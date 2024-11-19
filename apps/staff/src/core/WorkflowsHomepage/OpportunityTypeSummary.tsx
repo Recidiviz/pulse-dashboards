@@ -46,10 +46,10 @@ const ViewAllLabel = styled.div<{ $isMobile: boolean }>`
 `;
 
 const OpportunityTypeSummaryLink = styled(Link)<{
-  isMobile: boolean;
+  $isMobile: boolean;
 }>`
   display: flex;
-  flex-flow: row ${({ isMobile }) => !isMobile && "no"}wrap;
+  flex-flow: row ${({ $isMobile }) => !$isMobile && "no"}wrap;
   justify-content: space-between;
   padding: ${rem(spacing.md)} ${rem(spacing.md)} ${rem(spacing.xxl)}
     ${rem(spacing.md)};
@@ -69,19 +69,19 @@ const OpportunityTypeSummaryLink = styled(Link)<{
 `;
 
 const OpportunityHeaderWrapper = styled.div<{
-  isMobile: boolean;
+  $isMobile: boolean;
 }>`
-  padding-right: ${({ isMobile }) => (isMobile ? 0 : rem(spacing.xxl))};
-  width: ${({ isMobile }) => (!isMobile ? rem(550) : "100%")};
+  padding-right: ${({ $isMobile }) => ($isMobile ? 0 : rem(spacing.xxl))};
+  width: ${({ $isMobile }) => (!$isMobile ? rem(550) : "100%")};
 
-  ${({ isMobile }) => isMobile && "order: 2;"}
+  ${({ $isMobile }) => $isMobile && "order: 2;"}
 `;
 
 const OpportunityHeader = styled.div<{
-  isMobile: boolean;
+  $isMobile: boolean;
 }>`
   ${typography.Sans24};
-  ${({ isMobile }) => isMobile && typography.Sans18};
+  ${({ $isMobile }) => $isMobile && typography.Sans18};
   color: ${palette.pine2};
 `;
 
@@ -91,23 +91,23 @@ const ViewAllArrow = styled.div`
 `;
 
 const OpportunityInfoWrapper = styled.div<{
-  isMobile: boolean;
+  $isMobile: boolean;
   showZeroGrantsPill: boolean;
 }>`
   display: flex;
-  ${({ isMobile }) => isMobile && `gap: ${rem(spacing.md)};`}
+  ${({ $isMobile }) => $isMobile && `gap: ${rem(spacing.md)};`}
   width: ${({ showZeroGrantsPill }) =>
     showZeroGrantsPill ? rem(300) : "fit-content"};
-  justify-content: ${({ isMobile }) =>
-    isMobile ? "flex-start" : "space-between"};
+  justify-content: ${({ $isMobile }) =>
+    $isMobile ? "flex-start" : "space-between"};
   flex-shrink: 0;
 `;
 
-const ClientsWrapper = styled.div<{ isMobile: boolean }>`
+const ClientsWrapper = styled.div<{ $isMobile: boolean }>`
   display: flex;
   flex-flow: row nowrap;
 
-  ${({ isMobile }) => isMobile && "margin: 0 1rem 1rem; order: -1;"}
+  ${({ $isMobile }) => $isMobile && "margin: 0 1rem 1rem; order: -1;"}
 `;
 
 const ClientAvatarWrapper = styled.div`
@@ -175,12 +175,12 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
 
   return (
     <OpportunityTypeSummaryLink
-      isMobile={isMobile}
+      $isMobile={isMobile}
       className="OpportunityTypeSummaryLink"
       to={navigationURL}
     >
-      <OpportunityHeaderWrapper isMobile={isMobile}>
-        <OpportunityHeader isMobile={isMobile}>
+      <OpportunityHeaderWrapper $isMobile={isMobile}>
+        <OpportunityHeader $isMobile={isMobile}>
           {eligibilityTextForCount(countOpportunities(opportunities))}
         </OpportunityHeader>
         <ReviewStatusWrapper>
@@ -212,14 +212,14 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
         </ViewAllLabel>
       </OpportunityHeaderWrapper>
       <OpportunityInfoWrapper
-        isMobile={isMobile}
+        $isMobile={isMobile}
         showZeroGrantsPill={!!showZeroGrantsPill}
       >
         {showZeroGrantsPill && (
           <InsightsPill label="Zero Grants" tooltipCopy={zeroGrantsTooltip} />
         )}
         <ClientsWrapper
-          isMobile={isMobile}
+          $isMobile={isMobile}
           className="OpportunityClientsWrapper"
         >
           {previewOpportunities.map((opportunity) => (

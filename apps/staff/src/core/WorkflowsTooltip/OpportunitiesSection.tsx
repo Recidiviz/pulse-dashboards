@@ -38,7 +38,7 @@ export const OpportunitiesSection: React.FC<{
     <TooltipSection>
       <TooltipSectionHeader>Opportunities</TooltipSectionHeader>
       {opportunities.map((o: Opportunity) => (
-        <TooltipRow key={`{${o.selectId}`}>
+        <TooltipRow key={`tooltip-${o.type}-${o.selectId}`}>
           <TooltipTealStar />
           <TooltipSectionDetails>
             {o.config.label}

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TooltipTrigger } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import React from "react";
 
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
@@ -44,12 +45,14 @@ type WorkflowsTooltipProps = {
   children: React.ReactElement;
 };
 
-export const WorkflowsTooltip: React.FC<WorkflowsTooltipProps> = ({
-  person,
-  contents = <TooltipDetails person={person} />,
-  children,
-}) => {
-  useHydrateOpportunities(person);
+export const WorkflowsTooltip: React.FC<WorkflowsTooltipProps> = observer(
+  function WorkflowsTooltip({
+    person,
+    contents = <TooltipDetails person={person} />,
+    children,
+  }) {
+    useHydrateOpportunities(person);
 
-  return <TooltipTrigger contents={contents}>{children}</TooltipTrigger>;
-};
+    return <TooltipTrigger contents={contents}>{children}</TooltipTrigger>;
+  },
+);
