@@ -248,6 +248,20 @@ export class InsightsSupervisionStore {
     return this.config.metrics.map((metric) => metric.eventNameSingular);
   }
 
+  get officerRecord():
+    | SupervisionOfficer
+    | ExcludedSupervisionOfficer
+    | undefined {
+    const officer = [
+      ...this.officersBySupervisorPseudoId.values(),
+      ...this.excludedOfficersBySupervisorPseudoId.values(),
+    ]
+      .flat()
+      .find((o) => o.pseudonymizedId === this.officerPseudoId);
+
+    return officer;
+  }
+
   supervisionOfficerSupervisorByExternalId(
     supervisorId: string,
   ): SupervisionOfficerSupervisor | undefined {

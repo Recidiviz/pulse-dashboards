@@ -25,12 +25,7 @@ import {
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { ComponentType, useEffect, useRef, useState } from "react";
-import {
-  matchPath,
-  Navigate,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { matchPath, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import NotFound from "../../components/NotFound";
@@ -44,7 +39,8 @@ import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import { insightsUrl } from "../views";
 import { InsightsClientCapsule } from "./InsightsClientCapsule";
 import InsightsClientDetails from "./InsightsClientDetails";
-import InsightsClientEventsTable from "./InsightsClientEventsTable";
+import InsightsClientEventsList from "./InsightsClientEventsList";
+import InsightsLanternClientEventsTable from "./InsightsLanternClientEventsTable";
 
 export const StyledDrawerModal = styled(DrawerModal)<{
   isMobile: boolean;
@@ -138,6 +134,8 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
   const {
     clientInfo,
     clientEvents,
+    clientEventTypes,
+    clientEventsWithSupervisionEvents,
     supervisionDetails,
     clientPseudoId,
     officerPseudoId,
@@ -158,18 +156,8 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
     setModalIsOpen(Boolean(clientPseudoId));
   }, [clientPseudoId]);
 
-  if (!isInsightsLanternState) {
-    return (
-      <Navigate
-        to={insightsUrl("supervisionStaffMetric", {
-          officerPseudoId,
-          metricId,
-        })}
-      />
-    );
-  }
-
-  if (!clientInfo || !clientEvents) return <NotFound />;
+  if (!clientInfo || !clientEvents || !clientEventsWithSupervisionEvents)
+    return <NotFound />;
 
   if (initialPageLoad) {
     presenter.trackViewed();
@@ -224,6 +212,7 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
         <InsightsClientCapsule
           clientInfo={clientInfo}
           docLabel={labels.docLabel}
+          supervisionType={supervisionDetails?.supervisionType}
         />
         {!supervisorHomepage && (
           <Button kind="link" onClick={() => setModalIsOpen(false)}>
@@ -237,15 +226,25 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
           supervisionDetails={supervisionDetails}
           eventsLabel={eventsLabelSingular}
           outcomeDate={outcomeDate}
+          isInsightsLanternState={isInsightsLanternState}
         />
-        <InsightsClientEventsTable
-          events={clientEvents}
-          supervisorHomepage={supervisorHomepage}
-        />
+        {isInsightsLanternState ? (
+          <InsightsLanternClientEventsTable
+            events={clientEvents}
+            supervisorHomepage={supervisorHomepage}
+          />
+        ) : (
+          <InsightsClientEventsList
+            events={clientEventsWithSupervisionEvents}
+            clientEventTypes={clientEventTypes}
+          />
+        )}
       </Content>
-      <ModalFooter>
-        <LanternLogo />
-      </ModalFooter>
+      {isInsightsLanternState && (
+        <ModalFooter>
+          <LanternLogo />
+        </ModalFooter>
+      )}
     </DrawerComponent>
   );
 });

@@ -23,14 +23,19 @@ import moment from "moment";
 import {
   ClientEvent,
   ClientInfo,
+  ExcludedSupervisionOfficer,
+  SupervisionOfficer,
   SupervisionOfficerMetricEvent,
 } from "~datatypes";
-import { Hydratable, HydratesFromSource } from "~hydration-utils";
+import { FlowMethod, Hydratable, HydratesFromSource } from "~hydration-utils";
 
+import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { ConfigLabels, SupervisionDetails } from "./types";
 
 export class SupervisionClientDetailPresenter implements Hydratable {
+  fetchedOfficerRecord?: SupervisionOfficer;
+
   constructor(
     private supervisionStore: InsightsSupervisionStore,
     public officerPseudoId: string,
@@ -44,6 +49,7 @@ export class SupervisionClientDetailPresenter implements Hydratable {
       expectPopulated: [
         this.expectEventsPopulated,
         this.expectProfileInfoHydrated,
+        this.expectOfficerHydrated,
       ],
       populate: async () => {
         await Promise.all([
@@ -65,6 +71,7 @@ export class SupervisionClientDetailPresenter implements Hydratable {
             ),
           ),
           flowResult(this.supervisionStore.populateMetricConfigs()),
+          flowResult(this.populateSupervisionOfficer()),
         ]);
       },
     });
@@ -79,6 +86,10 @@ export class SupervisionClientDetailPresenter implements Hydratable {
   private expectProfileInfoHydrated() {
     if (!this.clientInfo)
       throw new Error("Failed to populate client profile info");
+  }
+
+  private expectOfficerHydrated() {
+    if (!this.officerRecord) throw new Error("Failed to populate officer info");
   }
 
   /**
@@ -99,6 +110,12 @@ export class SupervisionClientDetailPresenter implements Hydratable {
         ?.get(this.outcomeDate.toISOString());
 
     return events?.slice().sort((a, b) => descending(a.eventDate, b.eventDate));
+  }
+
+  get clientEventTypes(): Set<string> {
+    const { clientEvents } = this;
+
+    return new Set(clientEvents?.map((event) => event["metricId"]));
   }
 
   get clientInfo(): ClientInfo | undefined {
@@ -129,12 +146,12 @@ export class SupervisionClientDetailPresenter implements Hydratable {
     return this.supervisionStore.isInsightsLanternState;
   }
 
-  get supervisionDetails(): SupervisionDetails | undefined {
+  get clientMetricEvent(): SupervisionOfficerMetricEvent | undefined {
     const metricEvents =
       this.supervisionStore.metricEventsByOfficerPseudoIdAndMetricId
         .get(this.officerPseudoId)
         ?.get(this.metricId);
-    const clientEvent = metricEvents?.find(
+    const clientMetricEvent = metricEvents?.find(
       (e: SupervisionOfficerMetricEvent) => {
         return (
           e.pseudonymizedClientId === this.clientPseudoId &&
@@ -145,12 +162,93 @@ export class SupervisionClientDetailPresenter implements Hydratable {
       },
     );
 
-    if (!clientEvent) return undefined;
+    return clientMetricEvent;
+  }
+
+  get supervisionDetails(): SupervisionDetails | undefined {
+    const { clientMetricEvent } = this;
+
+    if (!clientMetricEvent) return undefined;
 
     return pick(
       ["officerAssignmentDate", "supervisionStartDate", "supervisionType"],
-      clientEvent,
+      clientMetricEvent,
     );
+  }
+
+  get officerSurname(): string | undefined {
+    return this.officerRecord?.fullName.surname;
+  }
+
+  get clientEventsWithSupervisionEvents(): ClientEvent[] | undefined {
+    const {
+      clientEvents,
+      supervisionDetails,
+      clientMetricEvent,
+      officerSurname,
+      labels: { supervisionOfficerLabel },
+    } = this;
+
+    let events = clientEvents ?? [];
+
+    if (supervisionDetails) {
+      const { supervisionType, ...relevantSupervisionDates } =
+        supervisionDetails;
+
+      const supervisionEventLabels: Record<
+        keyof typeof relevantSupervisionDates,
+        string
+      > = {
+        officerAssignmentDate: `assigned_to_${supervisionOfficerLabel}_${officerSurname ?? ""}`,
+        supervisionStartDate: `${supervisionType}_start_date`,
+      };
+
+      const supervisionEvents = Object.entries(relevantSupervisionDates).map(
+        ([key, value]): ClientEvent => {
+          return {
+            eventDate: value,
+            metricId:
+              supervisionEventLabels[
+                key as keyof typeof relevantSupervisionDates
+              ],
+            attributes: {
+              code: null,
+              description: null,
+            },
+          };
+        },
+      );
+
+      events = [...events, ...supervisionEvents];
+    }
+
+    if (clientMetricEvent) {
+      const metricEvent: ClientEvent = {
+        eventDate: clientMetricEvent.eventDate,
+        metricId: `${this.eventsLabelSingular}_date`,
+        attributes: {
+          code: null,
+          description: null,
+        },
+      };
+
+      events = [...events, ...[metricEvent]];
+    }
+
+    return events
+      ? events.sort((a, b) => descending(a.eventDate, b.eventDate))
+      : undefined;
+  }
+
+  private get isOfficerPopulated(): boolean {
+    return !!this.supervisionStore.officerRecord;
+  }
+
+  private get officerRecord():
+    | SupervisionOfficer
+    | ExcludedSupervisionOfficer
+    | undefined {
+    return this.supervisionStore.officerRecord ?? this.fetchedOfficerRecord;
   }
 
   trackViewed(): void {
@@ -164,5 +262,17 @@ export class SupervisionClientDetailPresenter implements Hydratable {
         viewedBy: userPseudoId,
       },
     );
+  }
+
+  *populateSupervisionOfficer(): FlowMethod<
+    InsightsAPI["supervisionOfficer"],
+    void
+  > {
+    if (this.isOfficerPopulated) return;
+
+    this.fetchedOfficerRecord =
+      yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
+        this.officerPseudoId,
+      );
   }
 }

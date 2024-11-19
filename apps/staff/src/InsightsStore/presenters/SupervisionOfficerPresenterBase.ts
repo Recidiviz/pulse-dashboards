@@ -58,7 +58,6 @@ export abstract class SupervisionOfficerPresenterBase<
       | "fetchedOfficerRecord"
       | "expectMetricsPopulated"
       | "hydrator"
-      | "officerRecordFromStore"
       | "officerRecord"
       | "outlierDataOrError"
       | "expectOfficerPopulated"
@@ -76,7 +75,6 @@ export abstract class SupervisionOfficerPresenterBase<
         expectPopulated: true,
         trackStaffPageViewed: true,
         expectMetricsPopulated: true,
-        officerRecordFromStore: true,
         officerRecord: true,
         outlierDataOrError: true,
         officerExternalId: true,
@@ -148,19 +146,8 @@ export abstract class SupervisionOfficerPresenterBase<
       throw new Error("Failed to populate metric configs");
   }
 
-  private get officerRecordFromStore(): T | undefined {
-    const officer = [
-      ...this.supervisionStore.officersBySupervisorPseudoId.values(),
-      ...this.supervisionStore.excludedOfficersBySupervisorPseudoId.values(),
-    ]
-      .flat()
-      .find((o) => o.pseudonymizedId === this.officerPseudoId);
-
-    return officer ? (officer as T) : undefined;
-  }
-
   private get officerRecord() {
-    return this.officerRecordFromStore ?? this.fetchedOfficerRecord;
+    return this.supervisionStore.officerRecord ?? this.fetchedOfficerRecord;
   }
 
   /**
@@ -170,7 +157,10 @@ export abstract class SupervisionOfficerPresenterBase<
   private get outlierDataOrError(): OutlierOfficerData<T> | Error {
     try {
       if (!this.officerRecord) throw new Error("Missing officer record");
-      return getOutlierOfficerData(this.officerRecord, this.supervisionStore);
+      return getOutlierOfficerData(
+        this.officerRecord,
+        this.supervisionStore,
+      ) as OutlierOfficerData<T>;
     } catch (e) {
       return castToError(e);
     }

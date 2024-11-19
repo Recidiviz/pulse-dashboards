@@ -112,13 +112,11 @@ export class SupervisionOfficerMetricEventsPresenter implements Hydratable {
   }
 
   get clientDetailLinks(): Array<string> | undefined {
-    const { insightsLanternState } =
-      this.supervisionStore.insightsStore.rootStore.tenantStore;
     const hasUndefinedEventDates = this.officerMetricEvents.some(
       (e) => !e.eventDate,
     );
 
-    if (!insightsLanternState || hasUndefinedEventDates) return;
+    if (hasUndefinedEventDates) return;
 
     return Array.from(this.officerMetricEvents, (d) =>
       insightsUrl("supervisionClientDetail", {

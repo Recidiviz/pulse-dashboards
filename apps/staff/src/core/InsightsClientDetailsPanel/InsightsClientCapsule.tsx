@@ -22,6 +22,7 @@ import styled from "styled-components/macro";
 
 import { ClientInfo } from "~datatypes";
 
+import { humanReadableTitleCase } from "../../utils";
 import { PersonInitialsAvatar } from "../Avatar";
 import PersonId from "../PersonId";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
@@ -45,14 +46,21 @@ const ClientId = styled.span`
   color: ${palette.data.teal1};
 `;
 
+const ClientSupervisionType = styled.div`
+  ${typography.Sans14};
+  color: ${palette.slate70};
+`;
+
 type InsightsClientCapsuleProps = {
   clientInfo: ClientInfo;
   docLabel: string;
+  supervisionType: string | undefined;
 };
 
 export const InsightsClientCapsule = observer(function InsightsClientCapsule({
   clientInfo,
   docLabel,
+  supervisionType,
 }: InsightsClientCapsuleProps): JSX.Element {
   return (
     <Wrapper>
@@ -63,6 +71,11 @@ export const InsightsClientCapsule = observer(function InsightsClientCapsule({
         <PersonId personId={clientInfo.clientId} docLabel={docLabel}>
           <ClientId>{clientInfo.clientId}</ClientId>
         </PersonId>
+        {supervisionType && (
+          <ClientSupervisionType>
+            {humanReadableTitleCase(supervisionType)}
+          </ClientSupervisionType>
+        )}
       </ClientDetail>
     </Wrapper>
   );

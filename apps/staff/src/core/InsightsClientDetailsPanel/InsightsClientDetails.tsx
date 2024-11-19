@@ -157,6 +157,7 @@ type InsightsClientDetailsType = {
   supervisionDetails?: SupervisionDetails;
   client: ClientInfo;
   outcomeDate: Date;
+  isInsightsLanternState: boolean;
 };
 
 const InsightsClientDetails: React.FC<InsightsClientDetailsType> = ({
@@ -164,15 +165,18 @@ const InsightsClientDetails: React.FC<InsightsClientDetailsType> = ({
   supervisionDetails,
   client,
   outcomeDate,
+  isInsightsLanternState,
 }) => {
   return (
     <Wrapper>
       <ClientDetails client={client} />
-      <ClientSupervisionDetails
-        eventsLabel={eventsLabel}
-        supervisionDetails={supervisionDetails}
-        outcomeDate={outcomeDate}
-      />
+      {isInsightsLanternState && (
+        <ClientSupervisionDetails
+          eventsLabel={eventsLabel}
+          supervisionDetails={supervisionDetails}
+          outcomeDate={outcomeDate}
+        />
+      )}
     </Wrapper>
   );
 };

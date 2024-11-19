@@ -15,40 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
-import { rem } from "polished";
 import { Column } from "react-table";
-import styled from "styled-components/macro";
 
 import { ClientEvent, ClientEventAttributes } from "~datatypes";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { formatDate, humanReadableTitleCase } from "../../utils";
 import InsightsTable from "../InsightsTable";
-
-const Wrapper = styled.div`
-  padding: ${rem(spacing.lg)} ${rem(spacing.md)};
-  border-top: 1px solid ${palette.slate10};
-  overflow-y: hidden;
-`;
-
-const Title = styled.div`
-  ${typography.Sans16};
-  color: ${palette.pine1};
-  margin-bottom: ${rem(spacing.sm)};
-`;
-
-const Code = styled.span`
-  color: ${palette.slate85};
-`;
-
-const Separator = styled.span`
-  color: ${palette.slate85};
-`;
-
-const Description = styled.span`
-  color: ${palette.slate60};
-`;
+import { Code, Description, Separator, Title, Wrapper } from "./styles";
 
 const columns = [
   {
@@ -109,15 +83,14 @@ const createTableColumn = (column: Column): Column => {
   }
 };
 
-type InsightsClientEventsTableType = {
+type InsightsLanternClientEventsTableType = {
   events: ClientEvent[];
   supervisorHomepage: boolean;
 };
 
-const InsightsClientEventsTable: React.FC<InsightsClientEventsTableType> = ({
-  events,
-  supervisorHomepage,
-}) => {
+const InsightsLanternClientEventsTable: React.FC<
+  InsightsLanternClientEventsTableType
+> = ({ events, supervisorHomepage }) => {
   const { isMobile } = useIsMobile(true);
   if (!events) return null;
 
@@ -135,4 +108,4 @@ const InsightsClientEventsTable: React.FC<InsightsClientEventsTableType> = ({
   );
 };
 
-export default InsightsClientEventsTable;
+export default InsightsLanternClientEventsTable;

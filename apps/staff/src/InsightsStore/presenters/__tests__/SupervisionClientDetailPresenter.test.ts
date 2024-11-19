@@ -77,6 +77,7 @@ describe("with client data already hydrated", () => {
         store.populateClientEventsForClient(clientPseudoId, parseISO(endDate)),
       ),
       flowResult(store.populateClientInfoForClient(clientPseudoId)),
+      flowResult(presenter.populateSupervisionOfficer()),
     ]);
   });
 
@@ -157,12 +158,48 @@ test("has supervisionDetails if metric event date matches outcomeDate", async ()
   expect(presenter.supervisionDetails).toMatchSnapshot();
 });
 
+test("has clientEventsWithSupervisionEvents", async () => {
+  const officerMetricEventDate = supervisionOfficerMetricEventFixture.find(
+    (e) => {
+      return (
+        e.pseudonymizedClientId === clientPseudoId &&
+        e.metricId === testMetric.metricId
+      );
+    },
+  )?.eventDate;
+  store.setOutcomeDate(officerMetricEventDate?.toISOString());
+
+  expect(store.outcomeDate).toBeDefined();
+
+  if (store.outcomeDate)
+    presenter = new SupervisionClientDetailPresenter(
+      store,
+      testOfficer.pseudonymizedId,
+      clientPseudoId,
+      testMetric.metricId,
+      store.outcomeDate,
+    );
+  await presenter.hydrate();
+
+  expect(presenter.clientEventsWithSupervisionEvents).toBeDefined();
+  expect(presenter.clientEventsWithSupervisionEvents).toMatchSnapshot();
+});
+
 test("supervisionDetails is undefined if metric event date does not match outcomeDate", async () => {
   // bogus outcome date
   store.setOutcomeDate("2000-01-01");
   await presenter.hydrate();
 
   expect(presenter.supervisionDetails).not.toBeDefined();
+});
+
+test("has clientEventsWithSupervisionEvents even if supervisionDetails is undefined", async () => {
+  // bogus outcome date
+  store.setOutcomeDate("2000-01-01");
+  await presenter.hydrate();
+
+  expect(presenter.clientEventsWithSupervisionEvents).toBeDefined();
+  expect(presenter.clientEventsWithSupervisionEvents).toMatchSnapshot();
 });
 
 test("hydration error in dependency", async () => {
