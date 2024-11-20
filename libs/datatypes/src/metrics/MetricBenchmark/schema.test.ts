@@ -39,29 +39,7 @@ test("benchmarks should be sorted chronologically", () => {
   });
 });
 
-test("caseload type is renamed to caseload category", () => {
-  const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
-    rawMetricBenchmarksFixture[0];
-  const rawFixtureCaseloadType = {
-    caseloadType: caseloadCategory,
-    ...rawFixtureNoCaseloadCategory,
-  };
-
-  const parsedMetricBenchmark = metricBenchmarkSchema.parse(
-    rawFixtureCaseloadType,
-  );
-  expect(
-    Object.prototype.hasOwnProperty.call(parsedMetricBenchmark, "caseloadType"),
-  ).toBeFalse();
-  expect(
-    Object.prototype.hasOwnProperty.call(
-      parsedMetricBenchmark,
-      "caseloadCategory",
-    ),
-  ).toBeTrue();
-});
-
-test("missing caseload type / category fails parsing", () => {
+test("missing caseload category fails parsing", () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
     rawMetricBenchmarksFixture[0];

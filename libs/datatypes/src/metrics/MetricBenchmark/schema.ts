@@ -18,14 +18,13 @@
 import { ascending } from "d3-array";
 import { z } from "zod";
 
-import { preprocessSchemaWithCaseloadCategoryOrType } from "../../people/utils/preprocessSchemaWithCaseloadCategoryOrType";
 import {
   dateStringSchemaWithoutTimeShift,
   uppercaseSchemaKeys,
 } from "../../utils/zod";
 import { targetStatusSchema } from "../utils/constants";
 
-const metricBenchmarkSchemaPreprocess = z.object({
+export const metricBenchmarkSchema = z.object({
   metricId: z.string(),
   caseloadCategory: z.string(),
   benchmarks: z
@@ -51,11 +50,6 @@ const metricBenchmarkSchemaPreprocess = z.object({
     });
   }),
 });
-
-// TODO(Recidiviz/recidiviz-data#31634): Remove this transformation once the backend does it
-export const metricBenchmarkSchema = preprocessSchemaWithCaseloadCategoryOrType(
-  metricBenchmarkSchemaPreprocess,
-);
 
 export type MetricBenchmark = z.infer<typeof metricBenchmarkSchema>;
 export type RawMetricBenchmark = z.input<typeof metricBenchmarkSchema>;

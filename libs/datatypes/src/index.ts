@@ -95,7 +95,6 @@ export * from "./people/Staff/Supervision/Workflows/schema";
 // -----------------------------------------------------------------------------
 export * from "./people/utils/addDisplayName";
 export * from "./people/utils/fullNameSchema";
-export * from "./people/utils/preprocessSchemaWithCaseloadCategoryOrType";
 export * from "./people/utils/types";
 
 // Workflows JII Exports: Common utilities for people

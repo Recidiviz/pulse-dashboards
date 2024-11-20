@@ -24,32 +24,7 @@ test("transformations", () => {
   );
 });
 
-test("caseload type is renamed to caseload category", () => {
-  const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
-    rawSupervisionOfficerFixture[0];
-  const rawFixtureCaseloadType = {
-    caseloadType: caseloadCategory,
-    ...rawFixtureNoCaseloadCategory,
-  };
-
-  const parsedSupervisionOfficer = supervisionOfficerSchema.parse(
-    rawFixtureCaseloadType,
-  );
-  expect(
-    Object.prototype.hasOwnProperty.call(
-      parsedSupervisionOfficer,
-      "caseloadType",
-    ),
-  ).toBeFalse();
-  expect(
-    Object.prototype.hasOwnProperty.call(
-      parsedSupervisionOfficer,
-      "caseloadCategory",
-    ),
-  ).toBeTrue();
-});
-
-test("missing caseload type / category fails parsing", () => {
+test("missing caseload category fails parsing", () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
     rawSupervisionOfficerFixture[0];

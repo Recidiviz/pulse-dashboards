@@ -20,7 +20,6 @@ import { z } from "zod";
 import { supervisionOfficerMetricOutlierSchema } from "../../../../../metrics/SupervisionOfficerMetricOutlier/schema";
 import { addDisplayName } from "../../../../../people/utils/addDisplayName";
 import { fullNameSchema } from "../../../../../people/utils/fullNameSchema";
-import { preprocessSchemaWithCaseloadCategoryOrType } from "../../../../utils/preprocessSchemaWithCaseloadCategoryOrType";
 
 const supervisionOfficerBaseSchema = z.object({
   fullName: fullNameSchema,
@@ -45,15 +44,9 @@ const withOutlierDataSchema = z.object({
 });
 export type WithOutlierData = z.infer<typeof withOutlierDataSchema>;
 
-const supervisionOfficerSchemaPreprocess = supervisionOfficerBaseSchema
+export const supervisionOfficerSchema = supervisionOfficerBaseSchema
   .transform(addDisplayName)
   .and(withOutlierDataSchema);
-
-// TODO(Recidiviz/recidiviz-data#31634): Remove this transformation once the backend does it
-export const supervisionOfficerSchema =
-  preprocessSchemaWithCaseloadCategoryOrType(
-    supervisionOfficerSchemaPreprocess,
-  );
 
 export const excludedSupervisionOfficerSchema = supervisionOfficerBaseSchema
   .transform(addDisplayName)
@@ -61,10 +54,8 @@ export const excludedSupervisionOfficerSchema = supervisionOfficerBaseSchema
 // TODO: Remove once excludedSupervisionOfficerSchema and supervisionOfficerSchema are merged
 
 export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
-// TODO: (6309) Remove the `_def.schema` once preprocess is removed
-export type RawSupervisionOfficer = z.input<
-  typeof supervisionOfficerSchema._def.schema
->;
+
+export type RawSupervisionOfficer = z.input<typeof supervisionOfficerSchema>;
 export type ExcludedSupervisionOfficer = z.infer<
   typeof excludedSupervisionOfficerSchema
 >;
