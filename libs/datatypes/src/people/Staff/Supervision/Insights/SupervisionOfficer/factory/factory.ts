@@ -41,9 +41,7 @@ export const rawSupervisionOfficerFactory = (
   stateCode = "US_XX",
 ) =>
   makeFactory<RawSupervisionOfficer>(() => {
-    const { supervisors, supervisionDistrict } = randDistrictAndSupervisors(
-      helpers.shuffle(s),
-    );
+    const { supervisors } = randDistrictAndSupervisors(helpers.shuffle(s));
 
     const hasOutliers = supervisors.some((s) => s.hasOutliers);
     const metricInfo: RawSupervisionOfficerMetricAndIdInfo =
@@ -51,7 +49,6 @@ export const rawSupervisionOfficerFactory = (
 
     return {
       fullName: each(() => fullNameFactory(person.sexType()).build()),
-      district: supervisionDistrict,
       supervisorExternalIds: [...supervisors.map((s) => s.externalId)],
       ...metricInfo,
     };

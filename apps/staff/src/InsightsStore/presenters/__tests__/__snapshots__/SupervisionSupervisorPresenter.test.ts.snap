@@ -686,7 +686,6 @@ Map {
           "caseloadCategory": "SEX_OFFENSE",
           "caseloadCategoryName": "Sex Offense Caseloads",
           "displayName": "Walter Harris",
-          "district": "Region D1",
           "externalId": "OFFICER4",
           "fullName": {
             "givenNames": "Walter",
@@ -3433,7 +3432,6 @@ Map {
           "caseloadCategory": "GENERAL_OR_OTHER",
           "caseloadCategoryName": "General Or Other Caseloads",
           "displayName": "Jason Nelson",
-          "district": "Region D1",
           "externalId": "so3",
           "fullName": {
             "givenNames": "Jason",
@@ -5965,7 +5963,6 @@ Map {
           "caseloadCategory": "SEX_OFFENSE",
           "caseloadCategoryName": "Sex Offense Caseloads",
           "displayName": "Walter Harris",
-          "district": "Region D1",
           "externalId": "OFFICER4",
           "fullName": {
             "givenNames": "Walter",
@@ -8114,7 +8111,6 @@ Map {
           "caseloadCategory": "SEX_OFFENSE",
           "caseloadCategoryName": "Sex Offense Caseloads",
           "displayName": "Walter Harris",
-          "district": "Region D1",
           "externalId": "OFFICER4",
           "fullName": {
             "givenNames": "Walter",
@@ -10261,7 +10257,6 @@ Map {
           "caseloadCategory": "GENERAL_OR_OTHER",
           "caseloadCategoryName": "General Or Other Caseloads",
           "displayName": "Jason Nelson",
-          "district": "Region D1",
           "externalId": "so3",
           "fullName": {
             "givenNames": "Jason",
@@ -12592,7 +12587,6 @@ exports[`outlierOfficersData 1`] = `
     "caseloadCategory": "SEX_OFFENSE",
     "caseloadCategoryName": "Sex Offense Caseloads",
     "displayName": "Walter Harris",
-    "district": "Region D1",
     "externalId": "OFFICER4",
     "fullName": {
       "givenNames": "Walter",
@@ -13920,7 +13914,6 @@ exports[`outlierOfficersData 1`] = `
     "caseloadCategory": "GENERAL_OR_OTHER",
     "caseloadCategoryName": "General Or Other Caseloads",
     "displayName": "Jason Nelson",
-    "district": "Region D1",
     "externalId": "so3",
     "fullName": {
       "givenNames": "Jason",

@@ -6,7 +6,6 @@ exports[`combines related data 1`] = `
   "caseloadCategory": "GENERAL_OR_OTHER",
   "caseloadCategoryName": "General Or Other Caseloads",
   "displayName": "Jason Nelson",
-  "district": "Region D1",
   "externalId": "so3",
   "fullName": {
     "givenNames": "Jason",

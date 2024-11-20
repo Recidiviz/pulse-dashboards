@@ -5,7 +5,6 @@ exports[`transformations 1`] = `
   "avgDailyPopulation": 54,
   "caseloadCategory": "SEX_OFFENSE",
   "displayName": "Walter Harris",
-  "district": "Region D1",
   "externalId": "OFFICER4",
   "fullName": {
     "givenNames": "Walter",
@@ -116,7 +115,6 @@ exports[`transformations 2`] = `
   "avgDailyPopulation": 12,
   "caseloadCategory": "GENERAL_OR_OTHER",
   "displayName": "Jack Hernandez",
-  "district": "Region D1",
   "externalId": "so2",
   "fullName": {
     "givenNames": "Jack",
@@ -141,7 +139,6 @@ exports[`transformations 3`] = `
   "avgDailyPopulation": 32,
   "caseloadCategory": "GENERAL_OR_OTHER",
   "displayName": "Jason Nelson",
-  "district": "Region D1",
   "externalId": "so3",
   "fullName": {
     "givenNames": "Jason",
@@ -232,7 +229,6 @@ exports[`transformations 4`] = `
   "avgDailyPopulation": 43,
   "caseloadCategory": "GENERAL_OR_OTHER",
   "displayName": "Carl Mark Campbell",
-  "district": null,
   "externalId": "so4",
   "fullName": {
     "givenNames": "Carl",
@@ -324,7 +320,6 @@ exports[`transformations 5`] = `
   "avgDailyPopulation": 5,
   "caseloadCategory": "GENERAL_OR_OTHER",
   "displayName": "Casey Ramirez",
-  "district": null,
   "externalId": "so5",
   "fullName": {
     "givenNames": "Casey",
@@ -344,7 +339,6 @@ exports[`transformations 6`] = `
   "avgDailyPopulation": 43,
   "caseloadCategory": "GENERAL_OR_OTHER",
   "displayName": "Elizabeth Ramirez",
-  "district": null,
   "externalId": "so8",
   "fullName": {
     "givenNames": "Elizabeth",

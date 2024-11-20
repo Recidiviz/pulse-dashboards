@@ -6,7 +6,6 @@ exports[`has outlierOfficerData 1`] = `
   "caseloadCategory": "SEX_OFFENSE",
   "caseloadCategoryName": "Sex Offense Caseloads",
   "displayName": "Walter Harris",
-  "district": "Region D1",
   "externalId": "OFFICER4",
   "fullName": {
     "givenNames": "Walter",
@@ -1337,7 +1336,6 @@ exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
   "caseloadCategory": "SEX_OFFENSE",
   "caseloadCategoryName": "Sex Offense Caseloads",
   "displayName": "Walter Harris",
-  "district": "Region D1",
   "externalId": "OFFICER4",
   "fullName": {
     "givenNames": "Walter",

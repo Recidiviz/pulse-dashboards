@@ -4,7 +4,6 @@ exports[`function: ExcludedSupervisionOfficerRawFactory > should generate realis
 [
   {
     "displayName": "Rogelio Kylo Carroll",
-    "district": "REGION 3",
     "externalId": "so5",
     "fullName": {
       "givenNames": "Rogelio",
@@ -18,7 +17,6 @@ exports[`function: ExcludedSupervisionOfficerRawFactory > should generate realis
   },
   {
     "displayName": "Elias Borer",
-    "district": "REGION 2",
     "externalId": "so5",
     "fullName": {
       "givenNames": "Elias",
@@ -32,7 +30,6 @@ exports[`function: ExcludedSupervisionOfficerRawFactory > should generate realis
   },
   {
     "displayName": "Roy Roberts-Jacobi",
-    "district": "REGION 3",
     "externalId": "so2",
     "fullName": {
       "givenNames": "Roy",
@@ -53,7 +50,6 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
     "avgDailyPopulation": 43,
     "caseloadCategory": "GENERAL_OR_OTHER",
     "displayName": "Jimmy Greenfelder",
-    "district": "REGION 2",
     "externalId": "so4",
     "fullName": {
       "givenNames": "Jimmy",
@@ -142,7 +138,6 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
     "avgDailyPopulation": 12,
     "caseloadCategory": "GENERAL_OR_OTHER",
     "displayName": "Megan Haley",
-    "district": "REGION 1",
     "externalId": "so2",
     "fullName": {
       "givenNames": "Megan",
@@ -165,7 +160,6 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
     "avgDailyPopulation": 12,
     "caseloadCategory": "GENERAL_OR_OTHER",
     "displayName": "Mattie Fawn Schaefer",
-    "district": "REGION 1",
     "externalId": "so2",
     "fullName": {
       "givenNames": "Mattie",

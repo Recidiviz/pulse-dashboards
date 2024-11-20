@@ -37,7 +37,6 @@ export const rawSupervisionOfficerFixture = [
       givenNames: usIdSupervisionStaffFixtures[0].givenNames,
       surname: usIdSupervisionStaffFixtures[0].surname,
     },
-    district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     caseloadCategory: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
     supervisorExternalIds: [
       supervisionOfficerSupervisorsFixture[0].externalId,
@@ -62,7 +61,6 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Jack",
       surname: "Hernandez",
     },
-    district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     outlierMetrics: [],
@@ -78,7 +76,6 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Jason",
       surname: "Nelson",
     },
-    district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
     caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     outlierMetrics: [
@@ -98,7 +95,6 @@ export const rawSupervisionOfficerFixture = [
       middleNames: "Mark",
       surname: "Campbell",
     },
-    district: supervisionOfficerSupervisorsFixture[1].supervisionDistrict,
     caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[1].externalId],
     outlierMetrics: [
@@ -117,7 +113,6 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Casey",
       surname: "Ramirez",
     },
-    district: null,
     caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
     outlierMetrics: [],
@@ -131,7 +126,6 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Elizabeth",
       surname: "Ramirez",
     },
-    district: supervisionOfficerSupervisorsFixture[1].supervisionDistrict,
     caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
     outlierMetrics: [
@@ -152,7 +146,6 @@ export const rawExcludedSupervisionOfficerFixture: RawExcludedSupervisionOfficer
         givenNames: "John",
         surname: "Harris",
       },
-      district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
       supervisorExternalIds: [
         supervisionOfficerSupervisorsFixture[0].externalId,
       ],
@@ -164,7 +157,6 @@ export const rawExcludedSupervisionOfficerFixture: RawExcludedSupervisionOfficer
         givenNames: "Larry",
         surname: "Hernandez",
       },
-      district: supervisionOfficerSupervisorsFixture[0].supervisionDistrict,
       supervisorExternalIds: [
         supervisionOfficerSupervisorsFixture[0].externalId,
       ],

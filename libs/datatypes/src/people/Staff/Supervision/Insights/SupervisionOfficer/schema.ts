@@ -25,7 +25,6 @@ import { preprocessSchemaWithCaseloadCategoryOrType } from "../../../../utils/pr
 const supervisionOfficerBaseSchema = z.object({
   fullName: fullNameSchema,
   externalId: z.string(),
-  district: z.string().nullable(),
   pseudonymizedId: z.string(),
   supervisorExternalIds: z.array(z.string()),
 });
