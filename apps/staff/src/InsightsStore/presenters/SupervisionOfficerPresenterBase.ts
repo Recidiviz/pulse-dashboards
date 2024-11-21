@@ -64,7 +64,6 @@ export abstract class SupervisionOfficerPresenterBase<
       | "expectSupervisorPopulated"
       | "expectOutlierDataPopulated"
       | "isOfficerPopulated"
-      | "expectActionStrategiesPopulated"
       | "populateSupervisionOfficer"
     >(
       this,
@@ -93,11 +92,9 @@ export abstract class SupervisionOfficerPresenterBase<
         expectSupervisorPopulated: true,
         expectOutlierDataPopulated: true,
         isOfficerPopulated: true,
-        expectActionStrategiesPopulated: true,
         populateSupervisionOfficer: true,
         hydrate: true,
         hydrationState: true,
-        trackActionStrategyPopupViewed: true,
       },
       { autoBind: true },
     );
@@ -114,7 +111,6 @@ export abstract class SupervisionOfficerPresenterBase<
       flowResult(this.supervisionStore.populateMetricConfigs()),
       flowResult(this.supervisionStore.populateSupervisionOfficerSupervisors()),
       flowResult(this.populateSupervisionOfficer()),
-      flowResult(this.supervisionStore.populateActionStrategies()),
     ];
   }
 
@@ -252,16 +248,6 @@ export abstract class SupervisionOfficerPresenterBase<
     this.supervisionStore.setUserHasSeenActionStrategy(this.officerPseudoId);
   }
 
-  /**
-   * Passthrough to supervisionStore.
-   * Sends analytics event when the popup is viewed
-   */
-  trackActionStrategyPopupViewed(): void {
-    this.supervisionStore.trackActionStrategyPopupViewed({
-      pseudoId: this.officerPseudoId,
-    });
-  }
-
   private expectOfficerPopulated() {
     if (!this.officerRecord) throw new Error("Failed to populate officer data");
   }
@@ -277,15 +263,6 @@ export abstract class SupervisionOfficerPresenterBase<
 
   protected get isOfficerPopulated() {
     return !(this.outlierDataOrError instanceof Error);
-  }
-
-  /**
-   * Asserts that metrics have been populated.
-   * @throws An error if Action Strategies are not populated.
-   */
-  private expectActionStrategiesPopulated() {
-    if (this.supervisionStore.actionStrategies === undefined)
-      throw new Error("Failed to populate action strategies");
   }
 
   protected abstract populateSupervisionOfficer(): FlowMethod<

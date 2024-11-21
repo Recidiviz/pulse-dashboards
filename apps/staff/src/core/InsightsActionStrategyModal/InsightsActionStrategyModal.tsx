@@ -26,7 +26,7 @@ import {
 import { observer } from "mobx-react-lite";
 import { now } from "mobx-utils";
 import { rem } from "polished";
-import { useEffect, useState } from "react";
+import { ComponentType, useEffect, useState } from "react";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
@@ -34,8 +34,13 @@ import { ActionStrategyCopy } from "~datatypes";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { SupervisionActionStrategyPresenter } from "../../InsightsStore/presenters/SupervisionActionStrategyPresenter";
 import { TEN_SECONDS } from "../../InsightsStore/presenters/utils";
 import LanternLogo from "../LanternLogo";
+import ModelHydrator from "../ModelHydrator";
+import { NavigationBackButton } from "../NavigationBackButton";
+import { NAV_BAR_HEIGHT } from "../NavigationLayout";
+import { useInsightsActionStrategyModal } from "./InsightsActionStrategyModalContext";
 
 export const StyledDrawerModal = styled(DrawerModal)<{
   isMobile: boolean;
@@ -55,7 +60,7 @@ export const StyledDrawerModal = styled(DrawerModal)<{
         box-shadow: unset !important;
         display: flex;
         flex-direction: column;
-        border-left: 1px solid ${palette.slate20};
+        border-left: ${rem(1)} solid ${palette.slate20};
       }`
       : `.ReactModal__Content {
         display: flex;
@@ -84,18 +89,30 @@ const ModalControls = styled.div`
   justify-content: space-between;
   background: white;
   padding: 1rem;
+  height: ${rem(NAV_BAR_HEIGHT)};
+  border-bottom: ${rem(1)} solid ${palette.slate10};
 
   .InsightsActionStrategyModal__close {
     grid-column: 2;
     justify-self: flex-end;
+  }
+  }
+`;
+
+const StyledNavigationBackButton = styled(NavigationBackButton)`
+  grid-column: 1;
+  justify-self: flex-start;
+  color: ${palette.pine2};
+
+  & i {
+    font-size: 1.75rem;
   }
 `;
 
 const ModalHeader = styled.div`
   ${typography.Sans24};
   color: ${palette.pine1};
-  padding-left: ${rem(spacing.lg)};
-  padding-right: ${rem(spacing.lg)};
+  padding: 0 ${rem(spacing.sm)};
   line-height: 1.5;
   font-weight: 600;
 `;
@@ -103,14 +120,14 @@ const ModalHeader = styled.div`
 const ModalFooter = styled.div`
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
   margin-top: auto;
-  border-top: 1px solid ${palette.slate10};
+  border-top: ${rem(1)} solid ${palette.slate10};
 `;
 
 const StyledMarkdownView = styled(MarkdownView)`
   font-weight: 500;
   ${typography.Sans16}
   p {
-    padding-left: ${rem(spacing.lg)};
+    padding-left: ${rem(spacing.sm)};
     margin-top: ${rem(spacing.lg)};
     margin-bottom: ${rem(spacing.lg)};
     color: ${palette.slate85};
@@ -134,89 +151,235 @@ const StyledMarkdownView = styled(MarkdownView)`
   }
 `;
 
+const List = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 ${rem(spacing.sm)};
+  margin-top: ${rem(spacing.lg)};
+`;
+
+const ListItem = styled.div`
+  ${typography.Sans14};
+  color: ${palette.pine2};
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: ${rem(spacing.xl)} ${rem(spacing.sm)};
+  gap: ${rem(spacing.sm)};
+  border-top: ${rem(1)} solid ${palette.slate10};
+
+  &:last-child {
+    border-bottom: 1px solid ${palette.slate10};
+  }
+
+  &:hover {
+    background-color: ${palette.slate10};
+    cursor: pointer;
+  }
+`;
+
 const Wrapper = styled.div`
   padding: ${rem(spacing.lg)} ${rem(spacing.md)};
 `;
 
-type ActionStratetgyModalProps = {
-  isOpen: boolean;
-  onBackClick?: () => void;
-  actionStrategy: ActionStrategyCopy[string];
-  pseudoId: string;
-  trackViewed: () => void;
-  supervisorHomepage: boolean;
+const ActionStrategyList = ({
+  actionStrategies,
+  onActionStrategySelect,
+  insightsLanternState,
+}: {
+  actionStrategies: ActionStrategyCopy;
+  onActionStrategySelect: (item: ActionStrategyCopy[string]) => void;
   insightsLanternState: boolean;
+}): React.ReactElement | null => {
+  const actionStrategiesList = Object.entries(actionStrategies);
+
+  const title = insightsLanternState
+    ? "Lantern Action Strategies"
+    : "Action Strategies";
+
+  return (
+    <>
+      <ModalHeader>{title}</ModalHeader>
+      <List>
+        {actionStrategiesList.map(([key, value]) => {
+          return (
+            <ListItem key={key} onClick={() => onActionStrategySelect(value)}>
+              {value.prompt}
+            </ListItem>
+          );
+        })}
+      </List>
+    </>
+  );
 };
 
-export const InsightsActionStrategyModal = observer(
-  function InsightsActionStrategyModal({
-    isOpen,
-    onBackClick,
-    actionStrategy,
-    pseudoId,
-    trackViewed,
+const ActionStrategy = ({
+  actionStrategy,
+}: {
+  actionStrategy: ActionStrategyCopy[string] | undefined;
+}): React.ReactElement | null => {
+  return (
+    <div>
+      <ModalHeader>{actionStrategy?.prompt}</ModalHeader>
+      <StyledMarkdownView
+        markdown={actionStrategy?.body ?? ""}
+        options={{ openLinksInNewWindow: true }}
+      />
+    </div>
+  );
+};
+
+type ActionStrategyModalProps = {
+  presenter: SupervisionActionStrategyPresenter;
+  supervisorHomepage: boolean;
+};
+
+export const InsightsActionStrategyModal = withPresenter(
+  observer(function InsightsActionStrategyModal({
+    presenter,
     supervisorHomepage,
-    insightsLanternState,
-  }: ActionStratetgyModalProps) {
+  }: ActionStrategyModalProps) {
     const {
       insightsStore: { supervisionStore },
     } = useRootStore();
     const { isMobile } = useIsMobile(true);
+    const {
+      isModalOpen: isOpen,
+      closeModal,
+      showList,
+      toggleShowList,
+      selectActionStrategy,
+      selectedActionStrategy,
+      viewedFromList,
+    } = useInsightsActionStrategyModal();
+
+    const {
+      surfacedActionStrategy,
+      pseudoId,
+      trackActionStrategyPopupViewed: trackViewed,
+      trackActionStrategyPopupViewedFromList: trackViewedFromList,
+      trackActionStrategyListViewed: trackListViewed,
+      isInsightsLanternState,
+      allActionStrategies,
+      getActionStrategyNameByValue: getName,
+    } = presenter;
 
     const [initialModalLoadTime, setModalOpenedAt] = useState<Date | undefined>(
       undefined,
     );
 
-    // trackActionStrategyPopupViewed10Seconds every 10 seconds after the initial modal load
+    // trackActionStrategyPopupViewed10Seconds every 10 seconds after load of action
+    // strategy detail
     if (
       initialModalLoadTime &&
       initialModalLoadTime.getTime() < now(TEN_SECONDS) - TEN_SECONDS
     ) {
       supervisionStore?.trackActionStrategyPopupViewed10Seconds({
-        pseudoId,
+        pseudoId: !viewedFromList ? pseudoId : undefined,
+        actionStrategy: getName(selectedActionStrategy),
       });
     }
 
     useEffect(() => {
       if (isOpen) {
-        setModalOpenedAt(new Date());
-        trackViewed();
+        if (showList) {
+          setModalOpenedAt(undefined);
+          trackListViewed();
+        } else {
+          setModalOpenedAt(new Date());
+          if (!viewedFromList) {
+            trackViewed();
+          } else {
+            trackViewedFromList(getName(selectedActionStrategy));
+          }
+        }
       } else {
         setModalOpenedAt(undefined);
+
+        // when closing the modal, reset the `selectedActionStrategy` to the surfaced one
+        selectActionStrategy(surfacedActionStrategy);
       }
-    }, [isOpen, trackViewed]);
+    }, [
+      isOpen,
+      trackViewed,
+      trackListViewed,
+      surfacedActionStrategy,
+      selectActionStrategy,
+      showList,
+      selectedActionStrategy,
+      viewedFromList,
+      trackViewedFromList,
+      getName,
+    ]);
 
     return (
       <StyledDrawerModal
         isOpen={isOpen}
-        onRequestClose={onBackClick}
+        onRequestClose={closeModal}
         supervisorHomepage={supervisorHomepage}
         isMobile={isMobile}
       >
         <ModalControls>
+          {!showList && (
+            <StyledNavigationBackButton action={{ onClick: toggleShowList }} />
+          )}
           <Button
             className="InsightsActionStrategyModal__close"
             kind="link"
-            onClick={onBackClick}
+            onClick={closeModal}
           >
             <Icon kind="Close" size="14" color={palette.pine2} />
           </Button>
         </ModalControls>
         <Wrapper>
-          <div>
-            <ModalHeader>{actionStrategy.prompt}</ModalHeader>
-            <StyledMarkdownView
-              markdown={actionStrategy.body}
-              options={{ openLinksInNewWindow: true }}
+          {showList ? (
+            <ActionStrategyList
+              actionStrategies={allActionStrategies}
+              onActionStrategySelect={selectActionStrategy}
+              insightsLanternState={isInsightsLanternState}
             />
-          </div>
+          ) : (
+            <ActionStrategy actionStrategy={selectedActionStrategy} />
+          )}
         </Wrapper>
-        {insightsLanternState && (
+        {isInsightsLanternState && (
           <ModalFooter>
             <LanternLogo />
           </ModalFooter>
         )}
       </StyledDrawerModal>
     );
-  },
+  }),
 );
+
+function withPresenter(Component: ComponentType<ActionStrategyModalProps>) {
+  return observer(function InsightsActionStrategyModalWrapper({
+    supervisorHomepage = false,
+  }: {
+    supervisorHomepage?: boolean;
+  }) {
+    const {
+      insightsStore: { supervisionStore },
+    } = useRootStore();
+    if (!supervisionStore) return null;
+    const { supervisorPseudoId, officerPseudoId } = supervisionStore;
+
+    const pseudoId = supervisorPseudoId ?? officerPseudoId;
+
+    if (!pseudoId) return null;
+
+    const presenter = new SupervisionActionStrategyPresenter(
+      supervisionStore,
+      pseudoId,
+    );
+    return (
+      <ModelHydrator model={presenter}>
+        <Component
+          presenter={presenter}
+          supervisorHomepage={supervisorHomepage}
+        />
+      </ModelHydrator>
+    );
+  });
+}

@@ -59,9 +59,6 @@ export const SupervisorPage = observer(function SupervisorPage({
     actionStrategyCopy,
     setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
-    supervisorPseudoId,
-    trackActionStrategyPopupViewed,
-    isInsightsLanternState,
     supervisionLocationInfo,
   } = presenter;
 
@@ -128,9 +125,6 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
           actionStrategy={actionStrategyCopy}
           bannerViewedCallback={setUserHasSeenActionStrategy}
           disableBannerCallback={disableSurfaceActionStrategies}
-          pseudoId={supervisorPseudoId}
-          modalViewedCallback={trackActionStrategyPopupViewed}
-          insightsLanternState={isInsightsLanternState}
         ></InsightsActionStrategyBanner>
       )}
       <Wrapper isLaptop={isLaptop}>

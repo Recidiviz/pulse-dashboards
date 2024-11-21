@@ -75,8 +75,6 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     actionStrategyCopy,
     setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
-    trackActionStrategyPopupViewed,
-    isInsightsLanternState,
     isVitalsEnabled,
   } = presenter;
 
@@ -142,10 +140,6 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               actionStrategy={actionStrategyCopy}
               bannerViewedCallback={setUserHasSeenActionStrategy}
               disableBannerCallback={disableSurfaceActionStrategies}
-              supervisorHomepage
-              pseudoId={officerPseudoId}
-              modalViewedCallback={trackActionStrategyPopupViewed}
-              insightsLanternState={isInsightsLanternState}
             />
           )}
           <Wrapper isTablet={isTablet}>

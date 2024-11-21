@@ -18,10 +18,9 @@
 import { clone } from "lodash";
 import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
-import { z } from "zod";
 
 import { isDemoMode } from "~client-env-utils";
-import { ACTION_STRATEGY_TYPE, OpportunityType } from "~datatypes";
+import { ActionStrategyType, OpportunityType } from "~datatypes";
 import {
   CreateOrUpdateRecommendationTrackingMetadata,
   IndividualCaseClickedWithStatusMetadata,
@@ -43,7 +42,7 @@ import {
   SupervisionNeedType,
   SupervisionTaskType,
 } from "../../WorkflowsStore/Task/types";
-import type RootStore from "..";
+import type RootStore from "../index";
 
 const isAnalyticsDisabled =
   isDemoMode() || !["staging", "production"].includes(import.meta.env.MODE);
@@ -85,19 +84,23 @@ type PageViewed30SecondsTrackingMetadata = {
 type ActionStrategySurfacedMetadata = {
   viewedBy?: string;
   pseudonymizedId: string;
-  actionStrategy: z.infer<typeof ACTION_STRATEGY_TYPE>;
+  actionStrategy: ActionStrategyType;
 };
 
 type ActionStrategyPopupMetadata = {
   viewedBy?: string;
-  pseudonymizedId: string;
-  actionStrategy: z.infer<typeof ACTION_STRATEGY_TYPE>;
+  pseudonymizedId?: string;
+  actionStrategy: ActionStrategyType;
 };
 
 type ActionStrategyPopupViewed10SecondsTrackingMetadata = {
   viewedBy?: string;
-  pseudonymizedId: string;
-  actionStrategy: z.infer<typeof ACTION_STRATEGY_TYPE>;
+  pseudonymizedId?: string;
+  actionStrategy: ActionStrategyType;
+};
+
+type ActionStrategyListMetadata = {
+  viewedBy?: string;
 };
 
 type OpportunityTrackingMetadata = {
@@ -254,6 +257,21 @@ export default class AnalyticsStore {
       "frontend.outliers_action_strategy_popup_viewed_10_seconds",
       metadata,
     );
+  }
+
+  trackInsightsActionStrategyPopupViewedFromList(
+    metadata: ActionStrategyPopupMetadata,
+  ): void {
+    this.track(
+      "frontend.outliers_action_strategy_popup_viewed_from_list",
+      metadata,
+    );
+  }
+
+  trackInsightsActionStrategyListViewed(
+    metadata: ActionStrategyListMetadata,
+  ): void {
+    this.track("frontend.outliers_action_strategy_list_viewed", metadata);
   }
 
   trackReferralFormViewed(metadata: OpportunityTrackingMetadata): void {

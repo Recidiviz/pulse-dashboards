@@ -34,7 +34,7 @@
     "@prisma/client": "^5.1.1",
     "@react-spring/web": "^9.7.4",
     "@recidiviz/auth": "^1.0.1",
-    "@recidiviz/design-system": "^5.7.0",
+    "@recidiviz/design-system": "^5.8.0",
     "@rmwc/select": "^14.0.11",
     "@rmwc/textfield": "^14.0.11",
     "@segment/analytics-next": "^1.72.1",
@@ -319,7 +319,8 @@
     "y18n": "^5",
     "trim-newlines": "^3.0.1",
     "ws": ">7.4.6",
-    "json-schema": "^0.4.0"
+    "json-schema": "^0.4.0",
+    "clsx": "~1.0.4"
   },
   "scripts": {
     "prepare": "husky",

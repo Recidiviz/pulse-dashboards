@@ -18,6 +18,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { configure } from "mobx";
+import { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
 
 import {
@@ -35,6 +36,7 @@ import { InsightsSupervisionStore } from "../../../InsightsStore/stores/Insights
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
+import { InsightsActionStrategyModalProvider } from "../../InsightsActionStrategyModal";
 import InsightsSupervisorPage, {
   SupervisorPage,
 } from "../InsightsSupervisorPage";
@@ -66,6 +68,16 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
+const renderWithContext = (component: ReactNode) => {
+  return render(
+    <BrowserRouter>
+      <InsightsActionStrategyModalProvider>
+        {component}
+      </InsightsActionStrategyModalProvider>
+    </BrowserRouter>,
+  );
+};
+
 const supervisorUser = supervisionOfficerSupervisorsFixture[0];
 const supervisorPseudoId = supervisorUser.pseudonymizedId;
 
@@ -91,11 +103,7 @@ describe("Hydrated Supervisor Page", () => {
     vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
     // re-hydrate to pick up the mock
     await presenter?.hydrate();
-    render(
-      <BrowserRouter>
-        <SupervisorPage presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<SupervisorPage presenter={presenter} />);
 
     [
       "2 of the 3 officers in Alejandro D Gonzalez's team are",
@@ -110,11 +118,7 @@ describe("Hydrated Supervisor Page", () => {
     vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
       supervisorUser,
     );
-    render(
-      <BrowserRouter>
-        <SupervisorPage presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<SupervisorPage presenter={presenter} />);
 
     await Promise.all(
       [
@@ -129,11 +133,7 @@ describe("Hydrated Supervisor Page", () => {
 
   test("renders back button", async () => {
     vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
-    render(
-      <BrowserRouter>
-        <SupervisorPage presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<SupervisorPage presenter={presenter} />);
 
     await waitFor(() =>
       expect(
@@ -147,11 +147,7 @@ describe("Hydrated Supervisor Page", () => {
       supervisorUser,
     );
     vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
-    render(
-      <BrowserRouter>
-        <SupervisorPage presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<SupervisorPage presenter={presenter} />);
 
     await waitFor(() =>
       expect(
@@ -168,11 +164,7 @@ describe("Hydrated Supervisor Page", () => {
       false,
     );
 
-    render(
-      <BrowserRouter>
-        <SupervisorPage presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<SupervisorPage presenter={presenter} />);
     expect(
       screen.queryByRole("link", { name: "Go to supervisors list" }),
     ).toBeNull();
@@ -183,11 +175,7 @@ describe("Hydrated Supervisor Page", () => {
       supervisorUser,
     );
     vi.spyOn(store, "supervisorIsCurrentUser", "get").mockReturnValue(true);
-    render(
-      <BrowserRouter>
-        <SupervisorPage presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<SupervisorPage presenter={presenter} />);
 
     await Promise.all(
       [
@@ -213,11 +201,7 @@ describe("Hydrated Supervisor Page", () => {
 
     await presenter?.hydrate();
 
-    render(
-      <BrowserRouter>
-        <SupervisorPage presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<SupervisorPage presenter={presenter} />);
 
     expect(
       store.insightsStore.rootStore.analyticsStore
@@ -251,11 +235,7 @@ describe("When insightsUnitState is true", () => {
     vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
       supervisorUser,
     );
-    render(
-      <BrowserRouter>
-        <SupervisorPage presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<SupervisorPage presenter={presenter} />);
 
     await Promise.all(
       [
@@ -287,11 +267,7 @@ describe("Insights Supervisor Page", () => {
   });
 
   test("renders loading indicator", () => {
-    render(
-      <BrowserRouter>
-        <InsightsSupervisorPage />
-      </BrowserRouter>,
-    );
+    renderWithContext(<InsightsSupervisorPage />);
 
     // two elements expected because of animated transition
     expect(screen.getAllByText("Loading data...")).toHaveLength(2);
@@ -302,11 +278,7 @@ describe("Insights Supervisor Page", () => {
       throw new Error("There was an error");
     });
 
-    render(
-      <BrowserRouter>
-        <InsightsSupervisorPage />
-      </BrowserRouter>,
-    );
+    renderWithContext(<InsightsSupervisorPage />);
 
     expect(
       await screen.findByText("Sorry, we’re having trouble loading this page"),
@@ -314,21 +286,13 @@ describe("Insights Supervisor Page", () => {
   });
 
   test("renders Supervisor Page when hydrated", async () => {
-    render(
-      <BrowserRouter>
-        <InsightsSupervisorPage />
-      </BrowserRouter>,
-    );
+    renderWithContext(<InsightsSupervisorPage />);
 
     expect(await screen.findByText("Alejandro D Gonzalez")).toBeInTheDocument();
   });
 
   test("has no axe violations", async () => {
-    const { container } = render(
-      <BrowserRouter>
-        <InsightsSupervisorPage />
-      </BrowserRouter>,
-    );
+    const { container } = renderWithContext(<InsightsSupervisorPage />);
 
     // Make sure the hydrated page actually loaded
     expect(await screen.findByText("Alejandro D Gonzalez")).toBeInTheDocument();

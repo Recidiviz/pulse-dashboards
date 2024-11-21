@@ -19,6 +19,7 @@ import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -26,6 +27,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
 import { pluralize, toTitleCase } from "../../utils";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
+import { useInsightsActionStrategyModal } from "../InsightsActionStrategyModal";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
   Body,
@@ -56,12 +58,22 @@ const ExcludedOfficersTooltipHeading = styled(OfficersTooltipHeading)`
   margin-top: ${rem(spacing.md)};
 `;
 
+const StyledLink = styled(Link)`
+  color: ${palette.signal.links} !important;
+  padding-top: ${rem(spacing.sm)};
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const SupervisorPageV2 = observer(function SupervisorPageV2({
   presenter,
 }: {
   presenter: SupervisionSupervisorPresenter;
 }) {
   const { isLaptop } = useIsMobile(true);
+  const { openModal } = useInsightsActionStrategyModal();
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
@@ -78,10 +90,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     actionStrategyCopy,
     setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
-    supervisorPseudoId,
-    trackActionStrategyPopupViewed,
-    isInsightsLanternState,
     supervisionLocationInfo,
+    supervisorPseudoId,
   } = presenter;
 
   const tooltipContents = (
@@ -141,7 +151,13 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         </HighlightedDescription>
       </InsightsTooltip>
       . Rates for the metrics below are calculated for the time period:{" "}
-      {timePeriod}.
+      {timePeriod}.{" "}
+      <StyledLink
+        to="#"
+        onClick={() => openModal({ showActionStrategyList: true })}
+      >
+        See action strategies.
+      </StyledLink>
     </>
   );
 
@@ -182,9 +198,6 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
           bannerViewedCallback={setUserHasSeenActionStrategy}
           disableBannerCallback={disableSurfaceActionStrategies}
           supervisorHomepage
-          pseudoId={supervisorPseudoId}
-          modalViewedCallback={trackActionStrategyPopupViewed}
-          insightsLanternState={isInsightsLanternState}
         />
       )}
       <Wrapper isLaptop={isLaptop} supervisorHomepage>

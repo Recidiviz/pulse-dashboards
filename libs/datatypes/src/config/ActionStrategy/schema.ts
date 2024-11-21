@@ -31,5 +31,7 @@ export const actionStrategySchema = z.record(
   ACTION_STRATEGY_TYPE.nullable(),
 );
 
+export type ActionStrategyType = z.infer<typeof ACTION_STRATEGY_TYPE>;
+
 export type ActionStrategy = z.infer<typeof actionStrategySchema>;
 export type RawActionStrategy = z.input<typeof actionStrategySchema>;

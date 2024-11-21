@@ -58,11 +58,13 @@ const BackButton = styled.button`
 type NavigationBackButtonProps = {
   action: { url: string } | { onClick: () => void };
   children?: React.ReactNode;
+  className?: string;
 };
 
 export const NavigationBackButton: FC<NavigationBackButtonProps> = ({
   children,
   action,
+  className,
 }) => {
   const buttonContents = (
     <>
@@ -72,8 +74,16 @@ export const NavigationBackButton: FC<NavigationBackButtonProps> = ({
   );
 
   if ("url" in action) {
-    return <BackLink to={action.url}>{buttonContents}</BackLink>;
+    return (
+      <BackLink to={action.url} className={className}>
+        {buttonContents}
+      </BackLink>
+    );
   }
 
-  return <BackButton onClick={action.onClick}>{buttonContents}</BackButton>;
+  return (
+    <BackButton onClick={action.onClick} className={className}>
+      {buttonContents}
+    </BackButton>
+  );
 };

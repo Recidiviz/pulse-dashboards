@@ -22,6 +22,7 @@ import { Route, Routes } from "react-router-dom";
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionPresenter } from "../../InsightsStore/presenters/SupervisionPresenter";
+import { InsightsActionStrategyModalProvider } from "../InsightsActionStrategyModal";
 import InsightsMetricPage from "../InsightsMetricPage";
 import InsightsNavLayout from "../InsightsNavLayout";
 import InsightsOnboardingPage from "../InsightsOnboardingPage";
@@ -45,82 +46,84 @@ const PageInsights: React.FC = observer(function PageInsights() {
   const { shouldUseSupervisorHomepageUI: supervisorHomepage } = insightsStore;
 
   return (
-    <InsightsNavLayout>
-      <ModelHydrator
-        model={new SupervisionPresenter(insightsStore, workflowsRootStore)}
-      >
-        <Routes>
-          <Route element={<InsightsRoute />}>
-            <Route
-              path={insightsRoute({ routeName: "supervision" })}
-              element={<InsightsSupervisionHome />}
-            />
-            <Route
-              path={insightsRoute({
-                routeName: "supervisionSupervisorsList",
-              })}
-              element={<InsightsSupervisorsListPage />}
-            />
-
-            <Route
-              path={insightsRoute({ routeName: "supervisionSupervisor" })}
-              element={
-                supervisorHomepage ? (
-                  <InsightsSupervisorPageV2 />
-                ) : (
-                  <InsightsSupervisorPage />
-                )
-              }
-            />
-
-            {supervisorHomepage && (
+    <InsightsActionStrategyModalProvider>
+      <InsightsNavLayout>
+        <ModelHydrator
+          model={new SupervisionPresenter(insightsStore, workflowsRootStore)}
+        >
+          <Routes>
+            <Route element={<InsightsRoute />}>
               <Route
-                path={insightsRoute({ routeName: "supervisionStaff" })}
-                element={<InsightsStaffPageV2 />}
+                path={insightsRoute({ routeName: "supervision" })}
+                element={<InsightsSupervisionHome />}
               />
-            )}
-
-            {[
-              insightsRoute({ routeName: "supervisionStaff" }),
-              insightsRoute({ routeName: "supervisionStaffMetric" }),
-              insightsRoute({ routeName: "supervisionClientDetail" }),
-            ].map((path) => (
               <Route
-                key={path}
-                path={path}
+                path={insightsRoute({
+                  routeName: "supervisionSupervisorsList",
+                })}
+                element={<InsightsSupervisorsListPage />}
+              />
+
+              <Route
+                path={insightsRoute({ routeName: "supervisionSupervisor" })}
                 element={
                   supervisorHomepage ? (
-                    <InsightsMetricPage />
+                    <InsightsSupervisorPageV2 />
                   ) : (
-                    <InsightsStaffPage />
+                    <InsightsSupervisorPage />
                   )
                 }
               />
-            ))}
-            {supervisorHomepage && (
-              <Route
-                path={insightsRoute({ routeName: "supervisionOpportunity" })}
-                element={<InsightsOpportunityPage />}
-              />
-            )}
 
-            {supervisorHomepage && (
-              <Route
-                path={insightsRoute({
-                  routeName: "supervisionOpportunityForm",
-                })}
-                element={<InsightsOpportunityFormPage />}
-              />
-            )}
-          </Route>
-          <Route
-            path={insightsRoute({ routeName: "supervisionOnboarding" })}
-            element={<InsightsOnboardingPage />}
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </ModelHydrator>
-    </InsightsNavLayout>
+              {supervisorHomepage && (
+                <Route
+                  path={insightsRoute({ routeName: "supervisionStaff" })}
+                  element={<InsightsStaffPageV2 />}
+                />
+              )}
+
+              {[
+                insightsRoute({ routeName: "supervisionStaff" }),
+                insightsRoute({ routeName: "supervisionStaffMetric" }),
+                insightsRoute({ routeName: "supervisionClientDetail" }),
+              ].map((path) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={
+                    supervisorHomepage ? (
+                      <InsightsMetricPage />
+                    ) : (
+                      <InsightsStaffPage />
+                    )
+                  }
+                />
+              ))}
+              {supervisorHomepage && (
+                <Route
+                  path={insightsRoute({ routeName: "supervisionOpportunity" })}
+                  element={<InsightsOpportunityPage />}
+                />
+              )}
+
+              {supervisorHomepage && (
+                <Route
+                  path={insightsRoute({
+                    routeName: "supervisionOpportunityForm",
+                  })}
+                  element={<InsightsOpportunityFormPage />}
+                />
+              )}
+            </Route>
+            <Route
+              path={insightsRoute({ routeName: "supervisionOnboarding" })}
+              element={<InsightsOnboardingPage />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ModelHydrator>
+      </InsightsNavLayout>
+    </InsightsActionStrategyModalProvider>
   );
 });
 

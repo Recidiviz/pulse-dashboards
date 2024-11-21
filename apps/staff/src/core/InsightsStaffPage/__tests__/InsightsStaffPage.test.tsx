@@ -18,6 +18,7 @@
 import { render, screen } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { configure } from "mobx";
+import { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
 
 import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
@@ -31,6 +32,7 @@ import { InsightsSupervisionStore } from "../../../InsightsStore/stores/Insights
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
+import { InsightsActionStrategyModalProvider } from "../../InsightsActionStrategyModal";
 import InsightsStaffPage, {
   StaffPageWithPresenter,
 } from "../InsightsStaffPage";
@@ -63,6 +65,16 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
+const renderWithContext = (component: ReactNode) => {
+  return render(
+    <BrowserRouter>
+      <InsightsActionStrategyModalProvider>
+        {component}
+      </InsightsActionStrategyModalProvider>
+    </BrowserRouter>,
+  );
+};
+
 describe("Insights Staff Page", () => {
   let store: InsightsSupervisionStore;
   let presenter: SupervisionOfficerDetailPresenter;
@@ -94,11 +106,7 @@ describe("Insights Staff Page", () => {
       () => supervisorPseudoId,
     );
 
-    render(
-      <BrowserRouter>
-        <StaffPageWithPresenter presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<StaffPageWithPresenter presenter={presenter} />);
 
     expect(
       store.insightsStore.rootStore.analyticsStore.trackInsightsStaffPageViewed,
@@ -117,11 +125,7 @@ describe("Insights Staff Page", () => {
       () => supervisorPseudoId,
     );
 
-    render(
-      <BrowserRouter>
-        <StaffPageWithPresenter presenter={presenter} />
-      </BrowserRouter>,
-    );
+    renderWithContext(<StaffPageWithPresenter presenter={presenter} />);
 
     expect(
       store.insightsStore.rootStore.analyticsStore
@@ -135,32 +139,20 @@ describe("Insights Staff Page", () => {
   });
 
   test("renders loading indicator", () => {
-    render(
-      <BrowserRouter>
-        <InsightsStaffPage />
-      </BrowserRouter>,
-    );
+    renderWithContext(<InsightsStaffPage />);
 
     // due to animated transitions the element may appear twice
     expect(screen.getAllByText("Loading data...")).toHaveLength(2);
   });
 
   test("renders Staff Page when hydrated", async () => {
-    render(
-      <BrowserRouter>
-        <InsightsStaffPage />
-      </BrowserRouter>,
-    );
+    renderWithContext(<InsightsStaffPage />);
 
     expect(await screen.findByText("List of Absconsions")).toBeInTheDocument();
   });
 
   test("has no axe violations", async () => {
-    const { container } = render(
-      <BrowserRouter>
-        <InsightsStaffPage />
-      </BrowserRouter>,
-    );
+    const { container } = renderWithContext(<InsightsStaffPage />);
 
     // Make sure the hydrated page actually loaded
     expect(await screen.findByText("List of Absconsions")).toBeInTheDocument();

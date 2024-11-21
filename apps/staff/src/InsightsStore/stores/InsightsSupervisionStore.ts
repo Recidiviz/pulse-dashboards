@@ -25,6 +25,7 @@ import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import {
   ActionStrategy,
   ActionStrategyCopy,
+  ActionStrategyType,
   ClientEvent,
   ClientInfo,
   ExcludedSupervisionOfficer,
@@ -259,6 +260,10 @@ export class InsightsSupervisionStore {
       .find((o) => o.pseudonymizedId === this.officerPseudoId);
 
     return officer;
+  }
+
+  get allActionStrategies(): ActionStrategyCopy {
+    return this.config.actionStrategyCopy;
   }
 
   supervisionOfficerSupervisorByExternalId(
@@ -668,11 +673,12 @@ export class InsightsSupervisionStore {
 
   trackActionStrategyPopupViewed10Seconds({
     pseudoId,
+    actionStrategy,
   }: {
-    pseudoId: string;
+    pseudoId?: string;
+    actionStrategy: ActionStrategyType | undefined;
   }): void {
     const { userPseudoId } = this.insightsStore.rootStore.userStore;
-    const actionStrategy = this.actionStrategies?.[pseudoId];
     if (!actionStrategy) return;
 
     this.insightsStore.rootStore.analyticsStore.trackInsightsActionStrategyPopupViewed10seconds(
@@ -714,6 +720,31 @@ export class InsightsSupervisionStore {
           actionStrategy,
         },
       );
+  }
+
+  trackActionStrategyPopupViewedFromList({
+    actionStrategy,
+  }: {
+    actionStrategy: ActionStrategyType;
+  }): void {
+    const { userPseudoId } = this.insightsStore.rootStore.userStore;
+
+    this.insightsStore.rootStore.analyticsStore.trackInsightsActionStrategyPopupViewedFromList(
+      {
+        viewedBy: userPseudoId,
+        actionStrategy,
+      },
+    );
+  }
+
+  trackActionStrategyListViewed(): void {
+    const { userPseudoId } = this.insightsStore.rootStore.userStore;
+
+    this.insightsStore.rootStore.analyticsStore.trackInsightsActionStrategyListViewed(
+      {
+        viewedBy: userPseudoId,
+      },
+    );
   }
 
   /*

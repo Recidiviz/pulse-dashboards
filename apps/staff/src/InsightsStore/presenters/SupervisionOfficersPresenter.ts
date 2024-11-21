@@ -57,7 +57,6 @@ export class SupervisionOfficersPresenter implements Hydratable {
           flowResult(
             this.supervisionStore.populateSupervisionOfficerSupervisors(),
           ),
-          flowResult(this.supervisionStore.populateActionStrategies()),
         ]);
       },
       expectPopulated: [
@@ -261,11 +260,5 @@ export class SupervisionOfficersPresenter implements Hydratable {
         viewedBy: userPseudoId,
       },
     );
-  }
-
-  trackActionStrategyPopupViewed(): void {
-    this.supervisionStore.trackActionStrategyPopupViewed({
-      pseudoId: this.supervisorPseudoId,
-    });
   }
 }

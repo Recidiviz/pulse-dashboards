@@ -31,6 +31,7 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { THIRTY_SECONDS } from "../../InsightsStore/presenters/utils";
 import { humanReadableTitleCase, pluralizeWord } from "../../utils";
+import { InsightsActionStrategyModal } from "../InsightsActionStrategyModal";
 import InsightsInfoModal from "../InsightsInfoModal";
 
 const PageWrapper = styled.div<{
@@ -311,6 +312,9 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
               supervisorHomepage={supervisorHomepage}
             />
           )}
+          <InsightsActionStrategyModal
+            supervisorHomepage={supervisorHomepage}
+          />
         </Header>
       </Wrapper>
       {children}

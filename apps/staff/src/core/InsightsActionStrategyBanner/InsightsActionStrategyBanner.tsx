@@ -15,22 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import {
+  Icon,
+  IconSVG,
+  palette,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { rem } from "polished";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { ActionStrategyCopy } from "~datatypes";
 
-import { InsightsActionStrategyModal } from "../InsightsActionStrategyModal";
+import { useInsightsActionStrategyModal } from "../InsightsActionStrategyModal";
 import { Banner } from "../sharedComponents";
+
+const BannerTextWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${rem(spacing.xs)};
+  padding-bottom: ${rem(spacing.sm)};
+  line-height: 1.5;
+`;
 
 const BannerText = styled.div`
   ${typography.Sans16};
   color: ${palette.pine1};
-  line-height: 1.5;
-  padding-bottom: ${rem(spacing.sm)};
 `;
 
 const StyledLink = styled(Link)`
@@ -45,10 +57,7 @@ type InsightsActionStrategyBannerType = {
   actionStrategy: ActionStrategyCopy[string];
   bannerViewedCallback: () => void;
   disableBannerCallback: () => void;
-  pseudoId: string;
-  modalViewedCallback: () => void;
   supervisorHomepage?: boolean;
-  insightsLanternState: boolean;
 };
 
 const InsightsActionStrategyBanner: React.FC<
@@ -57,20 +66,9 @@ const InsightsActionStrategyBanner: React.FC<
   actionStrategy,
   bannerViewedCallback,
   disableBannerCallback,
-  pseudoId,
-  modalViewedCallback,
   supervisorHomepage = false,
-  insightsLanternState,
 }) => {
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-
-  const openModal = () => {
-    setModalIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalIsOpen(false);
-  };
+  const { openModal } = useInsightsActionStrategyModal();
 
   useEffect(() => {
     bannerViewedCallback();
@@ -91,19 +89,21 @@ const InsightsActionStrategyBanner: React.FC<
         border: `1px solid ${palette.slate10}`,
       }}
     >
-      <BannerText>{actionStrategy.prompt}</BannerText>
-      <StyledLink to="#" onClick={openModal}>
+      <BannerTextWrapper>
+        <Icon
+          kind={IconSVG.Lightbulb}
+          fill={palette.pine2}
+          height={16}
+          width={16}
+        />
+        <BannerText>{actionStrategy.prompt}</BannerText>
+      </BannerTextWrapper>
+      <StyledLink
+        to="#"
+        onClick={() => openModal({ showActionStrategyList: false })}
+      >
         Read more
       </StyledLink>
-      <InsightsActionStrategyModal
-        isOpen={modalIsOpen}
-        onBackClick={closeModal}
-        actionStrategy={actionStrategy}
-        pseudoId={pseudoId}
-        trackViewed={modalViewedCallback}
-        supervisorHomepage={supervisorHomepage}
-        insightsLanternState={insightsLanternState}
-      />
     </Banner>
   );
 };
