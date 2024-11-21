@@ -36,7 +36,7 @@ export type PDFFillerFunc = (
 //
 // After setting the fields, calling `form.flatten()` will bake the form into a
 // static PDF. To generate the boilerplate needed to fill all the fields in a
-// given PDF, run: `yarn pdfformfiller-boilerplate path/to/your.pdf`
+// given PDF, run: `nx pdfformfiller-boilerplate staff server/assets/workflowsTemplates/path/to/your.pdf`
 
 export async function fillPDF(
   stateCode: string,

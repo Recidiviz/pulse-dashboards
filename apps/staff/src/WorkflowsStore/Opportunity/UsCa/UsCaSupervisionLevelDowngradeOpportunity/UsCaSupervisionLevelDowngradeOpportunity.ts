@@ -20,6 +20,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { Client } from "../../../Client";
 import { UsCaSupervisionLevelDowngradeForm } from "../../Forms/UsCaSupervisionLevelDowngradeForm";
+import { UsCaSupervisionLevelDowngradeForm3043 } from "../../Forms/UsCaSupervisionLevelDowngradeForm3043";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
   UsCaSupervisionLevelDowngradeReferralRecord,
@@ -30,7 +31,9 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   Client,
   UsCaSupervisionLevelDowngradeReferralRecord
 > {
-  form: UsCaSupervisionLevelDowngradeForm;
+  form:
+    | UsCaSupervisionLevelDowngradeForm3043
+    | UsCaSupervisionLevelDowngradeForm;
 
   constructor(client: Client, record: DocumentData) {
     super(
@@ -40,7 +43,10 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       usCaSupervisionLevelDowngradeSchema.parse(record),
     );
 
-    this.form = new UsCaSupervisionLevelDowngradeForm(this, client.rootStore);
+    this.form =
+      this.record.caseType && this.record.caseType === "SEX_OFFENSE"
+        ? new UsCaSupervisionLevelDowngradeForm3043(this, client.rootStore)
+        : new UsCaSupervisionLevelDowngradeForm(this, client.rootStore);
   }
 
   get eligibilityDate(): Date | undefined {

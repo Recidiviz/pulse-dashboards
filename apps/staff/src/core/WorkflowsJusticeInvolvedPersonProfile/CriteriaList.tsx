@@ -174,10 +174,10 @@ export const CriteriaList = observer(function CriteriaList({
         0 &&
         featureVariants.nonOMSCriteria &&
         !!opportunity.config.omsCriteriaHeader && (
-            <CriteriaSectionHeading isFirst={true}>
-              {opportunity.config.omsCriteriaHeader}
-            </CriteriaSectionHeading>
-          )}
+          <CriteriaSectionHeading isFirst={true}>
+            {opportunity.config.omsCriteriaHeader}
+          </CriteriaSectionHeading>
+        )}
 
       {opportunity.requirementsAlmostMet.map(almostMetReqToCriterion)}
       {opportunity.requirementsMet.map(metReqToCriterion)}

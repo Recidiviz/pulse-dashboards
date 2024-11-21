@@ -49,6 +49,7 @@ import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/Work
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
+import WorkflowsUsCaSupervisionLevelDowngradeForm3043 from "../WorkflowsUsCaSupervisionLevelDowngradeForm3043";
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 import WorkflowsUsTnReclassForm from "../WorkflowsUsTnReclassForm";
 
@@ -100,6 +101,7 @@ const FormComponents = {
   WorkflowsUsTnExpirationForm,
   WorkflowsUsTnReclassForm,
   WorkflowsUsCaSupervisionLevelDowngradeForm,
+  WorkflowsUsCaSupervisionLevelDowngradeForm3043,
   FormFurloughRelease,
   FormUsPaAdminSupervision,
   AnnualClassificationReview,

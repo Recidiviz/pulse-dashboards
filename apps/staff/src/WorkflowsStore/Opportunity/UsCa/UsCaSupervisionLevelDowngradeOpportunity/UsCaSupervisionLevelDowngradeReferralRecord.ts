@@ -21,9 +21,14 @@ import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 export const usCaSupervisionLevelDowngradeSchema = opportunitySchemaBase.extend(
   {
-    formInformation: z.object({
-      cdcno: z.string(),
-    }),
+    caseType: z.string().optional(),
+    formInformation: z
+      .object({
+        cdcno: z.string(),
+        paroleUnit: z.string(),
+        supervisionLevel: z.string(),
+      })
+      .partial(),
     eligibleCriteria: z
       .object({
         noSupervisionViolationWithin6Months: z.object({}).nullable(),
@@ -45,52 +50,56 @@ export type UsCaSupervisionLevelDowngradeReferralRecord = z.infer<
   typeof usCaSupervisionLevelDowngradeSchema
 >;
 
-export type UsCaSupervisionLevelDowngradeDraftData = {
+export type UsCaSupervisionLevelDowngradeSharedDraftData = {
   cdcNumber: string;
   fullName: string;
-  lastReleaseDate: string;
   unit: string;
-  offense: string;
-  csraScore: string;
   supervisionLevel: string;
-  reviewType: "ABBREVIATED" | "STANDARD" | "DISCHARGE";
-  seeDischargeReport: boolean;
-  dischargeReportDate: string;
-  objectiveScore1: number;
-  objectiveScore2: number;
-  objectiveScore3: number;
-  objectiveScore4: number;
-  objectiveScore5: number;
-  form1650Attached: boolean;
-  additionalReportAttached: boolean;
-  moveToNewCategory: boolean;
-  newCategory: string;
-  dateNotified: string;
-  notifiedInPerson: boolean;
-  notifiedByMail: boolean;
-  notifiedByPhone: boolean;
-  notifiedByEmail: boolean;
-  notifiedByLetter: boolean;
-  paroleePresent: "YES" | "NO" | "NOT_REQUIRED";
-  paroleeNotPresent: "TELEPHONED" | "FAILED" | "DECLINED" | "NOT_RESPOND";
-  cdcr1502DRProvided: boolean;
-  reasonableAccommodationProvided: boolean;
-  accommodationDescription: string;
-  otherParticipant1Name: string;
-  otherParticipant1Relation: string;
-  otherParticipant1Comments: string;
-  otherParticipant2Name: string;
-  otherParticipant2Relation: string;
-  otherParticipant2Comments: string;
-  agentSignatureBadge: string;
-  agentSignatureDate: string;
-  supervisorComments: string;
-  supervisorDecision: "REMAIN" | "MOVE" | "SCHEDULE";
-  supervisorNewCategory: string;
-  supervisorEffectiveDate: string;
-  dischargeCommitteeAction: "DISCHARGE" | "RETAIN" | "DEFER";
-  presidingAuthorityName: string;
-  dischargeCommitteeComments: string;
-  supervisorSignatureBadge: string;
-  supervisorSignatureDate: string;
 };
+
+export type UsCaSupervisionLevelDowngradeDraftData =
+  UsCaSupervisionLevelDowngradeSharedDraftData & {
+    lastReleaseDate: string;
+    offense: string;
+    csraScore: string;
+    reviewType: "ABBREVIATED" | "STANDARD" | "DISCHARGE";
+    seeDischargeReport: boolean;
+    dischargeReportDate: string;
+    objectiveScore1: number;
+    objectiveScore2: number;
+    objectiveScore3: number;
+    objectiveScore4: number;
+    objectiveScore5: number;
+    form1650Attached: boolean;
+    additionalReportAttached: boolean;
+    moveToNewCategory: boolean;
+    newCategory: string;
+    dateNotified: string;
+    notifiedInPerson: boolean;
+    notifiedByMail: boolean;
+    notifiedByPhone: boolean;
+    notifiedByEmail: boolean;
+    notifiedByLetter: boolean;
+    paroleePresent: "YES" | "NO" | "NOT_REQUIRED";
+    paroleeNotPresent: "TELEPHONED" | "FAILED" | "DECLINED" | "NOT_RESPOND";
+    cdcr1502DRProvided: boolean;
+    reasonableAccommodationProvided: boolean;
+    accommodationDescription: string;
+    otherParticipant1Name: string;
+    otherParticipant1Relation: string;
+    otherParticipant1Comments: string;
+    otherParticipant2Name: string;
+    otherParticipant2Relation: string;
+    otherParticipant2Comments: string;
+    agentSignatureBadge: string;
+    agentSignatureDate: string;
+    supervisorComments: string;
+    supervisorDecision: "REMAIN" | "MOVE" | "SCHEDULE";
+    supervisorNewCategory: string;
+    supervisorEffectiveDate: string;
+    dischargeCommitteeAction: "DISCHARGE" | "RETAIN" | "DEFER";
+    presidingAuthorityName: string;
+    dischargeCommitteeComments: string;
+    supervisorSignatureBadge: string;
+    supervisorSignatureDate: string;
+  };
