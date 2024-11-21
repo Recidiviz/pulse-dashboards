@@ -120,6 +120,15 @@ export class SupervisionOfficerPresenter<
     return this.countOpportunitiesForOfficer(this.officerExternalId);
   }
 
+  /**
+   * Passthrough to the SupervisionStore
+   * Checks if Vitals is enabled based on user permissions.
+   * @returns `true` if vitals is enabled, otherwise `false`.
+   */
+  get isVitalsEnabled() {
+    return this.supervisionStore.isVitalsEnabled;
+  }
+
   protected expectMetricsPopulated() {
     if (isExcludedSupervisionOfficer(this.fetchedOfficerRecord)) return;
     super.expectMetricsPopulated();

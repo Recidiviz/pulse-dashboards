@@ -319,19 +319,12 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   }
 
   /**
+   * Passthrough to the supervision store
    * Checks if Vitals is enabled based on user permissions.
    * @returns `true` if vitals is enabled, otherwise `false`.
    */
   get isVitalsEnabled() {
-    const { userStore } = this.supervisionStore.insightsStore.rootStore;
-
-    // Check if...
-    return (
-      // ...the user has allowed navigation to vitals (previously named operations) and...
-      userStore.getRoutePermission("operations") &&
-      // ...if the active feature variant for supervisorHomepageVitals is enabled.
-      !!userStore.activeFeatureVariants.supervisorHomepageVitals
-    );
+    return this.supervisionStore.isVitalsEnabled;
   }
 
   /**

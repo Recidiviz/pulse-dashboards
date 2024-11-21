@@ -39,6 +39,7 @@ import { formatTargetAndHighlight } from "../InsightsSwarmPlot/utils";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
 import { OpportunitySummaries } from "../WorkflowsHomepage/OpportunitySummaries";
+import { InsightsStaffVitals } from "./InsightsStaffVitals";
 
 const Wrapper = styled.div<{ isTablet: boolean }>`
   display: grid;
@@ -76,6 +77,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     disableSurfaceActionStrategies,
     trackActionStrategyPopupViewed,
     isInsightsLanternState,
+    isVitalsEnabled,
   } = presenter;
 
   // TODO(#5780): move infoItems to presenter
@@ -199,6 +201,9 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
             />
           )}
         </InsightsPageSection>
+      )}
+      {isVitalsEnabled && (
+        <InsightsStaffVitals officerPseudoId={officerPseudoId} />
       )}
     </InsightsPageLayout>
   );
