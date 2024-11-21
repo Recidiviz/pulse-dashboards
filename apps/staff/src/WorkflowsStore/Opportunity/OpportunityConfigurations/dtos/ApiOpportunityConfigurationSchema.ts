@@ -24,7 +24,7 @@ import { snoozeConfigurationSchema } from "../modules/SnoozeConfiguration/dtos/S
 // CRITERIA COPY SCHEMA
 const copySchema = z.object({
   text: z.string(),
-  tooltip: z.string().optional(),
+  tooltip: nullishAsUndefined(z.string()),
 });
 
 const criteriaCopySchema = z
