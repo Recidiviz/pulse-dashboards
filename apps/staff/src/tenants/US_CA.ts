@@ -26,7 +26,6 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
   domain: "cdcr.ca.gov",
   DOCName: "CDCR",
   internalSystemName: "OMS",
-  workflowsHomepage: "milestones",
   availableStateCodes: [dashboard.US_CA],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
@@ -39,7 +38,7 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
     },
   },
   navigation: {
-    workflows: ["milestones", "clients"],
+    workflows: ["home", "milestones", "clients"],
     insights: [INSIGHTS_PAGES.supervision],
   },
   milestoneTypes: [

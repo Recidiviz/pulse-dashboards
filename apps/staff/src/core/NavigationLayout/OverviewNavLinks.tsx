@@ -54,6 +54,9 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   } = useRootStore() as PartiallyTypedRootStore;
 
   const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
+  const enableMilestones = (userAllowedNavigation.workflows || []).includes(
+    "milestones",
+  );
   const enabledInsights =
     !!userAllowedNavigation.insights && supervisorHomepage;
   const enableSystems =
@@ -80,6 +83,9 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
         >
           {workflowsHomepageName}
         </NavLink>
+      )}
+      {enableMilestones && (
+        <NavLink to={workflowsUrl("milestones")}>Milestones</NavLink>
       )}
       {allowSupervisionTasks && enableWorkflows && (
         <NavLink
