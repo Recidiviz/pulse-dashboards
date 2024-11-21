@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { US_PA } from "../../RootStore/TenantStore/dashboardTenants";
+import { US_CA, US_PA } from "../../RootStore/TenantStore/dashboardTenants";
 import {
   US_DEMO,
   US_ID,
@@ -1295,6 +1295,23 @@ export const PaPopulationFilterOptions: PopulationFilters = {
   },
 };
 
+export const CaPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL],
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "High", value: "HIGH" },
+      { label: "Intake", value: "INTAKE" },
+      { label: "Limited", value: "LIMITED" },
+      { label: "Maximum", value: "MAXIMUM" },
+      { label: "Minimum", value: "MINIMUM" },
+      { label: "Medium", value: "MEDIUM" },
+      { label: "Residential Program", value: "RESIDENTIAL_PROGRAM" },
+    ],
+  },
+};
+
 export const DemoPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.AGE_GROUP]: {
@@ -1468,9 +1485,10 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
 };
 
 const FilterOptions: Record<
-  PathwaysTenants | "US_DEMO" | "US_PA",
+  PathwaysTenants | "US_DEMO" | "US_PA" | "US_CA",
   PopulationFilters
 > = {
+  [US_CA]: CaPopulationFilterOptions,
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
   [US_MO]: MoPopulationFilterOptions,

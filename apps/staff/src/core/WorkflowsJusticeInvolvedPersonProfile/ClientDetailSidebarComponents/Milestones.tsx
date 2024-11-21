@@ -21,6 +21,7 @@ import GoldStar from "../../../assets/static/images/goldStar.svg?react";
 import {
   DetailsHeading,
   DetailsSection,
+  MilestoneMarker,
   MilestonesItem,
   MilestonesList,
   SecureDetailsContent,
@@ -38,7 +39,9 @@ export function Milestones({ client }: ClientProfileProps): React.ReactElement {
               <MilestonesList
                 key={`${client.pseudonymizedId}-${milestone.type}`}
               >
-                <GoldStar height="12" width="12" />
+                <MilestoneMarker>
+                  <GoldStar height="100%" display="block" />
+                </MilestoneMarker>
                 <MilestonesItem>{milestone.text}</MilestonesItem>
               </MilestonesList>
             );

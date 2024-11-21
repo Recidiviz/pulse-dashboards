@@ -49,6 +49,7 @@ export const SectionLabelText = styled(Sans14)`
 export const TooltipContainer = styled.div`
   min-width: 100%;
   margin: ${rem(spacing.sm)};
+  max-width: ${rem(300)};
 `;
 
 export const TooltipSection = styled.div`
@@ -71,12 +72,18 @@ export const TooltipSectionDetails = styled(Sans12)<TooltipSectionDetailsProps>`
 
 export const TooltipRow = styled.div<{
   justifyContent?: string;
+  alignItems?: string;
 }>`
   display: flex;
-  align-items: center;
+  align-items: ${(props) => props.justifyContent ?? "center"}
   flex-direction: row;
   justify-content: ${(props) => props.justifyContent ?? "flex-start"};
   padding: 0.5rem 0 0 0;
+`;
+
+export const MilestoneTooltipMarker = styled.div`
+  flex: 0 0 1em;
+  padding-top: 0.1em;
 `;
 
 export const OtherReasonInputWrapper = styled.div`

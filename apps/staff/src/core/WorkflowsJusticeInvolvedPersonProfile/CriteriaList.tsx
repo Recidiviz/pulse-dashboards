@@ -172,11 +172,12 @@ export const CriteriaList = observer(function CriteriaList({
       {opportunity.requirementsAlmostMet.length +
         opportunity.requirementsMet.length >
         0 &&
-        featureVariants.nonOMSCriteria && (
-          <CriteriaSectionHeading isFirst={true}>
-            {opportunity.config.omsCriteriaHeader}
-          </CriteriaSectionHeading>
-        )}
+        featureVariants.nonOMSCriteria &&
+        !!opportunity.config.omsCriteriaHeader && (
+            <CriteriaSectionHeading isFirst={true}>
+              {opportunity.config.omsCriteriaHeader}
+            </CriteriaSectionHeading>
+          )}
 
       {opportunity.requirementsAlmostMet.map(almostMetReqToCriterion)}
       {opportunity.requirementsMet.map(metReqToCriterion)}

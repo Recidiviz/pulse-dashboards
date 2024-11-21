@@ -85,7 +85,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
         </NavLink>
       )}
       {enableMilestones && (
-        <NavLink to={workflowsUrl("milestones")}>Milestones</NavLink>
+        <NavLink to={workflowsUrl("milestones")}>Kudos</NavLink>
       )}
       {allowSupervisionTasks && enableWorkflows && (
         <NavLink

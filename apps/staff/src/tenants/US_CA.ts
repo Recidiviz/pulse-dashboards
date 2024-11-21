@@ -41,18 +41,6 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
     workflows: ["home", "milestones", "clients"],
     insights: [INSIGHTS_PAGES.supervision],
   },
-  milestoneTypes: [
-    "HOUSING_TYPE_IS_NOT_TRANSIENT",
-    "SUSTAINABLE_HOUSING_6_MONTHS",
-    "SUSTAINABLE_HOUSING_12_MONTHS",
-    "NO_VIOLATION_WITHIN_6_MONTHS",
-    "NO_VIOLATION_WITHIN_12_MONTHS",
-    "GAINED_EMPLOYMENT",
-    "EMPLOYED_6_MONTHS",
-    "EMPLOYED_12_MONTHS",
-    "PARTICIPATED_IN_PROGRAMMING_FOR_6_TO_8_MONTHS",
-    "PARTICIPATED_IN_PROGRAMMING_FOR_12_TO_14_MONTHS",
-  ],
   insightsLegacyUI: true,
   insightsUnitState: true,
 };

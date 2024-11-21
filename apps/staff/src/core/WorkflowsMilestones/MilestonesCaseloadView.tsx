@@ -257,11 +257,21 @@ const MilestonesCaseloadView: React.FC = observer(
                 sortable={false}
               />
               {numOfNewMilestones === 0 && activeTab === "New Milestones" ? (
-                <WorkflowsResults
-                  callToActionText={
-                    "You've reached out to everyone for now. Check back next month."
-                  }
-                />
+                milestonesClients["Congratulated"] &&
+                milestonesClients["Congratulated"]?.length > 0 ? (
+                  <WorkflowsResults
+                    callToActionText={
+                      "You've reached out to everyone for now. Check back next month."
+                    }
+                  />
+                ) : (
+                  <WorkflowsResults
+                    callToActionText={
+                      "None of the selected caseloads have" +
+                      " new milestones to display. Search for another caseload."
+                    }
+                  />
+                )
               ) : (
                 <>
                   <MilestonesCaseload

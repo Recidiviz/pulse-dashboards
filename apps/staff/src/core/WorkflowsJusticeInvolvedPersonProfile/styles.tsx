@@ -49,13 +49,20 @@ export const DetailsHeading = styled.dt`
 export const DetailsList = styled.dl``;
 
 export const MilestonesList = styled.dl`
-  align-items: center;
+  align-items: flex-start;
   display: flex;
   gap: ${rem(spacing.sm)};
   margin-bottom: ${rem(spacing.xs)};
 `;
 
-export const MilestonesItem = styled.span``;
+export const MilestoneMarker = styled.div`
+  flex: 0 0 1em;
+  padding-top: 0.1em;
+`;
+
+export const MilestonesItem = styled.span`
+  display: block;
+`;
 
 export const DetailsSubheading = styled.dt`
   ${typography.Sans14}

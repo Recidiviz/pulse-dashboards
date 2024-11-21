@@ -15,31 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Client } from "../../WorkflowsStore";
-import {
-  MilestoneTooltipMarker,
-  TooltipRow,
-  TooltipSection,
-  TooltipSectionDetails,
-  TooltipSectionHeader,
-  TooltipTealStar,
-} from "../sharedComponents";
+import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
-export const MilestonesSection: React.FC<{
-  milestones: Client["congratulationsMilestones"];
-}> = ({ milestones }) => {
-  if (!milestones.length) return null;
-  return (
-    <TooltipSection>
-      <TooltipSectionHeader>Milestones</TooltipSectionHeader>
-      {milestones.map((m) => (
-        <TooltipRow key={m.type} alignItems="flex-start">
-          <MilestoneTooltipMarker>
-            <TooltipTealStar />
-          </MilestoneTooltipMarker>
-          <TooltipSectionDetails>{m.text}</TooltipSectionDetails>
-        </TooltipRow>
-      ))}
-    </TooltipSection>
-  );
-};
+export class UsCaSupervisionLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
+  get omsCriteriaHeader() {
+    return "";
+  }
+}

@@ -24,6 +24,7 @@ import { UsAzOverdueForAcisDtpConfiguration } from "./UsAz/UsAzOverdueForAcisDtp
 import { UsAzOverdueForAcisTprConfiguration } from "./UsAz/UsAzOverdueForAcisTprConfiguration";
 import { UsAzReleaseToDTPConfiguration } from "./UsAz/UsAzReleaseToDTPConfiguration";
 import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
+import { UsCaSupervisionLevelDowngradeConfiguration } from "./UsCa/UsCaSupervisionLevelDowngradeConfiguration";
 import { LSUConfiguration } from "./UsId/LSUConfiguration";
 import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration";
 import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
@@ -73,6 +74,7 @@ const adminPanelOnlyCustomOpportunityConfigurations: Partial<
   usNdTransferToMinFacility: UsNdMinimumCustodyConfiguration,
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
   usOrEarnedDischarge: UsOrEarnedDischargeConfiguration,
+  usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeConfiguration,
 };
 
 const customOpportunityConfigurations: Partial<
