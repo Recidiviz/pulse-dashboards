@@ -74,4 +74,7 @@ export interface InsightsAPI {
   vitalsForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionVitalsMetric>>;
+  vitalsForOfficer(
+    officerPseudoId: string,
+  ): Promise<Array<SupervisionVitalsMetric>>;
 }

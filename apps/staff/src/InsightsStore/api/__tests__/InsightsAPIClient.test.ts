@@ -307,4 +307,38 @@ describe("InsightsAPIClient", () => {
       ]
     `);
   });
+
+  it("vitalsForOfficer parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ events: rawSupervisionVitalsMetricFixture }),
+    );
+    const response = await client.vitalsForOfficer(
+      supervisionOfficerFixture[0].pseudonymizedId,
+    );
+
+    expect(response).toMatchInlineSnapshot(`
+      [
+        {
+          "metricId": "timely_contact",
+          "vitalsMetrics": [
+            {
+              "metric30DDelta": -7,
+              "metricValue": 87,
+              "officerPseudonymizedId": "hashed-so1",
+            },
+          ],
+        },
+        {
+          "metricId": "timely_risk_assessment",
+          "vitalsMetrics": [
+            {
+              "metric30DDelta": -4,
+              "metricValue": 99,
+              "officerPseudonymizedId": "hashed-so1",
+            },
+          ],
+        },
+      ]
+    `);
+  });
 });

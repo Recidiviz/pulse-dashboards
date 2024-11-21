@@ -244,4 +244,18 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
       };
     });
   }
+
+  async vitalsForOfficer(
+    officerPseudoId: string,
+  ): Promise<Array<SupervisionVitalsMetric>> {
+    return supervisionOfficerVitalsMetricFixture.map((metric) => {
+      return {
+        ...metric,
+        vitalsMetrics: metric.vitalsMetrics.filter(
+          (metricForOfficer) =>
+            officerPseudoId === metricForOfficer.officerPseudonymizedId,
+        ),
+      };
+    });
+  }
 }
