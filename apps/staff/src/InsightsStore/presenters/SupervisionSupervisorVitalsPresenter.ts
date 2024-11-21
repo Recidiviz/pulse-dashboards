@@ -21,7 +21,6 @@ import { computed, flowResult, makeAutoObservable } from "mobx";
 import {
   ExcludedSupervisionOfficer,
   SupervisionOfficer,
-  VITALS_METRIC_IDS,
   VitalsMetricForOfficer,
 } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
@@ -31,6 +30,7 @@ import {
   SupervisorVitalsMetricDetail,
   VitalsMetricDetailForOfficer,
 } from "./types";
+import { labelForVitalsMetricId } from "./utils";
 
 /**
  * The `SupervisionSupervisorVitalsPresenter` class is responsible for managing and presenting
@@ -84,7 +84,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
   }
 
   get vitalsMetricDetails(): SupervisorVitalsMetricDetail[] {
-    const metrics = this.supervisionStore.vitalsMetricsBySupervisorPseudoId.get(
+    const metrics = this.supervisionStore.vitalsMetricsByPseudoId.get(
       this.supervisorPseudoId,
     );
     if (!metrics) return [];
@@ -94,17 +94,10 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
         ascending(a.metricValue, b.metricValue),
       );
       return {
-        label: this.labelForMetricId(metric.metricId),
+        label: labelForVitalsMetricId(metric.metricId),
         officersWithMetricValues: this.mergeOfficerNames(sortedMetrics),
       };
     });
-  }
-
-  // TODO #34616 Use Label from config once it is ready
-  labelForMetricId(metricId: string): string {
-    return metricId === VITALS_METRIC_IDS.enum.timely_contact
-      ? "F2F Contact"
-      : "Timely Risk Assessment";
   }
 
   // TODO #6617 - the next three methods along with their expectPopulated methods will move
@@ -182,7 +175,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
 
   private expectVitalsForSupervisorPopulated() {
     if (
-      !this.supervisionStore.vitalsMetricsBySupervisorPseudoId.get(
+      !this.supervisionStore.vitalsMetricsByPseudoId.get(
         this.supervisorPseudoId,
       )
     )

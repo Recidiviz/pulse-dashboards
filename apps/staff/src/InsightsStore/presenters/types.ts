@@ -131,3 +131,7 @@ export type SupervisorVitalsMetricDetail = {
   label: string;
   officersWithMetricValues: VitalsMetricDetailForOfficer[];
 };
+
+export type OfficerVitalsMetricDetail = VitalsMetricForOfficer & {
+  label: string;
+};

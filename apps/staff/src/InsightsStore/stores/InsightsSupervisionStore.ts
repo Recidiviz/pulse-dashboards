@@ -95,8 +95,7 @@ export class InsightsSupervisionStore {
 
   actionStrategiesEnabled = true;
 
-  vitalsMetricsBySupervisorPseudoId: Map<string, SupervisionVitalsMetric[]> =
-    new Map();
+  vitalsMetricsByPseudoId: Map<string, SupervisionVitalsMetric[]> = new Map();
 
   constructor(
     public readonly insightsStore: InsightsStore,
@@ -580,17 +579,28 @@ export class InsightsSupervisionStore {
   *populateVitalsForSupervisor(
     supervisorPseudoId: string,
   ): FlowMethod<InsightsAPI["vitalsForSupervisor"], void> {
-    if (this.vitalsMetricsBySupervisorPseudoId.has(supervisorPseudoId)) return;
+    if (this.vitalsMetricsByPseudoId.has(supervisorPseudoId)) return;
 
     const vitalsForSupervisor =
       yield this.insightsStore.apiClient.vitalsForSupervisor(
         supervisorPseudoId,
       );
 
-    this.vitalsMetricsBySupervisorPseudoId.set(
-      supervisorPseudoId,
-      vitalsForSupervisor,
-    );
+    this.vitalsMetricsByPseudoId.set(supervisorPseudoId, vitalsForSupervisor);
+  }
+
+  /**
+   * Fetches vitals metrics data for the specified officer
+   */
+  *populateVitalsForOfficer(
+    officerPseudoId: string,
+  ): FlowMethod<InsightsAPI["vitalsForOfficer"], void> {
+    if (this.vitalsMetricsByPseudoId.has(officerPseudoId)) return;
+
+    const vitalsForOfficer =
+      yield this.insightsStore.apiClient.vitalsForOfficer(officerPseudoId);
+
+    this.vitalsMetricsByPseudoId.set(officerPseudoId, vitalsForOfficer);
   }
 
   setSupervisorPseudoId(supervisorPseudoId: string | undefined): void {

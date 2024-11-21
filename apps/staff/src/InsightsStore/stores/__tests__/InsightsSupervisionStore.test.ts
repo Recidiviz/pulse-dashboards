@@ -750,9 +750,9 @@ test("hydrate vitalsForSupervisor", async () => {
     supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
   await flowResult(store.populateVitalsForSupervisor(testSupervisorPseudoId));
   expect(
-    store.vitalsMetricsBySupervisorPseudoId.get(testSupervisorPseudoId),
+    store.vitalsMetricsByPseudoId.get(testSupervisorPseudoId),
   ).toBeDefined();
   expect(
-    store.vitalsMetricsBySupervisorPseudoId.get(testSupervisorPseudoId),
+    store.vitalsMetricsByPseudoId.get(testSupervisorPseudoId),
   ).toMatchSnapshot();
 });

@@ -23,6 +23,7 @@ import {
   MetricConfig,
   SupervisionOfficer,
   supervisionOfficerSchema,
+  VITALS_METRIC_IDS,
 } from "~datatypes";
 
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
@@ -133,3 +134,10 @@ export function getLocationWithoutLabel(
     ? location.toUpperCase().split(`${label.toUpperCase()} `)[1]
     : location ?? undefined;
 }
+
+// TODO #34616 Use Label from config once it is ready
+export const labelForVitalsMetricId = (metricId: string): string => {
+  return metricId === VITALS_METRIC_IDS.enum.timely_contact
+    ? "F2F Contact"
+    : "Timely Risk Assessment";
+};
