@@ -7,7 +7,7 @@ exports[`fully eligible > requirements met 1`] = `
     "tooltip": "Offenders assigned to minimum in person or minimum low-risk supervision shall be evaluated for assignment to minimum TRS after they have completed six months of active supervision.",
   },
   {
-    "text": "Original COMPAS score was Medium/Medium",
+    "text": "Has eligible original COMPAS score of Medium/Medium",
     "tooltip": "Original COMPAS score was minimum or medium and current supervision level is minimum in person or current supervision level is minimum low risk.",
   },
   {
@@ -20,6 +20,7 @@ exports[`fully eligible > requirements met 1`] = `
   },
   {
     "text": "More than 90 days remaining until full-term discharge.",
+    "tooltip": undefined,
   },
 ]
 `;

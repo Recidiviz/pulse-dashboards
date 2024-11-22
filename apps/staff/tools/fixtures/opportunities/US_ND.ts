@@ -23,57 +23,83 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients eligible for early termination and download the paperwork to file with the Court.",
       compareBy: null,
-      denialReasons: {
-        "INT MEASURE":
-          "Under active intermediate measure as a result of 1+ violations",
-        "PENDING CHARGE": "Has a pending felony or misdemeanor charge",
-        "CASE PLAN NC": "Has not completed case plan goals",
-        "MIN PERIOD NE": "Minimum mandatory supervision period not expired",
-        DOP: "Being supervised for an offense resulting in the death of a person",
-        "FINES/FEES":
-          "Willful nonpayment of fines / fees despite ability to pay",
-        INC: "Incarcerated on another offense",
-        "PROS PERM DENIED": "Prosecutor permanently denied early termination",
-        "PROS TEMP DENIED":
-          "Prosecutor temporarily denied early termination and will reconsider",
-        "SENDING STATE DENIED": "Sending state denied early termination",
-      },
+      denialReasons: [
+        {
+          key: "INT MEASURE",
+          text: "Under active intermediate measure as a result of 1+ violations",
+        },
+        {
+          key: "PENDING CHARGE",
+          text: "Has a pending felony or misdemeanor charge",
+        },
+        { key: "CASE PLAN NC", text: "Has not completed case plan goals" },
+        {
+          key: "MIN PERIOD NE",
+          text: "Minimum mandatory supervision period not expired",
+        },
+        {
+          key: "DOP",
+          text: "Being supervised for an offense resulting in the death of a person",
+        },
+        {
+          key: "FINES/FEES",
+          text: "Willful nonpayment of fines / fees despite ability to pay",
+        },
+        { key: "INC", text: "Incarcerated on another offense" },
+        {
+          key: "PROS PERM DENIED",
+          text: "Prosecutor permanently denied early termination",
+        },
+        {
+          key: "PROS TEMP DENIED",
+          text: "Prosecutor temporarily denied early termination and will reconsider",
+        },
+        {
+          key: "SENDING STATE DENIED",
+          text: "Sending state denied early termination",
+        },
+      ],
       denialText: null,
       displayName: "Early Termination",
       dynamicEligibilityText:
         "client[|s] may be eligible for early termination",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        supervisionPastEarlyDischargeDate: {
+      eligibleCriteriaCopy: [
+        {
+          key: "supervisionPastEarlyDischargeDate",
           text: "Early termination date is {{date eligibleDate}}",
           tooltip:
-            "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
+            "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed.",
         },
-        usNdImpliedValidEarlyTerminationSupervisionLevel: {
+        {
+          key: "usNdImpliedValidEarlyTerminationSupervisionLevel",
           text: "Currently on {{lowerCase supervisionLevel}} supervision",
           tooltip:
             "Policy requirement: Currently on diversion, minimum, medium, maximum, IC-in, or IC-out supervision level.",
         },
-        usNdImpliedValidEarlyTerminationSentenceType: {
+        {
+          key: "usNdImpliedValidEarlyTerminationSentenceType",
           text: "Serving {{lowerCase supervisionType}} sentence",
           tooltip:
             "Policy requirement: Serving a suspended, deferred, or IC-probation sentence.",
         },
-        usNdNotInActiveRevocationStatus: {
+        {
+          key: "usNdNotInActiveRevocationStatus",
           text: "Not on active revocation status",
           tooltip: "Policy requirement: Not on active revocation status.",
         },
-      },
+      ],
       firestoreCollection: "earlyTerminationReferrals",
       hideDenialRevert: true,
       homepagePosition: 1,
-      ineligibleCriteriaCopy: {
-        supervisionPastEarlyDischargeDate: {
+      ineligibleCriteriaCopy: [
+        {
+          key: "supervisionPastEarlyDischargeDate",
           text: "Early termination date (as calculated by DOCSTARS) is within 60 days",
           tooltip:
-            "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
+            "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed.",
         },
-      },
+      ],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -89,89 +115,122 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "earlyTermination",
+      zeroGrantsTooltip: null,
     },
     usNdATP: {
       callToAction: "Review residents who may be eligible for ATP",
       compareBy: null,
-      denialReasons: {
-        Removal: "Recently removed from ATP",
-        Medical: "Disqualifying medical condition",
-        "Mental health": "Disqualifying mental health condition",
-        Violation:
-          "Recent community or reentry violations resulting in a return to DOCR custody",
-        Victim:
-          "Active or unresolved concerns in the community, such as victim relationships",
-        Other: "Other, please specify reason",
-      },
+      denialReasons: [
+        { key: "Removal", text: "Recently removed from ATP" },
+        { key: "Medical", text: "Disqualifying medical condition" },
+        { key: "Mental health", text: "Disqualifying mental health condition" },
+        {
+          key: "Violation",
+          text: "Recent community or reentry violations resulting in a return to DOCR custody",
+        },
+        {
+          key: "Victim",
+          text: "Active or unresolved concerns in the community, such as victim relationships",
+        },
+        { key: "Other", text: "Other, please specify reason" },
+      ],
       denialText: "Mark Ineligible",
       displayName: "Adult Transition Program",
       dynamicEligibilityText:
         "resident[|s] may be eligible for the Adult Transition Program (ATP)",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        custodyLevelIsMinimum: {
+      eligibleCriteriaCopy: [
+        {
+          key: "custodyLevelIsMinimum",
           text: "Currently classified as minimum custody",
           tooltip: "Must be classified as minimum to qualify for ATP",
         },
-        usNdIncarcerationWithin1YearOfFtcdOrPrdOrCppRelease: {
+        {
+          key: "usNdIncarcerationWithin1YearOfFtcdOrPrdOrCppRelease",
           text: "Less than 12 months until release or parole review date",
           tooltip:
             "Residents must be within 12 months of release to be eligible for ATP",
         },
-        usNdNoDetainersOrWarrants: {
+        {
+          key: "usNdNoDetainersOrWarrants",
           text: "No felony warrants or detainers",
           tooltip:
             "Active felony warrants or detainers disqualify a resident from transfer to ATP",
         },
-        usNdNotServingIneligibleOffenseForAtpWorkRelease: {
+        {
+          key: "usNdNotServingIneligibleOffenseForAtpWorkRelease",
           text: "Eligible offense",
           tooltip:
             "Residents are eligible for ATP unless they are serving a sentence for an AA felony without the opportunity for parole under North Dakota Century Code Section 12.1-20-03 or 12.1-16-01. Ineligible offenses include murder, gross sexual imposition with force, gross sexual imposition, and continuous sexual abuse of a child.",
         },
-        usNdWorkReleaseCommitteeRequirements: {
+        {
+          key: "usNdWorkReleaseCommitteeRequirements",
           text: "{{#if requiresCommitteeApproval}}The resident is compliant with the Work Release Committee's conditions{{else}}The resident does not require approval through the Work Release Committee{{/if}}",
           tooltip:
             "Adults in custody serving an 85% or Armed Offender Minimum Mandatory Sentence (AOMMS), having registration requirements, or having more than ten years until their maximum release date must be approved through the Work/Education Release Committee before consideration for the Adult Transition Program (ATP). Additionally, people in these circumstances can only start working during the last six months of their sentence and must be free of Level II or III disciplinary reports for six months prior to applying to be eligible.",
         },
-        incarceratedAtLeast90Days: { text: "In custody for at least 90 days" },
-        incarceratedAtLeast30DaysInSameFacility: {
+        {
+          key: "incarceratedAtLeast90Days",
+          text: "In custody for at least 90 days",
+          tooltip: null,
+        },
+        {
+          key: "incarceratedAtLeast30DaysInSameFacility",
           text: "Incarcerated for at least 30 days in current facility",
+          tooltip: null,
         },
-        notIncarcerationWithin3MonthsOfFullTermCompletionDate: {
+        {
+          key: "notIncarcerationWithin3MonthsOfFullTermCompletionDate",
           text: "More than 3 months until release or parole review date",
+          tooltip: null,
         },
-        usNdNoRecentReferralsToMinimumHousing: {
+        {
+          key: "usNdNoRecentReferralsToMinimumHousing",
           text: "No recent referrals to minimum housing in Elite",
+          tooltip: null,
         },
-        noEscapeInCurrentIncarceration: {
+        {
+          key: "noEscapeInCurrentIncarceration",
           text: "No escape-related sentences in current incarceration term",
+          tooltip: null,
         },
-        usNdHasFacilityRestrictions: {
+        {
+          key: "usNdHasFacilityRestrictions",
           text: "The resident has no alerts preventing them from being transferred to an ATP facility",
           tooltip:
             "Alerts requiring a resident to remain in a specific facility disqualify them from being transferred to an ATP facility.",
         },
-        notWithin1MonthOfParoleStartDate: {
+        {
+          key: "notWithin1MonthOfParoleStartDate",
           text: "More than 1 month until parole start date",
+          tooltip: null,
         },
-        usNdNotEnrolledInRelevantProgram: {
+        {
+          key: "usNdNotEnrolledInRelevantProgram",
           text: "Not currently enrolled in a core program",
+          tooltip: null,
         },
-      },
+      ],
       firestoreCollection: "US_ND-AtpReferrals",
       hideDenialRevert: false,
       homepagePosition: 3,
-      ineligibleCriteriaCopy: {
-        incarceratedAtLeast30DaysInSameFacility: {
+      ineligibleCriteriaCopy: [
+        {
+          key: "incarceratedAtLeast30DaysInSameFacility",
           text: "Needs {{daysUntil thirtyDaysInSameFacilityDate}} more days in current facility",
+          tooltip: null,
         },
-        incarceratedAtLeast90Days: {
+        {
+          key: "incarceratedAtLeast90Days",
           text: "Needs {{daysUntil eligibleDate}} more days in custody",
+          tooltip: null,
         },
-        usNdNotEnrolledInRelevantProgram: {
+        {
+          key: "usNdNotEnrolledInRelevantProgram",
           text: "The resident is currently enrolled in a core program",
+          tooltip: null,
         },
-      },
+      ],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -187,53 +246,70 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "ATP",
+      zeroGrantsTooltip: null,
     },
     usNdTransferToMinFacility: {
       callToAction: "Review clients overdue for minimum housing referral",
       compareBy: null,
-      denialReasons: {
-        Removal: "Recently removed from a minimum custody facility",
-        Medical: "Disqualifying medical condition",
-        "Mental health": "Disqualifying mental health condition",
-        Separations: "Disqualifying separations",
-        Denial: "Recent transfer request denial",
-        Escape: "History of escape (in the last 5 years)",
-        Other: "Other, please specify reason",
-      },
+      denialReasons: [
+        {
+          key: "Removal",
+          text: "Recently removed from a minimum custody facility",
+        },
+        { key: "Medical", text: "Disqualifying medical condition" },
+        { key: "Mental health", text: "Disqualifying mental health condition" },
+        { key: "Separations", text: "Disqualifying separations" },
+        { key: "Denial", text: "Recent transfer request denial" },
+        { key: "Escape", text: "History of escape (in the last 5 years)" },
+        { key: "Other", text: "Other, please specify reason" },
+      ],
       denialText: "Mark Ineligible",
       displayName: "Transfer to a Minimum Security Unit",
       dynamicEligibilityText:
         "resident[|s] [is|are] waiting for a minimum custody housing referral",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        custodyLevelIsMinimum: {
+      eligibleCriteriaCopy: [
+        {
+          key: "custodyLevelIsMinimum",
           text: "Currently classified as minimum custody",
           tooltip:
             "Residents who are classified as minimum custody but residing in a medium or maximum unit may be eligible for transfer to a minimum unit. Residents in an orientation unit are not eligible for transfer until completion of orientation.",
         },
-        usNdNotInMinimumSecurityFacility: {
+        {
+          key: "usNdNotInMinimumSecurityFacility",
           text: "Not residing in a minimum-security unit",
+          tooltip: null,
         },
-        incarcerationWithin42MonthsOfFullTermCompletionDate: {
+        {
+          key: "incarcerationWithin42MonthsOfFullTermCompletionDate",
           text: "Less than 42 months until release",
+          tooltip: null,
         },
-        notIncarcerationWithin3MonthsOfFullTermCompletionDate: {
+        {
+          key: "notIncarcerationWithin3MonthsOfFullTermCompletionDate",
           text: "More than 3 months until release",
+          tooltip: null,
         },
-        usNdNoRecentReferralsToMinimumHousing: {
+        {
+          key: "usNdNoRecentReferralsToMinimumHousing",
           text: "Has not received a recent minimum housing referral",
+          tooltip: null,
         },
-        noEscapeInCurrentIncarceration: {
+        {
+          key: "noEscapeInCurrentIncarceration",
           text: "No escape-related sentences in current incarceration term",
+          tooltip: null,
         },
-        usNdNotEnrolledInRelevantProgram: {
+        {
+          key: "usNdNotEnrolledInRelevantProgram",
           text: "Not currently enrolled in a core program",
+          tooltip: null,
         },
-      },
+      ],
       firestoreCollection: "US_ND-TransferToMinFacility",
       hideDenialRevert: false,
       homepagePosition: 2,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -249,6 +325,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "TransferToMinFacility",
+      zeroGrantsTooltip: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

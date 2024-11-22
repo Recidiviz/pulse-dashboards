@@ -23,26 +23,26 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review and refer eligible clients for Compliant Reporting.",
       compareBy: null,
-      denialReasons: {
-        DECF: "DECF: No effort to pay fine and costs",
-        DECR: "DECR: Criminal record",
-        DECT: "DECT: Insufficient time in supervision level",
-        DEDF: "DEDF: No effort to pay fees",
-        DEDU: "DEDU: Serious compliance problems ",
-        DEIJ: "DEIJ: Not allowed per court",
-        DEIR: "DEIR: Failure to report as instructed",
-        Other: "Other, please specify a reason",
-      },
+      denialReasons: [
+        { key: "DECF", text: "DECF: No effort to pay fine and costs" },
+        { key: "DECR", text: "DECR: Criminal record" },
+        { key: "DECT", text: "DECT: Insufficient time in supervision level" },
+        { key: "DEDF", text: "DEDF: No effort to pay fees" },
+        { key: "DEDU", text: "DEDU: Serious compliance problems " },
+        { key: "DEIJ", text: "DEIJ: Not allowed per court" },
+        { key: "DEIR", text: "DEIR: Failure to report as instructed" },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
       denialText: null,
       displayName: "Compliant Reporting",
       dynamicEligibilityText:
         "client[|s] may be eligible for Compliant Reporting",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {},
+      eligibleCriteriaCopy: [],
       firestoreCollection: "compliantReportingReferrals",
       hideDenialRevert: false,
       homepagePosition: 1,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -62,28 +62,34 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "compliantReporting",
+      zeroGrantsTooltip: null,
     },
     supervisionLevelDowngrade: {
       callToAction: "Change their supervision level in TOMIS.",
       compareBy: null,
-      denialReasons: {
-        COURT: "COURT: Court mandates supervision at a higher level",
-        Other: "Other: please specify a reason",
-      },
+      denialReasons: [
+        {
+          key: "COURT",
+          text: "COURT: Court mandates supervision at a higher level",
+        },
+        { key: "Other", text: "Other: please specify a reason" },
+      ],
       denialText: null,
       displayName: "Supervision Level Downgrade",
       dynamicEligibilityText:
         "client[|s] may be supervised at a higher level than their latest risk score",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        supervisionLevelHigherThanAssessmentLevel: {
+      eligibleCriteriaCopy: [
+        {
+          key: "supervisionLevelHigherThanAssessmentLevel",
           text: "Current supervision level: {{supervisionLevel}}; Last risk score: {{assessmentLevel}} {{#if latestAssessmentDate}}(as of {{date latestAssessmentDate}}){{else}}(assessment date unknown){{/if}}",
+          tooltip: null,
         },
-      },
+      ],
       firestoreCollection: "US_TN-supervisionLevelDowngrade",
       hideDenialRevert: false,
       homepagePosition: 4,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
       methodologyUrl:
@@ -99,33 +105,38 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "supervisionLevelDowngrade",
+      zeroGrantsTooltip: null,
     },
     usTnAnnualReclassification: {
       callToAction:
         "Review residents due for their annual reclassification and update their custody level in TOMIS.",
       compareBy: [{ field: "releaseDate" }],
-      denialReasons: {
-        OVERRIDE: "Reclassification date override",
-        Other: "Please specify a reason",
-      },
+      denialReasons: [],
       denialText: null,
       displayName: "Annual Reclassification",
       dynamicEligibilityText:
         "resident[|s] [is|are] eligible for their annual reclassification",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        usTnAtLeast12MonthsSinceLatestAssessment: {
+      eligibleCriteriaCopy: [
+        {
+          key: "usTnAtLeast12MonthsSinceLatestAssessment",
           text: "At least 12 months since last reclassification date",
+          tooltip: null,
         },
-        custodyLevelIsNotMax: { text: "Custody level is not maximum" },
-      },
+        {
+          key: "custodyLevelIsNotMax",
+          text: "Custody level is not maximum",
+          tooltip: null,
+        },
+      ],
       firestoreCollection: "US_TN-annualReclassificationReferrals",
       hideDenialRevert: false,
       homepagePosition: 4,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
-      methodologyUrl: "",
+      methodologyUrl:
+        "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
       notifications: [],
       priority: "NORMAL",
       sidebarComponents: [
@@ -133,7 +144,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
         "UsTnCommonlyUsedOverrideCodes",
       ],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snooze: null,
       stateCode: "US_TN",
       subheading:
         "This alert helps staff identify residents who are due for annual custody reclassification and directs staff to complete & submit new classification paperwork.",
@@ -141,32 +152,43 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "annualReclassification",
+      zeroGrantsTooltip: null,
     },
     usTnCustodyLevelDowngrade: {
       callToAction: "Review and update custody levels.",
       compareBy: null,
-      denialReasons: { Other: "Please specify a reason" },
+      denialReasons: [{ key: "Other", text: "Please specify a reason" }],
       denialText: null,
       displayName: "Custody Level Downgrade",
       dynamicEligibilityText:
         "resident[|s] may be eligible for a custody level downgrade",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        custodyLevelHigherThanRecommended: {
+      eligibleCriteriaCopy: [
+        {
+          key: "custodyLevelHigherThanRecommended",
           text: "Custody level is higher than latest CAF score suggests",
+          tooltip: null,
         },
-        custodyLevelIsNotMax: { text: "Custody level is not maximum" },
-        usTnIneligibleForAnnualReclassification: {
+        {
+          key: "custodyLevelIsNotMax",
+          text: "Custody level is not maximum",
+          tooltip: null,
+        },
+        {
+          key: "usTnIneligibleForAnnualReclassification",
           text: "Not eligible for annual reclassification",
+          tooltip: null,
         },
-        usTnLatestCafAssessmentNotOverride: {
+        {
+          key: "usTnLatestCafAssessmentNotOverride",
           text: "Last assessment did not include an override",
+          tooltip: null,
         },
-      },
+      ],
       firestoreCollection: "US_TN-custodyLevelDowngradeReferrals",
       hideDenialRevert: false,
       homepagePosition: 2,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
       methodologyUrl: "",
@@ -185,35 +207,42 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "custodyLevelDowngrade",
+      zeroGrantsTooltip: null,
     },
     usTnExpiration: {
       callToAction:
         "Review these clients and complete their auto-generated TEPE Note.",
       compareBy: null,
-      denialReasons: {
-        DATE: "DATE: Expiration date is incorrect or missing",
-        Other: "Other: please specify a reason",
-      },
+      denialReasons: [
+        { key: "DATE", text: "DATE: Expiration date is incorrect or missing" },
+        { key: "Other", text: "Other: please specify a reason" },
+      ],
       denialText: null,
       displayName: "Expiration",
       dynamicEligibilityText:
         "client[|s] may be on or past their expiration date",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        supervisionPastFullTermCompletionDateOrUpcoming1Day: {
+      eligibleCriteriaCopy: [
+        {
+          key: "supervisionPastFullTermCompletionDateOrUpcoming1Day",
           text: "{{#if (eq 0 (daysPast eligibleDate))}}Expiration date is today{{else}}{{#if (eq 1 (daysPast eligibleDate))}}1 day{{else}}{{daysPast eligibleDate}} days{{/if}} past expiration date{{/if}} ({{date eligibleDate}})",
+          tooltip: null,
         },
-        usTnNoZeroToleranceCodesSpans: {
+        {
+          key: "usTnNoZeroToleranceCodesSpans",
           text: "No zero tolerance codes since most recent sentence imposed date",
+          tooltip: null,
         },
-        usTnNotOnLifeSentenceOrLifetimeSupervision: {
+        {
+          key: "usTnNotOnLifeSentenceOrLifetimeSupervision",
           text: "Not on lifetime supervision or lifetime sentence",
+          tooltip: null,
         },
-      },
+      ],
       firestoreCollection: "US_TN-expirationReferrals",
       hideDenialRevert: false,
       homepagePosition: 3,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader:
         "Search for officers above to review clients who may be on or past their supervision expiration date.",
       isAlert: false,
@@ -223,7 +252,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       snooze: {
-        autoSnoozeParams: { type: "snoozeDays", params: { days: 30 } },
+        autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
       },
       stateCode: "US_TN",
       subheading:
@@ -232,6 +261,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "expiration",
+      zeroGrantsTooltip: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

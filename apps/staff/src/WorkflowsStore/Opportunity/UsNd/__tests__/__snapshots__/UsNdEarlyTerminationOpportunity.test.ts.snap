@@ -4,7 +4,7 @@ exports[`almost eligible past discharge date coming up > requirements almost met
 [
   {
     "text": "Early termination date (as calculated by DOCSTARS) is within 60 days",
-    "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
+    "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed.",
   },
 ]
 `;
@@ -13,7 +13,7 @@ exports[`almost eligible past discharge date coming up > requirements met 1`] = 
 [
   {
     "text": "Early termination date is Jan 3, 2022",
-    "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
+    "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed.",
   },
   {
     "text": "Currently on medium supervision",
@@ -34,7 +34,7 @@ exports[`fully eligible > requirements met 1`] = `
 [
   {
     "text": "Early termination date is Jan 3, 2022",
-    "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed or is within 30 days.",
+    "tooltip": "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed.",
   },
   {
     "text": "Currently on medium supervision",

@@ -23,20 +23,21 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "This tool helps staff prioritize inmates to prepare for release to the Drug Transition Program (release back to the community up to 90 days ahead of their earliest release date). People who have a release date approved by Central Time Comp will appear on this page if their approved release date has passed. Use this tool to identify and prioritize overdue cases.",
       compareBy: null,
-      denialReasons: {},
+      denialReasons: [],
       denialText: null,
       displayName: "Overdue for Drug Transition Program",
       dynamicEligibilityText: "resident[|s] are past their DTP date",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        usAzIncarcerationPastAcisDtpDate: {
+      eligibleCriteriaCopy: [
+        {
+          key: "usAzIncarcerationPastAcisDtpDate",
           text: "Past DTP date in ACIS{{#if acisDtpDate}}: {{date acisDtpDate}}{{/if}}",
         },
-      },
+      ],
       firestoreCollection: "US_AZ-OverdueForDTPReferrals",
       hideDenialRevert: false,
       homepagePosition: 2,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
       methodologyUrl:
@@ -48,31 +49,31 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_AZ",
       subheading: null,
       systemType: "INCARCERATION",
-      tabGroups: {
-        "ELIGIBILITY STATUS": ["Overdue"],
-      },
+      tabGroups: [{ key: "ELIGIBILITY STATUS", tabs: ["Overdue"] }],
       tooltipEligibilityText: null,
       urlSection: "OverdueForDTP",
+      zeroGrantsTooltip: null,
     },
     usAzOverdueForACISTPR: {
       callToAction:
         "This tool helps staff prioritize inmates to prepare for release to the Standard Transition Program (release back to the community up to 90 days ahead of their earliest release date). People who have a release date approved by Central Time Comp will appear on this page if their approved release date has passed. Use this tool to identify and prioritize overdue cases.",
       compareBy: null,
-      denialReasons: {},
+      denialReasons: [],
       denialText: null,
       displayName: "Overdue for Standard Transition Program",
       dynamicEligibilityText:
         "resident[|s] may be past their Standard Transition Program date",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        usAzIncarcerationPastAcisTprDate: {
+      eligibleCriteriaCopy: [
+        {
+          key: "usAzIncarcerationPastAcisTprDate",
           text: "Past TPR date in ACIS{{#if acisTprDate}}: {{date acisTprDate}}{{/if}}",
         },
-      },
+      ],
       firestoreCollection: "US_AZ-OverdueForTPRReferrals",
       hideDenialRevert: false,
       homepagePosition: 3,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
       methodologyUrl:
@@ -84,65 +85,74 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_AZ",
       subheading: null,
       systemType: "INCARCERATION",
-      tabGroups: {
-        "ELIGIBILITY STATUS": ["Overdue"],
-      },
+      tabGroups: [{ key: "ELIGIBILITY STATUS", tabs: ["Overdue"] }],
       tooltipEligibilityText: null,
       urlSection: "OverdueForTPR",
+      zeroGrantsTooltip: null,
     },
     usAzReleaseToDTP: {
       callToAction:
         "This tool helps staff prioritize inmates to prepare for release to the Drug Transition Program (release back to the community up to 90 days ahead of their earliest release date). People who meet the criteria for Drug Transition Release, or who might soon meet the criteria, will appear under one of these tabs. Use this tool to identify cases that need a home plan or other components of the release packet and update their status in the tool so that Central Time Comp can approve the inmate for release.",
       compareBy: null,
-      denialReasons: {},
+      denialReasons: [],
       denialText: null,
       displayName: "Drug Transition Program Release",
       dynamicEligibilityText:
         "inmate[|s] may be eligible for Drug Transition Program Release",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        usAzNoActiveFelonyDetainers: {
+      eligibleCriteriaCopy: [
+        {
+          key: "usAzNoActiveFelonyDetainers",
           text: "No active felony detainers",
         },
-        usAzEnrolledInOrMeetsMandatoryLiteracy: {
+        {
+          key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
           text: "Enrolled in or meets functional literacy requirement",
           tooltip:
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
         },
-        usAzOnlyDrugOffenseConvictions: {
+        {
+          key: "usAzOnlyDrugOffenseConvictions",
           text: "Serving sentence for only eligible drug offenses",
         },
-        custodyLevelIsMinimumOrMedium: {
+        {
+          key: "custodyLevelIsMinimumOrMedium",
           text: "Classified as Minimum or Medium security",
           tooltip:
             "Inmates must be classified by the department as minimum or medium custody as determined by an objective risk assessment.",
         },
-        usAzNoDtpRemovalsFromSelfImprovementPrograms: {
+        {
+          key: "usAzNoDtpRemovalsFromSelfImprovementPrograms",
           text: "No removals from major self-improvement programs within 18 months",
         },
-        usAzNoUnsatisfactoryProgramRatingsWithin3Months: {
+        {
+          key: "usAzNoUnsatisfactoryProgramRatingsWithin3Months",
           text: "No unsatisfactory program ratings within 3 months",
         },
-        usAzNoViolationsAndEligibleLegalStatus: {
+        {
+          key: "usAzNoViolationsAndEligibleLegalStatus",
           text: "No disqualifying violations of major rules",
         },
-      },
+      ],
       firestoreCollection: "US_AZ-DTPReferrals",
       hideDenialRevert: false,
-      homepagePosition: 1,
-      ineligibleCriteriaCopy: {
-        usAzIncarcerationPastAcisDtpDate: {
+      homepagePosition: 4,
+      ineligibleCriteriaCopy: [
+        {
+          key: "usAzIncarcerationPastAcisDtpDate",
           text: "Upcoming DTP date in ACIS{{#if acisDtpDate}}: {{date acisDtpDate}}{{/if}}",
         },
-        usAzNoActiveFelonyDetainers: {
+        {
+          key: "usAzNoActiveFelonyDetainers",
           text: "Has one or more felony detainers",
         },
-        usAzEnrolledInOrMeetsMandatoryLiteracy: {
+        {
+          key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
           text: "Has not enrolled in or met functional literacy requirement",
           tooltip:
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
         },
-      },
+      ],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -154,79 +164,94 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_AZ",
       subheading: null,
       systemType: "INCARCERATION",
-      tabGroups: {
-        "ELIGIBILITY STATUS": [
-          "Fast Trackers",
-          "Approved by Time Comp",
-          "Almost Eligible",
-          "Pending",
-        ],
-      },
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Fast Trackers",
+            "Approved by Time Comp",
+            "Almost Eligible",
+            "Pending",
+          ],
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "DTP",
+      zeroGrantsTooltip: null,
     },
     usAzReleaseToTPR: {
       callToAction:
         "This tool helps staff prioritize inmates to prepare for release to the Standard Transition Program (release back to the community up to 90 days ahead of their earliest release date). People who meet the criteria for Standard Transition Release, or who might soon meet the criteria, will appear under one of these tabs. Use this tool to identify cases that need a home plan or other components of the release packet and update their status in the tool so that Central Time Comp can approve the inmate for release.",
       compareBy: null,
-      denialReasons: {},
+      denialReasons: [],
       denialText: null,
       displayName: "Standard Transition Program Release",
       dynamicEligibilityText:
         "inmate[|s] may be eligible for Standard Transition Program Release",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        usAzNoActiveFelonyDetainers: { text: "No felony detainers" },
-        usAzMeetsFunctionalLiteracyTpr: {
+      eligibleCriteriaCopy: [
+        { key: "usAzNoActiveFelonyDetainers", text: "No felony detainers" },
+        {
+          key: "usAzMeetsFunctionalLiteracyTpr",
           text: "Functional literacy complete",
           tooltip:
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
         },
-        custodyLevelIsMinimumOrMedium: {
+        {
+          key: "custodyLevelIsMinimumOrMedium",
           text: "Classified as Minimum or Medium security",
           tooltip:
             "Inmates must be classified by the department as minimum or medium custody as determined by an objective risk assessment.",
         },
-        usAzAtLeast24MonthsSinceLastCsed: {
+        {
+          key: "usAzAtLeast24MonthsSinceLastCsed",
           text: "At least 24 months since last CSED",
         },
-        usAzNoDtpRemovalsFromSelfImprovementPrograms: {
+        {
+          key: "usAzNoDtpRemovalsFromSelfImprovementPrograms",
           text: "No removals from major self-improvement programs within 18 months",
         },
-        usAzNoUnsatisfactoryProgramRatingsWithin3Months: {
+        {
+          key: "usAzNoUnsatisfactoryProgramRatingsWithin3Months",
           text: "No unsatisfactory program ratings within 3 months",
         },
-        usAzNoViolationsAndEligibleLegalStatus: {
+        {
+          key: "usAzNoViolationsAndEligibleLegalStatus",
           text: "No disqualifying violations of major rules",
+          tooltip: "",
         },
-        usAzNoSexualArsonOrDangerousCrimesAgainstChildren: {
+        {
+          key: "usAzNoSexualArsonOrDangerousCrimesAgainstChildren",
           text: "Not convicted of an ineligible sexual crime, arson, or dangerous crimes against children",
           tooltip:
             "Inmates must not have been convicted of a sexual offense pursuant to title 13, chapter 14 or a violation of title 13, chapter 17.",
         },
-        usAzNoViolentConvictionUnlessAssaultOrAggravatedAssaultOrRobberyConviction:
-          {
-            text: "Not convicted of an ineligible violent crime",
-            tooltip:
-              "Inmates must not have been convicted of a violent crime as defined in section 13-901.03, unless the inmate was convicted of assault, aggravated assault or robbery.",
-          },
-      },
+        {
+          key: "usAzNotServingIneligibleOffense",
+          text: "Not convicted of an ineligible violent crime",
+          tooltip:
+            "Inmates must not have been convicted of a violent crime as defined in section 13-901.03, unless the inmate was convicted of assault, aggravated assault or robbery.",
+        },
+      ],
       firestoreCollection: "US_AZ-TPRReferrals",
       hideDenialRevert: false,
       homepagePosition: 1,
-      ineligibleCriteriaCopy: {
-        usAzIncarcerationPastAcisTprDate: {
+      ineligibleCriteriaCopy: [
+        {
+          key: "usAzIncarcerationPastAcisTprDate",
           text: "Upcoming TPR date in ACIS{{#if acisTprDate}}: {{date acisTprDate}}{{/if}}",
         },
-        usAzNoActiveFelonyDetainers: {
-          text: "Has one or more felony detainers",
-        },
-        usAzMeetsFunctionalLiteracy: {
+        {
+          key: "usAzMeetsFunctionalLiteracyTpr",
           text: "Functional literacy outstanding",
           tooltip:
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
         },
-      },
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "Has one or more felony detainers",
+        },
+      ],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -238,16 +263,20 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_AZ",
       subheading: null,
       systemType: "INCARCERATION",
-      tabGroups: {
-        "ELIGIBILITY STATUS": [
-          "Fast Trackers",
-          "Approved by Time Comp",
-          "Almost Eligible",
-          "Pending",
-        ],
-      },
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Fast Trackers",
+            "Approved by Time Comp",
+            "Almost Eligible",
+            "Pending",
+          ],
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "TPR",
+      zeroGrantsTooltip: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

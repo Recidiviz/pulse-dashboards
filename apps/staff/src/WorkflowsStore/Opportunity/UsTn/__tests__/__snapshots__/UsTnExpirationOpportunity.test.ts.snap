@@ -4,12 +4,15 @@ exports[`fully eligible > requirements met 1`] = `
 [
   {
     "text": "180 days past expiration date (Feb 2, 2022)",
+    "tooltip": undefined,
   },
   {
     "text": "No zero tolerance codes since most recent sentence imposed date",
+    "tooltip": undefined,
   },
   {
     "text": "Not on lifetime supervision or lifetime sentence",
+    "tooltip": undefined,
   },
 ]
 `;

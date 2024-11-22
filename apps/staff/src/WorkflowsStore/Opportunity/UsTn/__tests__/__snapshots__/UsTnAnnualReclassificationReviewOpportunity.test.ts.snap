@@ -4,9 +4,11 @@ exports[`Annual Reclassification Opportunity for fully eligible resident > requi
 [
   {
     "text": "At least 12 months since last reclassification date",
+    "tooltip": undefined,
   },
   {
     "text": "Custody level is not maximum",
+    "tooltip": undefined,
   },
 ]
 `;

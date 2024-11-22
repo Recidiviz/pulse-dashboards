@@ -4,15 +4,19 @@ exports[`fully eligible resident > requirements met 1`] = `
 [
   {
     "text": "Custody level is higher than latest CAF score suggests",
+    "tooltip": undefined,
   },
   {
     "text": "Custody level is not maximum",
+    "tooltip": undefined,
   },
   {
     "text": "Not eligible for annual reclassification",
+    "tooltip": undefined,
   },
   {
     "text": "Last assessment did not include an override",
+    "tooltip": undefined,
   },
 ]
 `;

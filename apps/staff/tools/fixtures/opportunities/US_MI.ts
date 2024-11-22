@@ -23,50 +23,63 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Complete SCC review and fill out 283 Form for eligible residents, inclusive of ADD signature.",
       compareBy: null,
-      denialReasons: {
-        "PRIOR RH":
-          "Prior restrictive housing history requires management at more restrictive level",
-        "PLACING BEHAVIOR":
-          "Severe placing behavior necessitates longer stay in segregation",
-        RESPECT: "Fails to be cordial and respectful to staff",
-        ATTITUDE:
-          "Behavior and attitude not consistent with general population expectations",
-        MISCONDUCTS: "Misconduct(s) filed during segregation",
-        "GP NOT APPROPRIATE":
-          "Unable to honor trust implicit in less restrictive environment ",
-        Other: "Other, please specify a reason",
-      },
+      denialReasons: [
+        {
+          key: "PRIOR RH",
+          text: "Prior restrictive housing history requires management at more restrictive level",
+        },
+        {
+          key: "PLACING BEHAVIOR",
+          text: "Severe placing behavior necessitates longer stay in segregation",
+        },
+        { key: "RESPECT", text: "Fails to be cordial and respectful to staff" },
+        {
+          key: "ATTITUDE",
+          text: "Behavior and attitude not consistent with general population expectations",
+        },
+        { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
+        {
+          key: "GP NOT APPROPRIATE",
+          text: "Unable to honor trust implicit in less restrictive environment ",
+        },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
       denialText: null,
       displayName: "ADD In-Person Review",
       dynamicEligibilityText:
         "resident[|s] [is|are] eligible for in-person review by the ADD at SCC to potentially return to general population",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        usMiPastAddInPersonReviewForSccDate: {
+      eligibleCriteriaCopy: [
+        {
+          key: "usMiPastAddInPersonReviewForSccDate",
           text: "{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestADDInPersonSccReviewDate}} last ADD in-person review recorded on {{date latestADDInPersonSccReviewDate}};{{/if}} ADD in-person review due on or before {{date nextSccDate}}",
           tooltip:
             "ADDs shall personally interview each prisoner in their respective regions who has been confined in administrative segregation for twelve continuous months. If the prisoner continues in administrative segregation beyond the first twelve month period, the ADD shall interview the prisoner every twelve months thereafter until the prisoner is released from administrative segregation.",
         },
-        usMiInSolitaryConfinementAtLeastOneYear: {
+        {
+          key: "usMiInSolitaryConfinementAtLeastOneYear",
           text: "Currently in {{usMiSegregationDisplayName record.formInformation.segregationType}}",
           tooltip:
             '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
         },
-      },
+      ],
       firestoreCollection:
         "US_MI-addInPersonSecurityClassificationCommitteeReview",
       hideDenialRevert: false,
       homepagePosition: 8,
-      ineligibleCriteriaCopy: {
-        usMiPastAddInPersonReviewForSccDate: {
+      ineligibleCriteriaCopy: [
+        {
+          key: "usMiPastAddInPersonReviewForSccDate",
           text: "Next ADD in-person review due in the next two months, on or before {{date nextSccDate}}",
           tooltip:
             "ADDs shall personally interview each prisoner in their respective regions who has been confined in administrative segregation for twelve continuous months. If the prisoner continues in administrative segregation beyond the first twelve month period, the ADD shall interview the prisoner every twelve months thereafter until the prisoner is released from administrative segregation.",
         },
-        usMiInSolitaryConfinementAtLeastOneYear: {
+        {
+          key: "usMiInSolitaryConfinementAtLeastOneYear",
           text: "In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}",
+          tooltip: null,
         },
-      },
+      ],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -83,54 +96,67 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This alert helps staff identify residents in restrictive housing who have spent 1+ consecutive year(s) in segregation and are therefore due for an in-person SCC review with the relevant ADD. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents, inclusive of ADD signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
       systemType: "INCARCERATION",
-      tabGroups: {
-        "ELIGIBILITY STATUS": [
-          "Overdue",
-          "Due now",
-          "Upcoming",
-          "Marked Ineligible",
-        ],
-      },
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: ["Overdue", "Due now", "Upcoming", "Marked Ineligible"],
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "addInPersonSecurityClassificationCommitteeReview",
+      zeroGrantsTooltip: null,
     },
     usMiClassificationReview: {
       callToAction:
         "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
       compareBy: null,
-      denialReasons: {
-        VIOLATIONS: "Excessive violation behavior during current review period",
-        EMPLOYMENT:
-          "Chronic unemployment with no effort to job search or recent, concerning unemployment",
-        "FINES & FEES":
-          "No effort to pay fines and fees despite documented ability to pay",
-        "CASE PLAN":
-          "No progress toward completion of Transition Accountability Plan goals/tasks",
-        NONCOMPLIANT: "Noncompliant with the order of supervision",
-        ABSCONSION: "Chronic missing of reporting dates",
-        Other: "Other: please specify a reason",
-      },
+      denialReasons: [
+        {
+          key: "VIOLATIONS",
+          text: "Excessive violation behavior during current review period",
+        },
+        {
+          key: "EMPLOYMENT",
+          text: "Chronic unemployment with no effort to job search or recent, concerning unemployment",
+        },
+        {
+          key: "FINES & FEES",
+          text: "No effort to pay fines and fees despite documented ability to pay",
+        },
+        {
+          key: "CASE PLAN",
+          text: "No progress toward completion of Transition Accountability Plan goals/tasks",
+        },
+        {
+          key: "NONCOMPLIANT",
+          text: "Noncompliant with the order of supervision",
+        },
+        { key: "ABSCONSION", text: "Chronic missing of reporting dates" },
+        { key: "Other", text: "Other: please specify a reason" },
+      ],
       denialText: null,
       displayName: "Classification Review",
       dynamicEligibilityText:
         "client[|s] may be eligible for a supervision level downgrade",
       eligibilityDateText: "Next Classification Due Date",
-      eligibleCriteriaCopy: {
-        usMiClassificationReviewPastDueDate: {
+      eligibleCriteriaCopy: [
+        {
+          key: "usMiClassificationReviewPastDueDate",
           text: "Recommended classification review date, based on supervision start date and last classification review date, is {{date eligibleDate}}",
           tooltip:
             "Classification reviews shall be completed after six months of active supervision […] Subsequent classification reviews shall be scheduled at six-month intervals.",
         },
-        usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+        {
+          key: "usMiNotAlreadyOnLowestEligibleSupervisionLevel",
           text: "Currently eligible based on offense type and supervision level",
           tooltip:
             "The supervising Agent shall ensure that a Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) has been completed for each offender on their active caseload as outlined in OP 06.01.145 “Administration and Use of COMPAS and TAP.” Unless mandated by statute or other criteria as directed in this operating procedure, the COMPAS shall be used to determine the initial supervision level of each offender.\nUnless an offender’s supervision level is mandated by policy or statute, the supervising Agent shall reduce an offender’s supervision level if the offender has satisfactorily completed six continuous months at the current assigned supervision level.",
         },
-      },
+      ],
       firestoreCollection: "US_MI-classificationReviewReferrals",
       hideDenialRevert: false,
       homepagePosition: 1,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -144,7 +170,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
       ],
       snooze: {
-        autoSnoozeParams: { type: "snoozeDays", params: { days: 180 } },
+        autoSnoozeParams: { params: { days: 180 }, type: "snoozeDays" },
       },
       stateCode: "US_MI",
       subheading:
@@ -153,97 +179,141 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "classificationReview",
+      zeroGrantsTooltip: null,
     },
     usMiEarlyDischarge: {
       callToAction:
         "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
       compareBy: null,
-      denialReasons: {
-        "CHILD ABUSE ORDER":
-          "CHILD ABUSE ORDER: Child abuse prevention order filed during supervision period",
-        "SUSPECTED OFFENSE":
-          "SUSPECTED OFFENSE: Suspected of a felony, assaultive misdemeanor, OWI, or offense requiring SORA registration",
-        "FELONY/STATE PROBATION":
-          "FELONY/STATE PROBATION: On parole and also on other state or federal probation supervision for an offense committed during the current period",
-        NEEDS:
-          "NEEDS: On parole and all criminogenic needs have not been addressed",
-        NONCOMPLIANT:
-          "NONCOMPLIANT: Not compliant with the order of supervision",
-        PROGRAMMING: "PROGRAMMING: Has not completed all required programming",
-        "PRO-SOCIAL": "PRO-SOCIAL: Has not demonstrated pro-social behavior",
-        RESTITUTION:
-          "RESTITUTION: Has not completed court-ordered restitution payments",
-        "FINES & FEES":
-          "FINES & FEES: Willful nonpayment of restitution, fees, court costs, fines, and other monetary obligations despite clear ability to pay",
-        "PENDING CHARGES": "PENDING CHARGES: Pending felony charges/warrant",
-        "ORDERED TREATMENT":
-          "ORDERED TREATMENT: Has not completed all required treatment",
-        "EXCLUDED OFFENSE":
-          "EXCLUDED OFFENSE: On parole for an offense resulting in death or serious bodily injury or an offense involving the discharge of a firearm",
-        JUDGE: "JUDGE: County Judge declined client for consideration",
-        Other: "Other: please specify a reason",
-      },
+      denialReasons: [
+        {
+          key: "CHILD ABUSE ORDER",
+          text: "CHILD ABUSE ORDER: Child abuse prevention order filed during supervision period",
+        },
+        {
+          key: "SUSPECTED OFFENSE",
+          text: "SUSPECTED OFFENSE: Suspected of a felony, assaultive misdemeanor, OWI, or offense requiring SORA registration",
+        },
+        {
+          key: "FELONY/STATE PROBATION",
+          text: "FELONY/STATE PROBATION: On parole and also on other state or federal probation supervision for an offense committed during the current period",
+        },
+        {
+          key: "NEEDS",
+          text: "NEEDS: On parole and all criminogenic needs have not been addressed",
+        },
+        {
+          key: "NONCOMPLIANT",
+          text: "NONCOMPLIANT: Not compliant with the order of supervision",
+        },
+        {
+          key: "PROGRAMMING",
+          text: "PROGRAMMING: Has not completed all required programming",
+        },
+        {
+          key: "PRO-SOCIAL",
+          text: "PRO-SOCIAL: Has not demonstrated pro-social behavior",
+        },
+        {
+          key: "RESTITUTION",
+          text: "RESTITUTION: Has not completed court-ordered restitution payments",
+        },
+        {
+          key: "FINES & FEES",
+          text: "FINES & FEES: Willful nonpayment of restitution, fees, court costs, fines, and other monetary obligations despite clear ability to pay",
+        },
+        {
+          key: "PENDING CHARGES",
+          text: "PENDING CHARGES: Pending felony charges/warrant",
+        },
+        {
+          key: "ORDERED TREATMENT",
+          text: "ORDERED TREATMENT: Has not completed all required treatment",
+        },
+        {
+          key: "EXCLUDED OFFENSE",
+          text: "EXCLUDED OFFENSE: On parole for an offense resulting in death or serious bodily injury or an offense involving the discharge of a firearm",
+        },
+        {
+          key: "JUDGE",
+          text: "JUDGE: County Judge declined client for consideration",
+        },
+        { key: "Other", text: "Other: please specify a reason" },
+      ],
       denialText: null,
       displayName: "Early Discharge",
       dynamicEligibilityText: "client[|s] may be eligible for early discharge",
       eligibilityDateText: "Earliest Eligibility Date for Early Discharge",
-      eligibleCriteriaCopy: {
-        supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: {
+      eligibleCriteriaCopy: [
+        {
+          key: "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
           text: 'Completed at least half of {{#if (eq record.metadata.supervisionType "Parole")}}parole{{else}}probation{{/if}} term',
           tooltip:
             '{{#if (eq record.metadata.supervisionType "Parole")}}A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more{{else}}An offender may be considered for discharge prior to the expiration of the original term of probation if they have completed at least one-half of the probation term{{/if}}',
         },
-        servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState: {
+        {
+          key: "servingAtLeastOneYearOnParoleSupervisionOrSupervisionOutOfState",
           text: "Serving a parole term of 12 months or more",
           tooltip:
             "A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more",
         },
-        usMiParoleDualSupervisionPastEarlyDischargeDate: {
+        {
+          key: "usMiParoleDualSupervisionPastEarlyDischargeDate",
           text: "Served mandatory period of parole",
           tooltip:
             "The parolee has served any mandatory period of parole as set forth in Paragraph F. ",
         },
-        usMiNoActivePpo: {
+        {
+          key: "usMiNoActivePpo",
           text: 'No active PPO ordered during the {{#if (eq record.metadata.supervisionType "Parole")}}parole{{else}}probation{{/if}} term',
           tooltip:
             'The {{#if (eq record.metadata.supervisionType "Parole")}}parolee{{else}}offender{{/if}} does not have an active PPO […] that was ordered against him/her during the {{#if (eq record.metadata.supervisionType "Parole")}}parole{{else}}probation{{/if}} term.',
         },
-        usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision: {
+        {
+          key: "usMiNoNewIneligibleOffensesForEarlyDischargeFromSupervision",
           text: 'Not involved in a felony, assaultive misdemeanor, or offense requiring SORA registration while on {{#if (eq record.metadata.supervisionType "Parole")}}parole{{else}}probation{{/if}}',
           tooltip:
             '{{#if (eq record.metadata.supervisionType "Parole")}}The parolee is not known to have been involved in […] felonious behavior, assaultive misdemeanor behavior (as set forth in Attachment A) […] or an offense that requires registration under the Sex Offender Registration Act while on parole.{{else}}The offender is not known to have been involved in […] felonious behavior or assaultive misdemeanor behavior as set forth in Attachment A “OP 06.01.145B Assaultive Misdemeanor List” which occurred while on probation or any offense that requires registration under the Sex Offender Registration Act (SORA), which occurred while on probation.{{/if}}',
         },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision:
-          {
-            text: "Not serving for an offense excluded from early discharge eligibility by policy.",
-            tooltip:
-              "The parolee is not serving for an offense […] required to be registered under the Sex Offender Registration Act.",
-          },
-        usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision:
-          {
-            text: "Not serving for an offense excluded from early discharge eligibility by policy.",
-            tooltip:
-              "The offender is not currently serving for an offense that requires a mandatory term of probation as identified in Paragraph H. The offender is not currently serving for MCL 750.81 or MCL 750.84 (Assault with Intent to commit Great Bodily Harm Less than Murder).",
-          },
-        usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai: {
+        {
+          key: "usMiNotServingIneligibleOffensesForEarlyDischargeFromParoleDualSupervision",
+          text: "Not serving for an offense excluded from early discharge eligibility by policy",
+          tooltip:
+            "The parolee is not serving for an offense […] required to be registered under the Sex Offender Registration Act.",
+        },
+        {
+          key: "usMiNotServingIneligibleOffensesForEarlyDischargeFromProbationSupervision",
+          text: "Not serving for an offense excluded from early discharge eligibility by policy",
+          tooltip:
+            "The offender is not currently serving for an offense that requires a mandatory term of probation as identified in Paragraph H. The offender is not currently serving for MCL 750.81 or MCL 750.84 (Assault with Intent to commit Great Bodily Harm Less than Murder).",
+        },
+        {
+          key: "usMiSupervisionOrSupervisionOutOfStateLevelIsNotSai",
           text: "Not paroled from SAI on current term",
           tooltip:
             "The parolee was not paroled from the Special Alternative Incarceration (SAI) program on the current term (see definition).",
         },
-        supervisionOrSupervisionOutOfStateLevelIsNotHigh: {
+        {
+          key: "supervisionOrSupervisionOutOfStateLevelIsNotHigh",
           text: "Not on intensive supervision",
+          tooltip: null,
         },
-        usMiNoOwiViolationOnParoleDualSupervision: {
-          text: "Not involved in an OWI offense while on parole.",
+        {
+          key: "usMiNoOwiViolationOnParoleDualSupervision",
+          text: "Not involved in an OWI offense while on parole",
           tooltip:
             "The parolee is not known to have been involved in […] a violation of MCL 257.625 (OWI) […] while on parole.",
         },
-        usMiNoPendingDetainer: { text: "No pending detainers" },
-      },
+        {
+          key: "usMiNoPendingDetainer",
+          text: "No pending detainers",
+          tooltip: null,
+        },
+      ],
       firestoreCollection: "US_MI-earlyDischargeReferrals",
       hideDenialRevert: false,
       homepagePosition: 2,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -258,63 +328,81 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_MI",
       subheading:
-        "Early discharge is the termination of the period of probation or parole before the full-term discharge date. Early discharge reviews are mandated, at minimum, once clients have served half of their original term of supervision. Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
+        "Early Discharge is the termination of the period of probation or parole before the full-term discharge date. Early discharge reviews are mandated, at minimum, once clients have served half of their original term of supervision.<br /><br />Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
       systemType: "SUPERVISION",
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "earlyDischarge",
+      zeroGrantsTooltip: null,
     },
     usMiMinimumTelephoneReporting: {
       callToAction:
         "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
       compareBy: null,
-      denialReasons: {
-        FIREARM:
-          "Serving on a felony offense involving possession or use of a firearm",
-        "SPEC COURT":
-          "Enrolled in a special issue court (e.g. Drug Treatment Court, Recovery Court, MH Court, Veterans Court)",
-        RPOSN:
-          "Designated as Reentry Project for Offenders with Special Needs (RPOSN - D-47)",
-        "HIGH PROFILE":
-          "Currently serving for an offense that resulted in the death of a person or a high-profile case with adverse community reaction (requires Max or higher based on risk score)",
-        JUDGE: "County Judge declined client for consideration",
-        Other: "Other, please specify a reason",
-      },
+      denialReasons: [
+        {
+          key: "FIREARM",
+          text: "Serving on a felony offense involving possession or use of a firearm",
+        },
+        {
+          key: "SPEC COURT",
+          text: "Enrolled in a special issue court (e.g. Drug Treatment Court, Recovery Court, MH Court, Veterans Court)",
+        },
+        {
+          key: "RPOSN",
+          text: "Designated as Reentry Project for Offenders with Special Needs (RPOSN - D-47)",
+        },
+        {
+          key: "HIGH PROFILE",
+          text: "Currently serving for an offense that resulted in the death of a person or a high-profile case with adverse community reaction (requires Max or higher based on risk score)",
+        },
+        {
+          key: "JUDGE",
+          text: "County Judge declined client for consideration",
+        },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
       denialText: null,
       displayName: "Minimum Telephone Reporting",
       dynamicEligibilityText:
         "client[|s] may be eligible for downgrade to a minimum telephone reporting",
       eligibilityDateText:
         "Earliest Eligibility Date for Minimum Telephone Reporting",
-      eligibleCriteriaCopy: {
-        onMinimumSupervisionAtLeastSixMonths: {
+      eligibleCriteriaCopy: [
+        {
+          key: "onMinimumSupervisionAtLeastSixMonths",
           text: "Served at least six months on Minimum In-Person or Minimum Low Risk supervision",
           tooltip:
             "Offenders assigned to minimum in person or minimum low-risk supervision shall be evaluated for assignment to minimum TRS after they have completed six months of active supervision.",
         },
-        usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting: {
-          text: "Original COMPAS score was {{titleCase initialAssessmentLevel}}",
+        {
+          key: "usMiSupervisionAndAssessmentLevelEligibleForTelephoneReporting",
+          text: "Has eligible original COMPAS score of {{titleCase initialAssessmentLevel}}",
           tooltip:
             "Original COMPAS score was minimum or medium and current supervision level is minimum in person or current supervision level is minimum low risk.",
         },
-        usMiNotRequiredToRegisterUnderSora: {
+        {
+          key: "usMiNotRequiredToRegisterUnderSora",
           text: "Not required to register per SORA",
           tooltip:
             "Not currently required to register pursuant to to the Sex Offender Registration Act.",
         },
-        usMiNotServingIneligibleOffensesForTelephoneReporting: {
+        {
+          key: "usMiNotServingIneligibleOffensesForTelephoneReporting",
           text: "Not on supervision for an offense excluded from eligibility for telephone reporting",
           tooltip:
             "Not currently serving for an offense listed in WS 01.06.115 Attachment A “Michigan Sex Offender Registry Offenses” or any any similar offense from another state. Not currently serving for an offense included in OP 06.04.130K Attachment A “TRS Exclusion List” including Attempts, Solicitation and Conspiracy. Agents should reference the PACC code on the list when determining eligibility. Not serving for Operating Under the Influence of Liquor (OUIL) or Operating While Impaired (OWI) (any level), unless the offender has successfully completed twelve months of active supervision. A probationer currently serving for OUIL/OWI may only be placed on TRS if authorized by the sentencing court and documented by a court order. Not serving a life or commuted sentence. Not serving a probation term with a delay of sentence.",
         },
-        supervisionNotPastFullTermCompletionDateOrUpcoming90Days: {
+        {
+          key: "supervisionNotPastFullTermCompletionDateOrUpcoming90Days",
           text: "More than 90 days remaining until full-term discharge.",
+          tooltip: null,
         },
-      },
+      ],
       firestoreCollection: "US_MI-minimumTelephoneReporting",
       hideDenialRevert: false,
       homepagePosition: 3,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -325,39 +413,44 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_MI",
       subheading:
-        "Minimum Telephone Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts. Review clients who meet the requirements for minimum telephone reporting and transfer them to telephone reporting in COMS.",
+        "Minimum Telephone Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts.<br /><br />Review clients who meet the requirements for minimum telephone reporting and transfer them to telephone reporting in COMS.",
       systemType: "SUPERVISION",
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "minimumTelephoneReporting",
+      zeroGrantsTooltip: null,
     },
     usMiPastFTRD: {
       callToAction:
         "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
       compareBy: null,
-      denialReasons: {
-        DATE: "Expiration date is inaccurate",
-        CUSTODY: "Client is currently in custody",
-        Other: "Other: please specify a reason",
-      },
+      denialReasons: [
+        { key: "DATE", text: "Expiration date is inaccurate" },
+        { key: "CUSTODY", text: "Client is currently in custody" },
+        { key: "Other", text: "Other: please specify a reason" },
+      ],
       denialText: null,
       displayName: "Overdue for Discharge",
       dynamicEligibilityText:
         "client[|s] [is|are] nearing or past their full-term release date",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        supervisionPastFullTermCompletionDate: {
+      eligibleCriteriaCopy: [
+        {
+          key: "supervisionPastFullTermCompletionDate",
           text: "{{daysPast eligibleDate}} days past FTRD ({{date eligibleDate}})",
+          tooltip: null,
         },
-      },
+      ],
       firestoreCollection: "US_MI-pastFTRDReferrals",
       hideDenialRevert: false,
       homepagePosition: 4,
-      ineligibleCriteriaCopy: {
-        supervisionPastFullTermCompletionDate: {
+      ineligibleCriteriaCopy: [
+        {
+          key: "supervisionPastFullTermCompletionDate",
           text: "{{daysUntil eligibleDate}} days until FTRD ({{date eligibleDate}})",
+          tooltip: null,
         },
-      },
+      ],
       initialHeader: null,
       isAlert: true,
       methodologyUrl:
@@ -366,7 +459,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],
       snooze: {
-        autoSnoozeParams: { type: "snoozeDays", params: { days: 30 } },
+        autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
       },
       stateCode: "US_MI",
       subheading:
@@ -375,46 +468,64 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: "Eligible for discharge",
       urlSection: "pastFTRD",
+      zeroGrantsTooltip: null,
     },
     usMiReclassificationRequest: {
       callToAction:
         "Return residents eligible for reclassification to general population",
       compareBy: null,
-      denialReasons: {
-        ALJ: "Administrative Law Judge found reasonable cause for delay at a hearing conducted on a Class I misconduct violation or on proposed placement in administrative segregation",
-        "HIGHER SECURITY":
-          "Classified to ad seg or higher security level but awaiting transfer to a facility with such housing [LOS should not exceed 30 days]",
-        TRANSFER:
-          "Awaiting transfer to a facility that can meet protection or physical/mental health needs",
-        PREA: "Part of a PREA investigation",
-        DETENTION:
-          "Awaiting transfer to a facility with detention cells to serve a sanction",
-        MEDICAL: "Medically quarantined, no single cells available",
-        PAROLEE: "Parolee at DRC awaiting parole revocation hearings",
-        Other: "Other, please specify a reason",
-      },
+      denialReasons: [
+        {
+          key: "ALJ",
+          text: "Administrative Law Judge found reasonable cause for delay at a hearing conducted on a Class I misconduct violation or on proposed placement in administrative segregation",
+        },
+        {
+          key: "HIGHER SECURITY",
+          text: "Classified to ad seg or higher security level but awaiting transfer to a facility with such housing [LOS should not exceed 30 days]",
+        },
+        {
+          key: "TRANSFER",
+          text: "Awaiting transfer to a facility that can meet protection or physical/mental health needs",
+        },
+        { key: "PREA", text: "Part of a PREA investigation" },
+        {
+          key: "DETENTION",
+          text: "Awaiting transfer to a facility with detention cells to serve a sanction",
+        },
+        {
+          key: "MEDICAL",
+          text: "Medically quarantined, no single cells available",
+        },
+        {
+          key: "PAROLEE",
+          text: "Parolee at DRC awaiting parole revocation hearings",
+        },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
       denialText: null,
       displayName: "Reclassification to General Population",
       dynamicEligibilityText:
         "resident[|s] in temporary segregation or detention [is|are] eligible for reclassification to general population",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        usMiEligibleForReclassificationFromSolitaryToGeneral: {
+      eligibleCriteriaCopy: [
+        {
+          key: "usMiEligibleForReclassificationFromSolitaryToGeneral",
           text: '{{#if (eq record.metadata.solitaryConfinementType "DISCIPLINARY_SOLITARY_CONFINEMENT")}}Length of stay in detention {{record.metadata.daysInSolitary}} days, {{daysPast sanctionExpirationDate}} days beyond original detention sanction{{else}}Length of stay in temporary segregation {{record.metadata.daysInSolitary}} days, exceeding 30-day policy requirement{{/if}}',
           tooltip:
             '{{#if (eq record.metadata.solitaryConfinementType "DISCIPLINARY_SOLITARY_CONFINEMENT")}}A prisoner shall not remain on detention status for longer than the period of time ordered by the ALJ{{else}}Wardens shall ensure that prisoners are not confined in temporary segregation for more than seven business days except under the circumstances listed in 1-7 below{{/if}}',
         },
-      },
+      ],
       firestoreCollection: "US_MI-reclassificationRequest",
       hideDenialRevert: false,
       homepagePosition: 6,
-      ineligibleCriteriaCopy: {
-        usMiEligibleForReclassificationFromSolitaryToGeneral: {
+      ineligibleCriteriaCopy: [
+        {
+          key: "usMiEligibleForReclassificationFromSolitaryToGeneral",
           text: "Length of stay in temporary segregation {{record.metadata.daysInSolitary}} days, exceeding 7-day policy requirement",
           tooltip:
             "Wardens shall ensure that prisoners are not confined in temporary segregation for more than seven business days except under the circumstances listed in 1-7 below",
         },
-      },
+      ],
       initialHeader:
         "Return residents eligible for reclassification to general population.",
       isAlert: false,
@@ -431,51 +542,63 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "reclassificationRequest",
+      zeroGrantsTooltip: null,
     },
     usMiSecurityClassificationCommitteeReview: {
       callToAction:
         "Complete SCC review and fill out 283 Form for eligible residents",
       compareBy: null,
-      denialReasons: {
-        "PRIOR RH":
-          "Prior restrictive housing history requires management at more restrictive level",
-        "PLACING BEHAVIOR":
-          "Severe placing behavior necessitates longer stay in segregation",
-        RESPECT: "Fails to be cordial and respectful to staff",
-        ATTITUDE:
-          "Behavior and attitude not consistent with general population expectations",
-        MISCONDUCTS: "Misconduct(s) filed during segregation",
-        "GP NOT APPROPRIATE":
-          "Unable to honor trust implicit in less restrictive environment ",
-        Other: "Other, please specify a reason",
-      },
+      denialReasons: [
+        {
+          key: "PRIOR RH",
+          text: "Prior restrictive housing history requires management at more restrictive level",
+        },
+        {
+          key: "PLACING BEHAVIOR",
+          text: "Severe placing behavior necessitates longer stay in segregation",
+        },
+        { key: "RESPECT", text: "Fails to be cordial and respectful to staff" },
+        {
+          key: "ATTITUDE",
+          text: "Behavior and attitude not consistent with general population expectations",
+        },
+        { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
+        {
+          key: "GP NOT APPROPRIATE",
+          text: "Unable to honor trust implicit in less restrictive environment ",
+        },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
       denialText: null,
       displayName: "Security Classification Committee Review",
       dynamicEligibilityText:
         "resident[|s] [is|are] eligible for SCC review to potentially return to general population",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        usMiPastSecurityClassificationCommitteeReviewDate: {
+      eligibleCriteriaCopy: [
+        {
+          key: "usMiPastSecurityClassificationCommitteeReviewDate",
           text: "{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestSccReviewDate}} last SCC review recorded on {{date latestSccReviewDate}};{{/if}} SCC review due on or before {{date nextSccDate}}",
           tooltip:
             "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
         },
-        housingUnitTypeIsSolitaryConfinement: {
+        {
+          key: "housingUnitTypeIsSolitaryConfinement",
           text: "Currently in {{usMiSegregationDisplayName record.formInformation.segregationType}}",
           tooltip:
             '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
         },
-      },
+      ],
       firestoreCollection: "US_MI-securityClassificationCommitteeReview",
       hideDenialRevert: false,
       homepagePosition: 7,
-      ineligibleCriteriaCopy: {
-        usMiPastSecurityClassificationCommitteeReviewDate: {
+      ineligibleCriteriaCopy: [
+        {
+          key: "usMiPastSecurityClassificationCommitteeReviewDate",
           text: "Next SCC review due next week, on or before {{date nextSccDate}}",
           tooltip:
             "A housing unit team review shall be conducted within seven calendar days of the prisoner being classified to administrative segregation. SCC shall review the prisoner at least every 30 calendar days thereafter until the prisoner is reclassified to general population status.",
         },
-      },
+      ],
       initialHeader:
         "Complete SCC review and fill out 283 Form for eligible residents.",
       isAlert: false,
@@ -493,52 +616,59 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
       systemType: "INCARCERATION",
-      tabGroups: {
-        "ELIGIBILITY STATUS": [
-          "Overdue",
-          "Due now",
-          "Upcoming",
-          "Marked Ineligible",
-        ],
-      },
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: ["Overdue", "Due now", "Upcoming", "Marked Ineligible"],
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "securityClassificationCommitteeReview",
+      zeroGrantsTooltip: null,
     },
     usMiSupervisionLevelDowngrade: {
       callToAction:
         "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
       compareBy: null,
-      denialReasons: {
-        OVERRIDE:
-          "Agent supervision level override due to noncompliance with supervision",
-        "EXCLUDED CHARGE":
-          "Client is required to be supervised at a higher level of supervision by policy",
-        Other: "Other: please specify a reason",
-      },
+      denialReasons: [
+        {
+          key: "OVERRIDE",
+          text: "Agent supervision level override due to noncompliance with supervision",
+        },
+        {
+          key: "EXCLUDED CHARGE",
+          text: "Client is required to be supervised at a higher level of supervision by policy",
+        },
+        { key: "Other", text: "Other: please specify a reason" },
+      ],
       denialText: null,
       displayName: "Supervision Level Mismatch",
       dynamicEligibilityText:
         "client[|s] within their first 6 months of supervision [is|are] being supervised at a level that does not match their latest risk score",
       eligibilityDateText: "Initial Classification Due Date",
-      eligibleCriteriaCopy: {
-        supervisionLevelHigherThanAssessmentLevel: {
+      eligibleCriteriaCopy: [
+        {
+          key: "supervisionLevelHigherThanAssessmentLevel",
           text: "Currently supervised at {{supervisionLevel}}; Latest COMPAS score is {{assessmentLevel}}",
           tooltip:
             "The supervising Agent shall ensure that a Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) has been completed for each offender on their active caseload as outlined in OP 06.01.145 “Administration and Use of COMPAS and TAP.”  Unless mandated by statute or other criteria as directed in this operating procedure, the COMPAS shall be used to determine the initial supervision level of each offender.  Any offender placed on active supervision without a completed COMPAS shall be supervised at a Medium level of supervision until a COMPAS can be completed (unless a higher level of supervision is mandated as outlined in this operating procedure).",
         },
-        usMiNotPastInitialClassificationReviewDate: {
-          text: "Not past initial classification review date",
+        {
+          key: "usMiNotPastInitialClassificationReviewDate",
+          text: "Initial classification review date is upcoming",
           tooltip:
             "Classification reviews shall be completed after six months of active supervision.  Unless an offender’s supervision level is mandated by policy or statute, the supervising Agent shall reduce an offender’s supervision level if the offender has satisfactorily completed six continuous months at the current assigned supervision level.",
         },
-        usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel: {
+        {
+          key: "usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel",
           text: "Not serving for an offense ineligible for a lower supervision level",
+          tooltip: null,
         },
-      },
+      ],
       firestoreCollection: "US_MI-supervisionLevelDowngrade",
       hideDenialRevert: false,
       homepagePosition: 5,
-      ineligibleCriteriaCopy: {},
+      ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
       methodologyUrl:
@@ -553,60 +683,74 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_MI",
       subheading:
-        "This alert helps staff identify clients who are eligible for a downgrade in their supervision level during their first six months on supervision. The tool will surface clients who have not yet received a COMPAS but are being supervised at a level other than medium or whose supervision level is not aligned with their COMPAS score. Review clients within their first six months of supervision and whose supervision level does not match their risk level and downgrade their supervision level in COMS.",
+        "This alert helps staff identify clients who are eligible for a downgrade in their supervision level during their first six months on supervision. The tool will surface clients who have not yet received a COMPAS but are being supervised at a level other than medium or whose supervision level is not aligned with their COMPAS score.<br /><br />Review clients within their first six months of supervision and whose supervision level does not match their risk level and downgrade their supervision level in COMS.",
       systemType: "SUPERVISION",
       tabGroups: null,
       tooltipEligibilityText: null,
       urlSection: "supervisionLevelMismatch",
+      zeroGrantsTooltip: null,
     },
     usMiWardenInPersonSecurityClassificationCommitteeReview: {
       callToAction:
         "Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
       compareBy: null,
-      denialReasons: {
-        "PRIOR RH":
-          "Prior restrictive housing history requires management at more restrictive level",
-        "PLACING BEHAVIOR":
-          "Severe placing behavior necessitates longer stay in segregation",
-        RESPECT: "Fails to be cordial and respectful to staff",
-        ATTITUDE:
-          "Behavior and attitude not consistent with general population expectations",
-        MISCONDUCTS: "Misconduct(s) filed during segregation",
-        "GP NOT APPROPRIATE":
-          "Unable to honor trust implicit in less restrictive environment ",
-        Other: "Other, please specify a reason",
-      },
+      denialReasons: [
+        {
+          key: "PRIOR RH",
+          text: "Prior restrictive housing history requires management at more restrictive level",
+        },
+        {
+          key: "PLACING BEHAVIOR",
+          text: "Severe placing behavior necessitates longer stay in segregation",
+        },
+        { key: "RESPECT", text: "Fails to be cordial and respectful to staff" },
+        {
+          key: "ATTITUDE",
+          text: "Behavior and attitude not consistent with general population expectations",
+        },
+        { key: "MISCONDUCTS", text: "Misconduct(s) filed during segregation" },
+        {
+          key: "GP NOT APPROPRIATE",
+          text: "Unable to honor trust implicit in less restrictive environment ",
+        },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
       denialText: null,
       displayName: "Warden In-Person Review",
       dynamicEligibilityText:
         "resident[|s] [is|are] eligible for in-person review by the Warden at SCC to potentially return to general population",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: {
-        usMiPastWardenInPersonReviewForSccDate: {
+      eligibleCriteriaCopy: [
+        {
+          key: "usMiPastWardenInPersonReviewForSccDate",
           text: "{{record.metadata.daysInCollapsedSolitarySession}} consecutive days in restrictive housing;{{#if latestWardenInPersonSccReviewDate}} last Warden in-person review recorded on {{date latestWardenInPersonSccReviewDate}};{{/if}} Warden in-person review due on or before {{date nextSccDate}}",
           tooltip:
             "Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.",
         },
-        usMiInSolitaryConfinementAtLeastSixMonths: {
+        {
+          key: "usMiInSolitaryConfinementAtLeastSixMonths",
           text: "Currently in {{usMiSegregationDisplayName record.formInformation.segregationType}}",
           tooltip:
             '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
         },
-      },
+      ],
       firestoreCollection:
         "US_MI-wardenInPersonSecurityClassificationCommitteeReview",
       hideDenialRevert: false,
       homepagePosition: 7,
-      ineligibleCriteriaCopy: {
-        usMiPastWardenInPersonReviewForSccDate: {
+      ineligibleCriteriaCopy: [
+        {
+          key: "usMiPastWardenInPersonReviewForSccDate",
           text: "Next Warden in-person review due in the next two months, on or before {{date nextSccDate}}",
           tooltip:
             "Wardens shall personally interview each prisoner in their respective facilities who has been confined in administrative segregation for six continuous months. If the prisoner continues in administrative segregation beyond the first six month period, the Warden shall interview the prisoner every six months thereafter until the prisoner is released from administrative segregation.",
         },
-        usMiInSolitaryConfinementAtLeastSixMonths: {
+        {
+          key: "usMiInSolitaryConfinementAtLeastSixMonths",
           text: "In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}",
+          tooltip: null,
         },
-      },
+      ],
       initialHeader: null,
       isAlert: false,
       methodologyUrl:
@@ -623,16 +767,15 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This alert helps staff identify residents in restrictive housing who have spent 6+ consecutive months in segregation and are therefore due for an in-person SCC review with the Warden. Complete SCC review and fill out pre-filled 283 Form for eligible residents, inclusive of Warden signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
       systemType: "INCARCERATION",
-      tabGroups: {
-        "ELIGIBILITY STATUS": [
-          "Overdue",
-          "Due now",
-          "Upcoming",
-          "Marked Ineligible",
-        ],
-      },
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: ["Overdue", "Due now", "Upcoming", "Marked Ineligible"],
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "wardenInPersonSecurityClassificationCommitteeReview",
+      zeroGrantsTooltip: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

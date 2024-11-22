@@ -32,16 +32,16 @@ const allConfigs = {
   ...US_AZ.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_AR.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_CA.mockApiOpportunityConfigurationResponse.enabledConfigs,
+  ...US_IA.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_ME.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_MI.mockApiOpportunityConfigurationResponse.enabledConfigs,
+  ...US_NE.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_OR.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_PA.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_TN.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_ID.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_MO.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_ND.mockApiOpportunityConfigurationResponse.enabledConfigs,
-  ...US_NE.mockApiOpportunityConfigurationResponse.enabledConfigs,
-  ...US_IA.mockApiOpportunityConfigurationResponse.enabledConfigs,
 } as const;
 export default allConfigs;
 export type FixtureOpportunityType = keyof typeof allConfigs;
