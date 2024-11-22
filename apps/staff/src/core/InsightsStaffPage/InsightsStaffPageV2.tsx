@@ -30,6 +30,7 @@ import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsChartCard from "../InsightsChartCard";
+import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
 import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
@@ -76,6 +77,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
     isVitalsEnabled,
+    officerHighlights,
   } = presenter;
 
   // TODO(#5780): move infoItems to presenter
@@ -131,6 +133,13 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
             {outlierOfficerData?.displayName} Profile
           </InsightsBreadcrumbs>
         )
+      }
+      highlightedOfficers={
+        <InsightsHighlightedOfficersBanner
+          highlightedOfficers={officerHighlights}
+          supervisionOfficerLabel={labels.supervisionOfficerLabel}
+          staffPage
+        />
       }
     >
       {outlierOfficerData?.outlierMetrics?.length ? (

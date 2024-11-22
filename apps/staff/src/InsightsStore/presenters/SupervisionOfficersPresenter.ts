@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { compact, uniq } from "lodash/fp";
+import { uniq } from "lodash/fp";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import {
@@ -36,7 +36,7 @@ import {
   HighlightedOfficersDetail,
   OutlierOfficerData,
 } from "./types";
-import { getOutlierOfficerData } from "./utils";
+import { getHighlightedOfficersByMetric, getOutlierOfficerData } from "./utils";
 
 export class SupervisionOfficersPresenter implements Hydratable {
   constructor(
@@ -224,26 +224,9 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   get highlightedOfficersByMetric(): HighlightedOfficersDetail[] {
-    if (!this.supervisionStore.metricConfigsById) return [];
-    const metricsToHighlight = Array.from(
-      this.supervisionStore.metricConfigsById.values(),
-    ).filter((m) => !!m.topXPct);
-    return compact(
-      metricsToHighlight.map((m) => {
-        const highlightedOfficers =
-          this.allOfficers?.filter((o) =>
-            o.topXPctMetrics.map((t) => t.metricId).includes(m.name),
-          ) || [];
-        if (highlightedOfficers.length > 0) {
-          return {
-            metricName: m.eventName,
-            officerNames: highlightedOfficers.map((o) => o.displayName),
-            numOfficers: highlightedOfficers.length,
-            topXPct: m.topXPct,
-          };
-        }
-        return;
-      }),
+    return getHighlightedOfficersByMetric(
+      this.supervisionStore.metricConfigsById,
+      this.allOfficers,
     );
   }
 

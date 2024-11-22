@@ -24,6 +24,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../InsightsStore/presenters/SupervisionOfficersPresenter";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsEmptyPage from "../InsightsEmptyPage";
+import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
 import { InsightsSidebarLegend } from "../InsightsLegend";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
@@ -33,10 +34,8 @@ import {
 } from "../InsightsPageLayout/InsightsPageLayout";
 import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
-import { Banner } from "../sharedComponents";
 import { insightsUrl } from "../views";
 import InsightsStaffCard from "./InsightsStaffCard";
-import { highlightedOfficerText } from "./utils";
 
 export const SupervisorPage = observer(function SupervisorPage({
   presenter,
@@ -142,13 +141,10 @@ outlier ${labels.supervisionOfficerLabel}s in your ${labels.supervisionUnitLabel
           </Sidebar>
         )}
         <Body>
-          {highlightedOfficersByMetric.map((detail) => {
-            return (
-              <Banner key={detail.metricName}>
-                {highlightedOfficerText(detail, labels.supervisionOfficerLabel)}
-              </Banner>
-            );
-          })}
+          <InsightsHighlightedOfficersBanner
+            highlightedOfficers={highlightedOfficersByMetric}
+            supervisionOfficerLabel={labels.supervisionOfficerLabel}
+          />
           {outlierOfficersData.map((officer, officerIndex) => {
             return (
               <InsightsStaffCard

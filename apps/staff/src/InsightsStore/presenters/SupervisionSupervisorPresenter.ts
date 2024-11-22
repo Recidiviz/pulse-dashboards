@@ -41,12 +41,13 @@ import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import {
   ByMetricAndCategory2DMap,
   ConfigLabels,
+  HighlightedOfficersDetail,
   MetricAndOutliersInfo,
   OutlierOfficerData,
   RawOpportunityInfo,
   RawOpportunityInfoByOpportunityType,
 } from "./types";
-import { getOutlierOfficerData } from "./utils";
+import { getHighlightedOfficersByMetric, getOutlierOfficerData } from "./utils";
 
 /**
  * The `SupervisionSupervisorPresenter` class is responsible for managing and presenting
@@ -291,6 +292,19 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       return undefined;
     }
     return this.outlierOfficersByMetricAndCaseloadCategoryOrError;
+  }
+
+  /**
+   * Returns officers of this supervisor in the top X percent of officers in the state,
+   * grouped by metric.
+   * @returns An array of objects containing the metric, top X percent criteria, and info about
+   * officers meeting the top X percent criteria.
+   */
+  get highlightedOfficersByMetric(): HighlightedOfficersDetail[] {
+    return getHighlightedOfficersByMetric(
+      this.metricConfigsById,
+      this.officersWithOutliersData,
+    );
   }
 
   // ==============================

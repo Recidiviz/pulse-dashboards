@@ -95,6 +95,7 @@ export abstract class SupervisionOfficerPresenterBase<
         populateSupervisionOfficer: true,
         hydrate: true,
         hydrationState: true,
+        metricConfigsById: true,
       },
       { autoBind: true },
     );
@@ -142,7 +143,7 @@ export abstract class SupervisionOfficerPresenterBase<
       throw new Error("Failed to populate metric configs");
   }
 
-  private get officerRecord() {
+  get officerRecord() {
     return this.supervisionStore.officerRecord ?? this.fetchedOfficerRecord;
   }
 
@@ -219,6 +220,10 @@ export abstract class SupervisionOfficerPresenterBase<
 
   get areCaseloadCategoryBreakdownsEnabled() {
     return this.supervisionStore.areCaseloadCategoryBreakdownsEnabled;
+  }
+
+  get metricConfigsById() {
+    return this.supervisionStore.metricConfigsById;
   }
 
   /**

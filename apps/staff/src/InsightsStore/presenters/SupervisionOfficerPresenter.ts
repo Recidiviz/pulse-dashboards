@@ -31,7 +31,11 @@ import { InsightsAPI } from "../api/interface";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
-import { isExcludedSupervisionOfficer } from "./utils";
+import { HighlightedOfficersDetail } from "./types";
+import {
+  getHighlightedOfficersByMetric,
+  isExcludedSupervisionOfficer,
+} from "./utils";
 
 export class SupervisionOfficerPresenter<
   T extends SupervisionOfficer | ExcludedSupervisionOfficer,
@@ -127,6 +131,17 @@ export class SupervisionOfficerPresenter<
    */
   get isVitalsEnabled() {
     return this.supervisionStore.isVitalsEnabled;
+  }
+
+  /**
+   * Returns metrics where this officer meets the top X percent criteria.
+   * @returns An array of objects containing the metric, top X percent criteria, and info about
+   * officers meeting the top X percent criteria.
+   */
+  get officerHighlights(): HighlightedOfficersDetail[] {
+    return getHighlightedOfficersByMetric(this.metricConfigsById, [
+      this.officerRecord as SupervisionOfficer,
+    ]);
   }
 
   protected expectMetricsPopulated() {

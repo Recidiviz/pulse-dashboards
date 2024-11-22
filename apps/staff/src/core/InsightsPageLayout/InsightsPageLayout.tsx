@@ -217,6 +217,7 @@ type InsightsPageLayoutProps = {
   contentsAboveTitle?: ReactNode;
   textToHighlight?: string;
   hasSupervisionInfoModal?: boolean;
+  highlightedOfficers?: ReactNode;
   children?: ReactNode;
 };
 
@@ -228,6 +229,7 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   contentsAboveTitle,
   hasSupervisionInfoModal,
   textToHighlight = "outlier",
+  highlightedOfficers,
   children,
 }) => {
   const { isMobile, isTablet, isLaptop } = useIsMobile(true);
@@ -295,6 +297,7 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
               )}
             </InfoSection>
           )}
+          {supervisorHomepage && highlightedOfficers}
           {supervisorHomepage && pageSubtitle && (
             <Subtitle>{pageSubtitle}</Subtitle>
           )}

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { compact } from "lodash/fp";
 import { Optional } from "utility-types";
 
 import {
@@ -27,7 +28,7 @@ import {
 } from "~datatypes";
 
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { OutlierOfficerData } from "./types";
+import { HighlightedOfficersDetail, OutlierOfficerData } from "./types";
 
 export const THIRTY_SECONDS = 1000 * 30;
 export const TEN_SECONDS = 1000 * 10;
@@ -141,3 +142,33 @@ export const labelForVitalsMetricId = (metricId: string): string => {
     ? "F2F Contact"
     : "Timely Risk Assessment";
 };
+
+export function getHighlightedOfficersByMetric(
+  metricConfigs: Map<string, MetricConfig> | undefined,
+  officers: SupervisionOfficer[] | undefined,
+): HighlightedOfficersDetail[] {
+  if (!metricConfigs) return [];
+  const metricsToHighlight = Array.from(metricConfigs.values()).filter(
+    (m) => !!m.topXPct,
+  );
+  return compact(
+    metricsToHighlight.map((m) => {
+      const highlightedOfficers =
+        officers?.filter((o) =>
+          o.topXPctMetrics?.map((t) => t.metricId).includes(m.name),
+        ) || [];
+      if (highlightedOfficers.length > 0) {
+        return {
+          metricName: m.eventName,
+          officers: highlightedOfficers.map((o) => ({
+            pseudonymizedId: o.pseudonymizedId,
+            displayName: o.displayName,
+          })),
+          numOfficers: highlightedOfficers.length,
+          topXPct: m.topXPct,
+        };
+      }
+      return;
+    }),
+  );
+}

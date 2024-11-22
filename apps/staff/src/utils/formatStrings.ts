@@ -430,6 +430,32 @@ function getWelcomeText(
   return `${welcomeText}, ${userName}`;
 }
 
+function getSerialListSeparator(index: number, arrayLength: number): string {
+  if (arrayLength < 2) {
+    return "";
+  }
+
+  // if exactly two items: no comma, just "and"
+  if (arrayLength === 2) {
+    return index === 0 ? " and " : "";
+  }
+
+  // if more than two items, separate with commas until the second to last item, then
+  // separate with ", and"
+  return index === arrayLength - 2
+    ? ", and "
+    : index < arrayLength - 2
+      ? ", "
+      : "";
+}
+
+function generateSerialListString(arr: string[]): string {
+  return arr.reduce((acc, curr, index) => {
+    const separator = getSerialListSeparator(index, arr.length);
+    return `${acc}${curr}${separator}`;
+  }, "");
+}
+
 export {
   convertCurlyQuotesToStraight,
   decrypt,
@@ -453,9 +479,11 @@ export {
   genderValueToHumanReadable,
   genderValueToLabel,
   generateEmailAddress,
+  generateSerialListString,
   getDimensionLabel,
   getFirstName,
   getPeriodLabelFromMetricPeriodMonthsFilter,
+  getSerialListSeparator,
   getStatePopulations,
   getStatePopulationsLabels,
   getTicks,

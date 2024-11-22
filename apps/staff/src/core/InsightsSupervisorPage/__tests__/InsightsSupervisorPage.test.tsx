@@ -23,6 +23,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import {
   InsightsConfigFixture,
+  supervisionOfficerFixture,
   supervisionOfficerSupervisorsFixture,
 } from "~datatypes";
 
@@ -31,16 +32,19 @@ import {
   useRootStore,
 } from "../../../components/StoreProvider";
 import { SupervisionOfficersPresenter } from "../../../InsightsStore/presenters/SupervisionOfficersPresenter";
-import { HighlightedOfficersDetail } from "../../../InsightsStore/presenters/types";
+import {
+  HighlightedOfficersDetail,
+  SupervisionOfficerIdentifiers,
+} from "../../../InsightsStore/presenters/types";
 import { InsightsSupervisionStore } from "../../../InsightsStore/stores/InsightsSupervisionStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
 import { InsightsActionStrategyModalProvider } from "../../InsightsActionStrategyModal";
+import InsightsHighlightedOfficersBanner from "../../InsightsHighlightedOfficersBanner";
 import InsightsSupervisorPage, {
   SupervisorPage,
 } from "../InsightsSupervisorPage";
-import { highlightedOfficerText } from "../utils";
 
 vi.mock("../../../components/StoreProvider");
 vi.mock(
@@ -80,6 +84,30 @@ const renderWithContext = (component: ReactNode) => {
 
 const supervisorUser = supervisionOfficerSupervisorsFixture[0];
 const supervisorPseudoId = supervisorUser.pseudonymizedId;
+
+const officers = supervisionOfficerFixture.slice(1, 4).map((officer) => ({
+  pseudonymizedId: officer.pseudonymizedId,
+  displayName: officer.displayName,
+  fullName: officer.fullName,
+})) as SupervisionOfficerIdentifiers[];
+
+const officerDetailOneOfficer = [
+  {
+    metricName: "program/treatment start",
+    officers: officers.slice(0, 1),
+    numOfficers: 1,
+    topXPct: 10,
+  },
+] as HighlightedOfficersDetail[];
+
+const officerDetailMoreThanTwoOfficers = [
+  {
+    metricName: "program/treatment start",
+    officers: officers,
+    numOfficers: 3,
+    topXPct: 10,
+  },
+] as HighlightedOfficersDetail[];
 
 describe("Hydrated Supervisor Page", () => {
   let presenter: SupervisionOfficersPresenter;
@@ -300,27 +328,33 @@ describe("Insights Supervisor Page", () => {
     expect(results).toHaveNoViolations();
   });
 
-  test("highlighted officer text singular", () => {
-    const detail = {
-      metricName: "program/treatment start",
-      officerNames: ["Jack Hernandez"],
-      numOfficers: 1,
-      topXPct: 10,
-    } as HighlightedOfficersDetail;
-    const expected =
-      "Jack Hernandez is in the top 10% of officers in the state for highest program/treatment start rate this year.";
-    expect(highlightedOfficerText(detail, "officer")).toBe(expected);
+  test("renders singular verb on highlighted officers banner", () => {
+    const { container } = render(
+      <BrowserRouter>
+        <InsightsHighlightedOfficersBanner
+          highlightedOfficers={officerDetailOneOfficer}
+          supervisionOfficerLabel="officer"
+        />
+      </BrowserRouter>,
+    );
+
+    expect(container.textContent).toContain(
+      "Jack Hernandez is in the top 10% of officers in the state for highest program/treatment start rate this year.",
+    );
   });
 
-  test("highlighted officer text plural", () => {
-    const detail = {
-      metricName: "program/treatment start",
-      officerNames: ["Jack Hernandez", "Jason Nelson", "William James"],
-      numOfficers: 2,
-      topXPct: 10,
-    } as HighlightedOfficersDetail;
-    const expected =
-      "Jack Hernandez, Jason Nelson, and William James are in the top 10% of officers in the state for highest program/treatment start rate this year.";
-    expect(highlightedOfficerText(detail, "officer")).toBe(expected);
+  test("renders plural verb on highlighted officers banner", () => {
+    const { container } = render(
+      <BrowserRouter>
+        <InsightsHighlightedOfficersBanner
+          highlightedOfficers={officerDetailMoreThanTwoOfficers}
+          supervisionOfficerLabel="officer"
+        />
+      </BrowserRouter>,
+    );
+
+    expect(container.textContent).toContain(
+      "Jack Hernandez, Jason Nelson, and Carl Mark Campbell are in the top 10% of officers in the state for highest program/treatment start rate this year.",
+    );
   });
 });

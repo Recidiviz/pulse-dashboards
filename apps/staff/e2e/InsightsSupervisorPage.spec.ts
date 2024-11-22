@@ -61,4 +61,76 @@ test.describe("Supervisors Page", () => {
       );
     });
   });
+
+  test.describe("Displays positive officer highlights", () => {
+    test("Legacy UI user", async ({ page }) => {
+      await page.route(
+        "http://localhost:3001/api/offlineUser?*",
+        async (route) => {
+          const response = await route.fetch();
+          const json = await response.json();
+          json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
+            "us_mi";
+          json["https://dashboard.recidiviz.org/app_metadata"].routes = {
+            insights: true,
+          };
+          json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
+            {
+              supervisorHomepage: false,
+            };
+          await route.fulfill({ response, json });
+        },
+      );
+
+      await page.goto("/");
+      const main = page.getByRole("main");
+      await main.waitFor({ state: "attached", timeout: 10000 });
+
+      await expect(main).toContainText(
+        "Jack Hernandez is in the top 10% of officers in the state for highest program/treatment starts rate this year.",
+      );
+    });
+
+    test("New supervisor homepage user", async ({ page }) => {
+      await page.route(
+        "http://localhost:3001/api/offlineUser?*",
+        async (route) => {
+          const response = await route.fetch();
+          const json = await response.json();
+          json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
+            "us_mi";
+          json["https://dashboard.recidiviz.org/app_metadata"].routes = {
+            insights: true,
+          };
+          json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
+            {
+              supervisorHomepage: {},
+            };
+          await route.fulfill({ response, json });
+        },
+      );
+
+      // first check that banner appears correctly on supervisor page
+      await page.goto("/");
+      const main = page.getByRole("main");
+      await main.waitFor({ state: "attached", timeout: 10000 });
+
+      const link = main.locator("a", { hasText: "Jack Hernandez" });
+
+      await expect(link).toBeVisible();
+
+      const href = await link.getAttribute("href");
+      expect(href).toBe("/insights/supervision/staff/hashed-so2");
+
+      await expect(main).toContainText(
+        "Jack Hernandez is in the top 10% of officers in the state for highest program/treatment starts rate this year.",
+      );
+
+      // then check that link takes user to staff page with banner
+      await link.click();
+      await expect(page.getByRole("main")).toContainText(
+        "Jack is in the top 10% of officers in the state for highest program/treatment starts rate this year.",
+      );
+    });
+  });
 });

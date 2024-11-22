@@ -28,6 +28,7 @@ import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/S
 import { pluralize, toTitleCase } from "../../utils";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import { useInsightsActionStrategyModal } from "../InsightsActionStrategyModal";
+import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
 import {
   Body,
@@ -92,6 +93,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     disableSurfaceActionStrategies,
     supervisionLocationInfo,
     supervisorPseudoId,
+    highlightedOfficersByMetric,
   } = presenter;
 
   const tooltipContents = (
@@ -190,6 +192,13 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
             {supervisorInfo?.displayName}
           </InsightsBreadcrumbs>
         )
+      }
+      highlightedOfficers={
+        <InsightsHighlightedOfficersBanner
+          highlightedOfficers={highlightedOfficersByMetric}
+          supervisionOfficerLabel={labels.supervisionOfficerLabel}
+          generateLinks
+        />
       }
     >
       {actionStrategyCopy && (

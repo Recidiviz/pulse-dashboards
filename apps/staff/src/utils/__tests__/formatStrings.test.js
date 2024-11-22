@@ -440,4 +440,25 @@ describe("formatStrings", () => {
       expect(res).toEqual("3 months");
     });
   });
+
+  describe("generateSerialListString", () => {
+    const names = ["Walter Harris", "Jack Hernandez", "Casey Ramirez"];
+
+    it("generates correct string for a single name", () => {
+      const result = utils.generateSerialListString(names.slice(0, 1));
+      expect(result).toEqual("Walter Harris");
+    });
+
+    it("generates correct string for two names", () => {
+      const result = utils.generateSerialListString(names.slice(0, 2));
+      expect(result).toEqual("Walter Harris and Jack Hernandez");
+    });
+
+    it("generates correct string for more than two names", () => {
+      const result = utils.generateSerialListString(names);
+      expect(result).toEqual(
+        "Walter Harris, Jack Hernandez, and Casey Ramirez",
+      );
+    });
+  });
 });
