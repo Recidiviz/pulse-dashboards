@@ -362,16 +362,19 @@ model Insight {
 }
 
 model RecidivismSeries {
-  id                 String                     @id @default(cuid())
-  recommendationType String
-  dataPoints         RecidvismSeriesDataPoint[]
+  id                        String                     @id @default(cuid())
+  recommendationType        String?
+  // The default range is 0 to -1 (equivalent to 0 to infinity)
+  sentenceLengthBucketStart Int                        @default(0)
+  sentenceLengthBucketEnd   Int                        @default(-1)
+  dataPoints                RecidvismSeriesDataPoint[]
 
   // These should always be linked to an insight and deleted when the insight is deleted
   insight   Insight @relation(fields: [insightId], references: [id], onDelete: Cascade)
   insightId String
 
   // There should only be one series per recommendation type for each insight
-  @@unique([insightId, recommendationType])
+  @@unique([insightId, recommendationType, sentenceLengthBucketStart, sentenceLengthBucketEnd])
 }
 
 model RecidvismSeriesDataPoint {
@@ -390,14 +393,17 @@ model RecidvismSeriesDataPoint {
 }
 
 model Disposition {
-  id                 String @id @default(cuid())
-  recommendationType String
-  percentage         Float
+  id                        String  @id @default(cuid())
+  recommendationType        String?
+  // The default range is 0 to -1 (equivalent to 0 to infinity)
+  sentenceLengthBucketStart Int     @default(0)
+  sentenceLengthBucketEnd   Int     @default(-1)
+  percentage                Float
 
   // These should always be linked to an insight and deleted when the insight is deleted
   insight   Insight @relation(fields: [insightId], references: [id], onDelete: Cascade)
   insightId String
 
   // There should only be one disposition percentage per recommendation type for each insight
-  @@unique([insightId, recommendationType])
+  @@unique([insightId, recommendationType, sentenceLengthBucketStart, sentenceLengthBucketEnd])
 }

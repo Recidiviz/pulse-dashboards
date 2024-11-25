@@ -66,6 +66,8 @@ export async function getInsights(
       rollupRecidivismSeries: {
         select: {
           recommendationType: true,
+          sentenceLengthBucketStart: true,
+          sentenceLengthBucketEnd: true,
           dataPoints: {
             omit: {
               id: true,

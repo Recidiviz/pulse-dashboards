@@ -93,6 +93,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
       rollupRecidivismSeries: [
         {
           recommendationType: "Probation",
+          sentenceLengthBucketStart: 0,
+          sentenceLengthBucketEnd: -1,
           dataPoints: [
             {
               cohortMonths: 0,
@@ -152,6 +154,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
         },
         {
           recommendationType: "Rider",
+          sentenceLengthBucketStart: 0,
+          sentenceLengthBucketEnd: -1,
           dataPoints: [
             {
               cohortMonths: 0,
@@ -211,6 +215,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
         },
         {
           recommendationType: "Term",
+          sentenceLengthBucketStart: 0,
+          sentenceLengthBucketEnd: -1,
           dataPoints: [
             {
               cohortMonths: 0,
@@ -273,14 +279,20 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
       dispositionData: [
         {
           recommendationType: "Probation",
+          sentenceLengthBucketStart: 0,
+          sentenceLengthBucketEnd: -1,
           percentage: 0.2,
         },
         {
           recommendationType: "Rider",
+          sentenceLengthBucketStart: 0,
+          sentenceLengthBucketEnd: -1,
           percentage: 0.5,
         },
         {
           recommendationType: "Term",
+          sentenceLengthBucketStart: 0,
+          sentenceLengthBucketEnd: -1,
           percentage: 0.3,
         },
       ],

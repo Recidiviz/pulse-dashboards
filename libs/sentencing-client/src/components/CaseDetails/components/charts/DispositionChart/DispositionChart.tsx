@@ -94,6 +94,8 @@ export function DispositionChart({
         <Styled.DispositionChartContainer $justify={justifyContent}>
           {orderedDatapoints.map(
             ({ percentage, recommendationType }) =>
+              // TODO(https://github.com/Recidiviz/recidiviz-data/issues/35110): Handle cases were recommendationType is not set but sentence range is
+              recommendationType &&
               recommendationType !== "None" && (
                 <Styled.DispositionChartCircleContainer
                   key={recommendationType}

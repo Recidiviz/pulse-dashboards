@@ -288,7 +288,10 @@ export function Report({
                   ? getRecidivismPlot(recidivismSeries, maxUpperCI)
                   : undefined;
 
-                const chartCaption = chartCaptions[dp.recommendationType];
+                // (https://github.com/Recidiviz/recidiviz-data/issues/35111): Handle cases were recommendationType is not set but sentence range is
+                const chartCaption = dp.recommendationType
+                  ? chartCaptions[dp.recommendationType]
+                  : "";
 
                 return (
                   <Styled.SentencingRecidivismRateSection

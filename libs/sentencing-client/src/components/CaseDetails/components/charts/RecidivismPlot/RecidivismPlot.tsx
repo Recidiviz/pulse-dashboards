@@ -52,6 +52,8 @@ export function RecidivismPlot({
     () =>
       dispositionData?.map(
         ({ recommendationType }) =>
+          // TODO(https://github.com/Recidiviz/recidiviz-data/issues/35110): Handle cases were recommendationType is not set but sentence range is
+          recommendationType &&
           recommendationType !== "None" && (
             <Styled.RecidivismChartLegendItem key={recommendationType}>
               <Styled.RecidivismChartLegendDot

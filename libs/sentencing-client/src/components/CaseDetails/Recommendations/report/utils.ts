@@ -19,8 +19,9 @@ import _ from "lodash";
 
 import { CaseInsight } from "../../../../api";
 
-type RecommendationType =
-  CaseInsight["rollupRecidivismSeries"][0]["recommendationType"];
+type RecommendationType = NonNullable<
+  CaseInsight["rollupRecidivismSeries"][0]["recommendationType"]
+>;
 
 export function getChartCaptions(insight: CaseInsight) {
   // Get all of the final (36 months in our case) data points for each recommendation type
@@ -34,6 +35,11 @@ export function getChartCaptions(insight: CaseInsight) {
       }>,
       series,
     ) => {
+      // TODO(https://github.com/Recidiviz/recidiviz-data/issues/35111): Handle cases were recommendationType is not set but sentence range is
+      if (!series.recommendationType) {
+        return acc;
+      }
+
       const finalDp = _.last(
         series.dataPoints.sort((a, b) => a.cohortMonths - b.cohortMonths),
       );
