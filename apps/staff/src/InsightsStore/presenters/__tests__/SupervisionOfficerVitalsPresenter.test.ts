@@ -86,6 +86,10 @@ test("vitalsMetricDetails when there are no VitalsMetricForOfficer for a metric"
         },
       ],
     },
+    {
+      metricId: "timely_risk_assessment",
+      vitalsMetrics: [],
+    },
   ]);
   expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
     [

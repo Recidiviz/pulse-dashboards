@@ -59,13 +59,16 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
     );
     if (!metrics) return [];
 
-    return metrics.map((metric) => {
-      return {
+    const formattedMetrics: OfficerVitalsMetricDetail[] = [];
+    metrics.forEach((metric) => {
+      if (metric.vitalsMetrics.length === 0) return;
+      formattedMetrics.push({
         label: labelForVitalsMetricId(metric.metricId),
         // The vitalsMetrics array will have one entry for officers
         ...metric.vitalsMetrics[0],
-      };
+      });
     });
+    return formattedMetrics;
   }
 
   // ==============================
