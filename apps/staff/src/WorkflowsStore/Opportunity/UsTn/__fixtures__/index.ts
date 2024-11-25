@@ -504,23 +504,21 @@ export const UsTnAnnualReclassificationReferralRecordFixture01: UsTnAnnualReclas
     },
     ineligibleCriteria: {},
     caseNotes: {
-      foo: [
+      "PRIOR RECORD OFFENSES": [
         {
           eventDate: "2022-04-06",
-          noteBody: "Body1",
-          noteTitle: "Title1",
+          noteTitle: "AGGRAVATED ASSAULT",
         },
         {
           eventDate: "2022-06-06",
-          noteBody: "Body2",
-          noteTitle: "Title2",
+          noteTitle: "CRIMINAL IMPERSONATION",
         },
       ],
-      "ba bar": [
+      "TN, ISC, DIVERSION SENTENCES": [
         {
           eventDate: "2022-09-06",
-          noteBody: "Body3",
-          noteTitle: "Title3",
+          noteBody: "Expires: 2028-02-02",
+          noteTitle: "POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV",
         },
       ],
     },

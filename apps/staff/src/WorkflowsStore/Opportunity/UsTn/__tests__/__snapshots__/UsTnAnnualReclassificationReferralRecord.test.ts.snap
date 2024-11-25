@@ -3,23 +3,21 @@
 exports[`UsTnAnnualReclassificationReviewReferralRecordRaw > matches the snapshot 1`] = `
 {
   "caseNotes": {
-    "ba bar": [
-      {
-        "eventDate": 2022-09-06T00:00:00.000Z,
-        "noteBody": "Body3",
-        "noteTitle": "Title3",
-      },
-    ],
-    "foo": [
+    "PRIOR RECORD OFFENSES": [
       {
         "eventDate": 2022-04-06T00:00:00.000Z,
-        "noteBody": "Body1",
-        "noteTitle": "Title1",
+        "noteTitle": "AGGRAVATED ASSAULT",
       },
       {
         "eventDate": 2022-06-06T00:00:00.000Z,
-        "noteBody": "Body2",
-        "noteTitle": "Title2",
+        "noteTitle": "CRIMINAL IMPERSONATION",
+      },
+    ],
+    "TN, ISC, DIVERSION SENTENCES": [
+      {
+        "eventDate": 2022-09-06T00:00:00.000Z,
+        "noteBody": "Expires: 2028-02-02",
+        "noteTitle": "POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV",
       },
     ],
   },
