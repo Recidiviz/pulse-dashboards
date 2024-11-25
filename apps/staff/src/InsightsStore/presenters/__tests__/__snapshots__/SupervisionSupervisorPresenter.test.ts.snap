@@ -691,6 +691,7 @@ Map {
             "givenNames": "Walter",
             "surname": "Harris",
           },
+          "includeInOutcomes": true,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -3437,6 +3438,7 @@ Map {
             "givenNames": "Jason",
             "surname": "Nelson",
           },
+          "includeInOutcomes": true,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -5968,6 +5970,7 @@ Map {
             "givenNames": "Walter",
             "surname": "Harris",
           },
+          "includeInOutcomes": true,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -8116,6 +8119,7 @@ Map {
             "givenNames": "Walter",
             "surname": "Harris",
           },
+          "includeInOutcomes": true,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -10262,6 +10266,7 @@ Map {
             "givenNames": "Jason",
             "surname": "Nelson",
           },
+          "includeInOutcomes": true,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -12592,6 +12597,7 @@ exports[`outlierOfficersData 1`] = `
       "givenNames": "Walter",
       "surname": "Harris",
     },
+    "includeInOutcomes": true,
     "outlierMetrics": [
       {
         "benchmark": {
@@ -13919,6 +13925,7 @@ exports[`outlierOfficersData 1`] = `
       "givenNames": "Jason",
       "surname": "Nelson",
     },
+    "includeInOutcomes": true,
     "outlierMetrics": [
       {
         "benchmark": {

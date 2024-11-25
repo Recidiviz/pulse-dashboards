@@ -177,6 +177,7 @@ test("supervisorId not found in supervisionOfficerSupervisors", async () => {
   expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
     [
       [Error: failed to populate officers with outliers],
+      [Error: failed to populate excluded officers],
       [Error: failed to populate supervisor],
       [Error: Missing expected data for supervised officers],
     ]

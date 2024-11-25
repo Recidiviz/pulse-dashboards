@@ -570,8 +570,15 @@ export class InsightsSupervisionStore {
         supervisorPseudoId,
       );
 
-    if (officersData.length > 0)
-      this.officersBySupervisorPseudoId.set(supervisorPseudoId, officersData);
+    if (officersData.length > 0) {
+      const includedOfficersData = officersData.filter(
+        (o) => o.includeInOutcomes !== false,
+      );
+      this.officersBySupervisorPseudoId.set(
+        supervisorPseudoId,
+        includedOfficersData,
+      );
+    }
   }
 
   /**
@@ -583,15 +590,17 @@ export class InsightsSupervisionStore {
     if (this.excludedOfficersBySupervisorPseudoId.has(supervisorPseudoId))
       return;
 
-    const excludedOfficersData =
+    const officersData =
       yield this.insightsStore.apiClient.excludedOfficersForSupervisor(
         supervisorPseudoId,
       );
 
-    this.excludedOfficersBySupervisorPseudoId.set(
-      supervisorPseudoId,
-      excludedOfficersData,
-    );
+    if (officersData.length > 0) {
+      this.excludedOfficersBySupervisorPseudoId.set(
+        supervisorPseudoId,
+        officersData,
+      );
+    }
   }
 
   /**

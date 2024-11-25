@@ -34,9 +34,10 @@ export const THIRTY_SECONDS = 1000 * 30;
 export const TEN_SECONDS = 1000 * 10;
 
 export function isExcludedSupervisionOfficer(
-  officerData: object | undefined,
+  officerData: any,
 ): officerData is ExcludedSupervisionOfficer {
   return (
+    officerData?.includeInOutcomes !== true &&
     excludedSupervisionOfficerSchema.safeParse(officerData).success &&
     !supervisionOfficerSchema.safeParse(officerData).success
   );

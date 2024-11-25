@@ -223,6 +223,76 @@ test("hydrate supervisionOfficers for supervisor", async () => {
   ).toEqual(expect.arrayContaining(supervisionOfficerFixture.slice(0, 2)));
 });
 
+test("hydrate supervisionOfficers for supervisor only includes includeInOutcomes=true", async () => {
+  const officers = supervisionOfficerFixture.slice(0, 2);
+  // make the second officer NOT included in outcomes
+  officers[1].includeInOutcomes = false;
+
+  // Ensure that the test supervisor is the modified officer's supervisor
+  const testSupervisorPseudoId =
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
+  const supervisorForModifiedOfficer =
+    supervisionOfficerSupervisorsFixture.find((s) =>
+      officers[1].supervisorExternalIds.includes(s.externalId),
+    );
+  expect(supervisorForModifiedOfficer?.pseudonymizedId).toEqual(
+    testSupervisorPseudoId,
+  );
+
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "officersForSupervisor",
+  ).mockResolvedValue(officers);
+
+  expect(
+    store.officersBySupervisorPseudoId.has(testSupervisorPseudoId),
+  ).toBeFalse();
+
+  await expect(
+    flowResult(store.populateOfficersForSupervisor(testSupervisorPseudoId)),
+  ).resolves.not.toThrow();
+
+  // Result doesn't include the modified -- NOT included -- officer
+  expect(
+    store.officersBySupervisorPseudoId.get(testSupervisorPseudoId),
+  ).toEqual(supervisionOfficerFixture.slice(0, 1));
+});
+
+test("hydrate supervisionOfficers for supervisor only includes includeInOutcomes=undefined", async () => {
+  const officers = supervisionOfficerFixture.slice(0, 2);
+  // make the second officer does not include the new includeInOutcomes column
+  officers[1].includeInOutcomes = undefined;
+
+  // Ensure that the test supervisor is the modified officer's supervisor
+  const testSupervisorPseudoId =
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
+  const supervisorForModifiedOfficer =
+    supervisionOfficerSupervisorsFixture.find((s) =>
+      officers[1].supervisorExternalIds.includes(s.externalId),
+    );
+  expect(supervisorForModifiedOfficer?.pseudonymizedId).toEqual(
+    testSupervisorPseudoId,
+  );
+
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "officersForSupervisor",
+  ).mockResolvedValue(officers);
+
+  expect(
+    store.officersBySupervisorPseudoId.has(testSupervisorPseudoId),
+  ).toBeFalse();
+
+  await expect(
+    flowResult(store.populateOfficersForSupervisor(testSupervisorPseudoId)),
+  ).resolves.not.toThrow();
+
+  // Result should include the officer missing includeInOutcomes -- indicating endpoint response hasn't changed yet
+  expect(
+    store.officersBySupervisorPseudoId.get(testSupervisorPseudoId),
+  ).toEqual(supervisionOfficerFixture.slice(0, 2));
+});
+
 test("hydrate excludedSupervisionOfficers for supervisor", async () => {
   const testSupervisorPseudoId =
     supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
@@ -238,9 +308,7 @@ test("hydrate excludedSupervisionOfficers for supervisor", async () => {
 
   expect(
     store.excludedOfficersBySupervisorPseudoId.get(testSupervisorPseudoId),
-  ).toEqual(
-    expect.arrayContaining(excludedSupervisionOfficerFixture.slice(0, 2)),
-  );
+  ).toEqual(excludedSupervisionOfficerFixture.slice(0, 2));
 });
 
 test("userCanAccessAllSupervisors with missing route", () => {

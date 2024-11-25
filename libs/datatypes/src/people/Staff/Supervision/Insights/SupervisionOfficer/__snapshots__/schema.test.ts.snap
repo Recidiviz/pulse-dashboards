@@ -10,6 +10,7 @@ exports[`transformations 1`] = `
     "givenNames": "Walter",
     "surname": "Harris",
   },
+  "includeInOutcomes": true,
   "outlierMetrics": [
     {
       "metricId": "absconsions_bench_warrants",
@@ -120,6 +121,7 @@ exports[`transformations 2`] = `
     "givenNames": "Jack",
     "surname": "Hernandez",
   },
+  "includeInOutcomes": true,
   "outlierMetrics": [],
   "pseudonymizedId": "hashed-so2",
   "supervisorExternalIds": [
@@ -144,6 +146,7 @@ exports[`transformations 3`] = `
     "givenNames": "Jason",
     "surname": "Nelson",
   },
+  "includeInOutcomes": true,
   "outlierMetrics": [
     {
       "metricId": "absconsions_bench_warrants",
@@ -235,6 +238,7 @@ exports[`transformations 4`] = `
     "middleNames": "Mark",
     "surname": "Campbell",
   },
+  "includeInOutcomes": true,
   "outlierMetrics": [
     {
       "metricId": "absconsions_bench_warrants",
@@ -325,6 +329,7 @@ exports[`transformations 5`] = `
     "givenNames": "Casey",
     "surname": "Ramirez",
   },
+  "includeInOutcomes": true,
   "outlierMetrics": [],
   "pseudonymizedId": "hashed-so5",
   "supervisorExternalIds": [
@@ -344,6 +349,7 @@ exports[`transformations 6`] = `
     "givenNames": "Elizabeth",
     "surname": "Ramirez",
   },
+  "includeInOutcomes": true,
   "outlierMetrics": [
     {
       "metricId": "treatment_starts",

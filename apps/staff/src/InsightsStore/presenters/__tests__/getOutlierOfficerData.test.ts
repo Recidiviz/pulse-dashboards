@@ -166,6 +166,8 @@ describe("when used in a context that expects excluded officers", () => {
     ["an empty object", {}],
     ["some object", { dog: "" }],
     ["an undefined", undefined],
+    ["includeInOutcomes is true", { includeInOutcomes: true }],
+    ["includeInOutcomes is undefined", { includeInOutcomes: undefined }],
   ] as const)(
     "type narrower should reject non-excluded officers",
     (_, data) => {

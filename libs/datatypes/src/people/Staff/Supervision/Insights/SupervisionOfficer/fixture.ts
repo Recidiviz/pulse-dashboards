@@ -53,6 +53,7 @@ export const rawSupervisionOfficerFixture = [
     topXPctMetrics: [],
     avgDailyPopulation: 54.321,
     zeroGrantOpportunities: ["LSU", "pastFTRD"],
+    includeInOutcomes: true,
   },
   {
     externalId: "so2",
@@ -68,6 +69,7 @@ export const rawSupervisionOfficerFixture = [
       { metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts, topXPct: 10 },
     ],
     avgDailyPopulation: 12.345,
+    includeInOutcomes: true,
   },
   {
     externalId: "so3",
@@ -86,6 +88,7 @@ export const rawSupervisionOfficerFixture = [
     ],
     topXPctMetrics: [],
     avgDailyPopulation: 32.1,
+    includeInOutcomes: true,
   },
   {
     externalId: "so4",
@@ -105,6 +108,7 @@ export const rawSupervisionOfficerFixture = [
     ],
     topXPctMetrics: [],
     avgDailyPopulation: 43.21,
+    includeInOutcomes: true,
   },
   {
     externalId: "so5",
@@ -118,6 +122,7 @@ export const rawSupervisionOfficerFixture = [
     outlierMetrics: [],
     topXPctMetrics: [],
     avgDailyPopulation: 5.43,
+    includeInOutcomes: true,
   },
   {
     externalId: "so8",
@@ -134,6 +139,7 @@ export const rawSupervisionOfficerFixture = [
     ],
     topXPctMetrics: [],
     avgDailyPopulation: 43.21,
+    includeInOutcomes: true,
   },
 ] satisfies RawSupervisionOfficer[];
 
