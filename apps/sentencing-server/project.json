@@ -140,7 +140,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["load-env-files"],
       "options": {
-        "command": "gcloud run jobs deploy sentencing-server-migrate-db --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID"
+        "command": "gcloud run jobs deploy sentencing-server-migrate-db --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID, DATABASE_URL_US_ND=$DATABASE_URL_US_ND"
       },
       "configurations": {
         "staging": {
@@ -175,7 +175,8 @@
           "IMPORT_CLOUD_TASK_URL": "$IMPORT_CLOUD_TASK_URL",
           "IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL": "$IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL",
           "IMPORT_BUCKET_ID": "$IMPORT_BUCKET_ID",
-          "DATABASE_URL_US_ID": "$DATABASE_URL_US_ID"
+          "DATABASE_URL_US_ID": "$DATABASE_URL_US_ID",
+          "DATABASE_URL_US_ND": "$DATABASE_URL_US_ND"
         }
       },
       "configurations": {
