@@ -1479,12 +1479,109 @@ describe("handle_import", () => {
               ]),
             }),
           ]),
+          dispositionNumRecords: expect.any(Number),
           dispositionData: expect.arrayContaining([
             // There should be one of each type of disposition
             expect.objectContaining({ recommendationType: "Probation" }),
             expect.objectContaining({ recommendationType: "Rider" }),
             expect.objectContaining({ recommendationType: "Term" }),
           ]),
+        }),
+      );
+    });
+
+    test("should handle null dispositions", async () => {
+      dataProviderSingleton.setData([
+        // New insight
+        {
+          state_code: StateCode.US_ID,
+          // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
+          gender: Gender.MALE,
+          assessment_score_bucket_start: faker.number.int({ max: 100 }),
+          assessment_score_bucket_end: faker.number.int({ max: 100 }),
+          most_severe_description: fakeOffense.name,
+          recidivism_rollup: JSON.stringify({
+            state_code: StateCode.US_ID,
+            gender: Gender.MALE,
+            assessment_score_bucket_start: faker.number.int({ max: 100 }),
+            assessment_score_bucket_end: faker.number.int({ max: 100 }),
+            most_severe_ncic_category_uniform: faker.string.alpha(),
+          }),
+          recidivism_num_records: faker.number.int({ max: 100 }),
+          recidivism_probation_series: JSON.stringify(
+            createFakeRecidivismSeriesForImport(),
+          ),
+          recidivism_rider_series: JSON.stringify(
+            createFakeRecidivismSeriesForImport(),
+          ),
+          recidivism_term_series: JSON.stringify(
+            createFakeRecidivismSeriesForImport(),
+          ),
+          disposition_num_records: null,
+          disposition_probation_pc: null,
+          disposition_rider_pc: null,
+          disposition_term_pc: null,
+        },
+      ]);
+
+      const response = await callHandleImportInsightData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new Insight was created
+      const dbInsights = await testPrismaClient.insight.findMany({
+        include: {
+          rollupRecidivismSeries: {
+            select: {
+              recommendationType: true,
+              dataPoints: true,
+            },
+          },
+          dispositionData: true,
+        },
+      });
+
+      // There should only be one insight in the database - the new one should have been created
+      // and the old one should have been deleted
+      expect(dbInsights).toHaveLength(1);
+
+      const newInsight = dbInsights[0];
+      expect(newInsight).toEqual(
+        expect.objectContaining({
+          gender: "MALE",
+          rollupStateCode: StateCode.US_ID,
+          rollupGender: Gender.MALE,
+          rollupAssessmentScoreBucketStart: expect.any(Number),
+          rollupAssessmentScoreBucketEnd: expect.any(Number),
+          rollupNcicCategory: expect.any(String),
+          rollupRecidivismNumRecords: expect.any(Number),
+          rollupRecidivismSeries: expect.arrayContaining([
+            // There should be two data points for each series
+            expect.objectContaining({
+              recommendationType: "Probation",
+              dataPoints: expect.arrayContaining([
+                expect.objectContaining({}),
+                expect.objectContaining({}),
+              ]),
+            }),
+            expect.objectContaining({
+              recommendationType: "Rider",
+              dataPoints: expect.arrayContaining([
+                expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                expect.objectContaining({ cohortMonths: expect.any(Number) }),
+              ]),
+            }),
+            expect.objectContaining({
+              recommendationType: "Term",
+              dataPoints: expect.arrayContaining([
+                expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                expect.objectContaining({ cohortMonths: expect.any(Number) }),
+              ]),
+            }),
+          ]),
+          dispositionNumRecords: 0,
+          // There shouldn't be any disposition data
+          dispositionData: expect.arrayContaining([]),
         }),
       );
     });

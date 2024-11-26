@@ -207,10 +207,10 @@ export const insightImportSchema = z.object({
   recidivism_rider_series: recidivismSeriesSchema.optional(),
   recidivism_term_series: recidivismSeriesSchema.optional(),
   // Integers are being converted to strings for some reason
-  disposition_num_records: z.coerce.number(),
-  disposition_probation_pc: z.number(),
-  disposition_rider_pc: z.number(),
-  disposition_term_pc: z.number(),
+  disposition_num_records: z.coerce.number().optional().nullable(),
+  disposition_probation_pc: z.number().optional().nullable(),
+  disposition_rider_pc: z.number().optional().nullable(),
+  disposition_term_pc: z.number().optional().nullable(),
 });
 
 export const offenseImportSchema = z.object({

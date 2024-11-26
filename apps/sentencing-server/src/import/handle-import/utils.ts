@@ -356,20 +356,28 @@ function transformAllRecidivismSeries(
 }
 
 function transformDispositions(data: z.infer<typeof insightImportSchema>) {
-  return [
-    {
+  const dispositions: Prisma.DispositionCreateManyInsightInput[] = [];
+
+  if (data.disposition_probation_pc) {
+    dispositions.push({
       recommendationType: "Probation",
       percentage: data.disposition_probation_pc,
-    },
-    {
+    });
+  }
+  if (data.disposition_rider_pc) {
+    dispositions.push({
       recommendationType: "Rider",
       percentage: data.disposition_rider_pc,
-    },
-    {
+    });
+  }
+  if (data.disposition_term_pc) {
+    dispositions.push({
       recommendationType: "Term",
       percentage: data.disposition_term_pc,
-    },
-  ] satisfies Prisma.DispositionCreateManyInsightInput[];
+    });
+  }
+
+  return dispositions;
 }
 
 export async function transformAndLoadInsightData(
@@ -441,7 +449,8 @@ export async function transformAndLoadInsightData(
       rollupRecidivismSeries: {
         create: transformAllRecidivismSeries(insightData),
       },
-      dispositionNumRecords: insightData.disposition_num_records,
+      // If this missing, assume it is zero
+      dispositionNumRecords: insightData.disposition_num_records ?? 0,
       dispositionData: {
         create: transformDispositions(insightData),
       },
