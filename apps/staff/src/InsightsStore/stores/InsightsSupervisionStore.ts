@@ -582,7 +582,8 @@ export class InsightsSupervisionStore {
   }
 
   /**
-   * Fetches excluded officer data for the specified supervisor
+   * Fetches excluded officer data for the specified supervisor. If the superviosr
+   * has no excluded officers, sets the entry for that supervisor to an empty list.
    */
   *populateExcludedOfficersForSupervisor(
     supervisorPseudoId: string,
@@ -595,12 +596,10 @@ export class InsightsSupervisionStore {
         supervisorPseudoId,
       );
 
-    if (officersData.length > 0) {
-      this.excludedOfficersBySupervisorPseudoId.set(
-        supervisorPseudoId,
-        officersData,
-      );
-    }
+    this.excludedOfficersBySupervisorPseudoId.set(
+      supervisorPseudoId,
+      officersData,
+    );
   }
 
   /**
