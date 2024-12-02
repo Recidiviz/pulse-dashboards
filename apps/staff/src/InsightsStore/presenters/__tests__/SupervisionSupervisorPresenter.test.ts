@@ -176,21 +176,21 @@ test("supervisorId not found in supervisionOfficerSupervisors", async () => {
   `);
   expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
     [
-      [Error: failed to populate officers with outliers],
       [Error: failed to populate supervisor],
-      [Error: Missing expected data for supervised officers],
     ]
   `);
 });
 
 test("supervisorId not found in officersBySupervisor", async () => {
-  vi.spyOn(
-    InsightsOfflineAPIClient.prototype,
-    "officersForSupervisor",
-  ).mockResolvedValue([]);
+  vi.spyOn(store, "officersBySupervisorPseudoId", "get").mockImplementation(
+    () => new Map(),
+  );
 
   await presenter.hydrate();
 
+  expect(
+    store.officersBySupervisorPseudoId.has(testSupervisor.pseudonymizedId),
+  ).toBeFalse();
   expect(presenter.hydrationState).toMatchInlineSnapshot(`
     {
       "error": [AggregateError: Expected data failed to populate],
@@ -203,6 +203,36 @@ test("supervisorId not found in officersBySupervisor", async () => {
       [Error: failed to populate officers with outliers],
       [Error: Missing expected data for supervised officers],
     ]
+  `);
+});
+
+test("supervisor has no officers with outcomes", async () => {
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "officersForSupervisor",
+  ).mockResolvedValue([]);
+
+  await presenter.hydrate();
+
+  expect(presenter.hydrationState).toMatchInlineSnapshot(`
+    {
+      "status": "hydrated",
+    }
+  `);
+});
+
+test("supervisor has no excluded officers", async () => {
+  vi.spyOn(
+    InsightsOfflineAPIClient.prototype,
+    "excludedOfficersForSupervisor",
+  ).mockResolvedValue([]);
+
+  await presenter.hydrate();
+
+  expect(presenter.hydrationState).toMatchInlineSnapshot(`
+    {
+      "status": "hydrated",
+    }
   `);
 });
 

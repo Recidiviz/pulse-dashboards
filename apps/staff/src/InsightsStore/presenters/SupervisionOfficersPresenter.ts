@@ -38,6 +38,10 @@ import {
 } from "./types";
 import { getHighlightedOfficersByMetric, getOutlierOfficerData } from "./utils";
 
+/***
+ * The SupervisionOfficersPresenter is the presenter for the v1 insights
+ * supervisor page.
+ */
 export class SupervisionOfficersPresenter implements Hydratable {
   constructor(
     private supervisionStore: InsightsSupervisionStore,
@@ -80,11 +84,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   private expectOfficersPopulated() {
-    if (
-      !this.supervisionStore.officersBySupervisorPseudoId.has(
-        this.supervisorPseudoId,
-      )
-    )
+    if (!this.allOfficers?.length)
       throw new Error("failed to populate officers");
   }
 
@@ -116,17 +116,12 @@ export class SupervisionOfficersPresenter implements Hydratable {
     | OutlierOfficerData<SupervisionOfficer>[]
     | Error {
     try {
-      const officersData =
-        this.supervisionStore.officersBySupervisorPseudoId.get(
-          this.supervisorPseudoId,
-        );
-
       // not expected in practice due to checks above, but needed for type safety
-      if (!officersData) {
+      if (!this.allOfficers?.length) {
         throw new Error("Missing expected data for supervised officers");
       }
 
-      return officersData
+      return this.allOfficers
         .filter((o) => o.outlierMetrics.length > 0)
         .map((o): OutlierOfficerData<SupervisionOfficer> => {
           return getOutlierOfficerData(o, this.supervisionStore);

@@ -570,15 +570,13 @@ export class InsightsSupervisionStore {
         supervisorPseudoId,
       );
 
-    if (officersData.length > 0) {
-      const includedOfficersData = officersData.filter(
-        (o) => o.includeInOutcomes !== false,
-      );
-      this.officersBySupervisorPseudoId.set(
-        supervisorPseudoId,
-        includedOfficersData,
-      );
-    }
+    const includedOfficersData = officersData.filter(
+      (o) => o.includeInOutcomes !== false,
+    );
+    this.officersBySupervisorPseudoId.set(
+      supervisorPseudoId,
+      includedOfficersData,
+    );
   }
 
   /**

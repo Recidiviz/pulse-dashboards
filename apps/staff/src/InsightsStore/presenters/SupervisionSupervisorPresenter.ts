@@ -84,7 +84,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       | "processOfficersAndOpportunities"
       | "buildOpportunitiesDetails"
       | "expectMetricsPopulated"
-      | "expectOfficersWithOutliersPopulated"
+      | "expectOfficersWithOutcomesPopulated"
       | "expectExcludedOfficersPopulated"
       | "expectSupervisorPopulated"
       | "expectOutlierDataPopulated"
@@ -97,7 +97,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         expectOutlierDataPopulated: true,
         expectSupervisorPopulated: true,
         expectExcludedOfficersPopulated: true,
-        expectOfficersWithOutliersPopulated: true,
+        expectOfficersWithOutcomesPopulated: true,
         expectMetricsPopulated: true,
         supervisorPseudoId: true,
         outlierOfficersData: computed,
@@ -175,7 +175,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   expectPopulated() {
     return [
       this.expectMetricsPopulated,
-      this.expectOfficersWithOutliersPopulated,
+      this.expectOfficersWithOutcomesPopulated,
       this.expectExcludedOfficersPopulated,
       this.expectSupervisorPopulated,
       this.expectOutlierDataPopulated,
@@ -639,10 +639,10 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   }
 
   /**
-   * Asserts that officers with outliers have been populated.
-   * @throws An error if officers with outliers are not populated.
+   * Asserts that officers with outcomes have been populated.
+   * @throws An error if officers with outcomes are not populated.
    */
-  private expectOfficersWithOutliersPopulated() {
+  private expectOfficersWithOutcomesPopulated() {
     if (
       !this.supervisionStore.officersBySupervisorPseudoId.has(
         this.supervisorPseudoId,
