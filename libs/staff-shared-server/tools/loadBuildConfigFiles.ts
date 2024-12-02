@@ -47,11 +47,9 @@ await Promise.all(
 console.log("Updating GAE yaml files...");
 
 const appEngineSecretsToFiles = {
-  // TODO(#4831): for backwards compatibility, using temporary alternate versions of these secrets;
-  // can go back to the standard ones once everyone is safely updated to the new version
-  env_gae_staging_tmp_migrate: "gae-staging.yaml",
-  env_gae_staging_demo_tmp_migrate: "gae-staging-demo.yaml",
-  env_gae_production_tmp_migrate: "gae-production.yaml",
+  env_gae_staging: "gae-staging.yaml",
+  env_gae_staging_demo: "gae-staging-demo.yaml",
+  env_gae_production: "gae-production.yaml",
 };
 
 await Promise.all(
