@@ -15,43 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useState } from "react";
-
 import * as Styled from "../../CaseDetails.styles";
-import { NOT_SURE_YET_OPTION } from "../../constants";
-import { InputFieldProps } from "../types";
+import { NOT_SURE_YET_OPTION } from "../constants";
+import { RadioInputProps } from "./types";
 
-export const RadioSelectField: React.FC<InputFieldProps> = ({
-  element,
-  parentKey,
-  prevValue,
-  updateForm,
-}) => {
-  const [currentValue, setCurrentValue] = useState(prevValue);
-
-  const updateRadioSelect = (option: string) => {
-    setCurrentValue(option);
-    updateForm(element.key, option, parentKey);
-  };
-
+export function RadioInput({
+  options,
+  selection,
+  updateSelection,
+}: RadioInputProps) {
   return (
     <Styled.MultiSelectContainer>
-      {element.options?.map((option) => {
+      {options.map((option) => {
+        const selected = selection === option;
+        const hasNoSelection =
+          selection === NOT_SURE_YET_OPTION || selection === null;
         const isDefaultNotSureYetSelected =
-          option === NOT_SURE_YET_OPTION && currentValue === null;
+          option === NOT_SURE_YET_OPTION && selection === null;
+
         return (
-          <Styled.MultiSelectChip
+          <Styled.SelectChip
             key={option}
-            selected={isDefaultNotSureYetSelected || currentValue === option}
-            onClick={() => updateRadioSelect(option)}
-            isNotSureYetOption={
-              currentValue === NOT_SURE_YET_OPTION || currentValue === null
-            }
+            selected={selected || isDefaultNotSureYetSelected}
+            onClick={() => updateSelection(option)}
+            isNotSureYetOption={hasNoSelection}
           >
             {option}
-          </Styled.MultiSelectChip>
+          </Styled.SelectChip>
         );
       })}
     </Styled.MultiSelectContainer>
   );
-};
+}

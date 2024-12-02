@@ -17,8 +17,8 @@
 
 import { palette } from "@recidiviz/design-system";
 import { captureException } from "@sentry/react";
-import { keyBy } from "lodash";
-import { makeAutoObservable } from "mobx";
+import { keyBy, startCase, toLower } from "lodash";
+import { flowResult, makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
 
 import { FlowMethod } from "~hydration-utils";
@@ -44,16 +44,55 @@ export class CaseStore {
 
   insight?: Insight;
 
+  activeCaseId?: string;
+
   constructor(public readonly psiStore: PSIStore) {
     makeAutoObservable(this);
     this.caseDetailsById = {};
     this.communityOpportunities = [];
     this.offenses = [];
     this.insight = undefined;
+    this.activeCaseId = undefined;
   }
 
   get offensesByName() {
     return keyBy(this.offenses, (offense) => offense.name);
+  }
+
+  get caseAttributes(): Partial<
+    Case & {
+      clientGender?: Client["gender"];
+    }
+  > {
+    if (!this.activeCaseId) return {};
+    const currentCase = this.caseDetailsById[this.activeCaseId];
+    if (currentCase.client?.fullName) {
+      currentCase.client.fullName = startCase(
+        toLower(currentCase.client?.fullName),
+      );
+    }
+    return {
+      ...currentCase,
+      clientGender: currentCase.client?.gender,
+    };
+  }
+
+  setActiveCaseId(caseId: string) {
+    this.activeCaseId = caseId;
+  }
+
+  async getInsight(
+    offense?: string,
+    lsirScore?: number,
+  ): Promise<Insight | undefined> {
+    if (!this.activeCaseId || !offense || !lsirScore) return;
+
+    const currentCase = this.caseDetailsById[this.activeCaseId];
+    const gender = currentCase.client?.gender;
+    if (!gender) return;
+
+    await flowResult(this.loadInsight(offense, gender, lsirScore));
+    return this.insight;
   }
 
   /** This is a MobX flow method and should be called with mobx.flowResult */

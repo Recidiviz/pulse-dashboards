@@ -23,8 +23,7 @@ import { Modal } from "../../Modal/Modal";
 import { Tooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
 import { NeedsIcons } from "../components/NeedsIcons/NeedsIcons";
-import { NEEDS_TO_BE_ADDRESSED_KEY } from "../constants";
-import { parseAttributeValue } from "../Form/utils";
+import { parseNeedsToBeAddressedValue } from "../Form/utils";
 import { RecommendationType } from "../types";
 import {
   ASAM_CARE_RECOMMENDATION_CRITERIA_KEY,
@@ -69,10 +68,7 @@ const displayEligibilityCriterias = (
   const label = eligibilityCriteriaToLabelName[key];
   // We only need to display the `<label>: <val>` for LSI-R score and lists, because `val` for all other
   // properties will be a boolean, which we can represent by only displaying the descriptive `label`
-  const val =
-    shouldDisplayLabelValue || isArray
-      ? parseAttributeValue(key, value)
-      : undefined;
+  const val = shouldDisplayLabelValue || isArray ? value : undefined;
 
   return Array.isArray(val) ? (
     <div key={key}>
@@ -114,8 +110,7 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
 }) => {
   if (!selectedOpportunity) return null;
   const needsAddressed =
-    (parseAttributeValue(
-      NEEDS_TO_BE_ADDRESSED_KEY,
+    (parseNeedsToBeAddressedValue(
       selectedOpportunity.needsAddressed,
     ) as string[]) ?? [];
   const eligibilityCriteria = getEligibilityCriteria(selectedOpportunity);

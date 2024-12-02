@@ -17,27 +17,21 @@
 
 import { observer } from "mobx-react-lite";
 
-import { formatPossessiveName } from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
-import { Form } from "../Form/Elements/Form";
-import { CaseOnboardingTopicProps } from "./types";
+import { FormField } from "./formConfig";
 
-export const OnboardingOffenseLsirScoreGenderReportType: React.FC<CaseOnboardingTopicProps> =
-  observer(function OnboardingOffenseLsirScore({ form, firstName }) {
-    return (
-      <>
-        <Styled.OnboardingHeaderWrapper>
-          <Styled.OnboardingHeader>
-            Let&apos;s get some details about {formatPossessiveName(firstName)}{" "}
-            case to enhance the historical insights
-          </Styled.OnboardingHeader>
-        </Styled.OnboardingHeaderWrapper>
-        <Form
-          form={form}
-          formFields={
-            form.onboardingFields.OFFENSE_LSIR_SCORE_GENDER_REPORT_TYPE_FIELDS
-          }
-        />
-      </>
-    );
-  });
+function Form({ formFields }: { formFields: FormField[] }): JSX.Element {
+  return (
+    <Styled.Form>
+      {formFields.map(({ key, FieldComponent }) => {
+        return (
+          <Styled.InputWrapper key={key}>
+            <FieldComponent />
+          </Styled.InputWrapper>
+        );
+      })}
+    </Styled.Form>
+  );
+}
+
+export default observer(Form);

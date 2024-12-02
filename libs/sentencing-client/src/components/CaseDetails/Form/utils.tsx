@@ -17,40 +17,28 @@
 
 import _, { capitalize } from "lodash";
 
-import { Case, Client } from "../../../api";
-import { ReportType } from "../../Dashboard/types";
+import { ReportType } from "../../constants";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
-  AsamCareRecommendationKey,
   CLIENT_GENDER_KEY,
   GenderToDisplayName,
-  MENTAL_HEALTH_DIAGNOSES_KEY,
-  MentalHealthDiagnosesKey,
-  NEEDS_TO_BE_ADDRESSED_KEY,
-  needsToBeAddressed,
-  NeedsToBeAddressedKey,
-  NO_OPTION,
-  NOT_SURE_YET_OPTION,
+  NeedsToBeAddressed,
   OFFENSE_KEY,
   OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY,
   OTHER_NEED_TO_BE_ADDRESSED_KEY,
-  PLEA_KEY,
-  PleaKey,
   REPORT_TYPE_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
-  YES_OPTION,
 } from "../constants";
-import {
-  ASAM_CARE_RECOMMENDATION_CRITERIA_KEY,
-  MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY,
-  NEEDS_ADDRESSED_CRITERIA_KEY,
-} from "../Opportunities/constants";
 import { FormAttributes, FormUpdates, FormValue } from "../types";
 import {
   asamLevelOfCareRecommendation,
   mentalHealthDiagnoses,
+  NO_OPTION,
+  NONE_OPTION,
+  NOT_SURE_YET_OPTION,
   pleas,
-} from "./CaseDetailsFormTemplate";
+  YES_OPTION,
+} from "./constants";
 import { SelectOption } from "./types";
 
 const convertGenderDisplayNameToEnum = (gender: string) => {
@@ -74,101 +62,66 @@ export const formatFormEnumValue = (value: string) => {
     .join("");
 };
 
-/** Parses stored values and enums into form/attribute values */
-export const parseAttributeValue = (
-  key: string,
-  value?: boolean | number | string | string[] | null,
-) => {
-  if (value === undefined) return;
-
-  const isBoolean = typeof value === "boolean";
-  if (isBoolean) {
-    if (value === false) {
-      return NO_OPTION;
-    }
-    if (value === true) {
-      return YES_OPTION;
-    }
-    if (value === null) {
-      return NOT_SURE_YET_OPTION;
-    }
-  }
-
-  const isArray = Array.isArray(value);
-  if (isArray) {
-    if (
-      key === NEEDS_TO_BE_ADDRESSED_KEY ||
-      key === NEEDS_ADDRESSED_CRITERIA_KEY
-    ) {
-      return (value as Case[NeedsToBeAddressedKey]).map(
-        (val) => needsToBeAddressed[val],
-      );
-    }
-    if (
-      key === MENTAL_HEALTH_DIAGNOSES_KEY ||
-      key === MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY
-    ) {
-      return (value as Case[MentalHealthDiagnosesKey]).map(
-        (val) => mentalHealthDiagnoses[val],
-      );
-    }
-  }
-
-  if (
-    key === ASAM_CARE_RECOMMENDATION_KEY ||
-    key === ASAM_CARE_RECOMMENDATION_CRITERIA_KEY
-  ) {
-    return (
-      asamLevelOfCareRecommendation[
-        value as NonNullable<Case[AsamCareRecommendationKey]>
-      ] ?? null
-    );
-  }
-
-  if (key === PLEA_KEY) {
-    return pleas[value as NonNullable<Case[PleaKey]>] ?? null;
-  }
-
-  if (key === CLIENT_GENDER_KEY) {
-    return GenderToDisplayName[value as NonNullable<Client["gender"]>] ?? null;
-  }
-
-  if (key === REPORT_TYPE_KEY) {
-    return ReportType[value as NonNullable<Case["reportType"]>] ?? null;
-  }
-
-  const isString = typeof value === "string";
-  const isNumber = typeof value === "number";
-  const isNull = value === null;
-  if (isNumber || isNull || isString) {
-    return value;
-  }
-
-  return value;
+/** Helper functions to parse backend values into frontend-compatible formats */
+export const parseBooleanValue = (value?: boolean | null) => {
+  if (value === false) return NO_OPTION;
+  if (value === true) return YES_OPTION;
+  return NOT_SURE_YET_OPTION;
 };
 
-/** Removes the offense frequency text (# records) from the offense string */
-const removeRecordsCount = (offenseString: FormValue) => {
-  if (!offenseString) return;
-  return String(offenseString).replace(/\s*\(\d+\s+records\)/, "");
+export const parseNeedsToBeAddressedValue = (
+  value?: (keyof typeof NeedsToBeAddressed)[] | null,
+) => {
+  if (!value) return null;
+  return value.map((val) => NeedsToBeAddressed[val]);
+};
+
+export const parseMentalHealthDiagnosesValue = (
+  value?: (keyof typeof mentalHealthDiagnoses)[] | null,
+) => {
+  if (!value) return null;
+  return value.map((val) => mentalHealthDiagnoses[val]);
+};
+
+export const parseAsamCareRecommendationValue = (
+  value?: keyof typeof asamLevelOfCareRecommendation | null,
+) => {
+  if (!value) return null;
+  return asamLevelOfCareRecommendation[value];
+};
+
+export const parsePleaValue = (value?: keyof typeof pleas | null) => {
+  if (!value) return null;
+  return pleas[value];
+};
+
+export const parseClientGenderValue = (
+  value?: keyof typeof GenderToDisplayName | null,
+) => {
+  if (!value) return null;
+  return GenderToDisplayName[value];
+};
+
+export const parseReportTypeValue = (
+  value?: keyof typeof ReportType | null,
+) => {
+  if (!value) return null;
+  return ReportType[value];
 };
 
 /** Converts form update inputs into enums or other backend-compatible data types. */
-export const transformUpdates = (updates: FormUpdates): FormAttributes => {
+export const transformUpdates = (
+  updates: Partial<FormUpdates>,
+): FormAttributes => {
   const transformedUpdates = {} as { [key: string]: FormValue };
 
   Object.entries(updates).forEach(([key, value]) => {
     if (
       key === SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY &&
-      (value === "None" || value === NOT_SURE_YET_OPTION)
+      (value === NONE_OPTION || value === NOT_SURE_YET_OPTION)
     ) {
-      transformedUpdates[key] = null;
+      transformedUpdates[key] = value === NONE_OPTION ? NONE_OPTION : null;
       transformedUpdates[ASAM_CARE_RECOMMENDATION_KEY] = null;
-      return;
-    }
-
-    if (key === OFFENSE_KEY) {
-      transformedUpdates[key] = removeRecordsCount(value);
       return;
     }
 
@@ -235,7 +188,7 @@ export const isValidLsirScore = (value: string): boolean => {
   const numberValue = Number(value);
   const isNumberWithinRange = numberValue >= min && numberValue <= max;
 
-  if (isNaN(numberValue) || !isNumberWithinRange) {
+  if (value && (isNaN(numberValue) || !isNumberWithinRange)) {
     return false;
   }
 
@@ -250,7 +203,10 @@ export const fuzzyMatch = (input: string, option: SelectOption) => {
 };
 
 /** A function that highlights matched search terms in a given label by wrapping them in styled <span> elements.  */
-export const highlightMatchedText = (searchInput: string, label?: string) => {
+export const highlightMatchedText = (
+  searchInput: string | null,
+  label?: string | null,
+) => {
   if (!searchInput || !label) return label;
 
   // Split the input into words by splitting at the white space and filter out empty spaces

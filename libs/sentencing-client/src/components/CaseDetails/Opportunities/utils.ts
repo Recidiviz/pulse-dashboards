@@ -20,6 +20,13 @@ import {
   convertDistrictToDistrictCode,
   extractDistrictAndCounty,
 } from "../../../utils/utils";
+import {
+  ANY_OPTION,
+  MILD_OPTION,
+  MODERATE_OPTION,
+  NONE_OPTION,
+  SEVERE_OPTION,
+} from "../Form/constants";
 import { FormValue, RecommendationType } from "../types";
 import { eligibilityCriteriaToLabelName } from "./constants";
 import { EligibilityAttributes, EligibilityCriteria } from "./types";
@@ -87,8 +94,9 @@ export const filterEligibleOpportunities = (
   // Age Criteria Check
   const hasAgeCriteria = Boolean(minAge || maxAge);
   const isNotAgeEligible =
-    attributes.age < (minAge ?? DEFAULT_MIN_NUMBER) ||
-    attributes.age > (maxAge ?? DEFAULT_MAX_NUMBER);
+    attributes.age &&
+    (attributes.age < (minAge ?? DEFAULT_MIN_NUMBER) ||
+      attributes.age > (maxAge ?? DEFAULT_MAX_NUMBER));
 
   if (hasAgeCriteria && isNotAgeEligible) return false;
 
@@ -105,7 +113,7 @@ export const filterEligibleOpportunities = (
 
   const districtOfSentencing = extractDistrictAndCounty(
     districtCountyOfSentencing,
-  ).district;
+  )?.district;
   const hasMatchingDistricts =
     districtOfSentencing === districtOfResidence?.toLocaleLowerCase();
   const districtName =
@@ -156,7 +164,7 @@ export const filterEligibleOpportunities = (
   // Criminal History Criteria Check
   const hasCriminalHistoryCriteria = Boolean(priorCriminalHistoryCriterion);
   const isCriminalHistoryEligible =
-    (priorCriminalHistoryCriterion === "None" &&
+    (priorCriminalHistoryCriterion === NONE_OPTION &&
       !attributes.previouslyIncarceratedOrUnderSupervision) ||
     (priorCriminalHistoryCriterion === "Significant" &&
       attributes.previouslyIncarceratedOrUnderSupervision);
@@ -182,14 +190,15 @@ export const filterEligibleOpportunities = (
     diagnosedMentalHealthDiagnosisCriterion &&
     diagnosedMentalHealthDiagnosisCriterion.length > 0;
   const isAnyCriteriaAndHasMinOneDiagnoses =
-    diagnosedMentalHealthDiagnosisCriterion.includes("Any") &&
+    diagnosedMentalHealthDiagnosisCriterion.includes(ANY_OPTION) &&
+    attributes.mentalHealthDiagnoses &&
     attributes.mentalHealthDiagnoses.length > 0 &&
-    attributes.mentalHealthDiagnoses?.[0] !== "None";
+    attributes.mentalHealthDiagnoses?.[0] !== NONE_OPTION;
   const hasOneMatchingDiagnosis =
-    attributes.mentalHealthDiagnoses?.[0] !== "None" &&
+    attributes.mentalHealthDiagnoses?.[0] !== NONE_OPTION &&
     diagnosedMentalHealthDiagnosisCriterion.some(
       (diagnosis) =>
-        diagnosis !== "Any" &&
+        diagnosis !== ANY_OPTION &&
         attributes.mentalHealthDiagnoses?.includes(diagnosis),
     );
   const isMentalHealthDiagnosisEligible =
@@ -200,7 +209,12 @@ export const filterEligibleOpportunities = (
     return false;
 
   // Substance Use Disorder Criteria Check
-  const orderedSubstanceLevels = ["Any", "Mild", "Moderate", "Severe"];
+  const orderedSubstanceLevels = [
+    ANY_OPTION,
+    MILD_OPTION,
+    MODERATE_OPTION,
+    SEVERE_OPTION,
+  ];
   const hasSubstanceUseDisorderCriteria = Boolean(
     diagnosedSubstanceUseDisorderCriterion,
   );
@@ -237,6 +251,7 @@ export const filterEligibleOpportunities = (
     );
 
   if (
+    attributes.needsToBeAddressed &&
     attributes.needsToBeAddressed.length > 0 &&
     hasNeedsAddressedCriteria &&
     !isNeedsAddressedEligible

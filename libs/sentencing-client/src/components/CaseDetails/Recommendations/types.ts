@@ -27,13 +27,13 @@ export type RecommendationsProps = {
   firstName?: string;
   lastName?: string;
   fullName?: string;
-  age: number;
-  externalId: string;
+  age?: number;
+  externalId?: string;
   gender?: Client["gender"];
   selectedRecommendation?: SelectedRecommendation;
   lastSavedRecommendation?: SelectedRecommendation;
   recommendedOpportunities?: OpportunitiesIdentifier;
-  needs: Case["needsToBeAddressed"];
+  needs?: Case["needsToBeAddressed"];
   insight?: CaseInsight;
   handleRecommendationUpdate: (recommendation: RecommendationType) => void;
   saveRecommendation: () => void;
@@ -69,7 +69,7 @@ export type GenerateRecommendationProps = {
   recommendation?: string | null;
   fullName?: string;
   lastName?: string;
-  needs: Case["needsToBeAddressed"];
+  needs?: Case["needsToBeAddressed"];
   opportunityDescriptions?: string[];
   gender?: Client["gender"];
 };

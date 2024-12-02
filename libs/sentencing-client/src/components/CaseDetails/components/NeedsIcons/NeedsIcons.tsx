@@ -32,27 +32,27 @@ import JobTrainingOrOpportunitiesIcon from "../../../assets/job-training-or-oppo
 import MentalHealthIcon from "../../../assets/mental-health-icon.svg?react";
 import SubstanceUseIcon from "../../../assets/substance-use-icon.svg?react";
 import TransportationIcon from "../../../assets/transportation-icon.svg?react";
-import { needsToBeAddressed } from "../../constants";
+import { NeedsToBeAddressed } from "../../constants";
 
 export const NeedsIcons: Record<string, React.JSX.Element | null> = {
-  [needsToBeAddressed["AngerManagement"]]: <AngerManagementIcon />,
-  [needsToBeAddressed["CaseManagement"]]: <CaseManagementIcon />,
-  [needsToBeAddressed["ClothingAndToiletries"]]: <ClothingAndToiletriesIcon />,
-  [needsToBeAddressed["DomesticViolenceIssues"]]: (
+  [NeedsToBeAddressed["AngerManagement"]]: <AngerManagementIcon />,
+  [NeedsToBeAddressed["CaseManagement"]]: <CaseManagementIcon />,
+  [NeedsToBeAddressed["ClothingAndToiletries"]]: <ClothingAndToiletriesIcon />,
+  [NeedsToBeAddressed["DomesticViolenceIssues"]]: (
     <DomesticViolenceIssuesIcon />
   ),
-  [needsToBeAddressed["Education"]]: <EducationIcon />,
-  [needsToBeAddressed["FamilyServices"]]: <FamilyServicesIcon />,
-  [needsToBeAddressed["FinancialAssistance"]]: <FinancialAssistanceIcon />,
-  [needsToBeAddressed["FoodInsecurity"]]: <FoodInsecurityIcon />,
-  [needsToBeAddressed["GeneralReEntrySupport"]]: <GeneralReEntrySupportIcon />,
-  [needsToBeAddressed["Healthcare"]]: <HealthcareIcon />,
-  [needsToBeAddressed["HousingOpportunities"]]: <HousingOpportunitiesIcon />,
-  [needsToBeAddressed["JobTrainingOrOpportunities"]]: (
+  [NeedsToBeAddressed["Education"]]: <EducationIcon />,
+  [NeedsToBeAddressed["FamilyServices"]]: <FamilyServicesIcon />,
+  [NeedsToBeAddressed["FinancialAssistance"]]: <FinancialAssistanceIcon />,
+  [NeedsToBeAddressed["FoodInsecurity"]]: <FoodInsecurityIcon />,
+  [NeedsToBeAddressed["GeneralReEntrySupport"]]: <GeneralReEntrySupportIcon />,
+  [NeedsToBeAddressed["Healthcare"]]: <HealthcareIcon />,
+  [NeedsToBeAddressed["HousingOpportunities"]]: <HousingOpportunitiesIcon />,
+  [NeedsToBeAddressed["JobTrainingOrOpportunities"]]: (
     <JobTrainingOrOpportunitiesIcon />
   ),
-  [needsToBeAddressed["MentalHealth"]]: <MentalHealthIcon />,
-  [needsToBeAddressed["SubstanceUse"]]: <SubstanceUseIcon />,
-  [needsToBeAddressed["Transportation"]]: <TransportationIcon />,
+  [NeedsToBeAddressed["MentalHealth"]]: <MentalHealthIcon />,
+  [NeedsToBeAddressed["SubstanceUse"]]: <SubstanceUseIcon />,
+  [NeedsToBeAddressed["Transportation"]]: <TransportationIcon />,
   Other: null,
 };

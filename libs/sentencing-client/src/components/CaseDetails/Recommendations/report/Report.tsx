@@ -43,7 +43,7 @@ import { getChartCaptions } from "./utils";
 interface ReportProps {
   fullName?: string;
   externalId: string;
-  age: number;
+  age?: number;
   selectedRecommendation: SelectedRecommendation;
   insight?: CaseInsight;
 }

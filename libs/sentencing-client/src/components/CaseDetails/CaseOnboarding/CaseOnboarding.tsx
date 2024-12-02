@@ -22,9 +22,11 @@ import { Case } from "../../../api";
 import { formatPossessiveName } from "../../../utils/utils";
 import { CaseStatus } from "../../Dashboard/types";
 import * as Styled from "../CaseDetails.styles";
-import { OnboardingAdditionalNeeds } from "./OnboardingAdditionalNeeds";
-import { OnboardingOffenseLsirScoreGenderReportType } from "./OnboardingOffenseLsirScore";
-import { OnboardingPrimaryNeeds } from "./OnboardingPrimaryNeeds";
+import { OFFENSE_KEY } from "../constants";
+import { form } from "../Form/FormStore";
+import OnboardingStepOne from "./OnboardingStepOne";
+import OnboardingStepThree from "./OnboardingStepThree";
+import OnboardingStepTwo from "./OnboardingStepTwo";
 import { CaseOnboardingProps, OnboardingTopic } from "./types";
 
 const onboardingTopics: Case["currentOnboardingTopic"][] = [
@@ -36,7 +38,6 @@ const onboardingTopics: Case["currentOnboardingTopic"][] = [
 
 export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
   function CaseOnboarding({
-    form,
     firstName,
     lastTopic,
     saveAttributes,
@@ -48,17 +49,16 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
       lastTopic ? onboardingTopics.indexOf(lastTopic) : 0,
     );
 
-    if (!form) return;
-
     const currentTopic: Case["currentOnboardingTopic"] | undefined =
       onboardingTopics[currentTopicIndex];
     const hasCompletedOnboarding =
-      currentTopicIndex === onboardingTopics.length;
+      currentTopicIndex === onboardingTopics.length - 1;
     const isNextButtonDisabled =
       currentTopic === OnboardingTopic.OffenseLsirScore &&
-      (form.hasError || !form.getFormValue("offense"));
+      (form.hasError || !form.updates[OFFENSE_KEY]);
 
     const goToPrevTopic = () => {
+      saveAttributes(form.updates);
       if (currentTopicIndex === 0) {
         navigateToDashboard();
       }
@@ -67,8 +67,9 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
     };
 
     const goToNextTopic = () => {
+      saveAttributes(form.updates);
       const nextTopic = onboardingTopics[currentTopicIndex + 1];
-      const willCompleteOnboarding = !nextTopic;
+      const willCompleteOnboarding = nextTopic === OnboardingTopic.Done;
       const currentTopicProgressUpdate = {
         currentOnboardingTopic: willCompleteOnboarding
           ? OnboardingTopic.Done
@@ -84,10 +85,10 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
       if (willCompleteOnboarding) {
         // TODO(Recidiviz/recidiviz-data#31435): Instead of an artificial timeout, figure out a way to wait for the response of the update.
         setTimeout(() => {
-          saveAttributes(undefined, currentTopicProgressUpdate, true);
+          saveAttributes(currentTopicProgressUpdate);
         }, 2500);
       } else {
-        saveAttributes(undefined, currentTopicProgressUpdate, true);
+        saveAttributes(currentTopicProgressUpdate);
       }
     };
 
@@ -98,16 +99,13 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
           {!hasCompletedOnboarding ? (
             <>
               {currentTopic === OnboardingTopic.OffenseLsirScore && (
-                <OnboardingOffenseLsirScoreGenderReportType
-                  form={form}
-                  firstName={firstName}
-                />
+                <OnboardingStepOne firstName={firstName} />
               )}
               {currentTopic === OnboardingTopic.PrimaryNeeds && (
-                <OnboardingPrimaryNeeds form={form} firstName={firstName} />
+                <OnboardingStepTwo firstName={firstName} />
               )}
               {currentTopic === OnboardingTopic.AdditionalNeeds && (
-                <OnboardingAdditionalNeeds form={form} firstName={firstName} />
+                <OnboardingStepThree firstName={firstName} />
               )}
               <Styled.ButtonWrapper>
                 <Styled.ActionButton kind="link" onClick={goToPrevTopic}>

@@ -15,25 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FormAttributes, FormFieldWithNestedList, FormValue } from "../types";
-
-export type InputFieldProps = {
-  element: FormFieldWithNestedList;
-  parentKey?: keyof FormAttributes;
-  prevValue?: FormValue;
-  updateForm: (
-    key: keyof FormAttributes,
-    value?: FormValue,
-    parentKey?: keyof FormAttributes,
-    isOtherContext?: boolean,
-  ) => void;
-  updateFormError?: (hasError: boolean) => void;
-  placeholder?: string;
-  isOtherContext?: boolean;
-  hasError?: boolean;
-};
-
-export type SelectOption = {
-  label?: string | null;
-  value?: FormValue;
+export const ReportType = {
+  FullPSI: "Full PSI",
+  FileReview: "File Review",
+  FileReviewWithUpdatedLSIRScore: "File Review + Updated LSI-R",
 };

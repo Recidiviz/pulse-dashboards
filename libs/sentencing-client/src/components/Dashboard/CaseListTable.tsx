@@ -33,6 +33,7 @@ import { sortFullNameByLastNameDescending } from "../../utils/sorting";
 import { displayReportType } from "../../utils/utils";
 import SortIcon from "../assets/sort-icon.svg?react";
 import { REPORT_TYPE_KEY } from "../CaseDetails/constants";
+import { ReportType } from "../constants";
 import {
   CLIENT_FULL_NAME_KEY,
   DUE_DATE_KEY,
@@ -47,7 +48,6 @@ import {
   CaseListTableCases,
   CaseStatusToDisplay,
   RecommendationStatusFilter,
-  ReportType,
 } from "./types";
 
 type CaseListTableProps = {

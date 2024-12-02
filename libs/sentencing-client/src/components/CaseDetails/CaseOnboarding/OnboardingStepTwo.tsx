@@ -19,28 +19,27 @@ import { observer } from "mobx-react-lite";
 
 import { formatPossessiveName } from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
-import { Form } from "../Form/Elements/Form";
+import Form from "../Form/Form";
+import { onboardingStepTwoFields } from "../Form/formConfig";
 import { CaseOnboardingTopicProps } from "./types";
 
-export const OnboardingPrimaryNeeds: React.FC<CaseOnboardingTopicProps> =
-  observer(function OnboardingPrimaryNeeds({ form, firstName }) {
-    return (
-      <>
-        <Styled.OnboardingHeaderWrapper>
-          <Styled.OnboardingHeader>
-            Gathering {formatPossessiveName(firstName)} primary needs help
-            pinpoint the best suited community opportunities
-          </Styled.OnboardingHeader>
-          <Styled.OnboardingDescription>
-            We will use this data to generate opportunities for {firstName}.
-            It&apos;s okay if you don&apos;t have this information yet, you can
-            add it later.{" "}
-          </Styled.OnboardingDescription>
-        </Styled.OnboardingHeaderWrapper>
-        <Form
-          form={form}
-          formFields={form.onboardingFields.PRIMARY_NEEDS_FIELD}
-        />
-      </>
-    );
-  });
+function OnboardingStepTwo({ firstName }: CaseOnboardingTopicProps) {
+  return (
+    <>
+      <Styled.OnboardingHeaderWrapper>
+        <Styled.OnboardingHeader>
+          Gathering {formatPossessiveName(firstName)} primary needs help
+          pinpoint the best suited community opportunities
+        </Styled.OnboardingHeader>
+        <Styled.OnboardingDescription>
+          We will use this data to generate opportunities for {firstName}.
+          It&apos;s okay if you don&apos;t have this information yet, you can
+          add it later.{" "}
+        </Styled.OnboardingDescription>
+      </Styled.OnboardingHeaderWrapper>
+      <Form formFields={onboardingStepTwoFields} />
+    </>
+  );
+}
+
+export default observer(OnboardingStepTwo);

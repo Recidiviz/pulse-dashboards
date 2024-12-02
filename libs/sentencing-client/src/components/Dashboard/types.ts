@@ -43,10 +43,4 @@ export type ContentCell = {
 
 export type ContentRow = { caseId: string; row: ContentCell[] };
 
-export enum ReportType {
-  FullPSI = "Full PSI",
-  FileReview = "File Review",
-  FileReviewWithUpdatedLSIRScore = "File Review + Updated LSI-R",
-}
-
 export type RecommendationStatusFilter = CaseStatusToDisplay | "Archived";

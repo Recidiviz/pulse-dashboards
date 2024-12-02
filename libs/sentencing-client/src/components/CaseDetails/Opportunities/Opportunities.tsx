@@ -28,7 +28,8 @@ import { keyBy, mapValues, pick } from "lodash";
 import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-import { Case, Opportunities as OpportunitiesType } from "../../../api";
+import { CaseStore } from "../../../../src/datastores/CaseStore";
+import { Opportunities as OpportunitiesType } from "../../../api";
 import { OpportunityViewOrigin } from "../../../datastores/types";
 import { formatPossessiveName } from "../../../utils/utils";
 import CheckIcon from "../../assets/check-icon.svg?react";
@@ -55,12 +56,18 @@ import {
   LSIR_SCORE_KEY,
   MENTAL_HEALTH_DIAGNOSES_KEY,
   NEEDS_TO_BE_ADDRESSED_KEY,
-  NOT_SURE_YET_OPTION,
   PLEA_KEY,
   PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../constants";
-import { parseAttributeValue } from "../Form/utils";
+import { NOT_SURE_YET_OPTION } from "../Form/constants";
+import {
+  parseAsamCareRecommendationValue,
+  parseBooleanValue,
+  parseMentalHealthDiagnosesValue,
+  parseNeedsToBeAddressedValue,
+  parsePleaValue,
+} from "../Form/utils";
 import {
   OpportunitiesIdentifier,
   RecommendationType,
@@ -78,7 +85,7 @@ type OpportunitiesProps = {
   selectedRecommendation: SelectedRecommendation;
   communityOpportunities: OpportunitiesType;
   recommendedOpportunities: OpportunitiesIdentifier;
-  caseAttributes: Case;
+  caseAttributes: CaseStore["caseAttributes"];
   updateRecommendedOpportunities: (
     opportunity: OpportunitiesIdentifier[number],
   ) => void;
@@ -113,10 +120,7 @@ const columns = [
         OpportunitiesWithOppNameProviderName[number]["needsAddressed"]
       >,
     ) => {
-      const value = parseAttributeValue(
-        NEEDS_TO_BE_ADDRESSED_KEY,
-        needs.getValue(),
-      ) as string[];
+      const value = parseNeedsToBeAddressedValue(needs.getValue());
       return (
         <Styled.NeedsWrapper>
           {value?.map((need) => (
@@ -228,105 +232,82 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     {
       key: LSIR_SCORE_KEY,
       label: "LSI-R Score",
-      value: parseAttributeValue(LSIR_SCORE_KEY, caseAttributes.lsirScore),
+      value: caseAttributes.lsirScore,
     },
     {
       key: NEEDS_TO_BE_ADDRESSED_KEY,
       label: "Needs",
-      value: parseAttributeValue(
-        NEEDS_TO_BE_ADDRESSED_KEY,
-        caseAttributes.needsToBeAddressed,
-      ),
+      value: parseNeedsToBeAddressedValue(caseAttributes.needsToBeAddressed),
     },
     {
       key: SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
       label: "Substance use disorder diagnosis",
-      value: parseAttributeValue(
-        SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
-        caseAttributes.substanceUseDisorderDiagnosis,
-      ),
+      value: caseAttributes.substanceUseDisorderDiagnosis,
     },
     {
       key: ASAM_CARE_RECOMMENDATION_KEY,
       label: "ASAM level of care recommendation",
-      value: parseAttributeValue(
-        ASAM_CARE_RECOMMENDATION_KEY,
+      value: parseAsamCareRecommendationValue(
         caseAttributes.asamCareRecommendation,
       ),
     },
     {
       key: MENTAL_HEALTH_DIAGNOSES_KEY,
       label: "Mental health diagnoses",
-      value: parseAttributeValue(
-        MENTAL_HEALTH_DIAGNOSES_KEY,
+      value: parseMentalHealthDiagnosesValue(
         caseAttributes.mentalHealthDiagnoses,
       ),
     },
     {
       key: IS_VETERAN_KEY,
       label: "Is veteran",
-      value: parseAttributeValue(IS_VETERAN_KEY, caseAttributes.isVeteran),
+      value: parseBooleanValue(caseAttributes.isVeteran),
     },
     {
       key: PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
       label: "Has a prior history of supervision/incarceration",
-      value: parseAttributeValue(
-        PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
+      value: parseBooleanValue(
         caseAttributes.previouslyIncarceratedOrUnderSupervision,
       ),
     },
     {
       key: HAS_PREVIOUS_FELONY_KEY,
       label: "Has a prior felony conviction",
-      value: parseAttributeValue(
-        HAS_PREVIOUS_FELONY_KEY,
-        caseAttributes.hasPreviousFelonyConviction,
-      ),
+      value: parseBooleanValue(caseAttributes.hasPreviousFelonyConviction),
     },
     {
       key: HAS_PREVIOUS_VIOLENT_OFFENSE_KEY,
       label: "Has a previous violent offense",
-      value: parseAttributeValue(
-        HAS_PREVIOUS_VIOLENT_OFFENSE_KEY,
+      value: parseBooleanValue(
         caseAttributes.hasPreviousViolentOffenseConviction,
       ),
     },
     {
       key: HAS_PREVIOUS_SEX_OFFENSE_KEY,
       label: "Has a previous sex offense",
-      value: parseAttributeValue(
-        HAS_PREVIOUS_SEX_OFFENSE_KEY,
-        caseAttributes.hasPreviousSexOffenseConviction,
-      ),
+      value: parseBooleanValue(caseAttributes.hasPreviousSexOffenseConviction),
     },
     {
       key: HAS_PREVIOUS_TREATMENT_COURT_KEY,
       label: "Has previously participated in a treatment court",
-      value: parseAttributeValue(
-        HAS_PREVIOUS_TREATMENT_COURT_KEY,
-        caseAttributes.hasPreviousTreatmentCourt,
-      ),
+      value: parseBooleanValue(caseAttributes.hasPreviousTreatmentCourt),
     },
     {
       key: HAS_DEVELOPMENTAL_DISABILITY_KEY,
       label: "Has a developmental disability",
-      value: parseAttributeValue(
-        HAS_DEVELOPMENTAL_DISABILITY_KEY,
-        caseAttributes.hasDevelopmentalDisability,
-      ),
+      value: parseBooleanValue(caseAttributes.hasDevelopmentalDisability),
     },
     {
       key: HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
       label: "Has an open child protective services case",
-      value: parseAttributeValue(
-        HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
+      value: parseBooleanValue(
         caseAttributes.hasOpenChildProtectiveServicesCase,
       ),
     },
     {
       key: PLEA_KEY,
       label: "Plea",
-      value: parseAttributeValue(PLEA_KEY, caseAttributes.plea),
+      value: parsePleaValue(caseAttributes.plea),
     },
   ];
 

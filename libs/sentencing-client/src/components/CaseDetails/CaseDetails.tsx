@@ -47,7 +47,6 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     staffPseudoId,
     caseId,
     caseAttributes,
-    form,
     communityOpportunities,
     recommendedOpportunities,
     updateAttributes,
@@ -92,11 +91,10 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   };
 
   const saveAttributes = (
-    options?: { showToast?: boolean },
     attributes?: MutableCaseAttributes,
-    mergeUpdates?: boolean,
+    options?: { showToast?: boolean },
   ) => {
-    updateAttributes(caseId, attributes, mergeUpdates);
+    updateAttributes(caseId, attributes);
     if (options?.showToast) {
       toast(() => <span>Case details updated</span>, {
         duration: 3000,
@@ -126,7 +124,6 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
       {/* Case Onboarding */}
       {caseAttributes.currentOnboardingTopic !== OnboardingTopic.Done ? (
         <CaseOnboarding
-          form={form}
           firstName={firstName}
           lastTopic={caseAttributes.currentOnboardingTopic}
           saveAttributes={saveAttributes}
@@ -170,7 +167,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                   trackRemoveOpportunityFromRecommendationClicked,
                 }}
               />
-
+              {/* Footer Disclaimer */}
               <Styled.DisclaimerWrapper>
                 <span style={{ fontWeight: 800 }}>DISCLAIMER</span> This tool is
                 for informational purposes only. Recidiviz does not guarantee
@@ -210,15 +207,12 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
           </Styled.Body>
 
           {/* Edit Case Details Modal */}
-          {form && (
-            <EditCaseDetailsModal
-              firstName={firstName}
-              form={form}
-              hideModal={hideEditCaseDetailsModal}
-              isOpen={showEditCaseDetailsModal}
-              saveAttributes={saveAttributes}
-            />
-          )}
+          <EditCaseDetailsModal
+            firstName={firstName}
+            hideModal={hideEditCaseDetailsModal}
+            isOpen={showEditCaseDetailsModal}
+            saveAttributes={saveAttributes}
+          />
         </>
       )}
     </Styled.PageContainer>

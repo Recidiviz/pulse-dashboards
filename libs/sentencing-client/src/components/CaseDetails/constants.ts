@@ -22,9 +22,9 @@ export const PDF_PAGE_WIDTH = 950;
 
 export const OFFENSE_KEY = "offense";
 
-export const CURRENT_OFFENSE_VIOLENT_KEY = "isCurrentOffenseViolent";
+export const VIOLENT_OFFENSE_KEY = "isCurrentOffenseViolent";
 
-export const CURRENT_OFFENSE_SEXUAL_KEY = "isCurrentOffenseSexual";
+export const SEX_OFFENSE_KEY = "isCurrentOffenseSexual";
 
 export const REPORT_TYPE_KEY = "reportType";
 export type ReportTypeKey = typeof REPORT_TYPE_KEY;
@@ -87,11 +87,7 @@ export type HasOpenChildProtectiveServicesCase =
 export const CLIENT_GENDER_KEY = "clientGender";
 export type ClientGender = "clientGender";
 
-export const NO_OPTION = "No";
-export const YES_OPTION = "Yes";
-export const NOT_SURE_YET_OPTION = "Not sure yet";
-
-export const needsToBeAddressed: Record<
+export const NeedsToBeAddressed: Record<
   Case["needsToBeAddressed"][number],
   string
 > = {

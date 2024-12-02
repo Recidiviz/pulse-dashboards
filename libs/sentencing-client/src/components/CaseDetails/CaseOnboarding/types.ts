@@ -17,7 +17,6 @@
 
 import { Case } from "../../../api";
 import { OnboardingNextOrBack } from "../../../datastores/types";
-import { CaseDetailsForm } from "../Form/CaseDetailsForm";
 import { FormFieldList, MutableCaseAttributes } from "../types";
 
 export enum OnboardingTopic {
@@ -28,13 +27,11 @@ export enum OnboardingTopic {
 }
 
 export type CaseOnboardingProps = {
-  form?: CaseDetailsForm;
   firstName?: string;
-  lastTopic: Case["currentOnboardingTopic"];
+  lastTopic?: Case["currentOnboardingTopic"];
   saveAttributes: (
-    options?: { showToast: boolean },
     attributes?: MutableCaseAttributes,
-    mergeUpdates?: boolean,
+    options?: { showToast: boolean },
   ) => void;
   navigateToDashboard: () => void;
   analytics: {
@@ -46,7 +43,6 @@ export type CaseOnboardingProps = {
 };
 
 export type CaseOnboardingTopicProps = {
-  form: CaseDetailsForm;
   firstName?: string;
 };
 

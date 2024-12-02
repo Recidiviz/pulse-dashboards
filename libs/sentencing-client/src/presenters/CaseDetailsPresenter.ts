@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { startCase, toLower } from "lodash";
 import { flowResult, makeAutoObservable, when } from "mobx";
 
 import {
@@ -25,8 +24,7 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
-import { Case, Client, Insight, Opportunities } from "../api";
-import { CaseDetailsForm } from "../components/CaseDetails/Form/CaseDetailsForm";
+import { Case, Opportunities } from "../api";
 import { filterEligibleOpportunities } from "../components/CaseDetails/Opportunities/utils";
 import {
   FormAttributes,
@@ -44,8 +42,6 @@ import {
 
 export class CaseDetailsPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
-
-  private caseDetailsForm?: CaseDetailsForm;
 
   recommendedOpportunities: OpportunitiesIdentifier;
 
@@ -79,13 +75,9 @@ export class CaseDetailsPresenter implements Hydratable {
     when(
       () => isHydrated(this),
       () => {
-        this.caseDetailsForm = new CaseDetailsForm(
-          this,
-          this.caseStore.offensesByName,
-          this.getInsight,
-        );
+        this.caseStore.setActiveCaseId(this.caseId);
         this.recommendedOpportunities =
-          this.caseAttributes.recommendedOpportunities ?? [];
+          this.caseAttributes?.recommendedOpportunities ?? [];
       },
     );
   }
@@ -94,19 +86,8 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.caseStore.psiStore.staffPseudoId;
   }
 
-  get caseAttributes(): Case & {
-    clientGender?: Client["gender"];
-  } {
-    const currentCase = this.caseStore.caseDetailsById[this.caseId];
-    if (currentCase.client?.fullName) {
-      currentCase.client.fullName = startCase(
-        toLower(currentCase.client?.fullName),
-      );
-    }
-    return {
-      ...currentCase,
-      clientGender: currentCase.client?.gender,
-    };
+  get caseAttributes() {
+    return this.caseStore.caseAttributes;
   }
 
   get caseEligibilityAttributes() {
@@ -165,10 +146,6 @@ export class CaseDetailsPresenter implements Hydratable {
     );
   }
 
-  get form() {
-    return this.caseDetailsForm;
-  }
-
   get hydrationState(): HydrationState {
     return this.hydrator.hydrationState;
   }
@@ -177,17 +154,10 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.hydrator.hydrate();
   }
 
-  async updateAttributes(
-    caseId: string,
-    attributes?: MutableCaseAttributes,
-    mergeUpdates?: boolean,
-  ) {
-    if (!attributes && JSON.stringify(this.form?.transformedUpdates) === "{}")
-      return;
-    const updates = mergeUpdates
-      ? { ...this.form?.transformedUpdates, ...attributes }
-      : attributes ?? this.form?.transformedUpdates;
-    await flowResult(this.caseStore.updateCaseDetails(caseId, updates));
+  async updateAttributes(caseId: string, attributes?: MutableCaseAttributes) {
+    if (!attributes) return;
+
+    await flowResult(this.caseStore.updateCaseDetails(caseId, attributes));
     await flowResult(this.caseStore.loadCaseDetails(this.caseId));
     await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
   }
@@ -329,17 +299,5 @@ export class CaseDetailsPresenter implements Hydratable {
       viewedBy: this.staffPseudoId,
       caseId: this.caseId,
     });
-  }
-
-  async getInsight(
-    offense: string,
-    lsirScore: number,
-  ): Promise<Insight | undefined> {
-    const currentCase = this.caseStore.caseDetailsById[this.caseId];
-    const gender = currentCase.client?.gender;
-    if (!gender) return;
-
-    await flowResult(this.caseStore.loadInsight(offense, gender, lsirScore));
-    return this.caseStore.insight;
   }
 }

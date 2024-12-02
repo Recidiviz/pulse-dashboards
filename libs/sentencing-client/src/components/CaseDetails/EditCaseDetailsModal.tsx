@@ -19,29 +19,32 @@ import { observer } from "mobx-react-lite";
 
 import { Modal } from "../Modal/Modal";
 import * as Styled from "./CaseDetails.styles";
-import { CaseDetailsForm } from "./Form/CaseDetailsForm";
-import { Form } from "./Form/Elements/Form";
+import Form from "./Form/Form";
+import { formFields } from "./Form/formConfig";
+import { form } from "./Form/FormStore";
+import { MutableCaseAttributes } from "./types";
 
 const EditCaseDetailsModal = ({
   firstName,
-  form,
   isOpen,
   hideModal,
   saveAttributes,
 }: {
   firstName?: string;
-  form: CaseDetailsForm;
   isOpen: boolean;
   hideModal: () => void;
-  saveAttributes: (options?: { showToast: boolean }) => void;
+  saveAttributes: (
+    attributes?: MutableCaseAttributes,
+    options?: { showToast: boolean },
+  ) => void;
 }) => {
   const closeModal = () => {
     hideModal();
     form.resetUpdates();
   };
   const saveAndCloseModal = () => {
-    saveAttributes({ showToast: true });
-    hideModal();
+    saveAttributes(form.updates, { showToast: true });
+    closeModal();
   };
 
   return (
@@ -56,7 +59,7 @@ const EditCaseDetailsModal = ({
 
       {/* Form */}
       <Styled.FormScrollWrapper>
-        <Form form={form} formFields={form.contentList} />
+        <Form formFields={formFields} />
       </Styled.FormScrollWrapper>
 
       <Styled.StickyActionButtonWrapper>

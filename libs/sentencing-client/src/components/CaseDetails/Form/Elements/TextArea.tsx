@@ -15,25 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FormAttributes, FormFieldWithNestedList, FormValue } from "../types";
+import * as Styled from "../../CaseDetails.styles";
+import { TextAreaProps } from "./types";
 
-export type InputFieldProps = {
-  element: FormFieldWithNestedList;
-  parentKey?: keyof FormAttributes;
-  prevValue?: FormValue;
-  updateForm: (
-    key: keyof FormAttributes,
-    value?: FormValue,
-    parentKey?: keyof FormAttributes,
-    isOtherContext?: boolean,
-  ) => void;
-  updateFormError?: (hasError: boolean) => void;
-  placeholder?: string;
-  isOtherContext?: boolean;
-  hasError?: boolean;
-};
-
-export type SelectOption = {
-  label?: string | null;
-  value?: FormValue;
-};
+export function TextArea({ id, value, onChange, placeholder }: TextAreaProps) {
+  return (
+    <Styled.TextArea
+      id={id}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+    />
+  );
+}

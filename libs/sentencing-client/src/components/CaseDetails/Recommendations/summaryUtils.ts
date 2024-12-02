@@ -21,7 +21,7 @@ import {
   formatPossessiveName,
   trimExtraSpaces,
 } from "../../../utils/utils";
-import { needsToBeAddressed } from "../constants";
+import { NeedsToBeAddressed } from "../constants";
 import { RecommendationType } from "../types";
 import {
   needsListExclusions,
@@ -38,7 +38,7 @@ export const formatNeedsList = (
 
   return needs
     .filter((need) => !exclusionList?.includes(need))
-    .map((need) => needToDisplayNameMap[need] || needsToBeAddressed[need])
+    .map((need) => needToDisplayNameMap[need] || NeedsToBeAddressed[need])
     .filter(Boolean);
 };
 

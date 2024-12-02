@@ -18,6 +18,7 @@
 import { CaseInsight } from "../../../../../api";
 import { convertDecimalToPercentage } from "../../../../../utils/utils";
 import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
+import { NONE_OPTION } from "../../../Form/constants";
 import { SelectedRecommendation } from "../../../types";
 import {
   RECOMMENDATION_TYPE_TO_BORDER_COLOR,
@@ -96,7 +97,7 @@ export function DispositionChart({
             ({ percentage, recommendationType }) =>
               // TODO(https://github.com/Recidiviz/recidiviz-data/issues/35110): Handle cases were recommendationType is not set but sentence range is
               recommendationType &&
-              recommendationType !== "None" && (
+              recommendationType !== NONE_OPTION && (
                 <Styled.DispositionChartCircleContainer
                   key={recommendationType}
                 >

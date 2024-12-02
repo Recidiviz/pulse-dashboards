@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Opportunities } from "../../../../api";
+import { NONE_OPTION } from "../../Form/constants";
 import { EligibilityAttributes } from "../types";
 import {
   filterEligibleOpportunities,
@@ -370,7 +371,7 @@ describe("filterEligibleOpportunities", () => {
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
 
     // If criteria is "Any", `mentalHealthDiagnoses` must contain one item that is not "None"
-    attributes.mentalHealthDiagnoses = ["None"];
+    attributes.mentalHealthDiagnoses = [NONE_OPTION];
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
 
     attributes.mentalHealthDiagnoses = ["BipolarDisorder"];
@@ -698,7 +699,7 @@ describe("filterEligibleOpportunities", () => {
       county: "District 1 - Caldwell",
       district: "DISTRICT 1",
       isVeteran: false,
-      mentalHealthDiagnoses: ["None"],
+      mentalHealthDiagnoses: [NONE_OPTION],
       substanceUseDisorderDiagnosis: "Severe",
       asamCareRecommendation: "ClinicallyManagedLowIntensityResidential",
       needsToBeAddressed: ["Education"],

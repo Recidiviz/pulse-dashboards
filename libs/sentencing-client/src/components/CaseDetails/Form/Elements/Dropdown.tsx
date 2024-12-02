@@ -15,30 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/// <reference types="vite-plugin-svgr/client" />
+import Select from "react-select";
 
-import { InputFieldProps } from "../types";
-import { TextInputField } from "./TextInputField";
+import { DropdownProps } from "./types";
 
-export const OtherContextInputField: React.FC<InputFieldProps> = ({
-  ...fieldProps
-}) => {
-  const { element } = fieldProps;
-
-  const showOtherContextField = Array.isArray(element.value)
-    ? element.value.some((val) =>
-        element.showOtherContextValuesMatch?.includes(val),
-      )
-    : element.showOtherContextValuesMatch?.includes(String(element.value));
-
+export function Dropdown({
+  value,
+  options,
+  onChange,
+  onInputChange,
+  isDisabled = false,
+  placeholder,
+  isMulti = false,
+  customComponents,
+  filterOption,
+  styles,
+}: DropdownProps) {
   return (
-    showOtherContextField && (
-      <TextInputField
-        {...fieldProps}
-        isOtherContext
-        placeholder={element.otherContext?.placeholder}
-        prevValue={element.otherContext?.value}
-      />
-    )
+    <Select
+      placeholder={placeholder}
+      value={value}
+      options={options}
+      onChange={onChange}
+      onInputChange={onInputChange}
+      isMulti={isMulti}
+      isDisabled={isDisabled}
+      components={customComponents}
+      filterOption={filterOption}
+      styles={styles}
+    />
   );
-};
+}

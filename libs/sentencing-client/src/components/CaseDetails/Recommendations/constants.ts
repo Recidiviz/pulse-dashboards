@@ -17,6 +17,7 @@
 
 import { Case } from "@prisma/client";
 
+import { OTHER_OPTION } from "../Form/constants";
 import { NeedsToDisplayName, Pronouns } from "./types";
 
 const neutralPronouns = {
@@ -56,7 +57,7 @@ export const pronouns: Pronouns = {
 export const defaultExclusionList: Case["needsToBeAddressed"] = [
   "ClothingAndToiletries",
   "GeneralReEntrySupport",
-  "Other",
+  OTHER_OPTION,
 ];
 
 /** Needs to be excluded from Rider or Term recommendations */

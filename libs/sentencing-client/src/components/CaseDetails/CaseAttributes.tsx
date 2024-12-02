@@ -18,13 +18,13 @@
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 
-import { Case } from "../../api";
+import { CaseStore } from "../../datastores/CaseStore";
 import { displayReportType, extractDistrictAndCounty } from "../../utils/utils";
 import * as Styled from "./CaseDetails.styles";
 import { GenderToDisplayName } from "./constants";
 
 type CaseAttributesProps = {
-  caseAttributes: Case;
+  caseAttributes: CaseStore["caseAttributes"];
   openEditCaseDetailsModal: () => void;
   analytics: { trackEditCaseDetailsClicked: () => void };
 };
@@ -61,7 +61,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
 
     const countyOfSentencingField = {
       label: "County",
-      value: extractDistrictAndCounty(districtCountyOfSentencing).county,
+      value: extractDistrictAndCounty(districtCountyOfSentencing)?.county,
     };
     const countyOfResidenceField = {
       label: "County of Residence",
@@ -70,7 +70,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
 
     const hasMatchingCountyOfResidenceAndSentencing =
       countyOfResidence?.toLocaleLowerCase() ===
-      extractDistrictAndCounty(districtCountyOfSentencing).county;
+      extractDistrictAndCounty(districtCountyOfSentencing)?.county;
 
     /** If the county of residence and sentencing differ, display both counties in header */
     const countyField = hasMatchingCountyOfResidenceAndSentencing
@@ -91,13 +91,12 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       { label: "Offense", value: offense },
       {
         label: "LSI-R Score",
-        value: lsirScore,
-        fallbackValue: "No score provided",
+        value: lsirScore ?? "No score provided",
       },
     ].map((attribute) => {
       return {
         ...attribute,
-        value: attribute.value ?? (attribute.fallbackValue ? "" : "-"),
+        value: attribute.value ?? "-",
       };
     });
 

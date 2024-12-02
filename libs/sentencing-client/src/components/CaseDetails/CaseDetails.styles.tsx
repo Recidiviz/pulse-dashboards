@@ -1147,7 +1147,7 @@ export const MultiSelectContainer = styled.div<{ selected?: boolean }>`
   margin-bottom: 16px;
 `;
 
-export const MultiSelectChip = styled.div<{
+export const SelectChip = styled.div<{
   selected?: boolean;
   isNotSureYetOption: boolean;
 }>`
@@ -1194,7 +1194,6 @@ export const RollupOffenseCategory = styled.div`
 `;
 
 export const NestedWrapper = styled.div`
-  margin-top: 24px;
   margin-left: 40px;
 `;
 
@@ -1245,7 +1244,8 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
   }),
 };
 
-export const multiDropdownStyles: StylesConfig<unknown, true> = {
+export const multiDropdownStyles: StylesConfig<SelectOption, true> = {
+  ...dropdownStyles,
   multiValue: (styles) => {
     return {
       ...styles,

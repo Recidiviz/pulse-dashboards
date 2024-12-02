@@ -15,25 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FormAttributes, FormFieldWithNestedList, FormValue } from "../types";
+import * as Styled from "../../CaseDetails.styles";
+import { TextInputProps } from "./types";
 
-export type InputFieldProps = {
-  element: FormFieldWithNestedList;
-  parentKey?: keyof FormAttributes;
-  prevValue?: FormValue;
-  updateForm: (
-    key: keyof FormAttributes,
-    value?: FormValue,
-    parentKey?: keyof FormAttributes,
-    isOtherContext?: boolean,
-  ) => void;
-  updateFormError?: (hasError: boolean) => void;
-  placeholder?: string;
-  isOtherContext?: boolean;
-  hasError?: boolean;
-};
-
-export type SelectOption = {
-  label?: string | null;
-  value?: FormValue;
-};
+export function TextInput({
+  id,
+  value,
+  onChange,
+  placeholder,
+  isDisabled = false,
+  errorMessage,
+  maxLength,
+  autoFocus = false,
+}: TextInputProps) {
+  return (
+    <>
+      <Styled.Input
+        id={id}
+        type="text"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        disabled={isDisabled}
+        maxLength={maxLength}
+        autoFocus={autoFocus}
+      />
+      {errorMessage && (
+        <Styled.ErrorMessage className="error-message">
+          {errorMessage}
+        </Styled.ErrorMessage>
+      )}
+    </>
+  );
+}

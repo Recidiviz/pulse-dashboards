@@ -15,25 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FormAttributes, FormFieldWithNestedList, FormValue } from "../types";
+import { observer } from "mobx-react-lite";
 
-export type InputFieldProps = {
-  element: FormFieldWithNestedList;
-  parentKey?: keyof FormAttributes;
-  prevValue?: FormValue;
-  updateForm: (
-    key: keyof FormAttributes,
-    value?: FormValue,
-    parentKey?: keyof FormAttributes,
-    isOtherContext?: boolean,
-  ) => void;
-  updateFormError?: (hasError: boolean) => void;
-  placeholder?: string;
-  isOtherContext?: boolean;
-  hasError?: boolean;
-};
+import { formatPossessiveName } from "../../../utils/utils";
+import * as Styled from "../CaseDetails.styles";
+import Form from "../Form/Form";
+import { onboardingStepOneFields } from "../Form/formConfig";
+import { CaseOnboardingTopicProps } from "./types";
 
-export type SelectOption = {
-  label?: string | null;
-  value?: FormValue;
-};
+function OnboardingStepOne({ firstName }: CaseOnboardingTopicProps) {
+  return (
+    <>
+      <Styled.OnboardingHeaderWrapper>
+        <Styled.OnboardingHeader>
+          Let&apos;s get some details about {formatPossessiveName(firstName)}{" "}
+          case to enhance the historical insights
+        </Styled.OnboardingHeader>
+      </Styled.OnboardingHeaderWrapper>
+      <Form formFields={onboardingStepOneFields} />
+    </>
+  );
+}
+
+export default observer(OnboardingStepOne);

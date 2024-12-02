@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Case, Opportunities } from "../../../api";
+import { CaseStore } from "../../../../src/datastores/CaseStore";
+import { Opportunities } from "../../../api";
 
 export type EligibilityCriteria = Pick<
   Opportunities[number],
@@ -36,7 +37,7 @@ export type EligibilityCriteria = Pick<
 >;
 
 export type EligibilityAttributes = Pick<
-  Case,
+  CaseStore["caseAttributes"],
   | "age"
   | "lsirScore"
   | "needsToBeAddressed"

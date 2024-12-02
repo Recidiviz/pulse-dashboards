@@ -17,7 +17,7 @@
 
 import Pluralize from "pluralize";
 
-import { ReportType } from "../components/Dashboard/types";
+import { ReportType } from "../components/constants";
 
 /**
  * Converts a decimal number to a percentage
@@ -31,7 +31,7 @@ export const convertDecimalToPercentage = (decimal: number) => {
  * If the `reportType` is `null` or `undefined`, returns "Unknown"
  */
 export const displayReportType = (
-  reportType: keyof typeof ReportType | null,
+  reportType?: keyof typeof ReportType | null,
 ) => {
   return reportType ? ReportType[reportType] : "Unknown";
 };
@@ -129,7 +129,8 @@ export const convertDistrictToDistrictCode = (district?: string) => {
  * extracted from a formatted string
  * (e.g. "District 4 - Caldwell" -> { district: "District 4", county: "Caldwell"})
  */
-export const extractDistrictAndCounty = (input: string) => {
+export const extractDistrictAndCounty = (input?: string) => {
+  if (!input) return;
   const [district, county] = input
     .split(" - ")
     .map((str) => str.trim().toLocaleLowerCase());

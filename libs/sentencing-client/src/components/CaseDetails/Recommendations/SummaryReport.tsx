@@ -37,11 +37,11 @@ type SummaryReportProps = {
   firstName?: string;
   lastName?: string;
   fullName?: string;
-  age: number;
+  age?: number;
   insight?: CaseInsight;
-  externalId: string;
+  externalId?: string;
   selectedRecommendation: SelectedRecommendation;
-  needs: Case["needsToBeAddressed"];
+  needs?: Case["needsToBeAddressed"];
   opportunityDescriptions?: string[];
   gender?: Client["gender"];
   analytics: {
@@ -120,7 +120,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     <Report
       fullName={fullName}
       age={age}
-      externalId={externalId}
+      externalId={externalId ?? ""}
       selectedRecommendation={selectedRecommendation}
       insight={insight}
     />

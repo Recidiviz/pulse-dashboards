@@ -19,30 +19,40 @@ import { fireEvent, render } from "@testing-library/react";
 import { configure } from "mobx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+import { createMockPSIStore } from "../../../../src/utils/test";
+import { formatPossessiveName } from "../../../../src/utils/utils";
 import {
   CaseDetailsFixture,
   StaffInfoFixture,
 } from "../../../api/offlineFixtures";
 import { PSIStore } from "../../../datastores/PSIStore";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
-import { createMockPSIStore } from "../../../utils/test";
-import { formatPossessiveName } from "../../../utils/utils";
 import { CaseDetails } from "../CaseDetails";
-import { caseDetailsFormTemplate } from "../Form/CaseDetailsFormTemplate";
-import { FALLBACK_POSSESSIVE_PRONOUN } from "../Form/constants";
 
 let psiStore: PSIStore;
 let presenter: CaseDetailsPresenter;
 const mockCase = Object.values(CaseDetailsFixture)[0];
 const caseId = mockCase.id;
 
-const nonNestedFormLabels = caseDetailsFormTemplate.map((field) => field.label);
-const nestedFormLabels = caseDetailsFormTemplate.reduce((acc, field) => {
-  if (field.nested) {
-    field.nested.forEach((nestedField) => acc.push(nestedField.label));
-  }
-  return acc;
-}, [] as string[]);
+const OFFENSE_FIELD_LABEL = "Offense";
+const LSIR_SCORE_FIELD_LABEL = "Draft LSI-R Score";
+const GENDER_FIELD_LABEL = "Gender";
+const REPORT_TYPE_FIELD_LABEL = "Report Type";
+const SUBSTANCE_USE_DISORDER_FIELD_LABEL = "Substance use disorder diagnosis";
+const MENTAL_HEALTH_DIAGNOSIS_FIELD_LABEL = "Mental health diagnoses";
+const PRIOR_HISTORY_OF_SUPERVISION_FIELD_LABEL =
+  "Has a prior history of supervision/incarceration";
+const IS_VETERAN_FIELD_LABEL = "Is a veteran";
+const DEVELOPMENTAL_DISABILITY_FIELD_LABEL = "Has a developmental disability";
+const CPS_FIELD_LABEL = "Has an open child protective services case";
+const PLEA_FIELD_LABEL = "Plea";
+const ASAM_FIELD_LABEL = "ASAM level of care recommendation";
+const PRIOR_FELONY_FIELD_LABEL = "Has a prior felony conviction";
+const PRIOR_VIOLENT_OFFENSE_FIELD_LABEL =
+  "Has a prior violent offense conviction";
+const PRIOR_SEX_OFFENSE_FIELD_LABEL = "Has a prior sex offense conviction";
+const PRIOR_TREATMENT_COURT_FIELD_LABEL =
+  "Has previously participated in a treatment court";
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -121,34 +131,27 @@ test("shows all of the non-nested fields", async () => {
   const editCaseDetailsButton = await screen.getByText("Edit Case Details");
   fireEvent.click(editCaseDetailsButton);
 
-  const offenseField = await screen.getByText(nonNestedFormLabels[0]);
-  const draftLsirScoreField = await screen.getByText(nonNestedFormLabels[1]);
-  const genderField = await screen.getByText(nonNestedFormLabels[2]);
-  const reportTypeField = await screen.getByText(nonNestedFormLabels[3]);
-
-  const primaryNeedsField = await screen.getByText(
-    nonNestedFormLabels[4].replace(
-      FALLBACK_POSSESSIVE_PRONOUN,
-      formatPossessiveName(presenter.caseAttributes.client?.firstName) ?? "",
-    ),
-  );
+  const offenseField = await screen.getByText(OFFENSE_FIELD_LABEL);
+  const draftLsirScoreField = await screen.getByText(LSIR_SCORE_FIELD_LABEL);
+  const genderField = await screen.getByText(GENDER_FIELD_LABEL);
+  const reportTypeField = await screen.getByText(REPORT_TYPE_FIELD_LABEL);
+  const PRIMARY_NEEDS_FIELD_LABEL = `What are ${formatPossessiveName(presenter.caseAttributes.client?.firstName)} primary needs? Select all that apply.`;
+  const primaryNeedsField = await screen.getByText(PRIMARY_NEEDS_FIELD_LABEL);
   const substanceUseDisorderField = await screen.getByText(
-    nonNestedFormLabels[5],
+    SUBSTANCE_USE_DISORDER_FIELD_LABEL,
   );
   const mentalHealthDiagnosisField = await screen.getByText(
-    nonNestedFormLabels[6],
+    MENTAL_HEALTH_DIAGNOSIS_FIELD_LABEL,
   );
   const priorHistoryOfSupervisionIncarcerationField = await screen.getByText(
-    nonNestedFormLabels[7],
+    PRIOR_HISTORY_OF_SUPERVISION_FIELD_LABEL,
   );
-  const isVeteranField = await screen.getByText(nonNestedFormLabels[6]);
+  const isVeteranField = await screen.getByText(IS_VETERAN_FIELD_LABEL);
   const developmentalDisabilityField = await screen.getByText(
-    nonNestedFormLabels[8],
+    DEVELOPMENTAL_DISABILITY_FIELD_LABEL,
   );
-  const childProtectiveServicesField = await screen.getByText(
-    nonNestedFormLabels[9],
-  );
-  const pleaField = await screen.getByText(nonNestedFormLabels[10]);
+  const childProtectiveServicesField = await screen.getByText(CPS_FIELD_LABEL);
+  const pleaField = await screen.getByText(PLEA_FIELD_LABEL);
 
   expect(offenseField).toBeInTheDocument();
   expect(draftLsirScoreField).toBeInTheDocument();
@@ -182,7 +185,7 @@ test("shows ASAM level of care recommendation only when 'Mild', 'Moderate', or '
   const editCaseDetailsButton = await screen.getByText("Edit Case Details");
   fireEvent.click(editCaseDetailsButton);
 
-  let asamLevelOfCareField = await screen.queryByText(nestedFormLabels[0]);
+  let asamLevelOfCareField = await screen.queryByText(ASAM_FIELD_LABEL);
   expect(asamLevelOfCareField).toBeNull();
 
   const noneOption = await screen.getByText("None");
@@ -193,27 +196,27 @@ test("shows ASAM level of care recommendation only when 'Mild', 'Moderate', or '
 
   fireEvent.click(mildOption);
 
-  asamLevelOfCareField = await screen.queryByText(nestedFormLabels[0]);
+  asamLevelOfCareField = await screen.queryByText(ASAM_FIELD_LABEL);
   expect(asamLevelOfCareField).not.toBeNull();
 
   fireEvent.click(noneOption);
 
-  asamLevelOfCareField = await screen.queryByText(nestedFormLabels[0]);
+  asamLevelOfCareField = await screen.queryByText(ASAM_FIELD_LABEL);
   expect(asamLevelOfCareField).toBeNull();
 
   fireEvent.click(moderateOption);
 
-  asamLevelOfCareField = await screen.queryByText(nestedFormLabels[0]);
+  asamLevelOfCareField = await screen.queryByText(ASAM_FIELD_LABEL);
   expect(asamLevelOfCareField).not.toBeNull();
 
   fireEvent.click(notSureYetOption[1]);
 
-  asamLevelOfCareField = await screen.queryByText(nestedFormLabels[0]);
+  asamLevelOfCareField = await screen.queryByText(ASAM_FIELD_LABEL);
   expect(asamLevelOfCareField).toBeNull();
 
   fireEvent.click(severeOption);
 
-  asamLevelOfCareField = await screen.queryByText(nestedFormLabels[0]);
+  asamLevelOfCareField = await screen.queryByText(ASAM_FIELD_LABEL);
   expect(asamLevelOfCareField).not.toBeNull();
 });
 
@@ -277,14 +280,16 @@ test("shows supervision/incarceration nested fields when 'No' is selected for pr
     priorHistoryOfSupervisionIncarcerationNoOptions[1];
 
   let hasPriorFelonyConvictionField = await screen.queryByText(
-    nestedFormLabels[1],
+    PRIOR_FELONY_FIELD_LABEL,
   );
   let hasPriorViolentOffenseField = await screen.queryByText(
-    nestedFormLabels[2],
+    PRIOR_VIOLENT_OFFENSE_FIELD_LABEL,
   );
-  let hasPriorSexOffenseField = await screen.queryByText(nestedFormLabels[3]);
+  let hasPriorSexOffenseField = await screen.queryByText(
+    PRIOR_SEX_OFFENSE_FIELD_LABEL,
+  );
   let hasPriorTreatmentCourtField = await screen.queryByText(
-    nestedFormLabels[4],
+    PRIOR_TREATMENT_COURT_FIELD_LABEL,
   );
 
   expect(hasPriorFelonyConvictionField).toBeNull();
@@ -294,10 +299,18 @@ test("shows supervision/incarceration nested fields when 'No' is selected for pr
 
   fireEvent.click(priorHistoryOfSupervisionIncarcerationNoOption);
 
-  hasPriorFelonyConvictionField = await screen.queryByText(nestedFormLabels[1]);
-  hasPriorViolentOffenseField = await screen.queryByText(nestedFormLabels[2]);
-  hasPriorSexOffenseField = await screen.queryByText(nestedFormLabels[3]);
-  hasPriorTreatmentCourtField = await screen.queryByText(nestedFormLabels[4]);
+  hasPriorFelonyConvictionField = await screen.queryByText(
+    PRIOR_FELONY_FIELD_LABEL,
+  );
+  hasPriorViolentOffenseField = await screen.queryByText(
+    PRIOR_VIOLENT_OFFENSE_FIELD_LABEL,
+  );
+  hasPriorSexOffenseField = await screen.queryByText(
+    PRIOR_SEX_OFFENSE_FIELD_LABEL,
+  );
+  hasPriorTreatmentCourtField = await screen.queryByText(
+    PRIOR_TREATMENT_COURT_FIELD_LABEL,
+  );
 
   expect(hasPriorFelonyConvictionField).not.toBeNull();
   expect(hasPriorViolentOffenseField).not.toBeNull();
