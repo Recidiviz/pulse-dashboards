@@ -138,7 +138,9 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
         {selectedOpportunity.lastUpdatedAt && (
           <Styled.SectionLabel>
             Last updated{" "}
-            {moment(selectedOpportunity.lastUpdatedAt).format("MM/DD/YYYY")}
+            {moment(selectedOpportunity.lastUpdatedAt)
+              .utc()
+              .format("MM/DD/YYYY")}
           </Styled.SectionLabel>
         )}
       </Styled.ModalHeaderWrapper>

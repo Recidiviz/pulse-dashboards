@@ -20,7 +20,7 @@ import moment from "moment";
 import { Case } from "../APIClient";
 
 const birthDate = new Date("1990-11-13T21:37:16.551Z");
-const age = moment().diff(birthDate, "years");
+const age = moment().utc().diff(birthDate, "years");
 
 export const CaseDetailsFixture: { [caseId: string]: Case } = {
   "f9c7ad42-949c-4f11-9ece-caf66df9f913": {

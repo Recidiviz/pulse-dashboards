@@ -108,7 +108,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
           <Styled.Name>{fullName}</Styled.Name>
           <Styled.ID>{externalId}</Styled.ID>
           <Styled.DueDate>
-            Due {moment(dueDate).format("MM/DD/YYYY")}
+            Due {moment(dueDate).utc().format("MM/DD/YYYY")}
           </Styled.DueDate>
           <Styled.EditCaseDetailsButton
             onClick={() => {

@@ -104,7 +104,7 @@ export function RecidivismPlotExplanation({
           rollupCombinedOffenseCategory={rollupCombinedOffenseCategory}
           rollupViolentOffense={rollupViolentOffense}
         />
-        , using IDOC data from 2010-{moment().year() - 3}.{" "}
+        , using IDOC data from 2010-{moment().utc().year() - 3}.{" "}
         {isTooltip &&
           `The shaded areas represent the confidence intervals, or the range of
       possible values for the true recidivism rate.`}

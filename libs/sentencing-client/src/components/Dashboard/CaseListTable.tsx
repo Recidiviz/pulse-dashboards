@@ -97,7 +97,7 @@ const columns = [
     header: "Due Date",
     accessorKey: DUE_DATE_KEY,
     cell: (dueDate: CellContext<CaseListTableCase, Date>) =>
-      moment(dueDate.getValue()).format("MM/DD/YYYY"),
+      moment(dueDate.getValue()).utc().format("MM/DD/YYYY"),
   },
   {
     header: "Report Type",
@@ -131,7 +131,7 @@ const columns = [
     ) => {
       const statusValue = status.getValue();
       const statusToDisplay =
-        moment() < moment(status.cell.row.original.dueDate)
+        moment().utc() < moment(status.cell.row.original.dueDate).utc()
           ? CaseStatusToDisplay[statusValue]
           : "Archived";
 
@@ -185,7 +185,7 @@ export const CaseListTable = ({
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
 
   const [data, setData] = useState(
-    caseTableData.filter((dp) => moment() < moment(dp.dueDate)), // Hide archived cases on initial load
+    caseTableData.filter((dp) => moment().utc() < moment(dp.dueDate).utc()), // Hide archived cases on initial load
   );
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([
@@ -234,7 +234,8 @@ export const CaseListTable = ({
     setData(() => {
       return caseTableData.filter((datapoint) => {
         const includesArchived = filters.includes("Archived");
-        const isBeforeDueDate = moment() < moment(datapoint.dueDate);
+        const isBeforeDueDate =
+          moment().utc() < moment(datapoint.dueDate).utc();
 
         if (datapoint.status) {
           const hasMatchingStatus = filters.includes(

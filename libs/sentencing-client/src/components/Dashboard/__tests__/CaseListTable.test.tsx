@@ -113,7 +113,7 @@ test("does not show archived cases", async () => {
   await presenter.hydrate();
   const data = presenter.caseTableData;
   const pastDueCase = data?.find(
-    (caseBrief) => moment() > moment(caseBrief.dueDate),
+    (caseBrief) => moment().utc() > moment(caseBrief.dueDate).utc(),
   );
 
   if (!data) return;
@@ -147,7 +147,7 @@ test("shows archived case when filter is checked", async () => {
   await presenter.hydrate();
   const data = presenter.caseTableData;
   const pastDueCase = data?.find(
-    (caseBrief) => moment() > moment(caseBrief.dueDate),
+    (caseBrief) => moment().utc() > moment(caseBrief.dueDate).utc(),
   );
 
   if (!data) return;
@@ -312,7 +312,8 @@ test("show/hide cases when 'Complete' filter is checked/unchecked", async () => 
   const completeName = data
     .find(
       (caseBrief) =>
-        caseBrief.status === "Complete" && moment() < moment(caseBrief.dueDate),
+        caseBrief.status === "Complete" &&
+        moment().utc() < moment(caseBrief.dueDate).utc(),
     )
     ?.client?.fullName.toLocaleLowerCase();
   let completeCase: HTMLElement | null = await screen.queryByText(

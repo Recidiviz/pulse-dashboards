@@ -142,7 +142,7 @@ export class APIClient {
 
     return {
       ...fetchedData,
-      age: moment().diff(fetchedData.client?.birthDate, "years"),
+      age: moment().utc().diff(fetchedData.client?.birthDate, "years"),
       client: updatedClient,
     };
   }
