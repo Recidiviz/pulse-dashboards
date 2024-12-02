@@ -360,7 +360,8 @@ export class OpportunityBase<
       case "US_ME":
       case "US_OR":
       case "US_TN":
-        return "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed eiusmod temor. With longer text, the profile link stays on one line";
+        // Placeholder text until the text comes from the config
+        return "Reminder: There are 2 weeks remaining in the competition for this opportunity.";
       default:
         return;
     }
