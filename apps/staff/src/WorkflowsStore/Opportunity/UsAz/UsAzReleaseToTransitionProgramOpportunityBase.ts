@@ -34,6 +34,7 @@ export type UsAzTransitionProgramSubcategory =
 export type UsAzReleaseToTPRUpdateRecord = OpportunityUpdate & {
   subcategory: UsAzTransitionProgramSubcategory | undefined;
 };
+
 export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
   ReferralRecord extends DocumentData,
   UpdateRecord extends OpportunityUpdate,

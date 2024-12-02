@@ -15,4 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UsAzReleaseToTransitionProgramOpportunityBase";
+import { z } from "zod";
+
+import { opportunitySchemaBase } from "~datatypes";
+
+export const usAzReleaseToTransitionProgramSchemaBase = opportunitySchemaBase
+  .extend({
+    metadata: z.object({
+      tabName: z.string().optional(),
+      tabDescription: z.string().optional(),
+    }),
+  })
+  .passthrough();
+
+export type UsAzReleaseToTransitionProgramReferralRecordRaw = z.input<
+  typeof usAzReleaseToTransitionProgramSchemaBase
+>;
+
+export type UsAzReleaseToTransitionProgramReferralRecord = z.infer<
+  typeof usAzReleaseToTransitionProgramSchemaBase
+>;

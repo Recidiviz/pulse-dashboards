@@ -20,16 +20,16 @@ import { DocumentData } from "firebase/firestore";
 import { UsAzResidentMetadata } from "../../../FirestoreStore/types/residentMetadata";
 import { Resident } from "../../Resident";
 import {
-  UsAzReleaseToTPRReferralRecord,
-  usAzReleaseToTPRSchema,
-} from "./UsAzReleaseToTPRReferralRecord";
+  UsAzReleaseToTransitionProgramReferralRecord,
+  usAzReleaseToTransitionProgramSchemaBase,
+} from "./UsAzReleaseToTransitionProgramBaseSchema";
 import {
   UsAzReleaseToTPRUpdateRecord,
   UsAzReleaseToTransitionProgramOpportunityBase,
 } from "./UsAzReleaseToTransitionProgramOpportunityBase";
 
 export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramOpportunityBase<
-  UsAzReleaseToTPRReferralRecord,
+  UsAzReleaseToTransitionProgramReferralRecord,
   UsAzReleaseToTPRUpdateRecord
 > {
   constructor(resident: Resident, record: DocumentData) {
@@ -37,7 +37,7 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
       resident,
       "usAzReleaseToTPR",
       resident.rootStore,
-      usAzReleaseToTPRSchema.parse(record),
+      usAzReleaseToTransitionProgramSchemaBase.parse(record),
     );
   }
 
