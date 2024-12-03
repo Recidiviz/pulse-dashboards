@@ -16253,7 +16253,7 @@ exports[`supervisorInfo 1`] = `
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-agonzalez123",
-  "supervisionDistrict": "Region D1",
+  "supervisionDistrict": "Region 1",
   "supervisionUnit": "Unit 1",
 }
 `;

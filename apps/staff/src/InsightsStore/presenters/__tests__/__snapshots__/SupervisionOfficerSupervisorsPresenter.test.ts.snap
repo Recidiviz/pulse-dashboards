@@ -3,7 +3,7 @@
 exports[`supervisors by district when homepage variant not set 1`] = `
 [
   {
-    "district": "Region D1",
+    "district": "Region 1",
     "supervisors": [
       {
         "displayName": "Alejandro D Gonzalez",
@@ -16,7 +16,7 @@ exports[`supervisors by district when homepage variant not set 1`] = `
         },
         "hasOutliers": true,
         "pseudonymizedId": "hashed-agonzalez123",
-        "supervisionDistrict": "Region D1",
+        "supervisionDistrict": "Region 1",
         "supervisionUnit": "Unit 1",
       },
       {
@@ -29,13 +29,13 @@ exports[`supervisors by district when homepage variant not set 1`] = `
         },
         "hasOutliers": true,
         "pseudonymizedId": "hashed-rsmith789",
-        "supervisionDistrict": "Region D1",
+        "supervisionDistrict": "Region 1",
         "supervisionUnit": "Unit 1",
       },
     ],
   },
   {
-    "district": null,
+    "district": "Region 2",
     "supervisors": [
       {
         "displayName": "David Lee",
@@ -47,7 +47,7 @@ exports[`supervisors by district when homepage variant not set 1`] = `
         },
         "hasOutliers": true,
         "pseudonymizedId": "hashed-dlee456",
-        "supervisionDistrict": null,
+        "supervisionDistrict": "Region 2",
         "supervisionUnit": "Unit 1",
       },
     ],
@@ -58,7 +58,7 @@ exports[`supervisors by district when homepage variant not set 1`] = `
 exports[`supervisors by district when workflows variant not set 1`] = `
 [
   {
-    "district": "Region D1",
+    "district": "Region 1",
     "supervisors": [
       {
         "displayName": "Alejandro D Gonzalez",
@@ -71,7 +71,7 @@ exports[`supervisors by district when workflows variant not set 1`] = `
         },
         "hasOutliers": true,
         "pseudonymizedId": "hashed-agonzalez123",
-        "supervisionDistrict": "Region D1",
+        "supervisionDistrict": "Region 1",
         "supervisionUnit": "Unit 1",
       },
       {
@@ -84,13 +84,13 @@ exports[`supervisors by district when workflows variant not set 1`] = `
         },
         "hasOutliers": true,
         "pseudonymizedId": "hashed-rsmith789",
-        "supervisionDistrict": "Region D1",
+        "supervisionDistrict": "Region 1",
         "supervisionUnit": "Unit 1",
       },
     ],
   },
   {
-    "district": null,
+    "district": "Region 2",
     "supervisors": [
       {
         "displayName": "David Lee",
@@ -102,7 +102,7 @@ exports[`supervisors by district when workflows variant not set 1`] = `
         },
         "hasOutliers": true,
         "pseudonymizedId": "hashed-dlee456",
-        "supervisionDistrict": null,
+        "supervisionDistrict": "Region 2",
         "supervisionUnit": "Unit 1",
       },
     ],

@@ -208,14 +208,14 @@ test("districts ordered correctly", async () => {
     },
   );
   const orderedDistrictList = [
+    "Region 1",
     "REGION 1",
+    "Region 2",
     "REGION 4A",
     "REGION 4B",
     "REGION 7",
     "REGION 10 - CENTRAL",
     "REGION 10 - WEST",
-    "Region D1",
-    null,
   ];
   expect(
     Array.from(presenter.supervisorsByDistrict.map(({ district }) => district)),

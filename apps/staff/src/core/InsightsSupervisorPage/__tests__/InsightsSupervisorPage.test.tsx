@@ -150,7 +150,7 @@ describe("Hydrated Supervisor Page", () => {
 
     await Promise.all(
       [
-        "D1",
+        "1",
         "Alejandro D Gonzalez",
         "Walter Harris, Jack Hernandez, Jason Nelson",
       ].map((text) =>

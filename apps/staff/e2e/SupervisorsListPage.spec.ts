@@ -33,7 +33,7 @@ test.describe("Supervisors List Page", () => {
       await expect(page.getByRole("main")).toContainText(
         "Select a supervisor to view their overview",
       );
-      await expect(page.getByRole("main")).toContainText("Region D1");
+      await expect(page.getByRole("main")).toContainText("Region 1");
       await expect(
         page.getByRole("link", { name: "Alejandro D Gonzalez" }),
       ).toBeVisible();
@@ -72,7 +72,7 @@ test.describe("Supervisors List Page", () => {
       await expect(page.getByRole("main")).toContainText(
         "3 supervisors across the state have one or more outlier officers in their team",
       );
-      await expect(page.getByRole("main")).toContainText("Region D1");
+      await expect(page.getByRole("main")).toContainText("Region 1");
       await expect(
         page.getByRole("link", { name: "Alejandro D Gonzalez" }),
       ).toBeVisible();
@@ -105,7 +105,7 @@ test.describe("Supervisors List Page", () => {
       await expect(page.getByRole("main")).toContainText(
         "Select a supervisor to view their overview",
       );
-      await expect(page.getByRole("main")).toContainText("Region D1");
+      await expect(page.getByRole("main")).toContainText("Region 1");
       await expect(
         page.getByRole("link", { name: "Alejandro D Gonzalez" }),
       ).toBeVisible();
@@ -142,7 +142,7 @@ test.describe("Supervisors List Page", () => {
       await expect(page.getByRole("main")).toContainText(
         "2 of the 3 officers in your team are outliers on one or more metrics",
       );
-      await expect(page.getByRole("main")).toContainText("Region: D1");
+      await expect(page.getByRole("main")).toContainText("Region: 1");
       await expect(page.getByRole("main")).toContainText(
         "Team Supervisor: Alejandro D Gonzalez",
       );

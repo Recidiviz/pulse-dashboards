@@ -29,7 +29,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
         surname: "Gonzalez",
       },
       externalId: "agonzalez123",
-      supervisionDistrict: "Region D1",
+      supervisionDistrict: "Region 1",
       supervisionUnit: "Unit 1",
       pseudonymizedId: "hashed-agonzalez123",
       hasOutliers: true,
@@ -38,7 +38,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "David", surname: "Lee" },
       externalId: "dlee456",
-      supervisionDistrict: null,
+      supervisionDistrict: "Region 2",
       supervisionUnit: "Unit 1",
       pseudonymizedId: "hashed-dlee456",
       hasOutliers: true,
@@ -47,7 +47,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "Rosa", surname: "Smith" },
       externalId: "rsmith789",
-      supervisionDistrict: "Region D1",
+      supervisionDistrict: "Region 1",
       supervisionUnit: "Unit 1",
       pseudonymizedId: "hashed-rsmith789",
       hasOutliers: true,
@@ -56,7 +56,7 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
     {
       fullName: { givenNames: "Charles", surname: "Thomas" },
       externalId: "cthomas321",
-      supervisionDistrict: null,
+      supervisionDistrict: "Region 2",
       supervisionUnit: null,
       pseudonymizedId: "hashed-cthomas321",
       hasOutliers: false,
