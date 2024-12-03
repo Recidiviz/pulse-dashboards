@@ -186,7 +186,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
     : {
         ...allFeatureVariants,
         supervisorHomepage: {
-          activeTenants: ["US_CA", "US_MI", "US_TN"],
+          activeTenants: ["US_MI", "US_TN"],
         },
         // Currently disabled because the last synced date doesn't exist on the backend yet.
         lastSyncedDate: undefined,

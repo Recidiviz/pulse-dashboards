@@ -41,7 +41,6 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
     workflows: ["home", "milestones", "clients"],
     insights: [INSIGHTS_PAGES.supervision],
   },
-  insightsLegacyUI: true,
   insightsUnitState: true,
 };
 
