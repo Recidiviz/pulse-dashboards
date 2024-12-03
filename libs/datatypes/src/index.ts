@@ -84,6 +84,8 @@ export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/factory/co
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/factory/factory";
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/fixture";
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficer/schema";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficerOutcomes/fixture";
+export * from "./people/Staff/Supervision/Insights/SupervisionOfficerOutcomes/schema";
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/factory/config";
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/factory/factory";
 export * from "./people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/fixture";
