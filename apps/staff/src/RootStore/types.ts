@@ -167,10 +167,10 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         },
         supervisorHomepageWorkflows: {},
         nonOMSCriteria: {
-          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ"],
+          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA"],
         },
         submittedOpportunityStatus: {
-          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ"],
+          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA"],
         },
         sortableOpportunityTabs: {
           activeTenants: ["US_OR", "US_ME", "US_MI"],
