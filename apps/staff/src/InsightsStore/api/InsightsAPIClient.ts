@@ -31,6 +31,8 @@ import {
   supervisionOfficerFixture,
   SupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventSchema,
+  SupervisionOfficerOutcomes,
+  supervisionOfficerOutcomesSchema,
   supervisionOfficerSchema,
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorSchema,
@@ -153,6 +155,15 @@ export class InsightsAPIClient implements InsightsAPI {
     return officerData.map((b) => excludedSupervisionOfficerSchema.parse(b));
   }
 
+  async outcomesForSupervisor(
+    supervisorPseudoId: string,
+  ): Promise<Array<SupervisionOfficerOutcomes>> {
+    const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/outcomes`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const outcomesData = fetchedData.outcomes as Array<unknown>;
+    return outcomesData.map((b) => supervisionOfficerOutcomesSchema.parse(b));
+  }
+
   async supervisionOfficer(
     officerPseudoId: string,
   ): Promise<SupervisionOfficer> {
@@ -170,6 +181,15 @@ export class InsightsAPIClient implements InsightsAPI {
     const fetchedData = await this.apiStore.get(endpoint);
     const officerData = fetchedData.officer as unknown;
     return excludedSupervisionOfficerSchema.parse(officerData);
+  }
+
+  async outcomesForOfficer(
+    officerPseudoId: string,
+  ): Promise<SupervisionOfficerOutcomes> {
+    const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/outcomes`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const outcomesData = fetchedData.outcomes as unknown;
+    return supervisionOfficerOutcomesSchema.parse(outcomesData);
   }
 
   async supervisionOfficerMetricEvents(

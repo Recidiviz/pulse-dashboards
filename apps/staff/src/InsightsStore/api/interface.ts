@@ -27,6 +27,7 @@ import {
   MetricBenchmark,
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
+  SupervisionOfficerOutcomes,
   SupervisionOfficerSupervisor,
   SupervisionVitalsMetric,
   UserInfo,
@@ -58,10 +59,16 @@ export interface InsightsAPI {
   excludedOfficersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<ExcludedSupervisionOfficer>>;
+  outcomesForSupervisor(
+    supervisorPseudoId: string,
+  ): Promise<Array<SupervisionOfficerOutcomes>>;
   supervisionOfficer(officerPseudoId: string): Promise<SupervisionOfficer>;
   excludedSupervisionOfficer(
     officerPseudoId: string,
   ): Promise<ExcludedSupervisionOfficer>;
+  outcomesForOfficer(
+    officerPseudoId: string,
+  ): Promise<SupervisionOfficerOutcomes>;
   supervisionOfficerMetricEvents(
     officerPseudoId: string,
     metricId: string,

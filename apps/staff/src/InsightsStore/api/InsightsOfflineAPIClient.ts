@@ -39,6 +39,8 @@ import {
   supervisionOfficerFixture,
   SupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventFixture,
+  SupervisionOfficerOutcomes,
+  supervisionOfficerOutcomesFixture,
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorsFixture,
   supervisionOfficerVitalsMetricFixture,
@@ -135,6 +137,20 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     };
   }
 
+  // TODO(#4625): Add state-specific fixtures, which will remove the need for this logic
+  removeCaSpecificDataFromOutcomesFixture(
+    officerOutcomesData: SupervisionOfficerOutcomes,
+  ): SupervisionOfficerOutcomes {
+    return {
+      ...officerOutcomesData,
+      outlierMetrics: officerOutcomesData.outlierMetrics.filter(
+        (metric) =>
+          metric.metricId !== FAVORABLE_METRIC_IDS.enum.treatment_starts,
+      ),
+      topXPctMetrics: [],
+    };
+  }
+
   async officersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>> {
@@ -159,6 +175,32 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
         .map((i) => `hashed-${i}`)
         .includes(supervisorPseudoId),
     );
+  }
+
+  async outcomesForSupervisor(
+    supervisorPseudoId: string,
+  ): Promise<Array<SupervisionOfficerOutcomes>> {
+    const transformedFixture = isDemoMode()
+      ? supervisionOfficerOutcomesFixture.map((officerOutcomes) =>
+          this.removeCaSpecificDataFromOutcomesFixture(officerOutcomes),
+        )
+      : supervisionOfficerOutcomesFixture;
+
+    // filter for officer outcomes fixtures belonging to this supervisor
+    return transformedFixture.filter((officerOutcomes) => {
+      const officerFixture = supervisionOfficerFixture.find(
+        (o) => o.pseudonymizedId === officerOutcomes.pseudonymizedId,
+      );
+
+      if (!officerFixture)
+        throw new Error(
+          `Officer ${officerOutcomes.pseudonymizedId} not present in fixture data`,
+        );
+
+      return officerFixture.supervisorExternalIds
+        .map((i) => `hashed-${i}`)
+        .includes(supervisorPseudoId);
+    });
   }
 
   async supervisionOfficer(
@@ -187,6 +229,23 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
       throw new Error(`Officer ${officerPseudoId} not present in fixture data`);
 
     return officerFixture;
+  }
+
+  async outcomesForOfficer(
+    officerPseudoId: string,
+  ): Promise<SupervisionOfficerOutcomes> {
+    const outcomesFixture = supervisionOfficerOutcomesFixture.find(
+      (o) => o.pseudonymizedId === officerPseudoId,
+    );
+
+    if (!outcomesFixture)
+      throw new Error(
+        `No outcomes fixture data for officer with pseudo id: [${officerPseudoId}]`,
+      );
+
+    return isDemoMode()
+      ? this.removeCaSpecificDataFromOutcomesFixture(outcomesFixture)
+      : outcomesFixture;
   }
 
   async supervisionOfficerMetricEvents(

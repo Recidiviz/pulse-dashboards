@@ -29,10 +29,12 @@ import {
   rawMetricBenchmarksFixture,
   rawSupervisionOfficerFixture,
   rawSupervisionOfficerMetricEventFixture,
+  rawSupervisionOfficerOutcomesFixture,
   rawSupervisionVitalsMetricFixture,
   rawSupervisorUserInfoFixture,
   supervisionOfficerFixture,
   supervisionOfficerMetricEventFixture,
+  supervisionOfficerOutcomesFixture,
   supervisionOfficerSupervisorsFixture,
   supervisorUserInfoFixture,
 } from "~datatypes";
@@ -186,6 +188,25 @@ describe("InsightsAPIClient", () => {
     expect(response).toEqual(supervisionOfficerFixture);
   });
 
+  it("outcomesForSupervisor calls the correct endpoint", async () => {
+    fetchMock.mockResponse(JSON.stringify({ outcomes: [] }));
+    await client.outcomesForSupervisor("any-hashed-id");
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(`${BASE_URL}/supervisor/any-hashed-id/outcomes`),
+    );
+  });
+
+  it("outcomesForSupervisor parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ outcomes: rawSupervisionOfficerOutcomesFixture }),
+    );
+    const response = await client.outcomesForSupervisor(
+      supervisionOfficerSupervisorsFixture[0].externalId,
+    );
+
+    expect(response).toEqual(supervisionOfficerOutcomesFixture);
+  });
+
   it("supervisionOfficer calls the correct endpoint", async () => {
     fetchMock.mockResponse(
       JSON.stringify({ officer: rawSupervisionOfficerFixture[0] }),
@@ -226,6 +247,25 @@ describe("InsightsAPIClient", () => {
     );
 
     expect(response).toEqual(excludedSupervisionOfficerFixture[0]);
+  });
+
+  it("supervisionOfficerOutcomes calls the correct endpoint", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ outcomes: rawSupervisionOfficerOutcomesFixture[0] }),
+    );
+    await client.outcomesForOfficer("any-hashed-id");
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(`${BASE_URL}/officer/any-hashed-id/outcomes`),
+    );
+  });
+
+  it("supervisionOfficerOutcomes parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ outcomes: rawSupervisionOfficerOutcomesFixture[0] }),
+    );
+    const response = await client.outcomesForOfficer("any-hashed-officer-id");
+
+    expect(response).toEqual(supervisionOfficerOutcomesFixture[0]);
   });
 
   it("supervisionOfficerMetricEvents calls the correct endpoint", async () => {
