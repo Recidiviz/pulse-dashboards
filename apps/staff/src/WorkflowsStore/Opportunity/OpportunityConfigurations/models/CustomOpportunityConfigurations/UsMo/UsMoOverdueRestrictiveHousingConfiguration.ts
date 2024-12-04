@@ -19,11 +19,7 @@ import { startOfWeek } from "date-fns";
 import { countBy } from "lodash";
 
 import { formatWorkflowsDate } from "../../../../../../utils";
-import {
-  Opportunity,
-  OpportunityRequirement,
-  OpportunityTab,
-} from "../../../../types";
+import { Opportunity, OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMoOverdueRestrictiveHousingConfiguration extends ApiOpportunityConfiguration {
@@ -52,33 +48,6 @@ export class UsMoOverdueRestrictiveHousingConfiguration extends ApiOpportunityCo
         "Missing Review Date",
       ],
     } as const;
-  }
-
-  get omsCriteriaHeader() {
-    return "Example of customizable header";
-  }
-
-  get nonOMSCriteria(): OpportunityRequirement[] {
-    // Placeholders for testing UI changes
-    return [
-      {
-        text: "A first external criterion to test non-OMS requirements",
-        tooltip:
-          "A long tooltip that has a substantial amount of text in it describing a policy.",
-      },
-      {
-        text: "Another external criterion to test non-OMS requirements, which is very long and extends to multiple lines",
-        tooltip: "A slightly shorter tooltip",
-      },
-      {
-        text: "Third criterion",
-        tooltip: "Tooltip",
-      },
-      {
-        text: "Fourth criterion",
-        tooltip: "Tooltip",
-      },
-    ];
   }
 
   get supportsAlmostEligible() {

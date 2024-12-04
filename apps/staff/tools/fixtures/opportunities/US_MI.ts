@@ -23,6 +23,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Complete SCC review and fill out 283 Form for eligible residents, inclusive of ADD signature.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "PRIOR RH",
@@ -45,6 +47,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "ADD In-Person Review",
       dynamicEligibilityText:
         "resident[|s] [is|are] eligible for in-person review by the ADD at SCC to potentially return to general population",
@@ -63,9 +66,12 @@ export const mockApiOpportunityConfigurationResponse = {
             '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection:
         "US_MI-addInPersonSecurityClassificationCommitteeReview",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 8,
       ineligibleCriteriaCopy: [
         {
@@ -82,9 +88,14 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
         "Incarceration",
@@ -93,8 +104,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
       stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents in restrictive housing who have spent 1+ consecutive year(s) in segregation and are therefore due for an in-person SCC review with the relevant ADD. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents, inclusive of ADD signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -102,6 +117,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tabs: ["Overdue", "Due now", "Upcoming", "Marked Ineligible"],
         },
       ],
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "addInPersonSecurityClassificationCommitteeReview",
       zeroGrantsTooltip: null,
@@ -110,6 +126,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "VIOLATIONS",
@@ -135,6 +153,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Classification Review",
       dynamicEligibilityText:
         "client[|s] may be eligible for a supervision level downgrade",
@@ -153,15 +172,23 @@ export const mockApiOpportunityConfigurationResponse = {
             "The supervising Agent shall ensure that a Correctional Offender Management Profiling for Alternative Sanctions (COMPAS) has been completed for each offender on their active caseload as outlined in OP 06.01.145 “Administration and Use of COMPAS and TAP.” Unless mandated by statute or other criteria as directed in this operating procedure, the COMPAS shall be used to determine the initial supervision level of each offender.\nUnless an offender’s supervision level is mandated by policy or statute, the supervising Agent shall reduce an offender’s supervision level if the offender has satisfactorily completed six continuous months at the current assigned supervision level.",
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_MI-classificationReviewReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 1,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
         "UsMiRecommendedSupervisionLevel",
@@ -173,10 +200,15 @@ export const mockApiOpportunityConfigurationResponse = {
         autoSnoozeParams: { params: { days: 180 }, type: "snoozeDays" },
       },
       stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify clients due or overdue for a classification review, which are generally mandated after six months of supervision and at six-month intervals thereafter, though some clients must receive a classification review earlier than six months by policy. Agents may reconsider the supervision level for a client based on developments in their case and behavior; per FOA Field Memorandum 2023-211, agents are presumptively required to downgrade clients’ supervision level during each classification review, provided that they have “satisfactorily completed” the prior six months on supervision. Review clients who meet the time threshold for classification review and downgrade their supervision level in COMS.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "classificationReview",
       zeroGrantsTooltip: null,
@@ -185,6 +217,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "CHILD ABUSE ORDER",
@@ -241,6 +275,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Early Discharge",
       dynamicEligibilityText: "client[|s] may be eligible for early discharge",
       eligibilityDateText: "Earliest Eligibility Date for Early Discharge",
@@ -310,15 +345,23 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: null,
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_MI-earlyDischargeReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 2,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
         "UsMiEarlyDischargeIcDetails",
@@ -327,10 +370,15 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "Early Discharge is the termination of the period of probation or parole before the full-term discharge date. Early discharge reviews are mandated, at minimum, once clients have served half of their original term of supervision.<br /><br />Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "earlyDischarge",
       zeroGrantsTooltip: null,
@@ -339,6 +387,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "FIREARM",
@@ -363,6 +413,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Minimum Telephone Reporting",
       dynamicEligibilityText:
         "client[|s] may be eligible for downgrade to a minimum telephone reporting",
@@ -399,23 +450,36 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: null,
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_MI-minimumTelephoneReporting",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 3,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "EligibilityDate"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "Minimum Telephone Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts.<br /><br />Review clients who meet the requirements for minimum telephone reporting and transfer them to telephone reporting in COMS.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "minimumTelephoneReporting",
       zeroGrantsTooltip: null,
@@ -424,12 +488,15 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         { key: "DATE", text: "Expiration date is inaccurate" },
         { key: "CUSTODY", text: "Client is currently in custody" },
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Overdue for Discharge",
       dynamicEligibilityText:
         "client[|s] [is|are] nearing or past their full-term release date",
@@ -441,8 +508,11 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: null,
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_MI-pastFTRDReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 4,
       ineligibleCriteriaCopy: [
         {
@@ -453,19 +523,29 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],
       snooze: {
         autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
       },
       stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify supervision clients who are past their full-term release date and directs staff to complete the discharge in COMS.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for discharge",
       urlSection: "pastFTRD",
       zeroGrantsTooltip: null,
@@ -474,6 +554,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Return residents eligible for reclassification to general population",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "ALJ",
@@ -503,6 +585,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Reclassification to General Population",
       dynamicEligibilityText:
         "resident[|s] in temporary segregation or detention [is|are] eligible for reclassification to general population",
@@ -515,8 +598,11 @@ export const mockApiOpportunityConfigurationResponse = {
             '{{#if (eq record.metadata.solitaryConfinementType "DISCIPLINARY_SOLITARY_CONFINEMENT")}}A prisoner shall not remain on detention status for longer than the period of time ordered by the ALJ{{else}}Wardens shall ensure that prisoners are not confined in temporary segregation for more than seven business days except under the circumstances listed in 1-7 below{{/if}}',
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_MI-reclassificationRequest",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 6,
       ineligibleCriteriaCopy: [
         {
@@ -529,17 +615,27 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Return residents eligible for reclassification to general population.",
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Incarceration"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
       stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents in temporary segregation or detention who may be eligible to return to general population, including residents who have served their full detention sanction and residents who have been in temporary segregation for longer than the seven day threshold stipulated by policy. Review eligible and overdue clients and work to transfer them back to general population.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "reclassificationRequest",
       zeroGrantsTooltip: null,
@@ -548,6 +644,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Complete SCC review and fill out 283 Form for eligible residents",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "PRIOR RH",
@@ -570,6 +668,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Security Classification Committee Review",
       dynamicEligibilityText:
         "resident[|s] [is|are] eligible for SCC review to potentially return to general population",
@@ -588,8 +687,11 @@ export const mockApiOpportunityConfigurationResponse = {
             '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_MI-securityClassificationCommitteeReview",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 7,
       ineligibleCriteriaCopy: [
         {
@@ -602,9 +704,14 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Complete SCC review and fill out 283 Form for eligible residents.",
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
         "Incarceration",
@@ -613,8 +720,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
       stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -622,6 +733,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tabs: ["Overdue", "Due now", "Upcoming", "Marked Ineligible"],
         },
       ],
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "securityClassificationCommitteeReview",
       zeroGrantsTooltip: null,
@@ -630,6 +742,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "OVERRIDE",
@@ -642,6 +756,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Supervision Level Mismatch",
       dynamicEligibilityText:
         "client[|s] within their first 6 months of supervision [is|are] being supervised at a level that does not match their latest risk score",
@@ -665,15 +780,23 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: null,
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_MI-supervisionLevelDowngrade",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 5,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
         "ClientProfileDetails",
@@ -682,10 +805,15 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify clients who are eligible for a downgrade in their supervision level during their first six months on supervision. The tool will surface clients who have not yet received a COMPAS but are being supervised at a level other than medium or whose supervision level is not aligned with their COMPAS score.<br /><br />Review clients within their first six months of supervision and whose supervision level does not match their risk level and downgrade their supervision level in COMS.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "supervisionLevelMismatch",
       zeroGrantsTooltip: null,
@@ -694,6 +822,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "PRIOR RH",
@@ -716,6 +846,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Warden In-Person Review",
       dynamicEligibilityText:
         "resident[|s] [is|are] eligible for in-person review by the Warden at SCC to potentially return to general population",
@@ -734,9 +865,12 @@ export const mockApiOpportunityConfigurationResponse = {
             '{{#if (eq record.formInformation.segregationType "ADMINISTRATIVE_SOLITARY_CONFINEMENT")}}Housing unit team members and SCC shall regularly review the behavioral adjustment of each prisoner classified to administrative segregation, including prisoners classified to administrative segregation who are serving a detention sanction for misconduct.{{else if (eq record.formInformation.segregationType "TEMPORARY_SOLITARY_CONFINEMENT")}}If the prisoner is held in temporary segregation for more than 30 calendar days, the facility shall afford the prisoner a review to determine whether there is a continuing need for separation.{{/if}}',
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection:
         "US_MI-wardenInPersonSecurityClassificationCommitteeReview",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 7,
       ineligibleCriteriaCopy: [
         {
@@ -753,9 +887,14 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
         "Incarceration",
@@ -764,8 +903,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
       stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents in restrictive housing who have spent 6+ consecutive months in segregation and are therefore due for an in-person SCC review with the Warden. Complete SCC review and fill out pre-filled 283 Form for eligible residents, inclusive of Warden signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -773,6 +916,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tabs: ["Overdue", "Due now", "Upcoming", "Marked Ineligible"],
         },
       ],
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "wardenInPersonSecurityClassificationCommitteeReview",
       zeroGrantsTooltip: null,

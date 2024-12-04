@@ -23,11 +23,11 @@ export class UsOrEarnedDischargeSentenceConfiguration extends ApiOpportunityConf
     return "Eligibility Requirements Verified via DOC400";
   }
 
-  get nonOMSCriteriaHeader() {
+  get nonOmsCriteriaHeader() {
     return "Additional Eligibility Requirements Manually Verified ";
   }
 
-  get nonOMSCriteria(): OpportunityRequirement[] {
+  get nonOmsCriteria(): OpportunityRequirement[] {
     return [
       {
         text: "No disqualifying sentence enhancements not entered in DOC400",

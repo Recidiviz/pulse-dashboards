@@ -674,11 +674,11 @@ export class OpportunityBase<
 
   get nonOMSRequirements(): OpportunityRequirement[] {
     const {
-      config: { nonOMSCriteria },
+      config: { nonOmsCriteria },
     } = this;
 
     // Because these criteria aren't associated with a referral record, they don't have reasons
-    return nonOMSCriteria.map((req) =>
+    return nonOmsCriteria.map((req) =>
       hydrateReq({
         raw: req,
         opportunity: this,

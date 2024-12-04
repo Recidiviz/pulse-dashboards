@@ -18,7 +18,7 @@
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMeEarlyTerminationConfiguration extends ApiOpportunityConfiguration {
-  get nonOMSCriteria() {
+  get nonOmsCriteria() {
     return [
       {
         text: "Must have fulfilled all proactive conditions of probation",

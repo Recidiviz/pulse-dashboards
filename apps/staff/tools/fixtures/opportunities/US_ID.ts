@@ -23,6 +23,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "SCNC",
@@ -35,28 +37,42 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Limited Supervision Unit",
       dynamicEligibilityText:
         "client[|s] may be eligible for the Limited Supervision Unit",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [],
+      emptyTabCopy: [],
       firestoreCollection: "US_ID-LSUReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 3,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_ID",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "The Limited Supervision Unit, which offers web-based reporting to low-risk clients, is the lowest level of supervision available in Idaho. This alert surfaces people who may be eligible for LSU based on the criteria set forth in policy. Review clients who may be eligible, complete a pre-filled transfer chrono, and go through the transfer process in Atlas.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for transfer to LSU",
       urlSection: "LSU",
       zeroGrantsTooltip: null,
@@ -65,6 +81,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         { key: "SCNC", text: "Not compliant with special conditions" },
         {
@@ -80,6 +98,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Earned Discharge",
       dynamicEligibilityText: "client[|s] may be eligible for earned discharge",
       eligibilityDateText: null,
@@ -121,8 +140,11 @@ export const mockApiOpportunityConfigurationResponse = {
             "If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole",
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_ID-earnedDischargeReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 2,
       ineligibleCriteriaCopy: [
         {
@@ -134,17 +156,27 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_ID",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify people who may be eligible for earned discharge based on IDOC’s criteria for consideration. Review clients who meet the criteria, complete the pre-filled request form, and go through the early discharge process with the court.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for Earned Discharge",
       urlSection: "earnedDischarge",
       zeroGrantsTooltip: null,
@@ -153,12 +185,15 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         { key: "ABSCONDING", text: "Client is in absconder status" },
         { key: "VIOLATION", text: "Client is in violation status" },
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Release from Supervision",
       dynamicEligibilityText:
         "client[|s] [is|are] nearing or past their full-term release date",
@@ -170,8 +205,11 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: null,
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_ID-pastFTRDReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 1,
       ineligibleCriteriaCopy: [
         {
@@ -183,19 +221,29 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader:
         "Search for officers above to review clients whose full-term release date is near or has passed.",
       isAlert: true,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "HIGH",
       sidebarComponents: ["ClientProfileDetails"],
       snooze: {
         autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
       },
       stateCode: "US_ID",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify people whose full-term release date has passed so that they can be moved to history in order to right-size caseloads. Review clients whose full-term release date has passed and discharge them in Atlas.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for discharge",
       urlSection: "pastFTRD",
       zeroGrantsTooltip: null,
@@ -204,6 +252,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review residents who may be eligbile for transfer to a CRC and start their paperwork in ATLAS.",
       compareBy: [{ field: "releaseDate" }],
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "MEDICAL",
@@ -226,6 +276,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Resident worker at Community Reentry Centers",
       dynamicEligibilityText:
         "resident[|s] may be eligible to be a resident worker at a Community Reentry Center",
@@ -276,8 +327,11 @@ export const mockApiOpportunityConfigurationResponse = {
             "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_ID-CRCResidentWorkerReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 5,
       ineligibleCriteriaCopy: [
         {
@@ -288,9 +342,14 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
         "Incarceration",
@@ -300,8 +359,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_ID",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify people who may be eligible for transfer to a resident worker bed at a Community Reentry Center (CRC). Review eligible residents and request a transfer in Atlas.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -331,6 +394,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "CRCResidentWorker",
       zeroGrantsTooltip: null,
@@ -339,6 +403,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
       compareBy: [{ field: "releaseDate" }],
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "MEDICAL",
@@ -361,6 +427,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Work-release at Community Reentry Centers",
       dynamicEligibilityText:
         "resident[|s] may be eligible for work-release at a Community Reentry Center",
@@ -411,8 +478,11 @@ export const mockApiOpportunityConfigurationResponse = {
             "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_ID-CRCWorkReleaseReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 6,
       ineligibleCriteriaCopy: [
         {
@@ -423,9 +493,14 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
         "Incarceration",
@@ -435,8 +510,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_ID",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify people who may be eligible for transfer to a work-release bed at a Community Reentry Center (CRC). Review eligible residents and request a transfer in Atlas.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -466,6 +545,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "CRCWorkRelease",
       zeroGrantsTooltip: null,
@@ -474,6 +554,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
       compareBy: [{ field: "releaseDate" }],
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "BEHAVIOR",
@@ -503,6 +585,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Expanded Community Reentry Centers",
       dynamicEligibilityText:
         "resident[|s] [is|are] eligible for transfer to Expanded Community Reentry Centers.",
@@ -553,8 +636,11 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: "Cannot have any felony detainers or holds",
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_ID-expandedCRCReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 4,
       ineligibleCriteriaCopy: [
         {
@@ -570,9 +656,14 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
         "Incarceration",
@@ -582,8 +673,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
       stateCode: "US_ID",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify people who meet the criteria to participate in the expanded CRC program, which allows eligible CRC residents to spend the last six months of their sentence living and working in the community. Review eligible residents and work with P&P to complete a transfer to expanded CRC if program capacity allows.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -613,6 +708,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "expandedCRC",
       zeroGrantsTooltip: null,
@@ -620,6 +716,8 @@ export const mockApiOpportunityConfigurationResponse = {
     usIdSupervisionLevelDowngrade: {
       callToAction: "Change their supervision level in Atlas",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "INCORRECT",
@@ -632,6 +730,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Supervision Level Mismatch",
       dynamicEligibilityText:
         "client[|s] [is|are] being supervised at a level that does not match their latest risk score",
@@ -643,23 +742,36 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: null,
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_ID-supervisionLevelDowngrade",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 7,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=share_link",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_ID",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify people whose current supervision level does not match their latest LSI-R or STATIC risk score; it does not surface people who are on specialized supervision levels by policy. Review eligible clients and update their supervision level in Atlas.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for supervision downgrade",
       urlSection: "supervisionLevelMismatch",
       zeroGrantsTooltip: null,

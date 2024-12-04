@@ -25,6 +25,8 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: [
         { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
       ],
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "BEDS",
@@ -44,21 +46,30 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Temporary Assignment",
       dynamicEligibilityText:
         "resident[|s] on Temporary Assignment to review for their initial meaningful hearing",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [],
+      emptyTabCopy: [],
       firestoreCollection:
         "US_MO-overdueRestrictiveHousingInitialHearingReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 3,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
       snooze: {
@@ -68,8 +79,12 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       },
       stateCode: "US_MO",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents in Temporary Assignment who are overdue or due for an initial meaningful hearing.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -83,6 +98,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "overdueRestrictiveHousingInitialHearing",
       zeroGrantsTooltip: null,
@@ -93,6 +109,8 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: [
         { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
       ],
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "BEDS",
@@ -111,20 +129,29 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Release from Restrictive Housing",
       dynamicEligibilityText:
         "resident[|s] to review for release from Restrictive Housing",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [],
+      emptyTabCopy: [],
       firestoreCollection: "US_MO-overdueRestrictiveHousingReleaseReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 2,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
       snooze: {
@@ -134,8 +161,12 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       },
       stateCode: "US_MO",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents in Restrictive Housing who have already reached or are about to reach the total number of days they were assigned to serve in restrictive housing before returning to the General Population. Review residents for release and prepare necessary paperwork for their return to the General Population.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -149,6 +180,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "overdueRestrictiveHousingRelease",
       zeroGrantsTooltip: null,
@@ -159,6 +191,8 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: [
         { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
       ],
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "BEDS",
@@ -170,21 +204,30 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Extended Restrictive Housing Review",
       dynamicEligibilityText:
         "resident[|s] in Extended Restrictive Housing to review for their next hearing",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [],
+      emptyTabCopy: [],
       firestoreCollection:
         "US_MO-overdueRestrictiveHousingReviewHearingReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 4,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsMoIncarceration", "UsMoRestrictiveHousing"],
       snooze: {
@@ -194,8 +237,12 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       },
       stateCode: "US_MO",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents in Extended Restrictive Housing  who are overdue or due for a hearing. Review residents and prepare necessary paperwork for their next hearing.",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -209,6 +256,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "overdueRestrictiveHousingReviewHearing",
       zeroGrantsTooltip: null,

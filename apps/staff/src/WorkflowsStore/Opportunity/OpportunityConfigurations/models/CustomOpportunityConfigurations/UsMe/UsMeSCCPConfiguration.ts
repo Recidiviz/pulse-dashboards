@@ -18,7 +18,7 @@
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMeSCCPConfiguration extends ApiOpportunityConfiguration {
-  get nonOMSCriteria() {
+  get nonOmsCriteria() {
     return [
       {
         text: "Must have completed assigned core programs",

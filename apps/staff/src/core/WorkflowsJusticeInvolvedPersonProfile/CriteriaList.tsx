@@ -186,7 +186,7 @@ export const CriteriaList = observer(function CriteriaList({
         opportunity.nonOMSRequirements.length > 0 && (
           <>
             <CriteriaSectionHeading>
-              {opportunity.config.nonOMSCriteriaHeader}
+              {opportunity.config.nonOmsCriteriaHeader}
             </CriteriaSectionHeading>
             {opportunity.nonOMSRequirements.map(nonOMSReqToCriterion)}
           </>

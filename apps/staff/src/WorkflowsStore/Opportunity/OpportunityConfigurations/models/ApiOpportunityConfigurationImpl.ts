@@ -182,8 +182,8 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.ineligibleCriteriaCopy;
   }
 
-  get nonOMSCriteria(): OpportunityRequirement[] {
-    return [];
+  get nonOmsCriteria(): OpportunityRequirement[] {
+    return this.configurationObject.nonOmsCriteria;
   }
 
   get compareBy() {
@@ -207,27 +207,34 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get deniedTabTitle(): OpportunityTab {
+    if (this.configurationObject.deniedTabTitle)
+      return this.configurationObject.deniedTabTitle as OpportunityTab;
+
     return this.isAlert ? "Overridden" : "Marked Ineligible";
   }
 
   get denialAdjective(): string {
-    return this.isAlert ? "Overridden" : "Ineligible";
+    return (
+      this.configurationObject.denialAdjective ??
+      (this.isAlert ? "Overridden" : "Ineligible")
+    );
   }
 
   get denialNoun(): string {
-    return this.isAlert ? "Override Status" : "Ineligibility";
+    return this.configurationObject.denialNoun ?? this.isAlert
+      ? "Override Status"
+      : "Ineligibility";
   }
 
   get submittedTabTitle(): OpportunityTab {
-    switch (this.stateCode) {
-      case "US_MI":
-        return "Pending";
-      default:
-        return "Submitted";
-    }
+    return (this.configurationObject.submittedTabTitle ??
+      "Pending") as OpportunityTab;
   }
 
   get omsCriteriaHeader(): string {
+    if (this.configurationObject.omsCriteriaHeader)
+      return this.configurationObject.omsCriteriaHeader;
+
     switch (this.stateCode) {
       case "US_ME":
         return "Validated by data from CORIS";
@@ -238,23 +245,18 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     }
   }
 
-  get nonOMSCriteriaHeader() {
-    switch (this.stateCode) {
-      // Setting header for ME/MI explicitly in case we want to change the default
-      case "US_ME":
-      case "US_MI":
-        return "Requirements to check";
-      default:
-        return "Requirements to check";
-    }
+  get nonOmsCriteriaHeader() {
+    return (
+      this.configurationObject.nonOmsCriteriaHeader ?? "Requirements to check"
+    );
   }
 
   get emptyTabCopy() {
-    return {};
+    return this.configurationObject.emptyTabCopy;
   }
 
   get tabPrefaceCopy() {
-    return {};
+    return this.configurationObject.tabPrefaceCopy;
   }
 
   get supportsDenial() {
@@ -266,18 +268,26 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get supportsSubmitted() {
-    return true;
+    return this.configurationObject.supportsSubmitted;
   }
 
   get highlightCasesOnHomepage() {
-    return false;
+    return this.configurationObject.highlightCasesOnHomepage;
   }
 
   get overdueOpportunityCalloutCopy() {
-    return "";
+    if (this.configurationObject.overdueOpportunityCalloutCopy)
+      return this.configurationObject.overdueOpportunityCalloutCopy;
+
+    throw new Error(
+      `Implement overdueOpportunityCalloutCopy() for ${this.label}`,
+    );
   }
 
   get highlightedCaseCtaCopy(): string {
+    if (this.configurationObject.highlightedCaseCtaCopy)
+      return this.configurationObject.highlightedCaseCtaCopy;
+
     throw new Error(`Implement highlightedCaseCtaCopy() for ${this.label}`);
   }
 
@@ -287,5 +297,17 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
       this.configurationObject.zeroGrantsTooltip ??
       "This officer has not granted any clients this opportunity in the past 12 months."
     );
+  }
+
+  get subcategoryHeadings() {
+    return this.configurationObject.subcategoryHeadings;
+  }
+
+  get subcategoryOrderings() {
+    return this.configurationObject.subcategoryOrderings;
+  }
+
+  get markSubmittedOptionsByTab() {
+    return this.configurationObject.markSubmittedOptionsByTab;
   }
 }

@@ -59,8 +59,8 @@ export interface OpportunityConfiguration {
   eligibleCriteriaCopy: CriteriaCopy;
   ineligibleCriteriaCopy: CriteriaCopy;
   compareBy: SortParam[] | undefined;
-  nonOMSCriteriaHeader: string;
-  nonOMSCriteria: OpportunityRequirement[];
+  nonOmsCriteriaHeader: string;
+  nonOmsCriteria: OpportunityRequirement[];
   homepagePosition: number;
   countByFunction?: (opportunities: Opportunity[]) => number;
   deniedTabTitle: OpportunityTab;

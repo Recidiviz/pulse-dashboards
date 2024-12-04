@@ -34,6 +34,37 @@ const criteriaCopySchema = z
   )
   .or(z.record(copySchema));
 
+const tabTextSchema = z
+  .array(
+    z.object({
+      tab: z.string(),
+      text: z.string(),
+    }),
+  )
+  .transform((a) => Object.fromEntries(a.map(({ tab, text }) => [tab, text])));
+
+const subcategoryHeadingSchema = z
+  .array(
+    z.object({
+      subcategory: z.string(),
+      text: z.string(),
+    }),
+  )
+  .transform((a) =>
+    Object.fromEntries(a.map(({ subcategory, text }) => [subcategory, text])),
+  );
+
+const tabTextListSchema = z
+  .array(
+    z.object({
+      tab: z.string(),
+      texts: z.array(z.string()).default([]),
+    }),
+  )
+  .transform((a) =>
+    Object.fromEntries(a.map(({ tab, texts }) => [tab, texts])),
+  );
+
 export const apiOpportunityConfigurationSchema = z.object({
   stateCode: z.enum(TenantIds),
   systemType: z.enum(["SUPERVISION", "INCARCERATION"]),
@@ -91,6 +122,28 @@ export const apiOpportunityConfigurationSchema = z.object({
   homepagePosition: z.number(),
   methodologyUrl: z.string(),
   zeroGrantsTooltip: nullishAsUndefined(z.string()),
+
+  deniedTabTitle: nullishAsUndefined(z.string()),
+  denialAdjective: nullishAsUndefined(z.string()),
+  denialNoun: nullishAsUndefined(z.string()),
+
+  supportsSubmitted: z.boolean().default(false),
+  submittedTabTitle: nullishAsUndefined(z.string()),
+
+  emptyTabCopy: tabTextSchema,
+  tabPrefaceCopy: tabTextSchema,
+
+  subcategoryHeadings: subcategoryHeadingSchema,
+  subcategoryOrderings: tabTextListSchema,
+  markSubmittedOptionsByTab: tabTextListSchema,
+
+  omsCriteriaHeader: nullishAsUndefined(z.string()),
+  nonOmsCriteriaHeader: nullishAsUndefined(z.string()),
+  nonOmsCriteria: z.array(copySchema).default([]),
+
+  highlightCasesOnHomepage: z.boolean().default(false),
+  highlightedCaseCtaCopy: nullishAsUndefined(z.string()),
+  overdueOpportunityCalloutCopy: nullishAsUndefined(z.string()),
 });
 
 export const apiOpportunityConfigurationResponseSchema = z.object({

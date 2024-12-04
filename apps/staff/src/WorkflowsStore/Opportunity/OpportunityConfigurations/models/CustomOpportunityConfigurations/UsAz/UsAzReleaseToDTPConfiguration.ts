@@ -33,11 +33,11 @@ export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
     } as const;
   }
 
-  get nonOMSCriteriaHeader() {
+  get nonOmsCriteriaHeader() {
     return "Other Considerations";
   }
 
-  get nonOMSCriteria() {
+  get nonOmsCriteria() {
     return [{ text: "Satisfactory progress with Corrections Plan" }];
   }
 
@@ -53,8 +53,9 @@ export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
     };
   }
 
-  get subcategoryOrderings(): Partial<
-    Record<OpportunityTab, UsAzTransitionProgramSubcategory[]>
+  get subcategoryOrderings(): Record<
+    string,
+    UsAzTransitionProgramSubcategory[]
   > {
     return {
       Pending: [
@@ -73,12 +74,12 @@ export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
     return "Pending";
   }
 
-  get markSubmittedOptionsByTab(): Partial<
-    Record<OpportunityTab, UsAzTransitionProgramSubcategory[]>
+  get markSubmittedOptionsByTab(): Record<
+    string,
+    UsAzTransitionProgramSubcategory[]
   > {
-    const allPendingSubcategories:
-      | UsAzTransitionProgramSubcategory[]
-      | undefined = this.subcategoryOrderings["Pending"];
+    const allPendingSubcategories: UsAzTransitionProgramSubcategory[] =
+      this.subcategoryOrderings["Pending"] ?? [];
 
     return {
       "Fast Trackers": allPendingSubcategories,

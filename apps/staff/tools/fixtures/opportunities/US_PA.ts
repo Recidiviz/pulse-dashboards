@@ -22,6 +22,8 @@ export const mockApiOpportunityConfigurationResponse = {
     usPaAdminSupervision: {
       callToAction: "Review clients and complete the DC-P 402 checklist",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "FINES & FEES",
@@ -36,12 +38,8 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Client is named in a PFA order or has a history of PFAs",
         },
         {
-          key: "OUT OF STATE",
-          text: "Client has an out of state offense that makes them ineligible per form 402",
-        },
-        {
           key: "UNREPORTED",
-          text: "Client has an unreported disposition on an offense that makes them ineligible per form 402",
+          text: "Client has an unreported disposition or a delinquent adjudication on an offense that makes them ineligible per form 402",
         },
         {
           key: "DRUG",
@@ -62,6 +60,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Administrative Supervision",
       dynamicEligibilityText:
         "client[|s] may be eligible for transfer to Adminstrative Supervision",
@@ -77,15 +76,18 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usPaNotServingIneligibleOffenseForAdminSupervision",
-          text: "Not serving for an ineligible offense",
+          text: "Not convicted of an ineligible offense",
         },
         {
           key: "usPaNotOnSexOffenseProtocol",
           text: "Not supervised under the sex offender protocol",
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_PA-adminSupervisionReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 1,
       ineligibleCriteriaCopy: [
         {
@@ -95,17 +97,27 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1dBTArU-kQojSvqWZ_i080pDtXxZe70X6/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "ClientEmployer"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_PA",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "Administrative supervision is a level of supervision that requires less contact than the minimum supervision level. It requires at least one face-to-face contact and one collateral contact per year. The official policy doc can be found [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view). On this page, you can review clients and complete the DC-P 402 form.",
+      submittedTabTitle: null,
+      supportsSubmitted: false,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "adminSupervision",
       zeroGrantsTooltip: null,
@@ -114,6 +126,8 @@ export const mockApiOpportunityConfigurationResponse = {
       callToAction:
         "Review clients and transfer to administrative supervision caseload",
       compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
       denialReasons: [
         {
           key: "SATISFACTORY",
@@ -126,6 +140,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
+      deniedTabTitle: null,
       displayName: "Special Circumstances Supervision",
       dynamicEligibilityText:
         "client[|s] may be eligible for transfer to Special Circumstances Supervision",
@@ -148,8 +163,11 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Not eligible for administrative supervision",
         },
       ],
+      emptyTabCopy: [],
       firestoreCollection: "US_PA-specialCircumstancesSupervisionReferrals",
       hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
       homepagePosition: 2,
       ineligibleCriteriaCopy: [
         {
@@ -159,17 +177,27 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
+      markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1dBTArU-kQojSvqWZ_i080pDtXxZe70X6/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "ClientEmployer"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_PA",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading:
         "Special circumstances supervision allows reentrants who are not eligible for traditional administrative supervision to be supervised at a lower level of supervision. It is typically used for reentrants who have extenuating circumstances that reduce the risk of re-offending or reentrants who have made satisfactory adjustments on supervision over a period of time. The official policy doc can be found [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view). On this page, you can review clients who may be eligible for special circumstances supervision. ",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
+      tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "specialCircumstancesSupervisionReferrals",
       zeroGrantsTooltip: null,
