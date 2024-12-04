@@ -7,7 +7,7 @@ exports[`has clientEvents 1`] = `
       "code": "149",
       "description": "NOT ASSOCIATE WITH ANYONE YOU KNOW TO HAVE A FELONY RECORD",
     },
-    "eventDate": 2023-03-21T00:00:00.000Z,
+    "eventDate": 2022-12-20T00:00:00.000Z,
     "metricId": "violations",
   },
   {
@@ -15,7 +15,7 @@ exports[`has clientEvents 1`] = `
       "code": null,
       "description": null,
     },
-    "eventDate": 2023-01-19T00:00:00.000Z,
+    "eventDate": 2022-10-20T00:00:00.000Z,
     "metricId": "treatment_completion",
   },
   {
@@ -23,7 +23,7 @@ exports[`has clientEvents 1`] = `
       "code": null,
       "description": "PAROLE REINSTATED",
     },
-    "eventDate": 2023-01-09T00:00:00.000Z,
+    "eventDate": 2022-10-10T00:00:00.000Z,
     "metricId": "violation_responses",
   },
   {
@@ -31,7 +31,7 @@ exports[`has clientEvents 1`] = `
       "code": "148",
       "description": "COMPLY WITH ALCOHOL AND DRUG TESTING ORDERED BY FIELD AGENT",
     },
-    "eventDate": 2022-12-29T00:00:00.000Z,
+    "eventDate": 2022-09-29T00:00:00.000Z,
     "metricId": "violations",
   },
 ]
@@ -44,7 +44,7 @@ exports[`has clientEventsWithSupervisionEvents 1`] = `
       "code": null,
       "description": null,
     },
-    "eventDate": 2022-12-24T00:00:00.000Z,
+    "eventDate": 2021-04-24T00:00:00.000Z,
     "metricId": "absconsion_date",
   },
   {
@@ -52,7 +52,7 @@ exports[`has clientEventsWithSupervisionEvents 1`] = `
       "code": "149",
       "description": "NOT ASSOCIATE WITH ANYONE YOU KNOW TO HAVE A FELONY RECORD",
     },
-    "eventDate": 2022-11-13T00:00:00.000Z,
+    "eventDate": 2020-12-13T00:00:00.000Z,
     "metricId": "violations",
   },
   {
@@ -60,7 +60,7 @@ exports[`has clientEventsWithSupervisionEvents 1`] = `
       "code": null,
       "description": null,
     },
-    "eventDate": 2022-09-13T00:00:00.000Z,
+    "eventDate": 2020-10-13T00:00:00.000Z,
     "metricId": "treatment_completion",
   },
   {
@@ -68,7 +68,7 @@ exports[`has clientEventsWithSupervisionEvents 1`] = `
       "code": null,
       "description": "PAROLE REINSTATED",
     },
-    "eventDate": 2022-09-03T00:00:00.000Z,
+    "eventDate": 2020-10-03T00:00:00.000Z,
     "metricId": "violation_responses",
   },
   {
@@ -76,7 +76,7 @@ exports[`has clientEventsWithSupervisionEvents 1`] = `
       "code": "148",
       "description": "COMPLY WITH ALCOHOL AND DRUG TESTING ORDERED BY FIELD AGENT",
     },
-    "eventDate": 2022-08-23T00:00:00.000Z,
+    "eventDate": 2020-09-22T00:00:00.000Z,
     "metricId": "violations",
   },
   {
@@ -84,7 +84,7 @@ exports[`has clientEventsWithSupervisionEvents 1`] = `
       "code": null,
       "description": null,
     },
-    "eventDate": 2021-01-08T00:00:00.000Z,
+    "eventDate": 2019-01-08T00:00:00.000Z,
     "metricId": "assigned_to_officer_Harris",
   },
   {
@@ -92,7 +92,7 @@ exports[`has clientEventsWithSupervisionEvents 1`] = `
       "code": null,
       "description": null,
     },
-    "eventDate": 2021-01-08T00:00:00.000Z,
+    "eventDate": 2019-01-08T00:00:00.000Z,
     "metricId": "COMMUNITY_CONFINEMENT_start_date",
   },
 ]
@@ -105,7 +105,7 @@ exports[`has clientEventsWithSupervisionEvents even if supervisionDetails is und
       "code": "149",
       "description": "NOT ASSOCIATE WITH ANYONE YOU KNOW TO HAVE A FELONY RECORD",
     },
-    "eventDate": 2023-03-21T00:00:00.000Z,
+    "eventDate": 2022-12-20T00:00:00.000Z,
     "metricId": "violations",
   },
   {
@@ -113,7 +113,7 @@ exports[`has clientEventsWithSupervisionEvents even if supervisionDetails is und
       "code": null,
       "description": null,
     },
-    "eventDate": 2023-01-19T00:00:00.000Z,
+    "eventDate": 2022-10-20T00:00:00.000Z,
     "metricId": "treatment_completion",
   },
   {
@@ -121,7 +121,7 @@ exports[`has clientEventsWithSupervisionEvents even if supervisionDetails is und
       "code": null,
       "description": "PAROLE REINSTATED",
     },
-    "eventDate": 2023-01-09T00:00:00.000Z,
+    "eventDate": 2022-10-10T00:00:00.000Z,
     "metricId": "violation_responses",
   },
   {
@@ -129,7 +129,7 @@ exports[`has clientEventsWithSupervisionEvents even if supervisionDetails is und
       "code": "148",
       "description": "COMPLY WITH ALCOHOL AND DRUG TESTING ORDERED BY FIELD AGENT",
     },
-    "eventDate": 2022-12-29T00:00:00.000Z,
+    "eventDate": 2022-09-29T00:00:00.000Z,
     "metricId": "violations",
   },
 ]
@@ -152,8 +152,8 @@ exports[`has clientInfo 1`] = `
 
 exports[`has supervisionDetails if metric event date matches outcomeDate 1`] = `
 {
-  "officerAssignmentDate": 2021-01-08T00:00:00.000Z,
-  "supervisionStartDate": 2021-01-08T00:00:00.000Z,
+  "officerAssignmentDate": 2019-01-08T00:00:00.000Z,
+  "supervisionStartDate": 2019-01-08T00:00:00.000Z,
   "supervisionType": "COMMUNITY_CONFINEMENT",
 }
 `;
@@ -165,7 +165,7 @@ exports[`with client data already hydrated > has clientEvents 1`] = `
       "code": "149",
       "description": "NOT ASSOCIATE WITH ANYONE YOU KNOW TO HAVE A FELONY RECORD",
     },
-    "eventDate": 2023-03-21T00:00:00.000Z,
+    "eventDate": 2022-12-20T00:00:00.000Z,
     "metricId": "violations",
   },
   {
@@ -173,7 +173,7 @@ exports[`with client data already hydrated > has clientEvents 1`] = `
       "code": null,
       "description": null,
     },
-    "eventDate": 2023-01-19T00:00:00.000Z,
+    "eventDate": 2022-10-20T00:00:00.000Z,
     "metricId": "treatment_completion",
   },
   {
@@ -181,7 +181,7 @@ exports[`with client data already hydrated > has clientEvents 1`] = `
       "code": null,
       "description": "PAROLE REINSTATED",
     },
-    "eventDate": 2023-01-09T00:00:00.000Z,
+    "eventDate": 2022-10-10T00:00:00.000Z,
     "metricId": "violation_responses",
   },
   {
@@ -189,7 +189,7 @@ exports[`with client data already hydrated > has clientEvents 1`] = `
       "code": "148",
       "description": "COMPLY WITH ALCOHOL AND DRUG TESTING ORDERED BY FIELD AGENT",
     },
-    "eventDate": 2022-12-29T00:00:00.000Z,
+    "eventDate": 2022-09-29T00:00:00.000Z,
     "metricId": "violations",
   },
 ]

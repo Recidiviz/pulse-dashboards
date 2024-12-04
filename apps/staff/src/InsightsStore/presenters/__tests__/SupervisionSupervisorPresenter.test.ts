@@ -137,7 +137,7 @@ test("timePeriod", async () => {
   const { timePeriod } = presenter;
 
   expect(timePeriod).toBeDefined();
-  expect(timePeriod).toMatch("9/1/22 - 9/1/23");
+  expect(timePeriod).toMatch("12/1/20 - 12/1/21");
 });
 
 test("outlierOfficersByMetricAndCaseloadCategory", async () => {

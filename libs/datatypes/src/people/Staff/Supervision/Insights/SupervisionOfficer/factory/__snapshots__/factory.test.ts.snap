@@ -61,32 +61,32 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
         "metricId": "absconsions_bench_warrants",
         "statusesOverTime": [
           {
-            "endDate": 2023-04-01T00:00:00.000Z,
+            "endDate": 2021-07-01T00:00:00.000Z,
             "metricRate": 0.06283,
             "status": "NEAR",
           },
           {
-            "endDate": 2023-05-01T00:00:00.000Z,
+            "endDate": 2021-08-01T00:00:00.000Z,
             "metricRate": 0.088881,
             "status": "NEAR",
           },
           {
-            "endDate": 2023-06-01T00:00:00.000Z,
+            "endDate": 2021-09-01T00:00:00.000Z,
             "metricRate": 0.109407,
             "status": "FAR",
           },
           {
-            "endDate": 2023-07-01T00:00:00.000Z,
+            "endDate": 2021-10-01T00:00:00.000Z,
             "metricRate": 0.110487,
             "status": "FAR",
           },
           {
-            "endDate": 2023-08-01T00:00:00.000Z,
+            "endDate": 2021-11-01T00:00:00.000Z,
             "metricRate": 0.154553,
             "status": "FAR",
           },
           {
-            "endDate": 2023-09-01T00:00:00.000Z,
+            "endDate": 2021-12-01T00:00:00.000Z,
             "metricRate": 0.1604677745537677,
             "status": "FAR",
           },
@@ -96,32 +96,32 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
         "metricId": "treatment_starts",
         "statusesOverTime": [
           {
-            "endDate": 2023-04-01T00:00:00.000Z,
+            "endDate": 2021-07-01T00:00:00.000Z,
             "metricRate": 0.022968597032909103,
             "status": "FAR",
           },
           {
-            "endDate": 2023-05-01T00:00:00.000Z,
+            "endDate": 2021-08-01T00:00:00.000Z,
             "metricRate": 0,
             "status": "FAR",
           },
           {
-            "endDate": 2023-06-01T00:00:00.000Z,
+            "endDate": 2021-09-01T00:00:00.000Z,
             "metricRate": 0.027919749790220463,
             "status": "FAR",
           },
           {
-            "endDate": 2023-07-01T00:00:00.000Z,
+            "endDate": 2021-10-01T00:00:00.000Z,
             "metricRate": 0.032353114502917085,
             "status": "FAR",
           },
           {
-            "endDate": 2023-08-01T00:00:00.000Z,
+            "endDate": 2021-11-01T00:00:00.000Z,
             "metricRate": 0.03232644409114997,
             "status": "NEAR",
           },
           {
-            "endDate": 2023-09-01T00:00:00.000Z,
+            "endDate": 2021-12-01T00:00:00.000Z,
             "metricRate": 0.028747594548953384,
             "status": "FAR",
           },

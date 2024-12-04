@@ -17,10 +17,10 @@
 
 import { z } from "zod";
 
-import { dateStringSchemaWithoutTimeShift } from "../../utils/zod/date";
+import { dateStringSchema } from "../../utils/zod/date";
 
 export const clientEventSchema = z.object({
-  eventDate: dateStringSchemaWithoutTimeShift,
+  eventDate: dateStringSchema,
   metricId: z.string(),
   attributes: z.object({
     code: z.string().nullable(),

@@ -18,18 +18,18 @@
 import { z } from "zod";
 
 import { fullNameSchema } from "../../people/utils/fullNameSchema";
-import { dateStringSchemaWithoutTimeShift } from "../../utils/zod";
+import { dateStringSchema } from "../../utils/zod";
 
 export const supervisionOfficerMetricEventSchema = z.object({
   metricId: z.string(),
-  eventDate: dateStringSchemaWithoutTimeShift,
+  eventDate: dateStringSchema,
   clientId: z.string(),
   clientName: fullNameSchema,
   pseudonymizedClientId: z.string(),
-  officerAssignmentDate: dateStringSchemaWithoutTimeShift,
-  officerAssignmentEndDate: dateStringSchemaWithoutTimeShift.nullable(),
-  supervisionStartDate: dateStringSchemaWithoutTimeShift,
-  supervisionEndDate: dateStringSchemaWithoutTimeShift.nullable(),
+  officerAssignmentDate: dateStringSchema,
+  officerAssignmentEndDate: dateStringSchema.nullable(),
+  supervisionStartDate: dateStringSchema,
+  supervisionEndDate: dateStringSchema.nullable(),
   supervisionType: z.string(),
 });
 

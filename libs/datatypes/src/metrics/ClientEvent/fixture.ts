@@ -20,7 +20,7 @@ import { ClientEvent, clientEventSchema, RawClientEvent } from "./schema";
 export const rawClientEventFixture: Array<RawClientEvent> = [
   {
     metricId: "violations",
-    eventDate: "2023-07-22",
+    eventDate: "2021-07-22",
     attributes: {
       code: "149",
       description: "NOT ASSOCIATE WITH ANYONE YOU KNOW TO HAVE A FELONY RECORD",
@@ -28,7 +28,7 @@ export const rawClientEventFixture: Array<RawClientEvent> = [
   },
   {
     metricId: "violation_responses",
-    eventDate: "2023-05-12",
+    eventDate: "2021-05-12",
     attributes: {
       code: null,
       description: "PAROLE REINSTATED",
@@ -36,7 +36,7 @@ export const rawClientEventFixture: Array<RawClientEvent> = [
   },
   {
     metricId: "violations",
-    eventDate: "2023-05-01",
+    eventDate: "2021-05-01",
     attributes: {
       code: "148",
       description:
@@ -45,7 +45,7 @@ export const rawClientEventFixture: Array<RawClientEvent> = [
   },
   {
     metricId: "treatment_completion",
-    eventDate: "2023-05-22",
+    eventDate: "2021-05-22",
     attributes: {
       code: null,
       description: null,
