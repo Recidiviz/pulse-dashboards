@@ -19,7 +19,7 @@ import { clone } from "lodash";
 import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 
-import { isDemoMode } from "~client-env-utils";
+import { isDemoMode, isTestEnv } from "~client-env-utils";
 import { ActionStrategyType, OpportunityType } from "~datatypes";
 import {
   CreateOrUpdateRecommendationTrackingMetadata,
@@ -178,6 +178,8 @@ export default class AnalyticsStore {
   }
 
   track(eventName: string, metadata?: Record<string, unknown>): void {
+    if (isTestEnv()) return;
+
     const { isImpersonating } = this.rootStore;
 
     const fullMetadata = clone(metadata) || {};

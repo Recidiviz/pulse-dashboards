@@ -96,6 +96,7 @@ function mockStores(mockWorkflowsStore: any) {
     workflowsStore: mockWorkflowsStore as WorkflowsStore,
     workflowsRootStore: {} as WorkflowsRootStore,
     currentTenantId: "US_TN",
+    userStore: { user: undefined },
   } as RootStore;
   const configStore = new OpportunityConfigurationStore(rootStore);
   configStore.mockHydrated(mockOpportunityConfigs);
@@ -296,6 +297,9 @@ describe("PageWorkflows", () => {
       mockStores({
         ...baseMockWorkflowsStore,
         activePage: "opportunityAction",
+        updateSelectedOpportunity: () => {
+          return;
+        },
       });
 
       renderRouter(`${WORKFLOWS_PATHS.workflows}/compliantReporting/101/101`);

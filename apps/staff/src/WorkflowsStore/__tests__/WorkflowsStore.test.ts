@@ -382,6 +382,8 @@ describe("hydrationState", () => {
 
   test("hydrated", () => {
     workflowsStore.userSubscription.hydrationState = statuses.hydrated;
+    workflowsStore.userSubscription.data = [mockOfficer.info];
+
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     workflowsStore.userUpdatesSubscription!.hydrationState = statuses.hydrated;
     workflowsStore.opportunityConfigurationStore.mockHydrated();
