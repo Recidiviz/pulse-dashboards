@@ -54,7 +54,6 @@ const OverdueLink = styled(Link)`
   }
 `;
 
-// TODO(#6720): Add tests for this and the associated fields on the presenter
 export const LinkedOpportunityCallout = function LinkedOpportunityCallout({
   overdueOpportunityCount,
   overdueOpportunityUrl,

@@ -39,7 +39,7 @@ const firestoreStore = {
 const mockOpportunities = {
   [mockOpportunity.type]: [mockOpportunity],
 };
-const workflowsStore = {
+const mockWorkflowsStore = {
   allOpportunitiesByType: mockOpportunities,
 } as any as WorkflowsStore;
 
@@ -50,18 +50,31 @@ const FEATURE_VARIANTS_WITH_OPP_TABS: FeatureVariantRecord = {
 const ORDERED_TABS = ["Eligible Now", "Almost Eligible", "Marked Ineligible"];
 const UNORDERED_TABS = ["Other"];
 
+function getPresenter({
+  config = mockOpportunity.config,
+  supervisionPresenter = undefined,
+  workflowsStore = mockWorkflowsStore,
+}: {
+  config?: OpportunityConfiguration;
+  supervisionPresenter?: SupervisionOpportunityPresenter;
+  workflowsStore?: WorkflowsStore;
+}): OpportunityCaseloadPresenter {
+  return new OpportunityCaseloadPresenter(
+    analyticsStore,
+    firestoreStore,
+    workflowsStore,
+    config,
+    FEATURE_VARIANTS_WITH_OPP_TABS,
+    mockOpportunity.type,
+    supervisionPresenter,
+  );
+}
+
 describe("one tab group, no supervision presenter", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    presenter = new OpportunityCaseloadPresenter(
-      analyticsStore,
-      firestoreStore,
-      workflowsStore,
-      mockOpportunity.config,
-      FEATURE_VARIANTS_WITH_OPP_TABS,
-      mockOpportunity.type,
-    );
+    presenter = getPresenter({});
   });
 
   test("reordering tabs updates firestore", () => {
@@ -115,6 +128,11 @@ describe("one tab group, no supervision presenter", () => {
       "Eligible Now",
     ]);
   });
+
+  test("returns sane defaults when no linked overdue opportunity", () => {
+    expect(presenter.overdueOpportunityCount).toEqual(0);
+    expect(presenter.overdueOpportunityUrl).toBeUndefined();
+  });
 });
 
 describe("multiple tab groups, no supervision presenter", () => {
@@ -128,14 +146,7 @@ describe("multiple tab groups, no supervision presenter", () => {
     };
 
     // separate group because the possible tab groups are set in the constructor
-    presenter = new OpportunityCaseloadPresenter(
-      analyticsStore,
-      firestoreStore,
-      workflowsStore,
-      multiTabGroupConfig,
-      FEATURE_VARIANTS_WITH_OPP_TABS,
-      mockOpportunity.type,
-    );
+    presenter = getPresenter({ config: multiTabGroupConfig });
   });
 
   test("changing tab group changes displayed tabs and selected tab", () => {
@@ -191,15 +202,9 @@ describe("in insights/with supervision presenter", () => {
       labels: { supervisionJiiLabel: "test title" },
     } as any as SupervisionOpportunityPresenter;
 
-    presenter = new OpportunityCaseloadPresenter(
-      analyticsStore,
-      firestoreStore,
-      workflowsStore,
-      mockOpportunity.config,
-      FEATURE_VARIANTS_WITH_OPP_TABS,
-      mockOpportunity.type,
-      supervisionOpportunityPresenter,
-    );
+    presenter = getPresenter({
+      supervisionPresenter: supervisionOpportunityPresenter,
+    });
   });
 
   test("gets opportunities from supervision presenter", () => {
@@ -211,5 +216,30 @@ describe("in insights/with supervision presenter", () => {
 
   test("gets JII title from supervision presenter", () => {
     expect(presenter.justiceInvolvedPersonTitle).toEqual("test title");
+  });
+});
+
+describe("with a linked overdue opportunity", () => {
+  beforeEach(() => {
+    const config: OpportunityConfiguration = {
+      ...mockOpportunity.config,
+      linkedOverdueOpportunityType: "earlyTermination",
+    };
+
+    const workflowsStore = {
+      ...mockWorkflowsStore,
+      eligibleOpportunities: {
+        earlyTermination: [0, 1, 2],
+      },
+    } as any as WorkflowsStore;
+
+    presenter = getPresenter({
+      config,
+      workflowsStore,
+    });
+  });
+
+  it("counts the number of overdue opportunities", () => {
+    expect(presenter.overdueOpportunityCount).toEqual(3);
   });
 });
