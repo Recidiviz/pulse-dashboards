@@ -276,18 +276,14 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get overdueOpportunityCalloutCopy() {
-    if (this.configurationObject.overdueOpportunityCalloutCopy)
-      return this.configurationObject.overdueOpportunityCalloutCopy;
-
-    throw new Error(
-      `Implement overdueOpportunityCalloutCopy() for ${this.label}`,
-    );
+    return this.configurationObject.overdueOpportunityCalloutCopy ?? "overdue";
   }
 
   get highlightedCaseCtaCopy(): string {
     if (this.configurationObject.highlightedCaseCtaCopy)
       return this.configurationObject.highlightedCaseCtaCopy;
-
+    // note: this error only triggers if highlightCasesOnHomepage is true but
+    // highlightedCaseCtaCopy is not set, as it is not requested otherwise
     throw new Error(`Implement highlightedCaseCtaCopy() for ${this.label}`);
   }
 
