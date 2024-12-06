@@ -17,13 +17,17 @@
 
 import { Gender, PrismaClient } from "@prisma/client";
 
+import { INSIGHT_INCLUDES_AND_OMITS } from "~sentencing-server/trpc/routes/common/constants";
+
 export async function getInsights(
   offenseName: string,
   gender: Gender,
   lsirScore: number,
+  isSexOffenseOverride: boolean | null,
+  isViolentOffenseOverride: boolean | null,
   prisma: PrismaClient,
 ) {
-  return await prisma.insight.findMany({
+  const insights = await prisma.insight.findMany({
     where: {
       // Check that the LSIR score is larger than the start of the bucket, where the start of the bucket is not -1
       assessmentScoreBucketStart: {
@@ -52,41 +56,141 @@ export async function getInsights(
       },
       gender: gender,
     },
-    include: {
-      offense: {
-        select: {
-          name: true,
-        },
-      },
-      rollupOffense: {
-        select: {
-          name: true,
-        },
-      },
-      rollupRecidivismSeries: {
-        select: {
-          recommendationType: true,
-          sentenceLengthBucketStart: true,
-          sentenceLengthBucketEnd: true,
-          dataPoints: {
-            omit: {
-              id: true,
-              recidivismSeriesId: true,
+    ...INSIGHT_INCLUDES_AND_OMITS,
+  });
+
+  // If there are no insights or we don't have to worry about sex/violent offense overrides, return the original insights
+  if (
+    (isSexOffenseOverride == null && isViolentOffenseOverride == null) ||
+    !insights.length
+  ) {
+    return insights;
+  }
+
+  // Just use the first insight for this logic
+  const originalInsight = insights[0];
+
+  // If we're not dealing with a level 5 (combined offense category) or level 6 (violent offense) rollup, return the original insights
+  if (
+    originalInsight.rollupCombinedOffenseCategory == null &&
+    originalInsight.rollupViolentOffense == null
+  ) {
+    return insights;
+  }
+
+  let newInsight = null;
+
+  // level 5 rollup (combined offense category)
+  if (originalInsight.rollupCombinedOffenseCategory !== null) {
+    const originalRollupIncludesSex =
+      originalInsight.rollupCombinedOffenseCategory.includes("Sex");
+    const originalRollupIncludesViolent =
+      originalInsight.rollupCombinedOffenseCategory.includes("Violent");
+
+    // Check to see if the overrides match the insight's rollup combined offense category - if they are not set or they do match, return the original insights
+    if (
+      (isSexOffenseOverride == null ||
+        isSexOffenseOverride === originalRollupIncludesSex) &&
+      (isViolentOffenseOverride == null ||
+        isViolentOffenseOverride === originalRollupIncludesViolent)
+    ) {
+      return insights;
+    }
+
+    // If the insight's rollup combined offense category contradicts the overrides, perform a new lookup
+    const isSexOffense =
+      isSexOffenseOverride == null
+        ? originalRollupIncludesSex
+        : isSexOffenseOverride;
+    const isViolentOffense =
+      isViolentOffenseOverride == null
+        ? originalRollupIncludesViolent
+        : isViolentOffenseOverride;
+    const isDrugOffense =
+      originalInsight.rollupCombinedOffenseCategory.includes("Drug");
+
+    const searchTerm = `${isSexOffense ? "" : "!"}Sex & ${isViolentOffense ? "" : "!"}Violent & ${isDrugOffense ? "" : "!"}Drug`;
+
+    // We just need the first insight
+    newInsight = await prisma.insight.findFirst({
+      where: {
+        AND: [
+          {
+            rollupCombinedOffenseCategory: {
+              search: searchTerm,
             },
           },
+          {
+            rollupCombinedOffenseCategory: {
+              not: null,
+            },
+          },
+        ],
+      },
+      ...INSIGHT_INCLUDES_AND_OMITS,
+    });
+  }
+
+  // Level 6 rollup (violent offense), or unable to find a suitable level 5 rollup
+  if (originalInsight.rollupViolentOffense != null || !newInsight) {
+    // If we aren't looking at a level 5 rollup, and there isn't a violence categorization override/the insight's rollup violent categorization matches the violent offense override, return the original insights
+    if (
+      originalInsight.rollupCombinedOffenseCategory == null &&
+      (isViolentOffenseOverride == null ||
+        originalInsight.rollupViolentOffense === isViolentOffenseOverride)
+    ) {
+      return insights;
+    }
+
+    // Otherwise, perform a new lookup based on the level 6 rollup
+    newInsight = await prisma.insight.findFirst({
+      where: {
+        AND: [
+          {
+            rollupViolentOffense: isViolentOffenseOverride,
+          },
+          {
+            rollupViolentOffense: {
+              not: null,
+            },
+          },
+        ],
+      },
+      ...INSIGHT_INCLUDES_AND_OMITS,
+    });
+  }
+
+  // Nothing found so far, get a level 7 rollup
+  if (!newInsight) {
+    // Level 7 rollup means that every other rollup field is null
+    newInsight = await prisma.insight.findFirst({
+      where: {
+        AND: {
+          rollupGender: null,
+          rollupAssessmentScoreBucketStart: null,
+          rollupAssessmentScoreBucketEnd: null,
+          rollupOffense: null,
+          rollupNcicCategory: null,
+          rollupCombinedOffenseCategory: null,
+          rollupViolentOffense: null,
         },
       },
-      dispositionData: {
-        omit: {
-          id: true,
-          insightId: true,
-        },
-      },
-    },
-    omit: {
-      id: true,
-      offenseId: true,
-      rollupOffenseId: true,
-    },
-  });
+      ...INSIGHT_INCLUDES_AND_OMITS,
+    });
+  }
+
+  // The offense name, gender, lsir scores, and disposition data should be set to be the same as the original insight, only the recidivism series + the combined offense category should change
+  if (newInsight) {
+    newInsight.offense = originalInsight.offense;
+    newInsight.gender = originalInsight.gender;
+    newInsight.assessmentScoreBucketStart =
+      originalInsight.assessmentScoreBucketStart;
+    newInsight.assessmentScoreBucketEnd =
+      originalInsight.assessmentScoreBucketEnd;
+    newInsight.dispositionNumRecords = originalInsight.dispositionNumRecords;
+    newInsight.dispositionData = originalInsight.dispositionData;
+  }
+
+  // Return the insight we have found, otherwise there are no insights to be found
+  return newInsight ? [newInsight] : [];
 }

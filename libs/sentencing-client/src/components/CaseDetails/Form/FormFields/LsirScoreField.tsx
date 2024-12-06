@@ -64,8 +64,10 @@ function LsirScoreField() {
     caseStore.getInsight(
       form.updates[OFFENSE_KEY] ?? caseStore.caseAttributes.offense,
       form.hasError ? undefined : Number(inputValue),
+      caseAttributes.isCurrentOffenseSexual,
+      caseAttributes.isCurrentOffenseViolent,
     );
-  }, [inputValue, caseStore]);
+  }, [inputValue, caseStore, caseAttributes]);
 
   return (
     <>

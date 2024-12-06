@@ -15,10 +15,43 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReportType } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-export const REPORT_TYPE_ENUM_TO_STRING = {
-  [ReportType.FullPSI]: "Full PSI",
-  [ReportType.FileReview]: "File Review",
-  [ReportType.FileReviewWithUpdatedLSIRScore]: "File Review + Updated LSI-R",
+export const INSIGHT_INCLUDES_AND_OMITS = {
+  include: {
+    offense: {
+      select: {
+        name: true,
+      },
+    },
+    rollupOffense: {
+      select: {
+        name: true,
+      },
+    },
+    rollupRecidivismSeries: {
+      select: {
+        recommendationType: true,
+        sentenceLengthBucketStart: true,
+        sentenceLengthBucketEnd: true,
+        dataPoints: {
+          omit: {
+            id: true,
+            recidivismSeriesId: true,
+          },
+        },
+      },
+    },
+    dispositionData: {
+      omit: {
+        id: true,
+        insightId: true,
+      },
+    },
+  } satisfies Prisma.InsightInclude,
+  omit: {
+    id: true,
+    offenseId: true,
+    rollupOffenseId: true,
+  } satisfies Prisma.InsightOmit,
 };

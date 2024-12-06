@@ -134,8 +134,10 @@ function OffenseField() {
     caseStore.getInsight(
       offenseName,
       caseStore.caseAttributes.lsirScore ?? undefined,
+      isViolentSexOffense.isSexOffense,
+      isViolentSexOffense.isViolentOffense,
     );
-  }, [selectValue, caseStore]);
+  }, [selectValue, caseStore, isViolentSexOffense]);
 
   return (
     <>

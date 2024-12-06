@@ -84,6 +84,8 @@ export class CaseStore {
   async getInsight(
     offense?: string,
     lsirScore?: number,
+    isSexOffense?: boolean | null,
+    isViolentOffense?: boolean | null,
   ): Promise<Insight | undefined> {
     if (!this.activeCaseId || !offense || !lsirScore) return;
 
@@ -91,7 +93,15 @@ export class CaseStore {
     const gender = currentCase.client?.gender;
     if (!gender) return;
 
-    await flowResult(this.loadInsight(offense, gender, lsirScore));
+    await flowResult(
+      this.loadInsight(
+        offense,
+        gender,
+        lsirScore,
+        isSexOffense,
+        isViolentOffense,
+      ),
+    );
     return this.insight;
   }
 
@@ -195,12 +205,20 @@ export class CaseStore {
     }
   }
 
-  *loadInsight(offense: string, gender: Client["gender"], lsirScore: number) {
+  *loadInsight(
+    offense: string,
+    gender: Client["gender"],
+    lsirScore: number,
+    isSexOffense?: boolean | null,
+    isViolentOffense?: boolean | null,
+  ) {
     try {
       this.insight = yield this.psiStore.apiClient.getInsight(
         offense,
         gender,
         lsirScore,
+        isSexOffense,
+        isViolentOffense,
       );
       return this.insight;
     } catch (error) {

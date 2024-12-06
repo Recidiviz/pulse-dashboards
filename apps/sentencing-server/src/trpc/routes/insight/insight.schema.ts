@@ -22,4 +22,6 @@ export const getInsightSchema = z.object({
   offenseName: z.string(),
   gender: z.nativeEnum(Gender),
   lsirScore: z.number(),
+  isSexOffense: z.boolean().nullable().default(null),
+  isViolentOffense: z.boolean().nullable().default(null),
 });

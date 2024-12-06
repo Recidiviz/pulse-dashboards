@@ -41,6 +41,8 @@ export async function getInsightForCase(
     caseData.offense.name,
     caseData.client.gender,
     caseData.lsirScore,
+    caseData.isCurrentOffenseSexual,
+    caseData.isCurrentOffenseViolent,
     prisma,
   );
 

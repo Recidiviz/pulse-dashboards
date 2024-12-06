@@ -26,13 +26,21 @@ export const insightRouter = router({
     .input(getInsightSchema)
     .query(
       async ({
-        input: { offenseName, gender, lsirScore },
+        input: {
+          offenseName,
+          gender,
+          lsirScore,
+          isSexOffense,
+          isViolentOffense,
+        },
         ctx: { prisma },
       }) => {
         const insights = await getInsights(
           offenseName,
           gender,
           lsirScore,
+          isSexOffense,
+          isViolentOffense,
           prisma,
         );
 

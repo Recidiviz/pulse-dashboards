@@ -180,14 +180,18 @@ export class APIClient {
     offense: string,
     gender: Client["gender"],
     lsirScore: number,
+    isSexOffense?: boolean | null,
+    isViolentOffense?: boolean | null,
   ) {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
 
     const fetchedData = await this.trpcClient.insight.getInsight.query({
       offenseName: offense,
-      gender: gender,
-      lsirScore: lsirScore,
+      gender,
+      lsirScore,
+      isSexOffense,
+      isViolentOffense,
     });
 
     return fetchedData;
