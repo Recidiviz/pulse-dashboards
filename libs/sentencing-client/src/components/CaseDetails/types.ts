@@ -19,6 +19,8 @@ import type { inferRouterInputs } from "@trpc/server";
 
 import type { AppRouter } from "~sentencing-server-types/shared/types";
 
+import { AttributeKey } from "../Dashboard/types";
+
 export enum RecommendationType {
   Probation = "Probation",
   Rider = "Rider",
@@ -92,3 +94,10 @@ export type FormUpdates = Record<keyof FormAttributes, FormValue>;
 export type NonNullableKey<T> = T extends null ? never : T;
 
 export type NonArrayType<T> = T extends (infer U)[] ? U : T;
+
+export type AttributeLabelValue = {
+  key: AttributeKey | string;
+  label: string;
+  value?: string | number;
+  fallbackValue?: string;
+};

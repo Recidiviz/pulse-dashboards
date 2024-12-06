@@ -36,6 +36,7 @@ const DashboardWithPresenter = observer(function DashboardWithPresenter({
     staffInfo,
     staffPseudoId,
     caseTableData,
+    stateCode,
     setIsFirstLogin,
     trackDashboardPageViewed,
     trackIndividualCaseClicked,
@@ -89,6 +90,7 @@ const DashboardWithPresenter = observer(function DashboardWithPresenter({
         <CaseListTable
           caseTableData={caseTableData}
           staffPseudoId={staffPseudoId}
+          stateCode={stateCode}
           analytics={{
             trackIndividualCaseClicked,
             trackRecommendationStatusFilterChanged,

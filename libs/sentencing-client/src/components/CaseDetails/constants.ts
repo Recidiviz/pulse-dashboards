@@ -26,6 +26,10 @@ export const VIOLENT_OFFENSE_KEY = "isCurrentOffenseViolent";
 
 export const SEX_OFFENSE_KEY = "isCurrentOffenseSexual";
 
+export const COUNTY_KEY = "county";
+
+export const AGE_KEY = "age";
+
 export const REPORT_TYPE_KEY = "reportType";
 export type ReportTypeKey = typeof REPORT_TYPE_KEY;
 

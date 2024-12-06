@@ -19,20 +19,24 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 
 import { CaseStore } from "../../datastores/CaseStore";
+import { filterExcludedAttributes } from "../../geoConfigs/utils";
 import { displayReportType, extractDistrictAndCounty } from "../../utils/utils";
 import * as Styled from "./CaseDetails.styles";
-import { GenderToDisplayName } from "./constants";
+import {
+  AGE_KEY,
+  CLIENT_GENDER_KEY,
+  COUNTY_KEY,
+  GenderToDisplayName,
+  LSIR_SCORE_KEY,
+  OFFENSE_KEY,
+  REPORT_TYPE_KEY,
+} from "./constants";
+import { AttributeLabelValue } from "./types";
 
 type CaseAttributesProps = {
   caseAttributes: CaseStore["caseAttributes"];
   openEditCaseDetailsModal: () => void;
   analytics: { trackEditCaseDetailsClicked: () => void };
-};
-
-type AttributeLabelValue = {
-  label: string;
-  value: string | number;
-  fallbackValue?: string;
 };
 
 export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
@@ -51,6 +55,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       offense,
       lsirScore,
       client,
+      stateCode,
     } = caseAttributes;
     const {
       fullName,
@@ -60,10 +65,14 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
     } = client || {};
 
     const countyOfSentencingField = {
+      key: COUNTY_KEY,
       label: "County",
-      value: extractDistrictAndCounty(districtCountyOfSentencing)?.county,
+      value:
+        extractDistrictAndCounty(districtCountyOfSentencing)?.county ??
+        "Unknown",
     };
     const countyOfResidenceField = {
+      key: COUNTY_KEY,
       label: "County of Residence",
       value: countyOfResidence?.toLocaleLowerCase() ?? "Unknown",
     };
@@ -73,32 +82,38 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       extractDistrictAndCounty(districtCountyOfSentencing)?.county;
 
     /** If the county of residence and sentencing differ, display both counties in header */
-    const countyField = hasMatchingCountyOfResidenceAndSentencing
-      ? [countyOfSentencingField]
-      : [countyOfSentencingField, countyOfResidenceField];
+    const countyField: AttributeLabelValue[] =
+      hasMatchingCountyOfResidenceAndSentencing
+        ? [countyOfSentencingField]
+        : [countyOfSentencingField, countyOfResidenceField];
 
     const attributesRow: AttributeLabelValue[] = [
       {
+        key: REPORT_TYPE_KEY,
         label: "Report Type",
         value: displayReportType(reportType),
       },
       ...countyField,
       {
+        key: CLIENT_GENDER_KEY,
         label: "Gender",
         value: gender ? GenderToDisplayName[gender] : undefined,
       },
-      { label: "Age", value: age },
-      { label: "Offense", value: offense },
+      { key: AGE_KEY, label: "Age", value: age },
+      { key: OFFENSE_KEY, label: "Offense", value: offense },
       {
+        key: LSIR_SCORE_KEY,
         label: "LSI-R Score",
         value: lsirScore ?? "No score provided",
       },
-    ].map((attribute) => {
-      return {
-        ...attribute,
-        value: attribute.value ?? "-",
-      };
-    });
+    ]
+      .map((attribute) => {
+        return {
+          ...attribute,
+          value: attribute.value,
+        };
+      })
+      .filter(filterExcludedAttributes(stateCode));
 
     return (
       <Styled.CaseAttributes>

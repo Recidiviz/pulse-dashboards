@@ -49,6 +49,10 @@ export class StaffPresenter implements Hydratable {
     });
   }
 
+  get stateCode() {
+    return this.staffStore.stateCode;
+  }
+
   get staffPseudoId() {
     return this.staffStore.psiStore.staffPseudoId;
   }

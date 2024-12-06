@@ -40,6 +40,10 @@ export class StaffStore {
     makeAutoObservable(this);
   }
 
+  get stateCode() {
+    return this.staffInfo?.stateCode;
+  }
+
   /** This is a MobX flow method and should be called with mobx.flowResult */
   *loadStaffInfo(): FlowMethod<APIClient["getStaffInfo"], void> {
     try {

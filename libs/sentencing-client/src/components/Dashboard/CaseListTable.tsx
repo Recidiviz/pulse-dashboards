@@ -28,6 +28,8 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Staff } from "../../api";
+import { filterExcludedAttributes } from "../../geoConfigs/utils";
 import { psiUrl } from "../../utils/routing";
 import { sortFullNameByLastNameDescending } from "../../utils/sorting";
 import { displayReportType } from "../../utils/utils";
@@ -53,6 +55,7 @@ import {
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;
   staffPseudoId: string;
+  stateCode?: Staff["stateCode"];
   analytics: {
     trackIndividualCaseClicked: (
       clientName: string,
@@ -174,6 +177,7 @@ const LOCAL_STORAGE_KEY = "dashboard-sort-order";
 export const CaseListTable = ({
   caseTableData,
   staffPseudoId,
+  stateCode,
   analytics,
 }: CaseListTableProps) => {
   const {
@@ -199,7 +203,7 @@ export const CaseListTable = ({
 
   const table = useReactTable({
     data,
-    columns,
+    columns: columns.filter(filterExcludedAttributes(stateCode, "accessorKey")),
     state: {
       sorting: sortingOrder,
     },

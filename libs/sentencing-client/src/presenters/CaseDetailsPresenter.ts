@@ -82,6 +82,10 @@ export class CaseDetailsPresenter implements Hydratable {
     );
   }
 
+  get stateCode() {
+    return this.caseStore.stateCode;
+  }
+
   get staffPseudoId() {
     return this.caseStore.psiStore.staffPseudoId;
   }

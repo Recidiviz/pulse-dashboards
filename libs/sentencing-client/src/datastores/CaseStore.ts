@@ -55,6 +55,10 @@ export class CaseStore {
     this.activeCaseId = undefined;
   }
 
+  get stateCode() {
+    return this.psiStore.staffStore.stateCode;
+  }
+
   get offensesByName() {
     return keyBy(this.offenses, (offense) => offense.name);
   }

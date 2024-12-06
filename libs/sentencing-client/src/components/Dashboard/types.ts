@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { StaffCase, StaffCases } from "../../api";
+import { MutableCaseAttributes } from "../CaseDetails/types";
 
 export type CaseListTableCases = StaffCases;
 
@@ -44,3 +45,9 @@ export type ContentCell = {
 export type ContentRow = { caseId: string; row: ContentCell[] };
 
 export type RecommendationStatusFilter = CaseStatusToDisplay | "Archived";
+
+export type AttributeKey =
+  | "client.externalId"
+  | "client.fullName"
+  | keyof StaffCase
+  | keyof MutableCaseAttributes;
