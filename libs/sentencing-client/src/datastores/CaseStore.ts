@@ -32,8 +32,10 @@ import {
   Opportunities,
 } from "../api/APIClient";
 import { FormAttributes } from "../components/CaseDetails/types";
+import { filterExcludedAttributes } from "../geoConfigs/utils";
 import { ERROR_TOAST_DURATION } from "./constants";
 import { PSIStore } from "./PSIStore";
+import { CaseAttributes } from "./types";
 
 export class CaseStore {
   caseDetailsById: { [id: string]: Case };
@@ -63,11 +65,7 @@ export class CaseStore {
     return keyBy(this.offenses, (offense) => offense.name);
   }
 
-  get caseAttributes(): Partial<
-    Case & {
-      clientGender?: Client["gender"];
-    }
-  > {
+  get caseAttributes(): CaseAttributes {
     if (!this.activeCaseId) return {};
     const currentCase = this.caseDetailsById[this.activeCaseId];
     if (currentCase.client?.fullName) {
@@ -75,10 +73,23 @@ export class CaseStore {
         toLower(currentCase.client?.fullName),
       );
     }
-    return {
+
+    const caseAttributes: CaseAttributes = {
       ...currentCase,
       clientGender: currentCase.client?.gender,
     };
+
+    const exclusionFilter = filterExcludedAttributes(this.stateCode);
+
+    const filteredCaseAttributes = Object.entries(caseAttributes)
+      .filter(([key]) => exclusionFilter({ key }))
+      .reduce((acc, [key, value]) => {
+        // @ts-expect-error TODO(Recidiviz/recidiviz-data#35771) Debug TypeScript conflict in `value`
+        acc[key as keyof CaseAttributes] = value;
+        return acc;
+      }, {} as CaseAttributes);
+
+    return filteredCaseAttributes;
   }
 
   setActiveCaseId(caseId: string) {

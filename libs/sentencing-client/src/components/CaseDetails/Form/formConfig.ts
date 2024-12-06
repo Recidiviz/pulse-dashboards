@@ -16,9 +16,14 @@
 // =============================================================================
 
 import {
+  ASAM_CARE_RECOMMENDATION_KEY,
   CLIENT_GENDER_KEY,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
   HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
+  HAS_PREVIOUS_FELONY_KEY,
+  HAS_PREVIOUS_SEX_OFFENSE_KEY,
+  HAS_PREVIOUS_TREATMENT_COURT_KEY,
+  HAS_PREVIOUS_VIOLENT_OFFENSE_KEY,
   IS_VETERAN_KEY,
   LSIR_SCORE_KEY,
   MENTAL_HEALTH_DIAGNOSES_KEY,
@@ -29,7 +34,7 @@ import {
   REPORT_TYPE_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../constants";
-import { FormAttributes } from "../types";
+import ASAMCareRecommendationField from "./FormFields/ASAMCareRecommendationField";
 import ChildProtectiveServicesStatus from "./FormFields/ChildProtectiveServicesStatusField";
 import DevelopmentalDisabilityStatusField from "./FormFields/DevelopmentalDisabilityStatusField";
 import GenderField from "./FormFields/GenderField";
@@ -38,17 +43,33 @@ import MentalHealthDiagnosisField from "./FormFields/MentalHealthDiagnosisField"
 import NeedsToBeAddressedField from "./FormFields/NeedsToBeAddressedField";
 import OffenseField from "./FormFields/OffenseField";
 import PleaStatusField from "./FormFields/PleaStatusField";
+import PriorFelonyConvictionField from "./FormFields/PriorFelonyConvictionField";
 import PriorIncarcerationOrSupervisionField from "./FormFields/PriorIncarcerationOrSupervisionField";
+import PriorSexOffenseConvictionField from "./FormFields/PriorSexOffenseConvictionField";
+import PriorTreatmentCourtField from "./FormFields/PriorTreatmentCourtField";
+import PriorViolentOffenseConvictionField from "./FormFields/PriorViolentOffenseConvictionField";
 import ReportTypeField from "./FormFields/ReportTypeField";
 import SubstanceUseDisorderDiagnosisField from "./FormFields/SubstanceUseDisorderDiagnosisField";
 import VeteranStatusField from "./FormFields/VeteranStatusField";
+import { FormField, FormFieldWithNestedFields } from "./types";
 
-export type FormField = {
-  key: keyof FormAttributes;
-  FieldComponent: React.ComponentType;
-};
+const PriorIncarcerationOrSupervisionNestedFields: FormField[] = [
+  { key: HAS_PREVIOUS_FELONY_KEY, FieldComponent: PriorFelonyConvictionField },
+  {
+    key: HAS_PREVIOUS_VIOLENT_OFFENSE_KEY,
+    FieldComponent: PriorViolentOffenseConvictionField,
+  },
+  {
+    key: HAS_PREVIOUS_SEX_OFFENSE_KEY,
+    FieldComponent: PriorSexOffenseConvictionField,
+  },
+  {
+    key: HAS_PREVIOUS_TREATMENT_COURT_KEY,
+    FieldComponent: PriorTreatmentCourtField,
+  },
+];
 
-const FormFields: { [key: string]: FormField } = {
+const FormFields: { [key: string]: FormFieldWithNestedFields } = {
   [OFFENSE_KEY]: { key: OFFENSE_KEY, FieldComponent: OffenseField },
   [LSIR_SCORE_KEY]: { key: LSIR_SCORE_KEY, FieldComponent: LsirScoreField },
   [CLIENT_GENDER_KEY]: { key: CLIENT_GENDER_KEY, FieldComponent: GenderField },
@@ -60,6 +81,12 @@ const FormFields: { [key: string]: FormField } = {
   [SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY]: {
     key: SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
     FieldComponent: SubstanceUseDisorderDiagnosisField,
+    nestedFields: [
+      {
+        key: ASAM_CARE_RECOMMENDATION_KEY,
+        FieldComponent: ASAMCareRecommendationField,
+      },
+    ],
   },
   [MENTAL_HEALTH_DIAGNOSES_KEY]: {
     key: MENTAL_HEALTH_DIAGNOSES_KEY,
@@ -69,6 +96,7 @@ const FormFields: { [key: string]: FormField } = {
   [PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY]: {
     key: PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
     FieldComponent: PriorIncarcerationOrSupervisionField,
+    nestedFields: PriorIncarcerationOrSupervisionNestedFields,
   },
   [HAS_DEVELOPMENTAL_DISABILITY_KEY]: {
     key: HAS_DEVELOPMENTAL_DISABILITY_KEY,

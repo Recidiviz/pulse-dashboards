@@ -17,16 +17,35 @@
 
 import { observer } from "mobx-react-lite";
 
+import { filterExcludedAttributes } from "../../../../src/geoConfigs/utils";
+import { useStore } from "../../StoreProvider/StoreProvider";
 import * as Styled from "../CaseDetails.styles";
-import { FormField } from "./formConfig";
+import { FormFieldWithNestedFields } from "./types";
 
-function Form({ formFields }: { formFields: FormField[] }): JSX.Element {
+function Form({
+  formFields,
+}: {
+  formFields: FormFieldWithNestedFields[];
+}): JSX.Element {
+  const { caseStore } = useStore();
+  const stateCode = caseStore.stateCode;
+  const filteredFormFields = formFields
+    .map((field) => {
+      if (field.nestedFields) {
+        field.nestedFields = field.nestedFields.filter(
+          filterExcludedAttributes(stateCode),
+        );
+      }
+      return field;
+    })
+    .filter(filterExcludedAttributes(stateCode));
+
   return (
     <Styled.Form>
-      {formFields.map(({ key, FieldComponent }) => {
+      {filteredFormFields.map(({ key, FieldComponent, nestedFields }) => {
         return (
           <Styled.InputWrapper key={key}>
-            <FieldComponent />
+            <FieldComponent nestedFields={nestedFields} />
           </Styled.InputWrapper>
         );
       })}

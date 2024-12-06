@@ -33,10 +33,10 @@ import {
 } from "../constants";
 import { RadioInput } from "../Elements/RadioInput";
 import { form } from "../FormStore";
+import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
-import ASAMCareRecommendationField from "./ASAMCareRecommendationField";
 
-function SubstanceUseDisorderDiagnosisField() {
+function SubstanceUseDisorderDiagnosisField({ nestedFields }: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -71,7 +71,7 @@ function SubstanceUseDisorderDiagnosisField() {
 
       {showASAMCareRecommendationDropdown && (
         <Styled.NestedWrapper>
-          <ASAMCareRecommendationField />
+          {nestedFields?.map(({ FieldComponent }) => <FieldComponent />)}
         </Styled.NestedWrapper>
       )}
     </>

@@ -17,7 +17,7 @@
 
 import { SortDirection } from "@tanstack/react-table";
 
-import { Case } from "../api";
+import { Case, Client } from "../api";
 import { RecommendationType } from "../components/CaseDetails/types";
 import {
   CaseListTableCase,
@@ -82,4 +82,8 @@ export type OpportunityWithOriginTrackingMetadata = {
   caseId: string;
   opportunityNameProviderName: string;
   origin: "table" | "modal";
+};
+
+export type CaseAttributes = Partial<Case> & {
+  clientGender?: Client["gender"];
 };

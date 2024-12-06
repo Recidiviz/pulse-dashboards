@@ -15,14 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { REPORT_TYPE_KEY } from "../components/CaseDetails/constants";
+import {
+  ASAM_CARE_RECOMMENDATION_KEY,
+  HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
+  HAS_PREVIOUS_FELONY_KEY,
+  HAS_PREVIOUS_TREATMENT_COURT_KEY,
+  PLEA_KEY,
+  REPORT_TYPE_KEY,
+} from "../components/CaseDetails/constants";
 import { GeoConfig, StateCode } from "./types";
 
 const US_ID_CONFIG: GeoConfig = {
   excludedAttributeKeys: [],
 };
 const US_ND_CONFIG: GeoConfig = {
-  excludedAttributeKeys: [REPORT_TYPE_KEY],
+  excludedAttributeKeys: [
+    REPORT_TYPE_KEY,
+    ASAM_CARE_RECOMMENDATION_KEY,
+    HAS_PREVIOUS_FELONY_KEY,
+    HAS_PREVIOUS_TREATMENT_COURT_KEY,
+    HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
+    PLEA_KEY,
+  ],
 };
 
 export const GEO_CONFIG: Partial<Record<StateCode, GeoConfig>> = {

@@ -23,14 +23,13 @@ import { PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY } from "../../constant
 import { YES_OPTION, yesNoUnsureOptions } from "../constants";
 import { RadioInput } from "../Elements/RadioInput";
 import { form } from "../FormStore";
+import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseBooleanValue } from "../utils";
-import PriorFelonyConvictionField from "./PriorFelonyConvictionField";
-import PriorSexOffenseConvictionField from "./PriorSexOffenseConvictionField";
-import PriorTreatmentCourtField from "./PriorTreatmentCourtField";
-import PriorViolentOffenseConvictionField from "./PriorViolentOffenseConvictionField";
 
-function PriorIncarcerationOrSupervisionField() {
+function PriorIncarcerationOrSupervisionField({
+  nestedFields,
+}: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -60,10 +59,7 @@ function PriorIncarcerationOrSupervisionField() {
 
       {showNestedFields && (
         <Styled.NestedWrapper>
-          <PriorFelonyConvictionField />
-          <PriorViolentOffenseConvictionField />
-          <PriorSexOffenseConvictionField />
-          <PriorTreatmentCourtField />
+          {nestedFields?.map(({ FieldComponent }) => <FieldComponent />)}
         </Styled.NestedWrapper>
       )}
     </>

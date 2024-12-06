@@ -17,6 +17,20 @@
 
 import { FormAttributes, FormFieldWithNestedList, FormValue } from "../types";
 
+export type FormField = {
+  key: keyof FormAttributes;
+  FieldComponent: React.ComponentType;
+};
+
+export type FormFieldProps = {
+  nestedFields?: FormField[];
+};
+
+export type FormFieldWithNestedFields = FormField &
+  FormFieldProps & {
+    FieldComponent: React.ComponentType<FormFieldProps>;
+  };
+
 export type InputFieldProps = {
   element: FormFieldWithNestedList;
   parentKey?: keyof FormAttributes;

@@ -54,6 +54,21 @@ const PRIOR_SEX_OFFENSE_FIELD_LABEL = "Has a prior sex offense conviction";
 const PRIOR_TREATMENT_COURT_FIELD_LABEL =
   "Has previously participated in a treatment court";
 
+// Clear all exclusions from geo configs so we can test all fields
+vi.mock("../../../geoConfigs/geoConfigs", () => {
+  return {
+    ...vi.importActual("../../../geoConfigs/geoConfigs"),
+    GEO_CONFIG: {
+      US_ND: {
+        excludedAttributeKeys: [],
+      },
+      US_ID: {
+        excludedAttributeKeys: [],
+      },
+    },
+  };
+});
+
 beforeEach(() => {
   configure({ safeDescriptors: false });
   psiStore = createMockPSIStore();
