@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { cloneDeep } from "lodash";
+import { cloneDeep, omit } from "lodash";
 import { flowResult } from "mobx";
 
 import {
@@ -27,6 +27,8 @@ import {
   metricBenchmarksFixture,
   SupervisionOfficer,
   supervisionOfficerFixture,
+  SupervisionOfficerOutcomes,
+  supervisionOfficerOutcomesFixture,
 } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
@@ -37,22 +39,70 @@ import { getOutlierOfficerData, isExcludedSupervisionOfficer } from "../utils";
 
 let officerData: SupervisionOfficer | ExcludedSupervisionOfficer;
 let supervisionStore: InsightsSupervisionStore;
+let officerOutcomes: SupervisionOfficerOutcomes;
 
 beforeEach(() => {
   vi.restoreAllMocks();
 
   [, , officerData] = supervisionOfficerFixture;
+  [, , officerOutcomes] = supervisionOfficerOutcomesFixture;
   supervisionStore = new InsightsSupervisionStore(
     new InsightsStore(new RootStore()),
     InsightsConfigFixture,
   );
 });
 
+// TODO(#6452): This test will become obsolete once we fully rely on the outcomes API
 test("combines related data", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
   expect(
     getOutlierOfficerData(officerData, supervisionStore),
   ).toMatchSnapshot();
+});
+
+test("combines related data from outcomes object", async () => {
+  await flowResult(supervisionStore.populateMetricConfigs());
+  const actual = getOutlierOfficerData(
+    officerData,
+    supervisionStore,
+    officerOutcomes,
+  );
+
+  // Contains officer fields
+  expect(actual).toEqual(
+    expect.objectContaining(omit(officerData, "outlierMetrics")),
+  );
+
+  // Contains outcomes fields
+  expect(actual).toContainKeys(Object.keys(officerOutcomes));
+
+  // Successfully transformed metric information to metrics with configs
+  actual.outlierMetrics?.forEach((om, i) => {
+    expect(om).toEqual(
+      expect.objectContaining({
+        ...officerOutcomes.outlierMetrics[i],
+        benchmark: expect.anything(),
+        config: expect.anything(),
+        currentPeriodData: expect.anything(),
+      }),
+    );
+  });
+  expect(actual.caseloadCategoryName).toBeDefined();
+});
+
+// TODO(#6452): This test will become obsolete once we fully rely on the outcomes API
+test("getOutlierOfficerData from outcomes object matches older implementation", async () => {
+  await flowResult(supervisionStore.populateMetricConfigs());
+  const fromOutcomesObject = getOutlierOfficerData(
+    officerData,
+    supervisionStore,
+    officerOutcomes,
+  );
+  const fromOfficerObject = getOutlierOfficerData(
+    officerData,
+    supervisionStore,
+  );
+  expect(fromOutcomesObject).toEqual(fromOfficerObject);
 });
 
 test("excludes current officer from the benchmark data points", async () => {

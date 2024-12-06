@@ -201,15 +201,15 @@ test("supervisorId not found in officersBySupervisor", async () => {
   expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
     [
       [Error: failed to populate officers with outliers],
-      [Error: Missing expected data for supervised officers],
+      [Error: No officer with outcomes data found for pseudo id: [hashed-so1]],
     ]
   `);
 });
 
-test("supervisor has no officers with outcomes", async () => {
+test("supervisor has no officer outcomes", async () => {
   vi.spyOn(
     InsightsOfflineAPIClient.prototype,
-    "officersForSupervisor",
+    "outcomesForSupervisor",
   ).mockResolvedValue([]);
 
   await presenter.hydrate();

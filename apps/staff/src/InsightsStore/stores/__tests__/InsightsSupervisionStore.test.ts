@@ -29,6 +29,7 @@ import {
   metricBenchmarksFixture,
   supervisionOfficerFixture,
   supervisionOfficerMetricEventFixture,
+  supervisionOfficerOutcomesFixture,
   supervisionOfficerSupervisorsFixture,
 } from "~datatypes";
 
@@ -309,6 +310,24 @@ test("hydrate excludedSupervisionOfficers for supervisor", async () => {
   expect(
     store.excludedOfficersBySupervisorPseudoId.get(testSupervisorPseudoId),
   ).toEqual(excludedSupervisionOfficerFixture.slice(0, 2));
+});
+
+test("hydrate supervisionOfficersOutcomes for supervisor", async () => {
+  const testSupervisorPseudoId =
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
+  expect(
+    store.officersOutcomesBySupervisorPseudoId.has(testSupervisorPseudoId),
+  ).toBeFalse();
+
+  await expect(
+    flowResult(store.populateOutcomesForSupervisor(testSupervisorPseudoId)),
+  ).resolves.not.toThrow();
+
+  expect(
+    store.officersOutcomesBySupervisorPseudoId.get(testSupervisorPseudoId),
+  ).toEqual(
+    expect.arrayContaining(supervisionOfficerOutcomesFixture.slice(0, 2)),
+  );
 });
 
 test("userCanAccessAllSupervisors with missing route", () => {

@@ -34,6 +34,7 @@ import {
   MetricConfig,
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
+  SupervisionOfficerOutcomes,
   SupervisionOfficerSupervisor,
   SupervisionVitalsMetric,
   UserInfo,
@@ -97,6 +98,11 @@ export class InsightsSupervisionStore {
   actionStrategiesEnabled = true;
 
   vitalsMetricsByPseudoId: Map<string, SupervisionVitalsMetric[]> = new Map();
+
+  officersOutcomesBySupervisorPseudoId: Map<
+    string,
+    SupervisionOfficerOutcomes[]
+  > = new Map();
 
   constructor(
     public readonly insightsStore: InsightsStore,
@@ -628,6 +634,26 @@ export class InsightsSupervisionStore {
       yield this.insightsStore.apiClient.vitalsForOfficer(officerPseudoId);
 
     this.vitalsMetricsByPseudoId.set(officerPseudoId, vitalsForOfficer);
+  }
+
+  /**
+   * Fetches officer outcomes data for the specified supervisor
+   */
+  *populateOutcomesForSupervisor(
+    supervisorPseudoId: string,
+  ): FlowMethod<InsightsAPI["outcomesForSupervisor"], void> {
+    if (this.officersOutcomesBySupervisorPseudoId.has(supervisorPseudoId))
+      return;
+
+    const officersOutcomesData =
+      yield this.insightsStore.apiClient.outcomesForSupervisor(
+        supervisorPseudoId,
+      );
+
+    this.officersOutcomesBySupervisorPseudoId.set(
+      supervisorPseudoId,
+      officersOutcomesData,
+    );
   }
 
   setSupervisorPseudoId(supervisorPseudoId: string | undefined): void {

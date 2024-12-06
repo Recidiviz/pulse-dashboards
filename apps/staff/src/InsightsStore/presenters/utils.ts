@@ -23,6 +23,7 @@ import {
   excludedSupervisionOfficerSchema,
   MetricConfig,
   SupervisionOfficer,
+  SupervisionOfficerOutcomes,
   supervisionOfficerSchema,
   VITALS_METRIC_IDS,
 } from "~datatypes";
@@ -47,26 +48,37 @@ export function isExcludedSupervisionOfficer(
  * Collects all of the officer data, modeling relationships between them with nested objects,
  * and verifies that all of the related objects actually exist. It throws an error rather than
  * returning a partial result, to guarantee return values are fully hydrated.
+ *
+ * TODO(#6452): Once we have removed obsolete information from the SupervisionOfficer zod
+ * schema, this function should no longer need to be generic, and the officerOutcomes
+ * should be required.
  */
 export function getOutlierOfficerData<
   T extends SupervisionOfficer | ExcludedSupervisionOfficer,
 >(
   officer: T,
   supervisionStore: InsightsSupervisionStore,
+  officerOutcomes?: SupervisionOfficerOutcomes,
 ): OutlierOfficerData<T> {
   if (isExcludedSupervisionOfficer(officer))
     return officer as OutlierOfficerData<T>;
 
   const officerData = officer as SupervisionOfficer;
 
+  // TODO(#6452): Remove obsolete fields form the SupervisionOfficer Zod schema and
+  // stop defaulting to the officerData objects
+  const caseloadCategoryId =
+    officerOutcomes?.caseloadCategory ?? officerData.caseloadCategory;
+
+  const outlierMetrics =
+    officerOutcomes?.outlierMetrics ?? officerData.outlierMetrics;
+
   return {
     ...officerData,
-    caseloadCategoryName: officerData.caseloadCategory
-      ? supervisionStore.caseloadCategoryDisplayName(
-          officerData.caseloadCategory,
-        )
+    caseloadCategoryName: caseloadCategoryId
+      ? supervisionStore.caseloadCategoryDisplayName(caseloadCategoryId)
       : undefined,
-    outlierMetrics: officerData.outlierMetrics.map((metric) => {
+    outlierMetrics: outlierMetrics.map((metric) => {
       // verify that the related objects we need are actually present;
       // specifically, the metric configs for this officer and the benchmarks
       // for their caseload type
@@ -82,7 +94,7 @@ export function getOutlierOfficerData<
         throw new Error(`Missing metric benchmark data for ${metric.metricId}`);
       }
 
-      const caseloadCategory = officerData.caseloadCategory || "ALL";
+      const caseloadCategory = caseloadCategoryId || "ALL";
       const benchmark = metricBenchmarks.get(caseloadCategory);
       if (!benchmark) {
         throw new Error(

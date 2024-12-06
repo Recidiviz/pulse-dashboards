@@ -88,6 +88,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       | "expectExcludedOfficersPopulated"
       | "expectSupervisorPopulated"
       | "expectOutlierDataPopulated"
+      | "expectOfficerOutcomesPopulated"
       | "populateCaseload"
       | "hydrator"
       | "hydrationState"
@@ -99,6 +100,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         expectExcludedOfficersPopulated: true,
         expectOfficersWithOutcomesPopulated: true,
         expectMetricsPopulated: true,
+        expectOfficerOutcomesPopulated: true,
         supervisorPseudoId: true,
         outlierOfficersData: computed,
         supervisorInfo: computed,
@@ -166,6 +168,11 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         ),
       ),
       flowResult(this.populateOpportunityConfigurationStore()),
+      flowResult(
+        this.supervisionStore.populateOutcomesForSupervisor(
+          this.supervisorPseudoId,
+        ),
+      ),
     ];
   }
 
@@ -184,6 +191,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         this.expectClientsForOfficersPopulated(
           this.allOfficers.map((o) => o.externalId),
         ),
+      this.expectOfficerOutcomesPopulated,
     ];
   }
 
@@ -542,20 +550,29 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     | OutlierOfficerData<SupervisionOfficer>[]
     | Error {
     try {
-      const officersData =
-        this.supervisionStore.officersBySupervisorPseudoId.get(
+      const outcomesData =
+        this.supervisionStore.officersOutcomesBySupervisorPseudoId.get(
           this.supervisorPseudoId,
         );
 
       // not expected in practice due to checks above, but needed for type safety
-      if (!officersData) {
-        throw new Error("Missing expected data for supervised officers");
+      if (!outcomesData) {
+        throw new Error(
+          "Missing expected outcomes data for supervised officers",
+        );
       }
-
-      return officersData
-        .filter((o) => o.outlierMetrics.length > 0)
-        .map((o): OutlierOfficerData<SupervisionOfficer> => {
-          return getOutlierOfficerData(o, this.supervisionStore);
+      return outcomesData
+        .filter((outcome) => outcome.outlierMetrics.length > 0)
+        .map((outcome): OutlierOfficerData<SupervisionOfficer> => {
+          const officer = this.officersWithOutliersData?.find(
+            (officer) => officer.pseudonymizedId === outcome.pseudonymizedId,
+          );
+          if (!officer) {
+            throw new Error(
+              `No officer with outcomes data found for pseudo id: [${outcome.pseudonymizedId}]`,
+            );
+          }
+          return getOutlierOfficerData(officer, this.supervisionStore, outcome);
         });
     } catch (e) {
       return castToError(e);
@@ -662,6 +679,19 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       )
     )
       throw new Error("failed to populate excluded officers");
+  }
+
+  /**
+   * Asserts that officers with outliers have been populated.
+   * @throws An error if officers with outliers are not populated.
+   */
+  private expectOfficerOutcomesPopulated() {
+    if (
+      !this.supervisionStore.officersOutcomesBySupervisorPseudoId.has(
+        this.supervisorPseudoId,
+      )
+    )
+      throw new Error("failed to populate officers' outcomes");
   }
 
   /**
