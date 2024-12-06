@@ -96,19 +96,15 @@ export const MenuButton = observer(function MenuButton({
     );
   };
 
-  const markSubmitted = async (subcategory?: string) => {
-    await opportunity.markSubmitted(subcategory);
-
-    const toastStatus = subcategory
-      ? opportunity.subcategoryHeadingFor(subcategory)
-      : config.submittedTabTitle;
-    toast(
-      `Marked ${opportunity.person.displayName} as ${toastStatus} for ${config.label}`,
-      {
-        id: "submittedToast", // prevent duplicate toasts
-        position: "bottom-left",
-      },
-    );
+  const markSubmittedAndToast = async (subcategory?: string) => {
+    opportunity.markSubmittedAndGenerateToast(subcategory).then((message) => {
+      if (message) {
+        toast(message, {
+          id: "submittedToast", // prevent duplicate toasts
+          position: "bottom-left",
+        });
+      }
+    });
   };
 
   const { submittedSubcategories } = opportunity;
@@ -128,7 +124,7 @@ export const MenuButton = observer(function MenuButton({
                   <OpportunityStatusDropdownMenuItem
                     key={subcategory}
                     onClick={async () => {
-                      await markSubmitted(subcategory);
+                      await markSubmittedAndToast(subcategory);
                     }}
                   >
                     {opportunity.subcategoryHeadingFor(subcategory)}
@@ -143,7 +139,9 @@ export const MenuButton = observer(function MenuButton({
               </OpportunityStatusDropdownMenuItem>
             ) : (
               <OpportunityStatusDropdownMenuItem
-                onClick={async () => await markSubmitted()}
+                onClick={async () => {
+                  await markSubmittedAndToast();
+                }}
               >
                 {submittedText}
               </OpportunityStatusDropdownMenuItem>

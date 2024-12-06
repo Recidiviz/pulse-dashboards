@@ -495,11 +495,11 @@ export class OpportunityBase<
     return buildOpportunityCompareFunction(sortParams);
   }
 
-  async markSubmitted(subcategory?: string): Promise<void> {
+  async markSubmitted(newSubcategory?: string): Promise<void> {
     await this.rootStore.firestoreStore.updateOpportunitySubmitted(
       this.currentUserEmail,
       this,
-      subcategory,
+      newSubcategory,
     );
 
     this.rootStore.analyticsStore.trackOpportunityMarkedSubmitted({
@@ -512,6 +512,27 @@ export class OpportunityBase<
     if (this.denial) {
       await this.deleteOpportunityDenialAndSnooze();
     }
+  }
+
+  /**
+   * Mark this opportunity as Submitted. If newSubcategory is provided, switch this
+   * opportunity to that subcategory. Return a message that can be displayed to the user
+   * about the status change (this method does not itself handle displaying the message)
+   * or return undefined if the opportunity's status did not change.
+   */
+  async markSubmittedAndGenerateToast(
+    newSubcategory?: string,
+  ): Promise<string | undefined> {
+    // if this would be a no-op, do nothing
+    if (newSubcategory && newSubcategory === this.subcategory) return;
+    if (!newSubcategory && this.isSubmitted) return;
+
+    await this.markSubmitted(newSubcategory);
+
+    const toastStatus = newSubcategory
+      ? this.subcategoryHeadingFor(newSubcategory)
+      : this.submittedTabTitle;
+    return `Marked ${this.person.displayName} as ${toastStatus} for ${this.config.label}`;
   }
 
   async setDenialReasons(reasons: string[]): Promise<void> {

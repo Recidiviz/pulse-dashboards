@@ -32,6 +32,7 @@ import { Timestamp } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
@@ -168,6 +169,9 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       firestoreStore,
       analyticsStore,
       workflowsStore: { currentUserEmail },
+      userStore: {
+        activeFeatureVariants: { submittedOpportunityStatus },
+      },
     },
   } = opportunity;
 
@@ -224,6 +228,12 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
           opportunityType: opportunity.type,
           opportunityId: opportunity.sentryTrackingId,
         });
+        // Once OMS writeback has successfully occurred, mark this person as Pending
+        if (submittedOpportunityStatus) {
+          opportunity.markSubmittedAndGenerateToast().then((message) => {
+            if (message) toast(message, { position: "bottom-left" });
+          });
+        }
       })
       .catch((e: Error) => {
         firestoreStore.updateUsTnExpirationContactNoteStatus(
@@ -270,7 +280,7 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
         <br />
         <br />
         <ModalTitle>{`${paginatedNote.length}-page TEPE note successfully submitted`}</ModalTitle>
-        <ModalText>View them in TOMIS</ModalText>
+        <ModalText>View the note in TOMIS</ModalText>
         <br />
         <br />
         <OKButton onClick={onCloseFn} shape="block">

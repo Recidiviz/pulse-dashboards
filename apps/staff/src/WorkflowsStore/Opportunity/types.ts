@@ -148,7 +148,9 @@ export interface Opportunity<
   readonly DenialConfirmationModal?: React.ComponentType<DenialConfirmationModalProps>;
   isSubmitted: boolean;
   readonly submittedTabTitle: string;
-  markSubmitted: (subcategory?: string) => Promise<void>;
+  markSubmittedAndGenerateToast: (
+    subcategory?: string,
+  ) => Promise<string | undefined>;
   deleteSubmitted: () => Promise<void>;
   submittedUpdate: Submission | undefined;
   readonly submittedSubcategories: string[] | undefined;

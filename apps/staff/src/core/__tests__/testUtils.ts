@@ -89,7 +89,7 @@ export const mockOpportunity: Opportunity<Client> = {
   isSubmitted: false,
   submittedTabTitle: "Submitted",
   submittedUpdate: undefined,
-  markSubmitted: async () => undefined,
+  markSubmittedAndGenerateToast: async () => undefined,
   deleteSubmitted: async () => undefined,
   config: {
     systemType: "SUPERVISION",
