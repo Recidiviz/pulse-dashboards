@@ -708,6 +708,46 @@ describe("filterEligibleOpportunities", () => {
 
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
   });
+
+  it("should skip evaluating excluded attributes", () => {
+    attributes = {
+      age: 30,
+      hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
+      hasPreviousSexOffenseConviction: false,
+      hasPreviousViolentOffenseConviction: false,
+      previouslyIncarceratedOrUnderSupervision: false,
+      plea: "Guilty",
+      county: "District 1 - Caldwell",
+      district: "DISTRICT 1",
+      isVeteran: false,
+      mentalHealthDiagnoses: ["BipolarDisorder"],
+      substanceUseDisorderDiagnosis: "Moderate",
+      asamCareRecommendation: "HighIntensityOutpatient",
+      needsToBeAddressed: ["Education"],
+      lsirScore: 10,
+    };
+
+    // `isVeteran` attribute does not meet the opportunity criteria
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+
+    // Exclude `isVeteran` from attributes
+    delete attributes["isVeteran"];
+
+    // Should skip evaluating the `isVeteran` criteria and return `true` as all other criteria match
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+
+    // Set age attribute to not match the opportunity criteria
+    attributes.age = 70;
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+
+    // Exclude `age` from attributes
+    delete attributes["age"];
+
+    // Should skip evaluating the `age` criteria and return `true` as all other criteria match
+    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+  });
 });
 
 test("formatPhoneNumberWithExtension handles base phone numbers", () => {

@@ -21,6 +21,20 @@ import {
   extractDistrictAndCounty,
 } from "../../../utils/utils";
 import {
+  AGE_KEY,
+  ASAM_CARE_RECOMMENDATION_KEY,
+  HAS_DEVELOPMENTAL_DISABILITY_KEY,
+  HAS_PREVIOUS_SEX_OFFENSE_KEY,
+  HAS_PREVIOUS_VIOLENT_OFFENSE_KEY,
+  IS_VETERAN_KEY,
+  LSIR_SCORE_KEY,
+  MENTAL_HEALTH_DIAGNOSES_KEY,
+  NEEDS_TO_BE_ADDRESSED_KEY,
+  PLEA_KEY,
+  PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
+  SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
+} from "../constants";
+import {
   ANY_OPTION,
   MILD_OPTION,
   MODERATE_OPTION,
@@ -98,7 +112,7 @@ export const filterEligibleOpportunities = (
     (attributes.age < (minAge ?? DEFAULT_MIN_NUMBER) ||
       attributes.age > (maxAge ?? DEFAULT_MAX_NUMBER));
 
-  if (hasAgeCriteria && isNotAgeEligible) return false;
+  if (AGE_KEY in attributes && hasAgeCriteria && isNotAgeEligible) return false;
 
   // Developmental Disability Criteria Check
   const hasDevelopmentalDisabilityCriteria = Boolean(
@@ -108,7 +122,11 @@ export const filterEligibleOpportunities = (
     developmentalDisabilityDiagnosisCriterion ===
     attributes.hasDevelopmentalDisability;
 
-  if (hasDevelopmentalDisabilityCriteria && !isDevelopmentalDisabilityEligible)
+  if (
+    HAS_DEVELOPMENTAL_DISABILITY_KEY in attributes &&
+    hasDevelopmentalDisabilityCriteria &&
+    !isDevelopmentalDisabilityEligible
+  )
     return false;
 
   const districtOfSentencing = extractDistrictAndCounty(
@@ -147,7 +165,12 @@ export const filterEligibleOpportunities = (
       attributes.hasPreviousSexOffenseConviction &&
     noCurrentOrPriorSexOffenseCriterion !== attributes.isCurrentOffenseSexual;
 
-  if (hasSexOffenseCriteria && !isSexOffenseEligible) return false;
+  if (
+    HAS_PREVIOUS_SEX_OFFENSE_KEY in attributes &&
+    hasSexOffenseCriteria &&
+    !isSexOffenseEligible
+  )
+    return false;
 
   // Violent Offense Criteria Check
   const hasViolentOffenseCriteria = Boolean(
@@ -159,7 +182,12 @@ export const filterEligibleOpportunities = (
     noCurrentOrPriorViolentOffenseCriterion !==
       attributes.isCurrentOffenseViolent;
 
-  if (hasViolentOffenseCriteria && !isViolentOffenseEligible) return false;
+  if (
+    HAS_PREVIOUS_VIOLENT_OFFENSE_KEY in attributes &&
+    hasViolentOffenseCriteria &&
+    !isViolentOffenseEligible
+  )
+    return false;
 
   // Criminal History Criteria Check
   const hasCriminalHistoryCriteria = Boolean(priorCriminalHistoryCriterion);
@@ -169,7 +197,12 @@ export const filterEligibleOpportunities = (
     (priorCriminalHistoryCriterion === "Significant" &&
       attributes.previouslyIncarceratedOrUnderSupervision);
 
-  if (hasCriminalHistoryCriteria && !isCriminalHistoryEligible) return false;
+  if (
+    PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY in attributes &&
+    hasCriminalHistoryCriteria &&
+    !isCriminalHistoryEligible
+  )
+    return false;
 
   // Plea Criteria Check
   const hasGuiltyPleaCriteria = Boolean(entryOfGuiltyPleaCriterion);
@@ -177,13 +210,15 @@ export const filterEligibleOpportunities = (
     entryOfGuiltyPleaCriterion ===
     (attributes.plea === "AlfordPlea" || attributes.plea === "Guilty");
 
-  if (hasGuiltyPleaCriteria && !isPleaEligible) return false;
+  if (PLEA_KEY in attributes && hasGuiltyPleaCriteria && !isPleaEligible)
+    return false;
 
   // Veteran Status Criteria Check
   const hasVeteranCriteria = Boolean(veteranStatusCriterion);
   const isVeteranEligible = veteranStatusCriterion === attributes.isVeteran;
 
-  if (hasVeteranCriteria && !isVeteranEligible) return false;
+  if (IS_VETERAN_KEY in attributes && hasVeteranCriteria && !isVeteranEligible)
+    return false;
 
   // Mental Health Diagnosis Criteria Check
   const hasMentalHealthDiagnosesCriteria =
@@ -205,7 +240,11 @@ export const filterEligibleOpportunities = (
     diagnosedMentalHealthDiagnosisCriterion &&
     (isAnyCriteriaAndHasMinOneDiagnoses || hasOneMatchingDiagnosis);
 
-  if (hasMentalHealthDiagnosesCriteria && !isMentalHealthDiagnosisEligible)
+  if (
+    MENTAL_HEALTH_DIAGNOSES_KEY in attributes &&
+    hasMentalHealthDiagnosesCriteria &&
+    !isMentalHealthDiagnosisEligible
+  )
     return false;
 
   // Substance Use Disorder Criteria Check
@@ -228,7 +267,11 @@ export const filterEligibleOpportunities = (
         (level) => level === attributes.substanceUseDisorderDiagnosis,
       );
 
-  if (hasSubstanceUseDisorderCriteria && !isSubstanceUseDisorderEligible)
+  if (
+    SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY in attributes &&
+    hasSubstanceUseDisorderCriteria &&
+    !isSubstanceUseDisorderEligible
+  )
     return false;
 
   // ASAM Level of Care Criteria Check
@@ -239,7 +282,11 @@ export const filterEligibleOpportunities = (
     asamLevelOfCareRecommendationCriterion ===
     attributes.asamCareRecommendation;
 
-  if (hasAsamCareRecommendationCriteria && !isAsamCareRecommendationEligible)
+  if (
+    ASAM_CARE_RECOMMENDATION_KEY in attributes &&
+    hasAsamCareRecommendationCriteria &&
+    !isAsamCareRecommendationEligible
+  )
     return false;
 
   // Needs Addressed Criteria Check
@@ -251,6 +298,7 @@ export const filterEligibleOpportunities = (
     );
 
   if (
+    NEEDS_TO_BE_ADDRESSED_KEY in attributes &&
     attributes.needsToBeAddressed &&
     attributes.needsToBeAddressed.length > 0 &&
     hasNeedsAddressedCriteria &&
@@ -267,7 +315,12 @@ export const filterEligibleOpportunities = (
     (minLsirScoreCriterion ?? DEFAULT_MIN_NUMBER) <= attributes.lsirScore &&
     attributes.lsirScore <= (maxLsirScoreCriterion ?? DEFAULT_MAX_NUMBER);
 
-  if (hasLsirScoreCriteria && !isLsirScoreEligible) return false;
+  if (
+    LSIR_SCORE_KEY in attributes &&
+    hasLsirScoreCriteria &&
+    !isLsirScoreEligible
+  )
+    return false;
 
   return true;
 };
