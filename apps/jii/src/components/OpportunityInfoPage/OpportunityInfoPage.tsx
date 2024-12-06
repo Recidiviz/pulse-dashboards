@@ -110,7 +110,9 @@ const OpportunityInfoPageWithPresenter: FC<{
 });
 
 export const OpportunityInfoPage = observer(function OpportunityInfoPage() {
-  const { pageSlug } = useTypedParams(State.Eligibility.Opportunity.InfoPage);
+  const { pageSlug } = useTypedParams(
+    State.Resident.Eligibility.Opportunity.InfoPage,
+  );
   const { opportunityConfig, eligibilityReport } =
     useResidentOpportunityContext();
 

@@ -38,7 +38,7 @@ const ResidentsHydratorWithPresenter: FC<{
 });
 
 export const ResidentsHydrator: FC = memo(function ResidentsHydrator() {
-  const { personPseudoId } = useTypedParams(State.Eligibility);
+  const { personPseudoId } = useTypedParams(State.Resident);
   const presenter = new ResidentsHydratorPresenter(
     useRootStore(),
     personPseudoId,

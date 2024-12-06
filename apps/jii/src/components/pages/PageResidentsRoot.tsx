@@ -26,9 +26,9 @@ import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";
 import { ResidentsHydrator } from "../ResidentsHydrator/ResidentsHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
-export const PageEligibility = observer(function ResidentsRoot() {
+export const PageResidentsRoot = observer(function PageResidentsRoot() {
   const rootStore = useRootStore();
-  const { stateSlug } = useTypedParams(State.Eligibility);
+  const { stateSlug } = useTypedParams(State.Resident.Eligibility);
 
   return (
     <RedirectIfLoggedOut

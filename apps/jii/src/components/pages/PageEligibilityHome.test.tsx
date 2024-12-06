@@ -42,21 +42,18 @@ function renderPage() {
   render(
     <MemoryRouter
       initialEntries={[
-        State.Eligibility.buildPath({
+        State.Resident.Eligibility.buildPath({
           stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
         }),
       ]}
     >
       <Routes>
-        <Route path={State.Eligibility.path}>
+        <Route path={State.Search.path} element={<div>search page</div>} />
+        <Route path={State.Resident.Eligibility.path}>
           <Route index element={<PageEligibilityHome />} />
-          <Route
-            path={State.Eligibility.$.Search.relativePath}
-            element={<div>search page</div>}
-          />
           {/* in reality this is a parameter, but for now there is only one possible value */}
           <Route
-            path={State.Eligibility.$.Opportunity.relativePath}
+            path={State.Resident.Eligibility.$.Opportunity.relativePath}
             element={<div>SCCP page</div>}
           />
         </Route>

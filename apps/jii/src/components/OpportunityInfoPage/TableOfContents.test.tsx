@@ -52,7 +52,7 @@ test("generates links to headings in page body", async () => {
   const { container } = render(
     <MemoryRouter
       initialEntries={[
-        State.Eligibility.Opportunity.InfoPage.buildPath({
+        State.Resident.Eligibility.Opportunity.InfoPage.buildPath({
           stateSlug: "maine",
           opportunitySlug: oppConfig.urlSlug,
           pageSlug: oppConfig.requirements.fullPage.urlSlug,

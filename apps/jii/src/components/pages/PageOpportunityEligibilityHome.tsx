@@ -24,7 +24,7 @@ import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/co
 
 export const PageOpportunityEligibilityHome: FC = memo(
   function PageOpportunityEligibilityHome() {
-    const { personPseudoId } = useTypedParams(State.Eligibility);
+    const { personPseudoId } = useTypedParams(State.Resident.Eligibility);
 
     return (
       <OpportunityEligibility

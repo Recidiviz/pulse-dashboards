@@ -26,20 +26,26 @@ export const ReturnToPathFragment = route("", {
 });
 
 export const State = route(":stateSlug", types(ReturnToPathFragment), {
-  Eligibility: route(
-    ":personPseudoId?/eligibility",
+  Resident: route(
+    ":personPseudoId?",
     {},
     {
-      Search: route("search"),
-      Opportunity: route(
-        ":opportunitySlug",
+      Eligibility: route(
+        "eligibility",
         {},
         {
-          InfoPage: route(":pageSlug"),
+          Opportunity: route(
+            ":opportunitySlug",
+            {},
+            {
+              InfoPage: route(":pageSlug"),
+            },
+          ),
         },
       ),
     },
   ),
+  Search: route("search"),
 });
 
 export const SiteRoot = route("", types(ReturnToPathFragment));

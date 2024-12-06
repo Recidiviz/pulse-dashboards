@@ -32,7 +32,7 @@ export const PageState: FC = () => {
       if (userStore.isAuthorizedForCurrentState)
         return (
           <Navigate
-            to={State.Eligibility.buildPath({
+            to={State.Resident.Eligibility.buildPath({
               stateSlug,
             })}
             replace

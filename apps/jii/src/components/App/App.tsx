@@ -37,11 +37,11 @@ import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { NotFound } from "../NotFound/NotFound";
 import { OpportunityInfoPage } from "../OpportunityInfoPage/OpportunityInfoPage";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
-import { PageEligibility } from "../pages/PageEligibility";
 import { PageEligibilityHome } from "../pages/PageEligibilityHome";
 import { PageHome } from "../pages/PageHome";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
 import { PageOpportunityEligibilityHome } from "../pages/PageOpportunityEligibilityHome";
+import { PageResidentsRoot } from "../pages/PageResidentsRoot";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
 import { PageState } from "../pages/PageState";
@@ -82,35 +82,37 @@ export function App() {
               <Route index element={<PageHome />} />
               <Route path={routes.State.path}>
                 <Route index element={<PageState />} />
-                <Route
-                  path={routes.State.Eligibility.path}
-                  element={<PageEligibility />}
-                >
+                <Route element={<PageResidentsRoot />}>
                   <Route element={<ResidentsLayout />}>
                     {/* relative paths required in this subtree 
-                  because of an optional param in Eligibility; 
-                  see https://github.com/remix-run/react-router/issues/9925 */}
-                    <Route index element={<PageEligibilityHome />} />
-                    <Route
-                      path={routes.State.Eligibility.$.Search.relativePath}
-                      element={<PageSearch />}
-                    />
-                    <Route
-                      path={routes.State.Eligibility.$.Opportunity.relativePath}
-                      element={<PageOpportunityEligibility />}
-                    >
-                      <Route
-                        index
-                        element={<PageOpportunityEligibilityHome />}
-                      />
+                    because of an optional param in Eligibility; 
+                    see https://github.com/remix-run/react-router/issues/9925 */}
+                    <Route path={routes.State.Resident.Eligibility.path}>
+                      <Route index element={<PageEligibilityHome />} />
                       <Route
                         path={
-                          routes.State.Eligibility.Opportunity.$.InfoPage
+                          routes.State.Resident.Eligibility.$.Opportunity
                             .relativePath
                         }
-                        element={<OpportunityInfoPage />}
-                      />
+                        element={<PageOpportunityEligibility />}
+                      >
+                        <Route
+                          index
+                          element={<PageOpportunityEligibilityHome />}
+                        />
+                        <Route
+                          path={
+                            routes.State.Resident.Eligibility.Opportunity.$
+                              .InfoPage.relativePath
+                          }
+                          element={<OpportunityInfoPage />}
+                        />
+                      </Route>
                     </Route>
+                    <Route
+                      path={routes.State.Search.path}
+                      element={<PageSearch />}
+                    />
                   </Route>
                 </Route>
               </Route>

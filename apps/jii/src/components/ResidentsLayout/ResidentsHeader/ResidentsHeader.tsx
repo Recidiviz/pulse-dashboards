@@ -83,7 +83,7 @@ export const ResidentsHeader: FC = observer(function ResidentsHeader() {
             new NavigationMenuPresenter(
               residentsStore.config,
               residentsStore.userStore,
-              useTypedParams(State.Eligibility),
+              useTypedParams(State.Resident.Eligibility),
               activeResident,
             )
           }

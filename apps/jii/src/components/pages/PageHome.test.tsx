@@ -48,7 +48,7 @@ function renderHome() {
       <Routes>
         <Route path="/" element={<PageHome />} />
         <Route
-          path={State.Eligibility.path}
+          path={State.Resident.Eligibility.path}
           element={<div>eligibility page</div>}
         />
         <Route path={EmailVerification.path} element={<div>verify page</div>} />

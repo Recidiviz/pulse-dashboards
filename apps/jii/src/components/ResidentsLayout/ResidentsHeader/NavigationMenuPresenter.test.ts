@@ -58,7 +58,7 @@ test("link to home", () => {
 test("links exclude search", () => {
   expect(
     presenter.links.find((l) =>
-      l.url.match(new RegExp(State.Eligibility.$.Search.relativePath)),
+      l.url.match(new RegExp(State.Search.relativePath)),
     ),
   ).toBeUndefined();
 });
@@ -68,7 +68,7 @@ test("links include search", () => {
 
   expect(
     presenter.links.find((l) =>
-      l.url.match(new RegExp(State.Eligibility.$.Search.relativePath)),
+      l.url.match(new RegExp(State.Search.buildPath({ stateSlug }))),
     ),
   ).toBeDefined();
 });
@@ -78,7 +78,7 @@ test("links to opportunities with active resident", () => {
     presenter.links.find(
       (l) =>
         l.url ===
-        State.Eligibility.Opportunity.buildPath({
+        State.Resident.Eligibility.Opportunity.buildPath({
           stateSlug,
           opportunitySlug: "sccp",
         }),
@@ -98,7 +98,7 @@ test("no links to opportunities without active resident", () => {
     presenter.links.find(
       (l) =>
         l.url ===
-        State.Eligibility.Opportunity.buildPath({
+        State.Resident.Eligibility.Opportunity.buildPath({
           stateSlug,
           opportunitySlug: "sccp",
         }),
@@ -120,39 +120,11 @@ test("opportunity links include person ID from URL", () => {
     presenter.links.find(
       (l) =>
         l.url ===
-        State.Eligibility.Opportunity.buildPath({
+        State.Resident.Eligibility.Opportunity.buildPath({
           stateSlug,
           opportunitySlug: "sccp",
           personPseudoId: testResident.pseudonymizedId,
         }),
-    ),
-  ).toBeDefined();
-});
-
-test("search link does not include person ID from URL", () => {
-  vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
-
-  presenter = new NavigationMenuPresenter(
-    residentsConfigByState.US_ME,
-    userStore,
-    { stateSlug, personPseudoId: testResident.pseudonymizedId },
-    testResident,
-  );
-
-  expect(
-    presenter.links.find(
-      (l) =>
-        l.url ===
-        State.Eligibility.Search.buildPath({
-          stateSlug,
-          personPseudoId: testResident.pseudonymizedId,
-        }),
-    ),
-  ).toBeUndefined();
-
-  expect(
-    presenter.links.find((l) =>
-      l.url.match(new RegExp(State.Eligibility.$.Search.relativePath)),
     ),
   ).toBeDefined();
 });

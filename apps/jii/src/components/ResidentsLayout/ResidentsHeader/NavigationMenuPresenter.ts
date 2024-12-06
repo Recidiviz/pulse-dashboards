@@ -27,7 +27,9 @@ export class NavigationMenuPresenter {
   constructor(
     private config: ResidentsConfig,
     private userStore: UserStore,
-    private eligibilityRouteParams: RouteParams<typeof State.Eligibility>,
+    private eligibilityRouteParams: RouteParams<
+      typeof State.Resident.Eligibility
+    >,
     private activeResident: ResidentsContext["activeResident"],
   ) {
     makeAutoObservable(this);
@@ -39,7 +41,7 @@ export class NavigationMenuPresenter {
     if (this.userStore.hasPermission("enhanced")) {
       links.push({
         text: "Search for Residents",
-        url: State.Eligibility.Search.buildPath({
+        url: State.Search.buildPath({
           stateSlug: this.eligibilityRouteParams.stateSlug,
         }),
       });
@@ -50,7 +52,7 @@ export class NavigationMenuPresenter {
       links.push(
         ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
           text: c.shortName,
-          url: State.Eligibility.Opportunity.buildPath({
+          url: State.Resident.Eligibility.Opportunity.buildPath({
             ...this.eligibilityRouteParams,
             opportunitySlug: c.urlSlug,
           }),

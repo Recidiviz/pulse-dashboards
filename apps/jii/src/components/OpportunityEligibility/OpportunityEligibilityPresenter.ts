@@ -67,7 +67,7 @@ export class OpportunityEligibilityPresenter {
       heading,
       sections,
       linkText,
-      linkUrl: State.Eligibility.Opportunity.InfoPage.buildPath({
+      linkUrl: State.Resident.Eligibility.Opportunity.InfoPage.buildPath({
         ...this.linkParams,
         pageSlug: urlSlug,
       }),
@@ -84,7 +84,7 @@ export class OpportunityEligibilityPresenter {
         heading,
         body,
         linkText,
-        linkUrl: State.Eligibility.Opportunity.InfoPage.buildPath({
+        linkUrl: State.Resident.Eligibility.Opportunity.InfoPage.buildPath({
           ...this.linkParams,
           pageSlug: urlSlug,
         }),

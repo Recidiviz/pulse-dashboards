@@ -32,7 +32,7 @@ export const PageHome = observer(function AppRoot() {
   if (authClient.isAuthorized)
     return (
       <Navigate
-        to={State.Eligibility.buildPath({
+        to={State.Resident.Eligibility.buildPath({
           stateSlug: stateConfigsByStateCode[stateCode].urlSlug,
         })}
         replace

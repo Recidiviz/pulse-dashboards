@@ -206,7 +206,7 @@ describe("protected routes", () => {
       container = render(
         <MemoryRouter
           initialEntries={[
-            routes.State.Eligibility.Search.buildPath({
+            routes.State.Search.buildPath({
               stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
             }),
           ]}
@@ -273,7 +273,7 @@ describe("protected routes", () => {
       container = render(
         <MemoryRouter
           initialEntries={[
-            routes.State.Eligibility.Opportunity.buildPath({
+            routes.State.Resident.Eligibility.Opportunity.buildPath({
               opportunitySlug: sccpConfig.urlSlug,
               stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
             }),
@@ -326,7 +326,7 @@ describe("protected routes", () => {
       container = render(
         <MemoryRouter
           initialEntries={[
-            routes.State.Eligibility.Opportunity.InfoPage.buildPath({
+            routes.State.Resident.Eligibility.Opportunity.InfoPage.buildPath({
               opportunitySlug: sccpConfig.urlSlug,
               stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
               pageSlug: sccpConfig.requirements.fullPage.urlSlug,
@@ -370,7 +370,7 @@ describe("protected routes", () => {
         container = render(
           <MemoryRouter
             initialEntries={[
-              routes.State.Eligibility.Opportunity.InfoPage.buildPath({
+              routes.State.Resident.Eligibility.Opportunity.InfoPage.buildPath({
                 opportunitySlug: "sccp",
                 stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
                 pageSlug: pageConfig.urlSlug,

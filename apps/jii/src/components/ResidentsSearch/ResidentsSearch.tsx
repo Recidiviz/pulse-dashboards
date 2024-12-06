@@ -48,7 +48,7 @@ const ResidentsSearchWithPresenter: React.FC<{
   const navigate = useNavigate();
   const residentLabelId = useId();
   const facilityLabelId = useId();
-  const urlParams = useTypedParams(State.Eligibility.Search);
+  const urlParams = useTypedParams(State.Search);
 
   return (
     <PageHydrator hydratable={presenter}>
@@ -76,7 +76,7 @@ const ResidentsSearchWithPresenter: React.FC<{
           onChange={(value) => {
             // this should land you on the selected resident's homepage
             navigate(
-              State.Eligibility.buildPath({
+              State.Resident.Eligibility.buildPath({
                 ...urlParams,
                 personPseudoId: value.pseudonymizedId,
               }),

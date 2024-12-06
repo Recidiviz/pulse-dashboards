@@ -23,7 +23,7 @@ import { ResidentOpportunityHydrator } from "../ResidentOpportunityHydrator/Resi
 
 export const PageOpportunityEligibility = memo(
   function PageOpportunityEligibility() {
-    const urlParams = useTypedParams(State.Eligibility.Opportunity);
+    const urlParams = useTypedParams(State.Resident.Eligibility.Opportunity);
 
     return <ResidentOpportunityHydrator {...urlParams} />;
   },
