@@ -110,7 +110,8 @@ test("supervisorId not found in supervisionOfficerSupervisors", async () => {
     [
       [Error: failed to populate officers],
       [Error: failed to populate supervisor],
-      [Error: Missing expected data for supervised officers],
+      [Error: Missing expected outcomes data for supervised officers],
+      [Error: failed to populate officers' outcomes],
     ]
   `);
 });
@@ -133,7 +134,7 @@ test("supervisorId not found in officersBySupervisor", async () => {
   expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
     [
       [Error: failed to populate officers],
-      [Error: Missing expected data for supervised officers],
+      [Error: No officer with outcomes data found for pseudo id: [hashed-so1]],
     ]
   `);
 });

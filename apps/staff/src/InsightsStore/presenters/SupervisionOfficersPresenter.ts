@@ -21,6 +21,7 @@ import { flowResult, makeAutoObservable } from "mobx";
 import {
   ActionStrategyCopy,
   SupervisionOfficer,
+  SupervisionOfficerOutcomes,
   SupervisionOfficerSupervisor,
 } from "~datatypes";
 import {
@@ -61,6 +62,11 @@ export class SupervisionOfficersPresenter implements Hydratable {
           flowResult(
             this.supervisionStore.populateSupervisionOfficerSupervisors(),
           ),
+          flowResult(
+            this.supervisionStore.populateOutcomesForSupervisor(
+              this.supervisorPseudoId,
+            ),
+          ),
         ]);
       },
       expectPopulated: [
@@ -68,6 +74,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
         this.expectOfficersPopulated,
         this.expectSupervisorPopulated,
         this.expectOutlierDataPopulated,
+        this.expectOfficerOutcomesPopulated,
       ],
     });
   }
@@ -86,6 +93,11 @@ export class SupervisionOfficersPresenter implements Hydratable {
   private expectOfficersPopulated() {
     if (!this.allOfficers?.length)
       throw new Error("failed to populate officers");
+  }
+
+  private expectOfficerOutcomesPopulated() {
+    if (!this.officerOutcomes?.length)
+      throw new Error("failed to populate officers' outcomes");
   }
 
   private expectSupervisorPopulated() {
@@ -117,14 +129,28 @@ export class SupervisionOfficersPresenter implements Hydratable {
     | Error {
     try {
       // not expected in practice due to checks above, but needed for type safety
-      if (!this.allOfficers?.length) {
-        throw new Error("Missing expected data for supervised officers");
+      if (!this.officerOutcomes?.length) {
+        throw new Error(
+          "Missing expected outcomes data for supervised officers",
+        );
       }
 
-      return this.allOfficers
-        .filter((o) => o.outlierMetrics.length > 0)
-        .map((o): OutlierOfficerData<SupervisionOfficer> => {
-          return getOutlierOfficerData(o, this.supervisionStore);
+      return this.officerOutcomes
+        .filter((outcomes) => outcomes.outlierMetrics.length > 0)
+        .map((outcomes): OutlierOfficerData<SupervisionOfficer> => {
+          const officer = this.allOfficers?.find(
+            (officer) => officer.pseudonymizedId === outcomes.pseudonymizedId,
+          );
+          if (!officer) {
+            throw new Error(
+              `No officer with outcomes data found for pseudo id: [${outcomes.pseudonymizedId}]`,
+            );
+          }
+          return getOutlierOfficerData(
+            officer,
+            this.supervisionStore,
+            outcomes,
+          );
         });
     } catch (e) {
       return castToError(e);
@@ -187,6 +213,15 @@ export class SupervisionOfficersPresenter implements Hydratable {
    */
   get allOfficers(): SupervisionOfficer[] | undefined {
     return this.supervisionStore?.officersBySupervisorPseudoId.get(
+      this.supervisorPseudoId,
+    );
+  }
+
+  /**
+   * Provides a list of all officer outcomes from this supervisor's unit
+   */
+  private get officerOutcomes(): SupervisionOfficerOutcomes[] | undefined {
+    return this.supervisionStore?.officersOutcomesBySupervisorPseudoId.get(
       this.supervisorPseudoId,
     );
   }
