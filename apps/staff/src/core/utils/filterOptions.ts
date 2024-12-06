@@ -364,6 +364,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
       { label: "Minimum", value: "MINIMUM" },
       { label: "Medium", value: "MEDIUM" },
       { label: "Maximum", value: "MAXIMUM" },
+      { label: "High", value: "HIGH" },
     ],
     get defaultOption(): FilterOption {
       return this.options[0];
