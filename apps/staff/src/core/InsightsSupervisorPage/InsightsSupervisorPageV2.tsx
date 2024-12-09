@@ -53,10 +53,9 @@ const OfficersTooltipHeading = styled.div`
   font-size: 12px;
   margin-bottom: ${rem(spacing.sm)};
   letter-spacing: 0.05em;
-`;
-
-const ExcludedOfficersTooltipHeading = styled(OfficersTooltipHeading)`
-  margin-top: ${rem(spacing.md)};
+  &:not(:first-child) {
+    margin-top: ${rem(spacing.md)};
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -98,7 +97,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 
   const tooltipContents = (
     <>
-      {allOfficers && (
+      {!!allOfficers?.length && (
         <>
           <OfficersTooltipHeading>INCLUDED IN OUTCOMES</OfficersTooltipHeading>
           <div>
@@ -110,9 +109,9 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       )}
       {!!excludedOfficers?.length && (
         <>
-          <ExcludedOfficersTooltipHeading>
+          <OfficersTooltipHeading>
             EXCLUDED FROM OUTCOMES
-          </ExcludedOfficersTooltipHeading>
+          </OfficersTooltipHeading>
           <div>
             {excludedOfficers.map((officer) => (
               <div key={officer.pseudonymizedId}>{officer.displayName}</div>
