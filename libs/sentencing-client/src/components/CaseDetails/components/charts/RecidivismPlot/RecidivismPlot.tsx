@@ -75,7 +75,7 @@ export function RecidivismPlot({
         Cumulative Recidivism Rates{" "}
         {!hideInfoTooltip && insight && (
           <InfoIconWithTooltip
-            headerText="Previous Sentences"
+            headerText="Cumulative Recidivism Rates"
             content={
               <CommonStyled.ChartTooltipContentSection>
                 <RecidivismPlotExplanation insight={insight} isTooltip />
