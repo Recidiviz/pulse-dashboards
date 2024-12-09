@@ -232,6 +232,7 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
         <Styled.RecommendationActionButtonWrapper>
           <Styled.ActionButton
             fullWidth
+            disabled={!selectedRecommendation}
             onClick={() => {
               setShowSummaryReport(true);
               saveRecommendation();

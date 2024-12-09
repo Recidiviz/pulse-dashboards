@@ -70,7 +70,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   const lastName = caseAttributes?.client?.lastName;
 
   const [selectedRecommendation, setSelectedRecommendation] = useState(
-    caseAttributes.selectedRecommendation ?? RecommendationType.Probation,
+    caseAttributes.selectedRecommendation,
   );
   const [showEditCaseDetailsModal, setShowEditCaseDetailsModal] =
     useState(false);

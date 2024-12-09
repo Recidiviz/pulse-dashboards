@@ -123,7 +123,7 @@ test("display case details page", async () => {
   expect(caseIdNode).toBeInTheDocument();
 });
 
-test("probation recommendation selected by default", async () => {
+test("no recommendations are selected by default", async () => {
   await presenter.hydrate();
   vi.spyOn(psiStore.caseStore, "caseDetailsById", "get").mockReturnValue({
     ...psiStore.caseStore.caseDetailsById,
@@ -155,7 +155,7 @@ test("probation recommendation selected by default", async () => {
     "I do not wish to make a recommendation",
   )) as HTMLInputElement;
 
-  expect(probationInput.checked).toBeTrue();
+  expect(probationInput.checked).toBeFalse();
   expect(riderInput.checked).toBeFalse();
   expect(termInput.checked).toBeFalse();
   expect(noRecommendationInput.checked).toBeFalse();
