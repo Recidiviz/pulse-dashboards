@@ -259,6 +259,20 @@ describe("usCaFilterByRoleSubtype", () => {
     ).toBeUndefined();
   });
 
+  it("should return undefined when the user is a supervisor", () => {
+    expect(
+      usCaFilterByRoleSubtype(
+        {
+          info: {
+            ...userWithoutDistrictOrRole.info,
+            roleSubtype: "SUPERVISION_OFFICER_SUPERVISOR",
+          },
+        },
+        enabledFeatureVariant,
+      ),
+    ).toBeUndefined();
+  });
+
   it("should restrict to the user's email", () => {
     const user: CombinedUserRecord = {
       info: {

@@ -214,7 +214,12 @@ export const usCaFilterByRoleSubtype: StaffFilterFunction = (
   user: CombinedUserRecord,
   featureVariants: ActiveFeatureVariantRecord,
 ) => {
-  if (featureVariants.supervisionUnrestrictedSearch) return;
+  // Allow any Parole Agent supervisors to access any caseload
+  if (
+    featureVariants.supervisionUnrestrictedSearch ||
+    user.info.roleSubtype === "SUPERVISION_OFFICER_SUPERVISOR"
+  )
+    return;
 
   // TODO(#4618): Consider getting rid of the role subtype comparison and replacing the relevant
   // logic with a feature variant
