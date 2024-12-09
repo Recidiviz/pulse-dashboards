@@ -268,6 +268,16 @@ export class InsightsSupervisionStore {
     return officer;
   }
 
+  get officerOutcomes(): SupervisionOfficerOutcomes | undefined {
+    const officerOutcomes = [
+      ...this.officersOutcomesBySupervisorPseudoId.values(),
+    ]
+      .flat()
+      .find((o) => o.pseudonymizedId === this.officerPseudoId);
+
+    return officerOutcomes;
+  }
+
   get allActionStrategies(): ActionStrategyCopy {
     return this.config.actionStrategyCopy;
   }

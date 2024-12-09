@@ -79,6 +79,9 @@ describe("with unit data already hydrated", () => {
       ),
       flowResult(store.populateSupervisionOfficerSupervisors()),
       flowResult(store.populateMetricConfigs()),
+      flowResult(
+        store.populateOutcomesForSupervisor(testSupervisor.pseudonymizedId),
+      ),
     ]);
   });
 

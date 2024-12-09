@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable, override } from "mobx";
+import { flowResult, makeObservable, override } from "mobx";
 
 import {
   ExcludedSupervisionOfficer,
@@ -78,9 +78,11 @@ export class SupervisionOfficerPresenter<
       ],
       populate: async () => {
         await Promise.all(super.populateMethods());
-        // this needs to happen after the above calls so that the officer record is hydrated, since
-        // we need its external ID
-        await this.populateCaseload();
+        // These need to happen after the above calls so that the officer record is hydrated
+        await Promise.all([
+          this.populateCaseload(),
+          flowResult(this.populateSupervisionOfficerOutcomes()),
+        ]);
       },
     });
   }

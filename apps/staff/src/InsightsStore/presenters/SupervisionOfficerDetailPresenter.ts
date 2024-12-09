@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { uniq } from "lodash";
-import { makeObservable, override } from "mobx";
+import { flowResult, makeObservable, override } from "mobx";
 
 import { MetricConfig, SupervisionOfficer } from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
@@ -52,6 +52,8 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
       expectPopulated: this.expectPopulated(),
       populate: async () => {
         await Promise.all([...this.populateMethods()]);
+        // Follows the above method so we have the officer record hydrated.
+        await flowResult(this.populateSupervisionOfficerOutcomes());
       },
     });
   }

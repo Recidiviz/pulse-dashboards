@@ -40,7 +40,7 @@ import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenter } from "../SupervisionOfficerPresenter";
 import * as utils from "../utils";
-import { getOutlierOfficerData } from "../utils";
+import { getOutlierOfficerData, isExcludedSupervisionOfficer } from "../utils";
 
 type TestOfficerType = SupervisionOfficer | ExcludedSupervisionOfficer;
 
@@ -145,6 +145,9 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
             testOfficer.externalId,
           ),
         ),
+        flowResult(
+          store.populateOutcomesForSupervisor(testSupervisor.pseudonymizedId),
+        ),
       ]);
     });
 
@@ -213,16 +216,26 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
       InsightsOfflineAPIClient.prototype,
       "supervisionOfficerSupervisors",
     );
+    vi.spyOn(InsightsOfflineAPIClient.prototype, "outcomesForOfficer");
 
     expect(presenter.hydrationState.status).toBe("needs hydration");
 
     await presenter.hydrate();
 
+    const officerPseudoId = testOfficer.pseudonymizedId;
+
     expect(presenter.hydrationState.status).toBe("hydrated");
     expect(store.insightsStore.apiClient.metricBenchmarks).toHaveBeenCalled();
     expect(
       store.insightsStore.apiClient.supervisionOfficer,
-    ).toHaveBeenCalledWith(testOfficer.pseudonymizedId);
+    ).toHaveBeenCalledWith(officerPseudoId);
+    if (!isExcludedSupervisionOfficer(testOfficer)) {
+      expect(
+        store.insightsStore.apiClient.outcomesForOfficer,
+      ).toHaveBeenCalledWith(officerPseudoId);
+    } else {
+      expect(store.insightsStore.apiClient.outcomesForOfficer).not.toBeCalled();
+    }
     expect(
       store.insightsStore.apiClient.supervisionOfficerSupervisors,
     ).toHaveBeenCalled();

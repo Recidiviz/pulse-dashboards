@@ -21,6 +21,7 @@ import {
   ActionStrategyCopy,
   ExcludedSupervisionOfficer,
   SupervisionOfficer,
+  SupervisionOfficerOutcomes,
   SupervisionOfficerSupervisor,
 } from "~datatypes";
 import {
@@ -34,7 +35,7 @@ import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import { ConfigLabels, OutlierOfficerData } from "./types";
-import { getOutlierOfficerData } from "./utils";
+import { getOutlierOfficerData, isExcludedSupervisionOfficer } from "./utils";
 
 export abstract class SupervisionOfficerPresenterBase<
     T extends SupervisionOfficer | ExcludedSupervisionOfficer,
@@ -45,6 +46,8 @@ export abstract class SupervisionOfficerPresenterBase<
   // rather than dealing with a partially hydrated unit in the supervisionStore,
   // we will just put the API response here (when applicable)
   protected fetchedOfficerRecord?: T;
+
+  protected fetchedOfficerOutcomes?: SupervisionOfficerOutcomes;
 
   protected hydrator: HydratesFromSource;
 
@@ -61,10 +64,12 @@ export abstract class SupervisionOfficerPresenterBase<
       | "officerRecord"
       | "outlierDataOrError"
       | "expectOfficerPopulated"
+      | "expectOfficerOutcomesPopulated"
       | "expectSupervisorPopulated"
       | "expectOutlierDataPopulated"
       | "isOfficerPopulated"
       | "populateSupervisionOfficer"
+      | "populateSupervisionOfficerOutcomes"
     >(
       this,
       {
@@ -89,10 +94,12 @@ export abstract class SupervisionOfficerPresenterBase<
         setUserHasSeenActionStrategy: true,
         disableSurfaceActionStrategies: true,
         expectOfficerPopulated: true,
+        expectOfficerOutcomesPopulated: true,
         expectSupervisorPopulated: true,
         expectOutlierDataPopulated: true,
         isOfficerPopulated: true,
         populateSupervisionOfficer: true,
+        populateSupervisionOfficerOutcomes: true,
         hydrate: true,
         hydrationState: true,
         metricConfigsById: true,
@@ -121,6 +128,7 @@ export abstract class SupervisionOfficerPresenterBase<
       this.expectOfficerPopulated,
       this.expectSupervisorPopulated,
       this.expectOutlierDataPopulated,
+      this.expectOfficerOutcomesPopulated,
     ];
   }
 
@@ -143,8 +151,18 @@ export abstract class SupervisionOfficerPresenterBase<
       throw new Error("Failed to populate metric configs");
   }
 
+  private expectOfficerOutcomesPopulated() {
+    if (isExcludedSupervisionOfficer(this.officerRecord)) return;
+    if (!this.officerOutcomes)
+      throw new Error("Failed to populate officer outcomes data");
+  }
+
   get officerRecord() {
     return this.supervisionStore.officerRecord ?? this.fetchedOfficerRecord;
+  }
+
+  private get officerOutcomes() {
+    return this.supervisionStore.officerOutcomes ?? this.fetchedOfficerOutcomes;
   }
 
   /**
@@ -154,9 +172,16 @@ export abstract class SupervisionOfficerPresenterBase<
   private get outlierDataOrError(): OutlierOfficerData<T> | Error {
     try {
       if (!this.officerRecord) throw new Error("Missing officer record");
+      if (
+        !isExcludedSupervisionOfficer(this.officerRecord) &&
+        !this.officerOutcomes
+      )
+        throw new Error("Missing officer outcomes");
+
       return getOutlierOfficerData(
         this.officerRecord,
         this.supervisionStore,
+        this.officerOutcomes,
       ) as OutlierOfficerData<T>;
     } catch (e) {
       return castToError(e);
@@ -274,6 +299,20 @@ export abstract class SupervisionOfficerPresenterBase<
     InsightsAPI["supervisionOfficer" | "excludedSupervisionOfficer"],
     void
   >;
+
+  /**
+   * Fetch outcomes for current officer.
+   */
+  protected *populateSupervisionOfficerOutcomes(): FlowMethod<
+    InsightsAPI["outcomesForOfficer"],
+    void
+  > {
+    if (isExcludedSupervisionOfficer(this.officerRecord)) return;
+    this.fetchedOfficerOutcomes =
+      yield this.supervisionStore.insightsStore.apiClient.outcomesForOfficer(
+        this.officerPseudoId,
+      );
+  }
 
   /**
    * Initiates hydration for all data needed within this presenter class

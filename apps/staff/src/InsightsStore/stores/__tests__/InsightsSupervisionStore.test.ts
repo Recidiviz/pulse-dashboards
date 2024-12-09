@@ -330,6 +330,28 @@ test("hydrate supervisionOfficersOutcomes for supervisor", async () => {
   );
 });
 
+test("officerOutcomes returns outcomes list when supervisor outcomes are hydrated", async () => {
+  const testSupervisorPseudoId =
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
+  const testOfficerPseudoId = supervisionOfficerFixture[0].pseudonymizedId;
+
+  await expect(
+    flowResult(store.populateOutcomesForSupervisor(testSupervisorPseudoId)),
+  ).resolves.not.toThrow();
+
+  store.setOfficerPseudoId(testOfficerPseudoId);
+
+  expect(store.officerOutcomes).toEqual(supervisionOfficerOutcomesFixture[0]);
+});
+
+test("officerOutcomes returns undefined when supervisor outcomes are not hydrated", async () => {
+  const testOfficerPseudoId = supervisionOfficerFixture[0].pseudonymizedId;
+
+  store.setOfficerPseudoId(testOfficerPseudoId);
+
+  expect(store.officerOutcomes).toBeUndefined();
+});
+
 test("userCanAccessAllSupervisors with missing route", () => {
   vi.spyOn(
     store.insightsStore.rootStore.userStore,
