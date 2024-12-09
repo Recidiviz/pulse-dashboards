@@ -124,19 +124,6 @@ export const convertDistrictToDistrictCode = (district?: string) => {
   return match ? `D${match[1]}` : null;
 };
 
-/**
- * Returns an object containing the `district` and `county` names
- * extracted from a formatted string
- * (e.g. "District 4 - Caldwell" -> { district: "District 4", county: "Caldwell"})
- */
-export const extractDistrictAndCounty = (input?: string | null) => {
-  if (!input) return;
-  const [district, county] = input
-    .split(" - ")
-    .map((str) => str.trim().toLocaleLowerCase());
-  return { district, county };
-};
-
 /** Displays `record` for 1 record or `records` for 0 or more than 1 records */
 export const printFormattedRecordString = (numberOfRecords: number) => {
   return numberOfRecords === 1 ? `record` : `records`;

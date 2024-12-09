@@ -16,10 +16,7 @@
 // =============================================================================
 
 import { Opportunities } from "../../../api";
-import {
-  convertDistrictToDistrictCode,
-  extractDistrictAndCounty,
-} from "../../../utils/utils";
+import { convertDistrictToDistrictCode } from "../../../utils/utils";
 import {
   AGE_KEY,
   ASAM_CARE_RECOMMENDATION_KEY,
@@ -102,8 +99,7 @@ export const filterEligibleOpportunities = (
     // TODO(Recidiviz/recidiviz-data#32242) Add CPS Criteria Check
     // hasOpenChildProtectiveServicesCaseCriterion
   } = opportunity;
-  const { district: districtOfResidence, county: districtCountyOfSentencing } =
-    attributes;
+  const { districtOfResidence, districtOfSentencing } = attributes;
 
   // Age Criteria Check
   const hasAgeCriteria = Boolean(minAge || maxAge);
@@ -129,11 +125,9 @@ export const filterEligibleOpportunities = (
   )
     return false;
 
-  const districtOfSentencing = extractDistrictAndCounty(
-    districtCountyOfSentencing,
-  )?.district;
   const hasMatchingDistricts =
-    districtOfSentencing === districtOfResidence?.toLocaleLowerCase();
+    districtOfSentencing?.toLocaleLowerCase() ===
+    districtOfResidence?.toLocaleLowerCase();
   const districtName =
     hasMatchingDistricts || !districtOfResidence
       ? districtOfSentencing

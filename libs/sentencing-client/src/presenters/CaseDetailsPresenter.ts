@@ -114,8 +114,9 @@ export class CaseDetailsPresenter implements Hydratable {
       hasOpenChildProtectiveServicesCase,
       plea,
       county,
+      district: districtOfSentencing,
     } = this.caseAttributes ?? {};
-    const { district } = this.caseAttributes?.client ?? {};
+    const { district: districtOfResidence } = this.caseAttributes?.client ?? {};
 
     return {
       age,
@@ -135,8 +136,9 @@ export class CaseDetailsPresenter implements Hydratable {
       hasDevelopmentalDisability,
       hasOpenChildProtectiveServicesCase,
       plea,
-      district, // district of client's residence
-      county, // district + county of sentencing
+      districtOfResidence,
+      county, // county of sentencing
+      districtOfSentencing,
     };
   }
 

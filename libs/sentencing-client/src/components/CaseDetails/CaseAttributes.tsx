@@ -20,7 +20,7 @@ import moment from "moment";
 
 import { CaseStore } from "../../datastores/CaseStore";
 import { filterExcludedAttributes } from "../../geoConfigs/utils";
-import { displayReportType, extractDistrictAndCounty } from "../../utils/utils";
+import { displayReportType } from "../../utils/utils";
 import * as Styled from "./CaseDetails.styles";
 import {
   AGE_KEY,
@@ -51,7 +51,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       age,
       dueDate,
       reportType,
-      county: districtCountyOfSentencing,
+      county: countyOfSentencing,
       offense,
       lsirScore,
       client,
@@ -67,9 +67,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
     const countyOfSentencingField = {
       key: COUNTY_KEY,
       label: "County",
-      value:
-        extractDistrictAndCounty(districtCountyOfSentencing)?.county ??
-        "Unknown",
+      value: countyOfSentencing ?? "Unknown",
     };
     const countyOfResidenceField = {
       key: COUNTY_KEY,
@@ -79,7 +77,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
 
     const hasMatchingCountyOfResidenceAndSentencing =
       countyOfResidence?.toLocaleLowerCase() ===
-      extractDistrictAndCounty(districtCountyOfSentencing)?.county;
+      countyOfSentencing?.toLocaleLowerCase();
 
     /** If the county of residence and sentencing differ, display both counties in header */
     const countyField: AttributeLabelValue[] =
