@@ -202,10 +202,8 @@ export async function transformAndLoadCaseData(
       staffId,
       clientId,
       dueDate: caseData.due_date,
-      completionDate: caseData.completion_date,
-      sentenceDate: caseData.sentence_date,
-      assignedDate: caseData.assigned_date,
       county: caseData.county,
+      district: caseData.district,
       lsirScore: caseData.lsir_score,
       lsirLevel: caseData.lsir_level,
       reportType: caseData.report_type

@@ -129,7 +129,7 @@ export const convertDistrictToDistrictCode = (district?: string) => {
  * extracted from a formatted string
  * (e.g. "District 4 - Caldwell" -> { district: "District 4", county: "Caldwell"})
  */
-export const extractDistrictAndCounty = (input?: string) => {
+export const extractDistrictAndCounty = (input?: string | null) => {
   if (!input) return;
   const [district, county] = input
     .split(" - ")

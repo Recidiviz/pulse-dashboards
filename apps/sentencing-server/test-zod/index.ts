@@ -30,12 +30,12 @@ import {
 } from "~sentencing-server/import/handle-import/models";
 
 const zodSchemaMap: Record<string, z.ZodTypeAny> = {
-  case: caseImportSchema,
-  client: clientImportSchema,
-  insight: insightImportSchema,
-  offense: offenseImportSchema,
-  opportunity: opportunityImportSchema,
-  staff: staffImportSchema,
+  case: z.array(caseImportSchema),
+  client: z.array(clientImportSchema),
+  insight: z.array(insightImportSchema),
+  offense: z.array(offenseImportSchema),
+  opportunity: z.array(opportunityImportSchema),
+  staff: z.array(staffImportSchema),
 };
 
 function getData(fileName: string) {

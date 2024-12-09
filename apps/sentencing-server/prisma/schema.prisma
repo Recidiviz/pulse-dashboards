@@ -281,10 +281,8 @@ model Case {
   clientId String?
 
   dueDate            DateTime?
-  completionDate     DateTime?
-  sentenceDate       DateTime
-  assignedDate       DateTime
-  county             String
+  county             String?
+  district           String?
   lsirLevel          String?
   reportType         ReportType?
   // Whether the LSIR score is locked and cannot be changed
