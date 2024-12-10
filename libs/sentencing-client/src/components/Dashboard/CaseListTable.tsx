@@ -35,6 +35,7 @@ import { sortFullNameByLastNameDescending } from "../../utils/sorting";
 import { displayReportType } from "../../utils/utils";
 import SortIcon from "../assets/sort-icon.svg?react";
 import { REPORT_TYPE_KEY } from "../CaseDetails/constants";
+import { UNKNOWN_OPTION } from "../CaseDetails/Form/constants";
 import { ReportType } from "../constants";
 import {
   CLIENT_FULL_NAME_KEY,
@@ -48,6 +49,7 @@ import { useDetectOutsideClick } from "./hooks";
 import {
   CaseListTableCase,
   CaseListTableCases,
+  CaseStatus,
   CaseStatusToDisplay,
   RecommendationStatusFilter,
 } from "./types";
@@ -100,7 +102,9 @@ const columns = [
     header: "Due Date",
     accessorKey: DUE_DATE_KEY,
     cell: (dueDate: CellContext<CaseListTableCase, Date>) =>
-      moment(dueDate.getValue()).utc().format("MM/DD/YYYY"),
+      dueDate.getValue() === null
+        ? UNKNOWN_OPTION
+        : moment(dueDate.getValue()).utc().format("MM/DD/YYYY"),
   },
   {
     header: "Report Type",
@@ -143,6 +147,48 @@ const columns = [
           {statusToDisplay}
         </Styled.StatusChip>
       );
+    },
+    sortingFn: (a: Row<CaseListTableCase>, b: Row<CaseListTableCase>) => {
+      const dueDateStringA = String(a.original[DUE_DATE_KEY]);
+      const dueDateStringB = String(b.original[DUE_DATE_KEY]);
+      const dueDateA = moment.utc(dueDateStringA);
+      const dueDateB = moment.utc(dueDateStringB);
+
+      const statusOrder = {
+        InProgress: 0,
+        NotYetStarted: 1,
+        Complete: 2,
+      };
+
+      const isArchivedA =
+        !a.original[DUE_DATE_KEY] || moment.utc().isAfter(dueDateA);
+      const isArchivedB =
+        !b.original[DUE_DATE_KEY] || moment.utc().isAfter(dueDateB);
+
+      // If both are archived, return 0
+      if (isArchivedA && isArchivedB) {
+        return 0;
+      }
+
+      // If A is archived and B is not, put A at the bottom of the list
+      if (isArchivedA) {
+        return 1;
+      }
+
+      // If B is archived and A is not, put B at the bottom of the list
+      if (isArchivedB) {
+        return -1;
+      }
+
+      // Sort by status
+      const caseStatusA = a.original[STATUS_KEY] as CaseStatus;
+      const caseStatusB = b.original[STATUS_KEY] as CaseStatus;
+      const statusComparison =
+        caseStatusA &&
+        caseStatusB &&
+        statusOrder[caseStatusA] - statusOrder[caseStatusB];
+
+      return statusComparison ?? 0;
     },
   },
 ];
@@ -198,7 +244,9 @@ export const CaseListTable = ({
 
   const [sortingOrder, setSortingOrder] = useState(() => {
     const savedSortingOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return savedSortingOrder ? JSON.parse(savedSortingOrder) : [];
+    return savedSortingOrder
+      ? JSON.parse(savedSortingOrder)
+      : [{ id: "client_fullName", desc: false }];
   });
 
   const table = useReactTable({
@@ -233,28 +281,36 @@ export const CaseListTable = ({
     const filtersExcludingActive = filters.filter(
       (item): item is RecommendationStatusFilter => item !== "Active",
     );
+
     trackRecommendationStatusFilterChanged(filtersExcludingActive);
     setStatusFilters(filters);
     setData(() => {
-      return caseTableData.filter((datapoint) => {
-        const includesArchived = filters.includes("Archived");
-        const isBeforeDueDate =
-          moment().utc() < moment(datapoint.dueDate).utc();
+      return caseTableData
+        .filter((datapoint) => {
+          const includesArchived = filters.includes("Archived");
+          const isBeforeDueDate =
+            moment().utc() < moment(datapoint.dueDate).utc();
 
-        if (datapoint.status) {
-          const hasMatchingStatus = filters.includes(
-            CaseStatusToDisplay[datapoint.status],
-          );
-          if (!includesArchived) {
-            return hasMatchingStatus && isBeforeDueDate;
+          if (datapoint.status) {
+            const hasMatchingStatus = filters.includes(
+              CaseStatusToDisplay[datapoint.status],
+            );
+            if (!includesArchived) {
+              return hasMatchingStatus && isBeforeDueDate;
+            }
+            if (!hasMatchingStatus && !isBeforeDueDate) {
+              return true;
+            }
+            return hasMatchingStatus;
           }
-          if (!hasMatchingStatus && !isBeforeDueDate) {
-            return true;
-          }
-          return hasMatchingStatus;
-        }
-        return true;
-      });
+          return true;
+        })
+        .sort((a, b) => {
+          // Moves archived cases to the bottom of the list
+          const dueDateA = moment.utc(a.dueDate);
+          const dueDateB = moment.utc(b.dueDate);
+          return !a.dueDate || dueDateA.isBefore(dueDateB) ? 1 : -1;
+        });
     });
   };
 
@@ -262,7 +318,7 @@ export const CaseListTable = ({
   useEffect(() => {
     const savedSortingOrder = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (
-      sortingOrder.length > 0 &&
+      sortingOrder?.length > 0 &&
       JSON.stringify(savedSortingOrder) !== JSON.stringify(sortingOrder)
     ) {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(sortingOrder));

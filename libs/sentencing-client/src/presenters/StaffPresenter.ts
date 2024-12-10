@@ -29,7 +29,6 @@ import {
   RecommendationStatusFilter,
 } from "../components/Dashboard/types";
 import { StaffStore } from "../datastores/StaffStore";
-import { sortFullNameByLastNameDescending } from "../utils/sorting";
 
 export class StaffPresenter implements Hydratable {
   private hydrator: HydratesFromSource;
@@ -62,14 +61,7 @@ export class StaffPresenter implements Hydratable {
   }
 
   get caseTableData() {
-    return !this.staffInfo
-      ? undefined
-      : [...this.staffInfo.cases].sort((a, b) =>
-          sortFullNameByLastNameDescending(
-            a.client?.fullName,
-            b.client?.fullName,
-          ),
-        );
+    return !this.staffInfo ? undefined : this.staffInfo.cases;
   }
 
   get hydrationState(): HydrationState {
