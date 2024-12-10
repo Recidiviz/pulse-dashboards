@@ -312,6 +312,9 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     return getHighlightedOfficersByMetric(
       this.metricConfigsById,
       this.officersWithOutliersData,
+      this.supervisionStore.officersOutcomesBySupervisorPseudoId.get(
+        this.supervisorPseudoId,
+      ),
     );
   }
 

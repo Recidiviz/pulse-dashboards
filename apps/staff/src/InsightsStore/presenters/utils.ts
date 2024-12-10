@@ -159,6 +159,7 @@ export const labelForVitalsMetricId = (metricId: string): string => {
 export function getHighlightedOfficersByMetric(
   metricConfigs: Map<string, MetricConfig> | undefined,
   officers: SupervisionOfficer[] | undefined,
+  officerOutcomes: SupervisionOfficerOutcomes[] | undefined,
 ): HighlightedOfficersDetail[] {
   if (!metricConfigs) return [];
   const metricsToHighlight = Array.from(metricConfigs.values()).filter(
@@ -166,17 +167,24 @@ export function getHighlightedOfficersByMetric(
   );
   return compact(
     metricsToHighlight.map((m) => {
-      const highlightedOfficers =
-        officers?.filter((o) =>
-          o.topXPctMetrics?.map((t) => t.metricId).includes(m.name),
-        ) || [];
-      if (highlightedOfficers.length > 0) {
+      // Get list of which officers are in the topXPct
+      const highlightedOfficerIds =
+        officerOutcomes
+          ?.filter((o) =>
+            o.topXPctMetrics.map((t) => t.metricId).includes(m.name),
+          )
+          .map((o) => o.pseudonymizedId) || [];
+      // Collect those officers' identifiers
+      const highlightedOfficers = officers
+        ?.filter((o) => highlightedOfficerIds.includes(o.pseudonymizedId))
+        .map((o) => ({
+          pseudonymizedId: o.pseudonymizedId,
+          displayName: o.displayName,
+        }));
+      if (highlightedOfficers && highlightedOfficers.length > 0) {
         return {
           metricName: m.eventName,
-          officers: highlightedOfficers.map((o) => ({
-            pseudonymizedId: o.pseudonymizedId,
-            displayName: o.displayName,
-          })),
+          officers: highlightedOfficers,
           numOfficers: highlightedOfficers.length,
           topXPct: m.topXPct,
         };

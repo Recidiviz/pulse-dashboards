@@ -141,9 +141,15 @@ export class SupervisionOfficerPresenter<
    * officers meeting the top X percent criteria.
    */
   get officerHighlights(): HighlightedOfficersDetail[] {
-    return getHighlightedOfficersByMetric(this.metricConfigsById, [
-      this.officerRecord as SupervisionOfficer,
-    ]);
+    // Not expected in practice, but needed for type safety
+    if (!this.officerOutcomes) {
+      throw new Error("Missing officer outcomes");
+    }
+    return getHighlightedOfficersByMetric(
+      this.metricConfigsById,
+      [this.officerRecord as SupervisionOfficer],
+      [this.officerOutcomes],
+    );
   }
 
   protected expectMetricsPopulated() {

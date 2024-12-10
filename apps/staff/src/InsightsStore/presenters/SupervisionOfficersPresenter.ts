@@ -257,6 +257,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
     return getHighlightedOfficersByMetric(
       this.supervisionStore.metricConfigsById,
       this.allOfficers,
+      this.officerOutcomes,
     );
   }
 

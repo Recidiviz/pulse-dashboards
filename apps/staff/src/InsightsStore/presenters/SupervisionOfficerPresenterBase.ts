@@ -161,7 +161,7 @@ export abstract class SupervisionOfficerPresenterBase<
     return this.supervisionStore.officerRecord ?? this.fetchedOfficerRecord;
   }
 
-  private get officerOutcomes() {
+  protected get officerOutcomes() {
     return this.supervisionStore.officerOutcomes ?? this.fetchedOfficerOutcomes;
   }
 
