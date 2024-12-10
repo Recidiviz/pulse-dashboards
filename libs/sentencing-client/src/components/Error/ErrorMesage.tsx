@@ -16,5 +16,10 @@
 // =============================================================================
 
 export const ErrorMessage = () => {
-  return <div>Sorry, we’re having trouble loading this page.</div>;
+  return (
+    <div style={{ textAlign: "center" }}>
+      Sorry, we’re having trouble loading this page. Please try refreshing the
+      page or reach out to your contact at Recidiviz for more help.
+    </div>
+  );
 };
