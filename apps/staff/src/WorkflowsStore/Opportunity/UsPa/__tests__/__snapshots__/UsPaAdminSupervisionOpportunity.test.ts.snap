@@ -7,6 +7,7 @@ exports[`fully eligible > requirements met 1`] = `
   },
   {
     "text": "Not convicted of an ineligible offense",
+    "tooltip": "See form 402 for full list of ineligible offenses",
   },
 ]
 `;

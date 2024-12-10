@@ -67,8 +67,10 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "onParoleAtLeastOneYear",
-          text: "Has served on parole for at least one year",
+          key: "usPaOnSupervisionAtLeastOneYear",
+          text: "Has served on supervision for at least one year",
+          tooltip:
+            "After one year of supervision, all reentrants must be assessed for administrative parole supervision",
         },
         {
           key: "usPaNoHighSanctionsInPastYear",
@@ -77,10 +79,13 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usPaNotServingIneligibleOffenseForAdminSupervision",
           text: "Not convicted of an ineligible offense",
+          tooltip: "See form 402 for full list of ineligible offenses",
         },
         {
           key: "usPaNotOnSexOffenseProtocol",
           text: "Not supervised under the sex offender protocol",
+          tooltip:
+            "All other reentrants supervised under the sex offender protocol shall be supervised at no less than the medium level of supervision for the entirety of their supervision",
         },
       ],
       emptyTabCopy: [],
@@ -91,7 +96,7 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 1,
       ineligibleCriteriaCopy: [
         {
-          key: "onParoleAtLeastOneYear",
+          key: "usPaOnSupervisionAtLeastOneYear",
           text: "Needs {{monthsOrDaysRemainingFromToday eligibleDate}} on supervision",
         },
       ],
@@ -100,8 +105,17 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1dBTArU-kQojSvqWZ_i080pDtXxZe70X6/view",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [
+        { text: "Has fulfilled treatment and special condition requirements" },
+        { text: "Making efforts to reduce financial obligations\t" },
+        { text: "Does not have a history of PFAs or a current PFA order " },
+        { text: "Has not been designated as a sexually violent predator" },
+        {
+          text: "Does not have out of state charges, unreported dispositions, or delinquent adjudications for ineligible offenses",
+          tooltip: "See form 402 for full list of ineligible offenses",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements for agents to check",
       notifications: [],
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
@@ -162,6 +176,12 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usPaNotEligibleOrMarkedIneligibleForAdminSupervision",
           text: "Not eligible for administrative supervision",
         },
+        {
+          key: "usPaNotOnSexOffenseProtocol",
+          text: "Not supervised under the sex offender protocol",
+          tooltip:
+            "All other reentrants supervised under the sex offender protocol shall be supervised at no less than the medium level of supervision for the entirety of their supervision.",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_PA-specialCircumstancesSupervisionReferrals",
@@ -180,8 +200,10 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1dBTArU-kQojSvqWZ_i080pDtXxZe70X6/view",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [
+        { text: "Has fulfilled treatment and special condition requirements" },
+      ],
+      nonOmsCriteriaHeader: "Requirements for agents to check",
       notifications: [],
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
@@ -194,7 +216,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "Special circumstances supervision allows reentrants who are not eligible for traditional administrative supervision to be supervised at a lower level of supervision. It is typically used for reentrants who have extenuating circumstances that reduce the risk of re-offending or reentrants who have made satisfactory adjustments on supervision over a period of time. The official policy doc can be found [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view). On this page, you can review clients who may be eligible for special circumstances supervision. ",
       submittedTabTitle: null,
-      supportsSubmitted: true,
+      supportsSubmitted: false,
       systemType: "SUPERVISION",
       tabGroups: null,
       tabPrefaceCopy: [],

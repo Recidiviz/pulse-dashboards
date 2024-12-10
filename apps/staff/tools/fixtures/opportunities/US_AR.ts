@@ -128,11 +128,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Not serving a life sentence",
           tooltip: null,
         },
-        {
-          key: "noEscapeViolations",
-          text: "No escape history",
-          tooltip: null,
-        },
+        { key: "noEscapeViolations", text: "No escape history", tooltip: null },
         {
           key: "noHighestSeverityIncarcerationSanctionsWithin90Days",
           text: "No major sanctions in past 90 days",

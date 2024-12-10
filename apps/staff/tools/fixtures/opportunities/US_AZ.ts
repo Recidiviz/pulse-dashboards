@@ -200,10 +200,10 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [{ text: "Satisfactory progress with Corrections Plan" }],
+      nonOmsCriteriaHeader: "Other Considerations",
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Requirements validated by OMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
@@ -213,7 +213,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading: null,
       submittedTabTitle: null,
-      supportsSubmitted: false,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
@@ -319,10 +319,10 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [{ text: "Satisfactory progress with Corrections Plan" }],
+      nonOmsCriteriaHeader: "Other Considerations",
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Requirements validated by OMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
@@ -332,7 +332,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading: null,
       submittedTabTitle: null,
-      supportsSubmitted: false,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
