@@ -15,25 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useOutletContext } from "react-router-dom";
+import { createContext } from "react";
 
 import {
   IncarcerationOpportunityId,
   OpportunityConfig,
 } from "../../configs/types";
 import { EligibilityReport } from "../../models/EligibilityReport/interface";
+import { useRequiredContext } from "../../utils/useRequiredContext";
 import { ResidentsContext } from "../ResidentsHydrator/context";
 
-export type ResidentOpportunityContext = Omit<
-  ResidentsContext,
-  "activeResident"
-> & {
+export type ResidentOpportunityContext = {
   activeResident: NonNullable<ResidentsContext["activeResident"]>;
   opportunityConfig: OpportunityConfig;
   opportunityId: IncarcerationOpportunityId;
   eligibilityReport: EligibilityReport;
 };
 
+const context = createContext<ResidentOpportunityContext | undefined>(
+  undefined,
+);
+
+export const ResidentOpportunityContextProvider = context.Provider;
+
 export function useResidentOpportunityContext() {
-  return useOutletContext<ResidentOpportunityContext>();
+  return useRequiredContext(context);
 }

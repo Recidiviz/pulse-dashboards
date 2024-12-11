@@ -22,6 +22,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
+import type { ResidentsStore } from "../../datastores/ResidentsStore";
 import { ResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { AdditionalSection } from "./AdditionalSection";
@@ -88,7 +89,10 @@ const OpportunityEligibilityWithPresenter: FC<{
 });
 
 export const OpportunityEligibility: FC<
-  ResidentOpportunityContext & { residentPseudoId?: string }
+  ResidentOpportunityContext & {
+    residentPseudoId?: string;
+    residentsStore: ResidentsStore;
+  }
 > = observer(function OpportunityEligibility({
   residentsStore,
   opportunityConfig,

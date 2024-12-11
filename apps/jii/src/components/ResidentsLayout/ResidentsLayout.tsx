@@ -21,7 +21,6 @@ import { memo } from "react";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useResidentsContext } from "../ResidentsHydrator/context";
 import { useSkipNav } from "../SkipNav/SkipNav";
 import { ResidentsHeader } from "./ResidentsHeader/ResidentsHeader";
 
@@ -39,7 +38,7 @@ export const ResidentsLayout = memo(function ResidentsLayout() {
       <Wrapper>
         <ResidentsHeader />
         <MainContent>
-          <Outlet context={useResidentsContext()} />
+          <Outlet />
         </MainContent>
       </Wrapper>
     </SkipNavController>

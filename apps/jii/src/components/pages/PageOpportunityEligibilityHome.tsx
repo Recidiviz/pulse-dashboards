@@ -21,15 +21,18 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { State } from "../../routes/routes";
 import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
+import { useResidentsContext } from "../ResidentsHydrator/context";
 
 export const PageOpportunityEligibilityHome: FC = memo(
   function PageOpportunityEligibilityHome() {
     const { personPseudoId } = useTypedParams(State.Resident.Eligibility);
+    const { residentsStore } = useResidentsContext();
 
     return (
       <OpportunityEligibility
         {...useResidentOpportunityContext()}
         residentPseudoId={personPseudoId}
+        residentsStore={residentsStore}
       />
     );
   },

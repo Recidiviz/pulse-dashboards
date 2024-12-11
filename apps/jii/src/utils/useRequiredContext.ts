@@ -15,22 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createContext } from "react";
+import { Context, useContext } from "react";
 
-import { ResidentRecord } from "~datatypes";
+const defaultError =
+  "Context value cannot be undefined; you may be missing the expected Provider.";
 
-import { ResidentsStore } from "../../datastores/ResidentsStore";
-import { useRequiredContext } from "../../utils/useRequiredContext";
-
-export type ResidentsContext = {
-  residentsStore: ResidentsStore;
-  activeResident: ResidentRecord["output"] | undefined;
-};
-
-const context = createContext<ResidentsContext | undefined>(undefined);
-
-export const ResidentsContextProvider = context.Provider;
-
-export function useResidentsContext() {
-  return useRequiredContext(context);
+export function useRequiredContext<Value>(
+  context: Context<Value | undefined>,
+  errorMessage = defaultError,
+): Value {
+  const value = useContext(context);
+  if (value === undefined) {
+    throw new Error(errorMessage);
+  }
+  return value;
 }

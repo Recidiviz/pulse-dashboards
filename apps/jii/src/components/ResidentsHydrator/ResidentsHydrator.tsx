@@ -23,7 +23,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { State } from "../../routes/routes";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
-import { ResidentsContext } from "./context";
+import { ResidentsContextProvider } from "./context";
 import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 
 const ResidentsHydratorWithPresenter: FC<{
@@ -31,9 +31,9 @@ const ResidentsHydratorWithPresenter: FC<{
 }> = observer(function ResidentsHydratorWithPresenter({ presenter }) {
   const { residentsStore, activeResident } = presenter;
   return (
-    <Outlet
-      context={{ residentsStore, activeResident } satisfies ResidentsContext}
-    />
+    <ResidentsContextProvider value={{ residentsStore, activeResident }}>
+      <Outlet />
+    </ResidentsContextProvider>
   );
 });
 

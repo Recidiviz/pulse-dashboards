@@ -21,7 +21,7 @@ import { Outlet } from "react-router-dom";
 
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useResidentsContext } from "../ResidentsHydrator/context";
-import { ResidentOpportunityContext } from "./context";
+import { ResidentOpportunityContextProvider } from "./context";
 import { ResidentOpportunityHydratorPresenter } from "./ResidentOpportunityHydratorPresenter";
 
 const ResidentOpportunityHydratorWithPresenter: FC<{
@@ -35,17 +35,16 @@ const ResidentOpportunityHydratorWithPresenter: FC<{
   } = presenter;
 
   return (
-    <Outlet
-      context={
-        {
-          ...useResidentsContext(),
-          activeResident,
-          eligibilityReport,
-          opportunityConfig,
-          opportunityId,
-        } satisfies ResidentOpportunityContext
-      }
-    />
+    <ResidentOpportunityContextProvider
+      value={{
+        activeResident,
+        eligibilityReport,
+        opportunityConfig,
+        opportunityId,
+      }}
+    >
+      <Outlet />
+    </ResidentOpportunityContextProvider>
   );
 });
 
