@@ -89,7 +89,7 @@ export function DispositionChart({
           </>
         )}
       </CommonStyled.ChartSubTitle>
-      {!insight || !sortedDatapoints || sortedDatapoints.length === 0 ? (
+      {!insight ? (
         <NoDataMessage />
       ) : (
         <Styled.DispositionChartContainer $justify={justifyContent}>

@@ -49,12 +49,12 @@ describe("UsAzDates metadataToDates tests", () => {
     };
     const dates = metadataToDates(metadataUnderTest, false, FAKE_TOOLTIP);
     expect(dates).toEqual([
+      { label: "SED", date: FAKE_DATES.sedDate },
       {
         label: "Projected TPR",
         date: FAKE_DATES.projectedTprDate,
         tooltip: FAKE_TOOLTIP,
       },
-      { label: "SED", date: FAKE_DATES.sedDate },
     ]);
   });
 
@@ -65,32 +65,32 @@ describe("UsAzDates metadataToDates tests", () => {
     };
     const dates = metadataToDates(metadataUnderTest, true, FAKE_TOOLTIP);
     expect(dates).toEqual([
+      { label: "SED", date: FAKE_DATES.sedDate },
       {
         label: "Projected DTP",
         date: FAKE_DATES.projectedDtpDate,
         tooltip: FAKE_TOOLTIP,
       },
-      { label: "SED", date: FAKE_DATES.sedDate },
     ]);
   });
 
   it("shows SED, ERCD, CSBD, and TPR when there is a real TPR date", () => {
     const dates = metadataToDates(FAKE_METADATA, false, FAKE_TOOLTIP);
     expect(dates).toEqual([
-      { label: "TPR", date: FAKE_DATES.acisTprDate },
-      { label: "CSBD", date: FAKE_DATES.csbdDate },
-      { label: "ERCD", date: FAKE_DATES.ercdDate },
       { label: "SED", date: FAKE_DATES.sedDate },
+      { label: "ERCD", date: FAKE_DATES.ercdDate },
+      { label: "CSBD", date: FAKE_DATES.csbdDate },
+      { label: "TPR", date: FAKE_DATES.acisTprDate },
     ]);
   });
 
   it("shows SED, ERCD, CSBD, and DTP when there is a real DTP date", () => {
     const dates = metadataToDates(FAKE_METADATA, true, FAKE_TOOLTIP);
     expect(dates).toEqual([
-      { label: "DTP", date: FAKE_DATES.acisDtpDate },
-      { label: "CSBD", date: FAKE_DATES.csbdDate },
-      { label: "ERCD", date: FAKE_DATES.ercdDate },
       { label: "SED", date: FAKE_DATES.sedDate },
+      { label: "ERCD", date: FAKE_DATES.ercdDate },
+      { label: "CSBD", date: FAKE_DATES.csbdDate },
+      { label: "DTP", date: FAKE_DATES.acisDtpDate },
     ]);
   });
 
@@ -102,10 +102,10 @@ describe("UsAzDates metadataToDates tests", () => {
     };
     const dates = metadataToDates(metadataUnderTest, false, FAKE_TOOLTIP);
     expect(dates).toEqual([
-      { label: "TPR", date: FAKE_DATES.acisTprDate },
-      { label: "CSBD", date: undefined },
-      { label: "ERCD", date: undefined },
       { label: "SED", date: FAKE_DATES.sedDate },
+      { label: "ERCD", date: undefined },
+      { label: "CSBD", date: undefined },
+      { label: "TPR", date: FAKE_DATES.acisTprDate },
     ]);
   });
 });

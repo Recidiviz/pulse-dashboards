@@ -36,38 +36,21 @@ export function DispositionChartExplanation({
     dispositionNumRecords,
   } = insight;
   const genderString = getDescriptionGender(gender);
-  const genderCohortString = (
-    <>
-      <span>{genderString}</span>
-      <LsirScoreText
-        rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
-        rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
-      />{" "}
-      with <span>{offense}</span> convictions
-    </>
-  );
-
-  const noPreviousRecordCopy = (
-    <>
-      Historical Sentencing represents the percentage of cases sentenced to a
-      particular disposition, using IDOC data from 2010 to present. There are no
-      previous records of {genderCohortString}.
-    </>
-  );
-  const withPreviousRecordsCopy = (
-    <>
-      Historical Sentencing represents the percentage of cases sentenced to a
-      particular disposition. The rates are based on{" "}
-      {dispositionNumRecords.toLocaleString()}{" "}
-      {printFormattedRecordString(dispositionNumRecords)} of{" "}
-      {genderCohortString}, using IDOC data from 2010 to present.
-    </>
-  );
 
   return (
     <Styled.TextContainer>
       <Styled.TextWrapper>
-        {dispositionNumRecords ? withPreviousRecordsCopy : noPreviousRecordCopy}
+        Historical Sentencing represents the percentage of cases sentenced to a
+        particular disposition. The rates are based on{" "}
+        {dispositionNumRecords.toLocaleString()}{" "}
+        {printFormattedRecordString(dispositionNumRecords)} of{" "}
+        <span>{genderString}</span>
+        <LsirScoreText
+          rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
+          rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
+        />{" "}
+        with <span>{offense} convictions</span>, using IDOC data from 2010 to
+        present.
       </Styled.TextWrapper>
     </Styled.TextContainer>
   );

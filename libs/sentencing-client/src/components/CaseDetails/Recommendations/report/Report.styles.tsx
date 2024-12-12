@@ -155,12 +155,8 @@ export const HistoricalDetails = styled(CaseOverview)`
   }
 `;
 
-export const HistoricalBreakdown = styled.div`
+export const BreakdownByDisposition = styled.div`
   margin-bottom: 76px;
-`;
-
-export const CumulativeBreakdown = styled.div`
-  margin-bottom: 32px;
 `;
 
 export const DispositionCardWrapper = styled.div`
@@ -363,13 +359,4 @@ export const Explanation = styled.span`
   ${typography.Sans12}
   color: ${customPalette.black};
   font-weight: 400;
-`;
-
-export const InfoPageLink = styled.div`
-  display: flex;
-  gap: 16px;
-  width: 100%;
-  padding: 16px;
-  border-radius: 4px;
-  background-color: ${palette.marble5};
 `;

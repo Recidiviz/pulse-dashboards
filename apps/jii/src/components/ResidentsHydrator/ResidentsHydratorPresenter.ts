@@ -26,18 +26,12 @@ import {
 import { RootStore } from "../../datastores/RootStore";
 
 export class ResidentsHydratorPresenter implements Hydratable {
-  constructor(
-    private rootStore: RootStore,
-    private residentPseudoId?: string,
-  ) {
+  constructor(private rootStore: RootStore) {
     makeAutoObservable(this, {}, { autoBind: true });
 
     this.hydrator = new HydratesFromSource({
-      expectPopulated: [
-        this.expectStorePopulated,
-        this.expectOptionalResidentPopulated,
-      ],
-      populate: this.populateStoreAndOptionalResident,
+      expectPopulated: [this.expectStorePopulated],
+      populate: this.populateStore,
     });
   }
 
@@ -51,47 +45,13 @@ export class ResidentsHydratorPresenter implements Hydratable {
     return this.hydrator.hydrate();
   }
 
-  private get userExternalId() {
-    return this.rootStore.userStore.externalId;
-  }
-
-  private async populateStoreAndOptionalResident() {
-    const residentsStore = await flowResult(
-      this.rootStore.populateResidentsStore(),
-    );
-    if (this.residentPseudoId) {
-      await flowResult(
-        residentsStore.populateResidentByPseudoId(this.residentPseudoId),
-      );
-    } else if (this.userExternalId) {
-      await flowResult(
-        residentsStore.populateResidentById(this.userExternalId),
-      );
-    }
+  private async populateStore() {
+    await flowResult(this.rootStore.populateResidentsStore());
   }
 
   private expectStorePopulated() {
     if (this.rootStore.residentsStore === undefined)
       throw new Error("missing expected residentsStore");
-  }
-
-  private expectOptionalResidentPopulated() {
-    if (this.residentPseudoId) {
-      if (
-        !this.rootStore.residentsStore?.isResidentWithPseudoIdPopulated(
-          this.residentPseudoId,
-        )
-      ) {
-        throw new Error(
-          `missing expected resident data for ${this.residentPseudoId}`,
-        );
-      }
-    } else if (
-      this.userExternalId &&
-      !this.rootStore.residentsStore?.isResidentPopulated(this.userExternalId)
-    ) {
-      throw new Error(`missing expected resident data for current user`);
-    }
   }
 
   get residentsStore() {
@@ -101,21 +61,5 @@ export class ResidentsHydratorPresenter implements Hydratable {
       throw new Error("missing expected residentsStore");
     }
     return residentsStore;
-  }
-
-  get activeResident() {
-    // in practice we generally expect hydration to succeed before getting here,
-    // or to throw an error if the expected is missing. We don't have to do an extra check here
-    // to satisfy type safety since is valid to be here without an active resident
-
-    if (this.residentPseudoId) {
-      return this.residentsStore.residentsByPseudoId.get(this.residentPseudoId);
-    }
-
-    if (this.userExternalId) {
-      return this.residentsStore.residentsByExternalId.get(this.userExternalId);
-    }
-
-    return undefined;
   }
 }

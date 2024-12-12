@@ -23,11 +23,10 @@ import { IS_VETERAN_KEY } from "../../constants";
 import { yesNoUnsureOptions } from "../constants";
 import { RadioInput } from "../Elements/RadioInput";
 import { form } from "../FormStore";
-import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseBooleanValue } from "../utils";
 
-function VeteranStatusField({ isRequired }: FormFieldProps) {
+function VeteranStatusField() {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -37,14 +36,12 @@ function VeteranStatusField({ isRequired }: FormFieldProps) {
 
   const updateSelection = (option: string) => {
     setInputValue(option);
-    form.updateForm(IS_VETERAN_KEY, option, isRequired);
+    form.updateForm(IS_VETERAN_KEY, option);
   };
 
   return (
     <>
-      <Styled.InputLabel>
-        Is a veteran {isRequired && <span>Required*</span>}
-      </Styled.InputLabel>
+      <Styled.InputLabel>Is a veteran</Styled.InputLabel>
 
       <RadioInput
         options={yesNoUnsureOptions}

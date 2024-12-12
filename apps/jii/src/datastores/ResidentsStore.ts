@@ -16,7 +16,7 @@
 // =============================================================================
 
 import keyBy from "lodash/keyBy";
-import { flowResult, makeAutoObservable, runInAction, set } from "mobx";
+import { makeAutoObservable, set } from "mobx";
 
 import { ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
@@ -26,7 +26,6 @@ import { DataAPI } from "../apis/data/interface";
 import { residentEligibilityReportConstructors } from "../configs/residentEligibilityReportConstructors";
 import {
   IncarcerationOpportunityId,
-  OpportunityConfig,
   OpportunityRecord,
   ResidentsConfig,
 } from "../configs/types";
@@ -205,7 +204,7 @@ export class ResidentsStore {
     }
   }
 
-  private isResidentEligibilityReportPopulated(
+  isResidentEligibilityReportPopulated(
     residentExternalId: string,
     opportunityId: IncarcerationOpportunityId,
   ): boolean {
@@ -215,62 +214,48 @@ export class ResidentsStore {
   }
 
   /**
-   * Populates {@link residentEligibilityReportsByExternalId} with a report object for
-   * the provided resident and opportunity IDs. Will call other populate methods as needed
-   * to fetch any needed data. Will not overwrite object if it already exists.
+   * Populates {@link residentEligibilityReportsByExternalId} with an {@link EligibilityReport} object
+   * for the given resident and opportunity, if it does not already exist.
    */
-  async populateEligibilityReportByResidentId(
-    residentExternalId: string,
-    opportunityId: IncarcerationOpportunityId,
-    config: OpportunityConfig,
-  ): Promise<void> {
+  populateEligibilityReportFromData<OppId extends IncarcerationOpportunityId>(
+    opportunityId: OppId,
+    resident: ResidentRecord["output"],
+    opportunity: OpportunityRecord<OppId> | undefined,
+  ) {
+    const residentExternalId = resident.personExternalId;
+
     if (
       this.isResidentEligibilityReportPopulated(
         residentExternalId,
         opportunityId,
       )
-    )
+    ) {
       return;
+    }
 
-    // make sure the report data is populated; these should be no-ops if the data already exists
-    await Promise.all([
-      flowResult(this.populateResidentById(residentExternalId)),
-      flowResult(
-        this.populateOpportunityRecordByResidentId(
-          residentExternalId,
-          opportunityId,
-        ),
-      ),
-    ]);
+    const config = this.config.incarcerationOpportunities[opportunityId];
 
-    const resident = this.residentsByExternalId.get(
-      residentExternalId,
-    ) as ResidentRecord["output"]; // we just populated this
-    const residentEligibility =
-      this.residentOpportunityRecordsByExternalId.get(residentExternalId)?.[
-        opportunityId
-      ]; // we also just populated this but it's fine for it to be undefined
+    if (!config) {
+      throw new Error(`Opportunity ${opportunityId} is not configured`);
+    }
+
     const ReportConstructor =
       residentEligibilityReportConstructors[opportunityId];
 
-    // create and store the report object
-    runInAction(() => {
-      const mapping =
-        this.residentEligibilityReportsByExternalId.get(residentExternalId) ??
-        new Map();
-      mapping.set(
-        opportunityId,
-        new ReportConstructor(resident, config, residentEligibility),
+    const mapping =
+      this.residentEligibilityReportsByExternalId.get(residentExternalId) ??
+      new Map();
+
+    mapping.set(
+      opportunityId,
+      new ReportConstructor(resident, config, opportunity),
+    );
+    if (!this.residentEligibilityReportsByExternalId.has(residentExternalId)) {
+      this.residentEligibilityReportsByExternalId.set(
+        residentExternalId,
+        mapping,
       );
-      if (
-        !this.residentEligibilityReportsByExternalId.has(residentExternalId)
-      ) {
-        this.residentEligibilityReportsByExternalId.set(
-          residentExternalId,
-          mapping,
-        );
-      }
-    });
+    }
   }
 
   get stateCode() {

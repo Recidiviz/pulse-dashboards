@@ -23,11 +23,10 @@ import { HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY } from "../../constants";
 import { yesNoUnsureOptions } from "../constants";
 import { RadioInput } from "../Elements/RadioInput";
 import { form } from "../FormStore";
-import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseBooleanValue } from "../utils";
 
-function ChildProtectiveServicesStatusField({ isRequired }: FormFieldProps) {
+function ChildProtectiveServicesStatusField() {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -39,18 +38,13 @@ function ChildProtectiveServicesStatusField({ isRequired }: FormFieldProps) {
 
   const updateSelection = (option: string) => {
     setInputValue(option);
-    form.updateForm(
-      HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
-      option,
-      isRequired,
-    );
+    form.updateForm(HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY, option);
   };
 
   return (
     <>
       <Styled.InputLabel>
-        Has an open child protective services case{" "}
-        {isRequired && <span>Required*</span>}
+        Has an open child protective services case
       </Styled.InputLabel>
 
       <RadioInput

@@ -70,16 +70,8 @@ const PriorIncarcerationOrSupervisionNestedFields: FormField[] = [
 ];
 
 const FormFields: { [key: string]: FormFieldWithNestedFields } = {
-  [OFFENSE_KEY]: {
-    key: OFFENSE_KEY,
-    FieldComponent: OffenseField,
-    isRequired: true,
-  },
-  [LSIR_SCORE_KEY]: {
-    key: LSIR_SCORE_KEY,
-    FieldComponent: LsirScoreField,
-    isRequired: true,
-  },
+  [OFFENSE_KEY]: { key: OFFENSE_KEY, FieldComponent: OffenseField },
+  [LSIR_SCORE_KEY]: { key: LSIR_SCORE_KEY, FieldComponent: LsirScoreField },
   [CLIENT_GENDER_KEY]: { key: CLIENT_GENDER_KEY, FieldComponent: GenderField },
   [REPORT_TYPE_KEY]: { key: REPORT_TYPE_KEY, FieldComponent: ReportTypeField },
   [NEEDS_TO_BE_ADDRESSED_KEY]: {

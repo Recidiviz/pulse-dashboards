@@ -23,11 +23,10 @@ import { HAS_DEVELOPMENTAL_DISABILITY_KEY } from "../../constants";
 import { yesNoUnsureOptions } from "../constants";
 import { RadioInput } from "../Elements/RadioInput";
 import { form } from "../FormStore";
-import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseBooleanValue } from "../utils";
 
-function DevelopmentalDisabilityStatusField({ isRequired }: FormFieldProps) {
+function DevelopmentalDisabilityStatusField() {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -39,14 +38,12 @@ function DevelopmentalDisabilityStatusField({ isRequired }: FormFieldProps) {
 
   const updateSelection = (option: string) => {
     setInputValue(option);
-    form.updateForm(HAS_DEVELOPMENTAL_DISABILITY_KEY, option, isRequired);
+    form.updateForm(HAS_DEVELOPMENTAL_DISABILITY_KEY, option);
   };
 
   return (
     <>
-      <Styled.InputLabel>
-        Has a developmental disability {isRequired && <span>Required*</span>}
-      </Styled.InputLabel>
+      <Styled.InputLabel>Has a developmental disability</Styled.InputLabel>
 
       <RadioInput
         options={yesNoUnsureOptions}

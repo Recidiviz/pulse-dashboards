@@ -5,100 +5,17 @@
 # -o pipefail Ensure entire pipeline returns non-zero status if part of it fails
 set -euo pipefail
 
-has_argument() {
-    [[ ("$1" == *=* && -n ${1#*=}) || ( ! -z "$2" && "$2" != -*)  ]];
-}
-
-extract_argument() {
-  echo "${2:-${1#*=}}"
-}
-
-handle_options() {
-  while [ $# -gt 0 ]; do
-    case $1 in
-      --env)
-        if ! has_argument $@; then
-          echo "File not specified." >&2
-          exit 1
-        fi
-        
-        env_file=$(extract_argument $@)
-        
-        shift
-        ;;
-      --env_staging)
-        if ! has_argument $@; then
-          echo "File not specified." >&2
-          exit 1
-        fi
-        
-        env_staging_file=$(extract_argument $@)
-        
-        shift
-        ;;
-      --env_prod)
-        if ! has_argument $@; then
-          echo "File not specified." >&2
-          exit 1
-        fi
-        
-        env_prod_file=$(extract_argument $@)
-        
-        shift
-        ;;
-      --env_test)
-        if ! has_argument $@; then
-          echo "File not specified." >&2
-          exit 1
-        fi
-        
-        env_test_file=$(extract_argument $@)
-        
-        shift
-        ;;
-      --env_demo)
-        if ! has_argument $@; then
-          echo "File not specified." >&2
-          exit 1
-        fi
-        
-        env_demo_file=$(extract_argument $@)
-        
-        shift
-        ;;
-      --env_preview)
-        if ! has_argument $@; then
-          echo "File not specified." >&2
-          exit 1
-        fi
-        
-        env_preview_file=$(extract_argument $@)
-        
-        shift
-        ;;
-      *)
-        echo "Invalid option: $1" >&2
-        exit 1
-        ;;
-    esac
-    shift
-  done
-}
-
-env_file=null
-env_staging_file=null
-env_prod_file=null
-env_test_file=null
-env_demo_file=null
-env_preview_file=null
-
-handle_options "$@"
+env_file=$1
+env_staging_file=$2
+env_prod_file=$3
+env_test_file=$4
+env_demo_file=${5:-null}
 
 # Download env files
 echo "Downloading env files..."
 
 # Create the files if they don't exist already
-touch .env .env.staging .env.production .env.test .env.preview .env.demo
+touch .env .env.staging .env.prod .env.test
 
 env=$(gcloud secrets versions access latest --secret=$env_file --project recidiviz-dashboard-staging)
 echo "${env}" > .env
@@ -110,10 +27,6 @@ env_test=$(gcloud secrets versions access latest --secret=$env_test_file --proje
 echo "${env_test}" > .env.test
 
 if [ "$env_demo_file" != null ]; then
-    env_demo=$(gcloud secrets versions access latest --secret=$env_demo_file --project recidiviz-dashboard-staging)
+    env_demo=$(gcloud secrets versions access latest --secret=$5 --project recidiviz-dashboard-staging)
     echo "${env_demo}" > .env.demo
-fi
-if [ "$env_preview_file" != null ]; then
-    env_preview=$(gcloud secrets versions access latest --secret=$env_preview_file --project recidiviz-dashboard-staging)
-    echo "${env_preview}" > .env.preview
 fi

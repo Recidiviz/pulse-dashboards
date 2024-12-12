@@ -17,9 +17,6 @@
 
 import { configure } from "mobx";
 
-import { outputFixture, usMeResidents } from "~datatypes";
-
-import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
 import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 
@@ -35,190 +32,55 @@ afterEach(() => {
   configure({ safeDescriptors: true });
 });
 
-describe("without resident specified", () => {
-  beforeEach(() => {
-    presenter = new ResidentsHydratorPresenter(store);
-  });
-
-  test("hydrate", async () => {
-    vi.spyOn(RootStore.prototype, "populateResidentsStore");
-
-    expect(presenter.hydrationState).toEqual({ status: "needs hydration" });
-
-    const hydrationPromise = presenter.hydrate();
-    expect(presenter.hydrationState).toEqual({ status: "loading" });
-
-    await hydrationPromise;
-
-    expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-    expect(store.populateResidentsStore).toHaveBeenCalled();
-
-    expect(store.residentsStore).toBeDefined();
-  });
-
-  test("hydration error", async () => {
-    const err = new Error("oops");
-    vi.spyOn(RootStore.prototype, "populateResidentsStore").mockImplementation(
-      () => {
-        throw err;
-      },
-    );
-
-    await presenter.hydrate();
-
-    expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
-  });
-
-  test("no redundant hydration while in progress", async () => {
-    vi.spyOn(store, "populateResidentsStore");
-
-    const h1 = presenter.hydrate();
-    const h2 = presenter.hydrate();
-
-    await Promise.all([h1, h2]);
-    expect(store.populateResidentsStore).toHaveBeenCalledTimes(1);
-  });
-
-  test("don't hydrate if already hydrated", async () => {
-    vi.spyOn(store, "populateResidentsStore");
-
-    await presenter.hydrate();
-    expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-    presenter.hydrate();
-
-    expect(store.populateResidentsStore).toHaveBeenCalledTimes(1);
-  });
+beforeEach(() => {
+  presenter = new ResidentsHydratorPresenter(store);
 });
 
-describe("with resident specified", () => {
-  const expectedResident = outputFixture(usMeResidents[0]);
+test("hydrate", async () => {
+  vi.spyOn(RootStore.prototype, "populateResidentsStore");
 
-  beforeEach(() => {
-    presenter = new ResidentsHydratorPresenter(
-      store,
-      expectedResident.pseudonymizedId,
-    );
-  });
+  expect(presenter.hydrationState).toEqual({ status: "needs hydration" });
 
-  test("hydrate", async () => {
-    const spy = vi.spyOn(
-      ResidentsStore.prototype,
-      "populateResidentByPseudoId",
-    );
+  const hydrationPromise = presenter.hydrate();
+  expect(presenter.hydrationState).toEqual({ status: "loading" });
 
-    expect(presenter.hydrationState).toEqual({ status: "needs hydration" });
-    expect(store.residentsStore).toBeUndefined();
+  await hydrationPromise;
 
-    const hydrationPromise = presenter.hydrate();
-    expect(presenter.hydrationState).toEqual({ status: "loading" });
+  expect(presenter.hydrationState).toEqual({ status: "hydrated" });
+  expect(store.populateResidentsStore).toHaveBeenCalled();
 
-    await hydrationPromise;
-
-    expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-    expect(spy).toHaveBeenCalledWith(expectedResident.pseudonymizedId);
-
-    expect(presenter.activeResident).toEqual(expectedResident);
-  });
-
-  test("hydration error", async () => {
-    const err = new Error("oops");
-    vi.spyOn(
-      ResidentsStore.prototype,
-      "populateResidentByPseudoId",
-    ).mockImplementation(() => {
-      throw err;
-    });
-
-    await presenter.hydrate();
-
-    expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
-  });
-
-  test("no redundant hydration while in progress", async () => {
-    const spy = vi.spyOn(
-      ResidentsStore.prototype,
-      "populateResidentByPseudoId",
-    );
-
-    const h1 = presenter.hydrate();
-    const h2 = presenter.hydrate();
-
-    await Promise.all([h1, h2]);
-    expect(spy).toHaveBeenCalledTimes(1);
-  });
-
-  test("don't hydrate if already hydrated", async () => {
-    const spy = vi.spyOn(
-      ResidentsStore.prototype,
-      "populateResidentByPseudoId",
-    );
-
-    await presenter.hydrate();
-    expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-    presenter.hydrate();
-
-    expect(spy).toHaveBeenCalledTimes(1);
-  });
+  expect(store.residentsStore).toBeDefined();
 });
 
-describe("with resident user", () => {
-  const expectedResident = outputFixture(usMeResidents[0]);
-
-  beforeEach(() => {
-    vi.spyOn(store.userStore, "externalId", "get").mockReturnValue(
-      expectedResident.personExternalId,
-    );
-    presenter = new ResidentsHydratorPresenter(store);
-  });
-
-  test("hydrate", async () => {
-    const spy = vi.spyOn(ResidentsStore.prototype, "populateResidentById");
-
-    expect(presenter.hydrationState).toEqual({ status: "needs hydration" });
-    expect(store.residentsStore).toBeUndefined();
-
-    const hydrationPromise = presenter.hydrate();
-    expect(presenter.hydrationState).toEqual({ status: "loading" });
-
-    await hydrationPromise;
-
-    expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-    expect(spy).toHaveBeenCalledWith(expectedResident.personExternalId);
-
-    expect(presenter.activeResident).toEqual(expectedResident);
-  });
-
-  test("hydration error", async () => {
-    const err = new Error("oops");
-    vi.spyOn(
-      ResidentsStore.prototype,
-      "populateResidentById",
-    ).mockImplementation(() => {
+test("hydration error", async () => {
+  const err = new Error("oops");
+  vi.spyOn(RootStore.prototype, "populateResidentsStore").mockImplementation(
+    () => {
       throw err;
-    });
+    },
+  );
 
-    await presenter.hydrate();
+  await presenter.hydrate();
 
-    expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
-  });
+  expect(presenter.hydrationState).toEqual({ status: "failed", error: err });
+});
 
-  test("no redundant hydration while in progress", async () => {
-    const spy = vi.spyOn(ResidentsStore.prototype, "populateResidentById");
+test("no redundant hydration while in progress", async () => {
+  vi.spyOn(store, "populateResidentsStore");
 
-    const h1 = presenter.hydrate();
-    const h2 = presenter.hydrate();
+  const h1 = presenter.hydrate();
+  const h2 = presenter.hydrate();
 
-    await Promise.all([h1, h2]);
-    expect(spy).toHaveBeenCalledTimes(1);
-  });
+  await Promise.all([h1, h2]);
+  expect(store.populateResidentsStore).toHaveBeenCalledTimes(1);
+});
 
-  test("don't hydrate if already hydrated", async () => {
-    const spy = vi.spyOn(ResidentsStore.prototype, "populateResidentById");
+test("don't hydrate if already hydrated", async () => {
+  vi.spyOn(store, "populateResidentsStore");
 
-    await presenter.hydrate();
-    expect(presenter.hydrationState).toEqual({ status: "hydrated" });
-    presenter.hydrate();
+  await presenter.hydrate();
+  expect(presenter.hydrationState).toEqual({ status: "hydrated" });
+  presenter.hydrate();
 
-    expect(spy).toHaveBeenCalledTimes(1);
-  });
+  expect(store.populateResidentsStore).toHaveBeenCalledTimes(1);
 });

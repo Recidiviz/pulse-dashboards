@@ -35,7 +35,7 @@ const mockCase = Object.values(CaseDetailsFixture)[0];
 const caseId = mockCase.id;
 
 const OFFENSE_FIELD_LABEL = "Offense";
-const LSIR_SCORE_FIELD_LABEL = "LSI-R Score";
+const LSIR_SCORE_FIELD_LABEL = "Draft LSI-R Score";
 const GENDER_FIELD_LABEL = "Gender";
 const REPORT_TYPE_FIELD_LABEL = "Report Type";
 const SUBSTANCE_USE_DISORDER_FIELD_LABEL = "Substance use disorder diagnosis";
@@ -53,7 +53,6 @@ const PRIOR_VIOLENT_OFFENSE_FIELD_LABEL =
 const PRIOR_SEX_OFFENSE_FIELD_LABEL = "Has a prior sex offense conviction";
 const PRIOR_TREATMENT_COURT_FIELD_LABEL =
   "Has previously participated in a treatment court";
-const ERROR_MESSAGE_STRING = "Please enter a number between 0 and 54.";
 
 // Clear all exclusions from geo configs so we can test all fields
 vi.mock("../../../geoConfigs/geoConfigs", () => {
@@ -352,52 +351,67 @@ test("error message displays when invalid lsir score is given and saving is disa
   const editCaseDetailsButton = await screen.getByText("Edit Case Details");
   fireEvent.click(editCaseDetailsButton);
 
-  const lsirScoreInput = await screen.getByLabelText("LSI-R Score Required*");
-  let errorMessage = await screen.queryByText(ERROR_MESSAGE_STRING);
+  const lsirScoreInput = await screen.getByLabelText("Draft LSI-R Score");
+  let errorMessage = await screen.queryByText(
+    "Please enter a number between 0 and 54.",
+  );
   const saveButton = await screen.getByText("Save");
 
   expect(lsirScoreInput).toHaveValue("");
-  expect(saveButton).toBeDisabled();
+  expect(errorMessage).toBeNull();
+  expect(saveButton).not.toBeDisabled();
 
   fireEvent.change(lsirScoreInput, { target: { value: "55" } });
   expect(lsirScoreInput).toHaveValue("55");
 
-  errorMessage = await screen.queryByText(ERROR_MESSAGE_STRING);
+  errorMessage = await screen.queryByText(
+    "Please enter a number between 0 and 54.",
+  );
   expect(errorMessage).not.toBeNull();
   expect(saveButton).toBeDisabled();
 
   fireEvent.change(lsirScoreInput, { target: { value: "54" } });
   expect(lsirScoreInput).toHaveValue("54");
 
-  errorMessage = await screen.queryByText(ERROR_MESSAGE_STRING);
+  errorMessage = await screen.queryByText(
+    "Please enter a number between 0 and 54.",
+  );
   expect(errorMessage).toBeNull();
   expect(saveButton).not.toBeDisabled();
 
   fireEvent.change(lsirScoreInput, { target: { value: "23" } });
   expect(lsirScoreInput).toHaveValue("23");
 
-  errorMessage = await screen.queryByText(ERROR_MESSAGE_STRING);
+  errorMessage = await screen.queryByText(
+    "Please enter a number between 0 and 54.",
+  );
   expect(errorMessage).toBeNull();
   expect(saveButton).not.toBeDisabled();
 
   fireEvent.change(lsirScoreInput, { target: { value: "0" } });
   expect(lsirScoreInput).toHaveValue("0");
 
-  errorMessage = await screen.queryByText(ERROR_MESSAGE_STRING);
+  errorMessage = await screen.queryByText(
+    "Please enter a number between 0 and 54.",
+  );
   expect(errorMessage).toBeNull();
   expect(saveButton).not.toBeDisabled();
 
   fireEvent.change(lsirScoreInput, { target: { value: "99" } });
   expect(lsirScoreInput).toHaveValue("99");
 
-  errorMessage = await screen.queryByText(ERROR_MESSAGE_STRING);
+  errorMessage = await screen.queryByText(
+    "Please enter a number between 0 and 54.",
+  );
   expect(errorMessage).not.toBeNull();
   expect(saveButton).toBeDisabled();
 
   fireEvent.change(lsirScoreInput, { target: { value: "9xyz" } });
   expect(lsirScoreInput).toHaveValue("9xyz");
 
-  errorMessage = await screen.queryByText(ERROR_MESSAGE_STRING);
+  errorMessage = await screen.queryByText(
+    "Please enter a number between 0 and 54.",
+  );
   expect(errorMessage).not.toBeNull();
   expect(saveButton).toBeDisabled();
 });

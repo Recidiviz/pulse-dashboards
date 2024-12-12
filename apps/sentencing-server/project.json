@@ -14,7 +14,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/load_env_files.sh --env env_sentencing_server --env_staging env_staging_sentencing_server --env_prod env_prod_sentencing_server --env_test env_test_sentencing_server --env_preview env_preview_sentencing_server",
+        "command": "../../tools/load_env_files.sh env_sentencing_server env_staging_sentencing_server env_prod_sentencing_server env_test_sentencing_server",
         "cwd": "{projectRoot}"
       }
     },
@@ -132,22 +132,9 @@
           "tags": [
             "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA"
           ]
-        },
-        "preview": {
-          "push": true,
-          "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server-preview:$VERSION"
-          ]
         }
       },
       "defaultConfiguration": "dev"
-    },
-    "create-preview-db": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "../../tools/clone_sentencing_db.sh",
-        "cwd": "{projectRoot}"
-      }
     },
     "migrate-db": {
       "executor": "nx:run-commands",
@@ -159,23 +146,13 @@
         "staging": {
           "args": [
             "--project recidiviz-dashboard-staging",
-            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db",
-            "--service-account sentencing-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db"
           ]
         },
         "production": {
           "args": [
             "--project recidiviz-dashboard-production",
-            "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:sentencing-db",
-            "--service-account sentencing-server@recidiviz-dashboard-production.iam.gserviceaccount.com"
-          ]
-        },
-        "preview": {
-          "command": "gcloud run jobs deploy ss-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID-$VERSION,DATABASE_URL_US_ND=$DATABASE_URL_US_ND-$VERSION",
-          "args": [
-            "--project recidiviz-dashboard-staging",
-            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
-            "--service-account sentencing-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+            "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:sentencing-db"
           ]
         }
       },
@@ -207,47 +184,16 @@
           "project": "recidiviz-dashboard-staging",
           "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA",
           "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:sentencing-db",
-          "memory": "512Mi",
-          "serviceAccount": "sentencing-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+          "memory": "512Mi"
         },
         "production": {
           "project": "recidiviz-dashboard-production",
           "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA",
           "cloudSqlInstance": "recidiviz-dashboard-production:us-central1:sentencing-db",
-          "memory": "512Mi",
-          "serviceAccount": "sentencing-server@recidiviz-dashboard-production.iam.gserviceaccount.com"
-        },
-        "preview": {
-          "name": "ss-preview-$VERSION",
-          "project": "recidiviz-dashboard-staging",
-          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server-preview:$VERSION",
-          "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
-          "memory": "512Mi",
-          "envVars": {
-            "AUTH0_DOMAIN": "$AUTH0_DOMAIN",
-            "AUTH0_AUDIENCE": "$AUTH0_AUDIENCE",
-            "SENTRY_DSN": "$SENTRY_DSN",
-            "SENTRY_ENV": "$SENTRY_ENV",
-            "CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL": "$CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL",
-            "IMPORT_CLOUD_TASK_PROJECT": "$IMPORT_CLOUD_TASK_PROJECT",
-            "IMPORT_CLOUD_TASK_LOCATION": "$IMPORT_CLOUD_TASK_LOCATION",
-            "IMPORT_CLOUD_TASK_QUEUE": "$IMPORT_CLOUD_TASK_QUEUE",
-            "IMPORT_CLOUD_TASK_URL": "$IMPORT_CLOUD_TASK_URL",
-            "IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL": "$IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL",
-            "IMPORT_BUCKET_ID": "$IMPORT_BUCKET_ID",
-            "DATABASE_URL_US_ID": "$DATABASE_URL_US_ID-$VERSION",
-            "DATABASE_URL_US_ND": "$DATABASE_URL_US_ND-$VERSION"
-          },
-          "serviceAccount": "sentencing-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+          "memory": "512Mi"
         }
       },
       "defaultConfiguration": "staging"
-    },
-    "cleanup-preview-resources": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "gcloud run services delete ss-preview-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud run jobs delete ss-migrate-preview-db-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud sql instances delete s-db-preview-$VERSION --project recidiviz-dashboard-staging -q"
-      }
     },
     "prisma-generate": {
       "inputs": ["{projectRoot}/apps/sentencing-server/prisma/schema.prisma"],

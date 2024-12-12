@@ -30,7 +30,6 @@ import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../constants";
 import { MultiSelectRadioInput } from "../Elements/MultiSelectRadioInput";
 import { TextArea } from "../Elements/TextArea";
 import { form } from "../FormStore";
-import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseNeedsToBeAddressedValue } from "../utils";
 
@@ -39,7 +38,7 @@ const needsToBeAddressedOptions = [
   NOT_SURE_YET_OPTION,
 ];
 
-function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
+function NeedsToBeAddressedField() {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
   const formattedFirstName = formatPossessiveName(
@@ -87,14 +86,13 @@ function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
 
   const updateOtherTextArea = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setOtherInputValue(e.target.value);
-    form.updateForm(OTHER_NEED_TO_BE_ADDRESSED_KEY, e.target.value, isRequired);
+    form.updateForm(OTHER_NEED_TO_BE_ADDRESSED_KEY, e.target.value);
   };
 
   return (
     <>
       <Styled.InputLabel>
-        What are {formattedFirstName} primary needs? Select all that apply.{" "}
-        {isRequired && <span>Required*</span>}
+        What are {formattedFirstName} primary needs? Select all that apply.
       </Styled.InputLabel>
 
       <MultiSelectRadioInput

@@ -23,13 +23,12 @@ import { PLEA_KEY } from "../../constants";
 import { NOT_SURE_YET_OPTION, pleas } from "../constants";
 import { RadioInput } from "../Elements/RadioInput";
 import { form } from "../FormStore";
-import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { parsePleaValue } from "../utils";
 
 const pleaOptions = [...Object.values(pleas), NOT_SURE_YET_OPTION];
 
-function PleaStatusField({ isRequired }: FormFieldProps) {
+function PleaStatusField() {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -39,14 +38,12 @@ function PleaStatusField({ isRequired }: FormFieldProps) {
 
   const updateSelection = (option: string) => {
     setInputValue(option);
-    form.updateForm(PLEA_KEY, option, isRequired);
+    form.updateForm(PLEA_KEY, option);
   };
 
   return (
     <>
-      <Styled.InputLabel>
-        Plea {isRequired && <span>Required*</span>}
-      </Styled.InputLabel>
+      <Styled.InputLabel>Plea</Styled.InputLabel>
 
       <RadioInput
         options={pleaOptions}

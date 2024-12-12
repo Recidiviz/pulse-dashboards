@@ -72,7 +72,7 @@ test("loads onboarding screen when user first accesses the case", async () => {
     `Let's get some details about ${firstName}'s case to enhance the historical insights`,
   );
   const offenseField = await screen.getByText("Offense");
-  const lsirScoreField = await screen.getByText("LSI-R Score");
+  const lsirScoreField = await screen.getByText("Draft LSI-R Score");
 
   expect(onboardingCaption).toBeInTheDocument();
   expect(offenseField).toBeInTheDocument();

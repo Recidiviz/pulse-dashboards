@@ -29,7 +29,6 @@ import { parseBooleanValue } from "../utils";
 
 function PriorIncarcerationOrSupervisionField({
   nestedFields,
-  isRequired,
 }: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
@@ -43,18 +42,13 @@ function PriorIncarcerationOrSupervisionField({
 
   const updateSelection = (option: string) => {
     setInputValue(option);
-    form.updateForm(
-      PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
-      option,
-      isRequired,
-    );
+    form.updateForm(PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY, option);
   };
 
   return (
     <>
       <Styled.InputLabel>
-        Has a prior history of supervision/incarceration{" "}
-        {isRequired && <span>Required*</span>}
+        Has a prior history of supervision/incarceration
       </Styled.InputLabel>
 
       <RadioInput

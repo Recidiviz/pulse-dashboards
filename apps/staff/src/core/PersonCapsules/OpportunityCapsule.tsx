@@ -43,20 +43,14 @@ export const OpportunityCapsule = observer(function OpportunityCapsule({
   let status: React.ReactNode = null;
 
   if (isHydrated(opportunity)) {
-    // Hide "Needs review" in Arizona, where it is misleading because most surfaced
-    // people in Arizona have been reviewed by a separate team besides tool users
-    const showProgress =
-      opportunity.lastViewed || opportunity.config.stateCode !== "US_AZ";
-
     status = (
       <>
         {opportunity.showEligibilityStatus("OpportunityCapsule") && (
           <>
-            <EligibilityStatus opportunity={opportunity} includeReasons />
-            {showProgress && " • "}
+            <EligibilityStatus opportunity={opportunity} includeReasons /> •{" "}
           </>
         )}
-        {showProgress && <WorkflowProgress opportunity={opportunity} />}
+        <WorkflowProgress opportunity={opportunity} />
       </>
     );
   }

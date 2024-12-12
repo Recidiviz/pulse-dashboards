@@ -47,10 +47,7 @@ function renderHome() {
     <MemoryRouter>
       <Routes>
         <Route path="/" element={<PageHome />} />
-        <Route
-          path={State.Resident.Eligibility.path}
-          element={<div>eligibility page</div>}
-        />
+        <Route path={State.path} element={<div>state page</div>} />
         <Route path={EmailVerification.path} element={<div>verify page</div>} />
       </Routes>
     </MemoryRouter>,
@@ -82,10 +79,10 @@ test("email verification page if needed", () => {
   expect(screen.getByText("verify page")).toBeInTheDocument();
 });
 
-test("eligibility page if authorized", () => {
+test("state page if authorized", () => {
   vi.spyOn(authClient, "isAuthorized", "get").mockReturnValue(true);
 
   renderHome();
 
-  expect(screen.getByText("eligibility page")).toBeInTheDocument();
+  expect(screen.getByText("state page")).toBeInTheDocument();
 });

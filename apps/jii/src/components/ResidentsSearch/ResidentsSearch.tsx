@@ -72,7 +72,6 @@ const ResidentsSearchWithPresenter: React.FC<{
         <Selector
           labelId={residentLabelId}
           options={presenter.selectOptions}
-          defaultValue={presenter.defaultOption}
           onChange={(value) => {
             // this should land you on the selected resident's homepage
             navigate(
@@ -91,13 +90,11 @@ const ResidentsSearchWithPresenter: React.FC<{
 
 export const ResidentsSearch = observer(function ResidentsSearch() {
   const { uiStore } = useRootStore();
-  const { residentsStore, activeResident } = useResidentsContext();
+  const { residentsStore } = useResidentsContext();
 
   return (
     <ResidentsSearchWithPresenter
-      presenter={
-        new ResidentsSearchPresenter(residentsStore, uiStore, activeResident)
-      }
+      presenter={new ResidentsSearchPresenter(residentsStore, uiStore)}
     />
   );
 });

@@ -22,6 +22,7 @@ import { Case } from "../../../api";
 import { formatPossessiveName } from "../../../utils/utils";
 import { CaseStatus } from "../../Dashboard/types";
 import * as Styled from "../CaseDetails.styles";
+import { OFFENSE_KEY } from "../constants";
 import { form } from "../Form/FormStore";
 import OnboardingStepOne from "./OnboardingStepOne";
 import OnboardingStepThree from "./OnboardingStepThree";
@@ -52,13 +53,14 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
       onboardingTopics[currentTopicIndex];
     const hasCompletedOnboarding =
       currentTopicIndex === onboardingTopics.length - 1;
-    const isNextButtonDisabled = form.hasError;
+    const isNextButtonDisabled =
+      currentTopic === OnboardingTopic.OffenseLsirScore &&
+      (form.hasError || !form.updates[OFFENSE_KEY]);
 
     const goToPrevTopic = () => {
+      saveAttributes(form.updates);
       if (currentTopicIndex === 0) {
         navigateToDashboard();
-      } else {
-        saveAttributes(form.updates);
       }
       currentTopic && trackOnboardingPageViewed(currentTopic, "back");
       setCurrentTopicIndex((prev) => prev - 1);

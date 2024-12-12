@@ -23,11 +23,10 @@ import { HAS_PREVIOUS_VIOLENT_OFFENSE_KEY } from "../../constants";
 import { yesNoUnsureOptions } from "../constants";
 import { RadioInput } from "../Elements/RadioInput";
 import { form } from "../FormStore";
-import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseBooleanValue } from "../utils";
 
-function PriorViolentOffenseConvictionField({ isRequired }: FormFieldProps) {
+function PriorViolentOffenseConvictionField() {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -39,14 +38,13 @@ function PriorViolentOffenseConvictionField({ isRequired }: FormFieldProps) {
 
   const updateSelection = (option: string) => {
     setInputValue(option);
-    form.updateForm(HAS_PREVIOUS_VIOLENT_OFFENSE_KEY, option, isRequired);
+    form.updateForm(HAS_PREVIOUS_VIOLENT_OFFENSE_KEY, option);
   };
 
   return (
     <>
       <Styled.InputLabel>
-        Has a prior violent offense conviction{" "}
-        {isRequired && <span>Required*</span>}
+        Has a prior violent offense conviction
       </Styled.InputLabel>
 
       <RadioInput

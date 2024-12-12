@@ -17,17 +17,30 @@
 
 import { createContext } from "react";
 
-import { ResidentsStore } from "../../datastores/ResidentsStore";
+import { ResidentRecord } from "~datatypes";
+
+import {
+  IncarcerationOpportunityId,
+  OpportunityConfig,
+} from "../../configs/types";
+import { EligibilityReport } from "../../models/EligibilityReport/interface";
 import { useRequiredContext } from "../../utils/useRequiredContext";
 
-export type ResidentsContext = {
-  residentsStore: ResidentsStore;
+export type OpportunityData = {
+  opportunityId: IncarcerationOpportunityId;
+  opportunityConfig: OpportunityConfig;
+  eligibilityReport: EligibilityReport;
 };
 
-const context = createContext<ResidentsContext | undefined>(undefined);
+export type SingleResidentContext = {
+  resident: ResidentRecord["output"];
+  opportunities: Array<OpportunityData>;
+};
 
-export const ResidentsContextProvider = context.Provider;
+const context = createContext<SingleResidentContext | undefined>(undefined);
 
-export function useResidentsContext() {
+export const SingleResidentContextProvider = context.Provider;
+
+export function useSingleResidentContext() {
   return useRequiredContext(context);
 }

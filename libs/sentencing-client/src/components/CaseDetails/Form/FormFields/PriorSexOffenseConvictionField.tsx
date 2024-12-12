@@ -23,11 +23,10 @@ import { HAS_PREVIOUS_SEX_OFFENSE_KEY } from "../../constants";
 import { yesNoUnsureOptions } from "../constants";
 import { RadioInput } from "../Elements/RadioInput";
 import { form } from "../FormStore";
-import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseBooleanValue } from "../utils";
 
-function PriorSexOffenseConvictionField({ isRequired }: FormFieldProps) {
+function PriorSexOffenseConvictionField() {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -39,15 +38,12 @@ function PriorSexOffenseConvictionField({ isRequired }: FormFieldProps) {
 
   const updateSelection = (option: string) => {
     setInputValue(option);
-    form.updateForm(HAS_PREVIOUS_SEX_OFFENSE_KEY, option, isRequired);
+    form.updateForm(HAS_PREVIOUS_SEX_OFFENSE_KEY, option);
   };
 
   return (
     <>
-      <Styled.InputLabel>
-        Has a prior sex offense conviction{" "}
-        {isRequired && <span>Required*</span>}
-      </Styled.InputLabel>
+      <Styled.InputLabel>Has a prior sex offense conviction</Styled.InputLabel>
 
       <RadioInput
         options={yesNoUnsureOptions}

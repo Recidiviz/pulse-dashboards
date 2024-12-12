@@ -24,11 +24,10 @@ import { getOffenseName } from "../../components/charts/RecidivismPlot/Recidivis
 import { LSIR_SCORE_KEY, OFFENSE_KEY } from "../../constants";
 import { TextInput } from "../Elements/TextInput";
 import { form } from "../FormStore";
-import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { isValidLsirScore } from "../utils";
 
-function LsirScoreField({ isRequired }: FormFieldProps) {
+function LsirScoreField() {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
   const insight = caseStore.insight;
@@ -55,9 +54,8 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
     setInputValue(e.target.value);
     form.updateForm(
       LSIR_SCORE_KEY,
-      e.target.value ? Number(e.target.value) : null,
-      isRequired,
-      isValidLsirScore,
+      Number(e.target.value),
+      !isValidLsirScore(e.target.value),
     );
   };
 
@@ -71,16 +69,10 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
     );
   }, [inputValue, caseStore, caseAttributes]);
 
-  /** Validate previously saved LSI-R score */
-  useEffect(() => {
-    form.validate(LSIR_SCORE_KEY, prevLsirScore, isRequired, isValidLsirScore);
-    return () => form.resetErrors();
-  }, [prevLsirScore, isRequired]);
-
   return (
     <>
       <Styled.InputLabel htmlFor={LSIR_SCORE_KEY}>
-        LSI-R Score {isRequired && <span>Required*</span>}
+        Draft LSI-R Score
       </Styled.InputLabel>
 
       <TextInput
@@ -90,17 +82,10 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
         isDisabled={caseAttributes.isLsirScoreLocked}
       />
 
-      {form.errors[LSIR_SCORE_KEY]?.inputError && (
+      {form.hasError && (
         <Styled.ErrorMessage>
           Please enter a number between 0 and 54.
         </Styled.ErrorMessage>
-      )}
-
-      {!caseAttributes.isLsirScoreLocked && (
-        <Styled.InputDescription>
-          If this is a File Review or if the LSI-R has not yet been scored,
-          enter the most recent risk score for this individual.
-        </Styled.InputDescription>
       )}
 
       {caseAttributes.isLsirScoreLocked && (

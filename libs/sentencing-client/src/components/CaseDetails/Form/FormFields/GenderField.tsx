@@ -23,7 +23,7 @@ import { CLIENT_GENDER_KEY, GenderToDisplayName } from "../../constants";
 import { UNKNOWN_OPTION } from "../constants";
 import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
-import { FormFieldProps, SelectOption } from "../types";
+import { SelectOption } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseClientGenderValue } from "../utils";
 
@@ -31,7 +31,7 @@ const genderOptions = Object.values(GenderToDisplayName).filter(
   (gender) => gender !== UNKNOWN_OPTION,
 );
 
-function GenderField({ isRequired }: FormFieldProps) {
+function GenderField() {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
   const options = genderOptions.map((selection) => ({
@@ -50,14 +50,12 @@ function GenderField({ isRequired }: FormFieldProps) {
     if (!option) return;
 
     setSelectValue(option);
-    form.updateForm(CLIENT_GENDER_KEY, option.value, isRequired);
+    form.updateForm(CLIENT_GENDER_KEY, option.value);
   };
 
   return (
     <>
-      <Styled.InputLabel>
-        Gender {isRequired && <span>Required*</span>}
-      </Styled.InputLabel>
+      <Styled.InputLabel>Gender</Styled.InputLabel>
 
       <Dropdown
         value={selectValue?.value ? selectValue : null}

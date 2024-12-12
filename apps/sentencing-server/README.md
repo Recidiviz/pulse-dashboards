@@ -8,14 +8,6 @@ Some technical details:
 - The server uses [Prisma](https://www.prisma.io/) to interact with the database.
 
 Resource links:
-Env Files
-
-- [env_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_dev_sentencing_server/versions?project=recidiviz-dashboard-staging)
-- [env_staging_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_staging_sentencing_server/versions?project=recidiviz-dashboard-staging)
-- [env_prod_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_prod_sentencing_server/versions?project=recidiviz-dashboard-staging)
-- [env_test_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_test_sentencing_server/versions?project=recidiviz-dashboard-staging)
-- [env_preview_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_preview_sentencing_server/versions?project=recidiviz-dashboard-staging)
-
 Staging
 
 - [Cloud Run](https://console.cloud.google.com/run/detail/us-central1/sentencing-server/metrics?project=recidiviz-dashboard-staging)
@@ -34,18 +26,22 @@ Production
 
 If you haven't already, follow the setup instructions in the root README to install dependencies.
 
-1. Get env variables by running `nx load-env-files sentencing-server`
+1. Get env variables from Google Secrets Manager and put them in this directory
+   - Put the [env_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_dev_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env` file
+   - Put the [env_staging_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_staging_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env.staging` file
+   - Put the [env_prod_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_prod_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env.staging` file
+   - Put the [env_test_sentencing_server](https://console.cloud.google.com/security/secret-manager/secret/env_test_sentencing_server/versions?project=recidiviz-dashboard-staging) in an `.env.test` file
 
    This way, `nx` will automatically pick up the correct environment variables based on the targets your are running.
 
 2. Make sure you have your Docker daemon running.
 3. Start the server with `nx dev sentencing-server`.
 
-### Updating the prisma schema
+## Updating the prisma schema
 
 If you make changes to the prisma schema, you will need to run `nx prisma-migrate sentencing-server --name="{YOUR_CHANGE_NAME}"` to create a database migration file. In order for this to work, the database must be running in the docker container.
 
-### Add support for a new state
+## Add support for a new state
 
 If you'd like to add support for a new state, you don't have to make any code changes!
 
@@ -55,15 +51,9 @@ Note: this process is the same for both staging and production.
 
 1. For the new state, create a new database in the Cloud SQL instance. The naming convention for these databases is the tenant id in all lowercase, like `us_ca` for California.
 
-2. Next, add a new environment variable for the new state's database connection string to `env_[prod/staging]_sentencing_server` in Google Secrets. The naming convention for these environment variables is `DATABASE_URL_{STATE_ABBREVIATION}`. For example, if you wanted to add support for the state of California, you would add an environment variable called `DATABASE_URL_US_CA` with the connection string for the California database.
-
-3. Under the `migrate-db` target in the `sentencing-server` `project.json` file, append `DATABASE_URL_{STATE_ABBREVIATION}=$DATABASE_URL_{STATE_ABBREVIATION}` to the `--set-env-vars` portion of the `command`. This will ensure that the database migration job has the correct environment variables.
-
-4. Under the `deploy-app` target in the `sentencing-server` `project.json` file, add `"DATABASE_URL_{STATE_ABBREVIATION}": "$DATABASE_URL_{STATE_ABBREVIATION}"` to the `envVars` dictionary. This will ensure that the server has the correct environment variables.
+2. Next, add a new environment variable for the new state's database connection string to both the Cloud Run and Cloud Run DB Migration Job deploys of the server. The naming convention for these environment variables is `DATABASE_URL_{STATE_ABBREVIATION}`. For example, if you wanted to add support for the state of California, you would add an environment variable called `DATABASE_URL_US_CA` with the connection string for the California database.
 
 ## Testing
-
-### Integration tests
 
 We have integration tests for the server + database.
 
@@ -73,21 +63,11 @@ In order to run these tests:
 2. Make sure you have your Docker daemon running.
 3. Run `nx test sentencing-server` to run the tests.
 
-### Testing zod schemas
+## Testing zod schemas
 
 If you'd like to test the zod import schemas against a downloaded JSONLines file of expected data, you can run `nx test-zod sentencing-server {path-to-jsonlines-file} {name-of-schema}`. This will run the zod schema against each line of the file and log any errors.
 
 The valid schema names are the keys of the `zodSchemaMap` object found in `test-zod/index.ts`
-
-## Previews
-
-Whenever you create a PR with changes to the sentencing server, a preview deployment will be created with a preview database, preview migrate job, and preview cloud run server using your PRs code. The preview `staff` app will also be initialized to point to the preview server, so you can test any changes end to end!
-
-NOTE: The preview server is great for testing changes to the TRPC routes, but it does not currently have any functionality for testing data imports.
-
-### Debugging Preview Database issues
-
-The preview database is only cloned from the staging database once per PR. If your PR becomes too out of sync with `main` and you rebase it, it's possible that the preview database will become too out of sync with the staging database for migrations to apply correctly. If you encounter issues with the preview database and migrations, you can delete it and re-run the preview Github Actions workflow to have a new one created and migrated. The name of the preview database will be in the logs of the preview Github Actions workflow.
 
 ## Deployment
 
