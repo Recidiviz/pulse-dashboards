@@ -34,6 +34,7 @@ import styled, { createGlobalStyle } from "styled-components/macro";
 import { initializeSentry } from "../../apis/Sentry/initializeSentry";
 import * as routes from "../../routes/routes";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
+import { GenericLayoutRoute } from "../GenericLayoutRoute/GenericLayoutRoute";
 import { NotFound } from "../NotFound/NotFound";
 import { OpportunityInfoPage } from "../OpportunityInfoPage/OpportunityInfoPage";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
@@ -46,7 +47,7 @@ import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
 import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
-import { ResidentsLayout } from "../ResidentsLayout/ResidentsLayout";
+import { ResidentLayoutRoute } from "../ResidentLayoutRoute/ResidentLayoutRoute";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
 const StyledApp = styled.div`
@@ -75,7 +76,6 @@ export function App() {
       <StoreProvider>
         <GlobalStyleBase />
         <GlobalStyle />
-
         <StyledApp>
           <SentryRoutes>
             <Route path={routes.SiteRoot.path} element={<PageRoot />}>
@@ -83,7 +83,7 @@ export function App() {
               <Route path={routes.State.path}>
                 <Route index element={<PageState />} />
                 <Route element={<PageResidentsRoot />}>
-                  <Route element={<ResidentsLayout />}>
+                  <Route element={<ResidentLayoutRoute />}>
                     {/* relative paths required in this subtree 
                     because of an optional param in Eligibility; 
                     see https://github.com/remix-run/react-router/issues/9925 */}
@@ -109,6 +109,8 @@ export function App() {
                         />
                       </Route>
                     </Route>
+                  </Route>
+                  <Route element={<GenericLayoutRoute />}>
                     <Route
                       path={routes.State.Search.path}
                       element={<PageSearch />}
@@ -116,16 +118,18 @@ export function App() {
                   </Route>
                 </Route>
               </Route>
-              <Route
-                path={routes.EmailVerification.path}
-                element={<PageVerifyEmail />}
-              />
-              <Route
-                path={routes.AfterLogin.path}
-                element={<PageAfterLogin />}
-              />
+              <Route element={<GenericLayoutRoute />}>
+                <Route
+                  path={routes.EmailVerification.path}
+                  element={<PageVerifyEmail />}
+                />
+                <Route
+                  path={routes.AfterLogin.path}
+                  element={<PageAfterLogin />}
+                />
 
-              <Route path="*" element={<NotFound />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
             </Route>
           </SentryRoutes>
         </StyledApp>

@@ -15,11 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReactElement } from "react";
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
+import { FC, memo, ReactNode } from "react";
+import styled from "styled-components/macro";
 
-import { PageLayout } from "../PageLayout/PageLayout";
-import { ErrorPageMainContent } from "./ErrorPageMainContent";
+import { useSkipNav } from "../SkipNav/SkipNav";
+import { PageHeader } from "./PageHeader";
 
-export const ErrorPage = ({ error }: { error: Error }): ReactElement => {
-  return <PageLayout main={<ErrorPageMainContent error={error} />} />;
-};
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.xl)};
+`;
+
+export const PageLayout: FC<{ header?: ReactNode; main: ReactNode }> = memo(
+  function PageLayout({ header, main }) {
+    const { MainContent, SkipNav, SkipNavController } = useSkipNav();
+    return (
+      <SkipNavController>
+        <SkipNav />
+        <Wrapper>
+          <PageHeader>{header}</PageHeader>
+          <MainContent>{main}</MainContent>
+        </Wrapper>
+      </SkipNavController>
+    );
+  },
+);

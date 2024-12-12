@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import { FC, memo } from "react";
 import { Outlet } from "react-router-dom";
 
-import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { ResidentOpportunityContextProvider } from "./context";
 import { ResidentOpportunityHydratorPresenter } from "./ResidentOpportunityHydratorPresenter";
@@ -64,8 +64,8 @@ export const ResidentOpportunityHydrator: FC<{
   );
 
   return (
-    <PageHydrator hydratable={presenter}>
+    <MainContentHydrator hydratable={presenter}>
       <ResidentOpportunityHydratorWithPresenter presenter={presenter} />
-    </PageHydrator>
+    </MainContentHydrator>
   );
 });

@@ -18,22 +18,12 @@
 import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
-import { State } from "../../../routes/routes";
-import {
-  PageContainer,
-  UnpaddedPageContainer,
-} from "../../BaseLayout/BaseLayout";
-import { useResidentsContext } from "../../ResidentsHydrator/context";
-import { Wordmark } from "../../Wordmark/Wordmark";
-import { NavigationMenu } from "./NavigationMenu";
-import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
-import { ResidentMiniProfile } from "./ResidentMiniProfile";
-import { ResidentMiniProfilePresenter } from "./ResidentMiniProfilePresenter";
+import { PageContainer, UnpaddedPageContainer } from "../BaseLayout/BaseLayout";
+import { Wordmark } from "../Wordmark/Wordmark";
 
 const HeaderWrapper = styled(UnpaddedPageContainer)`
   border-bottom: 1px solid ${palette.slate20};
@@ -59,36 +49,19 @@ const HeaderContent = styled.div`
   }
 `;
 
-export const ResidentsHeader: FC = observer(function ResidentsHeader() {
-  const { residentsStore, activeResident } = useResidentsContext();
-
-  const profilePresenter =
-    activeResident &&
-    new ResidentMiniProfilePresenter(activeResident, residentsStore.config);
-
-  return (
-    <HeaderWrapper>
-      <Header>
-        <HeaderContent>
-          <Link to="/">
-            <Wordmark />
-          </Link>
-
-          {profilePresenter && (
-            <ResidentMiniProfile presenter={profilePresenter} />
-          )}
-        </HeaderContent>
-        <NavigationMenu
-          presenter={
-            new NavigationMenuPresenter(
-              residentsStore.config,
-              residentsStore.userStore,
-              useTypedParams(State.Resident.Eligibility),
-              activeResident,
-            )
-          }
-        />
-      </Header>
-    </HeaderWrapper>
-  );
-});
+export const PageHeader: FC<{ children: ReactNode }> = observer(
+  function PageHeader({ children }) {
+    return (
+      <HeaderWrapper>
+        <Header>
+          <HeaderContent>
+            <Link to="/">
+              <Wordmark />
+            </Link>
+          </HeaderContent>
+          {children}
+        </Header>
+      </HeaderWrapper>
+    );
+  },
+);

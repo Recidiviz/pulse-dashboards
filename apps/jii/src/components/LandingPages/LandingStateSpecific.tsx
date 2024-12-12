@@ -27,7 +27,7 @@ import styled from "styled-components/macro";
 
 import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
 import { State } from "../../routes/routes";
-import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { LandingPageCopyWrapper } from "./LandingPageCopyWrapper";
@@ -96,9 +96,9 @@ export const LandingStateSpecific = memo(function LandingStateSpecific() {
 
   return (
     <LandingPageLayout>
-      <PageHydrator hydratable={presenter}>
+      <MainContentHydrator hydratable={presenter}>
         <LandingStateSpecificWithPresenter presenter={presenter} />
-      </PageHydrator>
+      </MainContentHydrator>
     </LandingPageLayout>
   );
 });

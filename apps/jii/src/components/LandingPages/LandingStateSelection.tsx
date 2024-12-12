@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import { FC, memo } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { LandingPageCopyWrapper } from "./LandingPageCopyWrapper";
@@ -62,9 +62,9 @@ export const LoginStateSelection: FC = memo(function LoginStateSelection() {
 
   return (
     <LandingPageLayout>
-      <PageHydrator hydratable={presenter}>
+      <MainContentHydrator hydratable={presenter}>
         <LoginStateSelectionWithPresenter presenter={presenter} />
-      </PageHydrator>
+      </MainContentHydrator>
     </LandingPageLayout>
   );
 });

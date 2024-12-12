@@ -17,19 +17,17 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { ResidentsConfig } from "../../../configs/types";
-import { UserStore } from "../../../datastores/UserStore";
-import { State } from "../../../routes/routes";
-import { RouteParams } from "../../../routes/utils";
-import { ResidentsContext } from "../../ResidentsHydrator/context";
+import { ResidentsConfig } from "../../configs/types";
+import { UserStore } from "../../datastores/UserStore";
+import { State } from "../../routes/routes";
+import { RouteParams } from "../../routes/utils";
+import { ResidentsContext } from "../ResidentsHydrator/context";
 
 export class NavigationMenuPresenter {
   constructor(
     private config: ResidentsConfig,
     private userStore: UserStore,
-    private eligibilityRouteParams: RouteParams<
-      typeof State.Resident.Eligibility
-    >,
+    private residentRouteParams: RouteParams<typeof State.Resident>,
     private activeResident: ResidentsContext["activeResident"],
   ) {
     makeAutoObservable(this);
@@ -42,7 +40,7 @@ export class NavigationMenuPresenter {
       links.push({
         text: "Search for Residents",
         url: State.Search.buildPath({
-          stateSlug: this.eligibilityRouteParams.stateSlug,
+          stateSlug: this.residentRouteParams.stateSlug,
         }),
       });
     }
@@ -53,7 +51,7 @@ export class NavigationMenuPresenter {
         ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
           text: c.shortName,
           url: State.Resident.Eligibility.Opportunity.buildPath({
-            ...this.eligibilityRouteParams,
+            ...this.residentRouteParams,
             opportunitySlug: c.urlSlug,
           }),
         })),

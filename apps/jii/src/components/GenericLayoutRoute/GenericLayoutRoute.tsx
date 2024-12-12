@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReactElement } from "react";
+import { observer } from "mobx-react-lite";
+import { Outlet } from "react-router-dom";
 
 import { PageLayout } from "../PageLayout/PageLayout";
-import { ErrorPageMainContent } from "./ErrorPageMainContent";
 
-export const ErrorPage = ({ error }: { error: Error }): ReactElement => {
-  return <PageLayout main={<ErrorPageMainContent error={error} />} />;
-};
+/**
+ * Page layout that renders nested routes with empty header bar (no resident-specific navigation).
+ */
+export const GenericLayoutRoute = observer(function GenericLayoutRoute() {
+  return <PageLayout main={<Outlet />} />;
+});

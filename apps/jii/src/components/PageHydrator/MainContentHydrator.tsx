@@ -15,11 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReactElement } from "react";
+import { FC, ReactNode } from "react";
 
-import { PageLayout } from "../PageLayout/PageLayout";
-import { ErrorPageMainContent } from "./ErrorPageMainContent";
+import { Hydratable, HydratorWithErrorLogging } from "~hydration-utils";
 
-export const ErrorPage = ({ error }: { error: Error }): ReactElement => {
-  return <PageLayout main={<ErrorPageMainContent error={error} />} />;
+import { ErrorPageMainContent } from "../ErrorPage/ErrorPageMainContent";
+
+/**
+ * In case of error this Hydrator logs to Sentry and renders an error message suitable
+ * to serve as the main content of a layout route or component
+ */
+export const MainContentHydrator: FC<{
+  children: ReactNode;
+  hydratable: Hydratable;
+}> = ({ children, hydratable }) => {
+  return (
+    <HydratorWithErrorLogging
+      hydratable={hydratable}
+      fallback={ErrorPageMainContent}
+    >
+      {children}
+    </HydratorWithErrorLogging>
+  );
 };

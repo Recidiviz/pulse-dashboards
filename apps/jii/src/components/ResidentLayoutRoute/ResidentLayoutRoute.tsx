@@ -15,40 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import { Navigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { State } from "../../routes/routes";
-import { ErrorPageMainContent } from "../ErrorPage/ErrorPageMainContent";
+import { PageLayout } from "../PageLayout/PageLayout";
 import { useResidentsContext } from "../ResidentsHydrator/context";
+import { NavigationMenu } from "./NavigationMenu";
+import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 
-export const PageEligibilityHome: FC = withErrorBoundary(
-  observer(function PageEligibilityHome() {
-    const { residentsStore, activeResident } = useResidentsContext();
-    const urlParams = useTypedParams(State.Resident.Eligibility);
+/**
+ * Page layout that renders nested routes with resident navigation in header bar
+ */
+export const ResidentLayoutRoute = observer(function ResidentLayoutRoute() {
+  const { residentsStore, activeResident } = useResidentsContext();
+  const residentParams = useTypedParams(State.Resident);
+  const navPresenter = new NavigationMenuPresenter(
+    residentsStore.config,
+    residentsStore.userStore,
+    residentParams,
+    activeResident,
+  );
 
-    const { hasPermission } = residentsStore.userStore;
-
-    if (activeResident) {
-      // for convenience, while there is only one opp configured we skip the lookup step
-      return (
-        <Navigate
-          to={State.Resident.Eligibility.Opportunity.buildPath({
-            ...urlParams,
-            opportunitySlug: "sccp",
-          })}
-          replace
-        />
-      );
-    }
-
-    if (hasPermission("enhanced"))
-      return <Navigate to={State.Search.buildPath(urlParams)} replace />;
-
-    throw new Error("No user ID specified for eligibility page");
-  }),
-  { fallback: ErrorPageMainContent },
-);
+  return (
+    <PageLayout
+      header={<NavigationMenu presenter={navPresenter} />}
+      main={<Outlet />}
+    />
+  );
+});

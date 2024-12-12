@@ -29,7 +29,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
 import { State } from "../../routes/routes";
-import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { Selector } from "../Selector/Selector";
 import { useRootStore } from "../StoreProvider/useRootStore";
@@ -51,7 +51,7 @@ const ResidentsSearchWithPresenter: React.FC<{
   const urlParams = useTypedParams(State.Search);
 
   return (
-    <PageHydrator hydratable={presenter}>
+    <MainContentHydrator hydratable={presenter}>
       <div>
         <Header34 as="h1">Look up a resident</Header34>
 
@@ -85,7 +85,7 @@ const ResidentsSearchWithPresenter: React.FC<{
           placeholder="Start typing a resident's name or DOC ID …"
         />
       </div>
-    </PageHydrator>
+    </MainContentHydrator>
   );
 });
 

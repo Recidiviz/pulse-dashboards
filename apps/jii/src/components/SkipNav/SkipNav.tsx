@@ -19,7 +19,6 @@ import { palette } from "@recidiviz/design-system";
 import { createContext, JSX, ReactNode, useContext, useId } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
-import { Required } from "utility-types";
 
 // invisible navigation link for keyboard and screen reader users; visible on tab focus
 const SkipNavContainer = styled.div`
@@ -68,10 +67,7 @@ function SkipNav() {
   );
 }
 
-type MainContentProps = Required<
-  Omit<JSX.IntrinsicElements["main"], "id">,
-  "children"
->;
+type MainContentProps = Omit<JSX.IntrinsicElements["main"], "id">;
 
 function MainContent(props: MainContentProps) {
   const { id } = useSkipNavContext();

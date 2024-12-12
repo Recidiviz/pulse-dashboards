@@ -19,9 +19,9 @@ import { configure } from "mobx";
 
 import { outputFixture, usMeResidents } from "~datatypes";
 
-import { residentsConfigByState } from "../../../configs/residentsConfig";
-import { UserStore } from "../../../datastores/UserStore";
-import { State } from "../../../routes/routes";
+import { residentsConfigByState } from "../../configs/residentsConfig";
+import { UserStore } from "../../datastores/UserStore";
+import { State } from "../../routes/routes";
 import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 
 let presenter: NavigationMenuPresenter;

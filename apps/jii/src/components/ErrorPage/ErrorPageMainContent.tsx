@@ -15,32 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
-import { memo } from "react";
-import { Outlet } from "react-router-dom";
-import styled from "styled-components/macro";
+import { Body16, Body19, Header34 } from "@recidiviz/design-system";
+import { ReactElement } from "react";
+import { Link } from "react-router-dom";
 
-import { useSkipNav } from "../SkipNav/SkipNav";
-import { ResidentsHeader } from "./ResidentsHeader/ResidentsHeader";
+import { PageContainer } from "../BaseLayout/BaseLayout";
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.xl)};
-`;
-
-export const ResidentsLayout = memo(function ResidentsLayout() {
-  const { MainContent, SkipNav, SkipNavController } = useSkipNav();
+export const ErrorPageMainContent = ({
+  error,
+}: {
+  error: Error;
+}): ReactElement => {
   return (
-    <SkipNavController>
-      <SkipNav />
-      <Wrapper>
-        <ResidentsHeader />
-        <MainContent>
-          <Outlet />
-        </MainContent>
-      </Wrapper>
-    </SkipNavController>
+    <PageContainer>
+      <Header34>Something went wrong</Header34>
+      <Body19>
+        An error occurred that prevented this page from loading. Please try
+        reloading the page, or <Link to="/">return to your homepage</Link>.
+      </Body19>
+      <Body16>
+        <em>
+          [{error.name}] {error.message}
+        </em>
+      </Body16>
+    </PageContainer>
   );
-});
+};
