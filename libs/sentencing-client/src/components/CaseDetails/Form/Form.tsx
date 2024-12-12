@@ -42,13 +42,18 @@ function Form({
 
   return (
     <Styled.Form>
-      {filteredFormFields.map(({ key, FieldComponent, nestedFields }) => {
-        return (
-          <Styled.InputWrapper key={key}>
-            <FieldComponent nestedFields={nestedFields} />
-          </Styled.InputWrapper>
-        );
-      })}
+      {filteredFormFields.map(
+        ({ key, FieldComponent, nestedFields, isRequired }) => {
+          return (
+            <Styled.InputWrapper key={key}>
+              <FieldComponent
+                nestedFields={nestedFields}
+                isRequired={isRequired}
+              />
+            </Styled.InputWrapper>
+          );
+        },
+      )}
     </Styled.Form>
   );
 }

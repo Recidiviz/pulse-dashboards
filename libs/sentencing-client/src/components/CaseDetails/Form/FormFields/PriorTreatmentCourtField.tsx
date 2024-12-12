@@ -23,10 +23,11 @@ import { HAS_PREVIOUS_TREATMENT_COURT_KEY } from "../../constants";
 import { yesNoUnsureOptions } from "../constants";
 import { RadioInput } from "../Elements/RadioInput";
 import { form } from "../FormStore";
+import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseBooleanValue } from "../utils";
 
-function PriorTreatmentCourtField() {
+function PriorTreatmentCourtField({ isRequired }: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -38,13 +39,14 @@ function PriorTreatmentCourtField() {
 
   const updateSelection = (option: string) => {
     setInputValue(option);
-    form.updateForm(HAS_PREVIOUS_TREATMENT_COURT_KEY, option);
+    form.updateForm(HAS_PREVIOUS_TREATMENT_COURT_KEY, option, isRequired);
   };
 
   return (
     <>
       <Styled.InputLabel>
-        Has previously participated in a treatment court
+        Has previously participated in a treatment court{" "}
+        {isRequired && <span>Required*</span>}
       </Styled.InputLabel>
 
       <RadioInput

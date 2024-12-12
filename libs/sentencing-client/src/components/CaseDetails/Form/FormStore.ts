@@ -18,17 +18,18 @@
 import { makeAutoObservable } from "mobx";
 
 import { FormAttributes, FormUpdates, FormValue } from "../types";
+import { Errors, ErrorType } from "./types";
 import { transformUpdates } from "./utils";
 
 export class FormStore {
   formUpdates: Partial<FormUpdates>;
 
-  hasError: boolean;
+  errors: Record<keyof FormAttributes, Errors>;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
     this.formUpdates = {};
-    this.hasError = false;
+    this.errors = {} as Record<keyof FormAttributes, Errors>;
   }
 
   get updates(): FormAttributes {
@@ -36,26 +37,91 @@ export class FormStore {
     return transformUpdates(this.formUpdates);
   }
 
-  updateErrorStatus(hasError?: boolean) {
+  get hasError(): boolean {
+    const errorsValues = Object.values(this.errors);
+    const hasErrors = errorsValues.some(
+      (error) => error.emptyRequiredField || error.inputError,
+    );
+
+    return hasErrors;
+  }
+
+  updateErrorStatus(
+    key: keyof FormAttributes,
+    errorType: ErrorType,
+    hasError?: boolean,
+  ) {
     if (hasError === undefined) return;
     if (hasError === false) {
-      this.hasError = false;
+      const currentErrors = this.errors[key];
+      if (currentErrors?.[errorType]) {
+        delete currentErrors[errorType];
+      }
+      this.errors[key] = { ...currentErrors };
     } else if (hasError === true) {
-      this.hasError = true;
+      this.errors[key] = { ...this.errors[key], [errorType]: true };
     }
   }
 
-  updateForm(key: keyof FormAttributes, value: FormValue, hasError?: boolean) {
-    this.updateErrorStatus(hasError);
-    if (!hasError) {
+  validate(
+    key: keyof FormAttributes,
+    value: FormValue,
+    isRequired?: boolean,
+    inputValidator?: (value: string) => boolean,
+  ) {
+    const isNullOrUndefinedValue = value === null || value === undefined;
+    const normalizedValue = isNullOrUndefinedValue ? "" : String(value);
+
+    let isRequiredFieldValid = true;
+    if (isRequired) {
+      if (!normalizedValue) {
+        this.updateErrorStatus(key, ErrorType.EmptyRequiredField, true);
+        isRequiredFieldValid = false;
+      } else {
+        this.updateErrorStatus(key, ErrorType.EmptyRequiredField, false);
+      }
+    }
+
+    let isInputValid = true;
+    if (inputValidator) {
+      if (inputValidator(normalizedValue) === false) {
+        /** Raise an input error only when they have an input & it fails validation (otherwise empty fields will also fail this validation) */
+        if (isRequiredFieldValid) {
+          this.updateErrorStatus(key, ErrorType.InputError, true);
+        }
+        isInputValid = false;
+      }
+      /** Clear input error when it passes validation or the input is cleared out */
+      if (inputValidator(normalizedValue) === true || !normalizedValue) {
+        this.updateErrorStatus(key, ErrorType.InputError, false);
+      }
+    }
+
+    return isRequiredFieldValid && isInputValid;
+  }
+
+  updateForm(
+    key: keyof FormAttributes,
+    value: FormValue,
+    isRequired?: boolean,
+    inputValidator?: (value: string) => boolean,
+  ) {
+    const isValid = this.validate(key, value, isRequired, inputValidator);
+
+    if (isValid) {
       this.formUpdates[key] = value;
     }
+
     return this.formUpdates;
+  }
+
+  resetErrors() {
+    this.errors = {} as Record<keyof FormAttributes, Errors>;
   }
 
   resetUpdates() {
     this.formUpdates = {};
-    this.hasError = false;
+    this.resetErrors();
   }
 }
 

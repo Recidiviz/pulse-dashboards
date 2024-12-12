@@ -29,7 +29,7 @@ import {
 } from "../../constants";
 import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
-import { SelectOption } from "../types";
+import { FormFieldProps, SelectOption } from "../types";
 import { useFormField } from "../useFormFields";
 import { fuzzyMatch, highlightMatchedText } from "../utils";
 
@@ -38,7 +38,7 @@ export const customFilter = (option: SelectOption, inputValue: string) => {
   return fuzzyMatch(inputValue, option);
 };
 
-function OffenseField() {
+function OffenseField({ isRequired }: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -65,7 +65,7 @@ function OffenseField() {
     if (!option) return;
 
     setSelectValue(option);
-    form.updateForm(OFFENSE_KEY, option.value);
+    form.updateForm(OFFENSE_KEY, option.value, isRequired);
   };
 
   const toggleViolentSexOffenseSelection = (
@@ -139,10 +139,16 @@ function OffenseField() {
     );
   }, [selectValue, caseStore, isViolentSexOffense]);
 
+  /** Validate previously saved offense field */
+  useEffect(() => {
+    form.validate(OFFENSE_KEY, caseAttributes?.offense, isRequired);
+    return () => form.resetErrors();
+  }, [caseAttributes, isRequired]);
+
   return (
     <>
       <Styled.InputLabel>
-        Offense <span>Required*</span>
+        Offense {isRequired && <span>Required*</span>}
       </Styled.InputLabel>
 
       <Dropdown

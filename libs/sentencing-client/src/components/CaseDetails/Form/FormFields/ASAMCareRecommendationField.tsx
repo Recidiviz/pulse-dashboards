@@ -23,7 +23,7 @@ import { ASAM_CARE_RECOMMENDATION_KEY } from "../../constants";
 import { asamLevelOfCareRecommendation } from "../constants";
 import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
-import { SelectOption } from "../types";
+import { FormFieldProps, SelectOption } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseAsamCareRecommendationValue } from "../utils";
 
@@ -31,7 +31,7 @@ const asamLevelOfCareRecommendationOptions = Object.values(
   asamLevelOfCareRecommendation,
 ).map((option) => ({ label: option, value: option }));
 
-function ASAMCareRecommendationField() {
+function ASAMCareRecommendationField({ isRequired }: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
   const prevASAMCareRecommendationValue = parseAsamCareRecommendationValue(
@@ -49,12 +49,14 @@ function ASAMCareRecommendationField() {
     if (!option) return;
 
     setSelectValue(option);
-    form.updateForm(ASAM_CARE_RECOMMENDATION_KEY, option.value);
+    form.updateForm(ASAM_CARE_RECOMMENDATION_KEY, option.value, isRequired);
   };
 
   return (
     <>
-      <Styled.InputLabel>ASAM level of care recommendation</Styled.InputLabel>
+      <Styled.InputLabel>
+        ASAM level of care recommendation {isRequired && <span>Required*</span>}
+      </Styled.InputLabel>
       <Dropdown
         value={selectValue?.value ? selectValue : null}
         options={asamLevelOfCareRecommendationOptions}

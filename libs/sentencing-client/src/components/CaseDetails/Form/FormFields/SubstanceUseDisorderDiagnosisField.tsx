@@ -36,7 +36,10 @@ import { form } from "../FormStore";
 import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
 
-function SubstanceUseDisorderDiagnosisField({ nestedFields }: FormFieldProps) {
+function SubstanceUseDisorderDiagnosisField({
+  nestedFields,
+  isRequired,
+}: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
@@ -52,7 +55,7 @@ function SubstanceUseDisorderDiagnosisField({ nestedFields }: FormFieldProps) {
 
   const updateSelection = (option: string) => {
     setInputValue(option);
-    form.updateForm(SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY, option);
+    form.updateForm(SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY, option, isRequired);
 
     if (option === NONE_OPTION || option === NOT_SURE_YET_OPTION) {
       form.updateForm(ASAM_CARE_RECOMMENDATION_KEY, null);
@@ -61,7 +64,9 @@ function SubstanceUseDisorderDiagnosisField({ nestedFields }: FormFieldProps) {
 
   return (
     <>
-      <Styled.InputLabel>Substance use disorder diagnosis</Styled.InputLabel>
+      <Styled.InputLabel>
+        Substance use disorder diagnosis {isRequired && <span>Required*</span>}
+      </Styled.InputLabel>
 
       <RadioInput
         options={substanceUseDisorderDiagnosisOptions}
