@@ -19,16 +19,14 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-export const usAzOverdueForAcisTprEligibleCriteria = z
-  .object({
-    usAzIncarcerationPastAcisTprDate: z.object({
-      acisTprDate: dateStringSchema,
-    }),
-  })
-  .passthrough();
-
 export const usAzOverdueForAcisTprSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: usAzOverdueForAcisTprEligibleCriteria,
+  eligibleCriteria: z
+    .object({
+      usAzIncarcerationPastAcisTprDate: z.object({
+        acisTprDate: dateStringSchema,
+      }),
+    })
+    .passthrough(),
 });
 
 export type UsAzOverdueForAcisTprReferralRecordRaw = z.input<

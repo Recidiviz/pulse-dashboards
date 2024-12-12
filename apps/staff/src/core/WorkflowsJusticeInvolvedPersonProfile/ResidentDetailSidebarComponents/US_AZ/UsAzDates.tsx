@@ -129,7 +129,7 @@ export function metadataToDates(
 ): DateInfo[] {
   const hasAcisDates = useDtp ? !!metadata.acisDtpDate : !!metadata.acisTprDate;
 
-  // Show all dates (ERCD, CSBD, TPR/DTP) if we have a date from ACIS
+  // Show all dates (TPR/DTP, CSBD, ERCD) if we have a date from ACIS
   const acisDate = useDtp
     ? [
         {
@@ -145,9 +145,9 @@ export function metadataToDates(
       ];
 
   const realDates = [
-    { label: "ERCD", date: optionalFieldToDate(metadata.ercdDate) },
-    { label: "CSBD", date: optionalFieldToDate(metadata.csbdDate) },
     ...acisDate,
+    { label: "CSBD", date: optionalFieldToDate(metadata.csbdDate) },
+    { label: "ERCD", date: optionalFieldToDate(metadata.ercdDate) },
   ];
 
   // If we don't have a date from ACIS, only show the projected TPR/DTP date
@@ -168,8 +168,8 @@ export function metadataToDates(
       ];
 
   return [
-    { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
     ...(hasAcisDates ? realDates : projectedDates),
+    { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
   ];
 }
 
@@ -190,6 +190,7 @@ export function UsAzDates({
     "In cases where Time Comp has not yet assigned a date for STP or DTP release, Recidiviz uses ADCRR policy to project the release date. We include this projected date here to help CO IIIs prioritize home plans and other release planning. Time Comp will make the final determination on release date once all transition release criteria have been met. As such, this date should not be shared with inmates.  For more details on how Recidiviz projects release dates, please click on “How are these dates calculated?” below.";
 
   const dates = metadataToDates(metadata, !!useDtp, inTableTooltip);
+  const hasAcisDates = useDtp ? !!metadata.acisDtpDate : !!metadata.acisTprDate;
 
   const today = new Date();
 
@@ -228,19 +229,21 @@ export function UsAzDates({
         </tbody>
       </DateTable>
 
-      <DateCalculationInfo>
-        <Link
-          to={
-            "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view"
-          }
-          target="_blank"
-        >
-          <DateMethodologyText>
-            {"How are these dates calculated? "}
-            <Icon kind="Info" size={12} />
-          </DateMethodologyText>
-        </Link>
-      </DateCalculationInfo>
+      {!hasAcisDates && (
+        <DateCalculationInfo>
+          <Link
+            to={
+              "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view"
+            }
+            target="_blank"
+          >
+            <DateMethodologyText>
+              {"How are these dates calculated? "}
+              <Icon kind="Info" size={12} />
+            </DateMethodologyText>
+          </Link>
+        </DateCalculationInfo>
+      )}
     </DetailsSection>
   );
 }
