@@ -16,31 +16,39 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { FC, memo } from "react";
 import { Outlet } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { State } from "../../routes/routes";
-import { PageLayout } from "../PageLayout/PageLayout";
+import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useResidentsContext } from "../ResidentsHydrator/context";
-import { NavigationMenu } from "./NavigationMenu";
-import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
+import { SingleResidentContextProvider } from "./context";
+import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresenter";
 
-/**
- * Page layout that renders nested routes with resident navigation in header bar
- */
-export const ResidentLayoutRoute = observer(function ResidentLayoutRoute() {
+// isolating data access in its own component prevents it from throwing errors before hydration is complete
+const SingleResidentHydratorWithPresenter: FC<{
+  presenter: SingleResidentHydratorPresenter;
+}> = observer(function SingleResidentHydratorWithPresenter({ presenter }) {
+  return (
+    <SingleResidentContextProvider value={presenter.residentData}>
+      <Outlet />
+    </SingleResidentContextProvider>
+  );
+});
+
+export const SingleResidentHydrator = memo(function SingleResidentHydrator() {
+  const { personPseudoId } = useTypedParams(State.Resident);
   const { residentsStore } = useResidentsContext();
-  const residentParams = useTypedParams(State.Resident);
-  const navPresenter = new NavigationMenuPresenter(
-    residentsStore.config,
-    residentsStore.userStore,
-    residentParams,
+
+  const presenter = new SingleResidentHydratorPresenter(
+    residentsStore,
+    personPseudoId,
   );
 
   return (
-    <PageLayout
-      header={<NavigationMenu presenter={navPresenter} />}
-      main={<Outlet />}
-    />
+    <PageHydrator hydratable={presenter}>
+      <SingleResidentHydratorWithPresenter presenter={presenter} />
+    </PageHydrator>
   );
 });

@@ -18,9 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { FC, memo } from "react";
 import { Outlet } from "react-router-dom";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { State } from "../../routes/routes";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { ResidentsContextProvider } from "./context";
@@ -29,20 +27,16 @@ import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 const ResidentsHydratorWithPresenter: FC<{
   presenter: ResidentsHydratorPresenter;
 }> = observer(function ResidentsHydratorWithPresenter({ presenter }) {
-  const { residentsStore, activeResident } = presenter;
+  const { residentsStore } = presenter;
   return (
-    <ResidentsContextProvider value={{ residentsStore, activeResident }}>
+    <ResidentsContextProvider value={{ residentsStore }}>
       <Outlet />
     </ResidentsContextProvider>
   );
 });
 
 export const ResidentsHydrator: FC = memo(function ResidentsHydrator() {
-  const { personPseudoId } = useTypedParams(State.Resident);
-  const presenter = new ResidentsHydratorPresenter(
-    useRootStore(),
-    personPseudoId,
-  );
+  const presenter = new ResidentsHydratorPresenter(useRootStore());
   return (
     <PageHydrator hydratable={presenter}>
       <ResidentsHydratorWithPresenter presenter={presenter} />

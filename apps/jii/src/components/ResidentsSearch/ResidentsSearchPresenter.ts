@@ -39,7 +39,6 @@ export class ResidentsSearchPresenter implements Hydratable {
   constructor(
     private residentsStore: ResidentsStore,
     private uiStore: UiStore,
-    private activeResident: ResidentRecord["output"] | undefined,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
 
@@ -85,16 +84,6 @@ export class ResidentsSearchPresenter implements Hydratable {
       value: r,
       label: `${r.personName.givenNames} ${r.personName.surname} (${r.personExternalId})`,
     }));
-  }
-
-  /**
-   * The resident select component is uncontrolled, but this can be used preserve state when navigating
-   * away from the page (passing a default only affects which option is selected when the component mounts)
-   */
-  get defaultOption() {
-    return this.selectOptions.find(
-      (o) => o.value.personExternalId === this.activeResident?.personExternalId,
-    );
   }
 
   get facilityFilterOptions(): [SelectOption, ...Array<SelectOption>] {

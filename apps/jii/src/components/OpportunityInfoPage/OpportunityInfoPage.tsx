@@ -113,8 +113,9 @@ export const OpportunityInfoPage = observer(function OpportunityInfoPage() {
   const { pageSlug } = useTypedParams(
     State.Resident.Eligibility.Opportunity.InfoPage,
   );
-  const { opportunityConfig, eligibilityReport } =
-    useResidentOpportunityContext();
+  const {
+    opportunity: { opportunityConfig, eligibilityReport },
+  } = useResidentOpportunityContext();
 
   return (
     <OpportunityInfoPageWithPresenter

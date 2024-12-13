@@ -27,7 +27,6 @@ import { FilterParams } from "~firestore-api";
 
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
 import { residentsConfigByState } from "../configs/residentsConfig";
-import { OpportunityConfig } from "../configs/types";
 import { UsMeSCCPEligibilityReport } from "../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
 import { ResidentsStore } from "./ResidentsStore";
 import { RootStore } from "./RootStore";
@@ -217,85 +216,45 @@ describe("populate resident eligibility", () => {
 });
 
 describe("populate resident eligibility report", () => {
-  const expectedRes = outputFixture(usMeResidents[1]);
+  const res = outputFixture(usMeResidents[1]);
   const oppId = "usMeSCCP";
-  const config = residentsConfigByState.US_ME.incarcerationOpportunities[
-    oppId
-  ] as OpportunityConfig;
+  const opp = outputFixture(usMeSccpFixtures.fullyEligibleHalfPortion);
 
-  test("succeeds", async () => {
-    await store.populateEligibilityReportByResidentId(
-      expectedRes.personExternalId,
-      oppId,
-      config,
-    );
+  test("succeeds", () => {
+    store.populateEligibilityReportFromData(oppId, res, opp);
     expect(
       store.residentEligibilityReportsByExternalId
-        .get(expectedRes.personExternalId)
+        .get(res.personExternalId)
         ?.get(oppId),
     ).toBeInstanceOf(UsMeSCCPEligibilityReport);
   });
 
-  test("fails", async () => {
-    await expect(
-      store.populateEligibilityReportByResidentId(
-        "does-not-exist",
-        oppId,
-        config,
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[Error: Missing data for resident does-not-exist in US_ME]`,
+  test("fails if config is missing", () => {
+    store.config.incarcerationOpportunities = {};
+
+    expect(() =>
+      store.populateEligibilityReportFromData(oppId, res, opp),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[Error: Opportunity usMeSCCP is not configured]`,
     );
   });
 
-  test("populates its dependencies if needed", async () => {
-    vi.spyOn(store, "populateResidentById");
-    vi.spyOn(store, "populateOpportunityRecordByResidentId");
+  test("does not recreate if already populated", () => {
+    store.populateEligibilityReportFromData(oppId, res, opp);
 
-    await store.populateEligibilityReportByResidentId(
-      expectedRes.personExternalId,
-      oppId,
-      config,
-    );
-
-    expect(store.populateResidentById).toHaveBeenCalledExactlyOnceWith(
-      expectedRes.personExternalId,
-    );
-    expect(
-      store.populateOpportunityRecordByResidentId,
-    ).toHaveBeenCalledExactlyOnceWith(expectedRes.personExternalId, oppId);
-  });
-
-  test("does not recreate if already populated", async () => {
-    vi.spyOn(store, "populateResidentById");
-    vi.spyOn(store, "populateOpportunityRecordByResidentId");
-
-    await store.populateEligibilityReportByResidentId(
-      expectedRes.personExternalId,
-      oppId,
-      config,
-    );
     const firstReport = store.residentEligibilityReportsByExternalId
-      .get(expectedRes.personExternalId)
+      .get(res.personExternalId)
       ?.get(oppId);
     // sanity check
     expect(firstReport).toBeDefined();
 
     // populate again
-    await store.populateEligibilityReportByResidentId(
-      expectedRes.personExternalId,
-      oppId,
-      config,
-    );
+    store.populateEligibilityReportFromData(oppId, res, opp);
 
     // report has not changed
     const currentReport = store.residentEligibilityReportsByExternalId
-      .get(expectedRes.personExternalId)
+      .get(res.personExternalId)
       ?.get(oppId);
     expect(currentReport).toBe(firstReport);
-
-    // dependencies were not repopulated
-    expect(store.populateResidentById).toHaveBeenCalledOnce();
-    expect(store.populateOpportunityRecordByResidentId).toHaveBeenCalledOnce();
   });
 });

@@ -20,7 +20,7 @@ import { keyBy } from "lodash";
 import { configure, set } from "mobx";
 
 import { isDemoMode } from "~client-env-utils";
-import { outputFixture, outputFixtureArray, usMeResidents } from "~datatypes";
+import { outputFixtureArray, usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
@@ -49,11 +49,7 @@ beforeEach(() => {
   });
 
   residentsStore = new ResidentsStore(rootStore, residentsConfigByState.US_ME);
-  presenter = new ResidentsSearchPresenter(
-    residentsStore,
-    rootStore.uiStore,
-    undefined,
-  );
+  presenter = new ResidentsSearchPresenter(residentsStore, rootStore.uiStore);
 });
 
 afterEach(() => {
@@ -92,22 +88,6 @@ describe("hydration", () => {
       ["facilityId", "==", "MOUNTAIN VIEW CORRECTIONAL FACILITY"],
     ]);
   });
-});
-
-test("with active resident", async () => {
-  vi.spyOn(residentsStore.userStore, "hasPermission").mockReturnValue(true);
-
-  const expectedResident = outputFixture(usMeResidents[2]);
-
-  presenter = new ResidentsSearchPresenter(
-    residentsStore,
-    rootStore.uiStore,
-    expectedResident,
-  );
-
-  await presenter.hydrate();
-
-  expect(presenter.defaultOption?.value).toEqual(expectedResident);
 });
 
 describe("facility filter", () => {

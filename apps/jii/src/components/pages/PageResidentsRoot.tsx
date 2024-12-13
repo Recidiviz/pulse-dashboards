@@ -28,7 +28,7 @@ import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageResidentsRoot = observer(function PageResidentsRoot() {
   const rootStore = useRootStore();
-  const { stateSlug } = useTypedParams(State.Resident.Eligibility);
+  const { stateSlug } = useTypedParams(State);
 
   return (
     <RedirectIfLoggedOut

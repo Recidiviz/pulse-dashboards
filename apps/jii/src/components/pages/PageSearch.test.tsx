@@ -46,7 +46,6 @@ beforeEach(async () => {
   vi.mocked(useResidentsContext).mockReturnValue({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     residentsStore: rootStore.residentsStore!,
-    activeResident: undefined,
   });
   vi.mocked(useTypedParams).mockReturnValue({ stateSlug: "maine" });
 });

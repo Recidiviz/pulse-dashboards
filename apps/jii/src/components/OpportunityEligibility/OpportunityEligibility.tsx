@@ -22,8 +22,10 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
+import { ResidentRecord } from "~datatypes";
+
 import type { ResidentsStore } from "../../datastores/ResidentsStore";
-import { ResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
+import { OpportunityData } from "../SingleResidentHydrator/context";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { AdditionalSection } from "./AdditionalSection";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
@@ -88,16 +90,14 @@ const OpportunityEligibilityWithPresenter: FC<{
   );
 });
 
-export const OpportunityEligibility: FC<
-  ResidentOpportunityContext & {
-    residentPseudoId?: string;
-    residentsStore: ResidentsStore;
-  }
-> = observer(function OpportunityEligibility({
+export const OpportunityEligibility: FC<{
+  residentsStore: ResidentsStore;
+  resident: ResidentRecord["output"];
+  opportunity: OpportunityData;
+}> = observer(function OpportunityEligibility({
   residentsStore,
-  opportunityConfig,
-  eligibilityReport,
-  residentPseudoId,
+  opportunity: { opportunityConfig, eligibilityReport },
+  resident,
 }) {
   return (
     <OpportunityEligibilityWithPresenter
@@ -106,7 +106,7 @@ export const OpportunityEligibility: FC<
           residentsStore,
           opportunityConfig,
           eligibilityReport,
-          residentPseudoId,
+          resident.pseudonymizedId,
         )
       }
     />

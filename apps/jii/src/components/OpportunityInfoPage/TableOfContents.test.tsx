@@ -56,6 +56,7 @@ test("generates links to headings in page body", async () => {
           stateSlug: "maine",
           opportunitySlug: oppConfig.urlSlug,
           pageSlug: oppConfig.requirements.fullPage.urlSlug,
+          personPseudoId: ineligibleResident.pseudonymizedId,
         }),
       ]}
     >
@@ -69,25 +70,26 @@ test("generates links to headings in page body", async () => {
 
   expect(await format(links?.outerHTML ?? "", { parser: "html" }))
     .toMatchInlineSnapshot(`
-    "<ol>
-      <li>
-        <a href="/maine/eligibility/sccp/requirements#how-do-i-qualify-for-sccp"
-          >How do I qualify for SCCP?</a
-        >
-      </li>
-      <li>
-        <a
-          href="/maine/eligibility/sccp/requirements#how-is-my-current-release-date-calculated"
-          >How is my Current Release Date calculated?</a
-        >
-      </li>
-      <li>
-        <a
-          href="/maine/eligibility/sccp/requirements#what-is-a-12-time-or-23-time-date-how-are-those-calculated"
-          >What is a 1/2 Time or 2/3 Time Date? How are those calculated?</a
-        >
-      </li>
-    </ol>
-    "
-  `);
+      "<ol>
+        <li>
+          <a
+            href="/maine/anonres999/eligibility/sccp/requirements#how-do-i-qualify-for-sccp"
+            >How do I qualify for SCCP?</a
+          >
+        </li>
+        <li>
+          <a
+            href="/maine/anonres999/eligibility/sccp/requirements#how-is-my-current-release-date-calculated"
+            >How is my Current Release Date calculated?</a
+          >
+        </li>
+        <li>
+          <a
+            href="/maine/anonres999/eligibility/sccp/requirements#what-is-a-12-time-or-23-time-date-how-are-those-calculated"
+            >What is a 1/2 Time or 2/3 Time Date? How are those calculated?</a
+          >
+        </li>
+      </ol>
+      "
+    `);
 });

@@ -21,14 +21,12 @@ import { ResidentsConfig } from "../../configs/types";
 import { UserStore } from "../../datastores/UserStore";
 import { State } from "../../routes/routes";
 import { RouteParams } from "../../routes/utils";
-import { ResidentsContext } from "../ResidentsHydrator/context";
 
 export class NavigationMenuPresenter {
   constructor(
     private config: ResidentsConfig,
     private userStore: UserStore,
     private residentRouteParams: RouteParams<typeof State.Resident>,
-    private activeResident: ResidentsContext["activeResident"],
   ) {
     makeAutoObservable(this);
   }
@@ -45,18 +43,15 @@ export class NavigationMenuPresenter {
       });
     }
 
-    // these links will just be broken without a resident active
-    if (this.activeResident) {
-      links.push(
-        ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
-          text: c.shortName,
-          url: State.Resident.Eligibility.Opportunity.buildPath({
-            ...this.residentRouteParams,
-            opportunitySlug: c.urlSlug,
-          }),
-        })),
-      );
-    }
+    links.push(
+      ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
+        text: c.shortName,
+        url: State.Resident.Eligibility.Opportunity.buildPath({
+          ...this.residentRouteParams,
+          opportunitySlug: c.urlSlug,
+        }),
+      })),
+    );
 
     return links;
   }
