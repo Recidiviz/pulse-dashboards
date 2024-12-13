@@ -732,6 +732,10 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "Warrant", value: "WARRANT" },
       { label: "ICOTS", value: "INTERSTATE_COMPACT" },
       { label: "Other", value: "OTHER" },
+      { label: "Primary", value: "6P1" },
+      { label: "Secondary", value: "6P2" },
+      { label: "Intermediate", value: "6P3" },
+      { label: "Transitional", value: "6P4" },
       { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
