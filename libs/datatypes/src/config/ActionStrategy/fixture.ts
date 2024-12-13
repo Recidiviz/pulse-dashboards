@@ -36,6 +36,7 @@ export const rawActionStrategyFixture: RawActionStrategy = {
     ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_60_PERC_OUTLIERS,
   [supervisionOfficerSupervisorsFixture[2].pseudonymizedId]:
     ACTION_STRATEGY_TYPE.enum.ACTION_STRATEGY_60_PERC_OUTLIERS,
+  [supervisionOfficerSupervisorsFixture[3].pseudonymizedId]: null,
 };
 
 export const actionStrategyFixture = actionStrategySchema.parse(

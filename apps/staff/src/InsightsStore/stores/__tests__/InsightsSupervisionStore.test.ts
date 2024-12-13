@@ -721,6 +721,7 @@ test("hydrate actionStrategies", async () => {
   expect(store.actionStrategies).toMatchInlineSnapshot(`
     {
       "hashed-agonzalez123": "ACTION_STRATEGY_60_PERC_OUTLIERS",
+      "hashed-cthomas321": null,
       "hashed-rsmith789": "ACTION_STRATEGY_60_PERC_OUTLIERS",
       "hashed-so1": "ACTION_STRATEGY_OUTLIER",
       "hashed-so3": "ACTION_STRATEGY_OUTLIER_ABSCONSION",
