@@ -106,9 +106,9 @@ export class FormStore {
     isRequired?: boolean,
     inputValidator?: (value: string) => boolean,
   ) {
-    const isValid = this.validate(key, value, isRequired, inputValidator);
+    this.validate(key, value, isRequired, inputValidator);
 
-    if (isValid) {
+    if (!this.errors[key]?.inputError) {
       this.formUpdates[key] = value;
     }
 

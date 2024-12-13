@@ -102,7 +102,8 @@ export class CaseStore {
     isSexOffense?: boolean | null,
     isViolentOffense?: boolean | null,
   ): Promise<Insight | undefined> {
-    if (!this.activeCaseId || !offense || !lsirScore) return;
+    if (!this.activeCaseId || !offense || (lsirScore !== 0 && !lsirScore))
+      return;
 
     const currentCase = this.caseDetailsById[this.activeCaseId];
     const gender = currentCase.client?.gender;

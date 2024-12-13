@@ -52,30 +52,42 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
     rollupOffenseName !== insight.offense?.name;
 
   const updateLsirScore = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    setInputValue(e.target.value.trim());
     form.updateForm(
       LSIR_SCORE_KEY,
-      e.target.value ? Number(e.target.value) : null,
+      e.target.value.trim() ? Number(e.target.value) : null,
       isRequired,
       isValidLsirScore,
     );
-  };
 
-  /** Fetches insights when LSI-R score changes to display rollup text under the LSI-R score field  */
-  useEffect(() => {
+    /** Fetches insights when LSI-R score changes to display rollup text under the LSI-R score field  */
     caseStore.getInsight(
       form.updates[OFFENSE_KEY] ?? caseStore.caseAttributes.offense,
-      form.hasError ? undefined : Number(inputValue),
-      caseAttributes.isCurrentOffenseSexual,
-      caseAttributes.isCurrentOffenseViolent,
+      form.hasError ? undefined : Number(e.target.value.trim()),
+      form.updates["isCurrentOffenseSexual"] ??
+        caseAttributes.isCurrentOffenseSexual,
+      form.updates["isCurrentOffenseViolent"] ??
+        caseAttributes.isCurrentOffenseViolent,
     );
-  }, [inputValue, caseStore, caseAttributes]);
+  };
 
   /** Validate previously saved LSI-R score */
   useEffect(() => {
     form.validate(LSIR_SCORE_KEY, prevLsirScore, isRequired, isValidLsirScore);
     return () => form.resetErrors();
   }, [prevLsirScore, isRequired]);
+
+  /** Fetch insights on previously saved values */
+  useEffect(() => {
+    caseStore.getInsight(
+      caseStore.caseAttributes.offense,
+      caseAttributes?.lsirScore ?? undefined,
+      caseAttributes.isCurrentOffenseSexual,
+      caseAttributes.isCurrentOffenseViolent,
+    );
+    // We only need to call this once on load to update/clear previously fetched insights
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

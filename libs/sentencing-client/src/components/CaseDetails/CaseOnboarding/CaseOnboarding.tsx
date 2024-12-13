@@ -57,6 +57,7 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
     const goToPrevTopic = () => {
       if (currentTopicIndex === 0) {
         navigateToDashboard();
+        form.resetUpdates();
       } else {
         saveAttributes(form.updates);
       }

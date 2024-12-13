@@ -65,7 +65,9 @@ function PriorIncarcerationOrSupervisionField({
 
       {showNestedFields && (
         <Styled.NestedWrapper>
-          {nestedFields?.map(({ FieldComponent }) => <FieldComponent />)}
+          {nestedFields?.map(({ FieldComponent }) => (
+            <FieldComponent key={FieldComponent.displayName} />
+          ))}
         </Styled.NestedWrapper>
       )}
     </>

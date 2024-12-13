@@ -23,6 +23,7 @@ import { components, MenuProps, OptionProps } from "react-select";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import {
+  LSIR_SCORE_KEY,
   OFFENSE_KEY,
   SEX_OFFENSE_KEY,
   VIOLENT_OFFENSE_KEY,
@@ -66,22 +67,49 @@ function OffenseField({ isRequired }: FormFieldProps) {
 
     setSelectValue(option);
     form.updateForm(OFFENSE_KEY, option.value, isRequired);
+
+    /** Fetches insights when offense changes to display rollup text under the LSI-R score field  */
+    caseStore.getInsight(
+      String(option.value),
+      form.updates[LSIR_SCORE_KEY] ??
+        caseStore.caseAttributes.lsirScore ??
+        undefined,
+      isViolentSexOffense.isSexOffense,
+      isViolentSexOffense.isViolentOffense,
+    );
   };
 
   const toggleViolentSexOffenseSelection = (
     key: typeof VIOLENT_OFFENSE_KEY | typeof SEX_OFFENSE_KEY,
   ) => {
-    let value = false;
+    let violentOffenseValue = isViolentSexOffense.isViolentOffense;
+    let sexOffenseValue = isViolentSexOffense.isSexOffense;
 
     if (key === VIOLENT_OFFENSE_KEY) {
-      value = !isViolentSexOffense.isViolentOffense;
-      setIsViolentSexOffense((prev) => ({ ...prev, isViolentOffense: value }));
+      violentOffenseValue = !isViolentSexOffense.isViolentOffense;
+      setIsViolentSexOffense((prev) => ({
+        ...prev,
+        isViolentOffense: violentOffenseValue,
+      }));
+      form.updateForm(key, violentOffenseValue);
     } else if (key === SEX_OFFENSE_KEY) {
-      value = !isViolentSexOffense.isSexOffense;
-      setIsViolentSexOffense((prev) => ({ ...prev, isSexOffense: value }));
+      sexOffenseValue = !isViolentSexOffense.isSexOffense;
+      setIsViolentSexOffense((prev) => ({
+        ...prev,
+        isSexOffense: sexOffenseValue,
+      }));
+      form.updateForm(key, sexOffenseValue);
     }
 
-    form.updateForm(key, value);
+    /** Fetches insights when violent/sex offense changes to display rollup text under the LSI-R score field  */
+    caseStore.getInsight(
+      selectValue?.value ? String(selectValue?.value) : undefined,
+      form.updates[LSIR_SCORE_KEY] ??
+        caseStore.caseAttributes.lsirScore ??
+        undefined,
+      sexOffenseValue,
+      violentOffenseValue,
+    );
   };
 
   const customFilter = (option: SelectOption, inputValue: string | null) => {
@@ -128,22 +156,23 @@ function OffenseField({ isRequired }: FormFieldProps) {
     );
   };
 
-  /** Fetches insights when offense changes to display rollup text under the LSI-R score field  */
-  useEffect(() => {
-    const offenseName = String(selectValue?.value);
-    caseStore.getInsight(
-      offenseName,
-      caseStore.caseAttributes.lsirScore ?? undefined,
-      isViolentSexOffense.isSexOffense,
-      isViolentSexOffense.isViolentOffense,
-    );
-  }, [selectValue, caseStore, isViolentSexOffense]);
-
   /** Validate previously saved offense field */
   useEffect(() => {
     form.validate(OFFENSE_KEY, caseAttributes?.offense, isRequired);
     return () => form.resetErrors();
   }, [caseAttributes, isRequired]);
+
+  /** Fetch insights on previously saved values */
+  useEffect(() => {
+    caseStore.getInsight(
+      caseAttributes?.offense,
+      caseStore.caseAttributes.lsirScore ?? undefined,
+      isViolentSexOffense.isSexOffense,
+      isViolentSexOffense.isViolentOffense,
+    );
+    // We only need to call this once on load to update/clear previously fetched insights
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
