@@ -22,7 +22,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
 import { pluralize, toTitleCase } from "../../utils";
@@ -74,6 +77,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 }) {
   const { isLaptop } = useIsMobile(true);
   const { openModal } = useInsightsActionStrategyModal();
+  const { actionStrategies } = useFeatureVariants();
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
@@ -153,12 +157,14 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       </InsightsTooltip>
       . Rates for the metrics below are calculated for the time period:{" "}
       {timePeriod}.{" "}
-      <StyledLink
-        to="#"
-        onClick={() => openModal({ showActionStrategyList: true })}
-      >
-        See action strategies.
-      </StyledLink>
+      {actionStrategies && (
+        <StyledLink
+          to="#"
+          onClick={() => openModal({ showActionStrategyList: true })}
+        >
+          See action strategies.
+        </StyledLink>
+      )}
     </>
   );
 
