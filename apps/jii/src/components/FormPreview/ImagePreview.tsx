@@ -137,9 +137,8 @@ const ImagePreviewWithPresenter: FC<{ presenter: ImagePreviewPresenter }> =
 
 export const ImagePreview: FC = withErrorBoundary(
   observer(function ImagePreview() {
-    const {
-      opportunity: { opportunityId, opportunityConfig },
-    } = useResidentOpportunityContext();
+    const { opportunityId, opportunityConfig } =
+      useResidentOpportunityContext();
 
     return (
       <ImagePreviewWithPresenter

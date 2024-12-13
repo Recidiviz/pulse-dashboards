@@ -14,7 +14,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/load_env_files.sh env_case_notes_server env_staging_case_notes_server env_prod_case_notes_server env_test_case_notes_server env_demo_case_notes_server",
+        "command": "../../tools/load_env_files.sh --env env_case_notes_server --env_staging env_staging_case_notes_server --env_prod env_prod_case_notes_server --env_test env_test_case_notes_server --env_demo env_demo_case_notes_server",
         "cwd": "{projectRoot}"
       }
     },

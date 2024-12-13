@@ -23,7 +23,7 @@ import { EmailVerification, State } from "../../routes/routes";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { PageLanding } from "./PageLanding";
 
-export const PageHome = observer(function PageHome() {
+export const PageHome = observer(function AppRoot() {
   const {
     userStore: { authClient },
     stateCode,
@@ -32,7 +32,7 @@ export const PageHome = observer(function PageHome() {
   if (authClient.isAuthorized)
     return (
       <Navigate
-        to={State.buildPath({
+        to={State.Resident.Eligibility.buildPath({
           stateSlug: stateConfigsByStateCode[stateCode].urlSlug,
         })}
         replace

@@ -179,8 +179,6 @@ describe("protected routes", () => {
 
   const residentFixture = outputFixture(usMeResidents[0]);
 
-  const personPseudoId = residentFixture.pseudonymizedId;
-
   beforeEach(() => {
     rootStore = new RootStore();
     vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
@@ -192,7 +190,7 @@ describe("protected routes", () => {
     ).mockReturnValue({
       stateCode: "US_ME",
       externalId: residentFixture.personExternalId,
-      pseudonymizedId: personPseudoId,
+      pseudonymizedId: residentFixture.pseudonymizedId,
       intercomUserHash: "abc123",
     });
   });
@@ -278,7 +276,6 @@ describe("protected routes", () => {
             routes.State.Resident.Eligibility.Opportunity.buildPath({
               opportunitySlug: sccpConfig.urlSlug,
               stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
-              personPseudoId,
             }),
           ]}
         >
@@ -332,7 +329,6 @@ describe("protected routes", () => {
             routes.State.Resident.Eligibility.Opportunity.InfoPage.buildPath({
               opportunitySlug: sccpConfig.urlSlug,
               stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
-              personPseudoId,
               pageSlug: sccpConfig.requirements.fullPage.urlSlug,
             }),
           ]}
@@ -378,7 +374,6 @@ describe("protected routes", () => {
                 opportunitySlug: "sccp",
                 stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
                 pageSlug: pageConfig.urlSlug,
-                personPseudoId,
               }),
             ]}
           >

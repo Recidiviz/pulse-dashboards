@@ -48,7 +48,6 @@ import { PageSearch } from "../pages/PageSearch";
 import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { ResidentLayoutRoute } from "../ResidentLayoutRoute/ResidentLayoutRoute";
-import { SingleResidentHydrator } from "../SingleResidentHydrator/SingleResidentHydrator";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
 const StyledApp = styled.div`
@@ -84,31 +83,30 @@ export function App() {
               <Route path={routes.State.path}>
                 <Route index element={<PageState />} />
                 <Route element={<PageResidentsRoot />}>
-                  <Route
-                    path={routes.State.Resident.path}
-                    element={<SingleResidentHydrator />}
-                  >
-                    <Route element={<ResidentLayoutRoute />}>
-                      <Route path={routes.State.Resident.Eligibility.path}>
-                        <Route index element={<PageEligibilityHome />} />
+                  <Route element={<ResidentLayoutRoute />}>
+                    {/* relative paths required in this subtree 
+                    because of an optional param in Eligibility; 
+                    see https://github.com/remix-run/react-router/issues/9925 */}
+                    <Route path={routes.State.Resident.Eligibility.path}>
+                      <Route index element={<PageEligibilityHome />} />
+                      <Route
+                        path={
+                          routes.State.Resident.Eligibility.$.Opportunity
+                            .relativePath
+                        }
+                        element={<PageOpportunityEligibility />}
+                      >
+                        <Route
+                          index
+                          element={<PageOpportunityEligibilityHome />}
+                        />
                         <Route
                           path={
-                            routes.State.Resident.Eligibility.Opportunity.path
+                            routes.State.Resident.Eligibility.Opportunity.$
+                              .InfoPage.relativePath
                           }
-                          element={<PageOpportunityEligibility />}
-                        >
-                          <Route
-                            index
-                            element={<PageOpportunityEligibilityHome />}
-                          />
-                          <Route
-                            path={
-                              routes.State.Resident.Eligibility.Opportunity
-                                .InfoPage.path
-                            }
-                            element={<OpportunityInfoPage />}
-                          />
-                        </Route>
+                          element={<OpportunityInfoPage />}
+                        />
                       </Route>
                     </Route>
                   </Route>

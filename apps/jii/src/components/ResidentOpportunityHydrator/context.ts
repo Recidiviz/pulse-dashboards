@@ -17,11 +17,19 @@
 
 import { createContext } from "react";
 
+import {
+  IncarcerationOpportunityId,
+  OpportunityConfig,
+} from "../../configs/types";
+import { EligibilityReport } from "../../models/EligibilityReport/interface";
 import { useRequiredContext } from "../../utils/useRequiredContext";
-import { OpportunityData } from "../SingleResidentHydrator/context";
+import { ResidentsContext } from "../ResidentsHydrator/context";
 
 export type ResidentOpportunityContext = {
-  opportunity: OpportunityData;
+  activeResident: NonNullable<ResidentsContext["activeResident"]>;
+  opportunityConfig: OpportunityConfig;
+  opportunityId: IncarcerationOpportunityId;
+  eligibilityReport: EligibilityReport;
 };
 
 const context = createContext<ResidentOpportunityContext | undefined>(

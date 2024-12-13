@@ -30,11 +30,11 @@ import { mentalHealthDiagnoses, NONE_OPTION, OTHER_OPTION } from "../constants";
 import { Dropdown } from "../Elements/Dropdown";
 import { TextArea } from "../Elements/TextArea";
 import { form } from "../FormStore";
-import { SelectOption } from "../types";
+import { FormFieldProps, SelectOption } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseMentalHealthDiagnosesValue } from "../utils";
 
-function MentalHealthDiagnosisField() {
+function MentalHealthDiagnosisField({ isRequired }: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
   const options = Object.values(mentalHealthDiagnoses).map((diagnosis) => ({
@@ -115,12 +115,18 @@ function MentalHealthDiagnosisField() {
 
   const updateOtherTextArea = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setOtherInputValue(e.target.value);
-    form.updateForm(OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY, e.target.value);
+    form.updateForm(
+      OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY,
+      e.target.value,
+      isRequired,
+    );
   };
 
   return (
     <>
-      <Styled.InputLabel>Mental health diagnoses</Styled.InputLabel>
+      <Styled.InputLabel>
+        Mental health diagnoses {isRequired && <span>Required*</span>}
+      </Styled.InputLabel>
 
       <Dropdown
         value={multiSelectValues}

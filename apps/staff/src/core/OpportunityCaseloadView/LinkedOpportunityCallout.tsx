@@ -28,7 +28,7 @@ const Container = styled.section`
   color: ${palette.pine2};
 
   background-color: #fff5f5;
-  border-color: ${palette.signal.error};
+  border-color: #e00e00;
   border-style: solid;
   border-width: 0 0 0 ${rem(spacing.xs)};
 

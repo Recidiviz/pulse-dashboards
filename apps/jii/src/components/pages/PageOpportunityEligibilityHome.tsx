@@ -16,20 +16,24 @@
 // =============================================================================
 
 import { FC, memo } from "react";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { State } from "../../routes/routes";
 import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { useResidentsContext } from "../ResidentsHydrator/context";
-import { useSingleResidentContext } from "../SingleResidentHydrator/context";
 
 export const PageOpportunityEligibilityHome: FC = memo(
   function PageOpportunityEligibilityHome() {
+    const { personPseudoId } = useTypedParams(State.Resident.Eligibility);
     const { residentsStore } = useResidentsContext();
-    const { resident } = useSingleResidentContext();
-    const { opportunity } = useResidentOpportunityContext();
 
     return (
-      <OpportunityEligibility {...{ resident, residentsStore, opportunity }} />
+      <OpportunityEligibility
+        {...useResidentOpportunityContext()}
+        residentPseudoId={personPseudoId}
+        residentsStore={residentsStore}
+      />
     );
   },
 );

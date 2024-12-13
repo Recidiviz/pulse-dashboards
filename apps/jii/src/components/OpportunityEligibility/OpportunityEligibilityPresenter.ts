@@ -28,7 +28,7 @@ export class OpportunityEligibilityPresenter {
     private residentsStore: ResidentsStore,
     private config: OpportunityConfig,
     private eligibilityReport: EligibilityReport,
-    private residentPseudoId: string,
+    private residentPseudoId?: string,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
   }

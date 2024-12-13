@@ -23,13 +23,13 @@ import * as Styled from "../../CaseDetails.styles";
 import { REPORT_TYPE_KEY } from "../../constants";
 import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
-import { SelectOption } from "../types";
+import { FormFieldProps, SelectOption } from "../types";
 import { useFormField } from "../useFormFields";
 import { parseReportTypeValue } from "../utils";
 
 const reportTypeOptions = Object.values(ReportType);
 
-function ReportTypeField() {
+function ReportTypeField({ isRequired }: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
   const options = reportTypeOptions.map((selection) => ({
@@ -48,12 +48,14 @@ function ReportTypeField() {
     if (!option) return;
 
     setSelectValue(option);
-    form.updateForm(REPORT_TYPE_KEY, option.value);
+    form.updateForm(REPORT_TYPE_KEY, option.value, isRequired);
   };
 
   return (
     <>
-      <Styled.InputLabel>Report Type</Styled.InputLabel>
+      <Styled.InputLabel>
+        Report Type {isRequired && <span>Required*</span>}
+      </Styled.InputLabel>
 
       <Dropdown
         value={selectValue?.value ? selectValue : null}

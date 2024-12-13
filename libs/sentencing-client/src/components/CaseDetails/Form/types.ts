@@ -24,6 +24,7 @@ export type FormField = {
 
 export type FormFieldProps = {
   nestedFields?: FormField[];
+  isRequired?: boolean;
 };
 
 export type FormFieldWithNestedFields = FormField &
@@ -51,3 +52,13 @@ export type SelectOption = {
   label?: string | null;
   value?: FormValue;
 };
+
+export type Errors = {
+  emptyRequiredField: boolean;
+  inputError: boolean;
+};
+
+export enum ErrorType {
+  EmptyRequiredField = "emptyRequiredField",
+  InputError = "inputError",
+}

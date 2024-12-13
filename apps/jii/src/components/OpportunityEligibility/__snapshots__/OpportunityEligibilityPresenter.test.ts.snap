@@ -18,7 +18,7 @@ exports[`eligible resident > additional sections content 1`] = `
 ",
     "heading": "Quick facts",
     "linkText": "Learn more about how the program works",
-    "linkUrl": "/maine/anonres001/eligibility/sccp/about",
+    "linkUrl": "/maine/eligibility/sccp/about",
   },
   {
     "body": "If you are eligible for SCCP, your case manager will give you an <FormPreview linkText="application packet" /> to fill out, which includes several parts:
@@ -36,7 +36,7 @@ exports[`eligible resident > additional sections content 1`] = `
 ",
     "heading": "How to apply",
     "linkText": "Learn more about the application process",
-    "linkUrl": "/maine/anonres001/eligibility/sccp/application-process",
+    "linkUrl": "/maine/eligibility/sccp/application-process",
   },
 ]
 `;
@@ -69,7 +69,7 @@ exports[`ineligible resident > additional sections content 1`] = `
 ",
     "heading": "Quick facts",
     "linkText": "Learn more about how the program works",
-    "linkUrl": "/maine/anonres999/eligibility/sccp/about",
+    "linkUrl": "/maine/eligibility/sccp/about",
   },
 ]
 `;

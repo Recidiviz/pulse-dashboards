@@ -53,7 +53,6 @@ describe("eligible resident", () => {
         opportunityConfig,
         outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
       ),
-      eligibleResident.pseudonymizedId,
     );
   });
 
@@ -63,57 +62,57 @@ describe("eligible resident", () => {
 
   test("requirements content", () => {
     expect(presenter.requirementsContent).toMatchInlineSnapshot(`
-      {
-        "heading": "Requirements",
-        "linkText": "Get details about each requirement",
-        "linkUrl": "/maine/anonres001/eligibility/sccp/requirements",
-        "sections": [
-          {
-            "icon": "Success",
-            "label": "Requirements you **have** met",
-            "requirements": [
-              {
-                "criterion": "Served 2/3 of your sentence",
-              },
-              {
-                "criterion": "No Class A or B discipline in past 90 days",
-              },
-              {
-                "criterion": "Current custody level is Community",
-              },
-              {
-                "criterion": "No unresolved detainers, warrants or pending charges",
-              },
-            ],
-          },
-          {
-            "icon": "CloseOutlined",
-            "label": "Requirements you **have not** met yet",
-            "requirements": [
-              {
-                "criterion": "Fewer than 30 months remaining on your sentence",
-                "ineligibleReason": "You'll meet this requirement on May 16, 2022",
-              },
-            ],
-          },
-          {
-            "icon": "ArrowCircled",
-            "label": "Ask your case manager if you’ve met these requirements",
-            "requirements": [
-              {
-                "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
-              },
-              {
-                "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
-              },
-              {
-                "criterion": "Completing required programs and following your case plan",
-              },
-            ],
-          },
-        ],
-      }
-    `);
+        {
+          "heading": "Requirements",
+          "linkText": "Get details about each requirement",
+          "linkUrl": "/maine/eligibility/sccp/requirements",
+          "sections": [
+            {
+              "icon": "Success",
+              "label": "Requirements you **have** met",
+              "requirements": [
+                {
+                  "criterion": "Served 2/3 of your sentence",
+                },
+                {
+                  "criterion": "No Class A or B discipline in past 90 days",
+                },
+                {
+                  "criterion": "Current custody level is Community",
+                },
+                {
+                  "criterion": "No unresolved detainers, warrants or pending charges",
+                },
+              ],
+            },
+            {
+              "icon": "CloseOutlined",
+              "label": "Requirements you **have not** met yet",
+              "requirements": [
+                {
+                  "criterion": "Fewer than 30 months remaining on your sentence",
+                  "ineligibleReason": "You'll meet this requirement on May 16, 2022",
+                },
+              ],
+            },
+            {
+              "icon": "ArrowCircled",
+              "label": "Ask your case manager if you’ve met these requirements",
+              "requirements": [
+                {
+                  "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
+                },
+                {
+                  "criterion": "Have a plan to support yourself –  a job, school, Social Security, or disability benefits",
+                },
+                {
+                  "criterion": "Completing required programs and following your case plan",
+                },
+              ],
+            },
+          ],
+        }
+      `);
   });
 
   test("additional sections content", () => {
@@ -132,7 +131,6 @@ describe("ineligible resident", () => {
         opportunityConfig,
         undefined,
       ),
-      ineligibleResident.pseudonymizedId,
     );
   });
 

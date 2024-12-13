@@ -27,7 +27,7 @@ export const ReturnToPathFragment = route("", {
 
 export const State = route(":stateSlug", types(ReturnToPathFragment), {
   Resident: route(
-    ":personPseudoId",
+    ":personPseudoId?",
     {},
     {
       Eligibility: route(

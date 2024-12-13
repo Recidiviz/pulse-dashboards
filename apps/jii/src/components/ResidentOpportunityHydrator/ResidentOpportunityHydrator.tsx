@@ -15,27 +15,57 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import { FC, memo } from "react";
 import { Outlet } from "react-router-dom";
 
-import { NotFound } from "../NotFound/NotFound";
-import { useSingleResidentContext } from "../SingleResidentHydrator/context";
+import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
+import { useResidentsContext } from "../ResidentsHydrator/context";
 import { ResidentOpportunityContextProvider } from "./context";
+import { ResidentOpportunityHydratorPresenter } from "./ResidentOpportunityHydratorPresenter";
+
+const ResidentOpportunityHydratorWithPresenter: FC<{
+  presenter: ResidentOpportunityHydratorPresenter;
+}> = observer(function ResidentOpportunityHydratorWithPresenter({ presenter }) {
+  const {
+    activeResident,
+    eligibilityReport,
+    opportunityConfig,
+    opportunityId,
+  } = presenter;
+
+  return (
+    <ResidentOpportunityContextProvider
+      value={{
+        activeResident,
+        eligibilityReport,
+        opportunityConfig,
+        opportunityId,
+      }}
+    >
+      <Outlet />
+    </ResidentOpportunityContextProvider>
+  );
+});
 
 export const ResidentOpportunityHydrator: FC<{
   opportunitySlug: string;
 }> = memo(function ResidentOpportunityHydrator({ opportunitySlug }) {
-  const { opportunities } = useSingleResidentContext();
+  const { residentsStore, activeResident } = useResidentsContext();
 
-  const opportunity = opportunities.find(
-    (oppData) => oppData.opportunityConfig.urlSlug === opportunitySlug,
+  if (!activeResident) {
+    throw new Error("Missing resident data");
+  }
+
+  const presenter = new ResidentOpportunityHydratorPresenter(
+    opportunitySlug,
+    residentsStore,
+    activeResident,
   );
 
-  if (!opportunity) return <NotFound />;
-
   return (
-    <ResidentOpportunityContextProvider value={{ opportunity }}>
-      <Outlet />
-    </ResidentOpportunityContextProvider>
+    <MainContentHydrator hydratable={presenter}>
+      <ResidentOpportunityHydratorWithPresenter presenter={presenter} />
+    </MainContentHydrator>
   );
 });

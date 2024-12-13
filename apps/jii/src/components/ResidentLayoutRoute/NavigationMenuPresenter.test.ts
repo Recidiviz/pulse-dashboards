@@ -39,7 +39,8 @@ beforeEach(() => {
   presenter = new NavigationMenuPresenter(
     residentsConfigByState.US_ME,
     userStore,
-    { stateSlug, personPseudoId: testResident.pseudonymizedId },
+    { stateSlug },
+    testResident,
   );
 });
 
@@ -72,7 +73,49 @@ test("links include search", () => {
   ).toBeDefined();
 });
 
-test("links to opportunities", () => {
+test("links to opportunities with active resident", () => {
+  expect(
+    presenter.links.find(
+      (l) =>
+        l.url ===
+        State.Resident.Eligibility.Opportunity.buildPath({
+          stateSlug,
+          opportunitySlug: "sccp",
+        }),
+    ),
+  ).toBeDefined();
+});
+
+test("no links to opportunities without active resident", () => {
+  presenter = new NavigationMenuPresenter(
+    residentsConfigByState.US_ME,
+    userStore,
+    { stateSlug },
+    undefined,
+  );
+
+  expect(
+    presenter.links.find(
+      (l) =>
+        l.url ===
+        State.Resident.Eligibility.Opportunity.buildPath({
+          stateSlug,
+          opportunitySlug: "sccp",
+        }),
+    ),
+  ).toBeUndefined();
+});
+
+test("opportunity links include person ID from URL", () => {
+  vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
+
+  presenter = new NavigationMenuPresenter(
+    residentsConfigByState.US_ME,
+    userStore,
+    { stateSlug, personPseudoId: testResident.pseudonymizedId },
+    testResident,
+  );
+
   expect(
     presenter.links.find(
       (l) =>

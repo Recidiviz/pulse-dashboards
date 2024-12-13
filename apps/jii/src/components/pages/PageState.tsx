@@ -29,24 +29,15 @@ export const PageState: FC = () => {
 
   try {
     if (userStore.authClient.isAuthorized) {
-      if (userStore.isAuthorizedForCurrentState) {
-        // known residents should be sent to their homepage
-        if (userStore.pseudonymizedId) {
-          return (
-            <Navigate
-              to={State.Resident.Eligibility.buildPath({
-                stateSlug,
-                personPseudoId: userStore.pseudonymizedId,
-              })}
-              replace
-            />
-          );
-        }
-
-        // if not a known resident, search is the only other fallback.
-        // if they don't have permission it will be handled by that page
-        return <Navigate to={State.Search.buildPath({ stateSlug })} />;
-      }
+      if (userStore.isAuthorizedForCurrentState)
+        return (
+          <Navigate
+            to={State.Resident.Eligibility.buildPath({
+              stateSlug,
+            })}
+            replace
+          />
+        );
     }
   } catch {
     // fall through

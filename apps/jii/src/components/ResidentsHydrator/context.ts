@@ -17,11 +17,14 @@
 
 import { createContext } from "react";
 
+import { ResidentRecord } from "~datatypes";
+
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { useRequiredContext } from "../../utils/useRequiredContext";
 
 export type ResidentsContext = {
   residentsStore: ResidentsStore;
+  activeResident: ResidentRecord["output"] | undefined;
 };
 
 const context = createContext<ResidentsContext | undefined>(undefined);

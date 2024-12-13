@@ -39,7 +39,7 @@ const MAX_DISPLAYED_CANDIDATES_PER_OPPORTUNITY = 3;
 
 const Container = styled.section`
   background-color: #fff5f5;
-  border-color: ${palette.signal.error};
+  border-color: #e00e00;
   border-style: solid;
   border-width: 0 0 0 ${rem(spacing.xs)};
 

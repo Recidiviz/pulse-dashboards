@@ -188,7 +188,7 @@ export const isValidLsirScore = (value: string): boolean => {
   const numberValue = Number(value);
   const isNumberWithinRange = numberValue >= min && numberValue <= max;
 
-  if (value && (isNaN(numberValue) || !isNumberWithinRange)) {
+  if (value === "" || isNaN(numberValue) || !isNumberWithinRange) {
     return false;
   }
 

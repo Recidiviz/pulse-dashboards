@@ -29,12 +29,13 @@ import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
  * Page layout that renders nested routes with resident navigation in header bar
  */
 export const ResidentLayoutRoute = observer(function ResidentLayoutRoute() {
-  const { residentsStore } = useResidentsContext();
+  const { residentsStore, activeResident } = useResidentsContext();
   const residentParams = useTypedParams(State.Resident);
   const navPresenter = new NavigationMenuPresenter(
     residentsStore.config,
     residentsStore.userStore,
     residentParams,
+    activeResident,
   );
 
   return (

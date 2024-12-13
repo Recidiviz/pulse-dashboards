@@ -23,19 +23,32 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { State } from "../../routes/routes";
 import { ErrorPageMainContent } from "../ErrorPage/ErrorPageMainContent";
+import { useResidentsContext } from "../ResidentsHydrator/context";
 
 export const PageEligibilityHome: FC = withErrorBoundary(
   observer(function PageEligibilityHome() {
-    // for convenience, while there is only one opp configured we skip the lookup step
-    return (
-      <Navigate
-        to={State.Resident.Eligibility.Opportunity.buildPath({
-          ...useTypedParams(State.Resident.Eligibility),
-          opportunitySlug: "sccp",
-        })}
-        replace
-      />
-    );
+    const { residentsStore, activeResident } = useResidentsContext();
+    const urlParams = useTypedParams(State.Resident.Eligibility);
+
+    const { hasPermission } = residentsStore.userStore;
+
+    if (activeResident) {
+      // for convenience, while there is only one opp configured we skip the lookup step
+      return (
+        <Navigate
+          to={State.Resident.Eligibility.Opportunity.buildPath({
+            ...urlParams,
+            opportunitySlug: "sccp",
+          })}
+          replace
+        />
+      );
+    }
+
+    if (hasPermission("enhanced"))
+      return <Navigate to={State.Search.buildPath(urlParams)} replace />;
+
+    throw new Error("No user ID specified for eligibility page");
   }),
   { fallback: ErrorPageMainContent },
 );
