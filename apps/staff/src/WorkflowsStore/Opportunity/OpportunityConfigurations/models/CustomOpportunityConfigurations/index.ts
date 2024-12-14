@@ -20,27 +20,18 @@ import { OpportunityType } from "~datatypes";
 import UserStore from "../../../../../RootStore/UserStore";
 import { IApiOpportunityConfiguration, OpportunityConfiguration } from "../..";
 import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl";
-import { UsAzOverdueForAcisDtpConfiguration } from "./UsAz/UsAzOverdueForAcisDtpConfiguration";
-import { UsAzOverdueForAcisTprConfiguration } from "./UsAz/UsAzOverdueForAcisTprConfiguration";
 import { UsAzReleaseToDTPConfiguration } from "./UsAz/UsAzReleaseToDTPConfiguration";
 import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
-import { UsCaSupervisionLevelDowngradeConfiguration } from "./UsCa/UsCaSupervisionLevelDowngradeConfiguration";
 import { LSUConfiguration } from "./UsId/LSUConfiguration";
 import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration";
-import { UsIdPastFTRD } from "./UsId/UsIdPastFTRDConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
-import { UsMeFurloughReleaseConfiguration } from "./UsMe/UsMeFurloughReleaseConfiguration";
-import { UsMeMediumTrusteeConfiguration } from "./UsMe/UsMeMediumTrusteeConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
-import { UsMeWorkReleaseConfiguration } from "./UsMe/UsMeWorkReleaseConfiguration";
-import { UsMiEarlyDischargeConfiguration } from "./UsMi/UsMiEarlyDischargeConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
-import { UsNdMinimumCustodyConfiguration } from "./UsNd/UsNdMinimumCustodyConfiguration";
 import { UsOrEarnedDischargeConfiguration } from "./UsOr/UsOrEarnedDischargeConfiguration";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
 import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
 
-const localCustomOpportunityConfigurations: Partial<
+const customOpportunityConfigurations: Partial<
   Record<OpportunityType, typeof ApiOpportunityConfiguration>
 > = {
   usMoOverdueRestrictiveHousingInitialHearing:
@@ -49,13 +40,8 @@ const localCustomOpportunityConfigurations: Partial<
     UsMoOverdueRestrictiveHousingConfiguration,
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingConfiguration,
-  pastFTRD: UsIdPastFTRD,
   usMeSCCP: UsMeSCCPConfiguration,
   usMeEarlyTermination: UsMeEarlyTerminationConfiguration,
-  usMeWorkRelease: UsMeWorkReleaseConfiguration,
-  usMeFurloughRelease: UsMeFurloughReleaseConfiguration,
-  usMeMediumTrustee: UsMeMediumTrusteeConfiguration,
-  usMiEarlyDischarge: UsMiEarlyDischargeConfiguration,
   usAzReleaseToTPR: UsAzReleaseToTPRConfiguration,
   usAzReleaseToDTP: UsAzReleaseToDTPConfiguration,
   usIdCRCResidentWorker: UsIdFacilitiesConfiguration,
@@ -63,25 +49,8 @@ const localCustomOpportunityConfigurations: Partial<
   usIdExpandedCRC: UsIdFacilitiesConfiguration,
   compliantReporting: CompliantReportingConfiguration,
   LSU: LSUConfiguration,
-};
-
-const adminPanelOnlyCustomOpportunityConfigurations: Partial<
-  Record<string, typeof ApiOpportunityConfiguration>
-> = {
-  usAzOverdueForACISDTP: UsAzOverdueForAcisDtpConfiguration,
-  usAzOverdueForACISTPR: UsAzOverdueForAcisTprConfiguration,
-  usNdATP: UsNdMinimumCustodyConfiguration,
-  usNdTransferToMinFacility: UsNdMinimumCustodyConfiguration,
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
   usOrEarnedDischarge: UsOrEarnedDischargeConfiguration,
-  usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeConfiguration,
-};
-
-const customOpportunityConfigurations: Partial<
-  Record<string, typeof ApiOpportunityConfiguration>
-> = {
-  ...localCustomOpportunityConfigurations,
-  ...adminPanelOnlyCustomOpportunityConfigurations,
 };
 
 export function apiOpportunityConfigurationFactory(

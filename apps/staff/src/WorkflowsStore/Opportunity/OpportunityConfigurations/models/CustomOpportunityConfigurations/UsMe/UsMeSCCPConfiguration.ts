@@ -18,24 +18,6 @@
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMeSCCPConfiguration extends ApiOpportunityConfiguration {
-  get nonOmsCriteria() {
-    return [
-      {
-        text: "Must have completed assigned core programs",
-        tooltip: "The resident must have completed assigned core programs",
-      },
-      {
-        text: "Must be currently case plan compliant",
-        tooltip: "The resident must be currently case plan compliant",
-      },
-      {
-        text: "Resident has a stable home to be released to",
-        tooltip:
-          "Suitable housing in the community may consist of: a. a home; b. a full-time treatment facility, such as a residential substance use disorder treatment facility or mental health facility; c. transitional housing that provides support services for targeted groups, e.g., veterans, domestic violence victims, persons with mental illness, persons with substance use disorder problems, etc.; d. temporary housing associated with education or vocational training or employment; e. a hospital or other appropriate care facility, such as a nursing facility, residential care facility or a facility that is a licensed hospice program pursuant to Title 22, Section 8622; or\n f. any other approved housing in the community.",
-      },
-    ];
-  }
-
   get supportsAlmostEligible() {
     return true;
   }

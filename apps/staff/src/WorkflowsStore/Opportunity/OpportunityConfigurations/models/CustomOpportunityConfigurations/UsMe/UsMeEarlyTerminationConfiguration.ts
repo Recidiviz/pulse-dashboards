@@ -18,21 +18,6 @@
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMeEarlyTerminationConfiguration extends ApiOpportunityConfiguration {
-  get nonOmsCriteria() {
-    return [
-      {
-        text: "Must have fulfilled all proactive conditions of probation",
-        tooltip:
-          "The Probation Officer shall determine whether the probationer has satisfactorily fulfilled all of the proactive conditions of his or her probation",
-      },
-      {
-        text: "Must have not engaged in conduct prohibited by conditions of probation",
-        tooltip:
-          "The Probation Officer shall determine whether the probationer has not engaged in conduct prohibited by his or her conditions of probation and in the opinion of the supervising Probation Officer continuation on probation would not benefit the community (including the victim, if any) or the probationer",
-      },
-    ];
-  }
-
   get supportsAlmostEligible() {
     return true;
   }

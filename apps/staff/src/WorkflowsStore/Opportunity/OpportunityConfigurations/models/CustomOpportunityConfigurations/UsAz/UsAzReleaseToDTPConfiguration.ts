@@ -17,99 +17,10 @@
 
 import { OpportunityType } from "~datatypes";
 
-import { OpportunityTab } from "../../../../types";
-import { UsAzTransitionProgramSubcategory } from "../../../../UsAz";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsAzReleaseToDTPConfiguration extends ApiOpportunityConfiguration {
-  get tabGroups() {
-    return {
-      "ELIGIBILITY STATUS": [
-        "Fast Trackers",
-        "Approved by Time Comp",
-        "Almost Eligible",
-        "Pending",
-      ],
-    } as const;
-  }
-
-  get nonOmsCriteriaHeader() {
-    return "Other Considerations";
-  }
-
-  get nonOmsCriteria() {
-    return [{ text: "Satisfactory progress with Corrections Plan" }];
-  }
-
-  get subcategoryHeadings(): Record<UsAzTransitionProgramSubcategory, string> {
-    return {
-      HOME_PLAN_IN_PROGRESS: "Home Plan in Progress",
-      AWAITING_HOME_PLAN_APPROVAL: "Awaiting Home Plan Approval",
-      AWAITING_RELEASE: "Awaiting Release",
-      PROJECTED_TPR_IN_LESS_THAN_180_DAYS:
-        "Projected DTP date in the next 6 months",
-      PROJECTED_TPR_IN_AT_LEAST_180_DAYS:
-        "Projected DTP date in 180 days or more",
-    };
-  }
-
-  get subcategoryOrderings(): Record<
-    string,
-    UsAzTransitionProgramSubcategory[]
-  > {
-    return {
-      Pending: [
-        "HOME_PLAN_IN_PROGRESS",
-        "AWAITING_HOME_PLAN_APPROVAL",
-        "AWAITING_RELEASE",
-      ],
-      "Almost Eligible": [
-        "PROJECTED_TPR_IN_LESS_THAN_180_DAYS",
-        "PROJECTED_TPR_IN_AT_LEAST_180_DAYS",
-      ],
-    };
-  }
-
-  get submittedTabTitle(): OpportunityTab {
-    return "Pending";
-  }
-
-  get markSubmittedOptionsByTab(): Record<
-    string,
-    UsAzTransitionProgramSubcategory[]
-  > {
-    const allPendingSubcategories: UsAzTransitionProgramSubcategory[] =
-      this.subcategoryOrderings["Pending"] ?? [];
-
-    return {
-      "Fast Trackers": allPendingSubcategories,
-      "Approved by Time Comp": allPendingSubcategories,
-      Pending: allPendingSubcategories,
-      "Almost Eligible": [
-        "HOME_PLAN_IN_PROGRESS",
-        "AWAITING_HOME_PLAN_APPROVAL",
-      ],
-    };
-  }
-
-  get tabPrefaceCopy() {
-    return {
-      "Fast Trackers":
-        "Fast Tracker cases have a release date within the next 30 days. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
-      "Approved by Time Comp":
-        "This tab contains cases with a release date between 30 and 180 days from now. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
-      "Almost Eligible":
-        "This tab contains cases with projected release dates that have not yet been approved by Central Time Comp. The first section includes inmates who have a projected DTP date within 6 months but who are missing Functional Literacy. The second section contains inmates who have a projected date beyond 180 days from now who might be missing one or more criteria for transition program release. This tab is intended to help CO IIIs prioritize release planning for people who might soon become eligible for release. Names are organized by soonest release date to farthest out.",
-      Pending:
-        "This tab contains cases that have been marked as in progress in one of the other tabs. This tab will automatically update if the inmate's status changes.",
-    };
-  }
-
   get linkedOverdueOpportunityType(): OpportunityType {
     return "usAzOverdueForACISDTP";
-  }
-
-  get overdueOpportunityCalloutCopy() {
-    return "overdue for their DTP date";
   }
 }
