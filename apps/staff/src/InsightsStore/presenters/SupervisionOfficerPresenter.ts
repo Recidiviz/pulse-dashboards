@@ -138,16 +138,19 @@ export class SupervisionOfficerPresenter<
   /**
    * Returns metrics where this officer meets the top X percent criteria.
    * @returns An array of objects containing the metric, top X percent criteria, and info about
-   * officers meeting the top X percent criteria.
+   * officers meeting the top X percent criteria. Returns empty array for officers
+   * excluded from outcomes.
    */
   get officerHighlights(): HighlightedOfficersDetail[] {
+    if (isExcludedSupervisionOfficer(this.officerRecord)) return [];
+
     // Not expected in practice, but needed for type safety
-    if (!this.officerOutcomes) {
-      throw new Error("Missing officer outcomes");
+    if (!this.officerOutcomes || !this.officerRecord) {
+      throw new Error("Missing necessary officer data");
     }
     return getHighlightedOfficersByMetric(
       this.metricConfigsById,
-      [this.officerRecord as SupervisionOfficer],
+      [this.officerRecord],
       [this.officerOutcomes],
     );
   }
