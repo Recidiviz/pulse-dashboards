@@ -18,11 +18,11 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
 import styled from "styled-components/macro";
 
+import { PersonInitialsAvatar } from "~ui";
+
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
-import { PersonInitialsAvatar } from "../Avatar";
 
 export type MilestonesCapsuleProps = {
   person: JusticeInvolvedPerson;

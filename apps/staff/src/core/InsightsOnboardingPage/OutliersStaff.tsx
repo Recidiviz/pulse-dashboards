@@ -25,10 +25,11 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { PersonInitialsAvatar } from "~ui";
+
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficersPresenter } from "../../InsightsStore/presenters/SupervisionOfficersPresenter";
-import { PersonInitialsAvatar } from "../Avatar";
 import ModelHydrator from "../ModelHydrator";
 
 const PillsWrapper = styled.div`

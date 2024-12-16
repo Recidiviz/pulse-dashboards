@@ -62,9 +62,6 @@ export const NavigationMenu: FC<{ presenter: NavigationMenuPresenter }> =
                   {link.text}
                 </StyledMenuItem>
               ))}
-              <StyledMenuItem onClick={() => presenter.logout()}>
-                Log out
-              </StyledMenuItem>
             </>
           </DropdownMenu>
         </Dropdown>

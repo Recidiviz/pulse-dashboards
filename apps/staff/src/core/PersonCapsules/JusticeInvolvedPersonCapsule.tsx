@@ -30,8 +30,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled, { css } from "styled-components/macro";
 
+import { PersonInitialsAvatar } from "~ui";
+
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
-import { PersonInitialsAvatar } from "../Avatar";
 import PersonId from "../PersonId";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 

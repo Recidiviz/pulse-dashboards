@@ -47,7 +47,8 @@
       "~server-setup-plugin": ["libs/common/server-setup-plugin/src/index.ts"],
       "~server-setup-plugin/*": ["libs/common/server-setup-plugin/src/*"],
       "~shared-assets/*": ["libs/shared-assets/src/*"],
-      "~staff-shared-server": ["libs/staff-shared-server/src/index.ts"]
+      "~staff-shared-server": ["libs/staff-shared-server/src/index.ts"],
+      "~ui": ["libs/ui/src/index.ts"]
     },
     "resolveJsonModule": true,
     "rootDir": ".",

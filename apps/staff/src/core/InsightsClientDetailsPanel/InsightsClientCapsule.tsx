@@ -21,9 +21,9 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { ClientInfo } from "~datatypes";
+import { PersonInitialsAvatar } from "~ui";
 
 import { humanReadableTitleCase } from "../../utils";
-import { PersonInitialsAvatar } from "../Avatar";
 import PersonId from "../PersonId";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 

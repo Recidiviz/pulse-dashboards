@@ -32,6 +32,8 @@ import React, { ReactNode } from "react";
 import simplur from "simplur";
 import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
+import { PersonInitialsAvatar } from "~ui";
+
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
@@ -43,7 +45,6 @@ import {
 } from "../../WorkflowsStore/Task/types";
 import { WorkflowsTasksStore } from "../../WorkflowsStore/Task/WorkflowsTasksStore";
 import { getEntries } from "../../WorkflowsStore/utils";
-import { PersonInitialsAvatar } from "../Avatar";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";

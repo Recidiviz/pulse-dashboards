@@ -138,6 +138,10 @@ export class UserStore {
   get stateCode() {
     return this.externals.stateCode;
   }
+
+  get user() {
+    return this.authClient.userProperties;
+  }
 }
 
 class SegmentExternals implements SegmentClientExternals {

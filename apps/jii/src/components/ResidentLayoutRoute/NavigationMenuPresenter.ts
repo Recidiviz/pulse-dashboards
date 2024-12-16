@@ -55,8 +55,4 @@ export class NavigationMenuPresenter {
 
     return links;
   }
-
-  logout() {
-    this.userStore.logOut();
-  }
 }

@@ -28,6 +28,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { PersonInitialsAvatar } from "~ui";
+
 import {
   useFeatureVariants,
   useRootStore,
@@ -35,7 +37,6 @@ import {
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerSupervisorsPresenter } from "../../InsightsStore/presenters/SupervisionOfficerSupervisorsPresenter";
 import { THIRTY_SECONDS } from "../../InsightsStore/presenters/utils";
-import { PersonInitialsAvatar } from "../Avatar";
 import ModelHydrator from "../ModelHydrator";
 import { SectionLabelText } from "../sharedComponents";
 import { insightsUrl } from "../views";

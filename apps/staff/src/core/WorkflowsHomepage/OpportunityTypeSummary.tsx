@@ -28,11 +28,11 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { OpportunityType } from "~datatypes";
+import { PersonInitialsAvatar } from "~ui";
 
 import { useOpportunityConfigurations } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { countOpportunities, Opportunity } from "../../WorkflowsStore";
-import { PersonInitialsAvatar } from "../Avatar";
 import InsightsPill from "../InsightsPill";
 import { insightsUrl, workflowsUrl } from "../views";
 

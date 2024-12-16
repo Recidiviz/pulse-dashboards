@@ -85,11 +85,3 @@ test("links to opportunities", () => {
     ),
   ).toBeDefined();
 });
-
-test("logout", () => {
-  vi.spyOn(userStore, "logOut");
-
-  presenter.logout();
-
-  expect(userStore.logOut).toHaveBeenCalled();
-});

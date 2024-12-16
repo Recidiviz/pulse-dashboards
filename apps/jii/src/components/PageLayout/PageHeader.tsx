@@ -24,6 +24,7 @@ import styled from "styled-components/macro";
 
 import { PageContainer, UnpaddedPageContainer } from "../BaseLayout/BaseLayout";
 import { Wordmark } from "../Wordmark/Wordmark";
+import { AccountMenu } from "./AccountMenu";
 
 const HeaderWrapper = styled(UnpaddedPageContainer)`
   border-bottom: 1px solid ${palette.slate20};
@@ -60,6 +61,7 @@ export const PageHeader: FC<{ children: ReactNode }> = observer(
             </Link>
           </HeaderContent>
           {children}
+          <AccountMenu />
         </Header>
       </HeaderWrapper>
     );

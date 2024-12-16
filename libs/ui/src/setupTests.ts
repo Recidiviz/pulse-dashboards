@@ -15,4 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UserAvatar";
+import "@testing-library/jest-dom";
+import "jest-styled-components";
+
+import { toHaveNoViolations } from "jest-axe";
+import jestExtendedMatchers from "jest-extended";
+
+expect.extend(jestExtendedMatchers);
+
+expect.extend(toHaveNoViolations);

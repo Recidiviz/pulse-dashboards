@@ -15,4 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UserAvatar";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+
+export default defineConfig({
+  root: __dirname,
+  cacheDir: "../../node_modules/.vite/libs/ui",
+
+  plugins: [
+    react({ babel: { plugins: ["babel-plugin-macros"] } }),
+    nxViteTsPaths(),
+  ],
+
+  test: {
+    mockReset: true,
+    unstubEnvs: true,
+    globalSetup: ["src/setupTestsGlobal.ts"],
+    setupFiles: ["src/setupTests.ts"],
+    globals: true,
+    environment: "jsdom",
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    reporters: ["default"],
+    coverage: { reportsDirectory: "../../coverage/libs/ui", provider: "v8" },
+  },
+});

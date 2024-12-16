@@ -61,7 +61,7 @@ const AvatarInitials = styled(Sans14)<{ size: number }>`
   text-align: center;
 `;
 
-export const formatAvatarText = (text: string, splitName: boolean): string => {
+const formatAvatarText = (text: string, splitName: boolean): string => {
   if (!text) return "";
   return splitName
     ? text
@@ -88,7 +88,7 @@ export const PersonInitialsAvatar: React.FC<AvatarProps> = ({
         name={initials}
         colors={palette.data.defaultOrder}
         square={square}
-        // @ts-ignore the title prop is missing from the package's types
+        // @ts-expect-error the title prop is missing from the package's types
         title // required for axe compliance
       />
       <AvatarInitials className="fs-exclude" size={size}>
