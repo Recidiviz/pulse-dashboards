@@ -15,10 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette } from "@recidiviz/design-system";
 import { DocumentData } from "firebase/firestore";
 
+import {
+  OPPORTUNITY_STATUS_COLORS,
+  StatusPalette,
+} from "../../../../core/utils/workflowsUtils";
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
+import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTransitionProgramForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab } from "../../types";
 import {
@@ -39,6 +45,11 @@ export class UsAzOverdueForAcisDtpOpportunity extends OpportunityBase<
       "usAzOverdueForACISDTP",
       resident.rootStore,
       usAzOverdueForAcisDtpSchema.parse(record),
+    );
+
+    this.form = new UsAzReleaseToTransitionProgramForm(
+      this,
+      resident.rootStore,
     );
   }
 
@@ -62,5 +73,12 @@ export class UsAzOverdueForAcisDtpOpportunity extends OpportunityBase<
 
   showEligibilityStatus(): boolean {
     return true;
+  }
+
+  get customStatusPalette(): StatusPalette | undefined {
+    return {
+      ...OPPORTUNITY_STATUS_COLORS.alert,
+      buttonFill: palette.signal.links,
+    };
   }
 }

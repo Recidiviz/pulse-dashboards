@@ -126,22 +126,19 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
   }
 
   get customStatusPalette() {
-    if (this.isSubmitted) {
-      return OPPORTUNITY_STATUS_COLORS.submitted;
-    }
-
-    if (this.almostEligible) {
-      return OPPORTUNITY_STATUS_COLORS.almostEligible;
-    }
-
-    if (this.record.metadata.tabDescription === "FAST_TRACK") {
+    if (
+      !this.isSubmitted &&
+      !this.almostEligible &&
+      this.record.metadata.tabDescription === "FAST_TRACK"
+    ) {
       return {
         ...OPPORTUNITY_STATUS_COLORS.alert,
         text: palette.pine4,
         icon: palette.signal.highlight,
+        buttonFill: palette.signal.links,
       };
     }
 
-    return OPPORTUNITY_STATUS_COLORS.eligible;
+    return undefined;
   }
 }

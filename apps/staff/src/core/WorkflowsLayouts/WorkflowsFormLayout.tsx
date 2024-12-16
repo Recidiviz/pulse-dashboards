@@ -48,6 +48,7 @@ import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationD
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
+import WorkflowsUsAzReleaseToTransitionProgramForm from "../WorkflowsUsAzReleaseToTransitionProgramForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm3043 from "../WorkflowsUsCaSupervisionLevelDowngradeForm3043";
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
@@ -107,6 +108,7 @@ const FormComponents = {
   AnnualClassificationReview,
   FormUsMiSCCReview,
   MediumTrustee,
+  WorkflowsUsAzReleaseToTransitionProgramForm,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;

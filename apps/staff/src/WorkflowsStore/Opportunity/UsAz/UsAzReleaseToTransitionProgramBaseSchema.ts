@@ -35,3 +35,12 @@ export type UsAzReleaseToTransitionProgramReferralRecordRaw = z.input<
 export type UsAzReleaseToTransitionProgramReferralRecord = z.infer<
   typeof usAzReleaseToTransitionProgramSchemaBase
 >;
+
+export type UsAzReleaseToTransitionProgramDraftData = {
+  isDTPRelease: boolean;
+  residentNameLastFirst: string;
+  adcNumber: string;
+  residentNameAndAdcNumber: string;
+  date: string;
+  staffNameLastFirst: string;
+};

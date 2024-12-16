@@ -19,6 +19,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { UsAzResidentMetadata } from "../../../FirestoreStore/types/residentMetadata";
 import { Resident } from "../../Resident";
+import { UsAzReleaseToTransitionProgramForm } from "../Forms/UsAzReleaseToTransitionProgramForm";
 import {
   UsAzReleaseToTransitionProgramReferralRecord,
   usAzReleaseToTransitionProgramSchemaBase,
@@ -38,6 +39,11 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
       "usAzReleaseToTPR",
       resident.rootStore,
       usAzReleaseToTransitionProgramSchemaBase.parse(record),
+    );
+
+    this.form = new UsAzReleaseToTransitionProgramForm(
+      this,
+      resident.rootStore,
     );
   }
 
