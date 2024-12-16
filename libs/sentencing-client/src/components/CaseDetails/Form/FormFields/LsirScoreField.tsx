@@ -61,13 +61,16 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
     );
 
     /** Fetches insights when LSI-R score changes to display rollup text under the LSI-R score field  */
+    /* TODO(Recidiviz/recidiviz-data#36133) - Reverse temporary disabling of this feature once fixes are complete */
     caseStore.getInsight(
       form.updates[OFFENSE_KEY] ?? caseStore.caseAttributes.offense,
       form.hasError ? undefined : Number(e.target.value.trim()),
-      form.updates["isCurrentOffenseSexual"] ??
-        caseAttributes.isCurrentOffenseSexual,
-      form.updates["isCurrentOffenseViolent"] ??
-        caseAttributes.isCurrentOffenseViolent,
+      null,
+      null,
+      // form.updates["isCurrentOffenseSexual"] ??
+      //   caseAttributes.isCurrentOffenseSexual,
+      // form.updates["isCurrentOffenseViolent"] ??
+      //   caseAttributes.isCurrentOffenseViolent,
     );
   };
 
@@ -79,11 +82,14 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
 
   /** Fetch insights on previously saved values */
   useEffect(() => {
+    /* TODO(Recidiviz/recidiviz-data#36133) - Reverse temporary disabling of this feature once fixes are complete */
     caseStore.getInsight(
       caseStore.caseAttributes.offense,
       caseAttributes?.lsirScore ?? undefined,
-      caseAttributes.isCurrentOffenseSexual,
-      caseAttributes.isCurrentOffenseViolent,
+      null,
+      null,
+      // caseAttributes.isCurrentOffenseSexual,
+      // caseAttributes.isCurrentOffenseViolent,
     );
     // We only need to call this once on load to update/clear previously fetched insights
     // eslint-disable-next-line react-hooks/exhaustive-deps

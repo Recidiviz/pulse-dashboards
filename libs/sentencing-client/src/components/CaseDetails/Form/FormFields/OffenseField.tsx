@@ -17,17 +17,12 @@
 
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { components, MenuProps, OptionProps } from "react-select";
 
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
-import {
-  LSIR_SCORE_KEY,
-  OFFENSE_KEY,
-  SEX_OFFENSE_KEY,
-  VIOLENT_OFFENSE_KEY,
-} from "../../constants";
+import { LSIR_SCORE_KEY, OFFENSE_KEY } from "../../constants";
 import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
 import { FormFieldProps, SelectOption } from "../types";
@@ -50,10 +45,11 @@ function OffenseField({ isRequired }: FormFieldProps) {
         value: caseAttributes?.offense,
       },
     });
-  const [isViolentSexOffense, setIsViolentSexOffense] = useState({
-    isViolentOffense: Boolean(caseAttributes?.isCurrentOffenseViolent),
-    isSexOffense: Boolean(caseAttributes?.isCurrentOffenseSexual),
-  });
+  /* TODO(Recidiviz/recidiviz-data#36133) - Reverse temporary disabling of this feature once fixes are complete */
+  // const [isViolentSexOffense, setIsViolentSexOffense] = useState({
+  //   isViolentOffense: Boolean(caseAttributes?.isCurrentOffenseViolent),
+  //   isSexOffense: Boolean(caseAttributes?.isCurrentOffenseSexual),
+  // });
 
   const options = Object.keys(caseStore.offensesByName).map(
     (selection: string) => ({
@@ -69,48 +65,53 @@ function OffenseField({ isRequired }: FormFieldProps) {
     form.updateForm(OFFENSE_KEY, option.value, isRequired);
 
     /** Fetches insights when offense changes to display rollup text under the LSI-R score field  */
+    /* TODO(Recidiviz/recidiviz-data#36133) - Reverse temporary disabling of this feature once fixes are complete */
     caseStore.getInsight(
       String(option.value),
       form.updates[LSIR_SCORE_KEY] ??
         caseStore.caseAttributes.lsirScore ??
         undefined,
-      isViolentSexOffense.isSexOffense,
-      isViolentSexOffense.isViolentOffense,
+      null,
+      null,
+      // isViolentSexOffense.isSexOffense,
+      // isViolentSexOffense.isViolentOffense,
     );
   };
 
-  const toggleViolentSexOffenseSelection = (
-    key: typeof VIOLENT_OFFENSE_KEY | typeof SEX_OFFENSE_KEY,
-  ) => {
-    let violentOffenseValue = isViolentSexOffense.isViolentOffense;
-    let sexOffenseValue = isViolentSexOffense.isSexOffense;
+  /* TODO(Recidiviz/recidiviz-data#36133) - Reverse temporary disabling of this feature once fixes are complete */
+  // const toggleViolentSexOffenseSelection = (
+  //   key: typeof VIOLENT_OFFENSE_KEY | typeof SEX_OFFENSE_KEY,
+  // ) => {
+  //   let violentOffenseValue = isViolentSexOffense.isViolentOffense;
+  //   let sexOffenseValue = isViolentSexOffense.isSexOffense;
 
-    if (key === VIOLENT_OFFENSE_KEY) {
-      violentOffenseValue = !isViolentSexOffense.isViolentOffense;
-      setIsViolentSexOffense((prev) => ({
-        ...prev,
-        isViolentOffense: violentOffenseValue,
-      }));
-      form.updateForm(key, violentOffenseValue);
-    } else if (key === SEX_OFFENSE_KEY) {
-      sexOffenseValue = !isViolentSexOffense.isSexOffense;
-      setIsViolentSexOffense((prev) => ({
-        ...prev,
-        isSexOffense: sexOffenseValue,
-      }));
-      form.updateForm(key, sexOffenseValue);
-    }
+  //   if (key === VIOLENT_OFFENSE_KEY) {
+  //     violentOffenseValue = !isViolentSexOffense.isViolentOffense;
+  //     setIsViolentSexOffense((prev) => ({
+  //       ...prev,
+  //       isViolentOffense: violentOffenseValue,
+  //     }));
+  //     form.updateForm(key, violentOffenseValue);
+  //   } else if (key === SEX_OFFENSE_KEY) {
+  //     sexOffenseValue = !isViolentSexOffense.isSexOffense;
+  //     setIsViolentSexOffense((prev) => ({
+  //       ...prev,
+  //       isSexOffense: sexOffenseValue,
+  //     }));
+  //     form.updateForm(key, sexOffenseValue);
+  //   }
 
-    /** Fetches insights when violent/sex offense changes to display rollup text under the LSI-R score field  */
-    caseStore.getInsight(
-      selectValue?.value ? String(selectValue?.value) : undefined,
-      form.updates[LSIR_SCORE_KEY] ??
-        caseStore.caseAttributes.lsirScore ??
-        undefined,
-      sexOffenseValue,
-      violentOffenseValue,
-    );
-  };
+  //   /** Fetches insights when violent/sex offense changes to display rollup text under the LSI-R score field  */
+
+  //   caseStore.getInsight(
+  //     selectValue?.value ? String(selectValue?.value) : undefined,
+  //     form.updates[LSIR_SCORE_KEY] ??
+  //       caseStore.caseAttributes.lsirScore ??
+  //       undefined,
+  //     sexOffenseValue,
+  //     violentOffenseValue,
+  //   );
+  // };
 
   const customFilter = (option: SelectOption, inputValue: string | null) => {
     if (!inputValue) return true;
@@ -164,11 +165,14 @@ function OffenseField({ isRequired }: FormFieldProps) {
 
   /** Fetch insights on previously saved values */
   useEffect(() => {
+    /* TODO(Recidiviz/recidiviz-data#36133) - Reverse temporary disabling of this feature once fixes are complete */
     caseStore.getInsight(
       caseAttributes?.offense,
       caseStore.caseAttributes.lsirScore ?? undefined,
-      isViolentSexOffense.isSexOffense,
-      isViolentSexOffense.isViolentOffense,
+      null,
+      null,
+      // isViolentSexOffense.isSexOffense,
+      // isViolentSexOffense.isViolentOffense,
     );
     // We only need to call this once on load to update/clear previously fetched insights
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -197,7 +201,8 @@ function OffenseField({ isRequired }: FormFieldProps) {
         If there are multiple charges for this case, choose the most severe
       </Styled.InputDescription>
 
-      <Styled.ViolentOrSexOffenseCheckboxContainer>
+      {/* TODO(Recidiviz/recidiviz-data#36133) - Reverse temporary disabling of this feature once fixes are complete */}
+      {/* <Styled.ViolentOrSexOffenseCheckboxContainer>
         <Styled.CheckboxWrapper>
           <label htmlFor="is_violent_offense">Violent Offense</label>
           <input
@@ -218,7 +223,7 @@ function OffenseField({ isRequired }: FormFieldProps) {
             onChange={() => toggleViolentSexOffenseSelection(SEX_OFFENSE_KEY)}
           />
         </Styled.CheckboxWrapper>
-      </Styled.ViolentOrSexOffenseCheckboxContainer>
+      </Styled.ViolentOrSexOffenseCheckboxContainer> */}
     </>
   );
 }
