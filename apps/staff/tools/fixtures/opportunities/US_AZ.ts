@@ -40,8 +40,8 @@ export const mockApiOpportunityConfigurationResponse = {
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-OverdueForDTPReferrals",
       hideDenialRevert: false,
-      highlightCasesOnHomepage: false,
-      highlightedCaseCtaCopy: null,
+      highlightCasesOnHomepage: true,
+      highlightedCaseCtaCopy: "overdue DTP cases",
       homepagePosition: 2,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
@@ -62,7 +62,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading: null,
       submittedTabTitle: null,
-      supportsSubmitted: true,
+      supportsSubmitted: false,
       systemType: "INCARCERATION",
       tabGroups: [{ key: "ELIGIBILITY STATUS", tabs: ["Overdue"] }],
       tabPrefaceCopy: [],
@@ -92,8 +92,8 @@ export const mockApiOpportunityConfigurationResponse = {
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-OverdueForTPRReferrals",
       hideDenialRevert: false,
-      highlightCasesOnHomepage: false,
-      highlightedCaseCtaCopy: null,
+      highlightCasesOnHomepage: true,
+      highlightedCaseCtaCopy: "overdue STP cases",
       homepagePosition: 3,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
@@ -114,7 +114,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading: null,
       submittedTabTitle: null,
-      supportsSubmitted: true,
+      supportsSubmitted: false,
       systemType: "INCARCERATION",
       tabGroups: [{ key: "ELIGIBILITY STATUS", tabs: ["Overdue"] }],
       tabPrefaceCopy: [],
@@ -197,22 +197,82 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
-      markSubmittedOptionsByTab: [],
+      markSubmittedOptionsByTab: [
+        {
+          tab: "Fast Trackers",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
+        {
+          tab: "Approved by Time Comp",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
+        {
+          tab: "Pending",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
+        {
+          tab: "Almost Eligible",
+          texts: ["HOME_PLAN_IN_PROGRESS", "AWAITING_HOME_PLAN_APPROVAL"],
+        },
+      ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
       nonOmsCriteria: [{ text: "Satisfactory progress with Corrections Plan" }],
       nonOmsCriteriaHeader: "Other Considerations",
       notifications: [],
       omsCriteriaHeader: "Requirements validated by OMS data",
-      overdueOpportunityCalloutCopy: null,
+      overdueOpportunityCalloutCopy: "overdue for their DTP date",
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
       snooze: null,
       stateCode: "US_AZ",
-      subcategoryHeadings: [],
-      subcategoryOrderings: [],
+      subcategoryHeadings: [
+        { subcategory: "HOME_PLAN_IN_PROGRESS", text: "Home Plan in Progress" },
+        {
+          subcategory: "AWAITING_HOME_PLAN_APPROVAL",
+          text: "Awaiting Home Plan Approval",
+        },
+        { subcategory: "AWAITING_RELEASE", text: "Awaiting Release" },
+        {
+          subcategory: "PROJECTED_TPR_IN_LESS_THAN_180_DAYS",
+          text: "Projected DTP date in the next 6 months",
+        },
+        {
+          subcategory: "PROJECTED_TPR_IN_AT_LEAST_180_DAYS",
+          text: "Projected DTP date in 180 days or more",
+        },
+      ],
+      subcategoryOrderings: [
+        {
+          tab: "Pending",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
+        {
+          tab: "Almost Eligible",
+          texts: [
+            "PROJECTED_TPR_IN_LESS_THAN_180_DAYS",
+            "PROJECTED_TPR_IN_AT_LEAST_180_DAYS",
+          ],
+        },
+      ],
       subheading: null,
-      submittedTabTitle: null,
+      submittedTabTitle: "Pending",
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
@@ -226,7 +286,24 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
-      tabPrefaceCopy: [],
+      tabPrefaceCopy: [
+        {
+          tab: "Fast Trackers",
+          text: "Fast Tracker cases have a release date within the next 30 days. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
+        },
+        {
+          tab: "Approved by Time Comp",
+          text: "This tab contains cases with a release date between 30 and 180 days from now. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
+        },
+        {
+          tab: "Almost Eligible",
+          text: "This tab contains cases with projected release dates that have not yet been approved by Central Time Comp. The first section includes inmates who have a projected DTP date within 6 months but who are missing Functional Literacy. The second section contains inmates who have a projected date beyond 180 days from now who might be missing one or more criteria for transition program release. This tab is intended to help CO IIIs prioritize release planning for people who might soon become eligible for release. Names are organized by soonest release date to farthest out.",
+        },
+        {
+          tab: "Pending",
+          text: "This tab contains cases that have been marked as in progress in one of the other tabs. This tab will automatically update if the inmate's status changes.",
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "DTP",
       zeroGrantsTooltip: null,
@@ -316,22 +393,82 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       initialHeader: null,
       isAlert: false,
-      markSubmittedOptionsByTab: [],
+      markSubmittedOptionsByTab: [
+        {
+          tab: "Fast Trackers",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
+        {
+          tab: "Approved by Time Comp",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
+        {
+          tab: "Pending",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
+        {
+          tab: "Almost Eligible",
+          texts: ["HOME_PLAN_IN_PROGRESS", "AWAITING_HOME_PLAN_APPROVAL"],
+        },
+      ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
       nonOmsCriteria: [{ text: "Satisfactory progress with Corrections Plan" }],
       nonOmsCriteriaHeader: "Other Considerations",
       notifications: [],
       omsCriteriaHeader: "Requirements validated by OMS data",
-      overdueOpportunityCalloutCopy: null,
+      overdueOpportunityCalloutCopy: "overdue for their STP date",
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
       snooze: null,
       stateCode: "US_AZ",
-      subcategoryHeadings: [],
-      subcategoryOrderings: [],
+      subcategoryHeadings: [
+        { subcategory: "HOME_PLAN_IN_PROGRESS", text: "Home Plan in Progress" },
+        {
+          subcategory: "AWAITING_HOME_PLAN_APPROVAL",
+          text: "Awaiting Home Plan Approval",
+        },
+        { subcategory: "AWAITING_RELEASE", text: "Awaiting Release" },
+        {
+          subcategory: "PROJECTED_TPR_IN_LESS_THAN_180_DAYS",
+          text: "Projected TPR date in the next 6 months",
+        },
+        {
+          subcategory: "PROJECTED_TPR_IN_AT_LEAST_180_DAYS",
+          text: "Projected TPR date in 180 days or more",
+        },
+      ],
+      subcategoryOrderings: [
+        {
+          tab: "Pending",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
+        {
+          tab: "Almost Eligible",
+          texts: [
+            "PROJECTED_TPR_IN_LESS_THAN_180_DAYS",
+            "PROJECTED_TPR_IN_AT_LEAST_180_DAYS",
+          ],
+        },
+      ],
       subheading: null,
-      submittedTabTitle: null,
+      submittedTabTitle: "Pending",
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
@@ -345,7 +482,24 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
       ],
-      tabPrefaceCopy: [],
+      tabPrefaceCopy: [
+        {
+          tab: "Fast Trackers",
+          text: "Fast Tracker cases have a release date within the next 30 days. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
+        },
+        {
+          tab: "Approved by Time Comp",
+          text: "This tab contains cases with a release date between 30 and 180 days from now. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
+        },
+        {
+          tab: "Almost Eligible",
+          text: "This tab contains cases with projected release dates that have not yet been approved by Central Time Comp. The first section includes inmates who have a projected STP date within 6 months but who are missing Functional Literacy. The second section contains inmates who have a projected date beyond 180 days from now who might be missing one or more criteria for transition program release. This tab is intended to help CO IIIs prioritize release planning for people who might soon become eligible for release. Names are organized by soonest release date to farthest out.",
+        },
+        {
+          tab: "Pending",
+          text: "This tab contains cases that have been marked as in progress in one of the other tabs. This tab will automatically update if the inmate's status changes.",
+        },
+      ],
       tooltipEligibilityText: null,
       urlSection: "TPR",
       zeroGrantsTooltip: null,

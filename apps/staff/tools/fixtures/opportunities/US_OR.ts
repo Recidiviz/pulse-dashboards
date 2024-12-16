@@ -210,7 +210,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usOrNoSupervisionSanctionsWithin6Months",
           text: "Needs {{monthsOrDaysRemainingFromToday violationExpirationDate}} without an administrative sanction",
-          tooltip: null,
         },
       ],
       initialHeader: null,
@@ -218,10 +217,42 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1-V5qxOjurPggO4NrHSRBDB_pn8gmYjoa/view",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [
+        {
+          text: "No disqualifying sentence enhancements not entered in DOC400",
+          tooltip:
+            "Is not on supervision for a sentencing enhancement imposed under the provisions of ORS 161.610, 161.725, 161.735, 164.061, 475.907, 475.925, or 475.930; as well as ORS 137.635 for Probation Burglary I",
+        },
+        {
+          text: "No court violations in the past 6 months",
+          tooltip:
+            "Has not been found in violation by the court in the immediate 6 months prior to review",
+        },
+        {
+          text: "Not convicted of a crime that occurred while on supervision for the case under review (not found in DOC400/CIS)",
+          tooltip:
+            "Has not been convicted of a crime (felony or misdemeanor) that occurred while on supervision for the case under review",
+        },
+        {
+          text: "Has fully paid any restitution and compensatory fine or is current on payment plan",
+          tooltip:
+            "Has either fully paid any restitution and compensatory fine ordered by the court, or established a payment schedule through the court or appropriate supervising authority consistent with ORS 137.106, and is current in their payment obligations",
+        },
+        {
+          text: "Has completed any specialty court programs or treatment programs",
+          tooltip:
+            "Has completed any specialty court program and treatment programs with set durations or timeframes, and has consistently participated in any ongoing treatment programs",
+        },
+        {
+          text: "In compliance with supervision conditions and case plan",
+          tooltip:
+            "Is in compliance with conditions of supervision and any applicable supervision case plan",
+        },
+      ],
+      nonOmsCriteriaHeader:
+        "Additional Eligibility Requirements Manually Verified",
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Eligibility Requirements Verified via DOC400",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],

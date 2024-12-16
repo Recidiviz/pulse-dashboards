@@ -191,27 +191,22 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "incarceratedAtLeast90Days",
           text: "In custody for at least 90 days",
-          tooltip: null,
         },
         {
           key: "incarceratedAtLeast30DaysInSameFacility",
           text: "Incarcerated for at least 30 days in current facility",
-          tooltip: null,
         },
         {
           key: "notIncarcerationWithin3MonthsOfFullTermCompletionDate",
           text: "More than 3 months until release or parole review date",
-          tooltip: null,
         },
         {
           key: "usNdNoRecentReferralsToMinimumHousing",
           text: "No recent referrals to minimum housing in Elite",
-          tooltip: null,
         },
         {
           key: "noEscapeInCurrentIncarceration",
           text: "No escape-related sentences in current incarceration term",
-          tooltip: null,
         },
         {
           key: "usNdHasFacilityRestrictions",
@@ -222,12 +217,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "notWithin1MonthOfParoleStartDate",
           text: "More than 1 month until parole start date",
-          tooltip: null,
         },
         {
           key: "usNdNotEnrolledInRelevantProgram",
           text: "Not currently enrolled in a core program",
-          tooltip: null,
         },
       ],
       emptyTabCopy: [],
@@ -240,17 +233,14 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "incarceratedAtLeast30DaysInSameFacility",
           text: "Needs {{daysUntil thirtyDaysInSameFacilityDate}} more days in current facility",
-          tooltip: null,
         },
         {
           key: "incarceratedAtLeast90Days",
           text: "Needs {{daysUntil eligibleDate}} more days in custody",
-          tooltip: null,
         },
         {
           key: "usNdNotEnrolledInRelevantProgram",
           text: "The resident is currently enrolled in a core program",
-          tooltip: null,
         },
       ],
       initialHeader: null,
@@ -261,7 +251,7 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Validated by data from Elite",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],
@@ -313,32 +303,26 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usNdNotInMinimumSecurityFacility",
           text: "Not residing in a minimum-security unit",
-          tooltip: null,
         },
         {
           key: "incarcerationWithin42MonthsOfFullTermCompletionDate",
           text: "Less than 42 months until release",
-          tooltip: null,
         },
         {
           key: "notIncarcerationWithin3MonthsOfFullTermCompletionDate",
           text: "More than 3 months until release",
-          tooltip: null,
         },
         {
           key: "usNdNoRecentReferralsToMinimumHousing",
           text: "Has not received a recent minimum housing referral",
-          tooltip: null,
         },
         {
           key: "noEscapeInCurrentIncarceration",
           text: "No escape-related sentences in current incarceration term",
-          tooltip: null,
         },
         {
           key: "usNdNotEnrolledInRelevantProgram",
           text: "Not currently enrolled in a core program",
-          tooltip: null,
         },
       ],
       emptyTabCopy: [],
@@ -356,7 +340,7 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Validated by data from Elite",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],

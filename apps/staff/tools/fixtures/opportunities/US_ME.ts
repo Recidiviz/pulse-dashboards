@@ -57,7 +57,18 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        {
+          text: "Must have fulfilled all proactive conditions of probation",
+          tooltip:
+            "The Probation Officer shall determine whether the probationer has satisfactorily fulfilled all of the proactive conditions of his or her probation",
+        },
+        {
+          text: "Must have not engaged in conduct prohibited by conditions of probation",
+          tooltip:
+            "The Probation Officer shall determine whether the probationer has not engaged in conduct prohibited by his or her conditions of probation and in the opinion of the supervising Probation Officer continuation on probation would not benefit the community (including the victim, if any) or the probationer",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: null,
@@ -152,7 +163,10 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        { text: "Must have completed assigned core programs" },
+        { text: "Must be currently case plan compliant" },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: null,
@@ -225,7 +239,9 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        { text: "Must have completed required core programming" },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: null,
@@ -355,7 +371,15 @@ export const mockApiOpportunityConfigurationResponse = {
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://www.maine.gov/sos/cec/rules/03/201/c10s272.docx",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        { text: "Must have completed assigned core programs" },
+        { text: "Must be currently case plan compliant" },
+        {
+          text: "Resident has a stable home to be released to",
+          tooltip:
+            "Suitable housing in the community may consist of: \na. a home; \nb. a full-time treatment facility, such as a residential substance use disorder treatment facility or mental health facility; \nc. transitional housing that provides support services for targeted groups, e.g., veterans, domestic violence victims, persons with mental illness, persons with substance use disorder problems, etc.; \nd. temporary housing associated with education or vocational training or employment; \ne. a hospital or other appropriate care facility, such as a nursing facility, residential care facility or a facility that is a licensed hospice program pursuant to Title 22, Section 8622; or \nf. any other approved housing in the community.",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: null,
@@ -414,7 +438,10 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        { text: "Must have completed assigned core programs" },
+        { text: "Must be currently case plan compliant" },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: null,

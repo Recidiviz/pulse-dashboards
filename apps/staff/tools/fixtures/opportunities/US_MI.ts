@@ -83,7 +83,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usMiInSolitaryConfinementAtLeastOneYear",
           text: "In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}",
-          tooltip: null,
         },
       ],
       initialHeader: null,
@@ -114,7 +113,13 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Overdue", "Due now", "Upcoming", "Marked Ineligible"],
+          tabs: [
+            "Overdue",
+            "Due now",
+            "Upcoming",
+            "Marked Ineligible",
+            "Pending",
+          ],
         },
       ],
       tabPrefaceCopy: [],
@@ -331,7 +336,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "supervisionOrSupervisionOutOfStateLevelIsNotHigh",
           text: "Not on intensive supervision",
-          tooltip: null,
         },
         {
           key: "usMiNoOwiViolationOnParoleDualSupervision",
@@ -339,11 +343,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "The parolee is not known to have been involved in […] a violation of MCL 257.625 (OWI) […] while on parole.",
         },
-        {
-          key: "usMiNoPendingDetainer",
-          text: "No pending detainers",
-          tooltip: null,
-        },
+        { key: "usMiNoPendingDetainer", text: "No pending detainers" },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_MI-earlyDischargeReferrals",
@@ -357,7 +357,20 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        { text: "Must have completed all required programming and treatment" },
+        {
+          text: "Must have completed court-ordered restitution payments",
+          tooltip:
+            "The client has not willfully failed to pay restitution or crime victim assessment(s)",
+        },
+        {
+          text: "Must have paid or made a good faith effort to pay restitution, fees, court costs, fines, and other monetary obligations",
+          tooltip:
+            "The client has not willfully failed to pay monetary obligations. Unless another standard is prescribed by the court, the Agent shall not regard the offender's failure to pay as willful if any of the following apply: \n1. The client provides documentation of disability and has little or no income. \n2. The client is on public assistance. \n3. The client has been unemployed for the majority of the probation term despite earnest job-seeking efforts and has little or no income from any other source. \n4. The client annual income is at or below the federal poverty guidelines (refer to the information at https://aspe.hhs.gov). \n5. The client net income is above federal poverty guidelines but has been and remains insufficient to satisfy the terms of the obligations ordered. \n6. The client has made earnest efforts to fulfill payment obligations, but the amount owed is such that complete payment within the scheduled probation term is unrealistic.",
+        },
+        { text: "Must have no pending felony charges or warrants" },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: null,
@@ -724,13 +737,19 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
-      submittedTabTitle: null,
+      submittedTabTitle: "Pending",
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Overdue", "Due now", "Upcoming", "Marked Ineligible"],
+          tabs: [
+            "Overdue",
+            "Due now",
+            "Upcoming",
+            "Marked Ineligible",
+            "Pending",
+          ],
         },
       ],
       tabPrefaceCopy: [],
@@ -882,7 +901,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usMiInSolitaryConfinementAtLeastSixMonths",
           text: "In restrictive housing for {{daysToYearsMonthsPast record.metadata.daysInCollapsedSolitarySession}}",
-          tooltip: null,
         },
       ],
       initialHeader: null,
@@ -913,7 +931,13 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Overdue", "Due now", "Upcoming", "Marked Ineligible"],
+          tabs: [
+            "Overdue",
+            "Due now",
+            "Upcoming",
+            "Marked Ineligible",
+            "Pending",
+          ],
         },
       ],
       tabPrefaceCopy: [],
