@@ -53,6 +53,7 @@ import {
   CaseStatusToDisplay,
   RecommendationStatusFilter,
 } from "./types";
+import { isBeforeDueDate } from "./utils";
 
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;
@@ -137,10 +138,9 @@ const columns = [
       status: CellContext<CaseListTableCase, CaseListTableCase["status"]>,
     ) => {
       const statusValue = status.getValue();
-      const statusToDisplay =
-        moment().utc() < moment(status.cell.row.original.dueDate).utc()
-          ? CaseStatusToDisplay[statusValue]
-          : "Archived";
+      const statusToDisplay = isBeforeDueDate(status.cell.row.original.dueDate)
+        ? CaseStatusToDisplay[statusValue]
+        : "Archived";
 
       return (
         <Styled.StatusChip status={statusToDisplay}>
@@ -235,7 +235,7 @@ export const CaseListTable = ({
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
 
   const [data, setData] = useState(
-    caseTableData.filter((dp) => moment().utc() < moment(dp.dueDate).utc()), // Hide archived cases on initial load
+    caseTableData.filter((dp) => isBeforeDueDate(dp.dueDate)), // Hide archived cases on initial load
   );
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([
@@ -288,17 +288,15 @@ export const CaseListTable = ({
       return caseTableData
         .filter((datapoint) => {
           const includesArchived = filters.includes("Archived");
-          const isBeforeDueDate =
-            moment().utc() < moment(datapoint.dueDate).utc();
 
           if (datapoint.status) {
             const hasMatchingStatus = filters.includes(
               CaseStatusToDisplay[datapoint.status],
             );
             if (!includesArchived) {
-              return hasMatchingStatus && isBeforeDueDate;
+              return hasMatchingStatus && isBeforeDueDate(datapoint.dueDate);
             }
-            if (!hasMatchingStatus && !isBeforeDueDate) {
+            if (!hasMatchingStatus && !isBeforeDueDate(datapoint.dueDate)) {
               return true;
             }
             return hasMatchingStatus;
