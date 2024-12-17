@@ -26,6 +26,8 @@ import { CaseStore } from "./CaseStore";
 import { StaffStore } from "./StaffStore";
 import {
   CreateOrUpdateRecommendationTrackingMetadata,
+  FeatureVariant,
+  FeatureVariantValue,
   IndividualCaseClickedWithStatusMetadata,
   OnboardingTrackingMetadata,
   OpportunityViewedTrackingMetadata,
@@ -42,6 +44,7 @@ export interface RootStore {
     userPseudoId?: string;
     isImpersonating: boolean;
     isRecidivizUser: boolean;
+    activeFeatureVariants: Partial<Record<FeatureVariant, FeatureVariantValue>>;
     getToken?: (
       options?: GetTokenSilentlyOptions,
     ) => Promise<string> | undefined;
@@ -113,5 +116,11 @@ export class PSIStore {
 
   get staffPseudoId(): string | undefined {
     return this.rootStore.userStore.userPseudoId;
+  }
+
+  get activeFeatureVariants(): Partial<
+    Record<FeatureVariant, FeatureVariantValue>
+  > {
+    return this.rootStore.userStore.activeFeatureVariants;
   }
 }

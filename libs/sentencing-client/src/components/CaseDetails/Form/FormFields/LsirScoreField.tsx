@@ -21,7 +21,12 @@ import { ChangeEvent, useEffect } from "react";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import { getOffenseName } from "../../components/charts/RecidivismPlot/RecidivismPlotExplanation";
-import { LSIR_SCORE_KEY, OFFENSE_KEY } from "../../constants";
+import {
+  LSIR_SCORE_KEY,
+  OFFENSE_KEY,
+  SEX_OFFENSE_KEY,
+  VIOLENT_OFFENSE_KEY,
+} from "../../constants";
 import { TextInput } from "../Elements/TextInput";
 import { form } from "../FormStore";
 import { FormFieldProps } from "../types";
@@ -34,6 +39,15 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
   const insight = caseStore.insight;
   const prevLsirScore =
     caseAttributes?.lsirScore === null ? "" : String(caseAttributes?.lsirScore);
+
+  const currentOffense =
+    form.updates[OFFENSE_KEY] ?? caseStore.caseAttributes?.offense;
+  const isCurrentOffenseViolentDefault =
+    currentOffense !== undefined &&
+    caseStore.offensesByName[currentOffense]?.isViolentOffense;
+  const isCurrentOffenseSexualDefault =
+    currentOffense !== undefined &&
+    caseStore.offensesByName[currentOffense]?.isSexOffense;
 
   const { inputValue, setInputValue } = useFormField({
     initialInputValue: prevLsirScore,
@@ -61,13 +75,23 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
     );
 
     /** Fetches insights when LSI-R score changes to display rollup text under the LSI-R score field  */
+
+    const isCurrentOffenseViolent =
+      form.updates[VIOLENT_OFFENSE_KEY] ??
+      (caseAttributes?.offense === currentOffense
+        ? caseAttributes?.isCurrentOffenseViolent
+        : isCurrentOffenseViolentDefault);
+    const isCurrentOffenseSexual =
+      form.updates[SEX_OFFENSE_KEY] ??
+      (caseAttributes?.offense === currentOffense
+        ? caseAttributes?.isCurrentOffenseSexual
+        : isCurrentOffenseSexualDefault);
+
     caseStore.getInsight(
       form.updates[OFFENSE_KEY] ?? caseStore.caseAttributes.offense,
       form.hasError ? undefined : Number(e.target.value.trim()),
-      form.updates["isCurrentOffenseSexual"] ??
-        caseAttributes.isCurrentOffenseSexual,
-      form.updates["isCurrentOffenseViolent"] ??
-        caseAttributes.isCurrentOffenseViolent,
+      isCurrentOffenseSexual,
+      isCurrentOffenseViolent,
     );
   };
 
@@ -82,8 +106,8 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
     caseStore.getInsight(
       caseStore.caseAttributes.offense,
       caseAttributes?.lsirScore ?? undefined,
-      caseAttributes.isCurrentOffenseSexual,
-      caseAttributes.isCurrentOffenseViolent,
+      caseAttributes?.isCurrentOffenseSexual ?? isCurrentOffenseSexualDefault,
+      caseAttributes?.isCurrentOffenseViolent ?? isCurrentOffenseViolentDefault,
     );
     // We only need to call this once on load to update/clear previously fetched insights
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -23,6 +23,7 @@ import {
   CaseListTableCase,
   RecommendationStatusFilter,
 } from "../components/Dashboard/types";
+import { StateCode } from "../geoConfigs/types";
 
 export type OnboardingNextOrBack = "next" | "back";
 
@@ -86,4 +87,13 @@ export type OpportunityWithOriginTrackingMetadata = {
 
 export type CaseAttributes = Partial<Case> & {
   clientGender?: Client["gender"];
+};
+
+// Feature variants exclusive to this app
+export type FeatureVariant = "offenseOverrideControls";
+
+export type FeatureVariantValue = {
+  activeDate?: Date;
+  variant?: string;
+  activeTenants?: StateCode[];
 };

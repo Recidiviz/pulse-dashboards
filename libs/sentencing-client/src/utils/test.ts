@@ -39,6 +39,7 @@ export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
       getToken: () => Promise.resolve("auth0-token"),
       isRecidivizUser: false,
       isImpersonating: false,
+      activeFeatureVariants: {},
     },
     analyticsStore: {
       rootStore: {} as RootStore,

@@ -40,8 +40,17 @@ export const customFilter = (option: SelectOption, inputValue: string) => {
 };
 
 function OffenseField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
+  const { caseStore, activeFeatureVariants } = useStore();
   const caseAttributes = caseStore.caseAttributes;
+
+  const currentOffense =
+    form.updates[OFFENSE_KEY] ?? caseStore.caseAttributes.offense;
+  const isCurrentOffenseViolentDefault =
+    currentOffense !== undefined &&
+    caseStore.offensesByName[currentOffense]?.isViolentOffense;
+  const isCurrentOffenseSexualDefault =
+    currentOffense !== undefined &&
+    caseStore.offensesByName[currentOffense]?.isSexOffense;
 
   const { inputValue, setInputValue, selectValue, setSelectValue } =
     useFormField({
@@ -51,8 +60,10 @@ function OffenseField({ isRequired }: FormFieldProps) {
       },
     });
   const [isViolentSexOffense, setIsViolentSexOffense] = useState({
-    isViolentOffense: Boolean(caseAttributes?.isCurrentOffenseViolent),
-    isSexOffense: Boolean(caseAttributes?.isCurrentOffenseSexual),
+    isViolentOffense:
+      caseAttributes?.isCurrentOffenseViolent ?? isCurrentOffenseViolentDefault,
+    isSexOffense:
+      caseAttributes?.isCurrentOffenseSexual ?? isCurrentOffenseSexualDefault,
   });
 
   const options = Object.keys(caseStore.offensesByName).map(
@@ -63,19 +74,33 @@ function OffenseField({ isRequired }: FormFieldProps) {
   );
 
   const updateDropdownInput = (option?: SelectOption | null) => {
-    if (!option) return;
+    if (!option || !option.value) return;
+    // After the above conditional, this should always be a string because the offenses dropdown only has string options
+    const updatedOffense = option.value as string;
 
     setSelectValue(option);
-    form.updateForm(OFFENSE_KEY, option.value, isRequired);
+    form.updateForm(OFFENSE_KEY, updatedOffense, isRequired);
+
+    const isUpdatedOffenseViolentDefault =
+      updatedOffense !== undefined &&
+      caseStore.offensesByName[updatedOffense]?.isViolentOffense;
+    const isUpdatedOffenseSexualDefault =
+      updatedOffense !== undefined &&
+      caseStore.offensesByName[updatedOffense]?.isSexOffense;
+
+    setIsViolentSexOffense({
+      isViolentOffense: isUpdatedOffenseViolentDefault,
+      isSexOffense: isUpdatedOffenseSexualDefault,
+    });
 
     /** Fetches insights when offense changes to display rollup text under the LSI-R score field  */
     caseStore.getInsight(
       String(option.value),
       form.updates[LSIR_SCORE_KEY] ??
-        caseStore.caseAttributes.lsirScore ??
+        caseStore.caseAttributes?.lsirScore ??
         undefined,
-      isViolentSexOffense.isSexOffense,
-      isViolentSexOffense.isViolentOffense,
+      isUpdatedOffenseSexualDefault,
+      isUpdatedOffenseViolentDefault,
     );
   };
 
@@ -133,7 +158,7 @@ function OffenseField({ isRequired }: FormFieldProps) {
   const CustomOption = action((props: OptionProps<SelectOption>) => {
     const frequencyLabel =
       props.data.label &&
-      caseStore.offensesByName[props.data.label].frequency.toLocaleString();
+      caseStore.offensesByName[props.data.label]?.frequency.toLocaleString();
 
     return (
       <components.Option {...props}>
@@ -166,7 +191,7 @@ function OffenseField({ isRequired }: FormFieldProps) {
   useEffect(() => {
     caseStore.getInsight(
       caseAttributes?.offense,
-      caseStore.caseAttributes.lsirScore ?? undefined,
+      caseStore.caseAttributes?.lsirScore ?? undefined,
       isViolentSexOffense.isSexOffense,
       isViolentSexOffense.isViolentOffense,
     );
@@ -197,28 +222,30 @@ function OffenseField({ isRequired }: FormFieldProps) {
         If there are multiple charges for this case, choose the most severe
       </Styled.InputDescription>
 
-      <Styled.ViolentOrSexOffenseCheckboxContainer>
-        <Styled.CheckboxWrapper>
-          <label htmlFor="is_violent_offense">Violent Offense</label>
-          <input
-            id="is_violent_offense"
-            type="checkbox"
-            checked={isViolentSexOffense.isViolentOffense}
-            onChange={() =>
-              toggleViolentSexOffenseSelection(VIOLENT_OFFENSE_KEY)
-            }
-          />
-        </Styled.CheckboxWrapper>
-        <Styled.CheckboxWrapper>
-          <label htmlFor="is_sex_offense">Sex Offense</label>
-          <input
-            id="is_sex_offense"
-            type="checkbox"
-            checked={isViolentSexOffense.isSexOffense}
-            onChange={() => toggleViolentSexOffenseSelection(SEX_OFFENSE_KEY)}
-          />
-        </Styled.CheckboxWrapper>
-      </Styled.ViolentOrSexOffenseCheckboxContainer>
+      {activeFeatureVariants["offenseOverrideControls"] && (
+        <Styled.ViolentOrSexOffenseCheckboxContainer>
+          <Styled.CheckboxWrapper>
+            <label htmlFor="is_violent_offense">Violent Offense</label>
+            <input
+              id="is_violent_offense"
+              type="checkbox"
+              checked={Boolean(isViolentSexOffense.isViolentOffense)}
+              onChange={() =>
+                toggleViolentSexOffenseSelection(VIOLENT_OFFENSE_KEY)
+              }
+            />
+          </Styled.CheckboxWrapper>
+          <Styled.CheckboxWrapper>
+            <label htmlFor="is_sex_offense">Sex Offense</label>
+            <input
+              id="is_sex_offense"
+              type="checkbox"
+              checked={Boolean(isViolentSexOffense.isSexOffense)}
+              onChange={() => toggleViolentSexOffenseSelection(SEX_OFFENSE_KEY)}
+            />
+          </Styled.CheckboxWrapper>
+        </Styled.ViolentOrSexOffenseCheckboxContainer>
+      )}
     </>
   );
 }

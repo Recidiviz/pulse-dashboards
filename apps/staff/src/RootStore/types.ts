@@ -93,7 +93,8 @@ export type FeatureVariant =
   | "fullWidthTimeline"
   | "zeroGrantsFlag"
   | "usOrEarnedDischargeSentence"
-  | "oppTabSubcategories";
+  | "oppTabSubcategories"
+  | "offenseOverrideControls";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -148,6 +149,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
   oppTabSubcategories: {},
+  offenseOverrideControls: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
