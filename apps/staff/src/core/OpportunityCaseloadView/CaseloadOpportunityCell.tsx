@@ -91,7 +91,6 @@ export const CaseloadOpportunityCell = observer(
                 avatarSize="lg"
                 opportunity={opportunity}
                 textSize="sm"
-                hideId
               />
             </PersonLink>
             {showButton &&

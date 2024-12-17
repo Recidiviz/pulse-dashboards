@@ -71,7 +71,10 @@ const PersonId: React.FC<{
       title={`Copy ${stateIdDescriptor} to clipboard`}
       className="fs-exclude"
       onClick={(e) => {
-        e.preventDefault(); // if PersonId is in a link, prevent the link from being followed
+        // if PersonId is in a clickable element, prevent other effects of the click,
+        // such as opening a modal or following a link
+        e.preventDefault();
+        e.stopPropagation();
         copyToClipboard();
       }}
       shiftIcon={shiftIcon}

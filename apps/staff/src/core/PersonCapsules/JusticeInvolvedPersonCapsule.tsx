@@ -42,7 +42,6 @@ export type JusticeInvolvedPersonCapsuleProps = {
   status: React.ReactNode;
   textSize: "sm" | "lg";
   profileLink?: string;
-  hideId?: boolean;
   nameHoverState?: boolean;
   additionalDetails?: string;
 };
@@ -125,7 +124,6 @@ export const JusticeInvolvedPersonCapsule = observer(
     status,
     textSize,
     profileLink,
-    hideId = false,
     additionalDetails,
     nameHoverState = true,
   }: JusticeInvolvedPersonCapsuleProps): JSX.Element {
@@ -163,14 +161,8 @@ export const JusticeInvolvedPersonCapsule = observer(
             ) : (
               nameElem
             )}
-            {!hideId && (
-              <>
-                <Separator> </Separator>
-                <PersonId personId={person.displayId}>
-                  {person.displayId}
-                </PersonId>
-              </>
-            )}
+            <Separator> </Separator>
+            <PersonId personId={person.displayId}>{person.displayId}</PersonId>
           </IdentityEl>
           <StatusEl
             className={`WorkflowsStatus__${person.externalId} fs-exclude`}
