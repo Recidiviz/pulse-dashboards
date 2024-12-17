@@ -109,7 +109,12 @@ export async function getInsights(
     const isDrugOffense =
       originalInsight.rollupCombinedOffenseCategory.includes("Drug");
 
-    const searchTerm = `${isSexOffense ? "" : "!"}Sex & ${isViolentOffense ? "" : "!"}Violent & ${isDrugOffense ? "" : "!"}Drug`;
+    // If everything is false, then use the Non-* search term, otherwise use the individualized search term
+    // This is because the search is non case sensitive, so we can't just use the ! operator
+    const searchTerm =
+      !isSexOffense && !isViolentOffense && !isDrugOffense
+        ? "Non-sex & Non-violent & Non-drug"
+        : `${isSexOffense ? "" : "!"}Sex & ${isViolentOffense ? "" : "!"}Violent & ${isDrugOffense ? "" : "!"}Drug`;
 
     // We just need the first insight
     newInsight = await prisma.insight.findFirst({
