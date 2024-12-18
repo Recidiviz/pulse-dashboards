@@ -43,11 +43,9 @@ If you haven't already, follow the setup instructions in the root README to inst
 
 ### Updating the prisma schema
 
-If you make changes to the prisma schema, you will need to run `nx prisma-migrate sentencing-server --name="{YOUR_CHANGE_NAME}"` to create a database migration file. In order for this to work, the database must be running in the docker container.
+Instructions for updating the prisma schema are in the [prisma README](../../libs/@sentencing-server/prisma/README.md).
 
 ### Add support for a new state
-
-If you'd like to add support for a new state, you don't have to make any code changes!
 
 Note: This is just for the application to support a new state. You will still need to add metric exports + Cloud Storage notifications for the new state in order for data to be be imported for the new state.
 

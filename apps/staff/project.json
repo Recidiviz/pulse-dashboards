@@ -14,7 +14,10 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "dependsOn": [
-        { "projects": ["sentencing-server"], "target": "prisma-generate" }
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        }
       ],
       "options": {
         "commands": [
@@ -141,7 +144,10 @@
     "build": {
       "executor": "@nx/vite:build",
       "dependsOn": [
-        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
         "env-prod"
       ],
       "options": {
@@ -158,7 +164,10 @@
     "build-staging": {
       "executor": "@nx/vite:build",
       "dependsOn": [
-        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
         "env-staging"
       ],
       "options": {
@@ -175,7 +184,10 @@
     "build-preview-ci": {
       "executor": "@nx/vite:build",
       "dependsOn": [
-        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
         "env-preview-ci"
       ],
       "options": {
@@ -192,7 +204,10 @@
     "build-demo": {
       "executor": "@nx/vite:build",
       "dependsOn": [
-        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
         "env-demo"
       ],
       "options": {
@@ -209,7 +224,10 @@
     "build-e2e": {
       "executor": "@nx/vite:build",
       "dependsOn": [
-        { "projects": ["sentencing-server"], "target": "prisma-generate" },
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
         "env-build-e2e"
       ],
       "options": {

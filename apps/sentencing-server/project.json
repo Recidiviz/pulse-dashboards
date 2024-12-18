@@ -27,7 +27,12 @@
     },
     "typecheck": {
       "executor": "nx:run-commands",
-      "dependsOn": ["prisma-generate"],
+      "dependsOn": [
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
       "options": {
         "commands": [
           "tsc -p ./tsconfig.app.json",
@@ -36,24 +41,18 @@
         "cwd": "{projectRoot}"
       }
     },
-    "docker": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}"
-      },
-      "configurations": {
-        "dev": {
-          "command": "docker compose up --wait"
-        },
-        "ci": {
-          "command": "echo 'No docker for CI'"
-        }
-      },
-      "defaultConfiguration": "dev"
-    },
     "dev": {
       "executor": "nx:run-commands",
-      "dependsOn": ["docker", "prisma-seed"],
+      "dependsOn": [
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "docker"
+        },
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-seed"
+        }
+      ],
       "options": {
         "command": "vite-node --watch src/main.ts",
         "cwd": "{projectRoot}"
@@ -62,7 +61,12 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
-      "dependsOn": ["prisma-generate"],
+      "dependsOn": [
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/sentencing-server",
@@ -74,8 +78,16 @@
         "target": "node20",
         "minify": true,
         "assets": [
-          "{projectRoot}/prisma/schema.prisma",
-          "{projectRoot}/prisma/migrations/**/*",
+          {
+            "glob": "prisma/schema.prisma",
+            "input": "{workspaceRoot}/libs/@sentencing-server/prisma",
+            "output": "."
+          },
+          {
+            "glob": "prisma/migrations/**/*",
+            "input": "{workspaceRoot}/libs/@sentencing-server/prisma",
+            "output": "."
+          },
           "{projectRoot}/scripts/*"
         ]
       },
@@ -94,19 +106,33 @@
     },
     "preview": {
       "executor": "@nx/vite:preview-server",
-      "dependsOn": ["docker", "prisma-seed"],
+      "dependsOn": [
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "docker"
+        },
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-seed"
+        }
+      ],
       "options": {
         "buildTarget": "sentencing-server:build"
       }
     },
     "test": {
       "executor": "nx:run-commands",
-      "dependsOn": ["docker", "prisma-generate"],
+      "dependsOn": [
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "docker"
+        }
+      ],
       "outputs": ["{workspaceRoot}/coverage/apps/sentencing-server"],
       "cache": true,
       "options": {
-        "command": "prisma db push && vitest",
-        "cwd": "{projectRoot}"
+        "command": "nx prisma-push @sentencing-server/prisma && cd apps/sentencing-server && vitest",
+        "cwd": "{workspaceRoot}"
       }
     },
     "container": {
@@ -248,84 +274,7 @@
       "options": {
         "command": "gcloud run services delete ss-preview-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud run jobs delete ss-migrate-preview-db-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud sql instances delete s-db-preview-$VERSION --project recidiviz-dashboard-staging -q"
       }
-    },
-    "prisma-generate": {
-      "inputs": ["{projectRoot}/apps/sentencing-server/prisma/schema.prisma"],
-      "executor": "@nx-tools/nx-prisma:generate",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-format": {
-      "executor": "@nx-tools/nx-prisma:format",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-migrate": {
-      "dependsOn": ["docker"],
-      "executor": "@nx-tools/nx-prisma:migrate",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-pull": {
-      "executor": "@nx-tools/nx-prisma:pull",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-push": {
-      "executor": "@nx-tools/nx-prisma:push",
-      "dependsOn": ["docker"],
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-deploy": {
-      "executor": "@nx-tools/nx-prisma:deploy",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-status": {
-      "executor": "@nx-tools/nx-prisma:status",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-studio": {
-      "executor": "@nx-tools/nx-prisma:studio",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-reset": {
-      "executor": "@nx-tools/nx-prisma:reset",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-resolve": {
-      "executor": "@nx-tools/nx-prisma:resolve",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
-    },
-    "prisma-seed": {
-      "executor": "@nx-tools/nx-prisma:seed",
-      "dependsOn": ["docker", "prisma-push", "prisma-generate"],
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma",
-        "script": "apps/sentencing-server/prisma/seed.ts"
-      }
-    },
-    "prisma-validate": {
-      "executor": "@nx-tools/nx-prisma:validate",
-      "options": {
-        "schema": "apps/sentencing-server/prisma/schema.prisma"
-      }
     }
   },
-  "tags": []
+  "tags": ["sentencing-server"]
 }

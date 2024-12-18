@@ -15,6 +15,12 @@
     },
     "typecheck": {
       "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
       "options": {
         "commands": [
           "tsc -p ./tsconfig.lib.json",

@@ -22,6 +22,7 @@
     "paths": {
       "~@case-notes-server/trpc": ["libs/@case-notes-server/trpc/src/index.ts"],
       "~@case-notes-server/trpc/*": ["libs/@case-notes-server/trpc/src/*"],
+      "~@sentencing-server/prisma/*": ["libs/@sentencing-server/prisma/src/*"],
       "~auth": ["libs/auth/src/index.ts"],
       "~auth0-jii": ["libs/auth0-jii/src/index.ts"],
       "~case-notes-server/*": ["apps/case-notes-server/src/*"],
