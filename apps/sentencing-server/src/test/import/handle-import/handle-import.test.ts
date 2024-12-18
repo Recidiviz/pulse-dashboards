@@ -1684,5 +1684,66 @@ describe("handle_import", () => {
         "Error when importing offenses! These offenses exist in the database but are missing from the data import: offense-name",
       );
     });
+
+    test("should not capture exception if missing offense is a placeholder one", async () => {
+      await testPrismaClient.offense.create({
+        data: {
+          stateCode: "US_ID",
+          name: "[PLACEHOLDER] Ben's offense",
+        },
+      });
+
+      // Missing the placeholder offense
+      dataProviderSingleton.setData([
+        // Old offense
+        {
+          state_code: StateCode.US_ID,
+          charge: fakeOffense.name,
+          is_sex_offense: false,
+          frequency: 100,
+        },
+        // New offense
+        {
+          state_code: StateCode.US_ID,
+          charge: "new-offense",
+          is_sex_offense: false,
+          frequency: 10,
+        },
+      ]);
+
+      const response = await callHandleImportOffenseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new offense was created
+      const dbOffenses = await testPrismaClient.offense.findMany();
+
+      // There should be three offenses in the database - the real old one, the placeholder old one, and the new one
+      expect(dbOffenses).toHaveLength(3);
+
+      expect(dbOffenses).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: fakeOffense.name,
+            isSexOffense: false,
+            // This should be explicitly updated to null
+            isViolentOffense: null,
+            frequency: 100,
+          }),
+          expect.objectContaining({
+            name: "new-offense",
+            isSexOffense: false,
+            isViolentOffense: null,
+            frequency: 10,
+          }),
+          expect.objectContaining({
+            name: "[PLACEHOLDER] Ben's offense",
+          }),
+        ]),
+      );
+
+      // Shouldn't have any errors
+      await testAndGetSentryReports(0);
+    });
   });
 });

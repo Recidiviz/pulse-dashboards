@@ -20,6 +20,7 @@ import { captureException } from "@sentry/node";
 import _ from "lodash";
 import z from "zod";
 
+import { PLACEHOLDER_SIGNIFIER } from "~sentencing-server/common/constants";
 import { EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE } from "~sentencing-server/import/handle-import/constants";
 import {
   caseImportSchema,
@@ -541,14 +542,21 @@ export async function transformAndLoadOffenseData(
 
   const missingExistingOffenses = await prismaClient.offense.findMany({
     where: {
-      NOT: {
-        name: {
-          in: newOffenseNames,
+      NOT: [
+        {
+          name: {
+            in: newOffenseNames,
+          },
         },
-      },
+        {
+          name: {
+            contains: PLACEHOLDER_SIGNIFIER,
+          },
+        },
+      ],
     },
   });
-  // If there are any offenses in the database that aren't in the data import, log an error
+  // If there are any non-placeholder offenses in the database that aren't in the data import, log an error
   if (missingExistingOffenses.length > 0) {
     captureException(
       `Error when importing offenses! These offenses exist in the database but are missing from the data import: ${missingExistingOffenses.map((offense) => offense.name).join(", ")}`,

@@ -16,3 +16,5 @@
 // =============================================================================
 
 export const OPPORTUNITY_UNKNOWN_PROVIDER_NAME = "unknown";
+
+export const PLACEHOLDER_SIGNIFIER = "[PLACEHOLDER]";

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PLACEHOLDER_SIGNIFIER } from "~sentencing-server/common/constants";
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
 
 export const offenseRouter = router({
@@ -29,6 +30,11 @@ export const offenseRouter = router({
         // Only return offenses that have insights
         insightOffenses: {
           some: {},
+        },
+        NOT: {
+          name: {
+            contains: PLACEHOLDER_SIGNIFIER,
+          },
         },
       },
     });

@@ -21,7 +21,10 @@ import {
   testPrismaClient,
   testTRPCClient,
 } from "~sentencing-server/test/setup";
-import { fakeOffense } from "~sentencing-server/test/setup/seed";
+import {
+  fakeInsightPrismaInput,
+  fakeOffense,
+} from "~sentencing-server/test/setup/seed";
 
 describe("offense router", () => {
   describe("getOffenses", () => {
@@ -39,6 +42,64 @@ describe("offense router", () => {
 
       const returnedOffenses = await testTRPCClient.offense.getOffenses.query();
 
+      // Only the original fake offense should be returned
+      expect(returnedOffenses).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: fakeOffense.name,
+            isSexOffense: false,
+            isViolentOffense: true,
+            frequency: fakeOffense.frequency,
+          }),
+        ]),
+      );
+    });
+
+    test("should not return placeholder offenses", async () => {
+      // Create a new offense with the placeholder text
+      await testPrismaClient.offense.createMany({
+        data: [
+          {
+            stateCode: fakeOffense.stateCode,
+            name: "[PLACEHOLDER] Ben's Offense",
+            isSexOffense: false,
+            isViolentOffense: true,
+            frequency: 10,
+          },
+        ],
+      });
+
+      // Create an insight for the new offense so that isn't the reason it's not returned
+      await testPrismaClient.insight.create({
+        data: {
+          stateCode: "US_ID",
+          gender: "MALE",
+          offense: {
+            connect: {
+              stateCode: fakeOffense.stateCode,
+              name: "[PLACEHOLDER] Ben's Offense",
+            },
+          },
+          assessmentScoreBucketStart: 10,
+          assessmentScoreBucketEnd: 20,
+          rollupStateCode: "US_ID",
+          rollupGender: null,
+          rollupAssessmentScoreBucketStart: null,
+          rollupAssessmentScoreBucketEnd: null,
+          rollupOffenseId: undefined,
+          rollupNcicCategory: null,
+          rollupCombinedOffenseCategory: "Sex offense, Drug offense",
+          rollupViolentOffense: null,
+          rollupRecidivismSeries: undefined,
+          dispositionData: fakeInsightPrismaInput.dispositionData,
+          rollupRecidivismNumRecords: 1,
+          dispositionNumRecords: 1,
+        },
+      });
+
+      const returnedOffenses = await testTRPCClient.offense.getOffenses.query();
+
+      expect(returnedOffenses).toHaveLength(1);
       // Only the original fake offense should be returned
       expect(returnedOffenses).toEqual(
         expect.arrayContaining([
