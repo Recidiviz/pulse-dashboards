@@ -1353,7 +1353,7 @@ describe("handle_import", () => {
 
     test("should import new insights and delete old data", async () => {
       dataProviderSingleton.setData([
-        // New insight
+        // New insights
         {
           state_code: StateCode.US_ID,
           // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
@@ -1383,13 +1383,38 @@ describe("handle_import", () => {
           disposition_rider_pc: faker.number.float(),
           disposition_term_pc: faker.number.float(),
         },
+        {
+          state_code: StateCode.US_ID,
+          gender: Gender.MALE,
+          assessment_score_bucket_start: faker.number.int({ max: 100 }),
+          assessment_score_bucket_end: faker.number.int({ max: 100 }),
+          most_severe_description: "another-offense",
+          recidivism_rollup: JSON.stringify({
+            state_code: StateCode.US_ID,
+            any_is_violent_uniform: true,
+          }),
+          recidivism_num_records: faker.number.int({ max: 100 }),
+          recidivism_probation_series: JSON.stringify(
+            createFakeRecidivismSeriesForImport(),
+          ),
+          recidivism_rider_series: JSON.stringify(
+            createFakeRecidivismSeriesForImport(),
+          ),
+          recidivism_term_series: JSON.stringify(
+            createFakeRecidivismSeriesForImport(),
+          ),
+          disposition_num_records: faker.number.int({ max: 100 }),
+          disposition_probation_pc: faker.number.float(),
+          disposition_rider_pc: faker.number.float(),
+          disposition_term_pc: faker.number.float(),
+        },
       ]);
 
       const response = await callHandleImportInsightData(testServer);
 
       expect(response.statusCode).toBe(200);
 
-      // Check that the new Insight was created
+      // Check that the new Insights were created
       const dbInsights = await testPrismaClient.insight.findMany({
         include: {
           rollupRecidivismSeries: {
@@ -1402,52 +1427,89 @@ describe("handle_import", () => {
         },
       });
 
-      // There should only be one insight in the database - the new one should have been created
-      // and the old one should have been deleted
-      expect(dbInsights).toHaveLength(1);
+      // There should be two insights in the database - just the two new ones
+      expect(dbInsights).toHaveLength(2);
 
-      const newInsight = dbInsights[0];
-      expect(newInsight).toEqual(
-        expect.objectContaining({
-          gender: "MALE",
-          rollupStateCode: StateCode.US_ID,
-          rollupGender: Gender.MALE,
-          rollupAssessmentScoreBucketStart: expect.any(Number),
-          rollupAssessmentScoreBucketEnd: expect.any(Number),
-          rollupNcicCategory: expect.any(String),
-          rollupRecidivismNumRecords: expect.any(Number),
-          rollupRecidivismSeries: expect.arrayContaining([
-            // There should be two data points for each series
-            expect.objectContaining({
-              recommendationType: "Probation",
-              dataPoints: expect.arrayContaining([
-                expect.objectContaining({}),
-                expect.objectContaining({}),
-              ]),
-            }),
-            expect.objectContaining({
-              recommendationType: "Rider",
-              dataPoints: expect.arrayContaining([
-                expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                expect.objectContaining({ cohortMonths: expect.any(Number) }),
-              ]),
-            }),
-            expect.objectContaining({
-              recommendationType: "Term",
-              dataPoints: expect.arrayContaining([
-                expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                expect.objectContaining({ cohortMonths: expect.any(Number) }),
-              ]),
-            }),
-          ]),
-          dispositionNumRecords: expect.any(Number),
-          dispositionData: expect.arrayContaining([
-            // There should be one of each type of disposition
-            expect.objectContaining({ recommendationType: "Probation" }),
-            expect.objectContaining({ recommendationType: "Rider" }),
-            expect.objectContaining({ recommendationType: "Term" }),
-          ]),
-        }),
+      expect(dbInsights).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            gender: "MALE",
+            rollupStateCode: StateCode.US_ID,
+            rollupGender: Gender.MALE,
+            rollupAssessmentScoreBucketStart: expect.any(Number),
+            rollupAssessmentScoreBucketEnd: expect.any(Number),
+            rollupNcicCategory: expect.any(String),
+            rollupRecidivismNumRecords: expect.any(Number),
+            rollupRecidivismSeries: expect.arrayContaining([
+              // There should be two data points for each series
+              expect.objectContaining({
+                recommendationType: "Probation",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({}),
+                  expect.objectContaining({}),
+                ]),
+              }),
+              expect.objectContaining({
+                recommendationType: "Rider",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                ]),
+              }),
+              expect.objectContaining({
+                recommendationType: "Term",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                ]),
+              }),
+            ]),
+            dispositionNumRecords: expect.any(Number),
+            dispositionData: expect.arrayContaining([
+              // There should be one of each type of disposition
+              expect.objectContaining({ recommendationType: "Probation" }),
+              expect.objectContaining({ recommendationType: "Rider" }),
+              expect.objectContaining({ recommendationType: "Term" }),
+            ]),
+          }),
+          expect.objectContaining({
+            gender: "MALE",
+            rollupStateCode: StateCode.US_ID,
+            rollupViolentOffense: true,
+            rollupRecidivismNumRecords: expect.any(Number),
+            rollupRecidivismSeries: expect.arrayContaining([
+              // There should be two data points for each series
+              expect.objectContaining({
+                recommendationType: "Probation",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({}),
+                  expect.objectContaining({}),
+                ]),
+              }),
+              expect.objectContaining({
+                recommendationType: "Rider",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                ]),
+              }),
+              expect.objectContaining({
+                recommendationType: "Term",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
+                ]),
+              }),
+            ]),
+            dispositionNumRecords: expect.any(Number),
+            dispositionData: expect.arrayContaining([
+              // There should be one of each type of disposition
+              expect.objectContaining({ recommendationType: "Probation" }),
+              expect.objectContaining({ recommendationType: "Rider" }),
+              expect.objectContaining({ recommendationType: "Term" }),
+            ]),
+          }),
+        ]),
       );
     });
 

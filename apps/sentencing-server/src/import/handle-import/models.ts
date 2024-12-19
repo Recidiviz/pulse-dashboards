@@ -186,7 +186,7 @@ export const recidivismRollupSchema = zu.stringToJSON().pipe(
     most_severe_description: z.string().optional(),
     most_severe_ncic_category_uniform: z.string().optional(),
     combined_offense_category: z.string().optional(),
-    violent_offense: z.boolean().optional(),
+    any_is_violent_uniform: z.boolean().optional(),
   }),
 );
 

@@ -443,7 +443,8 @@ export async function transformAndLoadInsightData(
         insightData.recidivism_rollup.most_severe_ncic_category_uniform,
       rollupCombinedOffenseCategory:
         insightData.recidivism_rollup.combined_offense_category,
-      rollupViolentOffense: insightData.recidivism_rollup.violent_offense,
+      rollupViolentOffense:
+        insightData.recidivism_rollup.any_is_violent_uniform,
       rollupRecidivismNumRecords: insightData.recidivism_num_records,
       rollupRecidivismSeries: {
         create: transformAllRecidivismSeries(insightData),
