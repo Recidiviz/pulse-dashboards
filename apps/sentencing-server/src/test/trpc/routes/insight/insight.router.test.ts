@@ -332,6 +332,122 @@ describe("insight router", () => {
           );
         });
 
+        test("should handle level 5 rollup for everything true", async () => {
+          // Create three new insights:
+          // 1. One for our fake offense that has a level 5 rollup but is labeled as a drug offense rollup, which won't match our search parameters
+          // 2. One that matches to a different offense but has a level 5 rollup that is labeled as a Non-* everything rollup, which won't match our search parameters
+          // 3. One that matches to a different offense but has a level 5 rollup that is labeled as a everything true rollup, which should match our search parameters
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: "Drug offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: Gender.MALE,
+              offense: {
+                create: {
+                  stateCode: StateCode.US_ID,
+                  name: "different-offense",
+                },
+              },
+              assessmentScoreBucketStart: 0,
+              assessmentScoreBucketEnd: 0,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory:
+                "Non-violent, Non-drug, Non-sex offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: undefined,
+              rollupRecidivismNumRecords: 2,
+              dispositionNumRecords: 2,
+            },
+          });
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: Gender.MALE,
+              offense: {
+                create: {
+                  stateCode: StateCode.US_ID,
+                  name: "different-offense-2",
+                },
+              },
+              assessmentScoreBucketStart: 0,
+              assessmentScoreBucketEnd: 0,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: "Violent, Drug, Sex offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries:
+                fakeInsightPrismaInput.rollupRecidivismSeries,
+              dispositionData: undefined,
+              rollupRecidivismNumRecords: 3,
+              dispositionNumRecords: 3,
+            },
+          });
+
+          // Look for an insight that that should only have a violent offense rollup
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+              isSexOffense: true,
+              isViolentOffense: true,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              // The offense name, gender, and lsir score buckets should match the original offense
+              offense: expect.objectContaining({
+                name: fakeInsight.offense,
+              }),
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupCombinedOffenseCategory: "Violent, Drug, Sex offense",
+              // The recidivism data should match the new insight while the rollup data should match the original one
+              rollupRecidivismNumRecords: 3,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
+
         test("should return a level 6 rollup if there is no level 5 match", async () => {
           // Create two new insights:
           // 1. One for our fake offense that has a level 5 rollup (combined offense category) but is labeled as a sex offense + drug offense rollup, which won't match our search parameters
