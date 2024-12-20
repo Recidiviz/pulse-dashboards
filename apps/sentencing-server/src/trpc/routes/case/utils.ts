@@ -16,10 +16,9 @@
 // =============================================================================
 
 import { Prisma, PrismaClient } from "@prisma/client";
-import { captureException } from "@sentry/node";
 
 import { PRISMA_CASE_GET_ARGS } from "~sentencing-server/trpc/routes/case/constants";
-import { getInsights } from "~sentencing-server/trpc/routes/common/utils";
+import { getInsight } from "~sentencing-server/trpc/routes/common/utils";
 
 type CaseData = Prisma.CaseGetPayload<typeof PRISMA_CASE_GET_ARGS>;
 
@@ -37,7 +36,7 @@ export async function getInsightForCase(
 
   const { id } = caseData;
 
-  const insights = await getInsights(
+  const insight = await getInsight(
     caseData.offense.name,
     caseData.client.gender,
     caseData.lsirScore,
@@ -46,24 +45,16 @@ export async function getInsightForCase(
     prisma,
   );
 
-  if (!insights.length) {
+  if (!insight) {
     throw new Error(
       `No corresponding insight found for provided case with id ${id}.`,
     );
   }
 
-  if (insights.length > 1) {
-    captureException(
-      `Multiple insights found for case with id ${id}: ${JSON.stringify(insights)}. Returning first one.`,
-    );
-  }
-
-  const insightToReturn = insights[0];
-
   return {
-    ...insightToReturn,
+    ...insight,
     // Move offenses names to top level
-    offense: insightToReturn.offense.name,
-    rollupOffense: insightToReturn.rollupOffense?.name,
+    offense: insight.offense.name,
+    rollupOffense: insight.rollupOffense?.name,
   };
 }

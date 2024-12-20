@@ -16,10 +16,65 @@
 // =============================================================================
 
 import { Gender, PrismaClient } from "@prisma/client";
+import { captureException } from "@sentry/node";
 
 import { INSIGHT_INCLUDES_AND_OMITS } from "~sentencing-server/trpc/routes/common/constants";
 
-export async function getInsights(
+function formatInsightCombinedOffenseCategory(
+  rollupCombinedOffenseCategory: string | null,
+) {
+  if (!rollupCombinedOffenseCategory) {
+    return rollupCombinedOffenseCategory;
+  }
+
+  // Non-* everything
+  if (
+    rollupCombinedOffenseCategory.includes("Non-violent") &&
+    rollupCombinedOffenseCategory.includes("Non-drug") &&
+    rollupCombinedOffenseCategory.includes("Non-sex")
+  ) {
+    return "Nonviolent offenses, not sex- or drug-related";
+  }
+
+  // Violent + anything else
+  if (rollupCombinedOffenseCategory.includes("Violent")) {
+    if (rollupCombinedOffenseCategory.includes("Drug")) {
+      if (rollupCombinedOffenseCategory.includes("Sex")) {
+        return "Violent, drug-related sex offenses";
+      }
+
+      return "Violent drug offenses";
+    }
+
+    if (rollupCombinedOffenseCategory.includes("Sex")) {
+      return "Violent sex offenses";
+    }
+
+    return "Violent offenses, not sex- or drug-related";
+  }
+
+  // Remaining Drug + others
+  if (rollupCombinedOffenseCategory.includes("Drug")) {
+    if (rollupCombinedOffenseCategory.includes("Sex")) {
+      return "Drug-related sex offenses";
+    }
+
+    return "Nonviolent drug offenses";
+  }
+
+  // Last possible is just Sex
+  if (rollupCombinedOffenseCategory.includes("Sex")) {
+    return "Nonviolent sex offenses";
+  }
+
+  // We should never reach this point
+  captureException(
+    `Unexpected combined offense category: ${rollupCombinedOffenseCategory}! Unable to format string, so just returning the value`,
+  );
+  return rollupCombinedOffenseCategory;
+}
+
+async function getInsightsWithReverseLookup(
   offenseName: string,
   gender: Gender,
   lsirScore: number,
@@ -204,4 +259,46 @@ export async function getInsights(
 
   // Return the insight we have found, otherwise there are no insights to be found
   return newInsight ? [newInsight] : [];
+}
+
+export async function getInsight(
+  offenseName: string,
+  gender: Gender,
+  lsirScore: number,
+  isSexOffenseOverride: boolean | null,
+  isViolentOffenseOverride: boolean | null,
+  prisma: PrismaClient,
+) {
+  const insights = await getInsightsWithReverseLookup(
+    offenseName,
+    gender,
+    lsirScore,
+    isSexOffenseOverride,
+    isViolentOffenseOverride,
+    prisma,
+  );
+
+  if (!insights.length) {
+    captureException(
+      `No insights found for attributes offense name of ${offenseName}, gender of ${gender}, LSI-R Score of ${lsirScore}, sex offense override of ${isSexOffenseOverride}, violent offense override of ${isViolentOffenseOverride}`,
+    );
+
+    return null;
+  }
+
+  if (insights.length > 1) {
+    captureException(
+      `Multiple insights found for attributes offense name of ${offenseName}, gender of ${gender}, LSI-R Score of ${lsirScore}, sex offense override of ${isSexOffenseOverride}, violent offense override of ${isViolentOffenseOverride}: ${JSON.stringify(insights)}. Returning the first one.`,
+    );
+  }
+
+  const insightToReturn = insights[0];
+
+  // Format the combined offense category
+  insightToReturn.rollupCombinedOffenseCategory =
+    formatInsightCombinedOffenseCategory(
+      insightToReturn.rollupCombinedOffenseCategory,
+    );
+
+  return insightToReturn;
 }

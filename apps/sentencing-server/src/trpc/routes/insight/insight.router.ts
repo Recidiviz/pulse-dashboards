@@ -15,10 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { captureException } from "@sentry/node";
-
 import { baseProcedure, router } from "~sentencing-server/trpc/init";
-import { getInsights } from "~sentencing-server/trpc/routes/common/utils";
+import { getInsight } from "~sentencing-server/trpc/routes/common/utils";
 import { getInsightSchema } from "~sentencing-server/trpc/routes/insight/insight.schema";
 
 export const insightRouter = router({
@@ -35,7 +33,7 @@ export const insightRouter = router({
         },
         ctx: { prisma },
       }) => {
-        const insights = await getInsights(
+        return await getInsight(
           offenseName,
           gender,
           lsirScore,
@@ -43,18 +41,6 @@ export const insightRouter = router({
           isViolentOffense,
           prisma,
         );
-
-        if (!insights.length) {
-          return null;
-        }
-
-        if (insights.length > 1) {
-          captureException(
-            `Multiple insights found for attributes offense name of ${offenseName}, gender of ${gender}, and LSI-R Score of ${lsirScore}: ${JSON.stringify(insights)}. Returning the first one.`,
-          );
-        }
-
-        return insights[0];
       },
     ),
 });
