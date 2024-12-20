@@ -341,6 +341,10 @@ export default class AnalyticsStore {
     this.track("frontend.tasks_previewed", metadata);
   }
 
+  trackTaskHeaderToggled(title: string): void {
+    this.track("frontend.task_header_toggled", { title });
+  }
+
   trackOpportunityMarkedSubmitted(metadata: OpportunityTrackingMetadata): void {
     this.track("frontend.opportunity_marked_submitted", metadata);
   }

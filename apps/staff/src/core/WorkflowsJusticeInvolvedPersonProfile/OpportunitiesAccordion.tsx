@@ -61,7 +61,6 @@ const AccordionButton = styled(AccordionItemButton)`
   &::after {
     display: inline-block;
     content: "+";
-    display: inline-block;
     font-size: 1rem;
     position: absolute;
     right: ${rem(spacing.sm)};

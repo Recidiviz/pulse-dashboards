@@ -110,16 +110,16 @@ type TaskClientTooltipProps = {
   children: React.ReactElement;
 };
 
-export const TaskListTooltip: React.FC<TaskClientTooltipProps> = ({
-  person,
-  tasks,
-  children,
-}) => {
-  useHydrateOpportunities(person);
+export const TaskListTooltip: React.FC<TaskClientTooltipProps> = observer(
+  function TaskListTooltip({ person, tasks, children }) {
+    useHydrateOpportunities(person);
 
-  return (
-    <TooltipTrigger contents={<TooltipDetails person={person} tasks={tasks} />}>
-      {children}
-    </TooltipTrigger>
-  );
-};
+    return (
+      <TooltipTrigger
+        contents={<TooltipDetails person={person} tasks={tasks} />}
+      >
+        {children}
+      </TooltipTrigger>
+    );
+  },
+);

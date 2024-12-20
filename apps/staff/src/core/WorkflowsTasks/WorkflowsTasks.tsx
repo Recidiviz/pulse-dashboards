@@ -18,41 +18,30 @@
 import {
   palette,
   Pill,
-  Sans12,
   Sans14,
-  Sans16,
   Serif34,
   spacing,
-  typography,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import { rem } from "polished";
-import React, { ReactNode } from "react";
+import React from "react";
 import simplur from "simplur";
 import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
-import { PersonInitialsAvatar } from "~ui";
-
 import { useRootStore } from "../../components/StoreProvider";
-import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
-import { JusticeInvolvedPerson } from "../../WorkflowsStore";
-import {
-  SupervisionNeedType,
-  SupervisionTask,
-  SupervisionTaskType,
-} from "../../WorkflowsStore/Task/types";
+import { SupervisionNeedType } from "../../WorkflowsStore";
 import { WorkflowsTasksStore } from "../../WorkflowsStore/Task/WorkflowsTasksStore";
 import { getEntries } from "../../WorkflowsStore/utils";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
-import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
+import { AllTasksView } from "./AllTasksView";
 import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
+import { NeedListItem } from "./ListItem";
 import { TaskPreviewModal } from "./TaskPreviewModal";
-import { TaskListTooltip } from "./WorkflowsTasksTooltip";
+import { TasksCalendarView } from "./TasksCalendarView";
 
 const TasksHeader = styled(Serif34)`
   color: ${palette.pine2};
@@ -91,21 +80,6 @@ const Divider = styled.hr`
   background-color: ${palette.slate20};
 `;
 
-const TaskClient = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: ${rem(spacing.md)};
-  cursor: pointer;
-`;
-
-const TaskClientItem = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${rem(spacing.sm)};
-  margin-right: ${rem(spacing.md)};
-  min-width: fit-content;
-`;
-
 export const TaskDueDate = styled.div<{
   overdue: boolean;
   font: FlattenSimpleInterpolation;
@@ -117,204 +91,6 @@ export const TaskDueDate = styled.div<{
   margin-left: ${({ marginLeft = "auto" }) => marginLeft};
   ${({ isMobile }) => isMobile && `font-size: ${rem(12)} !important;`}
 `;
-
-const TaskClientName = styled(Sans16).attrs({ as: "span" })`
-  color: ${palette.pine4};
-  &:hover,
-  &:focus {
-    cursor: pointer;
-  }
-`;
-
-type TaskListItemProps = {
-  person: JusticeInvolvedPerson;
-  task?: SupervisionTask<SupervisionTaskType>;
-};
-
-const TaskListItem: React.FC<TaskListItemProps> = observer(
-  function TaskListItem({ person, task }: TaskListItemProps) {
-    const { workflowsStore } = useRootStore();
-    const { isMobile } = useIsMobile(true);
-    const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
-    const readyOrderedTasks = person.supervisionTasks?.readyOrderedTasks ?? [];
-    const taskToDisplay = task || readyOrderedTasks[0];
-    if (!taskToDisplay) {
-      return null;
-    }
-    return (
-      <TaskListTooltip person={person} tasks={orderedTasks}>
-        <TaskClient
-          onClick={() =>
-            workflowsStore.updateSelectedPerson(person.pseudonymizedId)
-          }
-        >
-          <TaskClientItem>
-            <PersonInitialsAvatar name={person.displayName} size={24} />
-            <div>
-              <TaskClientName>{person.displayName}</TaskClientName>
-              <Sans12>
-                {task ? null : simplur`${orderedTasks.length} task[|s]`}
-              </Sans12>
-            </div>
-          </TaskClientItem>
-          <TaskDueDate
-            font={typography.Sans14}
-            overdue={taskToDisplay.isOverdue}
-            isMobile={isMobile}
-          >
-            {taskToDisplay.dueDateDisplayLong}
-          </TaskDueDate>
-        </TaskClient>
-      </TaskListTooltip>
-    );
-  },
-);
-
-const NeedListItem: React.FC<TaskListItemProps> = observer(
-  function NeedListItem({ person, task }: TaskListItemProps) {
-    const { workflowsStore } = useRootStore();
-    const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
-
-    return (
-      <TaskListTooltip person={person} tasks={orderedTasks}>
-        <TaskClient
-          onClick={() =>
-            workflowsStore.updateSelectedPerson(person.pseudonymizedId)
-          }
-        >
-          <PersonInitialsAvatar name={person.displayName} size={32} />
-          <TaskClientItem>
-            <TaskClientName>{person.displayName}</TaskClientName>
-            <Sans12>
-              {orderedTasks.length > 0 &&
-                simplur` ${orderedTasks.length} task[|s]`}
-            </Sans12>
-          </TaskClientItem>
-        </TaskClient>
-      </TaskListTooltip>
-    );
-  },
-);
-
-type TaskCalendarHeadingProps = {
-  dueDate: Date;
-};
-
-const TaskCalendarHeading: React.FC<TaskCalendarHeadingProps> = ({
-  dueDate,
-}) => {
-  return (
-    <>
-      <Divider />
-      <Sans14>
-        {moment(dueDate).format("MMM. D")} &bull;{" "}
-        {moment(dueDate).format("dddd")}
-      </Sans14>
-    </>
-  );
-};
-
-type TasksCalendarViewProps = {
-  type: SupervisionTaskType;
-};
-
-const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
-  function CalendarTasksViewComponent({ type }) {
-    const {
-      workflowsStore: { workflowsTasksStore: store },
-    } = useRootStore();
-
-    if (store.selectedCategory === "DUE_THIS_MONTH") {
-      return null;
-    }
-
-    const tasks = store.orderedTasksByCategory[type];
-    // Grab the last synced date from someone else in the state, since all dates are the same
-    const lastSyncedDate =
-      store.workflowsStore.caseloadPersons[0]?.lastDataFromState;
-
-    const calendar = [] as ReactNode[];
-
-    let previous: SupervisionTask<SupervisionTaskType> | null = null;
-    for (let index = 0; index < tasks.length; index += 1) {
-      const task = tasks[index];
-
-      if (task.isOverdue && !previous) {
-        calendar.push(
-          <div key="overdue-divider">
-            <Divider />
-            <Sans14>Overdue</Sans14>
-          </div>,
-        );
-      } else if (
-        !previous ||
-        (!task.isOverdue &&
-          !moment(task.dueDate).isSame(previous.dueDate, "day"))
-      ) {
-        calendar.push(
-          <TaskCalendarHeading
-            dueDate={task.dueDate}
-            key={task.dueDate.toDateString()}
-          />,
-        );
-      }
-
-      calendar.push(
-        <TaskListItem
-          person={task.person}
-          key={task.person.recordId}
-          task={task}
-        />,
-      );
-
-      previous = task;
-    }
-
-    return (
-      <>
-        {calendar}
-        <WorkflowsLastSynced date={lastSyncedDate} />
-      </>
-    );
-  },
-);
-
-const AllTasksView = observer(function AllTasksViewComponent() {
-  const {
-    workflowsStore: {
-      workflowsTasksStore: { clientsPartitionedByStatus },
-    },
-  } = useRootStore();
-
-  const [personsWithOverdueTasks, personsWithUpcomingTasks] =
-    clientsPartitionedByStatus;
-
-  const lastSynced = clientsPartitionedByStatus.flat()[0].lastDataFromState;
-
-  return (
-    <>
-      {personsWithOverdueTasks.length ? (
-        <>
-          <Divider />
-          <Sans14>Overdue</Sans14>
-          {personsWithOverdueTasks.map((person) => (
-            <TaskListItem person={person} key={person.recordId} />
-          ))}
-        </>
-      ) : null}
-      {personsWithUpcomingTasks.length ? (
-        <>
-          <Divider />
-          <Sans14>Due this month</Sans14>
-          {personsWithUpcomingTasks.map((person) => (
-            <TaskListItem person={person} key={person.recordId} />
-          ))}
-        </>
-      ) : null}
-      <WorkflowsLastSynced date={lastSynced} />
-    </>
-  );
-});
 
 type NeedsViewProps = {
   type: SupervisionNeedType;

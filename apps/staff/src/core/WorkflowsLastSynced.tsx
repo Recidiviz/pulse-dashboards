@@ -31,7 +31,6 @@ const LastSyncedPill = styled(Pill)`
   gap: 5px;
   background: white;
   z-index: 10;
-  border-radius: 10px;
   border-radius: 11px;
 
   @media screen and (max-width: ${coreStyles.breakpointXxs}) {
