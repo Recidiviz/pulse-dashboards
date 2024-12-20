@@ -173,12 +173,7 @@ export function Report({
           )}
           <Styled.AttributeChip>
             <OffenseText
-              rollupOffense={insight.rollupOffense}
-              rollupNcicCategory={insight.rollupNcicCategory}
-              rollupCombinedOffenseCategory={
-                insight.rollupCombinedOffenseCategory
-              }
-              rollupViolentOffense={insight.rollupViolentOffense}
+              rollupOffenseDescription={insight.rollupOffenseDescription}
             />
           </Styled.AttributeChip>
         </Styled.AttributeChipsWrapper>

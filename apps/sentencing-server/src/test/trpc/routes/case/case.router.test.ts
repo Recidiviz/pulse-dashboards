@@ -62,7 +62,12 @@ describe("case router", () => {
           isReportTypeLocked: false,
           // Should return an insight object
           insight: expect.objectContaining({
-            ...fakeInsight,
+            ..._.omit(fakeInsight, [
+              "stateCode",
+              "rollupOffense",
+              "rollupStateCode",
+            ]),
+            rollupOffenseDescription: `${fakeInsight.rollupOffense} offenses`,
             rollupRecidivismSeries: expect.arrayContaining(
               fakeRecidivismSeries.map((series) =>
                 expect.objectContaining({
@@ -152,7 +157,7 @@ describe("case router", () => {
 
       const sentryReports = await testAndGetSentryReports();
       expect(sentryReports[0].error?.message).toContain(
-        "No corresponding insight found for provided case with id",
+        "No insights found for attributes offense name of offense-name, gender of FEMALE, LSI-R Score of 10, sex offense override of null, violent offense override of null",
       );
     });
 
@@ -200,7 +205,7 @@ describe("case router", () => {
 
       const sentryReports = await testAndGetSentryReports();
       expect(sentryReports[0].error?.message).toContain(
-        "No corresponding insight found for provided case with id",
+        "No insights found for attributes offense name of offense-name, gender of FEMALE, LSI-R Score of 10, sex offense override of null, violent offense override of null",
       );
     });
 
@@ -224,7 +229,7 @@ describe("case router", () => {
 
       const sentryReports = await testAndGetSentryReports();
       expect(sentryReports[0].error?.message).toContain(
-        "Multiple insights found for case with id",
+        "Multiple insights found for",
       );
     });
 

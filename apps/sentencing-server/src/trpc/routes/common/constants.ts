@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma } from "@prisma/client";
+import { Client, Prisma } from "@prisma/client";
 
 export const INSIGHT_INCLUDES_AND_OMITS = {
   include: {
@@ -54,4 +54,15 @@ export const INSIGHT_INCLUDES_AND_OMITS = {
     offenseId: true,
     rollupOffenseId: true,
   } satisfies Prisma.InsightOmit,
+};
+
+export const GenderToDisplayName: Record<Client["gender"], string> = {
+  MALE: "Male",
+  FEMALE: "Female",
+  NON_BINARY: "Non-binary",
+  TRANS: "Transgender",
+  TRANS_FEMALE: "Transgender Female",
+  TRANS_MALE: "Transgender Male",
+  INTERNAL_UNKNOWN: "Unknown",
+  EXTERNAL_UNKNOWN: "Unknown",
 };

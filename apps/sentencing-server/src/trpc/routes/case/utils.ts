@@ -34,9 +34,7 @@ export async function getInsightForCase(
     return undefined;
   }
 
-  const { id } = caseData;
-
-  const insight = await getInsight(
+  return await getInsight(
     caseData.offense.name,
     caseData.client.gender,
     caseData.lsirScore,
@@ -44,17 +42,4 @@ export async function getInsightForCase(
     caseData.isCurrentOffenseViolent,
     prisma,
   );
-
-  if (!insight) {
-    throw new Error(
-      `No corresponding insight found for provided case with id ${id}.`,
-    );
-  }
-
-  return {
-    ...insight,
-    // Move offenses names to top level
-    offense: insight.offense.name,
-    rollupOffense: insight.rollupOffense?.name,
-  };
 }

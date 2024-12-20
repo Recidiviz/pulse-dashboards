@@ -20,8 +20,6 @@ import { ChangeEvent, useEffect } from "react";
 
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
-import { getOffenseName } from "../../components/charts/RecidivismPlot/RecidivismPlotExplanation";
-import { stateCodeToStateName } from "../../components/charts/RecidivismPlot/utils";
 import {
   LSIR_SCORE_KEY,
   OFFENSE_KEY,
@@ -54,24 +52,11 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
     initialInputValue: prevLsirScore,
   });
 
-  let rollupOffenseName = getOffenseName({
-    rollupCombinedOffenseCategory:
-      insight?.rollupCombinedOffenseCategory ?? null,
-    rollupNcicCategory: insight?.rollupNcicCategory ?? null,
-    rollupOffense: insight?.rollupOffense?.name,
-  });
-
-  rollupOffenseName =
-    rollupOffenseName ??
-    (insight?.rollupStateCode
-      ? `All cases in ${stateCodeToStateName(insight?.rollupStateCode)}`
-      : null);
-
   const showRollup =
     !form.hasError &&
     inputValue !== "" &&
     insight &&
-    rollupOffenseName !== insight.offense?.name;
+    insight.rollupOffense !== insight.offense;
 
   const updateLsirScore = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value.trim());
@@ -156,7 +141,7 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
       {showRollup && (
         <Styled.RollupOffenseCategory>
           <Styled.InputLabel>Recidivism Cohort</Styled.InputLabel>
-          <span>{rollupOffenseName}</span>
+          <span>{insight.rollupOffenseDescription}</span>
           <Styled.InputDescription>
             In order to provide recidivism rates based on a sufficient sample
             size, we need to broaden the group of similar cases we use to

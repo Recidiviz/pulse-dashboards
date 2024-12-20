@@ -15,18 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Gender, PrismaClient } from "@prisma/client";
+import { Gender, Prisma, PrismaClient, StateCode } from "@prisma/client";
 import { captureException } from "@sentry/node";
+import _ from "lodash";
 
 import { INSIGHT_INCLUDES_AND_OMITS } from "~sentencing-server/trpc/routes/common/constants";
 
-function formatInsightCombinedOffenseCategory(
-  rollupCombinedOffenseCategory: string | null,
-) {
-  if (!rollupCombinedOffenseCategory) {
-    return rollupCombinedOffenseCategory;
-  }
+type Insight = Prisma.InsightGetPayload<typeof INSIGHT_INCLUDES_AND_OMITS>;
 
+function formatInsightCombinedOffenseCategory(
+  rollupCombinedOffenseCategory: string,
+) {
   // Non-* everything
   if (
     rollupCombinedOffenseCategory.includes("Non-violent") &&
@@ -56,7 +55,7 @@ function formatInsightCombinedOffenseCategory(
   // Remaining Drug + others
   if (rollupCombinedOffenseCategory.includes("Drug")) {
     if (rollupCombinedOffenseCategory.includes("Sex")) {
-      return "Drug-related sex offenses";
+      return "Drug-related nonviolent sex offenses";
     }
 
     return "Nonviolent drug offenses";
@@ -72,6 +71,48 @@ function formatInsightCombinedOffenseCategory(
     `Unexpected combined offense category: ${rollupCombinedOffenseCategory}! Unable to format string, so just returning the value`,
   );
   return rollupCombinedOffenseCategory;
+}
+
+function formatStateCode(stateCode: StateCode) {
+  switch (stateCode) {
+    case StateCode.US_ID:
+      return "Idaho";
+    case StateCode.US_ND:
+      return "North Dakota";
+  }
+
+  return stateCode;
+}
+
+function formatRollupOffenseDescription(insight: Insight) {
+  const {
+    rollupOffense,
+    rollupNcicCategory,
+    rollupCombinedOffenseCategory,
+    rollupViolentOffense,
+    rollupStateCode,
+  } = insight;
+
+  if (rollupOffense) {
+    // Levels 1 + 2
+    return `${rollupOffense.name} offenses`;
+  } else if (rollupNcicCategory) {
+    // Levels 3 + 4
+    // If it doesn't have offense in the name, add it
+    if (!rollupNcicCategory.toLowerCase().includes("offense")) {
+      return `${rollupNcicCategory} offenses`;
+    }
+
+    return `${rollupNcicCategory}`;
+  } else if (rollupCombinedOffenseCategory) {
+    // Level 5
+    return formatInsightCombinedOffenseCategory(rollupCombinedOffenseCategory);
+  } else if (rollupViolentOffense !== null) {
+    // Level 6
+    return rollupViolentOffense ? "Violent offenses" : "Nonviolent offenses";
+  }
+
+  return `All offenses in ${formatStateCode(rollupStateCode)}`;
 }
 
 async function getInsightsWithReverseLookup(
@@ -283,7 +324,7 @@ export async function getInsight(
       `No insights found for attributes offense name of ${offenseName}, gender of ${gender}, LSI-R Score of ${lsirScore}, sex offense override of ${isSexOffenseOverride}, violent offense override of ${isViolentOffenseOverride}`,
     );
 
-    return null;
+    return undefined;
   }
 
   if (insights.length > 1) {
@@ -294,11 +335,21 @@ export async function getInsight(
 
   const insightToReturn = insights[0];
 
-  // Format the combined offense category
-  insightToReturn.rollupCombinedOffenseCategory =
-    formatInsightCombinedOffenseCategory(
-      insightToReturn.rollupCombinedOffenseCategory,
-    );
-
-  return insightToReturn;
+  return {
+    ..._.pick(insightToReturn, [
+      "gender",
+      "assessmentScoreBucketStart",
+      "assessmentScoreBucketEnd",
+      "rollupGender",
+      "rollupAssessmentScoreBucketStart",
+      "rollupAssessmentScoreBucketEnd",
+      "dispositionData",
+      "dispositionNumRecords",
+      "rollupRecidivismSeries",
+      "rollupRecidivismNumRecords",
+    ]),
+    offense: insightToReturn.offense.name,
+    rollupOffense: insightToReturn.rollupOffense?.name,
+    rollupOffenseDescription: formatRollupOffenseDescription(insightToReturn),
+  };
 }

@@ -74,20 +74,16 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
       district: "DISTRICT 1",
     },
     insight: {
-      stateCode: "US_ID",
       gender: "MALE",
       offense: "Burglary",
       assessmentScoreBucketStart: 0,
       assessmentScoreBucketEnd: 20,
-      rollupStateCode: "US_ID",
       rollupGender: null,
       rollupAssessmentScoreBucketStart: null,
       rollupAssessmentScoreBucketEnd: null,
       rollupOffense: "Burglary",
-      rollupNcicCategory: null,
-      rollupCombinedOffenseCategory: null,
-      rollupViolentOffense: null,
       rollupRecidivismNumRecords: 100,
+      rollupOffenseDescription: "Males, LSI-R = 20-30, Felony offenses",
       rollupRecidivismSeries: [
         {
           recommendationType: "Probation",

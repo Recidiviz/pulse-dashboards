@@ -17,10 +17,7 @@
 
 import moment from "moment";
 
-import {
-  formatOffenseLabel,
-  printFormattedRecordString,
-} from "../../../../../../src/utils/utils";
+import { printFormattedRecordString } from "../../../../../../src/utils/utils";
 import { CaseInsight } from "../../../../../api";
 import ciLegendImg from "../../../../assets/ci-legend.png";
 import { INDIVIDUALS_STRING } from "../common/constants";
@@ -29,38 +26,11 @@ import { LsirScoreText } from "../components/LsirScoreText";
 import * as Styled from "../components/Styles";
 
 interface OffenseSpanProps {
-  rollupOffense: string | undefined;
-  rollupNcicCategory: string | null;
-  rollupCombinedOffenseCategory: string | null;
-  rollupViolentOffense: boolean | null;
+  rollupOffenseDescription: string;
 }
 
-export function getOffenseName({
-  rollupOffense,
-  rollupNcicCategory,
-  rollupCombinedOffenseCategory,
-}: Omit<OffenseSpanProps, "rollupViolentOffense">) {
-  return rollupOffense || rollupCombinedOffenseCategory || rollupNcicCategory;
-}
-
-export function OffenseText({
-  rollupOffense,
-  rollupNcicCategory,
-  rollupCombinedOffenseCategory,
-  rollupViolentOffense,
-}: OffenseSpanProps) {
-  const offenseString =
-    getOffenseName({
-      rollupOffense,
-      rollupNcicCategory,
-      rollupCombinedOffenseCategory,
-    }) ||
-    (rollupViolentOffense === true ? "violent" : null) ||
-    (rollupViolentOffense === false ? "non-violent" : null);
-
-  return offenseString ? (
-    <span>{formatOffenseLabel(offenseString)}</span>
-  ) : null;
+export function OffenseText({ rollupOffenseDescription }: OffenseSpanProps) {
+  return <span>{rollupOffenseDescription}</span>;
 }
 
 interface RecidivismPlotExplanationProps {
@@ -74,10 +44,7 @@ export function RecidivismPlotExplanation({
 }: RecidivismPlotExplanationProps) {
   const {
     rollupGender,
-    rollupOffense,
-    rollupNcicCategory,
-    rollupCombinedOffenseCategory,
-    rollupViolentOffense,
+    rollupOffenseDescription,
     rollupAssessmentScoreBucketStart,
     rollupAssessmentScoreBucketEnd,
     rollupRecidivismNumRecords,
@@ -102,13 +69,7 @@ export function RecidivismPlotExplanation({
           rollupAssessmentScoreBucketStart={rollupAssessmentScoreBucketStart}
           rollupAssessmentScoreBucketEnd={rollupAssessmentScoreBucketEnd}
         />{" "}
-        with{" "}
-        <OffenseText
-          rollupOffense={rollupOffense}
-          rollupNcicCategory={rollupNcicCategory}
-          rollupCombinedOffenseCategory={rollupCombinedOffenseCategory}
-          rollupViolentOffense={rollupViolentOffense}
-        />
+        with <OffenseText rollupOffenseDescription={rollupOffenseDescription} />
         , using IDOC data from 2010-{moment().utc().year() - 3}.{" "}
         {isTooltip &&
           `The shaded areas represent the confidence intervals, or the range of

@@ -46,21 +46,19 @@ describe("insight router", () => {
               "assessmentScoreBucketStart",
               "assessmentScoreBucketEnd",
             ]),
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
-            }),
+            offense: fakeInsight.offense,
           }),
         );
       });
 
-      test("should return null if there isn't a matching one", async () => {
+      test("should return undefined if there isn't a matching one", async () => {
         const returnedInsight = await testTRPCClient.insight.getInsight.query({
           offenseName: fakeInsight.offense,
           lsirScore: 100,
           gender: fakeInsight.gender,
         });
 
-        expect(returnedInsight).toBeNull();
+        expect(returnedInsight).toBeUndefined();
       });
 
       test("should capture exception and return first insight if there are multiple", async () => {
@@ -82,9 +80,7 @@ describe("insight router", () => {
         expect(returnedInsight).toEqual(
           expect.objectContaining({
             gender: fakeInsight.gender,
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
-            }),
+            offense: fakeInsight.offense,
           }),
         );
 
@@ -200,13 +196,11 @@ describe("insight router", () => {
           expect(returnedInsight).toEqual(
             expect.objectContaining({
               // The offense name, gender, and lsir score buckets should match the original offense
-              offense: expect.objectContaining({
-                name: fakeInsight.offense,
-              }),
+              offense: fakeInsight.offense,
               gender: fakeInsight.gender,
               assessmentScoreBucketStart: 10,
               assessmentScoreBucketEnd: 20,
-              rollupCombinedOffenseCategory: "Violent drug offenses",
+              rollupOffenseDescription: "Violent drug offenses",
               // The recidivism data should match the new insight while the rollup data should match the original one
               rollupRecidivismNumRecords: 3,
               rollupRecidivismSeries: expect.any(Object),
@@ -316,13 +310,11 @@ describe("insight router", () => {
           expect(returnedInsight).toEqual(
             expect.objectContaining({
               // The offense name, gender, and lsir score buckets should match the original offense
-              offense: expect.objectContaining({
-                name: fakeInsight.offense,
-              }),
+              offense: fakeInsight.offense,
               gender: fakeInsight.gender,
               assessmentScoreBucketStart: 10,
               assessmentScoreBucketEnd: 20,
-              rollupCombinedOffenseCategory:
+              rollupOffenseDescription:
                 "Nonviolent offenses, not sex- or drug-related",
               // The recidivism data should match the new insight while the rollup data should match the original one
               rollupRecidivismNumRecords: 3,
@@ -433,14 +425,11 @@ describe("insight router", () => {
           expect(returnedInsight).toEqual(
             expect.objectContaining({
               // The offense name, gender, and lsir score buckets should match the original offense
-              offense: expect.objectContaining({
-                name: fakeInsight.offense,
-              }),
+              offense: fakeInsight.offense,
               gender: fakeInsight.gender,
               assessmentScoreBucketStart: 10,
               assessmentScoreBucketEnd: 20,
-              rollupCombinedOffenseCategory:
-                "Violent, drug-related sex offenses",
+              rollupOffenseDescription: "Violent, drug-related sex offenses",
               // The recidivism data should match the new insight while the rollup data should match the original one
               rollupRecidivismNumRecords: 3,
               rollupRecidivismSeries: expect.any(Object),
@@ -522,13 +511,11 @@ describe("insight router", () => {
           expect(returnedInsight).toEqual(
             expect.objectContaining({
               // The offense name, gender, and lsir score buckets should match the original offense
-              offense: expect.objectContaining({
-                name: fakeInsight.offense,
-              }),
+              offense: fakeInsight.offense,
               gender: fakeInsight.gender,
               assessmentScoreBucketStart: 10,
               assessmentScoreBucketEnd: 20,
-              rollupViolentOffense: true,
+              rollupOffenseDescription: "Violent offenses",
               // The recidivism data should match the new insight while the rollup data should match the original one
               rollupRecidivismNumRecords: 3,
               rollupRecidivismSeries: expect.any(Object),
@@ -610,15 +597,11 @@ describe("insight router", () => {
           expect(returnedInsight).toEqual(
             expect.objectContaining({
               // The offense name, gender, and lsir score buckets should match the original offense
-              offense: expect.objectContaining({
-                name: fakeInsight.offense,
-              }),
+              offense: fakeInsight.offense,
               gender: fakeInsight.gender,
               assessmentScoreBucketStart: 10,
               assessmentScoreBucketEnd: 20,
-              rollupCombinedOffenseCategory: null,
-              rollupViolentOffense: null,
-              rollupStateCode: "US_ID",
+              rollupOffenseDescription: "All offenses in Idaho",
               // The recidivism data should match the new insight while the rollup data should match the original one
               rollupRecidivismNumRecords: 3,
               rollupRecidivismSeries: expect.any(Object),
@@ -702,13 +685,11 @@ describe("insight router", () => {
           expect(returnedInsight).toEqual(
             expect.objectContaining({
               // The offense name, gender, and lsir score buckets should match the original offense
-              offense: expect.objectContaining({
-                name: fakeInsight.offense,
-              }),
+              offense: fakeInsight.offense,
               gender: fakeInsight.gender,
               assessmentScoreBucketStart: 10,
               assessmentScoreBucketEnd: 20,
-              rollupViolentOffense: true,
+              rollupOffenseDescription: "Violent offenses",
               // The recidivism data should match the new insight while the rollup data should match the original one
               rollupRecidivismNumRecords: 3,
               rollupRecidivismSeries: expect.any(Object),
@@ -790,15 +771,11 @@ describe("insight router", () => {
           expect(returnedInsight).toEqual(
             expect.objectContaining({
               // The offense name, gender, and lsir score buckets should match the original offense
-              offense: expect.objectContaining({
-                name: fakeInsight.offense,
-              }),
+              offense: fakeInsight.offense,
               gender: fakeInsight.gender,
               assessmentScoreBucketStart: 10,
               assessmentScoreBucketEnd: 20,
-              rollupCombinedOffenseCategory: null,
-              rollupViolentOffense: null,
-              rollupStateCode: "US_ID",
+              rollupOffenseDescription: "All offenses in Idaho",
               // The recidivism data should match the new insight while the rollup data should match the original one
               rollupRecidivismNumRecords: 3,
               rollupRecidivismSeries: expect.any(Object),
@@ -810,230 +787,826 @@ describe("insight router", () => {
       });
     });
 
-    describe("formatted combined offense categories", () => {
+    describe("formatted offense descriptions", () => {
       beforeEach(async () => {
         await testPrismaClient.insight.deleteMany();
       });
 
-      test("Non-violent, Non-sex, Non-drug", async () => {
-        await testPrismaClient.insight.create({
-          data: {
-            stateCode: "US_ID",
-            gender: fakeInsight.gender,
-            offense: {
-              connect: {
-                stateCode: StateCode.US_ID,
-                name: fakeInsight.offense,
+      describe("rollup offense", () => {
+        test("rollupOffense + lsir score buckets + gender (level 1)", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: Gender.MALE,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
               },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: Gender.MALE,
+              rollupAssessmentScoreBucketStart: 10,
+              rollupAssessmentScoreBucketEnd: 20,
+              rollupOffense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: null,
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
             },
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupStateCode: "US_ID",
-            rollupGender: null,
-            rollupAssessmentScoreBucketStart: null,
-            rollupAssessmentScoreBucketEnd: null,
-            rollupOffenseId: undefined,
-            rollupNcicCategory: null,
-            rollupCombinedOffenseCategory:
-              "Non-violent, Non-sex, Non-drug offense",
-            rollupViolentOffense: null,
-            rollupRecidivismSeries: undefined,
-            dispositionData: fakeInsightPrismaInput.dispositionData,
-            rollupRecidivismNumRecords: 1,
-            dispositionNumRecords: 1,
-          },
-        });
+          });
 
-        // Look for an insight that matches the offense
-        const returnedInsight = await testTRPCClient.insight.getInsight.query({
-          offenseName: fakeInsight.offense,
-          lsirScore: 15,
-          gender: fakeInsight.gender,
-          isSexOffense: false,
-          isViolentOffense: false,
-        });
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: Gender.MALE,
+            },
+          );
 
-        expect(returnedInsight).toEqual(
-          expect.objectContaining({
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: Gender.MALE,
+              rollupAssessmentScoreBucketStart: 10,
+              rollupAssessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "offense-name offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
             }),
-            gender: fakeInsight.gender,
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupCombinedOffenseCategory:
-              "Nonviolent offenses, not sex- or drug-related",
-            rollupRecidivismNumRecords: 1,
-            rollupRecidivismSeries: expect.any(Object),
-            dispositionNumRecords: 1,
-            dispositionData: expect.any(Array),
-          }),
-        );
+          );
+        });
+
+        test("Just rollupOffense (level 2)", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: Gender.MALE,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: null,
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: Gender.MALE,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: Gender.MALE,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "offense-name offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
       });
 
-      test("Violent, Drug, Sex", async () => {
-        await testPrismaClient.insight.create({
-          data: {
-            stateCode: "US_ID",
-            gender: fakeInsight.gender,
-            offense: {
-              connect: {
-                stateCode: StateCode.US_ID,
-                name: fakeInsight.offense,
+      describe("ncic category", () => {
+        test("rollupNcicCategory + lsir score buckets + gender (level 3)", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: Gender.MALE,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
               },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: Gender.MALE,
+              rollupAssessmentScoreBucketStart: 10,
+              rollupAssessmentScoreBucketEnd: 20,
+              rollupNcicCategory: "Larceny offenses",
+              rollupCombinedOffenseCategory: null,
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
             },
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupStateCode: "US_ID",
-            rollupGender: null,
-            rollupAssessmentScoreBucketStart: null,
-            rollupAssessmentScoreBucketEnd: null,
-            rollupOffenseId: undefined,
-            rollupNcicCategory: null,
-            rollupCombinedOffenseCategory: "Violent, Sex, Drug offense",
-            rollupViolentOffense: null,
-            rollupRecidivismSeries: undefined,
-            dispositionData: fakeInsightPrismaInput.dispositionData,
-            rollupRecidivismNumRecords: 1,
-            dispositionNumRecords: 1,
-          },
-        });
+          });
 
-        // Look for an insight that matches the offense
-        const returnedInsight = await testTRPCClient.insight.getInsight.query({
-          offenseName: fakeInsight.offense,
-          lsirScore: 15,
-          gender: fakeInsight.gender,
-          isSexOffense: true,
-          isViolentOffense: true,
-        });
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: Gender.MALE,
+            },
+          );
 
-        expect(returnedInsight).toEqual(
-          expect.objectContaining({
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: Gender.MALE,
+              rollupAssessmentScoreBucketStart: 10,
+              rollupAssessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Larceny offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
             }),
-            gender: fakeInsight.gender,
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupCombinedOffenseCategory: "Violent, drug-related sex offenses",
-            rollupRecidivismNumRecords: 1,
-            rollupRecidivismSeries: expect.any(Object),
-            dispositionNumRecords: 1,
-            dispositionData: expect.any(Array),
-          }),
-        );
+          );
+        });
+
+        test("Just rollupNcicCategory (level 4)", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupNcicCategory: "Larceny offenses",
+              rollupCombinedOffenseCategory: null,
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Larceny offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
+
+        test("rollupNcicCategory without the word offense in it (level 4)", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupNcicCategory: "Dangerous Drugs",
+              rollupCombinedOffenseCategory: null,
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Dangerous Drugs offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
       });
 
-      test("Violent, Drug", async () => {
-        await testPrismaClient.insight.create({
-          data: {
-            stateCode: "US_ID",
-            gender: fakeInsight.gender,
-            offense: {
-              connect: {
-                stateCode: StateCode.US_ID,
-                name: fakeInsight.offense,
+      describe("Combined offense categories (level 5)", () => {
+        test("Non-violent, Non-sex, Non-drug", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
               },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory:
+                "Non-violent, Non-sex, Non-drug offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
             },
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupStateCode: "US_ID",
-            rollupGender: null,
-            rollupAssessmentScoreBucketStart: null,
-            rollupAssessmentScoreBucketEnd: null,
-            rollupOffenseId: undefined,
-            rollupNcicCategory: null,
-            rollupCombinedOffenseCategory: "Violent, Drug offense",
-            rollupViolentOffense: null,
-            rollupRecidivismSeries: undefined,
-            dispositionData: fakeInsightPrismaInput.dispositionData,
-            rollupRecidivismNumRecords: 1,
-            dispositionNumRecords: 1,
-          },
-        });
+          });
 
-        // Look for an insight that matches the offense
-        const returnedInsight = await testTRPCClient.insight.getInsight.query({
-          offenseName: fakeInsight.offense,
-          lsirScore: 15,
-          gender: fakeInsight.gender,
-          isSexOffense: false,
-          isViolentOffense: true,
-        });
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+              isSexOffense: false,
+              isViolentOffense: false,
+            },
+          );
 
-        expect(returnedInsight).toEqual(
-          expect.objectContaining({
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription:
+                "Nonviolent offenses, not sex- or drug-related",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
             }),
-            gender: fakeInsight.gender,
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupCombinedOffenseCategory: "Violent drug offenses",
-            rollupRecidivismNumRecords: 1,
-            rollupRecidivismSeries: expect.any(Object),
-            dispositionNumRecords: 1,
-            dispositionData: expect.any(Array),
-          }),
-        );
+          );
+        });
+
+        test("Violent, Drug, Sex", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: "Violent, Sex, Drug offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+              isSexOffense: true,
+              isViolentOffense: true,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Violent, drug-related sex offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
+
+        test("Violent, Drug", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: "Violent, Drug offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+              isSexOffense: false,
+              isViolentOffense: true,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Violent drug offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
+
+        test("Violent, Sex", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: "Violent, Sex offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+              isSexOffense: true,
+              isViolentOffense: true,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Violent sex offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
+
+        test("Violent", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: "Violent offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+              isSexOffense: false,
+              isViolentOffense: true,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription:
+                "Violent offenses, not sex- or drug-related",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
+
+        test("Drug, Sex", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: "Drug, Sex offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+              isSexOffense: true,
+              isViolentOffense: false,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Drug-related nonviolent sex offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
+
+        test("Drug", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: "Drug offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+              isSexOffense: false,
+              isViolentOffense: false,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Nonviolent drug offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
+
+        test("Sex", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: "Sex offense",
+              rollupViolentOffense: null,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+              isSexOffense: true,
+              isViolentOffense: false,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Nonviolent sex offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
       });
 
-      test("Violent, Sex", async () => {
-        await testPrismaClient.insight.create({
-          data: {
-            stateCode: "US_ID",
-            gender: fakeInsight.gender,
-            offense: {
-              connect: {
-                stateCode: StateCode.US_ID,
-                name: fakeInsight.offense,
+      describe("Violent uniform (level 6)", () => {
+        test("Violent", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
               },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: null,
+              rollupViolentOffense: true,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
             },
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupStateCode: "US_ID",
-            rollupGender: null,
-            rollupAssessmentScoreBucketStart: null,
-            rollupAssessmentScoreBucketEnd: null,
-            rollupOffenseId: undefined,
-            rollupNcicCategory: null,
-            rollupCombinedOffenseCategory: "Violent, Sex offense",
-            rollupViolentOffense: null,
-            rollupRecidivismSeries: undefined,
-            dispositionData: fakeInsightPrismaInput.dispositionData,
-            rollupRecidivismNumRecords: 1,
-            dispositionNumRecords: 1,
-          },
-        });
+          });
 
-        // Look for an insight that matches the offense
-        const returnedInsight = await testTRPCClient.insight.getInsight.query({
-          offenseName: fakeInsight.offense,
-          lsirScore: 15,
-          gender: fakeInsight.gender,
-          isSexOffense: true,
-          isViolentOffense: true,
-        });
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+            },
+          );
 
-        expect(returnedInsight).toEqual(
-          expect.objectContaining({
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Violent offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
             }),
-            gender: fakeInsight.gender,
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupCombinedOffenseCategory: "Violent sex offenses",
-            rollupRecidivismNumRecords: 1,
-            rollupRecidivismSeries: expect.any(Object),
-            dispositionNumRecords: 1,
-            dispositionData: expect.any(Array),
-          }),
-        );
+          );
+        });
+
+        test("Nonviolent", async () => {
+          await testPrismaClient.insight.create({
+            data: {
+              stateCode: "US_ID",
+              gender: fakeInsight.gender,
+              offense: {
+                connect: {
+                  stateCode: StateCode.US_ID,
+                  name: fakeInsight.offense,
+                },
+              },
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupStateCode: "US_ID",
+              rollupGender: null,
+              rollupAssessmentScoreBucketStart: null,
+              rollupAssessmentScoreBucketEnd: null,
+              rollupOffenseId: undefined,
+              rollupNcicCategory: null,
+              rollupCombinedOffenseCategory: null,
+              rollupViolentOffense: false,
+              rollupRecidivismSeries: undefined,
+              dispositionData: fakeInsightPrismaInput.dispositionData,
+              rollupRecidivismNumRecords: 1,
+              dispositionNumRecords: 1,
+            },
+          });
+
+          // Look for an insight that matches the offense
+          const returnedInsight = await testTRPCClient.insight.getInsight.query(
+            {
+              offenseName: fakeInsight.offense,
+              lsirScore: 15,
+              gender: fakeInsight.gender,
+            },
+          );
+
+          expect(returnedInsight).toEqual(
+            expect.objectContaining({
+              offense: fakeInsight.offense,
+              gender: fakeInsight.gender,
+              assessmentScoreBucketStart: 10,
+              assessmentScoreBucketEnd: 20,
+              rollupOffenseDescription: "Nonviolent offenses",
+              rollupRecidivismNumRecords: 1,
+              rollupRecidivismSeries: expect.any(Object),
+              dispositionNumRecords: 1,
+              dispositionData: expect.any(Array),
+            }),
+          );
+        });
       });
 
-      test("Violent", async () => {
+      test("Statewide (level 7)", async () => {
         await testPrismaClient.insight.create({
           data: {
             stateCode: "US_ID",
@@ -1052,7 +1625,7 @@ describe("insight router", () => {
             rollupAssessmentScoreBucketEnd: null,
             rollupOffenseId: undefined,
             rollupNcicCategory: null,
-            rollupCombinedOffenseCategory: "Violent offense",
+            rollupCombinedOffenseCategory: null,
             rollupViolentOffense: null,
             rollupRecidivismSeries: undefined,
             dispositionData: fakeInsightPrismaInput.dispositionData,
@@ -1066,182 +1639,15 @@ describe("insight router", () => {
           offenseName: fakeInsight.offense,
           lsirScore: 15,
           gender: fakeInsight.gender,
-          isSexOffense: false,
-          isViolentOffense: true,
         });
 
         expect(returnedInsight).toEqual(
           expect.objectContaining({
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
-            }),
+            offense: fakeInsight.offense,
             gender: fakeInsight.gender,
             assessmentScoreBucketStart: 10,
             assessmentScoreBucketEnd: 20,
-            rollupCombinedOffenseCategory:
-              "Violent offenses, not sex- or drug-related",
-            rollupRecidivismNumRecords: 1,
-            rollupRecidivismSeries: expect.any(Object),
-            dispositionNumRecords: 1,
-            dispositionData: expect.any(Array),
-          }),
-        );
-      });
-
-      test("Drug, Sex", async () => {
-        await testPrismaClient.insight.create({
-          data: {
-            stateCode: "US_ID",
-            gender: fakeInsight.gender,
-            offense: {
-              connect: {
-                stateCode: StateCode.US_ID,
-                name: fakeInsight.offense,
-              },
-            },
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupStateCode: "US_ID",
-            rollupGender: null,
-            rollupAssessmentScoreBucketStart: null,
-            rollupAssessmentScoreBucketEnd: null,
-            rollupOffenseId: undefined,
-            rollupNcicCategory: null,
-            rollupCombinedOffenseCategory: "Drug, Sex offense",
-            rollupViolentOffense: null,
-            rollupRecidivismSeries: undefined,
-            dispositionData: fakeInsightPrismaInput.dispositionData,
-            rollupRecidivismNumRecords: 1,
-            dispositionNumRecords: 1,
-          },
-        });
-
-        // Look for an insight that matches the offense
-        const returnedInsight = await testTRPCClient.insight.getInsight.query({
-          offenseName: fakeInsight.offense,
-          lsirScore: 15,
-          gender: fakeInsight.gender,
-          isSexOffense: true,
-          isViolentOffense: false,
-        });
-
-        expect(returnedInsight).toEqual(
-          expect.objectContaining({
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
-            }),
-            gender: fakeInsight.gender,
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupCombinedOffenseCategory: "Drug-related sex offenses",
-            rollupRecidivismNumRecords: 1,
-            rollupRecidivismSeries: expect.any(Object),
-            dispositionNumRecords: 1,
-            dispositionData: expect.any(Array),
-          }),
-        );
-      });
-
-      test("Drug", async () => {
-        await testPrismaClient.insight.create({
-          data: {
-            stateCode: "US_ID",
-            gender: fakeInsight.gender,
-            offense: {
-              connect: {
-                stateCode: StateCode.US_ID,
-                name: fakeInsight.offense,
-              },
-            },
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupStateCode: "US_ID",
-            rollupGender: null,
-            rollupAssessmentScoreBucketStart: null,
-            rollupAssessmentScoreBucketEnd: null,
-            rollupOffenseId: undefined,
-            rollupNcicCategory: null,
-            rollupCombinedOffenseCategory: "Drug offense",
-            rollupViolentOffense: null,
-            rollupRecidivismSeries: undefined,
-            dispositionData: fakeInsightPrismaInput.dispositionData,
-            rollupRecidivismNumRecords: 1,
-            dispositionNumRecords: 1,
-          },
-        });
-
-        // Look for an insight that matches the offense
-        const returnedInsight = await testTRPCClient.insight.getInsight.query({
-          offenseName: fakeInsight.offense,
-          lsirScore: 15,
-          gender: fakeInsight.gender,
-          isSexOffense: false,
-          isViolentOffense: false,
-        });
-
-        expect(returnedInsight).toEqual(
-          expect.objectContaining({
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
-            }),
-            gender: fakeInsight.gender,
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupCombinedOffenseCategory: "Nonviolent drug offenses",
-            rollupRecidivismNumRecords: 1,
-            rollupRecidivismSeries: expect.any(Object),
-            dispositionNumRecords: 1,
-            dispositionData: expect.any(Array),
-          }),
-        );
-      });
-
-      test("Sex", async () => {
-        await testPrismaClient.insight.create({
-          data: {
-            stateCode: "US_ID",
-            gender: fakeInsight.gender,
-            offense: {
-              connect: {
-                stateCode: StateCode.US_ID,
-                name: fakeInsight.offense,
-              },
-            },
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupStateCode: "US_ID",
-            rollupGender: null,
-            rollupAssessmentScoreBucketStart: null,
-            rollupAssessmentScoreBucketEnd: null,
-            rollupOffenseId: undefined,
-            rollupNcicCategory: null,
-            rollupCombinedOffenseCategory: "Sex offense",
-            rollupViolentOffense: null,
-            rollupRecidivismSeries: undefined,
-            dispositionData: fakeInsightPrismaInput.dispositionData,
-            rollupRecidivismNumRecords: 1,
-            dispositionNumRecords: 1,
-          },
-        });
-
-        // Look for an insight that matches the offense
-        const returnedInsight = await testTRPCClient.insight.getInsight.query({
-          offenseName: fakeInsight.offense,
-          lsirScore: 15,
-          gender: fakeInsight.gender,
-          isSexOffense: true,
-          isViolentOffense: false,
-        });
-
-        expect(returnedInsight).toEqual(
-          expect.objectContaining({
-            offense: expect.objectContaining({
-              name: fakeInsight.offense,
-            }),
-            gender: fakeInsight.gender,
-            assessmentScoreBucketStart: 10,
-            assessmentScoreBucketEnd: 20,
-            rollupCombinedOffenseCategory: "Nonviolent sex offenses",
+            rollupOffenseDescription: "All offenses in Idaho",
             rollupRecidivismNumRecords: 1,
             rollupRecidivismSeries: expect.any(Object),
             dispositionNumRecords: 1,

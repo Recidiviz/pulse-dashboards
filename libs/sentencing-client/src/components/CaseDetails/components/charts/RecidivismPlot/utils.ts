@@ -29,30 +29,17 @@ import {
 } from "@observablehq/plot";
 
 import { CaseInsight } from "../../../../../api";
-import {
-  convertDecimalToPercentage,
-  formatOffenseLabel,
-} from "../../../../../utils/utils";
+import { convertDecimalToPercentage } from "../../../../../utils/utils";
 import { SelectedRecommendation } from "../../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
 import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
 
-export function stateCodeToStateName(
-  stateCode: CaseInsight["rollupStateCode"],
-) {
-  return stateCode === "US_ID" ? "Idaho" : stateCode;
-}
-
 export function getRecidivismPlotSubtitle(insight: CaseInsight) {
   const {
-    rollupStateCode,
+    rollupOffenseDescription,
     rollupGender,
     rollupAssessmentScoreBucketStart,
     rollupAssessmentScoreBucketEnd,
-    rollupOffense,
-    rollupNcicCategory,
-    rollupCombinedOffenseCategory,
-    rollupViolentOffense,
   } = insight;
 
   const genderString = getSubtitleGender(rollupGender);
@@ -61,31 +48,9 @@ export function getRecidivismPlotSubtitle(insight: CaseInsight) {
     rollupAssessmentScoreBucketEnd,
   );
 
-  const offenseString = rollupOffense
-    ? `${formatOffenseLabel(rollupOffense)}`
-    : undefined;
-  const combinedOffenseString = rollupCombinedOffenseCategory
-    ? `${formatOffenseLabel(rollupCombinedOffenseCategory)}`
-    : undefined;
-  const rollupNcicCategoryString = rollupNcicCategory
-    ? `${formatOffenseLabel(rollupNcicCategory)}`
-    : undefined;
-  const rollupViolentOffenseString = rollupViolentOffense
-    ? "Violent Offenses"
-    : undefined;
-
-  const recidivismSubtitleStrings = [
-    genderString,
-    lsirScoreString,
-    offenseString,
-    combinedOffenseString,
-    rollupNcicCategoryString,
-    rollupViolentOffenseString,
-  ].filter((v) => v);
-
-  return recidivismSubtitleStrings.length > 0
-    ? recidivismSubtitleStrings.join(", ")
-    : `All cases in ${stateCodeToStateName(rollupStateCode)}`;
+  return [genderString, lsirScoreString, rollupOffenseDescription]
+    .filter((v) => v)
+    .join(", ");
 }
 
 const PLOT_MARGIN_RIGHT = 42;

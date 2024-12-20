@@ -21,7 +21,9 @@ import { CaseInsight } from "../../../../../api/APIClient";
 import { GenderToDisplayName } from "../../../constants";
 import { INDIVIDUALS_STRING } from "./constants";
 
-export function getDescriptionGender(rollupGender: CaseInsight["gender"]) {
+export function getDescriptionGender(
+  rollupGender: NonNullable<CaseInsight["rollupGender"]>,
+) {
   let genderString;
   if (GenderToDisplayName[rollupGender] === GenderToDisplayName.MALE) {
     genderString = "men";
