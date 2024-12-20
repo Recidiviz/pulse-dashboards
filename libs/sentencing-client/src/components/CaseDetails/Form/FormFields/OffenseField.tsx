@@ -92,6 +92,8 @@ function OffenseField({ isRequired }: FormFieldProps) {
       isViolentOffense: isUpdatedOffenseViolentDefault,
       isSexOffense: isUpdatedOffenseSexualDefault,
     });
+    form.updateForm(VIOLENT_OFFENSE_KEY, isUpdatedOffenseViolentDefault);
+    form.updateForm(SEX_OFFENSE_KEY, isUpdatedOffenseSexualDefault);
 
     /** Fetches insights when offense changes to display rollup text under the LSI-R score field  */
     caseStore.getInsight(
