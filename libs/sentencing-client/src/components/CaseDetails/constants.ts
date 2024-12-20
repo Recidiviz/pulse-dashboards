@@ -30,6 +30,10 @@ export const COUNTY_KEY = "county";
 
 export const AGE_KEY = "age";
 
+export const OFFENSE_SUFFIX = "offense";
+
+export const OFFENSES_SUFFIX = "offenses";
+
 export const REPORT_TYPE_KEY = "reportType";
 export type ReportTypeKey = typeof REPORT_TYPE_KEY;
 

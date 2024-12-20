@@ -19,6 +19,7 @@ import {
   convertDecimalToPercentage,
   displayReportType,
   formatListWithAnd,
+  formatOffenseLabel,
   formatPossessiveName,
   formatWithArticle,
   pluralizeDuplicates,
@@ -106,4 +107,16 @@ test("pluralizeDuplicates formats duplicates and unique items correctly", () => 
     "felony drug courts",
     "an inpatient substance use treatment facility",
   ]);
+});
+
+test("formatOffenseLabel", () => {
+  expect(formatOffenseLabel("Violent offense")).toBe("Violent offenses");
+  expect(formatOffenseLabel("Violent offenses")).toBe("Violent offenses");
+  expect(formatOffenseLabel("BURGLARY")).toBe("BURGLARY offenses");
+  expect(formatOffenseLabel("Violent offense, Sex offense")).toBe(
+    "Violent offenses, Sex offenses",
+  );
+  expect(
+    formatOffenseLabel("Nonviolent offenses, not sex- or drug-related"),
+  ).toBe("Nonviolent offenses, not sex- or drug-related");
 });

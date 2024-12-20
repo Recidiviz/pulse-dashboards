@@ -16,7 +16,10 @@
 // =============================================================================
 
 import { CaseInsight } from "../../../../../api";
-import { convertDecimalToPercentage } from "../../../../../utils/utils";
+import {
+  convertDecimalToPercentage,
+  printFormattedRecordString,
+} from "../../../../../utils/utils";
 import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
 import { NONE_OPTION } from "../../../Form/constants";
 import { SelectedRecommendation } from "../../../types";
@@ -85,7 +88,8 @@ export function DispositionChart({
         {dispositionChartSubtitle && (
           <>
             {dispositionChartSubtitle} (Based on{" "}
-            {dispositionNumRecords?.toLocaleString()} records)
+            {dispositionNumRecords?.toLocaleString()}{" "}
+            {printFormattedRecordString(dispositionNumRecords ?? 0)})
           </>
         )}
       </CommonStyled.ChartSubTitle>

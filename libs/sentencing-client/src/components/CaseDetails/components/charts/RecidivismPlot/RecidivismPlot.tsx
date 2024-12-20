@@ -17,6 +17,7 @@
 
 import { useMemo } from "react";
 
+import { printFormattedRecordString } from "../../../../../../src/utils/utils";
 import { CaseInsight } from "../../../../../api";
 import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
 import { NONE_OPTION } from "../../../Form/constants";
@@ -88,7 +89,8 @@ export function RecidivismPlot({
         {recidivismPlotSubtitle && (
           <>
             {recidivismPlotSubtitle} (Based on{" "}
-            {rollupRecidivismNumRecords?.toLocaleString()} records)
+            {rollupRecidivismNumRecords?.toLocaleString()}{" "}
+            {printFormattedRecordString(rollupRecidivismNumRecords ?? 0)})
           </>
         )}
       </CommonStyled.ChartSubTitle>

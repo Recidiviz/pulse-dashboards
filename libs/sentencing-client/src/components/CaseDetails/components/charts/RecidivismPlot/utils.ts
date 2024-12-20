@@ -29,7 +29,10 @@ import {
 } from "@observablehq/plot";
 
 import { CaseInsight } from "../../../../../api";
-import { convertDecimalToPercentage } from "../../../../../utils/utils";
+import {
+  convertDecimalToPercentage,
+  formatOffenseLabel,
+} from "../../../../../utils/utils";
 import { SelectedRecommendation } from "../../../types";
 import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
 import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
@@ -58,12 +61,14 @@ export function getRecidivismPlotSubtitle(insight: CaseInsight) {
     rollupAssessmentScoreBucketEnd,
   );
 
-  const offenseString = rollupOffense ? `${rollupOffense} offenses` : undefined;
+  const offenseString = rollupOffense
+    ? `${formatOffenseLabel(rollupOffense)}`
+    : undefined;
   const combinedOffenseString = rollupCombinedOffenseCategory
-    ? `${rollupCombinedOffenseCategory} offenses`
+    ? `${formatOffenseLabel(rollupCombinedOffenseCategory)}`
     : undefined;
   const rollupNcicCategoryString = rollupNcicCategory
-    ? `${rollupNcicCategory} offenses`
+    ? `${formatOffenseLabel(rollupNcicCategory)}`
     : undefined;
   const rollupViolentOffenseString = rollupViolentOffense
     ? "Violent Offenses"

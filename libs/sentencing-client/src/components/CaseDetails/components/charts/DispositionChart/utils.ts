@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { formatOffenseLabel } from "../../../../../../src/utils/utils";
 import { CaseInsight } from "../../../../../api";
 import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
 
@@ -30,7 +31,7 @@ export function getDispositionChartSubtitle(insight: CaseInsight) {
     assessmentScoreBucketStart,
     assessmentScoreBucketEnd,
   );
-  const offenseString = `${offense} offenses`;
+  const offenseString = `${formatOffenseLabel(offense)}`;
 
   const dispositionSubtitleStrings = [
     genderString,

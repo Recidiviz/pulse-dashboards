@@ -17,6 +17,10 @@
 
 import Pluralize from "pluralize";
 
+import {
+  OFFENSE_SUFFIX,
+  OFFENSES_SUFFIX,
+} from "../components/CaseDetails/constants";
 import { ReportType } from "../components/constants";
 
 /**
@@ -127,4 +131,15 @@ export const convertDistrictToDistrictCode = (district?: string) => {
 /** Displays `record` for 1 record or `records` for 0 or more than 1 records */
 export const printFormattedRecordString = (numberOfRecords: number) => {
   return numberOfRecords === 1 ? `record` : `records`;
+};
+
+/** Ensures the offense string includes the word "offenses", and appends it if it does not. */
+export const formatOffenseLabel = (offense: string) => {
+  if (offense.toLocaleLowerCase().includes(OFFENSES_SUFFIX)) {
+    return offense;
+  }
+
+  return offense.toLocaleLowerCase().includes(OFFENSE_SUFFIX)
+    ? offense.replaceAll(OFFENSE_SUFFIX, OFFENSES_SUFFIX)
+    : `${offense} ${OFFENSES_SUFFIX}`;
 };

@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { printFormattedRecordString } from "../../../../../../src/utils/utils";
+import {
+  formatOffenseLabel,
+  printFormattedRecordString,
+} from "../../../../../../src/utils/utils";
 import { CaseInsight } from "../../../../../api";
 import { getDescriptionGender } from "../common/utils";
 import { LsirScoreText } from "../components/LsirScoreText";
@@ -43,7 +46,7 @@ export function DispositionChartExplanation({
         rollupAssessmentScoreBucketStart={assessmentScoreBucketStart}
         rollupAssessmentScoreBucketEnd={assessmentScoreBucketEnd}
       />{" "}
-      with <span>{offense}</span> convictions
+      with <span>{formatOffenseLabel(offense)}</span>
     </>
   );
 

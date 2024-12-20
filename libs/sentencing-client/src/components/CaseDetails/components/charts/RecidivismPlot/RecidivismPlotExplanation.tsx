@@ -17,7 +17,10 @@
 
 import moment from "moment";
 
-import { printFormattedRecordString } from "../../../../../../src/utils/utils";
+import {
+  formatOffenseLabel,
+  printFormattedRecordString,
+} from "../../../../../../src/utils/utils";
 import { CaseInsight } from "../../../../../api";
 import ciLegendImg from "../../../../assets/ci-legend.png";
 import { INDIVIDUALS_STRING } from "../common/constants";
@@ -55,7 +58,9 @@ export function OffenseText({
     (rollupViolentOffense === true ? "violent" : null) ||
     (rollupViolentOffense === false ? "non-violent" : null);
 
-  return offenseString ? <span>{offenseString} convictions</span> : null;
+  return offenseString ? (
+    <span>{formatOffenseLabel(offenseString)}</span>
+  ) : null;
 }
 
 interface RecidivismPlotExplanationProps {
