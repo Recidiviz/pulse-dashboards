@@ -79,7 +79,8 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usPaNotServingIneligibleOffenseForAdminSupervision",
           text: "Not convicted of an ineligible offense",
-          tooltip: "See form 402 for full list of ineligible offenses",
+          tooltip:
+            'Click "complete checklist" to see full list of ineligible offenses',
         },
         {
           key: "usPaNotOnSexOffenseProtocol",
@@ -106,13 +107,26 @@ export const mockApiOpportunityConfigurationResponse = {
       methodologyUrl:
         "https://drive.google.com/file/d/1dBTArU-kQojSvqWZ_i080pDtXxZe70X6/view",
       nonOmsCriteria: [
-        { text: "Has fulfilled treatment and special condition requirements" },
-        { text: "Making efforts to reduce financial obligations\t" },
-        { text: "Does not have a history of PFAs or a current PFA order " },
+        {
+          text: "Has fulfilled treatment and special condition requirements",
+          tooltip:
+            "See below for list of treatments and relevant special conditions",
+        },
+        {
+          text: "Making efforts to reduce financial obligations\t",
+          tooltip:
+            "See intranet (Act 35 - Supervision Financial Obligations section) or UJS site for financial obligations",
+        },
+        {
+          text: "Does not have a history of PFAs or a current PFA order ",
+          tooltip:
+            "See domestic violence section of integrated case summary for PFA orders",
+        },
         { text: "Has not been designated as a sexually violent predator" },
         {
           text: "Does not have out of state charges, unreported dispositions, or delinquent adjudications for ineligible offenses",
-          tooltip: "See form 402 for full list of ineligible offenses",
+          tooltip:
+            'Click "complete checklist" to see full list of ineligible offenses',
         },
       ],
       nonOmsCriteriaHeader: "Requirements for agents to check",
@@ -201,7 +215,11 @@ export const mockApiOpportunityConfigurationResponse = {
       methodologyUrl:
         "https://drive.google.com/file/d/1dBTArU-kQojSvqWZ_i080pDtXxZe70X6/view",
       nonOmsCriteria: [
-        { text: "Has fulfilled treatment and special condition requirements" },
+        {
+          text: "Has fulfilled treatment and special condition requirements",
+          tooltip:
+            "See below for list of treatments and relevant special conditions",
+        },
       ],
       nonOmsCriteriaHeader: "Requirements for agents to check",
       notifications: [],
