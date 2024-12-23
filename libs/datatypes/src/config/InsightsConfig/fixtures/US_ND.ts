@@ -64,7 +64,6 @@ export const US_ND: InsightsConfig = {
       descriptionMarkdown:
         "All transitions to incarceration (state prison or county jail) from supervision in the given time period, regardless of whether the final decision was a revocation or sanction admission.\n\n<br />\nDenominator is the average daily caseload for the agent over the given time period.",
       topXPct: null,
-      listTableText: undefined,
     },
     {
       name: "absconsions_bench_warrants",
@@ -77,7 +76,6 @@ export const US_ND: InsightsConfig = {
       descriptionMarkdown:
         "All reported absconsions from supervision in the given time period.\n\n<br />\nDenominator is the average daily caseload for the agent over the given time period.",
       topXPct: null,
-      listTableText: undefined,
     },
   ],
   noneAreOutliersLabel: "are outliers",

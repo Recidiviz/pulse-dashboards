@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { mapValues, sortBy } from "lodash";
+import { mapValues } from "lodash";
 import { flowResult, makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
@@ -26,6 +26,7 @@ import { mockOpportunityConfigs } from "../../../core/__tests__/testUtils";
 import { downloadZipFile } from "../../../core/Paperwork/utils";
 import { RootStore } from "../../../RootStore";
 import TENANTS from "../../../tenants";
+import { sortObject } from "../../utils";
 import { OpportunityConfigurationAPI } from "./api/interface";
 import { OpportunityConfigurationAPIClient } from "./api/OpportunityConfigurationAPIClient";
 import { OpportunityConfigurationOfflineAPIClient } from "./api/OpportunityConfigurationOfflineAPIClient";
@@ -114,9 +115,6 @@ export class OpportunityConfigurationStore implements Hydratable {
   }
 
   async downloadBlob(throttle_ms = 250) {
-    const sortObject = (o: object) =>
-      Object.fromEntries(sortBy(Object.entries(o), 0));
-
     const states = TENANTS.RECIDIVIZ.availableStateCodes.filter(
       (t) => TENANTS[t].navigation?.workflows,
     );

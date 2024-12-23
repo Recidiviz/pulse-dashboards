@@ -22,6 +22,7 @@ import { z } from "zod";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 
+import { InsightsConfigMetric } from "../../config/InsightsConfig/schema";
 import { CURRENT_DATE_FIXTURE } from "../../utils/zod/date/fixtureDates";
 
 export const ADVERSE_METRIC_IDS = z.enum([
@@ -60,3 +61,31 @@ export const VITALS_METRIC_IDS = z.enum([
   "timely_contact",
 ]);
 export type VitalsMetricId = z.infer<typeof VITALS_METRIC_IDS>;
+
+const normalizeMetricName = (name: string): string => {
+  switch (name) {
+    case ADVERSE_METRIC_IDS.enum.incarceration_starts:
+    case ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants:
+    case ADVERSE_METRIC_IDS.enum.incarceration_starts_technical_violation:
+      return name;
+    default:
+      // We need to check incarcerations first because one of our incarceration metrics is named
+      // incarceration_starts_most_severe_violation_type_not_absconsion
+      if (name.includes("incarceration_starts"))
+        return ADVERSE_METRIC_IDS.enum.incarceration_starts;
+      if (name.includes("absconsion"))
+        return ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants;
+      return name;
+  }
+};
+
+export const normalizeMetricNamesForFixtureData = (
+  metrics: InsightsConfigMetric[],
+): InsightsConfigMetric[] => {
+  return metrics.map((metric) => {
+    return {
+      ...metric,
+      name: normalizeMetricName(metric.name),
+    };
+  });
+};

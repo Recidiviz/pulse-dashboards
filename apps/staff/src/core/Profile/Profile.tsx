@@ -39,12 +39,24 @@ function Profile() {
   const logout = useLogout();
   const navigate = useNavigate();
 
-  const [isDownloadingConfigurations, setIsDownloadingConfigurations] =
-    useState(false);
-  const downloadConfigurations = async () => {
-    setIsDownloadingConfigurations(true);
+  const [
+    isDownloadingWorkflowsConfigurations,
+    setIsDownloadingWorkflowsConfigurations,
+  ] = useState(false);
+  const downloadWorkflowsConfigurations = async () => {
+    setIsDownloadingWorkflowsConfigurations(true);
     await userStore.rootStore?.workflowsStore.opportunityConfigurationStore.downloadBlob();
-    setIsDownloadingConfigurations(false);
+    setIsDownloadingWorkflowsConfigurations(false);
+  };
+  const [
+    isDownloadingInsightsConfigurations,
+    setIsDownloadingInsightsConfigurations,
+  ] = useState(false);
+  const downloadInsightsConfigurations = async () => {
+    setIsDownloadingInsightsConfigurations(true);
+
+    await userStore.rootStore?.insightsStore.downloadConfigurations();
+    setIsDownloadingInsightsConfigurations(false);
   };
 
   const showImpersonationForm =
@@ -89,12 +101,23 @@ function Profile() {
             {userStore.isRecidivizUser && !isDemoMode() && !isOfflineMode() && (
               <Button
                 className="Profile__button"
-                disabled={isDownloadingConfigurations}
-                onClick={downloadConfigurations}
+                disabled={isDownloadingWorkflowsConfigurations}
+                onClick={downloadWorkflowsConfigurations}
               >
-                {isDownloadingConfigurations
+                {isDownloadingWorkflowsConfigurations
                   ? "Downloading..."
                   : "Download Opportunity Configurations"}
+              </Button>
+            )}
+            {userStore.isRecidivizUser && !isDemoMode() && !isOfflineMode() && (
+              <Button
+                className="Profile__button"
+                disabled={isDownloadingInsightsConfigurations}
+                onClick={downloadInsightsConfigurations}
+              >
+                {isDownloadingInsightsConfigurations
+                  ? "Downloading..."
+                  : "Download Insights Configurations"}
               </Button>
             )}
             <Button

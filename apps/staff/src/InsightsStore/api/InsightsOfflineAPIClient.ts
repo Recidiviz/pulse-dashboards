@@ -30,6 +30,7 @@ import {
   ExcludedSupervisionOfficer,
   excludedSupervisionOfficerFixture,
   getMockConfigsByTenantId,
+  InsightsConfig,
   InsightsConfigFixture,
   LATEST_END_DATE,
   leadershipUserInfoFixture,
@@ -316,5 +317,14 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
         ),
       };
     });
+  }
+
+  /**
+   * Not for use in Offline or Demo mode.
+   */
+  async downloadStateConfiguration(stateCode: string): Promise<InsightsConfig> {
+    throw new Error(
+      "Insights configurations cannot be downloaded in Offline/Demo mode",
+    );
   }
 }

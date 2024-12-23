@@ -27,7 +27,7 @@ const caseloadCategorySchema = z.object({
   displayName: z.string(),
 });
 
-export const metricsSchema = z.object({
+export const insightsConfigMetricsSchema = z.object({
   name: z.string(),
   outcomeType: z.enum(["FAVORABLE", "ADVERSE"]),
   titleDisplayName: z.string(),
@@ -61,7 +61,7 @@ export const insightsConfigSchema = z.object({
   noneAreOutliersLabel: z.string(),
   learnMoreUrl: z.string(),
   exclusionReasonDescription: z.string(),
-  metrics: z.array(metricsSchema),
+  metrics: z.array(insightsConfigMetricsSchema),
   clientEvents: z.array(
     z.object({
       displayName: z.string(),
@@ -76,3 +76,4 @@ export const insightsConfigSchema = z.object({
 
 export type InsightsConfig = z.infer<typeof insightsConfigSchema>;
 export type RawInsightsConfig = z.input<typeof insightsConfigSchema>;
+export type InsightsConfigMetric = z.infer<typeof insightsConfigMetricsSchema>;

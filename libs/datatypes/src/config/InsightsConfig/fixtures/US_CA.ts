@@ -63,7 +63,6 @@ export const US_CA: InsightsConfig = {
       descriptionMarkdown:
         "All reported abscondings, as captured in the data we receive for all supervision levels except for CATEGORY D, DEPORTED and PENDING DEPORT, in a given time period.\n<br />\nDenominator is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
       topXPct: null,
-      listTableText: undefined,
     },
     {
       name: "treatment_starts",
@@ -76,7 +75,6 @@ export const US_CA: InsightsConfig = {
       descriptionMarkdown:
         "All reported program starts that exist in PVDTS, as captured in the data we receive for all supervision levels except for CATEGORY D, DEPORTED and PENDING DEPORT, in a given time period.\n<br />\nDenominator is the average daily caseload for the agent over the given time period, including people on both active and admin supervision levels.",
       topXPct: 10,
-      listTableText: undefined,
     },
   ],
   noneAreOutliersLabel: "are outliers on any metrics",

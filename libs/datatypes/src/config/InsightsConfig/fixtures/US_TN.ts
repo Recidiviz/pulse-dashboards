@@ -69,7 +69,6 @@ export const US_TN: InsightsConfig = {
       descriptionMarkdown:
         "The numerator is transitions to incarceration from supervision in the given time period (12 months), regardless of whether the final decision was a revocation or sanction admission. Any returns to incarceration for weekend confinement are excluded.  This includes supervision plan updates to IN CUSTODY or DETAINER status. Returns to incarceration entered as SPLIT confinement are also included - some of these will be results of pre-determined sentencing decisions rather than the result of supervision violations.\n\n<br />\nDenominator is the average daily caseload for the officer over the given time period, including people on both active and admin supervision levels.",
       topXPct: null,
-      listTableText: undefined,
     },
     {
       name: "absconsions_bench_warrants",
@@ -82,7 +81,6 @@ export const US_TN: InsightsConfig = {
       descriptionMarkdown:
         'All reported absconsions, as captured in the data we receive by supervision levels "9AB", "ZAB", "ZAC", "ZAP" or supervision type "ABS" for absconsions, in a given time period.\n\n<br />\nDenominator is the average daily caseload for the officer over the given time period, including people on both active and admin supervision levels.',
       topXPct: null,
-      listTableText: undefined,
     },
     {
       name: "incarceration_starts_technical_violation",
@@ -95,7 +93,6 @@ export const US_TN: InsightsConfig = {
       descriptionMarkdown:
         "Transitions to incarceration from supervision due to technical violations, regardless of whether the final decision was a revocation or sanction admission. It is considered a technical incarceration only if the most serious violation type across all violations in the prior 24 months was a technical violation. We use this logic even if someone’s return to prison is labeled a “new admission”, as long as they were previously on supervision. For incarceration transitions where we don’t find any associated violations, we infer violations and their type by looking at admission reasons implying a Technical or New Crime reason for returning to prison.\n\nThere are situations where we are unable to find a violation to match an incarceration we see in the data. For example, if there are no violations entered because of data entry reasons or because someone was previously in a CCC who did not use TOMIS, we will either not know the cause of the reincarceration or be associating the incarceration with an erroneous violation type.\n\n<br />\nDenominator is the average daily caseload for the officer over the given time period, including people on both active and admin supervision levels.",
       topXPct: null,
-      listTableText: undefined,
     },
   ],
   noneAreOutliersLabel: "are outliers",

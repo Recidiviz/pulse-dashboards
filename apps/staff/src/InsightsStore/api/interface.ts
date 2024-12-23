@@ -84,4 +84,5 @@ export interface InsightsAPI {
   vitalsForOfficer(
     officerPseudoId: string,
   ): Promise<Array<SupervisionVitalsMetric>>;
+  downloadStateConfiguration(stateCode: string): Promise<InsightsConfig>;
 }

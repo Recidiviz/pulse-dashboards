@@ -18,9 +18,13 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
+import { normalizeMetricNamesForFixtureData } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 
+import { downloadZipFile } from "../core/Paperwork/utils";
 import { RootStore } from "../RootStore";
+import TENANTS from "../tenants";
+import { sortObject } from "../WorkflowsStore/utils";
 import { InsightsAPIClient } from "./api/InsightsAPIClient";
 import { InsightsOfflineAPIClient } from "./api/InsightsOfflineAPIClient";
 import { InsightsAPI } from "./api/interface";
@@ -84,5 +88,48 @@ export class InsightsStore {
     const config = yield this.apiClient.init();
 
     this.supervisionStore = new InsightsSupervisionStore(this, config);
+  }
+
+  /**
+   * Downloads the configurations for each state.
+   * These downloaded configs can be manually loaded into the fixtures directory
+   * to allow state specific copy/config in offline and demo mode.
+   */
+  async downloadConfigurations() {
+    const states = TENANTS.RECIDIVIZ.availableStateCodes.filter(
+      (t) => TENANTS[t].navigation?.insights,
+    );
+
+    const fileInputs: { filename: any; fileContents: any }[] = [];
+    // Iterate over each state and download its configuration
+    for (const stateCode of states) {
+      try {
+        const data = await this.apiClient.downloadStateConfiguration(stateCode);
+
+        // To keep the size of the fixture data smaller, we don't have metric data for every version of each metric
+        // so we will normalize the metric name. The display name will remain the same.
+        // ex: incarcerations_starts in place of incarceration_starts_and_inferred
+        const normalizedData = {
+          ...data,
+          metrics: normalizeMetricNamesForFixtureData(data.metrics),
+        };
+
+        const formattedData = JSON.stringify(sortObject(normalizedData));
+
+        fileInputs.push({
+          filename: `${stateCode}.ts`,
+          fileContents: `import { InsightsConfig } from "../schema";
+
+export const ${stateCode.toUpperCase()}: InsightsConfig = ${formattedData};
+`,
+        });
+      } catch (error) {
+        console.error(
+          `Error downloading or saving data for ${stateCode}:`,
+          error,
+        );
+      }
+    }
+    downloadZipFile("Insights_configs.zip", fileInputs);
   }
 }

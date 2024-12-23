@@ -18,7 +18,7 @@
 import assertNever from "assert-never";
 import { add, endOfToday, getMonth, getYear, parseISO } from "date-fns";
 import { Timestamp } from "firebase/firestore";
-import { groupBy, mapValues } from "lodash";
+import { groupBy, mapValues, sortBy } from "lodash";
 import moment from "moment";
 
 import { fieldToDate, OpportunityType, StaffRecord } from "~datatypes";
@@ -313,3 +313,6 @@ export function getLinkToForm(
   return linkToForm;
 }
 export { fieldToDate };
+
+export const sortObject = (o: object) =>
+  Object.fromEntries(sortBy(Object.entries(o), 0));

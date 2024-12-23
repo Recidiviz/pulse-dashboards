@@ -17,10 +17,10 @@
 
 import { z } from "zod";
 
-import { metricsSchema } from "../../config/InsightsConfig/schema";
+import { insightsConfigMetricsSchema } from "../../config/InsightsConfig/schema";
 import { metricBenchmarkSchema } from "../MetricBenchmark/schema";
 
-const metricConfigSchema = metricsSchema.extend({
+const metricConfigSchema = insightsConfigMetricsSchema.extend({
   metricBenchmarksByCaseloadCategory: z
     .map(z.string(), metricBenchmarkSchema)
     .optional(),

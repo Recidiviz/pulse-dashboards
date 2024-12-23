@@ -61,7 +61,6 @@ export const US_PA: InsightsConfig = {
       eventNamePastTense: "were incarcerated",
       descriptionMarkdown: "",
       topXPct: null,
-      listTableText: undefined,
     },
     {
       name: "incarceration_starts",
@@ -73,7 +72,6 @@ export const US_PA: InsightsConfig = {
       eventNamePastTense: "had a technical incarceration",
       descriptionMarkdown: "",
       topXPct: null,
-      listTableText: undefined,
     },
     {
       name: "absconsions_bench_warrants",
@@ -85,7 +83,6 @@ export const US_PA: InsightsConfig = {
       eventNamePastTense: "absconded",
       descriptionMarkdown: "",
       topXPct: null,
-      listTableText: undefined,
     },
   ],
   noneAreOutliersLabel: "are outliers",

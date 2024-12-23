@@ -45,7 +45,7 @@ import UserStore from "../../../RootStore/UserStore";
 import { InsightsStore } from "../../InsightsStore";
 import { InsightsAPIClient } from "../InsightsAPIClient";
 
-const mockTenantId = "us_tn";
+const mockTenantId = "US_TN";
 const BASE_URL = `http://localhost:5000/outliers/${mockTenantId}`;
 
 describe("InsightsAPIClient", () => {
@@ -58,13 +58,12 @@ describe("InsightsAPIClient", () => {
       getToken: () => Promise.resolve(""),
       user: {},
     } as UserStore;
-    // @ts-ignore
-    const mockRootStore = {
-      currentTenantId: mockTenantId,
-      apiStore: new APIStore(mockUserStore),
-      userStore: mockUserStore,
-    } as RootStore;
-    client = new InsightsAPIClient(new InsightsStore(mockRootStore));
+    const rootStore = new RootStore();
+    rootStore.tenantStore.setCurrentTenantId(mockTenantId);
+    rootStore.apiStore = new APIStore(mockUserStore);
+    rootStore.userStore = mockUserStore;
+    const insightsStore = new InsightsStore(rootStore);
+    client = new InsightsAPIClient(insightsStore);
   });
 
   it("init calls the correct endpoint", async () => {

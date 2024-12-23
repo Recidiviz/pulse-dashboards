@@ -24,6 +24,7 @@ import {
   clientInfoSchema,
   ExcludedSupervisionOfficer,
   excludedSupervisionOfficerSchema,
+  InsightsConfig,
   insightsConfigSchema,
   MetricBenchmark,
   metricBenchmarkSchema,
@@ -260,5 +261,17 @@ export class InsightsAPIClient implements InsightsAPI {
         ),
       };
     });
+  }
+
+  /**
+   * This method is for internal use only.
+   * @internal
+   */
+  async downloadStateConfiguration(stateCode: string): Promise<InsightsConfig> {
+    const endpoint = `${import.meta.env.VITE_NEW_BACKEND_API_URL}/outliers/${stateCode}/configuration`;
+
+    const data = await this.apiStore.get(endpoint);
+
+    return insightsConfigSchema.parse(data.config);
   }
 }
