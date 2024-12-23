@@ -73,7 +73,9 @@ const FormHeading: React.FC = () => {
         <Logo src={idocLogo} alt="IDOC Logo" />
         <HeadingText>
           <MainHeading>Idaho Department of Correction</MainHeading>
-          <Subheading>Earned Discharge from {supervisionType}</Subheading>
+          <Subheading>
+            Request for Early Discharge: {supervisionType}
+          </Subheading>
         </HeadingText>
       </ContentContainer>
       <FormEDSeparator />
