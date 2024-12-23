@@ -211,8 +211,14 @@ export const highlightMatchedText = (
 
   // Split the input into words by splitting at the white space and filter out empty spaces
   const searchWords = searchInput.toLowerCase().split(/\s+/).filter(Boolean);
+
+  // Escape special regex characters
+  const regexString = searchWords
+    .map((word) => word.replace(/[.*+?^=!:()|[\]\\]/g, "\\$&"))
+    .join("|");
+
   // Create a regex of each word separated by a regex logical OR symbol `|`
-  const regex = new RegExp(`(${searchWords.join("|")})`, "gi");
+  const regex = new RegExp(`(${regexString})`, "gi");
   /**
    * Split the label into parts based on matches in the regex above.
    * E.g. if the label is "POSSESSION OF A CONTROLLED SUBSTANCE" and the `regex` is `/possession|of/gi`,
