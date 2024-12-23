@@ -70,7 +70,7 @@ test.describe("Supervisors List Page", () => {
         page.getByRole("link", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
-        "3 supervisors across the state have one or more outlier officers in their team",
+        "3 supervisors across the state have one or more outlier agents in their unit",
       );
       await expect(page.getByRole("main")).toContainText("Region 1");
       await expect(
@@ -140,14 +140,14 @@ test.describe("Supervisors List Page", () => {
         "2 supervisors across the state have one or more outlier officers in their team",
       );
       await expect(page.getByRole("main")).toContainText(
-        "2 of the 3 officers in your team are outliers on one or more metrics",
+        "2 of the 5 officers in your unit are outliers on one or more metrics",
       );
-      await expect(page.getByRole("main")).toContainText("Region: 1");
+      await expect(page.getByRole("main")).toContainText("District: Region 1");
       await expect(page.getByRole("main")).toContainText(
-        "Team Supervisor: Alejandro D Gonzalez",
+        "Unit Manager:  Alejandro D Gonzalez",
       );
       await expect(page.getByRole("main")).toContainText(
-        "Staff: Walter Harris, Jack Hernandez, Jason Nelson",
+        "Staff: Walter Harris, Jack Hernandez, Jason Nelson, Harriet Boyd",
       );
     });
   });

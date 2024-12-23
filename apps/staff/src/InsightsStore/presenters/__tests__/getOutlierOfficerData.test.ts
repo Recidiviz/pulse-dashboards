@@ -202,7 +202,7 @@ test("throws on missing benchmark for required caseload type", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
 
   expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
-    `Missing metric benchmark data for caseload type ${CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
+    `Missing metric benchmark data for caseload type ${CASELOAD_CATEGORY_IDS.enum.ALL} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
 

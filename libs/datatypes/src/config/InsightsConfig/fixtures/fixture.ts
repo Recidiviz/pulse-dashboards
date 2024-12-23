@@ -28,12 +28,12 @@ import {
   insightsConfigSchema,
   RawInsightsConfig,
 } from "../schema";
-import US_CA from "./US_CA";
-import US_ID from "./US_ID";
-import US_MI from "./US_MI";
-import US_ND from "./US_ND";
-import US_PA from "./US_PA";
-import US_TN from "./US_TN";
+import { US_CA } from "./US_CA";
+import { US_ID } from "./US_ID";
+import { US_MI } from "./US_MI";
+import { US_ND } from "./US_ND";
+import { US_PA } from "./US_PA";
+import { US_TN } from "./US_TN";
 
 export const rawInsightsConfigFixture: RawInsightsConfig = {
   supervisionOfficerLabel: "officer",
@@ -143,7 +143,7 @@ export const rawInsightsConfigFixture: RawInsightsConfig = {
     "Has a rate on any metric significantly higher than peers - over 1 Interquartile Range above the statewide rate.",
   caseloadCategories: [
     {
-      id: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+      id: CASELOAD_CATEGORY_IDS.enum.ALL,
       displayName: "General Or Other Caseloads",
     },
     {
@@ -158,7 +158,7 @@ export const InsightsConfigFixture: InsightsConfig = insightsConfigSchema.parse(
   rawInsightsConfigFixture,
 );
 
-export const getMockConfigs = () => ({
+export const getMockConfigsByTenantId = (): Record<string, InsightsConfig> => ({
   US_CA,
   US_ID,
   US_MI,

@@ -120,7 +120,7 @@ test("hydrated benchmarks can be missing caseload types", async () => {
   store.metricConfigsById?.forEach((mc) => {
     expect(
       mc.metricBenchmarksByCaseloadCategory?.get(
-        CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+        CASELOAD_CATEGORY_IDS.enum.ALL,
       ),
     ).toBeDefined();
     expect(

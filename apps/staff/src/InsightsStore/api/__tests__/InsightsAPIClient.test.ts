@@ -322,6 +322,16 @@ describe("InsightsAPIClient", () => {
               "metricValue": 31,
               "officerPseudonymizedId": "hashed-so3",
             },
+            {
+              "metric30DDelta": 5.9,
+              "metricValue": 79,
+              "officerPseudonymizedId": "hashed-so9",
+            },
+            {
+              "metric30DDelta": 1.5,
+              "metricValue": 89,
+              "officerPseudonymizedId": "hashed-so10",
+            },
           ],
         },
         {
@@ -341,6 +351,16 @@ describe("InsightsAPIClient", () => {
               "metric30DDelta": 0.7,
               "metricValue": 97,
               "officerPseudonymizedId": "hashed-so3",
+            },
+            {
+              "metric30DDelta": 0,
+              "metricValue": 100,
+              "officerPseudonymizedId": "hashed-so9",
+            },
+            {
+              "metric30DDelta": -3.4,
+              "metricValue": 79,
+              "officerPseudonymizedId": "hashed-so10",
             },
           ],
         },

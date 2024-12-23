@@ -17,13 +17,13 @@ exports[`function: ExcludedSupervisionOfficerRawFactory > should generate realis
   },
   {
     "displayName": "Elias Borer",
-    "externalId": "so5",
+    "externalId": "so10",
     "fullName": {
       "givenNames": "Elias",
       "middleNames": undefined,
       "surname": "Borer",
     },
-    "pseudonymizedId": "hashed-so5",
+    "pseudonymizedId": "hashed-so10",
     "supervisorExternalIds": [
       "M3xYAi",
     ],
@@ -48,9 +48,9 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
 [
   {
     "avgDailyPopulation": 43,
-    "caseloadCategory": "GENERAL_OR_OTHER",
+    "caseloadCategory": "ALL",
     "displayName": "Jimmy Greenfelder",
-    "externalId": "so4",
+    "externalId": "so9",
     "fullName": {
       "givenNames": "Jimmy",
       "middleNames": undefined,
@@ -62,32 +62,122 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
         "statusesOverTime": [
           {
             "endDate": 2021-07-01T00:00:00.000Z,
-            "metricRate": 0.06283,
-            "status": "NEAR",
-          },
-          {
-            "endDate": 2021-08-01T00:00:00.000Z,
-            "metricRate": 0.088881,
-            "status": "NEAR",
-          },
-          {
-            "endDate": 2021-09-01T00:00:00.000Z,
-            "metricRate": 0.109407,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2021-10-01T00:00:00.000Z,
-            "metricRate": 0.110487,
-            "status": "FAR",
-          },
-          {
-            "endDate": 2021-11-01T00:00:00.000Z,
             "metricRate": 0.154553,
             "status": "FAR",
           },
           {
+            "endDate": 2021-08-01T00:00:00.000Z,
+            "metricRate": 0.109407,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2021-09-01T00:00:00.000Z,
+            "metricRate": 0.12125238767544223,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2021-10-01T00:00:00.000Z,
+            "metricRate": 0.1466368227731864,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2021-11-01T00:00:00.000Z,
+            "metricRate": 0.110487,
+            "status": "FAR",
+          },
+          {
             "endDate": 2021-12-01T00:00:00.000Z,
-            "metricRate": 0.1604677745537677,
+            "metricRate": 0.11521464646464646,
+            "status": "FAR",
+          },
+        ],
+      },
+      {
+        "metricId": "incarceration_starts",
+        "statusesOverTime": [
+          {
+            "endDate": 2021-11-01T00:00:00.000Z,
+            "metricRate": 0.020006029214283755,
+            "status": "MET",
+          },
+          {
+            "endDate": 2021-12-01T00:00:00.000Z,
+            "metricRate": 0.4224537037037037,
+            "status": "FAR",
+          },
+        ],
+      },
+    ],
+    "pseudonymizedId": "hashed-so9",
+    "supervisorExternalIds": [
+      "zhJOf8",
+    ],
+    "topXPctMetrics": [],
+  },
+  {
+    "avgDailyPopulation": 12,
+    "caseloadCategory": "ALL",
+    "displayName": "Megan Haley",
+    "externalId": "so2",
+    "fullName": {
+      "givenNames": "Megan",
+      "middleNames": undefined,
+      "surname": "Haley",
+    },
+    "outlierMetrics": [],
+    "pseudonymizedId": "hashed-so2",
+    "supervisorExternalIds": [
+      "wxaST5",
+    ],
+    "topXPctMetrics": [
+      {
+        "metricId": "treatment_starts",
+        "topXPct": 10,
+      },
+    ],
+  },
+  {
+    "avgDailyPopulation": 32,
+    "caseloadCategory": "ALL",
+    "displayName": "Mattie Fawn Schaefer",
+    "externalId": "so3",
+    "fullName": {
+      "givenNames": "Mattie",
+      "middleNames": "Fawn",
+      "surname": "Schaefer",
+    },
+    "outlierMetrics": [
+      {
+        "metricId": "absconsions_bench_warrants",
+        "statusesOverTime": [
+          {
+            "endDate": 2021-07-01T00:00:00.000Z,
+            "metricRate": 0.154553,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2021-08-01T00:00:00.000Z,
+            "metricRate": 0.109407,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2021-09-01T00:00:00.000Z,
+            "metricRate": 0.12125238767544223,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2021-10-01T00:00:00.000Z,
+            "metricRate": 0.1466368227731864,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2021-11-01T00:00:00.000Z,
+            "metricRate": 0.110487,
+            "status": "FAR",
+          },
+          {
+            "endDate": 2021-12-01T00:00:00.000Z,
+            "metricRate": 0.11521464646464646,
             "status": "FAR",
           },
         ],
@@ -128,55 +218,11 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
         ],
       },
     ],
-    "pseudonymizedId": "hashed-so4",
-    "supervisorExternalIds": [
-      "zhJOf8",
-    ],
-    "topXPctMetrics": [],
-  },
-  {
-    "avgDailyPopulation": 12,
-    "caseloadCategory": "GENERAL_OR_OTHER",
-    "displayName": "Megan Haley",
-    "externalId": "so2",
-    "fullName": {
-      "givenNames": "Megan",
-      "middleNames": undefined,
-      "surname": "Haley",
-    },
-    "outlierMetrics": [],
-    "pseudonymizedId": "hashed-so2",
-    "supervisorExternalIds": [
-      "wxaST5",
-    ],
-    "topXPctMetrics": [
-      {
-        "metricId": "treatment_starts",
-        "topXPct": 10,
-      },
-    ],
-  },
-  {
-    "avgDailyPopulation": 12,
-    "caseloadCategory": "GENERAL_OR_OTHER",
-    "displayName": "Mattie Fawn Schaefer",
-    "externalId": "so2",
-    "fullName": {
-      "givenNames": "Mattie",
-      "middleNames": "Fawn",
-      "surname": "Schaefer",
-    },
-    "outlierMetrics": [],
-    "pseudonymizedId": "hashed-so2",
+    "pseudonymizedId": "hashed-so3",
     "supervisorExternalIds": [
       "NpMsAB",
     ],
-    "topXPctMetrics": [
-      {
-        "metricId": "treatment_starts",
-        "topXPct": 10,
-      },
-    ],
+    "topXPctMetrics": [],
   },
 ]
 `;

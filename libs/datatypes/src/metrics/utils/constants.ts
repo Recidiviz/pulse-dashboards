@@ -33,8 +33,9 @@ export const ADVERSE_METRIC_IDS = z.enum([
 export const FAVORABLE_METRIC_IDS = z.enum(["treatment_starts"]);
 
 export const CASELOAD_CATEGORY_IDS = z.enum([
-  "GENERAL_OR_OTHER",
+  "NOT_SEX_OFFENSE",
   "SEX_OFFENSE",
+  "ALL",
 ]);
 
 // We want to keep the dates consistent for tests but relevant to today in offline and demo mode

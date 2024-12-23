@@ -19,7 +19,7 @@
 
 import { differenceInDays, subDays } from "date-fns";
 
-import { isDemoMode } from "~client-env-utils";
+import { isTestEnv } from "~client-env-utils";
 import {
   ActionStrategy,
   actionStrategyFixture,
@@ -29,7 +29,7 @@ import {
   clientInfoFixture,
   ExcludedSupervisionOfficer,
   excludedSupervisionOfficerFixture,
-  FAVORABLE_METRIC_IDS,
+  getMockConfigsByTenantId,
   InsightsConfigFixture,
   LATEST_END_DATE,
   leadershipUserInfoFixture,
@@ -65,7 +65,11 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   constructor(public readonly insightsStore: InsightsStore) {}
 
   async init() {
-    return InsightsConfigFixture;
+    const { currentTenantId } = this.insightsStore.rootStore;
+    const configsByTenantId = getMockConfigsByTenantId();
+    if (isTestEnv() || !currentTenantId) return InsightsConfigFixture;
+
+    return configsByTenantId[currentTenantId];
   }
 
   async actionStrategies(supervisorPseudoId: string): Promise<ActionStrategy> {
@@ -123,44 +127,47 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     return supervisionOfficerSupervisorsFixture;
   }
 
-  // TODO(#4625): Add state-specific fixtures, which will remove the need for this logic
-  removeCaSpecificDataFromFixture(
-    officerData: SupervisionOfficer,
-  ): SupervisionOfficer {
-    return {
-      ...officerData,
-      outlierMetrics: officerData.outlierMetrics.filter(
-        (metric) =>
-          metric.metricId !== FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      ),
-      topXPctMetrics: [],
-    };
-  }
-
-  // TODO(#4625): Add state-specific fixtures, which will remove the need for this logic
-  removeCaSpecificDataFromOutcomesFixture(
-    officerOutcomesData: SupervisionOfficerOutcomes,
+  /**
+   * We will adjust the fixture data returned from the outcomes methods based on the current state and current environment.
+   * test environment: don't filter at all
+   * offline & demo mode: filter outcomes metrics to be only the metric types specified in the state's config
+   * States other than US_CA: filter out topXPctMetrics since the "Positive Highlights" are only enabled in CA
+   */
+  filterForStateAndEnv(
+    data: SupervisionOfficerOutcomes,
   ): SupervisionOfficerOutcomes {
-    return {
-      ...officerOutcomesData,
-      outlierMetrics: officerOutcomesData.outlierMetrics.filter(
-        (metric) =>
-          metric.metricId !== FAVORABLE_METRIC_IDS.enum.treatment_starts,
-      ),
-      topXPctMetrics: [],
+    const { currentTenantId } = this.insightsStore.rootStore;
+
+    if (isTestEnv() || !currentTenantId) return data;
+
+    const stateConfig = getMockConfigsByTenantId()[currentTenantId];
+
+    const caseloadCategories =
+      stateConfig.caseloadCategories?.map((c) => c.id) ?? [];
+    // If there are no specialized caseload categories configured for a state,
+    // caseloadCategories will be [], so we push the default "ALL" here
+    // to aid in the metrics filtering
+    if (caseloadCategories.length === 0) caseloadCategories.push("ALL");
+
+    // Filter out merics to include only metrics for the caseload category enabled for the state,
+    // and for the metric ids enabled for the state.
+    const returnValue = {
+      ...data,
+      outlierMetrics: caseloadCategories.includes(data.caseloadCategory)
+        ? data.outlierMetrics.filter((metric) =>
+            stateConfig.metrics.map((m) => m.name).includes(metric.metricId),
+          )
+        : [],
+      topXPctMetrics:
+        currentTenantId.toUpperCase() === "US_CA" ? data.topXPctMetrics : [],
     };
+    return returnValue;
   }
 
   async officersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>> {
-    const transformedFixture = isDemoMode()
-      ? supervisionOfficerFixture.map((officer) =>
-          this.removeCaSpecificDataFromFixture(officer),
-        )
-      : supervisionOfficerFixture;
-
-    return transformedFixture.filter((o) =>
+    return supervisionOfficerFixture.filter((o) =>
       o.supervisorExternalIds
         .map((i) => `hashed-${i}`)
         .includes(supervisorPseudoId),
@@ -180,14 +187,11 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async outcomesForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficerOutcomes>> {
-    const transformedFixture = isDemoMode()
-      ? supervisionOfficerOutcomesFixture.map((officerOutcomes) =>
-          this.removeCaSpecificDataFromOutcomesFixture(officerOutcomes),
-        )
-      : supervisionOfficerOutcomesFixture;
-
+    const stateSpecificFixture = supervisionOfficerOutcomesFixture.map(
+      (officerOutcomes) => this.filterForStateAndEnv(officerOutcomes),
+    );
     // filter for officer outcomes fixtures belonging to this supervisor
-    return transformedFixture.filter((officerOutcomes) => {
+    return stateSpecificFixture.filter((officerOutcomes) => {
       const officerFixture = supervisionOfficerFixture.find(
         (o) => o.pseudonymizedId === officerOutcomes.pseudonymizedId,
       );
@@ -213,9 +217,7 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     if (!officerFixture)
       throw new Error(`Officer ${officerPseudoId} not present in fixture data`);
 
-    return isDemoMode()
-      ? this.removeCaSpecificDataFromFixture(officerFixture)
-      : officerFixture;
+    return officerFixture;
   }
 
   async excludedSupervisionOfficer(
@@ -243,9 +245,7 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
         `No outcomes fixture data for officer with pseudo id: [${officerPseudoId}]`,
       );
 
-    return isDemoMode()
-      ? this.removeCaSpecificDataFromOutcomesFixture(outcomesFixture)
-      : outcomesFixture;
+    return this.filterForStateAndEnv(outcomesFixture);
   }
 
   async supervisionOfficerMetricEvents(

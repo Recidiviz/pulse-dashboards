@@ -49,8 +49,7 @@ test.describe("Supervisors Page", () => {
       );
       await page
         .getByRole("link", {
-          name: "Absconsions Absconsions See trends and cases Swarm plot of all absconsion rates in the state for SEX_OFFENSE caseloads, highlighting a value of 10.6%, which is far worse than the statewide rate of 2.9%. Other values in the chart range from 0% to 12%. Statewide rate At or below statewide rate Slightly worse than statewide rate Far worse than statewide rate",
-          exact: true,
+          name: "Absconder Warrants Absconder Warrants See trends and cases Swarm plot of all absconder warrant rates in the state for ALL caseloads, highlighting a value of 11.5%, which is far worse than the statewide rate of 6.0%. Other values in the chart range from 0% to 37%",
         })
         .click();
       await page
@@ -70,7 +69,7 @@ test.describe("Supervisors Page", () => {
           const response = await route.fetch();
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
-            "us_mi";
+            "us_ca";
           json["https://dashboard.recidiviz.org/app_metadata"].routes = {
             insights: true,
           };
@@ -87,7 +86,7 @@ test.describe("Supervisors Page", () => {
       await main.waitFor({ state: "attached", timeout: 10000 });
 
       await expect(main).toContainText(
-        "Jack Hernandez is in the top 10% of officers in the state for highest program/treatment starts rate this year.",
+        "Jack Hernandez is in the top 10% of agents in the state for highest program starts rate this year.",
       );
     });
 
@@ -98,7 +97,7 @@ test.describe("Supervisors Page", () => {
           const response = await route.fetch();
           const json = await response.json();
           json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
-            "us_mi";
+            "us_ca";
           json["https://dashboard.recidiviz.org/app_metadata"].routes = {
             insights: true,
           };
@@ -123,13 +122,41 @@ test.describe("Supervisors Page", () => {
       expect(href).toBe("/insights/supervision/staff/hashed-so2");
 
       await expect(main).toContainText(
-        "Jack Hernandez is in the top 10% of officers in the state for highest program/treatment starts rate this year.",
+        "Jack Hernandez is in the top 10% of agents in the state for highest program starts rate this year.",
       );
 
       // then check that link takes user to staff page with banner
       await link.click();
       await expect(page.getByRole("main")).toContainText(
-        "Jack is in the top 10% of officers in the state for highest program/treatment starts rate this year.",
+        "Jack is in the top 10% of agents in the state for highest program starts rate this year.",
+      );
+    });
+
+    test("Non-enabled state does not show banner", async ({ page }) => {
+      await page.route(
+        "http://localhost:3001/api/offlineUser?*",
+        async (route) => {
+          const response = await route.fetch();
+          const json = await response.json();
+          json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
+            "us_mi";
+          json["https://dashboard.recidiviz.org/app_metadata"].routes = {
+            insights: true,
+          };
+          json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
+            {
+              supervisorHomepage: false,
+            };
+          await route.fulfill({ response, json });
+        },
+      );
+
+      await page.goto("/");
+      const main = page.getByRole("main");
+      await main.waitFor({ state: "attached", timeout: 10000 });
+
+      await expect(main).not.toContainText(
+        "Jack Hernandez is in the top 10% of agents in the state for highest program/treatment starts rate this year.",
       );
     });
   });

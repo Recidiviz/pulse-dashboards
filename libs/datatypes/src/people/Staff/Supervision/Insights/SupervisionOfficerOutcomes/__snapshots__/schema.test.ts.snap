@@ -98,7 +98,7 @@ exports[`transformations 1`] = `
 
 exports[`transformations 2`] = `
 {
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "externalId": "so2",
   "outlierMetrics": [],
   "pseudonymizedId": "hashed-so2",
@@ -113,7 +113,7 @@ exports[`transformations 2`] = `
 
 exports[`transformations 3`] = `
 {
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "externalId": "so3",
   "outlierMetrics": [
     {
@@ -194,7 +194,7 @@ exports[`transformations 3`] = `
 
 exports[`transformations 4`] = `
 {
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "externalId": "so4",
   "outlierMetrics": [
     {
@@ -275,7 +275,7 @@ exports[`transformations 4`] = `
 
 exports[`transformations 5`] = `
 {
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "externalId": "so5",
   "outlierMetrics": [],
   "pseudonymizedId": "hashed-so5",
@@ -285,7 +285,7 @@ exports[`transformations 5`] = `
 
 exports[`transformations 6`] = `
 {
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "externalId": "so8",
   "outlierMetrics": [
     {
@@ -325,6 +325,128 @@ exports[`transformations 6`] = `
     },
   ],
   "pseudonymizedId": "hashed-so8",
+  "topXPctMetrics": [],
+}
+`;
+
+exports[`transformations 7`] = `
+{
+  "caseloadCategory": "ALL",
+  "externalId": "so9",
+  "outlierMetrics": [
+    {
+      "metricId": "absconsions_bench_warrants",
+      "statusesOverTime": [
+        {
+          "endDate": 2021-07-01T00:00:00.000Z,
+          "metricRate": 0.06283,
+          "status": "NEAR",
+        },
+        {
+          "endDate": 2021-08-01T00:00:00.000Z,
+          "metricRate": 0.088881,
+          "status": "NEAR",
+        },
+        {
+          "endDate": 2021-09-01T00:00:00.000Z,
+          "metricRate": 0.109407,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-10-01T00:00:00.000Z,
+          "metricRate": 0.110487,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-11-01T00:00:00.000Z,
+          "metricRate": 0.154553,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-12-01T00:00:00.000Z,
+          "metricRate": 0.1604677745537677,
+          "status": "FAR",
+        },
+      ],
+    },
+    {
+      "metricId": "incarceration_starts",
+      "statusesOverTime": [
+        {
+          "endDate": 2021-11-01T00:00:00.000Z,
+          "metricRate": 0.020006029214283755,
+          "status": "MET",
+        },
+        {
+          "endDate": 2021-12-01T00:00:00.000Z,
+          "metricRate": 0.4224537037037037,
+          "status": "FAR",
+        },
+      ],
+    },
+  ],
+  "pseudonymizedId": "hashed-so9",
+  "topXPctMetrics": [],
+}
+`;
+
+exports[`transformations 8`] = `
+{
+  "caseloadCategory": "NOT_SEX_OFFENSE",
+  "externalId": "so10",
+  "outlierMetrics": [
+    {
+      "metricId": "absconsions_bench_warrants",
+      "statusesOverTime": [
+        {
+          "endDate": 2021-07-01T00:00:00.000Z,
+          "metricRate": 0.154553,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-08-01T00:00:00.000Z,
+          "metricRate": 0.109407,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-09-01T00:00:00.000Z,
+          "metricRate": 0.12125238767544223,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-10-01T00:00:00.000Z,
+          "metricRate": 0.1466368227731864,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-11-01T00:00:00.000Z,
+          "metricRate": 0.110487,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-12-01T00:00:00.000Z,
+          "metricRate": 0.11521464646464646,
+          "status": "FAR",
+        },
+      ],
+    },
+    {
+      "metricId": "incarceration_starts",
+      "statusesOverTime": [
+        {
+          "endDate": 2021-11-01T00:00:00.000Z,
+          "metricRate": 0.020006029214283755,
+          "status": "MET",
+        },
+        {
+          "endDate": 2021-12-01T00:00:00.000Z,
+          "metricRate": 0.4224537037037037,
+          "status": "FAR",
+        },
+      ],
+    },
+  ],
+  "pseudonymizedId": "hashed-so10",
   "topXPctMetrics": [],
 }
 `;

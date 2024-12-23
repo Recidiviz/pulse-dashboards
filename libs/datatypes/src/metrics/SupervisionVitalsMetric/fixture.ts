@@ -58,6 +58,14 @@ const timelyContactValues = [
     metricValue: 89.0,
     metric30DDelta: 1.5,
   },
+  {
+    metricValue: 71.0,
+    metric30DDelta: 3.0,
+  },
+  {
+    metricValue: 93.0,
+    metric30DDelta: -1,
+  },
 ];
 
 const timelyRiskAssessmentValues = [
@@ -92,6 +100,14 @@ const timelyRiskAssessmentValues = [
   {
     metricValue: 79.0,
     metric30DDelta: -3.4,
+  },
+  {
+    metricValue: 77.0,
+    metric30DDelta: -5.4,
+  },
+  {
+    metricValue: 84.0,
+    metric30DDelta: 5.4,
   },
 ];
 

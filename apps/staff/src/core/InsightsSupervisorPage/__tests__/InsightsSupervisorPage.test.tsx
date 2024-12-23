@@ -134,7 +134,7 @@ describe("Hydrated Supervisor Page", () => {
     renderWithContext(<SupervisorPage presenter={presenter} />);
 
     [
-      "2 of the 3 officers in Alejandro D Gonzalez's team are",
+      "4 of the 5 officers in Alejandro D Gonzalez's team are",
       "outliers",
       "on one or more metrics",
     ].forEach((text) => {
@@ -152,7 +152,7 @@ describe("Hydrated Supervisor Page", () => {
       [
         "1",
         "Alejandro D Gonzalez",
-        "Walter Harris, Jack Hernandez, Jason Nelson",
+        "Walter Harris, Jack Hernandez, Jason Nelson, Harriet Boyd, Stephen Mann",
       ].map((text) =>
         waitFor(() => expect(screen.getByText(text)).toBeInTheDocument()),
       ),
@@ -207,7 +207,7 @@ describe("Hydrated Supervisor Page", () => {
 
     await Promise.all(
       [
-        "2 of the 3 officers in your team are",
+        "4 of the 5 officers in your team are",
         "outliers",
         "on one or more metrics",
       ].map((text) =>
@@ -269,7 +269,7 @@ describe("When insightsUnitState is true", () => {
       [
         "Unit 1",
         "Alejandro D Gonzalez",
-        "Walter Harris, Jack Hernandez, Jason Nelson",
+        "Walter Harris, Jack Hernandez, Jason Nelson, Harriet Boyd, Stephen Mann",
         "Team:",
         "Team Supervisor:",
       ].map((text) =>

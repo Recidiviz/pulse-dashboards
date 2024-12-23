@@ -37,11 +37,21 @@ exports[`transformations 1`] = `
     {
       "metric30DDelta": 5.9,
       "metricValue": 79,
-      "officerPseudonymizedId": "hashed-so6",
+      "officerPseudonymizedId": "hashed-so9",
     },
     {
       "metric30DDelta": 1.5,
       "metricValue": 89,
+      "officerPseudonymizedId": "hashed-so10",
+    },
+    {
+      "metric30DDelta": 3,
+      "metricValue": 71,
+      "officerPseudonymizedId": "hashed-so6",
+    },
+    {
+      "metric30DDelta": -1,
+      "metricValue": 93,
       "officerPseudonymizedId": "hashed-so7",
     },
   ],
@@ -85,11 +95,21 @@ exports[`transformations 2`] = `
     {
       "metric30DDelta": 0,
       "metricValue": 100,
-      "officerPseudonymizedId": "hashed-so6",
+      "officerPseudonymizedId": "hashed-so9",
     },
     {
       "metric30DDelta": -3.4,
       "metricValue": 79,
+      "officerPseudonymizedId": "hashed-so10",
+    },
+    {
+      "metric30DDelta": -5.4,
+      "metricValue": 77,
+      "officerPseudonymizedId": "hashed-so6",
+    },
+    {
+      "metric30DDelta": 5.4,
+      "metricValue": 84,
       "officerPseudonymizedId": "hashed-so7",
     },
   ],

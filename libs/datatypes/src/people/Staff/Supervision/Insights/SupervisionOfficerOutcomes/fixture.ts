@@ -45,7 +45,7 @@ export const rawSupervisionOfficerOutcomesFixture: RawSupervisionOfficerOutcomes
     {
       externalId: "so2",
       pseudonymizedId: "hashed-so2",
-      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
       outlierMetrics: [],
       topXPctMetrics: [
         { metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts, topXPct: 10 },
@@ -54,41 +54,61 @@ export const rawSupervisionOfficerOutcomesFixture: RawSupervisionOfficerOutcomes
     {
       externalId: "so3",
       pseudonymizedId: "hashed-so3",
-      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
       outlierMetrics: [
         rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-          .GENERAL_OR_OTHER[1],
-        rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
-          .GENERAL_OR_OTHER[0],
+          .ALL[1],
+        rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
       ],
       topXPctMetrics: [],
     },
     {
       externalId: "so4",
       pseudonymizedId: "hashed-so4",
-      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
       outlierMetrics: [
         rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-          .GENERAL_OR_OTHER[0],
-        rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
-          .GENERAL_OR_OTHER[0],
+          .ALL[0],
+        rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
       ],
       topXPctMetrics: [],
     },
     {
       externalId: "so5",
       pseudonymizedId: "hashed-so5",
-      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
       outlierMetrics: [],
       topXPctMetrics: [],
     },
     {
       externalId: "so8",
       pseudonymizedId: "hashed-so8",
-      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
       outlierMetrics: [
-        rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
-          .GENERAL_OR_OTHER[0],
+        rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
+      ],
+      topXPctMetrics: [],
+    },
+    {
+      externalId: "so9",
+      pseudonymizedId: "hashed-so9",
+      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
+      outlierMetrics: [
+        rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+          .ALL[0],
+        rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts.ALL[0],
+      ],
+      topXPctMetrics: [],
+    },
+    {
+      externalId: "so10",
+      pseudonymizedId: "hashed-so10",
+      caseloadCategory: CASELOAD_CATEGORY_IDS.enum.NOT_SEX_OFFENSE,
+      outlierMetrics: [
+        rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+          .NOT_SEX_OFFENSE[0],
+        rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts
+          .NOT_SEX_OFFENSE[0],
       ],
       topXPctMetrics: [],
     },

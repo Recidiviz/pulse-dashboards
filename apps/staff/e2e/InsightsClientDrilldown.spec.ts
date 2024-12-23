@@ -55,10 +55,10 @@ test.describe("Insights Client Drilldown", () => {
       await page.goto("/");
       await switchTenant(page, "Michigan");
       await page.getByRole("link", { name: "Alejandro D Gonzalez" }).click();
+      await page.getByRole("link", { name: "Harriet Boyd Absconder" }).click();
       await page
-        .getByRole("link", { name: "Walter Harris Absconsion Rate" })
+        .getByRole("link", { name: "Absconder Warrant Rate: 16.0" })
         .click();
-      await page.getByRole("link", { name: "Absconsion Rate" }).click();
       await expect(page.getByRole("rowgroup")).toContainText("Terry Clark");
       // link never becomes visible to playwright so this is a workaround to be able to open the modal
       await page

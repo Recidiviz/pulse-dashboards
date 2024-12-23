@@ -25,7 +25,7 @@ import { RawSupervisionOfficerMetricOutlier } from "./schema";
 
 export const rawSupervisionOfficerMetricOutlierFixtures = {
   [ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants]: {
-    [CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER]: [
+    [CASELOAD_CATEGORY_IDS.enum.ALL]: [
       {
         metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
         statusesOverTime: (
@@ -77,6 +77,24 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
         })),
       },
     ],
+    [CASELOAD_CATEGORY_IDS.enum.NOT_SEX_OFFENSE]: [
+      {
+        metricId: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,
+        statusesOverTime: (
+          [
+            { metricRate: 0.154553, status: "FAR" },
+            { metricRate: 0.109407, status: "FAR" },
+            { metricRate: 0.12125238767544223, status: "FAR" },
+            { metricRate: 0.1466368227731864, status: "FAR" },
+            { metricRate: 0.110487, status: "FAR" },
+            { metricRate: 0.11521464646464646, status: "FAR" },
+          ] as const
+        ).map((data, index) => ({
+          ...data,
+          endDate: LOOKBACK_END_DATE_STRINGS[index],
+        })),
+      },
+    ],
   },
   [ADVERSE_METRIC_IDS.enum.incarceration_starts]: {
     [CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE]: [
@@ -93,9 +111,37 @@ export const rawSupervisionOfficerMetricOutlierFixtures = {
         })),
       },
     ],
+    [CASELOAD_CATEGORY_IDS.enum.ALL]: [
+      {
+        metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
+        statusesOverTime: (
+          [
+            { metricRate: 0.020006029214283755, status: "MET" },
+            { metricRate: 0.4224537037037037, status: "FAR" },
+          ] as const
+        ).map((data, index) => ({
+          ...data,
+          endDate: LOOKBACK_END_DATE_STRINGS.slice(-2)[index],
+        })),
+      },
+    ],
+    [CASELOAD_CATEGORY_IDS.enum.NOT_SEX_OFFENSE]: [
+      {
+        metricId: ADVERSE_METRIC_IDS.enum.incarceration_starts,
+        statusesOverTime: (
+          [
+            { metricRate: 0.020006029214283755, status: "MET" },
+            { metricRate: 0.4224537037037037, status: "FAR" },
+          ] as const
+        ).map((data, index) => ({
+          ...data,
+          endDate: LOOKBACK_END_DATE_STRINGS.slice(-2)[index],
+        })),
+      },
+    ],
   },
   [FAVORABLE_METRIC_IDS.enum.treatment_starts]: {
-    [CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER]: [
+    [CASELOAD_CATEGORY_IDS.enum.ALL]: [
       {
         metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts,
         statusesOverTime: (

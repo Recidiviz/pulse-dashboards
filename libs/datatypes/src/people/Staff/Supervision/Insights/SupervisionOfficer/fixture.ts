@@ -62,7 +62,7 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Jack",
       surname: "Hernandez",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     outlierMetrics: [],
     topXPctMetrics: [
@@ -78,13 +78,12 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Jason",
       surname: "Nelson",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-        .GENERAL_OR_OTHER[1],
-      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
-        .GENERAL_OR_OTHER[0],
+        .ALL[1],
+      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
     ],
     topXPctMetrics: [],
     avgDailyPopulation: 32.1,
@@ -98,13 +97,12 @@ export const rawSupervisionOfficerFixture = [
       middleNames: "Mark",
       surname: "Campbell",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[1].externalId],
     outlierMetrics: [
       rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-        .GENERAL_OR_OTHER[0],
-      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
-        .GENERAL_OR_OTHER[0],
+        .ALL[0],
+      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
     ],
     topXPctMetrics: [],
     avgDailyPopulation: 43.21,
@@ -117,7 +115,7 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Casey",
       surname: "Ramirez",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
     outlierMetrics: [],
     topXPctMetrics: [],
@@ -131,11 +129,47 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Elizabeth",
       surname: "Ramirez",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.GENERAL_OR_OTHER,
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
     outlierMetrics: [
-      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
-        .GENERAL_OR_OTHER[0],
+      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
+    ],
+    topXPctMetrics: [],
+    avgDailyPopulation: 43.21,
+    includeInOutcomes: true,
+  },
+  {
+    externalId: "so9",
+    pseudonymizedId: "hashed-so9",
+    fullName: {
+      givenNames: "Harriet",
+      surname: "Boyd",
+    },
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
+    outlierMetrics: [
+      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+        .ALL[1],
+      rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts.ALL[0],
+    ],
+    topXPctMetrics: [],
+    avgDailyPopulation: 43.21,
+    includeInOutcomes: true,
+  },
+  {
+    externalId: "so10",
+    pseudonymizedId: "hashed-so10",
+    fullName: {
+      givenNames: "Stephen",
+      surname: "Mann",
+    },
+    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.NOT_SEX_OFFENSE,
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
+    outlierMetrics: [
+      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
+        .NOT_SEX_OFFENSE[0],
+      rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts
+        .NOT_SEX_OFFENSE[0],
     ],
     topXPctMetrics: [],
     avgDailyPopulation: 43.21,

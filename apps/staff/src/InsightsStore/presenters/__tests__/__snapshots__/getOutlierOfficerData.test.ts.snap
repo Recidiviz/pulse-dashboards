@@ -3,7 +3,7 @@
 exports[`combines related data 1`] = `
 {
   "avgDailyPopulation": 32,
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "caseloadCategoryName": "General Or Other Caseloads",
   "displayName": "Jason Nelson",
   "externalId": "so3",
@@ -41,7 +41,7 @@ exports[`combines related data 1`] = `
             "target": 0.06030045665489481,
           },
         ],
-        "caseloadCategory": "GENERAL_OR_OTHER",
+        "caseloadCategory": "ALL",
         "currentPeriodTarget": 0.06030045665489481,
         "latestPeriodValues": [
           {
@@ -1493,7 +1493,7 @@ exports[`combines related data 1`] = `
             "target": 0.12170399045971189,
           },
         ],
-        "caseloadCategory": "GENERAL_OR_OTHER",
+        "caseloadCategory": "ALL",
         "currentPeriodTarget": 0.12170399045971189,
         "latestPeriodValues": [
           {

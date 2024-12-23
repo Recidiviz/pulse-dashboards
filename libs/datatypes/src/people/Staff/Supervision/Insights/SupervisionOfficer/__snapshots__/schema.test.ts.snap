@@ -114,7 +114,7 @@ exports[`transformations 1`] = `
 exports[`transformations 2`] = `
 {
   "avgDailyPopulation": 12,
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "displayName": "Jack Hernandez",
   "externalId": "so2",
   "fullName": {
@@ -139,7 +139,7 @@ exports[`transformations 2`] = `
 exports[`transformations 3`] = `
 {
   "avgDailyPopulation": 32,
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "displayName": "Jason Nelson",
   "externalId": "so3",
   "fullName": {
@@ -230,7 +230,7 @@ exports[`transformations 3`] = `
 exports[`transformations 4`] = `
 {
   "avgDailyPopulation": 43,
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "displayName": "Carl Mark Campbell",
   "externalId": "so4",
   "fullName": {
@@ -322,7 +322,7 @@ exports[`transformations 4`] = `
 exports[`transformations 5`] = `
 {
   "avgDailyPopulation": 5,
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "displayName": "Casey Ramirez",
   "externalId": "so5",
   "fullName": {
@@ -342,7 +342,7 @@ exports[`transformations 5`] = `
 exports[`transformations 6`] = `
 {
   "avgDailyPopulation": 43,
-  "caseloadCategory": "GENERAL_OR_OTHER",
+  "caseloadCategory": "ALL",
   "displayName": "Elizabeth Ramirez",
   "externalId": "so8",
   "fullName": {
@@ -390,6 +390,148 @@ exports[`transformations 6`] = `
   "pseudonymizedId": "hashed-so8",
   "supervisorExternalIds": [
     "rsmith789",
+  ],
+  "topXPctMetrics": [],
+}
+`;
+
+exports[`transformations 7`] = `
+{
+  "avgDailyPopulation": 43,
+  "caseloadCategory": "ALL",
+  "displayName": "Harriet Boyd",
+  "externalId": "so9",
+  "fullName": {
+    "givenNames": "Harriet",
+    "surname": "Boyd",
+  },
+  "includeInOutcomes": true,
+  "outlierMetrics": [
+    {
+      "metricId": "absconsions_bench_warrants",
+      "statusesOverTime": [
+        {
+          "endDate": 2021-07-01T00:00:00.000Z,
+          "metricRate": 0.154553,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-08-01T00:00:00.000Z,
+          "metricRate": 0.109407,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-09-01T00:00:00.000Z,
+          "metricRate": 0.12125238767544223,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-10-01T00:00:00.000Z,
+          "metricRate": 0.1466368227731864,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-11-01T00:00:00.000Z,
+          "metricRate": 0.110487,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-12-01T00:00:00.000Z,
+          "metricRate": 0.11521464646464646,
+          "status": "FAR",
+        },
+      ],
+    },
+    {
+      "metricId": "incarceration_starts",
+      "statusesOverTime": [
+        {
+          "endDate": 2021-11-01T00:00:00.000Z,
+          "metricRate": 0.020006029214283755,
+          "status": "MET",
+        },
+        {
+          "endDate": 2021-12-01T00:00:00.000Z,
+          "metricRate": 0.4224537037037037,
+          "status": "FAR",
+        },
+      ],
+    },
+  ],
+  "pseudonymizedId": "hashed-so9",
+  "supervisorExternalIds": [
+    "agonzalez123",
+  ],
+  "topXPctMetrics": [],
+}
+`;
+
+exports[`transformations 8`] = `
+{
+  "avgDailyPopulation": 43,
+  "caseloadCategory": "NOT_SEX_OFFENSE",
+  "displayName": "Stephen Mann",
+  "externalId": "so10",
+  "fullName": {
+    "givenNames": "Stephen",
+    "surname": "Mann",
+  },
+  "includeInOutcomes": true,
+  "outlierMetrics": [
+    {
+      "metricId": "absconsions_bench_warrants",
+      "statusesOverTime": [
+        {
+          "endDate": 2021-07-01T00:00:00.000Z,
+          "metricRate": 0.154553,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-08-01T00:00:00.000Z,
+          "metricRate": 0.109407,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-09-01T00:00:00.000Z,
+          "metricRate": 0.12125238767544223,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-10-01T00:00:00.000Z,
+          "metricRate": 0.1466368227731864,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-11-01T00:00:00.000Z,
+          "metricRate": 0.110487,
+          "status": "FAR",
+        },
+        {
+          "endDate": 2021-12-01T00:00:00.000Z,
+          "metricRate": 0.11521464646464646,
+          "status": "FAR",
+        },
+      ],
+    },
+    {
+      "metricId": "incarceration_starts",
+      "statusesOverTime": [
+        {
+          "endDate": 2021-11-01T00:00:00.000Z,
+          "metricRate": 0.020006029214283755,
+          "status": "MET",
+        },
+        {
+          "endDate": 2021-12-01T00:00:00.000Z,
+          "metricRate": 0.4224537037037037,
+          "status": "FAR",
+        },
+      ],
+    },
+  ],
+  "pseudonymizedId": "hashed-so10",
+  "supervisorExternalIds": [
+    "agonzalez123",
   ],
   "topXPctMetrics": [],
 }

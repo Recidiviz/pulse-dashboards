@@ -4,7 +4,7 @@ exports[`prepareChartData 1`] = `
 {
   "backgroundRadius": 4,
   "centerOfContentArea": 53.5,
-  "chartLabel": "Swarm plot of all absconsion rates in the state for GENERAL_OR_OTHER caseloads, highlighting a value of 11.5%, which is far worse than the statewide rate of 6.0%. Other values in the chart range from 0% to 37%.",
+  "chartLabel": "Swarm plot of all absconsion rates in the state for ALL caseloads, highlighting a value of 11.5%, which is far worse than the statewide rate of 6.0%. Other values in the chart range from 0% to 37%.",
   "highlightRadius": 8,
   "scaleDomain": [
     0,
