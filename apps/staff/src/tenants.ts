@@ -28,6 +28,7 @@ import {
   US_MI,
   US_NE,
   US_OR,
+  US_TX,
 } from "./RootStore/TenantStore/dashboardTenants";
 import * as lantern from "./RootStore/TenantStore/lanternTenants";
 import { LANTERN_TENANTS } from "./RootStore/TenantStore/lanternTenants";
@@ -47,6 +48,7 @@ import US_NE_CONFIG from "./tenants/US_NE";
 import US_OR_CONFIG from "./tenants/US_OR";
 import US_PA_CONFIG from "./tenants/US_PA";
 import US_TN_CONFIG from "./tenants/US_TN";
+import US_TX_CONFIG from "./tenants/US_TX";
 
 export const RECIDIVIZ_TENANT = "RECIDIVIZ";
 export const CSG = "CSG";
@@ -72,6 +74,7 @@ const TENANTS: Tenants = {
   [US_OR]: US_OR_CONFIG,
   [lantern.US_PA]: US_PA_CONFIG,
   [pathways.US_TN]: US_TN_CONFIG,
+  [US_TX]: US_TX_CONFIG,
   RECIDIVIZ: {
     name: "Recidiviz",
     domain: "recidiviz.org",
