@@ -58,7 +58,7 @@ import { isBeforeDueDate } from "./utils";
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;
   staffPseudoId: string;
-  stateCode?: Staff["stateCode"];
+  stateCode: Staff["stateCode"];
   analytics: {
     trackIndividualCaseClicked: (
       clientName: string,

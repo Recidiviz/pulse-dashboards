@@ -34,7 +34,7 @@ import { OnboardingTopic } from "./CaseOnboarding/types";
 import EditCaseDetailsModal from "./EditCaseDetailsModal";
 import { Insights } from "./Insights/Insights";
 import { Opportunities } from "./Opportunities/Opportunities";
-import { Recommendations } from "./Recommendations/Recommendations";
+import Recommendations from "./Recommendations/Recommendations";
 import { MutableCaseAttributes, RecommendationType } from "./types";
 
 const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
@@ -46,6 +46,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   const {
     staffPseudoId,
     caseId,
+    stateCode,
     caseAttributes,
     communityOpportunities,
     recommendedOpportunities,
@@ -79,7 +80,9 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   const openEditCaseDetailsModal = () => setShowEditCaseDetailsModal(true);
   const hideEditCaseDetailsModal = () => setShowEditCaseDetailsModal(false);
 
-  const handleRecommendationUpdate = (recommendation: RecommendationType) => {
+  const handleRecommendationUpdate = (
+    recommendation: RecommendationType | string,
+  ) => {
     trackRecommendedDispositionChanged(recommendation);
     setSelectedRecommendation(recommendation);
   };
@@ -161,6 +164,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                 recommendedOpportunities={recommendedOpportunities}
                 updateRecommendedOpportunities={updateRecommendedOpportunities}
                 caseAttributes={caseAttributes}
+                stateCode={stateCode}
                 analytics={{
                   trackOpportunityModalOpened,
                   trackAddOpportunityToRecommendationClicked,
@@ -186,6 +190,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               firstName={firstName}
               lastName={lastName}
               age={caseAttributes.age}
+              stateCode={stateCode}
               externalId={caseAttributes.externalId}
               fullName={caseAttributes.client?.fullName}
               insight={caseAttributes.insight}

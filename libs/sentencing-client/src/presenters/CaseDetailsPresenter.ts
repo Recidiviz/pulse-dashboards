@@ -267,7 +267,7 @@ export class CaseDetailsPresenter implements Hydratable {
   }
 
   trackRecommendedDispositionChanged(
-    selectedRecommendation: RecommendationType,
+    selectedRecommendation: RecommendationType | string,
   ) {
     this.caseStore.psiStore.analyticsStore.trackRecommendedDispositionChanged({
       viewedBy: this.staffPseudoId,

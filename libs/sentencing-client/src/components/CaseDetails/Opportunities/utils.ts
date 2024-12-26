@@ -361,5 +361,5 @@ export const getOpportunityButtonTooltipText = (
 ) => {
   return isAddedOpportunity && selectedRecommendation
     ? "Switch your recommendation back to Probation if you want to add or remove opportunities"
-    : `You cannot add or edit opportunities when ${selectedRecommendation === RecommendationType.None ? "no" : selectedRecommendation} recommendation is selected`;
+    : `You cannot add or edit opportunities when ${selectedRecommendation === RecommendationType.None || !selectedRecommendation ? "no" : selectedRecommendation} recommendation is selected`;
 };

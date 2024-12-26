@@ -31,6 +31,8 @@ import toast from "react-hot-toast";
 import { CaseStore } from "../../../../src/datastores/CaseStore";
 import { Opportunities as OpportunitiesType } from "../../../api";
 import { OpportunityViewOrigin } from "../../../datastores/types";
+import { GEO_CONFIG } from "../../../geoConfigs/geoConfigs";
+import { StateCode } from "../../../geoConfigs/types";
 import { formatPossessiveName } from "../../../utils/utils";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import ResetSearchIcon from "../../assets/close-icon.svg?react";
@@ -60,7 +62,7 @@ import {
   PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../constants";
-import { NOT_SURE_YET_OPTION } from "../Form/constants";
+import { NONE_OPTION, NOT_SURE_YET_OPTION } from "../Form/constants";
 import {
   parseAsamCareRecommendationValue,
   parseBooleanValue,
@@ -68,11 +70,7 @@ import {
   parseNeedsToBeAddressedValue,
   parsePleaValue,
 } from "../Form/utils";
-import {
-  OpportunitiesIdentifier,
-  RecommendationType,
-  SelectedRecommendation,
-} from "../types";
+import { OpportunitiesIdentifier, SelectedRecommendation } from "../types";
 import { OPPORTUNITY_TOOLTIP_WIDTH } from "./constants";
 import OpportunityModal from "./OpportunityModal";
 import {
@@ -86,6 +84,7 @@ type OpportunitiesProps = {
   communityOpportunities: OpportunitiesType;
   recommendedOpportunities: OpportunitiesIdentifier;
   caseAttributes: CaseStore["caseAttributes"];
+  stateCode: StateCode;
   updateRecommendedOpportunities: (
     opportunity: OpportunitiesIdentifier[number],
   ) => void;
@@ -156,6 +155,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   communityOpportunities,
   recommendedOpportunities,
   caseAttributes,
+  stateCode,
   analytics,
   updateRecommendedOpportunities,
 }) => {
@@ -208,8 +208,29 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const pagePrompt =
     pageStart === pageEnd ? pageEnd : `${pageStart} – ${pageEnd}`;
 
-  const isProbationRecommendation =
-    selectedRecommendation === RecommendationType.Probation;
+  const isSelectedRecommendationNone = selectedRecommendation === NONE_OPTION;
+  const isRecommendationUnselected = !selectedRecommendation;
+
+  const matchingRecommendationOptionsForOpportunities =
+    GEO_CONFIG[stateCode]?.recommendation
+      .matchingRecommendationOptionsForOpportunities;
+
+  /**
+   * The adding opportunities button should be disabled when:
+   *  1. No recommendation is selected
+   *  2. "I do not wish to make a recommendation" is selected
+   *  3. When there is a defined `matchingRecommendationOptionsForOpportunities` list
+   *     and the selected recommendation is not included in the list
+   */
+  const isAddingOpportunitiesDisabled =
+    isRecommendationUnselected ||
+    isSelectedRecommendationNone ||
+    (!matchingRecommendationOptionsForOpportunities
+      ? false
+      : !!selectedRecommendation &&
+        !matchingRecommendationOptionsForOpportunities?.includes(
+          selectedRecommendation,
+        ));
 
   const opportunitiesByNameProviderName = keyBy(
     data,
@@ -538,7 +559,12 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                         {/* Add To Recommendation Button */}
                         {cell.column.id === "addToRecommendationAction" && (
                           <Tooltip
-                            disabled={isProbationRecommendation}
+                            /**
+                             * This tooltip explains why the Add To Recommendation button is disabled and
+                             * should be enabled & visible when the button is disabled, and disabled & hide
+                             * when the button is enabled.
+                             */
+                            disabled={!isAddingOpportunitiesDisabled}
                             width={OPPORTUNITY_TOOLTIP_WIDTH}
                             content={getOpportunityButtonTooltipText(
                               isAddedOpportunity,
@@ -546,7 +572,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                             )}
                           >
                             <Styled.AddRecommendationButton
-                              disabled={!isProbationRecommendation}
+                              disabled={isAddingOpportunitiesDisabled}
                               onClick={() =>
                                 toggleOpportunity(
                                   cell.row.original.opportunityNameProviderName,
@@ -634,6 +660,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
         isOpen={showOpportunityModal}
         hideModal={hideModal}
         selectedOpportunity={selectedOpportunity}
+        isAddingOpportunitiesDisabled={isAddingOpportunitiesDisabled}
         isAddedOpportunity={Boolean(
           selectedOpportunity &&
             recommendedOpportunities.find((opp) => {

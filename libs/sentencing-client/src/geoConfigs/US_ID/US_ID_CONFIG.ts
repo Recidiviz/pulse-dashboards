@@ -15,11 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GeoConfig, StateCode } from "./types";
-import { US_ID_CONFIG } from "./US_ID/US_ID_CONFIG";
-import { US_ND_CONFIG } from "./US_ND/US_ND_CONFIG";
+import { RecommendationOptionType } from "../../components/CaseDetails/Recommendations/constants";
+import { RecommendationType } from "../../components/CaseDetails/types";
+import { GeoConfig } from "../types";
 
-export const GEO_CONFIG: Partial<Record<StateCode, GeoConfig>> = {
-  US_ID: US_ID_CONFIG,
-  US_ND: US_ND_CONFIG,
+export const US_ID_CONFIG: GeoConfig = {
+  excludedAttributeKeys: [],
+  recommendation: {
+    type: RecommendationOptionType.SentenceType,
+    matchingRecommendationOptionsForOpportunities: [
+      RecommendationType.Probation,
+    ],
+    baseOptionsTemplate: [
+      {
+        label: RecommendationType.Probation,
+        recommendationType: RecommendationType.Probation,
+      },
+      {
+        label: RecommendationType.Rider,
+        recommendationType: RecommendationType.Rider,
+      },
+      {
+        label: RecommendationType.Term,
+        recommendationType: RecommendationType.Term,
+      },
+    ],
+  },
 };

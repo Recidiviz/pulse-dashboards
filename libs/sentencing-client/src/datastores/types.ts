@@ -69,7 +69,7 @@ export type OnboardingTrackingMetadata = {
 export type RecommendedDispositionTrackingMetadata = {
   viewedBy?: string;
   caseId: string;
-  selectedRecommendation: RecommendationType;
+  selectedRecommendation: RecommendationType | string;
 };
 
 export type OpportunityViewedTrackingMetadata = {

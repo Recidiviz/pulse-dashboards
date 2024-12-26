@@ -15,29 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { keyBy } from "lodash";
+import { observer } from "mobx-react-lite";
 import React, { Fragment, useState } from "react";
 
-import {
-  convertDecimalToPercentage,
-  pluralizeDuplicates,
-} from "../../../utils/utils";
+import { GEO_CONFIG } from "../../../../src/geoConfigs/geoConfigs";
+import { pluralizeDuplicates } from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
 import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
 import { RecommendationType } from "../types";
-import {
-  NoneOption,
-  ProbationOption,
-  TermOrRiderOption,
-} from "./RecommendationOptions";
+import { RecommendationOptionType } from "./constants";
+import { RecommendationRadioOption } from "./RecommendationOptions";
 import { SummaryReport } from "./SummaryReport";
-import { RecommendationOption, RecommendationsProps } from "./types";
+import { RecommendationsProps } from "./types";
+import { generateRecommendationOptions } from "./utils";
 
-export const Recommendations: React.FC<RecommendationsProps> = ({
+const Recommendations: React.FC<RecommendationsProps> = ({
   firstName,
   lastName,
   fullName,
   age,
+  stateCode,
   selectedRecommendation,
   lastSavedRecommendation,
   recommendedOpportunities,
@@ -61,86 +58,18 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
 
   const hideSummaryReport = () => setShowSummaryReport(false);
 
-  const { dispositionData, rollupRecidivismSeries } = insight ?? {};
+  const optionsBase =
+    GEO_CONFIG[stateCode]?.recommendation.baseOptionsTemplate ?? [];
+  const recommendationOptionType =
+    GEO_CONFIG[stateCode]?.recommendation.type ??
+    RecommendationOptionType.SentenceType;
+  const matchingRecommendationOptionsForOpportunities =
+    GEO_CONFIG[stateCode]?.recommendation
+      .matchingRecommendationOptionsForOpportunities;
 
-  const dispositionDataByRecommendationType = keyBy(
-    dispositionData,
-    "recommendationType",
+  const recommendedOpps = recommendedOpportunities?.map((opp) =>
+    createOpportunityProviderDisplayName(opp.opportunityName, opp.providerName),
   );
-  const rollUpRecidivismSeriesByRecommendationType = keyBy(
-    rollupRecidivismSeries,
-    "recommendationType",
-  );
-
-  const probationDatapoints =
-    rollUpRecidivismSeriesByRecommendationType["Probation"]?.dataPoints;
-  const riderDatapoints =
-    rollUpRecidivismSeriesByRecommendationType["Rider"]?.dataPoints;
-  const termDatapoints =
-    rollUpRecidivismSeriesByRecommendationType["Term"]?.dataPoints;
-
-  const probationRecidivismRate =
-    probationDatapoints &&
-    convertDecimalToPercentage(
-      probationDatapoints[probationDatapoints.length - 1].eventRate,
-    );
-  const probationHistoricalRate =
-    dispositionDataByRecommendationType[RecommendationType.Probation] &&
-    convertDecimalToPercentage(
-      dispositionDataByRecommendationType[RecommendationType.Probation]
-        .percentage,
-    );
-  const riderRecidivismRate =
-    riderDatapoints &&
-    convertDecimalToPercentage(
-      riderDatapoints[riderDatapoints.length - 1].eventRate,
-    );
-  const riderHistoricalRate =
-    dispositionDataByRecommendationType[RecommendationType.Rider] &&
-    convertDecimalToPercentage(
-      dispositionDataByRecommendationType[RecommendationType.Rider]?.percentage,
-    );
-  const termRecidivismRate =
-    termDatapoints &&
-    convertDecimalToPercentage(
-      termDatapoints[termDatapoints.length - 1].eventRate,
-    );
-  const termHistoricalRate =
-    dispositionDataByRecommendationType[RecommendationType.Term] &&
-    convertDecimalToPercentage(
-      dispositionDataByRecommendationType[RecommendationType.Term]?.percentage,
-    );
-
-  const recommendationOptions: RecommendationOption[] = [
-    {
-      key: RecommendationType.Probation,
-      label: RecommendationType.Probation,
-      opportunities: recommendedOpportunities?.map((opp) =>
-        createOpportunityProviderDisplayName(
-          opp.opportunityName,
-          opp.providerName,
-        ),
-      ),
-      recidivismRate: probationRecidivismRate,
-      historicalSentencingRate: probationHistoricalRate,
-    },
-    {
-      key: RecommendationType.Rider,
-      label: RecommendationType.Rider,
-      recidivismRate: riderRecidivismRate,
-      historicalSentencingRate: riderHistoricalRate,
-    },
-    {
-      key: RecommendationType.Term,
-      label: RecommendationType.Term,
-      recidivismRate: termRecidivismRate,
-      historicalSentencingRate: termHistoricalRate,
-    },
-    {
-      key: RecommendationType.None,
-      label: "I do not wish to make a recommendation",
-    },
-  ];
 
   const updateOrCreateDisplayText = lastSavedRecommendation
     ? "Update"
@@ -187,41 +116,31 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
           </Styled.Header>
 
           <Styled.RecommendationOptionsWrapper>
-            {recommendationOptions.map((option) => {
+            {generateRecommendationOptions(
+              recommendationOptionType,
+              optionsBase,
+              insight,
+              recommendedOpps,
+            ).map((option) => {
               const isSelectedRecommendation =
                 selectedRecommendation === option.key;
               const isRecorded = lastSavedRecommendation === option.key;
               const isNoneOption = option.key === RecommendationType.None;
-              const isProbationOption =
-                option.key === RecommendationType.Probation;
-              const isTermOrRiderOption =
-                option.key === RecommendationType.Term ||
-                option.key === RecommendationType.Rider;
               const baseProps = {
                 option,
                 isSelectedRecommendation,
                 handleRecommendationUpdate,
                 smallFont: isNoneOption,
                 isRecorded,
+                matchingRecommendationOptionsForOpportunities,
               };
 
               return (
                 <Fragment key={option.key}>
-                  {/* None Option */}
-                  {isNoneOption && <NoneOption optionProps={baseProps} />}
-
-                  {/* Probation Option */}
-                  {isProbationOption && (
-                    <ProbationOption
-                      optionProps={baseProps}
-                      firstName={firstName}
-                    />
-                  )}
-
-                  {/* Term or Rider Option */}
-                  {isTermOrRiderOption && (
-                    <TermOrRiderOption optionProps={baseProps} />
-                  )}
+                  <RecommendationRadioOption
+                    optionProps={baseProps}
+                    firstName={firstName}
+                  />
                 </Fragment>
               );
             })}
@@ -252,3 +171,5 @@ export const Recommendations: React.FC<RecommendationsProps> = ({
     </>
   );
 };
+
+export default observer(Recommendations);

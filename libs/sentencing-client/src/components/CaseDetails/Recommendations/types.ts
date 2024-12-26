@@ -30,12 +30,15 @@ export type RecommendationsProps = {
   age?: number;
   externalId?: string;
   gender?: Client["gender"];
+  stateCode: Case["stateCode"];
   selectedRecommendation?: SelectedRecommendation;
   lastSavedRecommendation?: SelectedRecommendation;
   recommendedOpportunities?: OpportunitiesIdentifier;
   needs?: Case["needsToBeAddressed"];
   insight?: CaseInsight;
-  handleRecommendationUpdate: (recommendation: RecommendationType) => void;
+  handleRecommendationUpdate: (
+    recommendation: RecommendationType | string,
+  ) => void;
   saveRecommendation: () => void;
   setCaseStatusCompleted: () => void;
   analytics: {
@@ -54,11 +57,22 @@ export type RecommendationsOptionProps = {
   handleRecommendationUpdate: RecommendationsProps["handleRecommendationUpdate"];
   smallFont: boolean;
   isRecorded: boolean;
+  matchingRecommendationOptionsForOpportunities?: (
+    | RecommendationType
+    | string
+  )[];
   children?: React.ReactNode;
 };
 
+export type RecommendationOptionTemplateBase = {
+  label: string;
+  sentenceLengthBucketStart?: number;
+  sentenceLengthBucketEnd?: number;
+  recommendationType?: RecommendationType;
+};
+
 export type RecommendationOption = {
-  key: RecommendationType;
+  key: RecommendationType | string;
   label: RecommendationType | string;
   opportunities?: string[];
   recidivismRate?: number;

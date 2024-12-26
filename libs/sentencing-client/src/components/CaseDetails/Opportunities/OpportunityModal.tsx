@@ -24,7 +24,6 @@ import { Tooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
 import { NeedsIcons } from "../components/NeedsIcons/NeedsIcons";
 import { parseNeedsToBeAddressedValue } from "../Form/utils";
-import { RecommendationType } from "../types";
 import {
   ASAM_CARE_RECOMMENDATION_CRITERIA_KEY,
   DIAGNOSED_SUBSTANCE_USE_SEVERITY_CRITERIA_KEY,
@@ -48,6 +47,7 @@ type OpportunityModalProps = {
   selectedOpportunity?: OpportunitiesType[number];
   isAddedOpportunity: boolean;
   selectedRecommendation?: string | null;
+  isAddingOpportunitiesDisabled: boolean;
   hideModal: () => void;
   toggleOpportunity: () => void;
 };
@@ -107,6 +107,7 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
   toggleOpportunity,
   isAddedOpportunity,
   selectedRecommendation,
+  isAddingOpportunitiesDisabled,
 }) => {
   if (!selectedOpportunity) return null;
   const needsAddressed =
@@ -238,7 +239,7 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
           Cancel
         </Styled.ActionButton>
         <Tooltip
-          disabled={selectedRecommendation === RecommendationType.Probation}
+          disabled={!isAddingOpportunitiesDisabled}
           width={OPPORTUNITY_TOOLTIP_WIDTH}
           content={getOpportunityButtonTooltipText(
             isAddedOpportunity,
@@ -246,7 +247,7 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
           )}
         >
           <Styled.ActionButton
-            disabled={selectedRecommendation !== RecommendationType.Probation}
+            disabled={isAddingOpportunitiesDisabled}
             onClick={() => {
               hideModal();
               toggleOpportunity();

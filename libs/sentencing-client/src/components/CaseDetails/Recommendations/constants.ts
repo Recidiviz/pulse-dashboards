@@ -20,6 +20,11 @@ import { Case } from "@prisma/client";
 import { OTHER_OPTION } from "../Form/constants";
 import { NeedsToDisplayName, Pronouns } from "./types";
 
+export enum RecommendationOptionType {
+  SentenceLength = "sentenceLength",
+  SentenceType = "recommendationType",
+}
+
 const neutralPronouns = {
   subject: "they",
   possessive: "their",

@@ -16,10 +16,28 @@
 // =============================================================================
 
 import { Staff } from "../api";
+import { RecommendationOptionType } from "../components/CaseDetails/Recommendations/constants";
+import { RecommendationOptionTemplateBase } from "../components/CaseDetails/Recommendations/types";
+import { RecommendationType } from "../components/CaseDetails/types";
 import { AttributeKey } from "../components/Dashboard/types";
 
 export type StateCode = Staff["stateCode"];
 
+export type GeoConfigRecommendation = {
+  type: RecommendationOptionType;
+  /**
+   * If undefined, shows the list of opportunities for all recommendation options
+   * If empty array, does not show a list of opportunities for any recommendation options
+   * If non-empty array, show a list of opportunities only for the listed recommendation options
+   */
+  matchingRecommendationOptionsForOpportunities?: (
+    | RecommendationType
+    | string
+  )[];
+  baseOptionsTemplate: RecommendationOptionTemplateBase[];
+};
+
 export type GeoConfig = {
   excludedAttributeKeys: AttributeKey[];
+  recommendation: GeoConfigRecommendation;
 };

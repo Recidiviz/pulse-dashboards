@@ -19,6 +19,7 @@ import { fireEvent, render } from "@testing-library/react";
 import { configure } from "mobx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+import { US_ID_CONFIG } from "../../../../src/geoConfigs/US_ID/US_ID_CONFIG";
 import { createMockPSIStore } from "../../../../src/utils/test";
 import { formatPossessiveName } from "../../../../src/utils/utils";
 import {
@@ -63,9 +64,7 @@ vi.mock("../../../geoConfigs/geoConfigs", () => {
       US_ND: {
         excludedAttributeKeys: [],
       },
-      US_ID: {
-        excludedAttributeKeys: [],
-      },
+      US_ID: US_ID_CONFIG,
     },
   };
 });

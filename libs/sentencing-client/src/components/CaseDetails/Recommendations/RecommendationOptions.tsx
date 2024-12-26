@@ -18,6 +18,7 @@
 import CheckIcon from "../../assets/green-check-icon.svg?react";
 import { InfoIconWithTooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
+import { NONE_OPTION, OTHER_OPTION } from "../Form/constants";
 import { RecommendationOption, RecommendationsOptionProps } from "./types";
 
 export const OpportunitiesList: React.FC<{
@@ -25,6 +26,7 @@ export const OpportunitiesList: React.FC<{
   firstName?: string;
 }> = ({ opportunities, firstName }) => {
   const tooltipText = `When you add opportunities from the “Opportunities${firstName && ` for ${firstName}`}” table, they will appear here under your Probation recommendation.`;
+
   return (
     <Styled.OpportunitiesSelections>
       <Styled.OpportunitiesWrapper>
@@ -100,16 +102,22 @@ export const RecommendationOptionBase: React.FC<RecommendationsOptionProps> = ({
   );
 };
 
-export const NoneOption: React.FC<{
-  optionProps: RecommendationsOptionProps;
-}> = ({ optionProps }) => <RecommendationOptionBase {...optionProps} />;
-
-export const ProbationOption: React.FC<{
+export const RecommendationRadioOption: React.FC<{
   optionProps: RecommendationsOptionProps;
   firstName?: string;
 }> = ({ optionProps, firstName }) => {
-  const { isSelectedRecommendation, option } = optionProps;
-  const showOpportunities = Boolean(isSelectedRecommendation);
+  const {
+    isSelectedRecommendation,
+    option,
+    matchingRecommendationOptionsForOpportunities,
+  } = optionProps;
+
+  const showOpportunities =
+    option.key !== NONE_OPTION &&
+    isSelectedRecommendation &&
+    (matchingRecommendationOptionsForOpportunities?.includes(option.key) ||
+      !matchingRecommendationOptionsForOpportunities);
+  const isNoneOrOther = [OTHER_OPTION, NONE_OPTION].includes(option.key);
 
   return (
     <RecommendationOptionBase {...optionProps}>
@@ -119,17 +127,7 @@ export const ProbationOption: React.FC<{
           firstName={firstName}
         />
       )}
-      <HistoricalOutcomes option={option} />
-    </RecommendationOptionBase>
-  );
-};
-
-export const TermOrRiderOption: React.FC<{
-  optionProps: RecommendationsOptionProps;
-}> = ({ optionProps }) => {
-  return (
-    <RecommendationOptionBase {...optionProps}>
-      <HistoricalOutcomes option={optionProps.option} />
+      {!isNoneOrOther && <HistoricalOutcomes option={option} />}
     </RecommendationOptionBase>
   );
 };
