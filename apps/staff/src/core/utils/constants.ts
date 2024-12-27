@@ -82,5 +82,5 @@ export const WORKFLOWS_METHODOLOGY_URL: Record<string, string> = {
   US_OR:
     "https://drive.google.com/file/d/1-V5qxOjurPggO4NrHSRBDB_pn8gmYjoa/view",
   US_PA:
-    "https://drive.google.com/file/d/1dBTArU-kQojSvqWZ_i080pDtXxZe70X6/view",
+    "https://drive.google.com/file/d/1xJwYGKfl5f8N-_lTU93CETQMbF16MNrL/view?usp=sharing",
 };
