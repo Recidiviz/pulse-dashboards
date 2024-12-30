@@ -21,7 +21,7 @@ import { makeAutoObservable, toJS } from "mobx";
 import { SupervisionOfficer } from "~datatypes";
 import { castToError, FlowMethod } from "~hydration-utils";
 
-import { MetricConfigWithBenchmark, OutlierOfficerData } from "../types";
+import { MetricConfigWithBenchmark, OfficerOutcomesData } from "../types";
 import {
   CHART_ASPECT_RATIO,
   SWARM_AREA_BOTTOM_OFFSET,
@@ -40,7 +40,7 @@ export class SwarmPresenterV2 {
   metricId: string;
   constructor(
     public readonly metric: MetricConfigWithBenchmark,
-    readonly outlierOfficersForMetric: OutlierOfficerData<SupervisionOfficer>[],
+    readonly outlierOfficersForMetric: OfficerOutcomesData<SupervisionOfficer>[],
   ) {
     this.metricId = metric.config.name;
     makeAutoObservable(this);

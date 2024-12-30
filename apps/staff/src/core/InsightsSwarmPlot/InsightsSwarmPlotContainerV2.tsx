@@ -24,7 +24,7 @@ import { SwarmPresenterV2 } from "../../InsightsStore/presenters/SwarmPresenter"
 import { CHART_ASPECT_RATIO } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import {
   MetricConfigWithBenchmark,
-  OutlierOfficerData,
+  OfficerOutcomesData,
   PresenterWithHoverManager,
 } from "../../InsightsStore/presenters/types";
 import { PlotMeasurer } from "./InsightsSwarmPlotContainer";
@@ -32,7 +32,7 @@ import { InsightsSwarmPlotV2 } from "./InsightsSwarmPlotV2";
 
 type InsightsSwarmPlotProps = {
   metric: MetricConfigWithBenchmark;
-  officersForMetric: OutlierOfficerData<SupervisionOfficer>[];
+  officersForMetric: OfficerOutcomesData<SupervisionOfficer>[];
   presenterWithHoverManager?: PresenterWithHoverManager;
   isMinimized?: boolean;
 };

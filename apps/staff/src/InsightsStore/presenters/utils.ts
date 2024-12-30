@@ -29,7 +29,7 @@ import {
 } from "~datatypes";
 
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { HighlightedOfficersDetail, OutlierOfficerData } from "./types";
+import { HighlightedOfficersDetail, OfficerOutcomesData } from "./types";
 
 export const THIRTY_SECONDS = 1000 * 30;
 export const TEN_SECONDS = 1000 * 10;
@@ -53,15 +53,15 @@ export function isExcludedSupervisionOfficer(
  * schema, this function should no longer need to be generic, and the officerOutcomes
  * should be required.
  */
-export function getOutlierOfficerData<
+export function getOfficerOutcomesData<
   T extends SupervisionOfficer | ExcludedSupervisionOfficer,
 >(
   officer: T,
   supervisionStore: InsightsSupervisionStore,
   officerOutcomes?: SupervisionOfficerOutcomes,
-): OutlierOfficerData<T> {
+): OfficerOutcomesData<T> {
   if (isExcludedSupervisionOfficer(officer))
-    return officer as OutlierOfficerData<T>;
+    return officer as OfficerOutcomesData<T>;
 
   const officerData = officer as SupervisionOfficer;
 
@@ -137,7 +137,7 @@ export function getOutlierOfficerData<
         currentPeriodData,
       };
     }),
-  } as OutlierOfficerData<T>;
+  } as OfficerOutcomesData<T>;
 }
 
 export function getLocationWithoutLabel(

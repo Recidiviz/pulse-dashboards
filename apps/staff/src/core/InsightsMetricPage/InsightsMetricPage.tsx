@@ -51,7 +51,7 @@ export const MetricPageWithPresenter = observer(
     const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
     const {
-      outlierOfficerData,
+      officerOutcomesData,
       defaultMetricId,
       officerPseudoId,
       metricId,
@@ -74,20 +74,20 @@ export const MetricPageWithPresenter = observer(
     };
 
     // empty page where the staff member is not an outlier on any metrics
-    if (outlierOfficerData && !outlierOfficerData.outlierMetrics.length) {
+    if (officerOutcomesData && !officerOutcomesData.outlierMetrics.length) {
       return (
         <InsightsEmptyPage
-          headerText={`${outlierOfficerData.displayName} is not currently an outlier on any metrics.`}
+          headerText={`${officerOutcomesData.displayName} is not currently an outlier on any metrics.`}
           {...supervisorLinkProps}
         />
       );
     }
 
     // if the presenter is hydrated, this stuff should never be missing in practice
-    if (!outlierOfficerData || !defaultMetricId || !metricInfo)
+    if (!officerOutcomesData || !defaultMetricId || !metricInfo)
       return <NotFound />;
 
-    const metric = outlierOfficerData.outlierMetrics.find(
+    const metric = officerOutcomesData.outlierMetrics.find(
       (metric) => metric.metricId === metricId,
     );
 
@@ -103,7 +103,7 @@ export const MetricPageWithPresenter = observer(
       return (
         <InsightsEmptyPage
           headerText={`${
-            outlierOfficerData.displayName
+            officerOutcomesData.displayName
           } is not currently an outlier on ${toTitleCase(
             metricInfo.eventName,
           )}. They are an outlier on other metrics.`}
@@ -130,7 +130,7 @@ export const MetricPageWithPresenter = observer(
     const infoItems = [
       {
         title: "avg daily caseload",
-        info: outlierOfficerData.avgDailyPopulation,
+        info: officerOutcomesData.avgDailyPopulation,
       },
     ];
 
@@ -165,7 +165,7 @@ export const MetricPageWithPresenter = observer(
 
     const pageDescription = (
       <>
-        Measure {outlierOfficerData.fullName.givenNames}’s performance as
+        Measure {officerOutcomesData.fullName.givenNames}’s performance as
         compared to other {labels.supervisionOfficerLabel}s in the state. Rates
         for the metrics below are calculated for the time period: {timePeriod}
         .&nbsp;
@@ -181,7 +181,7 @@ export const MetricPageWithPresenter = observer(
     return (
       <InsightsPageLayout
         pageTitle={metricInfo.titleDisplayName}
-        pageSubtitle={outlierOfficerData.displayName}
+        pageSubtitle={officerOutcomesData.displayName}
         pageDescription={pageDescription}
         infoItems={infoItems}
         contentsAboveTitle={
@@ -206,9 +206,9 @@ export const MetricPageWithPresenter = observer(
                   ]
                 : []),
               {
-                title: `${outlierOfficerData.displayName} Profile`,
+                title: `${officerOutcomesData.displayName} Profile`,
                 url: insightsUrl("supervisionStaff", {
-                  officerPseudoId: outlierOfficerData.pseudonymizedId,
+                  officerPseudoId: officerOutcomesData.pseudonymizedId,
                 }),
               },
             ]}
@@ -258,7 +258,7 @@ export const MetricPageWithPresenter = observer(
             >
               <InsightsSwarmPlotContainerV2
                 metric={metric}
-                officersForMetric={[outlierOfficerData]}
+                officersForMetric={[officerOutcomesData]}
               />
             </InsightsChartCard>
             <InsightsChartCard
@@ -278,7 +278,7 @@ export const MetricPageWithPresenter = observer(
             >
               <InsightsLinePlot
                 metric={metric}
-                officerName={outlierOfficerData.displayName}
+                officerName={officerOutcomesData.displayName}
                 supervisionOfficerLabel={labels.supervisionOfficerLabel}
                 supervisorHomepage
                 methodologyUrl={methodologyUrl}

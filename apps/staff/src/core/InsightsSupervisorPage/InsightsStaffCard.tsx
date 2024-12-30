@@ -31,7 +31,7 @@ import { SupervisionOfficer } from "~datatypes";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
+import { OfficerOutcomesData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
 import InsightsInfoModal from "../InsightsInfoModal";
 import { InsightsLegend } from "../InsightsLegend";
@@ -128,7 +128,7 @@ const MetricSection = styled(Link)<{ $hasBorder: boolean }>`
 `;
 
 type InsightsStaffCardType = {
-  officer: OutlierOfficerData<SupervisionOfficer>;
+  officer: OfficerOutcomesData<SupervisionOfficer>;
   officerIndex: number;
   title?: string;
   subtitle?: string;

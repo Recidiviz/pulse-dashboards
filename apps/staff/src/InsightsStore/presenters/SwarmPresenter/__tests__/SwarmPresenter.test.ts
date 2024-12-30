@@ -21,7 +21,7 @@ import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
 
 import { RootStore } from "../../../../RootStore";
 import { InsightsSupervisionStore } from "../../../stores/InsightsSupervisionStore";
-import { getOutlierOfficerData } from "../../utils";
+import { getOfficerOutcomesData } from "../../utils";
 import { SwarmPresenter } from "../SwarmPresenter";
 
 // vitest does not support Web Workers;
@@ -37,7 +37,7 @@ beforeEach(async () => {
   );
   await flowResult(store.populateMetricConfigs());
 
-  const processedOfficerData = getOutlierOfficerData(
+  const processedOfficerData = getOfficerOutcomesData(
     supervisionOfficerFixture[2],
     store,
   );

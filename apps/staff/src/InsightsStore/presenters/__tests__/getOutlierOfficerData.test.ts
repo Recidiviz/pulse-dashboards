@@ -35,7 +35,7 @@ import { RootStore } from "../../../RootStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
-import { getOutlierOfficerData, isExcludedSupervisionOfficer } from "../utils";
+import { getOfficerOutcomesData, isExcludedSupervisionOfficer } from "../utils";
 
 let officerData: SupervisionOfficer | ExcludedSupervisionOfficer;
 let supervisionStore: InsightsSupervisionStore;
@@ -56,13 +56,13 @@ beforeEach(() => {
 test("combines related data", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
   expect(
-    getOutlierOfficerData(officerData, supervisionStore),
+    getOfficerOutcomesData(officerData, supervisionStore),
   ).toMatchSnapshot();
 });
 
 test("combines related data from outcomes object", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
-  const actual = getOutlierOfficerData(
+  const actual = getOfficerOutcomesData(
     officerData,
     supervisionStore,
     officerOutcomes,
@@ -91,14 +91,14 @@ test("combines related data from outcomes object", async () => {
 });
 
 // TODO(#6452): This test will become obsolete once we fully rely on the outcomes API
-test("getOutlierOfficerData from outcomes object matches older implementation", async () => {
+test("getOfficerOutcomesData from outcomes object matches older implementation", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
-  const fromOutcomesObject = getOutlierOfficerData(
+  const fromOutcomesObject = getOfficerOutcomesData(
     officerData,
     supervisionStore,
     officerOutcomes,
   );
-  const fromOfficerObject = getOutlierOfficerData(
+  const fromOfficerObject = getOfficerOutcomesData(
     officerData,
     supervisionStore,
   );
@@ -144,7 +144,7 @@ test("excludes current officer from the benchmark data points", async () => {
       ?.latestPeriodValues.filter((d) => d.value === currentOutlierRate),
   ).toHaveLength(2);
 
-  const outlierData = getOutlierOfficerData(officerData, supervisionStore);
+  const outlierData = getOfficerOutcomesData(officerData, supervisionStore);
 
   expect(
     outlierData?.outlierMetrics?.[0].benchmark.latestPeriodValues.filter(
@@ -154,7 +154,7 @@ test("excludes current officer from the benchmark data points", async () => {
 });
 
 test("requires a hydrated store", () => {
-  expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow();
+  expect(() => getOfficerOutcomesData(officerData, supervisionStore)).toThrow();
 });
 
 test("throws on missing config", async () => {
@@ -168,7 +168,7 @@ test("throws on missing config", async () => {
 
   await flowResult(supervisionStore.populateMetricConfigs());
 
-  expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
+  expect(() => getOfficerOutcomesData(officerData, supervisionStore)).toThrow(
     `Missing metric configuration for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
@@ -183,7 +183,7 @@ test("throws if benchmark data was not fully hydrated", async () => {
 
   await flowResult(supervisionStore.populateMetricConfigs());
 
-  expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
+  expect(() => getOfficerOutcomesData(officerData, supervisionStore)).toThrow(
     `Missing metric benchmark data for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
@@ -201,7 +201,7 @@ test("throws on missing benchmark for required caseload type", async () => {
 
   await flowResult(supervisionStore.populateMetricConfigs());
 
-  expect(() => getOutlierOfficerData(officerData, supervisionStore)).toThrow(
+  expect(() => getOfficerOutcomesData(officerData, supervisionStore)).toThrow(
     `Missing metric benchmark data for caseload type ${CASELOAD_CATEGORY_IDS.enum.ALL} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
@@ -226,7 +226,7 @@ describe("when used in a context that expects excluded officers", () => {
   );
 
   it("should not mistake a non-excluded officer for an excluded officer", () => {
-    const officerWithOutlierData = getOutlierOfficerData(
+    const officerWithOutlierData = getOfficerOutcomesData(
       officerData,
       supervisionStore,
     );
@@ -234,7 +234,7 @@ describe("when used in a context that expects excluded officers", () => {
   });
 
   it("should return an excluded officer without issue", () => {
-    const officerWithOutlierData = getOutlierOfficerData(
+    const officerWithOutlierData = getOfficerOutcomesData(
       excludedSupervisionOfficerFixture[0],
       supervisionStore,
     );

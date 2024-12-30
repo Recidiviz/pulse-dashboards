@@ -21,7 +21,7 @@ import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
 
 import { RootStore } from "../../../../RootStore";
 import { InsightsSupervisionStore } from "../../../stores/InsightsSupervisionStore";
-import { getOutlierOfficerData } from "../../utils";
+import { getOfficerOutcomesData } from "../../utils";
 import {
   HIGHLIGHT_DOT_RADIUS_LG,
   HIGHLIGHT_DOT_RADIUS_SM,
@@ -44,7 +44,7 @@ beforeEach(async () => {
   );
   await flowResult(store.populateMetricConfigs());
 
-  const processedOfficerData = getOutlierOfficerData(
+  const processedOfficerData = getOfficerOutcomesData(
     supervisionOfficerFixture[2],
     store,
   );

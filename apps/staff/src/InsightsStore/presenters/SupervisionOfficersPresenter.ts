@@ -35,9 +35,12 @@ import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import {
   ConfigLabels,
   HighlightedOfficersDetail,
-  OutlierOfficerData,
+  OfficerOutcomesData,
 } from "./types";
-import { getHighlightedOfficersByMetric, getOutlierOfficerData } from "./utils";
+import {
+  getHighlightedOfficersByMetric,
+  getOfficerOutcomesData,
+} from "./utils";
 
 /***
  * The SupervisionOfficersPresenter is the presenter for the v1 insights
@@ -120,12 +123,12 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   /**
-   * Augments officer data with all necessary relationships fully hydrated.
-   * If this fails for any reason the value will instead be the error that was encountered,
-   * useful mainly for debugging.
+   * The list of outlier officers with outcomes data. Augments officer data with all necessary
+   * relationships fully hydrated. If this fails for any reason the value will instead
+   * be the error that was encountered, useful mainly for debugging.
    */
   private get outlierDataOrError():
-    | OutlierOfficerData<SupervisionOfficer>[]
+    | OfficerOutcomesData<SupervisionOfficer>[]
     | Error {
     try {
       // not expected in practice due to checks above, but needed for type safety
@@ -137,7 +140,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
 
       return this.officerOutcomes
         .filter((outcomes) => outcomes.outlierMetrics.length > 0)
-        .map((outcomes): OutlierOfficerData<SupervisionOfficer> => {
+        .map((outcomes): OfficerOutcomesData<SupervisionOfficer> => {
           const officer = this.allOfficers?.find(
             (officer) => officer.pseudonymizedId === outcomes.pseudonymizedId,
           );
@@ -146,7 +149,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
               `No officer with outcomes data found for pseudo id: [${outcomes.pseudonymizedId}]`,
             );
           }
-          return getOutlierOfficerData(
+          return getOfficerOutcomesData(
             officer,
             this.supervisionStore,
             outcomes,
@@ -158,10 +161,11 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   /**
-   * Augments officer data with all necessary relationships fully hydrated.
+   * The list of outlier officers with outcomes data. Augments officer data with all
+   * necessary relationships fully hydrated.
    */
   get outlierOfficersData():
-    | OutlierOfficerData<SupervisionOfficer>[]
+    | OfficerOutcomesData<SupervisionOfficer>[]
     | undefined {
     if (this.outlierDataOrError instanceof Error) {
       return undefined;

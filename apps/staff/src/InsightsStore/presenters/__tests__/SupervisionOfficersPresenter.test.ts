@@ -140,7 +140,7 @@ test("supervisorId not found in officersBySupervisor", async () => {
 });
 
 test("error assembling metrics data", async () => {
-  vi.spyOn(utils, "getOutlierOfficerData").mockImplementation(() => {
+  vi.spyOn(utils, "getOfficerOutcomesData").mockImplementation(() => {
     throw new Error("oops");
   });
 

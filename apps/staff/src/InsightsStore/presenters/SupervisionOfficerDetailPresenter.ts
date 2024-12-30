@@ -73,7 +73,7 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
   }
 
   get defaultMetricId() {
-    return this.outlierOfficerData?.outlierMetrics[0]?.metricId;
+    return this.officerOutcomesData?.outlierMetrics[0]?.metricId;
   }
 
   get metricId() {
@@ -82,7 +82,7 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
 
   get currentMetricIndex(): number {
     return (
-      this.outlierOfficerData?.outlierMetrics.findIndex(
+      this.officerOutcomesData?.outlierMetrics.findIndex(
         (m) => m.metricId === this.metricId,
       ) ?? 0
     );

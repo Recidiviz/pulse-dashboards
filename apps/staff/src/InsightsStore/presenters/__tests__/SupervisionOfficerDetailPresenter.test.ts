@@ -117,9 +117,9 @@ describe("with unit data already hydrated", () => {
     ).not.toHaveBeenCalled();
   });
 
-  test("has outlierOfficerData", async () => {
-    expect(presenter.outlierOfficerData).toBeDefined();
-    expect(presenter.outlierOfficerData).toMatchSnapshot();
+  test("has officerOutcomesData", async () => {
+    expect(presenter.officerOutcomesData).toBeDefined();
+    expect(presenter.officerOutcomesData).toMatchSnapshot();
   });
 
   test("has metricInfo", async () => {
@@ -180,11 +180,11 @@ test("hydration", async () => {
   ).toHaveBeenCalled();
 });
 
-test("has outlierOfficerData", async () => {
+test("has officerOutcomesData", async () => {
   await presenter.hydrate();
 
-  expect(presenter.outlierOfficerData).toBeDefined();
-  expect(presenter.outlierOfficerData).toMatchSnapshot();
+  expect(presenter.officerOutcomesData).toBeDefined();
+  expect(presenter.officerOutcomesData).toMatchSnapshot();
 });
 
 test("has metricInfo", async () => {
@@ -226,7 +226,7 @@ test("hydration error in dependency", async () => {
 });
 
 test("error assembling metrics data", async () => {
-  vi.spyOn(utils, "getOutlierOfficerData").mockImplementation(() => {
+  vi.spyOn(utils, "getOfficerOutcomesData").mockImplementation(() => {
     throw new Error("oops");
   });
 
@@ -242,7 +242,7 @@ test("error assembling metrics data", async () => {
       [Error: oops],
     ]
   `);
-  expect(presenter.outlierOfficerData).toBeUndefined();
+  expect(presenter.officerOutcomesData).toBeUndefined();
 });
 
 test("track staff page viewed events", async () => {
@@ -258,7 +258,7 @@ test("track staff page viewed events", async () => {
     supervisorPseudonymizedId:
       supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
     viewedBy: pseudoId,
-    numOutlierMetrics: presenter.outlierOfficerData?.outlierMetrics.length,
+    numOutlierMetrics: presenter.officerOutcomesData?.outlierMetrics.length,
   });
 });
 

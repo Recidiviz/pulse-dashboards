@@ -148,7 +148,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
-    outlierOfficerData,
+    officerOutcomesData,
     defaultMetricId,
     officerPseudoId,
     metricId,
@@ -184,17 +184,17 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   };
 
   // empty page where the staff member is not an outlier on any metrics
-  if (outlierOfficerData && !outlierOfficerData.outlierMetrics.length) {
+  if (officerOutcomesData && !officerOutcomesData.outlierMetrics.length) {
     return (
       <InsightsEmptyPage
-        headerText={`${outlierOfficerData.displayName} is not currently an outlier on any metrics.`}
+        headerText={`${officerOutcomesData.displayName} is not currently an outlier on any metrics.`}
         {...supervisorLinkProps}
       />
     );
   }
 
   // if the presenter is hydrated, this stuff should never be missing in practice
-  if (!outlierOfficerData || !defaultMetricId || !metricInfo)
+  if (!officerOutcomesData || !defaultMetricId || !metricInfo)
     return <NotFound />;
 
   // if current metric is not set, we need to redirect to the default metric URL
@@ -212,7 +212,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 
   // empty page where the staff is not an outlier on the page the user landed at
   if (
-    !outlierOfficerData.outlierMetrics.find(
+    !officerOutcomesData.outlierMetrics.find(
       (metric) => metric.metricId === metricInfo.name,
     )
   ) {
@@ -226,7 +226,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     return (
       <InsightsEmptyPage
         headerText={`${
-          outlierOfficerData.displayName
+          officerOutcomesData.displayName
         } is not currently an outlier on ${toTitleCase(
           metricInfo.eventName,
         )}. They are an outlier on other metrics.`}
@@ -235,7 +235,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     );
   }
 
-  const pageTitle = simplur`${outlierOfficerData.displayName} is an outlier on ${outlierOfficerData.outlierMetrics.length} metric[|s]`;
+  const pageTitle = simplur`${officerOutcomesData.displayName} is an outlier on ${officerOutcomesData.outlierMetrics.length} metric[|s]`;
   const supervisorNames = supervisorsInfo?.map((s) => s.displayName).join(", ");
 
   const infoItems = [
@@ -243,7 +243,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
       title: "caseload type",
       info:
         (presenter.areCaseloadCategoryBreakdownsEnabled &&
-          outlierOfficerData.caseloadCategoryName) ||
+          officerOutcomesData.caseloadCategoryName) ||
         null,
     },
     {
@@ -296,11 +296,11 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
           $isMobile={isMobile}
           $showScrollShadow={isMobile && isTabListOverflown}
         >
-          {outlierOfficerData.outlierMetrics.map((metric) => {
+          {officerOutcomesData.outlierMetrics.map((metric) => {
             const handleTabClick = () => {
               navigate(
                 insightsUrl("supervisionStaffMetric", {
-                  officerPseudoId: outlierOfficerData.pseudonymizedId,
+                  officerPseudoId: officerOutcomesData.pseudonymizedId,
                   metricId: metric.metricId,
                 }),
               );
@@ -313,7 +313,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
             );
           })}
         </StyledTabList>
-        {outlierOfficerData.outlierMetrics.map((metric) => {
+        {officerOutcomesData.outlierMetrics.map((metric) => {
           const firstDate = metric.benchmark.benchmarks[0]?.endDate;
           const secondToLastDate = metric.benchmark.benchmarks.at(-2)?.endDate;
           const lastDate = metric.benchmark.benchmarks.at(-1)?.endDate;

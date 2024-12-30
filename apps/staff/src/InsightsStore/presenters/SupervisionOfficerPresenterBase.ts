@@ -34,8 +34,8 @@ import {
 import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
-import { ConfigLabels, OutlierOfficerData } from "./types";
-import { getOutlierOfficerData, isExcludedSupervisionOfficer } from "./utils";
+import { ConfigLabels, OfficerOutcomesData } from "./types";
+import { getOfficerOutcomesData, isExcludedSupervisionOfficer } from "./utils";
 
 export abstract class SupervisionOfficerPresenterBase<
     T extends SupervisionOfficer | ExcludedSupervisionOfficer,
@@ -62,11 +62,11 @@ export abstract class SupervisionOfficerPresenterBase<
       | "expectMetricsPopulated"
       | "hydrator"
       | "officerRecord"
-      | "outlierDataOrError"
+      | "officerOutcomesDataOrError"
       | "expectOfficerPopulated"
       | "expectOfficerOutcomesPopulated"
       | "expectSupervisorPopulated"
-      | "expectOutlierDataPopulated"
+      | "expectOfficerOutcomesDataPopulated"
       | "isOfficerPopulated"
       | "populateSupervisionOfficer"
       | "populateSupervisionOfficerOutcomes"
@@ -80,9 +80,9 @@ export abstract class SupervisionOfficerPresenterBase<
         trackStaffPageViewed: true,
         expectMetricsPopulated: true,
         officerRecord: true,
-        outlierDataOrError: true,
+        officerOutcomesDataOrError: true,
         officerExternalId: true,
-        outlierOfficerData: true,
+        officerOutcomesData: true,
         supervisorsInfo: true,
         userCanAccessAllSupervisors: true,
         goToSupervisorInfo: true,
@@ -96,7 +96,7 @@ export abstract class SupervisionOfficerPresenterBase<
         expectOfficerPopulated: true,
         expectOfficerOutcomesPopulated: true,
         expectSupervisorPopulated: true,
-        expectOutlierDataPopulated: true,
+        expectOfficerOutcomesDataPopulated: true,
         isOfficerPopulated: true,
         populateSupervisionOfficer: true,
         populateSupervisionOfficerOutcomes: true,
@@ -127,7 +127,7 @@ export abstract class SupervisionOfficerPresenterBase<
       this.expectMetricsPopulated,
       this.expectOfficerPopulated,
       this.expectSupervisorPopulated,
-      this.expectOutlierDataPopulated,
+      this.expectOfficerOutcomesDataPopulated,
       this.expectOfficerOutcomesPopulated,
     ];
   }
@@ -141,7 +141,7 @@ export abstract class SupervisionOfficerPresenterBase<
         staffPseudonymizedId: this.officerPseudoId,
         supervisorPseudonymizedId: this.goToSupervisorInfo?.pseudonymizedId,
         viewedBy: userPseudoId,
-        numOutlierMetrics: this.outlierOfficerData?.outlierMetrics?.length,
+        numOutlierMetrics: this.officerOutcomesData?.outlierMetrics?.length,
       },
     );
   }
@@ -169,7 +169,7 @@ export abstract class SupervisionOfficerPresenterBase<
    * Augments officer data with all necessary relationships fully hydrated.
    * If this fails for any reason, the value will instead reflect the error that was encountered.
    */
-  private get outlierDataOrError(): OutlierOfficerData<T> | Error {
+  private get officerOutcomesDataOrError(): OfficerOutcomesData<T> | Error {
     try {
       if (!this.officerRecord) throw new Error("Missing officer record");
       if (
@@ -178,11 +178,11 @@ export abstract class SupervisionOfficerPresenterBase<
       )
         throw new Error("Missing officer outcomes");
 
-      return getOutlierOfficerData(
+      return getOfficerOutcomesData(
         this.officerRecord,
         this.supervisionStore,
         this.officerOutcomes,
-      ) as OutlierOfficerData<T>;
+      ) as OfficerOutcomesData<T>;
     } catch (e) {
       return castToError(e);
     }
@@ -195,9 +195,9 @@ export abstract class SupervisionOfficerPresenterBase<
   /**
    * Augments officer data with all necessary relationships fully hydrated.
    */
-  get outlierOfficerData(): OutlierOfficerData<T> | undefined {
-    if (this.outlierDataOrError instanceof Error) return;
-    return this.outlierDataOrError;
+  get officerOutcomesData(): OfficerOutcomesData<T> | undefined {
+    if (this.officerOutcomesDataOrError instanceof Error) return;
+    return this.officerOutcomesDataOrError;
   }
 
   get supervisorsInfo(): SupervisionOfficerSupervisor[] | undefined {
@@ -287,12 +287,13 @@ export abstract class SupervisionOfficerPresenterBase<
       throw new Error("Failed to populate supervisor info");
   }
 
-  private expectOutlierDataPopulated() {
-    if (this.outlierDataOrError instanceof Error) throw this.outlierDataOrError;
+  private expectOfficerOutcomesDataPopulated() {
+    if (this.officerOutcomesDataOrError instanceof Error)
+      throw this.officerOutcomesDataOrError;
   }
 
   protected get isOfficerPopulated() {
-    return !(this.outlierDataOrError instanceof Error);
+    return !(this.officerOutcomesDataOrError instanceof Error);
   }
 
   protected abstract populateSupervisionOfficer(): FlowMethod<

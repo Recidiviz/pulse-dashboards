@@ -32,7 +32,7 @@ import {
 
 // This type represents the state of fully hydrated data
 // where all necessary related objects are guaranteed to exist
-export type OutlierOfficerData<
+export type OfficerOutcomesData<
   T extends SupervisionOfficer | ExcludedSupervisionOfficer,
 > = T extends SupervisionOfficer
   ? Omit<SupervisionOfficer, "outlierMetrics"> & {
@@ -105,7 +105,7 @@ export type HighlightedOfficersDetail = {
 export type MetricAndOutliersInfo = {
   metricConfigWithBenchmark: MetricConfigWithBenchmark;
   caseloadCategoryName?: string;
-  officersForMetric: OutlierOfficerData<SupervisionOfficer>[];
+  officersForMetric: OfficerOutcomesData<SupervisionOfficer>[];
 };
 
 /** Helper type to group information by metric and by caseload category */

@@ -83,7 +83,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
   const {
     supervisorInfo,
     // TODO: (6040) Change this to `allOfficers` once backend is updated.
-    officersWithOutliersData: allOfficers,
+    officersWithOutcomesData: allOfficers,
     excludedOfficers,
     userCanAccessAllSupervisors,
     timePeriod,

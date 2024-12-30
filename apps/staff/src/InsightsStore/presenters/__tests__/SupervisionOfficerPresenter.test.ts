@@ -40,7 +40,7 @@ import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenter } from "../SupervisionOfficerPresenter";
 import * as utils from "../utils";
-import { getOutlierOfficerData, isExcludedSupervisionOfficer } from "../utils";
+import { getOfficerOutcomesData, isExcludedSupervisionOfficer } from "../utils";
 
 type TestOfficerType = SupervisionOfficer | ExcludedSupervisionOfficer;
 
@@ -49,7 +49,7 @@ let rootStore: RootStore;
 let jiiStore: JusticeInvolvedPersonsStore;
 const stateCode = "US_ID";
 const pseudoId = "hashed-mavis123";
-const testOfficerWithOutlierData = supervisionOfficerFixture[0];
+const testOfficerWithOutcomesData = supervisionOfficerFixture[0];
 const testSupervisor = supervisionOfficerSupervisorsFixture[0];
 const testExcludedOfficer = excludedSupervisionOfficerFixture[0];
 
@@ -79,7 +79,7 @@ beforeEach(() => {
 });
 
 const initPresenter = async (
-  testOfficer: typeof testExcludedOfficer | typeof testOfficerWithOutlierData,
+  testOfficer: typeof testExcludedOfficer | typeof testOfficerWithOutcomesData,
 ) => {
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
 
@@ -118,7 +118,7 @@ afterEach(() => {
 });
 
 const officerCases = [
-  ["with outlier data", testOfficerWithOutlierData],
+  ["with outlier data", testOfficerWithOutcomesData],
   ["WITHOUT outlier data", testExcludedOfficer],
 ] as const;
 
@@ -192,10 +192,10 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
       ).toHaveBeenCalledTimes(1);
     });
 
-    test("has outlierOfficerData", async () => {
-      expect(presenter.outlierOfficerData).toBeDefined();
-      expect(presenter.outlierOfficerData).toStrictEqual(
-        getOutlierOfficerData<TestOfficerType>(testOfficer, store),
+    test("has officerOutcomesData", async () => {
+      expect(presenter.officerOutcomesData).toBeDefined();
+      expect(presenter.officerOutcomesData).toStrictEqual(
+        getOfficerOutcomesData<TestOfficerType>(testOfficer, store),
       );
     });
 
@@ -241,12 +241,12 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
     ).toHaveBeenCalled();
   });
 
-  test("has outlierOfficerData", async () => {
+  test("has officerOutcomesData", async () => {
     await presenter.hydrate();
 
-    expect(presenter.outlierOfficerData).toBeDefined();
-    expect(presenter.outlierOfficerData).toStrictEqual(
-      getOutlierOfficerData(testOfficer, store),
+    expect(presenter.officerOutcomesData).toBeDefined();
+    expect(presenter.officerOutcomesData).toStrictEqual(
+      getOfficerOutcomesData(testOfficer, store),
     );
   });
 
@@ -378,7 +378,7 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
   test("error assembling metrics data", async () => {
     const expectedAggregateError = new Error("oops");
     const expectedAggregateErrorMessage = "Expected data failed to populate";
-    vi.spyOn(utils, "getOutlierOfficerData").mockImplementation(() => {
+    vi.spyOn(utils, "getOfficerOutcomesData").mockImplementation(() => {
       throw expectedAggregateError;
     });
 
@@ -389,6 +389,6 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
     expect(unpackAggregatedErrors(presenter)).toStrictEqual([
       expectedAggregateError,
     ]);
-    expect(presenter.outlierOfficerData).toBeUndefined();
+    expect(presenter.officerOutcomesData).toBeUndefined();
   });
 });

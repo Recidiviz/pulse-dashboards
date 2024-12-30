@@ -26,7 +26,7 @@ import { ExcludedSupervisionOfficer, SupervisionOfficer } from "~datatypes";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
-import { OutlierOfficerData } from "../../InsightsStore/presenters/types";
+import { OfficerOutcomesData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsChartCard from "../InsightsChartCard";
@@ -62,7 +62,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
-    outlierOfficerData,
+    officerOutcomesData,
     officerPseudoId,
     supervisorsInfo,
     goToSupervisorInfo,
@@ -88,13 +88,13 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
     },
     {
       title: "avg daily caseload",
-      info: outlierOfficerData?.avgDailyPopulation,
+      info: officerOutcomesData?.avgDailyPopulation,
     },
     {
       title: "caseload type",
       info:
         (presenter.areCaseloadCategoryBreakdownsEnabled &&
-          outlierOfficerData?.caseloadCategoryName) ||
+          officerOutcomesData?.caseloadCategoryName) ||
         null,
     },
   ];
@@ -106,7 +106,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 
   return (
     <InsightsPageLayout
-      pageTitle={outlierOfficerData?.displayName}
+      pageTitle={officerOutcomesData?.displayName}
       pageSubtitle="Outcomes"
       infoItems={infoItems}
       contentsAboveTitle={
@@ -130,7 +130,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               },
             ]}
           >
-            {outlierOfficerData?.displayName} Profile
+            {officerOutcomesData?.displayName} Profile
           </InsightsBreadcrumbs>
         )
       }
@@ -142,7 +142,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
         />
       }
     >
-      {outlierOfficerData?.outlierMetrics?.length ? (
+      {officerOutcomesData?.outlierMetrics?.length ? (
         <>
           {actionStrategyCopy && (
             <InsightsActionStrategyBanner
@@ -152,7 +152,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
             />
           )}
           <Wrapper isTablet={isTablet}>
-            {outlierOfficerData.outlierMetrics.map((metric) => {
+            {officerOutcomesData.outlierMetrics.map((metric) => {
               const { bodyDisplayName } = metric.config;
 
               return (
@@ -172,7 +172,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                   <InsightsSwarmPlotContainerV2
                     metric={metric}
                     officersForMetric={[
-                      outlierOfficerData as OutlierOfficerData<SupervisionOfficer>,
+                      officerOutcomesData as OfficerOutcomesData<SupervisionOfficer>,
                     ]}
                     isMinimized
                   />
@@ -194,7 +194,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
               opportunityTypes={opportunityTypes}
               officerPseudoId={officerPseudoId}
               zeroGrantOpportunities={
-                outlierOfficerData?.zeroGrantOpportunities
+                officerOutcomesData?.zeroGrantOpportunities
               }
             />
           ) : (

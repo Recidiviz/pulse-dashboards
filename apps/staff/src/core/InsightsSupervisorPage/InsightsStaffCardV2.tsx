@@ -188,7 +188,7 @@ const InsightsStaffCardV2: React.FC<{
 
   const {
     outlierOfficersByMetricAndCaseloadCategory,
-    outlierOfficersData: officers,
+    outcomesDataForOutlierOfficers: officers,
     labels: { supervisorHasNoOutlierOfficersLabel: emptyMessage },
   } = presenter;
 

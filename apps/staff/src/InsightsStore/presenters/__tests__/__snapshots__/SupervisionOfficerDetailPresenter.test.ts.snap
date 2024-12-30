@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`has outlierOfficerData 1`] = `
+exports[`has officerOutcomesData 1`] = `
 {
   "avgDailyPopulation": 54,
   "caseloadCategory": "SEX_OFFENSE",
@@ -1331,7 +1331,7 @@ exports[`has outlierOfficerData 1`] = `
 }
 `;
 
-exports[`with unit data already hydrated > has outlierOfficerData 1`] = `
+exports[`with unit data already hydrated > has officerOutcomesData 1`] = `
 {
   "avgDailyPopulation": 54,
   "caseloadCategory": "SEX_OFFENSE",

@@ -43,11 +43,14 @@ import {
   ConfigLabels,
   HighlightedOfficersDetail,
   MetricAndOutliersInfo,
-  OutlierOfficerData,
+  OfficerOutcomesData,
   RawOpportunityInfo,
   RawOpportunityInfoByOpportunityType,
 } from "./types";
-import { getHighlightedOfficersByMetric, getOutlierOfficerData } from "./utils";
+import {
+  getHighlightedOfficersByMetric,
+  getOfficerOutcomesData,
+} from "./utils";
 
 /**
  * The `SupervisionSupervisorPresenter` class is responsible for managing and presenting
@@ -87,7 +90,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       | "expectOfficersWithOutcomesPopulated"
       | "expectExcludedOfficersPopulated"
       | "expectSupervisorPopulated"
-      | "expectOutlierDataPopulated"
+      | "expectOutcomesDataForOutlierOfficersPopulated"
       | "expectOfficerOutcomesPopulated"
       | "populateCaseload"
       | "hydrator"
@@ -95,17 +98,17 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     >(
       this,
       {
-        expectOutlierDataPopulated: true,
+        expectOutcomesDataForOutlierOfficersPopulated: true,
         expectSupervisorPopulated: true,
         expectExcludedOfficersPopulated: true,
         expectOfficersWithOutcomesPopulated: true,
         expectMetricsPopulated: true,
         expectOfficerOutcomesPopulated: true,
         supervisorPseudoId: true,
-        outlierOfficersData: computed,
+        outcomesDataForOutlierOfficers: computed,
         supervisorInfo: computed,
         timePeriod: computed,
-        officersWithOutliersData: computed,
+        officersWithOutcomesData: computed,
         excludedOfficers: computed,
         allOfficers: computed,
         metricConfigsById: computed,
@@ -185,7 +188,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       this.expectOfficersWithOutcomesPopulated,
       this.expectExcludedOfficersPopulated,
       this.expectSupervisorPopulated,
-      this.expectOutlierDataPopulated,
+      this.expectOutcomesDataForOutlierOfficersPopulated,
       this.expectOpportunityConfigurationStorePopulated,
       () =>
         this.expectClientsForOfficersPopulated(
@@ -222,15 +225,15 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
 
   /**
    * Provides outlier officers' data with all necessary relationships fully hydrated.
-   * @returns An array of `OutlierOfficerData` or `undefined` if an error occurs.
+   * @returns An array of `OfficerOutcomesData` or `undefined` if an error occurs.
    */
-  get outlierOfficersData():
-    | OutlierOfficerData<SupervisionOfficer>[]
+  get outcomesDataForOutlierOfficers():
+    | OfficerOutcomesData<SupervisionOfficer>[]
     | undefined {
-    if (this.outlierDataOrError instanceof Error) {
+    if (this.outcomesDataForOutlierOfficersOrError instanceof Error) {
       return undefined;
     }
-    return this.outlierDataOrError;
+    return this.outcomesDataForOutlierOfficersOrError;
   }
 
   /**
@@ -238,7 +241,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    * explicitly excluded from outcomes.
    * @returns An array of `SupervisionOfficer` or `undefined` if data is not available.
    */
-  get officersWithOutliersData(): SupervisionOfficer[] | undefined {
+  get officersWithOutcomesData(): SupervisionOfficer[] | undefined {
     return this.supervisionStore.officersBySupervisorPseudoId.get(
       this.supervisorPseudoId,
     );
@@ -260,7 +263,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    */
   get allOfficers(): (SupervisionOfficer | ExcludedSupervisionOfficer)[] {
     return [
-      ...(this.officersWithOutliersData || []),
+      ...(this.officersWithOutcomesData || []),
       ...(this.excludedOfficers || []),
     ];
   }
@@ -311,7 +314,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   get highlightedOfficersByMetric(): HighlightedOfficersDetail[] {
     return getHighlightedOfficersByMetric(
       this.metricConfigsById,
-      this.officersWithOutliersData,
+      this.officersWithOutcomesData,
       this.supervisionStore.officersOutcomesBySupervisorPseudoId.get(
         this.supervisorPseudoId,
       ),
@@ -545,12 +548,12 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   // ==============================
 
   /**
-   * The outlier data for the `SupervisionOfficerSupervisor`
+   * The outlier officers' outcomes data for the `SupervisionOfficerSupervisor`
    * @throws An error if the data is not available.
-   * @returns An array of `OutlierOfficerData` or an `Error` object.
+   * @returns An array of `OfficerOutcomesData` or an `Error` object.
    */
-  private get outlierDataOrError():
-    | OutlierOfficerData<SupervisionOfficer>[]
+  private get outcomesDataForOutlierOfficersOrError():
+    | OfficerOutcomesData<SupervisionOfficer>[]
     | Error {
     try {
       const outcomesData =
@@ -566,8 +569,8 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       }
       return outcomesData
         .filter((outcome) => outcome.outlierMetrics.length > 0)
-        .map((outcome): OutlierOfficerData<SupervisionOfficer> => {
-          const officer = this.officersWithOutliersData?.find(
+        .map((outcome): OfficerOutcomesData<SupervisionOfficer> => {
+          const officer = this.officersWithOutcomesData?.find(
             (officer) => officer.pseudonymizedId === outcome.pseudonymizedId,
           );
           if (!officer) {
@@ -575,7 +578,11 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
               `No officer with outcomes data found for pseudo id: [${outcome.pseudonymizedId}]`,
             );
           }
-          return getOutlierOfficerData(officer, this.supervisionStore, outcome);
+          return getOfficerOutcomesData(
+            officer,
+            this.supervisionStore,
+            outcome,
+          );
         });
     } catch (e) {
       return castToError(e);
@@ -590,7 +597,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
     | Error {
     try {
-      if (!this.outlierOfficersData) {
+      if (!this.outcomesDataForOutlierOfficers) {
         throw new Error(
           "Missing expected data for grouping officers by metric",
         );
@@ -598,8 +605,8 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
 
       const resultMap: ByMetricAndCategory2DMap<MetricAndOutliersInfo> =
         new Map();
-      this.outlierOfficersData.forEach((outlierOfficerData) => {
-        outlierOfficerData.outlierMetrics.forEach((metric) => {
+      this.outcomesDataForOutlierOfficers.forEach((officerOutcomesData) => {
+        officerOutcomesData.outlierMetrics.forEach((metric) => {
           const {
             statusesOverTime,
             metricId,
@@ -609,19 +616,20 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
           const caseloadCategoryToOfficers = resultMap.get(metricId);
           if (caseloadCategoryToOfficers) {
             const officersForCaseloadCategory = caseloadCategoryToOfficers.get(
-              outlierOfficerData.caseloadCategory,
+              officerOutcomesData.caseloadCategory,
             );
             if (officersForCaseloadCategory) {
               officersForCaseloadCategory.officersForMetric.push(
-                outlierOfficerData,
+                officerOutcomesData,
               );
             } else {
               caseloadCategoryToOfficers.set(
-                outlierOfficerData.caseloadCategory,
+                officerOutcomesData.caseloadCategory,
                 {
                   metricConfigWithBenchmark: metricConfigWithBenchmark,
-                  caseloadCategoryName: outlierOfficerData.caseloadCategoryName,
-                  officersForMetric: [outlierOfficerData],
+                  caseloadCategoryName:
+                    officerOutcomesData.caseloadCategoryName,
+                  officersForMetric: [officerOutcomesData],
                 },
               );
             }
@@ -631,11 +639,11 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
               MetricAndOutliersInfo
             >();
             caseloadCategoryToOfficers.set(
-              outlierOfficerData.caseloadCategory,
+              officerOutcomesData.caseloadCategory,
               {
                 metricConfigWithBenchmark: metricConfigWithBenchmark,
-                caseloadCategoryName: outlierOfficerData.caseloadCategoryName,
-                officersForMetric: [outlierOfficerData],
+                caseloadCategoryName: officerOutcomesData.caseloadCategoryName,
+                officersForMetric: [officerOutcomesData],
               },
             );
             resultMap.set(metricId, caseloadCategoryToOfficers);
@@ -706,11 +714,12 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   }
 
   /**
-   * Asserts that outlier data has been populated.
+   * Asserts that outlier officers' data has been populated.
    * @throws The encountered error if outlier data is not populated.
    */
-  private expectOutlierDataPopulated() {
-    if (this.outlierDataOrError instanceof Error) throw this.outlierDataOrError;
+  private expectOutcomesDataForOutlierOfficersPopulated() {
+    if (this.outcomesDataForOutlierOfficersOrError instanceof Error)
+      throw this.outcomesDataForOutlierOfficersOrError;
   }
 
   /**

@@ -120,7 +120,7 @@ afterEach(() => {
 test("outlierOfficersData", async () => {
   await presenter.hydrate();
 
-  const { outlierOfficersData } = presenter;
+  const { outcomesDataForOutlierOfficers: outlierOfficersData } = presenter;
   expect(outlierOfficersData).toMatchSnapshot();
 });
 
@@ -237,13 +237,13 @@ test("supervisor has no excluded officers", async () => {
 });
 
 test("error assembling metrics data", async () => {
-  vi.spyOn(utils, "getOutlierOfficerData").mockImplementation(() => {
+  vi.spyOn(utils, "getOfficerOutcomesData").mockImplementation(() => {
     throw new Error("oops");
   });
 
   await presenter.hydrate();
 
-  expect(presenter.outlierOfficersData).toBeUndefined();
+  expect(presenter.outcomesDataForOutlierOfficers).toBeUndefined();
 
   expect(presenter.hydrationState).toMatchInlineSnapshot(`
     {
