@@ -27,8 +27,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { SupervisionOfficer } from "~datatypes";
-
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { OfficerOutcomesData } from "../../InsightsStore/presenters/types";
@@ -128,7 +126,7 @@ const MetricSection = styled(Link)<{ $hasBorder: boolean }>`
 `;
 
 type InsightsStaffCardType = {
-  officer: OfficerOutcomesData<SupervisionOfficer>;
+  officer: OfficerOutcomesData;
   officerIndex: number;
   title?: string;
   subtitle?: string;

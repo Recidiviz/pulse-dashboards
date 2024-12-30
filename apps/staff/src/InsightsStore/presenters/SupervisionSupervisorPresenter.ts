@@ -227,9 +227,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    * Provides outlier officers' data with all necessary relationships fully hydrated.
    * @returns An array of `OfficerOutcomesData` or `undefined` if an error occurs.
    */
-  get outcomesDataForOutlierOfficers():
-    | OfficerOutcomesData<SupervisionOfficer>[]
-    | undefined {
+  get outcomesDataForOutlierOfficers(): OfficerOutcomesData[] | undefined {
     if (this.outcomesDataForOutlierOfficersOrError instanceof Error) {
       return undefined;
     }
@@ -553,7 +551,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    * @returns An array of `OfficerOutcomesData` or an `Error` object.
    */
   private get outcomesDataForOutlierOfficersOrError():
-    | OfficerOutcomesData<SupervisionOfficer>[]
+    | OfficerOutcomesData[]
     | Error {
     try {
       const outcomesData =
@@ -569,7 +567,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       }
       return outcomesData
         .filter((outcome) => outcome.outlierMetrics.length > 0)
-        .map((outcome): OfficerOutcomesData<SupervisionOfficer> => {
+        .map((outcome): OfficerOutcomesData => {
           const officer = this.officersWithOutcomesData?.find(
             (officer) => officer.pseudonymizedId === outcome.pseudonymizedId,
           );

@@ -45,40 +45,27 @@ export function isExcludedSupervisionOfficer(
 }
 
 /**
- * Collects all of the officer data, modeling relationships between them with nested objects,
- * and verifies that all of the related objects actually exist. It throws an error rather than
- * returning a partial result, to guarantee return values are fully hydrated.
+ * Given an officer and their outcomes, collects all of the officer data, modeling
+ * relationships between them with nested objects, and verifies that all of the related
+ * objects actually exist. It throws an error rather than returning a partial result,
+ * to guarantee return values are fully hydrated.
  *
- * TODO(#6452): Once we have removed obsolete information from the SupervisionOfficer zod
- * schema, this function should no longer need to be generic, and the officerOutcomes
- * should be required.
+ * Note: this function should not be called for officers excluded from outcomes.
  */
-export function getOfficerOutcomesData<
-  T extends SupervisionOfficer | ExcludedSupervisionOfficer,
->(
-  officer: T,
+export function getOfficerOutcomesData(
+  officer: SupervisionOfficer,
   supervisionStore: InsightsSupervisionStore,
-  officerOutcomes?: SupervisionOfficerOutcomes,
-): OfficerOutcomesData<T> {
-  if (isExcludedSupervisionOfficer(officer))
-    return officer as OfficerOutcomesData<T>;
-
-  const officerData = officer as SupervisionOfficer;
-
-  // TODO(#6452): Remove obsolete fields form the SupervisionOfficer Zod schema and
-  // stop defaulting to the officerData objects
-  const caseloadCategoryId =
-    officerOutcomes?.caseloadCategory ?? officerData.caseloadCategory;
-
-  const outlierMetrics =
-    officerOutcomes?.outlierMetrics ?? officerData.outlierMetrics;
+  officerOutcomes: SupervisionOfficerOutcomes,
+): OfficerOutcomesData {
+  const caseloadCategoryId = officerOutcomes.caseloadCategory;
+  const outlierMetrics = officerOutcomes.outlierMetrics;
 
   return {
-    ...officerData,
-    caseloadCategoryName: caseloadCategoryId
-      ? supervisionStore.caseloadCategoryDisplayName(caseloadCategoryId)
-      : undefined,
-    outlierMetrics: outlierMetrics.map((metric) => {
+    ...officer,
+    ...officerOutcomes,
+    caseloadCategoryName:
+      supervisionStore.caseloadCategoryDisplayName(caseloadCategoryId),
+    outlierMetrics: outlierMetrics?.map((metric) => {
       // verify that the related objects we need are actually present;
       // specifically, the metric configs for this officer and the benchmarks
       // for their caseload type
@@ -137,7 +124,7 @@ export function getOfficerOutcomesData<
         currentPeriodData,
       };
     }),
-  } as OfficerOutcomesData<T>;
+  };
 }
 
 export function getLocationWithoutLabel(

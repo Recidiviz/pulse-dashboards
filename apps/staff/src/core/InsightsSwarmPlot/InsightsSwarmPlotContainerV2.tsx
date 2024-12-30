@@ -18,8 +18,6 @@
 import { observer } from "mobx-react-lite";
 import { AspectRatio } from "react-aspect-ratio";
 
-import { SupervisionOfficer } from "~datatypes";
-
 import { SwarmPresenterV2 } from "../../InsightsStore/presenters/SwarmPresenter";
 import { CHART_ASPECT_RATIO } from "../../InsightsStore/presenters/SwarmPresenter/constants";
 import {
@@ -32,7 +30,7 @@ import { InsightsSwarmPlotV2 } from "./InsightsSwarmPlotV2";
 
 type InsightsSwarmPlotProps = {
   metric: MetricConfigWithBenchmark;
-  officersForMetric: OfficerOutcomesData<SupervisionOfficer>[];
+  officersForMetric: OfficerOutcomesData[];
   presenterWithHoverManager?: PresenterWithHoverManager;
   isMinimized?: boolean;
 };

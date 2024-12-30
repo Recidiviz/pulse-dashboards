@@ -17,7 +17,11 @@
 
 import { flowResult } from "mobx";
 
-import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
+import {
+  InsightsConfigFixture,
+  supervisionOfficerFixture,
+  supervisionOfficerOutcomesFixture,
+} from "~datatypes";
 
 import { RootStore } from "../../../../RootStore";
 import { InsightsSupervisionStore } from "../../../stores/InsightsSupervisionStore";
@@ -47,6 +51,7 @@ beforeEach(async () => {
   const processedOfficerData = getOfficerOutcomesData(
     supervisionOfficerFixture[2],
     store,
+    supervisionOfficerOutcomesFixture[2],
   );
 
   presenter = new SwarmPresenterV2(processedOfficerData.outlierMetrics[0], [

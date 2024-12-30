@@ -18,7 +18,6 @@
 import { ValuesType } from "utility-types";
 
 import {
-  ExcludedSupervisionOfficer,
   InsightsConfig,
   MetricBenchmark,
   MetricConfig,
@@ -30,21 +29,14 @@ import {
   VitalsMetricForOfficer,
 } from "~datatypes";
 
-// This type represents the state of fully hydrated data
-// where all necessary related objects are guaranteed to exist
-export type OfficerOutcomesData<
-  T extends SupervisionOfficer | ExcludedSupervisionOfficer,
-> = T extends SupervisionOfficer
-  ? Omit<SupervisionOfficer, "outlierMetrics"> & {
-      outlierMetrics: MetricWithConfig[];
-      caseloadCategoryName?: string;
-    }
-  : T extends ExcludedSupervisionOfficer
-    ? Omit<ExcludedSupervisionOfficer, "outlierMetrics"> & {
-        outlierMetrics?: MetricWithConfig[];
-        caseloadCategoryName?: string;
-      }
-    : never;
+/**
+ * This type represents the combined officer and corresponding outcomes data, where all
+ * necessary related objects are guaranteed to exist.
+ */
+export type OfficerOutcomesData = Omit<SupervisionOfficer, "outlierMetrics"> & {
+  outlierMetrics: MetricWithConfig[];
+  caseloadCategoryName?: string;
+};
 
 export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
   currentPeriodData: ValuesType<
@@ -105,7 +97,7 @@ export type HighlightedOfficersDetail = {
 export type MetricAndOutliersInfo = {
   metricConfigWithBenchmark: MetricConfigWithBenchmark;
   caseloadCategoryName?: string;
-  officersForMetric: OfficerOutcomesData<SupervisionOfficer>[];
+  officersForMetric: OfficerOutcomesData[];
 };
 
 /** Helper type to group information by metric and by caseload category */

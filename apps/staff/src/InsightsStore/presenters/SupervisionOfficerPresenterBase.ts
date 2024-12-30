@@ -37,15 +37,15 @@ import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import { ConfigLabels, OfficerOutcomesData } from "./types";
 import { getOfficerOutcomesData, isExcludedSupervisionOfficer } from "./utils";
 
-export abstract class SupervisionOfficerPresenterBase<
-    T extends SupervisionOfficer | ExcludedSupervisionOfficer,
-  >
+export abstract class SupervisionOfficerPresenterBase
   extends SupervisionBasePresenter
   implements Hydratable
 {
   // rather than dealing with a partially hydrated unit in the supervisionStore,
   // we will just put the API response here (when applicable)
-  protected fetchedOfficerRecord?: T;
+  protected fetchedOfficerRecord?:
+    | SupervisionOfficer
+    | ExcludedSupervisionOfficer;
 
   protected fetchedOfficerOutcomes?: SupervisionOfficerOutcomes;
 
@@ -57,7 +57,7 @@ export abstract class SupervisionOfficerPresenterBase<
   ) {
     super(supervisionStore);
     makeObservable<
-      SupervisionOfficerPresenterBase<T>,
+      SupervisionOfficerPresenterBase,
       | "fetchedOfficerRecord"
       | "expectMetricsPopulated"
       | "hydrator"
@@ -169,20 +169,18 @@ export abstract class SupervisionOfficerPresenterBase<
    * Augments officer data with all necessary relationships fully hydrated.
    * If this fails for any reason, the value will instead reflect the error that was encountered.
    */
-  private get officerOutcomesDataOrError(): OfficerOutcomesData<T> | Error {
+  private get officerOutcomesDataOrError(): OfficerOutcomesData | Error {
     try {
       if (!this.officerRecord) throw new Error("Missing officer record");
-      if (
-        !isExcludedSupervisionOfficer(this.officerRecord) &&
-        !this.officerOutcomes
-      )
-        throw new Error("Missing officer outcomes");
+      if (isExcludedSupervisionOfficer(this.officerRecord))
+        throw new Error("Outcomes data is not expected for excluded officers");
+      if (!this.officerOutcomes) throw new Error("Missing officer outcomes");
 
       return getOfficerOutcomesData(
         this.officerRecord,
         this.supervisionStore,
         this.officerOutcomes,
-      ) as OfficerOutcomesData<T>;
+      );
     } catch (e) {
       return castToError(e);
     }
@@ -193,10 +191,15 @@ export abstract class SupervisionOfficerPresenterBase<
   }
 
   /**
-   * Augments officer data with all necessary relationships fully hydrated.
+   * Augments officer and corresponding outcomes data with all necessary relationships
+   * fully hydrated. Returns undefined for excluded officers.
    */
-  get officerOutcomesData(): OfficerOutcomesData<T> | undefined {
-    if (this.officerOutcomesDataOrError instanceof Error) return;
+  get officerOutcomesData(): OfficerOutcomesData | undefined {
+    if (
+      isExcludedSupervisionOfficer(this.officerRecord) ||
+      this.officerOutcomesDataOrError instanceof Error
+    )
+      return;
     return this.officerOutcomesDataOrError;
   }
 
@@ -288,11 +291,17 @@ export abstract class SupervisionOfficerPresenterBase<
   }
 
   private expectOfficerOutcomesDataPopulated() {
+    // We don't expect outcomes data for excluded officers
+    if (isExcludedSupervisionOfficer(this.officerRecord)) return;
     if (this.officerOutcomesDataOrError instanceof Error)
       throw this.officerOutcomesDataOrError;
   }
 
   protected get isOfficerPopulated() {
+    return !!this.officerRecord;
+  }
+
+  protected get isOfficerOutcomesDataPopulated() {
     return !(this.officerOutcomesDataOrError instanceof Error);
   }
 

@@ -43,7 +43,7 @@ export const OpportunityPageWithPresenter = observer(
     presenter: SupervisionOpportunityPresenter;
   }) {
     const {
-      officerOutcomesData,
+      officerRecord,
       goToSupervisorInfo,
       labels,
       userCanAccessAllSupervisors,
@@ -55,8 +55,9 @@ export const OpportunityPageWithPresenter = observer(
 
     // If the presenter is hydrated and we're on an opportunity page, this stuff should
     // never be missing in practice.
+    // TODO(#6983): the opportunities and opportunitiesByType are missing initially.
     if (
-      !officerOutcomesData ||
+      !officerRecord ||
       !opportunityType ||
       !opportunities ||
       !opportunitiesByType
@@ -87,9 +88,9 @@ export const OpportunityPageWithPresenter = observer(
                   ]
                 : []),
               {
-                title: `${officerOutcomesData.displayName} Profile`,
+                title: `${officerRecord.displayName} Profile`,
                 url: insightsUrl("supervisionStaff", {
-                  officerPseudoId: officerOutcomesData.pseudonymizedId,
+                  officerPseudoId: officerRecord.pseudonymizedId,
                 }),
               },
             ]}

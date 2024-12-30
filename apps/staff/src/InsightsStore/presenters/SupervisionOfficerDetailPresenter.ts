@@ -18,7 +18,7 @@
 import { uniq } from "lodash";
 import { flowResult, makeObservable, override } from "mobx";
 
-import { MetricConfig, SupervisionOfficer } from "~datatypes";
+import { MetricConfig } from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import { InsightsAPI } from "../api/interface";
@@ -26,7 +26,7 @@ import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
 import { getLocationWithoutLabel } from "./utils";
 
-export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresenterBase<SupervisionOfficer> {
+export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresenterBase {
   constructor(
     supervisionStore: InsightsSupervisionStore,
     officerPseudoId: string,

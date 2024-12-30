@@ -18,7 +18,6 @@
 import { captureException } from "@sentry/react";
 import { makeAutoObservable, toJS } from "mobx";
 
-import { SupervisionOfficer } from "~datatypes";
 import { castToError, FlowMethod } from "~hydration-utils";
 
 import { MetricConfigWithBenchmark, OfficerOutcomesData } from "../types";
@@ -40,7 +39,7 @@ export class SwarmPresenterV2 {
   metricId: string;
   constructor(
     public readonly metric: MetricConfigWithBenchmark,
-    readonly outlierOfficersForMetric: OfficerOutcomesData<SupervisionOfficer>[],
+    readonly outlierOfficersForMetric: OfficerOutcomesData[],
   ) {
     this.metricId = metric.config.name;
     makeAutoObservable(this);

@@ -17,11 +17,7 @@
 
 import { flowResult, makeObservable, override } from "mobx";
 
-import {
-  ExcludedSupervisionOfficer,
-  OpportunityType,
-  SupervisionOfficer,
-} from "~datatypes";
+import { OpportunityType } from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
@@ -37,12 +33,8 @@ import {
   isExcludedSupervisionOfficer,
 } from "./utils";
 
-export class SupervisionOfficerPresenter<
-  T extends SupervisionOfficer | ExcludedSupervisionOfficer,
-> extends WithJusticeInvolvedPersonStore(
-  SupervisionOfficerPresenterBase<
-    SupervisionOfficer | ExcludedSupervisionOfficer
-  >,
+export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
+  SupervisionOfficerPresenterBase,
 ) {
   constructor(
     protected supervisionStore: InsightsSupervisionStore,
@@ -54,7 +46,7 @@ export class SupervisionOfficerPresenter<
     this.justiceInvolvedPersonsStore = justiceInvolvedPersonStore;
 
     makeObservable<
-      SupervisionOfficerPresenter<T>,
+      SupervisionOfficerPresenter,
       | "populateSupervisionOfficer"
       | "expectClientsPopulated"
       | "populateCaseload"

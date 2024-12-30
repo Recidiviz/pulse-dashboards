@@ -21,8 +21,6 @@ import { flowResult } from "mobx";
 import {
   ADVERSE_METRIC_IDS,
   CASELOAD_CATEGORY_IDS,
-  ExcludedSupervisionOfficer,
-  excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
   metricBenchmarksFixture,
   SupervisionOfficer,
@@ -37,14 +35,14 @@ import { InsightsStore } from "../../InsightsStore";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { getOfficerOutcomesData, isExcludedSupervisionOfficer } from "../utils";
 
-let officerData: SupervisionOfficer | ExcludedSupervisionOfficer;
+let includedInOutcomesOfficer: SupervisionOfficer;
 let supervisionStore: InsightsSupervisionStore;
 let officerOutcomes: SupervisionOfficerOutcomes;
 
 beforeEach(() => {
   vi.restoreAllMocks();
 
-  [, , officerData] = supervisionOfficerFixture;
+  [, , includedInOutcomesOfficer] = supervisionOfficerFixture;
   [, , officerOutcomes] = supervisionOfficerOutcomesFixture;
   supervisionStore = new InsightsSupervisionStore(
     new InsightsStore(new RootStore()),
@@ -52,25 +50,17 @@ beforeEach(() => {
   );
 });
 
-// TODO(#6452): This test will become obsolete once we fully rely on the outcomes API
-test("combines related data", async () => {
-  await flowResult(supervisionStore.populateMetricConfigs());
-  expect(
-    getOfficerOutcomesData(officerData, supervisionStore),
-  ).toMatchSnapshot();
-});
-
 test("combines related data from outcomes object", async () => {
   await flowResult(supervisionStore.populateMetricConfigs());
   const actual = getOfficerOutcomesData(
-    officerData,
+    includedInOutcomesOfficer,
     supervisionStore,
     officerOutcomes,
   );
 
   // Contains officer fields
   expect(actual).toEqual(
-    expect.objectContaining(omit(officerData, "outlierMetrics")),
+    expect.objectContaining(omit(includedInOutcomesOfficer, "outlierMetrics")),
   );
 
   // Contains outcomes fields
@@ -90,31 +80,16 @@ test("combines related data from outcomes object", async () => {
   expect(actual.caseloadCategoryName).toBeDefined();
 });
 
-// TODO(#6452): This test will become obsolete once we fully rely on the outcomes API
-test("getOfficerOutcomesData from outcomes object matches older implementation", async () => {
-  await flowResult(supervisionStore.populateMetricConfigs());
-  const fromOutcomesObject = getOfficerOutcomesData(
-    officerData,
-    supervisionStore,
-    officerOutcomes,
-  );
-  const fromOfficerObject = getOfficerOutcomesData(
-    officerData,
-    supervisionStore,
-  );
-  expect(fromOutcomesObject).toEqual(fromOfficerObject);
-});
-
 test("excludes current officer from the benchmark data points", async () => {
   // injecting a duplicate value into the benchmark data so we can verify it doesn't get clobbered;
   // this is really more relevant to the favorable metrics that tend to skew towards zero,
   // but it is equally valid for all metrics
   const benchmarks = cloneDeep(metricBenchmarksFixture);
-  const outlierMetric = officerData?.outlierMetrics?.[0];
+  const outlierMetric = includedInOutcomesOfficer.outlierMetrics?.[0];
   const matchingBenchmarkForOfficer = benchmarks.find(
     (b) =>
-      "caseloadCategory" in officerData &&
-      b.caseloadCategory === officerData?.caseloadCategory &&
+      "caseloadCategory" in includedInOutcomesOfficer &&
+      b.caseloadCategory === includedInOutcomesOfficer?.caseloadCategory &&
       b.metricId === outlierMetric?.metricId,
   );
 
@@ -144,7 +119,11 @@ test("excludes current officer from the benchmark data points", async () => {
       ?.latestPeriodValues.filter((d) => d.value === currentOutlierRate),
   ).toHaveLength(2);
 
-  const outlierData = getOfficerOutcomesData(officerData, supervisionStore);
+  const outlierData = getOfficerOutcomesData(
+    includedInOutcomesOfficer,
+    supervisionStore,
+    officerOutcomes,
+  );
 
   expect(
     outlierData?.outlierMetrics?.[0].benchmark.latestPeriodValues.filter(
@@ -154,7 +133,13 @@ test("excludes current officer from the benchmark data points", async () => {
 });
 
 test("requires a hydrated store", () => {
-  expect(() => getOfficerOutcomesData(officerData, supervisionStore)).toThrow();
+  expect(() =>
+    getOfficerOutcomesData(
+      includedInOutcomesOfficer,
+      supervisionStore,
+      officerOutcomes,
+    ),
+  ).toThrow();
 });
 
 test("throws on missing config", async () => {
@@ -168,7 +153,13 @@ test("throws on missing config", async () => {
 
   await flowResult(supervisionStore.populateMetricConfigs());
 
-  expect(() => getOfficerOutcomesData(officerData, supervisionStore)).toThrow(
+  expect(() =>
+    getOfficerOutcomesData(
+      includedInOutcomesOfficer,
+      supervisionStore,
+      officerOutcomes,
+    ),
+  ).toThrow(
     `Missing metric configuration for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
@@ -183,7 +174,13 @@ test("throws if benchmark data was not fully hydrated", async () => {
 
   await flowResult(supervisionStore.populateMetricConfigs());
 
-  expect(() => getOfficerOutcomesData(officerData, supervisionStore)).toThrow(
+  expect(() =>
+    getOfficerOutcomesData(
+      includedInOutcomesOfficer,
+      supervisionStore,
+      officerOutcomes,
+    ),
+  ).toThrow(
     `Missing metric benchmark data for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
@@ -201,7 +198,13 @@ test("throws on missing benchmark for required caseload type", async () => {
 
   await flowResult(supervisionStore.populateMetricConfigs());
 
-  expect(() => getOfficerOutcomesData(officerData, supervisionStore)).toThrow(
+  expect(() =>
+    getOfficerOutcomesData(
+      includedInOutcomesOfficer,
+      supervisionStore,
+      officerOutcomes,
+    ),
+  ).toThrow(
     `Missing metric benchmark data for caseload type ${CASELOAD_CATEGORY_IDS.enum.ALL} for ${ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants}`,
   );
 });
@@ -212,7 +215,7 @@ describe("when used in a context that expects excluded officers", () => {
   });
 
   it.each([
-    ["an officer with outlier data", [officerData]],
+    ["an officer with outlier data", [includedInOutcomesOfficer]],
     ["an empty object", {}],
     ["some object", { dog: "" }],
     ["an undefined", undefined],
@@ -224,20 +227,4 @@ describe("when used in a context that expects excluded officers", () => {
       expect(isExcludedSupervisionOfficer(data)).toBeFalse();
     },
   );
-
-  it("should not mistake a non-excluded officer for an excluded officer", () => {
-    const officerWithOutlierData = getOfficerOutcomesData(
-      officerData,
-      supervisionStore,
-    );
-    expect(isExcludedSupervisionOfficer(officerWithOutlierData)).toBeFalse();
-  });
-
-  it("should return an excluded officer without issue", () => {
-    const officerWithOutlierData = getOfficerOutcomesData(
-      excludedSupervisionOfficerFixture[0],
-      supervisionStore,
-    );
-    expect(isExcludedSupervisionOfficer(officerWithOutlierData)).toBeTrue();
-  });
 });

@@ -21,12 +21,9 @@ import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
-import { ExcludedSupervisionOfficer, SupervisionOfficer } from "~datatypes";
-
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
-import { OfficerOutcomesData } from "../../InsightsStore/presenters/types";
 import { toTitleCase } from "../../utils";
 import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsChartCard from "../InsightsChartCard";
@@ -54,9 +51,7 @@ const Wrapper = styled.div<{ isTablet: boolean }>`
 export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   presenter,
 }: {
-  presenter: SupervisionOfficerPresenter<
-    SupervisionOfficer | ExcludedSupervisionOfficer
-  >;
+  presenter: SupervisionOfficerPresenter;
 }) {
   const { isTablet } = useIsMobile(true);
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
@@ -171,9 +166,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
                 >
                   <InsightsSwarmPlotContainerV2
                     metric={metric}
-                    officersForMetric={[
-                      officerOutcomesData as OfficerOutcomesData<SupervisionOfficer>,
-                    ]}
+                    officersForMetric={[officerOutcomesData]}
                     isMinimized
                   />
                 </InsightsChartCard>

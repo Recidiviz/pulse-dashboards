@@ -17,7 +17,7 @@
 
 import { makeObservable } from "mobx";
 
-import { OpportunityType, SupervisionOfficer } from "~datatypes";
+import { OpportunityType } from "~datatypes";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
@@ -30,7 +30,7 @@ import { SupervisionOfficerPresenter } from "./SupervisionOfficerPresenter";
  * supervisor homepage opportunity drill-down view. At this time, there's not a need
  * to override the parent hydrator/hydration methods.
  */
-export class SupervisionOpportunityPresenter extends SupervisionOfficerPresenter<SupervisionOfficer> {
+export class SupervisionOpportunityPresenter extends SupervisionOfficerPresenter {
   constructor(
     supervisionStore: InsightsSupervisionStore,
     justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
