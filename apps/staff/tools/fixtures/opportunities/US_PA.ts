@@ -39,7 +39,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "UNREPORTED",
-          text: "Client has an unreported disposition or a delinquent adjudication on an offense that makes them ineligible per form 402",
+          text: "Client has an out of state charge, an unreported disposition or a delinquent adjudication on an offense that makes them ineligible per form 402",
         },
         {
           key: "DRUG",
@@ -105,7 +105,7 @@ export const mockApiOpportunityConfigurationResponse = {
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
-        "https://drive.google.com/file/d/1dBTArU-kQojSvqWZ_i080pDtXxZe70X6/view",
+        "https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub",
       nonOmsCriteria: [
         {
           text: "Has fulfilled treatment and special condition requirements",
@@ -140,8 +140,8 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Administrative supervision is a level of supervision that requires less contact than the minimum supervision level. It requires at least one face-to-face contact and one collateral contact per year. The official policy doc can be found [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view). On this page, you can review clients and complete the DC-P 402 form.",
-      submittedTabTitle: null,
+        "Administrative supervision is a level of supervision that requires less contact than the minimum supervision level. It requires at least one face-to-face contact and one collateral contact per year. The official policy doc can be found [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view?usp=sharing). On this page, you can review clients and complete the DC-P 402 form.",
+      submittedTabTitle: "Submitted - Pending Review",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
@@ -178,7 +178,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usPaMeetsSpecialCircumstancesCriteriaForTimeServed",
           text: "Currently serving a {{caseType}} and has served on supervision for {{yearsRequiredToServe}} years",
           tooltip:
-            "Other reentrant categories that can be considered for the SPC include:\n(a) those serving a life sentence...over a seven year period\n(b) a non-life sentenced reentrant (violent case)...over a five-year period\n(c) a non-life sentenced reentrant (non-violent case)...over a three-year period\n(d) special probation and special parole cases that have had one year or more of successful supervision",
+            "Other reentrant categories that can be considered for the SPC include:\n(a) those serving a life sentence...over a seven year period\n(b) a non-life sentenced reentrant (violent case)...over a five-year period\n(c) a non-life sentenced reentrant (non-violent case)...over a three-year period\n(d) special probation and special parole cases that have had one year or more of successful supervision. Note - violent cases are determined by the Violent/Sexual Crimes Chart",
         },
         {
           key: "usPaMeetsSpecialCircumstancesCriteriaForSanctions",
@@ -213,7 +213,7 @@ export const mockApiOpportunityConfigurationResponse = {
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
-        "https://drive.google.com/file/d/1dBTArU-kQojSvqWZ_i080pDtXxZe70X6/view",
+        "https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub",
       nonOmsCriteria: [
         {
           text: "Has fulfilled treatment and special condition requirements",
@@ -233,7 +233,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "Special circumstances supervision allows reentrants who are not eligible for traditional administrative supervision to be supervised at a lower level of supervision. It is typically used for reentrants who have extenuating circumstances that reduce the risk of re-offending or reentrants who have made satisfactory adjustments on supervision over a period of time. The official policy doc can be found [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view). On this page, you can review clients who may be eligible for special circumstances supervision. ",
-      submittedTabTitle: null,
+      submittedTabTitle: "Submitted-Pending Review",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
