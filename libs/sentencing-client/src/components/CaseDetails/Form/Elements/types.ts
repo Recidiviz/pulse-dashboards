@@ -49,6 +49,7 @@ export type TextInputProps = {
   maxLength?: number;
   autoFocus?: boolean;
   styles?: React.CSSProperties;
+  hasError?: boolean;
 };
 
 export type TextAreaProps = {

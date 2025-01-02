@@ -34,4 +34,5 @@ export const customPalette = {
     grey3: "rgba(0, 17, 51, 1)",
   },
   teal: "rgba(204, 242, 235, 1)",
+  lightred: "rgba(180, 45, 45, 0.08)",
 };

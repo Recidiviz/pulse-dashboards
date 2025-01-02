@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import ErrorIcon from "../../../assets/error-icon.svg?react";
 import * as Styled from "../../CaseDetails.styles";
 import { TextInputProps } from "./types";
 
@@ -24,6 +25,7 @@ export function TextInput({
   onChange,
   placeholder,
   isDisabled = false,
+  hasError,
   errorMessage,
   maxLength,
   autoFocus = false,
@@ -39,9 +41,11 @@ export function TextInput({
         disabled={isDisabled}
         maxLength={maxLength}
         autoFocus={autoFocus}
+        hasError={hasError}
       />
-      {errorMessage && (
+      {hasError && errorMessage && (
         <Styled.ErrorMessage className="error-message">
+          <ErrorIcon />
           {errorMessage}
         </Styled.ErrorMessage>
       )}

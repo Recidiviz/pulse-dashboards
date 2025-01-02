@@ -117,13 +117,9 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
         value={inputValue ?? ""}
         onChange={updateLsirScore}
         isDisabled={caseAttributes.isLsirScoreLocked}
+        hasError={form.errors[LSIR_SCORE_KEY]?.inputError}
+        errorMessage="Please enter a number between 0 and 54."
       />
-
-      {form.errors[LSIR_SCORE_KEY]?.inputError && (
-        <Styled.ErrorMessage>
-          Please enter a number between 0 and 54.
-        </Styled.ErrorMessage>
-      )}
 
       {!caseAttributes.isLsirScoreLocked && (
         <Styled.InputDescription>

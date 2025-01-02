@@ -492,6 +492,9 @@ export const ActionButton = styled.button<{
 
   &:disabled {
     opacity: 0.6;
+    border: 1px solid ${palette.slate30};
+    background-color: transparent;
+    color: ${palette.slate80};
   }
 `;
 
@@ -1025,7 +1028,7 @@ export const InputWrapper = styled.div`
   margin-bottom: 24px;
 `;
 
-export const Input = styled.input`
+export const Input = styled.input<{ hasError?: boolean }>`
   padding: 12px 16px;
   border: 1px solid ${palette.slate20};
   border-radius: 8px;
@@ -1049,6 +1052,13 @@ export const Input = styled.input`
   &:disabled {
     color: ${palette.slate60};
   }
+
+  ${({ hasError }) =>
+    hasError &&
+    `
+      background-color: ${customPalette.lightred};
+      border-color: ${palette.signal.error};
+    `}
 `;
 
 export const ViolentOrSexOffenseCheckboxContainer = styled.div`
@@ -1113,8 +1123,10 @@ export const InputDescription = styled.div`
 `;
 
 export const ErrorMessage = styled.div`
-  margin-top: 4px;
+  display: flex;
+  margin-top: 6px;
   color: ${palette.signal.error};
+  gap: 8px;
 `;
 
 export const DropdownHeader = styled.div`
@@ -1234,14 +1246,19 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
       borderColor: palette.pine4,
     },
   }),
-  option: (styles, { isFocused }) => ({
+  option: (styles, { isFocused, isSelected }) => ({
     ...styles,
     color: palette.pine3,
-    backgroundColor: isFocused ? palette.slate10 : undefined,
+    backgroundColor: isFocused
+      ? palette.slate10
+      : isSelected
+        ? customPalette.green.light3
+        : undefined,
     ":active": {
       backgroundColor: palette.slate10,
     },
   }),
+  singleValue: (styles) => ({ ...styles, color: palette.pine3 }),
 };
 
 export const multiDropdownStyles: StylesConfig<SelectOption, true> = {
