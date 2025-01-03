@@ -18,56 +18,25 @@
 import { faker } from "@faker-js/faker";
 import { groupBy, pick } from "lodash";
 
-import { FAVORABLE_METRIC_IDS } from "../../../../../../metrics/utils/constants";
 import { SupervisionOfficerSupervisor } from "../../SupervisionOfficerSupervisor/schema";
 import { rawSupervisionOfficerFixture } from "../fixture";
 import { RawSupervisionOfficer } from "../schema";
 
 const { helpers } = faker;
 
-export const SUPERVISION_OFFICER_METRIC_PROPERTIES = [
-  "outlierMetrics",
-  "avgDailyPopulation",
-  "caseloadCategory",
-  "topXPctMetrics",
-] as const;
-
-export type RawSupervisionOfficerMetricAndIdInfo = Pick<
+export type RawSupervisionOfficerIdInfoAndAvgDailyPop = Pick<
   RawSupervisionOfficer,
-  | "externalId"
-  | "pseudonymizedId"
-  | (typeof SUPERVISION_OFFICER_METRIC_PROPERTIES)[number]
+  "externalId" | "pseudonymizedId" | "avgDailyPopulation"
 >;
 
-export const rawSupervisionOfficerMetricFixture: RawSupervisionOfficerMetricAndIdInfo[] =
+export const rawSupervisionOfficerMetricFixture: RawSupervisionOfficerIdInfoAndAvgDailyPop[] =
   rawSupervisionOfficerFixture.map((o) =>
-    pick(o, [
-      "externalId",
-      "pseudonymizedId",
-      ...SUPERVISION_OFFICER_METRIC_PROPERTIES,
-    ]),
+    pick(o, ["externalId", "pseudonymizedId", "avgDailyPopulation"]),
   );
 
-export const randRawSupervisionOfficerMetricFixture = (
-  hasOutliers: boolean,
-  stateCode: string,
-) => {
-  const metricsInfo = !hasOutliers
-    ? rawSupervisionOfficerMetricFixture.filter((o) => !o.outlierMetrics.length)
-    : rawSupervisionOfficerMetricFixture;
-
-  const selectedMetrics =
-    stateCode !== "US_CA"
-      ? metricsInfo.filter(
-          (o) =>
-            // Non-US_CA states have no favorable treatment_starts metrics
-            !o.outlierMetrics.length ||
-            o.outlierMetrics.some(
-              (m) => m.metricId !== FAVORABLE_METRIC_IDS.enum.treatment_starts,
-            ),
-        )
-      : metricsInfo;
-  return faker.helpers.arrayElement(selectedMetrics);
+export const randRawSupervisionOfficerMetricFixture = () => {
+  const metricsInfo = rawSupervisionOfficerMetricFixture;
+  return faker.helpers.arrayElement(metricsInfo);
 };
 
 export const randDistrictAndSupervisors = (

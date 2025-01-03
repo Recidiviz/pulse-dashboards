@@ -21,7 +21,11 @@ import { configure } from "mobx";
 import { ReactNode } from "react";
 import { BrowserRouter } from "react-router-dom";
 
-import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
+import {
+  InsightsConfigFixture,
+  supervisionOfficerFixture,
+  supervisionOfficerOutcomesFixture,
+} from "~datatypes";
 
 import {
   useFeatureVariants,
@@ -46,7 +50,8 @@ const useRootStoreMock = vi.mocked(useRootStore);
 const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
 const supervisorPseudoId = "hashed-agonzalez123";
 const officerPseudoId = supervisionOfficerFixture[0].pseudonymizedId;
-const testMetric = supervisionOfficerFixture[0].outlierMetrics[0].metricId;
+const testMetric =
+  supervisionOfficerOutcomesFixture[0].outlierMetrics[0].metricId;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });

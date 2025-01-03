@@ -15,11 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rawSupervisionOfficerMetricOutlierFixtures } from "../../../../../metrics/SupervisionOfficerMetricOutlier/fixture";
-import {
-  CASELOAD_CATEGORY_IDS,
-  FAVORABLE_METRIC_IDS,
-} from "../../../../../metrics/utils/constants";
 import { usIdSupervisionStaffFixtures } from "../../Workflows/fixture";
 import { supervisionOfficerSupervisorsFixture } from "../SupervisionOfficerSupervisor/fixture";
 import {
@@ -37,20 +32,10 @@ export const rawSupervisionOfficerFixture = [
       givenNames: usIdSupervisionStaffFixtures[0].givenNames,
       surname: usIdSupervisionStaffFixtures[0].surname,
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
     supervisorExternalIds: [
       supervisionOfficerSupervisorsFixture[0].externalId,
       supervisionOfficerSupervisorsFixture[1].externalId,
     ],
-    outlierMetrics: [
-      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-        .SEX_OFFENSE[0],
-      rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts
-        .SEX_OFFENSE[0],
-      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts
-        .SEX_OFFENSE[0],
-    ],
-    topXPctMetrics: [],
     avgDailyPopulation: 54.321,
     zeroGrantOpportunities: ["LSU", "pastFTRD"],
     includeInOutcomes: true,
@@ -62,12 +47,7 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Jack",
       surname: "Hernandez",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
-    outlierMetrics: [],
-    topXPctMetrics: [
-      { metricId: FAVORABLE_METRIC_IDS.enum.treatment_starts, topXPct: 10 },
-    ],
     avgDailyPopulation: 12.345,
     includeInOutcomes: true,
   },
@@ -78,14 +58,7 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Jason",
       surname: "Nelson",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
-    outlierMetrics: [
-      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-        .ALL[1],
-      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
-    ],
-    topXPctMetrics: [],
     avgDailyPopulation: 32.1,
     includeInOutcomes: true,
   },
@@ -97,14 +70,7 @@ export const rawSupervisionOfficerFixture = [
       middleNames: "Mark",
       surname: "Campbell",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[1].externalId],
-    outlierMetrics: [
-      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-        .ALL[0],
-      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
-    ],
-    topXPctMetrics: [],
     avgDailyPopulation: 43.21,
     includeInOutcomes: true,
   },
@@ -115,10 +81,7 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Casey",
       surname: "Ramirez",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
-    outlierMetrics: [],
-    topXPctMetrics: [],
     avgDailyPopulation: 5.43,
     includeInOutcomes: true,
   },
@@ -129,12 +92,7 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Elizabeth",
       surname: "Ramirez",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
-    outlierMetrics: [
-      rawSupervisionOfficerMetricOutlierFixtures.treatment_starts.ALL[0],
-    ],
-    topXPctMetrics: [],
     avgDailyPopulation: 43.21,
     includeInOutcomes: true,
   },
@@ -145,14 +103,7 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Harriet",
       surname: "Boyd",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.ALL,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
-    outlierMetrics: [
-      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-        .ALL[1],
-      rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts.ALL[0],
-    ],
-    topXPctMetrics: [],
     avgDailyPopulation: 43.21,
     includeInOutcomes: true,
   },
@@ -163,15 +114,7 @@ export const rawSupervisionOfficerFixture = [
       givenNames: "Stephen",
       surname: "Mann",
     },
-    caseloadCategory: CASELOAD_CATEGORY_IDS.enum.NOT_SEX_OFFENSE,
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
-    outlierMetrics: [
-      rawSupervisionOfficerMetricOutlierFixtures.absconsions_bench_warrants
-        .NOT_SEX_OFFENSE[0],
-      rawSupervisionOfficerMetricOutlierFixtures.incarceration_starts
-        .NOT_SEX_OFFENSE[0],
-    ],
-    topXPctMetrics: [],
     avgDailyPopulation: 43.21,
     includeInOutcomes: true,
   },

@@ -23,24 +23,3 @@ test("transformations", () => {
     expect(supervisionOfficerSchema.parse(so)).toMatchSnapshot(),
   );
 });
-
-test("missing caseload category fails parsing", () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { caseloadCategory, ...rawFixtureNoCaseloadCategory } =
-    rawSupervisionOfficerFixture[0];
-
-  expect(() => supervisionOfficerSchema.parse(rawFixtureNoCaseloadCategory))
-    .toThrowErrorMatchingInlineSnapshot(`
-    [ZodError: [
-      {
-        "code": "invalid_type",
-        "expected": "string",
-        "received": "undefined",
-        "path": [
-          "caseloadCategory"
-        ],
-        "message": "Required"
-      }
-    ]]
-  `);
-});

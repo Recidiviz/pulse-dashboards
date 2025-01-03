@@ -26,6 +26,7 @@ import {
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
   SupervisionOfficerMetricOutlier,
+  SupervisionOfficerOutcomes,
   VitalsMetricForOfficer,
 } from "~datatypes";
 
@@ -33,10 +34,14 @@ import {
  * This type represents the combined officer and corresponding outcomes data, where all
  * necessary related objects are guaranteed to exist.
  */
-export type OfficerOutcomesData = Omit<SupervisionOfficer, "outlierMetrics"> & {
-  outlierMetrics: MetricWithConfig[];
-  caseloadCategoryName?: string;
-};
+export type OfficerOutcomesData = Omit<
+  SupervisionOfficerOutcomes,
+  "outlierMetrics"
+> &
+  SupervisionOfficer & {
+    outlierMetrics: MetricWithConfig[];
+    caseloadCategoryName?: string;
+  };
 
 export type MetricWithConfig = SupervisionOfficerMetricOutlier & {
   currentPeriodData: ValuesType<

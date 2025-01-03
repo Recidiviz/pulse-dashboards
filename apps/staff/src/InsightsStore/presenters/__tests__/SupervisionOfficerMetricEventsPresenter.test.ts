@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
+import {
+  InsightsConfigFixture,
+  supervisionOfficerFixture,
+  supervisionOfficerOutcomesFixture,
+} from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
@@ -25,8 +29,9 @@ import { SupervisionOfficerMetricEventsPresenter } from "../SupervisionOfficerMe
 let store: InsightsSupervisionStore;
 let presenter: SupervisionOfficerMetricEventsPresenter;
 const testOfficer = supervisionOfficerFixture[2];
+const testOutcomes = supervisionOfficerOutcomesFixture[2];
 const testOfficerId = testOfficer.externalId;
-const testMetricId = testOfficer.outlierMetrics[0].metricId;
+const testMetricId = testOutcomes.outlierMetrics[0].metricId;
 
 beforeEach(() => {
   store = new InsightsSupervisionStore(

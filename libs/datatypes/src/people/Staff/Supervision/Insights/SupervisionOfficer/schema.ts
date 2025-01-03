@@ -17,7 +17,6 @@
 
 import { z } from "zod";
 
-import { supervisionOfficerMetricOutlierSchema } from "../../../../../metrics/SupervisionOfficerMetricOutlier/schema";
 import { addDisplayName } from "../../../../../people/utils/addDisplayName";
 import { fullNameSchema } from "../../../../../people/utils/fullNameSchema";
 
@@ -28,32 +27,20 @@ const supervisionOfficerBaseSchema = z.object({
   supervisorExternalIds: z.array(z.string()),
   // TODO #6793 Make includeInOutcomes a required field once endpoint response has this field
   includeInOutcomes: z.boolean().optional(),
-});
-
-const withOutlierDataSchema = z.object({
-  caseloadCategory: z.string(),
-  outlierMetrics: z.array(supervisionOfficerMetricOutlierSchema),
-  topXPctMetrics: z.array(
-    z.object({
-      metricId: z.string(),
-      topXPct: z.number(),
-    }),
-  ),
-  avgDailyPopulation: z
-    .number()
-    .transform((avgDailyPopulation) => Math.round(avgDailyPopulation)),
   zeroGrantOpportunities: z.array(z.string()).optional(),
 });
-export type WithOutlierData = z.infer<typeof withOutlierDataSchema>;
 
 export const supervisionOfficerSchema = supervisionOfficerBaseSchema
-  .transform(addDisplayName)
-  .and(withOutlierDataSchema);
+  .extend({
+    avgDailyPopulation: z
+      .number()
+      .transform((avgDailyPopulation) => Math.round(avgDailyPopulation)),
+  })
+  .transform(addDisplayName);
 
-export const excludedSupervisionOfficerSchema = supervisionOfficerBaseSchema
-  .transform(addDisplayName)
-  .and(withOutlierDataSchema.partial());
-// TODO: Remove once excludedSupervisionOfficerSchema and supervisionOfficerSchema are merged
+// TODO(#6453): Remove once excludedSupervisionOfficerSchema and supervisionOfficerSchema are merged
+export const excludedSupervisionOfficerSchema =
+  supervisionOfficerBaseSchema.transform(addDisplayName);
 
 export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
 

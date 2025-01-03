@@ -20,6 +20,7 @@ import { configure, flowResult } from "mobx";
 import {
   InsightsConfigFixture,
   supervisionOfficerFixture,
+  supervisionOfficerOutcomesFixture,
   supervisionOfficerSupervisorsFixture,
 } from "~datatypes";
 import { unpackAggregatedErrors } from "~hydration-utils";
@@ -67,7 +68,8 @@ afterEach(() => {
 });
 
 const testOfficer = supervisionOfficerFixture[0];
-const testMetric = testOfficer.outlierMetrics[0];
+const testOutcomes = supervisionOfficerOutcomesFixture[0];
+const testMetric = testOutcomes.outlierMetrics[0];
 const testSupervisor = supervisionOfficerSupervisorsFixture[0];
 let presenter: SupervisionOfficerDetailPresenter;
 

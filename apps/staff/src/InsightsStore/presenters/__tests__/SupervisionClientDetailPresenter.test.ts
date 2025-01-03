@@ -22,6 +22,7 @@ import {
   InsightsConfigFixture,
   supervisionOfficerFixture,
   supervisionOfficerMetricEventFixture,
+  supervisionOfficerOutcomesFixture,
 } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
@@ -67,7 +68,8 @@ afterEach(() => {
 });
 
 const testOfficer = supervisionOfficerFixture[0];
-const testMetric = testOfficer.outlierMetrics[0];
+const testOutcomes = supervisionOfficerOutcomesFixture[0];
+const testMetric = testOutcomes.outlierMetrics[0];
 let presenter: SupervisionClientDetailPresenter;
 
 describe("with client data already hydrated", () => {

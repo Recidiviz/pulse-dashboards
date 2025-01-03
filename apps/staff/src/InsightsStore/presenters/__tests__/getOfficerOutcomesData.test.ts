@@ -85,12 +85,11 @@ test("excludes current officer from the benchmark data points", async () => {
   // this is really more relevant to the favorable metrics that tend to skew towards zero,
   // but it is equally valid for all metrics
   const benchmarks = cloneDeep(metricBenchmarksFixture);
-  const outlierMetric = includedInOutcomesOfficer.outlierMetrics?.[0];
+  const outlierMetric = officerOutcomes.outlierMetrics[0];
   const matchingBenchmarkForOfficer = benchmarks.find(
     (b) =>
-      "caseloadCategory" in includedInOutcomesOfficer &&
-      b.caseloadCategory === includedInOutcomesOfficer?.caseloadCategory &&
-      b.metricId === outlierMetric?.metricId,
+      b.caseloadCategory === officerOutcomes.caseloadCategory &&
+      b.metricId === outlierMetric.metricId,
   );
 
   if (!matchingBenchmarkForOfficer)

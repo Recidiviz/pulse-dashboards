@@ -626,7 +626,8 @@ test("look up supervisor by pseudonymized ID", async () => {
 
 test("hydrate supervisionOfficerMetricEvents", async () => {
   const testOfficerPseudoId = supervisionOfficerFixture[1].pseudonymizedId;
-  const testMetricId = supervisionOfficerFixture[2].outlierMetrics[0].metricId;
+  const testMetricId =
+    supervisionOfficerOutcomesFixture[2].outlierMetrics[0].metricId;
 
   function getTestEvents() {
     return store.metricEventsByOfficerPseudoIdAndMetricId

@@ -17,7 +17,7 @@
 
 import { faker } from "@faker-js/faker";
 import { each, makeFactory } from "factory.ts";
-import { difference, pick } from "lodash";
+import { omit } from "lodash";
 
 import { FIXTURE_SEED_DEFAULT } from "~fixture-generator";
 
@@ -27,8 +27,7 @@ import { RawSupervisionOfficer } from "../schema";
 import {
   randDistrictAndSupervisors,
   randRawSupervisionOfficerMetricFixture,
-  RawSupervisionOfficerMetricAndIdInfo,
-  SUPERVISION_OFFICER_METRIC_PROPERTIES,
+  RawSupervisionOfficerIdInfoAndAvgDailyPop,
 } from "./factories";
 
 const { person, helpers } = faker;
@@ -38,14 +37,12 @@ faker.seed(FIXTURE_SEED_DEFAULT);
 // NOTE: TenantIds do not exist in the datatypes.
 export const rawSupervisionOfficerFactory = (
   s: SupervisionOfficerSupervisor[],
-  stateCode = "US_XX",
 ) =>
   makeFactory<RawSupervisionOfficer>(() => {
     const { supervisors } = randDistrictAndSupervisors(helpers.shuffle(s));
 
-    const hasOutliers = supervisors.some((s) => s.hasOutliers);
-    const metricInfo: RawSupervisionOfficerMetricAndIdInfo =
-      randRawSupervisionOfficerMetricFixture(hasOutliers, stateCode);
+    const metricInfo: RawSupervisionOfficerIdInfoAndAvgDailyPop =
+      randRawSupervisionOfficerMetricFixture();
 
     return {
       fullName: each(() => fullNameFactory(person.sexType()).build()),
@@ -56,12 +53,8 @@ export const rawSupervisionOfficerFactory = (
 
 export const rawExcludedSupervisionOfficerFactory = (
   s: SupervisionOfficerSupervisor[],
-  stateCode = "US_XX",
 ) =>
   makeFactory(() => {
-    const officer = rawSupervisionOfficerFactory(s, stateCode).build();
-    return pick(
-      officer,
-      difference(Object.keys(officer), SUPERVISION_OFFICER_METRIC_PROPERTIES),
-    );
+    const officer = rawSupervisionOfficerFactory(s).build();
+    return omit(officer, "avgDailyPopulation");
   });
