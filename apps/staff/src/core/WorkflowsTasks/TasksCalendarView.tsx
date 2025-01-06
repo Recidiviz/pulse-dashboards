@@ -59,6 +59,7 @@ export const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
           allowMultipleExpanded
           allowZeroExpanded
           preExpanded={Object.keys(groupedTasks).map((_, index) => `${index}`)}
+          key={store.selectedCategory}
         >
           {Object.entries(groupedTasks).map(([day, tasks], index) => (
             <TaskListGroup

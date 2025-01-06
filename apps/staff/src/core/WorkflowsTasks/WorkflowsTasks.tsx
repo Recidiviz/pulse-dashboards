@@ -116,13 +116,16 @@ const AllNeedsView: React.FC<NeedsViewProps> = observer(
   },
 );
 
-const LIST_VIEWS_BY_CATEGORY = {
-  DUE_THIS_MONTH: <AllTasksView />,
-  assessment: <TasksCalendarView type="assessment" />,
-  contact: <TasksCalendarView type="contact" />,
-  homeVisit: <TasksCalendarView type="homeVisit" />,
-  employment: <TasksCalendarView type="employment" />,
-} as Record<SupervisionTaskCategory, JSX.Element>;
+function getViewElement(category: SupervisionTaskCategory) {
+  switch (category) {
+    case "employmentNeed":
+      return null;
+    case "DUE_THIS_MONTH":
+      return <AllTasksView />;
+    default:
+      return <TasksCalendarView type={category} />;
+  }
+}
 
 const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
   const {
@@ -193,7 +196,7 @@ const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
               })}
             </TaskCategories>
 
-            {LIST_VIEWS_BY_CATEGORY[store.selectedCategory]}
+            {getViewElement(store.selectedCategory)}
             <TaskPreviewModal />
           </>
         }
