@@ -15,37 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, spacing, zindex } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import logoUrl from "../../assets/images/sunrise.svg";
 import { PageContainer, UnpaddedPageContainer } from "../BaseLayout/BaseLayout";
-import { Wordmark } from "../Wordmark/Wordmark";
 import { AccountMenu } from "./AccountMenu";
 
 const HeaderWrapper = styled(UnpaddedPageContainer)`
+  background: ${palette.white};
   border-bottom: 1px solid ${palette.slate20};
+  position: sticky;
+  top: 0;
+  z-index: ${zindex.modal.backdrop - 1};
 `;
+
+const LogoLink = styled(Link)``;
 
 const Header = styled(PageContainer).attrs({ as: "header" })`
-  align-items: flex-start;
-  display: flex;
-  gap: ${rem(spacing.md)};
-  padding-bottom: ${rem(spacing.md)};
-  padding-top: ${rem(spacing.md)};
-`;
-
-const HeaderContent = styled.div`
   align-items: center;
   display: flex;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-  gap: ${rem(spacing.md)};
+  gap: ${rem(spacing.lg)};
+  justify-content: stretch;
+  min-height: ${rem(64)};
 
-  > a {
+  ${LogoLink} {
     margin-right: auto;
   }
 `;
@@ -55,11 +53,9 @@ export const PageHeader: FC<{ children: ReactNode }> = observer(
     return (
       <HeaderWrapper>
         <Header>
-          <HeaderContent>
-            <Link to="/">
-              <Wordmark />
-            </Link>
-          </HeaderContent>
+          <LogoLink to="/">
+            <img src={logoUrl} alt="Opportunities" width="44" height="24" />
+          </LogoLink>
           {children}
           <AccountMenu />
         </Header>

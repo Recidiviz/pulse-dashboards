@@ -93,6 +93,6 @@ export class OpportunityEligibilityPresenter {
   }
 
   get htmlTitle() {
-    return this.config.htmlTitle;
+    return this.config.name;
   }
 }

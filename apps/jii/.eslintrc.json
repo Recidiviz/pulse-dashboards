@@ -25,6 +25,17 @@
             "name": "react-router-dom",
             "importNames": ["useParams"],
             "message": "Please import useTypedParams from react-router-typesafe-routes/dom instead"
+          },
+          {
+            "name": "@recidiviz/design-system",
+            "importNames": [
+              "Dropdown",
+              "DropdownMenu",
+              "DropdownMenuLabel",
+              "DropdownMenuItem",
+              "DropdownToggle"
+            ],
+            "message": "Please use components from src/components/Dropdown instead"
           }
         ]
       }

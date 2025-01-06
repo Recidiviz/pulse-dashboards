@@ -26,7 +26,7 @@ import summaryBody from "./summaryBody.md?raw";
 export const config: OpportunityConfig = {
   urlSlug: "sccp",
   firestoreCollection: "US_ME-SCCPReferrals",
-  htmlTitle: "Supervised Community Confinement Program",
+  name: "Supervised Community Confinement Program",
   headline: `{{#if eligibilityData}}
         {{#if resident.personName.givenNames}}{{ resident.personName.givenNames }}, you{{ else }}You{{/if}} 
         could be eligible to apply for the Supervised Community Confinement Program

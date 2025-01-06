@@ -47,14 +47,14 @@ import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
 import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
-import { ResidentLayoutRoute } from "../ResidentLayoutRoute/ResidentLayoutRoute";
+import { ResidentsLayoutRoute } from "../ResidentsLayoutRoute/ResidentsLayoutRoute";
 import { SingleResidentHydrator } from "../SingleResidentHydrator/SingleResidentHydrator";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
 const StyledApp = styled.div`
   /* these properties prevent full-bleed sections from messing up the page width */
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow-x: clip;
 `;
 
 const GlobalStyle = createGlobalStyle`
@@ -84,11 +84,11 @@ export function App() {
               <Route path={routes.State.path}>
                 <Route index element={<PageState />} />
                 <Route element={<PageResidentsRoot />}>
-                  <Route
-                    path={routes.State.Resident.path}
-                    element={<SingleResidentHydrator />}
-                  >
-                    <Route element={<ResidentLayoutRoute />}>
+                  <Route element={<ResidentsLayoutRoute />}>
+                    <Route
+                      path={routes.State.Resident.path}
+                      element={<SingleResidentHydrator />}
+                    >
                       <Route path={routes.State.Resident.Eligibility.path}>
                         <Route index element={<PageEligibilityHome />} />
                         <Route
@@ -111,8 +111,6 @@ export function App() {
                         </Route>
                       </Route>
                     </Route>
-                  </Route>
-                  <Route element={<GenericLayoutRoute />}>
                     <Route
                       path={routes.State.Search.path}
                       element={<PageSearch />}

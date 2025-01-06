@@ -26,6 +26,7 @@ interface AvatarProps {
   size?: number;
   splitName?: boolean;
   square?: boolean;
+  solidColor?: string;
 }
 
 interface AvatarElementProps {
@@ -77,20 +78,27 @@ export const PersonInitialsAvatar: React.FC<AvatarProps> = ({
   size = 40,
   splitName = true,
   square = false,
+  solidColor,
 }) => {
   const initials = formatAvatarText(name, splitName);
 
   return (
-    <AvatarElement className="UserAvatar" size={size}>
-      <Avatar
-        variant="marble"
-        size={size}
-        name={initials}
-        colors={palette.data.defaultOrder}
-        square={square}
-        // @ts-expect-error the title prop is missing from the package's types
-        title // required for axe compliance
-      />
+    <AvatarElement
+      className="UserAvatar"
+      size={size}
+      style={{ backgroundColor: solidColor }}
+    >
+      {!solidColor && (
+        <Avatar
+          variant="marble"
+          size={size}
+          name={initials}
+          colors={palette.data.defaultOrder}
+          square={square}
+          // @ts-expect-error the title prop is missing from the package's types
+          title // required for axe compliance
+        />
+      )}
       <AvatarInitials className="fs-exclude" size={size}>
         {initials}
       </AvatarInitials>

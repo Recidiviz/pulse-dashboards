@@ -15,16 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+
+import { PersonInitialsAvatar } from "~ui";
+
 import {
   Dropdown,
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
-} from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-
-import { PersonInitialsAvatar } from "~ui";
-
+} from "../Dropdown/Dropdown";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const AccountMenu = observer(function AccountMenu() {
@@ -35,11 +36,12 @@ export const AccountMenu = observer(function AccountMenu() {
 
   return (
     <Dropdown>
-      <DropdownToggle kind="link">
+      <DropdownToggle kind="borderless">
         <PersonInitialsAvatar
           name={userStore.user.name ?? "User"}
           size={32}
           square
+          solidColor={palette.pine4}
         />
       </DropdownToggle>
       <DropdownMenu alignment="right">

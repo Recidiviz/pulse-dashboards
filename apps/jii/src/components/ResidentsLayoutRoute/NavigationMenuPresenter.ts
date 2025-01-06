@@ -22,36 +22,60 @@ import { UserStore } from "../../datastores/UserStore";
 import { State } from "../../routes/routes";
 import { RouteParams } from "../../routes/utils";
 
+export type LinkProps = {
+  children: string;
+  to: string;
+};
+
 export class NavigationMenuPresenter {
   constructor(
     private config: ResidentsConfig,
     private userStore: UserStore,
-    private residentRouteParams: RouteParams<typeof State.Resident>,
+    private routeParams:
+      | RouteParams<typeof State.Resident>
+      | RouteParams<typeof State>,
   ) {
     makeAutoObservable(this);
   }
 
-  get links() {
-    const links = [{ text: "Home", url: "/" }];
+  get homeLink(): LinkProps | undefined {
+    if (!("personPseudoId" in this.routeParams)) return;
 
-    if (this.userStore.hasPermission("enhanced")) {
-      links.push({
-        text: "Search for Residents",
-        url: State.Search.buildPath({
-          stateSlug: this.residentRouteParams.stateSlug,
-        }),
-      });
-    }
+    return {
+      children: "Home",
+      to: State.Resident.buildPath(this.routeParams),
+    };
+  }
+
+  get searchLink(): LinkProps | undefined {
+    if (!this.userStore.hasPermission("enhanced")) return;
+
+    return {
+      children: "Search",
+      to: State.Search.buildPath({
+        stateSlug: this.routeParams.stateSlug,
+      }),
+    };
+  }
+
+  get opportunityLinks(): Array<LinkProps> | undefined {
+    const { routeParams } = this;
+
+    if (!("personPseudoId" in routeParams)) return;
+
+    const links = [];
 
     links.push(
       ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
-        text: c.shortName,
-        url: State.Resident.Eligibility.Opportunity.buildPath({
-          ...this.residentRouteParams,
+        children: c.name,
+        to: State.Resident.Eligibility.Opportunity.buildPath({
+          ...routeParams,
           opportunitySlug: c.urlSlug,
         }),
       })),
     );
+
+    if (!links.length) return;
 
     return links;
   }

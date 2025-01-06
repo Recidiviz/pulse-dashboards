@@ -318,9 +318,7 @@ describe("protected routes", () => {
     });
 
     it("should set page title", () => {
-      expect(window.document.title).toBe(
-        `${sccpConfig.htmlTitle} – Opportunities`,
-      );
+      expect(window.document.title).toBe(`${sccpConfig.name} – Opportunities`);
     });
   });
 

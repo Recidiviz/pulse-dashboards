@@ -16,25 +16,48 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { Outlet } from "react-router-dom";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+// we are using useParams to make a custom hook in this file
+// eslint-disable-next-line no-restricted-imports
+import { Outlet, useParams } from "react-router-dom";
 
 import { State } from "../../routes/routes";
+import { RouteParams } from "../../routes/utils";
 import { PageLayout } from "../PageLayout/PageLayout";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { NavigationMenu } from "./NavigationMenu";
 import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 
 /**
+ * Can be called under a state route or a single resident route,
+ * and will return the applicable typed URL params accordingly.
+ */
+function useParamsResidentOptional() {
+  const currentRouteParams = useParams();
+
+  let typedParams:
+    | RouteParams<typeof State.Resident>
+    | RouteParams<typeof State>;
+  try {
+    typedParams = State.Resident.getTypedParams(currentRouteParams);
+  } catch {
+    typedParams = State.getTypedParams(currentRouteParams);
+  }
+
+  return typedParams;
+}
+
+/**
  * Page layout that renders nested routes with resident navigation in header bar
  */
-export const ResidentLayoutRoute = observer(function ResidentLayoutRoute() {
+export const ResidentsLayoutRoute = observer(function ResidentsLayoutRoute() {
   const { residentsStore } = useResidentsContext();
-  const residentParams = useTypedParams(State.Resident);
+
+  const routeParams = useParamsResidentOptional();
+
   const navPresenter = new NavigationMenuPresenter(
     residentsStore.config,
     residentsStore.userStore,
-    residentParams,
+    routeParams,
   );
 
   return (

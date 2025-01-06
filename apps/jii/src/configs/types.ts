@@ -61,7 +61,7 @@ type EligibilityPageSection = {
 export type OpportunityConfig = {
   urlSlug: string;
   firestoreCollection: string;
-  htmlTitle: string;
+  name: string;
   headline: string;
   subheading: string;
   /**
