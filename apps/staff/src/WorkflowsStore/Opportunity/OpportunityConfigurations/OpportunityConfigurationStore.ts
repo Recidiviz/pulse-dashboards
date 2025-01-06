@@ -144,7 +144,7 @@ export const mockApiOpportunityConfigurationResponse = ${JSON.stringify(fetched)
                       } as const;
                       export default allConfigs; export type FixtureOpportunityType = keyof typeof allConfigs;`,
     });
-    downloadZipFile("configs.zip", files);
+    downloadZipFile("workflows_configs.zip", files);
   }
 
   get enabledOpportunityTypes() {
