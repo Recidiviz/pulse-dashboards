@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
 import moment from "moment";
 
 import { Opportunities as OpportunitiesType } from "../../../api";
@@ -263,4 +262,4 @@ const OpportunityModal: React.FC<OpportunityModalProps> = ({
   );
 };
 
-export default observer(OpportunityModal);
+export default OpportunityModal;

@@ -41,7 +41,7 @@ export function getChartCaptions(insight: CaseInsight) {
       }
 
       const finalDp = _.last(
-        series.dataPoints.sort((a, b) => a.cohortMonths - b.cohortMonths),
+        [...series.dataPoints].sort((a, b) => a.cohortMonths - b.cohortMonths),
       );
 
       if (finalDp) {

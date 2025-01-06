@@ -60,7 +60,9 @@ export function DispositionChart({
   const { dispositionData, dispositionNumRecords } = insight ?? {};
 
   const sortedDatapoints =
-    dispositionData?.sort((a, b) => a.percentage - b.percentage) ?? [];
+    (dispositionData &&
+      [...dispositionData].sort((a, b) => a.percentage - b.percentage)) ??
+    [];
   const [smallestDatapoint, ...otherDatapoints] = sortedDatapoints;
   // Ordered by second largest percentage, largest percentage, and smallest percentage
   const orderedDatapoints = [...otherDatapoints, smallestDatapoint].filter(

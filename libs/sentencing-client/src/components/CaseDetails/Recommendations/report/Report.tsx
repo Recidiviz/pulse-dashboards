@@ -77,7 +77,7 @@ export function Report({
 }: ReportProps) {
   const cumulativeEndingEventRates = insight?.rollupRecidivismSeries.map(
     (dp) => {
-      const sortedDatapoints = dp.dataPoints.sort(
+      const sortedDatapoints = [...dp.dataPoints].sort(
         (a, b) => a.cohortMonths - b.cohortMonths,
       );
       return {
@@ -95,11 +95,13 @@ export function Report({
       recommendationTypeOrder.indexOf(b.recommendationType),
   );
 
-  const sortedDispositionData = insight?.dispositionData.sort(
-    (a, b) =>
-      recommendationTypeOrder.indexOf(a.recommendationType) -
-      recommendationTypeOrder.indexOf(b.recommendationType),
-  );
+  const sortedDispositionData =
+    insight &&
+    [...insight.dispositionData].sort(
+      (a, b) =>
+        recommendationTypeOrder.indexOf(a.recommendationType) -
+        recommendationTypeOrder.indexOf(b.recommendationType),
+    );
 
   const gender = (
     insight?.gender || insight?.rollupGender
