@@ -86,6 +86,8 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
   }
 
   get portionServedDates(): PortionServedDates {
+    if (this.onLifeSentence) return [];
+
     const startDate = optionalFieldToDate(this.record.admissionDate);
     const endDate = optionalFieldToDate(this.record.releaseDate);
     const halfTimeDate = fractionalDateBetweenTwoDates(startDate, endDate, 0.5);
