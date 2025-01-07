@@ -30,6 +30,7 @@ const DEFAULT_CHARGE_CATEGORIES = [
   "serious_mental_illness",
   "sex_offense",
   "external_unknown",
+  "serious_mental_illness_or_disability",
 ];
 
 const DEFAULT_SUPERVISION_TYPES = [
