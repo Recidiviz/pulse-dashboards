@@ -18,6 +18,7 @@
 import { RecommendationOptionType } from "../../components/CaseDetails/Recommendations/constants";
 import { RecommendationType } from "../../components/CaseDetails/types";
 import { GeoConfig } from "../types";
+import { generateIdahoSummary } from "./utils";
 
 export const US_ID_CONFIG: GeoConfig = {
   excludedAttributeKeys: [],
@@ -40,5 +41,6 @@ export const US_ID_CONFIG: GeoConfig = {
         recommendationType: RecommendationType.Term,
       },
     ],
+    summaryGenerator: generateIdahoSummary,
   },
 };

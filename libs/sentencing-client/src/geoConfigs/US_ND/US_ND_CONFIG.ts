@@ -25,6 +25,7 @@ import {
 } from "../../components/CaseDetails/constants";
 import { RecommendationOptionType } from "../../components/CaseDetails/Recommendations/constants";
 import { GeoConfig } from "../types";
+import { generateNorthDakotaSummary } from "./utils";
 
 export const US_ND_CONFIG: GeoConfig = {
   excludedAttributeKeys: [
@@ -72,5 +73,6 @@ export const US_ND_CONFIG: GeoConfig = {
         label: "Other",
       },
     ],
+    summaryGenerator: generateNorthDakotaSummary,
   },
 };

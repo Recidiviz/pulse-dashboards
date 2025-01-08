@@ -86,6 +86,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
           fullName={fullName}
           firstName={firstName}
           lastName={lastName}
+          stateCode={stateCode}
           age={age}
           insight={insight}
           externalId={externalId}

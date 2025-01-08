@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import generatePDF from "react-to-pdf";
 
 import { Case, CaseInsight, Client } from "../../../api";
+import { StateCode } from "../../../geoConfigs/types";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import CheckWhiteIcon from "../../assets/check-white-icon.svg?react";
 import CopyIcon from "../../assets/copy-icon.svg?react";
@@ -37,6 +38,7 @@ type SummaryReportProps = {
   firstName?: string;
   lastName?: string;
   fullName?: string;
+  stateCode: StateCode;
   age?: number;
   insight?: CaseInsight;
   externalId?: string;
@@ -57,6 +59,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   firstName,
   lastName,
   fullName,
+  stateCode,
   age,
   insight,
   externalId,
@@ -81,6 +84,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     needs,
     opportunityDescriptions,
     gender,
+    stateCode,
   });
 
   const [hasDownloadedReport, setHasDownloadedReport] = useState(false);

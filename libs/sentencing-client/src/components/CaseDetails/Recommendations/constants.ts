@@ -15,9 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Case } from "@prisma/client";
-
-import { OTHER_OPTION } from "../Form/constants";
 import { NeedsToDisplayName, Pronouns } from "./types";
 
 export enum RecommendationOptionType {
@@ -58,25 +55,6 @@ export const pronouns: Pronouns = {
   UNKNOWN: neutralPronouns,
 };
 
-/** Needs to be excluded for all recommendations */
-export const defaultExclusionList: Case["needsToBeAddressed"] = [
-  "ClothingAndToiletries",
-  "GeneralReEntrySupport",
-  OTHER_OPTION,
-];
-
-/** Needs to be excluded from Rider or Term recommendations */
-export const riderOrTermExclusionList: Case["needsToBeAddressed"] = [
-  "CaseManagement",
-  "FamilyServices",
-  "FinancialAssistance",
-  "FoodInsecurity",
-  "HousingOpportunities",
-  "JobTrainingOrOpportunities",
-  "Transportation",
-  ...defaultExclusionList,
-];
-
 /** A map of need to display name overrides */
 export const needToDisplayNameMap: NeedsToDisplayName = {
   DomesticViolenceIssues: "Domestic Violence Training",
@@ -84,16 +62,4 @@ export const needToDisplayNameMap: NeedsToDisplayName = {
   FinancialAssistance: "Financial Support",
   HousingOpportunities: "Housing",
   JobTrainingOrOpportunities: "Vocational Training",
-};
-
-/**
- * A map of recommendation type and exclusion list
- */
-export const needsListExclusions: {
-  [key: string]: Case["needsToBeAddressed"];
-} = {
-  Rider: riderOrTermExclusionList,
-  Term: riderOrTermExclusionList,
-  Probation: defaultExclusionList,
-  None: defaultExclusionList,
 };

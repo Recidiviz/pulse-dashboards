@@ -17,7 +17,10 @@
 
 import { Staff } from "../api";
 import { RecommendationOptionType } from "../components/CaseDetails/Recommendations/constants";
-import { RecommendationOptionTemplateBase } from "../components/CaseDetails/Recommendations/types";
+import {
+  RecommendationOptionTemplateBase,
+  SummaryProps,
+} from "../components/CaseDetails/Recommendations/types";
 import { RecommendationType } from "../components/CaseDetails/types";
 import { AttributeKey } from "../components/Dashboard/types";
 
@@ -35,6 +38,7 @@ export type GeoConfigRecommendation = {
     | string
   )[];
   baseOptionsTemplate: RecommendationOptionTemplateBase[];
+  summaryGenerator: (props: SummaryProps) => string | void;
 };
 
 export type GeoConfig = {

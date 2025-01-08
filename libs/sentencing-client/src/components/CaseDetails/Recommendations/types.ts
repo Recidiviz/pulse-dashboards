@@ -17,6 +17,7 @@
 
 import { Case, CaseInsight, Client } from "../../../api";
 import { CreateOrUpdateRecommendation } from "../../../datastores/types";
+import { StateCode } from "../../../geoConfigs/types";
 import {
   OpportunitiesIdentifier,
   RecommendationType,
@@ -86,6 +87,25 @@ export type GenerateRecommendationProps = {
   needs?: Case["needsToBeAddressed"];
   opportunityDescriptions?: string[];
   gender?: Client["gender"];
+  sentenceLengthStart?: number;
+  sentenceLengthEnd?: number;
+  stateCode: StateCode;
+};
+
+export type SummaryProps = {
+  recommendation: RecommendationType | string;
+  sentenceLengthStart?: number;
+  sentenceLengthEnd?: number;
+  name?: string;
+  possessive: string;
+  object: string;
+  salutation: string | null;
+  subject: string;
+  needs: Case["needsToBeAddressed"];
+  opportunitiesList: string;
+  hasNeeds: boolean;
+  hasOpportunities: boolean;
+  hasNeedsAndOpportunities: boolean;
 };
 
 export type Pronouns = Record<
