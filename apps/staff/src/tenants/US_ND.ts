@@ -95,6 +95,7 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
       PATHWAYS_SECTIONS.countByAgeGroup,
       PATHWAYS_SECTIONS.countByRace,
     ],
+    psi: [],
     methodology: ["system", "operations"],
     insights: [INSIGHTS_PAGES.supervision],
   },
