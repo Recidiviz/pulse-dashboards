@@ -76,7 +76,7 @@ exports[`transformations 4`] = `
 
 exports[`transformations 5`] = `
 {
-  "avgDailyPopulation": 5,
+  "avgDailyPopulation": null,
   "displayName": "Casey Ramirez",
   "externalId": "so5",
   "fullName": {

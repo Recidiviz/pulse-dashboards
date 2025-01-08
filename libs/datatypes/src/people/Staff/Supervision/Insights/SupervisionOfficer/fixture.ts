@@ -82,7 +82,7 @@ export const rawSupervisionOfficerFixture = [
       surname: "Ramirez",
     },
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[2].externalId],
-    avgDailyPopulation: 5.43,
+    avgDailyPopulation: null,
     includeInOutcomes: true,
   },
   {

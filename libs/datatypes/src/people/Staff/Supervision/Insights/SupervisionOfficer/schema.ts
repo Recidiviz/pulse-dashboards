@@ -34,7 +34,8 @@ export const supervisionOfficerSchema = supervisionOfficerBaseSchema
   .extend({
     avgDailyPopulation: z
       .number()
-      .transform((avgDailyPopulation) => Math.round(avgDailyPopulation)),
+      .transform((avgDailyPopulation) => Math.round(avgDailyPopulation))
+      .nullable(),
   })
   .transform(addDisplayName);
 
