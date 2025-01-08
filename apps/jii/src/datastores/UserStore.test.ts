@@ -17,7 +17,7 @@
 
 import { configure } from "mobx";
 
-import { isOfflineMode, isTestEnv } from "~client-env-utils";
+import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 
 import { IntercomClient } from "../apis/Intercom/IntercomClient";
 import { SegmentClient } from "../apis/Segment/SegmentClient";
@@ -63,6 +63,21 @@ test("state authorization for external user", () => {
   expect(store.isAuthorizedForCurrentState).toBeFalse();
 });
 
+test("state authorization for external demo user", () => {
+  vi.mocked(isDemoMode).mockReturnValue(true);
+
+  expect(store.isAuthorizedForCurrentState).toBeTrue();
+
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "US_XX",
+    externalId: "123456",
+    pseudonymizedId: "test-pid",
+    intercomUserHash: "test-hash",
+  });
+
+  expect(store.isAuthorizedForCurrentState).toBeFalse();
+});
+
 test("state authorization for internal user", () => {
   vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
     stateCode: "RECIDIVIZ",
@@ -76,6 +91,23 @@ test("state authorization for internal user", () => {
     allowedStates: ["US_XX"],
   });
   expect(store.isAuthorizedForCurrentState).toBeFalse();
+});
+
+test("authorize all states for internal demo user", () => {
+  vi.mocked(isDemoMode).mockReturnValue(true);
+
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "RECIDIVIZ",
+    allowedStates: ["US_ME"],
+  });
+
+  expect(store.isAuthorizedForCurrentState).toBeTrue();
+
+  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
+    stateCode: "RECIDIVIZ",
+    allowedStates: ["US_XX"],
+  });
+  expect(store.isAuthorizedForCurrentState).toBeTrue();
 });
 
 test("has permission", () => {

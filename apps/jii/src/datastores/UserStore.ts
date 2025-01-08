@@ -24,7 +24,7 @@ import {
   metadataSchema,
   Permission,
 } from "~auth0-jii";
-import { isOfflineMode } from "~client-env-utils";
+import { isDemoMode, isOfflineMode } from "~client-env-utils";
 
 import { IntercomClient } from "../apis/Intercom/IntercomClient";
 import {
@@ -60,10 +60,16 @@ export class UserStore {
     if (isOfflineMode()) return true;
 
     const { stateCode, allowedStates } = this.authClient.appMetadata;
+
+    const isUserState = stateCode === this.externals.stateCode;
+    const isRecidivizUser = stateCode === "RECIDIVIZ";
+    const isRecidivizAllowedState = allowedStates?.includes(
+      this.externals.stateCode,
+    );
+
     return (
-      (stateCode === this.externals.stateCode ||
-        (stateCode === "RECIDIVIZ" &&
-          allowedStates?.includes(this.externals.stateCode))) ??
+      (isUserState ||
+        (isRecidivizUser && (isDemoMode() || isRecidivizAllowedState))) ??
       false
     );
   }
