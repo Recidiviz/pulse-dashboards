@@ -24,9 +24,6 @@ export const usPaAdminSupervisionReferrals =
       stateCode: "US_PA",
       externalId: "001",
       eligibleCriteria: {
-        usPaFulfilledRequirements: {
-          eligibleDate: "2022-01-01",
-        },
         usPaNoHighSanctionsInPastYear: {},
         usPaNotServingIneligibleOffenseForAdminSupervision: null,
       },
@@ -44,9 +41,6 @@ export const usPaAdminSupervisionReferrals =
       stateCode: "US_PA",
       externalId: "002",
       eligibleCriteria: {
-        usPaFulfilledRequirements: {
-          eligibleDate: "2023-01-15",
-        },
         usPaNoHighSanctionsInPastYear: {},
         usPaNotServingIneligibleOffenseForAdminSupervision: {
           ineligibleOffenses: ["EXAMPLE"],
@@ -67,7 +61,6 @@ export const usPaAdminSupervisionReferrals =
       stateCode: "US_PA",
       externalId: "003",
       eligibleCriteria: {
-        usPaFulfilledRequirements: null,
         usPaNoHighSanctionsInPastYear: null,
         usPaNotServingIneligibleOffenseForAdminSupervision: null,
       },

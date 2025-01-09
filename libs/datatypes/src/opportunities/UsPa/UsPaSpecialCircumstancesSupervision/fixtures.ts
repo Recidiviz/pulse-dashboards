@@ -37,7 +37,6 @@ export const usPaSpecialCircumstancesSupervisionFixtures = {
         caseType: "special probation or parole case",
         sanctionType: "high",
       },
-      usPaFulfilledRequirements: {},
       usPaNotEligibleOrMarkedIneligibleForAdminSupervision: {},
     },
     ineligibleCriteria: {},
@@ -61,7 +60,6 @@ export const usPaSpecialCircumstancesSupervisionFixtures = {
         caseType: "special probation or parole case",
         sanctionType: "high or medium",
       },
-      usPaFulfilledRequirements: {},
       usPaNotEligibleOrMarkedIneligibleForAdminSupervision: {},
     },
     ineligibleCriteria: {

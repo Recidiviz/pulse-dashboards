@@ -19,13 +19,10 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-import { eligibleDateSchema } from "../../schemaHelpers";
-
 export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z
     .object({
       usPaNoHighSanctionsInPastYear: z.object({}).nullable(),
-      usPaFulfilledRequirements: eligibleDateSchema.nullable(),
       usPaNotServingIneligibleOffenseForAdminSupervision: z
         .object({
           ineligibleOffenses: z.array(z.string()),

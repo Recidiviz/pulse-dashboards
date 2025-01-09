@@ -52,7 +52,6 @@ function createTestUnit() {
     stateCode: "US_OZ",
     externalId: "pei1",
     eligibleCriteria: {
-      usPaFulfilledRequirements: null,
       usPaNoHighSanctionsInPastYear: null,
       usPaNotServingIneligibleOffenseForAdminSupervision: null,
     },

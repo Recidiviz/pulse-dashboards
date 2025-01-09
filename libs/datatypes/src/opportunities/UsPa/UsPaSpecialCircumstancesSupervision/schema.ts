@@ -41,7 +41,6 @@ export const usPaSpecialCircumstancesSupervisionSchema =
           sanctionType: z.string().nullable(),
         })
         .nullable(),
-      usPaFulfilledRequirements: z.object({}).nullable(),
       usPaNotEligibleOrMarkedIneligibleForAdminSupervision: z
         .object({})
         .nullable(),

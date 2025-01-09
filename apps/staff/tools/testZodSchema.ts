@@ -34,6 +34,7 @@ import {
   usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
+  usPaSpecialCircumstancesSupervisionSchema,
 } from "~datatypes";
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
@@ -61,6 +62,7 @@ import { usMoOverdueRestrictiveHousingReleaseSchema } from "../src/WorkflowsStor
 import { usMoOverdueRestrictiveHousingReviewHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsNd/UsNdEarlyTerminationOpportunity/UsNdEarlyTerminationReferralRecord";
 import { usOrEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsOr/UsOrEarnedDischargeOpportunity/UsOrEarnedDischargeReferralRecord";
+import { usPaAdminSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
 import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewReferralRecord";
 import { usTnCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeReferralRecord";
@@ -137,6 +139,9 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usAzReleaseToDTP: usAzReleaseToTransitionProgramSchemaBase,
   usAzOverdueForACISTPR: usAzOverdueForAcisTprSchema,
   usAzOverdueForACISDTP: usAzOverdueForAcisDtpSchema,
+  usPaAdminSupervision: usPaAdminSupervisionSchema,
+  usPaSpecialCircumstancesSupervision:
+    usPaSpecialCircumstancesSupervisionSchema,
 };
 
 const OTHER_SCHEMAS = {

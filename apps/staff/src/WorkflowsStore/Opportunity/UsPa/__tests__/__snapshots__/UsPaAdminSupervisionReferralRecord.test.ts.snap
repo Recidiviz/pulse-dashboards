@@ -4,9 +4,6 @@ exports[`parses empty ineligible offenses array 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "usPaFulfilledRequirements": {
-      "eligibleDate": 2023-12-01T00:00:00.000Z,
-    },
     "usPaNoHighSanctionsInPastYear": {},
     "usPaNotServingIneligibleOffenseForAdminSupervision": {
       "ineligibleOffenses": [],
@@ -31,7 +28,6 @@ exports[`parses null reason fields 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "usPaFulfilledRequirements": null,
     "usPaNoHighSanctionsInPastYear": null,
     "usPaNotServingIneligibleOffenseForAdminSupervision": null,
   },
@@ -53,9 +49,6 @@ exports[`record parses as expected 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "usPaFulfilledRequirements": {
-      "eligibleDate": 2023-12-01T00:00:00.000Z,
-    },
     "usPaNoHighSanctionsInPastYear": {},
     "usPaNotServingIneligibleOffenseForAdminSupervision": {
       "ineligibleOffenses": [

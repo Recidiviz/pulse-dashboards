@@ -25,9 +25,6 @@ const rawRecord: UsPaAdminSupervisionReferralRecordRaw = {
   externalId: "abc123",
   eligibleCriteria: {
     usPaNoHighSanctionsInPastYear: {},
-    usPaFulfilledRequirements: {
-      eligibleDate: "2023-12-01",
-    },
     usPaNotServingIneligibleOffenseForAdminSupervision: {
       ineligibleOffenses: ["ABC", "DEF"],
       ineligibleSentencesExpirationDate: ["2023-06-01", "2022-01-01"],
@@ -53,7 +50,6 @@ test("parses null reason fields", () => {
     ...rawRecord,
     eligibleCriteria: {
       ...rawRecord.eligibleCriteria,
-      usPaFulfilledRequirements: null,
       usPaNoHighSanctionsInPastYear: null,
       usPaNotServingIneligibleOffenseForAdminSupervision: null,
     },

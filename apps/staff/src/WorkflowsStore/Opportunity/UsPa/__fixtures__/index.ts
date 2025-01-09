@@ -24,9 +24,6 @@ export const usPaAdminSupervisionReferralRecord: UsPaAdminSupervisionReferralRec
     stateCode: "US_PA",
     externalId: "123",
     eligibleCriteria: {
-      usPaFulfilledRequirements: {
-        eligibleDate: "2022-01-03",
-      },
       usPaNoHighSanctionsInPastYear: {},
       usPaNotServingIneligibleOffenseForAdminSupervision: {
         ineligibleOffenses: ["EXAMPLE"],

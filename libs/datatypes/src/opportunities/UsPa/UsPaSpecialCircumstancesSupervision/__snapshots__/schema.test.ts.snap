@@ -12,7 +12,6 @@ exports[`schema for almostEligible 1`] = `
     ],
   },
   "eligibleCriteria": {
-    "usPaFulfilledRequirements": {},
     "usPaMeetsSpecialCircumstancesCriteriaForSanctions": {
       "caseType": "special probation or parole case",
       "sanctionType": "high or medium",
@@ -45,7 +44,6 @@ exports[`schema for fullyEligible 1`] = `
     ],
   },
   "eligibleCriteria": {
-    "usPaFulfilledRequirements": {},
     "usPaMeetsSpecialCircumstancesCriteriaForSanctions": {
       "caseType": "special probation or parole case",
       "sanctionType": "high",
