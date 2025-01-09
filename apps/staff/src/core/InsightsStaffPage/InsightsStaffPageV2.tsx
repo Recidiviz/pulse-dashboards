@@ -58,6 +58,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 
   const {
     officerOutcomesData,
+    officerRecord,
     officerPseudoId,
     supervisorsInfo,
     goToSupervisorInfo,
@@ -101,7 +102,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
 
   return (
     <InsightsPageLayout
-      pageTitle={officerOutcomesData?.displayName}
+      pageTitle={officerRecord?.displayName}
       pageSubtitle="Outcomes"
       infoItems={infoItems}
       contentsAboveTitle={
