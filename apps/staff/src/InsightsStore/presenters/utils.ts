@@ -24,7 +24,6 @@ import {
   MetricConfig,
   SupervisionOfficer,
   SupervisionOfficerOutcomes,
-  supervisionOfficerSchema,
   VITALS_METRIC_IDS,
 } from "~datatypes";
 
@@ -39,8 +38,7 @@ export function isExcludedSupervisionOfficer(
 ): officerData is ExcludedSupervisionOfficer {
   return (
     officerData?.includeInOutcomes !== true &&
-    excludedSupervisionOfficerSchema.safeParse(officerData).success &&
-    !supervisionOfficerSchema.safeParse(officerData).success
+    excludedSupervisionOfficerSchema.safeParse(officerData).success
   );
 }
 
