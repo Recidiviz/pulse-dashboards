@@ -44,12 +44,14 @@ export const displayReportType = (
  * Formats a list of items with commas and "and" for the final item and optionally converts all items to lowercase
  */
 export const formatListWithAnd = (
-  items: string[],
+  items: string[] | undefined,
   emptyListText: string,
   lowercase?: boolean,
-): string => {
+): string | undefined => {
+  if (!items) return;
+
   const formattedItems = lowercase
-    ? items.map((item: string) => item.toLocaleLowerCase())
+    ? items?.map((item: string) => item.toLocaleLowerCase())
     : items;
   if (formattedItems.length === 0) {
     return emptyListText;

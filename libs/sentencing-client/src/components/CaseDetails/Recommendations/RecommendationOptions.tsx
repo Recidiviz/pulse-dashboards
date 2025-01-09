@@ -15,17 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { formatListWithAnd } from "../../../utils/utils";
 import CheckIcon from "../../assets/green-check-icon.svg?react";
 import { InfoIconWithTooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
 import { NONE_OPTION, OTHER_OPTION } from "../Form/constants";
+import { RecommendationType } from "../types";
 import { RecommendationOption, RecommendationsOptionProps } from "./types";
 
 export const OpportunitiesList: React.FC<{
   opportunities: RecommendationOption["opportunities"];
   firstName?: string;
-}> = ({ opportunities, firstName }) => {
-  const tooltipText = `When you add opportunities from the “Opportunities${firstName && ` for ${firstName}`}” table, they will appear here under your Probation recommendation.`;
+  matchingRecommendationOptionsForOpportunities?: (
+    | RecommendationType
+    | string
+  )[];
+}> = ({
+  opportunities,
+  firstName,
+  matchingRecommendationOptionsForOpportunities,
+}) => {
+  const recommendationWord =
+    matchingRecommendationOptionsForOpportunities?.length === 1
+      ? `recommendation`
+      : `recommendations`;
+  const formattedRecommendationNames = formatListWithAnd(
+    matchingRecommendationOptionsForOpportunities,
+    "",
+  );
+  const recommendationPhraseText = `${formattedRecommendationNames} ${recommendationWord}`;
+  const tooltipText = `When you add opportunities from the “Opportunities${firstName && ` for ${firstName}`}” table, they will appear here under your ${recommendationPhraseText}.`;
 
   return (
     <Styled.OpportunitiesSelections>
@@ -125,6 +144,9 @@ export const RecommendationRadioOption: React.FC<{
         <OpportunitiesList
           opportunities={option.opportunities}
           firstName={firstName}
+          matchingRecommendationOptionsForOpportunities={
+            matchingRecommendationOptionsForOpportunities
+          }
         />
       )}
       {!isNoneOrOther && <HistoricalOutcomes option={option} />}

@@ -102,7 +102,7 @@ export type SummaryProps = {
   salutation: string | null;
   subject: string;
   needs: Case["needsToBeAddressed"];
-  opportunitiesList: string;
+  opportunitiesList?: string;
   hasNeeds: boolean;
   hasOpportunities: boolean;
   hasNeedsAndOpportunities: boolean;

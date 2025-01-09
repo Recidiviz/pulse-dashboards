@@ -33,7 +33,7 @@ import { Opportunities as OpportunitiesType } from "../../../api";
 import { OpportunityViewOrigin } from "../../../datastores/types";
 import { GEO_CONFIG } from "../../../geoConfigs/geoConfigs";
 import { StateCode } from "../../../geoConfigs/types";
-import { formatPossessiveName } from "../../../utils/utils";
+import { formatListWithAnd, formatPossessiveName } from "../../../utils/utils";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import ResetSearchIcon from "../../assets/close-icon.svg?react";
 import LeftArrowIcon from "../../assets/left-arrow-carot-icon.svg?react";
@@ -214,6 +214,13 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const matchingRecommendationOptionsForOpportunities =
     GEO_CONFIG[stateCode]?.recommendation
       .matchingRecommendationOptionsForOpportunities;
+  const formattedRecommendationNames = formatListWithAnd(
+    matchingRecommendationOptionsForOpportunities,
+    "",
+  );
+  const recommendationPhraseText = formattedRecommendationNames
+    ? `recommending ${formattedRecommendationNames}`
+    : `making a recommendation`;
 
   /**
    * The adding opportunities button should be disabled when:
@@ -462,8 +469,8 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                 further refine the results.
               </TooltipContentSection>
               <TooltipContentSection>
-                When recommending probation, any opportunities you add will be
-                used to generate a recommendation summary for the judge.
+                When {recommendationPhraseText}, any opportunities you add will
+                be used to generate a recommendation summary for the judge.
               </TooltipContentSection>
             </>
           }
