@@ -31,7 +31,7 @@ import {
   PATHWAYS_SECTIONS,
   UNRESTRICTED_PAGES,
 } from "../../core/views";
-import tenants from "../../tenants";
+import { TENANT_CONFIGS } from "../../tenants";
 import isIE11 from "../../utils/isIE11";
 import RootStore from "..";
 import { FeatureVariant, TenantId } from "../types";
@@ -259,7 +259,7 @@ test("redirect to targetUrl after callback", async () => {
   expect(window.location.href).toBe(targetUrl);
 });
 
-test.each(Object.keys(tenants))(
+test.each(Object.keys(TENANT_CONFIGS))(
   "gets metadata for the user %s",
   async (currentTenantId) => {
     const allowedStates = ["US_MO", "US_CA"];
@@ -284,9 +284,11 @@ test.each(Object.keys(tenants))(
     }
 
     expect(store.availableStateCodes).toBe(
-      tenants[currentTenantId as TenantId].availableStateCodes,
+      TENANT_CONFIGS[currentTenantId as TenantId].availableStateCodes,
     );
-    expect(store.stateName).toBe(tenants[currentTenantId as TenantId].name);
+    expect(store.stateName).toBe(
+      TENANT_CONFIGS[currentTenantId as TenantId].name,
+    );
   },
 );
 
@@ -510,7 +512,7 @@ describe("isUserAllowedRoute", () => {
         },
       },
     };
-    tenants[tenantId].navigation = { operations: [] };
+    TENANT_CONFIGS[tenantId].navigation = { operations: [] };
     mockGetUser.mockResolvedValue({ email_verified: true, ...userAppMetadata });
     await store.authorize(mockHandleUrl);
     expect(store.isUserAllowedRoute("workflows")).toBe(true);
@@ -541,7 +543,7 @@ describe("isUserAllowedRoute", () => {
       },
     };
     mockGetUser.mockResolvedValue({ email_verified: true, ...userAppMetadata });
-    tenants[tenantId].navigation = { operations: [] };
+    TENANT_CONFIGS[tenantId].navigation = { operations: [] };
     await store.authorize(mockHandleUrl);
     expect(store.isUserAllowedRoute("operations")).toBe(true);
   });
@@ -562,7 +564,7 @@ describe("isUserAllowedRoute", () => {
         email_verified: true,
         ...userAppMetadata,
       });
-      tenants[tenantId].navigation = { operations: [] };
+      TENANT_CONFIGS[tenantId].navigation = { operations: [] };
       await store.authorize(mockHandleUrl);
       expect(store.isUserAllowedRoute(page)).toBe(true);
     },
@@ -574,7 +576,7 @@ describe("userAllowedNavigation", () => {
   let store: UserStore;
 
   beforeEach(() => {
-    tenants[stateCode].navigation = {
+    TENANT_CONFIGS[stateCode].navigation = {
       system: [
         PATHWAYS_PAGES.libertyToPrison,
         PATHWAYS_PAGES.prison,
@@ -643,7 +645,7 @@ describe("userAllowedNavigation", () => {
         },
       },
     };
-    tenants[stateCode].navigation = { operations: [] };
+    TENANT_CONFIGS[stateCode].navigation = { operations: [] };
     mockGetUser.mockResolvedValue({ email_verified: true, ...userAppMetadata });
     await store.authorize(mockHandleUrl);
     const expected = {
@@ -676,7 +678,7 @@ describe("userAllowedNavigation", () => {
 
   test("allows revocations when lantern permission is set", async () => {
     mockIsAuthenticated.mockResolvedValue(true);
-    tenants[stateCode].navigation = {
+    TENANT_CONFIGS[stateCode].navigation = {
       system: [
         PATHWAYS_PAGES.libertyToPrison,
         PATHWAYS_PAGES.prison,
@@ -731,7 +733,7 @@ describe("userAllowedNavigation", () => {
     });
 
     test("returns the navigation object minus the officer chart", async () => {
-      tenants[stateCode].navigation = {
+      TENANT_CONFIGS[stateCode].navigation = {
         system: [
           PATHWAYS_PAGES.libertyToPrison,
           PATHWAYS_PAGES.prison,
@@ -757,7 +759,7 @@ describe("userAllowedNavigation", () => {
     });
 
     test("it does not error if allowed.supervisionToPrison is undefined", async () => {
-      tenants[stateCode].navigation = {
+      TENANT_CONFIGS[stateCode].navigation = {
         system: [
           PATHWAYS_PAGES.libertyToPrison,
           PATHWAYS_PAGES.prison,
@@ -896,7 +898,7 @@ describe("recidivizAllowedStates", () => {
     });
     await store.authorize(mockHandleUrl);
     expect(store.recidivizAllowedStates).toEqual(
-      tenants.RECIDIVIZ.availableStateCodes,
+      TENANT_CONFIGS.RECIDIVIZ.availableStateCodes,
     );
   });
 });

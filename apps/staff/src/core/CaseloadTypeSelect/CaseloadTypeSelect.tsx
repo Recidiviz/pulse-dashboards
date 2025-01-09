@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import tenants from "../../tenants";
+import { TENANT_CONFIGS } from "../../tenants";
 import { toTitleCase } from "../../utils";
 import { PillButton } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
@@ -36,11 +36,11 @@ const CaseloadTypeSelect = observer(
     if (!supportsMultipleSystems || !currentTenantId) return null;
 
     const supervisionTitle =
-      tenants[currentTenantId].workflowsSystemConfigs?.SUPERVISION
+      TENANT_CONFIGS[currentTenantId].workflowsSystemConfigs?.SUPERVISION
         ?.searchTitleOverride ?? "Supervision Officer";
 
     const facilityTitle =
-      tenants[currentTenantId].workflowsSystemConfigs?.INCARCERATION
+      TENANT_CONFIGS[currentTenantId].workflowsSystemConfigs?.INCARCERATION
         ?.searchTitleOverride ?? "Facility";
 
     return (

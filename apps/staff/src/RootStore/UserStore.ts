@@ -52,7 +52,7 @@ import {
   PathwaysPageIdList,
   UNRESTRICTED_PAGES,
 } from "../core/views";
-import tenants from "../tenants";
+import { TENANT_CONFIGS } from "../tenants";
 import isIE11 from "../utils/isIE11";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
@@ -136,7 +136,7 @@ export default class UserStore {
   async authorize(handleTargetUrl: (targetUrl: string) => void): Promise<void> {
     if (isOfflineMode()) {
       const offlineUser = await fetchOfflineUser({
-        allowedStates: tenants.RECIDIVIZ.availableStateCodes,
+        allowedStates: TENANT_CONFIGS.RECIDIVIZ.availableStateCodes,
       });
       await this.rootStore?.firestoreStore.authenticate(
         "fakeAuth0Token",
@@ -312,7 +312,7 @@ export default class UserStore {
    * Returns a list of tenant IDs that Recidiviz users can access.
    */
   get recidivizAllowedStates(): TenantId[] {
-    const { availableStateCodes } = tenants[this.stateCode];
+    const { availableStateCodes } = TENANT_CONFIGS[this.stateCode];
     if (isDemoMode()) {
       return availableStateCodes;
     }
@@ -391,7 +391,7 @@ export default class UserStore {
     if (this.isRecidivizUser) {
       return this.recidivizAllowedStates;
     }
-    return tenants[this.stateCode].availableStateCodes;
+    return TENANT_CONFIGS[this.stateCode].availableStateCodes;
   }
 
   /**
@@ -399,7 +399,7 @@ export default class UserStore {
    * the given user.
    */
   get stateName(): string {
-    return tenants[this.stateCode].name;
+    return TENANT_CONFIGS[this.stateCode].name;
   }
 
   /**
@@ -457,7 +457,7 @@ export default class UserStore {
   get userAllowedNavigation(): Navigation | undefined {
     if (!this.rootStore?.currentTenantId) return {};
     const { navigation, insightsLanternState } =
-      tenants[this.rootStore.currentTenantId];
+      TENANT_CONFIGS[this.rootStore.currentTenantId];
 
     const allowed = navigation;
     if (!allowed) return {};

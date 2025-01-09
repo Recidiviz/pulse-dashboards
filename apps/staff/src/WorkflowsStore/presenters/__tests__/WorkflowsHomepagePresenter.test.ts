@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { TenantId } from "../../../RootStore/types";
-import TENANTS from "../../../tenants";
+import { TENANT_CONFIGS } from "../../../tenants";
 import { OpportunityConfigurationStore } from "../../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { WorkflowsHomepagePresenter } from "../WorkflowsHomepagePresenter";
@@ -85,7 +85,7 @@ describe("WorkflowsHomepagePresenter", () => {
         "get",
       ).mockReturnValue("mockTenant" as TenantId);
 
-      TENANTS["mockTenant" as TenantId] = {
+      TENANT_CONFIGS["mockTenant" as TenantId] = {
         workflowsSystemConfigs: {
           INCARCERATION: { searchTitleOverride: "location" },
         },
@@ -107,7 +107,7 @@ describe("WorkflowsHomepagePresenter", () => {
         "get",
       ).mockReturnValue("mockTenant" as TenantId);
 
-      TENANTS["mockTenant" as TenantId] = {
+      TENANT_CONFIGS["mockTenant" as TenantId] = {
         workflowsSystemConfigs: {
           INCARCERATION: { searchTitleOverride: "case manager" },
         },

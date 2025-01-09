@@ -18,23 +18,10 @@
 import { orderBy } from "lodash";
 import { computed, makeAutoObservable } from "mobx";
 
-import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { JusticeInvolvedPerson } from "../types";
 import { getEntries } from "../utils";
 import type { WorkflowsStore } from "../WorkflowsStore";
-import { taskDueDateComparator } from "./TasksBase";
-import {
-  SUPERVISION_NEED_TYPES,
-  SUPERVISION_TASK_TYPES,
-  SupervisionNeedType,
-  SupervisionTask,
-  SupervisionTaskType,
-} from "./types";
-
-type TasksByCategory = Record<
-  SupervisionTaskType,
-  SupervisionTask<SupervisionTaskType>[]
->;
+import { SUPERVISION_NEED_TYPES, SupervisionNeedType } from "./types";
 
 type PersonsByNeed = Record<SupervisionNeedType, JusticeInvolvedPerson[]>;
 
@@ -52,41 +39,13 @@ const buildRecordList = <K extends string, V>(
 export class WorkflowsTasksStore {
   workflowsStore: WorkflowsStore;
 
-  selectedCategory: SupervisionTaskCategory = "DUE_THIS_MONTH";
-
   constructor(workflowsStore: WorkflowsStore) {
     this.workflowsStore = workflowsStore;
     makeAutoObservable(this, {
       clientsPartitionedByStatus: computed,
-      orderedTasksByCategory: computed,
       orderedPersonsByNeed: computed,
       workflowsStore: false,
     });
-  }
-
-  get orderedTasksByCategory(): TasksByCategory {
-    const { caseloadPersonsSorted } = this.workflowsStore;
-
-    const tasksByType = buildRecordList<
-      SupervisionTaskType,
-      SupervisionTask<SupervisionTaskType>
-    >(SUPERVISION_TASK_TYPES);
-
-    caseloadPersonsSorted.forEach((person) => {
-      const { supervisionTasks } = person;
-
-      if (!supervisionTasks) return;
-
-      supervisionTasks.readyOrderedTasks.forEach((task) => {
-        tasksByType[task.type].push(task);
-      });
-    });
-
-    getEntries(tasksByType).forEach(([type, tasks]) => {
-      tasksByType[type] = tasks.sort(taskDueDateComparator);
-    });
-
-    return tasksByType;
   }
 
   get orderedPersonsByNeed(): PersonsByNeed {
@@ -113,16 +72,6 @@ export class WorkflowsTasksStore {
     });
 
     return personsByNeed;
-  }
-
-  toggleSelectedTaskCategory(category: SupervisionTaskCategory): void {
-    this.selectedCategory =
-      this.selectedCategory === category ? "DUE_THIS_MONTH" : category;
-
-    this.workflowsStore.rootStore.analyticsStore.trackTaskFilterSelected({
-      taskCategory: this.selectedCategory,
-      selectedSearchIds: this.workflowsStore.selectedSearchIds,
-    });
   }
 
   get clientsPartitionedByStatus(): [

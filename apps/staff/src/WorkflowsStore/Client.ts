@@ -41,7 +41,7 @@ import {
   TextMessageStatuses,
 } from "../FirestoreStore/types";
 import type { RootStore } from "../RootStore";
-import tenants from "../tenants";
+import { TENANT_CONFIGS } from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface } from "./Task/types";
@@ -150,9 +150,9 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
     if (
       rootStore.currentTenantId &&
-      tenants[rootStore.currentTenantId]?.navigation?.workflows?.includes(
-        "milestones",
-      )
+      TENANT_CONFIGS[
+        rootStore.currentTenantId
+      ]?.navigation?.workflows?.includes("milestones")
     ) {
       this.milestonesMessageUpdatesSubscription =
         new MilestonesMessageUpdateSubscription(
@@ -191,7 +191,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
     const tenantMilestoneTypes =
       this.rootStore.currentTenantId &&
-      tenants[this.rootStore.currentTenantId]?.milestoneTypes;
+      TENANT_CONFIGS[this.rootStore.currentTenantId]?.milestoneTypes;
     this.tenantMilestones = tenantMilestoneTypes
       ? filteredMilestoneTypes(record.milestones, tenantMilestoneTypes)
       : record.milestones;
@@ -528,7 +528,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     Message from Agent ${userSurname} at ${
       !this.rootStore.currentTenantId
         ? "DOC"
-        : tenants[this.rootStore.currentTenantId].DOCName
+        : TENANT_CONFIGS[this.rootStore.currentTenantId].DOCName
     }:
 
     ${salutation} Congratulations on reaching ${

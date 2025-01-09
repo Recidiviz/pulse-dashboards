@@ -17,7 +17,7 @@
 
 import pluralize from "pluralize";
 
-import TENANTS from "../../tenants";
+import { TENANT_CONFIGS } from "../../tenants";
 import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { CaseloadOpportunitiesPresenter } from "./CaseloadOpportunitiesPresenter";
@@ -56,7 +56,7 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     }
     const tenantConfig =
       currentTenantId &&
-      TENANTS[currentTenantId]?.workflowsSystemConfigs?.INCARCERATION;
+      TENANT_CONFIGS[currentTenantId]?.workflowsSystemConfigs?.INCARCERATION;
 
     const facilitiesSearchOverride =
       tenantConfig?.searchTitleOverride ?? "location";

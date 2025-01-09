@@ -38,7 +38,7 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,
   workflowsTasksConfig: {
-    homeVisit: {
+    assessment: {
       enabled: true,
       snoozeForOptionsInDays: [7, 30, 90],
     },
@@ -46,7 +46,7 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
       enabled: true,
       snoozeForOptionsInDays: [7, 30, 90],
     },
-    assessment: {
+    homeVisit: {
       enabled: true,
       snoozeForOptionsInDays: [7, 30, 90],
     },

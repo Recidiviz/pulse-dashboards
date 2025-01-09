@@ -23,7 +23,7 @@ import { FlowMethod } from "~hydration-utils";
 
 import { downloadZipFile } from "../core/Paperwork/utils";
 import { RootStore } from "../RootStore";
-import TENANTS from "../tenants";
+import { TENANT_CONFIGS } from "../tenants";
 import { sortObject } from "../WorkflowsStore/utils";
 import { InsightsAPIClient } from "./api/InsightsAPIClient";
 import { InsightsOfflineAPIClient } from "./api/InsightsOfflineAPIClient";
@@ -96,8 +96,8 @@ export class InsightsStore {
    * to allow state specific copy/config in offline and demo mode.
    */
   async downloadConfigurations() {
-    const states = TENANTS.RECIDIVIZ.availableStateCodes.filter(
-      (t) => TENANTS[t].navigation?.insights,
+    const states = TENANT_CONFIGS.RECIDIVIZ.availableStateCodes.filter(
+      (t) => TENANT_CONFIGS[t].navigation?.insights,
     );
 
     const fileInputs: { filename: any; fileContents: any }[] = [];

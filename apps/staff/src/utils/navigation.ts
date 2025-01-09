@@ -26,7 +26,7 @@ import {
   WORKFLOWS_PAGES,
 } from "../core/views";
 import { TenantId } from "../RootStore/types";
-import TENANTS from "../tenants";
+import { TENANT_CONFIGS } from "../tenants";
 
 export function getPathsFromNavigation(
   userAllowedNavigation: Navigation,
@@ -78,10 +78,10 @@ export function convertSlugToId(slug: string): string {
 }
 
 export function getStateNameForStateCode(stateCode: string): string {
-  if (!Object.keys(TENANTS).includes(stateCode)) {
+  if (!Object.keys(TENANT_CONFIGS).includes(stateCode)) {
     throw new Error(`Unknown state code provided: ${stateCode}`);
   }
-  return TENANTS[stateCode as TenantId].name;
+  return TENANT_CONFIGS[stateCode as TenantId].name;
 }
 
 export const filterQueryParams = Object.values(FILTER_TYPES).reduce(

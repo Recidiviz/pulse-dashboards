@@ -31,14 +31,13 @@ import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";
 import { SupervisionNeedType } from "../../WorkflowsStore";
-import { WorkflowsTasksStore } from "../../WorkflowsStore/Task/WorkflowsTasksStore";
-import { getEntries } from "../../WorkflowsStore/utils";
+import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
 import { AllTasksView } from "./AllTasksView";
-import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
+import { TASK_SELECTOR_LABELS } from "./fixtures";
 import { NeedListItem } from "./ListItem";
 import { TaskPreviewModal } from "./TaskPreviewModal";
 import { TasksCalendarView } from "./TasksCalendarView";
@@ -116,92 +115,101 @@ const AllNeedsView: React.FC<NeedsViewProps> = observer(
   },
 );
 
-function getViewElement(category: SupervisionTaskCategory) {
-  switch (category) {
+function getViewElement(presenter: CaseloadTasksPresenter) {
+  switch (presenter.selectedTaskCategory) {
     case "employmentNeed":
       return null;
     case "DUE_THIS_MONTH":
       return <AllTasksView />;
     default:
-      return <TasksCalendarView type={category} />;
+      return <TasksCalendarView presenter={presenter} />;
   }
 }
 
-const WorkflowsTasks = observer(function WorkflowsTasksComponent() {
-  const {
-    workflowsStore: {
-      workflowsTasksStore: store,
-      justiceInvolvedPersonTitle,
-      selectedSearchIds,
-      workflowsSearchFieldTitle,
-    },
-  } = useRootStore();
-
-  const COUNTS_BY_CATEGORY = {
-    DUE_THIS_MONTH: (s) => {
-      const [overdue, upcoming] = s.clientsPartitionedByStatus;
-      return overdue.length + upcoming.length;
-    },
-    assessment: (s) => s.orderedTasksByCategory.assessment.length,
-    contact: (s) => s.orderedTasksByCategory.contact.length,
-    homeVisit: (s) => s.orderedTasksByCategory.homeVisit.length,
-    employment: (s) => s.orderedTasksByCategory.employment.length,
-  } as Record<SupervisionTaskCategory, (s: WorkflowsTasksStore) => number>;
-
-  const empty = (
-    <WorkflowsResults
-      callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-        selectedSearchIds.length,
-      ]} ${pluralizeWord(
+const WorkflowsTasksWithPresenter = observer(
+  function WorkflowsTasksWithPresenter({
+    presenter,
+  }: {
+    presenter: CaseloadTasksPresenter;
+  }) {
+    const {
+      workflowsStore: {
+        justiceInvolvedPersonTitle,
+        selectedSearchIds,
         workflowsSearchFieldTitle,
-        selectedSearchIds.length,
-      )}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
-    />
-  );
+      },
+    } = useRootStore();
 
-  const initial = (
-    <WorkflowsResults
-      headerText="Tasks"
-      callToActionText="Search for officers above to review clients who have upcoming or overdue tasks."
-    />
-  );
-
-  return (
-    <WorkflowsNavLayout>
-      <CaseloadSelect />
-      <CaseloadTasksHydrator
-        initial={initial}
-        empty={empty}
-        hydrated={
-          <>
-            <TasksHeader>Tasks</TasksHeader>
-            <TasksDescription>
-              The clients below might have upcoming requirements this month.
-            </TasksDescription>
-
-            <TaskCategories>
-              {getEntries(COUNTS_BY_CATEGORY).map(([category, getCount]) => {
-                return (
-                  <TaskCategoryPill
-                    key={category}
-                    filled={category === store.selectedCategory}
-                    onClick={() => store.toggleSelectedTaskCategory(category)}
-                  >
-                    <Caption>
-                      {TASK_SELECTOR_LABELS[category]}{" "}
-                      <TaskAggregateCount>{getCount(store)}</TaskAggregateCount>
-                    </Caption>
-                  </TaskCategoryPill>
-                );
-              })}
-            </TaskCategories>
-
-            {getViewElement(store.selectedCategory)}
-            <TaskPreviewModal />
-          </>
-        }
+    const empty = (
+      <WorkflowsResults
+        callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
+          selectedSearchIds.length,
+        ]} ${pluralizeWord(
+          workflowsSearchFieldTitle,
+          selectedSearchIds.length,
+        )}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
       />
-    </WorkflowsNavLayout>
+    );
+
+    const initial = (
+      <WorkflowsResults
+        headerText="Tasks"
+        callToActionText="Search for officers above to review clients who have upcoming or overdue tasks."
+      />
+    );
+
+    return (
+      <WorkflowsNavLayout>
+        <CaseloadSelect />
+        <CaseloadTasksHydrator
+          initial={initial}
+          empty={empty}
+          hydrated={
+            <>
+              <TasksHeader>Tasks</TasksHeader>
+              <TasksDescription>
+                The clients below might have upcoming requirements this month.
+              </TasksDescription>
+
+              <TaskCategories>
+                {presenter.displayedTaskCategories.map((category) => {
+                  return (
+                    <TaskCategoryPill
+                      key={category}
+                      filled={category === presenter.selectedTaskCategory}
+                      onClick={() =>
+                        presenter.toggleSelectedTaskCategory(category)
+                      }
+                    >
+                      <Caption>
+                        {TASK_SELECTOR_LABELS[category]}{" "}
+                        <TaskAggregateCount>
+                          {presenter.countForCategory(category)}
+                        </TaskAggregateCount>
+                      </Caption>
+                    </TaskCategoryPill>
+                  );
+                })}
+              </TaskCategories>
+
+              {getViewElement(presenter)}
+              <TaskPreviewModal />
+            </>
+          }
+        />
+      </WorkflowsNavLayout>
+    );
+  },
+);
+
+const WorkflowsTasks = React.memo(function WorkflowsTasks() {
+  const { workflowsStore, analyticsStore, tenantStore } = useRootStore();
+  return (
+    <WorkflowsTasksWithPresenter
+      presenter={
+        new CaseloadTasksPresenter(workflowsStore, tenantStore, analyticsStore)
+      }
+    />
   );
 });
 

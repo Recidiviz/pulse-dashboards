@@ -19,10 +19,11 @@ import { makeAutoObservable, when } from "mobx";
 import qs from "query-string";
 
 import { StaffFilter } from "../../core/models/types";
+import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { CombinedUserRecord } from "../../FirestoreStore";
-import tenants from "../../tenants";
+import { TenantConfigs } from "../../tenants";
 import { StaffFilterFunction } from "../../WorkflowsStore";
-import type RootStore from "..";
+import { RootStore } from "../index";
 import {
   isTenantId,
   LanternMethodology,
@@ -91,11 +92,19 @@ export default class TenantStore {
   rootStore;
 
   currentTenantId?: TenantId;
+  tenantConfigs: TenantConfigs;
 
-  constructor({ rootStore }: { rootStore: typeof RootStore }) {
+  constructor({
+    rootStore,
+    tenantConfigs,
+  }: {
+    rootStore: RootStore;
+    tenantConfigs: TenantConfigs;
+  }) {
     makeAutoObservable(this);
 
     this.rootStore = rootStore;
+    this.tenantConfigs = tenantConfigs;
 
     when(
       () => !this.rootStore.userStore.userIsLoading,
@@ -157,23 +166,23 @@ export default class TenantStore {
 
   get stateName(): string {
     if (!this.currentTenantId) return "";
-    return tenants[this.currentTenantId].name;
+    return this.tenantConfigs[this.currentTenantId].name;
   }
 
   get stateCode(): string {
     if (!this.currentTenantId) return "";
-    return tenants[this.currentTenantId].stateCode;
+    return this.tenantConfigs[this.currentTenantId].stateCode;
   }
 
   get domain(): string | undefined {
     if (!this.currentTenantId) return "";
-    return tenants[this.currentTenantId].domain;
+    return this.tenantConfigs[this.currentTenantId].domain;
   }
 
   get enableUserRestrictions(): boolean {
     if (!this.currentTenantId) return false;
     return (
-      tenants[this.currentTenantId].enableUserRestrictions &&
+      this.tenantConfigs[this.currentTenantId].enableUserRestrictions &&
       Array.isArray(this.rootStore.userStore.allowedSupervisionLocationIds) &&
       this.rootStore.userStore.allowedSupervisionLocationIds.length > 0
     );
@@ -182,24 +191,35 @@ export default class TenantStore {
   get pathwaysName(): string {
     if (!this.currentTenantId) return "";
     return (
-      tenants[this.currentTenantId].pathwaysNameOverride ??
+      this.tenantConfigs[this.currentTenantId].pathwaysNameOverride ??
       "System-Level Trends"
     );
   }
 
   get insightsLaunchedDistricts(): string[] | undefined {
     if (!this.currentTenantId) return;
-    return tenants[this.currentTenantId].insightsLaunchedDistricts;
+    return this.tenantConfigs[this.currentTenantId].insightsLaunchedDistricts;
   }
 
   get insightsLanternState(): boolean {
     if (!this.currentTenantId) return false;
-    return tenants[this.currentTenantId].insightsLanternState ?? false;
+    return (
+      this.tenantConfigs[this.currentTenantId].insightsLanternState ?? false
+    );
   }
 
   get insightsLegacyUI(): boolean {
     if (!this.currentTenantId) return false;
-    return !!tenants[this.currentTenantId].insightsLegacyUI;
+    return !!this.tenantConfigs[this.currentTenantId].insightsLegacyUI;
+  }
+
+  get taskCategories(): SupervisionTaskCategory[] {
+    if (!this.currentTenantId) return [];
+    // Object.keys just makes the type string[] even if they keys are restricted
+    // @ts-expect-error
+    return Object.keys(
+      this.tenantConfigs[this.currentTenantId].workflowsTasksConfig ?? {},
+    );
   }
 
   /**
@@ -208,7 +228,7 @@ export default class TenantStore {
    */
   get insightsUnitState(): boolean {
     if (!this.currentTenantId) return false;
-    return !!tenants[this.currentTenantId].insightsUnitState;
+    return !!this.tenantConfigs[this.currentTenantId].insightsUnitState;
   }
 
   /**
@@ -221,13 +241,16 @@ export default class TenantStore {
     if (!this.currentTenantId) return defaultStaffFilterFunction;
 
     return (
-      tenants[this.currentTenantId]?.workflowsStaffFilterFn ??
+      this.tenantConfigs[this.currentTenantId]?.workflowsStaffFilterFn ??
       defaultStaffFilterFunction
     );
   }
 
   get releaseDateCopy(): string {
     if (!this.currentTenantId) return "";
-    return tenants[this.currentTenantId].releaseDateCopyOverride ?? "Release";
+    return (
+      this.tenantConfigs[this.currentTenantId].releaseDateCopyOverride ??
+      "Release"
+    );
   }
 }

@@ -19,7 +19,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { Mock } from "vitest";
 
 import RootStore from "../../../RootStore";
-import TENANTS from "../../../tenants";
+import { TENANT_CONFIGS } from "../../../tenants";
 import { render } from "../../../testUtils";
 import CoreStore from "../../CoreStore";
 import VitalsStore from "../../CoreStore/VitalsStore";
@@ -83,7 +83,8 @@ describe("VitalsSummaryTable", () => {
   describe("metrics by tenant", () => {
     describe("when the tenant is US_ND", () => {
       const metrics =
-        TENANTS.US_ND.vitalsMetrics?.map((m: VitalsMetric) => m.name) || [];
+        TENANT_CONFIGS.US_ND.vitalsMetrics?.map((m: VitalsMetric) => m.name) ||
+        [];
       it.each(metrics)(`renders a column with header %s`, (metric) => {
         const { getAllByText } = render(
           <Router>

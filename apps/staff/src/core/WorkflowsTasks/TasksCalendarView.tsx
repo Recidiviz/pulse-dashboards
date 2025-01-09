@@ -22,9 +22,7 @@ import moment from "moment/moment";
 import React from "react";
 import { Accordion } from "react-accessible-accordion";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { SupervisionTaskType } from "../../WorkflowsStore";
-import WorkflowsLastSynced from "../WorkflowsLastSynced";
+import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { TaskListItem } from "./ListItem";
 import { TaskListGroup } from "./TaskListGroup";
 
@@ -33,52 +31,42 @@ const formatCalendarHeading = (dueDate: Date): string => {
 };
 
 type TasksCalendarViewProps = {
-  type: SupervisionTaskType;
+  presenter: CaseloadTasksPresenter;
 };
 
 export const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(
-  function CalendarTasksViewComponent({ type }) {
-    const {
-      workflowsStore: { workflowsTasksStore: store },
-    } = useRootStore();
-
-    if (store.selectedCategory === "DUE_THIS_MONTH") {
+  function TasksCalendarView({ presenter }) {
+    if (presenter.selectedTaskCategory === "DUE_THIS_MONTH") {
       return null;
     }
 
-    const tasks = store.orderedTasksByCategory[type];
-    // Grab the last synced date from someone else in the state, since all dates are the same
-    const lastSyncedDate =
-      store.workflowsStore.caseloadPersons[0]?.lastDataFromState;
+    const tasks = presenter.orderedTasksForSelectedCategory;
 
     const groupedTasks = groupBy(tasks, (task) => startOfDay(task.dueDate));
 
     return (
-      <>
-        <Accordion
-          allowMultipleExpanded
-          allowZeroExpanded
-          preExpanded={Object.keys(groupedTasks).map((_, index) => `${index}`)}
-          key={store.selectedCategory}
-        >
-          {Object.entries(groupedTasks).map(([day, tasks], index) => (
-            <TaskListGroup
-              title={formatCalendarHeading(new Date(day))}
-              uuid={`${index}`}
-              items={tasks}
-              key={day}
-              renderer={(task) => (
-                <TaskListItem
-                  person={task.person}
-                  task={task}
-                  key={task.person.recordId}
-                />
-              )}
-            />
-          ))}
-        </Accordion>
-        <WorkflowsLastSynced date={lastSyncedDate} />
-      </>
+      <Accordion
+        allowMultipleExpanded
+        allowZeroExpanded
+        preExpanded={Object.keys(groupedTasks).map((_, index) => `${index}`)}
+        key={presenter.selectedTaskCategory}
+      >
+        {Object.entries(groupedTasks).map(([day, tasks], index) => (
+          <TaskListGroup
+            title={formatCalendarHeading(new Date(day))}
+            uuid={`${index}`}
+            items={tasks}
+            key={day}
+            renderer={(task) => (
+              <TaskListItem
+                person={task.person}
+                task={task}
+                key={task.person.recordId}
+              />
+            )}
+          />
+        ))}
+      </Accordion>
     );
   },
 );

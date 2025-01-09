@@ -157,7 +157,7 @@ const { stateConfigs } = vi.hoisted(() => {
 vi.mock("../subscriptions");
 vi.mock("../../tenants", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../tenants")>()),
-  default: stateConfigs,
+  TENANT_CONFIGS: stateConfigs,
 }));
 
 let rootStore: RootStore;

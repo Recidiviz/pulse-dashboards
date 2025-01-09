@@ -85,7 +85,9 @@ export type SupervisionDetailsForTask = {
   employment: EmploymentDetails;
 };
 
-export type SupervisionTask<T extends SupervisionTaskType> = {
+export type SupervisionTask<
+  T extends SupervisionTaskType = SupervisionTaskType,
+> = {
   type: T;
   dueDate: Date;
   details: SupervisionDetailsForTask[T];

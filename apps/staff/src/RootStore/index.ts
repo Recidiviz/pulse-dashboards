@@ -28,6 +28,7 @@ import {
 
 import FirestoreStore from "../FirestoreStore";
 import { InsightsStore } from "../InsightsStore/InsightsStore";
+import { TENANT_CONFIGS } from "../tenants";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { WorkflowsRootStore } from "../WorkflowsStore/WorkflowsRootStore";
 import AnalyticsStore from "./AnalyticsStore";
@@ -117,7 +118,10 @@ export class RootStore {
       rootStore: this,
     });
 
-    this.tenantStore = new TenantStore({ rootStore: this });
+    this.tenantStore = new TenantStore({
+      rootStore: this,
+      tenantConfigs: TENANT_CONFIGS,
+    });
 
     this.pageStore = new PageStore({ rootStore: this });
 

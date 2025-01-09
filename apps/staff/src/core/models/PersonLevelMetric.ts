@@ -17,7 +17,7 @@
 
 import { computed, makeObservable } from "mobx";
 
-import tenants from "../../tenants";
+import { TENANT_CONFIGS } from "../../tenants";
 import { toHumanReadable, toTitleCase } from "../../utils";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { DownloadableData, DownloadableDataset } from "../PageVitals/types";
@@ -60,7 +60,9 @@ export default class PersonLevelMetric extends PathwaysNewBackendMetric<PersonLe
 
   get columns(): TableColumn[] | undefined {
     if (!this.rootStore?.currentTenantId) return undefined;
-    return tenants[this.rootStore.currentTenantId].tableColumns?.[this.id];
+    return TENANT_CONFIGS[this.rootStore.currentTenantId].tableColumns?.[
+      this.id
+    ];
   }
 
   get downloadableData(): DownloadableData | undefined {

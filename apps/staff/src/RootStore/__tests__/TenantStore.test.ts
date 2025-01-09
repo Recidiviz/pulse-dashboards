@@ -15,8 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { TenantConfigs } from "../../tenants";
 import RootStore from "..";
-import { US_MO, US_PA } from "../TenantStore/lanternTenants";
 import TenantStore, {
   CURRENT_TENANT_IN_SESSION,
 } from "../TenantStore/TenantStore";
@@ -29,12 +29,31 @@ vi.mock("../../components/StoreProvider");
 const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
 
 const metadataField = `${METADATA_NAMESPACE}app_metadata`;
-const user = { [metadataField]: { stateCode: US_MO }, email_verified: true };
+const user = {
+  [metadataField]: { stateCode: "US_RESTRICTED" },
+  email_verified: true,
+};
+
+const mockTenantConfigs = {
+  US_RESTRICTED: {
+    enableUserRestrictions: true,
+  },
+  US_UNRESTRICTED: {
+    enableUserRestrictions: false,
+  },
+  US_TASKS: {
+    workflowsTasksConfig: {
+      task1: {},
+      task4: {},
+      task2: {},
+    },
+  },
+} as any as TenantConfigs;
 
 let tenantStore;
 describe("TenantStore", () => {
   const tenantIdFromStorage = "TEST_TENANT";
-  const tenantIdFromUser = US_MO;
+  const tenantIdFromUser = "US_STATE";
 
   const createMockRootStore = (mockUserStore: any) =>
     ({
@@ -55,26 +74,31 @@ describe("TenantStore", () => {
     it("returns true when a current tenant has restrictions enabled", () => {
       const mockRootStore = createMockRootStore({
         userIsLoading: false,
-        availableStateCodes: ["US_MO"],
+        availableStateCodes: ["US_RESTRICTED"],
         allowedSupervisionLocationIds: ["25"],
         userHasAccess: () => true,
         user,
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
       expect(tenantStore.enableUserRestrictions).toEqual(true);
     });
     it("returns false when a current tenant does not have restrictions enabled", () => {
       const mockRootStore = createMockRootStore({
         userIsLoading: false,
-        availableStateCodes: ["US_PA"],
+        availableStateCodes: ["US_UNRESTRICTED"],
         allowedSupervisionLocationIds: [],
         userHasAccess: () => true,
-        user: { [metadataField]: { stateCode: US_PA }, email_verified: true },
+        user: {
+          [metadataField]: { stateCode: "US_UNRESTRICTED" },
+          email_verified: true,
+        },
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
       expect(tenantStore.enableUserRestrictions).toEqual(false);
     });
@@ -82,7 +106,7 @@ describe("TenantStore", () => {
     it("returns true for recidiviz users with restrictions", () => {
       const mockRootStore = createMockRootStore({
         userIsLoading: false,
-        availableStateCodes: ["US_MO", "US_PA"],
+        availableStateCodes: ["US_RESTRICTED", "US_UNRESTRICTED"],
         allowedSupervisionLocationIds: ["25"],
         userHasAccess: () => true,
         user: {
@@ -92,13 +116,14 @@ describe("TenantStore", () => {
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
       expect(tenantStore.enableUserRestrictions).toEqual(true);
     });
     it("returns false for recidiviz users without restrictions", () => {
       const mockRootStore = createMockRootStore({
         userIsLoading: false,
-        availableStateCodes: ["US_MO", "US_PA"],
+        availableStateCodes: ["US_RESTRICTED", "US_UNRESTRICTED"],
         allowedSupervisionLocationIds: [],
         userHasAccess: () => true,
         user: {
@@ -108,6 +133,7 @@ describe("TenantStore", () => {
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
       expect(tenantStore.enableUserRestrictions).toEqual(false);
     });
@@ -115,16 +141,17 @@ describe("TenantStore", () => {
     it("returns false for restrictions in the wrong format", () => {
       const mockRootStore = createMockRootStore({
         userIsLoading: false,
-        availableStateCodes: ["US_MO"],
+        availableStateCodes: ["US_RESTRICTED"],
         allowedSupervisionLocationIds: "some string",
         userHasAccess: () => true,
         user: {
-          [metadataField]: { stateCode: "US_MO" },
+          [metadataField]: { stateCode: "US_RESTRICTED" },
           email_verified: true,
         },
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
       expect(tenantStore.enableUserRestrictions).toEqual(false);
     });
@@ -150,6 +177,7 @@ describe("TenantStore", () => {
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
       expect(tenantStore.currentTenantId).toEqual(tenantIdFromStorage);
     });
@@ -163,6 +191,7 @@ describe("TenantStore", () => {
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
 
       expect(tenantStore.currentTenantId).toEqual(tenantIdFromStorage);
@@ -179,6 +208,7 @@ describe("TenantStore", () => {
 
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
       expect(tenantStore.currentTenantId).toEqual(availableStateCodes[0]);
     });
@@ -205,6 +235,7 @@ describe("TenantStore", () => {
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
 
       expect(tenantStore.currentTenantId).toEqual("US_TN");
@@ -220,9 +251,52 @@ describe("TenantStore", () => {
       });
       tenantStore = new TenantStore({
         rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
       });
 
       expect(tenantStore.currentTenantId).toEqual(tenantIdFromStorage);
+    });
+  });
+
+  describe("when getting task configurations", () => {
+    beforeEach(() => {
+      sessionStorage.clear();
+      vi.clearAllMocks();
+      vi.resetAllMocks();
+    });
+
+    it("preserves the order of task types in workflowsTasksConfig", () => {
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        userHasAccess: () => true,
+        availableStateCodes: ["US_TASKS"],
+        user: {
+          [metadataField]: { stateCode: "US_TASKS" },
+          email_verified: true,
+        },
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
+      });
+      expect(tenantStore.taskCategories).toEqual(["task1", "task4", "task2"]);
+    });
+
+    it("returns a sane default when tasks are not configured", () => {
+      const mockRootStore = createMockRootStore({
+        userIsLoading: false,
+        userHasAccess: () => true,
+        availableStateCodes: ["US_UNRESTRICTED"],
+        user: {
+          [metadataField]: { stateCode: "US_UNRESTRICTED" },
+          email_verified: true,
+        },
+      });
+      tenantStore = new TenantStore({
+        rootStore: mockRootStore,
+        tenantConfigs: mockTenantConfigs,
+      });
+      expect(tenantStore.taskCategories).toEqual([]);
     });
   });
 });

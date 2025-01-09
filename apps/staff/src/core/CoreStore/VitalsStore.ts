@@ -17,7 +17,7 @@
 
 import { makeAutoObservable, reaction } from "mobx";
 
-import TENANTS from "../../tenants";
+import { TENANT_CONFIGS } from "../../tenants";
 import { downloadChartAsData } from "../../utils/downloads/downloadData";
 import { formatISODateString, formatPercent } from "../../utils/formatStrings";
 import { getMethodologyCopy } from "../content";
@@ -89,7 +89,7 @@ export default class VitalsStore {
   get metrics(): VitalsMetric[] {
     const tenantId = this.rootStore.tenantStore.currentTenantId;
     if (!tenantId) return [] as VitalsMetric[];
-    return TENANTS[tenantId].vitalsMetrics || ([] as VitalsMetric[]);
+    return TENANT_CONFIGS[tenantId].vitalsMetrics || ([] as VitalsMetric[]);
   }
 
   get currentEntitySummary(): VitalsSummaryRecord | undefined {

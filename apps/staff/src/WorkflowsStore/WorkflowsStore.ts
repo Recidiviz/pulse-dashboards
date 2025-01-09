@@ -71,7 +71,7 @@ import {
   WorkflowsResidentRecord,
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
-import tenants from "../tenants";
+import { TENANT_CONFIGS } from "../tenants";
 import { CaseloadSearchable } from "./CaseloadSearchable";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Location } from "./Location";
@@ -153,6 +153,7 @@ export class WorkflowsStore implements Hydratable {
    */
   selectedSearchIdsForImpersonation: string[] | undefined = undefined;
 
+  // TODO(#7061): access tenant config values from the tenant store instead of the global variable
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
     makeAutoObservable<this, "userKeepAliveDisposer">(this, {
@@ -531,7 +532,7 @@ export class WorkflowsStore implements Hydratable {
     } = this.rootStore;
 
     if (!currentTenantId) return;
-    const { workflowsSupportedSystems } = tenants[currentTenantId] ?? [];
+    const { workflowsSupportedSystems } = TENANT_CONFIGS[currentTenantId] ?? [];
 
     if (isRecidivizUser) {
       return workflowsSupportedSystems;
@@ -923,7 +924,7 @@ export class WorkflowsStore implements Hydratable {
       rootStore: { currentTenantId },
     } = this;
     if (!currentTenantId) return false;
-    return !!tenants[currentTenantId]?.tasks;
+    return !!TENANT_CONFIGS[currentTenantId]?.tasks;
   }
 
   /**
@@ -1015,27 +1016,28 @@ export class WorkflowsStore implements Hydratable {
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId) return fallback;
     return (
-      tenants[currentTenantId].workflowsSystemConfigs?.[system] ?? fallback
+      TENANT_CONFIGS[currentTenantId].workflowsSystemConfigs?.[system] ??
+      fallback
     );
   }
 
   get homepage(): WorkflowsPage {
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId) return "home";
-    return tenants[currentTenantId].workflowsHomepage ?? "home";
+    return TENANT_CONFIGS[currentTenantId].workflowsHomepage ?? "home";
   }
 
   get homepageNameOverride(): string | undefined {
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId) return undefined;
-    return tenants[currentTenantId].workflowsHomepageName;
+    return TENANT_CONFIGS[currentTenantId].workflowsHomepageName;
   }
 
   get internalSystemName(): string {
     const defaultName = "OMS";
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId) return defaultName;
-    return tenants[currentTenantId].internalSystemName ?? defaultName;
+    return TENANT_CONFIGS[currentTenantId].internalSystemName ?? defaultName;
   }
 
   get currentUserEmail(): string {

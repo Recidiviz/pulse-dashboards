@@ -53,14 +53,14 @@ import US_TX_CONFIG from "./tenants/US_TX";
 export const RECIDIVIZ_TENANT = "RECIDIVIZ";
 export const CSG = "CSG";
 
-export type Tenants = {
+export type TenantConfigs = {
   [K in TenantConfigId]: TenantConfig<K>;
 };
 
 // Add any new tenant IDs to the list in `fetchOfflineUser.js` to enable in offline mode.
 const ALL_TENANTS = uniq([...DASHBOARD_TENANTS, ...LANTERN_TENANTS]);
 
-const TENANTS: Tenants = {
+export const TENANT_CONFIGS: TenantConfigs = {
   [US_AZ]: US_AZ_CONFIG,
   [US_AR]: US_AR_CONFIG,
   [US_CA]: US_CA_CONFIG,
@@ -97,5 +97,3 @@ const TENANTS: Tenants = {
   },
   CSG: CSG_CONFIG,
 };
-
-export default TENANTS;

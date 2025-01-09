@@ -30,7 +30,7 @@ import { SnoozeTaskConfig } from "../../core/models/types";
 import { TaskValidationError } from "../../errors";
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import tenants from "../../tenants";
+import { TENANT_CONFIGS } from "../../tenants";
 import {
   CollectionDocumentSubscription,
   DocumentSubscription,
@@ -82,6 +82,7 @@ export abstract class TasksBase<
     this.person = person;
     this.rootStore = rootStore;
 
+    // TODO(#7033): Change this to a query instead of a subscription´
     this.taskSubscription = new CollectionDocumentSubscription<TaskRecord>(
       this.rootStore.firestoreStore,
       firestoreCollectionKey,
@@ -108,13 +109,13 @@ export abstract class TasksBase<
   get tasks(): SupervisionTask<SupervisionTaskType>[] {
     if (!isHydrated(this)) return [];
     const tenantId = this.rootStore.currentTenantId;
-    if (!tenantId || !tenants[tenantId].tasks) return [];
+    if (!tenantId || !TENANT_CONFIGS[tenantId].tasks) return [];
 
     return (this.record?.tasks || []).flatMap(
       <T extends SupervisionTaskType>(
         task: SupervisionTaskRecord<T>,
       ): SupervisionTask<T>[] => {
-        const TaskConstructor = tenants[tenantId].tasks?.[task.type];
+        const TaskConstructor = TENANT_CONFIGS[tenantId].tasks?.[task.type];
 
         if (TaskConstructor === undefined) {
           // TODO(#5622): Add a test to ensure a new name does not prevent
@@ -182,7 +183,7 @@ export abstract class TasksBase<
 
   get snoozeTasksConfig(): SnoozeTaskConfig | undefined {
     if (!this.rootStore.currentTenantId) return;
-    return tenants[this.rootStore.currentTenantId].workflowsTasksConfig;
+    return TENANT_CONFIGS[this.rootStore.currentTenantId].workflowsTasksConfig;
   }
 
   hydrate(): void {

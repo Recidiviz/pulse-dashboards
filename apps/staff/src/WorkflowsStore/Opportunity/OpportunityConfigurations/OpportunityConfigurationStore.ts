@@ -25,7 +25,7 @@ import { FlowMethod, Hydratable, HydratesFromSource } from "~hydration-utils";
 import { mockOpportunityConfigs } from "../../../core/__tests__/testUtils";
 import { downloadZipFile } from "../../../core/Paperwork/utils";
 import { RootStore } from "../../../RootStore";
-import TENANTS from "../../../tenants";
+import { TENANT_CONFIGS } from "../../../tenants";
 import { sortObject } from "../../utils";
 import { OpportunityConfigurationAPI } from "./api/interface";
 import { OpportunityConfigurationAPIClient } from "./api/OpportunityConfigurationAPIClient";
@@ -115,8 +115,8 @@ export class OpportunityConfigurationStore implements Hydratable {
   }
 
   async downloadBlob(throttle_ms = 250) {
-    const states = TENANTS.RECIDIVIZ.availableStateCodes.filter(
-      (t) => TENANTS[t].navigation?.workflows,
+    const states = TENANT_CONFIGS.RECIDIVIZ.availableStateCodes.filter(
+      (t) => TENANT_CONFIGS[t].navigation?.workflows,
     );
     const files = await Promise.all(
       states.map(async (tenant, i) => {

@@ -21,7 +21,7 @@ import { useQueryParams } from "use-query-params";
 import { Mock } from "vitest";
 
 import RootStore from "../../../RootStore";
-import TENANTS from "../../../tenants";
+import { TENANT_CONFIGS } from "../../../tenants";
 import CoreStore from "../../CoreStore";
 import FiltersStore from "../../CoreStore/FiltersStore";
 import VitalsStore from "../../CoreStore/VitalsStore";
@@ -105,7 +105,8 @@ describe("VitalsSummaryCards", () => {
   describe("metrics by tenant", () => {
     describe("when the tenant is US_ND", () => {
       const metrics =
-        TENANTS.US_ND.vitalsMetrics?.map((m: VitalsMetric) => m.name) || [];
+        TENANT_CONFIGS.US_ND.vitalsMetrics?.map((m: VitalsMetric) => m.name) ||
+        [];
       it.each(metrics)("renders the metric card %s", (metric) => {
         render(
           <Router>
