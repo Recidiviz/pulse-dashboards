@@ -41,7 +41,7 @@ export type RecommendationsProps = {
     recommendation: RecommendationType | string,
   ) => void;
   saveRecommendation: () => void;
-  setCaseStatusCompleted: () => void;
+  setCaseStatusCompleted: () => Promise<void>;
   analytics: {
     trackCreateOrUpdateRecommendationClicked: (
       type: CreateOrUpdateRecommendation,

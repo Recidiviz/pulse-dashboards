@@ -55,6 +55,10 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   } = analytics;
 
   const [showSummaryReport, setShowSummaryReport] = useState(false);
+  /** User will be creating a recommendation (for the first time) if there are no previously saved recommendations */
+  const [isCreatingRecommendation, setIsCreatingRecommendation] = useState(
+    !lastSavedRecommendation,
+  );
 
   const hideSummaryReport = () => setShowSummaryReport(false);
 
@@ -71,9 +75,9 @@ const Recommendations: React.FC<RecommendationsProps> = ({
     createOpportunityProviderDisplayName(opp.opportunityName, opp.providerName),
   );
 
-  const updateOrCreateDisplayText = lastSavedRecommendation
-    ? "Update"
-    : "Create";
+  const updateOrCreateDisplayText = isCreatingRecommendation
+    ? "Create"
+    : "Update";
 
   const opportunityDescriptions = recommendedOpportunities
     ?.map((opp) => opp.genericDescription)
@@ -98,6 +102,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
           gender={gender}
           hideSummaryReport={hideSummaryReport}
           setCaseStatusCompleted={setCaseStatusCompleted}
+          isCreatingRecommendation={isCreatingRecommendation}
           analytics={{
             trackCopySummaryToClipboardClicked,
             trackDownloadReportClicked,
@@ -158,6 +163,9 @@ const Recommendations: React.FC<RecommendationsProps> = ({
               saveRecommendation();
               trackCreateOrUpdateRecommendationClicked(
                 lastSavedRecommendation ? "update" : "create",
+              );
+              setIsCreatingRecommendation(
+                lastSavedRecommendation ? false : true,
               );
             }}
           >

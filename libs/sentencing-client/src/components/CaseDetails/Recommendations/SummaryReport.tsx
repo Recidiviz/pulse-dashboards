@@ -17,10 +17,12 @@
 
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import generatePDF from "react-to-pdf";
 
 import { Case, CaseInsight, Client } from "../../../api";
 import { StateCode } from "../../../geoConfigs/types";
+import { PSI_PATHS } from "../../../utils/routing";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import CheckWhiteIcon from "../../assets/check-white-icon.svg?react";
 import CopyIcon from "../../assets/copy-icon.svg?react";
@@ -52,7 +54,8 @@ type SummaryReportProps = {
     trackCaseStatusCompleteClicked: () => void;
   };
   hideSummaryReport: () => void;
-  setCaseStatusCompleted: () => void;
+  setCaseStatusCompleted: () => Promise<void>;
+  isCreatingRecommendation: boolean;
 };
 
 export const SummaryReport: React.FC<SummaryReportProps> = ({
@@ -70,6 +73,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   analytics,
   hideSummaryReport,
   setCaseStatusCompleted,
+  isCreatingRecommendation,
 }) => {
   const {
     trackCopySummaryToClipboardClicked,
@@ -86,6 +90,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     gender,
     stateCode,
   });
+  const navigate = useNavigate();
 
   const [hasDownloadedReport, setHasDownloadedReport] = useState(false);
   const [hasCopiedText, setHasCopiedText] = useState(false);
@@ -111,13 +116,26 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   };
 
   /** Marks the case status as "Complete" and hides the summary report view */
-  const completeSummaryReport = () => {
-    setCaseStatusCompleted();
+  const completeSummaryReport = async () => {
+    if (isCreatingRecommendation) {
+      await setCaseStatusCompleted();
+      navigate(PSI_PATHS.psi);
+    }
+
     trackCaseStatusCompleteClicked();
     hideSummaryReport();
-    toast(() => <span>{firstName}'s case has been updated</span>, {
-      duration: TOAST_TIMEOUT,
-    });
+
+    toast(
+      () => (
+        <span>
+          {firstName}'s case has been{" "}
+          {isCreatingRecommendation ? "completed" : "updated"}
+        </span>
+      ),
+      {
+        duration: TOAST_TIMEOUT,
+      },
+    );
   };
 
   const renderReport = () => (
