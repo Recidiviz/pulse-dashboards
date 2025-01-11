@@ -496,6 +496,18 @@ export default class UserStore {
       allowed.supervisionToPrison.splice(indexOfOfficerChart, 1);
     }
 
+    // The first key in insertion order will be the default page served by RedirectHome.
+    // Because external demos often start with linestaff tools, redirect to
+    // workflows home page when in demo mode.
+    if (isDemoMode() && "workflows" in allowed) {
+      const { workflows, ...rest } = allowed;
+      return {
+        workflows,
+        ...rest,
+        ...getAllowedMethodology(allowed),
+      };
+    }
+
     return { ...allowed, ...getAllowedMethodology(allowed) };
   }
 
