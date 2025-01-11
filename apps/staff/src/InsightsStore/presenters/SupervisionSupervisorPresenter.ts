@@ -223,6 +223,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     );
   }
 
+  // TODO (#7050): Remove this. It now lives in SupervisionSupervisorOutcomesPresenter.ts
   /**
    * Provides outlier officers' data with all necessary relationships fully hydrated.
    * @returns An array of `OfficerOutcomesData` or `undefined` if an error occurs.
@@ -266,6 +267,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     ];
   }
 
+  // TODO (#7050): Remove this entire section. It now lives in SupervisionSupervisorOutcomesPresenter.ts
   // ==============================
   // Metrics and Labels
   // ==============================
@@ -463,6 +465,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       throw new Error("Opportunity configuration store not hydrated");
   }
 
+  // TODO (#7050): Remove this entire section. It not lives in SupervisionSupervisorOutcomesPresenter.ts
   // ==============================
   // Action Strategies
   // ==============================
@@ -545,12 +548,13 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   // Error Handling and Assertions
   // ==============================
 
+  // TODO (#7050): Remove this. It now lives in SupervisionSupervisorOutcomesPresenter.ts
   /**
    * The outlier officers' outcomes data for the `SupervisionOfficerSupervisor`
    * @throws An error if the data is not available.
    * @returns An array of `OfficerOutcomesData` or an `Error` object.
    */
-  private get outcomesDataForOutlierOfficersOrError():
+  protected get outcomesDataForOutlierOfficersOrError():
     | OfficerOutcomesData[]
     | Error {
     try {
@@ -587,11 +591,12 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     }
   }
 
+  // TODO (#7050): Remove this. It now lives in SupervisionSupervisorOutcomesPresenter.ts
   /**
    * Internal method to calculate the grouping of outlier officers by metric and caseload category.
    * @returns A 2D map of outlier officers by metric and caseload category, or an `Error` object.
    */
-  private get outlierOfficersByMetricAndCaseloadCategoryOrError():
+  protected get outlierOfficersByMetricAndCaseloadCategoryOrError():
     | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
     | Error {
     try {
@@ -655,11 +660,12 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     }
   }
 
+  // TODO (#7050): Remove this. It now lives in SupervisionSupervisorOutcomesPresenter.ts
   /**
    * Asserts that metrics have been populated.
    * @throws An error if metrics are not populated.
    */
-  private expectMetricsPopulated() {
+  protected expectMetricsPopulated() {
     if (this.supervisionStore.metricConfigsById === undefined)
       throw new Error("Failed to populate metrics");
   }
@@ -690,11 +696,12 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       throw new Error("failed to populate excluded officers");
   }
 
+  // TODO (#7050): Remove this. It now lives in SupervisionSupervisorOutcomesPresenter.ts
   /**
    * Asserts that officers with outliers have been populated.
    * @throws An error if officers with outliers are not populated.
    */
-  private expectOfficerOutcomesPopulated() {
+  protected expectOfficerOutcomesPopulated() {
     if (
       !this.supervisionStore.officersOutcomesBySupervisorPseudoId.has(
         this.supervisorPseudoId,
@@ -711,11 +718,12 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     if (!this.supervisorInfo) throw new Error("failed to populate supervisor");
   }
 
+  // TODO (#7050): Remove this. It now lives in SupervisionSupervisorOutcomesPresenter.ts
   /**
    * Asserts that outlier officers' data has been populated.
    * @throws The encountered error if outlier data is not populated.
    */
-  private expectOutcomesDataForOutlierOfficersPopulated() {
+  protected expectOutcomesDataForOutlierOfficersPopulated() {
     if (this.outcomesDataForOutlierOfficersOrError instanceof Error)
       throw this.outcomesDataForOutlierOfficersOrError;
   }
