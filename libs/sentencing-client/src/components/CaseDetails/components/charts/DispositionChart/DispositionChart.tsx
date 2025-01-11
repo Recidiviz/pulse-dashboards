@@ -89,9 +89,11 @@ export function DispositionChart({
       <CommonStyled.ChartSubTitle>
         {dispositionChartSubtitle && (
           <>
-            {dispositionChartSubtitle} (Based on{" "}
-            {dispositionNumRecords?.toLocaleString()}{" "}
-            {printFormattedRecordString(dispositionNumRecords ?? 0)})
+            {dispositionChartSubtitle}{" "}
+            <span>
+              (Based on {dispositionNumRecords?.toLocaleString()}{" "}
+              {printFormattedRecordString(dispositionNumRecords ?? 0)})
+            </span>
           </>
         )}
       </CommonStyled.ChartSubTitle>

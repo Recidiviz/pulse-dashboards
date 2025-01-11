@@ -48,7 +48,7 @@ export const ChartSubTitle = styled.div`
   color: ${palette.slate80};
 
   span {
-    font-weight: 400;
+    font-weight: 500;
     font-style: italic;
   }
 `;

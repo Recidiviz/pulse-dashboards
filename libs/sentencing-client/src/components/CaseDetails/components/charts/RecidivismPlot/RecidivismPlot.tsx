@@ -88,9 +88,11 @@ export function RecidivismPlot({
       <CommonStyled.ChartSubTitle>
         {recidivismPlotSubtitle && (
           <>
-            {recidivismPlotSubtitle} (Based on{" "}
-            {rollupRecidivismNumRecords?.toLocaleString()}{" "}
-            {printFormattedRecordString(rollupRecidivismNumRecords ?? 0)})
+            {recidivismPlotSubtitle}{" "}
+            <span>
+              (Based on {rollupRecidivismNumRecords?.toLocaleString()}{" "}
+              {printFormattedRecordString(rollupRecidivismNumRecords ?? 0)})
+            </span>
           </>
         )}
       </CommonStyled.ChartSubTitle>

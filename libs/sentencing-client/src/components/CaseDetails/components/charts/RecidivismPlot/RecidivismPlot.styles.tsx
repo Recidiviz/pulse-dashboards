@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
 export const RecidivismChartLegend = styled.div`
@@ -25,6 +26,7 @@ export const RecidivismChartLegendItem = styled.div`
   display: flex;
   align-items: center;
   margin-right: 24px;
+  color: ${palette.pine1};
 `;
 
 export const RecidivismChartLegendDot = styled.div<{

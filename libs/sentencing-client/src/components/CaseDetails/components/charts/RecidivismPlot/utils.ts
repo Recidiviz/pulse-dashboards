@@ -23,10 +23,13 @@ import {
   lineY,
   plot,
   pointer,
+  pointerX,
+  ruleX,
   ruleY,
   text,
   tip,
 } from "@observablehq/plot";
+import { palette } from "@recidiviz/design-system";
 
 import { CaseInsight } from "../../../../../api";
 import { convertDecimalToPercentage } from "../../../../../utils/utils";
@@ -126,14 +129,7 @@ export function getRecidivismPlot(
         stroke: "recommendationType",
         r: 6,
       }),
-      tip(
-        data,
-        pointer({
-          x: "cohortMonths",
-          y: "eventRate",
-          title: (d) => `${d.eventRate}%`,
-        }),
-      ),
+
       text(endingEventRates, {
         x: "cohortMonths",
         y: (d) => d.eventRate,
@@ -165,6 +161,25 @@ export function getRecidivismPlot(
       }),
       // Adds a horizontal line a y = 0
       ruleY([0]),
+      ruleX(
+        data,
+        pointerX({
+          x: "cohortMonths",
+          py: "eventRate",
+          strokeWidth: 1,
+          stroke: palette.slate30,
+          strokeDasharray: "4",
+        }),
+      ),
+      tip(
+        data,
+        pointer({
+          x: "cohortMonths",
+          y: "eventRate",
+          title: (d) =>
+            `${d.cohortMonths} Months\n\n${d.recommendationType}: ${d.eventRate}%`,
+        }),
+      ),
     ],
   });
 }
