@@ -243,8 +243,14 @@ describe("hydrateStr", () => {
       ["date", parseISO("2025-01-15"), "Jan 15, 2025"],
       ["daysPast", parseISO("2024-12-15"), "17"],
       ["daysUntil", parseISO("2025-01-15"), "14"],
+      [
+        "monthsOrDaysRemainingFromToday",
+        parseISO("2025-01-15"),
+        "14 more days",
+      ],
+      ["monthsOrDaysRemainingFromToday", parseISO("2025-01-02"), "1 more day"],
     ])("%s handles date objects", (helper, input, expected) => {
-      timekeeper.freeze("2025-01-01");
+      timekeeper.freeze("2025-01-01T15:32");
       const template = `{{${helper} input}}`;
       const criteria = { input };
       const formatters = {};
@@ -262,8 +268,10 @@ describe("hydrateStr", () => {
       ["date", "2025-01-15", "Jan 15, 2025"],
       ["daysPast", "2024-12-15", "17"],
       ["daysUntil", "2025-01-15", "14"],
+      ["monthsOrDaysRemainingFromToday", "2025-01-15", "14 more days"],
+      ["monthsOrDaysRemainingFromToday", "2025-01-02", "1 more day"],
     ])("%s handles ISO strings", (helper, input, expected) => {
-      timekeeper.freeze("2025-01-01");
+      timekeeper.freeze("2025-01-01T15:32");
       const template = `{{${helper} input}}`;
       const criteria = { input };
       const formatters = {};

@@ -16,7 +16,12 @@
 // =============================================================================
 
 import { captureException } from "@sentry/react";
-import { differenceInDays, differenceInMonths, parseISO } from "date-fns";
+import {
+  differenceInDays,
+  differenceInMonths,
+  parseISO,
+  startOfToday,
+} from "date-fns";
 import Handlebars from "handlebars";
 import { mapValues, snakeCase } from "lodash";
 import simplur from "simplur";
@@ -33,9 +38,9 @@ import { Opportunity, OpportunityRequirement } from "../types";
 import { usMiSegregationDisplayName } from "./usMi/usMiCriteriaUtils";
 
 export const monthsOrDaysRemainingFromToday = (eligibleDate: Date): string => {
-  const months = differenceInMonths(eligibleDate, new Date());
+  const months = differenceInMonths(eligibleDate, startOfToday());
   if (months === 0) {
-    return simplur`${differenceInDays(eligibleDate, new Date())} more day[|s]`;
+    return simplur`${differenceInDays(eligibleDate, startOfToday())} more day[|s]`;
   }
   return simplur`${months} more month[|s]`;
 };
@@ -112,9 +117,9 @@ const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
   upperCase: (s) => s.toUpperCase(),
   titleCase: toTitleCase,
   date: (date) => formatWorkflowsDate(dateify(date)),
-  daysPast: (date) => differenceInDays(new Date(), dateify(date)),
-  daysUntil: (date) => differenceInDays(dateify(date), new Date()),
-  monthsUntil: (date) => differenceInMonths(dateify(date), new Date()),
+  daysPast: (date) => differenceInDays(startOfToday(), dateify(date)),
+  daysUntil: (date) => differenceInDays(dateify(date), startOfToday()),
+  monthsUntil: (date) => differenceInMonths(dateify(date), startOfToday()),
   yearsMonthsUntil: (date) => formatYearsMonthsFromNow(dateify(date)),
   daysToYearsMonthsPast: (days) => formatDaysToYearsMonthsPast(days),
   eq: (a, b) => a === b,
