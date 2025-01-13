@@ -158,6 +158,10 @@ export const mockApiOpportunityConfigurationResponse = {
       denialNoun: null,
       denialReasons: [
         {
+          key: "FINES & FEES",
+          text: "Client is not making efforts to reduce financial obligations",
+        },
+        {
           key: "SATISFACTORY",
           text: "Client has not had a satisfactory adjustment over their term of supervision",
         },
@@ -215,6 +219,11 @@ export const mockApiOpportunityConfigurationResponse = {
       methodologyUrl:
         "https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub",
       nonOmsCriteria: [
+        {
+          text: "Making efforts to reduce financial obligations",
+          tooltip:
+            "See intranet (Act 35 - Supervision Financial Obligations section) or UJS site for financial obligations",
+        },
         {
           text: "Has fulfilled treatment and special condition requirements",
           tooltip:
