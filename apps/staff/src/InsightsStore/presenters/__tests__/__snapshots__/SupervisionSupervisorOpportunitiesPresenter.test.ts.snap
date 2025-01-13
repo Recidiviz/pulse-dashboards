@@ -1,0 +1,158 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method: opportunityDetails > opportunityDetails is defined 1`] = `
+[
+  {
+    "clientsEligibleCount": 20,
+    "label": "Mock Opportunity",
+    "officersWithEligibleClients": [
+      {
+        "avgDailyPopulation": 54,
+        "clientsEligibleCount": 6,
+        "clientsEligibleCountWithLabel": "6 clients",
+        "displayName": "Walter Harris",
+        "externalId": "OFFICER4",
+        "fullName": {
+          "givenNames": "Walter",
+          "surname": "Harris",
+        },
+        "includeInOutcomes": true,
+        "pseudonymizedId": "hashed-so1",
+        "supervisorExternalIds": [
+          "agonzalez123",
+          "dlee456",
+        ],
+        "zeroGrantOpportunities": [
+          "LSU",
+          "pastFTRD",
+        ],
+      },
+      {
+        "avgDailyPopulation": 12,
+        "clientsEligibleCount": 5,
+        "clientsEligibleCountWithLabel": "5 clients",
+        "displayName": "Jack Hernandez",
+        "externalId": "so2",
+        "fullName": {
+          "givenNames": "Jack",
+          "surname": "Hernandez",
+        },
+        "includeInOutcomes": true,
+        "pseudonymizedId": "hashed-so2",
+        "supervisorExternalIds": [
+          "agonzalez123",
+        ],
+      },
+      {
+        "clientsEligibleCount": 5,
+        "clientsEligibleCountWithLabel": "5 clients",
+        "displayName": "John Harris",
+        "externalId": "so6",
+        "fullName": {
+          "givenNames": "John",
+          "surname": "Harris",
+        },
+        "pseudonymizedId": "hashed-so6",
+        "supervisorExternalIds": [
+          "agonzalez123",
+        ],
+      },
+      {
+        "avgDailyPopulation": 32,
+        "clientsEligibleCount": 4,
+        "clientsEligibleCountWithLabel": "4 clients",
+        "displayName": "Jason Nelson",
+        "externalId": "so3",
+        "fullName": {
+          "givenNames": "Jason",
+          "surname": "Nelson",
+        },
+        "includeInOutcomes": true,
+        "pseudonymizedId": "hashed-so3",
+        "supervisorExternalIds": [
+          "agonzalez123",
+        ],
+      },
+    ],
+    "opportunityType": "mockUsXxOpp",
+    "priority": "HIGH",
+    "zeroGrantsTooltip": undefined,
+  },
+  {
+    "clientsEligibleCount": 19,
+    "label": "Mock Opportunity Two",
+    "officersWithEligibleClients": [
+      {
+        "avgDailyPopulation": 12,
+        "clientsEligibleCount": 5,
+        "clientsEligibleCountWithLabel": "5 clients",
+        "displayName": "Jack Hernandez",
+        "externalId": "so2",
+        "fullName": {
+          "givenNames": "Jack",
+          "surname": "Hernandez",
+        },
+        "includeInOutcomes": true,
+        "pseudonymizedId": "hashed-so2",
+        "supervisorExternalIds": [
+          "agonzalez123",
+        ],
+      },
+      {
+        "avgDailyPopulation": 32,
+        "clientsEligibleCount": 5,
+        "clientsEligibleCountWithLabel": "5 clients",
+        "displayName": "Jason Nelson",
+        "externalId": "so3",
+        "fullName": {
+          "givenNames": "Jason",
+          "surname": "Nelson",
+        },
+        "includeInOutcomes": true,
+        "pseudonymizedId": "hashed-so3",
+        "supervisorExternalIds": [
+          "agonzalez123",
+        ],
+      },
+      {
+        "avgDailyPopulation": 54,
+        "clientsEligibleCount": 5,
+        "clientsEligibleCountWithLabel": "5 clients",
+        "displayName": "Walter Harris",
+        "externalId": "OFFICER4",
+        "fullName": {
+          "givenNames": "Walter",
+          "surname": "Harris",
+        },
+        "includeInOutcomes": true,
+        "pseudonymizedId": "hashed-so1",
+        "supervisorExternalIds": [
+          "agonzalez123",
+          "dlee456",
+        ],
+        "zeroGrantOpportunities": [
+          "LSU",
+          "pastFTRD",
+        ],
+      },
+      {
+        "clientsEligibleCount": 4,
+        "clientsEligibleCountWithLabel": "4 clients",
+        "displayName": "John Harris",
+        "externalId": "so6",
+        "fullName": {
+          "givenNames": "John",
+          "surname": "Harris",
+        },
+        "pseudonymizedId": "hashed-so6",
+        "supervisorExternalIds": [
+          "agonzalez123",
+        ],
+      },
+    ],
+    "opportunityType": "mockUsXxTwoOpp",
+    "priority": "NORMAL",
+    "zeroGrantsTooltip": undefined,
+  },
+]
+`;

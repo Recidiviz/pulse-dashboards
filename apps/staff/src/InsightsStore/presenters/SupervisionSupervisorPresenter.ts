@@ -75,7 +75,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     protected supervisionStore: InsightsSupervisionStore,
     public supervisorPseudoId: string,
     justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
-    private opportunityConfigurationStore: OpportunityConfigurationStore,
+    protected opportunityConfigurationStore: OpportunityConfigurationStore,
   ) {
     super(supervisionStore);
 
@@ -321,6 +321,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     );
   }
 
+  // TODO (#7050): Remove this section. This is now exists in SupervisionSupervisorWorkflowsPresenter.
   // ==============================
   // Opportunity Details
   // ==============================
@@ -374,11 +375,10 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   /**
    * Processes officers and their clients, creating a map of raw opportunity details.
    *
-   * @private
    * @param {((SupervisionOfficer | ExcludedSupervisionOfficer)[])} allOfficers
    * @return {*}  {RawOpportunityInfoByOpportunityType}
    */
-  private processOfficersAndOpportunities(
+  protected processOfficersAndOpportunities(
     allOfficers: (SupervisionOfficer | ExcludedSupervisionOfficer)[],
   ): RawOpportunityInfoByOpportunityType {
     return allOfficers.reduce(
@@ -416,11 +416,10 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   /**
    * Builds the opportunities details array from raw opportunity info.
    *
-   * @private
    * @param {RawOpportunityInfoByOpportunityType} rawOpportunityInfoMap
    * @returns {OpportunityInfo[]}
    */
-  private buildOpportunitiesDetails(
+  protected buildOpportunitiesDetails(
     rawOpportunityInfoMap: RawOpportunityInfoByOpportunityType,
   ): OpportunityInfo[] {
     return Array.from(rawOpportunityInfoMap.values())
@@ -436,11 +435,10 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   /**
    * Initializes an opportunity detail object for a given opportunity type.
    *
-   * @private
    * @param {OpportunityType} opportunityType
    * @returns {RawOpportunityInfo}
    */
-  private initializeOpportunityDetail(
+  protected initializeOpportunityDetail(
     opportunityType: OpportunityType,
   ): RawOpportunityInfo {
     const { homepagePosition, priority, label, zeroGrantsTooltip } =

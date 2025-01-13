@@ -53,6 +53,15 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
   // Component specific logic
   // ==============================
 
+  /**
+   * Passthrough to the supervision store
+   * Checks if Vitals is enabled based on user permissions.
+   * @returns `true` if vitals is enabled, otherwise `false`.
+   */
+  get isVitalsEnabled() {
+    return this.supervisionStore.isVitalsEnabled;
+  }
+
   get vitalsMetricDetails(): OfficerVitalsMetricDetail[] {
     const metrics = this.supervisionStore.vitalsMetricsByPseudoId.get(
       this.officerPseudoId,
