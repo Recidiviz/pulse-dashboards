@@ -39,6 +39,7 @@ export type EligibilityCriteria = Pick<
 export type EligibilityAttributes = Pick<
   CaseStore["caseAttributes"],
   | "age"
+  | "clientGender"
   | "lsirScore"
   | "needsToBeAddressed"
   | "substanceUseDisorderDiagnosis"
@@ -52,8 +53,9 @@ export type EligibilityAttributes = Pick<
   | "hasPreviousSexOffenseConviction"
   | "hasDevelopmentalDisability"
   | "plea"
-  | "county"
 > & {
   districtOfResidence?: string | null;
   districtOfSentencing?: string | null;
+  countyOfResidence?: string | null;
+  countyOfSentencing?: string | null;
 };

@@ -97,6 +97,7 @@ export class CaseDetailsPresenter implements Hydratable {
   get caseEligibilityAttributes() {
     const {
       age,
+      clientGender,
       lsirScore,
       needsToBeAddressed,
       substanceUseDisorderDiagnosis,
@@ -113,13 +114,15 @@ export class CaseDetailsPresenter implements Hydratable {
       hasDevelopmentalDisability,
       hasOpenChildProtectiveServicesCase,
       plea,
-      county,
+      county: countyOfSentencing,
       district: districtOfSentencing,
     } = this.caseAttributes ?? {};
-    const { district: districtOfResidence } = this.caseAttributes?.client ?? {};
+    const { district: districtOfResidence, county: countyOfResidence } =
+      this.caseAttributes?.client ?? {};
 
     return {
       age,
+      clientGender,
       lsirScore,
       needsToBeAddressed,
       substanceUseDisorderDiagnosis,
@@ -136,8 +139,9 @@ export class CaseDetailsPresenter implements Hydratable {
       hasDevelopmentalDisability,
       hasOpenChildProtectiveServicesCase,
       plea,
+      countyOfResidence,
+      countyOfSentencing,
       districtOfResidence,
-      county, // county of sentencing
       districtOfSentencing,
     };
   }

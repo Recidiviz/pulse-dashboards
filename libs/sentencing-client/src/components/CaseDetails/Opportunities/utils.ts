@@ -20,6 +20,7 @@ import { convertDistrictToDistrictCode } from "../../../utils/utils";
 import {
   AGE_KEY,
   ASAM_CARE_RECOMMENDATION_KEY,
+  CLIENT_GENDER_KEY,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
   HAS_PREVIOUS_SEX_OFFENSE_KEY,
   HAS_PREVIOUS_VIOLENT_OFFENSE_KEY,
@@ -83,6 +84,8 @@ export const filterEligibleOpportunities = (
   const {
     minAge,
     maxAge,
+    genders,
+    counties,
     developmentalDisabilityDiagnosisCriterion,
     noCurrentOrPriorSexOffenseCriterion,
     noCurrentOrPriorViolentOffenseCriterion,
@@ -99,7 +102,12 @@ export const filterEligibleOpportunities = (
     // TODO(Recidiviz/recidiviz-data#32242) Add CPS Criteria Check
     // hasOpenChildProtectiveServicesCaseCriterion
   } = opportunity;
-  const { districtOfResidence, districtOfSentencing } = attributes;
+  const {
+    districtOfResidence,
+    districtOfSentencing,
+    countyOfSentencing,
+    countyOfResidence,
+  } = attributes;
 
   // Age Criteria Check
   const hasAgeCriteria = Boolean(minAge || maxAge);
@@ -109,6 +117,49 @@ export const filterEligibleOpportunities = (
       attributes.age > (maxAge ?? DEFAULT_MAX_NUMBER));
 
   if (AGE_KEY in attributes && hasAgeCriteria && isNotAgeEligible) return false;
+
+  // Gender(s) Criteria Check
+  const hasGenderCriteria = Boolean(genders.length);
+  const isNotGenderEligible =
+    attributes.clientGender && !genders.includes(attributes.clientGender);
+
+  if (
+    CLIENT_GENDER_KEY in attributes &&
+    hasGenderCriteria &&
+    isNotGenderEligible
+  )
+    return false;
+
+  // Counties Criteria Check
+  const hasMatchingCountiesOfSentencingResidence =
+    countyOfSentencing?.toLocaleLowerCase() ===
+    countyOfResidence?.toLocaleLowerCase();
+  const countyName =
+    hasMatchingCountiesOfSentencingResidence || !countyOfResidence
+      ? countyOfSentencing
+      : countyOfResidence;
+  const isCountyEligible =
+    countyName &&
+    counties
+      .map((county: string) => county.toLocaleLowerCase())
+      .includes(countyName.toLocaleLowerCase());
+  const hasCountiesCriteria = counties.length;
+
+  if (hasCountiesCriteria && !isCountyEligible) return false;
+
+  // Districts Check
+  const hasMatchingDistricts =
+    districtOfSentencing?.toLocaleLowerCase() ===
+    districtOfResidence?.toLocaleLowerCase();
+  const districtName =
+    hasMatchingDistricts || !districtOfResidence
+      ? districtOfSentencing
+      : districtOfResidence;
+  const isDistrictEligible =
+    districtName &&
+    opportunityDistrict === convertDistrictToDistrictCode(districtName);
+
+  if (!isDistrictEligible) return false;
 
   // Developmental Disability Criteria Check
   const hasDevelopmentalDisabilityCriteria = Boolean(
@@ -124,19 +175,6 @@ export const filterEligibleOpportunities = (
     !isDevelopmentalDisabilityEligible
   )
     return false;
-
-  const hasMatchingDistricts =
-    districtOfSentencing?.toLocaleLowerCase() ===
-    districtOfResidence?.toLocaleLowerCase();
-  const districtName =
-    hasMatchingDistricts || !districtOfResidence
-      ? districtOfSentencing
-      : districtOfResidence;
-  const isDistrictEligible =
-    districtName &&
-    opportunityDistrict === convertDistrictToDistrictCode(districtName);
-
-  if (!isDistrictEligible) return false;
 
   // TODO(Recidiviz/recidiviz-data#32242) Add CPS Criteria Check
   // const hasOpenChildProtectiveServicesCriteria = Boolean(

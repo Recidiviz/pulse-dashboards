@@ -53,6 +53,8 @@ describe("filterEligibleOpportunities", () => {
     additionalNotes: null,
     genders: [],
     genericDescription: null,
+    counties: [],
+    active: true,
   };
   let attributes: EligibilityAttributes;
 
@@ -66,7 +68,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -90,7 +92,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -103,7 +105,7 @@ describe("filterEligibleOpportunities", () => {
 
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
 
-    attributes.county = "District 7 - Wallace"; // does not match criterion
+    attributes.countyOfSentencing = "District 7 - Wallace"; // does not match criterion
     attributes.districtOfResidence = "DISTRICT 7"; // does not match criterion
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
   });
@@ -118,7 +120,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "District 7 - Caldwell",
+      countyOfSentencing: "District 7 - Caldwell",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
       mentalHealthDiagnoses: ["BipolarDisorder"],
@@ -133,7 +135,7 @@ describe("filterEligibleOpportunities", () => {
     attributes.districtOfResidence = "DISTRICT 2"; // district (of residence) is the fallback and does not match criteron
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
 
-    attributes.county = "District 2 - Caldera"; // district sentencing matches district of residence and both do not match criteron
+    attributes.countyOfSentencing = "District 2 - Caldera"; // district sentencing matches district of residence and both do not match criteron
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
   });
 
@@ -147,7 +149,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: null,
       isVeteran: true,
@@ -177,7 +179,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -209,7 +211,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -233,7 +235,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -265,7 +267,7 @@ describe("filterEligibleOpportunities", () => {
       isCurrentOffenseViolent: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -297,7 +299,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: true, // does not match criterion
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -321,7 +323,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "NotGuilty", // does not match criterion
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -345,7 +347,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: false, // does not match criterion
@@ -369,7 +371,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -418,7 +420,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -524,7 +526,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -548,7 +550,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -578,7 +580,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -602,7 +604,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -626,7 +628,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -677,6 +679,8 @@ describe("filterEligibleOpportunities", () => {
       additionalNotes: null,
       genders: [],
       genericDescription: null,
+      counties: [],
+      active: true,
     };
 
     attributes = {
@@ -688,7 +692,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: true,
@@ -714,7 +718,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: true,
       previouslyIncarceratedOrUnderSupervision: true,
       plea: "NotGuilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: false,
@@ -738,7 +742,7 @@ describe("filterEligibleOpportunities", () => {
       hasPreviousViolentOffenseConviction: false,
       previouslyIncarceratedOrUnderSupervision: false,
       plea: "Guilty",
-      county: "Caldwell",
+      countyOfSentencing: "Caldwell",
       districtOfSentencing: "District 1",
       districtOfResidence: "DISTRICT 1",
       isVeteran: false,
@@ -767,6 +771,168 @@ describe("filterEligibleOpportunities", () => {
 
     // Should skip evaluating the `age` criteria and return `true` as all other criteria match
     expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+  });
+
+  it("should handle genders criterion", () => {
+    const opportunityWithGendersCriteria: Opportunities[number] = {
+      opportunityName: "Opportunity 1",
+      description: "",
+      providerName: null,
+      providerPhoneNumber: "",
+      providerWebsite: "",
+      providerAddress: "",
+      totalCapacity: 56,
+      availableCapacity: 85,
+      minAge: null,
+      maxAge: null,
+      developmentalDisabilityDiagnosisCriterion: false,
+      noCurrentOrPriorSexOffenseCriterion: false,
+      noCurrentOrPriorViolentOffenseCriterion: false,
+      priorCriminalHistoryCriterion: null,
+      entryOfGuiltyPleaCriterion: false,
+      veteranStatusCriterion: false,
+      diagnosedMentalHealthDiagnosisCriterion: ["Any"],
+      diagnosedSubstanceUseDisorderCriterion: null,
+      asamLevelOfCareRecommendationCriterion: null,
+      needsAddressed: [],
+      minLsirScoreCriterion: null,
+      maxLsirScoreCriterion: null,
+      noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+      district: "D1",
+      lastUpdatedAt: new Date(),
+      additionalNotes: null,
+      genders: ["FEMALE", "TRANS_MALE"],
+      genericDescription: null,
+      counties: [],
+      active: true,
+    };
+
+    attributes = {
+      age: 30,
+      clientGender: "FEMALE",
+      hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
+      hasPreviousSexOffenseConviction: false,
+      hasPreviousViolentOffenseConviction: false,
+      previouslyIncarceratedOrUnderSupervision: false,
+      plea: "Guilty",
+      countyOfSentencing: "Caldwell",
+      districtOfSentencing: "District 1",
+      districtOfResidence: "DISTRICT 1",
+      isVeteran: true,
+      mentalHealthDiagnoses: ["BipolarDisorder"],
+      substanceUseDisorderDiagnosis: "Moderate",
+      asamCareRecommendation: "HighIntensityOutpatient",
+      needsToBeAddressed: ["Education"],
+      lsirScore: 10,
+    };
+
+    expect(
+      filterEligibleOpportunities(opportunityWithGendersCriteria, attributes),
+    ).toBe(true);
+
+    attributes.clientGender = "MALE";
+
+    expect(
+      filterEligibleOpportunities(opportunityWithGendersCriteria, attributes),
+    ).toBe(false);
+
+    attributes.clientGender = "TRANS_MALE";
+
+    expect(
+      filterEligibleOpportunities(opportunityWithGendersCriteria, attributes),
+    ).toBe(true);
+  });
+
+  it("should handle counties criterion", () => {
+    const opportunityWithCountiesCriteria: Opportunities[number] = {
+      opportunityName: "Opportunity 1",
+      description: "",
+      providerName: null,
+      providerPhoneNumber: "",
+      providerWebsite: "",
+      providerAddress: "",
+      totalCapacity: 56,
+      availableCapacity: 85,
+      minAge: null,
+      maxAge: null,
+      developmentalDisabilityDiagnosisCriterion: false,
+      noCurrentOrPriorSexOffenseCriterion: false,
+      noCurrentOrPriorViolentOffenseCriterion: false,
+      priorCriminalHistoryCriterion: null,
+      entryOfGuiltyPleaCriterion: false,
+      veteranStatusCriterion: false,
+      diagnosedMentalHealthDiagnosisCriterion: ["Any"],
+      diagnosedSubstanceUseDisorderCriterion: null,
+      asamLevelOfCareRecommendationCriterion: null,
+      needsAddressed: [],
+      minLsirScoreCriterion: null,
+      maxLsirScoreCriterion: null,
+      noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+      district: "D1",
+      lastUpdatedAt: new Date(),
+      additionalNotes: null,
+      genders: ["FEMALE", "TRANS_MALE"],
+      counties: ["Caldwell", "Twin Falls"],
+      genericDescription: null,
+      active: true,
+    };
+
+    attributes = {
+      age: 30,
+      clientGender: "FEMALE",
+      hasDevelopmentalDisability: true,
+      isCurrentOffenseSexual: false,
+      isCurrentOffenseViolent: false,
+      hasPreviousSexOffenseConviction: false,
+      hasPreviousViolentOffenseConviction: false,
+      previouslyIncarceratedOrUnderSupervision: false,
+      plea: "Guilty",
+      countyOfSentencing: "Caldwell",
+      countyOfResidence: "Caldwell",
+      districtOfSentencing: "District 1",
+      districtOfResidence: "DISTRICT 1",
+      isVeteran: true,
+      mentalHealthDiagnoses: ["BipolarDisorder"],
+      substanceUseDisorderDiagnosis: "Moderate",
+      asamCareRecommendation: "HighIntensityOutpatient",
+      needsToBeAddressed: ["Education"],
+      lsirScore: 10,
+    };
+
+    expect(
+      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+    ).toBe(true);
+
+    attributes.countyOfSentencing = "Unknown";
+    attributes.countyOfResidence = "Unknown";
+
+    expect(
+      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+    ).toBe(false);
+
+    // Should fail validation because we're only changing county of sentencing, and if it's not the same as county of residence,
+    // the county of residence is used for the validation check
+    attributes.countyOfSentencing = "Twin Falls";
+    attributes.countyOfResidence = "Random";
+
+    expect(
+      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+    ).toBe(false);
+
+    // Should now pass validation because both county of sentencing & residence is the same and included in the `counties` list
+    attributes.countyOfResidence = "Twin Falls";
+    expect(
+      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+    ).toBe(true);
+
+    attributes.countyOfSentencing = "Caldwell";
+    attributes.countyOfResidence = "Caldwell";
+
+    expect(
+      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+    ).toBe(true);
   });
 });
 

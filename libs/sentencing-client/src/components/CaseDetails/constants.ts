@@ -28,7 +28,15 @@ export const SEX_OFFENSE_KEY = "isCurrentOffenseSexual";
 
 export const COUNTY_KEY = "county";
 
+export const COUNTY_OF_SENTENCING_KEY = "countyOfSentencing";
+
+export const COUNTY_OF_RESIDENCE_KEY = "countyOfResidence";
+
+export const COUNTIES_KEY = "counties";
+
 export const AGE_KEY = "age";
+
+export const GENDERS_KEY = "genders";
 
 export const OFFENSE_SUFFIX = "offense";
 
