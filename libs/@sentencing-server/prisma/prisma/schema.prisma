@@ -247,6 +247,8 @@ model Opportunity {
   district                                              String?
   genders                                               Gender[]
   genericDescription                                    String?
+  counties                                              String[]
+  active                                                Boolean                                   @default(true)
 
   cases Case[]
 
