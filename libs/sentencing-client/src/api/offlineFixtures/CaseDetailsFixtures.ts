@@ -53,6 +53,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     hasOpenChildProtectiveServicesCase: false,
     needsToBeAddressed: [],
     otherNeedToBeAddressed: null,
+    protectiveFactors: [],
+    otherProtectiveFactor: null,
     status: "InProgress",
     selectedRecommendation: null,
     recommendedMaxSentenceLength: null,

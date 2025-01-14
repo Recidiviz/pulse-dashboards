@@ -47,6 +47,8 @@ export type UpdateCaseInput = Pick<
   | "reportType"
   | "recommendedMinSentenceLength"
   | "recommendedMaxSentenceLength"
+  | "protectiveFactors"
+  | "otherProtectiveFactor"
 > & {
   recommendedOpportunities?: {
     opportunityName: OpportunityNameIdentifier;

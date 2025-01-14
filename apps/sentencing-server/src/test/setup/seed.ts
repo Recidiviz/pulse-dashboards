@@ -22,6 +22,7 @@ import {
   OnboardingTopic,
   Plea,
   PrismaClient,
+  ProtectiveFactor,
   ReportType,
   StateCode,
   SubstanceUseDiagnosis,
@@ -132,6 +133,7 @@ export const fakeCase = {
   otherMentalHealthDiagnosis: null,
   needsToBeAddressed: [],
   otherNeedToBeAddressed: null,
+  protectiveFactors: [faker.helpers.enumValue(ProtectiveFactor)],
   status: faker.helpers.enumValue(CaseStatus),
   selectedRecommendation: faker.helpers.arrayElement([
     "Probation",

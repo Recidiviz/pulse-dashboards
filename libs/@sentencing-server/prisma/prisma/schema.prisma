@@ -215,6 +215,22 @@ enum OnboardingTopic {
   Done
 }
 
+enum ProtectiveFactor {
+  NoPriorCriminalConvictions
+  NoHistoryOfViolentBehavior
+  NoSubstanceUseOrAbuseIssues
+  NoDiagnosisOfAMentalIllness
+  StableHousing
+  SteadyEmployment
+  FinancialStability
+  HighSchoolDiplomaOrHigherEducation
+  StrongSocialSupportNetwork
+  CloseFamilyTies
+  ActivelyParticipatingInTreatmentPrograms
+  EnrolledInEducationalOrVocationalTraining
+  ActiveInvolvementInCommunityActivities
+}
+
 model Opportunity {
   id                  String              @id @default(cuid())
   lastUpdatedAt       DateTime
@@ -318,6 +334,8 @@ model Case {
   hasOpenChildProtectiveServicesCase Boolean?
   needsToBeAddressed                 NeedToBeAddressed[]
   otherNeedToBeAddressed             String?
+  protectiveFactors                  ProtectiveFactor[]
+  otherProtectiveFactor              String?
 
   currentOnboardingTopic OnboardingTopic @default(OffenseLsirScore)
 

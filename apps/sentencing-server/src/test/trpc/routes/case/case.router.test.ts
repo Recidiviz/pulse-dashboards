@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Gender, ReportType } from "@prisma/client";
+import { Gender, ProtectiveFactor, ReportType } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
@@ -295,6 +295,11 @@ describe("case router", () => {
           clientGender: "MALE",
           recommendedMinSentenceLength: 10,
           recommendedMaxSentenceLength: 20,
+          protectiveFactors: [
+            ProtectiveFactor.NoHistoryOfViolentBehavior,
+            ProtectiveFactor.ActiveInvolvementInCommunityActivities,
+          ],
+          otherProtectiveFactor: "Other Protective Factor",
         },
       });
 
@@ -345,6 +350,11 @@ describe("case router", () => {
           }),
           recommendedMinSentenceLength: 10,
           recommendedMaxSentenceLength: 20,
+          protectiveFactors: [
+            ProtectiveFactor.NoHistoryOfViolentBehavior,
+            ProtectiveFactor.ActiveInvolvementInCommunityActivities,
+          ],
+          otherProtectiveFactor: "Other Protective Factor",
         }),
       );
     });

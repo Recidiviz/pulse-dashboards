@@ -23,6 +23,7 @@ import {
   NeedToBeAddressed,
   OnboardingTopic,
   Plea,
+  ProtectiveFactor,
   ReportType,
   SubstanceUseDiagnosis,
 } from "@prisma/client";
@@ -56,6 +57,8 @@ const OnboardingTopicEnum = z.nativeEnum(OnboardingTopic);
 const ReportTypeEnum = z.nativeEnum(ReportType);
 
 const GenderEnum = z.nativeEnum(Gender);
+
+const ProtectiveFactorEnum = z.nativeEnum(ProtectiveFactor);
 
 const OpportunitiesSchema = z.array(
   z.object({
@@ -102,5 +105,7 @@ export const updateCaseSchema = z.object({
     clientGender: GenderEnum.optional(),
     recommendedMinSentenceLength: z.number().int().optional(),
     recommendedMaxSentenceLength: z.number().int().optional(),
+    protectiveFactors: z.array(ProtectiveFactorEnum).optional(),
+    otherProtectiveFactor: z.string().nullable().optional(),
   }) satisfies z.ZodType<UpdateCaseInput>,
 });
