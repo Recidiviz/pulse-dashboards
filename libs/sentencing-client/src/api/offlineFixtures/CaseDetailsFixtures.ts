@@ -68,7 +68,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
       fullName: "Blanda Furman",
       firstName: "Blanda",
       lastName: "Furman",
-      gender: "EXTERNAL_UNKNOWN",
+      gender: "MALE",
       county: "Gwynedd County",
       birthDate: birthDate,
       externalId: "70478174",

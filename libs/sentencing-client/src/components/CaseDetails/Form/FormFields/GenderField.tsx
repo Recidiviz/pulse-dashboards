@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
@@ -39,10 +40,20 @@ function GenderField({ isRequired }: FormFieldProps) {
     value: selection,
   }));
 
+  const parsedGenderValue = parseClientGenderValue(
+    caseAttributes?.clientGender,
+  );
+  /**
+   * If gender is Unknown, it should be considered as no selection made
+   * and fail the required field validation
+   */
+  const prevGenderValue =
+    parsedGenderValue === UNKNOWN_OPTION ? null : parsedGenderValue;
+
   const { selectValue, setSelectValue } = useFormField({
     initialSelectValue: {
-      label: parseClientGenderValue(caseAttributes?.clientGender),
-      value: caseAttributes?.clientGender,
+      label: prevGenderValue,
+      value: prevGenderValue,
     },
   });
 
@@ -52,6 +63,12 @@ function GenderField({ isRequired }: FormFieldProps) {
     setSelectValue(option);
     form.updateForm(CLIENT_GENDER_KEY, option.value, isRequired);
   };
+
+  /** Validate previously saved gender field */
+  useEffect(() => {
+    form.validate(CLIENT_GENDER_KEY, prevGenderValue, isRequired);
+    return () => form.resetErrors();
+  }, [caseAttributes, prevGenderValue, isRequired]);
 
   return (
     <>
@@ -69,7 +86,7 @@ function GenderField({ isRequired }: FormFieldProps) {
 
       {caseAttributes.client?.isGenderLocked && (
         <Styled.InputDescription>
-          This score has been pulled in from Atlas and is unable to be edited.
+          The gender has been pulled in from Atlas and is unable to be edited.
         </Styled.InputDescription>
       )}
     </>

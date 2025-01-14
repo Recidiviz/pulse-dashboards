@@ -75,12 +75,16 @@ const FormFields: { [key: string]: FormFieldWithNestedFields } = {
     FieldComponent: OffenseField,
     isRequired: true,
   },
+  [CLIENT_GENDER_KEY]: {
+    key: CLIENT_GENDER_KEY,
+    FieldComponent: GenderField,
+    isRequired: true,
+  },
   [LSIR_SCORE_KEY]: {
     key: LSIR_SCORE_KEY,
     FieldComponent: LsirScoreField,
     isRequired: true,
   },
-  [CLIENT_GENDER_KEY]: { key: CLIENT_GENDER_KEY, FieldComponent: GenderField },
   [REPORT_TYPE_KEY]: { key: REPORT_TYPE_KEY, FieldComponent: ReportTypeField },
   [NEEDS_TO_BE_ADDRESSED_KEY]: {
     key: NEEDS_TO_BE_ADDRESSED_KEY,
@@ -121,8 +125,8 @@ export const formFields: FormField[] = Object.values(FormFields);
 
 export const onboardingStepOneFields = [
   FormFields[OFFENSE_KEY],
-  FormFields[LSIR_SCORE_KEY],
   FormFields[CLIENT_GENDER_KEY],
+  FormFields[LSIR_SCORE_KEY],
   FormFields[REPORT_TYPE_KEY],
 ];
 
