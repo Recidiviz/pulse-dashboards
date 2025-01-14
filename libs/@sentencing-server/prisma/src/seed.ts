@@ -139,8 +139,6 @@ async function main() {
       providerPhoneNumber: faker.phone.number(),
       providerWebsite: faker.internet.url(),
       providerAddress: faker.location.streetAddress(),
-      totalCapacity: faker.number.int({ max: 100 }),
-      availableCapacity: faker.number.int({ max: 100 }),
       minAge: faker.number.int({ max: 50 }),
       maxAge: faker.number.int({ min: 50, max: 100 }),
       developmentalDisabilityDiagnosisCriterion: faker.datatype.boolean(),

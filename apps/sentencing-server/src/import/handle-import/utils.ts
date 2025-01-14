@@ -274,8 +274,6 @@ export async function transformAndLoadOpportunityData(
       providerPhoneNumber: opportunityData.CleanedProviderPhoneNumber,
       providerWebsite: opportunityData.ProviderWebsite,
       providerAddress: opportunityData.ProviderAddress,
-      totalCapacity: opportunityData.CapacityTotal,
-      availableCapacity: opportunityData.CapacityAvailable,
       needsAddressed: opportunityData.NeedsAddressed,
       genders: opportunityData.genders ?? [],
       lastUpdatedAt: opportunityData.lastUpdatedDate,

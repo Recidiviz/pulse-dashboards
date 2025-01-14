@@ -137,10 +137,6 @@ export const opportunityImportSchema = z.object({
   CleanedProviderPhoneNumber: z.string().optional(),
   ProviderWebsite: z.string().optional(),
   ProviderAddress: z.string().optional(),
-  // Integers are being converted to strings for some reason
-  CapacityTotal: z.coerce.number().optional(),
-  // Integers are being converted to strings for some reason
-  CapacityAvailable: z.coerce.number().optional(),
   NeedsAddressed: needsAddressed,
   developmentalDisabilityDiagnosisCriterion: z.boolean(),
   noCurrentOrPriorSexOffenseCriterion: z.boolean(),

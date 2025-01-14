@@ -224,8 +224,6 @@ model Opportunity {
   providerPhoneNumber String?
   providerWebsite     String?
   providerAddress     String?
-  totalCapacity       Int?
-  availableCapacity   Int?
   needsAddressed      NeedToBeAddressed[]
   additionalNotes     String?
 
