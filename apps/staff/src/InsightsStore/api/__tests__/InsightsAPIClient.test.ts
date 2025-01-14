@@ -294,9 +294,7 @@ describe("InsightsAPIClient", () => {
   });
 
   it("vitalsForSupervisor parses the data", async () => {
-    fetchMock.mockResponse(
-      JSON.stringify({ events: rawSupervisionVitalsMetricFixture }),
-    );
+    fetchMock.mockResponse(JSON.stringify(rawSupervisionVitalsMetricFixture));
     const response = await client.vitalsForSupervisor(
       supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
     );
@@ -322,6 +320,21 @@ describe("InsightsAPIClient", () => {
               "officerPseudonymizedId": "hashed-so3",
             },
             {
+              "metric30DDelta": 3.4,
+              "metricValue": 22,
+              "officerPseudonymizedId": "hashed-so4",
+            },
+            {
+              "metric30DDelta": -3,
+              "metricValue": 50,
+              "officerPseudonymizedId": "hashed-so5",
+            },
+            {
+              "metric30DDelta": -0.2,
+              "metricValue": 22,
+              "officerPseudonymizedId": "hashed-so8",
+            },
+            {
               "metric30DDelta": 5.9,
               "metricValue": 79,
               "officerPseudonymizedId": "hashed-so9",
@@ -330,6 +343,16 @@ describe("InsightsAPIClient", () => {
               "metric30DDelta": 1.5,
               "metricValue": 89,
               "officerPseudonymizedId": "hashed-so10",
+            },
+            {
+              "metric30DDelta": 3,
+              "metricValue": 71,
+              "officerPseudonymizedId": "hashed-so6",
+            },
+            {
+              "metric30DDelta": -1,
+              "metricValue": 93,
+              "officerPseudonymizedId": "hashed-so7",
             },
           ],
         },
@@ -352,6 +375,21 @@ describe("InsightsAPIClient", () => {
               "officerPseudonymizedId": "hashed-so3",
             },
             {
+              "metric30DDelta": 0.9,
+              "metricValue": 98,
+              "officerPseudonymizedId": "hashed-so4",
+            },
+            {
+              "metric30DDelta": -5.9,
+              "metricValue": 89,
+              "officerPseudonymizedId": "hashed-so5",
+            },
+            {
+              "metric30DDelta": 1,
+              "metricValue": 90,
+              "officerPseudonymizedId": "hashed-so8",
+            },
+            {
               "metric30DDelta": 0,
               "metricValue": 100,
               "officerPseudonymizedId": "hashed-so9",
@@ -361,6 +399,16 @@ describe("InsightsAPIClient", () => {
               "metricValue": 79,
               "officerPseudonymizedId": "hashed-so10",
             },
+            {
+              "metric30DDelta": -5.4,
+              "metricValue": 77,
+              "officerPseudonymizedId": "hashed-so6",
+            },
+            {
+              "metric30DDelta": 5.4,
+              "metricValue": 84,
+              "officerPseudonymizedId": "hashed-so7",
+            },
           ],
         },
       ]
@@ -368,12 +416,20 @@ describe("InsightsAPIClient", () => {
   });
 
   it("vitalsForOfficer parses the data", async () => {
+    const { pseudonymizedId } = supervisionOfficerFixture[0];
+
     fetchMock.mockResponse(
-      JSON.stringify({ events: rawSupervisionVitalsMetricFixture }),
+      JSON.stringify(
+        rawSupervisionVitalsMetricFixture.map(({ vitalsMetrics, ...rest }) => ({
+          ...rest,
+          vitalsMetrics: vitalsMetrics.filter(
+            ({ officerPseudonymizedId }) =>
+              officerPseudonymizedId === pseudonymizedId,
+          ),
+        })),
+      ),
     );
-    const response = await client.vitalsForOfficer(
-      supervisionOfficerFixture[0].pseudonymizedId,
-    );
+    const response = await client.vitalsForOfficer(pseudonymizedId);
 
     expect(response).toMatchInlineSnapshot(`
       [

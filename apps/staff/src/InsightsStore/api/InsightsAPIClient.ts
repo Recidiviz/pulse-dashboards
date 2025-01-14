@@ -29,7 +29,6 @@ import {
   MetricBenchmark,
   metricBenchmarkSchema,
   SupervisionOfficer,
-  supervisionOfficerFixture,
   SupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventSchema,
   SupervisionOfficerOutcomes,
@@ -37,9 +36,8 @@ import {
   supervisionOfficerSchema,
   SupervisionOfficerSupervisor,
   supervisionOfficerSupervisorSchema,
-  supervisionOfficerSupervisorsFixture,
-  supervisionOfficerVitalsMetricFixture,
   SupervisionVitalsMetric,
+  supervisionVitalsMetricSchema,
   UserInfo,
   userInfoSchema,
 } from "~datatypes";
@@ -224,43 +222,20 @@ export class InsightsAPIClient implements InsightsAPI {
     return eventsData.map((b) => clientEventSchema.parse(b));
   }
 
-  // TODO #6671 - Instead of using fixture data, make request to endpoint once it is deployed
   async vitalsForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionVitalsMetric>> {
-    const supervisor = supervisionOfficerSupervisorsFixture.find(
-      (s) => s.pseudonymizedId === supervisorPseudoId,
-    );
-    if (!supervisor) return [];
-    return supervisionOfficerVitalsMetricFixture.map((metric) => {
-      return {
-        ...metric,
-        vitalsMetrics: metric.vitalsMetrics.filter((metricForOfficer) => {
-          const officersForSupervisor = supervisionOfficerFixture
-            .filter((o) =>
-              o.supervisorExternalIds.includes(supervisor?.externalId),
-            )
-            .map((o) => o.pseudonymizedId);
-          return officersForSupervisor.includes(
-            metricForOfficer.officerPseudonymizedId,
-          );
-        }),
-      };
-    });
+    const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/vitals`;
+    const fetchedData = (await this.apiStore.get(endpoint)) as Array<unknown>;
+    return fetchedData.map((b) => supervisionVitalsMetricSchema.parse(b));
   }
 
   async vitalsForOfficer(
     officerPseudoId: string,
   ): Promise<Array<SupervisionVitalsMetric>> {
-    return supervisionOfficerVitalsMetricFixture.map((metric) => {
-      return {
-        ...metric,
-        vitalsMetrics: metric.vitalsMetrics.filter(
-          (metricForOfficer) =>
-            officerPseudoId === metricForOfficer.officerPseudonymizedId,
-        ),
-      };
-    });
+    const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/vitals`;
+    const fetchedData = (await this.apiStore.get(endpoint)) as Array<unknown>;
+    return fetchedData.map((b) => supervisionVitalsMetricSchema.parse(b));
   }
 
   /**
