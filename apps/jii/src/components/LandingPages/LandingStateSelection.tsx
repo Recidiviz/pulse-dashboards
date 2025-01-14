@@ -16,20 +16,21 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { FC, memo } from "react";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { withPresenterManager } from "~hydration-utils";
 
 import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { LandingPageCopyWrapper } from "./LandingPageCopyWrapper";
-import { LandingPageLayout } from "./LandingPageLayout";
 import { LandingPageSelector } from "./LandingPageSelector";
 import { LandingStateSelectionPresenter } from "./LandingStateSelectionPresenter";
 
-const LoginStateSelectionWithPresenter: FC<{
+const ManagedComponent: FC<{
   presenter: LandingStateSelectionPresenter;
-}> = observer(function LoginStateSelectionWithPresenter({ presenter }) {
+}> = observer(function LoginStateSelection({ presenter }) {
   usePageTitle(undefined);
 
   const navigate = useNavigate();
@@ -53,18 +54,15 @@ const LoginStateSelectionWithPresenter: FC<{
   );
 });
 
-export const LoginStateSelection: FC = memo(function LoginStateSelection() {
-  usePageTitle(undefined);
-
+function usePresenter() {
   const { loginConfigStore } = useRootStore();
 
-  const presenter = new LandingStateSelectionPresenter(loginConfigStore);
+  return new LandingStateSelectionPresenter(loginConfigStore);
+}
 
-  return (
-    <LandingPageLayout>
-      <MainContentHydrator hydratable={presenter}>
-        <LoginStateSelectionWithPresenter presenter={presenter} />
-      </MainContentHydrator>
-    </LandingPageLayout>
-  );
+export const LoginStateSelection = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  HydratorComponent: MainContentHydrator,
+  managerIsObserver: false,
 });

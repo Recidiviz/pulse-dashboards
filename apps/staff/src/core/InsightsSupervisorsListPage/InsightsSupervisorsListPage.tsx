@@ -168,7 +168,7 @@ const InsightsSupervisorsListPage = observer(
     );
 
     return (
-      <ModelHydrator model={presenter}>
+      <ModelHydrator hydratable={presenter}>
         <SupervisorsList presenter={presenter} />
       </ModelHydrator>
     );

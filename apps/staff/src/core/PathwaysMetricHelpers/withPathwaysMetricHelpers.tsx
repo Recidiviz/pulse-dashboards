@@ -43,7 +43,7 @@ const withPathwaysMetricHelpers = <Props extends withPathwaysMetricHelperProps>(
   const ComponentWithHydrator: React.ComponentType<Props> = (props) => {
     const { metric } = props;
     return (
-      <MetricVizHydrator model={metric}>
+      <MetricVizHydrator hydratable={metric}>
         <PathwaysNoDataHelper metric={metric}>
           <OriginalComponent {...props} />
         </PathwaysNoDataHelper>

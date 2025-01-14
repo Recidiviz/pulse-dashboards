@@ -325,7 +325,7 @@ const InsightsOnboardingPage = observer(function InsightsOnboardingPage() {
   const presenter = new UserOnboardingPresenter(supervisionStore);
 
   return (
-    <ModelHydrator model={presenter}>
+    <ModelHydrator hydratable={presenter}>
       <OnboardingPage presenter={presenter} />
     </ModelHydrator>
   );

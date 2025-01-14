@@ -43,7 +43,7 @@ function withPresenter(Component: ComponentType<StaffVitalsProps>) {
     );
 
     return (
-      <ModelHydrator model={presenter}>
+      <ModelHydrator hydratable={presenter}>
         <Component presenter={presenter} />
       </ModelHydrator>
     );

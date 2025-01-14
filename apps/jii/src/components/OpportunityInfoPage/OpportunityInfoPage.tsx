@@ -24,6 +24,8 @@ import { Link } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { withPresenterManager } from "~hydration-utils";
+
 import { State } from "../../routes/routes";
 import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 import { ButtonLink } from "../ButtonLink/ButtonLink";
@@ -66,9 +68,9 @@ const PageLinks = styled(PageContainer)`
   }
 `;
 
-const OpportunityInfoPageWithPresenter: FC<{
+const ManagedComponent: FC<{
   presenter: OpportunityInfoPagePresenter;
-}> = observer(function OpportunityInfoPageWithPresenter({ presenter }) {
+}> = observer(function OpportunityInfoPage({ presenter }) {
   usePageTitle(presenter.heading);
 
   return (
@@ -109,7 +111,7 @@ const OpportunityInfoPageWithPresenter: FC<{
   );
 });
 
-export const OpportunityInfoPage = observer(function OpportunityInfoPage() {
+function usePresenter() {
   const { pageSlug } = useTypedParams(
     State.Resident.Eligibility.Opportunity.InfoPage,
   );
@@ -117,15 +119,15 @@ export const OpportunityInfoPage = observer(function OpportunityInfoPage() {
     opportunity: { opportunityConfig, eligibilityReport },
   } = useResidentOpportunityContext();
 
-  return (
-    <OpportunityInfoPageWithPresenter
-      presenter={
-        new OpportunityInfoPagePresenter(
-          opportunityConfig,
-          pageSlug,
-          eligibilityReport,
-        )
-      }
-    />
+  return new OpportunityInfoPagePresenter(
+    opportunityConfig,
+    pageSlug,
+    eligibilityReport,
   );
+}
+
+export const OpportunityInfoPage = withPresenterManager({
+  usePresenter,
+  managerIsObserver: true,
+  ManagedComponent,
 });

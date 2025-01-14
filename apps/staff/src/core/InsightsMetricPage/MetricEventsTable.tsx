@@ -63,7 +63,7 @@ function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
     );
 
     return (
-      <ModelHydrator model={presenter}>
+      <ModelHydrator hydratable={presenter}>
         <Component presenter={presenter} />
       </ModelHydrator>
     );

@@ -22,8 +22,8 @@ import { Hydratable, Hydrator } from "~hydration-utils";
 import { ErrorMessage } from "../components/StatusMessage";
 
 type ModelHydratorProps = {
-  children: React.ReactElement;
-  model: Hydratable;
+  children: React.ReactNode;
+  hydratable: Hydratable;
   className?: string;
 };
 
@@ -34,7 +34,7 @@ type ModelHydratorProps = {
  */
 function ModelHydrator({
   children,
-  model: hydratable,
+  hydratable,
   className,
 }: ModelHydratorProps): React.ReactElement {
   return (

@@ -78,7 +78,7 @@ const PageWorkflows: React.FC = () => {
   }
 
   return (
-    <ModelHydrator model={workflowsStore}>
+    <ModelHydrator hydratable={workflowsStore}>
       <Routes>
         <Route element={<WorkflowsRoute />}>
           <Route

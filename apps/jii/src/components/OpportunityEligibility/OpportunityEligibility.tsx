@@ -22,10 +22,11 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { ResidentRecord } from "~datatypes";
+import { withPresenterManager } from "~hydration-utils";
 
-import type { ResidentsStore } from "../../datastores/ResidentsStore";
-import { OpportunityData } from "../SingleResidentHydrator/context";
+import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
+import { useResidentsContext } from "../ResidentsHydrator/context";
+import { useSingleResidentContext } from "../SingleResidentHydrator/context";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { AdditionalSection } from "./AdditionalSection";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
@@ -58,9 +59,9 @@ const Subheading = styled.h2`
   }
 `;
 
-const OpportunityEligibilityWithPresenter: FC<{
+const ManagedComponent: FC<{
   presenter: OpportunityEligibilityPresenter;
-}> = observer(function OpportunityEligibilityWithPresenter({ presenter }) {
+}> = observer(function OpportunityEligibility({ presenter }) {
   usePageTitle(presenter.htmlTitle);
 
   return (
@@ -90,25 +91,23 @@ const OpportunityEligibilityWithPresenter: FC<{
   );
 });
 
-export const OpportunityEligibility: FC<{
-  residentsStore: ResidentsStore;
-  resident: ResidentRecord["output"];
-  opportunity: OpportunityData;
-}> = observer(function OpportunityEligibility({
-  residentsStore,
-  opportunity: { opportunityConfig, eligibilityReport },
-  resident,
-}) {
-  return (
-    <OpportunityEligibilityWithPresenter
-      presenter={
-        new OpportunityEligibilityPresenter(
-          residentsStore,
-          opportunityConfig,
-          eligibilityReport,
-          resident.pseudonymizedId,
-        )
-      }
-    />
+function usePresenter() {
+  const { residentsStore } = useResidentsContext();
+  const { resident } = useSingleResidentContext();
+  const {
+    opportunity: { opportunityConfig, eligibilityReport },
+  } = useResidentOpportunityContext();
+
+  return new OpportunityEligibilityPresenter(
+    residentsStore,
+    opportunityConfig,
+    eligibilityReport,
+    resident.pseudonymizedId,
   );
+}
+
+export const OpportunityEligibility = withPresenterManager({
+  usePresenter,
+  managerIsObserver: true,
+  ManagedComponent,
 });

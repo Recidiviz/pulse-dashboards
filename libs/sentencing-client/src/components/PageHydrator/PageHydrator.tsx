@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,18 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 
-import { LandingPageLayout } from "../LandingPages/LandingPageLayout";
-import { LoginStateSelection } from "../LandingPages/LandingStateSelection";
-import { usePageTitle } from "../usePageTitle/usePageTitle";
+import { Hydratable, Hydrator } from "~hydration-utils";
 
-export const PageLanding: FC = () => {
-  usePageTitle(undefined);
+import { ErrorMessage } from "../Error";
 
+export const PageHydrator: FC<{
+  children: ReactNode;
+  hydratable: Hydratable;
+}> = ({ children, hydratable }) => {
   return (
-    <LandingPageLayout>
-      <LoginStateSelection />
-    </LandingPageLayout>
+    <Hydrator hydratable={hydratable} failed={<ErrorMessage />}>
+      {children}
+    </Hydrator>
   );
 };

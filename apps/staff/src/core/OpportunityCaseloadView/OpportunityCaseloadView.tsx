@@ -21,6 +21,8 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { withPresenterManager } from "~hydration-utils";
+
 import { useRootStore } from "../../components/StoreProvider";
 import { OpportunityCaseloadViewPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadViewPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
@@ -35,61 +37,61 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-export const OpportunityCaseloadViewWithPresenter = observer(
-  function OpportunityCaseloadViewWithPresenter({
-    presenter,
-  }: {
-    presenter: OpportunityCaseloadViewPresenter;
-  }) {
-    const {
-      selectedSearchIds,
-      opportunityType,
-      hasOpportunities,
-      ctaTextAndHeaderText,
-    } = presenter;
+const ManagedComponent = observer(function OpportunityCaseloadView({
+  presenter,
+}: {
+  presenter: OpportunityCaseloadViewPresenter;
+}) {
+  const {
+    selectedSearchIds,
+    opportunityType,
+    hasOpportunities,
+    ctaTextAndHeaderText,
+  } = presenter;
 
-    const selectedSearchIdsCount = selectedSearchIds?.length || 0;
+  const selectedSearchIdsCount = selectedSearchIds?.length || 0;
 
-    return (
-      <WorkflowsNavLayout>
-        <Wrapper>
-          <CaseloadSelect />
-          <ModelHydrator model={presenter}>
-            <React.Fragment>
-              {(selectedSearchIdsCount === 0 || !hasOpportunities) && (
-                <WorkflowsResults
-                  headerText={ctaTextAndHeaderText.headerText}
-                  callToActionText={ctaTextAndHeaderText.ctaText}
-                />
-              )}
-              {selectedSearchIdsCount > 0 && hasOpportunities && (
-                <HydratedOpportunityPersonList
-                  opportunityType={opportunityType}
-                />
-              )}
-            </React.Fragment>
-          </ModelHydrator>
-        </Wrapper>
-      </WorkflowsNavLayout>
-    );
-  },
-);
+  return (
+    <WorkflowsNavLayout>
+      <Wrapper>
+        <CaseloadSelect />
+        <ModelHydrator hydratable={presenter}>
+          <React.Fragment>
+            {(selectedSearchIdsCount === 0 || !hasOpportunities) && (
+              <WorkflowsResults
+                headerText={ctaTextAndHeaderText.headerText}
+                callToActionText={ctaTextAndHeaderText.ctaText}
+              />
+            )}
+            {selectedSearchIdsCount > 0 && hasOpportunities && (
+              <HydratedOpportunityPersonList
+                opportunityType={opportunityType}
+              />
+            )}
+          </React.Fragment>
+        </ModelHydrator>
+      </Wrapper>
+    </WorkflowsNavLayout>
+  );
+});
 
-export const OpportunityCaseloadView = observer(function OpportunityCaseload() {
+function usePresenter() {
   const {
     workflowsStore,
     workflowsStore: { opportunityConfigurationStore, selectedOpportunityType },
   } = useRootStore();
 
-  return !selectedOpportunityType ? null : (
-    <OpportunityCaseloadViewWithPresenter
-      presenter={
-        new OpportunityCaseloadViewPresenter(
-          workflowsStore,
-          opportunityConfigurationStore,
-          selectedOpportunityType,
-        )
-      }
-    />
-  );
+  return !selectedOpportunityType
+    ? null
+    : new OpportunityCaseloadViewPresenter(
+        workflowsStore,
+        opportunityConfigurationStore,
+        selectedOpportunityType,
+      );
+}
+
+export const OpportunityCaseloadView = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
 });

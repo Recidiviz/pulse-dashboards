@@ -15,21 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC, memo } from "react";
-
 import { OpportunityEligibility } from "../OpportunityEligibility/OpportunityEligibility";
-import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
-import { useResidentsContext } from "../ResidentsHydrator/context";
-import { useSingleResidentContext } from "../SingleResidentHydrator/context";
 
-export const PageOpportunityEligibilityHome: FC = memo(
-  function PageOpportunityEligibilityHome() {
-    const { residentsStore } = useResidentsContext();
-    const { resident } = useSingleResidentContext();
-    const { opportunity } = useResidentOpportunityContext();
-
-    return (
-      <OpportunityEligibility {...{ resident, residentsStore, opportunity }} />
-    );
-  },
-);
+export function PageOpportunityEligibilityHome() {
+  return <OpportunityEligibility />;
+}

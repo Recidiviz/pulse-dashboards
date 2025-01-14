@@ -23,3 +23,4 @@ export * from "./Hydrator/HydratorWithErrorLogging";
 export type * from "./types";
 export * from "./utils/castToError";
 export * from "./utils/unpackAggregatedErrors";
+export * from "./withPresenterManager/withPresenterManager";

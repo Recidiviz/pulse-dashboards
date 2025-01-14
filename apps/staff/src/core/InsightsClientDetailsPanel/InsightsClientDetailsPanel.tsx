@@ -115,7 +115,7 @@ function withPresenter(
       outcomeDate,
     );
     return (
-      <ModelHydrator model={presenter}>
+      <ModelHydrator hydratable={presenter}>
         <Component presenter={presenter} />
       </ModelHydrator>
     );

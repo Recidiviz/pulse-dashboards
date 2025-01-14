@@ -16,17 +16,19 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { FC, memo } from "react";
+import { FC } from "react";
 import { Outlet } from "react-router-dom";
+
+import { withPresenterManager } from "~hydration-utils";
 
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { ResidentsContextProvider } from "./context";
 import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 
-const ResidentsHydratorWithPresenter: FC<{
+const ManagedComponent: FC<{
   presenter: ResidentsHydratorPresenter;
-}> = observer(function ResidentsHydratorWithPresenter({ presenter }) {
+}> = observer(function ResidentsHydrator({ presenter }) {
   const { residentsStore } = presenter;
   return (
     <ResidentsContextProvider value={{ residentsStore }}>
@@ -35,11 +37,13 @@ const ResidentsHydratorWithPresenter: FC<{
   );
 });
 
-export const ResidentsHydrator: FC = memo(function ResidentsHydrator() {
-  const presenter = new ResidentsHydratorPresenter(useRootStore());
-  return (
-    <PageHydrator hydratable={presenter}>
-      <ResidentsHydratorWithPresenter presenter={presenter} />
-    </PageHydrator>
-  );
+function usePresenter() {
+  return new ResidentsHydratorPresenter(useRootStore());
+}
+
+export const ResidentsHydrator = withPresenterManager({
+  usePresenter,
+  managerIsObserver: false,
+  ManagedComponent,
+  HydratorComponent: PageHydrator,
 });

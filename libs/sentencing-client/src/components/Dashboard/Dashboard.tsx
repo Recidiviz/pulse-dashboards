@@ -18,16 +18,16 @@
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
-import { Hydrator } from "~hydration-utils";
+import { withPresenterManager } from "~hydration-utils";
 
 import { PSIStore } from "../../datastores/PSIStore";
 import { StaffPresenter } from "../../presenters/StaffPresenter";
 import CloseIcon from "../assets/close-icon.svg?react";
-import { ErrorMessage } from "../Error";
+import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { CaseListTable } from "./CaseListTable";
 import * as Styled from "./Dashboard.styles";
 
-const DashboardWithPresenter = observer(function DashboardWithPresenter({
+const ManagedComponent = observer(function Dashboard({
   presenter,
 }: {
   presenter: StaffPresenter;
@@ -102,16 +102,15 @@ const DashboardWithPresenter = observer(function DashboardWithPresenter({
   );
 });
 
-export const Dashboard: React.FC<{
-  psiStore: PSIStore;
-}> = observer(function Dashboard({ psiStore }) {
+function usePresenter({ psiStore }: { psiStore: PSIStore }) {
   const { staffStore } = psiStore;
 
-  const presenter = new StaffPresenter(staffStore);
+  return new StaffPresenter(staffStore);
+}
 
-  return (
-    <Hydrator hydratable={presenter} failed={<ErrorMessage />}>
-      <DashboardWithPresenter presenter={presenter} />
-    </Hydrator>
-  );
+export const Dashboard = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
+  HydratorComponent: PageHydrator,
 });

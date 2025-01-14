@@ -130,7 +130,7 @@ const OutliersStaff = observer(function OutliersStaff({
   );
 
   return (
-    <ModelHydrator model={presenter}>
+    <ModelHydrator hydratable={presenter}>
       <StaffPills presenter={presenter} />
     </ModelHydrator>
   );

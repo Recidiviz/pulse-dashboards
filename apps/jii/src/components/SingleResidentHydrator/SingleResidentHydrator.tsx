@@ -16,9 +16,11 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { FC, memo } from "react";
+import { FC } from "react";
 import { Outlet } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
+
+import { withPresenterManager } from "~hydration-utils";
 
 import { State } from "../../routes/routes";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
@@ -27,9 +29,9 @@ import { SingleResidentContextProvider } from "./context";
 import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresenter";
 
 // isolating data access in its own component prevents it from throwing errors before hydration is complete
-const SingleResidentHydratorWithPresenter: FC<{
+const ManagedComponent: FC<{
   presenter: SingleResidentHydratorPresenter;
-}> = observer(function SingleResidentHydratorWithPresenter({ presenter }) {
+}> = observer(function SingleResidentHydrator({ presenter }) {
   return (
     <SingleResidentContextProvider value={presenter.residentData}>
       <Outlet />
@@ -37,18 +39,16 @@ const SingleResidentHydratorWithPresenter: FC<{
   );
 });
 
-export const SingleResidentHydrator = memo(function SingleResidentHydrator() {
+function usePresenter() {
   const { personPseudoId } = useTypedParams(State.Resident);
   const { residentsStore } = useResidentsContext();
 
-  const presenter = new SingleResidentHydratorPresenter(
-    residentsStore,
-    personPseudoId,
-  );
+  return new SingleResidentHydratorPresenter(residentsStore, personPseudoId);
+}
 
-  return (
-    <PageHydrator hydratable={presenter}>
-      <SingleResidentHydratorWithPresenter presenter={presenter} />
-    </PageHydrator>
-  );
+export const SingleResidentHydrator = withPresenterManager({
+  usePresenter,
+  managerIsObserver: false,
+  ManagedComponent,
+  HydratorComponent: PageHydrator,
 });

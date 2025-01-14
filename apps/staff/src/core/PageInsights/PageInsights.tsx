@@ -49,7 +49,9 @@ const PageInsights: React.FC = observer(function PageInsights() {
     <InsightsActionStrategyModalProvider>
       <InsightsNavLayout>
         <ModelHydrator
-          model={new SupervisionPresenter(insightsStore, workflowsRootStore)}
+          hydratable={
+            new SupervisionPresenter(insightsStore, workflowsRootStore)
+          }
         >
           <Routes>
             <Route element={<InsightsRoute />}>

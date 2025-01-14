@@ -18,12 +18,14 @@
 import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC, memo } from "react";
+import { FC } from "react";
 import {
   useTypedParams,
   useTypedSearchParams,
 } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
+
+import { withPresenterManager } from "~hydration-utils";
 
 import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
 import { State } from "../../routes/routes";
@@ -31,7 +33,6 @@ import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { LandingPageCopyWrapper } from "./LandingPageCopyWrapper";
-import { LandingPageLayout } from "./LandingPageLayout";
 import { LandingPageSelector } from "./LandingPageSelector";
 import { LandingStateSpecificPresenter } from "./LandingStateSpecificPresenter";
 
@@ -48,9 +49,9 @@ const ExamplesWrapper = styled.ul`
   row-gap: ${rem(spacing.lg)};
 `;
 
-const LandingStateSpecificWithPresenter: FC<{
+const ManagedComponent: FC<{
   presenter: LandingStateSpecificPresenter;
-}> = observer(function LandingStateSpecificWithPresenter({ presenter }) {
+}> = observer(function LandingStateSpecific({ presenter }) {
   return (
     <>
       <LandingPageCopyWrapper>{presenter.copy.intro}</LandingPageCopyWrapper>
@@ -77,7 +78,7 @@ const LandingStateSpecificWithPresenter: FC<{
   );
 });
 
-export const LandingStateSpecific = memo(function LandingStateSpecific() {
+function usePresenter() {
   const { stateSlug } = useTypedParams(State);
   const [{ returnToPath }] = useTypedSearchParams(State);
   const {
@@ -87,18 +88,17 @@ export const LandingStateSpecific = memo(function LandingStateSpecific() {
 
   usePageTitle(stateConfigsByUrlSlug[stateSlug]?.displayName);
 
-  const presenter = new LandingStateSpecificPresenter(
+  return new LandingStateSpecificPresenter(
     loginConfigStore,
     authClient,
     stateSlug,
     returnToPath,
   );
+}
 
-  return (
-    <LandingPageLayout>
-      <MainContentHydrator hydratable={presenter}>
-        <LandingStateSpecificWithPresenter presenter={presenter} />
-      </MainContentHydrator>
-    </LandingPageLayout>
-  );
+export const LandingStateSpecific = withPresenterManager({
+  usePresenter,
+  managerIsObserver: false,
+  HydratorComponent: MainContentHydrator,
+  ManagedComponent,
 });

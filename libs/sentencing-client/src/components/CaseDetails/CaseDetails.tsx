@@ -20,12 +20,10 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Hydrator } from "~hydration-utils";
-
 import { PSIStore } from "../../datastores/PSIStore";
 import { CaseDetailsPresenter } from "../../presenters/CaseDetailsPresenter";
 import { psiUrl } from "../../utils/routing";
-import { ErrorMessage } from "../Error";
+import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 import { CaseAttributes } from "./CaseAttributes";
 import * as Styled from "./CaseDetails.styles";
@@ -237,10 +235,10 @@ export const CaseDetails: React.FC<{
   const presenter = new CaseDetailsPresenter(caseStore, params["caseId"]);
 
   return (
-    <Hydrator hydratable={presenter} failed={<ErrorMessage />}>
+    <PageHydrator hydratable={presenter}>
       <StoreProvider store={psiStore}>
         <CaseDetailsWithPresenter presenter={presenter} />
       </StoreProvider>
-    </Hydrator>
+    </PageHydrator>
   );
 });

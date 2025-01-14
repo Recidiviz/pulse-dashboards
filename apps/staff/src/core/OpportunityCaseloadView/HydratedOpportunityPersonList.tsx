@@ -45,6 +45,7 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { OpportunityType } from "~datatypes";
+import { withPresenterManager } from "~hydration-utils";
 
 import {
   useFeatureVariants,
@@ -100,32 +101,174 @@ const SubcategoryHeading = styled(Sans14)`
   padding-bottom: ${rem(spacing.sm)};
 `;
 
-export const HydratedOpportunityPersonList = observer(
-  function HydratedOpportunityPersonList({
+type OpportunityPersonListProps = {
+  opportunityType: OpportunityType;
+  supervisionPresenter?: SupervisionOpportunityPresenter;
+};
+
+const ManagedComponent = observer(function HydratedOpportunityPersonList({
+  presenter,
+}: {
+  presenter: OpportunityCaseloadPresenter;
+}) {
+  const { isMobile } = useIsMobile(true);
+
+  // Use MouseSensor instead of PointerSensor to disable drag-and-drop on touch screens
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      // Require the mouse to move by 10 pixels before activating
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleTabClick = (tab: OpportunityTab) => {
+    presenter.activeTab = tab;
+  };
+
+  const handleTabGroupClick = (newTabGroup: string) => {
+    presenter.activeTabGroup = newTabGroup as OpportunityTabGroup;
+  };
+
+  const handleNotificationDismiss = (id: string) => {
+    presenter.dismissNotification(id);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      presenter.swapTabs(
+        active.id as OpportunityTab,
+        over.id as OpportunityTab,
+      );
+    }
+  };
+  const {
+    peopleInActiveTab,
+    overdueOpportunityCount,
+    overdueOpportunityUrl,
+    peopleInActiveTabBySubcategory,
+    overdueOpportunityCalloutCopy,
+  } = presenter;
+
+  return (
+    <FlexWrapper>
+      <Heading isMobile={isMobile} className="PersonList__Heading">
+        {presenter.label}
+      </Heading>
+      {presenter.subheading ? (
+        <OpportunitySubheading subheading={presenter.subheading} />
+      ) : (
+        <OpportunityPageExplainer>
+          {presenter.callToAction}
+        </OpportunityPageExplainer>
+      )}
+      <LinkedOpportunityCallout
+        overdueOpportunityCount={overdueOpportunityCount}
+        overdueOpportunityUrl={overdueOpportunityUrl}
+        overdueOpportunityCalloutCopy={overdueOpportunityCalloutCopy}
+      />
+      {presenter.activeOpportunityNotifications && (
+        <OpportunityNotifications
+          notifications={presenter.activeOpportunityNotifications}
+          handleDismiss={handleNotificationDismiss}
+        />
+      )}
+
+      {
+        /* Sortable tab control bar */
+        presenter.displayTabs && (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
+          >
+            <SortableContext
+              items={presenter.displayTabs}
+              strategy={horizontalListSortingStrategy}
+            >
+              <WorkflowsCaseloadControlBar
+                title={"Group by"}
+                tabBadges={presenter.tabBadges}
+                tabs={presenter.displayTabs}
+                activeTab={presenter.activeTab}
+                setActiveTab={handleTabClick}
+                setActiveTabGroup={handleTabGroupClick}
+                activeTabGroup={presenter.activeTabGroup as string}
+                tabGroups={presenter.displayTabGroups as string[]}
+                sortable={presenter.shouldShowAllTabs}
+              />
+            </SortableContext>
+          </DndContext>
+        )
+      }
+
+      {presenter.tabPrefaceText && (
+        <OpportunityPageExplainer>
+          {presenter.tabPrefaceText}
+        </OpportunityPageExplainer>
+      )}
+
+      {peopleInActiveTab.length === 0 ? (
+        /* Empty tab display */
+        <EmptyTabGroupWrapper>
+          <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
+        </EmptyTabGroupWrapper>
+      ) : peopleInActiveTabBySubcategory ? (
+        /* Subcategories display */
+        (presenter.subcategoryOrder ?? [])
+          .filter((category) => peopleInActiveTabBySubcategory[category])
+          .map((category) => (
+            <div key={category}>
+              <SubcategoryHeading>
+                {presenter.headingText(category)}
+              </SubcategoryHeading>
+              <CaseloadOpportunityGrid
+                items={peopleInActiveTabBySubcategory[category]}
+              />
+            </div>
+          ))
+      ) : (
+        /* Ordinary tab display with no subcategories */
+        <CaseloadOpportunityGrid items={peopleInActiveTab} />
+      )}
+
+      <OpportunityPreviewModal
+        opportunity={presenter.selectedOpportunity}
+        navigableOpportunities={presenter.navigablePeople}
+        selectedPerson={presenter.selectedPerson}
+      />
+      <WorkflowsLastSynced
+        date={peopleInActiveTab?.at(0)?.person?.lastDataFromState}
+      />
+    </FlexWrapper>
+  );
+});
+
+function usePresenter({
+  opportunityType,
+  supervisionPresenter,
+}: OpportunityPersonListProps) {
+  const { workflowsStore, analyticsStore, firestoreStore } = useRootStore();
+  const opportunityConfigs = useOpportunityConfigurations();
+  const featureVariants = useFeatureVariants();
+  const config = opportunityConfigs[opportunityType];
+
+  return new OpportunityCaseloadPresenter(
+    analyticsStore,
+    firestoreStore,
+    workflowsStore,
+    config,
+    featureVariants,
     opportunityType,
     supervisionPresenter,
-  }: {
-    opportunityType: OpportunityType;
-    supervisionPresenter?: SupervisionOpportunityPresenter;
-  }) {
-    const { workflowsStore, analyticsStore, firestoreStore } = useRootStore();
-    const opportunityConfigs = useOpportunityConfigurations();
-    const featureVariants = useFeatureVariants();
-    const config = opportunityConfigs[opportunityType];
-
-    const presenter = new OpportunityCaseloadPresenter(
-      analyticsStore,
-      firestoreStore,
-      workflowsStore,
-      config,
-      featureVariants,
-      opportunityType,
-      supervisionPresenter,
-    );
-
-    return <HydratedOpportunityPersonListWithPresenter presenter={presenter} />;
-  },
-);
+  );
+}
 
 /**
  * Displays relevant opportunities for a particular opportunity type organized into
@@ -133,148 +276,8 @@ export const HydratedOpportunityPersonList = observer(
  * opportunity config. This component is shared between Workflows and Insights; as
  * information is calculated differently, we share the SupervisionOpportunityPresenter.
  */
-export const HydratedOpportunityPersonListWithPresenter = observer(
-  function HydratedOpportunityPersonListWithPresenter({
-    presenter,
-  }: {
-    presenter: OpportunityCaseloadPresenter;
-  }) {
-    const { isMobile } = useIsMobile(true);
-
-    // Use MouseSensor instead of PointerSensor to disable drag-and-drop on touch screens
-    const sensors = useSensors(
-      useSensor(MouseSensor, {
-        // Require the mouse to move by 10 pixels before activating
-        activationConstraint: {
-          distance: 10,
-        },
-      }),
-      useSensor(KeyboardSensor, {
-        coordinateGetter: sortableKeyboardCoordinates,
-      }),
-    );
-
-    const handleTabClick = (tab: OpportunityTab) => {
-      presenter.activeTab = tab;
-    };
-
-    const handleTabGroupClick = (newTabGroup: string) => {
-      presenter.activeTabGroup = newTabGroup as OpportunityTabGroup;
-    };
-
-    const handleNotificationDismiss = (id: string) => {
-      presenter.dismissNotification(id);
-    };
-
-    const handleDragEnd = (event: DragEndEvent) => {
-      const { active, over } = event;
-      if (over && active.id !== over.id) {
-        presenter.swapTabs(
-          active.id as OpportunityTab,
-          over.id as OpportunityTab,
-        );
-      }
-    };
-    const {
-      peopleInActiveTab,
-      overdueOpportunityCount,
-      overdueOpportunityUrl,
-      peopleInActiveTabBySubcategory,
-      overdueOpportunityCalloutCopy,
-    } = presenter;
-
-    return (
-      <FlexWrapper>
-        <Heading isMobile={isMobile} className="PersonList__Heading">
-          {presenter.label}
-        </Heading>
-        {presenter.subheading ? (
-          <OpportunitySubheading subheading={presenter.subheading} />
-        ) : (
-          <OpportunityPageExplainer>
-            {presenter.callToAction}
-          </OpportunityPageExplainer>
-        )}
-        <LinkedOpportunityCallout
-          overdueOpportunityCount={overdueOpportunityCount}
-          overdueOpportunityUrl={overdueOpportunityUrl}
-          overdueOpportunityCalloutCopy={overdueOpportunityCalloutCopy}
-        />
-        {presenter.activeOpportunityNotifications && (
-          <OpportunityNotifications
-            notifications={presenter.activeOpportunityNotifications}
-            handleDismiss={handleNotificationDismiss}
-          />
-        )}
-
-        {
-          /* Sortable tab control bar */
-          presenter.displayTabs && (
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToHorizontalAxis, restrictToParentElement]}
-            >
-              <SortableContext
-                items={presenter.displayTabs}
-                strategy={horizontalListSortingStrategy}
-              >
-                <WorkflowsCaseloadControlBar
-                  title={"Group by"}
-                  tabBadges={presenter.tabBadges}
-                  tabs={presenter.displayTabs}
-                  activeTab={presenter.activeTab}
-                  setActiveTab={handleTabClick}
-                  setActiveTabGroup={handleTabGroupClick}
-                  activeTabGroup={presenter.activeTabGroup as string}
-                  tabGroups={presenter.displayTabGroups as string[]}
-                  sortable={presenter.shouldShowAllTabs}
-                />
-              </SortableContext>
-            </DndContext>
-          )
-        }
-
-        {presenter.tabPrefaceText && (
-          <OpportunityPageExplainer>
-            {presenter.tabPrefaceText}
-          </OpportunityPageExplainer>
-        )}
-
-        {peopleInActiveTab.length === 0 ? (
-          /* Empty tab display */
-          <EmptyTabGroupWrapper>
-            <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
-          </EmptyTabGroupWrapper>
-        ) : peopleInActiveTabBySubcategory ? (
-          /* Subcategories display */
-          (presenter.subcategoryOrder ?? [])
-            .filter((category) => peopleInActiveTabBySubcategory[category])
-            .map((category) => (
-              <div key={category}>
-                <SubcategoryHeading>
-                  {presenter.headingText(category)}
-                </SubcategoryHeading>
-                <CaseloadOpportunityGrid
-                  items={peopleInActiveTabBySubcategory[category]}
-                />
-              </div>
-            ))
-        ) : (
-          /* Ordinary tab display with no subcategories */
-          <CaseloadOpportunityGrid items={peopleInActiveTab} />
-        )}
-
-        <OpportunityPreviewModal
-          opportunity={presenter.selectedOpportunity}
-          navigableOpportunities={presenter.navigablePeople}
-          selectedPerson={presenter.selectedPerson}
-        />
-        <WorkflowsLastSynced
-          date={peopleInActiveTab?.at(0)?.person?.lastDataFromState}
-        />
-      </FlexWrapper>
-    );
-  },
-);
+export const HydratedOpportunityPersonList = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
+});

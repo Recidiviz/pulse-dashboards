@@ -20,6 +20,7 @@ import { Navigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { EmailVerification, State } from "../../routes/routes";
+import { LandingPageLayout } from "../LandingPages/LandingPageLayout";
 import { LandingStateSpecific } from "../LandingPages/LandingStateSpecific";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
@@ -56,5 +57,9 @@ export const PageState: FC = () => {
     return <Navigate to={EmailVerification.buildPath({})} replace />;
   }
 
-  return <LandingStateSpecific />;
+  return (
+    <LandingPageLayout>
+      <LandingStateSpecific />
+    </LandingPageLayout>
+  );
 };

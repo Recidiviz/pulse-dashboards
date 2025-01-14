@@ -278,7 +278,7 @@ const InsightsSupervisorPageV2 = observer(function InsightsSupervisorPageV2() {
   );
 
   return (
-    <ModelHydrator model={presenter}>
+    <ModelHydrator hydratable={presenter}>
       <SupervisorPageV2 presenter={presenter} />
     </ModelHydrator>
   );

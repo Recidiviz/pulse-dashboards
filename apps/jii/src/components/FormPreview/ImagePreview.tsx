@@ -28,6 +28,8 @@ import { darken, rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
+import { withPresenterManager } from "~hydration-utils";
+
 import { MAX_MODAL_HEIGHT, MODAL_PADDING } from "../Modal/Modal";
 import { NotFound } from "../NotFound/NotFound";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
@@ -113,8 +115,8 @@ const ResponsiveImage: FC<{ presenter: ImagePreviewPresenter }> = observer(
   },
 );
 
-const ImagePreviewWithPresenter: FC<{ presenter: ImagePreviewPresenter }> =
-  observer(function ImagePreviewWithPresenter({ presenter }) {
+const ManagedComponent: FC<{ presenter: ImagePreviewPresenter }> = observer(
+  function ImagePreview({ presenter }) {
     return (
       <Wrapper>
         <PreviewHeading>{presenter.title}</PreviewHeading>
@@ -133,19 +135,22 @@ const ImagePreviewWithPresenter: FC<{ presenter: ImagePreviewPresenter }> =
         </Controls>
       </Wrapper>
     );
-  });
+  },
+);
 
-export const ImagePreview: FC = withErrorBoundary(
-  observer(function ImagePreview() {
-    const {
-      opportunity: { opportunityId, opportunityConfig },
-    } = useResidentOpportunityContext();
+function usePresenter() {
+  const {
+    opportunity: { opportunityId, opportunityConfig },
+  } = useResidentOpportunityContext();
 
-    return (
-      <ImagePreviewWithPresenter
-        presenter={new ImagePreviewPresenter(opportunityId, opportunityConfig)}
-      />
-    );
+  return new ImagePreviewPresenter(opportunityId, opportunityConfig);
+}
+
+export const ImagePreview = withErrorBoundary(
+  withPresenterManager({
+    usePresenter,
+    managerIsObserver: true,
+    ManagedComponent,
   }),
   { fallback: <NotFound /> },
 );

@@ -23,10 +23,12 @@ import {
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React, { useId } from "react";
+import { FC, useId } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
+
+import { withPresenterManager } from "~hydration-utils";
 
 import { State } from "../../routes/routes";
 import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
@@ -42,16 +44,20 @@ const FacilityLabel = styled.label`
   margin-bottom: ${rem(spacing.lg)};
 `;
 
-const ResidentsSearchWithPresenter: React.FC<{
-  presenter: ResidentsSearchPresenter;
-}> = observer(function ResidentsSearchWithPresenter({ presenter }) {
-  const navigate = useNavigate();
-  const residentLabelId = useId();
-  const facilityLabelId = useId();
-  const urlParams = useTypedParams(State.Search);
+function usePresenter() {
+  const { uiStore } = useRootStore();
+  const { residentsStore } = useResidentsContext();
+  return new ResidentsSearchPresenter(residentsStore, uiStore);
+}
 
-  return (
-    <MainContentHydrator hydratable={presenter}>
+const ManagedComponent: FC<{ presenter: ResidentsSearchPresenter }> = observer(
+  function ResidentsSearch({ presenter }) {
+    const navigate = useNavigate();
+    const residentLabelId = useId();
+    const facilityLabelId = useId();
+    const urlParams = useTypedParams(State.Search);
+
+    return (
       <div>
         <Header34 as="h1">Look up a resident</Header34>
 
@@ -84,17 +90,13 @@ const ResidentsSearchWithPresenter: React.FC<{
           placeholder="Start typing a resident's name or DOC ID …"
         />
       </div>
-    </MainContentHydrator>
-  );
-});
+    );
+  },
+);
 
-export const ResidentsSearch = observer(function ResidentsSearch() {
-  const { uiStore } = useRootStore();
-  const { residentsStore } = useResidentsContext();
-
-  return (
-    <ResidentsSearchWithPresenter
-      presenter={new ResidentsSearchPresenter(residentsStore, uiStore)}
-    />
-  );
+export const ResidentsSearch = withPresenterManager({
+  usePresenter,
+  managerIsObserver: false,
+  ManagedComponent,
+  HydratorComponent: MainContentHydrator,
 });

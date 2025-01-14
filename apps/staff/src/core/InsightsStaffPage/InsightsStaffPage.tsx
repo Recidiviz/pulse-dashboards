@@ -33,6 +33,8 @@ import { Navigate, useNavigate } from "react-router-dom";
 import simplur from "simplur";
 import styled, { css } from "styled-components/macro";
 
+import { withPresenterManager } from "~hydration-utils";
+
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
@@ -136,7 +138,7 @@ const StyledTabPanel = styled(TabPanel)`
   }
 `;
 
-export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
+export const StaffPageWithPresenter = observer(function StaffPage({
   presenter,
 }: {
   presenter: SupervisionOfficerDetailPresenter;
@@ -436,7 +438,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   );
 });
 
-const InsightsStaffPage = observer(function InsightsStaffPage() {
+function usePresenter() {
   const {
     insightsStore: { supervisionStore },
   } = useRootStore();
@@ -445,16 +447,17 @@ const InsightsStaffPage = observer(function InsightsStaffPage() {
 
   if (!officerPseudoId) return null;
 
-  const presenter = new SupervisionOfficerDetailPresenter(
+  return new SupervisionOfficerDetailPresenter(
     supervisionStore,
     officerPseudoId,
   );
+}
 
-  return (
-    <ModelHydrator model={presenter}>
-      <StaffPageWithPresenter presenter={presenter} />
-    </ModelHydrator>
-  );
+const InsightsStaffPage = withPresenterManager({
+  usePresenter,
+  ManagedComponent: StaffPageWithPresenter,
+  managerIsObserver: true,
+  HydratorComponent: ModelHydrator,
 });
 
 export default InsightsStaffPage;

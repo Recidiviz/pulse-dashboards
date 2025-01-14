@@ -144,8 +144,8 @@ const InsightsOpportunityPage = observer(function InsightsMetricPage() {
   workflowsStore.updateActiveSystem("SUPERVISION");
 
   return (
-    <ModelHydrator model={presenter}>
-      <ModelHydrator model={workflowsStore}>
+    <ModelHydrator hydratable={presenter}>
+      <ModelHydrator hydratable={workflowsStore}>
         <OpportunityPageWithPresenter presenter={presenter} />
       </ModelHydrator>
     </ModelHydrator>

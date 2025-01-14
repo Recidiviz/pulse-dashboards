@@ -21,6 +21,8 @@ import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
 
+import { withPresenterManager } from "~hydration-utils";
+
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
@@ -48,7 +50,7 @@ const Wrapper = styled.div<{ isTablet: boolean }>`
   gap: ${rem(spacing.md)};
 `;
 
-export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
+const ManagedComponent = observer(function StaffPage({
   presenter,
 }: {
   presenter: SupervisionOfficerPresenter;
@@ -206,7 +208,7 @@ export const StaffPageWithPresenter = observer(function StaffPageWithPresenter({
   );
 });
 
-const InsightsStaffPageV2 = observer(function InsightsStaffPageV2() {
+function usePresenter() {
   const {
     insightsStore: { supervisionStore },
     workflowsRootStore: {
@@ -218,18 +220,19 @@ const InsightsStaffPageV2 = observer(function InsightsStaffPageV2() {
 
   if (!officerPseudoId || !justiceInvolvedPersonsStore) return null;
 
-  const presenter = new SupervisionOfficerPresenter(
+  return new SupervisionOfficerPresenter(
     supervisionStore,
     officerPseudoId,
     justiceInvolvedPersonsStore,
     opportunityConfigurationStore,
   );
+}
 
-  return (
-    <ModelHydrator model={presenter}>
-      <StaffPageWithPresenter presenter={presenter} />
-    </ModelHydrator>
-  );
+const InsightsStaffPageV2 = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
+  HydratorComponent: ModelHydrator,
 });
 
 export default InsightsStaffPageV2;

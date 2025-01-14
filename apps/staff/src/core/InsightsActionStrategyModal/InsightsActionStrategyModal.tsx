@@ -374,7 +374,7 @@ function withPresenter(Component: ComponentType<ActionStrategyModalProps>) {
       pseudoId,
     );
     return (
-      <ModelHydrator model={presenter}>
+      <ModelHydrator hydratable={presenter}>
         <Component
           presenter={presenter}
           supervisorHomepage={supervisorHomepage}
