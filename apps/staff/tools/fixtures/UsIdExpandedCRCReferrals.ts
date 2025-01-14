@@ -30,7 +30,7 @@ export const usIdExpandedCRCReferrals: FirestoreFixture<UsIdExpandedCRCReferralR
           },
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNoDetainersForXcrcAndCrc: null,
+          usIdNotDetainersForXcrcAndCrc: null,
           usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
             fullTermCompletionDate: "2024-03-12",
             paroleEligibilityDate: "2023-11-03",

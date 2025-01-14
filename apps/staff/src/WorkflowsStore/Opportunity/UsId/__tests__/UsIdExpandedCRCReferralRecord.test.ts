@@ -29,7 +29,7 @@ test("transforms record with FTCD and PED set", () => {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForXcrcAndCrc: null,
+      usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
         fullTermCompletionDate: "2022-08-12",
@@ -61,7 +61,7 @@ test("transforms record with TPD set", () => {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForXcrcAndCrc: null,
+      usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
         fullTermCompletionDate: null,
@@ -93,7 +93,7 @@ test("transforms record with caseNotes set", () => {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForXcrcAndCrc: null,
+      usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
         fullTermCompletionDate: null,

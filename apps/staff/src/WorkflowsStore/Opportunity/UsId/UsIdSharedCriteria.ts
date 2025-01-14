@@ -51,7 +51,7 @@ export const crcSharedCriteria = z
     usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: z
       .object({})
       .nullable(),
-    usIdNoDetainersForXcrcAndCrc: z.object({}).nullable(),
+    usIdNotDetainersForXcrcAndCrc: z.object({}).nullable(),
   })
   .passthrough();
 

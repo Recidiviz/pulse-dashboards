@@ -32,7 +32,7 @@ describe("UsIdCRCResidentWorkerReferralRecord multiple criteria", () => {
           custodyLevel: "MINIMUM",
         },
         notServingForSexualOffense: null,
-        usIdNoDetainersForXcrcAndCrc: null,
+        usIdNotDetainersForXcrcAndCrc: null,
         usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
         usIdCrcResidentWorkerTimeBasedCriteria: {
           reasons: [
@@ -138,7 +138,7 @@ test("transforms eligible record with life temporal criteria", () => {
     stateCode: "US_ID",
     externalId: "crc-work-release-eligible-02",
     eligibleCriteria: {
-      usIdNoDetainersForXcrcAndCrc: null,
+      usIdNotDetainersForXcrcAndCrc: null,
       custodyLevelIsMinimum: {
         custodyLevel: "MINIMUM",
       },

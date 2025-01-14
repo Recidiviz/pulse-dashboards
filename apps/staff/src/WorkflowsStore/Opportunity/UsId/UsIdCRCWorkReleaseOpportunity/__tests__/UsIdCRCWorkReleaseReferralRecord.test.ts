@@ -32,7 +32,7 @@ describe("UsIdCRCWorkReleaseReferralRecord", () => {
           custodyLevel: "MINIMUM",
         },
         notServingForSexualOffense: null,
-        usIdNoDetainersForXcrcAndCrc: null,
+        usIdNotDetainersForXcrcAndCrc: null,
         usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
         usIdCrcWorkReleaseTimeBasedCriteria: {
           reasons: [
@@ -153,7 +153,7 @@ test("transforms eligible record with life temporal criteria", () => {
         custodyLevel: "MINIMUM",
       },
       notServingForSexualOffense: null,
-      usIdNoDetainersForXcrcAndCrc: null,
+      usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
       usIdCrcWorkReleaseTimeBasedCriteria: {
         reasons: [

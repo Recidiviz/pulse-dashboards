@@ -304,7 +304,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "No escape, eluding police, or absconsion offense(s) in the last 10 years",
         },
         {
-          key: "usIdNoDetainersForXcrcAndCrc",
+          key: "usIdNotDetainersForXcrcAndCrc",
           text: "No active felony detainers or holds",
           tooltip: "Cannot have any felony detainers or holds",
         },
@@ -455,7 +455,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "No escape, eluding police, or absconsion offense(s) in the last 10 years",
         },
         {
-          key: "usIdNoDetainersForXcrcAndCrc",
+          key: "usIdNotDetainersForXcrcAndCrc",
           text: "No active felony detainers or holds",
           tooltip: "Cannot have any felony detainers or holds",
         },
@@ -631,7 +631,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "No escape, eluding police, or absconsion offense(s) in the last 10 years",
         },
         {
-          key: "usIdNoDetainersForXcrcAndCrc",
+          key: "usIdNotDetainersForXcrcAndCrc",
           text: "No active felony detainers or holds",
           tooltip: "Cannot have any felony detainers or holds",
         },

@@ -30,7 +30,7 @@ export const usIdCRCWorkReleaseReferrals: FirestoreFixture<UsIdCRCWorkReleaseRef
           },
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNoDetainersForXcrcAndCrc: null,
+          usIdNotDetainersForXcrcAndCrc: null,
           usIdCrcWorkReleaseTimeBasedCriteria: {
             reasons: [
               {
@@ -61,7 +61,7 @@ export const usIdCRCWorkReleaseReferrals: FirestoreFixture<UsIdCRCWorkReleaseRef
           },
           notServingForSexualOffense: null,
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-          usIdNoDetainersForXcrcAndCrc: null,
+          usIdNotDetainersForXcrcAndCrc: null,
           usIdCrcWorkReleaseTimeBasedCriteria: {
             reasons: [
               {
