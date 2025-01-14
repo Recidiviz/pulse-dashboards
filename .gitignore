@@ -69,3 +69,12 @@ gha-creds-*.json
 
 # ephemeral test configuration
 opportunityPageConfig.json
+
+# Terraform / Atmos created files
+.atmos
+.terraform
+.terraform.lock.hcl
+*.tf.json
+*.tfvars.json
+*.planfile
+*.tfplan

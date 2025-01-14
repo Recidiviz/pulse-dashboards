@@ -1,0 +1,11 @@
+apiVersion: atmos/v1
+kind: AtmosVendorConfig
+metadata:
+  name: Vendor configuration for pulse-dashboards
+spec:
+  sources:
+    - component: "cloud-sql-instance"
+      source: 'git::https://{{env "GITHUB_TOKEN"}}@github.com/Recidiviz/atmos-components.git//terraform/cloud-sql-instance?ref={{.Version}}'
+      version: dan/cloud-sql-instance
+      targets:
+        - components/terraform/vendor/{{.Component}}

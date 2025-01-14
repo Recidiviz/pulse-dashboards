@@ -1,0 +1,16 @@
+## Using `docker compose`
+# The `atmos-shell` service provides an environment for running our atmos scripts, or the atmos cli directly.
+# docker compose -f docker-compose.yaml run atmos-shell
+services:
+  atmos-shell:
+    image: us-central1-docker.pkg.dev/recidiviz-devops/atmos-runner/default:latest
+    entrypoint: sh
+    stdin_open: true
+    tty: true
+    working_dir: /usr/app/libs/atmos
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/.config/gcloud/application_default_credentials.json
+    volumes:
+      - ../../:/usr/app
+      - ~/.config/gcloud:/.config/gcloud
+

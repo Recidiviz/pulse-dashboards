@@ -1,0 +1,32 @@
+{
+  "name": "atmos",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+     "shell": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans atmos-shell",
+        "color": true,
+        "cwd": "{projectRoot}"
+      }
+    },
+    "cli": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans --entrypoint=atmos atmos-shell",
+        "color": true,
+        "cwd": "{projectRoot}"
+      }
+    },
+    "vendor-pull": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans -e GITHUB_TOKEN={args.github-token} --entrypoint=atmos atmos-shell vendor pull",
+        "color": true,
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
