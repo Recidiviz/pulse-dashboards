@@ -22,7 +22,6 @@ import { ValuesType } from "utility-types";
 
 import {
   CASELOAD_CATEGORY_IDS,
-  excludedSupervisionOfficerFixture,
   InsightsConfig,
   InsightsConfigFixture,
   LATEST_END_DATE,
@@ -292,24 +291,6 @@ test("hydrate supervisionOfficers for supervisor only includes includeInOutcomes
   expect(
     store.officersBySupervisorPseudoId.get(testSupervisorPseudoId),
   ).toEqual(supervisionOfficerFixture.slice(0, 2));
-});
-
-test("hydrate excludedSupervisionOfficers for supervisor", async () => {
-  const testSupervisorPseudoId =
-    supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
-  expect(
-    store.excludedOfficersBySupervisorPseudoId.has(testSupervisorPseudoId),
-  ).toBeFalse();
-
-  await expect(
-    flowResult(
-      store.populateExcludedOfficersForSupervisor(testSupervisorPseudoId),
-    ),
-  ).resolves.not.toThrow();
-
-  expect(
-    store.excludedOfficersBySupervisorPseudoId.get(testSupervisorPseudoId),
-  ).toEqual(excludedSupervisionOfficerFixture.slice(0, 2));
 });
 
 test("hydrate supervisionOfficersOutcomes for supervisor", async () => {

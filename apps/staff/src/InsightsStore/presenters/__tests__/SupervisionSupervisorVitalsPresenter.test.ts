@@ -68,11 +68,6 @@ describe("with vitals data already hydrated", () => {
       flowResult(
         store.populateOfficersForSupervisor(presenter.supervisorPseudoId),
       ),
-      flowResult(
-        store.populateExcludedOfficersForSupervisor(
-          presenter.supervisorPseudoId,
-        ),
-      ),
     ]);
   });
 

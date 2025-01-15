@@ -18,7 +18,6 @@
 import { configure, flowResult } from "mobx";
 
 import {
-  excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
   supervisionOfficerFixture,
   supervisionOfficerOutcomesFixture,
@@ -49,7 +48,8 @@ const pseudoId = "hashed-mavis123";
 const testOfficerWithOutcomes = supervisionOfficerFixture[0];
 const testOutcomes = supervisionOfficerOutcomesFixture[0];
 const testSupervisor = supervisionOfficerSupervisorsFixture[0];
-const testExcludedOfficer = excludedSupervisionOfficerFixture[0];
+// Officer where includeInOutcomes is false
+const testExcludedOfficer = supervisionOfficerFixture[8];
 
 let presenter: SupervisionOfficerPresenter;
 
@@ -130,11 +130,6 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
       await Promise.all([
         flowResult(
           store.populateOfficersForSupervisor(testSupervisor.pseudonymizedId),
-        ),
-        flowResult(
-          store.populateExcludedOfficersForSupervisor(
-            testSupervisor.pseudonymizedId,
-          ),
         ),
         flowResult(store.populateSupervisionOfficerSupervisors()),
         flowResult(store.populateMetricConfigs()),
