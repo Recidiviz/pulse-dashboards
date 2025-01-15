@@ -267,7 +267,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       className="OpportunityDenial"
       data-testid="OpportunityDenial"
     >
-      <Heading person={opportunity.person} />
+      <Heading person={opportunity.person} trackingOpportunity={opportunity} />
       <SidePanelHeader>{prompt}</SidePanelHeader>
       <>
         {Object.entries(opportunity.config.denialReasons).map(

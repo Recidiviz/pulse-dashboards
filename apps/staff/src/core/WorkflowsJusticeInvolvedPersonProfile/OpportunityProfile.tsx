@@ -142,7 +142,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
 
     return (
       <article>
-        <Heading person={selectedPerson} />
+        <Heading person={selectedPerson} trackingOpportunity={opportunity} />
         {personSpecificOppBanners && opportunity.previewBannerText && (
           <OpportunityBanner
             opportunity={opportunity}

@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { Opportunity } from "../../WorkflowsStore";
 import { ProfileCapsule } from "../PersonCapsules";
 import { PersonProfileProps } from "./types";
 
@@ -29,7 +30,11 @@ const HeadingWrapper = styled.div`
 
 export const Heading = observer(function Heading({
   person,
-}: PersonProfileProps) {
+  // used to track ID-copy-to-clipboard clicks if this component appears on an opportunity-specific page
+  trackingOpportunity,
+}: PersonProfileProps & {
+  trackingOpportunity?: Opportunity;
+}) {
   return (
     <HeadingWrapper>
       <ProfileCapsule
@@ -38,6 +43,7 @@ export const Heading = observer(function Heading({
         textSize="sm"
         nameHoverState={false}
         profileLink={person.profileUrl}
+        trackingOpportunity={trackingOpportunity}
       />
     </HeadingWrapper>
   );

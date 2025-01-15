@@ -68,7 +68,11 @@ export const InsightsClientCapsule = observer(function InsightsClientCapsule({
       <ClientDetail>
         <ClientName>{clientInfo.displayName}</ClientName>
         <Separator> • </Separator>
-        <PersonId personId={clientInfo.clientId} docLabel={docLabel}>
+        <PersonId
+          personId={clientInfo.clientId}
+          pseudoId={clientInfo.pseudonymizedClientId}
+          docLabel={docLabel}
+        >
           <ClientId>{clientInfo.clientId}</ClientId>
         </PersonId>
         {supervisionType && (

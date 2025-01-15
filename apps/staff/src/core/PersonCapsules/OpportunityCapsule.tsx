@@ -66,6 +66,7 @@ export const OpportunityCapsule = observer(function OpportunityCapsule({
       person={person}
       status={status}
       additionalDetails={opportunity.instanceDetails}
+      trackingOpportunity={opportunity}
       {...otherProps}
     />
   );

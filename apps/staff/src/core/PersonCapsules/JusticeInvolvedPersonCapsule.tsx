@@ -32,7 +32,7 @@ import styled, { css } from "styled-components/macro";
 
 import { PersonInitialsAvatar } from "~ui";
 
-import { JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import PersonId from "../PersonId";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
@@ -44,6 +44,7 @@ export type JusticeInvolvedPersonCapsuleProps = {
   profileLink?: string;
   nameHoverState?: boolean;
   additionalDetails?: string;
+  trackingOpportunity?: Opportunity;
 };
 
 const PersonName = styled.span`
@@ -125,6 +126,7 @@ export const JusticeInvolvedPersonCapsule = observer(
     textSize,
     profileLink,
     additionalDetails,
+    trackingOpportunity,
     nameHoverState = true,
   }: JusticeInvolvedPersonCapsuleProps): JSX.Element {
     const IdentityEl = SIZES.identity[textSize];
@@ -162,7 +164,13 @@ export const JusticeInvolvedPersonCapsule = observer(
               nameElem
             )}
             <Separator> </Separator>
-            <PersonId personId={person.displayId}>{person.displayId}</PersonId>
+            <PersonId
+              personId={person.displayId}
+              pseudoId={person.pseudonymizedId}
+              opportunity={trackingOpportunity}
+            >
+              {person.displayId}
+            </PersonId>
           </IdentityEl>
           <StatusEl
             className={`WorkflowsStatus__${person.externalId} fs-exclude`}

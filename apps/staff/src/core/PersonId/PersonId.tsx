@@ -24,6 +24,7 @@ import styled from "styled-components/macro";
 
 import copyIcon from "../../assets/static/images/copy.svg";
 import { useRootStore } from "../../components/StoreProvider";
+import { Opportunity } from "../../WorkflowsStore/Opportunity";
 
 const PersonIdWithCopyIcon = styled.span<{ shiftIcon: boolean }>`
   color: ${palette.data.teal1};
@@ -51,12 +52,21 @@ const PersonId: React.FC<{
   personId: string;
   shiftIcon?: boolean;
   docLabel?: string;
-}> = ({ children, personId, shiftIcon = false, docLabel = "DOC" }) => {
+  opportunity?: Opportunity;
+  pseudoId?: string;
+}> = ({
+  children,
+  personId,
+  shiftIcon = false,
+  docLabel = "DOC",
+  opportunity = undefined,
+  pseudoId = undefined,
+}) => {
   const [isCopied, copyToClipboard] = useClipboard(personId, {
     successDuration: 5000,
   });
 
-  const { currentTenantId } = useRootStore();
+  const { currentTenantId, analyticsStore } = useRootStore();
 
   // TODO(#6737): Parameterize this and pull from same source as insights if possible
   const stateIdDescriptor =
@@ -76,6 +86,18 @@ const PersonId: React.FC<{
         e.preventDefault();
         e.stopPropagation();
         copyToClipboard();
+
+        if (opportunity) {
+          analyticsStore.trackPersonIdCopiedtoClipboard({
+            justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
+            opportunityType: opportunity.type,
+            opportunityId: opportunity.sentryTrackingId,
+          });
+        } else if (pseudoId) {
+          analyticsStore.trackPersonIdCopiedtoClipboard({
+            justiceInvolvedPersonId: pseudoId,
+          });
+        }
       }}
       shiftIcon={shiftIcon}
     >

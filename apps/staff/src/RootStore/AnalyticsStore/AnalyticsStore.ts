@@ -363,6 +363,15 @@ export default class AnalyticsStore {
     this.track("frontend.referral_form_submitted", metadata);
   }
 
+  // This event will not always fire on opportunity-related pages, but we care about
+  // the opportunity type when it does.
+  trackPersonIdCopiedtoClipboard(
+    metadata: Partial<OpportunityTrackingMetadata> &
+      Pick<OpportunityTrackingMetadata, "justiceInvolvedPersonId">,
+  ): void {
+    this.track("frontend.person_id_copied_to_clipboard", metadata);
+  }
+
   trackTaskFilterSelected(metadata: {
     taskCategory: SupervisionTaskCategory;
     selectedSearchIds: string[];
