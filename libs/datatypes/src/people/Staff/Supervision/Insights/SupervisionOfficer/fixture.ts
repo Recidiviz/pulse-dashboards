@@ -118,6 +118,27 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 43.21,
     includeInOutcomes: true,
   },
+  // Officers excluded from outcomes
+  {
+    externalId: "so6",
+    pseudonymizedId: "hashed-so6",
+    fullName: {
+      givenNames: "John",
+      surname: "Harris",
+    },
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
+    avgDailyPopulation: null,
+  },
+  {
+    externalId: "so7",
+    pseudonymizedId: "hashed-so7",
+    fullName: {
+      givenNames: "Larry",
+      surname: "Hernandez",
+    },
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
+    avgDailyPopulation: 7.7,
+  },
 ] satisfies RawSupervisionOfficer[];
 
 export const rawExcludedSupervisionOfficerFixture: RawExcludedSupervisionOfficer[] =

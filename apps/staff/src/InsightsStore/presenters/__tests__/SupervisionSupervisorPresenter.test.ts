@@ -200,7 +200,7 @@ test("supervisorId not found in officersBySupervisor", async () => {
 
   expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
     [
-      [Error: failed to populate officers with outliers],
+      [Error: failed to populate officers],
       [Error: No officer with outcomes data found for pseudo id: [hashed-so1]],
     ]
   `);

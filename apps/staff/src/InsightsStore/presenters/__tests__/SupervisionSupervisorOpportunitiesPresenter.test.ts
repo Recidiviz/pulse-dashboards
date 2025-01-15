@@ -20,9 +20,9 @@ import { shuffle, sum } from "lodash";
 import { configure } from "mobx";
 
 import {
-  excludedSupervisionOfficerFixture,
   InsightsConfigFixture,
   OpportunityType,
+  supervisionOfficerFixture,
   supervisionOfficerSupervisorsFixture,
   SupervisionOfficerWithOpportunityDetails,
 } from "~datatypes";
@@ -51,7 +51,7 @@ import { SupervisionSupervisorOpportunitiesPresenter } from "../SupervisionSuper
 import { RawOpportunityInfo } from "../types";
 
 const testSupervisor = supervisionOfficerSupervisorsFixture[0];
-const officerWithNoClients = excludedSupervisionOfficerFixture[1];
+const officerWithNoClients = supervisionOfficerFixture[9];
 const testOfficers = [...CLIENTS_OFFICERS, officerWithNoClients].map(
   ({ supervisorExternalIds, ...rest }) => ({
     ...rest,

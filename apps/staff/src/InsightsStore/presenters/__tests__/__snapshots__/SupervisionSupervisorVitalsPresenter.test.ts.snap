@@ -18,6 +18,12 @@ exports[`with vitals data already hydrated > has vitalsMetricDetails 1`] = `
         "officerPseudonymizedId": "hashed-so2",
       },
       {
+        "displayName": "John Harris",
+        "metric30DDelta": 3,
+        "metricValue": 71,
+        "officerPseudonymizedId": "hashed-so6",
+      },
+      {
         "displayName": "Harriet Boyd",
         "metric30DDelta": 5.9,
         "metricValue": 79,
@@ -35,16 +41,34 @@ exports[`with vitals data already hydrated > has vitalsMetricDetails 1`] = `
         "metricValue": 89,
         "officerPseudonymizedId": "hashed-so10",
       },
+      {
+        "displayName": "Larry Hernandez",
+        "metric30DDelta": -1,
+        "metricValue": 93,
+        "officerPseudonymizedId": "hashed-so7",
+      },
     ],
   },
   {
     "label": "Timely Risk Assessment",
     "officersWithMetricValues": [
       {
+        "displayName": "John Harris",
+        "metric30DDelta": -5.4,
+        "metricValue": 77,
+        "officerPseudonymizedId": "hashed-so6",
+      },
+      {
         "displayName": "Stephen Mann",
         "metric30DDelta": -3.4,
         "metricValue": 79,
         "officerPseudonymizedId": "hashed-so10",
+      },
+      {
+        "displayName": "Larry Hernandez",
+        "metric30DDelta": 5.4,
+        "metricValue": 84,
+        "officerPseudonymizedId": "hashed-so7",
       },
       {
         "displayName": "Jack Hernandez",

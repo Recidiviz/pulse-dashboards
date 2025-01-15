@@ -18,11 +18,7 @@
 import { ascending } from "d3-array";
 import { computed, flowResult, makeAutoObservable } from "mobx";
 
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-  VitalsMetricForOfficer,
-} from "~datatypes";
+import { SupervisionOfficer, VitalsMetricForOfficer } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
@@ -100,39 +96,17 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
     });
   }
 
-  // TODO(#6453) - you don't need any of the bottom two in this presenter.
-  // TODO #6617 - the next three methods along with their expectPopulated methods will move
+  // TODO #6617 - the next method along with their expectPopulated methods will move
   // to SupervisionSupervisorPagePresenter during the refactor so the redundancy will be removed.
   /**
-   * Combines and returns all officers, both included and excluded, under this supervisor.
-   * @returns An array of `SupervisionOfficer` and `ExcludedSupervisionOfficer`, or `undefined`.
+   * Returns all officers, both included and excluded, under this supervisor.
+   * @returns An array of `SupervisionOfficer` (empty if data is not available).
    */
-  get allOfficers(): (SupervisionOfficer | ExcludedSupervisionOfficer)[] {
-    return [
-      ...(this.officersWithOutcomesData || []),
-      ...(this.excludedOfficers || []),
-    ];
-  }
-
-  /**
-   * Provides a list of all officers in this supervisor's unit that were not
-   * explicitly excluded from outcomes.
-   * @returns An array of `SupervisionOfficer` or `undefined` if data is not available.
-   */
-  get officersWithOutcomesData(): SupervisionOfficer[] | undefined {
-    return this.supervisionStore.officersBySupervisorPseudoId
-      .get(this.supervisorPseudoId)
-      ?.filter((o) => o.includeInOutcomes === true);
-  }
-
-  // TODO(#6453): this should look at and filter officersBySupervisorPseudoId
-  /**
-   * Provides a list of all officers excluded from outcomes in this supervisor's unit.
-   * @returns An array of `ExcludedSupervisionOfficer` or `undefined` if data is not available.
-   */
-  get excludedOfficers(): ExcludedSupervisionOfficer[] | undefined {
-    return this.supervisionStore.excludedOfficersBySupervisorPseudoId.get(
-      this.supervisorPseudoId,
+  get allOfficers(): SupervisionOfficer[] {
+    return (
+      this.supervisionStore.officersBySupervisorPseudoId.get(
+        this.supervisorPseudoId,
+      ) ?? []
     );
   }
 
@@ -156,11 +130,6 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
           this.supervisorPseudoId,
         ),
       ),
-      flowResult(
-        this.supervisionStore.populateExcludedOfficersForSupervisor(
-          this.supervisorPseudoId,
-        ),
-      ),
     ];
   }
 
@@ -170,8 +139,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
   expectPopulated() {
     return [
       this.expectVitalsForSupervisorPopulated,
-      this.expectOfficersWithOutcomesPopulated,
-      this.expectExcludedOfficersPopulated,
+      this.expectOfficersPopulated,
     ];
   }
 
@@ -187,29 +155,16 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
   }
 
   /**
-   * Asserts that officers with outcomes have been populated.
-   * @throws An error if officers with outcomes are not populated.
+   * Asserts that all officers have been populated.
+   * @throws An error if all officers are not populated.
    */
-  private expectOfficersWithOutcomesPopulated() {
+  private expectOfficersPopulated() {
     if (
       !this.supervisionStore.officersBySupervisorPseudoId.has(
         this.supervisorPseudoId,
       )
     )
-      throw new Error("failed to populate officers with outcomes");
-  }
-
-  /**
-   * Asserts that excluded officers have been populated.
-   * @throws An error if excluded officers are not populated.
-   */
-  private expectExcludedOfficersPopulated() {
-    if (
-      !this.supervisionStore.excludedOfficersBySupervisorPseudoId.has(
-        this.supervisorPseudoId,
-      )
-    )
-      throw new Error("failed to populate excluded officers");
+      throw new Error("failed to populate officers");
   }
 
   /**

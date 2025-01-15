@@ -21,7 +21,6 @@ import {
   clientInfoFixture,
   ClientRecord,
   clientRecordSchema,
-  excludedSupervisionOfficerFixture,
   OpportunityType,
   RawClientRecord,
   supervisionOfficerFixture,
@@ -39,7 +38,8 @@ export const CLIENTS_OFFICERS = [
   supervisionOfficerFixture[0],
   supervisionOfficerFixture[1],
   supervisionOfficerFixture[2],
-  excludedSupervisionOfficerFixture[0],
+  // officer not included in outcomes
+  supervisionOfficerFixture[8],
 ];
 
 const ELIGIBLE_OPPORTUNITY_CASES = [

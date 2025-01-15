@@ -4,39 +4,39 @@ exports[`function: ExcludedSupervisionOfficerRawFactory > should generate realis
 [
   {
     "displayName": "Rogelio Kylo Carroll",
-    "externalId": "so8",
+    "externalId": "so9",
     "fullName": {
       "givenNames": "Rogelio",
       "middleNames": "Kylo",
       "surname": "Carroll",
     },
-    "pseudonymizedId": "hashed-so8",
+    "pseudonymizedId": "hashed-so9",
     "supervisorExternalIds": [
       "fvqWr2",
     ],
   },
   {
     "displayName": "Elias Borer",
-    "externalId": "so10",
+    "externalId": "so7",
     "fullName": {
       "givenNames": "Elias",
       "middleNames": undefined,
       "surname": "Borer",
     },
-    "pseudonymizedId": "hashed-so10",
+    "pseudonymizedId": "hashed-so7",
     "supervisorExternalIds": [
       "M3xYAi",
     ],
   },
   {
     "displayName": "Roy Roberts-Jacobi",
-    "externalId": "OFFICER4",
+    "externalId": "so2",
     "fullName": {
       "givenNames": "Roy",
       "middleNames": undefined,
       "surname": "Roberts-Jacobi",
     },
-    "pseudonymizedId": "hashed-so1",
+    "pseudonymizedId": "hashed-so2",
     "supervisorExternalIds": [
       "fvqWr2",
     ],
@@ -49,13 +49,13 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
   {
     "avgDailyPopulation": 43,
     "displayName": "Jimmy Greenfelder",
-    "externalId": "so9",
+    "externalId": "so10",
     "fullName": {
       "givenNames": "Jimmy",
       "middleNames": undefined,
       "surname": "Greenfelder",
     },
-    "pseudonymizedId": "hashed-so9",
+    "pseudonymizedId": "hashed-so10",
     "supervisorExternalIds": [
       "zhJOf8",
     ],
@@ -75,15 +75,15 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
     ],
   },
   {
-    "avgDailyPopulation": 32,
+    "avgDailyPopulation": 43,
     "displayName": "Mattie Fawn Schaefer",
-    "externalId": "so3",
+    "externalId": "so4",
     "fullName": {
       "givenNames": "Mattie",
       "middleNames": "Fawn",
       "surname": "Schaefer",
     },
-    "pseudonymizedId": "hashed-so3",
+    "pseudonymizedId": "hashed-so4",
     "supervisorExternalIds": [
       "NpMsAB",
     ],

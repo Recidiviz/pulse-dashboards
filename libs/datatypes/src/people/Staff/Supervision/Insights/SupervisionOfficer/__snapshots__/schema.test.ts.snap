@@ -141,3 +141,35 @@ exports[`transformations 8`] = `
   ],
 }
 `;
+
+exports[`transformations 9`] = `
+{
+  "avgDailyPopulation": null,
+  "displayName": "John Harris",
+  "externalId": "so6",
+  "fullName": {
+    "givenNames": "John",
+    "surname": "Harris",
+  },
+  "pseudonymizedId": "hashed-so6",
+  "supervisorExternalIds": [
+    "agonzalez123",
+  ],
+}
+`;
+
+exports[`transformations 10`] = `
+{
+  "avgDailyPopulation": 8,
+  "displayName": "Larry Hernandez",
+  "externalId": "so7",
+  "fullName": {
+    "givenNames": "Larry",
+    "surname": "Hernandez",
+  },
+  "pseudonymizedId": "hashed-so7",
+  "supervisorExternalIds": [
+    "agonzalez123",
+  ],
+}
+`;

@@ -222,6 +222,16 @@ exports[`hydrate vitalsForSupervisor 1`] = `
         "metricValue": 89,
         "officerPseudonymizedId": "hashed-so10",
       },
+      {
+        "metric30DDelta": 3,
+        "metricValue": 71,
+        "officerPseudonymizedId": "hashed-so6",
+      },
+      {
+        "metric30DDelta": -1,
+        "metricValue": 93,
+        "officerPseudonymizedId": "hashed-so7",
+      },
     ],
   },
   {
@@ -251,6 +261,16 @@ exports[`hydrate vitalsForSupervisor 1`] = `
         "metric30DDelta": -3.4,
         "metricValue": 79,
         "officerPseudonymizedId": "hashed-so10",
+      },
+      {
+        "metric30DDelta": -5.4,
+        "metricValue": 77,
+        "officerPseudonymizedId": "hashed-so6",
+      },
+      {
+        "metric30DDelta": 5.4,
+        "metricValue": 84,
+        "officerPseudonymizedId": "hashed-so7",
       },
     ],
   },

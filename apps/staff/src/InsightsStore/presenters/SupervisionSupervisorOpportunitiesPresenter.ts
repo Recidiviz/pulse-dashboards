@@ -19,7 +19,6 @@ import { ascending, descending } from "d3-array";
 import simplur from "simplur";
 
 import {
-  ExcludedSupervisionOfficer,
   OpportunityInfo,
   OpportunityType,
   SupervisionOfficer,
@@ -105,16 +104,16 @@ export class SupervisionSupervisorOpportunitiesPresenter extends SupervisionSupe
   /**
    * Processes officers and their clients, creating a map of raw opportunity details.
    *
-   * @param {((SupervisionOfficer | ExcludedSupervisionOfficer)[])} allOfficers
+   * @param {(SupervisionOfficer[])} allOfficers
    * @return {*}  {RawOpportunityInfoByOpportunityType}
    */
   protected processOfficersAndOpportunities(
-    allOfficers: (SupervisionOfficer | ExcludedSupervisionOfficer)[],
+    allOfficers: SupervisionOfficer[],
   ): RawOpportunityInfoByOpportunityType {
     return allOfficers.reduce(
       (
         acc: RawOpportunityInfoByOpportunityType,
-        officer: SupervisionOfficer | ExcludedSupervisionOfficer,
+        officer: SupervisionOfficer,
       ) => {
         const opportunitiesByType =
           this.opportunitiesByTypeForOfficer(officer.externalId) ?? {};

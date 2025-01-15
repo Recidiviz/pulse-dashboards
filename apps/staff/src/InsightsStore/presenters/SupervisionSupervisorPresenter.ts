@@ -22,7 +22,6 @@ import simplur from "simplur";
 
 import {
   ActionStrategyCopy,
-  ExcludedSupervisionOfficer,
   OpportunityInfo,
   OpportunityType,
   SupervisionOfficer,
@@ -87,8 +86,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       | "processOfficersAndOpportunities"
       | "buildOpportunitiesDetails"
       | "expectMetricsPopulated"
-      | "expectOfficersWithOutcomesPopulated"
-      | "expectExcludedOfficersPopulated"
+      | "expectOfficersPopulated"
       | "expectSupervisorPopulated"
       | "expectOutcomesDataForOutlierOfficersPopulated"
       | "expectOfficerOutcomesPopulated"
@@ -100,8 +98,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       {
         expectOutcomesDataForOutlierOfficersPopulated: true,
         expectSupervisorPopulated: true,
-        expectExcludedOfficersPopulated: true,
-        expectOfficersWithOutcomesPopulated: true,
+        expectOfficersPopulated: true,
         expectMetricsPopulated: true,
         expectOfficerOutcomesPopulated: true,
         supervisorPseudoId: true,
@@ -165,11 +162,6 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
         ),
       ),
       flowResult(this.supervisionStore.populateSupervisionOfficerSupervisors()),
-      flowResult(
-        this.supervisionStore.populateExcludedOfficersForSupervisor(
-          this.supervisorPseudoId,
-        ),
-      ),
       flowResult(this.populateOpportunityConfigurationStore()),
       flowResult(
         this.supervisionStore.populateOutcomesForSupervisor(
@@ -185,8 +177,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   expectPopulated() {
     return [
       this.expectMetricsPopulated,
-      this.expectOfficersWithOutcomesPopulated,
-      this.expectExcludedOfficersPopulated,
+      this.expectOfficersPopulated,
       this.expectSupervisorPopulated,
       this.expectOutcomesDataForOutlierOfficersPopulated,
       this.expectOpportunityConfigurationStorePopulated,
@@ -246,27 +237,26 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       ?.filter((o) => o.includeInOutcomes === true);
   }
 
-  // TODO(#6453): this should pull from the officersBySupPSeudoId and filter
   /**
    * Provides a list of all officers excluded from outcomes in this supervisor's unit.
-   * @returns An array of `ExcludedSupervisionOfficer` or `undefined` if data is not available.
+   * @returns An array of `SupervisionOfficer` or `undefined` if data is not available.
    */
-  get excludedOfficers(): ExcludedSupervisionOfficer[] | undefined {
-    return this.supervisionStore.excludedOfficersBySupervisorPseudoId.get(
-      this.supervisorPseudoId,
-    );
+  get excludedOfficers(): SupervisionOfficer[] | undefined {
+    return this.supervisionStore.officersBySupervisorPseudoId
+      .get(this.supervisorPseudoId)
+      ?.filter((o) => o.includeInOutcomes !== true);
   }
 
-  // TODO(#6453): this should just look at the full list of officersBySupPsId
   /**
    * Combines and returns all officers, both included and excluded, under this supervisor.
-   * @returns An array of `SupervisionOfficer` and `ExcludedSupervisionOfficer`, or `undefined`.
+   * @returns An array of `SupervisionOfficer` (empty if data not available).
    */
-  get allOfficers(): (SupervisionOfficer | ExcludedSupervisionOfficer)[] {
-    return [
-      ...(this.officersWithOutcomesData || []),
-      ...(this.excludedOfficers || []),
-    ];
+  get allOfficers(): SupervisionOfficer[] {
+    return (
+      this.supervisionStore.officersBySupervisorPseudoId.get(
+        this.supervisorPseudoId,
+      ) ?? []
+    );
   }
 
   // TODO (#7050): Remove this entire section. It now lives in SupervisionSupervisorOutcomesPresenter.ts
@@ -377,16 +367,16 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   /**
    * Processes officers and their clients, creating a map of raw opportunity details.
    *
-   * @param {((SupervisionOfficer | ExcludedSupervisionOfficer)[])} allOfficers
+   * @param {(SupervisionOfficer[])} allOfficers
    * @return {*}  {RawOpportunityInfoByOpportunityType}
    */
   protected processOfficersAndOpportunities(
-    allOfficers: (SupervisionOfficer | ExcludedSupervisionOfficer)[],
+    allOfficers: SupervisionOfficer[],
   ): RawOpportunityInfoByOpportunityType {
     return allOfficers.reduce(
       (
         acc: RawOpportunityInfoByOpportunityType,
-        officer: SupervisionOfficer | ExcludedSupervisionOfficer,
+        officer: SupervisionOfficer,
       ) => {
         const opportunitiesByType =
           this.opportunitiesByTypeForOfficer(officer.externalId) ?? {};
@@ -670,31 +660,17 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       throw new Error("Failed to populate metrics");
   }
 
-  // TODO(#6453): this should just be expectOfficersPopulated
   /**
-   * Asserts that officers with outcomes have been populated.
-   * @throws An error if officers with outcomes are not populated.
+   * Asserts that all officers have been populated.
+   * @throws An error if all officers are not populated.
    */
-  private expectOfficersWithOutcomesPopulated() {
+  private expectOfficersPopulated() {
     if (
       !this.supervisionStore.officersBySupervisorPseudoId.has(
         this.supervisorPseudoId,
       )
     )
-      throw new Error("failed to populate officers with outliers");
-  }
-
-  /**
-   * Asserts that excluded officers have been populated.
-   * @throws An error if excluded officers are not populated.
-   */
-  private expectExcludedOfficersPopulated() {
-    if (
-      !this.supervisionStore.excludedOfficersBySupervisorPseudoId.has(
-        this.supervisorPseudoId,
-      )
-    )
-      throw new Error("failed to populate excluded officers");
+      throw new Error("failed to populate officers");
   }
 
   // TODO (#7050): Remove this. It now lives in SupervisionSupervisorOutcomesPresenter.ts
