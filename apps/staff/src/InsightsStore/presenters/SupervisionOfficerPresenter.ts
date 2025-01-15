@@ -160,6 +160,7 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
     void
   > {
     if (this.isOfficerPopulated) return;
+    // TODO(#6453): we shouldn't use the catch anymore
     try {
       this.fetchedOfficerRecord =
         yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(

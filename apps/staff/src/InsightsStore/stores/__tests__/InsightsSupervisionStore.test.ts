@@ -224,7 +224,7 @@ test("hydrate supervisionOfficers for supervisor", async () => {
   ).toEqual(expect.arrayContaining(supervisionOfficerFixture.slice(0, 2)));
 });
 
-test("hydrate supervisionOfficers for supervisor only includes includeInOutcomes=true", async () => {
+test("hydrate supervisionOfficers for supervisor includes includeInOutcomes=false officers", async () => {
   const officers = supervisionOfficerFixture.slice(0, 2);
   // make the second officer NOT included in outcomes
   officers[1].includeInOutcomes = false;
@@ -253,10 +253,10 @@ test("hydrate supervisionOfficers for supervisor only includes includeInOutcomes
     flowResult(store.populateOfficersForSupervisor(testSupervisorPseudoId)),
   ).resolves.not.toThrow();
 
-  // Result doesn't include the modified -- NOT included -- officer
+  // Result includes the modified - excluded from outcomes - officer
   expect(
     store.officersBySupervisorPseudoId.get(testSupervisorPseudoId),
-  ).toEqual(supervisionOfficerFixture.slice(0, 1));
+  ).toEqual(supervisionOfficerFixture.slice(0, 2));
 });
 
 test("hydrate supervisionOfficers for supervisor only includes includeInOutcomes=undefined", async () => {

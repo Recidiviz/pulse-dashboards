@@ -574,7 +574,7 @@ export class InsightsSupervisionStore {
   }
 
   /**
-   * Fetches officer and metric data for the specified supervisor
+   * Fetches officer data for the specified supervisor
    */
   *populateOfficersForSupervisor(
     supervisorPseudoId: string,
@@ -586,13 +586,7 @@ export class InsightsSupervisionStore {
         supervisorPseudoId,
       );
 
-    const includedOfficersData = officersData.filter(
-      (o) => o.includeInOutcomes !== false,
-    );
-    this.officersBySupervisorPseudoId.set(
-      supervisorPseudoId,
-      includedOfficersData,
-    );
+    this.officersBySupervisorPseudoId.set(supervisorPseudoId, officersData);
   }
 
   /**

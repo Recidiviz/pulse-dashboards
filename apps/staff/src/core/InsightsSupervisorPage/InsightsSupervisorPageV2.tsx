@@ -82,8 +82,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 
   const {
     supervisorInfo,
-    // TODO: (6040) Change this to `allOfficers` once backend is updated.
-    officersWithOutcomesData: allOfficers,
+    officersWithOutcomesData,
     excludedOfficers,
     userCanAccessAllSupervisors,
     timePeriod,
@@ -101,11 +100,11 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 
   const tooltipContents = (
     <>
-      {!!allOfficers?.length && (
+      {!!officersWithOutcomesData?.length && (
         <>
           <OfficersTooltipHeading>INCLUDED IN OUTCOMES</OfficersTooltipHeading>
           <div>
-            {allOfficers.map((officer) => (
+            {officersWithOutcomesData.map((officer) => (
               <div key={officer.pseudonymizedId}>{officer.displayName}</div>
             ))}
           </div>
@@ -126,8 +125,9 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     </>
   );
 
+  // TODO(#6453): add a numOfficers field to the presenter that uses the allOfficers array length
   const numOfficers =
-    (excludedOfficers?.length || 0) + (allOfficers?.length || 0);
+    (excludedOfficers?.length || 0) + (officersWithOutcomesData?.length || 0);
 
   const infoItems = [
     {

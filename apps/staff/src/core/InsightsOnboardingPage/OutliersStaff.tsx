@@ -81,7 +81,7 @@ const StaffPills = observer(function StaffPills({
 }) {
   const { isMobile } = useIsMobile(true);
 
-  const { allOfficers } = presenter;
+  const { allOfficersWithOutcomes: allOfficers } = presenter;
   const officerNames = allOfficers?.map((o) => o.displayName);
 
   if (!officerNames)

@@ -241,11 +241,12 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
    * @returns An array of `SupervisionOfficer` or `undefined` if data is not available.
    */
   get officersWithOutcomesData(): SupervisionOfficer[] | undefined {
-    return this.supervisionStore.officersBySupervisorPseudoId.get(
-      this.supervisorPseudoId,
-    );
+    return this.supervisionStore.officersBySupervisorPseudoId
+      .get(this.supervisorPseudoId)
+      ?.filter((o) => o.includeInOutcomes === true);
   }
 
+  // TODO(#6453): this should pull from the officersBySupPSeudoId and filter
   /**
    * Provides a list of all officers excluded from outcomes in this supervisor's unit.
    * @returns An array of `ExcludedSupervisionOfficer` or `undefined` if data is not available.
@@ -256,6 +257,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     );
   }
 
+  // TODO(#6453): this should just look at the full list of officersBySupPsId
   /**
    * Combines and returns all officers, both included and excluded, under this supervisor.
    * @returns An array of `SupervisionOfficer` and `ExcludedSupervisionOfficer`, or `undefined`.
@@ -668,6 +670,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       throw new Error("Failed to populate metrics");
   }
 
+  // TODO(#6453): this should just be expectOfficersPopulated
   /**
    * Asserts that officers with outcomes have been populated.
    * @throws An error if officers with outcomes are not populated.

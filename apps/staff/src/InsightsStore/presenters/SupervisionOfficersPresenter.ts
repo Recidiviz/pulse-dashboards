@@ -94,7 +94,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   private expectOfficersPopulated() {
-    if (!this.allOfficers?.length)
+    if (!this.allOfficersWithOutcomes?.length)
       throw new Error("failed to populate officers");
   }
 
@@ -139,7 +139,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
       return this.officerOutcomes
         .filter((outcomes) => outcomes.outlierMetrics.length > 0)
         .map((outcomes): OfficerOutcomesData => {
-          const officer = this.allOfficers?.find(
+          const officer = this.allOfficersWithOutcomes?.find(
             (officer) => officer.pseudonymizedId === outcomes.pseudonymizedId,
           );
           if (!officer) {
@@ -209,12 +209,12 @@ export class SupervisionOfficersPresenter implements Hydratable {
   }
 
   /**
-   * Provides a list of all officers that are in this supervisor's unit
+   * Provides a list of all officers with outcomes that are in this supervisor's unit
    */
-  get allOfficers(): SupervisionOfficer[] | undefined {
-    return this.supervisionStore?.officersBySupervisorPseudoId.get(
-      this.supervisorPseudoId,
-    );
+  get allOfficersWithOutcomes(): SupervisionOfficer[] | undefined {
+    return this.supervisionStore?.officersBySupervisorPseudoId
+      .get(this.supervisorPseudoId)
+      ?.filter((o) => o.includeInOutcomes === true);
   }
 
   /**
@@ -256,7 +256,7 @@ export class SupervisionOfficersPresenter implements Hydratable {
   get highlightedOfficersByMetric(): HighlightedOfficersDetail[] {
     return getHighlightedOfficersByMetric(
       this.supervisionStore.metricConfigsById,
-      this.allOfficers,
+      this.allOfficersWithOutcomes,
       this.officerOutcomes,
     );
   }

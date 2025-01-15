@@ -48,7 +48,7 @@ export const SupervisorPage = observer(function SupervisorPage({
   const {
     supervisorInfo,
     outlierOfficersData,
-    allOfficers,
+    allOfficersWithOutcomes: allOfficers,
     supervisorIsCurrentUser,
     userCanAccessAllSupervisors,
     timePeriod,

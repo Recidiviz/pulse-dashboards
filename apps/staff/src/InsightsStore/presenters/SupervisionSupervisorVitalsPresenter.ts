@@ -100,6 +100,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
     });
   }
 
+  // TODO(#6453) - you don't need any of the bottom two in this presenter.
   // TODO #6617 - the next three methods along with their expectPopulated methods will move
   // to SupervisionSupervisorPagePresenter during the refactor so the redundancy will be removed.
   /**
@@ -108,7 +109,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
    */
   get allOfficers(): (SupervisionOfficer | ExcludedSupervisionOfficer)[] {
     return [
-      ...(this.officersWithOutliersData || []),
+      ...(this.officersWithOutcomesData || []),
       ...(this.excludedOfficers || []),
     ];
   }
@@ -118,12 +119,13 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
    * explicitly excluded from outcomes.
    * @returns An array of `SupervisionOfficer` or `undefined` if data is not available.
    */
-  get officersWithOutliersData(): SupervisionOfficer[] | undefined {
-    return this.supervisionStore.officersBySupervisorPseudoId.get(
-      this.supervisorPseudoId,
-    );
+  get officersWithOutcomesData(): SupervisionOfficer[] | undefined {
+    return this.supervisionStore.officersBySupervisorPseudoId
+      .get(this.supervisorPseudoId)
+      ?.filter((o) => o.includeInOutcomes === true);
   }
 
+  // TODO(#6453): this should look at and filter officersBySupervisorPseudoId
   /**
    * Provides a list of all officers excluded from outcomes in this supervisor's unit.
    * @returns An array of `ExcludedSupervisionOfficer` or `undefined` if data is not available.
@@ -168,7 +170,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
   expectPopulated() {
     return [
       this.expectVitalsForSupervisorPopulated,
-      this.expectOfficersWithOutliersPopulated,
+      this.expectOfficersWithOutcomesPopulated,
       this.expectExcludedOfficersPopulated,
     ];
   }
@@ -185,16 +187,16 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
   }
 
   /**
-   * Asserts that officers with outliers have been populated.
-   * @throws An error if officers with outliers are not populated.
+   * Asserts that officers with outcomes have been populated.
+   * @throws An error if officers with outcomes are not populated.
    */
-  private expectOfficersWithOutliersPopulated() {
+  private expectOfficersWithOutcomesPopulated() {
     if (
       !this.supervisionStore.officersBySupervisorPseudoId.has(
         this.supervisorPseudoId,
       )
     )
-      throw new Error("failed to populate officers with outliers");
+      throw new Error("failed to populate officers with outcomes");
   }
 
   /**
