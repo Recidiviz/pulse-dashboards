@@ -51,6 +51,8 @@ export type LsirScoreKey = "lsirScore";
 export const NEEDS_TO_BE_ADDRESSED_KEY = "needsToBeAddressed";
 export type NeedsToBeAddressedKey = "needsToBeAddressed";
 
+export const PROTECTIVE_FACTORS_KEY = "protectiveFactors";
+
 export const ASAM_CARE_RECOMMENDATION_KEY = "asamCareRecommendation";
 export type AsamCareRecommendationKey = "asamCareRecommendation";
 
@@ -65,6 +67,8 @@ export type IsVeteran = "isVeteran";
 
 export const OTHER_NEED_TO_BE_ADDRESSED_KEY = "otherNeedToBeAddressed";
 export type OtherNeedToBeAddressed = "otherNeedToBeAddressed";
+
+export const OTHER_PROTECTIVE_FACTORS_KEY = "otherProtectiveFactor";
 
 export const OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY = "otherMentalHealthDiagnosis";
 export type OtherMentalHealthDiagnosis = "otherMentalHealthDiagnosis";
@@ -122,6 +126,29 @@ export const NeedsToBeAddressed: Record<
   MentalHealth: "Mental Health",
   SubstanceUse: "Substance Use",
   Transportation: "Transportation",
+  Other: "Other",
+};
+
+export const ProtectiveFactors: Record<
+  Case["protectiveFactors"][number],
+  string
+> = {
+  NoPriorCriminalConvictions: "No prior criminal convictions",
+  NoHistoryOfViolentBehavior: "No history of violent behavior",
+  NoSubstanceUseOrAbuseIssues: "No substance use or abuse issues",
+  NoDiagnosisOfAMentalIllness: "No diagnosis of a mental illness",
+  StableHousing: "Stable housing",
+  SteadyEmployment: "Steady employment",
+  FinancialStability: "Financial stability",
+  HighSchoolDiplomaOrHigherEducation: "High school diploma or higher education",
+  StrongSocialSupportNetwork: "Strong social support network",
+  CloseFamilyTies: "Close family ties",
+  ActivelyParticipatingInTreatmentPrograms:
+    "Actively participating in treatment programs",
+  EnrolledInEducationalOrVocationalTraining:
+    "Enrolled in educational or vocational training",
+  ActiveInvolvementInCommunityActivities:
+    "Active involvement in community activities",
   Other: "Other",
 };
 

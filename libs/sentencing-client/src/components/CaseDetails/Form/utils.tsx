@@ -26,6 +26,8 @@ import {
   OFFENSE_KEY,
   OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY,
   OTHER_NEED_TO_BE_ADDRESSED_KEY,
+  OTHER_PROTECTIVE_FACTORS_KEY,
+  ProtectiveFactors,
   REPORT_TYPE_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../constants";
@@ -74,6 +76,13 @@ export const parseNeedsToBeAddressedValue = (
 ) => {
   if (!value) return null;
   return value.map((val) => NeedsToBeAddressed[val]);
+};
+
+export const parseProtectiveFactorsValue = (
+  value?: (keyof typeof ProtectiveFactors)[] | null,
+) => {
+  if (!value) return null;
+  return value.map((val) => ProtectiveFactors[val]);
 };
 
 export const parseMentalHealthDiagnosesValue = (
@@ -152,6 +161,7 @@ export const transformUpdates = (
       isBoolean ||
       isNumber ||
       key === OTHER_NEED_TO_BE_ADDRESSED_KEY ||
+      key === OTHER_PROTECTIVE_FACTORS_KEY ||
       key === OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY ||
       key === OFFENSE_KEY
     ) {

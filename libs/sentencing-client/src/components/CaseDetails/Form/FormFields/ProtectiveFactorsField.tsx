@@ -18,13 +18,12 @@
 import { observer } from "mobx-react-lite";
 import { ChangeEvent } from "react";
 
-import { formatPossessiveName } from "../../../../utils/utils";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import {
-  NEEDS_TO_BE_ADDRESSED_KEY,
-  NeedsToBeAddressed,
-  OTHER_NEED_TO_BE_ADDRESSED_KEY,
+  OTHER_PROTECTIVE_FACTORS_KEY,
+  PROTECTIVE_FACTORS_KEY,
+  ProtectiveFactors,
 } from "../../constants";
 import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../constants";
 import { MultiSelectRadioInput } from "../Elements/MultiSelectRadioInput";
@@ -32,33 +31,31 @@ import { TextArea } from "../Elements/TextArea";
 import { form } from "../FormStore";
 import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
-import { parseNeedsToBeAddressedValue } from "../utils";
+import { parseProtectiveFactorsValue } from "../utils";
 
-const needsToBeAddressedOptions = [
-  ...Object.values(NeedsToBeAddressed),
+const protectiveFactorsOptions = [
+  ...Object.values(ProtectiveFactors),
   NOT_SURE_YET_OPTION,
 ];
 
-function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
+function ProtectiveFactorsField({ isRequired }: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
-  const formattedFirstName = formatPossessiveName(
-    caseAttributes.client?.firstName,
-  );
+  const firstName = caseAttributes.client?.firstName;
   const {
     multiInputValues,
     setMultiInputValues,
     otherInputValue,
     setOtherInputValue,
   } = useFormField({
-    initialMultiInputValues: parseNeedsToBeAddressedValue(
-      caseAttributes.needsToBeAddressed,
+    initialMultiInputValues: parseProtectiveFactorsValue(
+      caseAttributes.protectiveFactors,
     ),
-    initialOtherInputValue: caseAttributes.otherNeedToBeAddressed ?? "",
+    initialOtherInputValue: caseAttributes.otherProtectiveFactor ?? "",
   });
 
   const showOtherTextField = multiInputValues?.includes(
-    NeedsToBeAddressed[OTHER_OPTION],
+    ProtectiveFactors[OTHER_OPTION],
   );
 
   const updateSelections = (option: string | null) => {
@@ -66,16 +63,16 @@ function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
     // Clear out Other text field input when "Not Sure Yet" is selected or "Other" option is de-selected
     if (
       option === NOT_SURE_YET_OPTION ||
-      (option === NeedsToBeAddressed[OTHER_OPTION] &&
-        multiInputValues?.includes(NeedsToBeAddressed[OTHER_OPTION]))
+      (option === ProtectiveFactors[OTHER_OPTION] &&
+        multiInputValues?.includes(ProtectiveFactors[OTHER_OPTION]))
     ) {
       setOtherInputValue("");
-      form.updateForm(OTHER_NEED_TO_BE_ADDRESSED_KEY, null);
+      form.updateForm(OTHER_PROTECTIVE_FACTORS_KEY, null);
     }
 
     if (option === NOT_SURE_YET_OPTION) {
       setMultiInputValues([]);
-      form.updateForm(NEEDS_TO_BE_ADDRESSED_KEY, []);
+      form.updateForm(PROTECTIVE_FACTORS_KEY, []);
       return;
     }
 
@@ -84,31 +81,31 @@ function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
       : [...(multiInputValues ?? []), option];
 
     setMultiInputValues(updatedValue);
-    form.updateForm(NEEDS_TO_BE_ADDRESSED_KEY, updatedValue);
+    form.updateForm(PROTECTIVE_FACTORS_KEY, updatedValue);
   };
 
   const updateOtherTextArea = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setOtherInputValue(e.target.value);
-    form.updateForm(OTHER_NEED_TO_BE_ADDRESSED_KEY, e.target.value, isRequired);
+    form.updateForm(OTHER_PROTECTIVE_FACTORS_KEY, e.target.value, isRequired);
   };
 
   return (
     <>
       <Styled.InputLabel>
-        What are {formattedFirstName} primary needs? Select all that apply.{" "}
+        Which protective factors describe {firstName}? Select all that apply.{" "}
         {isRequired && <span>Required*</span>}
       </Styled.InputLabel>
 
       <MultiSelectRadioInput
-        options={needsToBeAddressedOptions}
+        options={protectiveFactorsOptions}
         selections={multiInputValues ?? []}
         updateSelections={updateSelections}
       />
 
       {showOtherTextField && (
         <TextArea
-          id="needs-other"
-          placeholder="Please specify other need"
+          id="protective-factors-other"
+          placeholder="Please specify other protective factor"
           value={otherInputValue}
           onChange={updateOtherTextArea}
         />
@@ -117,4 +114,4 @@ function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
   );
 }
 
-export default observer(NeedsToBeAddressedField);
+export default observer(ProtectiveFactorsField);

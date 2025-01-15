@@ -31,6 +31,7 @@ import {
   OFFENSE_KEY,
   PLEA_KEY,
   PREVIOUSLY_INCARCERATED_OR_UNDER_SUPERVISION_KEY,
+  PROTECTIVE_FACTORS_KEY,
   REPORT_TYPE_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../constants";
@@ -48,6 +49,7 @@ import PriorIncarcerationOrSupervisionField from "./FormFields/PriorIncarceratio
 import PriorSexOffenseConvictionField from "./FormFields/PriorSexOffenseConvictionField";
 import PriorTreatmentCourtField from "./FormFields/PriorTreatmentCourtField";
 import PriorViolentOffenseConvictionField from "./FormFields/PriorViolentOffenseConvictionField";
+import ProtectiveFactorsField from "./FormFields/ProtectiveFactorsField";
 import ReportTypeField from "./FormFields/ReportTypeField";
 import SubstanceUseDisorderDiagnosisField from "./FormFields/SubstanceUseDisorderDiagnosisField";
 import VeteranStatusField from "./FormFields/VeteranStatusField";
@@ -89,6 +91,10 @@ const FormFields: { [key: string]: FormFieldWithNestedFields } = {
   [NEEDS_TO_BE_ADDRESSED_KEY]: {
     key: NEEDS_TO_BE_ADDRESSED_KEY,
     FieldComponent: NeedsToBeAddressedField,
+  },
+  [PROTECTIVE_FACTORS_KEY]: {
+    key: PROTECTIVE_FACTORS_KEY,
+    FieldComponent: ProtectiveFactorsField,
   },
   [SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY]: {
     key: SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
@@ -132,7 +138,9 @@ export const onboardingStepOneFields = [
 
 export const onboardingStepTwoFields = [FormFields[NEEDS_TO_BE_ADDRESSED_KEY]];
 
-export const onboardingStepThreeFields = [
+export const onboardingStepThreeFields = [FormFields[PROTECTIVE_FACTORS_KEY]];
+
+export const onboardingStepFourFields = [
   FormFields[SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY],
   FormFields[MENTAL_HEALTH_DIAGNOSES_KEY],
   FormFields[IS_VETERAN_KEY],

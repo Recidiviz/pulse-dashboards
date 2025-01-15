@@ -17,30 +17,28 @@
 
 import { observer } from "mobx-react-lite";
 
-import { formatPossessiveName } from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
 import Form from "../Form/Form";
-import { onboardingStepThreeFields } from "../Form/formConfig";
+import { onboardingStepFourFields } from "../Form/formConfig";
 import { CaseOnboardingTopicProps } from "./types";
 
-function OnboardingStepThree({ firstName }: CaseOnboardingTopicProps) {
+function OnboardingStepFour({ firstName }: CaseOnboardingTopicProps) {
   return (
     <>
       <Styled.OnboardingHeaderWrapper>
         <Styled.OnboardingHeader>
-          Highlight {formatPossessiveName(firstName)} strengths to support a
-          balanced recommendation
+          A few more details to determine if {firstName} meets eligibility for
+          community opportunities
         </Styled.OnboardingHeader>
         <Styled.OnboardingDescription>
-          We will use this information to generate a draft recommendation
-          summary that helps the judge consider not just the areas of concern
-          but also the positive aspects of {formatPossessiveName(firstName)}{" "}
-          current situation.
+          We will use this data to generate opportunities for {firstName}.
+          It&apos;s okay if you don&apos;t have this information yet, you can
+          add it later.{" "}
         </Styled.OnboardingDescription>
       </Styled.OnboardingHeaderWrapper>
-      <Form formFields={onboardingStepThreeFields} />
+      <Form formFields={onboardingStepFourFields} />
     </>
   );
 }
 
-export default observer(OnboardingStepThree);
+export default observer(OnboardingStepFour);

@@ -23,6 +23,7 @@ import { formatPossessiveName } from "../../../utils/utils";
 import { CaseStatus } from "../../Dashboard/types";
 import * as Styled from "../CaseDetails.styles";
 import { form } from "../Form/FormStore";
+import OnboardingStepFour from "./OnboardingStepFour";
 import OnboardingStepOne from "./OnboardingStepOne";
 import OnboardingStepThree from "./OnboardingStepThree";
 import OnboardingStepTwo from "./OnboardingStepTwo";
@@ -31,6 +32,7 @@ import { CaseOnboardingProps, OnboardingTopic } from "./types";
 const onboardingTopics: Case["currentOnboardingTopic"][] = [
   OnboardingTopic.OffenseLsirScore,
   OnboardingTopic.PrimaryNeeds,
+  OnboardingTopic.ProtectiveFactors,
   OnboardingTopic.AdditionalNeeds,
   OnboardingTopic.Done,
 ];
@@ -103,8 +105,11 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
               {currentTopic === OnboardingTopic.PrimaryNeeds && (
                 <OnboardingStepTwo firstName={firstName} />
               )}
-              {currentTopic === OnboardingTopic.AdditionalNeeds && (
+              {currentTopic === OnboardingTopic.ProtectiveFactors && (
                 <OnboardingStepThree firstName={firstName} />
+              )}
+              {currentTopic === OnboardingTopic.AdditionalNeeds && (
+                <OnboardingStepFour firstName={firstName} />
               )}
               <Styled.ButtonWrapper>
                 <Styled.ActionButton kind="link" onClick={goToPrevTopic}>

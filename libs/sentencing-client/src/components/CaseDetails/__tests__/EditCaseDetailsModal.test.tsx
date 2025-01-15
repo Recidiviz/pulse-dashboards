@@ -222,7 +222,7 @@ test("shows ASAM level of care recommendation only when 'Mild', 'Moderate', or '
   asamLevelOfCareField = await screen.queryByText(ASAM_FIELD_LABEL);
   expect(asamLevelOfCareField).not.toBeNull();
 
-  fireEvent.click(notSureYetOption[1]);
+  fireEvent.click(notSureYetOption[2]);
 
   asamLevelOfCareField = await screen.queryByText(ASAM_FIELD_LABEL);
   expect(asamLevelOfCareField).toBeNull();
@@ -233,7 +233,7 @@ test("shows ASAM level of care recommendation only when 'Mild', 'Moderate', or '
   expect(asamLevelOfCareField).not.toBeNull();
 });
 
-test("shows/hides Other text field when 'Other' option is selected/deselected", async () => {
+test("shows/hides Other need text field when 'Other' option is selected/deselected", async () => {
   await presenter.hydrate();
   const screen = render(
     <MemoryRouter
@@ -251,7 +251,7 @@ test("shows/hides Other text field when 'Other' option is selected/deselected", 
   const editCaseDetailsButton = await screen.getByText("Edit Case Details");
   fireEvent.click(editCaseDetailsButton);
 
-  const otherOption = await screen.getByText("Other");
+  const otherOption = await screen.getAllByText("Other")[0];
 
   fireEvent.click(otherOption);
 
@@ -265,6 +265,42 @@ test("shows/hides Other text field when 'Other' option is selected/deselected", 
 
   otherTextField = await screen.queryByPlaceholderText(
     "Please specify other need",
+  );
+  expect(otherTextField).toBeNull();
+});
+
+test("shows/hides Other protective factor text field when 'Other' option is selected/deselected", async () => {
+  await presenter.hydrate();
+  const screen = render(
+    <MemoryRouter
+      initialEntries={[`/dashboard/${psiStore.staffPseudoId}/case/${caseId}`]}
+    >
+      <Routes>
+        <Route
+          path="/dashboard/:staffPseudoId/case/:caseId"
+          element={<CaseDetails psiStore={psiStore} />}
+        />
+      </Routes>
+    </MemoryRouter>,
+  );
+
+  const editCaseDetailsButton = await screen.getByText("Edit Case Details");
+  fireEvent.click(editCaseDetailsButton);
+
+  const otherOption = await screen.getAllByText("Other")[1];
+
+  fireEvent.click(otherOption);
+
+  let otherTextField: HTMLElement | null = await screen.getByPlaceholderText(
+    "Please specify other protective factor",
+  );
+
+  expect(otherTextField).toBeInTheDocument();
+
+  fireEvent.click(otherOption); // Deselect Other option
+
+  otherTextField = await screen.queryByPlaceholderText(
+    "Please specify other protective factor",
   );
   expect(otherTextField).toBeNull();
 });

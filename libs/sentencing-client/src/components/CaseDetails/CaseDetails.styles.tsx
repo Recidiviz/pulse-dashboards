@@ -1351,9 +1351,10 @@ export const OnboardingCompleteMessage = styled.div`
 `;
 
 const onboardingTopicToBarWidthPercentage = {
-  [OnboardingTopic.OffenseLsirScore]: 25,
-  [OnboardingTopic.PrimaryNeeds]: 50,
-  [OnboardingTopic.AdditionalNeeds]: 75,
+  [OnboardingTopic.OffenseLsirScore]: 20,
+  [OnboardingTopic.PrimaryNeeds]: 40,
+  [OnboardingTopic.ProtectiveFactors]: 60,
+  [OnboardingTopic.AdditionalNeeds]: 80,
   [OnboardingTopic.Done]: 100,
 };
 

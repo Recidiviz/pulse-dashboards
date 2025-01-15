@@ -22,6 +22,7 @@ import { FormFieldList, MutableCaseAttributes } from "../types";
 export enum OnboardingTopic {
   OffenseLsirScore = "OffenseLsirScore",
   PrimaryNeeds = "PrimaryNeeds",
+  ProtectiveFactors = "ProtectiveFactors",
   AdditionalNeeds = "AdditionalNeeds",
   Done = "Done",
 }

@@ -211,6 +211,7 @@ enum DiagnosedSubstanceUseDisorderCriterion {
 enum OnboardingTopic {
   OffenseLsirScore
   PrimaryNeeds
+  ProtectiveFactors
   AdditionalNeeds
   Done
 }
@@ -229,6 +230,7 @@ enum ProtectiveFactor {
   ActivelyParticipatingInTreatmentPrograms
   EnrolledInEducationalOrVocationalTraining
   ActiveInvolvementInCommunityActivities
+  Other
 }
 
 model Opportunity {
