@@ -46,7 +46,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     caseId,
     stateCode,
     caseAttributes,
-    communityOpportunities,
+    activeEligibleCommunityOpportunities,
     recommendedOpportunities,
     updateAttributes,
     updateRecommendation,
@@ -158,7 +158,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               <Opportunities
                 firstName={firstName}
                 selectedRecommendation={selectedRecommendation}
-                communityOpportunities={communityOpportunities}
+                communityOpportunities={activeEligibleCommunityOpportunities}
                 recommendedOpportunities={recommendedOpportunities}
                 updateRecommendedOpportunities={updateRecommendedOpportunities}
                 caseAttributes={caseAttributes}

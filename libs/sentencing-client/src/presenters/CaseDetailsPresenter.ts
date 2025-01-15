@@ -150,9 +150,14 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.caseStore.insight;
   }
 
-  get communityOpportunities(): Opportunities {
-    return this.caseStore.communityOpportunities.filter((opportunity) =>
-      filterEligibleOpportunities(opportunity, this.caseEligibilityAttributes),
+  get activeEligibleCommunityOpportunities(): Opportunities {
+    return this.caseStore.communityOpportunities.filter(
+      (opportunity) =>
+        opportunity.active &&
+        filterEligibleOpportunities(
+          opportunity,
+          this.caseEligibilityAttributes,
+        ),
     );
   }
 

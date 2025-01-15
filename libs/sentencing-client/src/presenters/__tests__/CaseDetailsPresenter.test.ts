@@ -88,3 +88,82 @@ test("no hydration if already hydrated", async () => {
 
   expect(psiStore.caseStore.loadCaseDetails).toHaveBeenCalledTimes(1);
 });
+
+test("activeEligibleCommunityOpportunities filters out inactive opportunities", async () => {
+  const communityOpportunities = [
+    {
+      opportunityName: "Active Opportunity 1",
+      description: "",
+      providerName: null,
+      providerPhoneNumber: "",
+      providerWebsite: "",
+      providerAddress: "",
+      minAge: 18,
+      maxAge: 65,
+      developmentalDisabilityDiagnosisCriterion: false,
+      noCurrentOrPriorSexOffenseCriterion: false,
+      noCurrentOrPriorViolentOffenseCriterion: false,
+      noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+      priorCriminalHistoryCriterion: null,
+      entryOfGuiltyPleaCriterion: false,
+      veteranStatusCriterion: false,
+      diagnosedMentalHealthDiagnosisCriterion: [],
+      diagnosedSubstanceUseDisorderCriterion: null,
+      asamLevelOfCareRecommendationCriterion: null,
+      needsAddressed: [],
+      minLsirScoreCriterion: null,
+      maxLsirScoreCriterion: null,
+      district: "D1",
+      lastUpdatedAt: new Date(),
+      additionalNotes: null,
+      genders: [],
+      genericDescription: null,
+      counties: [],
+      active: true,
+    },
+    {
+      opportunityName: "Inactive Opportunity 2",
+      description: "",
+      providerName: null,
+      providerPhoneNumber: "",
+      providerWebsite: "",
+      providerAddress: "",
+      minAge: 18,
+      maxAge: 65,
+      developmentalDisabilityDiagnosisCriterion: false,
+      noCurrentOrPriorSexOffenseCriterion: false,
+      noCurrentOrPriorViolentOffenseCriterion: false,
+      noPendingFelonyChargesInAnotherCountyOrStateCriterion: false,
+      priorCriminalHistoryCriterion: null,
+      entryOfGuiltyPleaCriterion: false,
+      veteranStatusCriterion: false,
+      diagnosedMentalHealthDiagnosisCriterion: [],
+      diagnosedSubstanceUseDisorderCriterion: null,
+      asamLevelOfCareRecommendationCriterion: null,
+      needsAddressed: [],
+      minLsirScoreCriterion: null,
+      maxLsirScoreCriterion: null,
+      district: "D1",
+      lastUpdatedAt: new Date(),
+      additionalNotes: null,
+      genders: [],
+      genericDescription: null,
+      counties: [],
+      active: false,
+    },
+  ];
+  psiStore.caseStore.communityOpportunities = communityOpportunities;
+
+  await presenter.hydrate();
+
+  expect(presenter.activeEligibleCommunityOpportunities.length).toBe(1);
+  expect(
+    presenter.activeEligibleCommunityOpportunities[0].opportunityName,
+  ).toBe("Active Opportunity 1");
+  expect(presenter.activeEligibleCommunityOpportunities).toContainEqual(
+    communityOpportunities.find((opp) => opp.active),
+  );
+  expect(presenter.activeEligibleCommunityOpportunities).not.toContainEqual(
+    communityOpportunities.find((opp) => !opp.active),
+  );
+});
