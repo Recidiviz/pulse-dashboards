@@ -156,22 +156,14 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
    * Fetch record for current officer.
    */
   protected *populateSupervisionOfficer(): FlowMethod<
-    InsightsAPI["supervisionOfficer" | "excludedSupervisionOfficer"],
+    InsightsAPI["supervisionOfficer"],
     void
   > {
     if (this.isOfficerPopulated) return;
-    // TODO(#6453): we shouldn't use the catch anymore
-    try {
-      this.fetchedOfficerRecord =
-        yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
-          this.officerPseudoId,
-        );
-    } catch (e) {
-      // TODO: (#6044) Remove once they work with the same endpoint.
-      this.fetchedOfficerRecord =
-        yield this.supervisionStore.insightsStore.apiClient.excludedSupervisionOfficer(
-          this.officerPseudoId,
-        );
-    }
+
+    this.fetchedOfficerRecord =
+      yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
+        this.officerPseudoId,
+      );
   }
 }

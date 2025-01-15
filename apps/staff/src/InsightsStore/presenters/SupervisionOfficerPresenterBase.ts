@@ -19,7 +19,6 @@ import { flowResult, makeObservable } from "mobx";
 
 import {
   ActionStrategyCopy,
-  ExcludedSupervisionOfficer,
   SupervisionOfficer,
   SupervisionOfficerOutcomes,
   SupervisionOfficerSupervisor,
@@ -43,9 +42,7 @@ export abstract class SupervisionOfficerPresenterBase
 {
   // rather than dealing with a partially hydrated unit in the supervisionStore,
   // we will just put the API response here (when applicable)
-  protected fetchedOfficerRecord?:
-    | SupervisionOfficer
-    | ExcludedSupervisionOfficer;
+  protected fetchedOfficerRecord?: SupervisionOfficer;
 
   protected fetchedOfficerOutcomes?: SupervisionOfficerOutcomes;
 
@@ -306,7 +303,7 @@ export abstract class SupervisionOfficerPresenterBase
   }
 
   protected abstract populateSupervisionOfficer(): FlowMethod<
-    InsightsAPI["supervisionOfficer" | "excludedSupervisionOfficer"],
+    InsightsAPI["supervisionOfficer"],
     void
   >;
 
