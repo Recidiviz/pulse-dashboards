@@ -27,6 +27,14 @@
         "color": true,
         "cwd": "{projectRoot}"
       }
+    },
+    "pull-runner": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker pull us-central1-docker.pkg.dev/recidiviz-devops/atmos-runner/default:latest",
+        "color": true,
+        "cwd": "{projectRoot}"
+      }
     }
   }
 }
