@@ -117,8 +117,9 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
 
   /** Marks the case status as "Complete" and hides the summary report view */
   const completeSummaryReport = async () => {
+    await setCaseStatusCompleted();
+
     if (isCreatingRecommendation) {
-      await setCaseStatusCompleted();
       navigate(PSI_PATHS.psi);
     }
 
