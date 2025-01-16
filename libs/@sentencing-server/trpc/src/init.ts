@@ -15,25 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@sentencing-server/trpc";
-import { registerImportRoutes } from "~sentencing-server/server/utils";
-import { buildCommonServer } from "~server-setup-plugin";
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+import { createContext } from "~@sentencing-server/trpc/context";
+import { procedurePlugin } from "~server-setup-plugin";
 
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
-  });
+export const t = initTRPC
+  .context<typeof createContext>()
+  // Required to get Date objects to serialize correctly.
+  .create({ transformer: superjson });
 
-  registerImportRoutes(server);
+export const router = t.router;
 
-  return server;
-}
+const plugin = procedurePlugin();
+
+export const baseProcedure = t.procedure.unstable_concat(plugin.procedure);

@@ -15,25 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@sentencing-server/trpc";
-import { registerImportRoutes } from "~sentencing-server/server/utils";
-import { buildCommonServer } from "~server-setup-plugin";
+import type { Prisma } from "@prisma/client";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
-
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
-  });
-
-  registerImportRoutes(server);
-
-  return server;
-}
+export type StaffCreateInput = Prisma.StaffCreateInput;
+export type ClientCreateInput = Prisma.ClientCreateInput;
+export type CaseCreateInput = Prisma.CaseCreateInput;
+export type OpportunityCreateInput = Prisma.OpportunityCreateInput;
+export type InsightCreateInput = Prisma.InsightCreateInput;
+export type DispositionCreateManyInsightInput =
+  Prisma.DispositionCreateManyInsightInput;
+export type RecidivismSeriesCreateWithoutInsightInput =
+  Prisma.RecidivismSeriesCreateWithoutInsightInput;
+export type OffenseCreateInput = Prisma.OffenseCreateInput;

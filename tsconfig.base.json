@@ -22,7 +22,15 @@
     "paths": {
       "~@case-notes-server/trpc": ["libs/@case-notes-server/trpc/src/index.ts"],
       "~@case-notes-server/trpc/*": ["libs/@case-notes-server/trpc/src/*"],
+      "~@sentencing-server/prisma": [
+        "libs/@sentencing-server/prisma/src/index.ts"
+      ],
       "~@sentencing-server/prisma/*": ["libs/@sentencing-server/prisma/src/*"],
+      "~@sentencing-server/trpc": ["libs/@sentencing-server/trpc/src/index.ts"],
+      "~@sentencing-server/trpc-types": [
+        "libs/@sentencing-server/trpc-types/src/index.ts"
+      ],
+      "~@sentencing-server/trpc/*": ["libs/@sentencing-server/trpc/src/*"],
       "~auth": ["libs/auth/src/index.ts"],
       "~auth0-jii": ["libs/auth0-jii/src/index.ts"],
       "~case-notes-server/*": ["apps/case-notes-server/src/*"],
@@ -43,7 +51,6 @@
       "~hydration-utils": ["libs/hydration-utils/src/index.ts"],
       "~repo": ["plugins/repo/src/index.ts"],
       "~sentencing-client": ["libs/sentencing-client/src/index.ts"],
-      "~sentencing-server-types/*": ["libs/sentencing-server-types/src/*"],
       "~sentencing-server/*": ["apps/sentencing-server/src/*"],
       "~server-setup-plugin": ["libs/common/server-setup-plugin/src/index.ts"],
       "~server-setup-plugin/*": ["libs/common/server-setup-plugin/src/*"],

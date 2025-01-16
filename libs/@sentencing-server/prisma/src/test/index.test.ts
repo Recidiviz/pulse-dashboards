@@ -15,25 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@sentencing-server/trpc";
-import { registerImportRoutes } from "~sentencing-server/server/utils";
-import { buildCommonServer } from "~server-setup-plugin";
+import { describe, expect, test } from "vitest";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
 
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
+describe("prisma", () => {
+  test("should return the same instance of a prisma client for a state code if it already exists", async () => {
+    const firstClient = getPrismaClientForStateCode("US_ID");
+    const secondClient = getPrismaClientForStateCode("US_ID");
+
+    expect(secondClient).toBe(firstClient);
   });
-
-  registerImportRoutes(server);
-
-  return server;
-}
+});

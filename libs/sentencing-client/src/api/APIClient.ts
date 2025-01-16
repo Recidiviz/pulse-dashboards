@@ -25,7 +25,7 @@ import { runInAction, when } from "mobx";
 import moment from "moment";
 import superjson from "superjson";
 
-import type { AppRouter } from "~sentencing-server-types/shared/types";
+import type { AppRouter } from "~@sentencing-server/trpc-types";
 
 import { FormAttributes } from "../components/CaseDetails/types";
 import { PSIStore } from "../datastores/PSIStore";

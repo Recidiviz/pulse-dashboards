@@ -26,8 +26,8 @@ import {
 } from "@prisma/client";
 import { describe, expect, test } from "vitest";
 
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";
 import { dataProviderSingleton } from "~fastify-data-import-plugin/testkit";
-import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
 import { testAndGetSentryReports } from "~sentencing-server/test/common/utils";
 import {
   caseBody,

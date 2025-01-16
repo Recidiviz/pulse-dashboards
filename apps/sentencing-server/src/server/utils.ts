@@ -18,11 +18,11 @@
 import { captureException } from "@sentry/node";
 import { FastifyInstance } from "fastify";
 
+import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
 import {
   ImportRoutesHandler,
   ObjectIdentifier,
 } from "~fastify-data-import-plugin";
-import { getPrismaClientForStateCode } from "~sentencing-server/prisma";
 import { FILE_NAME_TO_ETL_HELPER } from "~sentencing-server/server/constants";
 
 export function etlHelperGetter(identifier: ObjectIdentifier) {

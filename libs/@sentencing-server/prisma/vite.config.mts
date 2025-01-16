@@ -15,25 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@sentencing-server/trpc";
-import { registerImportRoutes } from "~sentencing-server/server/utils";
-import { buildCommonServer } from "~server-setup-plugin";
+/// <reference types='vitest' />
+import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
+import { defineConfig } from "vite";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+export default defineConfig({
+  root: __dirname,
+  cacheDir: "../../../node_modules/.vite/libs/@sentencing-server/prisma",
 
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
+  plugins: [nxViteTsPaths()],
+  test: {
+    globals: true,
+    cache: { dir: "../../../node_modules/.vitest" },
+    environment: "node",
+    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    reporters: ["default"],
+    coverage: {
+      reportsDirectory: "../../../coverage/libs/@sentencing-server/prisma",
+      provider: "v8",
     },
-  });
-
-  registerImportRoutes(server);
-
-  return server;
-}
+  },
+});

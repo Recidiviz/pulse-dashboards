@@ -31,10 +31,11 @@
     },
     "test": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/@sentencing-server/prisma"],
       "cache": true,
       "options": {
-        "command": "echo 'no tests'",
-        "cwd": "{workspaceRoot}"
+        "command": "vitest",
+        "cwd": "{projectRoot}"
       }
     },
     "docker": {

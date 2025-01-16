@@ -27,7 +27,7 @@ import {
 import z from "zod";
 import { zu } from "zod_utilz";
 
-import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~sentencing-server/common/constants";
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";
 
 export function fullNameObjectToString(nameObject: z.infer<typeof nameSchema>) {
   return `${nameObject.given_names} ${nameObject.middle_names} ${nameObject.surname} ${nameObject.name_suffix}`;

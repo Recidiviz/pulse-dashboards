@@ -20,7 +20,8 @@ import { captureException } from "@sentry/node";
 import _ from "lodash";
 import z from "zod";
 
-import { PLACEHOLDER_SIGNIFIER } from "~sentencing-server/common/constants";
+import { PLACEHOLDER_SIGNIFIER } from "~@sentencing-server/prisma";
+import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
 import { EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE } from "~sentencing-server/import/handle-import/constants";
 import {
   caseImportSchema,
@@ -31,7 +32,6 @@ import {
   recidivismSeriesSchema,
   staffImportSchema,
 } from "~sentencing-server/import/handle-import/models";
-import { getPrismaClientForStateCode } from "~sentencing-server/prisma";
 
 // Function definition pulled from https://zod.dev/?id=writing-generic-functions
 function parseData<T extends z.ZodTypeAny>(

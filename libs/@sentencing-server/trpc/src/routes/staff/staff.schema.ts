@@ -15,25 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@sentencing-server/trpc";
-import { registerImportRoutes } from "~sentencing-server/server/utils";
-import { buildCommonServer } from "~server-setup-plugin";
+import { z } from "zod";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+import {
+  GetStaffInput,
+  UpdateStaffInput,
+} from "~@sentencing-server/trpc/routes/staff/types";
 
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
-  });
+export const getStaffInputSchema = z.object({
+  pseudonymizedId: z.string(),
+}) satisfies z.ZodType<GetStaffInput>;
 
-  registerImportRoutes(server);
-
-  return server;
-}
+export const updateStaffSchema = z.object({
+  pseudonymizedId: z.string(),
+  hasLoggedIn: z.boolean(),
+}) satisfies z.ZodType<UpdateStaffInput>;

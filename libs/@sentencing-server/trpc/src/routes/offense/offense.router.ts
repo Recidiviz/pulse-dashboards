@@ -15,25 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@sentencing-server/trpc";
-import { registerImportRoutes } from "~sentencing-server/server/utils";
-import { buildCommonServer } from "~server-setup-plugin";
+import { PLACEHOLDER_SIGNIFIER } from "~@sentencing-server/prisma";
+import { baseProcedure, router } from "~@sentencing-server/trpc/init";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
-
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
-  });
-
-  registerImportRoutes(server);
-
-  return server;
-}
+export const offenseRouter = router({
+  getOffenses: baseProcedure.query(async ({ ctx: { prisma } }) => {
+    return await prisma.offense.findMany({
+      omit: {
+        id: true,
+        stateCode: true,
+      },
+      where: {
+        // TODO: Remove once we have insights for all offenses?
+        // Only return offenses that have insights
+        insightOffenses: {
+          some: {},
+        },
+        NOT: {
+          name: {
+            contains: PLACEHOLDER_SIGNIFIER,
+          },
+        },
+      },
+    });
+  }),
+});

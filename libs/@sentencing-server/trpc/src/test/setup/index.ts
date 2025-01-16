@@ -22,16 +22,22 @@ import {
   createTRPCProxyClient,
   httpBatchLink,
 } from "@trpc/client";
+import {
+  fastifyTRPCPlugin,
+  FastifyTRPCPluginOptions,
+} from "@trpc/server/adapters/fastify";
+import Fastify from "fastify";
+import { FastifyInstance } from "fastify/types/instance";
+import fastifyAuth0Verify from "fastify-auth0-verify";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
 import { beforeAll, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
-import type { AppRouter } from "~@sentencing-server/trpc";
-import { MockImportRoutesHandler } from "~fastify-data-import-plugin/testkit";
-import { buildServer } from "~sentencing-server/server";
-import { seed } from "~sentencing-server/test/setup/seed";
-import { resetDb } from "~sentencing-server/test/setup/utils";
+import { createContext } from "~@sentencing-server/trpc/context";
+import { AppRouter, appRouter } from "~@sentencing-server/trpc/router";
+import { seed } from "~@sentencing-server/trpc/test/setup/seed";
+import { resetDb } from "~@sentencing-server/trpc/test/setup/utils";
 
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])
@@ -39,16 +45,12 @@ export const testPort = process.env["PORT"]
 export const testHost = process.env["HOST"] ?? "localhost";
 
 export let testTRPCClient: CreateTRPCProxyClient<AppRouter>;
-export let testServer: ReturnType<typeof buildServer>;
+export let testServer: FastifyInstance;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 
 const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
-
-vi.mock("~fastify-data-import-plugin", () => ({
-  ImportRoutesHandler: MockImportRoutesHandler,
-}));
 
 beforeAll(async () => {
   init({
@@ -57,7 +59,25 @@ beforeAll(async () => {
     maxValueLength: 10000,
   });
 
-  testServer = buildServer();
+  const testServer = Fastify({
+    logger: true,
+  });
+
+  testServer.register(fastifyTRPCPlugin, {
+    prefix: "",
+    trpcOptions: {
+      router: appRouter,
+      createContext: createContext,
+      onError({ path, error }) {
+        console.error(`Error in tRPC handler on path '${path}':`, error);
+      },
+    } satisfies FastifyTRPCPluginOptions<typeof appRouter>["trpcOptions"],
+  });
+
+  testServer.register(fastifyAuth0Verify, {
+    domain: "domain",
+    audience: "audience",
+  });
 
   // Override he jwtVerify function to always pass
   testServer.addHook("preHandler", (req, reply, done) => {

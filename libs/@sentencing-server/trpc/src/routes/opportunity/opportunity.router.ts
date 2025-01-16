@@ -15,25 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@sentencing-server/trpc";
-import { registerImportRoutes } from "~sentencing-server/server/utils";
-import { buildCommonServer } from "~server-setup-plugin";
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";
+import { baseProcedure, router } from "~@sentencing-server/trpc/init";
 
-export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
-  }
+export const opportunityRouter = router({
+  getOpportunities: baseProcedure.query(async ({ ctx: { prisma } }) => {
+    const opportunities = await prisma.opportunity.findMany({
+      omit: {
+        id: true,
+      },
+    });
 
-  const server = buildCommonServer({
-    appRouter,
-    createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
-  });
-
-  registerImportRoutes(server);
-
-  return server;
-}
+    return opportunities.map((opportunity) => ({
+      ...opportunity,
+      providerName:
+        // If the provider name is the default unknown provider name, return null
+        opportunity.providerName === OPPORTUNITY_UNKNOWN_PROVIDER_NAME
+          ? null
+          : opportunity.providerName,
+    }));
+  }),
+});

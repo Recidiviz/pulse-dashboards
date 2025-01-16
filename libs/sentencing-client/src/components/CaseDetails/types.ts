@@ -17,7 +17,7 @@
 
 import type { inferRouterInputs } from "@trpc/server";
 
-import type { AppRouter } from "~sentencing-server-types/shared/types";
+import type { AppRouter } from "~@sentencing-server/trpc-types";
 
 import { AttributeKey } from "../Dashboard/types";
 

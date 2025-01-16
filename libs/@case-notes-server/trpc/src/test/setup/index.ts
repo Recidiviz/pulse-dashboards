@@ -25,6 +25,8 @@ import {
   fastifyTRPCPlugin,
   FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
+import Fastify from "fastify";
+import { FastifyInstance } from "fastify/types/instance";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
@@ -37,8 +39,6 @@ export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])
   : 3003;
 export const testHost = process.env["HOST"] ?? "localhost";
-import Fastify from "fastify";
-import { FastifyInstance } from "fastify/types/instance";
 
 export let testTRPCClient: CreateTRPCProxyClient<AppRouter>;
 export let testServer: FastifyInstance;
