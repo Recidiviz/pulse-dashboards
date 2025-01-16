@@ -213,17 +213,16 @@ describe("when used in a context that expects excluded officers", () => {
     await flowResult(supervisionStore.populateMetricConfigs());
   });
 
-  it.each([
-    ["an officer with outlier data", [includedInOutcomesOfficer]],
-    ["an empty object", {}],
-    ["some object", { dog: "" }],
-    ["an undefined", undefined],
-    ["includeInOutcomes is true", { includeInOutcomes: true }],
-    ["includeInOutcomes is undefined", { includeInOutcomes: undefined }],
-  ] as const)(
-    "type narrower should reject non-excluded officers",
-    (_, data) => {
-      expect(isExcludedSupervisionOfficer(data)).toBeFalse();
-    },
-  );
+  it("isExcludedOfficer returns false for officers included in outcomes", () => {
+    expect(isExcludedSupervisionOfficer(includedInOutcomesOfficer)).toBeFalse();
+  });
+  it("isExcludedOfficer returns false for undefined", () => {
+    expect(isExcludedSupervisionOfficer(undefined)).toBeFalse();
+  });
+  it("isExcludedOfficer returns true for officer not included in outcomes", () => {
+    const officerExcludedFromOutcomes = supervisionOfficerFixture[8];
+    expect(
+      isExcludedSupervisionOfficer(officerExcludedFromOutcomes),
+    ).toBeTrue();
+  });
 });

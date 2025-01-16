@@ -23,7 +23,6 @@ import moment from "moment";
 import {
   ClientEvent,
   ClientInfo,
-  ExcludedSupervisionOfficer,
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
 } from "~datatypes";
@@ -244,10 +243,7 @@ export class SupervisionClientDetailPresenter implements Hydratable {
     return !!this.supervisionStore.officerRecord;
   }
 
-  private get officerRecord():
-    | SupervisionOfficer
-    | ExcludedSupervisionOfficer
-    | undefined {
+  private get officerRecord(): SupervisionOfficer | undefined {
     return this.supervisionStore.officerRecord ?? this.fetchedOfficerRecord;
   }
 

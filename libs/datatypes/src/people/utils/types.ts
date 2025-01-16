@@ -17,10 +17,7 @@
 
 import { OpportunityType } from "../../opportunities/OpportunityType";
 import { IncarcerationStaffRecord } from "../Staff/Incarceration/Workflows/schema";
-import {
-  ExcludedSupervisionOfficer,
-  SupervisionOfficer,
-} from "../Staff/Supervision/Insights/SupervisionOfficer/schema";
+import { SupervisionOfficer } from "../Staff/Supervision/Insights/SupervisionOfficer/schema";
 import { SupervisionStaffRecord } from "../Staff/Supervision/Workflows/schema";
 
 /**
@@ -31,10 +28,7 @@ export type StaffRecord =
   | IncarcerationStaffRecord["output"]
   | SupervisionStaffRecord["output"];
 
-export type SupervisionOfficerWithOpportunityDetails = (
-  | ExcludedSupervisionOfficer
-  | SupervisionOfficer
-) & {
+export type SupervisionOfficerWithOpportunityDetails = SupervisionOfficer & {
   clientsEligibleCount: number;
   clientsEligibleCountWithLabel: string;
 };
