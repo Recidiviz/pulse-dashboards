@@ -6,6 +6,6 @@ spec:
   sources:
     - component: "cloud-sql-instance"
       source: 'git::https://{{env "GITHUB_TOKEN"}}@github.com/Recidiviz/atmos-components.git//terraform/cloud-sql-instance?ref={{.Version}}'
-      version: dan/cloud-sql-instance
+      version: main
       targets:
         - components/terraform/vendor/{{.Component}}

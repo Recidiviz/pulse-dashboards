@@ -5,7 +5,7 @@ vars:
 
 settings:
   project_id: recidiviz-dashboard-production
-  product: jii
+  product: jii-texting
 
 # Defines which catalogs to import into this configuration to create in recidiviz-dashboard-staging
 # import:
