@@ -10,5 +10,7 @@ dbs="$(gcloud sql instances list --project recidiviz-dashboard-staging --filter 
 if [[ -z $dbs ]]; then
   echo "No databases found. cloning database"
   gcloud sql instances clone sentencing-db s-db-preview-$VERSION --project recidiviz-dashboard-staging
-  gcloud sql instances patch s-db-preview-$VERSION --project recidiviz-dashboard-staging --no-deletion-protection
+  gcloud sql instances patch s-db-preview-$VERSION --project recidiviz-dashboard-staging \
+    --no-deletion-protection \
+    --availability-type=zonal
 fi
