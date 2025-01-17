@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { allResidents } from "./fixtures";
+import { rawAllResidents } from "./fixtures";
 import { residentRecordSchema } from "./schema";
 
-test.each(allResidents.map((f) => f.input))(
+test.each(rawAllResidents)(
   "schema for $stateCode $personExternalId",
   (input) => {
     expect(residentRecordSchema.parse(input)).toMatchSnapshot();

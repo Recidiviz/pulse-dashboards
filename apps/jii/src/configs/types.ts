@@ -120,7 +120,7 @@ export type OpportunityRecord<O extends IncarcerationOpportunityId> =
 export type ResidentEligibilityReportMapping = {
   [Id in IncarcerationOpportunityId]: new (
     ...args: [
-      ResidentRecord["output"],
+      ResidentRecord,
       OpportunityConfig,
       OpportunityRecord<Id> | undefined,
     ]

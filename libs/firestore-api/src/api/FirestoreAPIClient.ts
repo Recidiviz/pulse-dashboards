@@ -87,7 +87,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
           return;
         }
       })
-      .filter((r): r is ResidentRecord["output"] => !!r);
+      .filter((r): r is ResidentRecord => !!r);
   }
 
   resident(externalId: string) {

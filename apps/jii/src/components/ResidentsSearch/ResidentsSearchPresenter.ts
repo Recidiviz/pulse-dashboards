@@ -66,7 +66,7 @@ export class ResidentsSearchPresenter implements Hydratable {
     return this.hydrationSource.hydrate();
   }
 
-  private get residents(): Array<ResidentRecord["output"]> {
+  private get residents(): Array<ResidentRecord> {
     const { selectedFacilityFilterOptionValue } = this.uiStore;
 
     return Array.from(

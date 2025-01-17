@@ -20,7 +20,7 @@ import { keyBy } from "lodash";
 import { configure, set } from "mobx";
 
 import { isDemoMode } from "~client-env-utils";
-import { outputFixtureArray, usMeResidents } from "~datatypes";
+import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
@@ -65,7 +65,7 @@ describe("hydration", () => {
   test("already hydrated", () => {
     set(
       residentsStore.residentsByExternalId,
-      keyBy(outputFixtureArray(usMeResidents), "personExternalId"),
+      keyBy(usMeResidents, "personExternalId"),
     );
 
     expect(presenter.hydrationState.status).toBe("hydrated");

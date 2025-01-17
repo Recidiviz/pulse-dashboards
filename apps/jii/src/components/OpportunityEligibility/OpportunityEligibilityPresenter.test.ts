@@ -30,10 +30,8 @@ import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresent
 let residentsStore: ResidentsStore;
 let presenter: OpportunityEligibilityPresenter;
 const opportunityId: IncarcerationOpportunityId = "usMeSCCP";
-const eligibleResident = outputFixture(usMeResidents[0]);
-const ineligibleResident = outputFixture(
-  usMeResidents[usMeResidents.length - 1],
-);
+const eligibleResident = usMeResidents[0];
+const ineligibleResident = usMeResidents[usMeResidents.length - 1];
 const stateConfig = residentsConfigByState.US_ME;
 const opportunityConfig = stateConfig.incarcerationOpportunities[
   opportunityId

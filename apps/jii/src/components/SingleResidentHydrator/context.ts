@@ -33,7 +33,7 @@ export type OpportunityData = {
 };
 
 export type SingleResidentContext = {
-  resident: ResidentRecord["output"];
+  resident: ResidentRecord;
   opportunities: Array<OpportunityData>;
 };
 

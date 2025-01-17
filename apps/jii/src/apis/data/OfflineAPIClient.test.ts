@@ -35,7 +35,7 @@ test("residents should reflect state code", async () => {
 });
 
 test("fetch single resident", async () => {
-  const expectedRes = outputFixture(usMeResidents[0]);
+  const expectedRes = usMeResidents[0];
 
   const fetched = await api.residentById(expectedRes.personExternalId);
 
@@ -64,7 +64,7 @@ test("eligibility record", async () => {
   );
 
   const fetched = await api.residentEligibility(
-    outputFixture(usMeResidents[3]).personExternalId,
+    usMeResidents[3].personExternalId,
     "usMeSCCP",
   );
 

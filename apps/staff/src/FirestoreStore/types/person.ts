@@ -42,6 +42,6 @@ export type PersonUpdateRecord = {
  * Data from the Recidiviz data platform about an incarcerated person
  */
 export type WorkflowsResidentRecord = WorkflowsJusticeInvolvedPersonRecord &
-  ResidentRecord["output"] & {
+  ResidentRecord & {
     metadata: ResidentMetadata;
   };

@@ -36,13 +36,7 @@ import {
 import { z } from "zod";
 
 import { isDemoMode } from "~client-env-utils";
-import {
-  allResidents,
-  inputFixture,
-  inputFixtureArray,
-  outputFixture,
-  outputFixtureArray,
-} from "~datatypes";
+import { allResidents, rawAllResidents } from "~datatypes";
 
 import { FirestoreAPIClient } from "../FirestoreAPIClient";
 
@@ -98,10 +92,11 @@ test("authenticate", async () => {
 });
 
 describe("residents", () => {
+  const rawFixture = rawAllResidents.slice(0, 2);
   const expectedFixture = allResidents.slice(0, 2);
 
   const mockSnapshot = {
-    docs: inputFixtureArray(expectedFixture).map((f) => ({
+    docs: rawFixture.map((f) => ({
       data() {
         return f;
       },
@@ -114,7 +109,7 @@ describe("residents", () => {
 
   test("parsed result", async () => {
     const result = await client.residents();
-    expect(result).toEqual(outputFixtureArray(expectedFixture));
+    expect(result).toEqual(expectedFixture);
   });
 
   test("no filters", async () => {
@@ -154,11 +149,12 @@ describe("residents", () => {
 });
 
 describe("resident by pseudo ID", () => {
+  const rawFixture = rawAllResidents[0];
   const expectedFixture = allResidents[0];
-  const testId = inputFixture(expectedFixture).pseudonymizedId;
+  const testId = rawFixture.pseudonymizedId;
 
   const mockSnapshot = {
-    docs: inputFixtureArray([expectedFixture]).map((f) => ({
+    docs: [rawFixture].map((f) => ({
       data() {
         return f;
       },
@@ -175,7 +171,7 @@ describe("resident by pseudo ID", () => {
       ["stateCode", "==", "US_XX"],
       ["pseudonymizedId", "==", testId],
     ]);
-    expect(result).toEqual(outputFixture(expectedFixture));
+    expect(result).toEqual(expectedFixture);
   });
 
   test("no results", async () => {

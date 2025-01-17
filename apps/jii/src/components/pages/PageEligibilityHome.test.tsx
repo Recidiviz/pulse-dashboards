@@ -18,13 +18,13 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-import { outputFixture, usMeResidents } from "~datatypes";
+import { usMeResidents } from "~datatypes";
 
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import { State } from "../../routes/routes";
 import { PageEligibilityHome } from "./PageEligibilityHome";
 
-const testResident = outputFixture(usMeResidents[0]);
+const testResident = usMeResidents[0];
 
 function renderPage() {
   render(

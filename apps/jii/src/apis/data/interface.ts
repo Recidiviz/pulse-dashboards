@@ -44,21 +44,17 @@ export interface DataAPI {
    * Fetches data for available residents for the active StateCode, applying
    * additional filters as specified.
    */
-  residents(
-    filters?: Array<FilterParams>,
-  ): Promise<Array<ResidentRecord["output"]>>;
+  residents(filters?: Array<FilterParams>): Promise<Array<ResidentRecord>>;
   /**
    * Fetches data for the resident with personExternalId matching `residentExternalId`
    * for the active StateCode. Throws if a match cannot be found.
    */
-  residentById(residentExternalId: string): Promise<ResidentRecord["output"]>;
+  residentById(residentExternalId: string): Promise<ResidentRecord>;
   /**
    * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
    * for the active StateCode. Throws if a match cannot be found.
    */
-  residentByPseudoId(
-    residentPseudoId: string,
-  ): Promise<ResidentRecord["output"]>;
+  residentByPseudoId(residentPseudoId: string): Promise<ResidentRecord>;
   /**
    * Fetches the opportunity eligibility record for the specified resident
    * and opportunity type for the active StateCode. Will not throw if a record cannot be found;

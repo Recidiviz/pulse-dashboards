@@ -29,7 +29,7 @@ import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresent
 let presenter: SingleResidentHydratorPresenter;
 let store: ResidentsStore;
 
-const testResident = outputFixture(usMeResidents[0]);
+const testResident = usMeResidents[0];
 
 // too big for a snapshot but we want to verify that it gets assembled correctly
 const expectedData = {
@@ -131,7 +131,7 @@ describe("with resident ID from user data", () => {
 });
 
 describe("fetching data for wrong user", () => {
-  const wrongTestResident = outputFixture(usMeResidents[1]);
+  const wrongTestResident = usMeResidents[1];
 
   beforeEach(async () => {
     const rootStore = new RootStore();

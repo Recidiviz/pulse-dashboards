@@ -32,7 +32,7 @@ const APPLICATION_DATE_OFFSET_MONTHS = 3;
 
 export class UsMeSCCPEligibilityReport implements EligibilityReport {
   constructor(
-    private resident: ResidentRecord["output"],
+    private resident: ResidentRecord,
     private config: OpportunityConfig,
     private eligibilityData: UsMeSCCPRecord["output"] | undefined,
   ) {

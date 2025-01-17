@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ParsedRecord } from "../../utils/types";
 import { relativeFixtureDate } from "../../utils/zod/date/fixtureDates";
-import { makeRecordFixture } from "../../utils/zod/object/makeRecordFixture";
-import { residentRecordSchema } from "./schema";
+import {
+  RawResidentRecord,
+  ResidentRecord,
+  residentRecordSchema,
+} from "./schema";
 
-export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
+export const rawUsMeResidents: Array<RawResidentRecord> = [
   {
     officerId: "OFFICER5",
     stateCode: "US_ME",
@@ -211,6 +213,12 @@ export const usMeResidents: Array<ParsedRecord<typeof residentRecordSchema>> = [
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: 5 }),
     portionServedNeeded: "1/2" as const,
   },
-].map((r) => makeRecordFixture(residentRecordSchema, r));
+];
 
-export const allResidents = [...Object.values(usMeResidents)];
+export const usMeResidents: Array<ResidentRecord> = rawUsMeResidents.map((r) =>
+  residentRecordSchema.parse(r),
+);
+
+export const allResidents = [...usMeResidents];
+
+export const rawAllResidents = [...rawUsMeResidents];

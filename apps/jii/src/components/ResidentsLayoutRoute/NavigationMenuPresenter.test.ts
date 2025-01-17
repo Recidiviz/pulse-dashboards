@@ -17,7 +17,7 @@
 
 import { configure } from "mobx";
 
-import { outputFixture, usMeResidents } from "~datatypes";
+import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { UserStore } from "../../datastores/UserStore";
@@ -26,7 +26,7 @@ import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
 let presenter: NavigationMenuPresenter;
 let userStore: UserStore;
 
-const testResident = outputFixture(usMeResidents[0]);
+const testResident = usMeResidents[0];
 const stateSlug = "maine";
 
 beforeEach(() => {

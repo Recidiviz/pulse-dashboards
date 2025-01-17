@@ -41,7 +41,7 @@ export class ResidentsStore {
   /**
    * Holds all resident records that have been fetched
    */
-  residentsByExternalId: Map<string, ResidentRecord["output"]> = new Map();
+  residentsByExternalId: Map<string, ResidentRecord> = new Map();
 
   /**
    * Holds all opportunity eligibility records that have been fetched
@@ -133,7 +133,7 @@ export class ResidentsStore {
     this.residentsByExternalId.set(resident.personExternalId, resident);
   }
 
-  get residentsByPseudoId(): Map<string, ResidentRecord["output"]> {
+  get residentsByPseudoId(): Map<string, ResidentRecord> {
     return new Map(
       Object.entries(
         keyBy([...this.residentsByExternalId.values()], "pseudonymizedId"),
@@ -219,7 +219,7 @@ export class ResidentsStore {
    */
   populateEligibilityReportFromData<OppId extends IncarcerationOpportunityId>(
     opportunityId: OppId,
-    resident: ResidentRecord["output"],
+    resident: ResidentRecord,
     opportunity: OpportunityRecord<OppId> | undefined,
   ) {
     const residentExternalId = resident.personExternalId;

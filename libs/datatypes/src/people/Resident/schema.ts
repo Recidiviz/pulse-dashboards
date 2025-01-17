@@ -17,13 +17,9 @@
 
 import { z } from "zod";
 
-import { ParsedRecord } from "../../utils/types";
 import { dateStringSchema } from "../../utils/zod/date/dateStringSchema";
 import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
 
-/**
- * Data from the Recidiviz data platform about an incarcerated person
- */
 export const residentRecordSchema = justiceInvolvedPersonRecordSchema
   .extend({
     facilityId: z.string().nullish(),
@@ -43,4 +39,13 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
     personType: "RESIDENT" as const,
   }));
 
-export type ResidentRecord = ParsedRecord<typeof residentRecordSchema>;
+/**
+ * Data from the Recidiviz data platform about an incarcerated person
+ */
+export type ResidentRecord = z.output<typeof residentRecordSchema>;
+
+/**
+ * Data from the Recidiviz data platform about an incarcerated person
+ * in its raw form, as stored in Firestore
+ */
+export type RawResidentRecord = z.input<typeof residentRecordSchema>;

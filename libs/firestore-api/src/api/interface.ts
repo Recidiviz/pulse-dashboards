@@ -30,15 +30,11 @@ export interface FirestoreAPI {
     supervisorExternalId: string,
   ): Promise<StaffRecord[]>;
 
-  residents(
-    filters?: Array<FilterParams>,
-  ): Promise<Array<ResidentRecord["output"]>>;
+  residents(filters?: Array<FilterParams>): Promise<Array<ResidentRecord>>;
 
-  resident(externalId: string): Promise<ResidentRecord["output"] | undefined>;
+  resident(externalId: string): Promise<ResidentRecord | undefined>;
 
-  residentByPseudoId(
-    pseudoId: string,
-  ): Promise<ResidentRecord["output"] | undefined>;
+  residentByPseudoId(pseudoId: string): Promise<ResidentRecord | undefined>;
 
   recordForExternalId<Schema extends z.ZodTypeAny>(
     collection: FirestoreCollectionKey,

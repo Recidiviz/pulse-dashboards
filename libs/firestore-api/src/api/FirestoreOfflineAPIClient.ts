@@ -17,7 +17,6 @@
 
 import {
   allResidents,
-  outputFixture,
   outputFixtureArray,
   StaffRecord,
   supervisionStaffFixtures,
@@ -43,29 +42,24 @@ export class FirestoreOfflineAPIClient implements FirestoreAPI {
   }
 
   async residents() {
-    return outputFixtureArray(allResidents).filter(
-      (r) => r.stateCode === this.stateCode,
-    );
+    return allResidents.filter((r) => r.stateCode === this.stateCode);
   }
 
   async resident(externalId: string) {
     const residentFixture = allResidents.find(
       (r) =>
-        r.output.stateCode === this.stateCode &&
-        r.output.personExternalId === externalId,
+        r.stateCode === this.stateCode && r.personExternalId === externalId,
     );
 
-    return residentFixture ? outputFixture(residentFixture) : undefined;
+    return residentFixture ? residentFixture : undefined;
   }
 
   async residentByPseudoId(pseudoId: string) {
     const residentFixture = allResidents.find(
-      (r) =>
-        r.output.stateCode === this.stateCode &&
-        r.output.pseudonymizedId === pseudoId,
+      (r) => r.stateCode === this.stateCode && r.pseudonymizedId === pseudoId,
     );
 
-    return residentFixture ? outputFixture(residentFixture) : undefined;
+    return residentFixture ? residentFixture : undefined;
   }
 
   async recordForExternalId() {

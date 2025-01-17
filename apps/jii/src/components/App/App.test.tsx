@@ -22,7 +22,7 @@ import { MemoryRouter } from "react-router-dom";
 import { MockInstance } from "vitest";
 
 import { AuthClient } from "~auth";
-import { outputFixture, usMeResidents } from "~datatypes";
+import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
@@ -177,7 +177,7 @@ describe("public routes", () => {
 describe("protected routes", () => {
   let rootStore: RootStore;
 
-  const residentFixture = outputFixture(usMeResidents[0]);
+  const residentFixture = usMeResidents[0];
 
   const personPseudoId = residentFixture.pseudonymizedId;
 

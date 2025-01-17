@@ -17,12 +17,7 @@
 
 import { flowResult } from "mobx";
 
-import {
-  outputFixture,
-  outputFixtureArray,
-  usMeResidents,
-  usMeSccpFixtures,
-} from "~datatypes";
+import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 
 import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
@@ -44,7 +39,7 @@ describe("populate residents", () => {
 
     await flowResult(store.populateResidents());
 
-    outputFixtureArray(usMeResidents).forEach((r) => {
+    usMeResidents.forEach((r) => {
       expect(store.residentsByExternalId.get(r.personExternalId)).toEqual(r);
     });
   });
@@ -93,7 +88,7 @@ describe("populate residents", () => {
 
 describe("populate single resident", () => {
   test("succeeds", async () => {
-    const expectedRes = outputFixture(usMeResidents[1]);
+    const expectedRes = usMeResidents[1];
 
     expect(
       store.residentsByExternalId.get(expectedRes.personExternalId),
@@ -115,7 +110,7 @@ describe("populate single resident", () => {
   });
 
   test("does not refetch if already populated", async () => {
-    const expectedRes = outputFixture(usMeResidents[1]);
+    const expectedRes = usMeResidents[1];
 
     vi.spyOn(OfflineAPIClient.prototype, "residentById");
 
@@ -130,7 +125,7 @@ describe("populate single resident", () => {
 
 describe("populate resident eligibility", () => {
   test("succeeds", async () => {
-    const expectedRes = outputFixture(usMeResidents[1]);
+    const expectedRes = usMeResidents[1];
     const expectedEligibility = outputFixture(
       usMeSccpFixtures.eligibleToApplyBeforeXPortionServed,
     );
@@ -170,7 +165,7 @@ describe("populate resident eligibility", () => {
   });
 
   test("fails", async () => {
-    const expectedRes = outputFixture(usMeResidents[1]);
+    const expectedRes = usMeResidents[1];
 
     vi.spyOn(
       OfflineAPIClient.prototype,
@@ -188,7 +183,7 @@ describe("populate resident eligibility", () => {
   });
 
   test("does not refetch if already populated", async () => {
-    const expectedRes = outputFixture(usMeResidents[1]);
+    const expectedRes = usMeResidents[1];
 
     vi.spyOn(OfflineAPIClient.prototype, "residentEligibility");
 
@@ -216,7 +211,7 @@ describe("populate resident eligibility", () => {
 });
 
 describe("populate resident eligibility report", () => {
-  const res = outputFixture(usMeResidents[1]);
+  const res = usMeResidents[1];
   const oppId = "usMeSCCP";
   const opp = outputFixture(usMeSccpFixtures.fullyEligibleHalfPortion);
 

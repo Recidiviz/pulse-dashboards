@@ -19,12 +19,7 @@ import { waitFor } from "@testing-library/react";
 import { z } from "zod";
 
 import type { AuthClient } from "~auth";
-import {
-  outputFixture,
-  outputFixtureArray,
-  usMeResidents,
-  usMeSccpFixtures,
-} from "~datatypes";
+import { usMeResidents, usMeSccpFixtures } from "~datatypes";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
@@ -95,7 +90,7 @@ describe("after authentication", () => {
   });
 
   describe("resident", () => {
-    const record = outputFixture(usMeResidents[0]);
+    const record = usMeResidents[0];
 
     test("exists", async () => {
       vi.mocked(FirestoreAPIClient.prototype.resident).mockResolvedValue(
@@ -157,7 +152,7 @@ describe("after authentication", () => {
   });
 
   describe("residents", () => {
-    const records = outputFixtureArray(usMeResidents);
+    const records = usMeResidents;
 
     test("exists", async () => {
       vi.mocked(FirestoreAPIClient.prototype.residents).mockResolvedValue([

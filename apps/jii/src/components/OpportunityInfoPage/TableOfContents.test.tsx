@@ -19,7 +19,7 @@ import { render } from "@testing-library/react";
 import { format } from "prettier";
 import { MemoryRouter } from "react-router-dom";
 
-import { outputFixture, usMeResidents } from "~datatypes";
+import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import {
@@ -38,9 +38,7 @@ const oppConfig = stateConfig.incarcerationOpportunities[
   opportunityId
 ] as OpportunityConfig;
 
-const ineligibleResident = outputFixture(
-  usMeResidents[usMeResidents.length - 1],
-);
+const ineligibleResident = usMeResidents[usMeResidents.length - 1];
 
 test("generates links to headings in page body", async () => {
   const presenter = new OpportunityInfoPagePresenter(

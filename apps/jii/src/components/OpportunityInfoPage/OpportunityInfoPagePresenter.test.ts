@@ -37,7 +37,7 @@ describe("for eligible user", () => {
     oppConfig.requirements.fullPage,
     ...oppConfig.sections.map((s) => s.fullPage),
   ];
-  const eligibleResident = outputFixture(usMeResidents[0]);
+  const eligibleResident = usMeResidents[0];
 
   test.each(allPages)(
     "SCCP page $urlSlug links to all other pages",
@@ -66,9 +66,7 @@ describe("for eligible user", () => {
 
 describe("for ineligible user", () => {
   const hiddenPage = oppConfig.sections.find((s) => s.hideWhenIneligible);
-  const ineligibleResident = outputFixture(
-    usMeResidents[usMeResidents.length - 1],
-  );
+  const ineligibleResident = usMeResidents[usMeResidents.length - 1];
 
   const visiblePages = [
     oppConfig.requirements.fullPage,
