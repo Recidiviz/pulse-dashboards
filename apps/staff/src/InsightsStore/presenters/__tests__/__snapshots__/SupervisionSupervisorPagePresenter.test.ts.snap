@@ -1,0 +1,136 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`returns the officers with outcomes data 1`] = `
+[
+  {
+    "avgDailyPopulation": 54,
+    "displayName": "Walter Harris",
+    "externalId": "OFFICER4",
+    "fullName": {
+      "givenNames": "Walter",
+      "surname": "Harris",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so1",
+    "supervisorExternalIds": [
+      "agonzalez123",
+      "dlee456",
+    ],
+    "zeroGrantOpportunities": [
+      "LSU",
+      "pastFTRD",
+    ],
+  },
+  {
+    "avgDailyPopulation": 12,
+    "displayName": "Jack Hernandez",
+    "externalId": "so2",
+    "fullName": {
+      "givenNames": "Jack",
+      "surname": "Hernandez",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so2",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+  {
+    "avgDailyPopulation": 32,
+    "displayName": "Jason Nelson",
+    "externalId": "so3",
+    "fullName": {
+      "givenNames": "Jason",
+      "surname": "Nelson",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so3",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+  {
+    "avgDailyPopulation": 43,
+    "displayName": "Harriet Boyd",
+    "externalId": "so9",
+    "fullName": {
+      "givenNames": "Harriet",
+      "surname": "Boyd",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so9",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+  {
+    "avgDailyPopulation": 43,
+    "displayName": "Stephen Mann",
+    "externalId": "so10",
+    "fullName": {
+      "givenNames": "Stephen",
+      "surname": "Mann",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so10",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+]
+`;
+
+exports[`returns the officers without outcomes data 1`] = `
+[
+  {
+    "avgDailyPopulation": null,
+    "displayName": "John Harris",
+    "externalId": "so6",
+    "fullName": {
+      "givenNames": "John",
+      "surname": "Harris",
+    },
+    "pseudonymizedId": "hashed-so6",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+  {
+    "avgDailyPopulation": 8,
+    "displayName": "Larry Hernandez",
+    "externalId": "so7",
+    "fullName": {
+      "givenNames": "Larry",
+      "surname": "Hernandez",
+    },
+    "pseudonymizedId": "hashed-so7",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+]
+`;
+
+exports[`supervisorInfo 1`] = `
+{
+  "displayName": "Alejandro D Gonzalez",
+  "email": "mock-email",
+  "externalId": "agonzalez123",
+  "fullName": {
+    "givenNames": "Alejandro",
+    "middleNames": "D",
+    "surname": "Gonzalez",
+  },
+  "hasOutliers": true,
+  "pseudonymizedId": "hashed-agonzalez123",
+  "supervisionDistrict": "Region 1",
+  "supervisionUnit": "Unit 1",
+}
+`;
+
+exports[`supervisorLocationInfo 1`] = `
+{
+  "locationLabel": "region",
+  "supervisionLocation": "1",
+}
+`;

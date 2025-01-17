@@ -193,6 +193,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
   // Supervisor and Officer Data
   // ==============================
 
+  // TODO 7040: Remove these functions.
   /**
    * Provides information about the currently selected supervisor.
    * @returns The supervisor record, or `undefined` if not yet fetched.
@@ -201,6 +202,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     return this.supervisionStore.supervisorInfo(this.supervisorPseudoId);
   }
 
+  // TODO 7040: Remove these functions.
   /**
    * Provides information about the currently selected supervisor's
    * supervision location, whether it is by unit or by district
@@ -226,6 +228,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
     return this.outcomesDataForOutlierOfficersOrError;
   }
 
+  // TODO 7040: Remove these functions.
   /**
    * Provides a list of all officers in this supervisor's unit that were not
    * explicitly excluded from outcomes.
@@ -237,6 +240,7 @@ export class SupervisionSupervisorPresenter extends WithJusticeInvolvedPersonSto
       ?.filter((o) => o.includeInOutcomes === true);
   }
 
+  // TODO 7040: Remove these functions.
   /**
    * Provides a list of all officers excluded from outcomes in this supervisor's unit.
    * @returns An array of `SupervisionOfficer` or `undefined` if data is not available.
