@@ -72,6 +72,7 @@ export function recordsWithAggregateMetrics<T = MetricRecord>(
   );
 
   return pipe(
+    // @ts-expect-error - TS doesn't correctly set the type of the partialRight result here
     filter(and(matchingDimensions, matchingDateRangeWithLookback)),
     groupedByMonth,
     reduce((memo: T[], recordsInMonth: T[]): T[] => {
@@ -83,6 +84,7 @@ export function recordsWithAggregateMetrics<T = MetricRecord>(
 
       return memo;
     }, []),
+    // @ts-expect-error - TS doesn't correctly set the type of the partialRight result here
     filter(matchingDateRange),
     sortBy(["year", "month"]),
   )(records);

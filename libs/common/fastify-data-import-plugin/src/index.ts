@@ -117,6 +117,7 @@ export class ImportRoutesHandler extends ImportRoutesHandlerBase {
           headers: {
             "Content-Type": "application/json",
           },
+          // @ts-expect-error Typescript doesn't know that Buffer is a valid body type
           body: Buffer.from(JSON.stringify({ bucketId, objectId })),
           httpMethod: "POST",
           url: cloudTaskUrl,

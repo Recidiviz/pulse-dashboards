@@ -1,3 +1,4 @@
 **/server/core/demo_data
 /.nx/cache
 plugins/repo/src/generators/lib/files
+/.nx/workspace-data

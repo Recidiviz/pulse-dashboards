@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/case-notes-server/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "local": {
       "executor": "nx:run-commands",
@@ -72,7 +73,7 @@
     },
     "preview": {
       "executor": "@nx/vite:preview-server",
-      "dependsOn": ["docker"],
+      "dependsOn": ["docker", "build"],
       "options": {
         "buildTarget": "case-notes-server:build"
       }
@@ -160,6 +161,5 @@
       },
       "defaultConfiguration": "staging"
     }
-  },
-  "tags": []
+  }
 }

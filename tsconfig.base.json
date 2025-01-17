@@ -64,7 +64,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "ES6",
+    "target": "es2022",
     "useDefineForClassFields": true
   },
   "exclude": ["node_modules", "tmp"]

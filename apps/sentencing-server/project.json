@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/sentencing-server/src",
   "projectType": "application",
+  "tags": ["sentencing-server"],
   "targets": {
     "test-zod": {
       "executor": "nx:run-commands",
@@ -114,7 +115,8 @@
         {
           "projects": ["@sentencing-server/prisma"],
           "target": "prisma-seed"
-        }
+        },
+        "build"
       ],
       "options": {
         "buildTarget": "sentencing-server:build"
@@ -138,6 +140,7 @@
     "container": {
       "executor": "@nx-tools/nx-container:build",
       "dependsOn": ["build"],
+      "cwd": "{projectRoot}",
       "options": {
         "engine": "docker",
         "platforms": ["linux/amd64"]
@@ -275,6 +278,5 @@
         "command": "gcloud run services delete ss-preview-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud run jobs delete ss-migrate-preview-db-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud sql instances delete s-db-preview-$VERSION --project recidiviz-dashboard-staging -q"
       }
     }
-  },
-  "tags": ["sentencing-server"]
+  }
 }

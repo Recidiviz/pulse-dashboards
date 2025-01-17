@@ -31,6 +31,11 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
     coverage: {
       reportsDirectory: "../../coverage/apps/sentencing-server",
       provider: "v8",

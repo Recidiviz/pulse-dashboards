@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/jii/src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "lint-files": {
       "executor": "nx:run-commands",
@@ -121,6 +122,5 @@
         "cwd": "{projectRoot}"
       }
     }
-  },
-  "tags": []
+  }
 }

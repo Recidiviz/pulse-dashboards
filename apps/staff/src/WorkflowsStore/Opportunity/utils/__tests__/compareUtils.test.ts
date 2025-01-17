@@ -328,15 +328,17 @@ describe("Created sort functions should work", () => {
         datesWithUndefinedMembers,
         "INCARCERATION",
       );
+
+      const expected = [
+        ...datesWithUndefinedMembers.filter((d) => d !== undefined),
+        ...datesWithUndefinedMembers.filter((d) => d === undefined),
+      ];
+
       expect(
         shuffle(opportunities)
           .sort((a, b) => a.compare(b))
           .map((a) => a.eligibilityDate),
-      ).toEqual(
-        datesWithUndefinedMembers
-          .filter((d) => d !== undefined)
-          .concat(datesWithUndefinedMembers.filter((d) => d === undefined)),
-      );
+      ).toEqual(expected);
     });
   });
 
