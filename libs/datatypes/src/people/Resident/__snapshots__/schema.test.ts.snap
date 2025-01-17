@@ -2,7 +2,7 @@
 
 exports[`schema for 'US_ME' 'RES001' 1`] = `
 {
-  "admissionDate": "2013-11-16",
+  "admissionDate": 2013-11-16T00:00:00.000Z,
   "custodyLevel": "MINIMUM",
   "displayId": "dRES001",
   "facilityId": "FACILITY NAME",
@@ -16,7 +16,7 @@ exports[`schema for 'US_ME' 'RES001' 1`] = `
   "personType": "RESIDENT",
   "portionServedNeeded": "2/3",
   "pseudonymizedId": "anonres001",
-  "releaseDate": "2024-11-16",
+  "releaseDate": 2024-11-16T00:00:00.000Z,
   "stateCode": "US_ME",
   "unitId": "UNIT A",
   "usMePortionNeededEligibleDate": 2021-11-16T00:00:00.000Z,
@@ -25,7 +25,7 @@ exports[`schema for 'US_ME' 'RES001' 1`] = `
 
 exports[`schema for 'US_ME' 'RES002' 1`] = `
 {
-  "admissionDate": "2018-02-17",
+  "admissionDate": 2018-02-17T00:00:00.000Z,
   "custodyLevel": "MINIMUM",
   "displayId": "dRES002",
   "facilityId": "FACILITY NAME",
@@ -39,7 +39,7 @@ exports[`schema for 'US_ME' 'RES002' 1`] = `
   "personType": "RESIDENT",
   "portionServedNeeded": "2/3",
   "pseudonymizedId": "anonres002",
-  "releaseDate": "2024-02-16",
+  "releaseDate": 2024-02-16T00:00:00.000Z,
   "stateCode": "US_ME",
   "unitId": "UNIT B",
   "usMePortionNeededEligibleDate": 2022-02-16T00:00:00.000Z,
@@ -48,7 +48,7 @@ exports[`schema for 'US_ME' 'RES002' 1`] = `
 
 exports[`schema for 'US_ME' 'RES003' 1`] = `
 {
-  "admissionDate": "2019-06-18",
+  "admissionDate": 2019-06-18T00:00:00.000Z,
   "custodyLevel": "MINIMUM",
   "displayId": "dRES003",
   "facilityId": "FACILITY NAME",
@@ -62,7 +62,7 @@ exports[`schema for 'US_ME' 'RES003' 1`] = `
   "personType": "RESIDENT",
   "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres003",
-  "releaseDate": "2023-12-16",
+  "releaseDate": 2023-12-16T00:00:00.000Z,
   "stateCode": "US_ME",
   "unitId": "UNIT B",
   "usMePortionNeededEligibleDate": 2021-09-16T00:00:00.000Z,
@@ -71,7 +71,7 @@ exports[`schema for 'US_ME' 'RES003' 1`] = `
 
 exports[`schema for 'US_ME' 'RES004' 1`] = `
 {
-  "admissionDate": "2019-05-18",
+  "admissionDate": 2019-05-18T00:00:00.000Z,
   "custodyLevel": "MINIMUM",
   "displayId": "dRES004",
   "facilityId": "FACILITY NAME",
@@ -85,7 +85,7 @@ exports[`schema for 'US_ME' 'RES004' 1`] = `
   "personType": "RESIDENT",
   "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres004",
-  "releaseDate": "2024-01-16",
+  "releaseDate": 2024-01-16T00:00:00.000Z,
   "stateCode": "US_ME",
   "unitId": "UNIT A",
   "usMePortionNeededEligibleDate": 2021-09-16T00:00:00.000Z,
@@ -94,7 +94,7 @@ exports[`schema for 'US_ME' 'RES004' 1`] = `
 
 exports[`schema for 'US_ME' 'RES005' 1`] = `
 {
-  "admissionDate": "2020-05-16",
+  "admissionDate": 2020-05-16T00:00:00.000Z,
   "custodyLevel": "MINIMUM",
   "displayId": "dRES005",
   "facilityId": "FACILITY NAME",
@@ -108,7 +108,7 @@ exports[`schema for 'US_ME' 'RES005' 1`] = `
   "personType": "RESIDENT",
   "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres005",
-  "releaseDate": "2024-05-16",
+  "releaseDate": 2024-05-16T00:00:00.000Z,
   "stateCode": "US_ME",
   "unitId": "UNIT B",
   "usMePortionNeededEligibleDate": 2022-05-16T00:00:00.000Z,
@@ -117,7 +117,7 @@ exports[`schema for 'US_ME' 'RES005' 1`] = `
 
 exports[`schema for 'US_ME' 'RES006' 1`] = `
 {
-  "admissionDate": "2015-02-16",
+  "admissionDate": 2015-02-16T00:00:00.000Z,
   "custodyLevel": "MINIMUM",
   "displayId": "dRES006",
   "facilityId": "FACILITY NAME",
@@ -131,7 +131,7 @@ exports[`schema for 'US_ME' 'RES006' 1`] = `
   "personType": "RESIDENT",
   "portionServedNeeded": "2/3",
   "pseudonymizedId": "anonres006",
-  "releaseDate": "2024-02-16",
+  "releaseDate": 2024-02-16T00:00:00.000Z,
   "stateCode": "US_ME",
   "unitId": "UNIT B",
   "usMePortionNeededEligibleDate": 2021-02-16T00:00:00.000Z,
@@ -140,7 +140,7 @@ exports[`schema for 'US_ME' 'RES006' 1`] = `
 
 exports[`schema for 'US_ME' 'RES007' 1`] = `
 {
-  "admissionDate": "2019-06-16",
+  "admissionDate": 2019-06-16T00:00:00.000Z,
   "custodyLevel": "MINIMUM",
   "displayId": "dRES007",
   "facilityId": "FACILITY NAME",
@@ -154,7 +154,7 @@ exports[`schema for 'US_ME' 'RES007' 1`] = `
   "personType": "RESIDENT",
   "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres007",
-  "releaseDate": "2023-12-16",
+  "releaseDate": 2023-12-16T00:00:00.000Z,
   "stateCode": "US_ME",
   "unitId": "UNIT B",
   "usMePortionNeededEligibleDate": 2021-09-16T00:00:00.000Z,
@@ -163,7 +163,7 @@ exports[`schema for 'US_ME' 'RES007' 1`] = `
 
 exports[`schema for 'US_ME' 'RES008' 1`] = `
 {
-  "admissionDate": "2015-08-16",
+  "admissionDate": 2015-08-16T00:00:00.000Z,
   "custodyLevel": "MINIMUM",
   "displayId": "dRES008",
   "facilityId": "FACILITY NAME",
@@ -177,7 +177,7 @@ exports[`schema for 'US_ME' 'RES008' 1`] = `
   "personType": "RESIDENT",
   "portionServedNeeded": "2/3",
   "pseudonymizedId": "anonres008",
-  "releaseDate": "2024-08-16",
+  "releaseDate": 2024-08-16T00:00:00.000Z,
   "stateCode": "US_ME",
   "unitId": "UNIT A",
   "usMePortionNeededEligibleDate": 2021-08-16T00:00:00.000Z,
@@ -186,7 +186,7 @@ exports[`schema for 'US_ME' 'RES008' 1`] = `
 
 exports[`schema for 'US_ME' 'RES998' 1`] = `
 {
-  "admissionDate": "2020-05-16",
+  "admissionDate": 2020-05-16T00:00:00.000Z,
   "custodyLevel": "MEDIUM",
   "displayId": "dRES998",
   "facilityId": "FACILITY NAME",
@@ -206,7 +206,7 @@ exports[`schema for 'US_ME' 'RES998' 1`] = `
 
 exports[`schema for 'US_ME' 'RES999' 1`] = `
 {
-  "admissionDate": "2020-05-16",
+  "admissionDate": 2020-05-16T00:00:00.000Z,
   "custodyLevel": "MEDIUM",
   "displayId": "dRES999",
   "facilityId": "FACILITY NAME",
@@ -220,7 +220,7 @@ exports[`schema for 'US_ME' 'RES999' 1`] = `
   "personType": "RESIDENT",
   "portionServedNeeded": "1/2",
   "pseudonymizedId": "anonres999",
-  "releaseDate": "2024-05-16",
+  "releaseDate": 2024-05-16T00:00:00.000Z,
   "stateCode": "US_ME",
   "unitId": "UNIT B",
   "usMePortionNeededEligibleDate": 2022-05-16T00:00:00.000Z,

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,33 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { expectTypeOf, test } from "vitest";
+
 import {
+  RawResidentRecord,
+  ResidentRecord,
   UnparsedResidentRecord,
-  WorkflowsJusticeInvolvedPersonRecord,
-} from "~datatypes";
+} from "./schema";
 
-import { ResidentMetadata } from ".";
-
-export type PersonUpdateType = "preferredName" | "preferredContactMethod";
-export const contactMethods = ["Call", "Text", "Email", "None"];
-export type ContactMethodType = (typeof contactMethods)[number];
-export type PortionServedDates = {
-  heading: string;
-  date: Date | undefined;
-}[];
-
-/**
- * Person-level data generated within this application
- */
-export type PersonUpdateRecord = {
-  preferredName?: string;
-  preferredContactMethod?: ContactMethodType;
-};
-
-/**
- * Data from the Recidiviz data platform about an incarcerated person
- */
-export type WorkflowsResidentRecord = WorkflowsJusticeInvolvedPersonRecord &
-  UnparsedResidentRecord & {
-    metadata: ResidentMetadata;
-  };
+test("unparsed type mirrors transformations from parsed type", () => {
+  const unit = {} as UnparsedResidentRecord;
+  expectTypeOf(unit).toEqualTypeOf<
+    RawResidentRecord & Pick<ResidentRecord, "personType">
+  >();
+});

@@ -5,7 +5,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "First Resident (RES001)",
     "value": {
-      "admissionDate": "2013-11-16",
+      "admissionDate": 2013-11-16T00:00:00.000Z,
       "custodyLevel": "MINIMUM",
       "displayId": "dRES001",
       "facilityId": "FACILITY NAME",
@@ -19,7 +19,7 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "2/3",
       "pseudonymizedId": "anonres001",
-      "releaseDate": "2024-11-16",
+      "releaseDate": 2024-11-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT A",
       "usMePortionNeededEligibleDate": 2021-11-16T00:00:00.000Z,
@@ -28,7 +28,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "Second Resident (RES002)",
     "value": {
-      "admissionDate": "2018-02-17",
+      "admissionDate": 2018-02-17T00:00:00.000Z,
       "custodyLevel": "MINIMUM",
       "displayId": "dRES002",
       "facilityId": "FACILITY NAME",
@@ -42,7 +42,7 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "2/3",
       "pseudonymizedId": "anonres002",
-      "releaseDate": "2024-02-16",
+      "releaseDate": 2024-02-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT B",
       "usMePortionNeededEligibleDate": 2022-02-16T00:00:00.000Z,
@@ -51,7 +51,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "Third Resident (RES003)",
     "value": {
-      "admissionDate": "2019-06-18",
+      "admissionDate": 2019-06-18T00:00:00.000Z,
       "custodyLevel": "MINIMUM",
       "displayId": "dRES003",
       "facilityId": "FACILITY NAME",
@@ -65,7 +65,7 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "1/2",
       "pseudonymizedId": "anonres003",
-      "releaseDate": "2023-12-16",
+      "releaseDate": 2023-12-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT B",
       "usMePortionNeededEligibleDate": 2021-09-16T00:00:00.000Z,
@@ -74,7 +74,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "Fourth Resident (RES004)",
     "value": {
-      "admissionDate": "2019-05-18",
+      "admissionDate": 2019-05-18T00:00:00.000Z,
       "custodyLevel": "MINIMUM",
       "displayId": "dRES004",
       "facilityId": "FACILITY NAME",
@@ -88,7 +88,7 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "1/2",
       "pseudonymizedId": "anonres004",
-      "releaseDate": "2024-01-16",
+      "releaseDate": 2024-01-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT A",
       "usMePortionNeededEligibleDate": 2021-09-16T00:00:00.000Z,
@@ -97,7 +97,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "Fifth Resident (RES005)",
     "value": {
-      "admissionDate": "2020-05-16",
+      "admissionDate": 2020-05-16T00:00:00.000Z,
       "custodyLevel": "MINIMUM",
       "displayId": "dRES005",
       "facilityId": "FACILITY NAME",
@@ -111,7 +111,7 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "1/2",
       "pseudonymizedId": "anonres005",
-      "releaseDate": "2024-05-16",
+      "releaseDate": 2024-05-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT B",
       "usMePortionNeededEligibleDate": 2022-05-16T00:00:00.000Z,
@@ -120,7 +120,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "Sixth Resident (RES006)",
     "value": {
-      "admissionDate": "2015-02-16",
+      "admissionDate": 2015-02-16T00:00:00.000Z,
       "custodyLevel": "MINIMUM",
       "displayId": "dRES006",
       "facilityId": "FACILITY NAME",
@@ -134,7 +134,7 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "2/3",
       "pseudonymizedId": "anonres006",
-      "releaseDate": "2024-02-16",
+      "releaseDate": 2024-02-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT B",
       "usMePortionNeededEligibleDate": 2021-02-16T00:00:00.000Z,
@@ -143,7 +143,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "Seventh Resident (RES007)",
     "value": {
-      "admissionDate": "2019-06-16",
+      "admissionDate": 2019-06-16T00:00:00.000Z,
       "custodyLevel": "MINIMUM",
       "displayId": "dRES007",
       "facilityId": "FACILITY NAME",
@@ -157,7 +157,7 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "1/2",
       "pseudonymizedId": "anonres007",
-      "releaseDate": "2023-12-16",
+      "releaseDate": 2023-12-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT B",
       "usMePortionNeededEligibleDate": 2021-09-16T00:00:00.000Z,
@@ -166,7 +166,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "Eighth Resident (RES008)",
     "value": {
-      "admissionDate": "2015-08-16",
+      "admissionDate": 2015-08-16T00:00:00.000Z,
       "custodyLevel": "MINIMUM",
       "displayId": "dRES008",
       "facilityId": "FACILITY NAME",
@@ -180,7 +180,7 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "2/3",
       "pseudonymizedId": "anonres008",
-      "releaseDate": "2024-08-16",
+      "releaseDate": 2024-08-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT A",
       "usMePortionNeededEligibleDate": 2021-08-16T00:00:00.000Z,
@@ -189,7 +189,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "NoRelease Resident (RES998)",
     "value": {
-      "admissionDate": "2020-05-16",
+      "admissionDate": 2020-05-16T00:00:00.000Z,
       "custodyLevel": "MEDIUM",
       "displayId": "dRES998",
       "facilityId": "FACILITY NAME",
@@ -209,7 +209,7 @@ exports[`hydration > hydrate 1`] = `
   {
     "label": "Ineligible Resident (RES999)",
     "value": {
-      "admissionDate": "2020-05-16",
+      "admissionDate": 2020-05-16T00:00:00.000Z,
       "custodyLevel": "MEDIUM",
       "displayId": "dRES999",
       "facilityId": "FACILITY NAME",
@@ -223,7 +223,7 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "1/2",
       "pseudonymizedId": "anonres999",
-      "releaseDate": "2024-05-16",
+      "releaseDate": 2024-05-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT B",
       "usMePortionNeededEligibleDate": 2022-05-16T00:00:00.000Z,

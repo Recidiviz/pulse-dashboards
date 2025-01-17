@@ -22,6 +22,7 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
     "src/**/*.d.ts",
+    "src/**/*.test-d.ts",
     "vite.config.mts",
     "src/setupTests.ts",
     "src/setupTestsGlobal.ts"

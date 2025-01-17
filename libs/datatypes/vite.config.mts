@@ -41,5 +41,10 @@ export default defineConfig({
       reportsDirectory: "../../coverage/libs/schemas",
       provider: "v8",
     },
+    typecheck: {
+      enabled: true,
+      tsconfig: "tsconfig.spec.json",
+      ignoreSourceErrors: true,
+    },
   },
 });

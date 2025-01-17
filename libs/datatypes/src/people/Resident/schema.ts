@@ -26,11 +26,11 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
     unitId: z.string().nullish(),
     facilityUnitId: z.string().nullish(),
     custodyLevel: z.string().nullish(),
-    admissionDate: z.string().nullish(),
-    releaseDate: z.string().nullish(),
+    admissionDate: dateStringSchema.nullish(),
+    releaseDate: dateStringSchema.nullish(),
     portionServedNeeded: z.enum(["1/2", "2/3"]).nullish(),
-    sccpEligibilityDate: z.string().nullish(),
-    usTnFacilityAdmissionDate: z.string().nullish(),
+    sccpEligibilityDate: dateStringSchema.nullish(),
+    usTnFacilityAdmissionDate: dateStringSchema.nullish(),
     usMePortionNeededEligibleDate: dateStringSchema.nullish(),
     gender: z.string(),
   })
@@ -45,7 +45,15 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
 export type ResidentRecord = z.output<typeof residentRecordSchema>;
 
 /**
- * Data from the Recidiviz data platform about an incarcerated person
- * in its raw form, as stored in Firestore
+ * A Resident record in its raw form, as stored in Firestore
  */
 export type RawResidentRecord = z.input<typeof residentRecordSchema>;
+
+/**
+ * A Resident record in its raw form, with a discriminating `personType` string literal added.
+ * Should only be used in parts of the codebase where, for legacy reasons, resident records
+ * are not parsed with Zod.
+ */
+export type UnparsedResidentRecord = RawResidentRecord & {
+  personType: "RESIDENT";
+};
