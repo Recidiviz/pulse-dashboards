@@ -25,6 +25,7 @@ import {
   AccordionItemButton,
   AccordionItemHeading,
   AccordionItemPanel,
+  AccordionItemState,
 } from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
@@ -139,12 +140,17 @@ export const AccordionSection = observer(function AccordionSection({
           </AccordionButton>
         </AccordionItemHeading>
         <AccordionBody>
-          <OpportunityModule
-            hideHeader
-            opportunity={opportunity}
-            formLinkButton={formLinkButton && !!opportunity.form}
-            onDenialButtonClick={onDenialButtonClick}
-          />
+          <AccordionItemState>
+            {({ expanded }) => (
+              <OpportunityModule
+                hideHeader
+                isVisible={expanded}
+                opportunity={opportunity}
+                formLinkButton={formLinkButton && !!opportunity.form}
+                onDenialButtonClick={onDenialButtonClick}
+              />
+            )}
+          </AccordionItemState>
         </AccordionBody>
       </AccordionItem>
     </OpportunityWrapper>
@@ -188,7 +194,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
         if (!opportunity) return undefined;
         return (
           <AccordionSection
-            key={opportunity.selectId}
+            key={`${opportunity.accordionKey}-${opportunity.selectId}`}
             opportunity={opportunity}
             formLinkButton={formLinkButton}
             onDenialButtonClick={() => {

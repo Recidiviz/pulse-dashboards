@@ -23,6 +23,7 @@ import {
   intervalToDuration,
   startOfDay,
 } from "date-fns";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
@@ -299,14 +300,12 @@ export function IncarcerationProgress({
   );
 }
 
-export function SentenceProgress({
-  person,
-}: {
+export const SentenceProgress: React.FC<{
   person: JusticeInvolvedPerson;
-}) {
+}> = observer(function SentenceProgress({ person }) {
   if (person instanceof Resident) {
     return <IncarcerationProgress resident={person} />;
   } else if (person instanceof Client) {
     return <SupervisionProgress client={person} />;
   }
-}
+});

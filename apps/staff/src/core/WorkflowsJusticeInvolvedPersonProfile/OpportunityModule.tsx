@@ -88,6 +88,7 @@ type OpportunityModuleProps = {
   formLinkButton?: boolean;
   // form-related features (e.g. download button) are optional, but the corresponding fields
   // do need to be hydrated if you are trying to use any of them
+  isVisible?: boolean;
   opportunity: Opportunity;
   hideHeader?: boolean;
   onDenialButtonClick?: () => void;
@@ -96,6 +97,7 @@ type OpportunityModuleProps = {
 export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
   function OpportunityModule({
     formLinkButton,
+    isVisible,
     opportunity,
     hideHeader = false,
     onDenialButtonClick = () => null,
@@ -111,8 +113,11 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     const { officerPseudoId } = useParams();
 
     useEffect(() => {
-      opportunity.setLastViewed();
-    }, [opportunity]);
+      if (isVisible) {
+        opportunity.setLastViewed();
+        opportunity.trackPreviewed();
+      }
+    }, [opportunity, isVisible]);
 
     const colors = useStatusColors(opportunity);
     const showUpdateStatusButton =
