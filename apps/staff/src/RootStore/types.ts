@@ -64,15 +64,9 @@ export type FeatureVariant =
   | "TEST"
   | "enableSnooze"
   | "supervisionUnrestrictedSearch"
-  | "usMeWorkRelease"
-  | "usMeFurloughRelease"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
-  | "usIdCRC"
-  | "usIdExpandedCRC"
   | "usCaEnableSMS"
-  | "usMeCustodyLevelReview"
-  | "usMeAnnualReclassificationReview"
   | "usMoOverdueRHPilot"
   | "formRevertButton"
   | "insightsLeadershipPageAllDistricts"
@@ -117,12 +111,8 @@ export type ActiveFeatureVariantRecord = Partial<
 >;
 export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
-  usMeWorkRelease: {},
-  usMeFurloughRelease: {},
   usTnExpiration: {},
   usTnExpirationSubmitToTomis: {},
-  usIdCRC: {},
-  usIdExpandedCRC: {},
   usCaEnableSMS: {},
   enableSnooze: {},
   supervisionUnrestrictedSearch: {},
@@ -131,8 +121,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsLeadershipPageAllDistricts: {},
   insightsOnboarding: {},
   hideDenialRevert: {},
-  usMeCustodyLevelReview: {},
-  usMeAnnualReclassificationReview: {},
   workflowsSupervisorSearch: {},
   supervisorHomepage: {},
   supervisorHomepageWorkflows: {},
@@ -154,12 +142,8 @@ export const allFeatureVariants: FeatureVariantMapping = {
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
     ? {
-        usIdCRC: {},
-        usIdExpandedCRC: {},
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
-        usMeFurloughRelease: {},
-        usMeWorkRelease: {},
         supervisionUnrestrictedSearch: {},
         usMoOverdueRHPilot: {},
         enableSnooze: {},

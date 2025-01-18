@@ -985,12 +985,6 @@ describe("feature variants", () => {
         "supervisorHomepageVitals": {},
         "supervisorHomepageWorkflows": {},
         "usCaEnableSMS": {},
-        "usIdCRC": {},
-        "usIdExpandedCRC": {},
-        "usMeAnnualReclassificationReview": {},
-        "usMeCustodyLevelReview": {},
-        "usMeFurloughRelease": {},
-        "usMeWorkRelease": {},
         "usMoOverdueRHPilot": {},
         "usPaSpecialCircumstances": {},
         "usTnExpiration": {},
@@ -1030,12 +1024,6 @@ describe("feature variants", () => {
         "supervisorHomepageVitals": {},
         "supervisorHomepageWorkflows": {},
         "usCaEnableSMS": {},
-        "usIdCRC": {},
-        "usIdExpandedCRC": {},
-        "usMeAnnualReclassificationReview": {},
-        "usMeCustodyLevelReview": {},
-        "usMeFurloughRelease": {},
-        "usMeWorkRelease": {},
         "usMoOverdueRHPilot": {},
         "usPaSpecialCircumstances": {},
         "usTnExpiration": {},
@@ -1073,12 +1061,6 @@ describe("feature variants", () => {
         "supervisorHomepageVitals": {},
         "supervisorHomepageWorkflows": {},
         "usCaEnableSMS": {},
-        "usIdCRC": {},
-        "usIdExpandedCRC": {},
-        "usMeAnnualReclassificationReview": {},
-        "usMeCustodyLevelReview": {},
-        "usMeFurloughRelease": {},
-        "usMeWorkRelease": {},
         "usMoOverdueRHPilot": {},
         "usPaSpecialCircumstances": {},
         "usTnExpiration": {},
@@ -1184,12 +1166,12 @@ describe("feature variants", () => {
     runInAction(() => {
       store.user = getMockUserObject({
         featureVariants: { TEST: { variant: "a" } },
-        demoModeFeatureVariants: { usMeWorkRelease: {} },
+        demoModeFeatureVariants: { enableSnooze: {} },
       });
     });
 
     expect(store.activeFeatureVariants).toEqual({
-      usMeWorkRelease: {},
+      enableSnooze: {},
     });
   });
 
