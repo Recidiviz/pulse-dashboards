@@ -29,7 +29,7 @@ export const usMoResidents: ResidentFixture[] = [
     },
     gender: "MALE",
     pseudonymizedId: "anonres007",
-    facilityId: "FACILITY2",
+    facilityId: "FACILITY1",
     unitId: "UNIT E",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
@@ -63,7 +63,7 @@ export const usMoResidents: ResidentFixture[] = [
     },
     gender: "MALE",
     pseudonymizedId: "anonres009",
-    facilityId: "FACILITY2",
+    facilityId: "FACILITY1",
     unitId: "UNIT G",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
@@ -97,7 +97,7 @@ export const usMoResidents: ResidentFixture[] = [
     },
     gender: "FEMALE",
     pseudonymizedId: "anonres011",
-    facilityId: "FACILITY2",
+    facilityId: "FACILITY1",
     unitId: "UNIT E",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
@@ -131,7 +131,7 @@ export const usMoResidents: ResidentFixture[] = [
     },
     gender: "MALE",
     pseudonymizedId: "anonres013",
-    facilityId: "FACILITY2",
+    facilityId: "FACILITY1",
     unitId: "UNIT G",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
@@ -165,7 +165,7 @@ export const usMoResidents: ResidentFixture[] = [
     },
     gender: "MALE",
     pseudonymizedId: "anonres015",
-    facilityId: "FACILITY2",
+    facilityId: "FACILITY1",
     unitId: "UNIT E",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO
@@ -199,7 +199,7 @@ export const usMoResidents: ResidentFixture[] = [
     },
     gender: "MALE",
     pseudonymizedId: "anonres017",
-    facilityId: "FACILITY2",
+    facilityId: "FACILITY1",
     unitId: "UNIT G",
     custodyLevel: "MINIMUM",
     // Resident record query doesn't currently write start/end dates for MO

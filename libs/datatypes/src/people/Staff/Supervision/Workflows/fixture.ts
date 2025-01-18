@@ -18,6 +18,8 @@
 import { makeRecordFixture } from "../../../../utils/zod/object/makeRecordFixture";
 import { SupervisionStaffRecord, supervisionStaffRecordSchema } from "./schema";
 
+/* These Idaho fixtures are used for Workflows in Demo Mode and Offline Mode,
+   as well as for Demo Mode and tests for various parts of Insights. */
 export const usIdSupervisionStaffFixtures: Array<
   SupervisionStaffRecord["input"]
 > = [
@@ -43,6 +45,7 @@ export const usIdSupervisionStaffFixtures: Array<
   },
 ];
 
+/* These fixtures are used for Workflows Demo Mode and Offline Mode. */
 export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
   // US_CA - CALIFORNIA
   {
@@ -54,16 +57,6 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Douglas",
     supervisorExternalId: "SUPERVISOR1",
     pseudonymizedId: "p001",
-  },
-  {
-    email: "test-officer-1@example.com",
-    district: "DISTRICT 1",
-    id: "OFFICER2",
-    stateCode: "US_CA",
-    givenNames: "Eloise",
-    surname: "Rocha",
-    supervisorExternalId: null,
-    pseudonymizedId: "p002",
   },
   // US_ID - IDAHO
   ...usIdSupervisionStaffFixtures,
@@ -158,29 +151,9 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     district: "DISTRICT 50",
     id: "OFFICER2",
     stateCode: "US_TN",
-    givenNames: "Hollie",
-    surname: "Monroe",
-    supervisorExternalId: "SUPERVISOR1",
-    pseudonymizedId: "p002",
-  },
-  {
-    email: "test-supervisor@example.com",
-    district: "DISTRICT 50",
-    id: "SUPERVISOR1",
-    stateCode: "US_TN",
     givenNames: "Raihan",
     surname: "Phelpa",
-    supervisorExternalId: null,
-    pseudonymizedId: "p001",
-  },
-  {
-    email: null,
-    district: "DISTRICT 50",
-    id: "OFFICER3",
-    stateCode: "US_TN",
-    givenNames: "Luis",
-    surname: "Levy",
-    supervisorExternalId: null,
-    pseudonymizedId: "p003",
+    supervisorExternalId: "SUPERVISOR1",
+    pseudonymizedId: "p002",
   },
 ].map((r) => makeRecordFixture(supervisionStaffRecordSchema, r));

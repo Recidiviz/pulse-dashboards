@@ -21,6 +21,7 @@ import {
   incarcerationStaffRecordSchema,
 } from "./schema";
 
+/* These fixtures are used for Workflows Demo Mode and Offline Mode. */
 export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
   // US_AZ - ARIZONA
   {
@@ -46,15 +47,6 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     givenNames: "Idris",
     surname: "Vang",
     pseudonymizedId: "p003",
-  },
-  // US_ID - IDAHO
-  {
-    email: "test-officer-6@example.com",
-    id: "OFFICER6",
-    stateCode: "US_ID",
-    givenNames: "Ross",
-    surname: "Moyer",
-    pseudonymizedId: "p006",
   },
 
   // US_ME - MAINE

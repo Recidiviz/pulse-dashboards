@@ -17,58 +17,124 @@
 
 import {
   ClientRecord,
-  incarcerationStaffFixtures,
   IncarcerationStaffRecord,
+  incarcerationStaffRecordSchema,
+  makeRecordFixture,
   OpportunityType,
   outputFixtureArray,
-  supervisionStaffFixtures,
   SupervisionStaffRecord,
+  supervisionStaffRecordSchema,
 } from "~datatypes";
 
 import {
   CombinedUserRecord,
-  isUserRecord,
   LocationRecord,
   UserRecord,
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { dateToTimestamp } from "../utils";
 
-const userInfoFixtures = outputFixtureArray(supervisionStaffFixtures).filter(
-  isUserRecord,
-  // asserting because despite the typeguard, TS can't seem to figure this one out
-) as Array<UserRecord>;
+// INCARCERATION
+
+const incarcerationStaffTestFixtures: Array<IncarcerationStaffRecord> = [
+  makeRecordFixture(incarcerationStaffRecordSchema, {
+    email: "test-officer-1@example.com",
+    id: "INCARCERATION_OFFICER1",
+    stateCode: "US_XX",
+    givenNames: "TestIncarcerationOfficer1",
+    surname: "",
+    pseudonymizedId: "p001",
+  }),
+];
+
+export const mockIncarcerationOfficers: Array<
+  IncarcerationStaffRecord["output"]
+> = outputFixtureArray(incarcerationStaffTestFixtures);
+
+export const mockResidents: WorkflowsResidentRecord[] = [
+  {
+    recordId: "999",
+    personType: "RESIDENT",
+    admissionDate: "2023-03-23",
+    allEligibleOpportunities: ["usMeSCCP"],
+    custodyLevel: "MINIMUM",
+    facilityId: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+    officerId: "1",
+    stateCode: "US_ME",
+    gender: "MALE",
+    personName: {
+      givenNames: "Bernie",
+      surname: "Sanders",
+    },
+    pseudonymizedId: "p999",
+    releaseDate: "2023-09-22",
+    unitId: "UNIT E",
+    personExternalId: "999",
+    displayId: "d999",
+    metadata: {},
+  },
+];
+
+export const mockLocations: LocationRecord[] = [
+  {
+    id: "FAC1",
+    stateCode: "US_MO",
+    idType: "facilityId",
+    name: "Facility 1",
+    system: "INCARCERATION",
+  },
+  {
+    id: "FAC2",
+    stateCode: "US_MO",
+    idType: "facilityId",
+    name: "Facility 2",
+    system: "INCARCERATION",
+  },
+];
+
+// SUPERVISION STAFF
+
+const supervisionStaffTestFixtures = [
+  {
+    email: "test-officer-1@example.com",
+    district: "DISTRICT 1",
+    id: "XX_OFFICER1",
+    stateCode: "US_XX",
+    givenNames: "TestOfficer",
+    surname: "AlphabeticallySecond",
+    supervisorExternalId: null,
+    pseudonymizedId: "p001",
+  },
+  {
+    email: "test-officer-1@example.com",
+    district: "DISTRICT 1",
+    id: "XX_OFFICER2",
+    stateCode: "US_XX",
+    givenNames: "TestOfficer",
+    surname: "AlphabeticallyFirst",
+    supervisorExternalId: null,
+    pseudonymizedId: "p002",
+  },
+].map((r) => makeRecordFixture(supervisionStaffRecordSchema, r));
+
+export const mockSupervisionOfficers: Array<SupervisionStaffRecord["output"]> =
+  outputFixtureArray(supervisionStaffTestFixtures);
 
 export const mockOfficer: CombinedUserRecord = {
   info: {
-    ...userInfoFixtures[0],
-    stateCode: "US_XX",
+    ...(mockSupervisionOfficers[0] as UserRecord),
     hasCaseload: true,
   },
 };
 
 export const mockOfficer2: CombinedUserRecord = {
   info: {
-    ...userInfoFixtures[1],
-    stateCode: "US_XX",
+    ...(mockSupervisionOfficers[1] as UserRecord),
     hasCaseload: true,
   },
 };
 
-export const mockSupervisor: CombinedUserRecord = {
-  info: {
-    ...userInfoFixtures[2],
-    stateCode: "US_XX",
-    hasCaseload: false,
-  },
-};
-
-export const mockSupervisor2: CombinedUserRecord = {
-  info: {
-    ...userInfoFixtures.filter((user) => user.id === "SUPERVISOR1")[0],
-    hasCaseload: false,
-  },
-};
+// CLIENTS
 
 export const ineligibleClient: ClientRecord = {
   recordId: "us_xx_100",
@@ -81,7 +147,7 @@ export const ineligibleClient: ClientRecord = {
   displayId: "d100",
   pseudonymizedId: "p100",
   stateCode: "US_XX",
-  officerId: "OFFICER1",
+  officerId: "XX_OFFICER1",
   supervisionType: "TN PAROLEE",
   supervisionLevel: "MEDIUM",
   supervisionLevelStart: new Date("2020-12-20"),
@@ -140,7 +206,7 @@ export const eligibleClient: ClientRecord = {
   displayId: "d101",
   pseudonymizedId: "p101",
   stateCode: "US_XX",
-  officerId: "OFFICER1",
+  officerId: "XX_OFFICER1",
   supervisionType: "TN PROBATIONER",
   supervisionLevel: "MEDIUM",
   supervisionLevelStart: new Date("2019-12-20"),
@@ -180,7 +246,7 @@ export const lsuEligibleClient: ClientRecord = {
   displayId: "d102",
   pseudonymizedId: "p102",
   stateCode: "US_XX",
-  officerId: "OFFICER1",
+  officerId: "XX_OFFICER1",
   supervisionType: "MISDEMEANOR PROBATIONER",
   supervisionLevel: "STANDARD: MINIMUM",
   supervisionLevelStart: new Date("2021-07-05"),
@@ -220,7 +286,7 @@ export const lsuAlmostEligibleClient: ClientRecord = {
   displayId: "d103",
   pseudonymizedId: "p103",
   stateCode: "US_XX",
-  officerId: "OFFICER1",
+  officerId: "XX_OFFICER1",
   supervisionType: "MISDEMEANOR PROBATIONER",
   supervisionLevel: "STANDARD: MINIMUM",
   supervisionLevelStart: new Date("2021-07-05"),
@@ -256,6 +322,28 @@ export const lsuAlmostEligibleClient: ClientRecord = {
   ],
 };
 
+export const mockClients = [
+  ineligibleClient,
+  eligibleClient,
+  lsuEligibleClient,
+];
+
+// SUPERVISORS
+
+export const mockSupervisor: CombinedUserRecord = {
+  info: {
+    email: "test-supervisor@example.com",
+    id: "XX_SUPERVISOR1",
+    stateCode: "US_XX",
+    givenNames: "TestSupervisorWithStaff",
+    surname: "",
+    pseudonymizedId: "s001",
+    recordType: "supervisionStaff",
+  },
+};
+
+// MILESTONES
+
 export const milestonesClient: ClientRecord = {
   ...eligibleClient,
   recordId: "us_xx_104",
@@ -264,64 +352,3 @@ export const milestonesClient: ClientRecord = {
   displayId: "d104",
   pseudonymizedId: "p104",
 };
-
-export const mockClients = [
-  ineligibleClient,
-  eligibleClient,
-  lsuEligibleClient,
-];
-
-export const mockResidents: WorkflowsResidentRecord[] = [
-  {
-    recordId: "999",
-    personType: "RESIDENT",
-    admissionDate: "2023-03-23",
-    allEligibleOpportunities: ["usMeSCCP"],
-    custodyLevel: "MINIMUM",
-    facilityId: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
-    officerId: "1",
-    stateCode: "US_ME",
-    gender: "MALE",
-    personName: {
-      givenNames: "Bernie",
-      surname: "Sanders",
-    },
-    pseudonymizedId: "p999",
-    releaseDate: "2023-09-22",
-    unitId: "UNIT E",
-    personExternalId: "999",
-    displayId: "d999",
-    metadata: {},
-  },
-];
-
-export const mockSupervisionOfficers: Array<SupervisionStaffRecord["output"]> =
-  outputFixtureArray(supervisionStaffFixtures.slice(0, 2));
-
-const mockSelectSupervisionOfficerFixtures: Array<SupervisionStaffRecord> =
-  supervisionStaffFixtures.filter(
-    (staff) => staff.output.stateCode === "US_TN",
-  );
-export const mockSupervisionOfficers2: Array<SupervisionStaffRecord["output"]> =
-  outputFixtureArray(mockSelectSupervisionOfficerFixtures);
-
-export const mockIncarcerationOfficers: Array<
-  IncarcerationStaffRecord["output"]
-> = outputFixtureArray(incarcerationStaffFixtures.slice(0, 2));
-
-export const mockLocations: LocationRecord[] = [
-  {
-    id: "FAC1",
-    stateCode: "US_MO",
-    idType: "facilityId",
-    name: "Facility 1",
-    system: "INCARCERATION",
-  },
-  {
-    id: "FAC2",
-    stateCode: "US_MO",
-    idType: "facilityId",
-    name: "Facility 2",
-    system: "INCARCERATION",
-  },
-];

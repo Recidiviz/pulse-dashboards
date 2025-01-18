@@ -71,14 +71,14 @@ const data: LocationRecord[] = [
     system: "INCARCERATION",
     idType: "facilityId",
     id: "FACILITY1",
-    name: "TEST FACILITY 1",
+    name: "Facility #1",
   },
   {
     stateCode: "US_MI",
     system: "INCARCERATION",
     idType: "facilityId",
     id: "FACILITY2",
-    name: "TEST FACILITY 2",
+    name: "Facility #2",
   },
 
   //
