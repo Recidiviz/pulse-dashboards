@@ -43,13 +43,14 @@ const mockWorkflowsStore = {
 
 function makePersonWithTasks(
   taskTypes: SupervisionTaskCategory[],
-  { overdue = false, dateOffset = 0 } = {},
+  { overdue = false, dateOffset = 0, supervisionLevel = "Low" } = {},
 ): JusticeInvolvedPerson {
   const tasks = taskTypes.map((type) => ({
     type,
     dueDate: addDays(NOW, dateOffset),
   }));
   return {
+    supervisionLevel,
     supervisionTasks: {
       readyOrderedTasks: tasks,
       orderedTasks: tasks,
@@ -211,6 +212,70 @@ describe("CaseloadTasksPresenter", () => {
 
     it("counts all people with tasks when given 'DUE_THIS_MONTH'", () => {
       expect(presenter.countForCategory("DUE_THIS_MONTH")).toEqual(3);
+    });
+  });
+
+  describe("filtering people", () => {
+    beforeEach(() => {
+      const workflowsStore = {
+        ...mockWorkflowsStore,
+        caseloadPersons: [
+          makePersonWithTasks(["employment", "contact"], {
+            supervisionLevel: "Low",
+          }),
+          makePersonWithTasks(["contact"], {
+            supervisionLevel: "Low",
+          }),
+          makePersonWithTasks(["contact"], {
+            supervisionLevel: "Medium",
+          }),
+          makePersonWithTasks(["employment"], {
+            supervisionLevel: "Medium",
+          }),
+        ],
+      } as any as WorkflowsStore;
+
+      presenter = getPresenter({ workflowsStore });
+    });
+
+    it("returns all tasks when no filters set", () => {
+      expect(presenter.countForCategory("employment")).toEqual(2);
+      expect(presenter.countForCategory("contact")).toEqual(3);
+    });
+
+    it("filters tasks by set filters", () => {
+      presenter.setFilter("supervisionLevel", { value: "Low" });
+
+      expect(presenter.countForCategory("employment")).toEqual(1);
+      expect(presenter.countForCategory("contact")).toEqual(2);
+    });
+  });
+
+  describe("storing filter state", () => {
+    beforeEach(() => {
+      presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
+    });
+
+    it("starts with no filters selected", () => {
+      expect(presenter.selectedFilters).toEqual({});
+    });
+
+    it("stores selected filters", () => {
+      presenter.setFilter("supervisionLevel", { value: "Low" });
+      expect(presenter.selectedFilters).toEqual({
+        supervisionLevel: { value: "Low" },
+      });
+
+      presenter.setFilter("supervisionLevel", { value: "High" });
+      expect(presenter.selectedFilters).toEqual({
+        supervisionLevel: { value: "High" },
+      });
+    });
+
+    it("clears filters", () => {
+      presenter.setFilter("supervisionLevel", { value: "Low" });
+      presenter.resetFilters();
+      expect(presenter.selectedFilters).toEqual({});
     });
   });
 });

@@ -88,6 +88,7 @@ export type FeatureVariant =
   | "zeroGrantsFlag"
   | "usOrEarnedDischargeSentence"
   | "oppTabSubcategories"
+  | "taskFilters"
   | "offenseOverrideControls";
 
 export type FeatureVariantValue = {
@@ -137,6 +138,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
   oppTabSubcategories: {},
+  taskFilters: {},
   offenseOverrideControls: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =

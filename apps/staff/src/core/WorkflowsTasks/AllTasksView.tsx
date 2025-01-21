@@ -19,46 +19,41 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Accordion } from "react-accessible-accordion";
 
-import { useRootStore } from "../../components/StoreProvider";
-import WorkflowsLastSynced from "../WorkflowsLastSynced";
+import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { TaskListItem } from "./ListItem";
 import { TaskListGroup } from "./TaskListGroup";
 
-export const AllTasksView = observer(function AllTasksViewComponent() {
-  const {
-    workflowsStore: {
-      workflowsTasksStore: { clientsPartitionedByStatus },
-    },
-  } = useRootStore();
+type AllTasksViewProps = {
+  presenter: CaseloadTasksPresenter;
+};
 
-  const [personsWithOverdueTasks, personsWithUpcomingTasks] =
-    clientsPartitionedByStatus;
-
-  const lastSynced = clientsPartitionedByStatus.flat()[0].lastDataFromState;
+export const AllTasksView = observer(function AllTasksViewComponent({
+  presenter,
+}: AllTasksViewProps) {
+  const { clientsWithOverdueTasks, clientsWithUpcomingTasks } = presenter;
 
   return (
     <Accordion allowMultipleExpanded allowZeroExpanded preExpanded={["0", "1"]}>
-      {personsWithOverdueTasks.length ? (
+      {clientsWithOverdueTasks.length ? (
         <TaskListGroup
           title={"Overdue"}
           uuid={"0"}
-          items={personsWithOverdueTasks}
+          items={clientsWithOverdueTasks}
           renderer={(person) => (
             <TaskListItem person={person} key={person.recordId} />
           )}
         />
       ) : null}
-      {personsWithUpcomingTasks.length ? (
+      {clientsWithUpcomingTasks.length ? (
         <TaskListGroup
           title={"Due this month"}
           uuid={"1"}
-          items={personsWithUpcomingTasks}
+          items={clientsWithUpcomingTasks}
           renderer={(person) => (
             <TaskListItem person={person} key={person.recordId} />
           )}
         />
       ) : null}
-      <WorkflowsLastSynced date={lastSynced} />
     </Accordion>
   );
 });

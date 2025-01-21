@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { every } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
+import { PartialRecord } from "../../utils/typeUtils";
+import { Client } from "../Client";
 import { taskDueDateComparator } from "../Task/TasksBase";
 import { SupervisionTask } from "../Task/types";
 import { JusticeInvolvedPerson } from "../types";
@@ -40,14 +43,31 @@ function sortPeopleByNextTaskDueDate(
   );
 }
 
+// TODO: move these onto state-level configs
+const TASK_FILTER_CONFIG = {
+  supervisionLevel: [
+    { value: "Low" },
+    { value: "Moderate" },
+    { value: "High" },
+  ],
+} satisfies FilterConfig;
+
+export type TaskFilterOption = { value: string; label?: string };
+export type TaskFilterField = keyof Client;
+type SelectedFilters = PartialRecord<TaskFilterField, TaskFilterOption>;
+type FilterConfig = PartialRecord<TaskFilterField, TaskFilterOption[]>;
+
 export class CaseloadTasksPresenter {
   selectedCategory: SupervisionTaskCategory = "DUE_THIS_MONTH";
+  filterConfig: FilterConfig;
+  _selectedFilters: SelectedFilters = {};
 
   constructor(
     protected workflowsStore: WorkflowsStore,
     protected tenantStore: TenantStore,
     protected analyticsStore: AnalyticsStore,
   ) {
+    this.filterConfig = TASK_FILTER_CONFIG;
     makeAutoObservable(this);
   }
 
@@ -79,9 +99,7 @@ export class CaseloadTasksPresenter {
   orderedTasksForCategory(
     category: SupervisionTaskCategory,
   ): SupervisionTask[] {
-    const { caseloadPersons } = this.workflowsStore;
-
-    return caseloadPersons
+    return this.filteredPeople
       .flatMap((person) => {
         const { supervisionTasks } = person;
 
@@ -111,8 +129,22 @@ export class CaseloadTasksPresenter {
     }
   }
 
+  personmatchesFilters(person: JusticeInvolvedPerson): boolean {
+    return every(
+      Object.entries(this.selectedFilters),
+      // @ts-expect-error
+      ([field, options]) => person[field] === options.value,
+    );
+  }
+
+  get filteredPeople(): JusticeInvolvedPerson[] {
+    return this.workflowsStore.caseloadPersons.filter((p) =>
+      this.personmatchesFilters(p),
+    );
+  }
+
   get clientsWithOverdueTasks(): JusticeInvolvedPerson[] {
-    return this.workflowsStore.caseloadPersons
+    return this.filteredPeople
       .filter(
         (person) => (person.supervisionTasks?.overdueTasks.length ?? 0) > 0,
       )
@@ -120,12 +152,30 @@ export class CaseloadTasksPresenter {
   }
 
   get clientsWithUpcomingTasks(): JusticeInvolvedPerson[] {
-    return this.workflowsStore.caseloadPersons
+    return this.filteredPeople
       .filter(
         (person) =>
           (person.supervisionTasks?.overdueTasks.length ?? 0) === 0 &&
           (person.supervisionTasks?.upcomingTasks.length ?? 0) > 0,
       )
       .sort(sortPeopleByNextTaskDueDate);
+  }
+
+  // Filter controls
+
+  get filters(): FilterConfig {
+    return this.filterConfig;
+  }
+
+  get selectedFilters(): SelectedFilters {
+    return this._selectedFilters;
+  }
+
+  setFilter(field: TaskFilterField, option: TaskFilterOption) {
+    this._selectedFilters[field] = option;
+  }
+
+  resetFilters() {
+    this._selectedFilters = {};
   }
 }

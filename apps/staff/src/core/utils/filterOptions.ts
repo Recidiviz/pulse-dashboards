@@ -34,6 +34,11 @@ import {
 } from "../types/filters";
 import { FILTER_TYPES, METRIC_MODES } from "./constants";
 
+export type FilterOptions = Record<
+  PathwaysTenants | "US_DEMO" | "US_PA" | "US_CA",
+  PopulationFilters
+>;
+
 export const metricModeOptions = [
   { label: "Counts", value: METRIC_MODES.COUNTS },
   { label: "Rates", value: METRIC_MODES.RATES },
@@ -1489,10 +1494,7 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
   ],
 };
 
-const FilterOptions: Record<
-  PathwaysTenants | "US_DEMO" | "US_PA" | "US_CA",
-  PopulationFilters
-> = {
+const filterOptions: FilterOptions = {
   [US_CA]: CaPopulationFilterOptions,
   [US_ID]: IdPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
@@ -1502,4 +1504,4 @@ const FilterOptions: Record<
   [US_DEMO]: DemoPopulationFilterOptions,
 } as const;
 
-export default FilterOptions;
+export default filterOptions;

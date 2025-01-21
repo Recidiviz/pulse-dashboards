@@ -39,6 +39,7 @@ import WorkflowsResults from "../WorkflowsResults";
 import { AllTasksView } from "./AllTasksView";
 import { TASK_SELECTOR_LABELS } from "./fixtures";
 import { NeedListItem } from "./ListItem";
+import { TaskFilterDropdown } from "./TaskFilterDropdown";
 import { TaskPreviewModal } from "./TaskPreviewModal";
 import { TasksCalendarView } from "./TasksCalendarView";
 
@@ -120,7 +121,7 @@ function getViewElement(presenter: CaseloadTasksPresenter) {
     case "employmentNeed":
       return null;
     case "DUE_THIS_MONTH":
-      return <AllTasksView />;
+      return <AllTasksView presenter={presenter} />;
     default:
       return <TasksCalendarView presenter={presenter} />;
   }
@@ -169,6 +170,7 @@ const WorkflowsTasksWithPresenter = observer(
               <TasksHeader>Tasks</TasksHeader>
               <TasksDescription>
                 The clients below might have upcoming requirements this month.
+                <TaskFilterDropdown presenter={presenter} />
               </TasksDescription>
 
               <TaskCategories>
@@ -204,6 +206,7 @@ const WorkflowsTasksWithPresenter = observer(
 
 const WorkflowsTasks = React.memo(function WorkflowsTasks() {
   const { workflowsStore, analyticsStore, tenantStore } = useRootStore();
+
   return (
     <WorkflowsTasksWithPresenter
       presenter={
