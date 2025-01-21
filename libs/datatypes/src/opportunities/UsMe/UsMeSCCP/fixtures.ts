@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,37 @@ import { FixtureMapping } from "../../utils/types";
 import { UsMeSCCPRecord, usMeSCCPSchema } from "./schema";
 
 export const usMeSccpFixtures = {
+  almostEligibleMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
+    stateCode: "US_ME",
+    externalId: "RES001",
+    eligibleCriteria: {
+      usMeCustodyLevelIsMinimumOrCommunity: {
+        custodyLevel: "COMMUNITY",
+      },
+      usMeNoClassAOrBViolationFor90Days: null,
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeServedXPortionOfSentence: {
+        eligibleDate: relativeFixtureDate({ months: -1 }),
+        xPortionServed: "2/3",
+      },
+    },
+    ineligibleCriteria: {
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: relativeFixtureDate({ months: 5 }),
+      },
+    },
+    caseNotes: {
+      Education: [
+        {
+          eventDate: relativeFixtureDate({ months: -4 }),
+          noteTitle: "Graduated",
+          noteBody: "Completed coding course",
+        },
+      ],
+    },
+    isEligible: false,
+    isAlmostEligible: true,
+  }),
   eligibleToApplyBeforeXPortionServed: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES002",
@@ -39,94 +70,6 @@ export const usMeSccpFixtures = {
       },
     },
     ineligibleCriteria: {},
-    caseNotes: {
-      "Employment Training": [
-        {
-          eventDate: relativeFixtureDate({ days: -14 }),
-          noteTitle: "Graduated",
-          noteBody: "Completed course",
-        },
-      ],
-    },
-    isEligible: true,
-    isAlmostEligible: false,
-  }),
-  eligibleToApplyBeforeXMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
-    stateCode: "US_ME",
-    externalId: "RES008",
-    eligibleCriteria: {
-      usMeCustodyLevelIsMinimumOrCommunity: {
-        custodyLevel: "MINIMUM",
-      },
-      usMeNoClassAOrBViolationFor90Days: null,
-      usMeNoDetainersWarrantsOrOther: null,
-      usMeServedXPortionOfSentence: {
-        eligibleDate: relativeFixtureDate({ months: -4 }),
-        xPortionServed: "2/3",
-      },
-      usMeXMonthsRemainingOnSentence: {
-        eligibleDate: relativeFixtureDate({ months: 2 }),
-      },
-    },
-    ineligibleCriteria: {},
-    caseNotes: {
-      "Employment Training": [
-        {
-          eventDate: relativeFixtureDate({ days: -14 }),
-          noteTitle: "Graduated",
-          noteBody: "Completed course",
-        },
-      ],
-    },
-    isEligible: true,
-    isAlmostEligible: false,
-  }),
-  fullyEligibleTwoThirdsPortion: makeRecordFixture(usMeSCCPSchema, {
-    stateCode: "US_ME",
-    externalId: "RES006",
-    ineligibleCriteria: {},
-    eligibleCriteria: {
-      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
-      usMeServedXPortionOfSentence: {
-        eligibleDate: relativeFixtureDate({ months: -10 }),
-        xPortionServed: "2/3",
-      },
-      usMeXMonthsRemainingOnSentence: {
-        eligibleDate: relativeFixtureDate({ months: -4 }),
-      },
-      usMeNoDetainersWarrantsOrOther: null,
-      usMeNoClassAOrBViolationFor90Days: null,
-    },
-    caseNotes: {
-      "Employment Training": [
-        {
-          eventDate: relativeFixtureDate({ days: -14 }),
-          noteTitle: "Graduated",
-          noteBody: "Completed course",
-        },
-      ],
-    },
-    isEligible: true,
-    isAlmostEligible: false,
-  }),
-  fullyEligibleHalfPortion: makeRecordFixture(usMeSCCPSchema, {
-    stateCode: "US_ME",
-    externalId: "RES004",
-    ineligibleCriteria: {},
-    eligibleCriteria: {
-      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
-      usMeServedXPortionOfSentence: {
-        eligibleDate: relativeFixtureDate({
-          months: -3,
-        }),
-        xPortionServed: "1/2",
-      },
-      usMeXMonthsRemainingOnSentence: {
-        eligibleDate: relativeFixtureDate({ months: -6 }),
-      },
-      usMeNoDetainersWarrantsOrOther: null,
-      usMeNoClassAOrBViolationFor90Days: null,
-    },
     caseNotes: {
       "Employment Training": [
         {
@@ -174,6 +117,93 @@ export const usMeSccpFixtures = {
     isEligible: false,
     isAlmostEligible: true,
   }),
+  fullyEligibleHalfPortion: makeRecordFixture(usMeSCCPSchema, {
+    stateCode: "US_ME",
+    externalId: "RES004",
+    ineligibleCriteria: {},
+    eligibleCriteria: {
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
+      usMeServedXPortionOfSentence: {
+        eligibleDate: relativeFixtureDate({
+          months: -3,
+        }),
+        xPortionServed: "1/2",
+      },
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: relativeFixtureDate({ months: -6 }),
+      },
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeNoClassAOrBViolationFor90Days: null,
+    },
+    caseNotes: {
+      "Employment Training": [
+        {
+          eventDate: relativeFixtureDate({ days: -14 }),
+          noteTitle: "Graduated",
+          noteBody: "Completed course",
+        },
+      ],
+    },
+    isEligible: true,
+    isAlmostEligible: false,
+  }),
+  almostEligibleXPortion: makeRecordFixture(usMeSCCPSchema, {
+    stateCode: "US_ME",
+    externalId: "RES005",
+    ineligibleCriteria: {
+      usMeServedXPortionOfSentence: {
+        eligibleDate: relativeFixtureDate({ months: 5 }),
+        xPortionServed: "1/2",
+      },
+    },
+    eligibleCriteria: {
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: relativeFixtureDate({ months: -1 }),
+      },
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeNoClassAOrBViolationFor90Days: null,
+    },
+    caseNotes: {
+      "Employment Training": [
+        {
+          eventDate: relativeFixtureDate({ days: -14 }),
+          noteTitle: "Graduated",
+          noteBody: "Completed course",
+        },
+      ],
+    },
+    isEligible: false,
+    isAlmostEligible: true,
+  }),
+  fullyEligibleTwoThirdsPortion: makeRecordFixture(usMeSCCPSchema, {
+    stateCode: "US_ME",
+    externalId: "RES006",
+    ineligibleCriteria: {},
+    eligibleCriteria: {
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
+      usMeServedXPortionOfSentence: {
+        eligibleDate: relativeFixtureDate({ months: -10 }),
+        xPortionServed: "2/3",
+      },
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: relativeFixtureDate({ months: -4 }),
+      },
+      usMeNoDetainersWarrantsOrOther: null,
+      usMeNoClassAOrBViolationFor90Days: null,
+    },
+    caseNotes: {
+      "Employment Training": [
+        {
+          eventDate: relativeFixtureDate({ days: -14 }),
+          noteTitle: "Graduated",
+          noteBody: "Completed course",
+        },
+      ],
+    },
+    isEligible: true,
+    isAlmostEligible: false,
+  }),
   almostEligiblePendingViolation: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES007",
@@ -209,54 +239,59 @@ export const usMeSccpFixtures = {
     isEligible: false,
     isAlmostEligible: true,
   }),
-  almostEligibleMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
+  eligibleToApplyBeforeXMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
-    externalId: "RES001",
+    externalId: "RES008",
     eligibleCriteria: {
       usMeCustodyLevelIsMinimumOrCommunity: {
-        custodyLevel: "COMMUNITY",
+        custodyLevel: "MINIMUM",
       },
       usMeNoClassAOrBViolationFor90Days: null,
       usMeNoDetainersWarrantsOrOther: null,
       usMeServedXPortionOfSentence: {
-        eligibleDate: relativeFixtureDate({ months: -1 }),
+        eligibleDate: relativeFixtureDate({ months: -4 }),
         xPortionServed: "2/3",
       },
-    },
-    ineligibleCriteria: {
       usMeXMonthsRemainingOnSentence: {
-        eligibleDate: relativeFixtureDate({ months: 5 }),
+        eligibleDate: relativeFixtureDate({ months: 2 }),
       },
     },
+    ineligibleCriteria: {},
     caseNotes: {
-      Education: [
+      "Employment Training": [
         {
-          eventDate: relativeFixtureDate({ months: -4 }),
+          eventDate: relativeFixtureDate({ days: -14 }),
           noteTitle: "Graduated",
-          noteBody: "Completed coding course",
+          noteBody: "Completed course",
         },
       ],
     },
-    isEligible: false,
-    isAlmostEligible: true,
+    isEligible: true,
+    isAlmostEligible: false,
   }),
-  almostEligibleXPortion: makeRecordFixture(usMeSCCPSchema, {
+  ineligible: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
-    externalId: "RES005",
+    externalId: "RES999",
     ineligibleCriteria: {
       usMeServedXPortionOfSentence: {
-        eligibleDate: relativeFixtureDate({ months: 5 }),
+        eligibleDate: relativeFixtureDate({ months: 11 }),
         xPortionServed: "1/2",
       },
-    },
-    eligibleCriteria: {
-      usMeXMonthsRemainingOnSentence: {
-        eligibleDate: relativeFixtureDate({ months: -1 }),
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "MEDIUM" },
+      usMeNoClassAOrBViolationFor90Days: {
+        eligibleDate: null,
+        highestClassViol: "B",
+        violType: `Pending since ${relativeFixtureDate({ months: -3, days: -10 })}`,
       },
-      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
-      usMeNoDetainersWarrantsOrOther: null,
-      usMeNoClassAOrBViolationFor90Days: null,
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: relativeFixtureDate({ months: 11 }),
+      },
+      usMeNoDetainersWarrantsOrOther: {
+        detainer: "Interstate Active Detainer",
+        detainerStartDate: relativeFixtureDate({ years: -2 }),
+      },
     },
+    eligibleCriteria: {},
     caseNotes: {
       "Employment Training": [
         {

@@ -22,7 +22,15 @@ import { dateStringSchema } from "../../../utils/zod/date/dateStringSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import type { MergedCriteria } from "../../utils/types";
 
-// these have the same shape whether they are eligible or not
+/**
+ * represents either half-time date or two-thirds-time date
+ */
+export const usMeXPortionServedEnum = z.enum(["1/2", "2/3"]);
+
+// these are generally expected to have the same shape whether they are eligible or not.
+// there are actually some edge cases where any of these may be null for ineligible residents
+// (out-of-state incarceration, life sentence, weird or missing data), but we don't expect
+// this to affect our tools in practice, so for simplicity we do not parse those cases for now
 const possiblyIneligibleCriteria = z
   .object({
     usMeXMonthsRemainingOnSentence: z.object({
@@ -30,30 +38,35 @@ const possiblyIneligibleCriteria = z
     }),
     usMeServedXPortionOfSentence: z.object({
       eligibleDate: dateStringSchema,
-      xPortionServed: z.enum(["1/2", "2/3"]),
+      xPortionServed: usMeXPortionServedEnum,
+    }),
+    usMeCustodyLevelIsMinimumOrCommunity: z.object({
+      custodyLevel: z.string(),
     }),
   })
   .partial()
   .passthrough();
 
 export const usMeSCCPSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: possiblyIneligibleCriteria.extend({
-    // optional because it can also be ineligible, with a different shape
-    usMeNoClassAOrBViolationFor90Days: z.null().optional(),
-    usMeNoDetainersWarrantsOrOther: z.null(),
-    usMeCustodyLevelIsMinimumOrCommunity: z.object({
-      custodyLevel: z.string(),
-    }),
-  }),
-  ineligibleCriteria: possiblyIneligibleCriteria.extend({
-    usMeNoClassAOrBViolationFor90Days: z
-      .object({
+  eligibleCriteria: possiblyIneligibleCriteria
+    .extend({
+      usMeNoClassAOrBViolationFor90Days: z.null(),
+      usMeNoDetainersWarrantsOrOther: z.null(),
+    })
+    .partial(),
+  ineligibleCriteria: possiblyIneligibleCriteria
+    .extend({
+      usMeNoClassAOrBViolationFor90Days: z.object({
         eligibleDate: dateStringSchema.nullable(),
         highestClassViol: z.string(),
         violType: z.string(),
-      })
-      .optional(),
-  }),
+      }),
+      usMeNoDetainersWarrantsOrOther: z.object({
+        detainer: z.string(),
+        detainerStartDate: dateStringSchema,
+      }),
+    })
+    .partial(),
 });
 
 export type UsMeSCCPRecord = ParsedRecord<typeof usMeSCCPSchema>;

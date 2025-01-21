@@ -209,8 +209,8 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     unitId: "UNIT B",
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
-    releaseDate: relativeFixtureDate({ years: 2, months: 5 }),
-    usMePortionNeededEligibleDate: relativeFixtureDate({ months: 5 }),
+    releaseDate: relativeFixtureDate({ years: 3, months: 5 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({ months: 11 }),
     portionServedNeeded: "1/2" as const,
   },
 ];

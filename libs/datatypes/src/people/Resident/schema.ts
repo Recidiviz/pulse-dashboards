@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { usMeXPortionServedEnum } from "../../opportunities/UsMe/UsMeSCCP/schema";
 import { dateStringSchema } from "../../utils/zod/date/dateStringSchema";
 import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
 
@@ -28,7 +29,7 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
     custodyLevel: z.string().nullish(),
     admissionDate: dateStringSchema.nullish(),
     releaseDate: dateStringSchema.nullish(),
-    portionServedNeeded: z.enum(["1/2", "2/3"]).nullish(),
+    portionServedNeeded: usMeXPortionServedEnum.nullish(),
     sccpEligibilityDate: dateStringSchema.nullish(),
     usTnFacilityAdmissionDate: dateStringSchema.nullish(),
     usMePortionNeededEligibleDate: dateStringSchema.nullish(),

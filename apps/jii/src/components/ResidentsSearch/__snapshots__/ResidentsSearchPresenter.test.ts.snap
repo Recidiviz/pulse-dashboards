@@ -223,10 +223,10 @@ exports[`hydration > hydrate 1`] = `
       "personType": "RESIDENT",
       "portionServedNeeded": "1/2",
       "pseudonymizedId": "anonres999",
-      "releaseDate": 2024-05-16T00:00:00.000Z,
+      "releaseDate": 2025-05-16T00:00:00.000Z,
       "stateCode": "US_ME",
       "unitId": "UNIT B",
-      "usMePortionNeededEligibleDate": 2022-05-16T00:00:00.000Z,
+      "usMePortionNeededEligibleDate": 2022-11-16T00:00:00.000Z,
     },
   },
 ]
