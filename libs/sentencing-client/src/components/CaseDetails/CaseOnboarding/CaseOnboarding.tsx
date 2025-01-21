@@ -32,7 +32,6 @@ import { CaseOnboardingProps, OnboardingTopic } from "./types";
 const onboardingTopics: Case["currentOnboardingTopic"][] = [
   OnboardingTopic.OffenseLsirScore,
   OnboardingTopic.PrimaryNeeds,
-  OnboardingTopic.ProtectiveFactors,
   OnboardingTopic.AdditionalNeeds,
   OnboardingTopic.Done,
 ];
