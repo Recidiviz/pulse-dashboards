@@ -47,3 +47,23 @@ components:
           record_client_address: false
       metadata:
         component: vendor/cloud-sql-instance
+    gcs-buckets:
+      vars:
+        prefix: recidiviz-dashboard-staging
+        names: 
+          - jii-texting-etl-data
+        log_bucket: recidiviz-dashboard-staging-gcs-object-logs
+        versioning: 
+          jii-texting-etl-data: true
+        location: us 
+        storage_class: STANDARD
+        labels:
+          vanta-owner: joshua
+          vanta-description: terraform-managed-gcs-bucket
+        lifecycle_rules:
+          - action: 
+              type: Delete
+            condition:
+              num_newer_versions: 3
+      metadata:
+        component: vendor/cloud-storage-bucket

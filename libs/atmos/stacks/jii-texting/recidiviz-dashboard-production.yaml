@@ -29,3 +29,23 @@ components:
       metadata:
         # This is the path to the component, relative to components/terraform
         component: dummy-component
+    gcs-buckets:
+      vars:
+        prefix: recidiviz-dashboard-production
+        names: 
+          - jii-texting-etl-data
+        log_bucket: recidiviz-dashboard-production-gcs-object-logs
+        versioning: 
+          jii-texting-etl-data: true
+        location: us 
+        storage_class: STANDARD
+        labels:
+          vanta-owner: joshua
+          vanta-description: terraform-managed-gcs-bucket
+        lifecycle_rules:
+          - action: 
+              type: Delete
+            condition:
+              num_newer_versions: 3
+      metadata:
+        component: vendor/cloud-storage-bucket
