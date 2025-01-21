@@ -282,20 +282,14 @@ export const mockApiOpportunityConfigurationResponse = {
         "resident[|s] may be eligible to be a resident worker at a Community Reentry Center",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
-        {
-          key: "custodyLevelIsMinimum",
-          text: "Currently on Minimum custody",
-          tooltip: null,
-        },
+        { key: "custodyLevelIsMinimum", text: "Currently on Minimum custody" },
         {
           key: "notServingForSexualOffense",
           text: "Not serving for a sexual offense",
-          tooltip: null,
         },
         {
           key: "notServingForViolentOffense",
           text: "Not serving for a violent offense",
-          tooltip: null,
         },
         {
           key: "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years",
@@ -337,7 +331,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "notServingForViolentOffense",
           text: "Serving for a violent offense and eligible for CRC placement with an override",
-          tooltip: null,
         },
       ],
       initialHeader: null,
@@ -433,20 +426,14 @@ export const mockApiOpportunityConfigurationResponse = {
         "resident[|s] may be eligible for work-release at a Community Reentry Center",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
-        {
-          key: "custodyLevelIsMinimum",
-          text: "Currently on Minimum custody",
-          tooltip: null,
-        },
+        { key: "custodyLevelIsMinimum", text: "Currently on Minimum custody" },
         {
           key: "notServingForSexualOffense",
           text: "Not serving for a sexual offense",
-          tooltip: null,
         },
         {
           key: "notServingForViolentOffense",
           text: "Not serving for a violent offense",
-          tooltip: null,
         },
         {
           key: "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years",
@@ -488,7 +475,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "notServingForViolentOffense",
           text: "Serving for a violent offense and eligible for CRC placement with an override",
-          tooltip: null,
         },
       ],
       initialHeader: null,
@@ -600,17 +586,14 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "notServingForSexualOffense",
           text: "Not serving for a sexual offense",
-          tooltip: null,
         },
         {
           key: "notServingForViolentOffense",
           text: "Not serving for a violent offense",
-          tooltip: null,
         },
         {
           key: "usIdInCrcFacilityOrPwccUnit1",
           text: "Resident in {{{facilityName}}} since {{date crcStartDate}}",
-          tooltip: null,
         },
         {
           key: "usIdInCrcFacilityOrPwccUnit1For60Days",
@@ -646,12 +629,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "notServingForViolentOffense",
           text: "Serving for a violent offense and eligible for CRC placement with an override",
-          tooltip: null,
         },
         {
           key: "usIdInCrcFacilityOrPwccUnit1For60Days",
           text: "In a CRC facility but has not been there for 60 days",
-          tooltip: null,
         },
       ],
       initialHeader: null,

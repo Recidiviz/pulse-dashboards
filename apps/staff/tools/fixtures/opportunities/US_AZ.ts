@@ -42,7 +42,7 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: true,
       highlightedCaseCtaCopy: "overdue DTP cases",
-      homepagePosition: 2,
+      homepagePosition: 4,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: true,
@@ -178,7 +178,7 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 4,
+      homepagePosition: 2,
       ineligibleCriteriaCopy: [
         {
           key: "usAzIncarcerationPastAcisDtpDate",
