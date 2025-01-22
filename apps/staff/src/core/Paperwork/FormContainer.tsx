@@ -25,6 +25,7 @@ import {
 import * as Sentry from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
+import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
@@ -126,7 +127,10 @@ export const FormContainer = observer(function FormContainer({
     try {
       if (!isMissingContent) {
         await onClickDownload();
-        form.recordSuccessfulDownload();
+        const message = await form.recordSuccessfulDownload();
+        if (message) {
+          toast(message, { position: "bottom-left" });
+        }
       }
     } catch (e) {
       Sentry.captureException(e);

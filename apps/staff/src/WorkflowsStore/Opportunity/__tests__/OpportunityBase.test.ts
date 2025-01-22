@@ -152,6 +152,7 @@ function mockCompleted() {
 function mockSubmitted() {
   mockHydration({
     updateData: {
+      ...updatesSub.data,
       submitted: { by: "foo", date: vi.fn() as any },
     },
   });
@@ -562,6 +563,48 @@ describe("setDenialReasons", () => {
   });
 });
 
+describe("markSubmittedAndGenerateToast", () => {
+  beforeEach(() => {
+    vi.spyOn(root.firestoreStore, "updateOpportunitySubmitted");
+  });
+  test("marks submitted when feature variant is set and opportunity supports submitted", async () => {
+    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
+      submittedOpportunityStatus: {},
+    });
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      supportsSubmitted: true,
+    } as OpportunityConfiguration);
+    const message = await opp.markSubmittedAndGenerateToast();
+
+    expect(root.firestoreStore.updateOpportunitySubmitted).toHaveBeenCalled();
+    expect(message).not.toBeUndefined();
+  });
+
+  test("doesn't mark submitted without feature variant", async () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      supportsSubmitted: true,
+    } as OpportunityConfiguration);
+    const message = await opp.markSubmittedAndGenerateToast();
+
+    expect(
+      root.firestoreStore.updateOpportunitySubmitted,
+    ).not.toHaveBeenCalled();
+    expect(message).toBeUndefined();
+  });
+
+  test("doesn't mark submitted when opportunity doesn't support submitted", async () => {
+    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
+      submittedOpportunityStatus: {},
+    });
+    const message = await opp.markSubmittedAndGenerateToast();
+
+    expect(
+      root.firestoreStore.updateOpportunitySubmitted,
+    ).not.toHaveBeenCalled();
+    expect(message).toBeUndefined();
+  });
+});
+
 describe("tracking", () => {
   test("setting no reasons undoes a denial", async () => {
     const reasons: string[] = [];
@@ -642,12 +685,24 @@ describe("tracking", () => {
     vi.spyOn(AnalyticsStore.prototype, "trackOpportunityMarkedSubmitted");
     vi.spyOn(
       root.firestoreStore,
-      "deleteOpportunityDenialAndSnooze",
+      "updateOpportunitySubmitted",
     ).mockImplementation(async () => {
       mockSubmitted();
     });
+    vi.spyOn(
+      root.firestoreStore,
+      "deleteOpportunityDenialAndSnooze",
+    ).mockImplementation(async () => {
+      // delete the denial from the record
+      const { denial, ...rest } = updatesSub.data;
+      mockHydration({ updateData: rest });
+    });
+    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
+      submittedOpportunityStatus: {},
+    });
 
     mockDenied();
+    // @ts-expect-error calling private method to bypass checks in wrapper
     await opp.markSubmitted();
 
     expect(

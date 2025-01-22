@@ -113,6 +113,12 @@ describe("record form download", () => {
       opportunityId: opp.sentryTrackingId,
     });
   });
+
+  test("marks submitted", () => {
+    vi.spyOn(opp, "markSubmittedAndGenerateToast");
+    form.recordSuccessfulDownload();
+    expect(opp.markSubmittedAndGenerateToast).toHaveBeenCalled();
+  });
 });
 
 describe("draft data", () => {

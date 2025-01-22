@@ -135,13 +135,18 @@ export class FormBase<
     this.formIsDownloading = true;
   }
 
-  recordSuccessfulDownload(): void {
+  async recordSuccessfulDownload(): Promise<string | undefined> {
     this.opportunity?.setCompletedIfEligible();
     this.rootStore.analyticsStore.trackReferralFormDownloaded({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
       opportunityId: this.sentryTrackingId,
     });
+    // only automatically mark an opportunity as submitted upon form download if there
+    // are no subcategories of submitted, because the user should manually pick
+    // a subcategory of the submitted status if there exist subcategories
+    if (!this.opportunity.submittedSubcategories)
+      return this.opportunity?.markSubmittedAndGenerateToast();
   }
 
   recordEdit(): void {

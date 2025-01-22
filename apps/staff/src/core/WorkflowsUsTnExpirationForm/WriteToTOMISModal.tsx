@@ -169,9 +169,6 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
       firestoreStore,
       analyticsStore,
       workflowsStore: { currentUserEmail },
-      userStore: {
-        activeFeatureVariants: { submittedOpportunityStatus },
-      },
     },
   } = opportunity;
 
@@ -229,11 +226,9 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
           opportunityId: opportunity.sentryTrackingId,
         });
         // Once OMS writeback has successfully occurred, mark this person as Pending
-        if (submittedOpportunityStatus) {
-          opportunity.markSubmittedAndGenerateToast().then((message) => {
-            if (message) toast(message, { position: "bottom-left" });
-          });
-        }
+        opportunity.markSubmittedAndGenerateToast().then((message) => {
+          if (message) toast(message, { position: "bottom-left" });
+        });
       })
       .catch((e: Error) => {
         firestoreStore.updateUsTnExpirationContactNoteStatus(

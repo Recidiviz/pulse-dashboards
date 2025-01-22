@@ -495,7 +495,7 @@ export class OpportunityBase<
     return buildOpportunityCompareFunction(sortParams);
   }
 
-  async markSubmitted(newSubcategory?: string): Promise<void> {
+  private async markSubmitted(newSubcategory?: string): Promise<void> {
     await this.rootStore.firestoreStore.updateOpportunitySubmitted(
       this.currentUserEmail,
       this,
@@ -523,9 +523,43 @@ export class OpportunityBase<
   async markSubmittedAndGenerateToast(
     newSubcategory?: string,
   ): Promise<string | undefined> {
-    // if this would be a no-op, do nothing
-    if (newSubcategory && newSubcategory === this.subcategory) return;
-    if (!newSubcategory && this.isSubmitted) return;
+    // Do nothing if this user doesn't have access to the submitted status
+    // or this opportunity doesn't support the submitted status
+    if (
+      !this.config.supportsSubmitted ||
+      !this.rootStore.userStore.activeFeatureVariants.submittedOpportunityStatus
+    )
+      return;
+
+    // Return no toast if marking the opportunity as submitted would do nothing,
+    // or throw an error in egregious cases
+    if (newSubcategory) {
+      // trying to submit a submitted opportunity with its current subcategory
+      // (we cannot just check if the opportunity is submitted because it is valid to
+      // change the subcategory of an opportunity within the submitted status)
+      if (newSubcategory === this.subcategory) return;
+
+      // provided a subcategory that isn't valid for the submitted status
+      if (!this.submittedSubcategories) {
+        throw new Error(
+          `Tried to mark as ${newSubcategory}, but there are no subcategories of ${this.submittedTabTitle} for this opportunity type`,
+        );
+      }
+      if (!this.submittedSubcategories.includes(newSubcategory)) {
+        throw new Error(
+          `Tried to mark as ${newSubcategory}, but the only valid subcategories are ${this.submittedSubcategories}`,
+        );
+      }
+    } else {
+      // trying to submit an already submitted opportunity
+      if (this.isSubmitted) return;
+      // not provided a subcategory, but submitted opportunities have subcategories
+      if (this.submittedSubcategories) {
+        throw new Error(
+          `Tried to mark as ${this.submittedTabTitle}, but a subcategory needed to be provided for this opportunity type`,
+        );
+      }
+    }
 
     await this.markSubmitted(newSubcategory);
 
