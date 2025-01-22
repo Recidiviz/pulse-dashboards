@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import { filterExcludedAttributes } from "../../../../src/geoConfigs/utils";
 import { useStore } from "../../StoreProvider/StoreProvider";
 import * as Styled from "../CaseDetails.styles";
+import { PROTECTIVE_FACTORS_KEY } from "../constants";
 import { FormFieldWithNestedFields } from "./types";
 
 function Form({
@@ -27,7 +28,7 @@ function Form({
 }: {
   formFields: FormFieldWithNestedFields[];
 }): JSX.Element {
-  const { caseStore } = useStore();
+  const { caseStore, activeFeatureVariants } = useStore();
   const stateCode = caseStore.stateCode;
   const filteredFormFields = formFields
     .map((field) => {
@@ -38,7 +39,16 @@ function Form({
       }
       return field;
     })
-    .filter(filterExcludedAttributes(stateCode));
+    .filter(filterExcludedAttributes(stateCode))
+    .filter((field) => {
+      if (
+        !activeFeatureVariants["protectiveFactors"] &&
+        field.key === PROTECTIVE_FACTORS_KEY
+      ) {
+        return false;
+      }
+      return true;
+    });
 
   return (
     <Styled.Form>

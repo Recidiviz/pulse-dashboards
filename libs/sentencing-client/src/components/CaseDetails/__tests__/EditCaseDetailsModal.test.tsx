@@ -72,6 +72,9 @@ beforeEach(() => {
   psiStore = createMockPSIStore();
   presenter = new CaseDetailsPresenter(psiStore.caseStore, caseId);
 
+  vi.spyOn(psiStore, "activeFeatureVariants", "get").mockReturnValue({
+    protectiveFactors: {},
+  });
   vi.spyOn(psiStore.staffStore, "loadStaffInfo");
   vi.spyOn(psiStore.apiClient, "getStaffInfo").mockResolvedValue(
     StaffInfoFixture,
@@ -287,9 +290,9 @@ test("shows/hides Other protective factor text field when 'Other' option is sele
   const editCaseDetailsButton = await screen.getByText("Edit Case Details");
   fireEvent.click(editCaseDetailsButton);
 
-  const otherOption = await screen.getAllByText("Other")[1];
+  const otherOption = await screen.getAllByText("Other");
 
-  fireEvent.click(otherOption);
+  fireEvent.click(otherOption[otherOption.length - 1]);
 
   let otherTextField: HTMLElement | null = await screen.getByPlaceholderText(
     "Please specify other protective factor",
@@ -297,7 +300,7 @@ test("shows/hides Other protective factor text field when 'Other' option is sele
 
   expect(otherTextField).toBeInTheDocument();
 
-  fireEvent.click(otherOption); // Deselect Other option
+  fireEvent.click(otherOption[otherOption.length - 1]); // Deselect Other option
 
   otherTextField = await screen.queryByPlaceholderText(
     "Please specify other protective factor",

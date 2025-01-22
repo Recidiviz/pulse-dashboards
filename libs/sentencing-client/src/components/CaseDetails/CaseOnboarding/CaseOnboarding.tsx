@@ -21,6 +21,7 @@ import { useState } from "react";
 import { Case } from "../../../api";
 import { formatPossessiveName } from "../../../utils/utils";
 import { CaseStatus } from "../../Dashboard/types";
+import { useStore } from "../../StoreProvider/StoreProvider";
 import * as Styled from "../CaseDetails.styles";
 import { form } from "../Form/FormStore";
 import OnboardingStepFour from "./OnboardingStepFour";
@@ -28,13 +29,6 @@ import OnboardingStepOne from "./OnboardingStepOne";
 import OnboardingStepThree from "./OnboardingStepThree";
 import OnboardingStepTwo from "./OnboardingStepTwo";
 import { CaseOnboardingProps, OnboardingTopic } from "./types";
-
-const onboardingTopics: Case["currentOnboardingTopic"][] = [
-  OnboardingTopic.OffenseLsirScore,
-  OnboardingTopic.PrimaryNeeds,
-  OnboardingTopic.AdditionalNeeds,
-  OnboardingTopic.Done,
-];
 
 export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
   function CaseOnboarding({
@@ -45,6 +39,18 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
     analytics,
   }) {
     const { trackOnboardingPageViewed } = analytics;
+    const { activeFeatureVariants } = useStore();
+
+    const onboardingTopics: Case["currentOnboardingTopic"][] = [
+      OnboardingTopic.OffenseLsirScore,
+      OnboardingTopic.PrimaryNeeds,
+      ...(activeFeatureVariants["protectiveFactors"]
+        ? [OnboardingTopic.ProtectiveFactors]
+        : []),
+      OnboardingTopic.AdditionalNeeds,
+      OnboardingTopic.Done,
+    ];
+
     const [currentTopicIndex, setCurrentTopicIndex] = useState(
       lastTopic ? onboardingTopics.indexOf(lastTopic) : 0,
     );
