@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useRef, useState } from "react";
+import { debounce } from "lodash";
+import { ChangeEvent, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import generatePDF from "react-to-pdf";
@@ -27,9 +28,10 @@ import CheckIcon from "../../assets/check-icon.svg?react";
 import CheckWhiteIcon from "../../assets/check-white-icon.svg?react";
 import CopyIcon from "../../assets/copy-icon.svg?react";
 import DownloadIcon from "../../assets/download-icon.svg?react";
+import RefreshIcon from "../../assets/refresh-icon.svg?react";
 import * as Styled from "../CaseDetails.styles";
 import { PDF_PAGE_WIDTH } from "../constants";
-import { SelectedRecommendation } from "../types";
+import { MutableCaseAttributes, SelectedRecommendation } from "../types";
 import { Report } from "./report/Report";
 import { generateRecommendationSummary } from "./summaryUtils";
 
@@ -55,7 +57,9 @@ type SummaryReportProps = {
   };
   hideSummaryReport: () => void;
   setCaseStatusCompleted: () => Promise<void>;
+  updateAttributes: (attributes?: MutableCaseAttributes) => Promise<void>;
   isCreatingRecommendation: boolean;
+  savedSummary?: string | null;
 };
 
 export const SummaryReport: React.FC<SummaryReportProps> = ({
@@ -71,32 +75,74 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   opportunityDescriptions,
   gender,
   analytics,
+  updateAttributes,
   hideSummaryReport,
   setCaseStatusCompleted,
   isCreatingRecommendation,
+  savedSummary,
 }) => {
+  const navigate = useNavigate();
   const {
     trackCopySummaryToClipboardClicked,
     trackDownloadReportClicked,
     trackCaseStatusCompleteClicked,
   } = analytics;
   const targetRef = useRef<HTMLDivElement>(null);
-  const defaultRecommendationSummary = generateRecommendationSummary({
-    recommendation: selectedRecommendation,
-    fullName,
-    lastName,
-    needs,
-    opportunityDescriptions,
-    gender,
-    stateCode,
-  });
-  const navigate = useNavigate();
+  const hasPrevSavedRecommendation = Boolean(savedSummary);
+  const defaultRecommendationSummary = hasPrevSavedRecommendation
+    ? savedSummary
+    : generateRecommendationSummary({
+        recommendation: selectedRecommendation,
+        fullName,
+        lastName,
+        needs,
+        opportunityDescriptions,
+        gender,
+        stateCode,
+      });
 
   const [hasDownloadedReport, setHasDownloadedReport] = useState(false);
   const [hasCopiedText, setHasCopiedText] = useState(false);
   const [summaryValue, setSummaryValue] = useState(
     defaultRecommendationSummary ?? "",
   );
+
+  const saveSummary = async (value: string) => {
+    await updateAttributes({ recommendationSummary: value });
+    toast(() => <span>Recommendation summary changes saved</span>, {
+      duration: 3000,
+    });
+  };
+
+  const debouncedSave = useRef(
+    debounce((value) => {
+      saveSummary(value);
+    }, 1000),
+  ).current;
+
+  const handleSummaryChangeAndSave = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setSummaryValue(value);
+    debouncedSave(value);
+  };
+
+  const regenerateSummary = async () => {
+    const regeneratedSummary = generateRecommendationSummary({
+      recommendation: selectedRecommendation,
+      fullName,
+      lastName,
+      needs,
+      opportunityDescriptions,
+      gender,
+      stateCode,
+    });
+    setSummaryValue(regeneratedSummary ?? "");
+    /**
+     * Remove the saved recommendation so next time a user enters this flow,
+     * it falls back to the default behavior of auto-generating a summary.
+     */
+    await updateAttributes({ recommendationSummary: null });
+  };
 
   /** Handles the copying of the generated (and optionally edited) summary to a user's clipboard */
   const handleCopySummaryToClipboard = () => {
@@ -173,23 +219,36 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
           <Styled.SummaryTextAreaWrapper>
             <Styled.TextArea
               value={summaryValue}
-              onChange={(e) => setSummaryValue(e.target.value)}
+              onChange={handleSummaryChangeAndSave}
             />
-          </Styled.SummaryTextAreaWrapper>
-          <Styled.ActionButton
-            kind="bordered"
-            onClick={handleCopySummaryToClipboard}
-          >
-            {hasCopiedText ? (
-              <>
-                <CheckIcon /> Copied to clipboard
-              </>
-            ) : (
-              <>
-                <CopyIcon /> Copy to clipboard
-              </>
+            {hasPrevSavedRecommendation && (
+              <Styled.InputDescription>
+                This is the version of the summary you last edited. To
+                regenerate the summary, click Regenerate.
+              </Styled.InputDescription>
             )}
-          </Styled.ActionButton>
+          </Styled.SummaryTextAreaWrapper>
+          <Styled.ActionButtonRowWrapper>
+            <Styled.ActionButton
+              kind="bordered"
+              onClick={handleCopySummaryToClipboard}
+            >
+              {hasCopiedText ? (
+                <>
+                  <CheckIcon /> Copied to clipboard
+                </>
+              ) : (
+                <>
+                  <CopyIcon /> Copy to clipboard
+                </>
+              )}
+            </Styled.ActionButton>
+            {hasPrevSavedRecommendation && (
+              <Styled.ActionButton kind="bordered" onClick={regenerateSummary}>
+                <RefreshIcon /> Regenerate
+              </Styled.ActionButton>
+            )}
+          </Styled.ActionButtonRowWrapper>
         </Styled.SectionWrapper>
         {/* Step 2: Download Insights Report */}
         <Styled.SectionWrapper>

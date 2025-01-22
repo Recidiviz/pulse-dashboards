@@ -43,7 +43,6 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   const navigate = useNavigate();
   const {
     staffPseudoId,
-    caseId,
     stateCode,
     caseAttributes,
     activeEligibleCommunityOpportunities,
@@ -67,6 +66,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
 
   const firstName = caseAttributes?.client?.firstName;
   const lastName = caseAttributes?.client?.lastName;
+  const savedSummary = caseAttributes?.recommendationSummary;
 
   const [selectedRecommendation, setSelectedRecommendation] = useState(
     caseAttributes.selectedRecommendation,
@@ -95,7 +95,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     attributes?: MutableCaseAttributes,
     options?: { showToast?: boolean },
   ) => {
-    updateAttributes(caseId, attributes);
+    updateAttributes(attributes);
     if (options?.showToast) {
       toast(() => <span>Case details updated</span>, {
         duration: 3000,
@@ -195,11 +195,13 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               selectedRecommendation={selectedRecommendation}
               needs={caseAttributes.needsToBeAddressed}
               gender={caseAttributes.client?.gender}
+              savedSummary={savedSummary}
               handleRecommendationUpdate={handleRecommendationUpdate}
               saveRecommendation={saveRecommendation}
               recommendedOpportunities={recommendedOpportunities}
               lastSavedRecommendation={caseAttributes.selectedRecommendation}
               setCaseStatusCompleted={updateCaseStatusToCompleted}
+              updateAttributes={updateAttributes}
               analytics={{
                 trackCreateOrUpdateRecommendationClicked,
                 trackCopySummaryToClipboardClicked,

@@ -19,6 +19,7 @@ import { Case, CaseInsight, Client } from "../../../api";
 import { CreateOrUpdateRecommendation } from "../../../datastores/types";
 import { StateCode } from "../../../geoConfigs/types";
 import {
+  MutableCaseAttributes,
   OpportunitiesIdentifier,
   RecommendationType,
   SelectedRecommendation,
@@ -37,11 +38,13 @@ export type RecommendationsProps = {
   recommendedOpportunities?: OpportunitiesIdentifier;
   needs?: Case["needsToBeAddressed"];
   insight?: CaseInsight;
+  savedSummary?: string | null;
   handleRecommendationUpdate: (
     recommendation: RecommendationType | string,
   ) => void;
   saveRecommendation: () => void;
   setCaseStatusCompleted: () => Promise<void>;
+  updateAttributes: (attributes?: MutableCaseAttributes) => Promise<void>;
   analytics: {
     trackCreateOrUpdateRecommendationClicked: (
       type: CreateOrUpdateRecommendation,

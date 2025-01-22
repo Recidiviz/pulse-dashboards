@@ -169,28 +169,28 @@ export class CaseDetailsPresenter implements Hydratable {
     return this.hydrator.hydrate();
   }
 
-  async updateAttributes(caseId: string, attributes?: MutableCaseAttributes) {
+  async updateAttributes(attributes?: MutableCaseAttributes) {
     if (!attributes) return;
 
-    await flowResult(this.caseStore.updateCaseDetails(caseId, attributes));
+    await flowResult(this.caseStore.updateCaseDetails(this.caseId, attributes));
     await flowResult(this.caseStore.loadCaseDetails(this.caseId));
     await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
   }
 
   async updateRecommendation(recommendation: SelectedRecommendation) {
-    await this.updateAttributes(this.caseId, {
+    await this.updateAttributes({
       selectedRecommendation: recommendation,
     });
   }
 
   async updateCaseStatusToCompleted() {
-    await this.updateAttributes(this.caseId, { status: "Complete" });
+    await this.updateAttributes({ status: "Complete" });
   }
 
   async updateOnboardingTopicStatus(
     currentTopic: FormAttributes["currentOnboardingTopic"],
   ) {
-    await this.updateAttributes(this.caseId, {
+    await this.updateAttributes({
       currentOnboardingTopic: currentTopic,
     });
   }
@@ -207,7 +207,7 @@ export class CaseDetailsPresenter implements Hydratable {
         )
       : [...this.recommendedOpportunities, toggledOpportunity];
     this.recommendedOpportunities = updatedOpportunitiesList;
-    await this.updateAttributes(this.caseId, {
+    await this.updateAttributes({
       recommendedOpportunities: updatedOpportunitiesList,
     });
   }

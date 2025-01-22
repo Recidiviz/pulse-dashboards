@@ -43,6 +43,8 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   gender,
   externalId,
   analytics,
+  savedSummary,
+  updateAttributes,
   handleRecommendationUpdate,
   saveRecommendation,
   setCaseStatusCompleted,
@@ -100,9 +102,11 @@ const Recommendations: React.FC<RecommendationsProps> = ({
           )}
           needs={needs}
           gender={gender}
+          savedSummary={savedSummary}
           hideSummaryReport={hideSummaryReport}
           setCaseStatusCompleted={setCaseStatusCompleted}
           isCreatingRecommendation={isCreatingRecommendation}
+          updateAttributes={updateAttributes}
           analytics={{
             trackCopySummaryToClipboardClicked,
             trackDownloadReportClicked,

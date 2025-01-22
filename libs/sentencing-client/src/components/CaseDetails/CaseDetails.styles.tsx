@@ -1209,6 +1209,11 @@ export const NestedWrapper = styled.div`
   margin-left: 40px;
 `;
 
+export const ActionButtonRowWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
 export const ActionButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
