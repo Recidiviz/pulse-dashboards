@@ -219,8 +219,10 @@ enum OnboardingTopic {
 enum ProtectiveFactor {
   NoPriorCriminalConvictions
   NoHistoryOfViolentBehavior
-  NoSubstanceUseOrAbuseIssues
+  NoSubstanceAbuseIssues
   NoDiagnosisOfAMentalIllness
+  HistoryOfSuccessUnderSupervision
+  LengthyPeriodsOfSobrietyAfterCompletingTreatment
   StableHousing
   SteadyEmployment
   FinancialStability

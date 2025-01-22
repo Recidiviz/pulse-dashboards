@@ -135,8 +135,11 @@ export const ProtectiveFactors: Record<
 > = {
   NoPriorCriminalConvictions: "No prior criminal convictions",
   NoHistoryOfViolentBehavior: "No history of violent behavior",
-  NoSubstanceUseOrAbuseIssues: "No substance use or abuse issues",
+  NoSubstanceAbuseIssues: "No substance abuse issues",
   NoDiagnosisOfAMentalIllness: "No diagnosis of a mental illness",
+  HistoryOfSuccessUnderSupervision: "History of success under supervision",
+  LengthyPeriodsOfSobrietyAfterCompletingTreatment:
+    "Lengthy periods of sobriety after completing treatment",
   StableHousing: "Stable housing",
   SteadyEmployment: "Steady employment",
   FinancialStability: "Financial stability",
