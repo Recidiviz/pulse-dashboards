@@ -586,17 +586,21 @@ export default class FirestoreStore {
     personExternalId: string,
     opportunityTypeCollection: string,
     stateCode: string,
+    includeAlmostEligible: boolean,
   ): Promise<DocumentData[]> {
+    const isEligibleConstraint = where("isEligible", "==", true);
+
+    const eligibilityConstraint = includeAlmostEligible
+      ? or(isEligibleConstraint, where("isAlmostEligible", "==", true))
+      : isEligibleConstraint;
+
     const results = await getDocs(
       query(
         this.collection({ raw: opportunityTypeCollection }),
         and(
           where("externalId", "==", personExternalId),
           where("stateCode", "==", stateCode),
-          or(
-            where("isEligible", "==", true),
-            where("isAlmostEligible", "==", true),
-          ),
+          eligibilityConstraint,
         ),
       ),
     );

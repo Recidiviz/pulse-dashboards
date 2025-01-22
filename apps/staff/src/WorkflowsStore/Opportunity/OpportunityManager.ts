@@ -116,17 +116,16 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
     // Get the constructor from the defined mapping of type to constructor
     const constructor = opportunityConstructors[opportunityType];
 
-    // Get the collection name for the given opportunity type's records
-    const opportunityTypeCollection =
+    const { firestoreCollection, supportsAlmostEligible } =
       this.rootStore.workflowsRootStore.opportunityConfigurationStore
-        .opportunities[opportunityType].firestoreCollection;
+        .opportunities[opportunityType];
 
-    // Query for the records from Firestore using the collection name, person, and state
     const records: DocumentData[] =
       await this.rootStore.firestoreStore.getOpportunitiesForJIIAndOpportunityType(
         this.person.externalId,
-        opportunityTypeCollection,
+        firestoreCollection,
         this.rootStore.currentTenantId,
+        supportsAlmostEligible,
       );
 
     const oppList: InstanceType<typeof constructor>[] = [];

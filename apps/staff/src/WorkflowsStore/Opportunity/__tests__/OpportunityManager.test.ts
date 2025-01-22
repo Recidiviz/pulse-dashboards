@@ -311,6 +311,56 @@ describe("instantiateOpportunitiesByType", () => {
     expect(person.opportunityManager.opportunities.LSU?.length).toEqual(1);
     expect(isHydrated(person.opportunityManager)).toBeTrue();
   });
+
+  test("fetch includes almost eligible", async () => {
+    setTestEnabledOppTypes(["pastFTRD"]);
+
+    const clientRecord = {
+      ...ineligibleClientRecord,
+      allEligibleOpportunities: ["pastFTRD"] as OpportunityType[],
+    };
+    person = new Client(clientRecord, rootStore);
+    rootStore.tenantStore.currentTenantId = "US_ID";
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+
+    const spy = vi
+      .spyOn(
+        FirestoreStore.prototype,
+        "getOpportunitiesForJIIAndOpportunityType",
+      )
+      .mockResolvedValueOnce([]);
+
+    await person.opportunityManager.hydrate();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.lastCall?.[3]).toBeTrue();
+  });
+
+  test("fetch excludes almost eligible", async () => {
+    setTestEnabledOppTypes(["usIdSupervisionLevelDowngrade"]);
+
+    const clientRecord = {
+      ...ineligibleClientRecord,
+      allEligibleOpportunities: [
+        "usIdSupervisionLevelDowngrade",
+      ] as OpportunityType[],
+    };
+    person = new Client(clientRecord, rootStore);
+    rootStore.tenantStore.currentTenantId = "US_ID";
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+
+    const spy = vi
+      .spyOn(
+        FirestoreStore.prototype,
+        "getOpportunitiesForJIIAndOpportunityType",
+      )
+      .mockResolvedValueOnce([]);
+
+    await person.opportunityManager.hydrate();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy.mock.lastCall?.[3]).toBeFalse();
+  });
 });
 
 describe("hydrationState", () => {
