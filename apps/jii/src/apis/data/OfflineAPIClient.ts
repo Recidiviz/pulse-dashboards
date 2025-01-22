@@ -120,7 +120,7 @@ export class OfflineAPIClient implements DataAPI {
   async residentEligibility<O extends IncarcerationOpportunityId>(
     residentExternalId: string,
     opportunityId: O,
-  ): Promise<OpportunityRecord<O> | undefined> {
+  ): Promise<OpportunityRecord<O>> {
     // for convenience, while there is only one opportunity configured we skip the ID lookup step
     const fixture = Object.values(usMeSccpFixtures).find((f) =>
       isMatch(outputFixture(f), {
@@ -130,7 +130,9 @@ export class OfflineAPIClient implements DataAPI {
     );
 
     if (!fixture) {
-      return;
+      throw new Error(
+        `Unable to find ${opportunityId} record for ${residentExternalId}`,
+      );
     }
 
     return outputFixture(fixture);

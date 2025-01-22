@@ -152,34 +152,31 @@ describe("populate resident eligibility", () => {
 
   test("succeeds for ineligible resident", async () => {
     expect(
-      store.residentOpportunityRecordsByExternalId.get("not-eligible"),
+      store.residentOpportunityRecordsByExternalId.get("RES999"),
     ).toBeUndefined();
 
     await flowResult(
-      store.populateOpportunityRecordByResidentId("not-eligible", "usMeSCCP"),
+      store.populateOpportunityRecordByResidentId("RES999", "usMeSCCP"),
     );
 
-    expect(
-      store.residentOpportunityRecordsByExternalId.get("not-eligible"),
-    ).toEqual(expect.objectContaining({ usMeSCCP: undefined }));
+    expect(store.residentOpportunityRecordsByExternalId.get("RES999")).toEqual(
+      expect.objectContaining({
+        usMeSCCP: outputFixture(usMeSccpFixtures.ineligible),
+      }),
+    );
   });
 
   test("fails", async () => {
-    const expectedRes = usMeResidents[1];
-
-    vi.spyOn(
-      OfflineAPIClient.prototype,
-      "residentEligibility",
-    ).mockRejectedValue(new Error("api request failed"));
-
     await expect(async () =>
       flowResult(
         store.populateOpportunityRecordByResidentId(
-          expectedRes.personExternalId,
+          "does-not-exist",
           "usMeSCCP",
         ),
       ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: api request failed]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: Unable to find usMeSCCP record for does-not-exist]`,
+    );
   });
 
   test("does not refetch if already populated", async () => {

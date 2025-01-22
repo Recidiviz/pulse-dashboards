@@ -128,7 +128,7 @@ describe("ineligible resident", () => {
       new UsMeSCCPEligibilityReport(
         ineligibleResident,
         opportunityConfig,
-        undefined,
+        outputFixture(usMeSccpFixtures.ineligible),
       ),
       ineligibleResident.pseudonymizedId,
     );

@@ -57,11 +57,11 @@ export interface DataAPI {
   residentByPseudoId(residentPseudoId: string): Promise<ResidentRecord>;
   /**
    * Fetches the opportunity eligibility record for the specified resident
-   * and opportunity type for the active StateCode. Will not throw if a record cannot be found;
-   * the lack of a record should indicate that the resident is not currently eligible.
+   * and opportunity type for the active StateCode. Throws if a record is not found.
+   * (i.e., unlike Workflows this API requires a record even for ineligible residents.)
    */
   residentEligibility<O extends IncarcerationOpportunityId>(
     residentExternalId: string,
     opportunity: IncarcerationOpportunityId,
-  ): Promise<OpportunityRecord<O> | undefined>;
+  ): Promise<OpportunityRecord<O>>;
 }

@@ -154,10 +154,16 @@ export class ApiClient implements DataAPI {
 
       const schema = residentOpportunitySchemas[opportunityId];
 
-      return this.firestoreClient.recordForExternalId(
+      const record = await this.firestoreClient.recordForExternalId(
         { raw: collectionName },
         residentExternalId,
         schema,
+      );
+
+      if (record) return record;
+
+      throw new Error(
+        `Missing ${opportunityId} record for ${residentExternalId}`,
       );
     } catch (e) {
       console.log(e);

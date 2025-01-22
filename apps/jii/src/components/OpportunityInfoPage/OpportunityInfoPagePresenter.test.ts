@@ -81,7 +81,11 @@ describe("for ineligible user", () => {
       const presenter = new OpportunityInfoPagePresenter(
         oppConfig,
         pageConfig.urlSlug,
-        new UsMeSCCPEligibilityReport(ineligibleResident, oppConfig, undefined),
+        new UsMeSCCPEligibilityReport(
+          ineligibleResident,
+          oppConfig,
+          outputFixture(usMeSccpFixtures.ineligible),
+        ),
       );
 
       presenter.pageLinks.forEach((link) => {

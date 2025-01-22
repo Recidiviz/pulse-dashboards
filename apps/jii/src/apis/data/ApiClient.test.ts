@@ -145,9 +145,11 @@ describe("after authentication", () => {
         FirestoreAPIClient.prototype.recordForExternalId,
       ).mockResolvedValue(undefined);
 
-      const fetched = await client.residentEligibility("abc123", "usMeSCCP");
-
-      expect(fetched).toBeUndefined();
+      await expect(
+        client.residentEligibility("abc123", "usMeSCCP"),
+      ).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[Error: Missing usMeSCCP record for abc123]`,
+      );
     });
   });
 

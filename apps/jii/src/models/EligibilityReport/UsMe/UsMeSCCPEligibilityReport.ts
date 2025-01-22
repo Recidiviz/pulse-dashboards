@@ -26,7 +26,12 @@ import {
   hydrateTemplate,
 } from "../../../configs/hydrateTemplate";
 import { OpportunityConfig } from "../../../configs/types";
-import { EligibilityReport, RequirementsSectionContent } from "../interface";
+import {
+  EligibilityReport,
+  EligibilityStatus,
+  eligibilityStatusEnum,
+  RequirementsSectionContent,
+} from "../interface";
 
 const APPLICATION_DATE_OFFSET_MONTHS = 3;
 
@@ -34,40 +39,40 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
   constructor(
     private resident: ResidentRecord,
     private config: OpportunityConfig,
-    private eligibilityData: UsMeSCCPRecord["output"] | undefined,
+    private eligibilityData: UsMeSCCPRecord["output"],
   ) {
     makeAutoObservable(this);
   }
 
-  private get eligibilityDate() {
+  private get eligibilityDate(): Date {
     const eligibleDates = (
       [
         "usMeServedXPortionOfSentence",
         "usMeXMonthsRemainingOnSentence",
       ] as const
-    )
-      .map(
-        (criterion) =>
-          this.eligibilityData?.eligibleCriteria[criterion]?.eligibleDate ??
-          this.eligibilityData?.ineligibleCriteria[criterion]?.eligibleDate,
-      )
-      .filter((d): d is Date => d instanceof Date);
+    ).map((criterion) => {
+      const eligibleDate =
+        this.eligibilityData.eligibleCriteria[criterion]?.eligibleDate ??
+        this.eligibilityData.ineligibleCriteria[criterion]?.eligibleDate;
 
-    if (eligibleDates.length === 0) return;
+      // we don't expect to encounter this, but if we do it means data was malformed
+      if (!eligibleDate) {
+        throw new Error(`missing eligible date for ${criterion}`);
+      }
+
+      return eligibleDate;
+    });
 
     return max(eligibleDates);
   }
 
   private get applicationDate() {
-    if (this.eligibilityDate) {
-      return subMonths(this.eligibilityDate, APPLICATION_DATE_OFFSET_MONTHS);
-    }
-    return;
+    return subMonths(this.eligibilityDate, APPLICATION_DATE_OFFSET_MONTHS);
   }
 
   private get ineligibleViolation(): boolean {
     return (
-      this.eligibilityData?.ineligibleCriteria
+      this.eligibilityData.ineligibleCriteria
         .usMeNoClassAOrBViolationFor90Days !== undefined
     );
   }
@@ -97,8 +102,25 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     };
   }
 
-  get hasEligibilityData(): boolean {
-    return this.eligibilityData !== undefined;
+  get status() {
+    let value: EligibilityStatus;
+
+    if (this.eligibilityData.isAlmostEligible) {
+      value = "ALMOST ELIGIBLE";
+    } else if (this.eligibilityData.isEligible) {
+      // users within application period
+      if (isFuture(this.eligibilityDate)) {
+        value = "ALMOST ELIGIBLE";
+      }
+      // full eligibility
+      else {
+        value = "ELIGIBLE";
+      }
+    } else {
+      value = "INELIGIBLE";
+    }
+
+    return { value };
   }
 
   get headline(): string {
@@ -118,30 +140,6 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
   ): boolean {
     if (!reason) return false;
     return isFuture(reason.eligibleDate);
-  }
-
-  /**
-   * For use when eligibility data is not present; should return a single section
-   * of all tracked and untracked requirements without any personalization
-   */
-  private get staticRequirements(): [RequirementsSectionContent] {
-    const trackedRequirements = Object.values(
-      this.config.requirements.summary.trackedCriteria,
-    ).map((r) => ({
-      // ineligible reasons are dropped since we don't know eligibility info
-      criterion: hydrateTemplate(r.criterion, {}),
-    }));
-
-    return [
-      {
-        label: this.config.requirements.summary.staticRequirementsLabel,
-        icon: "ArrowCircled",
-        requirements: [
-          ...trackedRequirements,
-          ...this.config.requirements.summary.untrackedCriteria,
-        ],
-      },
-    ];
   }
 
   /**
@@ -171,8 +169,6 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
   }
 
   get requirements(): EligibilityReport["requirements"] {
-    if (!this.eligibilityData) return this.staticRequirements;
-
     const sections: Array<RequirementsSectionContent> = [];
 
     const { trackedCriteria } = this.config.requirements.summary;
@@ -235,10 +231,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
   get enabledSections() {
     return this.config.sections.filter((sectionConfig) => {
       // drop sections that are hidden for ineligible users, when applicable
-      if (
-        // for now this is a proxy for ineligible status; revisit when we add more data for those users
-        !this.hasEligibilityData
-      ) {
+      if (this.status.value === eligibilityStatusEnum.enum.INELIGIBLE) {
         return !sectionConfig.hideWhenIneligible;
       }
       return true;

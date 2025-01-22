@@ -310,7 +310,7 @@ exports[`schema for ineligible 1`] = `
       "eligibleDate": 2022-11-16T00:00:00.000Z,
     },
   },
-  "isAlmostEligible": true,
+  "isAlmostEligible": false,
   "isEligible": false,
   "stateCode": "US_ME",
 }

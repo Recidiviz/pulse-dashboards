@@ -261,15 +261,5 @@ describe("recordForExternalId", () => {
         await client.recordForExternalId({ raw: "foo" }, "abc123", z.any()),
       ).toEqual(obj);
     });
-
-    test("should reject fully ineligible", async () => {
-      mockDataFn.mockReturnValue({
-        isEligible: false,
-        isAlmostEligible: false,
-      });
-      expect(
-        await client.recordForExternalId({ raw: "foo" }, "abc123", z.any()),
-      ).toBeUndefined();
-    });
   });
 });

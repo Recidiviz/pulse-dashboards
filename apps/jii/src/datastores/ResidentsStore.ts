@@ -220,7 +220,7 @@ export class ResidentsStore {
   populateEligibilityReportFromData<OppId extends IncarcerationOpportunityId>(
     opportunityId: OppId,
     resident: ResidentRecord,
-    opportunity: OpportunityRecord<OppId> | undefined,
+    opportunity: OpportunityRecord<OppId>,
   ) {
     const residentExternalId = resident.personExternalId;
 

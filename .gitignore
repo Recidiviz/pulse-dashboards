@@ -81,3 +81,6 @@ opportunityPageConfig.json
 
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
+
+# may be generated temporarily while running vitest type tests
+tsconfig.vitest-temp.json

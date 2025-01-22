@@ -19,7 +19,7 @@ import { render } from "@testing-library/react";
 import { format } from "prettier";
 import { MemoryRouter } from "react-router-dom";
 
-import { usMeResidents } from "~datatypes";
+import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import {
@@ -44,7 +44,11 @@ test("generates links to headings in page body", async () => {
   const presenter = new OpportunityInfoPagePresenter(
     oppConfig,
     oppConfig.requirements.fullPage.urlSlug,
-    new UsMeSCCPEligibilityReport(ineligibleResident, oppConfig, undefined),
+    new UsMeSCCPEligibilityReport(
+      ineligibleResident,
+      oppConfig,
+      outputFixture(usMeSccpFixtures.ineligible),
+    ),
   );
 
   const { container } = render(

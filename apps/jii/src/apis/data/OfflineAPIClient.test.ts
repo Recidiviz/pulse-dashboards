@@ -72,6 +72,9 @@ test("eligibility record", async () => {
 });
 
 test("missing eligibility record", async () => {
-  const fetched = await api.residentEligibility("does-not-exist", "usMeSCCP");
-  expect(fetched).toBeUndefined();
+  await expect(
+    api.residentEligibility("does-not-exist", "usMeSCCP"),
+  ).rejects.toThrowErrorMatchingInlineSnapshot(
+    `[Error: Unable to find usMeSCCP record for does-not-exist]`,
+  );
 });

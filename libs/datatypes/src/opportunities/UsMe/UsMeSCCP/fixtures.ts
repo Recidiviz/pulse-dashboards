@@ -302,6 +302,6 @@ export const usMeSccpFixtures = {
       ],
     },
     isEligible: false,
-    isAlmostEligible: true,
+    isAlmostEligible: false,
   }),
 } satisfies FixtureMapping<UsMeSCCPRecord>;

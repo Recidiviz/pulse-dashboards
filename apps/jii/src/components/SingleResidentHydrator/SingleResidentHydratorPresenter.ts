@@ -22,6 +22,7 @@ import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import {
   IncarcerationOpportunityId,
+  OpportunityRecord,
   ResidentsConfig,
 } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
@@ -121,14 +122,13 @@ export class SingleResidentHydratorPresenter implements Hydratable {
 
     await Promise.all([residentPopulated, ...opportunitiesPopulated]);
 
-    // if we've gotten this far we can be confident that this exists
+    // if we've gotten this far we can be confident that the necessary data exists
     const resident = this.resident as ResidentRecord;
     this.opportunityTypes.forEach((oppType) => {
-      // no assertion here because it's actually fine/expected for this to be undefined
       const residentEligibility =
         residentsStore.residentOpportunityRecordsByExternalId.get(externalId)?.[
           oppType
-        ];
+        ] as OpportunityRecord<typeof oppType>;
 
       residentsStore.populateEligibilityReportFromData(
         oppType,

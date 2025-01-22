@@ -45,6 +45,14 @@ describe("fully eligible, needs to serve half", () => {
     expect(report.subheading).toMatchInlineSnapshot(`""`);
   });
 
+  test("status", () => {
+    expect(report.status).toMatchInlineSnapshot(`
+      {
+        "value": "ELIGIBLE",
+      }
+    `);
+  });
+
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
@@ -112,6 +120,14 @@ describe("eligible to apply before X portion served", () => {
     expect(report.subheading).toMatchInlineSnapshot(
       `"You could be eligible for release onto SCCP on <strong>February 16, 2022</strong>. You can apply up to 3 months prior to that date — which means that you may be eligible to apply now."`,
     );
+  });
+
+  test("status", () => {
+    expect(report.status).toMatchInlineSnapshot(`
+      {
+        "value": "ALMOST ELIGIBLE",
+      }
+    `);
   });
 
   test("requirements", () => {
@@ -190,6 +206,14 @@ describe("eligible to apply before X months remaining", () => {
     );
   });
 
+  test("status", () => {
+    expect(report.status).toMatchInlineSnapshot(`
+      {
+        "value": "ALMOST ELIGIBLE",
+      }
+    `);
+  });
+
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
@@ -264,6 +288,14 @@ describe("almost eligible, portion served", () => {
     expect(report.subheading).toMatchInlineSnapshot(
       `"You could be eligible for release onto SCCP on <strong>May 16, 2022</strong>. You can apply up to 3 months prior to that date — as soon as February 16, 2022."`,
     );
+  });
+
+  test("status", () => {
+    expect(report.status).toMatchInlineSnapshot(`
+      {
+        "value": "ALMOST ELIGIBLE",
+      }
+    `);
   });
 
   test("requirements", () => {
@@ -342,6 +374,14 @@ describe("almost eligible, recent violation", () => {
     );
   });
 
+  test("status", () => {
+    expect(report.status).toMatchInlineSnapshot(`
+      {
+        "value": "ALMOST ELIGIBLE",
+      }
+    `);
+  });
+
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
@@ -416,6 +456,14 @@ describe("almost eligible, pending violation", () => {
     expect(report.subheading).toMatchInlineSnapshot(
       `"You have remaining requirements. Talk to your case manager to understand if and when you can apply."`,
     );
+  });
+
+  test("status", () => {
+    expect(report.status).toMatchInlineSnapshot(`
+      {
+        "value": "ALMOST ELIGIBLE",
+      }
+    `);
   });
 
   test("requirements", () => {
@@ -494,6 +542,14 @@ describe("almost eligible, months remaining", () => {
     );
   });
 
+  test("status", () => {
+    expect(report.status).toMatchInlineSnapshot(`
+      {
+        "value": "ALMOST ELIGIBLE",
+      }
+    `);
+  });
+
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
@@ -551,44 +607,64 @@ describe("almost eligible, months remaining", () => {
 
 describe("not eligible", () => {
   beforeEach(() => {
-    report = new UsMeSCCPEligibilityReport(usMeResidents[0], config, undefined);
+    report = new UsMeSCCPEligibilityReport(
+      usMeResidents[0],
+      config,
+      outputFixture(usMeSccpFixtures.ineligible),
+    );
   });
 
   test("headline", () => {
     expect(report.headline).toMatchInlineSnapshot(
-      `"Learn about the Supervised Community Confinement Program"`,
+      `"First, you could be eligible to apply for the Supervised Community Confinement Program on August 16, 2022"`,
     );
   });
 
   test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(`""`);
+    expect(report.subheading).toMatchInlineSnapshot(
+      `"You have remaining requirements. Talk to your case manager to understand if and when you can apply."`,
+    );
+  });
+
+  test("status", () => {
+    expect(report.status).toMatchInlineSnapshot(`
+      {
+        "value": "INELIGIBLE",
+      }
+    `);
   });
 
   test("requirements", () => {
     expect(report.requirements).toMatchInlineSnapshot(`
       [
         {
-          "icon": "ArrowCircled",
-          "label": "In order to be eligible for SCCP, you must have met the following requirements:",
+          "icon": "CloseOutlined",
+          "label": "Requirements you **have not** met yet",
           "requirements": [
             {
-              "criterion": "Served 1/2 of your sentence if your sentence is 5 years or fewer; 
-                      served 2/3 of your sentence if your sentence is 5 or more years
-      ",
+              "criterion": "Served 1/2 of your sentence",
+              "ineligibleReason": "You'll meet this requirement on November 16, 2022",
             },
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
+              "ineligibleReason": "You'll meet this requirement on November 16, 2022",
             },
             {
               "criterion": "No Class A or B discipline in past 90 days",
+              "ineligibleReason": "You have a Class B violation: Pending since 2021-09-06",
             },
             {
-              "criterion": "Current custody level is  Minimum or Community
-      ",
+              "criterion": "Current custody level is Medium",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",
             },
+          ],
+        },
+        {
+          "icon": "ArrowCircled",
+          "label": "Ask your case manager if you’ve met these requirements",
+          "requirements": [
             {
               "criterion": "Have a safe and healthy place to live for the entire time you are on SCCP",
             },

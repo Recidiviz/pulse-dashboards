@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
 import { OpportunityConfig, RequirementCopy } from "../../configs/types";
 
 /**
@@ -26,8 +28,18 @@ export type RequirementsSectionContent = {
   requirements: Array<RequirementCopy>;
 };
 
+export const eligibilityStatusEnum = z.enum([
+  "ELIGIBLE",
+  "ALMOST ELIGIBLE",
+  "INELIGIBLE",
+]);
+
+export type EligibilityStatus = z.infer<typeof eligibilityStatusEnum>;
+
 export interface EligibilityReport {
-  hasEligibilityData: boolean;
+  status: {
+    value: EligibilityStatus;
+  };
   headline: string;
   subheading: string;
   requirements: Array<RequirementsSectionContent>;
