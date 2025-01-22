@@ -458,9 +458,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
       !userStore.isRecidivizUser &&
       import.meta.env.VITE_DEPLOY_ENV === "production";
 
-    const isDevOrStagingEnv = ["staging", "dev"].includes(
-      import.meta.env.VITE_DEPLOY_ENV,
-    );
+    const isDevOrStagingOrOfflineEnv =
+      ["staging", "dev"].includes(import.meta.env.VITE_DEPLOY_ENV) ||
+      isOfflineMode();
 
     const quickLinks = (
       <>
@@ -477,7 +477,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <WorkflowsLink enabled={enableWorkflows} homepage={homepage} />
         <WorkflowsSystemLinks enabled={supervisorHomepage} />
         <InsightsLink enabled={enabledInsights} />
-        {(isPsiStaff || isDevOrStagingEnv) && <PSILink enabled={enabledPSI} />}
+        {(isPsiStaff || isDevOrStagingOrOfflineEnv) && (
+          <PSILink enabled={enabledPSI} />
+        )}
         <LogoutLink enabled={!isOfflineMode()} />
       </>
     );
