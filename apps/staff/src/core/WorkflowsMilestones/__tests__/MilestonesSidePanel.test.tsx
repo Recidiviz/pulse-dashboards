@@ -26,7 +26,7 @@ import {
   useRootStore,
 } from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
-import { eligibleClient } from "../../../WorkflowsStore/__fixtures__";
+import { mockIneligibleClient } from "../../../WorkflowsStore/__fixtures__";
 import { Client } from "../../../WorkflowsStore/Client";
 import { MilestonesSidePanel } from "../MilestonesSidePanel";
 
@@ -70,7 +70,16 @@ describe("MilestonesSidePanel", () => {
         ...baseRootStoreMock.workflowsStore,
         availableOfficers: [],
         selectedClient: new Client(
-          eligibleClient,
+          {
+            ...mockIneligibleClient,
+            milestones: [
+              {
+                text: "Birthday this month (February 28)",
+                type: "BIRTHDAY_THIS_MONTH",
+              },
+            ],
+            phoneNumber: "5555555555",
+          },
           baseRootStoreMock as unknown as RootStore,
         ),
       },

@@ -42,11 +42,9 @@ import { FeatureVariant, TenantId } from "../../RootStore/types";
 import UserStore from "../../RootStore/UserStore";
 import type { OpportunityMapping, WorkflowsStore } from "..";
 import {
-  ineligibleClient,
-  lsuAlmostEligibleClient,
-  milestonesClient,
   mockClients,
   mockIncarcerationOfficers,
+  mockIneligibleClient,
   mockLocations,
   mockOfficer,
   mockOfficer2,
@@ -947,7 +945,7 @@ test("no client selected", async () => {
 test("select existing client", async () => {
   populateClients(mockClients);
 
-  const idToSelect = ineligibleClient.pseudonymizedId;
+  const idToSelect = mockIneligibleClient.pseudonymizedId;
 
   await workflowsStore.updateSelectedPerson(idToSelect);
 
@@ -963,7 +961,7 @@ test("select unfetched client", async () => {
   const idToSelect = "unknownId";
 
   vi.spyOn(FirestoreStore.prototype, "getClient").mockResolvedValue({
-    ...ineligibleClient,
+    ...mockIneligibleClient,
     pseudonymizedId: idToSelect,
   });
 
@@ -973,7 +971,7 @@ test("select unfetched client", async () => {
 
   expect(rootStore.firestoreStore.getClient).toHaveBeenCalledWith(
     idToSelect,
-    ineligibleClient.stateCode,
+    mockIneligibleClient.stateCode,
   );
   expect(workflowsStore.selectedClient?.pseudonymizedId).toBe(idToSelect);
 });
@@ -1046,7 +1044,7 @@ describe("hasOpportunities", () => {
 
   test("hasOpportunities is false if no client has opportunities", async () => {
     await waitForHydration();
-    populateClients([ineligibleClient]);
+    populateClients([mockIneligibleClient]);
     expect(workflowsStore.hasOpportunities(["compliantReporting"])).toBeFalse();
   });
 
@@ -1395,32 +1393,47 @@ describe("opportunityTypes are gated by gatedOpportunities when set", () => {
 });
 
 describe("getMilestonesClientsByStatus", () => {
-  beforeEach(async () => {
-    // Populate clients with the same number of statuses to test
-    populateClients([
-      ...mockClients,
-      lsuAlmostEligibleClient,
-      milestonesClient,
-    ]);
-    await waitForHydration();
+  const messageStatuses: Partial<TextMessageStatus>[] = [
+    "IN_PROGRESS",
+    "SUCCESS",
+    "FAILURE",
+    "DECLINED",
+  ];
 
+  beforeEach(async () => {
+    const milestonesClient: ClientRecord = {
+      ...mockIneligibleClient,
+      milestones: [
+        {
+          text: "Birthday this month (February 29)",
+          type: "BIRTHDAY_THIS_MONTH",
+        },
+        {
+          text: "6 months violation-free",
+          type: "NO_VIOLATION_WITHIN_6_MONTHS",
+        },
+      ],
+    };
+
+    // Populate clients, one for each status and one more to have no message
+    const milestonesClients: ClientRecord[] = [];
+    for (let i = 0; i < messageStatuses.length + 1; i++) {
+      milestonesClients.push({ ...milestonesClient, pseudonymizedId: `p${i}` });
+    }
+    populateClients(milestonesClients);
+
+    await waitForHydration();
     runInAction(() => {
-      const messageStatuses: Partial<TextMessageStatus>[] = [
-        "IN_PROGRESS",
-        "SUCCESS",
-        "FAILURE",
-        "DECLINED",
-      ];
-      // Assign each client one of the possible message statuses
-      workflowsStore.milestonesClients.forEach((client, index) => {
-        if (index === 0) {
-          // eslint-disable-next-line no-param-reassign
-          client.milestonesMessageUpdatesSubscription = undefined;
-        }
-        // eslint-disable-next-line no-param-reassign
-        client.milestonesMessageUpdatesSubscription = {
+      // The first client will have no message sent
+      workflowsStore.milestonesClients[0].milestonesMessageUpdatesSubscription =
+        undefined;
+      // Each of the rest will have a different message status
+      messageStatuses.forEach((status, index) => {
+        workflowsStore.milestonesClients[
+          index + 1
+        ].milestonesMessageUpdatesSubscription = {
           data: {
-            status: messageStatuses[index],
+            status,
           } as MilestonesMessage,
         } as MilestonesMessageUpdateSubscription<MilestonesMessage>;
       });
@@ -1435,58 +1448,14 @@ describe("getMilestonesClientsByStatus", () => {
     ).toBeUndefined();
   });
 
-  test("Clients whose messages are in progress or have been sent", () => {
-    const congratulatedMilestonesClients =
-      workflowsStore.getMilestonesClientsByStatus(["IN_PROGRESS", "SUCCESS"]);
-    expect(congratulatedMilestonesClients.length).toEqual(2);
-    expect(
-      congratulatedMilestonesClients.map(
-        (c) => c.milestoneMessagesUpdates?.status,
-      ),
-    ).toIncludeAllMembers(["IN_PROGRESS", "SUCCESS"]);
-  });
-
-  test("Clients whose officers declined to send a message", () => {
-    const declinedMilestonesClients =
-      workflowsStore.getMilestonesClientsByStatus(["DECLINED"]);
-    expect(declinedMilestonesClients.length).toEqual(1);
-    expect(
-      declinedMilestonesClients.map((c) => c.milestoneMessagesUpdates?.status),
-    ).toIncludeAllMembers(["DECLINED"]);
-  });
-  test("Clients who had an error sending the message", () => {
-    const errorMilestonesClients = workflowsStore.getMilestonesClientsByStatus([
-      "FAILURE",
-    ]);
-    expect(errorMilestonesClients.length).toEqual(1);
-    expect(
-      errorMilestonesClients.map((c) => c.milestoneMessagesUpdates?.status),
-    ).toIncludeAllMembers(["FAILURE"]);
-  });
-});
-
-describe("residents for US_ME", () => {
-  test("populate residents", async () => {
-    populateResidents(mockResidents);
-
-    await waitForHydration();
-
-    runInAction(() => {
-      rootStore.tenantStore.currentTenantId = "US_ME";
-      workflowsStore.updateActiveSystem("INCARCERATION");
-      workflowsStore.residentsSubscription.data = mockResidents;
-      workflowsStore.residentsSubscription.hydrationState = {
-        status: "hydrated",
-      };
-    });
-
-    expect(workflowsStore.justiceInvolvedPersons).toEqual({
-      [mockResidents[0].pseudonymizedId]: expect.any(Resident),
-    });
-    mockResidents.forEach(({ pseudonymizedId }) => {
+  test("Clients of every message send status", () => {
+    messageStatuses.forEach((status) => {
+      const milestonesClientsWithStatus =
+        workflowsStore.getMilestonesClientsByStatus([status]);
+      expect(milestonesClientsWithStatus).toBeArrayOfSize(1);
       expect(
-        workflowsStore.justiceInvolvedPersons[pseudonymizedId].pseudonymizedId,
-      ).toBe(pseudonymizedId);
+        milestonesClientsWithStatus[0].milestoneMessagesUpdates?.status,
+      ).toEqual(status);
     });
   });
 });

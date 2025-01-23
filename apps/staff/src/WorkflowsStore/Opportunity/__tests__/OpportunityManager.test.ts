@@ -17,12 +17,12 @@
 
 import { configure } from "mobx";
 
-import { OpportunityType } from "~datatypes";
+import { ClientRecord, OpportunityType } from "~datatypes";
 import { isHydrated } from "~hydration-utils";
 
 import FirestoreStore from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
-import { lsuEligibleClient } from "../../__fixtures__";
+import { mockIneligibleClient } from "../../__fixtures__";
 import { Client } from "../../Client";
 import { JusticeInvolvedPerson } from "../../types";
 import { ineligibleClientRecord } from "../__fixtures__";
@@ -37,6 +37,10 @@ import {
 
 let rootStore: RootStore;
 let person: JusticeInvolvedPerson;
+const lsuEligibleClient: ClientRecord = {
+  ...mockIneligibleClient,
+  allEligibleOpportunities: ["LSU"],
+};
 
 beforeEach(() => {
   // this lets us spy on observables, e.g. computed getters

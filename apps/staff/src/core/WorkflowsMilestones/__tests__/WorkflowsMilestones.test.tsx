@@ -25,10 +25,7 @@ import {
   useRootStore,
 } from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
-import {
-  eligibleClient,
-  ineligibleClient,
-} from "../../../WorkflowsStore/__fixtures__";
+import { mockIneligibleClient } from "../../../WorkflowsStore/__fixtures__";
 import { Client } from "../../../WorkflowsStore/Client";
 import WorkflowsMilestones from "..";
 
@@ -153,7 +150,18 @@ describe("WorkflowsMilestones", () => {
   });
 
   test("render results with milestones", () => {
-    const clients = [eligibleClient, ineligibleClient].map(
+    // the mock clients don't need a milestones field because
+    // we're overriding getMilestonesClientsByStatus anyway
+    const client1 = {
+      ...mockIneligibleClient,
+      personName: { surname: "Client1" },
+    };
+    const client2 = {
+      ...mockIneligibleClient,
+      personName: { surname: "Client2" },
+    };
+
+    const clients = [client1, client2].map(
       (client) =>
         new Client(client, {
           ...baseRootStoreMock,
@@ -164,7 +172,7 @@ describe("WorkflowsMilestones", () => {
       ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
-        selectedSearchIds: ["OFFICER1"],
+        selectedSearchIds: [client1.officerId],
         caseloadLoaded: () => true,
         caseloadPersons: clients,
         getMilestonesClientsByStatus: mockGetMilestonesClientsByStatus(clients),
@@ -177,8 +185,7 @@ describe("WorkflowsMilestones", () => {
         <WorkflowsMilestones />
       </BrowserRouter>,
     );
-    // Clients with milestones
-    expect(screen.getByText("Tonye Thompson")).toBeInTheDocument();
-    expect(screen.getByText("Linet Hansen")).toBeInTheDocument();
+    expect(screen.getByText("Client1")).toBeInTheDocument();
+    expect(screen.getByText("Client2")).toBeInTheDocument();
   });
 });

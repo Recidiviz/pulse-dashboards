@@ -18,6 +18,7 @@
 import { configure, flowResult } from "mobx";
 
 import {
+  ClientRecord,
   InsightsConfigFixture,
   supervisionOfficerFixture,
   supervisionOfficerOutcomesFixture,
@@ -28,10 +29,7 @@ import { hydrationFailure, unpackAggregatedErrors } from "~hydration-utils";
 import { OpportunityMapping } from "../../../../../staff/src/WorkflowsStore";
 import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";
-import {
-  eligibleClient,
-  lsuEligibleClient,
-} from "../../../WorkflowsStore/__fixtures__";
+import { mockIneligibleClient } from "../../../WorkflowsStore/__fixtures__";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { mockFirestoreStoreClientsForOfficerId } from "../../../WorkflowsStore/subscriptions/__tests__/testUtils";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
@@ -81,10 +79,17 @@ const initPresenter = async (
 ) => {
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
 
-  const testClient1 = lsuEligibleClient;
-  testClient1.allEligibleOpportunities.push("pastFTRD");
-  const testClient2 = eligibleClient;
-  testClient2.allEligibleOpportunities.push("LSU");
+  const lsuClient = {
+    ...mockIneligibleClient,
+    officerId: testOfficer.externalId,
+    allEligibleOpportunities: ["LSU"],
+  } as ClientRecord;
+
+  const ftrdClient = {
+    ...mockIneligibleClient,
+    officerId: testOfficer.externalId,
+    allEligibleOpportunities: ["pastFTRD"],
+  } as ClientRecord;
 
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
 
@@ -102,7 +107,7 @@ const initPresenter = async (
 
   await mockFirestoreStoreClientsForOfficerId(
     rootStore.firestoreStore,
-    [testClient1, testClient2],
+    [lsuClient, ftrdClient],
     true, // return all clients
     undefined,
   );
