@@ -941,6 +941,8 @@ describe("handle_import", () => {
           additionalNotes: "new-opportunity-notes",
           genders: ["Men"],
           genericDescription: "new-opportunity-generic-description",
+          counties: ["county1", "county2"],
+          status: "Active",
         },
       ]);
 
@@ -1016,6 +1018,8 @@ describe("handle_import", () => {
           additionalNotes: "new-opportunity-notes",
           genders: ["Men"],
           genericDescription: "new-opportunity-generic-description",
+          counties: ["county1", "county2"],
+          status: "Active",
         },
       ]);
 
@@ -1062,6 +1066,8 @@ describe("handle_import", () => {
           additionalNotes: "new-opportunity-notes",
           genders: [Gender.MALE],
           genericDescription: "new-opportunity-generic-description",
+          counties: ["county1", "county2"],
+          active: true,
         }),
       );
     });
@@ -1085,6 +1091,8 @@ describe("handle_import", () => {
           NeedsAddressed: [],
           diagnosedMentalHealthDiagnosisCriterion: [],
           lastUpdatedDate: lastUpdatedDate,
+          counties: ["county1", "county2"],
+          status: "Active",
         },
         // New opportunity
         {
@@ -1103,6 +1111,8 @@ describe("handle_import", () => {
           NeedsAddressed: [],
           diagnosedMentalHealthDiagnosisCriterion: [],
           lastUpdatedDate: lastUpdatedDate,
+          counties: ["county1", "county2"],
+          status: "Active",
         },
       ]);
 
@@ -1147,6 +1157,7 @@ describe("handle_import", () => {
             entryOfGuiltyPleaCriterion: false,
             veteranStatusCriterion: false,
             lastUpdatedAt: lastUpdatedDate,
+            counties: ["county1", "county2"],
           },
           {
             opportunityName: "new-opportunity-name",
@@ -1162,6 +1173,7 @@ describe("handle_import", () => {
             entryOfGuiltyPleaCriterion: false,
             veteranStatusCriterion: false,
             lastUpdatedAt: lastUpdatedDate,
+            counties: ["county1", "county2"],
           },
         ],
       });
@@ -1184,6 +1196,8 @@ describe("handle_import", () => {
           NeedsAddressed: [],
           diagnosedMentalHealthDiagnosisCriterion: [],
           lastUpdatedDate: lastUpdatedDate,
+          counties: ["county1", "county2"],
+          status: "Active",
         },
       ]);
 

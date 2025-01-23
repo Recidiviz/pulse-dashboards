@@ -246,6 +246,9 @@ export async function transformAndLoadOpportunityData(
       continue;
     }
 
+    // If the status is explicitly inactive, set it to inactive, otherwise set it true
+    const active = opportunityData.status === "Inactive" ? false : true;
+
     const newOpportunity = {
       ..._.pick(opportunityData, [
         "developmentalDisabilityDiagnosisCriterion",
@@ -265,6 +268,7 @@ export async function transformAndLoadOpportunityData(
         "district",
         "additionalNotes",
         "genericDescription",
+        "counties",
       ]),
       opportunityName: opportunityData.OpportunityName,
       description: opportunityData.Description,
@@ -277,6 +281,7 @@ export async function transformAndLoadOpportunityData(
       needsAddressed: opportunityData.NeedsAddressed,
       genders: opportunityData.genders ?? [],
       lastUpdatedAt: opportunityData.lastUpdatedDate,
+      active,
     };
 
     // Load data

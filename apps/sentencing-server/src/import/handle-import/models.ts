@@ -54,6 +54,7 @@ const asamLevelOfCareRecommendationCriterion = z.nativeEnum(
 const diagnosedSubstanceUseDisorderCriterion = z.nativeEnum(
   DiagnosedSubstanceUseDisorderCriterion,
 );
+const opportunityStatus = z.enum(["Active", "Inactive"]);
 
 export const nameSchema = zu.stringToJSON().pipe(
   z.object({
@@ -160,6 +161,8 @@ export const opportunityImportSchema = z.object({
   additionalNotes: z.string().optional(),
   genders: z.array(opportunityGender).optional(),
   genericDescription: z.string().optional(),
+  counties: z.array(z.string()),
+  status: opportunityStatus.optional(),
 });
 
 export const recidivismSeriesSchema = zu.stringToJSON().pipe(
