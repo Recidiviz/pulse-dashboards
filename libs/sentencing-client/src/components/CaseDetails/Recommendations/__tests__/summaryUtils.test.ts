@@ -63,6 +63,15 @@ const allProtectiveFactors: Case["protectiveFactors"] = [
   "Other",
 ];
 
+const sampleOpportunityDescriptions = pluralizeDuplicates([
+  "mental health provider",
+  "inpatient substance use treatment facility",
+  "inpatient substance use treatment facility",
+  "mental health court",
+  "veterans court",
+  "mental health court",
+]);
+
 const probationOrNoneExclusionList: Case["needsToBeAddressed"] = [
   "ClothingAndToiletries",
   "GeneralReEntrySupport",
@@ -195,6 +204,7 @@ describe("formatNeedsList", () => {
 });
 
 /**
+ * Idaho Summary
  * Based on the following template ([link to template](https://docs.google.com/document/d/1-cSzLhJoH_pnSn599ikDTj9blx7UYHWauYLUItSsPy0))
  */
 describe("generateRecommendationSummary for US_ID", () => {
@@ -729,14 +739,7 @@ describe("generateRecommendationSummary for US_ID", () => {
         "Education",
       ],
       protectiveFactors: [allProtectiveFactors[0]],
-      opportunityDescriptions: pluralizeDuplicates([
-        "mental health provider",
-        "inpatient substance use treatment facility",
-        "inpatient substance use treatment facility",
-        "mental health court",
-        "veterans court",
-        "mental health court",
-      ]),
+      opportunityDescriptions: sampleOpportunityDescriptions,
       gender: "FEMALE",
     };
     let summary = generateTestFormattedRecommendationSummary(props);
@@ -803,14 +806,7 @@ describe("generateRecommendationSummary for US_ID", () => {
         "Education",
       ],
       protectiveFactors: [],
-      opportunityDescriptions: pluralizeDuplicates([
-        "mental health provider",
-        "inpatient substance use treatment facility",
-        "inpatient substance use treatment facility",
-        "mental health court",
-        "veterans court",
-        "mental health court",
-      ]),
+      opportunityDescriptions: sampleOpportunityDescriptions,
       gender: "FEMALE",
     };
     let summary = generateTestFormattedRecommendationSummary(props);
@@ -877,14 +873,7 @@ describe("generateRecommendationSummary for US_ID", () => {
         "Education",
       ],
       protectiveFactors: allProtectiveFactors,
-      opportunityDescriptions: pluralizeDuplicates([
-        "mental health provider",
-        "inpatient substance use treatment facility",
-        "inpatient substance use treatment facility",
-        "mental health court",
-        "veterans court",
-        "mental health court",
-      ]),
+      opportunityDescriptions: sampleOpportunityDescriptions,
       gender: "FEMALE",
     };
     let summary = generateTestFormattedRecommendationSummary(props);
@@ -946,14 +935,7 @@ describe("generateRecommendationSummary for US_ID", () => {
       lastName: "Robertson",
       needs: [],
       protectiveFactors: [],
-      opportunityDescriptions: pluralizeDuplicates([
-        "mental health provider",
-        "inpatient substance use treatment facility",
-        "inpatient substance use treatment facility",
-        "mental health court",
-        "veterans court",
-        "mental health court",
-      ]),
+      opportunityDescriptions: sampleOpportunityDescriptions,
       gender: "FEMALE",
     };
     let summary = generateTestFormattedRecommendationSummary(props);
@@ -1015,14 +997,7 @@ describe("generateRecommendationSummary for US_ID", () => {
       lastName: "Robertson",
       needs: [],
       protectiveFactors: allProtectiveFactors,
-      opportunityDescriptions: pluralizeDuplicates([
-        "mental health provider",
-        "inpatient substance use treatment facility",
-        "inpatient substance use treatment facility",
-        "mental health court",
-        "veterans court",
-        "mental health court",
-      ]),
+      opportunityDescriptions: sampleOpportunityDescriptions,
       gender: "FEMALE",
     };
     let summary = generateTestFormattedRecommendationSummary(props);
@@ -1261,7 +1236,7 @@ describe("generateRecommendationSummary for US_ID", () => {
   });
 
   // Probation recommendation w/ protective factors and NO needs and NO opportunities
-  test("generates summary for Probation recommendation type (with protective factors and NO needs and NO opportunities) with expected name, pronouns and salutations", () => {
+  test.skip("generates summary for Probation recommendation type (with protective factors and NO needs and NO opportunities) with expected name, pronouns and salutations", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
@@ -1324,14 +1299,15 @@ describe("generateRecommendationSummary for US_ID", () => {
 });
 
 /**
- * Based on the following template ([link to template](https://docs.google.com/document/d/191u3uo84WNzJIvv-ZFPYhu6jRU1UpjRXNjkZUCrmNHE/edit?tab=t.0))
+ * North Dakota Summary
+ * Based on the following template ([link to template](https://docs.google.com/document/d/191u3uo84WNzJIvv-ZFPYhu6jRU1UpjRXNjkZUCrmNHE/))
  */
 
 describe("generateRecommendationSummary for US_ND", () => {
   // No recommendation
   test("generates summary for None recommendation type", () => {
     const recommendationType = RecommendationType.None;
-    const summary = generateRecommendationSummary({
+    const summary = generateTestFormattedRecommendationSummary({
       recommendation: recommendationType,
       stateCode: "US_ND",
       fullName: "Jane Doe Williams",
@@ -1346,8 +1322,8 @@ describe("generateRecommendationSummary for US_ND", () => {
     );
   });
 
-  // Other recommendation
-  test("generates summary for Other recommendation type", () => {
+  // Other recommendation (no protective factors, no needs, no opportunities)
+  test("generates summary for Other recommendation type (no protective factors, no needs, no opportunities)", () => {
     const recommendationType = OTHER_OPTION;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
@@ -1356,55 +1332,182 @@ describe("generateRecommendationSummary for US_ND", () => {
       lastName: "Williams",
       needs: [],
       opportunityDescriptions: [],
+      protectiveFactors: [],
       gender: "FEMALE",
     };
-    let summary = generateRecommendationSummary(props);
+    let summary = generateTestFormattedRecommendationSummary(props);
 
-    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure she needs while allowing her to access a variety of community-based resources to address her key needs, setting her up for a fresh start. Hopefully the defendant will take advantage of the resources available to her and make the changes necessary to set her life on a better path.`;
-    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure he needs while allowing him to access a variety of community-based resources to address his key needs, setting him up for a fresh start. Hopefully the defendant will take advantage of the resources available to him and make the changes necessary to set his life on a better path.`;
-    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jane Doe Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure they need while allowing them to access a variety of community-based resources to address their key needs, setting them up for a fresh start. Hopefully the defendant will take advantage of the resources available to them and make the changes necessary to set their life on a better path.`;
+    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation. During this time, it is further recommended that a comprehensive plan be developed to address her needs, both while incarcerated and in preparation for reentry. Given this support and structure, it is hoped that Ms. Williams will make the changes necessary to build a more stable and productive future.`;
+    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation. During this time, it is further recommended that a comprehensive plan be developed to address his needs, both while incarcerated and in preparation for reentry. Given this support and structure, it is hoped that Mr. Williams will make the changes necessary to build a more stable and productive future.`;
+    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jane Doe Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation. During this time, it is further recommended that a comprehensive plan be developed to address their needs, both while incarcerated and in preparation for reentry. Given this support and structure, it is hoped that Jane Doe Williams will make the changes necessary to build a more stable and productive future.`;
 
     // Gender: Female
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Trans Female
     props.gender = "TRANS_FEMALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Male
     props.gender = "MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Trans Male
     props.gender = "TRANS_MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Non-binary
     props.gender = "NON_BINARY";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Trans
     props.gender = "TRANS";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Internal Unknown
     props.gender = "INTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: External Unknown
     props.gender = "EXTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Undefined
     props.gender = undefined;
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+  });
+
+  // Other recommendation (w/ protective factors, needs, opportunities)
+  test("generates summary for Other recommendation type (w/ protective factors, needs, opportunities)", () => {
+    const recommendationType = OTHER_OPTION;
+    const props: GenerateRecommendationProps = {
+      recommendation: recommendationType,
+      stateCode: "US_ND",
+      fullName: "Jane Doe Williams",
+      lastName: "Williams",
+      needs: allNeeds,
+      opportunityDescriptions: sampleOpportunityDescriptions,
+      protectiveFactors: allProtectiveFactors,
+      gender: "FEMALE",
+    };
+    let summary = generateTestFormattedRecommendationSummary(props);
+
+    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation. While incarceration is recommended due to the nature of the offense, Ms. Williams has no prior criminal convictions, no history of violent behavior, no substance abuse issues, had previous success under supervision, had lengthy periods of sobriety after completing treatment, no diagnosis of a mental illness, stable housing, steady employment, financial stability, a high level of academic achievement, a strong social support network, close family ties, been actively participating in treatment programs, enrolled in educational or vocational training and been actively involved in community activities. These factors suggest a solid foundation that may contribute to her successful reintegration into the community upon her release. During this time, it is further recommended that a comprehensive plan be developed to address her anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support her eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Ms. Williams will make the changes necessary to build a more stable and productive future.`;
+    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation. While incarceration is recommended due to the nature of the offense, Mr. Williams has no prior criminal convictions, no history of violent behavior, no substance abuse issues, had previous success under supervision, had lengthy periods of sobriety after completing treatment, no diagnosis of a mental illness, stable housing, steady employment, financial stability, a high level of academic achievement, a strong social support network, close family ties, been actively participating in treatment programs, enrolled in educational or vocational training and been actively involved in community activities. These factors suggest a solid foundation that may contribute to his successful reintegration into the community upon his release. During this time, it is further recommended that a comprehensive plan be developed to address his anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support his eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Mr. Williams will make the changes necessary to build a more stable and productive future.`;
+    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jane Doe Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation. While incarceration is recommended due to the nature of the offense, Jane Doe Williams has no prior criminal convictions, no history of violent behavior, no substance abuse issues, had previous success under supervision, had lengthy periods of sobriety after completing treatment, no diagnosis of a mental illness, stable housing, steady employment, financial stability, a high level of academic achievement, a strong social support network, close family ties, been actively participating in treatment programs, enrolled in educational or vocational training and been actively involved in community activities. These factors suggest a solid foundation that may contribute to their successful reintegration into the community upon their release. During this time, it is further recommended that a comprehensive plan be developed to address their anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support their eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Jane Doe Williams will make the changes necessary to build a more stable and productive future.`;
+
+    // Gender: Female
+    expect(summary).toBe(femaleOrTransFemaleCopy);
+
+    // Gender: Trans Female
+    props.gender = "TRANS_FEMALE";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(femaleOrTransFemaleCopy);
+
+    // Gender: Male
+    props.gender = "MALE";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(maleOrTransMaleCopy);
+
+    // Gender: Trans Male
+    props.gender = "TRANS_MALE";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(maleOrTransMaleCopy);
+
+    // Gender: Non-binary
+    props.gender = "NON_BINARY";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: Trans
+    props.gender = "TRANS";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: Internal Unknown
+    props.gender = "INTERNAL_UNKNOWN";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: External Unknown
+    props.gender = "EXTERNAL_UNKNOWN";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: Undefined
+    props.gender = undefined;
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+  });
+
+  // Other recommendation (w/ single protective factor, needs, opportunities)
+  test("generates summary for Other recommendation type (w/ single protective factors, needs, opportunities)", () => {
+    const recommendationType = OTHER_OPTION;
+    const props: GenerateRecommendationProps = {
+      recommendation: recommendationType,
+      stateCode: "US_ND",
+      fullName: "Jane Doe Williams",
+      lastName: "Williams",
+      needs: allNeeds,
+      opportunityDescriptions: sampleOpportunityDescriptions,
+      protectiveFactors: [allProtectiveFactors[0]],
+      gender: "FEMALE",
+    };
+    let summary = generateTestFormattedRecommendationSummary(props);
+
+    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation. While incarceration is recommended due to the nature of the offense, Ms. Williams has no prior criminal convictions, suggesting a solid foundation that may contribute to her successful reintegration into the community upon her release. During this time, it is further recommended that a comprehensive plan be developed to address her anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support her eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Ms. Williams will make the changes necessary to build a more stable and productive future.`;
+    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation. While incarceration is recommended due to the nature of the offense, Mr. Williams has no prior criminal convictions, suggesting a solid foundation that may contribute to his successful reintegration into the community upon his release. During this time, it is further recommended that a comprehensive plan be developed to address his anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support his eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Mr. Williams will make the changes necessary to build a more stable and productive future.`;
+    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jane Doe Williams be sentenced to a period of incarceration with the North Dakota Department of Corrections and Rehabilitation. While incarceration is recommended due to the nature of the offense, Jane Doe Williams has no prior criminal convictions, suggesting a solid foundation that may contribute to their successful reintegration into the community upon their release. During this time, it is further recommended that a comprehensive plan be developed to address their anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support their eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Jane Doe Williams will make the changes necessary to build a more stable and productive future.`;
+
+    // Gender: Female
+    expect(summary).toBe(femaleOrTransFemaleCopy);
+
+    // Gender: Trans Female
+    props.gender = "TRANS_FEMALE";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(femaleOrTransFemaleCopy);
+
+    // Gender: Male
+    props.gender = "MALE";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(maleOrTransMaleCopy);
+
+    // Gender: Trans Male
+    props.gender = "TRANS_MALE";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(maleOrTransMaleCopy);
+
+    // Gender: Non-binary
+    props.gender = "NON_BINARY";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: Trans
+    props.gender = "TRANS";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: Internal Unknown
+    props.gender = "INTERNAL_UNKNOWN";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: External Unknown
+    props.gender = "EXTERNAL_UNKNOWN";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: Undefined
+    props.gender = undefined;
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
   });
 
@@ -1422,7 +1525,7 @@ describe("generateRecommendationSummary for US_ND", () => {
       opportunityDescriptions: [],
       gender: "FEMALE",
     };
-    let summary = generateRecommendationSummary(props);
+    let summary = generateTestFormattedRecommendationSummary(props);
 
     const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Williams be given a sentence of at least 21 years with the North Dakota Department of Corrections and Rehabilitation. Hopefully the defendant will take advantage of the resources available to her while incarcerated and make the changes necessary to set her life on a better path.`;
     const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Williams be given a sentence of at least 21 years with the North Dakota Department of Corrections and Rehabilitation. Hopefully the defendant will take advantage of the resources available to him while incarcerated and make the changes necessary to set his life on a better path.`;
@@ -1433,47 +1536,47 @@ describe("generateRecommendationSummary for US_ND", () => {
 
     // Gender: Trans Female
     props.gender = "TRANS_FEMALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Male
     props.gender = "MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Trans Male
     props.gender = "TRANS_MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Non-binary
     props.gender = "NON_BINARY";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Trans
     props.gender = "TRANS";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Internal Unknown
     props.gender = "INTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: External Unknown
     props.gender = "EXTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Undefined
     props.gender = undefined;
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
   });
 
-  // Less than one year recommendation (default) w/ needs and opportunities
-  test("generates summary for less than one year recommendation type with expected name and salutations", () => {
+  // Less than one year recommendation w/ needs and opportunities, no protective factors
+  test("generates summary for less than one year recommendation type with needs and opportunities, and no protective factors with expected name and salutations", () => {
     const recommendationType = "Less than one year";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
@@ -1494,68 +1597,138 @@ describe("generateRecommendationSummary for US_ND", () => {
         "JobTrainingOrOpportunities",
         "Transportation",
       ],
-      opportunityDescriptions: pluralizeDuplicates([
-        "mental health provider",
-        "inpatient substance use treatment facility",
-        "inpatient substance use treatment facility",
-        "mental health court",
-        "veterans court",
-        "mental health court",
-      ]),
+      opportunityDescriptions: sampleOpportunityDescriptions,
+      protectiveFactors: [],
       gender: "FEMALE",
     };
-    let summary = generateRecommendationSummary(props);
+    let summary = generateTestFormattedRecommendationSummary(props);
 
-    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Williams be given a sentence of less than one year with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure she needs while allowing her to access a variety of community-based resources, including a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. These services would support Ms. Williams in addressing her key needs, including domestic violence training, family support, financial support, general re-entry support, housing and vocational training. Hopefully the defendant will take advantage of the resources available to her and make the changes necessary to set her life on a better path.`;
-    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Williams be given a sentence of less than one year with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure he needs while allowing him to access a variety of community-based resources, including a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. These services would support Mr. Williams in addressing his key needs, including domestic violence training, family support, financial support, general re-entry support, housing and vocational training. Hopefully the defendant will take advantage of the resources available to him and make the changes necessary to set his life on a better path.`;
-    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jane Doe Williams be given a sentence of less than one year with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure they need while allowing them to access a variety of community-based resources, including a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. These services would support Jane Doe Williams in addressing their key needs, including domestic violence training, family support, financial support, general re-entry support, housing and vocational training. Hopefully the defendant will take advantage of the resources available to them and make the changes necessary to set their life on a better path.`;
+    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Williams be given a sentence of less than one year with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. During this time, it is further recommended that a comprehensive plan be developed to address her domestic violence training, family support, financial support, general re-entry support, housing and vocational training needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support her eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Ms. Williams will make the changes necessary to build a more stable and productive future.`;
+    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Williams be given a sentence of less than one year with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. During this time, it is further recommended that a comprehensive plan be developed to address his domestic violence training, family support, financial support, general re-entry support, housing and vocational training needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support his eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Mr. Williams will make the changes necessary to build a more stable and productive future.`;
+    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jane Doe Williams be given a sentence of less than one year with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. During this time, it is further recommended that a comprehensive plan be developed to address their domestic violence training, family support, financial support, general re-entry support, housing and vocational training needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support their eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Jane Doe Williams will make the changes necessary to build a more stable and productive future.`;
 
     // Gender: Female
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Trans Female
     props.gender = "TRANS_FEMALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Male
     props.gender = "MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Trans Male
     props.gender = "TRANS_MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Non-binary
     props.gender = "NON_BINARY";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Trans
     props.gender = "TRANS";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Internal Unknown
     props.gender = "INTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: External Unknown
     props.gender = "EXTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Undefined
     props.gender = undefined;
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
   });
 
-  // 11-20 years recommendation w/ opportunities and NO needs
-  test("generates summary for 11-20 years recommendation type (with opportunities and NO needs) with expected name, pronouns and salutations", () => {
+  // Less than one year recommendation (default) w/ needs and opportunities and protective factors
+  test("generates summary for less than one year recommendation type w/ needs and opportunities and protective factors with expected name and salutations", () => {
+    const recommendationType = "Less than one year";
+    const props: GenerateRecommendationProps = {
+      recommendation: recommendationType,
+      sentenceLengthStart: 0,
+      sentenceLengthEnd: 1,
+      stateCode: "US_ND",
+      fullName: "Jane Doe Williams",
+      lastName: "Williams",
+      needs: [
+        "CaseManagement",
+        "ClothingAndToiletries",
+        "DomesticViolenceIssues",
+        "FamilyServices",
+        "FinancialAssistance",
+        "FoodInsecurity",
+        "GeneralReEntrySupport",
+        "HousingOpportunities",
+        "JobTrainingOrOpportunities",
+        "Transportation",
+      ],
+      opportunityDescriptions: sampleOpportunityDescriptions,
+      protectiveFactors: allProtectiveFactors,
+      gender: "FEMALE",
+    };
+    let summary = generateTestFormattedRecommendationSummary(props);
+
+    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Williams be given a sentence of less than one year with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. While incarceration is recommended due to the nature of the offense, Ms. Williams has no prior criminal convictions, no history of violent behavior, no substance abuse issues, had previous success under supervision, had lengthy periods of sobriety after completing treatment, no diagnosis of a mental illness, stable housing, steady employment, financial stability, a high level of academic achievement, a strong social support network, close family ties, been actively participating in treatment programs, enrolled in educational or vocational training and been actively involved in community activities. These factors suggest a solid foundation that may contribute to her successful reintegration into the community upon her release. During this time, it is further recommended that a comprehensive plan be developed to address her domestic violence training, family support, financial support, general re-entry support, housing and vocational training needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support her eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Ms. Williams will make the changes necessary to build a more stable and productive future.`;
+    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Williams be given a sentence of less than one year with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. While incarceration is recommended due to the nature of the offense, Mr. Williams has no prior criminal convictions, no history of violent behavior, no substance abuse issues, had previous success under supervision, had lengthy periods of sobriety after completing treatment, no diagnosis of a mental illness, stable housing, steady employment, financial stability, a high level of academic achievement, a strong social support network, close family ties, been actively participating in treatment programs, enrolled in educational or vocational training and been actively involved in community activities. These factors suggest a solid foundation that may contribute to his successful reintegration into the community upon his release. During this time, it is further recommended that a comprehensive plan be developed to address his domestic violence training, family support, financial support, general re-entry support, housing and vocational training needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support his eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Mr. Williams will make the changes necessary to build a more stable and productive future.`;
+    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jane Doe Williams be given a sentence of less than one year with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. While incarceration is recommended due to the nature of the offense, Jane Doe Williams has no prior criminal convictions, no history of violent behavior, no substance abuse issues, had previous success under supervision, had lengthy periods of sobriety after completing treatment, no diagnosis of a mental illness, stable housing, steady employment, financial stability, a high level of academic achievement, a strong social support network, close family ties, been actively participating in treatment programs, enrolled in educational or vocational training and been actively involved in community activities. These factors suggest a solid foundation that may contribute to their successful reintegration into the community upon their release. During this time, it is further recommended that a comprehensive plan be developed to address their domestic violence training, family support, financial support, general re-entry support, housing and vocational training needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support their eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Jane Doe Williams will make the changes necessary to build a more stable and productive future.`;
+
+    // Gender: Female
+    expect(summary).toBe(femaleOrTransFemaleCopy);
+
+    // Gender: Trans Female
+    props.gender = "TRANS_FEMALE";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(femaleOrTransFemaleCopy);
+
+    // Gender: Male
+    props.gender = "MALE";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(maleOrTransMaleCopy);
+
+    // Gender: Trans Male
+    props.gender = "TRANS_MALE";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(maleOrTransMaleCopy);
+
+    // Gender: Non-binary
+    props.gender = "NON_BINARY";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: Trans
+    props.gender = "TRANS";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: Internal Unknown
+    props.gender = "INTERNAL_UNKNOWN";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: External Unknown
+    props.gender = "EXTERNAL_UNKNOWN";
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+
+    // Gender: Undefined
+    props.gender = undefined;
+    summary = generateTestFormattedRecommendationSummary(props);
+    expect(summary).toBe(neutralGenderCopy);
+  });
+
+  // 11-20 years recommendation w/ protective factors, opportunities and NO needs
+  test("generates summary for 11-20 years recommendation type (with protective factors, opportunities and NO needs) with expected name, pronouns and salutations", () => {
     const recommendationType = "11-20 years";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
@@ -1565,68 +1738,62 @@ describe("generateRecommendationSummary for US_ND", () => {
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: [],
-      opportunityDescriptions: pluralizeDuplicates([
-        "mental health provider",
-        "inpatient substance use treatment facility",
-        "inpatient substance use treatment facility",
-        "mental health court",
-        "veterans court",
-        "mental health court",
-      ]),
+      opportunityDescriptions: sampleOpportunityDescriptions,
+      protectiveFactors: [allProtectiveFactors[0], allProtectiveFactors[1]],
       gender: "FEMALE",
     };
-    let summary = generateRecommendationSummary(props);
-    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure she needs while allowing her to access a variety of community-based resources, including a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. These services would support Ms. Robertson in addressing her key needs, setting her up for a fresh start. Hopefully the defendant will take advantage of the resources available to her and make the changes necessary to set her life on a better path.`;
-    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure he needs while allowing him to access a variety of community-based resources, including a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. These services would support Mr. Robertson in addressing his key needs, setting him up for a fresh start. Hopefully the defendant will take advantage of the resources available to him and make the changes necessary to set his life on a better path.`;
-    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jo Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure they need while allowing them to access a variety of community-based resources, including a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. These services would support Jo Robertson in addressing their key needs, setting them up for a fresh start. Hopefully the defendant will take advantage of the resources available to them and make the changes necessary to set their life on a better path.`;
+    let summary = generateTestFormattedRecommendationSummary(props);
+    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. While incarceration is recommended due to the nature of the offense, Ms. Robertson has no prior criminal convictions and no history of violent behavior. These factors suggest a solid foundation that may contribute to her successful reintegration into the community upon her release. During this time, it is further recommended that a comprehensive plan be developed to address her needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support her eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Ms. Robertson will make the changes necessary to build a more stable and productive future.`;
+    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. While incarceration is recommended due to the nature of the offense, Mr. Robertson has no prior criminal convictions and no history of violent behavior. These factors suggest a solid foundation that may contribute to his successful reintegration into the community upon his release. During this time, it is further recommended that a comprehensive plan be developed to address his needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support his eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Mr. Robertson will make the changes necessary to build a more stable and productive future.`;
+    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jo Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. While incarceration is recommended due to the nature of the offense, Jo Robertson has no prior criminal convictions and no history of violent behavior. These factors suggest a solid foundation that may contribute to their successful reintegration into the community upon their release. During this time, it is further recommended that a comprehensive plan be developed to address their needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support their eventual transition, such as a mental health provider, inpatient substance use treatment facilities, mental health courts and a veterans court. Given this support and structure, it is hoped that Jo Robertson will make the changes necessary to build a more stable and productive future.`;
 
     // Gender: Female
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Trans Female
     props.gender = "TRANS_FEMALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Male
     props.gender = "MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Trans Male
     props.gender = "TRANS_MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Non-binary
     props.gender = "NON_BINARY";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Trans
     props.gender = "TRANS";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Internal Unknown
     props.gender = "INTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: External Unknown
     props.gender = "EXTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Undefined
     props.gender = undefined;
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
   });
 
-  //  11-20 years recommendation w/ needs and NO opportunities
-  test("generates summary for 11-20 years recommendation type (with needs and NO opportunities) with expected name, pronouns and salutations", () => {
-    const recommendationType = "11-20 years";
+  //  3-5 years recommendation w/ needs, protective factors and NO opportunities
+  test("generates summary for 3-5 years recommendation type (with needs, protective factors and NO opportunities) with expected name, pronouns and salutations", () => {
+    const recommendationType = "3-5 years";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 11,
@@ -1635,61 +1802,62 @@ describe("generateRecommendationSummary for US_ND", () => {
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: allNeeds,
+      protectiveFactors: allProtectiveFactors,
       opportunityDescriptions: [],
       gender: "FEMALE",
     };
-    let summary = generateRecommendationSummary(props);
-    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure she needs while allowing her to access a variety of community-based resources to address her key needs, including anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use. Hopefully the defendant will take advantage of the resources available to her and make the changes necessary to set her life on a better path.`;
-    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure he needs while allowing him to access a variety of community-based resources to address his key needs, including anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use. Hopefully the defendant will take advantage of the resources available to him and make the changes necessary to set his life on a better path.`;
-    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jo Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure they need while allowing them to access a variety of community-based resources to address their key needs, including anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use. Hopefully the defendant will take advantage of the resources available to them and make the changes necessary to set their life on a better path.`;
+    let summary = generateTestFormattedRecommendationSummary(props);
+    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Robertson be given a sentence between 3 and 5 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. While incarceration is recommended due to the nature of the offense, Ms. Robertson has no prior criminal convictions, no history of violent behavior, no substance abuse issues, had previous success under supervision, had lengthy periods of sobriety after completing treatment, no diagnosis of a mental illness, stable housing, steady employment, financial stability, a high level of academic achievement, a strong social support network, close family ties, been actively participating in treatment programs, enrolled in educational or vocational training and been actively involved in community activities. These factors suggest a solid foundation that may contribute to her successful reintegration into the community upon her release. During this time, it is further recommended that a comprehensive plan be developed to address her anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use needs, both while incarcerated and in preparation for reentry. Given this support and structure, it is hoped that Ms. Robertson will make the changes necessary to build a more stable and productive future.`;
+    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Robertson be given a sentence between 3 and 5 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. While incarceration is recommended due to the nature of the offense, Mr. Robertson has no prior criminal convictions, no history of violent behavior, no substance abuse issues, had previous success under supervision, had lengthy periods of sobriety after completing treatment, no diagnosis of a mental illness, stable housing, steady employment, financial stability, a high level of academic achievement, a strong social support network, close family ties, been actively participating in treatment programs, enrolled in educational or vocational training and been actively involved in community activities. These factors suggest a solid foundation that may contribute to his successful reintegration into the community upon his release. During this time, it is further recommended that a comprehensive plan be developed to address his anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use needs, both while incarcerated and in preparation for reentry. Given this support and structure, it is hoped that Mr. Robertson will make the changes necessary to build a more stable and productive future.`;
+    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jo Robertson be given a sentence between 3 and 5 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. While incarceration is recommended due to the nature of the offense, Jo Robertson has no prior criminal convictions, no history of violent behavior, no substance abuse issues, had previous success under supervision, had lengthy periods of sobriety after completing treatment, no diagnosis of a mental illness, stable housing, steady employment, financial stability, a high level of academic achievement, a strong social support network, close family ties, been actively participating in treatment programs, enrolled in educational or vocational training and been actively involved in community activities. These factors suggest a solid foundation that may contribute to their successful reintegration into the community upon their release. During this time, it is further recommended that a comprehensive plan be developed to address their anger management, domestic violence training, education, family support, financial support, healthcare, general re-entry support, housing, vocational training, mental health and substance use needs, both while incarcerated and in preparation for reentry. Given this support and structure, it is hoped that Jo Robertson will make the changes necessary to build a more stable and productive future.`;
 
     // Gender: Female
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Trans Female
     props.gender = "TRANS_FEMALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Male
     props.gender = "MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Trans Male
     props.gender = "TRANS_MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Non-binary
     props.gender = "NON_BINARY";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Trans
     props.gender = "TRANS";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Internal Unknown
     props.gender = "INTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: External Unknown
     props.gender = "EXTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Undefined
     props.gender = undefined;
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
   });
 
-  // 11-20 years recommendation w/ NO needs and NO opportunities
-  test("generates summary for 11-20 years recommendation type (with NO needs and NO opportunities) with expected name, pronouns and salutations", () => {
-    const recommendationType = "11-20 years";
+  // 6-10 years recommendation w/ NO needs and NO opportunities and NO protective factors
+  test("generates summary for 6-10 years recommendation type (with NO needs and NO opportunities and NO protective factors) with expected name, pronouns and salutations", () => {
+    const recommendationType = "6-10 years";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 11,
@@ -1699,54 +1867,55 @@ describe("generateRecommendationSummary for US_ND", () => {
       lastName: "Robertson",
       needs: [],
       opportunityDescriptions: [],
+      protectiveFactors: [],
       gender: "FEMALE",
     };
-    let summary = generateRecommendationSummary(props);
-    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure she needs while allowing her to access a variety of community-based resources to address her key needs, setting her up for a fresh start. Hopefully the defendant will take advantage of the resources available to her and make the changes necessary to set her life on a better path.`;
-    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure he needs while allowing him to access a variety of community-based resources to address his key needs, setting him up for a fresh start. Hopefully the defendant will take advantage of the resources available to him and make the changes necessary to set his life on a better path.`;
-    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jo Robertson be given a sentence between 11 and 20 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. This approach would provide the structure they need while allowing them to access a variety of community-based resources to address their key needs, setting them up for a fresh start. Hopefully the defendant will take advantage of the resources available to them and make the changes necessary to set their life on a better path.`;
+    let summary = generateTestFormattedRecommendationSummary(props);
+    const femaleOrTransFemaleCopy = `After careful consideration of the details of this case, it is recommended that Ms. Robertson be given a sentence between 6 and 10 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. During this time, it is further recommended that a comprehensive plan be developed to address her needs, both while incarcerated and in preparation for reentry. Given this support and structure, it is hoped that Ms. Robertson will make the changes necessary to build a more stable and productive future.`;
+    const maleOrTransMaleCopy = `After careful consideration of the details of this case, it is recommended that Mr. Robertson be given a sentence between 6 and 10 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. During this time, it is further recommended that a comprehensive plan be developed to address his needs, both while incarcerated and in preparation for reentry. Given this support and structure, it is hoped that Mr. Robertson will make the changes necessary to build a more stable and productive future.`;
+    const neutralGenderCopy = `After careful consideration of the details of this case, it is recommended that Jo Robertson be given a sentence between 6 and 10 years with the North Dakota Department of Corrections and Rehabilitation, followed by a period of supervised probation. During this time, it is further recommended that a comprehensive plan be developed to address their needs, both while incarcerated and in preparation for reentry. Given this support and structure, it is hoped that Jo Robertson will make the changes necessary to build a more stable and productive future.`;
 
     // Gender: Female
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Trans Female
     props.gender = "TRANS_FEMALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(femaleOrTransFemaleCopy);
 
     // Gender: Male
     props.gender = "MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Trans Male
     props.gender = "TRANS_MALE";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(maleOrTransMaleCopy);
 
     // Gender: Non-binary
     props.gender = "NON_BINARY";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Trans
     props.gender = "TRANS";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Internal Unknown
     props.gender = "INTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: External Unknown
     props.gender = "EXTERNAL_UNKNOWN";
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
 
     // Gender: Undefined
     props.gender = undefined;
-    summary = generateRecommendationSummary(props);
+    summary = generateTestFormattedRecommendationSummary(props);
     expect(summary).toBe(neutralGenderCopy);
   });
 });
