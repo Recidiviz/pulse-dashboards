@@ -20,11 +20,7 @@ import { OTHER_OPTION } from "../../components/CaseDetails/Form/constants";
 import { formatNeedsList } from "../../components/CaseDetails/Recommendations/summaryUtils";
 import { SummaryProps } from "../../components/CaseDetails/Recommendations/types";
 import { RecommendationType } from "../../components/CaseDetails/types";
-import {
-  formatListWithAnd,
-  formatPossessiveName,
-  trimExtraSpaces,
-} from "../../utils/utils";
+import { formatListWithAnd, trimExtraSpaces } from "../../utils/utils";
 
 /** Idaho recommendation summary generator */
 export const generateIdahoSummary = (props: SummaryProps): string | void => {
@@ -32,13 +28,15 @@ export const generateIdahoSummary = (props: SummaryProps): string | void => {
     recommendation,
     name,
     possessive,
-    object,
     salutation,
     needs,
     opportunitiesList,
+    protectiveFactorsList,
     hasNeeds,
     hasOpportunities,
     hasNeedsAndOpportunities,
+    hasProtectiveFactors,
+    hasSingleProtectiveFactor,
   } = props;
 
   const defaultExclusionList: Case["needsToBeAddressed"] = [
@@ -66,29 +64,44 @@ export const generateIdahoSummary = (props: SummaryProps): string | void => {
     needs,
     needsListExclusions[recommendation as RecommendationType],
   );
-  const needsList = formatListWithAnd(formattedNeedsList, "needs", true);
+  const needsList = formatListWithAnd(formattedNeedsList, "", true);
+
+  const factorsWhichSuggestPhrase = hasSingleProtectiveFactor
+    ? `suggesting`
+    : `factors which suggest`;
+  const theseFactorsSuggestPhrase = hasSingleProtectiveFactor
+    ? `, suggesting`
+    : `. These factors suggest`;
+  const protectiveFactorsSentence = hasProtectiveFactors
+    ? `${salutation} ${name} has ${protectiveFactorsList}—${factorsWhichSuggestPhrase} a solid foundation for success in the community.`
+    : ``;
+  const riderTermProtectiveFactorsParagraph = `While incarceration is recommended due to the nature of the offense, ${salutation} ${name} has ${protectiveFactorsList}${theseFactorsSuggestPhrase} a solid foundation that may contribute to ${possessive} successful reintegration into the community upon ${possessive} release.\n\n`;
 
   const probationTemplate = {
     default: `
-            After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet ${possessive} ${needsList} needs, including ${opportunitiesList}. Should probation be granted, a list of potential resources will be made available to ${salutation} ${formatPossessiveName(name)} supervising officer. Hopefully the defendant will take advantage of the resources available to ${object} while on supervision and make the changes necessary to set ${possessive} life on a better path.
+            After careful consideration of the details of this case, it is recommended that ${salutation} ${name} be sentenced to a period of felony probation. ${protectiveFactorsSentence}\n\nTo provide a clear path forward, it is further recommended that a comprehensive plan be put in place to address ${possessive} ${needsList} needs while on supervision. A variety of local resources are available to meet these needs, including ${opportunitiesList}.\n\nGiven this support and structure, it is hoped that ${salutation} ${name} will make the changes necessary to build a more stable and productive future.
         `,
     noNeeds: `
-            After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community to support ${object}, including ${opportunitiesList}. Should probation be granted, a list of potential resources will be made available to ${salutation} ${formatPossessiveName(name)} supervising officer. Hopefully the defendant will take advantage of the resources available to ${object} while on supervision and make the changes necessary to set ${possessive} life on a better path.
-         `,
+            After careful consideration of the details of this case, it is recommended that ${salutation} ${name} be sentenced to a period of felony probation. ${protectiveFactorsSentence}\n\nTo provide a clear path forward, it is further recommended that a comprehensive plan be put in place to address ${possessive} needs while on supervision. A variety of local resources are available to meet these needs, including ${opportunitiesList}.\n\nGiven this support and structure, it is hoped that ${salutation} ${name} will make the changes necessary to build a more stable and productive future.
+        `,
     noOpportunities: `
-            After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet ${possessive} ${needsList} needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set ${possessive} life on a better path.
-         `,
+            After careful consideration of the details of this case, it is recommended that ${salutation} ${name} be sentenced to a period of felony probation. ${protectiveFactorsSentence}\n\nTo provide a clear path forward, it is further recommended that a comprehensive plan be put in place to address ${possessive} ${needsList} needs while on supervision.\n\nGiven this support and structure, it is hoped that ${salutation} ${name} will make the changes necessary to build a more stable and productive future.
+        `,
     noNeedsNoOpportunities: `
-            After careful consideration of the details of this case, I respectfully recommend that ${salutation} ${name} be sentenced to a period of felony probation. There are a variety of opportunities in the community that may help to meet ${possessive} needs, and I hope that the defendant will take advantage of these resources while on supervision and make the changes necessary to set ${possessive} life on a better path.
-         `,
+            After careful consideration of the details of this case, it is recommended that ${salutation} ${name} be sentenced to a period of felony probation. ${protectiveFactorsSentence}\n\nTo provide a clear path forward, it is further recommended that a comprehensive plan be put in place to address ${possessive} needs while on supervision.\n\nGiven this support and structure, it is hoped that ${salutation} ${name} will make the changes necessary to build a more stable and productive future.
+        `,
   };
 
   const riderTermNoneTemplates: { [key: string]: string } = {
     Rider: `
-          I recommend that ${salutation} ${name} be sentenced to a period of retained jurisdiction where they can address their ${needsList} issues.
+          Given the circumstances of this case, it is recommended that ${salutation} ${name} be sentenced to a period of retained jurisdiction.\n\n${
+            hasProtectiveFactors ? riderTermProtectiveFactorsParagraph : ``
+          }During this time, it is further recommended that a comprehensive plan be developed to address ${possessive} ${needsList} needs. It is hoped that, with this structure and support, ${salutation} ${name} will make the changes necessary to build a more stable and productive future.
        `,
     Term: `
-          Due to the circumstances of their case, I respectfully recommend ${salutation} ${name} be sentenced to a period of incarceration under the physical custody of the Idaho Department of Correction where they can address their ${needsList} issues.
+          Given the circumstances of this case, it is recommended that ${salutation} ${name} be sentenced to a period of incarceration under the custody of the Idaho State Board of Correction.\n\n${
+            hasProtectiveFactors ? riderTermProtectiveFactorsParagraph : ``
+          }During ${possessive} incarceration, it is further recommended that a comprehensive plan be developed to address ${possessive} ${needsList} needs. It is hoped that, with this structure and support, ${salutation} ${name} will make the changes necessary to build a more stable and productive future.
        `,
     None: `
           Due to the circumstances of this case, I respectfully decline to make a sentencing recommendation at this time.

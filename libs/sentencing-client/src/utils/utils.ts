@@ -70,10 +70,10 @@ export const formatListWithAnd = (
 };
 
 /**
- * Trims extra spaces from a string, replacing multiple spaces with a single space, and removes leading and trailing spaces
+ * Trims extra spaces from a string, replacing multiple spaces with a single space, and removes leading and trailing spaces (excludes newlines)
  */
 export const trimExtraSpaces = (str: string) => {
-  return str.replace(/\s{2,}/g, " ").trim();
+  return str.replace(/ {2,}/g, " ").trim();
 };
 
 /**

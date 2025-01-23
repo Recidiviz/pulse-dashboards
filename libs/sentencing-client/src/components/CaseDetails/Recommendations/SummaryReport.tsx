@@ -48,6 +48,7 @@ type SummaryReportProps = {
   externalId?: string;
   selectedRecommendation: SelectedRecommendation;
   needs?: Case["needsToBeAddressed"];
+  protectiveFactors?: Case["protectiveFactors"];
   opportunityDescriptions?: string[];
   gender?: Client["gender"];
   analytics: {
@@ -72,6 +73,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   externalId,
   selectedRecommendation,
   needs,
+  protectiveFactors,
   opportunityDescriptions,
   gender,
   analytics,
@@ -96,6 +98,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
         fullName,
         lastName,
         needs,
+        protectiveFactors,
         opportunityDescriptions,
         gender,
         stateCode,
@@ -132,6 +135,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
       fullName,
       lastName,
       needs,
+      protectiveFactors,
       opportunityDescriptions,
       gender,
       stateCode,

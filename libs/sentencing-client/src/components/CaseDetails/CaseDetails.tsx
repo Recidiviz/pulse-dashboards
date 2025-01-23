@@ -194,6 +194,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               insight={caseAttributes.insight}
               selectedRecommendation={selectedRecommendation}
               needs={caseAttributes.needsToBeAddressed}
+              protectiveFactors={caseAttributes.protectiveFactors}
               gender={caseAttributes.client?.gender}
               savedSummary={savedSummary}
               handleRecommendationUpdate={handleRecommendationUpdate}

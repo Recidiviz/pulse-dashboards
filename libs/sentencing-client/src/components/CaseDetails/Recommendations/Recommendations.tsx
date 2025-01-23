@@ -40,6 +40,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   recommendedOpportunities,
   insight,
   needs,
+  protectiveFactors,
   gender,
   externalId,
   analytics,
@@ -101,6 +102,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
             opportunityDescriptions ?? [],
           )}
           needs={needs}
+          protectiveFactors={protectiveFactors}
           gender={gender}
           savedSummary={savedSummary}
           hideSummaryReport={hideSummaryReport}

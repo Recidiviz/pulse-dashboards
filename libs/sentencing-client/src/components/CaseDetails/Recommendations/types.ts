@@ -37,6 +37,7 @@ export type RecommendationsProps = {
   lastSavedRecommendation?: SelectedRecommendation;
   recommendedOpportunities?: OpportunitiesIdentifier;
   needs?: Case["needsToBeAddressed"];
+  protectiveFactors?: Case["protectiveFactors"];
   insight?: CaseInsight;
   savedSummary?: string | null;
   handleRecommendationUpdate: (
@@ -89,6 +90,7 @@ export type GenerateRecommendationProps = {
   lastName?: string;
   needs?: Case["needsToBeAddressed"];
   opportunityDescriptions?: string[];
+  protectiveFactors?: Case["protectiveFactors"];
   gender?: Client["gender"];
   sentenceLengthStart?: number;
   sentenceLengthEnd?: number;
@@ -106,9 +108,12 @@ export type SummaryProps = {
   subject: string;
   needs: Case["needsToBeAddressed"];
   opportunitiesList?: string;
+  protectiveFactorsList?: string;
   hasNeeds: boolean;
   hasOpportunities: boolean;
   hasNeedsAndOpportunities: boolean;
+  hasProtectiveFactors: boolean;
+  hasSingleProtectiveFactor: boolean;
 };
 
 export type Pronouns = Record<

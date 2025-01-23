@@ -20,9 +20,37 @@ import { keyBy } from "lodash";
 import { Case } from "../../../api";
 import { GEO_CONFIG } from "../../../geoConfigs/geoConfigs";
 import { formatListWithAnd } from "../../../utils/utils";
-import { NeedsToBeAddressed } from "../constants";
+import { NeedsToBeAddressed, ProtectiveFactors } from "../constants";
+import { OTHER_OPTION } from "../Form/constants";
 import { needToDisplayNameMap, pronouns } from "./constants";
 import { GenerateRecommendationProps, SummaryProps } from "./types";
+
+const normalizedProtectiveFactors: Partial<
+  Record<Case["protectiveFactors"][number], string>
+> = {
+  HighSchoolDiplomaOrHigherEducation: "a high level of academic achievement",
+  ActivelyParticipatingInTreatmentPrograms:
+    "been actively participating in treatment programs",
+  ActiveInvolvementInCommunityActivities:
+    "been actively involved in community activities",
+  HistoryOfSuccessUnderSupervision: "had previous success under supervision",
+  LengthyPeriodsOfSobrietyAfterCompletingTreatment:
+    "had lengthy periods of sobriety after completing treatment",
+  StrongSocialSupportNetwork: "a strong social support network",
+};
+
+export const formatProtectiveFactorsList = (
+  protectiveFactors: Case["protectiveFactors"],
+): string[] => {
+  return protectiveFactors
+    .filter((factor) => factor !== OTHER_OPTION)
+    .map(
+      (factor) =>
+        normalizedProtectiveFactors[factor] ||
+        ProtectiveFactors[factor].toLocaleLowerCase(),
+    )
+    .filter(Boolean);
+};
 
 export const formatNeedsList = (
   needs: Case["needsToBeAddressed"],
@@ -40,6 +68,7 @@ export const generateRecommendationSummary = ({
   lastName,
   needs = [],
   opportunityDescriptions = [],
+  protectiveFactors = [],
   gender,
   stateCode,
 }: GenerateRecommendationProps): string | void => {
@@ -56,9 +85,17 @@ export const generateRecommendationSummary = ({
     opportunityDescriptions,
     "opportunities",
   );
+  const formattedProtectiveFactors =
+    formatProtectiveFactorsList(protectiveFactors);
+  const protectiveFactorsList = formatListWithAnd(
+    formattedProtectiveFactors,
+    "",
+  );
 
   const hasNeeds = needs.length > 0;
   const hasOpportunities = opportunityDescriptions.length > 0;
+  const hasProtectiveFactors = protectiveFactors.length > 0;
+  const hasSingleProtectiveFactor = protectiveFactors.length === 1;
   const hasNeedsAndOpportunities = hasNeeds && hasOpportunities;
 
   const sentenceInfoByLabel = keyBy(
@@ -81,9 +118,12 @@ export const generateRecommendationSummary = ({
     subject,
     needs,
     opportunitiesList,
+    protectiveFactorsList,
     hasNeeds,
     hasOpportunities,
     hasNeedsAndOpportunities,
+    hasProtectiveFactors,
+    hasSingleProtectiveFactor,
   };
 
   const generateSummary =
