@@ -17,3 +17,19 @@ spec:
         - '**/README.md'
       targets:
         - components/terraform/vendor/{{.Component}}
+    - component: "artifact-registry"
+      source: 'github.com/GoogleCloudPlatform/terraform-google-artifact-registry.git?ref={{.Version}}'
+      version: 'v0.3.0'
+      included_paths:
+        - '**/*.tf'
+        - '**/README.md'
+      targets:
+        - components/terraform/vendor/{{.Component}}
+    - component: "cloud-run"
+      source: 'github.com/GoogleCloudPlatform/terraform-google-cloud-run.git?ref={{.Version}}'
+      version: 'v0.16.1'
+      included_paths:
+        - '**/*.tf'
+        - '**/README.md'
+      targets:
+        - components/terraform/vendor/{{.Component}}
