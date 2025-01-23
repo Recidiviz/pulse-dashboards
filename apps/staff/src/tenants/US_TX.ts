@@ -24,7 +24,7 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   domain: "tdcj.texas.gov",
   availableStateCodes: [dashboard.US_TX],
   enableUserRestrictions: false,
-  workflowsSupportedSystems: ["INCARCERATION"],
+  workflowsSupportedSystems: ["SUPERVISION"],
   workflowsSystemConfigs: {
     SUPERVISION: {
       searchType: "OFFICER",
@@ -32,7 +32,7 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
     },
   },
   navigation: {
-    workflows: ["home", "residents"],
+    workflows: ["home", "clients"],
   },
 };
 
