@@ -31,7 +31,7 @@ export const ButtonLink = styled(Link)`
   border: 1px solid ${palette.signal.links};
   color: ${palette.signal.links};
   display: inline-flex;
-  gap: ${rem(spacing.sm)};
+  gap: ${rem(spacing.md)};
   justify-content: center;s
   min-height: ${rem(32)};
   min-width: ${rem(129)};
@@ -42,7 +42,8 @@ export const ButtonLink = styled(Link)`
 
   &:hover,
   &:focus {
-    background-color: ${palette.slate10};
+    background-color: ${palette.pine4};
+    color: ${palette.white};
   }
 
   &:active,

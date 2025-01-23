@@ -83,7 +83,11 @@ export class UserStore {
   }
 
   get pseudonymizedId(): string | undefined {
-    return this.authClient.appMetadata.pseudonymizedId;
+    try {
+      return this.authClient.appMetadata.pseudonymizedId;
+    } catch {
+      return undefined;
+    }
   }
 
   hasPermission(permission: Permission): boolean {

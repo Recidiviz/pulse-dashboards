@@ -22,6 +22,10 @@
       {
         "paths": [
           {
+            "name": "styled-components",
+            "message": "Please import from styled-components/macro."
+          },
+          {
             "name": "react-router-dom",
             "importNames": ["useParams"],
             "message": "Please import useTypedParams from react-router-typesafe-routes/dom instead"

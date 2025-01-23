@@ -27,6 +27,16 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.xl)};
+  min-height: 100vh;
+
+  /* these styles ensure the main content always fills at least 
+  the remainder of the screen height, in case the content requires something
+  to be pushed to the bottom of the page */
+  & main {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-rows: 1fr;
+  }
 `;
 
 export const PageLayout: FC<{ header?: ReactNode; main: ReactNode }> = memo(

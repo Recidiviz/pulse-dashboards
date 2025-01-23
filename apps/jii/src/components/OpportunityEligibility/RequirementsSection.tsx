@@ -23,7 +23,7 @@ import { FC, Fragment } from "react";
 import styled from "styled-components/macro";
 
 import { RequirementsSectionContent } from "../../models/EligibilityReport/interface";
-import { ButtonLink } from "../ButtonLink/ButtonLink";
+import { GoButton } from "../ButtonLink/GoButton";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 import { Section, SectionHeading } from "./styles";
 
@@ -122,10 +122,9 @@ export const RequirementsSection: FC<{
         ))}
       </RequirementsGroupings>
       {presenter.requirementsContent && (
-        <ButtonLink to={presenter.requirementsContent.linkUrl}>
-          <span>{presenter.requirementsContent.linkText}</span>
-          <Icon kind="Arrow" size={16} />
-        </ButtonLink>
+        <GoButton to={presenter.requirementsContent.linkUrl}>
+          {presenter.requirementsContent.linkText}
+        </GoButton>
       )}
     </Section>
   );

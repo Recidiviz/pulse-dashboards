@@ -81,7 +81,7 @@ const ManagedComponent: FC<{ presenter: ResidentsSearchPresenter }> = observer(
           onChange={(value) => {
             // this should land you on the selected resident's homepage
             navigate(
-              State.Resident.Eligibility.buildPath({
+              State.Resident.buildPath({
                 ...urlParams,
                 personPseudoId: value.pseudonymizedId,
               }),

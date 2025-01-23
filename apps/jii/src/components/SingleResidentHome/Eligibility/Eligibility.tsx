@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
-import { ValuesType } from "utility-types";
+import { rem } from "polished";
+import { FC, Fragment } from "react";
+import styled from "styled-components/macro";
 
-import { GoButton } from "../ButtonLink/GoButton";
-import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
-import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
-import { Section, SectionHeading } from "./styles";
+import { useSingleResidentContext } from "../../SingleResidentHydrator/context";
+import { OpportunityCard } from "./OpportunityCard";
 
-export const AdditionalSection: FC<{
-  content: ValuesType<OpportunityEligibilityPresenter["additionalSections"]>;
-}> = observer(function AdditionalSection({ content }) {
+const Divider = styled.hr`
+  border: 1px solid ${palette.slate20};
+  margin: ${rem(spacing.xl)} 0;
+`;
+
+export const Eligibility: FC = observer(function Eligibility() {
+  const { opportunities } = useSingleResidentContext();
   return (
-    <Section>
-      <SectionHeading>{content.heading}</SectionHeading>
-      <CopyWrapper>{content.body}</CopyWrapper>
-
-      <GoButton to={content.linkUrl}>{content.linkText}</GoButton>
-    </Section>
+    <div>
+      {opportunities.map((data, i, { length }) => (
+        <Fragment key={data.opportunityId}>
+          <OpportunityCard {...data} />
+          {i + 1 < length ? <Divider /> : null}
+        </Fragment>
+      ))}
+    </div>
   );
 });

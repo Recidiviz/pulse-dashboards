@@ -31,4 +31,24 @@ export const usMeResidentsConfig: ResidentsConfig = {
   incarcerationOpportunities: {
     usMeSCCP: config,
   },
+  home: {
+    progress: {
+      title: "Your Progress",
+    },
+    eligibility: {
+      title: "Your Eligibility",
+    },
+    footer: {
+      about: {
+        title: "About this app",
+        body: `This app is made by Recidiviz, a technology nonprofit.  
+        It is free to access. The information updates daily.`,
+      },
+      contact: {
+        title: "Contact us",
+        body: `1322 Webster St, Suite 402  
+        Oakland, CA 94612`,
+      },
+    },
+  },
 };

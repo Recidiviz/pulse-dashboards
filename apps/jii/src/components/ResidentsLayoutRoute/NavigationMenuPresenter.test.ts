@@ -73,7 +73,7 @@ describe("with resident route", () => {
     expect(presenter.opportunityLinks).toMatchInlineSnapshot(`
       [
         {
-          "children": "Supervised Community Confinement Program",
+          "children": "Supervised Community Confinement Program (SCCP)",
           "to": "/maine/anonres001/eligibility/sccp",
         },
       ]

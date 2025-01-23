@@ -23,7 +23,7 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 import { withPresenterManager } from "~hydration-utils";
 
 import { State } from "../../routes/routes";
-import { PageHydrator } from "../PageHydrator/PageHydrator";
+import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { SingleResidentContextProvider } from "./context";
 import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresenter";
@@ -50,5 +50,5 @@ export const SingleResidentHydrator = withPresenterManager({
   usePresenter,
   managerIsObserver: false,
   ManagedComponent,
-  HydratorComponent: PageHydrator,
+  HydratorComponent: MainContentHydrator,
 });

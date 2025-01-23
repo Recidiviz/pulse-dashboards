@@ -102,6 +102,14 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     };
   }
 
+  get name() {
+    return this.config.name;
+  }
+
+  get description() {
+    return this.config.description;
+  }
+
   get status() {
     let value: EligibilityStatus;
 
@@ -120,7 +128,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
       value = "INELIGIBLE";
     }
 
-    return { value };
+    return { value, label: this.config.statusLabels[value] };
   }
 
   get headline(): string {

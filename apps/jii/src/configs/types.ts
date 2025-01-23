@@ -19,7 +19,10 @@ import { z } from "zod";
 
 import { ParsedRecord, ResidentRecord } from "~datatypes";
 
-import { EligibilityReport } from "../models/EligibilityReport/interface";
+import {
+  EligibilityReport,
+  EligibilityStatus,
+} from "../models/EligibilityReport/interface";
 import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
 import { stateCodes } from "./stateConstants";
 
@@ -62,6 +65,7 @@ export type OpportunityConfig = {
   urlSlug: string;
   firestoreCollection: string;
   name: string;
+  description: string;
   headline: string;
   subheading: string;
   /**
@@ -92,6 +96,7 @@ export type OpportunityConfig = {
   formPreview: {
     title: string;
   };
+  statusLabels: Record<EligibilityStatus, string>;
 };
 
 export type IncarcerationOpportunityId = "usMeSCCP";
@@ -101,6 +106,24 @@ export type ResidentsConfig = {
   incarcerationOpportunities: Partial<
     Record<IncarcerationOpportunityId, OpportunityConfig>
   >;
+  home: {
+    progress: {
+      title: string;
+    };
+    eligibility: {
+      title: string;
+    };
+    footer: {
+      about: {
+        title: string;
+        body: string;
+      };
+      contact: {
+        title: string;
+        body: string;
+      };
+    };
+  };
 };
 
 export type StateCode = z.infer<typeof stateCodes>;

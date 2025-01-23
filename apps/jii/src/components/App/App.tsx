@@ -45,6 +45,7 @@ import { PageOpportunityEligibilityHome } from "../pages/PageOpportunityEligibil
 import { PageResidentsRoot } from "../pages/PageResidentsRoot";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
+import { PageSingleResidentHome } from "../pages/PageSingleResidentHome";
 import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
 import { ResidentsLayoutRoute } from "../ResidentsLayoutRoute/ResidentsLayoutRoute";
@@ -89,6 +90,7 @@ export function App() {
                       path={routes.State.Resident.path}
                       element={<SingleResidentHydrator />}
                     >
+                      <Route index element={<PageSingleResidentHome />} />
                       <Route path={routes.State.Resident.Eligibility.path}>
                         <Route index element={<PageEligibilityHome />} />
                         <Route

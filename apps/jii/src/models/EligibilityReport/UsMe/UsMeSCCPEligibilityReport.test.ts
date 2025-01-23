@@ -48,6 +48,7 @@ describe("fully eligible, needs to serve half", () => {
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
+        "label": "May be eligible",
         "value": "ELIGIBLE",
       }
     `);
@@ -125,6 +126,7 @@ describe("eligible to apply before X portion served", () => {
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
+        "label": "Almost eligible",
         "value": "ALMOST ELIGIBLE",
       }
     `);
@@ -209,6 +211,7 @@ describe("eligible to apply before X months remaining", () => {
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
+        "label": "Almost eligible",
         "value": "ALMOST ELIGIBLE",
       }
     `);
@@ -293,6 +296,7 @@ describe("almost eligible, portion served", () => {
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
+        "label": "Almost eligible",
         "value": "ALMOST ELIGIBLE",
       }
     `);
@@ -377,6 +381,7 @@ describe("almost eligible, recent violation", () => {
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
+        "label": "Almost eligible",
         "value": "ALMOST ELIGIBLE",
       }
     `);
@@ -461,6 +466,7 @@ describe("almost eligible, pending violation", () => {
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
+        "label": "Almost eligible",
         "value": "ALMOST ELIGIBLE",
       }
     `);
@@ -545,6 +551,7 @@ describe("almost eligible, months remaining", () => {
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
+        "label": "Almost eligible",
         "value": "ALMOST ELIGIBLE",
       }
     `);
@@ -629,6 +636,7 @@ describe("not eligible", () => {
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
+        "label": "Not yet eligible",
         "value": "INELIGIBLE",
       }
     `);
