@@ -22,7 +22,7 @@ resource "google_secret_manager_secret_version" "env_secrets_version" {
   secret = google_secret_manager_secret.env_secrets[each.key].name
   # Convert YAML dictionary to .env syntax
   secret_data = join("\n", [
-    for key, value in yamldecode(data.sops_file.env.raw)[each.key]: join("", [key, "=", jsonencode(value)])
+    for key, value in yamldecode(data.sops_file.env.raw)[each.key]: join("", [key, "=", value])
   ])
   deletion_policy = "DISABLE"
 }
