@@ -1,11 +1,12 @@
-# Infrastructure configuration for components for the JII app that will be deployed to recidiviz-dashboard-production
+# Infrastructure configuration for components for the sentencing app that will be deployed to production
 # The variables set here are automatically provided to any components used in this stack.
 vars:
   project_id: recidiviz-dashboard-production
 
 settings:
-  project_id: recidiviz-dashboard-production
-  product: jii-texting
+  context:
+    project_id: recidiviz-dashboard-production
+    product: sentencing
 
 # Defines which catalogs to import into this configuration to create in recidiviz-dashboard-staging
 # import:
@@ -29,23 +30,21 @@ components:
       metadata:
         # This is the path to the component, relative to components/terraform
         component: dummy-component
-    gcs-buckets:
+    postgres-instance:
       vars:
-        prefix: recidiviz-dashboard-production
-        names: 
-          - jii-texting-etl-data
-        log_bucket: recidiviz-dashboard-production-gcs-object-logs
-        versioning: 
-          jii-texting-etl-data: true
-        location: us 
-        storage_class: STANDARD
-        labels:
-          vanta-owner: joshua
-          vanta-description: terraform-managed-gcs-bucket
-        lifecycle_rules:
-          - action: 
-              type: Delete
-            condition:
-              num_newer_versions: 3
+        create_bigquery_connection: false
+        instance_key: sentencing
+        base_secret_name: sentencing
+        database_version: POSTGRES_16
+        has_readonly_user: false
+        region: us-central1
+        zone: us-central1-f
+        secondary_zone: us-central1-c
+        tier: db-custom-1-3840
+        insights_config:
+          query_insights_enabled: true
+          query_string_length: 1024
+          record_application_tags: false
+          record_client_address: false
       metadata:
-        component: vendor/cloud-storage-bucket
+        component: vendor/cloud-sql-instance

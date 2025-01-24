@@ -1,11 +1,13 @@
 # Infrastructure configuration for components for the JII app that will be deployed to recidiviz-dashboard-staging
-# The variables set here are automatically provided to any components used in this stack.
-vars:
-  project_id: recidiviz-dashboard-staging
-
 settings:
-  project_id: recidiviz-dashboard-staging
-  product: jii-texting
+  context:
+    location: us-central1
+    project_id: recidiviz-dashboard-staging
+    product: jii-texting
+
+# The variables set here are automatically provided to all components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
 
 # Defines which catalogs to import into this configuration to create in recidiviz-dashboard-staging
 # import:
@@ -25,10 +27,6 @@ terraform:
 
 components:
   terraform:
-    dummy-component:
-      metadata:
-        # This is the path to the component, relative to components/terraform
-        component: dummy-component
     postgres-instance:
       vars:
         create_bigquery_connection: false
@@ -36,7 +34,7 @@ components:
         base_secret_name: jii_texting
         database_version: POSTGRES_16
         has_readonly_user: false
-        region: us-central1
+        region: "{{ .settings.context.location }}"
         zone: us-central1-a
         secondary_zone: us-central1-b
         tier: db-custom-1-3840
@@ -49,19 +47,16 @@ components:
         component: vendor/cloud-sql-instance
     gcs-buckets:
       vars:
-        prefix: recidiviz-dashboard-staging
-        names: 
+        prefix: "{{ .vars.project_id }}"
+        names:
           - jii-texting-etl-data
-        log_bucket: recidiviz-dashboard-staging-gcs-object-logs
-        versioning: 
+        log_bucket: "{{ .vars.project_id }}-gcs-object-logs"
+        versioning:
           jii-texting-etl-data: true
-        location: us 
+        location: us
         storage_class: STANDARD
-        labels:
-          vanta-owner: joshua
-          vanta-description: terraform-managed-gcs-bucket
         lifecycle_rules:
-          - action: 
+          - action:
               type: Delete
             condition:
               num_newer_versions: 3

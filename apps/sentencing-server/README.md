@@ -36,7 +36,7 @@ If you haven't already, follow the setup instructions in the root README to inst
 
 1. Get env variables by running `nx load-env-files sentencing-server`
 
-   This way, `nx` will automatically pick up the correct environment variables based on the targets your are running.
+   This way, `nx` will automatically pick up the correct environment variables based on the targets you are running.
 
 2. Make sure you have your Docker daemon running.
 3. Start the server with `nx dev sentencing-server`.

@@ -17,10 +17,17 @@ stacks:
   base_path: "stacks"
   # Include all .yaml files underneath the stacks folder
   included_paths:
-    - "**/*.yaml"
+    - "**/*.yaml.tmpl"
   # For each of the YAML files, group their components into stacks based on the project and product
-  name_template: "{{.settings.project_id}}--{{.settings.product}}"
+  name_template: "{{.settings.context.project_id}}--{{.settings.context.product}}"
 
+templates:
+  settings:
+    # Enable gomplates in Atmos stack manifests
+    enabled: true
+    evaluations: 3
+    gomplate:
+      enabled: true
 logs:
   file: "/dev/stderr"
   level: Info

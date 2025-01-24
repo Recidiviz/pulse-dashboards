@@ -1,0 +1,7 @@
+# SOPS allows us to store encrypted secrets files in our git repository
+# Configure SOPS to use the GCP KMS key provisioned for encryption / decryption
+# Recidiviz/security-operations-automation/atmos/stacks/recidiviz-dashboard-staging.yaml
+# https://github.com/getsops/sops
+creation_rules:
+    - path_regex: \.enc\.yaml$
+      gcp_kms: projects/recidiviz-dashboard-staging/locations/us-central1/keyRings/pulse-dashboards-sops/cryptoKeys/pulse-dashboards-sops-key

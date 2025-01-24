@@ -10,8 +10,7 @@ Env Files
 If you haven't already, follow the setup instructions in the root README to install dependencies.
 
 1. Get env variables by running `nx load-env-files @sentencing-server/prisma`
-
-   This way, `nx` will automatically pick up the correct environment variables based on the targets your are running.
+  This way, `nx` will automatically pick up the correct environment variables based on the targets you are running.
 
 ### Updating the prisma schema
 
