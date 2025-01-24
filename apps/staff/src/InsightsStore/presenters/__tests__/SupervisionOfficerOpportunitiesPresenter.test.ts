@@ -21,11 +21,10 @@ import {
   ClientRecord,
   InsightsConfigFixture,
   supervisionOfficerFixture,
-  supervisionOfficerOutcomesFixture,
   supervisionOfficerSupervisorsFixture,
 } from "~datatypes";
-import { hydrationFailure, unpackAggregatedErrors } from "~hydration-utils";
 
+import { OpportunityMapping } from "../../../../../staff/src/WorkflowsStore";
 import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";
 import { mockIneligibleClient } from "../../../WorkflowsStore/__fixtures__";
@@ -33,9 +32,7 @@ import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvo
 import { mockFirestoreStoreClientsForOfficerId } from "../../../WorkflowsStore/subscriptions/__tests__/testUtils";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
-import { SupervisionOfficerPresenter } from "../SupervisionOfficerPresenter";
-import * as utils from "../utils";
-import { getOfficerOutcomesData, isExcludedSupervisionOfficer } from "../utils";
+import { SupervisionOfficerOpportunitiesPresenter } from "../SupervisionOfficerOpportunitiesPresenter";
 
 let store: InsightsSupervisionStore;
 let rootStore: RootStore;
@@ -43,12 +40,11 @@ let jiiStore: JusticeInvolvedPersonsStore;
 const stateCode = "US_ID";
 const pseudoId = "hashed-mavis123";
 const testOfficerWithOutcomes = supervisionOfficerFixture[0];
-const testOutcomes = supervisionOfficerOutcomesFixture[0];
 const testSupervisor = supervisionOfficerSupervisorsFixture[0];
 // Officer where includeInOutcomes is false
 const testExcludedOfficer = supervisionOfficerFixture[8];
 
-let presenter: SupervisionOfficerPresenter;
+let presenter: SupervisionOfficerOpportunitiesPresenter;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -96,10 +92,11 @@ const initPresenter = async (
   workflowsRootStore.populateJusticeInvolvedPersonsStore();
   if (workflowsRootStore.justiceInvolvedPersonsStore) {
     jiiStore = workflowsRootStore.justiceInvolvedPersonsStore;
-    presenter = new SupervisionOfficerPresenter(
+    presenter = new SupervisionOfficerOpportunitiesPresenter(
       store,
       testOfficer.pseudonymizedId,
       jiiStore,
+      workflowsRootStore.opportunityConfigurationStore,
     );
   }
 
@@ -131,18 +128,14 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
   describe("with unit data already hydrated", () => {
     beforeEach(async () => {
       await Promise.all([
+        flowResult(store.populateSupervisionOfficerSupervisors()),
         flowResult(
           store.populateOfficersForSupervisor(testSupervisor.pseudonymizedId),
         ),
-        flowResult(store.populateSupervisionOfficerSupervisors()),
-        flowResult(store.populateMetricConfigs()),
         flowResult(
           jiiStore.populateCaseloadForSupervisionOfficer(
             testOfficer.externalId,
           ),
-        ),
-        flowResult(
-          store.populateOutcomesForSupervisor(testSupervisor.pseudonymizedId),
         ),
       ]);
     });
@@ -152,17 +145,11 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
     });
 
     test("makes no additional API calls", async () => {
-      vi.spyOn(InsightsOfflineAPIClient.prototype, "metricBenchmarks");
       vi.spyOn(InsightsOfflineAPIClient.prototype, "supervisionOfficer");
       vi.spyOn(
         InsightsOfflineAPIClient.prototype,
         "supervisionOfficerSupervisors",
       );
-      vi.spyOn(
-        InsightsOfflineAPIClient.prototype,
-        "supervisionOfficerMetricEvents",
-      );
-      vi.spyOn(InsightsOfflineAPIClient.prototype, "outcomesForOfficer");
 
       // add this expect in so that we can call the same one later in this test to ensure it didn't
       // get another call at that time
@@ -172,44 +159,15 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
       await presenter.hydrate();
 
       expect(
-        store.insightsStore.apiClient.metricBenchmarks,
-      ).not.toHaveBeenCalled();
-      expect(
         store.insightsStore.apiClient.supervisionOfficerSupervisors,
       ).not.toHaveBeenCalled();
       expect(
         store.insightsStore.apiClient.supervisionOfficer,
       ).not.toHaveBeenCalled();
-      expect(
-        store.insightsStore.apiClient.outcomesForOfficer,
-      ).not.toHaveBeenCalled();
-      expect(
-        store.insightsStore.apiClient.supervisionOfficerMetricEvents,
-      ).not.toHaveBeenCalled();
       // This 1 time is from the beforeEach, since we set up this spy earlier
       expect(
         store.insightsStore.rootStore.firestoreStore.getClientsForOfficerId,
       ).toHaveBeenCalledTimes(1);
-    });
-
-    test("officerOutcomesData is correct for the officer type", async () => {
-      if (isExcludedSupervisionOfficer(testOfficer)) {
-        expect(presenter.officerOutcomesData).not.toBeDefined();
-      } else {
-        expect(presenter.officerOutcomesData).toBeDefined();
-        expect(presenter.officerOutcomesData).toStrictEqual(
-          getOfficerOutcomesData(testOfficer, store, testOutcomes),
-        );
-      }
-    });
-
-    test("has supervisorsInfo", () => {
-      expect(presenter.supervisorsInfo).toBeDefined();
-      expect(
-        presenter.supervisorsInfo
-          ?.map((s) => s.externalId)
-          .every((id) => testOfficer.supervisorExternalIds.includes(id)),
-      ).toBeTrue();
     });
   });
 
@@ -229,59 +187,55 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
     const officerPseudoId = testOfficer.pseudonymizedId;
 
     expect(presenter.hydrationState.status).toBe("hydrated");
-    expect(store.insightsStore.apiClient.metricBenchmarks).toHaveBeenCalled();
     expect(
       store.insightsStore.apiClient.supervisionOfficer,
     ).toHaveBeenCalledWith(officerPseudoId);
-    if (!isExcludedSupervisionOfficer(testOfficer)) {
-      expect(
-        store.insightsStore.apiClient.outcomesForOfficer,
-      ).toHaveBeenCalledWith(officerPseudoId);
-    } else {
-      expect(store.insightsStore.apiClient.outcomesForOfficer).not.toBeCalled();
-    }
-    expect(
-      store.insightsStore.apiClient.supervisionOfficerSupervisors,
-    ).toHaveBeenCalled();
-  });
-
-  test("officerOutcomesData is correct for the officer type", async () => {
-    await presenter.hydrate();
-
-    if (isExcludedSupervisionOfficer(testOfficer)) {
-      expect(presenter.officerOutcomesData).not.toBeDefined();
-    } else {
-      expect(presenter.officerOutcomesData).toBeDefined();
-      expect(presenter.officerOutcomesData).toStrictEqual(
-        getOfficerOutcomesData(testOfficer, store, testOutcomes),
-      );
-    }
-  });
-
-  test("has supervisorsInfo", async () => {
-    await presenter.hydrate();
-
-    expect(presenter.supervisorsInfo).toBeDefined();
-    expect(
-      presenter.supervisorsInfo
-        ?.map((s) => s.externalId)
-        .every((id) => testOfficer.supervisorExternalIds.includes(id)),
-    ).toBeTrue();
-  });
-
-  test("has timePeriod", async () => {
-    await presenter.hydrate();
-
-    const { timePeriod } = presenter;
-
-    expect(timePeriod).toBeDefined();
-    expect(timePeriod).toMatch("12/1/20 - 12/1/21");
   });
 
   test("has clients", async () => {
     await presenter.hydrate();
     expect(presenter.clients).toBeDefined();
     expect(presenter.clients).toHaveLength(2);
+  });
+
+  // TODO(#6534): Properly mock opportunities instead of skipping
+  describe.skip("has opportunity dependent fields", () => {
+    beforeEach(async () => {
+      await presenter.hydrate();
+
+      for (const client of presenter.clients ?? []) {
+        vi.spyOn(client, "opportunities", "get")
+          .mockResolvedValueOnce({
+            compliantReporting: {
+              type: "compliantReporting",
+            },
+          } as any as OpportunityMapping)
+          .mockResolvedValueOnce({
+            pastFTRD: {
+              type: "pastFTRD",
+            },
+            LSU: {
+              type: "LSU",
+            },
+          } as any as OpportunityMapping);
+      }
+    });
+
+    test("has opportunitiesByType", async () => {
+      const { opportunitiesByType } = presenter;
+
+      expect(opportunitiesByType).toBeDefined();
+      expect(opportunitiesByType?.pastFTRD.length).toEqual(1);
+      expect(opportunitiesByType?.compliantReporting.length).toEqual(1);
+      expect(opportunitiesByType?.LSU.length).toEqual(2);
+    });
+
+    test("has numEligibleOpportunities", async () => {
+      const { numEligibleOpportunities } = presenter;
+
+      expect(numEligibleOpportunities).toBeDefined();
+      expect(numEligibleOpportunities).toEqual(4);
+    });
   });
 
   test("has numClientsOnCaseload", async () => {
@@ -293,38 +247,37 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
     expect(numClientsOnCaseload).toEqual(2);
   });
 
-  test("hydration error in dependency", async () => {
-    const err = new Error("fake error");
-    vi.spyOn(
-      InsightsSupervisionStore.prototype,
-      "populateMetricConfigs",
-    ).mockImplementation(() => {
-      throw err;
-    });
-
-    await presenter.hydrate();
-    expect(presenter.hydrationState).toEqual({
-      status: "failed",
-      error: err,
-    });
-  });
-
-  test("error assembling metrics data", async () => {
-    if (!isExcludedSupervisionOfficer(testOfficer)) {
-      const expectedAggregateError = new Error("oops");
-      const expectedAggregateErrorMessage = "Expected data failed to populate";
-      vi.spyOn(utils, "getOfficerOutcomesData").mockImplementation(() => {
-        throw expectedAggregateError;
-      });
-
+  describe("does not have client-dependent fields if workflows is disabled", () => {
+    beforeEach(async () => {
+      vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(false);
       await presenter.hydrate();
-      expect(hydrationFailure(presenter)?.message).toStrictEqual(
-        expectedAggregateErrorMessage,
-      );
-      expect(unpackAggregatedErrors(presenter)).toStrictEqual([
-        expectedAggregateError,
-      ]);
-      expect(presenter.officerOutcomesData).toBeUndefined();
-    }
+      expect(presenter.hydrationState).toEqual({ status: "hydrated" });
+      // Mock opportunity hydration so that client functions populate.
+      for (const client of presenter.clients ?? []) {
+        vi.spyOn(
+          client.opportunityManager,
+          "hydrationState",
+          "get",
+        ).mockReturnValue({
+          status: "hydrated",
+        });
+      }
+    });
+
+    test("does not have clients", async () => {
+      expect(presenter.clients).toBeUndefined();
+    });
+
+    test("does not have numClientsOnCaseload", async () => {
+      expect(presenter.numClientsOnCaseload).toBeUndefined();
+    });
+
+    test("does not have opportunitiesByType", async () => {
+      expect(presenter.opportunitiesByType).toBeUndefined();
+    });
+
+    test("does not have numEligibleOpportunities", async () => {
+      expect(presenter.numEligibleOpportunities).toBeUndefined();
+    });
   });
 });

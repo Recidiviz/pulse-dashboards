@@ -31,14 +31,13 @@ import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
 import InsightsChartCard from "../InsightsChartCard";
 import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
-import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
 import { EmptyCard } from "../InsightsSupervisorPage/InsightsStaffCardV2";
 import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
 import { formatTargetAndHighlight } from "../InsightsSwarmPlot/utils";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
-import { OpportunitySummaries } from "../WorkflowsHomepage/OpportunitySummaries";
+import { InsightsOpportunitySummary } from "./InsightsOpportunitySummary";
 import { InsightsStaffVitals } from "./InsightsStaffVitals";
 
 const Wrapper = styled.div<{ isTablet: boolean }>`
@@ -66,11 +65,8 @@ const ManagedComponent = observer(function StaffPage({
     goToSupervisorInfo,
     labels,
     timePeriod,
-    userCanAccessAllSupervisors,
     numClientsOnCaseload,
-    numEligibleOpportunities,
-    opportunitiesByType,
-    opportunityTypes,
+    userCanAccessAllSupervisors,
     actionStrategyCopy,
     setUserHasSeenActionStrategy,
     disableSurfaceActionStrategies,
@@ -180,27 +176,7 @@ const ManagedComponent = observer(function StaffPage({
       ) : (
         <EmptyCard message={labels.officerHasNoOutlierMetricsLabel} />
       )}
-      {opportunitiesByType && (
-        <InsightsPageSection
-          sectionTitle={`Opportunities (${numEligibleOpportunities ?? 0})`}
-        >
-          {numEligibleOpportunities ? (
-            <OpportunitySummaries
-              opportunitiesByType={opportunitiesByType}
-              opportunityTypes={opportunityTypes}
-              officerPseudoId={officerPseudoId}
-              zeroGrantOpportunities={
-                officerOutcomesData?.zeroGrantOpportunities
-              }
-            />
-          ) : (
-            <EmptyCard
-              message={labels.officerHasNoEligibleClientsLabel}
-              height={200}
-            />
-          )}
-        </InsightsPageSection>
-      )}
+      <InsightsOpportunitySummary />
       {isVitalsEnabled && (
         <InsightsStaffVitals officerPseudoId={officerPseudoId} />
       )}
@@ -211,10 +187,7 @@ const ManagedComponent = observer(function StaffPage({
 function usePresenter() {
   const {
     insightsStore: { supervisionStore },
-    workflowsRootStore: {
-      justiceInvolvedPersonsStore,
-      opportunityConfigurationStore,
-    },
+    workflowsRootStore: { justiceInvolvedPersonsStore },
   } = useRootStore();
   const officerPseudoId = supervisionStore?.officerPseudoId;
 
@@ -224,7 +197,6 @@ function usePresenter() {
     supervisionStore,
     officerPseudoId,
     justiceInvolvedPersonsStore,
-    opportunityConfigurationStore,
   );
 }
 

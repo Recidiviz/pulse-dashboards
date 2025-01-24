@@ -278,11 +278,11 @@ export abstract class SupervisionOfficerPresenterBase
     this.supervisionStore.setUserHasSeenActionStrategy(this.officerPseudoId);
   }
 
-  private expectOfficerPopulated() {
+  protected expectOfficerPopulated() {
     if (!this.officerRecord) throw new Error("Failed to populate officer data");
   }
 
-  private expectSupervisorPopulated() {
+  protected expectSupervisorPopulated() {
     if (!this.supervisorsInfo)
       throw new Error("Failed to populate supervisor info");
   }

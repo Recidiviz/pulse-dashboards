@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,35 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeObservable, override } from "mobx";
+import { makeObservable, override } from "mobx";
 
+import { OpportunityType } from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
+import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { InsightsAPI } from "../api/interface";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
-import { HighlightedOfficersDetail } from "./types";
-import {
-  getHighlightedOfficersByMetric,
-  isExcludedSupervisionOfficer,
-} from "./utils";
 
-export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
+export class SupervisionOfficerOpportunitiesPresenter extends WithJusticeInvolvedPersonStore(
   SupervisionOfficerPresenterBase,
 ) {
   constructor(
     protected supervisionStore: InsightsSupervisionStore,
     public officerPseudoId: string,
     justiceInvolvedPersonStore: JusticeInvolvedPersonsStore,
+    private opportunityConfigurationStore: OpportunityConfigurationStore,
   ) {
     super(supervisionStore, officerPseudoId);
     this.justiceInvolvedPersonsStore = justiceInvolvedPersonStore;
 
     makeObservable<
-      SupervisionOfficerPresenter,
+      SupervisionOfficerOpportunitiesPresenter,
       | "populateSupervisionOfficer"
       | "expectClientsPopulated"
       | "populateCaseload"
@@ -53,6 +51,8 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
       populateCaseload: true,
       clients: true,
       numClientsOnCaseload: true,
+      numEligibleOpportunities: true,
+      opportunitiesByType: true,
       populateSupervisionOfficer: override,
       hydrate: override,
       hydrationState: override,
@@ -60,16 +60,19 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
-        ...super.expectPopulated(),
+        this.expectSupervisorPopulated,
+        this.expectOfficerPopulated,
         () => this.expectClientsPopulated(this.officerExternalId),
       ],
       populate: async () => {
-        await Promise.all(super.populateMethods());
-        // These need to happen after the above calls so that the officer record is hydrated
         await Promise.all([
-          this.populateCaseload(),
-          flowResult(this.populateSupervisionOfficerOutcomes()),
+          await this.supervisionStore.populateSupervisionOfficerSupervisors(),
+          await this.populateSupervisionOfficer(),
         ]);
+
+        // This needs to happen after the above are hydrated
+        // so it can use the externalId to find the opportunities.
+        await this.populateCaseload();
       },
     });
   }
@@ -79,49 +82,36 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
     await this.populateOpportunitiesForOfficer(this.officerExternalId);
   }
 
-  // TODO(#5780): move to infoItems presenter
   get clients(): JusticeInvolvedPerson[] | undefined {
     return this.officerExternalId
       ? this.findClientsForOfficer(this.officerExternalId)
       : undefined;
   }
-  // TODO(#5780): move to infoItems presenter
+
   get numClientsOnCaseload(): number | undefined {
     return this.clients?.length;
   }
 
-  /**
-   * Passthrough to the SupervisionStore
-   * Checks if Vitals is enabled based on user permissions.
-   * @returns `true` if vitals is enabled, otherwise `false`.
-   */
-  get isVitalsEnabled() {
-    return this.supervisionStore.isVitalsEnabled;
+  get opportunitiesByType() {
+    return this.officerExternalId
+      ? this.opportunitiesByTypeForOfficer(this.officerExternalId)
+      : undefined;
   }
 
   /**
-   * Returns metrics where this officer meets the top X percent criteria.
-   * @returns An array of objects containing the metric, top X percent criteria, and info about
-   * officers meeting the top X percent criteria. Returns empty array for officers
-   * excluded from outcomes.
+   * The relevant opportunity types for this officer in display order.
    */
-  get officerHighlights(): HighlightedOfficersDetail[] {
-    if (isExcludedSupervisionOfficer(this.officerRecord)) return [];
-
-    // Not expected in practice, but needed for type safety
-    if (!this.officerOutcomes || !this.officerRecord) {
-      throw new Error("Missing necessary officer data");
-    }
-    return getHighlightedOfficersByMetric(
-      this.metricConfigsById,
-      [this.officerRecord],
-      [this.officerOutcomes],
+  get opportunityTypes(): OpportunityType[] {
+    if (!this.opportunitiesByType) return [];
+    return (Object.keys(this.opportunitiesByType) as OpportunityType[]).sort(
+      (a, b) =>
+        this.opportunityConfigurationStore.opportunities[a].homepagePosition -
+        this.opportunityConfigurationStore.opportunities[b].homepagePosition,
     );
   }
 
-  protected expectMetricsPopulated() {
-    if (isExcludedSupervisionOfficer(this.fetchedOfficerRecord)) return;
-    super.expectMetricsPopulated();
+  get numEligibleOpportunities(): number | undefined {
+    return this.countOpportunitiesForOfficer(this.officerExternalId);
   }
 
   /**
