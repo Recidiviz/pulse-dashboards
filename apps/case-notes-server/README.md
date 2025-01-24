@@ -19,13 +19,8 @@ Production
 
 If you haven't already, follow the setup instructions in the root README to install dependencies.
 
-1. Get env variables from Google Secrets Manager and put them in this directory
-   - Put the [env_dev_case_notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_dev_case_notes_server/versions?project=recidiviz-dashboard-staging) in an `.env` file
-   - Put the [env_staging_case_notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_staging_case_notes_server/versions?project=recidiviz-dashboard-staging) in an `.env.staging` file
-   - Put the [env_prod_case_notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_prod_case_notes_server/versions?project=recidiviz-dashboard-staging) in an `.env.prod` file
-   - Put the [env_test_case_notes_server](https://console.cloud.google.com/security/secret-manager/secret/env_test_case_notes_server/versions?project=recidiviz-dashboard-staging) in an `.env.test` file
-
-   This way, `nx` will automatically pick up the correct environment variables based on the targets your are running.
+1. Get env variables by running `nx load-env-files case-notes-server`
+   This way, `nx` will automatically pick up the correct environment variables based on the targets you are running.
 
 2. Make sure you have your Docker daemon running.
 3. Start the server with `nx dev case-notes-server`.
