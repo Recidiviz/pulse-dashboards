@@ -1,0 +1,164 @@
+{
+  "name": "jii-texting-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/jii-texting-server/src",
+  "projectType": "application",
+  "targets": {
+    "test-zod": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx test-zod/index.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server --env_preview env_preview_jii_texting_server",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite-node --watch src/main.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/jii-texting-server",
+        "bundle": true,
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "generatePackageJson": true,
+        "target": "node20",
+        "minify": true,
+        "assets": [
+          {
+            "glob": "prisma/schema.prisma",
+            "input": "{workspaceRoot}/libs/@jii-texting-server/prisma",
+            "output": "."
+          },
+          {
+            "glob": "prisma/migrations/**/*",
+            "input": "{workspaceRoot}/libs/@jii-texting-server/prisma",
+            "output": "."
+          },
+          "{projectRoot}/scripts/*"
+        ]
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {
+          "sourcemap": true,
+          "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
+        },
+        "cherry-pick": {
+          "sourcemap": true,
+          "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "dependsOn": [
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "docker"
+        },
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "prisma-seed"
+        }
+      ],
+      "options": {
+        "buildTarget": "jii-texting-server:build"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "outputs": ["{workspaceRoot}/coverage/apps/jii-texting-server"],
+      "cache": true,
+      "options": {
+        "command": "nx prisma-push @jii-texting-server/prisma && cd apps/jii-texting-server && vitest",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "staging": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/jii-texting-server:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/jii-texting-server:latest"
+          ]
+        },
+        "cherry-pick": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/jii-texting-server:$COMMIT_SHA"
+          ]
+        },
+        "preview": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/jii-texting-server-preview:$VERSION"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "create-preview-db": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../tools/clone_jii_texting_db.sh",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "cleanup-preview-resources": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "gcloud run services delete jii-preview-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud run jobs delete jii-migrate-preview-db-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud sql instances delete jii-db-preview-$VERSION --project recidiviz-dashboard-staging -q"
+      }
+    }
+  },
+  "tags": ["jii-texting-server"]
+}
