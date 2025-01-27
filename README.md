@@ -71,3 +71,17 @@ Briefly stated, there are a few benefits to doing this:
 **TL;DR:** run `nx generate ~repo:lib [my-library]` and follow the prompts. Update the generated files as necessary.
 
 **Long version:** Nx has various plugins that automate the boilerplate and nuances of creating and configuring libraries, such as [`@nx/js`](https://nx.dev/nx-api/js/generators/library) and [`@nx/react`](https://nx.dev/nx-api/react/generators/library). You can use those directly when needed, but in most cases you will want to reach for our local plugin first, which extends those plugins by setting our preferred options and extending the default plugin outputs with additional configuration and features that are tailored to our applications. These are meant to be sensible defaults, you can always override or extend them as needed to suit your use case. See [`/plugins/repo`](/plugins/repo) to learn more about its implementation.
+
+### Creating a new app for a server
+The below instructions apply to creating an app that doesn't have a UI as the client, e.g. JII texting.
+#### Instructions
+1. Generate the app
+
+   ```
+   nx g @nx/node:app apps/{server-name} --e2eTestRunner=none --unitTestRunner=none
+   ```
+   1. This creates a new directory named {server_name} in apps without adding a directory for e2e tests. The second argument 
+   ensures nx doesn't set up our testing framework with jest automatically, since we use vitest.
+2. Inspect any changes to the <code>yarn.lock</code> and <code>package.json</code> to look for any unnecessary changes made by the nx generator. You
+   might also want to check if the Fastify version was updated by searching for <code>fastify@</code> in <code>yarn.lock</code>.
+
