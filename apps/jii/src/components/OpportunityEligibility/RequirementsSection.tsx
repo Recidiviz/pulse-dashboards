@@ -24,11 +24,44 @@ import styled from "styled-components/macro";
 
 import { RequirementsSectionContent } from "../../models/EligibilityReport/interface";
 import { GoButton } from "../ButtonLink/GoButton";
+import { EligibilityStatusChip } from "../EligibilityStatusChip/EligibilityStatusChip";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 import { Section, SectionHeading } from "./styles";
 
 const LIST_PAD = spacing.xl;
 const BULLET_PAD = 12;
+
+const Header = styled.header`
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+
+  /* put margin on the header instead so it collapses with the following element */
+  margin-bottom: ${rem(spacing.xl)};
+  ${SectionHeading} {
+    margin: 0;
+  }
+`;
+
+const Highlights = styled.dl`
+  border-bottom: 1px solid ${palette.slate20};
+  margin: 0 0 ${rem(spacing.xl)};
+  padding-bottom: ${rem(spacing.md)};
+
+  dt {
+    ${typography.Sans18}
+
+    color: ${palette.slate85};
+    margin-bottom: ${rem(spacing.xs)};
+  }
+
+  dd {
+    ${typography.Sans24}
+
+    color: ${palette.pine1};
+    margin: 0 0 ${rem(spacing.md)};
+  }
+`;
 
 const RequirementsGroupings = styled.dl`
   dt {
@@ -107,8 +140,23 @@ export const RequirementsSection: FC<{
   presenter: OpportunityEligibilityPresenter;
 }> = observer(function RequirementsSection({ presenter }) {
   return (
-    <Section>
-      <SectionHeading>{presenter.requirementsContent.heading}</SectionHeading>
+    <Section id={presenter.requirementsContent.id}>
+      <Header>
+        <SectionHeading>{presenter.requirementsContent.heading}</SectionHeading>
+        <EligibilityStatusChip {...presenter.status} />
+      </Header>
+      {presenter.highlights && (
+        <Highlights>
+          {presenter.highlights.map(({ label, value }) => (
+            <Fragment key={label}>
+              <dt>
+                <Markdown>{label}</Markdown>
+              </dt>
+              <dd>{value}</dd>
+            </Fragment>
+          ))}
+        </Highlights>
+      )}
       <RequirementsGroupings>
         {presenter.requirementsContent.sections.map((section) => (
           <Fragment key={section.label}>

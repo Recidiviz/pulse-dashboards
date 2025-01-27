@@ -32,68 +32,32 @@ const oppConfig = stateConfig.incarcerationOpportunities[
   opportunityId
 ] as OpportunityConfig;
 
-describe("for eligible user", () => {
-  const allPages = [
-    oppConfig.requirements.fullPage,
-    ...oppConfig.sections.map((s) => s.fullPage),
-  ];
-  const eligibleResident = usMeResidents[0];
+const allPages = [
+  oppConfig.requirements.fullPage,
+  ...oppConfig.sections.map((s) => s.fullPage),
+];
+const eligibleResident = usMeResidents[0];
 
-  test.each(allPages)(
-    "SCCP page $urlSlug links to all other pages",
-    (pageConfig) => {
-      const presenter = new OpportunityInfoPagePresenter(
+test.each(allPages)(
+  "SCCP page $urlSlug links to all other pages",
+  (pageConfig) => {
+    const presenter = new OpportunityInfoPagePresenter(
+      oppConfig,
+      pageConfig.urlSlug,
+      new UsMeSCCPEligibilityReport(
+        eligibleResident,
         oppConfig,
-        pageConfig.urlSlug,
-        new UsMeSCCPEligibilityReport(
-          eligibleResident,
-          oppConfig,
-          outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
-        ),
-      );
+        outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
+      ),
+    );
 
-      const otherPages = allPages.filter((p) => p !== pageConfig);
-      otherPages.forEach((p) => {
-        expect(
-          presenter.pageLinks.find((l) => l.url.endsWith(p.urlSlug)),
-        ).toBeDefined();
-      });
+    const otherPages = allPages.filter((p) => p !== pageConfig);
+    otherPages.forEach((p) => {
+      expect(
+        presenter.pageLinks.find((l) => l.url.endsWith(p.urlSlug)),
+      ).toBeDefined();
+    });
 
-      expect.assertions(allPages.length - 1);
-    },
-  );
-});
-
-describe("for ineligible user", () => {
-  const hiddenPage = oppConfig.sections.find((s) => s.hideWhenIneligible);
-  const ineligibleResident = usMeResidents[usMeResidents.length - 1];
-
-  const visiblePages = [
-    oppConfig.requirements.fullPage,
-    ...oppConfig.sections
-      .filter((s) => s !== hiddenPage)
-      .map((s) => s.fullPage),
-  ];
-
-  test.each(visiblePages)(
-    "SCCP page $urlSlug links to all non-hidden pages",
-    (pageConfig) => {
-      const presenter = new OpportunityInfoPagePresenter(
-        oppConfig,
-        pageConfig.urlSlug,
-        new UsMeSCCPEligibilityReport(
-          ineligibleResident,
-          oppConfig,
-          outputFixture(usMeSccpFixtures.ineligible),
-        ),
-      );
-
-      presenter.pageLinks.forEach((link) => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        expect(link.url).not.toMatch(hiddenPage!.fullPage.urlSlug);
-      });
-
-      expect.assertions(visiblePages.length - 1);
-    },
-  );
-});
+    expect.assertions(allPages.length - 1);
+  },
+);

@@ -17,44 +17,19 @@
 
 import { OpportunityConfig } from "../../types";
 import aboutPage from "./aboutPage.md?raw";
+import aboutSummary from "./aboutSummary.md?raw";
 import nextStepsBody from "./nextStepsBody.md?raw";
 import nextStepsPage from "./nextStepsPage.md?raw";
-import quickFactsSummary from "./quickFactsSummary.md?raw";
 import requirementsPage from "./requirementsPage.md?raw";
-import summaryBody from "./summaryBody.md?raw";
 
 export const config: OpportunityConfig = {
   urlSlug: "sccp",
   firestoreCollection: "US_ME-SCCPReferrals",
   name: "Supervised Community Confinement Program (SCCP)",
   description: `Spend the last portion of your sentence in the community (also called “home confinement”)`,
-  headline: `{{#if eligibilityData}}
-        {{#if resident.personName.givenNames}}{{ resident.personName.givenNames }}, you{{ else }}You{{/if}} 
-        could be eligible to apply for the Supervised Community Confinement Program
-        {{#if (isFutureDate custom.applicationDate)}} on {{ formatFullDate custom.applicationDate }}{{/if}}
-      {{else}}Learn about the Supervised Community Confinement Program
-      {{/if}}`,
-  // if no eligibility data, or if resident is fully eligible, this will be blank;
-  // otherwise the copy responds to various data conditions
-  subheading: `{{#if eligibilityData}} 
-      {{#if custom.ineligibleViolation}}You have remaining requirements. Talk to your case manager to understand if and when you can apply.
-      {{else}}
-        {{#if (isFutureDate custom.eligibilityDate)}}
-        You could be eligible for release onto SCCP on <strong>{{formatFullDate custom.eligibilityDate}}</strong>. 
-        You can apply up to 3 months prior to that date —
-          {{#if (isFutureDate custom.applicationDate )}} as soon as {{formatFullDate custom.applicationDate}}.
-          {{else}} which means that you may be eligible to apply now.
-          {{/if}}
-        {{/if}}
-      {{/if}} 
-    {{/if}}`,
-  summary: {
-    heading: "About the program",
-    body: summaryBody,
-  },
   requirements: {
     summary: {
-      heading: "Requirements",
+      heading: "Your eligibility",
       trackedCriteria: {
         usMeServedXPortionOfSentence: {
           criterion: `{{#if currentCriterion}}Served {{currentCriterion.xPortionServed}} of your sentence
@@ -98,8 +73,24 @@ export const config: OpportunityConfig = {
             "Completing required programs and following your case plan",
         },
       ],
-      staticRequirementsLabel:
-        "In order to be eligible for SCCP, you must have met the following requirements:",
+      highlights: [
+        {
+          label: `When you may be eligible to **apply**`,
+          value: `{{#if (isFutureDate custom.applicationDate)}}
+            {{formatFullDate custom.applicationDate}}
+          {{else}}
+            Now
+          {{/if}}`,
+        },
+        {
+          label: `When you may be eligible for **release**`,
+          value: `{{#if (isFutureDate custom.eligibilityDate)}}
+            {{formatFullDate custom.eligibilityDate}}
+          {{else}}
+            Now
+          {{/if}}`,
+        },
+      ],
     },
     fullPage: {
       linkText: "Get details about each requirement",
@@ -111,8 +102,8 @@ export const config: OpportunityConfig = {
   sections: [
     {
       summary: {
-        heading: "Quick facts",
-        body: quickFactsSummary,
+        heading: "About SCCP",
+        body: aboutSummary,
       },
       fullPage: {
         linkText: "Learn more about how the program works",
@@ -132,7 +123,6 @@ export const config: OpportunityConfig = {
         heading: "SCCP Application Process and Tips",
         body: nextStepsPage,
       },
-      hideWhenIneligible: true,
     },
   ],
 
@@ -140,7 +130,7 @@ export const config: OpportunityConfig = {
   formPreview: { title: "SCCP Application" },
   statusLabels: {
     ELIGIBLE: "May be eligible",
-    "ALMOST ELIGIBLE": "Almost eligible",
+    ALMOST_ELIGIBLE: "Almost eligible",
     INELIGIBLE: "Not yet eligible",
   },
 } satisfies OpportunityConfig;

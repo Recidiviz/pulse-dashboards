@@ -28,7 +28,7 @@ export const AdditionalSection: FC<{
   content: ValuesType<OpportunityEligibilityPresenter["additionalSections"]>;
 }> = observer(function AdditionalSection({ content }) {
   return (
-    <Section>
+    <Section id={content.id}>
       <SectionHeading>{content.heading}</SectionHeading>
       <CopyWrapper>{content.body}</CopyWrapper>
 

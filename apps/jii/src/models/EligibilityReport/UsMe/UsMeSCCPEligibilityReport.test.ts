@@ -35,22 +35,27 @@ describe("fully eligible, needs to serve half", () => {
     );
   });
 
-  test("headline", () => {
-    expect(report.headline).toMatchInlineSnapshot(
-      `"First, you could be eligible to apply for the Supervised Community Confinement Program"`,
-    );
-  });
-
-  test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(`""`);
-  });
-
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
         "label": "May be eligible",
         "value": "ELIGIBLE",
       }
+    `);
+  });
+
+  test("highlights", () => {
+    expect(report.highlights).toMatchInlineSnapshot(`
+      [
+        {
+          "label": "When you may be eligible to **apply**",
+          "value": "Now",
+        },
+        {
+          "label": "When you may be eligible for **release**",
+          "value": "Now",
+        },
+      ]
     `);
   });
 
@@ -111,24 +116,27 @@ describe("eligible to apply before X portion served", () => {
     );
   });
 
-  test("headline", () => {
-    expect(report.headline).toMatchInlineSnapshot(
-      `"First, you could be eligible to apply for the Supervised Community Confinement Program"`,
-    );
-  });
-
-  test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on <strong>February 16, 2022</strong>. You can apply up to 3 months prior to that date — which means that you may be eligible to apply now."`,
-    );
-  });
-
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
         "label": "Almost eligible",
-        "value": "ALMOST ELIGIBLE",
+        "value": "ALMOST_ELIGIBLE",
       }
+    `);
+  });
+
+  test("highlights", () => {
+    expect(report.highlights).toMatchInlineSnapshot(`
+      [
+        {
+          "label": "When you may be eligible to **apply**",
+          "value": "Now",
+        },
+        {
+          "label": "When you may be eligible for **release**",
+          "value": "February 16, 2022",
+        },
+      ]
     `);
   });
 
@@ -196,24 +204,27 @@ describe("eligible to apply before X months remaining", () => {
     );
   });
 
-  test("headline", () => {
-    expect(report.headline).toMatchInlineSnapshot(
-      `"First, you could be eligible to apply for the Supervised Community Confinement Program"`,
-    );
-  });
-
-  test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on <strong>February 16, 2022</strong>. You can apply up to 3 months prior to that date — which means that you may be eligible to apply now."`,
-    );
-  });
-
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
         "label": "Almost eligible",
-        "value": "ALMOST ELIGIBLE",
+        "value": "ALMOST_ELIGIBLE",
       }
+    `);
+  });
+
+  test("highlights", () => {
+    expect(report.highlights).toMatchInlineSnapshot(`
+      [
+        {
+          "label": "When you may be eligible to **apply**",
+          "value": "Now",
+        },
+        {
+          "label": "When you may be eligible for **release**",
+          "value": "February 16, 2022",
+        },
+      ]
     `);
   });
 
@@ -281,24 +292,27 @@ describe("almost eligible, portion served", () => {
     );
   });
 
-  test("headline", () => {
-    expect(report.headline).toMatchInlineSnapshot(
-      `"First, you could be eligible to apply for the Supervised Community Confinement Program on February 16, 2022"`,
-    );
-  });
-
-  test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on <strong>May 16, 2022</strong>. You can apply up to 3 months prior to that date — as soon as February 16, 2022."`,
-    );
-  });
-
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
         "label": "Almost eligible",
-        "value": "ALMOST ELIGIBLE",
+        "value": "ALMOST_ELIGIBLE",
       }
+    `);
+  });
+
+  test("highlights", () => {
+    expect(report.highlights).toMatchInlineSnapshot(`
+      [
+        {
+          "label": "When you may be eligible to **apply**",
+          "value": "February 16, 2022",
+        },
+        {
+          "label": "When you may be eligible for **release**",
+          "value": "May 16, 2022",
+        },
+      ]
     `);
   });
 
@@ -366,24 +380,27 @@ describe("almost eligible, recent violation", () => {
     );
   });
 
-  test("headline", () => {
-    expect(report.headline).toMatchInlineSnapshot(
-      `"First, you could be eligible to apply for the Supervised Community Confinement Program"`,
-    );
-  });
-
-  test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(
-      `"You have remaining requirements. Talk to your case manager to understand if and when you can apply."`,
-    );
-  });
-
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
         "label": "Almost eligible",
-        "value": "ALMOST ELIGIBLE",
+        "value": "ALMOST_ELIGIBLE",
       }
+    `);
+  });
+
+  test("highlights", () => {
+    expect(report.highlights).toMatchInlineSnapshot(`
+      [
+        {
+          "label": "When you may be eligible to **apply**",
+          "value": "Now",
+        },
+        {
+          "label": "When you may be eligible for **release**",
+          "value": "Now",
+        },
+      ]
     `);
   });
 
@@ -451,25 +468,17 @@ describe("almost eligible, pending violation", () => {
     );
   });
 
-  test("headline", () => {
-    expect(report.headline).toMatchInlineSnapshot(
-      `"First, you could be eligible to apply for the Supervised Community Confinement Program"`,
-    );
-  });
-
-  test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(
-      `"You have remaining requirements. Talk to your case manager to understand if and when you can apply."`,
-    );
-  });
-
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
         "label": "Almost eligible",
-        "value": "ALMOST ELIGIBLE",
+        "value": "ALMOST_ELIGIBLE",
       }
     `);
+  });
+
+  test("highlights", () => {
+    expect(report.highlights).toMatchInlineSnapshot(`[]`);
   });
 
   test("requirements", () => {
@@ -536,24 +545,27 @@ describe("almost eligible, months remaining", () => {
     );
   });
 
-  test("headline", () => {
-    expect(report.headline).toMatchInlineSnapshot(
-      `"First, you could be eligible to apply for the Supervised Community Confinement Program on February 16, 2022"`,
-    );
-  });
-
-  test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(
-      `"You could be eligible for release onto SCCP on <strong>May 16, 2022</strong>. You can apply up to 3 months prior to that date — as soon as February 16, 2022."`,
-    );
-  });
-
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
         "label": "Almost eligible",
-        "value": "ALMOST ELIGIBLE",
+        "value": "ALMOST_ELIGIBLE",
       }
+    `);
+  });
+
+  test("highlights", () => {
+    expect(report.highlights).toMatchInlineSnapshot(`
+      [
+        {
+          "label": "When you may be eligible to **apply**",
+          "value": "February 16, 2022",
+        },
+        {
+          "label": "When you may be eligible for **release**",
+          "value": "May 16, 2022",
+        },
+      ]
     `);
   });
 
@@ -621,18 +633,6 @@ describe("not eligible", () => {
     );
   });
 
-  test("headline", () => {
-    expect(report.headline).toMatchInlineSnapshot(
-      `"First, you could be eligible to apply for the Supervised Community Confinement Program on August 16, 2022"`,
-    );
-  });
-
-  test("subheading", () => {
-    expect(report.subheading).toMatchInlineSnapshot(
-      `"You have remaining requirements. Talk to your case manager to understand if and when you can apply."`,
-    );
-  });
-
   test("status", () => {
     expect(report.status).toMatchInlineSnapshot(`
       {
@@ -640,6 +640,10 @@ describe("not eligible", () => {
         "value": "INELIGIBLE",
       }
     `);
+  });
+
+  test("highlights", () => {
+    expect(report.highlights).toMatchInlineSnapshot(`[]`);
   });
 
   test("requirements", () => {
@@ -688,7 +692,7 @@ describe("not eligible", () => {
     `);
   });
 
-  test("section disabled", () => {
-    expect(report.enabledSections).toEqual(config.sections.slice(0, 1));
+  test("all sections enabled", () => {
+    expect(report.enabledSections).toEqual(config.sections);
   });
 });

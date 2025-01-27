@@ -23,25 +23,30 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import logoUrl from "../../assets/images/sunrise.svg";
-import { PageContainer, UnpaddedPageContainer } from "../BaseLayout/BaseLayout";
+import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 import { AccountMenu } from "./AccountMenu";
 
-const HeaderWrapper = styled(UnpaddedPageContainer)`
+const HeaderWrapper = styled(FullBleedContainer)`
   background: ${palette.white};
   border-bottom: 1px solid ${palette.slate20};
   position: sticky;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: ${zindex.modal.backdrop - 1};
 `;
 
 const LogoLink = styled(Link)``;
 
+export const HEADER_BAR_HEIGHT = 64;
+export const HEADER_BAR_GAP = spacing.lg;
+
 const Header = styled(PageContainer).attrs({ as: "header" })`
   align-items: center;
   display: flex;
-  gap: ${rem(spacing.lg)};
+  gap: ${rem(HEADER_BAR_GAP)};
   justify-content: stretch;
-  min-height: ${rem(64)};
+  min-height: ${rem(HEADER_BAR_HEIGHT)};
 
   ${LogoLink} {
     margin-right: auto;

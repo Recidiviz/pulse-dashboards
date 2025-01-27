@@ -37,7 +37,7 @@ const statusStyles: Record<EligibilityStatus, CSSProperties> = {
     backgroundColor: "#EFFFE5",
     borderColor: "#A6EB84",
   },
-  "ALMOST ELIGIBLE": {
+  ALMOST_ELIGIBLE: {
     color: "#A82C00",
     backgroundColor: "#FFF8DE",
     borderColor: "#FCD579",
