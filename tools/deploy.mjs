@@ -15,6 +15,13 @@ import { WebClient as SlackClient } from "@slack/web-api";
 // in order for the gcloud stderr to display (used for the backend deploy)
 $.verbose = true;
 
+if ((await $`git status --porcelain`).stdout.trim() !== "") {
+  console.error(
+    "The git repo contains uncommitted changes. Make sure the repo is clean before deploying.",
+  );
+  process.exit(1);
+}
+
 // Get the most recent release
 console.log("Reading GitHub access token from Secret Manager...");
 const secretClient = new SecretManagerServiceClient({
@@ -76,6 +83,24 @@ let nextVersion = "deploy-candidate";
 let publishReleaseNotes;
 let releaseNotes;
 let isCpDeploy;
+
+if (deployEnv === "staging") {
+  const mainBranch = await octokit.rest.repos.getBranch({
+    owner,
+    repo,
+    branch: "main",
+  });
+  if (!mainBranch.data.commit.sha.startsWith(currentRevision)) {
+    const { proceedAnyway } = await inquirer.prompt({
+      type: "confirm",
+      name: "proceedAnyway",
+      message:
+        "⚠️ The commit you're about to deploy to staging is NOT the tip of main. Would you like to proceed anyway? ⚠️",
+      default: false,
+    });
+    if (!proceedAnyway) process.exit(1);
+  }
+}
 
 if (deployEnv === "production") {
   ({ isCpDeploy } = await inquirer.prompt({
