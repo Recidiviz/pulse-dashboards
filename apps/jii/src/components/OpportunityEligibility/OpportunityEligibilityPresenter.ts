@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { slugify } from "markdown-to-jsx";
 import { makeAutoObservable } from "mobx";
 
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
@@ -22,6 +23,7 @@ import { OpportunityConfig } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { EligibilityReport } from "../../models/EligibilityReport/interface";
 import { State } from "../../routes/routes";
+import { LinkProps } from "../ResidentsLayoutRoute/NavigationMenuPresenter";
 
 export class OpportunityEligibilityPresenter {
   constructor(
@@ -33,12 +35,12 @@ export class OpportunityEligibilityPresenter {
     makeAutoObservable(this, undefined, { autoBind: true });
   }
 
-  get headline() {
-    return this.eligibilityReport.headline;
+  get title() {
+    return this.eligibilityReport.name;
   }
 
-  get subheading() {
-    return this.eligibilityReport.subheading;
+  get status() {
+    return this.eligibilityReport.status;
   }
 
   private get linkParams() {
@@ -47,10 +49,6 @@ export class OpportunityEligibilityPresenter {
       opportunitySlug: this.config.urlSlug,
       personPseudoId: this.residentPseudoId,
     };
-  }
-
-  get summaryContent() {
-    return this.config.summary;
   }
 
   get requirementsContent() {
@@ -64,6 +62,7 @@ export class OpportunityEligibilityPresenter {
     } = this.config;
 
     return {
+      id: slugify(heading),
       heading,
       sections,
       linkText,
@@ -81,6 +80,7 @@ export class OpportunityEligibilityPresenter {
         fullPage: { urlSlug, linkText },
       } = sectionConfig;
       return {
+        id: slugify(heading),
         heading,
         body,
         linkText,
@@ -92,7 +92,47 @@ export class OpportunityEligibilityPresenter {
     });
   }
 
-  get htmlTitle() {
-    return this.config.name;
+  get tableOfContentsLinks(): Array<LinkProps> {
+    return [
+      {
+        children: this.requirementsContent.heading,
+        to: `#${this.requirementsContent.id}`,
+      },
+      ...this.additionalSections.map((section) => ({
+        children: section.heading,
+        to: `#${section.id}`,
+      })),
+    ];
+  }
+
+  get pageBackgroundStyle() {
+    let colors;
+
+    switch (this.status.value) {
+      case "ELIGIBLE":
+        colors = ["rgba(0, 196, 157, 0.08)", "rgba(255, 255, 255, 0.08)"];
+        break;
+      case "ALMOST_ELIGIBLE":
+        colors = ["rgba(252, 206, 68, 0.2)", "rgba(255, 255, 255, 0.2)"];
+        break;
+      case "INELIGIBLE":
+        colors = ["rgba(0, 77, 72, 0.06)", "rgba(255, 255, 255, 0.06)"];
+        break;
+    }
+
+    return colors
+      ? `linear-gradient(
+      180deg,
+      ${colors[0]} 0%,
+      ${colors[1]} 100%
+    )`
+      : "none";
+  }
+
+  get highlights() {
+    if (this.eligibilityReport.highlights.length) {
+      return this.eligibilityReport.highlights;
+    }
+    return undefined;
   }
 }

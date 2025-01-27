@@ -66,12 +66,6 @@ export type OpportunityConfig = {
   firestoreCollection: string;
   name: string;
   description: string;
-  headline: string;
-  subheading: string;
-  /**
-   * short section that appears right below the headline and above requirements
-   */
-  summary: SummaryContent;
   /**
    * Required section that has a specific format
    */
@@ -80,7 +74,10 @@ export type OpportunityConfig = {
       heading: string;
       trackedCriteria: Record<string, RequirementCopy>;
       untrackedCriteria: Array<RequirementCopy>;
-      staticRequirementsLabel: string;
+      /**
+       * Template strings are supported here
+       */
+      highlights: Array<{ label: string; value: string }>;
     };
     fullPage: FullPageConfig;
   };

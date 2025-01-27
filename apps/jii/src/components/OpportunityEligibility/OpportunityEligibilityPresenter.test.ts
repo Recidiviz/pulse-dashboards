@@ -55,14 +55,11 @@ describe("eligible resident", () => {
     );
   });
 
-  test("summary content", () => {
-    expect(presenter.summaryContent).toMatchSnapshot();
-  });
-
   test("requirements content", () => {
     expect(presenter.requirementsContent).toMatchInlineSnapshot(`
       {
-        "heading": "Requirements",
+        "heading": "Your eligibility",
+        "id": "your-eligibility",
         "linkText": "Get details about each requirement",
         "linkUrl": "/maine/anonres001/eligibility/sccp/requirements",
         "sections": [
@@ -135,7 +132,7 @@ describe("ineligible resident", () => {
   });
 
   test("additional sections content", () => {
-    expect(presenter.additionalSections).toHaveLength(1);
+    expect(presenter.additionalSections).toHaveLength(2);
     expect(presenter.additionalSections).toMatchSnapshot();
   });
 });

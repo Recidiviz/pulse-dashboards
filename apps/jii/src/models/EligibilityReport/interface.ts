@@ -30,7 +30,7 @@ export type RequirementsSectionContent = {
 
 export const eligibilityStatusEnum = z.enum([
   "ELIGIBLE",
-  "ALMOST ELIGIBLE",
+  "ALMOST_ELIGIBLE",
   "INELIGIBLE",
 ]);
 
@@ -43,8 +43,7 @@ export interface EligibilityReport {
     value: EligibilityStatus;
     label: string;
   };
-  headline: string;
-  subheading: string;
   requirements: Array<RequirementsSectionContent>;
   enabledSections: OpportunityConfig["sections"];
+  highlights: Array<{ label: string; value: string }>;
 }

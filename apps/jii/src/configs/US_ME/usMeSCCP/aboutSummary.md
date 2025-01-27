@@ -1,4 +1,4 @@
-While you’re on SCCP, the following rules and conditions apply:
+SCCP — also called “home confinement” — allows you to spend the last part your sentence in the community, with structured support and supervision.
 
 <dl>
 <dt>Good Time</dt>

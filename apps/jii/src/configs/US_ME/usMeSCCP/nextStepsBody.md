@@ -1,4 +1,4 @@
-If you are eligible for SCCP, your case manager will give you an <FormPreview linkText="application packet" /> to fill out, which includes several parts:
+If you are eligible for SCCP, your case manager will give you an application packet to fill out, which includes several parts:
 
 <dl>
 <dt>Application</dt>

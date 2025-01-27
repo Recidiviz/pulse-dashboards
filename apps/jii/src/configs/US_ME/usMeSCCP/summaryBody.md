@@ -1,3 +1,0 @@
-- SCCP is sometimes called “home confinement” or “supervised release”
-- You can spend the last part of your sentence under supervision in the community
-- SCCP can help you adjust to being back in the community with structured support

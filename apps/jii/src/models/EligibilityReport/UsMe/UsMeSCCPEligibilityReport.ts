@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
 import { isFuture, max, subMonths } from "date-fns";
 import { mapValues } from "lodash";
 import { makeAutoObservable } from "mobx";
@@ -44,13 +45,13 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     makeAutoObservable(this);
   }
 
+  private dateCriteria = [
+    "usMeServedXPortionOfSentence",
+    "usMeXMonthsRemainingOnSentence",
+  ] as const;
+
   private get eligibilityDate(): Date {
-    const eligibleDates = (
-      [
-        "usMeServedXPortionOfSentence",
-        "usMeXMonthsRemainingOnSentence",
-      ] as const
-    ).map((criterion) => {
+    const eligibleDates = this.dateCriteria.map((criterion) => {
       const eligibleDate =
         this.eligibilityData.eligibleCriteria[criterion]?.eligibleDate ??
         this.eligibilityData.ineligibleCriteria[criterion]?.eligibleDate;
@@ -114,11 +115,11 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     let value: EligibilityStatus;
 
     if (this.eligibilityData.isAlmostEligible) {
-      value = "ALMOST ELIGIBLE";
+      value = "ALMOST_ELIGIBLE";
     } else if (this.eligibilityData.isEligible) {
       // users within application period
       if (isFuture(this.eligibilityDate)) {
-        value = "ALMOST ELIGIBLE";
+        value = "ALMOST_ELIGIBLE";
       }
       // full eligibility
       else {
@@ -129,18 +130,6 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     }
 
     return { value, label: this.config.statusLabels[value] };
-  }
-
-  get headline(): string {
-    return cleanupInlineTemplate(
-      hydrateTemplate(this.config.headline, this.templateContext),
-    );
-  }
-
-  get subheading(): string {
-    return cleanupInlineTemplate(
-      hydrateTemplate(this.config.subheading, this.templateContext),
-    );
   }
 
   private eligibilityDateInFuture(
@@ -155,17 +144,12 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
    * this would be trivial, but for SCCP the groupings are different for staff vs JII
    * due to the way that the application process is handled.
    */
-  private getRequirementsByStatus(eligibilityData: UsMeSCCPRecord["output"]) {
-    const met = { ...eligibilityData.eligibleCriteria };
-    const notMet = { ...eligibilityData.ineligibleCriteria };
+  private get requirementsByStatus() {
+    const met = { ...this.eligibilityData.eligibleCriteria };
+    const notMet = { ...this.eligibilityData.ineligibleCriteria };
     // these criteria will be "met" if the resident is within the pre-eligibility application window,
     // but we want to display them based on the actual eligibility date here
-    (
-      [
-        "usMeXMonthsRemainingOnSentence",
-        "usMeServedXPortionOfSentence",
-      ] as const
-    ).forEach((key) => {
+    this.dateCriteria.forEach((key) => {
       if (this.eligibilityDateInFuture(met[key])) {
         // @ts-expect-error TS cannot match the keys with their corresponding values here
         notMet[key] = met[key];
@@ -184,7 +168,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
 
     // run a separate formatting pipeline for each grouping
     // since they are processed a little differently
-    const { met, notMet } = this.getRequirementsByStatus(this.eligibilityData);
+    const { met, notMet } = this.requirementsByStatus;
 
     if (Object.keys(met).length) {
       sections.push({
@@ -244,5 +228,58 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
       }
       return true;
     });
+  }
+
+  private showHighlights(): boolean {
+    switch (this.status.value) {
+      case "ELIGIBLE":
+        return true;
+      case "ALMOST_ELIGIBLE":
+        if (this.ineligibleViolation) {
+          // this criterion either has a date when the violation will be cleared,
+          // or a freetext field indicating that it is still pending. Suppress the
+          // highlights for pending violations only
+          if (
+            this.requirementsByStatus.notMet.usMeNoClassAOrBViolationFor90Days
+              ?.eligibleDate
+          ) {
+            return true;
+          }
+          return false;
+        }
+        return true;
+      case "INELIGIBLE": {
+        // we only want to show highlights if everything is met but the eligibility date
+        const nonDateIneligibleCriteria = Object.keys(
+          this.requirementsByStatus.notMet,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ).filter((c) => !this.dateCriteria.includes(c as any));
+        if (nonDateIneligibleCriteria.length > 0) {
+          return false;
+        }
+        return true;
+      }
+      default:
+        return assertNever(this.status.value);
+    }
+  }
+
+  get highlights() {
+    const highlights: EligibilityReport["highlights"] = [];
+
+    if (this.showHighlights()) {
+      this.config.requirements.summary.highlights.forEach(
+        ({ label, value }) => {
+          highlights.push({
+            label,
+            value: cleanupInlineTemplate(
+              hydrateTemplate(value, this.templateContext),
+            ),
+          });
+        },
+      );
+    }
+
+    return highlights;
   }
 }

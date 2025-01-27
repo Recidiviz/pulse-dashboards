@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
 import { configure } from "mobx";
 import { MemoryRouter } from "react-router-dom";
@@ -240,13 +240,13 @@ describe("protected routes", () => {
       </MemoryRouter>,
     );
 
-    await waitFor(() =>
-      expect(
-        screen.getByText("You could be eligible for release onto SCCP", {
-          exact: false,
-        }),
-      ).toBeInTheDocument(),
-    );
+    expect(
+      await screen.findByRole("heading", {
+        name: residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP
+          ?.name,
+        level: 1,
+      }),
+    ).toBeInTheDocument();
   });
 
   it("state root should redirect to default opportunity", async () => {
@@ -258,13 +258,13 @@ describe("protected routes", () => {
       </MemoryRouter>,
     );
 
-    await waitFor(() =>
-      expect(
-        screen.getByText("You could be eligible for release onto SCCP", {
-          exact: false,
-        }),
-      ).toBeInTheDocument(),
-    );
+    expect(
+      await screen.findByRole("heading", {
+        name: residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP
+          ?.name,
+        level: 1,
+      }),
+    ).toBeInTheDocument();
   });
 
   const sccpConfig = residentsConfigByState.US_ME.incarcerationOpportunities
@@ -288,31 +288,21 @@ describe("protected routes", () => {
     });
 
     it("should render", async () => {
-      await waitFor(() =>
-        expect(
-          screen.getByText("You could be eligible for release onto SCCP", {
-            exact: false,
-          }),
-        ).toBeInTheDocument(),
-      );
+      expect(
+        await screen.findByRole("heading", {
+          name: residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP
+            ?.name,
+          level: 1,
+        }),
+      ).toBeInTheDocument();
     });
 
     it("should be accessible", async () => {
-      await screen.findByText("You could be eligible for release onto SCCP", {
-        exact: false,
+      await screen.findByRole("heading", {
+        name: residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP
+          ?.name,
+        level: 1,
       });
-
-      expect(await axe(container)).toHaveNoViolations();
-
-      fireEvent.click(
-        screen.getByRole("button", { name: "application packet" }),
-      );
-
-      await waitFor(() =>
-        expect(
-          screen.getByRole("heading", { name: sccpConfig.formPreview.title }),
-        ).toBeVisible(),
-      );
 
       expect(await axe(container)).toHaveNoViolations();
     });
