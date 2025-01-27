@@ -34,6 +34,8 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "FFR",
           text: "FFR: Failure to make payments toward fines, fees, and restitution despite ability to pay",
         },
+        { key: "NCO", text: "NCO: Has active NCO, CPO, or restraining order" },
+        { key: "ILOCK", text: "ILOCK: Has active interlock device" },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
@@ -55,10 +57,20 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "http://forms.idoc.idaho.gov/WebLink/0/edoc/273717/Limited%20Supervision%20Unit.pdf",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [
+        {
+          text: "Must be compliant with all court-ordered conditions and special conditions ",
+        },
+        {
+          text: "Must have established a record of progress toward successful completion of Court-ordered obligations for local incarceration and community service",
+        },
+        {
+          text: "Has not failed to make payment toward fines/fees/restitution",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Validated by data from Atlas",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
