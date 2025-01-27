@@ -27,7 +27,11 @@ const US_IA_CONFIG: TenantConfig<"US_IA"> = {
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsSystemConfigs: {
     SUPERVISION: {
-      searchType: "OFFICER",
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
       searchField: ["officerId"],
     },
   },

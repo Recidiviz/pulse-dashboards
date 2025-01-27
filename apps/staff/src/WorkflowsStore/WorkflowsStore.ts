@@ -555,9 +555,15 @@ export class WorkflowsStore implements Hydratable {
     });
   }
 
-  get searchType(): SearchType | undefined {
-    if (this.activeSystem === "ALL") return "ALL";
-    return this.activeSystemConfig?.searchType;
+  get searchType(): SearchType {
+    const systemConfig = this.activeSystemConfig;
+    if (
+      !systemConfig ||
+      systemConfig.search.length > 1 ||
+      this.activeSystem === "ALL"
+    )
+      return "ALL";
+    return systemConfig.search[0].searchType;
   }
 
   get staffSubscription():
@@ -1010,15 +1016,35 @@ export class WorkflowsStore implements Hydratable {
 
   systemConfigFor(system: Exclude<SystemId, "ALL">): AnyWorkflowsSystemConfig {
     const fallback: AnyWorkflowsSystemConfig = {
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
       searchField: ["officerId"],
-      searchType: "OFFICER",
     };
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId) return fallback;
-    return (
-      TENANT_CONFIGS[currentTenantId].workflowsSystemConfigs?.[system] ??
-      fallback
-    );
+
+    const systemConfig =
+      TENANT_CONFIGS[currentTenantId].workflowsSystemConfigs?.[system];
+
+    if (!systemConfig) return fallback;
+
+    // TODO(#7136) - filter down search configs depending on restricted role
+    const enabledSearchConfigs = systemConfig.search.filter((search) => {
+      return !(
+        search.restrictedToFeatureVariant &&
+        !this.rootStore.userStore.activeFeatureVariants[
+          search.restrictedToFeatureVariant
+        ]
+      );
+    });
+
+    return {
+      ...systemConfig,
+      search: enabledSearchConfigs,
+    } as AnyWorkflowsSystemConfig;
   }
 
   get homepage(): WorkflowsPage {

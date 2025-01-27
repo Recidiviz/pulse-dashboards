@@ -27,7 +27,11 @@ const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
   workflowsSupportedSystems: ["INCARCERATION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
-      searchType: "OFFICER",
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
       searchField: ["officerId"],
     },
   },

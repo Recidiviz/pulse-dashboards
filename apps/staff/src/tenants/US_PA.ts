@@ -27,7 +27,11 @@ const US_PA_CONFIG: TenantConfig<"US_PA"> = {
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsSystemConfigs: {
     SUPERVISION: {
-      searchType: "OFFICER",
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
       searchField: ["officerId"],
       searchTitleOverride: "agent",
     },

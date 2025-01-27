@@ -23,7 +23,11 @@ import {
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import { TenantConfigId, TenantId } from "../../RootStore/types";
+import {
+  FeatureVariant,
+  TenantConfigId,
+  TenantId,
+} from "../../RootStore/types";
 import { Leaves } from "../../utils/typeUtils";
 import {
   JusticeInvolvedPerson,
@@ -108,11 +112,14 @@ export type SnoozeTaskConfig = {
 };
 
 export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
-  searchType: SearchType;
+  search: Array<{
+    searchType: SearchType;
+    restrictedToFeatureVariant?: FeatureVariant;
+  }>;
   searchField: Leaves<R & { metadata: { stateCode: T } }> & string[];
-  locationIdType?: "facilityId" | "facilityUnitId";
   searchOp?: "in" | "array-contains-any";
   searchTitleOverride?: string;
+  locationIdType?: "facilityId" | "facilityUnitId";
   onlySurfaceEligible?: boolean;
 };
 

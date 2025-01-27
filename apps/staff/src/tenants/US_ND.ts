@@ -34,7 +34,11 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
-      searchType: "OFFICER",
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
       searchField: ["officerId"],
       searchTitleOverride: "case manager",
     },

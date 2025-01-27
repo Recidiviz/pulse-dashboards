@@ -108,6 +108,20 @@ const { stateConfigs } = vi.hoisted(() => {
       ],
       workflowsSupportedSystems: ["SUPERVISION"],
       availableStateCodes: ["US_TN"],
+      workflowsSystemConfigs: {
+        INCARCERATION: {
+          search: [
+            {
+              searchType: "OFFICER",
+              restrictedToFeatureVariant: "TEST",
+            },
+            { searchType: "LOCATION" },
+          ],
+        },
+        SUPERVISION: {
+          search: [{ searchType: "LOCATION" }, { searchType: "OFFICER" }],
+        },
+      },
     },
     US_BB: {
       workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
@@ -126,7 +140,11 @@ const { stateConfigs } = vi.hoisted(() => {
       workflowsSupportedSystems: ["INCARCERATION"],
       workflowsSystemConfigs: {
         INCARCERATION: {
-          searchType: "LOCATION",
+          search: [
+            {
+              searchType: "LOCATION",
+            },
+          ],
           searchField: "facilityId",
           searchTitleOverride: "location",
         },
@@ -773,7 +791,6 @@ test("available searchables for search by location", async () => {
     workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers;
     workflowsStore.locationsSubscription.data = mockLocations;
   });
-
   const actual = workflowsStore.availableSearchables[0].searchables.map(
     (searchable) => {
       return {
@@ -794,6 +811,118 @@ test("available searchables for search by location", async () => {
   ];
 
   expect(actual).toEqual(expected);
+});
+
+test("available searchables when there are more than one search types", async () => {
+  await waitForHydration();
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("SUPERVISION");
+    rootStore.tenantStore.currentTenantId = "US_TN";
+    workflowsStore.incarcerationStaffSubscription.data =
+      mockIncarcerationOfficers;
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers;
+    workflowsStore.locationsSubscription.data = mockLocations;
+  });
+  expect(workflowsStore.searchType).toEqual("ALL");
+  // strip out actual data
+  const actual = workflowsStore.availableSearchables.map((searchableGroup) => {
+    return {
+      groupLabel: searchableGroup.groupLabel,
+      searchables: searchableGroup.searchables.map((searchable) => {
+        const { searchLabel, searchId } = searchable;
+        return { searchLabel, searchId };
+      }),
+    };
+  });
+  const expected = [
+    {
+      groupLabel: "All Locations",
+      searchables: [
+        {
+          searchLabel: "Facility 1",
+          searchId: "FAC1",
+        },
+        {
+          searchLabel: "Facility 2",
+          searchId: "FAC2",
+        },
+      ],
+    },
+    {
+      groupLabel: "All Officers",
+      searchables: [
+        {
+          searchId: "XX_OFFICER2",
+          searchLabel: "TestOfficer AlphabeticallyFirst",
+        },
+        {
+          searchId: "XX_OFFICER1",
+          searchLabel: "TestOfficer AlphabeticallySecond",
+        },
+      ],
+    },
+  ];
+
+  expect(actual).toEqual(expected);
+});
+
+test("searchType when there is a search type behind a not-enabled feature variant", async () => {
+  await waitForHydration();
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("INCARCERATION");
+    rootStore.tenantStore.currentTenantId = "US_TN";
+    workflowsStore.incarcerationStaffSubscription.data =
+      mockIncarcerationOfficers;
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers;
+    workflowsStore.locationsSubscription.data = mockLocations;
+  });
+  expect(workflowsStore.searchType).toEqual("LOCATION");
+});
+
+test("searchType when there is a search type behind an enabled feature variant", async () => {
+  setUser({ TEST: {} });
+
+  await waitForHydration();
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("INCARCERATION");
+    rootStore.tenantStore.currentTenantId = "US_TN";
+    workflowsStore.incarcerationStaffSubscription.data =
+      mockIncarcerationOfficers;
+    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers;
+    workflowsStore.locationsSubscription.data = mockLocations;
+  });
+  expect(workflowsStore.searchType).toEqual("ALL");
+});
+
+test("systemConfigFor when there is a search type behind a not-enabled feature variant", async () => {
+  await waitForHydration();
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("INCARCERATION");
+    rootStore.tenantStore.currentTenantId = "US_TN";
+  });
+  const expected = {
+    search: [{ searchType: "LOCATION" }],
+  };
+  expect(workflowsStore.systemConfigFor("INCARCERATION")).toEqual(expected);
+});
+
+test("systemConfigFor when there is a search type behind an enabled feature variant", async () => {
+  setUser({ TEST: {} });
+  await waitForHydration();
+  runInAction(() => {
+    workflowsStore.updateActiveSystem("INCARCERATION");
+    rootStore.tenantStore.currentTenantId = "US_TN";
+  });
+  const expected = {
+    search: [
+      {
+        searchType: "OFFICER",
+        restrictedToFeatureVariant: "TEST",
+      },
+      { searchType: "LOCATION" },
+    ],
+  };
+  expect(workflowsStore.systemConfigFor("INCARCERATION")).toEqual(expected);
 });
 
 test("update clients from subscription", async () => {

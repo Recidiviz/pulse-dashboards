@@ -27,7 +27,11 @@ const US_AR_CONFIG: TenantConfig<"US_AR"> = {
   workflowsSupportedSystems: ["INCARCERATION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
-      searchType: "LOCATION",
+      search: [
+        {
+          searchType: "LOCATION",
+        },
+      ],
       searchField: ["facilityId"],
       searchTitleOverride: "facility",
     },

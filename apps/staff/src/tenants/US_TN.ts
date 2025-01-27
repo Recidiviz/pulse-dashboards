@@ -37,7 +37,11 @@ const US_TN_CONFIG: TenantConfig<"US_TN"> = {
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
-      searchType: "LOCATION",
+      search: [
+        {
+          searchType: "LOCATION",
+        },
+      ],
       searchField: ["facilityUnitId"],
       searchTitleOverride: "unit",
     },
