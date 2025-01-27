@@ -29,6 +29,16 @@ spec:
       source: 'github.com/GoogleCloudPlatform/terraform-google-cloud-run.git?ref={{.Version}}'
       version: 'v0.16.1'
       included_paths:
+        - 'modules/job-exec/*.tf'
+        - 'modules/job-exec/README.md'
+        - '**/*.tf'
+        - '**/README.md'
+      targets:
+        - components/terraform/vendor/{{.Component}}
+    - component: "cloud-run-job-exec"
+      source: 'github.com/GoogleCloudPlatform/terraform-google-cloud-run.git//modules/job-exec?ref={{.Version}}'
+      version: 'v0.16.1'
+      included_paths:
         - '**/*.tf'
         - '**/README.md'
       targets:

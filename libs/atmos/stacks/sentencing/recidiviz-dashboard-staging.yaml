@@ -1,12 +1,12 @@
 # Infrastructure configuration for components for the sentencing app that will be deployed to staging
-# The variables set here are automatically provided to any components used in this stack.
-vars:
-  project_id: recidiviz-dashboard-staging
-
 settings:
   context:
     project_id: recidiviz-dashboard-staging
     product: sentencing
+
+# The variables set here are automatically provided to any components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
 
 # Defines which catalogs to import into this configuration to create in recidiviz-dashboard-staging
 # import:

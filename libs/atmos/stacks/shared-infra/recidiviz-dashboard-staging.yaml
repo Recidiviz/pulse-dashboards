@@ -27,5 +27,7 @@ terraform:
 components:
   terraform:
     env-secrets:
+      var:
+        project_id: "{{ .settings.context.project_id }}"
       metadata:
         component: env-secrets

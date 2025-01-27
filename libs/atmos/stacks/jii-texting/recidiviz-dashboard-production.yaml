@@ -43,3 +43,12 @@ components:
               num_newer_versions: 3
       metadata:
         component: vendor/cloud-storage-bucket
+    vendor/artifact-registry:
+      vars:
+        location: us-central1
+        format: DOCKER
+        repository_id: jii-texting-server
+    apps/jii-texting:
+      vars:
+        location: "{{ .settings.context.location }}"
+        server_image: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.product }}/default"

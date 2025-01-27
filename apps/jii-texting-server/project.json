@@ -4,7 +4,7 @@
   "sourceRoot": "apps/jii-texting-server/src",
   "projectType": "application",
   "targets": {
-    "test-zod": {
+        "test-zod": {
       "executor": "nx:run-commands",
       "options": {
         "command": "tsx test-zod/index.ts",
@@ -118,9 +118,25 @@
         "cwd": "{workspaceRoot}"
       }
     },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "configurations": {
+        "staging": {
+          "commands": [
+            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-staging--jii-texting --extra-args='-var server_version={args.tag} -var migrate={args.migrate}'"
+          ]
+        },
+        "production": {
+          "commands": [
+            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-production--jii-texting --extra-args='-var server_version={args.tag} -var migrate={args.migrate}'"
+          ]
+        }
+      }
+    },
     "container": {
       "executor": "@nx-tools/nx-container:build",
       "dependsOn": ["build"],
+      "cwd": "{projectRoot}",
       "options": {
         "engine": "docker",
         "platforms": ["linux/amd64"]
@@ -132,20 +148,20 @@
         "staging": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/jii-texting-server:$COMMIT_SHA",
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/jii-texting-server:latest"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting-server/default:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting-server/default:latest"
           ]
         },
         "cherry-pick": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/jii-texting-server:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting-server/default:$COMMIT_SHA"
           ]
         },
         "preview": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/jii-texting-server-preview:$VERSION"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting-server/preview:$VERSION"
           ]
         }
       },

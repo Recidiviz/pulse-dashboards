@@ -17,7 +17,7 @@ stacks:
   base_path: "stacks"
   # Include all .yaml files underneath the stacks folder
   included_paths:
-    - "**/*.yaml.tmpl"
+    - "**/*.yaml"
   # For each of the YAML files, group their components into stacks based on the project and product
   name_template: "{{.settings.context.project_id}}--{{.settings.context.product}}"
 

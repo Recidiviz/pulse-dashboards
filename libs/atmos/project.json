@@ -20,6 +20,22 @@
         "cwd": "{projectRoot}"
       }
     },
+    "plan": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans --entrypoint=atmos atmos-shell terraform plan {args.component} -s {args.stack} -- {args.extraArgs}",
+        "color": true,
+        "cwd": "{projectRoot}"
+      }
+    },
+    "apply": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans --entrypoint=atmos atmos-shell terraform apply {args.component} -s {args.stack} -- {args.extraArgs}",
+        "color": true,
+        "cwd": "{projectRoot}"
+      }
+    },
     "vendor-pull": {
       "executor": "nx:run-commands",
       "options": {
