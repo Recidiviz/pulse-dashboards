@@ -27,7 +27,11 @@ const US_OR_CONFIG: TenantConfig<"US_OR"> = {
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsSystemConfigs: {
     SUPERVISION: {
-      searchType: "CASELOAD",
+      search: [
+        {
+          searchType: "CASELOAD",
+        },
+      ],
       searchField: ["officerId"],
       searchTitleOverride: "caseload",
     },

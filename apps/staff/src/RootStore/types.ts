@@ -90,7 +90,8 @@ export type FeatureVariant =
   | "oppTabSubcategories"
   | "taskFilters"
   | "offenseOverrideControls"
-  | "protectiveFactors";
+  | "protectiveFactors"
+  | "usIdCaseManagerSearch";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -142,6 +143,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   taskFilters: {},
   offenseOverrideControls: {},
   protectiveFactors: {},
+  usIdCaseManagerSearch: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

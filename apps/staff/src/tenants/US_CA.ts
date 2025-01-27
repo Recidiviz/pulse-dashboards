@@ -32,7 +32,11 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
   workflowsStaffFilterFn: usCaFilterByRoleSubtype,
   workflowsSystemConfigs: {
     SUPERVISION: {
-      searchType: "OFFICER",
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
       searchField: ["officerId"],
       searchTitleOverride: "agent",
     },

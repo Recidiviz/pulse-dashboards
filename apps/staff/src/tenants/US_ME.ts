@@ -28,12 +28,20 @@ const US_ME_CONFIG: TenantConfig<"US_ME"> = {
   workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
-      searchType: "OFFICER",
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
       searchField: ["officerId"],
       searchTitleOverride: "case manager",
     },
     SUPERVISION: {
-      searchType: "OFFICER",
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
       searchField: ["officerId"],
       searchTitleOverride: "officer",
     },

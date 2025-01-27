@@ -82,12 +82,20 @@ export const TENANT_CONFIGS: TenantConfigs = {
     workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
     workflowsSystemConfigs: {
       INCARCERATION: {
-        searchType: "OFFICER",
+        search: [
+          {
+            searchType: "OFFICER",
+          },
+        ],
         searchField: ["officerId"],
         searchTitleOverride: "case manager",
       },
       SUPERVISION: {
-        searchType: "OFFICER",
+        search: [
+          {
+            searchType: "OFFICER",
+          },
+        ],
         searchField: ["officerId"],
         searchTitleOverride: "officer",
       },

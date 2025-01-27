@@ -64,11 +64,15 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
-      searchType: "LOCATION",
+      search: [
+        {
+          searchType: "LOCATION",
+        },
+      ],
       searchField: ["metadata", "crcFacilities"],
-      locationIdType: "facilityId",
       searchOp: "array-contains-any",
       searchTitleOverride: "facility",
+      locationIdType: "facilityId",
       onlySurfaceEligible: true,
     },
   },
