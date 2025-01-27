@@ -22,6 +22,12 @@
     "paths": {
       "~@case-notes-server/trpc": ["libs/@case-notes-server/trpc/src/index.ts"],
       "~@case-notes-server/trpc/*": ["libs/@case-notes-server/trpc/src/*"],
+      "~@jii-texting-server/prisma": [
+        "libs/@jii-texting-server/prisma/src/index.ts"
+      ],
+      "~@jii-texting-server/prisma/*": [
+        "libs/@jii-texting-server/prisma/src/*"
+      ],
       "~@sentencing-server/prisma": [
         "libs/@sentencing-server/prisma/src/index.ts"
       ],
