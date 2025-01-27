@@ -1,0 +1,88 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["tracing", "omitApi", "fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_US_ID")
+}
+
+enum StateCode {
+  US_AL
+  US_AK
+  US_AZ
+  US_AR
+  US_CA
+  US_CO
+  US_CT
+  US_DE
+  US_FL
+  US_GA
+  US_HI
+  US_ID
+  US_IL
+  US_IN
+  US_IA
+  US_KS
+  US_KY
+  US_LA
+  US_ME
+  US_MD
+  US_MA
+  US_MI
+  US_MN
+  US_MS
+  US_MO
+  US_MT
+  US_NE
+  US_NV
+  US_NH
+  US_NJ
+  US_NM
+  US_NY
+  US_NC
+  US_ND
+  US_OH
+  US_OK
+  US_OR
+  US_PA
+  US_RI
+  US_SC
+  US_SD
+  US_TN
+  US_TX
+  US_UT
+  US_VT
+  US_VA
+  US_WA
+  US_WV
+  US_WI
+  US_WY
+}
+
+enum TopicId {
+  UsIdLsu
+}
+
+enum GroupId {
+  FULLY_ELIGIBLE
+  ELIGIBLE_MISSING_FINES_AND_FEES
+  TWO_MISSING_CRITERIA
+  MISSING_DA
+  MISSING_INCOME_VERIFICATION
+}
+
+model Person {
+  stateCode   StateCode
+  externalId  String    @id
+  personId    Int       @unique
+  personName  String
+  phoneNumber String
+  officerId   String
+  poName      String
+  district    String
+  topicId     TopicId
+  groupId     GroupId
+  launchId    String?
+}

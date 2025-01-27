@@ -105,7 +105,12 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "docker"
+        }
+      ],
       "outputs": ["{workspaceRoot}/coverage/apps/jii-texting-server"],
       "cache": true,
       "options": {
