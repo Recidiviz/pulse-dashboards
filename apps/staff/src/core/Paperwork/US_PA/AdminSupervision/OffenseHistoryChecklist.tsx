@@ -41,8 +41,8 @@ const CheckboxContainer = styled.div`
 
 const ContentContainer = styled.div`
   display: grid;
-  grid-template: 13px 13px repeat(${GRID_ROW_COUNT - 2}, 1fr) / 36% 13% 3% 35% 13%;
-  height: 318px;
+  grid-template: 13px 13px repeat(${GRID_ROW_COUNT}, 1fr) / 36% 13% 3% 35% 13%;
+  height: 425px;
   font-size: ${rem(8)};
 `;
 
