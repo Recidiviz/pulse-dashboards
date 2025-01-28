@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`schema for almostEligibleMonthsRemaining 1`] = `
+exports[`schema for RES001almostEligibleMonthsRemaining 1`] = `
 {
   "caseNotes": {
     "Education": [
@@ -34,13 +34,13 @@ exports[`schema for almostEligibleMonthsRemaining 1`] = `
 }
 `;
 
-exports[`schema for almostEligiblePendingViolation 1`] = `
+exports[`schema for RES002eligibleToApplyBeforeXPortionServed 1`] = `
 {
   "caseNotes": {
-    "Education": [
+    "Employment Training": [
       {
-        "eventDate": 2021-06-02T00:00:00.000Z,
-        "noteBody": "Completed coding course",
+        "eventDate": 2021-12-02T00:00:00.000Z,
+        "noteBody": "Completed course",
         "noteTitle": "Graduated",
       },
     ],
@@ -49,30 +49,25 @@ exports[`schema for almostEligiblePendingViolation 1`] = `
     "usMeCustodyLevelIsMinimumOrCommunity": {
       "custodyLevel": "MINIMUM",
     },
+    "usMeNoClassAOrBViolationFor90Days": null,
     "usMeNoDetainersWarrantsOrOther": null,
     "usMeServedXPortionOfSentence": {
-      "eligibleDate": 2021-09-16T00:00:00.000Z,
-      "xPortionServed": "1/2",
+      "eligibleDate": 2022-02-16T00:00:00.000Z,
+      "xPortionServed": "2/3",
     },
     "usMeXMonthsRemainingOnSentence": {
-      "eligibleDate": 2021-06-16T00:00:00.000Z,
+      "eligibleDate": 2021-08-16T00:00:00.000Z,
     },
   },
-  "externalId": "RES007",
-  "ineligibleCriteria": {
-    "usMeNoClassAOrBViolationFor90Days": {
-      "eligibleDate": null,
-      "highestClassViol": "B",
-      "violType": "Pending since 2021-09-06",
-    },
-  },
-  "isAlmostEligible": true,
-  "isEligible": false,
+  "externalId": "RES002",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
   "stateCode": "US_ME",
 }
 `;
 
-exports[`schema for almostEligibleRecentViolation 1`] = `
+exports[`schema for RES003almostEligibleRecentViolation 1`] = `
 {
   "caseNotes": {
     "Education": [
@@ -110,107 +105,7 @@ exports[`schema for almostEligibleRecentViolation 1`] = `
 }
 `;
 
-exports[`schema for almostEligibleXPortion 1`] = `
-{
-  "caseNotes": {
-    "Employment Training": [
-      {
-        "eventDate": 2021-12-02T00:00:00.000Z,
-        "noteBody": "Completed course",
-        "noteTitle": "Graduated",
-      },
-    ],
-  },
-  "eligibleCriteria": {
-    "usMeCustodyLevelIsMinimumOrCommunity": {
-      "custodyLevel": "COMMUNITY",
-    },
-    "usMeNoClassAOrBViolationFor90Days": null,
-    "usMeNoDetainersWarrantsOrOther": null,
-    "usMeXMonthsRemainingOnSentence": {
-      "eligibleDate": 2021-11-16T00:00:00.000Z,
-    },
-  },
-  "externalId": "RES005",
-  "ineligibleCriteria": {
-    "usMeServedXPortionOfSentence": {
-      "eligibleDate": 2022-05-16T00:00:00.000Z,
-      "xPortionServed": "1/2",
-    },
-  },
-  "isAlmostEligible": true,
-  "isEligible": false,
-  "stateCode": "US_ME",
-}
-`;
-
-exports[`schema for eligibleToApplyBeforeXMonthsRemaining 1`] = `
-{
-  "caseNotes": {
-    "Employment Training": [
-      {
-        "eventDate": 2021-12-02T00:00:00.000Z,
-        "noteBody": "Completed course",
-        "noteTitle": "Graduated",
-      },
-    ],
-  },
-  "eligibleCriteria": {
-    "usMeCustodyLevelIsMinimumOrCommunity": {
-      "custodyLevel": "MINIMUM",
-    },
-    "usMeNoClassAOrBViolationFor90Days": null,
-    "usMeNoDetainersWarrantsOrOther": null,
-    "usMeServedXPortionOfSentence": {
-      "eligibleDate": 2021-08-16T00:00:00.000Z,
-      "xPortionServed": "2/3",
-    },
-    "usMeXMonthsRemainingOnSentence": {
-      "eligibleDate": 2022-02-16T00:00:00.000Z,
-    },
-  },
-  "externalId": "RES008",
-  "ineligibleCriteria": {},
-  "isAlmostEligible": false,
-  "isEligible": true,
-  "stateCode": "US_ME",
-}
-`;
-
-exports[`schema for eligibleToApplyBeforeXPortionServed 1`] = `
-{
-  "caseNotes": {
-    "Employment Training": [
-      {
-        "eventDate": 2021-12-02T00:00:00.000Z,
-        "noteBody": "Completed course",
-        "noteTitle": "Graduated",
-      },
-    ],
-  },
-  "eligibleCriteria": {
-    "usMeCustodyLevelIsMinimumOrCommunity": {
-      "custodyLevel": "MINIMUM",
-    },
-    "usMeNoClassAOrBViolationFor90Days": null,
-    "usMeNoDetainersWarrantsOrOther": null,
-    "usMeServedXPortionOfSentence": {
-      "eligibleDate": 2022-02-16T00:00:00.000Z,
-      "xPortionServed": "2/3",
-    },
-    "usMeXMonthsRemainingOnSentence": {
-      "eligibleDate": 2021-08-16T00:00:00.000Z,
-    },
-  },
-  "externalId": "RES002",
-  "ineligibleCriteria": {},
-  "isAlmostEligible": false,
-  "isEligible": true,
-  "stateCode": "US_ME",
-}
-`;
-
-exports[`schema for fullyEligibleHalfPortion 1`] = `
+exports[`schema for RES004fullyEligibleHalfPortion 1`] = `
 {
   "caseNotes": {
     "Employment Training": [
@@ -243,7 +138,7 @@ exports[`schema for fullyEligibleHalfPortion 1`] = `
 }
 `;
 
-exports[`schema for fullyEligibleTwoThirdsPortion 1`] = `
+exports[`schema for RES005almostEligibleXPortion 1`] = `
 {
   "caseNotes": {
     "Employment Training": [
@@ -256,7 +151,41 @@ exports[`schema for fullyEligibleTwoThirdsPortion 1`] = `
   },
   "eligibleCriteria": {
     "usMeCustodyLevelIsMinimumOrCommunity": {
-      "custodyLevel": "COMMUNITY",
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeXMonthsRemainingOnSentence": {
+      "eligibleDate": 2021-11-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES005",
+  "ineligibleCriteria": {
+    "usMeServedXPortionOfSentence": {
+      "eligibleDate": 2022-05-16T00:00:00.000Z,
+      "xPortionServed": "1/2",
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES006fullyEligibleTwoThirdsPortion 1`] = `
+{
+  "caseNotes": {
+    "Employment Training": [
+      {
+        "eventDate": 2021-12-02T00:00:00.000Z,
+        "noteBody": "Completed course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimumOrCommunity": {
+      "custodyLevel": "MINIMUM",
     },
     "usMeNoClassAOrBViolationFor90Days": null,
     "usMeNoDetainersWarrantsOrOther": null,
@@ -276,7 +205,112 @@ exports[`schema for fullyEligibleTwoThirdsPortion 1`] = `
 }
 `;
 
-exports[`schema for ineligible 1`] = `
+exports[`schema for RES007almostEligiblePendingViolation 1`] = `
+{
+  "caseNotes": {
+    "Education": [
+      {
+        "eventDate": 2021-06-02T00:00:00.000Z,
+        "noteBody": "Completed coding course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimumOrCommunity": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServedXPortionOfSentence": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+      "xPortionServed": "1/2",
+    },
+    "usMeXMonthsRemainingOnSentence": {
+      "eligibleDate": 2021-06-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES007",
+  "ineligibleCriteria": {
+    "usMeNoClassAOrBViolationFor90Days": {
+      "eligibleDate": null,
+      "highestClassViol": "B",
+      "violType": "Pending since 2021-09-06",
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES008eligibleToApplyBeforeXMonthsRemaining 1`] = `
+{
+  "caseNotes": {
+    "Employment Training": [
+      {
+        "eventDate": 2021-12-02T00:00:00.000Z,
+        "noteBody": "Completed course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimumOrCommunity": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServedXPortionOfSentence": {
+      "eligibleDate": 2021-08-16T00:00:00.000Z,
+      "xPortionServed": "2/3",
+    },
+    "usMeXMonthsRemainingOnSentence": {
+      "eligibleDate": 2022-02-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES008",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES009Ineligible 1`] = `
+{
+  "caseNotes": {
+    "Employment Training": [
+      {
+        "eventDate": 2021-12-02T00:00:00.000Z,
+        "noteBody": "Completed course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimumOrCommunity": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServedXPortionOfSentence": {
+      "eligibleDate": 2020-01-16T00:00:00.000Z,
+      "xPortionServed": "1/2",
+    },
+  },
+  "externalId": "RES009",
+  "ineligibleCriteria": {
+    "usMeXMonthsRemainingOnSentence": {
+      "eligibleDate": 2022-08-16T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": false,
+  "isEligible": false,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES999Ineligible 1`] = `
 {
   "caseNotes": {
     "Employment Training": [

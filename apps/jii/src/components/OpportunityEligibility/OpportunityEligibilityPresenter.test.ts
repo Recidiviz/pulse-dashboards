@@ -49,7 +49,7 @@ describe("eligible resident", () => {
       new UsMeSCCPEligibilityReport(
         eligibleResident,
         opportunityConfig,
-        outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
+        outputFixture(usMeSccpFixtures.RES001almostEligibleMonthsRemaining),
       ),
       eligibleResident.pseudonymizedId,
     );
@@ -125,7 +125,7 @@ describe("ineligible resident", () => {
       new UsMeSCCPEligibilityReport(
         ineligibleResident,
         opportunityConfig,
-        outputFixture(usMeSccpFixtures.ineligible),
+        outputFixture(usMeSccpFixtures.RES999Ineligible),
       ),
       ineligibleResident.pseudonymizedId,
     );
@@ -144,7 +144,7 @@ test("links reflect provided person ID", () => {
     new UsMeSCCPEligibilityReport(
       eligibleResident,
       opportunityConfig,
-      outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
+      outputFixture(usMeSccpFixtures.RES001almostEligibleMonthsRemaining),
     ),
     eligibleResident.pseudonymizedId,
   );

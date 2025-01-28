@@ -119,7 +119,7 @@ describe("after authentication", () => {
   });
 
   describe("eligibility", () => {
-    const record = usMeSccpFixtures.fullyEligibleHalfPortion.output;
+    const record = usMeSccpFixtures.RES004fullyEligibleHalfPortion.output;
 
     test("exists", async () => {
       vi.mocked(

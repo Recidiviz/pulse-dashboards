@@ -47,7 +47,7 @@ test.each(allPages)(
       new UsMeSCCPEligibilityReport(
         eligibleResident,
         oppConfig,
-        outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
+        outputFixture(usMeSccpFixtures.RES001almostEligibleMonthsRemaining),
       ),
     );
 

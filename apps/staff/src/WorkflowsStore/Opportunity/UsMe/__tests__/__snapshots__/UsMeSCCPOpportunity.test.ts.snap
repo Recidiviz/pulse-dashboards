@@ -33,7 +33,7 @@ exports[`almost eligible but for class A/B discipline > requirements met 2`] = `
 exports[`almost eligible but for fraction of sentence served > requirements met 1`] = `
 [
   {
-    "text": "Currently on eligible custody level: community",
+    "text": "Currently on eligible custody level: minimum",
     "tooltip": "Currently on minimum or community custody",
   },
   {
@@ -100,7 +100,7 @@ exports[`eligible with future x portion date 1`] = `
 exports[`fully eligible > requirements met 1`] = `
 [
   {
-    "text": "Currently on eligible custody level: community",
+    "text": "Currently on eligible custody level: minimum",
     "tooltip": "Currently on minimum or community custody",
   },
   {

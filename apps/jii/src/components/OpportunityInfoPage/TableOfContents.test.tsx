@@ -47,7 +47,7 @@ test("generates links to headings in page body", async () => {
     new UsMeSCCPEligibilityReport(
       ineligibleResident,
       oppConfig,
-      outputFixture(usMeSccpFixtures.ineligible),
+      outputFixture(usMeSccpFixtures.RES999Ineligible),
     ),
   );
 

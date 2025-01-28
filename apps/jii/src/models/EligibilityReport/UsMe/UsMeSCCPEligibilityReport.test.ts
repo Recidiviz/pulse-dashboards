@@ -31,7 +31,7 @@ describe("fully eligible, needs to serve half", () => {
     report = new UsMeSCCPEligibilityReport(
       usMeResidents[0],
       config,
-      outputFixture(usMeSccpFixtures.fullyEligibleHalfPortion),
+      outputFixture(usMeSccpFixtures.RES004fullyEligibleHalfPortion),
     );
   });
 
@@ -112,7 +112,7 @@ describe("eligible to apply before X portion served", () => {
     report = new UsMeSCCPEligibilityReport(
       usMeResidents[0],
       config,
-      outputFixture(usMeSccpFixtures.eligibleToApplyBeforeXPortionServed),
+      outputFixture(usMeSccpFixtures.RES002eligibleToApplyBeforeXPortionServed),
     );
   });
 
@@ -200,7 +200,9 @@ describe("eligible to apply before X months remaining", () => {
     report = new UsMeSCCPEligibilityReport(
       usMeResidents[0],
       config,
-      outputFixture(usMeSccpFixtures.eligibleToApplyBeforeXMonthsRemaining),
+      outputFixture(
+        usMeSccpFixtures.RES008eligibleToApplyBeforeXMonthsRemaining,
+      ),
     );
   });
 
@@ -288,7 +290,7 @@ describe("almost eligible, portion served", () => {
     report = new UsMeSCCPEligibilityReport(
       usMeResidents[0],
       config,
-      outputFixture(usMeSccpFixtures.almostEligibleXPortion),
+      outputFixture(usMeSccpFixtures.RES005almostEligibleXPortion),
     );
   });
 
@@ -330,7 +332,7 @@ describe("almost eligible, portion served", () => {
               "criterion": "No Class A or B discipline in past 90 days",
             },
             {
-              "criterion": "Current custody level is Community",
+              "criterion": "Current custody level is Minimum",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",
@@ -376,7 +378,7 @@ describe("almost eligible, recent violation", () => {
     report = new UsMeSCCPEligibilityReport(
       usMeResidents[0],
       config,
-      outputFixture(usMeSccpFixtures.almostEligibleRecentViolation),
+      outputFixture(usMeSccpFixtures.RES003almostEligibleRecentViolation),
     );
   });
 
@@ -464,7 +466,7 @@ describe("almost eligible, pending violation", () => {
     report = new UsMeSCCPEligibilityReport(
       usMeResidents[0],
       config,
-      outputFixture(usMeSccpFixtures.almostEligiblePendingViolation),
+      outputFixture(usMeSccpFixtures.RES007almostEligiblePendingViolation),
     );
   });
 
@@ -541,7 +543,7 @@ describe("almost eligible, months remaining", () => {
     report = new UsMeSCCPEligibilityReport(
       usMeResidents[0],
       config,
-      outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
+      outputFixture(usMeSccpFixtures.RES001almostEligibleMonthsRemaining),
     );
   });
 
@@ -629,7 +631,7 @@ describe("not eligible", () => {
     report = new UsMeSCCPEligibilityReport(
       usMeResidents[0],
       config,
-      outputFixture(usMeSccpFixtures.ineligible),
+      outputFixture(usMeSccpFixtures.RES999Ineligible),
     );
   });
 

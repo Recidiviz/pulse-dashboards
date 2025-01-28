@@ -17,8 +17,15 @@
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatFacilityHousingUnit } from "../../utils";
-import { UsMeWorkReleaseDraftData, UsMeWorkReleaseOpportunity } from "../UsMe";
+import { UsMeWorkReleaseOpportunity } from "../UsMe";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
+
+type UsMeWorkReleaseDraftData = {
+  residentName: string;
+  mdocNo: string;
+  facilityHousingUnit: string;
+  caseManager: string;
+};
 
 export class UsMeWorkReleaseForm extends FormBase<
   UsMeWorkReleaseDraftData,

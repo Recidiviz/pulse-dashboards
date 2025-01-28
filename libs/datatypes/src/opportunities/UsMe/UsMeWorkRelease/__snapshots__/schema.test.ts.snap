@@ -1,0 +1,285 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`schema for RES001Eligible 1`] = `
+{
+  "caseNotes": {
+    "Education": [
+      {
+        "eventDate": 2022-06-02T00:00:00.000Z,
+        "noteBody": "Completed coding course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2021-09-16T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2021-11-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES001",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES002Eligible 1`] = `
+{
+  "caseNotes": {
+    "Employment Training": [
+      {
+        "eventDate": 2021-12-02T00:00:00.000Z,
+        "noteBody": "Completed course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2021-06-05T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2021-11-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES002",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES003AlmostEligibleViolation 1`] = `
+{
+  "caseNotes": {
+    "Employment Training": [
+      {
+        "eventDate": 2021-12-02T00:00:00.000Z,
+        "noteBody": "Completed course",
+        "noteTitle": "Graduated",
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2020-12-16T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2020-12-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES003",
+  "ineligibleCriteria": {
+    "usMeNoClassAOrBViolationFor90Days": {
+      "eligibleDate": 2022-03-02T00:00:00.000Z,
+      "highestClassViol": "B",
+      "violType": "More than 1",
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES004IneligibleCommunity 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2020-06-16T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2021-01-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES004",
+  "ineligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "COMMUNITY",
+    },
+  },
+  "isAlmostEligible": false,
+  "isEligible": false,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES005Eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2021-12-06T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2021-05-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES005",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES006Eligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2021-11-01T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2021-02-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES006",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES007AlmostEligibleViolationPending 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2021-10-16T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2020-12-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES007",
+  "ineligibleCriteria": {
+    "usMeNoClassAOrBViolationFor90Days": {
+      "eligibleDate": null,
+      "highestClassViol": "B",
+      "violType": "Pending since 2021-09-06",
+    },
+  },
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES008Ineligible30Days 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2021-08-16T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES008",
+  "ineligibleCriteria": {
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2021-12-31T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": false,
+  "isEligible": false,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES009AlmostEligibleYearsRemaining 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": null,
+    "usMeNoDetainersWarrantsOrOther": null,
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2021-12-01T00:00:00.000Z,
+    },
+  },
+  "externalId": "RES009",
+  "ineligibleCriteria": {
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2022-02-16T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
+  "stateCode": "US_ME",
+}
+`;
+
+exports[`schema for RES999Ineligible 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {},
+  "externalId": "RES999",
+  "ineligibleCriteria": {
+    "usMeCustodyLevelIsMinimum": {
+      "custodyLevel": "MEDIUM",
+    },
+    "usMeNoClassAOrBViolationFor90Days": {
+      "eligibleDate": null,
+      "highestClassViol": "B",
+      "violType": "Pending since 2021-09-06",
+    },
+    "usMeNoDetainersWarrantsOrOther": {
+      "detainer": "Interstate Active Detainer",
+      "detainerStartDate": 2019-12-16T00:00:00.000Z,
+    },
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease": {
+      "eligibleDate": 2021-12-23T00:00:00.000Z,
+    },
+    "usMeThreeYearsRemainingOnSentence": {
+      "eligibleDate": 2022-05-16T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": false,
+  "isEligible": false,
+  "stateCode": "US_ME",
+}
+`;

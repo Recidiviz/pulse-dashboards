@@ -127,7 +127,7 @@ describe("populate resident eligibility", () => {
   test("succeeds", async () => {
     const expectedRes = usMeResidents[1];
     const expectedEligibility = outputFixture(
-      usMeSccpFixtures.eligibleToApplyBeforeXPortionServed,
+      usMeSccpFixtures.RES002eligibleToApplyBeforeXPortionServed,
     );
 
     expect(
@@ -161,7 +161,7 @@ describe("populate resident eligibility", () => {
 
     expect(store.residentOpportunityRecordsByExternalId.get("RES999")).toEqual(
       expect.objectContaining({
-        usMeSCCP: outputFixture(usMeSccpFixtures.ineligible),
+        usMeSCCP: outputFixture(usMeSccpFixtures.RES999Ineligible),
       }),
     );
   });
@@ -210,7 +210,7 @@ describe("populate resident eligibility", () => {
 describe("populate resident eligibility report", () => {
   const res = usMeResidents[1];
   const oppId = "usMeSCCP";
-  const opp = outputFixture(usMeSccpFixtures.fullyEligibleHalfPortion);
+  const opp = outputFixture(usMeSccpFixtures.RES004fullyEligibleHalfPortion);
 
   test("succeeds", () => {
     store.populateEligibilityReportFromData(oppId, res, opp);

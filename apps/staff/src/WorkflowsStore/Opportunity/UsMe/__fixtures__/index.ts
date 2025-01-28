@@ -18,13 +18,12 @@
 import {} from "date-fns";
 import { Required as RequireKeys } from "utility-types";
 
-import { ClientRecord } from "~datatypes";
+import { ClientRecord, UsMeWorkReleaseRecordRaw } from "~datatypes";
 
 import { WorkflowsResidentRecord } from "../../../../FirestoreStore";
 import {
   UsMeEarlyTerminationReferralRecordRaw,
   UsMeFurloughReleaseReferralRecordRaw,
-  UsMeWorkReleaseReferralRecordRaw,
 } from "..";
 
 export const usMePersonRecord: WorkflowsResidentRecord = {
@@ -105,34 +104,33 @@ export const usMeFurloughReleaseEligibleRecordFixture: UsMeFurloughReleaseReferr
     isAlmostEligible: false,
   };
 
-export const usMeWorkReleaseEligibleRecordFixture: UsMeWorkReleaseReferralRecordRaw =
-  {
-    stateCode: "US_ME",
-    externalId: "111",
-    eligibleCriteria: {
-      usMeCustodyLevelIsMinimum: { custodyLevel: "MINIMUM" },
-      usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-        eligibleDate: "2022-08-10",
-      },
-      usMeThreeYearsRemainingOnSentence: {
-        eligibleDate: "2022-08-14",
-      },
-      usMeNoClassAOrBViolationFor90Days: null,
-      usMeNoDetainersWarrantsOrOther: null,
+export const usMeWorkReleaseEligibleRecordFixture: UsMeWorkReleaseRecordRaw = {
+  stateCode: "US_ME",
+  externalId: "111",
+  eligibleCriteria: {
+    usMeCustodyLevelIsMinimum: { custodyLevel: "MINIMUM" },
+    usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
+      eligibleDate: "2022-08-10",
     },
-    ineligibleCriteria: {},
-    caseNotes: {
-      foo: [
-        {
-          noteTitle: "A title",
-          noteBody: "A body",
-          eventDate: "2022-06-28",
-        },
-      ],
+    usMeThreeYearsRemainingOnSentence: {
+      eligibleDate: "2022-08-14",
     },
-    isEligible: true,
-    isAlmostEligible: false,
-  };
+    usMeNoClassAOrBViolationFor90Days: null,
+    usMeNoDetainersWarrantsOrOther: null,
+  },
+  ineligibleCriteria: {},
+  caseNotes: {
+    foo: [
+      {
+        noteTitle: "A title",
+        noteBody: "A body",
+        eventDate: "2022-06-28",
+      },
+    ],
+  },
+  isEligible: true,
+  isAlmostEligible: false,
+};
 
 export const usMeEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord> =
   {

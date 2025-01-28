@@ -15,99 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMeWorkReleaseReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsMe";
+import {
+  usMeWorkReleaseFixturesRaw,
+  UsMeWorkReleaseRecordRaw,
+} from "~datatypes";
+
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
-export const usMeWorkReleaseReferrals: FirestoreFixture<UsMeWorkReleaseReferralRecordRaw> =
+export const usMeWorkReleaseReferrals: FirestoreFixture<UsMeWorkReleaseRecordRaw> =
   {
-    data: [
-      {
-        stateCode: "US_ME",
-        externalId: "RES001",
-        eligibleCriteria: {
-          usMeCustodyLevelIsMinimum: {
-            custodyLevel: "COMMUNITY",
-          },
-          usMeThreeYearsRemainingOnSentence: {
-            eligibleDate: "2022-10-22",
-          },
-          usMeNoDetainersWarrantsOrOther: null,
-          usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-            eligibleDate: "2022-09-10",
-          },
-          usMeNoClassAOrBViolationFor90Days: null,
-        },
-        ineligibleCriteria: {},
-        caseNotes: {
-          Education: [
-            {
-              eventDate: "2022-06-02",
-              noteTitle: "Graduated",
-              noteBody: "Completed coding course",
-            },
-          ],
-        },
-        isEligible: true,
-        isAlmostEligible: false,
-      },
-      {
-        stateCode: "US_ME",
-        externalId: "RES002",
-        eligibleCriteria: {
-          usMeCustodyLevelIsMinimum: {
-            custodyLevel: "MINIMUM",
-          },
-          usMeThreeYearsRemainingOnSentence: {
-            eligibleDate: "2021-11-27",
-          },
-          usMeNoDetainersWarrantsOrOther: null,
-          usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-            eligibleDate: "2021-06-10",
-          },
-          usMeNoClassAOrBViolationFor90Days: null,
-        },
-        ineligibleCriteria: {},
-        caseNotes: {
-          "Employment Training": [
-            {
-              eventDate: "2021-12-02",
-              noteTitle: "Graduated",
-              noteBody: "Completed course",
-            },
-          ],
-        },
-        isEligible: true,
-        isAlmostEligible: false,
-      },
-      {
-        stateCode: "US_ME",
-        externalId: "RES003",
-        eligibleCriteria: {
-          usMeCustodyLevelIsMinimum: {
-            custodyLevel: "MINIMUM",
-          },
-          usMeThreeYearsRemainingOnSentence: {
-            eligibleDate: "2021-10-27",
-          },
-          usMeNoDetainersWarrantsOrOther: null,
-          usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease: {
-            eligibleDate: "2023-06-10",
-          },
-          usMeNoClassAOrBViolationFor90Days: null,
-        },
-        ineligibleCriteria: {},
-        caseNotes: {
-          "Employment Training": [
-            {
-              eventDate: "2021-12-02",
-              noteTitle: "Graduated",
-              noteBody: "Completed course",
-            },
-          ],
-        },
-        isEligible: true,
-        isAlmostEligible: false,
-      },
-    ],
+    data: Object.values(usMeWorkReleaseFixturesRaw),
     idFunc: externalIdFunc,
   };

@@ -187,6 +187,29 @@ exports[`hydration > hydrate 1`] = `
     },
   },
   {
+    "label": "Ninth Resident (RES009)",
+    "value": {
+      "admissionDate": 2014-12-16T00:00:00.000Z,
+      "custodyLevel": "MINIMUM",
+      "displayId": "dRES009",
+      "facilityId": "FACILITY NAME",
+      "gender": "MALE",
+      "officerId": "OFFICER5",
+      "personExternalId": "RES009",
+      "personName": {
+        "givenNames": "Ninth",
+        "surname": "Resident",
+      },
+      "personType": "RESIDENT",
+      "portionServedNeeded": "1/2",
+      "pseudonymizedId": "anonres009",
+      "releaseDate": 2025-02-16T00:00:00.000Z,
+      "stateCode": "US_ME",
+      "unitId": "UNIT A",
+      "usMePortionNeededEligibleDate": 2020-01-16T00:00:00.000Z,
+    },
+  },
+  {
     "label": "NoRelease Resident (RES998)",
     "value": {
       "admissionDate": 2020-05-16T00:00:00.000Z,

@@ -31,6 +31,7 @@ import {
   usMeAnnualReclassificationSchema,
   usMeMediumTrusteeSchema,
   usMeSCCPSchema,
+  usMeWorkReleaseSchema,
   usMiAddInPersonSecurityClassificationCommitteeReviewSchema,
   usMiSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
@@ -51,7 +52,6 @@ import { usIdExpandedCRCSchema } from "../src/WorkflowsStore/Opportunity/UsId/Us
 import { usIdPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdPastFTRDOpportunity/UsIdPastFTRDReferralRecord";
 import { usMeEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeEarlyTerminationOpportunity/UsMeEarlyTerminationReferralRecord";
 import { usMeFurloughReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeFurloughReleaseOpportunity/UsMeFurloughReleaseReferralRecord";
-import { usMeWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeWorkReleaseOpportunity/UsMeWorkReleaseReferralRecord";
 import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity/UsMiClassificationReviewReferralRecord";
 import { usMiEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiEarlyDischargeOpportunity/UsMiEarlyDischargeReferralRecord";
 import { usMiMinimumTelephoneReportingSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiMinimumTelephoneReportingOpportunity/UsMiMinimumTelephoneReportingReferralRecord";

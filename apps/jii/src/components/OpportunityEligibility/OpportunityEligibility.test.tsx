@@ -47,7 +47,7 @@ const opportunityConfig = stateConfig.incarcerationOpportunities[
 const eligibilityReport = new UsMeSCCPEligibilityReport(
   eligibleResident,
   opportunityConfig,
-  outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
+  outputFixture(usMeSccpFixtures.RES001almostEligibleMonthsRemaining),
 );
 
 beforeEach(() => {
