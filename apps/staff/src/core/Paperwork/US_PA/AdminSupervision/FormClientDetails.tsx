@@ -84,20 +84,13 @@ const InstructionsCell = styled.div`
   letter-spacing: 0.01em;
 `;
 
-const RedText = styled.span`
-  color: red;
-`;
-
 const FormClientDetails: React.FC = () => {
   return (
     <ContentContainer>
       {ROW_INFO.map((info, n) => (
         <Row key={info.name} title={info.label} row={n + 1} name={info.name} />
       ))}
-      <InstructionsCell>
-        {strings.instructions}
-        <RedText>{strings.instructionsRed}</RedText>
-      </InstructionsCell>
+      <InstructionsCell>{strings.instructions}</InstructionsCell>
     </ContentContainer>
   );
 };

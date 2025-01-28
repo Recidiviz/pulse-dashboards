@@ -61,7 +61,12 @@ export const INJURY_OFFENSE_LABEL_INFO: LabelInfo[] = [
     field: "offense18_29",
   },
   {
-    label: "18 Pa. C.S. Ch. 31 rel. to Sexual Assault",
+    label: "18 Pa. C.S. Ch. 30 rel. to Human Trafficking",
+    rowSpan: 1,
+    field: "offense18_30",
+  },
+  {
+    label: "18 Pa. C.S. Ch. 31 rel. to Sexual Offenses",
     rowSpan: 1,
     field: "offense18_31",
   },
@@ -82,9 +87,9 @@ export const INJURY_OFFENSE_LABEL_INFO: LabelInfo[] = [
   },
   {
     label:
-      "30 Pa. C.S. 5502.1 Relating to Homicide by watercraft under influence of alcohol or controlled substance",
-    rowSpan: 3,
-    field: "offense30_5502_1",
+      "Any crime of violence defined in 42 Pa.C.S. §  9714(g), or any attempt, conspiracy or solicitation  to commit a crime of violence defined in 42  Pa.C.S. § 9714(g), including any equivalent crime committed in another jurisdiction.",
+    rowSpan: 5,
+    field: "offenseConspiracyToCommitCrime",
   },
   {
     label:
@@ -114,14 +119,21 @@ export const INJURY_OFFENSE_LABEL_INFO: LabelInfo[] = [
     field: "offense75_3742",
   },
   {
-    label: "An attempt or conspiracy to commit a personal injury crime*",
-    rowSpan: 2,
+    label:
+      "An attempt or conspiracy or solicitation to commit a personal injury crime*",
+    rowSpan: 5,
     field: "offensePersonalInjury",
   },
   {
-    label: "Named in a PFA Order (or history of PFAs)",
-    rowSpan: 1,
-    field: "offensePFAOrder",
+    label:
+      "75 Pa.C.S Ch. 38 Relating to driving after imbibing  alcohol or utilizing drugs in cases of bodily injury.",
+    rowSpan: 4,
+    field: "offense75_38",
+  },
+  {
+    label: "30 Pa.C.S. § 5502.4 Relating to aggravated assault by watercraft.",
+    rowSpan: 3,
+    field: "offense30_5502_4",
   },
 ];
 
@@ -149,13 +161,13 @@ export const OTHER_OFFENSE_LABEL_INFO: LabelInfo[] = [
     field: "offense18_76",
   },
   {
-    label: "42 Pa. C.S. 9795.1 Megan’s Law Registration",
+    label: "42 Pa. C.S. §§ 9799.14, 9799.55 Megan’s Law Registration",
     rowSpan: 1,
-    field: "offense42_9795_1",
+    field: "offense42_9799",
   },
   {
     label: "18 Pa. C.S. 6312 Sexual Abuse of Children",
-    rowSpan: 1,
+    rowSpan: 2,
     field: "offense18_6312",
   },
   {
@@ -170,7 +182,7 @@ export const OTHER_OFFENSE_LABEL_INFO: LabelInfo[] = [
   },
   {
     label: "42 Pa. C.S. 9712 Firearm Enhancement",
-    rowSpan: 1,
+    rowSpan: 3,
     field: "offense42_9712",
   },
   {
@@ -194,12 +206,35 @@ export const OTHER_OFFENSE_LABEL_INFO: LabelInfo[] = [
     rowSpan: 1,
     field: "offenseSexuallyViolentPredator",
   },
+  {
+    label: "Named in a PFA Order (or history of PFAs)",
+    rowSpan: 1,
+    field: "offensePFAOrder",
+  },
+  {
+    label: "18 Pa.C.S. 2803 Aggravated Hazing",
+    rowSpan: 1,
+    field: "offense18_2803",
+  },
+  {
+    label:
+      "30 Pa. C.S. 5502.1 Relating to Homicide by watercraft under influence of alcohol or controlled substance",
+    rowSpan: 3,
+    field: "offense30_5502_1",
+  },
+  {
+    label: "30 Pa.C.S. § 5502.2 Relating to homicide by watercraft",
+    rowSpan: 2,
+    field: "offense30_5502_2",
+  },
+  {
+    label:
+      "30 Pa.C.S. § 5502.3 Relating to aggravated  assault by watercraft while operating under the  influence.",
+    rowSpan: 4,
+    field: "offense30_5502_3",
+  },
   // The following are filler rows to match the PA form layout.
-  { label: "", rowSpan: 1 },
-  { label: "", rowSpan: 1 },
-  { label: "", rowSpan: 1 },
-  { label: "", rowSpan: 1 },
-  { label: "", rowSpan: 1 },
+  { label: "", rowSpan: 3 },
 ];
 
 export const CRITERIA_LABELS: LabelInfo[] = [
@@ -225,22 +260,21 @@ export const CRITERIA_LABELS: LabelInfo[] = [
   },
 ];
 
-export const GRID_ROW_COUNT = 27;
+export const GRID_ROW_COUNT = 37;
 
 export const GRAY_BACKGROUND = "#353535";
 export const BLUE_BACKGROUND = "#d8e6fc";
 
 export const strings = {
-  instructions: `Instructions: Review current offenses and criminal history for crimes which would disqualify reentrant for administrative parole. `,
-  instructionsRed: `Any conviction (and/or delinquent adjudication for offenses designated with an asterisk *) will preclude assignment to Administrative Parole.`,
+  instructions: `Instructions: Review current offenses and criminal history for crimes which would disqualify reentrant for administrative parole. Any conviction (and/or delinquent adjudication for offenses designated with an asterisk *) will preclude assignment to Administrative Parole.`,
   continueHeader: `If any "YES" is checked above, then the reentrant is not eligible for Administrative Parole. If "NONE", continue with the below questionnaire.`,
   dispositionHeader: `Are there any unreported dispositions in the reentrant's criminal history for any of the above listed personal injury crimes/other offenses? (Note date/offense below)`,
   eligibilityHeader: `Eligible for Administrative Parole?`,
   dispositionNotes: `List unreported disposition information:`,
   agentSignature: `Agent Signature`,
   agentName: `Agent Name (Printed)`,
-  footer: `DC-P 402 | rvsd. 08.2021`,
-  addendumFooter: `DC-P 402A | rvsd. 08.2021`,
+  footer: `DC-P 402 | rvsd. 01.2024`,
+  addendumFooter: `DC-P 402A | rvsd. 01.2024`,
 } as const;
 
 export const worksheetSectionsCopy: {
@@ -301,28 +335,36 @@ export const worksheetSectionsCopy: {
     headerText: `The reentrant is ineligible for administrative parole if the disposition shows that the reentrant was found guilty on one of the drug offenses in section 2 and at least one of the following sentencing enhancements were included in the disposition:`,
     checklist: [
       {
-        label: `18PA. C.S. 7508(a)1 (iii) - marijuana > 50 Ibs or 51 plants; min 5 years, $50,000`,
+        label: `18PA. C.S. 7508(a)1 (iii) - marijuana ≥ 50 Ibs or 51 plants; min 5 years, $50,000`,
         field: "offense7508_a1",
       },
       {
-        label: `18PA. C.S. 7508(a)2(iii) - narcotic > 100 grams; min 5 years, $25,000`,
+        label: `18PA. C.S. 7508(a)2(iii) - narcotic ≥ 100 grams; min 5 years, $25,000`,
         field: "offense7508_a2",
       },
       {
-        label: `18PA. C.S. 7508(a)3(iii) - cocoa leaves > 100 grams; min 4 years, $25,000`,
+        label: `18PA. C.S. 7508(a)3(iii) - cocoa leaves ≥ 100 grams; min 4 years, $25,000`,
         field: "offense7508_a3",
       },
       {
-        label: `18PA. C.S. 7508(a)4(iii) - methamphetamine > 100 grams; min 5 years, $50,000`,
+        label: `18PA. C.S. 7508(a)4(iii) - methamphetamine ≥ 100 grams; min 5 years, $50,000`,
         field: "offense7508_a4",
       },
       {
-        label: `18PA. C.S. 7508(a)7(iii) - heroin > 50 grams; min 5 years, $25,000`,
+        label: `18PA. C.S. 7508(a)7(iii) - heroin ≥ 50 grams; min 5 years, $25,000`,
         field: "offense7508_a7",
       },
       {
-        label: `18PA. C.S. 7508(a)8(iii) - MDA, MDMA, MMDA > 1,000 tablets or 300 grams; max 15 years, $250,000`,
+        label: `18PA. C.S. 7508(a)8(iii) - MDA, MDMA, MMDA ≥ 1,000 tablets or 300 grams; max 15 years, $250,000`,
         field: "offense7508_a8",
+      },
+      {
+        label: `61PA. C.S. 4103(7) - Fentanyl or a mixture containing Fentanyl ≥ 10 grams.`,
+        field: "offense4103_7",
+      },
+      {
+        label: `61PA. C.S. 4103(8) - Carfentanil or a mixture containing carfentanil ≥ 1 gram.`,
+        field: "offense4103_8",
       },
     ],
     footerText: `If none of these boxes are checked, then the PA drug charges do not preclude the reentrant's eligibility. Continue to section 4 if the reentrant also has out-of-state drug charges.`,
