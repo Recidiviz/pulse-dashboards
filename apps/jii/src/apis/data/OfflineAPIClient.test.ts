@@ -60,7 +60,7 @@ test("local config object", async () => {
 
 test("eligibility record", async () => {
   const expectedRecord = outputFixture(
-    usMeSccpFixtures.fullyEligibleHalfPortion,
+    usMeSccpFixtures.RES004fullyEligibleHalfPortion,
   );
 
   const fetched = await api.residentEligibility(

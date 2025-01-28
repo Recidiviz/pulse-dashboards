@@ -36,6 +36,8 @@ export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";
 export * from "./opportunities/UsMe/UsMeMediumTrustee/schema";
 export * from "./opportunities/UsMe/UsMeSCCP/fixtures";
 export * from "./opportunities/UsMe/UsMeSCCP/schema";
+export * from "./opportunities/UsMe/UsMeWorkRelease/fixtures";
+export * from "./opportunities/UsMe/UsMeWorkRelease/schema";
 
 // UsMi Exports: Includes fixtures and schema related to US-MI opportunities
 // -----------------------------------------------------------------------------

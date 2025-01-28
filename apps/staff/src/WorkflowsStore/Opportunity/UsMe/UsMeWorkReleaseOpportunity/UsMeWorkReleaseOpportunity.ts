@@ -19,15 +19,16 @@ import { differenceInMonths } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 
+import {
+  UsMeWorkReleaseCriteria,
+  UsMeWorkReleaseRecord,
+  usMeWorkReleaseSchema,
+} from "~datatypes";
+
 import { Resident } from "../../../Resident";
 import { UsMeWorkReleaseForm } from "../../Forms/UsMeWorkReleaseForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
-import {
-  transformWorkReleaseReferral as transformReferral,
-  UsMeWorkReleaseCriteria,
-  UsMeWorkReleaseReferralRecord,
-} from "./UsMeWorkReleaseReferralRecord";
 
 const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeWorkReleaseCriteria,
@@ -74,7 +75,7 @@ const ELIGIBLE_CRITERIA_COPY: Record<
 
 function hydrateThreeYearsRemainingRequirement(
   criterion: NonNullable<
-    UsMeWorkReleaseCriteria["usMeThreeYearsRemainingOnSentence"]
+    UsMeWorkReleaseRecord["eligibleCriteria"]["usMeThreeYearsRemainingOnSentence"]
   >,
   copy: OpportunityRequirement,
 ) {
@@ -93,7 +94,7 @@ function hydrateThreeYearsRemainingRequirement(
 }
 
 const requirementsForEligibleCriteria = (
-  criteria: Partial<UsMeWorkReleaseCriteria>,
+  criteria: UsMeWorkReleaseRecord["eligibleCriteria"],
 ): OpportunityRequirement[] => {
   const requirements: OpportunityRequirement[] = [];
 
@@ -137,7 +138,7 @@ const requirementsForEligibleCriteria = (
 
 export class UsMeWorkReleaseOpportunity extends OpportunityBase<
   Resident,
-  UsMeWorkReleaseReferralRecord
+  UsMeWorkReleaseRecord
 > {
   form: UsMeWorkReleaseForm;
 
@@ -148,7 +149,7 @@ export class UsMeWorkReleaseOpportunity extends OpportunityBase<
       resident,
       "usMeWorkRelease",
       resident.rootStore,
-      transformReferral(record),
+      usMeWorkReleaseSchema.parse(record),
     );
 
     this.form = new UsMeWorkReleaseForm(this, resident.rootStore);

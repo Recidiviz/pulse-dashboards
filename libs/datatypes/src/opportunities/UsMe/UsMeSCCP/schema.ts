@@ -21,6 +21,10 @@ import { ParsedRecord } from "../../../utils/types";
 import { dateStringSchema } from "../../../utils/zod/date/dateStringSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import type { MergedCriteria } from "../../utils/types";
+import {
+  noABViolation90DaysSchema,
+  noDetainersWarrantsSchema,
+} from "../common";
 
 /**
  * represents either half-time date or two-thirds-time date
@@ -50,21 +54,14 @@ const possiblyIneligibleCriteria = z
 export const usMeSCCPSchema = opportunitySchemaBase.extend({
   eligibleCriteria: possiblyIneligibleCriteria
     .extend({
-      usMeNoClassAOrBViolationFor90Days: z.null(),
-      usMeNoDetainersWarrantsOrOther: z.null(),
+      ...noABViolation90DaysSchema.eligible,
+      ...noDetainersWarrantsSchema.eligible,
     })
     .partial(),
   ineligibleCriteria: possiblyIneligibleCriteria
     .extend({
-      usMeNoClassAOrBViolationFor90Days: z.object({
-        eligibleDate: dateStringSchema.nullable(),
-        highestClassViol: z.string(),
-        violType: z.string(),
-      }),
-      usMeNoDetainersWarrantsOrOther: z.object({
-        detainer: z.string(),
-        detainerStartDate: dateStringSchema,
-      }),
+      ...noABViolation90DaysSchema.ineligible,
+      ...noDetainersWarrantsSchema.ineligible,
     })
     .partial(),
 });

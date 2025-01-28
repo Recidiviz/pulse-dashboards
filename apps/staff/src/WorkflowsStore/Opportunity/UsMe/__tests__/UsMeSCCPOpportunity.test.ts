@@ -68,7 +68,7 @@ describe("fully eligible", () => {
   beforeEach(() => {
     createTestUnit(
       usMePersonRecord,
-      usMeSccpFixtures.fullyEligibleTwoThirdsPortion.input,
+      usMeSccpFixtures.RES006fullyEligibleTwoThirdsPortion.input,
     );
   });
 
@@ -85,7 +85,7 @@ describe("fully eligible", () => {
 test("requirements for half sentence served", () => {
   createTestUnit(
     usMePersonRecordShorterSentence,
-    usMeSccpFixtures.fullyEligibleHalfPortion.input,
+    usMeSccpFixtures.RES004fullyEligibleHalfPortion.input,
   );
 
   expect(opp.requirementsMet[1]).toMatchSnapshot();
@@ -94,7 +94,7 @@ test("requirements for half sentence served", () => {
 test("eligible with future x portion date", () => {
   createTestUnit(
     usMePersonRecord,
-    usMeSccpFixtures.eligibleToApplyBeforeXPortionServed.input,
+    usMeSccpFixtures.RES002eligibleToApplyBeforeXPortionServed.input,
   );
 
   expect(opp.requirementsMet[1]).toMatchSnapshot();
@@ -107,7 +107,7 @@ describe("almost eligible but for months remaining", () => {
   beforeEach(() => {
     createTestUnit(
       usMePersonRecord,
-      usMeSccpFixtures.almostEligibleMonthsRemaining.input,
+      usMeSccpFixtures.RES001almostEligibleMonthsRemaining.input,
     );
   });
 
@@ -130,7 +130,7 @@ describe("almost eligible but for months remaining", () => {
 describe("almost eligible but for months with days remaining", () => {
   beforeEach(() => {
     const almostEligibleInDays = {
-      ...usMeSccpFixtures.almostEligibleMonthsRemaining.input,
+      ...usMeSccpFixtures.RES001almostEligibleMonthsRemaining.input,
       ineligibleCriteria: {
         usMeXMonthsRemainingOnSentence: {
           eligibleDate: relativeFixtureDate({ days: 13 }),
@@ -154,7 +154,7 @@ describe("ensure requirements text updates when source changes", () => {
     // copying it which made the requirements text never update until a reload.
     createTestUnit(
       usMePersonRecord,
-      usMeSccpFixtures.fullyEligibleTwoThirdsPortion.input,
+      usMeSccpFixtures.RES006fullyEligibleTwoThirdsPortion.input,
     );
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
@@ -164,7 +164,7 @@ describe("ensure requirements text updates when source changes", () => {
 
     createTestUnit(
       usMePersonRecord,
-      usMeSccpFixtures.almostEligibleMonthsRemaining.input,
+      usMeSccpFixtures.RES001almostEligibleMonthsRemaining.input,
     );
 
     // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
@@ -180,7 +180,7 @@ describe("almost eligible but for class A/B discipline", () => {
   beforeEach(() => {
     createTestUnit(
       usMePersonRecord,
-      usMeSccpFixtures.almostEligibleRecentViolation.input,
+      usMeSccpFixtures.RES003almostEligibleRecentViolation.input,
     );
   });
 
@@ -204,7 +204,7 @@ describe("almost eligible but for fraction of sentence served", () => {
   beforeEach(() => {
     createTestUnit(
       usMePersonRecord,
-      usMeSccpFixtures.almostEligibleXPortion.input,
+      usMeSccpFixtures.RES005almostEligibleXPortion.input,
     );
   });
 

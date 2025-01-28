@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,4 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UsMeWorkReleaseOpportunity";
+import { z } from "zod";
+
+import { dateStringSchema } from "../../utils/zod";
+
+export const noDetainersWarrantsSchema = {
+  eligible: {
+    usMeNoDetainersWarrantsOrOther: z.null(),
+  },
+  ineligible: {
+    usMeNoDetainersWarrantsOrOther: z.object({
+      detainer: z.string(),
+      detainerStartDate: dateStringSchema,
+    }),
+  },
+};
+
+export const noABViolation90DaysSchema = {
+  eligible: { usMeNoClassAOrBViolationFor90Days: z.null() },
+  ineligible: {
+    usMeNoClassAOrBViolationFor90Days: z.object({
+      eligibleDate: dateStringSchema.nullable(),
+      highestClassViol: z.string(),
+      violType: z.string(),
+    }),
+  },
+};

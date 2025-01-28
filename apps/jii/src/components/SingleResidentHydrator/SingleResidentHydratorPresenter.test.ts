@@ -43,7 +43,7 @@ const expectedData = {
         testResident,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         usMeResidentsConfig.incarcerationOpportunities.usMeSCCP!,
-        outputFixture(usMeSccpFixtures.almostEligibleMonthsRemaining),
+        outputFixture(usMeSccpFixtures.RES001almostEligibleMonthsRemaining),
       ),
     },
   ],

@@ -181,6 +181,28 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
   {
     officerId: "OFFICER5",
     stateCode: "US_ME",
+    personExternalId: "RES009",
+    displayId: "dRES009",
+    personName: {
+      givenNames: "Ninth",
+      surname: "Resident",
+    },
+    gender: "MALE",
+    pseudonymizedId: "anonres009",
+    facilityId: "FACILITY NAME",
+    unitId: "UNIT A",
+    custodyLevel: "MINIMUM",
+    admissionDate: relativeFixtureDate({ years: -7 }),
+    releaseDate: relativeFixtureDate({ years: 3, months: 2 }),
+    usMePortionNeededEligibleDate: relativeFixtureDate({
+      years: -2,
+      months: 1,
+    }),
+    portionServedNeeded: "1/2" as const,
+  },
+  {
+    officerId: "OFFICER5",
+    stateCode: "US_ME",
     personExternalId: "RES998",
     displayId: "dRES998",
     personName: {

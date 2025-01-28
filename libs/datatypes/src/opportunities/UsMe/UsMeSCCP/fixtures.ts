@@ -21,7 +21,7 @@ import { FixtureMapping } from "../../utils/types";
 import { UsMeSCCPRecord, usMeSCCPSchema } from "./schema";
 
 export const usMeSccpFixtures = {
-  almostEligibleMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
+  RES001almostEligibleMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES001",
     eligibleCriteria: {
@@ -52,7 +52,7 @@ export const usMeSccpFixtures = {
     isEligible: false,
     isAlmostEligible: true,
   }),
-  eligibleToApplyBeforeXPortionServed: makeRecordFixture(usMeSCCPSchema, {
+  RES002eligibleToApplyBeforeXPortionServed: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES002",
     eligibleCriteria: {
@@ -82,7 +82,7 @@ export const usMeSccpFixtures = {
     isEligible: true,
     isAlmostEligible: false,
   }),
-  almostEligibleRecentViolation: makeRecordFixture(usMeSCCPSchema, {
+  RES003almostEligibleRecentViolation: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES003",
     eligibleCriteria: {
@@ -117,7 +117,7 @@ export const usMeSccpFixtures = {
     isEligible: false,
     isAlmostEligible: true,
   }),
-  fullyEligibleHalfPortion: makeRecordFixture(usMeSCCPSchema, {
+  RES004fullyEligibleHalfPortion: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES004",
     ineligibleCriteria: {},
@@ -147,7 +147,7 @@ export const usMeSccpFixtures = {
     isEligible: true,
     isAlmostEligible: false,
   }),
-  almostEligibleXPortion: makeRecordFixture(usMeSCCPSchema, {
+  RES005almostEligibleXPortion: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES005",
     ineligibleCriteria: {
@@ -160,7 +160,7 @@ export const usMeSccpFixtures = {
       usMeXMonthsRemainingOnSentence: {
         eligibleDate: relativeFixtureDate({ months: -1 }),
       },
-      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "MINIMUM" },
       usMeNoDetainersWarrantsOrOther: null,
       usMeNoClassAOrBViolationFor90Days: null,
     },
@@ -176,12 +176,12 @@ export const usMeSccpFixtures = {
     isEligible: false,
     isAlmostEligible: true,
   }),
-  fullyEligibleTwoThirdsPortion: makeRecordFixture(usMeSCCPSchema, {
+  RES006fullyEligibleTwoThirdsPortion: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES006",
     ineligibleCriteria: {},
     eligibleCriteria: {
-      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "COMMUNITY" },
+      usMeCustodyLevelIsMinimumOrCommunity: { custodyLevel: "MINIMUM" },
       usMeServedXPortionOfSentence: {
         eligibleDate: relativeFixtureDate({ months: -10 }),
         xPortionServed: "2/3",
@@ -204,7 +204,7 @@ export const usMeSccpFixtures = {
     isEligible: true,
     isAlmostEligible: false,
   }),
-  almostEligiblePendingViolation: makeRecordFixture(usMeSCCPSchema, {
+  RES007almostEligiblePendingViolation: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES007",
     eligibleCriteria: {
@@ -239,9 +239,42 @@ export const usMeSccpFixtures = {
     isEligible: false,
     isAlmostEligible: true,
   }),
-  eligibleToApplyBeforeXMonthsRemaining: makeRecordFixture(usMeSCCPSchema, {
+  RES008eligibleToApplyBeforeXMonthsRemaining: makeRecordFixture(
+    usMeSCCPSchema,
+    {
+      stateCode: "US_ME",
+      externalId: "RES008",
+      eligibleCriteria: {
+        usMeCustodyLevelIsMinimumOrCommunity: {
+          custodyLevel: "MINIMUM",
+        },
+        usMeNoClassAOrBViolationFor90Days: null,
+        usMeNoDetainersWarrantsOrOther: null,
+        usMeServedXPortionOfSentence: {
+          eligibleDate: relativeFixtureDate({ months: -4 }),
+          xPortionServed: "2/3",
+        },
+        usMeXMonthsRemainingOnSentence: {
+          eligibleDate: relativeFixtureDate({ months: 2 }),
+        },
+      },
+      ineligibleCriteria: {},
+      caseNotes: {
+        "Employment Training": [
+          {
+            eventDate: relativeFixtureDate({ days: -14 }),
+            noteTitle: "Graduated",
+            noteBody: "Completed course",
+          },
+        ],
+      },
+      isEligible: true,
+      isAlmostEligible: false,
+    },
+  ),
+  RES009Ineligible: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
-    externalId: "RES008",
+    externalId: "RES009",
     eligibleCriteria: {
       usMeCustodyLevelIsMinimumOrCommunity: {
         custodyLevel: "MINIMUM",
@@ -249,14 +282,18 @@ export const usMeSccpFixtures = {
       usMeNoClassAOrBViolationFor90Days: null,
       usMeNoDetainersWarrantsOrOther: null,
       usMeServedXPortionOfSentence: {
-        eligibleDate: relativeFixtureDate({ months: -4 }),
-        xPortionServed: "2/3",
-      },
-      usMeXMonthsRemainingOnSentence: {
-        eligibleDate: relativeFixtureDate({ months: 2 }),
+        eligibleDate: relativeFixtureDate({
+          years: -2,
+          months: 1,
+        }),
+        xPortionServed: "1/2",
       },
     },
-    ineligibleCriteria: {},
+    ineligibleCriteria: {
+      usMeXMonthsRemainingOnSentence: {
+        eligibleDate: relativeFixtureDate({ months: 8 }),
+      },
+    },
     caseNotes: {
       "Employment Training": [
         {
@@ -266,10 +303,10 @@ export const usMeSccpFixtures = {
         },
       ],
     },
-    isEligible: true,
+    isEligible: false,
     isAlmostEligible: false,
   }),
-  ineligible: makeRecordFixture(usMeSCCPSchema, {
+  RES999Ineligible: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
     externalId: "RES999",
     ineligibleCriteria: {
