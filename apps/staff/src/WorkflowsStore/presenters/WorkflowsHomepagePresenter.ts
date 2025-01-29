@@ -17,7 +17,6 @@
 
 import pluralize from "pluralize";
 
-import { TENANT_CONFIGS } from "../../tenants";
 import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { CaseloadOpportunitiesPresenter } from "./CaseloadOpportunitiesPresenter";
@@ -40,12 +39,8 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
   }
 
   private get searchResultLabel() {
-    const {
-      workflowsSearchFieldTitle,
-      activeSystem,
-      rootStore: { currentTenantId },
-      selectedSearchIds,
-    } = this.workflowsStore;
+    const { workflowsSearchFieldTitle, activeSystem, selectedSearchIds } =
+      this.workflowsStore;
 
     const searchIdsCount = selectedSearchIds.length;
     if (
@@ -54,12 +49,11 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     ) {
       return pluralize(workflowsSearchFieldTitle, searchIdsCount);
     }
-    const tenantConfig =
-      currentTenantId &&
-      TENANT_CONFIGS[currentTenantId]?.workflowsSystemConfigs?.INCARCERATION;
 
-    const facilitiesSearchOverride =
-      tenantConfig?.searchTitleOverride ?? "location";
+    const facilitiesSearchOverride = this.workflowsStore.searchTitleOverride(
+      "INCARCERATION",
+      "location",
+    );
 
     return activeSystem === "ALL" && facilitiesSearchOverride !== "case manager"
       ? `${pluralize("caseload", searchIdsCount)} and/or ${pluralize(facilitiesSearchOverride, searchIdsCount)}`

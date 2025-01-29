@@ -38,9 +38,9 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
         {
           searchType: "OFFICER",
           searchField: ["officerId"],
+          searchTitleOverride: "case manager",
         },
       ],
-      searchTitleOverride: "case manager",
     },
   },
   releaseDateCopyOverride: "Good Time Release Date",

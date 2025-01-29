@@ -33,9 +33,9 @@ const US_MO_CONFIG: TenantConfig<"US_MO"> = {
         {
           searchType: "LOCATION",
           searchField: ["facilityId"],
+          searchTitleOverride: "facility",
         },
       ],
-      searchTitleOverride: "facility",
     },
   },
   navigation: {

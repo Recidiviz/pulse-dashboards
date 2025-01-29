@@ -68,10 +68,10 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
         {
           searchType: "LOCATION",
           searchField: ["metadata", "crcFacilities"],
+          searchTitleOverride: "facility",
         },
       ],
       searchOp: "array-contains-any",
-      searchTitleOverride: "facility",
       locationIdType: "facilityId",
       onlySurfaceEligible: true,
     },

@@ -114,13 +114,13 @@ export type SnoozeTaskConfig = {
 export type SearchConfig<R, T extends TenantConfigId> = {
   searchType: SearchType;
   searchField: Leaves<R & { metadata: { stateCode: T } }> & string[];
+  searchTitleOverride?: string;
   restrictedToFeatureVariant?: FeatureVariant;
 };
 
 export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
   search: SearchConfig<R, T>[];
   searchOp?: "in" | "array-contains-any";
-  searchTitleOverride?: string;
   locationIdType?: "facilityId" | "facilityUnitId";
   onlySurfaceEligible?: boolean;
 };

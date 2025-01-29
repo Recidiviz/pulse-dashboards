@@ -68,6 +68,7 @@ const baseWorkflowsStoreMock = {
     opportunities: mockOpportunityConfigs,
     hydrate: vi.fn(),
   },
+  searchTitleOverride: () => "location",
 };
 
 describe("WorkflowsHomepage", () => {

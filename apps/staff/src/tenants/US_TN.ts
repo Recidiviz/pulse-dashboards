@@ -41,9 +41,9 @@ const US_TN_CONFIG: TenantConfig<"US_TN"> = {
         {
           searchType: "LOCATION",
           searchField: ["facilityUnitId"],
+          searchTitleOverride: "unit",
         },
       ],
-      searchTitleOverride: "unit",
     },
   },
   insightsLanternState: true,

@@ -113,6 +113,7 @@ const { stateConfigs } = vi.hoisted(() => {
           search: [
             {
               searchType: "OFFICER",
+              searchTitleOverride: "case manager",
               restrictedToFeatureVariant: "TEST",
             },
             { searchType: "LOCATION" },
@@ -144,9 +145,9 @@ const { stateConfigs } = vi.hoisted(() => {
             {
               searchType: "LOCATION",
               searchField: ["facilityId"],
+              searchTitleOverride: "location",
             },
           ],
-          searchTitleOverride: "location",
         },
       },
       availableStateCodes: ["US_MO"],
@@ -637,6 +638,34 @@ describe("selectedSearchIds", () => {
   });
 });
 
+describe("workflowsSearchFieldTitle", () => {
+  test("without specificied searchTitleOverride", async () => {
+    await waitForHydration();
+    runInAction(() => {
+      workflowsStore.updateActiveSystem("SUPERVISION");
+    });
+    expect(workflowsStore.workflowsSearchFieldTitle).toEqual("officer");
+  });
+
+  test("with specificied searchTitleOverride", async () => {
+    runInAction(() => {
+      rootStore.tenantStore.currentTenantId = "US_MO";
+      workflowsStore.updateActiveSystem("INCARCERATION");
+    });
+    await waitForHydration();
+    expect(workflowsStore.workflowsSearchFieldTitle).toEqual("location");
+  });
+
+  test("with multiple search configs per active system defaults to officer", async () => {
+    runInAction(() => {
+      rootStore.tenantStore.currentTenantId = "US_TN";
+      workflowsStore.updateActiveSystem("INCARCERATION");
+    });
+    await waitForHydration();
+    expect(workflowsStore.workflowsSearchFieldTitle).toEqual("officer");
+  });
+});
+
 test("staffSupervisedByCurrentUser provides a list of users supervised by currently logged in user", async () => {
   await waitForHydration(mockSupervisor);
   populateSupervisedStaff();
@@ -917,6 +946,7 @@ test("systemConfigFor when there is a search type behind an enabled feature vari
     search: [
       {
         searchType: "OFFICER",
+        searchTitleOverride: "case manager",
         restrictedToFeatureVariant: "TEST",
       },
       { searchType: "LOCATION" },
