@@ -31,3 +31,7 @@ components:
         project_id: "{{ .settings.context.project_id }}"
       metadata:
         component: env-secrets
+      settings:
+        depends_on:
+          sops_file:
+            file: "libs/atmos/components/terraform/env-secrets/env-secrets.enc.yaml"

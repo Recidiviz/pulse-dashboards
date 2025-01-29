@@ -56,6 +56,7 @@
         "outputPath": "dist/apps/jii-texting-server",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
+        "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
         "target": "node20",
@@ -120,15 +121,18 @@
     },
     "deploy": {
       "executor": "nx:run-commands",
+      "options": {
+        "tty": true,
+      },
       "configurations": {
         "staging": {
           "commands": [
-            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-staging--jii-texting --extra-args='-var server_version={args.tag} -var migrate={args.migrate}'"
+            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-staging--jii-texting --terraform-opts=\"-auto-approve -var server_version={args.tag} -var migrate={args.migrate}\""
           ]
         },
         "production": {
           "commands": [
-            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-production--jii-texting --extra-args='-var server_version={args.tag} -var migrate={args.migrate}'"
+            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-production--jii-texting --terraform-opts=\"-auto-approve -var server_version={args.tag} -var migrate={args.migrate}\""
           ]
         }
       }

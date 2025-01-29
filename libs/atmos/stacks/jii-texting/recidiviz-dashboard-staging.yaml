@@ -72,4 +72,7 @@ components:
         location: "{{ .settings.context.location }}"
         # Pass the `connection-name` output from our `postgres-instance` component to the jii-texting app
         cloudsql_instance: !terraform.output postgres-instance connection_name
-        server_image: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.product }}/default"
+        server_image: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.artifact_repository }}/default"
+      settings:
+        context:
+          artifact_repository:  '{{ (atmos.Component "vendor/artifact-registry" .stack).outputs.artifact_name }}'

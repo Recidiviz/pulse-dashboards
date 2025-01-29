@@ -27,7 +27,6 @@ module "cloud-run" {
 
   service_name = "jii-texting-server"
   image = local.image
-  argument = ["-listen=:8080"]
   location = var.location
   project_id = var.project_id
   env_vars = local.env_vars
@@ -46,4 +45,5 @@ module "migrate-db" {
   exec = var.migrate
   container_command = ["./scripts/migrate-dbs.sh"]
   env_vars = local.env_vars
+  cloud_run_deletion_protection = false
 }
