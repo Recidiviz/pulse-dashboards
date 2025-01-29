@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { VITALS_METRIC_IDS } from "../../../metrics/utils/constants";
 import { InsightsConfig } from "../schema";
 
 export const US_ID: InsightsConfig = {
@@ -102,4 +103,14 @@ export const US_ID: InsightsConfig = {
   supervisorHasNoOutlierOfficersLabel:
     "Nice! No officers are outliers on any metrics this month.",
   worseThanRateLabel: "Far above the statewide rate",
+  vitalsMetrics: [
+    {
+      metricId: VITALS_METRIC_IDS.enum.timely_contact,
+      titleDisplayName: "Timely F2F Contact",
+    },
+    {
+      metricId: VITALS_METRIC_IDS.enum.timely_risk_assessment,
+      titleDisplayName: "Timely Risk Assessment",
+    },
+  ],
 };

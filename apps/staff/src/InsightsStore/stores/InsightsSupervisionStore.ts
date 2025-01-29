@@ -108,6 +108,10 @@ export class InsightsSupervisionStore {
     });
   }
 
+  get vitalsMetricsConfig() {
+    return this.config.vitalsMetrics;
+  }
+
   private get allCaseloadCategories(): Set<string> {
     return new Set(
       ...Array.from(
@@ -236,6 +240,7 @@ export class InsightsSupervisionStore {
       noneAreOutliersLabel: this.config.noneAreOutliersLabel,
       docLabel: this.config.docLabel,
       outliersHover: this.config.outliersHover,
+      vitalsMetricsMethodologyUrl: this.config.vitalsMetricsMethodologyUrl,
     };
   }
 

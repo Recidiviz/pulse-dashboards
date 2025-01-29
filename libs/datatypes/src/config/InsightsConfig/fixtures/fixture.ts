@@ -21,6 +21,7 @@ import {
   ADVERSE_METRIC_IDS,
   CASELOAD_CATEGORY_IDS,
   FAVORABLE_METRIC_IDS,
+  VITALS_METRIC_IDS,
 } from "../../../metrics/utils/constants";
 import { rawActionStrategyCopyFixture } from "../../ActionStrategyCopy/fixture";
 import {
@@ -149,6 +150,16 @@ export const rawInsightsConfigFixture: RawInsightsConfig = {
     {
       id: CASELOAD_CATEGORY_IDS.enum.SEX_OFFENSE,
       displayName: "Sex Offense Caseloads",
+    },
+  ],
+  vitalsMetrics: [
+    {
+      metricId: VITALS_METRIC_IDS.enum.timely_contact,
+      titleDisplayName: "Timely Contact",
+    },
+    {
+      metricId: VITALS_METRIC_IDS.enum.timely_risk_assessment,
+      titleDisplayName: "Timely Risk Assessment",
     },
   ],
   actionStrategyCopy: rawActionStrategyCopyFixture,

@@ -22,7 +22,6 @@ import {
   MetricConfig,
   SupervisionOfficer,
   SupervisionOfficerOutcomes,
-  VITALS_METRIC_IDS,
 } from "~datatypes";
 
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
@@ -129,11 +128,16 @@ export function getLocationWithoutLabel(
     : location ?? undefined;
 }
 
-// TODO #34616 Use Label from config once it is ready
-export const labelForVitalsMetricId = (metricId: string): string => {
-  return metricId === VITALS_METRIC_IDS.enum.timely_contact
-    ? "F2F Contact"
-    : "Timely Risk Assessment";
+export const labelForVitalsMetricId = (
+  metricId: string,
+  vitalsMetricsConfigs?: InsightsSupervisionStore["vitalsMetricsConfig"],
+): string => {
+  const config = vitalsMetricsConfigs?.find((c) => c.metricId === metricId);
+
+  if (!config)
+    throw new Error(`There is no vitals config for metricId, ${metricId}.`);
+
+  return config.titleDisplayName;
 };
 
 export function getHighlightedOfficersByMetric(

@@ -101,4 +101,5 @@ export const US_PA: InsightsConfig = {
     "Supervisor has no officers with eligible clients",
   supervisorHasNoOutlierOfficersLabel: "Supervisor has no outlier officers",
   worseThanRateLabel: "Far worse than statewide rate",
+  vitalsMetrics: [],
 };

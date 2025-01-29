@@ -76,6 +76,7 @@ export type ConfigLabels = Pick<
   | "noneAreOutliersLabel"
   | "docLabel"
   | "outliersHover"
+  | "vitalsMetricsMethodologyUrl"
 >;
 export type SupervisionDetails = Pick<
   SupervisionOfficerMetricEvent,

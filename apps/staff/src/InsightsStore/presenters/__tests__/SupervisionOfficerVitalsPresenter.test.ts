@@ -94,7 +94,7 @@ test("vitalsMetricDetails when there are no VitalsMetricForOfficer for a metric"
   expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
     [
       {
-        "label": "F2F Contact",
+        "label": "Timely Contact",
         "metric30DDelta": 1,
         "metricValue": 99,
         "officerPseudonymizedId": "hashed-so1",
@@ -110,7 +110,7 @@ test("vitalsMetricDetails when officer not found", () => {
       metricId: "timely_contact",
       vitalsMetrics: [
         {
-          officerPseudonymizedId: "not-a-real-id",
+          officerPseudonymizedId: supervisionOfficerFixture[0].pseudonymizedId,
           metric30DDelta: 1,
           metricValue: 99,
         },
@@ -118,6 +118,28 @@ test("vitalsMetricDetails when officer not found", () => {
     },
   ]);
   expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`[]`);
+});
+
+test("throw an when vitalsMetricDetails does not find a vitalsMetricConfig for a metricId", () => {
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "vitalsForOfficer");
+  store.vitalsMetricsByPseudoId.set(presenter.officerPseudoId, [
+    {
+      // @ts-ignore
+      metricId: "fake_id",
+      vitalsMetrics: [
+        {
+          officerPseudonymizedId: supervisionOfficerFixture[0].pseudonymizedId,
+          metric30DDelta: 1,
+          metricValue: 99,
+        },
+      ],
+    },
+  ]);
+  expect(
+    () => presenter.vitalsMetricDetails,
+  ).toThrowErrorMatchingInlineSnapshot(
+    `[Error: There is no vitals config for metricId, fake_id.]`,
+  );
 });
 
 test("hydration", async () => {

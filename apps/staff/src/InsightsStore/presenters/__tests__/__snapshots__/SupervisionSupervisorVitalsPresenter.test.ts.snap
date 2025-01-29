@@ -3,7 +3,7 @@
 exports[`with vitals data already hydrated > has vitalsMetricDetails 1`] = `
 [
   {
-    "label": "F2F Contact",
+    "label": "Timely Contact",
     "officersWithMetricValues": [
       {
         "displayName": "Jason Nelson",
