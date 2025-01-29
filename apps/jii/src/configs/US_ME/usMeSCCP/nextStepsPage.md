@@ -2,8 +2,6 @@
 
 You should work to ensure that your SCCP application is fully complete and no important information is missing. If possible, work closely with your case manager on your application to ensure that the information is complete.
 
-<p><FormPreview linkText="Preview a blank SCCP application" /></p>
-
 In your SCCP application essay, consider the following:
 
 - **Keep it simple** Write about the path you are on and your vision for the future, including the first steps you will take when released on to SCCP.
