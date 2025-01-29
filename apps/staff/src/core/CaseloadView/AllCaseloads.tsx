@@ -66,7 +66,7 @@ export const AllCaseloads = observer(function AllCaseloads() {
     },
   } = useRootStore();
 
-  const caseloads = groupBy(caseloadPersonsSorted, "searchIdValue");
+  const caseloads = groupBy(caseloadPersonsSorted, "searchIdValues");
 
   const allCaseloadsViz = (
     <>

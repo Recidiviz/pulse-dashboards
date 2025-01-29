@@ -622,21 +622,21 @@ export class OpportunityBase<
   }
 
   trackListViewed(): void {
-    // Pseudonymize staff IDs
     const { systemConfig } = this.person;
-    let pseudoSearchId =
-      systemConfig.searchField[0] === "officerId"
+    const searchIds = this.person.searchIdValues ?? [];
+    // Pseudonymize staff IDs
+    const pseudoSearchIds = searchIds?.map((value) =>
+      value === this.person.assignedStaffId
         ? this.person.assignedStaffPseudoId
-        : this.person.searchIdValue;
-
-    if (Array.isArray(pseudoSearchId))
-      pseudoSearchId = pseudoSearchId.join(",");
+        : value,
+    );
 
     this.rootStore.analyticsStore.trackSurfacedInList({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       opportunityType: this.type,
-      searchIdValue: pseudoSearchId,
-      searchField: systemConfig.searchField.join("."),
+      searchIdValue: pseudoSearchIds.join(","),
+      // TODO #7232 handle multiple search configs
+      searchField: systemConfig.search[0].searchField.join("."),
       tabTitle: this.tabTitle(),
       opportunityId: this.sentryTrackingId,
     });

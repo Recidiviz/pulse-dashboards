@@ -41,7 +41,9 @@ describe("LocationSubscription tests", () => {
         workflowsStore: {
           caseloadDistrict: "TEST",
           activeSystem: "SUPERVISION",
-          systemConfigFor: vi.fn(() => ({ searchField: ["district"] })),
+          systemConfigFor: vi.fn(() => ({
+            search: [{ searchType: "LOCATION", searchField: ["district"] }],
+          })),
         },
         firestoreStore: {
           collection: collectionMock,
@@ -69,7 +71,7 @@ describe("LocationSubscription tests", () => {
         rootStoreMock.currentTenantId = "US_TN";
         // @ts-ignore
         rootStoreMock.workflowsStore.systemConfigFor = vi.fn(() => ({
-          searchField: ["facilityId"],
+          search: [{ searchType: "LOCATION", searchField: ["facilityId"] }],
         }));
       });
       expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
@@ -88,8 +90,16 @@ describe("LocationSubscription tests", () => {
           activeSystem: "ALL",
           systemConfigFor: vi.fn((s) =>
             s === "INCARCERATION"
-              ? { searchField: ["facilityId"] }
-              : { searchField: ["district"] },
+              ? {
+                  search: [
+                    { searchType: "LOCATION", searchField: ["facilityId"] },
+                  ],
+                }
+              : {
+                  search: [
+                    { searchType: "LOCATION", searchField: ["district"] },
+                  ],
+                },
           ),
         },
         firestoreStore: {

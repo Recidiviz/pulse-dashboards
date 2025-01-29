@@ -31,18 +31,18 @@ const US_ME_CONFIG: TenantConfig<"US_ME"> = {
       search: [
         {
           searchType: "OFFICER",
+          searchField: ["officerId"],
         },
       ],
-      searchField: ["officerId"],
       searchTitleOverride: "case manager",
     },
     SUPERVISION: {
       search: [
         {
           searchType: "OFFICER",
+          searchField: ["officerId"],
         },
       ],
-      searchField: ["officerId"],
       searchTitleOverride: "officer",
     },
   },

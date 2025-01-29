@@ -30,5 +30,5 @@ type GetOpportunityMappingMethods<T> = NonNullable<
 
 export type JusticeInvolvedPersonOpportunityMapping = Exclude<
   NonNullable<GetOpportunityMappingMethods<JusticeInvolvedPersonBase>>,
-  "searchIdValue"
+  "searchIdValues"
 >;

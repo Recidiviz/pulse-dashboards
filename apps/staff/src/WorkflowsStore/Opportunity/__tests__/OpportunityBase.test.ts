@@ -28,6 +28,7 @@ import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import { formatDateToISO } from "../../../utils";
+import { mockSupervisionOfficers } from "../../__fixtures__";
 import { Client } from "../../Client";
 import { DocumentSubscription, UpdateFunction } from "../../subscriptions";
 import { OTHER_KEY } from "../../utils";
@@ -106,7 +107,14 @@ function createTestUnit() {
   };
 
   // using an ineligible to avoid wasted work creating opportunities we don't need
-  client = new Client(ineligibleClientRecord, root);
+  client = new Client(
+    {
+      ...ineligibleClientRecord,
+      officerId: mockSupervisionOfficers[0].id,
+      district: "DISTRICT1",
+    },
+    root,
+  );
   return new TestOpportunity(client, "TEST" as OpportunityType, oppRecord);
 }
 
@@ -633,7 +641,13 @@ describe("tracking", () => {
     });
   });
 
-  test("list view tracking", () => {
+  test("list view tracking for single search type", () => {
+    root.workflowsStore.supervisionStaffSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
+      search: [{ searchType: "OFFICER", searchField: ["officerId"] }],
+    });
     vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
     opp.trackListViewed();
 
@@ -641,7 +655,30 @@ describe("tracking", () => {
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
       searchField: "officerId",
-      searchIdValue: undefined,
+      searchIdValue: mockSupervisionOfficers[0].pseudonymizedId,
+      tabTitle: opp.tabTitle(),
+      opportunityId: opp.sentryTrackingId,
+    });
+  });
+
+  test("list view tracking for multiple search type only lists first searchField", () => {
+    root.workflowsStore.supervisionStaffSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
+      search: [
+        { searchType: "LOCATION", searchField: ["district"] },
+        { searchType: "OFFICER", searchField: ["officerId"] },
+      ],
+    });
+    vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
+    opp.trackListViewed();
+
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+      searchField: "district",
+      searchIdValue: `DISTRICT1,${mockSupervisionOfficers[0].pseudonymizedId}`,
       tabTitle: opp.tabTitle(),
       opportunityId: opp.sentryTrackingId,
     });

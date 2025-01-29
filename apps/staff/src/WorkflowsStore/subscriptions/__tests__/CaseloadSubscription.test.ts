@@ -42,7 +42,7 @@ beforeEach(() => {
   workflowsStoreMock = observable({
     selectedSearchIds: ["TEST1"],
     systemConfigFor: vi.fn(() => ({
-      searchField: "officerId",
+      search: [{ searchField: "officerId" }],
     })),
     rootStore: {
       currentTenantId: "US_ND",
@@ -62,7 +62,7 @@ test("dataSource reflects observables with defined search field", () => {
   runInAction(() => {
     // @ts-ignore
     workflowsStoreMock.systemConfigFor = vi.fn(() => ({
-      searchField: "facilityId",
+      search: [{ searchField: "facilityId" }],
     }));
   });
   sub.subscribe();

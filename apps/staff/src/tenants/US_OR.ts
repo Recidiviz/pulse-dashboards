@@ -30,9 +30,9 @@ const US_OR_CONFIG: TenantConfig<"US_OR"> = {
       search: [
         {
           searchType: "CASELOAD",
+          searchField: ["officerId"],
         },
       ],
-      searchField: ["officerId"],
       searchTitleOverride: "caseload",
     },
   },

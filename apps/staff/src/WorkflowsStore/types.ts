@@ -92,10 +92,10 @@ export type JusticeInvolvedPerson = {
   personUpdatesSubscription?: CollectionDocumentSubscription<PersonUpdateRecord>;
   trackProfileViewed: () => void;
   /**
-   * The value of the field on the person record that is used to return search results. Defaults to
+   * The values of the fields on the person record that are used to return search results. Defaults to
    * the person's assigned staff ID.
    */
-  searchIdValue: string[] | undefined;
+  searchIdValues: string[] | undefined;
   /**
    * The category of search that was conducted (officer, facility, or facility unit.)
    */
