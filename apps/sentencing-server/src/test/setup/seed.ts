@@ -26,7 +26,7 @@ import {
   ReportType,
   StateCode,
   SubstanceUseDiagnosis,
-} from "@prisma/client";
+} from "@prisma/sentencing-server/client";
 
 import {
   CaseCreateInput,

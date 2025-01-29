@@ -59,10 +59,18 @@
         "cwd": "{projectRoot}"
       }
     },
+    "create-base-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/create-base-package-json.mts {projectRoot}",
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "dependsOn": [
+        "create-base-package-json",
         {
           "projects": ["@sentencing-server/prisma"],
           "target": "prisma-generate"
@@ -90,7 +98,8 @@
             "output": "."
           },
           "{projectRoot}/scripts/*"
-        ]
+        ],
+        "external": ["@prisma/sentencing-server"]
       },
       "configurations": {
         "dev": {},
@@ -133,7 +142,7 @@
       "outputs": ["{workspaceRoot}/coverage/apps/sentencing-server"],
       "cache": true,
       "options": {
-        "command": "nx prisma-push @sentencing-server/prisma && cd apps/sentencing-server && vitest",
+        "command": "nx prisma-push @sentencing-server/prisma --accept-data-loss && cd apps/sentencing-server && vitest",
         "cwd": "{workspaceRoot}"
       }
     },

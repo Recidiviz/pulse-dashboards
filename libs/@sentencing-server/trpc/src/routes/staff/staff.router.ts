@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/sentencing-server/client";
 import { TRPCError } from "@trpc/server";
 
 import { baseProcedure, router } from "~@sentencing-server/trpc/init";
@@ -89,7 +89,7 @@ export const staffRouter = router({
           });
         } catch (e) {
           if (
-            e instanceof PrismaClientKnownRequestError &&
+            e instanceof Prisma.PrismaClientKnownRequestError &&
             e.code === "P2025"
           ) {
             throw new TRPCError({

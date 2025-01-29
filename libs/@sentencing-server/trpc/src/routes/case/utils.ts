@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/sentencing-server/client";
 
 import { PRISMA_CASE_GET_ARGS } from "~@sentencing-server/trpc/routes/case/constants";
 import { getInsight } from "~@sentencing-server/trpc/routes/common/utils";

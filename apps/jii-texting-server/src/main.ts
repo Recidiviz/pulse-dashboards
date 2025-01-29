@@ -15,9 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Include Prisma in the built bundle even though it is not used (yet)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import * as Prisma from "@prisma/client";
 import Fastify from "fastify";
 const host = process.env["HOST"] ?? "localhost";
 const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;

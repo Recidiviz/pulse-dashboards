@@ -20,6 +20,12 @@
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "paths": {
+      "@prisma/jii-texting-server/client": [
+        "node_modules/@prisma/jii-texting-server/client"
+      ],
+      "@prisma/sentencing-server/client": [
+        "node_modules/@prisma/sentencing-server/client"
+      ],
       "~@case-notes-server/trpc": ["libs/@case-notes-server/trpc/src/index.ts"],
       "~@case-notes-server/trpc/*": ["libs/@case-notes-server/trpc/src/*"],
       "~@jii-texting-server/prisma": [

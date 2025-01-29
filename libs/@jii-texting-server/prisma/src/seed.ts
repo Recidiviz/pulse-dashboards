@@ -22,7 +22,7 @@ import {
   PrismaClient,
   StateCode,
   TopicId,
-} from "@prisma/client";
+} from "@prisma/jii-texting-server/client/index.js";
 
 const prisma = new PrismaClient();
 

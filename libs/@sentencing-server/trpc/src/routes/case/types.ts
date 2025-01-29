@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Client, Offense, Prisma } from "@prisma/client";
+import type { Client, Offense, Prisma } from "@prisma/sentencing-server/client";
 
 export type GetCaseInput = Pick<Prisma.CaseWhereUniqueInput, "id">;
 

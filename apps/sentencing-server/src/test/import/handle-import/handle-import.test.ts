@@ -23,7 +23,7 @@ import {
   PriorCriminalHistoryCriterion,
   ReportType,
   StateCode,
-} from "@prisma/client";
+} from "@prisma/sentencing-server/client";
 import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";

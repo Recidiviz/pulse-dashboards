@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/client";
+import { StateCode } from "@prisma/sentencing-server/client";
 import { init } from "@sentry/node";
 import {
   CreateTRPCProxyClient,
