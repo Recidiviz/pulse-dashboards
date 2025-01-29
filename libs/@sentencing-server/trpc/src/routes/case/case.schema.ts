@@ -26,7 +26,7 @@ import {
   ProtectiveFactor,
   ReportType,
   SubstanceUseDiagnosis,
-} from "@prisma/client";
+} from "@prisma/sentencing-server/client";
 import { z } from "zod";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";

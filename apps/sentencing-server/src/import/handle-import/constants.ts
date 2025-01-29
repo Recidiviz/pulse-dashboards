@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReportType } from "@prisma/client";
+import { ReportType } from "@prisma/sentencing-server/client";
 
 export const EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE = {
   "PSI Assigned Full": ReportType.FullPSI,

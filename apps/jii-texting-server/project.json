@@ -4,7 +4,7 @@
   "sourceRoot": "apps/jii-texting-server/src",
   "projectType": "application",
   "targets": {
-        "test-zod": {
+    "test-zod": {
       "executor": "nx:run-commands",
       "options": {
         "command": "tsx test-zod/index.ts",
@@ -48,9 +48,17 @@
         "cwd": "{projectRoot}"
       }
     },
+    "create-base-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/create-base-package-json.mts {projectRoot}",
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "dependsOn": ["create-base-package-json"],
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/jii-texting-server",
@@ -73,7 +81,8 @@
             "output": "."
           },
           "{projectRoot}/scripts/*"
-        ]
+        ],
+        "external": ["@prisma/jii-texting-server"]
       },
       "configurations": {
         "dev": {},

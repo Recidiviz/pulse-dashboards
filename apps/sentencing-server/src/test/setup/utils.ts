@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/sentencing-server/client";
 
 const PRISMA_TABLES = Prisma.dmmf.datamodel.models
   .map((model) => model.name)

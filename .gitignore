@@ -48,8 +48,10 @@ yarn-error.log*
 package-lock.json
 .yalc
 yalc.lock
-# this is generated as part of the build process
+# these are generated as part of the build process
 libs/staff-shared-server/package.json
+apps/sentencing-server/package.json
+apps/jii-texting-server/package.json
 
 # Redis dump
 dump.rdb

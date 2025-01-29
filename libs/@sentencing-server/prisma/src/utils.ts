@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/sentencing-server/client";
 
 const prismaClients: Record<string, PrismaClient> = {};
 

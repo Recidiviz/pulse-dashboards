@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/sentencing-server/client";
 
 export const PRISMA_CASE_GET_ARGS = {
   omit: {

@@ -7,8 +7,9 @@ const tsconfig = JSON.parse(
   ).toString(),
 );
 
+// Allowlist the paths for the custom prisma clients
 const invalidImportPaths = Object.keys(tsconfig.compilerOptions.paths).filter(
-  (path) => !path.startsWith("~"),
+  (path) => !path.startsWith("~") && !path.startsWith("@prisma"),
 );
 
 if (invalidImportPaths.length) {

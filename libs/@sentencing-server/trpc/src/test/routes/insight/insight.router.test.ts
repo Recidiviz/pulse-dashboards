@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Gender, StateCode } from "@prisma/client";
+import { Gender, StateCode } from "@prisma/sentencing-server/client";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 

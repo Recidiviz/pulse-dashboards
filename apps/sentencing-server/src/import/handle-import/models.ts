@@ -23,7 +23,7 @@ import {
   NeedToBeAddressed,
   PriorCriminalHistoryCriterion,
   StateCode,
-} from "@prisma/client";
+} from "@prisma/sentencing-server/client";
 import z from "zod";
 import { zu } from "zod_utilz";
 

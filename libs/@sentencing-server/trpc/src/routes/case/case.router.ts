@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/sentencing-server/client";
 import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
@@ -117,7 +117,10 @@ export const caseRouter = router({
           }
         }
       } catch (e) {
-        if (e instanceof PrismaClientKnownRequestError && e.code === "P2025") {
+        if (
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === "P2025"
+        ) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Case with that id was not found",
@@ -158,7 +161,10 @@ export const caseRouter = router({
           },
         });
       } catch (e) {
-        if (e instanceof PrismaClientKnownRequestError && e.code === "P2025") {
+        if (
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === "P2025"
+        ) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Case with that id was not found",

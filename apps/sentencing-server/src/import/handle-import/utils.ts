@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Gender, Prisma } from "@prisma/client";
+import { Gender, Prisma } from "@prisma/sentencing-server/client";
 import { captureException } from "@sentry/node";
 import _ from "lodash";
 import z from "zod";

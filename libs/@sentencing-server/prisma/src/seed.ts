@@ -28,7 +28,7 @@ import {
   ReportType,
   StateCode,
   SubstanceUseDiagnosis,
-} from "@prisma/client";
+} from "@prisma/sentencing-server/client";
 
 const prisma = new PrismaClient();
 
