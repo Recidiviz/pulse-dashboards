@@ -32,6 +32,12 @@ function createTestUnit() {
 beforeEach(() => {
   vi.resetAllMocks();
   rootStore = new RootStore();
+  vi.spyOn(rootStore.workflowsStore, "systemConfigFor").mockReturnValue({
+    search: [
+      { searchType: "OFFICER", searchField: ["officerId"] },
+      { searchType: "LOCATION", searchField: ["facilityId"] },
+    ],
+  });
   record = {
     allEligibleOpportunities: [],
     officerId: "OFFICER1",
@@ -98,4 +104,66 @@ test("life sentence", () => {
   record.releaseDate = "2525-05-25";
   createTestUnit();
   expect(testResident.onLifeSentence).toBeTrue();
+});
+
+test("searchIdValues", () => {
+  createTestUnit();
+  expect(testResident.searchIdValues).toEqual(["OFFICER1", "FACILITY1"]);
+});
+
+test("matchesSearch is true with single searchField", () => {
+  vi.spyOn(rootStore.workflowsStore, "systemConfigFor").mockReturnValue({
+    search: [{ searchType: "OFFICER", searchField: ["officerId"] }],
+  });
+  record.officerId = "OFFICER_A";
+  createTestUnit();
+  expect(testResident.matchesSearch(["OFFICER_A"])).toBeTrue();
+});
+
+test("matchesSearch is true with multiple searchFields - both match", () => {
+  vi.spyOn(rootStore.workflowsStore, "systemConfigFor").mockReturnValue({
+    search: [
+      { searchType: "OFFICER", searchField: ["officerId"] },
+      { searchType: "LOCATION", searchField: ["district"] },
+    ],
+  });
+  record.officerId = "OFFICER_A";
+  record.facilityId = "FACILITY_A";
+  createTestUnit();
+  expect(testResident.matchesSearch(["OFFICER_A", "FACILITY_A"])).toBeTrue();
+});
+
+test("matchesSearch is true with multiple searchFields - one matches", () => {
+  vi.spyOn(rootStore.workflowsStore, "systemConfigFor").mockReturnValue({
+    search: [
+      { searchType: "OFFICER", searchField: ["officerId"] },
+      { searchType: "LOCATION", searchField: ["facilityId"] },
+    ],
+  });
+  record.officerId = "OFFICER_A";
+  record.facilityId = "FACILITY_B";
+  createTestUnit();
+  expect(testResident.matchesSearch(["OFFICER_A", "FACILITY_A"])).toBeTrue();
+});
+
+test("matchesSearch is false with single searchField", () => {
+  vi.spyOn(rootStore.workflowsStore, "systemConfigFor").mockReturnValue({
+    search: [{ searchType: "OFFICER", searchField: ["officerId"] }],
+  });
+  record.officerId = "OFFICER_A";
+  createTestUnit();
+  expect(testResident.matchesSearch(["OFFICER_B"])).toBeFalse();
+});
+
+test("matchesSearch is false with multiple searchFields", () => {
+  vi.spyOn(rootStore.workflowsStore, "systemConfigFor").mockReturnValue({
+    search: [
+      { searchType: "OFFICER", searchField: ["officerId"] },
+      { searchType: "LOCATION", searchField: ["district"] },
+    ],
+  });
+  record.officerId = "OFFICER_A";
+  record.facilityId = "FACILITY_A";
+  createTestUnit();
+  expect(testResident.matchesSearch(["OFFICER_B"])).toBeFalse();
 });

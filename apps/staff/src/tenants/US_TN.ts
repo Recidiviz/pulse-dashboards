@@ -40,9 +40,9 @@ const US_TN_CONFIG: TenantConfig<"US_TN"> = {
       search: [
         {
           searchType: "LOCATION",
+          searchField: ["facilityUnitId"],
         },
       ],
-      searchField: ["facilityUnitId"],
       searchTitleOverride: "unit",
     },
   },

@@ -1019,9 +1019,9 @@ export class WorkflowsStore implements Hydratable {
       search: [
         {
           searchType: "OFFICER",
+          searchField: ["officerId"],
         },
       ],
-      searchField: ["officerId"],
     };
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId) return fallback;

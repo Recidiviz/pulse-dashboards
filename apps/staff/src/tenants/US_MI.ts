@@ -33,18 +33,18 @@ const US_MI_CONFIG: TenantConfig<"US_MI"> = {
       search: [
         {
           searchType: "OFFICER",
+          searchField: ["officerId"],
         },
       ],
-      searchField: ["officerId"],
       searchTitleOverride: "agent",
     },
     INCARCERATION: {
       search: [
         {
           searchType: "LOCATION",
+          searchField: ["facilityId"],
         },
       ],
-      searchField: ["facilityId"],
       searchTitleOverride: "facility",
     },
   },

@@ -15,11 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import assertNever from "assert-never";
 import { get, some } from "lodash";
 import { action, computed, makeObservable, observable } from "mobx";
 
-import { FullName, OpportunityType, StaffRecord, WorkflowsJusticeInvolvedPersonRecord } from "~datatypes";
+import {
+  FullName,
+  OpportunityType,
+  StaffRecord,
+  WorkflowsJusticeInvolvedPersonRecord,
+} from "~datatypes";
 
 import { AnyWorkflowsSystemConfig } from "../core/models/types";
 import { workflowsUrl } from "../core/views";
@@ -262,22 +266,13 @@ export class JusticeInvolvedPersonBase<
     throw new Error("systemConfig must be overriden");
   }
 
-  get searchIdValue(): string[] | undefined {
-    return get(this.record, this.systemConfig.searchField);
+  get searchIdValues(): string[] {
+    return this.systemConfig.search.flatMap(
+      (searchConfig) => get(this.record, searchConfig.searchField) ?? [],
+    );
   }
 
   matchesSearch(searchIds: string[]): boolean {
-    const searchIdValue = this.searchIdValue;
-    switch (this.systemConfig.searchOp) {
-      case "array-contains-any":
-        if (!Array.isArray(searchIdValue)) return false;
-        return some(searchIds, (id) => searchIdValue.includes(id));
-      case "in":
-      case undefined:
-        if (typeof searchIdValue !== "string") return false;
-        return searchIds.includes(searchIdValue);
-      default:
-        assertNever(this.systemConfig.searchOp);
-    }
+    return some(searchIds, (id) => this.searchIdValues.includes(id));
   }
 }

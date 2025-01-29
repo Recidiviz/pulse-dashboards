@@ -143,9 +143,9 @@ const { stateConfigs } = vi.hoisted(() => {
           search: [
             {
               searchType: "LOCATION",
+              searchField: ["facilityId"],
             },
           ],
-          searchField: "facilityId",
           searchTitleOverride: "location",
         },
       },

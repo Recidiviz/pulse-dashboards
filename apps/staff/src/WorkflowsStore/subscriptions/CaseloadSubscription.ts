@@ -65,11 +65,11 @@ export class CaseloadSubscription<
     const config = this.workflowsStore.systemConfigFor(
       personType === "RESIDENT" ? "INCARCERATION" : "SUPERVISION",
     );
-
     const constraints = [
       where("stateCode", "==", currentTenantId),
       where(
-        new FieldPath(...config.searchField),
+        // TODO (#7054) Handle multiple search configs once second US_ID config is added.
+        new FieldPath(...config.search[0].searchField),
         config.searchOp ?? "in",
         selectedSearchIds,
       ),

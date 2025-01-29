@@ -30,9 +30,9 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
       search: [
         {
           searchType: "OFFICER",
+          searchField: ["officerId"],
         },
       ],
-      searchField: ["officerId"],
     },
   },
   navigation: {

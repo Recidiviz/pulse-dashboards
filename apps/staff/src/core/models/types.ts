@@ -111,12 +111,14 @@ export type SnoozeTaskConfig = {
   };
 };
 
-export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
-  search: Array<{
-    searchType: SearchType;
-    restrictedToFeatureVariant?: FeatureVariant;
-  }>;
+export type SearchConfig<R, T extends TenantConfigId> = {
+  searchType: SearchType;
   searchField: Leaves<R & { metadata: { stateCode: T } }> & string[];
+  restrictedToFeatureVariant?: FeatureVariant;
+};
+
+export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
+  search: SearchConfig<R, T>[];
   searchOp?: "in" | "array-contains-any";
   searchTitleOverride?: string;
   locationIdType?: "facilityId" | "facilityUnitId";
@@ -126,6 +128,10 @@ export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
 export type AnyWorkflowsSystemConfig =
   | WorkflowsSystemConfig<ClientRecord, any>
   | WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
+
+export type AnySearchConfig =
+  | SearchConfig<ClientRecord, any>
+  | SearchConfig<WorkflowsResidentRecord, any>;
 
 export type Searchable = {
   searchLabel: string;
