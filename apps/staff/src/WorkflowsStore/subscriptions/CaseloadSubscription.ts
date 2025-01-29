@@ -70,7 +70,7 @@ export class CaseloadSubscription<
       where(
         // TODO (#7054) Handle multiple search configs once second US_ID config is added.
         new FieldPath(...config.search[0].searchField),
-        config.searchOp ?? "in",
+        config.search[0].searchOp ?? "in",
         selectedSearchIds,
       ),
     ];
