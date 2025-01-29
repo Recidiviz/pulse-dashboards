@@ -36,9 +36,9 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
         {
           searchType: "OFFICER",
           searchField: ["officerId"],
+          searchTitleOverride: "agent",
         },
       ],
-      searchTitleOverride: "agent",
     },
   },
   navigation: {

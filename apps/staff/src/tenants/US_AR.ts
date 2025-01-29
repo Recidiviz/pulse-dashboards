@@ -31,9 +31,9 @@ const US_AR_CONFIG: TenantConfig<"US_AR"> = {
         {
           searchType: "LOCATION",
           searchField: ["facilityId"],
+          searchTitleOverride: "facility",
         },
       ],
-      searchTitleOverride: "facility",
     },
   },
   navigation: {

@@ -19,7 +19,6 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { TENANT_CONFIGS } from "../../tenants";
 import { toTitleCase } from "../../utils";
 import { PillButton } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
@@ -35,14 +34,6 @@ const CaseloadTypeSelect = observer(
 
     if (!supportsMultipleSystems || !currentTenantId) return null;
 
-    const supervisionTitle =
-      TENANT_CONFIGS[currentTenantId].workflowsSystemConfigs?.SUPERVISION
-        ?.searchTitleOverride ?? "Supervision Officer";
-
-    const facilityTitle =
-      TENANT_CONFIGS[currentTenantId].workflowsSystemConfigs?.INCARCERATION
-        ?.searchTitleOverride ?? "Facility";
-
     return (
       <>
         <PillButton
@@ -53,7 +44,12 @@ const CaseloadTypeSelect = observer(
           }
           active={activeSystem === "SUPERVISION"}
         >
-          {toTitleCase(supervisionTitle)}
+          {toTitleCase(
+            workflowsStore.searchTitleOverride(
+              "SUPERVISION",
+              "Supervision Officer",
+            ),
+          )}
         </PillButton>
         <PillButton
           onClick={() =>
@@ -63,7 +59,9 @@ const CaseloadTypeSelect = observer(
           }
           active={activeSystem === "INCARCERATION"}
         >
-          {toTitleCase(facilityTitle)}
+          {toTitleCase(
+            workflowsStore.searchTitleOverride("INCARCERATION", "Facility"),
+          )}
         </PillButton>
       </>
     );

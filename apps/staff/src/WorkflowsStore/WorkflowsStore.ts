@@ -162,6 +162,7 @@ export class WorkflowsStore implements Hydratable {
       hydrate: action,
       setActivePage: action,
       userKeepAliveDisposer: false,
+      searchTitleOverride: false,
     });
 
     this.opportunityConfigurationStore =
@@ -977,7 +978,19 @@ export class WorkflowsStore implements Hydratable {
    * Title to display for the search bar in workflows
    */
   get workflowsSearchFieldTitle(): string {
-    return this.activeSystemConfig?.searchTitleOverride ?? "officer";
+    return this.searchTitleOverride(this.activeSystem, "officer");
+  }
+
+  searchTitleOverride(
+    system: SystemId | undefined,
+    defaultTitle: string,
+  ): string {
+    if (!system || system === "ALL") return defaultTitle;
+    const searchConfig = this.systemConfigFor(system).search;
+
+    if (searchConfig.length === 1 && searchConfig[0].searchTitleOverride)
+      return searchConfig[0].searchTitleOverride;
+    return defaultTitle;
   }
 
   get supportsMultipleSystems(): boolean {
