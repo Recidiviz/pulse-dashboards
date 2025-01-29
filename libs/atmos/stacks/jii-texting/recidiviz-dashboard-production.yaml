@@ -1,6 +1,7 @@
 # Infrastructure configuration for components for the JII app that will be deployed to recidiviz-dashboard-production
 settings:
   context:
+    location: us-central1
     project_id: recidiviz-dashboard-production
     product: jii-texting
 
@@ -26,6 +27,24 @@ terraform:
 
 components:
   terraform:
+    postgres-instance:
+      vars:
+        create_bigquery_connection: false
+        instance_key: jii_texting
+        base_secret_name: jii_texting
+        database_version: POSTGRES_16
+        has_readonly_user: false
+        region: "{{ .settings.context.location }}"
+        zone: us-central1-a
+        secondary_zone: us-central1-b
+        tier: db-custom-1-3840
+        insights_config:
+          query_insights_enabled: true
+          query_string_length: 1024
+          record_application_tags: false
+          record_client_address: false
+      metadata:
+        component: vendor/cloud-sql-instance
     gcs-buckets:
       vars:
         prefix: "{{ .vars.project_id }}"
@@ -51,4 +70,9 @@ components:
     apps/jii-texting:
       vars:
         location: "{{ .settings.context.location }}"
-        server_image: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.product }}/default"
+        # Pass the `connection-name` output from our `postgres-instance` component to the jii-texting app
+        cloudsql_instance: !terraform.output postgres-instance connection_name
+        server_image: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.artifact_repository }}/default"
+      settings:
+        context:
+          artifact_repository:  '{{ (atmos.Component "vendor/artifact-registry" .stack).outputs.artifact_name }}'

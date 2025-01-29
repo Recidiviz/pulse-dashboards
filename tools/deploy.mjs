@@ -348,6 +348,66 @@ if (deployEnv === "staging" || deployEnv === "production") {
   }
 }
 
+if (deployEnv === "staging" || deployEnv === "production") {
+  const deployJiiTextingServerPrompt = await inquirer.prompt({
+    type: "confirm",
+    name: "deployJiiTextingServer",
+    message: "Would you like to deploy the JII Texting Server?",
+  });
+
+  if (deployJiiTextingServerPrompt.deployJiiTextingServer) {
+    console.log("Building and deploying the application...");
+
+    // Start docker and configure docker to upload to container registry
+    // Only needed for staging deploys
+    if (deployEnv === "staging" || (deployEnv === "production" && isCpDeploy)) {
+      try {
+        await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
+          process.stdout,
+        );
+      } catch (e) {
+        console.error("Failed to configure docker for gcloud", e);
+      }
+    }
+
+    let retryDeploy = false;
+    do {
+      // Deploy the app
+      console.log("Deploying application to Cloud Run...");
+      try {
+        // We only need to build and push the docker container if we are
+        // 1. deploying to staging.
+        // 2. deploying a cherry-pick
+        // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+        if (deployEnv === "staging") {
+          await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration ${deployEnv}`.pipe(
+            process.stdout,
+          );
+        } else if (deployEnv === "production" && isCpDeploy) {
+          await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
+        }
+
+        await $`nx run jii-texting-server:deploy --configuration=${deployEnv} --tag=${currentRevision} --migrate=true`.pipe(
+          process.stdout,
+        );
+
+        retryDeploy = false;
+      } catch (e) {
+        // eslint-disable-next-line no-await-in-loop
+        const retryDeployPrompt = await inquirer.prompt({
+          type: "confirm",
+          name: "retryDeploy",
+          message: `JII Texting server deploy failed with error: ${e}. Retry?`,
+          default: false,
+        });
+        retryDeploy = retryDeployPrompt.retryDeploy;
+      }
+    } while (retryDeploy);
+  }
+}
+
 if (
   deployEnv === "staging" ||
   deployEnv === "production" ||
