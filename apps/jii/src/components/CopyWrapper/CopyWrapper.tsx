@@ -22,7 +22,6 @@ import { FC } from "react";
 import { Link } from "react-router-dom";
 import styled, { css } from "styled-components/macro";
 
-import { FormPreview } from "../FormPreview/FormPreview";
 import { clickableText } from "../styles/clickableText";
 import { InternalOrExternalLink } from "./InternalOrExternalLink";
 
@@ -142,7 +141,6 @@ export const CopyWrapper: FC<{ children: string; className?: string }> = ({
         // ensures the styles defined above cascade correctly if there is only one block element in children
         forceWrapper: true,
         overrides: {
-          FormPreview: FormPreview,
           a: InternalOrExternalLink,
           InternalLink: Link,
         },
