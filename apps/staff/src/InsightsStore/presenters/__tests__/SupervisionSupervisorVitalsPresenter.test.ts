@@ -108,7 +108,7 @@ describe("with vitals data already hydrated", () => {
     expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
       [
         {
-          "label": "F2F Contact",
+          "label": "Timely Contact",
           "officersWithMetricValues": [
             {
               "displayName": "Walter Harris",
@@ -139,12 +139,36 @@ describe("with vitals data already hydrated", () => {
     expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
       [
         {
-          "label": "F2F Contact",
+          "label": "Timely Contact",
           "officersWithMetricValues": [],
         },
       ]
     `);
   });
+});
+
+test("throw an when vitalsMetricDetails does not find a vitalsMetricConfig for a metricId", async () => {
+  vi.spyOn(InsightsOfflineAPIClient.prototype, "vitalsForOfficer");
+
+  store.vitalsMetricsByPseudoId.set(pseudoId, [
+    {
+      // @ts-ignore
+      metricId: "fake_id",
+      vitalsMetrics: [
+        {
+          officerPseudonymizedId: supervisionOfficerFixture[0].pseudonymizedId,
+          metric30DDelta: 1,
+          metricValue: 99,
+        },
+      ],
+    },
+  ]);
+
+  expect(
+    () => presenter.vitalsMetricDetails,
+  ).toThrowErrorMatchingInlineSnapshot(
+    `[Error: There is no vitals config for metricId, fake_id.]`,
+  );
 });
 
 test("hydration", async () => {

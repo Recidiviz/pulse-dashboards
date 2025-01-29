@@ -39,7 +39,11 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
     protected supervisionStore: InsightsSupervisionStore,
     public officerPseudoId: string,
   ) {
-    makeAutoObservable(this, undefined, { autoBind: true });
+    makeAutoObservable(
+      this,
+      { vitalsMetricDetails: false },
+      { autoBind: true },
+    );
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: this.expectPopulated(),
@@ -72,7 +76,10 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
     metrics.forEach((metric) => {
       if (metric.vitalsMetrics.length === 0) return;
       formattedMetrics.push({
-        label: labelForVitalsMetricId(metric.metricId),
+        label: labelForVitalsMetricId(
+          metric.metricId,
+          this.supervisionStore.vitalsMetricsConfig,
+        ),
         // The vitalsMetrics array will have one entry for officers
         ...metric.vitalsMetrics[0],
       });

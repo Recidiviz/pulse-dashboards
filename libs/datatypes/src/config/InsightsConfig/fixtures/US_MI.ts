@@ -103,4 +103,5 @@ export const US_MI: InsightsConfig = {
   supervisorHasNoOutlierOfficersLabel:
     "No staff have metrics far from the statewide rate this month",
   worseThanRateLabel: "Far higher than statewide rate",
+  vitalsMetrics: [],
 };

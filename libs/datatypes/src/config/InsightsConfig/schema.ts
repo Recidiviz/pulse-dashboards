@@ -70,6 +70,13 @@ export const insightsConfigSchema = z.object({
   ),
   docLabel: z.string(),
   outliersHover: z.string(),
+  vitalsMetricsMethodologyUrl: z.string().optional(),
+  vitalsMetrics: z.array(
+    z.object({
+      metricId: z.string(),
+      titleDisplayName: z.string(),
+    }),
+  ),
   caseloadCategories: z.array(caseloadCategorySchema).optional(),
   actionStrategyCopy: actionStrategyCopySchema,
 });

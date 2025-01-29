@@ -284,6 +284,8 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async vitalsForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionVitalsMetric>> {
+    const hasVitalsMetrics = (await this.init()).vitalsMetrics.length > 0;
+    if (!hasVitalsMetrics) return [];
     const supervisor = supervisionOfficerSupervisorsFixture.find(
       (s) => s.pseudonymizedId === supervisorPseudoId,
     );
@@ -308,6 +310,8 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
   async vitalsForOfficer(
     officerPseudoId: string,
   ): Promise<Array<SupervisionVitalsMetric>> {
+    const hasVitalsMetrics = (await this.init()).vitalsMetrics.length > 0;
+    if (!hasVitalsMetrics) return [];
     return supervisionOfficerVitalsMetricFixture.map((metric) => {
       return {
         ...metric,

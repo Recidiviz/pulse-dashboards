@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { ascending } from "d3-array";
-import { computed, flowResult, makeAutoObservable } from "mobx";
+import { flowResult, makeAutoObservable } from "mobx";
 
 import { SupervisionOfficer, VitalsMetricForOfficer } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
@@ -46,7 +46,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
   ) {
     makeAutoObservable(
       this,
-      { vitalsMetricDetails: computed },
+      { vitalsMetricDetails: false },
       { autoBind: true },
     );
 
@@ -83,6 +83,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
     const metrics = this.supervisionStore.vitalsMetricsByPseudoId.get(
       this.supervisorPseudoId,
     );
+
     if (!metrics) return [];
 
     return metrics.map((metric) => {
@@ -90,7 +91,10 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
         ascending(a.metricValue, b.metricValue),
       );
       return {
-        label: labelForVitalsMetricId(metric.metricId),
+        label: labelForVitalsMetricId(
+          metric.metricId,
+          this.supervisionStore.vitalsMetricsConfig,
+        ),
         officersWithMetricValues: this.mergeOfficerNames(sortedMetrics),
       };
     });
