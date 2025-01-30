@@ -109,7 +109,7 @@ describe("LocationSubscription tests", () => {
       sub = new LocationSubscription(rootStoreMock);
     });
 
-    test("it selects the locationSearchField from the tenant config", () => {
+    test("it selects the locationIdType from the tenant config", () => {
       sub.subscribe();
 
       runInAction(() => {
@@ -118,6 +118,8 @@ describe("LocationSubscription tests", () => {
       });
 
       expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ID");
+      // This is choosing the locationIdType for location search
+      // instead of searchField for US_ID since the locations have idType = facilityId
       expect(whereMock).toHaveBeenCalledWith("idType", "==", "facilityId");
     });
   });

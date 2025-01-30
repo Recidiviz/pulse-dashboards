@@ -116,12 +116,12 @@ export type SearchConfig<R, T extends TenantConfigId> = {
   searchField: Leaves<R & { metadata: { stateCode: T } }> & string[];
   searchTitleOverride?: string;
   searchOp?: "in" | "array-contains-any";
+  locationIdType?: "facilityId" | "facilityUnitId";
   restrictedToFeatureVariant?: FeatureVariant;
 };
 
 export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
   search: SearchConfig<R, T>[];
-  locationIdType?: "facilityId" | "facilityUnitId";
   onlySurfaceEligible?: boolean;
 };
 
