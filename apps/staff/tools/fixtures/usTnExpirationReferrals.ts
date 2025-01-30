@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "~datatypes";
+
 import { UsTnExpirationReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn";
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
@@ -27,49 +29,48 @@ const data: UsTnExpirationReferralRecordRaw[] = [
       convictionCounties: ["010"],
       docketNumbers: ["123", "456"],
       latestPse: {
-        contactDate: "2022-06-01",
+        contactDate: relativeFixtureDate({ days: -28 }),
         contactType: "PSET",
       },
-      sexOffenses: ["sex offense"],
-      gangAffiliationId: "Gang A",
+      sexOffenses: [],
       latestEmp: {
-        contactDate: "2022-05-05",
+        contactDate: relativeFixtureDate({ days: -28 }),
         contactType: "EMPV",
-        contactComment: "Comment about employment",
+        contactComment: "Employment status updated",
       },
       latestFee: {
-        contactDate: "2022-04-04",
+        contactDate: relativeFixtureDate({ days: -109 }),
         contactType: "FEEP",
       },
       latestSpe: {
-        contactDate: "2022-05-05",
+        contactDate: relativeFixtureDate({ days: -49 }),
         contactType: "SPEC",
         contactComment: "Special conditions check",
       },
       latestVrr: {
-        contactDate: "2022-03-03",
+        contactDate: relativeFixtureDate({ days: -64 }),
         contactType: "VRRE",
       },
       newOffenses: [
         {
-          contactDate: "2022-02-09",
+          contactDate: relativeFixtureDate({ months: -13, days: -9 }),
           contactType: "NCAF",
           contactComment: "ARRESTED",
         },
         {
-          contactDate: "2022-02-17",
+          contactDate: relativeFixtureDate({ months: -9, days: -13 }),
           contactType: "NCAC",
           contactComment: "INTERROGATED",
         },
       ],
       alcoholHistory: [
         {
-          contactDate: "2022-02-12",
+          contactDate: relativeFixtureDate({ days: -49 }),
           contactType: "FSWR",
           contactComment: "HAD APPOINTMENT",
         },
         {
-          contactDate: "2022-02-07",
+          contactDate: relativeFixtureDate({ days: -121 }),
           contactType: "FSWR",
           contactComment: "HAD ANOTHER APPOINTMENT",
         },
@@ -80,13 +81,90 @@ const data: UsTnExpirationReferralRecordRaw[] = [
         {
           noteTitle: "COHC",
           noteBody: "Court hearing",
-          eventDate: "2022-06-17",
+          eventDate: relativeFixtureDate({ days: -11 }),
         },
       ],
     },
     eligibleCriteria: {
       supervisionPastFullTermCompletionDateOrUpcoming1Day: {
-        eligibleDate: "2022-02-11",
+        eligibleDate: relativeFixtureDate({ days: -11 }),
+      },
+      usTnNoZeroToleranceCodesSpans: {},
+      usTnNotOnLifeSentenceOrLifetimeSupervision: {
+        lifetimeFlag: false,
+      },
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  },
+  {
+    stateCode: "US_TN",
+    externalId: "109",
+    formInformation: {
+      offenses: ["DRIVING W/A REVOKED LICENSE", "TRAFFIC OFFENSE"],
+      convictionCounties: ["010"],
+      docketNumbers: ["123", "456"],
+      latestPse: {
+        contactDate: relativeFixtureDate({ days: -28 }),
+        contactType: "PSET",
+      },
+      sexOffenses: [],
+      latestEmp: {
+        contactDate: relativeFixtureDate({ days: -28 }),
+        contactType: "EMPV",
+        contactComment: "Employment status updated",
+      },
+      latestFee: {
+        contactDate: relativeFixtureDate({ days: -109 }),
+        contactType: "FEEP",
+      },
+      latestSpe: {
+        contactDate: relativeFixtureDate({ days: -49 }),
+        contactType: "SPEC",
+        contactComment: "Special conditions check",
+      },
+      latestVrr: {
+        contactDate: relativeFixtureDate({ days: -64 }),
+        contactType: "VRRE",
+      },
+      newOffenses: [
+        {
+          contactDate: relativeFixtureDate({ months: -13, days: -9 }),
+          contactType: "NCAF",
+          contactComment: "ARRESTED",
+        },
+        {
+          contactDate: relativeFixtureDate({ months: -9, days: -13 }),
+          contactType: "NCAC",
+          contactComment: "INTERROGATED",
+        },
+      ],
+      alcoholHistory: [
+        {
+          contactDate: relativeFixtureDate({ days: -49 }),
+          contactType: "FSWR",
+          contactComment: "HAD APPOINTMENT",
+        },
+        {
+          contactDate: relativeFixtureDate({ days: -121 }),
+          contactType: "FSWR",
+          contactComment: "HAD ANOTHER APPOINTMENT",
+        },
+      ],
+    },
+    caseNotes: {
+      "Revocation Hearings": [
+        {
+          noteTitle: "COHC",
+          noteBody: "Court hearing",
+          eventDate: relativeFixtureDate({ days: -9 }),
+        },
+      ],
+    },
+    eligibleCriteria: {
+      supervisionPastFullTermCompletionDateOrUpcoming1Day: {
+        eligibleDate: relativeFixtureDate({ days: -2 }),
       },
       usTnNoZeroToleranceCodesSpans: {},
       usTnNotOnLifeSentenceOrLifetimeSupervision: {

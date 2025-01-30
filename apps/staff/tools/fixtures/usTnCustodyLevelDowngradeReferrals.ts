@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "~datatypes";
+
 import { UsTnCustodyLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn";
 import { fixtureWithIdKey } from "./utils";
 
@@ -25,7 +27,7 @@ export const usTnCustodyLevelDowngradeFixture =
       externalId: "RES001",
       eligibleCriteria: {
         custodyLevelHigherThanRecommended: {
-          custodyLevel: "HIGH",
+          custodyLevel: "CLOSE",
           recommendedCustodyLevel: "MEDIUM",
         },
         custodyLevelIsNotMax: null,
@@ -42,25 +44,32 @@ export const usTnCustodyLevelDowngradeFixture =
         classificationType: "SPECIAL",
         hasIncompatibles: false,
         incompatibleArray: [],
-        statusAtHearingSeg: "GEN",
+        lastCafDate: relativeFixtureDate({ months: -11, days: -11 }),
+        lastCafTotal: "18",
         latestPreaScreeningResults: {
-          latestPreaScreeningDate: "2022-02-23",
-          aggressorFindingLevelChanged: true,
-          victimFindingLevelChanged: false,
+          latestPreaScreeningDate: relativeFixtureDate({ years: -2, days: 22 }),
+          aggressorFindingLevelChanged: false,
+          victimFindingLevelChanged: true,
         },
+        latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
+        latestVantageRiskLevel: "LOW",
+        levelOfCare: "LVL1",
+        sentenceEffectiveDate: relativeFixtureDate({ years: -2, days: -200 }),
+        sentenceReleaseEligibilityDate: relativeFixtureDate({ years: 1 }),
+        sentenceExpirationDate: relativeFixtureDate({ years: 3, days: 300 }),
+        statusAtHearingSeg: "GEN",
         q1Score: 0,
         q2Score: 0,
         q3Score: 4,
-        // q3Note: "Contra in penal facility",
         q4Score: 0,
-        q5Score: -2,
+        q5Score: 5,
         q6Score: -2,
         q7Score: 5,
         q7Notes: {
-          noteBody: "Class C Incident Details: Some details",
-          eventDate: "2019-02-01",
+          noteBody: "Class B Incident",
+          eventDate: relativeFixtureDate({ months: -13, days: -13 }),
         },
-        q8Score: 0,
+        q8Score: 3,
         q9Score: 0,
       },
       isEligible: true,
@@ -69,9 +78,25 @@ export const usTnCustodyLevelDowngradeFixture =
     {
       stateCode: "US_TN",
       externalId: "RES002",
+      caseNotes: {
+        "PRIOR RECORD OFFENSES": [
+          {
+            eventDate: relativeFixtureDate({ years: -5, months: -8 }),
+            noteTitle: "THEFT OF PROPERTY",
+          },
+          {
+            eventDate: relativeFixtureDate({ years: -5, months: -8 }),
+            noteTitle: "CRIMINAL IMPERSONATION",
+          },
+          {
+            eventDate: relativeFixtureDate({ years: -7, days: -20 }),
+            noteTitle: "AGGRAVATED BURGLARY",
+          },
+        ],
+      },
       eligibleCriteria: {
         custodyLevelHigherThanRecommended: {
-          custodyLevel: "HIGH",
+          custodyLevel: "MEDIUM",
           recommendedCustodyLevel: "MINIMUM",
         },
         custodyLevelIsNotMax: null,
@@ -85,27 +110,33 @@ export const usTnCustodyLevelDowngradeFixture =
       ineligibleCriteria: {},
       formInformation: {
         activeRecommendations: [],
+        currentOffenses: ["THEFT OF PROPERTY"],
         classificationType: "SPECIAL",
         hasIncompatibles: false,
         incompatibleArray: [],
-        statusAtHearingSeg: "GEN",
-        currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
-        lastCafDate: "2022-08-22",
+        lastCafDate: relativeFixtureDate({ years: -1, months: -5 }),
+        lastCafTotal: "8",
         latestPreaScreeningResults: {
-          latestPreaScreeningDate: "2022-02-23",
+          latestPreaScreeningDate: relativeFixtureDate({ years: -3 }),
           aggressorFindingLevelChanged: true,
           victimFindingLevelChanged: false,
         },
-        lastCafTotal: "8",
-        q1Score: 5,
-        q2Score: 3,
-        q3Score: 4,
-        q4Score: 4,
-        q5Score: 7,
-        q6Score: 4,
-        q7Score: 7,
-        q8Score: 5,
-        q9Score: 4,
+        latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
+        latestVantageRiskLevel: "LOW",
+        levelOfCare: "LVL1",
+        sentenceEffectiveDate: relativeFixtureDate({ years: -4, days: -400 }),
+        sentenceReleaseEligibilityDate: relativeFixtureDate({ days: 144 }),
+        sentenceExpirationDate: relativeFixtureDate({ years: 1, days: 100 }),
+        statusAtHearingSeg: "GEN",
+        q1Score: 0,
+        q2Score: 0,
+        q3Score: 1,
+        q4Score: 0,
+        q5Score: -2,
+        q6Score: -4,
+        q7Score: 0,
+        q8Score: 0,
+        q9Score: 2,
       },
       isEligible: true,
       isAlmostEligible: false,

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "~datatypes";
+
 import { CompliantReportingReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn";
 import { fixtureWithIdKey } from "./utils";
 
@@ -32,26 +34,35 @@ export const usTnCompliantReportingReferrals =
         usTnPassedDrugScreenCheck: {
           hasAtLeast1NegativeDrugTestPastYear: [
             {
-              negativeScreenDate: "2022-01-26",
+              negativeScreenDate: relativeFixtureDate({ days: -200 }),
               negativeScreenResult: "DRUN",
             },
           ],
           latestDrugTestIsNegative: {
-            latestDrugScreenDate: "2022-01-26",
+            latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
             latestDrugScreenResult: "DRUN",
           },
         },
         usTnNoZeroToleranceCodesSpans: { zeroToleranceCodeDates: null },
         usTnIneligibleOffensesExpired: {
           ineligibleOffenses: ["HABITUAL TRAFFIC OFFENDER"],
-          ineligibleSentencesExpirationDates: ["2020-05-06"],
+          ineligibleSentencesExpirationDates: [
+            relativeFixtureDate({ years: -3 }),
+          ],
         },
         usTnNotServingUnknownCrOffense: null,
         hasActiveSentence: { hasActiveSentence: true },
         usTnOnEligibleLevelForSufficientTime: {
-          eligibleDate: "2020-10-26",
+          eligibleDate: relativeFixtureDate({
+            years: -2,
+            days: -111,
+            months: 18,
+          }),
           eligibleLevel: "MEDIUM",
-          startDateOnEligibleLevel: "2019-10-26",
+          startDateOnEligibleLevel: relativeFixtureDate({
+            years: -2,
+            days: -111,
+          }),
         },
         usTnFinesFeesEligible: {
           hasFinesFeesBalanceBelow500: {
@@ -68,7 +79,7 @@ export const usTnCompliantReportingReferrals =
       },
       ineligibleCriteria: {},
       formInformation: {
-        sentenceStartDate: "2019-10-26",
+        sentenceStartDate: relativeFixtureDate({ years: -2, days: -555 }),
         currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
         driversLicense: "12345678",
         restitutionAmt: 400.0,
@@ -80,11 +91,11 @@ export const usTnCompliantReportingReferrals =
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
         mostRecentArrestCheck: {
-          contactDate: "2022-01-03",
+          contactDate: relativeFixtureDate({ years: -1, days: -33 }),
           contactType: "ARRN",
         },
         mostRecentSpeNote: {
-          contactDate: "2021-12-31",
+          contactDate: relativeFixtureDate({ days: -222 }),
           contactType: "SPET",
         },
       },
@@ -97,35 +108,42 @@ export const usTnCompliantReportingReferrals =
       eligibleCriteria: {
         usTnNoArrestsInPastYear: null,
         usTnSpecialConditionsAreCurrent: {
-          speNoteDue: "2022-12-31",
+          speNoteDue: relativeFixtureDate({ days: -50 }),
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
           hasAtLeast1NegativeDrugTestPastYear: [
-            { negativeScreenResult: "DRUN", negativeScreenDate: "2021-09-17" },
-            { negativeScreenResult: "DRUM", negativeScreenDate: "2022-02-02" },
+            {
+              negativeScreenResult: "DRUN",
+              negativeScreenDate: relativeFixtureDate({ days: -111 }),
+            },
+            {
+              negativeScreenResult: "DRUM",
+              negativeScreenDate: relativeFixtureDate({ days: -33 }),
+            },
           ],
           latestDrugTestIsNegative: {
-            latestDrugScreenDate: "2022-02-02",
+            latestDrugScreenDate: relativeFixtureDate({ days: -33 }),
             latestDrugScreenResult: "DRUM",
           },
         },
         usTnNoZeroToleranceCodesSpans: {
           zeroToleranceCodeDates: [
-            "2018-04-20",
-            "2017-08-30",
-            "2016-06-27",
-            "2018-01-30",
-            "2019-07-29",
+            relativeFixtureDate({ days: -121 }),
+            relativeFixtureDate({ months: -1, days: -144 }),
+            relativeFixtureDate({ months: -2, days: -169 }),
           ],
         },
         usTnIneligibleOffensesExpired: null,
         usTnNotServingUnknownCrOffense: null,
         hasActiveSentence: { hasActiveSentence: false },
         usTnOnEligibleLevelForSufficientTime: {
-          eligibleDate: "2020-12-20",
+          eligibleDate: relativeFixtureDate({ months: -1, days: -5 }),
           eligibleLevel: "MEDIUM",
-          startDateOnEligibleLevel: "2019-12-20",
+          startDateOnEligibleLevel: relativeFixtureDate({
+            months: -19,
+            days: -5,
+          }),
         },
         usTnFinesFeesEligible: {
           hasFinesFeesBalanceBelow500: {
@@ -141,13 +159,10 @@ export const usTnCompliantReportingReferrals =
       },
       ineligibleCriteria: {},
       formInformation: {
-        sentenceStartDate: "2022-01-17",
-        expirationDate: "2024-01-17",
-        sentenceLengthDays: "730",
-        currentOffenses: [
-          "FAILURE TO APPEAR (FELONY)",
-          "FAILURE TO APPEAR (FELONY)",
-        ],
+        sentenceStartDate: relativeFixtureDate({ months: -19, days: -5 }),
+        expirationDate: relativeFixtureDate({ days: -11 }),
+        sentenceLengthDays: "570",
+        currentOffenses: ["FAILURE TO APPEAR (FELONY)", "THEFT OF PROPERTY"],
         driversLicense: "12345678",
         restitutionAmt: 0.0,
         restitutionMonthlyPayment: 0.0,
@@ -155,11 +170,11 @@ export const usTnCompliantReportingReferrals =
       },
       metadata: {
         mostRecentArrestCheck: {
-          contactDate: "2022-01-03",
+          contactDate: relativeFixtureDate({ days: -70 }),
           contactType: "ARRN",
         },
         mostRecentSpeNote: {
-          contactDate: "2021-12-31",
+          contactDate: relativeFixtureDate({ days: -50 }),
           contactType: "SPEC",
         },
         convictionCounties: ["123 - ABC", "456 - DEF"],
@@ -170,21 +185,27 @@ export const usTnCompliantReportingReferrals =
     },
     {
       stateCode: "US_TN",
-      externalId: "102",
+      externalId: "104",
       eligibleCriteria: {
         usTnNoArrestsInPastYear: null,
         usTnSpecialConditionsAreCurrent: {
-          speNoteDue: null,
+          speNoteDue: relativeFixtureDate({ days: -50 }),
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
           hasAtLeast1NegativeDrugTestPastYear: [
-            { negativeScreenResult: "DRUN", negativeScreenDate: "2021-11-26" },
+            {
+              negativeScreenResult: "DRUN",
+              negativeScreenDate: relativeFixtureDate({ days: -111 }),
+            },
+            {
+              negativeScreenResult: "DRUM",
+              negativeScreenDate: relativeFixtureDate({ days: -33 }),
+            },
           ],
-
           latestDrugTestIsNegative: {
-            latestDrugScreenResult: "DRUN",
-            latestDrugScreenDate: "2021-11-26",
+            latestDrugScreenDate: relativeFixtureDate({ days: -33 }),
+            latestDrugScreenResult: "DRUM",
           },
         },
         usTnNoZeroToleranceCodesSpans: {
@@ -192,66 +213,14 @@ export const usTnCompliantReportingReferrals =
         },
         usTnIneligibleOffensesExpired: null,
         usTnNotServingUnknownCrOffense: null,
-        hasActiveSentence: { hasActiveSentence: true },
-        usTnNoHighSanctionsInPastYear: null,
-        usTnNoRecentCompliantReportingRejections: null,
-      },
-      ineligibleCriteria: {},
-      formInformation: {
-        sentenceStartDate: "2020-01-17",
-        expirationDate: "2023-01-17",
-        sentenceLengthDays: "1096",
-        currentOffenses: [
-          "BURGLARY-OTHER THAN HABITATION",
-          "THEFT OF PROPERTY - $1,000-$10,000",
-        ],
-        driversLicense: "12345667",
-        restitutionAmt: 136.0,
-        restitutionMonthlyPayment: 0.0,
-        restitutionMonthlyPaymentTo: ["FAKE PERSON"],
-      },
-      metadata: {
-        convictionCounties: ["123 - ABC", "456 - DEF"],
-        ineligibleOffensesExpired: [],
-        mostRecentArrestCheck: {
-          contactDate: "2023-08-09",
-          contactType: "ARRN",
-        },
-      },
-      isEligible: true,
-      isAlmostEligible: false,
-    },
-    {
-      stateCode: "US_TN",
-      externalId: "104",
-      eligibleCriteria: {
-        usTnNoArrestsInPastYear: null,
-        usTnSpecialConditionsAreCurrent: {
-          speNoteDue: "2022-12-31",
-        },
-        usTnNotServingIneligibleCrOffense: null,
-        usTnPassedDrugScreenCheck: {
-          hasAtLeast1NegativeDrugTestPastYear: [
-            { negativeScreenResult: "DRUX", negativeScreenDate: "2021-11-26" },
-          ],
-          latestDrugTestIsNegative: {
-            latestDrugScreenResult: "DRUX",
-            latestDrugScreenDate: "2021-11-26",
-          },
-        },
-        usTnNoZeroToleranceCodesSpans: {
-          zeroToleranceCodeDates: null,
-        },
-        usTnIneligibleOffensesExpired: {
-          ineligibleOffenses: ["TNCARE FRAUD"],
-          ineligibleSentencesExpirationDates: ["2023-03-02"],
-        },
-        usTnNotServingUnknownCrOffense: null,
-        hasActiveSentence: { hasActiveSentence: true },
+        hasActiveSentence: { hasActiveSentence: false },
         usTnOnEligibleLevelForSufficientTime: {
-          eligibleDate: "2020-10-07",
-          eligibleLevel: "MINIMUM",
-          startDateOnEligibleLevel: "2020-04-07",
+          eligibleDate: relativeFixtureDate({ months: -1, days: -5 }),
+          eligibleLevel: "MEDIUM",
+          startDateOnEligibleLevel: relativeFixtureDate({
+            months: -19,
+            days: -5,
+          }),
         },
         usTnFinesFeesEligible: {
           hasFinesFeesBalanceBelow500: {
@@ -263,6 +232,7 @@ export const usTnCompliantReportingReferrals =
           },
         },
         usTnNoHighSanctionsInPastYear: null,
+        usTnNoRecentCompliantReportingRejections: null,
       },
       ineligibleCriteria: {
         usTnNoRecentCompliantReportingRejections: {
@@ -270,20 +240,20 @@ export const usTnCompliantReportingReferrals =
         },
       },
       formInformation: {
-        sentenceStartDate: "2022-08-26",
-        expirationDate: "2025-08-26",
-        sentenceLengthDays: "1095",
+        sentenceStartDate: relativeFixtureDate({ months: -20 }),
+        expirationDate: relativeFixtureDate({ days: 1000 }),
+        sentenceLengthDays: "1700",
         currentOffenses: ["THEFT OF PROPERTY - $10,000-$60,000"],
         supervisionFeeArrearaged: false,
         judicialDistrict: [],
       },
       metadata: {
         mostRecentArrestCheck: {
-          contactDate: "2022-01-03",
+          contactDate: relativeFixtureDate({ months: -1 }),
           contactType: "ARRN",
         },
         mostRecentSpeNote: {
-          contactDate: "2021-12-31",
+          contactDate: relativeFixtureDate({ months: -1 }),
           contactType: "SPEC",
         },
         ineligibleOffensesExpired: ["TNCARE FRAUD"],
@@ -297,9 +267,12 @@ export const usTnCompliantReportingReferrals =
       externalId: "201",
       eligibleCriteria: {
         usTnOnEligibleLevelForSufficientTime: {
-          eligibleDate: "2023-11-11",
-          eligibleLevel: "MEDIUM",
-          startDateOnEligibleLevel: "2021-11-11",
+          eligibleDate: relativeFixtureDate({ months: -1, days: 2 }),
+          eligibleLevel: "MINIMUM",
+          startDateOnEligibleLevel: relativeFixtureDate({
+            months: -13,
+            days: 2,
+          }),
         },
         usTnFinesFeesEligible: {
           hasFinesFeesBalanceBelow500: { amountOwed: 45 },
@@ -315,22 +288,18 @@ export const usTnCompliantReportingReferrals =
         usTnNoHighSanctionsInPastYear: null,
         usTnNoRecentCompliantReportingRejections: null,
         usTnSpecialConditionsAreCurrent: {
-          speNoteDue: "2023-10-01",
+          speNoteDue: relativeFixtureDate({ days: -99 }),
         },
         usTnNotServingIneligibleCrOffense: null,
         usTnPassedDrugScreenCheck: {
           hasAtLeast1NegativeDrugTestPastYear: [
             {
-              negativeScreenDate: "2023-10-28",
-              negativeScreenResult: "DRUN",
-            },
-            {
-              negativeScreenDate: "2023-09-28",
+              negativeScreenDate: relativeFixtureDate({ days: -200 }),
               negativeScreenResult: "DRUN",
             },
           ],
           latestDrugTestIsNegative: {
-            latestDrugScreenDate: "2023-10-28",
+            latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
             latestDrugScreenResult: "DRUN",
           },
         },
@@ -344,7 +313,7 @@ export const usTnCompliantReportingReferrals =
       },
       ineligibleCriteria: {},
       formInformation: {
-        sentenceStartDate: "2013-10-09",
+        sentenceStartDate: relativeFixtureDate({ months: -13, days: 2 }),
         currentOffenses: ["BURGLARY"],
         driversLicense: "12345",
         courtCostsPaid: false,
@@ -367,11 +336,11 @@ export const usTnCompliantReportingReferrals =
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: [],
         mostRecentArrestCheck: {
-          contactDate: "2023-03-01",
+          contactDate: relativeFixtureDate({ days: -72 }),
           contactType: "ARRN",
         },
         mostRecentSpeNote: {
-          contactDate: "2023-03-01",
+          contactDate: relativeFixtureDate({ days: -99 }),
           contactType: "SPEC",
         },
       },
@@ -383,9 +352,12 @@ export const usTnCompliantReportingReferrals =
       externalId: "202",
       eligibleCriteria: {
         usTnOnEligibleLevelForSufficientTime: {
-          eligibleDate: "2022-11-04",
+          eligibleDate: relativeFixtureDate({ months: -1, days: 2 }),
           eligibleLevel: "MINIMUM",
-          startDateOnEligibleLevel: "2021-05-04",
+          startDateOnEligibleLevel: relativeFixtureDate({
+            months: -13,
+            days: 2,
+          }),
         },
         usTnNoArrestsInPastYear: null,
         usTnNoHighSanctionsInPastYear: null,
@@ -396,12 +368,12 @@ export const usTnCompliantReportingReferrals =
         usTnPassedDrugScreenCheck: {
           hasAtLeast1NegativeDrugTestPastYear: [
             {
-              negativeScreenDate: "2023-03-09",
+              negativeScreenDate: relativeFixtureDate({ days: -200 }),
               negativeScreenResult: "DRUN",
             },
           ],
           latestDrugTestIsNegative: {
-            latestDrugScreenDate: "2023-03-09",
+            latestDrugScreenDate: relativeFixtureDate({ days: -200 }),
             latestDrugScreenResult: "DRUN",
           },
         },
@@ -424,7 +396,7 @@ export const usTnCompliantReportingReferrals =
         },
       },
       formInformation: {
-        sentenceStartDate: "2020-03-07",
+        sentenceStartDate: relativeFixtureDate({ months: -13, days: 2 }),
         currentOffenses: ["EVADING ARREST"],
         courtCostsPaid: false,
         supervisionFeeArrearaged: false,
@@ -433,11 +405,159 @@ export const usTnCompliantReportingReferrals =
         convictionCounties: ["123ABC"],
         ineligibleOffensesExpired: [],
         mostRecentArrestCheck: {
-          contactDate: "2023-04-01",
+          contactDate: relativeFixtureDate({ days: -5 }),
+          contactType: "ARRN",
+        },
+      },
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+
+    {
+      stateCode: "US_TN",
+      externalId: "107",
+      eligibleCriteria: {
+        usTnNoArrestsInPastYear: null,
+        usTnSpecialConditionsAreCurrent: {
+          speNoteDue: null,
+        },
+        usTnNotServingIneligibleCrOffense: null,
+        usTnPassedDrugScreenCheck: {
+          hasAtLeast1NegativeDrugTestPastYear: [
+            {
+              negativeScreenDate: relativeFixtureDate({ months: -6, days: 6 }),
+              negativeScreenResult: "DRUN",
+            },
+          ],
+          latestDrugTestIsNegative: {
+            latestDrugScreenDate: relativeFixtureDate({ months: -6, days: 6 }),
+            latestDrugScreenResult: "DRUN",
+          },
+        },
+        usTnNoZeroToleranceCodesSpans: { zeroToleranceCodeDates: null },
+        usTnIneligibleOffensesExpired: {
+          ineligibleOffenses: ["HABITUAL TRAFFIC OFFENDER"],
+          ineligibleSentencesExpirationDates: [
+            relativeFixtureDate({ months: -7 }),
+          ],
+        },
+        usTnNotServingUnknownCrOffense: null,
+        hasActiveSentence: { hasActiveSentence: true },
+        usTnFinesFeesEligible: {
+          hasFinesFeesBalanceBelow500: {
+            amountOwed: 0,
+          },
+          hasPayments3ConsecutiveMonths: {
+            amountOwed: 0,
+            consecutiveMonthlyPayments: 3,
+          },
+        },
+        usTnNoHighSanctionsInPastYear: null,
+        usTnNoRecentCompliantReportingRejections: null,
+        usTnNoPriorRecordWithIneligibleCrOffense: null,
+      },
+      ineligibleCriteria: {
+        usTnOnEligibleLevelForSufficientTime: {
+          eligibleDate: relativeFixtureDate({ days: 4 }),
+          eligibleLevel: "MINIMUM",
+          startDateOnEligibleLevel: relativeFixtureDate({ years: -1, days: 4 }),
+        },
+      },
+      formInformation: {
+        sentenceStartDate: relativeFixtureDate({ years: -2, days: 22 }),
+        currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
+        driversLicense: "12345678",
+        restitutionAmt: 400.0,
+        restitutionMonthlyPayment: 0.0,
+        restitutionMonthlyPaymentTo: ["2ND JUDICIAL DRUG TASK FORCE"],
+        judicialDistrict: ["17"],
+      },
+      metadata: {
+        convictionCounties: ["123 - ABC", "456 - DEF"],
+        ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
+        mostRecentArrestCheck: {
+          contactDate: relativeFixtureDate({ months: -1 }),
           contactType: "ARRN",
         },
         mostRecentSpeNote: {
-          contactDate: "2019-08-15",
+          contactDate: relativeFixtureDate({ days: -222 }),
+          contactType: "SPET",
+        },
+      },
+      isEligible: false,
+      isAlmostEligible: true,
+    },
+    {
+      stateCode: "US_TN",
+      externalId: "203",
+      eligibleCriteria: {
+        usTnNoArrestsInPastYear: null,
+        usTnSpecialConditionsAreCurrent: {
+          speNoteDue: null,
+        },
+        usTnNotServingIneligibleCrOffense: null,
+        usTnPassedDrugScreenCheck: {
+          hasAtLeast1NegativeDrugTestPastYear: [
+            {
+              negativeScreenDate: relativeFixtureDate({ days: -77 }),
+              negativeScreenResult: "DRUN",
+            },
+          ],
+          latestDrugTestIsNegative: {
+            latestDrugScreenDate: relativeFixtureDate({ days: -77 }),
+            latestDrugScreenResult: "DRUN",
+          },
+        },
+        usTnNoZeroToleranceCodesSpans: { zeroToleranceCodeDates: null },
+        usTnIneligibleOffensesExpired: {
+          ineligibleOffenses: ["HABITUAL TRAFFIC OFFENDER"],
+          ineligibleSentencesExpirationDates: [
+            relativeFixtureDate({ months: -7 }),
+          ],
+        },
+        usTnNotServingUnknownCrOffense: null,
+        hasActiveSentence: { hasActiveSentence: true },
+        usTnFinesFeesEligible: {
+          hasFinesFeesBalanceBelow500: {
+            amountOwed: 0,
+          },
+          hasPayments3ConsecutiveMonths: {
+            amountOwed: 0,
+            consecutiveMonthlyPayments: 3,
+          },
+        },
+        usTnNoHighSanctionsInPastYear: null,
+        usTnNoRecentCompliantReportingRejections: null,
+        usTnNoPriorRecordWithIneligibleCrOffense: null,
+      },
+      ineligibleCriteria: {
+        usTnOnEligibleLevelForSufficientTime: {
+          eligibleDate: relativeFixtureDate({ days: 9 }),
+          eligibleLevel: "MEDIUM",
+          startDateOnEligibleLevel: relativeFixtureDate({
+            months: -18,
+            days: 9,
+          }),
+        },
+      },
+      formInformation: {
+        sentenceStartDate: relativeFixtureDate({ months: -23 }),
+        currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
+        driversLicense: "12345678",
+        restitutionAmt: 400.0,
+        restitutionMonthlyPayment: 0.0,
+        restitutionMonthlyPaymentTo: ["2ND JUDICIAL DRUG TASK FORCE"],
+        judicialDistrict: ["17"],
+      },
+      metadata: {
+        convictionCounties: ["123 - ABC", "456 - DEF"],
+        ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
+        mostRecentArrestCheck: {
+          contactDate: relativeFixtureDate({ months: -1 }),
+          contactType: "ARRN",
+        },
+        mostRecentSpeNote: {
+          contactDate: relativeFixtureDate({ days: -222 }),
           contactType: "SPET",
         },
       },

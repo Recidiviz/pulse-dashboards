@@ -76,14 +76,4 @@ export const incarcerationStaffFixtures: Array<IncarcerationStaffRecord> = [
     surname: "Riddle",
     pseudonymizedId: "p007",
   },
-
-  // US_TN - TENNESSEE
-  {
-    email: "test-officer-5@example.com",
-    id: "OFFICER5",
-    stateCode: "US_TN",
-    givenNames: "Francesca",
-    surname: "Contreras",
-    pseudonymizedId: "p015",
-  },
 ].map((r) => makeRecordFixture(incarcerationStaffRecordSchema, r));
