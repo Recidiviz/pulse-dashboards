@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "~datatypes";
+
 import { UsTnAnnualReclassificationReviewReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewReferralRecord";
 import { externalIdFunc, FirestoreFixture } from "./utils";
 
@@ -22,7 +24,7 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
   {
     stateCode: "US_TN",
     externalId: "RES003",
-    formReclassificationDueDate: "2024-01-01",
+    formReclassificationDueDate: relativeFixtureDate({ days: 2 }),
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
@@ -35,23 +37,40 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
     caseNotes: {
       "PRIOR RECORD OFFENSES": [
         {
-          eventDate: "2022-04-06",
+          eventDate: relativeFixtureDate({ years: -2, months: -2, days: -2 }),
           noteTitle: "AGGRAVATED ASSAULT",
         },
         {
-          eventDate: "2022-06-06",
+          eventDate: relativeFixtureDate({ years: -2, months: -1, days: -10 }),
           noteTitle: "CRIMINAL IMPERSONATION",
         },
       ],
       "TN, ISC, DIVERSION SENTENCES": [
         {
-          eventDate: "2022-09-06",
+          eventDate: relativeFixtureDate({ years: -3, days: -6 }),
           noteBody: "Expires: 2028-02-02",
           noteTitle: "POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV",
         },
       ],
     },
     formInformation: {
+      currentOffenses: ["POSS FIREARM W/PRIOR VIOL/DEAD WPN CONV"],
+      hasIncompatibles: false,
+      lastCafDate: relativeFixtureDate({ days: -363 }),
+      lastCafTotal: "15",
+      latestClassificationDate: relativeFixtureDate({ days: -355 }),
+      latestPreaScreeningResults: {
+        aggressorFindingLevelChanged: false,
+        latestPreaScreeningDate: relativeFixtureDate({ days: -150 }),
+        victimFindingLevelChanged: false,
+      },
+      latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
+      latestVantageRiskLevel: "LOW",
+      levelOfCare: "LVL2",
+      sentenceEffectiveDate: relativeFixtureDate({ years: -3, days: -100 }),
+      sentenceReleaseEligibilityDate: relativeFixtureDate({ months: 2 }),
+      sentenceExpirationDate: relativeFixtureDate({ years: 1, days: 100 }),
+      statusAtHearingSeg: "GEN",
       q1Score: 0,
       q2Score: 0,
       q3Score: 4,
@@ -60,8 +79,8 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
       q6Score: -2,
       q7Score: 5,
       q7Notes: {
-        noteBody: "Class C Incident Details: Some details",
-        eventDate: "2019-02-01",
+        noteBody: "Class B Incident",
+        eventDate: relativeFixtureDate({ years: -1, months: -2, days: -20 }),
       },
       q8Score: 0,
       q9Score: 0,
@@ -72,55 +91,81 @@ const data: UsTnAnnualReclassificationReviewReferralRecordRaw[] = [
   {
     stateCode: "US_TN",
     externalId: "RES004",
-    formReclassificationDueDate: "2024-02-01",
+    formReclassificationDueDate: relativeFixtureDate({ days: 6 }),
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
       custodyLevelComparedToRecommended: {
-        custodyLevel: "MINIMUM",
-        recommendedCustodyLevel: "MINIMUM",
+        custodyLevel: "CLOSE",
+        recommendedCustodyLevel: "MEDIUM",
       },
     },
     ineligibleCriteria: {},
     caseNotes: {
       "PRIOR RECORD OFFENSES": [
         {
-          eventDate: "2022-04-06",
+          eventDate: relativeFixtureDate({ years: -2, days: -22 }),
           noteTitle: "EVADING ARREST",
         },
         {
-          eventDate: "2022-06-06",
+          eventDate: relativeFixtureDate({ years: -3, days: -33 }),
           noteTitle: "DOMESTIC VIOLENCE",
         },
       ],
       "TN, ISC, DIVERSION SENTENCES": [
         {
-          eventDate: "2022-09-06",
+          eventDate: relativeFixtureDate({ years: -4, days: -444 }),
           noteBody: "Expires: 2029-04-02",
           noteTitle: "AGGRAVATED ASSAULT",
         },
       ],
     },
     formInformation: {
+      classificationType: "ANNUAL",
       currentOffenses: ["ROBBERY-ARMED WITH DEADLY WEAPON"],
-      lastCafDate: "2022-08-22",
-      lastCafTotal: "8",
-      q1Score: 5,
-      q2Score: 3,
+      hasIncompatibles: false,
+      lastCafDate: relativeFixtureDate({ days: -359 }),
+      lastCafTotal: "15",
+      latestClassificationDate: relativeFixtureDate({ days: -350 }),
+      latestPreaScreeningResults: {
+        aggressorFindingLevelChanged: false,
+        latestPreaScreeningDate: relativeFixtureDate({ days: -150 }),
+        victimFindingLevelChanged: false,
+      },
+      latestVantageCompletedDate: relativeFixtureDate({ days: -300 }),
+      latestVantageRiskLevel: "LOW",
+      levelOfCare: "LVL2",
+      sentenceEffectiveDate: relativeFixtureDate({ years: -2, days: -200 }),
+      sentenceReleaseEligibilityDate: relativeFixtureDate({ days: 100 }),
+      sentenceExpirationDate: relativeFixtureDate({ years: 1, days: 200 }),
+      statusAtHearingSeg: "GEN",
+      q1Score: 0,
+      q2Score: 0,
       q3Score: 4,
       q4Score: 4,
-      q5Score: 7,
-      q6Score: 4,
-      q7Score: 7,
-      q8Score: 5,
-      q9Score: 4,
-      q6Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
-      q7Notes: { eventDate: "2022-08-22", noteBody: "Some note" },
+      q5Score: -2,
+      q6Score: -1,
+      q7Score: 2,
+      q8Score: 3,
+      q9Score: 2,
+      q6Notes: [
+        {
+          eventDate: relativeFixtureDate({ months: -4, days: 13 }),
+          noteBody: "Class C Incident",
+        },
+      ],
+      q7Notes: [
+        {
+          eventDate: relativeFixtureDate({ months: -4, days: 13 }),
+          noteBody: "Class C Incident",
+        },
+      ],
       q8Notes: [
         {
-          detainerReceivedDate: "2022-08-22",
-          detainerFelonyFlag: "X",
+          description: "VANDALISM",
+          detainerFelonyFlag: null,
           detainerMisdemeanorFlag: "X",
+          detainerReceivedDate: relativeFixtureDate({ days: -15 }),
         },
       ],
     },

@@ -71,15 +71,3 @@ exports[`incarceration staff schema for 'US_MO' 'OFFICER7' 1`] = `
   "surname": "Riddle",
 }
 `;
-
-exports[`incarceration staff schema for 'US_TN' 'OFFICER5' 1`] = `
-{
-  "email": "test-officer-5@example.com",
-  "givenNames": "Francesca",
-  "id": "OFFICER5",
-  "pseudonymizedId": "p015",
-  "recordType": "incarcerationStaff",
-  "stateCode": "US_TN",
-  "surname": "Contreras",
-}
-`;

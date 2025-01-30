@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "~datatypes";
+
 import { ResidentFixture } from "../residents";
 
 export const usTnResidents: ResidentFixture[] = [
@@ -32,9 +34,9 @@ export const usTnResidents: ResidentFixture[] = [
     facilityId: "BLEDSOE_CC",
     unitId: "UNIT A",
     facilityUnitId: "BLEDSOE_CC‡UNIT A",
-    custodyLevel: "MINIMUM",
-    admissionDate: "2019-08-12",
-    releaseDate: "2025-10-22",
+    custodyLevel: "CLOSE",
+    admissionDate: relativeFixtureDate({ years: -2, days: -200 }),
+    releaseDate: relativeFixtureDate({ years: 3, days: 300 }),
     metadata: {},
   },
   {
@@ -49,11 +51,11 @@ export const usTnResidents: ResidentFixture[] = [
     gender: "FEMALE",
     pseudonymizedId: "anonres002",
     facilityId: "BLEDSOE_CC",
-    unitId: "UNIT B",
-    facilityUnitId: "BLEDSOE_CC‡UNIT B",
-    custodyLevel: "MINIMUM",
-    admissionDate: "2020-08-12",
-    releaseDate: "2024-11-27",
+    unitId: "UNIT A",
+    facilityUnitId: "BLEDSOE_CC‡UNIT A",
+    custodyLevel: "MEDIUM",
+    admissionDate: relativeFixtureDate({ years: -4, days: -400 }),
+    releaseDate: relativeFixtureDate({ years: 1, days: 100 }),
     metadata: {},
   },
   {
@@ -68,11 +70,11 @@ export const usTnResidents: ResidentFixture[] = [
     gender: "MALE",
     pseudonymizedId: "anonres003",
     facilityId: "BLEDSOE_CC",
-    unitId: "UNIT C",
-    facilityUnitId: "BLEDSOE_CC‡UNIT C",
-    custodyLevel: "MINIMUM",
-    admissionDate: "2020-08-12",
-    releaseDate: "2025-01-01",
+    unitId: "UNIT A",
+    facilityUnitId: "BLEDSOE_CC‡UNIT A",
+    custodyLevel: "MEDIUM",
+    admissionDate: relativeFixtureDate({ years: -3, days: -100 }),
+    releaseDate: relativeFixtureDate({ years: 1, days: 100 }),
     metadata: {},
   },
   {
@@ -87,11 +89,11 @@ export const usTnResidents: ResidentFixture[] = [
     gender: "INTERNAL_UNKNOWN",
     pseudonymizedId: "anonres004",
     facilityId: "BLEDSOE_CC",
-    unitId: "UNIT D",
-    facilityUnitId: "BLEDSOE_CC‡UNIT D",
-    custodyLevel: "MINIMUM",
-    admissionDate: "2021-08-12",
-    releaseDate: "2025-12-01",
+    unitId: "UNIT A",
+    facilityUnitId: "BLEDSOE_CC‡UNIT A",
+    custodyLevel: "CLOSE",
+    admissionDate: relativeFixtureDate({ years: -2, days: -200 }),
+    releaseDate: relativeFixtureDate({ years: 1, days: 200 }),
     metadata: {},
   },
 ];

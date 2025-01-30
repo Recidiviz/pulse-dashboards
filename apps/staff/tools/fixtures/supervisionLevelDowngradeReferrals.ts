@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "~datatypes";
+
 import { UsTnSupervisionLevelDowngradeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsTn";
 import { fixtureWithIdKey } from "./utils";
 
@@ -28,15 +30,43 @@ export const usTnSupervisionLevelDowngradeReferrals =
         eligibleCriteria: {
           supervisionLevelHigherThanAssessmentLevel: {
             assessmentLevel: "HIGH",
-            latestAssessmentDate: "2021-08-20",
+            latestAssessmentDate: relativeFixtureDate({ days: -1 }),
             supervisionLevel: "MAXIMUM",
           },
         },
         ineligibleCriteria: {},
         caseNotes: {
           Violations: [
-            { eventDate: "2021-05-03", noteTitle: "VRPT" },
-            { eventDate: "2020-01-10", noteTitle: "ARRP" },
+            {
+              eventDate: relativeFixtureDate({ months: -10 }),
+              noteTitle: "VRPT",
+            },
+            {
+              eventDate: relativeFixtureDate({ months: -5 }),
+              noteTitle: "ARRP",
+            },
+          ],
+        },
+        isEligible: true,
+        isAlmostEligible: false,
+      },
+      {
+        stateCode: "US_TN",
+        externalId: "108",
+        eligibleCriteria: {
+          supervisionLevelHigherThanAssessmentLevel: {
+            assessmentLevel: "LOW",
+            latestAssessmentDate: relativeFixtureDate({ days: -18 }),
+            supervisionLevel: "MEDIUM",
+          },
+        },
+        ineligibleCriteria: {},
+        caseNotes: {
+          Violations: [
+            {
+              eventDate: relativeFixtureDate({ days: -801 }),
+              noteTitle: "DEFG",
+            },
           ],
         },
         isEligible: true,
