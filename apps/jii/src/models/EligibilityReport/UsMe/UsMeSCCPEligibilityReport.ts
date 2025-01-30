@@ -18,7 +18,6 @@
 import assertNever from "assert-never";
 import { isFuture, max, subMonths } from "date-fns";
 import { mapValues } from "lodash";
-import { makeAutoObservable } from "mobx";
 
 import { ResidentRecord, UsMeSCCPRecord } from "~datatypes";
 
@@ -29,20 +28,23 @@ import {
 import { OpportunityConfig } from "../../../configs/types";
 import {
   EligibilityReport,
-  EligibilityStatus,
   eligibilityStatusEnum,
   RequirementsSectionContent,
 } from "../interface";
+import { ReportBase } from "../ReportBase";
 
 const APPLICATION_DATE_OFFSET_MONTHS = 3;
 
-export class UsMeSCCPEligibilityReport implements EligibilityReport {
+export class UsMeSCCPEligibilityReport
+  extends ReportBase
+  implements EligibilityReport
+{
   constructor(
-    private resident: ResidentRecord,
-    private config: OpportunityConfig,
-    private eligibilityData: UsMeSCCPRecord["output"],
+    resident: ResidentRecord,
+    config: OpportunityConfig,
+    protected override eligibilityData: UsMeSCCPRecord["output"],
   ) {
-    makeAutoObservable(this);
+    super(config, eligibilityData);
   }
 
   private dateCriteria = [
@@ -78,58 +80,30 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     );
   }
 
-  /**
-   * Generic preparation of report data for template rendering. Opportunity-specific
-   * properties should be added to an object called "custom" on this context
-   */
-  private get templateContext() {
-    const {
-      resident,
-      config,
-      eligibilityData,
-      applicationDate,
-      eligibilityDate,
-      ineligibleViolation,
-    } = this;
+  protected get highlightsTemplateContext() {
+    const { applicationDate, eligibilityDate, ineligibleViolation } = this;
+
     return {
-      resident,
-      config,
-      eligibilityData,
-      custom: {
-        eligibilityDate,
-        applicationDate,
-        ineligibleViolation,
-      },
+      eligibilityDate,
+      applicationDate,
+      ineligibleViolation,
     };
   }
 
-  get name() {
-    return this.config.name;
-  }
+  override get status() {
+    const baseStatus = super.status;
 
-  get description() {
-    return this.config.description;
-  }
-
-  get status() {
-    let value: EligibilityStatus;
-
-    if (this.eligibilityData.isAlmostEligible) {
-      value = "ALMOST_ELIGIBLE";
-    } else if (this.eligibilityData.isEligible) {
-      // users within application period
+    // users within application period
+    if (baseStatus.value === "ELIGIBLE") {
       if (isFuture(this.eligibilityDate)) {
-        value = "ALMOST_ELIGIBLE";
+        return {
+          value: eligibilityStatusEnum.enum.ALMOST_ELIGIBLE,
+          label: this.config.statusLabels.ALMOST_ELIGIBLE,
+        };
       }
-      // full eligibility
-      else {
-        value = "ELIGIBLE";
-      }
-    } else {
-      value = "INELIGIBLE";
     }
 
-    return { value, label: this.config.statusLabels[value] };
+    return baseStatus;
   }
 
   private eligibilityDateInFuture(
@@ -220,17 +194,7 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
     return sections;
   }
 
-  get enabledSections() {
-    return this.config.sections.filter((sectionConfig) => {
-      // drop sections that are hidden for ineligible users, when applicable
-      if (this.status.value === eligibilityStatusEnum.enum.INELIGIBLE) {
-        return !sectionConfig.hideWhenIneligible;
-      }
-      return true;
-    });
-  }
-
-  private showHighlights(): boolean {
+  protected get showHighlights(): boolean {
     switch (this.status.value) {
       case "ELIGIBLE":
         return true;
@@ -262,24 +226,5 @@ export class UsMeSCCPEligibilityReport implements EligibilityReport {
       default:
         return assertNever(this.status.value);
     }
-  }
-
-  get highlights() {
-    const highlights: EligibilityReport["highlights"] = [];
-
-    if (this.showHighlights()) {
-      this.config.requirements.summary.highlights.forEach(
-        ({ label, value }) => {
-          highlights.push({
-            label,
-            value: cleanupInlineTemplate(
-              hydrateTemplate(value, this.templateContext),
-            ),
-          });
-        },
-      );
-    }
-
-    return highlights;
   }
 }

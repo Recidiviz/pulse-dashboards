@@ -76,16 +76,16 @@ export const config: OpportunityConfig = {
       highlights: [
         {
           label: `When you may be eligible to **apply**`,
-          value: `{{#if (isFutureDate custom.applicationDate)}}
-            {{formatFullDate custom.applicationDate}}
+          value: `{{#if (isFutureDate applicationDate)}}
+            {{formatFullDate applicationDate}}
           {{else}}
             Now
           {{/if}}`,
         },
         {
           label: `When you may be eligible for **release**`,
-          value: `{{#if (isFutureDate custom.eligibilityDate)}}
-            {{formatFullDate custom.eligibilityDate}}
+          value: `{{#if (isFutureDate eligibilityDate)}}
+            {{formatFullDate eligibilityDate}}
           {{else}}
             Now
           {{/if}}`,
