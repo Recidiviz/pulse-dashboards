@@ -3,6 +3,7 @@ settings:
   context:
     location: us-central1
     project_id: recidiviz-dashboard-staging
+    project_number: 626425930051
     product: jii-texting
 
 # The variables set here are automatically provided to all components used in this stack.
@@ -53,7 +54,7 @@ components:
         log_bucket: "{{ .vars.project_id }}-gcs-object-logs"
         versioning:
           jii-texting-etl-data: true
-        location: us
+        location: "{{ .settings.context.location }}"
         storage_class: STANDARD
         lifecycle_rules:
           - action:
@@ -69,10 +70,13 @@ components:
         format: DOCKER
     apps/jii-texting:
       vars:
+        project_number: "{{ .settings.context.project_number }}"
         location: "{{ .settings.context.location }}"
         # Pass the `connection-name` output from our `postgres-instance` component to the jii-texting app
         cloudsql_instance: !terraform.output postgres-instance connection_name
         server_image: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.artifact_repository }}/default"
+        # The 'name' output uses the name of the first bucket, so ensure that the ETL bucket is the first one in the list
+        etl_bucket_name:  !terraform.output gcs-buckets name
       settings:
         context:
           artifact_repository:  '{{ (atmos.Component "vendor/artifact-registry" .stack).outputs.artifact_name }}'

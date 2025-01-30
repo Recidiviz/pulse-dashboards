@@ -12,5 +12,7 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/.config/gcloud/application_default_credentials.json
     volumes:
       - ../../:/usr/app
+      # Don't mount `node_modules` to improve startup performance
+      - /usr/app/node_modules
       - ~/.config/gcloud:/.config/gcloud
 
