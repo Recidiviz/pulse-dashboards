@@ -47,3 +47,39 @@ module "migrate-db" {
   env_vars = local.env_vars
   cloud_run_deletion_protection = false
 }
+
+# Configure a Google Workflow that is executed on a write to a GCS storage bucket
+# and executes the main JII texting processing (i.e a separate workflow) if needed
+module "handle-jii-texting-gcs-upload-wf" {
+  project_id = var.project_id
+  region = var.location
+  source = "../../vendor/google-workflows-workflow"
+  service_account_email = google_service_account.workflows.email
+  workflow_name = "handle-jii-texting-gcs-upload-wf"
+  workflow_trigger = {
+    event_arc = {
+      name                  = "handle-jii-texting-gcs-upload-wf"
+      service_account_email = google_service_account.eventarc.email
+      matching_criteria = [{
+        attribute = "type"
+        value     = "google.cloud.storage.object.v1.finalized"
+      },
+      {
+        attribute = "bucket",
+        value = var.etl_bucket_name
+      }]
+    }
+  }
+  workflow_source = <<-EOF
+  # This is a basic Workflow that returns the file name
+
+  main:
+    params: [event]
+    steps:
+      - init:
+          assign:
+            - object_name: $${event.data.name}
+      - return_object_name:
+          return: $${object_name}
+EOF
+}
