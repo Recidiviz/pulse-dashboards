@@ -4,6 +4,7 @@ settings:
     location: us-central1
     project_id: recidiviz-dashboard-staging
     project_number: 626425930051
+    data_platform_project_number: 984160736970
     product: jii-texting
 
 # The variables set here are automatically provided to all components used in this stack.
@@ -61,6 +62,9 @@ components:
               type: Delete
             condition:
               num_newer_versions: 3
+        set_admin_roles: true
+        bucket_admins: 
+          jii-texting-etl-data: "serviceAccount:{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com"
       metadata:
         component: vendor/cloud-storage-bucket
     vendor/artifact-registry:
