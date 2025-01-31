@@ -23,5 +23,6 @@ export type HydratorProps = {
   children: ReactNode;
   hydratable: Hydratable;
   failed: ReactNode;
+  loading?: ReactNode;
   className?: string;
 };

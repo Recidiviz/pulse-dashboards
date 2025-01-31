@@ -25,6 +25,7 @@ type ModelHydratorProps = {
   children: React.ReactNode;
   hydratable: Hydratable;
   className?: string;
+  loading?: React.ReactNode;
 };
 
 /**
@@ -36,11 +37,13 @@ function ModelHydrator({
   children,
   hydratable,
   className,
+  loading,
 }: ModelHydratorProps): React.ReactElement {
   return (
     <Hydrator
       {...{ children, hydratable, className }}
       failed={<ErrorMessage />}
+      loading={loading}
     />
   );
 }
