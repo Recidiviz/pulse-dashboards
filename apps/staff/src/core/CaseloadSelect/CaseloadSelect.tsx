@@ -45,10 +45,14 @@ import ReactSelect, {
 } from "react-select";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import { Searchable, SearchableGroup } from "../models/types";
+import { MaxWidth } from "../sharedComponents";
 
 // This is a query limitation imposed by Firestore
 const SELECTED_SEARCH_LIMIT = 30;
@@ -237,9 +241,12 @@ const MenuListWithShadow = (
     );
   };
 
-const CaseloadSelectContainer = styled(Sans14)`
+const CaseloadSelectContainer = styled(Sans14)<{
+  $opportunityTableView: boolean;
+}>`
   color: ${palette.slate85};
   margin-bottom: ${rem(spacing.lg)};
+  ${({ $opportunityTableView }) => $opportunityTableView && MaxWidth}
 `;
 
 const CaseloadSelectMobileButton = styled(Button).attrs({ kind: "link" })`
@@ -461,9 +468,11 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     if (!isMobile) setModalIsOpen(false);
   }, [isMobile]);
 
+  const { opportunityTableView } = useFeatureVariants();
+
   if (isMobile) {
     return (
-      <CaseloadSelectContainer>
+      <CaseloadSelectContainer $opportunityTableView={!!opportunityTableView}>
         Caseloads:
         <CaseloadSelectMobileButton onClick={() => setModalIsOpen(true)}>
           {selectedSearchIds.length > 0
@@ -487,7 +496,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   }
 
   return (
-    <CaseloadSelectContainer>
+    <CaseloadSelectContainer $opportunityTableView={!!opportunityTableView}>
       <ReactSelect {...defaultOptions} />
     </CaseloadSelectContainer>
   );

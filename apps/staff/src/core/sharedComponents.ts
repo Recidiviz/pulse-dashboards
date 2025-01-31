@@ -27,6 +27,7 @@ import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
 
 import TealStar from "../assets/static/images/tealStar.svg?react";
+import cssVars from "./CoreConstants.module.scss";
 
 export const Heading = styled.div<{ isMobile?: boolean }>`
   ${({ isMobile }) => (isMobile ? typography.Serif24 : typography.Serif34)}
@@ -124,5 +125,17 @@ export const Banner = styled.div`
   color: ${palette.pine1};
   @media (max-width: 1024px) {
     width: 100% !important;
+  }
+`;
+
+export const MaxWidth = `
+  max-width: 75vw;
+
+  @media screen and (max-width: ${cssVars.breakpointSxs}) {
+    max-width: 90vw;
+  }
+
+  @media screen and (max-width: ${cssVars.breakpointXs}) {
+    max-width: unset;
   }
 `;

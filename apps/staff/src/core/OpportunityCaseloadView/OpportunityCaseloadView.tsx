@@ -23,7 +23,10 @@ import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { OpportunityCaseloadViewPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadViewPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import ModelHydrator from "../ModelHydrator";
@@ -48,11 +51,14 @@ const ManagedComponent = observer(function OpportunityCaseloadView({
     hasOpportunities,
     ctaTextAndHeaderText,
   } = presenter;
+  const { opportunityTableView } = useFeatureVariants();
 
   const selectedSearchIdsCount = selectedSearchIds?.length || 0;
 
   return (
-    <WorkflowsNavLayout>
+    // If we're displaying the table view, the Workflows layout should fill the screen.
+    // If we're not, the Workflows layout should be centered and limited-width.
+    <WorkflowsNavLayout limitedWidth={!opportunityTableView}>
       <Wrapper>
         <CaseloadSelect />
         <ModelHydrator hydratable={presenter}>

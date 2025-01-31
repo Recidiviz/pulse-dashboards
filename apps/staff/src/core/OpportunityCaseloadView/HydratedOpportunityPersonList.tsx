@@ -40,6 +40,7 @@ import {
   Sans18,
   spacing,
 } from "@recidiviz/design-system";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
@@ -54,26 +55,47 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
-import { OpportunityTab, OpportunityTabGroup } from "../../WorkflowsStore";
+import { formatWorkflowsDate } from "../../utils/formatStrings";
+import {
+  Opportunity,
+  OpportunityTab,
+  OpportunityTabGroup,
+} from "../../WorkflowsStore";
+import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
-import { Heading } from "../sharedComponents";
+import PersonId from "../PersonId";
+import { Heading, MaxWidth } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
-import WorkflowsLastSynced from "../WorkflowsLastSynced";
+import { EligibilityStatusPill } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityModuleHeader";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
+import { CaseloadTable } from "./CaseloadTable";
 import { LinkedOpportunityCallout } from "./LinkedOpportunityCallout";
 import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import OpportunitySubheading from "./OpportunitySubheading";
+
+const MaxWidthWrapper = styled.div`
+  ${MaxWidth}
+`;
+
+const HorizontalScrollWrapper = styled.div`
+  overflow-x: scroll;
+`;
 
 const OpportunityPageExplainer = styled(Sans16)`
   color: ${palette.slate70};
   padding-bottom: ${rem(spacing.md)};
 `;
 
-const FlexWrapper = styled.div`
+const Flex = `
   display: flex;
   flex-direction: column;
   height: 100%;
+`;
+
+const MaxWidthFlexWrapper = styled.div`
+  ${Flex}
+  ${MaxWidth}
 `;
 
 const EmptyTabGroupWrapper = styled.div`
@@ -106,11 +128,114 @@ type OpportunityPersonListProps = {
   supervisionPresenter?: SupervisionOpportunityPresenter;
 };
 
+type OpportunityCaseloadComponentProps = {
+  presenter: OpportunityCaseloadPresenter;
+};
+
+const TableView = observer(function TableView({
+  presenter,
+}: OpportunityCaseloadComponentProps) {
+  // TODO(#7189) handle conditionally showing/hiding columns based on tab state
+
+  // We manually assemble column definitions instead of using createColumnHelper
+  // due to not needing display/grouping columns and due to type inference issues:
+  // https://github.com/TanStack/table/issues/4302
+  const columns: ColumnDef<Opportunity>[] = [
+    {
+      header: "Name",
+      accessorKey: "person.displayName",
+      enableSorting: true,
+      sortingFn: (rowA: Row<Opportunity>, rowB: Row<Opportunity>) =>
+        rowA.original.person.displayName.localeCompare(
+          rowB.original.person.displayName,
+        ),
+    },
+    {
+      // TODO(#6737): Make the column header the same as the label displayed when copied
+      header: "DOC ID",
+      accessorKey: "person.displayId",
+      enableSorting: true,
+      sortingFn: (rowA: Row<Opportunity>, rowB: Row<Opportunity>) => {
+        return rowA.original.person.displayId.localeCompare(
+          rowB.original.person.displayId,
+        );
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const opportunity = row.original;
+        const { person } = opportunity;
+        return (
+          <PersonId
+            personId={person.displayId}
+            pseudoId={person.pseudonymizedId}
+            opportunity={opportunity}
+          >
+            {person.displayId}
+          </PersonId>
+        );
+      },
+    },
+    {
+      header: "Officer",
+      accessorKey: "person.assignedStaffFullName",
+      enableSorting: true,
+      sortingFn: (rowA: Row<Opportunity>, rowB: Row<Opportunity>) => {
+        return rowA.original.person.assignedStaffFullName.localeCompare(
+          rowB.original.person.assignedStaffFullName,
+        );
+      },
+    },
+    {
+      header: "Status",
+      enableSorting: false,
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        return <EligibilityStatusPill opportunity={row.original} />;
+      },
+    },
+    {
+      header: "Eligibility Date",
+      accessorKey: "eligibilityDate",
+      enableSorting: true,
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        return row.original.eligibilityDate
+          ? formatWorkflowsDate(row.original.eligibilityDate)
+          : "—";
+      },
+    },
+    {
+      id: "cta-button",
+      header: "",
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        return row.original.form?.navigateToFormText ? (
+          <NavigateToFormButton
+            className="NavigateToFormButton"
+            opportunity={row.original}
+          >
+            {row.original.form.navigateToFormText}
+          </NavigateToFormButton>
+        ) : null;
+      },
+    },
+  ];
+
+  return (
+    <HorizontalScrollWrapper>
+      <CaseloadTable
+        expandedLastColumn
+        data={presenter.peopleInActiveTab}
+        columns={columns}
+        onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
+        shouldHighlightRow={(opp) => presenter.shouldHighlightOpportunity(opp)}
+      ></CaseloadTable>
+    </HorizontalScrollWrapper>
+  );
+});
+
 const ManagedComponent = observer(function HydratedOpportunityPersonList({
   presenter,
 }: {
   presenter: OpportunityCaseloadPresenter;
 }) {
+  const { opportunityTableView } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
 
   // Use MouseSensor instead of PointerSensor to disable drag-and-drop on touch screens
@@ -156,28 +281,28 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
   } = presenter;
 
   return (
-    <FlexWrapper>
-      <Heading isMobile={isMobile} className="PersonList__Heading">
-        {presenter.label}
-      </Heading>
-      {presenter.subheading ? (
-        <OpportunitySubheading subheading={presenter.subheading} />
-      ) : (
-        <OpportunityPageExplainer>
-          {presenter.callToAction}
-        </OpportunityPageExplainer>
-      )}
-      <LinkedOpportunityCallout
-        overdueOpportunityCount={overdueOpportunityCount}
-        overdueOpportunityUrl={overdueOpportunityUrl}
-        overdueOpportunityCalloutCopy={overdueOpportunityCalloutCopy}
-      />
-      {presenter.activeOpportunityNotifications && (
-        <OpportunityNotifications
-          notifications={presenter.activeOpportunityNotifications}
-          handleDismiss={handleNotificationDismiss}
+    <>
+      <MaxWidthWrapper>
+        <Heading isMobile={isMobile}>{presenter.label}</Heading>
+        {presenter.subheading ? (
+          <OpportunitySubheading subheading={presenter.subheading} />
+        ) : (
+          <OpportunityPageExplainer>
+            {presenter.callToAction}
+          </OpportunityPageExplainer>
+        )}
+        <LinkedOpportunityCallout
+          overdueOpportunityCount={overdueOpportunityCount}
+          overdueOpportunityUrl={overdueOpportunityUrl}
+          overdueOpportunityCalloutCopy={overdueOpportunityCalloutCopy}
         />
-      )}
+        {presenter.activeOpportunityNotifications && (
+          <OpportunityNotifications
+            notifications={presenter.activeOpportunityNotifications}
+            handleDismiss={handleNotificationDismiss}
+          />
+        )}
+      </MaxWidthWrapper>
 
       {
         /* Sortable tab control bar */
@@ -208,7 +333,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         )
       }
 
-      {presenter.tabPrefaceText && (
+      {presenter.tabPrefaceText && !opportunityTableView && (
         <OpportunityPageExplainer>
           {presenter.tabPrefaceText}
         </OpportunityPageExplainer>
@@ -216,9 +341,11 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
 
       {peopleInActiveTab.length === 0 ? (
         /* Empty tab display */
-        <EmptyTabGroupWrapper>
-          <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
-        </EmptyTabGroupWrapper>
+        <MaxWidthFlexWrapper>
+          <EmptyTabGroupWrapper>
+            <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
+          </EmptyTabGroupWrapper>
+        </MaxWidthFlexWrapper>
       ) : peopleInActiveTabBySubcategory ? (
         /* Subcategories display */
         (presenter.subcategoryOrder ?? [])
@@ -233,8 +360,11 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
               />
             </div>
           ))
+      ) : /* List or table view with no subcategories */
+      /* TODO(#7187) add support for subcategory view in table view */
+      opportunityTableView ? (
+        <TableView presenter={presenter} />
       ) : (
-        /* Ordinary tab display with no subcategories */
         <CaseloadOpportunityGrid items={peopleInActiveTab} />
       )}
 
@@ -243,10 +373,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         navigableOpportunities={presenter.navigablePeople}
         selectedPerson={presenter.selectedPerson}
       />
-      <WorkflowsLastSynced
-        date={peopleInActiveTab?.at(0)?.person?.lastDataFromState}
-      />
-    </FlexWrapper>
+    </>
   );
 });
 

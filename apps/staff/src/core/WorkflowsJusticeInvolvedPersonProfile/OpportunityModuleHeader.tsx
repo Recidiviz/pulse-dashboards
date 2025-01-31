@@ -32,7 +32,7 @@ const TitleText = styled(Sans16)`
   display: inline-block;
 `;
 
-const EligibilityStatusPill = styled(Pill)<{ $borderColor: string }>`
+const EligibilityStatusPillStyled = styled(Pill)<{ $borderColor: string }>`
   border-radius: ${rem(4)};
   border: 1px solid ${(props) => props.$borderColor};
   font-size: ${rem(12)};
@@ -53,9 +53,27 @@ type OpportunityModuleHeaderProps = {
   opportunity: Opportunity;
 };
 
+export const EligibilityStatusPill = observer(function EligibilityStatusPill({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  const colors = useStatusColors(opportunity);
+  return (
+    <EligibilityStatusPillStyled
+      className="EligibilityStatus"
+      filled
+      color={colors.badgeBackground}
+      textColor={colors.badgeText}
+      $borderColor={colors.badgeBorder}
+    >
+      <EligibilityStatus opportunity={opportunity} />
+    </EligibilityStatusPillStyled>
+  );
+});
+
 export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
   observer(function OpportunityModuleHeader({ opportunity }) {
-    const colors = useStatusColors(opportunity);
     const { submittedOpportunityStatus } = useFeatureVariants();
 
     if (submittedOpportunityStatus) {
@@ -65,15 +83,7 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
             {opportunity.config.label}
             {opportunity.labelAddendum}
           </OpportunityLabelWithPill>
-          <EligibilityStatusPill
-            className="EligibilityStatus"
-            filled
-            color={colors.badgeBackground}
-            textColor={colors.badgeText}
-            $borderColor={colors.badgeBorder}
-          >
-            <EligibilityStatus opportunity={opportunity} />
-          </EligibilityStatusPill>
+          <EligibilityStatusPill opportunity={opportunity} />
         </TitleText>
       );
     }

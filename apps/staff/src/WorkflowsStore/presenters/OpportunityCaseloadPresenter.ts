@@ -88,6 +88,7 @@ export class OpportunityCaseloadPresenter {
 
     makeAutoObservable(this, {
       updateNavigablePeople: action,
+      handleOpportunityClick: action,
     });
   }
 
@@ -321,6 +322,10 @@ export class OpportunityCaseloadPresenter {
   }
 
   get selectedOpportunity() {
+    // We cannot use the supervisionPresenter's selectedOpportunity because the
+    // CaseloadOpportunityCell/CaseloadTable change the selected opp in the workflows store;
+    // this method will still always return a hydrated opportunity because the
+    // selected person is from the correct source and therefore hydrated
     return this.selectedPerson?.opportunities[this.opportunityType]?.find(
       (opp) => opp.selectId === this.workflowsStore.selectedOpportunityId,
     );
@@ -358,5 +363,17 @@ export class OpportunityCaseloadPresenter {
     const newIndex = this.displayTabs.indexOf(newLocation);
     const newTabs = arrayMove(this.displayTabs, oldIndex, newIndex);
     this.displayTabs = newTabs;
+  }
+
+  handleOpportunityClick(opp: Opportunity) {
+    this.workflowsStore.updateSelectedPerson(opp.person.pseudonymizedId);
+    this.workflowsStore.updateSelectedOpportunity(opp.selectId);
+  }
+
+  shouldHighlightOpportunity(opp: Opportunity) {
+    return (
+      opp.person.pseudonymizedId === this.selectedPerson?.pseudonymizedId &&
+      opp.selectId === this.selectedOpportunity?.selectId
+    );
   }
 }
