@@ -26,9 +26,9 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import cssVars from "../CoreConstants.module.scss";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
+import { MaxWidth } from "../sharedComponents";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { workflowsUrl } from "../views";
 
@@ -41,30 +41,23 @@ const Wrapper = styled.div`
 
 const Main = styled.main<{
   isMobile?: boolean;
+  $limitedWidth: boolean;
 }>`
-  grid-column: 2;
-  padding-right: ${rem(spacing.md)};
-  padding-top: ${rem(spacing.sm)};
-  /* leaving extra space for the Intercom button */
-  padding-bottom: ${rem(spacing.md * 4)};
-
-  height: calc(100% - ${rem(spacing.md * 4)});
-
-  max-width: 75vw;
-  margin: 0 auto;
   padding: ${({ isMobile }) =>
     isMobile
       ? `${rem(spacing.lg)} ${rem(spacing.md)}`
-      : `${rem(spacing.xl)} ${rem(spacing.lg)}`};
+      : `${rem(spacing.xl)} ${rem(spacing.lg)}`}};
+
+  /* leaving extra space for the Intercom button */
   padding-bottom: ${rem(spacing.md * 5)};
+  height: calc(100% - ${rem(spacing.md * 5 + spacing.xl)});
 
-  @media screen and (max-width: ${cssVars.breakpointSxs}) {
-    max-width: 90vw;
-  }
-
-  @media screen and (max-width: ${cssVars.breakpointXs}) {
-    max-width: unset;
-  }
+  ${(props) =>
+    props.$limitedWidth &&
+    `
+      grid-column: 2;
+      margin: 0 auto;
+        ${MaxWidth}`}
 `;
 
 const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
@@ -81,9 +74,12 @@ const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
       : ""}
 `;
 
-export const WorkflowsNavLayout: React.FC<{ children?: React.ReactNode }> =
+export const WorkflowsNavLayout: React.FC<{
+  limitedWidth?: boolean;
+  children?: React.ReactNode;
+}> =
   // TODO(#5636) Eliminate PartiallyTypedRootStore
-  observer(function WorkflowsNavLayout({ children }) {
+  observer(function WorkflowsNavLayout({ limitedWidth = true, children }) {
     const {
       currentTenantId,
       workflowsStore: { homepage: workflowsHomepage, activePageIsHomepage },
@@ -98,7 +94,7 @@ export const WorkflowsNavLayout: React.FC<{ children?: React.ReactNode }> =
           <OverviewNavLinks />
         </NavigationLayout>
         {!activePageIsHomepage && (
-          <BackButtonWrapper $fixed={!isLaptop}>
+          <BackButtonWrapper $fixed={!isLaptop && limitedWidth}>
             <NavigationBackButton
               action={{ url: workflowsUrl(workflowsHomepage) }}
             >
@@ -106,7 +102,9 @@ export const WorkflowsNavLayout: React.FC<{ children?: React.ReactNode }> =
             </NavigationBackButton>
           </BackButtonWrapper>
         )}
-        <Main isMobile={isMobile}>{children}</Main>
+        <Main isMobile={isMobile} $limitedWidth={limitedWidth}>
+          {children}
+        </Main>
       </Wrapper>
     );
   });

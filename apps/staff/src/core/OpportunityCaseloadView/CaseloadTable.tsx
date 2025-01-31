@@ -211,7 +211,11 @@ export const CaseloadTable = function CaseloadTable<TData>({
             $isSelected={shouldHighlightRow(row.original)}
           >
             {row.getVisibleCells().map((cell) => (
-              <Cell key={cell.id} $expandedLastColumn={expandedLastColumn}>
+              <Cell
+                key={cell.id}
+                className={"fs-exclude"}
+                $expandedLastColumn={expandedLastColumn}
+              >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Cell>
             ))}

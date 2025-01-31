@@ -16,6 +16,8 @@
 // =============================================================================
 
 /* eslint camelcase: 0 */
+import { isDemoMode } from "~client-env-utils";
+
 import { CSG, RECIDIVIZ_TENANT } from "../tenants";
 import { DASHBOARD_TENANTS } from "./TenantStore/dashboardTenants";
 import * as lantern from "./TenantStore/lanternTenants";
@@ -91,7 +93,8 @@ export type FeatureVariant =
   | "taskFilters"
   | "offenseOverrideControls"
   | "protectiveFactors"
-  | "usIdCaseManagerSearch";
+  | "usIdCaseManagerSearch"
+  | "opportunityTableView";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -144,6 +147,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   offenseOverrideControls: {},
   protectiveFactors: {},
   usIdCaseManagerSearch: {},
+  opportunityTableView: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -180,6 +184,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         supervisorHomepage: {
           activeTenants: ["US_MI", "US_TN"],
         },
+        opportunityTableView: isDemoMode() ? undefined : {},
         // Currently disabled because the last synced date doesn't exist on the backend yet.
         lastSyncedDate: undefined,
         // Undefined so that Recidiviz users see both FVs in staging
