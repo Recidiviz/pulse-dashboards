@@ -67,6 +67,7 @@ export const Hydrator: React.FC<HydratorProps> = observer(function Hydrator({
   hydratable,
   className,
   failed,
+  loading,
 }) {
   const hydrationStatus = hydratable.hydrationState.status;
   const needsHydration = isHydrationUntouched(hydratable);
@@ -85,11 +86,18 @@ export const Hydrator: React.FC<HydratorProps> = observer(function Hydrator({
         switch (item) {
           case "needs hydration":
           case "loading":
-            return (
-              <StatusWrapper style={style}>
-                <Loading />
-              </StatusWrapper>
-            );
+            switch (loading) {
+              case null:
+                return null;
+              case undefined:
+                return (
+                  <StatusWrapper style={style}>
+                    <Loading />
+                  </StatusWrapper>
+                );
+              default:
+                return <StatusWrapper style={style}>{loading}</StatusWrapper>;
+            }
           case "failed":
             return <StatusWrapper style={style}>{failed}</StatusWrapper>;
           case "hydrated":
