@@ -25,7 +25,7 @@ import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
 import { getLinkToForm } from "../../utils";
 import { Opportunity } from "..";
 
-const NavigateToFormButtonStyle = styled(Button)`
+export const NavigateToFormButtonStyle = styled(Button)`
   display: inline-flex;
   align-items: center;
   justify-content: center;

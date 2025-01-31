@@ -26,7 +26,7 @@ import copyIcon from "../../assets/static/images/copy.svg";
 import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 
-const PersonIdWithCopyIcon = styled.span<{ shiftIcon: boolean }>`
+export const PersonIdWithCopyIcon = styled.span<{ shiftIcon: boolean }>`
   color: ${palette.data.teal1};
   padding: 0 ${rem(spacing.xs)};
   border-radius: ${rem(spacing.xs / 2)};
