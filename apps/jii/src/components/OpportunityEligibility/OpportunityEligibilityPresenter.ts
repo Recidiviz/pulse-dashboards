@@ -57,19 +57,22 @@ export class OpportunityEligibilityPresenter {
     const {
       requirements: {
         summary: { heading },
-        fullPage: { linkText, urlSlug },
+        fullPage,
       },
     } = this.config;
 
+    const { linkText, urlSlug } = fullPage ?? {};
     return {
       id: slugify(heading),
       heading,
       sections,
       linkText,
-      linkUrl: State.Resident.Eligibility.Opportunity.InfoPage.buildPath({
-        ...this.linkParams,
-        pageSlug: urlSlug,
-      }),
+      linkUrl:
+        urlSlug &&
+        State.Resident.Eligibility.Opportunity.InfoPage.buildPath({
+          ...this.linkParams,
+          pageSlug: urlSlug,
+        }),
     };
   }
 

@@ -43,7 +43,8 @@ const ineligibleResident = usMeResidents[usMeResidents.length - 1];
 test("generates links to headings in page body", async () => {
   const presenter = new OpportunityInfoPagePresenter(
     oppConfig,
-    oppConfig.requirements.fullPage.urlSlug,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    oppConfig.requirements.fullPage!.urlSlug,
     new UsMeSCCPEligibilityReport(
       ineligibleResident,
       oppConfig,
@@ -57,7 +58,8 @@ test("generates links to headings in page body", async () => {
         State.Resident.Eligibility.Opportunity.InfoPage.buildPath({
           stateSlug: "maine",
           opportunitySlug: oppConfig.urlSlug,
-          pageSlug: oppConfig.requirements.fullPage.urlSlug,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          pageSlug: oppConfig.requirements.fullPage!.urlSlug,
           personPseudoId: ineligibleResident.pseudonymizedId,
         }),
       ]}

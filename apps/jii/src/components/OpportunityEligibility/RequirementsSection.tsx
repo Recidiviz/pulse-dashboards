@@ -169,7 +169,7 @@ export const RequirementsSection: FC<{
           </Fragment>
         ))}
       </RequirementsGroupings>
-      {presenter.requirementsContent && (
+      {presenter.requirementsContent.linkUrl && (
         <GoButton to={presenter.requirementsContent.linkUrl}>
           {presenter.requirementsContent.linkText}
         </GoButton>

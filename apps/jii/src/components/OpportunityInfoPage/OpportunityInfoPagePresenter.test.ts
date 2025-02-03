@@ -35,7 +35,7 @@ const oppConfig = stateConfig.incarcerationOpportunities[
 const allPages = [
   oppConfig.requirements.fullPage,
   ...oppConfig.sections.map((s) => s.fullPage),
-];
+].filter((c) => c !== undefined);
 const eligibleResident = usMeResidents[0];
 
 test.each(allPages)(

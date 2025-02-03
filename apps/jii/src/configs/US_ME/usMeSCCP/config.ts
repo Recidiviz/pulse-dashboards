@@ -16,11 +16,15 @@
 // =============================================================================
 
 import { OpportunityConfig } from "../../types";
+import { commonTrackedCriteria, defaultStatusLabels } from "../commonConfigs";
 import aboutPage from "./aboutPage.md?raw";
 import aboutSummary from "./aboutSummary.md?raw";
 import nextStepsBody from "./nextStepsBody.md?raw";
 import nextStepsPage from "./nextStepsPage.md?raw";
 import requirementsPage from "./requirementsPage.md?raw";
+
+const { usMeNoClassAOrBViolationFor90Days, usMeNoDetainersWarrantsOrOther } =
+  commonTrackedCriteria;
 
 export const config: OpportunityConfig = {
   urlSlug: "sccp",
@@ -31,6 +35,12 @@ export const config: OpportunityConfig = {
     summary: {
       heading: "Your eligibility",
       trackedCriteria: {
+        usMeCustodyLevelIsMinimumOrCommunity: {
+          criterion: `Current custody level is {{#if currentCriterion}} 
+                {{titleCase (lowerCase currentCriterion.custodyLevel) }}
+                {{else}} Minimum or Community
+              {{/if}}`,
+        },
         usMeServedXPortionOfSentence: {
           criterion: `{{#if currentCriterion}}Served {{currentCriterion.xPortionServed}} of your sentence
               {{else}}Served 1/2 of your sentence if your sentence is 5 years or fewer; 
@@ -44,20 +54,8 @@ export const config: OpportunityConfig = {
           ineligibleReason:
             "You'll meet this requirement on {{formatFullDate currentCriterion.eligibleDate}}",
         },
-        usMeNoClassAOrBViolationFor90Days: {
-          criterion: "No Class A or B discipline in past 90 days",
-          ineligibleReason:
-            "{{#if currentCriterion.eligibleDate}}You'll meet this requirement on {{formatFullDate currentCriterion.eligibleDate}}{{else}}You have a Class {{currentCriterion.highestClassViol}} violation: {{currentCriterion.violType}}{{/if}}",
-        },
-        usMeCustodyLevelIsMinimumOrCommunity: {
-          criterion: `Current custody level is {{#if currentCriterion}} 
-                {{titleCase (lowerCase currentCriterion.custodyLevel) }}
-                {{else}} Minimum or Community
-              {{/if}}`,
-        },
-        usMeNoDetainersWarrantsOrOther: {
-          criterion: "No unresolved detainers, warrants or pending charges",
-        },
+        usMeNoClassAOrBViolationFor90Days,
+        usMeNoDetainersWarrantsOrOther,
       },
       untrackedCriteria: [
         {
@@ -127,10 +125,5 @@ export const config: OpportunityConfig = {
   ],
 
   shortName: "SCCP",
-  formPreview: { title: "SCCP Application" },
-  statusLabels: {
-    ELIGIBLE: "May be eligible",
-    ALMOST_ELIGIBLE: "Almost eligible",
-    INELIGIBLE: "Not yet eligible",
-  },
+  statusLabels: defaultStatusLabels,
 } satisfies OpportunityConfig;
