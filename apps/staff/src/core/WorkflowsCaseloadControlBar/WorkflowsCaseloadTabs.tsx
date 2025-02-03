@@ -49,7 +49,7 @@ const TabButton = styled.div<{ $active: boolean }>`
   background-color: ${palette.marble1};
   color: ${(props) => (props.$active ? palette.pine4 : palette.slate60)};
   padding: 0.5rem 0.25rem;
-  border-bottom: 1px solid;
+  border-bottom: 2px solid;
   border-bottom-color: ${(props) =>
     props.$active ? palette.pine4 : `transparent`};
   cursor: pointer;
