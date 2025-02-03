@@ -321,7 +321,8 @@ describe("protected routes", () => {
               opportunitySlug: sccpConfig.urlSlug,
               stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
               personPseudoId,
-              pageSlug: sccpConfig.requirements.fullPage.urlSlug,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              pageSlug: sccpConfig.requirements.fullPage!.urlSlug,
             }),
           ]}
         >
@@ -334,7 +335,7 @@ describe("protected routes", () => {
       await waitFor(() =>
         expect(
           screen.getByRole("heading", {
-            name: sccpConfig.requirements.fullPage.heading,
+            name: sccpConfig.requirements.fullPage?.heading,
           }),
         ).toBeInTheDocument(),
       );
@@ -342,7 +343,7 @@ describe("protected routes", () => {
 
     it("should be accessible", async () => {
       await screen.findByRole("heading", {
-        name: sccpConfig.requirements.fullPage.heading,
+        name: sccpConfig.requirements.fullPage?.heading,
       });
 
       expect(await axe(container)).toHaveNoViolations();
@@ -350,7 +351,7 @@ describe("protected routes", () => {
 
     it("should set page title", () => {
       expect(window.document.title).toBe(
-        `${sccpConfig.requirements.fullPage.heading} – Opportunities`,
+        `${sccpConfig.requirements.fullPage?.heading} – Opportunities`,
       );
     });
   });

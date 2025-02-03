@@ -67,6 +67,9 @@ describe("fully eligible, needs to serve half", () => {
           "label": "Requirements you **have** met",
           "requirements": [
             {
+              "criterion": "Current custody level is Community",
+            },
+            {
               "criterion": "Served 1/2 of your sentence",
             },
             {
@@ -74,9 +77,6 @@ describe("fully eligible, needs to serve half", () => {
             },
             {
               "criterion": "No Class A or B discipline in past 90 days",
-            },
-            {
-              "criterion": "Current custody level is Community",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",
@@ -148,13 +148,13 @@ describe("eligible to apply before X portion served", () => {
           "label": "Requirements you **have** met",
           "requirements": [
             {
+              "criterion": "Current custody level is Minimum",
+            },
+            {
               "criterion": "Fewer than 30 months remaining on your sentence",
             },
             {
               "criterion": "No Class A or B discipline in past 90 days",
-            },
-            {
-              "criterion": "Current custody level is Minimum",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",
@@ -238,13 +238,13 @@ describe("eligible to apply before X months remaining", () => {
           "label": "Requirements you **have** met",
           "requirements": [
             {
+              "criterion": "Current custody level is Minimum",
+            },
+            {
               "criterion": "Served 2/3 of your sentence",
             },
             {
               "criterion": "No Class A or B discipline in past 90 days",
-            },
-            {
-              "criterion": "Current custody level is Minimum",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",
@@ -326,13 +326,13 @@ describe("almost eligible, portion served", () => {
           "label": "Requirements you **have** met",
           "requirements": [
             {
+              "criterion": "Current custody level is Minimum",
+            },
+            {
               "criterion": "Fewer than 30 months remaining on your sentence",
             },
             {
               "criterion": "No Class A or B discipline in past 90 days",
-            },
-            {
-              "criterion": "Current custody level is Minimum",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",
@@ -414,13 +414,13 @@ describe("almost eligible, recent violation", () => {
           "label": "Requirements you **have** met",
           "requirements": [
             {
+              "criterion": "Current custody level is Minimum",
+            },
+            {
               "criterion": "Served 1/2 of your sentence",
             },
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
-            },
-            {
-              "criterion": "Current custody level is Minimum",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",
@@ -491,13 +491,13 @@ describe("almost eligible, pending violation", () => {
           "label": "Requirements you **have** met",
           "requirements": [
             {
+              "criterion": "Current custody level is Minimum",
+            },
+            {
               "criterion": "Served 1/2 of your sentence",
             },
             {
               "criterion": "Fewer than 30 months remaining on your sentence",
-            },
-            {
-              "criterion": "Current custody level is Minimum",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",
@@ -579,13 +579,13 @@ describe("almost eligible, months remaining", () => {
           "label": "Requirements you **have** met",
           "requirements": [
             {
+              "criterion": "Current custody level is Community",
+            },
+            {
               "criterion": "Served 2/3 of your sentence",
             },
             {
               "criterion": "No Class A or B discipline in past 90 days",
-            },
-            {
-              "criterion": "Current custody level is Community",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",
@@ -656,6 +656,9 @@ describe("not eligible", () => {
           "label": "Requirements you **have not** met yet",
           "requirements": [
             {
+              "criterion": "Current custody level is Medium",
+            },
+            {
               "criterion": "Served 1/2 of your sentence",
               "ineligibleReason": "You'll meet this requirement on November 16, 2022",
             },
@@ -666,9 +669,6 @@ describe("not eligible", () => {
             {
               "criterion": "No Class A or B discipline in past 90 days",
               "ineligibleReason": "You have a Class B violation: Pending since 2021-09-06",
-            },
-            {
-              "criterion": "Current custody level is Medium",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",

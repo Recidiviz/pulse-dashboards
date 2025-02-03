@@ -79,7 +79,7 @@ export type OpportunityConfig = {
        */
       highlights: Array<{ label: string; value: string }>;
     };
-    fullPage: FullPageConfig;
+    fullPage?: FullPageConfig;
   };
   /**
    * Optional copy-only sections that will appear below requirements
@@ -90,9 +90,7 @@ export type OpportunityConfig = {
    * into menus and headings to refer to this opportunity generically
    */
   shortName: string;
-  formPreview: {
-    title: string;
-  };
+
   statusLabels: Record<EligibilityStatus, string>;
 };
 

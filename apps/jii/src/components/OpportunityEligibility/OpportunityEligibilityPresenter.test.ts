@@ -68,13 +68,13 @@ describe("eligible resident", () => {
             "label": "Requirements you **have** met",
             "requirements": [
               {
+                "criterion": "Current custody level is Community",
+              },
+              {
                 "criterion": "Served 2/3 of your sentence",
               },
               {
                 "criterion": "No Class A or B discipline in past 90 days",
-              },
-              {
-                "criterion": "Current custody level is Community",
               },
               {
                 "criterion": "No unresolved detainers, warrants or pending charges",

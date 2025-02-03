@@ -36,10 +36,10 @@ export class OpportunityInfoPagePresenter {
     const config = [
       this.opportunityConfig.requirements,
       ...this.opportunityConfig.sections,
-    ].find((s) => s.fullPage.urlSlug === this.pageSlug);
+    ].find((s) => s.fullPage?.urlSlug === this.pageSlug);
 
     // in practice we don't really expect this to happen, mostly for type safety
-    if (!config) {
+    if (!config || !config.fullPage) {
       throw new Error(`No contents found for page ${this.pageSlug}`);
     }
     return config.fullPage;
@@ -68,6 +68,7 @@ export class OpportunityInfoPagePresenter {
       this.opportunityConfig.requirements.fullPage,
       ...this.eligibilityReport.enabledSections.map((s) => s.fullPage),
     ]
+      .filter((c) => c !== undefined)
       .filter((c) => c.urlSlug !== this.pageConfig.urlSlug)
       .map((c) => ({
         // intentionally using the page title here rather than the link text,
