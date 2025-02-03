@@ -92,6 +92,7 @@ export const US_CA: InsightsConfig = {
   supervisorHasNoOfficersWithEligibleClientsLabel:
     "Supervisor has no officers with eligible clients",
   supervisorHasNoOutlierOfficersLabel: "Supervisor has no outlier officers",
-  worseThanRateLabel: "Far worse than statewide rate",
   vitalsMetrics: [],
+  vitalsMetricsMethodologyUrl: "https://www.recidiviz.org/",
+  worseThanRateLabel: "Far worse than statewide rate",
 };

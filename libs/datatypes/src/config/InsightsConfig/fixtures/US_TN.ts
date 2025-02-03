@@ -113,6 +113,7 @@ export const US_TN: InsightsConfig = {
     "No staff have clients listed as currently eligible for an opportunity",
   supervisorHasNoOutlierOfficersLabel:
     "No staff have metrics far from the statewide rate this month",
-  worseThanRateLabel: "Much higher than statewide rate",
   vitalsMetrics: [],
+  vitalsMetricsMethodologyUrl: "https://www.recidiviz.org/",
+  worseThanRateLabel: "Much higher than statewide rate",
 };

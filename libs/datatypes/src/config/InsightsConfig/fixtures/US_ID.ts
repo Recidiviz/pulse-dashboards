@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { VITALS_METRIC_IDS } from "../../../metrics/utils/constants";
 import { InsightsConfig } from "../schema";
 
 export const US_ID: InsightsConfig = {
@@ -102,15 +101,13 @@ export const US_ID: InsightsConfig = {
     "Nice! No outstanding opportunities for now.",
   supervisorHasNoOutlierOfficersLabel:
     "Nice! No officers are outliers on any metrics this month.",
-  worseThanRateLabel: "Far above the statewide rate",
   vitalsMetrics: [
     {
-      metricId: VITALS_METRIC_IDS.enum.timely_contact,
-      titleDisplayName: "Timely F2F Contact",
-    },
-    {
-      metricId: VITALS_METRIC_IDS.enum.timely_risk_assessment,
+      metricId: "timely_risk_assessment",
       titleDisplayName: "Timely Risk Assessment",
     },
+    { metricId: "timely_contact", titleDisplayName: "Timely F2F Contact" },
   ],
+  vitalsMetricsMethodologyUrl: "https://www.recidiviz.org/",
+  worseThanRateLabel: "Far above the statewide rate",
 };
