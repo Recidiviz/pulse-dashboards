@@ -100,19 +100,31 @@ echo "Downloading env files..."
 # Create the files if they don't exist already
 touch .env .env.staging .env.production .env.test .env.preview .env.demo
 
-env=$(gcloud secrets versions access latest --secret=$env_file --project recidiviz-dashboard-staging)
-echo "${env}" > .env
+if [ "$env_file" != null ]; then
+  env=$(gcloud secrets versions access latest --secret=$env_file --project recidiviz-dashboard-staging)
+  echo "${env}" > .env
+fi
+
+if [ "$env_staging_file" != null ]; then
 env_staging=$(gcloud secrets versions access latest --secret=$env_staging_file --project recidiviz-dashboard-staging)
 echo "${env_staging}" > .env.staging
+fi
+
+if [ "$env_prod_file" != null ]; then
 env_prod=$(gcloud secrets versions access latest --secret=$env_prod_file --project recidiviz-dashboard-staging)
 echo "${env_prod}" > .env.production
+fi
+
+if [ "$env_test_file" != null ]; then
 env_test=$(gcloud secrets versions access latest --secret=$env_test_file --project recidiviz-dashboard-staging)
 echo "${env_test}" > .env.test
+fi
 
 if [ "$env_demo_file" != null ]; then
     env_demo=$(gcloud secrets versions access latest --secret=$env_demo_file --project recidiviz-dashboard-staging)
     echo "${env_demo}" > .env.demo
 fi
+
 if [ "$env_preview_file" != null ]; then
     env_preview=$(gcloud secrets versions access latest --secret=$env_preview_file --project recidiviz-dashboard-staging)
     echo "${env_preview}" > .env.preview

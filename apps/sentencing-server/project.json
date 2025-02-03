@@ -136,6 +136,10 @@
       "dependsOn": [
         {
           "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@sentencing-server/prisma"],
           "target": "docker"
         }
       ],
