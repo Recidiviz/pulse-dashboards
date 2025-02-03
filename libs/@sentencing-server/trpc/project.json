@@ -5,6 +5,13 @@
   "projectType": "library",
   "tags": ["sentencing-server"],
   "targets": {
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_sentencing_server --env_test env_test_sentencing_server",
+        "cwd": "{projectRoot}"
+      }
+    },
     "lint-files": {
       "executor": "nx:run-commands",
       "options": {
@@ -27,14 +34,18 @@
       "dependsOn": [
         {
           "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@sentencing-server/prisma"],
           "target": "docker"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/libs/@sentencing-server/trpc"],
       "cache": true,
       "options": {
-        "command": "vitest",
-        "cwd": "{projectRoot}"
+        "command": "nx prisma-push @sentencing-server/prisma --accept-data-loss && cd libs/@sentencing-server/trpc && vitest",
+        "cwd": "{workspaceRoot}"
       }
     }
   }
