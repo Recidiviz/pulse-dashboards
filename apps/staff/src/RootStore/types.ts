@@ -169,7 +169,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
           activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA"],
         },
         sortableOpportunityTabs: {
-          activeTenants: ["US_OR", "US_ME", "US_MI"],
+          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ"],
         },
         usOrEarnedDischargeSentence: {},
         oppTabSubcategories: {
