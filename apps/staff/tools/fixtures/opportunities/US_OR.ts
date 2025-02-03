@@ -134,7 +134,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "CONVICTION",
-          text: "Has been convicted a crime that occurred while on supervision for the case under review (not found in the DOC400/CIS)",
+          text: "Has been convicted of a crime that occurred while on supervision for the case under review (not found in the DOC400/CIS)",
         },
         {
           key: "FINES & FEES",
@@ -256,7 +256,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       stateCode: "US_OR",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
