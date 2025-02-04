@@ -18,7 +18,7 @@
 import { makeAutoObservable } from "mobx";
 
 import { OpportunityConfig } from "../../configs/types";
-import { EligibilityReport } from "../../models/EligibilityReport/interface";
+import { EligibilityReport } from "../../models/EligibilityReport/types";
 
 /**
  * Reads the specified static page content out of the opportunity config

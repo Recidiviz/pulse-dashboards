@@ -20,7 +20,7 @@ import { rem, rgba } from "polished";
 import { CSSProperties, FC } from "react";
 import styled from "styled-components/macro";
 
-import { EligibilityStatus } from "../../models/EligibilityReport/interface";
+import { EligibilityStatus } from "../../models/EligibilityReport/types";
 
 const Chip = styled.div`
   ${typography.Sans14};
@@ -47,6 +47,8 @@ const statusStyles: Record<EligibilityStatus, CSSProperties> = {
     backgroundColor: rgba(palette.slate, 0.05),
     borderColor: palette.slate30,
   },
+  // we don't expect this to be displayed
+  NA: {},
 };
 
 export const EligibilityStatusChip: FC<{

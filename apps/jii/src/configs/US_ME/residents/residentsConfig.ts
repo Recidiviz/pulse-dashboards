@@ -16,7 +16,8 @@
 // =============================================================================
 
 import { ResidentsConfig } from "../../types";
-import { config } from "../usMeSCCP/config";
+import { usMeSccpConfig } from "../usMeSCCP/config";
+import { usMeWorkReleaseConfig } from "../usMeWorkRelease/config";
 import releaseDateInfo from "./releaseDateInfo.md?raw";
 
 export const usMeResidentsConfig: ResidentsConfig = {
@@ -29,7 +30,8 @@ export const usMeResidentsConfig: ResidentsConfig = {
     },
   ],
   incarcerationOpportunities: {
-    usMeSCCP: config,
+    usMeWorkRelease: usMeWorkReleaseConfig,
+    usMeSCCP: usMeSccpConfig,
   },
   home: {
     progress: {

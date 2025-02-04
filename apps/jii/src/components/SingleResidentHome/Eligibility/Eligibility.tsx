@@ -33,12 +33,14 @@ export const Eligibility: FC = observer(function Eligibility() {
   const { opportunities } = useSingleResidentContext();
   return (
     <div>
-      {opportunities.map((data, i, { length }) => (
-        <Fragment key={data.opportunityId}>
-          <OpportunityCard {...data} />
-          {i + 1 < length ? <Divider /> : null}
-        </Fragment>
-      ))}
+      {opportunities
+        .filter((o) => o.eligibilityReport.status.value !== "NA")
+        .map((data, i, { length }) => (
+          <Fragment key={data.opportunityId}>
+            <OpportunityCard {...data} />
+            {i + 1 < length ? <Divider /> : null}
+          </Fragment>
+        ))}
     </div>
   );
 });

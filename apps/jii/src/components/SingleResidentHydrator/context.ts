@@ -23,7 +23,7 @@ import {
   IncarcerationOpportunityId,
   OpportunityConfig,
 } from "../../configs/types";
-import { EligibilityReport } from "../../models/EligibilityReport/interface";
+import { EligibilityReport } from "../../models/EligibilityReport/types";
 import { useRequiredContext } from "../../utils/useRequiredContext";
 
 export type OpportunityData = {

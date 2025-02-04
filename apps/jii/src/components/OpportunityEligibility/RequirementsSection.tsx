@@ -22,7 +22,7 @@ import { rem, rgba } from "polished";
 import { FC, Fragment } from "react";
 import styled from "styled-components/macro";
 
-import { RequirementsSectionContent } from "../../models/EligibilityReport/interface";
+import { RequirementsSectionContent } from "../../models/EligibilityReport/types";
 import { GoButton } from "../ButtonLink/GoButton";
 import { EligibilityStatusChip } from "../EligibilityStatusChip/EligibilityStatusChip";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
@@ -139,6 +139,8 @@ const RequirementsList: FC<{ section: RequirementsSectionContent }> = observer(
 export const RequirementsSection: FC<{
   presenter: OpportunityEligibilityPresenter;
 }> = observer(function RequirementsSection({ presenter }) {
+  if (!presenter.requirementsContent) return null;
+
   return (
     <Section id={presenter.requirementsContent.id}>
       <Header>

@@ -17,10 +17,11 @@
 
 import { ZodTypeAny } from "zod";
 
-import { usMeSCCPSchema } from "~datatypes";
+import { usMeSCCPSchema, usMeWorkReleaseSchema } from "~datatypes";
 
 import { IncarcerationOpportunityId } from "./types";
 
 export const residentOpportunitySchemas = {
   usMeSCCP: usMeSCCPSchema,
+  usMeWorkRelease: usMeWorkReleaseSchema,
 } satisfies Record<IncarcerationOpportunityId, ZodTypeAny>;

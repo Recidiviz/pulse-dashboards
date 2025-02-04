@@ -22,7 +22,7 @@ import { ParsedRecord, ResidentRecord } from "~datatypes";
 import {
   EligibilityReport,
   EligibilityStatus,
-} from "../models/EligibilityReport/interface";
+} from "../models/EligibilityReport/types";
 import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
 import { stateCodes } from "./stateConstants";
 
@@ -94,7 +94,7 @@ export type OpportunityConfig = {
   statusLabels: Record<EligibilityStatus, string>;
 };
 
-export type IncarcerationOpportunityId = "usMeSCCP";
+export type IncarcerationOpportunityId = "usMeSCCP" | "usMeWorkRelease";
 
 export type ResidentsConfig = {
   headerProfileFields: Array<ProfileField>;

@@ -21,7 +21,7 @@ import { makeAutoObservable } from "mobx";
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import { OpportunityConfig } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
-import { EligibilityReport } from "../../models/EligibilityReport/interface";
+import { EligibilityReport } from "../../models/EligibilityReport/types";
 import { State } from "../../routes/routes";
 import { LinkProps } from "../ResidentsLayoutRoute/NavigationMenuPresenter";
 
@@ -52,7 +52,9 @@ export class OpportunityEligibilityPresenter {
   }
 
   get requirementsContent() {
-    const { requirements: sections } = this.eligibilityReport;
+    const { status, requirements: sections } = this.eligibilityReport;
+
+    if (status.value === "NA") return;
 
     const {
       requirements: {
@@ -96,16 +98,21 @@ export class OpportunityEligibilityPresenter {
   }
 
   get tableOfContentsLinks(): Array<LinkProps> {
-    return [
-      {
-        children: this.requirementsContent.heading,
-        to: `#${this.requirementsContent.id}`,
-      },
+    const links = [
       ...this.additionalSections.map((section) => ({
         children: section.heading,
         to: `#${section.id}`,
       })),
     ];
+
+    if (this.requirementsContent) {
+      links.unshift({
+        children: this.requirementsContent.heading,
+        to: `#${this.requirementsContent.id}`,
+      });
+    }
+
+    return links;
   }
 
   get pageBackgroundStyle() {

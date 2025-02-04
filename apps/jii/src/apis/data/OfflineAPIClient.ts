@@ -15,9 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
 import isMatch from "lodash/isMatch";
 
-import { outputFixture, usMeSccpFixtures } from "~datatypes";
+import {
+  outputFixture,
+  usMeSccpFixtures,
+  usMeWorkReleaseFixtures,
+} from "~datatypes";
 import { FirestoreAPI, FirestoreOfflineAPIClient } from "~firestore-api";
 
 import {
@@ -121,13 +126,32 @@ export class OfflineAPIClient implements DataAPI {
     residentExternalId: string,
     opportunityId: O,
   ): Promise<OpportunityRecord<O>> {
-    // for convenience, while there is only one opportunity configured we skip the ID lookup step
-    const fixture = Object.values(usMeSccpFixtures).find((f) =>
-      isMatch(outputFixture(f), {
-        stateCode: this.stateCode,
-        externalId: residentExternalId,
-      }),
-    );
+    let fixture: OpportunityRecord<O> | undefined;
+
+    switch (opportunityId) {
+      case "usMeSCCP": {
+        const parsedFixture = Object.values(usMeSccpFixtures).find((f) =>
+          isMatch(outputFixture(f), {
+            stateCode: this.stateCode,
+            externalId: residentExternalId,
+          }),
+        );
+
+        fixture = parsedFixture ? outputFixture(parsedFixture) : undefined;
+        break;
+      }
+      case "usMeWorkRelease": {
+        fixture = Object.values(usMeWorkReleaseFixtures).find((f) =>
+          isMatch(f, {
+            stateCode: this.stateCode,
+            externalId: residentExternalId,
+          }),
+        );
+        break;
+      }
+      default:
+        assertNever(opportunityId);
+    }
 
     if (!fixture) {
       throw new Error(
@@ -135,6 +159,6 @@ export class OfflineAPIClient implements DataAPI {
       );
     }
 
-    return outputFixture(fixture);
+    return fixture;
   }
 }

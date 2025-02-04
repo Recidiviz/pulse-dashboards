@@ -42,8 +42,8 @@ export const usMeWorkReleaseConfig: OpportunityConfig = {
       highlights: [
         {
           label: `When you may be eligible to **apply**`,
-          value: `{{#if (isFutureDate eligibilityDate)}}
-          {{formatFullDate eligibilityDate}}
+          value: `{{#if (isFutureDate threeYearsRemainingDate)}}
+          {{formatFullDate threeYearsRemainingDate}}
         {{else}}
           Now
         {{/if}}`,

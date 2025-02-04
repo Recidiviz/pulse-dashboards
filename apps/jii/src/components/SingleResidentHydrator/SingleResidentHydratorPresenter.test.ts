@@ -17,13 +17,19 @@
 
 import { configure, flowResult } from "mobx";
 
-import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
+import {
+  outputFixture,
+  usMeResidents,
+  usMeSccpFixtures,
+  usMeWorkReleaseFixtures,
+} from "~datatypes";
 import { hydrationFailure } from "~hydration-utils";
 
 import { usMeResidentsConfig } from "../../configs/US_ME/residents/residentsConfig";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
 import { UsMeSCCPEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
+import { UsMeWorkReleaseEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeWorkReleaseEligibilityReport";
 import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresenter";
 
 let presenter: SingleResidentHydratorPresenter;
@@ -35,6 +41,17 @@ const testResident = usMeResidents[0];
 const expectedData = {
   resident: testResident,
   opportunities: [
+    {
+      opportunityId: "usMeWorkRelease",
+      opportunityConfig:
+        usMeResidentsConfig.incarcerationOpportunities.usMeWorkRelease,
+      eligibilityReport: new UsMeWorkReleaseEligibilityReport(
+        testResident,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        usMeResidentsConfig.incarcerationOpportunities.usMeWorkRelease!,
+        usMeWorkReleaseFixtures.RES001Eligible,
+      ),
+    },
     {
       opportunityId: "usMeSCCP",
       opportunityConfig:

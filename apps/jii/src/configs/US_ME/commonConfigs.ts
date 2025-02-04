@@ -21,6 +21,9 @@ export const defaultStatusLabels: OpportunityConfig["statusLabels"] = {
   ELIGIBLE: "May be eligible",
   ALMOST_ELIGIBLE: "Almost eligible",
   INELIGIBLE: "Not yet eligible",
+  // Generally we don't expect this status to be displayed, but it's included
+  // for completeness and as a fallback in case we do render it inadvertently
+  NA: "Not available",
 };
 
 const eligibleDateReasonTemplate =

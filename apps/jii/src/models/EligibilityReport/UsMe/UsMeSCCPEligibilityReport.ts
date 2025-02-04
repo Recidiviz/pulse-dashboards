@@ -15,28 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import assertNever from "assert-never";
 import { isFuture, max, subMonths } from "date-fns";
-import { mapValues } from "lodash";
 
 import { ResidentRecord, UsMeSCCPRecord } from "~datatypes";
 
-import {
-  cleanupInlineTemplate,
-  hydrateTemplate,
-} from "../../../configs/hydrateTemplate";
 import { OpportunityConfig } from "../../../configs/types";
-import {
-  EligibilityReport,
-  eligibilityStatusEnum,
-  RequirementsSectionContent,
-} from "../interface";
 import { ReportBase } from "../ReportBase";
+import { EligibilityReport, eligibilityStatusEnum } from "../types";
 
 const APPLICATION_DATE_OFFSET_MONTHS = 3;
 
 export class UsMeSCCPEligibilityReport
-  extends ReportBase
+  extends ReportBase<"usMeSCCP">
   implements EligibilityReport
 {
   constructor(
@@ -118,9 +108,9 @@ export class UsMeSCCPEligibilityReport
    * this would be trivial, but for SCCP the groupings are different for staff vs JII
    * due to the way that the application process is handled.
    */
-  private get requirementsByStatus() {
-    const met = { ...this.eligibilityData.eligibleCriteria };
-    const notMet = { ...this.eligibilityData.ineligibleCriteria };
+  protected override get requirementsByStatus() {
+    const { met, notMet } = super.requirementsByStatus;
+
     // these criteria will be "met" if the resident is within the pre-eligibility application window,
     // but we want to display them based on the actual eligibility date here
     this.dateCriteria.forEach((key) => {
@@ -132,66 +122,6 @@ export class UsMeSCCPEligibilityReport
     });
 
     return { met, notMet };
-  }
-
-  get requirements(): EligibilityReport["requirements"] {
-    const sections: Array<RequirementsSectionContent> = [];
-
-    const { trackedCriteria } = this.config.requirements.summary;
-    const orderedCriteria = Object.keys(trackedCriteria);
-
-    // run a separate formatting pipeline for each grouping
-    // since they are processed a little differently
-    const { met, notMet } = this.requirementsByStatus;
-
-    if (Object.keys(met).length) {
-      sections.push({
-        label: "Requirements you **have** met",
-        icon: "Success",
-        requirements: orderedCriteria
-          .filter((key) => key in met)
-          .map((key) => ({
-            // ineligible reason is excluded, since these criteria are met
-            criterion: cleanupInlineTemplate(
-              hydrateTemplate(trackedCriteria[key].criterion, {
-                currentCriterion: met[key],
-              }),
-            ),
-          })),
-      });
-    }
-
-    if (Object.keys(notMet).length) {
-      sections.push({
-        label: "Requirements you **have not** met yet",
-        icon: "CloseOutlined",
-        requirements: orderedCriteria
-          .filter((key) => key in notMet)
-          .map((key) =>
-            // here, by mapping over both values in the copy object,
-            // we are including criterion and ineligible reason, when it is present
-            mapValues(trackedCriteria[key], (template) =>
-              template
-                ? cleanupInlineTemplate(
-                    hydrateTemplate(template, {
-                      currentCriterion: notMet[key],
-                    }),
-                  )
-                : "",
-            ),
-          ),
-      });
-    }
-
-    if (this.config.requirements.summary.untrackedCriteria.length) {
-      sections.push({
-        label: "Ask your case manager if you’ve met these requirements",
-        icon: "ArrowCircled",
-        requirements: this.config.requirements.summary.untrackedCriteria,
-      });
-    }
-
-    return sections;
   }
 
   protected get showHighlights(): boolean {
@@ -224,7 +154,8 @@ export class UsMeSCCPEligibilityReport
         return true;
       }
       default:
-        return assertNever(this.status.value);
+        // no other values are explicitly supported by this opportunity
+        return false;
     }
   }
 }

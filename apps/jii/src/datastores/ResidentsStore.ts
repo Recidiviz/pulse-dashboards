@@ -29,7 +29,7 @@ import {
   OpportunityRecord,
   ResidentsConfig,
 } from "../configs/types";
-import { EligibilityReport } from "../models/EligibilityReport/interface";
+import { EligibilityReport } from "../models/EligibilityReport/types";
 import type { RootStore } from "./RootStore";
 
 // because we use a mapped type to ensure key-value agreement, this can't be an ES6 Map

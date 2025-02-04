@@ -72,7 +72,7 @@ exports[`schema for 'US_ME' 'RES003' 1`] = `
 exports[`schema for 'US_ME' 'RES004' 1`] = `
 {
   "admissionDate": 2019-05-18T00:00:00.000Z,
-  "custodyLevel": "MINIMUM",
+  "custodyLevel": "COMMUNITY",
   "displayId": "dRES004",
   "facilityId": "FACILITY NAME",
   "gender": "INTERNAL_UNKNOWN",
