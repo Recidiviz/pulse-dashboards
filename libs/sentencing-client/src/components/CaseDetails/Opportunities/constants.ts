@@ -55,6 +55,8 @@ export const VETERAN_STATUS_CRITERION_KEY = "veteranStatusCriterion";
 export const PRIOR_CRIMINAL_HISTORY_CRITERION_KEY =
   "priorCriminalHistoryCriterion";
 
+export const UNKNOWN = "UNKNOWN";
+
 export const eligibilityCriteriaToLabelName: Record<
   keyof EligibilityCriteria,
   string

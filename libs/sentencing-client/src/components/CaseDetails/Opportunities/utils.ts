@@ -40,7 +40,7 @@ import {
   SEVERE_OPTION,
 } from "../Form/constants";
 import { FormValue, RecommendationType } from "../types";
-import { eligibilityCriteriaToLabelName } from "./constants";
+import { eligibilityCriteriaToLabelName, UNKNOWN } from "./constants";
 import { EligibilityAttributes, EligibilityCriteria } from "./types";
 
 const DEFAULT_MIN_NUMBER = 0;
@@ -135,7 +135,9 @@ export const filterEligibleOpportunities = (
     countyOfSentencing?.toLocaleLowerCase() ===
     countyOfResidence?.toLocaleLowerCase();
   const countyName =
-    hasMatchingCountiesOfSentencingResidence || !countyOfResidence
+    hasMatchingCountiesOfSentencingResidence ||
+    !countyOfResidence ||
+    countyOfResidence === UNKNOWN
       ? countyOfSentencing
       : countyOfResidence;
   const isCountyEligible =
