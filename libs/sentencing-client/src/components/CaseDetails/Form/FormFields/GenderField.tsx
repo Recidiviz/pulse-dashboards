@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 
+import { GEO_CONFIG } from "../../../../geoConfigs/geoConfigs";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import { CLIENT_GENDER_KEY, GenderToDisplayName } from "../../constants";
@@ -35,6 +36,7 @@ const genderOptions = Object.values(GenderToDisplayName).filter(
 function GenderField({ isRequired }: FormFieldProps) {
   const { caseStore } = useStore();
   const caseAttributes = caseStore.caseAttributes;
+  const omsSystem = GEO_CONFIG[caseStore.stateCode]?.omsSystem;
   const options = genderOptions.map((selection) => ({
     label: selection,
     value: selection,
@@ -86,7 +88,8 @@ function GenderField({ isRequired }: FormFieldProps) {
 
       {caseAttributes.client?.isGenderLocked && (
         <Styled.InputDescription>
-          The gender has been pulled in from Atlas and is unable to be edited.
+          The gender has been pulled in from {omsSystem} and is unable to be
+          edited.
         </Styled.InputDescription>
       )}
     </>

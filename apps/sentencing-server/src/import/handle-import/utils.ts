@@ -20,8 +20,10 @@ import { captureException } from "@sentry/node";
 import _ from "lodash";
 import z from "zod";
 
-import { PLACEHOLDER_SIGNIFIER } from "~@sentencing-server/prisma";
-import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
+import {
+  getPrismaClientForStateCode,
+  PLACEHOLDER_SIGNIFIER,
+} from "~@sentencing-server/prisma";
 import { EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE } from "~sentencing-server/import/handle-import/constants";
 import {
   caseImportSchema,
@@ -77,15 +79,17 @@ export async function transformAndLoadClientData(
     const hasKnownGender =
       clientData.gender !== Gender.INTERNAL_UNKNOWN &&
       clientData.gender !== Gender.EXTERNAL_UNKNOWN;
+    const isCountyLocked = Boolean(clientData.county);
 
     const newClient = {
       externalId: clientData.external_id,
       pseudonymizedId: clientData.pseudonymized_id,
       stateCode: clientData.state_code,
       fullName: clientData.full_name,
-      county: clientData.county ?? "UNKNOWN",
+      county: clientData.county,
       birthDate: clientData.birth_date,
       isGenderLocked: hasKnownGender,
+      isCountyLocked,
       district: clientData.district,
       cases: {
         connect: existingCasesForClient,
@@ -212,6 +216,7 @@ export async function transformAndLoadCaseData(
         : null,
       isLsirScoreLocked: caseData.lsir_score !== undefined,
       isReportTypeLocked: caseData.report_type !== undefined,
+      isCountyLocked: caseData.county !== undefined,
     };
 
     // Load data

@@ -43,4 +43,5 @@ export const US_ID_CONFIG: GeoConfig = {
     ],
     summaryGenerator: generateIdahoSummary,
   },
+  omsSystem: "Atlas",
 };

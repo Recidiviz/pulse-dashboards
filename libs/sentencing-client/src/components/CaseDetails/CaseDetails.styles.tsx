@@ -1021,6 +1021,12 @@ export const FormScrollWrapper = styled.div`
   margin-bottom: 28px;
 `;
 
+export const InputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
 export const InputWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -1190,6 +1196,12 @@ export const SelectChip = styled.div<{
         fill: ${palette.slate60};
       }
   `}
+`;
+
+export const InputRowWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 18px;
 `;
 
 export const RollupOffenseCategory = styled.div`

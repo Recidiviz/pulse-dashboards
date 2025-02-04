@@ -28,6 +28,8 @@ export const SEX_OFFENSE_KEY = "isCurrentOffenseSexual";
 
 export const COUNTY_KEY = "county";
 
+export const DISTRICT_KEY = "district";
+
 export const COUNTY_OF_SENTENCING_KEY = "countyOfSentencing";
 
 export const COUNTY_OF_RESIDENCE_KEY = "countyOfResidence";
@@ -106,6 +108,9 @@ export type HasOpenChildProtectiveServicesCase =
 
 export const CLIENT_GENDER_KEY = "clientGender";
 export type ClientGender = "clientGender";
+
+export const CLIENT_COUNTY_KEY = "clientCounty";
+export const CLIENT_DISTRICT_KEY = "clientDistrict";
 
 export const NeedsToBeAddressed: Record<
   Case["needsToBeAddressed"][number],

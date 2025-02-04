@@ -20,7 +20,11 @@ import _, { capitalize } from "lodash";
 import { ReportType } from "../../constants";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
+  CLIENT_COUNTY_KEY,
+  CLIENT_DISTRICT_KEY,
   CLIENT_GENDER_KEY,
+  COUNTY_KEY,
+  DISTRICT_KEY,
   GenderToDisplayName,
   NeedsToBeAddressed,
   OFFENSE_KEY,
@@ -159,11 +163,16 @@ export const transformUpdates = (
     if (
       isNull ||
       isBoolean ||
-      isNumber ||
-      key === OTHER_NEED_TO_BE_ADDRESSED_KEY ||
-      key === OTHER_PROTECTIVE_FACTORS_KEY ||
-      key === OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY ||
-      key === OFFENSE_KEY
+      isNumber || [
+        OTHER_NEED_TO_BE_ADDRESSED_KEY,
+        OTHER_PROTECTIVE_FACTORS_KEY,
+        OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY,
+        OFFENSE_KEY,
+        COUNTY_KEY,
+        DISTRICT_KEY,
+        CLIENT_COUNTY_KEY,
+        CLIENT_DISTRICT_KEY,
+      ]
     ) {
       transformedUpdates[key] = value;
       return;

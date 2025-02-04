@@ -44,4 +44,9 @@ export type GeoConfigRecommendation = {
 export type GeoConfig = {
   excludedAttributeKeys: AttributeKey[];
   recommendation: GeoConfigRecommendation;
+  omsSystem: string;
 };
+
+export type CountyDistrictMap = Partial<
+  Record<StateCode, Record<string, string>>
+>;

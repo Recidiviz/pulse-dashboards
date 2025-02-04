@@ -18,6 +18,7 @@
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
   CLIENT_GENDER_KEY,
+  COUNTIES_KEY,
   HAS_DEVELOPMENTAL_DISABILITY_KEY,
   HAS_OPEN_CHILD_PROTECTIVE_SERVICES_CASE_KEY,
   HAS_PREVIOUS_FELONY_KEY,
@@ -37,6 +38,7 @@ import {
 } from "../constants";
 import ASAMCareRecommendationField from "./FormFields/ASAMCareRecommendationField";
 import ChildProtectiveServicesStatus from "./FormFields/ChildProtectiveServicesStatusField";
+import CountiesField from "./FormFields/CountiesField";
 import DevelopmentalDisabilityStatusField from "./FormFields/DevelopmentalDisabilityStatusField";
 import GenderField from "./FormFields/GenderField";
 import LsirScoreField from "./FormFields/LsirScoreField";
@@ -87,6 +89,11 @@ const FormFields: { [key: string]: FormFieldWithNestedFields } = {
     FieldComponent: LsirScoreField,
     isRequired: true,
   },
+  [COUNTIES_KEY]: {
+    key: COUNTIES_KEY,
+    FieldComponent: CountiesField,
+    isRequired: true,
+  },
   [REPORT_TYPE_KEY]: { key: REPORT_TYPE_KEY, FieldComponent: ReportTypeField },
   [NEEDS_TO_BE_ADDRESSED_KEY]: {
     key: NEEDS_TO_BE_ADDRESSED_KEY,
@@ -133,6 +140,7 @@ export const onboardingStepOneFields = [
   FormFields[OFFENSE_KEY],
   FormFields[CLIENT_GENDER_KEY],
   FormFields[LSIR_SCORE_KEY],
+  FormFields[COUNTIES_KEY],
   FormFields[REPORT_TYPE_KEY],
 ];
 

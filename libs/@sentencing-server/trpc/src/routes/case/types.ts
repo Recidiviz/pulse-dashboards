@@ -49,10 +49,14 @@ export type UpdateCaseInput = Pick<
   | "recommendedMaxSentenceLength"
   | "protectiveFactors"
   | "otherProtectiveFactor"
+  | "county"
+  | "district"
 > & {
   recommendedOpportunities?: {
     opportunityName: OpportunityNameIdentifier;
   }[];
   offense?: Offense["name"] | null;
   clientGender?: Client["gender"];
+  clientCounty?: Client["county"];
+  clientDistrict?: Client["district"];
 };

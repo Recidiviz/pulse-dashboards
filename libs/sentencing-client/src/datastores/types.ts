@@ -90,7 +90,10 @@ export type CaseAttributes = Partial<Case> & {
 };
 
 // Feature variants exclusive to this app
-export type FeatureVariant = "offenseOverrideControls" | "protectiveFactors";
+export type FeatureVariant =
+  | "offenseOverrideControls"
+  | "protectiveFactors"
+  | "editCountyFields";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
