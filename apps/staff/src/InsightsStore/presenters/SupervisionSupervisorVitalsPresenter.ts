@@ -79,6 +79,10 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
     return metricDetails;
   }
 
+  get vitalsMetricsMethodologyUrl() {
+    return this.supervisionStore.labels.vitalsMetricsMethodologyUrl;
+  }
+
   get vitalsMetricDetails(): SupervisorVitalsMetricDetail[] {
     const metrics = this.supervisionStore.vitalsMetricsByPseudoId.get(
       this.supervisorPseudoId,
