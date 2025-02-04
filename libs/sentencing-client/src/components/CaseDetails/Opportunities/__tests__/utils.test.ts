@@ -925,6 +925,13 @@ describe("filterEligibleOpportunities", () => {
     expect(
       filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
     ).toBe(true);
+
+    attributes.countyOfSentencing = "Caldwell";
+    attributes.countyOfResidence = "UNKNOWN";
+
+    expect(
+      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+    ).toBe(true);
   });
 });
 
