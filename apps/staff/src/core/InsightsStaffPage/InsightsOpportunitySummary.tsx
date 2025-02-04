@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,59 +26,65 @@ import { EmptyCard } from "../InsightsSupervisorPage/InsightsStaffCardV2";
 import ModelHydrator from "../ModelHydrator";
 import { OpportunitySummaries } from "../WorkflowsHomepage/OpportunitySummaries";
 
-export const InsightsOpportunitySummary = withPresenterManager({
-  managerIsObserver: true,
-  HydratorComponent: ModelHydrator,
-  usePresenter: () => {
-    const {
-      insightsStore: { supervisionStore },
-      workflowsRootStore: {
-        justiceInvolvedPersonsStore,
-        opportunityConfigurationStore,
-      },
-    } = useRootStore();
+const ManagedComponent = observer(function OpportunitySummary({
+  presenter,
+}: {
+  presenter: SupervisionOfficerOpportunitiesPresenter;
+}) {
+  const {
+    opportunitiesByType,
+    numEligibleOpportunities,
+    labels,
+    officerPseudoId,
+    officerOutcomesData,
+    opportunityTypes,
+  } = presenter;
 
-    const officerPseudoId = supervisionStore?.officerPseudoId;
+  return opportunitiesByType ? (
+    <InsightsPageSection
+      sectionTitle={`Opportunities (${numEligibleOpportunities ?? 0})`}
+    >
+      {numEligibleOpportunities ? (
+        <OpportunitySummaries
+          opportunitiesByType={opportunitiesByType}
+          opportunityTypes={opportunityTypes}
+          officerPseudoId={officerPseudoId}
+          zeroGrantOpportunities={officerOutcomesData?.zeroGrantOpportunities}
+        />
+      ) : (
+        <EmptyCard
+          message={labels.officerHasNoEligibleClientsLabel}
+          height={200}
+        />
+      )}
+    </InsightsPageSection>
+  ) : null;
+});
 
-    if (!officerPseudoId || !justiceInvolvedPersonsStore) return null;
-
-    return new SupervisionOfficerOpportunitiesPresenter(
-      supervisionStore,
-      officerPseudoId,
+function usePresenter() {
+  const {
+    insightsStore: { supervisionStore },
+    workflowsRootStore: {
       justiceInvolvedPersonsStore,
       opportunityConfigurationStore,
-    );
-  },
-  ManagedComponent: observer(function InsightsOpportunitySummary({
-    presenter,
-  }) {
-    const {
-      opportunitiesByType,
-      numEligibleOpportunities,
-      labels,
-      officerPseudoId,
-      officerOutcomesData,
-      opportunityTypes,
-    } = presenter;
+    },
+  } = useRootStore();
 
-    return opportunitiesByType ? (
-      <InsightsPageSection
-        sectionTitle={`Opportunities (${numEligibleOpportunities ?? 0})`}
-      >
-        {numEligibleOpportunities ? (
-          <OpportunitySummaries
-            opportunitiesByType={opportunitiesByType}
-            opportunityTypes={opportunityTypes}
-            officerPseudoId={officerPseudoId}
-            zeroGrantOpportunities={officerOutcomesData?.zeroGrantOpportunities}
-          />
-        ) : (
-          <EmptyCard
-            message={labels.officerHasNoEligibleClientsLabel}
-            height={200}
-          />
-        )}
-      </InsightsPageSection>
-    ) : null;
-  }),
+  const officerPseudoId = supervisionStore?.officerPseudoId;
+
+  if (!officerPseudoId || !justiceInvolvedPersonsStore) return null;
+
+  return new SupervisionOfficerOpportunitiesPresenter(
+    supervisionStore,
+    officerPseudoId,
+    justiceInvolvedPersonsStore,
+    opportunityConfigurationStore,
+  );
+}
+
+export const InsightsOpportunitySummary = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
+  HydratorComponent: ModelHydrator,
 });
