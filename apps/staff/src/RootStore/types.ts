@@ -93,6 +93,7 @@ export type FeatureVariant =
   | "taskFilters"
   | "offenseOverrideControls"
   | "protectiveFactors"
+  | "editCountyFields"
   | "usIdCaseManagerSearch"
   | "opportunityTableView";
 
@@ -146,6 +147,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   taskFilters: {},
   offenseOverrideControls: {},
   protectiveFactors: {},
+  editCountyFields: {},
   usIdCaseManagerSearch: {},
   opportunityTableView: {},
 };

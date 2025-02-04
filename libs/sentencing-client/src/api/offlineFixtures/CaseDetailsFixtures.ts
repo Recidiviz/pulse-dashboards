@@ -61,6 +61,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     recommendedMinSentenceLength: null,
     recommendedOpportunities: [],
     isLsirScoreLocked: false,
+    isCountyLocked: false,
     currentOnboardingTopic: "OffenseLsirScore",
     recommendationSummary: null,
     isReportTypeLocked: false,
@@ -73,6 +74,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
       birthDate: birthDate,
       externalId: "70478174",
       isGenderLocked: false,
+      isCountyLocked: false,
       district: "DISTRICT 1",
     },
     insight: {

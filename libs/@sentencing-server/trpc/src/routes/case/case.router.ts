@@ -77,23 +77,30 @@ export const caseRouter = router({
     .input(updateCaseSchema)
     .mutation(async ({ input: { id, attributes }, ctx: { prisma } }) => {
       try {
-        const { lsirScore, reportType, clientGender } = attributes;
-        if (lsirScore || reportType || clientGender) {
-          const { isLsirScoreLocked, isReportTypeLocked, client } =
-            await prisma.case.findUniqueOrThrow({
-              where: {
-                id,
-              },
-              select: {
-                isLsirScoreLocked: true,
-                isReportTypeLocked: true,
-                client: {
-                  select: {
-                    isGenderLocked: true,
-                  },
+        const { lsirScore, reportType, county, clientGender, clientCounty } =
+          attributes;
+        if (lsirScore || reportType || clientGender || county || clientCounty) {
+          const {
+            isLsirScoreLocked,
+            isReportTypeLocked,
+            isCountyLocked,
+            client,
+          } = await prisma.case.findUniqueOrThrow({
+            where: {
+              id,
+            },
+            select: {
+              isLsirScoreLocked: true,
+              isReportTypeLocked: true,
+              isCountyLocked: true,
+              client: {
+                select: {
+                  isGenderLocked: true,
+                  isCountyLocked: true,
                 },
               },
-            });
+            },
+          });
 
           if (lsirScore && isLsirScoreLocked) {
             throw new TRPCError({
@@ -109,10 +116,23 @@ export const caseRouter = router({
             });
           }
 
+          if (county && isCountyLocked) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "County is locked and cannot be updated",
+            });
+          }
+
           if (clientGender && client?.isGenderLocked) {
             throw new TRPCError({
               code: "BAD_REQUEST",
               message: "Client gender is locked and cannot be updated",
+            });
+          }
+          if (clientCounty && client?.isCountyLocked) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Client county is locked and cannot be updated",
             });
           }
         }
@@ -137,7 +157,11 @@ export const caseRouter = router({
             id,
           },
           data: {
-            ..._.omit(attributes, "clientGender"),
+            ..._.omit(attributes, [
+              "clientGender",
+              "clientCounty",
+              "clientDistrict",
+            ]),
             recommendedOpportunities: {
               set: attributes.recommendedOpportunities?.map((opportunity) => ({
                 opportunityName_providerName: {
@@ -156,6 +180,8 @@ export const caseRouter = router({
             client: {
               update: {
                 gender: attributes.clientGender,
+                county: attributes.clientCounty,
+                district: attributes.clientDistrict,
               },
             },
           },

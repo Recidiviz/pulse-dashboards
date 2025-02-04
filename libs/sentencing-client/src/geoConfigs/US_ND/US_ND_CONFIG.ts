@@ -75,4 +75,5 @@ export const US_ND_CONFIG: GeoConfig = {
     ],
     summaryGenerator: generateNorthDakotaSummary,
   },
+  omsSystem: "DOCSTARS",
 };

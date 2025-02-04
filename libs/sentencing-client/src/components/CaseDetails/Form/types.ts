@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { COUNTIES_KEY } from "../constants";
 import { FormAttributes, FormFieldWithNestedList, FormValue } from "../types";
 
 export type FormField = {
-  key: keyof FormAttributes;
+  key: keyof FormAttributes | typeof COUNTIES_KEY;
   FieldComponent: React.ComponentType;
 };
 

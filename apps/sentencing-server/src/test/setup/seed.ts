@@ -71,6 +71,7 @@ export const fakeClient = {
   county: faker.location.county(),
   district: faker.location.city(),
   birthDate: faker.date.birthdate(),
+  isCountyLocked: false,
 } satisfies ClientCreateInput;
 
 export const fakeOpportunity = {
@@ -141,6 +142,7 @@ export const fakeCase = {
     "Term",
   ]),
   isLsirScoreLocked: false,
+  isCountyLocked: false,
   currentOnboardingTopic: faker.helpers.enumValue(OnboardingTopic),
   recommendedOpportunities: [
     {

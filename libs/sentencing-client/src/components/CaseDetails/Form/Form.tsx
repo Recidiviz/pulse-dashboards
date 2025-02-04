@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import { filterExcludedAttributes } from "../../../../src/geoConfigs/utils";
 import { useStore } from "../../StoreProvider/StoreProvider";
 import * as Styled from "../CaseDetails.styles";
-import { PROTECTIVE_FACTORS_KEY } from "../constants";
+import { COUNTIES_KEY, PROTECTIVE_FACTORS_KEY } from "../constants";
 import { FormFieldWithNestedFields } from "./types";
 
 function Form({
@@ -42,8 +42,10 @@ function Form({
     .filter(filterExcludedAttributes(stateCode))
     .filter((field) => {
       if (
-        !activeFeatureVariants["protectiveFactors"] &&
-        field.key === PROTECTIVE_FACTORS_KEY
+        (!activeFeatureVariants["protectiveFactors"] &&
+          field.key === PROTECTIVE_FACTORS_KEY) ||
+        (!activeFeatureVariants["editCountyFields"] &&
+          field.key === COUNTIES_KEY)
       ) {
         return false;
       }

@@ -70,6 +70,7 @@ export const fakeClient = {
   gender: FAKE_CLIENT_GENDER,
   county: faker.location.county(),
   district: faker.location.city(),
+  isCountyLocked: false,
   birthDate: faker.date.birthdate(),
 } satisfies ClientCreateInput;
 
@@ -113,6 +114,7 @@ export const fakeCase = {
   stateCode: StateCode.US_ID,
   dueDate: faker.date.future(),
   county: faker.location.county(),
+  isCountyLocked: false,
   lsirScore: FAKE_CASE_LSIR_SCORE,
   lsirLevel: faker.number.int().toString(),
   reportType: ReportType.FullPSI,

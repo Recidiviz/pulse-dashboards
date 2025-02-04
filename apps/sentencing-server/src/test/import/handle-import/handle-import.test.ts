@@ -178,6 +178,7 @@ describe("handle_import", () => {
           lsirScore: 1000,
           // Make sure report type is converted to the enum
           reportType: ReportType.FullPSI,
+          isCountyLocked: true,
         }),
         expect.objectContaining({ externalId: "new-case-ext-id" }),
       ]);
@@ -210,6 +211,7 @@ describe("handle_import", () => {
         expect.objectContaining({
           externalId: fakeCase.externalId,
           lsirScore: fakeCase.lsirScore,
+          isCountyLocked: true,
         }),
       ]);
     });
@@ -258,6 +260,7 @@ describe("handle_import", () => {
           // The new one should have been allowed to have been uploaded with no client or case
           clientId: null,
           staffId: null,
+          isCountyLocked: true,
         }),
       ]);
     });
@@ -432,6 +435,85 @@ describe("handle_import", () => {
         expect.objectContaining({
           externalId: "new-case-ext-id",
           isReportTypeLocked: false,
+        }),
+      ]);
+    });
+
+    test("should set isCountyLocked if county of sentencing is provided", async () => {
+      dataProviderSingleton.setData([
+        // Existing case
+        {
+          external_id: fakeCase.externalId,
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          county: faker.location.county(),
+          lsir_score: (1000).toString(),
+          lsir_level: faker.number.int().toString(),
+          report_type: "PSI Assigned Full",
+        },
+      ]);
+
+      const response = await callHandleImportCaseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbCases = await testPrismaClient.case.findMany({});
+
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+          reportType: ReportType.FullPSI,
+          isReportTypeLocked: true,
+          isCountyLocked: true,
+        }),
+      ]);
+    });
+
+    test("should not set isCountyLocked if county of sentencing is not provided", async () => {
+      dataProviderSingleton.setData([
+        // Existing case
+        {
+          external_id: fakeCase.externalId,
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          county: faker.location.county(),
+          lsir_score: (1000).toString(),
+          lsir_level: faker.number.int().toString(),
+          report_type: "PSI Assigned Full",
+        },
+        // New case
+        {
+          external_id: "new-case-ext-id",
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          county: undefined,
+          lsir_level: faker.number.int().toString(),
+        },
+      ]);
+
+      const response = await callHandleImportCaseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbCases = await testPrismaClient.case.findMany({});
+
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+          isCountyLocked: true,
+        }),
+        expect.objectContaining({
+          externalId: "new-case-ext-id",
+          isReportTypeLocked: false,
+          isCountyLocked: false,
         }),
       ]);
     });
@@ -760,10 +842,112 @@ describe("handle_import", () => {
           expect.objectContaining({
             externalId: fakeClient.externalId,
             gender: fakeClient.gender,
+            isCountyLocked: true,
           }),
         ]),
       );
     });
+  });
+
+  test("should set isCountyLocked if county of residence is provided", async () => {
+    dataProviderSingleton.setData([
+      // New client
+      {
+        external_id: "new-client-ext-id",
+        pseudonymized_id: "new-client-pid",
+        case_ids: JSON.stringify(["new-case-ext-id"]),
+        state_code: StateCode.US_ID,
+        full_name: JSON.stringify({
+          given_names: "Given",
+          middle_names: "Middle",
+          surname: "Last",
+          name_suffix: "Sr.",
+        }),
+        gender: Gender.FEMALE,
+        county: faker.location.county(),
+        birth_date: faker.date.birthdate(),
+      },
+      // existing client
+      {
+        external_id: fakeClient.externalId,
+        pseudonymized_id: fakeClient.pseudonymizedId,
+        case_ids: JSON.stringify([fakeCase.externalId]),
+        state_code: StateCode.US_ID,
+        full_name: JSON.stringify({
+          given_names: faker.person.firstName(),
+          middle_names: faker.person.firstName(),
+          surname: faker.person.lastName(),
+          name_suffix: faker.person.suffix(),
+        }),
+        gender: faker.helpers.enumValue(Gender),
+        // Set a new county
+        county: "my fake county",
+        birth_date: faker.date.birthdate(),
+      },
+    ]);
+
+    const response = await callHandleImportClientData(testServer);
+
+    expect(response.statusCode).toBe(200);
+
+    const dbClients = await testPrismaClient.client.findMany({});
+
+    // The new client should have been inserted and the old one kept
+    expect(dbClients).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          externalId: fakeClient.externalId,
+        }),
+        expect.objectContaining({
+          externalId: "new-client-ext-id",
+          gender: Gender.FEMALE,
+          isGenderLocked: true,
+          isCountyLocked: true,
+        }),
+      ]),
+    );
+  });
+
+  test("should not set isCountyLocked if county of residence is provided", async () => {
+    dataProviderSingleton.setData([
+      // New client
+      {
+        external_id: "new-client-ext-id",
+        pseudonymized_id: "new-client-pid",
+        case_ids: JSON.stringify(["new-case-ext-id"]),
+        state_code: StateCode.US_ID,
+        full_name: JSON.stringify({
+          given_names: "Given",
+          middle_names: "Middle",
+          surname: "Last",
+          name_suffix: "Sr.",
+        }),
+        gender: Gender.INTERNAL_UNKNOWN,
+        county: undefined,
+        birth_date: faker.date.birthdate(),
+      },
+    ]);
+
+    const response = await callHandleImportClientData(testServer);
+
+    expect(response.statusCode).toBe(200);
+
+    const dbClients = await testPrismaClient.client.findMany({});
+
+    // The new client should have been inserted and the old one kept
+    expect(dbClients).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          externalId: fakeClient.externalId,
+        }),
+        expect.objectContaining({
+          externalId: "new-client-ext-id",
+          gender: Gender.INTERNAL_UNKNOWN,
+          isGenderLocked: false,
+          isCountyLocked: false,
+        }),
+      ]),
+    );
   });
 
   describe("import staff data", () => {

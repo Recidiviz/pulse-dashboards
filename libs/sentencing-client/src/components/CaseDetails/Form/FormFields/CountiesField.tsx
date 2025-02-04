@@ -15,38 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma } from "@prisma/sentencing-server/client";
+import { observer } from "mobx-react-lite";
 
-export const PRISMA_CASE_GET_ARGS = {
-  omit: {
-    staffId: true,
-    clientId: true,
-    offenseId: true,
-  },
-  include: {
-    recommendedOpportunities: {
-      select: {
-        opportunityName: true,
-        providerName: true,
-        genericDescription: true,
-      },
-    },
-    offense: {
-      select: {
-        name: true,
-      },
-    },
-    client: {
-      select: {
-        fullName: true,
-        gender: true,
-        county: true,
-        district: true,
-        birthDate: true,
-        externalId: true,
-        isGenderLocked: true,
-        isCountyLocked: true,
-      },
-    },
-  },
-} satisfies Prisma.CaseDefaultArgs;
+import * as Styled from "../../CaseDetails.styles";
+import CountyOfResidenceField from "./CountyOfResidenceField";
+import CountyOfSentencingField from "./CountyOfSentencingField";
+
+function CountiesField() {
+  return (
+    <Styled.InputRowWrapper>
+      <CountyOfSentencingField isRequired />
+      <CountyOfResidenceField />
+    </Styled.InputRowWrapper>
+  );
+}
+
+export default observer(CountiesField);

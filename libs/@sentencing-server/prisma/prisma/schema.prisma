@@ -92,13 +92,15 @@ model Client {
   fullName        String
 
   gender    Gender
-  county    String
+  county    String?
   birthDate DateTime
   district  String?
   cases     Case[]
 
   // Whether the gender is locked and cannot be changed
   isGenderLocked Boolean @default(false)
+  // Whether the county of residence is locked and cannot be changed
+  isCountyLocked Boolean @default(false)
 }
 
 enum ReportType {
@@ -310,6 +312,8 @@ model Case {
   isLsirScoreLocked  Boolean     @default(false)
   // Whether the report type is locked and cannot be changed
   isReportTypeLocked Boolean     @default(false)
+  // Whether the county of sentencing is locked and cannot be changed
+  isCountyLocked     Boolean     @default(false)
 
   // Mutable Attributes
   lsirScore Int?

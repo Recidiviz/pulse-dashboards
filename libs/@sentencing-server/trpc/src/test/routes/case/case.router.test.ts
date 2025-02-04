@@ -60,6 +60,7 @@ describe("case router", () => {
               "district",
               "birthDate",
               "externalId",
+              "isCountyLocked",
             ]),
             isGenderLocked: false,
           },
@@ -297,6 +298,10 @@ describe("case router", () => {
           lsirScore: 10,
           reportType: "FullPSI",
           clientGender: "MALE",
+          clientCounty: "TWIN FALLS",
+          clientDistrict: "DISTRICT 4",
+          county: "ADA",
+          district: "DISTRICT 1",
           recommendedMinSentenceLength: 10,
           recommendedMaxSentenceLength: 20,
           protectiveFactors: [
@@ -315,6 +320,8 @@ describe("case router", () => {
           client: {
             select: {
               gender: true,
+              county: true,
+              district: true,
             },
           },
           offense: {
@@ -327,6 +334,8 @@ describe("case router", () => {
 
       expect(updatedCase).toEqual(
         expect.objectContaining({
+          county: "ADA",
+          district: "DISTRICT 1",
           isCurrentOffenseViolent: true,
           isCurrentOffenseSexual: false,
           previouslyIncarceratedOrUnderSupervision: true,
@@ -348,6 +357,8 @@ describe("case router", () => {
           reportType: ReportType.FullPSI,
           client: expect.objectContaining({
             gender: Gender.MALE,
+            county: "TWIN FALLS",
+            district: "DISTRICT 4",
           }),
           offense: expect.objectContaining({
             name: fakeOffense.name,
@@ -484,6 +495,57 @@ describe("case router", () => {
         new TRPCError({
           code: "BAD_REQUEST",
           message: "Client gender is locked and cannot be updated",
+        }),
+      );
+    });
+
+    test("should throw error if client county is locked and county is provided", async () => {
+      await testPrismaClient.case.update({
+        where: { id: fakeCase.id },
+        data: {
+          client: {
+            update: {
+              isCountyLocked: true,
+            },
+          },
+        },
+      });
+
+      await expect(() =>
+        testTRPCClient.case.updateCase.mutate({
+          id: fakeCase.id,
+          attributes: {
+            clientCounty: "ADA",
+            clientDistrict: "DISTRICT 1",
+          },
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Client county is locked and cannot be updated",
+        }),
+      );
+    });
+
+    test("should throw error if case county is locked and county is provided", async () => {
+      await testPrismaClient.case.update({
+        where: { id: fakeCase.id },
+        data: {
+          isCountyLocked: true,
+        },
+      });
+
+      await expect(() =>
+        testTRPCClient.case.updateCase.mutate({
+          id: fakeCase.id,
+          attributes: {
+            county: "ADA",
+          },
+        }),
+      ).rejects.toThrowError(
+        new TRPCError({
+          code: "BAD_REQUEST",
+          message: "County is locked and cannot be updated",
         }),
       );
     });
