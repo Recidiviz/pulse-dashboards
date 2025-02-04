@@ -81,7 +81,7 @@ const StyledIcon = styled(Icon)`
   }
 `;
 
-const StyledLink = styled(Link)`
+export const StyledLink = styled(Link)`
   color: ${palette.signal.links} !important;
   &:hover {
     text-decoration: underline;

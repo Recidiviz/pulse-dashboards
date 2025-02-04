@@ -23,6 +23,7 @@ import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { StyledLink } from "../InsightsInfoModal/InsightsInfoModal";
 import {
   Header,
   Subtitle as Title,
@@ -32,7 +33,7 @@ import {
 const SectionWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${rem(spacing.md)};
+  gap: ${rem(spacing.lg)};
   padding: 0;
 `;
 
@@ -40,19 +41,22 @@ const Description = styled.div`
   max-width: ${rem(700)};
   ${typography.Sans14};
   color: ${palette.slate85};
-  margin-top: ${rem(spacing.md)};
+  margin-top: ${rem(spacing.sm)};
 `;
 
 type InsightsPageSectionProps = {
   sectionTitle?: string;
   sectionDescription?: ReactNode | string;
-
+  methodologyLink?: string;
+  methodologyLinkCta?: string;
   children?: ReactNode;
 };
 
 const InsightsPageSection: React.FC<InsightsPageSectionProps> = ({
   sectionTitle,
   sectionDescription,
+  methodologyLinkCta,
+  methodologyLink,
   children,
 }) => {
   const { isLaptop } = useIsMobile(true);
@@ -66,8 +70,15 @@ const InsightsPageSection: React.FC<InsightsPageSectionProps> = ({
       <Wrapper isLaptop={isLaptop} supervisorHomepage={supervisorHomepage}>
         <Header>
           <Title>{sectionTitle}</Title>
-          {supervisorHomepage && sectionDescription && (
-            <Description>{sectionDescription}</Description>
+          {(methodologyLink || methodologyLinkCta || sectionDescription) && (
+            <Description>
+              {sectionDescription}{" "}
+              {methodologyLink && (
+                <StyledLink to={methodologyLink} target="_blank">
+                  {methodologyLinkCta || "See Full Methodology"}
+                </StyledLink>
+              )}
+            </Description>
           )}
         </Header>
       </Wrapper>

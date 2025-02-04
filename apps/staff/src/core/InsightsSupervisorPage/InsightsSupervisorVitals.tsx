@@ -58,15 +58,15 @@ export const InsightsSupervisorVitals = withPresenter(
   observer(function InsightsSupervisorVitalsSection({
     presenter,
   }: SupervisorVitalsProps) {
-    const { vitalsMetricDetails } = presenter;
+    const { vitalsMetricDetails, vitalsMetricsMethodologyUrl } = presenter;
 
     if (vitalsMetricDetails.length === 0) return;
 
     return (
       <InsightsPageSection
         sectionTitle="Operations"
-        // TODO #6754 Add the methodology link once we have one from the config
-        sectionDescription="How did we calculate this rate?"
+        methodologyLinkCta="How did we calculate this rate?"
+        methodologyLink={vitalsMetricsMethodologyUrl}
       >
         <Body>
           <Grid>
