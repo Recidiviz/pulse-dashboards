@@ -149,7 +149,7 @@ test("links reflect provided person ID", () => {
     eligibleResident.pseudonymizedId,
   );
 
-  expect(presenter.requirementsContent.linkUrl).toMatchInlineSnapshot(
+  expect(presenter.requirementsContent?.linkUrl).toMatchInlineSnapshot(
     `"/maine/anonres001/eligibility/sccp/requirements"`,
   );
 

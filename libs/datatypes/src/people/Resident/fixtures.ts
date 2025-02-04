@@ -94,7 +94,7 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     pseudonymizedId: "anonres004",
     facilityId: "FACILITY NAME",
     unitId: "UNIT A",
-    custodyLevel: "MINIMUM",
+    custodyLevel: "COMMUNITY",
     admissionDate: relativeFixtureDate({ months: -31, days: 2 }),
     releaseDate: relativeFixtureDate({ months: 25 }),
     usMePortionNeededEligibleDate: relativeFixtureDate({

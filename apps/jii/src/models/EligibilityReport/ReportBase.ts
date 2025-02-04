@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { mapValues } from "lodash";
+
 import {
   cleanupInlineTemplate,
   hydrateTemplate,
@@ -28,12 +30,14 @@ import {
   EligibilityReport,
   EligibilityStatus,
   eligibilityStatusEnum,
-} from "./interface";
+  RequirementsByStatus,
+  RequirementsSectionContent,
+} from "./types";
 
-export abstract class ReportBase {
+export abstract class ReportBase<OppType extends IncarcerationOpportunityId> {
   constructor(
     protected config: OpportunityConfig,
-    protected eligibilityData: OpportunityRecord<IncarcerationOpportunityId>,
+    protected eligibilityData: OpportunityRecord<OppType>,
   ) {}
 
   get name() {
@@ -59,6 +63,78 @@ export abstract class ReportBase {
       value,
       label: this.config.statusLabels[value],
     };
+  }
+
+  /**
+   * Groups tracked requirements by their eligibility status. For most opportunities,
+   * these are expected to mirror the criteria objects in `this.eligibilityData`,
+   * but subclasses may override for custom logic
+   */
+  protected get requirementsByStatus(): RequirementsByStatus<OppType> {
+    const met = { ...this.eligibilityData.eligibleCriteria };
+    const notMet = { ...this.eligibilityData.ineligibleCriteria };
+
+    return { met, notMet };
+  }
+
+  get requirements(): EligibilityReport["requirements"] {
+    const sections: Array<RequirementsSectionContent> = [];
+
+    const { trackedCriteria } = this.config.requirements.summary;
+    const orderedCriteria = Object.keys(trackedCriteria);
+
+    // run a separate formatting pipeline for each grouping
+    // since they are processed a little differently
+    const { met, notMet } = this.requirementsByStatus;
+
+    if (Object.keys(met).length) {
+      sections.push({
+        label: "Requirements you **have** met",
+        icon: "Success",
+        requirements: orderedCriteria
+          .filter((key) => key in met)
+          .map((key) => ({
+            // ineligible reason is excluded, since these criteria are met
+            criterion: cleanupInlineTemplate(
+              hydrateTemplate(trackedCriteria[key].criterion, {
+                currentCriterion: met[key],
+              }),
+            ),
+          })),
+      });
+    }
+
+    if (Object.keys(notMet).length) {
+      sections.push({
+        label: "Requirements you **have not** met yet",
+        icon: "CloseOutlined",
+        requirements: orderedCriteria
+          .filter((key) => key in notMet)
+          .map((key) =>
+            // here, by mapping over both values in the copy object,
+            // we are including criterion and ineligible reason, when it is present
+            mapValues(trackedCriteria[key], (template) =>
+              template
+                ? cleanupInlineTemplate(
+                    hydrateTemplate(template, {
+                      currentCriterion: notMet[key],
+                    }),
+                  )
+                : "",
+            ),
+          ),
+      });
+    }
+
+    if (this.config.requirements.summary.untrackedCriteria.length) {
+      sections.push({
+        label: "Ask your case manager if you’ve met these requirements",
+        icon: "ArrowCircled",
+        requirements: this.config.requirements.summary.untrackedCriteria,
+      });
+    }
+
+    return sections;
   }
 
   /**

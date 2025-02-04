@@ -17,7 +17,12 @@
 
 import { z } from "zod";
 
-import { OpportunityConfig, RequirementCopy } from "../../configs/types";
+import {
+  IncarcerationOpportunityId,
+  OpportunityConfig,
+  OpportunityRecord,
+  RequirementCopy,
+} from "../../configs/types";
 
 /**
  * `icon` property should correspond to design system Icon name
@@ -32,9 +37,15 @@ export const eligibilityStatusEnum = z.enum([
   "ELIGIBLE",
   "ALMOST_ELIGIBLE",
   "INELIGIBLE",
+  "NA",
 ]);
 
 export type EligibilityStatus = z.infer<typeof eligibilityStatusEnum>;
+
+export type RequirementsByStatus<OppType extends IncarcerationOpportunityId> = {
+  met: OpportunityRecord<OppType>["eligibleCriteria"];
+  notMet: OpportunityRecord<OppType>["ineligibleCriteria"];
+};
 
 export interface EligibilityReport {
   name: string;

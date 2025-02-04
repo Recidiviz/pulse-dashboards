@@ -79,6 +79,12 @@ export const styles = css`
     padding-top: ${rem(spacing.md)};
   }
 
+  dd {
+    p:last-child {
+      margin: 0;
+    }
+  }
+
   @media (max-width: 499px) {
     dd {
       margin-left: 1em;
@@ -119,6 +125,10 @@ export const styles = css`
     margin: ${rem(spacing.xxl)} 0;
     border-color: ${palette.slate20};
     border-style: solid;
+  }
+
+  p {
+    margin: 0 0 1em;
   }
 `;
 

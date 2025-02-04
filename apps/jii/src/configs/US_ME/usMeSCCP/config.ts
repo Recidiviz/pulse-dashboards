@@ -26,7 +26,7 @@ import requirementsPage from "./requirementsPage.md?raw";
 const { usMeNoClassAOrBViolationFor90Days, usMeNoDetainersWarrantsOrOther } =
   commonTrackedCriteria;
 
-export const config: OpportunityConfig = {
+export const usMeSccpConfig: OpportunityConfig = {
   urlSlug: "sccp",
   firestoreCollection: "US_ME-SCCPReferrals",
   name: "Supervised Community Confinement Program (SCCP)",

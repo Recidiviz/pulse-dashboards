@@ -16,9 +16,11 @@
 // =============================================================================
 
 import { UsMeSCCPEligibilityReport } from "../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
+import { UsMeWorkReleaseEligibilityReport } from "../models/EligibilityReport/UsMe/UsMeWorkReleaseEligibilityReport";
 import { ResidentEligibilityReportMapping } from "./types";
 
 export const residentEligibilityReportConstructors: ResidentEligibilityReportMapping =
   {
     usMeSCCP: UsMeSCCPEligibilityReport,
+    usMeWorkRelease: UsMeWorkReleaseEligibilityReport,
   };

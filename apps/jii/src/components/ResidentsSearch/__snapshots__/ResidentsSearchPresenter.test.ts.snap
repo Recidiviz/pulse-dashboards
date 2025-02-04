@@ -75,7 +75,7 @@ exports[`hydration > hydrate 1`] = `
     "label": "Fourth Resident (RES004)",
     "value": {
       "admissionDate": 2019-05-18T00:00:00.000Z,
-      "custodyLevel": "MINIMUM",
+      "custodyLevel": "COMMUNITY",
       "displayId": "dRES004",
       "facilityId": "FACILITY NAME",
       "gender": "INTERNAL_UNKNOWN",
