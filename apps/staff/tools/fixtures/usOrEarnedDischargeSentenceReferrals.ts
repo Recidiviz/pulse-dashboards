@@ -38,6 +38,8 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<UsOrEarnedDi
           sentence: {
             courtCaseNumber: "CASE1",
             sentenceStatute: "STATUTE",
+            sentenceStartDate: "2020-01-01",
+            sentenceEndDate: "2020-01-01",
           },
         },
         isEligible: true,
@@ -60,6 +62,8 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<UsOrEarnedDi
           sentence: {
             courtCaseNumber: "CASE2",
             sentenceStatute: "STATUTE2",
+            sentenceStartDate: "2020-01-01",
+            sentenceEndDate: "2020-01-01",
           },
         },
         isEligible: true,
@@ -83,6 +87,8 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<UsOrEarnedDi
           sentence: {
             courtCaseNumber: "CASE1",
             sentenceStatute: "STATUTE",
+            sentenceStartDate: "2020-01-01",
+            sentenceEndDate: "2020-01-01",
           },
         },
         isEligible: false,
@@ -105,6 +111,8 @@ export const usOrEarnedDischargeSentenceReferrals: FirestoreFixture<UsOrEarnedDi
           sentence: {
             courtCaseNumber: "CASE2",
             sentenceStatute: "STATUTE2",
+            sentenceStartDate: "2020-02-02",
+            sentenceEndDate: "2020-02-02",
           },
         },
         isEligible: true,
