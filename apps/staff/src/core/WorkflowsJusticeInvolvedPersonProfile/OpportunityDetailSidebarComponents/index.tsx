@@ -17,5 +17,6 @@
 
 export * from "./CaseNotes";
 export * from "./EligibilityDate";
+export * from "./SentenceDates";
 export * from "./US_MI";
 export * from "./US_MO";

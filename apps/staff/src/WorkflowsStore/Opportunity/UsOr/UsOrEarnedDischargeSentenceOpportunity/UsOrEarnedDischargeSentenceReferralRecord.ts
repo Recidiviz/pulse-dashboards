@@ -43,6 +43,8 @@ export const usOrEarnedDischargeSentenceSchema = opportunitySchemaBase
       sentence: z.object({
         courtCaseNumber: z.string(),
         sentenceStatute: z.string(),
+        sentenceEndDate: dateStringSchema,
+        sentenceStartDate: dateStringSchema,
       }),
     }),
   })

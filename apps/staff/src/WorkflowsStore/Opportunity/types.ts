@@ -163,6 +163,8 @@ export interface Opportunity<
   highlightCalloutText: string;
   accordionKey: string;
   customStatusPalette?: StatusPalette;
+  sentenceStart?: Date | undefined;
+  sentenceExpiration?: Date | undefined;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

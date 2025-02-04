@@ -46,4 +46,12 @@ export class UsOrEarnedDischargeSentenceOpportunity extends OpportunityBase<
   get labelAddendum() {
     return ` • ${this.instanceDetails}`;
   }
+
+  get sentenceStart() {
+    return this.record.metadata.sentence.sentenceStartDate;
+  }
+
+  get sentenceExpiration() {
+    return this.record.metadata.sentence.sentenceEndDate;
+  }
 }

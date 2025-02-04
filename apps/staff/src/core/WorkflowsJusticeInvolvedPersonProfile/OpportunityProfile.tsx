@@ -43,6 +43,7 @@ import { OpportunityBanner } from "./OpportunityBanner";
 import {
   CaseNotes,
   EligibilityDate,
+  SentenceDates,
   UsMiEarlyDischargeIcDetails,
   UsMiRecommendedSupervisionLevel,
   UsMoIncarceration,
@@ -83,6 +84,7 @@ type ClientDetailComponentName = keyof typeof ClientDetailSidebarComponents;
 export const OpportunityDetailSidebarComponents = {
   CaseNotes,
   EligibilityDate,
+  SentenceDates,
   UsMiEarlyDischargeIcDetails,
   UsMiRecommendedSupervisionLevel,
   UsMoRestrictiveHousing,
