@@ -17,11 +17,9 @@
 
 import { faker } from "@faker-js/faker";
 import {
-  GroupId,
   Prisma,
   PrismaClient,
   StateCode,
-  TopicId,
 } from "@prisma/jii-texting-server/client/index.js";
 
 const prisma = new PrismaClient();
@@ -34,18 +32,23 @@ async function main() {
 
   const people: Prisma.PersonCreateInput[] = [];
 
+  const group: Prisma.GroupCreateNestedManyWithoutPeopleInput = {};
+
   for (let i = 0; i < numberOfPeople; i++) {
     people.push({
       stateCode: StateCode.US_ID,
       externalId: faker.string.uuid(),
-      personId: faker.number.int({ max: 1000 }),
-      personName: faker.person.fullName(),
+      pseudonymizedId: faker.string.uuid(),
+      personId: faker.string.uuid(),
+      givenName: faker.person.firstName(),
+      middleName: faker.person.middleName(),
+      surName: faker.person.lastName(),
+      nameSuffix: faker.person.suffix(),
       phoneNumber: faker.string.numeric({ length: 11 }),
       officerId: faker.string.uuid(),
       poName: faker.person.fullName(),
       district: faker.location.county(),
-      topicId: TopicId.UsIdLsu,
-      groupId: GroupId.FULLY_ELIGIBLE,
+      groups: group,
     });
   }
 
