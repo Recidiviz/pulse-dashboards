@@ -163,6 +163,15 @@ export const Value = styled.div`
   }
 `;
 
+export const LinkValue = styled.div`
+  color: ${palette.pine4};
+  text-transform: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 export const EditCaseDetails = styled.div`
   display: flex;
   justify-content: space-between;
