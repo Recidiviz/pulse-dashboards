@@ -61,7 +61,7 @@ class UsIdEmploymentVerificationTask extends Task<"employment"> {
           this.supervisionLevel
         ];
       if (standard) {
-        details += simplur`; ${standard.contacts} verification[|s] needed every ${standard.days} days, for current case type`;
+        details += simplur`; ${standard.contacts} verification[|s] needed every ${standard.days} days for current case type`;
       }
     }
 
