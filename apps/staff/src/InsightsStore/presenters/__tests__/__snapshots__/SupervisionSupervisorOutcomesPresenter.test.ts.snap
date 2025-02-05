@@ -35162,3 +35162,83 @@ Map {
   },
 }
 `;
+
+exports[`returns the officers with outcomes data 1`] = `
+[
+  {
+    "avgDailyPopulation": 54,
+    "displayName": "Walter Harris",
+    "externalId": "OFFICER4",
+    "fullName": {
+      "givenNames": "Walter",
+      "surname": "Harris",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so1",
+    "supervisorExternalIds": [
+      "agonzalez123",
+      "dlee456",
+    ],
+    "zeroGrantOpportunities": [
+      "LSU",
+      "pastFTRD",
+    ],
+  },
+  {
+    "avgDailyPopulation": 12,
+    "displayName": "Jack Hernandez",
+    "externalId": "so2",
+    "fullName": {
+      "givenNames": "Jack",
+      "surname": "Hernandez",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so2",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+  {
+    "avgDailyPopulation": 32,
+    "displayName": "Jason Nelson",
+    "externalId": "so3",
+    "fullName": {
+      "givenNames": "Jason",
+      "surname": "Nelson",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so3",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+  {
+    "avgDailyPopulation": 43,
+    "displayName": "Harriet Boyd",
+    "externalId": "so9",
+    "fullName": {
+      "givenNames": "Harriet",
+      "surname": "Boyd",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so9",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+  {
+    "avgDailyPopulation": 43,
+    "displayName": "Stephen Mann",
+    "externalId": "so10",
+    "fullName": {
+      "givenNames": "Stephen",
+      "surname": "Mann",
+    },
+    "includeInOutcomes": true,
+    "pseudonymizedId": "hashed-so10",
+    "supervisorExternalIds": [
+      "agonzalez123",
+    ],
+  },
+]
+`;

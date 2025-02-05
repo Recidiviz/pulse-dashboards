@@ -16,53 +16,69 @@
 // =============================================================================
 
 import { captureException } from "@sentry/react";
+import { flowResult, makeAutoObservable } from "mobx";
 
 import { ActionStrategyCopy } from "~datatypes";
-import { castToError, HydratesFromSource } from "~hydration-utils";
+import {
+  castToError,
+  Hydratable,
+  HydratesFromSource,
+  HydrationState,
+} from "~hydration-utils";
 
-import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
-import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { SupervisionSupervisorPresenter } from "./SupervisionSupervisorPresenter";
 import {
   ByMetricAndCategory2DMap,
   ConfigLabels,
-  HighlightedOfficersDetail,
   MetricAndOutliersInfo,
   OfficerOutcomesData,
 } from "./types";
-import {
-  getHighlightedOfficersByMetric,
-  getOfficerOutcomesData,
-} from "./utils";
+import { getOfficerOutcomesData } from "./utils";
 
 /**
  * The `SupervisionSupervisorOutcomesPresenter` class is responsible for managing and presenting
  * data related to the outcomes for a given supervisor's officers. It handles data hydration and officer
  * metric data aggregation.
  */
-export class SupervisionSupervisorOutcomesPresenter extends SupervisionSupervisorPresenter {
-  constructor(
-    supervisionStore: InsightsSupervisionStore,
-    supervisorPseudoId: string,
-    justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
-    opportunityConfigurationStore: OpportunityConfigurationStore,
-  ) {
-    super(
-      supervisionStore,
-      supervisorPseudoId,
-      justiceInvolvedPersonsStore,
-      opportunityConfigurationStore,
-    );
+export class SupervisionSupervisorOutcomesPresenter implements Hydratable {
+  _hoveredOfficerId?: string;
 
-    // TODO (#7050): Change to use only the populate methods related to this presenter.
+  hydrator: HydratesFromSource;
+
+  constructor(
+    public supervisionStore: InsightsSupervisionStore,
+    public supervisorPseudoId: string,
+  ) {
+    makeAutoObservable(this, {}, { autoBind: true });
+
     this.hydrator = new HydratesFromSource({
       populate: async () => {
-        await Promise.all([...this.populateMethods()]);
-        await this.populateCaseload();
+        await Promise.all([
+          flowResult(
+            this.supervisionStore.populateOutcomesForSupervisor(
+              this.supervisorPseudoId,
+            ),
+          ),
+          flowResult(
+            this.supervisionStore.populateOfficersForSupervisor(
+              this.supervisorPseudoId,
+            ),
+          ),
+          flowResult(this.supervisionStore.populateMetricConfigs()),
+        ]);
       },
-      expectPopulated: this.expectPopulated(),
+      expectPopulated: [
+        this.expectMetricsPopulated,
+        this.expectOutcomesDataForOutlierOfficersPopulated,
+        this.expectOfficerOutcomesPopulated,
+      ],
     });
+  }
+
+  get officersIncludedInOutcomes() {
+    return this.supervisionStore.officersBySupervisorPseudoId
+      .get(this.supervisorPseudoId)
+      ?.filter((o) => o.includeInOutcomes === true);
   }
 
   // ==============================
@@ -117,22 +133,6 @@ export class SupervisionSupervisorOutcomesPresenter extends SupervisionSuperviso
     return this.outlierOfficersByMetricAndCaseloadCategoryOrError;
   }
 
-  /**
-   * Returns officers of this supervisor in the top X percent of officers in the state,
-   * grouped by metric.
-   * @returns An array of objects containing the metric, top X percent criteria, and info about
-   * officers meeting the top X percent criteria.
-   */
-  get highlightedOfficersByMetric(): HighlightedOfficersDetail[] {
-    return getHighlightedOfficersByMetric(
-      this.metricConfigsById,
-      this.officersWithOutcomesData,
-      this.supervisionStore.officersOutcomesBySupervisorPseudoId.get(
-        this.supervisorPseudoId,
-      ),
-    );
-  }
-
   // ==============================
   // Action Strategies
   // ==============================
@@ -181,7 +181,6 @@ export class SupervisionSupervisorOutcomesPresenter extends SupervisionSuperviso
       throw new Error("failed to populate officers' outcomes");
   }
 
-  // TODO (#7050): Remove this. It now lives in SupervisionSupervisorOutcomesPresenter.ts
   /**
    * Asserts that officers' outcomes data has been populated.
    * @throws The encountered error if outlier data is not populated.
@@ -205,9 +204,7 @@ export class SupervisionSupervisorOutcomesPresenter extends SupervisionSuperviso
    * @throws An error if the data is not available.
    * @returns An array of `OfficerOutcomesData` or an `Error` object.
    */
-  protected get outcomesDataForOutlierOfficersOrError():
-    | OfficerOutcomesData[]
-    | Error {
+  get outcomesDataForOutlierOfficersOrError(): OfficerOutcomesData[] | Error {
     try {
       const outcomesData =
         this.supervisionStore.officersOutcomesBySupervisorPseudoId.get(
@@ -223,7 +220,7 @@ export class SupervisionSupervisorOutcomesPresenter extends SupervisionSuperviso
       return outcomesData
         .filter((outcome) => outcome.outlierMetrics.length > 0)
         .map((outcome): OfficerOutcomesData => {
-          const officer = this.officersWithOutcomesData?.find(
+          const officer = this.officersIncludedInOutcomes?.find(
             (officer) => officer.pseudonymizedId === outcome.pseudonymizedId,
           );
           if (!officer) {
@@ -246,7 +243,7 @@ export class SupervisionSupervisorOutcomesPresenter extends SupervisionSuperviso
    * Internal method to calculate the grouping of outlier officers by metric and caseload category.
    * @returns A 2D map of outlier officers by metric and caseload category, or an `Error` object.
    */
-  protected get outlierOfficersByMetricAndCaseloadCategoryOrError():
+  get outlierOfficersByMetricAndCaseloadCategoryOrError():
     | ByMetricAndCategory2DMap<MetricAndOutliersInfo>
     | Error {
     try {
@@ -308,5 +305,24 @@ export class SupervisionSupervisorOutcomesPresenter extends SupervisionSuperviso
     } catch (e) {
       return castToError(e);
     }
+  }
+
+  get hoveredOfficerId() {
+    return this._hoveredOfficerId;
+  }
+
+  updateHoveredOfficerId(officerId: string | undefined) {
+    this._hoveredOfficerId = officerId;
+  }
+
+  /**
+   * Initiates hydration for all data needed within this presenter class
+   */
+  async hydrate(): Promise<void> {
+    return this.hydrator.hydrate();
+  }
+
+  get hydrationState(): HydrationState {
+    return this.hydrator.hydrationState;
   }
 }

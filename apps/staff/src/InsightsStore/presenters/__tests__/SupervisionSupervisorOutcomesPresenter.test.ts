@@ -25,8 +25,6 @@ import { unpackAggregatedErrors } from "~hydration-utils";
 
 import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";
-import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
-import { OpportunityConfigurationStore } from "../../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsStore } from "../../InsightsStore";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
@@ -37,8 +35,6 @@ const testSupervisor = supervisionOfficerSupervisorsFixture[0];
 
 let store: InsightsSupervisionStore;
 let presenter: SupervisionSupervisorOutcomesPresenter;
-let jiiStore: JusticeInvolvedPersonsStore;
-let oppConfigStore: OpportunityConfigurationStore;
 let rootStore: RootStore;
 
 beforeEach(async () => {
@@ -68,27 +64,21 @@ beforeEach(async () => {
 
   rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
 
-  // JII STORE =========================================================
-  rootStore.workflowsRootStore.populateJusticeInvolvedPersonsStore();
-  const { justiceInvolvedPersonsStore, opportunityConfigurationStore } =
-    rootStore.workflowsRootStore;
-
-  oppConfigStore = opportunityConfigurationStore;
-  if (justiceInvolvedPersonsStore) {
-    jiiStore = justiceInvolvedPersonsStore;
-
-    presenter = new SupervisionSupervisorOutcomesPresenter(
-      store,
-      testSupervisor.pseudonymizedId,
-      jiiStore,
-      oppConfigStore,
-    );
-  }
+  presenter = new SupervisionSupervisorOutcomesPresenter(
+    store,
+    testSupervisor.pseudonymizedId,
+  );
 });
 
 afterEach(() => {
   vi.restoreAllMocks();
   configure({ safeDescriptors: true });
+});
+
+test("returns the officers with outcomes data", async () => {
+  await presenter.hydrate();
+
+  expect(presenter.officersIncludedInOutcomes).toMatchSnapshot();
 });
 
 test("outcomesDataForOutlierOfficers", async () => {

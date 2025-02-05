@@ -58,6 +58,15 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
     });
   }
 
+  /**
+   * Passthrough to the supervision store
+   * Checks if Vitals is enabled based on user permissions.
+   * @returns `true` if vitals is enabled, otherwise `false`.
+   */
+  get isVitalsEnabled() {
+    return this.supervisionStore.isVitalsEnabled;
+  }
+
   // ==============================
   // Component specific logic
   // ==============================
