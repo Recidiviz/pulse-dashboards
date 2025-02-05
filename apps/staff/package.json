@@ -10,20 +10,19 @@
   "author": "Recidiviz <team@recidiviz.org>",
   "license": "GNU General Public License v3",
   "scripts": {
-    "test-e2e-lantern": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite lantern --retry 2",
-    "test-e2e-login": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite login --retry 2",
-    "test-e2e-users": "source ./load_environment.sh env_e2e && wdio ./wdio.conf.js --suite userAccess --retry 2",
+    "test-e2e-lantern": ". load_environment.sh env_e2e && wdio ./wdio.conf.js --suite lantern --retry 2",
+    "test-e2e-login": ". load_environment.sh env_e2e && wdio ./wdio.conf.js --suite login --retry 2",
+    "test-e2e-users": ". load_environment.sh env_e2e && wdio ./wdio.conf.js --suite userAccess --retry 2",
     "test-e2e-workflows": "env-cmd -f .env.offline wdio ./wdio.conf.js --suite workflows --retry 2",
-    "test-zod": "source ./load_environment.sh env_dev_server && vite-node tools/testZodSchema.ts",
-    "load-demo-fixtures": "source ./load_environment.sh env_dev_server && vite-node tools/loadWorkflowsFixtures.ts",
-    "sync-content": "source ./load_environment.sh env_sync_content && vite-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*",
-    "verify-feature-variant-documentation": "source ./load_environment.sh env_sync_content && vite-node tools/verifyFeatureVariantDocumentation.ts",
+    "test-zod": ". load_environment.sh env_dev_server && vite-node tools/testZodSchema.ts",
+    "load-demo-fixtures": ". load_environment.sh env_dev_server && vite-node tools/loadWorkflowsFixtures.ts",
+    "sync-content": ". load_environment.sh env_sync_content && vite-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*",
     "load-prod-fixtures": "vite-node tools/loadProdTestFixtures.mjs",
     "pdfformfiller-boilerplate": "vite-node tools/pdfFormFillerBoilerplate.mjs",
-    "update-missing-snooze-staging": "source ./load_environment.sh env_dev_server && vite-node tools/updateMissingSnooze.ts",
-    "update-missing-snooze-local": "source ./load_environment.sh env_dev_demo_server && vite-node tools/updateMissingSnooze.ts",
-    "migrate-form-updates-staging": "source ./load_environment.sh env_dev_server && ts-node tools/migrate-formUpdates.ts",
-    "migrate-form-updates-local": "source ./load_environment.sh env_dev_demo_server && ts-node tools/migrate-formUpdates.ts"
+    "update-missing-snooze-staging": ". load_environment.sh env_dev_server && vite-node tools/updateMissingSnooze.ts",
+    "update-missing-snooze-local": ". load_environment.sh env_dev_demo_server && vite-node tools/updateMissingSnooze.ts",
+    "migrate-form-updates-staging": ". load_environment.sh env_dev_server && ts-node tools/migrate-formUpdates.ts",
+    "migrate-form-updates-local": ". load_environment.sh env_dev_demo_server && ts-node tools/migrate-formUpdates.ts"
   },
   "browserslist": {
     "production": [

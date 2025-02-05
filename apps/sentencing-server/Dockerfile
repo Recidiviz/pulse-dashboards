@@ -14,9 +14,12 @@ RUN apt-get install dumb-init
 COPY dist/apps/sentencing-server/scripts ./scripts
 RUN chmod +x scripts/*.sh
 
-# Copy over the package.json and yarn.lock files since they are changed less often
-COPY dist/apps/sentencing-server/package.json dist/apps/sentencing-server/yarn.lock ./
-RUN yarn install --production --frozen-lockfile
+# Enable corepack so newer versions of yarn can be installed
+RUN corepack enable
+
+# Copy over the package.json, yarn.lock, and .yarnrc.yml files since they are changed less often
+COPY dist/apps/sentencing-server/package.json dist/apps/sentencing-server/yarn.lock dist/apps/sentencing-server/.yarnrc.yml ./
+RUN yarn workspaces focus --production
 
 # Copy over the rest of the files as late as we can
 COPY dist/apps/sentencing-server .

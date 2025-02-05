@@ -56,7 +56,8 @@
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
         "target": "node20",
-        "minify": true
+        "minify": true,
+        "assets": ["{workspaceRoot}/.yarnrc.yml"]
       },
       "configurations": {
         "dev": {},

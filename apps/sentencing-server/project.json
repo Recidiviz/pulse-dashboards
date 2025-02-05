@@ -97,7 +97,8 @@
             "input": "{workspaceRoot}/libs/@sentencing-server/prisma",
             "output": "."
           },
-          "{projectRoot}/scripts/*"
+          "{projectRoot}/scripts/*",
+          "{workspaceRoot}/.yarnrc.yml"
         ],
         "external": ["@prisma/sentencing-server"]
       },

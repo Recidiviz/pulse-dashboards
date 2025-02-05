@@ -37,8 +37,7 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
 1. Install Firebase Tools (version >=10 required) and ensure you are logged in:
 
    ```
-   yarn global add firebase-tools
-   # OR npm install -g firebase-tools
+   brew install firebase-cli
    ```
 
    Then:
@@ -49,11 +48,11 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
 
 1. Additional recommendations:
    1. Install [Nx](https://nx.dev/getting-started/intro) globally (convenient for running package scripts):
-      `yarn global add nx@latest`
-   1. Install a linting package for your preferred code editor that hooks into [ESLint](https://eslint.org/docs/latest/), such as [the ESLint extension for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
-   1. Install a formatting package for your preferred code editor that hooks into [Prettier](https://prettier.io/docs/en/), such as [the Prettier - Code Formatter extension for VS Code](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
-   1. Install the [Nx Console](https://nx.dev/features/integrate-with-editors) for your code editor if you prefer a GUI for exploring and using Nx.
-   1. To make `git blame` more informative, tell it to ignore reformatting commits by running `git config blame.ignorerevsfile .git-blame-ignore-revs`.
+      `npm install -g nx@latest`
+   2. Install a linting package for your preferred code editor that hooks into [ESLint](https://eslint.org/docs/latest/), such as [the ESLint extension for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint).
+   3. Install a formatting package for your preferred code editor that hooks into [Prettier](https://prettier.io/docs/en/), such as [the Prettier - Code Formatter extension for VS Code](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
+   4. Install the [Nx Console](https://nx.dev/features/integrate-with-editors) for your code editor if you prefer a GUI for exploring and using Nx.
+   5. To make `git blame` more informative, tell it to ignore reformatting commits by running `git config blame.ignorerevsfile .git-blame-ignore-revs`.
 
 ### Creating new libraries
 
@@ -73,15 +72,18 @@ Briefly stated, there are a few benefits to doing this:
 **Long version:** Nx has various plugins that automate the boilerplate and nuances of creating and configuring libraries, such as [`@nx/js`](https://nx.dev/nx-api/js/generators/library) and [`@nx/react`](https://nx.dev/nx-api/react/generators/library). You can use those directly when needed, but in most cases you will want to reach for our local plugin first, which extends those plugins by setting our preferred options and extending the default plugin outputs with additional configuration and features that are tailored to our applications. These are meant to be sensible defaults, you can always override or extend them as needed to suit your use case. See [`/plugins/repo`](/plugins/repo) to learn more about its implementation.
 
 ### Creating a new app for a server
+
 The below instructions apply to creating an app that doesn't have a UI as the client, e.g. JII texting.
+
 #### Instructions
+
 1. Generate the app
 
    ```
    nx g @nx/node:app apps/{server-name} --e2eTestRunner=none --unitTestRunner=none
    ```
-   1. This creates a new directory named {server_name} in apps without adding a directory for e2e tests. The second argument 
+
+   1. This creates a new directory named {server_name} in apps without adding a directory for e2e tests. The second argument
    ensures nx doesn't set up our testing framework with jest automatically, since we use vitest.
 2. Inspect any changes to the <code>yarn.lock</code> and <code>package.json</code> to look for any unnecessary changes made by the nx generator. You
    might also want to check if the Fastify version was updated by searching for <code>fastify@</code> in <code>yarn.lock</code>.
-
