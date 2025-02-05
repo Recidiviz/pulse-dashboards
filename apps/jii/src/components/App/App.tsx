@@ -40,6 +40,7 @@ import { OpportunityInfoPage } from "../OpportunityInfoPage/OpportunityInfoPage"
 import { PageAfterLogin } from "../pages/PageAfterLogin";
 import { PageEligibilityHome } from "../pages/PageEligibilityHome";
 import { PageHome } from "../pages/PageHome";
+import { PageOpportunityComparison } from "../pages/PageOpportunityComparison";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
 import { PageOpportunityEligibilityHome } from "../pages/PageOpportunityEligibilityHome";
 import { PageResidentsRoot } from "../pages/PageResidentsRoot";
@@ -111,6 +112,12 @@ export function App() {
                             element={<OpportunityInfoPage />}
                           />
                         </Route>
+                        <Route
+                          path={
+                            routes.State.Resident.Eligibility.Comparison.path
+                          }
+                          element={<PageOpportunityComparison />}
+                        />
                       </Route>
                     </Route>
                     <Route

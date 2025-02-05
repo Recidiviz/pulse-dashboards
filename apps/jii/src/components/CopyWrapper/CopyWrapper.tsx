@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import styled, { css } from "styled-components/macro";
 
 import { clickableText } from "../styles/clickableText";
+import { ComparisonLinkInCopy } from "./ComparisonLinkInCopy";
 import { InternalOrExternalLink } from "./InternalOrExternalLink";
 
 export const styles = css`
@@ -151,8 +152,9 @@ export const CopyWrapper: FC<{ children: string; className?: string }> = ({
         // ensures the styles defined above cascade correctly if there is only one block element in children
         forceWrapper: true,
         overrides: {
-          a: InternalOrExternalLink,
-          InternalLink: Link,
+          a: { component: InternalOrExternalLink },
+          InternalLink: { component: Link },
+          ComparisonLink: { component: ComparisonLinkInCopy },
         },
       }}
     >

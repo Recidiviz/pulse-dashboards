@@ -72,7 +72,6 @@ const ManagedComponent: FC<{
   presenter: OpportunityInfoPagePresenter;
 }> = observer(function OpportunityInfoPage({ presenter }) {
   usePageTitle(presenter.heading);
-
   return (
     <>
       <ButtonLink to="../">

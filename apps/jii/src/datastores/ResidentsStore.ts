@@ -71,31 +71,6 @@ export class ResidentsStore {
     return this.rootStore.userStore;
   }
 
-  get opportunityIdsByUrlSlug(): Map<string, IncarcerationOpportunityId> {
-    return new Map(
-      Object.entries(this.config.incarcerationOpportunities).map(
-        ([id, config]) => {
-          return [
-            config.urlSlug,
-            id as keyof typeof this.config.incarcerationOpportunities,
-          ];
-        },
-      ),
-    );
-  }
-
-  /**
-   * Get a convenient non-nullable ID value; accepts any string,
-   * so you should be confident you have a valid slug or be prepared to handle an error.
-   */
-  opportunitySlugToIdOrThrow(slug: string) {
-    const id = this.opportunityIdsByUrlSlug.get(slug);
-    if (!id) {
-      throw new Error(`No opportunity ID matches url segment ${slug}`);
-    }
-    return id;
-  }
-
   areAllResidentsPopulated(): boolean {
     // if we started the session on a single resident's page, we might have had one
     // populated already. Seems a safe assumption that the total will always be > 1

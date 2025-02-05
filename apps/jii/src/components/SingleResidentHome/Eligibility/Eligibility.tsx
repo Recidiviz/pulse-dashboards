@@ -21,7 +21,12 @@ import { rem } from "polished";
 import { FC, Fragment } from "react";
 import styled from "styled-components/macro";
 
+import { withPresenterManager } from "~hydration-utils";
+
+import { ComparisonLink } from "../../OpportunityComparison/ComparisonLink";
+import { useResidentsContext } from "../../ResidentsHydrator/context";
 import { useSingleResidentContext } from "../../SingleResidentHydrator/context";
+import { EligibilityPresenter } from "./EligibilityPresenter";
 import { OpportunityCard } from "./OpportunityCard";
 
 const Divider = styled.hr`
@@ -29,18 +34,34 @@ const Divider = styled.hr`
   margin: ${rem(spacing.xl)} 0;
 `;
 
-export const Eligibility: FC = observer(function Eligibility() {
-  const { opportunities } = useSingleResidentContext();
-  return (
-    <div>
-      {opportunities
-        .filter((o) => o.eligibilityReport.status.value !== "NA")
-        .map((data, i, { length }) => (
+const ManagedComponent: FC<{ presenter: EligibilityPresenter }> = observer(
+  function Eligibility({ presenter }) {
+    const { opportunities, comparison } = presenter;
+    return (
+      <div>
+        {opportunities.map((data, i, { length }) => (
           <Fragment key={data.opportunityId}>
             <OpportunityCard {...data} />
             {i + 1 < length ? <Divider /> : null}
           </Fragment>
         ))}
-    </div>
-  );
+        {comparison && <ComparisonLink config={comparison} />}
+      </div>
+    );
+  },
+);
+
+function usePresenter() {
+  const { opportunities } = useSingleResidentContext();
+  const {
+    residentsStore: { config },
+  } = useResidentsContext();
+
+  return new EligibilityPresenter(opportunities, config);
+}
+
+export const Eligibility = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: false,
 });

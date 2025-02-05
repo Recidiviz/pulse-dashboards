@@ -16443,6 +16443,11 @@ human-signals@^5.0.0:
   resolved "https://registry.npmjs.org/human-signals/-/human-signals-5.0.0.tgz"
   integrity sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==
 
+humps@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/humps/-/humps-2.0.1.tgz#dd02ea6081bd0568dc5d073184463957ba9ef9aa"
+  integrity sha512-E0eIbrFWUhwfXJmsbdjRQFQPrl5pTEoKlz163j1mTqqUnU9PgR4AgB8AIITzuB3vLBdxZXyZ9TDIrwB2OASz4g==
+
 husky@^9.0.11:
   version "9.0.11"
   resolved "https://registry.npmjs.org/husky/-/husky-9.0.11.tgz"
@@ -22268,6 +22273,13 @@ react-select@^5.8.0:
     prop-types "^15.6.0"
     react-transition-group "^4.3.0"
     use-isomorphic-layout-effect "^1.1.2"
+
+react-shadow@^20.6.0:
+  version "20.6.0"
+  resolved "https://registry.yarnpkg.com/react-shadow/-/react-shadow-20.6.0.tgz#13c11ec50787ba6ab637381814562066be368d49"
+  integrity sha512-kY+w4OMNZ8Nj9YI9eiTgvvJ/wYO7XyX1D/LYhvwQZv5vw69iCiDtGB0BX/2U8gLUuZAMN+x/7rHJKqHh8wXFHQ==
+  dependencies:
+    humps "^2.0.1"
 
 react-shallow-renderer@^16.13.1:
   version "16.14.1"

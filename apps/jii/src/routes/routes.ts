@@ -41,6 +41,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
               InfoPage: route(":pageSlug"),
             },
           ),
+          Comparison: route("compare/:opportunitySlug1/:opportunitySlug2"),
         },
       ),
     },
