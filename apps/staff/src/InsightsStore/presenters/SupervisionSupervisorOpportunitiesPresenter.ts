@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ascending, descending } from "d3-array";
+import { flowResult, makeObservable } from "mobx";
 import simplur from "simplur";
 
 import {
@@ -29,34 +30,76 @@ import { HydratesFromSource, isHydrated } from "~hydration-utils";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { SupervisionSupervisorPresenter } from "./SupervisionSupervisorPresenter";
+import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import {
   RawOpportunityInfo,
   RawOpportunityInfoByOpportunityType,
 } from "./types";
 
-export class SupervisionSupervisorOpportunitiesPresenter extends SupervisionSupervisorPresenter {
+export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvolvedPersonStore(
+  SupervisionBasePresenter,
+) {
+  hydrator: HydratesFromSource;
+
   constructor(
     supervisionStore: InsightsSupervisionStore,
-    supervisorPseudoId: string,
+    public supervisorPseudoId: string,
     justiceInvolvedPersonsStore: JusticeInvolvedPersonsStore,
-    opportunityConfigurationStore: OpportunityConfigurationStore,
+    private opportunityConfigurationStore: OpportunityConfigurationStore,
   ) {
-    super(
-      supervisionStore,
-      supervisorPseudoId,
-      justiceInvolvedPersonsStore,
-      opportunityConfigurationStore,
+    super(supervisionStore);
+
+    this.justiceInvolvedPersonsStore = justiceInvolvedPersonsStore;
+    this.opportunityMapping = "opportunitiesEligible";
+
+    makeObservable<
+      SupervisionSupervisorOpportunitiesPresenter,
+      | "expectOfficersPopulated"
+      | "hydrator"
+      | "hydrationState"
+      | "initializeOpportunityDetail"
+    >(
+      this,
+      {
+        opportunityMapping: true,
+        expectOfficersPopulated: true,
+        supervisorPseudoId: true,
+        allOfficers: true,
+        hydrate: true,
+        hydrator: true,
+        populateOpportunitiesForOfficers: true,
+        populateCaseload: true,
+        hydrationState: true,
+        initializeOpportunityDetail: true,
+        opportunitiesDetails: true,
+        populateOpportunityConfigurationStore: true,
+        expectOpportunityConfigurationStorePopulated: true,
+      },
+      { autoBind: true },
     );
 
-    // TODO (#7050): Change to use only the populate methods related to this presenter.
     this.hydrator = new HydratesFromSource({
       populate: async () => {
-        await Promise.all([...this.populateMethods()]);
+        await Promise.all([
+          flowResult(
+            this.supervisionStore.populateOfficersForSupervisor(
+              this.supervisorPseudoId,
+            ),
+          ),
+          flowResult(this.populateOpportunityConfigurationStore()),
+        ]);
         await this.populateCaseload();
       },
-      expectPopulated: this.expectPopulated(),
+      expectPopulated: [
+        this.expectOfficersPopulated,
+        this.expectOpportunityConfigurationStorePopulated,
+        () =>
+          this.expectClientsForOfficersPopulated(
+            this.allOfficers.map((o) => o.externalId),
+          ),
+      ],
     });
   }
 
@@ -80,6 +123,22 @@ export class SupervisionSupervisorOpportunitiesPresenter extends SupervisionSupe
       : [];
   }
 
+  get labels() {
+    return this.supervisionStore.labels;
+  }
+
+  /**
+   * Combines and returns all officers under this supervisor.
+   * @returns An array of `SupervisionOfficer` (empty if array not available).
+   */
+  get allOfficers(): SupervisionOfficer[] {
+    return (
+      this.supervisionStore.officersBySupervisorPseudoId.get(
+        this.supervisorPseudoId,
+      ) ?? []
+    );
+  }
+
   /**
    * Populates the caseload by getting all officers and populating opportunities for them.
    */
@@ -87,6 +146,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends SupervisionSupe
     if (!this.isWorkflowsEnabled) return;
 
     const { allOfficers } = this;
+
     if (allOfficers) {
       await this.populateOpportunitiesForOfficers(
         allOfficers.map((officer) => officer.externalId),
@@ -145,7 +205,6 @@ export class SupervisionSupervisorOpportunitiesPresenter extends SupervisionSupe
   /**
    * Builds the opportunities details array from raw opportunity info.
    *
-   * @private
    * @param {RawOpportunityInfoByOpportunityType} rawOpportunityInfoMap
    * @returns {OpportunityInfo[]}
    */
@@ -153,7 +212,9 @@ export class SupervisionSupervisorOpportunitiesPresenter extends SupervisionSupe
     rawOpportunityInfoMap: RawOpportunityInfoByOpportunityType,
   ): OpportunityInfo[] {
     return Array.from(rawOpportunityInfoMap.values())
-      .toSorted(SupervisionSupervisorPresenter.sortOpportunitiesDetails)
+      .toSorted(
+        SupervisionSupervisorOpportunitiesPresenter.sortOpportunitiesDetails,
+      )
       .map(({ officersWithEligibleClients, homepagePosition, ...rest }) => ({
         ...rest,
         officersWithEligibleClients: officersWithEligibleClients.toSorted(
@@ -191,6 +252,19 @@ export class SupervisionSupervisorOpportunitiesPresenter extends SupervisionSupe
   expectOpportunityConfigurationStorePopulated() {
     if (!isHydrated(this.opportunityConfigurationStore))
       throw new Error("Opportunity configuration store not hydrated");
+  }
+
+  /**
+   * Asserts that officers have been populated.
+   * @throws An error if officers are not populated.
+   */
+  private expectOfficersPopulated() {
+    if (
+      !this.supervisionStore.officersBySupervisorPseudoId.has(
+        this.supervisorPseudoId,
+      )
+    )
+      throw new Error("failed to populate officers with outliers");
   }
 
   // ==============================

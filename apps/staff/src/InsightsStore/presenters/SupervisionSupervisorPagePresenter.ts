@@ -44,6 +44,22 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     });
   }
 
+  get isWorkflowsEnabled() {
+    const { userStore } = this.supervisionStore.insightsStore.rootStore;
+
+    // Check if...
+    return (
+      // ...the user has allowed navigation to workflows and...
+      userStore.getRoutePermission("workflowsSupervision") &&
+      // ...if the active feature variant for supervisorHomepageWorkflows is enabled.
+      !!userStore.activeFeatureVariants.supervisorHomepageWorkflows
+    );
+  }
+
+  get isVitalsEnabled() {
+    return this.supervisionStore.isVitalsEnabled;
+  }
+
   /**
    * Returns an array of promises representing the methods required to populate
    * the necessary data for this presenter.

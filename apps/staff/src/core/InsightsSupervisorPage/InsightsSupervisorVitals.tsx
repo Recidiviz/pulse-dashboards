@@ -43,7 +43,7 @@ function withPresenter(Component: ComponentType<SupervisorVitalsProps>) {
     );
 
     return (
-      <ModelHydrator hydratable={presenter}>
+      <ModelHydrator hydratable={presenter} loading={null}>
         <Component presenter={presenter} />
       </ModelHydrator>
     );
@@ -58,9 +58,14 @@ export const InsightsSupervisorVitals = withPresenter(
   observer(function InsightsSupervisorVitalsSection({
     presenter,
   }: SupervisorVitalsProps) {
-    const { vitalsMetricDetails, vitalsMetricsMethodologyUrl } = presenter;
+    
+    const {
+      isVitalsEnabled,
+      vitalsMetricDetails,
+      vitalsMetricsMethodologyUrl,
+    } = presenter;
 
-    if (vitalsMetricDetails.length === 0) return;
+    if (!isVitalsEnabled || vitalsMetricDetails.length === 0) return;
 
     return (
       <InsightsPageSection

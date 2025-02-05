@@ -18,33 +18,26 @@
 import { palette, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import styled from "styled-components/macro";
 
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
-import useIsMobile from "../../hooks/useIsMobile";
-import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
+import { SupervisionSupervisorPagePresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPagePresenter";
 import { pluralize, toTitleCase } from "../../utils";
-import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
+import { StyledLink } from "../CaseNoteSearch/components/SearchView/SearchView";
 import { useInsightsActionStrategyModal } from "../InsightsActionStrategyModal";
 import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
-import {
-  Body,
-  Grid,
-  InsightsTooltip,
-  Wrapper,
-} from "../InsightsPageLayout/InsightsPageLayout";
-import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
+import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
 import { InsightsBreadcrumbs } from "./InsightsBreadcrumbs";
-import InsightsStaffCardV2, { EmptyCard } from "./InsightsStaffCardV2";
-import { InsightsSupervisorOpportunityDetailCard } from "./InsightsSupervisorOpportunityDetailCard";
+import InsightsStaffCardV2 from "./InsightsStaffCardV2";
+import { InsightsSupervisorActionStrategyBanner } from "./InsightsSupervisorActionStrategyBanner";
+import { InsightsSupervisorOpportunityDetailSection } from "./InsightsSupervisorOpportunityDetailSection";
 import { InsightsSupervisorVitals } from "./InsightsSupervisorVitals";
 
 const HighlightedDescription = styled.span`
@@ -61,73 +54,44 @@ const OfficersTooltipHeading = styled.div`
   }
 `;
 
-const StyledLink = styled(Link)`
-  color: ${palette.signal.links} !important;
-  padding-top: ${rem(spacing.sm)};
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
+const InsightsSupervisorOutcomeTooltip: React.FC<{
+  title: string;
+  officers: { pseudonymizedId: string; displayName: string }[];
+}> = ({ title, officers }) => {
+  return (
+    <React.Fragment key={title}>
+      <OfficersTooltipHeading>{title}</OfficersTooltipHeading>
+      <div>
+        {officers.map((officer) => (
+          <div key={officer.pseudonymizedId}>{officer.displayName}</div>
+        ))}
+      </div>
+    </React.Fragment>
+  );
+};
 
 const SupervisorPageV2 = observer(function SupervisorPageV2({
   presenter,
 }: {
-  presenter: SupervisionSupervisorPresenter;
+  presenter: SupervisionSupervisorPagePresenter;
 }) {
-  const { isLaptop } = useIsMobile(true);
   const { openModal } = useInsightsActionStrategyModal();
   const { actionStrategies } = useFeatureVariants();
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
     supervisorInfo,
-    officersWithOutcomesData,
-    excludedOfficers,
+    officersIncludedInOutcomes,
+    officersExcludedFromOutcomes,
     userCanAccessAllSupervisors,
     timePeriod,
     labels,
-    isWorkflowsEnabled,
-    isVitalsEnabled,
-    opportunitiesDetails,
-    actionStrategyCopy,
-    setUserHasSeenActionStrategy,
-    disableSurfaceActionStrategies,
     supervisionLocationInfo,
     supervisorPseudoId,
+    allOfficers,
+    pageTitle,
     highlightedOfficersByMetric,
   } = presenter;
-
-  const tooltipContents = (
-    <>
-      {!!officersWithOutcomesData?.length && (
-        <>
-          <OfficersTooltipHeading>INCLUDED IN OUTCOMES</OfficersTooltipHeading>
-          <div>
-            {officersWithOutcomesData.map((officer) => (
-              <div key={officer.pseudonymizedId}>{officer.displayName}</div>
-            ))}
-          </div>
-        </>
-      )}
-      {!!excludedOfficers?.length && (
-        <>
-          <OfficersTooltipHeading>
-            EXCLUDED FROM OUTCOMES
-          </OfficersTooltipHeading>
-          <div>
-            {excludedOfficers.map((officer) => (
-              <div key={officer.pseudonymizedId}>{officer.displayName}</div>
-            ))}
-          </div>
-        </>
-      )}
-    </>
-  );
-
-  // TODO(#6453): add a numOfficers field to the presenter that uses the allOfficers array length
-  const numOfficers =
-    (excludedOfficers?.length || 0) + (officersWithOutcomesData?.length || 0);
 
   const infoItems = [
     {
@@ -136,12 +100,28 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     },
     {
       title: "team",
-      info: `${pluralize(numOfficers, toTitleCase(labels.supervisionOfficerLabel))}`,
-      tooltip: tooltipContents,
+      info: `${pluralize(
+        allOfficers.length,
+        toTitleCase(labels.supervisionOfficerLabel),
+      )}`,
+      tooltip: (
+        <>
+          {!!officersIncludedInOutcomes?.length && (
+            <InsightsSupervisorOutcomeTooltip
+              title="INCLUDED IN OUTCOMES"
+              officers={officersIncludedInOutcomes}
+            />
+          )}
+          {!!officersExcludedFromOutcomes?.length && (
+            <InsightsSupervisorOutcomeTooltip
+              title="EXCLUDED FROM OUTCOMES"
+              officers={officersExcludedFromOutcomes}
+            />
+          )}
+        </>
+      ),
     },
   ];
-
-  const pageTitle = `${supervisorInfo?.displayName} Overview`;
 
   const pageDescription = (
     <>
@@ -206,50 +186,10 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         />
       }
     >
-      {actionStrategyCopy && (
-        <InsightsActionStrategyBanner
-          actionStrategy={actionStrategyCopy}
-          bannerViewedCallback={setUserHasSeenActionStrategy}
-          disableBannerCallback={disableSurfaceActionStrategies}
-          supervisorHomepage
-        />
-      )}
-      <Wrapper isLaptop={isLaptop} supervisorHomepage>
-        <Body>
-          <InsightsStaffCardV2 presenter={presenter} />
-          {opportunitiesDetails && isWorkflowsEnabled && (
-            <InsightsPageSection
-              sectionTitle="Opportunities"
-              sectionDescription={`Take action on opportunities that ${labels.supervisionJiiLabel}s may be eligible for.`}
-            >
-              <Wrapper isLaptop={isLaptop} supervisorHomepage>
-                <Body>
-                  {opportunitiesDetails.length > 0 ? (
-                    <Grid>
-                      {opportunitiesDetails.map((opportunityDetail) => (
-                        <InsightsSupervisorOpportunityDetailCard
-                          opportunityInfo={opportunityDetail}
-                          labels={labels}
-                          key={opportunityDetail.label}
-                        />
-                      ))}
-                    </Grid>
-                  ) : (
-                    <EmptyCard
-                      message={
-                        labels.supervisorHasNoOfficersWithEligibleClientsLabel
-                      }
-                    />
-                  )}
-                </Body>
-              </Wrapper>
-            </InsightsPageSection>
-          )}
-          {isVitalsEnabled && (
-            <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />
-          )}
-        </Body>
-      </Wrapper>
+      <InsightsSupervisorActionStrategyBanner />
+      <InsightsStaffCardV2 />
+      <InsightsSupervisorOpportunityDetailSection />
+      <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />
     </InsightsPageLayout>
   );
 });
@@ -257,24 +197,13 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 const InsightsSupervisorPageV2 = observer(function InsightsSupervisorPageV2() {
   const {
     insightsStore: { supervisionStore },
-    workflowsRootStore: {
-      justiceInvolvedPersonsStore,
-      opportunityConfigurationStore,
-    },
   } = useRootStore();
 
-  if (
-    !supervisionStore?.supervisorPseudoId ||
-    !justiceInvolvedPersonsStore ||
-    !opportunityConfigurationStore
-  )
-    return null;
+  if (!supervisionStore?.supervisorPseudoId) return null;
 
-  const presenter = new SupervisionSupervisorPresenter(
+  const presenter = new SupervisionSupervisorPagePresenter(
     supervisionStore,
     supervisionStore.supervisorPseudoId,
-    justiceInvolvedPersonsStore,
-    opportunityConfigurationStore,
   );
 
   return (

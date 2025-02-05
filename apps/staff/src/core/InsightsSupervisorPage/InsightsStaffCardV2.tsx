@@ -22,10 +22,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { withPresenterManager } from "~hydration-utils";
+
 import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { SupervisionSupervisorPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPresenter";
+import { ModelHydratorWithoutLoader } from "../../InsightsStore/hydrators/ModelHydratorWithoutLoader";
+import { SupervisionSupervisorOutcomesPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorOutcomesPresenter";
 import { toTitleCase } from "../../utils";
 import InsightsInfoModalV2 from "../InsightsInfoModal/InsightsInfoModalV2";
 import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
@@ -177,9 +180,11 @@ export const EmptyCard = ({
   );
 };
 
-const InsightsStaffCardV2: React.FC<{
-  presenter: SupervisionSupervisorPresenter;
-}> = ({ presenter }) => {
+function InsightsStaffCard({
+  presenter,
+}: {
+  presenter: SupervisionSupervisorOutcomesPresenter;
+}) {
   const { isTablet } = useIsMobile(true);
 
   const {
@@ -335,6 +340,32 @@ const InsightsStaffCardV2: React.FC<{
       </CardBody>
     </CardWrapper>
   );
+}
+
+const ManagedComponent: React.FC<{
+  presenter: SupervisionSupervisorOutcomesPresenter;
+}> = observer(function InsightsStaffCardV2({ presenter }) {
+  return <InsightsStaffCard presenter={presenter} />;
+});
+
+const usePresenter = () => {
+  const {
+    insightsStore: { supervisionStore },
+  } = useRootStore();
+
+  return supervisionStore?.supervisorPseudoId
+    ? new SupervisionSupervisorOutcomesPresenter(
+        supervisionStore,
+        supervisionStore?.supervisorPseudoId,
+      )
+    : null;
 };
 
-export default observer(InsightsStaffCardV2);
+const InsightsStaffCardV2 = withPresenterManager({
+  managerIsObserver: true,
+  usePresenter,
+  HydratorComponent: ModelHydratorWithoutLoader,
+  ManagedComponent,
+});
+
+export default InsightsStaffCardV2;
