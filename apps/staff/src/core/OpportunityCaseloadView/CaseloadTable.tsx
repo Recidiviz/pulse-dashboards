@@ -22,9 +22,11 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   SortDirection,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import { rem } from "polished";
+import { Dispatch, SetStateAction } from "react";
 import styled from "styled-components/macro";
 
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
@@ -35,7 +37,6 @@ const Table = styled.table`
   width: 100%;
   ${typography.Sans14};
   text-align: left;
-  white-space: nowrap;
 `;
 
 const SortableHeader = styled.div<{ $sortable?: boolean }>`
@@ -53,7 +54,7 @@ const TableHeader = styled.thead`
 const SharedTableCellStyles = `
   height: 49px;
   padding-left: ${rem(spacing.xs)};
-  padding-right: ${rem(spacing.xxl)};
+  padding-right: ${rem(spacing.xs)};
 `;
 
 const HeaderCell = styled.th`
@@ -67,8 +68,7 @@ const Cell = styled.td<{ $expandedLastColumn: boolean }>`
 
   color: ${palette.pine1};
 
-  width: 0;
-  min-width: fit-content;
+  width: 12%;
 
   ${({ $expandedLastColumn }) =>
     /* Offset last column to fill all available space and right-align contents */
@@ -76,11 +76,13 @@ const Cell = styled.td<{ $expandedLastColumn: boolean }>`
     `&:last-child {
     text-align: right;
     width: auto;
+    padding-right: ${rem(spacing.xl)};
   }`}
 
   ${NavigateToFormButtonStyle} {
     min-height: 0;
     height: 32px;
+    white-space: nowrap;
   }
 
   ${PersonIdWithCopyIcon} {
@@ -157,6 +159,10 @@ type CaseloadTableProps<TData> = {
   expandedLastColumn?: boolean;
   onRowClick: (row: TData) => void;
   shouldHighlightRow: (row: TData) => boolean;
+  manualSorting?: {
+    sorting: SortingState;
+    setSorting: Dispatch<SetStateAction<SortingState>>;
+  };
 };
 
 export const CaseloadTable = function CaseloadTable<TData>({
@@ -165,12 +171,22 @@ export const CaseloadTable = function CaseloadTable<TData>({
   columns,
   onRowClick,
   shouldHighlightRow,
+  manualSorting = undefined,
 }: CaseloadTableProps<TData>) {
   const table = useReactTable({
     data,
     columns: columns,
     getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
+    ...(manualSorting
+      ? {
+          manualSorting: true,
+          state: {
+            sorting: manualSorting.sorting,
+          },
+          onSortingChange: manualSorting.setSorting,
+        }
+      : {}),
   });
 
   return (
