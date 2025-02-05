@@ -39,10 +39,21 @@ import {
   Sans16,
   Sans18,
   spacing,
+  TooltipTrigger,
 } from "@recidiviz/design-system";
-import { ColumnDef, Row } from "@tanstack/react-table";
+import { ColumnDef, Row, SortingState } from "@tanstack/react-table";
+import { orderBy } from "lodash";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
+import { rem, rgba } from "polished";
+import { Dispatch, SetStateAction, useState } from "react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemButton,
+  AccordionItemHeading,
+  AccordionItemPanel,
+  AccordionItemState,
+} from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
 import { OpportunityType } from "~datatypes";
@@ -57,6 +68,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import { formatWorkflowsDate } from "../../utils/formatStrings";
 import {
+  JusticeInvolvedPerson,
   Opportunity,
   OpportunityTab,
   OpportunityTabGroup,
@@ -84,7 +96,8 @@ const HorizontalScrollWrapper = styled.div`
 
 const OpportunityPageExplainer = styled(Sans16)`
   color: ${palette.slate70};
-  padding-bottom: ${rem(spacing.md)};
+  margin-bottom: ${rem(spacing.md)};
+  margin-top: ${rem(spacing.md)};
 `;
 
 const Flex = `
@@ -105,6 +118,7 @@ const EmptyTabGroupWrapper = styled.div`
   text-align: center;
   width: 100%;
   flex-grow: 1;
+  margin-top: ${rem(spacing.md)};
 
   border: 1px dashed ${palette.slate30};
   background-color: ${palette.marble2};
@@ -123,6 +137,42 @@ const SubcategoryHeading = styled(Sans14)`
   padding-bottom: ${rem(spacing.sm)};
 `;
 
+const CaseloadAccordionHeading = styled(AccordionItemHeading)`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 56px;
+  background-color: ${rgba(palette.slate, 0.05)};
+  border-bottom: 1px solid ${palette.slate10};
+`;
+
+const CaseloadAccordionTitleWrapper = styled.div`
+  display: flex;
+  gap: ${rem(spacing.xs)};
+
+  width: fit-content;
+  padding: ${rem(spacing.sm)};
+  border-radius: ${rem(spacing.sm)};
+  transition: all 0.3s ease;
+  &:hover {
+    background-color: ${palette.slate10};
+    cursor: pointer;
+  }
+`;
+
+const CaseloadAccordionIcon = styled.i`
+  vertical-align: top;
+  color: ${palette.pine3};
+`;
+
+const CaseloadAccordionTitle = styled(Sans14)`
+  color: ${palette.pine3};
+`;
+
+const CaseloadAccordionCount = styled(Sans14)`
+  color: ${palette.slate80};
+`;
+
 type OpportunityPersonListProps = {
   opportunityType: OpportunityType;
   supervisionPresenter?: SupervisionOpportunityPresenter;
@@ -132,9 +182,18 @@ type OpportunityCaseloadComponentProps = {
   presenter: OpportunityCaseloadPresenter;
 };
 
-const TableView = observer(function TableView({
+const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
   presenter,
-}: OpportunityCaseloadComponentProps) {
+  opportunities,
+  manualSorting,
+}: OpportunityCaseloadComponentProps & {
+  opportunities: Opportunity[];
+  manualSorting?: {
+    // returned by useState
+    sorting: SortingState;
+    setSorting: Dispatch<SetStateAction<SortingState>>;
+  };
+}) {
   // TODO(#7189) handle conditionally showing/hiding columns based on tab state
 
   // We manually assemble column definitions instead of using createColumnHelper
@@ -143,23 +202,18 @@ const TableView = observer(function TableView({
   const columns: ColumnDef<Opportunity>[] = [
     {
       header: "Name",
+      id: "person.displayName",
       accessorKey: "person.displayName",
       enableSorting: true,
-      sortingFn: (rowA: Row<Opportunity>, rowB: Row<Opportunity>) =>
-        rowA.original.person.displayName.localeCompare(
-          rowB.original.person.displayName,
-        ),
+      sortingFn: "text",
     },
     {
       // TODO(#6737): Make the column header the same as the label displayed when copied
       header: "DOC ID",
+      id: "person.displayId",
       accessorKey: "person.displayId",
       enableSorting: true,
-      sortingFn: (rowA: Row<Opportunity>, rowB: Row<Opportunity>) => {
-        return rowA.original.person.displayId.localeCompare(
-          rowB.original.person.displayId,
-        );
-      },
+      sortingFn: "alphanumeric",
       cell: ({ row }: { row: Row<Opportunity> }) => {
         const opportunity = row.original;
         const { person } = opportunity;
@@ -176,13 +230,10 @@ const TableView = observer(function TableView({
     },
     {
       header: "Officer",
+      id: "person.assignedStaffFullName",
       accessorKey: "person.assignedStaffFullName",
       enableSorting: true,
-      sortingFn: (rowA: Row<Opportunity>, rowB: Row<Opportunity>) => {
-        return rowA.original.person.assignedStaffFullName.localeCompare(
-          rowB.original.person.assignedStaffFullName,
-        );
-      },
+      sortingFn: "text",
     },
     {
       header: "Status",
@@ -193,8 +244,10 @@ const TableView = observer(function TableView({
     },
     {
       header: "Eligibility Date",
+      id: "eligibilityDate",
       accessorKey: "eligibilityDate",
       enableSorting: true,
+      sortingFn: "datetime",
       cell: ({ row }: { row: Row<Opportunity> }) => {
         return row.original.eligibilityDate
           ? formatWorkflowsDate(row.original.eligibilityDate)
@@ -204,6 +257,7 @@ const TableView = observer(function TableView({
     {
       id: "cta-button",
       header: "",
+      enableSorting: false,
       cell: ({ row }: { row: Row<Opportunity> }) => {
         return row.original.form?.navigateToFormText ? (
           <NavigateToFormButton
@@ -221,12 +275,111 @@ const TableView = observer(function TableView({
     <HorizontalScrollWrapper>
       <CaseloadTable
         expandedLastColumn
-        data={presenter.peopleInActiveTab}
+        data={opportunities}
         columns={columns}
         onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
         shouldHighlightRow={(opp) => presenter.shouldHighlightOpportunity(opp)}
+        manualSorting={manualSorting}
       ></CaseloadTable>
     </HorizontalScrollWrapper>
+  );
+});
+
+const MultiTableView = observer(function MultiTableView({
+  presenter,
+  subcategoryOrder,
+  peopleInActiveTabBySubcategory,
+}: OpportunityCaseloadComponentProps & {
+  subcategoryOrder: string[];
+  peopleInActiveTabBySubcategory: Record<
+    string,
+    Opportunity<JusticeInvolvedPerson>[]
+  >;
+}) {
+  // synchronize sorting state between all displayed tables
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const displayedSubcategories = subcategoryOrder.filter(
+    (category) => peopleInActiveTabBySubcategory[category],
+  );
+  return (
+    <Accordion
+      allowMultipleExpanded
+      allowZeroExpanded
+      preExpanded={[...displayedSubcategories.keys()]}
+    >
+      {displayedSubcategories.map((category, i) => {
+        const opps = peopleInActiveTabBySubcategory[category];
+
+        const sortedOpps =
+          sorting.length === 0
+            ? opps
+            : orderBy(
+                opps,
+                [sorting[0].id],
+                [sorting[0].desc ? "desc" : "asc"],
+              );
+
+        return (
+          <AccordionItem key={category} uuid={i}>
+            <CaseloadAccordionHeading>
+              <AccordionItemButton>
+                <AccordionItemState>
+                  {({ expanded }) => (
+                    <TooltipTrigger contents={expanded ? "Collapse" : "Expand"}>
+                      <CaseloadAccordionTitleWrapper>
+                        {expanded ? (
+                          <CaseloadAccordionIcon className="fa fa-angle-up fa-lg" />
+                        ) : (
+                          <CaseloadAccordionIcon className="fa fa-angle-down fa-lg" />
+                        )}
+                        <CaseloadAccordionTitle>
+                          {presenter.headingText(category)}
+                        </CaseloadAccordionTitle>
+                        <CaseloadAccordionCount>
+                          {sortedOpps.length}
+                        </CaseloadAccordionCount>
+                      </CaseloadAccordionTitleWrapper>
+                    </TooltipTrigger>
+                  )}
+                </AccordionItemState>
+              </AccordionItemButton>
+            </CaseloadAccordionHeading>
+            <AccordionItemPanel>
+              <OpportunityCaseloadTable
+                presenter={presenter}
+                opportunities={sortedOpps}
+                manualSorting={{ sorting, setSorting }}
+              />
+            </AccordionItemPanel>
+          </AccordionItem>
+        );
+      })}
+    </Accordion>
+  );
+});
+
+const TableView = observer(function TableView({
+  presenter,
+}: OpportunityCaseloadComponentProps) {
+  const { subcategoryOrder, peopleInActiveTabBySubcategory } = presenter;
+
+  // With subcategories: show a table for each subcategory
+  if (subcategoryOrder && peopleInActiveTabBySubcategory) {
+    return (
+      <MultiTableView
+        presenter={presenter}
+        subcategoryOrder={subcategoryOrder}
+        peopleInActiveTabBySubcategory={peopleInActiveTabBySubcategory}
+      />
+    );
+  }
+
+  // No subcategories: show one table with all people
+  return (
+    <OpportunityCaseloadTable
+      presenter={presenter}
+      opportunities={presenter.peopleInActiveTab}
+    />
   );
 });
 
@@ -346,8 +499,11 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
             <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
           </EmptyTabGroupWrapper>
         </MaxWidthFlexWrapper>
+      ) : opportunityTableView ? (
+        /* Table view */
+        <TableView presenter={presenter} />
       ) : peopleInActiveTabBySubcategory ? (
-        /* Subcategories display */
+        /* List view subcategories display */
         (presenter.subcategoryOrder ?? [])
           .filter((category) => peopleInActiveTabBySubcategory[category])
           .map((category) => (
@@ -360,11 +516,8 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
               />
             </div>
           ))
-      ) : /* List or table view with no subcategories */
-      /* TODO(#7187) add support for subcategory view in table view */
-      opportunityTableView ? (
-        <TableView presenter={presenter} />
       ) : (
+        /* List view with no subcategories */
         <CaseloadOpportunityGrid items={peopleInActiveTab} />
       )}
 

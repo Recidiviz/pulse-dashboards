@@ -45,7 +45,6 @@ const TabControls = styled.div`
   border-bottom: 1px solid ${palette.slate60};
   align-items: center;
   justify-content: space-between;
-  margin-bottom: ${rem(spacing.md)};
   ${TabControlsMobileView}
 `;
 
