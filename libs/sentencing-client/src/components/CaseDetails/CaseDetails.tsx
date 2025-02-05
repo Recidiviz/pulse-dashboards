@@ -75,7 +75,10 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
     useState(false);
   const [initialPageLoad, setInitialPageLoad] = useState(true);
 
-  const openEditCaseDetailsModal = () => setShowEditCaseDetailsModal(true);
+  const openEditCaseDetailsModal = () => {
+    setShowEditCaseDetailsModal(true);
+    trackEditCaseDetailsClicked();
+  };
   const hideEditCaseDetailsModal = () => setShowEditCaseDetailsModal(false);
 
   const handleRecommendationUpdate = (
@@ -142,7 +145,6 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
           <CaseAttributes
             caseAttributes={caseAttributes}
             openEditCaseDetailsModal={openEditCaseDetailsModal}
-            analytics={{ trackEditCaseDetailsClicked }}
           />
           <Styled.Body>
             <Styled.InsightsOpportunitiesWrapper>

@@ -98,6 +98,6 @@ export type NonArrayType<T> = T extends (infer U)[] ? U : T;
 export type AttributeLabelValue = {
   key: AttributeKey | string;
   label: string;
-  value?: string | number;
+  value?: string | number | null;
   fallbackValue?: string;
 };

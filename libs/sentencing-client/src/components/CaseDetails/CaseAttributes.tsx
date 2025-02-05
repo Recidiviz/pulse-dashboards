@@ -21,6 +21,7 @@ import moment from "moment";
 import { CaseStore } from "../../datastores/CaseStore";
 import { filterExcludedAttributes } from "../../geoConfigs/utils";
 import { displayReportType } from "../../utils/utils";
+import { useStore } from "../StoreProvider/StoreProvider";
 import * as Styled from "./CaseDetails.styles";
 import {
   AGE_KEY,
@@ -36,17 +37,14 @@ import { AttributeLabelValue } from "./types";
 type CaseAttributesProps = {
   caseAttributes: CaseStore["caseAttributes"];
   openEditCaseDetailsModal: () => void;
-  analytics: { trackEditCaseDetailsClicked: () => void };
 };
 
 export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
-  function CaseAttributes({
-    caseAttributes,
-    openEditCaseDetailsModal,
-    analytics,
-  }) {
-    const { trackEditCaseDetailsClicked } = analytics;
-
+  function CaseAttributes({ caseAttributes, openEditCaseDetailsModal }) {
+    const { activeFeatureVariants } = useStore();
+    const hasEditCountyFieldsFVEnabled = Boolean(
+      activeFeatureVariants["editCountyFields"],
+    );
     const {
       age,
       dueDate,
@@ -67,12 +65,16 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
     const countyOfSentencingField = {
       key: COUNTY_KEY,
       label: "County",
-      value: countyOfSentencing ?? "Unknown",
+      value: hasEditCountyFieldsFVEnabled
+        ? countyOfSentencing
+        : countyOfSentencing ?? "Unknown",
     };
     const countyOfResidenceField = {
       key: COUNTY_KEY,
       label: "County of Residence",
-      value: countyOfResidence?.toLocaleLowerCase() ?? "Unknown",
+      value: hasEditCountyFieldsFVEnabled
+        ? countyOfResidence?.toLocaleLowerCase()
+        : countyOfResidence?.toLocaleLowerCase() ?? "Unknown",
     };
 
     const hasMatchingCountyOfResidenceAndSentencing =
@@ -122,12 +124,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
           <Styled.DueDate>
             Due {moment(dueDate).utc().format("MM/DD/YYYY")}
           </Styled.DueDate>
-          <Styled.EditCaseDetailsButton
-            onClick={() => {
-              openEditCaseDetailsModal();
-              trackEditCaseDetailsClicked();
-            }}
-          >
+          <Styled.EditCaseDetailsButton onClick={openEditCaseDetailsModal}>
             Edit Case Details
           </Styled.EditCaseDetailsButton>
         </Styled.HeaderWrapper>
@@ -139,11 +136,13 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
               <Styled.Attribute>{attribute.label}:</Styled.Attribute>
               <Styled.Value>
                 {attribute.value}
-                <span>
-                  {attribute.value !== 0 &&
-                    !attribute.value &&
-                    attribute.fallbackValue}
-                </span>
+                {hasEditCountyFieldsFVEnabled &&
+                  !attribute.value &&
+                  attribute.key === COUNTY_KEY && (
+                    <Styled.LinkValue onClick={openEditCaseDetailsModal}>
+                      + Add a County
+                    </Styled.LinkValue>
+                  )}
               </Styled.Value>
             </Styled.AttributeValueWrapper>
           ))}
