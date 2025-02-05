@@ -77,6 +77,8 @@ You’d continue to live in an MDOC facility.
 - SCCP is a program for MDOC residents who are almost done with their prison sentence. It is sometimes called “home confinement.”
 - If eligible, you can apply to spend the last portion of your sentence in the community, while under the supervision of a probation officer.
 
+<ComparisonLink opportunityTypes={["usMeWorkRelease", "usMeSCCP"]} />
+
 ### Furlough Passes
 
 - Furlough passes give you special permission to leave the facility for a short period of time to visit your family or for other important reasons.

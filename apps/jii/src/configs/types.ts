@@ -23,6 +23,7 @@ import {
   EligibilityReport,
   EligibilityStatus,
 } from "../models/EligibilityReport/types";
+import { NonEmptyArray } from "../utils/types";
 import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
 import { stateCodes } from "./stateConstants";
 
@@ -90,11 +91,31 @@ export type OpportunityConfig = {
    * into menus and headings to refer to this opportunity generically
    */
   shortName: string;
-
   statusLabels: Record<EligibilityStatus, string>;
 };
 
-export type IncarcerationOpportunityId = "usMeSCCP" | "usMeWorkRelease";
+export const incarcerationOpportunityIdEnum = z.enum([
+  "usMeSCCP",
+  "usMeWorkRelease",
+]);
+
+export type IncarcerationOpportunityId = z.infer<
+  typeof incarcerationOpportunityIdEnum
+>;
+
+export type ComparisonPageConfig = {
+  opportunities: [IncarcerationOpportunityId, IncarcerationOpportunityId];
+  summary: {
+    text: string;
+    linkText: string;
+  };
+  fullPage: {
+    heading: string;
+    body: string;
+    tableRows: NonEmptyArray<[string, string, string]>;
+    linkText: string;
+  };
+};
 
 export type ResidentsConfig = {
   headerProfileFields: Array<ProfileField>;
@@ -119,6 +140,9 @@ export type ResidentsConfig = {
       };
     };
   };
+  // this is an array to support later expansion, but for now we don't support
+  // there being more than one of these pages in the implementation
+  comparisons?: [ComparisonPageConfig];
 };
 
 export type StateCode = z.infer<typeof stateCodes>;
