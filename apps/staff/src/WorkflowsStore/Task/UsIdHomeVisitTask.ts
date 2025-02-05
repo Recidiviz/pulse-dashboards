@@ -56,10 +56,12 @@ class UsIdHomeVisitTask extends Task<"homeVisit"> {
       ];
 
     if (this.lastHomeVisit) {
-      details += `Last home contact on: ${this.lastHomeVisit}; `;
+      details += `Last home contact on ${this.lastHomeVisit}; `;
     }
     if (complianceLevel) {
-      details += simplur`${complianceLevel.contacts} home contact[|s] needed every ${complianceLevel.days} days, for current supervision level and case type`;
+      details +=
+        simplur`${complianceLevel.contacts} home contact[|s] needed every ${complianceLevel.days} days ` +
+        "OR within 30 days of an address change for current supervision level and case type";
     }
     return details;
   }

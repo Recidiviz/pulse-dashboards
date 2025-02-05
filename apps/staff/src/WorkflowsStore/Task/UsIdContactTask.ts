@@ -52,10 +52,10 @@ class UsIdContactTask extends Task<"contact"> {
       ];
     let details = "";
     if (this.lastContacted) {
-      details += `Last contact was on: ${this.lastContacted}; `;
+      details += `Last contact was on ${this.lastContacted}; `;
     }
     if (complianceLevel) {
-      details += simplur`${complianceLevel.contacts} contact[|s] needed every ${complianceLevel.days} days, for current supervision level and case type`;
+      details += simplur`${complianceLevel.contacts} contact[|s] needed every ${complianceLevel.days} days for current supervision level and case type`;
     }
 
     return details;
