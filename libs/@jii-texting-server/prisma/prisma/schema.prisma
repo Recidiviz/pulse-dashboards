@@ -6,6 +6,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  // TODO(#38084) Create Helper to get DB URL
   url      = env("DATABASE_URL_US_ID")
 }
 
@@ -62,28 +63,126 @@ enum StateCode {
   US_WY
 }
 
-enum TopicId {
-  UsIdLsu
+enum MessageType {
+  INITIAL_TEXT
+  ELIGIBILITY_TEXT
 }
 
-enum GroupId {
-  FULLY_ELIGIBLE
-  ELIGIBLE_MISSING_FINES_AND_FEES
-  TWO_MISSING_CRITERIA
-  MISSING_DA
-  MISSING_INCOME_VERIFICATION
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum MessageAttemptStatus {
+  FAILURE
+  SUCCESS
+  IN_PROGRESS
 }
 
 model Person {
-  stateCode   StateCode
-  externalId  String    @id
-  personId    Int       @unique
-  personName  String
+  externalId      String    @id // indicated by DOC
+  pseudonymizedId String    @unique // hashed id used to anonymize
+  personId        String    @unique // internal Recidiviz id
+  stateCode       StateCode
+  givenName       String
+  middleName      String
+  surName         String
+  nameSuffix      String
+  phoneNumber     String    @unique
+  officerId       String
+  poName          String
+  district        String
+  lastOptOutDate  DateTime? // will not be null if person has opted-out
+
+  groups        Group[] // will be an empty list if this person should not be texted that day
+  replies       Reply[]
+  messageSeries MessageSeries[]
+}
+
+model MessageSeries {
+  id          String      @id @default(cuid())
+  messageType MessageType
+
+  person           Person           @relation(fields: [personExternalId], references: [externalId])
+  personExternalId String
+  group            Group            @relation(fields: [groupId], references: [id])
+  groupId          String
+  messageAttempts  MessageAttempt[]
+}
+
+model MessageAttempt {
+  id                     String               @id @default(cuid())
+  twilioMessageSid       String               @unique
+  body                   String
+  phoneNumber            String
+  status                 MessageAttemptStatus
+  createdTimestamp       DateTime // when sent post request to Twilio
+  lastUpdatedTimestamp   DateTime? // when status last updated by us
+  twilioSentTimestamp    DateTime? // when Twilio actually attempted to send message
+  deliveredTimestamp     DateTime? // when message was actually delivered to jii
+  requestedSendTimestamp DateTime? // when we asked Twilio to schedule send message
+  error                  String?
+  errorCode              Int?
+
+  messageSeries       MessageSeries     @relation(fields: [messageId], references: [id])
+  messageId           String
+  workflowExecution   WorkflowExecution @relation(fields: [workflowExecutionId], references: [id])
+  workflowExecutionId String
+  clicks              Click[]
+}
+
+model Topic {
+  id        String    @id @default(cuid())
+  topicName String
+  stateCode StateCode
+  status    Status    @default(INACTIVE)
+
+  groups Group[]
+
+  @@unique([topicName, stateCode])
+}
+
+model Group {
+  id                  String  @id @default(cuid())
+  groupName           String
+  messageCopyTemplate String?
+  status              Status  @default(INACTIVE)
+
+  topic         Topic           @relation(fields: [topicId], references: [id])
+  topicId       String
+  people        Person[]
+  messageSeries MessageSeries[]
+
+  @@unique([groupName, topicId])
+}
+
+model WorkflowExecution {
+  id                    String    @id @default(cuid())
+  stateCode             StateCode
+  workflowExecutionTime DateTime
+
+  messageAttempts MessageAttempt[]
+}
+
+model Reply {
+  id               String   @id @default(cuid())
+  twilioMessageSid String   @unique
+  body             String
+  messageTimestamp DateTime
+
+  person      Person @relation(fields: [phoneNumber], references: [phoneNumber])
   phoneNumber String
-  officerId   String
-  poName      String
-  district    String
-  topicId     TopicId
-  groupId     GroupId
-  launchId    String?
+}
+
+model Click {
+  id                  String   @id @default(cuid())
+  from                String
+  link                String
+  clickTime           DateTime
+  messagingServiceSid String
+  accountSid          String
+  userAgent           String
+
+  messageAttempt MessageAttempt @relation(fields: [smsSid], references: [twilioMessageSid])
+  smsSid         String         @unique
 }
