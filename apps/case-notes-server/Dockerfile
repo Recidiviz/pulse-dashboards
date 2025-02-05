@@ -10,9 +10,12 @@ ENV PORT 8080
 RUN apt-get update -y && apt-get install -y openssl
 RUN apt-get install dumb-init
 
-# Copy over the package.json and yarn.lock files since they are changed less often
-COPY dist/apps/case-notes-server/package.json dist/apps/case-notes-server/yarn.lock ./
-RUN yarn install --production --frozen-lockfile
+# Enable corepack so newer versions of yarn can be installed
+RUN corepack enable
+
+# Copy over the package.json, yarn.lock, and .yarnrc.yml files since they are changed less often
+COPY dist/apps/case-notes-server/package.json dist/apps/case-notes-server/yarn.lock dist/apps/case-notes-server/.yarnrc.yml ./
+RUN yarn workspaces focus --production
 
 # Copy over the rest of the files as late as we can
 COPY dist/apps/case-notes-server .

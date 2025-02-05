@@ -80,7 +80,8 @@
             "input": "{workspaceRoot}/libs/@jii-texting-server/prisma",
             "output": "."
           },
-          "{projectRoot}/scripts/*"
+          "{projectRoot}/scripts/*",
+          "{workspaceRoot}/.yarnrc.yml"
         ],
         "external": ["@prisma/jii-texting-server"]
       },
@@ -131,7 +132,7 @@
     "deploy": {
       "executor": "nx:run-commands",
       "options": {
-        "tty": true,
+        "tty": true
       },
       "configurations": {
         "staging": {

@@ -233,6 +233,13 @@
       "options": {
         "outputPath": "{workspaceRoot}/dist/apps/staff"
       }
+    },
+    "verify-feature-variant-documentation": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_sync_content && vite-node tools/verifyFeatureVariantDocumentation.ts'"
+      }
     }
   }
 }

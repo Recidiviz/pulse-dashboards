@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Loads appropriate environment variables into the shell. 
-# Usage: `source ./load_environment.sh <env_secret_1_name,env_secret_2_name>` && <command to start environment>
+# Usage: `. load_environment.sh <env_secret_1_name,env_secret_2_name>` && <command to start environment>
 # env_secret_names:
 # env_dev_spa - env vars for the dev frontend
 # env_dev_server - env vars for the dev backend
