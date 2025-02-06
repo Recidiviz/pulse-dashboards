@@ -154,18 +154,3 @@ test("supervisor has no officer outcomes", async () => {
     }
   `);
 });
-
-test("supervisor has no excluded officers", async () => {
-  vi.spyOn(
-    InsightsOfflineAPIClient.prototype,
-    "excludedOfficersForSupervisor",
-  ).mockResolvedValue([]);
-
-  await presenter.hydrate();
-
-  expect(presenter.hydrationState).toMatchInlineSnapshot(`
-    {
-      "status": "hydrated",
-    }
-  `);
-});

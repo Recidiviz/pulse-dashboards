@@ -22,7 +22,6 @@ import {
   ActionStrategy,
   ClientEvent,
   ClientInfo,
-  ExcludedSupervisionOfficer,
   InsightsConfig,
   MetricBenchmark,
   SupervisionOfficer,
@@ -56,16 +55,10 @@ export interface InsightsAPI {
   officersForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>>;
-  excludedOfficersForSupervisor(
-    supervisorPseudoId: string,
-  ): Promise<Array<ExcludedSupervisionOfficer>>;
   outcomesForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficerOutcomes>>;
   supervisionOfficer(officerPseudoId: string): Promise<SupervisionOfficer>;
-  excludedSupervisionOfficer(
-    officerPseudoId: string,
-  ): Promise<ExcludedSupervisionOfficer>;
   outcomesForOfficer(
     officerPseudoId: string,
   ): Promise<SupervisionOfficerOutcomes>;
