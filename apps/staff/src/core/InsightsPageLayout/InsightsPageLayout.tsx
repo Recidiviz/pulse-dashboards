@@ -30,33 +30,26 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { THIRTY_SECONDS } from "../../InsightsStore/presenters/utils";
-import { humanReadableTitleCase, pluralizeWord } from "../../utils";
+import { humanReadableTitleCase } from "../../utils";
 import { InsightsActionStrategyModal } from "../InsightsActionStrategyModal";
 import InsightsInfoModal from "../InsightsInfoModal";
 
 const PageWrapper = styled.div<{
   isMobile: boolean;
-  supervisorHomepage: boolean;
 }>`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
-  padding: 0
-    ${({ isMobile, supervisorHomepage }) =>
-      !isMobile && supervisorHomepage ? "56px" : "0"};
-
-  ${({ supervisorHomepage }) =>
-    supervisorHomepage &&
-    `max-width: ${rem(1200)};
-    margin: 0 auto;`}
+  padding: 0 ${({ isMobile }) => (isMobile ? "0" : "56px")};
+  max-width: ${rem(1200)};
+  margin: 0 auto;
 `;
 
 export const Wrapper = styled.div<{
   isLaptop: boolean;
-  supervisorHomepage?: boolean;
+  isFlex?: boolean;
 }>`
-  display: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? "block" : "flex"};
+  ${({ isFlex }) => isFlex && "display: flex;"}
   flex-direction: ${({ isLaptop }) => (isLaptop ? "column" : "row")};
   gap: ${rem(spacing.md)};
 `;
@@ -67,36 +60,24 @@ export const Header = styled.div`
 
 const Title = styled.div<{
   isMobile: boolean;
-  supervisorHomepage: boolean;
 }>`
-  ${({ supervisorHomepage }) =>
-    supervisorHomepage ? typography.Sans24 : typography.Serif34}
+  ${typography.Sans24}
   font-size: ${({ isMobile }) => (isMobile ? 24 : 34)}px;
-  font-weight: ${({ supervisorHomepage }) => (supervisorHomepage ? 600 : 400)};
+  font-weight: 600;
   color: ${palette.pine2};
-  margin-top: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? rem(spacing.lg) : 0};
+  margin-top: ${rem(spacing.lg)};
   margin-bottom: ${rem(spacing.md)};
-`;
-
-const HighlightedText = styled.span`
-  border-bottom: 2px dashed ${palette.pine2};
-  &:hover {
-    cursor: default;
-  }
 `;
 
 export const InfoSection = styled.div<{
   isMobile: boolean;
-  supervisorHomepage: boolean;
 }>`
   display: flex;
   flex-wrap: wrap;
   column-gap: ${rem(spacing.xl)};
   row-gap: ${rem(spacing.sm)};
   margin-bottom: ${rem(spacing.md)};
-  margin-right: ${({ isMobile, supervisorHomepage }) =>
-    isMobile || supervisorHomepage ? 0 : 20}%;
+  margin-right: 0;
 `;
 
 const InfoItem = styled.div`
@@ -121,22 +102,19 @@ export const Subtitle = styled.div`
   margin-top: 40px;
 `;
 
-export const Body = styled.div<{ supervisorHomepage?: boolean }>`
+export const Body = styled.div`
   display: flex;
   flex-direction: column;
-  flex-basis: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? `60%;` : "66%;"};
+  flex-basis: 60%;
   gap: ${rem(spacing.md)};
 `;
 
 export const Sidebar = styled.div<{
   isLaptop?: boolean;
-  supervisorHomepage?: boolean;
 }>`
   display: flex;
   flex-direction: column;
-  flex-basis: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? "40%;" : "33%;"};
+  flex-basis: 40%;
   order: ${({ isLaptop }) => (isLaptop ? 0 : 1)};
   gap: ${rem(spacing.md)};
 `;
@@ -144,38 +122,6 @@ export const Sidebar = styled.div<{
 const TooltipWrapper = styled.div`
   padding: ${rem(spacing.sm)};
 `;
-
-const TitleContents = ({
-  pageTitle,
-  supervisorHomepage,
-  textToHighlight,
-  tooltipContents,
-}: {
-  pageTitle: string;
-  supervisorHomepage: boolean;
-  textToHighlight: string;
-  tooltipContents: string;
-}) => {
-  const hasHighlightedSubstring = pageTitle.includes(textToHighlight);
-  const textToHighlightPlural = pluralizeWord(textToHighlight);
-  const outlierSubstring = pageTitle.includes(textToHighlightPlural)
-    ? textToHighlightPlural
-    : textToHighlight;
-  const [pageTitleStart, pageTitleEnd] = pageTitle.split(outlierSubstring);
-  return supervisorHomepage ? (
-    pageTitle
-  ) : (
-    <>
-      {pageTitleStart}
-      {hasHighlightedSubstring && (
-        <InsightsTooltip contents={`${tooltipContents}`} maxWidth={310}>
-          <HighlightedText>{outlierSubstring}</HighlightedText>
-        </InsightsTooltip>
-      )}
-      {pageTitleEnd}
-    </>
-  );
-};
 
 export const InsightsTooltip = ({
   contents,
@@ -215,10 +161,10 @@ type InsightsPageLayoutProps = {
   pageDescription?: ReactNode | string;
   descriptionHighlight?: string;
   contentsAboveTitle?: ReactNode;
-  textToHighlight?: string;
   hasSupervisionInfoModal?: boolean;
   highlightedOfficers?: ReactNode;
   children?: ReactNode;
+  isFlex?: boolean;
 };
 
 const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
@@ -228,18 +174,15 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   pageDescription,
   contentsAboveTitle,
   hasSupervisionInfoModal,
-  textToHighlight = "outlier",
   highlightedOfficers,
   children,
+  isFlex,
 }) => {
   const { isMobile, isTablet, isLaptop } = useIsMobile(true);
   const [pageOpenedAt, setPageOpenedAt] = useState<Date>(new Date());
 
   const {
-    insightsStore: {
-      supervisionStore,
-      shouldUseSupervisorHomepageUI: supervisorHomepage,
-    },
+    insightsStore: { supervisionStore },
   } = useRootStore();
 
   useEffect(() => {
@@ -257,25 +200,13 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
     supervisionStore;
 
   return (
-    <PageWrapper isMobile={isTablet} supervisorHomepage={supervisorHomepage}>
+    <PageWrapper isMobile={isTablet}>
       {contentsAboveTitle}
-      <Wrapper isLaptop={isLaptop} supervisorHomepage={supervisorHomepage}>
+      <Wrapper isFlex={isFlex} isLaptop={isLaptop}>
         <Header>
-          {pageTitle && (
-            <Title isMobile={isMobile} supervisorHomepage={supervisorHomepage}>
-              <TitleContents
-                pageTitle={pageTitle}
-                supervisorHomepage={supervisorHomepage}
-                textToHighlight={textToHighlight}
-                tooltipContents={labels.outliersHover}
-              />
-            </Title>
-          )}
+          {pageTitle && <Title isMobile={isMobile}>{pageTitle}</Title>}
           {infoItems && infoItems.length > 0 && (
-            <InfoSection
-              isMobile={isMobile}
-              supervisorHomepage={supervisorHomepage}
-            >
+            <InfoSection isMobile={isMobile}>
               {infoItems.map(
                 (item) =>
                   !!item.info && (
@@ -297,13 +228,9 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
               )}
             </InfoSection>
           )}
-          {supervisorHomepage && highlightedOfficers}
-          {supervisorHomepage && pageSubtitle && (
-            <Subtitle>{pageSubtitle}</Subtitle>
-          )}
-          {supervisorHomepage && pageDescription && (
-            <Description>{pageDescription}</Description>
-          )}
+          {highlightedOfficers}
+          {pageSubtitle && <Subtitle>{pageSubtitle}</Subtitle>}
+          {pageDescription && <Description>{pageDescription}</Description>}
           {hasSupervisionInfoModal && (
             <InsightsInfoModal
               buttonText="Why aren't all my staff showing up?"
@@ -312,12 +239,9 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
               copy={`We're listing all ${labels.supervisionOfficerLabel}s that we know to currently be reporting to this ${labels.supervisionSupervisorLabel} and that have caseload sizes within the ranges listed below.<br><br> 
               ${exclusionReasonDescription} <br><br>
               If an ${labels.supervisionOfficerLabel} is missing from this list or is incorrectly assigned to a ${labels.supervisionSupervisorLabel}, please let us know by messaging us via the support icon in the bottom right or by emailing **feedback@recidiviz.org.**`}
-              supervisorHomepage={supervisorHomepage}
             />
           )}
-          <InsightsActionStrategyModal
-            supervisorHomepage={supervisorHomepage}
-          />
+          <InsightsActionStrategyModal />
         </Header>
       </Wrapper>
       {children}

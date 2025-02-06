@@ -34,11 +34,9 @@ export const AxisLabel = styled(Text)`
   ${typography.Sans12}
   fill: ${palette.slate60};
 `;
-export const TargetLabel = styled(Text)<{ $supervisorHomepage?: boolean }>`
-  ${({ $supervisorHomepage }) =>
-    $supervisorHomepage ? typography.Sans14 : typography.Sans12}
-  fill: ${({ $supervisorHomepage }) =>
-    $supervisorHomepage ? palette.pine1 : palette.slate85};
+export const TargetLabel = styled(Text)`
+  ${typography.Sans14}
+  fill: ${palette.pine1};
 `;
 
 export const HighlightLabel = styled.div<{ $size: "sm" | "lg" }>`
@@ -53,9 +51,8 @@ export const AxisSpine = styled.line`
   stroke-width: 1px;
 `;
 
-export const TargetLine = styled.line<{ $supervisorHomepage?: boolean }>`
-  stroke: ${({ $supervisorHomepage }) =>
-    $supervisorHomepage ? palette.pine1 : palette.slate60};
+export const TargetLine = styled.line`
+  stroke: ${palette.pine1};
   stroke-width: ${TARGET_LINE_WIDTH}px;
   stroke-dasharray: 6 6;
 `;

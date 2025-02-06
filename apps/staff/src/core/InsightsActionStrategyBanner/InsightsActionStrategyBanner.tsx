@@ -57,17 +57,11 @@ type InsightsActionStrategyBannerType = {
   actionStrategy: ActionStrategyCopy[string];
   bannerViewedCallback: () => void;
   disableBannerCallback: () => void;
-  supervisorHomepage?: boolean;
 };
 
 const InsightsActionStrategyBanner: React.FC<
   InsightsActionStrategyBannerType
-> = ({
-  actionStrategy,
-  bannerViewedCallback,
-  disableBannerCallback,
-  supervisorHomepage = false,
-}) => {
+> = ({ actionStrategy, bannerViewedCallback, disableBannerCallback }) => {
   const { openModal } = useInsightsActionStrategyModal();
 
   useEffect(() => {
@@ -85,7 +79,7 @@ const InsightsActionStrategyBanner: React.FC<
   return (
     <Banner
       style={{
-        width: supervisorHomepage ? "100%" : "66%",
+        width: "100%",
         border: `1px solid ${palette.slate10}`,
       }}
     >

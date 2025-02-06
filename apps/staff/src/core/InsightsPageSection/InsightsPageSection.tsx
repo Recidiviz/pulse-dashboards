@@ -21,7 +21,6 @@ import { rem } from "polished";
 import React, { ReactNode } from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { StyledLink } from "../InsightsInfoModal/InsightsInfoModal";
 import {
@@ -61,13 +60,9 @@ const InsightsPageSection: React.FC<InsightsPageSectionProps> = ({
 }) => {
   const { isLaptop } = useIsMobile(true);
 
-  const {
-    insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
-  } = useRootStore();
-
   return (
     <SectionWrapper>
-      <Wrapper isLaptop={isLaptop} supervisorHomepage={supervisorHomepage}>
+      <Wrapper isLaptop={isLaptop}>
         <Header>
           <Title>{sectionTitle}</Title>
           {(methodologyLink || methodologyLinkCta || sectionDescription) && (

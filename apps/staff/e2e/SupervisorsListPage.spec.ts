@@ -70,7 +70,7 @@ test.describe("Supervisors List Page", () => {
         page.getByRole("link", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
       await expect(page.getByRole("main")).toContainText(
-        "3 supervisors across the state have one or more outlier agents in their unit",
+        "Select a supervisor to view their overview",
       );
       await expect(page.getByRole("main")).toContainText("Region 1");
       await expect(
@@ -93,7 +93,7 @@ test.describe("Supervisors List Page", () => {
             "insights_supervision_supervisors-list": true,
           };
           json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
-            { insightsLeadershipPageAllDistricts: {}, supervisorHomepage: {} };
+            { insightsLeadershipPageAllDistricts: {} };
           await route.fulfill({ response, json });
         },
       );
@@ -102,10 +102,6 @@ test.describe("Supervisors List Page", () => {
       await expect(
         page.getByRole("link", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
-      await expect(page.getByRole("main")).toContainText(
-        "Select a supervisor to view their overview",
-      );
-      await expect(page.getByRole("main")).toContainText("Region 1");
       await expect(
         page.getByRole("link", { name: "Alejandro D Gonzalez" }),
       ).toBeVisible();
@@ -136,19 +132,11 @@ test.describe("Supervisors List Page", () => {
       await expect(
         page.getByRole("link", { name: "Recidiviz | Lantern" }),
       ).toBeVisible();
-      await expect(page.getByRole("main")).not.toContainText(
-        "2 supervisors across the state have one or more outlier officers in their team",
-      );
-      await expect(page.getByRole("main")).toContainText(
-        "2 of the 5 officers in your unit are outliers on one or more metrics",
-      );
-      await expect(page.getByRole("main")).toContainText("District: Region 1");
-      await expect(page.getByRole("main")).toContainText(
-        "Unit Manager:  Alejandro D Gonzalez",
-      );
-      await expect(page.getByRole("main")).toContainText(
-        "Staff: Walter Harris, Jack Hernandez, Jason Nelson, Harriet Boyd",
-      );
+      await expect(
+        page.getByText("Alejandro D Gonzalez Overview"),
+      ).toBeVisible();
+      await expect(page.getByText("Outcomes")).toBeVisible();
+      await expect(page.getByText("Walter Harris")).toBeVisible();
     });
   });
 });

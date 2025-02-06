@@ -126,9 +126,6 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
   presenter,
 }: InsightsClientDetailsPanelProps) {
   const { isMobile } = useIsMobile(true);
-  const {
-    insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
-  } = useRootStore();
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
@@ -164,12 +161,8 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
     setInitialPageLoad(false);
   }
 
-  const DrawerComponent = supervisorHomepage
-    ? StyledDrawerModalV2
-    : StyledDrawerModal;
-
   return (
-    <DrawerComponent
+    <StyledDrawerModalV2
       isOpen={modalIsOpen}
       onRequestClose={() => {
         setModalIsOpen(false);
@@ -201,24 +194,17 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
       width={650}
       isMobile={isMobile}
     >
-      {supervisorHomepage && (
-        <CloseButtonWrapper>
-          <Button kind="link" onClick={() => setModalIsOpen(false)}>
-            <Icon kind="Close" size="16" color={palette.pine1} />
-          </Button>
-        </CloseButtonWrapper>
-      )}
+      <CloseButtonWrapper>
+        <Button kind="link" onClick={() => setModalIsOpen(false)}>
+          <Icon kind="Close" size="16" color={palette.pine1} />
+        </Button>
+      </CloseButtonWrapper>
       <ModalHeader>
         <InsightsClientCapsule
           clientInfo={clientInfo}
           docLabel={labels.docLabel}
           supervisionType={supervisionDetails?.supervisionType}
         />
-        {!supervisorHomepage && (
-          <Button kind="link" onClick={() => setModalIsOpen(false)}>
-            <Icon kind="Close" size="14" color={palette.pine2} />
-          </Button>
-        )}
       </ModalHeader>
       <Content ref={scrollElementRef}>
         <InsightsClientDetails
@@ -229,10 +215,7 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
           isInsightsLanternState={isInsightsLanternState}
         />
         {isInsightsLanternState ? (
-          <InsightsLanternClientEventsTable
-            events={clientEvents}
-            supervisorHomepage={supervisorHomepage}
-          />
+          <InsightsLanternClientEventsTable events={clientEvents} />
         ) : (
           <InsightsClientEventsList
             events={clientEventsWithSupervisionEvents}
@@ -245,7 +228,7 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
           <LanternLogo />
         </ModalFooter>
       )}
-    </DrawerComponent>
+    </StyledDrawerModalV2>
   );
 });
 

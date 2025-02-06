@@ -377,13 +377,12 @@ function AccountLink({ enabled }: OptionalLinkProps) {
   );
 }
 
-function WorkflowsSystemLinks({ enabled }: OptionalLinkProps) {
+function WorkflowsSystemLinks() {
   const { isMobile } = useIsMobile(true);
 
   const { workflowsStore } = useRootStore();
 
-  if (!enabled || !workflowsStore.supportsMultipleSystems || !isMobile)
-    return null;
+  if (!workflowsStore.supportsMultipleSystems || !isMobile) return null;
 
   return workflowsStore.workflowsSupportedSystems?.map((systemId) => {
     return (
@@ -424,19 +423,17 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
       currentTenantId,
       userStore,
       tenantStore,
-      insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
       workflowsStore: { homepage },
     } = useRootStore();
     const userAllowedNavigation = userStore?.userAllowedNavigation;
 
     if (!userAllowedNavigation || !currentTenantId) return null;
-
+    
     // We should include the insights and workflows links on views that don't use the
-    // sitewide nav bar, or when the supervisor homepage UI is not enabled.
-    const includeInsightsWorkflowsLinks =
-      (
-        [DASHBOARD_VIEWS.operations, DASHBOARD_VIEWS.system] as string[]
-      ).includes(view) || !supervisorHomepage;
+    // sitewide nav bar
+    const includeInsightsWorkflowsLinks = (
+      [DASHBOARD_VIEWS.operations, DASHBOARD_VIEWS.system] as string[]
+    ).includes(view);
 
     const enabledPathwaysPages =
       (userAllowedNavigation.system || []).length > 0;
@@ -475,7 +472,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <PathwaysLink enabled={enabledPathwaysPages} />
         <OperationsLink enabled={enableOperations} />
         <WorkflowsLink enabled={enableWorkflows} homepage={homepage} />
-        <WorkflowsSystemLinks enabled={supervisorHomepage} />
+        <WorkflowsSystemLinks />
         <InsightsLink enabled={enabledInsights} />
         {(isPsiStaff || isDevOrStagingOrOfflineEnv) && (
           <PSILink enabled={enabledPSI} />

@@ -66,10 +66,7 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
   const { isMobile } = useIsMobile(true);
 
   const {
-    insightsStore: {
-      supervisionStore,
-      shouldUseSupervisorHomepageUI: supervisorHomepage,
-    },
+    insightsStore: { supervisionStore },
   } = useRootStore();
   const { insightsOnboarding } = useFeatureVariants();
 
@@ -97,7 +94,7 @@ const InsightsNavLayout: React.FC<{ children?: React.ReactNode }> = ({
         <NavigationLayout
           externalMethodologyUrl={supervisionStore?.methodologyUrl}
         >
-          {supervisorHomepage && <OverviewNavLinks />}
+          <OverviewNavLinks />
         </NavigationLayout>
       )}
       <Main isMobile={isMobile} hasPadding={!isHideNavLayout}>

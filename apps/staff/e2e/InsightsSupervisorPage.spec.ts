@@ -47,14 +47,20 @@ test.describe("Supervisors Page", () => {
       await expect(page.getByRole("main")).toContainText(
         "How might I work with my team to improve these metrics?",
       );
+      
+      // Click the first staff member page found
       await page
-        .getByRole("link", {
-          name: "Absconder Warrants Absconder Warrants See trends and cases Swarm plot of all absconder warrant rates in the state for ALL caseloads, highlighting a value of 11.5%, which is far worse than the statewide rate of 6.0%. Other values in the chart range from 0% to 37%",
-        })
+        .getByRole("main")
+        .locator('a[href*="insights/supervision/staff/"]')
+        .first()
         .click();
-      await page
-        .getByRole("link", { name: " Go to Alejandro D Gonzalez'" })
-        .click();
+      await expect(
+        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+      ).toBeVisible();
+      await page.goBack();
+      await expect(
+        page.getByRole("link", { name: "Recidiviz | Lantern" }),
+      ).toBeVisible();
       await expect(page.getByRole("main")).not.toContainText(
         "How might I work with my team to improve these metrics?",
       );
@@ -74,9 +80,7 @@ test.describe("Supervisors Page", () => {
             insights: true,
           };
           json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
-            {
-              supervisorHomepage: false,
-            };
+            {};
           await route.fulfill({ response, json });
         },
       );
@@ -102,9 +106,7 @@ test.describe("Supervisors Page", () => {
             insights: true,
           };
           json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
-            {
-              supervisorHomepage: {},
-            };
+            {};
           await route.fulfill({ response, json });
         },
       );
@@ -144,9 +146,7 @@ test.describe("Supervisors Page", () => {
             insights: true,
           };
           json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
-            {
-              supervisorHomepage: false,
-            };
+            {};
           await route.fulfill({ response, json });
         },
       );

@@ -106,12 +106,11 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
    * excluded from outcomes.
    */
   get officerHighlights(): HighlightedOfficersDetail[] {
-    if (isExcludedSupervisionOfficer(this.officerRecord)) return [];
-
     // Not expected in practice, but needed for type safety
     if (!this.officerOutcomes || !this.officerRecord) {
       throw new Error("Missing necessary officer data");
     }
+
     return getHighlightedOfficersByMetric(
       this.metricConfigsById,
       [this.officerRecord],

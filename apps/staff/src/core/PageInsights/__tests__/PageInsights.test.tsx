@@ -50,7 +50,6 @@ beforeEach(() => {
   useRootStoreMock.mockReturnValue(rootStore);
   useFeatureVariantsMock.mockReturnValue({
     insightsLeadershipPageAllDistricts: true,
-    supervisorHomepage: undefined,
   });
   vi.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
     externalId: "user",
@@ -100,11 +99,6 @@ test("valid route", async () => {
     "get",
   ).mockReturnValue(true);
   vi.spyOn(
-    insightsStore,
-    "shouldUseSupervisorHomepageUI",
-    "get",
-  ).mockReturnValue(false);
-  vi.spyOn(
     insightsStore.supervisionStore,
     "userHasSeenOnboarding",
     "get",
@@ -113,7 +107,7 @@ test("valid route", async () => {
   renderRouter(insightsRoute({ routeName: "supervisionSupervisorsList" }));
 
   expect(
-    await screen.findByText("supervisors across the state have one or more", {
+    await screen.findByText("Select a supervisor to view their overview", {
       exact: false,
     }),
   ).toBeInTheDocument();

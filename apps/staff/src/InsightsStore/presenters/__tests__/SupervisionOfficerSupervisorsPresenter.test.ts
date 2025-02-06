@@ -39,11 +39,6 @@ beforeEach(() => {
     InsightsConfigFixture,
   );
   vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
-  vi.spyOn(
-    store.insightsStore,
-    "shouldUseSupervisorHomepageUI",
-    "get",
-  ).mockReturnValue(false);
 
   presenter = new SupervisionOfficerSupervisorsPresenter(store);
 });
@@ -79,34 +74,15 @@ test("all supervisors data", async () => {
   );
 });
 
-test("supervisors by district when homepage variant not set", async () => {
-  await presenter.hydrate();
-  expect(presenter.supervisorsByDistrict).toMatchSnapshot();
-  presenter.supervisorsByDistrict.forEach(({ supervisors }) => {
-    supervisors.forEach((s) => expect(s.hasOutliers).toBeTrue());
-  });
-});
-
 test("supervisors by district when workflows variant not set", async () => {
   await presenter.hydrate();
-  vi.spyOn(
-    store.insightsStore,
-    "shouldUseSupervisorHomepageUI",
-    "get",
-  ).mockReturnValue(true);
   expect(presenter.supervisorsByDistrict).toMatchSnapshot();
   presenter.supervisorsByDistrict.forEach(({ supervisors }) => {
     supervisors.forEach((s) => expect(s.hasOutliers).toBeTrue());
   });
 });
 
-test("supervisors by district when homepage and workflows variant is set", async () => {
-  vi.spyOn(
-    store.insightsStore,
-    "shouldUseSupervisorHomepageUI",
-    "get",
-  ).mockReturnValue(true);
-
+test("supervisors by district when workflows variant is set", async () => {
   vi.spyOn(
     store.insightsStore.rootStore.userStore,
     "activeFeatureVariants",
@@ -277,20 +253,6 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
   });
 
   it("only show supervisors from launched districts", async () => {
-    await presenter.hydrate();
-
-    expect(presenter.supervisorsWithOutliersCount).toEqual(1);
-    expect(
-      presenter.supervisorsByDistrict.map(({ district }) => district),
-    ).toEqual(launchedDistricts);
-  });
-
-  it("handles supervisor homepage variant", async () => {
-    vi.spyOn(
-      store.insightsStore,
-      "shouldUseSupervisorHomepageUI",
-      "get",
-    ).mockReturnValue(true);
     vi.spyOn(
       store.insightsStore.rootStore.userStore,
       "activeFeatureVariants",

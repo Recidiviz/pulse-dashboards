@@ -15,8 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { throttle } from "lodash";
 import { observer } from "mobx-react-lite";
+import { FC, useLayoutEffect, useRef } from "react";
 import { AspectRatio } from "react-aspect-ratio";
+import useMeasure from "react-use-measure";
 
 import { SwarmPresenterV2 } from "../../InsightsStore/presenters/SwarmPresenter";
 import { CHART_ASPECT_RATIO } from "../../InsightsStore/presenters/SwarmPresenter/constants";
@@ -25,8 +28,8 @@ import {
   OfficerOutcomesData,
   PresenterWithHoverManager,
 } from "../../InsightsStore/presenters/types";
-import { PlotMeasurer } from "./InsightsSwarmPlotContainer";
 import { InsightsSwarmPlotV2 } from "./InsightsSwarmPlotV2";
+import { InsightsSwarmPlotWrappedPropsV2 } from "./types";
 
 type InsightsSwarmPlotProps = {
   metric: MetricConfigWithBenchmark;
@@ -34,6 +37,33 @@ type InsightsSwarmPlotProps = {
   presenterWithHoverManager?: PresenterWithHoverManager;
   isMinimized?: boolean;
 };
+
+export function getThrottledUpdater() {
+  return throttle(
+    (measuredWidth: number, lastWidth: number, presenter: SwarmPresenterV2) => {
+      if (measuredWidth !== lastWidth) {
+        presenter.prepareChartData(measuredWidth);
+      }
+    },
+    400,
+  );
+}
+
+export const PlotMeasurer: FC<InsightsSwarmPlotWrappedPropsV2> = observer(
+  function PlotMeasurer({ children, presenter }) {
+    const [ref, bounds] = useMeasure();
+    const throttledUpdate = useRef(getThrottledUpdater());
+
+    const measuredWidth = bounds.width;
+    const lastWidth = presenter.width;
+
+    useLayoutEffect(() => {
+      throttledUpdate.current(measuredWidth, lastWidth, presenter);
+    }, [lastWidth, measuredWidth, presenter]);
+
+    return <div ref={ref}>{children}</div>;
+  },
+);
 
 const InsightsSwarmPlotContainerV2 = observer(
   function InsightsSwarmPlotContainerV2({

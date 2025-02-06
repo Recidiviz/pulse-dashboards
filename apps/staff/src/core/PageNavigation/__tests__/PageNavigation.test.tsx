@@ -20,11 +20,7 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 import { Mock } from "vitest";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-  useUserStore,
-} from "../../../components/StoreProvider";
+import { useRootStore, useUserStore } from "../../../components/StoreProvider";
 import useIsMobile from "../../../hooks/useIsMobile";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore/TenantStore";
@@ -70,9 +66,6 @@ describe("CoreLayout tests", () => {
       pathname: "/system",
     });
     vi.mocked(useIsMobile).mockReturnValue(false);
-    vi.mocked(useFeatureVariants).mockReturnValue({
-      supervisorHomepage: undefined,
-    });
 
     coreStore = new CoreStore(RootStore);
     vitalsStore = coreStore.vitalsStore;
@@ -85,9 +78,6 @@ describe("CoreLayout tests", () => {
         },
       },
       currentTenantId: "US_ID",
-      insightsStore: {
-        shouldUseSupervisorHomepageUI: false,
-      },
       workflowsStore: {
         homepage: "home",
       },

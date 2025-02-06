@@ -53,50 +53,45 @@ const TableHeader = styled.div`
 
 const TableBody = styled.div``;
 
-const TH = styled.div<{ supervisorHomepage?: boolean }>`
-  ${({ supervisorHomepage }) =>
-    supervisorHomepage
-      ? `padding-top: ${rem(spacing.sm)}; padding-bottom: ${rem(spacing.sm)};`
-      : `background: ${palette.marble3}; padding: ${rem(spacing.md)};`}
+const TH = styled.div`
+  padding-top: ${rem(spacing.sm)};
+  padding-bottom: ${rem(spacing.sm)};
 `;
 
 const TR = styled.div<{
-  supervisorHomepage?: boolean;
   transformToMobile?: boolean;
 }>`
   display: flex;
-  border-bottom: 1px solid ${palette.slate10};
-
-  ${({ supervisorHomepage }) =>
-    supervisorHomepage &&
-    `border-bottom: 0; border-top: 1px solid ${palette.slate20};`}
+  border-bottom: 1px solid ${palette.slate20};
+  border-top: 0;
 
   ${({ transformToMobile }) =>
     transformToMobile &&
-    `flex-direction: column; gap: ${rem(spacing.xxs)}; padding: ${rem(
+    `
+    flex-direction: column; gap: ${rem(spacing.xxs)}; padding: ${rem(
       spacing.md,
     )};`}
 
-    &:hover {
-    background: ${({ supervisorHomepage }) =>
-      supervisorHomepage
-        ? rgba(palette.slate30, 0.05)
-        : rgba(palette.signal.highlight, 0.05)};
+  &:hover {
+    background: ${rgba(palette.signal.highlight, 0.05)};
   }
 `;
 
 const TD = styled.div<{
   transformToMobile?: boolean;
-  supervisorHomepage?: boolean;
 }>`
   display: flex;
   align-items: center;
   padding: ${({ transformToMobile }) =>
     transformToMobile ? 0 : rem(spacing.md)};
 
-  ${({ transformToMobile }) => transformToMobile && `width: 100% !important;`}
-  ${({ supervisorHomepage }) =>
-    supervisorHomepage && `padding-left: 0; padding-right: 0;`}
+  ${({ transformToMobile }) =>
+    transformToMobile &&
+    `
+  width: 100% !important;
+  `}
+  padding-right: 0;
+  padding-left: 0;
 `;
 
 const Text = styled.div`
@@ -121,7 +116,6 @@ type OutlierTableProps<T extends object> = {
   transformToMobile?: boolean;
   scrollElement?: any;
   intercomTargetOnFirstRow?: string;
-  supervisorHomepage: boolean;
 };
 
 const InsightsTable = <T extends object>({
@@ -133,7 +127,6 @@ const InsightsTable = <T extends object>({
   rowSize = DEFAULT_TABLE_ROW_SIZE,
   transformToMobile = false,
   intercomTargetOnFirstRow,
-  supervisorHomepage,
 }: OutlierTableProps<T>) => {
   const { isMobile } = useIsMobile(true);
   const [isColumnHidden, hideColumn] = useState(false);
@@ -182,7 +175,6 @@ const InsightsTable = <T extends object>({
 
       const rowViz = (
         <TR
-          supervisorHomepage={supervisorHomepage && !transformToMobile}
           transformToMobile={transformToMobile}
           data-intercom-target={
             intercomTargetOnFirstRow && index === 0
@@ -195,7 +187,6 @@ const InsightsTable = <T extends object>({
             return (
               <TD
                 transformToMobile={transformToMobile}
-                supervisorHomepage={supervisorHomepage}
                 {...cell.getCellProps()}
               >
                 <Text>{cell.render("Cell")}</Text>
@@ -225,13 +216,12 @@ const InsightsTable = <T extends object>({
       transformToMobile,
       location.pathname,
       intercomTargetOnFirstRow,
-      supervisorHomepage,
     ],
   );
 
   return (
     <Table
-      hasBorder={!supervisorHomepage || transformToMobile}
+      hasBorder={transformToMobile}
       {...getTableProps({ style: { minWidth: TABLE_MIN_WIDTH } })}
     >
       {!transformToMobile && (
@@ -239,12 +229,7 @@ const InsightsTable = <T extends object>({
           {headerGroups.map((headerGroup) => (
             <TR {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <TH
-                  supervisorHomepage={supervisorHomepage}
-                  {...column.getHeaderProps()}
-                >
-                  {column.render("title")}
-                </TH>
+                <TH {...column.getHeaderProps()}>{column.render("title")}</TH>
               ))}
             </TR>
           ))}

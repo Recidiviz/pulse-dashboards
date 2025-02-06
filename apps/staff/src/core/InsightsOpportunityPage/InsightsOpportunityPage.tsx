@@ -100,7 +100,7 @@ export const OpportunityPageWithPresenter = observer(
         }
       >
         <Wrapper>
-          <Body supervisorHomepage>
+          <Body>
             <HydratedOpportunityPersonList
               opportunityType={opportunityType}
               supervisionPresenter={presenter}

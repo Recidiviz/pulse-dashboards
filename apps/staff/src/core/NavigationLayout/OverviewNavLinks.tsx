@@ -50,20 +50,15 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       homepageNameOverride,
     },
     userStore: { userAllowedNavigation },
-    insightsStore: { shouldUseSupervisorHomepageUI: supervisorHomepage },
   } = useRootStore() as PartiallyTypedRootStore;
 
   const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
   const enableMilestones = (userAllowedNavigation.workflows || []).includes(
     "milestones",
   );
-  const enabledInsights =
-    !!userAllowedNavigation.insights && supervisorHomepage;
-  const enableSystems =
-    (supervisorHomepage && (!supportsMultipleSystems || !isMobile)) ||
-    !supervisorHomepage;
-  const workflowsHomepageName =
-    homepageNameOverride ?? (supervisorHomepage ? "Opportunities" : "Home");
+  const enabledInsights = (userAllowedNavigation.insights || []).length > 0;
+  const enableSystems = !supportsMultipleSystems || !isMobile;
+  const workflowsHomepageName = homepageNameOverride ?? "Opportunities";
 
   return (
     <>

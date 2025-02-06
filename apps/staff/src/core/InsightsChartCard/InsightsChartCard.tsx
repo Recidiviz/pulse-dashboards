@@ -29,30 +29,24 @@ import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import { InsightsLegend } from "../InsightsLegend";
 
 const Wrapper = styled.div<{
   isClickable?: boolean;
-  supervisorHomepage?: boolean;
 }>`
   background: ${palette.marble1};
-  padding: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? rem(spacing.md) : rem(spacing.lg)};
-  box-shadow: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? "unset" : "0px 0px 2px 0px rgba(0, 0, 0, 0.35) inset"};
-  border: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? `1px solid ${palette.slate30}` : "unset"};
+  padding: ${rem(spacing.md)};
+  box-shadow: unset;
+  border: 1px solid ${palette.slate30};
   border-radius: ${rem(spacing.xs)};
 
   ${({ isClickable }) =>
     isClickable && `&:hover { border-color: ${palette.signal.links} }`}
 `;
 
-const Header = styled.div<{ supervisorHomepage?: boolean }>`
+const Header = styled.div`
   display: flex;
   align-items: start;
-  justify-content: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? "space-between" : "unset"};
+  justify-content: space-between;
   gap: ${rem(spacing.xs)};
 `;
 
@@ -91,20 +85,16 @@ const Rate = styled.span`
   margin-left: ${rem(spacing.xs)};
 `;
 
-const Content = styled.div<{ supervisorHomepage?: boolean }>`
-  padding: ${rem(spacing.lg)} 0
-    ${({ supervisorHomepage }) => (supervisorHomepage ? 0 : rem(spacing.md))};
+const Content = styled.div`
+  padding: ${rem(spacing.lg)} 0 0;
 `;
 
 type InsightsChartCardType = {
   title: string;
   subtitle?: string;
-  hasLegend?: boolean;
   infoModal?: React.ReactElement;
   url?: string;
   rate?: string;
-  outcomeType?: "FAVORABLE" | "ADVERSE";
-  supervisorHomepage: boolean;
   children?: React.ReactNode;
 };
 
@@ -112,11 +102,8 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
   title,
   subtitle,
   infoModal,
-  hasLegend = true,
-  outcomeType = "ADVERSE",
   url,
   rate,
-  supervisorHomepage,
   children,
 }) => {
   const { isMobile } = useIsMobile(true);
@@ -129,11 +116,10 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
     <Wrapper
       ref={ref}
       isClickable={!!url}
-      supervisorHomepage={supervisorHomepage}
       onMouseOver={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <Header supervisorHomepage={supervisorHomepage}>
+      <Header>
         <TitleWrapper>
           <Title>
             <div style={{ display: "flex", flexDirection: "row" }}>
@@ -161,10 +147,7 @@ const InsightsChartCard: React.FC<InsightsChartCardType> = ({
         )}
       </Header>
 
-      <Content supervisorHomepage={supervisorHomepage}>{children}</Content>
-      {!supervisorHomepage && hasLegend && (
-        <InsightsLegend direction="row" outcomeType={outcomeType} />
-      )}
+      <Content>{children}</Content>
     </Wrapper>
   );
 

@@ -75,7 +75,6 @@ export type FeatureVariant =
   | "insightsOnboarding"
   | "hideDenialRevert"
   | "workflowsSupervisorSearch"
-  | "supervisorHomepage"
   | "supervisorHomepageWorkflows"
   | "supervisorHomepageVitals"
   | "usPaSpecialCircumstances"
@@ -129,7 +128,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsOnboarding: {},
   hideDenialRevert: {},
   workflowsSupervisorSearch: {},
-  supervisorHomepage: {},
   supervisorHomepageWorkflows: {},
   supervisorHomepageVitals: {},
   usPaSpecialCircumstances: {},
@@ -160,9 +158,6 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         usMoOverdueRHPilot: {},
         enableSnooze: {},
         insightsOnboarding: {},
-        supervisorHomepage: {
-          activeTenants: ["US_TN"],
-        },
         supervisorHomepageWorkflows: {},
         nonOMSCriteria: {
           activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA"],
@@ -183,9 +178,6 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
       }
     : {
         ...allFeatureVariants,
-        supervisorHomepage: {
-          activeTenants: ["US_MI", "US_TN"],
-        },
         opportunityTableView: isDemoMode() ? undefined : {},
         // Currently disabled because the last synced date doesn't exist on the backend yet.
         lastSyncedDate: undefined,

@@ -15,19 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
+import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
 const NoteContainer = styled.div<{
-  supervisorHomepage: boolean;
   numNotes: number;
 }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  background-color: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? "#ECF1F0" : "#FDF9DD"};
+  background-color: #ecf1f0;
   padding: ${rem(spacing.md)};
   margin-bottom: ${rem(spacing.md)};
   border-radius: 4px;
@@ -95,7 +93,6 @@ interface NoteProps {
   onNext: () => void;
   onPrevious: () => void;
   index: number;
-  supervisorHomepage: boolean;
   numNotes: number;
   label: string;
   text: JSX.Element;
@@ -106,22 +103,13 @@ const NoteComponent: React.FC<NoteProps> = ({
   onNext,
   onPrevious,
   index,
-  supervisorHomepage,
   numNotes,
   label,
   text,
 }) => {
   return (
-    <NoteContainer supervisorHomepage={supervisorHomepage} numNotes={numNotes}>
+    <NoteContainer numNotes={numNotes}>
       <NoteLabelContainer>
-        {supervisorHomepage ? null : (
-          <Icon
-            kind="Alert"
-            color="#E0A852"
-            size={14}
-            style={{ marginRight: rem(spacing.xs) }}
-          />
-        )}
         <NoteLabel>{label}</NoteLabel>
       </NoteLabelContainer>
       <NoteText>{text}</NoteText>
