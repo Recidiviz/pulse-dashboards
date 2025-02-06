@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
+import { palette, spacing, typography } from "@recidiviz/design-system";
 import { captureException } from "@sentry/react";
 import { compiler } from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
@@ -25,22 +25,27 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { styles } from "../CopyWrapper/CopyWrapper";
-import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
 
 const Wrapper = styled.section`
   ${styles}
 
   margin-bottom: ${rem(spacing.xxl)};
+
+  h2 {
+    ${typography.Sans14}
+
+    color: ${palette.slate85};
+  }
 `;
 
-export const TableOfContents: FC<{ presenter: OpportunityInfoPagePresenter }> =
-  observer(function TableOfContents({ presenter }) {
+export const TableOfContents: FC<{ body: string }> = observer(
+  function TableOfContents({ body }) {
     // this should work, based on inspection of the library output,
     // but it's not typesafe, so we handle errors invisibly here
     // (better for UX if this just fails to render rather than displaying an error)
     try {
       // error in library types: passing a null wrapper should return  an array of children
-      const bodyElements = compiler(presenter.body, {
+      const bodyElements = compiler(body, {
         wrapper: null,
       }) as unknown as Array<JSX.Element>;
 
@@ -50,7 +55,7 @@ export const TableOfContents: FC<{ presenter: OpportunityInfoPagePresenter }> =
 
       return (
         <Wrapper>
-          <h2>Contents</h2>
+          <h2>On this page</h2>
           <ol>
             {entries.map((heading) => (
               <li key={heading.props.id}>
@@ -66,4 +71,5 @@ export const TableOfContents: FC<{ presenter: OpportunityInfoPagePresenter }> =
       captureException(e);
       return null;
     }
-  });
+  },
+);

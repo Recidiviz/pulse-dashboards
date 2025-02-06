@@ -22,9 +22,11 @@ import { FC } from "react";
 import { Link } from "react-router-dom";
 import styled, { css } from "styled-components/macro";
 
+import { ProgressPageTeaser } from "../ProgressPageTeaser/ProgressPageTeaser";
 import { clickableText } from "../styles/clickableText";
-import { ComparisonLinkInCopy } from "./ComparisonLinkInCopy";
+import { ComparisonTeaserInCopy } from "./ComparisonTeaserInCopy";
 import { InternalOrExternalLink } from "./InternalOrExternalLink";
+import { withShadowDOM } from "./ShadowDOM";
 
 export const styles = css`
   ${typography.Body16}
@@ -137,6 +139,9 @@ const MarkdownWrapper = styled(Markdown)`
   ${styles}
 `;
 
+// needed to prevent copy styles from breaking the custom component
+const ProgressPageTeaserInCopy = withShadowDOM(ProgressPageTeaser);
+
 /**
  * Renders Markdown children (via {@link https://www.npmjs.com/package/markdown-to-jsx|markdown-to-jsx})
  * and applies a standard stylesheet to the result
@@ -154,7 +159,8 @@ export const CopyWrapper: FC<{ children: string; className?: string }> = ({
         overrides: {
           a: { component: InternalOrExternalLink },
           InternalLink: { component: Link },
-          ComparisonLink: { component: ComparisonLinkInCopy },
+          ComparisonTeaser: { component: ComparisonTeaserInCopy },
+          ProgressPageTeaser: { component: ProgressPageTeaserInCopy },
         },
       }}
     >

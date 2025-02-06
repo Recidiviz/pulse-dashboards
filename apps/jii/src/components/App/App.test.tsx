@@ -270,6 +270,48 @@ describe("protected routes", () => {
   const sccpConfig = residentsConfigByState.US_ME.incarcerationOpportunities
     .usMeSCCP as OpportunityConfig;
 
+  describe("calculating dates page", () => {
+    beforeEach(() => {
+      container = render(
+        <MemoryRouter
+          initialEntries={[
+            routes.State.Resident.Progress.InfoPage.buildPath({
+              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+              personPseudoId,
+              pageSlug: residentsConfigByState.US_ME.progressPage.urlSlug,
+            }),
+          ]}
+        >
+          <App />
+        </MemoryRouter>,
+      ).container;
+    });
+
+    it("should render", async () => {
+      expect(
+        await screen.findByRole("heading", {
+          level: 1,
+          name: residentsConfigByState.US_ME.progressPage.heading,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it("should be accessible", async () => {
+      await screen.findByRole("heading", {
+        level: 1,
+        name: residentsConfigByState.US_ME.progressPage.heading,
+      });
+
+      expect(await axe(container)).toHaveNoViolations();
+    });
+
+    it("should set the page title", () => {
+      expect(window.document.title).toBe(
+        `${residentsConfigByState.US_ME.progressPage.heading} – Opportunities`,
+      );
+    });
+  });
+
   describe("SCCP page", () => {
     beforeEach(() => {
       container = render(

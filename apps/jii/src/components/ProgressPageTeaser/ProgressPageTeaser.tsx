@@ -15,38 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
+import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
-import styled from "styled-components/macro";
 
+import calendarImgUrl from "../../assets/images/calendar-clock.svg";
 import { State } from "../../routes/routes";
-import { formatFullDate } from "../../utils/date";
-import { GoButton } from "../ButtonLink/GoButton";
 import { useResidentsContext } from "../ResidentsHydrator/context";
-import { useSingleResidentContext } from "../SingleResidentHydrator/context";
+import { TeaserLink } from "../TeaserLink/TeaserLink";
 
-const ItemsWrapper = styled.dl`
-  margin: 0;
-  margin-bottom: ${rem(spacing.lg)};
-`;
-
-const ItemHeading = styled.dt`
-  ${typography.Sans14}
-
-  color: ${palette.slate85};
-  margin-bottom: ${rem(spacing.sm)};
-`;
-
-const ItemValue = styled.dd`
-  ${typography.Sans24}
-
-  margin: 0;
-`;
-
-export const Progress = observer(function Progress() {
-  const { resident } = useSingleResidentContext();
+export const ProgressPageTeaser: FC = () => {
   const {
     residentsStore: {
       config: { progressPage },
@@ -55,23 +32,16 @@ export const Progress = observer(function Progress() {
   const urlParams = useTypedParams(State.Resident);
 
   return (
-    <div>
-      <ItemsWrapper>
-        <ItemHeading>Current release date</ItemHeading>
-        <ItemValue>
-          {resident.releaseDate
-            ? formatFullDate(resident.releaseDate)
-            : "Unknown"}
-        </ItemValue>
-      </ItemsWrapper>
-      <GoButton
-        to={State.Resident.Progress.InfoPage.buildPath({
+    <TeaserLink
+      teaserText={progressPage.teaserText}
+      imageUrl={calendarImgUrl}
+      linkProps={{
+        children: progressPage.linkText,
+        to: State.Resident.Progress.InfoPage.buildPath({
           ...urlParams,
           pageSlug: progressPage.urlSlug,
-        })}
-      >
-        {progressPage.linkText}
-      </GoButton>
-    </div>
+        }),
+      }}
+    />
   );
-});
+};

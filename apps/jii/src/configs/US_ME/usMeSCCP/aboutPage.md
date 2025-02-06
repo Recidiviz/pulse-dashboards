@@ -19,6 +19,6 @@ Here are other options to help you transition into the community:
 
 - **Work Release:** Through this program, you can find a job outside the facility and make money. To qualify, you need to meet some of the same requirements as SCCP. Your case manager can help you know if you qualify for work release and can help you find a job.
 
-<ComparisonLink opportunityTypes={["usMeWorkRelease", "usMeSCCP"]} />
+<ComparisonTeaser opportunityTypes={["usMeWorkRelease", "usMeSCCP"]} />
 
 - **Furlough Passes:** You can also ask to leave the facility for a short time with a furlough pass. This is like a special permission to visit your family or do other important things. There are rules that limit how many times you can leave.

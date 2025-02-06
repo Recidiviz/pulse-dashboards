@@ -21,7 +21,7 @@ import {
   ResidentsConfig,
 } from "../../configs/types";
 
-export class ComparisonLinkPresenter {
+export class ComparisonTeaserPresenter {
   constructor(
     private config: ComparisonPageConfig,
     private opportunities: ResidentsConfig["incarcerationOpportunities"],

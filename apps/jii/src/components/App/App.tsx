@@ -43,6 +43,7 @@ import { PageHome } from "../pages/PageHome";
 import { PageOpportunityComparison } from "../pages/PageOpportunityComparison";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
 import { PageOpportunityEligibilityHome } from "../pages/PageOpportunityEligibilityHome";
+import { PageProgressInfoPage } from "../pages/PageProgressInfoPage";
 import { PageResidentsRoot } from "../pages/PageResidentsRoot";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
@@ -119,6 +120,10 @@ export function App() {
                           element={<PageOpportunityComparison />}
                         />
                       </Route>
+                      <Route
+                        path={routes.State.Resident.Progress.InfoPage.path}
+                        element={<PageProgressInfoPage />}
+                      />
                     </Route>
                     <Route
                       path={routes.State.Search.path}

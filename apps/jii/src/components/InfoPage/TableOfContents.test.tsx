@@ -19,16 +19,14 @@ import { render } from "@testing-library/react";
 import { format } from "prettier";
 import { MemoryRouter } from "react-router-dom";
 
-import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
+import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import {
   IncarcerationOpportunityId,
   OpportunityConfig,
 } from "../../configs/types";
-import { UsMeSCCPEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
 import { State } from "../../routes/routes";
-import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
 import { TableOfContents } from "./TableOfContents";
 
 const stateConfig = residentsConfigByState.US_ME;
@@ -41,17 +39,6 @@ const oppConfig = stateConfig.incarcerationOpportunities[
 const ineligibleResident = usMeResidents[usMeResidents.length - 1];
 
 test("generates links to headings in page body", async () => {
-  const presenter = new OpportunityInfoPagePresenter(
-    oppConfig,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    oppConfig.requirements.fullPage!.urlSlug,
-    new UsMeSCCPEligibilityReport(
-      ineligibleResident,
-      oppConfig,
-      outputFixture(usMeSccpFixtures.RES999Ineligible),
-    ),
-  );
-
   const { container } = render(
     <MemoryRouter
       initialEntries={[
@@ -64,7 +51,8 @@ test("generates links to headings in page body", async () => {
         }),
       ]}
     >
-      <TableOfContents presenter={presenter} />
+      {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+      <TableOfContents body={oppConfig.requirements.fullPage!.body} />
     </MemoryRouter>,
   );
 
