@@ -21,6 +21,7 @@ import path from "path";
 console.log("Creating package.json template ...");
 
 const packageTemplate = {
+  name: "staff-shared-server",
   scripts: {
     start: "node --import=extensionless/register server/index.js",
     "start-e2e": "env-cmd -f .env.offline yarn start",
