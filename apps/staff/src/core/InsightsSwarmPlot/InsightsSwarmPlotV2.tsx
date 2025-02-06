@@ -85,14 +85,12 @@ export const InsightsSwarmPlotV2 = observer(function InsightsSwarmPlotV2({
         {!isMinimized && targetRate && (
           <>
             <TargetLine
-              $supervisorHomepage
               x1={axisPositions.target}
               x2={axisPositions.target}
               y1={axisPositions.targetStart}
               y2={axisPositions.tickEnd}
             />
             <TargetLabel
-              $supervisorHomepage
               dx={TARGET_LINE_WIDTH + spacing.sm}
               x={axisPositions.target}
               y={axisPositions.targetStart}

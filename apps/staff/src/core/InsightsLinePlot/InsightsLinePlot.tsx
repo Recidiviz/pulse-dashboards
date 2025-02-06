@@ -33,14 +33,10 @@ import { TargetStatus } from "~datatypes";
 import useIsMobile from "../../hooks/useIsMobile";
 import { MetricWithConfig } from "../../InsightsStore/presenters/types";
 import { formatDate, formatPercent, getTicks } from "../../utils";
-import {
-  circleLegendIcon,
-  lineLegendIcon,
-} from "../InsightsLegend/InsightsLegend";
 import { GOAL_COLORS } from "../InsightsSwarmPlot/constants";
 import NoteComponent from "./NoteComponent";
 
-const Wrapper = styled.div<{ supervisorHomepage: boolean }>`
+const Wrapper = styled.div`
   .data-visualization {
     .axis-baseline {
       stroke: none;
@@ -71,8 +67,7 @@ const Wrapper = styled.div<{ supervisorHomepage: boolean }>`
     }
 
     .y.tick-line {
-      stroke: ${({ supervisorHomepage }) =>
-        supervisorHomepage ? "none" : palette.slate20};
+      stroke: none;
     }
   }
 
@@ -90,9 +85,8 @@ const StyledLink = styled(Link)`
 
 const StyledTooltip = styled(Tooltip).attrs({
   backgroundColor: palette.pine2,
-})<{ supervisorHomepage: boolean }>`
-  min-width: ${({ supervisorHomepage }) =>
-    supervisorHomepage ? rem(190) : rem(110)};
+})`
+  min-width: ${rem(190)};
   position: relative;
   display: flex;
   flex-direction: column;
@@ -167,7 +161,6 @@ type InsightsLinePlotType = {
   metric: MetricWithConfig;
   officerName?: string;
   supervisionOfficerLabel: string;
-  supervisorHomepage: boolean;
   methodologyUrl: string;
   eventName: string;
 };
@@ -188,7 +181,6 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
   metric,
   officerName,
   supervisionOfficerLabel,
-  supervisorHomepage,
   methodologyUrl,
   eventName,
 }) => {
@@ -216,7 +208,7 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
   };
 
   const pointStyles = {
-    r: supervisorHomepage ? 6 : 8,
+    r: 6,
     stroke: palette.white,
     strokeWidth: 2,
   };
@@ -292,7 +284,7 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
   };
 
   return (
-    <Wrapper ref={ref} supervisorHomepage={supervisorHomepage}>
+    <Wrapper ref={ref}>
       {renderedNotes.length > 0 && (
         <NoteComponent
           key={currentNoteIndex}
@@ -300,7 +292,6 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
           onNext={handleNextNote}
           onPrevious={handlePreviousNote}
           index={currentNoteIndex}
-          supervisorHomepage={supervisorHomepage}
           numNotes={renderedNotes.length}
           label={renderedNotes[currentNoteIndex].label}
           text={renderedNotes[currentNoteIndex].text}
@@ -318,27 +309,14 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
 
           return (
             d.parentLine.key === 0 && (
-              <StyledTooltip supervisorHomepage={supervisorHomepage}>
-                <div>{formatDateToYearRange(d.date, supervisorHomepage)}</div>
+              <StyledTooltip>
+                <div>{formatDateToYearRange(d.date)}</div>
                 {/* eslint-disable-next-line react/no-unused-prop-types */}
                 {pickedPoints.map(({ data }: { data: Point }) => {
-                  const icon = data.status
-                    ? circleLegendIcon(GOAL_COLORS[data.status])
-                    : lineLegendIcon(palette.white80);
-
-                  if (supervisorHomepage) {
-                    return (
-                      <div key={`${data.value}_${data.date}`}>
-                        {data.status ? officerName : "Statewide Rate"}
-                        <span>{data.value.toFixed(1)}%</span>
-                      </div>
-                    );
-                  }
-
                   return (
                     <div key={`${data.value}_${data.date}`}>
-                      {icon}
-                      {data.value.toFixed(1)}%
+                      {data.status ? officerName : "Statewide Rate"}
+                      <span>{data.value.toFixed(1)}%</span>
                     </div>
                   );
                 })}

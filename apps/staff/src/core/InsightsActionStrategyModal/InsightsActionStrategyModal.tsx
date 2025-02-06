@@ -44,32 +44,23 @@ import { useInsightsActionStrategyModal } from "./InsightsActionStrategyModalCon
 
 export const StyledDrawerModal = styled(DrawerModal)<{
   isMobile: boolean;
-  supervisorHomepage: boolean;
 }>`
-  ${({ supervisorHomepage }) =>
-    supervisorHomepage
-      ? `.ReactModal__Overlay {
-        background-color: unset;
-        backdrop-filter: unset;
-      }
+  .ReactModal__Overlay {
+    background-color: unset;
+    backdrop-filter: unset;
+  }
 
-      .ReactModal__Content {
-        height: 100vh !important;
-        right: 0 !important;
-        border-radius: unset !important;
-        box-shadow: unset !important;
-        display: flex;
-        flex-direction: column;
-        border-left: ${rem(1)} solid ${palette.slate20};
-      }`
-      : `.ReactModal__Content {
-        display: flex;
-        flex-direction: column;
-        height: 85% !important;
-      }`}
+  .ReactModal__Content {
+    height: 100vh !important;
+    right: 0 !important;
+    border-radius: unset !important;
+    box-shadow: unset !important;
+    display: flex;
+    flex-direction: column;
+    border-left: ${rem(1)} solid ${palette.slate20};
+  }
 
-  ${({ supervisorHomepage, isMobile }) =>
-    supervisorHomepage &&
+  ${({ isMobile }) =>
     isMobile &&
     `.ReactModal__Content {
         max-width: unset !important;
@@ -232,13 +223,11 @@ const ActionStrategy = ({
 
 type ActionStrategyModalProps = {
   presenter: SupervisionActionStrategyPresenter;
-  supervisorHomepage: boolean;
 };
 
 export const InsightsActionStrategyModal = withPresenter(
   observer(function InsightsActionStrategyModal({
     presenter,
-    supervisorHomepage,
   }: ActionStrategyModalProps) {
     const {
       insightsStore: { supervisionStore },
@@ -317,7 +306,6 @@ export const InsightsActionStrategyModal = withPresenter(
       <StyledDrawerModal
         isOpen={isOpen}
         onRequestClose={closeModal}
-        supervisorHomepage={supervisorHomepage}
         isMobile={isMobile}
       >
         <ModalControls>
@@ -354,11 +342,7 @@ export const InsightsActionStrategyModal = withPresenter(
 );
 
 function withPresenter(Component: ComponentType<ActionStrategyModalProps>) {
-  return observer(function InsightsActionStrategyModalWrapper({
-    supervisorHomepage = false,
-  }: {
-    supervisorHomepage?: boolean;
-  }) {
+  return observer(function InsightsActionStrategyModalWrapper() {
     const {
       insightsStore: { supervisionStore },
     } = useRootStore();
@@ -375,10 +359,7 @@ function withPresenter(Component: ComponentType<ActionStrategyModalProps>) {
     );
     return (
       <ModelHydrator hydratable={presenter}>
-        <Component
-          presenter={presenter}
-          supervisorHomepage={supervisorHomepage}
-        />
+        <Component presenter={presenter} />
       </ModelHydrator>
     );
   });

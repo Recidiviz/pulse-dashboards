@@ -20,7 +20,6 @@ import map from "lodash/fp/map";
 import pipe from "lodash/fp/pipe";
 import values from "lodash/fp/values";
 import { flowResult, makeAutoObservable } from "mobx";
-import simplur from "simplur";
 
 import { SupervisionOfficerSupervisor } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
@@ -81,7 +80,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   }
 
   /**
-   * Organize supervisors by district. For the new supervisor homepage, this includes
+   * Organize supervisors by district. This includes
    * all supervisors, not just supervisors with outlier officers.
    */
   get supervisorsByDistrict(): Array<{
@@ -99,7 +98,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
         };
       }),
     )(
-      (this.supervisorHomepage && this.isWorkflowsHomepageEnabled
+      (this.isWorkflowsHomepageEnabled
         ? this.allSupervisors
         : this.allSupervisorsWithOutliers) ?? [],
     );
@@ -130,19 +129,13 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
     return this.supervisionStore.labels;
   }
 
-  get supervisorHomepage(): boolean {
-    return this.supervisionStore.insightsStore.shouldUseSupervisorHomepageUI;
-  }
-
   get isWorkflowsHomepageEnabled(): boolean {
     return !!this.supervisionStore.insightsStore.rootStore.userStore
       .activeFeatureVariants.supervisorHomepageWorkflows;
   }
 
   get pageTitle(): string {
-    return this.supervisorHomepage
-      ? "Select a supervisor to view their overview"
-      : simplur`${this.supervisorsWithOutliersCount} ${this.labels.supervisionSupervisorLabel}[|s] across the state have one or more outlier ${this.labels.supervisionOfficerLabel}s in their ${this.labels.supervisionUnitLabel}`;
+    return "Select a supervisor to view their overview";
   }
 
   trackViewed(): void {

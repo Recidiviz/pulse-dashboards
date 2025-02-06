@@ -218,8 +218,8 @@ const ManagedComponent = observer(function MetricPage({
         </InsightsBreadcrumbs>
       }
     >
-      <Wrapper isLaptop={isLaptop}>
-        <Sidebar supervisorHomepage>
+      <Wrapper isFlex isLaptop={isLaptop}>
+        <Sidebar>
           <InsightsChartCard
             title={
               eventName === "program starts"
@@ -234,9 +234,6 @@ const ManagedComponent = observer(function MetricPage({
                 methodologyLink={methodologyUrl}
               />
             }
-            hasLegend={false}
-            outcomeType={metric.config.outcomeType}
-            supervisorHomepage
           >
             <MetricEventsTable
               officerPseudoId={presenter.officerPseudoId}
@@ -244,7 +241,7 @@ const ManagedComponent = observer(function MetricPage({
             />
           </InsightsChartCard>
         </Sidebar>
-        <Body supervisorHomepage>
+        <Body>
           <InsightsChartCard
             title={`${toTitleCase(bodyDisplayName)} Compared to State`}
             infoModal={
@@ -254,8 +251,6 @@ const ManagedComponent = observer(function MetricPage({
                 methodologyLink={methodologyUrl}
               />
             }
-            outcomeType={metric.config.outcomeType}
-            supervisorHomepage
           >
             <InsightsSwarmPlotContainerV2
               metric={metric}
@@ -274,14 +269,11 @@ const ManagedComponent = observer(function MetricPage({
                 methodologyLink={methodologyUrl}
               />
             }
-            outcomeType={metric.config.outcomeType}
-            supervisorHomepage
           >
             <InsightsLinePlot
               metric={metric}
               officerName={officerOutcomesData.displayName}
               supervisionOfficerLabel={labels.supervisionOfficerLabel}
-              supervisorHomepage
               methodologyUrl={methodologyUrl}
               eventName={metricInfo.eventName}
             />

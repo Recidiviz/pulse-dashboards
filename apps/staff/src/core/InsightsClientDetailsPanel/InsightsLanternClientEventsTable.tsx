@@ -19,7 +19,6 @@ import { Column } from "react-table";
 
 import { ClientEvent, ClientEventAttributes } from "~datatypes";
 
-import useIsMobile from "../../hooks/useIsMobile";
 import { formatDate, humanReadableTitleCase } from "../../utils";
 import InsightsTable from "../InsightsTable";
 import { Code, Description, Separator, Title, Wrapper } from "./styles";
@@ -85,13 +84,11 @@ const createTableColumn = (column: Column): Column => {
 
 type InsightsLanternClientEventsTableType = {
   events: ClientEvent[];
-  supervisorHomepage: boolean;
 };
 
 const InsightsLanternClientEventsTable: React.FC<
   InsightsLanternClientEventsTableType
-> = ({ events, supervisorHomepage }) => {
-  const { isMobile } = useIsMobile(true);
+> = ({ events }) => {
   if (!events) return null;
 
   return (
@@ -100,9 +97,8 @@ const InsightsLanternClientEventsTable: React.FC<
       <InsightsTable
         data={events}
         columns={columns.map((c) => createTableColumn(c))}
-        rowSize={isMobile || supervisorHomepage ? 110 : 76}
-        transformToMobile={isMobile || supervisorHomepage}
-        supervisorHomepage={supervisorHomepage}
+        rowSize={110}
+        transformToMobile={true}
       />
     </Wrapper>
   );

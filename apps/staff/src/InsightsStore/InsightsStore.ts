@@ -65,20 +65,6 @@ export class InsightsStore {
   }
 
   /**
-   * Whether to use the "supervisor homepage" UI. Returns true if the user has the
-   * supervisorHomepage feature variant enabled or if the current tenant is not configured as a
-   * legacy UI state.
-   *
-   * This is on InsightsStore and not InsightsSupervisionStore so it can be used pre-hydration.
-   */
-  get shouldUseSupervisorHomepageUI(): boolean {
-    const { userStore, tenantStore } = this.rootStore;
-    if (userStore.activeFeatureVariants.supervisorHomepage) return true;
-
-    return !tenantStore.insightsLegacyUI;
-  }
-
-  /**
    * Creates this.supervisionStore for the current tenant, if it does not already exist.
    * This is a MobX flow method and should be called with mobx.flowResult.
    */

@@ -15,5 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export { InsightsSwarmPlotContainer as InsightsSwarmPlot } from "./InsightsSwarmPlotContainer";
 export { InsightsSwarmPlotContainerV2 } from "./InsightsSwarmPlotContainerV2";

@@ -45,7 +45,6 @@ const ManagedComponent: React.FC<{
       actionStrategy={presenter.actionStrategyCopy}
       bannerViewedCallback={presenter.setUserHasSeenActionStrategy}
       disableBannerCallback={presenter.disableSurfaceActionStrategies}
-      supervisorHomepage
     />
   ) : null;
 });

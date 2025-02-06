@@ -29,10 +29,8 @@ import InsightsOnboardingPage from "../InsightsOnboardingPage";
 import InsightsOpportunityFormPage from "../InsightsOpportunityFormPage";
 import InsightsOpportunityPage from "../InsightsOpportunityPage";
 import { InsightsRoute } from "../InsightsRoute";
-import InsightsStaffPage from "../InsightsStaffPage";
 import InsightsStaffPageV2 from "../InsightsStaffPage/InsightsStaffPageV2";
 import { InsightsSupervisionHome } from "../InsightsSupervisionHome";
-import InsightsSupervisorPage from "../InsightsSupervisorPage";
 import InsightsSupervisorPageV2 from "../InsightsSupervisorPage/InsightsSupervisorPageV2";
 import InsightsSupervisorsListPage from "../InsightsSupervisorsListPage";
 import ModelHydrator from "../ModelHydrator";
@@ -43,7 +41,6 @@ const PageInsights: React.FC = observer(function PageInsights() {
     top: 0,
   });
   const { insightsStore, workflowsRootStore } = useRootStore();
-  const { shouldUseSupervisorHomepageUI: supervisorHomepage } = insightsStore;
 
   return (
     <InsightsActionStrategyModalProvider>
@@ -68,54 +65,36 @@ const PageInsights: React.FC = observer(function PageInsights() {
 
               <Route
                 path={insightsRoute({ routeName: "supervisionSupervisor" })}
-                element={
-                  supervisorHomepage ? (
-                    <InsightsSupervisorPageV2 />
-                  ) : (
-                    <InsightsSupervisorPage />
-                  )
-                }
+                element={<InsightsSupervisorPageV2 />}
               />
 
-              {supervisorHomepage && (
+              {
                 <Route
                   path={insightsRoute({ routeName: "supervisionStaff" })}
                   element={<InsightsStaffPageV2 />}
                 />
-              )}
+              }
 
               {[
-                insightsRoute({ routeName: "supervisionStaff" }),
                 insightsRoute({ routeName: "supervisionStaffMetric" }),
                 insightsRoute({ routeName: "supervisionClientDetail" }),
               ].map((path) => (
                 <Route
                   key={path}
                   path={path}
-                  element={
-                    supervisorHomepage ? (
-                      <InsightsMetricPage />
-                    ) : (
-                      <InsightsStaffPage />
-                    )
-                  }
+                  element={<InsightsMetricPage />}
                 />
               ))}
-              {supervisorHomepage && (
-                <Route
-                  path={insightsRoute({ routeName: "supervisionOpportunity" })}
-                  element={<InsightsOpportunityPage />}
-                />
-              )}
-
-              {supervisorHomepage && (
-                <Route
-                  path={insightsRoute({
-                    routeName: "supervisionOpportunityForm",
-                  })}
-                  element={<InsightsOpportunityFormPage />}
-                />
-              )}
+              <Route
+                path={insightsRoute({ routeName: "supervisionOpportunity" })}
+                element={<InsightsOpportunityPage />}
+              />
+              <Route
+                path={insightsRoute({
+                  routeName: "supervisionOpportunityForm",
+                })}
+                element={<InsightsOpportunityFormPage />}
+              />
             </Route>
             <Route
               path={insightsRoute({ routeName: "supervisionOnboarding" })}

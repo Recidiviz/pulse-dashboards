@@ -161,7 +161,6 @@ const ManagedComponent = observer(function StaffPage({
                   rate={formatTargetAndHighlight(
                     metric.currentPeriodData.metricRate,
                   )}
-                  supervisorHomepage
                 >
                   <InsightsSwarmPlotContainerV2
                     metric={metric}

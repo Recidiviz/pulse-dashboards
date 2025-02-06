@@ -99,13 +99,9 @@ const InfoButton = styled(Button)`
   }
 `;
 
-const StyledButton = styled(Button).attrs({ kind: "link" })<{
-  supervisorHomepage: boolean;
-}>`
-  ${({ supervisorHomepage }) =>
-    supervisorHomepage &&
-    `color: ${palette.slate85};
-      text-decoration: none !important;`}
+const StyledButton = styled(Button).attrs({ kind: "link" })`
+  color: ${palette.slate85};
+  text-decoration: none !important;
 `;
 
 type InsightsInfoModalType = {
@@ -114,7 +110,6 @@ type InsightsInfoModalType = {
   methodologyLink?: string;
   buttonText?: string;
   onClick?: () => void;
-  supervisorHomepage: boolean;
 };
 
 const InsightsInfoModal: React.FC<InsightsInfoModalType> = ({
@@ -123,18 +118,13 @@ const InsightsInfoModal: React.FC<InsightsInfoModalType> = ({
   methodologyLink,
   buttonText,
   onClick,
-  supervisorHomepage,
 }) => {
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
 
   return (
     <>
       {buttonText ? (
-        <StyledButton
-          aria-label={title}
-          supervisorHomepage={supervisorHomepage}
-          onClick={() => setModalIsOpen(true)}
-        >
+        <StyledButton aria-label={title} onClick={() => setModalIsOpen(true)}>
           {buttonText}
         </StyledButton>
       ) : (

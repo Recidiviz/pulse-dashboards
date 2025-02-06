@@ -20,11 +20,7 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryParams } from "use-query-params";
 import { Mock } from "vitest";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-  useUserStore,
-} from "../../../components/StoreProvider";
+import { useRootStore, useUserStore } from "../../../components/StoreProvider";
 import useIsMobile from "../../../hooks/useIsMobile";
 import RootStore from "../../../RootStore";
 import TenantStore from "../../../RootStore/TenantStore/TenantStore";
@@ -70,9 +66,6 @@ describe("OverviewNavLinks tests", () => {
       pathname: "/insights",
     });
     vi.mocked(useIsMobile).mockReturnValue(false);
-    vi.mocked(useFeatureVariants).mockReturnValue({
-      supervisorHomepage: {},
-    });
 
     coreStore = new CoreStore(RootStore);
     vitalsStore = coreStore.vitalsStore;
@@ -87,7 +80,6 @@ describe("OverviewNavLinks tests", () => {
       },
       workflowsStore: { allowSupervisionTasks: false },
       currentTenantId: "US_ID",
-      insightsStore: { shouldUseSupervisorHomepageUI: true },
     };
 
     useRootStoreMock.mockReturnValue(rootStoreMock);
@@ -110,6 +102,13 @@ describe("OverviewNavLinks tests", () => {
   });
 
   it("Should render a link for each page option", async () => {
+    renderLinks();
+
+    await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(1));
+  });
+
+  it("Should render a link for insights if enabled", async () => {
+    rootStoreMock.userStore.userAllowedNavigation.insights = ["page1"];
     renderLinks();
 
     await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(2));
@@ -160,7 +159,7 @@ describe("OverviewNavLinks tests", () => {
     rootStoreMock.workflowsStore.supportsMultipleSystems = true;
     renderLinks();
 
-    await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(2));
+    await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(1));
   });
 
   it("Should render a link for Residents and Clients page if not on mobile", async () => {

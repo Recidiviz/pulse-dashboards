@@ -20,10 +20,7 @@ import { noop } from "lodash";
 import { BrowserRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../../components/StoreProvider";
+import { useRootStore } from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
 import { mockIneligibleClient } from "../../../WorkflowsStore/__fixtures__";
 import { Client } from "../../../WorkflowsStore/Client";
@@ -48,9 +45,6 @@ const baseRootStoreMock = {
     doc: vi.fn(),
     collection: vi.fn(),
   },
-  insightsStore: {
-    shouldUseSupervisorHomepageUI: vi.fn(),
-  },
   workflowsRootStore: {
     opportunityConfigurationStore: {
       isHydrated: true,
@@ -72,9 +66,6 @@ describe("WorkflowsMilestones", () => {
     vi.resetAllMocks();
     // Quiet errors during test runs
     vi.spyOn(console, "error").mockImplementation(noop);
-    vi.mocked(useFeatureVariants).mockReturnValue({
-      supervisorHomepage: undefined,
-    });
   });
 
   afterEach(() => {
