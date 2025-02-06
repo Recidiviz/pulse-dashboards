@@ -34,8 +34,10 @@ export const workflowsStaffRecordBaseSchema = staffRecordBaseSchema.extend({
       "SUPERVISION_DISTRICT_MANAGER",
       "SUPERVISION_REGIONAL_MANAGER",
       "SUPERVISION_STATE_LEADERSHIP",
+      "COUNSELOR",
     ])
-    .nullish(),
+    .nullish()
+    .catch(null),
   hasCaseload: z.boolean().optional(),
   pseudonymizedId: z.string(),
 });
