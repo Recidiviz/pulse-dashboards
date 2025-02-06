@@ -18,7 +18,6 @@
 import { flowResult, makeObservable } from "mobx";
 
 import {
-  ActionStrategyCopy,
   SupervisionOfficer,
   SupervisionOfficerOutcomes,
   SupervisionOfficerSupervisor,
@@ -87,9 +86,6 @@ export abstract class SupervisionOfficerPresenterBase
         labels: true,
         timePeriod: true,
         areCaseloadCategoryBreakdownsEnabled: true,
-        actionStrategyCopy: true,
-        setUserHasSeenActionStrategy: true,
-        disableSurfaceActionStrategies: true,
         expectOfficerPopulated: true,
         expectOfficerOutcomesPopulated: true,
         expectSupervisorPopulated: true,
@@ -111,6 +107,13 @@ export abstract class SupervisionOfficerPresenterBase
     });
   }
 
+  expectOutcomesDependenciesPopulated() {
+    return [
+      this.expectOfficerOutcomesDataPopulated,
+      this.expectOfficerOutcomesPopulated,
+    ];
+  }
+
   populateMethods() {
     return [
       flowResult(this.supervisionStore.populateMetricConfigs()),
@@ -124,8 +127,6 @@ export abstract class SupervisionOfficerPresenterBase
       this.expectMetricsPopulated,
       this.expectOfficerPopulated,
       this.expectSupervisorPopulated,
-      this.expectOfficerOutcomesDataPopulated,
-      this.expectOfficerOutcomesPopulated,
     ];
   }
 
@@ -148,7 +149,7 @@ export abstract class SupervisionOfficerPresenterBase
       throw new Error("Failed to populate metric configs");
   }
 
-  private expectOfficerOutcomesPopulated() {
+  protected expectOfficerOutcomesPopulated() {
     if (isExcludedSupervisionOfficer(this.officerRecord)) return;
     if (!this.officerOutcomes)
       throw new Error("Failed to populate officer outcomes data");
@@ -166,7 +167,7 @@ export abstract class SupervisionOfficerPresenterBase
    * Augments officer data with all necessary relationships fully hydrated.
    * If this fails for any reason, the value will instead reflect the error that was encountered.
    */
-  private get officerOutcomesDataOrError(): OfficerOutcomesData | Error {
+  protected get officerOutcomesDataOrError(): OfficerOutcomesData | Error {
     try {
       if (!this.officerRecord) throw new Error("Missing officer record");
       if (isExcludedSupervisionOfficer(this.officerRecord))
@@ -251,33 +252,6 @@ export abstract class SupervisionOfficerPresenterBase
     return this.supervisionStore.metricConfigsById;
   }
 
-  /**
-   * Passthrough to supervisionStore.
-   * Provides the Action Strategy copy with prompt and body text
-   * @returns an ActionStrategyCopy object
-   */
-  get actionStrategyCopy(): ActionStrategyCopy[string] | undefined {
-    return this.supervisionStore.getActionStrategyCopy(this.officerPseudoId);
-  }
-
-  /**
-   * Passthrough to supervisionStore.
-   * Disables Action Strategies so that the banner is not seen
-   * again in the current session
-   */
-  disableSurfaceActionStrategies(): void {
-    this.supervisionStore.disableSurfaceActionStrategies();
-  }
-
-  /**
-   * Passthrough to supervisionStore.
-   * When the user has seen an Action Strategy banner,
-   * use this to notify the BE of the new surfaced event
-   */
-  setUserHasSeenActionStrategy(): void {
-    this.supervisionStore.setUserHasSeenActionStrategy(this.officerPseudoId);
-  }
-
   protected expectOfficerPopulated() {
     if (!this.officerRecord) throw new Error("Failed to populate officer data");
   }
@@ -287,7 +261,7 @@ export abstract class SupervisionOfficerPresenterBase
       throw new Error("Failed to populate supervisor info");
   }
 
-  private expectOfficerOutcomesDataPopulated() {
+  protected expectOfficerOutcomesDataPopulated() {
     // We don't expect outcomes data for excluded officers
     if (isExcludedSupervisionOfficer(this.officerRecord)) return;
     if (this.officerOutcomesDataOrError instanceof Error)

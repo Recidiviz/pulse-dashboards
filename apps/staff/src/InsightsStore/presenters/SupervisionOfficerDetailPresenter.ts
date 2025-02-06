@@ -23,10 +23,10 @@ import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
 import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
-import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
+import { SupervisionOfficerOutcomesPresenter } from "./SupervisionOfficerOutcomesPresenter";
 import { getLocationWithoutLabel } from "./utils";
 
-export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresenterBase {
+export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcomesPresenter {
   constructor(
     supervisionStore: InsightsSupervisionStore,
     officerPseudoId: string,
@@ -49,7 +49,10 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerPresent
     });
 
     this.hydrator = new HydratesFromSource({
-      expectPopulated: this.expectPopulated(),
+      expectPopulated: [
+        ...this.expectPopulated(),
+        ...this.expectOutcomesDependenciesPopulated(),
+      ],
       populate: async () => {
         await Promise.all([...this.populateMethods()]);
         // Follows the above method so we have the officer record hydrated.
