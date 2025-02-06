@@ -128,7 +128,7 @@
     },
     "build": {
       "dependsOn": ["load-build-config-files", "create-build-package-json"],
-      "command": "nx esbuild staff-shared-server -c deploy"
+      "command": "nx esbuild staff-shared-server -c deploy && cd dist/libs/staff-shared-server && yarn"
     },
     "build-e2e": {
       "executor": "nx:run-commands",
