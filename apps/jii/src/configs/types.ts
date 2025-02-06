@@ -143,6 +143,7 @@ export type ResidentsConfig = {
   // this is an array to support later expansion, but for now we don't support
   // there being more than one of these pages in the implementation
   comparisons?: [ComparisonPageConfig];
+  progressPage: FullPageConfig & { teaserText: string };
 };
 
 export type StateCode = z.infer<typeof stateCodes>;

@@ -18,6 +18,7 @@
 import { ResidentsConfig } from "../../types";
 import { usMeSccpConfig } from "../usMeSCCP/config";
 import { usMeWorkReleaseConfig } from "../usMeWorkRelease/config";
+import progressPageBody from "./progressPageBody.md?raw";
 import releaseDateInfo from "./releaseDateInfo.md?raw";
 
 export const usMeResidentsConfig: ResidentsConfig = {
@@ -104,4 +105,12 @@ export const usMeResidentsConfig: ResidentsConfig = {
       },
     },
   ],
+  progressPage: {
+    heading: "Calculating Important Dates",
+    body: progressPageBody,
+    linkText: "See date calculations",
+    urlSlug: "calculating-dates",
+    teaserText: `Learn more how important dates are calculated,
+    including how good time affects your sentence and release date.`,
+  },
 };

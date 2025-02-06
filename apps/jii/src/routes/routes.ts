@@ -25,6 +25,8 @@ export const ReturnToPathFragment = route("", {
   searchParams: { returnToPath: string() },
 });
 
+const InfoPage = route(":pageSlug");
+
 export const State = route(":stateSlug", types(ReturnToPathFragment), {
   Resident: route(
     ":personPseudoId",
@@ -38,10 +40,17 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
             ":opportunitySlug",
             {},
             {
-              InfoPage: route(":pageSlug"),
+              InfoPage,
             },
           ),
           Comparison: route("compare/:opportunitySlug1/:opportunitySlug2"),
+        },
+      ),
+      Progress: route(
+        "progress",
+        {},
+        {
+          InfoPage,
         },
       ),
     },

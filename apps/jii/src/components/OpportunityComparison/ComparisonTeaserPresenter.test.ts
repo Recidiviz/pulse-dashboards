@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { usMeResidentsConfig } from "../../configs/US_ME/residents/residentsConfig";
-import { ComparisonLinkPresenter } from "./ComparisonLinkPresenter";
+import { ComparisonTeaserPresenter } from "./ComparisonTeaserPresenter";
 
 test("link params", () => {
-  const presenter = new ComparisonLinkPresenter(
+  const presenter = new ComparisonTeaserPresenter(
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     usMeResidentsConfig.comparisons![0],
     usMeResidentsConfig.incarcerationOpportunities,

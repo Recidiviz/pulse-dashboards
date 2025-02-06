@@ -54,3 +54,5 @@ Your 1/2 or 2/3 Time Date falls halfway or two-thirds of the way between the dat
 For example, if you entered a DOC facility on 1/1/2020, and your Current Release Date is 1/1/2028, your 1/2 time date would be on 1/1/2024. If your Current Release Date moves earlier because you earn good time, your 1/2 or 2/3 Time Date will also move earlier.
 
 If your sentence is between 0 to 5 years, you must pass your 1/2 Time Date to be eligible for SCCP. If your sentence is longer than 5 years, you must pass your 2/3 Time Date to be eligible for SCCP.
+
+<ProgressPageTeaser />

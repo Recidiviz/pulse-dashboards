@@ -29,11 +29,9 @@ import { withPresenterManager } from "~hydration-utils";
 import { State } from "../../routes/routes";
 import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 import { ButtonLink } from "../ButtonLink/ButtonLink";
-import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
+import { InfoPage } from "../InfoPage/InfoPage";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
-import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
-import { TableOfContents } from "./TableOfContents";
 
 const PageLinksFooter = styled(FullBleedContainer).attrs({ as: "footer" })`
   background: ${palette.marble3};
@@ -71,18 +69,13 @@ const PageLinks = styled(PageContainer)`
 const ManagedComponent: FC<{
   presenter: OpportunityInfoPagePresenter;
 }> = observer(function OpportunityInfoPage({ presenter }) {
-  usePageTitle(presenter.heading);
   return (
     <>
       <ButtonLink to="../">
         <Icon kind="Arrow" rotate={180} size={13} />
         <span>Go back</span>
       </ButtonLink>
-      <article>
-        <CopyWrapper>{`# ${presenter.heading}`}</CopyWrapper>
-        <TableOfContents presenter={presenter} />
-        <CopyWrapper>{presenter.body}</CopyWrapper>
-      </article>
+      <InfoPage heading={presenter.heading} body={presenter.body} />
       {presenter.pageLinks.length > 0 && (
         <PageLinksFooter>
           <PageLinks>

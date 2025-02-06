@@ -16,44 +16,40 @@
 // =============================================================================
 
 import { FC } from "react";
-import root from "react-shadow/styled-components";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { ComparisonLink } from "../OpportunityComparison/ComparisonLink";
+import { ComparisonTeaser } from "../OpportunityComparison/ComparisonTeaser";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import {
-  ComparisonLinkInCopyPresenter,
-  ComparisonLinkInCopyProps,
-} from "./ComparisonLinkInCopyPresenter";
+  ComparisonTeaserInCopyPresenter,
+  ComparisonTeaserInCopyProps,
+} from "./ComparisonTeaserInCopyPresenter";
+import { ShadowDOM } from "./ShadowDOM";
 
 /**
  * Validates non-typesafe props from free-text copy fields
- * and uses it to render a {@link ComparisonLink}, if possible. Otherwise,
+ * and uses it to render a {@link ComparisonTeaser}, if possible. Otherwise,
  * gracefully falls back to rendering nothing.
  */
 const ManagedComponent: FC<{
-  presenter: ComparisonLinkInCopyPresenter;
+  presenter: ComparisonTeaserInCopyPresenter;
 }> = ({ presenter }) => {
-  // rendering this component in shadow DOM isolates it from the CopyWrapper styles,
-  // which otherwise would override some of the ComparisonLink styling
-  const ShadowRoot = root["div"];
-
   return presenter.linkProps ? (
-    <ShadowRoot>
-      <ComparisonLink {...presenter.linkProps} />
-    </ShadowRoot>
+    <ShadowDOM>
+      <ComparisonTeaser {...presenter.linkProps} />
+    </ShadowDOM>
   ) : null;
 };
 
-function usePresenter(props: ComparisonLinkInCopyProps) {
+function usePresenter(props: ComparisonTeaserInCopyProps) {
   const {
     residentsStore: { config },
   } = useResidentsContext();
-  return new ComparisonLinkInCopyPresenter(props, config);
+  return new ComparisonTeaserInCopyPresenter(props, config);
 }
 
-export const ComparisonLinkInCopy = withPresenterManager({
+export const ComparisonTeaserInCopy = withPresenterManager({
   usePresenter,
   ManagedComponent,
   managerIsObserver: false,

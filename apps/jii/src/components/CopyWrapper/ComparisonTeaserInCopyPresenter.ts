@@ -18,15 +18,15 @@
 import { captureException } from "@sentry/react";
 
 import { ResidentsConfig } from "../../configs/types";
-import { ComparisonLinkProps } from "../OpportunityComparison/ComparisonLink";
+import { ComparisonTeaserProps } from "../OpportunityComparison/ComparisonTeaser";
 import { IdTuple, idTupleSchema } from "../OpportunityComparison/types";
 import { findMatchingComparisonConfig } from "../OpportunityComparison/utils";
 
-export type ComparisonLinkInCopyProps = { opportunityTypes?: string };
+export type ComparisonTeaserInCopyProps = { opportunityTypes?: string };
 
-export class ComparisonLinkInCopyPresenter {
+export class ComparisonTeaserInCopyPresenter {
   constructor(
-    private props: ComparisonLinkInCopyProps,
+    private props: ComparisonTeaserInCopyProps,
     private residentsConfig: ResidentsConfig,
   ) {}
 
@@ -48,7 +48,7 @@ export class ComparisonLinkInCopyPresenter {
     return match;
   }
 
-  get linkProps(): ComparisonLinkProps | undefined {
+  get linkProps(): ComparisonTeaserProps | undefined {
     try {
       return { config: this.comparisonConfig };
     } catch (e) {

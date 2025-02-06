@@ -23,7 +23,7 @@ import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { ComparisonLink } from "../../OpportunityComparison/ComparisonLink";
+import { ComparisonTeaser } from "../../OpportunityComparison/ComparisonTeaser";
 import { useResidentsContext } from "../../ResidentsHydrator/context";
 import { useSingleResidentContext } from "../../SingleResidentHydrator/context";
 import { EligibilityPresenter } from "./EligibilityPresenter";
@@ -45,7 +45,7 @@ const ManagedComponent: FC<{ presenter: EligibilityPresenter }> = observer(
             {i + 1 < length ? <Divider /> : null}
           </Fragment>
         ))}
-        {comparison && <ComparisonLink config={comparison} />}
+        {comparison && <ComparisonTeaser config={comparison} />}
       </div>
     );
   },

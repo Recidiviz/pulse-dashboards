@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { usMeResidentsConfig } from "../../configs/US_ME/residents/residentsConfig";
-import { ComparisonLinkInCopyPresenter } from "./ComparisonLinkInCopyPresenter";
+import { ComparisonTeaserInCopyPresenter } from "./ComparisonTeaserInCopyPresenter";
 
 test("comparison found", () => {
-  const presenter = new ComparisonLinkInCopyPresenter(
+  const presenter = new ComparisonTeaserInCopyPresenter(
     {
       opportunityTypes: '["usMeWorkRelease", "usMeSCCP"]',
     },
@@ -33,7 +33,7 @@ test("comparison found", () => {
 });
 
 test("comparison not found", () => {
-  const presenter = new ComparisonLinkInCopyPresenter(
+  const presenter = new ComparisonTeaserInCopyPresenter(
     {
       opportunityTypes: '["usMeWorkRelease", "someInvalidId"]',
     },

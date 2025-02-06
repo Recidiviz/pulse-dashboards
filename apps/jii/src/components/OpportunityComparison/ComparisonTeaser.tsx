@@ -15,69 +15,50 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
 import { FC, memo } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
-import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
 import compareIconUrl from "../../assets/images/compare-arrows.svg";
 import { ComparisonPageConfig } from "../../configs/types";
 import { State } from "../../routes/routes";
-import { GoButton } from "../ButtonLink/GoButton";
 import { useResidentsContext } from "../ResidentsHydrator/context";
-import { ComparisonLinkPresenter } from "./ComparisonLinkPresenter";
+import { TeaserLink } from "../TeaserLink/TeaserLink";
+import { ComparisonTeaserPresenter } from "./ComparisonTeaserPresenter";
 
-const Wrapper = styled.article`
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(spacing.sm)};
-  display: flex;
-  gap: ${rem(spacing.lg)};
-  margin: ${rem(spacing.xl)} 0;
-  padding: ${rem(spacing.xl)};
-  text-wrap: balance;
-
-  p {
-    margin-top: 0;
-  }
-`;
-
-const ManagedComponent: FC<{ presenter: ComparisonLinkPresenter }> = memo(
-  function ComparisonLink({ presenter }) {
+const ManagedComponent: FC<{ presenter: ComparisonTeaserPresenter }> = memo(
+  function ComparisonTeaser({ presenter }) {
     const personParams = useTypedParams(State.Resident);
+
     return (
-      <Wrapper>
-        <img src={compareIconUrl} width={40} height={40} alt="" />
-        <div>
-          <p>{presenter.text}</p>
-          <GoButton
-            to={State.Resident.Eligibility.Comparison.buildPath({
-              ...personParams,
-              ...presenter.link.params,
-            })}
-          >
-            {presenter.link.text}
-          </GoButton>
-        </div>
-      </Wrapper>
+      <TeaserLink
+        teaserText={presenter.text}
+        imageUrl={compareIconUrl}
+        linkProps={{
+          children: presenter.link.text,
+          to: State.Resident.Eligibility.Comparison.buildPath({
+            ...personParams,
+            ...presenter.link.params,
+          }),
+        }}
+      />
     );
   },
 );
 
-export type ComparisonLinkProps = { config: ComparisonPageConfig };
+export type ComparisonTeaserProps = { config: ComparisonPageConfig };
 
-function usePresenter({ config }: ComparisonLinkProps) {
+function usePresenter({ config }: ComparisonTeaserProps) {
   const {
     residentsStore: {
       config: { incarcerationOpportunities },
     },
   } = useResidentsContext();
-  return new ComparisonLinkPresenter(config, incarcerationOpportunities);
+  return new ComparisonTeaserPresenter(config, incarcerationOpportunities);
 }
 
-export const ComparisonLink = withPresenterManager({
+export const ComparisonTeaser = withPresenterManager({
   usePresenter,
   ManagedComponent,
   managerIsObserver: false,
