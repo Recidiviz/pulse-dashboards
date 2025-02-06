@@ -27,8 +27,6 @@ import {
   clientEventFixture,
   ClientInfo,
   clientInfoFixture,
-  ExcludedSupervisionOfficer,
-  excludedSupervisionOfficerFixture,
   getMockConfigsByTenantId,
   InsightsConfig,
   InsightsConfigFixture,
@@ -175,16 +173,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     );
   }
 
-  async excludedOfficersForSupervisor(
-    supervisorPseudoId: string,
-  ): Promise<Array<ExcludedSupervisionOfficer>> {
-    return excludedSupervisionOfficerFixture.filter((o) =>
-      o.supervisorExternalIds
-        .map((i) => `hashed-${i}`)
-        .includes(supervisorPseudoId),
-    );
-  }
-
   async outcomesForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficerOutcomes>> {
@@ -212,19 +200,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     officerPseudoId: string,
   ): Promise<SupervisionOfficer> {
     const officerFixture = supervisionOfficerFixture.find(
-      (o) => o.pseudonymizedId === officerPseudoId,
-    );
-
-    if (!officerFixture)
-      throw new Error(`Officer ${officerPseudoId} not present in fixture data`);
-
-    return officerFixture;
-  }
-
-  async excludedSupervisionOfficer(
-    officerPseudoId: string,
-  ): Promise<ExcludedSupervisionOfficer> {
-    const officerFixture = excludedSupervisionOfficerFixture.find(
       (o) => o.pseudonymizedId === officerPseudoId,
     );
 

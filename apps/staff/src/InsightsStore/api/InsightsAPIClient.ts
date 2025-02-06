@@ -22,8 +22,6 @@ import {
   clientEventSchema,
   ClientInfo,
   clientInfoSchema,
-  ExcludedSupervisionOfficer,
-  excludedSupervisionOfficerSchema,
   InsightsConfig,
   insightsConfigSchema,
   MetricBenchmark,
@@ -145,15 +143,6 @@ export class InsightsAPIClient implements InsightsAPI {
     return officerData.map((b) => supervisionOfficerSchema.parse(b));
   }
 
-  async excludedOfficersForSupervisor(
-    supervisorPseudoId: string,
-  ): Promise<Array<ExcludedSupervisionOfficer>> {
-    const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/excluded_officers`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const officerData = fetchedData.officers as Array<unknown>;
-    return officerData.map((b) => excludedSupervisionOfficerSchema.parse(b));
-  }
-
   async outcomesForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficerOutcomes>> {
@@ -170,16 +159,6 @@ export class InsightsAPIClient implements InsightsAPI {
     const fetchedData = await this.apiStore.get(endpoint);
     const officerData = fetchedData.officer as unknown;
     return supervisionOfficerSchema.parse(officerData);
-  }
-
-  async excludedSupervisionOfficer(
-    officerPseudoId: string,
-  ): Promise<ExcludedSupervisionOfficer> {
-    // TODO: (#6044) Convert "/excluded_officer/" to "/officer/" once all officers are served from the same endpoint.
-    const endpoint = `${this.baseUrl}/excluded_officer/${officerPseudoId}`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const officerData = fetchedData.officer as unknown;
-    return excludedSupervisionOfficerSchema.parse(officerData);
   }
 
   async outcomesForOfficer(
