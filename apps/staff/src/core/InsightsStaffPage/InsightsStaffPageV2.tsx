@@ -15,46 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import { useState } from "react";
-import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
-import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
-import { toTitleCase } from "../../utils";
-import InsightsActionStrategyBanner from "../InsightsActionStrategyBanner";
-import InsightsChartCard from "../InsightsChartCard";
-import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
+import { ManagedStaffHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner/InsightsManagedStaffHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
-import { EmptyCard } from "../InsightsSupervisorPage/InsightsStaffCardV2";
-import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot";
-import { formatTargetAndHighlight } from "../InsightsSwarmPlot/utils";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
 import { InsightsOpportunitySummary } from "./InsightsOpportunitySummary";
+import { InsightsStaffActionStrategyBanner } from "./InsightsStaffActionStrategyBanner";
+import { InsightsStaffOutcomesSection } from "./InsightsStaffOutcomesSection";
 import { InsightsStaffVitals } from "./InsightsStaffVitals";
-
-const Wrapper = styled.div<{ isTablet: boolean }>`
-  display: grid;
-  grid-template-columns: repeat(
-    2,
-    minmax(${({ isTablet }) => (isTablet ? "unset" : rem(300))}, 1fr)
-  );
-  gap: ${rem(spacing.md)};
-`;
 
 const ManagedComponent = observer(function StaffPage({
   presenter,
 }: {
   presenter: SupervisionOfficerPresenter;
 }) {
-  const { isTablet } = useIsMobile(true);
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
@@ -64,14 +46,8 @@ const ManagedComponent = observer(function StaffPage({
     supervisorsInfo,
     goToSupervisorInfo,
     labels,
-    timePeriod,
-    numClientsOnCaseload,
     userCanAccessAllSupervisors,
-    actionStrategyCopy,
-    setUserHasSeenActionStrategy,
-    disableSurfaceActionStrategies,
-    isVitalsEnabled,
-    officerHighlights,
+    numClientsOnCaseload,
   } = presenter;
 
   // TODO(#5780): move infoItems to presenter
@@ -80,6 +56,7 @@ const ManagedComponent = observer(function StaffPage({
       title: "active clients",
       info: numClientsOnCaseload,
     },
+    // TODO(#5780): move infoItems to presenter
     {
       title: "avg daily caseload",
       info: officerOutcomesData?.avgDailyPopulation,
@@ -124,61 +101,16 @@ const ManagedComponent = observer(function StaffPage({
               },
             ]}
           >
-            {officerOutcomesData?.displayName} Profile
+            {officerRecord?.displayName} Profile
           </InsightsBreadcrumbs>
         )
       }
-      highlightedOfficers={
-        <InsightsHighlightedOfficersBanner
-          highlightedOfficers={officerHighlights}
-          supervisionOfficerLabel={labels.supervisionOfficerLabel}
-          staffPage
-        />
-      }
+      highlightedOfficers={<ManagedStaffHighlightedOfficersBanner />}
     >
-      {officerOutcomesData?.outlierMetrics?.length ? (
-        <>
-          {actionStrategyCopy && (
-            <InsightsActionStrategyBanner
-              actionStrategy={actionStrategyCopy}
-              bannerViewedCallback={setUserHasSeenActionStrategy}
-              disableBannerCallback={disableSurfaceActionStrategies}
-            />
-          )}
-          <Wrapper isTablet={isTablet}>
-            {officerOutcomesData.outlierMetrics.map((metric) => {
-              const { bodyDisplayName } = metric.config;
-
-              return (
-                <InsightsChartCard
-                  key={metric.metricId}
-                  url={insightsUrl("supervisionStaffMetric", {
-                    officerPseudoId,
-                    metricId: metric.metricId,
-                  })}
-                  title={toTitleCase(bodyDisplayName)}
-                  subtitle={timePeriod}
-                  rate={formatTargetAndHighlight(
-                    metric.currentPeriodData.metricRate,
-                  )}
-                >
-                  <InsightsSwarmPlotContainerV2
-                    metric={metric}
-                    officersForMetric={[officerOutcomesData]}
-                    isMinimized
-                  />
-                </InsightsChartCard>
-              );
-            })}
-          </Wrapper>
-        </>
-      ) : (
-        <EmptyCard message={labels.officerHasNoOutlierMetricsLabel} />
-      )}
+      <InsightsStaffActionStrategyBanner />
+      <InsightsStaffOutcomesSection />
       <InsightsOpportunitySummary />
-      {isVitalsEnabled && (
-        <InsightsStaffVitals officerPseudoId={officerPseudoId} />
-      )}
+      <InsightsStaffVitals officerPseudoId={officerPseudoId} />
     </InsightsPageLayout>
   );
 });

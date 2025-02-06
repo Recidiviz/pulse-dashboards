@@ -77,6 +77,7 @@ const InsightsActionStrategyBanner: React.FC<
   }, [bannerViewedCallback, disableBannerCallback]);
 
   return (
+    // (#7264): Wrap with the shared banner
     <Banner
       style={{
         width: "100%",

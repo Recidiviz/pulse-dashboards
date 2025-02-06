@@ -35,7 +35,7 @@ function withPresenter(Component: ComponentType<StaffVitalsProps>) {
       insightsStore: { supervisionStore },
     } = useRootStore();
 
-    if (!supervisionStore) return null;
+    if (!supervisionStore || !supervisionStore?.isVitalsEnabled) return null;
 
     const presenter = new SupervisionOfficerVitalsPresenter(
       supervisionStore,

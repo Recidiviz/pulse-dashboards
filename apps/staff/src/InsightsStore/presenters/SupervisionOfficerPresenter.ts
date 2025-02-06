@@ -25,11 +25,7 @@ import { InsightsAPI } from "../api/interface";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
-import { HighlightedOfficersDetail } from "./types";
-import {
-  getHighlightedOfficersByMetric,
-  isExcludedSupervisionOfficer,
-} from "./utils";
+import { isExcludedSupervisionOfficer } from "./utils";
 
 export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
   SupervisionOfficerPresenterBase,
@@ -60,7 +56,8 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
-        ...super.expectPopulated(),
+        ...this.expectPopulated(),
+        ...this.expectOutcomesDependenciesPopulated(),
         () => this.expectClientsPopulated(this.officerExternalId),
       ],
       populate: async () => {
@@ -88,34 +85,6 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
   // TODO(#5780): move to infoItems presenter
   get numClientsOnCaseload(): number | undefined {
     return this.clients?.length;
-  }
-
-  /**
-   * Passthrough to the SupervisionStore
-   * Checks if Vitals is enabled based on user permissions.
-   * @returns `true` if vitals is enabled, otherwise `false`.
-   */
-  get isVitalsEnabled() {
-    return this.supervisionStore.isVitalsEnabled;
-  }
-
-  /**
-   * Returns metrics where this officer meets the top X percent criteria.
-   * @returns An array of objects containing the metric, top X percent criteria, and info about
-   * officers meeting the top X percent criteria. Returns empty array for officers
-   * excluded from outcomes.
-   */
-  get officerHighlights(): HighlightedOfficersDetail[] {
-    // Not expected in practice, but needed for type safety
-    if (!this.officerOutcomes || !this.officerRecord) {
-      throw new Error("Missing necessary officer data");
-    }
-
-    return getHighlightedOfficersByMetric(
-      this.metricConfigsById,
-      [this.officerRecord],
-      [this.officerOutcomes],
-    );
   }
 
   protected expectMetricsPopulated() {
