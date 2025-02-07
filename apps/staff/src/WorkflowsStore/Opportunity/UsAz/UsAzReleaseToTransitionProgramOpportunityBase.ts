@@ -57,7 +57,7 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
       case "FAST_TRACK":
         return "Fast Trackers";
       case "APPROVED_BY_TIME_COMP":
-        return "Approved by Time Comp";
+        return "Eligible Now";
       default:
         return "Other";
     }
@@ -67,8 +67,6 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
     switch (this.record.metadata.tabDescription) {
       case "FAST_TRACK":
         return "Fast Tracker";
-      case "APPROVED_BY_TIME_COMP":
-        return "Approved by Time Comp";
       default:
         return "Eligible";
     }

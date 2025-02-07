@@ -70,8 +70,8 @@ export const LinkedOpportunityCallout = function LinkedOpportunityCallout({
       <Overdue>Overdue:</Overdue>{" "}
       {simplur`There [is|are] ${overdueOpportunityCount} [person|people] that [is|are] ${overdueOpportunityCalloutCopy}. `}
       Please check out the{" "}
-      <OverdueLink to={overdueOpportunityUrl}>outstanding cases</OverdueLink> on
-      the selected caseload(s).
+      <OverdueLink to={overdueOpportunityUrl}>overdue cases</OverdueLink> on the
+      selected caseload(s).
     </Container>
   );
 };

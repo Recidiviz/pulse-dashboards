@@ -53,6 +53,7 @@ describe("UsAzDates metadataToDates tests", () => {
         label: "Projected TPR",
         date: FAKE_DATES.projectedTprDate,
         tooltip: FAKE_TOOLTIP,
+        highlight: true,
       },
       { label: "SED", date: FAKE_DATES.sedDate },
     ]);
@@ -69,6 +70,7 @@ describe("UsAzDates metadataToDates tests", () => {
         label: "Projected DTP",
         date: FAKE_DATES.projectedDtpDate,
         tooltip: FAKE_TOOLTIP,
+        highlight: true,
       },
       { label: "SED", date: FAKE_DATES.sedDate },
     ]);

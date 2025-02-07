@@ -207,7 +207,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
         {
-          tab: "Approved by Time Comp",
+          tab: "Eligible Now",
           texts: [
             "HOME_PLAN_IN_PROGRESS",
             "AWAITING_HOME_PLAN_APPROVAL",
@@ -278,12 +278,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Fast Trackers",
-            "Approved by Time Comp",
-            "Almost Eligible",
-            "Pending",
-          ],
+          tabs: ["Fast Trackers", "Eligible Now", "Almost Eligible", "Pending"],
         },
       ],
       tabPrefaceCopy: [
@@ -292,7 +287,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Fast Tracker cases have a release date within the next 30 days. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
         },
         {
-          tab: "Approved by Time Comp",
+          tab: "Eligible Now",
           text: "This tab contains cases with a release date between 30 and 180 days from now. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
         },
         {
@@ -403,7 +398,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
         {
-          tab: "Approved by Time Comp",
+          tab: "Eligible Now",
           texts: [
             "HOME_PLAN_IN_PROGRESS",
             "AWAITING_HOME_PLAN_APPROVAL",
@@ -474,12 +469,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Fast Trackers",
-            "Approved by Time Comp",
-            "Almost Eligible",
-            "Pending",
-          ],
+          tabs: ["Fast Trackers", "Eligible Now", "Almost Eligible", "Pending"],
         },
       ],
       tabPrefaceCopy: [
@@ -488,7 +478,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Fast Tracker cases have a release date within the next 30 days. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
         },
         {
-          tab: "Approved by Time Comp",
+          tab: "Eligible Now",
           text: "This tab contains cases with a release date between 30 and 180 days from now. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
         },
         {

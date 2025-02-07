@@ -42,7 +42,7 @@ export const ProfileCapsule = observer(function ProfileCapsule({
       </>
     );
   } else if (person instanceof Resident) {
-    status = <>{person.custodyLevel}</>;
+    status = <>{person.displayCustodyLevel}</>;
   }
 
   return (
