@@ -114,7 +114,8 @@
             "input": "{projectRoot}/src",
             "glob": "server/assets/**/*",
             "output": "/"
-          }
+          },
+          "{workspaceRoot}/.yarnrc.yml"
         ],
         "target": "node20"
       },
