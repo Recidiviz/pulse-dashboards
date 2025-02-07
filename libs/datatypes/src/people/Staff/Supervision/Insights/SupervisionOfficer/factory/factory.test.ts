@@ -24,14 +24,8 @@ import {
 
 import { rawSupervisionOfficerSupervisorFactory } from "../../SupervisionOfficerSupervisor/factory/factory";
 import { supervisionOfficerSupervisorSchema } from "../../SupervisionOfficerSupervisor/schema";
-import {
-  excludedSupervisionOfficerSchema,
-  supervisionOfficerSchema,
-} from "../schema";
-import {
-  rawExcludedSupervisionOfficerFactory,
-  rawSupervisionOfficerFactory,
-} from "./factory";
+import { supervisionOfficerSchema } from "../schema";
+import { rawSupervisionOfficerFactory } from "./factory";
 
 faker.seed(FIXTURE_SEED_DEFAULT);
 
@@ -63,36 +57,6 @@ describe("function: SupervisionOfficerRawFactory", () => {
     expect(
       hasDifferentValuesAtKeys(
         supervisionOfficers.map((s) => supervisionOfficerSchema.parse(s)),
-      ),
-    ).toBeTrue();
-  });
-});
-
-describe("function: ExcludedSupervisionOfficerRawFactory", () => {
-  it("should generate a valid excluded supervision officer", () => {
-    const supervisionOfficer =
-      rawExcludedSupervisionOfficerFactory(getTestSupervisors()).build();
-    expect(() =>
-      excludedSupervisionOfficerSchema.parse(supervisionOfficer),
-    ).not.toThrow();
-  });
-
-  it("should generate realistic excluded supervision officers", () => {
-    const supervisionOfficers =
-      rawExcludedSupervisionOfficerFactory(getTestSupervisors()).buildList(3);
-    expect(
-      supervisionOfficers.map((s) => excludedSupervisionOfficerSchema.parse(s)),
-    ).toMatchSnapshot();
-  });
-
-  it("should have variations in values", () => {
-    const supervisionOfficers =
-      rawExcludedSupervisionOfficerFactory(getTestSupervisors()).buildList(30);
-    expect(
-      hasDifferentValuesAtKeys(
-        supervisionOfficers.map((s) =>
-          excludedSupervisionOfficerSchema.parse(s),
-        ),
       ),
     ).toBeTrue();
   });

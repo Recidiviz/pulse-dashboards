@@ -20,18 +20,15 @@ import { z } from "zod";
 import { addDisplayName } from "../../../../../people/utils/addDisplayName";
 import { fullNameSchema } from "../../../../../people/utils/fullNameSchema";
 
-const supervisionOfficerBaseSchema = z.object({
-  fullName: fullNameSchema,
-  externalId: z.string(),
-  pseudonymizedId: z.string(),
-  supervisorExternalIds: z.array(z.string()),
-  // TODO #6793 Make includeInOutcomes a required field once endpoint response has this field
-  includeInOutcomes: z.boolean().optional(),
-  zeroGrantOpportunities: z.array(z.string()).optional(),
-});
-
-export const supervisionOfficerSchema = supervisionOfficerBaseSchema
-  .extend({
+export const supervisionOfficerSchema = z
+  .object({
+    fullName: fullNameSchema,
+    externalId: z.string(),
+    pseudonymizedId: z.string(),
+    supervisorExternalIds: z.array(z.string()),
+    // TODO #6793 Make includeInOutcomes a required field once endpoint response has this field
+    includeInOutcomes: z.boolean().optional(),
+    zeroGrantOpportunities: z.array(z.string()).optional(),
     avgDailyPopulation: z
       .number()
       .transform((avgDailyPopulation) => Math.round(avgDailyPopulation))
@@ -39,16 +36,5 @@ export const supervisionOfficerSchema = supervisionOfficerBaseSchema
   })
   .transform(addDisplayName);
 
-// TODO(#6453): Remove once excludedSupervisionOfficerSchema and supervisionOfficerSchema are merged
-export const excludedSupervisionOfficerSchema =
-  supervisionOfficerBaseSchema.transform(addDisplayName);
-
 export type SupervisionOfficer = z.infer<typeof supervisionOfficerSchema>;
-
 export type RawSupervisionOfficer = z.input<typeof supervisionOfficerSchema>;
-export type ExcludedSupervisionOfficer = z.infer<
-  typeof excludedSupervisionOfficerSchema
->;
-export type RawExcludedSupervisionOfficer = z.input<
-  typeof excludedSupervisionOfficerSchema
->;
