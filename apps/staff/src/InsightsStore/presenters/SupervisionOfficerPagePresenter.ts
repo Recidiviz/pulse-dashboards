@@ -27,7 +27,7 @@ import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
 import { isExcludedSupervisionOfficer } from "./utils";
 
-export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
+export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonStore(
   SupervisionOfficerPresenterBase,
 ) {
   constructor(
@@ -39,7 +39,7 @@ export class SupervisionOfficerPresenter extends WithJusticeInvolvedPersonStore(
     this.justiceInvolvedPersonsStore = justiceInvolvedPersonStore;
 
     makeObservable<
-      SupervisionOfficerPresenter,
+      SupervisionOfficerPagePresenter,
       | "populateSupervisionOfficer"
       | "expectClientsPopulated"
       | "populateCaseload"

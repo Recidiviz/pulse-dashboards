@@ -33,7 +33,7 @@ import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvo
 import { mockFirestoreStoreClientsForOfficerId } from "../../../WorkflowsStore/subscriptions/__tests__/testUtils";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
-import { SupervisionOfficerPresenter } from "../SupervisionOfficerPresenter";
+import { SupervisionOfficerPagePresenter } from "../SupervisionOfficerPagePresenter";
 import * as utils from "../utils";
 import { getOfficerOutcomesData, isExcludedSupervisionOfficer } from "../utils";
 
@@ -48,7 +48,7 @@ const testSupervisor = supervisionOfficerSupervisorsFixture[0];
 // Officer where includeInOutcomes is false
 const testExcludedOfficer = supervisionOfficerFixture[8];
 
-let presenter: SupervisionOfficerPresenter;
+let presenter: SupervisionOfficerPagePresenter;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -96,7 +96,7 @@ const initPresenter = async (
   workflowsRootStore.populateJusticeInvolvedPersonsStore();
   if (workflowsRootStore.justiceInvolvedPersonsStore) {
     jiiStore = workflowsRootStore.justiceInvolvedPersonsStore;
-    presenter = new SupervisionOfficerPresenter(
+    presenter = new SupervisionOfficerPagePresenter(
       store,
       testOfficer.pseudonymizedId,
       jiiStore,

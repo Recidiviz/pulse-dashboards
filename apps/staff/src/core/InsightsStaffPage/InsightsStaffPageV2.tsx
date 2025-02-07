@@ -21,7 +21,7 @@ import { useState } from "react";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { SupervisionOfficerPresenter } from "../../InsightsStore/presenters/SupervisionOfficerPresenter";
+import { SupervisionOfficerPagePresenter } from "../../InsightsStore/presenters/SupervisionOfficerPagePresenter";
 import { ManagedStaffHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner/InsightsManagedStaffHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
@@ -35,7 +35,7 @@ import { InsightsStaffVitals } from "./InsightsStaffVitals";
 const ManagedComponent = observer(function StaffPage({
   presenter,
 }: {
-  presenter: SupervisionOfficerPresenter;
+  presenter: SupervisionOfficerPagePresenter;
 }) {
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
@@ -124,7 +124,7 @@ function usePresenter() {
 
   if (!officerPseudoId || !justiceInvolvedPersonsStore) return null;
 
-  return new SupervisionOfficerPresenter(
+  return new SupervisionOfficerPagePresenter(
     supervisionStore,
     officerPseudoId,
     justiceInvolvedPersonsStore,
