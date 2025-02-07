@@ -85,6 +85,7 @@ import { LinkedOpportunityCallout } from "./LinkedOpportunityCallout";
 import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import OpportunitySubheading from "./OpportunitySubheading";
+import { OpportunityTypeSelect } from "./OpportunityTypeSelect";
 
 const MaxWidthWrapper = styled.div`
   ${MaxWidth}
@@ -455,6 +456,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
             handleDismiss={handleNotificationDismiss}
           />
         )}
+        {opportunityTableView && <OpportunityTypeSelect />}
       </MaxWidthWrapper>
 
       {
