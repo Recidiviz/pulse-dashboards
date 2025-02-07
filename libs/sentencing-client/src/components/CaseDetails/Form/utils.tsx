@@ -163,7 +163,8 @@ export const transformUpdates = (
     if (
       isNull ||
       isBoolean ||
-      isNumber || [
+      isNumber ||
+      [
         OTHER_NEED_TO_BE_ADDRESSED_KEY,
         OTHER_PROTECTIVE_FACTORS_KEY,
         OTHER_MENTAL_HEALTH_DIAGNOSIS_KEY,
@@ -172,7 +173,7 @@ export const transformUpdates = (
         DISTRICT_KEY,
         CLIENT_COUNTY_KEY,
         CLIENT_DISTRICT_KEY,
-      ]
+      ].includes(key)
     ) {
       transformedUpdates[key] = value;
       return;
