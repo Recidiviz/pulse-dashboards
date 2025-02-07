@@ -15,10 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  rawExcludedSupervisionOfficerFixture,
-  rawSupervisionOfficerFixture,
-} from "../../people/Staff/Supervision/Insights/SupervisionOfficer/fixture";
+import { rawSupervisionOfficerFixture } from "../../people/Staff/Supervision/Insights/SupervisionOfficer/fixture";
 import { VITALS_METRIC_IDS } from "../utils/constants";
 import {
   RawSupervisionVitalsMetric,
@@ -111,9 +108,9 @@ const timelyRiskAssessmentValues = [
   },
 ];
 
-const allOfficerPseudoIds = rawSupervisionOfficerFixture
-  .map((o) => o.pseudonymizedId)
-  .concat(rawExcludedSupervisionOfficerFixture.map((o) => o.pseudonymizedId));
+const allOfficerPseudoIds = rawSupervisionOfficerFixture.map(
+  (o) => o.pseudonymizedId,
+);
 export const rawSupervisionVitalsMetricFixture: RawSupervisionVitalsMetric[] = [
   {
     metricId: VITALS_METRIC_IDS.enum.timely_contact,

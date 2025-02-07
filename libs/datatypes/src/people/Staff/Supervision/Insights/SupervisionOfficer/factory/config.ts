@@ -17,14 +17,8 @@
 
 import { FixtureFactoryConfig } from "~fixture-generator";
 
-import {
-  excludedSupervisionOfficerSchema,
-  supervisionOfficerSchema,
-} from "../schema";
-import {
-  rawExcludedSupervisionOfficerFactory,
-  rawSupervisionOfficerFactory,
-} from "./factory";
+import { supervisionOfficerSchema } from "../schema";
+import { rawSupervisionOfficerFactory } from "./factory";
 
 export const rawSupervisionOfficerFactoryConfig = {
   schema: supervisionOfficerSchema,
@@ -32,12 +26,4 @@ export const rawSupervisionOfficerFactoryConfig = {
   defaultCount: 30,
 } as const satisfies FixtureFactoryConfig<
   ReturnType<typeof rawSupervisionOfficerFactory>
->;
-
-export const rawExcludedSupervisionOfficerFactoryConfig = {
-  schema: excludedSupervisionOfficerSchema,
-  factory: rawExcludedSupervisionOfficerFactory,
-  defaultCount: 30,
-} as const satisfies FixtureFactoryConfig<
-  ReturnType<typeof rawExcludedSupervisionOfficerFactory>
 >;

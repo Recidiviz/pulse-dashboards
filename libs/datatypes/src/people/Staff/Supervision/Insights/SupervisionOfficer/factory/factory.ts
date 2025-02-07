@@ -17,7 +17,6 @@
 
 import { faker } from "@faker-js/faker";
 import { each, makeFactory } from "factory.ts";
-import { omit } from "lodash";
 
 import { FIXTURE_SEED_DEFAULT } from "~fixture-generator";
 
@@ -49,12 +48,4 @@ export const rawSupervisionOfficerFactory = (
       supervisorExternalIds: [...supervisors.map((s) => s.externalId)],
       ...metricInfo,
     };
-  });
-
-export const rawExcludedSupervisionOfficerFactory = (
-  s: SupervisionOfficerSupervisor[],
-) =>
-  makeFactory(() => {
-    const officer = rawSupervisionOfficerFactory(s).build();
-    return omit(officer, "avgDailyPopulation");
   });

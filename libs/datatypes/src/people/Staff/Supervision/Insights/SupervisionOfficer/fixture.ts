@@ -17,12 +17,7 @@
 
 import { usIdSupervisionStaffFixtures } from "../../Workflows/fixture";
 import { supervisionOfficerSupervisorsFixture } from "../SupervisionOfficerSupervisor/fixture";
-import {
-  excludedSupervisionOfficerSchema,
-  RawExcludedSupervisionOfficer,
-  RawSupervisionOfficer,
-  supervisionOfficerSchema,
-} from "./schema";
+import { RawSupervisionOfficer, supervisionOfficerSchema } from "./schema";
 
 export const rawSupervisionOfficerFixture = [
   {
@@ -140,37 +135,6 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 7.7,
   },
 ] satisfies RawSupervisionOfficer[];
-
-export const rawExcludedSupervisionOfficerFixture: RawExcludedSupervisionOfficer[] =
-  [
-    {
-      externalId: "so6",
-      pseudonymizedId: "hashed-so6",
-      fullName: {
-        givenNames: "John",
-        surname: "Harris",
-      },
-      supervisorExternalIds: [
-        supervisionOfficerSupervisorsFixture[0].externalId,
-      ],
-    },
-    {
-      externalId: "so7",
-      pseudonymizedId: "hashed-so7",
-      fullName: {
-        givenNames: "Larry",
-        surname: "Hernandez",
-      },
-      supervisorExternalIds: [
-        supervisionOfficerSupervisorsFixture[0].externalId,
-      ],
-    },
-  ];
-
-export const excludedSupervisionOfficerFixture =
-  rawExcludedSupervisionOfficerFixture.map((officer) =>
-    excludedSupervisionOfficerSchema.parse(officer),
-  );
 
 export const supervisionOfficerFixture = rawSupervisionOfficerFixture.map(
   (officer) => supervisionOfficerSchema.parse(officer),

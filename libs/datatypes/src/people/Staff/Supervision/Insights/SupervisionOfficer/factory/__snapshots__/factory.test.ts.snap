@@ -1,49 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`function: ExcludedSupervisionOfficerRawFactory > should generate realistic excluded supervision officers 1`] = `
-[
-  {
-    "displayName": "Rogelio Kylo Carroll",
-    "externalId": "so9",
-    "fullName": {
-      "givenNames": "Rogelio",
-      "middleNames": "Kylo",
-      "surname": "Carroll",
-    },
-    "pseudonymizedId": "hashed-so9",
-    "supervisorExternalIds": [
-      "fvqWr2",
-    ],
-  },
-  {
-    "displayName": "Elias Borer",
-    "externalId": "so7",
-    "fullName": {
-      "givenNames": "Elias",
-      "middleNames": undefined,
-      "surname": "Borer",
-    },
-    "pseudonymizedId": "hashed-so7",
-    "supervisorExternalIds": [
-      "M3xYAi",
-    ],
-  },
-  {
-    "displayName": "Roy Roberts-Jacobi",
-    "externalId": "so2",
-    "fullName": {
-      "givenNames": "Roy",
-      "middleNames": undefined,
-      "surname": "Roberts-Jacobi",
-    },
-    "pseudonymizedId": "hashed-so2",
-    "supervisorExternalIds": [
-      "fvqWr2",
-    ],
-  },
-]
-`;
-
 exports[`function: SupervisionOfficerRawFactory > should generate realistic supervision officers 1`] = `
 [
   {

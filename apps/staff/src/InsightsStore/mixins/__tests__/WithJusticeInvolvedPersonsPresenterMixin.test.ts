@@ -18,10 +18,7 @@
 import { configure } from "mobx";
 import { vi } from "vitest";
 
-import {
-  excludedSupervisionOfficerFixture,
-  InsightsConfigFixture,
-} from "~datatypes";
+import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
@@ -36,7 +33,7 @@ import { MockOpportunity } from "../__mocks__/MockOpportunity";
 import { MockSupervisionPresenterWithJiiMixin } from "../__mocks__/MockSupervisionPresenterWithJiiMixin";
 
 const officersExternalIds = CLIENTS_OFFICERS.map((o) => o.externalId);
-const OFFICER_WITH_NO_CLIENTS = excludedSupervisionOfficerFixture[1];
+const OFFICER_WITH_NO_CLIENTS = supervisionOfficerFixture[9];
 officersExternalIds.push(OFFICER_WITH_NO_CLIENTS.externalId);
 
 let presenter: MockSupervisionPresenterWithJiiMixin;
