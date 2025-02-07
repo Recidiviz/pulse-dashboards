@@ -194,9 +194,7 @@ export type OpportunityTab =
   | "Assessment Complete"
   | "In Progress"
   | "Submitted"
-  // For US_AZ TPR/DTP opportunities
-  | "Fast Trackers"
-  | "Approved by Time Comp"
+  | "Fast Trackers" // For US_AZ TPR/DTP opportunities
   | "Pending";
 
 export type OpportunityTabGroup =

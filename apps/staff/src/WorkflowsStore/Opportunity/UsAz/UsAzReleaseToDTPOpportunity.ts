@@ -41,10 +41,13 @@ export class UsAzReleaseToDTPOpportunity extends UsAzReleaseToTransitionProgramO
       usAzReleaseToTransitionProgramSchemaBase.parse(record),
     );
 
-    this.form = new UsAzReleaseToTransitionProgramForm(
-      this,
-      resident.rootStore,
-    );
+    // The agreement form can only be uploaded to the OMS if the resident has a TPR date
+    if (!record.metadata.tabName.startsWith("ALMOST_ELIGIBLE")) {
+      this.form = new UsAzReleaseToTransitionProgramForm(
+        this,
+        resident.rootStore,
+      );
+    }
   }
 
   get eligibilityDate(): Date {

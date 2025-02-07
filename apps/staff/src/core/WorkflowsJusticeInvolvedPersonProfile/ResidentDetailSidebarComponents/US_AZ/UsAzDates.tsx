@@ -54,10 +54,12 @@ const DateTableCell = styled.td`
   padding: ${rem(spacing.sm)};
 `;
 
-const ShadedDateTableCell = styled(DateTableCell)`
+const ShadedDateTableCell = styled(DateTableCell)<{ $highlight?: boolean }>`
   background-color: ${palette.marble3};
   white-space: nowrap;
   width: 30%;
+
+  ${({ $highlight }) => $highlight && `color: ${palette.signal.notification};`}
 `;
 
 const DateTableRow = styled.tr`
@@ -120,6 +122,7 @@ type DateInfo = {
   label: string;
   date?: Date;
   tooltip?: string;
+  highlight?: boolean;
 };
 
 export function metadataToDates(
@@ -157,6 +160,7 @@ export function metadataToDates(
           label: "Projected DTP",
           date: optionalFieldToDate(metadata.projectedDtpDate),
           tooltip: inTableTooltip,
+          highlight: true,
         },
       ]
     : [
@@ -164,6 +168,7 @@ export function metadataToDates(
           label: "Projected TPR",
           date: optionalFieldToDate(metadata.projectedTprDate),
           tooltip: inTableTooltip,
+          highlight: true,
         },
       ];
 
@@ -200,9 +205,9 @@ export function UsAzDates({
 
       <DateTable>
         <tbody>
-          {dates.map(({ label, date, tooltip }) => (
+          {dates.map(({ label, date, tooltip, highlight }) => (
             <DateTableRow key={label}>
-              <ShadedDateTableCell>
+              <ShadedDateTableCell $highlight={highlight}>
                 {label}
                 {tooltip && (
                   <>

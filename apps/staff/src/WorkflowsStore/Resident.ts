@@ -49,6 +49,22 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
     return this.record.custodyLevel ?? undefined;
   }
 
+  get displayCustodyLevel(): string {
+    if (this.stateCode === "US_AZ") {
+      if (
+        !this.custodyLevel ||
+        this.custodyLevel === "INTERNAL_UNKNOWN" ||
+        this.custodyLevel === "EXTERNAL_UNKNOWN"
+      ) {
+        return "UNKNOWN CUSTODY LEVEL";
+      } else {
+        return `${this.custodyLevel.replace("_", " ")} CUSTODY`;
+      }
+    }
+
+    return this.custodyLevel ?? "";
+  }
+
   get admissionDate(): Date | undefined {
     return optionalFieldToDate(this.record.admissionDate);
   }
