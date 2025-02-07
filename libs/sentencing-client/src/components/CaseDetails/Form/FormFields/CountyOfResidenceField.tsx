@@ -33,7 +33,9 @@ function CountyOfSentencingField({ isRequired }: FormFieldProps) {
   const caseAttributes = caseStore.caseAttributes;
   const omsSystem = GEO_CONFIG[caseStore.stateCode]?.omsSystem;
   const countiesDistricts = COUNTY_DISTRICT_MAP[caseStore.stateCode] ?? {};
-  const countyOfResidence = startCase(caseAttributes?.client?.county ?? "");
+  const countyOfResidence = startCase(
+    caseAttributes?.client?.county?.toLocaleLowerCase() ?? "",
+  );
   const options = Object.keys(countiesDistricts).map((selection) => ({
     label: selection,
     value: selection,
@@ -68,6 +70,7 @@ function CountyOfSentencingField({ isRequired }: FormFieldProps) {
         onChange={(value) => updateDropdownInput(value as SelectOption)}
         styles={Styled.dropdownStyles}
         isDisabled={caseAttributes.client?.isCountyLocked}
+        placeholder="Select a county..."
       />
       {caseAttributes.client?.isCountyLocked && (
         <Styled.InputDescription>
