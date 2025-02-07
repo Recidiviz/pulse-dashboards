@@ -25,6 +25,7 @@ import styled, { css } from "styled-components/macro";
 import { ProgressPageTeaser } from "../ProgressPageTeaser/ProgressPageTeaser";
 import { clickableText } from "../styles/clickableText";
 import { ComparisonTeaserInCopy } from "./ComparisonTeaserInCopy";
+import { Graphic } from "./Graphic";
 import { InternalOrExternalLink } from "./InternalOrExternalLink";
 import { withShadowDOM } from "./ShadowDOM";
 
@@ -161,6 +162,7 @@ export const CopyWrapper: FC<{ children: string; className?: string }> = ({
           InternalLink: { component: Link },
           ComparisonTeaser: { component: ComparisonTeaserInCopy },
           ProgressPageTeaser: { component: ProgressPageTeaserInCopy },
+          Graphic: { component: Graphic },
         },
       }}
     >
