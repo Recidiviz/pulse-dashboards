@@ -432,3 +432,18 @@ model Disposition {
   // There should only be one disposition percentage per recommendation type for each insight
   @@unique([insightId, recommendationType, sentenceLengthBucketStart, sentenceLengthBucketEnd])
 }
+
+model County {
+  id         String    @id @default(cuid())
+  stateCode  StateCode
+  name       String    @unique
+  district   District  @relation(fields: [districtId], references: [id])
+  districtId String
+}
+
+model District {
+  id        String    @id @default(cuid())
+  stateCode StateCode
+  name      String    @unique
+  counties  County[]
+}

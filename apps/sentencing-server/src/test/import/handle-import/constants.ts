@@ -46,3 +46,8 @@ export const offenseBody = {
   bucketId: TEST_BUCKET_ID,
   objectId: "US_ID/sentencing_charge_record.json",
 };
+
+export const countiesAndDistrictsBody = {
+  bucketId: TEST_BUCKET_ID,
+  objectId: "US_ID/sentencing_counties_and_districts.json",
+};

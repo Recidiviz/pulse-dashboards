@@ -218,3 +218,9 @@ export const offenseImportSchema = z.object({
   // Integers are being converted to strings for some reason
   frequency: z.coerce.number(),
 });
+
+export const countyAndDistrictImportSchema = z.object({
+  state_code: stateCode,
+  county: z.string(),
+  district: z.string(),
+});

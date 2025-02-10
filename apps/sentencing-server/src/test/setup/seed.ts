@@ -209,6 +209,15 @@ export const fakeInsight = {
   dispositionData: fakeDispositions,
 };
 
+export const fakeCounty = {
+  stateCode: StateCode.US_ID,
+  name: "Abbott",
+  district: {
+    stateCode: StateCode.US_ID,
+    name: "District 1",
+  },
+};
+
 export const fakeInsightPrismaInput = {
   ...fakeInsight,
   offense: {
@@ -271,4 +280,14 @@ export async function seed(prismaClient: PrismaClient) {
       data: fakeInsightPrismaInput,
     })
   ).id;
+
+  await prismaClient.county.create({
+    data: {
+      stateCode: fakeCounty.stateCode,
+      name: fakeCounty.name,
+      district: {
+        create: fakeCounty.district,
+      },
+    },
+  });
 }
