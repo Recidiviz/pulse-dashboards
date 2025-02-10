@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FieldPath, query, where } from "firebase/firestore";
+import { query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 import { Mock } from "vitest";
 
-import { ClientRecord } from "~datatypes";
+import { ClientRecord, ResidentRecord } from "~datatypes";
 
+import { WorkflowsSystemConfig } from "../../../core/models/types";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { CaseloadSubscription } from "../CaseloadSubscription";
 
@@ -33,6 +34,11 @@ const withConverterMock = vi.fn();
 
 let workflowsStoreMock: WorkflowsStore;
 let sub: CaseloadSubscription<ClientRecord>;
+let residentSub: CaseloadSubscription<ResidentRecord>;
+
+const supervisionSystemConfig = {
+  search: [{ searchType: "LOCATION", searchField: ["district"] }],
+} as WorkflowsSystemConfig<ClientRecord, any>;
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -44,6 +50,8 @@ beforeEach(() => {
     systemConfigFor: vi.fn(() => ({
       search: [{ searchField: "officerId" }],
     })),
+    clientSearchManager: { queryConstraints: [] },
+    residentSearchManager: { queryConstraints: undefined },
     rootStore: {
       currentTenantId: "US_ND",
       firestoreStore: {
@@ -56,29 +64,29 @@ beforeEach(() => {
     { key: "clients" },
     "CLIENT",
   );
+  residentSub = new CaseloadSubscription<ResidentRecord>(
+    workflowsStoreMock,
+    { key: "residents" },
+    "RESIDENT",
+  );
 });
 
-test("dataSource reflects observables with defined search field", () => {
+test("dataSource queries firestore when necessary data is present", () => {
   runInAction(() => {
+    workflowsStoreMock.systemConfigFor = vi.fn(() => supervisionSystemConfig);
     // @ts-ignore
-    workflowsStoreMock.systemConfigFor = vi.fn(() => ({
-      search: [{ searchField: "facilityId" }],
-    }));
+    workflowsStoreMock.selectedSearchIds = ["TEST1", "DISTRICT1"];
   });
   sub.subscribe();
 
   expect(collectionMock).toHaveBeenCalledWith({ key: "clients" });
-  expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
-  expect(whereMock).toHaveBeenCalledWith(new FieldPath("facilityId"), "in", [
-    "TEST1",
-  ]);
   expect(queryMock).toHaveBeenCalled();
 });
 
-test("dataSource is undefined if no officers are selected", () => {
+test("dataSource is undefined if queryConstraints are undefined", () => {
   runInAction(() => {
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = [];
+    workflowsStoreMock.clientSearchManager = { queryConstraints: undefined };
   });
 
   sub.subscribe();
@@ -90,20 +98,20 @@ test("dataSource is undefined if no officers are selected", () => {
 });
 
 test("dataSource reacts to observables", () => {
-  sub.subscribe();
+  residentSub.subscribe();
+  expect(queryMock).not.toHaveBeenCalled();
 
   runInAction(() => {
     // @ts-ignore
     workflowsStoreMock.rootStore.currentTenantId = "US_TN";
     // @ts-ignore
     workflowsStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
+    workflowsStoreMock.residentSearchManager = {
+      // @ts-ignore
+      queryConstraints: [whereMock],
+    };
   });
-
-  expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
-  expect(whereMock).toHaveBeenCalledWith(new FieldPath("officerId"), "in", [
-    "TEST1",
-    "TEST2",
-  ]);
+  expect(queryMock).toHaveBeenCalled();
 });
 
 test("dataSource can be unset and reset", () => {
@@ -123,14 +131,17 @@ test("dataSource can be unset and reset", () => {
     workflowsStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
   });
 
-  expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
-  expect(whereMock).toHaveBeenCalledWith(new FieldPath("officerId"), "in", [
-    "TEST1",
-    "TEST2",
-  ]);
+  expect(queryMock).toHaveBeenCalled();
 });
 
 test("FirestoreConverter inserts inferred properties when reading snapshot", () => {
+  runInAction(() => {
+    // @ts-ignore
+    workflowsStoreMock.clientSearchManager = {
+      queryConstraints: [],
+    };
+  });
+
   const mockRecord = {
     foo: "bar",
   };

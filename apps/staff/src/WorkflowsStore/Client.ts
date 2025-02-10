@@ -47,7 +47,7 @@ import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesM
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
 import { UsTxSupervisionTasks } from "./Task/UsTxSupervisionTasks";
-import { JusticeInvolvedPerson } from "./types";
+import { JusticeInvolvedPerson, PersonType } from "./types";
 import {
   clearPhoneNumberFormatting,
   formatSupervisionType,
@@ -357,6 +357,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return userEnteredPhoneNumber?.length
       ? userEnteredPhoneNumber
       : this.rawPhoneNumber;
+  }
+
+  get personType(): PersonType {
+    return this.record.personType;
   }
 
   milestonesPhoneNumberDoesNotMatchClient(enteredPhoneNumber: string): boolean {

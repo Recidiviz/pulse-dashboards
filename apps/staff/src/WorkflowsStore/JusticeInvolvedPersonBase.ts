@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { get, some } from "lodash";
+import { get } from "lodash";
 import { action, computed, makeObservable, observable } from "mobx";
 
 import {
@@ -46,9 +46,10 @@ import {
   JusticeInvolvedPerson,
   PersonClassForRecord,
   PersonRecordType,
+  PersonType,
 } from "./types";
 
-export class JusticeInvolvedPersonBase<
+export abstract class JusticeInvolvedPersonBase<
   RecordType extends PersonRecordType = WorkflowsJusticeInvolvedPersonRecord,
 > implements JusticeInvolvedPerson
 {
@@ -62,6 +63,10 @@ export class JusticeInvolvedPersonBase<
   personUpdatesSubscription?: CollectionDocumentSubscription<PersonUpdateRecord>;
 
   opportunityManager: OpportunityManagerInterface;
+
+  abstract systemConfig: AnyWorkflowsSystemConfig;
+
+  abstract personType: PersonType;
 
   constructor(
     record: RecordType,
@@ -262,17 +267,9 @@ export class JusticeInvolvedPersonBase<
     });
   }
 
-  get systemConfig(): AnyWorkflowsSystemConfig {
-    throw new Error("systemConfig must be overriden");
-  }
-
   get searchIdValues(): string[] {
     return this.systemConfig.search.flatMap(
       (searchConfig) => get(this.record, searchConfig.searchField) ?? [],
     );
-  }
-
-  matchesSearch(searchIds: string[]): boolean {
-    return some(searchIds, (id) => this.searchIdValues.includes(id));
   }
 }

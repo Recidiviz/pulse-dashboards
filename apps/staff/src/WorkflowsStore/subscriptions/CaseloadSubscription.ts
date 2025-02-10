@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  DocumentData,
-  FieldPath,
-  Query,
-  query,
-  where,
-} from "firebase/firestore";
+import { DocumentData, Query, query } from "firebase/firestore";
 import { z } from "zod";
 
 import { FirestoreCollectionKey } from "~firestore-api";
@@ -52,36 +46,22 @@ export class CaseloadSubscription<
 
   get dataSource(): Query | undefined {
     const {
-      selectedSearchIds,
-      rootStore: { currentTenantId, firestoreStore },
+      rootStore: { firestoreStore },
+      clientSearchManager: { queryConstraints: clientQueryConstraints },
+      residentSearchManager: { queryConstraints: residentQueryConstraints },
     } = this.workflowsStore;
 
-    if (!currentTenantId || !selectedSearchIds.length) {
-      return undefined;
-    }
-
     const { firestoreCollectionKey, personType } = this;
+    const queryConstraints =
+      personType === "RESIDENT"
+        ? residentQueryConstraints
+        : clientQueryConstraints;
 
-    const config = this.workflowsStore.systemConfigFor(
-      personType === "RESIDENT" ? "INCARCERATION" : "SUPERVISION",
-    );
-    const constraints = [
-      where("stateCode", "==", currentTenantId),
-      where(
-        // TODO (#7054) Handle multiple search configs once second US_ID config is added.
-        new FieldPath(...config.search[0].searchField),
-        config.search[0].searchOp ?? "in",
-        selectedSearchIds,
-      ),
-    ];
-
-    if (config.onlySurfaceEligible) {
-      constraints.push(where("allEligibleOpportunities", "!=", []));
-    }
+    if (!queryConstraints) return undefined;
 
     return query(
       firestoreStore.collection(firestoreCollectionKey),
-      ...constraints,
+      ...queryConstraints,
     ).withConverter({
       fromFirestore(snapshot, options) {
         const doc = snapshot.data(options);

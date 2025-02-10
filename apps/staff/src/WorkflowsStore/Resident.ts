@@ -22,6 +22,7 @@ import { workflowsUrl } from "../core/views";
 import { PortionServedDates, WorkflowsResidentRecord } from "../FirestoreStore";
 import { ResidentMetadata } from "../FirestoreStore/types";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
+import { PersonType } from "./types";
 import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
 
 const LIFE_SENTENCE_THRESHOLD = addYears(new Date(), 200);
@@ -129,5 +130,9 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
     }
 
     return uniqBy(opportunityDates, "heading");
+  }
+
+  get personType(): PersonType {
+    return this.record.personType;
   }
 }

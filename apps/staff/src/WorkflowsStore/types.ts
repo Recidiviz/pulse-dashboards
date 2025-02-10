@@ -44,6 +44,10 @@ export type JusticeInvolvedPerson = {
    */
   recordId: string;
   /**
+   * The record for this person
+   */
+  record: PersonRecordType;
+  /**
    * person identifier ingested from external system
    */
   externalId: string;
@@ -101,9 +105,9 @@ export type JusticeInvolvedPerson = {
    */
   systemConfig: AnyWorkflowsSystemConfig;
   /**
-   * Returns true if this person is matched by the list of searchIds
+   * Returns the personType either "CLIENT" or "RESIDENT"
    */
-  matchesSearch: (searchIds: string[]) => boolean;
+  personType: PersonType;
   /**
    * The date when the data about this person was most recently synced from the state
    */
@@ -113,6 +117,8 @@ export type JusticeInvolvedPerson = {
    */
   bannerText?: string;
 };
+
+export type PersonType = "CLIENT" | "RESIDENT";
 
 export type PersonRecordType =
   | WorkflowsJusticeInvolvedPersonRecord
