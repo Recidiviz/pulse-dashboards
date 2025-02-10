@@ -147,7 +147,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "pastEarnedDischargeEligibleDate",
-          text: "Served {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
+          text: "Served minimum sentence requirements: has served {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
           tooltip:
             "If on probation, served minimum sentence according to the court; if on parole for a nonviolent crime, served at least one year; if on parole for a sex/violent offense, served at least one-third of remaining sentence; if on parole for a life sentence, served at least five years on parole",
         },
@@ -171,8 +171,19 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "http://forms.idoc.idaho.gov/WebLink/0/edoc/282369/Termination%20of%20Probation%20or%20Parole%20Supervision.pdf",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [
+        {
+          text: "Must be compliant with all court-ordered conditions and special conditions",
+        },
+        {
+          text: "Must have established a record of progress toward successful completion of Court-ordered obligations for local incarceration and community service",
+        },
+        {
+          text: "Has not failed to make payment toward fines/fees/restitution",
+        },
+        { text: "Has not failed NCIC check" },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
       omsCriteriaHeader: null,
       overdueOpportunityCalloutCopy: null,
@@ -281,10 +292,6 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         { key: "PROGRAM", text: "Missing required facility programming" },
         { key: "DENIED", text: "Was denied a transfer to a CRC" },
-        {
-          key: "IN_PROGRESS",
-          text: "Was approved and is waiting to be transferred to a CRC",
-        },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
@@ -425,10 +432,6 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         { key: "PROGRAM", text: "Missing required facility programming" },
         { key: "DENIED", text: "Was denied a transfer to a CRC" },
-        {
-          key: "IN_PROGRESS",
-          text: "Was approved and is waiting to be transferred to a CRC",
-        },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
@@ -548,6 +551,66 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "CRCWorkRelease",
       zeroGrantsTooltip: null,
     },
+    usIdCustodyLevelDowngrade: {
+      callToAction: "Review eligible residents and reclassify in Atlas.",
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        { key: "OVERRIDE", text: "Active discretionary override" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "Unscheduled Reclassification",
+      dynamicEligibilityText:
+        "resident[|s] may be eligible for an unscheduled reclassification to a lower custody level",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        {
+          key: "custodyLevelHigherThanRecommended",
+          text: "Custody level is higher than latest classification score suggests",
+          tooltip: "",
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "US_ID-custodyLevelDowngradeReferrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 1,
+      ineligibleCriteriaCopy: [
+        {
+          key: "custodyLevelHigherThanRecommended",
+          text: "Custody level will be higher than classification score on  {{date minimumTimeServedDate}}",
+        },
+      ],
+      initialHeader: null,
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl:
+        "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
+      notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: ["Incarceration"],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      stateCode: "US_ID",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading:
+        "\nThis alert helps staff identify people who may be eligible for an unscheduled reclassification to a lower custody level. ",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
+      systemType: "INCARCERATION",
+      tabGroups: null,
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "custodyLevelDowngrade",
+      zeroGrantsTooltip: null,
+    },
     usIdExpandedCRC: {
       callToAction:
         "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
@@ -572,10 +635,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Was not approved by an IDOC medical provider",
         },
         { key: "Other", text: "Other, please specify a reason" },
-        {
-          key: "PENDING",
-          text: "There are pending felony charges or felony investigations in which the resident is a suspect",
-        },
         { key: "PROGRAM", text: "Missing required facility programming" },
         {
           key: "TRUST",

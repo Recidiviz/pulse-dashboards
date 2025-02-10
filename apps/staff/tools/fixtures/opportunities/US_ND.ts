@@ -261,7 +261,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This tool helps case managers identify residents who are eligible for a referral to ATP (including FTP or MTP), which provides residential transitional services and a stable foundation for residents as they prepare for release into the community. Case managers should complete a Minimum Housing Referral assessment in Elite for every eligible resident.",
-      submittedTabTitle: null,
+      submittedTabTitle: "Referral Submitted",
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,
@@ -285,6 +285,8 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Separations", text: "Disqualifying separations" },
         { key: "Denial", text: "Recent transfer request denial" },
         { key: "Escape", text: "History of escape (in the last 5 years)" },
+        { key: "Rescission", text: "Referral was rescinded/revoked." },
+        { key: "Treatment", text: "In or missing treatment." },
         { key: "Other", text: "Other, please specify reason" },
       ],
       denialText: "Mark Ineligible",
@@ -350,7 +352,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This tool helps case managers identify residents who are eligible for transfer to a minimum security unit (MRCC or JRMU). Case managers should complete a Minimum Housing Referral assessment in Elite for every eligible resident.",
-      submittedTabTitle: null,
+      submittedTabTitle: "Referral Submitted",
       supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,

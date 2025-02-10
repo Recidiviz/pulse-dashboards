@@ -47,7 +47,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "SEX",
-          text: "Client has been designated as a sexually violent predator",
+          text: "Client is an SVP or is supervised under the sex offender protocol",
         },
         {
           key: "DUI",
@@ -56,6 +56,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "OBSC",
           text: "Client was charged with 18 PA. C.S. 5903(4)(5)(6) relating to obscene/sexual material/performance and the victim was a minor",
+        },
+        {
+          key: "FIREARM",
+          text: "Client has a sentencing enhancement of 42 Pa. C.S. 9712 (related to firearms) or 204 PA Code 303.10(a) (related to deadly weapons)",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],
@@ -84,9 +88,9 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usPaNotOnSexOffenseProtocol",
-          text: "Not supervised under the sex offender protocol",
+          text: "Not supervised under the sex offender protocol or designated as a sexually violent predator",
           tooltip:
-            "All other reentrants supervised under the sex offender protocol shall be supervised at no less than the medium level of supervision for the entirety of their supervision",
+            "Reentrants designated as a sexually violent predator shall not be supervised below the maximum level of supervision. All other reentrants supervised under the sex offender protocol shall be supervised at no less than the medium level of supervision. ",
         },
       ],
       emptyTabCopy: [],
@@ -123,14 +127,14 @@ export const mockApiOpportunityConfigurationResponse = {
             "See domestic violence section of integrated case summary for PFA orders",
         },
         {
-          text: "Has not been designated as a sexually violent predator",
-          tooltip:
-            "See Megan's Law section of state police website for SVP status",
-        },
-        {
           text: "Does not have out of state charges, unreported dispositions, or delinquent adjudications for ineligible offenses",
           tooltip:
             'Click "complete checklist" to see full list of ineligible offenses',
+        },
+        {
+          text: "Does not have sentencing enhancements related to firearms or deadly weapons",
+          tooltip:
+            "Ineligible sentencing enhancements include 42 Pa. C.S. 9712 (related to firearms), and 204 PA Code 303.10(a) (related to deadly weapons)",
         },
       ],
       nonOmsCriteriaHeader: "Requirements for agents to check",
@@ -145,7 +149,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "Administrative supervision is a level of supervision that requires less contact than the minimum supervision level. It requires at least one face-to-face contact and one collateral contact per year. On this page, you can review clients and complete the DC-P 402 form. For more information, please refer to the supervision levels policy [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view) or learn more about [our methodology](https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub).",
-      submittedTabTitle: "Submitted - Pending Review",
+      submittedTabTitle: "Submitted",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
@@ -172,6 +176,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "SPECIAL CONDITIONS",
           text: "Client has not fulfilled special conditions or treatment requirements",
+        },
+        {
+          key: "SEX",
+          text: "Client is an SVP or is supervised under the sex offender protocol",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],
@@ -200,9 +208,9 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usPaNotOnSexOffenseProtocol",
-          text: "Not supervised under the sex offender protocol",
+          text: "Not supervised under the sex offender protocol or designated as a sexually violent predator",
           tooltip:
-            "All other reentrants supervised under the sex offender protocol shall be supervised at no less than the medium level of supervision for the entirety of their supervision.",
+            "Reentrants designated as a sexually violent predator shall not be supervised below the maximum level of supervision. All other reentrants supervised under the sex offender protocol shall be supervised at no less than the medium level of supervision. ",
         },
       ],
       emptyTabCopy: [],
@@ -246,7 +254,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "Special circumstances supervision allows reentrants who are not eligible for traditional administrative supervision to be supervised at a lower level of supervision. It is typically used for reentrants who have extenuating circumstances that reduce the risk of re-offending or reentrants who have made satisfactory adjustments on supervision over a period of time.<br><br>On this page, you can review clients who may be eligible for special circumstances supervision. For more information, please refer to the supervision levels policy [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view) or learn more about [our methodology](https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub). ",
-      submittedTabTitle: "Submitted-Pending Review",
+      submittedTabTitle: "Submitted",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
