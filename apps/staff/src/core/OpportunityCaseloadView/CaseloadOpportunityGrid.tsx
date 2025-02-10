@@ -31,7 +31,7 @@ const DEFAULT_ITEM_HEIGHT = 80;
 const DEFAULT_ITEM_WIDTH = 200;
 
 const CaseloadOpportunityRow = styled.div`
-  margin-bottom: ${rem(spacing.md)};
+  margin-top: ${rem(spacing.md)};
 `;
 
 type CaseloadOpportunityGridProps = {
