@@ -96,7 +96,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
   const infoItems = [
     {
       title: supervisionLocationInfo.locationLabel,
-      info: supervisionLocationInfo.supervisionLocation,
+      info: supervisionLocationInfo.supervisionLocationForSupervisorPage,
     },
     {
       title: "team",

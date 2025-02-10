@@ -76,8 +76,8 @@ test("all supervisors data", async () => {
 
 test("supervisors by district when workflows variant not set", async () => {
   await presenter.hydrate();
-  expect(presenter.supervisorsByDistrict).toMatchSnapshot();
-  presenter.supervisorsByDistrict.forEach(({ supervisors }) => {
+  expect(presenter.supervisorsByLocation).toMatchSnapshot();
+  presenter.supervisorsByLocation.forEach(({ supervisors }) => {
     supervisors.forEach((s) => expect(s.hasOutliers).toBeTrue());
   });
 });
@@ -91,8 +91,8 @@ test("supervisors by district when workflows variant is set", async () => {
 
   await presenter.hydrate();
 
-  const testSupervisors = presenter.supervisorsByDistrict.reduce(
-    (acc, { district, supervisors }) => acc.concat(supervisors),
+  const testSupervisors = presenter.supervisorsByLocation.reduce(
+    (acc, { supervisors }) => acc.concat(supervisors),
     [] as SupervisionOfficerSupervisor[],
   );
 
@@ -105,8 +105,8 @@ test("districts ordered correctly", async () => {
   await presenter.hydrate();
   presenter.allSupervisors.push(
     {
-      supervisionDistrict: "REGION 7",
-      supervisionUnit: "UNIT 7",
+      supervisionLocationForListPage: "REGION 7",
+      supervisionLocationForSupervisorPage: "UNIT 7",
       externalId: "testid1",
       displayName: "Test Name",
       fullName: {
@@ -118,8 +118,8 @@ test("districts ordered correctly", async () => {
       email: "mock-email",
     },
     {
-      supervisionDistrict: "REGION 4B",
-      supervisionUnit: "UNIT 4B",
+      supervisionLocationForListPage: "REGION 4B",
+      supervisionLocationForSupervisorPage: "UNIT 4B",
       externalId: "testid2",
       displayName: "Test Name",
       fullName: {
@@ -131,8 +131,8 @@ test("districts ordered correctly", async () => {
       email: "mock-email",
     },
     {
-      supervisionDistrict: "REGION 1",
-      supervisionUnit: "UNIT 1",
+      supervisionLocationForListPage: "REGION 1",
+      supervisionLocationForSupervisorPage: "UNIT 1",
       externalId: "testid3",
       displayName: "Test Name",
       fullName: {
@@ -144,8 +144,8 @@ test("districts ordered correctly", async () => {
       email: "mock-email",
     },
     {
-      supervisionDistrict: "REGION 10 - CENTRAL",
-      supervisionUnit: "UNIT 10 - CENTRAL",
+      supervisionLocationForListPage: "REGION 10 - CENTRAL",
+      supervisionLocationForSupervisorPage: "UNIT 10 - CENTRAL",
       externalId: "testid4",
       displayName: "Test Name",
       fullName: {
@@ -157,8 +157,8 @@ test("districts ordered correctly", async () => {
       email: "mock-email",
     },
     {
-      supervisionDistrict: "REGION 4A",
-      supervisionUnit: "UNIT 4A",
+      supervisionLocationForListPage: "REGION 4A",
+      supervisionLocationForSupervisorPage: "UNIT 4A",
       externalId: "testid5",
       displayName: "Test Name",
       fullName: {
@@ -170,8 +170,8 @@ test("districts ordered correctly", async () => {
       email: "mock-email",
     },
     {
-      supervisionDistrict: "REGION 10 - WEST",
-      supervisionUnit: "UNIT 10 - WEST",
+      supervisionLocationForListPage: "REGION 10 - WEST",
+      supervisionLocationForSupervisorPage: "UNIT 10 - WEST",
       externalId: "testid6",
       displayName: "Test Name",
       fullName: {
@@ -194,7 +194,7 @@ test("districts ordered correctly", async () => {
     "REGION 10 - WEST",
   ];
   expect(
-    Array.from(presenter.supervisorsByDistrict.map(({ district }) => district)),
+    Array.from(presenter.supervisorsByLocation.map(({ location }) => location)),
   ).toEqual(orderedDistrictList);
 });
 
@@ -217,8 +217,8 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
     vi.spyOn(store, "supervisionOfficerSupervisors", "get").mockReturnValue(
       supervisionOfficerSupervisorsFixture.concat(
         {
-          supervisionDistrict: launchedDistricts[0],
-          supervisionUnit: launchedDistricts[0],
+          supervisionLocationForListPage: launchedDistricts[0],
+          supervisionLocationForSupervisorPage: launchedDistricts[0],
           externalId: "testid1",
           displayName: "Test Name",
           fullName: {
@@ -231,8 +231,8 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
         },
         // Supervisor in launched district without outliers
         {
-          supervisionDistrict: launchedDistricts[0],
-          supervisionUnit: launchedDistricts[0],
+          supervisionLocationForSupervisorPage: launchedDistricts[0],
+          supervisionLocationForListPage: launchedDistricts[0],
           externalId: "testid2",
           displayName: "Test Name2",
           fullName: {
@@ -263,12 +263,12 @@ describe("insightsLeadershipPageAllDistricts feature variant not set", () => {
 
     expect(presenter.supervisorsWithOutliersCount).toEqual(1);
     expect(
-      presenter.supervisorsByDistrict.find(
-        ({ district }) => district === launchedDistricts[0],
+      presenter.supervisorsByLocation.find(
+        ({ location }) => location === launchedDistricts[0],
       )?.supervisors.length,
     ).toEqual(2);
     expect(
-      presenter.supervisorsByDistrict.map(({ district }) => district),
+      presenter.supervisorsByLocation.map(({ location }) => location),
     ).toEqual(launchedDistricts);
   });
 });

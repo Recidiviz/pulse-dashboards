@@ -38,7 +38,7 @@ import { US_TN } from "./US_TN";
 
 export const rawInsightsConfigFixture: RawInsightsConfig = {
   supervisionOfficerLabel: "officer",
-  supervisionDistrictLabel: "region",
+  supervisionDistrictLabel: "unit",
   supervisionDistrictManagerLabel: "district manager",
   supervisionJiiLabel: "client",
   supervisorHasNoOutlierOfficersLabel:

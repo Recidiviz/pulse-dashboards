@@ -12,8 +12,8 @@ exports[`transformations 1`] = `
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-agonzalez123",
-  "supervisionDistrict": "Region 1",
-  "supervisionUnit": "Unit 1",
+  "supervisionLocationForListPage": "Region 1",
+  "supervisionLocationForSupervisorPage": "Unit 1",
 }
 `;
 
@@ -28,8 +28,8 @@ exports[`transformations 2`] = `
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-dlee456",
-  "supervisionDistrict": "Region 2",
-  "supervisionUnit": "Unit 1",
+  "supervisionLocationForListPage": "Region 2",
+  "supervisionLocationForSupervisorPage": "Unit 1",
 }
 `;
 
@@ -44,8 +44,8 @@ exports[`transformations 3`] = `
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-rsmith789",
-  "supervisionDistrict": "Region 1",
-  "supervisionUnit": "Unit 1",
+  "supervisionLocationForListPage": "Region 1",
+  "supervisionLocationForSupervisorPage": "Unit 1",
 }
 `;
 
@@ -60,7 +60,7 @@ exports[`transformations 4`] = `
   },
   "hasOutliers": false,
   "pseudonymizedId": "hashed-cthomas321",
-  "supervisionDistrict": "Region 2",
-  "supervisionUnit": null,
+  "supervisionLocationForListPage": "Region 2",
+  "supervisionLocationForSupervisorPage": null,
 }
 `;
