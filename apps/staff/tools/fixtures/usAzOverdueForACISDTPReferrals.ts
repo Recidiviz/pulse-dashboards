@@ -59,6 +59,18 @@ export const usAzOverdueForACISDTPReferrals =
             noteBody: "Request to release as homeless",
           },
         ],
+        "Agreement Form Signature Status": [
+          {
+            eventDate: relativeFixtureDate({ days: -182 }),
+            noteTitle: "Declined 180+ Days Ago",
+          },
+        ],
+        "Mandatory Literacy Enrollment Information": [
+          {
+            eventDate: relativeFixtureDate({ days: -10 }),
+            noteTitle: "Currently Enrolled",
+          },
+        ],
       },
       isEligible: true,
       isAlmostEligible: false,

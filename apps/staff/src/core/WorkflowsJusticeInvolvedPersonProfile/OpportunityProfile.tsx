@@ -54,6 +54,7 @@ import {
   UsMoRestrictiveHousing,
   UsTnCommonlyUsedOverrideCodes,
 } from "./ResidentDetailSidebarComponents";
+import { UsAzAcisInformation } from "./ResidentDetailSidebarComponents/US_AZ/UsAzAcisInformation";
 import { UsAzDates } from "./ResidentDetailSidebarComponents/US_AZ/UsAzDates";
 import { UsIdParoleDates } from "./ResidentDetailSidebarComponents/US_ID/UsIdParoleDates";
 import { UsIdPastTwoYearsAlert } from "./ResidentDetailSidebarComponents/US_ID/UsIdPastTwoYearsAlert";
@@ -90,6 +91,7 @@ export const OpportunityDetailSidebarComponents = {
   UsMoRestrictiveHousing,
   UsTnCommonlyUsedOverrideCodes,
   UsMiRestrictiveHousing,
+  UsAzAcisInformation,
 };
 
 export const ResidentDetailSidebarComponents = {
