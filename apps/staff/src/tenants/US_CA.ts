@@ -42,8 +42,9 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
     },
   },
   navigation: {
-    workflows: ["home", "milestones", "clients"],
+    // The order of pages here determines where the user will land first when navigating from `/`
     insights: [INSIGHTS_PAGES.supervision],
+    workflows: ["home", "milestones", "clients"],
   },
   insightsUnitState: true,
 };
