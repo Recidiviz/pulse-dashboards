@@ -1,0 +1,11 @@
+# This is a basic Workflow that returns the file name
+
+main:
+  params: [event]
+  steps:
+    - init:
+        assign:
+          - object_name: ${event.data.name}
+    - return_object_name:
+        return: ${object_name}
+

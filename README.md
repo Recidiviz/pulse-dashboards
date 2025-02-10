@@ -54,6 +54,48 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
    4. Install the [Nx Console](https://nx.dev/features/integrate-with-editors) for your code editor if you prefer a GUI for exploring and using Nx.
    5. To make `git blame` more informative, tell it to ignore reformatting commits by running `git config blame.ignorerevsfile .git-blame-ignore-revs`.
 
+### Nx Development
+
+#### Running `nx affected` in CI checks
+ It can be helpful to run Nx tasks in CI, e.g. to validate that files in a certain directory follow a given format. `nx affected` is a useful command to run tasks on projects with changes ([docs](https://nx.dev/nx-api/nx/documents/affected)). 
+
+ In order to do this successfully, set up your target in the right `project.json` and add a job to the `build.yml` file that has the following steps in order:
+ 1. Checkout the repo 
+ ``` 
+- uses: actions/checkout@v4
+   with:
+      # By default, the 'pull_request' action checks out the merge commit, which doesn't
+      # necessarily have the latest changes for the branch. This will run the action on the
+      # latest commit in the branch.
+      # It is possible this workflow is triggered manually, so use the GITHUB_SHA in that case
+      ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      # 'nx affected' requires the full git history to determine affected projects
+      fetch-depth: 0
+```
+2. Set up Node and Yarn
+```
+- name: Enable corepack for yarn
+   run: corepack enable
+- name: Use Node
+   uses: actions/setup-node@v4
+   with:
+      node-version-file: ".nvmrc"
+      cache: "yarn"
+- name: "Setup Yarn"
+   run: |
+      yarn install --immutable
+```
+3. Set the base and head SHAs for `nx affected`
+```
+- name: Set shas for Nx
+   uses: nrwl/nx-set-shas@v4
+```
+4. Run the `nx affected` command with the desired target
+```
+- name: <Readable name of job>
+   run: yarn nx affected -t <target-name>
+```
+
 ### Creating new libraries
 
 #### Why make a library?
