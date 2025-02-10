@@ -30485,6 +30485,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-minimal-pie-chart@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "react-minimal-pie-chart@npm:9.1.0"
+  dependencies:
+    svg-partial-circle: "npm:^1.0.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18 || ^19
+    react-dom: ^16.8.0 || ^17 || ^18 || ^19
+  checksum: 10c0/9d1e859157620ee29eccdd6bf5e57b39e0a771357740cb42994343493bed685894a61463ff4cb8846a52871c7e0a0b0fc11587720db3d1b234e0827cc759c80c
+  languageName: node
+  linkType: hard
+
 "react-modal@npm:^3.12.1":
   version: 3.14.4
   resolution: "react-modal@npm:3.14.4"
@@ -31372,6 +31384,7 @@ __metadata:
     react-input-autosize: "npm:^3.0.0"
     react-intersection-observer: "npm:^9.4.3"
     react-is: "npm:18.3.1"
+    react-minimal-pie-chart: "npm:^9.1.0"
     react-modal: "npm:^3.12.1"
     react-perfect-scrollbar: "npm:^1.5.8"
     react-router-dom: "npm:^6.20.1"
@@ -34418,6 +34431,13 @@ __metadata:
   version: 2.0.4
   resolution: "svg-parser@npm:2.0.4"
   checksum: 10c0/02f6cb155dd7b63ebc2f44f36365bc294543bebb81b614b7628f1af3c54ab64f7e1cec20f06e252bf95bdde78441ae295a412c68ad1678f16a6907d924512b7a
+  languageName: node
+  linkType: hard
+
+"svg-partial-circle@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "svg-partial-circle@npm:1.0.0"
+  checksum: 10c0/5a5e53b17cf636515f9f48fa8c8a40edc411d82c29d1848a7cb0d980d8c0d41390874a87ea715db9f30bd2cf610d7760b58e60db51e913c2b0ba3fab001b31af
   languageName: node
   linkType: hard
 

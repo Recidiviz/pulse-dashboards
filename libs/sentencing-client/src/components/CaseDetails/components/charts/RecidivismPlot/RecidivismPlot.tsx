@@ -57,14 +57,14 @@ export function RecidivismPlot({
           // TODO(https://github.com/Recidiviz/recidiviz-data/issues/35110): Handle cases were recommendationType is not set but sentence range is
           recommendationType &&
           recommendationType !== NONE_OPTION && (
-            <Styled.RecidivismChartLegendItem key={recommendationType}>
-              <Styled.RecidivismChartLegendDot
+            <CommonStyled.ChartLegendItem key={recommendationType}>
+              <CommonStyled.ChartLegendDot
                 $backgroundColor={
                   RECOMMENDATION_TYPE_TO_COLOR[recommendationType]
                 }
               />
               <div>{recommendationType}</div>
-            </Styled.RecidivismChartLegendItem>
+            </CommonStyled.ChartLegendItem>
           ),
       ),
     [rollupRecidivismSeries],
@@ -96,9 +96,9 @@ export function RecidivismPlot({
           </>
         )}
       </CommonStyled.ChartSubTitle>
-      <Styled.RecidivismChartLegend>
+      <CommonStyled.ChartLegend>
         {recidivismChartLegend}
-      </Styled.RecidivismChartLegend>
+      </CommonStyled.ChartLegend>
       {!insight ? (
         <NoDataMessage />
       ) : (

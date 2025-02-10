@@ -16,31 +16,19 @@
 // =============================================================================
 
 import { CaseInsight } from "../../../../../api";
-import {
-  convertDecimalToPercentage,
-  printFormattedRecordString,
-} from "../../../../../utils/utils";
+import { GEO_CONFIG } from "../../../../../geoConfigs/geoConfigs";
+import { StateCode } from "../../../../../geoConfigs/types";
+import { printFormattedRecordString } from "../../../../../utils/utils";
 import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
-import { NONE_OPTION } from "../../../Form/constants";
+import { RecommendationOptionType } from "../../../Recommendations/constants";
 import { SelectedRecommendation } from "../../../types";
-import {
-  RECOMMENDATION_TYPE_TO_BORDER_COLOR,
-  RECOMMENDATION_TYPE_TO_COLOR,
-} from "../common/constants";
 import NoDataMessage from "../components/NoDataMessage";
 import * as CommonStyled from "../components/Styles";
 import * as Styled from "./DispositionChart.styles";
 import { DispositionChartExplanation } from "./DispositionChartExplanation";
+import { DispositionChartBySentenceLength } from "./SentenceLength/DispositionChartBySentenceLength";
+import { DispositionChartBySentenceType } from "./SentenceType/DispositionChartBySentenceType";
 import { getDispositionChartSubtitle } from "./utils";
-
-const MIN_CIRCLE_HEIGHT = 60;
-const MAX_CIRCLE_HEIGHT = 272;
-
-const getChartCircleHeight = (percentage: number, scale = 1) => {
-  const minHeight = MIN_CIRCLE_HEIGHT * scale;
-  const maxHeight = MAX_CIRCLE_HEIGHT * scale;
-  return minHeight + percentage * (maxHeight - minHeight);
-};
 
 interface DispositionChartProps {
   insight?: CaseInsight;
@@ -48,6 +36,7 @@ interface DispositionChartProps {
   justifyContent?: "center" | "flex-start";
   scale?: number;
   hideInfoTooltip?: boolean;
+  stateCode: StateCode;
 }
 
 export function DispositionChart({
@@ -56,21 +45,50 @@ export function DispositionChart({
   justifyContent = "center",
   scale,
   hideInfoTooltip,
+  stateCode,
 }: DispositionChartProps) {
   const { dispositionData, dispositionNumRecords } = insight ?? {};
 
-  const sortedDatapoints =
+  const sortedDataPoints =
     (dispositionData &&
       [...dispositionData].sort((a, b) => a.percentage - b.percentage)) ??
     [];
-  const [smallestDatapoint, ...otherDatapoints] = sortedDatapoints;
+  const [smallestDataPoint, ...otherDataPoints] = sortedDataPoints;
   // Ordered by second largest percentage, largest percentage, and smallest percentage
-  const orderedDatapoints = [...otherDatapoints, smallestDatapoint].filter(
+  const orderedDataPoints = [...otherDataPoints, smallestDataPoint].filter(
     (x) => x,
   );
 
+  const recommendationOptionType =
+    GEO_CONFIG[stateCode]?.recommendation.type ??
+    RecommendationOptionType.SentenceType;
+
   const dispositionChartSubtitle =
     insight && getDispositionChartSubtitle(insight);
+
+  let chart;
+  if (!orderedDataPoints.length) {
+    chart = <NoDataMessage />;
+  } else if (
+    recommendationOptionType === RecommendationOptionType.SentenceType
+  ) {
+    chart = (
+      <Styled.DispositionChartBySentenceTypeContainer $justify={justifyContent}>
+        <DispositionChartBySentenceType
+          dataPoints={orderedDataPoints}
+          selectedRecommendation={selectedRecommendation}
+          scale={scale}
+        />
+      </Styled.DispositionChartBySentenceTypeContainer>
+    );
+  } else {
+    chart = (
+      <Styled.DispositionChartBySentenceLengthContainer>
+        <DispositionChartBySentenceLength dataPoints={orderedDataPoints} />
+      </Styled.DispositionChartBySentenceLengthContainer>
+    );
+  }
+
   return (
     <>
       <CommonStyled.ChartTitle>
@@ -97,49 +115,7 @@ export function DispositionChart({
           </>
         )}
       </CommonStyled.ChartSubTitle>
-      {!insight || !sortedDatapoints || sortedDatapoints.length === 0 ? (
-        <NoDataMessage />
-      ) : (
-        <Styled.DispositionChartContainer $justify={justifyContent}>
-          {orderedDatapoints.map(
-            ({ percentage, recommendationType }) =>
-              // TODO(https://github.com/Recidiviz/recidiviz-data/issues/35110): Handle cases were recommendationType is not set but sentence range is
-              recommendationType &&
-              recommendationType !== NONE_OPTION && (
-                <Styled.DispositionChartCircleContainer
-                  key={recommendationType}
-                >
-                  <Styled.DispositionChartCircle
-                    $height={getChartCircleHeight(percentage, scale)}
-                    $backgroundColor={
-                      RECOMMENDATION_TYPE_TO_COLOR[recommendationType]
-                    }
-                    $borderColor={
-                      recommendationType === selectedRecommendation
-                        ? RECOMMENDATION_TYPE_TO_BORDER_COLOR[
-                            recommendationType
-                          ]
-                        : undefined
-                    }
-                    $hideCircle={convertDecimalToPercentage(percentage) === 0}
-                  >
-                    {convertDecimalToPercentage(percentage)}%
-                  </Styled.DispositionChartCircle>
-                  <Styled.DispositionChartCircleLabel
-                    $color={
-                      recommendationType === selectedRecommendation
-                        ? "#004D48"
-                        : "#2B546999"
-                    }
-                  >
-                    {convertDecimalToPercentage(percentage) > 0 &&
-                      recommendationType}
-                  </Styled.DispositionChartCircleLabel>
-                </Styled.DispositionChartCircleContainer>
-              ),
-          )}
-        </Styled.DispositionChartContainer>
-      )}
+      {chart}
     </>
   );
 }

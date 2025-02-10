@@ -155,6 +155,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                 fullName={caseAttributes.client?.fullName}
                 openEditCaseDetailsModal={openEditCaseDetailsModal}
                 lsirScore={caseAttributes.lsirScore}
+                stateCode={stateCode}
               />
               {/* Opportunities */}
               <Opportunities

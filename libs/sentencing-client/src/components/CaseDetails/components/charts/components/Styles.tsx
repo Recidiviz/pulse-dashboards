@@ -64,3 +64,24 @@ export const ChartTooltipContentSection = styled.div`
     color: ${customPalette.green.highlight};
   }
 `;
+
+export const ChartLegend = styled.div`
+  display: flex;
+`;
+
+export const ChartLegendItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 24px;
+  color: ${palette.pine1};
+`;
+
+export const ChartLegendDot = styled.div<{
+  $backgroundColor: string;
+}>`
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: ${(props) => props.$backgroundColor};
+`;
