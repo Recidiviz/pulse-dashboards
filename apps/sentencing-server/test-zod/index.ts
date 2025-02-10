@@ -23,6 +23,7 @@ import { z } from "zod";
 import {
   caseImportSchema,
   clientImportSchema,
+  countyAndDistrictImportSchema,
   insightImportSchema,
   offenseImportSchema,
   opportunityImportSchema,
@@ -36,6 +37,7 @@ const zodSchemaMap: Record<string, z.ZodTypeAny> = {
   offense: z.array(offenseImportSchema),
   opportunity: z.array(opportunityImportSchema),
   staff: z.array(staffImportSchema),
+  countyAndDistrict: z.array(countyAndDistrictImportSchema),
 };
 
 function getData(fileName: string) {

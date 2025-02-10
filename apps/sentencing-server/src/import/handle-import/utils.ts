@@ -28,6 +28,7 @@ import { EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE } from "~sentencing-server
 import {
   caseImportSchema,
   clientImportSchema,
+  countyAndDistrictImportSchema,
   insightImportSchema,
   offenseImportSchema,
   opportunityImportSchema,
@@ -571,4 +572,72 @@ export async function transformAndLoadOffenseData(
       `Error when importing offenses! These offenses exist in the database but are missing from the data import: ${missingExistingOffenses.map((offense) => offense.name).join(", ")}`,
     );
   }
+}
+
+export async function transformAndLoadCountyAndDistrictData(
+  stateCode: string,
+  data: AsyncGenerator<unknown>,
+) {
+  const prismaClient = getPrismaClientForStateCode(stateCode);
+  const errors: string[] = [];
+
+  const newCountyNames = [];
+
+  for await (const datum of data) {
+    const countyData = parseData(datum, countyAndDistrictImportSchema, errors);
+    if (!countyData) {
+      continue;
+    }
+
+    const newCounty = {
+      stateCode: countyData.state_code,
+      name: countyData.county,
+      district: {
+        connectOrCreate: {
+          where: {
+            name: countyData.district,
+          },
+          create: {
+            stateCode: countyData.state_code,
+            name: countyData.district,
+          },
+        },
+      },
+    };
+
+    newCountyNames.push(newCounty.name);
+
+    // Load data
+    await prismaClient.county.upsert({
+      where: {
+        name: newCounty.name,
+      },
+      create: newCounty,
+      update: newCounty,
+    });
+  }
+
+  if (errors.length > 0) {
+    throw errors.join("\n");
+  }
+
+  // Delete all of the old counties that weren't just loaded if we haven't hit any errors
+  await prismaClient.county.deleteMany({
+    where: {
+      NOT: {
+        name: {
+          in: newCountyNames,
+        },
+      },
+    },
+  });
+
+  // Delete all of the districts that no longer have counties (that means that they were deleted)
+  await prismaClient.district.deleteMany({
+    where: {
+      counties: {
+        none: {},
+      },
+    },
+  });
 }

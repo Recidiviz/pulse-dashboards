@@ -19,6 +19,7 @@ import { EtlHelper } from "~fastify-data-import-plugin";
 import {
   transformAndLoadCaseData,
   transformAndLoadClientData,
+  transformAndLoadCountyAndDistrictData,
   transformAndLoadInsightData,
   transformAndLoadOffenseData,
   transformAndLoadOpportunityData,
@@ -38,6 +39,9 @@ export const OPPORTUNITIES_FILE_NAME =
 export const INSIGHTS_FILE_NAME = "case_insights_record.json";
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/charge_record.py
 export const OFFENSES_FILE_NAME = "sentencing_charge_record.json";
+// See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/counties_and_districts.py
+export const COUNTIES_AND_DISTRICTS_FILES_NAME =
+  "sentencing_counties_and_districts.json";
 
 export const FILE_NAME_TO_ETL_HELPER: Record<string, EtlHelper> = {
   [CASES_FILE_NAME]: transformAndLoadCaseData,
@@ -46,4 +50,5 @@ export const FILE_NAME_TO_ETL_HELPER: Record<string, EtlHelper> = {
   [OPPORTUNITIES_FILE_NAME]: transformAndLoadOpportunityData,
   [INSIGHTS_FILE_NAME]: transformAndLoadInsightData,
   [OFFENSES_FILE_NAME]: transformAndLoadOffenseData,
+  [COUNTIES_AND_DISTRICTS_FILES_NAME]: transformAndLoadCountyAndDistrictData,
 };

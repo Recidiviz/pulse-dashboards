@@ -32,6 +32,7 @@ import { testAndGetSentryReports } from "~sentencing-server/test/common/utils";
 import {
   caseBody,
   clientBody,
+  countiesAndDistrictsBody,
   insightBody,
   offenseBody,
   opportunityBody,
@@ -41,6 +42,7 @@ import {
   callHandleImport,
   callHandleImportCaseData,
   callHandleImportClientData,
+  callHandleImportCountyAndDistrictData,
   callHandleImportInsightData,
   callHandleImportOffenseData,
   callHandleImportOpportunityData,
@@ -51,6 +53,7 @@ import { testPrismaClient, testServer } from "~sentencing-server/test/setup";
 import {
   fakeCase,
   fakeClient,
+  fakeCounty,
   fakeInsight,
   fakeOffense,
   fakeOpportunity,
@@ -847,107 +850,107 @@ describe("handle_import", () => {
         ]),
       );
     });
-  });
 
-  test("should set isCountyLocked if county of residence is provided", async () => {
-    dataProviderSingleton.setData([
-      // New client
-      {
-        external_id: "new-client-ext-id",
-        pseudonymized_id: "new-client-pid",
-        case_ids: JSON.stringify(["new-case-ext-id"]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: "Given",
-          middle_names: "Middle",
-          surname: "Last",
-          name_suffix: "Sr.",
-        }),
-        gender: Gender.FEMALE,
-        county: faker.location.county(),
-        birth_date: faker.date.birthdate(),
-      },
-      // existing client
-      {
-        external_id: fakeClient.externalId,
-        pseudonymized_id: fakeClient.pseudonymizedId,
-        case_ids: JSON.stringify([fakeCase.externalId]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: faker.person.firstName(),
-          middle_names: faker.person.firstName(),
-          surname: faker.person.lastName(),
-          name_suffix: faker.person.suffix(),
-        }),
-        gender: faker.helpers.enumValue(Gender),
-        // Set a new county
-        county: "my fake county",
-        birth_date: faker.date.birthdate(),
-      },
-    ]);
-
-    const response = await callHandleImportClientData(testServer);
-
-    expect(response.statusCode).toBe(200);
-
-    const dbClients = await testPrismaClient.client.findMany({});
-
-    // The new client should have been inserted and the old one kept
-    expect(dbClients).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          externalId: fakeClient.externalId,
-        }),
-        expect.objectContaining({
-          externalId: "new-client-ext-id",
+    test("should set isCountyLocked if county of residence is provided", async () => {
+      dataProviderSingleton.setData([
+        // New client
+        {
+          external_id: "new-client-ext-id",
+          pseudonymized_id: "new-client-pid",
+          case_ids: JSON.stringify(["new-case-ext-id"]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: "Given",
+            middle_names: "Middle",
+            surname: "Last",
+            name_suffix: "Sr.",
+          }),
           gender: Gender.FEMALE,
-          isGenderLocked: true,
-          isCountyLocked: true,
-        }),
-      ]),
-    );
-  });
+          county: faker.location.county(),
+          birth_date: faker.date.birthdate(),
+        },
+        // existing client
+        {
+          external_id: fakeClient.externalId,
+          pseudonymized_id: fakeClient.pseudonymizedId,
+          case_ids: JSON.stringify([fakeCase.externalId]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: faker.person.firstName(),
+            middle_names: faker.person.firstName(),
+            surname: faker.person.lastName(),
+            name_suffix: faker.person.suffix(),
+          }),
+          gender: faker.helpers.enumValue(Gender),
+          // Set a new county
+          county: "my fake county",
+          birth_date: faker.date.birthdate(),
+        },
+      ]);
 
-  test("should not set isCountyLocked if county of residence is provided", async () => {
-    dataProviderSingleton.setData([
-      // New client
-      {
-        external_id: "new-client-ext-id",
-        pseudonymized_id: "new-client-pid",
-        case_ids: JSON.stringify(["new-case-ext-id"]),
-        state_code: StateCode.US_ID,
-        full_name: JSON.stringify({
-          given_names: "Given",
-          middle_names: "Middle",
-          surname: "Last",
-          name_suffix: "Sr.",
-        }),
-        gender: Gender.INTERNAL_UNKNOWN,
-        county: undefined,
-        birth_date: faker.date.birthdate(),
-      },
-    ]);
+      const response = await callHandleImportClientData(testServer);
 
-    const response = await callHandleImportClientData(testServer);
+      expect(response.statusCode).toBe(200);
 
-    expect(response.statusCode).toBe(200);
+      const dbClients = await testPrismaClient.client.findMany({});
 
-    const dbClients = await testPrismaClient.client.findMany({});
+      // The new client should have been inserted and the old one kept
+      expect(dbClients).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            externalId: fakeClient.externalId,
+          }),
+          expect.objectContaining({
+            externalId: "new-client-ext-id",
+            gender: Gender.FEMALE,
+            isGenderLocked: true,
+            isCountyLocked: true,
+          }),
+        ]),
+      );
+    });
 
-    // The new client should have been inserted and the old one kept
-    expect(dbClients).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          externalId: fakeClient.externalId,
-        }),
-        expect.objectContaining({
-          externalId: "new-client-ext-id",
+    test("should not set isCountyLocked if county of residence is provided", async () => {
+      dataProviderSingleton.setData([
+        // New client
+        {
+          external_id: "new-client-ext-id",
+          pseudonymized_id: "new-client-pid",
+          case_ids: JSON.stringify(["new-case-ext-id"]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: "Given",
+            middle_names: "Middle",
+            surname: "Last",
+            name_suffix: "Sr.",
+          }),
           gender: Gender.INTERNAL_UNKNOWN,
-          isGenderLocked: false,
-          isCountyLocked: false,
-        }),
-      ]),
-    );
+          county: undefined,
+          birth_date: faker.date.birthdate(),
+        },
+      ]);
+
+      const response = await callHandleImportClientData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      const dbClients = await testPrismaClient.client.findMany({});
+
+      // The new client should have been inserted and the old one kept
+      expect(dbClients).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            externalId: fakeClient.externalId,
+          }),
+          expect.objectContaining({
+            externalId: "new-client-ext-id",
+            gender: Gender.INTERNAL_UNKNOWN,
+            isGenderLocked: false,
+            isCountyLocked: false,
+          }),
+        ]),
+      );
+    });
   });
 
   describe("import staff data", () => {
@@ -1988,6 +1991,103 @@ describe("handle_import", () => {
 
       // Shouldn't have any errors
       await testAndGetSentryReports(0);
+    });
+  });
+
+  describe("import county and district data", () => {
+    test("should throw error if state is not supported", async () => {
+      dataProviderSingleton.setData([
+        // old county + district data
+        {
+          state_code: StateCode.US_ID,
+          county: "county1",
+          district: "district1",
+        },
+        // New county + district data
+        {
+          state_code: StateCode.US_ID,
+          county: "county2",
+          district: "district2",
+        },
+      ]);
+
+      const response = await callHandleImport(testServer, {
+        ...countiesAndDistrictsBody,
+        objectId: "US_ME/sentencing_counties_and_districts.json",
+      });
+
+      expect(response.statusCode).toBe(400);
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Unsupported bucket + object pair: test-bucket/US_ME/sentencing_counties_and_districts.json",
+      );
+    });
+
+    test("should log any zod errors but insert correct rows", async () => {
+      dataProviderSingleton.setData([
+        // New county + district data (missing required fields)
+        {
+          state_code: StateCode.US_ID,
+          district: "District 2",
+        },
+      ]);
+
+      const response = await callHandleImportCountyAndDistrictData(testServer);
+
+      expect(response.statusCode).toBe(500);
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Error importing object US_ID/sentencing_counties_and_districts.json from bucket test-bucket: \nError parsing data:\nData: {",
+      );
+
+      const dbCounties = await testPrismaClient.county.findMany({
+        include: {
+          district: true,
+        },
+      });
+      // The old county and district should still be in there because there was a data error
+      expect(dbCounties).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: fakeCounty.name,
+            district: expect.objectContaining(fakeCounty.district),
+          }),
+        ]),
+      );
+    });
+
+    test("should import new counties and districts and delete old ones", async () => {
+      dataProviderSingleton.setData([
+        // New county + district data
+        {
+          state_code: StateCode.US_ID,
+          county: "Plout",
+          district: "District 2",
+        },
+      ]);
+
+      const response = await callHandleImportCountyAndDistrictData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      const dbDistricts = await testPrismaClient.district.findMany({
+        include: {
+          counties: true,
+        },
+      });
+      // Only the new district and county should be in here
+      expect(dbDistricts).toEqual([
+        expect.objectContaining({
+          name: "District 2",
+          counties: expect.arrayContaining([
+            expect.objectContaining({
+              name: "Plout",
+            }),
+          ]),
+        }),
+      ]);
     });
   });
 });

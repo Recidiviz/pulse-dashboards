@@ -21,6 +21,7 @@ import { buildServer } from "~sentencing-server/server";
 import {
   caseBody,
   clientBody,
+  countiesAndDistrictsBody,
   insightBody,
   offenseBody,
   opportunityBody,
@@ -73,6 +74,12 @@ export async function callHandleImportOffenseData(
   server: ReturnType<typeof buildServer>,
 ) {
   return await callHandleImport(server, offenseBody);
+}
+
+export async function callHandleImportCountyAndDistrictData(
+  server: ReturnType<typeof buildServer>,
+) {
+  return await callHandleImport(server, countiesAndDistrictsBody);
 }
 
 export function createFakeRecidivismSeriesForImport() {
