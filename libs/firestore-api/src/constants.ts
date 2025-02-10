@@ -28,5 +28,6 @@ export const FIRESTORE_GENERAL_COLLECTION_MAP = {
   milestonesMessages: "milestonesMessages",
   taskUpdates: "taskUpdates",
   usIdSupervisionTasks: "US_ID-supervisionTasks",
+  usTxSupervisionTasks: "US_TX-supervisionTasks",
   clientFormUpdates: "clientFormUpdates",
 } as const;

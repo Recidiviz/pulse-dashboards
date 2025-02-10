@@ -36,6 +36,7 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   homeVisit: "Home Contacts",
   employment: "Employment Verification",
   employmentNeed: "Unemployed",
+  usTxHomeVisit: "Home Contacts",
 };
 
 export const NEED_DISPLAY_NAME: Record<SupervisionNeedType, string> = {

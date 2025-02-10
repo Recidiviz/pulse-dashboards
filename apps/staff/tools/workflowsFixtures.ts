@@ -83,6 +83,7 @@ import { usTnAnnualReclassificationReviewFixture } from "./fixtures/usTnAnnualRe
 import { usTnCompliantReportingReferrals } from "./fixtures/usTnCompliantReportingReferrals";
 import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDowngradeReferrals";
 import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
+import { usTxSupervisionTasksData } from "./fixtures/usTxSupervisionTasks";
 import { FirestoreFixture, fixtureFromParsedRecords } from "./fixtures/utils";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
@@ -130,6 +131,7 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
   residents: residentsData,
   locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,
+  usTxSupervisionTasks: usTxSupervisionTasksData,
 } as const;
 
 const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<

@@ -15,27 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable } from "mobx";
+import { fieldToDate } from "~datatypes";
 
-import { SupervisionTaskUpdate } from "../../FirestoreStore";
-import { Client } from "../Client";
-import { TasksBase } from "./TasksBase";
-import { SupervisionTasksRecord } from "./types";
+import { formatDate } from "../../utils/formatStrings";
+import { Task } from "./Task";
 
-export class UsIdSupervisionTasks extends TasksBase<
-  Client,
-  SupervisionTasksRecord<"US_ID">,
-  SupervisionTaskUpdate
-> {
-  constructor(client: Client) {
-    super(client.rootStore, client, { key: "usIdSupervisionTasks" });
-    makeObservable(this, { needsEmployment: true });
+class UsTxHomeVisitTask extends Task<"usTxHomeVisit"> {
+  displayName = "Home contact";
+
+  dueDateDisplayLong = `${this.displayName} recommended ${this.dueDateFromToday}`;
+
+  dueDateDisplayShort = `Recommended ${this.dueDateFromToday}`;
+
+  get lastHomeVisit(): string | undefined {
+    if (!this.details.lastContactDate) return;
+    return formatDate(fieldToDate(this.details.lastContactDate));
   }
 
-  get needsEmployment(): boolean {
-    return (
-      this.record?.needs?.map((need) => need.type).includes("employmentNeed") ??
-      false
-    );
+  get additionalDetails(): string {
+    return this.lastHomeVisit
+      ? `Last contact on ${this.lastHomeVisit}`
+      : "No previous visit on record.";
   }
 }
+
+export default UsTxHomeVisitTask;

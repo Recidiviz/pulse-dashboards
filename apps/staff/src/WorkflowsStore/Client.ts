@@ -46,6 +46,7 @@ import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
 import { SupervisionTaskInterface } from "./Task/types";
 import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
+import { UsTxSupervisionTasks } from "./Task/UsTxSupervisionTasks";
 import { JusticeInvolvedPerson } from "./types";
 import {
   clearPhoneNumberFormatting,
@@ -79,11 +80,13 @@ const createClientSupervisionTasks: TaskFactory<Client> = (
   person,
 ): SupervisionTaskInterface | undefined => {
   const { allowSupervisionTasks } = person.rootStore.workflowsStore;
-  if (
-    person instanceof Client &&
-    allowSupervisionTasks &&
-    person.rootStore.currentTenantId === "US_ID"
-  ) {
+  if (!(person instanceof Client && allowSupervisionTasks)) return;
+
+  if (person.rootStore.currentTenantId === "US_TX") {
+    return new UsTxSupervisionTasks(person);
+  }
+
+  if (person.rootStore.currentTenantId === "US_ID") {
     return new UsIdSupervisionTasks(person);
   }
 };

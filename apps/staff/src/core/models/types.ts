@@ -76,7 +76,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   workflowsHomepageName?: string;
   workflowsTasksConfig?: SnoozeTaskConfig;
   tasks?: {
-    [k in SupervisionTaskType]: new (
+    [k in SupervisionTaskType]?: new (
       rootStore: RootStore,
       task: SupervisionTaskRecord<k>,
       person: JusticeInvolvedPerson,

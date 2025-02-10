@@ -15,27 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeObservable } from "mobx";
-
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { Client } from "../Client";
 import { TasksBase } from "./TasksBase";
 import { SupervisionTasksRecord } from "./types";
 
-export class UsIdSupervisionTasks extends TasksBase<
+export class UsTxSupervisionTasks extends TasksBase<
   Client,
-  SupervisionTasksRecord<"US_ID">,
+  SupervisionTasksRecord<"US_TX">,
   SupervisionTaskUpdate
 > {
   constructor(client: Client) {
-    super(client.rootStore, client, { key: "usIdSupervisionTasks" });
-    makeObservable(this, { needsEmployment: true });
-  }
-
-  get needsEmployment(): boolean {
-    return (
-      this.record?.needs?.map((need) => need.type).includes("employmentNeed") ??
-      false
-    );
+    super(client.rootStore, client, { key: "usTxSupervisionTasks" });
   }
 }

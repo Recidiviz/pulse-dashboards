@@ -25,6 +25,7 @@ import { US_ND_CLIENTS } from "./clients/usNdClients";
 import { US_OR_CLIENTS } from "./clients/usOrClients";
 import { US_PA_CLIENTS } from "./clients/usPaClients";
 import { US_TN_CLIENTS } from "./clients/usTnClients";
+import { US_TX_CLIENTS } from "./clients/usTxClients";
 import { FirestoreFixture, PersonFixture } from "./utils";
 
 export type ClientFixture = PersonFixture<RawClientRecord>;
@@ -36,8 +37,9 @@ const data: ClientFixture[] = [
   ...US_MI_CLIENTS,
   ...US_ND_CLIENTS,
   ...US_OR_CLIENTS,
-  ...US_TN_CLIENTS,
   ...US_PA_CLIENTS,
+  ...US_TN_CLIENTS,
+  ...US_TX_CLIENTS,
 ];
 
 export const clientsData: FirestoreFixture<ClientFixture> = {
