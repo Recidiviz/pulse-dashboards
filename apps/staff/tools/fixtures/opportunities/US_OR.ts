@@ -255,7 +255,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Eligibility Requirements Verified via DOC400",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["ClientProfileDetails"],
+      sidebarComponents: ["SentenceDates", "Contact"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 365 },
       stateCode: "US_OR",
       subcategoryHeadings: [],

@@ -106,7 +106,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify residents in restrictive housing who have spent 1+ consecutive year(s) in segregation and are therefore due for an in-person SCC review with the relevant ADD. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents, inclusive of ADD signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
+        "This alert helps staff identify residents in restrictive housing who have spent 1+ consecutive year(s) in segregation and are therefore due for an in-person SCC review with the relevant ADD. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents, inclusive of ADD signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. See frequently asked questions [here](https://drive.google.com/file/d/1aqHekX0rxCYc1U1KZdo-nK3ZS62pjKuR/view?usp=sharing).",
       submittedTabTitle: null,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
@@ -643,7 +643,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify residents in temporary segregation or detention who may be eligible to return to general population, including residents who have served their full detention sanction and residents who have been in temporary segregation for longer than the seven day threshold stipulated by policy. Review eligible and overdue clients and work to transfer them back to general population.",
+        "This alert helps staff identify residents in temporary segregation or detention who may be eligible to return to general population, including residents who have served their full detention sanction and residents who have been in temporary segregation for longer than the seven day threshold stipulated by policy. Review eligible and overdue clients and work to transfer them back to general population. See frequently asked questions [here](https://drive.google.com/file/d/1aqHekX0rxCYc1U1KZdo-nK3ZS62pjKuR/view?usp=sharing).",
       submittedTabTitle: null,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
@@ -736,7 +736,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
+        "This alert helps staff identify residents in restrictive housing who are due for a Security Classification Committee (SCC) Review, which is to be conducted within 7 calendar days of being classified to restrictive housing and every 30 days thereafter. Complete an SCC review and fill out the pre-filled 283 Form for eligible residents. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. See frequently asked questions [here](https://drive.google.com/file/d/1aqHekX0rxCYc1U1KZdo-nK3ZS62pjKuR/view?usp=sharing).",
       submittedTabTitle: "Pending",
       supportsSubmitted: true,
       systemType: "INCARCERATION",
@@ -924,7 +924,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify residents in restrictive housing who have spent 6+ consecutive months in segregation and are therefore due for an in-person SCC review with the Warden. Complete SCC review and fill out pre-filled 283 Form for eligible residents, inclusive of Warden signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population.",
+        "This alert helps staff identify residents in restrictive housing who have spent 6+ consecutive months in segregation and are therefore due for an in-person SCC review with the Warden. Complete SCC review and fill out pre-filled 283 Form for eligible residents, inclusive of Warden signature. Where possible, work to transfer residents who no longer need to be in temporary or administrative segregation back to general population. See frequently asked questions [here](https://drive.google.com/file/d/1aqHekX0rxCYc1U1KZdo-nK3ZS62pjKuR/view?usp=sharing).",
       submittedTabTitle: null,
       supportsSubmitted: true,
       systemType: "INCARCERATION",
