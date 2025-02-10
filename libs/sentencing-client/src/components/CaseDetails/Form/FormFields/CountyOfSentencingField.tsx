@@ -17,6 +17,7 @@
 
 import { startCase } from "lodash";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 
 import { COUNTY_DISTRICT_MAP } from "../../../../geoConfigs/countyDistrictMapping";
 import { GEO_CONFIG } from "../../../../geoConfigs/geoConfigs";
@@ -58,6 +59,12 @@ function CountyOfSentencingField({ isRequired }: FormFieldProps) {
     form.updateForm(COUNTY_KEY, county, isRequired);
     form.updateForm(DISTRICT_KEY, district, isRequired);
   };
+
+  /** Validate previously saved County */
+  useEffect(() => {
+    form.validate(COUNTY_KEY, caseAttributes?.county, isRequired);
+    return () => form.resetErrors();
+  }, [caseAttributes, isRequired]);
 
   return (
     <Styled.InputContainer>
