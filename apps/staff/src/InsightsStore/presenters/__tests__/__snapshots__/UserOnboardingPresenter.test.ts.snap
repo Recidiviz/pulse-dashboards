@@ -13,8 +13,8 @@ exports[`has userInfo 1`] = `
     },
     "hasOutliers": true,
     "pseudonymizedId": "hashed-agonzalez123",
-    "supervisionDistrict": "Region 1",
-    "supervisionUnit": "Unit 1",
+    "supervisionLocationForListPage": "Region 1",
+    "supervisionLocationForSupervisorPage": "Unit 1",
   },
   "metadata": {
     "hasSeenOnboarding": false,
@@ -36,8 +36,8 @@ exports[`with user data already hydrated > has userInfo 1`] = `
     },
     "hasOutliers": true,
     "pseudonymizedId": "hashed-agonzalez123",
-    "supervisionDistrict": "Region 1",
-    "supervisionUnit": "Unit 1",
+    "supervisionLocationForListPage": "Region 1",
+    "supervisionLocationForSupervisorPage": "Unit 1",
   },
   "metadata": {
     "hasSeenOnboarding": false,

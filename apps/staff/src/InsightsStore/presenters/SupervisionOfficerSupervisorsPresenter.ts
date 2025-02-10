@@ -67,9 +67,11 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
       this.supervisionStore.supervisionOfficerSupervisors ?? [];
     if (launchedDistricts && !this.insightsLeadershipPageAllDistricts) {
       return supervisors.filter(
-        ({ supervisionDistrict }) =>
-          supervisionDistrict &&
-          launchedDistricts.includes(supervisionDistrict.toUpperCase()),
+        ({ supervisionLocationForListPage }) =>
+          supervisionLocationForListPage &&
+          launchedDistricts.includes(
+            supervisionLocationForListPage.toUpperCase(),
+          ),
       );
     }
     return supervisors;
@@ -83,17 +85,19 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
    * Organize supervisors by district. This includes
    * all supervisors, not just supervisors with outlier officers.
    */
-  get supervisorsByDistrict(): Array<{
-    district: string | null;
+  get supervisorsByLocation(): Array<{
+    location: string | null;
     supervisors: Array<SupervisionOfficerSupervisor>;
   }> {
     const result = pipe(
-      groupBy((d: SupervisionOfficerSupervisor) => d.supervisionDistrict),
+      groupBy(
+        (d: SupervisionOfficerSupervisor) => d.supervisionLocationForListPage,
+      ),
       values,
       map((dataset) => {
-        const { supervisionDistrict } = dataset[0];
+        const { supervisionLocationForListPage } = dataset[0];
         return {
-          district: supervisionDistrict,
+          location: supervisionLocationForListPage,
           supervisors: dataset as SupervisionOfficerSupervisor[],
         };
       }),
@@ -108,12 +112,12 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
     );
 
     result.sort((a, b) => {
-      if (!a.district) return 1;
-      if (!b.district) return -1;
+      if (!a.location) return 1;
+      if (!b.location) return -1;
 
-      return a.district
+      return a.location
         .toLowerCase()
-        .localeCompare(b.district.toLowerCase(), "en", {
+        .localeCompare(b.location.toLowerCase(), "en", {
           numeric: true,
         });
     });

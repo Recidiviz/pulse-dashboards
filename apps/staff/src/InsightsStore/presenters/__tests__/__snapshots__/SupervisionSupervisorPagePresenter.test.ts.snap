@@ -123,14 +123,15 @@ exports[`supervisorInfo 1`] = `
   },
   "hasOutliers": true,
   "pseudonymizedId": "hashed-agonzalez123",
-  "supervisionDistrict": "Region 1",
-  "supervisionUnit": "Unit 1",
+  "supervisionLocationForListPage": "Region 1",
+  "supervisionLocationForSupervisorPage": "Unit 1",
 }
 `;
 
 exports[`supervisorLocationInfo 1`] = `
 {
-  "locationLabel": "region",
-  "supervisionLocation": "1",
+  "locationLabel": "unit",
+  "supervisionLocationForListPage": "Region 1",
+  "supervisionLocationForSupervisorPage": "1",
 }
 `;

@@ -13,8 +13,8 @@ exports[`function: SupervisionOfficerSupervisorRawFactory > should generate real
     },
     "hasOutliers": true,
     "pseudonymizedId": "erShMLpdq3APTcvT",
-    "supervisionDistrict": "REGION 3",
-    "supervisionUnit": "UNIT 3",
+    "supervisionLocationForListPage": "REGION 3",
+    "supervisionLocationForSupervisorPage": "UNIT 3",
   },
   {
     "displayName": "Wallace Bins",
@@ -27,8 +27,8 @@ exports[`function: SupervisionOfficerSupervisorRawFactory > should generate real
     },
     "hasOutliers": true,
     "pseudonymizedId": "bS-XG4I4f97o1jtl",
-    "supervisionDistrict": "REGION 3",
-    "supervisionUnit": null,
+    "supervisionLocationForListPage": "REGION 3",
+    "supervisionLocationForSupervisorPage": null,
   },
   {
     "displayName": "Lucas Rippin",
@@ -41,8 +41,8 @@ exports[`function: SupervisionOfficerSupervisorRawFactory > should generate real
     },
     "hasOutliers": false,
     "pseudonymizedId": "aAq3hJhoDPj_ISAH",
-    "supervisionDistrict": "REGION 1",
-    "supervisionUnit": "UNIT 2",
+    "supervisionLocationForListPage": "REGION 1",
+    "supervisionLocationForSupervisorPage": "UNIT 2",
   },
 ]
 `;

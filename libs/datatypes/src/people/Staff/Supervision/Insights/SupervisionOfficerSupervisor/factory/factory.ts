@@ -40,8 +40,8 @@ export const rawSupervisionOfficerSupervisorFactory = (
     return {
       externalId: randId(),
       pseudonymizedId: randPseudonymizedId(),
-      supervisionDistrict: nullable(() => randDistrict()),
-      supervisionUnit: nullable(() => randUnit()),
+      supervisionLocationForListPage: nullable(() => randDistrict()),
+      supervisionLocationForSupervisorPage: nullable(() => randUnit()),
       email: nullable(() =>
         randStaffEmail(stateCode, {
           firstName: fullName.givenNames,

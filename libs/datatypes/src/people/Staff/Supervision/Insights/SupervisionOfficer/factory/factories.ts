@@ -42,9 +42,12 @@ export const randRawSupervisionOfficerMetricFixture = () => {
 export const randDistrictAndSupervisors = (
   s: SupervisionOfficerSupervisor[],
 ) => {
-  const supervisorsBySupervisionDistrict = groupBy(s, "supervisionDistrict");
+  const supervisorsBySupervisionLocation = groupBy(
+    s,
+    "supervisionLocationForSupervisorPage",
+  );
   const [supervisionDistrict, districtSupervisors] = helpers.arrayElement(
-    Object.entries(supervisorsBySupervisionDistrict),
+    Object.entries(supervisorsBySupervisionLocation),
   );
 
   return {

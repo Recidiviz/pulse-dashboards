@@ -299,7 +299,8 @@ export class InsightsSupervisionStore {
 
   supervisionLocationInfo(supervisorPseudoId: string): {
     locationLabel: string;
-    supervisionLocation?: string | null;
+    supervisionLocationForListPage?: string | null;
+    supervisionLocationForSupervisorPage?: string | null;
   } {
     const {
       tenantStore: { insightsUnitState },
@@ -307,15 +308,19 @@ export class InsightsSupervisionStore {
     const locationLabel = insightsUnitState
       ? this.labels.supervisionUnitLabel
       : this.labels.supervisionDistrictLabel;
-    const supervisionLocation = getLocationWithoutLabel(
-      insightsUnitState
-        ? this.supervisorInfo(supervisorPseudoId)?.supervisionUnit
-        : this.supervisorInfo(supervisorPseudoId)?.supervisionDistrict,
+    const supervisionLocationForListPage = getLocationWithoutLabel(
+      this.supervisorInfo(supervisorPseudoId)?.supervisionLocationForListPage,
+      locationLabel,
+    );
+    const supervisionLocationForSupervisorPage = getLocationWithoutLabel(
+      this.supervisorInfo(supervisorPseudoId)
+        ?.supervisionLocationForSupervisorPage,
       locationLabel,
     );
     return {
       locationLabel,
-      supervisionLocation,
+      supervisionLocationForListPage,
+      supervisionLocationForSupervisorPage,
     };
   }
 

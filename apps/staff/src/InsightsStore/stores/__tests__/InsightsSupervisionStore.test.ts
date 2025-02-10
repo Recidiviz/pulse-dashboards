@@ -401,8 +401,8 @@ test("current user record for supervisor", async () => {
       },
       "hasOutliers": true,
       "pseudonymizedId": "hashed-agonzalez123",
-      "supervisionDistrict": "Region 1",
-      "supervisionUnit": "Unit 1",
+      "supervisionLocationForListPage": "Region 1",
+      "supervisionLocationForSupervisorPage": "Unit 1",
     }
   `);
 });
@@ -453,8 +453,8 @@ test("hydrate supervisors list with current user", async () => {
         },
         "hasOutliers": true,
         "pseudonymizedId": "hashed-agonzalez123",
-        "supervisionDistrict": "Region 1",
-        "supervisionUnit": "Unit 1",
+        "supervisionLocationForListPage": "Region 1",
+        "supervisionLocationForSupervisorPage": "Unit 1",
       },
     ]
   `);

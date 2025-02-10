@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { uniq } from "lodash";
 import { flowResult, makeObservable, override } from "mobx";
 
 import { MetricConfig } from "~datatypes";
@@ -24,7 +23,6 @@ import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerOutcomesPresenter } from "./SupervisionOfficerOutcomesPresenter";
-import { getLocationWithoutLabel } from "./utils";
 
 export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcomesPresenter {
   constructor(
@@ -45,7 +43,6 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcome
       ctaText: true,
       isInsightsLanternState: true,
       populateSupervisionOfficer: override,
-      supervisionLocationInfo: true,
     });
 
     this.hydrator = new HydratesFromSource({
@@ -101,33 +98,6 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcome
     const { labels, isInsightsLanternState } = this;
     return {
       insightsLanternStateCaseLearnMore: `${isInsightsLanternState ? `Click on a ${labels.supervisionJiiLabel} to see more information about this case, such as how long they had been with this ${labels.supervisionOfficerLabel} and more.` : ``}`,
-    };
-  }
-
-  supervisionLocationInfo(): {
-    locationLabel: string;
-    supervisionLocation?: string | null;
-  } {
-    const {
-      tenantStore: { insightsUnitState },
-    } = this.supervisionStore.insightsStore.rootStore;
-    const locationLabel = insightsUnitState
-      ? this.labels.supervisionUnitLabel
-      : this.labels.supervisionDistrictLabel;
-    const locations = uniq(
-      this.supervisorsInfo?.map((s) =>
-        insightsUnitState ? s.supervisionUnit : s.supervisionDistrict,
-      ),
-    );
-    if (locations.length > 1)
-      throw new Error("Supervisors have different supervision locations");
-    const supervisionLocation = getLocationWithoutLabel(
-      locations[0],
-      locationLabel,
-    );
-    return {
-      locationLabel,
-      supervisionLocation,
     };
   }
 

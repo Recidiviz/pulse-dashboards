@@ -98,7 +98,7 @@ const SupervisorsList = observer(function SupervisorsList({
     undefined,
   );
 
-  const { supervisorsByDistrict, pageTitle } = presenter;
+  const { supervisorsByLocation, pageTitle } = presenter;
 
   // trackPageViewed30Seconds every 30 seconds after the initial page load
   if (
@@ -113,10 +113,10 @@ const SupervisorsList = observer(function SupervisorsList({
     setInitialPageLoad(new Date());
   }
 
-  const districtViz = supervisorsByDistrict.map(
-    ({ district, supervisors }, districtIndex) => (
-      <div key={district}>
-        <DistrictName>{district ?? "Unknown"}</DistrictName>
+  const districtViz = supervisorsByLocation.map(
+    ({ location, supervisors }, districtIndex) => (
+      <div key={location}>
+        <DistrictName>{location ?? "Unknown"}</DistrictName>
         <SupervisorLinksWrapper isMobile={isMobile}>
           {supervisors.map((supervisor, supervisorIndex) => (
             <SupervisorWrapper
