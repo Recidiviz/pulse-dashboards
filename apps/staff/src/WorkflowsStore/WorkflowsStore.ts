@@ -25,7 +25,6 @@ import {
   reaction,
   runInAction,
   set,
-  values,
   when,
 } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
@@ -79,6 +78,7 @@ import { Officer } from "./Officer";
 import { Opportunity, OpportunityNotification } from "./Opportunity";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { Resident } from "./Resident";
+import { SearchManager } from "./SearchManager";
 import {
   CaseloadSubscription,
   CollectionDocumentSubscription,
@@ -153,6 +153,10 @@ export class WorkflowsStore implements Hydratable {
    */
   selectedSearchIdsForImpersonation: string[] | undefined = undefined;
 
+  clientSearchManager: SearchManager;
+
+  residentSearchManager: SearchManager;
+
   // TODO(#7061): access tenant config values from the tenant store instead of the global variable
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
@@ -165,6 +169,8 @@ export class WorkflowsStore implements Hydratable {
       searchTitleOverride: false,
     });
 
+    this.clientSearchManager = new SearchManager(this, "CLIENT");
+    this.residentSearchManager = new SearchManager(this, "RESIDENT");
     this.opportunityConfigurationStore =
       this.rootStore.workflowsRootStore.opportunityConfigurationStore;
 
@@ -632,16 +638,10 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get caseloadPersons(): JusticeInvolvedPerson[] {
-    return values(this.justiceInvolvedPersons).filter((p) => {
-      const personTypeMatchesActiveSystem =
-        this.activeSystem === "ALL" ||
-        (this.activeSystem === "INCARCERATION" && p instanceof Resident) ||
-        (this.activeSystem === "SUPERVISION" && p instanceof Client);
-
-      return (
-        personTypeMatchesActiveSystem && p.matchesSearch(this.selectedSearchIds)
-      );
-    });
+    return [
+      ...this.residentSearchManager.matchingPersons,
+      ...this.clientSearchManager.matchingPersons,
+    ];
   }
 
   get caseloadPersonsSorted(): JusticeInvolvedPerson[] {

@@ -24,6 +24,7 @@ import {
 } from "mobx";
 
 import {
+  ClientRecord,
   OpportunityType,
   StaffRecord,
   WorkflowsJusticeInvolvedPersonRecord,
@@ -31,6 +32,7 @@ import {
 
 import { PersonUpdateRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
+import { Client } from "../Client";
 import { JusticeInvolvedPersonBase } from "../JusticeInvolvedPersonBase";
 import { OpportunityMapping } from "../Opportunity";
 import { OpportunityBase } from "../Opportunity/OpportunityBase";
@@ -44,11 +46,11 @@ vi.mock("../subscriptions");
 
 let rootStore: RootStore;
 let testPerson: JusticeInvolvedPersonBase;
-let record: WorkflowsJusticeInvolvedPersonRecord;
 let mockOpportunityTypes: IObservableValue<OpportunityType[]>;
+let record: ClientRecord;
 
 function createTestUnit() {
-  testPerson = new JusticeInvolvedPersonBase(record, rootStore);
+  testPerson = new Client(record, rootStore);
 }
 
 beforeEach(() => {
@@ -84,6 +86,7 @@ beforeEach(() => {
     pseudonymizedId: "anon1",
     recordId: "us_xx_PERSON1",
     stateCode: "US_XX",
+    personType: "CLIENT",
   };
 });
 
