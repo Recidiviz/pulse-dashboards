@@ -17,7 +17,7 @@
 
 import styled from "styled-components/macro";
 
-export const DispositionChartContainer = styled.div<{
+export const DispositionChartBySentenceTypeContainer = styled.div<{
   $justify: string;
 }>`
   display: flex;
@@ -64,4 +64,11 @@ export const DispositionChartCircleLabel = styled.div<{
   $color: string;
 }>`
   color: ${(props) => props.$color};
+`;
+
+export const DispositionChartBySentenceLengthContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 47px;
 `;
