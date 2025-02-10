@@ -18,7 +18,7 @@
 import { SupervisionTasksRecord } from "../../src/WorkflowsStore/Task/types";
 import { FirestoreFixture } from "./utils";
 
-const data: SupervisionTasksRecord[] = [
+const data: SupervisionTasksRecord<"US_ID">[] = [
   {
     stateCode: "US_ID",
     externalId: "004",
@@ -119,8 +119,9 @@ const data: SupervisionTasksRecord[] = [
   },
 ];
 
-export const usIdSupervisionTasksData: FirestoreFixture<SupervisionTasksRecord> =
-  {
-    data,
-    idFunc: (r) => r.externalId,
-  };
+export const usIdSupervisionTasksData: FirestoreFixture<
+  SupervisionTasksRecord<"US_ID">
+> = {
+  data,
+  idFunc: (r) => r.externalId,
+};

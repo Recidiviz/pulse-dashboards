@@ -46,9 +46,10 @@ function sortPeopleByNextTaskDueDate(
 // TODO: move these onto state-level configs
 const TASK_FILTER_CONFIG = {
   supervisionLevel: [
-    { value: "Low" },
+    { value: "Minimum" },
     { value: "Moderate" },
     { value: "High" },
+    { value: "Maximum" },
   ],
 } satisfies FilterConfig;
 

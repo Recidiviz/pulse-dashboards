@@ -17,6 +17,7 @@
 
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
+import UsTxHomeVisitTask from "../WorkflowsStore/Task/UsTxHomeVisitTask";
 
 const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   name: "Texas",
@@ -35,8 +36,17 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
       ],
     },
   },
+  workflowsTasksConfig: {
+    usTxHomeVisit: {
+      enabled: true,
+      snoozeForOptionsInDays: [7, 30, 90],
+    },
+  },
+  tasks: {
+    usTxHomeVisit: UsTxHomeVisitTask,
+  },
   navigation: {
-    workflows: ["home", "clients"],
+    workflows: ["home", "tasks", "clients"],
   },
 };
 

@@ -22,35 +22,38 @@ import { RootStore } from "../../RootStore";
 import { Expect, Extends } from "../../utils/typeUtils";
 import { JusticeInvolvedPerson } from "../types";
 
-export const SUPERVISION_TASKS_TYPES = ["usIdSupervisionTasks"] as const;
-
-export type SupervisionTasksType = (typeof SUPERVISION_TASKS_TYPES)[number];
-
 export type SupervisionTasksCaseType = "GENERAL" | "SEX_OFFENSE";
 
 // TODO: Remove optional lastHomeVisit and lastContacted once it's available in the data
-type HomeVisitDetails = {
+type UsIdHomeVisitDetails = {
   caseType: SupervisionTasksCaseType;
   supervisionLevel: string;
   currentAddress: string;
   lastHomeVisit?: string;
 };
 
-type AssessmentDetails = {
+type UsIdAssessmentDetails = {
   riskLevel: string | null;
   lastAssessedOn: string | null;
 };
 
-type ContactDetails = {
+type UsIdContactDetails = {
   caseType: SupervisionTasksCaseType;
   supervisionLevel: string;
   lastContacted?: string;
 };
 
-type EmploymentDetails = {
+type UsIdEmploymentDetails = {
   caseType: SupervisionTasksCaseType;
   supervisionLevel: string;
   lastContacted?: string;
+};
+
+type UsTxHomeVisitDetails = {
+  contactCount: number;
+  lastContactDate: string | null;
+  overdueFlag: boolean;
+  typeOfContact: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -67,22 +70,26 @@ export type SupervisionNeedType = (typeof SUPERVISION_NEED_TYPES)[number];
 
 export const SUPERVISION_TASK_TYPES = [
   "homeVisit",
+  "usTxHomeVisit",
   "assessment",
   "contact",
   "employment",
 ] as const;
+
 export type SupervisionTaskType = (typeof SUPERVISION_TASK_TYPES)[number];
 export type SupervisionDetails =
-  | HomeVisitDetails
-  | AssessmentDetails
-  | ContactDetails
-  | EmploymentDetails;
+  | UsIdHomeVisitDetails
+  | UsIdAssessmentDetails
+  | UsIdContactDetails
+  | UsIdEmploymentDetails
+  | UsTxHomeVisitDetails;
 
 export type SupervisionDetailsForTask = {
-  homeVisit: HomeVisitDetails;
-  assessment: AssessmentDetails;
-  contact: ContactDetails;
-  employment: EmploymentDetails;
+  homeVisit: UsIdHomeVisitDetails;
+  usTxHomeVisit: UsTxHomeVisitDetails;
+  assessment: UsIdAssessmentDetails;
+  contact: UsIdContactDetails;
+  employment: UsIdEmploymentDetails;
 };
 
 export type SupervisionTask<
@@ -114,24 +121,32 @@ export type SupervisionNeed = {
   type: SupervisionNeedType;
 };
 
-export interface SupervisionTasksRecord {
+type TaskStateCodes = "US_ID" | "US_TX";
+
+// TODO: Derive these from tenant configs
+type TasksForState = {
+  US_ID: "homeVisit" | "assessment" | "contact" | "employment";
+  US_TX: "usTxHomeVisit";
+};
+
+export interface SupervisionTasksRecord<T extends TaskStateCodes> {
   externalId: string;
   officerId: string;
-  stateCode: string;
-  tasks: SupervisionTaskRecord<SupervisionTaskType>[];
+  stateCode: T;
+  tasks: SupervisionTaskRecord<TasksForState[T]>[];
   needs?: SupervisionNeed[];
 }
 
 /**
- * A SupervisionTask is associated with a single client and it has a list of tasks.
+ * A SupervisionTask is associated with a single client and has a list of tasks.
  */
 export interface SupervisionTaskInterface extends Hydratable {
-  readonly tasks: SupervisionTask<SupervisionTaskType>[];
+  readonly tasks: SupervisionTask[];
   readonly needs: SupervisionNeed[];
-  overdueTasks: SupervisionTask<SupervisionTaskType>[];
-  upcomingTasks: SupervisionTask<SupervisionTaskType>[];
-  orderedTasks: SupervisionTask<SupervisionTaskType>[];
-  readyOrderedTasks: SupervisionTask<SupervisionTaskType>[];
+  overdueTasks: SupervisionTask[];
+  upcomingTasks: SupervisionTask[];
+  orderedTasks: SupervisionTask[];
+  readyOrderedTasks: SupervisionTask[];
   snoozeTasksConfig?: SnoozeTaskConfig;
   trackPreviewed: () => void;
 }
