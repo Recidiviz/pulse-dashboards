@@ -96,6 +96,38 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
    run: yarn nx affected -t <target-name>
 ```
 
+### Linting
+We use ESLint to lint our codebase. There are many ESLint plugins available to lint files other than `.js` files and can often be found with the prefix `eslint-plugin-<file_type>`, e.g. `eslint-plugin-yml` ([docs](https://www.npmjs.com/package/eslint-plugin-yml)). It might be helpful to add linting to both pre-commit and CI checks to help 
+with the development flow. 
+
+#### To add a new plugin:
+1. Install the plugin with the command below. The `-D` flag is used to install this in the dev dependencies section of the top-level `package.json`
+   ```
+   yarn add -D <plugin-name>
+   ```
+2. Add the plugin name without the `eslint-plugin` prefix, e.g. `yml`, to the list of `plugins` in the top-level `.eslintrc.json`
+3. To configure the rules from the plugin, follow the package's usage instructions. This often means adding a new object to the `overrides` list in the `.eslintrc.json` file.
+
+   ```
+   {
+      "files": ["*.yaml", "*.yml"],
+      "extends": ["plugin:yml/standard"]
+   }
+   ```
+   - If you want to lint this type of file across the entire codebase, add this to the top-level `.eslintrc.json`. However, if you want to lint files from a certain project, you can add this override to the `.eslintrc.json` for the given project. See `/libs/atmos/.eslintrc.json` to see the 
+   ESLint config for linting YAML only in this project
+
+We use Husky to run our pre-commit checks, which are configured at `.husky/_/pre-commit`. The pre-commit check we have is `lint-staged` and is configured at `lint-staged.config.js`. 
+#### To ensure the project and file type is linted in pre-commit checks, you must:
+1. Make sure the project has a `lint-files` target whose command is `"eslint --max-warnings 0"`. If you used the library generator below, this will automatically be included in the `project.json`. 
+2. Add the new file extension to the module exports with the `lintCommand` as the value. 
+   - The affected/staged files are passed in automatically when linting
+
+#### Then to make sure the files are linted in the `lint_all` CI check:
+1. Add a `lint` target to the relevant `project.json`. Unlike the `lint-files` target above, this is not automatically included in the `project.json` because projects rely on the [default inferred task](https://nx.dev/nx-api/eslint/documents/overview#how-nxeslint-infers-tasks) at `nx.json`.
+   - In most cases, ESLint should pick up file extensions with rules in `overrides`, so the default `eslint .` will work. However, if you want to specify a specific directory to look in, you can use a glob pattern to specify the path ([docs](https://eslint.org/docs/latest/use/command-line-interface#--ext))
+2. If you are making changes for a new project, ensure that the CI check includes the project once you've added the `project.json` to the PR. 
+
 ### Creating new libraries
 
 #### Why make a library?
