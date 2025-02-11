@@ -28,10 +28,9 @@ export const offenseRouter = router({
       where: {
         // TODO: Remove once we have insights for all offenses?
         // Only return offenses that have insights
-        // NTS: undo commenting out of L32-34
-        // insightOffenses: {
-        //   some: {},
-        // },
+        insightOffenses: {
+          some: {},
+        },
         NOT: {
           name: {
             contains: PLACEHOLDER_SIGNIFIER,
