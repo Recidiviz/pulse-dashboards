@@ -1,8 +1,8 @@
-base_path: ./
+base_path: "./"
 
 components:
   terraform:
-    base_path: components/terraform
+    base_path: "components/terraform"
     # If desired, approval of plans prior to apply can be skipped automatically
     apply_auto_approve: false
     # When running `atmos deploy` initialize the Terraform backend
@@ -14,7 +14,7 @@ components:
 
 # Configuration on where to find stacks
 stacks:
-  base_path: stacks
+  base_path: "stacks"
   # Include all .yaml files underneath the stacks folder
   included_paths:
     - "**/*.yaml"
@@ -29,5 +29,5 @@ templates:
     gomplate:
       enabled: true
 logs:
-  file: /dev/stderr
+  file: "/dev/stderr"
   level: Info

@@ -69,14 +69,7 @@ variable "workflow_trigger" {
   })
 
   description = "Trigger for the Workflow . Cloud Scheduler OR Event Arc"
-  validation {
-    condition = !(
-      var.workflow_trigger.cloud_scheduler == null
-      &&
-      var.workflow_trigger.event_arc == null
-    )
-    error_message = "Either cloud_scheduler OR event_arc information is supported."
-  }
+  default = {}
 }
 
 variable "service_account_email" {
@@ -89,4 +82,10 @@ variable "service_account_create" {
   description = "Auto-create service account."
   type        = bool
   default     = false
+}
+
+variable "env_vars" {
+  type = map(string)
+  description = "Environment variables (cleartext)"
+  default     = {}
 }
