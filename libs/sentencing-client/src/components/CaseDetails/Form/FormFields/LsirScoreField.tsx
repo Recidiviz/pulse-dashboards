@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import { ChangeEvent, useEffect } from "react";
 
-import { GEO_CONFIG } from "../../../../geoConfigs/geoConfigs";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import {
@@ -34,9 +33,9 @@ import { useFormField } from "../useFormFields";
 import { isValidLsirScore } from "../utils";
 
 function LsirScoreField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
+  const { caseStore, geoConfig } = useStore();
   const caseAttributes = caseStore.caseAttributes;
-  const omsSystem = GEO_CONFIG[caseStore.stateCode]?.omsSystem;
+  const omsSystem = geoConfig.omsSystem;
   const insight = caseStore.insight;
   const prevLsirScore =
     caseAttributes?.lsirScore === null ? "" : String(caseAttributes?.lsirScore);

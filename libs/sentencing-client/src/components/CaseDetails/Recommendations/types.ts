@@ -17,7 +17,7 @@
 
 import { Case, CaseInsight, Client } from "../../../api";
 import { CreateOrUpdateRecommendation } from "../../../datastores/types";
-import { StateCode } from "../../../geoConfigs/types";
+import { GeoConfig } from "../../../geoConfigs/types";
 import {
   MutableCaseAttributes,
   OpportunitiesIdentifier,
@@ -30,9 +30,9 @@ export type RecommendationsProps = {
   lastName?: string;
   fullName?: string;
   age?: number;
+  geoConfig: GeoConfig;
   externalId?: string;
   gender?: Client["gender"];
-  stateCode: Case["stateCode"];
   selectedRecommendation?: SelectedRecommendation;
   lastSavedRecommendation?: SelectedRecommendation;
   recommendedOpportunities?: OpportunitiesIdentifier;
@@ -94,7 +94,7 @@ export type GenerateRecommendationProps = {
   gender?: Client["gender"];
   sentenceLengthStart?: number;
   sentenceLengthEnd?: number;
-  stateCode: StateCode;
+  geoConfig: GeoConfig;
 };
 
 export type SummaryProps = {

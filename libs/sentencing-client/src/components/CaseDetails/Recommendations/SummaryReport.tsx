@@ -16,13 +16,14 @@
 // =============================================================================
 
 import { debounce } from "lodash";
+import { observer } from "mobx-react-lite";
 import { ChangeEvent, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import generatePDF from "react-to-pdf";
 
 import { Case, CaseInsight, Client } from "../../../api";
-import { StateCode } from "../../../geoConfigs/types";
+import { GeoConfig } from "../../../geoConfigs/types";
 import { PSI_PATHS } from "../../../utils/routing";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import CheckWhiteIcon from "../../assets/check-white-icon.svg?react";
@@ -42,7 +43,7 @@ type SummaryReportProps = {
   firstName?: string;
   lastName?: string;
   fullName?: string;
-  stateCode: StateCode;
+  geoConfig: GeoConfig;
   age?: number;
   insight?: CaseInsight;
   externalId?: string;
@@ -67,7 +68,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   firstName,
   lastName,
   fullName,
-  stateCode,
+  geoConfig,
   age,
   insight,
   externalId,
@@ -101,7 +102,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
         protectiveFactors,
         opportunityDescriptions,
         gender,
-        stateCode,
+        geoConfig,
       });
 
   const [hasDownloadedReport, setHasDownloadedReport] = useState(false);
@@ -138,7 +139,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
       protectiveFactors,
       opportunityDescriptions,
       gender,
-      stateCode,
+      geoConfig,
     });
     setSummaryValue(regeneratedSummary ?? "");
     /**
@@ -304,3 +305,5 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     </Styled.RecommendationSummaryReport>
   );
 };
+
+export default observer(SummaryReport);

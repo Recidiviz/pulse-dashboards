@@ -15,20 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GEO_CONFIG } from "./geoConfigs";
-import { StateCode } from "./types";
+import { AttributeKey } from "../components/Dashboard/types";
 
 /**
  * Helper function for filtering out attributes based on state-specific attribute key exclusions
  * e.g. in ND filtering out the Report Type column from the Dashboard and field in the case attributes header
  */
 export const filterExcludedAttributes =
-  (stateCode?: StateCode, keyProperty = "key") =>
+  (excludedAttributeKeys?: AttributeKey[], keyProperty = "key") =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   <T extends { [key: string]: any }>(item: T): boolean => {
-    if (!stateCode) return true;
+    if (!excludedAttributeKeys) return true;
 
-    const excludedKeys = GEO_CONFIG[stateCode]?.excludedAttributeKeys || [];
+    const excludedKeys = excludedAttributeKeys || [];
 
     return !excludedKeys.includes(item[keyProperty]);
   };

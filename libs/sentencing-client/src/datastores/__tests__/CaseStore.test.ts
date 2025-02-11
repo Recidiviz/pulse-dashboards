@@ -21,7 +21,6 @@ import {
   CaseDetailsFixture,
   StaffInfoFixture,
 } from "../../api/offlineFixtures";
-import { GEO_CONFIG } from "../../geoConfigs/geoConfigs";
 import { createMockPSIStore } from "../../utils/test";
 
 const psiStore = createMockPSIStore();
@@ -73,28 +72,27 @@ test("caseAttributes filters based on state-specific exclusions list", async () 
   const stateCode1 = "US_ND";
   const stateCode2 = "US_ID";
 
-  if (psiStore.staffStore.staffInfo) {
-    psiStore.staffStore.staffInfo.stateCode = stateCode1;
-  }
+  const psiStore = createMockPSIStore();
+  const { caseStore } = psiStore;
+
+  psiStore.rootStore.userStore.stateCode = stateCode1;
 
   // Case Attributes should not have any properties in the US_ND exclusion list
   expect(caseStore.stateCode).toBe(stateCode1);
   expect(
-    GEO_CONFIG[stateCode1]?.excludedAttributeKeys?.some((key) =>
+    psiStore.geoConfig.excludedAttributeKeys.some((key) =>
       Object.keys(caseStore.caseAttributes).includes(key),
     ),
   ).toBe(false);
 
-  if (psiStore.staffStore.staffInfo) {
-    psiStore.staffStore.staffInfo.stateCode = stateCode2;
-  }
+  psiStore.rootStore.userStore.stateCode = stateCode2;
 
   await initializeCaseStore();
 
   // Case Attributes should not have any properties in the US_ID exclusion list
   expect(caseStore.stateCode).toBe(stateCode2);
   expect(
-    GEO_CONFIG[stateCode2]?.excludedAttributeKeys?.some((key) =>
+    psiStore.geoConfig.excludedAttributeKeys.some((key) =>
       Object.keys(caseStore.caseAttributes).includes(key),
     ),
   ).toBe(false);

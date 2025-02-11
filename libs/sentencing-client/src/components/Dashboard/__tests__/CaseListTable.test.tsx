@@ -53,7 +53,7 @@ test("shows status filter with default filters checked", async () => {
   const screen = render(
     <MemoryRouter>
       <CaseListTable
-        stateCode={"US_ID"}
+        excludedAttributeKeys={[]}
         caseTableData={[]}
         staffPseudoId=""
         analytics={analytics}
@@ -99,7 +99,7 @@ test("displays no cases message when none are provided", async () => {
   const screen = render(
     <MemoryRouter>
       <CaseListTable
-        stateCode={"US_ID"}
+        excludedAttributeKeys={[]}
         caseTableData={[]}
         staffPseudoId=""
         analytics={analytics}
@@ -123,7 +123,7 @@ test("does not show archived cases", async () => {
   const screen = render(
     <MemoryRouter>
       <CaseListTable
-        stateCode={"US_ID"}
+        excludedAttributeKeys={[]}
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
         analytics={analytics}
@@ -158,7 +158,7 @@ test("shows archived case when filter is checked", async () => {
   const screen = render(
     <MemoryRouter>
       <CaseListTable
-        stateCode={"US_ID"}
+        excludedAttributeKeys={[]}
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
         analytics={analytics}
@@ -214,7 +214,7 @@ test("show/hide cases when 'Not yet started' filter is checked/unchecked", async
   const screen = render(
     <MemoryRouter>
       <CaseListTable
-        stateCode={"US_ID"}
+        excludedAttributeKeys={[]}
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
         analytics={analytics}
@@ -259,7 +259,7 @@ test("show/hide cases when 'In Progress' filter is checked/unchecked", async () 
   const screen = render(
     <MemoryRouter>
       <CaseListTable
-        stateCode={"US_ID"}
+        excludedAttributeKeys={[]}
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
         analytics={analytics}
@@ -304,7 +304,7 @@ test("show/hide cases when 'Complete' filter is checked/unchecked", async () => 
   const screen = render(
     <MemoryRouter>
       <CaseListTable
-        stateCode={"US_ID"}
+        excludedAttributeKeys={[]}
         caseTableData={data}
         staffPseudoId={psiStore.staffPseudoId!}
         analytics={analytics}

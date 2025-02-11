@@ -18,7 +18,6 @@
 import { observer } from "mobx-react-lite";
 import React, { Fragment, useState } from "react";
 
-import { GEO_CONFIG } from "../../../../src/geoConfigs/geoConfigs";
 import { pluralizeDuplicates } from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
 import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
@@ -33,8 +32,8 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   firstName,
   lastName,
   fullName,
+  geoConfig,
   age,
-  stateCode,
   selectedRecommendation,
   lastSavedRecommendation,
   recommendedOpportunities,
@@ -65,14 +64,11 @@ const Recommendations: React.FC<RecommendationsProps> = ({
 
   const hideSummaryReport = () => setShowSummaryReport(false);
 
-  const optionsBase =
-    GEO_CONFIG[stateCode]?.recommendation.baseOptionsTemplate ?? [];
+  const optionsBase = geoConfig.recommendation.baseOptionsTemplate ?? [];
   const recommendationOptionType =
-    GEO_CONFIG[stateCode]?.recommendation.type ??
-    RecommendationOptionType.SentenceType;
+    geoConfig.recommendation.type ?? RecommendationOptionType.SentenceType;
   const matchingRecommendationOptionsForOpportunities =
-    GEO_CONFIG[stateCode]?.recommendation
-      .matchingRecommendationOptionsForOpportunities;
+    geoConfig.recommendation.matchingRecommendationOptionsForOpportunities;
 
   const recommendedOpps = recommendedOpportunities?.map((opp) =>
     createOpportunityProviderDisplayName(opp.opportunityName, opp.providerName),
@@ -93,7 +89,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
           fullName={fullName}
           firstName={firstName}
           lastName={lastName}
-          stateCode={stateCode}
+          geoConfig={geoConfig}
           age={age}
           insight={insight}
           externalId={externalId}

@@ -31,8 +31,7 @@ import toast from "react-hot-toast";
 import { CaseStore } from "../../../../src/datastores/CaseStore";
 import { Opportunities as OpportunitiesType } from "../../../api";
 import { OpportunityViewOrigin } from "../../../datastores/types";
-import { GEO_CONFIG } from "../../../geoConfigs/geoConfigs";
-import { StateCode } from "../../../geoConfigs/types";
+import { GeoConfig } from "../../../geoConfigs/types";
 import { formatListWithAnd, formatPossessiveName } from "../../../utils/utils";
 import CheckIcon from "../../assets/check-icon.svg?react";
 import ResetSearchIcon from "../../assets/close-icon.svg?react";
@@ -84,7 +83,7 @@ type OpportunitiesProps = {
   communityOpportunities: OpportunitiesType;
   recommendedOpportunities: OpportunitiesIdentifier;
   caseAttributes: CaseStore["caseAttributes"];
-  stateCode: StateCode;
+  geoConfig: GeoConfig;
   updateRecommendedOpportunities: (
     opportunity: OpportunitiesIdentifier[number],
   ) => void;
@@ -155,7 +154,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   communityOpportunities,
   recommendedOpportunities,
   caseAttributes,
-  stateCode,
+  geoConfig,
   analytics,
   updateRecommendedOpportunities,
 }) => {
@@ -212,8 +211,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const isRecommendationUnselected = !selectedRecommendation;
 
   const matchingRecommendationOptionsForOpportunities =
-    GEO_CONFIG[stateCode]?.recommendation
-      .matchingRecommendationOptionsForOpportunities;
+    geoConfig.recommendation.matchingRecommendationOptionsForOpportunities;
   const formattedRecommendationNames = formatListWithAnd(
     matchingRecommendationOptionsForOpportunities,
     "",

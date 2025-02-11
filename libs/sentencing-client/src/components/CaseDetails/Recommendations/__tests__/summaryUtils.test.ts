@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Case } from "../../../../api";
+import { createMockPSIStore } from "../../../../utils/test";
 import { pluralizeDuplicates } from "../../../../utils/utils";
 import { OTHER_OPTION } from "../../Form/constants";
 import { RecommendationType } from "../../types";
@@ -208,12 +209,15 @@ describe("formatNeedsList", () => {
  * Based on the following template ([link to template](https://docs.google.com/document/d/1-cSzLhJoH_pnSn599ikDTj9blx7UYHWauYLUItSsPy0))
  */
 describe("generateRecommendationSummary for US_ID", () => {
+  const psiStore = createMockPSIStore();
+  const geoConfig = psiStore.geoConfig;
+
   // No recommendation
   test("generates summary for None recommendation type", () => {
     const recommendationType = RecommendationType.None;
     const summary = generateTestFormattedRecommendationSummary({
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [],
@@ -231,7 +235,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Term;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [],
@@ -293,7 +297,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Term;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: allNeeds,
@@ -355,7 +359,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Term;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: allNeeds,
@@ -417,7 +421,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Term;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [],
@@ -479,7 +483,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Term;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [],
@@ -542,7 +546,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Rider;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [],
@@ -604,7 +608,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Rider;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: allNeeds,
@@ -666,7 +670,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Rider;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [],
@@ -729,7 +733,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [
@@ -796,7 +800,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [
@@ -863,7 +867,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [
@@ -930,7 +934,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: [],
@@ -992,7 +996,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: [],
@@ -1054,7 +1058,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: allNeeds,
@@ -1116,7 +1120,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: allNeeds,
@@ -1178,7 +1182,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: [],
@@ -1240,7 +1244,7 @@ describe("generateRecommendationSummary for US_ID", () => {
     const recommendationType = RecommendationType.Probation;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ID",
+      geoConfig,
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: [],
@@ -1304,12 +1308,15 @@ describe("generateRecommendationSummary for US_ID", () => {
  */
 
 describe("generateRecommendationSummary for US_ND", () => {
+  const psiStore = createMockPSIStore({ stateCodeOverride: "US_ND" });
+  const geoConfig = psiStore.geoConfig;
+
   // No recommendation
   test("generates summary for None recommendation type", () => {
     const recommendationType = RecommendationType.None;
     const summary = generateTestFormattedRecommendationSummary({
       recommendation: recommendationType,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [],
@@ -1327,7 +1334,7 @@ describe("generateRecommendationSummary for US_ND", () => {
     const recommendationType = OTHER_OPTION;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [],
@@ -1390,7 +1397,7 @@ describe("generateRecommendationSummary for US_ND", () => {
     const recommendationType = OTHER_OPTION;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: allNeeds,
@@ -1453,7 +1460,7 @@ describe("generateRecommendationSummary for US_ND", () => {
     const recommendationType = OTHER_OPTION;
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: allNeeds,
@@ -1518,7 +1525,7 @@ describe("generateRecommendationSummary for US_ND", () => {
       recommendation: recommendationType,
       sentenceLengthStart: 21,
       sentenceLengthEnd: -1,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [],
@@ -1582,7 +1589,7 @@ describe("generateRecommendationSummary for US_ND", () => {
       recommendation: recommendationType,
       sentenceLengthStart: 0,
       sentenceLengthEnd: 1,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [
@@ -1658,7 +1665,7 @@ describe("generateRecommendationSummary for US_ND", () => {
       recommendation: recommendationType,
       sentenceLengthStart: 0,
       sentenceLengthEnd: 1,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jane Doe Williams",
       lastName: "Williams",
       needs: [
@@ -1734,7 +1741,7 @@ describe("generateRecommendationSummary for US_ND", () => {
       recommendation: recommendationType,
       sentenceLengthStart: 11,
       sentenceLengthEnd: 20,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: [],
@@ -1798,7 +1805,7 @@ describe("generateRecommendationSummary for US_ND", () => {
       recommendation: recommendationType,
       sentenceLengthStart: 11,
       sentenceLengthEnd: 20,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: allNeeds,
@@ -1862,7 +1869,7 @@ describe("generateRecommendationSummary for US_ND", () => {
       recommendation: recommendationType,
       sentenceLengthStart: 11,
       sentenceLengthEnd: 20,
-      stateCode: "US_ND",
+      geoConfig,
       fullName: "Jo Robertson",
       lastName: "Robertson",
       needs: [],

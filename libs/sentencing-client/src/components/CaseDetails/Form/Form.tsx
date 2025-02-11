@@ -28,18 +28,17 @@ function Form({
 }: {
   formFields: FormFieldWithNestedFields[];
 }): JSX.Element {
-  const { caseStore, activeFeatureVariants } = useStore();
-  const stateCode = caseStore.stateCode;
+  const { activeFeatureVariants, geoConfig } = useStore();
   const filteredFormFields = formFields
     .map((field) => {
       if (field.nestedFields) {
         field.nestedFields = field.nestedFields.filter(
-          filterExcludedAttributes(stateCode),
+          filterExcludedAttributes(geoConfig.excludedAttributeKeys),
         );
       }
       return field;
     })
-    .filter(filterExcludedAttributes(stateCode))
+    .filter(filterExcludedAttributes(geoConfig.excludedAttributeKeys))
     .filter((field) => {
       if (
         (!activeFeatureVariants["protectiveFactors"] &&

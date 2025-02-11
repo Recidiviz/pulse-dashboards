@@ -16,12 +16,15 @@
 // =============================================================================
 
 import { GetTokenSilentlyOptions } from "@auth0/auth0-spa-js";
+import { captureException } from "@sentry/react";
 import { makeAutoObservable } from "mobx";
 
 import { isOfflineMode } from "~client-env-utils";
 
 import { APIClient } from "../api/APIClient";
 import { OfflineAPIClient } from "../api/OfflineAPIClient";
+import { GEO_CONFIG } from "../geoConfigs/geoConfigs";
+import { GeoConfig, StateCode } from "../geoConfigs/types";
 import { CaseStore } from "./CaseStore";
 import { StaffStore } from "./StaffStore";
 import {
@@ -36,15 +39,17 @@ import {
   RecommendationStatusFilterMetadata,
   RecommendedDispositionTrackingMetadata,
   SortOrderTrackingMetadata,
+  UserStateCode,
 } from "./types";
 
 export interface RootStore {
-  currentTenantId?: string;
+  currentTenantId?: StateCode;
   userStore: {
     userPseudoId?: string;
     isImpersonating: boolean;
     isRecidivizUser: boolean;
     activeFeatureVariants: Partial<Record<FeatureVariant, FeatureVariantValue>>;
+    stateCode: UserStateCode;
     getToken?: (
       options?: GetTokenSilentlyOptions,
     ) => Promise<string> | undefined;
@@ -116,6 +121,39 @@ export class PSIStore {
 
   get staffPseudoId(): string | undefined {
     return this.rootStore.userStore.userPseudoId;
+  }
+
+  get stateCode(): UserStateCode {
+    if (this.rootStore.userStore.isRecidivizUser) {
+      const currentTenantId = this.rootStore.currentTenantId;
+      if (!currentTenantId) {
+        throw new Error("No state code found");
+      }
+      return currentTenantId;
+    }
+
+    return this.rootStore.userStore.stateCode;
+  }
+
+  get geoConfig(): GeoConfig {
+    const config = GEO_CONFIG[this.stateCode];
+
+    if (!config) {
+      const message = `No state-specific config found for user's state code: ${this.stateCode}`;
+      const error = new Error(message);
+      error.name = "GeoConfigError";
+
+      captureException(error, {
+        extra: {
+          message,
+          staffId: this.staffPseudoId,
+        },
+      });
+
+      throw error;
+    }
+
+    return config;
   }
 
   get activeFeatureVariants(): Partial<

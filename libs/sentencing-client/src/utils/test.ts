@@ -27,10 +27,14 @@ import {
   RecommendedDispositionTrackingMetadata,
   SortOrderTrackingMetadata,
 } from "../datastores/types";
+import { StateCode } from "../geoConfigs/types";
 
-export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
-  const mockRootStore = {
-    currentTenantId: "US_ID",
+export const createMockRootStore = (
+  userPseudoIdOverride?: string | null,
+  stateCodeOverride: StateCode = "US_ID",
+): RootStore => {
+  const mockRootStore: RootStore = {
+    currentTenantId: stateCodeOverride,
     userStore: {
       userPseudoId:
         userPseudoIdOverride === null
@@ -40,11 +44,11 @@ export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
       isRecidivizUser: false,
       isImpersonating: false,
       activeFeatureVariants: {},
+      stateCode: stateCodeOverride,
     },
     analyticsStore: {
       rootStore: {} as RootStore,
       sessionId: "session-test",
-      disableAnalytics: true,
       identify: (userId: string) => null,
       track: (eventName: string, metadata?: Record<string, unknown>) => null,
       page: (pagePath: string) => null,
@@ -92,12 +96,16 @@ export const createMockRootStore = (userPseudoIdOverride?: string | null) => {
 export const createMockPSIStore = (options?: {
   userPseudoIdOverride?: string | null;
   hideApiUrl?: boolean;
+  stateCodeOverride?: StateCode;
 }) => {
   import.meta.env["VITE_SENTENCING_API_URL"] = options?.hideApiUrl
     ? undefined
     : "mockUrl";
 
-  const mockRootStore = createMockRootStore(options?.userPseudoIdOverride);
+  const mockRootStore = createMockRootStore(
+    options?.userPseudoIdOverride,
+    options?.stateCodeOverride,
+  );
   const psiStore = new PSIStore(mockRootStore);
   return psiStore;
 };
