@@ -289,7 +289,8 @@
     "cleanup-preview-resources": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "gcloud run services delete ss-preview-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud run jobs delete ss-migrate-preview-db-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud sql instances delete s-db-preview-$VERSION --project recidiviz-dashboard-staging -q"
+        "command": "../../tools/cleanup_sentencing_preview_resources.sh",
+        "cwd": "{projectRoot}"
       }
     }
   }
