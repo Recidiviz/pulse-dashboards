@@ -72,3 +72,18 @@ module "handle-jii-texting-gcs-upload-wf" {
   }
   workflow_source = file("${path.module}/workflows/handle-jii-texting-gcs-upload.workflows.yaml")
 }
+
+# Configure a Google Workflow that executes the main processing of JII texts,
+# which will be executed by the handle-jii-texting-gcs-upload-wf
+module "process-jii-to-text-wf" {
+  project_id            = var.project_id
+  region                = var.location
+  source                = "../../vendor/google-workflows-workflow"
+  service_account_email = google_service_account.workflows.email
+  workflow_name         = "process-jii-to-text"
+
+  workflow_source = file("${path.module}/workflows/process-jii-to-text.workflows.yaml")
+  env_vars = {
+    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_url
+  }
+}

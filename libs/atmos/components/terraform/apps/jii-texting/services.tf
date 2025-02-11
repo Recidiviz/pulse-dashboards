@@ -62,3 +62,10 @@ resource "google_service_account" "workflows" {
   account_id   = "jii-texting-workflows-sa"
   display_name = "Google Workflows Service Account"
 }
+
+# Grant Cloud Run invoker role to Google Workflows service account
+resource "google_project_iam_member" "runinvoker" {
+  project = var.project_id
+  role    = "roles/run.invoker"
+  member  = google_service_account.workflows.member
+}
