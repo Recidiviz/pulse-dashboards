@@ -16,8 +16,6 @@
 // =============================================================================
 
 import { CaseInsight } from "../../../../../api";
-import { GEO_CONFIG } from "../../../../../geoConfigs/geoConfigs";
-import { StateCode } from "../../../../../geoConfigs/types";
 import { printFormattedRecordString } from "../../../../../utils/utils";
 import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
 import { RecommendationOptionType } from "../../../Recommendations/constants";
@@ -36,7 +34,7 @@ interface DispositionChartProps {
   justifyContent?: "center" | "flex-start";
   scale?: number;
   hideInfoTooltip?: boolean;
-  stateCode: StateCode;
+  recommendationType: RecommendationOptionType;
 }
 
 export function DispositionChart({
@@ -45,7 +43,7 @@ export function DispositionChart({
   justifyContent = "center",
   scale,
   hideInfoTooltip,
-  stateCode,
+  recommendationType,
 }: DispositionChartProps) {
   const { dispositionData, dispositionNumRecords } = insight ?? {};
 
@@ -59,19 +57,13 @@ export function DispositionChart({
     (x) => x,
   );
 
-  const recommendationOptionType =
-    GEO_CONFIG[stateCode]?.recommendation.type ??
-    RecommendationOptionType.SentenceType;
-
   const dispositionChartSubtitle =
     insight && getDispositionChartSubtitle(insight);
 
   let chart;
   if (!orderedDataPoints.length) {
     chart = <NoDataMessage />;
-  } else if (
-    recommendationOptionType === RecommendationOptionType.SentenceType
-  ) {
+  } else if (recommendationType === RecommendationOptionType.SentenceType) {
     chart = (
       <Styled.DispositionChartBySentenceTypeContainer $justify={justifyContent}>
         <DispositionChartBySentenceType

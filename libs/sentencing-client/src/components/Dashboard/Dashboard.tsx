@@ -36,7 +36,7 @@ const ManagedComponent = observer(function Dashboard({
     staffInfo,
     staffPseudoId,
     caseTableData,
-    stateCode,
+    geoConfig,
     setIsFirstLogin,
     trackDashboardPageViewed,
     trackIndividualCaseClicked,
@@ -90,7 +90,7 @@ const ManagedComponent = observer(function Dashboard({
         <CaseListTable
           caseTableData={caseTableData}
           staffPseudoId={staffPseudoId}
-          stateCode={stateCode}
+          excludedAttributeKeys={geoConfig.excludedAttributeKeys}
           analytics={{
             trackIndividualCaseClicked,
             trackRecommendationStatusFilterChanged,

@@ -58,7 +58,7 @@ export class CaseStore {
   }
 
   get stateCode() {
-    return this.psiStore.staffStore.stateCode;
+    return this.psiStore.stateCode;
   }
 
   get offensesByName() {
@@ -73,13 +73,16 @@ export class CaseStore {
         toLower(currentCase.client?.fullName),
       );
     }
+    const config = this.psiStore.geoConfig;
 
     const caseAttributes: CaseAttributes = {
       ...currentCase,
       clientGender: currentCase.client?.gender,
     };
 
-    const exclusionFilter = filterExcludedAttributes(this.stateCode);
+    const exclusionFilter = filterExcludedAttributes(
+      config.excludedAttributeKeys,
+    );
 
     const filteredCaseAttributes = Object.entries(caseAttributes)
       .filter(([key]) => exclusionFilter({ key }))

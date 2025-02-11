@@ -18,7 +18,6 @@
 import { keyBy } from "lodash";
 
 import { Case } from "../../../api";
-import { GEO_CONFIG } from "../../../geoConfigs/geoConfigs";
 import { formatListWithAnd } from "../../../utils/utils";
 import { NeedsToBeAddressed, ProtectiveFactors } from "../constants";
 import { OTHER_OPTION } from "../Form/constants";
@@ -70,7 +69,7 @@ export const generateRecommendationSummary = ({
   opportunityDescriptions = [],
   protectiveFactors = [],
   gender,
-  stateCode,
+  geoConfig,
 }: GenerateRecommendationProps): string | void => {
   if (!recommendation) return;
 
@@ -99,7 +98,7 @@ export const generateRecommendationSummary = ({
   const hasNeedsAndOpportunities = hasNeeds && hasOpportunities;
 
   const sentenceInfoByLabel = keyBy(
-    GEO_CONFIG[stateCode]?.recommendation.baseOptionsTemplate,
+    geoConfig.recommendation.baseOptionsTemplate,
     "label",
   );
   const sentenceLengthStart =
@@ -126,8 +125,7 @@ export const generateRecommendationSummary = ({
     hasSingleProtectiveFactor,
   };
 
-  const generateSummary =
-    GEO_CONFIG[stateCode]?.recommendation.summaryGenerator;
+  const generateSummary = geoConfig.recommendation.summaryGenerator;
 
   if (generateSummary) return generateSummary(props);
 };

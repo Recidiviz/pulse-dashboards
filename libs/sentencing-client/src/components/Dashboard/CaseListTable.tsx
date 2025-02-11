@@ -28,7 +28,6 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Staff } from "../../api";
 import { filterExcludedAttributes } from "../../geoConfigs/utils";
 import { psiUrl } from "../../utils/routing";
 import { sortFullNameByLastNameDescending } from "../../utils/sorting";
@@ -47,6 +46,7 @@ import {
 import * as Styled from "./Dashboard.styles";
 import { useDetectOutsideClick } from "./hooks";
 import {
+  AttributeKey,
   CaseListTableCase,
   CaseListTableCases,
   CaseStatus,
@@ -58,7 +58,7 @@ import { isBeforeDueDate } from "./utils";
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;
   staffPseudoId: string;
-  stateCode: Staff["stateCode"];
+  excludedAttributeKeys: AttributeKey[];
   analytics: {
     trackIndividualCaseClicked: (
       clientName: string,
@@ -223,8 +223,8 @@ const LOCAL_STORAGE_KEY = "dashboard-sort-order";
 export const CaseListTable = ({
   caseTableData,
   staffPseudoId,
-  stateCode,
   analytics,
+  excludedAttributeKeys,
 }: CaseListTableProps) => {
   const {
     trackIndividualCaseClicked,
@@ -251,7 +251,9 @@ export const CaseListTable = ({
 
   const table = useReactTable({
     data,
-    columns: columns.filter(filterExcludedAttributes(stateCode, "accessorKey")),
+    columns: columns.filter(
+      filterExcludedAttributes(excludedAttributeKeys, "accessorKey"),
+    ),
     state: {
       sorting: sortingOrder,
     },

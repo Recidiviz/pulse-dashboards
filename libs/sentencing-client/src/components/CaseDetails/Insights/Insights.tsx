@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { CaseInsight } from "../../../api/APIClient";
-import { StateCode } from "../../../geoConfigs/types";
+import { GeoConfig } from "../../../geoConfigs/types";
 import PlusIcon from "../../assets/plus-icon.svg?react";
 import DraggableScrollContainer from "../../DraggableScrollContainer/DraggableScrollContainer";
 import * as Styled from "../CaseDetails.styles";
@@ -30,7 +30,7 @@ export interface InsightsProps {
   fullName?: string;
   lsirScore?: number | null;
   openEditCaseDetailsModal: () => void;
-  stateCode: StateCode;
+  geoConfig: GeoConfig;
 }
 
 export const Insights = ({
@@ -39,8 +39,10 @@ export const Insights = ({
   fullName,
   lsirScore,
   openEditCaseDetailsModal,
-  stateCode,
+  geoConfig,
 }: InsightsProps) => {
+  const recommendationType = geoConfig.recommendation.type;
+
   return (
     <Styled.Insights>
       <Styled.InsightsHeaderWrapper>
@@ -80,7 +82,7 @@ export const Insights = ({
             <DispositionChart
               insight={insight}
               selectedRecommendation={selectedRecommendation}
-              stateCode={stateCode}
+              recommendationType={recommendationType}
             />
           </Styled.Chart>
         </Styled.Charts>

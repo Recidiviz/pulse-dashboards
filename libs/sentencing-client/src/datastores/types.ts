@@ -31,6 +31,8 @@ export type OpportunityViewOrigin = "table" | "modal";
 
 export type CreateOrUpdateRecommendation = "create" | "update";
 
+export type UserStateCode = "RECIDIVIZ" | "CSG" | StateCode;
+
 export type PageOrClickTrackingMetadata = {
   viewedBy?: string;
   caseId?: string;

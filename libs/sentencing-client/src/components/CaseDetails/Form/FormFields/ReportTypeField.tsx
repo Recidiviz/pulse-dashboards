@@ -17,7 +17,6 @@
 
 import { observer } from "mobx-react-lite";
 
-import { GEO_CONFIG } from "../../../../geoConfigs/geoConfigs";
 import { ReportType } from "../../../constants";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
@@ -31,9 +30,9 @@ import { parseReportTypeValue } from "../utils";
 const reportTypeOptions = Object.values(ReportType);
 
 function ReportTypeField({ isRequired }: FormFieldProps) {
-  const { caseStore } = useStore();
+  const { caseStore, geoConfig } = useStore();
   const caseAttributes = caseStore.caseAttributes;
-  const omsSystem = GEO_CONFIG[caseStore.stateCode]?.omsSystem;
+  const omsSystem = geoConfig.omsSystem;
   const options = reportTypeOptions.map((selection) => ({
     label: selection,
     value: selection,

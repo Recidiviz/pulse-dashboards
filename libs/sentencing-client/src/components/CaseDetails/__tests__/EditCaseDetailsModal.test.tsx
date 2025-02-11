@@ -55,18 +55,6 @@ const PRIOR_TREATMENT_COURT_FIELD_LABEL =
   "Has previously participated in a treatment court";
 const ERROR_MESSAGE_STRING = "Please enter a number between 0 and 54.";
 
-// Clear all exclusions from geo configs so we can test all fields
-vi.mock("../../../geoConfigs/geoConfigs", () => {
-  return {
-    ...vi.importActual("../../../geoConfigs/geoConfigs"),
-    GEO_CONFIG: {
-      US_ND: {
-        excludedAttributeKeys: [],
-      },
-    },
-  };
-});
-
 beforeEach(() => {
   configure({ safeDescriptors: false });
   psiStore = createMockPSIStore();

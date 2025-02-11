@@ -43,10 +43,10 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   const navigate = useNavigate();
   const {
     staffPseudoId,
-    stateCode,
     caseAttributes,
     activeEligibleCommunityOpportunities,
     recommendedOpportunities,
+    geoConfig,
     updateAttributes,
     updateRecommendation,
     updateCaseStatusToCompleted,
@@ -155,7 +155,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                 fullName={caseAttributes.client?.fullName}
                 openEditCaseDetailsModal={openEditCaseDetailsModal}
                 lsirScore={caseAttributes.lsirScore}
-                stateCode={stateCode}
+                geoConfig={geoConfig}
               />
               {/* Opportunities */}
               <Opportunities
@@ -165,7 +165,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                 recommendedOpportunities={recommendedOpportunities}
                 updateRecommendedOpportunities={updateRecommendedOpportunities}
                 caseAttributes={caseAttributes}
-                stateCode={stateCode}
+                geoConfig={geoConfig}
                 analytics={{
                   trackOpportunityModalOpened,
                   trackAddOpportunityToRecommendationClicked,
@@ -188,10 +188,10 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
             </Styled.InsightsOpportunitiesWrapper>
             {/* Recommendations */}
             <Recommendations
+              geoConfig={geoConfig}
               firstName={firstName}
               lastName={lastName}
               age={caseAttributes.age}
-              stateCode={stateCode}
               externalId={caseAttributes.externalId}
               fullName={caseAttributes.client?.fullName}
               insight={caseAttributes.insight}

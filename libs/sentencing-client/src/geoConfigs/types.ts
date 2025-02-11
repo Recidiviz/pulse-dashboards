@@ -23,6 +23,7 @@ import {
 } from "../components/CaseDetails/Recommendations/types";
 import { RecommendationType } from "../components/CaseDetails/types";
 import { AttributeKey } from "../components/Dashboard/types";
+import { UserStateCode } from "../datastores/types";
 
 export type StateCode = Staff["stateCode"];
 
@@ -48,5 +49,5 @@ export type GeoConfig = {
 };
 
 export type CountyDistrictMap = Partial<
-  Record<StateCode, Record<string, string>>
+  Record<UserStateCode, Record<string, string>>
 >;

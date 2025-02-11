@@ -40,24 +40,6 @@ export class StaffStore {
     makeAutoObservable(this);
   }
 
-  get stateCode() {
-    if (!this.staffInfo?.stateCode) {
-      const message = "No state code found";
-      const error = new Error(message);
-      error.name = "StateCodeError";
-
-      captureException(error, {
-        extra: {
-          message,
-          staffId: this.psiStore.staffPseudoId,
-        },
-      });
-
-      throw error;
-    }
-    return this.staffInfo.stateCode;
-  }
-
   /** This is a MobX flow method and should be called with mobx.flowResult */
   *loadStaffInfo(): FlowMethod<APIClient["getStaffInfo"], void> {
     try {

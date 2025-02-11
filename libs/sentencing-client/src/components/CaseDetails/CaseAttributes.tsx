@@ -41,7 +41,7 @@ type CaseAttributesProps = {
 
 export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
   function CaseAttributes({ caseAttributes, openEditCaseDetailsModal }) {
-    const { activeFeatureVariants } = useStore();
+    const { activeFeatureVariants, geoConfig } = useStore();
     const hasEditCountyFieldsFVEnabled = Boolean(
       activeFeatureVariants["editCountyFields"],
     );
@@ -53,7 +53,6 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       offense,
       lsirScore,
       client,
-      stateCode,
     } = caseAttributes;
     const {
       fullName,
@@ -113,7 +112,7 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
           value: attribute.value,
         };
       })
-      .filter(filterExcludedAttributes(stateCode));
+      .filter(filterExcludedAttributes(geoConfig.excludedAttributeKeys));
 
     return (
       <Styled.CaseAttributes>

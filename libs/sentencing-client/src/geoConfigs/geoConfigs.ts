@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { GeoConfig, StateCode } from "./types";
+import { UserStateCode } from "../datastores/types";
+import { GeoConfig } from "./types";
 import { US_ID_CONFIG } from "./US_ID/US_ID_CONFIG";
 import { US_ND_CONFIG } from "./US_ND/US_ND_CONFIG";
 
-export const GEO_CONFIG: Partial<Record<StateCode, GeoConfig>> = {
+export const GEO_CONFIG: Partial<Record<UserStateCode, GeoConfig>> = {
   US_ID: US_ID_CONFIG,
   US_ND: US_ND_CONFIG,
 };
