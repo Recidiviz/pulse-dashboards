@@ -21,9 +21,9 @@ import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { UserStore } from "../../datastores/UserStore";
-import { NavigationMenuPresenter } from "./NavigationMenuPresenter";
+import { ResidentNavMenuPresenter } from "./ResidentNavMenuPresenter";
 
-let presenter: NavigationMenuPresenter;
+let presenter: ResidentNavMenuPresenter;
 let userStore: UserStore;
 
 const testResident = usMeResidents[0];
@@ -42,7 +42,7 @@ afterEach(() => {
 
 describe("with resident route", () => {
   beforeEach(() => {
-    presenter = new NavigationMenuPresenter(
+    presenter = new ResidentNavMenuPresenter(
       residentsConfigByState.US_ME,
       userStore,
       { stateSlug, personPseudoId: testResident.pseudonymizedId },
@@ -87,7 +87,7 @@ describe("with resident route", () => {
 
 describe("with non-resident route", () => {
   beforeEach(() => {
-    presenter = new NavigationMenuPresenter(
+    presenter = new ResidentNavMenuPresenter(
       residentsConfigByState.US_ME,
       userStore,
       { stateSlug },

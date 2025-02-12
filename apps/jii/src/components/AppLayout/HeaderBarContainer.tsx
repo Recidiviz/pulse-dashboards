@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Outlet } from "react-router-dom";
+import { palette } from "@recidiviz/design-system";
+import { FC, ReactNode } from "react";
+import styled from "styled-components/macro";
 
-import { AppLayout } from "../AppLayout/AppLayout";
-import { MenuBar } from "../AppLayout/MenuBar";
+import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 
-/**
- * Page layout that renders nested routes with empty header bar (no resident-specific navigation).
- */
-export const GenericLayoutRoute = observer(function GenericLayoutRoute() {
-  return <AppLayout header={<MenuBar />} main={<Outlet />} />;
-});
+const FullWidthWrapper = styled(FullBleedContainer)`
+  background: ${palette.white};
+  border-bottom: 1px solid ${palette.slate20};
+`;
+
+export const HeaderBarContainer: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  return (
+    <FullWidthWrapper>
+      <PageContainer>{children}</PageContainer>
+    </FullWidthWrapper>
+  );
+};

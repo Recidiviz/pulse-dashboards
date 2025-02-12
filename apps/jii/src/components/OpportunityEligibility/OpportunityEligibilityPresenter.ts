@@ -23,7 +23,7 @@ import { OpportunityConfig } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { EligibilityReport } from "../../models/EligibilityReport/types";
 import { State } from "../../routes/routes";
-import { LinkProps } from "../ResidentsLayoutRoute/NavigationMenuPresenter";
+import { LinkProps } from "../ResidentNavMenu/ResidentNavMenuPresenter";
 
 export class OpportunityEligibilityPresenter {
   constructor(

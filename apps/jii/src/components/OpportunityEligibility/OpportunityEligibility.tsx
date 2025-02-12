@@ -25,8 +25,9 @@ import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
+import { PAGE_LAYOUT_HEADER_GAP } from "../AppLayout/constants";
+import { HEADER_BAR_HEIGHT } from "../AppLayout/MenuBar";
 import { FullBleedContainer } from "../BaseLayout/BaseLayout";
-import { HEADER_BAR_GAP, HEADER_BAR_HEIGHT } from "../PageLayout/PageHeader";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { useSingleResidentContext } from "../SingleResidentHydrator/context";
@@ -54,7 +55,7 @@ const Wrapper = styled.article`
     "sidebar body";
 
   & [id] {
-    scroll-margin-top: ${rem(HEADER_BAR_HEIGHT + HEADER_BAR_GAP)};
+    scroll-margin-top: ${rem(HEADER_BAR_HEIGHT + PAGE_LAYOUT_HEADER_GAP)};
   }
 `;
 

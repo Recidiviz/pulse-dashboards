@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Outlet } from "react-router-dom";
+import { spacing } from "@recidiviz/design-system";
 
-import { AppLayout } from "../AppLayout/AppLayout";
-import { MenuBar } from "../AppLayout/MenuBar";
+export const PAGE_LAYOUT_HEADER_GAP = spacing.xl;
 
-/**
- * Page layout that renders nested routes with empty header bar (no resident-specific navigation).
- */
-export const GenericLayoutRoute = observer(function GenericLayoutRoute() {
-  return <AppLayout header={<MenuBar />} main={<Outlet />} />;
-});
+export const HEADER_PORTAL_ID = "app-layout-header-portal";

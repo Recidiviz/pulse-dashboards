@@ -21,7 +21,7 @@ import { FC, memo } from "react";
 import styled from "styled-components/macro";
 
 import { GoButton } from "../ButtonLink/GoButton";
-import { LinkProps } from "../ResidentsLayoutRoute/NavigationMenuPresenter";
+import { LinkProps } from "../ResidentNavMenu/ResidentNavMenuPresenter";
 
 const Wrapper = styled.article`
   border: 1px solid ${palette.slate20};

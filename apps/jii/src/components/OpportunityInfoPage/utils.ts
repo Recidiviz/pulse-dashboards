@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Outlet } from "react-router-dom";
+import { OpportunityConfig } from "../../configs/types";
 
-import { AppLayout } from "../AppLayout/AppLayout";
-import { MenuBar } from "../AppLayout/MenuBar";
+export function findPageConfig(
+  opportunityConfig: OpportunityConfig,
+  pageSlug: string,
+) {
+  const config = [
+    opportunityConfig.requirements,
+    ...opportunityConfig.sections,
+  ].find((s) => s.fullPage?.urlSlug === pageSlug);
 
-/**
- * Page layout that renders nested routes with empty header bar (no resident-specific navigation).
- */
-export const GenericLayoutRoute = observer(function GenericLayoutRoute() {
-  return <AppLayout header={<MenuBar />} main={<Outlet />} />;
-});
+  // in practice we don't really expect this to happen, mostly for type safety
+  if (!config || !config.fullPage) {
+    throw new Error(`No contents found for page ${pageSlug}`);
+  }
+  return config.fullPage;
+}
