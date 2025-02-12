@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ascending } from "d3-array";
 import { flowResult, makeAutoObservable } from "mobx";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
@@ -29,7 +30,10 @@ import {
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { UiStore } from "../../datastores/UiStore";
 
-const ALL_FACILITIES_VALUE = "__ALL__";
+const ALL_RESIDENTS_VALUE = "__ALL__";
+const PILOT_RESIDENTS_VALUE = "MVCF PILOT";
+const PILOT_FACILITY_ID = "MOUNTAIN VIEW CORRECTIONAL FACILITY";
+const PILOT_CUSTODY_LEVELS = ["MINIMUM", "COMMUNITY"];
 
 type SelectOption = { label: string; value: string };
 
@@ -67,16 +71,17 @@ export class ResidentsSearchPresenter implements Hydratable {
   }
 
   private get residents(): Array<ResidentRecord> {
-    const { selectedFacilityFilterOptionValue } = this.uiStore;
+    const { selectedResidentsFilterOptionValue } = this.uiStore;
 
-    return Array.from(
-      this.residentsStore.residentsByExternalId.values(),
-    ).filter(
-      (r) =>
-        !selectedFacilityFilterOptionValue ||
-        selectedFacilityFilterOptionValue === ALL_FACILITIES_VALUE ||
-        r.facilityId === selectedFacilityFilterOptionValue,
-    );
+    return Array.from(this.residentsStore.residentsByExternalId.values())
+      .filter(
+        (r) =>
+          !selectedResidentsFilterOptionValue ||
+          selectedResidentsFilterOptionValue === ALL_RESIDENTS_VALUE ||
+          (r.facilityId === PILOT_FACILITY_ID &&
+            PILOT_CUSTODY_LEVELS.includes(r.custodyLevel as string)),
+      )
+      .sort((a, b) => ascending(a.personName.surname, b.personName.surname));
   }
 
   get selectOptions() {
@@ -86,16 +91,16 @@ export class ResidentsSearchPresenter implements Hydratable {
     }));
   }
 
-  get facilityFilterOptions(): [SelectOption, ...Array<SelectOption>] {
+  get residentFilterOptions(): [SelectOption, ...Array<SelectOption>] {
     const options: [SelectOption, ...Array<SelectOption>] = [
-      { label: "All", value: ALL_FACILITIES_VALUE },
+      { label: "All", value: ALL_RESIDENTS_VALUE },
     ];
 
     // for convenience this is just hardcoded for the pilot
     if (!isOfflineMode() && !isDemoMode()) {
       options.push({
-        label: "Mountain View Correctional Facility",
-        value: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+        label: "Mountain View Correctional Facility Pilot",
+        value: PILOT_RESIDENTS_VALUE,
       });
     }
 
@@ -103,32 +108,37 @@ export class ResidentsSearchPresenter implements Hydratable {
   }
 
   /**
-   * The facility select component is uncontrolled, but this can be used preserve state when navigating
+   * The filter select component is uncontrolled, but this can be used preserve state when navigating
    * away from the page (passing a default only affects which option is selected when the component mounts)
    */
-  get facilityFilterDefaultOption() {
-    const { selectedFacilityFilterOptionValue } = this.uiStore;
-    if (selectedFacilityFilterOptionValue) {
-      return this.facilityFilterOptions.find(
-        (o) => o.value === selectedFacilityFilterOptionValue,
+  get residentFilterDefaultOption() {
+    const { selectedResidentsFilterOptionValue } = this.uiStore;
+    if (selectedResidentsFilterOptionValue) {
+      return this.residentFilterOptions.find(
+        (o) => o.value === selectedResidentsFilterOptionValue,
       );
     }
 
-    return this.facilityFilterOptions.at(-1);
+    return this.residentFilterOptions.at(-1);
   }
 
   private get residentsFilterParams(): Array<FilterParams> | undefined {
-    const { facilityFilterDefaultOption } = this;
-    if (!facilityFilterDefaultOption) return;
+    const { residentFilterDefaultOption: residentsFilterDefaultOption } = this;
+    if (!residentsFilterDefaultOption) return;
 
-    if (facilityFilterDefaultOption.value === ALL_FACILITIES_VALUE) return;
+    if (residentsFilterDefaultOption.value === PILOT_RESIDENTS_VALUE) {
+      return [
+        ["facilityId", "==", PILOT_FACILITY_ID],
+        ["custodyLevel", "in", PILOT_CUSTODY_LEVELS],
+      ];
+    }
 
-    return [["facilityId", "==", facilityFilterDefaultOption.value]];
+    return;
   }
 
-  setFacilityFilter(value: string) {
-    if (value !== this.uiStore.selectedFacilityFilterOptionValue) {
-      this.uiStore.selectedFacilityFilterOptionValue = value;
+  setResidentsFilter(value: string) {
+    if (value !== this.uiStore.selectedResidentsFilterOptionValue) {
+      this.uiStore.selectedResidentsFilterOptionValue = value;
       this.residentsStore.populateResidents(this.residentsFilterParams, true);
     }
   }

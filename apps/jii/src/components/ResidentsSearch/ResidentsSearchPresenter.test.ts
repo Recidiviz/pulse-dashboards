@@ -86,16 +86,17 @@ describe("hydration", () => {
     expect(presenter.selectOptions).toMatchSnapshot();
     expect(residentsStore.populateResidents).toHaveBeenLastCalledWith([
       ["facilityId", "==", "MOUNTAIN VIEW CORRECTIONAL FACILITY"],
+      ["custodyLevel", "in", ["MINIMUM", "COMMUNITY"]],
     ]);
   });
 });
 
 describe("facility filter", () => {
   test("default value", () => {
-    expect(presenter.facilityFilterDefaultOption).toMatchInlineSnapshot(`
+    expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(`
       {
-        "label": "Mountain View Correctional Facility",
-        "value": "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+        "label": "Mountain View Correctional Facility Pilot",
+        "value": "MVCF PILOT",
       }
     `);
   });
@@ -103,8 +104,8 @@ describe("facility filter", () => {
   test("set value", async () => {
     vi.spyOn(residentsStore, "populateResidents");
 
-    presenter.setFacilityFilter("__ALL__");
-    expect(presenter.facilityFilterDefaultOption).toMatchInlineSnapshot(`
+    presenter.setResidentsFilter("__ALL__");
+    expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(`
       {
         "label": "All",
         "value": "__ALL__",
@@ -116,17 +117,22 @@ describe("facility filter", () => {
       true,
     );
 
-    presenter.setFacilityFilter("MOUNTAIN VIEW CORRECTIONAL FACILITY");
+    presenter.setResidentsFilter("MVCF PILOT");
 
-    expect(presenter.facilityFilterDefaultOption).toMatchInlineSnapshot(`
+    expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(
+      `
       {
-        "label": "Mountain View Correctional Facility",
-        "value": "MOUNTAIN VIEW CORRECTIONAL FACILITY",
+        "label": "Mountain View Correctional Facility Pilot",
+        "value": "MVCF PILOT",
       }
-    `);
+    `,
+    );
 
     expect(residentsStore.populateResidents).toHaveBeenLastCalledWith(
-      [["facilityId", "==", "MOUNTAIN VIEW CORRECTIONAL FACILITY"]],
+      [
+        ["facilityId", "==", "MOUNTAIN VIEW CORRECTIONAL FACILITY"],
+        ["custodyLevel", "in", ["MINIMUM", "COMMUNITY"]],
+      ],
       true,
     );
   });
@@ -134,14 +140,14 @@ describe("facility filter", () => {
   test("demo mode", () => {
     vi.mocked(isDemoMode).mockReturnValue(true);
 
-    expect(presenter.facilityFilterOptions).toEqual([
+    expect(presenter.residentFilterOptions).toEqual([
       {
         label: "All",
         value: "__ALL__",
       },
     ]);
 
-    expect(presenter.facilityFilterDefaultOption).toEqual({
+    expect(presenter.residentFilterDefaultOption).toEqual({
       label: "All",
       value: "__ALL__",
     });

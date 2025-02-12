@@ -26,7 +26,7 @@ export class UiStore {
    * Used to filter results on the search page, for users with access to it.
    * Storing it here will allow it to persist when navigating away from the page
    */
-  selectedFacilityFilterOptionValue?: string;
+  selectedResidentsFilterOptionValue?: string;
 
   constructor() {
     makeAutoObservable(this);
