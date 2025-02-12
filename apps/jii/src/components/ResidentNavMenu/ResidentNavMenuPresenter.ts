@@ -27,7 +27,7 @@ export type LinkProps = {
   to: string;
 };
 
-export class NavigationMenuPresenter {
+export class ResidentNavMenuPresenter {
   constructor(
     private config: ResidentsConfig,
     private userStore: UserStore,

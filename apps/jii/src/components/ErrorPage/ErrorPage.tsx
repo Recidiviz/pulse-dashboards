@@ -17,9 +17,9 @@
 
 import { ReactElement } from "react";
 
-import { PageLayout } from "../PageLayout/PageLayout";
+import { AppLayout } from "../AppLayout/AppLayout";
 import { ErrorPageMainContent } from "./ErrorPageMainContent";
 
 export const ErrorPage = ({ error }: { error: Error }): ReactElement => {
-  return <PageLayout main={<ErrorPageMainContent error={error} />} />;
+  return <AppLayout main={<ErrorPageMainContent error={error} />}></AppLayout>;
 };

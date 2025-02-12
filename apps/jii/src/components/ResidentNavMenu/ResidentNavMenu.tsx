@@ -19,16 +19,26 @@ import { palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+// we are using useParams to make a custom hook in this file
+// eslint-disable-next-line no-restricted-imports
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { withPresenterManager } from "~hydration-utils";
+
+import { State } from "../../routes/routes";
+import { RouteParams } from "../../routes/utils";
 import {
   Dropdown,
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
 } from "../Dropdown/Dropdown";
-import { LinkProps, NavigationMenuPresenter } from "./NavigationMenuPresenter";
+import { useResidentsContext } from "../ResidentsHydrator/context";
+import {
+  LinkProps,
+  ResidentNavMenuPresenter,
+} from "./ResidentNavMenuPresenter";
 
 const BORDER = 4;
 
@@ -80,8 +90,8 @@ const OpportunitiesMenu: FC<{ links: Array<LinkProps> }> = observer(
   },
 );
 
-export const NavigationMenu: FC<{ presenter: NavigationMenuPresenter }> =
-  observer(function NavigationMenu({ presenter }) {
+const ManagedComponent: FC<{ presenter: ResidentNavMenuPresenter }> = observer(
+  function ResidentNavMenu({ presenter }) {
     return (
       <Wrapper>
         {presenter.homeLink && <NavLink end {...presenter.homeLink} />}
@@ -91,4 +101,42 @@ export const NavigationMenu: FC<{ presenter: NavigationMenuPresenter }> =
         {presenter.searchLink && <NavLink end {...presenter.searchLink} />}
       </Wrapper>
     );
-  });
+  },
+);
+
+/**
+ * Can be called under a state route or a single resident route,
+ * and will return the applicable typed URL params accordingly.
+ */
+function useParamsResidentOptional() {
+  const currentRouteParams = useParams();
+
+  let typedParams:
+    | RouteParams<typeof State.Resident>
+    | RouteParams<typeof State>;
+  try {
+    typedParams = State.Resident.getTypedParams(currentRouteParams);
+  } catch {
+    typedParams = State.getTypedParams(currentRouteParams);
+  }
+
+  return typedParams;
+}
+
+function usePresenter() {
+  const { residentsStore } = useResidentsContext();
+
+  const routeParams = useParamsResidentOptional();
+
+  return new ResidentNavMenuPresenter(
+    residentsStore.config,
+    residentsStore.userStore,
+    routeParams,
+  );
+}
+
+export const ResidentNavMenu = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
+});

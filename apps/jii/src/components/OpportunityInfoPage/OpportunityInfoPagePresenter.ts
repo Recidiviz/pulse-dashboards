@@ -19,6 +19,7 @@ import { makeAutoObservable } from "mobx";
 
 import { OpportunityConfig } from "../../configs/types";
 import { EligibilityReport } from "../../models/EligibilityReport/types";
+import { findPageConfig } from "./utils";
 
 /**
  * Reads the specified static page content out of the opportunity config
@@ -33,16 +34,7 @@ export class OpportunityInfoPagePresenter {
   }
 
   private get pageConfig() {
-    const config = [
-      this.opportunityConfig.requirements,
-      ...this.opportunityConfig.sections,
-    ].find((s) => s.fullPage?.urlSlug === this.pageSlug);
-
-    // in practice we don't really expect this to happen, mostly for type safety
-    if (!config || !config.fullPage) {
-      throw new Error(`No contents found for page ${this.pageSlug}`);
-    }
-    return config.fullPage;
+    return findPageConfig(this.opportunityConfig, this.pageSlug);
   }
 
   get heading() {

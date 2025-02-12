@@ -33,11 +33,11 @@ export const styles = css`
   ${typography.Body16}
 
   h1 {
-    ${typography.Serif34}
+    ${typography.Sans24}
 
     color: ${palette.pine1};
     font-size: ${rem(34)};
-    margin: ${rem(spacing.xxl)} 0 ${rem(spacing.xxl)};
+    margin: ${rem(spacing.sm)} 0 ${rem(spacing.xl)};
   }
 
   h2 {

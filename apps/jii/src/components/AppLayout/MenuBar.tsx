@@ -17,39 +17,40 @@
 
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { FC, memo, ReactNode } from "react";
+import { FC, ReactNode } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useSkipNav } from "../SkipNav/SkipNav";
-import { PageHeader } from "./PageHeader";
+import logoUrl from "../../assets/images/sunrise.svg";
+import { AccountMenu } from "./AccountMenu";
+import { HeaderBarContainer } from "./HeaderBarContainer";
 
-const Wrapper = styled.div`
+const LogoLink = styled(Link)``;
+
+export const HEADER_BAR_HEIGHT = 64;
+
+const Header = styled.div`
+  align-items: center;
   display: flex;
-  flex-direction: column;
-  gap: ${rem(spacing.xl)};
-  min-height: 100vh;
+  gap: ${rem(spacing.lg)};
+  justify-content: stretch;
+  min-height: ${rem(HEADER_BAR_HEIGHT)};
 
-  /* these styles ensure the main content always fills at least 
-  the remainder of the screen height, in case the content requires something
-  to be pushed to the bottom of the page */
-  & main {
-    display: grid;
-    flex: 1 1 auto;
-    grid-template-rows: 1fr;
+  ${LogoLink} {
+    margin-right: auto;
   }
 `;
 
-export const PageLayout: FC<{ header?: ReactNode; main: ReactNode }> = memo(
-  function PageLayout({ header, main }) {
-    const { MainContent, SkipNav, SkipNavController } = useSkipNav();
-    return (
-      <SkipNavController>
-        <SkipNav />
-        <Wrapper>
-          <PageHeader>{header}</PageHeader>
-          <MainContent>{main}</MainContent>
-        </Wrapper>
-      </SkipNavController>
-    );
-  },
-);
+export const MenuBar: FC<{ children?: ReactNode }> = ({ children }) => {
+  return (
+    <HeaderBarContainer>
+      <Header>
+        <LogoLink to="/">
+          <img src={logoUrl} alt="Opportunities" width="44" height="24" />
+        </LogoLink>
+        {children}
+        <AccountMenu />
+      </Header>
+    </HeaderBarContainer>
+  );
+};

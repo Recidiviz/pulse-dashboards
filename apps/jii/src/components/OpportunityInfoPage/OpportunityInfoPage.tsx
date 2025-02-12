@@ -27,10 +27,12 @@ import styled from "styled-components/macro";
 import { withPresenterManager } from "~hydration-utils";
 
 import { State } from "../../routes/routes";
+import { HeaderPortal } from "../AppLayout/HeaderPortal";
 import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 import { ButtonLink } from "../ButtonLink/ButtonLink";
 import { InfoPage } from "../InfoPage/InfoPage";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
+import { BreadcrumbsNav } from "./BreadcrumbsNav";
 import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
 
 const PageLinksFooter = styled(FullBleedContainer).attrs({ as: "footer" })`
@@ -71,10 +73,9 @@ const ManagedComponent: FC<{
 }> = observer(function OpportunityInfoPage({ presenter }) {
   return (
     <>
-      <ButtonLink to="../">
-        <Icon kind="Arrow" rotate={180} size={13} />
-        <span>Go back</span>
-      </ButtonLink>
+      <HeaderPortal>
+        <BreadcrumbsNav />
+      </HeaderPortal>
       <InfoPage heading={presenter.heading} body={presenter.body} />
       {presenter.pageLinks.length > 0 && (
         <PageLinksFooter>
