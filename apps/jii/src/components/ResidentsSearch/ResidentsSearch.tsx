@@ -37,7 +37,7 @@ import { Selector } from "../Selector/Selector";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
-const FacilityLabel = styled.label`
+const FilterLabel = styled.label`
   ${typography.Sans14}
 
   display: block;
@@ -54,23 +54,23 @@ const ManagedComponent: FC<{ presenter: ResidentsSearchPresenter }> = observer(
   function ResidentsSearch({ presenter }) {
     const navigate = useNavigate();
     const residentLabelId = useId();
-    const facilityLabelId = useId();
+    const filterLabelId = useId();
     const urlParams = useTypedParams(State.Search);
 
     return (
       <div>
         <Header34 as="h1">Look up a resident</Header34>
 
-        <FacilityLabel id={facilityLabelId}>
-          Filter by facility:
+        <FilterLabel id={filterLabelId}>
+          Filter residents:
           <Selector
-            labelId={facilityLabelId}
-            options={presenter.facilityFilterOptions}
-            onChange={(v) => presenter.setFacilityFilter(v)}
+            labelId={filterLabelId}
+            options={presenter.residentFilterOptions}
+            onChange={(v) => presenter.setResidentsFilter(v)}
             placeholder=""
-            defaultValue={presenter.facilityFilterDefaultOption}
+            defaultValue={presenter.residentFilterDefaultOption}
           />
-        </FacilityLabel>
+        </FilterLabel>
 
         <Body16 as="p" id={residentLabelId}>
           Search for a resident to explore what they will see in Opportunities.
