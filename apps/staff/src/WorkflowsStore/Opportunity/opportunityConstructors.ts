@@ -64,7 +64,10 @@ import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./UsMo/Us
 import { UsOrEarnedDischargeOpportunity } from "./UsOr";
 import { UsOrEarnedDischargeSentenceOpportunity } from "./UsOr/UsOrEarnedDischargeSentenceOpportunity";
 import { UsPaAdminSupervisionOpportunity } from "./UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
-import { UsTnCustodyLevelDowngradeOpportunity } from "./UsTn";
+import {
+  UsTnCustodyLevelDowngradeOpportunity,
+  UsTnSuspensionOfDirectSupervisionOpportunity,
+} from "./UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 
 export const opportunityConstructors = {
@@ -134,6 +137,8 @@ export const opportunityConstructors = {
   usTnExpiration: UsTnExpirationOpportunity,
   usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
+  usTnSuspensionOfDirectSupervision:
+    UsTnSuspensionOfDirectSupervisionOpportunity,
 } as const satisfies Record<
   OpportunityType,
   | (new (c: Resident, r: DocumentData) => Opportunity<Resident>)

@@ -42,6 +42,7 @@ import { FormSCCP } from "../Paperwork/US_ME/SCCP/FormSCCP";
 import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease";
 import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCReview";
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
+import { FormUsTnSuspensionOfDirectSupervision } from "../Paperwork/US_TN/SuspensionOfDirectSupervision/FormUsTnSuspensionOfDirectSupervision";
 import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
@@ -109,6 +110,7 @@ const FormComponents = {
   FormUsMiSCCReview,
   MediumTrustee,
   WorkflowsUsAzReleaseToTransitionProgramForm,
+  FormUsTnSuspensionOfDirectSupervision,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;
