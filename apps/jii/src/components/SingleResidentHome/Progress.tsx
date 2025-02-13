@@ -59,9 +59,7 @@ export const Progress = observer(function Progress() {
       <ItemsWrapper>
         <ItemHeading>Current release date</ItemHeading>
         <ItemValue>
-          {resident.releaseDate
-            ? formatFullDate(resident.releaseDate)
-            : "Unknown"}
+          {resident.releaseDate ? formatFullDate(resident.releaseDate) : "N/A"}
         </ItemValue>
       </ItemsWrapper>
       <GoButton
