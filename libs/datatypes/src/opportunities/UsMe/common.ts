@@ -41,3 +41,45 @@ export const noABViolation90DaysSchema = {
     }),
   },
 };
+
+export const eligibleDateReasonSchema = z.object({
+  eligibleDate: dateStringSchema,
+});
+
+export const nullableEligibleDateReasonSchema = z
+  .object({
+    eligibleDate: dateStringSchema.nullable(),
+  })
+  .nullable();
+
+export function eligibleDateReason<C extends string>(criterionId: C) {
+  return <
+    {
+      eligible: Record<C, typeof eligibleDateReasonSchema>;
+      ineligible: Record<C, typeof nullableEligibleDateReasonSchema>;
+    }
+  >{
+    eligible: {
+      [criterionId]: eligibleDateReasonSchema,
+    },
+    ineligible: {
+      [criterionId]: nullableEligibleDateReasonSchema,
+    },
+  };
+}
+
+export function custodyLevelReason<C extends string>(criterionId: C) {
+  const reason = z.object({
+    custodyLevel: z.string(),
+  });
+
+  return <
+    {
+      eligible: Record<C, typeof reason>;
+      ineligible: Record<C, ReturnType<typeof reason.nullable>>;
+    }
+  >{
+    eligible: { [criterionId]: reason },
+    ineligible: { [criterionId]: reason.nullable() },
+  };
+}

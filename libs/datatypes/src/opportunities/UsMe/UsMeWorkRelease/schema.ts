@@ -17,65 +17,29 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "../../../utils/zod";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import { MergedCriteria } from "../../utils/types";
 import {
+  custodyLevelReason,
+  eligibleDateReason,
   noABViolation90DaysSchema,
   noDetainersWarrantsSchema,
 } from "../common";
 
 function custodyLevelCriterion() {
-  const reason = z.object({
-    custodyLevel: z.string(),
-  });
-
-  const criterionId = "usMeCustodyLevelIsMinimum";
-
-  return {
-    eligible: { [criterionId]: reason },
-    ineligible: { [criterionId]: reason.nullable() },
-  };
+  return custodyLevelReason("usMeCustodyLevelIsMinimum");
 }
 
 function yearsRemainingCriterion() {
-  const criterionId = "usMeThreeYearsRemainingOnSentence";
-
-  return {
-    eligible: {
-      [criterionId]: z.object({
-        eligibleDate: dateStringSchema,
-      }),
-    },
-    ineligible: {
-      [criterionId]: z
-        .object({
-          eligibleDate: dateStringSchema.nullable(),
-        })
-        .nullable(),
-    },
-  };
+  return eligibleDateReason("usMeThreeYearsRemainingOnSentence");
 }
 
 function served30DaysCriterion() {
-  const criterionId =
-    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease";
-
-  return {
-    eligible: {
-      [criterionId]: z.object({
-        eligibleDate: dateStringSchema,
-      }),
-    },
-    ineligible: {
-      [criterionId]: z
-        .object({
-          eligibleDate: dateStringSchema.nullable(),
-        })
-        .nullable(),
-    },
-  };
+  return eligibleDateReason(
+    "usMeServed30DaysAtEligibleFacilityForFurloughOrWorkRelease",
+  );
 }
+
 export const usMeWorkReleaseSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z
     .object({
