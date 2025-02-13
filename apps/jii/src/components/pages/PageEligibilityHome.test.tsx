@@ -37,20 +37,16 @@ function renderPage() {
       ]}
     >
       <Routes>
+        <Route path={State.Resident.path} element={<div>resident home</div>} />
         <Route path={State.Resident.Eligibility.path}>
           <Route index element={<PageEligibilityHome />} />
-          {/* in reality this is a parameter, but for now there is only one possible value */}
-          <Route
-            path={State.Resident.Eligibility.$.Opportunity.relativePath}
-            element={<div>SCCP page</div>}
-          />
         </Route>
       </Routes>
     </MemoryRouter>,
   );
 }
 
-test("redirect to SCCP page", () => {
+test("redirect to home page", () => {
   renderPage();
-  expect(screen.getByText("SCCP page")).toBeInTheDocument();
+  expect(screen.getByText("resident home")).toBeInTheDocument();
 });

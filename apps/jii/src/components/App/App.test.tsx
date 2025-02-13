@@ -233,7 +233,7 @@ describe("protected routes", () => {
     });
   });
 
-  it("root should redirect to default opportunity", async () => {
+  it("root should redirect to homepage", async () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <App />
@@ -242,14 +242,13 @@ describe("protected routes", () => {
 
     expect(
       await screen.findByRole("heading", {
-        name: residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP
-          ?.name,
-        level: 1,
+        name: "Your Progress",
+        level: 2,
       }),
     ).toBeInTheDocument();
   });
 
-  it("state root should redirect to default opportunity", async () => {
+  it("state root should redirect to homepage", async () => {
     render(
       <MemoryRouter
         initialEntries={[routes.State.buildPath({ stateSlug: "maine" })]}
@@ -260,9 +259,8 @@ describe("protected routes", () => {
 
     expect(
       await screen.findByRole("heading", {
-        name: residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP
-          ?.name,
-        level: 1,
+        name: "Your Progress",
+        level: 2,
       }),
     ).toBeInTheDocument();
   });
