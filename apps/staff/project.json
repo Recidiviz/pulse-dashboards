@@ -36,7 +36,40 @@
         "cwd": "{projectRoot}"
       }
     },
-
+    "test-e2e-lantern": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_e2e && wdio ./wdio.conf.js --suite lantern --retry 2'"
+      }
+    },
+    "test-e2e-login": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_e2e && wdio ./wdio.conf.js --suite login --retry 2'"
+      }
+    },
+    "test-e2e-users": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_e2e && wdio ./wdio.conf.js --suite userAccess --retry 2'"
+      }
+    },
+    "test-e2e-workflows": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "env-cmd -f .env.offline wdio ./wdio.conf.js --suite workflows --retry 2"
+      }
+    },
+    "test-zod": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/testZodSchema.ts'"
+      }
+    },
     "env-dev-spa": {
       "executor": "nx:run-commands",
       "options": {
@@ -239,6 +272,59 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "bash -c '. load_environment.sh env_sync_content && vite-node tools/verifyFeatureVariantDocumentation.ts'"
+      }
+    },
+    "load-demo-fixtures": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/loadWorkflowsFixtures.ts'"
+      }
+    },
+    "sync-content": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_sync_content && vite-node tools/syncContentFromSheets.ts && prettier --write src/core/content/*'"
+      }
+    },
+    "load-prod-fixtures": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite-node tools/loadProdTestFixtures.mjs"
+      }
+    },
+    "pdfformfiller-boilerplate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite-node tools/pdfFormFillerBoilerplate.mjs"
+      }
+    },
+    "update-missing-snooze-staging": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/updateMissingSnooze.ts'"
+      }
+    },
+    "update-missing-snooze-local": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_dev_demo_server && vite-node tools/updateMissingSnooze.ts'"
+      }
+    },
+    "migrate-form-updates-staging": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "bash -c '. load_environment.sh env_dev_server && ts-node tools/migrate-formUpdates.ts'"
+      }
+    },
+    "migrate-form-updates-local": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash -c '. load_environment.sh env_dev_demo_server && ts-node tools/migrate-formUpdates.ts'"
       }
     }
   }
