@@ -15,11 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isEqual } from "date-fns";
 import { z } from "zod";
 
 import { usMeXPortionServedEnum } from "../../opportunities/UsMe/UsMeSCCP/schema";
 import { dateStringSchema } from "../../utils/zod/date/dateStringSchema";
 import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
+
+/**
+ * Magic date that appears in data sometimes and is equivalent to null
+ */
+const MISSING_DATE_SENTINEL = new Date(9999, 11, 1);
 
 export const residentRecordSchema = justiceInvolvedPersonRecordSchema
   .extend({
@@ -28,7 +34,12 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
     facilityUnitId: z.string().nullish(),
     custodyLevel: z.string().nullish(),
     admissionDate: dateStringSchema.nullish(),
-    releaseDate: dateStringSchema.nullish(),
+    releaseDate: dateStringSchema.nullish().transform((d) => {
+      if (d && isEqual(d, MISSING_DATE_SENTINEL)) {
+        return null;
+      }
+      return d;
+    }),
     portionServedNeeded: usMeXPortionServedEnum.nullish(),
     sccpEligibilityDate: dateStringSchema.nullish(),
     usTnFacilityAdmissionDate: dateStringSchema.nullish(),
@@ -44,7 +55,6 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
  * Data from the Recidiviz data platform about an incarcerated person
  */
 export type ResidentRecord = z.output<typeof residentRecordSchema>;
-
 /**
  * A Resident record in its raw form, as stored in Firestore
  */

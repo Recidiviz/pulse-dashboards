@@ -47,12 +47,12 @@ export const usMeSccpConfig: OpportunityConfig = {
                 served 2/3 of your sentence if your sentence is 5 or more years
               {{/if}}`,
           ineligibleReason:
-            "You'll meet this requirement on {{formatFullDate currentCriterion.eligibleDate}}",
+            "{{#if currentCriterion.eligibleDate}}You'll meet this requirement on {{formatFullDate currentCriterion.eligibleDate}}{{/if}}",
         },
         usMeXMonthsRemainingOnSentence: {
           criterion: "Fewer than 30 months remaining on your sentence",
           ineligibleReason:
-            "You'll meet this requirement on {{formatFullDate currentCriterion.eligibleDate}}",
+            "{{#if currentCriterion.eligibleDate}}You'll meet this requirement on {{formatFullDate currentCriterion.eligibleDate}}{{/if}}",
         },
         usMeNoClassAOrBViolationFor90Days,
         usMeNoDetainersWarrantsOrOther,
