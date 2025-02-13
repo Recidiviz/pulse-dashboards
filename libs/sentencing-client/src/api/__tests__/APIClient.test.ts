@@ -60,6 +60,11 @@ beforeEach(() => {
         query: vi.fn(),
       },
     },
+    county: {
+      getCounties: {
+        query: vi.fn(),
+      },
+    },
     insight: {
       getInsight: {
         query: vi.fn(),

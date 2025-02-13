@@ -46,6 +46,8 @@ export type Insight = Awaited<ReturnType<APIClient["getInsight"]>>;
 
 export type Offenses = Awaited<ReturnType<APIClient["getOffenses"]>>;
 
+export type Counties = Awaited<ReturnType<APIClient["getCounties"]>>;
+
 export type Client = NonNullable<Case["client"]>;
 
 export type Opportunities = Awaited<
@@ -172,6 +174,15 @@ export class APIClient {
       return Promise.reject({ message: "No tRPC client initialized" });
 
     const fetchedData = await this.trpcClient.offense.getOffenses.query();
+
+    return fetchedData;
+  }
+
+  async getCounties() {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+
+    const fetchedData = await this.trpcClient.county.getCounties.query();
 
     return fetchedData;
   }
