@@ -17,6 +17,7 @@
 
 import { router } from "~@sentencing-server/trpc/init";
 import { caseRouter } from "~@sentencing-server/trpc/routes/case/case.router";
+import { countyRouter } from "~@sentencing-server/trpc/routes/county/county.router";
 import { insightRouter } from "~@sentencing-server/trpc/routes/insight/insight.router";
 import { offenseRouter } from "~@sentencing-server/trpc/routes/offense/offense.router";
 import { opportunityRouter } from "~@sentencing-server/trpc/routes/opportunity/opportunity.router";
@@ -27,6 +28,7 @@ export const appRouter = router({
   case: caseRouter,
   opportunity: opportunityRouter,
   offense: offenseRouter,
+  county: countyRouter,
   insight: insightRouter,
 });
 

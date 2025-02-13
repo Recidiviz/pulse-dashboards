@@ -27,6 +27,7 @@ import {
   APIClient,
   Case,
   Client,
+  Counties,
   Insight,
   Offenses,
   Opportunities,
@@ -44,6 +45,8 @@ export class CaseStore {
 
   offenses: Offenses;
 
+  counties: Counties;
+
   insight?: Insight;
 
   activeCaseId?: string;
@@ -53,6 +56,7 @@ export class CaseStore {
     this.caseDetailsById = {};
     this.communityOpportunities = [];
     this.offenses = [];
+    this.counties = [];
     this.insight = undefined;
     this.activeCaseId = undefined;
   }
@@ -216,6 +220,27 @@ export class CaseStore {
       });
       toast(
         "Something went wrong loading a list of offenses. Please try again or contact us for support.",
+        {
+          duration: ERROR_TOAST_DURATION,
+          style: { backgroundColor: palette.signal.error },
+        },
+      );
+    }
+  }
+
+  *loadCounties() {
+    try {
+      const counties: Counties = yield this.psiStore.apiClient.getCounties();
+      this.counties = counties;
+    } catch (error) {
+      captureException(new Error("Error while loading counties"), {
+        extra: {
+          message: `loadCounties error: ${error}`,
+          staffId: this.psiStore.staffPseudoId,
+        },
+      });
+      toast(
+        "Something went wrong loading a list of counties. Please try again or contact us for support.",
         {
           duration: ERROR_TOAST_DURATION,
           style: { backgroundColor: palette.signal.error },

@@ -67,6 +67,7 @@ export class CaseDetailsPresenter implements Hydratable {
           await flowResult(this.caseStore.psiStore.staffStore.loadStaffInfo());
         }
         await flowResult(this.caseStore.loadOffenses());
+        await flowResult(this.caseStore.loadCounties());
         await flowResult(this.caseStore.loadCaseDetails(this.caseId));
         await flowResult(this.caseStore.loadCommunityOpportunities());
       },

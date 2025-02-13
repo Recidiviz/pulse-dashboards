@@ -61,6 +61,10 @@ export class OfflineAPIClient {
     return [];
   }
 
+  async getCounties(): Promise<string[]> {
+    return [];
+  }
+
   async getInsight(): Promise<string[]> {
     return [];
   }

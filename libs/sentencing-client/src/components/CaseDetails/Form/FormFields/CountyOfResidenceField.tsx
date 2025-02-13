@@ -18,7 +18,6 @@
 import { startCase } from "lodash";
 import { observer } from "mobx-react-lite";
 
-import { COUNTY_DISTRICT_MAP } from "../../../../geoConfigs/countyDistrictMapping";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import { CLIENT_COUNTY_KEY, CLIENT_DISTRICT_KEY } from "../../constants";
@@ -28,16 +27,16 @@ import { FormFieldProps, SelectOption } from "../types";
 import { useFormField } from "../useFormFields";
 
 function CountyOfSentencingField({ isRequired }: FormFieldProps) {
-  const { caseStore, geoConfig, stateCode } = useStore();
+  const { caseStore, geoConfig } = useStore();
   const caseAttributes = caseStore.caseAttributes;
   const omsSystem = geoConfig.omsSystem;
-  const countiesDistricts = COUNTY_DISTRICT_MAP[stateCode] ?? {};
+  const countiesOptions = caseStore.counties;
   const countyOfResidence = startCase(
     caseAttributes?.client?.county?.toLocaleLowerCase() ?? "",
   );
-  const options = Object.keys(countiesDistricts).map((selection) => ({
-    label: selection,
-    value: selection,
+  const options = countiesOptions.map((selection) => ({
+    label: startCase(selection.county?.toLocaleLowerCase()),
+    value: selection.county,
   }));
 
   const { selectValue, setSelectValue } = useFormField({
@@ -51,7 +50,9 @@ function CountyOfSentencingField({ isRequired }: FormFieldProps) {
     if (!option) return;
 
     const county = option.value as string;
-    const district = COUNTY_DISTRICT_MAP[stateCode]?.[county];
+    const district = countiesOptions.find(
+      (cd) => cd.county === county,
+    )?.district;
 
     setSelectValue(option);
     form.updateForm(CLIENT_COUNTY_KEY, county, isRequired);
