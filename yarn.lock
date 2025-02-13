@@ -33743,12 +33743,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"staff@workspace:apps/staff":
-  version: 0.0.0-use.local
-  resolution: "staff@workspace:apps/staff"
-  languageName: unknown
-  linkType: soft
-
 "standard-as-callback@npm:^2.0.1":
   version: 2.0.1
   resolution: "standard-as-callback@npm:2.0.1"
