@@ -33,6 +33,10 @@ export type RequirementsSectionContent = {
   requirements: Array<RequirementCopy>;
 };
 
+/**
+ * Values in this enum should be ordered by priority,
+ * useful for sorting groups of opportunities by status
+ */
 export const eligibilityStatusEnum = z.enum([
   "ELIGIBLE",
   "ALMOST_ELIGIBLE",

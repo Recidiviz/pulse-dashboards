@@ -94,3 +94,55 @@ describe("without NA opportunities", () => {
     expect(presenter.comparison).toEqual(usMeResidentsConfig.comparisons?.[0]);
   });
 });
+
+describe("opportunity sorting", () => {
+  test("config order when statuses match", async () => {
+    const residentPseudoId = usMeResidents[5].pseudonymizedId;
+    const hydrator = new SingleResidentHydratorPresenter(
+      new ResidentsStore(new RootStore(), usMeResidentsConfig),
+      residentPseudoId,
+    );
+
+    hydrator.hydrate();
+    await when(() => isHydrated(hydrator));
+
+    presenter = new EligibilityPresenter(
+      hydrator.residentData.opportunities,
+      usMeResidentsConfig,
+    );
+
+    const { opportunities } = presenter;
+    expect(opportunities).toHaveLength(2);
+    expect(opportunities[0].opportunityId).toBe("usMeWorkRelease");
+    expect(opportunities[0].eligibilityReport.status.value).toBe("ELIGIBLE");
+
+    expect(opportunities[1].opportunityId).toBe("usMeSCCP");
+    expect(opportunities[1].eligibilityReport.status.value).toBe("ELIGIBLE");
+  });
+
+  test("in status order", async () => {
+    const residentPseudoId = usMeResidents[7].pseudonymizedId;
+    const hydrator = new SingleResidentHydratorPresenter(
+      new ResidentsStore(new RootStore(), usMeResidentsConfig),
+      residentPseudoId,
+    );
+
+    hydrator.hydrate();
+    await when(() => isHydrated(hydrator));
+
+    presenter = new EligibilityPresenter(
+      hydrator.residentData.opportunities,
+      usMeResidentsConfig,
+    );
+
+    const { opportunities } = presenter;
+    expect(opportunities).toHaveLength(2);
+    expect(opportunities[0].opportunityId).toBe("usMeSCCP");
+    expect(opportunities[0].eligibilityReport.status.value).toBe(
+      "ALMOST_ELIGIBLE",
+    );
+
+    expect(opportunities[1].opportunityId).toBe("usMeWorkRelease");
+    expect(opportunities[1].eligibilityReport.status.value).toBe("INELIGIBLE");
+  });
+});

@@ -15,11 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ascending } from "d3-array";
+
 import {
   IncarcerationOpportunityId,
   ResidentsConfig,
 } from "../../../configs/types";
+import { eligibilityStatusEnum } from "../../../models/EligibilityReport/types";
 import { OpportunityData } from "../../SingleResidentHydrator/context";
+
+function getStatusSortOrder(d: OpportunityData) {
+  // values are assumed to be sorted by priority in the enum
+  return eligibilityStatusEnum.options.indexOf(
+    d.eligibilityReport.status.value,
+  );
+}
 
 export class EligibilityPresenter {
   constructor(
@@ -28,9 +38,9 @@ export class EligibilityPresenter {
   ) {}
 
   get opportunities() {
-    return this.opportunityData.filter(
-      (o) => o.eligibilityReport.status.value !== "NA",
-    );
+    return this.opportunityData
+      .filter((o) => o.eligibilityReport.status.value !== "NA")
+      .sort((a, b) => ascending(getStatusSortOrder(a), getStatusSortOrder(b)));
   }
 
   private isOpportunityEnabled(id: IncarcerationOpportunityId) {
