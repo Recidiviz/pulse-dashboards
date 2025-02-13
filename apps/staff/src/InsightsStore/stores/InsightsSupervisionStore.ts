@@ -843,7 +843,7 @@ export class InsightsSupervisionStore {
   *patchUserInfoForCurrentUser(
     props: PatchUserInfoProps,
   ): FlowMethod<InsightsAPI["patchUserInfo"], void> {
-    const { userAppMetadata, isRecidivizUser, isCSGUser } =
+    const { userAppMetadata, isRecidivizUser, isCSGUser, isImpersonating } =
       this.insightsStore.rootStore.userStore;
 
     // Recidiviz and CSG users might not have pseudonymizedIds, but should have an experience
@@ -854,6 +854,14 @@ export class InsightsSupervisionStore {
 
     if (!userAppMetadata) {
       throw new Error("Missing app_metadata for user");
+    }
+
+    if (isImpersonating && this.userInfo) {
+      this.userInfo.metadata = {
+        ...this.userInfo.metadata,
+        ...props,
+      };
+      return;
     }
 
     const { pseudonymizedId } = userAppMetadata;
