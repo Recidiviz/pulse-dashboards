@@ -15,19 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-// we are using useParams to make a custom hook in this file
-// eslint-disable-next-line no-restricted-imports
+import { ErrorBoundary } from "@sentry/react";
 import { Outlet } from "react-router-dom";
 
 import { AppLayout } from "../AppLayout/AppLayout";
 import { MenuBar } from "../AppLayout/MenuBar";
+import { ErrorPageMainContent } from "../ErrorPage/ErrorPageMainContent";
 import { ResidentNavMenu } from "../ResidentNavMenu/ResidentNavMenu";
 
 /**
  * Page layout that renders nested routes with resident navigation in header bar
  */
-export const ResidentsLayoutRoute = observer(function ResidentsLayoutRoute() {
+export const ResidentsLayoutRoute = () => {
   return (
     <AppLayout
       header={
@@ -35,7 +34,11 @@ export const ResidentsLayoutRoute = observer(function ResidentsLayoutRoute() {
           <ResidentNavMenu />
         </MenuBar>
       }
-      main={<Outlet />}
+      main={
+        <ErrorBoundary fallback={ErrorPageMainContent}>
+          <Outlet />
+        </ErrorBoundary>
+      }
     />
   );
-});
+};

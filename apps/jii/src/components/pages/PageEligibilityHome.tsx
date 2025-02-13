@@ -15,27 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withErrorBoundary } from "@sentry/react";
-import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { Navigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { State } from "../../routes/routes";
-import { ErrorPageMainContent } from "../ErrorPage/ErrorPageMainContent";
 
-export const PageEligibilityHome: FC = withErrorBoundary(
-  observer(function PageEligibilityHome() {
-    // for convenience, while there is only one opp configured we skip the lookup step
-    return (
-      <Navigate
-        to={State.Resident.Eligibility.Opportunity.buildPath({
-          ...useTypedParams(State.Resident.Eligibility),
-          opportunitySlug: "sccp",
-        })}
-        replace
-      />
-    );
-  }),
-  { fallback: ErrorPageMainContent },
-);
+export const PageEligibilityHome: FC = () => {
+  // no one should ever be sent here on purpose since the page isn't implemented,
+  // this is just here to rescue people who type a bogus URL in their address bar
+  return (
+    <Navigate
+      to={State.Resident.buildPath({
+        ...useTypedParams(State.Resident.Eligibility),
+      })}
+      replace
+    />
+  );
+};

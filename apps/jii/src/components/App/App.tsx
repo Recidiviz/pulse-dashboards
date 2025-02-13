@@ -76,7 +76,7 @@ const SentryRoutes = withSentryReactRouterV6Routing(Routes);
 
 export function App() {
   return (
-    <ErrorBoundary showDialog fallback={ErrorPage}>
+    <ErrorBoundary fallback={ErrorPage}>
       <StoreProvider>
         <GlobalStyleBase />
         <GlobalStyle />

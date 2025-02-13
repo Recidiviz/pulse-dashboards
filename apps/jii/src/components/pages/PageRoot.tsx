@@ -15,28 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router-dom";
 
 import { AuthClientHydrator } from "~auth";
 
 import { PageContainer } from "../BaseLayout/BaseLayout";
+import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { ScrollToTop } from "../ScrollToTop/ScrollToTop";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageviewTracking } from "../usePageviewTracking/usePageviewTracking";
 
-export const PageRoot = observer(function AppRoot() {
-  const {
-    userStore: { authClient },
-  } = useRootStore();
-  usePageviewTracking();
+export const PageRoot = withErrorBoundary(
+  observer(function AppRoot() {
+    const {
+      userStore: { authClient },
+    } = useRootStore();
+    usePageviewTracking();
 
-  return (
-    <AuthClientHydrator authClient={authClient}>
-      <PageContainer>
-        <Outlet />
-      </PageContainer>
-      <ScrollToTop />
-    </AuthClientHydrator>
-  );
-});
+    return (
+      <AuthClientHydrator authClient={authClient}>
+        <PageContainer>
+          <Outlet />
+        </PageContainer>
+        <ScrollToTop />
+      </AuthClientHydrator>
+    );
+  }),
+  { fallback: ErrorPage },
+);
