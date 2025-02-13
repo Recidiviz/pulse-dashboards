@@ -18,12 +18,11 @@
 import { makeObservable, override } from "mobx";
 
 import { OpportunityType } from "~datatypes";
-import { FlowMethod, HydratesFromSource } from "~hydration-utils";
+import { HydratesFromSource } from "~hydration-utils";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
-import { InsightsAPI } from "../api/interface";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
@@ -42,9 +41,7 @@ export class SupervisionOfficerOpportunitiesPresenter extends WithJusticeInvolve
 
     makeObservable<
       SupervisionOfficerOpportunitiesPresenter,
-      | "populateSupervisionOfficer"
-      | "expectClientsPopulated"
-      | "populateCaseload"
+      "expectClientsPopulated" | "populateCaseload"
     >(this, {
       isWorkflowsEnabled: true,
       expectClientsPopulated: true,
@@ -53,7 +50,6 @@ export class SupervisionOfficerOpportunitiesPresenter extends WithJusticeInvolve
       numClientsOnCaseload: true,
       numEligibleOpportunities: true,
       opportunitiesByType: true,
-      populateSupervisionOfficer: override,
       hydrate: override,
       hydrationState: override,
     });
@@ -66,8 +62,8 @@ export class SupervisionOfficerOpportunitiesPresenter extends WithJusticeInvolve
       ],
       populate: async () => {
         await Promise.all([
-          await this.supervisionStore.populateSupervisionOfficerSupervisors(),
-          await this.populateSupervisionOfficer(),
+          this.supervisionStore.populateSupervisionOfficerSupervisors(),
+          this.populateSupervisionOfficer(),
         ]);
 
         // This needs to happen after the above are hydrated
@@ -112,20 +108,5 @@ export class SupervisionOfficerOpportunitiesPresenter extends WithJusticeInvolve
 
   get numEligibleOpportunities(): number | undefined {
     return this.countOpportunitiesForOfficer(this.officerExternalId);
-  }
-
-  /**
-   * Fetch record for current officer.
-   */
-  protected *populateSupervisionOfficer(): FlowMethod<
-    InsightsAPI["supervisionOfficer"],
-    void
-  > {
-    if (this.isOfficerPopulated) return;
-
-    this.fetchedOfficerRecord =
-      yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
-        this.officerPseudoId,
-      );
   }
 }

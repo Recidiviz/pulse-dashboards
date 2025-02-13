@@ -15,21 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeObservable } from "mobx";
+import { flowResult, makeObservable, runInAction } from "mobx";
 
 import {
   SupervisionOfficer,
   SupervisionOfficerOutcomes,
   SupervisionOfficerSupervisor,
 } from "~datatypes";
-import {
-  castToError,
-  FlowMethod,
-  Hydratable,
-  HydratesFromSource,
-} from "~hydration-utils";
+import { castToError, Hydratable, HydratesFromSource } from "~hydration-utils";
 
-import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
 import { ConfigLabels, OfficerOutcomesData } from "./types";
@@ -118,7 +112,7 @@ export abstract class SupervisionOfficerPresenterBase
     return [
       flowResult(this.supervisionStore.populateMetricConfigs()),
       flowResult(this.supervisionStore.populateSupervisionOfficerSupervisors()),
-      flowResult(this.populateSupervisionOfficer()),
+      this.populateSupervisionOfficer(),
     ];
   }
 
@@ -276,23 +270,36 @@ export abstract class SupervisionOfficerPresenterBase
     return !(this.officerOutcomesDataOrError instanceof Error);
   }
 
-  protected abstract populateSupervisionOfficer(): FlowMethod<
-    InsightsAPI["supervisionOfficer"],
-    void
-  >;
+  // Overridden bound flow methods seem to produce mobx errors, so use regular actions here instead:
+  // https://github.com/Recidiviz/pulse-dashboards/pull/7352#issuecomment-2655130415
+  protected async populateSupervisionOfficer() {
+    if (this.isOfficerPopulated) return;
+
+    const officer =
+      await this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
+        this.officerPseudoId,
+      );
+    runInAction(() => {
+      this.fetchedOfficerRecord = officer;
+    });
+  }
 
   /**
    * Fetch outcomes for current officer.
    */
-  protected *populateSupervisionOfficerOutcomes(): FlowMethod<
-    InsightsAPI["outcomesForOfficer"],
-    void
-  > {
+  // At the time of writing, this is not overridden anywhere, but preemptively making a regular
+  // action instead of flow in case it becomes overridden in the future
+  // (see comment on populateSupervisionOfficer)
+  protected async populateSupervisionOfficerOutcomes() {
     if (isExcludedSupervisionOfficer(this.officerRecord)) return;
-    this.fetchedOfficerOutcomes =
-      yield this.supervisionStore.insightsStore.apiClient.outcomesForOfficer(
+
+    const outcomesForOfficer =
+      await this.supervisionStore.insightsStore.apiClient.outcomesForOfficer(
         this.officerPseudoId,
       );
+    runInAction(() => {
+      this.fetchedOfficerOutcomes = outcomesForOfficer;
+    });
   }
 
   /**

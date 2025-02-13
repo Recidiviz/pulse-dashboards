@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeObservable, override } from "mobx";
+import { makeObservable, override } from "mobx";
 
 import { ActionStrategyCopy } from "~datatypes";
-import { castToError, FlowMethod, HydratesFromSource } from "~hydration-utils";
+import { castToError, HydratesFromSource } from "~hydration-utils";
 
-import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
 import { HighlightedOfficersDetail, OfficerOutcomesData } from "./types";
@@ -39,16 +38,12 @@ export class SupervisionOfficerOutcomesPresenter extends SupervisionOfficerPrese
 
     makeObservable<
       SupervisionOfficerOutcomesPresenter,
-      // officer
-      | "populateSupervisionOfficer"
       // outcomes
       | "expectOfficerOutcomesPopulated"
-      | "populateSupervisionOfficerOutcomes"
       | "expectOfficerOutcomesDataPopulated"
       | "officerOutcomesDataOrError"
     >(this, {
       // hydration
-      populateSupervisionOfficer: override,
       hydrate: override,
       hydrationState: override,
       // action strategies
@@ -60,7 +55,6 @@ export class SupervisionOfficerOutcomesPresenter extends SupervisionOfficerPrese
       officerOutcomesDataOrError: override,
       expectOfficerOutcomesPopulated: override,
       expectOfficerOutcomesDataPopulated: override,
-      populateSupervisionOfficerOutcomes: override,
     });
 
     this.hydrator = new HydratesFromSource({
@@ -71,7 +65,7 @@ export class SupervisionOfficerOutcomesPresenter extends SupervisionOfficerPrese
       populate: async () => {
         await Promise.all(super.populateMethods());
         // These need to happen after the above calls so that the officer record is hydrated
-        await flowResult(this.populateSupervisionOfficerOutcomes());
+        await this.populateSupervisionOfficerOutcomes();
       },
     });
   }
@@ -175,34 +169,5 @@ export class SupervisionOfficerOutcomesPresenter extends SupervisionOfficerPrese
 
   protected get isOfficerOutcomesDataPopulated() {
     return !(this.officerOutcomesDataOrError instanceof Error);
-  }
-
-  /**
-   * Fetch record for current officer.
-   */
-  protected *populateSupervisionOfficer(): FlowMethod<
-    InsightsAPI["supervisionOfficer"],
-    void
-  > {
-    if (this.isOfficerPopulated) return;
-
-    this.fetchedOfficerRecord =
-      yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
-        this.officerPseudoId,
-      );
-  }
-
-  /**
-   * Fetch outcomes for current officer.
-   */
-  protected *populateSupervisionOfficerOutcomes(): FlowMethod<
-    InsightsAPI["outcomesForOfficer"],
-    void
-  > {
-    if (isExcludedSupervisionOfficer(this.officerRecord)) return;
-    this.fetchedOfficerOutcomes =
-      yield this.supervisionStore.insightsStore.apiClient.outcomesForOfficer(
-        this.officerPseudoId,
-      );
   }
 }
