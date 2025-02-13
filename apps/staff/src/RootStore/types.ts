@@ -94,7 +94,8 @@ export type FeatureVariant =
   | "protectiveFactors"
   | "editCountyFields"
   | "usIdCaseManagerSearch"
-  | "opportunityTableView";
+  | "opportunityTableView"
+  | "usTnSuspensionOfDirectSupervision";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -148,6 +149,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   editCountyFields: {},
   usIdCaseManagerSearch: {},
   opportunityTableView: {},
+  usTnSuspensionOfDirectSupervision: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -175,6 +177,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         fullWidthTimeline: {
           activeTenants: ["US_AZ"],
         },
+        usTnSuspensionOfDirectSupervision: {},
       }
     : {
         ...allFeatureVariants,

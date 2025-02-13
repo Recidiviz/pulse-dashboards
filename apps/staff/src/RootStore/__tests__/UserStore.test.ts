@@ -994,6 +994,7 @@ describe("feature variants", () => {
         "usPaSpecialCircumstances": {},
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
+        "usTnSuspensionOfDirectSupervision": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
       }
@@ -1038,6 +1039,7 @@ describe("feature variants", () => {
         "usPaSpecialCircumstances": {},
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
+        "usTnSuspensionOfDirectSupervision": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
       }
@@ -1080,6 +1082,7 @@ describe("feature variants", () => {
         "usPaSpecialCircumstances": {},
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
+        "usTnSuspensionOfDirectSupervision": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
       }
