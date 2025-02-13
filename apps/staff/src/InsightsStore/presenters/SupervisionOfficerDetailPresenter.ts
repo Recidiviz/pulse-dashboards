@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeObservable, override } from "mobx";
+import { makeObservable, override, runInAction } from "mobx";
 
 import { MetricConfig } from "~datatypes";
-import { FlowMethod, HydratesFromSource } from "~hydration-utils";
+import { HydratesFromSource } from "~hydration-utils";
 
-import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerOutcomesPresenter } from "./SupervisionOfficerOutcomesPresenter";
 
@@ -53,7 +52,7 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcome
       populate: async () => {
         await Promise.all([...this.populateMethods()]);
         // Follows the above method so we have the officer record hydrated.
-        await flowResult(this.populateSupervisionOfficerOutcomes());
+        await this.populateSupervisionOfficerOutcomes();
       },
     });
   }
@@ -101,10 +100,9 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcome
     };
   }
 
-  protected *populateSupervisionOfficer(): FlowMethod<
-    InsightsAPI["supervisionOfficer"],
-    void
-  > {
+  // Overridden bound flow methods seem to produce mobx errors, so use regular actions here instead:
+  // https://github.com/Recidiviz/pulse-dashboards/pull/7352#issuecomment-2655130415
+  protected async populateSupervisionOfficer() {
     if (this.isOfficerPopulated) return;
 
     if (this.metricId) {
@@ -115,10 +113,12 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcome
         this.metricId,
       );
     }
-
-    this.fetchedOfficerRecord =
-      yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
+    const officer =
+      await this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
         this.officerPseudoId,
       );
+    runInAction(() => {
+      this.fetchedOfficerRecord = officer;
+    });
   }
 }

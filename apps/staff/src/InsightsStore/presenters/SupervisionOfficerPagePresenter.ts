@@ -15,13 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeObservable, override } from "mobx";
+import { makeObservable, override } from "mobx";
 
-import { FlowMethod, HydratesFromSource } from "~hydration-utils";
+import { HydratesFromSource } from "~hydration-utils";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
-import { InsightsAPI } from "../api/interface";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
@@ -40,16 +39,13 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
 
     makeObservable<
       SupervisionOfficerPagePresenter,
-      | "populateSupervisionOfficer"
-      | "expectClientsPopulated"
-      | "populateCaseload"
+      "expectClientsPopulated" | "populateCaseload"
     >(this, {
       isWorkflowsEnabled: true,
       expectClientsPopulated: true,
       populateCaseload: true,
       clients: true,
       numClientsOnCaseload: true,
-      populateSupervisionOfficer: override,
       hydrate: override,
       hydrationState: override,
     });
@@ -65,7 +61,7 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
         // These need to happen after the above calls so that the officer record is hydrated
         await Promise.all([
           this.populateCaseload(),
-          flowResult(this.populateSupervisionOfficerOutcomes()),
+          this.populateSupervisionOfficerOutcomes(),
         ]);
       },
     });
@@ -90,20 +86,5 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
   protected expectMetricsPopulated() {
     if (isExcludedSupervisionOfficer(this.fetchedOfficerRecord)) return;
     super.expectMetricsPopulated();
-  }
-
-  /**
-   * Fetch record for current officer.
-   */
-  protected *populateSupervisionOfficer(): FlowMethod<
-    InsightsAPI["supervisionOfficer"],
-    void
-  > {
-    if (this.isOfficerPopulated) return;
-
-    this.fetchedOfficerRecord =
-      yield this.supervisionStore.insightsStore.apiClient.supervisionOfficer(
-        this.officerPseudoId,
-      );
   }
 }
