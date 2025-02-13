@@ -91,6 +91,10 @@ export function hydrateXMonthsRemainingRequirement(
   criterion: NonNullable<UsMeSCCPCriteria["usMeXMonthsRemainingOnSentence"]>,
   copy: OpportunityRequirement,
 ) {
+  // this can only happen for fully ineligible residents.
+  // the schema supports them but Workflows doesn't
+  if (!criterion.eligibleDate) return;
+
   const monthsRemaining =
     differenceInMonths(criterion.eligibleDate, new Date()) + 36;
 
@@ -108,8 +112,12 @@ export function hydrateXMonthsRemainingRequirement(
 function hydrateServedXPortionOfSentence(
   criterion: NonNullable<UsMeSCCPCriteria["usMeServedXPortionOfSentence"]>,
   copy: OpportunityRequirement,
-): OpportunityRequirement {
+) {
   const { xPortionServed, eligibleDate } = criterion;
+  // this can only happen for fully ineligible residents.
+  // the schema supports them but Workflows doesn't
+  if (!eligibleDate) return;
+
   const lengthCondition =
     xPortionServed === "1/2" ? "5 years or less" : "more than 5 years";
   const monthsDifference = differenceInMonths(new Date(), eligibleDate);
@@ -180,19 +188,25 @@ const requirementsForEligibleCriteria = (
 
   if (criteria.usMeXMonthsRemainingOnSentence) {
     requirements.push(
+      // this can be missing if the criterion was missing some data,
+      // which does not apply to eligible residents per the schema
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       hydrateXMonthsRemainingRequirement(
         criteria.usMeXMonthsRemainingOnSentence,
         usMeXMonthsRemainingOnSentence,
-      ),
+      )!,
     );
   }
 
   if (criteria.usMeServedXPortionOfSentence) {
     requirements.push(
+      // this can be missing if the criterion was missing some data,
+      // which does not apply to eligible residents per the schema
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       hydrateServedXPortionOfSentence(
         criteria.usMeServedXPortionOfSentence,
         usMeServedXPortionOfSentence,
-      ),
+      )!,
     );
   }
 
@@ -219,21 +233,29 @@ const requirementsForIneligibleCriteria = (
   } = cloneDeep(INELIGIBLE_CRITERIA_COPY);
 
   if (criteria.usMeXMonthsRemainingOnSentence) {
-    requirements.push(
-      hydrateXMonthsRemainingRequirement(
-        criteria.usMeXMonthsRemainingOnSentence,
-        usMeXMonthsRemainingOnSentence,
-      ),
+    const requirement = hydrateXMonthsRemainingRequirement(
+      criteria.usMeXMonthsRemainingOnSentence,
+      usMeXMonthsRemainingOnSentence,
     );
+    // this can be missing if the criterion was missing some data.
+    // should only happen with fully ineligible residents, who will not be displayed anyway,
+    // so it should be safe to ignore these cases in practice
+    if (requirement) {
+      requirements.push(requirement);
+    }
   }
 
   if (criteria.usMeServedXPortionOfSentence) {
-    requirements.push(
-      hydrateServedXPortionOfSentence(
-        criteria.usMeServedXPortionOfSentence,
-        usMeServedXPortionOfSentence,
-      ),
+    const requirement = hydrateServedXPortionOfSentence(
+      criteria.usMeServedXPortionOfSentence,
+      usMeServedXPortionOfSentence,
     );
+    // this can be missing if the criterion was missing some data.
+    // only happens with fully ineligible residents, who will not be displayed anyway,
+    // so it should be safe to ignore these cases in practice
+    if (requirement) {
+      requirements.push(requirement);
+    }
   }
 
   if (criteria.usMeNoClassAOrBViolationFor90Days) {
@@ -286,6 +308,9 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
 
     if (usMeXMonthsRemainingOnSentence) {
       const { eligibleDate } = usMeXMonthsRemainingOnSentence;
+      // this should never be missing in almost-eligible residents.
+      // only expected for fully ineligible residents, who are not supported here anyway
+      if (!eligibleDate) return;
 
       const monthsRemaining = differenceInMonths(eligibleDate, new Date());
       let remainingText =
@@ -313,8 +338,10 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
         INELIGIBLE_CRITERIA_COPY,
       );
 
+      // this can be missing if the criterion was missing some data.
+      // only happens with fully ineligible residents, who are not supported anyway
       return hydrateServedXPortionOfSentence(usMeServedXPortionOfSentence, copy)
-        .text;
+        ?.text;
     }
 
     return "Status unknown";

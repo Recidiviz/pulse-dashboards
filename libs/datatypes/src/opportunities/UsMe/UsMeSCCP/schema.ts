@@ -18,12 +18,15 @@
 import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
-import { dateStringSchema } from "../../../utils/zod/date/dateStringSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 import type { MergedCriteria } from "../../utils/types";
 import {
+  custodyLevelReason,
+  eligibleDateReason,
+  eligibleDateReasonSchema,
   noABViolation90DaysSchema,
   noDetainersWarrantsSchema,
+  nullableEligibleDateReasonSchema,
 } from "../common";
 
 /**
@@ -31,39 +34,53 @@ import {
  */
 export const usMeXPortionServedEnum = z.enum(["1/2", "2/3"]);
 
-// these are generally expected to have the same shape whether they are eligible or not.
-// there are actually some edge cases where any of these may be null for ineligible residents
-// (out-of-state incarceration, life sentence, weird or missing data), but we don't expect
-// this to affect our tools in practice, so for simplicity we do not parse those cases for now
-const possiblyIneligibleCriteria = z
-  .object({
-    usMeXMonthsRemainingOnSentence: z.object({
-      eligibleDate: dateStringSchema,
-    }),
-    usMeServedXPortionOfSentence: z.object({
-      eligibleDate: dateStringSchema,
-      xPortionServed: usMeXPortionServedEnum,
-    }),
-    usMeCustodyLevelIsMinimumOrCommunity: z.object({
-      custodyLevel: z.string(),
-    }),
-  })
-  .partial()
-  .passthrough();
+function custodyLevelCriterion() {
+  return custodyLevelReason("usMeCustodyLevelIsMinimumOrCommunity");
+}
+
+function monthsRemainingCriterion() {
+  return eligibleDateReason("usMeXMonthsRemainingOnSentence");
+}
+
+function xPortionCriterion() {
+  const criterionId = "usMeServedXPortionOfSentence";
+
+  const xPortionServedReason = { xPortionServed: usMeXPortionServedEnum };
+
+  return {
+    eligible: {
+      [criterionId]: eligibleDateReasonSchema.extend(xPortionServedReason),
+    },
+    ineligible: {
+      [criterionId]: nullableEligibleDateReasonSchema
+        .unwrap()
+        .extend(xPortionServedReason)
+        .nullable(),
+    },
+  };
+}
 
 export const usMeSCCPSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: possiblyIneligibleCriteria
-    .extend({
+  eligibleCriteria: z
+    .object({
+      ...xPortionCriterion().eligible,
+      ...monthsRemainingCriterion().eligible,
+      ...custodyLevelCriterion().eligible,
       ...noABViolation90DaysSchema.eligible,
       ...noDetainersWarrantsSchema.eligible,
     })
-    .partial(),
-  ineligibleCriteria: possiblyIneligibleCriteria
-    .extend({
+    .partial()
+    .passthrough(),
+  ineligibleCriteria: z
+    .object({
+      ...xPortionCriterion().ineligible,
+      ...monthsRemainingCriterion().ineligible,
+      ...custodyLevelCriterion().ineligible,
       ...noABViolation90DaysSchema.ineligible,
       ...noDetainersWarrantsSchema.ineligible,
     })
-    .partial(),
+    .partial()
+    .passthrough(),
 });
 
 export type UsMeSCCPRecord = ParsedRecord<typeof usMeSCCPSchema>;
