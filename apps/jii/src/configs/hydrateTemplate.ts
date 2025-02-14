@@ -21,7 +21,7 @@ import Handlebars from "handlebars";
 
 import { dateStringSchema } from "~datatypes";
 
-import { formatFullDate } from "../utils/date";
+import { formatFullDate, formatISODatesInText } from "../utils/date";
 
 Handlebars.registerHelper("titleCase", (s: string) => toTitleCase(s));
 Handlebars.registerHelper("lowerCase", (s: string) => s.toLowerCase());
@@ -32,6 +32,9 @@ Handlebars.registerHelper("formatFullDate", (d: Date | string) => {
 Handlebars.registerHelper("isFutureDate", (d: Date) => isFuture(d));
 Handlebars.registerHelper("and", (a: unknown, b: unknown) => a && b);
 Handlebars.registerHelper("equals", (a: unknown, b: unknown) => a === b);
+Handlebars.registerHelper("formatDatesInText", (s: string) =>
+  formatISODatesInText(s),
+);
 
 /**
  * Hydrates the Handlebars template in `template` with the values in `context`.

@@ -34,7 +34,7 @@ export const commonTrackedCriteria = {
     criterion: "No Class A or B discipline in past 90 days",
     ineligibleReason: `{{#if currentCriterion.eligibleDate}}
       ${eligibleDateReasonTemplate}
-    {{else}}You have a Class {{currentCriterion.highestClassViol}} violation: {{currentCriterion.violType}}
+    {{else}}You have a Class {{currentCriterion.highestClassViol}} violation: {{formatDatesInText currentCriterion.violType}}
     {{/if}}`,
   },
   usMeNoDetainersWarrantsOrOther: {

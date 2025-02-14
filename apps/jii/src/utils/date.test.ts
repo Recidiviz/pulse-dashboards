@@ -15,8 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatFullDate } from "./date";
+import { formatFullDate, formatISODatesInText } from "./date";
 
 test("formatFullDate", () => {
   expect(formatFullDate(new Date(2024, 3, 24))).toBe("April 24, 2024");
+});
+
+test("formatISODatesInText", () => {
+  expect(formatISODatesInText("Pending since 2025-01-14")).toBe(
+    "Pending since January 14, 2025",
+  );
+  // invalid date-esque patterns are ignored
+  expect(formatISODatesInText("4444-44-44")).toBe("4444-44-44");
 });
