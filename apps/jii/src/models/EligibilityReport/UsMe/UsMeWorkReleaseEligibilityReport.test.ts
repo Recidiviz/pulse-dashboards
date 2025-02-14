@@ -276,7 +276,7 @@ describe("ineligible", () => {
             },
             {
               "criterion": "No Class A or B discipline in past 90 days",
-              "ineligibleReason": "You have a Class B violation: Pending since 2021-09-06",
+              "ineligibleReason": "You have a Class B violation: Pending since September 6, 2021",
             },
             {
               "criterion": "No unresolved detainers, warrants or pending charges",

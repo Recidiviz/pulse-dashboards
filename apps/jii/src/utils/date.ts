@@ -17,6 +17,25 @@
 
 import { format } from "date-fns";
 
+import { dateStringSchema } from "~datatypes";
+
 export function formatFullDate(date: Date) {
   return format(date, "MMMM d, yyyy");
+}
+
+/**
+ * Extracts any dates found in input text and reformats them
+ * with {@link formatFullDate}. If none are found or if the date strings
+ * turn out to be invalid or unparseable, returns the input string unaltered
+ */
+export function formatISODatesInText(text: string): string {
+  try {
+    return text.replaceAll(/\d{4}-\d{2}-\d{2}/g, (match) =>
+      formatFullDate(dateStringSchema.parse(match)),
+    );
+  } catch {
+    // fall through
+  }
+
+  return text;
 }
