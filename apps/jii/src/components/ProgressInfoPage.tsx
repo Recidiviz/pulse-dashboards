@@ -16,11 +16,11 @@
 // =============================================================================
 
 import { FC } from "react";
-import { Navigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { State } from "../routes/routes";
 import { InfoPage } from "./InfoPage/InfoPage";
+import { Redirect } from "./Redirect/Redirect";
 import { useResidentsContext } from "./ResidentsHydrator/context";
 
 export const ProgressInfoPage: FC = () => {
@@ -35,12 +35,11 @@ export const ProgressInfoPage: FC = () => {
   // so if the page URL is wrong somehow just redirect
   if (urlParams.pageSlug !== progressPage.urlSlug) {
     return (
-      <Navigate
+      <Redirect
         to={State.Resident.Progress.InfoPage.buildPath({
           ...urlParams,
           pageSlug: progressPage.urlSlug,
         })}
-        replace
       />
     );
   }

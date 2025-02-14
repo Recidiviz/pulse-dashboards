@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +16,12 @@
 // =============================================================================
 
 import { FC } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { Navigate, To } from "react-router-dom";
 
-import { State } from "../../routes/routes";
-import { Redirect } from "../Redirect/Redirect";
-
-export const PageEligibilityHome: FC = () => {
-  // no one should ever be sent here on purpose since the page isn't implemented,
-  // this is just here to rescue people who type a bogus URL in their address bar
-  return (
-    <Redirect
-      to={State.Resident.buildPath({
-        ...useTypedParams(State.Resident.Eligibility),
-      })}
-    />
-  );
+/**
+ * Redirect user to a new route, updating browser history in place
+ * (i.e. there will be no reference to the original URL, only the new destination)
+ */
+export const Redirect: FC<{ to: To }> = ({ to }) => {
+  return <Navigate to={to} replace />;
 };

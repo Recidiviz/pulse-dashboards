@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { Navigate } from "react-router-dom";
 
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import { EmailVerification, State } from "../../routes/routes";
+import { Redirect } from "../Redirect/Redirect";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { PageLanding } from "./PageLanding";
 
@@ -31,16 +31,15 @@ export const PageHome = observer(function PageHome() {
 
   if (authClient.isAuthorized)
     return (
-      <Navigate
+      <Redirect
         to={State.buildPath({
           stateSlug: stateConfigsByStateCode[stateCode].urlSlug,
         })}
-        replace
       />
     );
 
   if (authClient.isEmailVerificationRequired)
-    return <Navigate to={EmailVerification.buildPath({})} replace />;
+    return <Redirect to={EmailVerification.buildPath({})} />;
 
   return <PageLanding />;
 });
