@@ -80,11 +80,13 @@ export class OpportunityCaseloadPresenter {
 
     this.tableViewEnabled = !!featureVariants.opportunityTableView;
 
-    // only update the list of people to navigate through when a new sidebar is opened
+    // only update the list of opportunities to navigate through when necessary,
+    // to avoid changing the list when an opportunity status is changed from side panel
     reaction(
-      () => this.selectedPerson,
-      (_, previousPerson) => {
-        if (previousPerson === undefined) this.updateNavigablePeople();
+      () => this.selectedOpportunity,
+      (nextOpp) => {
+        if (!nextOpp || !this._navigablePeople.includes(nextOpp))
+          this.updateNavigablePeople();
       },
       // populate the list if there's already a selected person upon page load
       { fireImmediately: true },
@@ -389,8 +391,7 @@ export class OpportunityCaseloadPresenter {
   }
 
   handleOpportunityClick(opp: Opportunity) {
-    this.workflowsStore.updateSelectedPerson(opp.person.pseudonymizedId);
-    this.workflowsStore.updateSelectedOpportunity(opp.selectId);
+    this.workflowsStore.updateSelectedPersonAndOpportunity(opp);
   }
 
   shouldHighlightOpportunity(opp: Opportunity) {

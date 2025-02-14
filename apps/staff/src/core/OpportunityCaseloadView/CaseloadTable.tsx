@@ -25,6 +25,7 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Dispatch, SetStateAction } from "react";
 import styled from "styled-components/macro";
@@ -165,7 +166,7 @@ type CaseloadTableProps<TData> = {
   };
 };
 
-export const CaseloadTable = function CaseloadTable<TData>({
+export const CaseloadTable = observer(function CaseloadTable<TData>({
   expandedLastColumn = false,
   data,
   columns,
@@ -240,4 +241,4 @@ export const CaseloadTable = function CaseloadTable<TData>({
       </TableBody>
     </Table>
   );
-};
+});

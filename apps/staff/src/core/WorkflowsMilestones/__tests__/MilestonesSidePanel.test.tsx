@@ -41,7 +41,7 @@ const baseRootStoreMock = {
   userStore: { userSurname: "Smith", userFullName: "Firstname Smith" },
   workflowsStore: {
     availableOfficers: [],
-    updateSelectedPerson: () => null,
+    updateSelectedPersonAndOpportunity: () => null,
     formatSupervisionLevel: () => null,
     caseloadLoaded: () => false,
     justiceInvolvedPersonTitle: "client",

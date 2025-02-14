@@ -500,7 +500,6 @@ export class WorkflowsStore implements Hydratable {
     if (personId && !has(this.justiceInvolvedPersons, personId)) {
       await this.fetchPerson(personId);
     }
-
     runInAction(() => {
       this.selectedPersonPseudoId = personId;
     });
@@ -508,6 +507,22 @@ export class WorkflowsStore implements Hydratable {
 
   updateSelectedOpportunity(opportunityId?: string): void {
     runInAction(() => (this.selectedOpportunityId = opportunityId));
+  }
+
+  /**
+   * Update the opportunity and person within a mobx transaction so that reactions don't
+   * observe the opportunity and person being out of sync. This function should be used
+   * instead of calling updateSelectedPerson and updateSelectedOpportunity in sequence.
+   */
+  async updateSelectedPersonAndOpportunity(opportunity?: Opportunity) {
+    const personId = opportunity?.person.pseudonymizedId;
+    if (personId && !has(this.justiceInvolvedPersons, personId)) {
+      await this.fetchPerson(personId);
+    }
+    runInAction(() => {
+      this.selectedPersonPseudoId = personId;
+      this.selectedOpportunityId = opportunity?.selectId;
+    });
   }
 
   updateSelectedOpportunityType(opportunityType?: OpportunityType): void {

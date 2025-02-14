@@ -114,8 +114,7 @@ const HighlightedCandidate = function HighlightedCandidate({
 }): ReactNode {
   const { workflowsStore } = useRootStore();
   const onClick = () => {
-    workflowsStore.updateSelectedOpportunity(opportunity.selectId);
-    workflowsStore.updateSelectedPerson(opportunity.person.pseudonymizedId);
+    workflowsStore.updateSelectedPersonAndOpportunity(opportunity);
   };
 
   const { urlSection } = opportunity.config;
