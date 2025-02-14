@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { ascending } from "d3-array";
 import {
+  and,
   FieldPath,
-  QueryFieldFilterConstraint,
+  or,
+  QueryCompositeFilterConstraint,
   where,
 } from "firebase/firestore";
-import { some } from "lodash";
+import { groupBy, some } from "lodash";
 import { values } from "mobx";
 
 import { AnyWorkflowsSystemConfig } from "../core/models/types";
@@ -37,7 +40,7 @@ export class SearchManager {
     this.personType = personType;
   }
 
-  get queryConstraints(): QueryFieldFilterConstraint[] | undefined {
+  get queryConstraints(): QueryCompositeFilterConstraint | undefined {
     const {
       selectedSearchIds,
       rootStore: { currentTenantId },
@@ -48,19 +51,28 @@ export class SearchManager {
       return undefined;
     }
 
-    const constraints = [
-      where("stateCode", "==", currentTenantId),
-      where(
-        // TODO (#7054) Handle multiple search configs once second US_ID config is added.
-        new FieldPath(...systemConfig.search[0].searchField),
-        systemConfig.search[0].searchOp ?? "in",
+    // The conditions that are applied with a logical OR
+    // A person should match if they match searchId1 OR searchId2
+    const orConditions = systemConfig.search.map((c) => {
+      return where(
+        new FieldPath(...c.searchField),
+        c.searchOp ?? "in",
         selectedSearchIds,
-      ),
+      );
+    });
+
+    // The conditions that are applied with a logical AND
+    // A person should match if they have a specific stateCode AND they match any of the searchIds
+    const andConditions = [
+      where("stateCode", "==", currentTenantId),
+      or(...orConditions),
     ];
 
     if (systemConfig.onlySurfaceEligible) {
-      constraints.push(where("allEligibleOpportunities", "!=", []));
+      andConditions.push(where("allEligibleOpportunities", "!=", []));
     }
+
+    const constraints = and(...andConditions);
 
     return constraints;
   }
@@ -86,6 +98,52 @@ export class SearchManager {
           return this.personMatchesSearch(p);
         })
       : [];
+  }
+
+  get matchingPersonsSorted(): JusticeInvolvedPerson[] {
+    return this.matchingPersons.sort((a, b) => {
+      return (
+        ascending(a.fullName.surname, b.fullName.surname) ||
+        ascending(a.fullName.givenNames, b.fullName.givenNames)
+      );
+    });
+  }
+
+  /**
+   * Returns an object with matching persons grouped by the seletedSearchId that they matched:
+   * {
+   *   officerId1: [CLIENT1, CLIENT3],
+   *   locationId1: [CLIENT1]
+   * }
+   */
+  get matchingPersonsGrouped(): Record<string, JusticeInvolvedPerson[]> {
+    const matchingPersons = [ ...this.matchingPersonsSorted ];
+    let caseloads: Record<string, JusticeInvolvedPerson[]> = {};
+    // Create a group for each searchField id
+    this.systemConfig.search.forEach(({ searchField }) => {
+      caseloads = {
+        ...caseloads,
+        ...groupBy(
+          matchingPersons,
+          `record.${searchField.join(".")}`,
+        ),
+      };
+    });
+    // Delete extraneous groups that are not in selectedSearchIds
+    // The extra groups exist because we are pulling all of the ids from every searchField
+    // in the logic above, but some of them won't be in the selectedSearchIds even though the JIP matches.
+    // So given:
+    //   selectedSearchIds: ["officer1, location1"]
+    //   client1: { oficerId: "officer1", "location1" }
+    //   client2: { oficerId: "officer1", "location2" }
+    // caseloads at this point would be:
+    //   caseloads: { officer1: [client1, client2], location1: [client1], location2: [client2] }
+    // the "location2" id is not in selectedSearchIds so it should be removed as a group
+    Object.keys(caseloads).forEach((key) => {
+      if (!this.workflowsStore.selectedSearchIds.includes(key))
+        delete caseloads[key];
+    });
+    return caseloads;
   }
 
   get isEnabled(): boolean {
