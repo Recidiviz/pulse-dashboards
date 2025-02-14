@@ -32,6 +32,14 @@ expect.extend(toHaveNoViolations);
 
 const fetchMocker = createFetchMock(vi);
 
+// stub ResizeObserver, which does not exist in JSDOM
+class ResizeObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+window.ResizeObserver = ResizeObserver;
+
 beforeAll(() => {
   fetchMocker.enableMocks();
 
