@@ -21,12 +21,13 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, useId } from "react";
 import { Link } from "react-router-dom";
+import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
 import { PAGE_LAYOUT_HEADER_GAP } from "../AppLayout/constants";
-import { HEADER_BAR_HEIGHT } from "../AppLayout/MenuBar";
+import { HeaderPortal } from "../AppLayout/HeaderPortal";
 import { FullBleedContainer } from "../BaseLayout/BaseLayout";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { useResidentsContext } from "../ResidentsHydrator/context";
@@ -36,7 +37,7 @@ import { AdditionalSection } from "./AdditionalSection";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 import { RequirementsSection } from "./RequirementsSection";
 
-const SIDEBAR_WIDTH = rem(120);
+const SIDEBAR_WIDTH = 120;
 
 const Background = styled(FullBleedContainer)`
   height: ${rem(400)};
@@ -45,17 +46,11 @@ const Background = styled(FullBleedContainer)`
   top: -${rem(spacing.xl)};
 `;
 
-const Wrapper = styled.article`
-  column-gap: ${rem(spacing.xl * 2)};
-  display: grid;
-  grid-template-columns: ${SIDEBAR_WIDTH} 1fr;
-  grid-template-rows: auto 1fr;
-  grid-template-areas:
-    "sidebar title"
-    "sidebar body";
+const Wrapper = styled.article<{ scrollMargin: number }>`
+  padding-left: ${rem(SIDEBAR_WIDTH + spacing.xl * 2)};
 
   & [id] {
-    scroll-margin-top: ${rem(HEADER_BAR_HEIGHT + PAGE_LAYOUT_HEADER_GAP)};
+    scroll-margin-top: ${(props) => props.scrollMargin}px;
   }
 `;
 
@@ -64,21 +59,16 @@ const Headline = styled.h1`
 
   color: ${palette.pine1};
   font-size: ${rem(34)};
-  grid-area: title;
   margin: 0 0 ${rem(spacing.sm)};
   text-wrap: balance;
 `;
 
-const Body = styled.div`
-  grid-area: body;
-`;
+const Body = styled.div``;
 
 const TableOfContents = styled.nav`
-  grid-area: sidebar;
-  position: fixed;
-  /* fixed positioning takes this out of the grid after initial placement, 
-  so we need to reset the width */
-  width: ${SIDEBAR_WIDTH};
+  margin-top: ${rem(PAGE_LAYOUT_HEADER_GAP)};
+  position: absolute;
+  width: ${rem(SIDEBAR_WIDTH)};
 
   h2 {
     ${typography.Sans14}
@@ -110,12 +100,14 @@ const ManagedComponent: FC<{
 
   const tocLabelId = useId();
 
+  // we will align with the TOC position to keep anchor links
+  // from scrolling past the sticky header
+  const [measureRef, { top: topOfContent }] = useMeasure();
+
   return (
-    <div>
-      <Background style={{ background: presenter.pageBackgroundStyle }} />
-      <Wrapper>
-        <Headline>{presenter.title}</Headline>
-        <TableOfContents aria-labelledby={tocLabelId}>
+    <>
+      <HeaderPortal>
+        <TableOfContents aria-labelledby={tocLabelId} ref={measureRef}>
           <h2 id={tocLabelId}>On this page</h2>
           <ul>
             {presenter.tableOfContentsLinks.map((props) => (
@@ -125,19 +117,26 @@ const ManagedComponent: FC<{
             ))}
           </ul>
         </TableOfContents>
-        <Body>
-          <RequirementsSection presenter={presenter} />
+      </HeaderPortal>
+      <div>
+        <Background style={{ background: presenter.pageBackgroundStyle }} />
+        <Wrapper scrollMargin={topOfContent}>
+          <Headline>{presenter.title}</Headline>
 
-          {presenter.additionalSections.map((sectionContent) => (
-            <AdditionalSection
-              content={sectionContent}
-              key={sectionContent.linkUrl}
-            />
-          ))}
-        </Body>
-      </Wrapper>
-      <ScrollToHashElement />
-    </div>
+          <Body>
+            <RequirementsSection presenter={presenter} />
+
+            {presenter.additionalSections.map((sectionContent) => (
+              <AdditionalSection
+                content={sectionContent}
+                key={sectionContent.linkUrl}
+              />
+            ))}
+          </Body>
+        </Wrapper>
+        <ScrollToHashElement />
+      </div>
+    </>
   );
 });
 

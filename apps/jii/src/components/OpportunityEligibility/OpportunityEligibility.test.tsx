@@ -28,6 +28,7 @@ import {
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
 import { UsMeSCCPEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
+import { HEADER_PORTAL_ID } from "../AppLayout/constants";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { useSingleResidentContext } from "../SingleResidentHydrator/context";
@@ -62,11 +63,20 @@ beforeEach(() => {
     opportunity: { opportunityId, opportunityConfig, eligibilityReport },
   });
 
+  // component will try to render a Portal here
+  const portalRoot = document.createElement("div");
+  portalRoot.setAttribute("id", HEADER_PORTAL_ID);
+  document.body.appendChild(portalRoot);
+
   render(
     <MemoryRouter>
       <OpportunityEligibility />
     </MemoryRouter>,
   );
+});
+
+afterEach(() => {
+  document.getElementById(HEADER_PORTAL_ID)?.remove();
 });
 
 test("TOC links and destinations", () => {

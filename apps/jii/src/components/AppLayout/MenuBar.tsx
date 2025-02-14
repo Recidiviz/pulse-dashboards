@@ -27,14 +27,12 @@ import { HeaderBarContainer } from "./HeaderBarContainer";
 
 const LogoLink = styled(Link)``;
 
-export const HEADER_BAR_HEIGHT = 64;
-
 const Header = styled.div`
   align-items: center;
   display: flex;
   gap: ${rem(spacing.lg)};
   justify-content: stretch;
-  min-height: ${rem(HEADER_BAR_HEIGHT)};
+  min-height: ${rem(64)};
 
   ${LogoLink} {
     margin-right: auto;
