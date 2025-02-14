@@ -37,6 +37,9 @@ export type UserUpdateRecord = {
     OpportunityType,
     Record<OpportunityTabGroup, OpportunityTab[]>
   >;
+  // If false or undefined, shows Workflows table view to users with the
+  // opportunityTableView feature variant
+  showListView?: boolean;
 };
 export type UserRecord = Omit<StaffRecord, "email"> & { email: string };
 export function isUserRecord(

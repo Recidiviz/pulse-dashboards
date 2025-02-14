@@ -96,7 +96,7 @@ const CaseloadOpportunityGrid = ({
           {({ width }) => (
             <List
               outerRef={registerChild}
-              height={DEFAULT_ITEM_HEIGHT * rowCount}
+              height={DEFAULT_ITEM_HEIGHT * rowCount + spacing.md}
               itemCount={rowCount}
               itemSize={DEFAULT_ITEM_HEIGHT}
               width={width}

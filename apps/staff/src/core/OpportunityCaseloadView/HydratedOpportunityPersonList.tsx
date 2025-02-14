@@ -86,6 +86,7 @@ import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import OpportunitySubheading from "./OpportunitySubheading";
 import { OpportunityTypeSelect } from "./OpportunityTypeSelect";
+import { TableViewToggle } from "./TableViewToggle";
 
 const MaxWidthWrapper = styled.div`
   ${MaxWidth}
@@ -133,7 +134,7 @@ const EmptyTabText = styled(Sans18)`
 const SubcategoryHeading = styled(Sans14)`
   text-transform: uppercase;
   color: ${palette.slate60};
-  margin: ${rem(spacing.md)} 0;
+  margin-top: ${rem(spacing.md)};
   border-bottom: 1px solid ${palette.slate20};
   padding-bottom: ${rem(spacing.sm)};
 `;
@@ -183,7 +184,7 @@ type OpportunityCaseloadComponentProps = {
   presenter: OpportunityCaseloadPresenter;
 };
 
-const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
+const OpportunityCaseloadTable = function OpportunityCaseloadTable({
   presenter,
   opportunities,
   manualSorting,
@@ -284,9 +285,9 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
       ></CaseloadTable>
     </HorizontalScrollWrapper>
   );
-});
+};
 
-const MultiTableView = observer(function MultiTableView({
+const MultiTableView = function MultiTableView({
   presenter,
   subcategoryOrder,
   peopleInActiveTabBySubcategory,
@@ -357,7 +358,7 @@ const MultiTableView = observer(function MultiTableView({
       })}
     </Accordion>
   );
-});
+};
 
 const TableView = observer(function TableView({
   presenter,
@@ -457,6 +458,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
           />
         )}
         {opportunityTableView && <OpportunityTypeSelect />}
+        {opportunityTableView && <TableViewToggle presenter={presenter} />}
       </MaxWidthWrapper>
 
       {
@@ -488,7 +490,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         )
       }
 
-      {presenter.tabPrefaceText && !opportunityTableView && (
+      {presenter.tabPrefaceText && presenter.showListView && (
         <OpportunityPageExplainer>
           {presenter.tabPrefaceText}
         </OpportunityPageExplainer>
@@ -501,7 +503,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
             <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
           </EmptyTabGroupWrapper>
         </MaxWidthFlexWrapper>
-      ) : opportunityTableView ? (
+      ) : !presenter.showListView ? (
         /* Table view */
         <TableView presenter={presenter} />
       ) : peopleInActiveTabBySubcategory ? (
