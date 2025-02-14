@@ -16,12 +16,12 @@
 // =============================================================================
 
 import { FC } from "react";
-import { Navigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { EmailVerification, State } from "../../routes/routes";
 import { LandingPageLayout } from "../LandingPages/LandingPageLayout";
 import { LandingStateSpecific } from "../LandingPages/LandingStateSpecific";
+import { Redirect } from "../Redirect/Redirect";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageState: FC = () => {
@@ -34,19 +34,18 @@ export const PageState: FC = () => {
         // known residents should be sent to their homepage
         if (userStore.pseudonymizedId) {
           return (
-            <Navigate
+            <Redirect
               to={State.Resident.Eligibility.buildPath({
                 stateSlug,
                 personPseudoId: userStore.pseudonymizedId,
               })}
-              replace
             />
           );
         }
 
         // if not a known resident, search is the only other fallback.
         // if they don't have permission it will be handled by that page
-        return <Navigate to={State.Search.buildPath({ stateSlug })} />;
+        return <Redirect to={State.Search.buildPath({ stateSlug })} />;
       }
     }
   } catch {
@@ -54,7 +53,7 @@ export const PageState: FC = () => {
   }
 
   if (userStore.authClient.isEmailVerificationRequired) {
-    return <Navigate to={EmailVerification.buildPath({})} replace />;
+    return <Redirect to={EmailVerification.buildPath({})} />;
   }
 
   return (
