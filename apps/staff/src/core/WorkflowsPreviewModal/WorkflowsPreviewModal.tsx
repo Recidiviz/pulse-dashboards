@@ -26,27 +26,67 @@ import { rem } from "polished";
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
+import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import useModalTimeoutDismissal from "./hooks/useModalTimeoutDismissal";
 import WorkflowsPreviewModalContext from "./WorkflowsPreviewModalContext";
 
 export const StyledDrawerModal = styled(DrawerModal)<{
   isMobile: boolean;
+  $overrideStyles: boolean;
 }>`
+  ${({ $overrideStyles, isMobile }) =>
+    $overrideStyles
+      ? `.ReactModal__Overlay {
+    width: 0 !important;
+    backdrop-filter: unset;
+  }
+
   .ReactModal__Content {
+    border-radius: unset;
+    box-shadow: unset;
+    border: 1px solid ${palette.slate20};
+    right: 0 !important;
+
+    ${
+      isMobile
+        ? `
+    max-width: unset !important;
+    max-height: unset !important;
+    width: 100% !important;
+    height: 100% !important;
+    `
+        : `
+    height: calc(100vh - ${rem(NAV_BAR_HEIGHT)}) !important;
+    min-height: unset;
+    // the DrawerModal is translated in the y-direction by -50% of its own height;
+    // to align the top of the modal with the bottom of the nav bar, we account for
+    // this offset, the nav bar, and the 1px border
+    top: calc(
+      0.5 * (100vh - ${rem(NAV_BAR_HEIGHT)}) + ${rem(NAV_BAR_HEIGHT - 1)}
+    ) !important;
+    `
+    }
+    
+}`
+      : `.ReactModal__Content {
     display: flex;
     flex-direction: column;
 
-    ${({ isMobile }) =>
+    ${
       isMobile &&
       `max-width: unset !important;
     max-height: unset !important;
     width: 100% !important;
     height: 100% !important;
     right: 0 !important;
-    border-radius: 0 !important;`}
-  }
+    border-radius: 0 !important;`
+    }
+  }`}
 `;
 
 const ModalControls = styled.div`
@@ -107,6 +147,7 @@ export function WorkflowsPreviewModal({
   contentRef,
 }: PreviewModalProps): JSX.Element {
   const { workflowsStore } = useRootStore();
+  const { opportunityTableView } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
   const CLOSE_TIMEOUT_MS = 1000;
   const MODAL_WIDTH = 480;
@@ -136,10 +177,11 @@ export function WorkflowsPreviewModal({
       isOpen={modalIsOpen}
       onAfterOpen={onAfterOpen}
       onRequestClose={() => handleCloseModal()}
-      onAfterClose={() =>
-        clearSelectedPersonOnClose &&
-        workflowsStore.updateSelectedPerson(undefined)
-      }
+      onAfterClose={async () => {
+        if (clearSelectedPersonOnClose) {
+          await workflowsStore.updateSelectedPersonAndOpportunity(undefined);
+        }
+      }}
       closeTimeoutMS={CLOSE_TIMEOUT_MS}
       width={MODAL_WIDTH}
       isMobile={isMobile}
@@ -148,6 +190,9 @@ export function WorkflowsPreviewModal({
           contentRef.current = node;
         }
       }}
+      shouldCloseOnOverlayClick={!opportunityTableView}
+      $overrideStyles={!!opportunityTableView}
+      disableBackgroundScroll={!opportunityTableView}
     >
       <ModalControls>
         {onBackClick && (

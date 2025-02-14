@@ -21,7 +21,6 @@ import {
   Sans16,
   TooltipTrigger,
 } from "@recidiviz/design-system";
-import { runInAction } from "mobx";
 import { useCallback, useEffect } from "react";
 import styled from "styled-components/macro";
 
@@ -93,12 +92,7 @@ export const OpportunityProfileFooter: React.FC<
       const nextOpportunityIndex = currentOpportunityIndex + direction;
       const nextOpportunity = navigableOpportunities[nextOpportunityIndex];
 
-      runInAction(async () => {
-        await workflowsStore.updateSelectedPerson(
-          nextOpportunity.person.pseudonymizedId,
-        );
-        workflowsStore.updateSelectedOpportunity(nextOpportunity.selectId);
-      });
+      workflowsStore.updateSelectedPersonAndOpportunity(nextOpportunity);
 
       nextOpportunity.trackPreviewed();
       if (modalRef?.current) {

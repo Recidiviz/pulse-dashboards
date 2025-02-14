@@ -282,7 +282,7 @@ const OpportunityCaseloadTable = function OpportunityCaseloadTable({
         onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
         shouldHighlightRow={(opp) => presenter.shouldHighlightOpportunity(opp)}
         manualSorting={manualSorting}
-      ></CaseloadTable>
+      />
     </HorizontalScrollWrapper>
   );
 };
