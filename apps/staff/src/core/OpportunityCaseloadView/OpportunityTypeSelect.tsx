@@ -30,6 +30,10 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { workflowsUrl } from "../views";
 
+const TallerDropdownToggle = styled(DropdownToggle)`
+  height: 40px;
+`;
+
 const FixedWidthText = styled.span`
   text-align: left;
   width: 180px;
@@ -65,11 +69,11 @@ export const OpportunityTypeSelect = observer(function OpportunityTypeSelect() {
 
   return (
     <Dropdown>
-      <DropdownToggle kind="secondary" showCaret>
+      <TallerDropdownToggle kind="secondary" showCaret>
         <FixedWidthText>
           {configs[selectedOpportunityType].label}
         </FixedWidthText>
-      </DropdownToggle>
+      </TallerDropdownToggle>
       <DropdownMenu alignment="left">
         {opportunityTypes.map((oppType) => (
           <DropdownMenuItem

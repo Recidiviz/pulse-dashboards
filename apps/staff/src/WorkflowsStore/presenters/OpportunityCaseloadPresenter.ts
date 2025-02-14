@@ -53,6 +53,8 @@ export class OpportunityCaseloadPresenter {
   private userSelectedTab?: OpportunityTab;
   private userOrderedTabs?: OpportunityTab[];
   private readonly updatesSubscription?: CollectionDocumentSubscription<UserUpdateRecord>;
+  private readonly tableViewEnabled: boolean;
+  private _showListView = false;
 
   private _navigablePeople: Opportunity<JusticeInvolvedPerson>[] = [];
 
@@ -76,6 +78,8 @@ export class OpportunityCaseloadPresenter {
 
     this.sortingEnabled = !!featureVariants.sortableOpportunityTabs;
 
+    this.tableViewEnabled = !!featureVariants.opportunityTableView;
+
     // only update the list of people to navigate through when a new sidebar is opened
     reaction(
       () => this.selectedPerson,
@@ -90,6 +94,25 @@ export class OpportunityCaseloadPresenter {
       updateNavigablePeople: action,
       handleOpportunityClick: action,
     });
+  }
+
+  get showListView() {
+    return (
+      // if the user doesn't have access to table view,
+      !this.tableViewEnabled ||
+      // or selected list view while on this page,
+      this._showListView ||
+      // or their preference stored in firestore is to show list view
+      !!this.updatesSubscription?.data?.showListView
+    );
+  }
+
+  set showListView(showListView: boolean) {
+    this._showListView = showListView;
+    this.firestoreStore.updateListViewPreference(
+      this.workflowsStore.currentUserEmail,
+      showListView,
+    );
   }
 
   get activeTab() {
