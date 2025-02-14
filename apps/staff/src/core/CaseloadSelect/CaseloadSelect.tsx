@@ -295,7 +295,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   } = workflowsStore;
 
   const searchTitle =
-    supportsMultipleSystems && activeSystem === "ALL"
+    (supportsMultipleSystems && activeSystem === "ALL") || searchType === "ALL"
       ? "caseload"
       : workflowsSearchFieldTitle;
 

@@ -61,7 +61,7 @@ export class CaseloadSubscription<
 
     return query(
       firestoreStore.collection(firestoreCollectionKey),
-      ...queryConstraints,
+      queryConstraints,
     ).withConverter({
       fromFirestore(snapshot, options) {
         const doc = snapshot.data(options);

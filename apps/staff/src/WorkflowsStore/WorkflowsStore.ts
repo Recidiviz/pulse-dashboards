@@ -16,7 +16,6 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { ascending } from "d3-array";
 import { intersection, pick, sortBy } from "lodash";
 import {
   action,
@@ -660,12 +659,17 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get caseloadPersonsSorted(): JusticeInvolvedPerson[] {
-    return this.caseloadPersons.sort((a, b) => {
-      return (
-        ascending(a.fullName.surname, b.fullName.surname) ||
-        ascending(a.fullName.givenNames, b.fullName.givenNames)
-      );
-    });
+    return [
+      ...this.residentSearchManager.matchingPersonsSorted,
+      ...this.clientSearchManager.matchingPersonsSorted,
+    ];
+  }
+
+  get caseloadPersonsGrouped(): Record<string, JusticeInvolvedPerson[]> {
+    return {
+      ...this.clientSearchManager.matchingPersonsGrouped,
+      ...this.residentSearchManager.matchingPersonsGrouped,
+    }
   }
 
   get milestonesClients(): Client[] {
@@ -693,7 +697,7 @@ export class WorkflowsStore implements Hydratable {
   ): Record<OpportunityType, Opportunity[]> {
     const mapping = {} as Record<OpportunityType, Opportunity[]>;
     this.opportunityTypes.forEach((opportunityType: OpportunityType) => {
-      const opportunities = this.caseloadPersonsSorted
+      const opportunities = this.caseloadPersons
         .flatMap(
           (c): Opportunity[] => c[opportunityStatus][opportunityType] || [],
         )

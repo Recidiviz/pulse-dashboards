@@ -72,6 +72,12 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
           searchOp: "array-contains-any",
           locationIdType: "facilityId",
         },
+        {
+          searchType: "OFFICER",
+          searchField: ["officerId"],
+          searchTitleOverride: "case manager",
+          restrictedToFeatureVariant: "usIdCaseManagerSearch",
+        },
       ],
       onlySurfaceEligible: true,
     },

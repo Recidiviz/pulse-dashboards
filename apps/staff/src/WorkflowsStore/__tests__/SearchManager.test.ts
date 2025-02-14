@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FieldPath, query, where } from "firebase/firestore";
+import { and, FieldPath, or, query, where } from "firebase/firestore";
 import { observable } from "mobx";
 import { Mock } from "vitest";
 
@@ -32,6 +32,8 @@ vi.mock("firebase/firestore");
 
 const queryMock = query as Mock;
 const whereMock = where as Mock;
+const andMock = and as Mock;
+const orMock = or as Mock;
 const collectionMock = vi.fn();
 const withConverterMock = vi.fn();
 
@@ -47,6 +49,13 @@ beforeEach(() => {
   vi.resetAllMocks();
 
   queryMock.mockReturnValue({ withConverter: withConverterMock });
+  whereMock.mockImplementation(
+    (_fieldPath, searchOp, selectedSearchIds) =>
+      `${searchOp}, ${selectedSearchIds.length === 0 ? "[]" : selectedSearchIds}`,
+  );
+  orMock.mockImplementation((...args) => args.join("||"));
+  andMock.mockImplementation((...args) => args.join("&&"));
+
   workflowsStoreMock = observable({
     systemConfigFor: vi.fn(() => ({
       search: [],
@@ -71,7 +80,7 @@ beforeEach(() => {
     officerId: "OFFICER1",
     personExternalId: "PERSON1",
     displayId: "PERSON1",
-    personName: { givenNames: "Real", surname: "Person" },
+    personName: { givenNames: "Sam", surname: "Alphabetically Second" },
     pseudonymizedId: "anon1",
     recordId: "us_xx_PERSON1",
     stateCode: "US_ND",
@@ -82,6 +91,7 @@ beforeEach(() => {
     record: clientRecord,
     searchIdValues: [clientRecord.officerId],
     personType: "CLIENT",
+    fullName: clientRecord.personName,
   } as Client;
 });
 
@@ -100,21 +110,63 @@ describe("queryConstraints", () => {
     expect(clientSearchManager.queryConstraints).toBeUndefined();
   });
 
-  test("builds the correct query", () => {
+  test("queryConstraints builds the correct query for single searchField", () => {
     const supervisionSystemConfig = {
       search: [{ searchType: "LOCATION", searchField: ["district"] }],
     } as WorkflowsSystemConfig<ClientRecord, any>;
     workflowsStoreMock.systemConfigFor = vi.fn(() => supervisionSystemConfig);
     // @ts-ignore
     workflowsStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
-    const constraints = clientSearchManager.queryConstraints;
 
-    expect(constraints).toHaveLength(2);
+    // eslint-disable-next-line
+    clientSearchManager.queryConstraints;
     expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
     expect(whereMock).toHaveBeenCalledWith(new FieldPath("district"), "in", [
       "TEST1",
       "TEST2",
     ]);
+    expect(orMock).toHaveBeenCalledWith("in, TEST1,TEST2");
+    expect(andMock).toHaveBeenCalledWith("==, US_ND", "in, TEST1,TEST2");
+  });
+
+  test("queryConstraints builds the correct query for multiple searchField", () => {
+    const supervisionSystemConfig = {
+      search: [
+        { searchType: "LOCATION", searchField: ["district"] },
+        {
+          searchType: "OFFICER",
+          searchField: ["officerId"],
+          searchOp: "fakeOp",
+        },
+      ],
+      onlySurfaceEligible: true,
+    } as WorkflowsSystemConfig<ClientRecord, any>;
+    workflowsStoreMock.systemConfigFor = vi.fn(() => supervisionSystemConfig);
+    // @ts-ignore
+    workflowsStoreMock.selectedSearchIds = ["TEST1", "TEST2", "OFFICER1"];
+
+    // eslint-disable-next-line
+    clientSearchManager.queryConstraints;
+    expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ND");
+    expect(whereMock).toHaveBeenCalledWith(new FieldPath("district"), "in", [
+      "TEST1",
+      "TEST2",
+      "OFFICER1",
+    ]);
+    expect(whereMock).toHaveBeenCalledWith(
+      new FieldPath("officerId"),
+      "fakeOp",
+      ["TEST1", "TEST2", "OFFICER1"],
+    );
+    expect(orMock).toHaveBeenCalledWith(
+      "in, TEST1,TEST2,OFFICER1",
+      "fakeOp, TEST1,TEST2,OFFICER1",
+    );
+    expect(andMock).toHaveBeenCalledWith(
+      "==, US_ND",
+      "in, TEST1,TEST2,OFFICER1||fakeOp, TEST1,TEST2,OFFICER1",
+      "!=, []",
+    );
   });
 });
 
@@ -224,6 +276,86 @@ describe("matchingPersons", () => {
     workflowsStoreMock.selectedSearchIds = ["A DIFFERENT OFFICER"];
     workflowsStoreMock.activeSystem = "SUPERVISION";
     expect(residentSearchManager.matchingPersons).toEqual([]);
+  });
+});
+
+describe("matchingPersonsGrouped", () => {
+  let testClient2: Client;
+  let clientRecord2: ClientRecord;
+
+  beforeEach(() => {
+    clientRecord2 = {
+      ...clientRecord,
+      personExternalId: "PERSON2",
+      displayId: "PERSON2",
+      // The two clients have different districts
+      district: "OTHER DISTRICT",
+      // The two clients have the same officerIds
+      officerId: clientRecord.officerId,
+      personName: { givenNames: "Jane", surname: "Alphabetically First" },
+    };
+    testClient2 = {
+      record: clientRecord2,
+      searchIdValues: [clientRecord2.officerId, clientRecord2.district],
+      personType: "CLIENT",
+      fullName: clientRecord2.personName,
+    } as Client;
+    workflowsStoreMock.justiceInvolvedPersons = { testClient, testClient2 };
+    workflowsStoreMock.activeSystem = "ALL";
+  });
+
+  test("grouped by searchFieldValue with multiple clients matching multiple search ids", () => {
+    const supervisionSystemConfig = {
+      search: [
+        { searchType: "LOCATION", searchField: ["district"] },
+        { searchType: "OFFICER", searchField: ["officerId"] },
+      ],
+      onlySurfaceEligible: true,
+    } as WorkflowsSystemConfig<ClientRecord, any>;
+    workflowsStoreMock.systemConfigFor = vi.fn(() => supervisionSystemConfig);
+
+    // @ts-ignore
+    workflowsStoreMock.selectedSearchIds = [
+      clientRecord.officerId,
+      clientRecord.district,
+    ];
+    const expected = {
+      // We should see both clients since they have the same officer who is in selectedSearchIds
+      OFFICER1: [testClient2, testClient],
+      // We should see only the first client since only their district is in selectedSearchIds
+      DISTRICT1: [testClient],
+    };
+    expect(clientSearchManager.matchingPersonsGrouped).toEqual(expected);
+  });
+
+  test("grouped by searchField value when one client matches and the other doesn't", () => {
+    const supervisionSystemConfig = {
+      search: [
+        { searchType: "LOCATION", searchField: ["district"] },
+        { searchType: "OFFICER", searchField: ["officerId"] },
+      ],
+      onlySurfaceEligible: true,
+    } as WorkflowsSystemConfig<ClientRecord, any>;
+    workflowsStoreMock.systemConfigFor = vi.fn(() => supervisionSystemConfig);
+    clientRecord2.officerId = "Some other not-matching officer";
+    testClient2 = {
+      record: clientRecord2,
+      searchIdValues: [clientRecord2.officerId, clientRecord2.district],
+      personType: "CLIENT",
+      fullName: clientRecord2.personName,
+    } as Client;
+    workflowsStoreMock.justiceInvolvedPersons = { testClient, testClient2 };
+    // @ts-ignore
+    workflowsStoreMock.selectedSearchIds = [
+      clientRecord.officerId,
+      clientRecord.district,
+    ];
+    // We should see the same client for both search groups since they match both selectedSearchIds
+    const expected = {
+      OFFICER1: [testClient],
+      DISTRICT1: [testClient],
+    };
+    expect(clientSearchManager.matchingPersonsGrouped).toEqual(expected);
   });
 });
 

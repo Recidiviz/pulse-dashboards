@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
-import { groupBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -63,23 +62,22 @@ export const AllCaseloads = observer(function AllCaseloads() {
       selectedSearchables,
       workflowsSearchFieldTitle,
       justiceInvolvedPersonTitle,
+      caseloadPersonsGrouped
     },
   } = useRootStore();
-
-  const caseloads = groupBy(caseloadPersonsSorted, "searchIdValues");
 
   const allCaseloadsViz = (
     <>
       {selectedSearchables.map((searchable) => (
         <React.Fragment key={searchable.searchId}>
-          {caseloads[searchable.searchId] && (
+          {caseloadPersonsGrouped[searchable.searchId] && (
             <SectionLabelText>
               <span className="fs-exclude">{searchable.searchLabel}</span>
             </SectionLabelText>
           )}
           {/* in practice there should never be a missing caseload,
             but fall back to an empty array for type safety */}
-          <Caseload persons={caseloads[searchable.searchId] ?? []} />
+          <Caseload persons={caseloadPersonsGrouped[searchable.searchId] ?? []} />
         </React.Fragment>
       ))}
     </>

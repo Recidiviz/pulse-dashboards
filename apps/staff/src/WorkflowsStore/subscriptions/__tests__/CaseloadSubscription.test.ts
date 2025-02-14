@@ -136,9 +136,9 @@ test("dataSource can be unset and reset", () => {
 
 test("FirestoreConverter inserts inferred properties when reading snapshot", () => {
   runInAction(() => {
-    // @ts-ignore
     workflowsStoreMock.clientSearchManager = {
-      queryConstraints: [],
+      // @ts-ignore
+      queryConstraints: {},
     };
   });
 
