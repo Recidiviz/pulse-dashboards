@@ -21,7 +21,7 @@ export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usAzOverdueForACISDTP: {
       callToAction:
-        "This tool helps staff prioritize inmates to prepare for release to the Drug Transition Program (release back to the community up to 90 days ahead of their earliest release date). People who have a release date approved by Central Time Comp will appear on this page if their approved release date has passed. Use this tool to identify and prioritize overdue cases.",
+        "This tool helps staff prioritize inmates for early release through the Drug Transition Program. Inmates with a release date in ACIS in the past will appear on this page. ",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -72,7 +72,7 @@ export const mockApiOpportunityConfigurationResponse = {
     },
     usAzOverdueForACISTPR: {
       callToAction:
-        "This tool helps staff prioritize inmates to prepare for release to the Standard Transition Program (release back to the community up to 90 days ahead of their earliest release date). People who have a release date approved by Central Time Comp will appear on this page if their approved release date has passed. Use this tool to identify and prioritize overdue cases.",
+        "This tool helps staff prioritize inmates for early release through the Standard Transition Program. Inmates with a release date in ACIS in the past will appear on this page. ",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -124,7 +124,7 @@ export const mockApiOpportunityConfigurationResponse = {
     },
     usAzReleaseToDTP: {
       callToAction:
-        "This tool helps staff prioritize inmates to prepare for release to the Drug Transition Program (release back to the community up to 90 days ahead of their earliest release date). People who meet the criteria for Drug Transition Release, or who might soon meet the criteria, will appear under one of these tabs. Use this tool to identify cases that need a home plan or other components of the release packet and update their status in the tool so that Central Time Comp can approve the inmate for release.",
+        "This tool helps staff prioritize inmates for early release through the Drug Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. ",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -207,7 +207,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
         {
-          tab: "Approved by Time Comp",
+          tab: "Eligible Now",
           texts: [
             "HOME_PLAN_IN_PROGRESS",
             "AWAITING_HOME_PLAN_APPROVAL",
@@ -229,10 +229,10 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [{ text: "Satisfactory progress with Corrections Plan" }],
-      nonOmsCriteriaHeader: "Other Considerations",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: "Requirements validated by OMS data",
+      omsCriteriaHeader: "Requirements validated by ACIS",
       overdueOpportunityCalloutCopy: "overdue for their DTP date",
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
@@ -278,30 +278,25 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Fast Trackers",
-            "Approved by Time Comp",
-            "Almost Eligible",
-            "Pending",
-          ],
+          tabs: ["Fast Trackers", "Eligible Now", "Almost Eligible", "Pending"],
         },
       ],
       tabPrefaceCopy: [
         {
           tab: "Fast Trackers",
-          text: "Fast Tracker cases have a release date within the next 30 days. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
+          text: "Fast Tracker cases have a release date within 30 days, with dates already approved by Central Time Comp. COIIIs should ensure home plans are submitted and release packets are complete. Names are ordered by release date.",
         },
         {
-          tab: "Approved by Time Comp",
-          text: "This tab contains cases with a release date between 30 and 180 days from now. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
+          tab: "Eligible Now",
+          text: "This tab lists cases with release dates 30–180 days out, approved by Central Time Comp. COIIIs must submit home plans for approval and complete all release packet components. Names are ordered by release date.",
         },
         {
           tab: "Almost Eligible",
-          text: "This tab contains cases with projected release dates that have not yet been approved by Central Time Comp. The first section includes inmates who have a projected DTP date within 6 months but who are missing Functional Literacy. The second section contains inmates who have a projected date beyond 180 days from now who might be missing one or more criteria for transition program release. This tab is intended to help CO IIIs prioritize release planning for people who might soon become eligible for release. Names are organized by soonest release date to farthest out.",
+          text: "This tab shows cases with projected release dates not yet approved by Central Time Comp. The first section includes inmates with a project release date within the next six months. The second section covers those 180+ days out. Use this tab to prioritize release planning. Names are ordered by release date.",
         },
         {
           tab: "Pending",
-          text: "This tab contains cases that have been marked as in progress in one of the other tabs. This tab will automatically update if the inmate's status changes.",
+          text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
         },
       ],
       tooltipEligibilityText: null,
@@ -310,7 +305,7 @@ export const mockApiOpportunityConfigurationResponse = {
     },
     usAzReleaseToTPR: {
       callToAction:
-        "This tool helps staff prioritize inmates to prepare for release to the Standard Transition Program (release back to the community up to 90 days ahead of their earliest release date). People who meet the criteria for Standard Transition Release, or who might soon meet the criteria, will appear under one of these tabs. Use this tool to identify cases that need a home plan or other components of the release packet and update their status in the tool so that Central Time Comp can approve the inmate for release.",
+        "This tool helps staff prioritize inmates for early release through the Standard Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. ",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -403,7 +398,7 @@ export const mockApiOpportunityConfigurationResponse = {
           ],
         },
         {
-          tab: "Approved by Time Comp",
+          tab: "Eligible Now",
           texts: [
             "HOME_PLAN_IN_PROGRESS",
             "AWAITING_HOME_PLAN_APPROVAL",
@@ -425,10 +420,10 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [{ text: "Satisfactory progress with Corrections Plan" }],
-      nonOmsCriteriaHeader: "Other Considerations",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: "Requirements validated by OMS data",
+      omsCriteriaHeader: "Requirements validated by ACIS data",
       overdueOpportunityCalloutCopy: "overdue for their STP date",
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
@@ -474,30 +469,25 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Fast Trackers",
-            "Approved by Time Comp",
-            "Almost Eligible",
-            "Pending",
-          ],
+          tabs: ["Fast Trackers", "Eligible Now", "Almost Eligible", "Pending"],
         },
       ],
       tabPrefaceCopy: [
         {
           tab: "Fast Trackers",
-          text: "Fast Tracker cases have a release date within the next 30 days. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
+          text: "Fast Tracker cases have a release date within 30 days, with dates already approved by Central Time Comp. COIIIs should ensure home plans are submitted and release packets are complete. Names are ordered by release date. ",
         },
         {
-          tab: "Approved by Time Comp",
-          text: "This tab contains cases with a release date between 30 and 180 days from now. These release dates have been approved by Central Time Comp. CO IIIs should ensure that all of these inmates have a home plan submitted for approval and that all other release packet components are complete. Names are organized by soonest release date to farthest out.",
+          tab: "Eligible Now",
+          text: "This tab lists cases with release dates 30–180 days out, approved by Central Time Comp. COIIIs must submit home plans for approval and complete all release packet components. Names are ordered by release date.",
         },
         {
           tab: "Almost Eligible",
-          text: "This tab contains cases with projected release dates that have not yet been approved by Central Time Comp. The first section includes inmates who have a projected STP date within 6 months but who are missing Functional Literacy. The second section contains inmates who have a projected date beyond 180 days from now who might be missing one or more criteria for transition program release. This tab is intended to help CO IIIs prioritize release planning for people who might soon become eligible for release. Names are organized by soonest release date to farthest out.",
+          text: "This tab shows cases with projected release dates not yet approved by Central Time Comp. The first section includes inmates with a project release date within the next six months. The second section covers those 180+ days out. Use this tab to prioritize release planning. Names are ordered by release date.",
         },
         {
           tab: "Pending",
-          text: "This tab contains cases that have been marked as in progress in one of the other tabs. This tab will automatically update if the inmate's status changes.",
+          text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
         },
       ],
       tooltipEligibilityText: null,

@@ -344,29 +344,28 @@ export const mockApiOpportunityConfigurationResponse = {
       zeroGrantsTooltip: null,
     },
     usTnSuspensionOfDirectSupervision: {
-      callToAction:
-        "Review clients who may be eligible and complete the Direct Supervision Suspension Request form.",
+      callToAction: "Generate request",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
-        { key: "TIME", text: "TIME: Insufficient time on supervision" },
-        { key: "CASEPLAN", text: "CASE PLAN: Has not reached case plan goals" },
+        { key: "TIME", text: "Insufficient time on supervision" },
+        { key: "CASE PLAN", text: "Has not reached case plan goals" },
         {
           key: "CONDITIONS",
-          text: "CONDITIONS: Special conditions incomplete / not compliant",
+          text: "Special conditions incomplete / not compliant",
         },
         {
           key: "FINANCIAL",
-          text: "FINANCIAL: Not meeting financial obligations to court and/or victim",
+          text: "Not meeting financial obligations to court and/or victim",
         },
-        { key: "CHARGES", text: "CHARGES: Pending criminal charges" },
+        { key: "CHARGES", text: "Pending criminal charges" },
         {
           key: "JURISDICTION",
-          text: "JURISDICTION: Under active supervision in another jurisdiction",
+          text: "Under active supervision in another jurisdiction",
         },
-        { key: "INDICTMENT", text: "INDICTMENT: Under indictment" },
-        { key: "Other", text: "Other: please specify a reason" },
+        { key: "INDICTMENT", text: "Under indictment" },
+        { key: "OTHER", text: "Please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
@@ -374,46 +373,116 @@ export const mockApiOpportunityConfigurationResponse = {
       dynamicEligibilityText:
         "client[|s] [is|are] eligible for Suspension of Direct Supervision",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: [],
+      eligibleCriteriaCopy: [
+        {
+          key: "onSupervisionAtLeast2Years",
+          text: "On supervision for at least two years",
+          tooltip:
+            "On supervision for two years, including compliant reporting, unless removed from compliant reporting due to the imposition of a sanction.",
+        },
+        {
+          key: "noSupervisionViolationReportWithin2Years",
+          text: "No violation reports submitted in past two years",
+        },
+        {
+          key: "usTnNoWarrantWithin2Years",
+          text: "No warrants in past two years",
+        },
+        {
+          key: "assessedRiskLowAtLeast2Years",
+          text: "Overall risk score of 'minimum' for at least two years",
+        },
+        {
+          key: "usTnNoSupervisionSanctionWithin1Year",
+          text: "Has not been sanctioned in the past year",
+        },
+        {
+          key: "atLeast12MonthsSinceMostRecentPositiveDrugTest",
+          text: "Has not tested positive for any substance within the last year without a valid prescription",
+        },
+        {
+          key: "hasFinesFeesBalanceOf0OrIsExempt",
+          text: "Is current on supervision fee obligations as they apply to the current sentence",
+        },
+        {
+          key: "latestDrugTestIsNegative",
+          text: "Has successfully passed the most recent drug screen",
+          tooltip:
+            "Clients must have successfully passed the most recent drug screen prior to the request for Suspension of Direct Supervision.",
+        },
+        {
+          key: "usTnNotOnCommunitySupervisionForLife",
+          text: "Not supervised under a Community Supervision for Life (CSL) certificate",
+        },
+        {
+          key: "usTnNoArrestsInPast2Years",
+          text: "No arrests within the last two years",
+          tooltip: "No arrests within the last two years.",
+        },
+      ],
       emptyTabCopy: [],
       firestoreCollection: "US_TN-suspensionOfDirectSupervisionReferrals",
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 3,
-      ineligibleCriteriaCopy: [],
+      homepagePosition: 5,
+      ineligibleCriteriaCopy: [
+        {
+          key: "hasFinesFeesBalanceOf0OrIsExempt",
+          // eslint-disable-next-line no-template-curly-in-string
+          text: "Unpaid balance of ${{amountOwed}}",
+        },
+      ],
       initialHeader:
         "Review clients who may be eligible and complete the Direct Supervision Suspension Request form.",
       isAlert: false,
       markSubmittedOptionsByTab: [],
-      methodologyUrl:
-        "https://drive.google.com/file/d/1IpetvPM49g_c-D-HzGdf7v6QAe_z5IHn/view?usp=sharing",
-      nonOmsCriteria: [],
-      nonOmsCriteriaHeader: null,
+      methodologyUrl: "https://recidiviz.org",
+      nonOmsCriteria: [
+        {
+          text: "Has reached all goals for two consecutive offender case plans",
+        },
+        {
+          text: "Client’s criminal activity, reintegration, job, housing, and community behavior have been assessed",
+          tooltip:
+            "Officers must consider the client's criminal involvement and associations, adjustment to community release, progress toward stable employment/education, housing, and pro-social behaviors within the community. ",
+        },
+        {
+          text: "Has completed all special conditions of supervision and/or is in compliance with conditions",
+        },
+        {
+          text: "In compliance with the agreed payment plan for the last year",
+          tooltip:
+            "Clients must meet all financial obligations to the court and/or victim as outlined in an agreed payment plan, or be otherwise exempted, and must be in compliance with the agreed payment plan for the previous 12 months. ",
+        },
+        { text: "No pending criminal charges in any jursidiction" },
+        { text: "Not under active supervision in any other jurisdiction" },
+        { text: "Is not under indictment" },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Validated by data from TOMIS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
-        "SpecialConditions",
         "ClientProfileDetails",
+        "SpecialConditions",
         "FinesAndFees",
+        "CaseNotes",
       ],
-      snooze: {
-        autoSnoozeParams: { params: { days: 180 }, type: "snoozeDays" },
-      },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_TN",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Suspension of Direct Supervision is a type of supervision for clients on parole that removes the requirement for clients to meet in person with officers. Clients will remain on parole and must adhere to all rules and conditions. The official policy doc can be found here.",
+        "Suspension of Direct Supervision is a type of supervision for clients on parole that removes the requirement for clients to meet in person with officers. Clients will remain on parole and must adhere to all rules and conditions. For official policy details, see Policy #708.05.",
       submittedTabTitle: null,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
-      urlSection: "usTnSuspensionOfDirectSupervision",
+      urlSection: "suspensionOfDirectSupervision",
       zeroGrantsTooltip: null,
     },
   },

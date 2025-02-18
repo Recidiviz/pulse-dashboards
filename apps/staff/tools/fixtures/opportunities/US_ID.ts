@@ -176,9 +176,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Must be compliant with all court-ordered conditions and special conditions",
         },
         {
-          text: "Must have established a record of progress toward successful completion of Court-ordered obligations for local incarceration and community service",
-        },
-        {
           text: "Has not failed to make payment toward fines/fees/restitution",
         },
         { text: "Has not failed NCIC check" },
@@ -558,6 +555,15 @@ export const mockApiOpportunityConfigurationResponse = {
       denialNoun: null,
       denialReasons: [
         { key: "OVERRIDE", text: "Active discretionary override" },
+        {
+          key: "PROGRAMMING",
+          text: "Reclassification would disrupt required programming",
+        },
+        {
+          key: "HOUSING",
+          text: "Reclassification requires housing that is currently unavailable",
+        },
+        { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
@@ -568,7 +574,7 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "custodyLevelHigherThanRecommended",
-          text: "Custody level is higher than latest classification score suggests",
+          text: "Custody level has been higher than latest classification score suggests since {{date upcomingEligibilityDate}}.",
           tooltip: "",
         },
       ],
@@ -581,7 +587,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "custodyLevelHigherThanRecommended",
-          text: "Custody level will be higher than classification score on  {{date minimumTimeServedDate}}",
+          text: "Custody level will be higher than classification score on  {{date upcomingEligibilityDate}}.",
         },
       ],
       initialHeader: null,
