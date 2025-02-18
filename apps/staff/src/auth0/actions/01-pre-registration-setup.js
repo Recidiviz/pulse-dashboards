@@ -81,7 +81,10 @@ exports.onExecutePreUserRegistration = async (event, api) => {
       lantern: true,
     });
     api.user.setAppMetadata("featureVariants", {
-      responsiveRevamp: true,
+      insightsLeadershipPageAllDistricts: {},
+      actionStrategies: {
+        activeTenants: ["US_MI"],
+      },
     });
     return;
   }

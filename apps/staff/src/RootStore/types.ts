@@ -178,6 +178,9 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
           activeTenants: ["US_AZ"],
         },
         usTnSuspensionOfDirectSupervision: {},
+        actionStrategies: {
+          activeTenants: ["US_MI"],
+        },
       }
     : {
         ...allFeatureVariants,

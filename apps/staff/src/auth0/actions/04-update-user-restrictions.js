@@ -72,6 +72,9 @@ exports.onExecutePostLogin = async (event, api) => {
     /** Set featureVariants to allow CSG access to insights */
     api.user.setAppMetadata("featureVariants", {
       insightsLeadershipPageAllDistricts: {},
+      actionStrategies: {
+        activeTenants: ["US_MI"],
+      },
     });
     return;
   }
