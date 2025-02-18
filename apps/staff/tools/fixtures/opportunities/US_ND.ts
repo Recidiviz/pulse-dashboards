@@ -43,6 +43,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "DOP",
           text: "Being supervised for an offense resulting in the death of a person",
         },
+        { key: "SO", text: "Being supervised for a sex offense" },
         {
           key: "FINES/FEES",
           text: "Willful nonpayment of fines / fees despite ability to pay",
@@ -111,7 +112,28 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1eHbSEOjjT9FvxffSbXOYEfOYPJheeu6t/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        {
+          text: "Fines, fees and restitution",
+          tooltip:
+            "Adults under supervision who owe court fines, fees, and restitution to the court will be considered on a case-by-case basis for early termination. The decision primarily will be based on whether the adults under supervision are willfully engaging in nonpayment.\nStaff shall consider reducing outstanding fees, fines, and restitution to a civil judgment at termination time, if deemed eligible, thus allowing an avenue to collect outstanding money after supervision is terminated.",
+        },
+        {
+          text: "Has completed the goals of their case supervision plans",
+          tooltip:
+            "Adults under supervision must complete the goals of their case supervision plans.",
+        },
+        {
+          text: "Not being supervised for an offense resulting in the death of a person",
+          tooltip:
+            "Adults under supervision are ineligible for early termination if [...] (they are being supervised for an offense which) [...] involves causing a human being’s death.",
+        },
+        {
+          text: "Not being supervised for a sex offense",
+          tooltip:
+            "Adults under supervision are ineligible for early termination if [...] (they are being supervised for) [...] any felony sex offense",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: null,
@@ -150,6 +172,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "Victim",
           text: "Active or unresolved concerns in the community, such as victim relationships",
         },
+        { key: "MRCC", text: "Must transfer to MRCC before ATP consideration" },
         { key: "Other", text: "Other, please specify reason" },
       ],
       denialText: "Mark Ineligible",
@@ -248,7 +271,23 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1eHbSEOjjT9FvxffSbXOYEfOYPJheeu6t/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        {
+          text: "Must be compliant with programming requirements",
+          tooltip:
+            "Compliant with all work, education, and programming\nrequirements",
+        },
+        {
+          text: "Resident must sign ATP Agreement",
+          tooltip:
+            "Adults in custody must sign the Adult Transition Program Agreement form prior to transfer",
+        },
+        {
+          text: "Must be given medical clearance",
+          tooltip:
+            "Adults in custody must be given a medical physical and be\ncleared by the appropriate health authority prior to transfer",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Validated by data from Elite",

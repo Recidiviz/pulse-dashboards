@@ -149,7 +149,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "Administrative supervision is a level of supervision that requires less contact than the minimum supervision level. It requires at least one face-to-face contact and one collateral contact per year. On this page, you can review clients and complete the DC-P 402 form. For more information, please refer to the supervision levels policy [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view) or learn more about [our methodology](https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub).",
-      submittedTabTitle: "Submitted",
+      submittedTabTitle: "Pending Review",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
@@ -254,7 +254,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "Special circumstances supervision allows reentrants who are not eligible for traditional administrative supervision to be supervised at a lower level of supervision. It is typically used for reentrants who have extenuating circumstances that reduce the risk of re-offending or reentrants who have made satisfactory adjustments on supervision over a period of time.<br><br>On this page, you can review clients who may be eligible for special circumstances supervision. For more information, please refer to the supervision levels policy [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view) or learn more about [our methodology](https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub). ",
-      submittedTabTitle: "Submitted",
+      submittedTabTitle: "Pending Review",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
