@@ -288,7 +288,11 @@ if (deployFrontendPrompt.deployFrontend) {
   }
 }
 
-if (deployEnv === "staging" || deployEnv === "production") {
+if (
+  deployEnv === "staging" ||
+  deployEnv === "production" ||
+  deployEnv === "demo"
+) {
   const deploySentencingServerPrompt = await inquirer.prompt({
     type: "confirm",
     name: "deploySentencingServer",
@@ -300,7 +304,11 @@ if (deployEnv === "staging" || deployEnv === "production") {
 
     // Start docker and configure docker to upload to container registry
     // Only needed for staging deploys
-    if (deployEnv === "staging" || (deployEnv === "production" && isCpDeploy)) {
+    if (
+      deployEnv === "staging" ||
+      (deployEnv === "production" && isCpDeploy) ||
+      deployEnv === "demo"
+    ) {
       try {
         await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
           process.stdout,
@@ -325,6 +333,10 @@ if (deployEnv === "staging" || deployEnv === "production") {
           );
         } else if (deployEnv === "production" && isCpDeploy) {
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
+        } else if (deployEnv === "demo") {
+          await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration demo`.pipe(
             process.stdout,
           );
         }

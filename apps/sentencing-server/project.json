@@ -15,7 +15,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/load_env_files.sh --env env_sentencing_server --env_staging env_staging_sentencing_server --env_prod env_prod_sentencing_server --env_test env_test_sentencing_server --env_preview env_preview_sentencing_server",
+        "command": "../../tools/load_env_files.sh --env env_sentencing_server --env_staging env_staging_sentencing_server --env_prod env_prod_sentencing_server --env_test env_test_sentencing_server --env_preview env_preview_sentencing_server --env_demo env_demo_sentencing_server",
         "cwd": "{projectRoot}"
       }
     },
@@ -111,6 +111,10 @@
         "cherry-pick": {
           "sourcemap": true,
           "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
+        },
+        "demo": {
+          "sourcemap": true,
+          "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
         }
       },
       "defaultConfiguration": "dev"
@@ -181,6 +185,12 @@
           "tags": [
             "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server-preview:$VERSION"
           ]
+        },
+        "demo": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA"
+          ]
         }
       },
       "defaultConfiguration": "dev"
@@ -218,6 +228,14 @@
           "args": [
             "--project recidiviz-dashboard-staging",
             "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
+            "--service-account sentencing-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+          ]
+        },
+        "demo": {
+          "command": "gcloud run jobs deploy sentencing-server-demo-migrate-db --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID,DATABASE_URL_US_ND=$DATABASE_URL_US_ND",
+          "args": [
+            "--project recidiviz-dashboard-staging",
+            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db-demo",
             "--service-account sentencing-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
           ]
         }
@@ -281,6 +299,13 @@
             "DATABASE_URL_US_ID": "$DATABASE_URL_US_ID-$VERSION",
             "DATABASE_URL_US_ND": "$DATABASE_URL_US_ND-$VERSION"
           },
+          "serviceAccount": "sentencing-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+        },
+        "demo": {
+          "name": "sentencing-server-demo",
+          "project": "recidiviz-dashboard-staging",
+          "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server:$COMMIT_SHA",
+          "memory": "512Mi",
           "serviceAccount": "sentencing-server@recidiviz-dashboard-staging.iam.gserviceaccount.com"
         }
       },
