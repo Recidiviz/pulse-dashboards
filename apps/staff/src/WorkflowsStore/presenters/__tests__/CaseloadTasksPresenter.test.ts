@@ -34,6 +34,16 @@ const mockAnalyticsStore = {
 
 const mockTenantStore = {
   taskCategories: ["assessment", "employment"],
+  tasksConfiguration: {
+    tasks: {
+      assessment: {
+        constructor: vi.fn(),
+      },
+      employment: {
+        constructor: vi.fn(),
+      },
+    },
+  },
 } as any as TenantStore;
 
 const mockWorkflowsStore = {

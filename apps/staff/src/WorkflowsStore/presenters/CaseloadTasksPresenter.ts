@@ -18,11 +18,16 @@
 import { every } from "lodash";
 import { makeAutoObservable } from "mobx";
 
+import {
+  TaskFilterField,
+  TaskFilterOption,
+  TaskFilterSection,
+  WorkflowsTasksConfig,
+} from "../../core/models/types";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { PartialRecord } from "../../utils/typeUtils";
-import { Client } from "../Client";
 import { taskDueDateComparator } from "../Task/TasksBase";
 import { SupervisionTask } from "../Task/types";
 import { JusticeInvolvedPerson } from "../types";
@@ -43,24 +48,10 @@ function sortPeopleByNextTaskDueDate(
   );
 }
 
-// TODO: move these onto state-level configs
-const TASK_FILTER_CONFIG = {
-  supervisionLevel: [
-    { value: "Minimum" },
-    { value: "Moderate" },
-    { value: "High" },
-    { value: "Maximum" },
-  ],
-} satisfies FilterConfig;
-
-export type TaskFilterOption = { value: string; label?: string };
-export type TaskFilterField = keyof Client;
 type SelectedFilters = PartialRecord<TaskFilterField, TaskFilterOption>;
-type FilterConfig = PartialRecord<TaskFilterField, TaskFilterOption[]>;
 
 export class CaseloadTasksPresenter {
   selectedCategory: SupervisionTaskCategory = "DUE_THIS_MONTH";
-  filterConfig: FilterConfig;
   _selectedFilters: SelectedFilters = {};
 
   constructor(
@@ -68,8 +59,17 @@ export class CaseloadTasksPresenter {
     protected tenantStore: TenantStore,
     protected analyticsStore: AnalyticsStore,
   ) {
-    this.filterConfig = TASK_FILTER_CONFIG;
     makeAutoObservable(this);
+  }
+
+  get taskConfig(): WorkflowsTasksConfig {
+    const { tasksConfiguration, currentTenantId } = this.tenantStore;
+    if (!tasksConfiguration) {
+      throw new Error(
+        `Trying to initialize CaseloadTaskPresenter for state without task configuration: ${currentTenantId}`,
+      );
+    }
+    return tasksConfiguration;
   }
 
   get taskCategories(): SupervisionTaskCategory[] {
@@ -130,7 +130,7 @@ export class CaseloadTasksPresenter {
     }
   }
 
-  personmatchesFilters(person: JusticeInvolvedPerson): boolean {
+  personMatchesFilters(person: JusticeInvolvedPerson): boolean {
     return every(
       Object.entries(this.selectedFilters),
       // @ts-expect-error
@@ -140,7 +140,7 @@ export class CaseloadTasksPresenter {
 
   get filteredPeople(): JusticeInvolvedPerson[] {
     return this.workflowsStore.caseloadPersons.filter((p) =>
-      this.personmatchesFilters(p),
+      this.personMatchesFilters(p),
     );
   }
 
@@ -164,8 +164,11 @@ export class CaseloadTasksPresenter {
 
   // Filter controls
 
-  get filters(): FilterConfig {
-    return this.filterConfig;
+  get filters(): TaskFilterSection[] {
+    const { filters } = this.taskConfig;
+    if (!filters) return [];
+
+    return filters;
   }
 
   get selectedFilters(): SelectedFilters {

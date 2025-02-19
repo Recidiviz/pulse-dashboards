@@ -25,11 +25,8 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
-import {
-  CaseloadTasksPresenter,
-  TaskFilterField,
-  TaskFilterOption,
-} from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
+import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
+import { TaskFilterField, TaskFilterOption } from "../models/types";
 
 function TaskFilterDropdownItem({
   option,
@@ -78,12 +75,11 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
       <DropdownToggle>Filters</DropdownToggle>
       <DropdownMenu>
         <>
-          {Object.entries(filters).map(([field, filterOptions]) => (
+          {filters.map(({ field, options }) => (
             <TaskFilterDropdownGroup
               key={field}
-              // @ts-expect-error Object.entries() turns the fields into `string`s
               field={field}
-              options={filterOptions}
+              options={options}
               presenter={presenter}
             />
           ))}

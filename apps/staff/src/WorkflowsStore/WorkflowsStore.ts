@@ -930,7 +930,7 @@ export class WorkflowsStore implements Hydratable {
   }
 
   /**
-   * Whether or not the loaded caseload has any supervision tasks for the selected officer.
+   * Whether the loaded caseload has any supervision tasks for the selected officer.
    */
   get hasSupervisionTasks(): boolean {
     return this.caseloadPersons.some((person) => {
@@ -943,14 +943,14 @@ export class WorkflowsStore implements Hydratable {
   }
 
   /**
-   * Whether or not this tenant has the supervision tasks feature.
+   * Whether this tenant has the supervision tasks feature.
    */
   get allowSupervisionTasks(): boolean {
     const {
       rootStore: { currentTenantId },
     } = this;
     if (!currentTenantId) return false;
-    return !!TENANT_CONFIGS[currentTenantId]?.tasks;
+    return !!TENANT_CONFIGS[currentTenantId]?.workflowsTasksConfig;
   }
 
   /**

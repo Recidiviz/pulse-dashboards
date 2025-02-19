@@ -29,7 +29,7 @@ import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
 import { SupervisionTask, SupervisionTaskType } from "../../WorkflowsStore";
-import { SnoozeTaskConfig } from "../models/types";
+import { WorkflowsTasksConfig } from "../models/types";
 
 const Wrapper = styled.div`
   grid-column-start: 2;
@@ -78,7 +78,7 @@ const SnoozeMenuInstruction = styled(Sans14)`
 
 type SnoozeTaskDropdownProps = {
   task: SupervisionTask<SupervisionTaskType>;
-  snoozeTasksConfig?: SnoozeTaskConfig[SupervisionTaskType] | undefined;
+  taskConfig?: WorkflowsTasksConfig["tasks"][SupervisionTaskType];
 };
 
 const ToastWrapper = styled(Sans14)`
@@ -144,14 +144,9 @@ const UnhideTaskButton = styled(UndoButton)`
 
 export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
   task,
-  snoozeTasksConfig,
+  taskConfig,
 }: SnoozeTaskDropdownProps) {
-  if (
-    !snoozeTasksConfig ||
-    !snoozeTasksConfig?.enabled ||
-    !snoozeTasksConfig?.snoozeForOptionsInDays
-  )
-    return null;
+  if (!taskConfig || !taskConfig?.snoozeForOptionsInDays) return null;
 
   return (
     <Wrapper>
@@ -179,7 +174,7 @@ export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
               )}
             </SnoozeMenuInstruction>
             {!task.isSnoozed &&
-              snoozeTasksConfig.snoozeForOptionsInDays.map((option) => {
+              taskConfig.snoozeForOptionsInDays.map((option) => {
                 return (
                   <SnoozeMenuItem
                     key={`snooze-days-${option}`}

@@ -17,6 +17,9 @@
 
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "./constants";
 
+export type FirestoreCollectionName =
+  keyof typeof FIRESTORE_GENERAL_COLLECTION_MAP;
+
 export type FirestoreCollectionKey =
-  | { key: keyof typeof FIRESTORE_GENERAL_COLLECTION_MAP; raw?: never }
+  | { key: FirestoreCollectionName; raw?: never }
   | { raw: string; key?: never };

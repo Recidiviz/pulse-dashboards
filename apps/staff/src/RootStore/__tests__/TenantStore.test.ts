@@ -43,9 +43,11 @@ const mockTenantConfigs = {
   },
   US_TASKS: {
     workflowsTasksConfig: {
-      task1: {},
-      task4: {},
-      task2: {},
+      tasks: {
+        task1: {},
+        task4: {},
+        task2: {},
+      },
     },
   },
 } as any as TenantConfigs;

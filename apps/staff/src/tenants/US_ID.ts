@@ -38,28 +38,42 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,
   workflowsTasksConfig: {
-    assessment: {
-      enabled: true,
-      snoozeForOptionsInDays: [7, 30, 90],
+    collection: "usIdSupervisionTasks",
+    tasks: {
+      assessment: {
+        constructor: UsIdRiskAssessmentTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      contact: {
+        constructor: UsIdContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      homeVisit: {
+        constructor: UsIdHomeVisitTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      employment: {
+        constructor: UsIdEmploymentVerificationTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
     },
-    contact: {
-      enabled: true,
-      snoozeForOptionsInDays: [7, 30, 90],
-    },
-    homeVisit: {
-      enabled: true,
-      snoozeForOptionsInDays: [7, 30, 90],
-    },
-    employment: {
-      enabled: true,
-      snoozeForOptionsInDays: [7, 30, 90],
-    },
-  },
-  tasks: {
-    homeVisit: UsIdHomeVisitTask,
-    contact: UsIdContactTask,
-    assessment: UsIdRiskAssessmentTask,
-    employment: UsIdEmploymentVerificationTask,
+    filters: [
+      {
+        title: "Supervision Level",
+        field: "supervisionLevel",
+        options: [
+          {
+            value: "Low",
+          },
+          {
+            value: "Moderate",
+          },
+          {
+            value: "High",
+          },
+        ],
+      },
+    ],
   },
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemConfigs: {
