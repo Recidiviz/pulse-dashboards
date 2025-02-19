@@ -18,7 +18,7 @@
 import { makeAutoObservable, when } from "mobx";
 import qs from "query-string";
 
-import { StaffFilter } from "../../core/models/types";
+import { StaffFilter, WorkflowsTasksConfig } from "../../core/models/types";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { CombinedUserRecord } from "../../FirestoreStore";
 import { TenantConfigs } from "../../tenants";
@@ -214,12 +214,16 @@ export default class TenantStore {
   }
 
   get taskCategories(): SupervisionTaskCategory[] {
-    if (!this.currentTenantId) return [];
+    const { tasksConfiguration } = this;
     // Object.keys just makes the type string[] even if they keys are restricted
     // @ts-expect-error
-    return Object.keys(
-      this.tenantConfigs[this.currentTenantId].workflowsTasksConfig ?? {},
-    );
+    return Object.keys(tasksConfiguration?.tasks ?? {});
+  }
+
+  get tasksConfiguration(): WorkflowsTasksConfig | undefined {
+    if (!this.currentTenantId) return;
+
+    return this.tenantConfigs[this.currentTenantId].workflowsTasksConfig;
   }
 
   /**

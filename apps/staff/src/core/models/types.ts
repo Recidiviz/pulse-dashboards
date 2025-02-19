@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { ClientRecord, MilestoneType, StaffRecord } from "~datatypes";
+import { FirestoreCollectionName } from "~firestore-api";
 import { Hydratable } from "~hydration-utils";
 
 import {
@@ -30,6 +31,7 @@ import {
 } from "../../RootStore/types";
 import { Leaves } from "../../utils/typeUtils";
 import {
+  Client,
   JusticeInvolvedPerson,
   StaffFilterFunction,
 } from "../../WorkflowsStore";
@@ -74,15 +76,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   };
   workflowsHomepage?: WorkflowsPage;
   workflowsHomepageName?: string;
-  workflowsTasksConfig?: SnoozeTaskConfig;
-  tasks?: {
-    [k in SupervisionTaskType]?: new (
-      rootStore: RootStore,
-      task: SupervisionTaskRecord<k>,
-      person: JusticeInvolvedPerson,
-      updates?: SupervisionTaskUpdate[k],
-    ) => Task<k>;
-  };
+  workflowsTasksConfig?: WorkflowsTasksConfig;
   milestoneTypes?: MilestoneType[];
   pathwaysNameOverride?: "Pathways" | "System-Level Trends";
   workflowsStaffFilterFn?: StaffFilterFunction;
@@ -104,12 +98,30 @@ export type StaffFilter = {
 
 type ValidSnoozeForDays = 7 | 30 | 90;
 
-export type SnoozeTaskConfig = {
-  [k in SupervisionTaskType]?: {
-    enabled: boolean;
-    snoozeForOptionsInDays: Array<ValidSnoozeForDays>;
+export type WorkflowsTasksConfig = {
+  collection: FirestoreCollectionName;
+  tasks: {
+    [K in SupervisionTaskType]?: {
+      constructor: new (
+        rootStore: RootStore,
+        task: SupervisionTaskRecord<K>,
+        person: JusticeInvolvedPerson,
+        updates?: SupervisionTaskUpdate[K],
+      ) => Task<K>;
+      snoozeForOptionsInDays?: Array<ValidSnoozeForDays>;
+    };
   };
+  filters?: TaskFilterSection[];
 };
+
+export type TaskFilterSection = {
+  title: string;
+  field: TaskFilterField;
+  options: TaskFilterOption[];
+};
+
+export type TaskFilterOption = { value: string; label?: string };
+export type TaskFilterField = keyof Client;
 
 export type SearchConfig<R, T extends TenantConfigId> = {
   searchType: SearchType;
@@ -128,10 +140,6 @@ export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
 export type AnyWorkflowsSystemConfig =
   | WorkflowsSystemConfig<ClientRecord, any>
   | WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
-
-export type AnySearchConfig =
-  | SearchConfig<ClientRecord, any>
-  | SearchConfig<WorkflowsResidentRecord, any>;
 
 export type Searchable = {
   searchLabel: string;

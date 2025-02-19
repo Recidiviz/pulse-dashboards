@@ -17,10 +17,13 @@
 
 import { Hydratable } from "~hydration-utils";
 
-import { SnoozeTaskConfig } from "../../core/models/types";
+import { WorkflowsTasksConfig } from "../../core/models/types";
+import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { Expect, Extends } from "../../utils/typeUtils";
+import { Client } from "../Client";
 import { JusticeInvolvedPerson } from "../types";
+import { TasksBase } from "./TasksBase";
 
 export type SupervisionTasksCaseType = "GENERAL" | "SEX_OFFENSE";
 
@@ -121,7 +124,7 @@ export type SupervisionNeed = {
   type: SupervisionNeedType;
 };
 
-type TaskStateCodes = "US_ID" | "US_TX";
+export type TasksStateCode = "US_ID" | "US_TX";
 
 // TODO: Derive these from tenant configs
 type TasksForState = {
@@ -129,7 +132,7 @@ type TasksForState = {
   US_TX: "usTxHomeVisit";
 };
 
-export interface SupervisionTasksRecord<T extends TaskStateCodes> {
+export interface SupervisionTasksRecord<T extends TasksStateCode> {
   externalId: string;
   officerId: string;
   stateCode: T;
@@ -147,6 +150,29 @@ export interface SupervisionTaskInterface extends Hydratable {
   upcomingTasks: SupervisionTask[];
   orderedTasks: SupervisionTask[];
   readyOrderedTasks: SupervisionTask[];
-  snoozeTasksConfig?: SnoozeTaskConfig;
+  tasksConfig?: WorkflowsTasksConfig;
   trackPreviewed: () => void;
+}
+
+export class SupervisionTasks<T extends TasksStateCode> extends TasksBase<
+  Client,
+  SupervisionTasksRecord<T>,
+  SupervisionTaskUpdate
+> {
+  constructor(stateCode: T, client: Client) {
+    const {
+      rootStore,
+      rootStore: {
+        tenantStore: { tasksConfiguration },
+      },
+    } = client;
+
+    if (!tasksConfiguration) {
+      throw new Error(
+        `State ${stateCode} missing taskConfiguration in TenantConfig`,
+      );
+    }
+
+    super(rootStore, client, tasksConfiguration);
+  }
 }

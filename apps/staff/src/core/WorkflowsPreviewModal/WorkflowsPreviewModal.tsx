@@ -103,10 +103,10 @@ const ModalControls = styled.div`
   .WorkflowsPreviewModal__close {
     grid-column: 2;
     justify-self: flex-end;
-  };
+  }
 
   .WorkflowsPreviewModal__back {
-    grid-column 1;
+    grid-column: 1;
     justify-self: flex-start;
   }
 `;

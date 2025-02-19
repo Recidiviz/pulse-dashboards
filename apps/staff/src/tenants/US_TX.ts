@@ -37,13 +37,33 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
     },
   },
   workflowsTasksConfig: {
-    usTxHomeVisit: {
-      enabled: true,
-      snoozeForOptionsInDays: [7, 30, 90],
+    collection: "usTxSupervisionTasks",
+    tasks: {
+      usTxHomeVisit: {
+        constructor: UsTxHomeVisitTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
     },
-  },
-  tasks: {
-    usTxHomeVisit: UsTxHomeVisitTask,
+    filters: [
+      {
+        title: "Supervision Level",
+        field: "supervisionLevel",
+        options: [
+          {
+            value: "Minimum",
+          },
+          {
+            value: "Moderate",
+          },
+          {
+            value: "High",
+          },
+          {
+            value: "Maximum",
+          },
+        ],
+      },
+    ],
   },
   navigation: {
     workflows: ["home", "tasks", "clients"],

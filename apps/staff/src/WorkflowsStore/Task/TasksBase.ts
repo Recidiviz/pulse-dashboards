@@ -19,14 +19,13 @@ import * as Sentry from "@sentry/react";
 import { DocumentData } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
-import { FirestoreCollectionKey } from "~firestore-api";
 import {
   compositeHydrationState,
   HydrationState,
   isHydrated,
 } from "~hydration-utils";
 
-import { SnoozeTaskConfig } from "../../core/models/types";
+import { WorkflowsTasksConfig } from "../../core/models/types";
 import { TaskValidationError } from "../../errors";
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -48,8 +47,6 @@ import {
 
 /**
  * Implements functionality shared by all Tasks, most notably the `Hydratable` interface.
- * While this is an abstract class, it provides stubs rather than abstract properties, whenever possible,
- * to facilitate incremental development of new tasks.
  */
 export abstract class TasksBase<
   PersonType extends JusticeInvolvedPerson,
@@ -61,6 +58,8 @@ export abstract class TasksBase<
 
   person: PersonType;
 
+  tasksConfiguration: WorkflowsTasksConfig;
+
   taskSubscription: DocumentSubscription<TaskRecord>;
 
   updatesSubscription: DocumentSubscription<UpdateRecord>;
@@ -68,7 +67,7 @@ export abstract class TasksBase<
   constructor(
     rootStore: RootStore,
     person: PersonType,
-    firestoreCollectionKey: FirestoreCollectionKey,
+    tasksConfiguration: WorkflowsTasksConfig,
     validateRecord?: ValidateFunction<TaskRecord>,
   ) {
     makeObservable(this, {
@@ -81,11 +80,12 @@ export abstract class TasksBase<
     });
     this.person = person;
     this.rootStore = rootStore;
+    this.tasksConfiguration = tasksConfiguration;
 
     // TODO(#7033): Change this to a query instead of a subscription´
     this.taskSubscription = new CollectionDocumentSubscription<TaskRecord>(
       this.rootStore.firestoreStore,
-      firestoreCollectionKey,
+      { key: tasksConfiguration.collection },
       person.recordId,
       undefined,
       validateRecord,
@@ -108,14 +108,16 @@ export abstract class TasksBase<
 
   get tasks(): SupervisionTask<SupervisionTaskType>[] {
     if (!isHydrated(this)) return [];
-    const tenantId = this.rootStore.currentTenantId;
-    if (!tenantId || !TENANT_CONFIGS[tenantId].tasks) return [];
+    const { currentTenantId } = this.rootStore.tenantStore;
+    if (!currentTenantId) return [];
 
     return (this.record?.tasks || []).flatMap(
       <T extends SupervisionTaskType>(
         task: SupervisionTaskRecord<T>,
       ): SupervisionTask<T>[] => {
-        const TaskConstructor = TENANT_CONFIGS[tenantId].tasks?.[task.type];
+        const TaskConstructor =
+          TENANT_CONFIGS[currentTenantId].workflowsTasksConfig?.tasks[task.type]
+            ?.constructor;
 
         if (TaskConstructor === undefined) {
           // TODO(#5622): Add a test to ensure a new name does not prevent
@@ -124,7 +126,7 @@ export abstract class TasksBase<
             `Missing a class constructor for task with type: ${task.type}`,
           );
           Sentry.captureException(error, (scope) => {
-            scope.setTag("currentTenantId", tenantId);
+            scope.setTag("currentTenantId", currentTenantId);
             return scope;
           });
           return [];
@@ -181,7 +183,7 @@ export abstract class TasksBase<
     return this.tasks.filter((task) => !task.isSnoozed);
   }
 
-  get snoozeTasksConfig(): SnoozeTaskConfig | undefined {
+  get tasksConfig(): WorkflowsTasksConfig | undefined {
     if (!this.rootStore.currentTenantId) return;
     return TENANT_CONFIGS[this.rootStore.currentTenantId].workflowsTasksConfig;
   }

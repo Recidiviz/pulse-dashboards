@@ -95,7 +95,7 @@ export const PreviewTasks = observer(function PreviewTasks({
 
   const tasks = person.supervisionTasks?.orderedTasks ?? [];
   const needs = person.supervisionTasks?.needs ?? [];
-  const snoozeTasksConfig = person.supervisionTasks?.snoozeTasksConfig;
+  const tasksConfig = person.supervisionTasks?.tasksConfig;
 
   if (!tasks.length && !needs.length) return null;
 
@@ -131,7 +131,7 @@ export const PreviewTasks = observer(function PreviewTasks({
                 {showSnoozeDropdown && (
                   <SnoozeTaskDropdown
                     task={task}
-                    snoozeTasksConfig={snoozeTasksConfig?.[task.type]}
+                    taskConfig={tasksConfig?.tasks[task.type]}
                   />
                 )}
               </TaskItem>

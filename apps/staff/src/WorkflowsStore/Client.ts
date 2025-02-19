@@ -44,9 +44,7 @@ import type { RootStore } from "../RootStore";
 import { TENANT_CONFIGS } from "../tenants";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { MilestonesMessageUpdateSubscription } from "./subscriptions/MilestonesMessageUpdateSubscription";
-import { SupervisionTaskInterface } from "./Task/types";
-import { UsIdSupervisionTasks } from "./Task/UsIdSupervisionTasks";
-import { UsTxSupervisionTasks } from "./Task/UsTxSupervisionTasks";
+import { SupervisionTaskInterface, SupervisionTasks } from "./Task/types";
 import { JusticeInvolvedPerson, PersonType } from "./types";
 import {
   clearPhoneNumberFormatting,
@@ -82,13 +80,10 @@ const createClientSupervisionTasks: TaskFactory<Client> = (
   const { allowSupervisionTasks } = person.rootStore.workflowsStore;
   if (!(person instanceof Client && allowSupervisionTasks)) return;
 
-  if (person.rootStore.currentTenantId === "US_TX") {
-    return new UsTxSupervisionTasks(person);
-  }
-
-  if (person.rootStore.currentTenantId === "US_ID") {
-    return new UsIdSupervisionTasks(person);
-  }
+  // Checking `allowSupervisionTasks` ensures this will be an appropriate state code
+  // but TS currently has no way of knowing that
+  // @ts-expect-error
+  return new SupervisionTasks(person.rootStore.currentTenantId, person);
 };
 
 export function isClient(
