@@ -38,6 +38,15 @@ export const usTnSuspensionOfDirectSupervisionSchema =
           .partial(),
       })
       .partial(),
+    metadata: z
+      .object({
+        latestNegativeArrestCheck: z.object({
+          contactDate: dateStringSchema,
+          contactType: z.string(),
+          contactComment: z.string().optional(),
+        }),
+      })
+      .passthrough(),
   });
 
 export type UsTnSuspensionOfDirectSupervisionReferralRecord = z.infer<
