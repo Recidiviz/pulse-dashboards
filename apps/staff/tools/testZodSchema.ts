@@ -68,6 +68,7 @@ import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Op
 import { usTnCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeReferralRecord";
 import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnExpirationOpportunity/UsTnExpirationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
+import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSuspensionOfDirectSupervisionOpportunity/UsTnSuspensionOfDirectSupervisionReferralRecord";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
 
@@ -142,6 +143,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usPaAdminSupervision: usPaAdminSupervisionSchema,
   usPaSpecialCircumstancesSupervision:
     usPaSpecialCircumstancesSupervisionSchema,
+  usTnSuspensionOfDirectSupervision: usTnSuspensionOfDirectSupervisionSchema,
 };
 
 const OTHER_SCHEMAS = {
