@@ -16,7 +16,7 @@ jobs="$(gcloud run jobs list --project recidiviz-dashboard-staging --filter $job
 
 if [[ $dbs ]]; then
   # Wait for the clone operation to finish if it does already exist (we have to wait for the clone operation to finish before we can delete the database)
-  CLONE_OPERATION_ID="$(gcloud sql operations list --project recidiviz-dashboard-staging --instance db_name --filter "TYPE=CLONE" --format="get(NAME)")"
+  CLONE_OPERATION_ID="$(gcloud sql operations list --project recidiviz-dashboard-staging --instance $db_name --filter "TYPE=CLONE" --format="get(NAME)")"
   gcloud sql operations wait --project recidiviz-dashboard-staging $CLONE_OPERATION_ID
 
   gcloud sql instances delete $db_name --project recidiviz-dashboard-staging -q
