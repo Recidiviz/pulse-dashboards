@@ -85,6 +85,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   insightsLegacyUI?: boolean;
   releaseDateCopyOverride?: string;
   insightsUnitState?: boolean;
+  incarcerationStaffTitleOverride?: string;
 };
 
 /**

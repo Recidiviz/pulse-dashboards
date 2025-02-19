@@ -71,6 +71,10 @@ export function Incarceration({
   resident,
   opportunity,
 }: ResidentWithOptionalOpportunityProps): React.ReactElement {
+  const {
+    tenantStore: { incarcerationStaffTitle: incarcerationStaffTitleCopy },
+  } = useRootStore();
+
   return (
     <DetailsSection>
       <DetailsHeading>Incarceration</DetailsHeading>
@@ -81,12 +85,16 @@ export function Incarceration({
             {formatWorkflowsDate(resident.admissionDate)}
           </SecureDetailsContent>
           <PartialTime person={resident} />
-          <ReleaseDate resident={resident} opportunity={opportunity} />
+          {resident.stateCode !== "US_AZ" && (
+            <ReleaseDate resident={resident} opportunity={opportunity} />
+          )}
           <StateSpecificIncarcerationDetails resident={resident} />
 
           {resident.assignedStaffId && (
             <>
-              <DetailsSubheading>Case Manager</DetailsSubheading>
+              <DetailsSubheading>
+                {incarcerationStaffTitleCopy}
+              </DetailsSubheading>
               <SecureDetailsContent>
                 <WorkflowsOfficerName officerId={resident.assignedStaffId} />
               </SecureDetailsContent>
@@ -94,8 +102,12 @@ export function Incarceration({
           )}
           <DetailsSubheading>Facility</DetailsSubheading>
           <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
-          <DetailsSubheading>Unit</DetailsSubheading>
-          <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
+          {resident.unitId && (
+            <>
+              <DetailsSubheading>Unit</DetailsSubheading>
+              <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
+            </>
+          )}
           <UsTnFacilityAdmissionDateSubsection resident={resident} />
         </DetailsList>
       </SecureDetailsContent>

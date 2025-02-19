@@ -257,4 +257,12 @@ export default class TenantStore {
       "Release"
     );
   }
+
+  get incarcerationStaffTitle(): string {
+    if (!this.currentTenantId) return "";
+    return (
+      this.tenantConfigs[this.currentTenantId]
+        .incarcerationStaffTitleOverride ?? "Case Manager"
+    );
+  }
 }
