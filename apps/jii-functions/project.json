@@ -31,7 +31,8 @@
         "tsConfig": "apps/jii-functions/tsconfig.app.json",
         "generatePackageJson": true,
         "target": "node20",
-        "esbuildConfig": "{projectRoot}/esbuild.config.js"
+        "esbuildConfig": "{projectRoot}/esbuild.config.js",
+        "assets": ["{workspaceRoot}/.yarnrc.yml"]
       },
       "configurations": {
         "development": {},
@@ -50,7 +51,7 @@
     },
     "deploy": {
       "dependsOn": [{ "target": "build", "params": "forward" }],
-      "command": "firebase deploy --only functions --config firebase.jii.json",
+      "command": "pushd dist/apps/jii-functions && yarn && popd && firebase deploy --only functions --config firebase.jii.json",
       "defaultConfiguration": "staging",
       "configurations": {
         "staging": {
