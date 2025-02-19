@@ -37,8 +37,12 @@ export function ResidentHousing({
         <DetailsList>
           <DetailsSubheading>Facility</DetailsSubheading>
           <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
-          <DetailsSubheading>Unit</DetailsSubheading>
-          <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
+          {resident.unitId && (
+            <>
+              <DetailsSubheading>Unit</DetailsSubheading>
+              <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
+            </>
+          )}
           <UsTnFacilityAdmissionDateSubsection resident={resident} />
         </DetailsList>
       </SecureDetailsContent>
