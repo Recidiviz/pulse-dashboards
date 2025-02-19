@@ -37,6 +37,30 @@ components:
         zone: us-central1-f
         secondary_zone: us-central1-c
         tier: db-custom-1-3840
+        additional_databases:
+          - us_id
+          - us_nd
+        insights_config:
+          query_insights_enabled: true
+          query_string_length: 1024
+          record_application_tags: false
+          record_client_address: false
+      metadata:
+        component: vendor/cloud-sql-instance
+    demo-postgres-instance:
+      vars:
+        create_bigquery_connection: false
+        instance_key: sentencing_demo
+        base_secret_name: sentencing_demo
+        database_version: POSTGRES_16
+        has_readonly_user: false
+        region: us-central1
+        zone: us-central1-f
+        secondary_zone: us-central1-c
+        tier: db-custom-1-3840
+        additional_databases:
+          - us_id
+          - us_nd
         insights_config:
           query_insights_enabled: true
           query_string_length: 1024
