@@ -75,6 +75,7 @@ components:
     apps/jii-texting:
       vars:
         project_number: "{{ .settings.context.project_number }}"
+        data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
         location: "{{ .settings.context.location }}"
         # Pass the `connection-name` output from our `postgres-instance` component to the jii-texting app
         cloudsql_instance: !terraform.output postgres-instance {{ .stack }} connection_name

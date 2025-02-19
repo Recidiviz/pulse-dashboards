@@ -8,6 +8,10 @@ variable "project_number" {
   description = "The project number for the project we are deploying to"
 }
 
+variable "data_platform_project_number" {
+  type        = string
+  description = "The data platform project number for the equivalent project/env we are deploying to"
+}
 
 variable "location" {
   type        = string
