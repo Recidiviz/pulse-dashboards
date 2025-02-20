@@ -1,4 +1,4 @@
-name: "[Request] Feature"
+name: "Request: Feature"
 description: "File a request for a new feature or enhancement."
 title: "[<UBN/P0/P1>][<US_XX>][<Product>]: "
 labels: ["Type: Feature"]
