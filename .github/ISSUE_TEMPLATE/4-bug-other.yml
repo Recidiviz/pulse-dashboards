@@ -1,0 +1,66 @@
+name: "Bug: Other"
+description: "File a bug report."
+title: "[<UBN/P0/P1>][<US_XX>][<Product>]: "
+labels: ["Type: Bug"]
+projects: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to report a bug.
+        Refer to [go/slas](https://docs.google.com/document/d/15oVaisNkKTbagTVhXjqqf_iE7YW6g1_Jq9k-s-UMWrc) to determine the proper priority, label, and assignees for this issue.
+  - type: input
+    id: product
+    attributes:
+      label: Product
+      description: e.g. Workflows, Tasks, Supervisor Homepage, JII texts, JII facilities app, PSI, Vitals, Lantern, Spotlight
+      placeholder: 
+    validations:
+      required: true
+  - type: input
+    id: states
+    attributes:
+      label: State(s)
+      description: 
+      placeholder: 
+    validations:
+      required: true
+  - type: textarea
+    id: users
+    attributes:
+      label: Which users are affected?
+      description: Provide IDs of officer, client, and/or resident in go/github-pii, if applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: describe
+    attributes:
+      label: Describe the problem
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What is the expected behavior?
+      description: Please explain what the user expected to see in the tool.
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot of issue, if applicable
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklists
+      description: 
+      options:
+        - label: "Added label for Team: State Pod or Team: Polaris"
+          required: false
+        - label: "Added label for Region: US_XX (if applicable)"
+          required: false
+        - label: "Added the appropriate Project: label (Workflows, Insights, JII, PSI, Vitals, Lantern)"
+          required: false

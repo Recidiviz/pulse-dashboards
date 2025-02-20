@@ -3,7 +3,6 @@ name: Workflows Autofilled Form request
 about: Request a form to be autofilled for a particular Workflow opportunity.
 title: "[US_XX] Form Automation: "
 labels: "Team: Polaris, Project: Workflows"
-assignees: "sychang"
 ---
 
 ### Request Information
