@@ -1,6 +1,6 @@
-name: "[Request] Data pull"
+name: "Request: Data pull"
 description: "File a request for a data pull."
-title: "[UBN/P0/P1][Request]: "
+title: "[<UBN/P0/P1>][<US_XX>]: "
 labels: []
 projects: []
 assignees: []
@@ -13,11 +13,9 @@ body:
   - type: input
     id: product
     attributes:
-      label: Product
+      label: Product (if applicable)
       description: e.g. Workflows, Tasks, Supervisor Homepage, JII texts, JII facilities app, PSI, Vitals, Lantern, Spotlight
       placeholder: 
-    validations:
-      required: true
   - type: input
     id: states
     attributes:

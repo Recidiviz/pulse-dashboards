@@ -54,7 +54,7 @@ body:
   - type: textarea
     id: screenshot
     attributes:
-      label: Screenshot of issue, if applicable
+      label: Screenshot of issue (if applicable)
     validations:
       required: false
   - type: checkboxes
