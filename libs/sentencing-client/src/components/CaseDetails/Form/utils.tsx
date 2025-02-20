@@ -17,6 +17,7 @@
 
 import _, { capitalize } from "lodash";
 
+import { titleCase } from "../../../utils/utils";
 import { ReportType } from "../../constants";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
@@ -35,6 +36,7 @@ import {
   REPORT_TYPE_KEY,
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../constants";
+import { UNKNOWN } from "../Opportunities/constants";
 import { FormAttributes, FormUpdates, FormValue } from "../types";
 import {
   asamLevelOfCareRecommendation,
@@ -45,7 +47,29 @@ import {
   pleas,
   YES_OPTION,
 } from "./constants";
-import { SelectOption } from "./types";
+import { CountyDistrict, SelectOption } from "./types";
+
+export const getFilteredCountyOptions = (
+  countiesOptions: CountyDistrict[],
+  caseOrClientCountyDistrict: CountyDistrict,
+): SelectOption[] => {
+  return countiesOptions
+    .filter((selection) => {
+      if (
+        caseOrClientCountyDistrict.district &&
+        (!caseOrClientCountyDistrict.county ||
+          caseOrClientCountyDistrict.county === UNKNOWN)
+      ) {
+        return selection.district === caseOrClientCountyDistrict.district;
+      }
+      return true;
+    })
+    .map((selection) => ({
+      label: titleCase(selection.county),
+      value: selection.county,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+};
 
 const convertGenderDisplayNameToEnum = (gender: string) => {
   const genderDisplayNameToEnum = _.invert(GenderToDisplayName);

@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { startCase } from "lodash";
 import Pluralize from "pluralize";
 
 import {
@@ -144,4 +145,10 @@ export const formatOffenseLabel = (offense: string) => {
   return offense.toLocaleLowerCase().includes(OFFENSE_SUFFIX)
     ? offense.replaceAll(OFFENSE_SUFFIX, OFFENSES_SUFFIX)
     : `${offense} ${OFFENSES_SUFFIX}`;
+};
+
+/** Converts a string to title case */
+export const titleCase = (str?: string | null) => {
+  if (!str) return "";
+  return startCase(str.toLocaleLowerCase());
 };

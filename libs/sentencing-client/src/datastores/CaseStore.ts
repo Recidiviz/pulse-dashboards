@@ -17,7 +17,7 @@
 
 import { palette } from "@recidiviz/design-system";
 import { captureException } from "@sentry/react";
-import { keyBy, startCase, toLower } from "lodash";
+import { keyBy } from "lodash";
 import { flowResult, makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
 
@@ -34,6 +34,7 @@ import {
 } from "../api/APIClient";
 import { FormAttributes } from "../components/CaseDetails/types";
 import { filterExcludedAttributes } from "../geoConfigs/utils";
+import { titleCase } from "../utils/utils";
 import { ERROR_TOAST_DURATION } from "./constants";
 import { PSIStore } from "./PSIStore";
 import { CaseAttributes } from "./types";
@@ -73,9 +74,7 @@ export class CaseStore {
     if (!this.activeCaseId) return {};
     const currentCase = this.caseDetailsById[this.activeCaseId];
     if (currentCase.client?.fullName) {
-      currentCase.client.fullName = startCase(
-        toLower(currentCase.client?.fullName),
-      );
+      currentCase.client.fullName = titleCase(currentCase.client?.fullName);
     }
     const config = this.psiStore.geoConfig;
 

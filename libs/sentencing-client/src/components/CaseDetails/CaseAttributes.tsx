@@ -20,7 +20,7 @@ import moment from "moment";
 
 import { CaseStore } from "../../datastores/CaseStore";
 import { filterExcludedAttributes } from "../../geoConfigs/utils";
-import { displayReportType } from "../../utils/utils";
+import { displayReportType, titleCase } from "../../utils/utils";
 import { useStore } from "../StoreProvider/StoreProvider";
 import * as Styled from "./CaseDetails.styles";
 import {
@@ -60,25 +60,27 @@ export const CaseAttributes: React.FC<CaseAttributesProps> = observer(
       externalId,
       county: countyOfResidence,
     } = client || {};
+    const formattedCountyOfSentencing = titleCase(countyOfSentencing);
+    const formattedCountyOfResidence = titleCase(countyOfResidence);
 
     const countyOfSentencingField = {
       key: COUNTY_KEY,
       label: "County",
       value: hasEditCountyFieldsFVEnabled
-        ? countyOfSentencing
-        : countyOfSentencing ?? "Unknown",
+        ? formattedCountyOfSentencing
+        : formattedCountyOfSentencing ?? "Unknown",
     };
     const countyOfResidenceField = {
       key: COUNTY_KEY,
       label: "County of Residence",
       value: hasEditCountyFieldsFVEnabled
-        ? countyOfResidence?.toLocaleLowerCase()
-        : countyOfResidence?.toLocaleLowerCase() ?? "Unknown",
+        ? formattedCountyOfResidence
+        : formattedCountyOfResidence ?? "Unknown",
     };
 
     const hasMatchingCountyOfResidenceAndSentencing =
-      countyOfResidence?.toLocaleLowerCase() ===
-      countyOfSentencing?.toLocaleLowerCase();
+      formattedCountyOfResidence?.toLocaleLowerCase() ===
+      formattedCountyOfSentencing?.toLocaleLowerCase();
 
     /** If the county of residence and sentencing differ, display both counties in header */
     const countyField: AttributeLabelValue[] =
