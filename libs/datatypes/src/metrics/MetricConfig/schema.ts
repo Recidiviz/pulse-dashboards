@@ -20,6 +20,7 @@ import { z } from "zod";
 import { insightsConfigMetricsSchema } from "../../config/InsightsConfig/schema";
 import { metricBenchmarkSchema } from "../MetricBenchmark/schema";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const metricConfigSchema = insightsConfigMetricsSchema.extend({
   metricBenchmarksByCaseloadCategory: z
     .map(z.string(), metricBenchmarkSchema)

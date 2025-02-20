@@ -51,7 +51,6 @@ export const useAnimatedValue = (
 
       const range = Math.ceil(value.length * Math.min(1, elapsed / duration));
 
-      // eslint-disable-next-line no-param-reassign
       input.current.value = value.substr(0, range);
 
       if (elapsed <= duration) {
@@ -138,7 +137,7 @@ export const useResizeForm = (
         yOffset += gutter + (scale - 1) * page.offsetHeight;
         containerHeight +=
           gutter + page.offsetHeight * scale + 2 * scaledMargin;
-        // eslint-disable-next-line no-param-reassign
+
         page.style.transform = transform;
 
         if (i === 0) {

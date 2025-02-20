@@ -35,7 +35,6 @@ export class UsMeSCCPForm extends FormBase<
 
   allowRevert = false;
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     return "FormSCCP";
   }

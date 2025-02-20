@@ -27,8 +27,7 @@ import { Input } from "./styles";
 type FormInputProps = StyledComponentProps<
   "input",
   DefaultTheme,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  {},
+  object,
   never
 > & {
   name: keyof UsCaSupervisionLevelDowngradeDraftData;

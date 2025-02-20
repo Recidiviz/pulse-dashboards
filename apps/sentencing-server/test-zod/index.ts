@@ -48,7 +48,7 @@ function getData(fileName: string) {
   return _.map(contents, (row) => {
     try {
       return JSON.parse(row);
-    } catch (e) {
+    } catch {
       return undefined;
     }
   }).filter((row) => row !== undefined);

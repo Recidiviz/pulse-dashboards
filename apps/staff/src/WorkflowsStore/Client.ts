@@ -94,9 +94,8 @@ export function isClient(
 
 // TODO(#1735): the real type should be cleaner than this
 export type ParsedSpecialCondition = {
-  // eslint-disable-next-line camelcase
   note_update_date: string;
-  // eslint-disable-next-line camelcase
+
   conditions_on_date: string | null;
 };
 
@@ -230,9 +229,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   }
 
   get district() {
-    // For some reason typescript doesn't like super.district
-    // eslint-disable-next-line dot-notation
-    return this.record.district ?? super["district"];
+    return this.record.district ?? super.district;
   }
 
   get portionServedDates(): PortionServedDates {
@@ -269,9 +266,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     this.probationSpecialConditions?.forEach((conditionsJson) => {
       try {
         const conditionsForSentence: {
-          // eslint-disable-next-line camelcase
           note_update_date: string;
-          // eslint-disable-next-line camelcase
+
           conditions_on_date: string | null;
         }[] = JSON.parse(
           // the specialConditions strings are almost valid JSON,
@@ -281,21 +277,19 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
         );
 
         conditionsForSentence.forEach(
-          // eslint-disable-next-line camelcase
           ({ note_update_date, conditions_on_date }) => {
             // don't display nulls
-            // eslint-disable-next-line camelcase
+
             if (!conditions_on_date) return;
 
             // note that we have to convert the actual values back to uppercase
             // to display them properly
             conditionsToDisplay.push(
-              // eslint-disable-next-line camelcase
               mapValues({ note_update_date, conditions_on_date }, toUpper),
             );
           },
         );
-      } catch (e) {
+      } catch {
         // if we couldn't hack our way to valid JSON,
         // display the whole ugly string so there's no data loss
         conditionsToDisplay.push(conditionsJson);

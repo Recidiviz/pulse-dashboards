@@ -16,7 +16,7 @@
 // =============================================================================
 
 // https://webdriver.io/docs/pageobjects/
-/* eslint-disable class-methods-use-this */
+
 export default class Page {
   constructor({ redirectPause = 2000 }) {
     this.redirectPause = redirectPause;
@@ -24,6 +24,7 @@ export default class Page {
 
   async open(path) {
     await browser.url(path);
+    // eslint-disable-next-line wdio/no-pause
     await browser.pause(this.redirectPause);
   }
 

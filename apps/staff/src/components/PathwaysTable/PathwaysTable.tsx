@@ -81,7 +81,6 @@ const PathwaysTable: React.FC<Props> = ({ columns, data }) => {
   const listRef: React.LegacyRef<List> = React.createRef();
 
   useEffect(() => {
-    // eslint-disable-next-line
     listRef.current?.resetAfterIndex(0);
   }, [listRef]);
 

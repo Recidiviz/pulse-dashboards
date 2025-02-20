@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+/* eslint-disable no-console */
+
 import { AnalyticsBrowser } from "@segment/analytics-next";
 import { v4 as uuidv4 } from "uuid";
 

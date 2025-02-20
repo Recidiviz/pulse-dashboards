@@ -38,6 +38,7 @@ When("I click on the person {string}", async (personName) => {
   await personNameLink.waitForExist();
   await personNameLink.click();
   // Wait for Preview Modal to open
+  // eslint-disable-next-line wdio/no-pause
   await browser.pause(1000);
 });
 

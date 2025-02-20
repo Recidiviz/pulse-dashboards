@@ -23,6 +23,7 @@ import { ImportRoutesHandlerBase } from "~fastify-data-import-plugin/common/clas
  * Use the `setData` method to set the data that will be returned by any instance of a MockImportRoutesHandler.
  */
 export class MockDataProvider {
+  // eslint-disable-next-line no-use-before-define -- only using it as a type here
   private static _instance: MockDataProvider;
   data: unknown[] = [];
 

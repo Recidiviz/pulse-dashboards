@@ -69,6 +69,79 @@ function Footer() {
   );
 }
 
+interface HistoricalSentencingAttributeChipsProps {
+  insight?: CaseInsight;
+}
+
+function HistoricalSentencingAttributeChips({
+  insight,
+}: HistoricalSentencingAttributeChipsProps) {
+  if (!insight) return null;
+  const numberOfRecords = insight?.dispositionNumRecords.toLocaleString();
+  const genderString = getSubtitleGender(insight.gender);
+  const lsirScore = getSubtitleLsirScore(
+    insight.assessmentScoreBucketStart,
+    insight.assessmentScoreBucketEnd,
+  );
+
+  return (
+    <Styled.AttributesContainer>
+      {numberOfRecords && (
+        <Styled.NumberOfRecords>
+          {numberOfRecords}{" "}
+          {printFormattedRecordString(insight?.dispositionNumRecords)}
+        </Styled.NumberOfRecords>
+      )}
+      <Styled.AttributeChipsWrapper>
+        {genderString && genderString !== INDIVIDUALS_STRING && (
+          <Styled.AttributeChip>{genderString}</Styled.AttributeChip>
+        )}
+        {lsirScore && <Styled.AttributeChip>{lsirScore}</Styled.AttributeChip>}
+        <Styled.AttributeChip>{insight?.offense}</Styled.AttributeChip>
+      </Styled.AttributeChipsWrapper>
+    </Styled.AttributesContainer>
+  );
+}
+
+interface CumulativeRecidivismRatesAttributeChipsProps {
+  insight?: CaseInsight;
+}
+
+function CumulativeRecidivismRatesAttributeChips({
+  insight,
+}: CumulativeRecidivismRatesAttributeChipsProps) {
+  if (!insight) return null;
+
+  const genderString = getSubtitleGender(insight.rollupGender);
+  const lsirScore = getSubtitleLsirScore(
+    insight.rollupAssessmentScoreBucketStart,
+    insight.rollupAssessmentScoreBucketEnd,
+  );
+  const numberOfRecords = insight?.rollupRecidivismNumRecords.toLocaleString();
+
+  return (
+    <Styled.AttributesContainer>
+      {numberOfRecords && (
+        <Styled.NumberOfRecords>
+          {numberOfRecords}{" "}
+          {printFormattedRecordString(insight?.rollupRecidivismNumRecords)}
+        </Styled.NumberOfRecords>
+      )}
+      <Styled.AttributeChipsWrapper>
+        {genderString && genderString !== INDIVIDUALS_STRING && (
+          <Styled.AttributeChip>{genderString}</Styled.AttributeChip>
+        )}
+        {lsirScore && <Styled.AttributeChip>{lsirScore}</Styled.AttributeChip>}
+        <Styled.AttributeChip>
+          <OffenseText
+            rollupOffenseDescription={insight.rollupOffenseDescription}
+          />
+        </Styled.AttributeChip>
+      </Styled.AttributeChipsWrapper>
+    </Styled.AttributesContainer>
+  );
+}
+
 export function Report({
   insight,
   fullName,
@@ -117,72 +190,6 @@ export function Report({
 
   const chartCaptions = insight ? getChartCaptions(insight) : {};
 
-  const HistoricalSentencingAttributeChips = () => {
-    if (!insight) return null;
-    const numberOfRecords = insight?.dispositionNumRecords.toLocaleString();
-    const genderString = getSubtitleGender(insight.gender);
-    const lsirScore = getSubtitleLsirScore(
-      insight.assessmentScoreBucketStart,
-      insight.assessmentScoreBucketEnd,
-    );
-
-    return (
-      <Styled.AttributesContainer>
-        {numberOfRecords && (
-          <Styled.NumberOfRecords>
-            {numberOfRecords}{" "}
-            {printFormattedRecordString(insight?.dispositionNumRecords)}
-          </Styled.NumberOfRecords>
-        )}
-        <Styled.AttributeChipsWrapper>
-          {genderString && genderString !== INDIVIDUALS_STRING && (
-            <Styled.AttributeChip>{genderString}</Styled.AttributeChip>
-          )}
-          {lsirScore && (
-            <Styled.AttributeChip>{lsirScore}</Styled.AttributeChip>
-          )}
-          <Styled.AttributeChip>{insight?.offense}</Styled.AttributeChip>
-        </Styled.AttributeChipsWrapper>
-      </Styled.AttributesContainer>
-    );
-  };
-
-  const CumulativeRecidivismRatesAttributeChips = () => {
-    if (!insight) return null;
-
-    const genderString = getSubtitleGender(insight.rollupGender);
-    const lsirScore = getSubtitleLsirScore(
-      insight.rollupAssessmentScoreBucketStart,
-      insight.rollupAssessmentScoreBucketEnd,
-    );
-    const numberOfRecords =
-      insight?.rollupRecidivismNumRecords.toLocaleString();
-
-    return (
-      <Styled.AttributesContainer>
-        {numberOfRecords && (
-          <Styled.NumberOfRecords>
-            {numberOfRecords}{" "}
-            {printFormattedRecordString(insight?.rollupRecidivismNumRecords)}
-          </Styled.NumberOfRecords>
-        )}
-        <Styled.AttributeChipsWrapper>
-          {genderString && genderString !== INDIVIDUALS_STRING && (
-            <Styled.AttributeChip>{genderString}</Styled.AttributeChip>
-          )}
-          {lsirScore && (
-            <Styled.AttributeChip>{lsirScore}</Styled.AttributeChip>
-          )}
-          <Styled.AttributeChip>
-            <OffenseText
-              rollupOffenseDescription={insight.rollupOffenseDescription}
-            />
-          </Styled.AttributeChip>
-        </Styled.AttributeChipsWrapper>
-      </Styled.AttributesContainer>
-    );
-  };
-
   return (
     <Styled.ReportContainer>
       <Styled.Page>
@@ -226,7 +233,7 @@ export function Report({
         <Styled.HistoricalBreakdown>
           <Styled.TitleAttributesWrapper>
             <Styled.SectionTitle>Historical Sentencing</Styled.SectionTitle>
-            <HistoricalSentencingAttributeChips />
+            <HistoricalSentencingAttributeChips insight={insight} />
           </Styled.TitleAttributesWrapper>
 
           <Styled.SentencingRecidivismRateContainer>
@@ -317,7 +324,7 @@ export function Report({
                       style={{ marginLeft: "-6px" }}
                       ref={(ref) => {
                         if (!ref || !plot) {
-                          return;
+                          return undefined;
                         }
                         ref.replaceChildren();
                         ref.appendChild(plot);

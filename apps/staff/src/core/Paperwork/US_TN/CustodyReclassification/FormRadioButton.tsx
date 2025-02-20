@@ -33,8 +33,7 @@ export const SquareInputSelector = styled.input`
 type FormRadioButtonProps = StyledComponentProps<
   typeof SquareInputSelector,
   DefaultTheme,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  {},
+  object,
   never
 > & {
   name: keyof FormDataType;
@@ -61,7 +60,6 @@ const FormRadioButton: React.FC<FormRadioButtonProps> =
       };
 
     return (
-      // eslint-disable-next-line jsx-a11y/label-has-for
       <label>
         {label}
         <SquareInputSelector

@@ -1,8 +1,0 @@
-# comment next line to lint everything
-node_modules/
-build/
-public/
-
-src/auth0/**/*.js
-
-**/*.template

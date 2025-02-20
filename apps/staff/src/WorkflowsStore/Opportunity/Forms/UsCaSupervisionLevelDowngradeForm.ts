@@ -29,7 +29,6 @@ export class UsCaSupervisionLevelDowngradeForm extends FormBase<
 > {
   navigateToFormText = "Reduce level";
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsCaSupervisionLevelDowngradeForm";
   }

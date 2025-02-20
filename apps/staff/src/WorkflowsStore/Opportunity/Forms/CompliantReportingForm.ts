@@ -29,7 +29,6 @@ export class CompliantReportingForm extends FormBase<
 > {
   navigateToFormText = "Auto-fill referral";
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsCompliantReportingForm";
   }

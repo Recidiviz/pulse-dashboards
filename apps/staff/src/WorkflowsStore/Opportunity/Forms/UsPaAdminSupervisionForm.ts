@@ -27,7 +27,6 @@ export class UsPaAdminSupervisionForm extends FormBase<
 > {
   navigateToFormText = "Complete checklist";
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     return "FormUsPaAdminSupervision";
   }

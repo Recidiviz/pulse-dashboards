@@ -213,7 +213,7 @@ app.get(
 // An App Engine-specific API for handling warmup requests on new instance initialization
 app.get("/_ah/warmup", () => {
   // The server automatically launches initialization of the metric cache, so nothing is needed here
-  // eslint-disable-next-line no-console
+
   console.log("Responding to warmup request...");
 });
 

@@ -256,6 +256,7 @@ const MilestonesCaseloadView: React.FC = observer(
                 setActiveTab={handleTabClick}
                 sortable={false}
               />
+              {/* eslint-disable-next-line no-nested-ternary */}
               {numOfNewMilestones === 0 && activeTab === "New Milestones" ? (
                 milestonesClients["Congratulated"] &&
                 milestonesClients["Congratulated"]?.length > 0 ? (

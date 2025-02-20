@@ -40,6 +40,7 @@ export function TextInput({
         placeholder={placeholder}
         disabled={isDisabled}
         maxLength={maxLength}
+        // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autoFocus}
         hasError={hasError}
       />

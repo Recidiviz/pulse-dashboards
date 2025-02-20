@@ -67,7 +67,6 @@ export class BaseMetrics {
   }
 
   validateDimensionsForFile(metricName, sourceDimensions) {
-    // eslint-disable-next-line no-console
     console.log(
       `${this.metricType} - Source dimensions for ${metricName} validations skipped: ${sourceDimensions}`,
     );

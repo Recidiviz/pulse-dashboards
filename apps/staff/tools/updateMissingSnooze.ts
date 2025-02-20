@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable no-continue */
 /* eslint-disable no-console */
 
 import { Firestore } from "@google-cloud/firestore";
@@ -100,7 +99,7 @@ async function updateSnooze() {
       console.log("No snooze configured for doc:", path);
       if (missingOpps[opportunityType] !== undefined) {
         // @ts-ignore
-        // eslint-disable-next-line no-plusplus
+
         missingOpps[opportunityType]++;
       } else {
         missingOpps[opportunityType] = 1;

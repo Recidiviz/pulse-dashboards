@@ -82,9 +82,11 @@ export function useOpportunityConfigurations(): Record<
   OpportunityType,
   OpportunityConfiguration
 >;
+// eslint-disable-next-line no-redeclare
 export function useOpportunityConfigurations(
   opportunityType: OpportunityType,
 ): OpportunityConfiguration;
+// eslint-disable-next-line no-redeclare
 export function useOpportunityConfigurations(
   opportunityType?: OpportunityType,
 ) {

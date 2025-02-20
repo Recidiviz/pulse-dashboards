@@ -37,7 +37,6 @@ export const generate = async (
 ): Promise<jsPDF> => {
   const pages = Array.from(element.querySelectorAll(selector)) as HTMLElement[];
 
-  // eslint-disable-next-line new-cap
   const pdf = new jsPDF({
     unit: "in",
     format: [DIMENSIONS_IN.WIDTH, DIMENSIONS_IN.HEIGHT],
@@ -46,7 +45,6 @@ export const generate = async (
   let pageIndex = 0;
   for (const page of pages) {
     Array.from(page.querySelectorAll("input")).forEach((input) => {
-      // eslint-disable-next-line no-param-reassign
       input.style.backgroundImage = "";
     });
     const pdfContentAreaWidth = DIMENSIONS_PX.WIDTH - DIMENSIONS_PX.MARGIN;

@@ -216,6 +216,7 @@ const OpportunityCaseloadTable = function OpportunityCaseloadTable({
       accessorKey: "person.displayId",
       enableSorting: true,
       sortingFn: "alphanumeric",
+      // eslint-disable-next-line react/no-unstable-nested-components
       cell: ({ row }: { row: Row<Opportunity> }) => {
         const opportunity = row.original;
         const { person } = opportunity;
@@ -240,6 +241,7 @@ const OpportunityCaseloadTable = function OpportunityCaseloadTable({
     {
       header: "Status",
       enableSorting: false,
+      // eslint-disable-next-line react/no-unstable-nested-components
       cell: ({ row }: { row: Row<Opportunity> }) => {
         return <EligibilityStatusPill opportunity={row.original} />;
       },
@@ -260,6 +262,7 @@ const OpportunityCaseloadTable = function OpportunityCaseloadTable({
       id: "cta-button",
       header: "",
       enableSorting: false,
+      // eslint-disable-next-line react/no-unstable-nested-components
       cell: ({ row }: { row: Row<Opportunity> }) => {
         return row.original.form?.navigateToFormText ? (
           <NavigateToFormButton
@@ -496,6 +499,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         </OpportunityPageExplainer>
       )}
 
+      {/* eslint-disable-next-line no-nested-ternary */}
       {peopleInActiveTab.length === 0 ? (
         /* Empty tab display */
         <MaxWidthFlexWrapper>
@@ -503,7 +507,8 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
             <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
           </EmptyTabGroupWrapper>
         </MaxWidthFlexWrapper>
-      ) : !presenter.showListView ? (
+      ) : // eslint-disable-next-line no-nested-ternary
+      !presenter.showListView ? (
         /* Table view */
         <TableView presenter={presenter} />
       ) : peopleInActiveTabBySubcategory ? (

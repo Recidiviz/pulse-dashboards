@@ -26,7 +26,7 @@ export type SnapshotDiffType = {
 /**
  * Differ that compares counts between records with records with keys of a specific type.
  */
-/* eslint-disable class-methods-use-this */
+
 export class SnapshotDiffer extends Differ<
   SnapshotDataRecord,
   SnapshotDiffType

@@ -1275,6 +1275,7 @@ export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
   option: (styles, { isFocused, isSelected }) => ({
     ...styles,
     color: palette.pine3,
+    // eslint-disable-next-line no-nested-ternary
     backgroundColor: isFocused
       ? palette.slate10
       : isSelected

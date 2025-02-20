@@ -158,7 +158,7 @@ export function createSubset(metricName, filters, metricFile) {
     };
   }
 
-  /* eslint-disable no-console */
+   
   console.log(
     `Creating subset file for: ${metricName} with filters: ${JSON.stringify(
       filters,

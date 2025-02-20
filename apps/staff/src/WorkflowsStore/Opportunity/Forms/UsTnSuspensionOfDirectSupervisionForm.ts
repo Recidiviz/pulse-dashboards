@@ -28,7 +28,6 @@ export class UsTnSuspensionOfDirectSupervisionForm extends FormBase<
   navigateToFormText = "Generate paperwork";
   allowRevert = false;
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     return "FormUsTnSuspensionOfDirectSupervision";
   }

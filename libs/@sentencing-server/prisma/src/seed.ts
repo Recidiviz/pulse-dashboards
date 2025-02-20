@@ -79,6 +79,7 @@ async function main() {
   const numberOfCases = 10;
 
   for (let i = 0; i < numberOfCases; i++) {
+    // eslint-disable-next-line no-await-in-loop -- this is a seed script
     await prisma.case.create({
       data: {
         externalId: faker.string.uuid(),

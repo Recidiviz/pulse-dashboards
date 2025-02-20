@@ -36,11 +36,9 @@ export function isTenantId(tenantId: string): tenantId is TenantId {
   return TenantIds.includes(tenantId as TenantId);
 }
 
-const InternalTenantIds = [RECIDIVIZ_TENANT, CSG] as const;
-
 export const TenantIds = DASHBOARD_TENANTS;
 
-export type InternalTenantId = (typeof InternalTenantIds)[number];
+export type InternalTenantId = typeof RECIDIVIZ_TENANT | typeof CSG;
 export type TenantId = (typeof TenantIds)[number];
 export type TenantConfigId = InternalTenantId | TenantId;
 

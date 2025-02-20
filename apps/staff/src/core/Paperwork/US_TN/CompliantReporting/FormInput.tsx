@@ -31,8 +31,7 @@ export type FormInputValueBuilder = (data: any, value: string) => string;
 type FormInputProps = StyledComponentProps<
   "input",
   DefaultTheme,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  {},
+  object,
   never
 > & {
   name: keyof FormDataType;

@@ -50,6 +50,7 @@ export class IntercomClient {
   }): void {
     if (this.isOffline) {
       if (!this.isSilent) {
+        // eslint-disable-next-line no-console
         console.log(`[Intercom] ${JSON.stringify(userArgs)}`);
       }
       return;

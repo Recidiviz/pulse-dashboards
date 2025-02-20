@@ -29,7 +29,6 @@ import { FormBase, PrefilledDataTransformer } from "./FormBase";
 export class LSUForm extends FormBase<LSUDraftData, LSUOpportunity> {
   navigateToFormText = "Generate Chrono";
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsLSUForm";
   }

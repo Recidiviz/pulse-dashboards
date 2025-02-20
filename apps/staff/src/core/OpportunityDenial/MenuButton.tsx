@@ -116,6 +116,7 @@ export const MenuButton = observer(function MenuButton({
         <DropdownMenu>
           {
             // If there are subcategories for submitted, show a menu option for each submitted category
+            // eslint-disable-next-line no-nested-ternary
             oppTabSubcategories &&
             submittedSubcategories &&
             submittedSubcategories.length > 0 ? (

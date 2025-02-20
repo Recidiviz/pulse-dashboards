@@ -289,6 +289,7 @@ const ObjectiveOutcome = observer(function ObjectiveOutcome({
 
 const ObjectivesTotal = observer(function ObjectivesTotal() {
   const opportunityForm =
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useOpportunityFormContext() as UsCaSupervisionLevelDowngradeForm;
 
   const { formData } = opportunityForm;

@@ -269,7 +269,6 @@ export class FormBase<
 
   allowRevert = true;
 
-  // eslint-disable-next-line class-methods-use-this
   get downloadText(): string {
     return "";
   }
@@ -278,7 +277,6 @@ export class FormBase<
     return "";
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     // @ts-ignore
     return undefined;

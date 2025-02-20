@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable class-methods-use-this */
 import Page from "./basePage";
 
 class LoginPage extends Page {
@@ -40,6 +39,7 @@ class LoginPage extends Page {
     await (await this.submitBtn()).click();
     await (await this.passwordInput()).addValue(password);
     await (await this.submitBtn()).click();
+    // eslint-disable-next-line wdio/no-pause
     await browser.pause(this.redirectPause);
   }
 }

@@ -250,6 +250,7 @@ export const highlightMatchedText = (
   // Map through each label part and wrap our matched terms around a styled span
   return labelParts.map((part, index) =>
     searchWords.includes(part.toLowerCase()) ? (
+      // eslint-disable-next-line react/no-array-index-key
       <span key={index} style={{ backgroundColor: "rgba(160, 255, 202, 1)" }}>
         {part}
       </span>

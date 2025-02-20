@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable no-continue */
 /* eslint-disable no-console */
 
 import { FieldValue, Firestore } from "@google-cloud/firestore";
@@ -104,8 +103,6 @@ async function migrateFormUpdates({ shouldUpdate, shouldDelete }: Options) {
         if (newFormId === undefined) {
           console.log("No formId configured for doc: ", path);
           if (skippedOpps[opportunityType] !== undefined) {
-            // @ts-ignore
-            // eslint-disable-next-line no-plusplus
             skippedOpps[opportunityType]++;
           } else {
             skippedOpps[opportunityType] = 1;

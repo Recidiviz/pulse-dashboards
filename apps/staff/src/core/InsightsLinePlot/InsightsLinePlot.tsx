@@ -311,7 +311,6 @@ const InsightsLinePlot: React.FC<InsightsLinePlotType> = ({
             d.parentLine.key === 0 && (
               <StyledTooltip>
                 <div>{formatDateToYearRange(d.date)}</div>
-                {/* eslint-disable-next-line react/no-unused-prop-types */}
                 {pickedPoints.map(({ data }: { data: Point }) => {
                   return (
                     <div key={`${data.value}_${data.date}`}>

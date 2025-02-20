@@ -60,6 +60,7 @@ export const InsightsBreadcrumbs: React.FC<InsightsBreadcrumbsProps> = ({
   return (
     <Wrapper>
       {previousPages.map((page, index) => (
+        // eslint-disable-next-line react/no-array-index-key
         <React.Fragment key={index}>
           <PreviousPage to={page.url}>{page.title}</PreviousPage>
           {index < previousPages.length - 1 && <Separator>/</Separator>}

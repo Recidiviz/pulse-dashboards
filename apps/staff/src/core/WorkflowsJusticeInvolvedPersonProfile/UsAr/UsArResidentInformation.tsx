@@ -81,6 +81,7 @@ function UsArGoodTimeClassification({
         )}
         <DetailsSubheading>Incarceration Sanctions</DetailsSubheading>
         <SecureDetailsContent>
+          {/* eslint-disable-next-line no-nested-ternary */}
           {noIncarcerationSanctionsWithin12Months
             ? "No incarceration sanctions within last 12 months"
             : noIncarcerationSanctionsWithin6Months

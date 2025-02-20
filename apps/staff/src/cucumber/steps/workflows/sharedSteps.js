@@ -71,11 +71,13 @@ When("I select {string} from the dropdown", async (searchValue) => {
   await container.click();
   await waitForNetworkIdle();
   // Wait for options to load
+  // eslint-disable-next-line wdio/no-pause
   await browser.pause(2000);
   const option = await $(`div.CaseloadSelect__option=${searchValue}`);
   await option.waitForExist();
   // Wait for data to load
   await Promise.all([option.click(), waitForNetworkIdle()]);
+  // eslint-disable-next-line wdio/no-pause
   await browser.pause(1000);
 });
 

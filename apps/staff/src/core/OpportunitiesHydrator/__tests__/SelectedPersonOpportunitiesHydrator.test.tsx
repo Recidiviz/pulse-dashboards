@@ -63,7 +63,6 @@ const setUp = ({
 };
 
 const expectStateToBe = (expectedState: "HYDRATED" | "EMPTY" | "LOADING") => {
-  // eslint-disable-next-line default-case
   switch (expectedState) {
     case "LOADING":
       expect(

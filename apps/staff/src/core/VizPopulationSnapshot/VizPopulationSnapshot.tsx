@@ -283,14 +283,11 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
       oLabel: (accessorLabel: string, _: any) => {
         return (
           <text textAnchor="middle">
-            {
-              // eslint-disable-next-line react/destructuring-assignment
-              accessorLabel.split(/(.*?\/)/g).map((wrapPart) => (
-                <tspan key={accessorLabel} dy="1.5em" x="0">
-                  {wrapPart}
-                </tspan>
-              ))
-            }
+            {accessorLabel.split(/(.*?\/)/g).map((wrapPart) => (
+              <tspan key={accessorLabel} dy="1.5em" x="0">
+                {wrapPart}
+              </tspan>
+            ))}
           </text>
         );
       },

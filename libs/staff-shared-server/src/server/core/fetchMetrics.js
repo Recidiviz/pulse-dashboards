@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable no-console */
+ 
 
 import * as Sentry from "@sentry/node";
 

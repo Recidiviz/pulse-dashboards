@@ -29,6 +29,15 @@ import { zu } from "zod_utilz";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";
 
+export const nameSchema = zu.stringToJSON().pipe(
+  z.object({
+    given_names: z.string(),
+    middle_names: z.string(),
+    name_suffix: z.string(),
+    surname: z.string(),
+  }),
+);
+
 export function fullNameObjectToString(nameObject: z.infer<typeof nameSchema>) {
   return `${nameObject.given_names} ${nameObject.middle_names} ${nameObject.surname} ${nameObject.name_suffix}`;
 }
@@ -55,15 +64,6 @@ const diagnosedSubstanceUseDisorderCriterion = z.nativeEnum(
   DiagnosedSubstanceUseDisorderCriterion,
 );
 const opportunityStatus = z.enum(["Active", "Inactive"]);
-
-export const nameSchema = zu.stringToJSON().pipe(
-  z.object({
-    given_names: z.string(),
-    middle_names: z.string(),
-    name_suffix: z.string(),
-    surname: z.string(),
-  }),
-);
 
 const caseIdsSchema = zu.stringToJSON().pipe(z.array(z.string()));
 

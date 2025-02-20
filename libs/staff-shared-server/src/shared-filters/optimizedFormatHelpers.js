@@ -41,7 +41,7 @@ export const getDimensionValue = (
   let value;
   try {
     value = dimensions[dimensionIndex][1][dimensionValueIndex];
-  } catch (error) {
+  } catch {
     throw new Error(
       `Could not parse dimension manifest of ${dimensions} with dimension index of ${dimensionIndex} and dimension value index of ${dimensionValueIndex}`,
     );

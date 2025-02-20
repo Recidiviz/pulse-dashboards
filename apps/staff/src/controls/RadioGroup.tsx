@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import "./RadioGroup.scss";
 
 import React, { useState } from "react";

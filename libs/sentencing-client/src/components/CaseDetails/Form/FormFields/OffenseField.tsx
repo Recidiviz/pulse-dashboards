@@ -34,6 +34,29 @@ import { FormFieldProps, SelectOption } from "../types";
 import { useFormField } from "../useFormFields";
 import { fuzzyMatch, highlightMatchedText } from "../utils";
 
+const customFilterFn = (option: SelectOption, inputValue: string | null) => {
+  if (!inputValue) return true;
+  return fuzzyMatch(inputValue, option);
+};
+
+interface CustomHeaderProps {
+  inputValue: string | null;
+  options: SelectOption[];
+}
+
+function CustomHeader({ inputValue, options }: CustomHeaderProps) {
+  const filteredOptions = options?.filter((option) =>
+    customFilterFn(option, inputValue),
+  );
+
+  return (
+    <Styled.DropdownHeader>
+      <span>{filteredOptions?.length} Results (as of 3 years)</span>
+      <span>Sorted by Frequency</span>
+    </Styled.DropdownHeader>
+  );
+}
+
 export const customFilter = (option: SelectOption, inputValue: string) => {
   if (!inputValue) return true;
   return fuzzyMatch(inputValue, option);
@@ -139,24 +162,6 @@ function OffenseField({ isRequired }: FormFieldProps) {
     );
   };
 
-  const customFilter = (option: SelectOption, inputValue: string | null) => {
-    if (!inputValue) return true;
-    return fuzzyMatch(inputValue, option);
-  };
-
-  const CustomHeader = () => {
-    const filteredOptions = options?.filter((option) =>
-      customFilter(option, inputValue),
-    );
-
-    return (
-      <Styled.DropdownHeader>
-        <span>{filteredOptions?.length} Results (as of 3 years)</span>
-        <span>Sorted by Frequency</span>
-      </Styled.DropdownHeader>
-    );
-  };
-
   const CustomOption = action((props: OptionProps<SelectOption>) => {
     const frequencyLabel =
       props.data.label &&
@@ -174,10 +179,11 @@ function OffenseField({ isRequired }: FormFieldProps) {
     );
   });
 
+  // eslint-disable-next-line react/no-unstable-nested-components
   const CustomMenu = (props: MenuProps<SelectOption>) => {
     return (
       <components.Menu {...props}>
-        <CustomHeader />
+        <CustomHeader inputValue={inputValue} options={options} />
         {props.children}
       </components.Menu>
     );
@@ -212,7 +218,7 @@ function OffenseField({ isRequired }: FormFieldProps) {
         options={options}
         onChange={(value) => updateDropdownInput(value as SelectOption)}
         onInputChange={setInputValue}
-        filterOption={customFilter}
+        filterOption={customFilterFn}
         customComponents={{
           Option: CustomOption,
           Menu: CustomMenu,

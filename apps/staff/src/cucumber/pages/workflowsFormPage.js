@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable class-methods-use-this */
 import { readFileSync } from "fs";
 import { join } from "path";
 

@@ -40,7 +40,6 @@ function VerificationNeeded() {
           <p className="mB-30 fsz-def c-grey-700">
             If you have reached this page by mistake, please try to log in
             again.{" "}
-            {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
             If you are still having trouble, please reach out to{" "}
             <a
               href="mailto:feedback@recidiviz.org?Subject=Trouble%20logging%20in"

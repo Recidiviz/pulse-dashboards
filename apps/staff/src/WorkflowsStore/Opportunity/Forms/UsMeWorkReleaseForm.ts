@@ -33,7 +33,6 @@ export class UsMeWorkReleaseForm extends FormBase<
 > {
   navigateToFormText = "Generate paperwork";
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     return "FormWorkRelease";
   }
