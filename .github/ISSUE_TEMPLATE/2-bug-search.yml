@@ -1,0 +1,63 @@
+name: "Bug: Search"
+description: "File a bug report for a Workflows search issue."
+title: "[<UBN/P0/P1>][<US_XX>][<Product>]: "
+labels: ["Type: Bug"]
+projects: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to report a Workflows search issue.
+        Refer to [go/slas](https://docs.google.com/document/d/15oVaisNkKTbagTVhXjqqf_iE7YW6g1_Jq9k-s-UMWrc) to determine the proper priority, label, and assignees for this issue.
+  - type: markdown
+    attributes:
+      value: |
+        *Note*: In many states (e.g. TN), supervision users are only able to search for other users in the same district as them. If a user cannot search for anyone, there’s a good chance their district is set incorrectly. If a user cannot search for a specific staff member, their districts probably do not match. Before filing a ticket, check the [Admin Panel Roster page](https://admin-panel-prod.recidiviz.org/admin/line_staff_tools/state_role_default_permissions) to make sure all districts are set appropriately.
+  - type: input
+    id: states
+    attributes:
+      label: State(s)
+      description: 
+      placeholder: 
+    validations:
+      required: true
+  - type: textarea
+    id: users
+    attributes:
+      label: Which users are affected?
+      description: Provide IDs of officer, client, and/or resident in go/github-pii, if applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: describe
+    attributes:
+      label: Describe the problem
+      description: e.g. Officer X cannot search for anything
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What is the expected behavior?
+      description: Please explain what the user expected to see in the tool (e.g. when Officer X searches for Y, they should see Z)
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot of issue, if applicable
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Checklists
+      description: 
+      options:
+        - label: "Added label for Team: State Pod or Team: Polaris"
+          required: false
+        - label: "Added label for Region: US_XX (if applicable)"
+          required: false
+        - label: "Added the appropriate Project: label (Workflows, Insights, JII, PSI, Vitals, Lantern)"
+          required: false
