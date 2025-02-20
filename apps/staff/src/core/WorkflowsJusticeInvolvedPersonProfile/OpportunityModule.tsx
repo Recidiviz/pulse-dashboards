@@ -31,6 +31,7 @@ import { getLinkToForm } from "../../WorkflowsStore/utils";
 import { desktopLinkGate } from "../desktopLinkGate";
 import { MenuButton } from "../OpportunityDenial/MenuButton";
 import { useStatusColors } from "../utils/workflowsUtils";
+import { WORKFLOWS_PATHS } from "../views";
 import { TextLink } from "../WorkflowsMilestones/styles";
 import { CriteriaList } from "./CriteriaList";
 import MarkedIneligibleReasons, {
@@ -114,10 +115,13 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
 
     useEffect(() => {
       if (isVisible) {
-        opportunity.setLastViewed();
+        if (pathname.startsWith(WORKFLOWS_PATHS.workflows)) {
+          // Only set last viewed from workflows, not from insights
+          opportunity.setLastViewed();
+        }
         opportunity.trackPreviewed();
       }
-    }, [opportunity, isVisible]);
+    }, [opportunity, isVisible, pathname]);
 
     const colors = useStatusColors(opportunity);
     const showUpdateStatusButton =
