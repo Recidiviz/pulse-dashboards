@@ -47,7 +47,8 @@ import {
   NOT_SURE_YET_OPTION,
   YES_OPTION,
 } from "../constants";
-import { transformUpdates } from "../utils";
+import { CountyDistrict } from "../types";
+import { getFilteredCountyOptions, transformUpdates } from "../utils";
 
 describe("transformUpdates", () => {
   it("should handle updates with SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY key and NONE_OPTION correctly", () => {
@@ -216,5 +217,65 @@ describe("transformUpdates", () => {
     const result = transformUpdates(updates);
 
     expect(result[HAS_PREVIOUS_TREATMENT_COURT_KEY]).toBeUndefined();
+  });
+});
+
+describe("getFilteredCountyOptions", () => {
+  const countiesOptions = [
+    { county: "Ada", district: "DISTRICT 3" },
+    { county: "Caldwell", district: "DISTRICT 3" },
+    { county: "Boise", district: "DISTRICT 4" },
+  ];
+
+  it("should filter counties by district if only district is provided", () => {
+    let countyDistrict: CountyDistrict = {
+      district: "DISTRICT 3",
+      county: null,
+    };
+    let result = getFilteredCountyOptions(countiesOptions, countyDistrict);
+
+    expect(result).toEqual([
+      { label: "Ada", value: "Ada" },
+      { label: "Caldwell", value: "Caldwell" },
+    ]);
+
+    countyDistrict = { district: "DISTRICT 4", county: null };
+    result = getFilteredCountyOptions(countiesOptions, countyDistrict);
+
+    expect(result).toEqual([{ label: "Boise", value: "Boise" }]);
+
+    countyDistrict = { district: "DISTRICT 4", county: "UNKNOWN" };
+    result = getFilteredCountyOptions(countiesOptions, countyDistrict);
+
+    expect(result).toEqual([{ label: "Boise", value: "Boise" }]);
+  });
+
+  it("should not filter counties if district and county are not provided", () => {
+    const countyDistrict = { district: null, county: null };
+    const result = getFilteredCountyOptions(countiesOptions, countyDistrict);
+
+    expect(result).toEqual([
+      { label: "Ada", value: "Ada" },
+      { label: "Boise", value: "Boise" },
+      { label: "Caldwell", value: "Caldwell" },
+    ]);
+  });
+
+  it("should sort counties alphabetically by label", () => {
+    const countyDistrict = { district: null, county: null };
+    const result = getFilteredCountyOptions(countiesOptions, countyDistrict);
+
+    expect(result).toEqual([
+      { label: "Ada", value: "Ada" },
+      { label: "Boise", value: "Boise" },
+      { label: "Caldwell", value: "Caldwell" },
+    ]);
+  });
+
+  it("should return an empty array if no counties match the district", () => {
+    const countyDistrict = { district: "DISTRICT X", county: null };
+    const result = getFilteredCountyOptions(countiesOptions, countyDistrict);
+
+    expect(result).toEqual([]);
   });
 });

@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { startCase } from "lodash";
 import { observer } from "mobx-react-lite";
 
+import { titleCase } from "../../../../utils/utils";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import { CLIENT_COUNTY_KEY, CLIENT_DISTRICT_KEY } from "../../constants";
@@ -25,19 +25,18 @@ import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
 import { FormFieldProps, SelectOption } from "../types";
 import { useFormField } from "../useFormFields";
+import { getFilteredCountyOptions } from "../utils";
 
 function CountyOfSentencingField({ isRequired }: FormFieldProps) {
   const { caseStore, geoConfig } = useStore();
   const caseAttributes = caseStore.caseAttributes;
   const omsSystem = geoConfig.omsSystem;
   const countiesOptions = caseStore.counties;
-  const countyOfResidence = startCase(
-    caseAttributes?.client?.county?.toLocaleLowerCase() ?? "",
-  );
-  const options = countiesOptions.map((selection) => ({
-    label: startCase(selection.county?.toLocaleLowerCase()),
-    value: selection.county,
-  }));
+  const countyOfResidence = titleCase(caseAttributes?.client?.county);
+  const options = getFilteredCountyOptions(countiesOptions, {
+    county: caseAttributes.client?.county,
+    district: caseAttributes.client?.district,
+  });
 
   const { selectValue, setSelectValue } = useFormField({
     initialSelectValue: {

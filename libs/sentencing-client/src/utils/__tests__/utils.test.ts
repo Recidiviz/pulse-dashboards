@@ -23,6 +23,7 @@ import {
   formatPossessiveName,
   formatWithArticle,
   pluralizeDuplicates,
+  titleCase,
   trimExtraSpaces,
 } from "../utils";
 
@@ -119,4 +120,13 @@ test("formatOffenseLabel", () => {
   expect(
     formatOffenseLabel("Nonviolent offenses, not sex- or drug-related"),
   ).toBe("Nonviolent offenses, not sex- or drug-related");
+});
+
+test("titleCase", () => {
+  expect(titleCase("hello")).toBe("Hello");
+  expect(titleCase("hello world")).toBe("Hello World");
+  expect(titleCase("HELLO WORLD")).toBe("Hello World");
+  expect(titleCase("hElLo WoRLd")).toBe("Hello World");
+  expect(titleCase("")).toBe("");
+  expect(titleCase("a b c")).toBe("A B C");
 });

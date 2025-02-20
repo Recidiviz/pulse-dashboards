@@ -63,3 +63,8 @@ export enum ErrorType {
   EmptyRequiredField = "emptyRequiredField",
   InputError = "inputError",
 }
+
+export type CountyDistrict = {
+  county?: string | null;
+  district?: string | null;
+};
