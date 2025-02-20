@@ -26,7 +26,7 @@ import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
-import { OpportunityConfig } from "../../configs/types";
+import { ComparisonPageConfig, OpportunityConfig } from "../../configs/types";
 import { RootStore } from "../../datastores/RootStore";
 import * as routes from "../../routes/routes";
 import * as hooks from "../StoreProvider/useRootStore";
@@ -268,6 +268,45 @@ describe("protected routes", () => {
   const sccpConfig = residentsConfigByState.US_ME.incarcerationOpportunities
     .usMeSCCP as OpportunityConfig;
 
+  describe("homepage", () => {
+    beforeEach(() => {
+      container = render(
+        <MemoryRouter
+          initialEntries={[
+            routes.State.Resident.buildPath({
+              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+              personPseudoId,
+            }),
+          ]}
+        >
+          <App />
+        </MemoryRouter>,
+      ).container;
+    });
+
+    it("should render", async () => {
+      expect(
+        await screen.findByRole("heading", {
+          level: 2,
+          name: "Your Progress",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it("should be accessible", async () => {
+      await screen.findByRole("heading", {
+        level: 2,
+        name: "Your Progress",
+      });
+
+      expect(await axe(container)).toHaveNoViolations();
+    });
+
+    it("should set the page title", () => {
+      expect(window.document.title).toBe(`Home – Opportunities`);
+    });
+  });
+
   describe("calculating dates page", () => {
     beforeEach(() => {
       container = render(
@@ -310,7 +349,7 @@ describe("protected routes", () => {
     });
   });
 
-  describe("SCCP page", () => {
+  describe("opportunity page", () => {
     beforeEach(() => {
       container = render(
         <MemoryRouter
@@ -352,7 +391,7 @@ describe("protected routes", () => {
     });
   });
 
-  describe("SCCP requirements page", () => {
+  describe("opportunity requirements page", () => {
     beforeEach(() => {
       container = render(
         <MemoryRouter
@@ -397,7 +436,7 @@ describe("protected routes", () => {
   });
 
   describe.each(sccpConfig.sections.map((s) => s.fullPage))(
-    "SCCP page: $urlSlug",
+    "opportunity info page: $urlSlug",
     (pageConfig) => {
       beforeEach(() => {
         container = render(
@@ -441,4 +480,53 @@ describe("protected routes", () => {
       });
     },
   );
+
+  describe("opportunity comparison page", () => {
+    const comparisonConfig = residentsConfigByState.US_ME
+      .comparisons?.[0] as ComparisonPageConfig;
+
+    beforeEach(() => {
+      container = render(
+        <MemoryRouter
+          initialEntries={[
+            routes.State.Resident.Eligibility.Comparison.buildPath({
+              stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
+              personPseudoId,
+              opportunitySlug1: sccpConfig.urlSlug,
+              opportunitySlug2:
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                residentsConfigByState.US_ME.incarcerationOpportunities
+                  .usMeWorkRelease!.urlSlug,
+            }),
+          ]}
+        >
+          <App />
+        </MemoryRouter>,
+      ).container;
+    });
+
+    it("should render", async () => {
+      expect(
+        await screen.findByRole("heading", {
+          name: comparisonConfig.fullPage.heading,
+          level: 1,
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it("should be accessible", async () => {
+      await screen.findByRole("heading", {
+        name: comparisonConfig.fullPage.heading,
+        level: 1,
+      });
+
+      expect(await axe(container)).toHaveNoViolations();
+    });
+
+    it("should set page title", () => {
+      expect(window.document.title).toBe(
+        `${comparisonConfig.fullPage.heading} – Opportunities`,
+      );
+    });
+  });
 });
