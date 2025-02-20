@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable class-methods-use-this */
 import Page from "./basePage";
 
 class ProfilePage extends Page {

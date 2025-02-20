@@ -21,6 +21,7 @@ import { z } from "zod";
 
 import { fullNameSchema } from "./fullNameSchema";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const fullNameBuilderSchema = fullNameSchema.required({
   givenNames: true,
   surname: true,

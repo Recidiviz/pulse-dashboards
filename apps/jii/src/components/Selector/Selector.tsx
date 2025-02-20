@@ -84,6 +84,7 @@ export const Selector = observer(function Selector<OptionVal>({
           option: (baseStyles, state) => ({
             ...baseStyles,
             color: palette.pine3,
+            // eslint-disable-next-line no-nested-ternary
             background: state.isFocused
               ? palette.slate10
               : state.isSelected

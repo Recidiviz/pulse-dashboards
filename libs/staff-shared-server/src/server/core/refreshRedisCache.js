@@ -28,8 +28,6 @@ import {
 } from "../utils/cacheKeys";
 import { getCache } from "./cacheManager";
 
-/* eslint-disable no-console */
-
 function cacheEachSubsetFile(
   cache,
   cacheKey,

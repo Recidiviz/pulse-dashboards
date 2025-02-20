@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable class-methods-use-this */
-
 import { differenceInDays, subDays } from "date-fns";
 
 import { isTestEnv } from "~client-env-utils";
@@ -60,7 +58,6 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     { metadata: PatchUserInfoProps }
   > = new Map();
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(public readonly insightsStore: InsightsStore) {}
 
   async init() {

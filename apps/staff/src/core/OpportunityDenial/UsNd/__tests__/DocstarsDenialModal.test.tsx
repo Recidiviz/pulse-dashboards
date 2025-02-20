@@ -39,7 +39,6 @@ const mockRootStore = () => {
   const updateOmsSnoozeStatus = vi.fn();
   updateOmsSnoozeStatus.mockImplementation(
     (opp, _email, _state, _pei, _date, _ts, status) => {
-      // eslint-disable-next-line no-param-reassign
       opp.omsSnoozeStatus = status;
     },
   );

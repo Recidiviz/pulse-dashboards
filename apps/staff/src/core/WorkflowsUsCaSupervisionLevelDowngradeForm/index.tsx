@@ -180,7 +180,6 @@ const FormUsCaSupervisionLeveDowngrade = observer(
       <FormContainer
         agencyName="CDCR"
         heading="Supervision Level Downgrade"
-        /* eslint-disable-next-line @typescript-eslint/no-empty-function */
         onClickDownload={onClickDownload}
         downloadButtonLabel="Download PDF"
         opportunity={opportunity}

@@ -57,6 +57,7 @@ When(
     const criteriaList = await WorkflowsFormPage.criteriaList();
     await criteriaList.click();
     // Wait for data to save to firestore
+    // eslint-disable-next-line wdio/no-pause
     await browser.pause(2500);
   },
 );
@@ -103,6 +104,7 @@ When("I click on preview page {int}", async (pageNumber) => {
   const page = pages[pageNumber - 1];
   await page.isExisting();
   await page.click();
+  // eslint-disable-next-line wdio/no-pause
   await browser.pause(500);
 });
 
@@ -123,6 +125,7 @@ Then(
     const formField = await $(`input#${inputId}`);
     await formField.waitForExist();
     // Wait for form text animation
+    // eslint-disable-next-line wdio/no-pause
     await browser.pause(3000);
     const formValue = await formField.getValue(inputValue);
     expect(formValue).toEqual(inputValue);

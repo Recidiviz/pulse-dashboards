@@ -34,7 +34,7 @@ export function etlHelperGetter(identifier: ObjectIdentifier) {
 
   try {
     getPrismaClientForStateCode(stateCode);
-  } catch (e) {
+  } catch {
     return undefined;
   }
 

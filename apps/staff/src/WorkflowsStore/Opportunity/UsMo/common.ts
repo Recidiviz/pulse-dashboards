@@ -62,13 +62,10 @@ const cdvMetadata = z.object({
   numMinorCdvsBeforeLastHearing: stringToIntSchema,
 });
 
-const solitaryAssignmentInfoPastYearSchema = z.object({
-  endDate: z.string().nullable(),
-  startDate: z.string().nullable(),
-});
-export type UsMoSolitaryAssignmentInfoPastYear = z.infer<
-  typeof solitaryAssignmentInfoPastYearSchema
->;
+export type UsMoSolitaryAssignmentInfoPastYear = {
+  endDate: string | null;
+  startDate: string | null;
+};
 
 export type UsMoConductViolationMetadata = z.infer<typeof cdvMetadata>;
 

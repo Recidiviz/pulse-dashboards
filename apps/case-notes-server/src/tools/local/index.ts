@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+/* eslint-disable no-await-in-loop -- We have to wait for a prompt */
+
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import inquirer from "inquirer";
 import superjson from "superjson";

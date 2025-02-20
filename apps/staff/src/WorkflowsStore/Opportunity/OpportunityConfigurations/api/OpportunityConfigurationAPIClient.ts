@@ -24,7 +24,6 @@ import { OpportunityConfigurationAPI } from "./interface";
 export class OpportunityConfigurationAPIClient
   implements OpportunityConfigurationAPI
 {
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     public readonly opportunityConfigurationStore: OpportunityConfigurationStore,
   ) {}

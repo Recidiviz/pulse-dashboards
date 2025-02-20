@@ -46,7 +46,6 @@ export class NewRevocationsMetrics extends BaseMetrics {
     const invalidDimensions = {};
 
     if (!validDimensions || !sourceDimensions || isDemoMode) {
-      // eslint-disable-next-line no-console
       console.log(`Skipping dimensions validations for ${fileName}`);
       return;
     }

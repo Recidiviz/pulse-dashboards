@@ -166,6 +166,7 @@ export class ApiClient implements DataAPI {
         `Missing ${opportunityId} record for ${residentExternalId}`,
       );
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log(e);
       throw e;
     }

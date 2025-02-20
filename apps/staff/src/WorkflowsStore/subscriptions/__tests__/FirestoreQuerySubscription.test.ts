@@ -49,7 +49,6 @@ function getTestUnit(...constructorArgs: any[]) {
   observableParam = observable.box("TEST1");
 
   class TestSubscription extends FirestoreQuerySubscription<any> {
-    // eslint-disable-next-line class-methods-use-this
     get dataSource() {
       // we don't care about the query itself here, just need a return value
       // that will react to the mock observable

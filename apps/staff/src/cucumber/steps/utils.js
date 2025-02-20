@@ -59,7 +59,7 @@ async function waitForNetworkIdle() {
   // Puppeteer's method waitForNetworkIdle is not currently included in the latest release of wdio. There are plans to include it
   // in the next release, but in the meantime we try to roll our own. This was borrowed / adapted by several comments in this thread:
   // https://github.com/puppeteer/puppeteer/issues/1353#issuecomment-629271737
-  /* eslint-disable no-use-before-define */
+
   let timeoutId = setTimeout(onTimeout, timeout);
 
   function onRequestStarted() {
@@ -95,7 +95,6 @@ async function waitForNetworkIdle() {
   page.on("request", onRequestStarted);
   page.on("requestfinished", onRequestFinished);
   page.on("requestfailed", onRequestFinished);
-  /* eslint-enable no-use-before-define */
 
   return new Promise((res) => {
     resolve = res;
@@ -141,6 +140,7 @@ async function switchUserStateCode(stateCode) {
   await avatarDropdown.click();
   const profileLink = await $(".AccountLink");
   await profileLink.waitForExist();
+  // eslint-disable-next-line wdio/no-pause
   await browser.pause(500);
   await waitForNavigation(profileLink.click());
   const stateSelection = await $(`.StateSelection__${stateCode}`);
@@ -154,6 +154,7 @@ async function switchToWorkflows() {
   await avatarDropdown.click();
   const workflowsLink = await $(".WorkflowsLink");
   await workflowsLink.waitForExist();
+  // eslint-disable-next-line wdio/no-pause
   await browser.pause(500);
   await waitForNavigation(workflowsLink.click());
 }

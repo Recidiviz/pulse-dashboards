@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const constructedOpportunityTypes = [
   // US_AZ
   "usAzOverdueForACISDTP",

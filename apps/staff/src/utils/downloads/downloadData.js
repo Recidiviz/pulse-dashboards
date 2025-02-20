@@ -29,6 +29,7 @@ import transformChartDataToCsv from "./transformChartDataToCsv";
 
 // Functions for flowing through browser-specific download functionality
 // https://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+// eslint-disable-next-line no-constant-binary-expression
 const isIE = /* @cc_on!@ */ false || !!document.documentMode;
 const isEdge = !isIE && !!window.StyleMedia;
 

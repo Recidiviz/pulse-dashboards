@@ -108,6 +108,7 @@ const InsightsClientEventsList: React.FC<InsightsClientEventsListType> = ({
             <Event
               event={event}
               clientEventTypes={clientEventTypes}
+              // eslint-disable-next-line react/no-array-index-key
               key={index}
             />
           );

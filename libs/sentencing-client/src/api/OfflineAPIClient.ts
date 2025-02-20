@@ -22,7 +22,6 @@ import { Case, Opportunities, Staff } from "./APIClient";
 export class OfflineAPIClient {
   private editableInfo: Map<string, unknown> = new Map();
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(public readonly psiStore: PSIStore) {}
 
   async getStaffInfo(): Promise<Staff> {

@@ -25,6 +25,6 @@ import toInteger from "lodash/fp/toInteger";
  * @param {Array} dataset
  * @returns {number}
  */
-// eslint-disable-next-line import/prefer-default-export
+
 export const sumIntBy = (key, dataset) =>
   sumBy((item) => toInteger(item[key]), dataset);

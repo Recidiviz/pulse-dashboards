@@ -36,7 +36,7 @@ export async function getIsAuth0Authorized(opts: CreateFastifyContextOptions) {
     } else {
       auth0Authorized = false;
     }
-  } catch (err) {
+  } catch {
     auth0Authorized = false;
   }
 

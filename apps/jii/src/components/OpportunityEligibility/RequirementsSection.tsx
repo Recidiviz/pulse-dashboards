@@ -118,6 +118,7 @@ const RequirementsList: FC<{ section: RequirementsSectionContent }> = observer(
             <RequirementMarker
               kind={section.icon}
               color={
+                // eslint-disable-next-line no-nested-ternary
                 section.icon === "Success"
                   ? palette.signal.highlight
                   : section.icon === "CloseOutlined"

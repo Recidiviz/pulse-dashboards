@@ -441,7 +441,6 @@ export class WorkflowsStore implements Hydratable {
   updatePerson(record: ClientRecord, PersonClass: typeof Client): void;
 
   updatePerson(
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     record: any,
     PersonClass: typeof Client | typeof Resident,
   ): void {
@@ -669,7 +668,7 @@ export class WorkflowsStore implements Hydratable {
     return {
       ...this.clientSearchManager.matchingPersonsGrouped,
       ...this.residentSearchManager.matchingPersonsGrouped,
-    }
+    };
   }
 
   get milestonesClients(): Client[] {

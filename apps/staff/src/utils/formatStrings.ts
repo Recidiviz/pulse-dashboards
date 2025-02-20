@@ -32,7 +32,6 @@ import pipe from "lodash/fp/pipe";
 import startCase from "lodash/fp/startCase";
 import moment from "moment";
 import numeral from "numeral";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import Pluralize from "pluralize";
 
 import { FullName } from "~datatypes";
@@ -442,6 +441,7 @@ function getSerialListSeparator(index: number, arrayLength: number): string {
 
   // if more than two items, separate with commas until the second to last item, then
   // separate with ", and"
+  // eslint-disable-next-line no-nested-ternary
   return index === arrayLength - 2
     ? ", and "
     : index < arrayLength - 2

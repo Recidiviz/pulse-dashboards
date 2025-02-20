@@ -178,6 +178,7 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
         <ModalHeader>
           <ModalTitle className={isNoteView ? "fs-exclude" : ""}>
             {isNoteView && (
+              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
               <i
                 className="fa fa-angle-left"
                 onClick={() => setCurrentView("SEARCH_VIEW")}

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { PieChart } from "react-minimal-pie-chart";
 
 import { Insight } from "../../../../../../api";
@@ -84,29 +84,48 @@ export function DispositionChartBySentenceLength({
     </CommonStyled.ChartLegendItem>
   ));
 
+  const getLabel = useCallback(
+    ({
+      x,
+      y,
+      dx,
+      dy,
+      dataEntry,
+      dataIndex,
+    }: {
+      x: number;
+      y: number;
+      dx: number;
+      dy: number;
+      dataEntry: { percentage: number };
+      dataIndex: number;
+    }) => (
+      <text
+        x={x}
+        y={y}
+        dx={dx}
+        dy={dy}
+        dominant-baseline="central"
+        text-anchor="middle"
+        style={{
+          fontSize: "5px",
+        }}
+        fill="#FFFFFF"
+        // If a segment's label is focused, consider the segment focused
+        onMouseOver={() => setFocusedSegment(dataIndex)}
+        onMouseOut={() => setFocusedSegment(undefined)}
+      >
+        {`${Math.round(dataEntry.percentage)}%`}
+      </text>
+    ),
+    [setFocusedSegment],
+  );
+
   return (
     <div style={{ height: CHART_HEIGHT }}>
       <PieChart
         data={formattedDataPoints}
-        label={({ x, y, dx, dy, dataEntry, dataIndex }) => (
-          <text
-            x={x}
-            y={y}
-            dx={dx}
-            dy={dy}
-            dominant-baseline="central"
-            text-anchor="middle"
-            style={{
-              fontSize: "5px",
-            }}
-            fill="#FFFFFF"
-            // If a segment's label is focused, consider the segment focused
-            onMouseOver={() => setFocusedSegment(dataIndex)}
-            onMouseOut={() => setFocusedSegment(undefined)}
-          >
-            {`${Math.round(dataEntry.percentage)}%`}
-          </text>
-        )}
+        label={getLabel}
         labelStyle={{
           fill: "#FFFFFF",
           fontSize: "0.5em",

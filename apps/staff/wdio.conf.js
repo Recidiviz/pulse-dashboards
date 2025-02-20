@@ -323,7 +323,7 @@ exports.config = {
   /**
    * Runs after a Cucumber scenario
    */
-  // eslint-disable-next-line
+
   afterScenario: async function (world) {
     const { tags } = world.pickle;
     const { status } = world.result;

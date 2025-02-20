@@ -49,7 +49,6 @@ import {
 } from "./interface";
 
 export class InsightsAPIClient implements InsightsAPI {
-  // eslint-disable-next-line no-useless-constructor
   constructor(public readonly insightsStore: InsightsStore) {}
 
   private get apiStore() {

@@ -90,6 +90,7 @@ export class InsightsStore {
     // Iterate over each state and download its configuration
     for (const stateCode of states) {
       try {
+        // eslint-disable-next-line no-await-in-loop
         const data = await this.apiClient.downloadStateConfiguration(stateCode);
 
         // To keep the size of the fixture data smaller, we don't have metric data for every version of each metric

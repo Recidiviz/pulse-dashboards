@@ -122,7 +122,6 @@ export class UsTnExpirationForm extends FormBase<
 > {
   navigateToFormText = "Generate TEPE note";
 
-  // eslint-disable-next-line class-methods-use-this
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsTnExpirationForm";
   }

@@ -79,7 +79,6 @@ export function filterOptimizedDataFormat(
     }
 
     if (!matchesFilter) {
-      /* eslint-disable-next-line no-continue */
       continue;
     }
 

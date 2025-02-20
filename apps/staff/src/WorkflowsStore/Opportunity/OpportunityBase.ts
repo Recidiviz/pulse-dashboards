@@ -760,22 +760,18 @@ export class OpportunityBase<
   // so subclasses can use normal annotations instead of having to use `override`.
   // ===============================
 
-  // eslint-disable-next-line class-methods-use-this
   get eligibilityDate(): Date | undefined {
     return undefined;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get formVariant(): FormVariant | undefined {
     return undefined;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get eligibleStatusMessage(): string | undefined {
     return undefined;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get almostEligibleStatusMessage(): string | undefined {
     return undefined;
   }

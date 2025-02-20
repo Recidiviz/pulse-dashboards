@@ -28,7 +28,6 @@ const syncContentWithSheet = async () => {
   await createPageCopyFile(doc);
   await createMetricCopyFile(doc);
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const stateCode of STATES_WITH_COPY_OVERRIDES) {
     // eslint-disable-next-line no-await-in-loop
     await createPageCopyFile(doc, stateCode);

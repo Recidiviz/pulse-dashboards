@@ -46,7 +46,6 @@ export default class CaseTableStore extends BaseDataStore {
 
   formatExportData(data) {
     return (this.formatTableData(data) || []).map(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       ({ admissionType, ...record }) => ({
         data: Object.values(record),
       }),

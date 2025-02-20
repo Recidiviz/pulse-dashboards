@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable class-methods-use-this */
 import Page from "./basePage";
 
 class LanternPage extends Page {
@@ -75,6 +74,7 @@ class LanternPage extends Page {
 
   async navigateToProfile() {
     (await this.userMenu()).click();
+    // eslint-disable-next-line wdio/no-pause
     await browser.pause(this.redirectPause);
   }
 }

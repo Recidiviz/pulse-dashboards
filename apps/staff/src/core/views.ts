@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+/* eslint-disable no-redeclare */
+
 import { psiRootPath } from "~sentencing-client";
 
 import { MetricId, SystemId } from "./models/types";

@@ -74,16 +74,8 @@ vi.mock("firebase/firestore", async (importOriginal) => {
     connectFirestoreEmulator: vi.fn(),
   };
 });
-const testStateCodes = [
-  "US_ME",
-  "US_BB",
-  "US_MO",
-  "US_TN",
-  "US_XX",
-  "US_YY",
-] as const;
 
-type testStateCode = (typeof testStateCodes)[number];
+type testStateCode = "US_ME" | "US_BB" | "US_MO" | "US_TN" | "US_XX" | "US_YY";
 const { stateConfigs } = vi.hoisted(() => {
   const stateConfigs: Record<testStateCode | "RECIDIVIZ", any> = {
     US_XX: {

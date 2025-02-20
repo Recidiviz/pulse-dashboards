@@ -35,13 +35,13 @@ import {
   SupervisorDetailCardList,
 } from "./styles";
 
-type InsightsSupervisorOpportunityDetailCard = {
+type InsightsSupervisorOpportunityDetailCardProps = {
   opportunityInfo: OpportunityInfo;
   labels: ConfigLabels;
 };
 
 export const InsightsSupervisorOpportunityDetailCard: React.FC<
-  InsightsSupervisorOpportunityDetailCard
+  InsightsSupervisorOpportunityDetailCardProps
 > = ({
   labels,
   opportunityInfo: {
