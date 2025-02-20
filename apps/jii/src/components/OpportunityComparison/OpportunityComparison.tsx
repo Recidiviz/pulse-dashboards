@@ -88,7 +88,7 @@ ${pageContents.body}`}
       <ComparisonTable>
         <thead>
           <tr>
-            <th></th>
+            <td></td>
             <th>{pageContents.tableHeadings[0]}</th>
             <th>{pageContents.tableHeadings[1]}</th>
           </tr>
