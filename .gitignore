@@ -80,6 +80,7 @@ opportunityPageConfig.json
 *.tfvars.json
 *.planfile
 *.tfplan
+.decrypted*
 
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
