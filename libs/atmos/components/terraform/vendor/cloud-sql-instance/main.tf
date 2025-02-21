@@ -62,7 +62,7 @@ resource "google_sql_database_instance" "data" {
     disk_autoresize   = true
     tier              = var.tier
     edition           = "ENTERPRISE"
-    availability_type = "REGIONAL"
+    availability_type = var.availability_type
 
     backup_configuration {
       enabled                        = true
@@ -168,7 +168,7 @@ resource "google_sql_user" "readonly" {
 # this instance.
 resource "google_bigquery_connection" "default_db_bq_connection" {
   provider = google-beta
-  count = var.create_bigquery_connection ? 1 : 0
+  count    = var.create_bigquery_connection ? 1 : 0
 
   connection_id = "${var.instance_key}_cloudsql"
   friendly_name = "${local.bq_connection_friendly_name} Cloud SQL Postgres"

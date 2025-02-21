@@ -33,6 +33,7 @@ components:
         base_secret_name: sentencing
         database_version: POSTGRES_16
         has_readonly_user: false
+        availability_type: REGIONAL
         region: us-central1
         zone: us-central1-f
         secondary_zone: us-central1-c
