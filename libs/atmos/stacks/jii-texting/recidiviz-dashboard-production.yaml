@@ -37,6 +37,7 @@ components:
         database_version: POSTGRES_16
         has_readonly_user: false
         region: "{{ .settings.context.location }}"
+        availability_type: REGIONAL
         zone: us-central1-a
         secondary_zone: us-central1-b
         tier: db-custom-1-3840

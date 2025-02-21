@@ -22,7 +22,7 @@ variable "project_id" {
 
 # The project for the related database instance
 variable "create_bigquery_connection" {
-  type = bool
+  type    = bool
   default = true
 }
 
@@ -82,4 +82,11 @@ variable "insights_config" {
     record_client_address   = optional(bool)
   })
   default = null
+}
+
+# Postgres database version
+# See also https://cloud.google.com/sql/docs/postgres/create-instance#create-2nd-gen
+variable "availability_type" {
+  type    = string
+  default = "ZONAL"
 }
