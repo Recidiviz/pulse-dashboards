@@ -68,7 +68,10 @@ export const InsightsStaffVitals = withPresenter(
           <Grid>
             {vitalsMetricDetails.map((metric) => {
               return (
-                <InsightsStaffVitalsDetailCard vitalsMetricDetails={metric} />
+                <InsightsStaffVitalsDetailCard
+                  key={metric.label}
+                  vitalsMetricDetails={metric}
+                />
               );
             })}
           </Grid>
