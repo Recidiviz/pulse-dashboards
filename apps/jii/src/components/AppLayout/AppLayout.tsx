@@ -15,19 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, zindex } from "@recidiviz/design-system";
+import { palette } from "@recidiviz/design-system";
+import { action } from "mobx";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC, memo, ReactNode } from "react";
+import { FC, ReactNode, useLayoutEffect } from "react";
+import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
 
 import { useSkipNav } from "../SkipNav/SkipNav";
-import { HEADER_PORTAL_ID, PAGE_LAYOUT_HEADER_GAP } from "./constants";
+import { useRootStore } from "../StoreProvider/useRootStore";
+import {
+  HEADER_PORTAL_ID,
+  PAGE_LAYOUT_HEADER_GAP,
+  STICKY_HEADER_ZINDEX,
+} from "./constants";
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ scrollMargin: number }>`
   display: grid;
   grid-template-rows: auto 1fr;
   min-height: 100vh;
   row-gap: ${rem(PAGE_LAYOUT_HEADER_GAP)};
+
+  /* main content and any potential scroll anchors it contains
+   should be offset from the header so that skip links don't overshoot */
+  main,
+  main [id] {
+    scroll-margin-top: ${(props) => props.scrollMargin}px;
+  }
 `;
 
 const Header = styled.header`
@@ -36,17 +51,42 @@ const Header = styled.header`
   top: 0;
   left: 0;
   right: 0;
-  z-index: ${zindex.modal.backdrop - 20};
+  z-index: ${STICKY_HEADER_ZINDEX};
 `;
 
-export const AppLayout: FC<{ header?: ReactNode; main: ReactNode }> = memo(
+function useHeaderMeasurement() {
+  // we will use the observed header height to offset the scroll,
+  // so that the skip link doesn't result in content hidden behind the header
+  const [measureRef, { height: headerHeightMeasurement }] = useMeasure();
+  // we'll read it from the datastore, for consistency with the rest of the application
+  const {
+    uiStore,
+    uiStore: { stickyHeaderHeight },
+  } = useRootStore();
+  // layout effect to make sure this is available to children before they paint,
+  // to avoid possible layout shifts or other jankiness
+  useLayoutEffect(
+    () =>
+      action("update sticky header height", () => {
+        uiStore.stickyHeaderHeight = headerHeightMeasurement;
+      })(),
+    [headerHeightMeasurement, uiStore],
+  );
+
+  return { measureRef, stickyHeaderHeight };
+}
+
+export const AppLayout: FC<{ header?: ReactNode; main: ReactNode }> = observer(
   function AppLayout({ main, header }) {
     const { MainContent, SkipNav, SkipNavController } = useSkipNav();
+
+    const { measureRef, stickyHeaderHeight } = useHeaderMeasurement();
+
     return (
       <SkipNavController>
         <SkipNav />
-        <Wrapper>
-          <Header>
+        <Wrapper scrollMargin={stickyHeaderHeight + PAGE_LAYOUT_HEADER_GAP}>
+          <Header ref={measureRef}>
             {header}
             {/* This is a placeholder for components that may be rendered by ./HeaderPortal.
             This component should not give it any children or otherwise interfere with it */}

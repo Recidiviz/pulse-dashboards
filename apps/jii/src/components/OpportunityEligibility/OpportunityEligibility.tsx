@@ -21,23 +21,20 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, useId } from "react";
 import { Link } from "react-router-dom";
-import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
 import { PAGE_LAYOUT_HEADER_GAP } from "../AppLayout/constants";
-import { HeaderPortal } from "../AppLayout/HeaderPortal";
 import { FullBleedContainer } from "../BaseLayout/BaseLayout";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { useSingleResidentContext } from "../SingleResidentHydrator/context";
+import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { AdditionalSection } from "./AdditionalSection";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 import { RequirementsSection } from "./RequirementsSection";
-
-const SIDEBAR_WIDTH = 120;
 
 const Background = styled(FullBleedContainer)`
   height: ${rem(400)};
@@ -46,12 +43,14 @@ const Background = styled(FullBleedContainer)`
   top: -${rem(spacing.xl)};
 `;
 
-const Wrapper = styled.article<{ scrollMargin: number }>`
-  padding-left: ${rem(SIDEBAR_WIDTH + spacing.xl * 2)};
-
-  & [id] {
-    scroll-margin-top: ${(props) => props.scrollMargin}px;
-  }
+const Wrapper = styled.article`
+  column-gap: ${rem(spacing.xl * 2)};
+  display: grid;
+  grid-template-columns: ${rem(120)} 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "sidebar title"
+    "sidebar body";
 `;
 
 const Headline = styled.h1`
@@ -59,16 +58,19 @@ const Headline = styled.h1`
 
   color: ${palette.pine1};
   font-size: ${rem(34)};
+  grid-area: title;
   margin: 0 0 ${rem(spacing.sm)};
   text-wrap: balance;
 `;
 
-const Body = styled.div``;
+const Body = styled.div`
+  grid-area: body;
+`;
 
 const TableOfContents = styled.nav`
-  margin-top: ${rem(PAGE_LAYOUT_HEADER_GAP)};
-  position: absolute;
-  width: ${rem(SIDEBAR_WIDTH)};
+  align-self: start;
+  grid-area: sidebar;
+  position: sticky;
 
   h2 {
     ${typography.Sans14}
@@ -99,15 +101,19 @@ const ManagedComponent: FC<{
   usePageTitle(presenter.title);
 
   const tocLabelId = useId();
-
-  // we will align with the TOC position to keep anchor links
-  // from scrolling past the sticky header
-  const [measureRef, { top: topOfContent }] = useMeasure();
+  const {
+    uiStore: { stickyHeaderHeight },
+  } = useRootStore();
 
   return (
-    <>
-      <HeaderPortal>
-        <TableOfContents aria-labelledby={tocLabelId} ref={measureRef}>
+    <div>
+      <Background style={{ background: presenter.pageBackgroundStyle }} />
+      <Wrapper>
+        <Headline>{presenter.title}</Headline>
+        <TableOfContents
+          aria-labelledby={tocLabelId}
+          style={{ top: `${stickyHeaderHeight + PAGE_LAYOUT_HEADER_GAP}px` }}
+        >
           <h2 id={tocLabelId}>On this page</h2>
           <ul>
             {presenter.tableOfContentsLinks.map((props) => (
@@ -117,26 +123,19 @@ const ManagedComponent: FC<{
             ))}
           </ul>
         </TableOfContents>
-      </HeaderPortal>
-      <div>
-        <Background style={{ background: presenter.pageBackgroundStyle }} />
-        <Wrapper scrollMargin={topOfContent}>
-          <Headline>{presenter.title}</Headline>
+        <Body>
+          <RequirementsSection presenter={presenter} />
 
-          <Body>
-            <RequirementsSection presenter={presenter} />
-
-            {presenter.additionalSections.map((sectionContent) => (
-              <AdditionalSection
-                content={sectionContent}
-                key={sectionContent.linkUrl}
-              />
-            ))}
-          </Body>
-        </Wrapper>
-        <ScrollToHashElement />
-      </div>
-    </>
+          {presenter.additionalSections.map((sectionContent) => (
+            <AdditionalSection
+              content={sectionContent}
+              key={sectionContent.linkUrl}
+            />
+          ))}
+        </Body>
+      </Wrapper>
+      <ScrollToHashElement />
+    </div>
   );
 });
 

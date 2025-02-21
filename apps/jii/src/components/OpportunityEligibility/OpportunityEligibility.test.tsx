@@ -32,11 +32,13 @@ import { HEADER_PORTAL_ID } from "../AppLayout/constants";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { useSingleResidentContext } from "../SingleResidentHydrator/context";
+import { useRootStore } from "../StoreProvider/useRootStore";
 import { OpportunityEligibility } from "./OpportunityEligibility";
 
 vi.mock("../ResidentsHydrator/context");
 vi.mock("../SingleResidentHydrator/context");
 vi.mock("../ResidentOpportunityHydrator/context");
+vi.mock("../StoreProvider/useRootStore");
 
 let residentsStore: ResidentsStore;
 const opportunityId: IncarcerationOpportunityId = "usMeSCCP";
@@ -52,8 +54,10 @@ const eligibilityReport = new UsMeSCCPEligibilityReport(
 );
 
 beforeEach(() => {
-  residentsStore = new ResidentsStore(new RootStore(), stateConfig);
+  const rootStore = new RootStore();
+  residentsStore = new ResidentsStore(rootStore, stateConfig);
 
+  vi.mocked(useRootStore).mockReturnValue(rootStore);
   vi.mocked(useResidentsContext).mockReturnValue({ residentsStore });
   // @ts-expect-error only mocking what we need
   vi.mocked(useSingleResidentContext).mockReturnValue({

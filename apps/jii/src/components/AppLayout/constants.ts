@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
+import { spacing, zindex } from "@recidiviz/design-system";
 
 export const PAGE_LAYOUT_HEADER_GAP = spacing.xl;
 
 export const HEADER_PORTAL_ID = "app-layout-header-portal";
+
+export const STICKY_HEADER_ZINDEX = zindex.modal.backdrop - 20;
