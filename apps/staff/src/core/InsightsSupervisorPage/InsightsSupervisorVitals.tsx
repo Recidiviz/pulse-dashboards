@@ -58,7 +58,6 @@ export const InsightsSupervisorVitals = withPresenter(
   observer(function InsightsSupervisorVitalsSection({
     presenter,
   }: SupervisorVitalsProps) {
-    
     const {
       isVitalsEnabled,
       vitalsMetricDetails,
@@ -78,6 +77,7 @@ export const InsightsSupervisorVitals = withPresenter(
             {vitalsMetricDetails.map((metric) => {
               return (
                 <InsightsSupervisorVitalsDetailCard
+                  key={metric.label}
                   vitalsMetricDetails={metric}
                 />
               );

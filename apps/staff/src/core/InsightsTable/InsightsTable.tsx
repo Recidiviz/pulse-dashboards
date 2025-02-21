@@ -173,6 +173,7 @@ const InsightsTable = <T extends object>({
       const row = rows[index];
       prepareRow(row);
 
+      const { key: rowKey, ...rowProps } = row.getRowProps({ style });
       const rowViz = (
         <TR
           transformToMobile={transformToMobile}
@@ -181,13 +182,16 @@ const InsightsTable = <T extends object>({
               ? intercomTargetOnFirstRow
               : undefined
           }
-          {...row.getRowProps({ style })}
+          key={rowKey}
+          {...rowProps}
         >
           {row.cells.map((cell) => {
+            const { key: cellKey, ...cellProps } = cell.getCellProps();
             return (
               <TD
                 transformToMobile={transformToMobile}
-                {...cell.getCellProps()}
+                key={cellKey}
+                {...cellProps}
               >
                 <Text>{cell.render("Cell")}</Text>
               </TD>
@@ -226,13 +230,23 @@ const InsightsTable = <T extends object>({
     >
       {!transformToMobile && (
         <TableHeader>
-          {headerGroups.map((headerGroup) => (
-            <TR {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <TH {...column.getHeaderProps()}>{column.render("title")}</TH>
-              ))}
-            </TR>
-          ))}
+          {headerGroups.map((headerGroup) => {
+            const { key: headerGroupKey, ...headerGroupProps } =
+              headerGroup.getHeaderGroupProps();
+            return (
+              <TR key={headerGroupKey} {...headerGroupProps}>
+                {headerGroup.headers.map((column) => {
+                  const { key: columnHeaderKey, ...columnHeaderProps } =
+                    column.getHeaderProps();
+                  return (
+                    <TH key={columnHeaderKey} {...columnHeaderProps}>
+                      {column.render("title")}
+                    </TH>
+                  );
+                })}
+              </TR>
+            );
+          })}
         </TableHeader>
       )}
       <TableBody
