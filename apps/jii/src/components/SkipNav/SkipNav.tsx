@@ -20,6 +20,8 @@ import { createContext, JSX, ReactNode, useContext, useId } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { STICKY_HEADER_ZINDEX } from "../AppLayout/constants";
+
 // invisible navigation link for keyboard and screen reader users; visible on tab focus
 const SkipNavContainer = styled.div`
   a {
@@ -31,7 +33,7 @@ const SkipNavContainer = styled.div`
     border-right: 1px solid white;
     border-bottom: 1px solid white;
     background: ${palette.pine3};
-    z-index: 100;
+    z-index: ${STICKY_HEADER_ZINDEX + 1};
 
     &:focus {
       position: absolute;

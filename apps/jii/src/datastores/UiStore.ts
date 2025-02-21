@@ -28,6 +28,14 @@ export class UiStore {
    */
   selectedResidentsFilterOptionValue?: string;
 
+  /**
+   * Some components may wish to know how tall the sticky header is,
+   * e.g. to ensure they don't scroll content past it to be covered up.
+   * That value should be tracked and stored here, when applicable
+   * (not all pages use this header).
+   */
+  stickyHeaderHeight = 0;
+
   constructor() {
     makeAutoObservable(this);
   }
