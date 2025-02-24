@@ -27,8 +27,7 @@ import { rem } from "polished";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
-import { workflowsUrl } from "../views";
+import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
 
 const TallerDropdownToggle = styled(DropdownToggle)`
   height: 40px;
@@ -54,40 +53,34 @@ const SelectedOpportunityTypeIndicator = styled.span`
   margin-left: ${rem(spacing.sm)};
 `;
 
-export const OpportunityTypeSelect = observer(function OpportunityTypeSelect() {
-  const {
-    workflowsStore: {
-      selectedOpportunityType,
-      opportunityTypes,
-      opportunityConfigurationStore,
-    },
-  } = useRootStore();
+export const OpportunityTypeSelect = observer(function OpportunityTypeSelect({
+  presenter,
+}: {
+  presenter: OpportunityCaseloadPresenter;
+}) {
+  const { opportunityConfigs, selectedOpportunityType, opportunityTypes } =
+    presenter;
   const navigate = useNavigate();
-  const configs = opportunityConfigurationStore.apiOpportunityConfigurations;
 
-  if (!configs || !selectedOpportunityType) return null;
+  if (!opportunityConfigs || !selectedOpportunityType) return null;
 
   return (
     <Dropdown>
       <TallerDropdownToggle kind="secondary" showCaret>
         <FixedWidthText>
-          {configs[selectedOpportunityType].label}
+          {opportunityConfigs[selectedOpportunityType].label}
         </FixedWidthText>
       </TallerDropdownToggle>
       <DropdownMenu alignment="left">
         {opportunityTypes.map((oppType) => (
           <DropdownMenuItem
             onClick={() =>
-              navigate(
-                workflowsUrl("opportunityClients", {
-                  urlSection: configs[oppType].urlSection,
-                }),
-              )
+              navigate(presenter.urlForOppConfig(opportunityConfigs[oppType]))
             }
             key={oppType}
           >
             <FlexWrapper>
-              {configs[oppType].label}
+              {opportunityConfigs[oppType].label}
               {oppType === selectedOpportunityType && (
                 <SelectedOpportunityTypeIndicator />
               )}

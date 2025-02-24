@@ -20,6 +20,8 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { isHydrated } from "~hydration-utils";
+
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
@@ -56,6 +58,7 @@ export const OpportunityPageWithPresenter = observer(
     // If the presenter is hydrated and we're on an opportunity page, this stuff should
     // never be missing in practice.
     // TODO(#6983): the opportunities and opportunitiesByType are missing initially.
+    if (!isHydrated(presenter)) return null;
     if (
       !officerRecord ||
       !opportunityType ||

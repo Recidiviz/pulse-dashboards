@@ -23,7 +23,7 @@ import toast from "react-hot-toast";
 
 import { OpportunityType } from "~datatypes";
 
-import { workflowsUrl } from "../../core/views";
+import { insightsUrl, workflowsUrl } from "../../core/views";
 import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
@@ -354,6 +354,48 @@ export class OpportunityCaseloadPresenter {
     return this.selectedPerson?.opportunities[this.opportunityType]?.find(
       (opp) => opp.selectId === this.workflowsStore.selectedOpportunityId,
     );
+  }
+
+  get selectedOpportunityType() {
+    if (this.supervisionPresenter) {
+      return this.supervisionPresenter.opportunityType;
+    }
+    return this.workflowsStore.selectedOpportunityType;
+  }
+
+  get opportunityConfigs() {
+    if (this.supervisionPresenter) {
+      // @ts-expect-error accessing private opportunity configuration store
+      // because workflows configurations are not hydrated on supervisor homepage
+      return this.supervisionPresenter.opportunityConfigurationStore
+        ?.apiOpportunityConfigurations;
+    }
+    return this.workflowsStore.opportunityConfigurationStore
+      .apiOpportunityConfigurations;
+  }
+
+  get opportunityTypes(): OpportunityType[] {
+    if (this.supervisionPresenter) {
+      return Object.keys(
+        this.supervisionPresenter.opportunitiesByType ?? {},
+      ) as OpportunityType[];
+    }
+    return this.workflowsStore.opportunityTypes;
+  }
+
+  urlForOppConfig(config: OpportunityConfiguration) {
+    const officerPseudoId =
+      // @ts-expect-error accessing private store
+      this.supervisionPresenter?.supervisionStore.officerPseudoId;
+    if (officerPseudoId) {
+      return insightsUrl("supervisionOpportunity", {
+        officerPseudoId,
+        opportunityTypeUrl: config.urlSection,
+      });
+    }
+    return workflowsUrl("opportunityClients", {
+      urlSection: config.urlSection,
+    });
   }
 
   get overdueOpportunityUrl(): string | undefined {

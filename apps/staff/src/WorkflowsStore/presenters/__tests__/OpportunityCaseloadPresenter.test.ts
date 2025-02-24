@@ -190,32 +190,68 @@ describe("multiple tab groups, no supervision presenter", () => {
 });
 
 describe("in insights/with supervision presenter", () => {
-  beforeEach(() => {
-    // supervision presenter with two opportunities
-    const supervisionOpportunityPresenter = {
-      opportunitiesByType: {
-        [mockOpportunity.type]: [
-          mockOpportunity,
-          { ...mockOpportunity, tabTitle: () => "Marked Ineligible" },
-        ],
+  // supervision presenter with two opportunities
+  const supervisionOpportunityPresenter = {
+    opportunitiesByType: {
+      [mockOpportunity.type]: [
+        mockOpportunity,
+        { ...mockOpportunity, tabTitle: () => "Marked Ineligible" },
+      ],
+    },
+    labels: { supervisionJiiLabel: "test title" },
+    supervisionStore: {
+      officerPseudoId: "testofficer1",
+    },
+    opportunityConfigurationStore: {
+      apiOpportunityConfigurations: {
+        [mockOpportunity.type]: mockOpportunity.config,
       },
-      labels: { supervisionJiiLabel: "test title" },
-    } as any as SupervisionOpportunityPresenter;
+    },
+  } as any as SupervisionOpportunityPresenter;
 
+  beforeEach(() => {
+    vi.clearAllMocks();
     presenter = getPresenter({
       supervisionPresenter: supervisionOpportunityPresenter,
     });
   });
 
   test("gets opportunities from supervision presenter", () => {
+    const workflowsSpy = vi.spyOn(
+      mockWorkflowsStore,
+      "allOpportunitiesByType",
+      "get",
+    );
     expect(presenter.oppsFromOpportunitiesByTab).toContainAllKeys([
       "Eligible Now",
       "Marked Ineligible",
     ]);
+    expect(workflowsSpy).not.toHaveBeenCalled();
   });
 
   test("gets JII title from supervision presenter", () => {
     expect(presenter.justiceInvolvedPersonTitle).toEqual("test title");
+  });
+
+  test("gets current opportunity type from supervision presenter", () => {
+    expect(presenter.opportunityType).toEqual(mockOpportunity.type);
+  });
+
+  test("gets opportunity configurations from supervision presenter", () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    expect(Object.keys(presenter.opportunityConfigs!)).toEqual([
+      mockOpportunity.type,
+    ]);
+  });
+
+  test("gets opportunity types from supervision presenter", () => {
+    expect(presenter.opportunityTypes).toEqual([mockOpportunity.type]);
+  });
+
+  test("gets URL for other opportunity type for insights", () => {
+    expect(presenter.urlForOppConfig(mockOpportunity.config)).toEqual(
+      `/insights/supervision/staff/testofficer1/opportunity/${mockOpportunity.config.urlSection}`,
+    );
   });
 });
 

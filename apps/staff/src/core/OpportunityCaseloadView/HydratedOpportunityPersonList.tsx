@@ -460,7 +460,9 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
             handleDismiss={handleNotificationDismiss}
           />
         )}
-        {opportunityTableView && <OpportunityTypeSelect />}
+        {opportunityTableView && (
+          <OpportunityTypeSelect presenter={presenter} />
+        )}
         {opportunityTableView && <TableViewToggle presenter={presenter} />}
       </MaxWidthWrapper>
 
