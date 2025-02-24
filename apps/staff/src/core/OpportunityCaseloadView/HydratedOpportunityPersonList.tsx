@@ -75,6 +75,7 @@ import {
 } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
+import InsightsPill from "../InsightsPill";
 import PersonId from "../PersonId";
 import { Heading, MaxWidth } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
@@ -441,7 +442,15 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
   return (
     <>
       <MaxWidthWrapper>
-        <Heading isMobile={isMobile}>{presenter.label}</Heading>
+        <Heading isMobile={isMobile}>
+          {presenter.label}{" "}
+          {presenter.showZeroGrantsPill && (
+            <InsightsPill
+              label="Zero Grants"
+              tooltipCopy={presenter.zeroGrantsTooltip}
+            />
+          )}
+        </Heading>
         {presenter.subheading ? (
           <OpportunitySubheading subheading={presenter.subheading} />
         ) : (
