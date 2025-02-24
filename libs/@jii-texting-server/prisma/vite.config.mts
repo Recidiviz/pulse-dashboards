@@ -25,6 +25,7 @@ export default defineConfig({
 
   plugins: [nxViteTsPaths()],
   test: {
+    name: "@jii-texting-server/prisma",
     globals: true,
     cache: { dir: "../../../node_modules/.vitest" },
     environment: "node",
@@ -33,6 +34,12 @@ export default defineConfig({
     coverage: {
       reportsDirectory: "../../../coverage/libs/@jii-texting-server/prisma",
       provider: "v8",
+    },
+    env: {
+      DATABASE_URL:
+        "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
+      DATABASE_URL_US_ID:
+        "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
     },
   },
 });

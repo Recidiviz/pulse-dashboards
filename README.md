@@ -54,14 +54,23 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
    4. Install the [Nx Console](https://nx.dev/features/integrate-with-editors) for your code editor if you prefer a GUI for exploring and using Nx.
    5. To make `git blame` more informative, tell it to ignore reformatting commits by running `git config blame.ignorerevsfile .git-blame-ignore-revs`.
 
+## Testing
+
+If you install the [Vitest VS Code extension](https://marketplace.visualstudio.com/items?itemName=ZixuanChen.vitest-explorer), you can run tests from the editor. It should work out of the box with our current setup!
+
+NOTE: If your test need certain environment variables to be set, you can add them to the `vitest.config.ts` file in the project you are testing. See `apps/sentencing-server/vite.config.mts` for an example.
+
 ### Nx Development
 
 #### Running `nx affected` in CI checks
- It can be helpful to run Nx tasks in CI, e.g. to validate that files in a certain directory follow a given format. `nx affected` is a useful command to run tasks on projects with changes ([docs](https://nx.dev/nx-api/nx/documents/affected)). 
+
+ It can be helpful to run Nx tasks in CI, e.g. to validate that files in a certain directory follow a given format. `nx affected` is a useful command to run tasks on projects with changes ([docs](https://nx.dev/nx-api/nx/documents/affected)).
 
  In order to do this successfully, set up your target in the right `project.json` and add a job to the `build.yml` file that has the following steps in order:
- 1. Checkout the repo 
- ``` 
+
+ 1. Checkout the repo
+
+ ```
 - uses: actions/checkout@v4
    with:
       # By default, the 'pull_request' action checks out the merge commit, which doesn't
@@ -72,7 +81,9 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
       # 'nx affected' requires the full git history to determine affected projects
       fetch-depth: 0
 ```
+
 2. Set up Node and Yarn
+
 ```
 - name: Enable corepack for yarn
    run: corepack enable
@@ -85,26 +96,34 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
    run: |
       yarn install --immutable
 ```
+
 3. Set the base and head SHAs for `nx affected`
+
 ```
 - name: Set shas for Nx
    uses: nrwl/nx-set-shas@v4
 ```
+
 4. Run the `nx affected` command with the desired target
+
 ```
 - name: <Readable name of job>
    run: yarn nx affected -t <target-name>
 ```
 
 ### Linting
-We use ESLint to lint our codebase. There are many ESLint plugins available to lint files other than `.js` files and can often be found with the prefix `eslint-plugin-<file_type>`, e.g. `eslint-plugin-yml` ([docs](https://www.npmjs.com/package/eslint-plugin-yml)). It might be helpful to add linting to both pre-commit and CI checks to help 
-with the development flow. 
 
-#### To add a new plugin:
+We use ESLint to lint our codebase. There are many ESLint plugins available to lint files other than `.js` files and can often be found with the prefix `eslint-plugin-<file_type>`, e.g. `eslint-plugin-yml` ([docs](https://www.npmjs.com/package/eslint-plugin-yml)). It might be helpful to add linting to both pre-commit and CI checks to help
+with the development flow.
+
+#### To add a new plugin
+
 1. Install the plugin with the command below. The `-D` flag is used to install this in the dev dependencies section of the top-level `package.json`
+
    ```
    yarn add -D <plugin-name>
    ```
+
 2. Add the plugin name without the `eslint-plugin` prefix, e.g. `yml`, to the list of `plugins` in the top-level `.eslintrc.json`
 3. To configure the rules from the plugin, follow the package's usage instructions. This often means adding a new object to the `overrides` list in the `.eslintrc.json` file.
 
@@ -114,19 +133,23 @@ with the development flow.
       "extends": ["plugin:yml/standard"]
    }
    ```
-   - If you want to lint this type of file across the entire codebase, add this to the top-level `.eslintrc.json`. However, if you want to lint files from a certain project, you can add this override to the `.eslintrc.json` for the given project. See `/libs/atmos/.eslintrc.json` to see the 
+
+   - If you want to lint this type of file across the entire codebase, add this to the top-level `.eslintrc.json`. However, if you want to lint files from a certain project, you can add this override to the `.eslintrc.json` for the given project. See `/libs/atmos/.eslintrc.json` to see the
    ESLint config for linting YAML only in this project
 
-We use Husky to run our pre-commit checks, which are configured at `.husky/_/pre-commit`. The pre-commit check we have is `lint-staged` and is configured at `lint-staged.config.js`. 
-#### To ensure the project and file type is linted in pre-commit checks, you must:
-1. Make sure the project has a `lint-files` target whose command is `"eslint --max-warnings 0"`. If you used the library generator below, this will automatically be included in the `project.json`. 
-2. Add the new file extension to the module exports with the `lintCommand` as the value. 
+We use Husky to run our pre-commit checks, which are configured at `.husky/_/pre-commit`. The pre-commit check we have is `lint-staged` and is configured at `lint-staged.config.js`.
+
+#### To ensure the project and file type is linted in pre-commit checks, you must
+
+1. Make sure the project has a `lint-files` target whose command is `"eslint --max-warnings 0"`. If you used the library generator below, this will automatically be included in the `project.json`.
+2. Add the new file extension to the module exports with the `lintCommand` as the value.
    - The affected/staged files are passed in automatically when linting
 
-#### Then to make sure the files are linted in the `lint_all` CI check:
+#### Then to make sure the files are linted in the `lint_all` CI check
+
 1. Add a `lint` target to the relevant `project.json`. Unlike the `lint-files` target above, this is not automatically included in the `project.json` because projects rely on the [default inferred task](https://nx.dev/nx-api/eslint/documents/overview#how-nxeslint-infers-tasks) at `nx.json`.
    - In most cases, ESLint should pick up file extensions with rules in `overrides`, so the default `eslint .` will work. However, if you want to specify a specific directory to look in, you can use a glob pattern to specify the path ([docs](https://eslint.org/docs/latest/use/command-line-interface#--ext))
-2. If you are making changes for a new project, ensure that the CI check includes the project once you've added the `project.json` to the PR. 
+2. If you are making changes for a new project, ensure that the CI check includes the project once you've added the `project.json` to the PR.
 
 ### Creating new libraries
 
