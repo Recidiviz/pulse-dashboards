@@ -48,6 +48,7 @@ import { WorkflowsStore } from "../WorkflowsStore";
  */
 export class OpportunityCaseloadPresenter {
   readonly displayTabGroups: OpportunityTabGroup[];
+  readonly showZeroGrantsPill: boolean;
   private readonly sortingEnabled: boolean;
   private _activeTabGroup: OpportunityTabGroup;
   private userSelectedTab?: OpportunityTab;
@@ -79,6 +80,13 @@ export class OpportunityCaseloadPresenter {
     this.sortingEnabled = !!featureVariants.sortableOpportunityTabs;
 
     this.tableViewEnabled = !!featureVariants.opportunityTableView;
+
+    this.showZeroGrantsPill = !!(
+      featureVariants.zeroGrantsFlag &&
+      this.supervisionPresenter?.officerRecord?.zeroGrantOpportunities?.includes(
+        opportunityType,
+      )
+    );
 
     // only update the list of opportunities to navigate through when necessary,
     // to avoid changing the list when an opportunity status is changed from side panel
@@ -248,6 +256,9 @@ export class OpportunityCaseloadPresenter {
   }
 
   get label() {
+    if (this.supervisionPresenter?.officerRecord) {
+      return `${this.supervisionPresenter.officerRecord.displayName}, ${this.config.label}`;
+    }
     return this.config.label;
   }
 
@@ -257,6 +268,10 @@ export class OpportunityCaseloadPresenter {
 
   get subheading() {
     return this.config.subheading;
+  }
+
+  get zeroGrantsTooltip() {
+    return this.config.zeroGrantsTooltip;
   }
 
   get peopleInActiveTab() {

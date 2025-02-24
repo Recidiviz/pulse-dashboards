@@ -26,6 +26,7 @@ const PillWrapper = styled(Pill)`
   ${typography.Sans12}
   height: ${rem(22)};
   margin-right: 0;
+  vertical-align: middle;
 `;
 
 interface InsightsPillProps {
