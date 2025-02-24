@@ -6,7 +6,7 @@ The secrets are encrypted via `sops` (`brew install sops`).
 **Prerequisite:** modifying encrypted secrets requires elevated permissions. [go/join-on-call](https://go/join-on-call) for the staging project 
 
 ```bash
-sops edit ./env-secrets.env.yaml
+sops edit ./env-secrets.enc.yaml
 ```
 
 Alternatively, you can use the following plugins to edit inside your IDE:

@@ -15,20 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { buildServer } from "~jii-texting-server/server";
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;
+import { Prisma, PrismaClient } from "@prisma/jii-texting-server/client";
 
-const server = buildServer();
+const PRISMA_TABLES = Prisma.dmmf.datamodel.models
+  .map((model) => model.name)
+  .filter((table) => table);
 
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
-});
-
-export default server;
+export async function resetDb(prismaClient: PrismaClient) {
+  await prismaClient.$transaction(
+    PRISMA_TABLES.map((table) =>
+      prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),
+    ),
+  );
+}
