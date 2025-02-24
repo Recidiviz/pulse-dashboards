@@ -34,5 +34,18 @@ export default defineConfig({
       reportsDirectory: "../../coverage/apps/case-notes-server",
       provider: "v8",
     },
+    env: {
+      AUTH0_DOMAIN: "test",
+      AUTH0_AUDIENCE: "test",
+      VERTEX_PROJECT_ID: "project-id",
+      VERTEX_ENGINE_ID: "engine-id",
+      CASE_NOTES_BQ_TABLE_ADDRESS: "bq-table",
+      LOGS_BQ_PROJECT_ID: "logs-project-id",
+      LOGS_BQ_DATASET_ID: "logs-dataset-id",
+      LOGS_BQ_TABLE_ID: "logs-table-id",
+      SENTRY_DSN:
+        "https://f9d293e9c6d5b26b5393edc64b666052@o432474.ingest.us.sentry.io/4508207193128960",
+      SENTRY_ENV: "test",
+    },
   },
 });
