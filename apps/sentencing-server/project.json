@@ -74,7 +74,8 @@
         {
           "projects": ["@sentencing-server/prisma"],
           "target": "prisma-generate"
-        }
+        },
+        "load-env-files"
       ],
       "options": {
         "platform": "node",
