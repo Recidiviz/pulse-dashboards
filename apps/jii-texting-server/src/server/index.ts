@@ -15,20 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { buildServer } from "~jii-texting-server/server";
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;
+import Fastify from "fastify";
 
-const server = buildServer();
+import registerWebhooks from "~jii-texting-server/server/webhooks";
 
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
-});
+export function buildServer() {
+  // Instantiate Fastify with some config
+  const server = Fastify({
+    logger: true,
+  });
 
-export default server;
+  server.get("/", async function handler() {
+    return { hello: "world" };
+  });
+
+  registerWebhooks(server);
+
+  return server;
+}

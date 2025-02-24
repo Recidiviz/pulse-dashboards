@@ -31,6 +31,13 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
+    // Ensure that tests are run one at a time so that we don't have multiple
+    // updates to the test DB at once
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
     coverage: {
       reportsDirectory: "../../coverage/apps/jii-texting-server",
       provider: "v8",

@@ -119,13 +119,17 @@
       "dependsOn": [
         {
           "projects": ["@jii-texting-server/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@jii-texting-server/prisma"],
           "target": "docker"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/apps/jii-texting-server"],
       "cache": true,
       "options": {
-        "command": "nx prisma-push @jii-texting-server/prisma && cd apps/jii-texting-server && vitest",
+        "command": "nx prisma-push @jii-texting-server/prisma --accept-data-loss && cd apps/jii-texting-server && vitest",
         "cwd": "{workspaceRoot}"
       }
     },

@@ -7,7 +7,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   // TODO(#38084) Create Helper to get DB URL
-  url      = env("DATABASE_URL_US_ID")
+  url      = env("DATABASE_URL")
 }
 
 enum StateCode {
@@ -95,7 +95,6 @@ model Person {
   lastOptOutDate  DateTime? // will not be null if person has opted-out
 
   groups        Group[] // will be an empty list if this person should not be texted that day
-  replies       Reply[]
   messageSeries MessageSeries[]
 }
 
@@ -162,16 +161,6 @@ model WorkflowExecution {
   workflowExecutionTime DateTime
 
   messageAttempts MessageAttempt[]
-}
-
-model Reply {
-  id               String   @id @default(cuid())
-  twilioMessageSid String   @unique
-  body             String
-  messageTimestamp DateTime
-
-  person      Person @relation(fields: [phoneNumber], references: [phoneNumber])
-  phoneNumber String
 }
 
 model Click {
