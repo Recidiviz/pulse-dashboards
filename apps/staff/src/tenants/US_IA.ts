@@ -31,6 +31,7 @@ const US_IA_CONFIG: TenantConfig<"US_IA"> = {
         {
           searchType: "OFFICER",
           searchField: ["officerId"],
+          searchTitle: "officer",
         },
       ],
     },

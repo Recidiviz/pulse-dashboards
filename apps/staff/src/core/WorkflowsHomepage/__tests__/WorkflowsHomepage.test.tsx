@@ -62,7 +62,11 @@ const baseWorkflowsStoreMock = {
     opportunities: mockOpportunityConfigs,
     hydrate: vi.fn(),
   },
-  searchTitleOverride: () => "location",
+  searchStore: { searchTitleOverride: () => "location" },
+  activePage: { page: "home " },
+  systemConfigFor: () => {
+    return { search: [] };
+  },
 };
 
 describe("WorkflowsHomepage", () => {
@@ -206,7 +210,7 @@ describe("WorkflowsHomepage", () => {
         allOpportunitiesByType: {
           pastFTRD: [mockOpportunity],
         },
-        workflowsSearchFieldTitle: "agent",
+        searchTitleOverride: () => "agent",
         hasOpportunities: () => true,
       },
     });
@@ -233,7 +237,7 @@ describe("WorkflowsHomepage", () => {
         allOpportunitiesByType: {
           pastFTRD: [mockOpportunity],
         },
-        workflowsSearchFieldTitle: "facility",
+        searchTitleOverride: () => "facility",
         hasOpportunities: () => true,
         activeSystem: "INCARCERATION",
       },
@@ -261,7 +265,7 @@ describe("WorkflowsHomepage", () => {
         allOpportunitiesByType: {
           pastFTRD: [mockOpportunity],
         },
-        workflowsSearchFieldTitle: "case manager",
+        searchTitleOverride: () => "case manager",
         hasOpportunities: () => true,
         activeSystem: "INCARCERATION",
       },

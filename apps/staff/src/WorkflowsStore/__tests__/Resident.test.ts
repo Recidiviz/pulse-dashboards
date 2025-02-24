@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { configure } from "mobx";
+
 import { WorkflowsResidentRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { Resident } from "../Resident";
@@ -30,12 +32,13 @@ function createTestUnit() {
 }
 
 beforeEach(() => {
+  configure({ safeDescriptors: false });
   vi.resetAllMocks();
   rootStore = new RootStore();
   vi.spyOn(rootStore.workflowsStore, "systemConfigFor").mockReturnValue({
     search: [
-      { searchType: "OFFICER", searchField: ["officerId"] },
-      { searchType: "LOCATION", searchField: ["facilityId"] },
+      { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
+      { searchType: "LOCATION", searchField: ["facilityId"], searchTitle: "" },
     ],
   });
   record = {
@@ -56,6 +59,11 @@ beforeEach(() => {
     personType: "RESIDENT",
     metadata: {},
   };
+});
+
+afterEach(() => {
+  configure({ safeDescriptors: true });
+  vi.resetAllMocks();
 });
 
 const PROPERTIES_FROM_RECORD: [

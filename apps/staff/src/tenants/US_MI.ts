@@ -34,7 +34,7 @@ const US_MI_CONFIG: TenantConfig<"US_MI"> = {
         {
           searchType: "OFFICER",
           searchField: ["officerId"],
-          searchTitleOverride: "agent",
+          searchTitle: "agent",
         },
       ],
     },
@@ -43,7 +43,7 @@ const US_MI_CONFIG: TenantConfig<"US_MI"> = {
         {
           searchType: "LOCATION",
           searchField: ["facilityId"],
-          searchTitleOverride: "facility",
+          searchTitle: "facility",
         },
       ],
     },

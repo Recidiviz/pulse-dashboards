@@ -32,6 +32,7 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
         {
           searchType: "OFFICER",
           searchField: ["officerId"],
+          searchTitle: "officer",
         },
       ],
     },

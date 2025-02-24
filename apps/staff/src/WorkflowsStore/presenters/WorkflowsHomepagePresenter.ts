@@ -39,25 +39,42 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
   }
 
   private get searchResultLabel() {
-    const { workflowsSearchFieldTitle, activeSystem, selectedSearchIds } =
-      this.workflowsStore;
+    const {
+      activeSystem,
+      selectedSearchIds,
+      searchStore: { searchTypeOverride },
+    } = this.workflowsStore;
 
     const searchIdsCount = selectedSearchIds.length;
-    if (
-      activeSystem === "INCARCERATION" &&
-      workflowsSearchFieldTitle !== "case manager"
-    ) {
-      return pluralize(workflowsSearchFieldTitle, searchIdsCount);
-    }
 
-    const facilitiesSearchOverride = this.workflowsStore.searchTitleOverride(
-      "INCARCERATION",
-      "location",
-    );
+    const replaceOfficerTitleCallback = (value: string) => {
+      return [
+        "case manager",
+        "officer",
+        "agent",
+        "supervision officer",
+      ].includes(value)
+        ? "caseload"
+        : value;
+    };
+    const incarcerationSearchOverride =
+      this.workflowsStore.searchStore.searchTitleOverride(
+        "INCARCERATION",
+        "location",
+        replaceOfficerTitleCallback,
+      );
+    const activeSystemSearchOverride =
+      this.workflowsStore.searchStore.searchTitleOverride(
+        activeSystem,
+        "caseload",
+        replaceOfficerTitleCallback,
+      );
 
-    return activeSystem === "ALL" && facilitiesSearchOverride !== "case manager"
-      ? `${pluralize("caseload", searchIdsCount)} and/or ${pluralize(facilitiesSearchOverride, searchIdsCount)}`
-      : pluralize("caseload", searchIdsCount);
+    return activeSystem === "ALL" &&
+      !searchTypeOverride &&
+      incarcerationSearchOverride !== "caseload"
+      ? `${pluralize("caseload", searchIdsCount)} and/or ${pluralize(incarcerationSearchOverride, searchIdsCount)}`
+      : pluralize(activeSystemSearchOverride, searchIdsCount);
   }
 
   get userGivenNames() {

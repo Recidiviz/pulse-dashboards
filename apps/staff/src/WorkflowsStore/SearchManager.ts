@@ -27,24 +27,26 @@ import { groupBy, some } from "lodash";
 import { values } from "mobx";
 
 import { AnyWorkflowsSystemConfig } from "../core/models/types";
+import { SearchStore } from "./SearchStore";
 import { JusticeInvolvedPerson, PersonType } from "./types";
-import { WorkflowsStore } from "./WorkflowsStore";
 
 export class SearchManager {
-  workflowsStore: WorkflowsStore;
+  searchStore: SearchStore;
 
   personType: PersonType;
 
-  constructor(workflowsStore: WorkflowsStore, personType: PersonType) {
-    this.workflowsStore = workflowsStore;
+  constructor(searchStore: SearchStore, personType: PersonType) {
+    this.searchStore = searchStore;
     this.personType = personType;
   }
 
   get queryConstraints(): QueryCompositeFilterConstraint | undefined {
     const {
-      selectedSearchIds,
-      rootStore: { currentTenantId },
-    } = this.workflowsStore;
+      workflowsStore: {
+        selectedSearchIds,
+        rootStore: { currentTenantId },
+      },
+    } = this.searchStore;
     const { systemConfig } = this;
 
     if (!currentTenantId || !selectedSearchIds.length) {
@@ -78,7 +80,7 @@ export class SearchManager {
   }
 
   get systemConfig(): AnyWorkflowsSystemConfig {
-    return this.workflowsStore.systemConfigFor(
+    return this.searchStore.workflowsStore.systemConfigFor(
       this.personType === "RESIDENT" ? "INCARCERATION" : "SUPERVISION",
     );
   }
@@ -86,7 +88,7 @@ export class SearchManager {
   personMatchesSearch(person: JusticeInvolvedPerson): boolean {
     return (
       person.personType === this.personType &&
-      some(this.workflowsStore.selectedSearchIds, (id) =>
+      some(this.searchStore.workflowsStore.selectedSearchIds, (id) =>
         person.searchIdValues?.includes(id),
       )
     );
@@ -94,9 +96,11 @@ export class SearchManager {
 
   get matchingPersons(): JusticeInvolvedPerson[] {
     return this.isEnabled
-      ? values(this.workflowsStore.justiceInvolvedPersons).filter((p) => {
-          return this.personMatchesSearch(p);
-        })
+      ? values(this.searchStore.workflowsStore.justiceInvolvedPersons).filter(
+          (p) => {
+            return this.personMatchesSearch(p);
+          },
+        )
       : [];
   }
 
@@ -140,7 +144,7 @@ export class SearchManager {
     //   caseloads: { officer1: [client1, client2], location1: [client1], location2: [client2] }
     // the "location2" id is not in selectedSearchIds so it should be removed as a group
     Object.keys(caseloads).forEach((key) => {
-      if (!this.workflowsStore.selectedSearchIds.includes(key))
+      if (!this.searchStore.workflowsStore.selectedSearchIds.includes(key))
         delete caseloads[key];
     });
     return caseloads;
@@ -148,10 +152,10 @@ export class SearchManager {
 
   get isEnabled(): boolean {
     return (
-      this.workflowsStore.activeSystem === "ALL" ||
-      (this.workflowsStore.activeSystem === "INCARCERATION" &&
+      this.searchStore.workflowsStore.activeSystem === "ALL" ||
+      (this.searchStore.workflowsStore.activeSystem === "INCARCERATION" &&
         this.personType === "RESIDENT") ||
-      (this.workflowsStore.activeSystem === "SUPERVISION" &&
+      (this.searchStore.workflowsStore.activeSystem === "SUPERVISION" &&
         this.personType === "CLIENT")
     );
   }

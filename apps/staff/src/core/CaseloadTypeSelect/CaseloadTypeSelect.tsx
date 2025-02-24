@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { intersection, uniq } from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { toTitleCase } from "../../utils";
+import { SystemId } from "../models/types";
 import { PillButton } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
 const CaseloadTypeSelect = observer(
@@ -28,41 +30,51 @@ const CaseloadTypeSelect = observer(
     const { workflowsStore } = rootStore;
     const {
       activeSystem,
-      supportsMultipleSystems,
       rootStore: { currentTenantId },
+      systemConfigFor,
+      searchType,
+      workflowsSupportedSystems,
+      searchStore: { handleSearchPillClick },
     } = workflowsStore;
 
-    if (!supportsMultipleSystems || !currentTenantId) return null;
+    if (!currentTenantId || !activeSystem || !workflowsSupportedSystems)
+      return null;
+
+    const systems: Exclude<SystemId, "ALL">[] = intersection(
+      ["SUPERVISION", "INCARCERATION"],
+      workflowsSupportedSystems as Exclude<SystemId, "ALL">[],
+    );
+
+    const searchTitles = uniq(
+      systems.flatMap((system) =>
+        systemConfigFor(system).search.map(
+          (searchConfig) => searchConfig.searchTitle,
+        ),
+      ),
+    );
+    if (searchTitles.length === 1) return null;
 
     return (
       <>
-        <PillButton
-          onClick={() =>
-            workflowsStore.updateActiveSystem(
-              activeSystem === "SUPERVISION" ? "ALL" : "SUPERVISION",
-            )
-          }
-          active={activeSystem === "SUPERVISION"}
-        >
-          {toTitleCase(
-            workflowsStore.searchTitleOverride(
-              "SUPERVISION",
-              "Supervision Officer",
-            ),
-          )}
-        </PillButton>
-        <PillButton
-          onClick={() =>
-            workflowsStore.updateActiveSystem(
-              activeSystem === "INCARCERATION" ? "ALL" : "INCARCERATION",
-            )
-          }
-          active={activeSystem === "INCARCERATION"}
-        >
-          {toTitleCase(
-            workflowsStore.searchTitleOverride("INCARCERATION", "Facility"),
-          )}
-        </PillButton>
+        {systems.map((system) => {
+          if (
+            (systemConfigFor(system).search.length === 1 &&
+              workflowsStore.activePage.page !== "home") ||
+            (workflowsStore.activePage.page !== "home" &&
+              workflowsStore.activeSystem !== system)
+          )
+            return null;
+          return systemConfigFor(system).search.map((searchConfig) => (
+            <PillButton
+              onClick={() =>
+                handleSearchPillClick(searchConfig.searchType, system)
+              }
+              active={searchType === searchConfig.searchType}
+            >
+              {toTitleCase(searchConfig.searchTitle)}
+            </PillButton>
+          ));
+        })}
       </>
     );
   },

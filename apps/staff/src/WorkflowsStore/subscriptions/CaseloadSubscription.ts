@@ -47,8 +47,10 @@ export class CaseloadSubscription<
   get dataSource(): Query | undefined {
     const {
       rootStore: { firestoreStore },
-      clientSearchManager: { queryConstraints: clientQueryConstraints },
-      residentSearchManager: { queryConstraints: residentQueryConstraints },
+      searchStore: {
+        clientSearchManager: { queryConstraints: clientQueryConstraints },
+        residentSearchManager: { queryConstraints: residentQueryConstraints },
+      },
     } = this.workflowsStore;
 
     const { firestoreCollectionKey, personType } = this;
