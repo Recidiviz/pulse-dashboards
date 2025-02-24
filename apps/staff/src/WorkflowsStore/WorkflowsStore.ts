@@ -77,7 +77,7 @@ import { Officer } from "./Officer";
 import { Opportunity, OpportunityNotification } from "./Opportunity";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { Resident } from "./Resident";
-import { SearchManager } from "./SearchManager";
+import { SearchStore } from "./SearchStore";
 import {
   CaseloadSubscription,
   CollectionDocumentSubscription,
@@ -136,6 +136,8 @@ export class WorkflowsStore implements Hydratable {
 
   workflowsTasksStore: WorkflowsTasksStore;
 
+  searchStore: SearchStore;
+
   activeSystem?: SystemId;
 
   activePage: WorkflowsRouteParams = {};
@@ -152,24 +154,21 @@ export class WorkflowsStore implements Hydratable {
    */
   selectedSearchIdsForImpersonation: string[] | undefined = undefined;
 
-  clientSearchManager: SearchManager;
-
-  residentSearchManager: SearchManager;
-
   // TODO(#7061): access tenant config values from the tenant store instead of the global variable
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
-    makeAutoObservable<this, "userKeepAliveDisposer">(this, {
-      rootStore: false,
-      formatSupervisionLevel: false,
-      hydrate: action,
-      setActivePage: action,
-      userKeepAliveDisposer: false,
-      searchTitleOverride: false,
-    });
+    makeAutoObservable<this, "userKeepAliveDisposer">(
+      this,
+      {
+        rootStore: false,
+        formatSupervisionLevel: false,
+        hydrate: action,
+        setActivePage: action,
+        userKeepAliveDisposer: false,
+      },
+      { autoBind: true },
+    );
 
-    this.clientSearchManager = new SearchManager(this, "CLIENT");
-    this.residentSearchManager = new SearchManager(this, "RESIDENT");
     this.opportunityConfigurationStore =
       this.rootStore.workflowsRootStore.opportunityConfigurationStore;
 
@@ -243,6 +242,7 @@ export class WorkflowsStore implements Hydratable {
     );
 
     this.workflowsTasksStore = new WorkflowsTasksStore(this);
+    this.searchStore = new SearchStore(this);
   }
 
   hasOpportunities(opportunityTypes: OpportunityType[]): boolean {
@@ -576,6 +576,8 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get searchType(): SearchType {
+    if (this.searchStore.searchTypeOverride)
+      return this.searchStore.searchTypeOverride;
     const systemConfig = this.activeSystemConfig;
     if (
       !systemConfig ||
@@ -651,24 +653,11 @@ export class WorkflowsStore implements Hydratable {
   }
 
   get caseloadPersons(): JusticeInvolvedPerson[] {
-    return [
-      ...this.residentSearchManager.matchingPersons,
-      ...this.clientSearchManager.matchingPersons,
-    ];
+    return this.searchStore.caseloadPersons;
   }
 
   get caseloadPersonsSorted(): JusticeInvolvedPerson[] {
-    return [
-      ...this.residentSearchManager.matchingPersonsSorted,
-      ...this.clientSearchManager.matchingPersonsSorted,
-    ];
-  }
-
-  get caseloadPersonsGrouped(): Record<string, JusticeInvolvedPerson[]> {
-    return {
-      ...this.clientSearchManager.matchingPersonsGrouped,
-      ...this.residentSearchManager.matchingPersonsGrouped,
-    };
+    return this.searchStore.caseloadPersonsSorted;
   }
 
   get milestonesClients(): Client[] {
@@ -787,6 +776,7 @@ export class WorkflowsStore implements Hydratable {
           },
         ];
       }
+      case "INCARCERATION_OFFICER":
       case "OFFICER": {
         if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
           const staffWithCaseload = this.staffSupervisedByCurrentUser.map(
@@ -996,19 +986,7 @@ export class WorkflowsStore implements Hydratable {
    * Title to display for the search bar in workflows
    */
   get workflowsSearchFieldTitle(): string {
-    return this.searchTitleOverride(this.activeSystem, "officer");
-  }
-
-  searchTitleOverride(
-    system: SystemId | undefined,
-    defaultTitle: string,
-  ): string {
-    if (!system || system === "ALL") return defaultTitle;
-    const searchConfig = this.systemConfigFor(system).search;
-
-    if (searchConfig.length === 1 && searchConfig[0].searchTitleOverride)
-      return searchConfig[0].searchTitleOverride;
-    return defaultTitle;
+    return this.searchStore.searchTitleOverride(this.activeSystem, "officer");
   }
 
   get supportsMultipleSystems(): boolean {
@@ -1051,6 +1029,7 @@ export class WorkflowsStore implements Hydratable {
         {
           searchType: "OFFICER",
           searchField: ["officerId"],
+          searchTitle: "officer",
         },
       ],
     };

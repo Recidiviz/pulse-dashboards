@@ -39,7 +39,7 @@ beforeEach(() => {
     user: { info: { givenNames: "John Doe" } },
     supportsMultipleSystems: true,
     opportunityTypes: MOCK_OPPORTUNITY_TYPES,
-    searchTitleOverride: () => "case manager",
+    searchStore: { searchTitleOverride: () => "case manager" },
   } as unknown as WorkflowsStore;
 
   opportunityConfigurationStore = {
@@ -75,7 +75,7 @@ describe("WorkflowsHomepagePresenter", () => {
   describe("searchResultLabel tests", () => {
     it("returns pluralized caseload and location when activeSystem is ALL", () => {
       workflowsStore.activeSystem = "ALL";
-      workflowsStore.searchTitleOverride = () => "location";
+      workflowsStore.searchStore.searchTitleOverride = () => "location";
       vi.spyOn(workflowsStore, "selectedSearchIds", "get").mockReturnValue([
         "id1",
         "id2",
@@ -89,23 +89,6 @@ describe("WorkflowsHomepagePresenter", () => {
       // Accessing private property via @ts-ignore for testing
       // @ts-ignore
       expect(presenter.searchResultLabel).toBe("caseloads and/or locations");
-    });
-
-    it("returns pluralized caseload only when searchTitleOverride is 'case manager'", () => {
-      workflowsStore.activeSystem = "ALL";
-      vi.spyOn(workflowsStore, "selectedSearchIds", "get").mockReturnValue([
-        "id1",
-      ]);
-      vi.spyOn(
-        workflowsStore.rootStore,
-        "currentTenantId",
-        "get",
-      ).mockReturnValue("mockTenant" as TenantId);
-      workflowsStore.searchTitleOverride = () => "case manager";
-
-      // Accessing private property via @ts-ignore for testing
-      // @ts-ignore
-      expect(presenter.searchResultLabel).toBe("caseload");
     });
   });
 });

@@ -105,7 +105,7 @@ const { stateConfigs } = vi.hoisted(() => {
           search: [
             {
               searchType: "OFFICER",
-              searchTitleOverride: "case manager",
+              searchTitle: "case manager",
               restrictedToFeatureVariant: "TEST",
             },
             { searchType: "LOCATION" },
@@ -137,7 +137,7 @@ const { stateConfigs } = vi.hoisted(() => {
             {
               searchType: "LOCATION",
               searchField: ["facilityId"],
-              searchTitleOverride: "location",
+              searchTitle: "location",
             },
           ],
         },
@@ -938,7 +938,7 @@ test("systemConfigFor when there is a search type behind an enabled feature vari
     search: [
       {
         searchType: "OFFICER",
-        searchTitleOverride: "case manager",
+        searchTitle: "case manager",
         restrictedToFeatureVariant: "TEST",
       },
       { searchType: "LOCATION" },

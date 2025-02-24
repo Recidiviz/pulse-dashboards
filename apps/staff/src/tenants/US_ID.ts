@@ -82,15 +82,25 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
         {
           searchType: "LOCATION",
           searchField: ["metadata", "crcFacilities"],
-          searchTitleOverride: "facility",
+          searchTitle: "facility",
           searchOp: "array-contains-any",
           locationIdType: "facilityId",
         },
         {
+          searchType: "INCARCERATION_OFFICER",
+          searchField: ["officerId"],
+          searchTitle: "case manager",
+          restrictedToFeatureVariant: "usIdCaseManagerSearch",
+        },
+      ],
+      onlySurfaceEligible: true,
+    },
+    SUPERVISION: {
+      search: [
+        {
           searchType: "OFFICER",
           searchField: ["officerId"],
-          searchTitleOverride: "case manager",
-          restrictedToFeatureVariant: "usIdCaseManagerSearch",
+          searchTitle: "supervision officer",
         },
       ],
       onlySurfaceEligible: true,

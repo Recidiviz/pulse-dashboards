@@ -86,7 +86,7 @@ export const TENANT_CONFIGS: TenantConfigs = {
           {
             searchType: "OFFICER",
             searchField: ["officerId"],
-            searchTitleOverride: "case manager",
+            searchTitle: "case manager",
           },
         ],
       },
@@ -95,7 +95,7 @@ export const TENANT_CONFIGS: TenantConfigs = {
           {
             searchType: "OFFICER",
             searchField: ["officerId"],
-            searchTitleOverride: "officer",
+            searchTitle: "officer",
           },
         ],
       },

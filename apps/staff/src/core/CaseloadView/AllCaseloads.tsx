@@ -58,11 +58,10 @@ function Caseload({ persons }: { persons: JusticeInvolvedPerson[] }) {
 export const AllCaseloads = observer(function AllCaseloads() {
   const {
     workflowsStore: {
-      caseloadPersonsSorted,
       selectedSearchables,
       workflowsSearchFieldTitle,
       justiceInvolvedPersonTitle,
-      caseloadPersonsGrouped
+      searchStore: { caseloadPersonsGrouped, caseloadPersons },
     },
   } = useRootStore();
 
@@ -77,7 +76,9 @@ export const AllCaseloads = observer(function AllCaseloads() {
           )}
           {/* in practice there should never be a missing caseload,
             but fall back to an empty array for type safety */}
-          <Caseload persons={caseloadPersonsGrouped[searchable.searchId] ?? []} />
+          <Caseload
+            persons={caseloadPersonsGrouped[searchable.searchId] ?? []}
+          />
         </React.Fragment>
       ))}
     </>
@@ -96,13 +97,11 @@ export const AllCaseloads = observer(function AllCaseloads() {
       hydrated={
         <WorkflowsResults
           headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s (${
-            caseloadPersonsSorted.length
+            caseloadPersons.length
           })`}
         >
           {allCaseloadsViz}
-          <WorkflowsLastSynced
-            date={caseloadPersonsSorted[0]?.lastDataFromState}
-          />
+          <WorkflowsLastSynced date={caseloadPersons[0]?.lastDataFromState} />
         </WorkflowsResults>
       }
       empty={null}

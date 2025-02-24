@@ -646,7 +646,9 @@ describe("tracking", () => {
       mockSupervisionOfficers;
     root.workflowsStore.updateActiveSystem("SUPERVISION");
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
-      search: [{ searchType: "OFFICER", searchField: ["officerId"] }],
+      search: [
+        { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
+      ],
     });
     vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
     opp.trackListViewed();
@@ -667,8 +669,8 @@ describe("tracking", () => {
     root.workflowsStore.updateActiveSystem("SUPERVISION");
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
-        { searchType: "LOCATION", searchField: ["district"] },
-        { searchType: "OFFICER", searchField: ["officerId"] },
+        { searchType: "LOCATION", searchField: ["district"], searchTitle: "" },
+        { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
       ],
     });
     vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");

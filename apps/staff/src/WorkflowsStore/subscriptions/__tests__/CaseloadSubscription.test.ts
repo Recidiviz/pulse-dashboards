@@ -50,8 +50,10 @@ beforeEach(() => {
     systemConfigFor: vi.fn(() => ({
       search: [{ searchField: "officerId" }],
     })),
-    clientSearchManager: { queryConstraints: [] },
-    residentSearchManager: { queryConstraints: undefined },
+    searchStore: {
+      clientSearchManager: { queryConstraints: [] },
+      residentSearchManager: { queryConstraints: undefined },
+    },
     rootStore: {
       currentTenantId: "US_ND",
       firestoreStore: {
@@ -86,7 +88,9 @@ test("dataSource queries firestore when necessary data is present", () => {
 test("dataSource is undefined if queryConstraints are undefined", () => {
   runInAction(() => {
     // @ts-ignore
-    workflowsStoreMock.clientSearchManager = { queryConstraints: undefined };
+    workflowsStoreMock.searchStore.clientSearchManager = {
+      queryConstraints: undefined,
+    };
   });
 
   sub.subscribe();
@@ -106,7 +110,7 @@ test("dataSource reacts to observables", () => {
     workflowsStoreMock.rootStore.currentTenantId = "US_TN";
     // @ts-ignore
     workflowsStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
-    workflowsStoreMock.residentSearchManager = {
+    workflowsStoreMock.searchStore.residentSearchManager = {
       // @ts-ignore
       queryConstraints: [whereMock],
     };
@@ -136,7 +140,7 @@ test("dataSource can be unset and reset", () => {
 
 test("FirestoreConverter inserts inferred properties when reading snapshot", () => {
   runInAction(() => {
-    workflowsStoreMock.clientSearchManager = {
+    workflowsStoreMock.searchStore.clientSearchManager = {
       // @ts-ignore
       queryConstraints: {},
     };

@@ -49,14 +49,14 @@ export class WorkflowsTasksStore {
   }
 
   get orderedPersonsByNeed(): PersonsByNeed {
-    const { caseloadPersonsSorted } = this.workflowsStore;
+    const { caseloadPersons } = this.workflowsStore;
 
     const personsByNeed = buildRecordList<
       SupervisionNeedType,
       JusticeInvolvedPerson
     >(SUPERVISION_NEED_TYPES);
 
-    caseloadPersonsSorted.forEach((person) => {
+    caseloadPersons.forEach((person) => {
       const { supervisionTasks } = person;
 
       if (!supervisionTasks) return;
@@ -78,7 +78,7 @@ export class WorkflowsTasksStore {
     JusticeInvolvedPerson[],
     JusticeInvolvedPerson[],
   ] {
-    const personsWithOverdueTasks = this.workflowsStore.caseloadPersonsSorted
+    const personsWithOverdueTasks = this.workflowsStore.caseloadPersons
       .filter(
         (person) =>
           !!person.supervisionTasks &&
@@ -92,7 +92,7 @@ export class WorkflowsTasksStore {
         );
       });
 
-    const personsWithUpcomingTasks = this.workflowsStore.caseloadPersonsSorted
+    const personsWithUpcomingTasks = this.workflowsStore.caseloadPersons
       .filter(
         (person) =>
           !!person.supervisionTasks &&

@@ -38,7 +38,16 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
         {
           searchType: "OFFICER",
           searchField: ["officerId"],
-          searchTitleOverride: "case manager",
+          searchTitle: "case manager",
+        },
+      ],
+    },
+    SUPERVISION: {
+      search: [
+        {
+          searchType: "OFFICER",
+          searchField: ["officerId"],
+          searchTitle: "officer",
         },
       ],
     },

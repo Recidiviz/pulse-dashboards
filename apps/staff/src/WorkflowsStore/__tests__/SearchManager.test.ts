@@ -23,10 +23,10 @@ import { ClientRecord } from "~datatypes";
 
 import { WorkflowsSystemConfig } from "../../core/models/types";
 import { WorkflowsResidentRecord } from "../../FirestoreStore";
-import { WorkflowsStore } from "../../WorkflowsStore";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import { SearchManager } from "../SearchManager";
+import { SearchStore } from "../SearchStore";
 
 vi.mock("firebase/firestore");
 
@@ -37,7 +37,7 @@ const orMock = or as Mock;
 const collectionMock = vi.fn();
 const withConverterMock = vi.fn();
 
-let workflowsStoreMock: WorkflowsStore;
+let searchStoreMock: SearchStore;
 let clientSearchManager: SearchManager;
 let residentSearchManager: SearchManager;
 let testClient: Client;
@@ -56,25 +56,27 @@ beforeEach(() => {
   orMock.mockImplementation((...args) => args.join("||"));
   andMock.mockImplementation((...args) => args.join("&&"));
 
-  workflowsStoreMock = observable({
-    systemConfigFor: vi.fn(() => ({
-      search: [],
-    })),
-    systemConfig: vi.fn(() => ({
-      search: [],
-    })),
-    clientSearchManager: { queryConstraints: [] },
-    residentSearchManager: { queryConstraints: [] },
-    rootStore: {
-      currentTenantId: "US_ND",
-      firestoreStore: {
-        collection: collectionMock,
-        doc: vi.fn(),
+  searchStoreMock = observable({
+    workflowsStore: {
+      systemConfigFor: vi.fn(() => ({
+        search: [],
+      })),
+      systemConfig: vi.fn(() => ({
+        search: [],
+      })),
+      rootStore: {
+        currentTenantId: "US_ND",
+        firestoreStore: {
+          collection: collectionMock,
+          doc: vi.fn(),
+        },
       },
     },
-  }) as unknown as WorkflowsStore;
-  clientSearchManager = new SearchManager(workflowsStoreMock, "CLIENT");
-  residentSearchManager = new SearchManager(workflowsStoreMock, "RESIDENT");
+    clientSearchManager: { queryConstraints: [] },
+    residentSearchManager: { queryConstraints: [] },
+  }) as unknown as SearchStore;
+  clientSearchManager = new SearchManager(searchStoreMock, "CLIENT");
+  residentSearchManager = new SearchManager(searchStoreMock, "RESIDENT");
   clientRecord = {
     allEligibleOpportunities: [],
     officerId: "OFFICER1",
@@ -98,14 +100,14 @@ beforeEach(() => {
 describe("queryConstraints", () => {
   test("returns undefined if currentTenandId is missing", () => {
     // @ts-ignore
-    workflowsStoreMock.rootStore.currentTenantId = undefined;
+    searchStoreMock.workflowsStore.rootStore.currentTenantId = undefined;
 
     expect(clientSearchManager.queryConstraints).toBeUndefined();
   });
 
   test("returns undefined if no officers are selected", () => {
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = [];
+    searchStoreMock.workflowsStore.selectedSearchIds = [];
 
     expect(clientSearchManager.queryConstraints).toBeUndefined();
   });
@@ -114,9 +116,11 @@ describe("queryConstraints", () => {
     const supervisionSystemConfig = {
       search: [{ searchType: "LOCATION", searchField: ["district"] }],
     } as WorkflowsSystemConfig<ClientRecord, any>;
-    workflowsStoreMock.systemConfigFor = vi.fn(() => supervisionSystemConfig);
+    searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
+      () => supervisionSystemConfig,
+    );
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
+    searchStoreMock.workflowsStore.selectedSearchIds = ["TEST1", "TEST2"];
 
     // eslint-disable-next-line
     clientSearchManager.queryConstraints;
@@ -141,9 +145,15 @@ describe("queryConstraints", () => {
       ],
       onlySurfaceEligible: true,
     } as WorkflowsSystemConfig<ClientRecord, any>;
-    workflowsStoreMock.systemConfigFor = vi.fn(() => supervisionSystemConfig);
+    searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
+      () => supervisionSystemConfig,
+    );
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = ["TEST1", "TEST2", "OFFICER1"];
+    searchStoreMock.workflowsStore.selectedSearchIds = [
+      "TEST1",
+      "TEST2",
+      "OFFICER1",
+    ];
 
     // eslint-disable-next-line
     clientSearchManager.queryConstraints;
@@ -173,13 +183,13 @@ describe("queryConstraints", () => {
 describe("personMatchesSearch", () => {
   test("true with single matching searchField", () => {
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = [clientRecord.officerId];
+    searchStoreMock.workflowsStore.selectedSearchIds = [clientRecord.officerId];
     expect(clientSearchManager.personMatchesSearch(testClient)).toBeTrue();
   });
 
   test("true with multiple searchFields - both match", () => {
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = [
+    searchStoreMock.workflowsStore.selectedSearchIds = [
       clientRecord.officerId,
       clientRecord.district,
     ];
@@ -188,7 +198,7 @@ describe("personMatchesSearch", () => {
 
   test("true with multiple searchFields - one matches", () => {
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = [
+    searchStoreMock.workflowsStore.selectedSearchIds = [
       clientRecord.officerId,
       "A DIFFERENT DISTRICT",
     ];
@@ -197,7 +207,7 @@ describe("personMatchesSearch", () => {
 
   test("false with multiple searchFields - none match", () => {
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = [
+    searchStoreMock.workflowsStore.selectedSearchIds = [
       "A DIFFERENT OFFICER",
       "A DIFFERENT DISTRICT",
     ];
@@ -226,55 +236,58 @@ describe("matchingPersons", () => {
       searchIdValues: [residentRecord.officerId],
       personType: "RESIDENT",
     } as Resident;
-    workflowsStoreMock.justiceInvolvedPersons = { testClient, testResident };
+    searchStoreMock.workflowsStore.justiceInvolvedPersons = {
+      testClient,
+      testResident,
+    };
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = [
+    searchStoreMock.workflowsStore.selectedSearchIds = [
       clientRecord.officerId,
       residentRecord.officerId,
     ];
   });
 
   test("client matches when activeSystem is ALL", () => {
-    workflowsStoreMock.activeSystem = "ALL";
+    searchStoreMock.workflowsStore.activeSystem = "ALL";
     expect(clientSearchManager.matchingPersons).toEqual([testClient]);
   });
 
   test("client matches when activeSystem is SUPERVISION", () => {
-    workflowsStoreMock.activeSystem = "SUPERVISION";
+    searchStoreMock.workflowsStore.activeSystem = "SUPERVISION";
     expect(clientSearchManager.matchingPersons).toEqual([testClient]);
   });
 
   test("client does not match when activeSystem is INCARCERATION", () => {
-    workflowsStoreMock.activeSystem = "INCARCERATION";
+    searchStoreMock.workflowsStore.activeSystem = "INCARCERATION";
     expect(clientSearchManager.matchingPersons).toEqual([]);
   });
 
   test("client does not match when person does not match", () => {
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = ["A DIFFERENT OFFICER"];
-    workflowsStoreMock.activeSystem = "SUPERVISION";
+    searchStoreMock.workflowsStore.selectedSearchIds = ["A DIFFERENT OFFICER"];
+    searchStoreMock.workflowsStore.activeSystem = "SUPERVISION";
     expect(clientSearchManager.matchingPersons).toEqual([]);
   });
 
   test("resident matches when activeSystem is ALL", () => {
-    workflowsStoreMock.activeSystem = "ALL";
+    searchStoreMock.workflowsStore.activeSystem = "ALL";
     expect(residentSearchManager.matchingPersons).toEqual([testResident]);
   });
 
   test("resident does not match when activeSystem is SUPERVISION", () => {
-    workflowsStoreMock.activeSystem = "SUPERVISION";
+    searchStoreMock.workflowsStore.activeSystem = "SUPERVISION";
     expect(residentSearchManager.matchingPersons).toEqual([]);
   });
 
   test("resident matches when activeSystem is INCARCERATION", () => {
-    workflowsStoreMock.activeSystem = "INCARCERATION";
+    searchStoreMock.workflowsStore.activeSystem = "INCARCERATION";
     expect(residentSearchManager.matchingPersons).toEqual([testResident]);
   });
 
   test("resident does not match when person does not match", () => {
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = ["A DIFFERENT OFFICER"];
-    workflowsStoreMock.activeSystem = "SUPERVISION";
+    searchStoreMock.workflowsStore.selectedSearchIds = ["A DIFFERENT OFFICER"];
+    searchStoreMock.workflowsStore.activeSystem = "SUPERVISION";
     expect(residentSearchManager.matchingPersons).toEqual([]);
   });
 });
@@ -300,8 +313,11 @@ describe("matchingPersonsGrouped", () => {
       personType: "CLIENT",
       fullName: clientRecord2.personName,
     } as Client;
-    workflowsStoreMock.justiceInvolvedPersons = { testClient, testClient2 };
-    workflowsStoreMock.activeSystem = "ALL";
+    searchStoreMock.workflowsStore.justiceInvolvedPersons = {
+      testClient,
+      testClient2,
+    };
+    searchStoreMock.workflowsStore.activeSystem = "ALL";
   });
 
   test("grouped by searchFieldValue with multiple clients matching multiple search ids", () => {
@@ -312,10 +328,12 @@ describe("matchingPersonsGrouped", () => {
       ],
       onlySurfaceEligible: true,
     } as WorkflowsSystemConfig<ClientRecord, any>;
-    workflowsStoreMock.systemConfigFor = vi.fn(() => supervisionSystemConfig);
+    searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
+      () => supervisionSystemConfig,
+    );
 
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = [
+    searchStoreMock.workflowsStore.selectedSearchIds = [
       clientRecord.officerId,
       clientRecord.district,
     ];
@@ -336,7 +354,9 @@ describe("matchingPersonsGrouped", () => {
       ],
       onlySurfaceEligible: true,
     } as WorkflowsSystemConfig<ClientRecord, any>;
-    workflowsStoreMock.systemConfigFor = vi.fn(() => supervisionSystemConfig);
+    searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
+      () => supervisionSystemConfig,
+    );
     clientRecord2.officerId = "Some other not-matching officer";
     testClient2 = {
       record: clientRecord2,
@@ -344,9 +364,12 @@ describe("matchingPersonsGrouped", () => {
       personType: "CLIENT",
       fullName: clientRecord2.personName,
     } as Client;
-    workflowsStoreMock.justiceInvolvedPersons = { testClient, testClient2 };
+    searchStoreMock.workflowsStore.justiceInvolvedPersons = {
+      testClient,
+      testClient2,
+    };
     // @ts-ignore
-    workflowsStoreMock.selectedSearchIds = [
+    searchStoreMock.workflowsStore.selectedSearchIds = [
       clientRecord.officerId,
       clientRecord.district,
     ];
@@ -361,32 +384,32 @@ describe("matchingPersonsGrouped", () => {
 
 describe("isEnabled", () => {
   test("client isEnabled when activeSystem is ALL", () => {
-    workflowsStoreMock.activeSystem = "ALL";
+    searchStoreMock.workflowsStore.activeSystem = "ALL";
     expect(clientSearchManager.isEnabled).toBeTrue();
   });
 
   test("client isEnabled when activeSystem is SUPERVISION", () => {
-    workflowsStoreMock.activeSystem = "SUPERVISION";
+    searchStoreMock.workflowsStore.activeSystem = "SUPERVISION";
     expect(clientSearchManager.isEnabled).toBeTrue();
   });
 
   test("client is not enabled when activeSystem is INCARCERATION", () => {
-    workflowsStoreMock.activeSystem = "INCARCERATION";
+    searchStoreMock.workflowsStore.activeSystem = "INCARCERATION";
     expect(clientSearchManager.isEnabled).toBeFalse();
   });
 
   test("resident isEnabled when activeSystem is ALL", () => {
-    workflowsStoreMock.activeSystem = "ALL";
+    searchStoreMock.workflowsStore.activeSystem = "ALL";
     expect(residentSearchManager.isEnabled).toBeTrue();
   });
 
   test("resident is not enabled when activeSystem is SUPERVISION", () => {
-    workflowsStoreMock.activeSystem = "SUPERVISION";
+    searchStoreMock.workflowsStore.activeSystem = "SUPERVISION";
     expect(residentSearchManager.isEnabled).toBeFalse();
   });
 
   test("resident isEnabled when activeSystem is INCARCERATION", () => {
-    workflowsStoreMock.activeSystem = "INCARCERATION";
+    searchStoreMock.workflowsStore.activeSystem = "INCARCERATION";
     expect(residentSearchManager.isEnabled).toBeTrue();
   });
 });

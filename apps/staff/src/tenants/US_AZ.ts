@@ -31,6 +31,7 @@ const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
         {
           searchType: "OFFICER",
           searchField: ["officerId"],
+          searchTitle: "officer",
         },
       ],
     },

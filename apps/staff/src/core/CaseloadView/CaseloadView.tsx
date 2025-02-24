@@ -18,12 +18,14 @@
 import React from "react";
 
 import { CaseloadSelect } from "../CaseloadSelect";
+import CaseloadTypeSelect from "../CaseloadTypeSelect/CaseloadTypeSelect";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { AllCaseloads } from "./AllCaseloads";
 
 export const CaseloadView: React.FC = () => {
   return (
     <WorkflowsNavLayout>
+      <CaseloadTypeSelect />
       <CaseloadSelect />
       <AllCaseloads />
     </WorkflowsNavLayout>

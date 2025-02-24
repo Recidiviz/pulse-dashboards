@@ -127,7 +127,7 @@ export type TaskFilterField = keyof Client;
 export type SearchConfig<R, T extends TenantConfigId> = {
   searchType: SearchType;
   searchField: Leaves<R & { metadata: { stateCode: T } }> & string[];
-  searchTitleOverride?: string;
+  searchTitle: string;
   searchOp?: "in" | "array-contains-any";
   locationIdType?: "facilityId" | "facilityUnitId";
   restrictedToFeatureVariant?: FeatureVariant;
@@ -153,7 +153,12 @@ export type SearchableGroup = {
 };
 
 export type SystemId = "INCARCERATION" | "SUPERVISION" | "ALL";
-export type SearchType = "OFFICER" | "CASELOAD" | "LOCATION" | "ALL";
+export type SearchType =
+  | "OFFICER"
+  | "INCARCERATION_OFFICER"
+  | "CASELOAD"
+  | "LOCATION"
+  | "ALL";
 
 export type Gender = "ALL" | "FEMALE" | "MALE";
 export type AgeGroup =
