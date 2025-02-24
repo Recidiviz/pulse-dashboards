@@ -123,4 +123,10 @@ export default tseslint.config(
       ],
     },
   },
+  {
+    files: ["tools/fixtures/opportunities/*"],
+    rules: {
+      "no-template-curly-in-string": "off",
+    },
+  },
 );
