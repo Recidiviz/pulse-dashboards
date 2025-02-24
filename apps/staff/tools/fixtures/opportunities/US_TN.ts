@@ -365,13 +365,13 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Under active supervision in another jurisdiction",
         },
         { key: "INDICTMENT", text: "Under indictment" },
-        { key: "OTHER", text: "Please specify a reason" },
+        { key: "OTHER", text: "Other: please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
       displayName: "Suspension of Direct Supervision",
       dynamicEligibilityText:
-        "client[|s] [is|are] eligible for Suspension of Direct Supervision",
+        "client[|s] may be eligible for Suspension of Direct Supervision",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -383,6 +383,8 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "noSupervisionViolationReportWithin2Years",
           text: "No violation reports submitted in past two years",
+          tooltip:
+            "No submission of violation reports in past two years. Recidiviz uses the date of any underlying violation(s) associated with a violation report to check this eligibility requirement.",
         },
         {
           key: "usTnNoWarrantWithin2Years",
@@ -416,7 +418,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usTnNoArrestsInPast2Years",
-          text: "No arrests within the last two years",
+          text: "Negative arrest check on {{date record.metadata.latestNegativeArrestCheck.contactDate}}",
           tooltip: "No arrests within the last two years.",
         },
       ],
@@ -429,7 +431,6 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "hasFinesFeesBalanceOf0OrIsExempt",
-          // eslint-disable-next-line no-template-curly-in-string
           text: "Unpaid balance of ${{amountOwed}}",
         },
       ],
