@@ -179,6 +179,9 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         actionStrategies: {
           activeTenants: ["US_MI"],
         },
+        zeroGrantsFlag: {
+          activeTenants: ["US_ID", "US_MI", "US_TN"],
+        },
       }
     : {
         ...allFeatureVariants,
