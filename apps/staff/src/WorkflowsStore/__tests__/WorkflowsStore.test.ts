@@ -739,34 +739,6 @@ test("locations from subscription", async () => {
   expect(workflowsStore.availableLocations).toEqual(mockLocations);
 });
 
-test("searchType when there is a search type behind a not-enabled feature variant", async () => {
-  await waitForHydration();
-  runInAction(() => {
-    workflowsStore.updateActiveSystem("INCARCERATION");
-    rootStore.tenantStore.currentTenantId = "US_TN";
-    workflowsStore.incarcerationStaffSubscription.data =
-      mockIncarcerationOfficers;
-    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers;
-    workflowsStore.locationsSubscription.data = mockLocations;
-  });
-  expect(workflowsStore.searchType).toEqual("LOCATION");
-});
-
-test("searchType when there is a search type behind an enabled feature variant", async () => {
-  setUser({ TEST: {} });
-
-  await waitForHydration();
-  runInAction(() => {
-    workflowsStore.updateActiveSystem("INCARCERATION");
-    rootStore.tenantStore.currentTenantId = "US_TN";
-    workflowsStore.incarcerationStaffSubscription.data =
-      mockIncarcerationOfficers;
-    workflowsStore.supervisionStaffSubscription.data = mockSupervisionOfficers;
-    workflowsStore.locationsSubscription.data = mockLocations;
-  });
-  expect(workflowsStore.searchType).toEqual("ALL");
-});
-
 test("systemConfigFor when there is a search type behind a not-enabled feature variant", async () => {
   await waitForHydration();
   runInAction(() => {

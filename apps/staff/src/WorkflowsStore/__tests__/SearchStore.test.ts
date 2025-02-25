@@ -17,7 +17,6 @@
 
 import { observable } from "mobx";
 
-import { AnyWorkflowsSystemConfig } from "../../core/models/types";
 import {
   mockLocations,
   mockOfficer,
@@ -43,10 +42,12 @@ beforeEach(() => {
     systemConfigFor: vi.fn(() => ({
       search: [{ searchType: "OFFICER", searchTitle: "officer" }],
     })),
+    activeSystemConfig: {
+      search: [{ searchType: "OFFICER", searchTitle: "officer" }],
+    },
     activeSystem: "SUPERVISION",
     availableOfficers: [...mockSupervisionOfficers].sort(staffNameComparator),
     availableLocations: mockLocations,
-    searchType: "OFFICER",
   });
   searchStore = new SearchStore(workflowsStore as unknown as WorkflowsStore);
 });
@@ -63,23 +64,20 @@ describe("searchTitleOverride", () => {
   });
 
   test("when there is a searchTypeOverride it returns corresponding searchTitle", () => {
-    workflowsStore.systemConfigFor = vi.fn(
-      (system) =>
-        ({
-          search: [
-            {
-              searchType: "OFFICER",
-              searchTitle: "officer title",
-              searchField: "any",
-            },
-            {
-              searchType: "LOCATION",
-              searchTitle: "location title",
-              searchField: "any",
-            },
-          ],
-        }) as unknown as AnyWorkflowsSystemConfig,
-    );
+    workflowsStore.systemConfigFor = vi.fn((system) => ({
+      search: [
+        {
+          searchType: "OFFICER",
+          searchTitle: "officer title",
+          searchField: "any",
+        },
+        {
+          searchType: "LOCATION",
+          searchTitle: "location title",
+          searchField: "any",
+        },
+      ],
+    }));
     searchStore.setSearchTypeOverride("LOCATION");
     expect(searchStore.searchTitleOverride("SUPERVISION", "default")).toEqual(
       "location title",
@@ -93,23 +91,20 @@ describe("searchTitleOverride", () => {
   });
 
   test("when there are more than one corresponding searchConfigs and no searchTypeOverride, it returns the default", () => {
-    workflowsStore.systemConfigFor = vi.fn(
-      (system) =>
-        ({
-          search: [
-            {
-              searchType: "OFFICER",
-              searchTitle: "officer title",
-              searchField: "any",
-            },
-            {
-              searchType: "LOCATION",
-              searchTitle: "location title",
-              searchField: "any",
-            },
-          ],
-        }) as unknown as AnyWorkflowsSystemConfig,
-    );
+    workflowsStore.systemConfigFor = vi.fn((system) => ({
+      search: [
+        {
+          searchType: "OFFICER",
+          searchTitle: "officer title",
+          searchField: "any",
+        },
+        {
+          searchType: "LOCATION",
+          searchTitle: "location title",
+          searchField: "any",
+        },
+      ],
+    }));
     expect(searchStore.searchTitleOverride("SUPERVISION", "default")).toEqual(
       "default",
     );
@@ -225,7 +220,9 @@ describe("availableSearchables", () => {
   });
 
   test("for search by location", async () => {
-    workflowsStore.searchType = "LOCATION";
+    workflowsStore.activeSystemConfig = {
+      search: [{ searchType: "LOCATION", searchTitle: "facility" }],
+    };
     const actual = searchStore.availableSearchables[0].searchables.map(
       (searchable) => {
         return {
@@ -249,7 +246,12 @@ describe("availableSearchables", () => {
   });
 
   test("when there are more than one search types", async () => {
-    workflowsStore.searchType = "ALL";
+    workflowsStore.activeSystemConfig = {
+      search: [
+        { searchType: "LOCATION", searchTitle: "facility" },
+        { searchType: "OFFICER", searchTitle: "officer" },
+      ],
+    };
     // strip out actual data
     const actual = searchStore.availableSearchables.map((searchableGroup) => {
       return {
@@ -291,5 +293,50 @@ describe("availableSearchables", () => {
         },
       ]
     `);
+  });
+});
+
+describe("searchType", () => {
+  test("searchType when there is a single search config", async () => {
+    workflowsStore.activeSystemConfig = {
+      search: [{ searchType: "LOCATION" }],
+    };
+    expect(searchStore.searchType).toEqual("LOCATION");
+  });
+
+  test("searchType when there is are multiple searchConfigs", async () => {
+    workflowsStore.activeSystemConfig = {
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+        { searchType: "LOCATION" },
+      ],
+    };
+    expect(searchStore.searchType).toEqual("ALL");
+  });
+
+  test("searchType when activeSystem is ALL", async () => {
+    workflowsStore.activeSystemConfig = {
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
+    };
+    workflowsStore.activeSystem = "ALL";
+    expect(searchStore.searchType).toEqual("ALL");
+  });
+
+  test("searchType when there is a searchTypeOverride", async () => {
+    workflowsStore.activeSystemConfig = {
+      search: [
+        {
+          searchType: "OFFICER",
+        },
+      ],
+    };
+    searchStore.searchTypeOverride = "LOCATION";
+    expect(searchStore.searchType).toEqual("LOCATION");
   });
 });

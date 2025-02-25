@@ -37,6 +37,7 @@ beforeEach(() => {
       availableOfficers: [
         { givenNames: "Test", surname: "User", email: "test@example.gov" },
       ],
+      searchStore: { searchType: "OFFICER" },
     },
   });
 });

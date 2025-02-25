@@ -35,7 +35,10 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
   officerEmail,
 }) => {
   const {
-    workflowsStore: { availableOfficers, searchType },
+    workflowsStore: {
+      availableOfficers,
+      searchStore: { searchType },
+    },
   } = useRootStore();
 
   if (!officerId && !officerEmail) return null;

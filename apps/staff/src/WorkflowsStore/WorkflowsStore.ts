@@ -51,7 +51,6 @@ import {
 import {
   AnyWorkflowsSystemConfig,
   Searchable,
-  SearchType,
   SystemId,
 } from "../core/models/types";
 import { FilterOption } from "../core/types/filters";
@@ -329,7 +328,7 @@ export class WorkflowsStore implements Hydratable {
     if (
       !updates.selectedSearchIds &&
       info.hasCaseload &&
-      this.searchType === "OFFICER"
+      this.searchStore.searchType === "OFFICER"
     ) {
       updates.selectedSearchIds = [info.id];
       metadata.isDefaultOfficerSelection = true;
@@ -569,19 +568,6 @@ export class WorkflowsStore implements Hydratable {
     runInAction(() => {
       this.activeSystem = systemId;
     });
-  }
-
-  get searchType(): SearchType {
-    if (this.searchStore.searchTypeOverride)
-      return this.searchStore.searchTypeOverride;
-    const systemConfig = this.activeSystemConfig;
-    if (
-      !systemConfig ||
-      systemConfig.search.length > 1 ||
-      this.activeSystem === "ALL"
-    )
-      return "ALL";
-    return systemConfig.search[0].searchType;
   }
 
   get staffSubscription():
