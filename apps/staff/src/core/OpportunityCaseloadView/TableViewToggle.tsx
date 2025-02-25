@@ -27,7 +27,7 @@ import styled from "styled-components/macro";
 
 import ListViewIcon from "../../assets/static/images/oppListView.svg?react";
 import TableViewIcon from "../../assets/static/images/oppTableView.svg?react";
-import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
+import { TableViewSelectInterface } from "../../WorkflowsStore/presenters/TableViewSelectPresenter";
 
 const ViewTypeButton = styled(Button)<{ $selected: boolean }>`
   width: 40px;
@@ -57,7 +57,7 @@ const ButtonGroup = styled.div`
 export const TableViewToggle = observer(function TableViewToggle({
   presenter,
 }: {
-  presenter: OpportunityCaseloadPresenter;
+  presenter: TableViewSelectInterface;
 }) {
   return (
     <ButtonGroup>

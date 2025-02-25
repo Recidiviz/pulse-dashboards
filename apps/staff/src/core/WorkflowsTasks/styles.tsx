@@ -15,13 +15,68 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import {
+  palette,
+  Pill,
+  Sans14,
+  Serif34,
+  spacing,
+} from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
 export const Divider = styled.hr`
   margin: ${rem(spacing.md)} 0;
   height: 1px;
   border: none;
   background-color: ${palette.slate20};
+`;
+
+export const TasksHeader = styled(Serif34)`
+  color: ${palette.pine2};
+  margin-bottom: ${rem(spacing.md)};
+`;
+
+export const TasksCaption = styled(Sans14)`
+  color: ${palette.slate70};
+`;
+
+export const TasksDescription = styled(TasksCaption)`
+  margin-bottom: ${rem(spacing.lg)};
+`;
+
+export const TaskCategoryPill = styled(Pill).attrs({
+  color: palette.slate10,
+})`
+  cursor: pointer;
+  color: ${palette.slate85};
+`;
+
+export const TaskCategories = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: ${rem(spacing.sm)};
+`;
+
+export const TaskAggregateCount = styled.span`
+  color: ${palette.signal.links};
+`;
+
+export const TaskDivider = styled.hr`
+  margin: ${rem(spacing.md)} 0;
+  height: 1px;
+  border: none;
+  background-color: ${palette.slate20};
+`;
+
+export const TaskDueDate = styled.div<{
+  overdue: boolean;
+  font: FlattenSimpleInterpolation;
+  marginLeft?: string;
+  isMobile?: boolean;
+}>`
+  ${({ font }) => font}
+  color: ${({ overdue }) => (overdue ? palette.signal.error : palette.slate70)};
+  margin-left: ${({ marginLeft = "auto" }) => marginLeft};
+  ${({ isMobile }) => isMobile && `font-size: ${rem(12)} !important;`}
 `;

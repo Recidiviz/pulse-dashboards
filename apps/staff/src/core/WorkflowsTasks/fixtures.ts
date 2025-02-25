@@ -21,8 +21,16 @@ import {
   SupervisionNeedType,
 } from "../../WorkflowsStore/Task/types";
 
-export const SUPERVISION_TASK_CATEGORIES = [
+export const TEMPORAL_TASK_CATEGORIES = [
+  "ALL_TASKS",
+  "OVERDUE",
+  "DUE_THIS_WEEK",
   "DUE_THIS_MONTH",
+] as const;
+
+export const SUPERVISION_TASK_CATEGORIES = [
+  "ALL_TASKS_OLD",
+  ...TEMPORAL_TASK_CATEGORIES,
   ...SUPERVISION_TASK_TYPES,
   ...SUPERVISION_NEED_TYPES,
 ] as const;
@@ -30,6 +38,10 @@ export type SupervisionTaskCategory =
   (typeof SUPERVISION_TASK_CATEGORIES)[number];
 
 export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
+  ALL_TASKS: "All tasks",
+  ALL_TASKS_OLD: "Due this month",
+  OVERDUE: "Overdue",
+  DUE_THIS_WEEK: "Due this week",
   DUE_THIS_MONTH: "Due this month",
   assessment: "Risk Assessments",
   contact: "Contacts",

@@ -92,9 +92,9 @@ describe("CaseloadTasksPresenter", () => {
       expect(presenter.taskCategories).toEqual(mockTenantStore.taskCategories);
     });
 
-    it("prepends 'DUE_THIS_MONTH' to categories supplied by the store for displaying categories", () => {
+    it("prepends 'ALL_TASKS_OLD' to categories supplied by the store for displaying categories", () => {
       expect(presenter.displayedTaskCategories).toEqual([
-        "DUE_THIS_MONTH",
+        "ALL_TASKS_OLD",
         ...mockTenantStore.taskCategories,
       ]);
     });
@@ -105,7 +105,23 @@ describe("CaseloadTasksPresenter", () => {
       presenter = getPresenter({});
     });
 
-    it("is initialized to 'DUE_THIS_MONTH'", () => {
+    it("is initialized to 'ALL_TASKS_OLD' when current tenant is US_ID", () => {
+      presenter = getPresenter({
+        tenantStore: {
+          ...mockTenantStore,
+          currentTenantId: "US_ID",
+        } as any as TenantStore,
+      });
+      expect(presenter.selectedCategory).toEqual("ALL_TASKS_OLD");
+    });
+
+    it("is initialized to 'DUE_THIS_MONTH' when current tenant is not US_ID", () => {
+      presenter = getPresenter({
+        tenantStore: {
+          ...mockTenantStore,
+          currentTenantId: "US_IDONT",
+        } as any as TenantStore,
+      });
       expect(presenter.selectedCategory).toEqual("DUE_THIS_MONTH");
     });
 
@@ -117,7 +133,7 @@ describe("CaseloadTasksPresenter", () => {
     it("toggles stored selected category when current category is reselected", () => {
       presenter.toggleSelectedTaskCategory("employment");
       presenter.toggleSelectedTaskCategory("employment");
-      expect(presenter.selectedCategory).toEqual("DUE_THIS_MONTH");
+      expect(presenter.selectedCategory).toEqual("ALL_TASKS_OLD");
     });
 
     it("logs category selection to the analytics store", () => {
@@ -220,8 +236,8 @@ describe("CaseloadTasksPresenter", () => {
       expect(presenter.countForCategory("employmentNeed")).toEqual(0);
     });
 
-    it("counts all people with tasks when given 'DUE_THIS_MONTH'", () => {
-      expect(presenter.countForCategory("DUE_THIS_MONTH")).toEqual(3);
+    it("counts all people with tasks when given 'ALL_TASKS_OLD'", () => {
+      expect(presenter.countForCategory("ALL_TASKS_OLD")).toEqual(3);
     });
   });
 

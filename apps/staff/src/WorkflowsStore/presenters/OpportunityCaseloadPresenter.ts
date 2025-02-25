@@ -41,12 +41,16 @@ import { OpportunityConfiguration } from "../Opportunity/OpportunityConfiguratio
 import { CollectionDocumentSubscription } from "../subscriptions";
 import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
+import {
+  TableViewSelectInterface,
+  TableViewSelectPresenter,
+} from "./TableViewSelectPresenter";
 /**
  * Responsible for presenting information about the caseload relative to a user's
  * current view of a single opportunity, including who is eligible and the user's
  * visual settings such as tab grouping and tab ordering.
  */
-export class OpportunityCaseloadPresenter {
+export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
   readonly displayTabGroups: OpportunityTabGroup[];
   readonly showZeroGrantsPill: boolean;
   private readonly sortingEnabled: boolean;
@@ -54,8 +58,7 @@ export class OpportunityCaseloadPresenter {
   private userSelectedTab?: OpportunityTab;
   private userOrderedTabs?: OpportunityTab[];
   private readonly updatesSubscription?: CollectionDocumentSubscription<UserUpdateRecord>;
-  private readonly tableViewEnabled: boolean;
-  private _showListView = false;
+  private tableViewSelectPresenter: TableViewSelectPresenter;
 
   private _navigablePeople: Opportunity<JusticeInvolvedPerson>[] = [];
 
@@ -75,11 +78,15 @@ export class OpportunityCaseloadPresenter {
     this.userSelectedTab = this.defaultOrderedTabs[0];
     this.userOrderedTabs = undefined;
 
+    this.tableViewSelectPresenter = new TableViewSelectPresenter(
+      firestoreStore,
+      workflowsStore,
+      featureVariants,
+    );
+
     this.updatesSubscription = this.workflowsStore.userUpdatesSubscription;
 
     this.sortingEnabled = !!featureVariants.sortableOpportunityTabs;
-
-    this.tableViewEnabled = !!featureVariants.opportunityTableView;
 
     this.showZeroGrantsPill = !!(
       featureVariants.zeroGrantsFlag &&
@@ -107,22 +114,11 @@ export class OpportunityCaseloadPresenter {
   }
 
   get showListView() {
-    return (
-      // if the user doesn't have access to table view,
-      !this.tableViewEnabled ||
-      // or selected list view while on this page,
-      this._showListView ||
-      // or their preference stored in firestore is to show list view
-      !!this.updatesSubscription?.data?.showListView
-    );
+    return this.tableViewSelectPresenter.showListView;
   }
 
   set showListView(showListView: boolean) {
-    this._showListView = showListView;
-    this.firestoreStore.updateListViewPreference(
-      this.workflowsStore.currentUserEmail,
-      showListView,
-    );
+    this.tableViewSelectPresenter.showListView = showListView;
   }
 
   get activeTab() {

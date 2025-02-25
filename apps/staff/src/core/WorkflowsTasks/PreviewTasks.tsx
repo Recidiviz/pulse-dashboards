@@ -25,8 +25,8 @@ import { formatDate } from "../../utils";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
+import { TaskDueDate } from "./styles";
 import { TaskItemDivider } from "./TaskPreviewModal";
-import { TaskDueDate } from "./WorkflowsTasks";
 
 const TasksWrapper = styled.div``;
 const TaskItems = styled.div`
@@ -78,7 +78,7 @@ const TaskContent = styled.div`
   display: flex;
   flex-flow: column;
   justify-content: center;
-  align-items: left;
+  align-items: flex-start;
   grid-column-start: 1;
 `;
 

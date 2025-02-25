@@ -77,6 +77,7 @@ const TabButton = styled.div<{ $active: boolean }>`
 
 export interface SortableTabButtonProps<T extends string> {
   tab: T;
+  label?: string;
   badge?: number;
   active: boolean;
   onClick: (tab: T) => void;
@@ -85,6 +86,7 @@ export interface SortableTabButtonProps<T extends string> {
 
 function SortableTabButton<T extends string>({
   tab,
+  label,
   badge,
   active,
   onClick,
@@ -108,7 +110,7 @@ function SortableTabButton<T extends string>({
       {...attributes}
       {...listeners}
     >
-      {tab as string}
+      {label ?? (tab as string)}
       {badge !== undefined && (
         <TabBadge
           filled
@@ -125,18 +127,20 @@ function SortableTabButton<T extends string>({
 
 export interface WorkflowsCaseloadTabsProps<T extends string> {
   tabs: T[];
+  tabLabels?: Partial<Record<T, string>>;
   tabBadges?: Partial<Record<T, number>>;
   activeTab: T;
   setActiveTab: (tab: T) => void;
-  sortable: boolean;
+  sortable?: boolean;
 }
 
 function WorkflowsCaseloadTabs<T extends string>({
   tabs,
+  tabLabels,
   tabBadges,
   activeTab,
   setActiveTab,
-  sortable,
+  sortable = false,
 }: WorkflowsCaseloadTabsProps<T>) {
   return (
     <TabWrapper>
@@ -144,6 +148,7 @@ function WorkflowsCaseloadTabs<T extends string>({
         <SortableTabButton
           key={tab as string}
           tab={tab}
+          label={tabLabels?.[tab]}
           badge={tabBadges?.[tab]}
           active={activeTab === tab}
           onClick={setActiveTab}
