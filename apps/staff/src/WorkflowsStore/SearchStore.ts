@@ -15,9 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import assertNever from "assert-never";
 import { makeAutoObservable, reaction } from "mobx";
 
-import { SearchType, SystemId } from "../core/models/types";
+import { SearchableGroup, SearchType, SystemId } from "../core/models/types";
+import { CaseloadSearchable } from "./CaseloadSearchable";
+import { Location } from "./Location";
+import { Officer } from "./Officer";
 import { SearchManager } from "./SearchManager";
 import { JusticeInvolvedPerson } from "./types";
 import { WorkflowsStore } from "./WorkflowsStore";
@@ -66,6 +70,104 @@ export class SearchStore {
       ...this.clientSearchManager.matchingPersonsGrouped,
       ...this.residentSearchManager.matchingPersonsGrouped,
     };
+  }
+
+  get availableSearchables(): SearchableGroup[] {
+    switch (this.workflowsStore.searchType) {
+      case "LOCATION": {
+        return [
+          {
+            groupLabel: "All Locations",
+            searchables: this.workflowsStore.availableLocations.map(
+              (location) => new Location(location),
+            ),
+          },
+        ];
+      }
+      case "INCARCERATION_OFFICER":
+      case "OFFICER": {
+        if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
+          const staffWithCaseload =
+            this.workflowsStore.staffSupervisedByCurrentUser.map(
+              (officer) => new Officer(officer),
+            );
+          // include user's own caseload if they have one
+          if (this.workflowsStore.user?.info.hasCaseload) {
+            const currentUserStaffRecord =
+              this.workflowsStore.availableOfficers.find(
+                (officer) => officer.id === this.workflowsStore.user?.info.id,
+              );
+            if (currentUserStaffRecord) {
+              staffWithCaseload.push(new Officer(currentUserStaffRecord));
+            }
+          }
+          const staffWithCaseloadIdsSet = new Set(
+            staffWithCaseload.map((officer) => officer.searchId),
+          );
+          const groupedOfficers = [
+            {
+              groupLabel: "Your Team",
+              searchables: staffWithCaseload,
+            },
+            {
+              groupLabel: "All Staff",
+              searchables: this.workflowsStore.availableOfficers
+                .filter(
+                  (officer) =>
+                    !staffWithCaseloadIdsSet.has(officer.id) &&
+                    officer.id !== this.workflowsStore.user?.info.id,
+                )
+                .map((officer) => new Officer(officer)),
+            },
+          ];
+
+          return groupedOfficers;
+        }
+
+        return [
+          {
+            groupLabel: "All Officers",
+            searchables: this.workflowsStore.availableOfficers.map(
+              (officer) => new Officer(officer),
+            ),
+          },
+        ];
+      }
+      case "CASELOAD": {
+        return [
+          {
+            groupLabel: "All Caseloads",
+            searchables: this.workflowsStore.availableOfficers.map(
+              (officer) => new CaseloadSearchable(officer),
+            ),
+          },
+        ];
+      }
+      case "ALL": {
+        const locations = this.workflowsStore.availableLocations.map(
+          (location) => new Location(location),
+        );
+        const officers = this.workflowsStore.availableOfficers.map(
+          (officer) => new Officer(officer),
+        );
+
+        return [
+          { groupLabel: "All Locations", searchables: locations },
+          { groupLabel: "All Officers", searchables: officers },
+        ].filter((group) => group.searchables.length); // exclude groups with 0 searchables
+      }
+      case undefined:
+        return [];
+      default:
+        assertNever(this.workflowsStore.searchType);
+    }
+  }
+
+  get hasSupervisedStaffAndRequiredFeatureVariant(): boolean {
+    return Boolean(
+      this.workflowsStore.featureVariants.workflowsSupervisorSearch &&
+        this.workflowsStore.staffSupervisedByCurrentUser.length > 0,
+    );
   }
 
   setSearchTypeOverride(override?: SearchType): void {
