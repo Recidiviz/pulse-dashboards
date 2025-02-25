@@ -413,6 +413,10 @@ export default class AnalyticsStore {
     this.track("frontend.opportunity_snoozed", metadata);
   }
 
+  trackOpportunitySnoozeCaseNoteCopied(metadata: SnoozeTrackingMetadata) {
+    this.track("frontend.opportunity_snooze_case_note_copied", metadata);
+  }
+
   trackAlmostEligibleCopyCTAViewed(metadata: CopyCTAMetadata) {
     this.track("frontend.almost_eligible_copy_cta_viewed", metadata);
   }

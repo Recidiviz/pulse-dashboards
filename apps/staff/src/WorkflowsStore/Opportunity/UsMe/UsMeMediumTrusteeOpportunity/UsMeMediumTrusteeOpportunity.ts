@@ -21,9 +21,9 @@ import { UsMeMediumTrusteeRecord, usMeMediumTrusteeSchema } from "~datatypes";
 
 import { Resident } from "../../../Resident";
 import { UsMeMediumTrusteeForm } from "../../Forms/UsMeMediumTrusteeForm";
-import { OpportunityBase } from "../../OpportunityBase";
+import { UsMeExternalSnoozeOpportunityBase } from "../UsMeExternalSnoozeOpportunityBase/UsMeExternalSnoozeOpportunityBase";
 
-export class UsMeMediumTrusteeOpportunity extends OpportunityBase<
+export class UsMeMediumTrusteeOpportunity extends UsMeExternalSnoozeOpportunityBase<
   Resident,
   UsMeMediumTrusteeRecord["output"]
 > {

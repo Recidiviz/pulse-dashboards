@@ -31,6 +31,7 @@ exports[`transform record 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;

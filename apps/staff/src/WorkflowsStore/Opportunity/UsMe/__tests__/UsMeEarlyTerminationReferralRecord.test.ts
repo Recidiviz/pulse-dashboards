@@ -46,6 +46,7 @@ test("transform record with restitution case", () => {
     caseNotes: {},
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
@@ -59,6 +60,7 @@ test("transform record without restitution case", () => {
     ineligibleCriteria: {},
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
@@ -79,6 +81,7 @@ test("transform record with restitution ineligibleCriteria", () => {
     },
     isEligible: false,
     isAlmostEligible: true,
+    metadata: {},
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
@@ -100,6 +103,7 @@ test("transform record with pending violation ineligibleCriteria", () => {
     },
     isEligible: false,
     isAlmostEligible: true,
+    metadata: {},
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();
@@ -116,6 +120,7 @@ test("transform record with null pending violation criteria", () => {
     ineligibleCriteria: {},
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   };
 
   expect(usMeEarlyTerminationSchema.parse(rawRecord)).toMatchSnapshot();

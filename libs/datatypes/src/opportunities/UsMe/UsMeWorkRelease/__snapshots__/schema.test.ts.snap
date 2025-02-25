@@ -28,6 +28,7 @@ exports[`schema for RES001Eligible 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -60,6 +61,7 @@ exports[`schema for RES002Eligible 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -97,6 +99,7 @@ exports[`schema for RES003AlmostEligibleViolation 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -122,6 +125,7 @@ exports[`schema for RES004IneligibleCommunity 1`] = `
   },
   "isAlmostEligible": false,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -146,6 +150,7 @@ exports[`schema for RES005Eligible 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -170,6 +175,7 @@ exports[`schema for RES006Eligible 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -199,6 +205,7 @@ exports[`schema for RES007AlmostEligibleViolationPending 1`] = `
   },
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -224,6 +231,7 @@ exports[`schema for RES008Ineligible30Days 1`] = `
   },
   "isAlmostEligible": false,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -249,6 +257,7 @@ exports[`schema for RES009AlmostEligibleYearsRemaining 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -280,6 +289,7 @@ exports[`schema for RES999Ineligible 1`] = `
   },
   "isAlmostEligible": false,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;

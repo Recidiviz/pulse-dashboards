@@ -27,8 +27,8 @@ import {
 
 import { Resident } from "../../../Resident";
 import { UsMeWorkReleaseForm } from "../../Forms/UsMeWorkReleaseForm";
-import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
+import { UsMeExternalSnoozeOpportunityBase } from "../UsMeExternalSnoozeOpportunityBase/UsMeExternalSnoozeOpportunityBase";
 
 const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeWorkReleaseCriteria,
@@ -136,7 +136,7 @@ const requirementsForEligibleCriteria = (
   return requirements;
 };
 
-export class UsMeWorkReleaseOpportunity extends OpportunityBase<
+export class UsMeWorkReleaseOpportunity extends UsMeExternalSnoozeOpportunityBase<
   Resident,
   UsMeWorkReleaseRecord
 > {

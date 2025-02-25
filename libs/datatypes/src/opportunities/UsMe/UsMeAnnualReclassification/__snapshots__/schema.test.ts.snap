@@ -21,6 +21,7 @@ exports[`schema for almostEligible 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -46,6 +47,7 @@ exports[`schema for fullyEligible 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;

@@ -24,10 +24,7 @@ import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
-import {
-  DenialConfirmationModalProps,
-  Opportunity,
-} from "../../../WorkflowsStore";
+import { Opportunity } from "../../../WorkflowsStore";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityDenialView } from "../OpportunityDenialView";
@@ -639,13 +636,7 @@ describe("OpportunityDenialView", () => {
         denial: {
           reasons: ["CODE"],
         },
-        DenialConfirmationModal: ({
-          showModal,
-        }: DenialConfirmationModalProps) => (
-          <div data-testid="stub-modal">
-            {showModal ? "MODAL SHOWN" : "MODAL NOT SHOWN"}
-          </div>
-        ),
+        denialConfirmationModalName: "TestingStub" as const,
       };
 
       vi.spyOn(opp, "deleteOpportunityDenialAndSnooze");

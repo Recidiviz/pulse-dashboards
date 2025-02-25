@@ -19,6 +19,7 @@ import { z } from "zod";
 
 import { ParsedRecord } from "../../../utils/types";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { usMeDenialMetadataSchema } from "../common";
 
 export const usMeMediumTrusteeSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z
@@ -28,6 +29,9 @@ export const usMeMediumTrusteeSchema = opportunitySchemaBase.extend({
       usMeNoViolationFor5Years: z.null(),
     })
     .passthrough(),
+  metadata: z.object({
+    denial: usMeDenialMetadataSchema,
+  }),
 });
 
 export type UsMeMediumTrusteeRecord = ParsedRecord<

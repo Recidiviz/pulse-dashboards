@@ -45,6 +45,7 @@ export const usMeAnnualReclassificationFixtures = {
     ineligibleCriteria: {},
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   }),
   almostEligible: makeRecordFixture(usMeAnnualReclassificationSchema, {
     stateCode: "US_ME",
@@ -68,5 +69,6 @@ export const usMeAnnualReclassificationFixtures = {
     },
     isEligible: false,
     isAlmostEligible: true,
+    metadata: {},
   }),
 } satisfies FixtureMapping<UsMeAnnualReclassificationRecord>;

@@ -42,6 +42,7 @@ export const usMeMediumTrusteeFixtures = {
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   }),
   fullyEligibleWithLifeSentence: makeRecordFixture(usMeMediumTrusteeSchema, {
     stateCode: "US_ME",
@@ -65,5 +66,6 @@ export const usMeMediumTrusteeFixtures = {
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   }),
 } satisfies FixtureMapping<UsMeMediumTrusteeRecord>;

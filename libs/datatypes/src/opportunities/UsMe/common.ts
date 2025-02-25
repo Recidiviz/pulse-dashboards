@@ -17,7 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "../../utils/zod";
+import { dateStringSchema, nullishAsUndefined } from "../../utils/zod";
 
 export const noDetainersWarrantsSchema = {
   eligible: {
@@ -83,3 +83,13 @@ export function custodyLevelReason<C extends string>(criterionId: C) {
     ineligible: { [criterionId]: reason.nullable() },
   };
 }
+
+export const usMeDenialMetadataSchema = z
+  .object({
+    updatedBy: z.string(),
+    startDate: dateStringSchema,
+    endDate: dateStringSchema,
+    reasons: z.string().array(),
+    otherReason: nullishAsUndefined(z.string()),
+  })
+  .nullish();

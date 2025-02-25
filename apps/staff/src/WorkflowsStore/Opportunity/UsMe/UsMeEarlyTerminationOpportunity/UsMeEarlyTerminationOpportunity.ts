@@ -20,8 +20,8 @@ import { DocumentData } from "firebase/firestore";
 
 import { formatAsCurrency, formatWorkflowsDate } from "../../../../utils";
 import { Client } from "../../../Client";
-import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
+import { UsMeExternalSnoozeOpportunityBase } from "../UsMeExternalSnoozeOpportunityBase/UsMeExternalSnoozeOpportunityBase";
 import {
   UsMeEarlyTerminationReferralRecord,
   usMeEarlyTerminationSchema,
@@ -49,7 +49,7 @@ const CRITERIA: Record<
   usMeNoPendingViolationsWhileSupervised: {},
 };
 
-export class UsMeEarlyTerminationOpportunity extends OpportunityBase<
+export class UsMeEarlyTerminationOpportunity extends UsMeExternalSnoozeOpportunityBase<
   Client,
   UsMeEarlyTerminationReferralRecord
 > {

@@ -38,12 +38,9 @@ import styled from "styled-components/macro";
 import AcknowledgementCheckbox from "../../../../src/components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";
 import { formatDateToISO, formatWorkflowsDate } from "../../../utils";
-import {
-  Client,
-  DenialConfirmationModalProps,
-  Opportunity,
-} from "../../../WorkflowsStore";
+import { Client, Opportunity } from "../../../WorkflowsStore";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
+import { DenialConfirmationModalProps } from "../DenialConfirmationModals";
 
 const Acknowledgement = styled.div`
   display: flex;

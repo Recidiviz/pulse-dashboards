@@ -49,6 +49,7 @@ export const usMeWorkReleaseFixturesRaw = {
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   },
   RES002Eligible: {
     stateCode: "US_ME",
@@ -78,6 +79,7 @@ export const usMeWorkReleaseFixturesRaw = {
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   },
   RES003AlmostEligibleViolation: {
     stateCode: "US_ME",
@@ -112,6 +114,7 @@ export const usMeWorkReleaseFixturesRaw = {
     },
     isEligible: false,
     isAlmostEligible: true,
+    metadata: {},
   },
   RES004IneligibleCommunity: {
     stateCode: "US_ME",
@@ -131,6 +134,7 @@ export const usMeWorkReleaseFixturesRaw = {
     },
     isEligible: false,
     isAlmostEligible: false,
+    metadata: {},
   },
   RES005Eligible: {
     stateCode: "US_ME",
@@ -149,6 +153,7 @@ export const usMeWorkReleaseFixturesRaw = {
     ineligibleCriteria: {},
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   },
   RES006Eligible: {
     stateCode: "US_ME",
@@ -167,6 +172,7 @@ export const usMeWorkReleaseFixturesRaw = {
     ineligibleCriteria: {},
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   },
 
   RES007AlmostEligibleViolationPending: {
@@ -191,6 +197,7 @@ export const usMeWorkReleaseFixturesRaw = {
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   },
   RES008Ineligible30Days: {
     stateCode: "US_ME",
@@ -211,6 +218,7 @@ export const usMeWorkReleaseFixturesRaw = {
     },
     isEligible: false,
     isAlmostEligible: false,
+    metadata: {},
   },
   RES009AlmostEligibleYearsRemaining: {
     stateCode: "US_ME",
@@ -230,6 +238,7 @@ export const usMeWorkReleaseFixturesRaw = {
     },
     isEligible: false,
     isAlmostEligible: true,
+    metadata: {},
   },
   RES999Ineligible: {
     stateCode: "US_ME",
@@ -256,6 +265,7 @@ export const usMeWorkReleaseFixturesRaw = {
     },
     isEligible: false,
     isAlmostEligible: false,
+    metadata: {},
   },
 } satisfies Record<string, UsMeWorkReleaseRecordRaw>;
 

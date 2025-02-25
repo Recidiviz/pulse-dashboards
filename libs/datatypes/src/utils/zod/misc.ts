@@ -15,12 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMeSCCPRecord, usMeSCCPSchema } from "~datatypes";
+import { z } from "zod";
 
-import { TransformFunction } from "../../../subscriptions";
-
-export const transformReferral: TransformFunction<UsMeSCCPRecord["output"]> = (
-  record,
-) => {
-  return usMeSCCPSchema.parse(record);
-};
+export function nullishAsUndefined<T extends z.ZodTypeAny>(schema: T) {
+  return schema.nullish().transform((output) => {
+    return output === null ? undefined : output;
+  });
+}

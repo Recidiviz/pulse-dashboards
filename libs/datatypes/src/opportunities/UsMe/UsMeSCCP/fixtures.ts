@@ -51,6 +51,7 @@ export const usMeSccpFixtures = {
     },
     isEligible: false,
     isAlmostEligible: true,
+    metadata: {},
   }),
   RES002eligibleToApplyBeforeXPortionServed: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -81,6 +82,7 @@ export const usMeSccpFixtures = {
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   }),
   RES003almostEligibleRecentViolation: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -116,6 +118,7 @@ export const usMeSccpFixtures = {
     },
     isEligible: false,
     isAlmostEligible: true,
+    metadata: {},
   }),
   RES004fullyEligibleHalfPortion: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -146,6 +149,7 @@ export const usMeSccpFixtures = {
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   }),
   RES005almostEligibleXPortion: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -175,6 +179,7 @@ export const usMeSccpFixtures = {
     },
     isEligible: false,
     isAlmostEligible: true,
+    metadata: {},
   }),
   RES006fullyEligibleTwoThirdsPortion: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -203,6 +208,7 @@ export const usMeSccpFixtures = {
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   }),
   RES007almostEligiblePendingViolation: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -238,6 +244,7 @@ export const usMeSccpFixtures = {
     },
     isEligible: false,
     isAlmostEligible: true,
+    metadata: {},
   }),
   RES008eligibleToApplyBeforeXMonthsRemaining: makeRecordFixture(
     usMeSCCPSchema,
@@ -270,6 +277,7 @@ export const usMeSccpFixtures = {
       },
       isEligible: true,
       isAlmostEligible: false,
+      metadata: {},
     },
   ),
   RES009Ineligible: makeRecordFixture(usMeSCCPSchema, {
@@ -305,6 +313,7 @@ export const usMeSccpFixtures = {
     },
     isEligible: false,
     isAlmostEligible: false,
+    metadata: {},
   }),
   RES999Ineligible: makeRecordFixture(usMeSCCPSchema, {
     stateCode: "US_ME",
@@ -340,5 +349,6 @@ export const usMeSccpFixtures = {
     },
     isEligible: false,
     isAlmostEligible: false,
+    metadata: {},
   }),
 } satisfies FixtureMapping<UsMeSCCPRecord>;

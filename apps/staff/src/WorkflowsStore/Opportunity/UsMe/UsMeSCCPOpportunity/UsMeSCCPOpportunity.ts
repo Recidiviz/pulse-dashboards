@@ -19,14 +19,13 @@ import { differenceInDays, differenceInMonths } from "date-fns";
 import { DocumentData } from "firebase/firestore";
 import { cloneDeep } from "lodash";
 
-import { UsMeSCCPCriteria, UsMeSCCPRecord } from "~datatypes";
+import { UsMeSCCPCriteria, UsMeSCCPRecord, usMeSCCPSchema } from "~datatypes";
 
 import { pluralizeWord } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { UsMeSCCPForm } from "../../Forms/UsMeSCCPForm";
-import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
-import { transformReferral } from "./transformReferral";
+import { UsMeExternalSnoozeOpportunityBase } from "../UsMeExternalSnoozeOpportunityBase/UsMeExternalSnoozeOpportunityBase";
 
 const ELIGIBLE_CRITERIA_COPY: Record<
   keyof UsMeSCCPCriteria,
@@ -270,7 +269,7 @@ const requirementsForIneligibleCriteria = (
   return requirements;
 };
 
-export class UsMeSCCPOpportunity extends OpportunityBase<
+export class UsMeSCCPOpportunity extends UsMeExternalSnoozeOpportunityBase<
   Resident,
   UsMeSCCPRecord["output"]
 > {
@@ -281,7 +280,12 @@ export class UsMeSCCPOpportunity extends OpportunityBase<
   almostEligibleRecommendedNote = undefined;
 
   constructor(resident: Resident, record: DocumentData) {
-    super(resident, "usMeSCCP", resident.rootStore, transformReferral(record));
+    super(
+      resident,
+      "usMeSCCP",
+      resident.rootStore,
+      usMeSCCPSchema.parse(record),
+    );
 
     this.form = new UsMeSCCPForm(this, resident.rootStore);
   }

@@ -30,6 +30,7 @@ exports[`schema for RES001almostEligibleMonthsRemaining 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -63,6 +64,7 @@ exports[`schema for RES002eligibleToApplyBeforeXPortionServed 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -101,6 +103,7 @@ exports[`schema for RES003almostEligibleRecentViolation 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -134,6 +137,7 @@ exports[`schema for RES004fullyEligibleHalfPortion 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -168,6 +172,7 @@ exports[`schema for RES005almostEligibleXPortion 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -201,6 +206,7 @@ exports[`schema for RES006fullyEligibleTwoThirdsPortion 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -239,6 +245,7 @@ exports[`schema for RES007almostEligiblePendingViolation 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -272,6 +279,7 @@ exports[`schema for RES008eligibleToApplyBeforeXMonthsRemaining 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -306,6 +314,7 @@ exports[`schema for RES009Ineligible 1`] = `
   },
   "isAlmostEligible": false,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -346,6 +355,7 @@ exports[`schema for RES999Ineligible 1`] = `
   },
   "isAlmostEligible": false,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;

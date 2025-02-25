@@ -43,6 +43,7 @@ import {
   SidePanelContents,
   SidePanelHeader,
 } from "../WorkflowsMilestones/styles";
+import { DenialConfirmationModals } from "./DenialConfirmationModals";
 
 const SliderWrapper = styled.div`
   width: 100%;
@@ -149,7 +150,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const sliderDays = (snoozeForDays || defaultManualSnoozeDays) ?? 0;
 
-  const { DenialConfirmationModal } = opportunity;
+  const { denialConfirmationModalName } = opportunity;
 
   const postDenialToast = () => {
     if (submittedOpportunityStatus) {
@@ -186,8 +187,18 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     onSubmit();
   };
 
+  const handleAlternativeSubmission = async () => {
+    // Called when the confirmation modal handled the submission itself
+    setShowConfirmationModal(false);
+    onSubmit();
+  };
+
+  const DenialConfirmationModal =
+    denialConfirmationModalName &&
+    DenialConfirmationModals[denialConfirmationModalName];
+
   const handleSave = () => {
-    if (DenialConfirmationModal) {
+    if (denialConfirmationModalName) {
       setShowConfirmationModal(true);
     } else {
       submitDenial();
@@ -344,6 +355,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           snoozeUntilDate={snoozeUntilDate}
           showModal={showConfirmationModal}
           onCloseFn={() => setShowConfirmationModal(false)}
+          onAlternativeSubmissionFn={handleAlternativeSubmission}
           onSuccessFn={submitDenial}
         />
       ) : null}
