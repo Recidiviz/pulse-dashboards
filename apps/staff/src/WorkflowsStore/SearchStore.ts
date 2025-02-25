@@ -72,8 +72,21 @@ export class SearchStore {
     };
   }
 
+  get searchType(): SearchType {
+    if (this.searchTypeOverride) return this.searchTypeOverride;
+    const systemConfig = this.workflowsStore.activeSystemConfig;
+
+    if (
+      !systemConfig ||
+      systemConfig.search.length > 1 ||
+      this.workflowsStore.activeSystem === "ALL"
+    )
+      return "ALL";
+    return systemConfig.search[0].searchType;
+  }
+
   get availableSearchables(): SearchableGroup[] {
-    switch (this.workflowsStore.searchType) {
+    switch (this.searchType) {
       case "LOCATION": {
         return [
           {
@@ -159,7 +172,7 @@ export class SearchStore {
       case undefined:
         return [];
       default:
-        assertNever(this.workflowsStore.searchType);
+        assertNever(this.searchType);
     }
   }
 

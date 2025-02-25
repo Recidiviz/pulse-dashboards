@@ -287,10 +287,9 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const {
     selectedSearchables,
     supportsMultipleSystems,
-    searchType,
     activeSystem,
     selectedSearchIds,
-    searchStore: { availableSearchables, searchTitleOverride },
+    searchStore: { searchType, availableSearchables, searchTitleOverride },
   } = workflowsStore;
 
   const searchTitle =
