@@ -92,7 +92,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
         {
           recommendationType: "Probation",
           sentenceLengthBucketStart: 0,
-          sentenceLengthBucketEnd: -1,
+          sentenceLengthBucketEnd: 1,
           dataPoints: [
             {
               cohortMonths: 0,
@@ -152,8 +152,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
         },
         {
           recommendationType: "Rider",
-          sentenceLengthBucketStart: 0,
-          sentenceLengthBucketEnd: -1,
+          sentenceLengthBucketStart: 1,
+          sentenceLengthBucketEnd: 2,
           dataPoints: [
             {
               cohortMonths: 0,
@@ -213,8 +213,8 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
         },
         {
           recommendationType: "Term",
-          sentenceLengthBucketStart: 0,
-          sentenceLengthBucketEnd: -1,
+          sentenceLengthBucketStart: 3,
+          sentenceLengthBucketEnd: 5,
           dataPoints: [
             {
               cohortMonths: 0,

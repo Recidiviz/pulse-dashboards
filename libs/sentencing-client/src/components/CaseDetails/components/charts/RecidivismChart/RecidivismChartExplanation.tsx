@@ -17,8 +17,8 @@
 
 import moment from "moment";
 
-import { printFormattedRecordString } from "../../../../../../src/utils/utils";
 import { CaseInsight } from "../../../../../api";
+import { printFormattedRecordString } from "../../../../../utils/utils";
 import ciLegendImg from "../../../../assets/ci-legend.png";
 import { INDIVIDUALS_STRING } from "../common/constants";
 import { getDescriptionGender } from "../common/utils";
@@ -33,15 +33,15 @@ export function OffenseText({ rollupOffenseDescription }: OffenseSpanProps) {
   return <span>{rollupOffenseDescription}</span>;
 }
 
-interface RecidivismPlotExplanationProps {
+interface RecidivismChartExplanationProps {
   insight: CaseInsight;
   isTooltip?: boolean;
 }
 
-export function RecidivismPlotExplanation({
+export function RecidivismChartExplanation({
   insight,
   isTooltip = false,
-}: RecidivismPlotExplanationProps) {
+}: RecidivismChartExplanationProps) {
   const {
     rollupGender,
     rollupOffenseDescription,

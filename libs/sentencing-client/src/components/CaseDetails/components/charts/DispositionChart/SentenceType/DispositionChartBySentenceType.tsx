@@ -21,7 +21,7 @@ import { NONE_OPTION } from "../../../../Form/constants";
 import { SelectedRecommendation } from "../../../../types";
 import {
   RECOMMENDATION_TYPE_TO_BORDER_COLOR,
-  RECOMMENDATION_TYPE_TO_COLOR,
+  SENTENCE_TYPE_TO_COLOR,
 } from "../../common/constants";
 import * as Styled from "../DispositionChart.styles";
 
@@ -54,9 +54,7 @@ export function DispositionChartBySentenceType({
             <Styled.DispositionChartCircleContainer key={recommendationType}>
               <Styled.DispositionChartCircle
                 $height={getChartCircleHeight(percentage, scale)}
-                $backgroundColor={
-                  RECOMMENDATION_TYPE_TO_COLOR[recommendationType]
-                }
+                $backgroundColor={SENTENCE_TYPE_TO_COLOR[recommendationType]}
                 $borderColor={
                   recommendationType === selectedRecommendation
                     ? RECOMMENDATION_TYPE_TO_BORDER_COLOR[recommendationType]

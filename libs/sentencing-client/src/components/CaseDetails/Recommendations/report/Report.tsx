@@ -34,8 +34,8 @@ import {
 import { DispositionChartExplanation } from "../../components/charts/DispositionChart/DispositionChartExplanation";
 import {
   OffenseText,
-  RecidivismPlotExplanation,
-} from "../../components/charts/RecidivismPlot/RecidivismPlotExplanation";
+  RecidivismChartExplanation,
+} from "../../components/charts/RecidivismChart/RecidivismChartExplanation";
 import { recommendationTypeOrder } from "../../constants";
 import { getRecidivismPlot } from "./Plot";
 import * as Styled from "./Report.styles";
@@ -338,7 +338,7 @@ export function Report({
             </Styled.SentencingRecidivismRateWrapper>
             {insight && (
               <Styled.Explanation>
-                <RecidivismPlotExplanation insight={insight} />
+                <RecidivismChartExplanation insight={insight} />
               </Styled.Explanation>
             )}
           </Styled.SentencingRecidivismRateContainer>

@@ -19,15 +19,9 @@ import { useCallback, useMemo, useState } from "react";
 import { PieChart } from "react-minimal-pie-chart";
 
 import { Insight } from "../../../../../../api";
+import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
+import { getSentenceLengthBucketText } from "../../common/utils";
 import * as CommonStyled from "../../components/Styles";
-
-const COLORS: Record<string, string> = {
-  "< 1 Year": "#25636F",
-  "1-2 Years": "#D9A95F",
-  "3-5 Years": "#BA4F4F",
-  "11-20 Years": "#4C6290",
-  "21+ Years": "#90AEB5",
-};
 
 const CHART_HEIGHT = 277;
 
@@ -52,34 +46,32 @@ export function DispositionChartBySentenceLength({
         )
         .map((dataPoint) => {
           const {
+            recommendationType,
             sentenceLengthBucketStart,
             sentenceLengthBucketEnd,
             percentage,
           } = dataPoint;
 
-          let range: string;
-          // Format the string to account for ranges starting with 0 and ending with -1
-          if (sentenceLengthBucketStart === 0) {
-            // If the range ends with 1 year, we want to display it as "< 1 Year"
-            range = `< ${sentenceLengthBucketEnd} Year${sentenceLengthBucketEnd > 1 ? "s" : ""}`;
-          } else if (sentenceLengthBucketEnd === -1) {
-            range = `${sentenceLengthBucketStart}+ Years`;
-          } else {
-            range = `${sentenceLengthBucketStart}-${sentenceLengthBucketEnd} Years`;
-          }
+          const title = getSentenceLengthBucketText(
+            recommendationType,
+            sentenceLengthBucketStart,
+            sentenceLengthBucketEnd,
+          );
 
           return {
-            title: range,
+            title,
             value: percentage,
-            color: COLORS[range],
+            color: SENTENCE_TYPE_TO_COLOR[title],
           };
         }),
     [dataPoints],
   );
 
-  const recidivismChartLegend = formattedDataPoints.map(({ title }) => (
+  const recidivismChartLegend = formattedDataPoints.map(({ title, color }) => (
     <CommonStyled.ChartLegendItem key={title}>
-      <CommonStyled.ChartLegendDot $backgroundColor={COLORS[title]} />
+      <CommonStyled.ChartLegendDot
+        $backgroundColor={color}
+      />
       <div>{title}</div>
     </CommonStyled.ChartLegendItem>
   ));

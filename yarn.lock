@@ -7441,14 +7441,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@observablehq/plot@npm:^0.6.15":
-  version: 0.6.15
-  resolution: "@observablehq/plot@npm:0.6.15"
+"@observablehq/plot@npm:^0.6.17":
+  version: 0.6.17
+  resolution: "@observablehq/plot@npm:0.6.17"
   dependencies:
     d3: "npm:^7.9.0"
     interval-tree-1d: "npm:^1.0.0"
     isoformat: "npm:^0.2.0"
-  checksum: 10c0/ed05ea3708b1b44fbfbc67006158bd1ede4a4caaaaf995d44932d7d0f0ad9fe779f2daaf6d84949218a5aa3dee3791a784b1db1447c214d38dd2d67bc671e26b
+  checksum: 10c0/9ce274b888b3a8d18b539c1162ad9c5f72cff1c61e80b868c7cff92102949a16da674e19d00ffd3b7003bf69816837737b488618d825b80739d01c0f8bfb100b
   languageName: node
   linkType: hard
 
@@ -29516,7 +29516,7 @@ __metadata:
     "@nx/vite": "npm:20.4.4"
     "@nx/web": "npm:20.4.4"
     "@nx/workspace": "npm:20.4.4"
-    "@observablehq/plot": "npm:^0.6.15"
+    "@observablehq/plot": "npm:^0.6.17"
     "@octokit/rest": "npm:^19.0.7"
     "@playwright/test": "npm:^1.36.0"
     "@prisma/client": "npm:^6.0.1"
