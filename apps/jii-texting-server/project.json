@@ -166,20 +166,20 @@
         "staging": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting-server/default:$COMMIT_SHA",
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting-server/default:latest"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server/default:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server/default:latest"
           ]
         },
         "cherry-pick": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting-server/default:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server/default:$COMMIT_SHA"
           ]
         },
         "preview": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting-server/preview:$VERSION"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server/preview:$VERSION"
           ]
         }
       },
