@@ -1,5 +1,5 @@
 data "sops_file" "env" {
-  source_file = "../../env-secrets/env-secrets.enc.yaml"
+  source_file = "../../env-secrets/secrets/jii_texting_server.enc.yaml"
 }
 
 locals {
