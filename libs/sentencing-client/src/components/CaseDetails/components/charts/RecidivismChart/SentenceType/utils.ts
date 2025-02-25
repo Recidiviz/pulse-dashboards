@@ -31,11 +31,11 @@ import {
 } from "@observablehq/plot";
 import { palette } from "@recidiviz/design-system";
 
-import { CaseInsight } from "../../../../../api";
-import { convertDecimalToPercentage } from "../../../../../utils/utils";
-import { SelectedRecommendation } from "../../../types";
-import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
-import { getSubtitleGender, getSubtitleLsirScore } from "../common/utils";
+import { CaseInsight } from "../../../../../../api";
+import { convertDecimalToPercentage } from "../../../../../../utils/utils";
+import { SelectedRecommendation } from "../../../../types";
+import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
+import { getSubtitleGender, getSubtitleLsirScore } from "../../common/utils";
 
 export function getRecidivismPlotSubtitle(insight: CaseInsight) {
   const {
@@ -102,8 +102,8 @@ export function getRecidivismPlot(
     width: plotWidth,
     // The "white" fill is so that non-selected dots have a white fill
     color: {
-      domain: [...Object.keys(RECOMMENDATION_TYPE_TO_COLOR), "white"],
-      range: [...Object.values(RECOMMENDATION_TYPE_TO_COLOR), "#FFFFFF"],
+      domain: [...Object.keys(SENTENCE_TYPE_TO_COLOR), "white"],
+      range: [...Object.values(SENTENCE_TYPE_TO_COLOR), "#FFFFFF"],
     },
     marks: [
       lineY(data, {

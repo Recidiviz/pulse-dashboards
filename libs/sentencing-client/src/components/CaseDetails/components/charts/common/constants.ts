@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const RECOMMENDATION_TYPE_TO_COLOR: { [key: string]: string } = {
+export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
   Probation: "#25636F",
   Rider: "#D9A95F",
   Term: "#BA4F4F",
+  "< 1 Year": "#25636F",
+  "1-2 Years": "#D9A95F",
+  "3-5 Years": "#BA4F4F",
+  "11-20 Years": "#4C6290",
+  "21+ Years": "#90AEB5",
 };
 
 export const RECOMMENDATION_TYPE_TO_BORDER_COLOR: { [key: string]: string } = {

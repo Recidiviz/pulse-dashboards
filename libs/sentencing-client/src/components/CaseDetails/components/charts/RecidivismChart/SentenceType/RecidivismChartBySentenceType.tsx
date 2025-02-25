@@ -17,33 +17,33 @@
 
 import { useMemo } from "react";
 
-import { printFormattedRecordString } from "../../../../../../src/utils/utils";
-import { CaseInsight } from "../../../../../api";
-import { InfoIconWithTooltip } from "../../../../Tooltip/Tooltip";
-import { NONE_OPTION } from "../../../Form/constants";
-import { SelectedRecommendation } from "../../../types";
-import { RECOMMENDATION_TYPE_TO_COLOR } from "../common/constants";
-import NoDataMessage from "../components/NoDataMessage";
-import * as CommonStyled from "../components/Styles";
-import * as Styled from "./RecidivismPlot.styles";
-import { RecidivismPlotExplanation } from "./RecidivismPlotExplanation";
+import { CaseInsight } from "../../../../../../api";
+import { printFormattedRecordString } from "../../../../../../utils/utils";
+import { InfoIconWithTooltip } from "../../../../../Tooltip/Tooltip";
+import { NONE_OPTION } from "../../../../Form/constants";
+import { SelectedRecommendation } from "../../../../types";
+import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
+import NoDataMessage from "../../components/NoDataMessage";
+import * as CommonStyled from "../../components/Styles";
+import * as Styled from "../RecidivismChart.styles";
+import { RecidivismChartExplanation } from "../RecidivismChartExplanation";
 import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
 
 const DEFAULT_PLOT_WIDTH = 704;
 
-interface RecidivismPlotProps {
+interface RecidivismChartBySentenceTypeProps {
   insight?: CaseInsight;
   selectedRecommendation: SelectedRecommendation;
   plotWidth?: number;
   hideInfoTooltip?: boolean;
 }
 
-export function RecidivismPlot({
+export function RecidivismChartBySentenceType({
   insight,
   selectedRecommendation,
   plotWidth = DEFAULT_PLOT_WIDTH,
   hideInfoTooltip,
-}: RecidivismPlotProps) {
+}: RecidivismChartBySentenceTypeProps) {
   const { rollupRecidivismNumRecords, rollupRecidivismSeries } = insight ?? {};
 
   const recidivismPlotSubtitle = insight && getRecidivismPlotSubtitle(insight);
@@ -54,14 +54,11 @@ export function RecidivismPlot({
     () =>
       rollupRecidivismSeries?.map(
         ({ recommendationType }) =>
-          // TODO(https://github.com/Recidiviz/recidiviz-data/issues/35110): Handle cases were recommendationType is not set but sentence range is
           recommendationType &&
           recommendationType !== NONE_OPTION && (
             <CommonStyled.ChartLegendItem key={recommendationType}>
               <CommonStyled.ChartLegendDot
-                $backgroundColor={
-                  RECOMMENDATION_TYPE_TO_COLOR[recommendationType]
-                }
+                $backgroundColor={SENTENCE_TYPE_TO_COLOR[recommendationType]}
               />
               <div>{recommendationType}</div>
             </CommonStyled.ChartLegendItem>
@@ -79,7 +76,7 @@ export function RecidivismPlot({
             headerText="Cumulative Recidivism Rates"
             content={
               <CommonStyled.ChartTooltipContentSection>
-                <RecidivismPlotExplanation insight={insight} isTooltip />
+                <RecidivismChartExplanation insight={insight} isTooltip />
               </CommonStyled.ChartTooltipContentSection>
             }
           />

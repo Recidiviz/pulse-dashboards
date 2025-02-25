@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import _ from "lodash";
 
 import { CaseInsight } from "../../../../../api/APIClient";
@@ -76,4 +77,35 @@ export function getSubtitleLsirScore(
   }
 
   return `LSI-R = ${subString}`;
+}
+
+export function getSentenceLengthBucketText(
+  recommendationType: string | null,
+  sentenceLengthBucketStart: number,
+  sentenceLengthBucketEnd: number,
+) {
+  // If the bucket range is 0 to infinity, just return the recommendation type
+  if (sentenceLengthBucketStart === 0 && sentenceLengthBucketEnd === -1) {
+    if (!recommendationType) {
+      captureException(
+        new Error(
+          "Recommendation type is null and there is no sentence length bucket!",
+        ),
+      );
+    }
+
+    return recommendationType ?? "UNKNOWN";
+  }
+
+  // If the bucket is 0 - x, just make it < x year(s)
+  if (sentenceLengthBucketStart === 0) {
+    return `< ${sentenceLengthBucketEnd} Year${sentenceLengthBucketEnd > 1 ? "s" : ""}`;
+  }
+  // If the bucket is x - infinity, just make it > x year(s)
+  if (sentenceLengthBucketEnd === -1) {
+    return `> ${sentenceLengthBucketStart} Year${sentenceLengthBucketStart > 1 ? "s" : ""}`;
+  }
+
+  // Otherwise, return the range
+  return `${sentenceLengthBucketStart}-${sentenceLengthBucketEnd} Years`;
 }

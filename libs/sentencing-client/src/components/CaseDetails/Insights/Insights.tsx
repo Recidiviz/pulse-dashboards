@@ -21,7 +21,7 @@ import PlusIcon from "../../assets/plus-icon.svg?react";
 import DraggableScrollContainer from "../../DraggableScrollContainer/DraggableScrollContainer";
 import * as Styled from "../CaseDetails.styles";
 import { DispositionChart } from "../components/charts/DispositionChart/DispositionChart";
-import { RecidivismPlot } from "../components/charts/RecidivismPlot/RecidivismPlot";
+import { RecidivismChart } from "../components/charts/RecidivismChart/RecidivismChart";
 import { SelectedRecommendation } from "../types";
 
 export interface InsightsProps {
@@ -69,11 +69,12 @@ export const Insights = ({
       {/* Charts */}
       <DraggableScrollContainer>
         <Styled.Charts>
-          {/* Cumulative Recidivism Rates Chart */}
+          {/* Recidivism Rates Chart */}
           <Styled.Chart $marginRight={16}>
-            <RecidivismPlot
+            <RecidivismChart
               insight={insight}
               selectedRecommendation={selectedRecommendation}
+              recommendationType={recommendationType}
             />
           </Styled.Chart>
 
