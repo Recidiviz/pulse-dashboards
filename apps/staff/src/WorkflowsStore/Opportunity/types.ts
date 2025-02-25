@@ -20,6 +20,7 @@ import { DocumentData } from "firebase/firestore";
 import { OpportunityType } from "~datatypes";
 import { Hydratable } from "~hydration-utils";
 
+import { DenialConfirmationModalName } from "../../core/OpportunityDenial/DenialConfirmationModals";
 import { StatusPalette } from "../../core/utils/workflowsUtils";
 import {
   AutoSnoozeUpdate,
@@ -145,7 +146,7 @@ export interface Opportunity<
   compare: (other: Opportunity) => number;
   showEligibilityStatus: (component: Component) => boolean;
   readonly portionServedRequirement?: string[];
-  readonly DenialConfirmationModal?: React.ComponentType<DenialConfirmationModalProps>;
+  readonly denialConfirmationModalName?: DenialConfirmationModalName;
   isSubmitted: boolean;
   readonly submittedTabTitle: string;
   markSubmittedAndGenerateToast: (
@@ -206,16 +207,6 @@ export type OpportunityTabGroups = PartialRecord<
   OpportunityTabGroup,
   Readonly<OpportunityTab[]>
 >;
-
-export type DenialConfirmationModalProps = {
-  opportunity: Opportunity;
-  reasons: string[];
-  otherReason: string;
-  snoozeUntilDate?: Date;
-  showModal: boolean;
-  onCloseFn: () => any;
-  onSuccessFn: () => any;
-};
 
 export type OpportunityPriority = "NORMAL" | "HIGH";
 

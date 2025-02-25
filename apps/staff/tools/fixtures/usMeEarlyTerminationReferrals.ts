@@ -48,6 +48,14 @@ export const usMeEarlyTerminationReferralsFixture =
       },
       isEligible: true,
       isAlmostEligible: false,
+      metadata: {
+        denial: {
+          updatedBy: "officer.smith@example.com",
+          startDate: "2021-12-01",
+          endDate: "2022-01-01",
+          reasons: ["BENEFIT", "CONDUCT"],
+        },
+      },
     },
     {
       stateCode: "US_ME",
@@ -78,6 +86,7 @@ export const usMeEarlyTerminationReferralsFixture =
       },
       isEligible: false,
       isAlmostEligible: true,
+      metadata: {},
     },
     {
       stateCode: "US_ME",
@@ -109,5 +118,6 @@ export const usMeEarlyTerminationReferralsFixture =
       },
       isEligible: false,
       isAlmostEligible: true,
+      metadata: {},
     },
   ]);

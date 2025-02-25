@@ -17,7 +17,6 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { DocstarsDenialModal } from "../../../../core/OpportunityDenial/UsNd/DocstarsDenialModal";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { EarlyTerminationForm } from "../../Forms/EarlyTerminationForm";
@@ -36,7 +35,7 @@ export class UsNdEarlyTerminationOpportunity extends OpportunityBase<
 > {
   form: EarlyTerminationForm;
 
-  readonly DenialConfirmationModal = DocstarsDenialModal;
+  readonly denialConfirmationModalName = "DocstarsDenialModal";
 
   constructor(client: Client, record: DocumentData) {
     super(

@@ -30,6 +30,7 @@ export * from "./opportunities/OpportunityType";
 
 // UsMe Exports: Includes fixtures and schema related to US-ME opportunities
 // -----------------------------------------------------------------------------
+export { usMeDenialMetadataSchema } from "./opportunities/UsMe/common";
 export * from "./opportunities/UsMe/UsMeAnnualReclassification/fixtures";
 export * from "./opportunities/UsMe/UsMeAnnualReclassification/schema";
 export * from "./opportunities/UsMe/UsMeMediumTrustee/fixtures";

@@ -24,6 +24,7 @@ import {
   eligibleDateReason,
   noABViolation90DaysSchema,
   noDetainersWarrantsSchema,
+  usMeDenialMetadataSchema,
 } from "../common";
 
 function custodyLevelCriterion() {
@@ -61,6 +62,9 @@ export const usMeWorkReleaseSchema = opportunitySchemaBase.extend({
     })
     .partial()
     .passthrough(),
+  metadata: z.object({
+    denial: usMeDenialMetadataSchema,
+  }),
 });
 
 export type UsMeWorkReleaseRecord = z.infer<typeof usMeWorkReleaseSchema>;

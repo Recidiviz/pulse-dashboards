@@ -21,13 +21,13 @@ import { DocumentData } from "firebase/firestore";
 import { FeatureGateError } from "../../../../errors";
 import { Resident } from "../../../Resident";
 import { UsMeFurloughReleaseForm } from "../../Forms/UsMeFurloughReleaseForm";
-import { OpportunityBase } from "../../OpportunityBase";
+import { UsMeExternalSnoozeOpportunityBase } from "../UsMeExternalSnoozeOpportunityBase/UsMeExternalSnoozeOpportunityBase";
 import {
   UsMeFurloughReleaseReferralRecord,
   usMeFurloughReleaseSchema,
 } from "./UsMeFurloughReleaseReferralRecord";
 
-export class UsMeFurloughReleaseOpportunity extends OpportunityBase<
+export class UsMeFurloughReleaseOpportunity extends UsMeExternalSnoozeOpportunityBase<
   Resident,
   UsMeFurloughReleaseReferralRecord
 > {

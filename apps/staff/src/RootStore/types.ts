@@ -93,7 +93,8 @@ export type FeatureVariant =
   | "editCountyFields"
   | "usIdCaseManagerSearch"
   | "opportunityTableView"
-  | "usTnSuspensionOfDirectSupervision";
+  | "usTnSuspensionOfDirectSupervision"
+  | "usMeCaseNoteSnooze";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -148,6 +149,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIdCaseManagerSearch: {},
   opportunityTableView: {},
   usTnSuspensionOfDirectSupervision: {},
+  usMeCaseNoteSnooze: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -191,6 +193,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         // Undefined so that Recidiviz users see both FVs in staging
         usOrEarnedDischargeSentence: undefined,
         personSpecificOppBanners: undefined,
+        usMeCaseNoteSnooze: isDemoMode() ? undefined : {},
       };
 
 export type LanternMethodologyByTenant = {

@@ -27,6 +27,7 @@ import {
   noABViolation90DaysSchema,
   noDetainersWarrantsSchema,
   nullableEligibleDateReasonSchema,
+  usMeDenialMetadataSchema,
 } from "../common";
 
 /**
@@ -81,6 +82,9 @@ export const usMeSCCPSchema = opportunitySchemaBase.extend({
     })
     .partial()
     .passthrough(),
+  metadata: z.object({
+    denial: usMeDenialMetadataSchema,
+  }),
 });
 
 export type UsMeSCCPRecord = ParsedRecord<typeof usMeSCCPSchema>;

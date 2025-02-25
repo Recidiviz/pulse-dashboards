@@ -24,9 +24,9 @@ import {
 
 import { Resident } from "../../../Resident";
 import { UsMeAnnualReclassificationReviewForm } from "../../Forms/UsMeAnnualReclassificationReviewForm";
-import { OpportunityBase } from "../../OpportunityBase";
+import { UsMeExternalSnoozeOpportunityBase } from "../UsMeExternalSnoozeOpportunityBase/UsMeExternalSnoozeOpportunityBase";
 
-export class UsMeAnnualReclassificationOpportunity extends OpportunityBase<
+export class UsMeAnnualReclassificationOpportunity extends UsMeExternalSnoozeOpportunityBase<
   Resident,
   UsMeAnnualReclassificationRecord["output"]
 > {

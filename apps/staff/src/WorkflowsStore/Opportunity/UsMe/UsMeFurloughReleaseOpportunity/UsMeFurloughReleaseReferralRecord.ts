@@ -17,7 +17,11 @@
 
 import { z } from "zod";
 
-import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+import {
+  dateStringSchema,
+  opportunitySchemaBase,
+  usMeDenialMetadataSchema,
+} from "~datatypes";
 
 import { eligibleDateSchema } from "../../schemaHelpers";
 
@@ -46,6 +50,9 @@ export const usMeFurloughReleaseSchema = opportunitySchemaBase.extend({
       usMeServedHalfOfSentence: eligibleDateSchema.optional(),
     })
     .passthrough(),
+  metadata: z.object({
+    denial: usMeDenialMetadataSchema,
+  }),
 });
 
 export type UsMeFurloughReleaseReferralRecord = z.infer<

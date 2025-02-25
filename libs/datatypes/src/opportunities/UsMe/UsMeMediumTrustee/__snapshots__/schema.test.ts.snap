@@ -20,6 +20,7 @@ exports[`schema for fullyEligible 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -44,6 +45,7 @@ exports[`schema for fullyEligibleWithLifeSentence 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;

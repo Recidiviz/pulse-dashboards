@@ -20,6 +20,7 @@ import { z } from "zod";
 import { ParsedRecord } from "../../../utils/types";
 import { dateStringSchema } from "../../../utils/zod/date/dateStringSchema";
 import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
+import { usMeDenialMetadataSchema } from "../common";
 
 const usMeIncarcerationPastRelevantClassificationDate = z.object({
   latestClassificationDate: dateStringSchema.nullable(),
@@ -49,6 +50,9 @@ export const usMeAnnualReclassificationSchema = opportunitySchemaBase.extend({
     workAssignments: z.string().optional(),
     escapeHistory10Years: z.string().optional(),
     sentenceIncludesProbation: z.string().optional(),
+  }),
+  metadata: z.object({
+    denial: usMeDenialMetadataSchema,
   }),
 });
 

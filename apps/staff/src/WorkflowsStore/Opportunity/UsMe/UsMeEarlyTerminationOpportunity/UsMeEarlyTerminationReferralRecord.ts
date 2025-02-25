@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { usMeDenialMetadataSchema } from "~datatypes";
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 import { NullCoalesce } from "../../schemaHelpers";
@@ -71,6 +72,9 @@ const ineligibleCriteria = z
 export const usMeEarlyTerminationSchema = opportunitySchemaBase.extend({
   eligibleCriteria,
   ineligibleCriteria,
+  metadata: z.object({
+    denial: usMeDenialMetadataSchema,
+  }),
 });
 
 export type UsMeEarlyTerminationReferralRecord = z.infer<

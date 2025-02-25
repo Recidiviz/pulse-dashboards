@@ -19,6 +19,7 @@ exports[`transform record with null pending violation criteria 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -46,6 +47,7 @@ exports[`transform record with pending violation ineligibleCriteria 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -70,6 +72,7 @@ exports[`transform record with restitution case 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -95,6 +98,7 @@ exports[`transform record with restitution ineligibleCriteria 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;
@@ -117,6 +121,7 @@ exports[`transform record without restitution case 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ME",
 }
 `;

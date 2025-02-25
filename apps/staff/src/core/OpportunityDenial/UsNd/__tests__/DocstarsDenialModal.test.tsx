@@ -78,6 +78,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -107,6 +108,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -122,6 +124,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -167,6 +170,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -182,6 +186,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -215,6 +220,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -230,6 +236,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -244,6 +251,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -270,6 +278,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={onSuccessFn}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -285,6 +294,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={onSuccessFn}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -299,6 +309,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={onSuccessFn}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -324,6 +335,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -348,6 +360,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -368,6 +381,7 @@ describe("DocstarsDenialModal", () => {
         showModal={false}
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
@@ -381,6 +395,7 @@ describe("DocstarsDenialModal", () => {
         showModal
         onCloseFn={vi.fn()}
         onSuccessFn={vi.fn()}
+        onAlternativeSubmissionFn={vi.fn()}
       />,
     );
 
