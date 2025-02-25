@@ -18,22 +18,37 @@
 import { observable } from "mobx";
 
 import { AnyWorkflowsSystemConfig } from "../../core/models/types";
+import {
+  mockLocations,
+  mockOfficer,
+  mockSupervisionOfficers,
+  mockSupervisor,
+} from "../__fixtures__";
 import { SearchStore } from "../SearchStore";
+import { staffNameComparator } from "../utils";
 import { WorkflowsStore } from "../WorkflowsStore";
 
 let searchStore: SearchStore;
-let workflowsStore: WorkflowsStore;
+let workflowsStore: any;
 
 beforeEach(() => {
   workflowsStore = observable({
+    user: {
+      ...mockOfficer,
+    },
     rootStore: {
       currentTenantId: "US_ND",
     },
+    featureVariants: { workflowsSupervisorSearch: false },
     systemConfigFor: vi.fn(() => ({
       search: [{ searchType: "OFFICER", searchTitle: "officer" }],
     })),
-  }) as unknown as WorkflowsStore;
-  searchStore = new SearchStore(workflowsStore);
+    activeSystem: "SUPERVISION",
+    availableOfficers: [...mockSupervisionOfficers].sort(staffNameComparator),
+    availableLocations: mockLocations,
+    searchType: "OFFICER",
+  });
+  searchStore = new SearchStore(workflowsStore as unknown as WorkflowsStore);
 });
 
 afterEach(() => {
@@ -114,5 +129,167 @@ describe("searchTitleOverride", () => {
     expect(
       searchStore.searchTitleOverride("SUPERVISION", "default", callback),
     ).toEqual("replacement value");
+  });
+});
+
+describe("availableSearchables", () => {
+  test("for search by officer", async () => {
+    const actual = searchStore.availableSearchables[0].searchables.map(
+      (searchable) => {
+        return {
+          searchLabel: searchable.searchLabel,
+          searchId: searchable.searchId,
+        };
+      },
+    );
+
+    expect(searchStore.availableSearchables).toBeArrayOfSize(1);
+    expect(searchStore.availableSearchables[0].groupLabel).toBe("All Officers");
+    expect(actual).toMatchInlineSnapshot(`
+      [
+        {
+          "searchId": "XX_OFFICER2",
+          "searchLabel": "TestOfficer AlphabeticallyFirst",
+        },
+        {
+          "searchId": "XX_OFFICER1",
+          "searchLabel": "TestOfficer AlphabeticallySecond",
+        },
+      ]
+    `);
+  });
+
+  test("for search by officer when user has staff they supervise", async () => {
+    workflowsStore.featureVariants.workflowsSupervisorSearch = {};
+    workflowsStore.hasSupervisedStaffAndRequiredFeatureVariant = true;
+    const officers = [
+      // two officers supervised by mockSupervisor, one supervised by someone else
+      {
+        id: "XX_SUPERVISED_OFFICER2",
+        stateCode: "US_XX",
+        givenNames: "TestSupervisedOfficer2",
+        surname: "AlphabeticallyFirst",
+        supervisorExternalId: mockSupervisor.info.id,
+        pseudonymizedId: "p002",
+        recordType: "supervisionStaff",
+      },
+      {
+        id: "XX_SUPERVISED_OFFICER1",
+        stateCode: "US_XX",
+        givenNames: "TestSupervisedOfficer1",
+        surname: "AlphabeticallySecond",
+        supervisorExternalId: mockSupervisor.info.id,
+        pseudonymizedId: "p001",
+        recordType: "supervisionStaff",
+      },
+      {
+        id: "XX_SUPERVISED_OFFICER3",
+        stateCode: "US_XX",
+        givenNames: "TestSupervisedOfficer3",
+        surname: "SupervisedBySomeoneElse",
+        supervisorExternalId: "XX_SUPERVISOR_OTHER",
+        pseudonymizedId: "p003",
+        recordType: "supervisionStaff",
+      },
+      {
+        ...mockSupervisor.info,
+      },
+    ];
+    workflowsStore.staffSupervisedByCurrentUser = officers.filter(
+      (o) => o.supervisorExternalId === mockSupervisor.info.id,
+    );
+    workflowsStore.availableOfficers = officers;
+
+    expect(searchStore.availableSearchables).toBeArrayOfSize(2);
+    expect(searchStore.availableSearchables[0].groupLabel).toBe("Your Team");
+    expect(searchStore.availableSearchables[1].groupLabel).toBe("All Staff");
+
+    const yourTeamSearchableIds =
+      searchStore.availableSearchables[0].searchables.map(
+        (officer) => officer.searchId,
+      );
+    const allStaffSearchableIds =
+      searchStore.availableSearchables[1].searchables.map(
+        (officer) => officer.searchId,
+      );
+
+    // alphabetically, Officer2 comes before Officer1
+    expect(yourTeamSearchableIds).toEqual([
+      "XX_SUPERVISED_OFFICER2",
+      "XX_SUPERVISED_OFFICER1",
+    ]);
+    expect(allStaffSearchableIds).toEqual([
+      "XX_SUPERVISED_OFFICER3",
+      mockSupervisor.info.id,
+    ]);
+  });
+
+  test("for search by location", async () => {
+    workflowsStore.searchType = "LOCATION";
+    const actual = searchStore.availableSearchables[0].searchables.map(
+      (searchable) => {
+        return {
+          searchLabel: searchable.searchLabel,
+          searchId: searchable.searchId,
+        };
+      },
+    );
+    expect(actual).toMatchInlineSnapshot(`
+      [
+        {
+          "searchId": "FAC1",
+          "searchLabel": "Facility 1",
+        },
+        {
+          "searchId": "FAC2",
+          "searchLabel": "Facility 2",
+        },
+      ]
+    `);
+  });
+
+  test("when there are more than one search types", async () => {
+    workflowsStore.searchType = "ALL";
+    // strip out actual data
+    const actual = searchStore.availableSearchables.map((searchableGroup) => {
+      return {
+        groupLabel: searchableGroup.groupLabel,
+        searchables: searchableGroup.searchables.map((searchable) => {
+          const { searchLabel, searchId } = searchable;
+          return { searchLabel, searchId };
+        }),
+      };
+    });
+
+    expect(actual).toMatchInlineSnapshot(`
+      [
+        {
+          "groupLabel": "All Locations",
+          "searchables": [
+            {
+              "searchId": "FAC1",
+              "searchLabel": "Facility 1",
+            },
+            {
+              "searchId": "FAC2",
+              "searchLabel": "Facility 2",
+            },
+          ],
+        },
+        {
+          "groupLabel": "All Officers",
+          "searchables": [
+            {
+              "searchId": "XX_OFFICER2",
+              "searchLabel": "TestOfficer AlphabeticallyFirst",
+            },
+            {
+              "searchId": "XX_OFFICER1",
+              "searchLabel": "TestOfficer AlphabeticallySecond",
+            },
+          ],
+        },
+      ]
+    `);
   });
 });
