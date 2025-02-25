@@ -24,7 +24,10 @@ import {
   TaskFilterSection,
   WorkflowsTasksConfig,
 } from "../../core/models/types";
-import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
+import {
+  SupervisionTaskCategory,
+  TEMPORAL_TASK_CATEGORIES,
+} from "../../core/WorkflowsTasks/fixtures";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { PartialRecord } from "../../utils/typeUtils";
@@ -51,7 +54,7 @@ function sortPeopleByNextTaskDueDate(
 type SelectedFilters = PartialRecord<TaskFilterField, TaskFilterOption>;
 
 export class CaseloadTasksPresenter {
-  selectedCategory: SupervisionTaskCategory = "DUE_THIS_MONTH";
+  selectedCategory: SupervisionTaskCategory;
   _selectedFilters: SelectedFilters = {};
 
   constructor(
@@ -60,6 +63,11 @@ export class CaseloadTasksPresenter {
     protected analyticsStore: AnalyticsStore,
   ) {
     makeAutoObservable(this);
+    if (tenantStore.currentTenantId === "US_ID") {
+      this.selectedCategory = "ALL_TASKS_OLD";
+    } else {
+      this.selectedCategory = "DUE_THIS_MONTH";
+    }
   }
 
   get taskConfig(): WorkflowsTasksConfig {
@@ -76,20 +84,30 @@ export class CaseloadTasksPresenter {
     return this.tenantStore.taskCategories;
   }
 
+  // Categories used in the original tasks view in ID
   get displayedTaskCategories(): SupervisionTaskCategory[] {
-    return ["DUE_THIS_MONTH", ...this.taskCategories];
+    return ["ALL_TASKS_OLD", ...this.taskCategories];
+  }
+
+  // Tab categories used in the new tasks view
+  get displayedTemporalTaskCategories(): SupervisionTaskCategory[] {
+    return [...TEMPORAL_TASK_CATEGORIES];
   }
 
   get selectedTaskCategory(): SupervisionTaskCategory {
     return this.selectedCategory;
   }
 
+  set selectedTaskCategory(newCategory: SupervisionTaskCategory) {
+    this.selectedCategory = newCategory;
+  }
+
   // This function toggles between the selected category and the default
-  // category "DUE_THIS_MONTH". If the selected category is the current
-  // category, it will switch back to "DUE_THIS_MONTH".
+  // category "ALL_TASKS_OLD". If the selected category is the current
+  // category, it will switch back to "ALL_TASKS_OLD".
   toggleSelectedTaskCategory(newCategory: SupervisionTaskCategory): void {
     this.selectedCategory =
-      this.selectedCategory === newCategory ? "DUE_THIS_MONTH" : newCategory;
+      this.selectedCategory === newCategory ? "ALL_TASKS_OLD" : newCategory;
 
     this.analyticsStore.trackTaskFilterSelected({
       taskCategory: this.selectedCategory,
@@ -119,8 +137,8 @@ export class CaseloadTasksPresenter {
 
   countForCategory(category: SupervisionTaskCategory): number {
     switch (category) {
-      case "DUE_THIS_MONTH":
-        // When viewing DUE_THIS_MONTH, we count people instead of tasks
+      case "ALL_TASKS_OLD":
+        // When viewing ALL_TASKS_OLD, we count people instead of tasks
         return (
           this.clientsWithOverdueTasks.length +
           this.clientsWithUpcomingTasks.length

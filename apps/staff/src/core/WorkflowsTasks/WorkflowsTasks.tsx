@@ -15,117 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  palette,
-  Pill,
-  Sans14,
-  Serif34,
-  spacing,
-} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import React from "react";
 import simplur from "simplur";
-import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";
-import { SupervisionNeedType } from "../../WorkflowsStore";
 import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
-import { AllTasksView } from "./AllTasksView";
-import { TASK_SELECTOR_LABELS } from "./fixtures";
-import { NeedListItem } from "./ListItem";
-import { TaskFilterDropdown } from "./TaskFilterDropdown";
-import { TaskPreviewModal } from "./TaskPreviewModal";
-import { TasksCalendarView } from "./TasksCalendarView";
-
-const TasksHeader = styled(Serif34)`
-  color: ${palette.pine2};
-  margin-bottom: ${rem(spacing.md)};
-`;
-
-const Caption = styled(Sans14)`
-  color: ${palette.slate70};
-`;
-
-const TasksDescription = styled(Caption)`
-  margin-bottom: ${rem(spacing.lg)};
-`;
-
-const TaskCategoryPill = styled(Pill).attrs({
-  color: palette.slate10,
-})`
-  cursor: pointer;
-  color: ${palette.slate85};
-`;
-
-const TaskCategories = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: ${rem(spacing.sm)};
-`;
-
-const TaskAggregateCount = styled.span`
-  color: ${palette.signal.links};
-`;
-
-const Divider = styled.hr`
-  margin: ${rem(spacing.md)} 0;
-  height: 1px;
-  border: none;
-  background-color: ${palette.slate20};
-`;
-
-export const TaskDueDate = styled.div<{
-  overdue: boolean;
-  font: FlattenSimpleInterpolation;
-  marginLeft?: string;
-  isMobile?: boolean;
-}>`
-  ${({ font }) => font}
-  color: ${({ overdue }) => (overdue ? palette.signal.error : palette.slate70)};
-  margin-left: ${({ marginLeft = "auto" }) => marginLeft};
-  ${({ isMobile }) => isMobile && `font-size: ${rem(12)} !important;`}
-`;
-
-type NeedsViewProps = {
-  type: SupervisionNeedType;
-};
-
-// This component is not currently in use since we aren't showing any needs,
-// but I do not want to delete it since we may add new ones
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const AllNeedsView: React.FC<NeedsViewProps> = observer(
-  function AllNeedsViewComponent({ type }) {
-    const {
-      workflowsStore: { workflowsTasksStore: store },
-    } = useRootStore();
-
-    return (
-      <>
-        <Divider />
-        {store.orderedPersonsByNeed[type].map((person) => (
-          <NeedListItem person={person} key={person.recordId} />
-        ))}
-      </>
-    );
-  },
-);
-
-function getViewElement(presenter: CaseloadTasksPresenter) {
-  switch (presenter.selectedTaskCategory) {
-    case "employmentNeed":
-      return null;
-    case "DUE_THIS_MONTH":
-      return <AllTasksView presenter={presenter} />;
-    default:
-      return <TasksCalendarView presenter={presenter} />;
-  }
-}
+import { WorkflowsTasksBody } from "./WorkflowsTasksBody";
+import { WorkflowsTasksBodyV2 } from "./WorkflowsTasksBodyV2";
 
 const WorkflowsTasksWithPresenter = observer(
   function WorkflowsTasksWithPresenter({
@@ -139,6 +41,7 @@ const WorkflowsTasksWithPresenter = observer(
         selectedSearchIds,
         workflowsSearchFieldTitle,
       },
+      currentTenantId,
     } = useRootStore();
 
     const empty = (
@@ -166,37 +69,11 @@ const WorkflowsTasksWithPresenter = observer(
           initial={initial}
           empty={empty}
           hydrated={
-            <>
-              <TasksHeader>Tasks</TasksHeader>
-              <TasksDescription>
-                The clients below might have upcoming requirements this month.
-                <TaskFilterDropdown presenter={presenter} />
-              </TasksDescription>
-
-              <TaskCategories>
-                {presenter.displayedTaskCategories.map((category) => {
-                  return (
-                    <TaskCategoryPill
-                      key={category}
-                      filled={category === presenter.selectedTaskCategory}
-                      onClick={() =>
-                        presenter.toggleSelectedTaskCategory(category)
-                      }
-                    >
-                      <Caption>
-                        {TASK_SELECTOR_LABELS[category]}{" "}
-                        <TaskAggregateCount>
-                          {presenter.countForCategory(category)}
-                        </TaskAggregateCount>
-                      </Caption>
-                    </TaskCategoryPill>
-                  );
-                })}
-              </TaskCategories>
-
-              {getViewElement(presenter)}
-              <TaskPreviewModal />
-            </>
+            currentTenantId === "US_ID" ? (
+              <WorkflowsTasksBody presenter={presenter} />
+            ) : (
+              <WorkflowsTasksBodyV2 presenter={presenter} />
+            )
           }
         />
       </WorkflowsNavLayout>

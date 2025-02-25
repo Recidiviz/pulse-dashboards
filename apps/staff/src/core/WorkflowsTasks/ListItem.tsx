@@ -37,7 +37,7 @@ import {
   SupervisionTask,
   SupervisionTaskType,
 } from "../../WorkflowsStore";
-import { TaskDueDate } from "./WorkflowsTasks";
+import { TaskDueDate } from "./styles";
 import { TaskListTooltip } from "./WorkflowsTasksTooltip";
 
 const TaskClient = styled.div`

@@ -45,12 +45,7 @@ const ManagedComponent = observer(function OpportunityCaseloadView({
 }: {
   presenter: OpportunityCaseloadViewPresenter;
 }) {
-  const {
-    selectedSearchIds,
-    opportunityType,
-    hasOpportunities,
-    ctaTextAndHeaderText,
-  } = presenter;
+  const { selectedSearchIds, hasOpportunities } = presenter;
   const { opportunityTableView } = useFeatureVariants();
 
   const selectedSearchIdsCount = selectedSearchIds?.length || 0;
@@ -65,13 +60,13 @@ const ManagedComponent = observer(function OpportunityCaseloadView({
           <React.Fragment>
             {(selectedSearchIdsCount === 0 || !hasOpportunities) && (
               <WorkflowsResults
-                headerText={ctaTextAndHeaderText.headerText}
-                callToActionText={ctaTextAndHeaderText.ctaText}
+                headerText={presenter.ctaTextAndHeaderText.headerText}
+                callToActionText={presenter.ctaTextAndHeaderText.ctaText}
               />
             )}
             {selectedSearchIdsCount > 0 && hasOpportunities && (
               <HydratedOpportunityPersonList
-                opportunityType={opportunityType}
+                opportunityType={presenter.opportunityType}
               />
             )}
           </React.Fragment>
