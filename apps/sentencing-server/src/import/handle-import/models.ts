@@ -79,8 +79,8 @@ export const caseImportSchema = z.object({
   staff_id: z.string(),
   client_id: z.string(),
   due_date: z.coerce.date().optional(),
-  county: z.string().nullable().optional(),
-  district: z.string().nullable().optional(),
+  county: z.string().optional(),
+  district: z.string().optional(),
   lsir_score: z.coerce.number().optional(),
   lsir_level: z.string().optional(),
   report_type: reportType.optional(),
@@ -95,8 +95,8 @@ export const clientImportSchema = z
     full_name: nameSchema,
     gender: gender,
     county: z.string().optional(),
-    birth_date: z.coerce.date(),
     district: z.string().optional(),
+    birth_date: z.coerce.date(),
   })
   .transform((data) => {
     // Spread the full_name object into the root object

@@ -61,6 +61,5 @@ export type UpdateCaseInput = Pick<
   county?: County["name"] | null;
   offense?: Offense["name"] | null;
   clientGender?: Client["gender"];
-  clientCounty?: Client["county"];
-  clientDistrict?: Client["district"];
+  clientCounty?: County["name"] | null;
 };

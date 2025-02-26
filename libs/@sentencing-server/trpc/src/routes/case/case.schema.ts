@@ -106,7 +106,6 @@ export const updateCaseSchema = z.object({
     district: z.string().optional(),
     clientGender: GenderEnum.optional(),
     clientCounty: z.string().optional(),
-    clientDistrict: z.string().optional(),
     recommendedMinSentenceLength: z.number().int().optional(),
     recommendedMaxSentenceLength: z.number().int().optional(),
     protectiveFactors: z.array(ProtectiveFactorEnum).optional(),

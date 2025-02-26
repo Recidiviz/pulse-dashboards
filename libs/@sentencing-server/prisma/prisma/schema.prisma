@@ -92,10 +92,16 @@ model Client {
   fullName        String
 
   gender    Gender
-  county    String?
   birthDate DateTime
-  district  String?
   cases     Case[]
+
+  // County and District fields must be mutually exclusive (this is currently enforced via SQL)
+  // If a county is ever set, it will always include the district, and must be the single source of truth for both fields
+  // A district is only ever set when it is ingested and does not include a county
+  county     County?   @relation(fields: [countyId], references: [id])
+  countyId   String?
+  district   District? @relation(fields: [districtId], references: [id])
+  districtId String?
 
   // Whether the gender is locked and cannot be changed
   isGenderLocked Boolean @default(false)
@@ -446,6 +452,7 @@ model County {
   district   District? @relation(fields: [districtId], references: [id])
   districtId String?
   Case       Case[]
+  Client     Client[]
 }
 
 model District {
@@ -454,4 +461,5 @@ model District {
   name      String    @unique
   counties  County[]
   Case      Case[]
+  Client    Client[]
 }

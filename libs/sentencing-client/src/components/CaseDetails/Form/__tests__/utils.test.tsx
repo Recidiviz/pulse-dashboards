@@ -21,7 +21,6 @@ import { ReportType } from "../../../constants";
 import {
   ASAM_CARE_RECOMMENDATION_KEY,
   CLIENT_COUNTY_KEY,
-  CLIENT_DISTRICT_KEY,
   CLIENT_GENDER_KEY,
   COUNTY_KEY,
   DISTRICT_KEY,
@@ -147,7 +146,6 @@ describe("transformUpdates", () => {
       [COUNTY_KEY]: "Ada",
       [DISTRICT_KEY]: "DISTRICT 3",
       [CLIENT_COUNTY_KEY]: "Caldwell",
-      [CLIENT_DISTRICT_KEY]: "DISTRICT 2",
     };
 
     const result = transformUpdates(updates);
@@ -164,7 +162,6 @@ describe("transformUpdates", () => {
     );
     expect(result[COUNTY_KEY]).toBe("Ada");
     expect(result[CLIENT_COUNTY_KEY]).toBe("Caldwell");
-    expect(result[CLIENT_DISTRICT_KEY]).toBe("DISTRICT 2");
   });
 
   it("should convert REPORT_TYPE_KEY value correctly", () => {

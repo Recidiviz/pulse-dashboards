@@ -72,6 +72,12 @@ export async function transformAndLoadClientData(
       continue;
     }
 
+    const existingClient = await prismaClient.case.findUnique({
+      where: { externalId: clientData.external_id },
+      include: {
+        county: true,
+      },
+    });
     // Just get the cases which are already in the database (if a case hasn't been uploaded yet, it will be linked to this client during the case upload process)
     const existingCasesForClient = existingCases.filter(({ externalId }) =>
       clientData.case_ids.includes(externalId),
@@ -87,8 +93,6 @@ export async function transformAndLoadClientData(
       pseudonymizedId: clientData.pseudonymized_id,
       stateCode: clientData.state_code,
       fullName: clientData.full_name,
-      county: clientData.county,
-      district: clientData.district,
       birthDate: clientData.birth_date,
       isGenderLocked: hasKnownGender,
       isCountyLocked,
@@ -97,6 +101,70 @@ export async function transformAndLoadClientData(
       },
     };
 
+    const createCountyConnection = clientData.county
+      ? {
+          connectOrCreate: {
+            where: {
+              stateCode: clientData.state_code,
+              name: clientData.county,
+            },
+            create: {
+              stateCode: clientData.state_code,
+              name: clientData.county,
+            },
+          },
+        }
+      : undefined;
+    const createDistrictConnection =
+      !clientData.county && clientData.district
+        ? {
+            connectOrCreate: {
+              where: {
+                stateCode: clientData.state_code,
+                name: clientData.district,
+              },
+              create: {
+                stateCode: clientData.state_code,
+                name: clientData.district,
+              },
+            },
+          }
+        : undefined;
+
+    // If we don't ingest a county, do nothing so we don't override the county the user sets
+    const updateCountyConnection = clientData.county
+      ? {
+          connectOrCreate: {
+            where: {
+              stateCode: clientData.state_code,
+              name: clientData.county,
+            },
+            create: {
+              stateCode: clientData.state_code,
+              name: clientData.county,
+            },
+          },
+        }
+      : undefined;
+    // Disconnect the district if we have a county, since the district connected to the county will be the source of truth
+    // If we don't ingest a district, we can disconnect it too because we'll create a county or the user will set a county at which point,
+    // we'll use the district connected to the county as the source of truth
+    const updateDistrictConnection =
+      existingClient?.county || clientData.county || !clientData.district
+        ? { disconnect: true }
+        : {
+            connectOrCreate: {
+              where: {
+                stateCode: clientData.state_code,
+                name: clientData.district,
+              },
+              create: {
+                stateCode: clientData.state_code,
+                name: clientData.district,
+              },
+            },
+          };
+
     // Load data
     await prismaClient.client.upsert({
       where: {
@@ -104,11 +172,15 @@ export async function transformAndLoadClientData(
       },
       create: {
         ...newClient,
+        county: createCountyConnection,
+        district: createDistrictConnection,
         // When creating, always set the gender
         gender: clientData.gender,
       },
       update: {
         ...newClient,
+        county: updateCountyConnection,
+        district: updateDistrictConnection,
         // When updating, only change the gender if it's defined
         gender: hasKnownGender ? clientData.gender : undefined,
       },

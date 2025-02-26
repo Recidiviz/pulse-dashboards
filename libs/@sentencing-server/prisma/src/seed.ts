@@ -68,8 +68,12 @@ async function main() {
       fullName: faker.person.fullName(),
       stateCode: StateCode.US_ID,
       gender: faker.helpers.enumValue(Gender),
-      county: faker.location.county(),
       birthDate: faker.date.birthdate(),
+      county: {
+        connect: {
+          name: faker.location.county(),
+        },
+      },
     });
   }
 

@@ -20,7 +20,7 @@ import { observer } from "mobx-react-lite";
 import { titleCase } from "../../../../utils/utils";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
-import { CLIENT_COUNTY_KEY, CLIENT_DISTRICT_KEY } from "../../constants";
+import { CLIENT_COUNTY_KEY } from "../../constants";
 import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
 import { FormFieldProps, SelectOption } from "../types";
@@ -49,13 +49,9 @@ function CountyOfSentencingField({ isRequired }: FormFieldProps) {
     if (!option) return;
 
     const county = option.value as string;
-    const district = countiesOptions.find(
-      (cd) => cd.county === county,
-    )?.district;
 
     setSelectValue(option);
     form.updateForm(CLIENT_COUNTY_KEY, county, isRequired);
-    form.updateForm(CLIENT_DISTRICT_KEY, district, isRequired);
   };
 
   return (

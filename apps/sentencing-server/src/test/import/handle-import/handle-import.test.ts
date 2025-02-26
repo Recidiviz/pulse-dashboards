@@ -683,12 +683,17 @@ describe("handle_import", () => {
         "Error importing object US_ID/sentencing_client_record.json from bucket test-bucket: \nError parsing data:\nData: {",
       );
 
-      const dbClients = await testPrismaClient.client.findMany();
+      const dbClients = await testPrismaClient.client.findMany({
+        include: {
+          county: true,
+          district: true,
+        },
+      });
       // The old client should still be included in there with new data
       expect(dbClients).toEqual([
         expect.objectContaining({
           externalId: "client-ext-1",
-          county: "my fake county",
+          county: expect.objectContaining({ name: "my fake county" }),
         }),
       ]);
     });
@@ -736,7 +741,12 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new case was created
-      const dbClients = await testPrismaClient.client.findMany({});
+      const dbClients = await testPrismaClient.client.findMany({
+        include: {
+          county: true,
+          district: true,
+        },
+      });
 
       // There should only be two clients in the database - the new one and the updated existing one
       expect(dbClients).toHaveLength(2);
@@ -747,8 +757,93 @@ describe("handle_import", () => {
         }),
         expect.objectContaining({
           externalId: "client-ext-1",
+          county: expect.objectContaining({ name: "my fake county" }),
+        }),
+      ]);
+    });
+
+    test("should null district if county is provided", async () => {
+      dataProviderSingleton.setData([
+        // existing client
+        {
+          external_id: fakeClient.externalId,
+          pseudonymized_id: fakeClient.pseudonymizedId,
+          case_ids: JSON.stringify([fakeCase.externalId]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: faker.person.firstName(),
+            middle_names: faker.person.firstName(),
+            surname: faker.person.lastName(),
+            name_suffix: faker.person.suffix(),
+          }),
+          gender: faker.helpers.enumValue(Gender),
           county: "my fake county",
           district: "my fake district",
+          birth_date: faker.date.birthdate(),
+        },
+      ]);
+
+      const response = await callHandleImportClientData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      const dbClients = await testPrismaClient.client.findMany({
+        include: {
+          county: true,
+          district: true,
+        },
+      });
+
+      expect(dbClients).toEqual([
+        expect.objectContaining({
+          externalId: fakeClient.externalId,
+          county: expect.objectContaining({ name: "my fake county" }),
+          district: null,
+        }),
+      ]);
+    });
+
+    test("should keep district if county is not provided", async () => {
+      dataProviderSingleton.setData([
+        // existing client
+        {
+          external_id: fakeClient.externalId,
+          pseudonymized_id: fakeClient.pseudonymizedId,
+          case_ids: JSON.stringify([fakeCase.externalId]),
+          state_code: StateCode.US_ID,
+          full_name: JSON.stringify({
+            given_names: faker.person.firstName(),
+            middle_names: faker.person.firstName(),
+            surname: faker.person.lastName(),
+            name_suffix: faker.person.suffix(),
+          }),
+          gender: faker.helpers.enumValue(Gender),
+          district: "my fake district",
+          birth_date: faker.date.birthdate(),
+        },
+      ]);
+
+      await testPrismaClient.client.update({
+        where: { externalId: fakeClient.externalId },
+        data: { countyId: null },
+      });
+
+      const response = await callHandleImportClientData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      const dbClients = await testPrismaClient.client.findMany({
+        include: {
+          county: true,
+          district: true,
+        },
+      });
+
+      expect(dbClients).toEqual([
+        expect.objectContaining({
+          externalId: fakeClient.externalId,
+          county: null,
+          district: expect.objectContaining({ name: "my fake district" }),
         }),
       ]);
     });
