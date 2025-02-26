@@ -32,7 +32,6 @@ import FirestoreStore, {
   CombinedUserRecord,
   MilestonesMessage,
   TextMessageStatus,
-  UserRecord,
   UserUpdateRecord,
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
@@ -405,17 +404,69 @@ describe("hydrationState", () => {
   });
 });
 
-test("user data waits for hydration to be complete", () => {
-  mockAuthedUser();
-  workflowsStore.hydrate();
+describe("user", () => {
+  test("user data waits for hydration to be complete", () => {
+    mockAuthedUser();
+    workflowsStore.hydrate();
 
-  expect(workflowsStore.user).toBeUndefined();
-});
+    expect(workflowsStore.user).toBeUndefined();
+  });
 
-test("user data reflects subscriptions", async () => {
-  await waitForHydration();
+  test("user data reflects subscriptions", async () => {
+    await waitForHydration();
 
-  expect(workflowsStore.user?.info).toEqual(mockOfficer.info);
+    expect(workflowsStore.user?.info).toEqual(mockOfficer.info);
+  });
+
+  test("defaults to self when no selected search and the state is search-by-officer", async () => {
+    await waitForHydration();
+    runInAction(() => {
+      workflowsStore.updateActiveSystem("SUPERVISION");
+    });
+    expect(workflowsStore.user?.updates?.selectedSearchIds).toEqual([
+      mockOfficer.info.id,
+    ]);
+  });
+
+  test("defaults to no selected search if the user has no saved search and the state is not search-by-officer", async () => {
+    runInAction(() => {
+      // arbitrary state code; the only incarceration officers are in US_XX
+      rootStore.tenantStore.currentTenantId = "US_MO";
+      workflowsStore.updateActiveSystem("INCARCERATION");
+    });
+    await waitForHydration();
+    expect(workflowsStore.user?.updates?.selectedSearchIds).toBeUndefined();
+  });
+
+  test("defaults to stored value for states that are not search-by-officer", async () => {
+    runInAction(() => {
+      rootStore.tenantStore.currentTenantId = "US_MO";
+    });
+    const mockStoredLocations = ["LOC1", "LOC3"];
+
+    await waitForHydration({
+      ...mockOfficer,
+      updates: {
+        ...(mockOfficer.updates as UserUpdateRecord),
+        selectedSearchIds: mockStoredLocations,
+      },
+    });
+
+    expect(workflowsStore.user?.updates?.selectedSearchIds).toEqual(
+      mockStoredLocations,
+    );
+  });
+
+  test("default caseload does not override empty stored value", async () => {
+    await waitForHydration({
+      ...mockOfficer,
+      updates: {
+        ...(mockOfficer.updates as UserUpdateRecord),
+        selectedSearchIds: [],
+      },
+    });
+    expect(workflowsStore.user?.updates?.selectedSearchIds).toEqual([]);
+  });
 });
 
 const populateSupervisedStaff = () => {
@@ -454,14 +505,13 @@ const populateSupervisedStaff = () => {
   });
 };
 
-describe("selectedSearchIds", () => {
+describe("trackCaseloadSearch", () => {
   describe("for non-supervisors", () => {
-    test("defaults to self", async () => {
+    test("calls trackCaseloadSearch with isDefault", async () => {
       await waitForHydration();
       runInAction(() => {
         workflowsStore.updateActiveSystem("SUPERVISION");
       });
-      expect(workflowsStore.selectedSearchIds).toEqual([mockOfficer.info.id]);
       expect(rootStore.analyticsStore.trackCaseloadSearch).toHaveBeenCalledWith(
         {
           searchCount: 1,
@@ -469,163 +519,6 @@ describe("selectedSearchIds", () => {
           searchType: "OFFICER",
         },
       );
-    });
-
-    test("defaults to no selected search if the user has no saved search and the state is not search-by-officer", async () => {
-      runInAction(() => {
-        // arbitrary state code; the only incarceration officers are in US_XX
-        rootStore.tenantStore.currentTenantId = "US_MO";
-        workflowsStore.updateActiveSystem("INCARCERATION");
-      });
-      await waitForHydration();
-      expect(workflowsStore.selectedSearchIds).toEqual([]);
-    });
-
-    test("defaults to stored value", async () => {
-      const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
-
-      await waitForHydration({
-        ...mockOfficer,
-        updates: {
-          ...(mockOfficer.updates as UserUpdateRecord),
-          selectedSearchIds: mockStoredOfficers,
-        },
-      });
-
-      expect(workflowsStore.selectedSearchIds).toEqual(mockStoredOfficers);
-    });
-
-    test("defaults to stored value for states that are not search-by-officer", async () => {
-      runInAction(() => {
-        rootStore.tenantStore.currentTenantId = "US_MO";
-      });
-      const mockStoredLocations = ["LOC1", "LOC3"];
-
-      await waitForHydration({
-        ...mockOfficer,
-        updates: {
-          ...(mockOfficer.updates as UserUpdateRecord),
-          selectedSearchIds: mockStoredLocations,
-        },
-      });
-
-      expect(workflowsStore.selectedSearchIds).toEqual(mockStoredLocations);
-    });
-
-    test("default caseload does not override empty stored value", async () => {
-      await waitForHydration({
-        ...mockOfficer,
-        updates: {
-          ...(mockOfficer.updates as UserUpdateRecord),
-          selectedSearchIds: [],
-        },
-      });
-      expect(workflowsStore.selectedSearchIds).toEqual([]);
-    });
-
-    test("caseload syncs with stored value changes", async () => {
-      const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
-
-      await waitForHydration();
-
-      runInAction(() => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        rootStore.workflowsStore.userUpdatesSubscription!.data = {
-          stateCode: mockOfficer.info.stateCode,
-          selectedSearchIds: mockStoredOfficers,
-        };
-      });
-
-      expect(workflowsStore.selectedSearchIds).toEqual(mockStoredOfficers);
-    });
-
-    test("reflects updated list after impersonated user makes new search updates", async () => {
-      // simulate an impersonated user
-      runInAction(() => {
-        rootStore.userStore.user = {
-          ...rootStore.userStore.user,
-          impersonator: true,
-        };
-
-        // impersonated users do not have write access to firebase
-        // so we patch the firebase write to a no-op
-        rootStore.firestoreStore.updateSelectedSearchIds = () => undefined;
-      });
-
-      await waitForHydration({ ...mockOfficer });
-
-      runInAction(() => {
-        workflowsStore.updateSelectedSearch(["OFFICER2"]);
-      });
-
-      expect(workflowsStore.selectedSearchIds).toEqual(["OFFICER2"]);
-    });
-  });
-
-  describe("for supervisors with no caseload", () => {
-    beforeEach(async () => {
-      setUser({ workflowsSupervisorSearch: {} });
-      // without a caseload, this supervisor won't show up as a search id
-      await waitForHydration({
-        ...mockSupervisor,
-        info: { ...(mockSupervisor.info as UserRecord), hasCaseload: false },
-      });
-    });
-
-    test("defaults to no selected search if user has no supervised staff", async () => {
-      // no supervised people are populated
-      expect(workflowsStore.selectedSearchIds).toEqual([]);
-    });
-
-    test("defaults to current user's supervised staff", async () => {
-      populateSupervisedStaff();
-      expect(workflowsStore.selectedSearchIds).toEqual([
-        "XX_SUPERVISED_OFFICER2",
-        "XX_SUPERVISED_OFFICER1",
-      ]);
-    });
-  });
-
-  describe("for supervisors with a caseload", () => {
-    beforeEach(async () => {
-      setUser({ workflowsSupervisorSearch: {} });
-      await waitForHydration({
-        ...mockSupervisor,
-        info: { ...(mockSupervisor.info as UserRecord), hasCaseload: true },
-      });
-      populateSupervisedStaff();
-    });
-
-    test("includes current user", async () => {
-      expect(workflowsStore.selectedSearchIds).toEqual([
-        "XX_SUPERVISOR1",
-        "XX_SUPERVISED_OFFICER2",
-        "XX_SUPERVISED_OFFICER1",
-      ]);
-    });
-
-    test("reflects updated list after user makes new search updates", async () => {
-      runInAction(() => {
-        // user deselects officers 1 and 2
-        workflowsStore.updateSelectedSearch([
-          workflowsStore.selectedSearchIds[0],
-        ]);
-      });
-
-      expect(workflowsStore.selectedSearchIds).toEqual(["XX_SUPERVISOR1"]);
-
-      runInAction(() => {
-        // user reselects officer 1
-        workflowsStore.updateSelectedSearch([
-          ...workflowsStore.selectedSearchIds,
-          "XX_SUPERVISED_OFFICER1",
-        ]);
-      });
-
-      expect(workflowsStore.selectedSearchIds).toEqual([
-        "XX_SUPERVISOR1",
-        "XX_SUPERVISED_OFFICER1",
-      ]);
     });
   });
 });

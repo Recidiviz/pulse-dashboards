@@ -32,14 +32,16 @@ const MOCK_OPPORTUNITY_CONFIG = {
 
 beforeEach(() => {
   workflowsStore = {
-    selectedSearchIds: ["id1", "id2"],
     workflowsSearchFieldTitle: "field title",
     activeSystem: "INCARCERATION",
     rootStore: { currentTenantId: "mockTenant" },
     user: { info: { givenNames: "John Doe" } },
     supportsMultipleSystems: true,
     opportunityTypes: MOCK_OPPORTUNITY_TYPES,
-    searchStore: { searchTitleOverride: () => "case manager" },
+    searchStore: {
+      searchTitleOverride: () => "case manager",
+      selectedSearchIds: ["id1", "id2"],
+    },
   } as unknown as WorkflowsStore;
 
   opportunityConfigurationStore = {
@@ -76,10 +78,6 @@ describe("WorkflowsHomepagePresenter", () => {
     it("returns pluralized caseload and location when activeSystem is ALL", () => {
       workflowsStore.activeSystem = "ALL";
       workflowsStore.searchStore.searchTitleOverride = () => "location";
-      vi.spyOn(workflowsStore, "selectedSearchIds", "get").mockReturnValue([
-        "id1",
-        "id2",
-      ]);
       vi.spyOn(
         workflowsStore.rootStore,
         "currentTenantId",

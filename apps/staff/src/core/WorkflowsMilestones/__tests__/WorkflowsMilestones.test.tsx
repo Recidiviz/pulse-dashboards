@@ -77,7 +77,7 @@ describe("WorkflowsMilestones", () => {
       ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
-        selectedSearchIds: [],
+        searchStore: { selectedSearchIds: [] },
       },
     });
 
@@ -103,7 +103,7 @@ describe("WorkflowsMilestones", () => {
       ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
-        selectedSearchIds: ["OFFICER1"],
+        searchStore: { selectedSearchIds: ["OFFICER1"] },
       },
     });
 
@@ -121,7 +121,7 @@ describe("WorkflowsMilestones", () => {
       ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
-        selectedSearchIds: ["OFFICER1"],
+        searchStore: { selectedSearchIds: ["OFFICER1"] },
         caseloadLoaded: () => true,
         caseloadPersons: [],
       },
@@ -163,7 +163,7 @@ describe("WorkflowsMilestones", () => {
       ...baseRootStoreMock,
       workflowsStore: {
         ...baseWorkflowsStoreMock,
-        selectedSearchIds: [client1.officerId],
+        searchStore: { selectedSearchIds: [client1.officerId] },
         caseloadLoaded: () => true,
         caseloadPersons: clients,
         getMilestonesClientsByStatus: mockGetMilestonesClientsByStatus(clients),

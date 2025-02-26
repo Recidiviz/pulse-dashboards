@@ -46,7 +46,6 @@ const useOpportunityConfigurationsMock = useOpportunityConfigurations as Mock;
 const baseWorkflowsStoreMock = {
   opportunitiesLoaded: () => false,
   potentialOpportunities: () => [],
-  selectedSearchIds: ["123"],
   opportunityTypes: ["earlyTermination"],
   allOpportunitiesByType: { earlyTermination: [] },
   hasOpportunities: () => false,
@@ -62,7 +61,10 @@ const baseWorkflowsStoreMock = {
     opportunities: mockOpportunityConfigs,
     hydrate: vi.fn(),
   },
-  searchStore: { searchTitleOverride: () => "location" },
+  searchStore: {
+    searchTitleOverride: () => "location",
+    selectedSearchIds: ["123"],
+  },
   activePage: { page: "home " },
   systemConfigFor: () => {
     return { search: [] };
@@ -162,7 +164,10 @@ describe("WorkflowsHomepage", () => {
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
-        selectedSearchIds: ["123", "456"],
+        searchStore: {
+          searchTitleOverride: () => "location",
+          selectedSearchIds: ["123", "456"],
+        },
       },
     });
 

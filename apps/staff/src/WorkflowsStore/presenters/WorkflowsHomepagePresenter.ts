@@ -41,8 +41,7 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
   private get searchResultLabel() {
     const {
       activeSystem,
-      selectedSearchIds,
-      searchStore: { searchTypeOverride },
+      searchStore: { selectedSearchIds, searchTypeOverride },
     } = this.workflowsStore;
 
     const searchIdsCount = selectedSearchIds.length;

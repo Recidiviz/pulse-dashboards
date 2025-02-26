@@ -48,7 +48,7 @@ const mockTenantStore = {
 
 const mockWorkflowsStore = {
   caseloadPersons: [],
-  selectedSearchIds: ["1", "2"],
+  searchStore: { selectedSearchIds: ["1", "2"] },
 } as any as WorkflowsStore;
 
 function makePersonWithTasks(

@@ -38,8 +38,8 @@ const WorkflowsTasksWithPresenter = observer(
     const {
       workflowsStore: {
         justiceInvolvedPersonTitle,
-        selectedSearchIds,
         workflowsSearchFieldTitle,
+        searchStore: { selectedSearchIds },
       },
       currentTenantId,
     } = useRootStore();

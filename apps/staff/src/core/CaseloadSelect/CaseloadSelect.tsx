@@ -288,8 +288,13 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     selectedSearchables,
     supportsMultipleSystems,
     activeSystem,
-    selectedSearchIds,
-    searchStore: { searchType, availableSearchables, searchTitleOverride },
+    searchStore: {
+      selectedSearchIds,
+      searchType,
+      availableSearchables,
+      searchTitleOverride,
+      updateSelectedSearch,
+    },
   } = workflowsStore;
 
   const searchTitle =
@@ -443,9 +448,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     isMulti: true,
     isOptionDisabled: () => disableAdditionalSelections,
     onChange: (newValue: any) => {
-      workflowsStore.updateSelectedSearch(
-        newValue.map((item: SelectOption) => item.value),
-      );
+      updateSelectedSearch(newValue.map((item: SelectOption) => item.value));
       analyticsStore.trackCaseloadSearch({
         searchCount: newValue.length,
         isDefault: false,
