@@ -48,11 +48,7 @@ import {
   isHydrationFinished,
 } from "~hydration-utils";
 
-import {
-  AnyWorkflowsSystemConfig,
-  Searchable,
-  SystemId,
-} from "../core/models/types";
+import { AnyWorkflowsSystemConfig, SystemId } from "../core/models/types";
 import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
@@ -463,15 +459,6 @@ export class WorkflowsStore implements Hydratable {
     runInAction(() => {
       this.selectedOpportunityOnFullProfile = opportunity;
     });
-  }
-
-  get selectedSearchables(): Searchable[] {
-    const allSearchables = this.searchStore.availableSearchables.flatMap(
-      (searchableGroup) => searchableGroup.searchables,
-    );
-    return allSearchables.filter((searchable) =>
-      this.searchStore.selectedSearchIds.includes(searchable.searchId),
-    );
   }
 
   /** List of supported systems based on the user's permissions. */
