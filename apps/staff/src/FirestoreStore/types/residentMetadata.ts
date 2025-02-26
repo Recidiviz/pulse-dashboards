@@ -68,6 +68,7 @@ export type UsAzResidentMetadata = {
   projectedTprDate: string;
   acisDtpDate: string | null;
   projectedDtpDate: string | null;
+  csedDate: string | null;
 };
 
 /*****

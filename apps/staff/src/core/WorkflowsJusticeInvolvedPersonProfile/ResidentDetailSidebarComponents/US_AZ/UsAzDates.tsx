@@ -175,6 +175,7 @@ export function metadataToDates(
   return [
     ...(hasAcisDates ? realDates : projectedDates),
     { label: "SED", date: optionalFieldToDate(metadata.sedDate) },
+    { label: "CSED", date: optionalFieldToDate(metadata.csedDate) },
   ];
 }
 

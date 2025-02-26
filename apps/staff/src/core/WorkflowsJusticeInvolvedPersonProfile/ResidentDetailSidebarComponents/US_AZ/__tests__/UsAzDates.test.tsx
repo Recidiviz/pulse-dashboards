@@ -28,6 +28,7 @@ describe("UsAzDates metadataToDates tests", () => {
     projectedTprDate: new Date(2000, 6, 6),
     acisDtpDate: new Date(2000, 7, 7),
     projectedDtpDate: new Date(2000, 8, 8),
+    csedDate: new Date(2000, 9, 9),
   };
 
   const FAKE_METADATA = {
@@ -42,7 +43,7 @@ describe("UsAzDates metadataToDates tests", () => {
 
   const FAKE_TOOLTIP = "TOOLTIP";
 
-  it("shows SED and Projected TPR when there is no real TPR date", () => {
+  it("shows Projected TPR, SED, and CSED when there is no real TPR date", () => {
     const metadataUnderTest = {
       ...FAKE_METADATA,
       acisTprDate: null,
@@ -56,10 +57,11 @@ describe("UsAzDates metadataToDates tests", () => {
         highlight: true,
       },
       { label: "SED", date: FAKE_DATES.sedDate },
+      { label: "CSED", date: FAKE_DATES.csedDate },
     ]);
   });
 
-  it("shows SED and Projected DTP when there is no real DTP date", () => {
+  it("shows Projected DTP, SED, and CSED when there is no real DTP date", () => {
     const metadataUnderTest = {
       ...FAKE_METADATA,
       acisDtpDate: null,
@@ -73,26 +75,29 @@ describe("UsAzDates metadataToDates tests", () => {
         highlight: true,
       },
       { label: "SED", date: FAKE_DATES.sedDate },
+      { label: "CSED", date: FAKE_DATES.csedDate },
     ]);
   });
 
-  it("shows SED, ERCD, CSBD, and TPR when there is a real TPR date", () => {
+  it("shows real TPR and all other dates when there is a real TPR date", () => {
     const dates = metadataToDates(FAKE_METADATA, false, FAKE_TOOLTIP);
     expect(dates).toEqual([
       { label: "TPR", date: FAKE_DATES.acisTprDate },
       { label: "CSBD", date: FAKE_DATES.csbdDate },
       { label: "ERCD", date: FAKE_DATES.ercdDate },
       { label: "SED", date: FAKE_DATES.sedDate },
+      { label: "CSED", date: FAKE_DATES.csedDate },
     ]);
   });
 
-  it("shows SED, ERCD, CSBD, and DTP when there is a real DTP date", () => {
+  it("shows real DTP and all other dates when there is a real DTP date", () => {
     const dates = metadataToDates(FAKE_METADATA, true, FAKE_TOOLTIP);
     expect(dates).toEqual([
       { label: "DTP", date: FAKE_DATES.acisDtpDate },
       { label: "CSBD", date: FAKE_DATES.csbdDate },
       { label: "ERCD", date: FAKE_DATES.ercdDate },
       { label: "SED", date: FAKE_DATES.sedDate },
+      { label: "CSED", date: FAKE_DATES.csedDate },
     ]);
   });
 
@@ -108,6 +113,7 @@ describe("UsAzDates metadataToDates tests", () => {
       { label: "CSBD", date: undefined },
       { label: "ERCD", date: undefined },
       { label: "SED", date: FAKE_DATES.sedDate },
+      { label: "CSED", date: FAKE_DATES.csedDate },
     ]);
   });
 });
