@@ -74,6 +74,16 @@ export const caseRouter = router({
         district:
           caseData.district?.name ?? caseData.county?.district?.name ?? null,
         insight,
+        client: caseData.client
+          ? {
+              ...caseData.client,
+              county: caseData.client?.county?.name ?? null,
+              district:
+                caseData.client?.district?.name ??
+                caseData.client?.county?.district?.name ??
+                null,
+            }
+          : null,
       };
     }),
   updateCase: baseProcedure
@@ -156,12 +166,7 @@ export const caseRouter = router({
 
       try {
         const updateData: Prisma.CaseUpdateInput = {
-          ..._.omit(attributes, [
-            "district",
-            "clientGender",
-            "clientCounty",
-            "clientDistrict",
-          ]),
+          ..._.omit(attributes, ["district", "clientGender", "clientCounty"]),
           county: {
             connect: attributes.county
               ? {
@@ -187,8 +192,16 @@ export const caseRouter = router({
           client: {
             update: {
               gender: attributes.clientGender,
-              county: attributes.clientCounty,
-              district: attributes.clientDistrict,
+              county: {
+                connect: attributes.clientCounty
+                  ? {
+                      name: attributes.clientCounty,
+                    }
+                  : undefined,
+              },
+              district: attributes.clientCounty
+                ? { disconnect: true }
+                : undefined,
             },
           },
         };

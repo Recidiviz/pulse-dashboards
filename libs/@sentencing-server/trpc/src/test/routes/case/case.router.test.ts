@@ -56,12 +56,12 @@ describe("case router", () => {
             ..._.pick(fakeClient, [
               "fullName",
               "gender",
-              "county",
-              "district",
               "birthDate",
               "externalId",
               "isCountyLocked",
             ]),
+            county: "Abbott",
+            district: "District 1",
             isGenderLocked: false,
           },
           isReportTypeLocked: false,
@@ -298,8 +298,7 @@ describe("case router", () => {
           lsirScore: 10,
           reportType: "FullPSI",
           clientGender: "MALE",
-          clientCounty: "TWIN FALLS",
-          clientDistrict: "DISTRICT 4",
+          clientCounty: "Twin Falls",
           county: "Abbott",
           recommendedMinSentenceLength: 10,
           recommendedMaxSentenceLength: 20,
@@ -319,8 +318,11 @@ describe("case router", () => {
           client: {
             select: {
               gender: true,
-              county: true,
-              district: true,
+              county: {
+                select: {
+                  name: true,
+                },
+              },
             },
           },
           offense: {
@@ -360,8 +362,7 @@ describe("case router", () => {
           reportType: ReportType.FullPSI,
           client: expect.objectContaining({
             gender: Gender.MALE,
-            county: "TWIN FALLS",
-            district: "DISTRICT 4",
+            county: expect.objectContaining({ name: "Twin Falls" }),
           }),
           offense: expect.objectContaining({
             name: fakeOffense.name,
@@ -519,7 +520,6 @@ describe("case router", () => {
           id: fakeCase.id,
           attributes: {
             clientCounty: "ADA",
-            clientDistrict: "DISTRICT 1",
           },
         }),
       ).rejects.toThrowError(

@@ -53,8 +53,21 @@ export const PRISMA_CASE_GET_ARGS = {
       select: {
         fullName: true,
         gender: true,
-        county: true,
-        district: true,
+        county: {
+          select: {
+            name: true,
+            district: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        district: {
+          select: {
+            name: true,
+          },
+        },
         birthDate: true,
         externalId: true,
         isGenderLocked: true,

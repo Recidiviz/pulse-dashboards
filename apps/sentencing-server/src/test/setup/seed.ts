@@ -53,6 +53,17 @@ export const fakeOffense = {
   frequency: faker.number.int({ max: 100 }),
 } satisfies OffenseCreateInput;
 
+export const fakeCounty = {
+  id: "county-1",
+  stateCode: StateCode.US_ID,
+  name: "Abbott",
+  district: {
+    id: "district-1",
+    stateCode: StateCode.US_ID,
+    name: "District 1",
+  },
+};
+
 export const fakeStaff = {
   externalId: "staff-ext-1",
   pseudonymizedId: "staff-pid-1",
@@ -68,10 +79,13 @@ export const fakeClient = {
   fullName: faker.person.fullName(),
   stateCode: StateCode.US_ID,
   gender: FAKE_CLIENT_GENDER,
-  county: faker.location.county(),
-  district: faker.location.city(),
   birthDate: faker.date.birthdate(),
   isCountyLocked: false,
+  county: {
+    connect: {
+      name: fakeCounty.name,
+    },
+  },
 } satisfies ClientCreateInput;
 
 export const fakeOpportunity = {
@@ -107,17 +121,6 @@ export const fakeOpportunity2 = {
   genericDescription: null,
   lastUpdatedAt: faker.date.recent(),
 } satisfies OpportunityCreateInput;
-
-export const fakeCounty = {
-  id: "county-1",
-  stateCode: StateCode.US_ID,
-  name: "Abbott",
-  district: {
-    id: "district-1",
-    stateCode: StateCode.US_ID,
-    name: "District 1",
-  },
-};
 
 export const fakeCase = {
   externalId: "case-ext-1",
@@ -262,6 +265,16 @@ export let fakeInsightId: string;
 export async function seed(prismaClient: PrismaClient) {
   // Seed Data
   await prismaClient.offense.create({ data: fakeOffense });
+  await prismaClient.county.create({
+    data: {
+      stateCode: fakeCounty.stateCode,
+      name: fakeCounty.name,
+      district: {
+        create: fakeCounty.district,
+      },
+    },
+  });
+
   await prismaClient.staff.create({ data: fakeStaff });
   await prismaClient.client.create({ data: fakeClient });
   await prismaClient.opportunity.createMany({
@@ -273,16 +286,6 @@ export async function seed(prismaClient: PrismaClient) {
       data: fakeInsightPrismaInput,
     })
   ).id;
-
-  await prismaClient.county.create({
-    data: {
-      stateCode: fakeCounty.stateCode,
-      name: fakeCounty.name,
-      district: {
-        create: fakeCounty.district,
-      },
-    },
-  });
 
   await prismaClient.case.create({
     data: {
