@@ -263,6 +263,16 @@ export class SearchStore {
     this.searchTypeOverride = override;
   }
 
+  /**
+   * Title to display for the search bar in workflows
+   */
+  get workflowsSearchFieldTitle(): string {
+    return this.searchTitleOverride(
+      this.workflowsStore.activeSystem,
+      "officer",
+    );
+  }
+
   searchTitleOverride(
     system: SystemId | undefined,
     defaultTitle: string,

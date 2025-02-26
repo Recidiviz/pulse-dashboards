@@ -50,7 +50,6 @@ const baseWorkflowsStoreMock = {
   allOpportunitiesByType: { earlyTermination: [] },
   hasOpportunities: () => false,
   user: { info: { givenNames: "Recidiviz" } },
-  workflowsSearchFieldTitle: "officer",
   justiceInvolvedPersonTitle: "client",
   rootStore: {
     currentTenantId: "US_XX",
@@ -62,6 +61,7 @@ const baseWorkflowsStoreMock = {
     hydrate: vi.fn(),
   },
   searchStore: {
+    workflowsSearchFieldTitle: "officer",
     searchTitleOverride: () => "location",
     selectedSearchIds: ["123"],
   },
@@ -167,6 +167,7 @@ describe("WorkflowsHomepage", () => {
         searchStore: {
           searchTitleOverride: () => "location",
           selectedSearchIds: ["123", "456"],
+          workflowsSearchFieldTitle: "officer",
         },
       },
     });
@@ -189,7 +190,11 @@ describe("WorkflowsHomepage", () => {
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
-        workflowsSearchFieldTitle: "unicorn",
+        searchStore: {
+          workflowsSearchFieldTitle: "unicorn",
+          selectedSearchIds: ["123"],
+          searchTitleOverride: () => "location",
+        },
       },
     });
 

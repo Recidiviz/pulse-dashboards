@@ -44,9 +44,9 @@ const ManagedComponent = observer(function WorkflowsHomepage({
     userGivenNames,
     hasOpportunities,
     labels: {
+      workflowsSearchFieldTitle,
       justiceInvolvedPersonTitle,
       listOfSelectedOpportunities,
-      workflowsSearchFieldTitle,
       searchResultLabel,
     },
   } = presenter;

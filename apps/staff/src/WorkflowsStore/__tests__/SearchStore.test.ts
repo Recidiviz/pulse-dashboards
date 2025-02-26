@@ -172,6 +172,47 @@ describe("searchTitleOverride", () => {
   });
 });
 
+describe("workflowsSearchFieldTitle", () => {
+  test("without specificied searchTitleOverride", async () => {
+    expect(searchStore.workflowsSearchFieldTitle).toEqual("officer");
+  });
+
+  test("with specificied searchTitleOverride", async () => {
+    workflowsStore.systemConfigFor = () => {
+      return {
+        search: [
+          {
+            searchType: "LOCATION",
+            searchField: ["facilityId"],
+            searchTitle: "location",
+          },
+        ],
+      };
+    };
+    expect(searchStore.workflowsSearchFieldTitle).toEqual("location");
+  });
+
+  test("with multiple search configs per active system defaults to officer", async () => {
+    workflowsStore.systemConfigFor = () => {
+      return {
+        search: [
+          {
+            searchType: "LOCATION",
+            searchField: ["facilityId"],
+            searchTitle: "location",
+          },
+          {
+            searchType: "OFFICER",
+            searchField: ["officerId"],
+            searchTitle: "case manager",
+          },
+        ],
+      };
+    };
+    expect(searchStore.workflowsSearchFieldTitle).toEqual("officer");
+  });
+});
+
 describe("availableSearchables", () => {
   test("for search by officer", async () => {
     const actual = searchStore.availableSearchables[0].searchables.map(

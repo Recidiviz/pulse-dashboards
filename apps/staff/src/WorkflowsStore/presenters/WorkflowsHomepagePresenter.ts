@@ -85,6 +85,8 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
       ...super.labels,
       searchResultLabel: this.searchResultLabel,
       listOfSelectedOpportunities: this.listOfSelectedOpportunitiesText,
+      workflowsSearchFieldTitle:
+        this.workflowsStore.searchStore.workflowsSearchFieldTitle,
     };
   }
 

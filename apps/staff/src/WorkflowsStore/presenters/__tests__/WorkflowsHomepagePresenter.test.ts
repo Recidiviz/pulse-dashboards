@@ -32,13 +32,13 @@ const MOCK_OPPORTUNITY_CONFIG = {
 
 beforeEach(() => {
   workflowsStore = {
-    workflowsSearchFieldTitle: "field title",
     activeSystem: "INCARCERATION",
     rootStore: { currentTenantId: "mockTenant" },
     user: { info: { givenNames: "John Doe" } },
     supportsMultipleSystems: true,
     opportunityTypes: MOCK_OPPORTUNITY_TYPES,
     searchStore: {
+      workflowsSearchFieldTitle: "field title",
       searchTitleOverride: () => "case manager",
       selectedSearchIds: ["id1", "id2"],
     },
@@ -64,7 +64,8 @@ describe("WorkflowsHomepagePresenter", () => {
 
     expect(labels).toMatchObject({
       justiceInvolvedPersonTitle: workflowsStore.justiceInvolvedPersonTitle,
-      workflowsSearchFieldTitle: workflowsStore.workflowsSearchFieldTitle,
+      workflowsSearchFieldTitle:
+        workflowsStore.searchStore.workflowsSearchFieldTitle,
       searchResultLabel: expect.any(String),
       listOfSelectedOpportunities: "Opportunity Type 1 and Opportunity Type 2",
     });

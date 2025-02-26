@@ -59,9 +59,12 @@ export const AllCaseloads = observer(function AllCaseloads() {
   const {
     workflowsStore: {
       selectedSearchables,
-      workflowsSearchFieldTitle,
       justiceInvolvedPersonTitle,
-      searchStore: { caseloadPersonsGrouped, caseloadPersons },
+      searchStore: {
+        workflowsSearchFieldTitle,
+        caseloadPersonsGrouped,
+        caseloadPersons,
+      },
     },
   } = useRootStore();
 

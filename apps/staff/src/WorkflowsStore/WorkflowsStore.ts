@@ -809,14 +809,6 @@ export class WorkflowsStore implements Hydratable {
     this.formDownloadingFlag = value;
   }
 
-  // TODO: Make into a label
-  /**
-   * Title to display for the search bar in workflows
-   */
-  get workflowsSearchFieldTitle(): string {
-    return this.searchStore.searchTitleOverride(this.activeSystem, "officer");
-  }
-
   get supportsMultipleSystems(): boolean {
     return (
       (this.workflowsSupportedSystems &&
