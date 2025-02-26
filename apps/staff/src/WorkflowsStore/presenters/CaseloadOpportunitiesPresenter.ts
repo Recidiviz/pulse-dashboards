@@ -78,7 +78,8 @@ export class CaseloadOpportunitiesPresenter implements Hydratable {
     return {
       justiceInvolvedPersonTitle:
         this.workflowsStore.justiceInvolvedPersonTitle,
-      workflowsSearchFieldTitle: this.workflowsStore.workflowsSearchFieldTitle,
+      workflowsSearchFieldTitle:
+        this.workflowsStore.searchStore.workflowsSearchFieldTitle,
     };
   }
 
