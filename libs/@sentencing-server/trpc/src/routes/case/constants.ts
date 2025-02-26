@@ -22,6 +22,8 @@ export const PRISMA_CASE_GET_ARGS = {
     staffId: true,
     clientId: true,
     offenseId: true,
+    countyId: true,
+    districtId: true,
   },
   include: {
     recommendedOpportunities: {
@@ -36,6 +38,17 @@ export const PRISMA_CASE_GET_ARGS = {
         name: true,
       },
     },
+    county: {
+      select: {
+        name: true,
+        district: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    },
+    district: { select: { name: true } },
     client: {
       select: {
         fullName: true,

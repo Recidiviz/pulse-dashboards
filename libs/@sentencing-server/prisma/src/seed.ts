@@ -97,7 +97,11 @@ async function main() {
         },
         stateCode: StateCode.US_ID,
         dueDate: faker.date.future(),
-        county: faker.location.county(),
+        county: {
+          connect: {
+            name: faker.location.county(),
+          },
+        },
         lsirScore: faker.number.int(100),
         lsirLevel: faker.number.int().toString(),
         reportType: faker.helpers.enumValue(ReportType),

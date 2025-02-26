@@ -520,6 +520,86 @@ describe("handle_import", () => {
         }),
       ]);
     });
+
+    test("should null district if county is provided", async () => {
+      dataProviderSingleton.setData([
+        // Existing case
+        {
+          external_id: fakeCase.externalId,
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          county: fakeCounty.name,
+          district: faker.location.city(),
+          lsir_score: (1000).toString(),
+          lsir_level: faker.number.int().toString(),
+          report_type: "PSI Assigned Full",
+        },
+      ]);
+
+      const response = await callHandleImportCaseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbCases = await testPrismaClient.case.findMany({
+        include: {
+          county: true,
+          district: true,
+        },
+      });
+
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+          county: expect.objectContaining({ name: fakeCounty.name }),
+          district: null,
+        }),
+      ]);
+    });
+
+    test("should keep district if county is not provided", async () => {
+      dataProviderSingleton.setData([
+        // Existing case
+        {
+          external_id: fakeCase.externalId,
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          district: fakeCounty.district.name,
+          lsir_score: (1000).toString(),
+          lsir_level: faker.number.int().toString(),
+          report_type: "PSI Assigned Full",
+        },
+      ]);
+
+      await testPrismaClient.case.update({
+        where: { externalId: fakeCase.externalId },
+        data: { countyId: null },
+      });
+
+      const response = await callHandleImportCaseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbCases = await testPrismaClient.case.findMany({
+        include: {
+          county: true,
+          district: true,
+        },
+      });
+
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+          county: null,
+          district: expect.objectContaining({ name: fakeCounty.district.name }),
+        }),
+      ]);
+    });
   });
 
   describe("import client data", () => {

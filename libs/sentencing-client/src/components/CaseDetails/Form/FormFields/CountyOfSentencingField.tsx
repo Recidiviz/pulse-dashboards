@@ -21,7 +21,7 @@ import { useEffect } from "react";
 import { titleCase } from "../../../../utils/utils";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
-import { COUNTY_KEY, DISTRICT_KEY } from "../../constants";
+import { COUNTY_KEY } from "../../constants";
 import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
 import { FormFieldProps, SelectOption } from "../types";
@@ -47,13 +47,9 @@ function CountyOfSentencingField({ isRequired }: FormFieldProps) {
     if (!option) return;
 
     const county = option.value as string;
-    const district = countiesOptions.find(
-      (cd) => cd.county === county,
-    )?.district;
 
     setSelectValue(option);
     form.updateForm(COUNTY_KEY, county, isRequired);
-    form.updateForm(DISTRICT_KEY, district, isRequired);
   };
 
   /** Validate previously saved County */

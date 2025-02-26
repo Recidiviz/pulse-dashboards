@@ -108,12 +108,21 @@ export const fakeOpportunity2 = {
   lastUpdatedAt: faker.date.recent(),
 } satisfies OpportunityCreateInput;
 
+export const fakeCounty = {
+  stateCode: StateCode.US_ID,
+  name: "Abbott",
+  district: {
+    stateCode: StateCode.US_ID,
+    name: "District 1",
+  },
+};
+
 export const fakeCase = {
   externalId: "case-ext-1",
   id: "case-1",
   stateCode: StateCode.US_ID,
   dueDate: faker.date.future(),
-  county: faker.location.county(),
+  county: fakeCounty.name,
   isCountyLocked: false,
   lsirScore: FAKE_CASE_LSIR_SCORE,
   lsirLevel: faker.number.int().toString(),
@@ -173,6 +182,11 @@ export const fakeCasePrismaInput = {
   offense: {
     connect: {
       name: fakeOffense.name,
+    },
+  },
+  county: {
+    connect: {
+      name: fakeCounty.name,
     },
   },
 } satisfies CaseCreateInput;
@@ -250,6 +264,15 @@ export async function seed(prismaClient: PrismaClient) {
   await prismaClient.client.create({ data: fakeClient });
   await prismaClient.opportunity.createMany({
     data: [fakeOpportunity, fakeOpportunity2],
+  });
+  await prismaClient.county.create({
+    data: {
+      stateCode: fakeCounty.stateCode,
+      name: fakeCounty.name,
+      district: {
+        create: fakeCounty.district,
+      },
+    },
   });
   await prismaClient.case.create({
     data: {

@@ -108,12 +108,23 @@ export const fakeOpportunity2 = {
   lastUpdatedAt: faker.date.recent(),
 } satisfies OpportunityCreateInput;
 
+export const fakeCounty = {
+  id: "county-1",
+  stateCode: StateCode.US_ID,
+  name: "Abbott",
+  district: {
+    id: "district-1",
+    stateCode: StateCode.US_ID,
+    name: "District 1",
+  },
+};
+
 export const fakeCase = {
   externalId: "case-ext-1",
   id: "case-1",
   stateCode: StateCode.US_ID,
   dueDate: faker.date.future(),
-  county: faker.location.county(),
+  county: fakeCounty.name,
   lsirScore: FAKE_CASE_LSIR_SCORE,
   lsirLevel: faker.number.int().toString(),
   reportType: ReportType.FullPSI,
@@ -175,6 +186,11 @@ export const fakeCasePrismaInput = {
       name: fakeOffense.name,
     },
   },
+  county: {
+    connect: {
+      name: fakeCounty.name,
+    },
+  },
 } satisfies CaseCreateInput;
 
 export const fakeRecidivismSeries = createFakeRecidivismSeries();
@@ -207,15 +223,6 @@ export const fakeInsight = {
   rollupRecidivismSeries: fakeRecidivismSeries,
   dispositionNumRecords: faker.number.int({ max: 100 }),
   dispositionData: fakeDispositions,
-};
-
-export const fakeCounty = {
-  stateCode: StateCode.US_ID,
-  name: "Abbott",
-  district: {
-    stateCode: StateCode.US_ID,
-    name: "District 1",
-  },
 };
 
 export const fakeInsightPrismaInput = {
@@ -260,21 +267,7 @@ export async function seed(prismaClient: PrismaClient) {
   await prismaClient.opportunity.createMany({
     data: [fakeOpportunity, fakeOpportunity2],
   });
-  await prismaClient.case.create({
-    data: {
-      ...fakeCasePrismaInput,
-      client: {
-        connect: {
-          externalId: fakeClient.externalId,
-        },
-      },
-      staff: {
-        connect: {
-          externalId: fakeStaff.externalId,
-        },
-      },
-    },
-  });
+
   fakeInsightId = (
     await prismaClient.insight.create({
       data: fakeInsightPrismaInput,
@@ -287,6 +280,22 @@ export async function seed(prismaClient: PrismaClient) {
       name: fakeCounty.name,
       district: {
         create: fakeCounty.district,
+      },
+    },
+  });
+
+  await prismaClient.case.create({
+    data: {
+      ...fakeCasePrismaInput,
+      client: {
+        connect: {
+          externalId: fakeClient.externalId,
+        },
+      },
+      staff: {
+        connect: {
+          externalId: fakeStaff.externalId,
+        },
       },
     },
   });

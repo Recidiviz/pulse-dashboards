@@ -28,7 +28,7 @@ describe("county router", () => {
       await testPrismaClient.district.create({
         data: {
           id: "district-id-1",
-          name: "District 1",
+          name: "District 12",
           stateCode: "US_ID",
         },
       });
@@ -48,7 +48,7 @@ describe("county router", () => {
         expect.arrayContaining([
           expect.objectContaining({
             county: "County 1",
-            district: "District 1",
+            district: "District 12",
           }),
         ]),
       );
