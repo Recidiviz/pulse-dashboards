@@ -58,9 +58,9 @@ function Caseload({ persons }: { persons: JusticeInvolvedPerson[] }) {
 export const AllCaseloads = observer(function AllCaseloads() {
   const {
     workflowsStore: {
-      selectedSearchables,
       justiceInvolvedPersonTitle,
       searchStore: {
+        selectedSearchables,
         workflowsSearchFieldTitle,
         caseloadPersonsGrouped,
         caseloadPersons,

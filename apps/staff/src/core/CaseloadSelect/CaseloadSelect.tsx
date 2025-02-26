@@ -285,10 +285,10 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const { workflowsStore, analyticsStore } = useRootStore();
   const { isMobile } = useIsMobile(true);
   const {
-    selectedSearchables,
     supportsMultipleSystems,
     activeSystem,
     searchStore: {
+      selectedSearchables,
       selectedSearchIds,
       searchType,
       availableSearchables,

@@ -18,7 +18,12 @@
 import assertNever from "assert-never";
 import { makeAutoObservable, reaction } from "mobx";
 
-import { SearchableGroup, SearchType, SystemId } from "../core/models/types";
+import {
+  Searchable,
+  SearchableGroup,
+  SearchType,
+  SystemId,
+} from "../core/models/types";
 import { CaseloadSearchable } from "./CaseloadSearchable";
 import { Location } from "./Location";
 import { Officer } from "./Officer";
@@ -159,6 +164,15 @@ export class SearchStore {
     }
 
     this.selectedSearchIdsForImpersonation = searchIds;
+  }
+
+  get selectedSearchables(): Searchable[] {
+    const allSearchables = this.availableSearchables.flatMap(
+      (searchableGroup) => searchableGroup.searchables,
+    );
+    return allSearchables.filter((searchable) =>
+      this.selectedSearchIds.includes(searchable.searchId),
+    );
   }
 
   get availableSearchables(): SearchableGroup[] {
