@@ -137,18 +137,6 @@ export class WorkflowsStore implements Hydratable {
 
   activePage: WorkflowsRouteParams = {};
 
-  /**
-   * Local state to keep track of the selected search ids for a user with supervised staff,
-   * after the default behavior or auto-setting their search ids (to their own + supervised staff) upon login
-   */
-  selectedSearchIdsForSupervisorsWithStaff: string[] | undefined = undefined;
-
-  /**
-   * Local state to keep track of the selected search ids during impersonation mode, since
-   * in impersonation mode the user cannot write to firebase
-   */
-  selectedSearchIdsForImpersonation: string[] | undefined = undefined;
-
   // TODO(#7061): access tenant config values from the tenant store instead of the global variable
   constructor({ rootStore }: ConstructorOpts) {
     this.rootStore = rootStore;
@@ -204,20 +192,12 @@ export class WorkflowsStore implements Hydratable {
       },
     );
 
-    // clear saved caseload and search when changing tenants, to prevent cross-contamination
+    // clear saved caseload when changing tenants, to prevent cross-contamination
     reaction(
       () => [this.rootStore.currentTenantId],
       () => {
-        this.updateSelectedSearch([]);
         this.justiceInvolvedPersons = {};
       },
-    );
-
-    // mirror impersonation selected search with firestore
-    reaction(
-      () => this.user?.updates?.selectedSearchIds,
-      (searchIds?) =>
-        (this.selectedSearchIdsForImpersonation = searchIds ?? []),
     );
 
     // log default caseload search injection, when applicable
@@ -226,9 +206,9 @@ export class WorkflowsStore implements Hydratable {
       () => {
         const { isDefaultOfficerSelection } = this.user?.metadata ?? {};
 
-        if (this.selectedSearchIds && isDefaultOfficerSelection) {
+        if (this.searchStore.selectedSearchIds && isDefaultOfficerSelection) {
           this.rootStore.analyticsStore.trackCaseloadSearch({
-            searchCount: this.selectedSearchIds.length,
+            searchCount: this.searchStore.selectedSearchIds.length,
             isDefault: true,
             searchType: "OFFICER",
           });
@@ -362,34 +342,6 @@ export class WorkflowsStore implements Hydratable {
     }
   }
 
-  get selectedSearchIds(): string[] {
-    if (!this.user) return [];
-
-    const { info } = this.user;
-
-    // return the current user's caseload and staff if current user
-    // has at least one staff member they supervise upon login, otherwise
-    // use the list updated in `selectedSearchIdsForSupervisorsWithStaff`
-    if (this.searchStore.hasSupervisedStaffAndRequiredFeatureVariant) {
-      if (this.selectedSearchIdsForSupervisorsWithStaff) {
-        return this.selectedSearchIdsForSupervisorsWithStaff;
-      }
-      const supervisedStaffIds = this.staffSupervisedByCurrentUser.map(
-        (staff) => staff.id,
-      );
-      const currentUserId = info.hasCaseload ? [info.id] : [];
-      const staffAndCurrentUserIds = [...currentUserId, ...supervisedStaffIds];
-      return staffAndCurrentUserIds;
-    }
-
-    if (this.rootStore.isImpersonating) {
-      return this.selectedSearchIdsForImpersonation ?? [];
-    }
-
-    const previousSearchIds = this.user.updates?.selectedSearchIds;
-    return previousSearchIds ?? [];
-  }
-
   private get dismissedOpportunityNotificationIds() {
     return this.user?.updates?.dismissedOpportunityNotificationIds ?? [];
   }
@@ -463,23 +415,6 @@ export class WorkflowsStore implements Hydratable {
     });
   }
 
-  updateSelectedSearch(searchIds: string[]): void {
-    if (!this.user || !this.rootStore.currentTenantId) return;
-
-    this.rootStore.firestoreStore.updateSelectedSearchIds(
-      this.user.info.email,
-      this.rootStore.currentTenantId,
-      searchIds,
-    );
-
-    // update the `selectedSearchIdsForSupervisorsWithStaff` for users with staff they supervise
-    if (this.searchStore.hasSupervisedStaffAndRequiredFeatureVariant) {
-      this.selectedSearchIdsForSupervisorsWithStaff = searchIds;
-    }
-
-    this.selectedSearchIdsForImpersonation = searchIds;
-  }
-
   dismissOpportunityNotification(notificationId: string): void {
     if (!this.user) return;
 
@@ -535,7 +470,7 @@ export class WorkflowsStore implements Hydratable {
       (searchableGroup) => searchableGroup.searchables,
     );
     return allSearchables.filter((searchable) =>
-      this.selectedSearchIds.includes(searchable.searchId),
+      this.searchStore.selectedSearchIds.includes(searchable.searchId),
     );
   }
 
@@ -697,7 +632,7 @@ export class WorkflowsStore implements Hydratable {
     return (
       this.caseloadPersons.filter(
         (person) => isHydrationFinished(person.opportunityManager) === false,
-      ).length === 0 && this.selectedSearchIds.length > 0
+      ).length === 0 && this.searchStore.selectedSearchIds.length > 0
     );
   }
 

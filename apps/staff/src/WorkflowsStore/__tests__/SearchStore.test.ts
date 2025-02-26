@@ -17,6 +17,7 @@
 
 import { observable } from "mobx";
 
+import { UserRecord, UserUpdateRecord } from "../../FirestoreStore";
 import {
   mockLocations,
   mockOfficer,
@@ -30,13 +31,57 @@ import { WorkflowsStore } from "../WorkflowsStore";
 let searchStore: SearchStore;
 let workflowsStore: any;
 
+const officers = [
+  // two officers supervised by mockSupervisor, one supervised by someone else, plus the mockSupervisor
+  {
+    id: "XX_SUPERVISED_OFFICER2",
+    stateCode: "US_XX",
+    givenNames: "TestSupervisedOfficer2",
+    surname: "AlphabeticallyFirst",
+    supervisorExternalId: mockSupervisor.info.id,
+    pseudonymizedId: "p002",
+    recordType: "supervisionStaff",
+  },
+  {
+    id: "XX_SUPERVISED_OFFICER1",
+    stateCode: "US_XX",
+    givenNames: "TestSupervisedOfficer1",
+    surname: "AlphabeticallySecond",
+    supervisorExternalId: mockSupervisor.info.id,
+    pseudonymizedId: "p001",
+    recordType: "supervisionStaff",
+  },
+  {
+    id: "XX_SUPERVISED_OFFICER3",
+    stateCode: "US_XX",
+    givenNames: "TestSupervisedOfficer3",
+    surname: "SupervisedBySomeoneElse",
+    supervisorExternalId: "XX_SUPERVISOR_OTHER",
+    pseudonymizedId: "p003",
+    recordType: "supervisionStaff",
+  },
+  {
+    ...mockSupervisor.info,
+  },
+];
+
+const supervisedStaff = officers.filter(
+  (o) => o.supervisorExternalId === mockSupervisor.info.id,
+);
+
+const mockUpdatedSelectedSearchIds = vi.fn();
+
 beforeEach(() => {
   workflowsStore = observable({
     user: {
       ...mockOfficer,
+      updates: {},
     },
     rootStore: {
       currentTenantId: "US_ND",
+      firestoreStore: {
+        updateSelectedSearchIds: mockUpdatedSelectedSearchIds,
+      },
     },
     featureVariants: { workflowsSupervisorSearch: false },
     systemConfigFor: vi.fn(() => ({
@@ -157,39 +202,7 @@ describe("availableSearchables", () => {
   test("for search by officer when user has staff they supervise", async () => {
     workflowsStore.featureVariants.workflowsSupervisorSearch = {};
     workflowsStore.hasSupervisedStaffAndRequiredFeatureVariant = true;
-    const officers = [
-      // two officers supervised by mockSupervisor, one supervised by someone else
-      {
-        id: "XX_SUPERVISED_OFFICER2",
-        stateCode: "US_XX",
-        givenNames: "TestSupervisedOfficer2",
-        surname: "AlphabeticallyFirst",
-        supervisorExternalId: mockSupervisor.info.id,
-        pseudonymizedId: "p002",
-        recordType: "supervisionStaff",
-      },
-      {
-        id: "XX_SUPERVISED_OFFICER1",
-        stateCode: "US_XX",
-        givenNames: "TestSupervisedOfficer1",
-        surname: "AlphabeticallySecond",
-        supervisorExternalId: mockSupervisor.info.id,
-        pseudonymizedId: "p001",
-        recordType: "supervisionStaff",
-      },
-      {
-        id: "XX_SUPERVISED_OFFICER3",
-        stateCode: "US_XX",
-        givenNames: "TestSupervisedOfficer3",
-        surname: "SupervisedBySomeoneElse",
-        supervisorExternalId: "XX_SUPERVISOR_OTHER",
-        pseudonymizedId: "p003",
-        recordType: "supervisionStaff",
-      },
-      {
-        ...mockSupervisor.info,
-      },
-    ];
+
     workflowsStore.staffSupervisedByCurrentUser = officers.filter(
       (o) => o.supervisorExternalId === mockSupervisor.info.id,
     );
@@ -338,5 +351,142 @@ describe("searchType", () => {
     };
     searchStore.searchTypeOverride = "LOCATION";
     expect(searchStore.searchType).toEqual("LOCATION");
+  });
+});
+
+describe("selectedSearchIds", () => {
+  describe("for non-supervisors", () => {
+    test("defaults to stored value", async () => {
+      const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
+
+      workflowsStore.user = {
+        ...mockOfficer,
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: mockStoredOfficers,
+        },
+      };
+
+      expect(searchStore.selectedSearchIds).toEqual(mockStoredOfficers);
+    });
+
+    test("caseload syncs with stored value changes", async () => {
+      const mockStoredOfficers = ["OFFICER1", "OFFICER3"];
+
+      workflowsStore.user.updates = {
+        stateCode: mockOfficer.info.stateCode,
+        selectedSearchIds: mockStoredOfficers,
+      };
+
+      expect(searchStore.selectedSearchIds).toEqual(mockStoredOfficers);
+    });
+
+    test("uses selectedSearchIdsForImpersonation for impersonated user", async () => {
+      workflowsStore.user = {
+        updates: {
+          stateCode: mockOfficer.info.stateCode,
+          selectedSearchIds: ["OTHER_OFFICER"],
+        },
+      };
+      workflowsStore.rootStore.isImpersonating = true;
+      searchStore.selectedSearchIdsForImpersonation = ["OFFICER2"];
+
+      expect(searchStore.selectedSearchIds).toEqual(["OFFICER2"]);
+    });
+  });
+
+  describe("for supervisors with no caseload", () => {
+    beforeEach(async () => {
+      workflowsStore.featureVariants = { workflowsSupervisorSearch: {} };
+      workflowsStore.user = {
+        ...mockSupervisor,
+        info: { ...(mockSupervisor.info as UserRecord), hasCaseload: false },
+      };
+      workflowsStore.staffSupervisedByCurrentUser = supervisedStaff;
+    });
+
+    test("defaults to no selected search if user has no supervised staff", async () => {
+      workflowsStore.staffSupervisedByCurrentUser = [];
+      // no supervised people are populated
+      expect(searchStore.selectedSearchIds).toEqual([]);
+    });
+
+    test("defaults to current user's supervised staff", async () => {
+      workflowsStore.staffSupervisedByCurrentUser = supervisedStaff;
+      expect(searchStore.selectedSearchIds).toEqual(
+        supervisedStaff.map((s) => s.id),
+      );
+    });
+
+    test("defaults to selectedSearchIdsForSupervisorsWithStaff if present", async () => {
+      const searchIds = ["ID1", "ID2"];
+      searchStore.selectedSearchIdsForSupervisorsWithStaff = searchIds;
+      expect(searchStore.selectedSearchIds).toEqual(searchIds);
+    });
+  });
+
+  describe("for supervisors with a caseload", () => {
+    beforeEach(async () => {
+      workflowsStore.featureVariants = { workflowsSupervisorSearch: {} };
+      workflowsStore.user = {
+        ...mockSupervisor,
+        info: { ...(mockSupervisor.info as UserRecord), hasCaseload: true },
+      };
+      workflowsStore.staffSupervisedByCurrentUser = supervisedStaff;
+    });
+
+    test("includes current user", async () => {
+      expect(searchStore.selectedSearchIds).toEqual([
+        mockSupervisor.info.id,
+        ...supervisedStaff.map((s) => s.id),
+      ]);
+    });
+
+    test("defaults to selectedSearchIdsForSupervisorsWithStaff if present", async () => {
+      const searchIds = ["ID1", "ID2"];
+      searchStore.selectedSearchIdsForSupervisorsWithStaff = searchIds;
+      expect(searchStore.selectedSearchIds).toEqual(searchIds);
+    });
+  });
+
+  describe("updateSelectedSearch", () => {
+    beforeEach(async () => {
+      workflowsStore.featureVariants = { workflowsSupervisorSearch: {} };
+      workflowsStore.user = {
+        ...mockSupervisor,
+        info: { ...(mockSupervisor.info as UserRecord), hasCaseload: true },
+      };
+      workflowsStore.staffSupervisedByCurrentUser = supervisedStaff;
+    });
+
+    test("selectedSearchIds reflects updated list after user makes new search updates", async () => {
+      // user selects themselves
+      searchStore.updateSelectedSearch([searchStore.selectedSearchIds[0]]);
+
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
+        mockSupervisor.info.email,
+        "US_ND",
+        [searchStore.selectedSearchIds[0]],
+      );
+      expect(searchStore.selectedSearchIds).toEqual([
+        searchStore.selectedSearchIds[0],
+      ]);
+
+      // user selects another officer
+      searchStore.updateSelectedSearch([
+        ...searchStore.selectedSearchIds,
+        "ID2",
+      ]);
+
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
+        mockSupervisor.info.email,
+        "US_ND",
+        [searchStore.selectedSearchIds[0], "ID2"],
+      );
+      expect(searchStore.selectedSearchIds).toEqual([
+        searchStore.selectedSearchIds[0],
+        "ID2",
+      ]);
+    });
   });
 });

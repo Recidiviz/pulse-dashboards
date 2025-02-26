@@ -36,7 +36,9 @@ export const CaseloadTasksHydrator = observer(function CaseloadTasksHydrator({
   hydrated,
 }: TasksHydrator) {
   const { workflowsStore } = useRootStore();
-  const { selectedSearchIds } = workflowsStore;
+  const {
+    searchStore: { selectedSearchIds },
+  } = workflowsStore;
 
   useEffect(
     () =>

@@ -35,6 +35,18 @@ export class SearchStore {
 
   searchTypeOverride?: SearchType;
 
+  /**
+   * Local state to keep track of the selected search ids during impersonation mode, since
+   * in impersonation mode the user cannot write to firebase
+   */
+  selectedSearchIdsForImpersonation: string[] | undefined = undefined;
+
+  /**
+   * Local state to keep track of the selected search ids for a user with supervised staff,
+   * after the default behavior or auto-setting their search ids (to their own + supervised staff) upon login
+   */
+  selectedSearchIdsForSupervisorsWithStaff: string[] | undefined = undefined;
+
   constructor(workflowsStore: WorkflowsStore) {
     this.workflowsStore = workflowsStore;
     makeAutoObservable(this, {}, { autoBind: true });
@@ -47,6 +59,21 @@ export class SearchStore {
       () => [this.workflowsStore.rootStore.currentTenantId],
       () => {
         this.setSearchTypeOverride(undefined);
+      },
+    );
+
+    // mirror impersonation selected search with firestore
+    reaction(
+      () => this.workflowsStore.user?.updates?.selectedSearchIds,
+      (searchIds?) =>
+        (this.selectedSearchIdsForImpersonation = searchIds ?? []),
+    );
+
+    // clear saved search when changing tenants, to prevent cross-contamination
+    reaction(
+      () => [this.workflowsStore.rootStore.currentTenantId],
+      () => {
+        this.updateSelectedSearch([]);
       },
     );
   }
@@ -83,6 +110,55 @@ export class SearchStore {
     )
       return "ALL";
     return systemConfig.search[0].searchType;
+  }
+
+  get selectedSearchIds(): string[] {
+    const user = this.workflowsStore.user;
+    if (!user) return [];
+
+    const { info } = user;
+
+    // return the current user's caseload and staff if current user
+    // has at least one staff member they supervise upon login, otherwise
+    // use the list updated in `selectedSearchIdsForSupervisorsWithStaff`
+    if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
+      if (this.selectedSearchIdsForSupervisorsWithStaff) {
+        return this.selectedSearchIdsForSupervisorsWithStaff;
+      }
+      const supervisedStaffIds =
+        this.workflowsStore.staffSupervisedByCurrentUser.map(
+          (staff) => staff.id,
+        );
+
+      const currentUserId = info.hasCaseload ? [info.id] : [];
+      const staffAndCurrentUserIds = [...currentUserId, ...supervisedStaffIds];
+      return staffAndCurrentUserIds;
+    }
+
+    if (this.workflowsStore.rootStore.isImpersonating) {
+      return this.selectedSearchIdsForImpersonation ?? [];
+    }
+
+    const previousSearchIds = user.updates?.selectedSearchIds;
+    return previousSearchIds ?? [];
+  }
+
+  updateSelectedSearch(searchIds: string[]): void {
+    const user = this.workflowsStore.user;
+    if (!user || !this.workflowsStore.rootStore.currentTenantId) return;
+
+    this.workflowsStore.rootStore.firestoreStore.updateSelectedSearchIds(
+      user.info.email,
+      this.workflowsStore.rootStore.currentTenantId,
+      searchIds,
+    );
+
+    // update the `selectedSearchIdsForSupervisorsWithStaff` for users with staff they supervise
+    if (this.hasSupervisedStaffAndRequiredFeatureVariant) {
+      this.selectedSearchIdsForSupervisorsWithStaff = searchIds;
+    }
+
+    this.selectedSearchIdsForImpersonation = searchIds;
   }
 
   get availableSearchables(): SearchableGroup[] {

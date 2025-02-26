@@ -111,7 +111,7 @@ export class CaseloadTasksPresenter {
 
     this.analyticsStore.trackTaskFilterSelected({
       taskCategory: this.selectedCategory,
-      selectedSearchIds: this.workflowsStore.selectedSearchIds,
+      selectedSearchIds: this.workflowsStore.searchStore.selectedSearchIds,
     });
   }
 

@@ -47,7 +47,7 @@ export class CaseloadOpportunitiesPresenter implements Hydratable {
    * the opportunities that match the selected search ids (i.e. Location, Case Manager, etc.)
    */
   get selectedSearchIds() {
-    return this.workflowsStore.selectedSearchIds;
+    return this.workflowsStore.searchStore.selectedSearchIds;
   }
 
   get opportunityType() {

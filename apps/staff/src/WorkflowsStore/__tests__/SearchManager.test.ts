@@ -107,7 +107,7 @@ describe("queryConstraints", () => {
 
   test("returns undefined if no officers are selected", () => {
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = [];
+    searchStoreMock.selectedSearchIds = [];
 
     expect(clientSearchManager.queryConstraints).toBeUndefined();
   });
@@ -120,7 +120,7 @@ describe("queryConstraints", () => {
       () => supervisionSystemConfig,
     );
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = ["TEST1", "TEST2"];
+    searchStoreMock.selectedSearchIds = ["TEST1", "TEST2"];
 
     // eslint-disable-next-line
     clientSearchManager.queryConstraints;
@@ -149,11 +149,7 @@ describe("queryConstraints", () => {
       () => supervisionSystemConfig,
     );
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = [
-      "TEST1",
-      "TEST2",
-      "OFFICER1",
-    ];
+    searchStoreMock.selectedSearchIds = ["TEST1", "TEST2", "OFFICER1"];
 
     // eslint-disable-next-line
     clientSearchManager.queryConstraints;
@@ -183,13 +179,13 @@ describe("queryConstraints", () => {
 describe("personMatchesSearch", () => {
   test("true with single matching searchField", () => {
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = [clientRecord.officerId];
+    searchStoreMock.selectedSearchIds = [clientRecord.officerId];
     expect(clientSearchManager.personMatchesSearch(testClient)).toBeTrue();
   });
 
   test("true with multiple searchFields - both match", () => {
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = [
+    searchStoreMock.selectedSearchIds = [
       clientRecord.officerId,
       clientRecord.district,
     ];
@@ -198,7 +194,7 @@ describe("personMatchesSearch", () => {
 
   test("true with multiple searchFields - one matches", () => {
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = [
+    searchStoreMock.selectedSearchIds = [
       clientRecord.officerId,
       "A DIFFERENT DISTRICT",
     ];
@@ -207,7 +203,7 @@ describe("personMatchesSearch", () => {
 
   test("false with multiple searchFields - none match", () => {
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = [
+    searchStoreMock.selectedSearchIds = [
       "A DIFFERENT OFFICER",
       "A DIFFERENT DISTRICT",
     ];
@@ -241,7 +237,7 @@ describe("matchingPersons", () => {
       testResident,
     };
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = [
+    searchStoreMock.selectedSearchIds = [
       clientRecord.officerId,
       residentRecord.officerId,
     ];
@@ -264,7 +260,7 @@ describe("matchingPersons", () => {
 
   test("client does not match when person does not match", () => {
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = ["A DIFFERENT OFFICER"];
+    searchStoreMock.selectedSearchIds = ["A DIFFERENT OFFICER"];
     searchStoreMock.workflowsStore.activeSystem = "SUPERVISION";
     expect(clientSearchManager.matchingPersons).toEqual([]);
   });
@@ -286,7 +282,7 @@ describe("matchingPersons", () => {
 
   test("resident does not match when person does not match", () => {
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = ["A DIFFERENT OFFICER"];
+    searchStoreMock.selectedSearchIds = ["A DIFFERENT OFFICER"];
     searchStoreMock.workflowsStore.activeSystem = "SUPERVISION";
     expect(residentSearchManager.matchingPersons).toEqual([]);
   });
@@ -333,7 +329,7 @@ describe("matchingPersonsGrouped", () => {
     );
 
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = [
+    searchStoreMock.selectedSearchIds = [
       clientRecord.officerId,
       clientRecord.district,
     ];
@@ -369,7 +365,7 @@ describe("matchingPersonsGrouped", () => {
       testClient2,
     };
     // @ts-ignore
-    searchStoreMock.workflowsStore.selectedSearchIds = [
+    searchStoreMock.selectedSearchIds = [
       clientRecord.officerId,
       clientRecord.district,
     ];

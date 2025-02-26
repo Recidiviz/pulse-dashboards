@@ -32,7 +32,7 @@ const MOCK_OPPORTUNITY_TYPES = [
 
 beforeAll(() => {
   workflowsStore = {
-    selectedSearchIds: ["id1", "id2"],
+    searchStore: { selectedSearchIds: ["id1", "id2"] },
     selectedOpportunityType: MOCK_OPPORTUNITY_TYPES[0],
     opportunityTypes: MOCK_OPPORTUNITY_TYPES,
     allOpportunitiesByType: {
@@ -49,7 +49,9 @@ beforeAll(() => {
 });
 
 it("returns selected search ids from workflowsStore", () => {
-  expect(presenter.selectedSearchIds).toEqual(workflowsStore.selectedSearchIds);
+  expect(presenter.selectedSearchIds).toEqual(
+    workflowsStore.searchStore.selectedSearchIds,
+  );
 });
 
 it("returns selected opportunity type from workflowsStore", () => {

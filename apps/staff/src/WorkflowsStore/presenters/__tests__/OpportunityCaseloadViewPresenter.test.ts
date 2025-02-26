@@ -39,9 +39,9 @@ function initPresenter(
 ) {
   workflowsStore = {
     selectedOpportunityType: MOCK_OPPORTUNITY_TYPE,
-    selectedSearchIds,
     workflowsSearchFieldTitle: "find",
     justiceInvolvedPersonTitle: "client",
+    searchStore: { selectedSearchIds },
   } as unknown as WorkflowsStore;
 
   opportunityConfigurationStore = {

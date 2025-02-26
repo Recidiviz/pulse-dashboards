@@ -43,9 +43,9 @@ export class SearchManager {
   get queryConstraints(): QueryCompositeFilterConstraint | undefined {
     const {
       workflowsStore: {
-        selectedSearchIds,
         rootStore: { currentTenantId },
       },
+      selectedSearchIds,
     } = this.searchStore;
     const { systemConfig } = this;
 
@@ -88,7 +88,7 @@ export class SearchManager {
   personMatchesSearch(person: JusticeInvolvedPerson): boolean {
     return (
       person.personType === this.personType &&
-      some(this.searchStore.workflowsStore.selectedSearchIds, (id) =>
+      some(this.searchStore.selectedSearchIds, (id) =>
         person.searchIdValues?.includes(id),
       )
     );
@@ -121,16 +121,13 @@ export class SearchManager {
    * }
    */
   get matchingPersonsGrouped(): Record<string, JusticeInvolvedPerson[]> {
-    const matchingPersons = [ ...this.matchingPersonsSorted ];
+    const matchingPersons = [...this.matchingPersonsSorted];
     let caseloads: Record<string, JusticeInvolvedPerson[]> = {};
     // Create a group for each searchField id
     this.systemConfig.search.forEach(({ searchField }) => {
       caseloads = {
         ...caseloads,
-        ...groupBy(
-          matchingPersons,
-          `record.${searchField.join(".")}`,
-        ),
+        ...groupBy(matchingPersons, `record.${searchField.join(".")}`),
       };
     });
     // Delete extraneous groups that are not in selectedSearchIds
@@ -144,7 +141,7 @@ export class SearchManager {
     //   caseloads: { officer1: [client1, client2], location1: [client1], location2: [client2] }
     // the "location2" id is not in selectedSearchIds so it should be removed as a group
     Object.keys(caseloads).forEach((key) => {
-      if (!this.searchStore.workflowsStore.selectedSearchIds.includes(key))
+      if (!this.searchStore.selectedSearchIds.includes(key))
         delete caseloads[key];
     });
     return caseloads;
