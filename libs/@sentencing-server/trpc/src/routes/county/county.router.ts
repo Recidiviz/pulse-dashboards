@@ -32,7 +32,7 @@ export const countyRouter = router({
     });
     const flatCountiesDistricts = countiesDistricts.map((cd) => ({
       county: cd.name,
-      district: cd.district.name,
+      district: cd.district?.name,
     }));
 
     return flatCountiesDistricts;

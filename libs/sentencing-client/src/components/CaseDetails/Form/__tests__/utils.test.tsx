@@ -137,7 +137,7 @@ describe("transformUpdates", () => {
     expect(result[LSIR_SCORE_KEY]).toBe(42);
   });
 
-  it("should leave other needs, other protective factors, other mental health diagnosis, offense, county, district, client county, client district keys unchanged", () => {
+  it("should leave other needs, other protective factors, other mental health diagnosis, offense, county, client county, client district keys unchanged", () => {
     const updates = {
       [OTHER_NEED_TO_BE_ADDRESSED_KEY]: "Some other need",
       [OTHER_PROTECTIVE_FACTORS_KEY]: "Some other protective factor",
@@ -163,7 +163,6 @@ describe("transformUpdates", () => {
       "POSSESSION OF A CONTROLLED SUBSTANCE WITH THE INTENT TO DELIVER",
     );
     expect(result[COUNTY_KEY]).toBe("Ada");
-    expect(result[DISTRICT_KEY]).toBe("DISTRICT 3");
     expect(result[CLIENT_COUNTY_KEY]).toBe("Caldwell");
     expect(result[CLIENT_DISTRICT_KEY]).toBe("DISTRICT 2");
   });

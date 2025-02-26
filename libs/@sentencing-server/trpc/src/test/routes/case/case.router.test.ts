@@ -300,8 +300,7 @@ describe("case router", () => {
           clientGender: "MALE",
           clientCounty: "TWIN FALLS",
           clientDistrict: "DISTRICT 4",
-          county: "ADA",
-          district: "DISTRICT 1",
+          county: "Abbott",
           recommendedMinSentenceLength: 10,
           recommendedMaxSentenceLength: 20,
           protectiveFactors: [
@@ -329,13 +328,17 @@ describe("case router", () => {
               name: true,
             },
           },
+          county: {
+            select: {
+              name: true,
+            },
+          },
         },
       });
 
       expect(updatedCase).toEqual(
         expect.objectContaining({
-          county: "ADA",
-          district: "DISTRICT 1",
+          county: expect.objectContaining({ name: "Abbott" }),
           isCurrentOffenseViolent: true,
           isCurrentOffenseSexual: false,
           previouslyIncarceratedOrUnderSupervision: true,

@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Client, Offense, Prisma } from "@prisma/sentencing-server/client";
+import type {
+  Client,
+  County,
+  Offense,
+  Prisma,
+} from "@prisma/sentencing-server/client";
 
 export type GetCaseInput = Pick<Prisma.CaseWhereUniqueInput, "id">;
 
@@ -49,12 +54,11 @@ export type UpdateCaseInput = Pick<
   | "recommendedMaxSentenceLength"
   | "protectiveFactors"
   | "otherProtectiveFactor"
-  | "county"
-  | "district"
 > & {
   recommendedOpportunities?: {
     opportunityName: OpportunityNameIdentifier;
   }[];
+  county?: County["name"] | null;
   offense?: Offense["name"] | null;
   clientGender?: Client["gender"];
   clientCounty?: Client["county"];

@@ -303,9 +303,15 @@ model Case {
   client   Client? @relation(fields: [clientId], references: [externalId])
   clientId String?
 
+  // County and District fields must be mutually exclusive (this is currently enforced via SQL)
+  // If a county is ever set, it will always include the district, and must be the single source of truth for both fields
+  // A district is only ever set when it is ingested and does not include a county
+  county     County?   @relation(fields: [countyId], references: [id])
+  countyId   String?
+  district   District? @relation(fields: [districtId], references: [id])
+  districtId String?
+
   dueDate            DateTime?
-  county             String?
-  district           String?
   lsirLevel          String?
   reportType         ReportType?
   // Whether the LSIR score is locked and cannot be changed
@@ -437,8 +443,9 @@ model County {
   id         String    @id @default(cuid())
   stateCode  StateCode
   name       String    @unique
-  district   District  @relation(fields: [districtId], references: [id])
-  districtId String
+  district   District? @relation(fields: [districtId], references: [id])
+  districtId String?
+  Case       Case[]
 }
 
 model District {
@@ -446,4 +453,5 @@ model District {
   stateCode StateCode
   name      String    @unique
   counties  County[]
+  Case      Case[]
 }

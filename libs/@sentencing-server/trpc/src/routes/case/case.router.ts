@@ -70,6 +70,9 @@ export const caseRouter = router({
           }),
         ),
         offense: caseData.offense?.name,
+        county: caseData.county?.name ?? null,
+        district:
+          caseData.district?.name ?? caseData.county?.district?.name ?? null,
         insight,
       };
     }),
@@ -152,39 +155,53 @@ export const caseRouter = router({
       }
 
       try {
+        const updateData: Prisma.CaseUpdateInput = {
+          ..._.omit(attributes, [
+            "district",
+            "clientGender",
+            "clientCounty",
+            "clientDistrict",
+          ]),
+          county: {
+            connect: attributes.county
+              ? {
+                  name: attributes.county,
+                }
+              : undefined,
+          },
+          recommendedOpportunities: {
+            set: attributes.recommendedOpportunities?.map((opportunity) => ({
+              opportunityName_providerName: {
+                opportunityName: opportunity.opportunityName,
+                providerName: opportunity.providerName,
+              },
+            })),
+          },
+          offense: {
+            connect: attributes.offense
+              ? {
+                  name: attributes.offense,
+                }
+              : undefined,
+          },
+          client: {
+            update: {
+              gender: attributes.clientGender,
+              county: attributes.clientCounty,
+              district: attributes.clientDistrict,
+            },
+          },
+        };
+
+        if (attributes.county) {
+          updateData.district = { disconnect: true };
+        }
+
         await prisma.case.update({
           where: {
             id,
           },
-          data: {
-            ..._.omit(attributes, [
-              "clientGender",
-              "clientCounty",
-              "clientDistrict",
-            ]),
-            recommendedOpportunities: {
-              set: attributes.recommendedOpportunities?.map((opportunity) => ({
-                opportunityName_providerName: {
-                  opportunityName: opportunity.opportunityName,
-                  providerName: opportunity.providerName,
-                },
-              })),
-            },
-            offense: {
-              connect: attributes.offense
-                ? {
-                    name: attributes.offense,
-                  }
-                : undefined,
-            },
-            client: {
-              update: {
-                gender: attributes.clientGender,
-                county: attributes.clientCounty,
-                district: attributes.clientDistrict,
-              },
-            },
-          },
+          data: updateData,
         });
       } catch (e) {
         if (

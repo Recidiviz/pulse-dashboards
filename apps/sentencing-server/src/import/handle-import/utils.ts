@@ -88,10 +88,10 @@ export async function transformAndLoadClientData(
       stateCode: clientData.state_code,
       fullName: clientData.full_name,
       county: clientData.county,
+      district: clientData.district,
       birthDate: clientData.birth_date,
       isGenderLocked: hasKnownGender,
       isCountyLocked,
-      district: clientData.district,
       cases: {
         connect: existingCasesForClient,
       },
@@ -205,11 +205,7 @@ export async function transformAndLoadCaseData(
     const newCase = {
       externalId: caseData.external_id,
       stateCode: caseData.state_code,
-      staffId,
-      clientId,
       dueDate: caseData.due_date,
-      county: caseData.county,
-      district: caseData.district,
       lsirScore: caseData.lsir_score,
       lsirLevel: caseData.lsir_level,
       reportType: caseData.report_type
@@ -217,16 +213,135 @@ export async function transformAndLoadCaseData(
         : null,
       isLsirScoreLocked: caseData.lsir_score !== undefined,
       isReportTypeLocked: caseData.report_type !== undefined,
-      isCountyLocked: caseData.county !== undefined,
+      isCountyLocked: Boolean(caseData.county),
     };
+
+    const createStaffConnection = staffId
+      ? {
+          connect: {
+            externalId: staffId,
+          },
+        }
+      : undefined;
+    const createClientConnection = clientId
+      ? {
+          connect: {
+            externalId: clientId,
+          },
+        }
+      : undefined;
+    const createCountyConnection = caseData.county
+      ? {
+          connectOrCreate: {
+            where: {
+              stateCode: caseData.state_code,
+              name: caseData.county,
+            },
+            create: {
+              stateCode: caseData.state_code,
+              name: caseData.county,
+            },
+          },
+        }
+      : undefined;
+    const createDistrictConnection =
+      !caseData.county && caseData.district
+        ? {
+            connectOrCreate: {
+              where: {
+                stateCode: caseData.state_code,
+                name: caseData.district,
+              },
+              create: {
+                stateCode: caseData.state_code,
+                name: caseData.district,
+              },
+            },
+          }
+        : undefined;
+
+    // For staff and client, since the incoming data is the source of truth, we can disconnect if there is no associated staffId or clientId
+    const updateStaffConnection = staffId
+      ? {
+          connect: {
+            externalId: staffId,
+          },
+        }
+      : {
+          disconnect: true,
+        };
+    const updateClientConnection = clientId
+      ? {
+          connect: {
+            externalId: clientId,
+          },
+        }
+      : {
+          disconnect: true,
+        };
+    // If we don't ingest a county, do nothing so we don't override the county the user sets
+    const updateCountyConnection = caseData.county
+      ? {
+          connectOrCreate: {
+            where: {
+              stateCode: caseData.state_code,
+              name: caseData.county,
+            },
+            create: {
+              stateCode: caseData.state_code,
+              name: caseData.county,
+            },
+          },
+        }
+      : undefined;
+
+    const existingCase = await prismaClient.case.findUnique({
+      where: {
+        externalId: caseData.external_id,
+      },
+      include: {
+        county: true,
+      },
+    });
+
+    // Disconnect the district if we have a county, since the district connected to the county will be the source of truth
+    // If we don't ingest a district, we can disconnect it too because we'll create a county or the user will set a county at which point,
+    // we'll use the district connected to the county as the source of truth
+    const updateDistrictConnection =
+      existingCase?.county || caseData.county || !caseData.district
+        ? { disconnect: true }
+        : {
+            connectOrCreate: {
+              where: {
+                stateCode: caseData.state_code,
+                name: caseData.district,
+              },
+              create: {
+                stateCode: caseData.state_code,
+                name: caseData.district,
+              },
+            },
+          };
 
     // Load data
     await prismaClient.case.upsert({
       where: {
         externalId: newCase.externalId,
       },
-      create: newCase,
-      update: newCase,
+      create: {
+        ...newCase,
+        staff: createStaffConnection,
+        client: createClientConnection,
+        county: createCountyConnection,
+        district: createDistrictConnection,
+      },
+      update: {
+        ...newCase,
+        staff: updateStaffConnection,
+        client: updateClientConnection,
+        county: updateCountyConnection,
+        district: updateDistrictConnection,
+      },
     });
   }
 
