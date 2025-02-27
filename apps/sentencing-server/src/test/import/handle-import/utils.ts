@@ -16,7 +16,9 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+import { z } from "zod";
 
+import { insightImportSchema } from "~sentencing-server/import/handle-import/models";
 import { buildServer } from "~sentencing-server/server";
 import {
   caseBody,
@@ -82,19 +84,47 @@ export async function callHandleImportCountyAndDistrictData(
   return await callHandleImport(server, countiesAndDistrictsBody);
 }
 
-export function createFakeRecidivismSeriesForImport() {
-  // Need to make sure the months are unique
-  const months = faker.helpers.uniqueArray(
-    () => faker.number.int({ max: 100 }),
-    2,
-  );
+export function createFakeRecidivismSeriesForImport(
+  keys: {
+    sentence_type?: string;
+    sentence_length_bucket_start?: number;
+    sentence_length_bucket_end?: number;
+  }[],
+) {
+  return JSON.stringify(
+    keys.map((key) => {
+      // Need to make sure the months are unique
+      const months = faker.helpers.uniqueArray(
+        () => faker.number.int({ max: 100 }),
+        2,
+      );
 
-  return months.map((month) => {
-    return {
-      cohort_months: month,
-      event_rate: faker.number.float(),
-      lower_ci: faker.number.float(),
-      upper_ci: faker.number.float(),
-    };
-  });
+      return {
+        ...key,
+        data_points: months.map((month) => ({
+          cohort_months: month,
+          event_rate: faker.number.float(),
+          lower_ci: faker.number.float(),
+          upper_ci: faker.number.float(),
+        })),
+      };
+    }) satisfies z.infer<typeof insightImportSchema>["recidivism_series"],
+  );
+}
+
+export function createFakeDispositionsForImport(
+  keys: {
+    sentence_type?: string;
+    sentence_length_bucket_start?: number;
+    sentence_length_bucket_end?: number;
+  }[],
+) {
+  return JSON.stringify(
+    keys.map((key) => {
+      return {
+        ...key,
+        percentage: faker.number.float(),
+      };
+    }) satisfies z.infer<typeof insightImportSchema>["dispositions"],
+  );
 }

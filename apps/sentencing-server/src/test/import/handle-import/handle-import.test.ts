@@ -47,6 +47,7 @@ import {
   callHandleImportOffenseData,
   callHandleImportOpportunityData,
   callHandleImportStaffData,
+  createFakeDispositionsForImport,
   createFakeRecidivismSeriesForImport,
 } from "~sentencing-server/test/import/handle-import/utils";
 import { testPrismaClient, testServer } from "~sentencing-server/test/setup";
@@ -1603,19 +1604,17 @@ describe("handle_import", () => {
             most_severe_ncic_category_uniform: faker.string.alpha(),
           }),
           recidivism_num_records: faker.number.int({ max: 100 }),
-          recidivism_probation_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_rider_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_term_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
+          recidivism_series: createFakeRecidivismSeriesForImport([
+            {
+              sentence_type: "Probation",
+            },
+          ]),
           disposition_num_records: faker.number.int({ max: 100 }),
-          disposition_probation_pc: faker.number.float(),
-          disposition_rider_pc: faker.number.float(),
-          disposition_term_pc: faker.number.float(),
+          dispositions: createFakeDispositionsForImport([
+            {
+              sentence_type: "Probation",
+            },
+          ]),
         },
       ]);
 
@@ -1651,19 +1650,17 @@ describe("handle_import", () => {
           }),
           // Update num records
           recidivism_num_records: 78923,
-          recidivism_probation_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_rider_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_term_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
+          recidivism_series: createFakeRecidivismSeriesForImport([
+            {
+              sentence_type: "Probation",
+            },
+          ]),
           disposition_num_records: faker.number.int({ max: 100 }),
-          disposition_probation_pc: faker.number.float(),
-          disposition_rider_pc: faker.number.float(),
-          disposition_term_pc: faker.number.float(),
+          dispositions: createFakeDispositionsForImport([
+            {
+              sentence_type: "Probation",
+            },
+          ]),
         },
         // New insight (with bad rollup data)
         {
@@ -1696,19 +1693,17 @@ describe("handle_import", () => {
         },
       });
       // The old insight should have been updated
-      expect(dbInsights).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            gender: fakeInsight.gender,
-            assessmentScoreBucketStart: fakeInsight.assessmentScoreBucketStart,
-            assessmentScoreBucketEnd: fakeInsight.assessmentScoreBucketEnd,
-            offense: expect.objectContaining({
-              name: fakeOffense.name,
-            }),
-            rollupRecidivismNumRecords: 78923,
+      expect(dbInsights).toEqual([
+        expect.objectContaining({
+          gender: fakeInsight.gender,
+          assessmentScoreBucketStart: fakeInsight.assessmentScoreBucketStart,
+          assessmentScoreBucketEnd: fakeInsight.assessmentScoreBucketEnd,
+          offense: expect.objectContaining({
+            name: fakeOffense.name,
           }),
-        ]),
-      );
+          rollupRecidivismNumRecords: 78923,
+        }),
+      ]);
     });
 
     test("should import new insights and delete old data", async () => {
@@ -1729,19 +1724,17 @@ describe("handle_import", () => {
             most_severe_ncic_category_uniform: faker.string.alpha(),
           }),
           recidivism_num_records: faker.number.int({ max: 100 }),
-          recidivism_probation_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_rider_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_term_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
+          recidivism_series: createFakeRecidivismSeriesForImport([
+            {
+              sentence_type: "Probation",
+            },
+          ]),
           disposition_num_records: faker.number.int({ max: 100 }),
-          disposition_probation_pc: faker.number.float(),
-          disposition_rider_pc: faker.number.float(),
-          disposition_term_pc: faker.number.float(),
+          dispositions: createFakeDispositionsForImport([
+            {
+              sentence_type: "Probation",
+            },
+          ]),
         },
         {
           state_code: StateCode.US_ID,
@@ -1754,19 +1747,17 @@ describe("handle_import", () => {
             any_is_violent_uniform: true,
           }),
           recidivism_num_records: faker.number.int({ max: 100 }),
-          recidivism_probation_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_rider_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_term_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
+          recidivism_series: createFakeRecidivismSeriesForImport([
+            {
+              sentence_type: "Probation",
+            },
+          ]),
           disposition_num_records: faker.number.int({ max: 100 }),
-          disposition_probation_pc: faker.number.float(),
-          disposition_rider_pc: faker.number.float(),
-          disposition_term_pc: faker.number.float(),
+          dispositions: createFakeDispositionsForImport([
+            {
+              sentence_type: "Probation",
+            },
+          ]),
         },
       ]);
 
@@ -1801,7 +1792,6 @@ describe("handle_import", () => {
             rollupNcicCategory: expect.any(String),
             rollupRecidivismNumRecords: expect.any(Number),
             rollupRecidivismSeries: expect.arrayContaining([
-              // There should be two data points for each series
               expect.objectContaining({
                 recommendationType: "Probation",
                 dataPoints: expect.arrayContaining([
@@ -1809,27 +1799,10 @@ describe("handle_import", () => {
                   expect.objectContaining({}),
                 ]),
               }),
-              expect.objectContaining({
-                recommendationType: "Rider",
-                dataPoints: expect.arrayContaining([
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                ]),
-              }),
-              expect.objectContaining({
-                recommendationType: "Term",
-                dataPoints: expect.arrayContaining([
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                ]),
-              }),
             ]),
             dispositionNumRecords: expect.any(Number),
             dispositionData: expect.arrayContaining([
-              // There should be one of each type of disposition
               expect.objectContaining({ recommendationType: "Probation" }),
-              expect.objectContaining({ recommendationType: "Rider" }),
-              expect.objectContaining({ recommendationType: "Term" }),
             ]),
           }),
           expect.objectContaining({
@@ -1846,36 +1819,19 @@ describe("handle_import", () => {
                   expect.objectContaining({}),
                 ]),
               }),
-              expect.objectContaining({
-                recommendationType: "Rider",
-                dataPoints: expect.arrayContaining([
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                ]),
-              }),
-              expect.objectContaining({
-                recommendationType: "Term",
-                dataPoints: expect.arrayContaining([
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                  expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                ]),
-              }),
             ]),
             dispositionNumRecords: expect.any(Number),
             dispositionData: expect.arrayContaining([
-              // There should be one of each type of disposition
               expect.objectContaining({ recommendationType: "Probation" }),
-              expect.objectContaining({ recommendationType: "Rider" }),
-              expect.objectContaining({ recommendationType: "Term" }),
             ]),
           }),
         ]),
       );
     });
 
-    test("should handle null dispositions", async () => {
+    test("should handle data without sentence lengths", async () => {
       dataProviderSingleton.setData([
-        // New insight
+        // New insights
         {
           state_code: StateCode.US_ID,
           // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
@@ -1891,19 +1847,29 @@ describe("handle_import", () => {
             most_severe_ncic_category_uniform: faker.string.alpha(),
           }),
           recidivism_num_records: faker.number.int({ max: 100 }),
-          recidivism_probation_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_rider_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          recidivism_term_series: JSON.stringify(
-            createFakeRecidivismSeriesForImport(),
-          ),
-          disposition_num_records: null,
-          disposition_probation_pc: null,
-          disposition_rider_pc: null,
-          disposition_term_pc: null,
+          recidivism_series: createFakeRecidivismSeriesForImport([
+            {
+              sentence_type: "Probation",
+            },
+            {
+              sentence_type: "Term",
+            },
+            {
+              sentence_type: "Rider",
+            },
+          ]),
+          disposition_num_records: faker.number.int({ max: 100 }),
+          dispositions: createFakeDispositionsForImport([
+            {
+              sentence_type: "Probation",
+            },
+            {
+              sentence_type: "Term",
+            },
+            {
+              sentence_type: "Rider",
+            },
+          ]),
         },
       ]);
 
@@ -1911,12 +1877,14 @@ describe("handle_import", () => {
 
       expect(response.statusCode).toBe(200);
 
-      // Check that the new Insight was created
+      // Check that the new Insights were created
       const dbInsights = await testPrismaClient.insight.findMany({
         include: {
           rollupRecidivismSeries: {
             select: {
               recommendationType: true,
+              sentenceLengthBucketEnd: true,
+              sentenceLengthBucketStart: true,
               dataPoints: true,
             },
           },
@@ -1924,48 +1892,160 @@ describe("handle_import", () => {
         },
       });
 
-      // There should only be one insight in the database - the new one should have been created
-      // and the old one should have been deleted
       expect(dbInsights).toHaveLength(1);
 
-      const newInsight = dbInsights[0];
-      expect(newInsight).toEqual(
-        expect.objectContaining({
-          gender: "MALE",
-          rollupStateCode: StateCode.US_ID,
-          rollupGender: Gender.MALE,
-          rollupAssessmentScoreBucketStart: expect.any(Number),
-          rollupAssessmentScoreBucketEnd: expect.any(Number),
-          rollupNcicCategory: expect.any(String),
-          rollupRecidivismNumRecords: expect.any(Number),
-          rollupRecidivismSeries: expect.arrayContaining([
-            // There should be two data points for each series
-            expect.objectContaining({
-              recommendationType: "Probation",
-              dataPoints: expect.arrayContaining([
-                expect.objectContaining({}),
-                expect.objectContaining({}),
-              ]),
-            }),
-            expect.objectContaining({
-              recommendationType: "Rider",
-              dataPoints: expect.arrayContaining([
-                expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                expect.objectContaining({ cohortMonths: expect.any(Number) }),
-              ]),
-            }),
-            expect.objectContaining({
-              recommendationType: "Term",
-              dataPoints: expect.arrayContaining([
-                expect.objectContaining({ cohortMonths: expect.any(Number) }),
-                expect.objectContaining({ cohortMonths: expect.any(Number) }),
-              ]),
-            }),
+      expect(dbInsights).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            rollupRecidivismSeries: expect.arrayContaining([
+              expect.objectContaining({
+                recommendationType: "Probation",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({}),
+                  expect.objectContaining({}),
+                ]),
+              }),
+              expect.objectContaining({
+                recommendationType: "Term",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({}),
+                  expect.objectContaining({}),
+                ]),
+              }),
+              expect.objectContaining({
+                recommendationType: "Rider",
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({}),
+                  expect.objectContaining({}),
+                ]),
+              }),
+            ]),
+            dispositionData: expect.arrayContaining([
+              expect.objectContaining({ recommendationType: "Probation" }),
+              expect.objectContaining({ recommendationType: "Term" }),
+              expect.objectContaining({ recommendationType: "Rider" }),
+            ]),
+          }),
+        ]),
+      );
+    });
+
+    test("should handle recidivism series without sentence type", async () => {
+      dataProviderSingleton.setData([
+        // New insights
+        {
+          state_code: StateCode.US_ID,
+          // We use MALE because the existing insight uses FEMALE, so there is no chance of a collision
+          gender: Gender.MALE,
+          assessment_score_bucket_start: faker.number.int({ max: 100 }),
+          assessment_score_bucket_end: faker.number.int({ max: 100 }),
+          most_severe_description: fakeOffense.name,
+          recidivism_rollup: JSON.stringify({
+            state_code: StateCode.US_ID,
+            gender: Gender.MALE,
+            assessment_score_bucket_start: faker.number.int({ max: 100 }),
+            assessment_score_bucket_end: faker.number.int({ max: 100 }),
+            most_severe_ncic_category_uniform: faker.string.alpha(),
+          }),
+          recidivism_num_records: faker.number.int({ max: 100 }),
+          recidivism_series: createFakeRecidivismSeriesForImport([
+            {
+              sentence_length_bucket_start: 0,
+              sentence_length_bucket_end: 1,
+            },
+            {
+              sentence_length_bucket_start: 2,
+              sentence_length_bucket_end: 5,
+            },
+            {
+              sentence_length_bucket_start: 20,
+              sentence_length_bucket_end: -1,
+            },
           ]),
-          dispositionNumRecords: 0,
-          // There shouldn't be any disposition data
-          dispositionData: expect.arrayContaining([]),
-        }),
+          disposition_num_records: faker.number.int({ max: 100 }),
+          dispositions: createFakeDispositionsForImport([
+            {
+              sentence_length_bucket_start: 0,
+              sentence_length_bucket_end: 1,
+            },
+            {
+              sentence_length_bucket_start: 2,
+              sentence_length_bucket_end: 5,
+            },
+            {
+              sentence_length_bucket_start: 20,
+              sentence_length_bucket_end: -1,
+            },
+          ]),
+        },
+      ]);
+
+      const response = await callHandleImportInsightData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new Insights were created
+      const dbInsights = await testPrismaClient.insight.findMany({
+        include: {
+          rollupRecidivismSeries: {
+            select: {
+              recommendationType: true,
+              sentenceLengthBucketEnd: true,
+              sentenceLengthBucketStart: true,
+              dataPoints: true,
+            },
+          },
+          dispositionData: true,
+        },
+      });
+
+      expect(dbInsights).toHaveLength(1);
+
+      expect(dbInsights).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            rollupRecidivismSeries: expect.arrayContaining([
+              expect.objectContaining({
+                sentenceLengthBucketStart: 0,
+                sentenceLengthBucketEnd: 1,
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({}),
+                  expect.objectContaining({}),
+                ]),
+              }),
+              expect.objectContaining({
+                sentenceLengthBucketStart: 2,
+                sentenceLengthBucketEnd: 5,
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({}),
+                  expect.objectContaining({}),
+                ]),
+              }),
+              expect.objectContaining({
+                sentenceLengthBucketStart: 20,
+                sentenceLengthBucketEnd: -1,
+                dataPoints: expect.arrayContaining([
+                  expect.objectContaining({}),
+                  expect.objectContaining({}),
+                ]),
+              }),
+            ]),
+            dispositionData: expect.arrayContaining([
+              expect.objectContaining({
+                sentenceLengthBucketStart: 0,
+                sentenceLengthBucketEnd: 1,
+              }),
+              expect.objectContaining({
+                sentenceLengthBucketStart: 2,
+                sentenceLengthBucketEnd: 5,
+              }),
+              expect.objectContaining({
+                sentenceLengthBucketStart: 20,
+                sentenceLengthBucketEnd: -1,
+              }),
+            ]),
+          }),
+        ]),
       );
     });
   });
