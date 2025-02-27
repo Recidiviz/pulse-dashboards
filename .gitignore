@@ -51,6 +51,7 @@ yalc.lock
 # these are generated as part of the build process
 libs/staff-shared-server/package.json
 apps/sentencing-server/package.json
+apps/jii-texting-jobs/package.json
 apps/jii-texting-server/package.json
 
 # Redis dump

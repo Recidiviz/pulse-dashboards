@@ -7,9 +7,9 @@ import "zx/globals"; // get access to $ function
 
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { Octokit } from "@octokit/rest";
+import { WebClient as SlackClient } from "@slack/web-api";
 import inquirer from "inquirer";
 import { inc } from "semver";
-import { WebClient as SlackClient } from "@slack/web-api";
 
 // The default is true, but we explicitly set it here because it needs to be set to true
 // in order for the gcloud stderr to display (used for the backend deploy)
@@ -392,11 +392,20 @@ if (deployEnv === "staging" || deployEnv === "production") {
         // 2. deploying a cherry-pick
         // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
         if (deployEnv === "staging") {
+          // Push the docker container for the Cloud Run service
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration ${deployEnv}`.pipe(
+            process.stdout,
+          );
+          // Push the docker container for the Cloud Run jobs
+          await $`COMMIT_SHA=${currentRevision} nx container jii-texting-jobs --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
+          // Push the docker container for the Cloud Run jobs
+          await $`COMMIT_SHA=${currentRevision} nx container jii-texting-jobs --configuration cherry-pick`.pipe(
             process.stdout,
           );
         }
