@@ -32,7 +32,6 @@ import {
   insightImportSchema,
   offenseImportSchema,
   opportunityImportSchema,
-  recidivismSeriesSchema,
   staffImportSchema,
 } from "~sentencing-server/import/handle-import/models";
 
@@ -509,70 +508,44 @@ export async function transformAndLoadOpportunityData(
 }
 
 function transformRecidivismSeries(
-  recommendationType: string,
-  dataPoints?: z.infer<typeof recidivismSeriesSchema>,
-): Prisma.RecidivismSeriesCreateWithoutInsightInput | undefined {
-  if (dataPoints === undefined) {
-    return undefined;
-  }
-
-  return {
-    recommendationType,
-    dataPoints: {
-      createMany: {
-        data: dataPoints.map((s) => ({
-          cohortMonths: s.cohort_months,
-          eventRate: s.event_rate,
-          lowerCI: s.lower_ci,
-          upperCI: s.upper_ci,
-        })),
-      },
-    },
-  };
-}
-
-function transformAllRecidivismSeries(
-  data: z.infer<typeof insightImportSchema>,
+  rawRecidivismSeries: z.infer<typeof insightImportSchema>["recidivism_series"],
 ) {
-  const {
-    recidivism_probation_series,
-    recidivism_rider_series,
-    recidivism_term_series,
-  } = data;
+  return rawRecidivismSeries
+    .map((series) => {
+      if (series.data_points === undefined) {
+        return undefined;
+      }
 
-  return [
-    transformRecidivismSeries("Probation", recidivism_probation_series),
-    transformRecidivismSeries("Rider", recidivism_rider_series),
-    transformRecidivismSeries("Term", recidivism_term_series),
-  ].filter(
-    (v): v is Prisma.RecidivismSeriesCreateWithoutInsightInput =>
-      v !== undefined,
-  ) satisfies Prisma.RecidivismSeriesCreateWithoutInsightInput[];
+      return {
+        recommendationType: series.sentence_type,
+        sentenceLengthBucketStart: series.sentence_length_bucket_start,
+        sentenceLengthBucketEnd: series.sentence_length_bucket_end,
+        dataPoints: {
+          createMany: {
+            data: series.data_points.map((s) => ({
+              cohortMonths: s.cohort_months,
+              eventRate: s.event_rate,
+              lowerCI: s.lower_ci,
+              upperCI: s.upper_ci,
+            })),
+          },
+        },
+      };
+    })
+    .filter(
+      (v) => v !== undefined,
+    ) satisfies Prisma.RecidivismSeriesCreateWithoutInsightInput[];
 }
 
-function transformDispositions(data: z.infer<typeof insightImportSchema>) {
-  const dispositions: Prisma.DispositionCreateManyInsightInput[] = [];
-
-  if (data.disposition_probation_pc) {
-    dispositions.push({
-      recommendationType: "Probation",
-      percentage: data.disposition_probation_pc,
-    });
-  }
-  if (data.disposition_rider_pc) {
-    dispositions.push({
-      recommendationType: "Rider",
-      percentage: data.disposition_rider_pc,
-    });
-  }
-  if (data.disposition_term_pc) {
-    dispositions.push({
-      recommendationType: "Term",
-      percentage: data.disposition_term_pc,
-    });
-  }
-
-  return dispositions;
+function transformDispositions(
+  dispositions: z.infer<typeof insightImportSchema>["dispositions"],
+) {
+  return dispositions.map((v) => ({
+    recommendationType: v.sentence_type,
+    sentenceLengthBucketStart: v.sentence_length_bucket_start,
+    sentenceLengthBucketEnd: v.sentence_length_bucket_end,
+    percentage: v.percentage,
+  })) satisfies Prisma.DispositionCreateManyInsightInput[];
 }
 
 export async function transformAndLoadInsightData(
@@ -643,12 +616,12 @@ export async function transformAndLoadInsightData(
         insightData.recidivism_rollup.any_is_violent_uniform,
       rollupRecidivismNumRecords: insightData.recidivism_num_records,
       rollupRecidivismSeries: {
-        create: transformAllRecidivismSeries(insightData),
+        create: transformRecidivismSeries(insightData.recidivism_series),
       },
       // If this missing, assume it is zero
       dispositionNumRecords: insightData.disposition_num_records ?? 0,
       dispositionData: {
-        create: transformDispositions(insightData),
+        create: transformDispositions(insightData.dispositions),
       },
     } satisfies Prisma.InsightCreateInput;
 

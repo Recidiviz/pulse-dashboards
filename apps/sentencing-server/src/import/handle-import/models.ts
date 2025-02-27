@@ -168,10 +168,28 @@ export const opportunityImportSchema = z.object({
 export const recidivismSeriesSchema = zu.stringToJSON().pipe(
   z.array(
     z.object({
-      cohort_months: z.number(),
-      event_rate: z.number(),
-      lower_ci: z.number(),
-      upper_ci: z.number(),
+      sentence_type: z.string().optional(),
+      sentence_length_bucket_start: z.number().optional(),
+      sentence_length_bucket_end: z.number().optional(),
+      data_points: z.array(
+        z.object({
+          cohort_months: z.number(),
+          event_rate: z.number(),
+          lower_ci: z.number(),
+          upper_ci: z.number(),
+        }),
+      ),
+    }),
+  ),
+);
+
+export const dispositionsSchema = zu.stringToJSON().pipe(
+  z.array(
+    z.object({
+      sentence_type: z.string().optional(),
+      sentence_length_bucket_start: z.number().optional(),
+      sentence_length_bucket_end: z.number().optional(),
+      percentage: z.number(),
     }),
   ),
 );
@@ -200,14 +218,10 @@ export const insightImportSchema = z.object({
   recidivism_rollup: recidivismRollupSchema,
   // Integers are being converted to strings for some reason
   recidivism_num_records: z.coerce.number(),
-  recidivism_probation_series: recidivismSeriesSchema.optional(),
-  recidivism_rider_series: recidivismSeriesSchema.optional(),
-  recidivism_term_series: recidivismSeriesSchema.optional(),
+  recidivism_series: recidivismSeriesSchema,
   // Integers are being converted to strings for some reason
-  disposition_num_records: z.coerce.number().optional().nullable(),
-  disposition_probation_pc: z.number().optional().nullable(),
-  disposition_rider_pc: z.number().optional().nullable(),
-  disposition_term_pc: z.number().optional().nullable(),
+  disposition_num_records: z.coerce.number().optional(),
+  dispositions: dispositionsSchema,
 });
 
 export const offenseImportSchema = z.object({
