@@ -71,6 +71,9 @@ export const HistoricalOutcomes: React.FC<{ option: RecommendationOption }> = ({
   option,
 }) => {
   const { recidivismRate, historicalSentencingRate } = option;
+  const isMissingRecidivismAndHistoricalSentencingRates =
+    !recidivismRate && !historicalSentencingRate;
+
   return (
     <Styled.RecommendationOutcome>
       <Styled.PercentageWrapper>
@@ -79,7 +82,9 @@ export const HistoricalOutcomes: React.FC<{ option: RecommendationOption }> = ({
       </Styled.PercentageWrapper>
       <Styled.PercentageWrapper>
         <Styled.Percentage>
-          {historicalSentencingRate ?? "--"}%
+          {historicalSentencingRate ??
+            (isMissingRecidivismAndHistoricalSentencingRates ? "--" : "0")}
+          %
         </Styled.Percentage>
         <Styled.PercentageLabel>Historical Sentencing</Styled.PercentageLabel>
       </Styled.PercentageWrapper>
