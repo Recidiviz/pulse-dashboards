@@ -9,7 +9,8 @@ locals {
   staging_env   = local.env_secrets["env_staging_jii_texting_server"]
   prod_env      = local.env_secrets["env_prod_jii_texting_server"]
 
-  image = "${var.server_image}:${var.server_version}"
+  server_image = "${var.artifact_registry_repo}/jii-texting-server:${var.server_version}"
+  job_image    = "${var.artifact_registry_repo}/jii-texting-jobs:${var.server_version}"
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
@@ -26,7 +27,7 @@ module "cloud-run" {
   source = "../../vendor/cloud-run"
 
   service_name = "jii-texting-server"
-  image        = local.image
+  image        = local.server_image
   location     = var.location
   project_id   = var.project_id
   env_vars     = local.env_vars
@@ -39,7 +40,7 @@ module "cloud-run" {
 module "migrate-db" {
   source                        = "../../vendor/cloud-run-job-exec"
   name                          = "jii-texting-migrate-db"
-  image                         = local.image
+  image                         = local.server_image
   project_id                    = var.project_id
   location                      = var.location
   exec                          = var.migrate
@@ -86,4 +87,15 @@ module "process-jii-to-text-wf" {
   env_vars = {
     CLOUD_RUN_SERVICE_URL = module.cloud-run.service_url
   }
+}
+
+# Configure a Cloud Run job that will process the JII eligible for texts on a given day
+module "process-jii-cloud-run-job" {
+  source                        = "../../vendor/cloud-run-job-exec"
+  name                          = "process-jii"
+  image                         = local.job_image
+  project_id                    = var.project_id
+  location                      = var.location
+  env_vars                      = local.env_vars
+  cloud_run_deletion_protection = false
 }

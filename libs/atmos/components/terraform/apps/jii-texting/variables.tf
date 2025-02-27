@@ -18,9 +18,9 @@ variable "location" {
   description = "The GCP location (us-east1, us-central1, etc) that we are deploying the service to"
 }
 
-variable "server_image" {
+variable "artifact_registry_repo" {
   type        = string
-  description = "Artifact Registry repository to use for the server and migrate jobs"
+  description = "Artifact Registry repository to use for JII texting"
 }
 
 variable "server_version" {
