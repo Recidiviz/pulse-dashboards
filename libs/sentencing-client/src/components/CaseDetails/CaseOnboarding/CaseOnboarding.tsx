@@ -92,6 +92,7 @@ export const CaseOnboarding: React.FC<CaseOnboardingProps> = observer(
         // TODO(Recidiviz/recidiviz-data#31435): Instead of an artificial timeout, figure out a way to wait for the response of the update.
         setTimeout(() => {
           saveAttributes(currentTopicProgressUpdate);
+          form.resetUpdates();
         }, 2500);
       } else {
         saveAttributes(currentTopicProgressUpdate);
