@@ -103,7 +103,6 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
           searchTitle: "supervision officer",
         },
       ],
-      onlySurfaceEligible: true,
     },
   },
   navigation: {
