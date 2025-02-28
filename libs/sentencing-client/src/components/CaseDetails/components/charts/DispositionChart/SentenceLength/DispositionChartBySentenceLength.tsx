@@ -39,6 +39,7 @@ export function DispositionChartBySentenceLength({
   const formattedDataPoints = useMemo(
     () =>
       dataPoints
+        .filter((d) => d.percentage > 0)
         .sort(
           (dataPoint1, dataPoint2) =>
             dataPoint1.sentenceLengthBucketStart -
@@ -69,9 +70,7 @@ export function DispositionChartBySentenceLength({
 
   const recidivismChartLegend = formattedDataPoints.map(({ title, color }) => (
     <CommonStyled.ChartLegendItem key={title}>
-      <CommonStyled.ChartLegendDot
-        $backgroundColor={color}
-      />
+      <CommonStyled.ChartLegendDot $backgroundColor={color} />
       <div>{title}</div>
     </CommonStyled.ChartLegendItem>
   ));
