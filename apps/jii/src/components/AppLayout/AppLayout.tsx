@@ -52,6 +52,10 @@ const Header = styled.header`
   left: 0;
   right: 0;
   z-index: ${STICKY_HEADER_ZINDEX};
+
+  @media (max-height: 599px) {
+    position: static;
+  }
 `;
 
 function useHeaderMeasurement() {

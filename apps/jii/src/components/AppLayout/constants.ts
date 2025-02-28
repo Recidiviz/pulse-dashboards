@@ -22,3 +22,5 @@ export const PAGE_LAYOUT_HEADER_GAP = spacing.xl;
 export const HEADER_PORTAL_ID = "app-layout-header-portal";
 
 export const STICKY_HEADER_ZINDEX = zindex.modal.backdrop - 20;
+
+export const COLLAPSIBLE_MENU_BREAKPOINT = 550;

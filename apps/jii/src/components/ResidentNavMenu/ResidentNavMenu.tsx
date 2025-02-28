@@ -28,6 +28,7 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { State } from "../../routes/routes";
 import { RouteParams } from "../../routes/utils";
+import { COLLAPSIBLE_MENU_BREAKPOINT } from "../AppLayout/constants";
 import {
   Dropdown,
   DropdownMenu,
@@ -65,6 +66,34 @@ const Wrapper = styled.nav`
     color: ${palette.pine1};
     padding-top: 0;
   }
+
+  @media (max-width: ${COLLAPSIBLE_MENU_BREAKPOINT - 1}px) {
+    align-items: flex-end;
+    flex-direction: column;
+    margin-bottom: ${rem(spacing.lg)};
+
+    & > * {
+      padding: 0 ${rem(BORDER)};
+    }
+
+    a.active {
+      border-top: none;
+      border-right: ${rem(BORDER)} solid ${palette.pine4};
+      padding-right: 0;
+    }
+  }
+`;
+
+const ResponsiveDropdownMenu = styled(DropdownMenu)`
+  @media (max-width: ${COLLAPSIBLE_MENU_BREAKPOINT - 1}px) {
+    max-width: 80vw;
+
+    & > button {
+      height: auto;
+      padding: ${rem(spacing.md)};
+      white-space: normal;
+    }
+  }
 `;
 
 const OpportunitiesMenu: FC<{ links: Array<LinkProps> }> = observer(
@@ -76,7 +105,7 @@ const OpportunitiesMenu: FC<{ links: Array<LinkProps> }> = observer(
         <DropdownToggle kind="borderless" showCaret>
           Opportunities
         </DropdownToggle>
-        <DropdownMenu alignment="right">
+        <ResponsiveDropdownMenu alignment="right">
           {links.map((link) => (
             // preferably these would be React Router Links but the design system
             // Dropdown component does not support this
@@ -84,7 +113,7 @@ const OpportunitiesMenu: FC<{ links: Array<LinkProps> }> = observer(
               {link.children}
             </DropdownMenuItem>
           ))}
-        </DropdownMenu>
+        </ResponsiveDropdownMenu>
       </Dropdown>
     );
   },

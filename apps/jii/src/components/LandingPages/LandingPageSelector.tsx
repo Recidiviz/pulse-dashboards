@@ -23,22 +23,31 @@ import styled from "styled-components/macro";
 
 import { Selector, SelectorProps } from "../Selector/Selector";
 
-const SelectorWrapper = styled.div`
+const Wrapper = styled.div`
   background: ${palette.marble2};
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(14)};
-  display: grid;
-  gap: ${rem(spacing.md)};
-  grid-template-areas:
-    "label label"
-    ". .";
-  grid-template-rows: auto auto;
-  grid-template-columns: 1fr auto;
   margin: ${rem(spacing.xl)} 0;
   padding: ${rem(spacing.xl)};
 
   label {
-    grid-area: label;
+    display: block;
+    margin-bottom: ${rem(spacing.md)};
+  }
+`;
+
+const SelectWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${rem(spacing.md)};
+  justify: space-between;
+
+  & > div {
+    flex 4 0 55%;
+  }
+
+  & > button {
+    flex: 1 1 auto;
   }
 `;
 
@@ -60,12 +69,14 @@ export const LandingPageSelector = observer(function LandingPageSelector<
   const labelId = useId();
 
   return (
-    <SelectorWrapper>
+    <Wrapper>
       <label id={labelId}>{label}</label>
-      <Selector {...{ placeholder, options, onChange }} labelId={labelId} />
-      <Button disabled={disableButton} onClick={onButtonClick}>
-        Go
-      </Button>
-    </SelectorWrapper>
+      <SelectWrapper>
+        <Selector {...{ placeholder, options, onChange }} labelId={labelId} />
+        <Button disabled={disableButton} onClick={onButtonClick}>
+          Go
+        </Button>
+      </SelectWrapper>
+    </Wrapper>
   );
 });

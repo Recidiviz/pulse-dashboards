@@ -30,6 +30,14 @@ import { useResidentsContext } from "../ResidentsHydrator/context";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { OpportunityComparisonPresenter } from "./OpportunityComparisonPresenter";
 
+// introduces horizontal scrolling on narrower screens (below min table width)
+const TableWrapper = styled.div`
+  /* this size accounts for page padding at 320px screen width.
+  at larger screen sizes we will be well within this limit */
+  max-width: 80vw;
+  overflow-x: auto;
+`;
+
 const ComparisonTable = styled.table`
   border-spacing: 0;
   margin-top: ${rem(spacing.xxl)};
@@ -85,44 +93,46 @@ const ManagedComponent: FC<{ presenter: OpportunityComparisonPresenter }> = ({
 
 ${pageContents.body}`}
       </CopyWrapper>
-      <ComparisonTable>
-        <thead>
-          <tr>
-            <td></td>
-            <th>{pageContents.tableHeadings[0]}</th>
-            <th>{pageContents.tableHeadings[1]}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pageContents.tableRows.map((row) => (
-            <tr key={row[0]}>
-              {row.map((cell, i) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <td key={i}>{cell}</td>
+      <TableWrapper>
+        <ComparisonTable>
+          <thead>
+            <tr>
+              <td></td>
+              <th>{pageContents.tableHeadings[0]}</th>
+              <th>{pageContents.tableHeadings[1]}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pageContents.tableRows.map((row) => (
+              <tr key={row[0]}>
+                {row.map((cell, i) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <td key={i}>{cell}</td>
+                ))}
+              </tr>
+            ))}
+            <tr>
+              <td></td>
+              {opportunitySlugs.map((slug, i) => (
+                <td key={slug}>
+                  <LinkBox>
+                    <p>Interested in {pageContents.tableHeadings[i]}?</p>
+                    <GoButton
+                      to={State.Resident.Eligibility.Opportunity.buildPath({
+                        stateSlug,
+                        personPseudoId,
+                        opportunitySlug: slug,
+                      })}
+                    >
+                      {pageContents.linkText}
+                    </GoButton>
+                  </LinkBox>
+                </td>
               ))}
             </tr>
-          ))}
-          <tr>
-            <td></td>
-            {opportunitySlugs.map((slug, i) => (
-              <td key={slug}>
-                <LinkBox>
-                  <p>Interested in {pageContents.tableHeadings[i]}?</p>
-                  <GoButton
-                    to={State.Resident.Eligibility.Opportunity.buildPath({
-                      stateSlug,
-                      personPseudoId,
-                      opportunitySlug: slug,
-                    })}
-                  >
-                    {pageContents.linkText}
-                  </GoButton>
-                </LinkBox>
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </ComparisonTable>
+          </tbody>
+        </ComparisonTable>
+      </TableWrapper>
     </div>
   );
 };

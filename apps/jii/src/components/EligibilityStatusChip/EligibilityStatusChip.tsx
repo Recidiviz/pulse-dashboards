@@ -22,9 +22,10 @@ import styled from "styled-components/macro";
 
 import { EligibilityStatus } from "../../models/EligibilityReport/types";
 
-const Chip = styled.div`
+const Chip = styled.span`
   ${typography.Sans14};
 
+  display: inline-block;
   padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
   border-radius: ${rem(spacing.xs)};
   border-style: solid;

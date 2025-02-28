@@ -34,6 +34,8 @@ const BULLET_PAD = 12;
 const Header = styled.header`
   align-items: flex-start;
   display: flex;
+  flex-wrap: wrap;
+  gap: ${rem(spacing.lg)};
   justify-content: space-between;
 
   /* put margin on the header instead so it collapses with the following element */

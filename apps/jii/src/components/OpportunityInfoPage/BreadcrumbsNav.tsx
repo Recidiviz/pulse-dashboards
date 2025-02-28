@@ -33,6 +33,7 @@ const Nav = styled.nav.attrs({ "aria-label": "Breadcrumb" })`
 
     padding: 0;
     display: flex;
+    flex-wrap: wrap;
     gap: ${rem(spacing.md)};
 
     li {
@@ -44,6 +45,7 @@ const Nav = styled.nav.attrs({ "aria-label": "Breadcrumb" })`
         background: url(${chevronUrl});
         content: "";
         display: block;
+        flex: 0 0 auto;
         width: ${rem(5)};
         height: ${rem(8)};
       }

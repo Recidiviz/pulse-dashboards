@@ -43,14 +43,19 @@ const Background = styled(FullBleedContainer)`
   top: -${rem(spacing.xl)};
 `;
 
+const TOC_WIDTH = rem(120);
+const STICKY_TOC_BREAKPOINT = `min-width: calc(${TOC_WIDTH} * 5.5)`;
+
 const Wrapper = styled.article`
-  column-gap: ${rem(spacing.xl * 2)};
-  display: grid;
-  grid-template-columns: ${rem(120)} 1fr;
-  grid-template-rows: auto 1fr;
-  grid-template-areas:
-    "sidebar title"
-    "sidebar body";
+  @media (${STICKY_TOC_BREAKPOINT}) {
+    column-gap: ${rem(spacing.xl * 2)};
+    display: grid;
+    grid-template-columns: ${TOC_WIDTH} 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "sidebar title"
+      "sidebar body";
+  }
 `;
 
 const Headline = styled.h1`
@@ -68,9 +73,14 @@ const Body = styled.div`
 `;
 
 const TableOfContents = styled.nav`
+  @media (${STICKY_TOC_BREAKPOINT}) {
+    position: sticky;
+    margin-top: 0;
+  }
+
   align-self: start;
   grid-area: sidebar;
-  position: sticky;
+  margin-top: ${rem(spacing.lg)};
 
   h2 {
     ${typography.Sans14}
