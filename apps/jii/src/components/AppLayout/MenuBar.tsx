@@ -23,6 +23,7 @@ import styled from "styled-components/macro";
 
 import logoUrl from "../../assets/images/sunrise.svg";
 import { AccountMenu } from "./AccountMenu";
+import { CollapsibleContainer } from "./CollapsibleContainer";
 import { HeaderBarContainer } from "./HeaderBarContainer";
 
 const LogoLink = styled(Link)``;
@@ -46,8 +47,10 @@ export const MenuBar: FC<{ children?: ReactNode }> = ({ children }) => {
         <LogoLink to="/">
           <img src={logoUrl} alt="Opportunities" width="44" height="24" />
         </LogoLink>
-        {children}
-        <AccountMenu />
+        <CollapsibleContainer>
+          {children}
+          <AccountMenu />
+        </CollapsibleContainer>
       </Header>
     </HeaderBarContainer>
   );

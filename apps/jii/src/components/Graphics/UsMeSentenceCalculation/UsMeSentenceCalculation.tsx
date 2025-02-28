@@ -24,34 +24,52 @@ import diagram1Url from "./diagram1.svg";
 import diagram2Url from "./diagram2.svg";
 import diagram3Url from "./diagram3.svg";
 
+// above roughly this screen width, the graphics can be displayed at full size
+const GRAPHIC_BREAKPOINT = 560;
+
 const ListWrapper = styled.ol`
   padding: 0;
   margin: ${rem(spacing.xl)} 0;
 
   li {
-    border: 1px solid ${palette.slate20};
-    border-radius: ${rem(16)};
     display: flex;
     flex-wrap: wrap;
     margin: ${rem(spacing.md)} 0;
     overflow: hidden;
+
+    @media (min-width: ${GRAPHIC_BREAKPOINT}px) {
+      border: 1px solid ${palette.slate20};
+      border-radius: ${rem(16)};
+    }
   }
 `;
 
 const ListText = styled.div`
   display: list-item;
   flex: 25 0 ${rem(100)};
+  margin-left: ${rem(spacing.lg)};
   padding: ${rem(spacing.lg)} 0;
-  margin: 0 ${rem(spacing.lg)} 0 ${rem(spacing.xxl)};
+
+  @media (min-width: ${GRAPHIC_BREAKPOINT}px) {
+    margin: 0 ${rem(spacing.lg)} 0 ${rem(spacing.xxl)};
+  }
 `;
 
 const GraphicWrapper = styled.div`
   align-items: center;
-  background: ${palette.marble2};
   display: flex;
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   justify-content: center;
-  padding: ${rem(spacing.xl)} ${rem(spacing.lg)};
+
+  @media (min-width: ${GRAPHIC_BREAKPOINT}px) {
+    background: ${palette.marble2};
+    padding: ${rem(spacing.xl)} ${rem(spacing.lg)};
+  }
+
+  img {
+    max-width: 452px;
+    width: 100%;
+  }
 `;
 
 export const UsMeSentenceCalculation: FC = () => {
@@ -63,7 +81,7 @@ export const UsMeSentenceCalculation: FC = () => {
           entered a DOC facility.
         </ListText>
         <GraphicWrapper>
-          <img width={452} src={diagram1Url} alt="" />
+          <img src={diagram1Url} alt="" />
         </GraphicWrapper>
       </li>
       <li>

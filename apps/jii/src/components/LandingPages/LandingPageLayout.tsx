@@ -29,13 +29,13 @@ import { FullBleedContainer } from "../BaseLayout/BaseLayout";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { Wordmark } from "../Wordmark/Wordmark";
 
-const CONTENT_WIDTH = rem(PAGE_WIDTH * 0.8);
+const CONTENT_WIDTH = PAGE_WIDTH * 0.8;
 
 const Wrapper = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto;
   margin: 0 auto;
-  max-width: ${CONTENT_WIDTH};
+  max-width: ${rem(CONTENT_WIDTH)};
   min-height: 100vh;
 `;
 
@@ -51,14 +51,23 @@ const Footer = styled(FullBleedContainer).attrs({ as: "footer" })`
   background: #001414;
 `;
 
+const Left = styled.div`
+  flex: 1 1 60%;
+`;
+const Right = styled.div`
+  flex: 0 0 auto;
+`;
+
 const FooterContents = styled.div`
   color: ${palette.white};
-  column-gap: 15%;
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 15%;
   margin: 0 auto;
-  max-width: ${CONTENT_WIDTH};
-  padding: ${rem(spacing.xxl)} 0;
+  max-width: ${rem(CONTENT_WIDTH + spacing.md * 2)};
+  padding: ${rem(spacing.xxl)} ${rem(spacing.md)};
+  text-wrap: balance;
 
   h2 {
     ${typography.Sans14}
@@ -115,13 +124,13 @@ export const LandingPageLayout: FC<{ children: ReactNode }> = ({
       <Main>{children}</Main>
       <Footer>
         <FooterContents>
-          <div>
+          <Left>
             <h2>
               Made by <RecidivizWordmark />
             </h2>
             <Markdown>{landingPageConfig.aboutRecidivizCopy}</Markdown>
-          </div>
-          <div>
+          </Left>
+          <Right>
             <h2>For staff</h2>
             <p>
               <Button
@@ -138,7 +147,7 @@ export const LandingPageLayout: FC<{ children: ReactNode }> = ({
             <p>
               <a href="mailto:feedback@recidiviz.org">Contact us</a>
             </p>
-          </div>
+          </Right>
         </FooterContents>
       </Footer>
     </Wrapper>

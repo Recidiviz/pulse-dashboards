@@ -27,9 +27,18 @@ const Wrapper = styled.article`
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(spacing.sm)};
   display: flex;
+  flex-wrap: wrap;
   gap: ${rem(spacing.lg)};
   margin: ${rem(spacing.xl)} 0;
   padding: ${rem(spacing.xl)};
+
+  & > img {
+    flex: 0 0 40px;
+  }
+
+  & > div {
+    flex: 1 1 80%;
+  }
 
   p {
     margin-top: 0;

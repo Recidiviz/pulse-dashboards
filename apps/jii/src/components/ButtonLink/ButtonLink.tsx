@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, palette, spacing } from "@recidiviz/design-system";
+import { animation, palette } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
@@ -27,13 +27,13 @@ export const ButtonLink = styled(Link)`
   // many of these styles are borrowed from the design system, which does not export them
   align-items: center;
   background-color: transparent;
-  border-radius: ${rem(999)};
+  border-radius: ${rem(21)};
   border: 1px solid ${palette.signal.links};
   color: ${palette.signal.links};
   display: inline-flex;
-  gap: ${rem(spacing.md)};
-  justify-content: center;s
-  min-height: ${rem(32)};
+  gap: 1em;
+  justify-content: space-between;
+  min-height: ${rem(42)};
   min-width: ${rem(129)};
   padding: ${rem(10)} ${rem(18)};
   text-decoration: none;
@@ -50,5 +50,14 @@ export const ButtonLink = styled(Link)`
   &[aria-expanded="true"] {
     border-color: ${palette.signal.highlight};
     color: ${palette.signal.highlight};
+  }
+
+  & > * {
+    flex: 0 1 auto;
+  }
+
+  /* expect this to be an icon */
+  & > svg {
+    flex: 0 0 auto;
   }
 `;

@@ -26,22 +26,30 @@ import { EligibilityStatusChip } from "../../EligibilityStatusChip/EligibilitySt
 import { OpportunityData } from "../../SingleResidentHydrator/context";
 
 const Wrapper = styled.article`
-  align-items: start;
-  column-gap: ${rem(spacing.lg)};
-  display: grid;
-  grid-template-columns: 1fr auto;
-  text-wrap: balance;
+  @media (min-width: 450px) {
+    align-items: start;
+    column-gap: ${rem(spacing.lg)};
+    display: grid;
+    grid-template-columns: 1fr auto;
+    text-wrap: balance;
+  }
 
   h3 {
     ${typography.Sans24}
+
+    margin-bottom: ${rem(spacing.md)};
   }
 
   p {
     ${typography.Sans14}
 
     color: ${palette.slate85};
-    margin: ${rem(spacing.md)} 0 ${rem(spacing.lg)};
+    margin: 0 0 ${rem(spacing.lg)};
   }
+`;
+
+const ChipWrapper = styled.div`
+  margin-bottom: ${rem(spacing.md)};
 `;
 
 export const OpportunityCard: FC<OpportunityData> = ({
@@ -51,7 +59,9 @@ export const OpportunityCard: FC<OpportunityData> = ({
   return (
     <Wrapper>
       <h3>{eligibilityReport.name}</h3>
-      <EligibilityStatusChip {...eligibilityReport.status} />
+      <ChipWrapper>
+        <EligibilityStatusChip {...eligibilityReport.status} />
+      </ChipWrapper>
       <div>
         <p>{eligibilityReport.description}</p>
         <GoButton

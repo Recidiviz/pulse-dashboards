@@ -20,10 +20,9 @@ import { rem } from "polished";
 import { memo } from "react";
 import styled from "styled-components/macro";
 
-import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
-import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { Eligibility } from "./Eligibility";
+import { Footer } from "./Footer";
 import { Progress } from "./Progress";
 
 const Wrapper = styled.div`
@@ -39,49 +38,29 @@ const SectionsWrapper = styled.div`
   display: grid;
 `;
 
+const HEADER_COLUMN_WIDTH = 150;
+const STACKING_BREAKPOINT = HEADER_COLUMN_WIDTH * 4;
+
 const SectionModule = styled.article`
-  column-gap: ${rem(spacing.xl)};
-  display: grid;
-  grid-template-columns: ${rem(150)} 1fr;
+  @media (min-width: ${STACKING_BREAKPOINT}px) {
+    column-gap: ${rem(spacing.xl)};
+    display: grid;
+    grid-template-columns: ${rem(HEADER_COLUMN_WIDTH)} 1fr;
+  }
 `;
 
 const ModuleHeading = styled.h2`
   ${typography.Sans16}
 
   color: ${palette.pine1};
-`;
-
-const Footer = styled(FullBleedContainer).attrs({ as: "footer" })`
-  background-color: ${palette.pine1};
-  color: ${palette.white80};
-  padding: ${rem(spacing.lg)} 0;
-
-  h2,
-  p {
-    ${typography.Sans12}
-
-    margin: 0;
-  }
-
-  h2 {
-    color: ${palette.white};
-  }
-`;
-
-const FooterContents = styled(PageContainer)`
-  display: flex;
-  justify-content: space-between;
-
-  & > :last-child {
-    text-align: right;
-  }
+  margin: 0 0 ${rem(spacing.lg)};
 `;
 
 export const SingleResidentHome = memo(function SingleResidentHome() {
   const {
     residentsStore: {
       config: {
-        home: { eligibility, footer, progress },
+        home: { eligibility, progress },
       },
     },
   } = useResidentsContext();
@@ -98,18 +77,7 @@ export const SingleResidentHome = memo(function SingleResidentHome() {
           <Eligibility />
         </SectionModule>
       </SectionsWrapper>
-      <Footer>
-        <FooterContents>
-          <div>
-            <h2>{footer.about.title}</h2>
-            <CopyWrapper>{footer.about.body}</CopyWrapper>
-          </div>
-          <div>
-            <h2>{footer.contact.title}</h2>
-            <CopyWrapper>{footer.contact.body}</CopyWrapper>
-          </div>
-        </FooterContents>
-      </Footer>
+      <Footer />
     </Wrapper>
   );
 });

@@ -23,9 +23,9 @@ import { ButtonLink } from "../ButtonLink/ButtonLink";
 
 export const Section = styled.section`
   border: 1px solid ${palette.slate20};
-  border-radius: ${rem(24)};
+  border-radius: clamp(${rem(2)}, 2vw, ${rem(24)});
   margin: ${rem(spacing.lg)} 0;
-  padding: ${rem(spacing.xl)};
+  padding: clamp(${rem(spacing.md)}, 4vw, ${rem(spacing.xl)});
   text-wrap: pretty;
 
   ${ButtonLink} {
