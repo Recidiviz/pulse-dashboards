@@ -78,6 +78,10 @@ export abstract class Task<
     return this.task.type;
   }
 
+  get key(): string {
+    return `${this.task.type}-${this.person.externalId}`;
+  }
+
   abstract get additionalDetails(): string | undefined;
 
   get dueDate(): Date {

@@ -20,12 +20,16 @@ import { fieldToDate } from "~datatypes";
 import { formatDate } from "../../utils/formatStrings";
 import { Task } from "./Task";
 
-class UsTxHomeVisitTask extends Task<"usTxHomeVisit"> {
+class UsTxHomeContactTask extends Task<"usTxHomeContact"> {
   displayName = "Home contact";
 
   dueDateDisplayLong = `${this.displayName} recommended ${this.dueDateFromToday}`;
 
   dueDateDisplayShort = `Recommended ${this.dueDateFromToday}`;
+
+  get key(): string {
+    return `${super.key}-${this.task.details.typeOfContact}`;
+  }
 
   get lastHomeVisit(): string | undefined {
     if (!this.details.lastContactDate) return;
@@ -39,4 +43,4 @@ class UsTxHomeVisitTask extends Task<"usTxHomeVisit"> {
   }
 }
 
-export default UsTxHomeVisitTask;
+export default UsTxHomeContactTask;

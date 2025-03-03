@@ -25,14 +25,25 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER1",
     tasks: [
       {
-        type: "usTxHomeVisit",
+        type: "usTxHomeContact",
         // overdue
         dueDate: "2022-01-03",
         details: {
           contactCount: 2,
           lastContactDate: "2021-08-03",
-          overdueFlag: false,
-          typeOfContact: "HOME",
+          overdueFlag: true,
+          typeOfContact: "UNSCHEDULED HOME",
+        },
+      },
+      {
+        type: "usTxElectronicContact",
+        // overdue
+        dueDate: "2022-09-23",
+        details: {
+          contactCount: 2,
+          lastContactDate: "2022-06-23",
+          overdueFlag: true,
+          typeOfContact: "SCHEDULED ELECTRONIC",
         },
       },
     ],
@@ -43,14 +54,35 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER1",
     tasks: [
       {
-        type: "usTxHomeVisit",
+        type: "usTxHomeContact",
+        // overdue
+        dueDate: "2022-03-09",
+        details: {
+          contactCount: 2,
+          lastContactDate: "2021-03-09",
+          overdueFlag: true,
+          typeOfContact: "SCHEDULED HOME",
+        },
+      },
+      {
+        type: "usTxFieldContact",
         // overdue
         dueDate: "2022-03-09",
         details: {
           contactCount: 2,
           lastContactDate: "2021-03-09",
           overdueFlag: false,
-          typeOfContact: "HOME",
+          typeOfContact: "SCHEDULED FIELD",
+        },
+      },
+      {
+        type: "usTxAssessment",
+        // overdue
+        dueDate: "2022-10-09",
+        details: {
+          eventType: "supervision_start_no_prior_assessment",
+          eventDate: "2022-06-09",
+          dueAssessmentDate: "2022-10-09",
         },
       },
     ],

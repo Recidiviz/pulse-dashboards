@@ -17,7 +17,10 @@
 
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
-import UsTxHomeVisitTask from "../WorkflowsStore/Task/UsTxHomeVisitTask";
+import UsTxAssessmentTask from "../WorkflowsStore/Task/UsTxAssessmentTask";
+import UsTxElectronicContactTask from "../WorkflowsStore/Task/UsTxElectronicContactTask";
+import UsTxFieldContactTask from "../WorkflowsStore/Task/UsTxFieldContactTask";
+import UsTxHomeContactTask from "../WorkflowsStore/Task/UsTxHomeContactTask";
 
 const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   name: "Texas",
@@ -40,8 +43,20 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   workflowsTasksConfig: {
     collection: "usTxSupervisionTasks",
     tasks: {
-      usTxHomeVisit: {
-        constructor: UsTxHomeVisitTask,
+      usTxHomeContact: {
+        constructor: UsTxHomeContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usTxFieldContact: {
+        constructor: UsTxFieldContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usTxElectronicContact: {
+        constructor: UsTxElectronicContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usTxAssessment: {
+        constructor: UsTxAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
     },
