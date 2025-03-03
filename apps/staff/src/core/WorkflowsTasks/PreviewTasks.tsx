@@ -104,7 +104,7 @@ export const PreviewTasks = observer(function PreviewTasks({
       <TaskItems>
         {tasks.map((task) => {
           return (
-            <div key={`${task.type}-${task.person.externalId}`}>
+            <div key={task.key}>
               <TaskItem showSnoozeDropdown={showSnoozeDropdown}>
                 <TaskContent>
                   <TaskTitle isMobile={isMobile}>

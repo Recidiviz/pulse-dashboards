@@ -52,11 +52,17 @@ type UsIdEmploymentDetails = {
   lastContacted?: string;
 };
 
-type UsTxHomeVisitDetails = {
+type UsTxContactDetails = {
   contactCount: number;
   lastContactDate: string | null;
   overdueFlag: boolean;
   typeOfContact: string;
+};
+
+type UsTxAssessmentDetails = {
+  eventType: string;
+  dueAssessmentDate: string | null;
+  eventDate: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -73,10 +79,13 @@ export type SupervisionNeedType = (typeof SUPERVISION_NEED_TYPES)[number];
 
 export const SUPERVISION_TASK_TYPES = [
   "homeVisit",
-  "usTxHomeVisit",
   "assessment",
   "contact",
   "employment",
+  "usTxHomeContact",
+  "usTxFieldContact",
+  "usTxElectronicContact",
+  "usTxAssessment",
 ] as const;
 
 export type SupervisionTaskType = (typeof SUPERVISION_TASK_TYPES)[number];
@@ -85,20 +94,25 @@ export type SupervisionDetails =
   | UsIdAssessmentDetails
   | UsIdContactDetails
   | UsIdEmploymentDetails
-  | UsTxHomeVisitDetails;
+  | UsTxContactDetails
+  | UsTxAssessmentDetails;
 
 export type SupervisionDetailsForTask = {
   homeVisit: UsIdHomeVisitDetails;
-  usTxHomeVisit: UsTxHomeVisitDetails;
   assessment: UsIdAssessmentDetails;
   contact: UsIdContactDetails;
   employment: UsIdEmploymentDetails;
+  usTxHomeContact: UsTxContactDetails;
+  usTxFieldContact: UsTxContactDetails;
+  usTxElectronicContact: UsTxContactDetails;
+  usTxAssessment: UsTxAssessmentDetails;
 };
 
 export type SupervisionTask<
   T extends SupervisionTaskType = SupervisionTaskType,
 > = {
   type: T;
+  key: string;
   dueDate: Date;
   details: SupervisionDetailsForTask[T];
   isOverdue: boolean;
@@ -129,7 +143,11 @@ export type TasksStateCode = "US_ID" | "US_TX";
 // TODO: Derive these from tenant configs
 type TasksForState = {
   US_ID: "homeVisit" | "assessment" | "contact" | "employment";
-  US_TX: "usTxHomeVisit";
+  US_TX:
+    | "usTxHomeContact"
+    | "usTxFieldContact"
+    | "usTxElectronicContact"
+    | "usTxAssessment";
 };
 
 export interface SupervisionTasksRecord<T extends TasksStateCode> {

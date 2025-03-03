@@ -48,7 +48,7 @@ const TasksSection: React.FC<{
     <TooltipSection>
       <TooltipSectionHeader>Tasks</TooltipSectionHeader>
       {tasks.map((t) => (
-        <TooltipRow justifyContent="space-between" key={t.type}>
+        <TooltipRow justifyContent="space-between" key={t.key}>
           <TooltipSectionDetails>{t.displayName}</TooltipSectionDetails>
           <TooltipSectionDetails overdue={t.isOverdue}>
             {t.dueDateDisplayShort}
