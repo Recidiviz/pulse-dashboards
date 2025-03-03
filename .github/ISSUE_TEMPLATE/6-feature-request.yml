@@ -1,6 +1,6 @@
 name: "Request: Feature"
 description: "File a request for a new feature or enhancement."
-title: "[<UBN/P0/P1>][<US_XX>][<Product>]: "
+title: "[UBN/P0/P1][US_XX][Product]: Title"
 labels: ["Type: Feature"]
 projects: []
 assignees: []
@@ -11,6 +11,10 @@ body:
         Use this template to make a feature request. 
         *Note*: If this is product feedback that should be triaged by a Polaris PM, fill out [go/product-feedback-form](https://www.notion.so/recidiviz/1737889f4d19801ebb91c4aeb6df4cce) instead of making a ticket!
         Refer to [go/slas](https://docs.google.com/document/d/15oVaisNkKTbagTVhXjqqf_iE7YW6g1_Jq9k-s-UMWrc) to determine the proper priority, label, and assignees for this issue.
+        The tldr; is:
+            * UBNs will be addressed immediately. Assign the Pod or Polaris oncall (see [go/oncall](https://docs.google.com/spreadsheets/d/1qoiZcnZVQYsnaLSCkTTzfVr-qnhw5CihXQYPOOm6uMY/edit)).
+            * P0s will be addressed in 1-2 weeks. Assign the Pod or Polaris oncall.
+            * P1s will be triaged, prioritized, and assigned at sprint planning.
   - type: input
     id: product
     attributes:
