@@ -48,6 +48,7 @@ export const fakePerson = {
   officerId: "officer-id-1",
   poName: faker.person.fullName(),
   district: faker.location.county(),
+  lastOptOutDate: new Date("2025-01-01"),
 } satisfies Prisma.PersonCreateInput;
 
 export async function seed(prismaClient: PrismaClient) {

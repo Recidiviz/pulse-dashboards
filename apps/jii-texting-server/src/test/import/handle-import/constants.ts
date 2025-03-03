@@ -15,23 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Fastify from "fastify";
+export const TEST_BUCKET_ID = "test-bucket";
 
-import { registerImportRoutes } from "~jii-texting-server/server/utils";
-import registerWebhooks from "~jii-texting-server/server/webhooks";
-
-export function buildServer() {
-  // Instantiate Fastify with some config
-  const server = Fastify({
-    logger: true,
-  });
-
-  server.get("/", async function handler() {
-    return { hello: "world" };
-  });
-
-  registerWebhooks(server);
-  registerImportRoutes(server);
-
-  return server;
-}
+export const importPersonRequestBody = {
+  bucketId: TEST_BUCKET_ID,
+  objectId: "US_ID/jii_to_text.json",
+};

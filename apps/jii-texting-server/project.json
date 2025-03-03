@@ -14,7 +14,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server --env_preview env_preview_jii_texting_server",
+        "command": "../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server",
         "cwd": "{projectRoot}"
       }
     },

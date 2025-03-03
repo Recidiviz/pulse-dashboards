@@ -15,23 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Fastify from "fastify";
+import { buildServer } from "~jii-texting-server/server";
+import { importPersonRequestBody } from "~jii-texting-server/test/import/handle-import/constants";
 
-import { registerImportRoutes } from "~jii-texting-server/server/utils";
-import registerWebhooks from "~jii-texting-server/server/webhooks";
-
-export function buildServer() {
-  // Instantiate Fastify with some config
-  const server = Fastify({
-    logger: true,
+export async function callHandleImport(
+  server: ReturnType<typeof buildServer>,
+  data: object,
+) {
+  return await server.inject({
+    method: "POST",
+    url: "/handle_import",
+    payload: data,
+    headers: { authorization: `Bearer token` },
   });
+}
 
-  server.get("/", async function handler() {
-    return { hello: "world" };
-  });
-
-  registerWebhooks(server);
-  registerImportRoutes(server);
-
-  return server;
+export async function callHandleImportPersonData(
+  server: ReturnType<typeof buildServer>,
+) {
+  return await callHandleImport(server, importPersonRequestBody);
 }

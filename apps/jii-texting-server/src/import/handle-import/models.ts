@@ -15,23 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Fastify from "fastify";
+import { StateCode } from "@prisma/jii-texting-server/client";
+import z from "zod";
+import { zu } from "zod_utilz";
 
-import { registerImportRoutes } from "~jii-texting-server/server/utils";
-import registerWebhooks from "~jii-texting-server/server/webhooks";
+export const nameSchema = zu.stringToJSON().pipe(
+  z.object({
+    given_names: z.string(),
+    middle_names: z.string(),
+    name_suffix: z.string(),
+    surname: z.string(),
+  }),
+);
 
-export function buildServer() {
-  // Instantiate Fastify with some config
-  const server = Fastify({
-    logger: true,
-  });
-
-  server.get("/", async function handler() {
-    return { hello: "world" };
-  });
-
-  registerWebhooks(server);
-  registerImportRoutes(server);
-
-  return server;
-}
+export const personImportSchema = z.object({
+  external_id: z.string(),
+  pseudonymized_id: z.string(),
+  person_id: z.string(),
+  state_code: z.nativeEnum(StateCode),
+  person_name: nameSchema,
+  phone_number: z.string(),
+  officer_id: z.string(),
+  po_name: z.string(),
+  district: z.string(),
+});
