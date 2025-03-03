@@ -16,11 +16,10 @@
 // =============================================================================
 
 import { StateCode } from "@prisma/jii-texting-server/client";
-import { beforeAll, beforeEach, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
 import { MockImportRoutesHandler } from "~fastify-data-import-plugin/testkit";
-import server from "~jii-texting-server/main";
 import { buildServer } from "~jii-texting-server/server";
 import { seed } from "~jii-texting-server/test/setup/seed";
 import { resetDb } from "~jii-texting-server/test/setup/utils";
@@ -30,7 +29,7 @@ export const testPort = process.env["PORT"]
   : 3003;
 export const testHost = process.env["HOST"] ?? "localhost";
 
-export let testServer: typeof server;
+export let testServer: ReturnType<typeof buildServer>;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 
 vi.mock("~fastify-data-import-plugin", () => ({
@@ -54,4 +53,8 @@ beforeAll(async () => {
 beforeEach(async () => {
   await resetDb(testPrismaClient);
   await seed(testPrismaClient);
+});
+
+afterAll(async () => {
+  await testServer.close();
 });

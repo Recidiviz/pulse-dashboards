@@ -15,23 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Fastify from "fastify";
+import { EtlHelper } from "~fastify-data-import-plugin";
+import { transformAndLoadPersonData } from "~jii-texting-server/import/handle-import/utils";
+export const PERSON_FILE_NAME = "jii_to_text.json";
 
-import { registerImportRoutes } from "~jii-texting-server/server/utils";
-import registerWebhooks from "~jii-texting-server/server/webhooks";
-
-export function buildServer() {
-  // Instantiate Fastify with some config
-  const server = Fastify({
-    logger: true,
-  });
-
-  server.get("/", async function handler() {
-    return { hello: "world" };
-  });
-
-  registerWebhooks(server);
-  registerImportRoutes(server);
-
-  return server;
-}
+export const FILE_NAME_TO_ETL_HELPER: Record<string, EtlHelper> = {
+  [PERSON_FILE_NAME]: transformAndLoadPersonData,
+};
