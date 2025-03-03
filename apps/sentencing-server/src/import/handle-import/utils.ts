@@ -692,17 +692,37 @@ export async function transformAndLoadOffenseData(
       isViolentOffense:
         offenseData.is_violent === undefined ? null : offenseData.is_violent,
       frequency: offenseData.frequency,
-    };
+    } satisfies Prisma.OffenseCreateInput | Prisma.OffenseUpdateInput;
 
     newOffenseNames.push(newOffense.name);
 
     // Load data
-    await prismaClient.offense.upsert({
+    const upsertedOffense = await prismaClient.offense.upsert({
       where: {
         name: newOffense.name,
       },
       create: newOffense,
-      update: newOffense,
+      update: {
+        ...newOffense,
+        // delete all of the existing mandatory minimums because we are replacing them
+        //  with the new ones
+        mandatoryMinimums: {
+          deleteMany: {},
+        },
+      },
+    });
+
+    // Recreate all of the mandatory minimums
+    await prismaClient.mandatoryMinimum.createMany({
+      data:
+        offenseData.mandatory_minimums?.map((m) => ({
+          offenseId: upsertedOffense.id,
+          sentenceType: m.SentenceType,
+          minimumSentenceLength: m.MinimumSentenceLength,
+          maximumSentenceLength: m.MaximumSentenceLength,
+          statuteNumber: m.StatuteNumber,
+          statuteLink: m.StatuteLink,
+        })) ?? [],
     });
   }
 

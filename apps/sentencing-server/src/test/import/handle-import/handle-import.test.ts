@@ -56,6 +56,7 @@ import {
   fakeClient,
   fakeCounty,
   fakeInsight,
+  fakeMandatoryMinimum,
   fakeOffense,
   fakeOpportunity,
   fakeStaff,
@@ -2128,6 +2129,15 @@ describe("handle_import", () => {
           charge: fakeOffense.name,
           is_sex_offense: false,
           frequency: 100,
+          mandatory_minimums: [
+            {
+              SentenceType: fakeMandatoryMinimum.sentenceType,
+              MinimumSentenceLength: fakeMandatoryMinimum.minimumSentenceLength,
+              MaximumSentenceLength: fakeMandatoryMinimum.maximumSentenceLength,
+              StatuteNumber: fakeMandatoryMinimum.statuteNumber,
+              StatuteLink: fakeMandatoryMinimum.statuteLink,
+            },
+          ],
         },
         // New offense
         {
@@ -2135,6 +2145,13 @@ describe("handle_import", () => {
           charge: "new-offense",
           is_sex_offense: false,
           frequency: 10,
+          mandatory_minimums: [
+            {
+              SentenceType: "TERM",
+              MinimumSentenceLength: 1,
+              MaximumSentenceLength: 100,
+            },
+          ],
         },
       ]);
 
@@ -2143,7 +2160,9 @@ describe("handle_import", () => {
       expect(response.statusCode).toBe(200);
 
       // Check that the new offense was created
-      const dbOffenses = await testPrismaClient.offense.findMany();
+      const dbOffenses = await testPrismaClient.offense.findMany({
+        include: { mandatoryMinimums: true },
+      });
 
       // There should only be two offenses in the database - the old one should have been preserved and the new one created
       expect(dbOffenses).toHaveLength(2);
@@ -2156,12 +2175,30 @@ describe("handle_import", () => {
             // This should be explicitly updated to null
             isViolentOffense: null,
             frequency: 100,
+            mandatoryMinimums: expect.arrayContaining([
+              expect.objectContaining({
+                sentenceType: fakeMandatoryMinimum.sentenceType,
+                minimumSentenceLength:
+                  fakeMandatoryMinimum.minimumSentenceLength,
+                maximumSentenceLength:
+                  fakeMandatoryMinimum.maximumSentenceLength,
+                statuteNumber: fakeMandatoryMinimum.statuteNumber,
+                statuteLink: fakeMandatoryMinimum.statuteLink,
+              }),
+            ]),
           }),
           expect.objectContaining({
             name: "new-offense",
             isSexOffense: false,
             isViolentOffense: null,
             frequency: 10,
+            mandatoryMinimums: expect.arrayContaining([
+              expect.objectContaining({
+                sentenceType: "TERM",
+                minimumSentenceLength: 1,
+                maximumSentenceLength: 100,
+              }),
+            ]),
           }),
         ]),
       );
@@ -2246,6 +2283,55 @@ describe("handle_import", () => {
 
       // Shouldn't have any errors
       await testAndGetSentryReports(0);
+    });
+
+    test("should override provided mandatory minimums", async () => {
+      dataProviderSingleton.setData([
+        // Old offense
+        {
+          state_code: StateCode.US_ID,
+          charge: fakeOffense.name,
+          is_sex_offense: false,
+          frequency: 100,
+          // New mandatory minimum
+          mandatory_minimums: [
+            {
+              SentenceType: "PROBATION",
+              MinimumSentenceLength: 1,
+              MaximumSentenceLength: 2,
+              StatuteNumber: "L202",
+            },
+          ],
+        },
+      ]);
+
+      const response = await callHandleImportOffenseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new offense was created
+      const dbOffenses = await testPrismaClient.offense.findMany({
+        include: { mandatoryMinimums: true },
+      });
+      expect(dbOffenses).toHaveLength(1);
+
+      expect(dbOffenses).toEqual([
+        expect.objectContaining({
+          name: fakeOffense.name,
+          isSexOffense: false,
+          // This should be explicitly updated to null
+          isViolentOffense: null,
+          frequency: 100,
+          mandatoryMinimums: [
+            expect.objectContaining({
+              sentenceType: "PROBATION",
+              minimumSentenceLength: 1,
+              maximumSentenceLength: 2,
+              statuteNumber: "L202",
+            }),
+          ],
+        }),
+      ]);
     });
   });
 

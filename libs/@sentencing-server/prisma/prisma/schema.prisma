@@ -284,16 +284,31 @@ model Opportunity {
 }
 
 model Offense {
-  id               String    @id @default(cuid())
-  stateCode        StateCode
-  name             String    @unique
-  isViolentOffense Boolean?
-  isSexOffense     Boolean?
-  frequency        Int       @default(0)
+  id                String             @id @default(cuid())
+  stateCode         StateCode
+  name              String             @unique
+  isViolentOffense  Boolean?
+  isSexOffense      Boolean?
+  frequency         Int                @default(0)
+  mandatoryMinimums MandatoryMinimum[]
 
   Case                  Case[]
   insightOffenses       Insight[] @relation("InsightOffenses")
   insightRollupOffenses Insight[] @relation("InsightRollupOffenses")
+}
+
+model MandatoryMinimum {
+  id                    String  @id @default(cuid())
+  sentenceType          String
+  minimumSentenceLength Int?
+  maximumSentenceLength Int?
+  statuteNumber         String?
+  statuteLink           String?
+
+  offense   Offense @relation(fields: [offenseId], references: [id], onDelete: Cascade)
+  offenseId String
+
+  @@unique([offenseId, sentenceType])
 }
 
 model Case {
