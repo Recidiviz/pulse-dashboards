@@ -141,9 +141,9 @@ describe("queryConstraints", () => {
           searchType: "OFFICER",
           searchField: ["officerId"],
           searchOp: "fakeOp",
+          onlySurfaceEligible: true,
         },
       ],
-      onlySurfaceEligible: true,
     } as WorkflowsSystemConfig<ClientRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
       () => supervisionSystemConfig,
@@ -166,12 +166,11 @@ describe("queryConstraints", () => {
     );
     expect(orMock).toHaveBeenCalledWith(
       "in, TEST1,TEST2,OFFICER1",
-      "fakeOp, TEST1,TEST2,OFFICER1",
+      "fakeOp, TEST1,TEST2,OFFICER1&&!=, []",
     );
     expect(andMock).toHaveBeenCalledWith(
       "==, US_ND",
-      "in, TEST1,TEST2,OFFICER1||fakeOp, TEST1,TEST2,OFFICER1",
-      "!=, []",
+      "in, TEST1,TEST2,OFFICER1||fakeOp, TEST1,TEST2,OFFICER1&&!=, []",
     );
   });
 });
@@ -322,7 +321,6 @@ describe("matchingPersonsGrouped", () => {
         { searchType: "LOCATION", searchField: ["district"] },
         { searchType: "OFFICER", searchField: ["officerId"] },
       ],
-      onlySurfaceEligible: true,
     } as WorkflowsSystemConfig<ClientRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
       () => supervisionSystemConfig,
@@ -348,7 +346,6 @@ describe("matchingPersonsGrouped", () => {
         { searchType: "LOCATION", searchField: ["district"] },
         { searchType: "OFFICER", searchField: ["officerId"] },
       ],
-      onlySurfaceEligible: true,
     } as WorkflowsSystemConfig<ClientRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
       () => supervisionSystemConfig,

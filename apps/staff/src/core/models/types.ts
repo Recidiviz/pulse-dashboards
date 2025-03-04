@@ -131,12 +131,12 @@ export type SearchConfig<R, T extends TenantConfigId> = {
   searchTitle: string;
   searchOp?: "in" | "array-contains-any";
   locationIdType?: "facilityId" | "facilityUnitId";
+  onlySurfaceEligible?: boolean;
   restrictedToFeatureVariant?: FeatureVariant;
 };
 
 export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
   search: SearchConfig<R, T>[];
-  onlySurfaceEligible?: boolean;
 };
 
 export type AnyWorkflowsSystemConfig =
