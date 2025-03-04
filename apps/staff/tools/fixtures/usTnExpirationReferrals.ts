@@ -86,7 +86,7 @@ const data: UsTnExpirationReferralRecordRaw[] = [
       ],
     },
     eligibleCriteria: {
-      supervisionPastFullTermCompletionDateOrUpcoming1Day: {
+      supervisionPastFullTermCompletionDate: {
         eligibleDate: relativeFixtureDate({ days: -11 }),
       },
       usTnNoZeroToleranceCodesSpans: {},
@@ -163,7 +163,7 @@ const data: UsTnExpirationReferralRecordRaw[] = [
       ],
     },
     eligibleCriteria: {
-      supervisionPastFullTermCompletionDateOrUpcoming1Day: {
+      supervisionPastFullTermCompletionDate: {
         eligibleDate: relativeFixtureDate({ days: -2 }),
       },
       usTnNoZeroToleranceCodesSpans: {},

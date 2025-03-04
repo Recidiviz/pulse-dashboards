@@ -57,8 +57,8 @@ export class UsTnExpirationOpportunity extends OpportunityBase<
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.eligibleCriteria
-      ?.supervisionPastFullTermCompletionDateOrUpcoming1Day?.eligibleDate;
+    return this.record?.eligibleCriteria?.supervisionPastFullTermCompletionDate
+      ?.eligibleDate;
   }
 
   get externalRequestData():

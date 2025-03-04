@@ -142,8 +142,7 @@ export class UsTnExpirationForm extends FormBase<
       const prefilledFields: Partial<UsTnExpirationDraftData> = {
         contactTypes: contactTypes(form.latestVrr?.contactType.toUpperCase()),
         expirationDate: formatFormValueDateMMDDYYYYY(
-          criterion.supervisionPastFullTermCompletionDateOrUpcoming1Day
-            .eligibleDate,
+          criterion.supervisionPastFullTermCompletionDate.eligibleDate,
         ),
         currentOffenses: displayList(form.offenses),
         convictionCounties: displayList(form.convictionCounties),

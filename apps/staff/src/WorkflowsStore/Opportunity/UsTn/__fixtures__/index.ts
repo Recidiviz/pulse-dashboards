@@ -398,7 +398,7 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecordRa
       ],
     },
     eligibleCriteria: {
-      supervisionPastFullTermCompletionDateOrUpcoming1Day: {
+      supervisionPastFullTermCompletionDate: {
         eligibleDate: "2022-02-02",
       },
       usTnNoZeroToleranceCodesSpans: {},
