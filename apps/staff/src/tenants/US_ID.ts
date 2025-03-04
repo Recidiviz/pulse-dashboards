@@ -85,6 +85,7 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
           searchTitle: "facility",
           searchOp: "array-contains-any",
           locationIdType: "facilityId",
+          onlySurfaceEligible: true,
         },
         {
           searchType: "INCARCERATION_OFFICER",
@@ -93,7 +94,6 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
           restrictedToFeatureVariant: "usIdCaseManagerSearch",
         },
       ],
-      onlySurfaceEligible: true,
     },
     SUPERVISION: {
       search: [

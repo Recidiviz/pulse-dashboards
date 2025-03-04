@@ -56,11 +56,15 @@ export class SearchManager {
     // The conditions that are applied with a logical OR
     // A person should match if they match searchId1 OR searchId2
     const orConditions = systemConfig.search.map((c) => {
-      return where(
+      const whereClause = where(
         new FieldPath(...c.searchField),
         c.searchOp ?? "in",
         selectedSearchIds,
       );
+      if (c.onlySurfaceEligible) {
+        return and(whereClause, where("allEligibleOpportunities", "!=", []));
+      }
+      return whereClause;
     });
 
     // The conditions that are applied with a logical AND
@@ -70,9 +74,9 @@ export class SearchManager {
       or(...orConditions),
     ];
 
-    if (systemConfig.onlySurfaceEligible) {
-      andConditions.push(where("allEligibleOpportunities", "!=", []));
-    }
+    // if (true) {
+    //   andConditions.push(where("allEligibleOpportunities", "!=", []));
+    // }
 
     const constraints = and(...andConditions);
 
