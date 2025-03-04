@@ -69,6 +69,7 @@ import { usTnCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportuni
 import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnExpirationOpportunity/UsTnExpirationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
 import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSuspensionOfDirectSupervisionOpportunity/UsTnSuspensionOfDirectSupervisionReferralRecord";
+import { usUtEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsUt";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
 
@@ -93,29 +94,39 @@ function getDb() {
 const db = getDb();
 
 const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
-  compliantReporting: compliantReportingSchema,
+  // US_AZ
+  usAzReleaseToTPR: usAzReleaseToTransitionProgramSchemaBase,
+  usAzReleaseToDTP: usAzReleaseToTransitionProgramSchemaBase,
+  usAzOverdueForACISTPR: usAzOverdueForAcisTprSchema,
+  usAzOverdueForACISDTP: usAzOverdueForAcisDtpSchema,
+
+  // US_CA
+  usCaSupervisionLevelDowngrade: usCaSupervisionLevelDowngradeSchema,
+
+  // US_ID
   earnedDischarge: usIdEarnedDischargeSchema,
   LSU: usIdLsuSchema,
-  earlyTermination: usNdEarlyTerminationSchema,
   pastFTRD: usIdPastFTRDSchema,
-  usMiPastFTRD: usMiPastFTRDSchema,
-  usMeSCCP: usMeSCCPSchema,
   usIdCRCResidentWorker: usIdCRCResidentWorkerSchema,
   usIdCRCWorkRelease: usIdCRCWorkReleaseSchema,
   usIdExpandedCRC: usIdExpandedCRCSchema,
   usIdSupervisionLevelDowngrade:
     supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
-  supervisionLevelDowngrade:
-    usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
+
+  // US_ME
   usMeEarlyTermination: usMeEarlyTerminationSchema,
+  usMeFurloughRelease: usMeFurloughReleaseSchema,
+  usMeMediumTrustee: usMeMediumTrusteeSchema,
+  usMeReclassificationReview: usMeAnnualReclassificationSchema,
+  usMeSCCP: usMeSCCPSchema,
+  usMeWorkRelease: usMeWorkReleaseSchema,
+
+  // US_MI
+  usMiPastFTRD: usMiPastFTRDSchema,
   usMiSupervisionLevelDowngrade:
     usMiSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
   usMiClassificationReview:
     usMiClassificationReviewSchemaForSupervisionLevelFormatter(),
-  usTnCustodyLevelDowngrade: usTnCustodyLevelDowngradeSchema,
-  usTnExpiration: usTnExpirationSchema,
-  usMeFurloughRelease: usMeFurloughReleaseSchema,
-  usCaSupervisionLevelDowngrade: usCaSupervisionLevelDowngradeSchema,
   usMiEarlyDischarge: usMiEarlyDischargeSchema,
   usMiMinimumTelephoneReporting: usMiMinimumTelephoneReportingSchema,
   usMiAddInPersonSecurityClassificationCommitteeReview:
@@ -124,26 +135,38 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
     usMiSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReview:
     usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
-  usTnAnnualReclassification: usTnAnnualReclassificationReviewSchema,
-  usMeWorkRelease: usMeWorkReleaseSchema,
+
+  // US_MO
   usMoOverdueRestrictiveHousingRelease:
     usMoOverdueRestrictiveHousingReleaseSchema,
   usMoOverdueRestrictiveHousingInitialHearing:
     usMoOverdueRestrictiveHousingInitialHearingSchema,
   usMoOverdueRestrictiveHousingReviewHearing:
     usMoOverdueRestrictiveHousingReviewHearingSchema,
+
+  // US_ND
+  earlyTermination: usNdEarlyTerminationSchema,
+
+  // US_OR
   usOrEarnedDischarge: usOrEarnedDischargeSchema,
   usOrEarnedDischargeSentence: usOrEarnedDischargeSchema,
-  usMeReclassificationReview: usMeAnnualReclassificationSchema,
-  usMeMediumTrustee: usMeMediumTrusteeSchema,
-  usAzReleaseToTPR: usAzReleaseToTransitionProgramSchemaBase,
-  usAzReleaseToDTP: usAzReleaseToTransitionProgramSchemaBase,
-  usAzOverdueForACISTPR: usAzOverdueForAcisTprSchema,
-  usAzOverdueForACISDTP: usAzOverdueForAcisDtpSchema,
+
+  // US_PA
   usPaAdminSupervision: usPaAdminSupervisionSchema,
   usPaSpecialCircumstancesSupervision:
     usPaSpecialCircumstancesSupervisionSchema,
+
+  // US_TN
+  compliantReporting: compliantReportingSchema,
+  supervisionLevelDowngrade:
+    usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
+  usTnAnnualReclassification: usTnAnnualReclassificationReviewSchema,
+  usTnCustodyLevelDowngrade: usTnCustodyLevelDowngradeSchema,
+  usTnExpiration: usTnExpirationSchema,
   usTnSuspensionOfDirectSupervision: usTnSuspensionOfDirectSupervisionSchema,
+
+  // US_UT
+  usUtEarlyTermination: usUtEarlyTerminationSchema,
 };
 
 const OTHER_SCHEMAS = {

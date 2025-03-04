@@ -29,6 +29,7 @@ import * as US_OR from "./US_OR";
 import * as US_PA from "./US_PA";
 import * as US_TN from "./US_TN";
 import * as US_TX from "./US_TX";
+import * as US_UT from "./US_UT";
 const allConfigs = {
   ...US_AZ.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_AR.mockApiOpportunityConfigurationResponse.enabledConfigs,
@@ -44,6 +45,7 @@ const allConfigs = {
   ...US_ID.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_MO.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_ND.mockApiOpportunityConfigurationResponse.enabledConfigs,
+  ...US_UT.mockApiOpportunityConfigurationResponse.enabledConfigs,
 } as const;
 export default allConfigs;
 export type FixtureOpportunityType = keyof typeof allConfigs;

@@ -69,6 +69,7 @@ import {
   UsTnSuspensionOfDirectSupervisionOpportunity,
 } from "./UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
+import { UsUtEarlyTerminationOpportunity } from "./UsUt";
 
 export const opportunityConstructors = {
   // US_AZ
@@ -139,6 +140,9 @@ export const opportunityConstructors = {
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usTnSuspensionOfDirectSupervision:
     UsTnSuspensionOfDirectSupervisionOpportunity,
+
+  // US_UT
+  usUtEarlyTermination: UsUtEarlyTerminationOpportunity,
 } as const satisfies Record<
   OpportunityType,
   | (new (c: Resident, r: DocumentData) => Opportunity<Resident>)

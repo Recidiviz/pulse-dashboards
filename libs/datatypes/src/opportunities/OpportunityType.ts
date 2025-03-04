@@ -77,6 +77,9 @@ const constructedOpportunityTypes = [
   "supervisionLevelDowngrade",
   "usTnAnnualReclassification",
   "usTnSuspensionOfDirectSupervision",
+
+  // US_UT
+  "usUtEarlyTermination",
 ] as const;
 
 export type OpportunityType = (typeof constructedOpportunityTypes)[number];
