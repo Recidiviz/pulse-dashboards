@@ -28,6 +28,7 @@ export const stateCodes = {
   US_PA: "US_PA",
   US_TN: "US_TN",
   US_TX: "US_TX",
+  US_UT: "US_UT",
 };
 
 export const csgStateCodes = [
