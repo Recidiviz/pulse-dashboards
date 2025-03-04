@@ -103,7 +103,7 @@ export function getSentenceLengthBucketText(
   }
   // If the bucket is x - infinity, just make it > x year(s)
   if (sentenceLengthBucketEnd === -1) {
-    return `> ${sentenceLengthBucketStart} Year${sentenceLengthBucketStart > 1 ? "s" : ""}`;
+    return `${sentenceLengthBucketStart}+ Years`;
   }
 
   // Otherwise, return the range
