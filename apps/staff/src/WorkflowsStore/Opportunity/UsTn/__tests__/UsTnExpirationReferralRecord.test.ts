@@ -82,7 +82,7 @@ const usTnExpirationRecordRaw: z.input<typeof usTnExpirationSchema> = {
     ],
   },
   eligibleCriteria: {
-    supervisionPastFullTermCompletionDateOrUpcoming1Day: {
+    supervisionPastFullTermCompletionDate: {
       eligibleDate: "2022-03-03",
     },
     usTnNoZeroToleranceCodesSpans: {},

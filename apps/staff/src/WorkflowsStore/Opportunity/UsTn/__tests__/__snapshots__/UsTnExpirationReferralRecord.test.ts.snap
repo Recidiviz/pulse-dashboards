@@ -4,7 +4,7 @@ exports[`transform function 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "supervisionPastFullTermCompletionDateOrUpcoming1Day": {
+    "supervisionPastFullTermCompletionDate": {
       "eligibleDate": 2022-03-03T00:00:00.000Z,
     },
     "usTnNoZeroToleranceCodesSpans": {},

@@ -47,7 +47,7 @@ export const usTnExpirationSchema = opportunitySchemaBase.extend({
   }),
   eligibleCriteria: z
     .object({
-      supervisionPastFullTermCompletionDateOrUpcoming1Day: z.object({
+      supervisionPastFullTermCompletionDate: z.object({
         eligibleDate: dateStringSchema,
       }),
       usTnNoZeroToleranceCodesSpans: NullCoalesce(
@@ -107,8 +107,7 @@ export function getUsTnExpirationValidator(
 ): ValidateFunction<UsTnExpirationReferralRecord> {
   return (transformedRecord) => {
     const { eligibleDate } =
-      transformedRecord.eligibleCriteria
-        .supervisionPastFullTermCompletionDateOrUpcoming1Day;
+      transformedRecord.eligibleCriteria.supervisionPastFullTermCompletionDate;
 
     if (eligibleDate.getTime() !== client.expirationDate?.getTime())
       throw new OpportunityValidationError(
