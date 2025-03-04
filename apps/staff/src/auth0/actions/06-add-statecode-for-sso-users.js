@@ -23,6 +23,10 @@ exports.onExecutePostLogin = async (event, api) => {
       [event.secrets.US_ME_CONNECTION_ID]: "us_me",
       [event.secrets.US_ND_CONNECTION_ID]: "us_nd",
       [event.secrets.US_TN_CONNECTION_ID]: "us_tn",
+      [event.secrets.US_CA_CONNECTION_ID]: "us_ca",
+      [event.secrets.US_AZ_CONNECTION_ID]: "us_az",
+      [event.secrets.US_TX_CONNECTION_ID]: "us_tx",
+      [event.secrets.US_PA_CONNECTION_ID]: "us_pa",
     };
 
     const connection = event.connection.id;

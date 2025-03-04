@@ -32,6 +32,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     US_OR: ["doc.oregon.gov", "clackamas.us", "deschutes.org"],
     US_PA: ["pa.gov"],
     US_TN: ["tn.gov", "corecivic.com"],
+    US_TX: ["tdcj.texas.gov"],
   };
 
   /** Set up external clients and dependencies **/
