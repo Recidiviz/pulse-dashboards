@@ -83,6 +83,7 @@ import { usTnCompliantReportingReferrals } from "./fixtures/usTnCompliantReporti
 import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDowngradeReferrals";
 import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
 import { usTxSupervisionTasksData } from "./fixtures/usTxSupervisionTasks";
+import { usUtEarlyTerminationReferrals } from "./fixtures/usUtEarlyTerminationReferrals";
 import { FirestoreFixture, fixtureFromParsedRecords } from "./fixtures/utils";
 
 const { FIREBASE_PROJECT, FIREBASE_CREDENTIAL } = process.env;
@@ -187,6 +188,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usTnAnnualReclassificationReferrals: usTnAnnualReclassificationReviewFixture,
   usMoOverdueRestrictiveHousingInitialHearingReferrals,
   usMoOverdueRestrictiveHousingReviewHearingReferrals,
+  usUtEarlyTerminationReferrals,
 } as const;
 
 const FIXTURES_TO_LOAD = [

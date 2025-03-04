@@ -158,4 +158,15 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     supervisorExternalId: "SUPERVISOR1",
     pseudonymizedId: "p001",
   },
+
+  // US_UT - UTAH
+  {
+    email: null,
+    id: "UTOFFICER1",
+    stateCode: "US_UT",
+    givenNames: "Sunny",
+    surname: "Campana",
+    supervisorExternalId: null,
+    pseudonymizedId: "p001",
+  },
 ].map((r) => makeRecordFixture(supervisionStaffRecordSchema, r));

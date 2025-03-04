@@ -161,3 +161,16 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER1' 1`] = `
   "surname": "Linkus",
 }
 `;
+
+exports[`supervision staff schema for 'US_UT' 'UTOFFICER1' 1`] = `
+{
+  "email": null,
+  "givenNames": "Sunny",
+  "id": "UTOFFICER1",
+  "pseudonymizedId": "p001",
+  "recordType": "supervisionStaff",
+  "stateCode": "US_UT",
+  "supervisorExternalId": null,
+  "surname": "Campana",
+}
+`;
