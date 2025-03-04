@@ -23,15 +23,20 @@ import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOfficerOutcomesPresenter } from "../../InsightsStore/presenters/SupervisionOfficerOutcomesPresenter";
 import InsightsChartCard from "../InsightsChartCard";
+import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
 import { EmptyCard } from "../InsightsSupervisorPage/InsightsStaffCardV2";
 import { InsightsSwarmPlotContainerV2 } from "../InsightsSwarmPlot/InsightsSwarmPlotContainerV2";
 import { formatTargetAndHighlight } from "../InsightsSwarmPlot/utils";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
+import { InsightsStaffActionStrategyBanner } from "./InsightsStaffActionStrategyBanner";
 
 const Wrapper = styled.div<{ isTablet: boolean }>`
   display: grid;
@@ -52,7 +57,10 @@ const ManagedComponent = observer(function InsightsStaffOutcomesSection({
 
   const { isTablet } = useIsMobile(true);
 
-  return officerOutcomesData?.outlierMetrics?.length ? (
+  const { outcomesModule } = useFeatureVariants();
+  if (!outcomesModule) return;
+
+  const content = officerOutcomesData?.outlierMetrics?.length ? (
     <Wrapper isTablet={isTablet}>
       {officerOutcomesData.outlierMetrics.map((metric) => {
         const { bodyDisplayName } = metric.config;
@@ -79,6 +87,13 @@ const ManagedComponent = observer(function InsightsStaffOutcomesSection({
     </Wrapper>
   ) : (
     <EmptyCard message={labels.officerHasNoOutlierMetricsLabel} />
+  );
+
+  return (
+    <InsightsPageSection sectionTitle="Outcomes">
+      <InsightsStaffActionStrategyBanner />
+      {content}
+    </InsightsPageSection>
   );
 });
 

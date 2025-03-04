@@ -25,15 +25,20 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { StyledLink } from "../InsightsInfoModal/InsightsInfoModal";
 import {
   Header,
-  Subtitle as Title,
+  Subtitle,
   Wrapper,
 } from "../InsightsPageLayout/InsightsPageLayout";
+
+const Title = styled(Subtitle)`
+  margin-top: 0;
+`;
 
 const SectionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.lg)};
   padding: 0;
+  margin-bottom: 40px;
 `;
 
 const Description = styled.div`

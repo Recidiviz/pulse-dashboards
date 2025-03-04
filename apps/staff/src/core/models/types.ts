@@ -26,6 +26,7 @@ import {
 import { RootStore } from "../../RootStore";
 import {
   FeatureVariant,
+  FeatureVariantRecord,
   TenantConfigId,
   TenantId,
 } from "../../RootStore/types";
@@ -82,10 +83,10 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   workflowsStaffFilterFn?: StaffFilterFunction;
   insightsLaunchedDistricts?: string[];
   insightsLanternState?: boolean;
-  insightsLegacyUI?: boolean;
   releaseDateCopyOverride?: string;
   insightsUnitState?: boolean;
   incarcerationStaffTitleOverride?: string;
+  featureVariants?: FeatureVariantRecord;
 };
 
 /**

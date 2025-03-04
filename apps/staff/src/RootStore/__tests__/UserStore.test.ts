@@ -71,6 +71,7 @@ const mockRootStore = {
   },
   tenantStore: {
     setCurrentTenantId: vi.fn(),
+    tenantFeatureVariants: {},
   },
 } as unknown as typeof RootStore;
 
@@ -939,7 +940,12 @@ describe("feature variants", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     store = new UserStore({
-      rootStore: { currentTenantId: tenantId } as unknown as typeof RootStore,
+      rootStore: {
+        currentTenantId: tenantId,
+        tenantStore: {
+          tenantFeatureVariants: {},
+        },
+      } as unknown as typeof RootStore,
     });
     runInAction(() => {
       store.isAuthorized = true;
@@ -1219,6 +1225,28 @@ describe("feature variants", () => {
     });
 
     expect(store.activeFeatureVariants).toEqual({});
+  });
+
+  test("tenantFeatureVariants are applied", () => {
+    store = new UserStore({
+      rootStore: {
+        currentTenantId: "US_XX",
+        tenantStore: {
+          tenantFeatureVariants: {
+            TENANTFV: {},
+          },
+        },
+      } as unknown as typeof RootStore,
+    });
+    runInAction(() => {
+      store.user = getMockUserObject({});
+      store.isAuthorized = true;
+      store.userIsLoading = false;
+    });
+
+    expect(store.activeFeatureVariants).toEqual({
+      TENANTFV: {},
+    });
   });
 });
 

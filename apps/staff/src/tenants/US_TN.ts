@@ -56,7 +56,6 @@ const US_TN_CONFIG: TenantConfig<"US_TN"> = {
     },
   },
   insightsLanternState: true,
-  insightsLegacyUI: true,
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "clients", "residents"],
@@ -103,6 +102,9 @@ const US_TN_CONFIG: TenantConfig<"US_TN"> = {
     methodology: [DASHBOARD_VIEWS.system],
   },
   tableColumns: enabledTableColumns[pathways.US_TN],
+  featureVariants: {
+    outcomesModule: {},
+  },
 };
 
 export default US_TN_CONFIG;

@@ -194,6 +194,9 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
     },
   ],
   releaseDateCopyOverride: "Full Term Release Date",
+  featureVariants: {
+    outcomesModule: {},
+  },
 };
 
 export default US_ID_CONFIG;

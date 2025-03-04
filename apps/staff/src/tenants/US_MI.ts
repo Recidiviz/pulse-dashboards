@@ -49,10 +49,12 @@ const US_MI_CONFIG: TenantConfig<"US_MI"> = {
     },
   },
   insightsLanternState: true,
-  insightsLegacyUI: true,
   navigation: {
     insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "clients", "residents"],
+  },
+  featureVariants: {
+    outcomesModule: {},
   },
 };
 

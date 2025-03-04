@@ -94,7 +94,8 @@ export type FeatureVariant =
   | "usIdCaseManagerSearch"
   | "opportunityTableView"
   | "usTnSuspensionOfDirectSupervision"
-  | "usMeCaseNoteSnooze";
+  | "usMeCaseNoteSnooze"
+  | "outcomesModule";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -150,6 +151,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   opportunityTableView: {},
   usTnSuspensionOfDirectSupervision: {},
   usMeCaseNoteSnooze: {},
+  outcomesModule: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -184,6 +186,9 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         zeroGrantsFlag: {
           activeTenants: ["US_ID", "US_MI", "US_TN"],
         },
+        outcomesModule: {
+          activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
+        },
       }
     : {
         ...allFeatureVariants,
@@ -194,6 +199,9 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         usOrEarnedDischargeSentence: undefined,
         personSpecificOppBanners: undefined,
         usMeCaseNoteSnooze: isDemoMode() ? undefined : {},
+        outcomesModule: {
+          activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
+        },
       };
 
 export type LanternMethodologyByTenant = {
