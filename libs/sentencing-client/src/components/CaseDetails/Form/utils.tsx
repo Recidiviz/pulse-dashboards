@@ -55,6 +55,8 @@ export const getFilteredCountyOptions = (
 ): SelectOption[] => {
   return countiesOptions
     .filter((selection) => {
+      // TODO(#7517) Temporary fix for de-duplicating counties (by filtering out counties without districts)
+      if (selection.county && !selection.district) return false;
       if (
         caseOrClientCountyDistrict.district &&
         (!caseOrClientCountyDistrict.county ||
