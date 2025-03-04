@@ -1,0 +1,45 @@
+{
+  "name": "data-import-plugin",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/common/data-import-plugin/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "dependsOn": [
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/common/data-import-plugin"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
