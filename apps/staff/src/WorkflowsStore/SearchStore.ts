@@ -16,7 +16,7 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction, when } from "mobx";
 
 import {
   Searchable,
@@ -81,6 +81,35 @@ export class SearchStore {
         this.updateSelectedSearch([]);
       },
     );
+
+    // set and log default caseload to the user's own, when applicable
+    when(
+      () =>
+        !!this.workflowsStore.user && !!this.workflowsStore.activeSystemConfig,
+      () => {
+        if (
+          !this.workflowsStore.user?.info ||
+          !this.workflowsStore.user?.updates
+        )
+          return;
+
+        // This should only happen once per user with a caseload
+        // After the first time login they will always have selectedSearchIds, even if it is an empty array
+        if (
+          !this.workflowsStore.user.updates.selectedSearchIds &&
+          this.workflowsStore.user.info.hasCaseload &&
+          ["OFFICER", "INCARCERATION_OFFICER"].includes(this.searchType)
+        ) {
+          const defaultCaseloadIds = [this.workflowsStore.user.info.id];
+          this.updateSelectedSearch(defaultCaseloadIds);
+          this.workflowsStore.rootStore.analyticsStore.trackCaseloadSearch({
+            searchCount: defaultCaseloadIds.length,
+            isDefault: true,
+            searchType: this.searchType,
+          });
+        }
+      },
+    );
   }
 
   get caseloadPersons(): JusticeInvolvedPerson[] {
@@ -117,9 +146,9 @@ export class SearchStore {
     return systemConfig.search[0].searchType;
   }
 
-  get selectedSearchIds(): string[] {
+  get supervisorSearchIds(): string[] | undefined {
     const user = this.workflowsStore.user;
-    if (!user) return [];
+    if (!user) return undefined;
 
     const { info } = user;
 
@@ -139,13 +168,19 @@ export class SearchStore {
       const staffAndCurrentUserIds = [...currentUserId, ...supervisedStaffIds];
       return staffAndCurrentUserIds;
     }
+  }
+
+  get selectedSearchIds(): string[] {
+    const user = this.workflowsStore.user;
+    if (!user) return [];
+
+    if (this.supervisorSearchIds) return this.supervisorSearchIds;
 
     if (this.workflowsStore.rootStore.isImpersonating) {
       return this.selectedSearchIdsForImpersonation ?? [];
     }
 
-    const previousSearchIds = user.updates?.selectedSearchIds;
-    return previousSearchIds ?? [];
+    return user.updates?.selectedSearchIds ?? [];
   }
 
   updateSelectedSearch(searchIds: string[]): void {

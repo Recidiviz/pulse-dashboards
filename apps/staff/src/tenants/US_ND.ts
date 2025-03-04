@@ -36,7 +36,7 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
     INCARCERATION: {
       search: [
         {
-          searchType: "OFFICER",
+          searchType: "INCARCERATION_OFFICER",
           searchField: ["officerId"],
           searchTitle: "case manager",
         },

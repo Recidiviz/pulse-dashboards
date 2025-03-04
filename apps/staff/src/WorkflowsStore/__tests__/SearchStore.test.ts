@@ -70,6 +70,7 @@ const supervisedStaff = officers.filter(
 );
 
 const mockUpdatedSelectedSearchIds = vi.fn();
+const mockTrackCaseloadSearch = vi.fn();
 
 beforeEach(() => {
   workflowsStore = observable({
@@ -81,6 +82,9 @@ beforeEach(() => {
       currentTenantId: "US_ND",
       firestoreStore: {
         updateSelectedSearchIds: mockUpdatedSelectedSearchIds,
+      },
+      analyticsStore: {
+        trackCaseloadSearch: mockTrackCaseloadSearch,
       },
     },
     featureVariants: { workflowsSupervisorSearch: false },
@@ -528,6 +532,224 @@ describe("selectedSearchIds", () => {
         searchStore.selectedSearchIds[0],
         "ID2",
       ]);
+    });
+  });
+});
+
+describe("default selected aseload", () => {
+  describe("user data", () => {
+    test("defaults to self when no selected search and the state is search-by-officer", async () => {
+      workflowsStore.user = {
+        ...mockOfficer,
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: undefined,
+        },
+      };
+      workflowsStore.systemConfigFor = {
+        search: [
+          {
+            searchType: "OFFICER",
+            searchField: ["officerId"],
+            searchTitle: "officer",
+          },
+        ],
+      };
+
+      new SearchStore(workflowsStore as unknown as WorkflowsStore);
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
+        mockOfficer.info.email,
+        "US_ND",
+        [mockOfficer.info.id],
+      );
+    });
+
+    test("defaults to self when no selected search and the state is search-by-incarceration-officer", async () => {
+      workflowsStore.user = {
+        ...mockOfficer,
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: undefined,
+        },
+      };
+      workflowsStore.activeSystemConfig = {
+        search: [
+          {
+            searchType: "INCARCERATION_OFFICER",
+            searchField: ["officerId"],
+            searchTitle: "officer",
+          },
+        ],
+      };
+
+      new SearchStore(workflowsStore as unknown as WorkflowsStore);
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
+        mockOfficer.info.email,
+        "US_ND",
+        [mockOfficer.info.id],
+      );
+    });
+
+    test("defaults to no selected search if the user has no saved search and the state is not search-by-officer", async () => {
+      workflowsStore.activeSystemConfig = {
+        search: [
+          {
+            searchType: "LOCATION",
+            searchField: ["facilityId"],
+            searchTitle: "facility",
+          },
+        ],
+      };
+      workflowsStore.user = {
+        ...mockOfficer,
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: undefined,
+        },
+      };
+      vi.resetAllMocks();
+
+      new SearchStore(workflowsStore as unknown as WorkflowsStore);
+      expect(mockUpdatedSelectedSearchIds).not.toHaveBeenCalled();
+    });
+
+    test("defaults to stored value for states that are not search-by-officer", async () => {
+      const mockStoredLocations = ["LOC1", "LOC3"];
+
+      workflowsStore.activeSystemConfig = {
+        search: [
+          {
+            searchType: "LOCATION",
+            searchField: ["facilityId"],
+            searchTitle: "facility",
+          },
+        ],
+      };
+      workflowsStore.user = {
+        ...mockOfficer,
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: mockStoredLocations,
+        },
+      };
+      vi.resetAllMocks();
+
+      const store = new SearchStore(
+        workflowsStore as unknown as WorkflowsStore,
+      );
+      expect(store.selectedSearchIds).toEqual(mockStoredLocations);
+      expect(mockUpdatedSelectedSearchIds).not.toHaveBeenCalled();
+    });
+
+    test("default caseload does not override empty stored value", async () => {
+      workflowsStore.activeSystemConfig = {
+        search: [
+          {
+            searchType: "INCARCERATION_OFFICER",
+            searchField: ["officerId"],
+            searchTitle: "officer",
+          },
+        ],
+      };
+      workflowsStore.user = {
+        ...mockOfficer,
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: [],
+        },
+      };
+      vi.resetAllMocks();
+
+      const store = new SearchStore(
+        workflowsStore as unknown as WorkflowsStore,
+      );
+      expect(store.selectedSearchIds).toEqual([]);
+      expect(mockUpdatedSelectedSearchIds).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe("trackCaseloadSearch - default caseload", () => {
+  describe("for non-supervisors", () => {
+    test("calls trackCaseloadSearch with isDefault", async () => {
+      workflowsStore.activeSystemConfig = {
+        search: [
+          {
+            searchType: "OFFICER",
+            searchField: ["officerId"],
+            searchTitle: "officer",
+          },
+        ],
+      };
+      workflowsStore.user = {
+        ...mockOfficer,
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: undefined,
+        },
+      };
+
+      vi.resetAllMocks();
+      new SearchStore(workflowsStore as unknown as WorkflowsStore);
+      expect(mockTrackCaseloadSearch).toHaveBeenCalledWith({
+        searchCount: 1,
+        isDefault: true,
+        searchType: "OFFICER",
+      });
+    });
+
+    test("calls trackCaseloadSearch with isDefault for INCARCERATION_OFFICER searchType", async () => {
+      workflowsStore.activeSystemConfig = {
+        search: [
+          {
+            searchType: "INCARCERATION_OFFICER",
+            searchField: ["officerId"],
+            searchTitle: "officer",
+          },
+        ],
+      };
+      workflowsStore.user = {
+        ...mockOfficer,
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: undefined,
+        },
+      };
+      vi.resetAllMocks();
+      new SearchStore(workflowsStore as unknown as WorkflowsStore);
+      expect(mockTrackCaseloadSearch).toHaveBeenCalledWith({
+        searchCount: 1,
+        isDefault: true,
+        searchType: "INCARCERATION_OFFICER",
+      });
+    });
+  });
+
+  describe("for supervisors", () => {
+    test("does not track default caseload search", async () => {
+      workflowsStore.activeSystemConfig = {
+        search: [
+          {
+            searchType: "OFFICER",
+            searchField: ["officerId"],
+            searchTitle: "officer",
+          },
+        ],
+      };
+      workflowsStore.user = {
+        info: {
+          ...mockOfficer,
+          hasCaseload: false,
+        },
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: undefined,
+        },
+      };
+
+      vi.resetAllMocks();
+      new SearchStore(workflowsStore as unknown as WorkflowsStore);
+      expect(mockTrackCaseloadSearch).not.toHaveBeenCalled();
     });
   });
 });

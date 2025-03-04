@@ -24,7 +24,6 @@ import {
   reaction,
   runInAction,
   set,
-  when,
 } from "mobx";
 import { IDisposer, keepAlive } from "mobx-utils";
 
@@ -196,22 +195,6 @@ export class WorkflowsStore implements Hydratable {
       },
     );
 
-    // log default caseload search injection, when applicable
-    when(
-      () => !!this.user,
-      () => {
-        const { isDefaultOfficerSelection } = this.user?.metadata ?? {};
-
-        if (this.searchStore.selectedSearchIds && isDefaultOfficerSelection) {
-          this.rootStore.analyticsStore.trackCaseloadSearch({
-            searchCount: this.searchStore.selectedSearchIds.length,
-            isDefault: true,
-            searchType: "OFFICER",
-          });
-        }
-      },
-    );
-
     this.workflowsTasksStore = new WorkflowsTasksStore(this);
     this.searchStore = new SearchStore(this);
   }
@@ -293,22 +276,12 @@ export class WorkflowsStore implements Hydratable {
     if (!isHydrated(this)) return undefined;
 
     const [info] = this.userSubscription.data;
-
     const updates = this.userUpdatesSubscription?.data ?? {
       stateCode: info.stateCode,
+      selectedSearchIds: undefined,
     };
 
     const metadata: UserMetadata = {};
-
-    // set default caseload to the user's own, when applicable
-    if (
-      !updates.selectedSearchIds &&
-      info.hasCaseload &&
-      this.searchStore.searchType === "OFFICER"
-    ) {
-      updates.selectedSearchIds = [info.id];
-      metadata.isDefaultOfficerSelection = true;
-    }
 
     return { info, updates, metadata };
   }
