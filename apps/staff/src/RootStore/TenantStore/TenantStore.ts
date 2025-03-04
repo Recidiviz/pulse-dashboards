@@ -25,6 +25,7 @@ import { TenantConfigs } from "../../tenants";
 import { StaffFilterFunction } from "../../WorkflowsStore";
 import { RootStore } from "../index";
 import {
+  FeatureVariantRecord,
   isTenantId,
   LanternMethodology,
   LanternTenants,
@@ -208,11 +209,6 @@ export default class TenantStore {
     );
   }
 
-  get insightsLegacyUI(): boolean {
-    if (!this.currentTenantId) return false;
-    return !!this.tenantConfigs[this.currentTenantId].insightsLegacyUI;
-  }
-
   get taskCategories(): SupervisionTaskCategory[] {
     const { tasksConfiguration } = this;
     // Object.keys just makes the type string[] even if they keys are restricted
@@ -264,5 +260,10 @@ export default class TenantStore {
       this.tenantConfigs[this.currentTenantId]
         .incarcerationStaffTitleOverride ?? "Case Manager"
     );
+  }
+
+  get tenantFeatureVariants(): FeatureVariantRecord {
+    if (!this.currentTenantId) return {};
+    return this.tenantConfigs[this.currentTenantId].featureVariants ?? {};
   }
 }

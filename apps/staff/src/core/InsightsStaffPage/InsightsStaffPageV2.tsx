@@ -28,7 +28,6 @@ import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrum
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
 import { InsightsOpportunitySummary } from "./InsightsOpportunitySummary";
-import { InsightsStaffActionStrategyBanner } from "./InsightsStaffActionStrategyBanner";
 import { InsightsStaffOutcomesSection } from "./InsightsStaffOutcomesSection";
 import { InsightsStaffVitals } from "./InsightsStaffVitals";
 
@@ -78,7 +77,6 @@ const ManagedComponent = observer(function StaffPage({
   return (
     <InsightsPageLayout
       pageTitle={officerRecord?.displayName}
-      pageSubtitle="Outcomes"
       infoItems={infoItems}
       contentsAboveTitle={
         supervisorsInfo &&
@@ -107,7 +105,6 @@ const ManagedComponent = observer(function StaffPage({
       }
       highlightedOfficers={<ManagedStaffHighlightedOfficersBanner />}
     >
-      <InsightsStaffActionStrategyBanner />
       <InsightsStaffOutcomesSection />
       <InsightsOpportunitySummary />
       <InsightsStaffVitals officerPseudoId={officerPseudoId} />

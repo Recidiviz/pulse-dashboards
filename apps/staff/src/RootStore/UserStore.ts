@@ -418,6 +418,11 @@ export default class UserStore {
 
     if (this.isRecidivizUser) fvs = { ...defaultFeatureVariantsActive, ...fvs };
 
+    const tenantFeatureVariants =
+      this.rootStore?.tenantStore.tenantFeatureVariants ?? {};
+
+    fvs = { ...tenantFeatureVariants, ...fvs };
+
     return Object.entries(fvs).reduce(
       (activeVariants, [variantName, variantInfo]) => {
         if (!variantInfo) return activeVariants;

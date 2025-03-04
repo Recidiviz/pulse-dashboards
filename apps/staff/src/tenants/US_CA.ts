@@ -47,6 +47,9 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
     workflows: ["home", "milestones", "clients"],
   },
   insightsUnitState: true,
+  featureVariants: {
+    outcomesModule: {},
+  },
 };
 
 export default US_CA_CONFIG;

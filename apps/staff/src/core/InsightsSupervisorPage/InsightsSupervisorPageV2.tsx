@@ -21,28 +21,17 @@ import { rem } from "polished";
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionSupervisorPagePresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPagePresenter";
 import { pluralize, toTitleCase } from "../../utils";
-import { StyledLink } from "../CaseNoteSearch/components/SearchView/SearchView";
-import { useInsightsActionStrategyModal } from "../InsightsActionStrategyModal";
 import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
-import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
 import { InsightsBreadcrumbs } from "./InsightsBreadcrumbs";
-import InsightsStaffCardV2 from "./InsightsStaffCardV2";
-import { InsightsSupervisorActionStrategyBanner } from "./InsightsSupervisorActionStrategyBanner";
+import { InsightsOutcomesModule } from "./InsightsOutcomesModule";
 import { InsightsSupervisorOpportunityDetailSection } from "./InsightsSupervisorOpportunityDetailSection";
 import { InsightsSupervisorVitals } from "./InsightsSupervisorVitals";
-
-const HighlightedDescription = styled.span`
-  border-bottom: 1px dashed ${palette.slate85};
-`;
 
 const OfficersTooltipHeading = styled.div`
   color: ${palette.white80};
@@ -75,8 +64,6 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
 }: {
   presenter: SupervisionSupervisorPagePresenter;
 }) {
-  const { openModal } = useInsightsActionStrategyModal();
-  const { actionStrategies } = useFeatureVariants();
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
 
   const {
@@ -123,31 +110,6 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     },
   ];
 
-  const pageDescription = (
-    <>
-      Measure your team’s performance across other{" "}
-      {labels.supervisionOfficerLabel}s in the state.{" "}
-      {toTitleCase(labels.supervisionOfficerLabel)}s surfaced are{" "}
-      <InsightsTooltip
-        contents={`${toTitleCase(labels.supervisionOfficerLabel)} shown are one Interquartile Range above the statewide rate.`}
-      >
-        <HighlightedDescription>
-          {labels.worseThanRateLabel.toLowerCase()}
-        </HighlightedDescription>
-      </InsightsTooltip>
-      . Rates for the metrics below are calculated for the time period:{" "}
-      {timePeriod}.{" "}
-      {actionStrategies && (
-        <StyledLink
-          to="#"
-          onClick={() => openModal({ showActionStrategyList: true })}
-        >
-          See action strategies.
-        </StyledLink>
-      )}
-    </>
-  );
-
   if (initialPageLoad) {
     presenter.trackViewed();
     setInitialPageLoad(false);
@@ -156,9 +118,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
   return (
     <InsightsPageLayout
       pageTitle={pageTitle}
-      pageSubtitle="Outcomes"
       infoItems={infoItems}
-      pageDescription={pageDescription}
       hasSupervisionInfoModal={false}
       contentsAboveTitle={
         userCanAccessAllSupervisors && (
@@ -186,8 +146,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         />
       }
     >
-      <InsightsSupervisorActionStrategyBanner />
-      <InsightsStaffCardV2 />
+      <InsightsOutcomesModule labels={labels} timePeriod={timePeriod} />
       <InsightsSupervisorOpportunityDetailSection />
       <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />
     </InsightsPageLayout>
