@@ -42,7 +42,7 @@ export interface OpportunityConfiguration {
   snooze?: SnoozeConfiguration;
   tabGroups: Readonly<Partial<OpportunityTabGroups>>;
   initialHeader?: string;
-  callToAction: string;
+  callToAction?: string;
   subheading?: string;
   eligibilityTextForCount: (count: number) => string;
   denialButtonText?: string;

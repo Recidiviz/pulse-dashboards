@@ -15,38 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PATHWAYS_TENANTS } from "./pathwaysTenants";
+import { TenantConfig } from "../core/models/types";
+import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-export const US_AZ = "US_AZ";
-export const US_AR = "US_AR";
-export const US_CA = "US_CA";
-export const US_IA = "US_IA";
-export const US_ME = "US_ME";
-export const US_MI = "US_MI";
-export const US_NE = "US_NE";
-export const US_OR = "US_OR";
-export const US_PA = "US_PA";
-export const US_TX = "US_TX";
-export const US_UT = "US_UT";
+const US_UT_CONFIG: TenantConfig<"US_UT"> = {
+  name: "Utah",
+  stateCode: "UT",
+  domain: "utah.gov",
+  availableStateCodes: [dashboard.US_UT],
+  enableUserRestrictions: false,
+  workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsSystemConfigs: {
+    SUPERVISION: {
+      search: [
+        {
+          searchType: "OFFICER",
+          searchField: ["officerId"],
+          searchTitle: "agent",
+        },
+      ],
+    },
+  },
+  navigation: {
+    workflows: ["home", "clients"],
+  },
+};
 
-const NON_PATHWAYS_TENANTS = [
-  US_AZ,
-  US_AR,
-  US_CA,
-  US_IA,
-  US_ME,
-  US_MI,
-  US_NE,
-  US_OR,
-  US_PA,
-  US_TX,
-  US_UT,
-] as const;
-
-/**
- * Tenants that have access to the Recidiviz Dashboard, including Pathways, Operations, and Workflows.
- */
-export const DASHBOARD_TENANTS = [
-  ...NON_PATHWAYS_TENANTS,
-  ...PATHWAYS_TENANTS,
-] as const;
+export default US_UT_CONFIG;
