@@ -30,7 +30,7 @@ const US_ME_CONFIG: TenantConfig<"US_ME"> = {
     INCARCERATION: {
       search: [
         {
-          searchType: "OFFICER",
+          searchType: "INCARCERATION_OFFICER",
           searchField: ["officerId"],
           searchTitle: "case manager",
         },

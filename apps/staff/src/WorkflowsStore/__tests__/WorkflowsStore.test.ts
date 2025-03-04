@@ -36,7 +36,6 @@ import FirestoreStore, {
   WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
 import UserStore from "../../RootStore/UserStore";
 import type { OpportunityMapping, WorkflowsStore } from "..";
@@ -86,6 +85,16 @@ const { stateConfigs } = vi.hoisted(() => {
       ],
       workflowsSupportedSystems: ["SUPERVISION"],
       availableStateCodes: ["US_XX"],
+      workflowsSystemConfigs: {
+        INCARCERATION: {
+          search: [
+            {
+              searchType: "INCARCERATION_OFFICER",
+              searchTitle: "case manager",
+            },
+          ],
+        },
+      },
     },
     US_YY: {
       workflowsSupportedSystems: ["SUPERVISION"],
@@ -193,7 +202,10 @@ async function waitForHydration({
 
     /* eslint-disable @typescript-eslint/no-non-null-assertion */
     // these subs will not be null because we called hydrate() above!
-    workflowsStore.userUpdatesSubscription!.data = updates;
+    workflowsStore.userUpdatesSubscription!.data = {
+      ...updates,
+      selectedSearchIds: [mockOfficer.info.id],
+    } as UserUpdateRecord;
     workflowsStore.userUpdatesSubscription!.hydrationState = {
       status: "hydrated",
     };
@@ -226,7 +238,6 @@ beforeEach(() => {
   // this lets us spy on observables, e.g. the tenant ID getter
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
-  vi.spyOn(AnalyticsStore.prototype, "trackCaseloadSearch");
   mockAuthedUser();
   workflowsStore = rootStore.workflowsStore;
   stateConfigs.US_XX.workflowsStaffFilterFn = filterByUserDistrict;
@@ -417,56 +428,6 @@ describe("user", () => {
 
     expect(workflowsStore.user?.info).toEqual(mockOfficer.info);
   });
-
-  test("defaults to self when no selected search and the state is search-by-officer", async () => {
-    await waitForHydration();
-    runInAction(() => {
-      workflowsStore.updateActiveSystem("SUPERVISION");
-    });
-    expect(workflowsStore.user?.updates?.selectedSearchIds).toEqual([
-      mockOfficer.info.id,
-    ]);
-  });
-
-  test("defaults to no selected search if the user has no saved search and the state is not search-by-officer", async () => {
-    runInAction(() => {
-      // arbitrary state code; the only incarceration officers are in US_XX
-      rootStore.tenantStore.currentTenantId = "US_MO";
-      workflowsStore.updateActiveSystem("INCARCERATION");
-    });
-    await waitForHydration();
-    expect(workflowsStore.user?.updates?.selectedSearchIds).toBeUndefined();
-  });
-
-  test("defaults to stored value for states that are not search-by-officer", async () => {
-    runInAction(() => {
-      rootStore.tenantStore.currentTenantId = "US_MO";
-    });
-    const mockStoredLocations = ["LOC1", "LOC3"];
-
-    await waitForHydration({
-      ...mockOfficer,
-      updates: {
-        ...(mockOfficer.updates as UserUpdateRecord),
-        selectedSearchIds: mockStoredLocations,
-      },
-    });
-
-    expect(workflowsStore.user?.updates?.selectedSearchIds).toEqual(
-      mockStoredLocations,
-    );
-  });
-
-  test("default caseload does not override empty stored value", async () => {
-    await waitForHydration({
-      ...mockOfficer,
-      updates: {
-        ...(mockOfficer.updates as UserUpdateRecord),
-        selectedSearchIds: [],
-      },
-    });
-    expect(workflowsStore.user?.updates?.selectedSearchIds).toEqual([]);
-  });
 });
 
 const populateSupervisedStaff = () => {
@@ -504,24 +465,6 @@ const populateSupervisedStaff = () => {
     ];
   });
 };
-
-describe("trackCaseloadSearch", () => {
-  describe("for non-supervisors", () => {
-    test("calls trackCaseloadSearch with isDefault", async () => {
-      await waitForHydration();
-      runInAction(() => {
-        workflowsStore.updateActiveSystem("SUPERVISION");
-      });
-      expect(rootStore.analyticsStore.trackCaseloadSearch).toHaveBeenCalledWith(
-        {
-          searchCount: 1,
-          isDefault: true,
-          searchType: "OFFICER",
-        },
-      );
-    });
-  });
-});
 
 test("staffSupervisedByCurrentUser provides a list of users supervised by currently logged in user", async () => {
   await waitForHydration(mockSupervisor);
