@@ -425,6 +425,10 @@ export default class AnalyticsStore {
     this.track("frontend.almost_eligible_copy_cta_clicked", metadata);
   }
 
+  /****************************
+   * Case Notes Search Tracking *
+   ****************************/
+
   trackCaseNoteSearch(metadata: {
     userPseudonymizedId: string;
     clientPseudonymizedId: string;
@@ -432,6 +436,14 @@ export default class AnalyticsStore {
     error?: string | null;
   }) {
     this.track("frontend.case_note_search", metadata);
+  }
+
+  trackNoteClicked(metadata: {
+    userPseudonymizedId: string;
+    clientPseudonymizedId: string;
+    docId: string;
+  }) {
+    this.track("frontend.case_note_search_note_clicked", metadata);
   }
 
   /****************************

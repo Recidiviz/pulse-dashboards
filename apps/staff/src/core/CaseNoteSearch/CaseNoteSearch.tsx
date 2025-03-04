@@ -152,6 +152,12 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
   };
 
   const handleNoteClick = (docId: string) => {
+    analyticsStore.trackNoteClicked({
+      userPseudonymizedId: userStore.userPseudoId,
+      clientPseudonymizedId: selectedPerson.pseudonymizedId,
+      docId,
+    });
+
     setDocId(docId);
     setCurrentView("NOTE_VIEW");
   };
