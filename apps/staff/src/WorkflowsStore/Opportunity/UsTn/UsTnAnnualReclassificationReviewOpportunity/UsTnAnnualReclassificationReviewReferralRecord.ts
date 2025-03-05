@@ -25,8 +25,6 @@ export const usTnAnnualReclassificationReviewSchema =
   opportunitySchemaBase.extend({
     eligibleCriteria: z
       .object({
-        usTnAtLeast12MonthsSinceLatestAssessment: z.null(),
-        custodyLevelIsNotMax: z.null(),
         custodyLevelComparedToRecommended: z.object({
           custodyLevel: z
             .string()
