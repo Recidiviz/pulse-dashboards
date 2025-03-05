@@ -15,6 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export async function processJii() {
-  console.log(`Running processJii()`);
+import { StateCode } from "@prisma/jii-texting-server/client";
+
+import { TwilioAPIClient } from "~twilio-api";
+
+export type processJiiArguments = {
+  stateCode: StateCode;
+  dryRun: boolean;
+};
+
+export function processJii({ stateCode, dryRun }: processJiiArguments) {
+  console.log(
+    `Starting the process-jii job for ${stateCode}, where dry-run is ${dryRun}`,
+  );
+
+  const twilioAccountSid = process.env["TWILIO_ACCOUNT_SID"] ?? "";
+  const twilioAuthToken = process.env["TWILIO_AUTH_TOKEN"] ?? "";
+  const twilioSubaccountSid =
+    process.env[`TWILIO_MESSAGING_SERVICE_SID_${stateCode.toUpperCase()}`];
+
+  const twilioClient = new TwilioAPIClient(
+    twilioAccountSid,
+    twilioAuthToken,
+    twilioSubaccountSid,
+  );
+
+  twilioClient.createMessage("Hello from Recidiviz", "5514979687");
 }

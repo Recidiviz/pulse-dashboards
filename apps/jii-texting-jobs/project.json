@@ -42,7 +42,8 @@
             "input": "{workspaceRoot}/libs/@jii-texting-server/prisma",
             "output": "."
           },
-          "{workspaceRoot}/.yarnrc.yml"
+          "{workspaceRoot}/.yarnrc.yml",
+          "{projectRoot}/scripts/*"
         ],
         "external": ["@prisma/jii-texting-server"],
         "generatePackageJson": true,
@@ -82,6 +83,32 @@
         }
       },
       "defaultConfiguration": "dev"
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "docker"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/jii-texting-server"],
+      "cache": true,
+      "options": {
+        "command": "nx prisma-push @jii-texting-server/prisma --accept-data-loss && cd apps/jii-texting-jobs && vitest",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "run-local-job": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx src/main.ts --state-code=US_ID"
+      }
     }
   },
   "tags": ["jii-texting-jobs"]
