@@ -13439,6 +13439,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^1.7.8":
+  version: 1.8.1
+  resolution: "axios@npm:1.8.1"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/b2e1d5a61264502deee4b50f0a6df0aa3b174c546ccf68c0dff714a2b8863232e0bd8cb5b84f853303e97f242a98260f9bb9beabeafe451ad5af538e9eb7ac22
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:^4.1.0":
   version: 4.1.0
   resolution: "axobject-query@npm:4.1.0"
@@ -16637,6 +16648,13 @@ __metadata:
   version: 4.0.14
   resolution: "date-format@npm:4.0.14"
   checksum: 10c0/1c67a4d77c677bb880328c81d81f5b9ed7fbf672bdaff74e5a0f7314b21188f3a829b06acf120c70cc1df876a7724e3e5c23d511e86d64656a3035a76ac3930b
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.9":
+  version: 1.11.13
+  resolution: "dayjs@npm:1.11.13"
+  checksum: 10c0/a3caf6ac8363c7dade9d1ee797848ddcf25c1ace68d9fe8678ecf8ba0675825430de5d793672ec87b24a69bf04a1544b176547b2539982275d5542a7955f35b7
   languageName: node
   linkType: hard
 
@@ -24031,6 +24049,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsonwebtoken@npm:^9.0.2":
+  version: 9.0.2
+  resolution: "jsonwebtoken@npm:9.0.2"
+  dependencies:
+    jws: "npm:^3.2.2"
+    lodash.includes: "npm:^4.3.0"
+    lodash.isboolean: "npm:^3.0.3"
+    lodash.isinteger: "npm:^4.0.4"
+    lodash.isnumber: "npm:^3.0.3"
+    lodash.isplainobject: "npm:^4.0.6"
+    lodash.isstring: "npm:^4.0.1"
+    lodash.once: "npm:^4.0.0"
+    ms: "npm:^2.1.1"
+    semver: "npm:^7.5.4"
+  checksum: 10c0/d287a29814895e866db2e5a0209ce730cbc158441a0e5a70d5e940eb0d28ab7498c6bf45029cc8b479639bca94056e9a7f254e2cdb92a2f5750c7f358657a131
+  languageName: node
+  linkType: hard
+
 "jspdf@npm:^2.5.1":
   version: 2.5.1
   resolution: "jspdf@npm:2.5.1"
@@ -29753,6 +29789,7 @@ __metadata:
     ts-node: "npm:^10.9.1"
     tslib: "npm:^2.3.0"
     tsx: "npm:^4.17.0"
+    twilio: "npm:^5.4.5"
     typescript: "npm:5.7.3"
     typescript-eslint: "npm:^8.19.0"
     use-onclickoutside: "npm:^0.4.0"
@@ -30842,6 +30879,13 @@ __metadata:
     ajv-formats: "npm:^2.1.1"
     ajv-keywords: "npm:^5.1.0"
   checksum: 10c0/c23f0fa73ef71a01d4a2bb7af4c91e0d356ec640e071aa2d06ea5e67f042962bb7ac7c29a60a295bb0125878801bc3209197a2b8a833dd25bd38e37c3ed21427
+  languageName: node
+  linkType: hard
+
+"scmp@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "scmp@npm:2.1.0"
+  checksum: 10c0/2128efa993cd2e3e10e3ab6d574cc9993ac7aa30430527e5da830ab509ba15eae49d8ca918d6aa934915bbd5b863778b04178227be005b49d801c0ca6063d2e4
   languageName: node
   linkType: hard
 
@@ -33236,6 +33280,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"twilio@npm:^5.4.5":
+  version: 5.4.5
+  resolution: "twilio@npm:5.4.5"
+  dependencies:
+    axios: "npm:^1.7.8"
+    dayjs: "npm:^1.11.9"
+    https-proxy-agent: "npm:^5.0.0"
+    jsonwebtoken: "npm:^9.0.2"
+    qs: "npm:^6.9.4"
+    scmp: "npm:^2.1.0"
+    xmlbuilder: "npm:^13.0.2"
+  checksum: 10c0/8ef600653e630957a0cd52d128edd9982fa7854bba9ea9b93c22500bf0f3e11e59e910ebc19a14ecc5efb9772d55a78ad9b747e64df6a183625942c233c68873
+  languageName: node
+  linkType: hard
+
 "type-check@npm:^0.4.0, type-check@npm:~0.4.0":
   version: 0.4.0
   resolution: "type-check@npm:0.4.0"
@@ -34925,6 +34984,13 @@ __metadata:
   version: 4.0.0
   resolution: "xml-name-validator@npm:4.0.0"
   checksum: 10c0/c1bfa219d64e56fee265b2bd31b2fcecefc063ee802da1e73bad1f21d7afd89b943c9e2c97af2942f60b1ad46f915a4c81e00039c7d398b53cf410e29d3c30bd
+  languageName: node
+  linkType: hard
+
+"xmlbuilder@npm:^13.0.2":
+  version: 13.0.2
+  resolution: "xmlbuilder@npm:13.0.2"
+  checksum: 10c0/e703027bd10808ee93f6626a4ca440e9d295a0b323aed151c39f427f32d23bda0a1af0b9278286fa94c25fc52d46716fa79e17abcda31205fb33bf4bc0ffe575
   languageName: node
   linkType: hard
 
