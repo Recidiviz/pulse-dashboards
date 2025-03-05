@@ -463,7 +463,7 @@ model Disposition {
 model County {
   id         String    @id @default(cuid())
   stateCode  StateCode
-  name       String    @unique
+  name       String    @unique @db.Citext
   district   District? @relation(fields: [districtId], references: [id])
   districtId String?
   Case       Case[]
@@ -473,7 +473,7 @@ model County {
 model District {
   id        String    @id @default(cuid())
   stateCode StateCode
-  name      String    @unique
+  name      String    @unique @db.Citext
   counties  County[]
   Case      Case[]
   Client    Client[]
