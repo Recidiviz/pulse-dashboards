@@ -47,6 +47,7 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
+      "dependsOn": ["create-base-package-json", "load-env-files"],
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/case-notes-server",
@@ -90,7 +91,7 @@
     },
     "container": {
       "executor": "@nx-tools/nx-container:build",
-      "dependsOn": ["build", "load-env-files"],
+      "dependsOn": ["build"],
       "options": {
         "engine": "docker",
         "platforms": ["linux/amd64"]
