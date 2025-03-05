@@ -58,7 +58,7 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
-      "dependsOn": ["create-base-package-json"],
+      "dependsOn": ["create-base-package-json", "load-env-files"],
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/jii-texting-server",
