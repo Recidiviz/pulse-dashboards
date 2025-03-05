@@ -24,6 +24,7 @@ import {
   REPORT_TYPE_KEY,
 } from "../../components/CaseDetails/constants";
 import { RecommendationOptionType } from "../../components/CaseDetails/Recommendations/constants";
+import { RecommendationType } from "../../components/CaseDetails/types";
 import { GeoConfig } from "../types";
 import { generateNorthDakotaSummary } from "./utils";
 
@@ -40,6 +41,10 @@ export const US_ND_CONFIG: GeoConfig = {
     type: RecommendationOptionType.SentenceLength,
     baseOptionsTemplate: [
       {
+        label: RecommendationType.Probation,
+        recommendationType: RecommendationType.Probation,
+      },
+      {
         label: "Less than one year",
         sentenceLengthBucketStart: 0,
         sentenceLengthBucketEnd: 1,
@@ -55,18 +60,8 @@ export const US_ND_CONFIG: GeoConfig = {
         sentenceLengthBucketEnd: 5,
       },
       {
-        label: "6-10 years",
+        label: "6+ years",
         sentenceLengthBucketStart: 6,
-        sentenceLengthBucketEnd: 10,
-      },
-      {
-        label: "11-20 years",
-        sentenceLengthBucketStart: 11,
-        sentenceLengthBucketEnd: 20,
-      },
-      {
-        label: "21+ years",
-        sentenceLengthBucketStart: 21,
         sentenceLengthBucketEnd: -1,
       },
       {

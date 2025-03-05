@@ -52,7 +52,6 @@ export function DispositionChartBySentenceLength({
             sentenceLengthBucketEnd,
             percentage,
           } = dataPoint;
-
           const title = getSentenceLengthBucketText(
             recommendationType,
             sentenceLengthBucketStart,
@@ -88,7 +87,7 @@ export function DispositionChartBySentenceLength({
       y: number;
       dx: number;
       dy: number;
-      dataEntry: { percentage: number };
+      dataEntry: { value: number };
       dataIndex: number;
     }) => (
       <text
@@ -106,7 +105,7 @@ export function DispositionChartBySentenceLength({
         onMouseOver={() => setFocusedSegment(dataIndex)}
         onMouseOut={() => setFocusedSegment(undefined)}
       >
-        {`${Math.round(dataEntry.percentage)}%`}
+        {`${Math.round(dataEntry.value * 100)}%`}
       </text>
     ),
     [setFocusedSegment],

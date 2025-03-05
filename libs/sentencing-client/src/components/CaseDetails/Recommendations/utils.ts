@@ -21,14 +21,25 @@ import { CaseInsight } from "../../../../src/api";
 import { convertDecimalToPercentage } from "../../../../src/utils/utils";
 import { OTHER_OPTION } from "../Form/constants";
 import { RecommendationType } from "../types";
-import { RecommendationOptionType } from "./constants";
 import {
+  DispositionData,
   RecommendationOption,
   RecommendationOptionTemplateBase,
+  RollupRecidivismSeries,
 } from "./types";
 
+const getDataKey = (item: DispositionData | RollupRecidivismSeries) => {
+  if (
+    item.sentenceLengthBucketStart === 0 &&
+    item.sentenceLengthBucketEnd === -1 &&
+    item.recommendationType
+  ) {
+    return item.recommendationType;
+  }
+  return item.sentenceLengthBucketStart ?? item.recommendationType;
+};
+
 export const generateRecommendationOptions = (
-  optionType: RecommendationOptionType,
   optionsBase: RecommendationOptionTemplateBase[],
   insight?: CaseInsight,
   recommendedOpportunities?: string[],
@@ -39,18 +50,21 @@ export const generateRecommendationOptions = (
     key: RecommendationType.None,
     label: "I do not wish to make a recommendation",
   };
-  const keyByField =
-    optionType === RecommendationOptionType.SentenceType
-      ? "recommendationType"
-      : "sentenceLengthBucketStart";
 
-  const dispositionDataByKey = keyBy(dispositionData, keyByField);
-  const rollUpRecidivismSeriesByKey = keyBy(rollupRecidivismSeries, keyByField);
+  const dispositionDataByKey = keyBy(dispositionData, (item) =>
+    getDataKey(item),
+  );
+
+  const rollUpRecidivismSeriesByKey = keyBy(rollupRecidivismSeries, (item) =>
+    getDataKey(item),
+  );
 
   const options: RecommendationOption[] = optionsBase
     .map((option) => {
       const key =
-        option.label === OTHER_OPTION ? OTHER_OPTION : option[keyByField];
+        option.label === OTHER_OPTION
+          ? OTHER_OPTION
+          : option.recommendationType ?? option.sentenceLengthBucketStart;
       if (key === undefined) return;
 
       const datapoints = rollUpRecidivismSeriesByKey[key]?.dataPoints;
