@@ -152,7 +152,7 @@
       "outputs": ["{workspaceRoot}/coverage/apps/sentencing-server"],
       "cache": true,
       "options": {
-        "command": "nx prisma-push @sentencing-server/prisma --accept-data-loss && cd apps/sentencing-server && vitest",
+        "command": "nx prisma-deploy @sentencing-server/prisma && cd apps/sentencing-server && vitest",
         "cwd": "{workspaceRoot}"
       }
     },

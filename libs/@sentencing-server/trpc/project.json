@@ -44,7 +44,7 @@
       "outputs": ["{workspaceRoot}/coverage/libs/@sentencing-server/trpc"],
       "cache": true,
       "options": {
-        "command": "nx prisma-push @sentencing-server/prisma --accept-data-loss && cd libs/@sentencing-server/trpc && vitest",
+        "command": "nx prisma-deploy @sentencing-server/prisma && cd libs/@sentencing-server/trpc && vitest",
         "cwd": "{workspaceRoot}"
       }
     }

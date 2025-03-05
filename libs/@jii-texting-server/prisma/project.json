@@ -118,7 +118,7 @@
     },
     "prisma-seed": {
       "executor": "@nx-tools/nx-prisma:seed",
-      "dependsOn": ["docker", "prisma-push", "prisma-generate"],
+      "dependsOn": ["docker", "prisma-deploy"],
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma",
         "script": "{projectRoot}/src/seed.ts"
