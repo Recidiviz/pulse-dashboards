@@ -3255,6 +3255,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@commander-js/extra-typings@npm:^13.1.0":
+  version: 13.1.0
+  resolution: "@commander-js/extra-typings@npm:13.1.0"
+  peerDependencies:
+    commander: ~13.1.0
+  checksum: 10c0/ff799f0641f68855aa73c976912a607c25d564df34fd8e262927a80b19f6cccd882fe7ce098a0e072a497fd0020cbd19fd1e4d5cc98a461cd6623abf8ed5f4e7
+  languageName: node
+  linkType: hard
+
 "@cspotcode/source-map-consumer@npm:0.8.0":
   version: 0.8.0
   resolution: "@cspotcode/source-map-consumer@npm:0.8.0"
@@ -15188,6 +15197,13 @@ __metadata:
   version: 9.1.0
   resolution: "commander@npm:9.1.0"
   checksum: 10c0/401daebdfa3cab85b62090a88ed6b9fb4519163afb9247336010e4346970597566c07a832bb84f5c4af68d256b90d01ed7f6984366e6d232d356c533526019b5
+  languageName: node
+  linkType: hard
+
+"commander@npm:^13.1.0":
+  version: 13.1.0
+  resolution: "commander@npm:13.1.0"
+  checksum: 10c0/7b8c5544bba704fbe84b7cab2e043df8586d5c114a4c5b607f83ae5060708940ed0b5bd5838cf8ce27539cde265c1cbd59ce3c8c6b017ed3eec8943e3a415164
   languageName: node
   linkType: hard
 
@@ -29516,6 +29532,7 @@ __metadata:
     "@babel/preset-react": "npm:^7.14.5"
     "@babel/register": "npm:^7.13.14"
     "@cascadia-code/scroll-to-hash-element": "npm:^2.0.2"
+    "@commander-js/extra-typings": "npm:^13.1.0"
     "@cucumber/cucumber": "npm:^7.1.0"
     "@dnd-kit/core": "npm:^6.1.0"
     "@dnd-kit/modifiers": "npm:^7.0.0"
@@ -29642,6 +29659,7 @@ __metadata:
     chartjs-plugin-datalabels: "npm:^0.7.0"
     classnames: "npm:^2.2.6"
     comlink: "npm:^4.4.1"
+    commander: "npm:^13.1.0"
     cors: "npm:^2.8.5"
     coveralls: "npm:^3.1.0"
     crypto-js: "npm:^4.2.0"
