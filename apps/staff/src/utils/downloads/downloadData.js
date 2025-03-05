@@ -17,6 +17,7 @@
 
 import * as Sentry from "@sentry/react";
 import downloadjs from "downloadjs";
+import html2canvas from "html2canvas";
 import JSZip from "jszip";
 
 import exportDataOnMobileDevices, {
@@ -189,7 +190,7 @@ export function downloadHtmlElementAsImage({
 }) {
   const element = document.getElementById(chartId);
 
-  window.html2canvas(element, {}).then((canvas) => {
+  html2canvas(element, {}).then((canvas) => {
     downloadCanvasAsImage({
       canvas,
       filename: `${configureFilename(chartId, {}, true)}.png`,

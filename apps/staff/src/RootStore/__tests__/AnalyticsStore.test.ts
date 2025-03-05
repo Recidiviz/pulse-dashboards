@@ -25,6 +25,10 @@ describe("AnalyticsStore", () => {
     vi.resetModules();
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   const mockRootStore = {
     isImpersonating: false,
     userStore: {
@@ -43,7 +47,7 @@ describe("AnalyticsStore", () => {
     vi.stubEnv("VITE_AUTH_ENV", authEnv);
     const AnalyticsStore = (await import("../AnalyticsStore")).default;
 
-    return new AnalyticsStore({ rootStore });
+    return new AnalyticsStore({ rootStore, isTestMode: true });
   }
 
   describe("Recidiviz user in staging", () => {
@@ -67,16 +71,18 @@ describe("AnalyticsStore", () => {
     });
 
     it("does call track", () => {
+      const track = vi.spyOn(analyticsStore.segment, "track");
       analyticsStore.trackReferralFormViewed({
         justiceInvolvedPersonId: "",
         opportunityType: "LSU",
       });
-      expect(window.analytics.track).toHaveBeenCalled();
+      expect(track).toHaveBeenCalled();
     });
 
     it("does call page", () => {
+      const page = vi.spyOn(analyticsStore.segment, "page");
       analyticsStore.page("/foo");
-      expect(window.analytics.page).toHaveBeenCalled();
+      expect(page).toHaveBeenCalled();
     });
   });
 
@@ -101,16 +107,18 @@ describe("AnalyticsStore", () => {
     });
 
     it("does not call track", () => {
+      const track = vi.spyOn(analyticsStore.segment, "track");
       analyticsStore.trackReferralFormViewed({
         justiceInvolvedPersonId: "",
         opportunityType: "LSU",
       });
-      expect(window.analytics.track).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
     });
 
     it("does not call page", () => {
+      const page = vi.spyOn(analyticsStore.segment, "page");
       analyticsStore.page("/foo");
-      expect(window.analytics.page).not.toHaveBeenCalled();
+      expect(page).not.toHaveBeenCalled();
     });
   });
 
@@ -135,16 +143,18 @@ describe("AnalyticsStore", () => {
     });
 
     it("does not call track", () => {
+      const track = vi.spyOn(analyticsStore.segment, "track");
       analyticsStore.trackReferralFormViewed({
         justiceInvolvedPersonId: "",
         opportunityType: "LSU",
       });
-      expect(window.analytics.track).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
     });
 
     it("does not call page", () => {
+      const page = vi.spyOn(analyticsStore.segment, "page");
       analyticsStore.page("/foo");
-      expect(window.analytics.page).not.toHaveBeenCalled();
+      expect(page).not.toHaveBeenCalled();
     });
   });
 
@@ -162,11 +172,12 @@ describe("AnalyticsStore", () => {
     });
 
     it("does not call track", () => {
+      const track = vi.spyOn(analyticsStore.segment, "track");
       analyticsStore.trackReferralFormViewed({
         justiceInvolvedPersonId: "",
         opportunityType: "LSU",
       });
-      expect(window.analytics.track).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
     });
 
     it("does not call page", () => {
@@ -189,16 +200,18 @@ describe("AnalyticsStore", () => {
     });
 
     it("does not call track", () => {
+      const track = vi.spyOn(analyticsStore.segment, "track");
       analyticsStore.trackReferralFormViewed({
         justiceInvolvedPersonId: "",
         opportunityType: "LSU",
       });
-      expect(window.analytics.track).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
     });
 
     it("does not call page", () => {
+      const page = vi.spyOn(analyticsStore.segment, "page");
       analyticsStore.page("/foo");
-      expect(window.analytics.page).not.toHaveBeenCalled();
+      expect(page).not.toHaveBeenCalled();
     });
   });
 
@@ -212,16 +225,18 @@ describe("AnalyticsStore", () => {
     });
 
     it("does not call track", () => {
+      const track = vi.spyOn(analyticsStore.segment, "track");
       analyticsStore.trackReferralFormViewed({
         justiceInvolvedPersonId: "",
         opportunityType: "LSU",
       });
-      expect(window.analytics.track).not.toHaveBeenCalled();
+      expect(track).not.toHaveBeenCalled();
     });
 
     it("does not call page", () => {
+      const page = vi.spyOn(analyticsStore.segment, "page");
       analyticsStore.page("/foo");
-      expect(window.analytics.page).not.toHaveBeenCalled();
+      expect(page).not.toHaveBeenCalled();
     });
   });
 
@@ -239,16 +254,18 @@ describe("AnalyticsStore", () => {
     });
 
     it("does call analytics to track", () => {
+      const track = vi.spyOn(analyticsStore.segment, "track");
       analyticsStore.trackReferralFormViewed({
         justiceInvolvedPersonId: "",
         opportunityType: "LSU",
       });
-      expect(window.analytics.track).toHaveBeenCalled();
+      expect(track).toHaveBeenCalled();
     });
 
     it("does call analytics for pageview", () => {
+      const page = vi.spyOn(analyticsStore.segment, "page");
       analyticsStore.page("/foo");
-      expect(window.analytics.page).toHaveBeenCalledWith("/foo");
+      expect(page).toHaveBeenCalledWith("/foo");
     });
   });
 
@@ -266,16 +283,18 @@ describe("AnalyticsStore", () => {
     });
 
     it("does call analytics to track", () => {
+      const track = vi.spyOn(analyticsStore.segment, "track");
       analyticsStore.trackReferralFormViewed({
         justiceInvolvedPersonId: "",
         opportunityType: "LSU",
       });
-      expect(window.analytics.track).toHaveBeenCalled();
+      expect(track).toHaveBeenCalled();
     });
 
     it("does call analytics for pageview", () => {
+      const page = vi.spyOn(analyticsStore.segment, "page");
       analyticsStore.page("/foo");
-      expect(window.analytics.page).toHaveBeenCalledWith("/foo");
+      expect(page).toHaveBeenCalledWith("/foo");
     });
   });
 });
