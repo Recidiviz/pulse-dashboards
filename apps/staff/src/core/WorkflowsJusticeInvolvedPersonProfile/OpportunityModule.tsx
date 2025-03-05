@@ -151,7 +151,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
 
       if (submittedOpportunityStatus) {
         toast(
-          `${opportunity.person.displayName} is now ${opportunity.tabTitle()} for ${opportunity.config.label}`,
+          `${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`,
           {
             position: "bottom-left",
           },

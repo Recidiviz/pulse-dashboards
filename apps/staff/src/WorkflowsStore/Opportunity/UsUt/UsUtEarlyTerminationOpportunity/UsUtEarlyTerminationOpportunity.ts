@@ -19,6 +19,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
+import { OpportunityTab } from "../../types";
 import {
   UsUtEarlyTerminationReferralRecord,
   usUtEarlyTerminationSchema,
@@ -35,5 +36,29 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
       client.rootStore,
       usUtEarlyTerminationSchema.parse(record),
     );
+  }
+
+  tabTitle(): OpportunityTab {
+    if (this.isSubmitted) return this.submittedTabTitle;
+    if (this.denied) return this.deniedTabTitle;
+    switch (this.record.metadata.tabName) {
+      case "REPORT_DUE_ELIGIBLE":
+      case "REPORT_DUE_ALMOST_ELIGIBLE":
+        return "Report Due";
+      case "EARLY_REQUESTS":
+        return "Early Requests";
+      default:
+        return "Other";
+    }
+  }
+
+  get subcategory() {
+    if (this.isSubmitted || this.denied) return;
+
+    switch (this.record.metadata.tabName) {
+      case "REPORT_DUE_ELIGIBLE":
+      case "REPORT_DUE_ALMOST_ELIGIBLE":
+        return this.record.metadata.tabName;
+    }
   }
 }

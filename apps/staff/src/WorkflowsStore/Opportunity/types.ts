@@ -196,7 +196,9 @@ export type OpportunityTab =
   | "In Progress"
   | "Submitted"
   | "Fast Trackers" // For US_AZ TPR/DTP opportunities
-  | "Pending";
+  | "Pending"
+  | "Report Due" // "Report Due" and "Early Requests" for US_UT Early Termination
+  | "Early Requests";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"
