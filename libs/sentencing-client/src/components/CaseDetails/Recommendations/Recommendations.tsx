@@ -22,7 +22,6 @@ import { pluralizeDuplicates } from "../../../utils/utils";
 import * as Styled from "../CaseDetails.styles";
 import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
 import { RecommendationType } from "../types";
-import { RecommendationOptionType } from "./constants";
 import { RecommendationRadioOption } from "./RecommendationOptions";
 import { SummaryReport } from "./SummaryReport";
 import { RecommendationsProps } from "./types";
@@ -65,8 +64,6 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   const hideSummaryReport = () => setShowSummaryReport(false);
 
   const optionsBase = geoConfig.recommendation.baseOptionsTemplate ?? [];
-  const recommendationOptionType =
-    geoConfig.recommendation.type ?? RecommendationOptionType.SentenceType;
   const matchingRecommendationOptionsForOpportunities =
     geoConfig.recommendation.matchingRecommendationOptionsForOpportunities;
 
@@ -125,7 +122,6 @@ const Recommendations: React.FC<RecommendationsProps> = ({
 
           <Styled.RecommendationOptionsWrapper>
             {generateRecommendationOptions(
-              recommendationOptionType,
               optionsBase,
               insight,
               recommendedOpps,

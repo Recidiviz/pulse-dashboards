@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Case, CaseInsight, Client } from "../../../api";
+import { Case, CaseInsight, Client, Insight } from "../../../api";
 import { CreateOrUpdateRecommendation } from "../../../datastores/types";
 import { GeoConfig } from "../../../geoConfigs/types";
 import {
@@ -129,3 +129,7 @@ export type Pronouns = Record<
 export type NeedsToDisplayName = {
   [key in Case["needsToBeAddressed"][number]]?: string;
 };
+
+export type DispositionData = NonNullable<Insight>["dispositionData"][number];
+export type RollupRecidivismSeries =
+  NonNullable<Insight>["rollupRecidivismSeries"][number];
