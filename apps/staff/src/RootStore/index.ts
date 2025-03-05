@@ -19,6 +19,7 @@ import { Auth0ClientOptions, User } from "@auth0/auth0-spa-js";
 import * as Sentry from "@sentry/react";
 import { computed, configure, makeObservable, onReactionError } from "mobx";
 
+import { isTestEnv } from "~client-env-utils";
 import { PSIStore } from "~sentencing-client";
 import {
   demoAuthConfig,
@@ -131,7 +132,10 @@ export class RootStore {
 
     this.apiStore = new APIStore(this.userStore);
 
-    this.analyticsStore = new AnalyticsStore({ rootStore: this });
+    this.analyticsStore = new AnalyticsStore({
+      rootStore: this,
+      isTestMode: isTestEnv(),
+    });
 
     this.firestoreStore = new FirestoreStore({ rootStore: this });
 

@@ -326,7 +326,8 @@
     "trim-newlines": "^3.0.1",
     "ws": ">7.4.6",
     "json-schema": "^0.4.0",
-    "clsx": "~1.0.4"
+    "clsx": "~1.0.4",
+    "regenerator-runtime": "^0.14.1"
   },
   "scripts": {
     "prepare": "husky",

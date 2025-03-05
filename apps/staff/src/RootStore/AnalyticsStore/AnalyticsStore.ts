@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { AnalyticsBrowser } from "@segment/analytics-next";
 import { clone } from "lodash";
 import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
@@ -132,13 +133,26 @@ export type CopyCTAMetadata = OpportunityTrackingMetadata & {
 
 export default class AnalyticsStore {
   rootStore;
+  segment;
 
   sessionId = uuidv4();
 
-  constructor({ rootStore }: { rootStore: typeof RootStore }) {
+  constructor({
+    rootStore,
+    isTestMode,
+  }: {
+    rootStore: typeof RootStore;
+    isTestMode?: boolean;
+  }) {
     makeAutoObservable(this);
 
     this.rootStore = rootStore;
+    this.segment = AnalyticsBrowser.load(
+      {
+        writeKey: "YDsBLA1staRM3Eg0zXEA3hGnA42teFUe",
+      },
+      { disable: isTestMode },
+    );
   }
 
   get shouldLogAnalyticsEvent(): boolean {
@@ -174,7 +188,7 @@ export default class AnalyticsStore {
     // eslint-disable-next-line
     if (this.shouldLogAnalyticsEvent) console.log(log);
     if (this.shouldSkipWriteToSegment) return;
-    window.analytics.identify(userId, traits);
+    this.segment.identify(userId, traits);
   }
 
   track(eventName: string, metadata?: Record<string, unknown>): void {
@@ -194,7 +208,7 @@ export default class AnalyticsStore {
     // eslint-disable-next-line
     if (this.shouldLogAnalyticsEvent) console.log(log);
     if (this.shouldSkipWriteToSegment) return;
-    window.analytics.track(eventName, fullMetadata);
+    this.segment.track(eventName, fullMetadata);
   }
 
   page(pagePath: string) {
@@ -207,7 +221,7 @@ export default class AnalyticsStore {
     // eslint-disable-next-line
     if (this.shouldLogAnalyticsEvent) console.log(log);
     if (this.shouldSkipWriteToSegment) return;
-    window.analytics.page(pagePath);
+    this.segment.page(pagePath);
   }
 
   trackInsightsSupervisorsListPageViewed(
