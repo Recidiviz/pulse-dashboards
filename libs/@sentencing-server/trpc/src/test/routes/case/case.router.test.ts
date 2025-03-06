@@ -65,6 +65,7 @@ describe("case router", () => {
             isGenderLocked: false,
           },
           isReportTypeLocked: false,
+          isCancelled: false,
           // Should return an insight object
           insight: expect.objectContaining({
             ..._.omit(fakeInsight, [

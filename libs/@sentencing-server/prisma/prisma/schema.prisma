@@ -341,6 +341,7 @@ model Case {
   isReportTypeLocked Boolean     @default(false)
   // Whether the county of sentencing is locked and cannot be changed
   isCountyLocked     Boolean     @default(false)
+  isCancelled        Boolean     @default(false)
 
   // Mutable Attributes
   lsirScore Int?

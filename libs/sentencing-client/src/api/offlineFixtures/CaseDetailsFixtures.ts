@@ -65,6 +65,7 @@ export const CaseDetailsFixture: { [caseId: string]: Case } = {
     currentOnboardingTopic: "OffenseLsirScore",
     recommendationSummary: null,
     isReportTypeLocked: false,
+    isCancelled: false,
     client: {
       fullName: "Blanda Furman",
       firstName: "Blanda",

@@ -165,6 +165,7 @@ export const fakeCase = {
   ]),
   isLsirScoreLocked: false,
   isCountyLocked: false,
+  isCancelled: false,
   currentOnboardingTopic: faker.helpers.enumValue(OnboardingTopic),
   recommendedOpportunities: [
     {
