@@ -18,6 +18,9 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { withPresenterManager } from "~hydration-utils";
+
+import { useRootStore } from "../../components/StoreProvider";
 import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { AllTasksView } from "./AllTasksView";
 import { TASK_SELECTOR_LABELS } from "./fixtures";
@@ -44,7 +47,7 @@ function getViewElement(presenter: CaseloadTasksPresenter) {
   }
 }
 
-export const WorkflowsTasksBody = observer(function WorkflowsTaskBody({
+export const ManagedComponent = observer(function WorkflowsTaskBody({
   presenter,
 }: {
   presenter: CaseloadTasksPresenter;
@@ -80,4 +83,19 @@ export const WorkflowsTasksBody = observer(function WorkflowsTaskBody({
       <TaskPreviewModal />
     </>
   );
+});
+
+function usePresenter() {
+  const { workflowsStore, analyticsStore, tenantStore } = useRootStore();
+  return new CaseloadTasksPresenter(
+    workflowsStore,
+    tenantStore,
+    analyticsStore,
+  );
+}
+
+export const WorkflowsTasksBody = withPresenterManager({
+  usePresenter,
+  managerIsObserver: true,
+  ManagedComponent,
 });

@@ -21,7 +21,6 @@ import simplur from "simplur";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";
-import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
@@ -29,66 +28,48 @@ import WorkflowsResults from "../WorkflowsResults";
 import { WorkflowsTasksBody } from "./WorkflowsTasksBody";
 import { WorkflowsTasksBodyV2 } from "./WorkflowsTasksBodyV2";
 
-const WorkflowsTasksWithPresenter = observer(
-  function WorkflowsTasksWithPresenter({
-    presenter,
-  }: {
-    presenter: CaseloadTasksPresenter;
-  }) {
-    const {
-      workflowsStore: {
-        justiceInvolvedPersonTitle,
-        searchStore: { workflowsSearchFieldTitle, selectedSearchIds },
-      },
-      currentTenantId,
-    } = useRootStore();
+const WorkflowsTasks = observer(function WorkflowsTasks() {
+  const {
+    workflowsStore: {
+      justiceInvolvedPersonTitle,
+      searchStore: { workflowsSearchFieldTitle, selectedSearchIds },
+    },
+    currentTenantId,
+  } = useRootStore();
 
-    const empty = (
-      <WorkflowsResults
-        callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-          selectedSearchIds.length,
-        ]} ${pluralizeWord(
-          workflowsSearchFieldTitle,
-          selectedSearchIds.length,
-        )}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
-      />
-    );
+  const empty = (
+    <WorkflowsResults
+      callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
+        selectedSearchIds.length,
+      ]} ${pluralizeWord(
+        workflowsSearchFieldTitle,
+        selectedSearchIds.length,
+      )}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
+    />
+  );
 
-    const initial = (
-      <WorkflowsResults
-        headerText="Tasks"
-        callToActionText="Search for officers above to review clients who have upcoming or overdue tasks."
-      />
-    );
-
-    return (
-      <WorkflowsNavLayout>
-        <CaseloadSelect />
-        <CaseloadTasksHydrator
-          initial={initial}
-          empty={empty}
-          hydrated={
-            currentTenantId === "US_ID" ? (
-              <WorkflowsTasksBody presenter={presenter} />
-            ) : (
-              <WorkflowsTasksBodyV2 presenter={presenter} />
-            )
-          }
-        />
-      </WorkflowsNavLayout>
-    );
-  },
-);
-
-const WorkflowsTasks = React.memo(function WorkflowsTasks() {
-  const { workflowsStore, analyticsStore, tenantStore } = useRootStore();
+  const initial = (
+    <WorkflowsResults
+      headerText="Tasks"
+      callToActionText={`Search for ${workflowsSearchFieldTitle}s above to review ${justiceInvolvedPersonTitle}s who have upcoming or overdue tasks.`}
+    />
+  );
 
   return (
-    <WorkflowsTasksWithPresenter
-      presenter={
-        new CaseloadTasksPresenter(workflowsStore, tenantStore, analyticsStore)
-      }
-    />
+    <WorkflowsNavLayout>
+      <CaseloadSelect />
+      <CaseloadTasksHydrator
+        initial={initial}
+        empty={empty}
+        hydrated={
+          currentTenantId === "US_ID" ? (
+            <WorkflowsTasksBody />
+          ) : (
+            <WorkflowsTasksBodyV2 />
+          )
+        }
+      />
+    </WorkflowsNavLayout>
   );
 });
 
