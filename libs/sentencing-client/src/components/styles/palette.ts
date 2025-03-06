@@ -17,7 +17,10 @@
 
 export const customPalette = {
   black: "rgba(0, 0, 0, 1)",
-  blue1: "rgba(200, 229, 255, 1)",
+  blue: {
+    light1: "rgba(200, 229, 255, 1)",
+    link: "rgb(55, 118, 174)",
+  },
   green: {
     light1: "rgba(43, 105, 105, 0.03)",
     light2: "rgba(43, 84, 105, 0.1)",

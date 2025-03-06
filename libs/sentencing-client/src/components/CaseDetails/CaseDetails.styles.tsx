@@ -127,7 +127,7 @@ export const DueDate = styled.div`
   justify-content: center;
   align-items: center;
   color: ${palette.pine1};
-  background-color: ${customPalette.blue1};
+  background-color: ${customPalette.blue.light1};
   border-radius: 10px;
   padding: 0 8px;
   font-size: 13px;
@@ -160,6 +160,25 @@ export const Value = styled.div`
   span {
     text-transform: none;
     color: ${palette.slate60};
+  }
+`;
+
+export const Link = styled.a`
+  width: fit-content;
+  display: flex;
+  gap: 4px;
+  text-decoration: none;
+  color: ${customPalette.blue.link};
+  text-transform: none;
+
+  &:hover {
+    cursor: pointer;
+    color: ${customPalette.blue.link};
+  }
+
+  &:visited,
+  &:active {
+    color: ${customPalette.blue.link};
   }
 `;
 
@@ -343,7 +362,10 @@ export const RecommendationOptionsWrapper = styled.div`
   gap: 8px;
 `;
 
-export const RecommendationOption = styled.div<{ selected?: boolean }>`
+export const RecommendationOption = styled.div<{
+  selected?: boolean;
+  isDisabled?: boolean;
+}>`
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -355,6 +377,11 @@ export const RecommendationOption = styled.div<{ selected?: boolean }>`
     `
     background-color: rgba(43, 105, 105, 0.03);
     border: 1px solid rgba(0, 102, 95, 0.4);
+  `}
+  ${({ isDisabled }) =>
+    isDisabled &&
+    `
+    opacity: 0.6;
   `}
 `;
 
@@ -1065,7 +1092,8 @@ export const Input = styled.input<{ hasError?: boolean }>`
   }
 
   &:disabled {
-    color: ${palette.slate60};
+    color: ${palette.pine3};
+    background-color: ${palette.slate10};
   }
 
   ${({ hasError }) =>
@@ -1135,6 +1163,34 @@ export const InputDescription = styled.div`
   color: ${palette.slate60};
   margin-top: 4px;
   ${typography.Sans14}
+`;
+
+export const InputAlert = styled.div`
+  ${typography.Sans14};
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: ${customPalette.green.light3};
+  border: 1px solid ${palette.pine4};
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 12px;
+  color: ${palette.pine4};
+
+  svg {
+    margin-right: 8px;
+  }
+
+  svg > path {
+    fill: ${palette.pine4};
+    fill-opacity: 1;
+  }
+`;
+
+export const InputAlertMessageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `;
 
 export const ErrorMessage = styled.div`
@@ -1264,10 +1320,11 @@ export const StickyActionButtonWrapper = styled.div`
 `;
 
 export const dropdownStyles: StylesConfig<SelectOption, boolean> = {
-  control: (styles, { isFocused }) => ({
+  control: (styles, { isFocused, isDisabled }) => ({
     ...styles,
     borderColor: isFocused ? palette.pine4 : palette.slate20,
     boxShadow: isFocused ? `0 0 0 1px  ${palette.pine4}` : "none",
+    backgroundColor: isDisabled ? palette.slate10 : palette.white,
     ":hover": {
       borderColor: palette.pine4,
     },

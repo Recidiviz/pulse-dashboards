@@ -96,7 +96,8 @@ export type FeatureVariant =
   | "opportunityTableView"
   | "usTnSuspensionOfDirectSupervision"
   | "usMeCaseNoteSnooze"
-  | "outcomesModule";
+  | "outcomesModule"
+  | "mandatoryMinimum";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -154,6 +155,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnSuspensionOfDirectSupervision: {},
   usMeCaseNoteSnooze: {},
   outcomesModule: {},
+  mandatoryMinimum: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

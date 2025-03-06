@@ -19,13 +19,18 @@ import { observer } from "mobx-react-lite";
 import React, { Fragment, useState } from "react";
 
 import { pluralizeDuplicates } from "../../../utils/utils";
+import { useStore } from "../../StoreProvider/StoreProvider";
 import * as Styled from "../CaseDetails.styles";
 import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
 import { RecommendationType } from "../types";
+import MandatoryMinimums from "./MandatoryMinimums";
 import { RecommendationRadioOption } from "./RecommendationOptions";
 import { SummaryReport } from "./SummaryReport";
 import { RecommendationsProps } from "./types";
-import { generateRecommendationOptions } from "./utils";
+import {
+  generateRecommendationOptions,
+  getMandatoryMinimumsData,
+} from "./utils";
 
 const Recommendations: React.FC<RecommendationsProps> = ({
   firstName,
@@ -48,6 +53,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   saveRecommendation,
   setCaseStatusCompleted,
 }) => {
+  const { caseStore, activeFeatureVariants } = useStore();
   const {
     trackCreateOrUpdateRecommendationClicked,
     trackCopySummaryToClipboardClicked,
@@ -78,6 +84,22 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   const opportunityDescriptions = recommendedOpportunities
     ?.map((opp) => opp.genericDescription)
     .filter((desc) => desc) as string[] | undefined;
+
+  // Mandatory Minimum
+  const hasMandatoryMinimumFVEnabled = Boolean(
+    activeFeatureVariants["mandatoryMinimum"],
+  );
+  const currentOffense = caseStore.caseAttributes.offense;
+  const {
+    mandatoryMinimums,
+    mandatoryMinimumAutoSelectionRecommendation,
+    disabledMandatoryMinimumOptions,
+  } = currentOffense
+    ? getMandatoryMinimumsData(
+        optionsBase,
+        caseStore.offensesByName[currentOffense]?.mandatoryMinimums,
+      )
+    : {};
 
   return (
     <>
@@ -119,7 +141,14 @@ const Recommendations: React.FC<RecommendationsProps> = ({
               {firstName}.
             </Styled.Description>
           </Styled.Header>
-
+          <MandatoryMinimums
+            mandatoryMinimums={mandatoryMinimums}
+            hasMandatoryMinimumFVEnabled={hasMandatoryMinimumFVEnabled}
+            mandatoryMinimumAutoSelectionRecommendation={
+              mandatoryMinimumAutoSelectionRecommendation
+            }
+            handleRecommendationUpdate={handleRecommendationUpdate}
+          />
           <Styled.RecommendationOptionsWrapper>
             {generateRecommendationOptions(
               optionsBase,
@@ -137,6 +166,11 @@ const Recommendations: React.FC<RecommendationsProps> = ({
                 smallFont: isNoneOption,
                 isRecorded,
                 matchingRecommendationOptionsForOpportunities,
+                isDisabled:
+                  hasMandatoryMinimumFVEnabled &&
+                  disabledMandatoryMinimumOptions?.length
+                    ? disabledMandatoryMinimumOptions.includes(option.key)
+                    : false,
               };
 
               return (

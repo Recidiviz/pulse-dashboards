@@ -40,9 +40,7 @@ export type RecommendationsProps = {
   protectiveFactors?: Case["protectiveFactors"];
   insight?: CaseInsight;
   savedSummary?: string | null;
-  handleRecommendationUpdate: (
-    recommendation: RecommendationType | string,
-  ) => void;
+  handleRecommendationUpdate: (recommendation: string) => void;
   saveRecommendation: () => void;
   setCaseStatusCompleted: () => Promise<void>;
   updateAttributes: (attributes?: MutableCaseAttributes) => Promise<void>;
@@ -62,6 +60,7 @@ export type RecommendationsOptionProps = {
   handleRecommendationUpdate: RecommendationsProps["handleRecommendationUpdate"];
   smallFont: boolean;
   isRecorded: boolean;
+  isDisabled: boolean;
   matchingRecommendationOptionsForOpportunities?: (
     | RecommendationType
     | string
@@ -73,12 +72,12 @@ export type RecommendationOptionTemplateBase = {
   label: string;
   sentenceLengthBucketStart?: number;
   sentenceLengthBucketEnd?: number;
-  recommendationType?: RecommendationType;
+  recommendationType?: string;
 };
 
 export type RecommendationOption = {
-  key: RecommendationType | string;
-  label: RecommendationType | string;
+  key: string;
+  label: string;
   opportunities?: string[];
   recidivismRate?: number;
   historicalSentencingRate?: number;
@@ -98,7 +97,7 @@ export type GenerateRecommendationProps = {
 };
 
 export type SummaryProps = {
-  recommendation: RecommendationType | string;
+  recommendation: string;
   sentenceLengthStart?: number;
   sentenceLengthEnd?: number;
   name?: string;

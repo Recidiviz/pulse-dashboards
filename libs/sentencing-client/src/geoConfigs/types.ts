@@ -23,7 +23,6 @@ import {
 } from "../components/CaseDetails/Recommendations/types";
 import { RecommendationType } from "../components/CaseDetails/types";
 import { AttributeKey } from "../components/Dashboard/types";
-import { UserStateCode } from "../datastores/types";
 
 export type StateCode = Staff["stateCode"];
 
@@ -47,7 +46,3 @@ export type GeoConfig = {
   recommendation: GeoConfigRecommendation;
   omsSystem: string;
 };
-
-export type CountyDistrictMap = Partial<
-  Record<UserStateCode, Record<string, string>>
->;

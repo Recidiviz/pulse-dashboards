@@ -18,7 +18,6 @@
 import { SortDirection } from "@tanstack/react-table";
 
 import { Case, Client } from "../api";
-import { RecommendationType } from "../components/CaseDetails/types";
 import {
   CaseListTableCase,
   RecommendationStatusFilter,
@@ -71,7 +70,7 @@ export type OnboardingTrackingMetadata = {
 export type RecommendedDispositionTrackingMetadata = {
   viewedBy?: string;
   caseId: string;
-  selectedRecommendation: RecommendationType | string;
+  selectedRecommendation: string;
 };
 
 export type OpportunityViewedTrackingMetadata = {
@@ -95,7 +94,8 @@ export type CaseAttributes = Partial<Case> & {
 export type FeatureVariant =
   | "offenseOverrideControls"
   | "protectiveFactors"
-  | "editCountyFields";
+  | "editCountyFields"
+  | "mandatoryMinimum";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
