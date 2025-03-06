@@ -91,6 +91,7 @@ export type FeatureVariant =
   | "offenseOverrideControls"
   | "protectiveFactors"
   | "editCountyFields"
+  | "usIdCRCFacilitySearch"
   | "usIdCaseManagerSearch"
   | "opportunityTableView"
   | "usTnSuspensionOfDirectSupervision"
@@ -148,6 +149,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   protectiveFactors: {},
   editCountyFields: {},
   usIdCaseManagerSearch: {},
+  usIdCRCFacilitySearch: {},
   opportunityTableView: {},
   usTnSuspensionOfDirectSupervision: {},
   usMeCaseNoteSnooze: {},
@@ -189,6 +191,8 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         outcomesModule: {
           activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
         },
+        usIdCaseManagerSearch: {},
+        usIdCRCFacilitySearch: {},
       }
     : {
         ...allFeatureVariants,
