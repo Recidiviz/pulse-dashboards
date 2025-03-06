@@ -34,6 +34,7 @@ const constructedOpportunityTypes = [
   "usIdCRCResidentWorker",
   "usIdCRCWorkRelease",
   "usIdSupervisionLevelDowngrade",
+  "usIdCustodyLevelDowngrade",
 
   // US_ME
   "usMeSCCP",

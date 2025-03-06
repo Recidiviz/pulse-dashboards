@@ -48,6 +48,7 @@ import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsI
 import { usIdLsuSchema } from "../src/WorkflowsStore/Opportunity/UsId/LSUOpportunity";
 import { usIdCRCResidentWorkerSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCResidentWorkerOpportunity";
 import { usIdCRCWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCRCWorkReleaseOpportunity";
+import { usIdCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdCustodyLevelDowngradeOpportunity/UsIdCustodyLevelDowngradeReferralRecord";
 import { usIdExpandedCRCSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdExpandedCRCOpportunity/UsIdExpandedCRCReferralRecord";
 import { usIdPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdPastFTRDOpportunity/UsIdPastFTRDReferralRecord";
 import { usMeEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeEarlyTerminationOpportunity/UsMeEarlyTerminationReferralRecord";
@@ -110,6 +111,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usIdCRCResidentWorker: usIdCRCResidentWorkerSchema,
   usIdCRCWorkRelease: usIdCRCWorkReleaseSchema,
   usIdExpandedCRC: usIdExpandedCRCSchema,
+  usIdCustodyLevelDowngrade: usIdCustodyLevelDowngradeSchema,
   usIdSupervisionLevelDowngrade:
     supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter(),
 

@@ -19,7 +19,7 @@ import { ResidentFixture } from "../residents";
 
 export const usIdResidents: ResidentFixture[] = [
   {
-    allEligibleOpportunities: ["usIdExpandedCRC"],
+    allEligibleOpportunities: ["usIdExpandedCRC", "usIdCustodyLevelDowngrade"],
     stateCode: "US_ID",
     personExternalId: "ID_RES001",
     displayId: "RES001",
@@ -44,7 +44,10 @@ export const usIdResidents: ResidentFixture[] = [
     },
   },
   {
-    allEligibleOpportunities: ["usIdCRCWorkRelease"],
+    allEligibleOpportunities: [
+      "usIdCRCWorkRelease",
+      "usIdCustodyLevelDowngrade",
+    ],
     stateCode: "US_ID",
     personExternalId: "ID_RES002",
     displayId: "RES002",
