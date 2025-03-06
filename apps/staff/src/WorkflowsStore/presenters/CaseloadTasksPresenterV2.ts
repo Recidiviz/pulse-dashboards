@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isThisMonth, isThisWeek } from "date-fns";
 import { every } from "lodash";
 import { makeAutoObservable } from "mobx";
 
@@ -24,7 +25,10 @@ import {
   TaskFilterSection,
   WorkflowsTasksConfig,
 } from "../../core/models/types";
-import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
+import {
+  SupervisionTaskCategory,
+  TEMPORAL_TASK_CATEGORIES,
+} from "../../core/WorkflowsTasks/fixtures";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { PartialRecord } from "../../utils/typeUtils";
@@ -50,9 +54,9 @@ function sortPeopleByNextTaskDueDate(
 
 type SelectedFilters = PartialRecord<TaskFilterField, TaskFilterOption>;
 
-export class CaseloadTasksPresenter {
+export class CaseloadTasksPresenterV2 {
   selectedCategory: SupervisionTaskCategory;
-  _selectedFilters: SelectedFilters = {};
+  private _selectedFilters: SelectedFilters = {};
 
   constructor(
     protected workflowsStore: WorkflowsStore,
@@ -60,7 +64,7 @@ export class CaseloadTasksPresenter {
     protected analyticsStore: AnalyticsStore,
   ) {
     makeAutoObservable(this);
-    this.selectedCategory = "ALL_TASKS_OLD";
+    this.selectedCategory = "ALL_TASKS";
   }
 
   get taskConfig(): WorkflowsTasksConfig {
@@ -77,9 +81,9 @@ export class CaseloadTasksPresenter {
     return this.tenantStore.taskCategories;
   }
 
-  // Categories used in the original tasks view in ID
+  // Tab categories used in the new tasks view
   get displayedTaskCategories(): SupervisionTaskCategory[] {
-    return ["ALL_TASKS_OLD", ...this.taskCategories];
+    return [...TEMPORAL_TASK_CATEGORIES];
   }
 
   get selectedTaskCategory(): SupervisionTaskCategory {
@@ -88,19 +92,23 @@ export class CaseloadTasksPresenter {
 
   set selectedTaskCategory(newCategory: SupervisionTaskCategory) {
     this.selectedCategory = newCategory;
-  }
-
-  // This function toggles between the selected category and the default
-  // category "ALL_TASKS_OLD". If the selected category is the current
-  // category, it will switch back to "ALL_TASKS_OLD".
-  toggleSelectedTaskCategory(newCategory: SupervisionTaskCategory): void {
-    this.selectedCategory =
-      this.selectedCategory === newCategory ? "ALL_TASKS_OLD" : newCategory;
 
     this.analyticsStore.trackTaskFilterSelected({
       taskCategory: this.selectedCategory,
       selectedSearchIds: this.workflowsStore.searchStore.selectedSearchIds,
     });
+  }
+
+  // Selection controls
+  selectPerson(person: JusticeInvolvedPerson) {
+    this.workflowsStore.updateSelectedPerson(person.pseudonymizedId);
+  }
+
+  shouldHighlightTask(task: SupervisionTask): boolean {
+    return (
+      task.person.pseudonymizedId ===
+      this.workflowsStore.selectedPerson?.pseudonymizedId
+    );
   }
 
   orderedTasksForCategory(
@@ -112,9 +120,22 @@ export class CaseloadTasksPresenter {
 
         if (!supervisionTasks) return [];
 
-        return supervisionTasks.readyOrderedTasks.filter(
-          (t) => t.type === category,
-        );
+        if (category === "ALL_TASKS") return supervisionTasks.readyOrderedTasks;
+
+        return supervisionTasks.readyOrderedTasks.filter((t) => {
+          switch (category) {
+            case "OVERDUE":
+              return t.isOverdue;
+            case "DUE_THIS_WEEK":
+              return !t.isOverdue && isThisWeek(t.dueDate);
+            case "DUE_THIS_MONTH":
+              return (
+                !t.isOverdue && !isThisWeek(t.dueDate) && isThisMonth(t.dueDate)
+              );
+            default:
+              return false;
+          }
+        });
       })
       .sort(taskDueDateComparator);
   }
@@ -124,16 +145,7 @@ export class CaseloadTasksPresenter {
   }
 
   countForCategory(category: SupervisionTaskCategory): number {
-    switch (category) {
-      case "ALL_TASKS_OLD":
-        // When viewing ALL_TASKS_OLD, we count people instead of tasks
-        return (
-          this.clientsWithOverdueTasks.length +
-          this.clientsWithUpcomingTasks.length
-        );
-      default:
-        return this.orderedTasksForCategory(category).length;
-    }
+    return this.orderedTasksForCategory(category).length;
   }
 
   personMatchesFilters(person: JusticeInvolvedPerson): boolean {

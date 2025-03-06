@@ -16,17 +16,20 @@
 // =============================================================================
 
 import { addDays } from "date-fns";
+import tk from "timekeeper";
 
 import { SupervisionTaskCategory } from "../../../core/WorkflowsTasks/fixtures";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import { JusticeInvolvedPerson } from "../../types";
 import { WorkflowsStore } from "../../WorkflowsStore";
-import { CaseloadTasksPresenter } from "../CaseloadTasksPresenter";
+import { CaseloadTasksPresenterV2 } from "../CaseloadTasksPresenterV2";
 
-let presenter: CaseloadTasksPresenter;
+let presenter: CaseloadTasksPresenterV2;
 
-const NOW = new Date();
+// Freeze time so that tests using isThisWeek() and isThisMonth() are not flakey
+const now = new Date(2022, 1, 3);
+tk.freeze(now);
 
 const mockAnalyticsStore = {
   trackTaskFilterSelected: vi.fn(),
@@ -57,7 +60,8 @@ function makePersonWithTasks(
 ): JusticeInvolvedPerson {
   const tasks = taskTypes.map((type) => ({
     type,
-    dueDate: addDays(NOW, dateOffset),
+    dueDate: addDays(new Date(), dateOffset),
+    isOverdue: overdue,
   }));
   return {
     supervisionLevel,
@@ -74,8 +78,8 @@ function getPresenter({
   workflowsStore = mockWorkflowsStore,
   tenantStore = mockTenantStore,
   analyticsStore = mockAnalyticsStore,
-}): CaseloadTasksPresenter {
-  return new CaseloadTasksPresenter(
+}): CaseloadTasksPresenterV2 {
+  return new CaseloadTasksPresenterV2(
     workflowsStore,
     tenantStore,
     analyticsStore,
@@ -91,13 +95,6 @@ describe("CaseloadTasksPresenter", () => {
     it("returns taskCategories in the same order as in the tenant store", () => {
       expect(presenter.taskCategories).toEqual(mockTenantStore.taskCategories);
     });
-
-    it("prepends 'ALL_TASKS_OLD' to categories supplied by the store for displaying categories", () => {
-      expect(presenter.displayedTaskCategories).toEqual([
-        "ALL_TASKS_OLD",
-        ...mockTenantStore.taskCategories,
-      ]);
-    });
   });
 
   describe("selectedTaskCategory", () => {
@@ -105,23 +102,23 @@ describe("CaseloadTasksPresenter", () => {
       presenter = getPresenter({});
     });
 
-    it("is initialized to 'ALL_TASKS_OLD'", () => {
-      expect(presenter.selectedCategory).toEqual("ALL_TASKS_OLD");
+    it("is initialized to 'ALL_TASKS'", () => {
+      expect(presenter.selectedCategory).toEqual("ALL_TASKS");
     });
 
-    it("updates stored selected category when toggled", () => {
-      presenter.toggleSelectedTaskCategory("employment");
+    it("updates stored selected category when changes", () => {
+      presenter.selectedTaskCategory = "employment";
       expect(presenter.selectedCategory).toEqual("employment");
     });
 
-    it("toggles stored selected category when current category is reselected", () => {
-      presenter.toggleSelectedTaskCategory("employment");
-      presenter.toggleSelectedTaskCategory("employment");
-      expect(presenter.selectedCategory).toEqual("ALL_TASKS_OLD");
+    it("keeps the same category when selected twice", () => {
+      presenter.selectedTaskCategory = "employment";
+      presenter.selectedTaskCategory = "employment";
+      expect(presenter.selectedCategory).toEqual("employment");
     });
 
     it("logs category selection to the analytics store", () => {
-      presenter.toggleSelectedTaskCategory("employment");
+      presenter.selectedTaskCategory = "employment";
       expect(
         mockAnalyticsStore.trackTaskFilterSelected,
       ).toHaveBeenLastCalledWith({
@@ -137,8 +134,9 @@ describe("CaseloadTasksPresenter", () => {
         ...mockWorkflowsStore,
         caseloadPersons: [
           makePersonWithTasks(["employment", "contact"], { dateOffset: 0 }),
-          makePersonWithTasks(["employment", "assessment"], { dateOffset: 1 }),
-          makePersonWithTasks(["homeVisit"], { dateOffset: -1 }),
+          makePersonWithTasks(["employment", "assessment"], { dateOffset: 11 }),
+          makePersonWithTasks(["homeVisit"], { dateOffset: 12 }),
+          makePersonWithTasks(["homeVisit"], { dateOffset: -1, overdue: true }),
         ],
       } as any as WorkflowsStore;
 
@@ -146,26 +144,33 @@ describe("CaseloadTasksPresenter", () => {
     });
 
     it("filters by type in orderedTasksForCategory", () => {
-      expect(presenter.orderedTasksForCategory("employment")).toHaveLength(2);
-      expect(presenter.orderedTasksForCategory("contact")).toHaveLength(1);
-      expect(presenter.orderedTasksForCategory("assessment")).toHaveLength(1);
-      expect(presenter.orderedTasksForCategory("homeVisit")).toHaveLength(1);
-      expect(presenter.orderedTasksForCategory("employmentNeed")).toHaveLength(
-        0,
+      expect(presenter.orderedTasksForCategory("ALL_TASKS")).toHaveLength(6);
+      expect(presenter.orderedTasksForCategory("OVERDUE")).toHaveLength(1);
+      expect(presenter.orderedTasksForCategory("DUE_THIS_WEEK")).toHaveLength(
+        2,
+      );
+      expect(presenter.orderedTasksForCategory("DUE_THIS_MONTH")).toHaveLength(
+        3,
       );
     });
 
     it("uses stored category for orderedTasksForSelectedCategory", () => {
-      presenter.toggleSelectedTaskCategory("employment");
-      expect(presenter.orderedTasksForSelectedCategory).toHaveLength(2);
-      presenter.toggleSelectedTaskCategory("assessment");
+      presenter.selectedTaskCategory = "ALL_TASKS";
+      expect(presenter.orderedTasksForSelectedCategory).toHaveLength(6);
+      presenter.selectedTaskCategory = "OVERDUE";
       expect(presenter.orderedTasksForSelectedCategory).toHaveLength(1);
     });
 
     it("are ordered by due date", () => {
       expect(
-        presenter.orderedTasksForCategory("employment").map((t) => t.dueDate),
-      ).toEqual([NOW, addDays(NOW, 1)]);
+        presenter
+          .orderedTasksForCategory("DUE_THIS_MONTH")
+          .map((t) => t.dueDate),
+      ).toEqual([
+        addDays(new Date(), 11),
+        addDays(new Date(), 11),
+        addDays(new Date(), 12),
+      ]);
     });
   });
 
@@ -195,36 +200,6 @@ describe("CaseloadTasksPresenter", () => {
     });
   });
 
-  describe("counting tasks", () => {
-    beforeEach(() => {
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        caseloadPersons: [
-          makePersonWithTasks(["employment", "contact"], {
-            overdue: true,
-            dateOffset: -2,
-          }),
-          makePersonWithTasks(["employment", "assessment"], { dateOffset: 1 }),
-          makePersonWithTasks(["homeVisit"], { overdue: true, dateOffset: -1 }),
-        ],
-      } as any as WorkflowsStore;
-
-      presenter = getPresenter({ workflowsStore });
-    });
-
-    it("counts all tasks for a category regardless of status", () => {
-      expect(presenter.countForCategory("employment")).toEqual(2);
-      expect(presenter.countForCategory("contact")).toEqual(1);
-      expect(presenter.countForCategory("assessment")).toEqual(1);
-      expect(presenter.countForCategory("homeVisit")).toEqual(1);
-      expect(presenter.countForCategory("employmentNeed")).toEqual(0);
-    });
-
-    it("counts all people with tasks when given 'ALL_TASKS_OLD'", () => {
-      expect(presenter.countForCategory("ALL_TASKS_OLD")).toEqual(3);
-    });
-  });
-
   describe("filtering people", () => {
     beforeEach(() => {
       const workflowsStore = {
@@ -235,6 +210,7 @@ describe("CaseloadTasksPresenter", () => {
           }),
           makePersonWithTasks(["contact"], {
             supervisionLevel: "Low",
+            dateOffset: 7,
           }),
           makePersonWithTasks(["contact"], {
             supervisionLevel: "Medium",
@@ -249,15 +225,19 @@ describe("CaseloadTasksPresenter", () => {
     });
 
     it("returns all tasks when no filters set", () => {
-      expect(presenter.countForCategory("employment")).toEqual(2);
-      expect(presenter.countForCategory("contact")).toEqual(3);
+      expect(presenter.countForCategory("ALL_TASKS")).toEqual(5);
+      expect(presenter.countForCategory("OVERDUE")).toEqual(0);
+      expect(presenter.countForCategory("DUE_THIS_WEEK")).toEqual(4);
+      expect(presenter.countForCategory("DUE_THIS_MONTH")).toEqual(1);
     });
 
     it("filters tasks by set filters", () => {
       presenter.setFilter("supervisionLevel", { value: "Low" });
 
-      expect(presenter.countForCategory("employment")).toEqual(1);
-      expect(presenter.countForCategory("contact")).toEqual(2);
+      expect(presenter.countForCategory("ALL_TASKS")).toEqual(3);
+      expect(presenter.countForCategory("OVERDUE")).toEqual(0);
+      expect(presenter.countForCategory("DUE_THIS_WEEK")).toEqual(2);
+      expect(presenter.countForCategory("DUE_THIS_MONTH")).toEqual(1);
     });
   });
 

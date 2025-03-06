@@ -16,35 +16,36 @@
 // =============================================================================
 
 import { ColumnDef, Row } from "@tanstack/react-table";
+import { observer } from "mobx-react-lite";
 
-import { Client } from "../../WorkflowsStore";
-import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
+import { Client, SupervisionTask } from "../../WorkflowsStore";
+import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
+import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
 import PersonId from "../PersonId";
 
-export function TasksTable({
+export const TasksTable = observer(function TasksTable({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenter;
+  presenter: CaseloadTasksPresenterV2;
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const columns: ColumnDef<Client>[] = [
+  const columns: ColumnDef<SupervisionTask>[] = [
     {
       header: "Name",
-      id: "displayName",
-      accessorKey: "displayName",
+      id: "person.displayName",
+      accessorKey: "person.displayName",
       enableSorting: true,
       sortingFn: "text",
     },
     {
       // TODO(#6737): Make the column header the same as the label displayed when copied
       header: "DOC ID",
-      id: "displayId",
-      accessorKey: "displayId",
+      id: "person.displayId",
+      accessorKey: "person.displayId",
       enableSorting: true,
       sortingFn: "alphanumeric",
       // eslint-disable-next-line react/no-unstable-nested-components
-      cell: ({ row }: { row: Row<Client> }) => {
-        const person = row.original;
+      cell: ({ row }: { row: Row<SupervisionTask> }) => {
+        const person = row.original.person;
         return (
           <PersonId
             personId={person.displayId}
@@ -56,31 +57,40 @@ export function TasksTable({
       },
     },
     {
-      header: "Case Type",
-      id: "caseType",
-      accessorKey: "supervisionType",
-      enableSorting: true,
-      sortingFn: "text",
-    },
-    {
       header: "Supervision",
-      id: "supervisionLevel",
-      accessorKey: "supervisionType",
+      id: "person.supervisionLevel",
+      accessorKey: "person.supervisionLevel",
       enableSorting: true,
       sortingFn: "text",
+      // eslint-disable-next-line react/no-unstable-nested-components
+      cell: observer(function SupervisionCell({ row }) {
+        return (row.original.person as Client).supervisionLevel;
+      }),
     },
     {
       header: "Tasks due",
-      id: "supervisionLevel",
-      accessorKey: "supervisionType",
-      enableSorting: true,
-      sortingFn: "alphanumeric",
-      cell: ({ row }: { row: Row<Client> }) => {
-        const person = row.original;
+      id: "tasksDue",
+      cell: ({ row }: { row: Row<SupervisionTask> }) => {
+        const person = row.original.person;
         return person.supervisionTasks?.tasks.length ?? 0;
       },
     },
+    {
+      header: "Task",
+      id: "dueDateDisplayLong",
+      accessorKey: "dueDateDisplayLong",
+    },
   ];
 
-  return <div />;
-}
+  return (
+    <CaseloadTable
+      expandedLastColumn
+      data={presenter.orderedTasksForSelectedCategory}
+      columns={columns}
+      onRowClick={(task) => {
+        presenter.selectPerson(task.person);
+      }}
+      shouldHighlightRow={(task) => presenter.shouldHighlightTask(task)}
+    />
+  );
+});

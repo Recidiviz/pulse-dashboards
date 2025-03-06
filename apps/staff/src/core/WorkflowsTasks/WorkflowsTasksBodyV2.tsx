@@ -19,16 +19,21 @@ import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
+import { withPresenterManager } from "~hydration-utils";
+
+import { useRootStore } from "../../components/StoreProvider";
+import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import WorkflowsCaseloadTabs from "../WorkflowsCaseloadControlBar";
 import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
 import { TasksDescription } from "./styles";
 import { TasksHeader } from "./styles";
+import { TaskPreviewModal } from "./TaskPreviewModal";
+import { TasksTable } from "./TasksTable";
 
-export const WorkflowsTasksBodyV2 = observer(function WorkflowsTasksBodyV2({
+export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenter;
+  presenter: CaseloadTasksPresenterV2;
 }) {
   return (
     <>
@@ -39,13 +44,13 @@ export const WorkflowsTasksBodyV2 = observer(function WorkflowsTasksBodyV2({
         from?
       </TasksDescription>
       <WorkflowsCaseloadTabs
-        tabs={presenter.displayedTemporalTaskCategories}
+        tabs={presenter.displayedTaskCategories}
         tabLabels={TASK_SELECTOR_LABELS}
         tabBadges={{
-          ALL_TASKS: 13,
-          OVERDUE: 4,
-          DUE_THIS_WEEK: 2,
-          DUE_THIS_MONTH: 7,
+          ALL_TASKS: presenter.countForCategory("ALL_TASKS"),
+          OVERDUE: presenter.countForCategory("OVERDUE"),
+          DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
+          DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
         }}
         activeTab={presenter.selectedCategory}
         setActiveTab={(tab: SupervisionTaskCategory) => {
@@ -54,6 +59,23 @@ export const WorkflowsTasksBodyV2 = observer(function WorkflowsTasksBodyV2({
           });
         }}
       />
+      <TasksTable presenter={presenter} />
+      <TaskPreviewModal />
     </>
   );
+});
+
+function usePresenter() {
+  const { workflowsStore, analyticsStore, tenantStore } = useRootStore();
+  return new CaseloadTasksPresenterV2(
+    workflowsStore,
+    tenantStore,
+    analyticsStore,
+  );
+}
+
+export const WorkflowsTasksBodyV2 = withPresenterManager({
+  usePresenter,
+  managerIsObserver: true,
+  ManagedComponent,
 });
