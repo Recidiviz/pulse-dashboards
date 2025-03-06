@@ -59,6 +59,7 @@ import { usAzReleaseToTPRReferrals } from "./fixtures/usAzReleaseToTPRReferrals"
 import { usCaSupervisionLevelDowngradeReferrals } from "./fixtures/usCaSupervisionLevelDowngradeReferrals";
 import { usIdCRCResidentWorkerReferrals } from "./fixtures/UsIdCRCResidentWorkerReferrals";
 import { usIdCRCWorkReleaseReferrals } from "./fixtures/UsIdCRCWorkReleaseReferrals";
+import { usIdCustodyLevelDowngradeReferrals } from "./fixtures/usIdCustodyLevelDowngradeReferrals";
 import { usIdExpandedCRCReferrals } from "./fixtures/UsIdExpandedCRCReferrals";
 import { usIdPastFtrdFixture } from "./fixtures/UsIdPastFtrdReferrals";
 import { usIdSupervisionLevelDowngradeReferrals } from "./fixtures/usIdSupervisionLevelDowngradeReferrals";
@@ -170,6 +171,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usIdExpandedCRCReferrals,
   usMoOverdueRestrictiveHousingReleaseReferrals,
   usIdSupervisionLevelDowngradeReferrals,
+  usIdCustodyLevelDowngradeReferrals,
   usMeWorkReleaseReferrals,
   usMiEarlyDischargeReferrals: usMiEarlyDischargeReferralsFixture,
   usMiClassificationReviewReferrals: UsMiClassificationReviewReferralsFixture,

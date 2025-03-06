@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./EarnedDischargeOpportunity";
-export * from "./LSUOpportunity";
-export * from "./UsIdCustodyLevelDowngradeOpportunity";
-export * from "./UsIdExpandedCRCOpportunity";
-export * from "./UsIdPastFTRDOpportunity";
-export * from "./UsIdSupervisionLevelDowngradeOpportunity";
+import { DocumentData } from "firebase/firestore";
+
+import { Resident } from "../../../Resident";
+import { OpportunityBase } from "../../OpportunityBase";
+import {
+  UsIdCustodyLevelDowngradeReferralRecord,
+  usIdCustodyLevelDowngradeSchema,
+} from "./UsIdCustodyLevelDowngradeReferralRecord";
+
+export class UsIdCustodyLevelDowngradeOpportunity extends OpportunityBase<
+  Resident,
+  UsIdCustodyLevelDowngradeReferralRecord
+> {
+  constructor(resident: Resident, record: DocumentData) {
+    super(
+      resident,
+      "usIdCustodyLevelDowngrade",
+      resident.rootStore,
+      usIdCustodyLevelDowngradeSchema.parse(record),
+    );
+  }
+
+  get eligibilityDate(): Date | undefined {
+    return this.record?.metadata.eligibleDate;
+  }
+}

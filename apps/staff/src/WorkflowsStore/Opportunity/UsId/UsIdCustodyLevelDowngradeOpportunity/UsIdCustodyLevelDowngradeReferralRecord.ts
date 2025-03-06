@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,9 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./EarnedDischargeOpportunity";
-export * from "./LSUOpportunity";
-export * from "./UsIdCustodyLevelDowngradeOpportunity";
-export * from "./UsIdExpandedCRCOpportunity";
-export * from "./UsIdPastFTRDOpportunity";
-export * from "./UsIdSupervisionLevelDowngradeOpportunity";
+import { z } from "zod";
+
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+
+export const usIdCustodyLevelDowngradeSchema = opportunitySchemaBase.extend({
+  metadata: z.object({
+    eligibleDate: dateStringSchema,
+  }),
+});
+
+export type UsIdCustodyLevelDowngradeReferralRecord = z.infer<
+  typeof usIdCustodyLevelDowngradeSchema
+>;
+
+export type UsIdCustodyLevelDowngradeReferralRecordRaw = z.input<
+  typeof usIdCustodyLevelDowngradeSchema
+>;

@@ -47,6 +47,7 @@ import { UsAzReleaseToTPROpportunity } from "./UsAz/UsAzReleaseToTPROpportunity"
 import { UsIdExpandedCRCOpportunity } from "./UsId";
 import { UsIdCRCResidentWorkerOpportunity } from "./UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerOpportunity";
 import { UsIdCRCWorkReleaseOpportunity } from "./UsId/UsIdCRCWorkReleaseOpportunity";
+import { UsIdCustodyLevelDowngradeOpportunity } from "./UsId/UsIdCustodyLevelDowngradeOpportunity";
 import {
   UsMeFurloughReleaseOpportunity,
   UsMeSCCPOpportunity,
@@ -89,6 +90,7 @@ export const opportunityConstructors = {
   LSU: LSUOpportunity,
   pastFTRD: UsIdPastFTRDOpportunity,
   usIdSupervisionLevelDowngrade: UsIdSupervisionLevelDowngradeOpportunity,
+  usIdCustodyLevelDowngrade: UsIdCustodyLevelDowngradeOpportunity,
 
   // US_MI
   usMiAddInPersonSecurityClassificationCommitteeReview:

@@ -550,7 +550,10 @@ export const mockApiOpportunityConfigurationResponse = {
     },
     usIdCustodyLevelDowngrade: {
       callToAction: "Review eligible residents and reclassify in Atlas.",
-      compareBy: null,
+      compareBy: [
+        { field: "eligibilityDate", sortDirection: "asc" },
+        { field: "releaseDate", sortDirection: "asc" },
+      ],
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
