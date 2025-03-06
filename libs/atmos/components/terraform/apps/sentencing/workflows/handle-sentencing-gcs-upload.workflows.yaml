@@ -1,0 +1,22 @@
+# This Workflow takes the state code and executes the sentencing-server-import job with the state code as an environment variable.
+
+main:
+  params: [event]
+  steps:
+    - init:
+        assign:
+          - state_code: ${event.state_code}
+          - job_name: ${sys.get_env("JOB_NAME")}
+    - run_job:
+        call: googleapis.run.v2.projects.locations.jobs.run
+        args:
+          name: ${job_name}
+          body:
+            overrides:
+              containerOverrides:
+                env:
+                  - name: STATE_CODE
+                    value: ${state_code}
+        result: job_execution
+    - finish:
+        return: ${job_execution}
