@@ -22,3 +22,5 @@ export const EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE = {
   "PSI File Review Assigned": ReportType.FileReview,
   "PSI File Review w/LSI Assigned": ReportType.FileReviewWithUpdatedLSIRScore,
 };
+
+export const CANCELLED_STATUS = "Cancelled";

@@ -84,6 +84,7 @@ export const caseImportSchema = z.object({
   lsir_score: z.coerce.number().optional(),
   lsir_level: z.string().optional(),
   report_type: reportType.optional(),
+  investigation_status: z.string().optional(),
 });
 
 export const clientImportSchema = z

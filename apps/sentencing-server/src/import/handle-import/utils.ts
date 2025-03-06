@@ -24,7 +24,10 @@ import {
   getPrismaClientForStateCode,
   PLACEHOLDER_SIGNIFIER,
 } from "~@sentencing-server/prisma";
-import { EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE } from "~sentencing-server/import/handle-import/constants";
+import {
+  CANCELLED_STATUS,
+  EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE,
+} from "~sentencing-server/import/handle-import/constants";
 import {
   caseImportSchema,
   clientImportSchema,
@@ -285,6 +288,7 @@ export async function transformAndLoadCaseData(
       isLsirScoreLocked: caseData.lsir_score !== undefined,
       isReportTypeLocked: caseData.report_type !== undefined,
       isCountyLocked: Boolean(caseData.county),
+      isCancelled: caseData.investigation_status === CANCELLED_STATUS,
     };
 
     const createStaffConnection = staffId

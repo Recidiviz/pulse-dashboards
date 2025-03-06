@@ -28,6 +28,7 @@ import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";
 import { dataProviderSingleton } from "~fastify-data-import-plugin/testkit";
+import { CANCELLED_STATUS } from "~sentencing-server/import/handle-import/constants";
 import { testAndGetSentryReports } from "~sentencing-server/test/common/utils";
 import {
   caseBody,
@@ -599,6 +600,55 @@ describe("handle_import", () => {
           externalId: fakeCase.externalId,
           county: null,
           district: expect.objectContaining({ name: fakeCounty.district.name }),
+        }),
+      ]);
+    });
+
+    test("should properly set isCancelled status", async () => {
+      dataProviderSingleton.setData([
+        // Case without investigation status
+        {
+          external_id: fakeCase.externalId,
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          district: fakeCounty.district.name,
+          lsir_score: (1000).toString(),
+          lsir_level: faker.number.int().toString(),
+          report_type: "PSI Assigned Full",
+          investigation_status: undefined,
+        },
+        // Case with cancelled investigation status
+        {
+          external_id: "external-id-2",
+          state_code: StateCode.US_ID,
+          staff_id: fakeStaff.externalId,
+          client_id: fakeClient.externalId,
+          due_date: faker.date.future(),
+          district: fakeCounty.district.name,
+          lsir_score: (1000).toString(),
+          lsir_level: faker.number.int().toString(),
+          report_type: "PSI Assigned Full",
+          investigation_status: CANCELLED_STATUS,
+        },
+      ]);
+
+      const response = await callHandleImportCaseData(testServer);
+
+      expect(response.statusCode).toBe(200);
+
+      // Check that the new case was created
+      const dbCases = await testPrismaClient.case.findMany({});
+
+      expect(dbCases).toEqual([
+        expect.objectContaining({
+          externalId: fakeCase.externalId,
+          isCancelled: false,
+        }),
+        expect.objectContaining({
+          externalId: "external-id-2",
+          isCancelled: true,
         }),
       ]);
     });
