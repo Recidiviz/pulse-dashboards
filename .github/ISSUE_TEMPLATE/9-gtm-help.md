@@ -1,9 +1,9 @@
 ---
 name: GTM request
-about: Use this to request go-to-market support for an initiative. Tickets are triaged weekly by Kim and Serena.
+about: Use this to request go-to-market support for an initiative. Tickets are triaged weekly by Kim and Fy.
 title: Replace this text... (e.g., Support TN CLD Workflows partial launch)
 labels: "GTM"
-assignees: sychang,recidivizkim
+assignees: FyKnightRecidiviz,recidivizkim
 ---
 
 # Submissions are reviewed and triaged weekly by Serena and Kim. If the ticket needs immediate attention, reach out to Kim.
