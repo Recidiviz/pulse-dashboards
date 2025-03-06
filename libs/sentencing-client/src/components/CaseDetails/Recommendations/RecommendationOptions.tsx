@@ -98,18 +98,21 @@ export const RecommendationOptionBase: React.FC<RecommendationsOptionProps> = ({
   handleRecommendationUpdate,
   smallFont,
   isRecorded,
+  isDisabled,
   children,
 }) => {
   return (
     <Styled.RecommendationOption
-      selected={isSelectedRecommendation}
+      selected={isSelectedRecommendation && !isDisabled}
       key={option.key}
-      onClick={() => handleRecommendationUpdate(option.key)}
+      onClick={() => !isDisabled && handleRecommendationUpdate(option.key)}
+      isDisabled={isDisabled}
     >
       <Styled.InputSelection
         id={option.key}
         type="radio"
         checked={isSelectedRecommendation}
+        disabled={isDisabled}
         readOnly
       />
       <Styled.RecommendationDetails>

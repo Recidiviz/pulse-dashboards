@@ -37,6 +37,9 @@ export const offenseRouter = router({
           },
         },
       },
+      include: {
+        mandatoryMinimums: true,
+      },
     });
   }),
 });

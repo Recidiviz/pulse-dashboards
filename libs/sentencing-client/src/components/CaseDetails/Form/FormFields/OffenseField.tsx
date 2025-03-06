@@ -20,6 +20,8 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { components, MenuProps, OptionProps } from "react-select";
 
+import { formatListWithAnd } from "../../../../../src/utils/utils";
+import InfoIcon from "../../../assets/info-icon.svg?react";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import {
@@ -28,6 +30,7 @@ import {
   SEX_OFFENSE_KEY,
   VIOLENT_OFFENSE_KEY,
 } from "../../constants";
+import { getMandatoryMinimumsData } from "../../Recommendations/utils";
 import { Dropdown } from "../Elements/Dropdown";
 import { form } from "../FormStore";
 import { FormFieldProps, SelectOption } from "../types";
@@ -63,7 +66,7 @@ export const customFilter = (option: SelectOption, inputValue: string) => {
 };
 
 function OffenseField({ isRequired }: FormFieldProps) {
-  const { caseStore, activeFeatureVariants } = useStore();
+  const { caseStore, activeFeatureVariants, geoConfig } = useStore();
   const caseAttributes = caseStore.caseAttributes;
 
   const currentOffense =
@@ -74,6 +77,17 @@ function OffenseField({ isRequired }: FormFieldProps) {
   const isCurrentOffenseSexualDefault =
     currentOffense !== undefined &&
     caseStore.offensesByName[currentOffense]?.isSexOffense;
+
+  // Mandatory Minimums
+  const hasMandatoryMinimum =
+    currentOffense !== undefined &&
+    caseStore.offensesByName[currentOffense]?.mandatoryMinimums.length > 0;
+  const { mandatoryMinimumsSentenceTypes } = currentOffense
+    ? getMandatoryMinimumsData(
+        geoConfig.recommendation.baseOptionsTemplate,
+        caseStore.offensesByName[currentOffense]?.mandatoryMinimums,
+      )
+    : {};
 
   const { inputValue, setInputValue, selectValue, setSelectValue } =
     useFormField({
@@ -229,6 +243,17 @@ function OffenseField({ isRequired }: FormFieldProps) {
       <Styled.InputDescription>
         If there are multiple charges for this case, choose the most severe
       </Styled.InputDescription>
+
+      {activeFeatureVariants["mandatoryMinimum"] && hasMandatoryMinimum && (
+        <Styled.InputAlert>
+          <span>
+            <InfoIcon />
+            This offense carries a mandatory minimum{" "}
+            {formatListWithAnd(mandatoryMinimumsSentenceTypes, "", true)}{" "}
+            sentence
+          </span>
+        </Styled.InputAlert>
+      )}
 
       {activeFeatureVariants["offenseOverrideControls"] && (
         <Styled.ViolentOrSexOffenseCheckboxContainer>

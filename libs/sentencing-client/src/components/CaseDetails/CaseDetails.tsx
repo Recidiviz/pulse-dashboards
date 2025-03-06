@@ -33,7 +33,7 @@ import EditCaseDetailsModal from "./EditCaseDetailsModal";
 import { Insights } from "./Insights/Insights";
 import { Opportunities } from "./Opportunities/Opportunities";
 import Recommendations from "./Recommendations/Recommendations";
-import { MutableCaseAttributes, RecommendationType } from "./types";
+import { MutableCaseAttributes } from "./types";
 
 const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   presenter,
@@ -81,9 +81,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   };
   const hideEditCaseDetailsModal = () => setShowEditCaseDetailsModal(false);
 
-  const handleRecommendationUpdate = (
-    recommendation: RecommendationType | string,
-  ) => {
+  const handleRecommendationUpdate = (recommendation: string) => {
     trackRecommendedDispositionChanged(recommendation);
     setSelectedRecommendation(recommendation);
   };

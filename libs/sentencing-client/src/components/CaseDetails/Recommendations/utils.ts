@@ -17,7 +17,7 @@
 
 import { keyBy } from "lodash";
 
-import { CaseInsight } from "../../../../src/api";
+import { CaseInsight, Offenses } from "../../../../src/api";
 import { convertDecimalToPercentage } from "../../../../src/utils/utils";
 import { OTHER_OPTION } from "../Form/constants";
 import { RecommendationType } from "../types";
@@ -88,4 +88,34 @@ export const generateRecommendationOptions = (
     .filter((option) => option !== undefined) as RecommendationOption[];
 
   return [...options, noneOption];
+};
+
+export const getMandatoryMinimumsData = (
+  optionsBase: RecommendationOptionTemplateBase[],
+  mandatoryMinimums?: Offenses[number]["mandatoryMinimums"],
+) => {
+  if (!mandatoryMinimums || !mandatoryMinimums?.length) return {};
+
+  const mandatoryMinimumsSentenceTypes = mandatoryMinimums.map(
+    (mm) => mm.sentenceType,
+  );
+  const mandatoryMinimumAutoSelectionRecommendation =
+    mandatoryMinimumsSentenceTypes?.[0];
+  const disabledMandatoryMinimumOptions = optionsBase
+    .map((option) => option.recommendationType)
+    .filter((option) => option !== undefined)
+    .filter(
+      (recommendationType) =>
+        recommendationType &&
+        !mandatoryMinimumsSentenceTypes?.includes(recommendationType) &&
+        recommendationType !== RecommendationType.None &&
+        recommendationType !== OTHER_OPTION,
+    );
+
+  return {
+    mandatoryMinimums,
+    mandatoryMinimumsSentenceTypes,
+    mandatoryMinimumAutoSelectionRecommendation,
+    disabledMandatoryMinimumOptions,
+  };
 };

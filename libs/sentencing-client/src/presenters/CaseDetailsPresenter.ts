@@ -30,7 +30,6 @@ import {
   FormAttributes,
   MutableCaseAttributes,
   OpportunitiesIdentifier,
-  RecommendationType,
   SelectedRecommendation,
 } from "../components/CaseDetails/types";
 import { CaseStore } from "../datastores/CaseStore";
@@ -280,9 +279,7 @@ export class CaseDetailsPresenter implements Hydratable {
     );
   }
 
-  trackRecommendedDispositionChanged(
-    selectedRecommendation: RecommendationType | string,
-  ) {
+  trackRecommendedDispositionChanged(selectedRecommendation: string) {
     this.caseStore.psiStore.analyticsStore.trackRecommendedDispositionChanged({
       viewedBy: this.staffPseudoId,
       selectedRecommendation,
