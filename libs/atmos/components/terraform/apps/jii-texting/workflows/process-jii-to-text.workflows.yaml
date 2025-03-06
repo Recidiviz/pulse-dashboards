@@ -6,10 +6,41 @@ main:
   steps:
     - init:
         assign:
-          - state_code: args.stateCode
-          - dry_run: args.dryRun
+          - state_code: ${args.stateCode}
+          - dry_run: ${args.dryRun}
           - cloud_run_service_url: ${sys.get_env("CLOUD_RUN_SERVICE_URL")}
           - endpoint_to_invoke: /
+    - get_metric_export_file_names:
+        steps:
+          - get_objects_list:
+              try:
+                call: googleapis.storage.v1.objects.list
+                args:
+                  bucket: ${sys.get_env("BUCKET_ID")}
+                  delimiter: /
+                  prefix: ${state_code + "/"}
+                result: metric_export_objects_list
+              except:
+                as: e
+                steps:
+                  - raise_get_objects_list_error:
+                      raise: ${e}
+          - assign_metric_export_file_names:
+              assign:
+                - metric_export_file_names: []
+          - get_file_names:
+              for:
+                value: metric_export_object
+                index: _
+                in: ${metric_export_objects_list.items}
+                steps:
+                  - append_file_name:
+                      assign:
+                        - metric_export_file_names: ${list.concat(metric_export_file_names, metric_export_object.name)}
+          - check_length_metric_export_file_names:
+              switch:
+                - condition: ${len(metric_export_file_names) == 0}
+                  next: return
     - invoke_cloud_run:
         call: http.get
         args:
@@ -18,4 +49,4 @@ main:
             type: OIDC
         result: cloud_run_result
     - return:
-        return: result
+        return: ${metric_export_file_names}

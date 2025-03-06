@@ -86,6 +86,7 @@ module "process-jii-to-text-wf" {
   workflow_source = file("${path.module}/workflows/process-jii-to-text.workflows.yaml")
   env_vars = {
     CLOUD_RUN_SERVICE_URL = module.cloud-run.service_url
+    BUCKET_ID = var.etl_bucket_name
   }
 }
 
