@@ -2,7 +2,10 @@
 settings:
   context:
     project_id: recidiviz-dashboard-staging
+    data_platform_project_number: 984160736970
+    registry_repo_name: sentencing
     product: sentencing
+    location: us-central1
 
 # The variables set here are automatically provided to any components used in this stack.
 vars:
@@ -26,26 +29,6 @@ terraform:
 
 components:
   terraform:
-    postgres-instance:
-      vars:
-        create_bigquery_connection: false
-        instance_key: sentencing
-        base_secret_name: sentencing
-        database_version: POSTGRES_16
-        has_readonly_user: false
-        region: us-central1
-        zone: us-central1-f
-        tier: db-custom-1-3840
-        additional_databases:
-          - us_id
-          - us_nd
-        insights_config:
-          query_insights_enabled: true
-          query_string_length: 1024
-          record_application_tags: false
-          record_client_address: false
-      metadata:
-        component: vendor/cloud-sql-instance
     demo-postgres-instance:
       vars:
         create_bigquery_connection: false
@@ -66,3 +49,7 @@ components:
           record_client_address: false
       metadata:
         component: vendor/cloud-sql-instance
+    apps/sentencing:
+      vars:
+        location: "{{ .settings.context.location }}"
+        data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
