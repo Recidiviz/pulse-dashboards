@@ -86,6 +86,7 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
           searchOp: "array-contains-any",
           locationIdType: "facilityId",
           onlySurfaceEligible: true,
+          restrictedToFeatureVariant: "usIdCRCFacilitySearch",
         },
         {
           searchType: "INCARCERATION_OFFICER",
