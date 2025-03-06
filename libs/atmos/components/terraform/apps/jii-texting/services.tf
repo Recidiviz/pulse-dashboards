@@ -70,6 +70,13 @@ resource "google_project_iam_member" "runinvoker" {
   member  = google_service_account.workflows.member
 }
 
+# Grant Cloud Storage Object Viewer role to Google Workflows service account
+resource "google_project_iam_member" "storageobjectviewer" {
+  project = var.project_id
+  role    = "roles/storage.objectViewer"
+  member  = google_service_account.workflows.member
+}
+
 # Create Pub/Sub topic for a successful export of JII Texting views
 resource "google_pubsub_topic" "jii_texting_export_success_topic" {
   name    = "jii_texting_export_success"
