@@ -15,30 +15,60 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PieChart } from "react-minimal-pie-chart";
+import { Tooltip, TooltipRefProps } from "react-tooltip";
 
 import { Insight } from "../../../../../../api";
+import { convertDecimalToPercentage } from "../../../../../../utils/utils";
 import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
-import { getSentenceLengthBucketText } from "../../common/utils";
+import {
+  getSentenceLengthBucketLabel,
+  sortDataForSentenceLengthCharts,
+} from "../../common/utils";
 import * as CommonStyled from "../../components/Styles";
 
 const CHART_HEIGHT = 277;
 
 const OPACITY = 0.3;
 
+function TooltipContent({
+  title,
+  percentage,
+  numOffenses,
+}: {
+  title: string;
+  percentage: number;
+  numOffenses: number;
+}) {
+  const formattedPercentage = convertDecimalToPercentage(percentage);
+
+  return (
+    <div>
+      <div style={{ color: "#FFFFFF", fontSize: 14, marginBottom: 8 }}>
+        {`${title} (${formattedPercentage}%)`}
+      </div>
+      <div style={{ color: "#FFFFFFB2", fontSize: 12 }}>
+        {`${numOffenses} offenses`}
+      </div>
+    </div>
+  );
+}
+
 type DispositionChartBySentenceLengthProps = {
   dataPoints: NonNullable<Insight>["dispositionData"];
+  totalNumOffenses: number;
 };
 
 export function DispositionChartBySentenceLength({
   dataPoints,
+  totalNumOffenses,
 }: DispositionChartBySentenceLengthProps) {
   const [focusedSegment, setFocusedSegment] = useState<number>();
 
   const formattedDataPoints = useMemo(
     () =>
-      dataPoints
+      sortDataForSentenceLengthCharts(dataPoints)
         .filter((d) => d.percentage > 0)
         .sort(
           (dataPoint1, dataPoint2) =>
@@ -52,7 +82,8 @@ export function DispositionChartBySentenceLength({
             sentenceLengthBucketEnd,
             percentage,
           } = dataPoint;
-          const title = getSentenceLengthBucketText(
+
+          const title = getSentenceLengthBucketLabel(
             recommendationType,
             sentenceLengthBucketStart,
             sentenceLengthBucketEnd,
@@ -62,10 +93,31 @@ export function DispositionChartBySentenceLength({
             title,
             value: percentage,
             color: SENTENCE_TYPE_TO_COLOR[title],
+            numOffenses: Math.round(percentage * totalNumOffenses),
           };
         }),
-    [dataPoints],
+    [dataPoints, totalNumOffenses],
   );
+
+  const tooltipRef1 = useRef<TooltipRefProps>(null);
+  useEffect(() => {
+    if (focusedSegment !== undefined) {
+      const focusedDataPoint = formattedDataPoints[focusedSegment];
+
+      tooltipRef1.current?.open({
+        anchorSelect: `#segment-${focusedSegment}`,
+        content: (
+          <TooltipContent
+            title={focusedDataPoint.title}
+            percentage={focusedDataPoint.value}
+            numOffenses={focusedDataPoint.numOffenses}
+          />
+        ),
+      });
+    } else {
+      tooltipRef1.current?.close();
+    }
+  }, [focusedSegment, formattedDataPoints]);
 
   const recidivismChartLegend = formattedDataPoints.map(({ title, color }) => (
     <CommonStyled.ChartLegendItem key={title}>
@@ -91,6 +143,7 @@ export function DispositionChartBySentenceLength({
       dataIndex: number;
     }) => (
       <text
+        id={`segment-${dataIndex}`}
         x={x}
         y={y}
         dx={dx}
@@ -105,7 +158,7 @@ export function DispositionChartBySentenceLength({
         onMouseOver={() => setFocusedSegment(dataIndex)}
         onMouseOut={() => setFocusedSegment(undefined)}
       >
-        {`${Math.round(dataEntry.value * 100)}%`}
+        {`${convertDecimalToPercentage(dataEntry.value)}%`}
       </text>
     ),
     [setFocusedSegment],
@@ -134,6 +187,13 @@ export function DispositionChartBySentenceLength({
               : OPACITY,
         })}
       />
+      <Tooltip
+        ref={tooltipRef1}
+        style={{ backgroundColor: "#001F1F", borderRadius: 8, padding: 16 }}
+        imperativeModeOnly
+        disableStyleInjection
+      />
+
       <div style={{ marginTop: 35, width: 466 }}>
         <CommonStyled.ChartLegend>
           {recidivismChartLegend}

@@ -79,7 +79,7 @@ export function getSubtitleLsirScore(
   return `LSI-R = ${subString}`;
 }
 
-export function getSentenceLengthBucketText(
+export function getSentenceLengthBucketLabel(
   recommendationType: string | null,
   sentenceLengthBucketStart: number,
   sentenceLengthBucketEnd: number,
@@ -108,4 +108,32 @@ export function getSentenceLengthBucketText(
 
   // Otherwise, return the range
   return `${sentenceLengthBucketStart}-${sentenceLengthBucketEnd} Years`;
+}
+
+function sentenceLengthLabelFilter(d: {
+  sentenceLengthBucketStart: number;
+  sentenceLengthBucketEnd: number;
+}) {
+  return d.sentenceLengthBucketStart === 0 && d.sentenceLengthBucketEnd === -1;
+}
+
+type SentenceLengthDataPoint = {
+  recommendationType: string | null;
+  sentenceLengthBucketStart: number;
+  sentenceLengthBucketEnd: number;
+};
+
+export function sortDataForSentenceLengthCharts<
+  T extends SentenceLengthDataPoint,
+>(buckets: T[]) {
+  // Return the buckets without sentence length ends and starts first,
+  // then sort the rest by start value
+  return [
+    ...buckets.filter(sentenceLengthLabelFilter),
+    ...buckets
+      .filter((d) => !sentenceLengthLabelFilter(d))
+      .sort(
+        (a, b) => a.sentenceLengthBucketStart - b.sentenceLengthBucketStart,
+      ),
+  ];
 }

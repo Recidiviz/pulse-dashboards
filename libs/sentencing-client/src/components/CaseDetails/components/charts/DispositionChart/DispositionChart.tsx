@@ -76,7 +76,10 @@ export function DispositionChart({
   } else {
     chart = (
       <Styled.DispositionChartBySentenceLengthContainer>
-        <DispositionChartBySentenceLength dataPoints={orderedDataPoints} />
+        <DispositionChartBySentenceLength
+          dataPoints={orderedDataPoints}
+          totalNumOffenses={dispositionNumRecords ?? 0}
+        />
       </Styled.DispositionChartBySentenceLengthContainer>
     );
   }

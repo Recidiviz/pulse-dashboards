@@ -21,7 +21,10 @@ import { printFormattedRecordString } from "../../../../../../../src/utils/utils
 import { CaseInsight } from "../../../../../../api";
 import { InfoIconWithTooltip } from "../../../../../Tooltip/Tooltip";
 import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
-import { getSentenceLengthBucketText } from "../../common/utils";
+import {
+  getSentenceLengthBucketLabel,
+  sortDataForSentenceLengthCharts,
+} from "../../common/utils";
 import NoDataMessage from "../../components/NoDataMessage";
 import * as CommonStyled from "../../components/Styles";
 import * as Styled from "../RecidivismChart.styles";
@@ -49,23 +52,23 @@ export function RecidivismChartBySentenceLength({
 
   const recidivismChartLegend = useMemo(
     () =>
-      rollupRecidivismSeries?.map(
+      sortDataForSentenceLengthCharts(rollupRecidivismSeries ?? []).map(
         ({
           recommendationType,
           sentenceLengthBucketStart,
           sentenceLengthBucketEnd,
         }) => {
-          const text = getSentenceLengthBucketText(
+          const label = getSentenceLengthBucketLabel(
             recommendationType,
             sentenceLengthBucketStart,
             sentenceLengthBucketEnd,
           );
-          const color = SENTENCE_TYPE_TO_COLOR[text];
+          const color = SENTENCE_TYPE_TO_COLOR[label];
 
           return (
-            <CommonStyled.ChartLegendItem key={text}>
+            <CommonStyled.ChartLegendItem key={label}>
               <CommonStyled.ChartLegendDot $backgroundColor={color} />
-              <div>{text}</div>
+              <div>{label}</div>
             </CommonStyled.ChartLegendItem>
           );
         },
