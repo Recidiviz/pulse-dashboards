@@ -46,6 +46,7 @@ import {
   Milestones,
   SpecialConditions,
 } from "./ClientDetailSidebarComponents";
+import { UsUtDates } from "./ClientDetailSidebarComponents/UsUtDates";
 import ClientDetailsInput from "./ClientDetailsInput";
 import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
 import { PartialTime } from "./PartialTime";
@@ -191,22 +192,31 @@ const ClientDetails = observer(function ClientDetails({
 
   return (
     <>
-      {!fullWidthTimeline && (
+      {client.stateCode === "US_UT" ? (
+        <UsUtDates client={client} />
+      ) : (
         <>
-          <SupervisionProgress client={client} />
-          <Divider />
+          {!fullWidthTimeline && (
+            <>
+              <SupervisionProgress client={client} />
+              <Divider />
+            </>
+          )}
+          <PartialTime person={client} />
+          {client.portionServedDates.length > 0 && <Divider />}
         </>
       )}
-      <PartialTime person={client} />
-      {client.portionServedDates.length > 0 && <Divider />}
       {client.profileMilestones.length > 0 && (
         <>
           <Milestones client={client} />
           <Divider />
         </>
       )}
-      <ClientHousing client={client} />
-      <Divider />
+      {client.address && (
+        <>
+          <ClientHousing client={client} /> <Divider />
+        </>
+      )}
       {client.currentEmployers && client.currentEmployers.length > 0 && (
         <>
           <ClientEmployer client={client} />
