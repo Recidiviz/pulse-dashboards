@@ -33,6 +33,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     US_PA: ["pa.gov"],
     US_TN: ["tn.gov", "corecivic.com"],
     US_TX: ["tdcj.texas.gov"],
+    US_UT: ["utah.gov"],
   };
 
   /** Set up external clients and dependencies **/
