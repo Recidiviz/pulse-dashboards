@@ -37,6 +37,10 @@ class UsTxElectronicContactTask extends Task<"usTxElectronicContact"> {
       ? `Last contact on ${this.lastElectronicContact}`
       : "No previous visit on record.";
   }
+
+  get frequency(): string {
+    return "Every 2 months";
+  }
 }
 
 export default UsTxElectronicContactTask;

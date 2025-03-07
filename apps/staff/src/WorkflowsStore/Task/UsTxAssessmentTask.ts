@@ -37,6 +37,10 @@ class UsTxAssessmentTask extends Task<"usTxAssessment"> {
       ? `Last assessment on ${this.lastAssessment}`
       : "No previous assessment on record.";
   }
+
+  get frequency(): string {
+    return "Every 6 months";
+  }
 }
 
 export default UsTxAssessmentTask;

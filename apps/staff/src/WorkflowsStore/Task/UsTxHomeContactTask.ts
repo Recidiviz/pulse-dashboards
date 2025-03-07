@@ -41,6 +41,10 @@ class UsTxHomeContactTask extends Task<"usTxHomeContact"> {
       ? `Last contact on ${this.lastHomeVisit}`
       : "No previous visit on record.";
   }
+
+  get frequency(): string {
+    return "Every 2 months";
+  }
 }
 
 export default UsTxHomeContactTask;

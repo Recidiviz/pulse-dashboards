@@ -17,11 +17,45 @@
 
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
+import styled from "styled-components/macro";
 
 import { Client, SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
 import PersonId from "../PersonId";
+
+const TaskInfo = styled.div`
+  text-align: left;
+`;
+
+function PersonIdCell({ row }: { row: Row<SupervisionTask> }) {
+  const { person } = row.original;
+  return (
+    <PersonId personId={person.displayId} pseudoId={person.pseudonymizedId}>
+      {person.displayId}
+    </PersonId>
+  );
+}
+
+const SupervisionLevelCell = observer(function SupervisionCell({
+  row,
+}: {
+  row: Row<SupervisionTask>;
+}) {
+  return (row.original.person as Client).supervisionLevel;
+});
+
+function TaskInfoCell({ row }: { row: Row<SupervisionTask> }) {
+  return <TaskInfo>{row.original.dueDateDisplayLong}</TaskInfo>;
+}
+
+function FrequencyCell({ row }: { row: Row<SupervisionTask> }) {
+  return (
+    <div>
+      <i className="fa fa-refresh" /> {row.original.frequency}
+    </div>
+  );
+}
 
 export const TasksTable = observer(function TasksTable({
   presenter,
@@ -43,42 +77,34 @@ export const TasksTable = observer(function TasksTable({
       accessorKey: "person.displayId",
       enableSorting: true,
       sortingFn: "alphanumeric",
-      // eslint-disable-next-line react/no-unstable-nested-components
-      cell: ({ row }: { row: Row<SupervisionTask> }) => {
-        const person = row.original.person;
-        return (
-          <PersonId
-            personId={person.displayId}
-            pseudoId={person.pseudonymizedId}
-          >
-            {person.displayId}
-          </PersonId>
-        );
-      },
+      cell: PersonIdCell,
     },
     {
       header: "Supervision",
       id: "person.supervisionLevel",
-      accessorKey: "person.supervisionLevel",
-      enableSorting: true,
-      sortingFn: "text",
-      // eslint-disable-next-line react/no-unstable-nested-components
-      cell: observer(function SupervisionCell({ row }) {
-        return (row.original.person as Client).supervisionLevel;
-      }),
+      enableSorting: false,
+      cell: SupervisionLevelCell,
+    },
+    {
+      header: "Frequency",
+      id: "frequency",
+      enableSorting: false,
+      cell: FrequencyCell,
     },
     {
       header: "Tasks due",
       id: "tasksDue",
-      cell: ({ row }: { row: Row<SupervisionTask> }) => {
-        const person = row.original.person;
+      enableSorting: false,
+      accessorFn: (task) => {
+        const person = task.person;
         return person.supervisionTasks?.tasks.length ?? 0;
       },
     },
     {
       header: "Task",
       id: "dueDateDisplayLong",
-      accessorKey: "dueDateDisplayLong",
+      enableSorting: false,
+      cell: TaskInfoCell,
     },
   ];
 

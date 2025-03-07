@@ -28,6 +28,7 @@ import {
   TaskAggregateCount,
   TaskCategories,
   TaskCategoryPill,
+  TasksBodyContainer,
   TasksCaption,
   TasksDescription,
   TasksHeader,
@@ -53,7 +54,7 @@ export const ManagedComponent = observer(function WorkflowsTaskBody({
   presenter: CaseloadTasksPresenter;
 }) {
   return (
-    <>
+    <TasksBodyContainer>
       <TasksHeader>Tasks</TasksHeader>
       <TasksDescription>
         The clients below might have upcoming requirements this month.
@@ -81,7 +82,7 @@ export const ManagedComponent = observer(function WorkflowsTaskBody({
 
       {getViewElement(presenter)}
       <TaskPreviewModal />
-    </>
+    </TasksBodyContainer>
   );
 });
 

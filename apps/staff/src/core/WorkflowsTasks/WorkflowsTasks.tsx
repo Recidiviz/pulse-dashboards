@@ -25,6 +25,7 @@ import { CaseloadSelect } from "../CaseloadSelect";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
+import { TasksBodyContainer } from "./styles";
 import { WorkflowsTasksBody } from "./WorkflowsTasksBody";
 import { WorkflowsTasksBodyV2 } from "./WorkflowsTasksBodyV2";
 
@@ -38,25 +39,29 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
   } = useRootStore();
 
   const empty = (
-    <WorkflowsResults
-      callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-        selectedSearchIds.length,
-      ]} ${pluralizeWord(
-        workflowsSearchFieldTitle,
-        selectedSearchIds.length,
-      )}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
-    />
+    <TasksBodyContainer>
+      <WorkflowsResults
+        callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
+          selectedSearchIds.length,
+        ]} ${pluralizeWord(
+          workflowsSearchFieldTitle,
+          selectedSearchIds.length,
+        )}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
+      />
+    </TasksBodyContainer>
   );
 
   const initial = (
-    <WorkflowsResults
-      headerText="Tasks"
-      callToActionText={`Search for ${workflowsSearchFieldTitle}s above to review ${justiceInvolvedPersonTitle}s who have upcoming or overdue tasks.`}
-    />
+    <TasksBodyContainer>
+      <WorkflowsResults
+        headerText="Tasks"
+        callToActionText={`Search for ${workflowsSearchFieldTitle}s above to review ${justiceInvolvedPersonTitle}s who have upcoming or overdue tasks.`}
+      />
+    </TasksBodyContainer>
   );
 
   return (
-    <WorkflowsNavLayout>
+    <WorkflowsNavLayout limitedWidth={false}>
       <CaseloadSelect />
       <CaseloadTasksHydrator
         initial={initial}

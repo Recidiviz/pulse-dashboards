@@ -64,6 +64,7 @@ const HeaderCell = styled.th`
   font-weight: unset;
 `;
 
+// TODO(#7572): Keep base table implementation generic
 const Cell = styled.td<{ $expandedLastColumn: boolean }>`
   ${SharedTableCellStyles}
 
