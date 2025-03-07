@@ -66,8 +66,7 @@ components:
               num_newer_versions: 3
         set_admin_roles: true
         bucket_admins: 
-          jii-texting-write-etl-data: "serviceAccount:{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com"
-          jii-texting-read-etl-data: "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+          jii-texting-etl-data: "serviceAccount:{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com, serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
       metadata:
         component: vendor/cloud-storage-bucket
     vendor/artifact-registry:
