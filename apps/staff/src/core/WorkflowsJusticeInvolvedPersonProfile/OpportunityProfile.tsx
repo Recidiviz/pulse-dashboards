@@ -37,6 +37,7 @@ import {
   SpecialConditions,
   Supervision,
 } from "./ClientDetailSidebarComponents";
+import { UsUtDates } from "./ClientDetailSidebarComponents/UsUtDates";
 import { Heading } from "./Heading";
 import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
 import { OpportunityBanner } from "./OpportunityBanner";
@@ -78,6 +79,7 @@ export const ClientDetailSidebarComponents = {
   ClientEmployer,
   Milestones,
   ClientProfileDetails,
+  UsUtDates,
 };
 
 type ClientDetailComponentName = keyof typeof ClientDetailSidebarComponents;

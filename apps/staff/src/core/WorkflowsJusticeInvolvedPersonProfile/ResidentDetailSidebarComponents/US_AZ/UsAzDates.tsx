@@ -15,95 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Icon,
-  palette,
-  Sans14,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { Icon, palette, Sans14, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { UsAzResidentMetadata } from "../../../../FirestoreStore";
-import { formatDueDateFromToday, formatWorkflowsDate } from "../../../../utils";
 import { optionalFieldToDate } from "../../../../WorkflowsStore/utils";
-import { InfoButton } from "../../InfoButton";
-import {
-  DetailsHeading,
-  DetailsSection,
-  InfoTooltipWrapper,
-} from "../../styles";
+import { DateInfo, DatesTable } from "../../DatesTable";
+import { DetailsHeading, DetailsSection } from "../../styles";
 import { ResidentProfileProps } from "../../types";
-
-const DateTable = styled.table`
-  ${typography.Sans14};
-  color: ${palette.slate80};
-  border-spacing: 0;
-  border-collapse: separate;
-  margin: ${rem(spacing.md)} 0;
-  width: 100%;
-`;
-
-const DateTableCell = styled.td`
-  border: 1px ${palette.slate20};
-
-  border-top-style: solid;
-  border-left-style: solid;
-  padding: ${rem(spacing.sm)};
-`;
-
-const ShadedDateTableCell = styled(DateTableCell)<{ $highlight?: boolean }>`
-  background-color: ${palette.marble3};
-  white-space: nowrap;
-  width: 30%;
-
-  ${({ $highlight }) => $highlight && `color: ${palette.signal.notification};`}
-`;
-
-const DateTableRow = styled.tr`
-  /* last column: right border */
-  & ${DateTableCell}:last-child {
-    border-right-style: solid;
-  }
-
-  /* first row: round corners */
-  &:first-child {
-    & ${DateTableCell} {
-      &:first-child {
-        border-top-left-radius: 4px;
-      }
-      &:last-child {
-        border-top-right-radius: 4px;
-        border-right-style: solid;
-      }
-    }
-  }
-
-  /* last row: bottom border, round corners */
-  &:last-child {
-    & ${DateTableCell} {
-      border-bottom-style: solid;
-
-      &:first-child {
-        border-bottom-left-radius: 4px;
-      }
-      &:last-child {
-        border-bottom-right-radius: 4px;
-      }
-    }
-  }
-`;
 
 const DateCalculationInfo = styled(Sans14)`
   color: ${palette.slate70};
-`;
-
-const DateExplainer = styled(Sans14)<{ $datePast: boolean }>`
-  display: inline-block;
-  color: ${(props) =>
-    props.$datePast ? palette.signal.error : palette.slate60};
 `;
 
 const DateMethodologyText = styled(Sans14)`
@@ -117,13 +41,6 @@ const DateMethodologyText = styled(Sans14)`
   border-bottom: 1px dashed ${palette.pine3};
   padding-bottom: ${rem(spacing.xxs)};
 `;
-
-type DateInfo = {
-  label: string;
-  date?: Date;
-  tooltip?: string;
-  highlight?: boolean;
-};
 
 export function metadataToDates(
   metadata: UsAzResidentMetadata,
@@ -187,53 +104,24 @@ export function UsAzDates({
   if (metadata.stateCode !== "US_AZ") return null;
 
   // Only show a DTP date for people with a DTP opportunity; by default show TPR
-  const useDtp = resident.flattenedOpportunities.find(
-    (opp) =>
-      opp.type === "usAzReleaseToDTP" || opp.type === "usAzOverdueForACISDTP",
+  const useDtp = Boolean(
+    resident.flattenedOpportunities.find(
+      (opp) =>
+        opp.type === "usAzReleaseToDTP" || opp.type === "usAzOverdueForACISDTP",
+    ),
   );
 
   const inTableTooltip =
     "In cases where Time Comp has not yet assigned a date for STP or DTP release, Recidiviz uses ADCRR policy to project the release date. We include this projected date here to help CO IIIs prioritize home plans and other release planning. Time Comp will make the final determination on release date once all transition release criteria have been met. As such, this date should not be shared with inmates.  For more details on how Recidiviz projects release dates, please click on “How are these dates calculated?” below.";
 
-  const dates = metadataToDates(metadata, !!useDtp, inTableTooltip);
+  const dates = metadataToDates(metadata, useDtp, inTableTooltip);
   const hasAcisDates = useDtp ? !!metadata.acisDtpDate : !!metadata.acisTprDate;
-
-  const today = new Date();
 
   return (
     <DetailsSection>
       <DetailsHeading>Dates to Keep Track of</DetailsHeading>
 
-      <DateTable>
-        <tbody>
-          {dates.map(({ label, date, tooltip, highlight }) => (
-            <DateTableRow key={label}>
-              <ShadedDateTableCell $highlight={highlight}>
-                {label}
-                {tooltip && (
-                  <>
-                    {" "}
-                    <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                      <InfoButton infoUrl={undefined} />
-                    </InfoTooltipWrapper>
-                  </>
-                )}
-              </ShadedDateTableCell>
-              <DateTableCell>
-                {formatWorkflowsDate(date)}
-                {date && (
-                  <>
-                    {" "}
-                    <DateExplainer $datePast={new Date(date) < today}>
-                      {`(${formatDueDateFromToday(new Date(date))})`}
-                    </DateExplainer>
-                  </>
-                )}
-              </DateTableCell>
-            </DateTableRow>
-          ))}
-        </tbody>
-      </DateTable>
+      <DatesTable dates={dates} highlightPastDates />
 
       {!hasAcisDates && (
         <DateCalculationInfo>
