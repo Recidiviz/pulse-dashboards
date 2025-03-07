@@ -24,19 +24,39 @@ import {
   plot,
   pointerY,
   rectX,
+  tip,
 } from "@observablehq/plot";
 
 import { CaseInsight } from "../../../../../../api";
+import { convertDecimalToPercentage } from "../../../../../../utils/utils";
 import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
 import {
-  getSentenceLengthBucketText,
+  getSentenceLengthBucketLabel,
   getSubtitleGender,
   getSubtitleLsirScore,
+  sortDataForSentenceLengthCharts,
 } from "../../common/utils";
 
 const PLOT_HEIGHT_MULTIPLIER = 70;
 const DOT_RADIUS = 13;
 const RECT_INSET = 16;
+
+function getTooltip(d: {
+  eventRate: number;
+  upperCI: number;
+  lowerCI: number;
+  name: string;
+  cohortMonths: number;
+}) {
+  const formattedEventRate = convertDecimalToPercentage(d.eventRate);
+
+  // The confidence interval is the larger of the two differences between the event rate and the upper/lower CI. This is because it's possible that either interval crosses 0 or 100 and will be cut off, so the larger of the two will be the correct one
+  const formattedConfidenceInterval = Math.max(
+    convertDecimalToPercentage(d.upperCI - d.eventRate),
+    convertDecimalToPercentage(d.eventRate - d.lowerCI),
+  );
+  return `${d.name} (${formattedEventRate}%)\n\nThe Cumulative Recidivism Rate is ${formattedEventRate}% for sentences of ${d.name} at ${d.cohortMonths} months. This statistic has a confidence interval of ± ${formattedConfidenceInterval}%. `;
+}
 
 export function getRecidivismPlotSubtitle(insight: CaseInsight) {
   const {
@@ -59,13 +79,6 @@ export function getRecidivismPlotSubtitle(insight: CaseInsight) {
 
 const PLOT_MARGIN_LEFT = 80;
 
-function sentenceLengthLabelFilter(d: {
-  sentenceLengthBucketStart: number;
-  sentenceLengthBucketEnd: number;
-}) {
-  return d.sentenceLengthBucketStart === 0 && d.sentenceLengthBucketEnd === -1;
-}
-
 export function getRecidivismPlot(
   insight: CaseInsight,
   plotWidth: number,
@@ -73,7 +86,9 @@ export function getRecidivismPlot(
 ) {
   const { rollupRecidivismSeries } = insight;
 
-  const transformedSeries = rollupRecidivismSeries.map((series) => {
+  const transformedSeries = sortDataForSentenceLengthCharts(
+    rollupRecidivismSeries,
+  ).map((series) => {
     const {
       dataPoints,
       sentenceLengthBucketStart,
@@ -81,7 +96,7 @@ export function getRecidivismPlot(
       recommendationType,
     } = series;
 
-    const name = getSentenceLengthBucketText(
+    const name = getSentenceLengthBucketLabel(
       recommendationType,
       sentenceLengthBucketStart,
       sentenceLengthBucketEnd,
@@ -93,42 +108,35 @@ export function getRecidivismPlot(
 
     return {
       name,
-      sentenceLengthBucketStart,
-      sentenceLengthBucketEnd,
       ...lastDataPoint,
     };
   });
 
-  // The order of the y domain should first be sentence type labels, then the sentence length labels ordered by start value
-  const yDomain = [
-    ...transformedSeries.filter(sentenceLengthLabelFilter).map((d) => d.name),
-    ...transformedSeries
-      .filter((d) => !sentenceLengthLabelFilter(d))
-      .sort((a, b) => a.sentenceLengthBucketStart - b.sentenceLengthBucketStart)
-      .map((d) => d.name),
-  ];
+  // The data has been sorted properly, so set the yDomain to follow its sort order
+  const yDomain = transformedSeries.map((series) => series.name);
 
   // Make the domain the closest 5% multiple on either end of the min and max values
-  const domainStart =
+  const xDomainStart =
     Math.floor(
       Math.min(...transformedSeries.map((series) => series.lowerCI)) * 20,
     ) * 5;
-  const domainEnd =
+  const xDomainEnd =
     Math.ceil(
       Math.max(...transformedSeries.map((series) => series.upperCI)) * 20,
     ) * 5;
 
   return plot({
     width: plotWidth,
-    height: 35 + PLOT_HEIGHT_MULTIPLIER * transformedSeries.length,
+    height: 210 + PLOT_HEIGHT_MULTIPLIER * transformedSeries.length,
     marginLeft: PLOT_MARGIN_LEFT,
+    marginBottom: 200,
     color: {
-      domain: [...Object.keys(SENTENCE_TYPE_TO_COLOR), "white"],
-      range: [...Object.values(SENTENCE_TYPE_TO_COLOR), "#FFFFFF"],
+      domain: [...Object.keys(SENTENCE_TYPE_TO_COLOR)],
+      range: [...Object.values(SENTENCE_TYPE_TO_COLOR)],
     },
     x: {
       percent: true,
-      domain: [domainStart, domainEnd],
+      domain: [xDomainStart, xDomainEnd],
     },
     y: {
       domain: yDomain,
@@ -188,6 +196,16 @@ export function getRecidivismPlot(
           y: "name",
           r: DOT_RADIUS,
           fill: "name",
+        }),
+      ),
+      tip(
+        transformedSeries,
+        pointerY({
+          x: "eventRate",
+          y: "name",
+          title: getTooltip,
+          fontSize: 12,
+          fontFamily: "Public Sans",
         }),
       ),
     ],

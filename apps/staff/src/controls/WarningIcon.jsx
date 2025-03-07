@@ -16,8 +16,7 @@
 // =============================================================================
 
 import PropTypes from "prop-types";
-import React from "react";
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 function WarningIcon({ tooltipText, className = "" }) {
   const id = `_${Math.random().toString(36).substr(2, 9)}`;
@@ -25,7 +24,11 @@ function WarningIcon({ tooltipText, className = "" }) {
   return (
     <>
       &nbsp;
-      <span data-tip data-for={id} className={`ti-alert ${className}`} />
+      <span
+        data-tooltip-content
+        data-tooltip-id={id}
+        className={`ti-alert ${className}`}
+      />
       <ReactTooltip id={id} effect="solid">
         {tooltipText}
       </ReactTooltip>
