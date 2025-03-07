@@ -100,6 +100,11 @@ export abstract class Task<
     return this.task.details;
   }
 
+  get frequency(): string {
+    // This is reimplemented directly on the classes for the tasks that currently use it
+    return "";
+  }
+
   get snoozedUntil(): Date | undefined {
     if (!this.updates?.snoozedOn) return;
 

@@ -18,6 +18,7 @@
 import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
+import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
@@ -29,6 +30,11 @@ import { TasksDescription } from "./styles";
 import { TasksHeader } from "./styles";
 import { TaskPreviewModal } from "./TaskPreviewModal";
 import { TasksTable } from "./TasksTable";
+
+// TODO(#7571): Add Noir/Cool Grey to design system
+const TasksTabUnderline = styled.div`
+  border-bottom: #00113326 1px solid;
+`;
 
 export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
   presenter,
@@ -43,22 +49,24 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
         refreshed from the OMS overnight and daily. Where are these tasks pulled
         from?
       </TasksDescription>
-      <WorkflowsCaseloadTabs
-        tabs={presenter.displayedTaskCategories}
-        tabLabels={TASK_SELECTOR_LABELS}
-        tabBadges={{
-          ALL_TASKS: presenter.countForCategory("ALL_TASKS"),
-          OVERDUE: presenter.countForCategory("OVERDUE"),
-          DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
-          DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
-        }}
-        activeTab={presenter.selectedCategory}
-        setActiveTab={(tab: SupervisionTaskCategory) => {
-          runInAction(() => {
-            presenter.selectedCategory = tab;
-          });
-        }}
-      />
+      <TasksTabUnderline>
+        <WorkflowsCaseloadTabs
+          tabs={presenter.displayedTaskCategories}
+          tabLabels={TASK_SELECTOR_LABELS}
+          tabBadges={{
+            ALL_TASKS: presenter.countForCategory("ALL_TASKS"),
+            OVERDUE: presenter.countForCategory("OVERDUE"),
+            DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
+            DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
+          }}
+          activeTab={presenter.selectedCategory}
+          setActiveTab={(tab: SupervisionTaskCategory) => {
+            runInAction(() => {
+              presenter.selectedCategory = tab;
+            });
+          }}
+        />
+      </TasksTabUnderline>
       <TasksTable presenter={presenter} />
       <TaskPreviewModal />
     </>

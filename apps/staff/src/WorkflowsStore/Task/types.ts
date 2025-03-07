@@ -124,6 +124,7 @@ export type SupervisionTask<
   displayName: string;
   dueDateDisplayLong: string;
   dueDateDisplayShort: string;
+  frequency: string;
   additionalDetails?: string;
   updateSupervisionTask: (snoozeForDays?: number) => void;
 };

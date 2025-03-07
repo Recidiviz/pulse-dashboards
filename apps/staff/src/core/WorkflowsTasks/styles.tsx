@@ -25,6 +25,8 @@ import {
 import { rem } from "polished";
 import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
 
+import { MaxWidth } from "../sharedComponents";
+
 export const Divider = styled.hr`
   margin: ${rem(spacing.md)} 0;
   height: 1px;
@@ -43,6 +45,11 @@ export const TasksCaption = styled(Sans14)`
 
 export const TasksDescription = styled(TasksCaption)`
   margin-bottom: ${rem(spacing.lg)};
+  max-width: ${rem(540)};
+`;
+
+export const TasksBodyContainer = styled.div`
+  ${MaxWidth}
 `;
 
 export const TaskCategoryPill = styled(Pill).attrs({

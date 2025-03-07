@@ -41,6 +41,10 @@ class UsTxFieldContactTask extends Task<"usTxFieldContact"> {
       ? `Last contact on ${this.lastFieldContact}`
       : "No previous visit on record.";
   }
+
+  get frequency(): string {
+    return "Every 4 weeks";
+  }
 }
 
 export default UsTxFieldContactTask;
