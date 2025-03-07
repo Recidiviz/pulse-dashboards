@@ -36,7 +36,12 @@ export const ProfileCapsule = observer(function ProfileCapsule({
   if (person instanceof Client) {
     status = (
       <>
-        {[person.supervisionType, person.supervisionLevel]
+        {[
+          person.stateCode === "US_TX"
+            ? person.caseType
+            : person.supervisionType,
+          person.supervisionLevel,
+        ]
           .filter(identity)
           .join(", ")}
       </>

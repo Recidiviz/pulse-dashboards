@@ -22,6 +22,7 @@ import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { formatDate } from "../../utils";
+import { SupervisionTask } from "../../WorkflowsStore";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
@@ -87,15 +88,116 @@ const TaskSnoozedDate = styled(Sans14)`
   line-height: 2;
 `;
 
+const TaskItemV2 = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
+  min-height: ${rem(75)};
+  padding: 1.5rem 0;
+  display: grid;
+  grid-template-columns: 180px 180px auto;
+  align-content: center;
+  position: relative;
+`;
+
+const TaskInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const TaskFrequency = styled.div`
+  font-size: ${rem(12)};
+  margin-top: ${rem(6)};
+`;
+
+const TaskTimeline = styled.div`
+  font-size: ${rem(12)};
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(16)};
+`;
+
+const TaskTimelineDueDate = styled.div<{ overdue: boolean }>`
+  color: ${({ overdue }) => (overdue ? palette.signal.error : palette.pine4)};
+`;
+
+const TaskPreview = ({
+  task,
+  showSnoozeDropdown,
+}: {
+  task: SupervisionTask;
+  showSnoozeDropdown: boolean;
+}) => {
+  const { isMobile } = useIsMobile(true);
+  return (
+    <div key={task.key}>
+      <TaskItem showSnoozeDropdown={showSnoozeDropdown}>
+        <TaskContent>
+          <TaskTitle isMobile={isMobile}>
+            <TaskName>{task.displayName}</TaskName>
+            <TaskDivider> &bull; </TaskDivider>
+            <TaskDueDate
+              font={typography.Sans16}
+              marginLeft="0"
+              overdue={task.isOverdue && !task.isSnoozed}
+              title={task.dueDateDisplayShort}
+              isMobile={isMobile}
+            >
+              {task.dueDateDisplayShort}
+            </TaskDueDate>
+          </TaskTitle>
+          {task.snoozedUntil && (
+            <TaskSnoozedDate>
+              {"Hidden from Tasks list until " + formatDate(task.snoozedUntil)}
+            </TaskSnoozedDate>
+          )}
+          <TaskDetails>{task.additionalDetails}</TaskDetails>
+        </TaskContent>
+        {showSnoozeDropdown && (
+          <SnoozeTaskDropdown
+            task={task}
+            taskConfig={
+              task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
+            }
+          />
+        )}
+      </TaskItem>
+      <TaskItemDivider />
+    </div>
+  );
+};
+
+const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
+  return (
+    <div key={task.key}>
+      <TaskItemV2>
+        <TaskInfo>
+          <TaskName>{task.displayName}</TaskName>
+          <TaskFrequency>
+            <i className="fa fa-refresh" /> {task.frequency}
+          </TaskFrequency>
+        </TaskInfo>
+        <TaskTimeline>
+          <div>{task.additionalDetails}</div>
+          <TaskTimelineDueDate overdue={task.isOverdue}>
+            {task.dueDateDisplayShort}
+          </TaskTimelineDueDate>
+        </TaskTimeline>
+        <SnoozeTaskDropdown
+          task={task}
+          taskConfig={
+            task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
+          }
+        />
+      </TaskItemV2>
+      <TaskItemDivider />
+    </div>
+  );
+};
+
 export const PreviewTasks = observer(function PreviewTasks({
   person,
   showSnoozeDropdown,
 }: PersonProfileProps & { showSnoozeDropdown: boolean }) {
-  const { isMobile } = useIsMobile(true);
-
   const tasks = person.supervisionTasks?.orderedTasks ?? [];
   const needs = person.supervisionTasks?.needs ?? [];
-  const tasksConfig = person.supervisionTasks?.tasksConfig;
 
   if (!tasks.length && !needs.length) return null;
 
@@ -103,41 +205,14 @@ export const PreviewTasks = observer(function PreviewTasks({
     <TasksWrapper>
       <TaskItems>
         {tasks.map((task) => {
-          return (
-            <div key={task.key}>
-              <TaskItem showSnoozeDropdown={showSnoozeDropdown}>
-                <TaskContent>
-                  <TaskTitle isMobile={isMobile}>
-                    <TaskName>{task.displayName}</TaskName>
-                    <TaskDivider> &bull; </TaskDivider>
-                    <TaskDueDate
-                      font={typography.Sans16}
-                      marginLeft="0"
-                      overdue={task.isOverdue && !task.isSnoozed}
-                      title={task.dueDateDisplayShort}
-                      isMobile={isMobile}
-                    >
-                      {task.dueDateDisplayShort}
-                    </TaskDueDate>
-                  </TaskTitle>
-                  {task.snoozedUntil && (
-                    <TaskSnoozedDate>
-                      {"Hidden from Tasks list until " +
-                        formatDate(task.snoozedUntil)}
-                    </TaskSnoozedDate>
-                  )}
-                  <TaskDetails>{task.additionalDetails}</TaskDetails>
-                </TaskContent>
-                {showSnoozeDropdown && (
-                  <SnoozeTaskDropdown
-                    task={task}
-                    taskConfig={tasksConfig?.tasks[task.type]}
-                  />
-                )}
-              </TaskItem>
-              <TaskItemDivider />
-            </div>
-          );
+          if (person.stateCode === "US_ID")
+            return (
+              <TaskPreview
+                task={task}
+                showSnoozeDropdown={showSnoozeDropdown}
+              />
+            );
+          return <TaskPreviewV2 task={task} />;
         })}
         {needs.map((need) => {
           return (
