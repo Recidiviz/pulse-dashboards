@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {} from "date-fns";
 import { Required as RequireKeys } from "utility-types";
 
 import { ClientRecord, UsMeWorkReleaseRecordRaw } from "~datatypes";
@@ -148,6 +147,7 @@ export const usMeEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
     pseudonymizedId: "p009",
     stateCode: "US_ME",
     officerId: "OFFICER8",
+    caseType: "GENERAL",
     supervisionType: "PROBATION",
     supervisionLevel: "MEDIUM",
     supervisionLevelStart: new Date("2019-12-20"),

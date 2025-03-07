@@ -124,6 +124,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   supervisionStartDate?: Date;
 
+  rawCaseType?: string;
+
   currentBalance?: number;
 
   lastPaymentAmount?: number;
@@ -174,6 +176,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   updateRecord(record: ClientRecord): void {
     super.updateRecord(record);
     this.supervisionLevelStart = record.supervisionLevelStart;
+    this.rawCaseType = record.caseType;
     this.address = record.address;
     this.rawPhoneNumber = record.phoneNumber;
     this.expirationDate = record.expirationDate;
@@ -216,6 +219,36 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this.rootStore.workflowsStore.formatSupervisionLevel(
       this.record.supervisionLevel,
     );
+  }
+
+  get caseType(): string {
+    if (this.stateCode !== "US_TX") return this.rawCaseType ?? "Unknown";
+
+    // Update fallback to futureproof
+    switch (this.rawCaseType) {
+      case "GENERAL":
+        return "Regular";
+      case "SEX_OFFENSE":
+        return "Sex offender";
+      case "DRUG_COURT":
+        return "Substance abuse";
+      case "MENTAL_HEALTH_COURT":
+        return "Mentally ill";
+      case "SERIOUS_MENTAL_ILLNESS_OR_DISABILITY":
+        return "Intellectually Disabled";
+      case "ELECTRONIC_MONITORING":
+        return "Electronic monitoring";
+      case "INTENSE_SUPERVISION":
+        return "Super-intensive supervision";
+      case "DAY_REPORTING":
+        return "Day/district resource center";
+      case "PHYSICAL_ILLNESS_OR_DISABILITY":
+        return "Terminally Ill / Physically Handicapped";
+      case "INTERNAL_UNKNOWN":
+      case "EXTERNAL_UNKNOWN":
+      default:
+        return "Unknown";
+    }
   }
 
   get phoneNumber(): string | undefined {
