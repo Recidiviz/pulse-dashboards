@@ -37,12 +37,29 @@ export const TaskItemDivider = styled.hr`
   min-width: 100%;
 `;
 
+const TaskItemHeader = styled.div`
+  background-color: ${palette.marble2};
+  border-bottom: 1px solid ${palette.slate10};
+  color: ${palette.slate70};
+  font-family: "Public Sans", sans-serif;
+  font-weight: 700;
+  margin: 0 -${rem(spacing.md)};
+  min-width: 100%;
+  padding-top: ${rem(4)};
+  padding-bottom: ${rem(4)};
+  padding-left: ${rem(16)};
+  text-transform: uppercase;
+`;
+
 export const TaskPreviewModal = observer(function TaskPreviewModal() {
   const {
     workflowsStore: { selectedClient },
   } = useRootStore();
 
   if (!selectedClient) return null;
+
+  const opportunitiesToDisplay = !!Object.values(selectedClient.opportunities)
+    .length;
 
   return (
     <WorkflowsPreviewModal
@@ -51,11 +68,16 @@ export const TaskPreviewModal = observer(function TaskPreviewModal() {
       pageContent={
         <article>
           <Heading person={selectedClient} />
-          <OpportunitiesAccordion hideEmpty person={selectedClient} />
-          {Object.values(selectedClient.opportunities).length ? null : (
-            <TaskItemDivider />
-          )}
+          <TaskItemHeader>Tasks</TaskItemHeader>
           <PreviewTasks person={selectedClient} showSnoozeDropdown />
+          <TaskItemDivider />
+          {opportunitiesToDisplay && (
+            <>
+              <TaskItemHeader>Opportunities</TaskItemHeader>
+              <OpportunitiesAccordion hideEmpty person={selectedClient} />
+            </>
+          )}
+          <TaskItemHeader>Client Details</TaskItemHeader>
           <Supervision client={selectedClient} />
           <Milestones client={selectedClient} />
           <Contact client={selectedClient} />
