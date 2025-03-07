@@ -1,0 +1,182 @@
+{
+  "name": "@sentencing-server/import",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@sentencing-server/import/src",
+  "projectType": "application",
+  "tags": ["sentencing-server"],
+  "targets": {
+    "test-zod": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx test-zod/index.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_sentencing_server_import --env_staging env_staging_sentencing_server_import --env_prod env_prod_sentencing_server_import",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "create-base-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/create-base-package-json.mts {projectRoot}",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "create-base-package-json",
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
+        "load-env-files"
+      ],
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/@sentencing-server/import",
+        "bundle": true,
+        "main": "{projectRoot}/src/main.ts",
+        "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "generatePackageJson": true,
+        "target": "node20",
+        "minify": true,
+        "assets": [
+          {
+            "glob": "prisma/schema.prisma",
+            "input": "{workspaceRoot}/libs/@sentencing-server/prisma",
+            "output": "."
+          },
+          "{workspaceRoot}/.yarnrc.yml"
+        ],
+        "external": ["@prisma/sentencing-server"]
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {
+          "sourcemap": true,
+          "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
+        },
+        "cherry-pick": {
+          "sourcemap": true,
+          "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "docker"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/@sentencing-server/import"],
+      "cache": true,
+      "options": {
+        "command": "nx prisma-deploy @sentencing-server/prisma && cd apps/@sentencing-server/import && vitest",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "cwd": "{projectRoot}",
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "staging": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-data-import:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-data-import:latest"
+          ]
+        },
+        "cherry-pick": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-data-import:$COMMIT_SHA"
+          ]
+        },
+        "preview": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-data-import-preview:$VERSION"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "deploy-app": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["load-env-files"],
+      "options": {
+        "command": "gcloud run jobs deploy sentencing-data-import --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-data-import:$COMMIT_SHA --region us-central1 --set-env-vars IMPORT_BUCKET_ID=$IMPORT_BUCKET_ID,DATABASE_URL_US_ID=$DATABASE_URL_US_ID,DATABASE_URL_US_ND=$DATABASE_URL_US_ND"
+      },
+      "configurations": {
+        "staging": {
+          "args": [
+            "--project recidiviz-dashboard-staging",
+            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db",
+            "--service-account sentencing@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+          ]
+        },
+        "production": {
+          "args": [
+            "--project recidiviz-dashboard-production",
+            "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:sentencing-db",
+            "--service-account sentencing@recidiviz-dashboard-production.iam.gserviceaccount.com"
+          ]
+        },
+        "preview": {
+          "command": "gcloud run jobs deploy ss-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server-preview:$VERSION --region us-central1 --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID-$VERSION,DATABASE_URL_US_ND=$DATABASE_URL_US_ND-$VERSION",
+          "args": [
+            "--project recidiviz-dashboard-staging",
+            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
+            "--service-account sentencing@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+          ]
+        }
+      },
+      "defaultConfiguration": "staging"
+    }
+  }
+}

@@ -53,6 +53,7 @@ libs/staff-shared-server/package.json
 apps/sentencing-server/package.json
 apps/jii-texting-jobs/package.json
 apps/jii-texting-server/package.json
+apps/@sentencing-server/import/package.json
 
 # Redis dump
 dump.rdb
