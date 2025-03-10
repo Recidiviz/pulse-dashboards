@@ -66,16 +66,52 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
         field: "supervisionLevel",
         options: [
           {
+            value: "Limited",
+          },
+          {
             value: "Minimum",
           },
           {
-            value: "Moderate",
+            value: "Medium",
           },
           {
             value: "High",
           },
           {
             value: "Maximum",
+          },
+        ],
+      },
+      {
+        title: "Case Type",
+        field: "caseType",
+        options: [
+          {
+            value: "Regular",
+          },
+          {
+            value: "Sex offender",
+          },
+          {
+            value: "Substance abuse",
+          },
+          {
+            value: "Mentally ill",
+          },
+          {
+            value: "Intellectually disabled",
+          },
+          {
+            value: "Electronic monitoring",
+          },
+          {
+            value: "Super-intensive supervision",
+          },
+          {
+            value: "Day/district resource center",
+          },
+          {
+            value: "Terminally ill / Physically handicapped",
           },
         ],
       },

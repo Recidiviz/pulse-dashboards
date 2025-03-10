@@ -235,7 +235,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       case "MENTAL_HEALTH_COURT":
         return "Mentally ill";
       case "SERIOUS_MENTAL_ILLNESS_OR_DISABILITY":
-        return "Intellectually Disabled";
+        return "Intellectually disabled";
       case "ELECTRONIC_MONITORING":
         return "Electronic monitoring";
       case "INTENSE_SUPERVISION":
@@ -243,7 +243,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       case "DAY_REPORTING":
         return "Day/district resource center";
       case "PHYSICAL_ILLNESS_OR_DISABILITY":
-        return "Terminally Ill / Physically Handicapped";
+        return "Terminally ill / Physically handicapped";
       case "INTERNAL_UNKNOWN":
       case "EXTERNAL_UNKNOWN":
       default:

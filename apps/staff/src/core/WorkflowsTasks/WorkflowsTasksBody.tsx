@@ -33,7 +33,6 @@ import {
   TasksDescription,
   TasksHeader,
 } from "./styles";
-import { TaskFilterDropdown } from "./TaskFilterDropdown";
 import { TaskPreviewModal } from "./TaskPreviewModal";
 import { TasksCalendarView } from "./TasksCalendarView";
 
@@ -58,7 +57,6 @@ export const ManagedComponent = observer(function WorkflowsTaskBody({
       <TasksHeader>Tasks</TasksHeader>
       <TasksDescription>
         The clients below might have upcoming requirements this month.
-        <TaskFilterDropdown presenter={presenter} />
       </TasksDescription>
 
       <TaskCategories>
