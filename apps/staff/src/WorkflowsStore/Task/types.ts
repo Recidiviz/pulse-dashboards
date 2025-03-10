@@ -57,12 +57,14 @@ type UsTxContactDetails = {
   lastContactDate: string | null;
   overdueFlag: boolean;
   typeOfContact: string;
+  frequency: string;
 };
 
 type UsTxAssessmentDetails = {
   eventType: string;
   dueAssessmentDate: string | null;
   eventDate: string;
+  frequency: string;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -82,9 +84,12 @@ export const SUPERVISION_TASK_TYPES = [
   "assessment",
   "contact",
   "employment",
-  "usTxHomeContact",
-  "usTxFieldContact",
-  "usTxElectronicContact",
+  "usTxHomeContactScheduled",
+  "usTxHomeContactUnscheduled",
+  "usTxFieldContactScheduled",
+  "usTxFieldContactUnscheduled",
+  "usTxElectronicContactScheduled",
+  "usTxElectronicContactUnscheduled",
   "usTxAssessment",
 ] as const;
 
@@ -102,9 +107,12 @@ export type SupervisionDetailsForTask = {
   assessment: UsIdAssessmentDetails;
   contact: UsIdContactDetails;
   employment: UsIdEmploymentDetails;
-  usTxHomeContact: UsTxContactDetails;
-  usTxFieldContact: UsTxContactDetails;
-  usTxElectronicContact: UsTxContactDetails;
+  usTxHomeContactScheduled: UsTxContactDetails;
+  usTxHomeContactUnscheduled: UsTxContactDetails;
+  usTxFieldContactScheduled: UsTxContactDetails;
+  usTxFieldContactUnscheduled: UsTxContactDetails;
+  usTxElectronicContactScheduled: UsTxContactDetails;
+  usTxElectronicContactUnscheduled: UsTxContactDetails;
   usTxAssessment: UsTxAssessmentDetails;
 };
 
@@ -141,14 +149,18 @@ export type SupervisionNeed = {
 
 export type TasksStateCode = "US_ID" | "US_TX";
 
+export type UsTxContactTaskType =
+  | "usTxHomeContactScheduled"
+  | "usTxHomeContactUnscheduled"
+  | "usTxFieldContactScheduled"
+  | "usTxFieldContactUnscheduled"
+  | "usTxElectronicContactScheduled"
+  | "usTxElectronicContactUnscheduled";
+
 // TODO: Derive these from tenant configs
 type TasksForState = {
   US_ID: "homeVisit" | "assessment" | "contact" | "employment";
-  US_TX:
-    | "usTxHomeContact"
-    | "usTxFieldContact"
-    | "usTxElectronicContact"
-    | "usTxAssessment";
+  US_TX: UsTxContactTaskType | "usTxAssessment";
 };
 
 export interface SupervisionTasksRecord<T extends TasksStateCode> {

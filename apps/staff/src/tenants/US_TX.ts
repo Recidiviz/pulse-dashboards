@@ -18,9 +18,12 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsTxAssessmentTask from "../WorkflowsStore/Task/UsTxAssessmentTask";
-import UsTxElectronicContactTask from "../WorkflowsStore/Task/UsTxElectronicContactTask";
-import UsTxFieldContactTask from "../WorkflowsStore/Task/UsTxFieldContactTask";
-import UsTxHomeContactTask from "../WorkflowsStore/Task/UsTxHomeContactTask";
+import UsTxElectronicContactScheduledTask from "../WorkflowsStore/Task/UsTxElectronicContactScheduledTask";
+import UsTxElectronicContactUnscheduledTask from "../WorkflowsStore/Task/UsTxElectronicContactUnscheduledTask";
+import UsTxFieldContactScheduledTask from "../WorkflowsStore/Task/UsTxFieldContactScheduledTask";
+import UsTxFieldContactUnscheduledTask from "../WorkflowsStore/Task/UsTxFieldContactUnscheduledTask";
+import usTxHomeContactScheduledTask from "../WorkflowsStore/Task/UsTxHomeContactScheduledTask";
+import usTxHomeContactUnscheduledTask from "../WorkflowsStore/Task/UsTxHomeContactUnscheduledTask";
 
 const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   name: "Texas",
@@ -29,6 +32,8 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   availableStateCodes: [dashboard.US_TX],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsHomepage: "tasks",
+  workflowsHomepageName: "Tasks",
   workflowsSystemConfigs: {
     SUPERVISION: {
       search: [
@@ -43,16 +48,28 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   workflowsTasksConfig: {
     collection: "usTxSupervisionTasks",
     tasks: {
-      usTxHomeContact: {
-        constructor: UsTxHomeContactTask,
+      usTxHomeContactScheduled: {
+        constructor: usTxHomeContactScheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
-      usTxFieldContact: {
-        constructor: UsTxFieldContactTask,
+      usTxHomeContactUnscheduled: {
+        constructor: usTxHomeContactUnscheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
-      usTxElectronicContact: {
-        constructor: UsTxElectronicContactTask,
+      usTxFieldContactScheduled: {
+        constructor: UsTxFieldContactScheduledTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usTxFieldContactUnscheduled: {
+        constructor: UsTxFieldContactUnscheduledTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usTxElectronicContactScheduled: {
+        constructor: UsTxElectronicContactScheduledTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usTxElectronicContactUnscheduled: {
+        constructor: UsTxElectronicContactUnscheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxAssessment: {
@@ -118,7 +135,7 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
     ],
   },
   navigation: {
-    workflows: ["home", "tasks", "clients"],
+    workflows: ["tasks", "clients"],
   },
 };
 

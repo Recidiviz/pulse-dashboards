@@ -155,7 +155,7 @@ export class CaseloadTasksPresenterV2 {
     return every(
       Object.entries(this.selectedFilters),
       ([field, options]: [keyof JusticeInvolvedPerson, string[]]) =>
-        // @ts-ignore searchable fields are restricted to strings but TS does not know that
+        // @ts-expect-error searchable fields are restricted to strings but TS does not know that
         options.includes(person[field]),
     );
   }

@@ -166,7 +166,7 @@ const TaskPreview = ({
 
 const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
   return (
-    <div key={task.key}>
+    <>
       <TaskItemV2>
         <TaskInfo>
           <TaskName>{task.displayName}</TaskName>
@@ -188,7 +188,7 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
         />
       </TaskItemV2>
       <TaskItemDivider />
-    </div>
+    </>
   );
 };
 
@@ -212,7 +212,7 @@ export const PreviewTasks = observer(function PreviewTasks({
                 showSnoozeDropdown={showSnoozeDropdown}
               />
             );
-          return <TaskPreviewV2 task={task} />;
+          return <TaskPreviewV2 task={task} key={task.key} />;
         })}
         {needs.map((need) => {
           return (

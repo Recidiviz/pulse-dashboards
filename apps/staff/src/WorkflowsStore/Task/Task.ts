@@ -50,12 +50,6 @@ export abstract class Task<
   /* ex: Risk assessment */
   abstract displayName: string;
 
-  /* ex: Risk assessment due 3 days ago */
-  abstract dueDateDisplayLong: string;
-
-  /* ex: Due 3 days ago */
-  abstract dueDateDisplayShort: string;
-
   constructor(
     rootStore: RootStore,
     task: SupervisionTaskRecord<TaskType>,
@@ -98,6 +92,16 @@ export abstract class Task<
 
   get details(): SupervisionDetailsForTask[TaskType] {
     return this.task.details;
+  }
+
+  /* ex: Risk assessment due 3 days ago */
+  get dueDateDisplayLong() {
+    return `${this.displayName} recommended ${this.dueDateFromToday}`;
+  }
+
+  /* ex: Due 3 days ago */
+  get dueDateDisplayShort() {
+    return `Recommended ${this.dueDateFromToday}`;
   }
 
   get frequency(): string {

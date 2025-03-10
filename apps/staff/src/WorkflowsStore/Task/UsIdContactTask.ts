@@ -27,10 +27,6 @@ import { US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE } from "./utils";
 class UsIdContactTask extends Task<"contact"> {
   displayName = "Contact";
 
-  dueDateDisplayLong = `${this.displayName} recommended ${this.dueDateFromToday}`;
-
-  dueDateDisplayShort = `Recommended ${this.dueDateFromToday}`;
-
   get lastContacted(): string | undefined {
     if (!this.details.lastContacted) return;
     return formatDate(fieldToDate(this.details.lastContacted));

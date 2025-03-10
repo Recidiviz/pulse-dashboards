@@ -25,7 +25,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER1",
     tasks: [
       {
-        type: "usTxHomeContact",
+        type: "usTxHomeContactScheduled",
         // overdue
         dueDate: "2022-01-03",
         details: {
@@ -33,17 +33,19 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           lastContactDate: "2021-08-03",
           overdueFlag: true,
           typeOfContact: "UNSCHEDULED HOME",
+          frequency: "4 MONTHS",
         },
       },
       {
-        type: "usTxElectronicContact",
+        type: "usTxElectronicContactUnscheduled",
         // overdue
         dueDate: "2022-09-23",
         details: {
           contactCount: 2,
           lastContactDate: "2022-06-23",
           overdueFlag: true,
-          typeOfContact: "SCHEDULED ELECTRONIC",
+          typeOfContact: "UNSCHEDULED ELECTRONIC",
+          frequency: "3 MONTHS",
         },
       },
     ],
@@ -54,7 +56,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
     officerId: "OFFICER1",
     tasks: [
       {
-        type: "usTxHomeContact",
+        type: "usTxHomeContactScheduled",
         // overdue
         dueDate: "2022-03-09",
         details: {
@@ -62,17 +64,19 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           lastContactDate: "2021-03-09",
           overdueFlag: true,
           typeOfContact: "SCHEDULED HOME",
+          frequency: "12 MONTHS",
         },
       },
       {
-        type: "usTxFieldContact",
+        type: "usTxFieldContactUnscheduled",
         // overdue
         dueDate: "2022-03-09",
         details: {
           contactCount: 2,
           lastContactDate: "2021-03-09",
           overdueFlag: false,
-          typeOfContact: "SCHEDULED FIELD",
+          typeOfContact: "UNSCHEDULED FIELD",
+          frequency: "12 MONTHS",
         },
       },
       {
@@ -83,6 +87,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           eventType: "supervision_start_no_prior_assessment",
           eventDate: "2022-06-09",
           dueAssessmentDate: "2022-10-09",
+          frequency: "4 MONTHS",
         },
       },
     ],

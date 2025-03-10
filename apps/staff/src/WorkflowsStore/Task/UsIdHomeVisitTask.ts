@@ -27,10 +27,6 @@ import { US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE } from "./utils";
 class UsIdHomeVisitTask extends Task<"homeVisit"> {
   displayName = "Home contact";
 
-  dueDateDisplayLong = `${this.displayName} recommended ${this.dueDateFromToday}`;
-
-  dueDateDisplayShort = `Recommended ${this.dueDateFromToday}`;
-
   get currentAddress(): string | undefined {
     return this.details.currentAddress;
   }

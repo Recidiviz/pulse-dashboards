@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,28 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fieldToDate } from "~datatypes";
+import UsTxContactTask from "./UsTxContactTask";
 
-import { formatDate } from "../../utils/formatStrings";
-import { Task } from "./Task";
-
-class UsTxAssessmentTask extends Task<"usTxAssessment"> {
-  displayName = "Assessment";
-
-  get lastAssessment(): string | undefined {
-    if (this.details.eventType !== "assessment_completed") return;
-    return formatDate(fieldToDate(this.details.eventDate));
-  }
-
-  get additionalDetails(): string {
-    return this.lastAssessment
-      ? `Last assessment on ${this.lastAssessment}`
-      : "No previous assessment on record.";
-  }
-
-  get frequency(): string {
-    return `Every ${this.details.frequency.toLowerCase()}`;
-  }
+class UsTxHomeContactScheduledTask extends UsTxContactTask<"usTxHomeContactScheduled"> {
+  displayName = "Home contact (scheduled)";
 }
 
-export default UsTxAssessmentTask;
+export default UsTxHomeContactScheduledTask;
