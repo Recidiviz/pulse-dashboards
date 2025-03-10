@@ -15,25 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { NeedToBeAddressed } from "@prisma/sentencing-server/client";
+import { http, HttpResponse } from "msw";
 import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";
+import { testAndGetSentryReports } from "~@sentencing-server/trpc/test/common/utils";
 import {
   testPrismaClient,
   testTRPCClient,
 } from "~@sentencing-server/trpc/test/setup";
-import { fakeOpportunity } from "~@sentencing-server/trpc/test/setup/seed";
+import { mswServer } from "~@sentencing-server/trpc/test/setup/msw";
+import {
+  fakeOpportunity,
+  fakeOpportunity2,
+} from "~@sentencing-server/trpc/test/setup/seed";
 
 describe("opportunity router", () => {
   describe("getOpportunities", () => {
     test("should return all opportunities", async () => {
       const returnedOpportunities =
-        await testTRPCClient.opportunity.getOpportunities.query();
+        await testTRPCClient.opportunity.getOpportunities.query({});
 
       expect(returnedOpportunities).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             ...fakeOpportunity,
+          }),
+          expect.objectContaining({
+            ...fakeOpportunity2,
           }),
         ]),
       );
@@ -49,7 +59,7 @@ describe("opportunity router", () => {
       });
 
       const returnedOpportunities =
-        await testTRPCClient.opportunity.getOpportunities.query();
+        await testTRPCClient.opportunity.getOpportunities.query({});
 
       expect(returnedOpportunities).toEqual(
         expect.arrayContaining([
@@ -62,6 +72,82 @@ describe("opportunity router", () => {
           }),
         ]),
       );
+    });
+
+    describe("find help", () => {
+      test("should not include findhelp programs by default", async () => {
+        const returnedOpportunities =
+          await testTRPCClient.opportunity.getOpportunities.query({});
+
+        expect(returnedOpportunities).toEqual([
+          expect.objectContaining({
+            ...fakeOpportunity,
+          }),
+          expect.objectContaining({
+            ...fakeOpportunity2,
+          }),
+        ]);
+      });
+
+      test("should report authentication error but still return internal opportunities", async () => {
+        // Override the authentication endpoint to return a failure
+        mswServer.use(
+          http.post("https://api.auntberthaqa.com/v3/authenticate", () => {
+            return HttpResponse.json({
+              success: false,
+            });
+          }),
+        );
+
+        const returnedOpportunities =
+          await testTRPCClient.opportunity.getOpportunities.query({
+            includeFindHelpPrograms: true,
+          });
+
+        expect(returnedOpportunities).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              ...fakeOpportunity,
+            }),
+            expect.objectContaining({
+              ...fakeOpportunity2,
+            }),
+          ]),
+        );
+
+        const sentryReports = await testAndGetSentryReports();
+        expect(sentryReports[0].error?.message).toContain(
+          "Failed to authenticate with Findhelp",
+        );
+      });
+
+      test("should return formatted programs and internal opportunities", async () => {
+        const returnedOpportunities =
+          await testTRPCClient.opportunity.getOpportunities.query({
+            includeFindHelpPrograms: true,
+          });
+
+        expect(returnedOpportunities).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              ...fakeOpportunity,
+            }),
+            expect.objectContaining({
+              ...fakeOpportunity2,
+            }),
+            expect.objectContaining({
+              providerName: "fake_provider",
+              providerPhoneNumber: "fake_phone",
+              providerWebsite: "fake_url",
+              providerAddress: "fake_address1",
+              needsAddressed: expect.arrayContaining([
+                NeedToBeAddressed.Healthcare,
+                NeedToBeAddressed.SubstanceUse,
+              ]),
+            }),
+          ]),
+        );
+      });
     });
   });
 });

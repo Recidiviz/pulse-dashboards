@@ -12,5 +12,5 @@
     "vite.config.mts",
     "src/test/**.{ts,tsx}"
   ],
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "findhelp-taxonomy/update-findhelp-labels.mts"],
 }

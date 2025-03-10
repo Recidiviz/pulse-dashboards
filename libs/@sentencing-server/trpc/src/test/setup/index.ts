@@ -31,11 +31,12 @@ import { FastifyInstance } from "fastify/types/instance";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
-import { beforeAll, beforeEach, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
 import { createContext } from "~@sentencing-server/trpc/context";
 import { AppRouter, appRouter } from "~@sentencing-server/trpc/router";
+import { mswServer } from "~@sentencing-server/trpc/test/setup/msw";
 import { seed } from "~@sentencing-server/trpc/test/setup/seed";
 import { resetDb } from "~@sentencing-server/trpc/test/setup/utils";
 
@@ -53,6 +54,8 @@ const { testkit, sentryTransport } = sentryTestkit();
 export { testkit };
 
 beforeAll(async () => {
+  mswServer.listen();
+
   init({
     dsn: process.env["SENTRY_DSN"],
     transport: sentryTransport,
@@ -120,3 +123,6 @@ beforeEach(async () => {
 
   testkit.reset();
 });
+
+afterEach(() => mswServer.resetHandlers());
+afterAll(() => mswServer.close());
