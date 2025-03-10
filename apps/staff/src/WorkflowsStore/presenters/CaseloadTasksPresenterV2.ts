@@ -52,7 +52,10 @@ function sortPeopleByNextTaskDueDate(
   );
 }
 
-type SelectedFilters = PartialRecord<TaskFilterField, TaskFilterOption>;
+type SelectedFilters = PartialRecord<
+  TaskFilterField,
+  TaskFilterOption["value"][]
+>;
 
 export class CaseloadTasksPresenterV2 {
   selectedCategory: SupervisionTaskCategory;
@@ -151,8 +154,9 @@ export class CaseloadTasksPresenterV2 {
   personMatchesFilters(person: JusticeInvolvedPerson): boolean {
     return every(
       Object.entries(this.selectedFilters),
-      ([field, options]: [keyof JusticeInvolvedPerson, TaskFilterOption]) =>
-        person[field] === options.value,
+      ([field, options]: [keyof JusticeInvolvedPerson, string[]]) =>
+        // @ts-ignore searchable fields are restricted to strings but TS does not know that
+        options.includes(person[field]),
     );
   }
 
@@ -193,11 +197,43 @@ export class CaseloadTasksPresenterV2 {
     return this._selectedFilters;
   }
 
+  filterIsSelected(
+    field: TaskFilterField,
+    { value }: TaskFilterOption,
+  ): boolean {
+    return Boolean(this._selectedFilters[field]?.includes(value));
+  }
+
   setFilter(field: TaskFilterField, option: TaskFilterOption) {
-    this._selectedFilters[field] = option;
+    const { value } = option;
+
+    if (!this._selectedFilters[field]) {
+      this._selectedFilters[field] = [value];
+      return;
+    }
+
+    if (!this.filterIsSelected(field, option)) {
+      this._selectedFilters[field]?.push(value);
+    }
+  }
+
+  toggleFilter(field: TaskFilterField, option: TaskFilterOption) {
+    const { value } = option;
+
+    if (this.filterIsSelected(field, option)) {
+      this._selectedFilters[field] = this._selectedFilters[field]?.filter(
+        (f) => f !== value,
+      );
+    } else {
+      this.setFilter(field, option);
+    }
   }
 
   resetFilters() {
     this._selectedFilters = {};
+  }
+
+  get selectedFilterCount(): number {
+    return Object.values(this._selectedFilters).flatMap((x) => x).length;
   }
 }

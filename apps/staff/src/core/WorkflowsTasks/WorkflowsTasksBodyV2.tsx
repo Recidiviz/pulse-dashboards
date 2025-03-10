@@ -24,16 +24,25 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
+import { MaxWidth } from "../sharedComponents";
 import WorkflowsCaseloadTabs from "../WorkflowsCaseloadControlBar";
 import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
 import { TasksDescription } from "./styles";
 import { TasksHeader } from "./styles";
+import { TaskFilterDropdown } from "./TaskFilterDropdown";
 import { TaskPreviewModal } from "./TaskPreviewModal";
 import { TasksTable } from "./TasksTable";
 
 // TODO(#7571): Add Noir/Cool Grey to design system
 const TasksTabUnderline = styled.div`
   border-bottom: #00113326 1px solid;
+`;
+
+const TasksTopbarContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  ${MaxWidth}
 `;
 
 export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
@@ -44,11 +53,15 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
   return (
     <>
       <TasksHeader>Tasks</TasksHeader>
-      <TasksDescription>
-        The clients below might have upcoming requirements this month. Data is
-        refreshed from the OMS overnight and daily. Where are these tasks pulled
-        from?
-      </TasksDescription>
+
+      <TasksTopbarContainer>
+        <TasksDescription>
+          The clients below might have upcoming requirements this month. Data is
+          refreshed from the OMS overnight and daily. Where are these tasks
+          pulled from?
+        </TasksDescription>
+        <TaskFilterDropdown presenter={presenter} />
+      </TasksTopbarContainer>
       <TasksTabUnderline>
         <WorkflowsCaseloadTabs
           tabs={presenter.displayedTaskCategories}

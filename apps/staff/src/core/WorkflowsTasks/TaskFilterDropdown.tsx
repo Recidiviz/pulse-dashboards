@@ -20,50 +20,125 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
+  palette,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import React from "react";
+import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
-import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
+import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { TaskFilterField, TaskFilterOption } from "../models/types";
 
-function TaskFilterDropdownItem({
+const FilterDropdownToggle = styled(DropdownToggle)`
+  padding: 12px 16px;
+`;
+
+const FilterIcon = styled.i.attrs({
+  className: "fa fa-filter",
+})`
+  color: ${palette.slate30};
+  margin-top: -2px;
+  padding-right: 4px;
+`;
+
+const FilterDownArrow = styled.i.attrs({
+  className: "fa fa-caret-down",
+})`
+  margin-top: -2px;
+  padding-left: 8px;
+`;
+
+const FilterDropdownMenu = styled(DropdownMenu)`
+  transform: translateX(-124px) translateY(4px);
+  width: 231px;
+  padding: 24px 22px;
+  overflow: hidden;
+  white-space: nowrap;
+`;
+
+const FilterGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  &:not(:first-child) {
+    margin-top: 14px;
+    padding-top: 22px;
+    border-top: ${palette.slate30} 1px solid;
+  }
+`;
+
+const FilterGroupHeader = styled.div`
+  text-transform: uppercase;
+  font-size: ${rem(12)};
+  font-weight: 700;
+  padding: 0;
+`;
+
+const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)`
+  padding-left: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const ClearAllButton = styled(StyledFilterDropdownMenuItem)`
+  margin-top: 8px;
+  text-transform: uppercase;
+  font-weight: 700;
+`;
+
+const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
   option,
   onClick,
+  checked,
 }: {
   option: TaskFilterOption;
   onClick: () => void;
+  checked: boolean;
 }) {
   return (
-    <DropdownMenuItem onClick={() => onClick()} key={option.value}>
+    <StyledFilterDropdownMenuItem onClick={() => onClick()} key={option.value}>
+      <input readOnly type={"checkbox"} checked={checked} />{" "}
       {option.label ?? option.value}
-    </DropdownMenuItem>
+    </StyledFilterDropdownMenuItem>
   );
-}
+});
 
-function TaskFilterDropdownGroup({
+const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
   field,
   options,
   presenter,
+  title,
 }: {
   field: TaskFilterField;
   options: TaskFilterOption[];
-  presenter: CaseloadTasksPresenter;
+  presenter: CaseloadTasksPresenterV2;
+  title: string;
 }) {
-  return options.map((option) => (
-    <TaskFilterDropdownItem
-      key={option.value}
-      option={option}
-      onClick={() => presenter.setFilter(field, option)}
-    />
-  ));
-}
+  return (
+    <FilterGroup>
+      <FilterGroupHeader>{title}</FilterGroupHeader>
+      {options.map((option) => (
+        <TaskFilterDropdownItem
+          key={option.value}
+          option={option}
+          checked={presenter.filterIsSelected(field, option)}
+          onClick={() => presenter.toggleFilter(field, option)}
+        />
+      ))}
+    </FilterGroup>
+  );
+});
 
 export const TaskFilterDropdown = observer(function TaskFilterDropdown({
   presenter,
 }: {
-  presenter: CaseloadTasksPresenter;
+  presenter: CaseloadTasksPresenterV2;
 }) {
   const { filters } = presenter;
   const { taskFilters } = useFeatureVariants();
@@ -72,22 +147,27 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
 
   return (
     <Dropdown>
-      <DropdownToggle>Filters</DropdownToggle>
-      <DropdownMenu>
+      <FilterDropdownToggle>
+        <FilterIcon /> Filters <FilterDownArrow />
+      </FilterDropdownToggle>
+      <FilterDropdownMenu>
         <>
-          {filters.map(({ field, options }) => (
+          {filters.map(({ field, options, title }) => (
             <TaskFilterDropdownGroup
               key={field}
+              title={title}
               field={field}
               options={options}
               presenter={presenter}
             />
           ))}
         </>
-        <DropdownMenuItem onClick={() => presenter.resetFilters()} key="clear">
-          Clear
-        </DropdownMenuItem>
-      </DropdownMenu>
+        <ClearAllButton key="clear" onClick={() => presenter.resetFilters()}>
+          Clear all filters{" "}
+          {presenter.selectedFilterCount !== 0 &&
+            `(${presenter.selectedFilterCount})`}
+        </ClearAllButton>
+      </FilterDropdownMenu>
     </Dropdown>
   );
 });
