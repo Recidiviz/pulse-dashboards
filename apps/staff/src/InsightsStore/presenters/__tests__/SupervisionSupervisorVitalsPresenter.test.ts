@@ -92,7 +92,7 @@ describe("with vitals data already hydrated", () => {
 
   test("vitalsMetricDetails when there are no VitalsMetricForOfficer for a metric", () => {
     vi.spyOn(InsightsOfflineAPIClient.prototype, "vitalsForSupervisor");
-    store.vitalsMetricsByPseudoId.set(pseudoId, [
+    store.vitalsMetricsBySupervisorPseudoId.set(pseudoId, [
       {
         metricId: "timely_contact",
         vitalsMetrics: [
@@ -124,7 +124,7 @@ describe("with vitals data already hydrated", () => {
 
   test("vitalsMetricDetails when officer not found", () => {
     vi.spyOn(InsightsOfflineAPIClient.prototype, "vitalsForSupervisor");
-    store.vitalsMetricsByPseudoId.set(pseudoId, [
+    store.vitalsMetricsBySupervisorPseudoId.set(pseudoId, [
       {
         metricId: "timely_contact",
         vitalsMetrics: [
@@ -150,7 +150,7 @@ describe("with vitals data already hydrated", () => {
 test("throw an when vitalsMetricDetails does not find a vitalsMetricConfig for a metricId", async () => {
   vi.spyOn(InsightsOfflineAPIClient.prototype, "vitalsForOfficer");
 
-  store.vitalsMetricsByPseudoId.set(pseudoId, [
+  store.vitalsMetricsBySupervisorPseudoId.set(pseudoId, [
     {
       // @ts-ignore
       metricId: "fake_id",
