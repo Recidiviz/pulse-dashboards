@@ -50,6 +50,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       homepageNameOverride,
     },
     userStore: { userAllowedNavigation },
+    currentTenantId,
   } = useRootStore() as PartiallyTypedRootStore;
 
   const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
@@ -60,6 +61,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const enableSystems = !supportsMultipleSystems || !isMobile;
   const workflowsHomepageName = homepageNameOverride ?? "Opportunities";
 
+  // TODO(#7613): Dynamically dedupe nav links when homepage is a normal tab
   return (
     <>
       {enabledInsights && (
@@ -82,14 +84,16 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       {enableMilestones && (
         <NavLink to={workflowsUrl("milestones")}>Kudos</NavLink>
       )}
-      {allowSupervisionTasks && enableWorkflows && (
-        <NavLink
-          to={workflowsUrl("tasks")}
-          onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}
-        >
-          Tasks
-        </NavLink>
-      )}
+      {allowSupervisionTasks &&
+        enableWorkflows &&
+        currentTenantId !== "US_TX" && (
+          <NavLink
+            to={workflowsUrl("tasks")}
+            onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}
+          >
+            Tasks
+          </NavLink>
+        )}
       {enableSystems
         ? workflowsSupportedSystems?.map((systemId: SystemId) => {
             const path = SYSTEM_ID_TO_PATH[systemId];

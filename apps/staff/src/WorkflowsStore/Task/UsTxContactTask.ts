@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,30 +17,25 @@
 
 import { fieldToDate } from "~datatypes";
 
-import { formatDate } from "../../utils/formatStrings";
+import { formatDate } from "../../utils";
 import { Task } from "./Task";
+import { UsTxContactTaskType } from "./types";
 
-class UsTxElectronicContactTask extends Task<"usTxElectronicContact"> {
-  displayName = "Electronic contact";
-
-  dueDateDisplayLong = `${this.displayName} recommended ${this.dueDateFromToday}`;
-
-  dueDateDisplayShort = `Recommended ${this.dueDateFromToday}`;
-
-  get lastElectronicContact(): string | undefined {
+abstract class UsTxContactTask<T extends UsTxContactTaskType> extends Task<T> {
+  get lastContactDate(): string | undefined {
     if (!this.details.lastContactDate) return;
     return formatDate(fieldToDate(this.details.lastContactDate));
   }
 
   get additionalDetails(): string {
-    return this.lastElectronicContact
-      ? `Last contact on ${this.lastElectronicContact}`
+    return this.lastContactDate
+      ? `Last contact on ${this.lastContactDate}`
       : "No previous visit on record.";
   }
 
   get frequency(): string {
-    return "Every 2 months";
+    return `Every ${this.details.frequency.toLowerCase()}`;
   }
 }
 
-export default UsTxElectronicContactTask;
+export default UsTxContactTask;

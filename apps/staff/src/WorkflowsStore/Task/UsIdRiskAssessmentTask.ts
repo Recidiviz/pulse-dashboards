@@ -23,9 +23,13 @@ import { Task } from "./Task";
 class UsIdRiskAssessmentTask extends Task<"assessment"> {
   displayName = "Risk assessment";
 
-  dueDateDisplayLong = `${this.displayName} due ${this.dueDateFromToday}`;
+  get dueDateDisplayLong() {
+    return `${this.displayName} due ${this.dueDateFromToday}`;
+  }
 
-  dueDateDisplayShort = `Due ${this.dueDateFromToday}`;
+  get dueDateDisplayShort() {
+    return `Due ${this.dueDateFromToday}`;
+  }
 
   get additionalDetails(): string | undefined {
     let details = "";

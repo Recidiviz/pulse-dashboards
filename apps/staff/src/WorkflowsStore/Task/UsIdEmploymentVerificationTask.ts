@@ -27,9 +27,9 @@ import { US_ID_SUPERVISION_EMPLOYMENT_VERIFICATION_COMPLIANCE } from "./utils";
 class UsIdEmploymentVerificationTask extends Task<"employment"> {
   displayName = "Employment";
 
-  dueDateDisplayLong = `Employment Verification recommended ${this.dueDateFromToday}`;
-
-  dueDateDisplayShort = `Recommended ${this.dueDateFromToday}`;
+  get dueDateDisplayLong() {
+    return `Employment Verification recommended ${this.dueDateFromToday}`;
+  }
 
   get lastVerified(): string | undefined {
     if (!this.details.lastContacted) return;
