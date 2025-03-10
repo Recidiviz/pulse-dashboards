@@ -45,7 +45,7 @@ import { ColumnDef, Row, SortingState } from "@tanstack/react-table";
 import { orderBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Accordion,
   AccordionItem,
@@ -66,7 +66,10 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
-import { formatWorkflowsDate } from "../../utils/formatStrings";
+import {
+  formatDurationFromOptionalDays,
+  formatWorkflowsDate,
+} from "../../utils/formatStrings";
 import {
   JusticeInvolvedPerson,
   Opportunity,
@@ -80,8 +83,9 @@ import PersonId from "../PersonId";
 import { Heading, MaxWidth } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
 import { EligibilityStatusPill } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityModuleHeader";
+import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
-import { CaseloadTable } from "./CaseloadTable";
+import { CaseloadTable, CaseloadTableManualSorting } from "./CaseloadTable";
 import { LinkedOpportunityCallout } from "./LinkedOpportunityCallout";
 import OpportunityNotifications from "./OpportunityNotifications";
 import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
@@ -176,6 +180,36 @@ const CaseloadAccordionCount = styled(Sans14)`
   color: ${palette.slate80};
 `;
 
+// In Table View, when sorting is enabled for a column, we need to specify the data used
+// to order rows (which may be different from the data displayed in the cell) with an
+// accessor function. The react-table API also allows an accessorKey to be specified in
+// lieu of an accessorFn, but accessorFn makes manual sorting of opportunities easier.
+type OpportunityTableColumnSorting =
+  | {
+      enableSorting: true;
+      sortingFn: NonNullable<ColumnDef<Opportunity>["sortingFn"]>;
+      accessorFn: (opp: Opportunity) => any;
+    }
+  | { enableSorting: false };
+
+export type OpportunityTableColumnId =
+  | "PERSON_NAME"
+  | "INSTANCE_DETAILS"
+  | "PERSON_DISPLAY_ID"
+  | "ASSIGNED_STAFF_NAME"
+  | "STATUS"
+  | "ELIGIBILITY_DATE"
+  | "ELIGIBLE_FOR"
+  | "SNOOZE_ENDS_IN"
+  | "SUBMITTED_FOR"
+  | "CTA_BUTTON";
+
+type OpportunityTableColumnDef = {
+  header: string;
+  id: OpportunityTableColumnId;
+  cell?: ColumnDef<Opportunity>["cell"];
+} & OpportunityTableColumnSorting;
+
 type OpportunityPersonListProps = {
   opportunityType: OpportunityType;
   supervisionPresenter?: SupervisionOpportunityPresenter;
@@ -185,128 +219,103 @@ type OpportunityCaseloadComponentProps = {
   presenter: OpportunityCaseloadPresenter;
 };
 
-const OpportunityCaseloadTable = function OpportunityCaseloadTable({
+export function PersonIdCell({ row }: { row: Row<Opportunity> }) {
+  const opportunity = row.original;
+  const { person } = opportunity;
+  return (
+    <PersonId
+      personId={person.displayId}
+      pseudoId={person.pseudonymizedId}
+      opportunity={opportunity}
+    >
+      {person.displayId}
+    </PersonId>
+  );
+}
+
+export function OfficerNameCell({ row }: { row: Row<Opportunity> }) {
+  return row.original.person.assignedStaffId ? (
+    <WorkflowsOfficerName officerId={row.original.person.assignedStaffId} />
+  ) : (
+    // for type safety, but we should not show this column for anyone without an officer
+    "—"
+  );
+}
+
+export function FormButtonCell({ row }: { row: Row<Opportunity> }) {
+  return row.original.form?.navigateToFormText ? (
+    <NavigateToFormButton
+      className="NavigateToFormButton"
+      opportunity={row.original}
+    >
+      {row.original.form.navigateToFormText}
+    </NavigateToFormButton>
+  ) : null;
+}
+
+export function EligibilityStatusCell({ row }: { row: Row<Opportunity> }) {
+  return <EligibilityStatusPill opportunity={row.original} />;
+}
+
+const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
   presenter,
   opportunities,
   manualSorting,
+  allColumns,
 }: OpportunityCaseloadComponentProps & {
   opportunities: Opportunity[];
-  manualSorting?: {
-    // returned by useState
-    sorting: SortingState;
-    setSorting: Dispatch<SetStateAction<SortingState>>;
-  };
+  manualSorting?: CaseloadTableManualSorting; // returned by useState
+  allColumns: OpportunityTableColumnDef[];
 }) {
-  // TODO(#7189) handle conditionally showing/hiding columns based on tab state
-
-  // We manually assemble column definitions instead of using createColumnHelper
-  // due to not needing display/grouping columns and due to type inference issues:
-  // https://github.com/TanStack/table/issues/4302
-  const columns: ColumnDef<Opportunity>[] = [
-    {
-      header: "Name",
-      id: "person.displayName",
-      accessorKey: "person.displayName",
-      enableSorting: true,
-      sortingFn: "text",
-    },
-    {
-      // TODO(#6737): Make the column header the same as the label displayed when copied
-      header: "DOC ID",
-      id: "person.displayId",
-      accessorKey: "person.displayId",
-      enableSorting: true,
-      sortingFn: "alphanumeric",
-      // eslint-disable-next-line react/no-unstable-nested-components
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        const opportunity = row.original;
-        const { person } = opportunity;
-        return (
-          <PersonId
-            personId={person.displayId}
-            pseudoId={person.pseudonymizedId}
-            opportunity={opportunity}
-          >
-            {person.displayId}
-          </PersonId>
-        );
-      },
-    },
-    {
-      header: "Officer",
-      id: "person.assignedStaffFullName",
-      accessorKey: "person.assignedStaffFullName",
-      enableSorting: true,
-      sortingFn: "text",
-    },
-    {
-      header: "Status",
-      enableSorting: false,
-      // eslint-disable-next-line react/no-unstable-nested-components
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        return <EligibilityStatusPill opportunity={row.original} />;
-      },
-    },
-    {
-      header: "Eligibility Date",
-      id: "eligibilityDate",
-      accessorKey: "eligibilityDate",
-      enableSorting: true,
-      sortingFn: "datetime",
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        return row.original.eligibilityDate
-          ? formatWorkflowsDate(row.original.eligibilityDate)
-          : "—";
-      },
-    },
-    {
-      id: "cta-button",
-      header: "",
-      enableSorting: false,
-      // eslint-disable-next-line react/no-unstable-nested-components
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        return row.original.form?.navigateToFormText ? (
-          <NavigateToFormButton
-            className="NavigateToFormButton"
-            opportunity={row.original}
-          >
-            {row.original.form.navigateToFormText}
-          </NavigateToFormButton>
-        ) : null;
-      },
-    },
-  ];
+  const displayedColumns = allColumns.filter(
+    (col) => presenter.enabledColumnIds[col.id],
+  );
 
   return (
     <HorizontalScrollWrapper>
       <CaseloadTable
         expandedLastColumn
         data={opportunities}
-        columns={columns}
+        columns={displayedColumns}
         onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
         shouldHighlightRow={(opp) => presenter.shouldHighlightOpportunity(opp)}
         manualSorting={manualSorting}
       />
     </HorizontalScrollWrapper>
   );
-};
+});
 
-const MultiTableView = function MultiTableView({
+const MultiTableView = observer(function MultiTableView({
   presenter,
   subcategoryOrder,
   peopleInActiveTabBySubcategory,
+  allColumns,
 }: OpportunityCaseloadComponentProps & {
   subcategoryOrder: string[];
   peopleInActiveTabBySubcategory: Record<
     string,
     Opportunity<JusticeInvolvedPerson>[]
   >;
+  allColumns: OpportunityTableColumnDef[];
 }) {
   // synchronize sorting state between all displayed tables
   const [sorting, setSorting] = useState<SortingState>([]);
   const displayedSubcategories = subcategoryOrder.filter(
     (category) => peopleInActiveTabBySubcategory[category],
   );
+
+  // A map from column ID to a function that takes the original data for a row
+  // and returns the value to use for sorting that column
+  const getDataToSortBy = useMemo(
+    () =>
+      Object.fromEntries(
+        allColumns
+          .filter((col) => col.enableSorting)
+          .map((col) => [col.id, col.accessorFn]),
+      ),
+    [allColumns],
+  );
+
   return (
     <Accordion
       allowMultipleExpanded
@@ -321,7 +330,7 @@ const MultiTableView = function MultiTableView({
             ? opps
             : orderBy(
                 opps,
-                [sorting[0].id],
+                [(opp) => getDataToSortBy[sorting[0].id](opp)],
                 [sorting[0].desc ? "desc" : "asc"],
               );
 
@@ -355,6 +364,7 @@ const MultiTableView = function MultiTableView({
                 presenter={presenter}
                 opportunities={sortedOpps}
                 manualSorting={{ sorting, setSorting }}
+                allColumns={allColumns}
               />
             </AccordionItemPanel>
           </AccordionItem>
@@ -362,11 +372,110 @@ const MultiTableView = function MultiTableView({
       })}
     </Accordion>
   );
-};
+});
 
 const TableView = observer(function TableView({
   presenter,
 }: OpportunityCaseloadComponentProps) {
+  // We manually assemble column definitions instead of using createColumnHelper
+  // due to not needing display/grouping columns and due to type inference issues:
+  // https://github.com/TanStack/table/issues/4302
+  const columns: OpportunityTableColumnDef[] = [
+    {
+      header: "Name",
+      id: "PERSON_NAME",
+      accessorFn: (opp: Opportunity) => opp.person.displayName,
+      enableSorting: true,
+      sortingFn: "text",
+    },
+    {
+      // TODO(#7453): Update this heading if other opportunities use instanceDetails
+      header: "Sentence",
+      id: "INSTANCE_DETAILS",
+      accessorFn: (opp: Opportunity) => opp.instanceDetails,
+      enableSorting: true,
+      sortingFn: "alphanumeric",
+    },
+    {
+      // TODO(#6737): Make the column header the same as the label displayed when copied
+      header: "ID",
+      id: "PERSON_DISPLAY_ID",
+      accessorFn: (opp: Opportunity) => opp.person.displayId,
+      enableSorting: true,
+      sortingFn: "alphanumeric",
+      cell: PersonIdCell,
+    },
+    {
+      header: "Officer",
+      id: "ASSIGNED_STAFF_NAME",
+      accessorFn: (opp: Opportunity) => opp.person.assignedStaffFullName,
+      enableSorting: true,
+      sortingFn: "text",
+      cell: OfficerNameCell,
+    },
+    {
+      header: "Status",
+      id: "STATUS",
+      enableSorting: false,
+      cell: EligibilityStatusCell,
+    },
+    {
+      header: "Eligibility Date",
+      id: "ELIGIBILITY_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => opp.eligibilityDate,
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        return row.original.eligibilityDate
+          ? formatWorkflowsDate(row.original.eligibilityDate)
+          : "—";
+      },
+    },
+    {
+      header: "Eligible for",
+      id: "ELIGIBLE_FOR",
+      enableSorting: true,
+      sortingFn: "basic",
+      accessorFn: presenter.eligibleForDays,
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        return formatDurationFromOptionalDays(
+          presenter.eligibleForDays(row.original),
+        );
+      },
+    },
+    {
+      header: "Snooze ends in",
+      id: "SNOOZE_ENDS_IN",
+      enableSorting: true,
+      sortingFn: "basic",
+      accessorFn: presenter.snoozeEndsInDays,
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        return formatDurationFromOptionalDays(
+          presenter.snoozeEndsInDays(row.original),
+        );
+      },
+    },
+    {
+      header: `${presenter.config.submittedTabTitle} for`,
+      id: "SUBMITTED_FOR",
+      enableSorting: true,
+      sortingFn: "basic",
+      accessorFn: presenter.submittedForDays,
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        return formatDurationFromOptionalDays(
+          presenter.submittedForDays(row.original),
+        );
+      },
+    },
+    // The CTA button column should be last to take advantage of special rightmost column formatting
+    {
+      header: "",
+      id: "CTA_BUTTON",
+      enableSorting: false,
+      cell: FormButtonCell,
+    },
+  ];
+
   const { subcategoryOrder, peopleInActiveTabBySubcategory } = presenter;
 
   // With subcategories: show a table for each subcategory
@@ -376,6 +485,7 @@ const TableView = observer(function TableView({
         presenter={presenter}
         subcategoryOrder={subcategoryOrder}
         peopleInActiveTabBySubcategory={peopleInActiveTabBySubcategory}
+        allColumns={columns}
       />
     );
   }
@@ -385,6 +495,7 @@ const TableView = observer(function TableView({
     <OpportunityCaseloadTable
       presenter={presenter}
       opportunities={presenter.peopleInActiveTab}
+      allColumns={columns}
     />
   );
 });

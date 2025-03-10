@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import tk from "timekeeper";
+
 import { mockOpportunity } from "../../../core/__tests__/testUtils";
 import FirestoreStore from "../../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import { FeatureVariantRecord } from "../../../RootStore/types";
 import { OpportunityConfiguration } from "../../Opportunity/OpportunityConfigurations";
-import { OpportunityTabGroups } from "../../Opportunity/types";
+import { OpportunityTab, OpportunityTabGroups } from "../../Opportunity/types";
 import { WorkflowsStore } from "../../WorkflowsStore";
 import { OpportunityCaseloadPresenter } from "../OpportunityCaseloadPresenter";
 
@@ -82,15 +84,17 @@ describe("one tab group, no supervision presenter", () => {
 
     expect(presenter.displayTabs).toEqual([
       "Eligible Now",
+      "Submitted",
       "Marked Ineligible",
     ]);
-
+    // Moves the "Marked Ineligible" tab to the previous spot of "Eligible Now"
     presenter.swapTabs("Marked Ineligible", "Eligible Now");
 
     expect(mockUpdateCustomTabOrderings).toHaveBeenCalledOnce();
     expect(presenter.displayTabs).toEqual([
       "Marked Ineligible",
       "Eligible Now",
+      "Submitted",
     ]);
   });
 
@@ -123,9 +127,11 @@ describe("one tab group, no supervision presenter", () => {
     };
 
     // Mock config doesn't support Almost Eligible, so that one gets dropped
+    // Config also specifies Submitted, so that one should be included
     expect(presenter.displayTabs).toEqual([
       "Marked Ineligible",
       "Eligible Now",
+      "Submitted",
     ]);
   });
 
@@ -252,6 +258,89 @@ describe("in insights/with supervision presenter", () => {
     expect(presenter.urlForOppConfig(mockOpportunity.config)).toEqual(
       `/insights/supervision/staff/testofficer1/opportunity/${mockOpportunity.config.urlSection}`,
     );
+  });
+
+  test("doesn't show the officer name column", () => {
+    expect(presenter.enabledColumnIds["ASSIGNED_STAFF_NAME"]).toBeFalse();
+  });
+});
+
+describe("table view columns", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    tk.reset();
+
+    presenter = getPresenter({});
+  });
+
+  test("show Eligibility Date and Eligible For columns when viewing opportunity that became eligible in the past", () => {
+    tk.freeze(new Date(2000, 1, 1));
+    vi.spyOn(
+      mockWorkflowsStore,
+      "allOpportunitiesByType",
+      "get",
+    ).mockReturnValue({
+      [mockOpportunity.type]: [
+        {
+          ...mockOpportunity,
+          eligibilityDate: new Date(1999, 1, 1),
+        },
+      ],
+    });
+    presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
+    expect(presenter.enabledColumnIds["ELIGIBILITY_DATE"]).toBeTrue();
+    expect(presenter.enabledColumnIds["ELIGIBLE_FOR"]).toBeTrue();
+  });
+
+  test("show Eligibility Date but not Eligible For column when viewing opportunity that will become eligible in the future", () => {
+    tk.freeze(new Date(2000, 1, 1));
+    vi.spyOn(
+      mockWorkflowsStore,
+      "allOpportunitiesByType",
+      "get",
+    ).mockReturnValue({
+      [mockOpportunity.type]: [
+        {
+          ...mockOpportunity,
+          eligibilityDate: new Date(2000, 2, 2),
+        },
+      ],
+    });
+    presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
+    expect(presenter.enabledColumnIds["ELIGIBILITY_DATE"]).toBeTrue();
+    expect(presenter.enabledColumnIds["ELIGIBLE_FOR"]).toBeFalse();
+  });
+
+  test("don't show Instance Details column when opportunity doesn't have them", () => {
+    expect(presenter.enabledColumnIds["INSTANCE_DETAILS"]).toBeFalse();
+  });
+
+  test("show Instance Details column when opportunity has them", () => {
+    vi.spyOn(
+      mockWorkflowsStore,
+      "allOpportunitiesByType",
+      "get",
+    ).mockReturnValue({
+      [mockOpportunity.type]: [
+        {
+          ...mockOpportunity,
+          instanceDetails: "test",
+        },
+      ],
+    });
+    presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
+
+    expect(presenter.enabledColumnIds["INSTANCE_DETAILS"]).toBeTrue();
+  });
+
+  test("show Snooze Ends In column when viewing denied opportunities", () => {
+    presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
+    expect(presenter.enabledColumnIds["SNOOZE_ENDS_IN"]).toBeTrue();
+  });
+
+  test("show Submitted For column when viewing submitted opportunities", () => {
+    presenter.activeTab = mockOpportunity.submittedTabTitle as OpportunityTab;
+    expect(presenter.enabledColumnIds["SUBMITTED_FOR"]).toBeTrue();
   });
 });
 

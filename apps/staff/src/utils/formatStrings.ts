@@ -250,6 +250,12 @@ function formatDurationFromDays(days: number): string {
   return moment.duration(days, "days").humanize();
 }
 
+function formatDurationFromOptionalDays(days?: number, fallback = "—"): string {
+  // moment.duration(0).humanize gives "a few seconds", which is not always applicable
+  if (days === 0) return "less than 1 day";
+  return days ? formatDurationFromDays(days) : fallback;
+}
+
 /*
   Given a date, returns the duration from now in the form "X years, Y months"
   If either value is zero, that unit is omitted
@@ -467,6 +473,7 @@ export {
   formatDistrictLabel,
   formatDueDateFromToday,
   formatDurationFromDays,
+  formatDurationFromOptionalDays,
   formatISODateString,
   formatLargeNumber,
   formatName,

@@ -17,12 +17,14 @@
 
 import { toTitleCase } from "@artsy/to-title-case";
 import { arrayMove } from "@dnd-kit/sortable";
-import { difference, intersection } from "lodash";
+import { differenceInDays, startOfToday } from "date-fns";
+import { difference, intersection, some } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
 import toast from "react-hot-toast";
 
 import { OpportunityType } from "~datatypes";
 
+import { OpportunityTableColumnId } from "../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { insightsUrl, workflowsUrl } from "../../core/views";
 import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
@@ -45,12 +47,14 @@ import {
   TableViewSelectInterface,
   TableViewSelectPresenter,
 } from "./TableViewSelectPresenter";
+
 /**
  * Responsible for presenting information about the caseload relative to a user's
  * current view of a single opportunity, including who is eligible and the user's
  * visual settings such as tab grouping and tab ordering.
  */
 export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
+  readonly isSupervisorHomepage: boolean;
   readonly displayTabGroups: OpportunityTabGroup[];
   readonly showZeroGrantsPill: boolean;
   private readonly sortingEnabled: boolean;
@@ -71,6 +75,8 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
     public readonly opportunityType: OpportunityType,
     private readonly supervisionPresenter?: SupervisionOpportunityPresenter,
   ) {
+    this.isSupervisorHomepage = !!supervisionPresenter;
+
     this.displayTabGroups = Object.keys(
       config.tabGroups,
     ) as OpportunityTabGroup[];
@@ -119,6 +125,64 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
 
   set showListView(showListView: boolean) {
     this.tableViewSelectPresenter.showListView = showListView;
+  }
+
+  /**
+   * Return a map from column IDs of the opportunity table view to whether or not
+   * the column should currently be visible.
+   */
+  get enabledColumnIds(): Record<OpportunityTableColumnId, boolean> {
+    const opportunities = this.peopleInActiveTab;
+    return {
+      PERSON_NAME: true,
+      INSTANCE_DETAILS: some(opportunities, (opp) => !!opp.instanceDetails),
+      PERSON_DISPLAY_ID: true,
+      ASSIGNED_STAFF_NAME:
+        !this.isSupervisorHomepage &&
+        some(opportunities, (opp) => !!opp.person.assignedStaffId),
+      STATUS: true,
+      ELIGIBILITY_DATE: some(opportunities, (opp) => !!opp.eligibilityDate),
+      ELIGIBLE_FOR: some(
+        opportunities,
+        (opp: Opportunity) =>
+          !opp.denied &&
+          !opp.isSubmitted &&
+          !opp.almostEligible &&
+          opp.eligibilityDate &&
+          opp.eligibilityDate < startOfToday(),
+      ),
+      SNOOZE_ENDS_IN: this.isViewingDeniedTab,
+      SUBMITTED_FOR: this.isViewingSubmittedTab,
+      CTA_BUTTON: true,
+    };
+  }
+
+  submittedForDays(opp: Opportunity): number | undefined {
+    if (!opp.submittedUpdate) return;
+    return differenceInDays(opp.submittedUpdate.date.toDate(), startOfToday());
+  }
+
+  snoozeEndsInDays(opp: Opportunity): number | undefined {
+    if (opp.manualSnooze) return opp.snoozeForDays;
+    if (opp.autoSnooze && opp.autoSnooze.snoozeUntil) {
+      return differenceInDays(
+        startOfToday(),
+        new Date(opp.autoSnooze.snoozeUntil),
+      );
+    }
+  }
+
+  eligibleForDays(opp: Opportunity): number | undefined {
+    if (!opp.eligibilityDate || opp.eligibilityDate > startOfToday()) return;
+    return differenceInDays(startOfToday(), opp.eligibilityDate);
+  }
+
+  get isViewingDeniedTab() {
+    return this.activeTab === this.config.deniedTabTitle;
+  }
+
+  get isViewingSubmittedTab() {
+    return this.activeTab === this.config.submittedTabTitle;
   }
 
   get activeTab() {
