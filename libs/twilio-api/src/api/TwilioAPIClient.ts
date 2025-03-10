@@ -45,4 +45,8 @@ export class TwilioAPIClient implements ITwilioAPI {
 
     return message;
   }
+
+  async getMessage(messageSid: string) {
+    return await this.client.messages(messageSid).fetch();
+  }
 }

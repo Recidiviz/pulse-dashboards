@@ -34,6 +34,10 @@
       "~@jii-texting-server/prisma/*": [
         "libs/@jii-texting-server/prisma/src/*"
       ],
+      "~@jii-texting-server/utils": [
+        "libs/@jii-texting-server/utils/src/index.ts"
+      ],
+      "~@jii-texting-server/utils/*": ["libs/@jii-texting-server/utils/src/*"],
       "~@sentencing-server/import": [
         "apps/@sentencing-server/import/src/index.ts"
       ],
@@ -85,6 +89,7 @@
       "~server-setup-plugin/*": ["libs/common/server-setup-plugin/src/*"],
       "~shared-assets/*": ["libs/shared-assets/src/*"],
       "~staff-shared-server": ["libs/staff-shared-server/src/index.ts"],
+      "~twilio-api": ["libs/twilio-api/src/index.ts"],
       "~ui": ["libs/ui/src/index.ts"]
     },
     "resolveJsonModule": true,
