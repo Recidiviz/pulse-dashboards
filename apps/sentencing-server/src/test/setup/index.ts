@@ -50,7 +50,7 @@ vi.mock("~fastify-data-import-plugin", () => ({
   ImportRoutesHandler: MockImportRoutesHandler,
 }));
 
-beforeAll(async () => {
+beforeAll(async() => {
   init({
     dsn: process.env["SENTRY_DSN"],
     transport: sentryTransport,

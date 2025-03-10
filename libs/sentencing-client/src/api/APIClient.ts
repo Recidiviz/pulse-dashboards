@@ -164,7 +164,7 @@ export class APIClient {
       return Promise.reject({ message: "No tRPC client initialized" });
 
     const fetchedData =
-      await this.trpcClient.opportunity.getOpportunities.query();
+      await this.trpcClient.opportunity.getOpportunities.query({});
 
     return fetchedData;
   }

@@ -15,24 +15,42 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/node";
+
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";
 import { baseProcedure, router } from "~@sentencing-server/trpc/init";
+import { getOpportunitiesInputSchema } from "~@sentencing-server/trpc/routes/opportunity/opportunity.schema";
+import { PrismaOpportunity } from "~@sentencing-server/trpc/routes/opportunity/types";
+import { getFindHelpPrograms } from "~@sentencing-server/trpc/routes/opportunity/utils";
 
 export const opportunityRouter = router({
-  getOpportunities: baseProcedure.query(async ({ ctx: { prisma } }) => {
-    const opportunities = await prisma.opportunity.findMany({
-      omit: {
-        id: true,
-      },
-    });
+  getOpportunities: baseProcedure
+    .input(getOpportunitiesInputSchema)
+    .query(async ({ ctx: { prisma }, input: { includeFindHelpPrograms } }) => {
+      const opportunities = await prisma.opportunity.findMany({
+        omit: {
+          id: true,
+        },
+      });
 
-    return opportunities.map((opportunity) => ({
-      ...opportunity,
-      providerName:
-        // If the provider name is the default unknown provider name, return null
-        opportunity.providerName === OPPORTUNITY_UNKNOWN_PROVIDER_NAME
-          ? null
-          : opportunity.providerName,
-    }));
-  }),
+      const cleanedDbOpportunities = opportunities.map((opportunity) => ({
+        ...opportunity,
+        providerName:
+          // If the provider name is the default unknown provider name, return null
+          opportunity.providerName === OPPORTUNITY_UNKNOWN_PROVIDER_NAME
+            ? null
+            : opportunity.providerName,
+      }));
+
+      let findHelpOpportunities: PrismaOpportunity[] = [];
+      if (includeFindHelpPrograms) {
+        try {
+          findHelpOpportunities = await getFindHelpPrograms();
+        } catch (e) {
+          captureException(e);
+        }
+      }
+
+      return cleanedDbOpportunities.concat(findHelpOpportunities);
+    }),
 });

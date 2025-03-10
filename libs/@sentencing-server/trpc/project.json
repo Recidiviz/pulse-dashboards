@@ -5,6 +5,13 @@
   "projectType": "library",
   "tags": ["sentencing-server"],
   "targets": {
+    "update-findhelp-labels": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx findhelp-taxonomy/update-findhelp-labels.mts",
+        "cwd": "{projectRoot}"
+      }
+    },
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
