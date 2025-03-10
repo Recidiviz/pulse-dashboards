@@ -37,6 +37,8 @@ import {
   SupervisionOfficerSupervisor,
   SupervisionVitalsMetric,
   UserInfo,
+  VitalsMetricForOfficer,
+  VitalsMetricId,
 } from "~datatypes";
 import { FlowMethod } from "~hydration-utils";
 
@@ -91,7 +93,8 @@ export class InsightsSupervisionStore {
 
   actionStrategiesEnabled = true;
 
-  vitalsMetricsByPseudoId: Map<string, SupervisionVitalsMetric[]> = new Map();
+  vitalsMetricsBySupervisorPseudoId: Map<string, SupervisionVitalsMetric[]> =
+    new Map();
 
   officersOutcomesBySupervisorPseudoId: Map<
     string,
@@ -269,6 +272,64 @@ export class InsightsSupervisionStore {
       .find((o) => o.pseudonymizedId === this.officerPseudoId);
 
     return officerOutcomes;
+  }
+
+  get officerVitalsMetrics(): SupervisionVitalsMetric[] | undefined {
+    const officerVitalsMetrics = [
+      ...this.vitalsMetricsBySupervisorPseudoId.values(),
+    ]
+      .flat()
+      .map((vitalsMetric) => ({
+        metricId: vitalsMetric.metricId,
+        vitalsMetrics: vitalsMetric.vitalsMetrics.filter(
+          (m) => m.officerPseudonymizedId === this.officerPseudoId,
+        ),
+      }))
+      .filter((vitalsMetric) => vitalsMetric.vitalsMetrics.length > 0);
+
+    // Officers can report to multiple supervisors, so there might be duplicate values returned.
+    // Start by grouping all metrics by MetricId, so each MetricId has a single array of vitals
+    // metrics.
+    const officerVitalsMetricMap = officerVitalsMetrics.reduce<
+      Record<VitalsMetricId, VitalsMetricForOfficer[]>
+    >(
+      (accumulator, currentValue) => ({
+        ...accumulator,
+        [currentValue.metricId]: [
+          ...(accumulator[currentValue.metricId] ?? []),
+          ...currentValue.vitalsMetrics,
+        ],
+      }),
+      {} as Record<VitalsMetricId, VitalsMetricForOfficer[]>,
+    );
+
+    // Now, check that in cases where there are multiple entries in the array for a single MetricId,
+    // that the values all match. If they don't, throw an error. If they do, deduplicate to the
+    // first value.
+    const officerVitalsMetricsDeduped = Object.entries(
+      officerVitalsMetricMap,
+    ).map(([metricId, vitalsMetrics]) => {
+      if (
+        vitalsMetrics.length > 1 &&
+        !vitalsMetrics.every(
+          (metric) =>
+            metric.metricValue === vitalsMetrics[0].metricValue &&
+            metric.metric30DDelta === vitalsMetrics[0].metric30DDelta,
+        )
+      ) {
+        throw new Error(
+          `Found mismatched metric values for metric ${metricId} for officer pseudo ID ${this.officerPseudoId}`,
+        );
+      }
+      return {
+        metricId: metricId as VitalsMetricId,
+        vitalsMetrics: vitalsMetrics.slice(0, 1),
+      };
+    });
+
+    return officerVitalsMetricsDeduped.length > 0
+      ? officerVitalsMetricsDeduped
+      : undefined;
   }
 
   get allActionStrategies(): ActionStrategyCopy {
@@ -593,28 +654,17 @@ export class InsightsSupervisionStore {
   *populateVitalsForSupervisor(
     supervisorPseudoId: string,
   ): FlowMethod<InsightsAPI["vitalsForSupervisor"], void> {
-    if (this.vitalsMetricsByPseudoId.has(supervisorPseudoId)) return;
+    if (this.vitalsMetricsBySupervisorPseudoId.has(supervisorPseudoId)) return;
 
     const vitalsForSupervisor =
       yield this.insightsStore.apiClient.vitalsForSupervisor(
         supervisorPseudoId,
       );
 
-    this.vitalsMetricsByPseudoId.set(supervisorPseudoId, vitalsForSupervisor);
-  }
-
-  /**
-   * Fetches vitals metrics data for the specified officer
-   */
-  *populateVitalsForOfficer(
-    officerPseudoId: string,
-  ): FlowMethod<InsightsAPI["vitalsForOfficer"], void> {
-    if (this.vitalsMetricsByPseudoId.has(officerPseudoId)) return;
-
-    const vitalsForOfficer =
-      yield this.insightsStore.apiClient.vitalsForOfficer(officerPseudoId);
-
-    this.vitalsMetricsByPseudoId.set(officerPseudoId, vitalsForOfficer);
+    this.vitalsMetricsBySupervisorPseudoId.set(
+      supervisorPseudoId,
+      vitalsForSupervisor,
+    );
   }
 
   /**

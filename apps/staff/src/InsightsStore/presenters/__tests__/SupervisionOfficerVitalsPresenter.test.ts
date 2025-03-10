@@ -17,7 +17,11 @@
 
 import { flowResult } from "mobx";
 
-import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
+import {
+  InsightsConfigFixture,
+  supervisionOfficerFixture,
+  supervisionOfficerSupervisorsFixture,
+} from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import UserStore from "../../../RootStore/UserStore";
@@ -27,6 +31,7 @@ import { SupervisionOfficerVitalsPresenter } from "../SupervisionOfficerVitalsPr
 
 let store: InsightsSupervisionStore;
 const pseudoId = "hashed-agonzalez123";
+const testOfficerPseudoId = supervisionOfficerFixture[0].pseudonymizedId;
 
 beforeEach(() => {
   vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
@@ -40,7 +45,7 @@ beforeEach(() => {
     new RootStore().insightsStore,
     InsightsConfigFixture,
   );
-  const testOfficerPseudoId = supervisionOfficerFixture[0].pseudonymizedId;
+  store.setOfficerPseudoId(testOfficerPseudoId);
 
   presenter = new SupervisionOfficerVitalsPresenter(store, testOfficerPseudoId);
 });
@@ -53,13 +58,35 @@ let presenter: SupervisionOfficerVitalsPresenter;
 
 describe("with vitals data already hydrated", () => {
   beforeEach(async () => {
-    await Promise.all([
-      flowResult(store.populateVitalsForOfficer(presenter.officerPseudoId)),
-    ]);
+    await Promise.all([flowResult(presenter.populateVitalsForOfficer())]);
   });
 
   test("is immediately hydrated", () => {
     expect(presenter.hydrationState.status).toBe("hydrated");
+    expect(presenter.officerVitalsMetrics).toMatchInlineSnapshot(`
+      [
+        {
+          "metricId": "timely_contact",
+          "vitalsMetrics": [
+            {
+              "metric30DDelta": -7,
+              "metricValue": 87,
+              "officerPseudonymizedId": "hashed-so1",
+            },
+          ],
+        },
+        {
+          "metricId": "timely_risk_assessment",
+          "vitalsMetrics": [
+            {
+              "metric30DDelta": -4,
+              "metricValue": 99,
+              "officerPseudonymizedId": "hashed-so1",
+            },
+          ],
+        },
+      ]
+    `);
   });
 
   test("makes no additional API calls", async () => {
@@ -74,21 +101,63 @@ describe("with vitals data already hydrated", () => {
 });
 
 test("vitalsMetricDetails when there are no VitalsMetricForOfficer for a metric", () => {
-  vi.spyOn(InsightsOfflineAPIClient.prototype, "vitalsForOfficer");
-  store.vitalsMetricsByPseudoId.set(presenter.officerPseudoId, [
+  store.vitalsMetricsBySupervisorPseudoId.set(
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
+    [
+      {
+        metricId: "timely_contact",
+        vitalsMetrics: [
+          {
+            officerPseudonymizedId: testOfficerPseudoId,
+            metric30DDelta: 1,
+            metricValue: 99,
+          },
+        ],
+      },
+      {
+        metricId: "timely_risk_assessment",
+        vitalsMetrics: [],
+      },
+    ],
+  );
+  expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
+    [
+      {
+        "label": "Timely Contact",
+        "metric30DDelta": 1,
+        "metricValue": 99,
+        "officerPseudonymizedId": "hashed-so1",
+      },
+    ]
+  `);
+});
+
+test("vitalsMetricDetails when an officer supervises themself", () => {
+  store.vitalsMetricsBySupervisorPseudoId.set(testOfficerPseudoId, [
     {
       metricId: "timely_contact",
       vitalsMetrics: [
         {
-          officerPseudonymizedId: supervisionOfficerFixture[0].pseudonymizedId,
+          officerPseudonymizedId: testOfficerPseudoId,
           metric30DDelta: 1,
           metricValue: 99,
+        },
+        {
+          officerPseudonymizedId: supervisionOfficerFixture[1].pseudonymizedId,
+          metric30DDelta: 2,
+          metricValue: 98,
         },
       ],
     },
     {
       metricId: "timely_risk_assessment",
-      vitalsMetrics: [],
+      vitalsMetrics: [
+        {
+          officerPseudonymizedId: supervisionOfficerFixture[2].pseudonymizedId,
+          metric30DDelta: 3,
+          metricValue: 97,
+        },
+      ],
     },
   ]);
   expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
@@ -104,37 +173,122 @@ test("vitalsMetricDetails when there are no VitalsMetricForOfficer for a metric"
 });
 
 test("vitalsMetricDetails when officer not found", () => {
-  vi.spyOn(InsightsOfflineAPIClient.prototype, "vitalsForOfficer");
-  store.vitalsMetricsByPseudoId.set("not-a-real-id", [
-    {
-      metricId: "timely_contact",
-      vitalsMetrics: [
-        {
-          officerPseudonymizedId: supervisionOfficerFixture[0].pseudonymizedId,
-          metric30DDelta: 1,
-          metricValue: 99,
-        },
-      ],
-    },
-  ]);
+  store.vitalsMetricsBySupervisorPseudoId.set(
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
+    [
+      {
+        metricId: "timely_contact",
+        vitalsMetrics: [
+          {
+            officerPseudonymizedId: "not-a-real-id",
+            metric30DDelta: 1,
+            metricValue: 99,
+          },
+        ],
+      },
+    ],
+  );
   expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`[]`);
 });
 
-test("throw an when vitalsMetricDetails does not find a vitalsMetricConfig for a metricId", () => {
-  vi.spyOn(InsightsOfflineAPIClient.prototype, "vitalsForOfficer");
-  store.vitalsMetricsByPseudoId.set(presenter.officerPseudoId, [
-    {
-      // @ts-ignore
-      metricId: "fake_id",
-      vitalsMetrics: [
-        {
-          officerPseudonymizedId: supervisionOfficerFixture[0].pseudonymizedId,
-          metric30DDelta: 1,
-          metricValue: 99,
-        },
-      ],
-    },
-  ]);
+test("vitalsmetricDetails when an officer has multiple supervisors", () => {
+  store.vitalsMetricsBySupervisorPseudoId.set(
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
+    [
+      {
+        metricId: "timely_contact",
+        vitalsMetrics: [
+          {
+            officerPseudonymizedId: testOfficerPseudoId,
+            metric30DDelta: 1,
+            metricValue: 99,
+          },
+        ],
+      },
+    ],
+  );
+  store.vitalsMetricsBySupervisorPseudoId.set(
+    supervisionOfficerSupervisorsFixture[1].pseudonymizedId,
+    [
+      {
+        metricId: "timely_contact",
+        vitalsMetrics: [
+          {
+            officerPseudonymizedId: testOfficerPseudoId,
+            metric30DDelta: 1,
+            metricValue: 99,
+          },
+        ],
+      },
+    ],
+  );
+  expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
+    [
+      {
+        "label": "Timely Contact",
+        "metric30DDelta": 1,
+        "metricValue": 99,
+        "officerPseudonymizedId": "hashed-so1",
+      },
+    ]
+  `);
+});
+
+test("vitalsmetricDetails when an officer has multiple supervisors with different values for the officer", () => {
+  store.vitalsMetricsBySupervisorPseudoId.set(
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
+    [
+      {
+        metricId: "timely_contact",
+        vitalsMetrics: [
+          {
+            officerPseudonymizedId: testOfficerPseudoId,
+            metric30DDelta: 1,
+            metricValue: 99,
+          },
+        ],
+      },
+    ],
+  );
+  store.vitalsMetricsBySupervisorPseudoId.set(
+    supervisionOfficerSupervisorsFixture[1].pseudonymizedId,
+    [
+      {
+        metricId: "timely_contact",
+        vitalsMetrics: [
+          {
+            officerPseudonymizedId: testOfficerPseudoId,
+            metric30DDelta: 1,
+            metricValue: 60,
+          },
+        ],
+      },
+    ],
+  );
+  expect(
+    () => presenter.vitalsMetricDetails,
+  ).toThrowErrorMatchingInlineSnapshot(
+    `[Error: Found mismatched metric values for metric timely_contact for officer pseudo ID hashed-so1]`,
+  );
+});
+
+test("throw an error when vitalsMetricDetails does not find a vitalsMetricConfig for a metricId", () => {
+  store.vitalsMetricsBySupervisorPseudoId.set(
+    supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
+    [
+      {
+        // @ts-ignore
+        metricId: "fake_id",
+        vitalsMetrics: [
+          {
+            officerPseudonymizedId: testOfficerPseudoId,
+            metric30DDelta: 1,
+            metricValue: 99,
+          },
+        ],
+      },
+    ],
+  );
   expect(
     () => presenter.vitalsMetricDetails,
   ).toThrowErrorMatchingInlineSnapshot(

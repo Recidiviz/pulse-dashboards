@@ -17,8 +17,10 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { Hydratable, HydratesFromSource } from "~hydration-utils";
+import { SupervisionVitalsMetric } from "~datatypes";
+import { FlowMethod, Hydratable, HydratesFromSource } from "~hydration-utils";
 
+import { InsightsAPI } from "../api/interface";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { OfficerVitalsMetricDetail } from "./types";
 import { labelForVitalsMetricId } from "./utils";
@@ -33,6 +35,7 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
   // Properties and Constructor
   // ==============================
 
+  private fetchedOfficerVitalsMetrics?: SupervisionVitalsMetric[];
   private hydrator: HydratesFromSource;
 
   constructor(
@@ -66,10 +69,15 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
   // Component specific logic
   // ==============================
 
-  get vitalsMetricDetails(): OfficerVitalsMetricDetail[] {
-    const metrics = this.supervisionStore.vitalsMetricsByPseudoId.get(
-      this.officerPseudoId,
+  get officerVitalsMetrics() {
+    return (
+      this.supervisionStore.officerVitalsMetrics ??
+      this.fetchedOfficerVitalsMetrics
     );
+  }
+
+  get vitalsMetricDetails(): OfficerVitalsMetricDetail[] {
+    const metrics = this.officerVitalsMetrics;
     if (!metrics) return [];
 
     const formattedMetrics: OfficerVitalsMetricDetail[] = [];
@@ -96,11 +104,20 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
    * the necessary data for this presenter.
    */
   populateMethods() {
-    return [
-      flowResult(
-        this.supervisionStore.populateVitalsForOfficer(this.officerPseudoId),
-      ),
-    ];
+    return [flowResult(this.populateVitalsForOfficer())];
+  }
+
+  /**
+   * Fetch vitals metrics for current officer.
+   */
+  *populateVitalsForOfficer(): FlowMethod<
+    InsightsAPI["vitalsForOfficer"],
+    void
+  > {
+    this.fetchedOfficerVitalsMetrics =
+      yield this.supervisionStore.insightsStore.apiClient.vitalsForOfficer(
+        this.officerPseudoId,
+      );
   }
 
   /**
@@ -111,9 +128,7 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
   }
 
   private expectVitalsForOfficerPopulated() {
-    if (
-      !this.supervisionStore.vitalsMetricsByPseudoId.get(this.officerPseudoId)
-    )
+    if (!this.officerVitalsMetrics)
       throw new Error(
         `Failed to populate vitals metrics for officer ${this.officerPseudoId}`,
       );

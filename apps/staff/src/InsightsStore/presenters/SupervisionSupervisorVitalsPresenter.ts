@@ -93,7 +93,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
   }
 
   get vitalsMetricDetails(): SupervisorVitalsMetricDetail[] {
-    const metrics = this.supervisionStore.vitalsMetricsByPseudoId.get(
+    const metrics = this.supervisionStore.vitalsMetricsBySupervisorPseudoId.get(
       this.supervisorPseudoId,
     );
 
@@ -162,7 +162,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
 
   private expectVitalsForSupervisorPopulated() {
     if (
-      !this.supervisionStore.vitalsMetricsByPseudoId.get(
+      !this.supervisionStore.vitalsMetricsBySupervisorPseudoId.get(
         this.supervisorPseudoId,
       )
     )
