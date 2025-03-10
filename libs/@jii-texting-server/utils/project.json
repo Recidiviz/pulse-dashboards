@@ -1,0 +1,56 @@
+{
+  "name": "@jii-texting-server/utils",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@jii-texting-server/utils/src",
+  "projectType": "library",
+  "tags": ["jii-texting-server"],
+  "targets": {
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_jii_texting_server --env_test env_test_jii_texting_server",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [        {
+        "projects": ["@jii-texting-server/prisma"],
+        "target": "prisma-generate"
+      }],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "docker"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/coverage/libs/@jii-texting-server/utils"],
+      "cache": true,
+      "options": {
+        "command": "nx prisma-push @jii-texting-server/prisma --accept-data-loss && cd libs/@jii-texting-server/utils && vitest",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}

@@ -77,6 +77,7 @@ enum MessageAttemptStatus {
   FAILURE
   SUCCESS
   IN_PROGRESS
+  UNKNOWN
 }
 
 model Person {
@@ -99,8 +100,8 @@ model Person {
 }
 
 model MessageSeries {
-  id          String      @id @default(cuid())
-  messageType MessageType
+  id               String      @id @default(cuid())
+  messageType      MessageType
 
   person           Person           @relation(fields: [personExternalId], references: [externalId])
   personExternalId String
@@ -118,7 +119,6 @@ model MessageAttempt {
   createdTimestamp       DateTime // when sent post request to Twilio
   lastUpdatedTimestamp   DateTime? // when status last updated by us
   twilioSentTimestamp    DateTime? // when Twilio actually attempted to send message
-  deliveredTimestamp     DateTime? // when message was actually delivered to jii
   requestedSendTimestamp DateTime? // when we asked Twilio to schedule send message
   error                  String?
   errorCode              Int?
