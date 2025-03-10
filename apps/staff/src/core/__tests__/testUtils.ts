@@ -116,6 +116,7 @@ export const mockOpportunity: Opportunity<Client> = {
       "ELIGIBILITY STATUS": generateTabs({
         supportsAlmostEligible: false,
         supportsDenial: true,
+        submittedTabTitle: "Submitted",
       }),
     },
     isEnabled: true,

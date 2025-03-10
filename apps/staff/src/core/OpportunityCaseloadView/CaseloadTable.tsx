@@ -155,16 +155,18 @@ const SortIconWrapper = styled.div<{
   }};
 `;
 
+export type CaseloadTableManualSorting = {
+  sorting: SortingState;
+  setSorting: Dispatch<SetStateAction<SortingState>>;
+};
+
 type CaseloadTableProps<TData> = {
   data: TData[];
   columns: ColumnDef<TData>[];
   expandedLastColumn?: boolean;
   onRowClick: (row: TData) => void;
   shouldHighlightRow: (row: TData) => boolean;
-  manualSorting?: {
-    sorting: SortingState;
-    setSorting: Dispatch<SetStateAction<SortingState>>;
-  };
+  manualSorting?: CaseloadTableManualSorting;
 };
 
 export const CaseloadTable = observer(function CaseloadTable<TData>({
@@ -183,10 +185,8 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
     ...(manualSorting
       ? {
           manualSorting: true,
-          state: {
-            sorting: manualSorting.sorting,
-          },
           onSortingChange: manualSorting.setSorting,
+          state: { sorting: manualSorting?.sorting },
         }
       : {}),
   });
