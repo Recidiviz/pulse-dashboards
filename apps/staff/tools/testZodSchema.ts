@@ -62,7 +62,7 @@ import { usMoOverdueRestrictiveHousingInitialHearingSchema } from "../src/Workfl
 import { usMoOverdueRestrictiveHousingReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity/UsMoOverdueRestrictiveHousingReleaseReferralRecord";
 import { usMoOverdueRestrictiveHousingReviewHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsNd/UsNdEarlyTerminationOpportunity/UsNdEarlyTerminationReferralRecord";
-import { usOrEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsOr/UsOrEarnedDischargeOpportunity/UsOrEarnedDischargeReferralRecord";
+import { usOrEarnedDischargeSentenceSchema } from "../src/WorkflowsStore/Opportunity/UsOr/UsOrEarnedDischargeSentenceOpportunity";
 import { usPaAdminSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
 import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewReferralRecord";
@@ -150,8 +150,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   earlyTermination: usNdEarlyTerminationSchema,
 
   // US_OR
-  usOrEarnedDischarge: usOrEarnedDischargeSchema,
-  usOrEarnedDischargeSentence: usOrEarnedDischargeSchema,
+  usOrEarnedDischargeSentence: usOrEarnedDischargeSentenceSchema,
 
   // US_PA
   usPaAdminSupervision: usPaAdminSupervisionSchema,
