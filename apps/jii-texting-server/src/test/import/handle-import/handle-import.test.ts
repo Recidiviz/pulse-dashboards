@@ -35,7 +35,7 @@ describe("handle_import", () => {
           person_name: JSON.stringify({
             given_names: fakePerson.givenName,
             middle_names: fakePerson.middleName,
-            surname: fakePerson.surName,
+            surname: fakePerson.surname,
             name_suffix: fakePerson.nameSuffix,
           }),
           phone_number: fakePerson.phoneNumber,

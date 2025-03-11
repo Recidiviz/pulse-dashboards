@@ -64,7 +64,7 @@ export async function transformAndLoadPersonData(
       stateCode: personData.state_code,
       givenName: personData.person_name.given_names,
       middleName: personData.person_name.middle_names,
-      surName: personData.person_name.surname,
+      surname: personData.person_name.surname,
       nameSuffix: personData.person_name.name_suffix,
       phoneNumber: personData.phone_number,
       officerId: personData.officer_id,
