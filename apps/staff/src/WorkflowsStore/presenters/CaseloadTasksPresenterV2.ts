@@ -21,21 +21,30 @@ import { makeAutoObservable } from "mobx";
 
 import {
   TaskFilterField,
+  TaskFilterFieldForPerson,
+  TaskFilterFieldForTask,
   TaskFilterOption,
   TaskFilterSection,
+  TaskFilterType,
   WorkflowsTasksConfig,
 } from "../../core/models/types";
 import {
   SupervisionTaskCategory,
   TEMPORAL_TASK_CATEGORIES,
 } from "../../core/WorkflowsTasks/fixtures";
+import FirestoreStore from "../../FirestoreStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
+import { FeatureVariantRecord } from "../../RootStore/types";
 import { PartialRecord } from "../../utils/typeUtils";
 import { taskDueDateComparator } from "../Task/TasksBase";
 import { SupervisionTask } from "../Task/types";
 import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
+import {
+  TableViewSelectInterface,
+  TableViewSelectPresenter,
+} from "./TableViewSelectPresenter";
 
 function sortPeopleByNextTaskDueDate(
   personA: JusticeInvolvedPerson,
@@ -57,17 +66,25 @@ type SelectedFilters = PartialRecord<
   TaskFilterOption["value"][]
 >;
 
-export class CaseloadTasksPresenterV2 {
+export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   selectedCategory: SupervisionTaskCategory;
   private _selectedFilters: SelectedFilters = {};
+  private tableViewSelectPresenter: TableViewSelectPresenter;
 
   constructor(
     protected workflowsStore: WorkflowsStore,
     protected tenantStore: TenantStore,
     protected analyticsStore: AnalyticsStore,
+    protected firestoreStore: FirestoreStore,
+    protected featureVariants: FeatureVariantRecord,
   ) {
     makeAutoObservable(this);
     this.selectedCategory = "ALL_TASKS";
+    this.tableViewSelectPresenter = new TableViewSelectPresenter(
+      firestoreStore,
+      workflowsStore,
+      featureVariants,
+    );
   }
 
   get taskConfig(): WorkflowsTasksConfig {
@@ -123,10 +140,12 @@ export class CaseloadTasksPresenterV2 {
 
         if (!supervisionTasks) return [];
 
-        if (category === "ALL_TASKS") return supervisionTasks.readyOrderedTasks;
-
         return supervisionTasks.readyOrderedTasks.filter((t) => {
+          if (!this.taskMatchesFilters(t)) return false;
+
           switch (category) {
+            case "ALL_TASKS":
+              return true;
             case "OVERDUE":
               return t.isOverdue;
             case "DUE_THIS_WEEK":
@@ -143,6 +162,15 @@ export class CaseloadTasksPresenterV2 {
       .sort(taskDueDateComparator);
   }
 
+  taskMatchesFilters(task: SupervisionTask): boolean {
+    return every(
+      Object.entries(this.selectedFiltersForType("task")),
+      ([field, options]: [TaskFilterFieldForTask, string[]]) =>
+        // @ts-expect-error searchable fields are restricted to strings but TS does not know that
+        options.includes(task[field]),
+    );
+  }
+
   get orderedTasksForSelectedCategory(): SupervisionTask[] {
     return this.orderedTasksForCategory(this.selectedCategory);
   }
@@ -153,8 +181,8 @@ export class CaseloadTasksPresenterV2 {
 
   personMatchesFilters(person: JusticeInvolvedPerson): boolean {
     return every(
-      Object.entries(this.selectedFilters),
-      ([field, options]: [keyof JusticeInvolvedPerson, string[]]) =>
+      Object.entries(this.selectedFiltersForType("person")),
+      ([field, options]: [TaskFilterFieldForPerson, string[]]) =>
         // @ts-expect-error searchable fields are restricted to strings but TS does not know that
         options.includes(person[field]),
     );
@@ -197,6 +225,15 @@ export class CaseloadTasksPresenterV2 {
     return this._selectedFilters;
   }
 
+  selectedFiltersForType(filterType: TaskFilterType): SelectedFilters {
+    return Object.fromEntries(
+      Object.entries(this._selectedFilters).filter(
+        ([field, _]) =>
+          this.filters.find((f) => f.field === field)?.type === filterType,
+      ),
+    );
+  }
+
   filterIsSelected(
     field: TaskFilterField,
     { value }: TaskFilterOption,
@@ -235,5 +272,13 @@ export class CaseloadTasksPresenterV2 {
 
   get selectedFilterCount(): number {
     return Object.values(this._selectedFilters).flatMap((x) => x).length;
+  }
+
+  get showListView() {
+    return this.tableViewSelectPresenter.showListView;
+  }
+
+  set showListView(showListView: boolean) {
+    this.tableViewSelectPresenter.showListView = showListView;
   }
 }

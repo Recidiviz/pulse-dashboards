@@ -22,6 +22,7 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
+import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { AllTasksView } from "./AllTasksView";
 import { TASK_SELECTOR_LABELS } from "./fixtures";
 import {
@@ -36,11 +37,14 @@ import {
 import { TaskPreviewModal } from "./TaskPreviewModal";
 import { TasksCalendarView } from "./TasksCalendarView";
 
-function getViewElement(presenter: CaseloadTasksPresenter) {
+function getViewElement(
+  presenter: CaseloadTasksPresenterV2 | CaseloadTasksPresenter,
+) {
   switch (presenter.selectedTaskCategory) {
     case "employmentNeed":
       return null;
     case "ALL_TASKS_OLD":
+    case "ALL_TASKS":
       return <AllTasksView presenter={presenter} />;
     default:
       return <TasksCalendarView presenter={presenter} />;

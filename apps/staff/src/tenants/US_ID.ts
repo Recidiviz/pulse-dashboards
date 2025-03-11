@@ -61,6 +61,7 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
       {
         title: "Supervision Level",
         field: "supervisionLevel",
+        type: "person",
         options: [
           {
             value: "Low",

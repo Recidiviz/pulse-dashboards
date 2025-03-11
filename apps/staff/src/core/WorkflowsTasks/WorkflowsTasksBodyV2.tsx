@@ -17,13 +17,18 @@
 
 import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
+import { TableViewToggle } from "../OpportunityCaseloadView/TableViewToggle";
 import { MaxWidth } from "../sharedComponents";
 import WorkflowsCaseloadTabs from "../WorkflowsCaseloadControlBar";
 import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
@@ -31,6 +36,7 @@ import { TasksDescription } from "./styles";
 import { TasksHeader } from "./styles";
 import { TaskFilterDropdown } from "./TaskFilterDropdown";
 import { TaskPreviewModal } from "./TaskPreviewModal";
+import { TasksList } from "./TasksList";
 import { TasksTable } from "./TasksTable";
 
 // TODO(#7571): Add Noir/Cool Grey to design system
@@ -45,6 +51,12 @@ const TasksTopbarContainer = styled.div`
   ${MaxWidth}
 `;
 
+const TableControls = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: ${rem(8)};
+`;
+
 export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
   presenter,
 }: {
@@ -57,41 +69,53 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
       <TasksTopbarContainer>
         <TasksDescription>
           The clients below might have upcoming requirements this month. Data is
-          refreshed from the OMS overnight and daily. Where are these tasks
-          pulled from?
+          refreshed from the OMS overnight and daily.
         </TasksDescription>
-        <TaskFilterDropdown presenter={presenter} />
+        <TableControls>
+          <TableViewToggle presenter={presenter} />
+          <TaskFilterDropdown presenter={presenter} />
+        </TableControls>
       </TasksTopbarContainer>
-      <TasksTabUnderline>
-        <WorkflowsCaseloadTabs
-          tabs={presenter.displayedTaskCategories}
-          tabLabels={TASK_SELECTOR_LABELS}
-          tabBadges={{
-            ALL_TASKS: presenter.countForCategory("ALL_TASKS"),
-            OVERDUE: presenter.countForCategory("OVERDUE"),
-            DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
-            DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
-          }}
-          activeTab={presenter.selectedCategory}
-          setActiveTab={(tab: SupervisionTaskCategory) => {
-            runInAction(() => {
-              presenter.selectedCategory = tab;
-            });
-          }}
-        />
-      </TasksTabUnderline>
-      <TasksTable presenter={presenter} />
+      {presenter.showListView ? (
+        <TasksList presenter={presenter} />
+      ) : (
+        <>
+          <TasksTabUnderline>
+            <WorkflowsCaseloadTabs
+              tabs={presenter.displayedTaskCategories}
+              tabLabels={TASK_SELECTOR_LABELS}
+              tabBadges={{
+                ALL_TASKS: presenter.countForCategory("ALL_TASKS"),
+                OVERDUE: presenter.countForCategory("OVERDUE"),
+                DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
+                DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
+              }}
+              activeTab={presenter.selectedCategory}
+              setActiveTab={(tab: SupervisionTaskCategory) => {
+                runInAction(() => {
+                  presenter.selectedCategory = tab;
+                });
+              }}
+            />
+          </TasksTabUnderline>
+          <TasksTable presenter={presenter} />
+        </>
+      )}
       <TaskPreviewModal />
     </>
   );
 });
 
 function usePresenter() {
-  const { workflowsStore, analyticsStore, tenantStore } = useRootStore();
+  const { workflowsStore, analyticsStore, tenantStore, firestoreStore } =
+    useRootStore();
+  const featureVariants = useFeatureVariants();
   return new CaseloadTasksPresenterV2(
     workflowsStore,
     tenantStore,
     analyticsStore,
+    firestoreStore,
+    featureVariants,
   );
 }
 
