@@ -87,7 +87,7 @@ model Person {
   stateCode       StateCode
   givenName       String
   middleName      String
-  surName         String
+  surname         String
   nameSuffix      String
   phoneNumber     String    @unique
   officerId       String
@@ -123,8 +123,8 @@ model MessageAttempt {
   error                  String?
   errorCode              Int?
 
-  messageSeries       MessageSeries     @relation(fields: [messageId], references: [id])
-  messageId           String
+  messageSeries       MessageSeries     @relation(fields: [messageSeriesId], references: [id])
+  messageSeriesId           String
   workflowExecution   WorkflowExecution @relation(fields: [workflowExecutionId], references: [id])
   workflowExecutionId String
   clicks              Click[]

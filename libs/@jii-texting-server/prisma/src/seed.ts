@@ -42,7 +42,7 @@ async function main() {
       personId: faker.string.uuid(),
       givenName: faker.person.firstName(),
       middleName: faker.person.middleName(),
-      surName: faker.person.lastName(),
+      surname: faker.person.lastName(),
       nameSuffix: faker.person.suffix(),
       phoneNumber: faker.string.numeric({ length: 11 }),
       officerId: faker.string.uuid(),

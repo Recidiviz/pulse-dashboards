@@ -42,7 +42,7 @@ export const fakePerson = {
   personId: "person-id-1",
   givenName: faker.person.firstName(),
   middleName: faker.person.middleName(),
-  surName: faker.person.lastName(),
+  surname: faker.person.lastName(),
   nameSuffix: faker.person.suffix(),
   phoneNumber: "1234567890",
   officerId: "officer-id-1",
