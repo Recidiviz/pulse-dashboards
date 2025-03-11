@@ -33,6 +33,7 @@ import { TaskFilterField, TaskFilterOption } from "../models/types";
 
 const FilterDropdownToggle = styled(DropdownToggle)`
   padding: 12px 16px;
+  height: 41px;
 `;
 
 const FilterIcon = styled.i.attrs({
@@ -148,7 +149,10 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
   return (
     <Dropdown>
       <FilterDropdownToggle>
-        <FilterIcon /> Filters <FilterDownArrow />
+        <FilterIcon /> Filters{" "}
+        {presenter.selectedFilterCount !== 0 &&
+          `(${presenter.selectedFilterCount})`}
+        <FilterDownArrow />
       </FilterDropdownToggle>
       <FilterDropdownMenu>
         <>

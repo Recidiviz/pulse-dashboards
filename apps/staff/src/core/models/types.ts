@@ -35,6 +35,7 @@ import {
   Client,
   JusticeInvolvedPerson,
   StaffFilterFunction,
+  SupervisionTask,
 } from "../../WorkflowsStore";
 import { Task } from "../../WorkflowsStore/Task/Task";
 import {
@@ -116,14 +117,18 @@ export type WorkflowsTasksConfig = {
   filters?: TaskFilterSection[];
 };
 
-export type TaskFilterSection = {
+export type TaskFilterOption = { value: string; label?: string };
+export type TaskFilterFieldForPerson = keyof Client;
+export type TaskFilterFieldForTask = keyof SupervisionTask;
+export type TaskFilterField = TaskFilterFieldForPerson | TaskFilterFieldForTask;
+export type TaskFilterType = "person" | "task";
+
+export type TaskFilterSection<T extends TaskFilterType = TaskFilterType> = {
   title: string;
-  field: TaskFilterField;
+  type: T;
+  field: T extends "person" ? TaskFilterFieldForPerson : TaskFilterFieldForTask;
   options: TaskFilterOption[];
 };
-
-export type TaskFilterOption = { value: string; label?: string };
-export type TaskFilterField = keyof Client;
 
 export type SearchConfig<R, T extends TenantConfigId> = {
   searchType: SearchType;

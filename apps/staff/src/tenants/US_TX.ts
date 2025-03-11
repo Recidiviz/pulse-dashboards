@@ -79,8 +79,44 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
     },
     filters: [
       {
+        title: "Contact Type",
+        field: "type",
+        type: "task",
+        options: [
+          {
+            value: "usTxHomeContactScheduled",
+            label: "Home Contact, Sch.",
+          },
+          {
+            value: "usTxHomeContactUnscheduled",
+            label: "Home Contact, Unsch.",
+          },
+          {
+            value: "usTxFieldContactScheduled",
+            label: "Field Contact, Sch.",
+          },
+          {
+            value: "usTxFieldContactUnscheduled",
+            label: "Field Contact, Unsch.",
+          },
+          {
+            value: "usTxElectronicContactScheduled",
+            label: "Electronic Contact, Sch.",
+          },
+          {
+            value: "usTxElectronicContactUnscheduled",
+            label: "Electronic Contact, Unsch.",
+          },
+          {
+            value: "usTxAssesment",
+            label: "Assessments",
+          },
+        ],
+      },
+      {
         title: "Supervision Level",
         field: "supervisionLevel",
+        type: "person",
         options: [
           {
             value: "Limited",
@@ -102,6 +138,7 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
       {
         title: "Case Type",
         field: "caseType",
+        type: "person",
         options: [
           {
             value: "Regular",

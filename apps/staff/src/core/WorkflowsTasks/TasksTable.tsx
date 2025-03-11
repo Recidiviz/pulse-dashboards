@@ -23,6 +23,7 @@ import { Client, SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
 import PersonId from "../PersonId";
+import { TaskFrequency } from "./TaskFrequency";
 
 const TaskInfo = styled.div`
   text-align: left;
@@ -50,11 +51,7 @@ function TaskInfoCell({ row }: { row: Row<SupervisionTask> }) {
 }
 
 function FrequencyCell({ row }: { row: Row<SupervisionTask> }) {
-  return (
-    <div>
-      <i className="fa fa-refresh" /> {row.original.frequency}
-    </div>
-  );
+  return <TaskFrequency task={row.original} />;
 }
 
 export const TasksTable = observer(function TasksTable({
@@ -80,7 +77,7 @@ export const TasksTable = observer(function TasksTable({
       cell: PersonIdCell,
     },
     {
-      header: "Supervision",
+      header: "Case Type",
       id: "person.caseType",
       enableSorting: false,
       cell: CaseTypeCell,

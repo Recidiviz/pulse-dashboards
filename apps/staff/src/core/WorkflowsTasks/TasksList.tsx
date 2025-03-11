@@ -18,43 +18,54 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Accordion } from "react-accessible-accordion";
+import styled from "styled-components/macro";
 
-import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
-import { TaskListItem } from "./ListItem";
+import { MaxWidth } from "../sharedComponents";
 import { TaskListGroup } from "./TaskListGroup";
+import { TaskListItemV2 } from "./TaskListItemV2";
+
+const TasksListContainer = styled.div`
+  ${MaxWidth}
+`;
 
 type AllTasksViewProps = {
-  presenter: CaseloadTasksPresenterV2 | CaseloadTasksPresenter;
+  presenter: CaseloadTasksPresenterV2;
 };
 
-export const AllTasksView = observer(function AllTasksViewComponent({
+export const TasksList = observer(function TasksList({
   presenter,
 }: AllTasksViewProps) {
   const { clientsWithOverdueTasks, clientsWithUpcomingTasks } = presenter;
 
   return (
-    <Accordion allowMultipleExpanded allowZeroExpanded preExpanded={["0", "1"]}>
-      {clientsWithOverdueTasks.length ? (
-        <TaskListGroup
-          title={"Overdue"}
-          uuid={"0"}
-          items={clientsWithOverdueTasks}
-          renderer={(person) => (
-            <TaskListItem person={person} key={person.recordId} />
-          )}
-        />
-      ) : null}
-      {clientsWithUpcomingTasks.length ? (
-        <TaskListGroup
-          title={"Due this month"}
-          uuid={"1"}
-          items={clientsWithUpcomingTasks}
-          renderer={(person) => (
-            <TaskListItem person={person} key={person.recordId} />
-          )}
-        />
-      ) : null}
-    </Accordion>
+    <TasksListContainer>
+      <Accordion
+        allowMultipleExpanded
+        allowZeroExpanded
+        preExpanded={["0", "1"]}
+      >
+        {clientsWithOverdueTasks.length ? (
+          <TaskListGroup
+            title={"Overdue"}
+            uuid={"0"}
+            items={clientsWithOverdueTasks}
+            renderer={(person) => (
+              <TaskListItemV2 person={person} key={person.recordId} />
+            )}
+          />
+        ) : null}
+        {clientsWithUpcomingTasks.length ? (
+          <TaskListGroup
+            title={"Due this month"}
+            uuid={"1"}
+            items={clientsWithUpcomingTasks}
+            renderer={(person) => (
+              <TaskListItemV2 person={person} key={person.recordId} />
+            )}
+          />
+        ) : null}
+      </Accordion>
+    </TasksListContainer>
   );
 });

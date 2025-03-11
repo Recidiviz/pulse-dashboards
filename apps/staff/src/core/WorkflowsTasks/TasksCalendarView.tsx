@@ -23,6 +23,7 @@ import React from "react";
 import { Accordion } from "react-accessible-accordion";
 
 import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
+import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { TaskListItem } from "./ListItem";
 import { TaskListGroup } from "./TaskListGroup";
 
@@ -31,7 +32,7 @@ const formatCalendarHeading = (dueDate: Date): string => {
 };
 
 type TasksCalendarViewProps = {
-  presenter: CaseloadTasksPresenter;
+  presenter: CaseloadTasksPresenterV2 | CaseloadTasksPresenter;
 };
 
 export const TasksCalendarView: React.FC<TasksCalendarViewProps> = observer(

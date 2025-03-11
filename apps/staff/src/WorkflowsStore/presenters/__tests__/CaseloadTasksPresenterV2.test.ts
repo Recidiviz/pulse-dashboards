@@ -19,6 +19,7 @@ import { addDays } from "date-fns";
 import tk from "timekeeper";
 
 import { SupervisionTaskCategory } from "../../../core/WorkflowsTasks/fixtures";
+import FirestoreStore from "../../../FirestoreStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import TenantStore from "../../../RootStore/TenantStore";
 import { JusticeInvolvedPerson } from "../../types";
@@ -46,6 +47,16 @@ const mockTenantStore = {
         constructor: vi.fn(),
       },
     },
+    filters: [
+      {
+        field: "supervisionLevel",
+        type: "person",
+      },
+      {
+        field: "district",
+        type: "person",
+      },
+    ],
   },
 } as any as TenantStore;
 
@@ -89,10 +100,12 @@ function getPresenter({
     workflowsStore,
     tenantStore,
     analyticsStore,
+    {} as FirestoreStore,
+    {},
   );
 }
 
-describe("CaseloadTasksPresenter", () => {
+describe("CaseloadTasksPresenterV2", () => {
   describe("taskCategories", () => {
     beforeEach(() => {
       presenter = getPresenter({});

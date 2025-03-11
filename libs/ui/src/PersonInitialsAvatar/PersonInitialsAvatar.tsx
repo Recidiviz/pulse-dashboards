@@ -55,7 +55,7 @@ const AvatarElement = styled.div(
 const AvatarInitials = styled(Sans14)<{ size: number }>`
   color: white;
   flex: 0 0 auto;
-  font-size: ${(props) => rem(props.size / 4)};
+  font-size: ${(props) => rem(props.size / 3)};
   font-weight: 700;
   line-height: 1;
   position: relative;
@@ -82,23 +82,19 @@ export const PersonInitialsAvatar: React.FC<AvatarProps> = ({
 }) => {
   const initials = formatAvatarText(name, splitName);
 
+  const colors = solidColor ? [solidColor] : palette.data.defaultOrder;
+
   return (
-    <AvatarElement
-      className="UserAvatar"
-      size={size}
-      style={{ backgroundColor: solidColor }}
-    >
-      {!solidColor && (
-        <Avatar
-          variant="marble"
-          size={size}
-          name={initials}
-          colors={palette.data.defaultOrder}
-          square={square}
-          // @ts-expect-error the title prop is missing from the package's types
-          title // required for axe compliance
-        />
-      )}
+    <AvatarElement className="UserAvatar" size={size}>
+      <Avatar
+        variant="marble"
+        size={size}
+        name={initials}
+        colors={colors}
+        square={square}
+        // @ts-expect-error the title prop is missing from the package's types
+        title // required for axe compliance
+      />
       <AvatarInitials className="fs-exclude" size={size}>
         {initials}
       </AvatarInitials>
