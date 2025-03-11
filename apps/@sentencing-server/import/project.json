@@ -32,6 +32,10 @@
         {
           "projects": ["@sentencing-server/prisma"],
           "target": "prisma-generate"
+        },
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "prisma-generate"
         }
       ],
       "options": {
@@ -146,37 +150,12 @@
       },
       "defaultConfiguration": "dev"
     },
-    "deploy-app": {
+    "deploy-preview-job": {
       "executor": "nx:run-commands",
       "dependsOn": ["load-env-files"],
       "options": {
-        "command": "gcloud run jobs deploy sentencing-data-import --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-data-import:$COMMIT_SHA --region us-central1 --set-env-vars IMPORT_BUCKET_ID=$IMPORT_BUCKET_ID,DATABASE_URL_US_ID=$DATABASE_URL_US_ID,DATABASE_URL_US_ND=$DATABASE_URL_US_ND"
-      },
-      "configurations": {
-        "staging": {
-          "args": [
-            "--project recidiviz-dashboard-staging",
-            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:sentencing-db",
-            "--service-account sentencing@recidiviz-dashboard-staging.iam.gserviceaccount.com"
-          ]
-        },
-        "production": {
-          "args": [
-            "--project recidiviz-dashboard-production",
-            "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:sentencing-db",
-            "--service-account sentencing@recidiviz-dashboard-production.iam.gserviceaccount.com"
-          ]
-        },
-        "preview": {
-          "command": "gcloud run jobs deploy ss-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/cloud-run-source-deploy/sentencing-server-preview:$VERSION --region us-central1 --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID-$VERSION,DATABASE_URL_US_ND=$DATABASE_URL_US_ND-$VERSION",
-          "args": [
-            "--project recidiviz-dashboard-staging",
-            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
-            "--service-account sentencing@recidiviz-dashboard-staging.iam.gserviceaccount.com"
-          ]
-        }
-      },
-      "defaultConfiguration": "staging"
+        "command": "gcloud run jobs deploy sentencing-data-import-preview-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-data-import-preview:$COMMIT_SHA --region us-central1 --set-env-vars IMPORT_BUCKET_ID=$IMPORT_BUCKET_ID,DATABASE_URL_US_ID=$DATABASE_URL_US_ID,DATABASE_URL_US_ND=$DATABASE_URL_US_ND --project recidiviz-dashboard-staging --set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION --service-account sentencing@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+      }
     }
   }
 }

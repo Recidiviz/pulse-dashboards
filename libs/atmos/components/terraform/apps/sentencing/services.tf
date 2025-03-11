@@ -46,6 +46,13 @@ resource "google_project_iam_member" "cloudsqlclient" {
   member  = "serviceAccount:${google_service_account.default.email}"
 }
 
+# Grant Artifact Registry reader so the service account 
+resource "google_project_iam_member" "artifactregistryreader" {
+  project = var.artifact_registry_project_id
+  role    = "roles/artifactregistry.reader"
+  member  = "serviceAccount:${google_service_account.default.email}"
+}
+
 resource "google_pubsub_topic" "sentencing_export_success_topic" {
   name    = "sentencing_export_success"
   project = var.project_id

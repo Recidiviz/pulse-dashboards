@@ -2,8 +2,8 @@
 settings:
   context:
     project_id: recidiviz-dashboard-staging
+    project_number: 626425930051
     data_platform_project_number: 984160736970
-    registry_repo_name: sentencing
     product: sentencing
     location: us-central1
 
@@ -49,7 +49,18 @@ components:
           record_client_address: false
       metadata:
         component: vendor/cloud-sql-instance
+    artifact_registry:
+      vars:
+        project_id: "{{ .settings.context.project_id }}"
+        location: "{{ .settings.context.location }}"
+        repository_id: sentencing
+        format: DOCKER
+      metadata:
+        component: vendor/artifact-registry
     apps/sentencing:
       vars:
         location: "{{ .settings.context.location }}"
+        project_number: "{{ .settings.context.project_number }}"
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
+        artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
+        artifact_registry_project_id: "{{ .settings.context.project_id }}"
