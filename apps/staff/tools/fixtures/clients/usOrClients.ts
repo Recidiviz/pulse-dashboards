@@ -38,10 +38,7 @@ export const US_OR_CLIENTS: ClientFixture[] = [
     currentBalance: 1221.88,
     lastPaymentAmount: 125.75,
     lastPaymentDate: "2022-01-04",
-    allEligibleOpportunities: [
-      "usOrEarnedDischarge",
-      "usOrEarnedDischargeSentence",
-    ],
+    allEligibleOpportunities: ["usOrEarnedDischargeSentence"],
   },
   {
     personName: {
@@ -63,9 +60,6 @@ export const US_OR_CLIENTS: ClientFixture[] = [
     currentBalance: 1221.88,
     lastPaymentAmount: 125.75,
     lastPaymentDate: "2022-01-04",
-    allEligibleOpportunities: [
-      "usOrEarnedDischarge",
-      "usOrEarnedDischargeSentence",
-    ],
+    allEligibleOpportunities: ["usOrEarnedDischargeSentence"],
   },
 ];

@@ -27,7 +27,6 @@ import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration"
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
-import { UsOrEarnedDischargeConfiguration } from "./UsOr/UsOrEarnedDischargeConfiguration";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
 import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
 
@@ -50,7 +49,6 @@ const customOpportunityConfigurations: Partial<
   compliantReporting: CompliantReportingConfiguration,
   LSU: LSUConfiguration,
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
-  usOrEarnedDischarge: UsOrEarnedDischargeConfiguration,
 };
 
 export function apiOpportunityConfigurationFactory(

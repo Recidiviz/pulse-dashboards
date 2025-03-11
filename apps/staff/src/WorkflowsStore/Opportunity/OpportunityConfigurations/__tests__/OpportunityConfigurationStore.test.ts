@@ -33,19 +33,21 @@ test("changing tenant ID resets store", async () => {
 });
 
 test("getOpportunityTypeFromUrl for existing opportunity url", async () => {
-  expect(store.getOpportunityTypeFromUrl("earnedDischarge")).toBe(
-    "usOrEarnedDischarge",
+  expect(store.getOpportunityTypeFromUrl("earnedDischargeSentence")).toBe(
+    "usOrEarnedDischargeSentence",
   );
 });
 
 test("getOpportunityTypeFromUrl for various tenants", async () => {
-  expect(store.getOpportunityTypeFromUrl("earnedDischarge")).toBe(
-    "usOrEarnedDischarge",
-  );
-  rootStore.tenantStore.setCurrentTenantId("US_ID");
+  rootStore.tenantStore.setCurrentTenantId("US_CA");
   store.mockHydrated();
-  expect(store.getOpportunityTypeFromUrl("earnedDischarge")).toBe(
-    "earnedDischarge",
+  expect(store.getOpportunityTypeFromUrl("supervisionLevelDowngrade")).toBe(
+    "usCaSupervisionLevelDowngrade",
+  );
+  rootStore.tenantStore.setCurrentTenantId("US_TN");
+  store.mockHydrated();
+  expect(store.getOpportunityTypeFromUrl("supervisionLevelDowngrade")).toBe(
+    "supervisionLevelDowngrade",
   );
 });
 

@@ -64,7 +64,6 @@ const constructedOpportunityTypes = [
   "earlyTermination",
 
   // US_OR
-  "usOrEarnedDischarge",
   "usOrEarnedDischargeSentence",
 
   // US_PA
