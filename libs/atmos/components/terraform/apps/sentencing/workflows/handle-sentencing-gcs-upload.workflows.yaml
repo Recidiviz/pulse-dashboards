@@ -3,9 +3,13 @@
 main:
   params: [event]
   steps:
+    - decode_pubsub_message:
+        assign:
+          - base64: ${base64.decode(event.data.message.data)}
+          - message: ${json.decode(base64)}
     - init:
         assign:
-          - state_code: ${event.state_code}
+          - state_code: ${message.state_code}
           - job_name: ${sys.get_env("JOB_NAME")}
     - run_job:
         call: googleapis.run.v2.projects.locations.jobs.run

@@ -10,8 +10,8 @@ locals {
   prod_import_env    = local.env_secrets["env_prod_sentencing_server_import"]
 
   registry_repo_name = "sentencing"
-  import_image_name  = "sentencing-import"
-  import_job_name    = "sentencing-import"
+  import_image_name  = "sentencing-data-import"
+  import_job_name    = "sentencing-data-import"
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
@@ -33,8 +33,10 @@ module "database" {
   base_secret_name           = "sentencing"
   database_version           = "POSTGRES_16"
   has_readonly_user          = false
+  availability_type          = var.database_availability_type
   region                     = "us-central1"
   zone                       = "us-central1-f"
+  secondary_zone             = var.database_secondary_zone
   tier                       = "db-custom-1-3840"
   additional_databases       = ["us_id", "us_nd"]
   insights_config = {
@@ -45,26 +47,18 @@ module "database" {
   }
 }
 
-module "artifact_registry" {
-  source = "../../vendor/artifact-registry"
-
-  project_id    = var.project_id
-  location      = var.location
-  repository_id = local.registry_repo_name
-  format        = "DOCKER"
-}
-
 # Configure a job that can migrate the database
 # We don't execute it on deploy - it will be run when the workflow is triggered
 module "import-job" {
   source                        = "../../vendor/cloud-run-job-exec"
   exec                          = false
   name                          = local.import_job_name
-  image                         = "${var.location}-docker.pkg.dev/${var.project_id}/${module.artifact_registry.artifact_name}/${local.import_image_name}:${var.import_container_version}"
+  image                         = "${var.artifact_registry_repo}/${local.import_image_name}:${var.import_container_version}"
   project_id                    = var.project_id
   location                      = var.location
   env_vars                      = local.import_env_vars
   cloud_run_deletion_protection = false
+  service_account_email         = google_service_account.default.email
 
   volumes = [{
     name = "cloudsql"
@@ -99,7 +93,7 @@ module "gcs_bucket" {
   }]
   set_admin_roles = true
   bucket_admins = {
-    "sentencing-etl-data" = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+    "sentencing-etl-data" = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com,serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
   }
 }
 
@@ -114,14 +108,11 @@ module "handle-sentencing-gcs-upload" {
     event_arc = {
       name                  = "handle-sentencing-upload-wf"
       service_account_email = google_service_account.default.email
+      pubsub_topic_id       = google_pubsub_topic.sentencing_export_success_topic.id
       matching_criteria = [
         {
           attribute = "type"
           value     = "google.cloud.pubsub.topic.v1.messagePublished"
-        },
-        {
-          attribute = "topic"
-          value     = google_pubsub_topic.sentencing_export_success_topic.id
         }
       ]
     }
