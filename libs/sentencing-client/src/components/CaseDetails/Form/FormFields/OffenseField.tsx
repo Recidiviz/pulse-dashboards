@@ -81,7 +81,7 @@ function OffenseField({ isRequired }: FormFieldProps) {
   // Mandatory Minimums
   const hasMandatoryMinimum =
     currentOffense !== undefined &&
-    caseStore.offensesByName[currentOffense]?.mandatoryMinimums.length > 0;
+    caseStore.offensesByName[currentOffense]?.mandatoryMinimums?.length > 0;
   const { mandatoryMinimumsSentenceTypes } = currentOffense
     ? getMandatoryMinimumsData(
         geoConfig.recommendation.baseOptionsTemplate,
