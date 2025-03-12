@@ -27,7 +27,6 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { TaskFilterField, TaskFilterOption } from "../models/types";
 
@@ -142,9 +141,6 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
   presenter: CaseloadTasksPresenterV2;
 }) {
   const { filters } = presenter;
-  const { taskFilters } = useFeatureVariants();
-
-  if (!taskFilters) return null;
 
   return (
     <Dropdown>

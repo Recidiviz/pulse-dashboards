@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { US_CA, US_PA } from "../../RootStore/TenantStore/dashboardTenants";
+import {
+  US_CA,
+  US_PA,
+  US_TX,
+} from "../../RootStore/TenantStore/dashboardTenants";
 import {
   US_DEMO,
   US_ID,
@@ -35,7 +39,7 @@ import {
 import { FILTER_TYPES, METRIC_MODES } from "./constants";
 
 export type FilterOptions = Record<
-  PathwaysTenants | "US_DEMO" | "US_PA" | "US_CA",
+  PathwaysTenants | "US_DEMO" | "US_PA" | "US_CA" | "US_TX",
   PopulationFilters
 >;
 
@@ -1322,6 +1326,21 @@ export const CaPopulationFilterOptions: PopulationFilters = {
   },
 };
 
+export const TxPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL],
+    options: [
+      { label: "All", value: "ALL" },
+      { label: "High", value: "MAXIMUM" },
+      { label: "Medium", value: "HIGH" },
+      { label: "Low-Moderate", value: "MEDIUM" },
+      { label: "Low", value: "MINIMUM" },
+      { label: "Annual", value: "LIMITED" },
+    ],
+  },
+};
+
 export const DemoPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.AGE_GROUP]: {
@@ -1497,10 +1516,11 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
 const filterOptions: FilterOptions = {
   [US_CA]: CaPopulationFilterOptions,
   [US_ID]: IdPopulationFilterOptions,
-  [US_TN]: TnPopulationFilterOptions,
   [US_MO]: MoPopulationFilterOptions,
   [US_ND]: NdPopulationFilterOptions,
   [US_PA]: PaPopulationFilterOptions,
+  [US_TN]: TnPopulationFilterOptions,
+  [US_TX]: TxPopulationFilterOptions,
   [US_DEMO]: DemoPopulationFilterOptions,
 } as const;
 
