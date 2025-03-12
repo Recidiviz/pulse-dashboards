@@ -146,6 +146,8 @@ export * from "./metrics/utils/constants";
 
 // System: Types related to the system, such as the User, metadata, etc.
 // -----------------------------------------------------------------------------
+export * from "./system/RosterChangeRequest/fixture";
+export * from "./system/RosterChangeRequest/schema";
 export * from "./system/UserInfo/fixture";
 export * from "./system/UserInfo/schema";
 

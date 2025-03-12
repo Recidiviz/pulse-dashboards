@@ -32,6 +32,9 @@ import {
   leadershipUserInfoFixture,
   MetricBenchmark,
   metricBenchmarksFixture,
+  RosterChangeRequest,
+  RosterChangeRequestResponse,
+  rosterChangeRequestResponseFixture,
   SupervisionOfficer,
   supervisionOfficerFixture,
   SupervisionOfficerMetricEvent,
@@ -193,6 +196,10 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
     });
   }
 
+  async allSupervisionOfficers(): Promise<Array<SupervisionOfficer>> {
+    return supervisionOfficerFixture;
+  }
+
   async supervisionOfficer(
     officerPseudoId: string,
   ): Promise<SupervisionOfficer> {
@@ -293,6 +300,13 @@ export class InsightsOfflineAPIClient implements InsightsAPI {
         ),
       };
     });
+  }
+
+  async submitRosterChangeRequestIntercomTicket(
+    supervisorPseudoId: string,
+    props: RosterChangeRequest,
+  ): Promise<RosterChangeRequestResponse> {
+    return rosterChangeRequestResponseFixture;
   }
 
   /**

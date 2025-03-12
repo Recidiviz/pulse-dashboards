@@ -24,6 +24,8 @@ import {
   ClientInfo,
   InsightsConfig,
   MetricBenchmark,
+  RosterChangeRequest,
+  RosterChangeRequestResponse,
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
   SupervisionOfficerOutcomes,
@@ -58,6 +60,11 @@ export interface InsightsAPI {
   outcomesForSupervisor(
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficerOutcomes>>;
+  allSupervisionOfficers(): Promise<Array<SupervisionOfficer>>;
+  submitRosterChangeRequestIntercomTicket(
+    supervisorPseudoId: string,
+    props: RosterChangeRequest,
+  ): Promise<RosterChangeRequestResponse>;
   supervisionOfficer(officerPseudoId: string): Promise<SupervisionOfficer>;
   outcomesForOfficer(
     officerPseudoId: string,

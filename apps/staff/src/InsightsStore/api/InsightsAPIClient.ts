@@ -26,6 +26,9 @@ import {
   insightsConfigSchema,
   MetricBenchmark,
   metricBenchmarkSchema,
+  RosterChangeRequest,
+  RosterChangeRequestResponse,
+  rosterChangeRequestResponseSchema,
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
   supervisionOfficerMetricEventSchema,
@@ -151,6 +154,13 @@ export class InsightsAPIClient implements InsightsAPI {
     return outcomesData.map((b) => supervisionOfficerOutcomesSchema.parse(b));
   }
 
+  async allSupervisionOfficers(): Promise<Array<SupervisionOfficer>> {
+    const endpoint = `${this.baseUrl}/officers`;
+    const fetchedData = await this.apiStore.get(endpoint);
+    const officerData = fetchedData.officers as Array<unknown>;
+    return officerData.map((b) => supervisionOfficerSchema.parse(b));
+  }
+
   async supervisionOfficer(
     officerPseudoId: string,
   ): Promise<SupervisionOfficer> {
@@ -214,6 +224,15 @@ export class InsightsAPIClient implements InsightsAPI {
     const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/vitals`;
     const fetchedData = (await this.apiStore.get(endpoint)) as Array<unknown>;
     return fetchedData.map((b) => supervisionVitalsMetricSchema.parse(b));
+  }
+
+  async submitRosterChangeRequestIntercomTicket(
+    supervisorPseudoId: string,
+    props: RosterChangeRequest,
+  ): Promise<RosterChangeRequestResponse> {
+    const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/roster_change_request`;
+    const fetchedData = await this.apiStore.post(endpoint, props);
+    return rosterChangeRequestResponseSchema.parse(fetchedData);
   }
 
   /**
