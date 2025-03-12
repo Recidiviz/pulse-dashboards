@@ -1,0 +1,121 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`rosterChangeRequest schema error transformations 1`] = `
+[ZodError: [
+  {
+    "code": "too_small",
+    "minimum": 1,
+    "type": "string",
+    "inclusive": true,
+    "exact": false,
+    "message": "Request note cannot be empty.",
+    "path": [
+      "requestNote"
+    ]
+  }
+]]
+`;
+
+exports[`rosterChangeRequest schema error transformations 2`] = `
+[ZodError: [
+  {
+    "code": "too_small",
+    "minimum": 1,
+    "type": "array",
+    "inclusive": true,
+    "exact": false,
+    "message": "Must have at least one officer.",
+    "path": [
+      "affectedOfficersExternalIds"
+    ]
+  }
+]]
+`;
+
+exports[`rosterChangeRequest schema error transformations 3`] = `
+[ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "requestNote"
+    ],
+    "message": "Required"
+  }
+]]
+`;
+
+exports[`rosterChangeRequest schema transformations 1`] = `
+{
+  "affectedOfficersExternalIds": [
+    "OFFICER4",
+  ],
+  "requestChangeType": "REMOVE",
+  "requestNote": "Officer reassigned.
+Effective immediately.",
+  "requesterName": "Alejandro D Gonzalez",
+}
+`;
+
+exports[`rosterChangeRequest schema transformations 2`] = `
+{
+  "affectedOfficersExternalIds": [
+    "so5",
+  ],
+  "requestChangeType": "ADD",
+  "requestNote": "Needed for case support.
+
+Please confirm receipt.",
+  "requesterName": "David Lee",
+}
+`;
+
+exports[`rosterChangeRequest schema transformations 3`] = `
+{
+  "affectedOfficersExternalIds": [
+    "OFFICER4",
+  ],
+  "requestChangeType": "ADD",
+  "requestNote": "Officer reassigned to assist with caseload.
+Expected to start next week.",
+  "requesterName": "Charles Thomas",
+}
+`;
+
+exports[`rosterChangeRequest schema transformations 4`] = `
+{
+  "affectedOfficersExternalIds": [
+    "so8",
+    "so9",
+  ],
+  "requestChangeType": "REMOVE",
+  "requestNote": "Due to recent operational changes and workload rebalancing, these officers need to be reassigned.
+
+We appreciate the quick processing of this request and will coordinate as needed to ensure a smooth transition.
+Let us know if you have any questions.",
+  "requesterName": "Rosa Smith",
+}
+`;
+
+exports[`rosterChangeRequest schema transformations 5`] = `
+{
+  "affectedOfficersExternalIds": [
+    "so8",
+    "so9",
+  ],
+  "requestChangeType": "ADD",
+  "requestNote": "To better align resources with increasing casework demands, these officers are being added to the caseload.
+Their skills and experience make them well-suited for the current needs, and we appreciate the processing of this update.
+
+If any issues arise, please notify us as soon as possible.",
+  "requesterName": "Rosa Smith",
+}
+`;
+
+exports[`rosterChangeRequestResponse schema transformation 1`] = `
+{
+  "email": "test@testdomain.com",
+  "id": "1",
+}
+`;

@@ -25,11 +25,15 @@ import {
   rawInsightsConfigFixture,
   rawLeadershipUserInfoFixture,
   rawMetricBenchmarksFixture,
+  rawRosterChangeRequestFixtures,
+  rawRosterChangeRequestResponseFixture,
   rawSupervisionOfficerFixture,
   rawSupervisionOfficerMetricEventFixture,
   rawSupervisionOfficerOutcomesFixture,
   rawSupervisionVitalsMetricFixture,
   rawSupervisorUserInfoFixture,
+  rosterChangeRequestFixtures,
+  rosterChangeRequestResponseFixture,
   supervisionOfficerFixture,
   supervisionOfficerMetricEventFixture,
   supervisionOfficerOutcomesFixture,
@@ -202,6 +206,23 @@ describe("InsightsAPIClient", () => {
     );
 
     expect(response).toEqual(supervisionOfficerOutcomesFixture);
+  });
+
+  it("allSupervisionOfficers parses the data", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({ officers: rawSupervisionOfficerFixture }),
+    );
+    const response = await client.allSupervisionOfficers();
+
+    expect(response).toEqual(supervisionOfficerFixture);
+  });
+
+  it("allSupervisionOfficers calls the correct endpoint", async () => {
+    fetchMock.mockResponse(JSON.stringify({ officers: [] }));
+    await client.allSupervisionOfficers();
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(`${BASE_URL}/officers`),
+    );
   });
 
   it("supervisionOfficer calls the correct endpoint", async () => {
@@ -432,5 +453,35 @@ describe("InsightsAPIClient", () => {
         },
       ]
     `);
+  });
+
+  it("submitRosterChangeRequestIntercomTicket parses the data", async () => {
+    const [supervisorPseudoId, mockRequest] = Object.entries(
+      rawRosterChangeRequestFixtures,
+    )[0];
+    fetchMock.mockResponse(
+      JSON.stringify(rawRosterChangeRequestResponseFixture),
+    );
+    const response = await client.submitRosterChangeRequestIntercomTicket(
+      supervisorPseudoId,
+      mockRequest,
+    );
+    expect(response).toEqual(rosterChangeRequestResponseFixture);
+  });
+
+  it("submitRosterChangeRequestIntercomTicket calls the correct endpoint", async () => {
+    const supervisorPseudoId = Object.keys(rawRosterChangeRequestFixtures)[0];
+    fetchMock.mockResponse(
+      JSON.stringify(rawRosterChangeRequestResponseFixture),
+    );
+    await client.submitRosterChangeRequestIntercomTicket(
+      supervisorPseudoId,
+      rosterChangeRequestFixtures[0],
+    );
+    expect(fetchMock.mock.calls[0][0]).toEqual(
+      encodeURI(
+        `${BASE_URL}/supervisor/${supervisorPseudoId}/roster_change_request`,
+      ),
+    );
   });
 });
