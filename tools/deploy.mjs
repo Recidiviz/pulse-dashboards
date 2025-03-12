@@ -1,7 +1,19 @@
-/* eslint-disable no-console -- this is a script that prints its output */
-/* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] --
- * allow dev dependencies since this won't run in production
- * */
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
 
 import "zx/globals"; // get access to $ function
 
@@ -51,7 +63,7 @@ if (deployEnv === "preview") {
     {
       name: "previewAppName",
       message:
-        "Enter a name for your preview app (letters, digits, and hypens only):",
+        "Enter a name for your preview app (letters, digits, and hyphens only):",
       validate: (name) => /^[a-zA-Z0-9-]+$/.test(name),
     },
     {
@@ -83,6 +95,8 @@ let nextVersion = "deploy-candidate";
 let publishReleaseNotes;
 let releaseNotes;
 let isCpDeploy;
+const successfullyDeployed = [];
+let deployingLatestMain = true;
 
 if (deployEnv === "staging") {
   const mainBranch = await octokit.rest.repos.getBranch({
@@ -99,6 +113,7 @@ if (deployEnv === "staging") {
       default: false,
     });
     if (!proceedAnyway) process.exit(1);
+    deployingLatestMain = false;
   }
 }
 
@@ -144,7 +159,7 @@ if (deployEnv === "production") {
       default: releaseNotes,
     });
     releaseNotes = noteEditorPrompt.noteEditor;
-    // eslint-disable-next-line no-undef -- chalk is part of the zx global import
+
     console.log(`${chalk.bold("New release notes:")}\n${releaseNotes}`);
   }
 
@@ -203,6 +218,7 @@ if (deployBackendPrompt.deployBackend) {
           break;
       }
       retryBackend = false;
+      successfullyDeployed.push("staff-shared-server");
     } catch (e) {
       // eslint-disable-next-line no-await-in-loop
       const retryBackendPrompt = await inquirer.prompt({
@@ -274,6 +290,7 @@ if (deployFrontendPrompt.deployFrontend) {
             );
         }
         retryFrontend = false;
+        successfullyDeployed.push("Frontend");
       } catch (e) {
         // eslint-disable-next-line no-await-in-loop
         const retryFrontendPrompt = await inquirer.prompt({
@@ -328,24 +345,29 @@ if (
         // 2. deploying a cherry-pick
         // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
         if (deployEnv === "staging") {
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration cherry-pick`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "demo") {
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration demo`.pipe(
             process.stdout,
           );
         }
 
+        // eslint-disable-next-line no-await-in-loop
         await $`COMMIT_SHA=${currentRevision} nx deploy-app sentencing-server --configuration ${deployEnv}`.pipe(
           process.stdout,
         );
 
         retryDeploy = false;
+        successfullyDeployed.push("Sentencing Server");
       } catch (e) {
         // eslint-disable-next-line no-await-in-loop
         const retryDeployPrompt = await inquirer.prompt({
@@ -393,29 +415,35 @@ if (deployEnv === "staging" || deployEnv === "production") {
         // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
         if (deployEnv === "staging") {
           // Push the docker container for the Cloud Run service
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
           // Push the docker container for the Cloud Run jobs
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-jobs --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration cherry-pick`.pipe(
             process.stdout,
           );
           // Push the docker container for the Cloud Run jobs
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-jobs --configuration cherry-pick`.pipe(
             process.stdout,
           );
         }
 
         // TODO(#7617) Check if ETL Cloud Run Job is running before DB migration
+        // eslint-disable-next-line no-await-in-loop
         await $`nx run jii-texting-server:deploy --configuration=${deployEnv} --tag=${currentRevision} --migrate=true`.pipe(
           process.stdout,
         );
 
         retryDeploy = false;
+        successfullyDeployed.push("JII Texting Server");
       } catch (e) {
         // eslint-disable-next-line no-await-in-loop
         const retryDeployPrompt = await inquirer.prompt({
@@ -470,24 +498,29 @@ if (
         // 2. deploying a cherry-pick
         // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
         if (deployEnv === "staging") {
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration cherry-pick`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "demo") {
+          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration demo`.pipe(
             process.stdout,
           );
         }
 
+        // eslint-disable-next-line no-await-in-loop
         await $`COMMIT_SHA=${currentRevision} nx deploy-app case-notes-server --configuration ${deployEnv}`.pipe(
           process.stdout,
         );
 
         retryDeploy = false;
+        successfullyDeployed.push("Case Notes Server");
       } catch (e) {
         // eslint-disable-next-line no-await-in-loop
         const retryDeployPrompt = await inquirer.prompt({
@@ -539,7 +572,11 @@ if (publishReleaseNotes) {
   }
 }
 
-// Slack deployment bot
+// Post a message to Slack about the deployment through the Deployment Bot account
+console.log("Posting the deploy notification to Slack...");
+
+$.verbose = false;
+const deployer = (await $`gcloud config get-value account`).stdout.trim();
 
 const polarisChannelId = "C026UPMAX4G";
 const polarisEngChannelId = "C04LC0VH78B";
@@ -547,13 +584,28 @@ const polarisEngChannelId = "C04LC0VH78B";
 let slackChannel = null;
 let slackMessage = null;
 
-if (deployEnv === "staging") {
+if (deployEnv === "staging" && successfullyDeployed.length > 0) {
   slackChannel = polarisEngChannelId;
-  slackMessage = `\`${currentRevision}\` on staging`;
-}
 
-if (deployEnv === "production") {
-  let message = `${nextVersion} is on production!`;
+  let revisionText = "`" + currentRevision + "`";
+  if (!deployingLatestMain) revisionText += " (not the tip of main)";
+
+  slackMessage = `${deployer} deployed ${revisionText} to staging!`;
+
+  // Add a github link when a stable one exists, i.e. when the commit just deployed
+  // exists on origin/main, even if it is not the tip
+  const mostRecentAncestor = (
+    await $`git fetch origin main --negotiate-only --negotiation-tip=${currentRevision}`
+  ).stdout.trim();
+  const shortenedAncestor = (
+    await $`git rev-parse --short ${mostRecentAncestor}`
+  ).stdout.trim();
+  if (shortenedAncestor === currentRevision) {
+    const githubLink = `https://github.com/${owner}/${repo}/commit/${mostRecentAncestor}`;
+    slackMessage += ` (<${githubLink}|view on GitHub>)`;
+  }
+} else if (deployEnv === "production") {
+  let message = `${deployer} deployed ${nextVersion} to production!`;
 
   if (publishReleaseNotes) {
     const releaseNotesMessage = releaseNotes
@@ -569,10 +621,14 @@ if (deployEnv === "production") {
 }
 
 if (slackChannel !== null && slackMessage !== null) {
+  slackMessage += `\nWhat was deployed: ${successfullyDeployed.join(", ")}`;
   try {
     const slackMessageResponse = await slack.chat.postMessage({
       channel: slackChannel,
       text: slackMessage,
+      // Don't show previews for Github links
+      unfurl_links: false,
+      unfurl_media: false,
     });
     if (slackMessageResponse.ok) {
       console.log("Succesfully posted to Slack");
@@ -581,8 +637,9 @@ if (slackChannel !== null && slackMessage !== null) {
     }
   } catch (error) {
     console.log(
-      "There was a problem posting to Slack, please post the message manually.",
+      "There was a problem posting to Slack, please post the message manually:",
     );
+    console.log(slackMessage);
     console.error(error);
   }
 }
