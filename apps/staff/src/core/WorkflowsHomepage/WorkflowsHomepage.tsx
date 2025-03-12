@@ -54,10 +54,11 @@ const ManagedComponent = observer(function WorkflowsHomepage({
   const selectedSearchIdsCount = selectedSearchIds?.length || 0;
 
   const ctaAndHeaderText = () => {
+    const salutation = userGivenNames ? `Hi, ${userGivenNames}.` : "Hi.";
     // If no search ids are selected, show a welcome message
     if (selectedSearchIdsCount === 0)
       return {
-        headerText: `Hi, ${userGivenNames}.`,
+        headerText: salutation,
         ctaText: supportsMultipleSystems
           ? `Search above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`
           : `Search for ${pluralize(
@@ -84,7 +85,7 @@ const ManagedComponent = observer(function WorkflowsHomepage({
     // else show the header text with the number of opportunities found
     else
       return {
-        headerText: `Hi, ${userGivenNames}. We’ve found some outstanding items across ${selectedSearchIdsCount} ${searchResultLabel}`,
+        headerText: `${salutation} We’ve found some outstanding items across ${selectedSearchIdsCount} ${searchResultLabel}`,
       };
   };
 
