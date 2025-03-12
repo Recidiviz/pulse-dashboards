@@ -36,6 +36,42 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzIncarcerationPastAcisDtpDate",
           text: "Past DTP date in ACIS{{#if acisDtpDate}}: {{date acisDtpDate}}{{/if}}",
         },
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "No active felony detainers",
+        },
+        {
+          key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
+          text: "Enrolled in or meets functional literacy requirement",
+          tooltip:
+            "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
+        },
+        {
+          key: "usAzOnlyDrugOffenseConvictions",
+          text: "Serving sentence for only eligible drug offenses",
+        },
+        {
+          key: "custodyLevelIsMinimumOrMedium",
+          text: "Classified as Minimum or Medium security",
+          tooltip:
+            "Inmates must be classified by the department as minimum or medium custody as determined by an objective risk assessment.",
+        },
+        {
+          key: "usAzNoDtpRemovalsFromSelfImprovementPrograms",
+          text: "No removals from major self-improvement programs within 18 months",
+        },
+        {
+          key: "usAzNoUnsatisfactoryProgramRatingsWithin3Months",
+          text: "No unsatisfactory program ratings within 3 months",
+        },
+        {
+          key: "usAzNoViolationsAndEligibleLegalStatus",
+          text: "No disqualifying violations of major rules",
+        },
+        {
+          key: "usAzNoIneligibleDtpOffenseConvictions",
+          text: "No disqualifying convictions",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-OverdueForDTPReferrals",
@@ -43,16 +79,27 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: true,
       highlightedCaseCtaCopy: "overdue DTP cases",
       homepagePosition: 4,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "Has one or more felony detainers",
+        },
+        {
+          key: "usAzEnrolledInOrMeetsMandatoryLiteracy",
+          text: "Has not enrolled in or met functional literacy requirement",
+          tooltip:
+            "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
+        },
+      ],
       initialHeader: null,
-      isAlert: true,
+      isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Requirements validated by ACIS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
@@ -88,6 +135,39 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzIncarcerationPastAcisTprDate",
           text: "Past TPR date in ACIS{{#if acisTprDate}}: {{date acisTprDate}}{{/if}}",
         },
+        { key: "usAzNoActiveFelonyDetainers", text: "No felony detainers" },
+        {
+          key: "usAzMeetsFunctionalLiteracyTpr",
+          text: "Functional literacy complete",
+          tooltip:
+            "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
+        },
+        {
+          key: "custodyLevelIsMinimumOrMedium",
+          text: "Classified as Minimum or Medium security",
+          tooltip:
+            "Inmates must be classified by the department as minimum or medium custody as determined by an objective risk assessment.",
+        },
+        {
+          key: "usAzAtLeast24MonthsSinceLastCsed",
+          text: "At least 24 months since last CSED",
+        },
+        {
+          key: "usAzNoTprRemovalsFromSelfImprovementPrograms",
+          text: "No removals from major self-improvement programs within 18 months",
+        },
+        {
+          key: "usAzNoUnsatisfactoryProgramRatingsWithin3Months",
+          text: "No unsatisfactory program ratings within 3 months",
+        },
+        {
+          key: "usAzNoViolationsAndEligibleLegalStatus",
+          text: "No disqualifying violations of major rules",
+        },
+        {
+          key: "usAzNoIneligibleTprOffenseConvictions",
+          text: "No disqualifying convictions",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-OverdueForTPRReferrals",
@@ -95,9 +175,20 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: true,
       highlightedCaseCtaCopy: "overdue STP cases",
       homepagePosition: 3,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "usAzMeetsFunctionalLiteracyTpr",
+          text: "Functional literacy outstanding",
+          tooltip:
+            "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
+        },
+        {
+          key: "usAzNoActiveFelonyDetainers",
+          text: "Has one or more felony detainers",
+        },
+      ],
       initialHeader: null,
-      isAlert: true,
+      isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
@@ -335,7 +426,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "At least 24 months since last CSED",
         },
         {
-          key: "usAzNoDtpRemovalsFromSelfImprovementPrograms",
+          key: "usAzNoTprRemovalsFromSelfImprovementPrograms",
           text: "No removals from major self-improvement programs within 18 months",
         },
         {
@@ -346,18 +437,6 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzNoViolationsAndEligibleLegalStatus",
           text: "No disqualifying violations of major rules",
           tooltip: "",
-        },
-        {
-          key: "usAzNoSexualArsonOrDangerousCrimesAgainstChildren",
-          text: "Not convicted of an ineligible sexual crime, arson, or dangerous crimes against children",
-          tooltip:
-            "Inmates must not have been convicted of a sexual offense pursuant to title 13, chapter 14 or a violation of title 13, chapter 17.",
-        },
-        {
-          key: "usAzNotServingIneligibleOffense",
-          text: "Not convicted of an ineligible violent crime",
-          tooltip:
-            "Inmates must not have been convicted of a violent crime as defined in section 13-901.03, unless the inmate was convicted of assault, aggravated assault or robbery.",
         },
         {
           key: "usAzNoIneligibleTprOffenseConvictions",
@@ -492,98 +571,6 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       tooltipEligibilityText: null,
       urlSection: "TPR",
-      zeroGrantsTooltip: null,
-    },
-    usAzTransferToAdministrativeSupervision: {
-      callToAction:
-        "Review clients who may be eligible for Administrative Supervision and fill out a checklist for them.",
-      compareBy: null,
-      denialAdjective: null,
-      denialNoun: null,
-      denialReasons: [{ key: "OTHER", text: "Please specify reason" }],
-      denialText: null,
-      deniedTabTitle: null,
-      displayName: "Administrative Supervision",
-      dynamicEligibilityText:
-        "client[|s] may be eligible for transfer to Administrative Supervision.",
-      eligibilityDateText: null,
-      eligibleCriteriaCopy: [
-        {
-          key: "usAzNoDisqualifyingConvictions",
-          text: "Eligible underlying offense(s)",
-          tooltip:
-            "To be eligible for Administrative Supervision, clients must not have current convictions of sex offense, domestic violence, arson or homicide, unless the client qualifies for administrative supervision under section 1.8.",
-        },
-        {
-          key: "usAzMeetsHousingCriteria",
-          text: "Meets housing criteria",
-          tooltip:
-            "Not classified as homeless in their home release plan. A client may also meet this requirement once they have achieved stable housing while on supervision.",
-        },
-        {
-          key: "usAzMeetsEmploymentCriteria",
-          text: "Meets employment criteria",
-          tooltip:
-            "Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4. A client may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, application for disability status, inability to work, or retirement. For the purpose of this policy, clients providing caregiving for a family member may also be considered to meet this condition. ",
-        },
-        {
-          key: "usAzMeetsMentalHealthCriteria",
-          text: "Meets mental health criteria",
-          tooltip: "Mental Health Score of 3 or below and not SMI-C.",
-        },
-      ],
-      emptyTabCopy: [],
-      firestoreCollection: "US_AZ-TransferToAdminSupervision",
-      hideDenialRevert: false,
-      highlightCasesOnHomepage: false,
-      highlightedCaseCtaCopy: null,
-      homepagePosition: 5,
-      ineligibleCriteriaCopy: [],
-      initialHeader: null,
-      isAlert: false,
-      markSubmittedOptionsByTab: [],
-      methodologyUrl:
-        "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [
-        {
-          text: "ORAS medium or lower",
-          tooltip:
-            "To be eligible for Administrative Supervision, clients must have an ORAS risk determination of medium or lower, unless they qualify for administrative supervision under section 1.8.",
-        },
-        {
-          text: "Initial intake and needs assessment complete",
-          tooltip:
-            "Has completed initial intake and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (eg. telephone or by video call).",
-        },
-        {
-          text: "Meets substance use disorder criteria ",
-          tooltip:
-            "Not currently dealing with substance use issues, as assessed in ORAS question 5.4. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from this requirement. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
-        },
-        {
-          text: "No recent disqualifying violations.",
-          tooltip:
-            "Clients with any risk score and with current convictions of any offense, including sex offense, domestic violence, arson, or homicide, are eligible for administrative supervision if they meet criteria 1.3 - 1.7, and \nupon completion of 15 consecutive months of supervision with no violations.\nSuch decisions are conditional on supervisor approval.",
-        },
-      ],
-      nonOmsCriteriaHeader: null,
-      notifications: [],
-      omsCriteriaHeader: "Validated by data from ACIS",
-      overdueOpportunityCalloutCopy: null,
-      priority: "NORMAL",
-      sidebarComponents: ["Supervision"],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
-      stateCode: "US_AZ",
-      subcategoryHeadings: [],
-      subcategoryOrderings: [],
-      subheading: null,
-      submittedTabTitle: null,
-      supportsSubmitted: false,
-      systemType: "SUPERVISION",
-      tabGroups: null,
-      tabPrefaceCopy: [],
-      tooltipEligibilityText: null,
-      urlSection: "AdminSupervision",
       zeroGrantsTooltip: null,
     },
   },
