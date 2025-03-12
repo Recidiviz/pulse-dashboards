@@ -107,9 +107,10 @@ export const transform = (
     currentOffenses3: formInformation.currentOffenses?.[3] || "",
     currentOffenses4: formInformation.currentOffenses?.[4] || "",
 
-    supervisionFeeExemptionType: (
-      record.eligibleCriteria.usTnFinesFeesEligible
-        ?.hasPermanentFinesFeesExemption?.currentExemptions ?? []
+    supervisionFeeExemptionType: _.uniq(
+      formInformation.currentExemptionsAndExpiration?.map(
+        (exemptionInfo) => exemptionInfo.exemptionReason,
+      ),
     ).join(", "),
     supervisionFeeExemptionExpirDate: _.uniq(
       formInformation.currentExemptionsAndExpiration?.map(
