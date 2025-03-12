@@ -87,7 +87,6 @@ export type FeatureVariant =
   | "zeroGrantsFlag"
   | "usOrEarnedDischargeSentence"
   | "oppTabSubcategories"
-  | "taskFilters"
   | "offenseOverrideControls"
   | "protectiveFactors"
   | "editCountyFields"
@@ -145,7 +144,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
   oppTabSubcategories: {},
-  taskFilters: {},
   offenseOverrideControls: {},
   protectiveFactors: {},
   editCountyFields: {},
@@ -160,41 +158,32 @@ export const allFeatureVariants: FeatureVariantMapping = {
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
     ? {
-        usTnExpiration: {},
-        usTnExpirationSubmitToTomis: {},
-        supervisionUnrestrictedSearch: {},
-        usMoOverdueRHPilot: {},
+        actionStrategies: { activeTenants: ["US_MI"] },
         enableSnooze: {},
+        fullWidthTimeline: { activeTenants: ["US_AZ"] },
         insightsOnboarding: {},
-        supervisorHomepageWorkflows: {},
         nonOMSCriteria: {
           activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA"],
+        },
+        opportunityTableView: { activeTenants: ["US_TX"] },
+        oppTabSubcategories: { activeTenants: ["US_AZ"] },
+        outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
+        sortableOpportunityTabs: {
+          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ"],
         },
         submittedOpportunityStatus: {
           activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA"],
         },
-        sortableOpportunityTabs: {
-          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ"],
-        },
-        usOrEarnedDischargeSentence: {},
-        oppTabSubcategories: {
-          activeTenants: ["US_AZ"],
-        },
-        fullWidthTimeline: {
-          activeTenants: ["US_AZ"],
-        },
-        usTnSuspensionOfDirectSupervision: {},
-        actionStrategies: {
-          activeTenants: ["US_MI"],
-        },
-        zeroGrantsFlag: {
-          activeTenants: ["US_ID", "US_MI", "US_TN"],
-        },
-        outcomesModule: {
-          activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
-        },
+        supervisionUnrestrictedSearch: {},
+        supervisorHomepageWorkflows: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},
+        usMoOverdueRHPilot: {},
+        usOrEarnedDischargeSentence: {},
+        usTnExpiration: {},
+        usTnExpirationSubmitToTomis: {},
+        usTnSuspensionOfDirectSupervision: {},
+        zeroGrantsFlag: { activeTenants: ["US_ID", "US_MI", "US_TN"] },
       }
     : {
         ...allFeatureVariants,

@@ -119,19 +119,19 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
         type: "person",
         options: [
           {
-            value: "Limited",
+            value: "Annual",
           },
           {
-            value: "Minimum",
+            value: "Low",
+          },
+          {
+            value: "Low-Moderate",
           },
           {
             value: "Medium",
           },
           {
             value: "High",
-          },
-          {
-            value: "Maximum",
           },
         ],
       },
