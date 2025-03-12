@@ -51,7 +51,8 @@ export const US_ND: InsightsConfig = {
   ],
   docLabel: "DOCR",
   exclusionReasonDescription: "TODO EXCLUSION REASON",
-  learnMoreUrl: "https://recidiviz.org/",
+  learnMoreUrl:
+    "https://drive.google.com/file/d/1gWA2aFu0VtL9c9ysv3PuhWjVjj7jYPNc/view?usp=sharing",
   metrics: [
     {
       name: "incarceration_starts",
@@ -101,6 +102,7 @@ export const US_ND: InsightsConfig = {
     },
     { metricId: "timely_contact", titleDisplayName: "Timely Contact" },
   ],
-  vitalsMetricsMethodologyUrl: "https://www.recidiviz.org/",
+  vitalsMetricsMethodologyUrl:
+    "https://drive.google.com/file/d/1gWA2aFu0VtL9c9ysv3PuhWjVjj7jYPNc/view?usp=sharing",
   worseThanRateLabel: "Far above the statewide rate",
 };
