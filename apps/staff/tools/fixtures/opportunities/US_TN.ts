@@ -202,6 +202,227 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "annualReclassification",
       zeroGrantsTooltip: null,
     },
+    usTnCompliantReporting2025Policy: {
+      callToAction: "Auto-fill referral",
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        {
+          key: "CONTACT",
+          text: "Hasn't had 3 face-to-face contacts (or doesn't have them scheduled) within 60 days",
+        },
+        { key: "FELONY", text: "Has pending felony charges" },
+        {
+          key: "REPORTING",
+          text: "Hasn't reported as instructed for 3 months ",
+        },
+        {
+          key: "CONDITIONS",
+          text: "Hasn't complied with Court/Board of Parole conditions",
+        },
+        {
+          key: "NEEDS",
+          text: "Isn't addressing high assessed criminogenic needs",
+        },
+        {
+          key: "CASE",
+          text: "On supervision for highly publicized case, sex offense or domestic violence",
+        },
+        { key: "FEE", text: "No effort to pay fees" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "Compliant Reporting - 2025 Policy",
+      dynamicEligibilityText:
+        "client[|s] may be eligible for Compliant Reporting",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        {
+          key: "onMinimumOrLowMediumSupervisionAtLeastSixMonths",
+          text: "On Minimum supervision level for 6+ months",
+          tooltip:
+            "Once Strong-R 2.0 is implemented, this will change to 'Low-Moderate' supervision level",
+        },
+        {
+          key: "usTnNoArrestsInPast6Months",
+          text: "Negative arrest check on {{date record.metadata.latestNegativeArrestCheck.contactDate}}",
+          tooltip: "Client has had no arrests in the past 6 months",
+        },
+        {
+          key: "noSupervisionViolationReportWithin6Months",
+          text: "No violations in the past 6 months",
+        },
+        {
+          key: "usTnNoSupervisionSanctionWithin3Months",
+          text: "No sanctions in the past 3 months",
+        },
+        {
+          key: "latestDrugTestIsNegativeOrMissing",
+          text: ' {{#if  (eq latestDrugScreenDate "")}}\nNo recent drug screens\n{{else}}\nPassed most recent drug screen on {{date latestDrugScreenDate}}\n{{/if}}\n\n',
+          tooltip:
+            "Tested negative on their most recent drug screen or have no drug tests",
+        },
+        {
+          key: "usTnFeeScheduleOrPermanentExemption",
+          text: " {{#if  (eq latestFeeContactDate “”)}}\nHas permanent exemption {{currentExemptions}}\n\n{{else}}\n {{#if  (eq currentExemptions “”)}}\nLatest FEEP on {{date latestFeeContactDate}}\n{{else}}\nLatest FEEP on {{date latestFeeContactDate}}, has permanent exemption {{currentExemptions}}\n{{/if}}\n{{/if}}\n\n\n\n\n",
+          tooltip:
+            "Clients who've had a FEEP code in the last 90 days are surfaced as eligible or have a permanent exemption",
+        },
+        {
+          key: "usTnAssessedNotHighOnStrongRDomains",
+          text: "No high needs as of {{date assessmentDate}}",
+          tooltip:
+            "Have addressed or are addressing any highly assessed criminogenic needs.",
+        },
+        {
+          key: "usTnNotOnCommunitySupervisionForLife",
+          text: "Not currently on supervision as convicted sex offender",
+          tooltip:
+            "Client isn't on Sex Offense Unit (SCU), doesn't have Community Supervision for Life, and doesn't have a sex offense listed in \"type of offense\". For reference, all current offenses are listed in client record.",
+        },
+        {
+          key: "usTnNotServingIneligibleCrOffensePolicyB",
+          text: "Not currently on supervision for domestic violence",
+          tooltip:
+            'Client doesn\'t have a DV offense listed in "type of offense". For reference, all current offenses are listed in client record. ',
+        },
+        {
+          key: "usTnNotInDayReportingCenterLocation",
+          text: "Not in day reporting center",
+        },
+        {
+          key: "onUnassignedFor60Days",
+          text: "On intake for 60+ days",
+          tooltip: "Clients must be on intake for 60 days",
+        },
+        {
+          key: "assessedRiskLowAfterUnassignedSupervisionLevel",
+          text: "Assessed Low after starting on Intake, latest assessment on {{date assessment_date}}",
+        },
+        {
+          key: "usTnThreeFaceToFaceContactsWithin60DaysOfUnassignedSupervisionLevel",
+          text: "Three face-to-face contacts since intake start on {{faceToFaceContactsArray}}",
+          tooltip:
+            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discrection.",
+        },
+        {
+          key: "usTnHomeVisitSinceUnassignedSupervisionLevel",
+          text: "First home visit since intake on {{date eligibleDate}}",
+        },
+        {
+          key: "usTnNoSupervisionSanctionSinceUnassignedSupervisionLevel",
+          text: "No sanctions since being placed on Community Supervision",
+        },
+        {
+          key: "noSupervisionViolationReportSinceUnassignedSupervisionLevel",
+          text: "No violations since being placed on Community Supervision",
+        },
+        {
+          key: "noPositiveDrugScreensSinceUnassignedSupervisionLevel",
+          text: '"No positive drug screens since being placed on Community\nSupervision."',
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "usTnCompliantReporting2025PolicyReferrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 6,
+      ineligibleCriteriaCopy: [
+        {
+          key: "onMinimumOrLowMediumSupervisionAtLeastSixMonths",
+          text: "Needs {{daysUntil minimumTimeServedDate}} more days on Minimum",
+        },
+        {
+          key: "usTnFeeScheduleOrPermanentExemption",
+          text: "Confirm the client has a fee payment schedule in place if applicable",
+          tooltip:
+            "Clients who've had a FEEP code in the last 90 days are surfaced as eligible",
+        },
+        {
+          key: "usTnAssessedNotHighOnStrongRDomains",
+          text: "Has at least one high need domain",
+          tooltip:
+            "Have addressed or are addressing any highly assessed criminogenic needs.",
+        },
+        {
+          key: "onUnassignedFor60Days",
+          text: "Needs {{daysUntil minimumTimeServedDate}} more days on Intake",
+          tooltip: "Clients must be on intake for 60 days",
+        },
+        {
+          key: "usTnThreeFaceToFaceContactsWithin60DaysOfUnassignedSupervisionLevel",
+          text: "Did not have 3 face to face contacts within 60 days of starting Intake. Has had contacts on {{faceToFaceContactsArray}}",
+          tooltip:
+            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discrection.",
+        },
+      ],
+      initialHeader:
+        "Review and refer eligible clients for Compliant Reporting using the autofilled paperwork.",
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl:
+        "https://drive.google.com/file/d/1YNAUTViqg_Pgt15KsZPUiNG11Dh2TTiB/view",
+      nonOmsCriteria: [
+        {
+          text: "No pending felony charges",
+          tooltip:
+            "See VWARs submitted on current supervision period for information on potential pending felony charges",
+        },
+        {
+          text: "Has reported as instructed for the past 3 months (unless excused or documented)",
+        },
+        {
+          text: "Able to comply with any Court/Board of Parole ordered special conditions",
+        },
+        {
+          text: "Not currently on supervision for highly publicized case",
+          tooltip:
+            "For reference, all current offenses are listed in client record.",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check",
+      notifications: [],
+      omsCriteriaHeader: "Validated by data from TOMIS",
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: [
+        "SpecialConditions",
+        "ClientProfileDetails",
+        "FinesAndFees",
+        "CaseNotes",
+      ],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      stateCode: "US_TN",
+      subcategoryHeadings: [
+        { subcategory: "MISSING_1_CRITERIA", text: "Missing 1 Criteria" },
+        { subcategory: "MISSING_2_CRITERIA", text: "Missing 2 Criteria" },
+        { subcategory: "MISSING_3_CRITERIA", text: "Missing 3 Criteria" },
+        { subcategory: "MISSING_4_CRITERIA", text: "Missing 4 Criteria" },
+      ],
+      subcategoryOrderings: [
+        {
+          tab: "Almost Eligible",
+          texts: [
+            "MISSING_1_CRITERIA",
+            "MISSING_2_CRITERIA",
+            "MISSING_3_CRITERIA",
+            "MISSING_4_CRITERIA",
+          ],
+        },
+      ],
+      subheading:
+        "Compliant Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts. ",
+      submittedTabTitle: null,
+      supportsSubmitted: true,
+      systemType: "SUPERVISION",
+      tabGroups: null,
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "usTnCompliantReporting2025Policy",
+      zeroGrantsTooltip: null,
+    },
     usTnCustodyLevelDowngrade: {
       callToAction: "Review and update custody levels.",
       compareBy: null,
@@ -291,19 +512,20 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "supervisionPastFullTermCompletionDate",
+          key: "supervisionPastFullTermCompletionDateOrUpcoming1Day",
           text: "{{#if (eq 0 (daysPast eligibleDate))}}Expiration date is today{{else}}{{#if (eq 1 (daysPast eligibleDate))}}1 day{{else}}{{daysPast eligibleDate}} days{{/if}} past expiration date{{/if}} ({{date eligibleDate}})",
-          tooltip: null,
         },
         {
           key: "usTnNoZeroToleranceCodesSpans",
           text: "No zero tolerance codes since most recent sentence imposed date",
-          tooltip: null,
         },
         {
           key: "usTnNotOnLifeSentenceOrLifetimeSupervision",
           text: "Not on lifetime supervision or lifetime sentence",
-          tooltip: null,
+        },
+        {
+          key: "supervisionPastFullTermCompletionDate",
+          text: "{{#if (eq 0 (daysPast eligibleDate))}}Expiration date is today{{else}}{{#if (eq 1 (daysPast eligibleDate))}}1 day{{else}}{{daysPast eligibleDate}} days{{/if}} past expiration date{{/if}} ({{date eligibleDate}})",
         },
       ],
       emptyTabCopy: [],

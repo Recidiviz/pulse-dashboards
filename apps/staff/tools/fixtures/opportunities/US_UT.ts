@@ -20,22 +20,108 @@ import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore
 export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usUtEarlyTermination: {
-      callToAction: null,
+      callToAction:
+        "Review the clients and submit a report to the court for those who are strong candidates",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [{ key: "OTHER", text: "Other, please enter a reason" }],
+      denialReasons: [
+        {
+          key: "CRIMINAL CONDUCT",
+          text: "Client engaged in new criminal conduct recently",
+        },
+        {
+          key: "RESTITUTION",
+          text: "Restitution hasn't been paid consistently",
+        },
+        {
+          key: "CASE ACTION PLAN",
+          text: "Insufficient progress in the Case Action Plan",
+        },
+        {
+          key: "TREATMENT",
+          text: "Client has not completed ordered assessments, treatment, or programming",
+        },
+        { key: "Other", text: "Other, please enter a reason" },
+      ],
       denialText: null,
-      deniedTabTitle: "Pending – Ineligible",
-      displayName: "Early Termination of Probation",
+      deniedTabTitle: "Marked Ineligible",
+      displayName: "Early Termination of Supervision",
       dynamicEligibilityText:
-        "client[|s] have upcoming reports due for Early Termination of Probation",
+        "client[|s] may be [a suitable candidate|suitable candidates] for Early Termination",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: [],
+      eligibleCriteriaCopy: [
+        {
+          key: "usUtHasCompletedOrderedAssessments",
+          text: "Treatment completed",
+          tooltip:
+            "• Completion of ordered assessments and any recommended treatment or programming by a licensed provider.\n• For the purposes of this section, persons voluntarily engaged in ongoing care after having completing ordered treatment\nshall be considered as having completed treatment.\n• If no treatment is ordered, then this requirement has been met.",
+        },
+        {
+          key: "usUtRiskReductionForEt",
+          text: "Decline in risk score",
+          tooltip:
+            "Risk reduction as indicated by ANY of the following:\n1. Overall reduction of 5 percent or more on LS/RNR or other validated risk assessment.\n2. Reduction by one level on LS/RNR or other validated risk assessment (e.g., high to moderate).\n3. Maintaining an overall risk level of moderate or low on LS/RNR or other validated risk assessment.",
+        },
+        {
+          key: "supervisionHousingIsPermanentOrTemporaryFor3Months",
+          text: "Past early termination review date (half-time date)",
+          tooltip:
+            "A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
+        },
+        {
+          key: "supervisionHousingIsPermanentFor3Months",
+          text: "Stable housing",
+          tooltip: "Client has had stable housing for at least three months. ",
+        },
+        {
+          key: "supervisionContinuousEmploymentFor3Months",
+          text: "Stable employment",
+          tooltip:
+            "Client has had continuous employment for at least three months",
+        },
+        {
+          key: "usUtNoMedhighSupervisionViolationWithin3Months",
+          text: "No recent violation history",
+          tooltip:
+            "Client has had no medium/high supervision violations in the last three months.",
+        },
+        {
+          key: "onSupervisionAtLeast6Months",
+          text: "On supervision for at least 6 months",
+        },
+        {
+          key: "usUtNoRiskLevelIncreaseOf15Percent",
+          text: "No recent increase in risk score",
+          tooltip:
+            "Risk score has not increased in more than 15% in the past year",
+        },
+        {
+          key: "atLeast3MonthsSinceMostRecentPositiveDrugTest",
+          text: "No recent positive drug test",
+          tooltip: "No positive drug test in the past 3 months",
+        },
+        {
+          key: "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
+          text: "Is past early termination review date (half-time date)",
+          tooltip:
+            "A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
+        },
+        {
+          key: "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
+          text: "Is past early termination review date (half-time date)",
+          tooltip:
+            "A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
+        },
+      ],
       emptyTabCopy: [
         {
           tab: "Report Due",
           text: "At this time, there are no clients who have a report due. Please navigate to one of the other tabs.",
+        },
+        {
+          tab: "Report submitted",
+          text: "At this time, there are no clients who have a report submitted. Please navigate to one of the other tabs.",
         },
       ],
       firestoreCollection: "US_UT-earlyTerminationReferrals",
@@ -45,11 +131,26 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 1,
       ineligibleCriteriaCopy: [
         {
+          key: "usUtHasCompletedOrderedAssessments",
+          text: "Has not yet completed ordered assessments, recommended treatment or programming ",
+        },
+        {
+          key: "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
+          text: "Meets all criteria except for being past the early termination review date",
+        },
+        {
+          key: "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
+          text: "Is not past early termination review date (half-time date)",
+          tooltip:
+            "A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
+        },
+        {
           key: "supervisionContinuousEmploymentFor3Months",
-          text: "PLACEHOLDER TEXT supervisionContinuousEmploymentFor3Months",
+          text: "Has not demonstrated employment stability ",
         },
       ],
-      initialHeader: null,
+      initialHeader:
+        "Review the clients and submit a report to the court for those who are strong candidates",
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://dashboard.recidiviz.org",
@@ -60,9 +161,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsUtDates", "Contact"],
-      snooze: {
-        autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
-      },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_UT",
       subcategoryHeadings: [
         { subcategory: "REPORT_DUE_ELIGIBLE", text: "Eligible" },
@@ -74,8 +173,9 @@ export const mockApiOpportunityConfigurationResponse = {
           texts: ["REPORT_DUE_ELIGIBLE", "REPORT_DUE_ALMOST_ELIGIBLE"],
         },
       ],
-      subheading: null,
-      submittedTabTitle: "Pending – Meets Requirements",
+      subheading:
+        "UDC Early Termination policy allows agents to apply to the courts to end a client's probation or parole at the halfway mark or sooner. Reports must be filed with the court 30 days before the early termination review date, or earlier at the agent’s discretion.",
+      submittedTabTitle: "Report submitted",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: [
@@ -84,8 +184,8 @@ export const mockApiOpportunityConfigurationResponse = {
           tabs: [
             "Report Due",
             "Early Requests",
-            "Pending – Meets Requirements",
-            "Pending – Ineligible",
+            "Report submitted",
+            "Marked Ineligible",
           ],
         },
       ],

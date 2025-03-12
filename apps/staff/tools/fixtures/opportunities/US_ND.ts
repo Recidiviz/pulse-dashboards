@@ -73,7 +73,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "supervisionPastEarlyDischargeDate",
           text: "Early termination date is {{date eligibleDate}}",
           tooltip:
-            "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed.",
+            "Policy requirement: must be passed early termination date (as calculated by DOCSTARS)",
         },
         {
           key: "usNdImpliedValidEarlyTerminationSupervisionLevel",
@@ -102,9 +102,9 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "supervisionPastEarlyDischargeDate",
-          text: "Early termination date (as calculated by DOCSTARS) is within 60 days",
+          text: "Early termination date (as calculated by DOCSTARS) is within 3 months",
           tooltip:
-            "Policy requirement: Early termination date (as calculated by DOCSTARS) has passed.",
+            "Policy requirement: must be passed early termination date (as calculated by DOCSTARS)",
         },
       ],
       initialHeader: null,
@@ -145,7 +145,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify residents who are due for annual custody reclassification and directs staff to complete & submit new classification paperwork. Review clients eligible for early termination and complete the auto-filled paperwork to file with the court.",
+        "Review clients eligible for early termination and complete the auto-filled paperwork to file with the court.",
       submittedTabTitle: null,
       supportsSubmitted: true,
       systemType: "SUPERVISION",

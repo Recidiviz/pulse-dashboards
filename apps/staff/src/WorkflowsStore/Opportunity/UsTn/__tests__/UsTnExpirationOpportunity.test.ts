@@ -86,7 +86,9 @@ describe("fully eligible", () => {
     tk.reset();
     tk.freeze(new Date(2022, 1, 2, 16, 30));
 
-    const actual = opp.requirementsMet[0].text;
+    // There isn't a way to easily tell which requirementsMet value corresponds to the copy we're
+    // trying to test, but we can tell by looking at it that it's index 2.
+    const actual = opp.requirementsMet[2].text;
 
     expect(actual).toEqual("Expiration date is today (Feb 2, 2022)");
   });
@@ -95,7 +97,9 @@ describe("fully eligible", () => {
     tk.reset();
     tk.freeze(new Date(2022, 1, 3, 16, 30));
 
-    const actual = opp.requirementsMet[0].text;
+    // There isn't a way to easily tell which requirementsMet value corresponds to the copy we're
+    // trying to test, but we can tell by looking at it that it's index 2.
+    const actual = opp.requirementsMet[2].text;
 
     expect(actual).toEqual("1 day past expiration date (Feb 2, 2022)");
   });

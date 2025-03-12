@@ -210,7 +210,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subheading:
         "This alert helps staff identify clients due or overdue for a classification review, which are generally mandated after six months of supervision and at six-month intervals thereafter, though some clients must receive a classification review earlier than six months by policy. Agents may reconsider the supervision level for a client based on developments in their case and behavior; per FOA Field Memorandum 2023-211, agents are presumptively required to downgrade clients’ supervision level during each classification review, provided that they have “satisfactorily completed” the prior six months on supervision. Review clients who meet the time threshold for classification review and downgrade their supervision level in COMS.",
       submittedTabTitle: null,
-      supportsSubmitted: false,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
       tabPrefaceCopy: [],
