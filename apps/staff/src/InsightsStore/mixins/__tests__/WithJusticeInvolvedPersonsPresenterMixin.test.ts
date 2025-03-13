@@ -167,7 +167,31 @@ describe("JusticeInvolvedPersonsStore", () => {
     });
   });
 
-  describe("after population of caseload", () => {
+  describe("after population of an officer caseload", () => {
+    beforeEach(async () => {
+      await presenter.populateCaseloadForOfficer(officersExternalIds[0]);
+    });
+
+    it("should have test officer present in caseload map", () => {
+      const testCaseload = jiiStore?.caseloadByOfficerExternalId.get(
+        officersExternalIds[0],
+      );
+      expect(testCaseload?.length).toEqual(8);
+    });
+
+    it("should have populated clients for the officer", () => {
+      expect(() =>
+        presenter.expectClientsPopulated(officersExternalIds[0]),
+      ).not.toThrow();
+    });
+
+    it(`finds clients for the populated officer, ${officersExternalIds[0]}`, () => {
+      const clients = presenter.findClientsForOfficer(officersExternalIds[0]);
+      expect(clients?.length).toEqual(8);
+    });
+  });
+
+  describe("after population of all caseloads + opportunities", () => {
     beforeEach(async () => {
       await presenter.populateOpportunitiesForOfficers(officersExternalIds);
     });

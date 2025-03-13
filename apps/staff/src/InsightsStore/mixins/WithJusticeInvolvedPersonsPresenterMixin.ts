@@ -160,6 +160,21 @@ export function WithJusticeInvolvedPersonStore<
     }
 
     /**
+     * Populate the caseload map for this officer. This SKIPS opportunity
+     * hydration for the officer's clients.
+     * @param officerExternalId - External ID of the relevant officer.
+     */
+    async populateCaseloadForOfficer(officerExternalId: string) {
+      if (!this.justiceInvolvedPersonsStore) return;
+
+      await flowResult(
+        this.justiceInvolvedPersonsStore.populateCaseloadForSupervisionOfficer(
+          officerExternalId,
+        ),
+      );
+    }
+
+    /**
      * Hydrates the opportunities for each of the clients that belong to the officer.
      * @param officerExternalId - The external ID of the officer to populate opportunities for.
      */
