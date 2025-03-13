@@ -63,6 +63,7 @@ const ManagedComponent = observer(function MetricPage({
     methodologyUrl,
     userCanAccessAllSupervisors,
     ctaText,
+    numClientsOnCaseload,
   } = presenter;
 
   const supervisorLinkProps = goToSupervisorInfo && {
@@ -129,6 +130,10 @@ const ManagedComponent = observer(function MetricPage({
   } = metric.config;
 
   const infoItems = [
+    {
+      title: "active clients",
+      info: numClientsOnCaseload,
+    },
     {
       title: "avg daily caseload",
       info: officerOutcomesData.avgDailyPopulation,
@@ -287,6 +292,7 @@ const ManagedComponent = observer(function MetricPage({
 function usePresenter() {
   const {
     insightsStore: { supervisionStore },
+    workflowsRootStore: { justiceInvolvedPersonsStore },
   } = useRootStore();
 
   const officerPseudoId = supervisionStore?.officerPseudoId;
@@ -294,11 +300,13 @@ function usePresenter() {
 
   // TODO: If/when we remove the original insights layout, we should refactor the
   // officer detail presenter to take the metric ID as a parameter.
-  if (!officerPseudoId || !metricId) return null;
+  if (!officerPseudoId || !metricId || !justiceInvolvedPersonsStore)
+    return null;
 
   return new SupervisionOfficerDetailPresenter(
     supervisionStore,
     officerPseudoId,
+    justiceInvolvedPersonsStore,
   );
 }
 

@@ -18,6 +18,7 @@
 import { configure, flowResult } from "mobx";
 
 import {
+  ClientRecord,
   InsightsConfigFixture,
   supervisionOfficerFixture,
   supervisionOfficerOutcomesFixture,
@@ -28,15 +29,20 @@ import { unpackAggregatedErrors } from "~hydration-utils";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import UserStore from "../../../RootStore/UserStore";
+import { mockIneligibleClient } from "../../../WorkflowsStore/__fixtures__";
+import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
+import { mockFirestoreStoreClientsForOfficerId } from "../../../WorkflowsStore/subscriptions/__tests__/testUtils";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
 import { SupervisionOfficerDetailPresenter } from "../SupervisionOfficerDetailPresenter";
 import * as utils from "../utils";
 
 let store: InsightsSupervisionStore;
+let jipStore: JusticeInvolvedPersonsStore;
 const pseudoId = "hashed-agonzalez123";
+const stateCode = "US_CA";
 
-beforeEach(() => {
+beforeEach(async () => {
   configure({ safeDescriptors: false });
   vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
     () => pseudoId,
@@ -45,21 +51,51 @@ beforeEach(() => {
     () => false,
   );
   vi.spyOn(UserStore.prototype, "stateCode", "get").mockImplementation(
-    () => "US_CA",
+    () => stateCode,
   );
 
+  const rootStore = new RootStore();
   store = new InsightsSupervisionStore(
-    new RootStore().insightsStore,
+    rootStore.insightsStore,
     InsightsConfigFixture,
   );
+
   vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(true);
   store.setOfficerPseudoId(testOfficer.pseudonymizedId);
   store.setMetricId(testMetric.metricId);
 
-  presenter = new SupervisionOfficerDetailPresenter(
-    store,
-    testOfficer.pseudonymizedId,
+  const { workflowsRootStore } = rootStore;
+  rootStore.tenantStore.currentTenantId = stateCode;
+  workflowsRootStore.populateJusticeInvolvedPersonsStore();
+  if (workflowsRootStore.justiceInvolvedPersonsStore) {
+    jipStore = workflowsRootStore.justiceInvolvedPersonsStore;
+    presenter = new SupervisionOfficerDetailPresenter(
+      store,
+      testOfficer.pseudonymizedId,
+      jipStore,
+    );
+  }
+
+  const lsuClient = {
+    ...mockIneligibleClient,
+    officerId: testOfficer.externalId,
+    allEligibleOpportunities: ["LSU"],
+  } as ClientRecord;
+
+  const ftrdClient = {
+    ...mockIneligibleClient,
+    officerId: testOfficer.externalId,
+    allEligibleOpportunities: ["pastFTRD"],
+  } as ClientRecord;
+
+  await mockFirestoreStoreClientsForOfficerId(
+    rootStore.firestoreStore,
+    [lsuClient, ftrdClient],
+    true, // return all clients
+    testOfficer.externalId,
   );
+
+  vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(true);
 });
 
 afterEach(() => {
@@ -83,6 +119,9 @@ describe("with unit data already hydrated", () => {
       flowResult(store.populateMetricConfigs()),
       flowResult(
         store.populateOutcomesForSupervisor(testSupervisor.pseudonymizedId),
+      ),
+      flowResult(
+        jipStore.populateCaseloadForSupervisionOfficer(testOfficer.externalId),
       ),
     ]);
   });
@@ -135,6 +174,10 @@ describe("with unit data already hydrated", () => {
       supervisionOfficerSupervisorsFixture[0],
       supervisionOfficerSupervisorsFixture[1],
     ]);
+  });
+
+  test("has numClientsOnCaseload", async () => {
+    expect(presenter.numClientsOnCaseload).toEqual(2);
   });
 
   test("has goToSupervisorInfo for mostRecentSupervisor", () => {
@@ -212,6 +255,12 @@ test("has timePeriod", async () => {
 
   expect(timePeriod).toBeDefined();
   expect(timePeriod).toMatch("12/1/20 - 12/1/21");
+});
+
+test("has numClientsOnCaseload", async () => {
+  await presenter.hydrate();
+
+  expect(presenter.numClientsOnCaseload).toEqual(2);
 });
 
 test("hydration error in dependency", async () => {

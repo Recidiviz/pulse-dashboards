@@ -20,19 +20,25 @@ import { makeObservable, override, runInAction } from "mobx";
 import { MetricConfig } from "~datatypes";
 import { HydratesFromSource } from "~hydration-utils";
 
+import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
+import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerOutcomesPresenter } from "./SupervisionOfficerOutcomesPresenter";
 
-export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcomesPresenter {
+export class SupervisionOfficerDetailPresenter extends WithJusticeInvolvedPersonStore(
+  SupervisionOfficerOutcomesPresenter,
+) {
   constructor(
     supervisionStore: InsightsSupervisionStore,
     officerPseudoId: string,
+    justiceInvolvedPersonStore: JusticeInvolvedPersonsStore,
   ) {
     super(supervisionStore, officerPseudoId);
+    this.justiceInvolvedPersonsStore = justiceInvolvedPersonStore;
 
     makeObservable<
       SupervisionOfficerDetailPresenter,
-      "populateSupervisionOfficer"
+      "populateSupervisionOfficer" | "populateCaseload"
     >(this, {
       trackMetricViewed: true,
       defaultMetricId: true,
@@ -42,17 +48,20 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcome
       ctaText: true,
       isInsightsLanternState: true,
       populateSupervisionOfficer: override,
+      populateCaseload: true,
     });
 
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         ...this.expectPopulated(),
         ...this.expectOutcomesDependenciesPopulated(),
+        () => this.expectClientsPopulated(this.officerExternalId),
       ],
       populate: async () => {
         await Promise.all([...this.populateMethods()]);
         // Follows the above method so we have the officer record hydrated.
         await this.populateSupervisionOfficerOutcomes();
+        await this.populateCaseload();
       },
     });
   }
@@ -98,6 +107,16 @@ export class SupervisionOfficerDetailPresenter extends SupervisionOfficerOutcome
     return {
       insightsLanternStateCaseLearnMore: `${isInsightsLanternState ? `Click on a ${labels.supervisionJiiLabel} to see more information about this case, such as how long they had been with this ${labels.supervisionOfficerLabel} and more.` : ``}`,
     };
+  }
+
+  get numClientsOnCaseload(): number | undefined {
+    if (!this.officerExternalId) return undefined;
+    return this.findClientsForOfficer(this.officerExternalId)?.length;
+  }
+
+  private async populateCaseload() {
+    if (!this.isWorkflowsEnabled || !this.officerExternalId) return;
+    await this.populateCaseloadForOfficer(this.officerExternalId);
   }
 
   // Overridden bound flow methods seem to produce mobx errors, so use regular actions here instead:
