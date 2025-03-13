@@ -93,6 +93,18 @@ export const OPPORTUNITY_STATUS_COLORS = {
     badgeBorder: "rgb(255,204,223)",
     badgeText: "rgb(179,9,60)",
   },
+  eligibleOverride: {
+    icon: palette.signal.highlight,
+    iconAlmost: palette.signal.error,
+    background: "transparent",
+    border: rgba(palette.slate, 0.1),
+    text: palette.pine4,
+    buttonFill: palette.signal.links,
+    link: palette.signal.links,
+    badgeBackground: "rgb(255,244,249)",
+    badgeBorder: "rgb(255,204,223)",
+    badgeText: "rgb(179,9,60)",
+  },
 } as const;
 
 export type StatusPalette =

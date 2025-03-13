@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import { DocumentData } from "firebase/firestore";
 
 import {
@@ -26,7 +25,8 @@ import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../Resident";
 import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTransitionProgramForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityTab } from "../../types";
+import { OpportunityRequirement, OpportunityTab } from "../../types";
+import { hydrateReq, hydrateUntypedCriteria } from "../../utils/criteriaUtils";
 import {
   UsAzOverdueForAcisTprReferralRecord,
   usAzOverdueForAcisTprSchema,
@@ -75,10 +75,47 @@ export class UsAzOverdueForAcisTprOpportunity extends OpportunityBase<
     return true;
   }
 
+  get requirementsMet(): OpportunityRequirement[] {
+    const {
+      record,
+      config: { eligibleCriteriaCopy },
+    } = this;
+    if (!record) return [];
+
+    const filteredEligibleCriteriaCopyEntries = Object.entries(
+      eligibleCriteriaCopy,
+    ).filter(
+      ([criteria, raw]) => criteria !== "usAzIncarcerationPastAcisTprDate",
+    );
+
+    return hydrateUntypedCriteria(
+      record.eligibleCriteria as any,
+      Object.fromEntries(filteredEligibleCriteriaCopyEntries),
+      this,
+      this.criteriaFormatters,
+    );
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    // Visually treat the overdue date as an almost eligible criteria as per #7489
+    const {
+      record,
+      config: { eligibleCriteriaCopy },
+    } = this;
+
+    const { usAzIncarcerationPastAcisTprDate } = eligibleCriteriaCopy;
+
+    const req: OpportunityRequirement = hydrateReq({
+      raw: usAzIncarcerationPastAcisTprDate,
+      opportunity: this,
+      criteria: record.eligibleCriteria.usAzIncarcerationPastAcisTprDate,
+      formatters: this.criteriaFormatters,
+    });
+
+    return [req, ...super.requirementsAlmostMet];
+  }
+
   get customStatusPalette(): StatusPalette | undefined {
-    return {
-      ...OPPORTUNITY_STATUS_COLORS.alert,
-      buttonFill: palette.signal.links,
-    };
+    return OPPORTUNITY_STATUS_COLORS.eligibleOverride;
   }
 }
