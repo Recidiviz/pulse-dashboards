@@ -79,6 +79,7 @@ import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationRefe
 import { usOrEarnedDischargeSentenceReferrals } from "./fixtures/usOrEarnedDischargeSentenceReferrals";
 import { usPaAdminSupervisionReferrals } from "./fixtures/usPaAdminSupervisionReferrals";
 import { usTnAnnualReclassificationReviewFixture } from "./fixtures/usTnAnnualReclassificationReviewReferrals";
+import { usTnCompliantReporting2025PolicyReferrals } from "./fixtures/usTnCompliantReporting2025PolicyReferrals";
 import { usTnCompliantReportingReferrals } from "./fixtures/usTnCompliantReportingReferrals";
 import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDowngradeReferrals";
 import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
@@ -183,6 +184,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usOrEarnedDischargeSentenceReferrals,
   usPaAdminSupervisionReferrals,
   compliantReportingReferrals: usTnCompliantReportingReferrals,
+  usTnCompliantReporting2025PolicyReferrals:
+    usTnCompliantReporting2025PolicyReferrals,
   usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeFixture,
   usTnExpirationReferrals: usTnExpirationFixture,
   usTnAnnualReclassificationReferrals: usTnAnnualReclassificationReviewFixture,

@@ -49,7 +49,10 @@ export const US_TN_CLIENTS: ClientFixture[] = [
         {"NOTE_UPDATE_DATE": "${formatISO(add(new Date(), { days: -222 }))}", "CONDITIONS_ON_DATE": "MUST COMPLETE RECOVERY COURT"}]
       `,
     ],
-    allEligibleOpportunities: ["compliantReporting"],
+    allEligibleOpportunities: [
+      "compliantReporting",
+      "usTnCompliantReporting2025Policy",
+    ],
     currentEmployers: [
       {
         name: "Tire store",
@@ -91,7 +94,11 @@ export const US_TN_CLIENTS: ClientFixture[] = [
         conditionDescription: "TREATMENT AS ASSESSED",
       },
     ],
-    allEligibleOpportunities: ["compliantReporting", "usTnExpiration"],
+    allEligibleOpportunities: [
+      "compliantReporting",
+      "usTnExpiration",
+      "usTnCompliantReporting2025Policy",
+    ],
     currentEmployers: [
       {
         name: "Photo Stop Photography Studio",
@@ -156,7 +163,10 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     supervisionStartDate: relativeFixtureDate({ months: -20 }),
     expirationDate: relativeFixtureDate({ days: 1000 }),
     currentBalance: 125.75,
-    allEligibleOpportunities: ["compliantReporting"],
+    allEligibleOpportunities: [
+      "compliantReporting",
+      "usTnCompliantReporting2025Policy",
+    ],
     currentEmployers: [
       {
         name: "The Noodle Store",
@@ -186,7 +196,10 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     currentBalance: 0,
     lastPaymentAmount: 125.75,
     lastPaymentDate: relativeFixtureDate({ months: -11 }),
-    allEligibleOpportunities: ["compliantReporting"],
+    allEligibleOpportunities: [
+      "compliantReporting",
+      "usTnCompliantReporting2025Policy",
+    ],
     emailAddress: "sarah@example.com",
   },
   {
@@ -273,7 +286,10 @@ export const US_TN_CLIENTS: ClientFixture[] = [
         address: "496 Main Ave",
       },
     ],
-    allEligibleOpportunities: ["compliantReporting"],
+    allEligibleOpportunities: [
+      "compliantReporting",
+      "usTnCompliantReporting2025Policy",
+    ],
   },
   {
     personExternalId: "202",
@@ -296,7 +312,10 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     supervisionStartDate: relativeFixtureDate({ months: -13, days: 2 }),
     expirationDate: relativeFixtureDate({ months: 19, days: 19 }),
     emailAddress: "linda@example.com",
-    allEligibleOpportunities: ["compliantReporting"],
+    allEligibleOpportunities: [
+      "compliantReporting",
+      "usTnCompliantReporting2025Policy",
+    ],
   },
   {
     personExternalId: "203",
@@ -320,6 +339,9 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     supervisionStartDate: relativeFixtureDate({ months: -23 }),
     expirationDate: relativeFixtureDate({ months: 18, days: 18 }),
     emailAddress: "reginald@example.com",
-    allEligibleOpportunities: ["compliantReporting"],
+    allEligibleOpportunities: [
+      "compliantReporting",
+      "usTnCompliantReporting2025Policy",
+    ],
   },
 ];

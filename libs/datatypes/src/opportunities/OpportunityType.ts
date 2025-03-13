@@ -72,6 +72,7 @@ const constructedOpportunityTypes = [
 
   // US_TN
   "compliantReporting",
+  "usTnCompliantReporting2025Policy",
   "usTnCustodyLevelDowngrade",
   "usTnExpiration",
   "supervisionLevelDowngrade",
