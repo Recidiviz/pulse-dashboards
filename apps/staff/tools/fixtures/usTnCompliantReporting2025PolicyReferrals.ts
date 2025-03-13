@@ -56,6 +56,15 @@ export const usTnCompliantReporting2025PolicyReferrals =
           },
         },
         ineligibleCriteria: {},
+        formInformation: {
+          sentenceStartDate: relativeFixtureDate({ years: -2, days: -555 }),
+          currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
+          driversLicense: "12345678",
+          restitutionAmt: 400.0,
+          restitutionMonthlyPayment: 0.0,
+          restitutionMonthlyPaymentTo: ["2ND JUDICIAL DRUG TASK FORCE"],
+          judicialDistrict: ["17"],
+        },
         metadata: {
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
@@ -103,6 +112,16 @@ export const usTnCompliantReporting2025PolicyReferrals =
           },
         },
         ineligibleCriteria: {},
+        formInformation: {
+          sentenceStartDate: relativeFixtureDate({ months: -19, days: -5 }),
+          expirationDate: relativeFixtureDate({ days: -11 }),
+          sentenceLengthDays: "570",
+          currentOffenses: ["FAILURE TO APPEAR (FELONY)", "THEFT OF PROPERTY"],
+          driversLicense: "12345678",
+          restitutionAmt: 0.0,
+          restitutionMonthlyPayment: 0.0,
+          judicialDistrict: ["14"],
+        },
         metadata: {
           tabName: "MISSING_)_CRITERIA",
           allOffenses: ["FIRST DEGERE MURDER", "MURDER"],
@@ -156,6 +175,14 @@ export const usTnCompliantReporting2025PolicyReferrals =
             contactCode: ["DECF", "DEDU"],
           },
         },
+        formInformation: {
+          sentenceStartDate: relativeFixtureDate({ months: -20 }),
+          expirationDate: relativeFixtureDate({ days: 1000 }),
+          sentenceLengthDays: "1700",
+          currentOffenses: ["THEFT OF PROPERTY - $10,000-$60,000"],
+          supervisionFeeArrearaged: false,
+          judicialDistrict: [],
+        },
         metadata: {
           tabName: "MISSING_1_CRITERIA",
           mostRecentArrestCheck: {
@@ -204,6 +231,26 @@ export const usTnCompliantReporting2025PolicyReferrals =
           },
         },
         ineligibleCriteria: {},
+        formInformation: {
+          sentenceStartDate: relativeFixtureDate({ months: -13, days: 2 }),
+          currentOffenses: ["BURGLARY"],
+          driversLicense: "12345",
+          courtCostsPaid: false,
+          supervisionFeeAssessed: 0,
+          supervisionFeeArrearaged: false,
+          supervisionFeeArrearagedAmount: 0,
+          currentExemptionsAndExpiration: [
+            {
+              exemptionReason: "SSDB",
+              endDate: null,
+            },
+            {
+              exemptionReason: "SSDB",
+              endDate: null,
+            },
+          ],
+          supervisionFeeWaived: true,
+        },
         metadata: {
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: [],
@@ -252,6 +299,12 @@ export const usTnCompliantReporting2025PolicyReferrals =
             latestFeeContactDate: relativeFixtureDate({ months: -1, days: -5 }),
           },
         },
+        formInformation: {
+          sentenceStartDate: relativeFixtureDate({ months: -13, days: 2 }),
+          currentOffenses: ["EVADING ARREST"],
+          courtCostsPaid: false,
+          supervisionFeeArrearaged: false,
+        },
         metadata: {
           tabName: "MISSING_1_CRITERIA",
           convictionCounties: ["123ABC"],
@@ -297,6 +350,15 @@ export const usTnCompliantReporting2025PolicyReferrals =
             currentExemptions: null,
             latestFeeContactDate: relativeFixtureDate({ days: -25 }),
           },
+        },
+        formInformation: {
+          sentenceStartDate: relativeFixtureDate({ years: -2, days: 22 }),
+          currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
+          driversLicense: "12345678",
+          restitutionAmt: 400.0,
+          restitutionMonthlyPayment: 0.0,
+          restitutionMonthlyPaymentTo: ["2ND JUDICIAL DRUG TASK FORCE"],
+          judicialDistrict: ["17"],
         },
         metadata: {
           tabName: "MISSING_2_CRITERIA",
@@ -346,6 +408,15 @@ export const usTnCompliantReporting2025PolicyReferrals =
           onMinimumOrLowMediumSupervisionAtLeastSixMonths: {
             eligibleDate: relativeFixtureDate({ months: -1 }),
           },
+        },
+        formInformation: {
+          sentenceStartDate: relativeFixtureDate({ months: -23 }),
+          currentOffenses: ["FAILURE TO APPEAR (FELONY)"],
+          driversLicense: "12345678",
+          restitutionAmt: 400.0,
+          restitutionMonthlyPayment: 0.0,
+          restitutionMonthlyPaymentTo: ["2ND JUDICIAL DRUG TASK FORCE"],
+          judicialDistrict: ["17"],
         },
         metadata: {
           tabName: "MISSING_3_CRITERIA",

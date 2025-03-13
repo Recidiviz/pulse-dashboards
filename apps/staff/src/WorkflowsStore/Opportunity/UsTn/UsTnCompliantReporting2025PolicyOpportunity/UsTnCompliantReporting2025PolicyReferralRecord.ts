@@ -17,15 +17,41 @@
 
 import { z } from "zod";
 
-import { opportunitySchemaBase } from "~datatypes";
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+
+import { stringToIntSchema } from "../../schemaHelpers";
 
 export const usTnCompliantReporting2025PolicySchema =
   opportunitySchemaBase.extend({
-    eligibleCriteria: z.object({}).passthrough(),
-    ineligibleCriteria: z.object({}).passthrough(),
+    formInformation: z
+      .object({
+        sentenceStartDate: dateStringSchema,
+        expirationDate: dateStringSchema,
+        sentenceLengthDays: stringToIntSchema,
+        currentOffenses: z.array(z.string()),
+        driversLicense: z.string(),
+        restitutionAmt: z.number(),
+        restitutionMonthlyPayment: z.number(),
+        restitutionMonthlyPaymentTo: z.array(z.string()),
+        courtCostsPaid: z.boolean(),
+        supervisionFeeAssessed: z.number(),
+        supervisionFeeArrearaged: z.boolean(),
+        supervisionFeeArrearagedAmount: z.number(),
+        currentExemptionsAndExpiration: z.array(
+          z.object({
+            exemptionReason: z.string(),
+            endDate: dateStringSchema.nullish(),
+          }),
+        ),
+        supervisionFeeWaived: z.boolean(),
+        docketNumbers: z.array(z.string()),
+        judicialDistrict: z.array(z.string()),
+      })
+      .partial(),
     metadata: z
       .object({
         tabName: z.string().optional(),
+        convictionCounties: z.array(z.string()),
       })
       .passthrough(),
   });

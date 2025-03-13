@@ -40,9 +40,12 @@ import {
 } from "../../../../utils";
 import type {
   Client,
+  CompliantReportingOpportunity,
   CompliantReportingReferralRecord,
   CompliantReportingTransformedETLFormInput,
 } from "../../../../WorkflowsStore";
+import { UsTnCompliantReporting2025PolicyOpportunity } from "../../../../WorkflowsStore/Opportunity/UsTn/UsTnCompliantReporting2025PolicyOpportunity";
+import { UsTnCompliantReporting2025PolicyReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsTn/UsTnCompliantReporting2025PolicyOpportunity/UsTnCompliantReporting2025PolicyReferralRecord";
 
 function formatSentenceLength(
   startDate?: Date,
@@ -59,7 +62,12 @@ function formatSentenceLength(
 
 export const transform = (
   client: Client,
-  record: CompliantReportingReferralRecord,
+  record:
+    | CompliantReportingReferralRecord
+    | UsTnCompliantReporting2025PolicyReferralRecord,
+  opportunity:
+    | CompliantReportingOpportunity
+    | UsTnCompliantReporting2025PolicyOpportunity,
 ): CompliantReportingTransformedETLFormInput => {
   const { formInformation } = record;
 
@@ -132,11 +140,7 @@ export const transform = (
       : "",
     courtCostsPaid: !!formInformation.courtCostsPaid,
     tdocId: record.externalId,
-    specialConditionsAlcDrugScreenDate: formatDate(
-      record.eligibleCriteria.usTnPassedDrugScreenCheck.latestDrugTestIsNegative
-        .latestDrugScreenDate,
-      "yyyy-MM-dd",
-    ),
+    specialConditionsAlcDrugScreenDate: opportunity.drugScreenDate,
     convictionCounty: record.metadata.convictionCounties.join(", "),
     courtName: "Circuit Court",
   };

@@ -23,7 +23,11 @@ import { OpportunityType } from "~datatypes";
 import { formatRelativeToNow } from "../../../../core/utils/timePeriod";
 import { OpportunityValidationError } from "../../../../errors";
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
-import { formatWorkflowsDate, pluralizeWord } from "../../../../utils";
+import {
+  formatDate,
+  formatWorkflowsDate,
+  pluralizeWord,
+} from "../../../../utils";
 import { Client } from "../../../Client";
 import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -500,5 +504,15 @@ export class CompliantReportingOpportunity extends OpportunityBase<
       );
 
     return { title, text };
+  }
+
+  // This is needed for a field in the shared form. This CR Opportunity and the new 2025 Opportunity use different
+  // fields for the drugScreenDate so we override it here to pass to the form
+  get drugScreenDate() {
+    return formatDate(
+      this.record.eligibleCriteria.usTnPassedDrugScreenCheck
+        ?.latestDrugTestIsNegative.latestDrugScreenDate,
+      "yyyy-MM-dd",
+    );
   }
 }
