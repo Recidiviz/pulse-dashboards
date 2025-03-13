@@ -69,6 +69,7 @@ import {
   UsTnSuspensionOfDirectSupervisionOpportunity,
 } from "./UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
+import { UsTnCompliantReporting2025PolicyOpportunity } from "./UsTn/UsTnCompliantReporting2025PolicyOpportunity";
 import { UsUtEarlyTerminationOpportunity } from "./UsUt";
 
 export const opportunityConstructors = {
@@ -135,6 +136,7 @@ export const opportunityConstructors = {
   // US_TN
   usTnAnnualReclassification: UsTnAnnualReclassificationReviewOpportunity,
   compliantReporting: CompliantReportingOpportunity,
+  usTnCompliantReporting2025Policy: UsTnCompliantReporting2025PolicyOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,
   usTnCustodyLevelDowngrade: UsTnCustodyLevelDowngradeOpportunity,
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,

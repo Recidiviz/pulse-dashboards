@@ -96,7 +96,8 @@ export type FeatureVariant =
   | "usTnSuspensionOfDirectSupervision"
   | "usMeCaseNoteSnooze"
   | "outcomesModule"
-  | "mandatoryMinimum";
+  | "mandatoryMinimum"
+  | "usTnCompliantReporting2025Policy";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -154,6 +155,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usMeCaseNoteSnooze: {},
   outcomesModule: {},
   mandatoryMinimum: {},
+  usTnCompliantReporting2025Policy: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -197,6 +199,7 @@ export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
         outcomesModule: {
           activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
         },
+        usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
       };
 
 export type LanternMethodologyByTenant = {
