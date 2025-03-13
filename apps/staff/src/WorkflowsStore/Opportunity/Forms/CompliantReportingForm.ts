@@ -21,11 +21,12 @@ import {
   CompliantReportingDraftData,
   CompliantReportingOpportunity,
 } from "../UsTn";
+import { UsTnCompliantReporting2025PolicyOpportunity } from "../UsTn/UsTnCompliantReporting2025PolicyOpportunity";
 import { FormBase } from "./FormBase";
 
 export class CompliantReportingForm extends FormBase<
   CompliantReportingDraftData,
-  CompliantReportingOpportunity
+  CompliantReportingOpportunity | UsTnCompliantReporting2025PolicyOpportunity
 > {
   navigateToFormText = "Auto-fill referral";
 
@@ -50,7 +51,7 @@ export class CompliantReportingForm extends FormBase<
   }
 
   prefilledDataTransformer(): Partial<CompliantReportingDraftData> {
-    if (!this.opportunity.record) return {};
-    return transform(this.person, this.opportunity.record);
+    if (!this.opportunity || !this.opportunity.record) return {};
+    return transform(this.person, this.opportunity.record, this.opportunity);
   }
 }

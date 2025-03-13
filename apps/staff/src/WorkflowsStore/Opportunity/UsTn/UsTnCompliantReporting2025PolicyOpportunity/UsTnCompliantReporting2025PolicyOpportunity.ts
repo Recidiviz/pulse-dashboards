@@ -18,6 +18,7 @@
 import { DocumentData } from "firebase/firestore";
 
 import { Client } from "../../../Client";
+import { CompliantReportingForm } from "../../Forms/CompliantReportingForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
   UsTnCompliantReporting2025PolicyReferralRecord,
@@ -28,6 +29,8 @@ export class UsTnCompliantReporting2025PolicyOpportunity extends OpportunityBase
   Client,
   UsTnCompliantReporting2025PolicyReferralRecord
 > {
+  form: CompliantReportingForm;
+
   constructor(client: Client, record: DocumentData) {
     super(
       client,
@@ -35,6 +38,15 @@ export class UsTnCompliantReporting2025PolicyOpportunity extends OpportunityBase
       client.rootStore,
       usTnCompliantReporting2025PolicySchema.parse(record),
     );
+
+    this.form = new CompliantReportingForm(this, client.rootStore);
+  }
+
+  // This is needed for a field in the shared form. The original CR Opportunity and this 2025 Opportunity use different
+  // fields for the drugScreenDate so we override it here to pass to the form
+  get drugScreenDate() {
+    return this.record.eligibleCriteria.latestDrugTestIsNegativeOrMissing
+      ?.latestDrugScreenDate;
   }
 
   get subcategory() {
