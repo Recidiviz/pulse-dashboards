@@ -283,7 +283,7 @@ export function Report({
             <Styled.SectionTitle>
               Cumulative Recidivism Rate <span>(36 months)</span>
             </Styled.SectionTitle>
-            <CumulativeRecidivismRatesAttributeChips />
+            <CumulativeRecidivismRatesAttributeChips insight={insight} />
           </Styled.TitleAttributesWrapper>
 
           <Styled.SentencingRecidivismRateContainer>
