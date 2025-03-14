@@ -135,18 +135,19 @@
     },
     "deploy": {
       "executor": "nx:run-commands",
+      "dependsOn": ["load-env-files", "migrate-db"],
       "options": {
         "tty": true
       },
       "configurations": {
         "staging": {
           "commands": [
-            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-staging--jii-texting --terraform-opts=\"-auto-approve -var server_version={args.tag} -var migrate={args.migrate}\""
+            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-staging--jii-texting --terraform-opts=\"-auto-approve -var server_version={args.tag}\""
           ]
         },
         "production": {
           "commands": [
-            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-production--jii-texting --terraform-opts=\"-auto-approve -var server_version={args.tag} -var migrate={args.migrate}\""
+            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-production--jii-texting --terraform-opts=\"-auto-approve -var server_version={args.tag}\""
           ]
         }
       }
@@ -197,6 +198,28 @@
       "options": {
         "command": "gcloud run services delete jii-preview-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud run jobs delete jii-migrate-preview-db-$VERSION --project recidiviz-dashboard-staging --region us-central1 -q && gcloud sql instances delete jii-db-preview-$VERSION --project recidiviz-dashboard-staging -q"
       }
+    },
+    "migrate-db": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["load-env-files"],
+      "options": {
+        "command": "gcloud run jobs deploy jii-texting-migrate-db --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server:$COMMIT_SHA --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID"
+      },
+      "configurations": {
+        "staging": {
+          "args": [
+            "--project recidiviz-dashboard-staging",
+            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:jii-texting"
+          ]
+        },
+        "production": {
+          "args": [
+            "--project recidiviz-dashboard-production",
+            "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:jii-texting"
+          ]
+        }
+      },
+      "defaultConfiguration": "staging"
     }
   },
   "tags": ["jii-texting-server"]

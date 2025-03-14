@@ -97,25 +97,3 @@ resource "google_cloud_run_v2_job" "job" {
 }
 
 data "google_client_config" "default" {}
-
-resource "terracurl_request" "exec" {
-  count  = var.exec ? 1 : 0
-  name   = "exec-job"
-  url    = "https://run.googleapis.com/v2/${google_cloud_run_v2_job.job.id}:run"
-  method = "POST"
-  headers = {
-    Authorization = "Bearer ${data.google_client_config.default.access_token}"
-    Content-Type  = "application/json",
-  }
-  response_codes = [200]
-  // no-op destroy
-  // we don't use terracurl_request data source as that will result in
-  // repeated job runs on every refresh
-  destroy_url            = "https://run.googleapis.com/v2/${google_cloud_run_v2_job.job.id}"
-  destroy_method         = "GET"
-  destroy_response_codes = [200]
-  destroy_headers = {
-    Authorization = "Bearer ${data.google_client_config.default.access_token}"
-    Content-Type  = "application/json",
-  }
-}

@@ -34,12 +34,6 @@ variable "cloudsql_instance" {
   description = "Cloud SQL instance connection string, used to mount a unix socket in Cloud Run"
 }
 
-variable "migrate" {
-  type        = bool
-  description = "Optionally, execute the migrations when running the Terraform apply plan"
-  default     = false
-}
-
 variable "etl_bucket_name" {
   type        = string
   description = "The name of the GCS bucket that contains the ETL data"

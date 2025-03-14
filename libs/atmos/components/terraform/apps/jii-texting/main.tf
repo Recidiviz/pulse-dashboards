@@ -36,19 +36,6 @@ module "cloud-run" {
   }
 }
 
-# Configure a job that can migrate the database
-module "migrate-db" {
-  source                        = "../../vendor/cloud-run-job-exec"
-  name                          = "jii-texting-migrate-db"
-  image                         = local.server_image
-  project_id                    = var.project_id
-  location                      = var.location
-  exec                          = var.migrate
-  container_command             = ["./scripts/migrate-dbs.sh"]
-  env_vars                      = local.env_vars
-  cloud_run_deletion_protection = false
-}
-
 # Configure a Google Workflow that is executed on a write to a GCS storage bucket
 # and executes the main JII texting processing (i.e a separate workflow) if needed
 module "handle-jii-texting-gcs-upload-wf" {
@@ -86,7 +73,7 @@ module "process-jii-to-text-wf" {
   workflow_source = file("${path.module}/workflows/process-jii-to-text.workflows.yaml")
   env_vars = {
     CLOUD_RUN_SERVICE_URL = module.cloud-run.service_url
-    BUCKET_ID = var.etl_bucket_name
+    BUCKET_ID             = var.etl_bucket_name
   }
 }
 
@@ -99,4 +86,5 @@ module "process-jii-cloud-run-job" {
   location                      = var.location
   env_vars                      = local.env_vars
   cloud_run_deletion_protection = false
+  volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [var.cloudsql_instance] } }]
 }
