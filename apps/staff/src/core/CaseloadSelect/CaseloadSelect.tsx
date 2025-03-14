@@ -43,7 +43,7 @@ import ReactSelect, {
   SelectComponentsConfig,
   StylesConfig,
 } from "react-select";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
 
 import {
   useFeatureVariants,
@@ -52,7 +52,6 @@ import {
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import { Searchable, SearchableGroup } from "../models/types";
-import { MaxWidth } from "../sharedComponents";
 
 // This is a query limitation imposed by Firestore
 const SELECTED_SEARCH_LIMIT = 30;
@@ -246,7 +245,11 @@ const CaseloadSelectContainer = styled(Sans14)<{
 }>`
   color: ${palette.slate85};
   margin-bottom: ${rem(spacing.lg)};
-  ${({ $opportunityTableView }) => $opportunityTableView && MaxWidth}
+  ${({ $opportunityTableView }) =>
+    $opportunityTableView &&
+    css`
+      flex: 1;
+    `}
 `;
 
 const CaseloadSelectMobileButton = styled(Button).attrs({ kind: "link" })`

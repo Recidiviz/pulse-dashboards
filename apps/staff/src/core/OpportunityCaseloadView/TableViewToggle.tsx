@@ -15,14 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Button,
-  palette,
-  spacing,
-  TooltipTrigger,
-} from "@recidiviz/design-system";
+import { Button, palette, TooltipTrigger } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import ListViewIcon from "../../assets/static/images/oppListView.svg?react";
@@ -51,7 +45,6 @@ const ButtonTooltipTrigger = styled(TooltipTrigger)`
 const ButtonGroup = styled.div`
   display: inline-flex;
   vertical-align: bottom;
-  margin-left: ${rem(spacing.lg)};
 `;
 
 export const TableViewToggle = observer(function TableViewToggle({

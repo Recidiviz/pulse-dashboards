@@ -78,6 +78,7 @@ import {
 } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
+import { CaseloadSelect } from "../CaseloadSelect";
 import InsightsPill from "../InsightsPill";
 import PersonId from "../PersonId";
 import { Heading, MaxWidth } from "../sharedComponents";
@@ -92,6 +93,11 @@ import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
 import OpportunitySubheading from "./OpportunitySubheading";
 import { OpportunityTypeSelect } from "./OpportunityTypeSelect";
 import { TableViewToggle } from "./TableViewToggle";
+
+const FlexWrapper = styled.div`
+  display: flex;
+  gap: ${rem(spacing.lg)};
+`;
 
 const MaxWidthWrapper = styled.div`
   ${MaxWidth}
@@ -509,7 +515,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
   presenter: OpportunityCaseloadPresenter;
 }) {
   const { opportunityTableView } = useFeatureVariants();
-  const { isMobile } = useIsMobile(true);
+  const { isMobile, isTablet } = useIsMobile(true);
 
   // Use MouseSensor instead of PointerSensor to disable drag-and-drop on touch screens
   const sensors = useSensors(
@@ -584,9 +590,12 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
           />
         )}
         {opportunityTableView && (
-          <OpportunityTypeSelect presenter={presenter} />
+          <FlexWrapper>
+            <OpportunityTypeSelect presenter={presenter} />
+            {!presenter.isSupervisorHomepage && !isTablet && <CaseloadSelect />}
+            <TableViewToggle presenter={presenter} />
+          </FlexWrapper>
         )}
-        {opportunityTableView && <TableViewToggle presenter={presenter} />}
       </MaxWidthWrapper>
 
       {
