@@ -21678,16 +21678,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html2canvas@npm:^1.0.0-rc.5, html2canvas@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "html2canvas@npm:1.4.1"
-  dependencies:
-    css-line-break: "npm:^2.1.0"
-    text-segmentation: "npm:^1.0.3"
-  checksum: 10c0/6de86f75762b00948edf2ea559f16da0a1ec3facc4a8a7d3f35fcec59bb0c5970463478988ae3d9082152e0173690d46ebf4082e7ac803dd4817bae1d355c0db
-  languageName: node
-  linkType: hard
-
 "htmlparser2@npm:^6.0.0":
   version: 6.0.1
   resolution: "htmlparser2@npm:6.0.1"
@@ -29963,7 +29953,6 @@ __metadata:
     google-spreadsheet: "npm:^4.1.1"
     handlebars: "npm:^4.7.8"
     helmet: "npm:^5.1.0"
-    html2canvas: "https://github.com/ohaibbq/html2canvas.git#commit=555f194698ef453c488be3804d5c1f30b83f4353"
     husky: "npm:^9.0.11"
     i18next: "npm:^22.1.4"
     inquirer: "npm:^9.1.5"
