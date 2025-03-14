@@ -38,6 +38,13 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
     );
   }
 
+  get almostEligible() {
+    // Even though "Early Requests" have an ineligible criteria specified,
+    // they are technically "eligible" for the opportunity
+    if (this.record.metadata.tabName === "EARLY_REQUESTS") return false;
+    return super.almostEligible;
+  }
+
   tabTitle(): OpportunityTab {
     if (this.isSubmitted) return this.submittedTabTitle;
     if (this.denied) return this.deniedTabTitle;
