@@ -36,21 +36,22 @@ export function UsUtDates({
   const dates = [
     { label: "Start", date: startDate },
     {
-      label: "Report Due",
+      label: "ET Report Due",
       date: reportDue,
       tooltip: "Equivalent to 30 days before the client's half-time date",
     },
     {
-      label: "Mandatory ET Review",
+      label: "Early Termination Review",
       date: halfTime,
-      tooltip: "Equivalent to the half-time date",
+      tooltip: "Equivalent to the client's half-time date",
     },
     {
       label: "Final Report Due",
       date: finalReportDue,
-      tooltip: "Equivalent to 30 days before the client's supervision end date",
+      tooltip:
+        "Equivalent to 30 days before the client's scheduled termination date",
     },
-    { label: "End", date: endDate },
+    { label: "Scheduled Termination", date: endDate },
   ];
 
   return (
