@@ -36,13 +36,18 @@ import InsightsInfoModal from "../InsightsInfoModal";
 
 const PageWrapper = styled.div<{
   isMobile: boolean;
+  $limitedWidth: boolean;
 }>`
   display: flex;
   flex-direction: column;
   gap: ${rem(spacing.md)};
   padding: 0 ${({ isMobile }) => (isMobile ? "0" : "56px")};
-  max-width: ${rem(1200)};
-  margin: 0 auto;
+  ${(props) =>
+    props.$limitedWidth &&
+    `
+      max-width: ${rem(1200)};
+      margin: 0 auto;
+    `}
 `;
 
 export const Wrapper = styled.div<{
@@ -165,6 +170,7 @@ type InsightsPageLayoutProps = {
   highlightedOfficers?: ReactNode;
   children?: ReactNode;
   isFlex?: boolean;
+  limitedWidth?: boolean;
 };
 
 const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
@@ -177,6 +183,7 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
   highlightedOfficers,
   children,
   isFlex,
+  limitedWidth = true,
 }) => {
   const { isMobile, isTablet, isLaptop } = useIsMobile(true);
   const [pageOpenedAt, setPageOpenedAt] = useState<Date>(new Date());
@@ -200,7 +207,7 @@ const InsightsPageLayout: React.FC<InsightsPageLayoutProps> = ({
     supervisionStore;
 
   return (
-    <PageWrapper isMobile={isTablet}>
+    <PageWrapper isMobile={isTablet} $limitedWidth={limitedWidth}>
       {contentsAboveTitle}
       <Wrapper isFlex={isFlex} isLaptop={isLaptop}>
         <Header>

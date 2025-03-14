@@ -428,7 +428,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const userAllowedNavigation = userStore?.userAllowedNavigation;
 
     if (!userAllowedNavigation || !currentTenantId) return null;
-    
+
     // We should include the insights and workflows links on views that don't use the
     // sitewide nav bar
     const includeInsightsWorkflowsLinks = (

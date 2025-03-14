@@ -95,16 +95,12 @@ export const OpportunityProfileFooter: React.FC<
       workflowsStore.updateSelectedPersonAndOpportunity(nextOpportunity);
 
       nextOpportunity.trackPreviewed();
-      if (modalRef?.current) {
-        modalRef.current.scrollTo(0, 0);
-      }
     },
     [
       canNavigateOpportunity,
       currentOpportunityIndex,
       navigableOpportunities,
       workflowsStore,
-      modalRef,
     ],
   );
 

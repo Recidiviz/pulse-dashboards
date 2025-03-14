@@ -38,6 +38,8 @@ type CaseloadOpportunityGridProps = {
   items: Opportunity<JusticeInvolvedPerson>[];
 };
 
+// TODO(#7667): Make the screen width breakpoint for 1 column display narrower
+// TODO(#7684): Stop scrolling to the top of page when this component renders
 const CaseloadOpportunityGrid = ({
   items = [],
 }: CaseloadOpportunityGridProps) => {
@@ -99,7 +101,7 @@ const CaseloadOpportunityGrid = ({
               height={DEFAULT_ITEM_HEIGHT * rowCount + spacing.md}
               itemCount={rowCount}
               itemSize={DEFAULT_ITEM_HEIGHT}
-              width={width}
+              width={width * 0.875}
             >
               {RenderRow}
             </List>

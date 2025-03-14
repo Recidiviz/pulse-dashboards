@@ -53,6 +53,7 @@ export const OpportunityPageWithPresenter = observer(
       opportunities,
       opportunityLabel,
       opportunitiesByType,
+      shouldLimitWidth,
     } = presenter;
 
     // If the presenter is hydrated and we're on an opportunity page, this stuff should
@@ -69,6 +70,7 @@ export const OpportunityPageWithPresenter = observer(
 
     return (
       <InsightsPageLayout
+        limitedWidth={shouldLimitWidth}
         contentsAboveTitle={
           <InsightsBreadcrumbs
             previousPages={[
