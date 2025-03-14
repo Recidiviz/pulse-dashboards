@@ -31,6 +31,7 @@ import { Dispatch, SetStateAction } from "react";
 import styled from "styled-components/macro";
 
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
+import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
 
@@ -62,15 +63,17 @@ const HeaderCell = styled.th`
   ${SharedTableCellStyles}
   color: ${palette.slate80};
   font-weight: unset;
+  user-select: none;
 `;
 
 // TODO(#7572): Keep base table implementation generic
-const Cell = styled.td<{ $expandedLastColumn: boolean }>`
+const Cell = styled.td<{ $expandedLastColumn: boolean; $isMobile: boolean }>`
   ${SharedTableCellStyles}
 
   color: ${palette.pine1};
 
-  width: 12%;
+  width: 13%;
+  ${({ $isMobile }) => ($isMobile ? `min-width: 100px;` : `min-width: 125px;`)}
 
   ${({ $expandedLastColumn }) =>
     /* Offset last column to fill all available space and right-align contents */
@@ -104,6 +107,7 @@ const Row = styled.tr<{ $isSelected?: boolean }>`
 
   ${Cell} {
     ${({ $isSelected }) => $isSelected && "background-color: #EDF4FC;"}
+    transition: all 0.15s ease-in-out;
   }
 
   :not(:hover, :focus) {
@@ -166,6 +170,7 @@ type CaseloadTableProps<TData> = {
   expandedLastColumn?: boolean;
   onRowClick: (row: TData) => void;
   shouldHighlightRow: (row: TData) => boolean;
+  onRowRender?: (row: TData) => void;
   manualSorting?: CaseloadTableManualSorting;
 };
 
@@ -175,8 +180,10 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   columns,
   onRowClick,
   shouldHighlightRow,
+  onRowRender = () => undefined,
   manualSorting = undefined,
 }: CaseloadTableProps<TData>) {
+  const { isMobile } = useIsMobile(true);
   const table = useReactTable({
     data,
     columns: columns,
@@ -220,25 +227,29 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
         ))}
       </TableHeader>
       <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          <Row
-            key={row.id}
-            onClick={() => {
-              onRowClick(row.original);
-            }}
-            $isSelected={shouldHighlightRow(row.original)}
-          >
-            {row.getVisibleCells().map((cell) => (
-              <Cell
-                key={cell.id}
-                className={"fs-exclude"}
-                $expandedLastColumn={expandedLastColumn}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </Cell>
-            ))}
-          </Row>
-        ))}
+        {table.getRowModel().rows.map((row) => {
+          onRowRender(row.original);
+          return (
+            <Row
+              key={row.id}
+              onClick={() => {
+                onRowClick(row.original);
+              }}
+              $isSelected={shouldHighlightRow(row.original)}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <Cell
+                  key={cell.id}
+                  className={"fs-exclude"}
+                  $expandedLastColumn={expandedLastColumn}
+                  $isMobile={isMobile}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Cell>
+              ))}
+            </Row>
+          );
+        })}
       </TableBody>
     </Table>
   );

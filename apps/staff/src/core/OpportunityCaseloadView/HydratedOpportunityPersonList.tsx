@@ -278,6 +278,9 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
         data={opportunities}
         columns={displayedColumns}
         onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
+        onRowRender={(opp) => {
+          opp.trackListViewed();
+        }}
         shouldHighlightRow={(opp) => presenter.shouldHighlightOpportunity(opp)}
         manualSorting={manualSorting}
       />

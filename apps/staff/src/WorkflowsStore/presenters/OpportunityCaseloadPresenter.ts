@@ -81,7 +81,7 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
       config.tabGroups,
     ) as OpportunityTabGroup[];
     this._activeTabGroup = this.displayTabGroups[0];
-    this.userSelectedTab = this.defaultOrderedTabs[0];
+    this.userSelectedTab = undefined;
     this.userOrderedTabs = undefined;
 
     this.tableViewSelectPresenter = new TableViewSelectPresenter(

@@ -31,6 +31,7 @@ export const PersonIdWithCopyIcon = styled.span<{ shiftIcon: boolean }>`
   padding: 0 ${rem(spacing.xs)};
   border-radius: ${rem(spacing.xs / 2)};
   transition: all 0.3s ease;
+  white-space: nowrap;
 
   &::after {
     content: url("${copyIcon}");

@@ -35,7 +35,7 @@ import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import useModalTimeoutDismissal from "./hooks/useModalTimeoutDismissal";
 import WorkflowsPreviewModalContext from "./WorkflowsPreviewModalContext";
 
-export const StyledDrawerModal = styled(DrawerModal)<{
+const StyledDrawerModal = styled(DrawerModal)<{
   isMobile: boolean;
   $overrideStyles: boolean;
 }>`
@@ -44,6 +44,10 @@ export const StyledDrawerModal = styled(DrawerModal)<{
       ? `.ReactModal__Overlay {
     width: 0 !important;
     backdrop-filter: unset;
+    
+    // Stop the preview modal from being given a higher z-index than the nav bar,
+    // which would block dropdown menus from the top bar
+    z-index: unset !important;
   }
 
   .ReactModal__Content {
@@ -157,6 +161,13 @@ export function WorkflowsPreviewModal({
   const [modalIsOpen, setModalIsOpen] = useState(isOpen);
   const { setDismissAfterMs } = useModalTimeoutDismissal({ setModalIsOpen });
 
+  // Scroll to the top when a new modal is opened
+  useEffect(() => {
+    if (contentRef?.current) {
+      contentRef.current.scrollTo(0, 0);
+    }
+  }, [workflowsStore.selectedOpportunity, contentRef]);
+
   useEffect(() => {
     setModalIsOpen(isOpen);
   }, [isOpen]);
@@ -192,7 +203,7 @@ export function WorkflowsPreviewModal({
       }}
       shouldCloseOnOverlayClick={!opportunityTableView}
       $overrideStyles={!!opportunityTableView}
-      disableBackgroundScroll={!opportunityTableView}
+      disableBackgroundScroll={isMobile || !opportunityTableView}
     >
       <ModalControls>
         {onBackClick && (
