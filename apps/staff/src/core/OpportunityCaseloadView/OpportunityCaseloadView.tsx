@@ -27,6 +27,7 @@ import {
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { OpportunityCaseloadViewPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadViewPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import ModelHydrator from "../ModelHydrator";
@@ -45,15 +46,29 @@ const ManagedComponent = observer(function OpportunityCaseloadView({
 }: {
   presenter: OpportunityCaseloadViewPresenter;
 }) {
-  const { selectedSearchIds, hasOpportunities } = presenter;
+  const { selectedSearchIds, opportunityType, hasOpportunities } = presenter;
   const { opportunityTableView } = useFeatureVariants();
+  const { isTablet } = useIsMobile(true);
 
   const selectedSearchIdsCount = selectedSearchIds?.length || 0;
 
+  if (opportunityTableView) {
+    return (
+      // If we're displaying the table view, the Workflows layout should fill the screen.
+      <WorkflowsNavLayout limitedWidth={false}>
+        <Wrapper>
+          {isTablet && <CaseloadSelect />}
+          <ModelHydrator hydratable={presenter}>
+            <HydratedOpportunityPersonList opportunityType={opportunityType} />
+          </ModelHydrator>
+        </Wrapper>
+      </WorkflowsNavLayout>
+    );
+  }
+
   return (
-    // If we're displaying the table view, the Workflows layout should fill the screen.
-    // If we're not, the Workflows layout should be centered and limited-width.
-    <WorkflowsNavLayout limitedWidth={!opportunityTableView}>
+    // Not displaying table view, the Workflows layout should be centered and limited-width.
+    <WorkflowsNavLayout limitedWidth={true}>
       <Wrapper>
         <CaseloadSelect />
         <ModelHydrator hydratable={presenter}>
@@ -66,7 +81,7 @@ const ManagedComponent = observer(function OpportunityCaseloadView({
             )}
             {selectedSearchIdsCount > 0 && hasOpportunities && (
               <HydratedOpportunityPersonList
-                opportunityType={presenter.opportunityType}
+                opportunityType={opportunityType}
               />
             )}
           </React.Fragment>
