@@ -22,10 +22,10 @@ import {
   ServiceTaxonomy,
   TaxonomyNode,
 } from "~@sentencing-server/trpc/routes/opportunity/types";
-import { getAuthToken } from "~@sentencing-server/trpc/routes/opportunity/utils";
+import { refreshAuthToken } from "~@sentencing-server/trpc/routes/opportunity/utils";
 
 async function getTaxonomy() {
-  const token = await getAuthToken();
+  const token = await refreshAuthToken();
 
   const taxonomy = await axios.get<ServiceTaxonomy>(
     `https://api.auntberthaqa.com/v2/taxonomy`,

@@ -18,7 +18,7 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
-import { ProgramsResponse } from "~@sentencing-server/trpc/routes/opportunity/types";
+import { Programs } from "~@sentencing-server/trpc/routes/opportunity/types";
 
 export const mswServer = setupServer(
   http.post("https://api.auntberthaqa.com/v3/authenticate", () => {
@@ -49,6 +49,6 @@ export const mswServer = setupServer(
         },
       ],
       count: 1,
-    } satisfies ProgramsResponse);
+    } satisfies Programs);
   }),
 );
