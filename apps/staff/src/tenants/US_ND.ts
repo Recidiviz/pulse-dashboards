@@ -54,6 +54,7 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
   },
   releaseDateCopyOverride: "Good Time Release Date",
   navigation: {
+    insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "clients", "residents"],
     operations: [],
     system: [
@@ -110,7 +111,6 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
     ],
     psi: [],
     methodology: ["system", "operations"],
-    insights: [INSIGHTS_PAGES.supervision],
   },
   tableColumns: enabledTableColumns[pathways.US_ND],
   vitalsMetrics: [
