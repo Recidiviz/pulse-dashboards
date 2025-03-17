@@ -47,6 +47,7 @@ describe("staff router", () => {
               "reportType",
               "status",
               "offense",
+              "isCancelled",
             ]),
             client: _.pick(fakeClient, ["fullName", "externalId"]),
           },

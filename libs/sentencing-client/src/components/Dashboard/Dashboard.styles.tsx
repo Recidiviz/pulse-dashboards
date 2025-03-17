@@ -21,7 +21,7 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { customPalette } from "../styles/palette";
-import { CaseStatusToDisplay } from "./types";
+import { RecommendationStatusFilter } from "./types";
 
 const TABLE_COLUMN_WIDTH = 400;
 
@@ -290,10 +290,14 @@ const statusToCSS = {
     color: rgba(20, 28, 65, 1);
     background-color: rgba(200, 229, 255, 1);
   `,
+  Cancelled: `
+    color: rgba(76, 12, 28, 1);
+    background-color: rgba(255, 220, 229, 1);
+  `,
 };
 
 export const StatusChip = styled.div<{
-  status: CaseStatusToDisplay | "Archived";
+  status: RecommendationStatusFilter;
 }>`
   ${typography.Sans16}
   height: 18px;

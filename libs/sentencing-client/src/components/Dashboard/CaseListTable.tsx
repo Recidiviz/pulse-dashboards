@@ -37,6 +37,9 @@ import { REPORT_TYPE_KEY } from "../CaseDetails/constants";
 import { UNKNOWN_OPTION } from "../CaseDetails/Form/constants";
 import { ReportType } from "../constants";
 import {
+  ACTIVE_STATUS,
+  ARCHIVED_STATUS,
+  CANCELLED_STATUS,
   CLIENT_FULL_NAME_KEY,
   DUE_DATE_KEY,
   ID_KEY,
@@ -74,7 +77,7 @@ type CaseListTableProps = {
   };
 };
 
-type StatusFilter = RecommendationStatusFilter | "Active";
+type StatusFilter = RecommendationStatusFilter | typeof ACTIVE_STATUS;
 
 const columns = [
   {
@@ -138,9 +141,13 @@ const columns = [
       status: CellContext<CaseListTableCase, CaseListTableCase["status"]>,
     ) => {
       const statusValue = status.getValue();
-      const statusToDisplay = isBeforeDueDate(status.cell.row.original.dueDate)
+      const isCancelledStatus = status.cell.row.original.isCancelled;
+      const statusOrArchived = isBeforeDueDate(status.cell.row.original.dueDate)
         ? CaseStatusToDisplay[statusValue]
-        : "Archived";
+        : ARCHIVED_STATUS;
+      const statusToDisplay = isCancelledStatus
+        ? CANCELLED_STATUS
+        : statusOrArchived;
 
       return (
         <Styled.StatusChip status={statusToDisplay}>
@@ -197,25 +204,31 @@ const getUpdatedStatusFilters = (
   status: StatusFilter,
   currentFilters: StatusFilter[],
 ): StatusFilter[] => {
-  if (status === "Active") {
-    const includesArchived = currentFilters.includes("Archived");
-    const emptyOrArchived: StatusFilter[] = includesArchived
-      ? ["Archived"]
+  if (status === ACTIVE_STATUS) {
+    const includesArchived = currentFilters.includes(ARCHIVED_STATUS);
+    const includesCancelled = currentFilters.includes(CANCELLED_STATUS);
+    const archivedFilter: StatusFilter[] = includesArchived
+      ? [ARCHIVED_STATUS]
       : [];
+    const cancelledFilter: StatusFilter[] = includesCancelled
+      ? [CANCELLED_STATUS]
+      : [];
+    const hasNoActiveStatusFilters = !Object.values(CaseStatusToDisplay).some(
+      (status) => currentFilters.includes(status),
+    );
 
-    if (includesArchived && currentFilters.length === 1) {
-      return [...Object.values(CaseStatusToDisplay), "Archived"];
+    if (hasNoActiveStatusFilters) {
+      return [...Object.values(CaseStatusToDisplay), ...currentFilters];
     }
+
     return currentFilters.length > 0
-      ? emptyOrArchived
+      ? [...archivedFilter, ...cancelledFilter]
       : Object.values(CaseStatusToDisplay);
   }
 
-  if (currentFilters.includes(status)) {
-    return currentFilters.filter((currStatus) => currStatus !== status);
-  }
-
-  return [...currentFilters, status];
+  return currentFilters.includes(status)
+    ? currentFilters.filter((currStatus) => currStatus !== status)
+    : [...currentFilters, status];
 };
 
 const LOCAL_STORAGE_KEY = "dashboard-sort-order";
@@ -263,15 +276,16 @@ export const CaseListTable = ({
   });
 
   const filterOptions: { key: StatusFilter }[] = [
-    { key: "Active" },
+    { key: ACTIVE_STATUS },
     ...Object.values(CaseStatusToDisplay).map((status) => ({
       key: status,
     })),
-    { key: "Archived" },
+    { key: ARCHIVED_STATUS },
+    { key: CANCELLED_STATUS },
   ];
 
   const isFilterChecked = (status: StatusFilter) =>
-    status === "Active"
+    status === ACTIVE_STATUS
       ? statusFilters.length > 0 &&
         Object.values(CaseStatusToDisplay).some((filter) =>
           statusFilters.includes(filter),
@@ -281,7 +295,7 @@ export const CaseListTable = ({
   const handleFilterChange = (status: StatusFilter) => {
     const filters = getUpdatedStatusFilters(status, statusFilters);
     const filtersExcludingActive = filters.filter(
-      (item): item is RecommendationStatusFilter => item !== "Active",
+      (item): item is RecommendationStatusFilter => item !== ACTIVE_STATUS,
     );
 
     trackRecommendationStatusFilterChanged(filtersExcludingActive);
@@ -289,21 +303,22 @@ export const CaseListTable = ({
     setData(() => {
       return caseTableData
         .filter((datapoint) => {
-          const includesArchived = filters.includes("Archived");
+          const includesArchived = filters.includes(ARCHIVED_STATUS);
+          const includesCancelled = filters.includes(CANCELLED_STATUS);
+          const hasMatchingStatus = filters.includes(
+            CaseStatusToDisplay[datapoint.status],
+          );
 
-          if (datapoint.status) {
-            const hasMatchingStatus = filters.includes(
-              CaseStatusToDisplay[datapoint.status],
-            );
-            if (!includesArchived) {
-              return hasMatchingStatus && isBeforeDueDate(datapoint.dueDate);
-            }
-            if (!hasMatchingStatus && !isBeforeDueDate(datapoint.dueDate)) {
-              return true;
-            }
-            return hasMatchingStatus;
+          if (datapoint.isCancelled) {
+            // Include the case if it is cancelled and the CANCELLED_STATUS filter is active
+            return includesCancelled;
           }
-          return true;
+          if (!isBeforeDueDate(datapoint.dueDate)) {
+            // Include the case if it is archived and the ARCHIVED_STATUS filter is active
+            return includesArchived;
+          }
+          // Include the case if it matches the selected status filters
+          return hasMatchingStatus;
         })
         .sort((a, b) => {
           // Moves archived cases to the bottom of the list
@@ -344,7 +359,13 @@ export const CaseListTable = ({
               {filterOptions.map(({ key }) => (
                 <Styled.DropdownOption
                   key={key}
-                  isNested={!["Active", "Archived"].includes(key)}
+                  isNested={
+                    ![
+                      ACTIVE_STATUS,
+                      ARCHIVED_STATUS,
+                      CANCELLED_STATUS,
+                    ].includes(key)
+                  }
                 >
                   <input
                     id={`${key}-checkbox-status-filter-option`}

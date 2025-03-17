@@ -26,6 +26,8 @@ import { PSIStore } from "../../../datastores/PSIStore";
 import { StaffPresenter } from "../../../presenters/StaffPresenter";
 import { createMockPSIStore } from "../../../utils/test";
 import { CaseListTable } from "../CaseListTable";
+import { ACTIVE_STATUS, ARCHIVED_STATUS, CANCELLED_STATUS } from "../constants";
+import { CaseStatusToDisplay } from "../types";
 
 let psiStore: PSIStore;
 let presenter: StaffPresenter;
@@ -66,29 +68,40 @@ test("shows status filter with default filters checked", async () => {
 
   fireEvent.click(statusFilter);
 
-  const archived = (await screen.getByLabelText("Archived", {
+  const archived = (await screen.getByLabelText(ARCHIVED_STATUS, {
     selector: "input",
   })) as HTMLInputElement;
-  const active = (await screen.getByLabelText("Active", {
+  const active = (await screen.getByLabelText(ACTIVE_STATUS, {
     selector: "input",
   })) as HTMLInputElement;
-  const notYetStarted = (await screen.getByLabelText("Not yet started", {
+  const notYetStarted = (await screen.getByLabelText(
+    CaseStatusToDisplay.NotYetStarted,
+    {
+      selector: "input",
+    },
+  )) as HTMLInputElement;
+  const inProgress = (await screen.getByLabelText(
+    CaseStatusToDisplay.InProgress,
+    {
+      selector: "input",
+    },
+  )) as HTMLInputElement;
+  const complete = (await screen.getByLabelText(CaseStatusToDisplay.Complete, {
     selector: "input",
   })) as HTMLInputElement;
-  const inProgress = (await screen.getByLabelText("In Progress", {
-    selector: "input",
-  })) as HTMLInputElement;
-  const complete = (await screen.getByLabelText("Complete", {
+  const cancelled = (await screen.getByLabelText(CANCELLED_STATUS, {
     selector: "input",
   })) as HTMLInputElement;
 
   expect(archived).toBeInTheDocument();
+  expect(cancelled).toBeInTheDocument();
   expect(active).toBeInTheDocument();
   expect(notYetStarted).toBeInTheDocument();
   expect(inProgress).toBeInTheDocument();
   expect(complete).toBeInTheDocument();
 
   expect(archived.checked).toBeFalse();
+  expect(cancelled.checked).toBeFalse();
   expect(active.checked).toBeTrue();
   expect(notYetStarted.checked).toBeTrue();
   expect(inProgress.checked).toBeTrue();
@@ -131,10 +144,12 @@ test("does not show archived cases", async () => {
     </MemoryRouter>,
   );
 
-  const notYetStartedCase = await screen.getByText("Not yet started");
-  const completeCase = await screen.getByText("Complete");
-  const inProgressCase = await screen.getByText("In Progress");
-  const archivedCase = await screen.queryByText("Archived");
+  const notYetStartedCase = await screen.getByText(
+    CaseStatusToDisplay.NotYetStarted,
+  );
+  const completeCase = await screen.getByText(CaseStatusToDisplay.Complete);
+  const inProgressCase = await screen.getByText(CaseStatusToDisplay.InProgress);
+  const archivedCase = await screen.queryByText(ARCHIVED_STATUS);
   const pastDueCaseName = await screen.queryByText(
     pastDueCase!.client!.fullName,
   );
@@ -166,11 +181,13 @@ test("shows archived case when filter is checked", async () => {
     </MemoryRouter>,
   );
 
-  let notYetStartedCase = await screen.getByText("Not yet started");
-  let completeCase = await screen.getByText("Complete");
-  let inProgressCase = await screen.getByText("In Progress");
+  let notYetStartedCase = await screen.getByText(
+    CaseStatusToDisplay.NotYetStarted,
+  );
+  let completeCase = await screen.getByText(CaseStatusToDisplay.Complete);
+  let inProgressCase = await screen.getByText(CaseStatusToDisplay.InProgress);
   let archivedCase: HTMLElement | HTMLElement[] | null =
-    await screen.queryByText("Archived");
+    await screen.queryByText(ARCHIVED_STATUS);
   let pastDueCaseName: HTMLElement | HTMLElement[] | null =
     await screen.queryByText(pastDueCase!.client!.fullName.toLocaleLowerCase());
   const statusFilter = await screen.findByText("Status (3)");
@@ -183,20 +200,20 @@ test("shows archived case when filter is checked", async () => {
 
   fireEvent.click(statusFilter);
 
-  const archivedInput = (await screen.getByLabelText("Archived", {
+  const archivedInput = (await screen.getByLabelText(ARCHIVED_STATUS, {
     selector: "input",
   })) as HTMLInputElement;
 
   fireEvent.click(archivedInput);
   fireEvent.click(statusFilter);
 
-  archivedCase = await screen.getByText("Archived");
+  archivedCase = await screen.getByText(ARCHIVED_STATUS);
   pastDueCaseName = await screen.getByText(
     pastDueCase!.client!.fullName.toLocaleLowerCase(),
   );
-  notYetStartedCase = await screen.getByText("Not yet started");
-  completeCase = await screen.getByText("Complete");
-  inProgressCase = await screen.getByText("In Progress");
+  notYetStartedCase = await screen.getByText(CaseStatusToDisplay.NotYetStarted);
+  completeCase = await screen.getByText(CaseStatusToDisplay.Complete);
+  inProgressCase = await screen.getByText(CaseStatusToDisplay.InProgress);
 
   expect(archivedCase).toBeInTheDocument();
   expect(pastDueCaseName).toBeInTheDocument();
@@ -235,9 +252,12 @@ test("show/hide cases when 'Not yet started' filter is checked/unchecked", async
 
   expect(notYetStartedCase).not.toBeNull();
 
-  const notYetStartedInput = (await screen.getByLabelText("Not yet started", {
-    selector: "input",
-  })) as HTMLInputElement;
+  const notYetStartedInput = (await screen.getByLabelText(
+    CaseStatusToDisplay.NotYetStarted,
+    {
+      selector: "input",
+    },
+  )) as HTMLInputElement;
 
   fireEvent.click(notYetStartedInput); // Uncheck
 
@@ -280,9 +300,12 @@ test("show/hide cases when 'In Progress' filter is checked/unchecked", async () 
 
   expect(inProgressCase).not.toBeNull();
 
-  const inProgressInput = (await screen.getByLabelText("In Progress", {
-    selector: "input",
-  })) as HTMLInputElement;
+  const inProgressInput = (await screen.getByLabelText(
+    CaseStatusToDisplay.InProgress,
+    {
+      selector: "input",
+    },
+  )) as HTMLInputElement;
 
   fireEvent.click(inProgressInput); // Uncheck
 
@@ -319,7 +342,7 @@ test("show/hide cases when 'Complete' filter is checked/unchecked", async () => 
   const completeName = data
     .find(
       (caseBrief) =>
-        caseBrief.status === "Complete" &&
+        caseBrief.status === CaseStatusToDisplay.Complete &&
         moment().utc() < moment(caseBrief.dueDate).utc(),
     )
     ?.client?.fullName.toLocaleLowerCase();
@@ -329,9 +352,12 @@ test("show/hide cases when 'Complete' filter is checked/unchecked", async () => 
 
   expect(completeCase).not.toBeNull();
 
-  const completeInput = (await screen.getByLabelText("Complete", {
-    selector: "input",
-  })) as HTMLInputElement;
+  const completeInput = (await screen.getByLabelText(
+    CaseStatusToDisplay.Complete,
+    {
+      selector: "input",
+    },
+  )) as HTMLInputElement;
 
   fireEvent.click(completeInput); //Uncheck
 

@@ -41,3 +41,7 @@ export const SortKeys = {
   ClientFullName: CLIENT_FULL_NAME_KEY,
   DueDate: DUE_DATE_KEY,
 };
+
+export const ACTIVE_STATUS = "Active";
+export const ARCHIVED_STATUS = "Archived";
+export const CANCELLED_STATUS = "Cancelled";

@@ -41,6 +41,7 @@ export const StaffInfoFixture: Staff = {
       reportType: "FullPSI",
       offense: "Burglary",
       status: "InProgress",
+      isCancelled: false,
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132",
@@ -53,6 +54,7 @@ export const StaffInfoFixture: Staff = {
       reportType: "FileReview",
       offense: "Burglary",
       status: "NotYetStarted",
+      isCancelled: false,
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x2",
@@ -65,6 +67,7 @@ export const StaffInfoFixture: Staff = {
       reportType: "FileReviewWithUpdatedLSIRScore",
       offense: undefined,
       status: "Complete",
+      isCancelled: false,
     },
     {
       id: "f9c7ad42-949c-4f11-9ece-caf66df9f9132x",
@@ -77,6 +80,7 @@ export const StaffInfoFixture: Staff = {
       reportType: "FileReviewWithUpdatedLSIRScore",
       offense: "Burglary",
       status: "Complete",
+      isCancelled: false,
     },
   ],
 };
