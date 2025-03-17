@@ -43,6 +43,7 @@ export const staffRouter = router({
               dueDate: true,
               reportType: true,
               status: true,
+              isCancelled: true,
               client: {
                 select: {
                   externalId: true,

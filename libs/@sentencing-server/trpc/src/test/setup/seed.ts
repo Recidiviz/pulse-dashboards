@@ -136,6 +136,7 @@ export const fakeCase = {
   reportType: ReportType.FullPSI,
   offense: fakeOffense.name,
   isVeteran: faker.datatype.boolean(),
+  isCancelled: false,
   previouslyIncarceratedOrUnderSupervision: faker.datatype.boolean(),
   hasPreviousFelonyConviction: faker.datatype.boolean(),
   hasPreviousViolentOffenseConviction: faker.datatype.boolean(),
