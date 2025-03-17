@@ -19,6 +19,7 @@ import { parseISO } from "date-fns";
 import { cloneDeep } from "lodash";
 import { configure, flowResult, observable } from "mobx";
 import { ValuesType } from "utility-types";
+import { beforeEach, MockInstance } from "vitest";
 
 import {
   CASELOAD_CATEGORY_IDS,
@@ -26,6 +27,7 @@ import {
   InsightsConfigFixture,
   LATEST_END_DATE,
   metricBenchmarksFixture,
+  rawRosterChangeRequestFixtures,
   supervisionOfficerFixture,
   supervisionOfficerMetricEventFixture,
   supervisionOfficerOutcomesFixture,
@@ -35,6 +37,7 @@ import {
 import { RootStore } from "../../../RootStore";
 import { formatDateToISO } from "../../../utils";
 import { InsightsOfflineAPIClient } from "../../api/InsightsOfflineAPIClient";
+import { InsightsAPI } from "../../api/interface";
 import { InsightsStore } from "../../InsightsStore";
 import { SupervisionPresenter } from "../../presenters/SupervisionPresenter";
 import { InsightsSupervisionStore } from "../InsightsSupervisionStore";
@@ -207,6 +210,16 @@ test("hydrate supervisionOfficerSupervisors", async () => {
   );
 });
 
+test("hydrate allSupervisionOfficers", async () => {
+  vi.spyOn(store, "userCanSubmitRosterChangeRequest", "get").mockReturnValue(
+    true,
+  );
+  await expect(
+    flowResult(store.populateAllSupervisionOfficers()),
+  ).resolves.not.toThrow();
+  expect(store.supervisionOfficers).toEqual(supervisionOfficerFixture);
+});
+
 test("hydrate supervisionOfficers for supervisor", async () => {
   const testSupervisorPseudoId =
     supervisionOfficerSupervisorsFixture[0].pseudonymizedId;
@@ -374,6 +387,44 @@ test("userCanAccessAllSupervisors with true route", () => {
 
   expect(store.userCanAccessAllSupervisors).toBeTrue();
 });
+
+test.each([
+  [true, true, true, true],
+  [true, false, true, true],
+  [true, true, false, true],
+  [false, true, true, false],
+  [false, false, false, true],
+])(
+  "%s that user can submit roster change request (isSupervisorUser: %s, userCanAccessAllSupervisors: %s, hasFeatureVariant: %s)",
+  (
+    expected,
+    isCurrentSupervisorUser,
+    userCanAccessAllSupervisors,
+    hasFeatureVariant,
+  ) => {
+    vi.spyOn(store, "currentSupervisorUser", "get").mockReturnValue(
+      isCurrentSupervisorUser
+        ? supervisionOfficerSupervisorsFixture[0]
+        : undefined,
+    );
+    vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(
+      userCanAccessAllSupervisors,
+    );
+
+    vi.spyOn(
+      store.insightsStore.rootStore.userStore,
+      "activeFeatureVariants",
+      "get",
+    ).mockReturnValue(
+      hasFeatureVariant
+        ? {
+            reportIncorrectRosters: {},
+          }
+        : {},
+    );
+    expect(store.userCanSubmitRosterChangeRequest).toBe(expected);
+  },
+);
 
 test("current user record for supervisor", async () => {
   vi.spyOn(
@@ -847,4 +898,90 @@ test("hydrate vitalsForSupervisor", async () => {
   expect(
     store.vitalsMetricsBySupervisorPseudoId.get(testSupervisorPseudoId),
   ).toMatchSnapshot();
+});
+
+describe("submitting a roster change request intercom ticket", () => {
+  let apiClientSubmitRequestFnSpy: MockInstance<
+    InsightsAPI["submitRosterChangeRequestIntercomTicket"]
+  >;
+  let userSpy: MockInstance<() => RootStore["user"]>;
+  let canSubmitFnSpy: MockInstance<
+    () => InsightsSupervisionStore["userCanSubmitRosterChangeRequest"]
+  >;
+
+  const [supervisorPseudoId, mockRequestProps] = Object.entries(
+    rawRosterChangeRequestFixtures,
+  )[1];
+  const submitTicket = () =>
+    flowResult(
+      store.submitRosterChangeRequestIntercomTicket(
+        supervisorPseudoId,
+        mockRequestProps,
+      ),
+    );
+
+  beforeEach(() => {
+    userSpy = vi.spyOn(store.insightsStore.rootStore, "user", "get");
+    canSubmitFnSpy = vi.spyOn(store, "userCanSubmitRosterChangeRequest", "get");
+    apiClientSubmitRequestFnSpy = vi.spyOn(
+      store.insightsStore.apiClient,
+      "submitRosterChangeRequestIntercomTicket",
+    );
+
+    vi.spyOn(
+      store.insightsStore.rootStore.userStore,
+      "userAppMetadata",
+      "get",
+    ).mockReturnValue({
+      externalId: "abc123",
+      pseudonymizedId: "hashed-agonzalez123",
+      district: "District One",
+      stateCode: "us_mi",
+      routes: observable({
+        insights: true,
+        "insights_supervision_supervisors-list": false,
+      }),
+    });
+    vi.spyOn(
+      store.insightsStore.rootStore.userStore,
+      "activeFeatureVariants",
+      "get",
+    ).mockReturnValue({
+      reportIncorrectRosters: {},
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("succeeds", async () => {
+    userSpy.mockReturnValue({ name: mockRequestProps.requesterName });
+    canSubmitFnSpy.mockReturnValue(true);
+
+    await expect(submitTicket()).resolves.not.toThrow();
+
+    expect(apiClientSubmitRequestFnSpy).toHaveBeenCalledWith(
+      supervisorPseudoId,
+      mockRequestProps,
+    );
+  });
+
+  test("fails without permission", async () => {
+    userSpy.mockReturnValue({ name: mockRequestProps.requesterName });
+    canSubmitFnSpy.mockReturnValue(false);
+
+    await expect(submitTicket()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: You do not have permission to submit a roster change request.]`,
+    );
+  });
+
+  test("fails without name", async () => {
+    userSpy.mockReturnValue({ name: undefined });
+    canSubmitFnSpy.mockReturnValue(true);
+
+    await expect(submitTicket()).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: User's name could not be found to submit request.]`,
+    );
+  });
 });

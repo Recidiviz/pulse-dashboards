@@ -21,7 +21,11 @@ import { makeAutoObservable } from "mobx";
 import { v4 as uuidv4 } from "uuid";
 
 import { isDemoMode, isTestEnv } from "~client-env-utils";
-import { ActionStrategyType, OpportunityType } from "~datatypes";
+import {
+  ActionStrategyType,
+  OpportunityType,
+  RosterChangeRequest,
+} from "~datatypes";
 import {
   CreateOrUpdateRecommendationTrackingMetadata,
   IndividualCaseClickedWithStatusMetadata,
@@ -102,6 +106,22 @@ type ActionStrategyPopupViewed10SecondsTrackingMetadata = {
 
 type ActionStrategyListMetadata = {
   viewedBy?: string;
+};
+
+type SupervisorRosterModalViewedByMetadata = {
+  supervisorPseudonymizedId: string;
+  viewedBy?: string;
+};
+
+type RosterChangeRequestFormSubmittedByMetadata = Pick<
+  RosterChangeRequest,
+  "requestChangeType"
+> & {
+  supervisorPseudonymizedId: string;
+  affectedOfficersExternalIds: string;
+  intercomTicketId?: string;
+  submittedBy?: string;
+  error?: string;
 };
 
 type OpportunityTrackingMetadata = {
@@ -288,6 +308,21 @@ export default class AnalyticsStore {
     metadata: ActionStrategyListMetadata,
   ): void {
     this.track("frontend.outliers_action_strategy_list_viewed", metadata);
+  }
+
+  trackInsightsRosterModalViewed(
+    metadata: SupervisorRosterModalViewedByMetadata,
+  ): void {
+    this.track("frontend.outliers_supervisor_roster_modal_viewed", metadata);
+  }
+
+  trackInsightsRosterChangeRequestFormSubmitted(
+    metadata: RosterChangeRequestFormSubmittedByMetadata,
+  ): void {
+    this.track(
+      "frontend.outliers_roster_change_request_form_submitted",
+      metadata,
+    );
   }
 
   trackReferralFormViewed(metadata: OpportunityTrackingMetadata): void {
