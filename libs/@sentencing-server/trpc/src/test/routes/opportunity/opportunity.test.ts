@@ -20,6 +20,7 @@ import { http, HttpResponse } from "msw";
 import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";
+import { Programs } from "~@sentencing-server/trpc/routes/opportunity/types";
 import { testAndGetSentryReports } from "~@sentencing-server/trpc/test/common/utils";
 import {
   testPrismaClient,
@@ -74,8 +75,8 @@ describe("opportunity router", () => {
       );
     });
 
-    describe("find help", () => {
-      test("should not include findhelp programs by default", async () => {
+    describe("Findhelp", () => {
+      test("should not include Findhelp programs by default", async () => {
         const returnedOpportunities =
           await testTRPCClient.opportunity.getOpportunities.query({});
 
@@ -118,6 +119,122 @@ describe("opportunity router", () => {
         const sentryReports = await testAndGetSentryReports();
         expect(sentryReports[0].error?.message).toContain(
           "Failed to authenticate with Findhelp",
+        );
+      });
+
+      test("should throw error if unable to authenticate after three tries", async () => {
+        // Auth token will have been set by the first call
+        await testTRPCClient.opportunity.getOpportunities.query({
+          includeFindHelpPrograms: true,
+        });
+
+        mswServer.use(
+          // Override the programs response to always return a 401 auth error now (reauth never works)
+          http.get(
+            `https://api.auntberthaqa.com/v2/zipcodes/*/programsLite`,
+            () => {
+              return new HttpResponse(null, { status: 401 });
+            },
+          ),
+        );
+
+        // The second call should never successfully authenticate and will throw a new error
+        const returnedOpportunities =
+          await testTRPCClient.opportunity.getOpportunities.query({
+            includeFindHelpPrograms: true,
+          });
+
+        // Should still return the internal opportunities
+        expect(returnedOpportunities).toEqual([
+          expect.objectContaining({
+            ...fakeOpportunity,
+          }),
+          expect.objectContaining({
+            ...fakeOpportunity2,
+          }),
+        ]);
+
+        const sentryReports = await testAndGetSentryReports();
+        expect(sentryReports[0].error?.message).toContain(
+          "Failed to authenticate with Findhelp after three attempts",
+        );
+      });
+
+      test("should attempt to reauthenticate if authentication token has expired", async () => {
+        // Auth token will have been set by the first call
+        await testTRPCClient.opportunity.getOpportunities.query({
+          includeFindHelpPrograms: true,
+        });
+
+        mswServer.use(
+          // Override the programs response to return a 401 auth error if it gets the old token
+          http.get(
+            `https://api.auntberthaqa.com/v2/zipcodes/*/programsLite`,
+            ({ request }) => {
+              const authHeader = request.headers.get("Authorization");
+
+              if (authHeader === "Bearer fake_auth_token") {
+                return new HttpResponse(null, { status: 401 });
+              }
+
+              return HttpResponse.json({
+                programs: [
+                  {
+                    name: "fake_program",
+                    description: "fake_description",
+                    provider_name: "fake_provider",
+                    website_url: "fake_url",
+                    offices: [
+                      {
+                        phone_number: "fake_phone",
+                        address1: "fake_address1",
+                      },
+                    ],
+                    attribute_tags: ["fake_attribute"],
+                    service_tags: ["dental care", "addiction & recovery"],
+                  },
+                ],
+                count: 1,
+              } satisfies Programs);
+            },
+          ),
+          // Get the authentication to return a new auth token
+          http.post("https://api.auntberthaqa.com/v3/authenticate", () => {
+            return HttpResponse.json({
+              success: true,
+              data: {
+                user_id: 1,
+                token: "fake_auth_token_2",
+              },
+            });
+          }),
+        );
+
+        // The second call should hit an authentication error, attempt to reauthenticate, and then successfully fetch the new programs
+        const returnedOpportunities =
+          await testTRPCClient.opportunity.getOpportunities.query({
+            includeFindHelpPrograms: true,
+          });
+
+        expect(returnedOpportunities).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              ...fakeOpportunity,
+            }),
+            expect.objectContaining({
+              ...fakeOpportunity2,
+            }),
+            expect.objectContaining({
+              providerName: "fake_provider",
+              providerPhoneNumber: "fake_phone",
+              providerWebsite: "fake_url",
+              providerAddress: "fake_address1",
+              needsAddressed: expect.arrayContaining([
+                NeedToBeAddressed.Healthcare,
+                NeedToBeAddressed.SubstanceUse,
+              ]),
+            }),
+          ]),
         );
       });
 

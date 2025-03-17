@@ -36,22 +36,18 @@ type Office = {
   address1: string;
 };
 
-export type ProgramsResponse =
-  | {
-      count: number;
-      programs: {
-        name: string;
-        description: string;
-        provider_name: string;
-        website_url: string;
-        offices: Office[];
-        attribute_tags: string[];
-        service_tags: string[];
-      }[];
-    }
-  | {
-      success: false;
-    };
+export type Programs = {
+  count: number;
+  programs: {
+    name: string;
+    description: string;
+    provider_name: string;
+    website_url: string;
+    offices: Office[];
+    attribute_tags: string[];
+    service_tags: string[];
+  }[];
+};
 
 export type TaxonomyNode = {
   label: string;

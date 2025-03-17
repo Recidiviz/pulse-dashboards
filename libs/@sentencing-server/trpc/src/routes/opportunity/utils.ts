@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { NeedToBeAddressed } from "@prisma/sentencing-server/client";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import _ from "lodash";
 
 import {
@@ -27,14 +27,15 @@ import {
 import {
   AuthResponse,
   PrismaOpportunity,
-  ProgramsResponse,
+  Programs,
 } from "~@sentencing-server/trpc/routes/opportunity/types";
 
-const PROGRAMS_SUCCESS_RESPONSE = "success";
-const PROGRAMS_PROGRAMS_KEY = "programs";
 const TOKEN_EXPIRATION = 3600;
+const MAX_ATTEMPTS = 2;
 
-export async function getAuthToken() {
+let AUTH_TOKEN: string | undefined;
+
+export async function refreshAuthToken() {
   const authResponse = await axios.post<AuthResponse>(
     AUTH_ENDPOINT,
     {
@@ -56,7 +57,7 @@ export async function getAuthToken() {
     throw Error("Failed to authenticate with Findhelp");
   }
 
-  return data.token;
+  AUTH_TOKEN = data.token;
 }
 
 function mapServiceTagsToNeedsAddressed(serviceTags: string[]) {
@@ -102,30 +103,58 @@ function getMinAndMaxAge(serviceTags: string[]) {
 }
 
 export async function getFindHelpPrograms(zipCode = "83201") {
-  const token = await getAuthToken();
-
-  const programsResponse = await axios.get<ProgramsResponse>(
-    `https://api.auntberthaqa.com/v2/zipcodes/${zipCode}/programsLite`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        serviceTag: RELEVANT_SERVICE_TAGS,
-      },
-    },
-  );
-
-  if (
-    (PROGRAMS_SUCCESS_RESPONSE in programsResponse.data &&
-      !programsResponse.data.success) ||
-    !(PROGRAMS_PROGRAMS_KEY in programsResponse.data)
-  ) {
-    throw Error("Failed to get programs from Findhelp");
+  // If the Auth token has never been created, create it
+  if (!AUTH_TOKEN) {
+    await refreshAuthToken();
   }
 
-  const { programs } = programsResponse.data;
+  let programs: Programs["programs"] | undefined = undefined;
+  let attempts = 0;
+
+  // Attempt to get the programs from Findhelp
+  // If the authentication token has expired, try to refresh it and retry the request (up to three times)
+  // If any other errors occur, rethrow it
+  do {
+    try {
+      // eslint-disable-next-line no-await-in-loop -- we need to retry the request if the token has expired
+      const programsResponse = await axios.get<Programs>(
+        `https://api.auntberthaqa.com/v2/zipcodes/${zipCode}/programsLite`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${AUTH_TOKEN}`,
+          },
+          params: {
+            serviceTag: RELEVANT_SERVICE_TAGS,
+          },
+        },
+      );
+
+      programs = programsResponse.data.programs;
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        if (e.response?.status === 401) {
+          console.error(
+            "Authorization token has expired, retrying with new authentication token.",
+            e,
+          );
+
+          // eslint-disable-next-line no-await-in-loop
+          await refreshAuthToken();
+          attempts++;
+          continue;
+        }
+
+        throw new Error(`Failed to get programs from Findhelp: ${e}`);
+      }
+
+      throw e;
+    }
+  } while (!programs && attempts < MAX_ATTEMPTS);
+
+  if (!programs) {
+    throw Error("Failed to authenticate with Findhelp after three attempts");
+  }
 
   return programs.map((program) => {
     const { minAge, maxAge } = getMinAndMaxAge(program.attribute_tags);
