@@ -4,18 +4,10 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-     "shell": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans atmos-shell",
-        "color": true,
-        "cwd": "{projectRoot}"
-      }
-    },
     "cli": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans --entrypoint=atmos atmos-shell",
+        "command": "atmos",
         "color": true,
         "cwd": "{projectRoot}"
       }
@@ -23,7 +15,7 @@
     "plan": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans --entrypoint=atmos atmos-shell terraform plan {args.component} -s {args.stack} -- {args.terraform-opts}",
+        "command": "atmos terraform plan {args.component} -s {args.stack} -- {args.terraform-opts}",
         "color": true,
         "cwd": "{projectRoot}",
         "tty": true
@@ -32,7 +24,7 @@
     "apply": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans --entrypoint=atmos atmos-shell terraform apply {args.component} -s {args.stack} -- {args.terraform-opts}",
+        "command": "atmos terraform apply {args.component} -s {args.stack} -- {args.terraform-opts}",
         "debug": true,
         "color": true,
         "cwd": "{projectRoot}",
@@ -42,15 +34,7 @@
     "vendor-pull": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose -f docker-compose.yaml run --rm --remove-orphans -e GITHUB_TOKEN={args.github-token} --entrypoint=atmos atmos-shell vendor pull",
-        "color": true,
-        "cwd": "{projectRoot}"
-      }
-    },
-    "pull-runner": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "docker pull us-central1-docker.pkg.dev/recidiviz-devops/atmos-runner/default:latest",
+        "command": "atmos vendor pull",
         "color": true,
         "cwd": "{projectRoot}"
       }
@@ -71,7 +55,9 @@
     },
     "validate-workflows-yaml": {
       "executor": "nx:run-commands",
-      "inputs": ["{projectRoot}/components/terraform/apps/jii-texting/workflows"],
+      "inputs": [
+        "{projectRoot}/components/terraform/apps/jii-texting/workflows"
+      ],
       "options": {
         "command": "v8r -s https://json.schemastore.org/workflows.json '**.workflows.{yaml,yml}'",
         "cwd": "{projectRoot}/components/terraform/apps/jii-texting/workflows"

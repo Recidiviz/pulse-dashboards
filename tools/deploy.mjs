@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+/* eslint-disable no-await-in-loop */
+
 import "zx/globals"; // get access to $ function
 
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
@@ -48,6 +50,9 @@ const [slackToken] = await secretClient.accessSecretVersion({
 
 console.log("Installing yarn packages...");
 await $`yarn install`.pipe(process.stdout);
+
+console.log("Updating atmos...");
+await $`brew install atmos`.pipe(process.stdout);
 
 // Determine which environment to deploy
 const { deployEnv } = await inquirer.prompt({
@@ -198,20 +203,17 @@ if (deployBackendPrompt.deployBackend) {
     try {
       switch (deployEnv) {
         case "production":
-          // eslint-disable-next-line no-await-in-loop
           await $`gcloud app deploy dist/libs/staff-shared-server/gae-production.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
             process.stdout,
           );
           publishReleaseNotes = true;
           break;
         case "demo":
-          // eslint-disable-next-line no-await-in-loop
           await $`gcloud app deploy dist/libs/staff-shared-server/gae-staging-demo.yaml --project recidiviz-dashboard-staging`.pipe(
             process.stdout,
           );
           break;
         default:
-          // eslint-disable-next-line no-await-in-loop
           await $`gcloud app deploy dist/libs/staff-shared-server/gae-staging.yaml --project recidiviz-dashboard-staging`.pipe(
             process.stdout,
           );
@@ -220,7 +222,6 @@ if (deployBackendPrompt.deployBackend) {
       retryBackend = false;
       successfullyDeployed.push("staff-shared-server");
     } catch (e) {
-      // eslint-disable-next-line no-await-in-loop
       const retryBackendPrompt = await inquirer.prompt({
         type: "confirm",
         name: "retryBackend",
@@ -277,14 +278,12 @@ if (deployFrontendPrompt.deployFrontend) {
       try {
         switch (deployEnv) {
           case "production":
-            // eslint-disable-next-line no-await-in-loop
             await $`firebase deploy --only hosting -P production -m "Version ${nextVersion} - Commit hash ${currentRevision}"`.pipe(
               process.stdout,
             );
             publishReleaseNotes = true;
             break;
           default:
-            // eslint-disable-next-line no-await-in-loop
             await $`firebase deploy --only hosting -P ${deployEnv} -m "${currentRevision}"`.pipe(
               process.stdout,
             );
@@ -292,7 +291,6 @@ if (deployFrontendPrompt.deployFrontend) {
         retryFrontend = false;
         successfullyDeployed.push("Frontend");
       } catch (e) {
-        // eslint-disable-next-line no-await-in-loop
         const retryFrontendPrompt = await inquirer.prompt({
           type: "confirm",
           name: "retryFrontend",
@@ -345,23 +343,19 @@ if (
         // 2. deploying a cherry-pick
         // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
         if (deployEnv === "staging") {
-          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
-          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration cherry-pick`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "demo") {
-          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration demo`.pipe(
             process.stdout,
           );
         }
 
-        // eslint-disable-next-line no-await-in-loop
         await $`COMMIT_SHA=${currentRevision} nx deploy-app sentencing-server --configuration ${deployEnv}`.pipe(
           process.stdout,
         );
@@ -369,7 +363,6 @@ if (
         retryDeploy = false;
         successfullyDeployed.push("Sentencing Server");
       } catch (e) {
-        // eslint-disable-next-line no-await-in-loop
         const retryDeployPrompt = await inquirer.prompt({
           type: "confirm",
           name: "retryDeploy",
@@ -415,29 +408,28 @@ if (deployEnv === "staging" || deployEnv === "production") {
         // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
         if (deployEnv === "staging") {
           // Push the docker container for the Cloud Run service
-          // eslint-disable-next-line no-await-in-loop
+
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
           // Push the docker container for the Cloud Run jobs
-          // eslint-disable-next-line no-await-in-loop
+
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-jobs --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
-          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration cherry-pick`.pipe(
             process.stdout,
           );
           // Push the docker container for the Cloud Run jobs
-          // eslint-disable-next-line no-await-in-loop
+
           await $`COMMIT_SHA=${currentRevision} nx container jii-texting-jobs --configuration cherry-pick`.pipe(
             process.stdout,
           );
         }
 
         // TODO(#7617) Check if ETL Cloud Run Job is running before DB migration
-        // eslint-disable-next-line no-await-in-loop
+
         await $`nx run jii-texting-server:deploy --configuration=${deployEnv} --tag=${currentRevision} --migrate=true`.pipe(
           process.stdout,
         );
@@ -445,7 +437,6 @@ if (deployEnv === "staging" || deployEnv === "production") {
         retryDeploy = false;
         successfullyDeployed.push("JII Texting Server");
       } catch (e) {
-        // eslint-disable-next-line no-await-in-loop
         const retryDeployPrompt = await inquirer.prompt({
           type: "confirm",
           name: "retryDeploy",
@@ -498,23 +489,19 @@ if (
         // 2. deploying a cherry-pick
         // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
         if (deployEnv === "staging") {
-          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
-          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration cherry-pick`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "demo") {
-          // eslint-disable-next-line no-await-in-loop
           await $`COMMIT_SHA=${currentRevision} nx container case-notes-server --configuration demo`.pipe(
             process.stdout,
           );
         }
 
-        // eslint-disable-next-line no-await-in-loop
         await $`COMMIT_SHA=${currentRevision} nx deploy-app case-notes-server --configuration ${deployEnv}`.pipe(
           process.stdout,
         );
@@ -522,7 +509,6 @@ if (
         retryDeploy = false;
         successfullyDeployed.push("Case Notes Server");
       } catch (e) {
-        // eslint-disable-next-line no-await-in-loop
         const retryDeployPrompt = await inquirer.prompt({
           type: "confirm",
           name: "retryDeploy",
