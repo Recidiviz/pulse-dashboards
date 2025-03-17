@@ -159,12 +159,14 @@ export class APIClient {
     });
   }
 
-  async getCommunityOpportunities(): Promise<Opportunities> {
+  async getCommunityOpportunities(isDemoMode = false): Promise<Opportunities> {
     if (!this.trpcClient)
       return Promise.reject({ message: "No tRPC client initialized" });
 
     const fetchedData =
-      await this.trpcClient.opportunity.getOpportunities.query({});
+      await this.trpcClient.opportunity.getOpportunities.query({
+        includeFindHelpPrograms: isDemoMode,
+      });
 
     return fetchedData;
   }

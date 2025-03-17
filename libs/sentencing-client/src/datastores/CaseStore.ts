@@ -21,6 +21,7 @@ import { keyBy } from "lodash";
 import { flowResult, makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
 
+import { isDemoMode } from "~client-env-utils";
 import { FlowMethod } from "~hydration-utils";
 
 import {
@@ -181,7 +182,7 @@ export class CaseStore {
   *loadCommunityOpportunities() {
     try {
       this.communityOpportunities =
-        yield this.psiStore.apiClient.getCommunityOpportunities();
+        yield this.psiStore.apiClient.getCommunityOpportunities(isDemoMode());
     } catch (error) {
       captureException(
         new Error("Error while loading community opportunities"),
