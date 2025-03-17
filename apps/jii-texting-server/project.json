@@ -58,7 +58,14 @@
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
-      "dependsOn": ["create-base-package-json", "load-env-files"],
+      "dependsOn": [
+        "create-base-package-json",
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "prisma-generate"
+        },
+        "load-env-files"
+      ],
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/jii-texting-server",
