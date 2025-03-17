@@ -97,7 +97,8 @@ export type FeatureVariant =
   | "usMeCaseNoteSnooze"
   | "outcomesModule"
   | "mandatoryMinimum"
-  | "usTnCompliantReporting2025Policy";
+  | "usTnCompliantReporting2025Policy"
+  | "reportIncorrectRosters";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -156,6 +157,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   outcomesModule: {},
   mandatoryMinimum: {},
   usTnCompliantReporting2025Policy: {},
+  reportIncorrectRosters: {},
 };
 export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

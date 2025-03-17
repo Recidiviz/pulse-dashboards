@@ -31,6 +31,8 @@ import {
   InsightsConfig,
   MetricBenchmark,
   MetricConfig,
+  RosterChangeRequest,
+  RosterChangeRequestResponse,
   SupervisionOfficer,
   SupervisionOfficerMetricEvent,
   SupervisionOfficerOutcomes,
@@ -81,6 +83,8 @@ export class InsightsSupervisionStore {
   latestBenchmarksDate?: Date;
 
   private allSupervisionOfficerSupervisors?: SupervisionOfficerSupervisor[];
+
+  private allSupervisionOfficers?: SupervisionOfficer[];
 
   metricEventsByOfficerPseudoIdAndMetricId: StringMap2D<
     Array<SupervisionOfficerMetricEvent>
@@ -171,6 +175,14 @@ export class InsightsSupervisionStore {
     return this.userInfo?.metadata.hasSeenOnboarding ?? false;
   }
 
+  get userCanSubmitRosterChangeRequest(): boolean {
+    return (
+      "reportIncorrectRosters" in
+        this.insightsStore.rootStore.userStore.activeFeatureVariants &&
+      (this.userCanAccessAllSupervisors || !!this.currentSupervisorUser)
+    );
+  }
+
   get currentSupervisorUser(): SupervisionOfficerSupervisor | undefined {
     if (this.userInfo?.role === "supervision_officer_supervisor") {
       return this.userInfo.entity;
@@ -197,6 +209,12 @@ export class InsightsSupervisionStore {
     throw new Error(
       "User is not a supervisor but cannot access all supervisors",
     );
+  }
+
+  get supervisionOfficers(): SupervisionOfficer[] | undefined {
+    if (this.userCanSubmitRosterChangeRequest)
+      return this.allSupervisionOfficers;
+    else throw new Error("User cannot access all officers.");
   }
 
   get benchmarksTimePeriod(): string | undefined {
@@ -649,6 +667,19 @@ export class InsightsSupervisionStore {
   }
 
   /**
+   * Fetches all officer data
+   */
+  *populateAllSupervisionOfficers(): FlowMethod<
+    InsightsAPI["allSupervisionOfficers"],
+    void
+  > {
+    if (this.allSupervisionOfficers !== undefined) return;
+
+    this.allSupervisionOfficers =
+      yield this.insightsStore.apiClient.allSupervisionOfficers();
+  }
+
+  /**
    * Fetches vitals metrics data for the specified supervisor
    */
   *populateVitalsForSupervisor(
@@ -923,5 +954,39 @@ export class InsightsSupervisionStore {
       pseudonymizedId,
       props,
     );
+  }
+
+  /**
+   * Submits a request to the backend to create an Intercom ticket
+   * requesting to make roster addition(s) or removal(s) for a supervisors's caseload.
+   * @returns API Response if the status is OK, an error otherwise.
+   */
+  *submitRosterChangeRequestIntercomTicket(
+    targetSupervisorPseudoId: string,
+    props: Omit<RosterChangeRequest, "requesterName">,
+  ): FlowMethod<
+    InsightsAPI["submitRosterChangeRequestIntercomTicket"],
+    RosterChangeRequestResponse
+  > {
+    if (!this.userCanSubmitRosterChangeRequest)
+      throw new Error(
+        "You do not have permission to submit a roster change request.",
+      );
+
+    const requesterName = this.insightsStore.rootStore.user?.name;
+
+    if (requesterName === undefined)
+      throw new Error("User's name could not be found to submit request.");
+
+    const response =
+      yield this.insightsStore.apiClient.submitRosterChangeRequestIntercomTicket(
+        targetSupervisorPseudoId,
+        {
+          ...props,
+          requesterName,
+        },
+      );
+
+    return response;
   }
 }
