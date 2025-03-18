@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import FindhelpLogo from "../../components/assets/findhelp.svg?react";
 import { RecommendationOptionType } from "../../components/CaseDetails/Recommendations/constants";
 import { RecommendationType } from "../../components/CaseDetails/types";
 import { GeoConfig } from "../types";
@@ -44,4 +45,5 @@ export const US_ID_CONFIG: GeoConfig = {
     summaryGenerator: generateIdahoSummary,
   },
   omsSystem: "Atlas",
+  ExternalOpportunityLogo: FindhelpLogo,
 };

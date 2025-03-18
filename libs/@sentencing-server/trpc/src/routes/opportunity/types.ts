@@ -23,6 +23,13 @@ export type PrismaOpportunity = Prisma.OpportunityGetPayload<{
   };
 }>;
 
+export type DataSource = "internal" | "external";
+
+export type Opportunity = Omit<PrismaOpportunity, "providerName"> & {
+  providerName: PrismaOpportunity["providerName"] | null;
+  source: DataSource;
+};
+
 export type AuthResponse = {
   success: boolean;
   data?: {

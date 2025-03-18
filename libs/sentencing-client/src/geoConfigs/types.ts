@@ -45,4 +45,7 @@ export type GeoConfig = {
   excludedAttributeKeys: AttributeKey[];
   recommendation: GeoConfigRecommendation;
   omsSystem: string;
+  ExternalOpportunityLogo?: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement>
+  >;
 };
