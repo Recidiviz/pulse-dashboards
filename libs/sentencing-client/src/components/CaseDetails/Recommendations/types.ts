@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Dispatch, SetStateAction } from "react";
+
 import { Case, CaseInsight, Client, Insight } from "../../../api";
 import { CreateOrUpdateRecommendation } from "../../../datastores/types";
 import { GeoConfig } from "../../../geoConfigs/types";
 import {
-  MutableCaseAttributes,
   OpportunitiesIdentifier,
   RecommendationType,
   SelectedRecommendation,
@@ -27,23 +28,16 @@ import {
 
 export type RecommendationsProps = {
   firstName?: string;
-  lastName?: string;
-  fullName?: string;
-  age?: number;
   geoConfig: GeoConfig;
-  externalId?: string;
-  gender?: Client["gender"];
   selectedRecommendation?: SelectedRecommendation;
   lastSavedRecommendation?: SelectedRecommendation;
   recommendedOpportunities?: OpportunitiesIdentifier;
-  needs?: Case["needsToBeAddressed"];
-  protectiveFactors?: Case["protectiveFactors"];
   insight?: CaseInsight;
-  savedSummary?: string | null;
   handleRecommendationUpdate: (recommendation: string) => void;
   saveRecommendation: () => void;
-  setCaseStatusCompleted: () => Promise<void>;
-  updateAttributes: (attributes?: MutableCaseAttributes) => Promise<void>;
+  openSummaryReport: () => void;
+  isCreatingRecommendation: boolean;
+  setIsCreatingRecommendation: Dispatch<SetStateAction<boolean>>;
   analytics: {
     trackCreateOrUpdateRecommendationClicked: (
       type: CreateOrUpdateRecommendation,

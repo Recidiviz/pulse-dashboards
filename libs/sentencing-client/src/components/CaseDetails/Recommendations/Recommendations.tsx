@@ -16,16 +16,14 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 
-import { pluralizeDuplicates } from "../../../utils/utils";
 import { useStore } from "../../StoreProvider/StoreProvider";
 import * as Styled from "../CaseDetails.styles";
 import { createOpportunityProviderDisplayName } from "../Opportunities/utils";
 import { RecommendationType } from "../types";
 import MandatoryMinimums from "./MandatoryMinimums";
 import { RecommendationRadioOption } from "./RecommendationOptions";
-import { SummaryReport } from "./SummaryReport";
 import { RecommendationsProps } from "./types";
 import {
   generateRecommendationOptions,
@@ -34,40 +32,20 @@ import {
 
 const Recommendations: React.FC<RecommendationsProps> = ({
   firstName,
-  lastName,
-  fullName,
   geoConfig,
-  age,
   selectedRecommendation,
   lastSavedRecommendation,
   recommendedOpportunities,
   insight,
-  needs,
-  protectiveFactors,
-  gender,
-  externalId,
   analytics,
-  savedSummary,
-  updateAttributes,
   handleRecommendationUpdate,
   saveRecommendation,
-  setCaseStatusCompleted,
+  openSummaryReport,
+  isCreatingRecommendation,
+  setIsCreatingRecommendation,
 }) => {
   const { caseStore, activeFeatureVariants } = useStore();
-  const {
-    trackCreateOrUpdateRecommendationClicked,
-    trackCopySummaryToClipboardClicked,
-    trackDownloadReportClicked,
-    trackCaseStatusCompleteClicked,
-  } = analytics;
-
-  const [showSummaryReport, setShowSummaryReport] = useState(false);
-  /** User will be creating a recommendation (for the first time) if there are no previously saved recommendations */
-  const [isCreatingRecommendation, setIsCreatingRecommendation] = useState(
-    !lastSavedRecommendation,
-  );
-
-  const hideSummaryReport = () => setShowSummaryReport(false);
+  const { trackCreateOrUpdateRecommendationClicked } = analytics;
 
   const optionsBase = geoConfig.recommendation.baseOptionsTemplate ?? [];
   const matchingRecommendationOptionsForOpportunities =
@@ -80,10 +58,6 @@ const Recommendations: React.FC<RecommendationsProps> = ({
   const updateOrCreateDisplayText = isCreatingRecommendation
     ? "Create"
     : "Update";
-
-  const opportunityDescriptions = recommendedOpportunities
-    ?.map((opp) => opp.genericDescription)
-    .filter((desc) => desc) as string[] | undefined;
 
   // Mandatory Minimum
   const hasMandatoryMinimumFVEnabled = Boolean(
@@ -102,37 +76,8 @@ const Recommendations: React.FC<RecommendationsProps> = ({
     : {};
 
   return (
-    <>
-      {showSummaryReport && (
-        <SummaryReport
-          fullName={fullName}
-          firstName={firstName}
-          lastName={lastName}
-          geoConfig={geoConfig}
-          age={age}
-          insight={insight}
-          externalId={externalId}
-          selectedRecommendation={selectedRecommendation}
-          opportunityDescriptions={pluralizeDuplicates(
-            opportunityDescriptions ?? [],
-          )}
-          needs={needs}
-          protectiveFactors={protectiveFactors}
-          gender={gender}
-          savedSummary={savedSummary}
-          hideSummaryReport={hideSummaryReport}
-          setCaseStatusCompleted={setCaseStatusCompleted}
-          isCreatingRecommendation={isCreatingRecommendation}
-          updateAttributes={updateAttributes}
-          analytics={{
-            trackCopySummaryToClipboardClicked,
-            trackDownloadReportClicked,
-            trackCaseStatusCompleteClicked,
-          }}
-        />
-      )}
-
-      <Styled.Recommendations>
+    <Styled.Recommendations>
+      <Styled.RecommendationsContainer>
         <Styled.RecommendationsWrapper>
           <Styled.Header>
             <Styled.Title>Create Recommendations</Styled.Title>
@@ -191,7 +136,7 @@ const Recommendations: React.FC<RecommendationsProps> = ({
             fullWidth
             disabled={!selectedRecommendation}
             onClick={() => {
-              setShowSummaryReport(true);
+              openSummaryReport();
               saveRecommendation();
               trackCreateOrUpdateRecommendationClicked(
                 lastSavedRecommendation ? "update" : "create",
@@ -203,13 +148,13 @@ const Recommendations: React.FC<RecommendationsProps> = ({
           >
             {updateOrCreateDisplayText}
           </Styled.ActionButton>
-          <Styled.Description rightPadding={36}>
+          <Styled.Description rightPadding={100}>
             Clicking "{updateOrCreateDisplayText}" will generate a downloadable
             report for the judge.
           </Styled.Description>
         </Styled.RecommendationActionButtonWrapper>
-      </Styled.Recommendations>
-    </>
+      </Styled.RecommendationsContainer>
+    </Styled.Recommendations>
   );
 };
 
