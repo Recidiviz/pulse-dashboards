@@ -4,42 +4,42 @@ metadata:
   name: Vendor configuration for pulse-dashboards
 spec:
   sources:
-    - component: "cloud-sql-instance"
+    - component: cloud-sql-instance
       source: 'git::https://{{env "GITHUB_TOKEN"}}@github.com/Recidiviz/atmos-components.git//terraform/cloud-sql-instance?ref={{.Version}}'
       version: main
       targets:
         - components/terraform/vendor/{{.Component}}
-    - component: "cloud-storage-bucket"
-      source: 'github.com/terraform-google-modules/terraform-google-cloud-storage.git?ref={{.Version}}'
-      version: 'v9.0.0'
+    - component: cloud-storage-bucket
+      source: "github.com/terraform-google-modules/terraform-google-cloud-storage.git?ref={{.Version}}"
+      version: v9.0.0
       included_paths:
-        - '**/*.tf'
-        - '**/README.md'
+        - "**/*.tf"
+        - "**/README.md"
       targets:
         - components/terraform/vendor/{{.Component}}
-    - component: "artifact-registry"
-      source: 'github.com/GoogleCloudPlatform/terraform-google-artifact-registry.git?ref={{.Version}}'
-      version: 'v0.3.0'
+    - component: artifact-registry
+      source: "github.com/GoogleCloudPlatform/terraform-google-artifact-registry.git?ref={{.Version}}"
+      version: v0.3.0
       included_paths:
-        - '**/*.tf'
-        - '**/README.md'
+        - "**/*.tf"
+        - "**/README.md"
       targets:
         - components/terraform/vendor/{{.Component}}
-    - component: "cloud-run"
-      source: 'github.com/GoogleCloudPlatform/terraform-google-cloud-run.git?ref={{.Version}}'
-      version: 'v0.16.1'
+    - component: cloud-run
+      source: "github.com/GoogleCloudPlatform/terraform-google-cloud-run.git//modules/v2?ref={{.Version}}"
+      version: v0.17.0
       included_paths:
-        - 'modules/job-exec/*.tf'
-        - 'modules/job-exec/README.md'
-        - '**/*.tf'
-        - '**/README.md'
+        - "modules/job-exec/*.tf"
+        - modules/job-exec/README.md
+        - "**/*.tf"
+        - "**/README.md"
       targets:
         - components/terraform/vendor/{{.Component}}
-    - component: "cloud-run-job-exec"
-      source: 'github.com/GoogleCloudPlatform/terraform-google-cloud-run.git//modules/job-exec?ref={{.Version}}'
-      version: 'v0.16.1'
+    - component: cloud-run-job-exec
+      source: "github.com/GoogleCloudPlatform/terraform-google-cloud-run.git//modules/job-exec?ref={{.Version}}"
+      version: v0.16.1
       included_paths:
-        - '**/*.tf'
-        - '**/README.md'
+        - "**/*.tf"
+        - "**/README.md"
       targets:
         - components/terraform/vendor/{{.Component}}

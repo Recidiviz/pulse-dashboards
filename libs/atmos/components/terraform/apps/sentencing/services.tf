@@ -46,10 +46,17 @@ resource "google_project_iam_member" "cloudsqlclient" {
   member  = "serviceAccount:${google_service_account.default.email}"
 }
 
-# Grant Artifact Registry reader so the service account 
+# Grant Artifact Registry reader so the service account can read images
 resource "google_project_iam_member" "artifactregistryreader" {
   project = var.artifact_registry_project_id
   role    = "roles/artifactregistry.reader"
+  member  = "serviceAccount:${google_service_account.default.email}"
+}
+
+# Grant Cloud Storage Object Viewer role to the service account can read objects
+resource "google_project_iam_member" "storageobjectviewer" {
+  project = var.project_id
+  role    = "roles/storage.objectViewer"
   member  = "serviceAccount:${google_service_account.default.email}"
 }
 

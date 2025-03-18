@@ -15,7 +15,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../../tools/load_env_files.sh --env env_sentencing_server_import --env_staging env_staging_sentencing_server_import --env_prod env_prod_sentencing_server_import",
+        "command": "../../../tools/load_env_files.sh --env env_sentencing_data_import --env_staging env_staging_sentencing_data_import --env_prod env_prod_sentencing_data_import",
         "cwd": "{projectRoot}"
       }
     },

@@ -342,12 +342,21 @@ if (
         // 1. deploying to staging.
         // 2. deploying a cherry-pick
         // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+
         if (deployEnv === "staging") {
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
+
+          await $`COMMIT_SHA=${currentRevision} nx container @sentencing-server/import --configuration ${deployEnv}`.pipe(
+            process.stdout,
+          );
         } else if (deployEnv === "production" && isCpDeploy) {
           await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
+
+          await $`COMMIT_SHA=${currentRevision} nx container @sentencing-server/import --configuration cherry-pick`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "demo") {
@@ -356,9 +365,21 @@ if (
           );
         }
 
-        await $`COMMIT_SHA=${currentRevision} nx deploy-app sentencing-server --configuration ${deployEnv}`.pipe(
-          process.stdout,
-        );
+        if (deployEnv === "staging" || deployEnv === "production") {
+          await $`nx run atmos:apply --component=apps/sentencing --stack=recidiviz-dashboard-${deployEnv}--sentencing --terraform-opts=\"-auto-approve -var server_container_version=${currentRevision} migrate_db_container_version=${currentRevision} import_container_version=${currentRevision}\"`.pipe(
+            process.stdout,
+          );
+        } else if (deployEnv === "demo") {
+          await $`nx run atmos:apply --component=demo-postgres-instance --stack=recidiviz-dashboard-staging--sentencing --terraform-opts=\"-auto-approve\"`.pipe(
+            process.stdout,
+          );
+
+          // The demo migration + server still needs to be deployed manually
+          // TODO(https://github.com/Recidiviz/recidiviz-data/issues/30615): remove once demo is fully managed by terraform
+          await $`COMMIT_SHA=${currentRevision} nx deploy-app sentencing-server --configuration ${deployEnv}`.pipe(
+            process.stdout,
+          );
+        }
 
         retryDeploy = false;
         successfullyDeployed.push("Sentencing Server");

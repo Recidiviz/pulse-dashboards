@@ -20,9 +20,22 @@ variable "location" {
 
 variable "import_container_version" {
   type        = string
-  description = "The version tag of the image that we are deploying"
+  description = "The version tag of the image that will deployed for the import job"
   default     = "latest"
 }
+
+variable "server_container_version" {
+  type        = string
+  description = "The version tag of the image that will deployed for the server"
+  default     = "latest"
+}
+
+variable "migrate_db_container_version" {
+  type        = string
+  description = "The version tag of the image that will be used for the database migration job"
+  default     = "latest"
+}
+
 
 variable "artifact_registry_repo" {
   type        = string
