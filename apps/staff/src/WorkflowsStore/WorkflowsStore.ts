@@ -52,7 +52,7 @@ import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
 } from "../core/utils/filterOptions";
-import { WorkflowsPage } from "../core/views";
+import { WORKFLOWS_PAGES, WorkflowsPage } from "../core/views";
 import {
   CombinedUserRecord,
   LocationRecord,
@@ -877,5 +877,9 @@ export class WorkflowsStore implements Hydratable {
 
   get activePageIsHomepage(): boolean {
     return this.activePage.page === this.homepage;
+  }
+
+  get activePageIsTasks(): boolean {
+    return this.activePage.page === WORKFLOWS_PAGES.tasks;
   }
 }

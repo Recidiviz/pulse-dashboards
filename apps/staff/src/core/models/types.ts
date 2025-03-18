@@ -103,6 +103,7 @@ type ValidSnoozeForDays = 7 | 30 | 90;
 
 export type WorkflowsTasksConfig = {
   collection: FirestoreCollectionName;
+  methodologyUrl?: string;
   tasks: {
     [K in SupervisionTaskType]?: {
       constructor: new (

@@ -281,4 +281,16 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   set showListView(showListView: boolean) {
     this.tableViewSelectPresenter.showListView = showListView;
   }
+
+  // Text shown at the top of the Tasks page
+  get pageDescription() {
+    switch (this.tenantStore.currentTenantId) {
+      case "US_ID":
+        return "The clients below might have upcoming requirements this month. Hiding a below task will not change an officer's timeliness percentage in the Operations metrics.";
+      case "US_TX":
+        return "The clients below might have upcoming requirements this month. Data is refreshed from the OMS overnight and daily.";
+      default:
+        return "The clients below might have upcoming requirements this month.";
+    }
+  }
 }

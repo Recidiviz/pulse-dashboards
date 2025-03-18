@@ -156,6 +156,7 @@ const TaskPreview = ({
             taskConfig={
               task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
             }
+            operationsInfoInToast={true}
           />
         )}
       </TaskItem>
@@ -185,6 +186,7 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
           taskConfig={
             task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
           }
+          operationsInfoInToast={false} // only for Texas
         />
       </TaskItemV2>
       <TaskItemDivider />
