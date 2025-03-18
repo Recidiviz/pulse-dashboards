@@ -254,6 +254,16 @@ describe("CaseloadTasksPresenterV2", () => {
       expect(presenter.countForCategory("DUE_THIS_MONTH")).toEqual(1);
     });
 
+    it("returns all tasks when a filter is set and then unset", () => {
+      presenter.toggleFilter("supervisionLevel", { value: "Low" });
+      presenter.toggleFilter("supervisionLevel", { value: "Low" });
+
+      expect(presenter.countForCategory("ALL_TASKS")).toEqual(5);
+      expect(presenter.countForCategory("OVERDUE")).toEqual(0);
+      expect(presenter.countForCategory("DUE_THIS_WEEK")).toEqual(4);
+      expect(presenter.countForCategory("DUE_THIS_MONTH")).toEqual(1);
+    });
+
     it("filters tasks by set filters", () => {
       presenter.setFilter("supervisionLevel", { value: "Low" });
 

@@ -254,13 +254,21 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     }
   }
 
-  toggleFilter(field: TaskFilterField, option: TaskFilterOption) {
+  unsetFilter(field: TaskFilterField, option: TaskFilterOption) {
     const { value } = option;
 
-    if (this.filterIsSelected(field, option)) {
+    if (this._selectedFilters[field]?.length === 1) {
+      delete this._selectedFilters[field];
+    } else {
       this._selectedFilters[field] = this._selectedFilters[field]?.filter(
         (f) => f !== value,
       );
+    }
+  }
+
+  toggleFilter(field: TaskFilterField, option: TaskFilterOption) {
+    if (this.filterIsSelected(field, option)) {
+      this.unsetFilter(field, option);
     } else {
       this.setFilter(field, option);
     }
