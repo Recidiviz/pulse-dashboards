@@ -27,13 +27,30 @@ module "cloud-run" {
   source = "../../vendor/cloud-run"
 
   service_name = "jii-texting-server"
-  image        = local.server_image
   location     = var.location
   project_id   = var.project_id
-  env_vars     = local.env_vars
-  template_annotations = {
-    "run.googleapis.com/cloudsql-instances" : var.cloudsql_instance
-  }
+
+  containers = [
+    {
+      container_image = local.server_image
+
+      env_vars = local.env_vars
+
+      volume_mounts = [{
+        name       = "cloudsql"
+        mount_path = "/cloudsql"
+      }]
+    }
+  ]
+
+
+  volumes = [{
+    name = "cloudsql"
+    cloud_sql_instance = {
+      instances = [var.cloudsql_instance]
+    }
+    }
+  ]
 }
 
 # Configure a Google Workflow that is executed on a write to a GCS storage bucket
@@ -72,7 +89,7 @@ module "process-jii-to-text-wf" {
 
   workflow_source = file("${path.module}/workflows/process-jii-to-text.workflows.yaml")
   env_vars = {
-    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_url
+    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
     BUCKET_ID             = var.etl_bucket_name
   }
 }

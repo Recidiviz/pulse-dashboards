@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Google LLC
+ * Copyright 2024 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,268 +20,321 @@ variable "project_id" {
   type        = string
 }
 
-variable "service_name" {
-  description = "The name of the Cloud Run service to create"
-  type        = string
-}
-
 variable "location" {
   description = "Cloud Run service deployment location"
   type        = string
 }
 
-variable "image" {
-  description = "GCR hosted image URL to deploy"
+variable "service_name" {
+  description = "The name of the Cloud Run service to create"
   type        = string
 }
 
-variable "generate_revision_name" {
+variable "description" {
+  description = "Cloud Run service description. This field currently has a 512-character limit."
+  type        = string
+  default     = null
+}
+
+// Containers
+variable "containers" {
+  type = list(object({
+    container_name       = optional(string, null)
+    container_image      = string
+    working_dir          = optional(string, null)
+    depends_on_container = optional(list(string), null)
+    container_args       = optional(list(string), null)
+    container_command    = optional(list(string), null)
+    env_vars = optional(list(object({
+      value = string
+      name  = string
+    })), [])
+    env_secret_vars = optional(map(object({
+      secret  = string
+      version = string
+    })), {})
+    volume_mounts = optional(list(object({
+      name       = string
+      mount_path = string
+    })), [])
+    ports = optional(object({
+      name           = optional(string, "http1")
+      container_port = optional(number, 8080)
+    }), {})
+    resources = optional(object({
+      limits = optional(object({
+        cpu    = optional(string)
+        memory = optional(string)
+      }))
+      cpu_idle          = optional(bool, true)
+      startup_cpu_boost = optional(bool, false)
+    }), {})
+    startup_probe = optional(object({
+      failure_threshold     = optional(number, null)
+      initial_delay_seconds = optional(number, null)
+      timeout_seconds       = optional(number, null)
+      period_seconds        = optional(number, null)
+      http_get = optional(object({
+        path = optional(string)
+        port = optional(string)
+        http_headers = optional(list(object({
+          name  = string
+          value = string
+        })), [])
+      }), null)
+      tcp_socket = optional(object({
+        port = optional(number)
+      }), null)
+      grpc = optional(object({
+        port    = optional(number)
+        service = optional(string)
+      }), null)
+    }), null)
+    liveness_probe = optional(object({
+      failure_threshold     = optional(number, null)
+      initial_delay_seconds = optional(number, null)
+      timeout_seconds       = optional(number, null)
+      period_seconds        = optional(number, null)
+      http_get = optional(object({
+        path = optional(string)
+        port = optional(string)
+        http_headers = optional(list(object({
+          name  = string
+          value = string
+        })), null)
+      }), null)
+      tcp_socket = optional(object({
+        port = optional(number)
+      }), null)
+      grpc = optional(object({
+        port    = optional(number)
+        service = optional(string)
+      }), null)
+    }), null)
+  }))
+  description = "Map of container images for the service"
+}
+
+variable "create_service_account" {
   type        = bool
-  description = "Option to enable revision name generation"
+  description = "Create a new service account for cloud run service"
   default     = true
 }
 
-variable "traffic_split" {
-  type = list(object({
-    latest_revision = bool
-    percent         = number
-    revision_name   = string
-    tag             = string
-  }))
-  description = "Managing traffic routing to the service"
-  default = [{
-    latest_revision = true
-    percent         = 100
-    revision_name   = "v1-0-0"
-    tag             = null
-  }]
+variable "service_account_project_roles" {
+  type        = list(string)
+  description = "Roles to grant to the newly created cloud run SA in specified project. Should be used with create_service_account set to true and no input for service_account"
+  default     = []
 }
 
-variable "service_labels" {
-  type        = map(string)
-  description = "A set of key/value label pairs to assign to the service"
-  default     = {}
+variable "members" {
+  type        = list(string)
+  description = "Users/SAs to be given invoker access to the service. Grant invoker access by specifying the users or service accounts (SAs). Use allUsers for public access, allAuthenticatedUsers for access by logged-in Google users, or provide a list of specific users/SAs. See the complete list of available options: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service_iam#member\\/members-1"
+  default     = []
 }
 
-variable "service_annotations" {
-  type        = map(string)
-  description = "Annotations to the service. Acceptable values all, internal, internal-and-cloud-load-balancing"
-  default = {
-    "run.googleapis.com/ingress" = "all"
-  }
-}
-
-// Metadata
-variable "template_labels" {
-  type        = map(string)
-  description = "A set of key/value label pairs to assign to the container metadata"
-  default     = {}
-}
-
-variable "template_annotations" {
-  type        = map(string)
-  description = "Annotations to the container metadata including VPC Connector and SQL. See [more details](https://cloud.google.com/run/docs/reference/rpc/google.cloud.run.v1#revisiontemplate)"
-  default = {
-    "run.googleapis.com/client-name"   = "terraform"
-    "generated-by"                     = "terraform"
-    "autoscaling.knative.dev/maxScale" = 2
-    "autoscaling.knative.dev/minScale" = 1
-  }
-}
-
-variable "encryption_key" {
-  description = "CMEK encryption key self-link expected in the format projects/PROJECT/locations/LOCATION/keyRings/KEY-RING/cryptoKeys/CRYPTO-KEY."
-  type        = string
+variable "vpc_access" {
+  type = object({
+    connector = optional(string)
+    egress    = optional(string)
+    network_interfaces = optional(object({
+      network    = optional(string)
+      subnetwork = optional(string)
+      tags       = optional(list(string))
+    }))
+  })
+  description = "VPC Access configuration to use for this Task. For more information, visit https://cloud.google.com/run/docs/configuring/connecting-vpc"
   default     = null
 }
 
-// template spec
-variable "container_concurrency" {
-  type        = number
-  description = "Concurrent request limits to the service"
-  default     = null
+variable "cloud_run_deletion_protection" {
+  type        = bool
+  description = "This field prevents Terraform from destroying or recreating the Cloud Run v2 Jobs and Services"
+  default     = true
 }
 
-variable "timeout_seconds" {
-  type        = number
-  description = "Timeout for each request"
-  default     = 120
-}
-
-variable "service_account_email" {
-  type        = string
-  description = "Service Account email needed for the service"
-  default     = ""
+// Prometheus sidecar
+variable "enable_prometheus_sidecar" {
+  type        = bool
+  description = "Enable Prometheus sidecar in Cloud Run instance."
+  default     = false
 }
 
 variable "volumes" {
   type = list(object({
     name = string
-    secret = set(object({
-      secret_name = string
-      items       = map(string)
+    secret = optional(object({
+      secret       = string
+      default_mode = optional(string)
+      items = optional(object({
+        path    = string
+        version = optional(string)
+        mode    = optional(string)
+      }))
+    }))
+    cloud_sql_instance = optional(object({
+      instances = optional(list(string))
+    }))
+    empty_dir = optional(object({
+      medium     = optional(string)
+      size_limit = optional(string)
+    }))
+    gcs = optional(object({
+      bucket    = string
+      read_only = optional(string)
+    }))
+    nfs = optional(object({
+      server    = string
+      path      = string
+      read_only = optional(string)
     }))
   }))
-  description = "[Beta] Volumes needed for environment variables (when using secret)"
+  description = "Volumes needed for environment variables (when using secret)"
   default     = []
 }
 
-# template spec container
-# resources
-# cpu = (core count * 1000)m
-# memory = (size) in Mi/Gi
-variable "limits" {
-  type        = map(string)
-  description = "Resource limits to the container"
+variable "traffic" {
+  type = list(object({
+    type     = optional(string, "TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST")
+    percent  = optional(number, 100)
+    revision = optional(string, null)
+    tag      = optional(string, null)
+  }))
+  description = "Specifies how to distribute traffic over a collection of Revisions belonging to the Service. If traffic is empty or not provided, defaults to 100% traffic to the latest Ready Revision."
+  default     = []
+}
+
+variable "service_scaling" {
+  type = object({
+    min_instance_count = optional(number)
+  })
+  description = "Scaling settings that apply to the whole service"
   default     = null
 }
-variable "requests" {
+
+variable "service_labels" {
   type        = map(string)
-  description = "Resource requests to the container"
+  description = "Unstructured key value map that can be used to organize and categorize objects. For more information, visit https://cloud.google.com/resource-manager/docs/creating-managing-labels or https://cloud.google.com/run/docs/configuring/labels"
   default     = {}
 }
 
-variable "ports" {
+variable "service_annotations" {
+  type        = map(string)
+  description = "Unstructured key value map that may be set by external tools to store and arbitrary metadata. They are not queryable and should be preserved when modifying objects. Refer https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service#annotations"
+  default     = {}
+}
+
+variable "client" {
   type = object({
-    name = string
-    port = number
+    name    = optional(string, null)
+    version = optional(string, null)
   })
-  description = "Port which the container listens to (http1 or h2c)"
-  default = {
-    name = "http1"
-    port = 8080
+  description = "Arbitrary identifier for the API client and version identifier"
+  default     = {}
+}
+
+variable "ingress" {
+  type        = string
+  description = "Provides the ingress settings for this Service. On output, returns the currently observed ingress settings, or INGRESS_TRAFFIC_UNSPECIFIED if no revision is active."
+  default     = "INGRESS_TRAFFIC_ALL"
+
+  validation {
+    condition     = contains(["INGRESS_TRAFFIC_ALL", "INGRESS_TRAFFIC_INTERNAL_ONLY", "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"], var.ingress)
+    error_message = "Allowed values for ingress are \"INGRESS_TRAFFIC_ALL\", \"INGRESS_TRAFFIC_INTERNAL_ONLY\", or \"INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER\"."
   }
 }
 
-variable "argument" {
-  type        = list(string)
-  description = "Arguments passed to the ENTRYPOINT command, include these only if image entrypoint needs arguments"
-  default     = []
-}
-
-variable "container_command" {
-  type        = list(string)
-  description = "Leave blank to use the ENTRYPOINT command defined in the container image, include these only if image entrypoint should be overwritten"
-  default     = []
-}
-
-variable "startup_probe" {
-  type = object({
-    failure_threshold     = optional(number, null)
-    initial_delay_seconds = optional(number, null)
-    timeout_seconds       = optional(number, null)
-    period_seconds        = optional(number, null)
-    http_get = optional(object({
-      path = optional(string)
-      http_headers = optional(list(object({
-        name  = string
-        value = string
-      })), null)
-    }), null)
-    tcp_socket = optional(object({
-      port = optional(number)
-    }), null)
-    grpc = optional(object({
-      port    = optional(number)
-      service = optional(string)
-    }), null)
-  })
-  default     = null
-  description = <<-EOF
-    Startup probe of application within the container.
-    All other probes are disabled if a startup probe is provided, until it succeeds.
-    Container will not be added to service endpoints if the probe fails.
-    More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
-  EOF
-}
-
-variable "liveness_probe" {
-  type = object({
-    failure_threshold     = optional(number, null)
-    initial_delay_seconds = optional(number, null)
-    timeout_seconds       = optional(number, null)
-    period_seconds        = optional(number, null)
-    http_get = optional(object({
-      path = optional(string)
-      http_headers = optional(list(object({
-        name  = string
-        value = string
-      })), null)
-    }), null)
-    grpc = optional(object({
-      port    = optional(number)
-      service = optional(string)
-    }), null)
-  })
-  default     = null
-  description = <<-EOF
-    Periodic probe of container liveness. Container will be restarted if the probe fails.
-    More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes
-  EOF
-}
-variable "env_vars" {
-  type = list(object({
-    value = string
-    name  = string
-  }))
-  description = "Environment variables (cleartext)"
-  default     = []
-}
-
-variable "env_secret_vars" {
-  type = list(object({
-    name = string
-    value_from = set(object({
-      secret_key_ref = map(string)
-    }))
-  }))
-  description = "[Beta] Environment variables (Secret Manager)"
-  default     = []
-}
-
-variable "volume_mounts" {
-  type = list(object({
-    mount_path = string
-    name       = string
-  }))
-  description = "[Beta] Volume Mounts to be attached to the container (when using secret)"
-  default     = []
-}
-
-// Domain Mapping
-variable "verified_domain_name" {
-  type        = list(string)
-  description = "List of Custom Domain Name"
-  default     = []
-}
-
-variable "force_override" {
-  type        = bool
-  description = "Option to force override existing mapping"
-  default     = false
-}
-
-variable "certificate_mode" {
+variable "launch_stage" {
   type        = string
-  description = "The mode of the certificate (NONE or AUTOMATIC)"
-  default     = "NONE"
+  description = "The launch stage as defined by Google Cloud Platform Launch Stages. Cloud Run supports ALPHA, BETA, and GA. If no value is specified, GA is assumed."
+  default     = "GA"
+
+  validation {
+    condition     = contains(["UNIMPLEMENTED", "PRELAUNCH", "EARLY_ACCESS", "ALPHA", "BETA", "GA", "DEPRECATED"], var.launch_stage)
+    error_message = "Allowed values for launch_stage are \"UNIMPLEMENTED\", \"PRELAUNCH\", or \"EARLY_ACCESS\", or \"DEPRECATED\", or \"ALPHA\", or \"BETA\", or \"GA\"."
+  }
 }
 
-variable "domain_map_labels" {
-  type        = map(string)
-  description = "A set of key/value label pairs to assign to the Domain mapping"
-  default     = {}
-}
-
-variable "domain_map_annotations" {
-  type        = map(string)
-  description = "Annotations to the domain map"
-  default     = {}
-}
-
-// IAM
-variable "members" {
+variable "custom_audiences" {
   type        = list(string)
-  description = "Users/SAs to be given invoker access to the service"
-  default     = []
+  description = "One or more custom audiences that you want this service to support. Specify each custom audience as the full URL in a string. Refer https://cloud.google.com/run/docs/configuring/custom-audiences"
+  default     = null
+}
+
+variable "binary_authorization" {
+  type = object({
+    breakglass_justification = optional(bool) # If present, indicates to use Breakglass using this justification. If useDefault is False, then it must be empty. For more information on breakglass, see https://cloud.google.com/binary-authorization/docs/using-breakglass
+    use_default              = optional(bool) #If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled.
+  })
+  description = "Settings for the Binary Authorization feature."
+  default     = null
+}
+
+// Template
+variable "revision" {
+  description = "The unique name for the revision. If this field is omitted, it will be automatically generated based on the Service name"
+  type        = string
+  default     = null
+}
+
+variable "template_scaling" {
+  type = object({
+    min_instance_count = optional(number)
+    max_instance_count = optional(number)
+  })
+  description = "Scaling settings for this Revision."
+  default     = null
+}
+
+variable "template_labels" {
+  type        = map(string)
+  description = "Unstructured key value map that can be used to organize and categorize objects. For more information, visit https://cloud.google.com/resource-manager/docs/creating-managing-labels or https://cloud.google.com/run/docs/configuring/labels"
+  default     = {}
+}
+
+variable "template_annotations" {
+  type        = map(string)
+  description = "Unstructured key value map that may be set by external tools to store and arbitrary metadata. They are not queryable and should be preserved when modifying objects. Refer https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloud_run_v2_service#annotations"
+  default     = {}
+}
+
+variable "timeout" {
+  type        = string
+  description = "Max allowed time for an instance to respond to a request. A duration in seconds with up to nine fractional digits, ending with 's'"
+  default     = null
+}
+
+variable "service_account" {
+  type        = string
+  description = "Email address of the IAM service account associated with the revision of the service"
+  default     = null
+}
+
+variable "encryption_key" {
+  description = "A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. This is optional."
+  type        = string
+  default     = null
+}
+
+variable "max_instance_request_concurrency" {
+  type        = string
+  description = "Sets the maximum number of requests that each serving instance can receive. This is optional."
+  default     = null
+}
+
+variable "session_affinity" {
+  type        = string
+  description = "Enables session affinity. For more information, go to https://cloud.google.com/run/docs/configuring/session-affinity"
+  default     = null
+}
+
+variable "execution_environment" {
+  type        = string
+  description = "The sandbox environment to host this Revision."
+  default     = "EXECUTION_ENVIRONMENT_GEN2"
+
+  validation {
+    condition     = contains(["EXECUTION_ENVIRONMENT_GEN1", "EXECUTION_ENVIRONMENT_GEN2"], var.execution_environment)
+    error_message = "Allowed values for ingress are \"EXECUTION_ENVIRONMENT_GEN1\", \"EXECUTION_ENVIRONMENT_GEN2\"."
+  }
 }
