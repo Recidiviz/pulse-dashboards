@@ -587,7 +587,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Under active supervision in another jurisdiction",
         },
         { key: "INDICTMENT", text: "Under indictment" },
-        { key: "OTHER", text: "Other: please specify a reason" },
+        { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
