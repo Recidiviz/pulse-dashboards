@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Opportunities } from "../../api";
 import {
   CaseDetailsFixture,
   StaffInfoFixture,
@@ -120,6 +121,7 @@ test("activeEligibleCommunityOpportunities filters out inactive opportunities", 
       genericDescription: null,
       counties: [],
       active: true,
+      source: "internal",
     },
     {
       opportunityName: "Inactive Opportunity 2",
@@ -150,8 +152,9 @@ test("activeEligibleCommunityOpportunities filters out inactive opportunities", 
       genericDescription: null,
       counties: [],
       active: false,
+      source: "internal",
     },
-  ];
+  ] satisfies Opportunities;
   psiStore.caseStore.communityOpportunities = communityOpportunities;
 
   await presenter.hydrate();

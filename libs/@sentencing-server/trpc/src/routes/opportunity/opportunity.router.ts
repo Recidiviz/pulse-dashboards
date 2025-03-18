@@ -20,20 +20,24 @@ import { captureException } from "@sentry/node";
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing-server/prisma";
 import { baseProcedure, router } from "~@sentencing-server/trpc/init";
 import { getOpportunitiesInputSchema } from "~@sentencing-server/trpc/routes/opportunity/opportunity.schema";
-import { PrismaOpportunity } from "~@sentencing-server/trpc/routes/opportunity/types";
+import {
+  DataSource,
+  Opportunity,
+  PrismaOpportunity,
+} from "~@sentencing-server/trpc/routes/opportunity/types";
 import { getFindHelpPrograms } from "~@sentencing-server/trpc/routes/opportunity/utils";
 
 export const opportunityRouter = router({
   getOpportunities: baseProcedure
     .input(getOpportunitiesInputSchema)
     .query(async ({ ctx: { prisma }, input: { includeFindHelpPrograms } }) => {
-      const opportunities = await prisma.opportunity.findMany({
+      const dbOpportunities = await prisma.opportunity.findMany({
         omit: {
           id: true,
         },
       });
 
-      const cleanedDbOpportunities = opportunities.map((opportunity) => ({
+      const cleanedDbOpportunities = dbOpportunities.map((opportunity) => ({
         ...opportunity,
         providerName:
           // If the provider name is the default unknown provider name, return null
@@ -51,6 +55,15 @@ export const opportunityRouter = router({
         }
       }
 
-      return cleanedDbOpportunities.concat(findHelpOpportunities);
+      const opportunities: Opportunity[] = cleanedDbOpportunities
+        .map((opp) => ({ ...opp, source: "internal" as DataSource }))
+        .concat(
+          findHelpOpportunities.map((opp) => ({
+            ...opp,
+            source: "external" as DataSource,
+          })),
+        );
+
+      return opportunities;
     }),
 });

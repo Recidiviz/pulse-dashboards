@@ -248,9 +248,11 @@ describe("opportunity router", () => {
           expect.arrayContaining([
             expect.objectContaining({
               ...fakeOpportunity,
+              source: "internal",
             }),
             expect.objectContaining({
               ...fakeOpportunity2,
+              source: "internal",
             }),
             expect.objectContaining({
               providerName: "fake_provider",
@@ -261,6 +263,7 @@ describe("opportunity router", () => {
                 NeedToBeAddressed.Healthcare,
                 NeedToBeAddressed.SubstanceUse,
               ]),
+              source: "external",
             }),
           ]),
         );

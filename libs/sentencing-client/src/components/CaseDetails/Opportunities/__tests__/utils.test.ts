@@ -53,6 +53,7 @@ describe("filterEligibleOpportunities", () => {
     genericDescription: null,
     counties: [],
     active: true,
+    source: "internal",
   };
   let attributes: EligibilityAttributes;
 
@@ -677,6 +678,7 @@ describe("filterEligibleOpportunities", () => {
       genericDescription: null,
       counties: [],
       active: true,
+      source: "internal",
     };
 
     attributes = {
@@ -799,6 +801,7 @@ describe("filterEligibleOpportunities", () => {
       genericDescription: null,
       counties: [],
       active: true,
+      source: "internal",
     };
 
     attributes = {
@@ -869,6 +872,7 @@ describe("filterEligibleOpportunities", () => {
       counties: ["Caldwell", "Twin Falls"],
       genericDescription: null,
       active: true,
+      source: "internal",
     };
 
     attributes = {
