@@ -20,14 +20,14 @@ import { StateSpecificPageCopy } from "../types";
 const content: StateSpecificPageCopy = {
   prison: {
     summary:
-      'Includes individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails. All people in work centers are grouped into a "WC" category.\n',
+      'Includes individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails. Our county jail population includes both beds paid for by the IDOC as well as beds not paid for by the IDOC. All people in work centers are grouped into a "WC" category.\n',
     sections: {
       projectedCountOverTime: "Prison population over time",
       countByLocation: "Prison population by facility",
       personLevelDetail: "List of people in prison",
     },
     methodology:
-      'Includes individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails. All people in work centers are grouped into a "WC" category.\n',
+      'Includes individuals who are admitted to state facilities, including termers, riders, parole violators, people in CAPP, and people held in county jails. Our county jail population includes both beds paid for by the IDOC as well as beds not paid for by the IDOC. All people in work centers are grouped into a "WC" category.\n',
   },
   supervision: {
     summary:
