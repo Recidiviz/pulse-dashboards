@@ -16,7 +16,7 @@
     "target": "ESNext",
     "module": "es2022",
     "moduleResolution": "Node",
-    "types": ["vite/client", "node"],
+    "types": ["vite/client", "node", "vitest"],
   },
   // This is needed for ts-node to work with prisma/seed.ts
   "ts-node": {

@@ -15,33 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Command } from "@commander-js/extra-typings";
-import { StateCode } from "@prisma/jii-texting-server/client";
-
-import { processJii } from "~jii-texting-jobs/scripts/process-jii";
-
-// Define CLI
-const program = new Command()
-  .option("-s, --state-code <code>", "State code to run the Cloud Run job for")
-  .option(
-    "-d, --dry-run [run]",
-    "Whether or not this is a dry run; messages will not be sent if equal to `true`",
-    true,
-  )
-  .option(
-    "-w, --workflow-execution-id <id>",
-    "The Workflow execution ID that triggered this script",
-  );
-
-function main() {
-  program.parse();
-  const options = program.opts();
-
-  processJii({
-    stateCode: options.stateCode as StateCode,
-    dryRun: options.dryRun as boolean,
-    workflowExecutionId: options.workflowExecutionId as string,
-  });
-}
-
-main();
+export const setup = () => {
+  // prevents silly timezone issues when testing dates
+  process.env.TZ = "UTC";
+};

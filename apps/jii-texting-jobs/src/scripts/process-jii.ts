@@ -17,18 +17,31 @@
 
 import { StateCode } from "@prisma/jii-texting-server/client";
 
+import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
+import {
+  PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP,
+  PersonWithMessageSeriesAndGroup,
+  processIndividualJii,
+  ScriptAction,
+} from "~@jii-texting-server/utils";
 import { TwilioAPIClient } from "~twilio-api";
 
 export type processJiiArguments = {
   stateCode: StateCode;
   dryRun: boolean;
+  workflowExecutionId: string;
 };
 
-export function processJii({ stateCode, dryRun }: processJiiArguments) {
+export async function processJii({
+  stateCode,
+  dryRun,
+  workflowExecutionId,
+}: processJiiArguments) {
   console.log(
     `Starting the process-jii job for ${stateCode}, where dry-run is ${dryRun}`,
   );
 
+  // Instantiate the Twilio client
   const twilioAccountSid = process.env["TWILIO_ACCOUNT_SID"] ?? "";
   const twilioAuthToken = process.env["TWILIO_AUTH_TOKEN"] ?? "";
   const twilioSubaccountSid =
@@ -40,5 +53,48 @@ export function processJii({ stateCode, dryRun }: processJiiArguments) {
     twilioSubaccountSid,
   );
 
-  twilioClient.createMessage("Hello from Recidiviz", "5514979687");
+  // Get Prisma client
+  const prisma = getPrismaClientForStateCode(stateCode);
+
+  // Get all JII who should receive a text, that is people who have the `groups` field hydrated
+  // Currently, it's not possible to flatten the results (see https://stackoverflow.com/questions/71445312/for-prisma-client-join-queries-is-it-possible-to-move-deeply-nested-fields-to-to)
+  const jiiToText: PersonWithMessageSeriesAndGroup[] =
+    await prisma.person.findMany({
+      // Filter for people where the `groups` relation is not empty (see https://github.com/prisma/prisma/issues/3888)
+      // Also see https://www.prisma.io/docs/orm/reference/prisma-client-reference#none
+      where: {
+        NOT: {
+          groups: {
+            none: {},
+          },
+        },
+      },
+      ...PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP,
+    });
+
+  const results: Record<ScriptAction, string[]> = {
+    INITIAL_MESSAGE_SENT: [],
+    ELIGIBILITY_MESSAGE_SENT: [],
+    SKIPPED: [],
+    ERROR: [],
+  };
+
+  await Promise.all(
+    jiiToText.map(async (jii) => {
+      const action = await processIndividualJii(
+        jii,
+        workflowExecutionId,
+        dryRun,
+        prisma,
+        twilioClient,
+      );
+      results[action as ScriptAction].push(jii.pseudonymizedId);
+    }),
+  );
+
+  for (const key in results) {
+    console.log(`${key}: ${results[key as ScriptAction]}`);
+  }
+
+  return results;
 }

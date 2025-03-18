@@ -21,18 +21,29 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: "../../../node_modules/.vite/libs/@jii-texting-server/utils",
+  cacheDir: "../../node_modules/.vite/apps/jii-texting-jobs",
 
   plugins: [nxViteTsPaths()],
   test: {
-    name: "@jii-texting-server/utils",
+    setupFiles: ["src/test/setup/index.ts", "src/setupTests.ts"],
     globals: true,
-    cache: { dir: "../../../node_modules/.vitest" },
+    cache: { dir: "../../node_modules/.vitest" },
+    globalSetup: ["src/setupTestsGlobal.ts"],
     environment: "node",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
+    restoreMocks: true,
+    unstubEnvs: true,
+    unstubGlobals: true,
+    // Ensure that tests are run one at a time so that we don't have multiple
+    // updates to the test DB at once
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
     coverage: {
-      reportsDirectory: "../../../coverage/libs/@jii-texting-server/utils",
+      reportsDirectory: "../../coverage/apps/jii-texting-jobs",
       provider: "v8",
     },
     // We need to set this up this way because:

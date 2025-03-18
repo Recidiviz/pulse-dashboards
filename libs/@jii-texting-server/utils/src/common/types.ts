@@ -17,15 +17,27 @@
 
 import { Prisma } from "@prisma/jii-texting-server/client";
 
+export const MESSAGE_ATTEMPT_SELECT = {
+  select: {
+    id: true,
+    twilioMessageSid: true,
+    status: true,
+    createdTimestamp: true,
+  } satisfies Prisma.MessageAttemptSelectScalar,
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const messageAttemptScalar =
+  Prisma.validator<Prisma.MessageAttemptDefaultArgs>()(MESSAGE_ATTEMPT_SELECT);
+
+export type MessageAttemptSelect = Prisma.MessageAttemptGetPayload<
+  typeof messageAttemptScalar
+>;
+
 export const MESSAGE_SERIES_INCLUDE_ATTEMPTS_AND_GROUP = {
   include: {
     messageAttempts: {
-      select: {
-        id: true,
-        twilioMessageSid: true,
-        status: true,
-        createdTimestamp: true,
-      },
+      ...MESSAGE_ATTEMPT_SELECT,
       orderBy: {
         createdTimestamp: "desc",
       },
@@ -50,3 +62,35 @@ const messageSeriesWithOrderedAttemptsAndGroup =
 export type MessageSeriesWithAttemptsAndGroup = Prisma.MessageSeriesGetPayload<
   typeof messageSeriesWithOrderedAttemptsAndGroup
 >;
+
+export const PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP = {
+  include: {
+    groups: { include: { topic: true } },
+    messageSeries: {
+      ...MESSAGE_SERIES_INCLUDE_ATTEMPTS_AND_GROUP,
+    },
+  } satisfies Prisma.PersonInclude,
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const personWithMessageSeriesAndGroup =
+  Prisma.validator<Prisma.PersonDefaultArgs>()(
+    PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP,
+  );
+
+export type PersonWithMessageSeriesAndGroup = Prisma.PersonGetPayload<
+  typeof personWithMessageSeriesAndGroup
+>;
+
+// Actions we might execute for a given person and group
+export enum ScriptAction {
+  INITIAL_MESSAGE_SENT = "INITIAL_MESSAGE_SENT",
+  ELIGIBILITY_MESSAGE_SENT = "ELIGIBILITY_MESSAGE_SENT",
+  ERROR = "ERROR",
+  SKIPPED = "SKIPPED",
+}
+
+export type GroupAction = {
+  id: string;
+  action: ScriptAction;
+};

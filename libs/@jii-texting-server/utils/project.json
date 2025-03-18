@@ -48,7 +48,7 @@
       "outputs": ["{workspaceRoot}/coverage/libs/@jii-texting-server/utils"],
       "cache": true,
       "options": {
-        "command": "nx prisma-push @jii-texting-server/prisma --accept-data-loss && cd libs/@jii-texting-server/utils && vitest",
+        "command": "nx prisma-deploy @jii-texting-server/prisma --accept-data-loss && cd libs/@jii-texting-server/utils && vitest",
         "cwd": "{workspaceRoot}"
       }
     }
