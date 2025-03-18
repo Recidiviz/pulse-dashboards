@@ -5,6 +5,7 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
   {
     "avgDailyPopulation": 43,
     "displayName": "Marcus Kozey",
+    "email": "officerso4@recidiviz.org",
     "externalId": "so4",
     "fullName": {
       "givenNames": "Marcus",
@@ -21,6 +22,7 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
   {
     "avgDailyPopulation": null,
     "displayName": "Veronica Jo Johnson",
+    "email": "officerso6@recidiviz.org",
     "externalId": "so6",
     "fullName": {
       "givenNames": "Veronica",
@@ -35,6 +37,7 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
   {
     "avgDailyPopulation": 43,
     "displayName": "Adrienne Collins",
+    "email": "officerso4@recidiviz.org",
     "externalId": "so4",
     "fullName": {
       "givenNames": "Adrienne",

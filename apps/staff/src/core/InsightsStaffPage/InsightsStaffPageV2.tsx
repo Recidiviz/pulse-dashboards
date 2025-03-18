@@ -60,6 +60,7 @@ const ManagedComponent = observer(function StaffPage({
       title: "avg daily caseload",
       info: officerOutcomesData?.avgDailyPopulation,
     },
+    { title: "email", info: officerRecord?.email },
     {
       title: "caseload type",
       info:

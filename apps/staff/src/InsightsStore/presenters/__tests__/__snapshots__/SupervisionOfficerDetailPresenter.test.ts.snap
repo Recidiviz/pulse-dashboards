@@ -6,6 +6,7 @@ exports[`has officerOutcomesData 1`] = `
   "caseloadCategory": "SEX_OFFENSE",
   "caseloadCategoryName": "Sex Offense Caseloads",
   "displayName": "Walter Harris",
+  "email": "officer1@recidiviz.org",
   "externalId": "OFFICER4",
   "fullName": {
     "givenNames": "Walter",
@@ -1337,6 +1338,7 @@ exports[`with unit data already hydrated > has officerOutcomesData 1`] = `
   "caseloadCategory": "SEX_OFFENSE",
   "caseloadCategoryName": "Sex Offense Caseloads",
   "displayName": "Walter Harris",
+  "email": "officer1@recidiviz.org",
   "externalId": "OFFICER4",
   "fullName": {
     "givenNames": "Walter",

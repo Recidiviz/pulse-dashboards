@@ -25,6 +25,7 @@ export const supervisionOfficerSchema = z
     fullName: fullNameSchema,
     externalId: z.string(),
     pseudonymizedId: z.string(),
+    email: z.string().nullable(),
     supervisorExternalIds: z.array(z.string()),
     // TODO #6793 Make includeInOutcomes a required field once endpoint response has this field
     includeInOutcomes: z.boolean().optional(),
