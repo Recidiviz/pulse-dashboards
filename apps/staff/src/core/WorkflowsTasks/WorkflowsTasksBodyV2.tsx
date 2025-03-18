@@ -18,7 +18,6 @@
 import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
 import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
@@ -67,10 +66,7 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
       <TasksHeader>Tasks</TasksHeader>
 
       <TasksTopbarContainer>
-        <TasksDescription>
-          The clients below might have upcoming requirements this month. Data is
-          refreshed from the OMS overnight and daily.
-        </TasksDescription>
+        <TasksDescription>{presenter.pageDescription}</TasksDescription>
         <TableControls>
           <TableViewToggle presenter={presenter} />
           <TaskFilterDropdown presenter={presenter} />

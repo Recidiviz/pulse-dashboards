@@ -79,6 +79,7 @@ const SnoozeMenuInstruction = styled(Sans14)`
 type SnoozeTaskDropdownProps = {
   task: SupervisionTask<SupervisionTaskType>;
   taskConfig?: WorkflowsTasksConfig["tasks"][SupervisionTaskType];
+  operationsInfoInToast: boolean;
 };
 
 const ToastWrapper = styled(Sans14)`
@@ -107,12 +108,16 @@ const UndoButton = styled.button`
 const snoozeTaskToast = (
   task: SupervisionTask<SupervisionTaskType>,
   snoozeForDays: number,
+  operationsInfoInToast: boolean,
 ) => {
   const personName = task.person.displayName;
+  let toastText = `${personName}'s ${task.displayName} will be hidden from this list for ${snoozeForDays} days.`;
+  if (operationsInfoInToast)
+    toastText += ` This will not change the officer's timeliness Operations metrics.`;
   return toast(
     (t) => (
       <ToastWrapper>
-        {`${personName}'s ${task.displayName} will be hidden from this list for ${snoozeForDays} days. `}
+        {toastText}
         <UndoButton
           type="submit"
           onClick={() => {
@@ -126,7 +131,7 @@ const snoozeTaskToast = (
     ),
     {
       className: "SnoozeTaskToast",
-      duration: 3000,
+      duration: 7000,
     },
   );
 };
@@ -145,6 +150,7 @@ const UnhideTaskButton = styled(UndoButton)`
 export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
   task,
   taskConfig,
+  operationsInfoInToast,
 }: SnoozeTaskDropdownProps) {
   if (!taskConfig || !taskConfig?.snoozeForOptionsInDays) return null;
 
@@ -180,7 +186,7 @@ export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
                     key={`snooze-days-${option}`}
                     onClick={() => {
                       task.updateSupervisionTask(option);
-                      snoozeTaskToast(task, option);
+                      snoozeTaskToast(task, option, operationsInfoInToast);
                     }}
                   >
                     {option} days

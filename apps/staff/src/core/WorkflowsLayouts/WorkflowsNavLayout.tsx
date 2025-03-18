@@ -82,14 +82,25 @@ export const WorkflowsNavLayout: React.FC<{
   observer(function WorkflowsNavLayout({ limitedWidth = true, children }) {
     const {
       currentTenantId,
-      workflowsStore: { homepage: workflowsHomepage, activePageIsHomepage },
+      workflowsStore: {
+        homepage: workflowsHomepage,
+        activePageIsHomepage,
+        activePageIsTasks,
+      },
+      tenantStore,
     } = useRootStore() as PartiallyTypedRootStore;
     const { isMobile, isLaptop } = useIsMobile(true);
+
+    const workflowsMethodology = WORKFLOWS_METHODOLOGY_URL[currentTenantId];
+    const tasksMethodology =
+      tenantStore?.tasksConfiguration?.methodologyUrl ?? workflowsMethodology;
 
     return (
       <Wrapper>
         <NavigationLayout
-          externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
+          externalMethodologyUrl={
+            activePageIsTasks ? tasksMethodology : workflowsMethodology
+          }
         >
           <OverviewNavLinks />
         </NavigationLayout>

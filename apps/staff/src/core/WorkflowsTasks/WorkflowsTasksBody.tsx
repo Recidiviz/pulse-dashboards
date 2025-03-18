@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
 
 import { withPresenterManager } from "~hydration-utils";
 
@@ -59,9 +58,7 @@ export const ManagedComponent = observer(function WorkflowsTaskBody({
   return (
     <TasksBodyContainer>
       <TasksHeader>Tasks</TasksHeader>
-      <TasksDescription>
-        The clients below might have upcoming requirements this month.
-      </TasksDescription>
+      <TasksDescription>{presenter.pageDescription}</TasksDescription>
 
       <TaskCategories>
         {presenter.displayedTaskCategories.map((category) => {

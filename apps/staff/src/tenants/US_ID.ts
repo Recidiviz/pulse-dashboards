@@ -39,6 +39,8 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
   workflowsStaffFilterFn: filterByUserDistrict,
   workflowsTasksConfig: {
     collection: "usIdSupervisionTasks",
+    methodologyUrl:
+      "https://docs.google.com/document/d/1BmzbVFUQhbWOs9IOwR-gykUHNtZin5iUyzPdn8zRdx4/edit",
     tasks: {
       assessment: {
         constructor: UsIdRiskAssessmentTask,
