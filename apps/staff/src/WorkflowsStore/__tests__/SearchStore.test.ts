@@ -536,7 +536,7 @@ describe("selectedSearchIds", () => {
   });
 });
 
-describe("default selected aseload", () => {
+describe("default selected caseload", () => {
   describe("user data", () => {
     test("defaults to self when no selected search and the state is search-by-officer", async () => {
       workflowsStore.user = {
@@ -750,6 +750,53 @@ describe("trackCaseloadSearch - default caseload", () => {
       vi.resetAllMocks();
       new SearchStore(workflowsStore as unknown as WorkflowsStore);
       expect(mockTrackCaseloadSearch).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("handleSearchPillClick", () => {
+    const updateActiveSystemConfigMock = vi.fn();
+
+    beforeEach(() => {
+      workflowsStore.activeSystemConfig = {
+        search: [{ searchType: "LOCATION" }],
+      };
+      workflowsStore.activeSystem = "ALL";
+      workflowsStore.activePage = { page: "home" };
+      workflowsStore.user = {
+        ...mockOfficer,
+        updates: {
+          ...(mockOfficer.updates as UserUpdateRecord),
+          selectedSearchIds: "ID1",
+        },
+      };
+      workflowsStore.updateActiveSystem = updateActiveSystemConfigMock;
+      searchStore.setSearchTypeOverride("LOCATION");
+      vi.resetAllMocks();
+    });
+
+    test("when currently selected pill was clicked", () => {
+      searchStore.handleSearchPillClick("LOCATION", "INCARCERATION");
+      expect(searchStore.searchTypeOverride).toBeUndefined();
+      expect(mockUpdatedSelectedSearchIds).not.toHaveBeenCalled();
+      expect(updateActiveSystemConfigMock).toHaveBeenCalledWith(
+        "INCARCERATION",
+      );
+    });
+
+    test("when not-currently selected pill was clicked", () => {
+      searchStore.handleSearchPillClick("OFFICER", "INCARCERATION");
+      expect(searchStore.searchTypeOverride).toEqual("OFFICER");
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
+        "test-officer-1@example.com",
+        "US_ND",
+        [],
+      );
+    });
+
+    test("when activeSystem is INCARCERATION", () => {
+      workflowsStore.activeSystem = "INCARCERATION";
+      searchStore.handleSearchPillClick("OFFICER", "INCARCERATION");
+      expect(updateActiveSystemConfigMock).toHaveBeenCalledWith("ALL");
     });
   });
 });
