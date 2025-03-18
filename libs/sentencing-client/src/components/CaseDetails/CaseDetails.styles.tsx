@@ -35,6 +35,7 @@ import { FormAttributes, ProfileStrength } from "./types";
 
 const RECOMMENDATION_PANEL_HEIGHT_OFFSET = 244;
 const OPPORTUNITY_TABLE_HEIGHT = 525;
+const RECOMMENDATION_PANEL_WIDTH = 504;
 
 export const PageContainer = styled.div`
   width: 100%;
@@ -66,6 +67,7 @@ export const Body = styled.div`
   flex-grow: 1;
   overflow-y: auto;
   overscroll-behavior: auto;
+  position: relative;
 `;
 
 export const BackLink = styled.div<{ leftMargin?: number }>`
@@ -311,8 +313,8 @@ export const EditCaseDetailsButton = styled.button`
 
 export const Recommendations = styled.div`
   height: 100%;
-  min-width: 504px;
-  width: 504px;
+  min-width: ${RECOMMENDATION_PANEL_WIDTH}px;
+  width: ${RECOMMENDATION_PANEL_WIDTH}px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -320,11 +322,20 @@ export const Recommendations = styled.div`
   border-left: 1px solid ${palette.marble5};
   background-color: ${palette.white};
   max-height: calc(-${RECOMMENDATION_PANEL_HEIGHT_OFFSET}px + 100vh);
-  padding-bottom: 120px;
   overflow-y: auto;
   overscroll-behavior: auto;
-  position: fixed;
-  right: 0;
+  position: sticky;
+  top: 0;
+  left: 100%;
+  z-index: 1;
+`;
+
+export const RecommendationsContainer = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
 `;
 
 export const RecommendationsWrapper = styled.div`
@@ -332,6 +343,7 @@ export const RecommendationsWrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   padding: 24px;
+  padding-bottom: 50px;
 `;
 
 export const Header = styled.div`
@@ -492,14 +504,17 @@ export const InputSelection = styled.input`
 `;
 
 export const RecommendationActionButtonWrapper = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 10px 24px 24px 24px;
   border-top: 1px solid ${palette.marble5};
-  position: fixed;
-  background-color: ${palette.white};
+  position: sticky;
+  z-index: 1;
   bottom: 0;
+  right: 0;
+  background-color: ${palette.white};
 
   @media screen and (max-height: 336px) {
     position: unset;
@@ -636,9 +651,12 @@ export const InsightsOpportunitiesWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 18px 0 18px 0;
+  padding: 18px ${RECOMMENDATION_PANEL_WIDTH}px 18px 0;
   overflow-x: hidden;
-  padding-right: 500px;
+  overflow-y: auto;
+  overscroll-behavior: auto;
+  position: absolute;
+  z-index: 0;
 `;
 
 export const Insights = styled.div`

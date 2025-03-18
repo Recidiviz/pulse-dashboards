@@ -23,6 +23,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { PSIStore } from "../../datastores/PSIStore";
 import { CaseDetailsPresenter } from "../../presenters/CaseDetailsPresenter";
 import { psiUrl } from "../../utils/routing";
+import { pluralizeDuplicates } from "../../utils/utils";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 import { CaseAttributes } from "./CaseAttributes";
@@ -33,6 +34,7 @@ import EditCaseDetailsModal from "./EditCaseDetailsModal";
 import { Insights } from "./Insights/Insights";
 import { Opportunities } from "./Opportunities/Opportunities";
 import Recommendations from "./Recommendations/Recommendations";
+import SummaryReport from "./Recommendations/SummaryReport";
 import { MutableCaseAttributes } from "./types";
 
 const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
@@ -73,13 +75,23 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   );
   const [showEditCaseDetailsModal, setShowEditCaseDetailsModal] =
     useState(false);
+  const [showSummaryReport, setShowSummaryReport] = useState(false);
   const [initialPageLoad, setInitialPageLoad] = useState(true);
+  const [isCreatingRecommendation, setIsCreatingRecommendation] = useState(
+    !caseAttributes.selectedRecommendation,
+  );
+
+  const opportunityDescriptions = recommendedOpportunities
+    ?.map((opp) => opp.genericDescription)
+    .filter((desc) => desc) as string[] | undefined;
 
   const openEditCaseDetailsModal = () => {
     setShowEditCaseDetailsModal(true);
     trackEditCaseDetailsClicked();
   };
   const hideEditCaseDetailsModal = () => setShowEditCaseDetailsModal(false);
+  const openSummaryReport = () => setShowSummaryReport(true);
+  const hideSummaryReport = () => setShowSummaryReport(false);
 
   const handleRecommendationUpdate = (recommendation: string) => {
     trackRecommendedDispositionChanged(recommendation);
@@ -188,31 +200,52 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
             <Recommendations
               geoConfig={geoConfig}
               firstName={firstName}
-              lastName={lastName}
-              age={caseAttributes.age}
-              externalId={caseAttributes.externalId}
-              fullName={caseAttributes.client?.fullName}
               insight={caseAttributes.insight}
               selectedRecommendation={selectedRecommendation}
-              needs={caseAttributes.needsToBeAddressed}
-              protectiveFactors={caseAttributes.protectiveFactors}
-              gender={caseAttributes.client?.gender}
-              savedSummary={savedSummary}
               handleRecommendationUpdate={handleRecommendationUpdate}
               saveRecommendation={saveRecommendation}
               recommendedOpportunities={recommendedOpportunities}
               lastSavedRecommendation={caseAttributes.selectedRecommendation}
-              setCaseStatusCompleted={updateCaseStatusToCompleted}
-              updateAttributes={updateAttributes}
               analytics={{
                 trackCreateOrUpdateRecommendationClicked,
                 trackCopySummaryToClipboardClicked,
                 trackDownloadReportClicked,
                 trackCaseStatusCompleteClicked,
               }}
+              openSummaryReport={openSummaryReport}
+              isCreatingRecommendation={isCreatingRecommendation}
+              setIsCreatingRecommendation={setIsCreatingRecommendation}
             />
           </Styled.Body>
 
+          {showSummaryReport && (
+            <SummaryReport
+              fullName={caseAttributes.client?.fullName}
+              firstName={firstName}
+              lastName={lastName}
+              geoConfig={geoConfig}
+              age={caseAttributes.age}
+              insight={caseAttributes.insight}
+              externalId={caseAttributes.externalId}
+              selectedRecommendation={selectedRecommendation}
+              opportunityDescriptions={pluralizeDuplicates(
+                opportunityDescriptions ?? [],
+              )}
+              needs={caseAttributes.needsToBeAddressed}
+              protectiveFactors={caseAttributes.protectiveFactors}
+              gender={caseAttributes.client?.gender}
+              savedSummary={savedSummary}
+              hideSummaryReport={hideSummaryReport}
+              setCaseStatusCompleted={updateCaseStatusToCompleted}
+              isCreatingRecommendation={isCreatingRecommendation}
+              updateAttributes={updateAttributes}
+              analytics={{
+                trackCopySummaryToClipboardClicked,
+                trackDownloadReportClicked,
+                trackCaseStatusCompleteClicked,
+              }}
+            />
+          )}
           {/* Edit Case Details Modal */}
           <EditCaseDetailsModal
             firstName={firstName}
