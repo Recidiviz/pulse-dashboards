@@ -25,7 +25,16 @@ import {
   MessageStatus,
 } from "twilio/lib/rest/api/v2010/account/message";
 
-import { MessageSeriesWithAttemptsAndGroup } from "~@jii-texting-server/utils";
+import {
+  MessageAttemptSelect,
+  MessageSeriesWithAttemptsAndGroup,
+  PersonWithMessageSeriesAndGroup,
+  ScriptAction,
+} from "~@jii-texting-server/utils";
+import {
+  MAX_ELIGIBILITY_TEXT_ATTEMPTS,
+  MAX_INITIAL_TEXT_ATTEMPTS,
+} from "~@jii-texting-server/utils/common/constants";
 import { TwilioAPIClient } from "~twilio-api";
 
 /**
@@ -172,4 +181,117 @@ export async function sendInitialText(
     console.log(`Error in sendInitialText for ${personExternalId}: ${e}`);
     return undefined;
   }
+}
+
+/**
+ * Returns True if the person is in a terminal state, that is we should not try to
+ * send them any more messages if:
+ *  - we have sent them an eligibility text that is successful
+ *  - we have sent them the max number of attempts and the latest status is not IN_PROGRESS
+ *
+ * @param latestMessageType The type of the last message that we sent to the JII
+ * @param orderedMessageAttempts The list of MessageAttempts ordered descending
+ */
+export function personIsInTerminalState(
+  latestMessageType: MessageType,
+  orderedMessageAttempts: MessageAttemptSelect[],
+) {
+  // Get the status of the latest message we've sent them
+  const latestMessageAttemptStatus = orderedMessageAttempts[0].status;
+
+  // Check if we've sent the JII the maximum number of texts
+  const sentMaxAttempts =
+    orderedMessageAttempts.length ===
+    MAX_INITIAL_TEXT_ATTEMPTS + MAX_ELIGIBILITY_TEXT_ATTEMPTS;
+
+  if (
+    (sentMaxAttempts &&
+      latestMessageAttemptStatus !== MessageAttemptStatus.IN_PROGRESS) ||
+    (latestMessageType === MessageType.ELIGIBILITY_TEXT &&
+      latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS)
+  )
+    return true;
+
+  return false;
+}
+
+/**
+ * Process the given JII for the given group to determine what action we need to take
+ * for this JII, e.g. send an initial or eligibility text, or neither. If `dryRun=true`,
+ * then we should not persist any information to the DB nor make requests to Twilio.
+ *
+ * @param jii The JII that we want to figure out how to process
+ * @param workflowExecutionId The ID of the current Workflow Execution that the message is being sent during
+ * @param prisma Prisma Client
+ * @param twilio Twilio API Client
+ */
+export async function processIndividualJii(
+  jii: PersonWithMessageSeriesAndGroup,
+  workflowExecutionId: string,
+  dryRun: boolean,
+  prisma: PrismaClient,
+  twilio: TwilioAPIClient,
+): Promise<ScriptAction> {
+  // TODO(#7573): Reevaluate when JII can be in multiple topics
+  // Assumes that we only have one topic/group pairing per JII
+  const group = jii.groups[0];
+
+  // Get the relevant MessageSeries objects for the given group
+  const messageSeriesList: MessageSeriesWithAttemptsAndGroup[] =
+    jii.messageSeries.filter((series) => series.group.id === group.id);
+
+  // If there are no MessageSeries entries for this group, we have never sent this JII a text for this group. Thus, send an initial text.
+  // TODO(#7573): Reevaluate when there are multiple topics/state, e.g. will the topics share an initial text or will there be different ones?
+  if (!messageSeriesList.length) {
+    if (dryRun) {
+      return ScriptAction.INITIAL_MESSAGE_SENT;
+    }
+
+    // TODO: check if topic/group are active?
+    const message = await sendInitialText(
+      jii.phoneNumber,
+      jii.externalId,
+      group.id,
+      workflowExecutionId,
+      prisma,
+      twilio,
+    );
+
+    if (message) {
+      return ScriptAction.INITIAL_MESSAGE_SENT;
+    } else {
+      return ScriptAction.ERROR;
+    }
+  }
+
+  // Get MessageAttempt objects ordered by descending createdTimestamp
+  const orderedMessageAttempts = getOrderedMessageAttempts(messageSeriesList);
+
+  // Get the latestMessageType by finding the MessageSeries that contains the
+  // messageAttempt with an ID equivalent to the latest MessageAttempt
+  const latestMessageType = jii.messageSeries.find((series) =>
+    series.messageAttempts
+      .flatMap((attempt) => attempt.id)
+      .includes(orderedMessageAttempts[0].id),
+  )?.messageType;
+
+  if (latestMessageType === undefined) return ScriptAction.ERROR;
+
+  // If we've attempted to send the max attempts of each message and the
+  // latest message is in a terminal state, skip this person.
+  if (personIsInTerminalState(latestMessageType, orderedMessageAttempts)) {
+    return ScriptAction.SKIPPED;
+  }
+
+  // Update message attempt status for the latest attempt by querying Twilio
+  if (!dryRun) {
+    await updateMessageAttempt(
+      prisma,
+      twilio,
+      orderedMessageAttempts[0].status,
+      orderedMessageAttempts[0].twilioMessageSid,
+    );
+  }
+
+  return ScriptAction.SKIPPED;
 }

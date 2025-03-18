@@ -96,7 +96,7 @@
           "target": "docker"
         }
       ],
-      "outputs": ["{workspaceRoot}/coverage/apps/jii-texting-server"],
+      "outputs": ["{workspaceRoot}/coverage/apps/jii-texting-jobs"],
       "cache": true,
       "options": {
         "command": "nx prisma-deploy @jii-texting-server/prisma && cd apps/jii-texting-jobs && vitest",
