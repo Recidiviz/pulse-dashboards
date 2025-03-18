@@ -11,6 +11,7 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
         "clientsEligibleCount": 6,
         "clientsEligibleCountWithLabel": "6 clients",
         "displayName": "Walter Harris",
+        "email": "officer1@recidiviz.org",
         "externalId": "OFFICER4",
         "fullName": {
           "givenNames": "Walter",
@@ -32,6 +33,7 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
         "clientsEligibleCount": 5,
         "clientsEligibleCountWithLabel": "5 clients",
         "displayName": "Jack Hernandez",
+        "email": null,
         "externalId": "so2",
         "fullName": {
           "givenNames": "Jack",
@@ -48,6 +50,7 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
         "clientsEligibleCount": 5,
         "clientsEligibleCountWithLabel": "5 clients",
         "displayName": "John Harris",
+        "email": "officer6@recidiviz.org",
         "externalId": "so6",
         "fullName": {
           "givenNames": "John",
@@ -63,6 +66,7 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
         "clientsEligibleCount": 4,
         "clientsEligibleCountWithLabel": "4 clients",
         "displayName": "Jason Nelson",
+        "email": "officer3@recidiviz.org",
         "externalId": "so3",
         "fullName": {
           "givenNames": "Jason",
@@ -88,6 +92,7 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
         "clientsEligibleCount": 5,
         "clientsEligibleCountWithLabel": "5 clients",
         "displayName": "Jack Hernandez",
+        "email": null,
         "externalId": "so2",
         "fullName": {
           "givenNames": "Jack",
@@ -104,6 +109,7 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
         "clientsEligibleCount": 5,
         "clientsEligibleCountWithLabel": "5 clients",
         "displayName": "Jason Nelson",
+        "email": "officer3@recidiviz.org",
         "externalId": "so3",
         "fullName": {
           "givenNames": "Jason",
@@ -120,6 +126,7 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
         "clientsEligibleCount": 5,
         "clientsEligibleCountWithLabel": "5 clients",
         "displayName": "Walter Harris",
+        "email": "officer1@recidiviz.org",
         "externalId": "OFFICER4",
         "fullName": {
           "givenNames": "Walter",
@@ -141,6 +148,7 @@ exports[`Opportunity details methods > when isWorkflowsEnabled is True > Method:
         "clientsEligibleCount": 4,
         "clientsEligibleCountWithLabel": "4 clients",
         "displayName": "John Harris",
+        "email": "officer6@recidiviz.org",
         "externalId": "so6",
         "fullName": {
           "givenNames": "John",

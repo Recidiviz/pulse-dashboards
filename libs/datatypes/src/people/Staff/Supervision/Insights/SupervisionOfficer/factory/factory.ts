@@ -45,6 +45,7 @@ export const rawSupervisionOfficerFactory = (
 
     return {
       fullName: each(() => fullNameFactory(person.sexType()).build()),
+      email: `officer${metricInfo.externalId}@recidiviz.org`,
       supervisorExternalIds: [...supervisors.map((s) => s.externalId)],
       ...metricInfo,
     };

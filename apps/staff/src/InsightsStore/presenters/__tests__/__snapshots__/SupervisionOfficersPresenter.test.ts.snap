@@ -7,6 +7,7 @@ exports[`outlierOfficersData 1`] = `
     "caseloadCategory": "SEX_OFFENSE",
     "caseloadCategoryName": "Sex Offense Caseloads",
     "displayName": "Walter Harris",
+    "email": "officer1@recidiviz.org",
     "externalId": "OFFICER4",
     "fullName": {
       "givenNames": "Walter",
@@ -1335,6 +1336,7 @@ exports[`outlierOfficersData 1`] = `
     "caseloadCategory": "ALL",
     "caseloadCategoryName": "General Or Other Caseloads",
     "displayName": "Jason Nelson",
+    "email": "officer3@recidiviz.org",
     "externalId": "so3",
     "fullName": {
       "givenNames": "Jason",
@@ -3658,6 +3660,7 @@ exports[`outlierOfficersData 1`] = `
     "caseloadCategory": "ALL",
     "caseloadCategoryName": "General Or Other Caseloads",
     "displayName": "Harriet Boyd",
+    "email": "officer9@recidiviz.org",
     "externalId": "so9",
     "fullName": {
       "givenNames": "Harriet",
@@ -6565,6 +6568,7 @@ exports[`outlierOfficersData 1`] = `
     "caseloadCategory": "NOT_SEX_OFFENSE",
     "caseloadCategoryName": undefined,
     "displayName": "Stephen Mann",
+    "email": "officer10@recidiviz.org",
     "externalId": "so10",
     "fullName": {
       "givenNames": "Stephen",

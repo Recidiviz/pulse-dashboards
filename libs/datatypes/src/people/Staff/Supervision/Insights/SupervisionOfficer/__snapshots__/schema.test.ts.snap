@@ -4,6 +4,7 @@ exports[`transformations 1`] = `
 {
   "avgDailyPopulation": 54,
   "displayName": "Walter Harris",
+  "email": "officer1@recidiviz.org",
   "externalId": "OFFICER4",
   "fullName": {
     "givenNames": "Walter",
@@ -26,6 +27,7 @@ exports[`transformations 2`] = `
 {
   "avgDailyPopulation": 12,
   "displayName": "Jack Hernandez",
+  "email": null,
   "externalId": "so2",
   "fullName": {
     "givenNames": "Jack",
@@ -43,6 +45,7 @@ exports[`transformations 3`] = `
 {
   "avgDailyPopulation": 32,
   "displayName": "Jason Nelson",
+  "email": "officer3@recidiviz.org",
   "externalId": "so3",
   "fullName": {
     "givenNames": "Jason",
@@ -60,6 +63,7 @@ exports[`transformations 4`] = `
 {
   "avgDailyPopulation": 43,
   "displayName": "Carl Mark Campbell",
+  "email": "officer4@recidiviz.org",
   "externalId": "so4",
   "fullName": {
     "givenNames": "Carl",
@@ -78,6 +82,7 @@ exports[`transformations 5`] = `
 {
   "avgDailyPopulation": null,
   "displayName": "Casey Ramirez",
+  "email": "officer5@recidiviz.org",
   "externalId": "so5",
   "fullName": {
     "givenNames": "Casey",
@@ -95,6 +100,7 @@ exports[`transformations 6`] = `
 {
   "avgDailyPopulation": 43,
   "displayName": "Elizabeth Ramirez",
+  "email": "officer8@recidiviz.org",
   "externalId": "so8",
   "fullName": {
     "givenNames": "Elizabeth",
@@ -112,6 +118,7 @@ exports[`transformations 7`] = `
 {
   "avgDailyPopulation": 43,
   "displayName": "Harriet Boyd",
+  "email": "officer9@recidiviz.org",
   "externalId": "so9",
   "fullName": {
     "givenNames": "Harriet",
@@ -129,6 +136,7 @@ exports[`transformations 8`] = `
 {
   "avgDailyPopulation": 43,
   "displayName": "Stephen Mann",
+  "email": "officer10@recidiviz.org",
   "externalId": "so10",
   "fullName": {
     "givenNames": "Stephen",
@@ -146,6 +154,7 @@ exports[`transformations 9`] = `
 {
   "avgDailyPopulation": null,
   "displayName": "John Harris",
+  "email": "officer6@recidiviz.org",
   "externalId": "so6",
   "fullName": {
     "givenNames": "John",
@@ -162,6 +171,7 @@ exports[`transformations 10`] = `
 {
   "avgDailyPopulation": 8,
   "displayName": "Larry Hernandez",
+  "email": "officer7@recidiviz.org",
   "externalId": "so7",
   "fullName": {
     "givenNames": "Larry",
