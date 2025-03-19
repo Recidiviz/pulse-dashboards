@@ -520,4 +520,146 @@ describe("hydrateStr", () => {
       });
     });
   });
+
+  describe("and helper", () => {
+    it("is true when both fields are true", () => {
+      const template =
+        "{{a}} and {{b}} {{#if (and a b)}}are{{else}}aren't{{/if}} both true";
+      const criteria = { a: true, b: true };
+      const formatters = {};
+
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result).toEqual("true and true are both true");
+    });
+
+    it("is false when one field is false", () => {
+      const template =
+        "{{a}} and {{b}} {{#if (and a b)}}are{{else}}aren't{{/if}} both true";
+      const criteria = { a: true, b: false };
+      const formatters = {};
+
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result).toEqual("true and false aren't both true");
+
+      const criteria2 = { a: false, b: true };
+      const result2 = hydrateStr(template, {
+        criteria: criteria2,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result2).toEqual("false and true aren't both true");
+    });
+
+    it("is false when both fields are false", () => {
+      const template =
+        "{{a}} and {{b}} {{#if (and a b)}}are{{else}}aren't{{/if}} both true";
+      const criteria = { a: false, b: false };
+      const formatters = {};
+
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result).toEqual("false and false aren't both true");
+    });
+
+    it("matches a field to a literal true", () => {
+      const template =
+        "{{a}} and true {{#if (and a true)}}are{{else}}aren't{{/if}} both true";
+      const criteria = { a: true };
+      const formatters = {};
+
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result).toEqual("true and true are both true");
+    });
+  });
+
+  describe("or helper", () => {
+    it("is true when either field is true", () => {
+      const template =
+        "{{a}} or {{b}} {{#if (or a b)}}is{{else}}isn't{{/if}} true";
+      const criteria = { a: true, b: false };
+      const formatters = {};
+
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result).toEqual("true or false is true");
+
+      const criteria2 = { a: false, b: true };
+      const result2 = hydrateStr(template, {
+        criteria: criteria2,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result2).toEqual("false or true is true");
+    });
+
+    it("is true when both fields are true", () => {
+      const template =
+        "{{a}} or {{b}} {{#if (or a b)}}is{{else}}isn't{{/if}} true";
+      const criteria = { a: true, b: true };
+      const formatters = {};
+
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result).toEqual("true or true is true");
+    });
+
+    it("is false when both fields are false", () => {
+      const template =
+        "{{a}} or {{b}} {{#if (or a b)}}is{{else}}isn't{{/if}} true";
+      const criteria = { a: false, b: false };
+      const formatters = {};
+
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result).toEqual("false or false isn't true");
+    });
+
+    it("matches a field to a literal true", () => {
+      const template =
+        "{{a}} or true {{#if (or a true)}}is{{else}}isn't{{/if}} true";
+      const criteria = { a: false };
+      const formatters = {};
+
+      const result = hydrateStr(template, {
+        criteria,
+        formatters,
+        opportunity: mockOpportunity,
+      });
+
+      expect(result).toEqual("false or true is true");
+    });
+  });
 });

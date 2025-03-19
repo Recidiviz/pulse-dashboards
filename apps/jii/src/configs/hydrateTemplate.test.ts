@@ -119,6 +119,33 @@ describe("helpers", () => {
   });
 });
 
+test("or", () => {
+  expect(
+    hydrateTemplate("{{#if (or a b)}}yes{{else}}no{{/if}}", {
+      a: false,
+      b: true,
+    }),
+  ).toBe("yes");
+  expect(
+    hydrateTemplate("{{#if (or a b)}}yes{{else}}no{{/if}}", {
+      a: true,
+      b: false,
+    }),
+  ).toBe("yes");
+  expect(
+    hydrateTemplate("{{#if (or a b)}}yes{{else}}no{{/if}}", {
+      a: true,
+      b: true,
+    }),
+  ).toBe("yes");
+  expect(
+    hydrateTemplate("{{#if (or a b)}}yes{{else}}no{{/if}}", {
+      a: false,
+      b: false,
+    }),
+  ).toBe("no");
+});
+
 test("cleanupInlineTemplate", () => {
   expect(
     cleanupInlineTemplate(`

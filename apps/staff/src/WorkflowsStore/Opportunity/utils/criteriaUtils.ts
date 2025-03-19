@@ -123,6 +123,8 @@ const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
   yearsMonthsUntil: (date) => formatYearsMonthsFromNow(dateify(date)),
   daysToYearsMonthsPast: (days) => formatDaysToYearsMonthsPast(days),
   eq: (a, b) => a === b,
+  and: (a, b) => a && b,
+  or: (a, b) => a || b,
   length: (xs) => xs && xs.length,
   monthsOrDaysRemainingFromToday: (date) =>
     monthsOrDaysRemainingFromToday(dateify(date)),
