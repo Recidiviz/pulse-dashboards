@@ -31,6 +31,7 @@ Handlebars.registerHelper("formatFullDate", (d: Date | string) => {
 });
 Handlebars.registerHelper("isFutureDate", (d: Date) => isFuture(d));
 Handlebars.registerHelper("and", (a: unknown, b: unknown) => a && b);
+Handlebars.registerHelper("or", (a: unknown, b: unknown) => a || b);
 Handlebars.registerHelper("equals", (a: unknown, b: unknown) => a === b);
 Handlebars.registerHelper("formatDatesInText", (s: string) =>
   formatISODatesInText(s),
