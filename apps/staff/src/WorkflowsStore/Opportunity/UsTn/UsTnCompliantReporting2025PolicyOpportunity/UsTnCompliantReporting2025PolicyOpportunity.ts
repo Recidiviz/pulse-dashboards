@@ -31,6 +31,10 @@ export class UsTnCompliantReporting2025PolicyOpportunity extends OpportunityBase
 > {
   form: CompliantReportingForm;
 
+  readonly hideUnknownCaseNoteDates = true;
+
+  readonly caseNotesTitle = "Other Relevant Information";
+
   constructor(client: Client, record: DocumentData) {
     super(
       client,
@@ -53,5 +57,9 @@ export class UsTnCompliantReporting2025PolicyOpportunity extends OpportunityBase
     if (this.isSubmitted || this.denied) return;
 
     if (this.almostEligible) return this.record.metadata.tabName;
+  }
+
+  get eligibilityDate(): Date | undefined {
+    return this.record?.metadata.eligibleDate;
   }
 }
