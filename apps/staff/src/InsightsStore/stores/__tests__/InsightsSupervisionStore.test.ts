@@ -410,7 +410,6 @@ test.each([
     vi.spyOn(store, "userCanAccessAllSupervisors", "get").mockReturnValue(
       userCanAccessAllSupervisors,
     );
-
     vi.spyOn(
       store.insightsStore.rootStore.userStore,
       "activeFeatureVariants",

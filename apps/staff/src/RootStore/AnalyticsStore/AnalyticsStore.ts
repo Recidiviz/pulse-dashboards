@@ -118,7 +118,7 @@ type RosterChangeRequestFormSubmittedByMetadata = Pick<
   "requestChangeType"
 > & {
   supervisorPseudonymizedId: string;
-  affectedOfficersExternalIds: string;
+  affectedOfficersExternalIds: string[];
   intercomTicketId?: string;
   submittedBy?: string;
   error?: string;
