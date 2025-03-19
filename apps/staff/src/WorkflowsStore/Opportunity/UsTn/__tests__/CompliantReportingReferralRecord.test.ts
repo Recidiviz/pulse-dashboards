@@ -44,7 +44,7 @@ const metadata: CompliantReportingReferralRecordRaw["metadata"] &
   allOffenses: ["FAILURE TO APPEAR (FELONY)", "EVADING ARREST"],
   convictionCounties: ["123ABC"],
   ineligibleOffensesExpired: [],
-  mostRecentArrestCheck: {
+  latestNegativeArrestCheck: {
     contactDate: "2023-04-01",
     contactType: "ARRN",
   },

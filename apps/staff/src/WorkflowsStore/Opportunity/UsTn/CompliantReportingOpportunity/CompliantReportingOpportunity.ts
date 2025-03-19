@@ -234,7 +234,7 @@ export class CompliantReportingOpportunity extends OpportunityBase<
     // required arrest history
     requirements.push({
       text: `Negative arrest check on ${formatWorkflowsDate(
-        metadata.mostRecentArrestCheck.contactDate,
+        metadata.latestNegativeArrestCheck.contactDate,
       )}`,
       tooltip: CRITERIA.arrests.tooltip,
     });

@@ -69,7 +69,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           eligibleDate: relativeFixtureDate({ months: -1, days: -5 }),
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
-          mostRecentArrestCheck: {
+          latestNegativeArrestCheck: {
             contactDate: relativeFixtureDate({ years: -1, days: -33 }),
             contactType: "ARRN",
           },
@@ -127,7 +127,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           eligibleDate: relativeFixtureDate({ months: -2, days: -5 }),
           tabName: "MISSING_)_CRITERIA",
           allOffenses: ["FIRST DEGERE MURDER", "MURDER"],
-          mostRecentArrestCheck: {
+          latestNegativeArrestCheck: {
             contactDate: relativeFixtureDate({ days: -70 }),
             contactType: "ARRN",
           },
@@ -188,7 +188,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
         metadata: {
           eligibleDate: relativeFixtureDate({ days: -15 }),
           tabName: "MISSING_1_CRITERIA",
-          mostRecentArrestCheck: {
+          latestNegativeArrestCheck: {
             contactDate: relativeFixtureDate({ months: -1 }),
             contactType: "ARRN",
           },
@@ -270,7 +270,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           eligibleDate: relativeFixtureDate({ months: -2, days: -13 }),
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: [],
-          mostRecentArrestCheck: {
+          latestNegativeArrestCheck: {
             contactDate: relativeFixtureDate({ days: -72 }),
             contactType: "ARRN",
           },
@@ -326,7 +326,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           tabName: "MISSING_1_CRITERIA",
           convictionCounties: ["123ABC"],
           ineligibleOffensesExpired: [],
-          mostRecentArrestCheck: {
+          latestNegativeArrestCheck: {
             contactDate: relativeFixtureDate({ days: -5 }),
             contactType: "ARRN",
           },
@@ -392,7 +392,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           tabName: "MISSING_2_CRITERIA",
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
-          mostRecentArrestCheck: {
+          latestNegativeArrestCheck: {
             contactDate: relativeFixtureDate({ months: -1 }),
             contactType: "ARRN",
           },
@@ -473,7 +473,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           tabName: "MISSING_3_CRITERIA",
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
-          mostRecentArrestCheck: {
+          latestNegativeArrestCheck: {
             contactDate: relativeFixtureDate({ months: -1 }),
             contactType: "ARRN",
           },

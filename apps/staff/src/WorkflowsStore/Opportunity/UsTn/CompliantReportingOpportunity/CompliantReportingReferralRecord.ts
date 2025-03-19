@@ -194,7 +194,7 @@ export const compliantReportingSchema = opportunitySchemaBase.extend({
     })
     .partial(),
   metadata: z.object({
-    mostRecentArrestCheck: z.object({
+    latestNegativeArrestCheck: z.object({
       contactDate: dateStringSchema,
       contactType: z.literal("ARRN"),
     }),
