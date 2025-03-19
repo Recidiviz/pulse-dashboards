@@ -95,7 +95,7 @@ exports[`parse almost eligible 1`] = `
       "123ABC",
     ],
     "ineligibleOffensesExpired": [],
-    "mostRecentArrestCheck": {
+    "latestNegativeArrestCheck": {
       "contactDate": 2023-04-01T00:00:00.000Z,
       "contactType": "ARRN",
     },
@@ -202,7 +202,7 @@ exports[`parse eligible 1`] = `
       "123ABC",
     ],
     "ineligibleOffensesExpired": [],
-    "mostRecentArrestCheck": {
+    "latestNegativeArrestCheck": {
       "contactDate": 2023-04-01T00:00:00.000Z,
       "contactType": "ARRN",
     },

@@ -90,7 +90,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
-        mostRecentArrestCheck: {
+        latestNegativeArrestCheck: {
           contactDate: relativeFixtureDate({ years: -1, days: -33 }),
           contactType: "ARRN",
         },
@@ -169,7 +169,7 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: ["14"],
       },
       metadata: {
-        mostRecentArrestCheck: {
+        latestNegativeArrestCheck: {
           contactDate: relativeFixtureDate({ days: -70 }),
           contactType: "ARRN",
         },
@@ -248,7 +248,7 @@ export const usTnCompliantReportingReferrals =
         judicialDistrict: [],
       },
       metadata: {
-        mostRecentArrestCheck: {
+        latestNegativeArrestCheck: {
           contactDate: relativeFixtureDate({ months: -1 }),
           contactType: "ARRN",
         },
@@ -335,7 +335,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: [],
-        mostRecentArrestCheck: {
+        latestNegativeArrestCheck: {
           contactDate: relativeFixtureDate({ days: -72 }),
           contactType: "ARRN",
         },
@@ -404,7 +404,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123ABC"],
         ineligibleOffensesExpired: [],
-        mostRecentArrestCheck: {
+        latestNegativeArrestCheck: {
           contactDate: relativeFixtureDate({ days: -5 }),
           contactType: "ARRN",
         },
@@ -475,7 +475,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
-        mostRecentArrestCheck: {
+        latestNegativeArrestCheck: {
           contactDate: relativeFixtureDate({ months: -1 }),
           contactType: "ARRN",
         },
@@ -552,7 +552,7 @@ export const usTnCompliantReportingReferrals =
       metadata: {
         convictionCounties: ["123 - ABC", "456 - DEF"],
         ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
-        mostRecentArrestCheck: {
+        latestNegativeArrestCheck: {
           contactDate: relativeFixtureDate({ months: -1 }),
           contactType: "ARRN",
         },
