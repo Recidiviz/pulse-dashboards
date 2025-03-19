@@ -1,0 +1,15 @@
+# This is a basic Workflow that takes the state code and determines if we should 
+# execute the process-jii-to-text Workflow 
+
+main:
+  params: [event]
+  steps:
+    - decode_pubsub_message:
+        assign:
+          - base64: ${base64.decode(event.data.message.data)}
+          - message: ${json.decode(base64)}
+    - init:
+        assign:
+          - state_code: ${message.state_code}
+    - return_state_code:
+        return: ${state_code}

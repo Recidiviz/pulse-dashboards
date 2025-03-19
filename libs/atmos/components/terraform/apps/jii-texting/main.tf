@@ -53,29 +53,28 @@ module "cloud-run" {
   ]
 }
 
-# Configure a Google Workflow that is executed on a write to a GCS storage bucket
-# and executes the main JII texting processing (i.e a separate workflow) if needed
-module "handle-jii-texting-gcs-upload-wf" {
+# Configure a Google Workflow that is executed when a message is published to
+# the jii_texting_export_success_topic 
+module "handle-jii-texting-export-wf" {
   project_id            = var.project_id
   region                = var.location
   source                = "../../vendor/google-workflows-workflow"
   service_account_email = google_service_account.workflows.email
-  workflow_name         = "handle-jii-texting-gcs-upload-wf"
+  workflow_name         = "handle-jii-texting-export-wf"
   workflow_trigger = {
     event_arc = {
-      name                  = "handle-jii-texting-gcs-upload-wf"
+      name                  = "handle-jii-texting-export-wf"
       service_account_email = google_service_account.eventarc.email
-      matching_criteria = [{
-        attribute = "type"
-        value     = "google.cloud.storage.object.v1.finalized"
-        },
+      pubsub_topic_id       = google_pubsub_topic.jii_texting_export_success_topic.id
+      matching_criteria = [
         {
-          attribute = "bucket",
-          value     = var.etl_bucket_name
-      }]
+          attribute = "type"
+          value     = "google.cloud.pubsub.topic.v1.messagePublished"
+        }
+      ]
     }
   }
-  workflow_source = file("${path.module}/workflows/handle-jii-texting-gcs-upload.workflows.yaml")
+  workflow_source = file("${path.module}/workflows/handle-jii-texting-export.workflows.yaml")
 }
 
 # Configure a Google Workflow that executes the main processing of JII texts,
