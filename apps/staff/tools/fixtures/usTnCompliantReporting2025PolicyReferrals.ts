@@ -66,6 +66,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           judicialDistrict: ["17"],
         },
         metadata: {
+          eligibleDate: relativeFixtureDate({ months: -1, days: -5 }),
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
           mostRecentArrestCheck: {
@@ -123,6 +124,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           judicialDistrict: ["14"],
         },
         metadata: {
+          eligibleDate: relativeFixtureDate({ months: -2, days: -5 }),
           tabName: "MISSING_)_CRITERIA",
           allOffenses: ["FIRST DEGERE MURDER", "MURDER"],
           mostRecentArrestCheck: {
@@ -184,6 +186,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           judicialDistrict: [],
         },
         metadata: {
+          eligibleDate: relativeFixtureDate({ days: -15 }),
           tabName: "MISSING_1_CRITERIA",
           mostRecentArrestCheck: {
             contactDate: relativeFixtureDate({ months: -1 }),
@@ -195,6 +198,15 @@ export const usTnCompliantReporting2025PolicyReferrals =
           },
           ineligibleOffensesExpired: ["TNCARE FRAUD"],
           convictionCounties: [],
+        },
+        caseNotes: {
+          "CURRENT OFFENSES": [
+            {
+              eventDate: null,
+              noteBody: "THEFT OF PROPERTY - $10,000-$60,000",
+              noteTitle: null,
+            },
+          ],
         },
         isEligible: false,
         isAlmostEligible: true,
@@ -233,7 +245,10 @@ export const usTnCompliantReporting2025PolicyReferrals =
         ineligibleCriteria: {},
         formInformation: {
           sentenceStartDate: relativeFixtureDate({ months: -13, days: 2 }),
-          currentOffenses: ["BURGLARY"],
+          currentOffenses: [
+            "BURGLARY",
+            "INITIATION OF PROCESS TO MANUFACTURE METH",
+          ],
           driversLicense: "12345",
           courtCostsPaid: false,
           supervisionFeeAssessed: 0,
@@ -252,6 +267,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           supervisionFeeWaived: true,
         },
         metadata: {
+          eligibleDate: relativeFixtureDate({ months: -2, days: -13 }),
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: [],
           mostRecentArrestCheck: {
@@ -306,6 +322,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           supervisionFeeArrearaged: false,
         },
         metadata: {
+          eligibleDate: relativeFixtureDate({ days: -20 }),
           tabName: "MISSING_1_CRITERIA",
           convictionCounties: ["123ABC"],
           ineligibleOffensesExpired: [],
@@ -313,6 +330,16 @@ export const usTnCompliantReporting2025PolicyReferrals =
             contactDate: relativeFixtureDate({ days: -5 }),
             contactType: "ARRN",
           },
+        },
+        caseNotes: {
+          "CURRENT OFFENSES": [
+            { eventDate: null, noteBody: "BURGLARY", noteTitle: null },
+            {
+              eventDate: null,
+              noteBody: "INITIATION OF PROCESS TO MANUFACTURE METH",
+              noteTitle: null,
+            },
+          ],
         },
         isEligible: false,
         isAlmostEligible: true,
@@ -361,6 +388,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           judicialDistrict: ["17"],
         },
         metadata: {
+          eligibleDate: relativeFixtureDate({ days: -28 }),
           tabName: "MISSING_2_CRITERIA",
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
@@ -372,6 +400,28 @@ export const usTnCompliantReporting2025PolicyReferrals =
             contactDate: relativeFixtureDate({ days: -222 }),
             contactType: "SPET",
           },
+        },
+        caseNotes: {
+          "CURRENT OFFENSES": [
+            { eventDate: null, noteBody: "BURGLARY", noteTitle: null },
+            {
+              eventDate: null,
+              noteBody: "INITIATION OF PROCESS TO MANUFACTURE METH",
+              noteTitle: null,
+            },
+          ],
+          "LATEST STRONG-R DOMAINS": [
+            {
+              eventDate: relativeFixtureDate({ days: -33 }),
+              noteBody: "LOW",
+              noteTitle: "Aggression Need Level",
+            },
+            {
+              eventDate: relativeFixtureDate({ days: -33 }),
+              noteBody: "HIGH",
+              noteTitle: "Alcohol Drug Need Level",
+            },
+          ],
         },
         isEligible: false,
         isAlmostEligible: true,
@@ -419,6 +469,7 @@ export const usTnCompliantReporting2025PolicyReferrals =
           judicialDistrict: ["17"],
         },
         metadata: {
+          eligibleDate: relativeFixtureDate({ months: -1, days: -15 }),
           tabName: "MISSING_3_CRITERIA",
           convictionCounties: ["123 - ABC", "456 - DEF"],
           ineligibleOffensesExpired: ["HABITUAL TRAFFIC OFFENDER"],
@@ -430,6 +481,27 @@ export const usTnCompliantReporting2025PolicyReferrals =
             contactDate: relativeFixtureDate({ days: -222 }),
             contactType: "SPET",
           },
+        },
+        caseNotes: {
+          "CURRENT OFFENSES": [
+            {
+              eventDate: null,
+              noteBody: "FAILURE TO APPEAR (FELONY)",
+              noteTitle: null,
+            },
+          ],
+          "LATEST STRONG-R DOMAINS": [
+            {
+              eventDate: relativeFixtureDate({ days: -33 }),
+              noteBody: "LOW",
+              noteTitle: "Agression Need Level",
+            },
+            {
+              eventDate: relativeFixtureDate({ days: -33 }),
+              noteBody: "HIGH",
+              noteTitle: "Alcohol Drug Need Level",
+            },
+          ],
         },
         isEligible: false,
         isAlmostEligible: true,

@@ -52,6 +52,7 @@ export const usTnCompliantReporting2025PolicySchema =
       .object({
         tabName: z.string().optional(),
         convictionCounties: z.array(z.string()),
+        eligibleDate: dateStringSchema,
       })
       .passthrough(),
   });
