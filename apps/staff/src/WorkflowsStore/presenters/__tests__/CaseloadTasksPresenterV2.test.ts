@@ -56,6 +56,10 @@ const mockTenantStore = {
         field: "district",
         type: "person",
       },
+      {
+        field: "type",
+        type: "task",
+      },
     ],
   },
 } as any as TenantStore;
@@ -216,6 +220,18 @@ describe("CaseloadTasksPresenterV2", () => {
 
     it("groups people with upcoming tasks together", () => {
       expect(presenter.clientsWithUpcomingTasks).toHaveLength(1);
+    });
+
+    it("filters people by selected task types", () => {
+      presenter.toggleFilter("type", { value: "employment" });
+      expect(presenter.clientsWithUpcomingTasks).toHaveLength(1);
+      expect(presenter.clientsWithOverdueTasks).toHaveLength(1);
+    });
+
+    it("can filter down to empty lists", () => {
+      presenter.toggleFilter("type", { value: "someOtherType" });
+      expect(presenter.clientsWithUpcomingTasks).toHaveLength(0);
+      expect(presenter.clientsWithOverdueTasks).toHaveLength(0);
     });
   });
 
