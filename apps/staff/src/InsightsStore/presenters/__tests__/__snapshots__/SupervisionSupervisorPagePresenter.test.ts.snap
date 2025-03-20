@@ -5,6 +5,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 54,
     "displayName": "Walter Harris",
+    "district": "Unit 1",
     "email": "officer1@recidiviz.org",
     "externalId": "OFFICER4",
     "fullName": {
@@ -25,6 +26,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 12,
     "displayName": "Jack Hernandez",
+    "district": "Unit 1",
     "email": null,
     "externalId": "so2",
     "fullName": {
@@ -40,6 +42,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 32,
     "displayName": "Jason Nelson",
+    "district": "Unit 1",
     "email": "officer3@recidiviz.org",
     "externalId": "so3",
     "fullName": {
@@ -55,6 +58,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 43,
     "displayName": "Harriet Boyd",
+    "district": "Unit 1",
     "email": "officer9@recidiviz.org",
     "externalId": "so9",
     "fullName": {
@@ -70,6 +74,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 43,
     "displayName": "Stephen Mann",
+    "district": "Unit 1",
     "email": "officer10@recidiviz.org",
     "externalId": "so10",
     "fullName": {
@@ -90,6 +95,7 @@ exports[`returns the officers without outcomes data 1`] = `
   {
     "avgDailyPopulation": null,
     "displayName": "John Harris",
+    "district": "Unit 3",
     "email": "officer6@recidiviz.org",
     "externalId": "so6",
     "fullName": {
@@ -104,6 +110,7 @@ exports[`returns the officers without outcomes data 1`] = `
   {
     "avgDailyPopulation": 8,
     "displayName": "Larry Hernandez",
+    "district": "Unit 2",
     "email": "officer7@recidiviz.org",
     "externalId": "so7",
     "fullName": {

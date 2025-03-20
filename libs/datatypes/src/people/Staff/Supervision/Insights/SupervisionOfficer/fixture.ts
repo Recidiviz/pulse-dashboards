@@ -35,6 +35,7 @@ export const rawSupervisionOfficerFixture = [
     zeroGrantOpportunities: ["LSU", "pastFTRD"],
     includeInOutcomes: true,
     email: "officer1@recidiviz.org",
+    district: "Unit 1",
   },
   {
     externalId: "so2",
@@ -47,6 +48,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 12.345,
     includeInOutcomes: true,
     email: null,
+    district: "Unit 1",
   },
   {
     externalId: "so3",
@@ -59,6 +61,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 32.1,
     includeInOutcomes: true,
     email: "officer3@recidiviz.org",
+    district: "Unit 1",
   },
   {
     externalId: "so4",
@@ -72,6 +75,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 43.21,
     includeInOutcomes: true,
     email: "officer4@recidiviz.org",
+    district: "Unit 1",
   },
   {
     externalId: "so5",
@@ -84,6 +88,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: null,
     includeInOutcomes: true,
     email: "officer5@recidiviz.org",
+    district: "Unit 1",
   },
   {
     externalId: "so8",
@@ -96,6 +101,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 43.21,
     includeInOutcomes: true,
     email: "officer8@recidiviz.org",
+    district: "Unit 4",
   },
   {
     externalId: "so9",
@@ -108,6 +114,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 43.21,
     includeInOutcomes: true,
     email: "officer9@recidiviz.org",
+    district: "Unit 1",
   },
   {
     externalId: "so10",
@@ -120,6 +127,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 43.21,
     includeInOutcomes: true,
     email: "officer10@recidiviz.org",
+    district: "Unit 1",
   },
   // Officers excluded from outcomes
   {
@@ -132,6 +140,7 @@ export const rawSupervisionOfficerFixture = [
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     avgDailyPopulation: null,
     email: "officer6@recidiviz.org",
+    district: "Unit 3",
   },
   {
     externalId: "so7",
@@ -143,6 +152,7 @@ export const rawSupervisionOfficerFixture = [
     supervisorExternalIds: [supervisionOfficerSupervisorsFixture[0].externalId],
     avgDailyPopulation: 7.7,
     email: "officer7@recidiviz.org",
+    district: "Unit 2",
   },
 ] satisfies RawSupervisionOfficer[];
 

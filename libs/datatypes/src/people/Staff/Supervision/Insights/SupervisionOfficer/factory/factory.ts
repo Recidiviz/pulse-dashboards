@@ -43,10 +43,16 @@ export const rawSupervisionOfficerFactory = (
     const metricInfo: RawSupervisionOfficerIdInfoAndAvgDailyPop =
       randRawSupervisionOfficerMetricFixture();
 
+    const district =
+      supervisors
+        .map((s) => s.supervisionLocationForSupervisorPage)
+        .find((d) => d !== undefined) || "Unit 1";
+
     return {
       fullName: each(() => fullNameFactory(person.sexType()).build()),
       email: `officer${metricInfo.externalId}@recidiviz.org`,
       supervisorExternalIds: [...supervisors.map((s) => s.externalId)],
+      district,
       ...metricInfo,
     };
   });

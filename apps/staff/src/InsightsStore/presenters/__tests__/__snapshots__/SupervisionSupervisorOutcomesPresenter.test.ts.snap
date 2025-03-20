@@ -7,6 +7,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
     "caseloadCategory": "SEX_OFFENSE",
     "caseloadCategoryName": "Sex Offense Caseloads",
     "displayName": "Walter Harris",
+    "district": "Unit 1",
     "email": "officer1@recidiviz.org",
     "externalId": "OFFICER4",
     "fullName": {
@@ -1336,6 +1337,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
     "caseloadCategory": "ALL",
     "caseloadCategoryName": "General Or Other Caseloads",
     "displayName": "Jason Nelson",
+    "district": "Unit 1",
     "email": "officer3@recidiviz.org",
     "externalId": "so3",
     "fullName": {
@@ -3660,6 +3662,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
     "caseloadCategory": "ALL",
     "caseloadCategoryName": "General Or Other Caseloads",
     "displayName": "Harriet Boyd",
+    "district": "Unit 1",
     "email": "officer9@recidiviz.org",
     "externalId": "so9",
     "fullName": {
@@ -6568,6 +6571,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
     "caseloadCategory": "NOT_SEX_OFFENSE",
     "caseloadCategoryName": undefined,
     "displayName": "Stephen Mann",
+    "district": "Unit 1",
     "email": "officer10@recidiviz.org",
     "externalId": "so10",
     "fullName": {
@@ -9103,6 +9107,7 @@ Map {
           "caseloadCategory": "SEX_OFFENSE",
           "caseloadCategoryName": "Sex Offense Caseloads",
           "displayName": "Walter Harris",
+          "district": "Unit 1",
           "email": "officer1@recidiviz.org",
           "externalId": "OFFICER4",
           "fullName": {
@@ -11851,6 +11856,7 @@ Map {
           "caseloadCategory": "ALL",
           "caseloadCategoryName": "General Or Other Caseloads",
           "displayName": "Jason Nelson",
+          "district": "Unit 1",
           "email": "officer3@recidiviz.org",
           "externalId": "so3",
           "fullName": {
@@ -14175,6 +14181,7 @@ Map {
           "caseloadCategory": "ALL",
           "caseloadCategoryName": "General Or Other Caseloads",
           "displayName": "Harriet Boyd",
+          "district": "Unit 1",
           "email": "officer9@recidiviz.org",
           "externalId": "so9",
           "fullName": {
@@ -18246,6 +18253,7 @@ Map {
           "caseloadCategory": "NOT_SEX_OFFENSE",
           "caseloadCategoryName": undefined,
           "displayName": "Stephen Mann",
+          "district": "Unit 1",
           "email": "officer10@recidiviz.org",
           "externalId": "so10",
           "fullName": {
@@ -20787,6 +20795,7 @@ Map {
           "caseloadCategory": "SEX_OFFENSE",
           "caseloadCategoryName": "Sex Offense Caseloads",
           "displayName": "Walter Harris",
+          "district": "Unit 1",
           "email": "officer1@recidiviz.org",
           "externalId": "OFFICER4",
           "fullName": {
@@ -23539,6 +23548,7 @@ Map {
           "caseloadCategory": "ALL",
           "caseloadCategoryName": "General Or Other Caseloads",
           "displayName": "Harriet Boyd",
+          "district": "Unit 1",
           "email": "officer9@recidiviz.org",
           "externalId": "so9",
           "fullName": {
@@ -27550,6 +27560,7 @@ Map {
           "caseloadCategory": "NOT_SEX_OFFENSE",
           "caseloadCategoryName": undefined,
           "displayName": "Stephen Mann",
+          "district": "Unit 1",
           "email": "officer10@recidiviz.org",
           "externalId": "so10",
           "fullName": {
@@ -30703,6 +30714,7 @@ Map {
           "caseloadCategory": "SEX_OFFENSE",
           "caseloadCategoryName": "Sex Offense Caseloads",
           "displayName": "Walter Harris",
+          "district": "Unit 1",
           "email": "officer1@recidiviz.org",
           "externalId": "OFFICER4",
           "fullName": {
@@ -32851,6 +32863,7 @@ Map {
           "caseloadCategory": "ALL",
           "caseloadCategoryName": "General Or Other Caseloads",
           "displayName": "Jason Nelson",
+          "district": "Unit 1",
           "email": "officer3@recidiviz.org",
           "externalId": "so3",
           "fullName": {
@@ -35181,6 +35194,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 54,
     "displayName": "Walter Harris",
+    "district": "Unit 1",
     "email": "officer1@recidiviz.org",
     "externalId": "OFFICER4",
     "fullName": {
@@ -35201,6 +35215,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 12,
     "displayName": "Jack Hernandez",
+    "district": "Unit 1",
     "email": null,
     "externalId": "so2",
     "fullName": {
@@ -35216,6 +35231,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 32,
     "displayName": "Jason Nelson",
+    "district": "Unit 1",
     "email": "officer3@recidiviz.org",
     "externalId": "so3",
     "fullName": {
@@ -35231,6 +35247,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 43,
     "displayName": "Harriet Boyd",
+    "district": "Unit 1",
     "email": "officer9@recidiviz.org",
     "externalId": "so9",
     "fullName": {
@@ -35246,6 +35263,7 @@ exports[`returns the officers with outcomes data 1`] = `
   {
     "avgDailyPopulation": 43,
     "displayName": "Stephen Mann",
+    "district": "Unit 1",
     "email": "officer10@recidiviz.org",
     "externalId": "so10",
     "fullName": {
