@@ -58,7 +58,7 @@ import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
 import {
   ActiveFeatureVariantRecord,
-  defaultFeatureVariantsActive,
+  defaultRecidivizUserFeatureVariantsActive,
   InternalTenantId,
   TenantId,
   UserAppMetadata,
@@ -416,7 +416,8 @@ export default class UserStore {
     if (isDemoMode() && this.userAppMetadata?.demoModeFeatureVariants)
       fvs = this.userAppMetadata?.demoModeFeatureVariants;
 
-    if (this.isRecidivizUser) fvs = { ...defaultFeatureVariantsActive, ...fvs };
+    if (this.isRecidivizUser)
+      fvs = { ...defaultRecidivizUserFeatureVariantsActive, ...fvs };
 
     const tenantFeatureVariants =
       this.rootStore?.tenantStore.tenantFeatureVariants ?? {};
