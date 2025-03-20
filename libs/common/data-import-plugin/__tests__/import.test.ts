@@ -18,16 +18,18 @@
 import { describe, expect, test } from "vitest";
 
 import {
+  FILE_ONE,
+  FILE_TWO,
   TEST_BUCKET,
-  TEST_FILE,
   TEST_STATE_CODE,
 } from "~data-import-plugin/test/common/constants";
 import { arrayToJsonLines } from "~data-import-plugin/test/common/utils";
 import {
+  fileOneLoadFn,
+  fileTwoLoadFn,
   importHandler,
   mockPrismaClient,
   mockStorageSingleton,
-  testLoadFn,
 } from "~data-import-plugin/test/setup";
 
 describe("import", () => {
@@ -39,8 +41,8 @@ describe("import", () => {
 
   test("should throw error if data is not parsable", async () => {
     await mockStorageSingleton
-      .bucket("test-bucket")
-      .file("US_ID/test-file")
+      .bucket(TEST_BUCKET)
+      .file(`${TEST_STATE_CODE}/${FILE_ONE}`)
       .save(
         arrayToJsonLines([
           {
@@ -49,15 +51,51 @@ describe("import", () => {
         ]),
       );
 
-    await expect(importHandler.import(TEST_STATE_CODE)).rejects.toThrow(
-      /Error importing test-file from bucket id test-bucket for state code US_ID: \nUnable to parse data:/,
+    await expect(
+      importHandler.import(TEST_STATE_CODE, [FILE_ONE]),
+    ).rejects.toThrow(
+      /Error importing file-one from bucket id test-bucket for state code US_ID: \nUnable to parse data:/,
     );
   });
 
-  test("should call loaderFunction", async () => {
+  test("should handle files being passed", async () => {
     await mockStorageSingleton
       .bucket(TEST_BUCKET)
-      .file(`${TEST_STATE_CODE}/${TEST_FILE}`)
+      .file(`${TEST_STATE_CODE}/${FILE_ONE}`)
+      .save(
+        arrayToJsonLines([
+          {
+            testField: "testing-field",
+          },
+        ]),
+      );
+
+    await importHandler.import(TEST_STATE_CODE, [FILE_ONE]);
+
+    expect(fileOneLoadFn).toHaveBeenCalledWith(
+      mockPrismaClient,
+      // This is how a generator apparently looks?
+      expect.objectContaining({}),
+    );
+
+    expect(fileTwoLoadFn).not.toHaveBeenCalled();
+  });
+
+  test("should load all files by default", async () => {
+    await mockStorageSingleton
+      .bucket(TEST_BUCKET)
+      .file(`${TEST_STATE_CODE}/${FILE_ONE}`)
+      .save(
+        arrayToJsonLines([
+          {
+            testField: "testing-field",
+          },
+        ]),
+      );
+
+    await mockStorageSingleton
+      .bucket(TEST_BUCKET)
+      .file(`${TEST_STATE_CODE}/${FILE_TWO}`)
       .save(
         arrayToJsonLines([
           {
@@ -68,7 +106,13 @@ describe("import", () => {
 
     await importHandler.import(TEST_STATE_CODE);
 
-    expect(testLoadFn).toHaveBeenCalledWith(
+    expect(fileOneLoadFn).toHaveBeenCalledWith(
+      mockPrismaClient,
+      // This is how a generator apparently looks?
+      expect.objectContaining({}),
+    );
+
+    expect(fileTwoLoadFn).toHaveBeenCalledWith(
       mockPrismaClient,
       // This is how a generator apparently looks?
       expect.objectContaining({}),

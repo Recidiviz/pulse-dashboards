@@ -17,8 +17,12 @@
 
 import { ReportType } from "@prisma/sentencing-server/client";
 
-import { staffImportSchema } from "~@sentencing-server/import/models";
-import { transformAndLoadStaffData } from "~@sentencing-server/import/utils";
+import {
+  insightImportSchema,
+  staffImportSchema,
+} from "~@sentencing-server/import/models";
+import { transformAndLoadInsightData } from "~@sentencing-server/import/utils/insights";
+import { transformAndLoadStaffData } from "~@sentencing-server/import/utils/staff";
 
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/case_record.py
 export const CASES_FILE_NAME = "sentencing_case_record.json";
@@ -41,6 +45,10 @@ export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
   [STAFF_FILE_NAME]: {
     schema: staffImportSchema,
     loaderFn: transformAndLoadStaffData,
+  },
+  [INSIGHTS_FILE_NAME]: {
+    schema: insightImportSchema,
+    loaderFn: transformAndLoadInsightData,
   },
 };
 

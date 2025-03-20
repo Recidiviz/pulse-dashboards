@@ -22,9 +22,11 @@ async function importData() {
     throw new Error("Missing state code environment variable");
   }
 
+  const files = process.env["FILES"]?.split(",");
+
   const importHandler = getImportHandler();
 
-  await importHandler.import(process.env["STATE_CODE"]);
+  await importHandler.import(process.env["STATE_CODE"], files);
 }
 
 await importData();

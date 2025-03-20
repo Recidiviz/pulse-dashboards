@@ -84,6 +84,7 @@ export const caseImportSchema = z.object({
   lsir_score: z.coerce.number().optional(),
   lsir_level: z.string().optional(),
   report_type: reportType.optional(),
+  investigation_status: z.string().optional(),
 });
 
 export const clientImportSchema = z
@@ -224,6 +225,16 @@ export const insightImportSchema = z.object({
   dispositions: dispositionsSchema,
 });
 
+const mandatoryMinimumsSchema = z.array(
+  z.object({
+    SentenceType: z.string(),
+    MinimumSentenceLength: z.coerce.number().nullable(),
+    MaximumSentenceLength: z.coerce.number().nullable(),
+    StatuteNumber: z.string().nullable().optional(),
+    StatuteLink: z.string().nullable().optional(),
+  }),
+);
+
 export const offenseImportSchema = z.object({
   state_code: stateCode,
   charge: z.string(),
@@ -231,6 +242,7 @@ export const offenseImportSchema = z.object({
   is_violent: z.boolean().optional(),
   // Integers are being converted to strings for some reason
   frequency: z.coerce.number(),
+  mandatory_minimums: mandatoryMinimumsSchema.optional(),
 });
 
 export const countyAndDistrictImportSchema = z.object({

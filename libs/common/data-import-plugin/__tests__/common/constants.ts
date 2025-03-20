@@ -17,4 +17,5 @@
 
 export const TEST_STATE_CODE = "US_ID";
 export const TEST_BUCKET = "test-bucket";
-export const TEST_FILE = "test-file";
+export const FILE_ONE = "file-one";
+export const FILE_TWO = "file-two";

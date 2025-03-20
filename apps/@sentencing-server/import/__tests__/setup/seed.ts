@@ -64,6 +64,14 @@ export const fakeCounty = {
   },
 };
 
+export const fakeMandatoryMinimum = {
+  sentenceType: "Probation",
+  minimumSentenceLength: faker.number.int({ max: 100 }),
+  maximumSentenceLength: faker.number.int({ max: 100 }),
+  statuteNumber: "L1000",
+  statuteLink: faker.internet.url(),
+};
+
 export const fakeStaff = {
   externalId: "staff-ext-1",
   pseudonymizedId: "staff-pid-1",
@@ -157,6 +165,7 @@ export const fakeCase = {
   ]),
   isLsirScoreLocked: false,
   isCountyLocked: false,
+  isCancelled: false,
   currentOnboardingTopic: faker.helpers.enumValue(OnboardingTopic),
   recommendedOpportunities: [
     {
@@ -264,7 +273,12 @@ export let fakeInsightId: string;
 
 export async function seed(prismaClient: PrismaClient) {
   // Seed Data
-  await prismaClient.offense.create({ data: fakeOffense });
+  await prismaClient.offense.create({
+    data: {
+      ...fakeOffense,
+      mandatoryMinimums: { create: fakeMandatoryMinimum },
+    },
+  });
   await prismaClient.county.create({
     data: {
       stateCode: fakeCounty.stateCode,
