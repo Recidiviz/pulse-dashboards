@@ -15,13 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ReportType } from "@prisma/sentencing-server/client";
-
 import {
+  caseImportSchema,
+  clientImportSchema,
+  countyAndDistrictImportSchema,
   insightImportSchema,
+  offenseImportSchema,
+  opportunityImportSchema,
   staffImportSchema,
 } from "~@sentencing-server/import/models";
+import { transformAndLoadCaseData } from "~@sentencing-server/import/utils/cases";
+import { transformAndLoadClientData } from "~@sentencing-server/import/utils/clients";
+import { transformAndLoadCountyAndDistrictData } from "~@sentencing-server/import/utils/countiesAndDistricts";
 import { transformAndLoadInsightData } from "~@sentencing-server/import/utils/insights";
+import { transformAndLoadOffenseData } from "~@sentencing-server/import/utils/offenses";
+import { transformAndLoadOpportunityData } from "~@sentencing-server/import/utils/opportunities";
 import { transformAndLoadStaffData } from "~@sentencing-server/import/utils/staff";
 
 // See view_id from https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/query/state/views/sentencing/case_record.py
@@ -50,10 +58,24 @@ export const FILE_NAME_TO_SCHEMA_AND_LOADER_FN = {
     schema: insightImportSchema,
     loaderFn: transformAndLoadInsightData,
   },
-};
-
-export const EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE = {
-  "PSI Assigned Full": ReportType.FullPSI,
-  "PSI File Review Assigned": ReportType.FileReview,
-  "PSI File Review w/LSI Assigned": ReportType.FileReviewWithUpdatedLSIRScore,
+  [CLIENTS_FILE_NAME]: {
+    schema: clientImportSchema,
+    loaderFn: transformAndLoadClientData,
+  },
+  [CASES_FILE_NAME]: {
+    schema: caseImportSchema,
+    loaderFn: transformAndLoadCaseData,
+  },
+  [OPPORTUNITIES_FILE_NAME]: {
+    schema: opportunityImportSchema,
+    loaderFn: transformAndLoadOpportunityData,
+  },
+  [OFFENSES_FILE_NAME]: {
+    schema: offenseImportSchema,
+    loaderFn: transformAndLoadOffenseData,
+  },
+  [COUNTIES_AND_DISTRICTS_FILES_NAME]: {
+    schema: countyAndDistrictImportSchema,
+    loaderFn: transformAndLoadCountyAndDistrictData,
+  },
 };
