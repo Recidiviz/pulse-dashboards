@@ -6,24 +6,19 @@ locals {
   is_production = var.project_id == "recidiviz-dashboard-production"
   env_secrets   = yamldecode(data.sops_file.env.raw)
 
-  shared_server_env  = local.env_secrets["env_sentencing_server"]
-  staging_server_env = local.env_secrets["env_staging_sentencing_server"]
-  prod_server_env    = local.env_secrets["env_prod_sentencing_server"]
+  shared_server_env = local.env_secrets["env_sentencing_server"]
+  server_env        = local.env_secrets[var.server_env_key]
 
-  staging_migrate_db_env = local.env_secrets["env_staging_sentencing_migrate_db"]
-  prod_migrate_db_env    = local.env_secrets["env_prod_sentencing_migrate_db"]
+  migrate_db_env = local.env_secrets[var.migrate_db_env_key]
 
-  shared_import_env  = local.env_secrets["env_sentencing_data_import"]
-  staging_import_env = local.env_secrets["env_staging_sentencing_data_import"]
-  prod_import_env    = local.env_secrets["env_prod_sentencing_data_import"]
+  shared_data_import_env = local.env_secrets["env_sentencing_data_import"]
+  data_import_env        = var.configure_import ? local.env_secrets[var.data_import_env_key] : {}
 
   registry_repo_name = "sentencing"
 
   server_image_name = "sentencing-server"
-  server_name       = "sentencing-server"
 
   migrate_db_image_name = "sentencing-server"
-  migrate_db_name       = "sentencing-migrate-db"
 
   import_image_name = "sentencing-data-import"
   import_job_name   = "sentencing-data-import"
@@ -31,7 +26,7 @@ locals {
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
   server_env_vars = nonsensitive([
-    for key, value in merge(local.shared_server_env, local.is_production ? local.prod_server_env : local.staging_server_env) : {
+    for key, value in merge(local.shared_server_env, local.server_env) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -41,7 +36,7 @@ locals {
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
   migrate_db_env_vars = nonsensitive([
-    for key, value in local.is_production ? local.prod_migrate_db_env : local.staging_migrate_db_env : {
+    for key, value in local.migrate_db_env : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -51,8 +46,8 @@ locals {
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  import_env_vars = nonsensitive([
-    for key, value in merge(local.shared_import_env, local.is_production ? local.prod_import_env : local.staging_import_env) : {
+  data_import_env_vars = nonsensitive([
+    for key, value in merge(local.shared_data_import_env, local.data_import_env) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -65,8 +60,8 @@ module "database" {
 
   project_id                 = var.project_id
   create_bigquery_connection = false
-  instance_key               = "sentencing"
-  base_secret_name           = "sentencing"
+  instance_key               = var.sql_instance_name
+  base_secret_name           = var.sql_base_secret_name
   database_version           = "POSTGRES_16"
   has_readonly_user          = false
   availability_type          = var.database_availability_type
@@ -88,7 +83,7 @@ module "server" {
 
   project_id      = var.project_id
   location        = var.location
-  service_name    = local.server_name
+  service_name    = var.server_name
   service_account = google_service_account.default.email
 
   containers = [
@@ -118,7 +113,7 @@ module "server" {
 module "migrate-db-job" {
   source                        = "../../vendor/cloud-run-job-exec"
   exec                          = true
-  name                          = local.migrate_db_name
+  name                          = var.migrate_db_name
   image                         = "${var.artifact_registry_repo}/${local.migrate_db_image_name}:${var.migrate_db_container_version}"
   project_id                    = var.project_id
   location                      = var.location
@@ -144,13 +139,17 @@ module "migrate-db-job" {
 # Configure a job that will import data
 # We don't execute it on deploy - it will be run when the workflow is triggered
 module "import-job" {
-  source                        = "../../vendor/cloud-run-job-exec"
+  source = "../../vendor/cloud-run-job-exec"
+
+  # Don't create an import job for demo
+  count = var.configure_import ? 1 : 0
+
   exec                          = false
   name                          = local.import_job_name
   image                         = "${var.artifact_registry_repo}/${local.import_image_name}:${var.import_container_version}"
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.import_env_vars
+  env_vars                      = local.data_import_env_vars
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
 
@@ -170,6 +169,9 @@ module "import-job" {
 
 module "gcs_bucket" {
   source = "../../vendor/cloud-storage-bucket"
+
+  # Don't create a bucket for demo
+  count = var.configure_import ? 1 : 0
 
   project_id = var.project_id
   location   = var.location
@@ -198,7 +200,11 @@ module "gcs_bucket" {
 
 # Configure a Google Workflow that is executed when a pubsub notification
 module "handle-sentencing-gcs-upload" {
-  source                = "../../vendor/google-workflows-workflow"
+  source = "../../vendor/google-workflows-workflow"
+
+  # Don't create a workflow for demo
+  count = var.configure_import ? 1 : 0
+
   project_id            = var.project_id
   region                = var.location
   service_account_email = google_service_account.default.email
@@ -207,7 +213,7 @@ module "handle-sentencing-gcs-upload" {
     event_arc = {
       name                  = "handle-sentencing-upload-wf"
       service_account_email = google_service_account.default.email
-      pubsub_topic_id       = google_pubsub_topic.sentencing_export_success_topic.id
+      pubsub_topic_id       = google_pubsub_topic.sentencing_export_success_topic[0].id
       matching_criteria = [
         {
           attribute = "type"
@@ -218,6 +224,6 @@ module "handle-sentencing-gcs-upload" {
   }
   workflow_source = file("${path.module}/workflows/handle-sentencing-gcs-upload.workflows.yaml")
   env_vars = {
-    JOB_NAME = module.import-job.id
+    JOB_NAME = module.import-job[0].id
   }
 }

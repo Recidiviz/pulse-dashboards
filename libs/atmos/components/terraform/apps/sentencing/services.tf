@@ -1,6 +1,6 @@
 # Create a service account
 resource "google_service_account" "default" {
-  account_id   = "sentencing"
+  account_id   = var.service_account_id
   display_name = "Sentencing Service Account for data import and running the server"
 }
 
@@ -23,6 +23,9 @@ resource "google_project_iam_member" "workflowsinvoker" {
   project = var.project_id
   role    = "roles/workflows.invoker"
   member  = "serviceAccount:${google_service_account.default.email}"
+
+  // Only create this resource if the import job is configured
+  count = var.configure_import ? 1 : 0
 }
 
 # Grant Eventarc eventReceiver so the service account can receive events
@@ -30,6 +33,9 @@ resource "google_project_iam_member" "eventarceventreceiver" {
   project = var.project_id
   role    = "roles/eventarc.eventReceiver"
   member  = "serviceAccount:${google_service_account.default.email}"
+
+  // Only create this resource if the import job is configured
+  count = var.configure_import ? 1 : 0
 }
 
 # Grant Iam service account user so the service account can orchestrate the internal cloud run service accounts
@@ -58,9 +64,15 @@ resource "google_project_iam_member" "storageobjectviewer" {
   project = var.project_id
   role    = "roles/storage.objectViewer"
   member  = "serviceAccount:${google_service_account.default.email}"
+
+  // Only create this resource if the import job is configured
+  count = var.configure_import ? 1 : 0
 }
 
 resource "google_pubsub_topic" "sentencing_export_success_topic" {
   name    = "sentencing_export_success"
   project = var.project_id
+
+  // Only create this resource if the import job is configured
+  count = var.configure_import ? 1 : 0
 }

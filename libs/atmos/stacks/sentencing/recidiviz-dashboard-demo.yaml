@@ -1,10 +1,10 @@
-# Infrastructure configuration for components for the sentencing app that will be deployed to production
+# Infrastructure configuration for components for the sentencing app that will be deployed to staging
 settings:
   context:
-    project_id: recidiviz-dashboard-production
-    project_number: 13012629248
-    data_platform_project_number: 688733534196
-    product: sentencing
+    project_id: recidiviz-dashboard-staging
+    project_number: 626425930051
+    data_platform_project_number: 984160736970
+    product: sentencing-demo
     location: us-central1
 
 # The variables set here are automatically provided to any components used in this stack.
@@ -20,12 +20,12 @@ terraform:
   backend_type: gcs
   backend:
     gcs:
-      bucket: recidiviz-dashboard-production-tf-state
+      bucket: recidiviz-dashboard-demo-tf-state
   # This provides the default configuration for our Terraform providers
   # https://atmos.tools/core-concepts/components/terraform/providers
   providers:
     google:
-      project: recidiviz-dashboard-production
+      project: recidiviz-dashboard-staging
 
 components:
   terraform:
@@ -36,8 +36,11 @@ components:
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
         artifact_registry_repo: '{{ (atmos.Component "apps/sentencing" "recidiviz-dashboard-staging--sentencing").vars.artifact_registry_repo }}'
         artifact_registry_project_id: '{{ (atmos.Component "apps/sentencing" "recidiviz-dashboard-staging--sentencing").vars.project_id }}'
-        database_availability_type: REGIONAL
-        database_secondary_zone: us-central1-c
-        server_env_key: env_prod_sentencing_server
-        migrate_db_env_key: env_prod_sentencing_migrate_db
-        data_import_env_key: env_prod_sentencing_data_import
+        configure_import: false
+        server_env_key: env_demo_sentencing_server
+        migrate_db_env_key: env_demo_sentencing_migrate_db
+        service_account_id: sentencing-demo
+        sql_instance_name: sentencing-demo
+        sql_base_secret_name: sentencing_demo
+        server_name: sentencing-server-demo
+        migrate_db_name: sentencing-migrate-db-demo

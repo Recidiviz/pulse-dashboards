@@ -59,3 +59,61 @@ variable "database_secondary_zone" {
   description = "The secondary zone for the service"
   default     = null
 }
+
+variable "sql_instance_name" {
+  type        = string
+  description = "The name of the SQL instance"
+  default     = "sentencing"
+}
+
+variable "sql_base_secret_name" {
+  type        = string
+  description = "The name of the SQL secret prefixes"
+  default     = "sentencing"
+}
+
+variable "server_name" {
+  type        = string
+  description = "The name of the SQL instance"
+  default     = "sentencing-server"
+}
+
+variable "migrate_db_name" {
+  type        = string
+  description = "The name of the SQL instance"
+  default     = "sentencing-migrate-db"
+}
+
+variable "import-job-name" {
+  type        = string
+  description = "The name of the SQL instance"
+  default     = "sentencing-data-import"
+}
+
+variable "configure_import" {
+  type        = bool
+  description = "Whether to include the import-related resources"
+  default     = true
+}
+
+variable "server_env_key" {
+  type        = string
+  description = "The key for the server env"
+}
+
+variable "migrate_db_env_key" {
+  type        = string
+  description = "The key for the migrate db env"
+}
+
+variable "data_import_env_key" {
+  type        = string
+  description = "The key for the import data env"
+  default     = null
+}
+
+variable "service_account_id" {
+  type        = string
+  description = "The name of the service account"
+  default     = "sentencing"
+}
