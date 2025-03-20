@@ -15,8 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { STAFF_FILE_NAME } from "~@sentencing-server/import/constants";
+import {
+  INSIGHTS_FILE_NAME,
+  STAFF_FILE_NAME,
+} from "~@sentencing-server/import/constants";
 
 export const TEST_BUCKET = "test-bucket";
 export const TEST_STATE_CODE = "US_ID";
 export const TEST_STAFF_FILE_NAME = `${TEST_STATE_CODE}/${STAFF_FILE_NAME}`;
+export const TEST_INSIGHTS_FILE_NAME = `${TEST_STATE_CODE}/${INSIGHTS_FILE_NAME}`;

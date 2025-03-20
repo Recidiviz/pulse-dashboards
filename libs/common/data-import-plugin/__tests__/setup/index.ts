@@ -23,8 +23,9 @@ import { z } from "zod";
 import { PrismaClient } from "~data-import-plugin/common/types";
 import { ImportHandler } from "~data-import-plugin/index";
 import {
+  FILE_ONE,
+  FILE_TWO,
   TEST_BUCKET,
-  TEST_FILE,
 } from "~data-import-plugin/test/common/constants";
 
 export const mockPrismaClient = mock<PrismaClient>();
@@ -37,14 +38,31 @@ export const testGetPrismaClientForStateCode = vi.fn((stateCode: string) => {
   throw new Error(`Unsupported state code: ${stateCode}`);
 });
 
-const testSchema = z.object({
+const fileOneSchema = z.object({
   testField: z.string(),
 });
 
-export const testLoadFn = vi.fn(
+const fileTwoSchema = z.object({
+  testField: z.string(),
+});
+
+export const fileOneLoadFn = vi.fn(
   async (
     _: typeof mockPrismaClient,
-    data: AsyncGenerator<z.infer<typeof testSchema> | Error>,
+    data: AsyncGenerator<z.infer<typeof fileOneSchema> | Error>,
+  ) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for await (const _data of data) {
+      continue;
+    }
+    return Promise.resolve();
+  },
+);
+
+export const fileTwoLoadFn = vi.fn(
+  async (
+    _: typeof mockPrismaClient,
+    data: AsyncGenerator<z.infer<typeof fileTwoSchema> | Error>,
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for await (const _data of data) {
@@ -60,9 +78,13 @@ export const importHandler = new ImportHandler({
   bucket: TEST_BUCKET,
   getPrismaClientForStateCode: testGetPrismaClientForStateCode,
   filesToSchemasAndLoaderFns: {
-    [TEST_FILE]: {
-      schema: testSchema,
-      loaderFn: testLoadFn,
+    [FILE_ONE]: {
+      schema: fileOneSchema,
+      loaderFn: fileOneLoadFn,
+    },
+    [FILE_TWO]: {
+      schema: fileTwoSchema,
+      loaderFn: fileTwoLoadFn,
     },
   },
 });
@@ -74,6 +96,6 @@ vi.mock("@google-cloud/storage", () => ({
 }));
 
 beforeEach(() => {
-  testLoadFn.mockClear();
+  fileOneLoadFn.mockClear();
   mockStorageSingleton = new MockStorage();
 });

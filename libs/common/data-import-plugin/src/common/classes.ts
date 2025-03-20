@@ -49,6 +49,7 @@ export abstract class ImportHandlerBase<T extends PrismaClient, M> {
     schema: K,
   ) {
     const data = this.getDataFromGCS(bucket, file);
+    let count = 1;
     for await (const datum of data) {
       try {
         yield schema.parse(datum) as z.infer<K>;
@@ -57,22 +58,30 @@ export abstract class ImportHandlerBase<T extends PrismaClient, M> {
           `\nUnable to parse data:\nData: ${JSON.stringify(datum, null, 2)}\nError: ${e}`,
         );
       }
+
+      if (count % 100 === 0) {
+        console.log(`Processed ${count} records from ${file}...`);
+      }
+      count++;
     }
+
+    console.log(`Processed ${count} records from ${file}.`);
   }
 
   /**
    * Imports data from GCS for the provided state code.
+   *
+   * @param stateCode - The state code to import data for.
+   * @param files - The files to import. If not provided, all files will be imported.
    */
-  public async import(stateCode: string) {
-    const {
-      bucket,
-      getPrismaClientForStateCode,
-      filesToSchemasAndLoaderFns: filesToModelsAndLoaderFns,
-    } = this.props;
+  public async import(stateCode: string, files?: string[]) {
+    const { bucket, getPrismaClientForStateCode, filesToSchemasAndLoaderFns } =
+      this.props;
 
     console.log(
       `Received notification for import of data from bucket id ${bucket} for state code ${stateCode}.`,
     );
+    console.log(`Files to import: ${files ? files.join(", ") : "all files"}.`);
 
     let prismaClient;
     try {
@@ -82,11 +91,18 @@ export abstract class ImportHandlerBase<T extends PrismaClient, M> {
     }
 
     const errors = [];
-    for await (const file of Object.keys(filesToModelsAndLoaderFns)) {
+
+    for await (const file of files ?? Object.keys(filesToSchemasAndLoaderFns)) {
       console.log(`Loading data for file ${file}.`);
 
       try {
-        const { schema, loaderFn } = filesToModelsAndLoaderFns[file];
+        if (!(file in filesToSchemasAndLoaderFns)) {
+          throw new Error(
+            `No loader function found for file ${file}. Skipping.`,
+          );
+        }
+
+        const { schema, loaderFn } = filesToSchemasAndLoaderFns[file];
         const data = this.getAndTransformDataFromGCS(
           bucket,
           `${stateCode}/${file}`,
