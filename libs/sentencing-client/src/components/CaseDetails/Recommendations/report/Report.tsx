@@ -15,14 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import _ from "lodash";
 import moment from "moment";
 
 import { CaseInsight } from "../../../../api";
-import {
-  convertDecimalToPercentage,
-  printFormattedRecordString,
-} from "../../../../utils/utils";
+import { GeoConfig } from "../../../../geoConfigs/types";
+import { printFormattedRecordString } from "../../../../utils/utils";
 import InfoIcon from "../../../assets/info-icon.svg?react";
 import RecidivizLogo from "../../../assets/recidiviz-logo-bw.png";
 import { SelectedRecommendation } from "../../../CaseDetails/types";
@@ -36,10 +33,14 @@ import {
   OffenseText,
   RecidivismChartExplanation,
 } from "../../components/charts/RecidivismChart/RecidivismChartExplanation";
-import { recommendationTypeOrder } from "../../constants";
-import { getRecidivismPlot } from "./Plot";
+import { RecommendationOptionType } from "../constants";
+import {
+  DispositionSectionForSentenceLength,
+  DispositionSectionForSentenceType,
+  RecidivismRateSectionForSentenceLength,
+  RecidivismRateSectionForSentenceType,
+} from "./components";
 import * as Styled from "./Report.styles";
-import { getChartCaptions } from "./utils";
 
 interface ReportProps {
   fullName?: string;
@@ -47,6 +48,7 @@ interface ReportProps {
   age?: number;
   selectedRecommendation: SelectedRecommendation;
   insight?: CaseInsight;
+  geoConfig: GeoConfig;
 }
 
 function Header() {
@@ -147,48 +149,45 @@ export function Report({
   fullName,
   age,
   selectedRecommendation,
+  geoConfig,
 }: ReportProps) {
-  const cumulativeEndingEventRates = insight?.rollupRecidivismSeries.map(
-    (dp) => {
-      const sortedDatapoints = [...dp.dataPoints].sort(
-        (a, b) => a.cohortMonths - b.cohortMonths,
-      );
-      return {
-        ...dp,
-        endingEventRate: convertDecimalToPercentage(
-          sortedDatapoints[dp.dataPoints.length - 1].eventRate,
-        ),
-      };
-    },
-  );
-
-  const sortedCumulativeEndingEventRates = cumulativeEndingEventRates?.sort(
-    (a, b) =>
-      recommendationTypeOrder.indexOf(a.recommendationType) -
-      recommendationTypeOrder.indexOf(b.recommendationType),
-  );
-
-  const sortedDispositionData =
-    insight &&
-    [...insight.dispositionData].sort(
-      (a, b) =>
-        recommendationTypeOrder.indexOf(a.recommendationType) -
-        recommendationTypeOrder.indexOf(b.recommendationType),
-    );
+  const recommendationOptionType = geoConfig.recommendation.type;
+  const recommendationOrder = geoConfig.recommendation.baseOptionsTemplate;
 
   const gender = (
     insight?.gender || insight?.rollupGender
   )?.toLocaleLowerCase();
 
-  // Get the maximum upper CI value across all recommendation types
-  const maxUpperCI =
-    _.max(
-      insight?.rollupRecidivismSeries.flatMap((val) => {
-        return val.dataPoints.map((dp) => dp.upperCI);
-      }),
-    ) ?? 0;
+  let dispositionSection;
+  if (insight?.dispositionNumRecords) {
+    dispositionSection =
+      recommendationOptionType === RecommendationOptionType.SentenceType ? (
+        <DispositionSectionForSentenceType
+          insight={insight}
+          recommendationOrder={recommendationOrder}
+        />
+      ) : (
+        <DispositionSectionForSentenceLength
+          insight={insight}
+          recommendationOrder={recommendationOrder}
+        />
+      );
+  } else {
+    dispositionSection = (
+      <Styled.RateDetailsTitle>No previous records</Styled.RateDetailsTitle>
+    );
+  }
 
-  const chartCaptions = insight ? getChartCaptions(insight) : {};
+  const recidivismRatePlots =
+    insight &&
+    (recommendationOptionType === RecommendationOptionType.SentenceType ? (
+      <RecidivismRateSectionForSentenceType
+        insight={insight}
+        recommendationOrder={recommendationOrder}
+      />
+    ) : (
+      <RecidivismRateSectionForSentenceLength insight={insight} />
+    ));
 
   return (
     <Styled.ReportContainer>
@@ -237,38 +236,9 @@ export function Report({
           </Styled.TitleAttributesWrapper>
 
           <Styled.SentencingRecidivismRateContainer>
-            <Styled.SentencingRecidivismRateWrapper>
-              {(!sortedDispositionData ||
-                sortedDispositionData.length === 0) && (
-                <Styled.RateDetailsTitle>
-                  No previous records
-                </Styled.RateDetailsTitle>
-              )}
-              {sortedDispositionData?.map((dp) => {
-                const historicalSentencingPercentage =
-                  convertDecimalToPercentage(dp.percentage);
-                return (
-                  <Styled.SentencingRecidivismRateSection
-                    key={dp.recommendationType}
-                  >
-                    <Styled.RateDetailsTitlePercentage>
-                      <Styled.RateDetailsTitle>
-                        {dp.recommendationType}
-                      </Styled.RateDetailsTitle>
-                      <Styled.RateDetailsPercentage>
-                        {historicalSentencingPercentage !== undefined
-                          ? historicalSentencingPercentage
-                          : "--"}
-                        %
-                      </Styled.RateDetailsPercentage>
-                    </Styled.RateDetailsTitlePercentage>
-                    <Styled.ProgressBar
-                      percentage={historicalSentencingPercentage}
-                    />
-                  </Styled.SentencingRecidivismRateSection>
-                );
-              })}
-            </Styled.SentencingRecidivismRateWrapper>
+            <Styled.DispositionCardWrapper>
+              {dispositionSection}
+            </Styled.DispositionCardWrapper>
             {insight && (
               <Styled.Explanation>
                 <DispositionChartExplanation insight={insight} />
@@ -288,57 +258,14 @@ export function Report({
 
           <Styled.SentencingRecidivismRateContainer>
             <Styled.SentencingRecidivismRateWrapper>
-              {sortedCumulativeEndingEventRates?.map((dp) => {
-                const recidivismSeries = _.find(
-                  insight?.rollupRecidivismSeries,
-                  (series) =>
-                    series.recommendationType === dp.recommendationType,
-                )?.dataPoints;
-
-                const plot = recidivismSeries
-                  ? getRecidivismPlot(recidivismSeries, maxUpperCI)
-                  : undefined;
-
-                // (https://github.com/Recidiviz/recidiviz-data/issues/35111): Handle cases were recommendationType is not set but sentence range is
-                const chartCaption = dp.recommendationType
-                  ? chartCaptions[dp.recommendationType]
-                  : "";
-
-                return (
-                  <Styled.SentencingRecidivismRateSection
-                    key={dp.recommendationType}
-                  >
-                    <Styled.RateDetailsTitlePercentage>
-                      <Styled.RateDetailsTitle>
-                        {dp.recommendationType}
-                      </Styled.RateDetailsTitle>
-                      <Styled.RateDetailsPercentage>
-                        {dp.endingEventRate !== undefined
-                          ? dp.endingEventRate
-                          : "--"}
-                        %
-                      </Styled.RateDetailsPercentage>
-                    </Styled.RateDetailsTitlePercentage>
-                    {/* Chart */}
-                    <div
-                      style={{ marginLeft: "-6px" }}
-                      ref={(ref) => {
-                        if (!ref || !plot) {
-                          return undefined;
-                        }
-                        ref.replaceChildren();
-                        ref.appendChild(plot);
-                      }}
-                    />
-                    {/* Chart caption */}
-                    <Styled.ChartCaption>{chartCaption}</Styled.ChartCaption>
-                  </Styled.SentencingRecidivismRateSection>
-                );
-              })}
+              {recidivismRatePlots}
             </Styled.SentencingRecidivismRateWrapper>
             {insight && (
               <Styled.Explanation>
-                <RecidivismChartExplanation insight={insight} />
+                <RecidivismChartExplanation
+                  insight={insight}
+                  recommendationOptionType={recommendationOptionType}
+                />
               </Styled.Explanation>
             )}
           </Styled.SentencingRecidivismRateContainer>

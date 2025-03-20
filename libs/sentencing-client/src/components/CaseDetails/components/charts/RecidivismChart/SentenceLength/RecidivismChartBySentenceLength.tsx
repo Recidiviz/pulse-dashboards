@@ -20,6 +20,7 @@ import { useMemo, useState } from "react";
 import { printFormattedRecordString } from "../../../../../../../src/utils/utils";
 import { CaseInsight } from "../../../../../../api";
 import { InfoIconWithTooltip } from "../../../../../Tooltip/Tooltip";
+import { RecommendationOptionType } from "../../../../Recommendations/constants";
 import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
 import {
   getSentenceLengthBucketLabel,
@@ -85,7 +86,13 @@ export function RecidivismChartBySentenceLength({
             headerText="36 Month Cumulative Recidivism Rates with 95% Confidence"
             content={
               <CommonStyled.ChartTooltipContentSection>
-                <RecidivismChartExplanation insight={insight} isTooltip />
+                <RecidivismChartExplanation
+                  insight={insight}
+                  isTooltip
+                  recommendationOptionType={
+                    RecommendationOptionType.SentenceLength
+                  }
+                />
               </CommonStyled.ChartTooltipContentSection>
             }
           />

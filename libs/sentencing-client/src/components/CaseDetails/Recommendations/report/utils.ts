@@ -18,6 +18,7 @@
 import _ from "lodash";
 
 import { CaseInsight } from "../../../../api";
+import { RecommendationOptionTemplateBase } from "../types";
 
 type RecommendationType = NonNullable<
   CaseInsight["rollupRecidivismSeries"][0]["recommendationType"]
@@ -121,4 +122,28 @@ export function getChartCaptions(insight: CaseInsight) {
     },
     {},
   );
+}
+
+export function getRecommendationOrderIndex(
+  recommendation: {
+    recommendationType: string | null;
+    sentenceLengthBucketStart: number;
+    sentenceLengthBucketEnd: number;
+  },
+  recommendationOrder: RecommendationOptionTemplateBase[],
+) {
+  return recommendationOrder.findIndex((option) => {
+    if (
+      recommendation.sentenceLengthBucketStart === 0 &&
+      recommendation.sentenceLengthBucketEnd === -1
+    ) {
+      return option.recommendationType === recommendation.recommendationType;
+    }
+
+    return (
+      option.sentenceLengthBucketStart ===
+        recommendation.sentenceLengthBucketStart &&
+      option.sentenceLengthBucketEnd === recommendation.sentenceLengthBucketEnd
+    );
+  });
 }
