@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { isThisMonth, isThisWeek } from "date-fns";
-import { every } from "lodash";
+import { every, some } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import {
@@ -180,11 +180,18 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   personMatchesFilters(person: JusticeInvolvedPerson): boolean {
-    return every(
+    const matchesPeopleFilters = every(
       Object.entries(this.selectedFiltersForType("person")),
       ([field, options]: [TaskFilterFieldForPerson, string[]]) =>
         // @ts-expect-error searchable fields are restricted to strings but TS does not know that
         options.includes(person[field]),
+    );
+
+    if (!matchesPeopleFilters) return false;
+
+    // return true if the person has any tasks that match the filters
+    return some(person.supervisionTasks?.readyOrderedTasks ?? [], (task) =>
+      this.taskMatchesFilters(task),
     );
   }
 

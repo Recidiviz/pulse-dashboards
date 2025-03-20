@@ -108,7 +108,7 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
             label: "Electronic Contact, Unsch.",
           },
           {
-            value: "usTxAssesment",
+            value: "usTxAssessment",
             label: "Assessments",
           },
         ],
