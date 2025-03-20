@@ -159,7 +159,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnCompliantReporting2025Policy: {},
   reportIncorrectRosters: {},
 };
-export const defaultFeatureVariantsActive: Partial<FeatureVariantMapping> =
+export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
     ? {
         actionStrategies: { activeTenants: ["US_MI"] },
