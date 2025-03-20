@@ -45,7 +45,7 @@ export const US_ND_CONFIG: GeoConfig = {
         recommendationType: RecommendationType.Probation,
       },
       {
-        label: "Less than one year",
+        label: "< 1 Year",
         sentenceLengthBucketStart: 0,
         sentenceLengthBucketEnd: 1,
       },

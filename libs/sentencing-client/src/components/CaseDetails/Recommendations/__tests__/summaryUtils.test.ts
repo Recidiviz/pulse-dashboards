@@ -1584,7 +1584,7 @@ describe("generateRecommendationSummary for US_ND", () => {
 
   // Less than one year recommendation w/ needs and opportunities, no protective factors
   test("generates summary for less than one year recommendation type with needs and opportunities, and no protective factors with expected name and salutations", () => {
-    const recommendationType = "Less than one year";
+    const recommendationType = "< 1 Year";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 0,
@@ -1660,7 +1660,7 @@ describe("generateRecommendationSummary for US_ND", () => {
 
   // Less than one year recommendation (default) w/ needs and opportunities and protective factors
   test("generates summary for less than one year recommendation type w/ needs and opportunities and protective factors with expected name and salutations", () => {
-    const recommendationType = "Less than one year";
+    const recommendationType = "< 1 Year";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 0,

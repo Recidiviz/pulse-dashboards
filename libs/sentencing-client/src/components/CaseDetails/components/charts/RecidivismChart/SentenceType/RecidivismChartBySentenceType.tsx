@@ -21,6 +21,7 @@ import { CaseInsight } from "../../../../../../api";
 import { printFormattedRecordString } from "../../../../../../utils/utils";
 import { InfoIconWithTooltip } from "../../../../../Tooltip/Tooltip";
 import { NONE_OPTION } from "../../../../Form/constants";
+import { RecommendationOptionType } from "../../../../Recommendations/constants";
 import { SelectedRecommendation } from "../../../../types";
 import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
 import NoDataMessage from "../../components/NoDataMessage";
@@ -76,7 +77,13 @@ export function RecidivismChartBySentenceType({
             headerText="Cumulative Recidivism Rates"
             content={
               <CommonStyled.ChartTooltipContentSection>
-                <RecidivismChartExplanation insight={insight} isTooltip />
+                <RecidivismChartExplanation
+                  insight={insight}
+                  isTooltip
+                  recommendationOptionType={
+                    RecommendationOptionType.SentenceType
+                  }
+                />
               </CommonStyled.ChartTooltipContentSection>
             }
           />

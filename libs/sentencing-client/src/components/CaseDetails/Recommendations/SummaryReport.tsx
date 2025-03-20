@@ -197,6 +197,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
       externalId={externalId ?? ""}
       selectedRecommendation={selectedRecommendation}
       insight={insight}
+      geoConfig={geoConfig}
     />
   );
 

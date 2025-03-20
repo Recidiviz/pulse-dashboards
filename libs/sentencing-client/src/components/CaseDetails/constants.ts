@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { Case, Client } from "../../api";
-import { RecommendationType } from "./types";
 
 export const PDF_PAGE_WIDTH = 950;
 
@@ -170,10 +169,3 @@ export const GenderToDisplayName: Record<Client["gender"], string> = {
   INTERNAL_UNKNOWN: "Unknown",
   EXTERNAL_UNKNOWN: "Unknown",
 };
-
-export const recommendationTypeOrder: Case["selectedRecommendation"][] = [
-  RecommendationType.Probation,
-  RecommendationType.Rider,
-  RecommendationType.Term,
-  RecommendationType.None,
-];

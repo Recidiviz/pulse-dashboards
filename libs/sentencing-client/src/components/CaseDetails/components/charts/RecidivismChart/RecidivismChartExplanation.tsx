@@ -20,6 +20,7 @@ import moment from "moment";
 import { CaseInsight } from "../../../../../api";
 import { printFormattedRecordString } from "../../../../../utils/utils";
 import ciLegendImg from "../../../../assets/ci-legend.png";
+import { RecommendationOptionType } from "../../../Recommendations/constants";
 import { INDIVIDUALS_STRING } from "../common/constants";
 import { getDescriptionGender } from "../common/utils";
 import { LsirScoreText } from "../components/LsirScoreText";
@@ -35,11 +36,13 @@ export function OffenseText({ rollupOffenseDescription }: OffenseSpanProps) {
 
 interface RecidivismChartExplanationProps {
   insight: CaseInsight;
+  recommendationOptionType: RecommendationOptionType;
   isTooltip?: boolean;
 }
 
 export function RecidivismChartExplanation({
   insight,
+  recommendationOptionType,
   isTooltip = false,
 }: RecidivismChartExplanationProps) {
   const {
@@ -75,13 +78,14 @@ export function RecidivismChartExplanation({
           `The shaded areas represent the confidence intervals, or the range of
       possible values for the true recidivism rate.`}
       </Styled.TextWrapper>
-      {!isTooltip && (
-        <img
-          src={ciLegendImg}
-          height="68px"
-          alt="Confidence Intervals: Shaded areas represent the range of possible values for the true recidivism rate."
-        />
-      )}
+      {!isTooltip &&
+        recommendationOptionType === RecommendationOptionType.SentenceType && (
+          <img
+            src={ciLegendImg}
+            height="68px"
+            alt="Confidence Intervals: Shaded areas represent the range of possible values for the true recidivism rate."
+          />
+        )}
     </Styled.TextContainer>
   );
 }

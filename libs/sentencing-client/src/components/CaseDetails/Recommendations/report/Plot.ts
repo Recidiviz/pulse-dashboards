@@ -29,7 +29,7 @@ import { CaseInsight } from "../../../../api";
 
 const TICK_LOCATIONS = [0, 3, 6, 9, 12, 18, 24, 30, 36];
 
-export function getRecidivismPlot(
+export function getRecidivismPlotForSentenceType(
   dataPoints: CaseInsight["rollupRecidivismSeries"][0]["dataPoints"],
   maxUpperCI: number,
 ) {

@@ -83,6 +83,7 @@ export function getRecidivismPlot(
   insight: CaseInsight,
   plotWidth: number,
   isFocused = true,
+  forReport = false,
 ) {
   const { rollupRecidivismSeries } = insight;
 
@@ -125,11 +126,13 @@ export function getRecidivismPlot(
       Math.max(...transformedSeries.map((series) => series.upperCI)) * 20,
     ) * 5;
 
+  const margin = forReport ? 0 : 200;
+
   return plot({
     width: plotWidth,
-    height: 210 + PLOT_HEIGHT_MULTIPLIER * transformedSeries.length,
+    height: margin + 10 + PLOT_HEIGHT_MULTIPLIER * transformedSeries.length,
     marginLeft: PLOT_MARGIN_LEFT,
-    marginBottom: 200,
+    marginBottom: margin,
     color: {
       domain: [...Object.keys(SENTENCE_TYPE_TO_COLOR)],
       range: [...Object.values(SENTENCE_TYPE_TO_COLOR)],
@@ -169,45 +172,51 @@ export function getRecidivismPlot(
         insetBottom: RECT_INSET,
         insetTop: RECT_INSET,
         fill: "#2B54691A",
-        opacity: isFocused ? 0.3 : 1,
+        opacity: isFocused && !forReport ? 0.3 : 1,
       }),
-      rectX(
-        transformedSeries,
-        pointerY({
-          x1: "lowerCI",
-          x2: "upperCI",
-          y: "name",
-          insetBottom: RECT_INSET,
-          insetTop: RECT_INSET,
-          fill: "#2B54691A",
-        }),
-      ),
+      forReport
+        ? null
+        : rectX(
+            transformedSeries,
+            pointerY({
+              x1: "lowerCI",
+              x2: "upperCI",
+              y: "name",
+              insetBottom: RECT_INSET,
+              insetTop: RECT_INSET,
+              fill: "#2B54691A",
+            }),
+          ),
       dot(transformedSeries, {
         x: "eventRate",
         y: "name",
-        fill: "name",
+        fill: forReport ? "#001F1F" : "name",
         r: DOT_RADIUS,
-        opacity: isFocused ? 0.3 : 1,
+        opacity: isFocused && !forReport ? 0.3 : 1,
       }),
-      dot(
-        transformedSeries,
-        pointerY({
-          x: "eventRate",
-          y: "name",
-          r: DOT_RADIUS,
-          fill: "name",
-        }),
-      ),
-      tip(
-        transformedSeries,
-        pointerY({
-          x: "eventRate",
-          y: "name",
-          title: getTooltip,
-          fontSize: 12,
-          fontFamily: "Public Sans",
-        }),
-      ),
+      forReport
+        ? null
+        : dot(
+            transformedSeries,
+            pointerY({
+              x: "eventRate",
+              y: "name",
+              r: DOT_RADIUS,
+              fill: "name",
+            }),
+          ),
+      forReport
+        ? null
+        : tip(
+            transformedSeries,
+            pointerY({
+              x: "eventRate",
+              y: "name",
+              title: getTooltip,
+              fontSize: 12,
+              fontFamily: "Public Sans",
+            }),
+          ),
     ],
   });
 }
