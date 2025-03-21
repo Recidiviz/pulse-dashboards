@@ -13,16 +13,6 @@
       }
     },
     "typecheck": {
-      "dependsOn": [
-        {
-          "projects": ["@sentencing-server/prisma"],
-          "target": "prisma-generate"
-        },
-        {
-          "projects": ["@jii-texting-server/prisma"],
-          "target": "prisma-generate"
-        }
-      ],
       "executor": "nx:run-commands",
       "options": {
         "commands": [

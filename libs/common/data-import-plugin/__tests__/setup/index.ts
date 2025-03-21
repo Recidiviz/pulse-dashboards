@@ -20,7 +20,6 @@ import { beforeEach, vi } from "vitest";
 import { mock } from "vitest-mock-extended";
 import { z } from "zod";
 
-import { PrismaClient } from "~data-import-plugin/common/types";
 import { ImportHandler } from "~data-import-plugin/index";
 import {
   FILE_ONE,
@@ -28,7 +27,7 @@ import {
   TEST_BUCKET,
 } from "~data-import-plugin/test/common/constants";
 
-export const mockPrismaClient = mock<PrismaClient>();
+export const mockPrismaClient = mock();
 
 export const testGetPrismaClientForStateCode = vi.fn((stateCode: string) => {
   if (stateCode === "US_ID") {

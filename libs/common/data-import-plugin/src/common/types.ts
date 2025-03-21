@@ -15,16 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { PrismaClient as JiiTextingServerPrismaClient } from "@prisma/jii-texting-server/client";
-import type { PrismaClient as SentencingServerPrismaClient } from "@prisma/sentencing-server/client";
 import { z } from "zod";
 
-// Prisma doesn't have a generic for the PrismaClient, so we are forced to make it a union of the possible prisma clients in order for typing to work correctly.
-export type PrismaClient =
-  | SentencingServerPrismaClient
-  | JiiTextingServerPrismaClient;
-
-interface ZodSchemaAndLoaderFn<T extends PrismaClient, U extends z.ZodTypeAny> {
+interface ZodSchemaAndLoaderFn<T, U extends z.ZodTypeAny> {
   schema: U;
   loaderFn: (
     prismaClient: T,
@@ -33,7 +26,7 @@ interface ZodSchemaAndLoaderFn<T extends PrismaClient, U extends z.ZodTypeAny> {
 }
 
 // This type is a generic that is inferred from the provided ZodSchemaAndLoaderFns
-export type FilesToSchemasAndLoaderFns<T extends PrismaClient, M> = {
+export type FilesToSchemasAndLoaderFns<T, M> = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- Need this infer so the types are correctly inferred
   [key: string]: M extends ZodSchemaAndLoaderFn<T, infer _U> ? M : never;
 };
@@ -44,7 +37,7 @@ export type FilesToSchemasAndLoaderFns<T extends PrismaClient, M> = {
  * @property getPrismaClientForStateCode - A function that returns a PrismaClient for a given state code. This is used to determine if a state is supported and to pass the client to the loader functions.
  * @property filesToSchemasAndLoaderFns - An object that maps file names to Zod schemas and loader functions. All of the files provided will be imported when import() is called.
  */
-export type Props<T extends PrismaClient, M> = {
+export type Props<T, M> = {
   bucket: string;
   getPrismaClientForStateCode: (stateCode: string) => T;
   filesToSchemasAndLoaderFns: FilesToSchemasAndLoaderFns<T, M>;

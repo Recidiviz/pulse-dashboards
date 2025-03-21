@@ -17,12 +17,12 @@
 
 import { z } from "zod";
 
-import type { PrismaClient, Props } from "~data-import-plugin/common/types";
+import type { Props } from "~data-import-plugin/common/types";
 
 /**
  * Base class for handling imports from GCS.
  */
-export abstract class ImportHandlerBase<T extends PrismaClient, M> {
+export abstract class ImportHandlerBase<T, M> {
   props;
 
   /**
