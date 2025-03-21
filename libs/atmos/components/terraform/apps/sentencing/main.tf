@@ -170,7 +170,7 @@ module "import-job" {
 }
 
 module "gcs_bucket" {
-  source = "../../vendor/cloud-storage-bucket"
+  source = "../../vendor/submodules/cloud-storage-bucket"
 
   # Don't create a bucket for demo
   count = var.configure_import ? 1 : 0
