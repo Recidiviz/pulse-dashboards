@@ -66,7 +66,7 @@ export function metadataToDates(
 
   const realDates = [
     ...acisDate,
-    { label: "CSBD", date: optionalFieldToDate(metadata.csbdDate) },
+    { label: "CSBD / TR to ADD", date: optionalFieldToDate(metadata.csbdDate) },
     { label: "ERCD", date: optionalFieldToDate(metadata.ercdDate) },
   ];
 
