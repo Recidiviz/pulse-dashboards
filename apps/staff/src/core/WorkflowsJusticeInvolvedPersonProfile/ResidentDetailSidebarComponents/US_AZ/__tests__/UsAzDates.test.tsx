@@ -83,7 +83,7 @@ describe("UsAzDates metadataToDates tests", () => {
     const dates = metadataToDates(FAKE_METADATA, false, FAKE_TOOLTIP);
     expect(dates).toEqual([
       { label: "TPR", date: FAKE_DATES.acisTprDate },
-      { label: "CSBD", date: FAKE_DATES.csbdDate },
+      { label: "CSBD / TR to ADD", date: FAKE_DATES.csbdDate },
       { label: "ERCD", date: FAKE_DATES.ercdDate },
       { label: "SED", date: FAKE_DATES.sedDate },
       { label: "CSED", date: FAKE_DATES.csedDate },
@@ -94,7 +94,7 @@ describe("UsAzDates metadataToDates tests", () => {
     const dates = metadataToDates(FAKE_METADATA, true, FAKE_TOOLTIP);
     expect(dates).toEqual([
       { label: "DTP", date: FAKE_DATES.acisDtpDate },
-      { label: "CSBD", date: FAKE_DATES.csbdDate },
+      { label: "CSBD / TR to ADD", date: FAKE_DATES.csbdDate },
       { label: "ERCD", date: FAKE_DATES.ercdDate },
       { label: "SED", date: FAKE_DATES.sedDate },
       { label: "CSED", date: FAKE_DATES.csedDate },
@@ -110,7 +110,7 @@ describe("UsAzDates metadataToDates tests", () => {
     const dates = metadataToDates(metadataUnderTest, false, FAKE_TOOLTIP);
     expect(dates).toEqual([
       { label: "TPR", date: FAKE_DATES.acisTprDate },
-      { label: "CSBD", date: undefined },
+      { label: "CSBD / TR to ADD", date: undefined },
       { label: "ERCD", date: undefined },
       { label: "SED", date: FAKE_DATES.sedDate },
       { label: "CSED", date: FAKE_DATES.csedDate },
