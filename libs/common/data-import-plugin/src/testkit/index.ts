@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { ImportHandlerBase } from "~data-import-plugin/common/classes";
-import { PrismaClient } from "~data-import-plugin/common/types";
 
 /**
  * MockDataProvider is a singleton class for loading data via the MockImportHandler.
@@ -49,10 +48,7 @@ export class MockDataProvider {
 
 export const dataProviderSingleton = MockDataProvider.Instance;
 
-export class MockImportHandler<
-  T extends PrismaClient,
-  M,
-> extends ImportHandlerBase<T, M> {
+export class MockImportHandler<T, M> extends ImportHandlerBase<T, M> {
   override async *getDataFromGCS(_bucket: string, file: string) {
     for (const datum of dataProviderSingleton.data[file]) {
       yield datum;

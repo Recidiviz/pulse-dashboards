@@ -19,15 +19,11 @@ import { Storage } from "@google-cloud/storage";
 import readline from "readline";
 
 import { ImportHandlerBase } from "~data-import-plugin/common/classes";
-import { PrismaClient } from "~data-import-plugin/common/types";
 
 /**
  * ImportHandler is a class that handles the import of data from GCS.
  */
-export class ImportHandler<T extends PrismaClient, M> extends ImportHandlerBase<
-  T,
-  M
-> {
+export class ImportHandler<T, M> extends ImportHandlerBase<T, M> {
   override async *getDataFromGCS(bucket: string, file: string) {
     const storage = new Storage();
 
