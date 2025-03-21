@@ -41,5 +41,9 @@ spec:
       included_paths:
         - "**/*.tf"
         - "**/README.md"
+    - component: submodules/cloud-storage-bucket
+      source: components/terraform/vendor/cloud-storage-bucket
+      excluded_paths:
+        - "**/versions.tf"
       targets:
         - components/terraform/vendor/{{.Component}}
