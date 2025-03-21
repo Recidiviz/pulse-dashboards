@@ -241,7 +241,10 @@ export function Report({
             </Styled.DispositionCardWrapper>
             {insight && (
               <Styled.Explanation>
-                <DispositionChartExplanation insight={insight} />
+                <DispositionChartExplanation
+                  insight={insight}
+                  orgName={geoConfig.orgName}
+                />
               </Styled.Explanation>
             )}
           </Styled.SentencingRecidivismRateContainer>
@@ -265,6 +268,7 @@ export function Report({
                 <RecidivismChartExplanation
                   insight={insight}
                   recommendationOptionType={recommendationOptionType}
+                  orgName={geoConfig.orgName}
                 />
               </Styled.Explanation>
             )}

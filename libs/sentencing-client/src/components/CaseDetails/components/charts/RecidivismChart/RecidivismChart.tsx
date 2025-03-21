@@ -23,6 +23,7 @@ import { RecidivismChartBySentenceType } from "./SentenceType/RecidivismChartByS
 
 interface RecidivismChartProps {
   insight?: CaseInsight;
+  orgName: string;
   selectedRecommendation: SelectedRecommendation;
   recommendationType: RecommendationOptionType;
 }
@@ -30,14 +31,16 @@ interface RecidivismChartProps {
 export function RecidivismChart({
   recommendationType,
   insight,
+  orgName,
   selectedRecommendation,
 }: RecidivismChartProps) {
   return recommendationType === RecommendationOptionType.SentenceType ? (
     <RecidivismChartBySentenceType
       insight={insight}
+      orgName={orgName}
       selectedRecommendation={selectedRecommendation}
     />
   ) : (
-    <RecidivismChartBySentenceLength insight={insight} />
+    <RecidivismChartBySentenceLength insight={insight} orgName={orgName} />
   );
 }

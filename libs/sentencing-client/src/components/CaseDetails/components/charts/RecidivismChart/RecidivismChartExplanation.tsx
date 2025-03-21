@@ -37,12 +37,14 @@ export function OffenseText({ rollupOffenseDescription }: OffenseSpanProps) {
 interface RecidivismChartExplanationProps {
   insight: CaseInsight;
   recommendationOptionType: RecommendationOptionType;
+  orgName: string;
   isTooltip?: boolean;
 }
 
 export function RecidivismChartExplanation({
   insight,
   recommendationOptionType,
+  orgName,
   isTooltip = false,
 }: RecidivismChartExplanationProps) {
   const {
@@ -73,7 +75,7 @@ export function RecidivismChartExplanation({
           rollupAssessmentScoreBucketEnd={rollupAssessmentScoreBucketEnd}
         />{" "}
         with <OffenseText rollupOffenseDescription={rollupOffenseDescription} />
-        , using IDOC data from 2010-{moment().utc().year() - 3}.{" "}
+        , using ${orgName} data from 2010-{moment().utc().year() - 3}.{" "}
         {isTooltip &&
           `The shaded areas represent the confidence intervals, or the range of
       possible values for the true recidivism rate.`}

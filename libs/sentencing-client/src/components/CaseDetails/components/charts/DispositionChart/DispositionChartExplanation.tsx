@@ -26,10 +26,12 @@ import * as Styled from "../components/Styles";
 
 interface DispositionChartExplanationProps {
   insight: CaseInsight;
+  orgName: string;
 }
 
 export function DispositionChartExplanation({
   insight,
+  orgName,
 }: DispositionChartExplanationProps) {
   const {
     gender,
@@ -53,8 +55,8 @@ export function DispositionChartExplanation({
   const noPreviousRecordCopy = (
     <>
       Historical Sentencing represents the percentage of cases sentenced to a
-      particular disposition, using IDOC data from 2010 to present. There are no
-      previous records of {genderCohortString}.
+      particular disposition, using ${orgName} data from 2010 to present. There
+      are no previous records of {genderCohortString}.
     </>
   );
   const withPreviousRecordsCopy = (
@@ -63,7 +65,7 @@ export function DispositionChartExplanation({
       particular disposition. The rates are based on{" "}
       {dispositionNumRecords.toLocaleString()}{" "}
       {printFormattedRecordString(dispositionNumRecords)} of{" "}
-      {genderCohortString}, using IDOC data from 2010 to present.
+      {genderCohortString}, using ${orgName} data from 2010 to present.
     </>
   );
 
