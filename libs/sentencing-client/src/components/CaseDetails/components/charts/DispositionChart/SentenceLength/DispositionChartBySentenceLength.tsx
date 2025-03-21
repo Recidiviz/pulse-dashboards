@@ -29,8 +29,8 @@ import {
 import * as CommonStyled from "../../components/Styles";
 
 const CHART_HEIGHT = 277;
-
 const OPACITY = 0.3;
+const DISPOSITION_VISIBILITY_THRESHOLD = 0.01;
 
 function TooltipContent({
   title,
@@ -66,38 +66,44 @@ export function DispositionChartBySentenceLength({
 }: DispositionChartBySentenceLengthProps) {
   const [focusedSegment, setFocusedSegment] = useState<number>();
 
-  const formattedDataPoints = useMemo(
-    () =>
-      sortDataForSentenceLengthCharts(dataPoints)
-        .filter((d) => d.percentage > 0)
-        .sort(
-          (dataPoint1, dataPoint2) =>
-            dataPoint1.sentenceLengthBucketStart -
-            dataPoint2.sentenceLengthBucketStart,
-        )
-        .map((dataPoint) => {
-          const {
-            recommendationType,
-            sentenceLengthBucketStart,
-            sentenceLengthBucketEnd,
-            percentage,
-          } = dataPoint;
+  const [formattedDataPoints, excludedDataPoints] = useMemo(() => {
+    const formattedDataPoints = sortDataForSentenceLengthCharts(dataPoints)
+      .sort(
+        (dataPoint1, dataPoint2) =>
+          dataPoint1.sentenceLengthBucketStart -
+          dataPoint2.sentenceLengthBucketStart,
+      )
+      .map((dataPoint) => {
+        const {
+          recommendationType,
+          sentenceLengthBucketStart,
+          sentenceLengthBucketEnd,
+          percentage,
+        } = dataPoint;
 
-          const title = getSentenceLengthBucketLabel(
-            recommendationType,
-            sentenceLengthBucketStart,
-            sentenceLengthBucketEnd,
-          );
+        const title = getSentenceLengthBucketLabel(
+          recommendationType,
+          sentenceLengthBucketStart,
+          sentenceLengthBucketEnd,
+        );
 
-          return {
-            title,
-            value: percentage,
-            color: SENTENCE_TYPE_TO_COLOR[title],
-            numOffenses: Math.round(percentage * totalNumOffenses),
-          };
-        }),
-    [dataPoints, totalNumOffenses],
-  );
+        return {
+          title,
+          value: percentage,
+          color: SENTENCE_TYPE_TO_COLOR[title],
+          numOffenses: Math.round(percentage * totalNumOffenses),
+        };
+      });
+
+    const includedDataPoints = formattedDataPoints.filter(
+      (dataPoint) => dataPoint.value >= DISPOSITION_VISIBILITY_THRESHOLD,
+    );
+    const excludedDataPoints = formattedDataPoints.filter(
+      (dataPoint) => dataPoint.value < DISPOSITION_VISIBILITY_THRESHOLD,
+    );
+
+    return [includedDataPoints, excludedDataPoints];
+  }, [dataPoints, totalNumOffenses]);
 
   const tooltipRef1 = useRef<TooltipRefProps>(null);
   useEffect(() => {
@@ -125,6 +131,20 @@ export function DispositionChartBySentenceLength({
       <div>{title}</div>
     </CommonStyled.ChartLegendItem>
   ));
+
+  const numExcludedDataPoints = excludedDataPoints.length;
+
+  const excludedDataPointsLegend = numExcludedDataPoints ? (
+    <div style={{ marginTop: 16, color: "#2B5469CC" }}>
+      {`Note: ${excludedDataPoints
+        .map((v) => v.title)
+        .join(", ")
+        .replace(
+          /,(?=[^,]+$)/,
+          " and",
+        )} had zero values and ${numExcludedDataPoints === 1 ? "is" : "are"} not represented in the chart.`}
+    </div>
+  ) : null;
 
   const getLabel = useCallback(
     ({
@@ -198,6 +218,7 @@ export function DispositionChartBySentenceLength({
         <CommonStyled.ChartLegend>
           {recidivismChartLegend}
         </CommonStyled.ChartLegend>
+        {excludedDataPointsLegend}
       </div>
     </div>
   );
