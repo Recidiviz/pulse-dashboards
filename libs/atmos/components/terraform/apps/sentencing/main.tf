@@ -152,6 +152,8 @@ module "import-job" {
   env_vars                      = local.data_import_env_vars
   cloud_run_deletion_protection = false
   service_account_email         = google_service_account.default.email
+  timeout                       = "3600s"
+  max_retries                   = 1
 
   volumes = [{
     name = "cloudsql"
