@@ -166,19 +166,19 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
     ? {
         actionStrategies: { activeTenants: ["US_MI"] },
         enableSnooze: {},
-        fullWidthTimeline: { activeTenants: ["US_AZ"] },
+        fullWidthTimeline: { activeTenants: ["US_AZ", "US_UT"] },
         insightsOnboarding: {},
         nonOMSCriteria: {
-          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA"],
+          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA", "US_UT"],
         },
         opportunityTableView: { activeTenants: ["US_TX"] },
-        oppTabSubcategories: { activeTenants: ["US_AZ"] },
+        oppTabSubcategories: { activeTenants: ["US_AZ", "US_UT"] },
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
         sortableOpportunityTabs: {
-          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ"],
+          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_UT"],
         },
         submittedOpportunityStatus: {
-          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA"],
+          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA", "US_UT"],
         },
         supervisionUnrestrictedSearch: {},
         supervisorHomepageWorkflows: {},
