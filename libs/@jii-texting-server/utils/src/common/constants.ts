@@ -15,5 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const MAX_INITIAL_TEXT_ATTEMPTS = 3;
-export const MAX_ELIGIBILITY_TEXT_ATTEMPTS = 3;
+export const MAX_RETRY_ATTEMPTS = 3;

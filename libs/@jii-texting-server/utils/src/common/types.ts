@@ -88,6 +88,7 @@ export enum ScriptAction {
   ELIGIBILITY_MESSAGE_SENT = "ELIGIBILITY_MESSAGE_SENT",
   ERROR = "ERROR",
   SKIPPED = "SKIPPED",
+  NOOP = "NOOP",
 }
 
 export type GroupAction = {
