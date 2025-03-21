@@ -17,17 +17,12 @@
 
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
 
 import { Client, SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
 import PersonId from "../PersonId";
 import { TaskFrequency } from "./TaskFrequency";
-
-const TaskInfo = styled.div`
-  text-align: left;
-`;
 
 function PersonIdCell({ row }: { row: Row<SupervisionTask> }) {
   const { person } = row.original;
@@ -47,7 +42,7 @@ const CaseTypeCell = observer(function SupervisionCell({
 });
 
 function TaskInfoCell({ row }: { row: Row<SupervisionTask> }) {
-  return <TaskInfo>{row.original.dueDateDisplayLong}</TaskInfo>;
+  return row.original.dueDateDisplayLong;
 }
 
 function FrequencyCell({ row }: { row: Row<SupervisionTask> }) {

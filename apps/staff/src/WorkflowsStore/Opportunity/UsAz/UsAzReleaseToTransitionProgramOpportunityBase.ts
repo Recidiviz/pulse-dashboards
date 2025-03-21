@@ -70,6 +70,7 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
   }
 
   get almostEligibleStatusMessage() {
+    if (!this.almostEligible) return;
     switch (this.record.metadata.tabDescription) {
       case "ALMOST_ELIGIBLE_MISSING_MANLIT_BETWEEN_7_AND_180_DAYS":
         return "Missing functional literacy requirement";
