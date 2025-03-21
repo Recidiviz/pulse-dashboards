@@ -77,6 +77,7 @@ export async function processJii({
     ELIGIBILITY_MESSAGE_SENT: [],
     SKIPPED: [],
     ERROR: [],
+    NOOP: [],
   };
 
   await Promise.all(

@@ -25,6 +25,7 @@ import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 import {
   fakePersonOne,
   fakeWorkflowExecutionOne,
+  fakeWorkflowExecutionThree,
   fakeWorkflowExecutionTwo,
 } from "~@jii-texting-server/utils/test/constants";
 import { processJii } from "~jii-texting-jobs/scripts/process-jii";
@@ -47,16 +48,21 @@ describe("one person in DB without prior messages, thus send initial text", () =
       TwilioAPIClient.prototype.createMessage,
     ).toHaveBeenCalledExactlyOnceWith(
       // TODO(#7566): Get the real copy from group or state-level
-      "This is an initial text",
+      "This is the message body",
       fakePersonOne.phoneNumber,
     );
   });
 
   test("validate Prisma write on Twilio createMessage success", async () => {
     vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
-      sid: "twilio-message-sid",
+      body: "message body",
       status: "queued",
-    } as MessageInstance);
+      sid: "twilio-message-sid",
+      dateCreated: new Date(),
+      dateSent: new Date(),
+      errorMessage: null,
+      errorCode: null,
+    } as unknown as MessageInstance);
 
     await processJii({
       stateCode: StateCode.US_ID,
@@ -136,6 +142,29 @@ describe("one person in DB with initial text sent once", () => {
     });
   });
 
+  describe("person has opted out", () => {
+    beforeEach(async () => {
+      await testPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          lastOptOutDate: new Date(),
+        },
+      });
+    });
+
+    test("Twilio getMessage not called", async () => {
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      expect(TwilioAPIClient.prototype.getMessage).not.toBeCalled();
+    });
+  });
+
   test("validate Twilio getMessage call", async () => {
     vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
       sid: "message-sid-1",
@@ -153,35 +182,140 @@ describe("one person in DB with initial text sent once", () => {
     ).toHaveBeenCalledExactlyOnceWith("message-sid-1");
   });
 
-  test("MessageAttempt is updated", async () => {
-    vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
-      sid: "message-sid-1",
-      status: "sent",
-    } as MessageInstance);
-
-    // Ensure test has correct setup with one existing MessageAttempt
-    const currentMessageAttempt =
-      await testPrismaClient.messageAttempt.findFirstOrThrow({
-        where: { twilioMessageSid: "message-sid-1" },
-      });
-    expect(currentMessageAttempt.status).toBe(MessageAttemptStatus.IN_PROGRESS);
-
-    await processJii({
-      stateCode: StateCode.US_ID,
-      dryRun: false,
-      workflowExecutionId: fakeWorkflowExecutionOne.id,
+  describe("initial text sent successfully", () => {
+    beforeEach(() => {
+      vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+        sid: "message-sid-1",
+        status: "sent",
+      } as MessageInstance);
     });
 
-    const newMessageAttempt =
-      await testPrismaClient.messageAttempt.findFirstOrThrow({
-        where: { twilioMessageSid: "message-sid-1" },
+    test("MessageAttempt is updated", async () => {
+      // Ensure test has correct setup with one existing MessageAttempt
+      const currentMessageAttempt =
+        await testPrismaClient.messageAttempt.findFirstOrThrow({
+          where: { twilioMessageSid: "message-sid-1" },
+        });
+      expect(currentMessageAttempt.status).toBe(
+        MessageAttemptStatus.IN_PROGRESS,
+      );
+
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
       });
 
-    expect(newMessageAttempt.status).toBe(MessageAttemptStatus.SUCCESS);
+      const newMessageAttempt =
+        await testPrismaClient.messageAttempt.findFirstOrThrow({
+          where: { twilioMessageSid: "message-sid-1" },
+        });
+
+      expect(newMessageAttempt.status).toBe(MessageAttemptStatus.SUCCESS);
+    });
+
+    test("eligibility text sent", async () => {
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "message body",
+        status: "queued",
+        sid: "twilio-message-sid",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      const personWithMessageSeries =
+        await testPrismaClient.person.findFirstOrThrow({
+          where: {
+            personId: fakePersonOne.personId,
+          },
+          include: {
+            messageSeries: true,
+          },
+        });
+
+      expect(personWithMessageSeries.messageSeries.length).toBe(2);
+    });
+  });
+
+  describe("initial text has failed status in Twilio", () => {
+    beforeEach(() => {
+      vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+        sid: "message-sid-1",
+        status: "failed",
+      } as MessageInstance);
+    });
+
+    test("MessageAttempt is updated", async () => {
+      // Ensure test has correct setup with one existing MessageAttempt
+      const currentMessageAttempt =
+        await testPrismaClient.messageAttempt.findFirstOrThrow({
+          where: { twilioMessageSid: "message-sid-1" },
+        });
+      expect(currentMessageAttempt.status).toBe(
+        MessageAttemptStatus.IN_PROGRESS,
+      );
+
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      const newMessageAttempt =
+        await testPrismaClient.messageAttempt.findFirstOrThrow({
+          where: { twilioMessageSid: "message-sid-1" },
+        });
+
+      expect(newMessageAttempt.status).toBe(MessageAttemptStatus.FAILURE);
+    });
+
+    test("initial text is attempted again", async () => {
+      // Ensure test is setup correctly
+      const existingMessageAttempts =
+        await testPrismaClient.messageAttempt.count({
+          where: {
+            phoneNumber: fakePersonOne.phoneNumber,
+          },
+        });
+
+      expect(existingMessageAttempts).toBe(1);
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "message body",
+        status: "queued",
+        sid: "twilio-message-sid",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      const messageAttempts = await testPrismaClient.messageAttempt.count({
+        where: {
+          phoneNumber: fakePersonOne.phoneNumber,
+        },
+      });
+
+      expect(messageAttempts).toBe(2);
+    });
   });
 });
 
-describe("one person in DB with multiple initial text attempts", () => {
+describe("one person in DB with three initial text attempts", () => {
   beforeEach(async () => {
     const person = await testPrismaClient.person.findFirstOrThrow({
       where: { personId: fakePersonOne.personId },
@@ -213,10 +347,19 @@ describe("one person in DB with multiple initial text attempts", () => {
             {
               twilioMessageSid: "message-sid-2",
               body: "Hello world",
-              status: MessageAttemptStatus.IN_PROGRESS,
+              status: MessageAttemptStatus.FAILURE,
               phoneNumber: person.phoneNumber,
               createdTimestamp: fakeWorkflowExecutionTwo.workflowExecutionTime,
               workflowExecutionId: fakeWorkflowExecutionTwo.id,
+            },
+            {
+              twilioMessageSid: "message-sid-3",
+              body: "Hello world",
+              status: MessageAttemptStatus.IN_PROGRESS,
+              phoneNumber: person.phoneNumber,
+              createdTimestamp:
+                fakeWorkflowExecutionThree.workflowExecutionTime,
+              workflowExecutionId: fakeWorkflowExecutionThree.id,
             },
           ],
         },
@@ -224,42 +367,75 @@ describe("one person in DB with multiple initial text attempts", () => {
     });
   });
 
-  test("validate Twilio getMessage call", async () => {
-    vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
-      sid: "message-sid-2",
-      status: "sent",
-    } as MessageInstance);
-
-    await processJii({
-      stateCode: StateCode.US_ID,
-      dryRun: false,
-      workflowExecutionId: fakeWorkflowExecutionOne.id,
+  describe("latest attempt is successful", () => {
+    beforeEach(() => {
+      vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+        sid: "message-sid-3",
+        status: "sent",
+      } as MessageInstance);
     });
 
-    expect(TwilioAPIClient.prototype.getMessage).toHaveBeenCalledOnce();
-    expect(TwilioAPIClient.prototype.getMessage).toHaveBeenCalledWith(
-      "message-sid-2",
-    );
-  });
-
-  test("validate MessageAttempt is updated", async () => {
-    vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
-      sid: "message-sid-2",
-      status: "sent",
-    } as MessageInstance);
-
-    await processJii({
-      stateCode: StateCode.US_ID,
-      dryRun: false,
-      workflowExecutionId: fakeWorkflowExecutionOne.id,
-    });
-
-    const newMessageAttempt =
-      await testPrismaClient.messageAttempt.findFirstOrThrow({
-        where: { twilioMessageSid: "message-sid-2" },
+    test("validate Twilio getMessage call", async () => {
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
       });
 
-    expect(newMessageAttempt.status).toBe(MessageAttemptStatus.SUCCESS);
+      expect(TwilioAPIClient.prototype.getMessage).toHaveBeenCalledOnce();
+      expect(TwilioAPIClient.prototype.getMessage).toHaveBeenCalledWith(
+        "message-sid-3",
+      );
+    });
+
+    test("validate MessageAttempt is updated", async () => {
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      const newMessageAttempt =
+        await testPrismaClient.messageAttempt.findFirstOrThrow({
+          where: { twilioMessageSid: "message-sid-3" },
+        });
+
+      expect(newMessageAttempt.status).toBe(MessageAttemptStatus.SUCCESS);
+    });
+  });
+
+  describe("latest attempt is failure", () => {
+    beforeEach(() => {
+      vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+        sid: "message-sid-3",
+        status: "failed",
+      } as MessageInstance);
+    });
+
+    test("validate MessageAttempt is updated", async () => {
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      const newMessageAttempt =
+        await testPrismaClient.messageAttempt.findFirstOrThrow({
+          where: { twilioMessageSid: "message-sid-3" },
+        });
+
+      expect(newMessageAttempt.status).toBe(MessageAttemptStatus.FAILURE);
+    });
+
+    test("validate createMessage is not called", async () => {
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      expect(TwilioAPIClient.prototype.createMessage).not.toBeCalled();
+    });
   });
 });
 
