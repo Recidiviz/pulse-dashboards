@@ -45,6 +45,7 @@ export class usMiSecurityClassificationCommitteeReviewOpportunity extends Opport
   }
 
   get almostEligibleStatusMessage(): string | undefined {
+    if (!this.almostEligible) return;
     return "Upcoming";
   }
 

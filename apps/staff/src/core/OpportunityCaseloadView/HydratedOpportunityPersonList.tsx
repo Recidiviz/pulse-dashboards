@@ -107,6 +107,11 @@ const HorizontalScrollWrapper = styled.div`
   overflow-x: scroll;
 `;
 
+const RightAlignedWrapper = styled.div`
+  text-align: right;
+  padding-right: ${rem(spacing.xl)};
+`;
+
 const OpportunityPageExplainer = styled(Sans16)`
   color: ${palette.slate70};
   margin-bottom: ${rem(spacing.md)};
@@ -195,6 +200,7 @@ type OpportunityTableColumnSorting =
       enableSorting: true;
       sortingFn: NonNullable<ColumnDef<Opportunity>["sortingFn"]>;
       accessorFn: (opp: Opportunity) => any;
+      sortUndefined?: ColumnDef<Opportunity>["sortUndefined"];
     }
   | { enableSorting: false };
 
@@ -208,7 +214,9 @@ export type OpportunityTableColumnId =
   | "ELIGIBLE_FOR"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
-  | "CTA_BUTTON";
+  | "CTA_BUTTON"
+  | "LAST_VIEWED"
+  | "ALMOST_ELIGIBLE_STATUS";
 
 type OpportunityTableColumnDef = {
   header: string;
@@ -250,17 +258,34 @@ export function OfficerNameCell({ row }: { row: Row<Opportunity> }) {
 
 export function FormButtonCell({ row }: { row: Row<Opportunity> }) {
   return row.original.form?.navigateToFormText ? (
-    <NavigateToFormButton
-      className="NavigateToFormButton"
-      opportunity={row.original}
-    >
-      {row.original.form.navigateToFormText}
-    </NavigateToFormButton>
+    <RightAlignedWrapper>
+      <NavigateToFormButton
+        className="NavigateToFormButton"
+        opportunity={row.original}
+      >
+        {row.original.form.navigateToFormText}
+      </NavigateToFormButton>
+    </RightAlignedWrapper>
   ) : null;
 }
 
 export function EligibilityStatusCell({ row }: { row: Row<Opportunity> }) {
   return <EligibilityStatusPill opportunity={row.original} />;
+}
+
+export function LastViewedCell({ row }: { row: Row<Opportunity> }) {
+  const { lastViewed } = row.original;
+
+  if (lastViewed) {
+    return (
+      <>
+        {formatWorkflowsDate(lastViewed.date.toDate())} by{" "}
+        <WorkflowsOfficerName officerEmail={lastViewed.by} />
+      </>
+    );
+  }
+
+  return <>Never</>;
 }
 
 const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
@@ -289,6 +314,7 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
         }}
         shouldHighlightRow={(opp) => presenter.shouldHighlightOpportunity(opp)}
         manualSorting={manualSorting}
+        enableMultiSort={presenter.tableMultiSortEnabled}
       />
     </HorizontalScrollWrapper>
   );
@@ -415,12 +441,32 @@ const TableView = observer(function TableView({
       cell: PersonIdCell,
     },
     {
-      header: "Officer",
-      id: "ASSIGNED_STAFF_NAME",
-      accessorFn: (opp: Opportunity) => opp.person.assignedStaffFullName,
+      header: presenter.eligibilityDateHeader,
+      id: "ELIGIBILITY_DATE",
       enableSorting: true,
-      sortingFn: "text",
-      cell: OfficerNameCell,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => opp.eligibilityDate,
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const { eligibilityDate } = row.original;
+        const eligibleForDays = presenter.eligibleForDays(row.original);
+        if (eligibilityDate && eligibleForDays) {
+          return `${formatWorkflowsDate(eligibilityDate)} (${formatDurationFromOptionalDays(eligibleForDays)} ago)`;
+        } else if (eligibilityDate) {
+          return formatWorkflowsDate(eligibilityDate);
+        } else {
+          return "—";
+        }
+      },
+    },
+    {
+      header: "Last Viewed",
+      id: "LAST_VIEWED",
+      accessorFn: (opp: Opportunity) => opp.lastViewed?.date,
+      enableSorting: true,
+      sortingFn: "datetime",
+      // treat opportunities that have never been viewed as having the earliest dates
+      sortUndefined: -1,
+      cell: LastViewedCell,
     },
     {
       header: "Status",
@@ -429,27 +475,15 @@ const TableView = observer(function TableView({
       cell: EligibilityStatusCell,
     },
     {
-      header: "Eligibility Date",
-      id: "ELIGIBILITY_DATE",
-      enableSorting: true,
-      sortingFn: "datetime",
-      accessorFn: (opp: Opportunity) => opp.eligibilityDate,
+      header: "Missing Criteria",
+      id: "ALMOST_ELIGIBLE_STATUS",
+      enableSorting: false,
       cell: ({ row }: { row: Row<Opportunity> }) => {
-        return row.original.eligibilityDate
-          ? formatWorkflowsDate(row.original.eligibilityDate)
-          : "—";
-      },
-    },
-    {
-      header: "Eligible for",
-      id: "ELIGIBLE_FOR",
-      enableSorting: true,
-      sortingFn: "basic",
-      accessorFn: presenter.eligibleForDays,
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        return formatDurationFromOptionalDays(
-          presenter.eligibleForDays(row.original),
-        );
+        const opp = row.original;
+        if (!opp.isSubmitted && !opp.denied) {
+          return opp.almostEligibleStatusMessage;
+        }
+        return "—";
       },
     },
     {
@@ -465,7 +499,7 @@ const TableView = observer(function TableView({
       },
     },
     {
-      header: `${presenter.config.submittedTabTitle} for`,
+      header: presenter.submittedForHeader,
       id: "SUBMITTED_FOR",
       enableSorting: true,
       sortingFn: "basic",
@@ -475,6 +509,14 @@ const TableView = observer(function TableView({
           presenter.submittedForDays(row.original),
         );
       },
+    },
+    {
+      header: "Assigned to",
+      id: "ASSIGNED_STAFF_NAME",
+      accessorFn: (opp: Opportunity) => opp.person.assignedStaffFullName,
+      enableSorting: true,
+      sortingFn: "text",
+      cell: OfficerNameCell,
     },
     // The CTA button column should be last to take advantage of special rightmost column formatting
     {

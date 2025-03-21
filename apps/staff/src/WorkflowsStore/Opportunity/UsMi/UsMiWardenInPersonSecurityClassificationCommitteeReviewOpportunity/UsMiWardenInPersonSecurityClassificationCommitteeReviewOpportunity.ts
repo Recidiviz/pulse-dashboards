@@ -59,6 +59,7 @@ export class usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity 
   }
 
   get almostEligibleStatusMessage(): string | undefined {
+    if (!this.almostEligible) return;
     return "Upcoming";
   }
 

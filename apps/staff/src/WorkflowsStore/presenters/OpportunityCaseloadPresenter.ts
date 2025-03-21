@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { toTitleCase } from "@artsy/to-title-case";
 import { arrayMove } from "@dnd-kit/sortable";
 import { differenceInDays, startOfToday } from "date-fns";
 import { difference, intersection, some } from "lodash";
@@ -30,6 +29,7 @@ import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
+import { toTitleCase } from "../../utils";
 import {
   opportunitiesBySubcategory,
   opportunitiesByTab,
@@ -57,7 +57,8 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
   readonly isSupervisorHomepage: boolean;
   readonly displayTabGroups: OpportunityTabGroup[];
   readonly showZeroGrantsPill: boolean;
-  private readonly sortingEnabled: boolean;
+  private readonly tabSortingEnabled: boolean;
+  readonly tableMultiSortEnabled: boolean;
   private _activeTabGroup: OpportunityTabGroup;
   private userSelectedTab?: OpportunityTab;
   private userOrderedTabs?: OpportunityTab[];
@@ -92,7 +93,8 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
 
     this.updatesSubscription = this.workflowsStore.userUpdatesSubscription;
 
-    this.sortingEnabled = !!featureVariants.sortableOpportunityTabs;
+    this.tabSortingEnabled = !!featureVariants.sortableOpportunityTabs;
+    this.tableMultiSortEnabled = !!featureVariants.tableMultiSortEnabled;
 
     this.showZeroGrantsPill = !!(
       featureVariants.zeroGrantsFlag &&
@@ -150,6 +152,12 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
           !opp.almostEligible &&
           opp.eligibilityDate &&
           opp.eligibilityDate < startOfToday(),
+      ),
+      LAST_VIEWED: true,
+      ALMOST_ELIGIBLE_STATUS: some(
+        opportunities,
+        (opp: Opportunity) =>
+          !opp.denied && !opp.isSubmitted && opp.almostEligibleStatusMessage,
       ),
       SNOOZE_ENDS_IN: this.isViewingDeniedTab,
       SUBMITTED_FOR: this.isViewingSubmittedTab,
@@ -285,7 +293,9 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
   }
 
   get shouldShowAllTabs() {
-    return this.sortingEnabled && this.activeTabGroup === "ELIGIBILITY STATUS";
+    return (
+      this.tabSortingEnabled && this.activeTabGroup === "ELIGIBILITY STATUS"
+    );
   }
 
   get activeOpportunityNotifications() {
@@ -332,6 +342,19 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
 
   get zeroGrantsTooltip() {
     return this.config.zeroGrantsTooltip;
+  }
+
+  get eligibilityDateHeader() {
+    // Header text for the "eligibility date" column in table view
+    const { eligibilityDateText } = this.config;
+    if (!eligibilityDateText) return "Eligibility Date";
+    return toTitleCase(eligibilityDateText.toLowerCase());
+  }
+
+  get submittedForHeader() {
+    // Header text for the "submitted" column in table view
+    const { submittedTabTitle } = this.config;
+    return `${toTitleCase(submittedTabTitle.toLowerCase())} for`;
   }
 
   get peopleInActiveTab() {

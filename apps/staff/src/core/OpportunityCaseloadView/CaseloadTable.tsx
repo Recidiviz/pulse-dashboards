@@ -55,8 +55,7 @@ const TableHeader = styled.thead`
 
 const SharedTableCellStyles = `
   height: 49px;
-  padding-left: ${rem(spacing.xs)};
-  padding-right: ${rem(spacing.xs)};
+  padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
 `;
 
 const HeaderCell = styled.th`
@@ -66,22 +65,26 @@ const HeaderCell = styled.th`
   user-select: none;
 `;
 
-// TODO(#7572): Keep base table implementation generic
-const Cell = styled.td<{ $expandedLastColumn: boolean; $isMobile: boolean }>`
+const Cell = styled.td<{
+  $expandedLastColumn: boolean;
+  $isMobile: boolean;
+  $columns: number;
+}>`
   ${SharedTableCellStyles}
 
   color: ${palette.pine1};
 
-  width: 13%;
+  ${({ $columns }) =>
+    /* If there are more than 7 columns, make columns accordingly narrower */
+    $columns > 7 ? `width: calc(91% / ${$columns});` : `width: 13%;`}
+
   ${({ $isMobile }) => ($isMobile ? `min-width: 100px;` : `min-width: 125px;`)}
 
   ${({ $expandedLastColumn }) =>
-    /* Offset last column to fill all available space and right-align contents */
+    /* Offset last column to fill all available space */
     $expandedLastColumn &&
     `&:last-child {
-    text-align: right;
     width: auto;
-    padding-right: ${rem(spacing.xl)};
   }`}
 
   ${NavigateToFormButtonStyle} {
@@ -172,6 +175,7 @@ type CaseloadTableProps<TData> = {
   shouldHighlightRow: (row: TData) => boolean;
   onRowRender?: (row: TData) => void;
   manualSorting?: CaseloadTableManualSorting;
+  enableMultiSort?: boolean;
 };
 
 export const CaseloadTable = observer(function CaseloadTable<TData>({
@@ -182,6 +186,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   shouldHighlightRow,
   onRowRender = () => undefined,
   manualSorting = undefined,
+  enableMultiSort = false,
 }: CaseloadTableProps<TData>) {
   const { isMobile } = useIsMobile(true);
   const table = useReactTable({
@@ -194,6 +199,13 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
           manualSorting: true,
           onSortingChange: manualSorting.setSorting,
           state: { sorting: manualSorting?.sorting },
+        }
+      : {}),
+    ...(enableMultiSort
+      ? {
+          enableMultiSort: true,
+          isMultiSortEvent: (_) => true,
+          maxMultiSortColCount: 3,
         }
       : {}),
   });
@@ -243,6 +255,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
                   className={"fs-exclude"}
                   $expandedLastColumn={expandedLastColumn}
                   $isMobile={isMobile}
+                  $columns={columns.length}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Cell>
