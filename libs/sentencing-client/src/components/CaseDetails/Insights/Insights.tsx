@@ -72,6 +72,7 @@ export const Insights = ({
           {/* Recidivism Rates Chart */}
           <Styled.Chart $marginRight={16}>
             <RecidivismChart
+              orgName={geoConfig.orgName}
               insight={insight}
               selectedRecommendation={selectedRecommendation}
               recommendationType={recommendationType}
@@ -84,6 +85,7 @@ export const Insights = ({
               insight={insight}
               selectedRecommendation={selectedRecommendation}
               recommendationType={recommendationType}
+              orgName={geoConfig.orgName}
             />
           </Styled.Chart>
         </Styled.Charts>

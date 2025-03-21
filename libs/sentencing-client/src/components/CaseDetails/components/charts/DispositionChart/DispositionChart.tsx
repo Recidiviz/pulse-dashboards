@@ -35,6 +35,7 @@ interface DispositionChartProps {
   scale?: number;
   hideInfoTooltip?: boolean;
   recommendationType: RecommendationOptionType;
+  orgName: string;
 }
 
 export function DispositionChart({
@@ -44,6 +45,7 @@ export function DispositionChart({
   scale,
   hideInfoTooltip,
   recommendationType,
+  orgName,
 }: DispositionChartProps) {
   const { dispositionData, dispositionNumRecords } = insight ?? {};
 
@@ -93,7 +95,10 @@ export function DispositionChart({
             headerText="Previous Sentences"
             content={
               <CommonStyled.ChartTooltipContentSection>
-                <DispositionChartExplanation insight={insight} />
+                <DispositionChartExplanation
+                  insight={insight}
+                  orgName={orgName}
+                />
               </CommonStyled.ChartTooltipContentSection>
             }
           />

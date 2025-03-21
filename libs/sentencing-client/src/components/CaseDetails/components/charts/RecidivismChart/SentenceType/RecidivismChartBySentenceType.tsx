@@ -34,6 +34,7 @@ const DEFAULT_PLOT_WIDTH = 704;
 
 interface RecidivismChartBySentenceTypeProps {
   insight?: CaseInsight;
+  orgName: string;
   selectedRecommendation: SelectedRecommendation;
   plotWidth?: number;
   hideInfoTooltip?: boolean;
@@ -41,6 +42,7 @@ interface RecidivismChartBySentenceTypeProps {
 
 export function RecidivismChartBySentenceType({
   insight,
+  orgName,
   selectedRecommendation,
   plotWidth = DEFAULT_PLOT_WIDTH,
   hideInfoTooltip,
@@ -79,6 +81,7 @@ export function RecidivismChartBySentenceType({
               <CommonStyled.ChartTooltipContentSection>
                 <RecidivismChartExplanation
                   insight={insight}
+                  orgName={orgName}
                   isTooltip
                   recommendationOptionType={
                     RecommendationOptionType.SentenceType
