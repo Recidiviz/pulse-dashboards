@@ -50,6 +50,30 @@ export const fakeFullyEligibleGroup = {
   status: Status.ACTIVE,
 };
 
+export const fakeMissingFinesFeesGroup = {
+  groupName: "ELIGIBLE_MISSING_FINES_AND_FEES",
+  messageCopyTemplate: "Hi, this is a message.",
+  status: Status.ACTIVE,
+};
+
+export const fakeMissingIncomeVerification = {
+  groupName: "MISSING_INCOME_VERIFICATION",
+  messageCopyTemplate: "Hi, this is a message.",
+  status: Status.ACTIVE,
+};
+
+export const fakeMissingDA = {
+  groupName: "MISSING_DA",
+  messageCopyTemplate: "Hi, this is a message.",
+  status: Status.ACTIVE,
+};
+
+export const fakeTwoMissingCriteria = {
+  groupName: "TWO_MISSING_CRITERIA",
+  messageCopyTemplate: "Hi, this is a message.",
+  status: Status.ACTIVE,
+};
+
 // TOPICS
 export const fakeTopic = {
   topicName: "LSU",
@@ -63,14 +87,14 @@ export const fakePersonOne = {
   pseudonymizedId: "pseudo-id-1",
   personId: "person-id-1",
   externalId: "person-ext-id-1",
-  givenName: faker.person.firstName(),
+  givenName: "JANE",
   middleName: faker.person.middleName(),
   surname: faker.person.lastName(),
   nameSuffix: faker.person.suffix(),
   phoneNumber: faker.string.numeric({ length: 11 }),
   officerId: faker.string.uuid(),
-  poName: faker.person.fullName(),
-  district: faker.location.county(),
+  poName: "JOHN DOE",
+  district: "District 1",
 };
 
 export const fakePersonTwo = {

@@ -72,6 +72,25 @@ export const PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP = {
   } satisfies Prisma.PersonInclude,
 };
 
+export const PERSON_SELECT_DATA_FOR_MESSAGE = {
+  select: {
+    givenName: true,
+    poName: true,
+    phoneNumber: true,
+    district: true,
+    externalId: true,
+  } satisfies Prisma.PersonSelectScalar,
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const personSelectForMessage = Prisma.validator<Prisma.PersonDefaultArgs>()(
+  PERSON_SELECT_DATA_FOR_MESSAGE,
+);
+
+export type PersonDataForMessage = Prisma.PersonGetPayload<
+  typeof personSelectForMessage
+>;
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const personWithMessageSeriesAndGroup =
   Prisma.validator<Prisma.PersonDefaultArgs>()(

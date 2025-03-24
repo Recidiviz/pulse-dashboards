@@ -15,4 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+/****************************
+ * State Agnostic Constants *
+ ****************************/
 export const MAX_RETRY_ATTEMPTS = 3;
+
+/****************************
+ * Idaho LSU Constants *
+ ****************************/
+export const US_ID_LSU_VISIT_LINK =
+  "\n\nSee all requirements at rviz.co/id_lsu.";
+export const US_ID_LSU_LEARN_MORE = "\n\nLearn more at rviz.co/id_lsu.";

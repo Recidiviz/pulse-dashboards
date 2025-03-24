@@ -28,10 +28,15 @@ import {
 import {
   MessageAttemptSelect,
   MessageSeriesWithAttemptsAndGroup,
+  PersonDataForMessage,
   PersonWithMessageSeriesAndGroup,
   ScriptAction,
 } from "~@jii-texting-server/utils";
-import { MAX_RETRY_ATTEMPTS } from "~@jii-texting-server/utils/common/constants";
+import {
+  MAX_RETRY_ATTEMPTS,
+  US_ID_LSU_LEARN_MORE,
+  US_ID_LSU_VISIT_LINK,
+} from "~@jii-texting-server/utils/common/constants";
 import { TwilioAPIClient } from "~twilio-api";
 
 function messageAttemptSortByCreatedTimestampDesc(
@@ -133,6 +138,93 @@ export async function updateMessageAttempt(
 }
 
 /**
+ * Returns additional contact information based on the district provided. This
+ * is currently specific to Idaho LSU.
+ *
+ * @param district The district the recipient of a message is assigned to
+ * @returns Text to add for additional contact information in the message body
+ */
+function getAdditionalContactForIdahoLSU(district: string) {
+  const districtIdentifier = district.split(" ")[1];
+  switch (districtIdentifier) {
+    case "1":
+      return "or email D1Connect@idoc.idaho.gov";
+    case "2":
+      return "or contact a specialist at district2Admin@idoc.idaho.gov";
+    case "3":
+      return "or a specialist at specialistsd3@idoc.idaho.gov or (208) 454-7601";
+    case "4":
+      return "or a specialist at d4ppspecialists@idoc.idaho.gov or 208-327-7008";
+    case "5":
+      return "or a specialist at D5general@idoc.idaho.gov or 208-644-7268";
+    case "7":
+      return "or a specialist at d7.pp.specialist@idoc.idaho.gov or (208) 701-7130";
+    default:
+      return undefined;
+  }
+}
+
+/**
+ * Returns the message body for a text to send to JII based on the message type
+ * and the group name. This is currently specific to Idaho LSU texting work and should
+ * be reworked in #7745.
+ *
+ * @param givenName The first name of the person we're sending a text to
+ * @param poName The full name of the person's supervising officer
+ * @param district The district the person is assigned to
+ * @param groupName The name of the group the person belongs to. Should match the values in the `group` column of the `jii_to_text` BQ product view
+ * @returns The full text to send the person
+ */
+function getIdahoLSUMessageBody(
+  { givenName, poName, district }: PersonDataForMessage,
+  messageType: MessageType,
+  groupName: string,
+) {
+  const additionalContactSuffix = getAdditionalContactForIdahoLSU(district);
+  const contactAddendum =
+    additionalContactSuffix !== undefined ? ` ${additionalContactSuffix}` : "";
+
+  const givenNameToUse =
+    givenName.charAt(0).toUpperCase() + givenName.slice(1).toLowerCase();
+
+  const poNameToUse = poName
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+
+  let body = "";
+
+  if (messageType === MessageType.INITIAL_TEXT) {
+    body += `Hi ${givenNameToUse}, we’re reaching out on behalf of the Idaho Department of Correction (IDOC). You’re now subscribed to receive updates about potential opportunities such as the Limited Supervision Unit (LSU), which offers a lower level of supervision.\n\nWe’ll let you know by texting this number if you meet the criteria for specific programs. Receiving this message does not mean you’re already eligible for any opportunity.\n\nIf you have questions, reach out to ${poNameToUse}.`;
+  } else {
+    // Otherwise, we're sending a message, where messageType=ELIGIBILITY_TEXT
+    if (groupName === "FULLY_ELIGIBLE") {
+      body += `Hi ${givenNameToUse}, IDOC records show that you have met most of the requirements to be considered for the Limited Supervision Unit (LSU). LSU is a lower level of supervision with monthly online check-ins for those in good standing (for example, no new misdemeanors).\n\nThis message does not mean that you have already been transferred to LSU. To fully qualify, your PO will need to check that:\n1. You have no active no-contact orders.\n2. You have made payments towards your fines/fees at least 3 months in a row (even small payments count).\n\nIf you believe you meet these conditions or have questions, please contact ${poNameToUse}${contactAddendum}; they can confirm your eligibility and help you apply. Approval for LSU is not guaranteed.`;
+      body += US_ID_LSU_LEARN_MORE;
+    } else if (groupName === "ELIGIBLE_MISSING_FINES_AND_FEES") {
+      body += `Hi ${givenNameToUse}, IDOC records show you meet most requirements but have a remaining step to be considered for the Limited Supervision Unit (LSU). If you make fine/fee payments for 3 months in a row (even small payments count), you may qualify.\n\nLSU is a lower level of supervision with monthly online check-ins for those in good standing (for example, no active no-contact orders, and no new misdemeanors). It reduces your monthly supervision fee from $60 to $30. LSU is optional, and this message does not mean you have already been transferred.\n\nYou can reach out to ${poNameToUse}${contactAddendum} to make payments or with questions about LSU. They must verify that you are in compliance with your conditions of supervision. If you are, they can help you apply.`;
+      body += US_ID_LSU_LEARN_MORE;
+    } else if (groupName === "MISSING_INCOME_VERIFICATION") {
+      body += `Hi ${givenNameToUse}, IDOC records show you may soon be eligible to apply for the Limited Supervision Unit (LSU), a lower level of supervision for those meeting all their required conditions. This message does not mean you are already eligible.\n\nLSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($30 vs. $60/month).\n\nTo qualify, you’ll need to provide your PO with documents like pay-stubs proving you have full-time employment, are a student, or other income sources like a pension.\n\nYou must also have paid towards your fines/fees at least 3 months in a row (even small payments count).\n\nIf interested, contact ${poNameToUse}${contactAddendum}. They must first confirm your eligibility, then can help you apply.`;
+      body += US_ID_LSU_VISIT_LINK;
+    } else if (groupName === "MISSING_DA") {
+      body += `Hi ${givenNameToUse}, IDOC records show you may soon be eligible to apply for the Limited Supervision Unit (LSU), a lower level of supervision for those meeting all their required conditions. This message does not mean you are already eligible.\n\nLSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($30 instead of $60/month).\n\nTo qualify, you’ll need to provide your PO with a negative urine analysis test.\n\nAdditionally, you must have paid towards your fines/fees at least 3 months in a row (even small payments count).\n\nIf interested, contact ${poNameToUse}${contactAddendum}. They must verify that you are in compliance with your conditions of supervision. If you are, they can help you apply.`;
+      body += US_ID_LSU_VISIT_LINK;
+    } else if (groupName === "TWO_MISSING_CRITERIA") {
+      body += `Hi ${givenNameToUse}, IDOC records show you may soon be eligible to apply for the Limited Supervision Unit (LSU), a lower level of supervision for those meeting all their required conditions.\n\nLSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($30 instead of $60/month).\n\nTo qualify, you’ll need to provide your PO with:\n1. Documents like pay-stubs proving you have full-time employment, are a student, or other income sources like a pension, and\n2. A negative urine analysis test.\n\nAdditionally, you must have paid towards your fines/fees at least 3 months in a row (even small payments count).\n\nIf interested, contact ${poNameToUse}${contactAddendum}. They must first confirm your eligibility, then can help you apply.`;
+      body += US_ID_LSU_VISIT_LINK;
+    } else {
+      throw new Error(`Received unexpected group name: ${groupName}`);
+    }
+  }
+
+  body += `\n\nReply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number.`;
+
+  return body;
+}
+
+/**
  * Creates/sends a message via the TwilioAPIClient and persists the message in the DB.
  * If the messageSeriesId is provided, then create a new MessageAttempt object that
  * will be connected to an existing MessageSeries, where id = messageSeriesId. If
@@ -140,8 +232,8 @@ export async function updateMessageAttempt(
  * a nested MessageAttempt for the given messageType
  *
  * @param messageType The type of message we're sending
- * @param toPhoneNumber The phone number to send the message to
- * @param personExternalId The external ID of the JII that we're sending a message to
+ * @param personMetadata Metadata about the person we're sending a text to
+ * @param groupName The name of the group the person belongs to. Should match the values in the `group` column of the `jii_to_text` BQ product view
  * @param groupId The id of the Group that the JII belongs to
  * @param workflowExecutionId The ID of the current Workflow Execution that the message is being sent during
  * @param prisma Prisma Client
@@ -150,17 +242,23 @@ export async function updateMessageAttempt(
  */
 export async function sendText(
   messageType: MessageType,
-  toPhoneNumber: string,
-  personExternalId: string,
+  personMetadata: PersonDataForMessage,
+  groupName: string,
   groupId: string,
   workflowExecutionId: string,
   prisma: PrismaClient,
   twilio: TwilioAPIClient,
   messageSeriesId?: string,
 ) {
+  const { phoneNumber, externalId } = personMetadata;
+
   try {
-    // TODO(#7566): Get the real copy from group or state-level
-    const messageBody = "This is the message body";
+    // TODO(#7745): Get the copy from group table or state-level
+    const messageBody = getIdahoLSUMessageBody(
+      personMetadata,
+      messageType,
+      groupName,
+    );
 
     // Send message via Twilio client
     // TODO(#7574): Schedule send if the job is running at odd hours
@@ -172,7 +270,7 @@ export async function sendText(
       dateSent,
       errorMessage,
       errorCode,
-    } = await twilio.createMessage(messageBody, toPhoneNumber);
+    } = await twilio.createMessage(messageBody, phoneNumber);
     const messageStatus = mapTwilioStatusToInternalStatus(status);
     // Note: the timezone we get from Twilio doesn't matter because Prisma converts
     // to UTC under the hood on creation of dates
@@ -182,7 +280,7 @@ export async function sendText(
         data: {
           twilioMessageSid: sid,
           body: body,
-          phoneNumber: toPhoneNumber,
+          phoneNumber: phoneNumber,
           status: messageStatus,
           createdTimestamp: dateCreated,
           twilioSentTimestamp: dateSent,
@@ -198,14 +296,14 @@ export async function sendText(
       await prisma.messageSeries.create({
         data: {
           messageType: messageType,
-          personExternalId: personExternalId,
+          personExternalId: externalId,
           groupId: groupId,
           messageAttempts: {
             create: [
               {
                 twilioMessageSid: sid,
                 body: body,
-                phoneNumber: toPhoneNumber,
+                phoneNumber: phoneNumber,
                 status: messageStatus,
                 createdTimestamp: dateCreated,
                 workflowExecutionId: workflowExecutionId,
@@ -222,7 +320,7 @@ export async function sendText(
 
     return sid;
   } catch (e) {
-    console.log(`Error in sendText for ${personExternalId}: ${e}`);
+    console.log(`Error in sendText for ${externalId}: ${e}`);
     return undefined;
   }
 }
@@ -316,6 +414,14 @@ export async function processIndividualJii(
   // Assumes that we only have one topic/group pairing per JII
   const group = jii.groups[0];
 
+  const personMetadata: PersonDataForMessage = {
+    givenName: jii.givenName,
+    phoneNumber: jii.phoneNumber,
+    externalId: jii.externalId,
+    poName: jii.poName,
+    district: jii.district,
+  };
+
   // Get the relevant MessageSeries objects for the given group
   const messageSeriesList: MessageSeriesWithAttemptsAndGroup[] =
     jii.messageSeries.filter((series) => series.group.id === group.id);
@@ -330,8 +436,8 @@ export async function processIndividualJii(
     // TODO: check if topic/group are active?
     const message = await sendText(
       MessageType.INITIAL_TEXT,
-      jii.phoneNumber,
-      jii.externalId,
+      personMetadata,
+      group.groupName,
       group.id,
       workflowExecutionId,
       prisma,
@@ -399,8 +505,8 @@ export async function processIndividualJii(
 
     const message = await sendText(
       MessageType.ELIGIBILITY_TEXT,
-      jii.phoneNumber,
-      jii.externalId,
+      personMetadata,
+      group.groupName,
       group.id,
       workflowExecutionId,
       prisma,
@@ -437,8 +543,8 @@ export async function processIndividualJii(
     // TODO(#7703): Incorporate buffers between retries
     const message = await sendText(
       latestMessageSeries.messageType,
-      jii.phoneNumber,
-      jii.externalId,
+      personMetadata,
+      group.groupName,
       group.id,
       workflowExecutionId,
       prisma,

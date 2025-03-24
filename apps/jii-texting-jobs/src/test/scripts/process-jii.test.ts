@@ -38,19 +38,30 @@ vi.stubEnv("TWILIO_MESSAGING_SERVICE_SID_US_ID", "");
 
 describe("one person in DB without prior messages, thus send initial text", () => {
   test("validate Twilio createMessage call", async () => {
+    const spy = vi
+      .spyOn(TwilioAPIClient.prototype, "createMessage")
+      .mockResolvedValue({
+        sid: "twilio-message-sid",
+        status: "queued",
+      } as MessageInstance);
+
     await processJii({
       stateCode: StateCode.US_ID,
       dryRun: false,
       workflowExecutionId: fakeWorkflowExecutionOne.id,
     });
 
-    expect(
-      TwilioAPIClient.prototype.createMessage,
-    ).toHaveBeenCalledExactlyOnceWith(
-      // TODO(#7566): Get the real copy from group or state-level
-      "This is the message body",
-      fakePersonOne.phoneNumber,
-    );
+    expect(spy).toBeCalledTimes(1);
+    expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`
+      "Hi Jane, we’re reaching out on behalf of the Idaho Department of Correction (IDOC). You’re now subscribed to receive updates about potential opportunities such as the Limited Supervision Unit (LSU), which offers a lower level of supervision.
+
+      We’ll let you know by texting this number if you meet the criteria for specific programs. Receiving this message does not mean you’re already eligible for any opportunity.
+
+      If you have questions, reach out to John Doe.
+
+      Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+    `);
+    expect(spy.mock.calls[0][1]).toBe(fakePersonOne.phoneNumber);
   });
 
   test("validate Prisma write on Twilio createMessage success", async () => {
@@ -535,3 +546,79 @@ describe("one person with initial and eligibility message series", () => {
     expect(newMessageAttempt.status).toBe(MessageAttemptStatus.SUCCESS);
   });
 });
+
+test.each([
+  ["District 1", "ELIGIBLE_MISSING_FINES_AND_FEES"],
+  ["District 2", "MISSING_INCOME_VERIFICATION"],
+  ["district 3", "MISSING_DA"],
+  ["district 4", "TWO_MISSING_CRITERIA"],
+  ["DISTRICT 5", "ELIGIBLE_MISSING_FINES_AND_FEES"],
+  ["District 7", "MISSING_INCOME_VERIFICATION"],
+])(
+  "copy for person where district=%s and group=%s",
+  async (district, groupName) => {
+    vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+      sid: "message-sid-1",
+      status: "sent",
+    } as MessageInstance);
+
+    const group = await testPrismaClient.group.findFirstOrThrow({
+      where: {
+        groupName: groupName,
+      },
+    });
+
+    await testPrismaClient.person.update({
+      where: { personId: fakePersonOne.personId },
+      data: {
+        district: district,
+        groups: {
+          set: [{ id: group.id }],
+        },
+      },
+    });
+
+    // Insert MessageSeries with single MessageAttempt for the test group
+    await testPrismaClient.messageSeries.create({
+      data: {
+        messageType: MessageType.INITIAL_TEXT,
+        group: { connect: { id: group.id } },
+        person: { connect: { personId: fakePersonOne?.personId } },
+        messageAttempts: {
+          create: [
+            {
+              twilioMessageSid: "message-sid-1",
+              body: "Hello world",
+              phoneNumber: fakePersonOne.phoneNumber,
+              status: MessageAttemptStatus.SUCCESS,
+              createdTimestamp: fakeWorkflowExecutionOne.workflowExecutionTime,
+              workflowExecutionId: fakeWorkflowExecutionOne.id,
+            },
+          ],
+        },
+      },
+    });
+
+    const spy = vi
+      .spyOn(TwilioAPIClient.prototype, "createMessage")
+      .mockResolvedValue({
+        body: "message body",
+        status: "queued",
+        sid: "twilio-message-sid",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+    await processJii({
+      stateCode: StateCode.US_ID,
+      dryRun: false,
+      workflowExecutionId: fakeWorkflowExecutionOne.id,
+    });
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy.mock.calls[0][0]).toMatchSnapshot();
+    expect(spy.mock.calls[0][1]).toBe(fakePersonOne.phoneNumber);
+  },
+);

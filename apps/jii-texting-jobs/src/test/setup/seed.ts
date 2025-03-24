@@ -19,9 +19,13 @@ import { PrismaClient } from "@prisma/jii-texting-server/client";
 
 import {
   fakeFullyEligibleGroup,
+  fakeMissingDA,
+  fakeMissingFinesFeesGroup,
+  fakeMissingIncomeVerification,
   fakePersonOne,
   fakeTopic,
   fakeTrustedTesterGroup,
+  fakeTwoMissingCriteria,
   fakeWorkflowExecutionOne,
   fakeWorkflowExecutionThree,
   fakeWorkflowExecutionTwo,
@@ -32,7 +36,14 @@ export async function seed(prismaClient: PrismaClient) {
     data: {
       ...fakeTopic,
       groups: {
-        create: [fakeTrustedTesterGroup, fakeFullyEligibleGroup],
+        create: [
+          fakeTrustedTesterGroup,
+          fakeFullyEligibleGroup,
+          fakeMissingDA,
+          fakeMissingFinesFeesGroup,
+          fakeMissingIncomeVerification,
+          fakeTwoMissingCriteria,
+        ],
       },
     },
     include: {
@@ -48,8 +59,8 @@ export async function seed(prismaClient: PrismaClient) {
     ],
   });
 
-  const trustedTesterGroup = topic.groups.find(
-    (group) => group.groupName === "TRUSTED_TESTER",
+  const fullyEligibleGroup = topic.groups.find(
+    (group) => group.groupName === fakeFullyEligibleGroup.groupName,
   );
 
   // Create a person with an active group and no messages
@@ -58,7 +69,7 @@ export async function seed(prismaClient: PrismaClient) {
       ...fakePersonOne,
       groups: {
         connect: {
-          id: trustedTesterGroup?.id,
+          id: fullyEligibleGroup?.id,
         },
       },
     },
