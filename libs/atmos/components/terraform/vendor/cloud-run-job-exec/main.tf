@@ -97,3 +97,16 @@ resource "google_cloud_run_v2_job" "job" {
 }
 
 data "google_client_config" "default" {}
+
+resource "terracurl_request" "exec" {
+  count        = var.exec ? 1 : 0
+  name         = "exec-job"
+  url          = "https://run.googleapis.com/v2/${google_cloud_run_v2_job.job.id}:run"
+  method       = "POST"
+  headers = {
+    Authorization = "Bearer ${data.google_client_config.default.access_token}"
+    Content-Type  = "application/json",
+  }
+  response_codes = [200]
+  destroy_skip = true
+}
