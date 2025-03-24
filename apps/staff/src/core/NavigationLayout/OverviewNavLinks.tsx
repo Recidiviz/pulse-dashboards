@@ -43,14 +43,13 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const {
     workflowsStore,
     workflowsStore: {
-      allowSupervisionTasks,
+      isSupervisionTasksEnabled,
       workflowsSupportedSystems,
       supportsMultipleSystems,
       homepage,
       homepageNameOverride,
     },
     userStore: { userAllowedNavigation },
-    currentTenantId,
   } = useRootStore() as PartiallyTypedRootStore;
 
   const enableWorkflows = (userAllowedNavigation.workflows || []).length > 0;
@@ -84,16 +83,14 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       {enableMilestones && (
         <NavLink to={workflowsUrl("milestones")}>Kudos</NavLink>
       )}
-      {allowSupervisionTasks &&
-        enableWorkflows &&
-        currentTenantId !== "US_TX" && (
-          <NavLink
-            to={workflowsUrl("tasks")}
-            onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}
-          >
-            Tasks
-          </NavLink>
-        )}
+      {isSupervisionTasksEnabled && (
+        <NavLink
+          to={workflowsUrl("tasks")}
+          onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}
+        >
+          Tasks
+        </NavLink>
+      )}
       {enableSystems
         ? workflowsSupportedSystems?.map((systemId: SystemId) => {
             const path = SYSTEM_ID_TO_PATH[systemId];

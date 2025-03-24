@@ -99,7 +99,8 @@ export type FeatureVariant =
   | "mandatoryMinimum"
   | "usTnCompliantReporting2025Policy"
   | "reportIncorrectRosters"
-  | "tableMultiSortEnabled";
+  | "tableMultiSortEnabled"
+  | "supervisionTasksNavLink";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -160,6 +161,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnCompliantReporting2025Policy: {},
   reportIncorrectRosters: {},
   tableMultiSortEnabled: {},
+  supervisionTasksNavLink: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -190,6 +192,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnExpirationSubmitToTomis: {},
         usTnSuspensionOfDirectSupervision: {},
         zeroGrantsFlag: { activeTenants: ["US_ID", "US_MI", "US_TN"] },
+        supervisionTasksNavLink: { activeTenants: ["US_ID"] },
       }
     : {
         ...allFeatureVariants,
@@ -205,6 +208,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         },
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
         tableMultiSortEnabled: undefined,
+        supervisionTasksNavLink: { activeTenants: ["US_ID"] },
       };
 
 export type LanternMethodologyByTenant = {

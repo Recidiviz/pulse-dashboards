@@ -108,6 +108,7 @@ const { stateConfigs } = vi.hoisted(() => {
       ],
       workflowsSupportedSystems: ["SUPERVISION"],
       availableStateCodes: ["US_TN"],
+      workflowsTasksConfig: {},
       workflowsSystemConfigs: {
         INCARCERATION: {
           search: [
@@ -135,6 +136,7 @@ const { stateConfigs } = vi.hoisted(() => {
       opportunityTypes: [],
       workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
       availableStateCodes: ["US_ME"],
+      workflowsTasksConfig: {},
     },
     US_MO: {
       opportunityTypes: ["usMoOverdueRestrictiveHousingRelease"],
@@ -877,6 +879,56 @@ describe("hasOpportunities", () => {
         "compliantReporting",
       ]),
     ).toBeTrue();
+  });
+});
+
+describe("isSupervisionTasksEnabled", () => {
+  test("when tasks allowed, route exists, FV active", async () => {
+    setUser({ supervisionTasksNavLink: {} }, "US_ME", {
+      workflowsSupervision: true,
+    });
+    runInAction(() => {
+      workflowsStore.updateActiveSystem("SUPERVISION");
+      rootStore.tenantStore.currentTenantId = "US_ME";
+    });
+    await waitForHydration();
+    expect(workflowsStore.isSupervisionTasksEnabled).toBeTrue();
+  });
+
+  test("when task config is missing", async () => {
+    setUser({ supervisionTasksNavLink: {} }, "US_MO", {
+      workflowsSupervision: true,
+    });
+    runInAction(() => {
+      workflowsStore.updateActiveSystem("SUPERVISION");
+      rootStore.tenantStore.currentTenantId = "US_MO";
+    });
+    await waitForHydration();
+    expect(workflowsStore.isSupervisionTasksEnabled).toBeFalse();
+  });
+
+  test("when route permission is missing", async () => {
+    setUser({ supervisionTasksNavLink: {} }, "US_ME", {
+      workflowsSupervision: false,
+    });
+    runInAction(() => {
+      workflowsStore.updateActiveSystem("SUPERVISION");
+      rootStore.tenantStore.currentTenantId = "US_ME";
+    });
+    await waitForHydration();
+    expect(workflowsStore.isSupervisionTasksEnabled).toBeFalse();
+  });
+
+  test("when feature variant is missing", async () => {
+    setUser({}, "US_ME", {
+      workflowsSupervision: true,
+    });
+    runInAction(() => {
+      workflowsStore.updateActiveSystem("SUPERVISION");
+      rootStore.tenantStore.currentTenantId = "US_ME";
+    });
+    await waitForHydration();
+    expect(workflowsStore.isSupervisionTasksEnabled).toBeFalse();
   });
 });
 

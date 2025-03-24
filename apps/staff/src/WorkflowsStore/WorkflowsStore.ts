@@ -730,6 +730,14 @@ export class WorkflowsStore implements Hydratable {
     return !!TENANT_CONFIGS[currentTenantId]?.workflowsTasksConfig;
   }
 
+  get isSupervisionTasksEnabled(): boolean {
+    return (
+      this.allowSupervisionTasks &&
+      !!this.featureVariants["supervisionTasksNavLink"] &&
+      this.rootStore.userStore.getRoutePermission("workflowsSupervision")
+    );
+  }
+
   /**
    * A list of staff supervised by the current user
    */

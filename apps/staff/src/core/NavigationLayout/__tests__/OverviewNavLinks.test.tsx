@@ -115,7 +115,7 @@ describe("OverviewNavLinks tests", () => {
   });
 
   it("Should render a link for Tasks page if enabled", async () => {
-    rootStoreMock.workflowsStore.allowSupervisionTasks = true;
+    rootStoreMock.workflowsStore.isSupervisionTasksEnabled = true;
     renderLinks();
 
     await waitFor(() =>
