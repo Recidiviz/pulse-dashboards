@@ -230,6 +230,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "On supervision for highly publicized case, sex offense or domestic violence",
         },
         { key: "FEE", text: "No effort to pay fees" },
+        { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
@@ -265,7 +266,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usTnFeeScheduleOrPermanentExemption",
-          text: " {{#if  (eq latestFeeContactDate “”)}}\nHas permanent exemption {{currentExemptions}}\n\n{{else}}\n {{#if  (eq currentExemptions “”)}}\nLatest FEEP on {{date latestFeeContactDate}}\n{{else}}\nLatest FEEP on {{date latestFeeContactDate}}, has permanent exemption {{currentExemptions}}\n{{/if}}\n{{/if}}\n\n\n\n\n",
+          text: " {{#if  (eq latestFeeContactDate null)}}\nHas permanent exemption {{currentExemptions}}\n\n{{else}}\n {{#if  (eq currentExemptions null)}}\nLatest FEEP on {{date latestFeeContactDate}}\n{{else}}\nLatest FEEP on {{date latestFeeContactDate}}, has permanent exemption {{currentExemptions}}\n{{/if}}\n{{/if}}\n\n\n\n\n",
           tooltip:
             "Clients who've had a FEEP code in the last 90 days are surfaced as eligible or have a permanent exemption",
         },

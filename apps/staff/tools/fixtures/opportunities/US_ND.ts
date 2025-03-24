@@ -372,7 +372,16 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 2,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "incarcerationWithin42MonthsOfFullTermCompletionDate",
+          text: "Less than a month from being 42 months away from release",
+        },
+        {
+          key: "usNdNotEnrolledInRelevantProgram",
+          text: "Currently enrolled in a program",
+        },
+      ],
       initialHeader: null,
       isAlert: false,
       markSubmittedOptionsByTab: [],
