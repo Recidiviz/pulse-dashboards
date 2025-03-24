@@ -21,6 +21,7 @@ import { Mock } from "vitest";
 
 import { ClientRecord } from "~datatypes";
 
+import { usIdResidents } from "../../../tools/fixtures/residents/usIdResidents";
 import { WorkflowsSystemConfig } from "../../core/models/types";
 import { WorkflowsResidentRecord } from "../../FirestoreStore";
 import { Client } from "../Client";
@@ -372,6 +373,79 @@ describe("matchingPersonsGrouped", () => {
       DISTRICT1: [testClient],
     };
     expect(clientSearchManager.matchingPersonsGrouped).toEqual(expected);
+  });
+
+  test("searchFieldValue is adjusted for 'duplicate' CRC locations", () => {
+    const residentRecords = usIdResidents;
+    const incarcerationSystemConfig = {
+      search: [
+        { searchType: "LOCATION", searchField: ["metadata", "crcFacilities"] },
+      ],
+    } as WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
+    searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
+      () => incarcerationSystemConfig,
+    );
+    const residents = residentRecords.map((r) => {
+      return {
+        record: r,
+        recordId: r.personExternalId,
+        externalId: r.personExternalId,
+        personType: "RESIDENT",
+        fullName: r.personName,
+        // @ts-ignore
+        searchIdValues: r.metadata.crcFacilities,
+        pseudonymizedId: r.pseudonymizedId,
+      } as unknown as Resident;
+    });
+    searchStoreMock.workflowsStore.justiceInvolvedPersons = {
+      [residents[0].pseudonymizedId]: residents[0], // crcFacilities: ["CRC LRC", "LRC"]
+      [residents[1].pseudonymizedId]: residents[1], // crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
+      [residents[2].pseudonymizedId]: residents[2], // crcFacilities: ["CRC PRC", "PRC"],
+      [residents[3].pseudonymizedId]: residents[3], // crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
+    };
+    // @ts-ignore
+    searchStoreMock.selectedSearchIds = ["LRC"];
+    const expected = {
+      LRC: [residents[0], residents[1], residents[3]],
+    };
+    expect(residentSearchManager.matchingPersonsGrouped).toEqual(expected);
+  });
+
+  test("searchFieldValue with multiple locations", () => {
+    const residentRecords = usIdResidents;
+    const incarcerationSystemConfig = {
+      search: [
+        { searchType: "LOCATION", searchField: ["metadata", "crcFacilities"] },
+      ],
+    } as WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
+    searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
+      () => incarcerationSystemConfig,
+    );
+    const residents = residentRecords.map((r) => {
+      return {
+        record: r,
+        recordId: r.personExternalId,
+        externalId: r.personExternalId,
+        personType: "RESIDENT",
+        fullName: r.personName,
+        // @ts-ignore
+        searchIdValues: r.metadata.crcFacilities,
+        pseudonymizedId: r.pseudonymizedId,
+      } as unknown as Resident;
+    });
+    searchStoreMock.workflowsStore.justiceInvolvedPersons = {
+      [residents[0].pseudonymizedId]: residents[0], // crcFacilities: ["CRC LRC", "LRC"]
+      [residents[1].pseudonymizedId]: residents[1], // crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
+      [residents[2].pseudonymizedId]: residents[2], // crcFacilities: ["CRC PRC", "PRC"],
+      [residents[3].pseudonymizedId]: residents[3], // crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
+    };
+    // @ts-ignore
+    searchStoreMock.selectedSearchIds = ["LRC", "PRC"];
+    const expected = {
+      LRC: [residents[0], residents[1], residents[3]],
+      PRC: [residents[2], residents[1], residents[3]],
+    };
+    expect(residentSearchManager.matchingPersonsGrouped).toEqual(expected);
   });
 });
 

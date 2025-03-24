@@ -126,28 +126,28 @@ export class SearchManager {
    */
   get matchingPersonsGrouped(): Record<string, JusticeInvolvedPerson[]> {
     const matchingPersons = [...this.matchingPersonsSorted];
-    let caseloads: Record<string, JusticeInvolvedPerson[]> = {};
+    const caseloads: Record<string, JusticeInvolvedPerson[]> = {};
     // Create a group for each searchField id
     this.systemConfig.search.forEach(({ searchField }) => {
-      caseloads = {
-        ...caseloads,
-        ...groupBy(matchingPersons, `record.${searchField.join(".")}`),
-      };
+      // If the searchField is an array, groupBy converts it to a comma separated string as the key
+      const groupedPersons = groupBy(
+        matchingPersons,
+        `record.${searchField.join(".")}`,
+      );
+
+      Object.entries(groupedPersons).forEach(([caseloadId, caseload]) => {
+        // The caseloadId at this point is either a string: "OFFICER_ID1"
+        // or a string representation of an array in the case of US_ID facility: "'CRC PWCC', 'PWCC', 'CRC EBCRC', 'EBCRC'"
+        // We need to split the string with multiple facilities and create a group for each caseloadId/facility if it is in selectedSearchIds
+        // TODO #7802 Handle case when IDs contain a comma
+        caseloadId.split(",").forEach((key) => {
+          if (this.searchStore.selectedSearchIds.includes(key)) {
+            caseloads[key] = (caseloads[key] ?? []).concat(caseload);
+          }
+        });
+      });
     });
-    // Delete extraneous groups that are not in selectedSearchIds
-    // The extra groups exist because we are pulling all of the ids from every searchField
-    // in the logic above, but some of them won't be in the selectedSearchIds even though the JIP matches.
-    // So given:
-    //   selectedSearchIds: ["officer1, location1"]
-    //   client1: { oficerId: "officer1", "location1" }
-    //   client2: { oficerId: "officer1", "location2" }
-    // caseloads at this point would be:
-    //   caseloads: { officer1: [client1, client2], location1: [client1], location2: [client2] }
-    // the "location2" id is not in selectedSearchIds so it should be removed as a group
-    Object.keys(caseloads).forEach((key) => {
-      if (!this.searchStore.selectedSearchIds.includes(key))
-        delete caseloads[key];
-    });
+
     return caseloads;
   }
 
