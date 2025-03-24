@@ -126,7 +126,7 @@ export function getRecidivismPlot(
       Math.max(...transformedSeries.map((series) => series.upperCI)) * 20,
     ) * 5;
 
-  const margin = forReport ? 0 : 200;
+  const margin = forReport ? 20 : 200;
 
   return plot({
     width: plotWidth,

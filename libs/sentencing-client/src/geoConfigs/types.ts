@@ -49,4 +49,5 @@ export type GeoConfig = {
   ExternalOpportunityLogo?: React.FunctionComponent<
     React.SVGProps<SVGSVGElement>
   >;
+  infoPageLink?: string;
 };

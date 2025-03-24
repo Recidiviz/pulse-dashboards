@@ -55,7 +55,7 @@ export function DispositionChartExplanation({
   const noPreviousRecordCopy = (
     <>
       Historical Sentencing represents the percentage of cases sentenced to a
-      particular disposition, using ${orgName} data from 2010 to present. There
+      particular disposition, using {orgName} data from 2010 to present. There
       are no previous records of {genderCohortString}.
     </>
   );
@@ -65,7 +65,7 @@ export function DispositionChartExplanation({
       particular disposition. The rates are based on{" "}
       {dispositionNumRecords.toLocaleString()}{" "}
       {printFormattedRecordString(dispositionNumRecords)} of{" "}
-      {genderCohortString}, using ${orgName} data from 2010 to present.
+      {genderCohortString}, using {orgName} data from 2010 to present.
     </>
   );
 

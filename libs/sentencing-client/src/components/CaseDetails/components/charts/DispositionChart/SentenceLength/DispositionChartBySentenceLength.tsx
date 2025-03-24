@@ -30,7 +30,7 @@ import * as CommonStyled from "../../components/Styles";
 
 const CHART_HEIGHT = 277;
 const OPACITY = 0.3;
-const DISPOSITION_VISIBILITY_THRESHOLD = 0.01;
+const DISPOSITION_VISIBILITY_THRESHOLD = 0.005;
 
 function TooltipContent({
   title,
