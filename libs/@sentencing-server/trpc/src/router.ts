@@ -22,9 +22,11 @@ import { insightRouter } from "~@sentencing-server/trpc/routes/insight/insight.r
 import { offenseRouter } from "~@sentencing-server/trpc/routes/offense/offense.router";
 import { opportunityRouter } from "~@sentencing-server/trpc/routes/opportunity/opportunity.router";
 import { staffRouter } from "~@sentencing-server/trpc/routes/staff/staff.router";
+import { supervisorRouter } from "~@sentencing-server/trpc/routes/supervisor/supervisor.router";
 
 export const appRouter = router({
   staff: staffRouter,
+  supervisor: supervisorRouter,
   case: caseRouter,
   opportunity: opportunityRouter,
   offense: offenseRouter,

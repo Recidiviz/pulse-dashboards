@@ -70,6 +70,11 @@ beforeEach(() => {
         query: vi.fn(),
       },
     },
+    supervisor: {
+      getSupervisor: {
+        query: vi.fn(),
+      },
+    },
   };
   (createTRPCProxyClient as Mock).mockReturnValue(mockTRPCClient);
   apiClient = new APIClient(psiStore);

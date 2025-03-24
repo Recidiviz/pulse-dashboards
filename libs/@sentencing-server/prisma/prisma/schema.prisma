@@ -81,8 +81,10 @@ model Staff {
 
   hasLoggedIn Boolean @default(false)
 
-  email String
-  cases Case[]
+  email        String
+  cases        Case[]
+  // TODO(Recidiviz/recidiviz-data#40011) Make this a self-relation and update metric exports to include supervisee data
+  supervisorId String?
 }
 
 model Client {

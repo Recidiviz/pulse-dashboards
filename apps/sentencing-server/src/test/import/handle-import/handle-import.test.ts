@@ -1196,6 +1196,7 @@ describe("handle_import", () => {
             name_suffix: "Sr.",
           }),
           email: faker.internet.email(),
+          supervisor_id: "123",
         },
       ]);
 
@@ -1228,6 +1229,7 @@ describe("handle_import", () => {
           }),
           // Set the email
           email: "existing_staff@gmail.com",
+          supervisor_id: "123",
         },
         // new staff (with invalid state code)
         {
@@ -1242,6 +1244,7 @@ describe("handle_import", () => {
             name_suffix: faker.person.suffix(),
           }),
           email: faker.internet.email(),
+          supervisor_id: undefined,
         },
       ]);
 
@@ -1281,6 +1284,7 @@ describe("handle_import", () => {
             name_suffix: faker.person.suffix(),
           }),
           email: faker.internet.email(),
+          supervisor_id: "123",
         },
         // existing staff
         {
@@ -1296,6 +1300,7 @@ describe("handle_import", () => {
           }),
           // Set the email
           email: "existing_staff@gmail.com",
+          supervisor_id: undefined,
         },
       ]);
 
@@ -1313,10 +1318,12 @@ describe("handle_import", () => {
         expect.arrayContaining([
           expect.objectContaining({
             externalId: "new-staff-ext-id",
+            supervisorId: "123",
           }),
           expect.objectContaining({
             externalId: "staff-ext-1",
             email: "existing_staff@gmail.com",
+            supervisorId: "123",
           }),
         ]),
       );

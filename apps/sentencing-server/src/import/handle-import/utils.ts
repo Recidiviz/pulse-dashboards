@@ -227,6 +227,7 @@ export async function transformAndLoadStaffData(
       cases: {
         connect: existingCasesForStaff,
       },
+      supervisorId: staffData.supervisor_id,
     };
 
     // Load data

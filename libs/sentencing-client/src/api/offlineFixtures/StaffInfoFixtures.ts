@@ -25,6 +25,7 @@ const unarchivableDueDate = new Date(
 
 export const StaffInfoFixture: Staff = {
   pseudonymizedId: "ABC123",
+  supervisorId: "DEF456",
   fullName: "",
   email: "firstlast@test.com",
   stateCode: "US_ID",

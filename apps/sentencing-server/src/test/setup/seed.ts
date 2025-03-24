@@ -72,6 +72,15 @@ export const fakeMandatoryMinimum = {
   statuteLink: faker.internet.url(),
 };
 
+export const fakeSupervisor = {
+  externalId: "supervisor-ext-1",
+  pseudonymizedId: "supervisor-pid-1",
+  fullName: faker.person.fullName(),
+  email: faker.internet.email(),
+  stateCode: StateCode.US_ID,
+  hasLoggedIn: faker.datatype.boolean(),
+} satisfies StaffCreateInput;
+
 export const fakeStaff = {
   externalId: "staff-ext-1",
   pseudonymizedId: "staff-pid-1",
@@ -79,6 +88,7 @@ export const fakeStaff = {
   email: faker.internet.email(),
   stateCode: StateCode.US_ID,
   hasLoggedIn: faker.datatype.boolean(),
+  supervisorId: "123",
 } satisfies StaffCreateInput;
 
 export const fakeClient = {
