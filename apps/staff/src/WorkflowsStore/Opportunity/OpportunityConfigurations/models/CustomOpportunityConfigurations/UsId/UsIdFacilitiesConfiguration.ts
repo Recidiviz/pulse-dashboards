@@ -16,14 +16,13 @@
 // =============================================================================
 
 import { OpportunityTabGroups } from "../../../../types";
-import { generateTabs } from "../../../../utils/tabUtils";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsIdFacilitiesConfiguration extends ApiOpportunityConfiguration {
   get tabGroups(): OpportunityTabGroups {
     return {
       ...this.configurationObject.tabGroups,
-      "ELIGIBILITY STATUS": generateTabs(this),
+      "ELIGIBILITY STATUS": super.defaultEligibilityStatusTabs(),
     };
   }
 }

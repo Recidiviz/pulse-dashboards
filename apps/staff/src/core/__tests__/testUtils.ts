@@ -26,7 +26,6 @@ import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/Oppor
 import { apiOpportunityConfigurationSchema } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/dtos/ApiOpportunityConfigurationSchema";
 import { formatEligibilityText } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/ApiOpportunityConfigurationImpl";
 import { apiOpportunityConfigurationFactory } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/CustomOpportunityConfigurations";
-import { generateTabs } from "../../WorkflowsStore/Opportunity/utils/tabUtils";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 
 export const mockOpportunityConfigs = Object.fromEntries(
@@ -113,11 +112,7 @@ export const mockOpportunity: Opportunity<Client> = {
       autoSnoozeParams: (snoozedOn: Date) => add(snoozedOn, { days: 30 }),
     },
     tabGroups: {
-      "ELIGIBILITY STATUS": generateTabs({
-        supportsAlmostEligible: false,
-        supportsDenial: true,
-        submittedTabTitle: "Submitted",
-      }),
+      "ELIGIBILITY STATUS": ["Eligible Now", "Submitted", "Marked Ineligible"],
     },
     isEnabled: true,
     denialReasons: { CODE: "Denial Code", [OTHER_KEY]: "Other" },

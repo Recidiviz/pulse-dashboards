@@ -29,7 +29,6 @@ import {
   OpportunityTab,
   OpportunityTabGroups,
 } from "../../types";
-import { generateTabs } from "../../utils/tabUtils";
 import { IApiOpportunityConfiguration } from "../interfaces";
 import { OpportunityConfiguration } from "../interfaces/OpportunityConfiguration";
 
@@ -150,8 +149,19 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     const tabs = this.configurationObject.tabGroups as OpportunityTabGroups;
     if (tabs) return tabs;
     return {
-      "ELIGIBILITY STATUS": generateTabs(this),
+      "ELIGIBILITY STATUS": this.defaultEligibilityStatusTabs(),
     };
+  }
+
+  protected defaultEligibilityStatusTabs(): ReadonlyArray<OpportunityTab> {
+    const almostEligibleTabTitle: OpportunityTab = "Almost Eligible";
+
+    return [
+      "Eligible Now",
+      ...(this.supportsAlmostEligible ? [almostEligibleTabTitle] : []),
+      ...(this.supportsSubmitted ? [this.submittedTabTitle] : []),
+      ...(this.supportsDenial ? [this.deniedTabTitle] : []),
+    ];
   }
 
   get methodologyUrl() {
