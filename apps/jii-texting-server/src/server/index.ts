@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { setupFastifyErrorHandler } from "@sentry/node";
 import Fastify from "fastify";
 
+import registerRoutes from "~jii-texting-server/server/routes";
 import { registerImportRoutes } from "~jii-texting-server/server/utils";
 import registerWebhooks from "~jii-texting-server/server/webhooks";
 
@@ -30,8 +32,11 @@ export function buildServer() {
     return { hello: "world" };
   });
 
+  setupFastifyErrorHandler(server);
+
   registerWebhooks(server);
   registerImportRoutes(server);
+  registerRoutes(server);
 
   return server;
 }

@@ -42,5 +42,32 @@ export default defineConfig({
       reportsDirectory: "../../coverage/apps/jii-texting-server",
       provider: "v8",
     },
+    // We need to set this up this way because:
+    // 1. The vitest vscode extension doesn't load any environment variables, so it needs backups
+    // 2. The env variables for local testing and CI are different
+    // NOTE: none of these are true secrets, they are all fine to put in this file
+    env: {
+      CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL:
+        process.env["CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL"] ??
+        "test-csn@fake.com",
+      DATABASE_URL:
+        process.env["DATABASE_URL"] ??
+        "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
+      DATABASE_URL_US_ID:
+        process.env["DATABASE_URL_US_ID"] ??
+        "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
+      IMPORT_BUCKET_ID: process.env["IMPORT_BUCKET_ID"] ?? "test-bucket",
+      IMPORT_CLOUD_TASK_LOCATION:
+        process.env["IMPORT_CLOUD_TASK_LOCATION"] ?? "test-task-location",
+      IMPORT_CLOUD_TASK_PROJECT:
+        process.env["IMPORT_CLOUD_TASK_PROJECT"] ?? "test-task-project",
+      IMPORT_CLOUD_TASK_QUEUE:
+        process.env["IMPORT_CLOUD_TASK_QUEUE"] ?? "test-task-queue",
+      IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL:
+        process.env["IMPORT_CLOUD_TASK_SERVICE_ACCOUNT_EMAIL"] ??
+        "test-task@fake.com",
+      IMPORT_CLOUD_TASK_URL:
+        process.env["IMPORT_CLOUD_TASK_URL"] ?? "test-task-url",
+    },
   },
 });

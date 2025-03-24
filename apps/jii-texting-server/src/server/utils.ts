@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { StateCode } from "@prisma/jii-texting-server/client";
 import { captureException } from "@sentry/node";
 import { FastifyInstance } from "fastify";
 
@@ -74,4 +75,8 @@ export function registerImportRoutes(server: FastifyInstance) {
   });
 
   importHandler.registerImportRoutes(server);
+}
+
+export function isValidStateCode(stateCode: string) {
+  return (Object.values(StateCode) as string[]).includes(stateCode);
 }
