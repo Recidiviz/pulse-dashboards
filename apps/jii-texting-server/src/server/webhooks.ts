@@ -56,22 +56,22 @@ async function registerWebhooks(server: FastifyInstance) {
       // Remove the international code prefix, i.e. +1, for internal use
       const fromPhoneNumber = fromNumber.substring(2);
 
-      // Find the person that has this phone number, if they exist
-      const person = await prisma.person.findUnique({
+      // Find the people that have this phone number, if they exist
+      const people = await prisma.person.findMany({
         where: {
           phoneNumber: fromPhoneNumber,
         },
       });
 
-      if (!person) {
+      if (!people) {
         request.log.info(
           `Received incoming message from unrecognized phone number`,
         );
       }
 
       // If the person exists and the person has opted out, update their record
-      if (person && optOutType) {
-        await prisma.person.update({
+      if (people && optOutType) {
+        prisma.person.updateMany({
           where: {
             phoneNumber: fromPhoneNumber,
           },
@@ -80,8 +80,14 @@ async function registerWebhooks(server: FastifyInstance) {
           },
         });
 
+        const updatedPseudonymizedIds: string[] = [];
+
+        people.forEach((person) => {
+          updatedPseudonymizedIds.push(person.pseudonymizedId);
+        });
+
         request.log.info(
-          `Updated opt-out for person ${person.pseudonymizedId}`,
+          `Updated opt-out for people: ${updatedPseudonymizedIds}`,
         );
       }
 

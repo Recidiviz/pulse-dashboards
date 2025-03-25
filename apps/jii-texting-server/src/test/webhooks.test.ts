@@ -43,7 +43,7 @@ describe("twilio_incoming_message", () => {
       statusCode: 200,
     });
 
-    const person = await testPrismaClient.person.findUnique({
+    const person = await testPrismaClient.person.findFirst({
       where: {
         phoneNumber: existingPersonPhoneNumber,
       },

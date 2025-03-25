@@ -89,7 +89,7 @@ model Person {
   middleName      String?
   surname         String
   nameSuffix      String?
-  phoneNumber     String    @unique
+  phoneNumber     String
   officerId       String
   poName          String
   district        String
