@@ -99,7 +99,12 @@ export type JusticeInvolvedPerson = {
    * The values of the fields on the person record that are used to return search results. Defaults to
    * the person's assigned staff ID.
    */
-  searchIdValues: string[] | undefined;
+  searchIdValues: string[];
+
+  /**
+   * The searchIdValues, broken out by searchField
+   */
+  searchIdValuesBySearchField: Record<string, string[]>;
   /**
    * The category of search that was conducted (officer, facility, or facility unit.)
    */

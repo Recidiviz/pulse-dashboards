@@ -622,24 +622,37 @@ export class OpportunityBase<
   }
 
   trackListViewed(): void {
-    const { systemConfig } = this.person;
-    const searchIds = this.person.searchIdValues ?? [];
-    // Pseudonymize staff IDs
-    const pseudoSearchIds = searchIds?.map((value) =>
-      value === this.person.assignedStaffId
-        ? this.person.assignedStaffPseudoId
-        : value,
-    );
+    const { selectedSearchIds } = this.rootStore.workflowsStore.searchStore;
 
-    this.rootStore.analyticsStore.trackSurfacedInList({
-      justiceInvolvedPersonId: this.person.pseudonymizedId,
-      opportunityType: this.type,
-      searchIdValue: pseudoSearchIds.join(","),
-      // TODO #7232 handle multiple search configs
-      searchField: systemConfig.search[0].searchField.join("."),
-      tabTitle: this.tabTitle(),
-      opportunityId: this.sentryTrackingId,
-    });
+    // These are all of the possible search id values by search field, even if that search id value is not in selectedSearchIds,
+    // broken out by searchField.
+    Object.entries(this.person.searchIdValuesBySearchField).forEach(
+      ([searchField, searchIdValues]) => {
+        // These are all of the search Id values for a person, that are also present in selectedSearchIds
+        const activeSearchIdValues = searchIdValues.filter((id) =>
+          selectedSearchIds?.includes(id),
+        );
+
+        // Pseudonymize staff IDs
+        const pseudoSearchIds = activeSearchIdValues.map((value) =>
+          value === this.person.assignedStaffId
+            ? this.person.assignedStaffPseudoId
+            : value,
+        );
+
+        // For each searchField, if the person matches based on that searchField fire the event
+        if (pseudoSearchIds.length > 0) {
+          this.rootStore.analyticsStore.trackSurfacedInList({
+            justiceInvolvedPersonId: this.person.pseudonymizedId,
+            opportunityType: this.type,
+            searchIdValue: pseudoSearchIds.join(","),
+            searchField: searchField,
+            tabTitle: this.tabTitle(),
+            opportunityId: this.sentryTrackingId,
+          });
+        }
+      },
+    );
   }
 
   trackPreviewed(): void {

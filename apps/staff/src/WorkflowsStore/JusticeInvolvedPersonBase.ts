@@ -267,9 +267,21 @@ export abstract class JusticeInvolvedPersonBase<
     });
   }
 
+  // These are all of the possible search id values by search field, even if that search id value is not in selectedSearchIds,
   get searchIdValues(): string[] {
-    return this.systemConfig.search.flatMap(
-      (searchConfig) => get(this.record, searchConfig.searchField) ?? [],
+    return Object.values(this.searchIdValuesBySearchField).flat();
+  }
+
+  // These are all of the searchIdValues, broken out by searchField.
+  get searchIdValuesBySearchField(): Record<string, string[]> {
+    return this.systemConfig.search.reduce(
+      (acc: Record<string, string[]>, searchConfig) => {
+        acc[searchConfig.searchField.join(".")] = [
+          get(this.record, searchConfig.searchField),
+        ].flat();
+        return acc;
+      },
+      {},
     );
   }
 }

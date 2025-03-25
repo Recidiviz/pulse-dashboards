@@ -30,6 +30,7 @@ import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import { formatDateToISO } from "../../../utils";
 import { mockSupervisionOfficers } from "../../__fixtures__";
 import { Client } from "../../Client";
+import { SearchStore } from "../../SearchStore";
 import { DocumentSubscription, UpdateFunction } from "../../subscriptions";
 import { OTHER_KEY } from "../../utils";
 import { ineligibleClientRecord } from "../__fixtures__";
@@ -113,6 +114,9 @@ function createTestUnit() {
       ...ineligibleClientRecord,
       officerId: mockSupervisionOfficers[0].id,
       district: "DISTRICT1",
+      // Clients don't have crcFacilities, but adding them here to test analytics logic for array searchFields
+      // @ts-ignore
+      metadata: { crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"] },
     },
     root,
   );
@@ -646,6 +650,9 @@ describe("tracking", () => {
     root.workflowsStore.supervisionStaffSubscription.data =
       mockSupervisionOfficers;
     root.workflowsStore.updateActiveSystem("SUPERVISION");
+    root.workflowsStore.searchStore = {
+      selectedSearchIds: [mockSupervisionOfficers[0].id],
+    } as unknown as SearchStore;
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
         { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
@@ -658,16 +665,21 @@ describe("tracking", () => {
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
       searchField: "officerId",
+      // this is the pseudonymized version of the selected id
       searchIdValue: mockSupervisionOfficers[0].pseudonymizedId,
       tabTitle: opp.tabTitle(),
       opportunityId: opp.sentryTrackingId,
     });
   });
 
-  test("list view tracking for multiple search type only lists first searchField", () => {
+  test("list view tracking for multiple search types with only one active", () => {
     root.workflowsStore.supervisionStaffSubscription.data =
       mockSupervisionOfficers;
     root.workflowsStore.updateActiveSystem("SUPERVISION");
+    // only location search is actively being used
+    root.workflowsStore.searchStore = {
+      selectedSearchIds: ["DISTRICT1"],
+    } as unknown as SearchStore;
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
         { searchType: "LOCATION", searchField: ["district"], searchTitle: "" },
@@ -681,10 +693,89 @@ describe("tracking", () => {
       justiceInvolvedPersonId: client.pseudonymizedId,
       opportunityType: opp.type,
       searchField: "district",
-      searchIdValue: `DISTRICT1,${mockSupervisionOfficers[0].pseudonymizedId}`,
+      searchIdValue: "DISTRICT1",
       tabTitle: opp.tabTitle(),
       opportunityId: opp.sentryTrackingId,
     });
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledTimes(1);
+  });
+
+  test("list view tracking for multiple search types with both active", () => {
+    root.workflowsStore.supervisionStaffSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    // Both location and officer search are used
+    root.workflowsStore.searchStore = {
+      selectedSearchIds: ["DISTRICT1", mockSupervisionOfficers[0].id],
+    } as unknown as SearchStore;
+    vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
+      search: [
+        { searchType: "LOCATION", searchField: ["district"], searchTitle: "" },
+        { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
+      ],
+    });
+    vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
+    opp.trackListViewed();
+
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+      searchField: "officerId",
+      // this is the pseudonymized version of the selected id
+      searchIdValue: mockSupervisionOfficers[0].pseudonymizedId,
+      tabTitle: opp.tabTitle(),
+      opportunityId: opp.sentryTrackingId,
+    });
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+      searchField: "district",
+      searchIdValue: "DISTRICT1",
+      tabTitle: opp.tabTitle(),
+      opportunityId: opp.sentryTrackingId,
+    });
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledTimes(2);
+  });
+
+  test("list view tracking for multiple search types, one of which is CRC facility", () => {
+    root.workflowsStore.supervisionStaffSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    // Both location and officer search are used
+    root.workflowsStore.searchStore = {
+      selectedSearchIds: ["LRC", mockSupervisionOfficers[0].id],
+    } as unknown as SearchStore;
+    vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
+      search: [
+        {
+          searchType: "LOCATION",
+          searchField: ["metadata", "crcFacilities"],
+          searchTitle: "",
+        },
+        { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
+      ],
+    });
+    vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
+    opp.trackListViewed();
+
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+      searchField: "officerId",
+      // this is the pseudonymized version of the selected id
+      searchIdValue: mockSupervisionOfficers[0].pseudonymizedId,
+      tabTitle: opp.tabTitle(),
+      opportunityId: opp.sentryTrackingId,
+    });
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+      searchField: "metadata.crcFacilities",
+      searchIdValue: "LRC",
+      tabTitle: opp.tabTitle(),
+      opportunityId: opp.sentryTrackingId,
+    });
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledTimes(2);
   });
 
   test("preview tracking", async () => {
