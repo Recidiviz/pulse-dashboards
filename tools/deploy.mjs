@@ -447,7 +447,7 @@ if (deployEnv === "staging" || deployEnv === "production") {
 
         // TODO(#7617) Check if ETL Cloud Run Job is running before DB migration
 
-        await $`nx run jii-texting-server:deploy --configuration=${deployEnv} --tag=${currentRevision} --migrate=true`.pipe(
+        await $`COMMIT_SHA=${currentRevision} nx run jii-texting-server:deploy --configuration=${deployEnv} --tag=${currentRevision} --migrate=true`.pipe(
           process.stdout,
         );
 
