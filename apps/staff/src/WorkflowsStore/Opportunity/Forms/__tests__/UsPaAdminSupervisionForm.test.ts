@@ -65,6 +65,7 @@ function createTestUnit() {
     },
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsPaAdminSupervisionOpportunity(person, oppRecord);

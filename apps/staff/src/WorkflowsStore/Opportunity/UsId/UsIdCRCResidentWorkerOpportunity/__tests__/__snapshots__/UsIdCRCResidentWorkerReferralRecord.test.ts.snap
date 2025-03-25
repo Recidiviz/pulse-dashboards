@@ -19,6 +19,7 @@ exports[`UsIdCRCResidentWorkerReferralRecord multiple criteria > transforms elig
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;
@@ -41,6 +42,7 @@ exports[`transforms eligible record with life temporal criteria 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;

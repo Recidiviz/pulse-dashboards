@@ -42,6 +42,7 @@ export const opportunitySchemaBase = z.object({
   opportunityId: z.string().optional(),
   // Hashed opportunity ID used to prevent emitting PII in Segment events
   opportunityPseudonymizedId: z.string().optional(),
+  metadata: z.object({}).passthrough().default({}),
 });
 
 export type OpportunityRecordBase = z.infer<typeof opportunitySchemaBase>;

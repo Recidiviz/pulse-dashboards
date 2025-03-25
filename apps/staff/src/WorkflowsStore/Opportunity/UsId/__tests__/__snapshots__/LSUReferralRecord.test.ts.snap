@@ -57,6 +57,7 @@ exports[`can transform record with eligible and ineligible criteria 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;
@@ -92,6 +93,7 @@ exports[`optional criteria have sane fallbacks 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;
@@ -153,6 +155,7 @@ exports[`transform record 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;

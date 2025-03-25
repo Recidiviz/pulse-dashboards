@@ -104,6 +104,7 @@ function createTestUnit() {
     caseNotes: {},
     isEligible: true,
     isAlmostEligible: false,
+    metadata: {},
   };
 
   // using an ineligible to avoid wasted work creating opportunities we don't need

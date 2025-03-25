@@ -69,6 +69,7 @@ exports[`record is properly parsed for opportunity 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_XX",
 }
 `;

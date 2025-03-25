@@ -81,6 +81,7 @@ exports[`formInformation parses 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;
@@ -111,6 +112,7 @@ exports[`optional criteria have sane fallbacks 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;
@@ -154,6 +156,7 @@ exports[`transform dual/parole record 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;
@@ -196,6 +199,7 @@ exports[`transform probation record 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;
@@ -231,6 +235,7 @@ exports[`transforms records with eligible and ineligible criteria 1`] = `
   },
   "isAlmostEligible": true,
   "isEligible": false,
+  "metadata": {},
   "stateCode": "US_ID",
 }
 `;

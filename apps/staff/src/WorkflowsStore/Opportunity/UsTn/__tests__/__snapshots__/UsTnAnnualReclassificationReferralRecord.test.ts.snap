@@ -69,6 +69,7 @@ exports[`UsTnAnnualReclassificationReviewReferralRecordRaw > matches the snapsho
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_TN",
 }
 `;
@@ -124,6 +125,7 @@ exports[`UsTnAnnualReclassificationReviewReferralRecordRaw > matches the snapsho
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_TN",
 }
 `;

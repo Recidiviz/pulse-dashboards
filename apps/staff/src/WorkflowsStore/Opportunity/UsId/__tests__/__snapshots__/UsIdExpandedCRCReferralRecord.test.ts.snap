@@ -27,6 +27,7 @@ exports[`transforms record with FTCD and PED set 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_MI",
 }
 `;
@@ -58,6 +59,7 @@ exports[`transforms record with TPD set 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_MI",
 }
 `;
@@ -95,6 +97,7 @@ exports[`transforms record with caseNotes set 1`] = `
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {},
   "stateCode": "US_MI",
 }
 `;
