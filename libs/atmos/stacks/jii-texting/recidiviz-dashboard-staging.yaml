@@ -45,7 +45,7 @@ components:
           query_string_length: 1024
           record_application_tags: false
           record_client_address: false
-        additional_databases: 
+        additional_databases:
           - us_id
       metadata:
         component: vendor/cloud-sql-instance
@@ -65,7 +65,7 @@ components:
             condition:
               num_newer_versions: 3
         set_admin_roles: true
-        bucket_admins: 
+        bucket_admins:
           jii-texting-etl-data: "serviceAccount:{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com,serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
       metadata:
         component: vendor/cloud-storage-bucket
@@ -74,6 +74,17 @@ components:
         location: "{{ .settings.context.location }}"
         repository_id: "{{ .settings.context.registry_repo_name }}"
         format: DOCKER
+        cleanup_policies:
+          delete-untagged:
+            type: DELETE
+            id: delete-untagged
+            condition:
+              tag_state: UNTAGGED
+          keep-minimum-versions:
+            type: KEEP
+            id: keep-minimum-versions
+            most_recent_versions:
+              keep_count: 15
     apps/jii-texting:
       vars:
         project_number: "{{ .settings.context.project_number }}"

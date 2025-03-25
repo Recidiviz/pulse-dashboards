@@ -35,6 +35,17 @@ components:
         location: "{{ .settings.context.location }}"
         repository_id: sentencing
         format: DOCKER
+        cleanup_policies:
+          delete-untagged:
+            type: DELETE
+            id: delete-untagged
+            condition:
+              tag_state: UNTAGGED
+          keep-minimum-versions:
+            type: KEEP
+            id: keep-minimum-versions
+            most_recent_versions:
+              keep_count: 15
       metadata:
         component: vendor/artifact-registry
     apps/sentencing:
