@@ -86,9 +86,9 @@ model Person {
   personId        String    @unique // internal Recidiviz id
   stateCode       StateCode
   givenName       String
-  middleName      String
+  middleName      String?
   surname         String
-  nameSuffix      String
+  nameSuffix      String?
   phoneNumber     String    @unique
   officerId       String
   poName          String

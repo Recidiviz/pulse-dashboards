@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Person" ALTER COLUMN "middleName" DROP NOT NULL,
+ALTER COLUMN "nameSuffix" DROP NOT NULL;
