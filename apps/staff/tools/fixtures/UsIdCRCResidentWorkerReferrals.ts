@@ -32,13 +32,11 @@ export const usIdCRCResidentWorkerReferrals: FirestoreFixture<UsIdCRCResidentWor
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
           usIdNotDetainersForXcrcAndCrc: null,
           usIdCrcResidentWorkerTimeBasedCriteria: {
-            reasons: [
-              {
-                criteriaName:
-                  "US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE",
-                tentativeParoleDate: "2025-08-14",
-              },
-            ],
+            eligibleOffenses: null,
+            fullTermCompletionDate: null,
+            groupProjectedParoleReleaseDate: "2025-08-14",
+            paroleEligibilityDate: null,
+            nextParoleHearingDate: null,
           },
         },
         ineligibleCriteria: {},
@@ -56,21 +54,11 @@ export const usIdCRCResidentWorkerReferrals: FirestoreFixture<UsIdCRCResidentWor
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
           usIdNotDetainersForXcrcAndCrc: null,
           usIdCrcResidentWorkerTimeBasedCriteria: {
-            reasons: [
-              {
-                criteriaName:
-                  "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD",
-                fullTermCompletionDate: "2028-10-10",
-                tentativeParoleDate: null,
-              },
-              {
-                criteriaName:
-                  "US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD",
-                fullTermCompletionDate: "2031-03-13",
-                nextParoleHearingDate: "2025-11-15",
-                paroleEligibilityDate: "2025-10-12",
-              },
-            ],
+            eligibleOffenses: null,
+            fullTermCompletionDate: "2031-03-13",
+            groupProjectedParoleReleaseDate: null,
+            nextParoleHearingDate: "2025-11-15",
+            paroleEligibilityDate: "2025-10-12",
           },
         },
         ineligibleCriteria: {},

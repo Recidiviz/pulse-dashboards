@@ -32,20 +32,10 @@ export const usIdCRCWorkReleaseReferrals: FirestoreFixture<UsIdCRCWorkReleaseRef
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
           usIdNotDetainersForXcrcAndCrc: null,
           usIdCrcWorkReleaseTimeBasedCriteria: {
-            reasons: [
-              {
-                criteriaName:
-                  "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD",
-                fullTermCompletionDate: "2023-10-10",
-                tentativeParoleDate: null,
-              },
-              {
-                criteriaName:
-                  "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
-                fullTermCompletionDate: "2031-03-13",
-                minTermCompletionDate: "2023-11-15",
-              },
-            ],
+            eligibleOffenses: null,
+            fullTermCompletionDate: "2023-10-10",
+            groupProjectedParoleReleaseDate: null,
+            minTermCompletionDate: null,
           },
         },
         ineligibleCriteria: {},
@@ -63,13 +53,10 @@ export const usIdCRCWorkReleaseReferrals: FirestoreFixture<UsIdCRCWorkReleaseRef
           usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
           usIdNotDetainersForXcrcAndCrc: null,
           usIdCrcWorkReleaseTimeBasedCriteria: {
-            reasons: [
-              {
-                criteriaName:
-                  "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE",
-                tentativeParoleDate: "2024-08-14",
-              },
-            ],
+            eligibleOffenses: null,
+            fullTermCompletionDate: "2027-03-13",
+            groupProjectedParoleReleaseDate: null,
+            minTermCompletionDate: "2025-05-25",
           },
         },
         ineligibleCriteria: {},

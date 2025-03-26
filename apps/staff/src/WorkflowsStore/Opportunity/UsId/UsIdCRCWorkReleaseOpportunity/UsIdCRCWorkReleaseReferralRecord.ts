@@ -24,7 +24,7 @@ import {
   crcSharedIneligibleCriteria,
 } from "../UsIdSharedCriteria";
 
-const usIdCrcWorkReleaseTimeBasedCriteria = z.object({
+const oldUsIdCrcWorkReleaseTimeBasedCriteriaSchema = z.object({
   reasons: z.array(
     z.discriminatedUnion("criteriaName", [
       z.object({
@@ -51,74 +51,137 @@ const usIdCrcWorkReleaseTimeBasedCriteria = z.object({
   ),
 });
 
-export const usIdCRCWorkReleaseSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: crcSharedCriteria
-    .extend({
-      usIdCrcWorkReleaseTimeBasedCriteria,
-      // The three criteria below do not come directly from firestore
-      // but are instead derived from usIdCrcWorkReleaseTimeBasedCriteria
-      usIdIncarcerationWithin18MonthsOfFtcdOrTpd: z
-        .object({
-          fullTermCompletionDate: dateStringSchema.nullable(),
-          tentativeParoleDate: dateStringSchema.nullable(),
-        })
-        .optional(),
-      usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd: z
-        .object({
-          fullTermCompletionDate: dateStringSchema,
-          minTermCompletionDate: dateStringSchema,
-        })
-        .optional(),
-      usIdIncarcerationWithin1YearOfTpdAndLifeSentence: z
-        .object({
-          tentativeParoleDate: dateStringSchema,
-        })
-        .optional(),
-    })
-    .transform(
-      ({ usIdCrcWorkReleaseTimeBasedCriteria: timeCriteria, ...rest }) => {
-        const transformedCriteria = { ...rest };
-        const criteriaPriority = [
-          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD",
-          "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
-          "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE",
-        ];
+// TODO(#7697): Remove the old schema once backend changes have been deployed to prod
+const oldEligibleCriteriaSchema = crcSharedCriteria
+  .extend({
+    usIdCrcWorkReleaseTimeBasedCriteria:
+      oldUsIdCrcWorkReleaseTimeBasedCriteriaSchema,
+    // The three criteria below do not come directly from firestore
+    // but are instead derived from usIdCrcWorkReleaseTimeBasedCriteria
+    usIdIncarcerationWithin18MonthsOfFtcdOrTpd: z
+      .object({
+        fullTermCompletionDate: dateStringSchema.nullable(),
+        tentativeParoleDate: dateStringSchema.nullable(),
+      })
+      .optional(),
+    usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd: z
+      .object({
+        fullTermCompletionDate: dateStringSchema,
+        minTermCompletionDate: dateStringSchema,
+      })
+      .optional(),
+    usIdIncarcerationWithin1YearOfTpdAndLifeSentence: z
+      .object({
+        tentativeParoleDate: dateStringSchema,
+      })
+      .optional(),
+  })
+  .transform(
+    ({ usIdCrcWorkReleaseTimeBasedCriteria: timeCriteria, ...rest }) => {
+      const transformedCriteria = { ...rest };
+      const criteriaPriority = [
+        "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD",
+        "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD",
+        "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE",
+      ];
 
-        const criteriaFound = timeCriteria.reasons.reduce(
-          (acc: any, { criteriaName, ...otherReasons }: any) => {
-            acc[criteriaName] = otherReasons;
-            return acc;
-          },
-          {},
-        );
+      const criteriaFound = timeCriteria.reasons.reduce(
+        (acc: any, { criteriaName, ...otherReasons }: any) => {
+          acc[criteriaName] = otherReasons;
+          return acc;
+        },
+        {},
+      );
 
-        for (const criteria of criteriaPriority) {
-          if (criteriaFound[criteria]) {
-            switch (criteria) {
-              case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD":
-                transformedCriteria.usIdIncarcerationWithin18MonthsOfFtcdOrTpd =
-                  criteriaFound[criteria];
-                break;
-              case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD":
-                transformedCriteria.usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd =
-                  criteriaFound[criteria];
-                break;
-              case "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE":
-                transformedCriteria.usIdIncarcerationWithin1YearOfTpdAndLifeSentence =
-                  criteriaFound[criteria];
-                break;
-              default:
-                throw new Error(
-                  `Unexpected time-based criteria for CRC Work Release: ${criteria}`,
-                );
-            }
-            break;
+      for (const criteria of criteriaPriority) {
+        if (criteriaFound[criteria]) {
+          switch (criteria) {
+            case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD":
+              transformedCriteria.usIdIncarcerationWithin18MonthsOfFtcdOrTpd =
+                criteriaFound[criteria];
+              break;
+            case "US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD":
+              transformedCriteria.usIdIncarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd =
+                criteriaFound[criteria];
+              break;
+            case "US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE":
+              transformedCriteria.usIdIncarcerationWithin1YearOfTpdAndLifeSentence =
+                criteriaFound[criteria];
+              break;
+            default:
+              throw new Error(
+                `Unexpected time-based criteria for CRC Work Release: ${criteria}`,
+              );
           }
+          break;
         }
+      }
 
-        return transformedCriteria;
-      },
-    ),
+      return transformedCriteria;
+    },
+  );
+
+const incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcdSchema = z.object({
+  fullTermCompletionDate: dateStringSchema,
+  minTermCompletionDate: dateStringSchema,
+});
+
+const incarcerationWithin18MonthsOfFtcdOrTpdSchema = z.object({
+  fullTermCompletionDate: dateStringSchema.nullable(),
+  groupProjectedParoleReleaseDate: dateStringSchema.nullable(),
+});
+
+const incarcerationWithin1YearOfTpdAndLifeSentenceSchema = z.object({
+  eligibleOffenses: z.array(z.string()),
+  groupProjectedParoleReleaseDate: dateStringSchema,
+});
+
+// These criteria do not come directly from firestore, but are instead
+// determined from the shape of usIdCrcWorkReleaseTimeBasedCriteria.
+//
+// The order of keys in this object matters. Specifically, we must attempt parsing
+// incarcerationWithin18MonthsOfFtcdOrTpdSchema AFTER incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcdSchema
+// because the former schema is permissive and will successfully parse the criteria of
+// someone who is only eligible for the latter reason, even if their FTCD is more than
+// 18 months away.
+const derivedCriteria = {
+  incarcerationWithin1YearOfTpdAndLifeSentence:
+    incarcerationWithin1YearOfTpdAndLifeSentenceSchema.optional(),
+  incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd:
+    incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcdSchema.optional(),
+  incarcerationWithin18MonthsOfFtcdOrTpd:
+    incarcerationWithin18MonthsOfFtcdOrTpdSchema.optional(),
+};
+
+const newEligibleCriteriaSchema = crcSharedCriteria
+  .extend({
+    // Passthrough values initially instead of parsing them in order to avoid
+    // trying to parse strings into Dates twice with dateStringSchema
+    usIdCrcWorkReleaseTimeBasedCriteria: z.object({}).passthrough(),
+  })
+  .extend(derivedCriteria)
+  .transform(
+    ({ usIdCrcWorkReleaseTimeBasedCriteria: reasons, ...rest }, ctx) => {
+      const transformedCriteria = rest;
+
+      for (const [key, schema] of Object.entries(derivedCriteria)) {
+        const parsed = schema.safeParse(reasons);
+        if (parsed.success) {
+          transformedCriteria[key] = parsed.data;
+          return transformedCriteria;
+        }
+      }
+
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Unexpected time-based criteria for CRC Work Release: ${JSON.stringify(reasons)}`,
+      });
+      return z.NEVER;
+    },
+  );
+
+export const usIdCRCWorkReleaseSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: oldEligibleCriteriaSchema.or(newEligibleCriteriaSchema),
   ineligibleCriteria: crcSharedIneligibleCriteria,
 });
 

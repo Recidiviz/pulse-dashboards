@@ -1,5 +1,81 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`UsIdCRCResidentWorkerReferralRecord (new schema) > eligible record for incarcerationWithin3YearsOfTpdAndLifeSentence 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "incarcerationWithin3YearsOfTpdAndLifeSentence": {
+      "eligibleOffenses": [
+        "I00-0000",
+        "I11-1111",
+      ],
+      "groupProjectedParoleReleaseDate": 2031-03-13T00:00:00.000Z,
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "testCRC01",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`UsIdCRCResidentWorkerReferralRecord (new schema) > eligible record for incarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "incarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd": {
+      "fullTermCompletionDate": 2031-03-13T00:00:00.000Z,
+      "nextParoleHearingDate": 2002-02-02T00:00:00.000Z,
+      "paroleEligibilityDate": 2000-01-01T00:00:00.000Z,
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "testCRC01",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`UsIdCRCResidentWorkerReferralRecord (new schema) > eligible record with incarcerationWithin7YearsOfFtcdOrTpd 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "incarcerationWithin7YearsOfFtcdOrTpd": {
+      "fullTermCompletionDate": 2031-03-13T00:00:00.000Z,
+      "groupProjectedParoleReleaseDate": 2031-03-13T00:00:00.000Z,
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "testCRC01",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
 exports[`UsIdCRCResidentWorkerReferralRecord multiple criteria > transforms eligible record with multiple temporal criteria 1`] = `
 {
   "caseNotes": {},

@@ -17,8 +17,8 @@ exports[`transforms record with FTCD and PED set 1`] = `
     },
     "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd": {
       "fullTermCompletionDate": 2022-08-12T00:00:00.000Z,
+      "groupProjectedParoleReleaseDate": null,
       "paroleEligibilityDate": 2022-03-19T00:00:00.000Z,
-      "tentativeParoleDate": null,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNotDetainersForXcrcAndCrc": null,
@@ -49,8 +49,8 @@ exports[`transforms record with TPD set 1`] = `
     },
     "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd": {
       "fullTermCompletionDate": null,
+      "groupProjectedParoleReleaseDate": 2022-07-11T00:00:00.000Z,
       "paroleEligibilityDate": null,
-      "tentativeParoleDate": 2022-07-11T00:00:00.000Z,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNotDetainersForXcrcAndCrc": null,
@@ -87,8 +87,8 @@ exports[`transforms record with caseNotes set 1`] = `
     },
     "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd": {
       "fullTermCompletionDate": null,
+      "groupProjectedParoleReleaseDate": 2022-07-11T00:00:00.000Z,
       "paroleEligibilityDate": null,
-      "tentativeParoleDate": 2022-07-11T00:00:00.000Z,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNotDetainersForXcrcAndCrc": null,

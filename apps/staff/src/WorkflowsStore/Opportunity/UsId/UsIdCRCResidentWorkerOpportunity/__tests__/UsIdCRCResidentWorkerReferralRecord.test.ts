@@ -20,6 +20,62 @@ import {
   usIdCRCResidentWorkerSchema,
 } from "../UsIdCRCResidentWorkerReferralRecord";
 
+describe("UsIdCRCResidentWorkerReferralRecord (new schema)", () => {
+  const rawRecord: UsIdCRCResidentWorkerReferralRecordRaw = {
+    stateCode: "US_ID",
+    externalId: "testCRC01",
+    eligibleCriteria: {
+      custodyLevelIsMinimum: {
+        custodyLevel: "MINIMUM",
+      },
+      notServingForSexualOffense: null,
+      usIdNotDetainersForXcrcAndCrc: null,
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+      // The resulting snapshot for each test should no longer include
+      // usIdCrcResidentWorkerTimeBasedCriteria and should instead include
+      // the time-based criteria named in the test name.
+      usIdCrcResidentWorkerTimeBasedCriteria: {
+        eligibleOffenses: null,
+        fullTermCompletionDate: "2031-03-13",
+        groupProjectedParoleReleaseDate: "2031-03-13",
+        paroleEligibilityDate: null,
+        nextParoleHearingDate: null,
+      },
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  };
+
+  test("eligible record with incarcerationWithin7YearsOfFtcdOrTpd", () => {
+    expect(usIdCRCResidentWorkerSchema.parse(rawRecord)).toMatchSnapshot();
+  });
+
+  test("eligible record for incarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd", () => {
+    rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria = {
+      eligibleOffenses: null,
+      fullTermCompletionDate: "2031-03-13",
+      groupProjectedParoleReleaseDate: null,
+      paroleEligibilityDate: "2000-01-01",
+      nextParoleHearingDate: "2002-02-02",
+    };
+    expect(usIdCRCResidentWorkerSchema.parse(rawRecord)).toMatchSnapshot();
+  });
+
+  test("eligible record for incarcerationWithin3YearsOfTpdAndLifeSentence", () => {
+    rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria = {
+      eligibleOffenses: ["I00-0000", "I11-1111"],
+      // people on life sentences have a FTCD far in the future
+      fullTermCompletionDate: "9999-12-31",
+      groupProjectedParoleReleaseDate: "2031-03-13",
+      paroleEligibilityDate: "2000-01-01",
+      nextParoleHearingDate: "2002-02-02",
+    };
+    expect(usIdCRCResidentWorkerSchema.parse(rawRecord)).toMatchSnapshot();
+  });
+});
+
+// TODO(#7697) Remove old tests corresponding to old schema (below this line)
 describe("UsIdCRCResidentWorkerReferralRecord multiple criteria", () => {
   let rawRecord: UsIdCRCResidentWorkerReferralRecordRaw;
 
@@ -81,6 +137,7 @@ describe("UsIdCRCResidentWorkerReferralRecord multiple criteria", () => {
   });
 
   test("US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE and US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD should be `undefined`", () => {
+    // @ts-ignore
     rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria.reasons.splice(
       1,
       1,
@@ -93,6 +150,7 @@ describe("UsIdCRCResidentWorkerReferralRecord multiple criteria", () => {
   });
 
   test("US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_3_YEARS_OF_TPD_AND_LIFE_SENTENCE should be `undefined`", () => {
+    // @ts-ignore
     rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria.reasons.splice(
       0,
       1,
@@ -115,6 +173,7 @@ describe("UsIdCRCResidentWorkerReferralRecord multiple criteria", () => {
   });
 
   test("US_IX_INCARCERATION_WITHIN_7_YEARS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_7_YEARS_OF_PED_AND_PHD_AND_20_YEARS_OF_FTCD should be `undefined`", () => {
+    // @ts-ignore
     rawRecord.eligibleCriteria.usIdCrcResidentWorkerTimeBasedCriteria.reasons.splice(
       0,
       2,

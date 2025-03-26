@@ -1,5 +1,80 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`UsIdCRCWorkReleaseReferralRecord (new schema) > eligible record for incarcerationWithin1YearOfTpdAndLifeSentence 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "incarcerationWithin1YearOfTpdAndLifeSentence": {
+      "eligibleOffenses": [
+        "I00-0000",
+        "I11-1111",
+      ],
+      "groupProjectedParoleReleaseDate": 2031-03-13T00:00:00.000Z,
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "testCRC01",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`UsIdCRCWorkReleaseReferralRecord (new schema) > eligible record for incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd": {
+      "fullTermCompletionDate": 2031-03-13T00:00:00.000Z,
+      "minTermCompletionDate": 2025-05-25T00:00:00.000Z,
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "testCRC01",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
+exports[`UsIdCRCWorkReleaseReferralRecord (new schema) > eligible record for incarcerationWithin18MonthsOfFtcdOrTpd 1`] = `
+{
+  "caseNotes": {},
+  "eligibleCriteria": {
+    "custodyLevelIsMinimum": {
+      "custodyLevel": "MINIMUM",
+    },
+    "incarcerationWithin18MonthsOfFtcdOrTpd": {
+      "fullTermCompletionDate": null,
+      "groupProjectedParoleReleaseDate": 2031-03-13T00:00:00.000Z,
+    },
+    "notServingForSexualOffense": null,
+    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
+    "usIdNotDetainersForXcrcAndCrc": null,
+  },
+  "externalId": "testCRC01",
+  "ineligibleCriteria": {},
+  "isAlmostEligible": false,
+  "isEligible": true,
+  "metadata": {},
+  "stateCode": "US_ID",
+}
+`;
+
 exports[`UsIdCRCWorkReleaseReferralRecord > transforms eligible record with multiple temporal criteria 1`] = `
 {
   "caseNotes": {},

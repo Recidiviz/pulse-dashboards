@@ -20,6 +20,59 @@ import {
   usIdCRCWorkReleaseSchema,
 } from "../UsIdCRCWorkReleaseReferralRecord";
 
+describe("UsIdCRCWorkReleaseReferralRecord (new schema)", () => {
+  const rawRecord: UsIdCRCWorkReleaseReferralRecordRaw = {
+    stateCode: "US_ID",
+    externalId: "testCRC01",
+    eligibleCriteria: {
+      custodyLevelIsMinimum: {
+        custodyLevel: "MINIMUM",
+      },
+      notServingForSexualOffense: null,
+      usIdNotDetainersForXcrcAndCrc: null,
+      usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
+      // The resulting snapshot for each test should no longer include
+      // usIdCrcWorkReleaseTimeBasedCriteria and should instead include
+      // the time-based criteria named in the test name.
+      usIdCrcWorkReleaseTimeBasedCriteria: {
+        eligibleOffenses: null,
+        fullTermCompletionDate: null,
+        groupProjectedParoleReleaseDate: "2031-03-13",
+        minTermCompletionDate: null,
+      },
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+  };
+
+  test("eligible record for incarcerationWithin18MonthsOfFtcdOrTpd", () => {
+    expect(usIdCRCWorkReleaseSchema.parse(rawRecord)).toMatchSnapshot();
+  });
+
+  test("eligible record for incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd", () => {
+    rawRecord.eligibleCriteria.usIdCrcWorkReleaseTimeBasedCriteria = {
+      eligibleOffenses: null,
+      fullTermCompletionDate: "2031-03-13",
+      groupProjectedParoleReleaseDate: null,
+      minTermCompletionDate: "2025-05-25",
+    };
+    expect(usIdCRCWorkReleaseSchema.parse(rawRecord)).toMatchSnapshot();
+  });
+
+  test("eligible record for incarcerationWithin1YearOfTpdAndLifeSentence", () => {
+    rawRecord.eligibleCriteria.usIdCrcWorkReleaseTimeBasedCriteria = {
+      eligibleOffenses: ["I00-0000", "I11-1111"],
+      // people on life sentences have a FTCD far in the future
+      fullTermCompletionDate: "9999-12-31",
+      groupProjectedParoleReleaseDate: "2031-03-13",
+      minTermCompletionDate: "9999-12-31",
+    };
+    expect(usIdCRCWorkReleaseSchema.parse(rawRecord)).toMatchSnapshot();
+  });
+});
+
+// TODO(#7697) Remove old tests corresponding to old schema (below this line)
 describe("UsIdCRCWorkReleaseReferralRecord", () => {
   let rawRecord: UsIdCRCWorkReleaseReferralRecordRaw;
 
@@ -85,6 +138,7 @@ describe("UsIdCRCWorkReleaseReferralRecord", () => {
   });
 
   test("US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE and US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD should be `undefined`", () => {
+    // @ts-ignore
     rawRecord.eligibleCriteria.usIdCrcWorkReleaseTimeBasedCriteria.reasons.splice(
       1,
       1,
@@ -105,6 +159,7 @@ describe("UsIdCRCWorkReleaseReferralRecord", () => {
   });
 
   test("US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_1_YEAR_OF_TPD_AND_LIFE_SENTENCE should be `undefined`", () => {
+    // @ts-ignore
     rawRecord.eligibleCriteria.usIdCrcWorkReleaseTimeBasedCriteria.reasons.splice(
       0,
       1,
@@ -125,6 +180,7 @@ describe("UsIdCRCWorkReleaseReferralRecord", () => {
   });
 
   test("US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_FTCD_OR_TPD and US_IX_INCARCERATION_WITHIN_18_MONTHS_OF_EPRD_AND_15_YEARS_OF_FTCD should be `undefined`", () => {
+    // @ts-ignore
     rawRecord.eligibleCriteria.usIdCrcWorkReleaseTimeBasedCriteria.reasons.splice(
       0,
       2,
