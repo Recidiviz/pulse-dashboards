@@ -50,21 +50,22 @@ const FilterDownArrow = styled.i.attrs({
   padding-left: 8px;
 `;
 
+// TODO: Replace the magic numbers with calculations
 const FilterDropdownMenu = styled(DropdownMenu)`
-  transform: translateX(-124px) translateY(4px);
-  width: 231px;
+  transform: translateX(-394px) translateY(4px);
   padding: 24px 22px;
-  overflow: hidden;
-  white-space: nowrap;
 `;
 
 const FilterGroup = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  white-space: nowrap;
 
   &:not(:first-child) {
-    margin-top: 14px;
-    padding-top: 22px;
+    margin-top: 18px;
+    padding-top: 18px;
     border-top: ${palette.slate30} 1px solid;
   }
 `;
@@ -80,16 +81,37 @@ const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)`
   padding-left: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: ${palette.pine4};
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
 
   &:last-child {
     margin-bottom: 0;
   }
 `;
 
-const ClearAllButton = styled(StyledFilterDropdownMenuItem)`
+const FilterGroupColumns = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  border-bottom: ${palette.slate30} 1px solid;
+  padding-bottom: 24px;
+`;
+
+const FilterGroupColumn = styled.div`
+  width: 210px;
+`;
+
+const ClearAllButton = styled(DropdownMenuItem)`
   margin-top: 8px;
+  margin-bottom: 0 !important;
+  padding-left: 0;
   text-transform: uppercase;
   font-weight: 700;
+  color: ${palette.pine4};
 `;
 
 const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
@@ -145,27 +167,40 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
   return (
     <Dropdown>
       <FilterDropdownToggle>
-        <FilterIcon /> Filters{" "}
-        {presenter.selectedFilterCount !== 0 &&
-          `(${presenter.selectedFilterCount})`}
+        <FilterIcon /> Filters
         <FilterDownArrow />
       </FilterDropdownToggle>
       <FilterDropdownMenu>
-        <>
-          {filters.map(({ field, options, title }) => (
-            <TaskFilterDropdownGroup
-              key={field}
-              title={title}
-              field={field}
-              options={options}
-              presenter={presenter}
-            />
-          ))}
-        </>
+        <FilterGroupColumns>
+          <FilterGroupColumn>
+            {filters
+              .slice(0, Math.ceil(filters.length / 2))
+              .map(({ field, options, title }) => (
+                <TaskFilterDropdownGroup
+                  key={field}
+                  title={title}
+                  field={field}
+                  options={options}
+                  presenter={presenter}
+                />
+              ))}
+          </FilterGroupColumn>
+          <FilterGroupColumn>
+            {filters
+              .slice(Math.ceil(filters.length / 2))
+              .map(({ field, options, title }) => (
+                <TaskFilterDropdownGroup
+                  key={field}
+                  title={title}
+                  field={field}
+                  options={options}
+                  presenter={presenter}
+                />
+              ))}
+          </FilterGroupColumn>
+        </FilterGroupColumns>
         <ClearAllButton key="clear" onClick={() => presenter.resetFilters()}>
-          Clear all filters{" "}
-          {presenter.selectedFilterCount !== 0 &&
-            `(${presenter.selectedFilterCount})`}
+          Clear all filters
         </ClearAllButton>
       </FilterDropdownMenu>
     </Dropdown>
