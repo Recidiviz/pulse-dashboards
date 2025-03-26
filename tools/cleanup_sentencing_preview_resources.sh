@@ -7,11 +7,13 @@ set -euo pipefail
 
 db_name="s-db-preview-$VERSION"
 service_name="ss-preview-$VERSION"
-job_name="ss-migrate-preview-db-$VERSION"
+migrate_job_name="ss-migrate-preview-db-$VERSION"
+import_job_name="s-data-import-preview-$VERSION"
 
 dbs="$(gcloud sql instances list --project recidiviz-dashboard-staging --filter $db_name)"
 services="$(gcloud run services list --project recidiviz-dashboard-staging --filter $service_name)"
-jobs="$(gcloud run jobs list --project recidiviz-dashboard-staging --filter $job_name)"
+migrate_jobs="$(gcloud run jobs list --project recidiviz-dashboard-staging --filter $migrate_job_name)"
+import_jobs="$(gcloud run jobs list --project recidiviz-dashboard-staging --filter $import_job_name)"
 
 
 if [[ $dbs ]]; then
@@ -27,6 +29,10 @@ if [[ $services ]]; then
   gcloud run services delete $service_name --project recidiviz-dashboard-staging --region us-central1 -q
 fi
 
-if [[ $jobs ]]; then
-  gcloud run jobs delete $job_name --project recidiviz-dashboard-staging --region us-central1 -q
+if [[ $migrate_jobs ]]; then
+  gcloud run jobs delete $migrate_job_name --project recidiviz-dashboard-staging --region us-central1 -q
+fi
+
+if [[ $import_jobs ]]; then
+  gcloud run jobs delete $import_job_name --project recidiviz-dashboard-staging --region us-central1 -q
 fi
