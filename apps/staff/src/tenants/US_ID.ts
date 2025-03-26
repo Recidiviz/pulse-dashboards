@@ -87,7 +87,7 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
           searchField: ["metadata", "crcFacilities"],
           searchTitle: "facility",
           searchOp: "array-contains-any",
-          locationIdType: "facilityId",
+          locationIdType: "crcFacilityId",
           onlySurfaceEligible: true,
           restrictedToFeatureVariant: "usIdCRCFacilitySearch",
         },
