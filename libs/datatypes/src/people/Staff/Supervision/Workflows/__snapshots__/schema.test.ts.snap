@@ -150,7 +150,7 @@ exports[`supervision staff schema for 'US_TN' 'OFFICER1' 1`] = `
 
 exports[`supervision staff schema for 'US_TX' 'OFFICER1' 1`] = `
 {
-  "district": "DISTRICT 42",
+  "district": "DISTRICT 1",
   "email": "tx-test-officer@example.com",
   "givenNames": "Link",
   "id": "OFFICER1",
@@ -159,6 +159,20 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER1' 1`] = `
   "stateCode": "US_TX",
   "supervisorExternalId": "SUPERVISOR1",
   "surname": "Linkus",
+}
+`;
+
+exports[`supervision staff schema for 'US_TX' 'OFFICER2' 1`] = `
+{
+  "district": "DISTRICT 42",
+  "email": "tx-test-officer-2@example.com",
+  "givenNames": "Arthur",
+  "id": "OFFICER2",
+  "pseudonymizedId": "p002",
+  "recordType": "supervisionStaff",
+  "stateCode": "US_TX",
+  "supervisorExternalId": "SUPERVISOR2",
+  "surname": "Dent",
 }
 `;
 

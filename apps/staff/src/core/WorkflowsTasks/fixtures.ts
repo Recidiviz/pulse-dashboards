@@ -50,6 +50,7 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   employmentNeed: "Unemployed",
   usTxHomeContactScheduled: "Home Contacts (Scheduled)",
   usTxHomeContactUnscheduled: "Home Contacts (Unscheduled)",
+  usTxHomeContactEdgeCase: "Home Contacts (Misc.)",
   usTxFieldContactScheduled: "Field Contacts (Scheduled)",
   usTxFieldContactUnscheduled: "Field Contacts (Unscheduled)",
   usTxElectronicContactScheduled: "Electronic Contacts (Scheduled)",

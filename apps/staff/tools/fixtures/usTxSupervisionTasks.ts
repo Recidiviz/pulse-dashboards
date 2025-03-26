@@ -92,6 +92,34 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
       },
     ],
   },
+  {
+    stateCode: "US_TX",
+    externalId: "003",
+    officerId: "OFFICER2",
+    tasks: [
+      {
+        type: "usTxHomeContactEdgeCase",
+        dueDate: "2022-03-12",
+        details: {
+          reasonForContact: "Initial Home Contact",
+        },
+      },
+    ],
+  },
+  {
+    stateCode: "US_TX",
+    externalId: "004",
+    officerId: "OFFICER2",
+    tasks: [
+      {
+        type: "usTxHomeContactEdgeCase",
+        dueDate: "2022-03-18",
+        details: {
+          reasonForContact: "Home Contact due to Address Change",
+        },
+      },
+    ],
+  },
 ];
 
 export const usTxSupervisionTasksData: FirestoreFixture<

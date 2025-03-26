@@ -22,6 +22,7 @@ import UsTxElectronicContactScheduledTask from "../WorkflowsStore/Task/UsTxElect
 import UsTxElectronicContactUnscheduledTask from "../WorkflowsStore/Task/UsTxElectronicContactUnscheduledTask";
 import UsTxFieldContactScheduledTask from "../WorkflowsStore/Task/UsTxFieldContactScheduledTask";
 import UsTxFieldContactUnscheduledTask from "../WorkflowsStore/Task/UsTxFieldContactUnscheduledTask";
+import usTxHomeContactEdgeCaseTask from "../WorkflowsStore/Task/UsTxHomeContactEdgeCaseTask";
 import usTxHomeContactScheduledTask from "../WorkflowsStore/Task/UsTxHomeContactScheduledTask";
 import usTxHomeContactUnscheduledTask from "../WorkflowsStore/Task/UsTxHomeContactUnscheduledTask";
 
@@ -54,6 +55,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
       },
       usTxHomeContactUnscheduled: {
         constructor: usTxHomeContactUnscheduledTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usTxHomeContactEdgeCase: {
+        constructor: usTxHomeContactEdgeCaseTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxFieldContactScheduled: {
@@ -90,6 +95,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
           {
             value: "usTxHomeContactUnscheduled",
             label: "Home Contact, Unsch.",
+          },
+          {
+            value: "usTxHomeContactEdgeCase",
+            label: "Home Contact, Misc.",
           },
           {
             value: "usTxFieldContactScheduled",
