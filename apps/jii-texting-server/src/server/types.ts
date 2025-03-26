@@ -15,31 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma, PrismaClient } from "@prisma/jii-texting-server/client";
-import { expect, vi } from "vitest";
+import { FastifyRequest } from "fastify";
 
-import { testkit } from "~jii-texting-server/test/setup";
-
-const PRISMA_TABLES = Prisma.dmmf.datamodel.models
-  .map((model) => model.name)
-  .filter((table) => table);
-
-export async function resetDb(prismaClient: PrismaClient) {
-  await prismaClient.$transaction(
-    PRISMA_TABLES.map((table) =>
-      prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),
-    ),
-  );
-}
-
-export async function testAndGetSentryReports(expectedLength = 1) {
-  // Use waitFor because sentry-testkit can be async
-  const sentryReports = await vi.waitFor(async () => {
-    const reports = testkit.reports();
-    expect(reports).toHaveLength(expectedLength);
-
-    return reports;
-  });
-
-  return sentryReports;
-}
+export type RequestWithStateCodeParam = FastifyRequest<{
+  Params: {
+    stateCode: string;
+  };
+}>;

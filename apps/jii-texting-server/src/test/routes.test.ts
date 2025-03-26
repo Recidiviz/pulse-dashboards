@@ -18,15 +18,31 @@
 import { describe, test } from "vitest";
 
 import { fakeWorkflowExecutionOne } from "~@jii-texting-server/utils/test/constants";
-import { testPrismaClient, testServer } from "~jii-texting-server/test/setup";
+import {
+  mockGetPayload,
+  testPrismaClient,
+  testServer,
+} from "~jii-texting-server/test/setup";
+import { testAndGetSentryReports } from "~jii-texting-server/test/setup/utils";
 
-describe("/workflow-executions", () => {
-  describe("GET requests", () => {
+vi.stubEnv("GOOGLE_WORKFLOWS_SERVICE_ACCOUNT_EMAIL", "valid@example.com");
+
+describe("GET /workflow-executions/latest/US_ID", () => {
+  describe("authenticated requests", () => {
+    beforeEach(() => {
+      mockGetPayload.mockReturnValueOnce({
+        email_verified: true,
+        email: "valid@example.com",
+      });
+    });
+
     test("returns 200 and null on initial request", async () => {
-      // Assumes the test DB is not seeded with any WorkflowExecution objects
       const response = await testServer.inject({
         method: "GET",
         url: "/workflow-executions/latest/US_ID",
+        headers: {
+          Authorization: "Bearer valid-token",
+        },
       });
 
       expect(response).toMatchObject({
@@ -35,18 +51,6 @@ describe("/workflow-executions", () => {
 
       expect(JSON.parse(response.body)).toMatchObject({
         workflowExecution: null,
-      });
-    });
-
-    test("returns 400 on invalid state code", async () => {
-      // Assumes the test DB is not seeded with any WorkflowExecution objects
-      const response = await testServer.inject({
-        method: "GET",
-        url: "/workflow-executions/latest/US_XX",
-      });
-
-      expect(response).toMatchObject({
-        statusCode: 400,
       });
     });
 
@@ -60,6 +64,9 @@ describe("/workflow-executions", () => {
       const response = await testServer.inject({
         method: "GET",
         url: `/workflow-executions/latest/${stateCode}`,
+        headers: {
+          Authorization: "Bearer valid-token",
+        },
       });
 
       expect(JSON.parse(response.body)).toMatchObject({
@@ -72,18 +79,100 @@ describe("/workflow-executions", () => {
     });
   });
 
-  test("workflow execution created", async () => {
-    const response = await testServer.inject({
-      method: "POST",
-      url: "/workflow-executions/US_ID",
+  describe("unauthenticated requests", () => {
+    test("should return 400 if state code is invalid", async () => {
+      const response = await testServer.inject({
+        method: "GET",
+        url: "/workflow-executions/latest/XX", // Invalid state code
+        headers: {
+          Authorization: "Bearer valid-token",
+        },
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(JSON.parse(response.body)).toMatchObject({
+        error: "Invalid state code",
+      });
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "Invalid state code received: XX",
+      );
     });
 
-    const execution = await testPrismaClient.workflowExecution.findFirst({
-      where: {
-        id: JSON.parse(response.body).id,
-      },
+    test("should return 403 if email invalid", async () => {
+      mockGetPayload.mockReturnValueOnce({
+        email_verified: true,
+        email: "fake@fake.com",
+      });
+
+      const response = await testServer.inject({
+        method: "GET",
+        url: "/workflow-executions/latest/US_ID",
+        headers: {
+          Authorization: "Bearer valid-token",
+        },
+      });
+
+      expect(response.statusCode).toBe(403);
+      expect(JSON.parse(response.body)).toMatchObject({
+        error: "Invalid token",
+      });
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "error verifying auth token: Error: Invalid email address",
+      );
     });
 
-    expect(execution).toBeDefined();
+    test("should return 403 if no email associated with token", async () => {
+      mockGetPayload.mockReturnValueOnce({
+        email_verified: true,
+      });
+
+      const response = await testServer.inject({
+        method: "GET",
+        url: "/workflow-executions/latest/US_ID", // Invalid state code
+        headers: {
+          Authorization: "Bearer valid-token",
+        },
+      });
+
+      expect(response.statusCode).toBe(403);
+      expect(JSON.parse(response.body)).toMatchObject({
+        error: "Invalid token",
+      });
+
+      const sentryReports = await testAndGetSentryReports();
+      expect(sentryReports[0].error?.message).toContain(
+        "error verifying auth token: Error: Email not verified",
+      );
+    });
+  });
+});
+
+describe("POST /workflows-executions", () => {
+  describe("authenticated requests", () => {
+    beforeEach(() => {
+      mockGetPayload.mockReturnValueOnce({
+        email_verified: true,
+        email: "valid@example.com",
+      });
+    });
+
+    test("workflow execution created", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/workflow-executions/US_ID",
+      });
+
+      const execution = await testPrismaClient.workflowExecution.findFirst({
+        where: {
+          id: JSON.parse(response.body).id,
+        },
+      });
+
+      expect(execution).toBeDefined();
+    });
   });
 });

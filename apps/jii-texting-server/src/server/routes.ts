@@ -16,23 +16,26 @@
 // =============================================================================
 
 import { StateCode } from "@prisma/jii-texting-server/client";
-import { captureException } from "@sentry/node";
-import { FastifyInstance, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 
 import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
-import { isValidStateCode } from "~jii-texting-server/server/utils";
-
-type RequestWithStateCodeParam = FastifyRequest<{
-  Params: {
-    stateCode: string;
-  };
-}>;
+import { getAuthenticateInternalRequestPreHandlerFn } from "~jii-texting-server/server/authUtils";
+import { RequestWithStateCodeParam } from "~jii-texting-server/server/types";
 
 /**
  * Encapsulates the routes for the JII texting server
  * @param {FastifyInstance} server  Encapsulated Fastify Instance
  */
 async function registerRoutes(server: FastifyInstance) {
+  if (!process.env["GOOGLE_WORKFLOWS_SERVICE_ACCOUNT_EMAIL"]) {
+    throw new Error(
+      "Missing required environment variables for JII Texting Routes setup",
+    );
+  }
+
+  // This should be the only user/email with access to these routes
+  const email = process.env["GOOGLE_WORKFLOWS_SERVICE_ACCOUNT_EMAIL"];
+
   /**
    * Returns the most recent WorkflowExecution object
    * @param stateCode The state code that we're retrieving WorkflowExecution information for
@@ -40,15 +43,11 @@ async function registerRoutes(server: FastifyInstance) {
    */
   server.get(
     "/workflow-executions/latest/:stateCode",
+    {
+      preHandler: [getAuthenticateInternalRequestPreHandlerFn(email)],
+    },
     async (request: RequestWithStateCodeParam, response) => {
       const { stateCode: stateCodeStr } = request.params;
-
-      if (!isValidStateCode(stateCodeStr)) {
-        response.status(400);
-        captureException(`Invalid state code received: ${stateCodeStr}`);
-        return;
-      }
-
       const stateCode = stateCodeStr as StateCode;
       const prisma = getPrismaClientForStateCode(stateCode);
 
@@ -73,15 +72,11 @@ async function registerRoutes(server: FastifyInstance) {
    */
   server.post(
     "/workflow-executions/:stateCode",
+    {
+      preHandler: [getAuthenticateInternalRequestPreHandlerFn(email)],
+    },
     async (request: RequestWithStateCodeParam, response) => {
       const { stateCode: stateCodeStr } = request.params;
-
-      if (!isValidStateCode(stateCodeStr)) {
-        response.status(400);
-        captureException(`Invalid state code received: ${stateCodeStr}`);
-        return;
-      }
-
       const stateCode = stateCodeStr as StateCode;
       const prisma = getPrismaClientForStateCode(stateCode);
 

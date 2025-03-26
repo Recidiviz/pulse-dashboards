@@ -1,0 +1,79 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { captureException } from "@sentry/node";
+import { FastifyReply } from "fastify";
+import { OAuth2Client } from "google-auth-library";
+
+import { RequestWithStateCodeParam } from "~jii-texting-server/server/types";
+import { isValidStateCode } from "~jii-texting-server/server/utils";
+
+export async function verifyGoogleIdToken(
+  authorizationHeaders: string | undefined,
+  email: string,
+) {
+  const idToken = authorizationHeaders?.split(" ")[1];
+
+  if (!idToken) {
+    throw new Error("No bearer token was provided");
+  }
+
+  const oAuth2Client = new OAuth2Client();
+
+  const result = await oAuth2Client.verifyIdToken({
+    idToken,
+  });
+
+  const payload = result.getPayload();
+
+  if (!payload || !payload.email_verified || !payload.email) {
+    throw new Error("Email not verified");
+  }
+
+  if (payload.email !== email) {
+    throw new Error("Invalid email address");
+  }
+
+  console.log(`Email verified: ${payload.email}`);
+}
+
+/**
+ * Authenticates requests to the JII Texting Server by validating that the
+ * Auth token is associated with the expected email;
+ * @param email The service account email authorized to make requests to the endpoint
+ */
+export function getAuthenticateInternalRequestPreHandlerFn(email: string) {
+  return async (request: RequestWithStateCodeParam, reply: FastifyReply) => {
+    // Validate the state code in the URL
+    const { stateCode: stateCodeStr } = request.params;
+
+    if (!isValidStateCode(stateCodeStr)) {
+      reply.status(400).send({ error: "Invalid state code" });
+      captureException(`Invalid state code received: ${stateCodeStr}`);
+      return;
+    }
+
+    // Validate that the token in the request is from the expected service account
+    try {
+      await verifyGoogleIdToken(request.headers.authorization, email);
+    } catch (err) {
+      reply.status(403).send({ error: "Invalid token" });
+      captureException(`error verifying auth token: ${err}`);
+      return;
+    }
+  };
+}

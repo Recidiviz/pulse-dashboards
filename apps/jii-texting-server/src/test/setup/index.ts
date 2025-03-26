@@ -16,6 +16,9 @@
 // =============================================================================
 
 import { StateCode } from "@prisma/jii-texting-server/client";
+import { init } from "@sentry/node";
+import { OAuth2Client } from "google-auth-library";
+import sentryTestkit from "sentry-testkit";
 import { afterAll, beforeAll, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
@@ -31,12 +34,23 @@ export const testHost = process.env["HOST"] ?? "localhost";
 
 export let testServer: ReturnType<typeof buildServer>;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
+export let mockVerifyIdToken: ReturnType<typeof vi.fn>;
+export let mockGetPayload: ReturnType<typeof vi.fn>;
 
 vi.mock("~fastify-data-import-plugin", () => ({
   ImportRoutesHandler: MockImportRoutesHandler,
 }));
 
+const { testkit, sentryTransport } = sentryTestkit();
+
+export { testkit };
+
 beforeAll(async () => {
+  init({
+    dsn: process.env["SENTRY_DSN"],
+    transport: sentryTransport,
+  });
+
   testServer = buildServer();
 
   // Start listening.
@@ -51,8 +65,22 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  vi.restoreAllMocks();
+  testkit.reset();
+
   await resetDb(testPrismaClient);
   await seed(testPrismaClient);
+
+  // Get the mocked verifyIdToken function from OAuth2Client
+  mockVerifyIdToken = vi.fn(async () => ({
+    getPayload: mockGetPayload,
+  }));
+
+  mockGetPayload = vi.fn();
+  // Ensure `verifyIdToken` returns an object with a `getPayload()` function
+  vi.spyOn(OAuth2Client.prototype, "verifyIdToken").mockImplementation(
+    mockVerifyIdToken,
+  );
 });
 
 afterAll(async () => {

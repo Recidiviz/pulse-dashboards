@@ -28,10 +28,7 @@ export function buildServer() {
     logger: true,
   });
 
-  server.get("/", async function handler() {
-    return { hello: "world" };
-  });
-
+  // Ensure Sentry is setup before starting the server
   setupFastifyErrorHandler(server);
 
   registerWebhooks(server);

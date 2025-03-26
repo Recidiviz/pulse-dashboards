@@ -68,6 +68,12 @@ export default defineConfig({
         "test-task@fake.com",
       IMPORT_CLOUD_TASK_URL:
         process.env["IMPORT_CLOUD_TASK_URL"] ?? "test-task-url",
+      GOOGLE_WORKFLOWS_SERVICE_ACCOUNT_EMAIL:
+        process.env["GOOGLE_WORKFLOWS_SERVICE_ACCOUNT_EMAIL"] ??
+        "fake@fake.com",
+      SENTRY_DSN:
+        "https://d469d84bb29f6e77828e286a793ede9d@o432474.ingest.us.sentry.io/4508728082890752",
+      SENTRY_ENV: "test",
     },
   },
 });
