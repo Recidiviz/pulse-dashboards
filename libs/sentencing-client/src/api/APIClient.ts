@@ -34,6 +34,8 @@ export type tRPCClient = CreateTRPCProxyClient<AppRouter>;
 
 export type Staff = Awaited<ReturnType<APIClient["getStaffInfo"]>>;
 
+export type Supervisor = Awaited<ReturnType<APIClient["getSupervisorInfo"]>>;
+
 export type StaffCases = Staff["cases"];
 
 export type StaffCase = StaffCases[number];
@@ -111,6 +113,18 @@ export class APIClient {
       return Promise.reject({ message: "No staff pseudo id found" });
 
     const fetchedData = await this.trpcClient.staff.getStaff.query({
+      pseudonymizedId: this.psiStore.staffPseudoId,
+    });
+    return fetchedData;
+  }
+
+  async getSupervisorInfo() {
+    if (!this.trpcClient)
+      return Promise.reject({ message: "No tRPC client initialized" });
+    if (!this.psiStore.staffPseudoId)
+      return Promise.reject({ message: "No staff pseudo id found" });
+
+    const fetchedData = await this.trpcClient.supervisor.getSupervisor.query({
       pseudonymizedId: this.psiStore.staffPseudoId,
     });
     return fetchedData;

@@ -60,7 +60,7 @@ export const Tooltip: React.FC<
 };
 
 export const InfoIconWithTooltip: React.FC<{
-  headerText: string;
+  headerText?: string;
   content: string | React.ReactNode;
 }> = ({ headerText, content }) => {
   return (

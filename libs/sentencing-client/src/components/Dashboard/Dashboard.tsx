@@ -22,10 +22,11 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { PSIStore } from "../../datastores/PSIStore";
 import { StaffPresenter } from "../../presenters/StaffPresenter";
-import CloseIcon from "../assets/close-icon.svg?react";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
-import { CaseListTable } from "./CaseListTable";
 import * as Styled from "./Dashboard.styles";
+import { StaffDashboard } from "./StaffDashboard";
+import { SupervisorDashboard } from "./SupervisorDashboard";
+import { StaffDashboardProps } from "./types";
 
 const ManagedComponent = observer(function Dashboard({
   presenter,
@@ -34,6 +35,7 @@ const ManagedComponent = observer(function Dashboard({
 }) {
   const {
     staffInfo,
+    supervisorInfo,
     staffPseudoId,
     caseTableData,
     geoConfig,
@@ -44,60 +46,35 @@ const ManagedComponent = observer(function Dashboard({
     trackDashboardSortOrderChanged,
   } = presenter;
 
-  const [showWelcomeMessage, setShowWelcomeMessage] = useState(
-    !staffInfo?.hasLoggedIn,
-  );
   const [initialPageLoad, setInitialPageLoad] = useState(true);
 
-  if (!staffPseudoId || !caseTableData) return null;
+  if (!staffPseudoId) return null;
 
   if (initialPageLoad) {
     trackDashboardPageViewed();
     setInitialPageLoad(false);
   }
 
+  const staffDashboardProps: StaffDashboardProps = {
+    staffInfo,
+    staffPseudoId,
+    caseTableData,
+    geoConfig,
+    setIsFirstLogin,
+    trackIndividualCaseClicked,
+    trackRecommendationStatusFilterChanged,
+    trackDashboardSortOrderChanged,
+  };
+
   return (
     <Styled.PageContainer>
-      {/* Welcome Message */}
-      {showWelcomeMessage && (
-        <Styled.WelcomeMessage>
-          <Styled.TitleDescriptionWrapper>
-            <Styled.WelcomeTitle>
-              Welcome to your case dashboard!
-            </Styled.WelcomeTitle>
-            <Styled.WelcomeDescription>
-              Generate informed case recommendations based on historical
-              outcomes customized for each case. Find and suggest customized
-              treatment and diversion opportunities for clients that will aid in
-              their healing and set them up for success in the community.
-            </Styled.WelcomeDescription>
-          </Styled.TitleDescriptionWrapper>
-          <Styled.CloseButton
-            onClick={() => {
-              if (!staffInfo?.hasLoggedIn) {
-                setIsFirstLogin();
-                setShowWelcomeMessage(false);
-              }
-            }}
-          >
-            <CloseIcon />
-          </Styled.CloseButton>
-        </Styled.WelcomeMessage>
-      )}
-
-      {/* List of Cases */}
-      <Styled.Cases>
-        <CaseListTable
-          caseTableData={caseTableData}
-          staffPseudoId={staffPseudoId}
-          excludedAttributeKeys={geoConfig.excludedAttributeKeys}
-          analytics={{
-            trackIndividualCaseClicked,
-            trackRecommendationStatusFilterChanged,
-            trackDashboardSortOrderChanged,
-          }}
+      {presenter.isSupervisor ? (
+        <SupervisorDashboard
+          supervisorStats={supervisorInfo?.supervisorDashboardStats}
         />
-      </Styled.Cases>
+      ) : (
+        <StaffDashboard {...staffDashboardProps} />
+      )}
     </Styled.PageContainer>
   );
 });

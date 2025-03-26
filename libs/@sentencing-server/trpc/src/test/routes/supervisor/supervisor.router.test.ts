@@ -158,18 +158,20 @@ describe("getSupervisorDashboardStats", () => {
 
     const expectedTopLineStats = {
       casesDue: 2, // Cases due within the last 30 days
-      teamUsageRate: 50, // Staff with at least one recommendation recorded in the last 30 days - only one staff member accomplished this
-      totalCaseCompletionRate: 25,
+      teamUsageRate: 100, // Staff with at least one recommendation recorded in the last 30 days - only one staff member accomplished this
+      totalCaseCompletionRate: 50,
     };
 
     const expectedStaffStats = [
       expect.objectContaining({
         caseCompletionRate: 50,
         activeCasesAssigned: 2,
+        totalCasesDueLast30Days: 2,
       }),
       expect.objectContaining({
         caseCompletionRate: 0,
         activeCasesAssigned: 0, // No active cases (all due dates are in the past)
+        totalCasesDueLast30Days: 0,
       }),
     ];
 

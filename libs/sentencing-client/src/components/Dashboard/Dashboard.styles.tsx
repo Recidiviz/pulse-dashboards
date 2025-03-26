@@ -250,12 +250,6 @@ export const Row = styled.tr`
   border-bottom: 1px solid ${customPalette.white.white2};
 
   & > td:first-child {
-    color: ${palette.pine4};
-
-    &:hover {
-      cursor: pointer;
-      text-decoration: underline;
-    }
   }
 `;
 
@@ -264,9 +258,20 @@ export const HeaderCell = styled.th`
   color: ${customPalette.grey.grey3};
 `;
 
-export const Cell = styled.td`
+export const Cell = styled.td<{ isLink?: boolean }>`
   width: ${rem(TABLE_COLUMN_WIDTH)};
   padding: 16px;
+
+  ${({ isLink }) =>
+    isLink &&
+    `
+    color: ${palette.pine4};
+
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  `}
 `;
 
 export const Offense = styled.div<{ isNotSpecified: boolean }>`
@@ -339,4 +344,52 @@ export const SortIconWrapper = styled.div<{
     }
     return "";
   }};
+`;
+
+export const SupervisorDashboardContainer = styled.div`
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+`;
+
+export const TopLineStats = styled.div`
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+`;
+
+export const StatsWrapper = styled.div`
+  display: flex;
+  gap: 24px;
+  margin: 12px 0 32px 0;
+`;
+
+export const StatsDescription = styled.div`
+  ${typography.Sans18}
+  width: 100%;
+  color: ${palette.pine4};
+  span {
+    color: ${palette.slate60};
+  }
+`;
+
+export const StatCard = styled.div`
+  min-width: 200px;
+  border: 1px solid ${palette.slate20};
+  border-radius: 4px;
+  padding: 20px;
+`;
+
+export const Stat = styled.div`
+  ${typography.Header34}
+  font-size: 42px;
+  margin-bottom: 8px;
+  color: ${palette.data.forest1};
+`;
+
+export const StatLabel = styled.div`
+  color: ${palette.slate80};
 `;

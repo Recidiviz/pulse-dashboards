@@ -15,9 +15,33 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StaffCase, StaffCases } from "../../api";
+import { SortDirection } from "@tanstack/react-table";
+
+import { Staff, StaffCase, StaffCases, Supervisor } from "../../api";
+import { GeoConfig } from "../../geoConfigs/types";
 import { MutableCaseAttributes } from "../CaseDetails/types";
 import { ARCHIVED_STATUS, CANCELLED_STATUS } from "./constants";
+
+export type SupervisorStats = Supervisor["supervisorDashboardStats"];
+
+export type StaffDashboardProps = {
+  staffInfo?: Staff;
+  staffPseudoId: string;
+  caseTableData?: CaseListTableCases;
+  geoConfig: GeoConfig;
+  setIsFirstLogin: () => Promise<void>;
+  trackIndividualCaseClicked: (
+    caseId: string,
+    recommendationStatus: CaseListTableCase["status"],
+  ) => void;
+  trackRecommendationStatusFilterChanged: (
+    filters: RecommendationStatusFilter[],
+  ) => void;
+  trackDashboardSortOrderChanged: (
+    sortDirection: false | SortDirection,
+    columnName?: string,
+  ) => void;
+};
 
 export type CaseListTableCases = StaffCases;
 

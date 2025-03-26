@@ -25,6 +25,7 @@ type StaffStats = Omit<Staff, "externalId"> & {
 export type SupervisorStats = {
   topLineStats: {
     casesDue: number;
+    teamUsageRate: number;
     totalCaseCompletionRate: number;
   };
   staffStats: StaffStats[];

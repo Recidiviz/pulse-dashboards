@@ -16,10 +16,12 @@
 // =============================================================================
 
 import {
+  capitalizeName,
   convertDecimalToPercentage,
   displayReportType,
   formatListWithAnd,
   formatOffenseLabel,
+  formatPercentage,
   formatPossessiveName,
   formatWithArticle,
   pluralizeDuplicates,
@@ -129,4 +131,47 @@ test("titleCase", () => {
   expect(titleCase("hElLo WoRLd")).toBe("Hello World");
   expect(titleCase("")).toBe("");
   expect(titleCase("a b c")).toBe("A B C");
+});
+
+test("capitalizeName", () => {
+  // Basic capitalization
+  expect(capitalizeName("john")).toBe("John");
+  expect(capitalizeName("JOHN")).toBe("John");
+  expect(capitalizeName("jOhN")).toBe("John");
+  expect(capitalizeName("john doe")).toBe("John Doe");
+
+  // Hyphenated names
+  expect(capitalizeName("mary-jane")).toBe("Mary-Jane");
+
+  // Names with apostrophes
+  expect(capitalizeName("o'connor")).toBe("O'Connor");
+
+  // Names with hyphens and apostrophes
+  expect(capitalizeName("john mary-jane o'connor")).toBe(
+    "John Mary-Jane O'Connor",
+  );
+
+  // Special characters without letters
+  expect(capitalizeName("1234")).toBe("1234");
+  expect(capitalizeName("!@#$")).toBe("!@#$");
+});
+
+test("formatPercentage", () => {
+  // Whole numbers
+  expect(formatPercentage(50)).toBe("50%");
+  expect(formatPercentage(100)).toBe("100%");
+
+  // Rounding
+  expect(formatPercentage(49.5)).toBe("50%");
+  expect(formatPercentage(49.4)).toBe("49%");
+
+  // Less than 1%
+  expect(formatPercentage(0.5)).toBe("< 1%");
+  expect(formatPercentage(0.01)).toBe("< 1%");
+
+  // 0%
+  expect(formatPercentage(0)).toBe("0%");
+
+  // Negative numbers
+  expect(formatPercentage(-5)).toBe("-5%");
 });

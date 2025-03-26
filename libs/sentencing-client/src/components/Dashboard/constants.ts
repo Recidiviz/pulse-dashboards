@@ -31,7 +31,7 @@ export const OFFENSE_KEY: keyof StaffCase = "offense";
 
 export const STATUS_KEY: keyof StaffCase = "status";
 
-const FULL_NAME_KEY: keyof NonNullable<StaffCaseClient> = "fullName";
+export const FULL_NAME_KEY: keyof NonNullable<StaffCaseClient> = "fullName";
 
 export const CLIENT_FULL_NAME_KEY = [CLIENT_KEY, FULL_NAME_KEY].join(".");
 

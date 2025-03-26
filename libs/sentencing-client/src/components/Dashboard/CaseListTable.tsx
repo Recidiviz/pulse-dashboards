@@ -41,7 +41,9 @@ import {
   ARCHIVED_STATUS,
   CANCELLED_STATUS,
   CLIENT_FULL_NAME_KEY,
+  CLIENT_KEY,
   DUE_DATE_KEY,
+  FULL_NAME_KEY,
   ID_KEY,
   OFFENSE_KEY,
   STATUS_KEY,
@@ -422,6 +424,7 @@ export const CaseListTable = ({
               {row.getVisibleCells().map((cell) => (
                 <Styled.Cell
                   key={cell.id}
+                  isLink={cell.column.id === `${CLIENT_KEY}_${FULL_NAME_KEY}`}
                   onClick={() => {
                     if (
                       cell.getValue() === cell.row.original.client?.fullName

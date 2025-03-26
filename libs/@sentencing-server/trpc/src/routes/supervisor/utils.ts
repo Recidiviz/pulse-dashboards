@@ -30,11 +30,14 @@ const lastThirtyDays = moment().utc().subtract(30, "days").toDate();
 const calculateRate = (numerator: number, denominator: number): number =>
   denominator === 0 ? 0 : (numerator / denominator) * 100;
 
-const isCompletedInLast30Days = (
+const isDueWithinLast30Days = (dueDate: Date | null): boolean =>
+  moment(dueDate).utc() >= moment(lastThirtyDays).utc();
+
+const isCompletedWithinLast30Days = (
   caseInfo: Pick<Case, "selectedRecommendation" | "dueDate">,
 ): boolean =>
   Boolean(caseInfo.selectedRecommendation) &&
-  moment(caseInfo.dueDate).utc() >= moment(lastThirtyDays).utc();
+  isDueWithinLast30Days(caseInfo.dueDate);
 
 export async function getSupervisorDashboardStats(
   supervisor: StaffData,
@@ -64,31 +67,38 @@ export async function getSupervisorDashboardStats(
   if (totalSupervisedStaff > 0) {
     // Top Line Stats
     const allCases = allSupervisedStaff.flatMap((s) => s.cases);
-    const allCasesDueLast30Days = allCases.filter(
-      (c) => moment(c.dueDate).utc() >= moment(lastThirtyDays).utc(),
+    const allCasesDueLast30Days = allCases.filter((c) =>
+      isDueWithinLast30Days(c.dueDate),
     );
-    const staffWithRecommendationsLast30Days = allSupervisedStaff.filter((s) =>
-      s.cases.some(isCompletedInLast30Days),
+    const staffWithOneCaseRecommendationDueLast30Days =
+      allSupervisedStaff.filter((s) =>
+        s.cases.some(isCompletedWithinLast30Days),
+      );
+    const staffWithCasesDueLast30Days = allSupervisedStaff.filter((s) =>
+      s.cases.some((c) => isDueWithinLast30Days(c.dueDate)),
     );
-    const totalCasesWithRecommendationsLast30Days =
+    const totalCasesWithRecommendationsDueLast30Days =
       allCasesDueLast30Days.filter((c) => c.selectedRecommendation).length;
 
     const topLineStats = {
       casesDue: allCasesDueLast30Days.length,
       teamUsageRate: calculateRate(
-        staffWithRecommendationsLast30Days.length,
-        totalSupervisedStaff,
+        staffWithOneCaseRecommendationDueLast30Days.length,
+        staffWithCasesDueLast30Days.length,
       ),
       totalCaseCompletionRate: calculateRate(
-        totalCasesWithRecommendationsLast30Days,
-        allCases.length,
+        totalCasesWithRecommendationsDueLast30Days,
+        allCasesDueLast30Days.length,
       ),
     };
 
     // Staff Stats
     const staffStats = allSupervisedStaff.map((s) => {
-      const completedCasesLast30Days = s.cases.filter(
-        isCompletedInLast30Days,
+      const totalCasesDueLast30Days = s.cases.filter((c) =>
+        isDueWithinLast30Days(c.dueDate),
+      );
+      const completedCasesDueLast30Days = s.cases.filter(
+        isCompletedWithinLast30Days,
       ).length;
       const activeCasesAssigned = s.cases.filter(
         (c) => moment().utc() < moment(c.dueDate).utc().add(1, "day"),
@@ -97,9 +107,10 @@ export async function getSupervisorDashboardStats(
       return {
         ...s,
         cases: undefined,
+        totalCasesDueLast30Days: totalCasesDueLast30Days.length,
         caseCompletionRate: calculateRate(
-          completedCasesLast30Days,
-          s.cases.length,
+          completedCasesDueLast30Days,
+          totalCasesDueLast30Days.length,
         ),
         activeCasesAssigned,
       };

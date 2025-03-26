@@ -17,7 +17,7 @@
 
 import { FormAttributes } from "../components/CaseDetails/types";
 import { PSIStore } from "../datastores/PSIStore";
-import { Case, Opportunities, Staff } from "./APIClient";
+import { Case, Opportunities, Staff, Supervisor } from "./APIClient";
 
 export class OfflineAPIClient {
   private editableInfo: Map<string, unknown> = new Map();
@@ -32,6 +32,17 @@ export class OfflineAPIClient {
       ...StaffInfoFixture,
       hasLoggedIn:
         this.editableInfo.has("hasLoggedIn") ?? StaffInfoFixture.hasLoggedIn,
+    };
+  }
+
+  async getSupervisorInfo(): Promise<Supervisor> {
+    const { StaffInfoFixture } = await import(
+      "./offlineFixtures/StaffInfoFixtures"
+    );
+    return {
+      ...StaffInfoFixture,
+      externalId: undefined,
+      supervisorDashboardStats: undefined,
     };
   }
 

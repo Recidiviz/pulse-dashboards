@@ -95,7 +95,8 @@ export type FeatureVariant =
   | "offenseOverrideControls"
   | "protectiveFactors"
   | "editCountyFields"
-  | "mandatoryMinimum";
+  | "mandatoryMinimum"
+  | "psiSupervisor";
 
 export type FeatureVariantValue = {
   activeDate?: Date;

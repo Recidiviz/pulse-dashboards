@@ -152,3 +152,19 @@ export const titleCase = (str?: string | null) => {
   if (!str) return "";
   return startCase(str.toLocaleLowerCase());
 };
+
+/** Capitalizes human names (accounting for things like hyphens and apostrophes)  */
+export const capitalizeName = (name: string) =>
+  name.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+
+/**
+ * Rounds a percentage rate to a whole number.
+ * If the percentage is greater than 0 and less than 1, returns "< 1%".
+ */
+export const formatPercentage = (rate?: number): string | undefined => {
+  if (rate === undefined) return;
+  if (rate > 0 && rate < 1) {
+    return "< 1%";
+  }
+  return `${Math.round(rate)}%`;
+};

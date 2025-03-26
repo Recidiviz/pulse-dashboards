@@ -24,7 +24,7 @@ import toast from "react-hot-toast";
 import { FlowMethod } from "~hydration-utils";
 import { PSIStore } from "~sentencing-client";
 
-import { APIClient, Staff, StaffCase } from "../api/APIClient";
+import { APIClient, Staff, StaffCase, Supervisor } from "../api/APIClient";
 import { ERROR_TOAST_DURATION } from "./constants";
 
 type CaseBriefsById = {
@@ -34,10 +34,16 @@ type CaseBriefsById = {
 export class StaffStore {
   staffInfo?: Staff;
 
+  supervisorInfo?: Supervisor;
+
   caseBriefsById?: CaseBriefsById;
 
   constructor(public readonly psiStore: PSIStore) {
     makeAutoObservable(this);
+  }
+
+  get isSupervisor(): boolean {
+    return this.psiStore.isSupervisor;
   }
 
   /** This is a MobX flow method and should be called with mobx.flowResult */
@@ -54,6 +60,27 @@ export class StaffStore {
       });
       toast(
         "Something went wrong loading your cases. Please try again or contact us for support.",
+        {
+          duration: ERROR_TOAST_DURATION,
+          style: { backgroundColor: palette.signal.error },
+        },
+      );
+    }
+  }
+
+  /** This is a MobX flow method and should be called with mobx.flowResult */
+  *loadSupervisorInfo(): FlowMethod<APIClient["getSupervisorInfo"], void> {
+    try {
+      this.supervisorInfo = yield this.psiStore.apiClient.getSupervisorInfo();
+    } catch (error) {
+      captureException(new Error("Error while loading supervisor info"), {
+        extra: {
+          message: `loadSupervisorInfo error: ${error}`,
+          staffId: this.psiStore.staffPseudoId,
+        },
+      });
+      toast(
+        "Something went wrong loading your dashboard. Please try again or contact us for support.",
         {
           duration: ERROR_TOAST_DURATION,
           style: { backgroundColor: palette.signal.error },

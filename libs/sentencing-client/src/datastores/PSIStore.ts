@@ -161,4 +161,8 @@ export class PSIStore {
   > {
     return this.rootStore.userStore.activeFeatureVariants;
   }
+
+  get isSupervisor(): boolean {
+    return Boolean(this.activeFeatureVariants.psiSupervisor);
+  }
 }
