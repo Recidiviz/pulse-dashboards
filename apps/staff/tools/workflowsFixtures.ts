@@ -52,6 +52,8 @@ import { LSUReferralsFixture } from "./fixtures/LSUReferrals";
 import { FixtureOpportunityType } from "./fixtures/opportunities";
 import { residentsData } from "./fixtures/residents";
 import { usTnSupervisionLevelDowngradeReferrals } from "./fixtures/supervisionLevelDowngradeReferrals";
+import { usArInstitutionalWorkerStatusReferrals } from "./fixtures/usArInstitutionalWorkerStatusReferrals";
+import { usArWorkReleaseReferrals } from "./fixtures/usArWorkReleaseReferrals";
 import { usAzOverdueForACISDTPReferrals } from "./fixtures/usAzOverdueForACISDTPReferrals";
 import { usAzOverdueForACISTPRReferrals } from "./fixtures/usAzOverdueForACISTPRReferrals";
 import { usAzReleaseToDTPReferrals } from "./fixtures/usAzReleaseToDTPReferrals";
@@ -161,6 +163,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   earnedDischargeReferrals: earnedDischargeReferralsFixture,
   LSUReferrals: LSUReferralsFixture,
   supervisionLevelDowngradeReferrals: usTnSupervisionLevelDowngradeReferrals,
+  usArInstitutionalWorkerStatusReferrals,
+  usArWorkReleaseReferrals,
   usAzReleaseToTPRReferrals,
   usAzReleaseToDTPReferrals,
   usAzOverdueForACISDTPReferrals,

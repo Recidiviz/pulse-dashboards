@@ -201,4 +201,136 @@ export const usArResidents: Omit<
       projectedReleaseDate: "2025-10-22",
     },
   },
+  {
+    // TODO(#7787): Allow types that exist only in static configs
+    allEligibleOpportunities: [
+      // @ts-expect-error - these types are only defined in the admin panel and fixtures
+      "usArInstitutionalWorkerStatus",
+      // @ts-expect-error - these types are only defined in the admin panel and fixtures
+      "usArWorkRelease",
+    ],
+    stateCode: "US_AR",
+    personExternalId: "AR_RES004",
+    displayId: "RES004",
+    personName: {
+      givenNames: "Alice",
+      middleNames: "Marie",
+      surname: "Johnson",
+    },
+    gender: "FEMALE",
+    pseudonymizedId: "anonres004",
+    facilityId: "FACILITY1",
+    unitId: "UNIT B",
+    custodyLevel: "MEDIUM",
+    admissionDate: "2021-01-15",
+    releaseDate: "2026-01-15",
+    metadata: {
+      stateCode: "US_AR",
+      currentCustodyClassification: "C3",
+      currentGtEarningClass: "II-P",
+      currentLocation: "1230457",
+      currentSentences: [
+        {
+          sentenceId: 555666888889998,
+          startDate: "2016-04-12",
+          endDate: "2017-01-08",
+          initialTimeServedDays: 15,
+          personId: 4,
+        },
+        {
+          sentenceId: 222881257772133,
+          startDate: "2006-08-12",
+          endDate: "2009-10-22",
+          initialTimeServedDays: 20,
+          personId: 4,
+        },
+      ],
+      gedCompletionDate: "2018-11-23",
+      maxFlatReleaseDate: "2026-01-15",
+      noIncarcerationSanctionsWithin6Months: true,
+      noIncarcerationSanctionsWithin12Months: true,
+      paroleEligibilityDate: "2024-06-01",
+      programAchievement: [
+        {
+          programLocation: "1400759",
+          programAchievementDate: "2025-09-06",
+          programType: "TEG",
+          programEvaluationScore: null,
+        },
+        {
+          programLocation: "1400757",
+          programAchievementDate: "2020-06-04",
+          programType: "SM",
+          programEvaluationScore: "PASS",
+        },
+      ],
+      projectedReleaseDate: "2026-01-15",
+    },
+  },
+  {
+    // TODO(#7787): Allow types that exist only in static configs
+    allEligibleOpportunities: [
+      // @ts-expect-error - these types are only defined in the admin panel and fixtures
+      "usArInstitutionalWorkerStatus",
+      // @ts-expect-error - these types are only defined in the admin panel and fixtures
+      "usArWorkRelease",
+    ],
+    stateCode: "US_AR",
+    personExternalId: "AR_RES005",
+    displayId: "RES005",
+    personName: {
+      givenNames: "John",
+      middleNames: "Edward",
+      surname: "Smith",
+    },
+    gender: "MALE",
+    pseudonymizedId: "anonres005",
+    facilityId: "FACILITY1",
+    unitId: "UNIT C",
+    custodyLevel: "MAXIMUM",
+    admissionDate: "2018-11-20",
+    releaseDate: "2024-05-10",
+    metadata: {
+      stateCode: "US_AR",
+      currentCustodyClassification: "C1",
+      currentGtEarningClass: "III-P",
+      currentLocation: "1230458",
+      currentSentences: [
+        {
+          sentenceId: 555666888889997,
+          startDate: "2014-07-12",
+          endDate: "2015-03-08",
+          initialTimeServedDays: 10,
+          personId: 5,
+        },
+        {
+          sentenceId: 222881257772132,
+          startDate: "2003-05-12",
+          endDate: "2006-07-22",
+          initialTimeServedDays: 18,
+          personId: 5,
+        },
+      ],
+      gedCompletionDate: "2016-02-23",
+      maxFlatReleaseDate: "2024-05-10",
+      noIncarcerationSanctionsWithin6Months: true,
+      noIncarcerationSanctionsWithin12Months: true,
+      paroleEligibilityDate: "2022-11-01",
+      programAchievement: [
+        {
+          programLocation: "1400760",
+          programAchievementDate: "2023-12-06",
+          programType: "TEG",
+          programEvaluationScore: null,
+        },
+        {
+          programLocation: "1400755",
+          programAchievementDate: "2018-01-04",
+          programType: "SM",
+          programEvaluationScore: "PASS",
+        },
+      ],
+      projectedReleaseDate: "2024-05-10",
+    },
+  },
 ];

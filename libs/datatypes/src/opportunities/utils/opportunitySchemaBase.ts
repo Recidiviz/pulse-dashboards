@@ -46,3 +46,4 @@ export const opportunitySchemaBase = z.object({
 });
 
 export type OpportunityRecordBase = z.infer<typeof opportunitySchemaBase>;
+export type OpportunityRecordBaseRaw = z.input<typeof opportunitySchemaBase>;
