@@ -58,7 +58,7 @@ const ManagedComponent = observer(function StaffPage({
     // TODO(#5780): move infoItems to presenter
     {
       title: "avg daily caseload",
-      info: officerOutcomesData?.avgDailyPopulation,
+      info: officerRecord?.avgDailyPopulation,
     },
     { title: "email", info: officerRecord?.email },
     {
