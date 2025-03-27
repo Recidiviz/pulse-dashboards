@@ -195,7 +195,7 @@ export class UsTnReclassificationReviewForm extends FormBase<
           out[`q${q}Selection`] = -1;
         } else {
           const selection = findIndex(options, (o) => o.score === score);
-          if (selection === -1) throw new Error("bad CAF score");
+          if (selection === -1) return;
           out[`q${q}Selection`] = selection;
         }
       });

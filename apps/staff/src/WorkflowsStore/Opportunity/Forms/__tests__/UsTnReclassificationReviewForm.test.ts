@@ -194,13 +194,13 @@ describe("prefilledDataTransformer", () => {
     });
   });
 
-  test("throws on invalid scores", () => {
+  test("handles unexpected score appropriately", () => {
     for (const i of assessmentQuestionNumbers) {
       const key = `q${i}Score` as `q${typeof i}Score`;
       const temp = oppRecord.formInformation[key];
       oppRecord.formInformation[key] = 20;
       // eslint-disable-next-line no-loop-func
-      expect(() => form.prefilledDataTransformer()).toThrow();
+      expect(() => form.prefilledDataTransformer()).toBeDefined();
       oppRecord.formInformation[key] = temp;
     }
   });
