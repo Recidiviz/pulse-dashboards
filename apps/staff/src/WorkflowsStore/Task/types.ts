@@ -88,6 +88,7 @@ export const SUPERVISION_TASK_TYPES = [
   "assessment",
   "contact",
   "employment",
+  "usTxCollateralContactScheduled",
   "usTxHomeContactScheduled",
   "usTxHomeContactUnscheduled",
   "usTxHomeContactEdgeCase",
@@ -113,6 +114,7 @@ export type SupervisionDetailsForTask = {
   assessment: UsIdAssessmentDetails;
   contact: UsIdContactDetails;
   employment: UsIdEmploymentDetails;
+  usTxCollateralContactScheduled: UsTxContactDetails;
   usTxHomeContactScheduled: UsTxContactDetails;
   usTxHomeContactUnscheduled: UsTxContactDetails;
   usTxHomeContactEdgeCase: UsTxEdgeCaseContactDetails;
@@ -157,6 +159,7 @@ export type SupervisionNeed = {
 export type TasksStateCode = "US_ID" | "US_TX";
 
 export type UsTxContactTaskType =
+  | "usTxCollateralContactScheduled"
   | "usTxHomeContactScheduled"
   | "usTxHomeContactUnscheduled"
   | "usTxFieldContactScheduled"

@@ -18,6 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsTxAssessmentTask from "../WorkflowsStore/Task/UsTxAssessmentTask";
+import usTxCollateralContactScheduled from "../WorkflowsStore/Task/UsTxCollateralContactScheduled";
 import UsTxElectronicContactScheduledTask from "../WorkflowsStore/Task/UsTxElectronicContactScheduledTask";
 import UsTxElectronicContactUnscheduledTask from "../WorkflowsStore/Task/UsTxElectronicContactUnscheduledTask";
 import UsTxFieldContactScheduledTask from "../WorkflowsStore/Task/UsTxFieldContactScheduledTask";
@@ -49,6 +50,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   workflowsTasksConfig: {
     collection: "usTxSupervisionTasks",
     tasks: {
+      usTxCollateralContactScheduled: {
+        constructor: usTxCollateralContactScheduled,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
       usTxHomeContactScheduled: {
         constructor: usTxHomeContactScheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
@@ -88,6 +93,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
         field: "type",
         type: "task",
         options: [
+          {
+            value: "usTxCollateralContactScheduled",
+            label: "Collateral Contact",
+          },
           {
             value: "usTxHomeContactScheduled",
             label: "Home Contact, Sch.",
