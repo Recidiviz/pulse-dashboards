@@ -43,7 +43,10 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
 
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;
-    return this.record.eligibleCriteria.usMiClassificationReviewPastDueDate
-      .eligibleDate;
+    return (
+      super.eligibilityDate ??
+      this.record.eligibleCriteria.usMiClassificationReviewPastDueDate
+        .eligibleDate
+    );
   }
 }

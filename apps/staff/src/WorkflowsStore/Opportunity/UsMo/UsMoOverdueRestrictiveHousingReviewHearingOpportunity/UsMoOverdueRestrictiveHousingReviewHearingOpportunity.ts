@@ -117,7 +117,7 @@ export class UsMoOverdueRestrictiveHousingReviewHearingOpportunity extends UsMoO
       this.record?.ineligibleCriteria.usMoPastLatestScheduledReviewDate;
     const { nextReviewDate } = pastLatestScheduledReviewDate ?? {};
 
-    return nextReviewDate;
+    return super.eligibilityDate ?? nextReviewDate;
   }
 
   get eligibleStatusMessage(): string {

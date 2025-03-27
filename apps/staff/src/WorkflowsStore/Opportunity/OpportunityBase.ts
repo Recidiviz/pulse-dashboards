@@ -767,15 +767,15 @@ export class OpportunityBase<
     return this.record?.opportunityPseudonymizedId ?? null;
   }
 
+  get eligibilityDate(): Date | undefined {
+    return this.record?.eligibleDate ?? undefined;
+  }
+
   // ===============================
   // properties below this line are stubs and in most cases should be overridden
   // in a subclass. Given their triviality they are not annotated by MobX either,
   // so subclasses can use normal annotations instead of having to use `override`.
   // ===============================
-
-  get eligibilityDate(): Date | undefined {
-    return undefined;
-  }
 
   get formVariant(): FormVariant | undefined {
     return undefined;

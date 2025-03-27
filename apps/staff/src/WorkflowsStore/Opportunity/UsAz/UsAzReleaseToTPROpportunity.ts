@@ -49,6 +49,9 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
 
   get eligibilityDate(): Date {
     const metadata = this.person.metadata as UsAzResidentMetadata;
-    return new Date(metadata.acisTprDate ?? metadata.projectedTprDate);
+    return (
+      super.eligibilityDate ??
+      new Date(metadata.acisTprDate ?? metadata.projectedTprDate)
+    );
   }
 }

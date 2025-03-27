@@ -36,6 +36,8 @@ export const opportunitySchemaBase = z.object({
   isAlmostEligible: z.boolean(),
   eligibleCriteria: baseCriteriaSchema,
   ineligibleCriteria: baseCriteriaSchema,
+  // TODO(#7854): Remove optional() once all opportunity records have an eligible date
+  eligibleDate: dateStringSchema.nullable().optional(),
   caseNotes: z.record(z.array(caseNoteSchema)).default({}),
   // Identifier to support sentence-level opportunities, that is multiple instances of a
   // given opportunity for a given person

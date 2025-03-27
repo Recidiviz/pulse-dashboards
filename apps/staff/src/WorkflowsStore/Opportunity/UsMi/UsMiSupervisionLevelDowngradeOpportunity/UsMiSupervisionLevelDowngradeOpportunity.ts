@@ -50,6 +50,6 @@ export class UsMiSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   readonly hideUnknownCaseNoteDates = true;
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.metadata.eligibleDate;
+    return super.eligibilityDate ?? this.record?.metadata.eligibleDate;
   }
 }

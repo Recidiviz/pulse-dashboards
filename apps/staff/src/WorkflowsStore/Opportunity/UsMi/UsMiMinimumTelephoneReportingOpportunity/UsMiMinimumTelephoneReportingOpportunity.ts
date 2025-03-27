@@ -38,6 +38,6 @@ export class UsMiMinimumTelephoneReportingOpportunity extends OpportunityBase<
   }
 
   get eligibilityDate(): Date | undefined {
-    return this.record?.metadata.eligibleDate;
+    return super.eligibilityDate ?? this.record?.metadata.eligibleDate;
   }
 }

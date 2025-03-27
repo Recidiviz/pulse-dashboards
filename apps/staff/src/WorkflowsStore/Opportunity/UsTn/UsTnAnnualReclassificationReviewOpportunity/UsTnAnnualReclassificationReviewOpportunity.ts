@@ -50,7 +50,7 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
   }
 
   get eligibilityDate() {
-    return this.record?.formReclassificationDueDate;
+    return super.eligibilityDate ?? this.record?.formReclassificationDueDate;
   }
 
   showEligibilityStatus(): boolean {

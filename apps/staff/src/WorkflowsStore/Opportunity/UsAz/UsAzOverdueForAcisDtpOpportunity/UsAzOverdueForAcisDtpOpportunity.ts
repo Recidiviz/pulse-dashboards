@@ -58,8 +58,11 @@ export class UsAzOverdueForAcisDtpOpportunity extends OpportunityBase<
   }
 
   get eligibilityDate(): Date {
-    return new Date(
-      this.record.eligibleCriteria.usAzIncarcerationPastAcisDtpDate.acisDtpDate,
+    return (
+      super.eligibilityDate ??
+      new Date(
+        this.record.eligibleCriteria.usAzIncarcerationPastAcisDtpDate.acisDtpDate,
+      )
     );
   }
 

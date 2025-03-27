@@ -37,6 +37,7 @@ export abstract class PastFTRDOpportunityBase<
 
   get eligibilityDate(): Date | undefined {
     return (
+      super.eligibilityDate ??
       this.record?.eligibleCriteria.supervisionPastFullTermCompletionDate
         ?.eligibleDate ??
       this.record?.ineligibleCriteria.supervisionPastFullTermCompletionDate

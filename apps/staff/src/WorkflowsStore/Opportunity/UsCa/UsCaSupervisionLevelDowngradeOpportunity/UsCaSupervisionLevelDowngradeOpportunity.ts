@@ -51,8 +51,11 @@ export class UsCaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
 
   get eligibilityDate(): Date | undefined {
     if (!this.record) return;
-    return this.record.eligibleCriteria.supervisionLevelIsHighFor6Months
-      .highStartDate;
+    return (
+      super.eligibilityDate ??
+      this.record.eligibleCriteria.supervisionLevelIsHighFor6Months
+        .highStartDate
+    );
   }
 
   get eligibilityCallToActionText(): string {

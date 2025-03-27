@@ -159,7 +159,9 @@ export class UsMoOverdueRestrictiveHousingReleaseOpportunity extends UsMoOverdue
     const sanctionInfo =
       this.record?.eligibleCriteria.usMoNoActiveD1Sanctions ??
       this.record?.ineligibleCriteria.usMoNoActiveD1Sanctions;
-    return sanctionInfo?.latestSanctionEndDate ?? undefined;
+    return (
+      super.eligibilityDate ?? sanctionInfo?.latestSanctionEndDate ?? undefined
+    );
   }
 
   get eligibleStatusMessage(): string {

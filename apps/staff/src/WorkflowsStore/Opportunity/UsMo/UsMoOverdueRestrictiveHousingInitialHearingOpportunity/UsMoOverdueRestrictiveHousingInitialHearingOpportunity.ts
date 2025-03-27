@@ -109,7 +109,7 @@ export class UsMoOverdueRestrictiveHousingInitialHearingOpportunity extends UsMo
     const initialHearingPastDueDate =
       this.record?.eligibleCriteria.usMoInitialHearingPastDueDate ||
       this.record?.ineligibleCriteria.usMoInitialHearingPastDueDate;
-    return initialHearingPastDueDate?.nextReviewDate;
+    return super.eligibilityDate ?? initialHearingPastDueDate?.nextReviewDate;
   }
 
   get eligibleStatusMessage(): string {
