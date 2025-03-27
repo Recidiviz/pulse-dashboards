@@ -16,7 +16,7 @@
 // =============================================================================
 
 import {
-  createColumnHelper,
+  CellContext,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -25,7 +25,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { keyBy, mapValues, pick } from "lodash";
-import _ from "lodash";
 import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -105,35 +104,40 @@ type OpportunityWithOppNameProviderName = OpportunitiesType[number] & {
   opportunityNameProviderName: string;
 };
 
-const columnHelper = createColumnHelper<OpportunityWithOppNameProviderName>();
-
 function getColumns(geoConfig: GeoConfig) {
   const { ExternalOpportunityLogo } = geoConfig;
 
   return [
-    columnHelper.accessor(
-      (row) => _.pick(row, ["opportunityNameProviderName", "source"]),
-      {
-        header: "Opportunity & Provider",
-        id: "opportunityNameProviderName",
-        cell: (props) => {
-          const { opportunityNameProviderName, source } = props.getValue();
-          return (
-            <>
-              <div>{opportunityNameProviderName}</div>
-              {ExternalOpportunityLogo && source === "external" ? (
-                <div style={{ marginTop: 4 }}>
-                  <ExternalOpportunityLogo />
-                </div>
-              ) : null}
-            </>
-          );
-        },
+    {
+      header: "Opportunity & Provider",
+      accessorKey: "opportunityNameProviderName",
+      cell: (
+        value: CellContext<OpportunityWithOppNameProviderName, string>,
+      ) => {
+        const opportunityNameProviderName = value.getValue();
+        const source = value.row.original.source;
+
+        return (
+          <>
+            <div>{opportunityNameProviderName}</div>
+            {ExternalOpportunityLogo && source === "external" ? (
+              <div style={{ marginTop: 4 }}>
+                <ExternalOpportunityLogo />
+              </div>
+            ) : null}
+          </>
+        );
       },
-    ),
-    columnHelper.accessor("needsAddressed", {
+    },
+    {
       header: "Needs Addressed",
-      cell: (needs) => {
+      accessorKey: "needsAddressed",
+      cell: (
+        needs: CellContext<
+          OpportunityWithOppNameProviderName,
+          OpportunityWithOppNameProviderName["needsAddressed"]
+        >,
+      ) => {
         const value = parseNeedsToBeAddressedValue(needs.getValue());
         return (
           <Styled.NeedsWrapper>
@@ -145,7 +149,7 @@ function getColumns(geoConfig: GeoConfig) {
           </Styled.NeedsWrapper>
         );
       },
-    }),
+    },
     {
       header: "",
       accessorKey: "addToRecommendationAction",
@@ -565,6 +569,9 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                     return (
                       <StyledDashboard.Cell
                         key={cell.id}
+                        isLink={
+                          cell.column.id === "opportunityNameProviderName"
+                        }
                         onClick={() => {
                           showModal(
                             cell.column.id === "opportunityNameProviderName",
