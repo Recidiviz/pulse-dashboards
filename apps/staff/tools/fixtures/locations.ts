@@ -50,15 +50,15 @@ const data: LocationRecord[] = [
   {
     stateCode: "US_ID",
     system: "INCARCERATION",
-    idType: "facilityId",
-    id: "LRC",
+    idType: "crcFacilityId",
+    id: "CRC LRC",
     name: "Lunar Reentry Center",
   },
   {
     stateCode: "US_ID",
     system: "INCARCERATION",
-    idType: "facilityId",
-    id: "PRC",
+    idType: "crcFacilityId",
+    id: "CRC PRC",
     name: "Phobos Reentry Center",
   },
 

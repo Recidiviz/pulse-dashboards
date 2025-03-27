@@ -23,7 +23,7 @@ import { WorkflowsResidentRecord } from "./person";
 export type LocationRecord = {
   stateCode: string;
   system: SystemId;
-  idType: keyof ClientRecord | keyof WorkflowsResidentRecord;
+  idType: keyof ClientRecord | keyof WorkflowsResidentRecord | "crcFacilityId";
   id: string;
   name: string;
 };
