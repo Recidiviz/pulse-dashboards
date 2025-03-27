@@ -74,6 +74,7 @@ export default defineConfig({
       SENTRY_DSN:
         "https://d469d84bb29f6e77828e286a793ede9d@o432474.ingest.us.sentry.io/4508728082890752",
       SENTRY_ENV: "test",
+      TWILIO_AUTH_TOKEN: process.env["TWILIO_AUTH_TOKEN"] ?? "token",
     },
   },
 });

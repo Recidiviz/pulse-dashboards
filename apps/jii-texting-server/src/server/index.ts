@@ -20,7 +20,7 @@ import Fastify from "fastify";
 
 import registerRoutes from "~jii-texting-server/server/routes";
 import { registerImportRoutes } from "~jii-texting-server/server/utils";
-import registerWebhooks from "~jii-texting-server/server/webhooks";
+import registerTwilioWebhooks from "~jii-texting-server/server/webhooks";
 
 export function buildServer() {
   // Instantiate Fastify with some config
@@ -31,7 +31,7 @@ export function buildServer() {
   // Ensure Sentry is setup before starting the server
   setupFastifyErrorHandler(server);
 
-  registerWebhooks(server);
+  registerTwilioWebhooks(server);
   registerImportRoutes(server);
   registerRoutes(server);
 

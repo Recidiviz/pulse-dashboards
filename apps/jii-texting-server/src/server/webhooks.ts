@@ -15,35 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FastifyInstance, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 
 import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
-
-interface TwilioIncomingMessageRequestType {
-  values: {
-    MessageSid: string;
-    From: string;
-    Body: string;
-    OptOutType?: string;
-  };
-}
+import { getAuthenticateTwilioWebhookRequestFn } from "~jii-texting-server/server/authUtils";
+import { TwilioWebhookRequest } from "~jii-texting-server/server/types";
 
 /**
- * Encapsulates the routes for webhooks
+ * Encapsulates the routes for Twilio webhooks
  * @param {FastifyInstance} server  Encapsulated Fastify Instance
  */
-async function registerWebhooks(server: FastifyInstance) {
+async function registerTwilioWebhooks(server: FastifyInstance) {
+  // Instantiate the Twilio client
+  if (!process.env["TWILIO_AUTH_TOKEN"]) {
+    throw new Error(
+      "Missing required environment variables for Twilio Auth Token in webhooks setup",
+    );
+  }
+
+  const twilioAuthToken = process.env["TWILIO_AUTH_TOKEN"];
+
   server.post(
-    "/webhook/twilio_incoming_message/:stateCode",
-    async (
-      request: FastifyRequest<{
-        Body: TwilioIncomingMessageRequestType;
-        Params: {
-          stateCode: string;
-        };
-      }>,
-      response,
-    ) => {
+    "/webhook/twilio/incoming_message/:stateCode",
+    {
+      preHandler: [getAuthenticateTwilioWebhookRequestFn(twilioAuthToken)],
+    },
+    async (request: TwilioWebhookRequest, response) => {
       const { stateCode } = request.params;
       const prisma = getPrismaClientForStateCode(stateCode);
 
@@ -65,13 +62,13 @@ async function registerWebhooks(server: FastifyInstance) {
 
       if (!people) {
         request.log.info(
-          `Received incoming message from unrecognized phone number`,
+          `Received incoming message from phone number without associated Person`,
         );
       }
 
       // If the person exists and the person has opted out, update their record
       if (people && optOutType) {
-        prisma.person.updateMany({
+        await prisma.person.updateMany({
           where: {
             phoneNumber: fromPhoneNumber,
           },
@@ -97,4 +94,4 @@ async function registerWebhooks(server: FastifyInstance) {
   );
 }
 
-export default registerWebhooks;
+export default registerTwilioWebhooks;

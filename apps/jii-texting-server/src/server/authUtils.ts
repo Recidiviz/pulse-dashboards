@@ -18,8 +18,12 @@
 import { captureException } from "@sentry/node";
 import { FastifyReply } from "fastify";
 import { OAuth2Client } from "google-auth-library";
+import { validateRequest } from "twilio";
 
-import { RequestWithStateCodeParam } from "~jii-texting-server/server/types";
+import {
+  RequestWithStateCodeParam,
+  TwilioWebhookRequest,
+} from "~jii-texting-server/server/types";
 import { isValidStateCode } from "~jii-texting-server/server/utils";
 
 export async function verifyGoogleIdToken(
@@ -73,6 +77,43 @@ export function getAuthenticateInternalRequestPreHandlerFn(email: string) {
     } catch (err) {
       reply.status(403).send({ error: "Invalid token" });
       captureException(`error verifying auth token: ${err}`);
+      return;
+    }
+  };
+}
+
+/**
+ * Authenticates requests to the Twilio webhooks on the JII Texting Server by validating
+ * that the request with the Twilio library validateRequest method
+ * @param token The expected Twilio Auth token
+ */
+export function getAuthenticateTwilioWebhookRequestFn(twilioAuthToken: string) {
+  return async (request: TwilioWebhookRequest, response: FastifyReply) => {
+    try {
+      const twilioSignature = request.headers["x-twilio-signature"];
+
+      if (!twilioSignature) {
+        captureException(`No Twilio signature provided`);
+        response.status(403).send({ error: `Missing Twilio signature` });
+        return;
+      }
+
+      // Validate the Twilio request with the Twilio library
+      const isValidTwilioRequest = validateRequest(
+        twilioAuthToken,
+        twilioSignature as string,
+        request.url,
+        request.params,
+      );
+
+      if (!isValidTwilioRequest) {
+        captureException(`invalid request received`);
+        response.status(403).send({ error: `Invalid Twilio request` });
+        return;
+      }
+    } catch (err) {
+      captureException(`error trying to validate webhook request: ${err}`);
+      response.status(403).send({ error: `Unable to validate request` });
       return;
     }
   };

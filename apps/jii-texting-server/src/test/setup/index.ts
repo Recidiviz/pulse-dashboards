@@ -36,6 +36,7 @@ export let testServer: ReturnType<typeof buildServer>;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 export let mockVerifyIdToken: ReturnType<typeof vi.fn>;
 export let mockGetPayload: ReturnType<typeof vi.fn>;
+export let mockTwilioVaildateRequest: ReturnType<typeof vi.fn>;
 
 vi.mock("~fastify-data-import-plugin", () => ({
   ImportRoutesHandler: MockImportRoutesHandler,
@@ -44,6 +45,10 @@ vi.mock("~fastify-data-import-plugin", () => ({
 const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
+
+vi.mock("twilio", () => ({
+  validateRequest: vi.fn(),
+}));
 
 beforeAll(async () => {
   init({

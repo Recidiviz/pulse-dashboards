@@ -22,3 +22,19 @@ export type RequestWithStateCodeParam = FastifyRequest<{
     stateCode: string;
   };
 }>;
+
+export interface TwilioIncomingMessageRequestType {
+  values: {
+    MessageSid: string;
+    From: string;
+    Body: string;
+    OptOutType?: string;
+  };
+}
+
+export type TwilioWebhookRequest = FastifyRequest<{
+  Body: TwilioIncomingMessageRequestType;
+  Params: {
+    stateCode: string;
+  };
+}>;

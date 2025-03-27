@@ -15,61 +15,128 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// import MockDate from "mockdate";
-import { describe, test } from "vitest";
+import { validateRequest } from "twilio";
+import { describe, test, vi } from "vitest";
 
 import { testPrismaClient, testServer } from "~jii-texting-server/test/setup";
 import { fakePerson } from "~jii-texting-server/test/setup/seed";
 
-describe("twilio_incoming_message", () => {
-  test("incoming message from existing person persisted in DB successfully", async () => {
-    const existingPersonPhoneNumber = fakePerson.phoneNumber;
-    const twilioMessageSid = "incoming-message-sid-1";
+describe("POST /webhook/twilio/incoming_message/US_ID", () => {
+  describe("authenticated requests", () => {
+    beforeEach(() => {
+      vi.mocked(validateRequest).mockReturnValueOnce(true);
+    });
 
-    const response = await testServer.inject({
-      method: "POST",
-      url: "/webhook/twilio_incoming_message/US_ID",
-      payload: {
-        values: {
-          MessageSid: twilioMessageSid,
-          From: `+1${existingPersonPhoneNumber}`,
-          Body: "This is a reply",
-          OptOutType: "STOP",
+    test("incoming message from existing person persisted in DB successfully", async () => {
+      const existingPersonPhoneNumber = fakePerson.phoneNumber;
+      const twilioMessageSid = "incoming-message-sid-1";
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/webhook/twilio/incoming_message/US_ID",
+        headers: {
+          "x-twilio-signature": "signature",
         },
-      },
+        payload: {
+          values: {
+            MessageSid: twilioMessageSid,
+            From: `+1${existingPersonPhoneNumber}`,
+            Body: "This is a reply",
+            OptOutType: "STOP",
+          },
+        },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+      });
+
+      const persons = await testPrismaClient.person.findMany({
+        where: {
+          phoneNumber: existingPersonPhoneNumber,
+        },
+      });
+
+      expect(persons.length).toBe(1);
+      // Validate person has opted out
+      expect(persons[0].lastOptOutDate).not.toBeNull();
     });
 
-    expect(response).toMatchObject({
-      statusCode: 200,
-    });
+    test("incoming message success for non-existent person", async () => {
+      const twilioMessageSid = "incoming-message-sid-1";
 
-    const person = await testPrismaClient.person.findFirst({
-      where: {
-        phoneNumber: existingPersonPhoneNumber,
-      },
-    });
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/webhook/twilio/incoming_message/US_ID",
+        headers: {
+          "x-twilio-signature": "signature",
+        },
+        payload: {
+          values: {
+            MessageSid: twilioMessageSid,
+            From: `+11111111111`,
+            Body: "This is a reply",
+          },
+        },
+      });
 
-    // Validate person has opted out
-    expect(person?.lastOptOutDate).not.toBeNull();
+      expect(response).toMatchObject({
+        statusCode: 200,
+      });
+    });
   });
 
-  test("incoming message success for non-existent person", async () => {
-    const twilioMessageSid = "incoming-message-sid-1";
+  describe("unauthenticated requests", () => {
+    test("no twilio signature provided", async () => {
+      const existingPersonPhoneNumber = fakePerson.phoneNumber;
+      const twilioMessageSid = "incoming-message-sid-1";
 
-    const response = await testServer.inject({
-      method: "POST",
-      url: "/webhook/twilio_incoming_message/US_ID",
-      payload: {
-        values: {
-          MessageSid: twilioMessageSid,
-          From: `+11111111111`,
-          Body: "This is a reply",
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/webhook/twilio/incoming_message/US_ID",
+        headers: {},
+        payload: {
+          values: {
+            MessageSid: twilioMessageSid,
+            From: `+1${existingPersonPhoneNumber}`,
+            Body: "This is a reply",
+            OptOutType: "STOP",
+          },
         },
-      },
+      });
+
+      expect(response.statusCode).toBe(403);
+      expect(JSON.parse(response.body)).toMatchObject({
+        error: "Missing Twilio signature",
+      });
     });
 
-    expect(response).toMatchObject({
-      statusCode: 200,
+    test("signature provided, but invalid request", async () => {
+      vi.mocked(validateRequest).mockReturnValueOnce(false);
+
+      const existingPersonPhoneNumber = fakePerson.phoneNumber;
+      const twilioMessageSid = "incoming-message-sid-1";
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/webhook/twilio/incoming_message/US_ID",
+        headers: {
+          "x-twilio-signature": "signature",
+        },
+        payload: {
+          values: {
+            MessageSid: twilioMessageSid,
+            From: `+1${existingPersonPhoneNumber}`,
+            Body: "This is a reply",
+            OptOutType: "STOP",
+          },
+        },
+      });
+
+      expect(response.statusCode).toBe(403);
+      expect(JSON.parse(response.body)).toMatchObject({
+        error: "Invalid Twilio request",
+      });
     });
   });
 });
