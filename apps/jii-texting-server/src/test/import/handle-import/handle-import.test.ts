@@ -17,31 +17,41 @@
 
 import { StateCode } from "@prisma/jii-texting-server/client";
 
+import {
+  fakeFullyEligibleGroup,
+  fakePersonOne,
+} from "~@jii-texting-server/utils/test/constants";
 import { dataProviderSingleton } from "~fastify-data-import-plugin/testkit";
 import { callHandleImportPersonData } from "~jii-texting-server/test/import/handle-import/utils";
 import { testPrismaClient, testServer } from "~jii-texting-server/test/setup";
-import { fakePerson } from "~jii-texting-server/test/setup/seed";
 
 describe("handle_import", () => {
   describe("import people data", () => {
     test("should upsert existing people and add new people", async () => {
+      // Set up test so that existing person has opt out date
+      await testPrismaClient.person.update({
+        where: { personId: fakePersonOne.personId },
+        data: { lastOptOutDate: new Date("2025-01-01") },
+      });
+
       dataProviderSingleton.setData([
         // Existing person
         {
-          external_id: fakePerson.externalId,
-          pseudonymized_id: fakePerson.pseudonymizedId,
-          person_id: fakePerson.personId,
+          external_id: fakePersonOne.externalId,
+          pseudonymized_id: fakePersonOne.pseudonymizedId,
+          person_id: fakePersonOne.personId,
           state_code: StateCode.US_ID,
           person_name: JSON.stringify({
-            given_names: fakePerson.givenName,
-            middle_names: fakePerson.middleName,
-            surname: fakePerson.surname,
-            name_suffix: fakePerson.nameSuffix,
+            given_names: fakePersonOne.givenName,
+            middle_names: fakePersonOne.middleName,
+            surname: fakePersonOne.surname,
+            name_suffix: fakePersonOne.nameSuffix,
           }),
-          phone_number: fakePerson.phoneNumber,
-          officer_id: fakePerson.officerId,
-          po_name: fakePerson.poName,
-          district: fakePerson.district,
+          phone_number: fakePersonOne.phoneNumber,
+          officer_id: fakePersonOne.officerId,
+          po_name: fakePersonOne.poName,
+          district: fakePersonOne.district,
+          group_id: fakeFullyEligibleGroup.groupName,
         },
         // New person
         {
@@ -56,9 +66,10 @@ describe("handle_import", () => {
             name_suffix: "Sr.",
           }),
           phone_number: "8888888888",
-          officer_id: fakePerson.officerId,
-          po_name: fakePerson.poName,
-          district: fakePerson.district,
+          officer_id: fakePersonOne.officerId,
+          po_name: fakePersonOne.poName,
+          district: fakePersonOne.district,
+          group_id: fakeFullyEligibleGroup.groupName,
         },
       ]);
 
@@ -72,7 +83,7 @@ describe("handle_import", () => {
       // Check that old person lastOptOutDate has not changed
       expect(dbPeople).toEqual([
         expect.objectContaining({
-          externalId: "person-ext-1",
+          externalId: fakePersonOne.externalId,
           lastOptOutDate: new Date("2025-01-01"),
         }),
         expect.objectContaining({ externalId: "new-person-ext" }),
@@ -98,10 +109,10 @@ describe("handle_import", () => {
       // DB should already be seeded with existing person that has a group
       expect(dbPerson).toEqual([
         expect.objectContaining({
-          externalId: "person-ext-1",
+          externalId: fakePersonOne.externalId,
           groups: [
             {
-              groupName: "TRUSTED_TESTER",
+              groupName: fakeFullyEligibleGroup.groupName,
               messageCopyTemplate: "Hi, this is a message.",
               status: "ACTIVE",
             },
@@ -123,9 +134,10 @@ describe("handle_import", () => {
             name_suffix: "Sr.",
           }),
           phone_number: "8888888888",
-          officer_id: fakePerson.officerId,
-          po_name: fakePerson.poName,
-          district: fakePerson.district,
+          officer_id: fakePersonOne.officerId,
+          po_name: fakePersonOne.poName,
+          district: fakePersonOne.district,
+          group_id: fakeFullyEligibleGroup.groupName,
         },
       ]);
 
@@ -152,7 +164,7 @@ describe("handle_import", () => {
       // Check that old person groups are set to undefined
       expect(dbPeople).toEqual([
         expect.objectContaining({
-          externalId: "person-ext-1",
+          externalId: fakePersonOne.externalId,
           groups: [],
         }),
         expect.objectContaining({ externalId: "new-person-ext" }),

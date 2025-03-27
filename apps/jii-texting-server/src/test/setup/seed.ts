@@ -15,48 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { faker } from "@faker-js/faker";
+import { PrismaClient } from "@prisma/jii-texting-server/client";
+
 import {
-  Prisma,
-  PrismaClient,
-  StateCode,
-  Status,
-} from "@prisma/jii-texting-server/client";
-
-const fakeTopic = {
-  topicName: "LSU",
-  stateCode: StateCode.US_ID,
-  status: Status.ACTIVE,
-} satisfies Prisma.TopicCreateInput;
-
-const fakeGroup = {
-  groupName: "TRUSTED_TESTER",
-  messageCopyTemplate: "Hi, this is a message.",
-  status: Status.ACTIVE,
-};
-
-export const fakePerson = {
-  stateCode: StateCode.US_ID,
-  externalId: "person-ext-1",
-  pseudonymizedId: "person-pseudo-id-1",
-  personId: "person-id-1",
-  givenName: faker.person.firstName(),
-  middleName: faker.person.middleName(),
-  surname: faker.person.lastName(),
-  nameSuffix: faker.person.suffix(),
-  phoneNumber: "1234567890",
-  officerId: "officer-id-1",
-  poName: faker.person.fullName(),
-  district: faker.location.county(),
-  lastOptOutDate: new Date("2025-01-01"),
-} satisfies Prisma.PersonCreateInput;
+  fakeFullyEligibleGroup,
+  fakePersonOne,
+  fakeTopic,
+  fakeTrustedTesterGroup,
+} from "~@jii-texting-server/utils/test/constants";
 
 export async function seed(prismaClient: PrismaClient) {
   const topic = await prismaClient.topic.create({
     data: {
       ...fakeTopic,
       groups: {
-        create: fakeGroup,
+        create: [fakeTrustedTesterGroup, fakeFullyEligibleGroup],
       },
     },
     include: {
@@ -64,16 +37,16 @@ export async function seed(prismaClient: PrismaClient) {
     },
   });
 
-  const group = topic.groups.find(
-    (group) => group.groupName === "TRUSTED_TESTER",
+  const fullyEligibleGroup = topic.groups.find(
+    (group) => group.groupName === fakeFullyEligibleGroup.groupName,
   );
 
   await prismaClient.person.create({
     data: {
-      ...fakePerson,
+      ...fakePersonOne,
       groups: {
         connect: {
-          id: group?.id,
+          id: fullyEligibleGroup?.id,
         },
       },
     },

@@ -30,9 +30,7 @@ function parseData<T extends z.ZodTypeAny>(
     // See https://zod.dev/?id=inferring-the-inferred-type for why we need to cast to z.infer<T>
     return schema.parse(datum) as z.infer<T>;
   } catch (e) {
-    errors.push(
-      `\nError parsing data:\nData: ${JSON.stringify(datum, null, 2)}\nError: ${e}`,
-    );
+    errors.push(`\nError parsing data: ${e}`);
   }
   return undefined;
 }
@@ -56,6 +54,10 @@ export async function transformAndLoadPersonData(
     if (!personData) {
       continue;
     }
+
+    const group = await prismaClient.group.findFirstOrThrow({
+      where: { groupName: personData.group_id },
+    });
 
     const newPerson = {
       externalId: personData.external_id,
@@ -81,7 +83,10 @@ export async function transformAndLoadPersonData(
       where: {
         externalId: newPerson.externalId,
       },
-      create: newPerson,
+      create: {
+        ...newPerson,
+        groups: { connect: { id: group.id } },
+      },
       update: newPerson,
     });
   }

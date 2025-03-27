@@ -18,8 +18,8 @@
 import { validateRequest } from "twilio";
 import { describe, test, vi } from "vitest";
 
+import { fakePersonOne } from "~@jii-texting-server/utils/test/constants";
 import { testPrismaClient, testServer } from "~jii-texting-server/test/setup";
-import { fakePerson } from "~jii-texting-server/test/setup/seed";
 
 describe("POST /webhook/twilio/incoming_message/US_ID", () => {
   describe("authenticated requests", () => {
@@ -28,7 +28,7 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
     });
 
     test("incoming message from existing person persisted in DB successfully", async () => {
-      const existingPersonPhoneNumber = fakePerson.phoneNumber;
+      const existingPersonPhoneNumber = fakePersonOne.phoneNumber;
       const twilioMessageSid = "incoming-message-sid-1";
 
       const response = await testServer.inject({
@@ -88,7 +88,7 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
 
   describe("unauthenticated requests", () => {
     test("no twilio signature provided", async () => {
-      const existingPersonPhoneNumber = fakePerson.phoneNumber;
+      const existingPersonPhoneNumber = fakePersonOne.phoneNumber;
       const twilioMessageSid = "incoming-message-sid-1";
 
       const response = await testServer.inject({
@@ -114,7 +114,7 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
     test("signature provided, but invalid request", async () => {
       vi.mocked(validateRequest).mockReturnValueOnce(false);
 
-      const existingPersonPhoneNumber = fakePerson.phoneNumber;
+      const existingPersonPhoneNumber = fakePersonOne.phoneNumber;
       const twilioMessageSid = "incoming-message-sid-1";
 
       const response = await testServer.inject({

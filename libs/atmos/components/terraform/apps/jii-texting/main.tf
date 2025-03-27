@@ -43,7 +43,6 @@ module "cloud-run" {
     }
   ]
 
-
   volumes = [{
     name = "cloudsql"
     cloud_sql_instance = {
@@ -51,6 +50,9 @@ module "cloud-run" {
     }
     }
   ]
+
+  # Roles to grant the Cloud Run service account
+  service_account_project_roles = ["roles/cloudsql.client", "roles/storage.objectViewer"]
 }
 
 # Configure a Google Workflow that is executed when a message is published to
