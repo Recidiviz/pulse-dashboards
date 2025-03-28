@@ -41,7 +41,6 @@ const TOAST_TIMEOUT = 3000;
 
 type SummaryReportProps = {
   firstName?: string;
-  lastName?: string;
   fullName?: string;
   geoConfig: GeoConfig;
   age?: number;
@@ -66,7 +65,6 @@ type SummaryReportProps = {
 
 export const SummaryReport: React.FC<SummaryReportProps> = ({
   firstName,
-  lastName,
   fullName,
   geoConfig,
   age,
@@ -97,7 +95,6 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     : generateRecommendationSummary({
         recommendation: selectedRecommendation,
         fullName,
-        lastName,
         needs,
         protectiveFactors,
         opportunityDescriptions,
@@ -134,7 +131,6 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     const regeneratedSummary = generateRecommendationSummary({
       recommendation: selectedRecommendation,
       fullName,
-      lastName,
       needs,
       protectiveFactors,
       opportunityDescriptions,

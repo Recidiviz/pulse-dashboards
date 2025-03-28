@@ -67,7 +67,6 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
   } = presenter;
 
   const firstName = caseAttributes?.client?.firstName;
-  const lastName = caseAttributes?.client?.lastName;
   const savedSummary = caseAttributes?.recommendationSummary;
 
   const [selectedRecommendation, setSelectedRecommendation] = useState(
@@ -222,7 +221,6 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
             <SummaryReport
               fullName={caseAttributes.client?.fullName}
               firstName={firstName}
-              lastName={lastName}
               geoConfig={geoConfig}
               age={caseAttributes.age}
               insight={caseAttributes.insight}

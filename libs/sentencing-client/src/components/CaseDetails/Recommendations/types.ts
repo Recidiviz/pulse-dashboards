@@ -80,7 +80,6 @@ export type RecommendationOption = {
 export type GenerateRecommendationProps = {
   recommendation?: string | null;
   fullName?: string;
-  lastName?: string;
   needs?: Case["needsToBeAddressed"];
   opportunityDescriptions?: string[];
   protectiveFactors?: Case["protectiveFactors"];

@@ -64,7 +64,6 @@ export const formatNeedsList = (
 export const generateRecommendationSummary = ({
   recommendation,
   fullName = "",
-  lastName,
   needs = [],
   opportunityDescriptions = [],
   protectiveFactors = [],
@@ -78,6 +77,7 @@ export const generateRecommendationSummary = ({
     : pronouns["UNKNOWN"];
   const isBinaryOrTransMaleOrTransFemaleGender =
     gender && ["MALE", "FEMALE", "TRANS_MALE", "TRANS_FEMALE"].includes(gender);
+  const lastName = fullName.split(" ").slice(-1).join(" ");
   const name = isBinaryOrTransMaleOrTransFemaleGender ? lastName : fullName;
 
   const opportunitiesList = formatListWithAnd(
