@@ -28,6 +28,10 @@ import {
   getSubtitleGender,
   getSubtitleLsirScore,
 } from "../../components/charts/common/utils";
+import {
+  RECIDIVISM_RATES_TEXT,
+  SENTENCE_DISTRIBUTION_TEXT,
+} from "../../components/charts/constants";
 import { DispositionChartExplanation } from "../../components/charts/DispositionChart/DispositionChartExplanation";
 import {
   OffenseText,
@@ -228,10 +232,12 @@ export function Report({
           </Styled.CaseOverview>
         </Styled.SnapshotContainer>
 
-        {/* Historical Sentencing */}
+        {/* Sentence Distribution */}
         <Styled.HistoricalBreakdown>
           <Styled.TitleAttributesWrapper>
-            <Styled.SectionTitle>Historical Sentencing</Styled.SectionTitle>
+            <Styled.SectionTitle>
+              {SENTENCE_DISTRIBUTION_TEXT}
+            </Styled.SectionTitle>
             <HistoricalSentencingAttributeChips insight={insight} />
           </Styled.TitleAttributesWrapper>
 
@@ -254,7 +260,7 @@ export function Report({
         <Styled.CumulativeBreakdown>
           <Styled.TitleAttributesWrapper>
             <Styled.SectionTitle>
-              Cumulative Recidivism Rate <span>(36 months)</span>
+              {RECIDIVISM_RATES_TEXT} <span>(36 months)</span>
             </Styled.SectionTitle>
             <CumulativeRecidivismRatesAttributeChips insight={insight} />
           </Styled.TitleAttributesWrapper>

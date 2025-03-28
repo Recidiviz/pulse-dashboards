@@ -26,6 +26,7 @@ import { SelectedRecommendation } from "../../../../types";
 import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
 import NoDataMessage from "../../components/NoDataMessage";
 import * as CommonStyled from "../../components/Styles";
+import { RECIDIVISM_RATES_CHART_TITLE } from "../../constants";
 import * as Styled from "../RecidivismChart.styles";
 import { RecidivismChartExplanation } from "../RecidivismChartExplanation";
 import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
@@ -73,10 +74,10 @@ export function RecidivismChartBySentenceType({
   return (
     <>
       <CommonStyled.ChartTitle>
-        Cumulative Recidivism Rates{" "}
+        {RECIDIVISM_RATES_CHART_TITLE}{" "}
         {!hideInfoTooltip && insight && (
           <InfoIconWithTooltip
-            headerText="Cumulative Recidivism Rates"
+            headerText={RECIDIVISM_RATES_CHART_TITLE}
             content={
               <CommonStyled.ChartTooltipContentSection>
                 <RecidivismChartExplanation

@@ -23,6 +23,7 @@ import { CaseInsight } from "../../../../../api";
 import { getDescriptionGender } from "../common/utils";
 import { LsirScoreText } from "../components/LsirScoreText";
 import * as Styled from "../components/Styles";
+import { SENTENCE_DISTRIBUTION_TEXT } from "../constants";
 
 interface DispositionChartExplanationProps {
   insight: CaseInsight;
@@ -54,15 +55,15 @@ export function DispositionChartExplanation({
 
   const noPreviousRecordCopy = (
     <>
-      Historical Sentencing represents the percentage of cases sentenced to a
-      particular disposition, using {orgName} data from 2010 to present. There
-      are no previous records of {genderCohortString}.
+      {SENTENCE_DISTRIBUTION_TEXT} represents the percentage of cases sentenced
+      to a particular disposition, using {orgName} data from 2010 to present.
+      There are no previous records of {genderCohortString}.
     </>
   );
   const withPreviousRecordsCopy = (
     <>
-      Historical Sentencing represents the percentage of cases sentenced to a
-      particular disposition. The rates are based on{" "}
+      {SENTENCE_DISTRIBUTION_TEXT} represents the percentage of cases sentenced
+      to a particular disposition. The rates are based on{" "}
       {dispositionNumRecords.toLocaleString()}{" "}
       {printFormattedRecordString(dispositionNumRecords)} of{" "}
       {genderCohortString}, using {orgName} data from 2010 to present.

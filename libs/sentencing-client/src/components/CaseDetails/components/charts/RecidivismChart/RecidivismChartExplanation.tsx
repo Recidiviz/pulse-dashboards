@@ -77,7 +77,7 @@ export function RecidivismChartExplanation({
         with <OffenseText rollupOffenseDescription={rollupOffenseDescription} />
         , using {orgName} data from 2010-{moment().utc().year() - 3}.{" "}
         {isTooltip &&
-          `The shaded areas represent the confidence intervals, or the range of
+          `The shaded areas represent 95% confidence intervals, or the range of
       possible values for the true recidivism rate.`}
       </Styled.TextWrapper>
       {!isTooltip &&
@@ -85,7 +85,7 @@ export function RecidivismChartExplanation({
           <img
             src={ciLegendImg}
             height="68px"
-            alt="Confidence Intervals: Shaded areas represent the range of possible values for the true recidivism rate."
+            alt="Confidence Intervals (95%): Shaded areas represent the range of possible values for the true recidivism rate."
           />
         )}
     </Styled.TextContainer>

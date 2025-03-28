@@ -28,6 +28,7 @@ import {
 } from "../../common/utils";
 import NoDataMessage from "../../components/NoDataMessage";
 import * as CommonStyled from "../../components/Styles";
+import { RECIDIVISM_RATES_CHART_TITLE } from "../../constants";
 import * as Styled from "../RecidivismChart.styles";
 import { RecidivismChartExplanation } from "../RecidivismChartExplanation";
 import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
@@ -82,10 +83,10 @@ export function RecidivismChartBySentenceLength({
   return (
     <>
       <CommonStyled.ChartTitle>
-        36 Month Cumulative Recidivism Rates with 95% Confidence
+        {RECIDIVISM_RATES_CHART_TITLE}
         {!hideInfoTooltip && insight && (
           <InfoIconWithTooltip
-            headerText="36 Month Cumulative Recidivism Rates with 95% Confidence"
+            headerText={RECIDIVISM_RATES_CHART_TITLE}
             content={
               <CommonStyled.ChartTooltipContentSection>
                 <RecidivismChartExplanation

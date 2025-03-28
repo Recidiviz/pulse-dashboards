@@ -22,6 +22,7 @@ import { RecommendationOptionType } from "../../../Recommendations/constants";
 import { SelectedRecommendation } from "../../../types";
 import NoDataMessage from "../components/NoDataMessage";
 import * as CommonStyled from "../components/Styles";
+import { SENTENCE_DISTRIBUTION_TEXT } from "../constants";
 import * as Styled from "./DispositionChart.styles";
 import { DispositionChartExplanation } from "./DispositionChartExplanation";
 import { DispositionChartBySentenceLength } from "./SentenceLength/DispositionChartBySentenceLength";
@@ -89,10 +90,10 @@ export function DispositionChart({
   return (
     <>
       <CommonStyled.ChartTitle>
-        Previous Sentences{" "}
+        {SENTENCE_DISTRIBUTION_TEXT}{" "}
         {!hideInfoTooltip && insight && (
           <InfoIconWithTooltip
-            headerText="Previous Sentences"
+            headerText={SENTENCE_DISTRIBUTION_TEXT}
             content={
               <CommonStyled.ChartTooltipContentSection>
                 <DispositionChartExplanation
