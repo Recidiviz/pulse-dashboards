@@ -69,8 +69,8 @@ type InsightsStaffVitalsDetailCardProps = {
 export const InsightsStaffVitalsDetailCard: React.FC<
   InsightsStaffVitalsDetailCardProps
 > = ({ vitalsMetricDetails }) => {
-  const positiveDelta = vitalsMetricDetails.metric30DDelta >= 0;
-  const deltaText = `${positiveDelta ? "+" : ""}${Math.round(vitalsMetricDetails.metric30DDelta)}% in 30 days`;
+  const positiveDelta = vitalsMetricDetails.metric30DDelta > 0;
+  const deltaText = `${positiveDelta ? "+" : ""}${Math.round(vitalsMetricDetails.metric30DDelta)}% in past 30 days`;
   const showPill = vitalsMetricDetails.metricValue < 80;
   return (
     <StaffCardWrapper>
