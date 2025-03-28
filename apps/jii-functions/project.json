@@ -45,7 +45,7 @@
       "options": {
         "commands": [
           "nx build jii-functions -c development --watch",
-          "firebase --config firebase.jii.json --project recidiviz-jii-staging emulators:start"
+          "sleep 10 && firebase --config firebase.jii.json --project recidiviz-jii-staging emulators:start"
         ]
       }
     },
