@@ -119,7 +119,6 @@ describe("with resident ID from user data", () => {
       stateCode: "US_ME",
       externalId: testResident.personExternalId,
       pseudonymizedId: testResident.pseudonymizedId,
-      intercomUserHash: "intercom-abc123",
     });
 
     presenter = new SingleResidentHydratorPresenter(
@@ -159,7 +158,6 @@ describe("fetching data for wrong user", () => {
       stateCode: "US_ME",
       externalId: testResident.personExternalId,
       pseudonymizedId: testResident.pseudonymizedId,
-      intercomUserHash: "intercom-abc123",
     });
 
     presenter = new SingleResidentHydratorPresenter(

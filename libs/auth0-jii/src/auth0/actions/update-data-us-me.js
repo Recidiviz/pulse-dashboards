@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const { createHash, createHmac } = require("crypto");
+const { createHash } = require("crypto");
 const { csvParse } = require("d3-dsv");
 
 // NOTE the normalized header row; please exclude headers when you paste in new data
@@ -64,15 +64,6 @@ exports.onExecutePostLogin = async (event, api) => {
         .digest("base64url")
         .substring(0, 16);
       api.user.setAppMetadata("pseudonymizedId", pseudoId);
-
-      // intercom hash for Identity Verification needs to be based on a UUID
-      const intercomHash = createHmac(
-        "sha256",
-        event.secrets.INTERCOM_SECRET_KEY,
-      )
-        .update(pseudoId)
-        .digest("hex");
-      api.user.setAppMetadata("intercomUserHash", intercomHash);
     }
   }
 };

@@ -39,7 +39,6 @@ test("side effect", () => {
     stateCode: "US_ME",
     externalId: "123456",
     pseudonymizedId: "test-pid",
-    intercomUserHash: "test-hash",
   });
 
   vi.spyOn(rootStore.userStore, "identifyToTrackers");

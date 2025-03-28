@@ -193,7 +193,6 @@ describe("protected routes", () => {
       stateCode: "US_ME",
       externalId: residentFixture.personExternalId,
       pseudonymizedId: personPseudoId,
-      intercomUserHash: "abc123",
     });
   });
 

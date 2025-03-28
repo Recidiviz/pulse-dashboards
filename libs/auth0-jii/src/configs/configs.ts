@@ -82,7 +82,6 @@ export const metadataSchema = z
     stateCode: z.string(),
     externalId: z.string().optional(),
     pseudonymizedId: z.string().optional(),
-    intercomUserHash: z.string().optional(),
     allowedStates: z.array(z.string()).optional(),
     // accepts and discards unknown strings, to avoid breaking if new permissions are added before schema update
     permissions: z
@@ -95,14 +94,12 @@ export const metadataSchema = z
   .refine(
     (d) => {
       // verify that external IDs and their related properties travel together;
-      // note that it is acceptable to have intercomUserHash without the other two
       if (d.externalId || d.pseudonymizedId) {
-        return !!(d.externalId && d.pseudonymizedId && d.intercomUserHash);
+        return !!(d.externalId && d.pseudonymizedId);
       }
       return true;
     },
     {
-      message:
-        "externalId, pseudonymizedId, and intercomUserHash must all be present",
+      message: "externalId and pseudonymizedId must both be present",
     },
   );

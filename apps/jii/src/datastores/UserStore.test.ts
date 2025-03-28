@@ -19,7 +19,6 @@ import { configure } from "mobx";
 
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 
-import { IntercomClient } from "../apis/Intercom/IntercomClient";
 import { SegmentClient } from "../apis/Segment/SegmentClient";
 import { UserStore } from "./UserStore";
 
@@ -42,7 +41,6 @@ beforeEach(() => {
     stateCode: "US_ME",
     externalId: "123456",
     pseudonymizedId: "test-pid",
-    intercomUserHash: "test-hash",
   });
 });
 
@@ -57,7 +55,6 @@ test("state authorization for external user", () => {
     stateCode: "US_XX",
     externalId: "123456",
     pseudonymizedId: "test-pid",
-    intercomUserHash: "test-hash",
   });
 
   expect(store.isAuthorizedForCurrentState).toBeFalse();
@@ -72,7 +69,6 @@ test("state authorization for external demo user", () => {
     stateCode: "US_XX",
     externalId: "123456",
     pseudonymizedId: "test-pid",
-    intercomUserHash: "test-hash",
   });
 
   expect(store.isAuthorizedForCurrentState).toBeFalse();
@@ -131,57 +127,22 @@ test("reads pseudonymizedId from app metadata", () => {
 
 test("log out", () => {
   vi.spyOn(store.authClient, "logOut");
-  vi.spyOn(store.intercomClient, "logOut");
 
   store.logOut();
   expect(store.authClient.logOut).toHaveBeenCalled();
-  expect(store.intercomClient.logOut).toHaveBeenCalled();
 });
 
 test("identify to trackers", () => {
-  vi.spyOn(IntercomClient.prototype, "updateUser");
   vi.spyOn(SegmentClient.prototype, "identify");
 
   store.identifyToTrackers();
-
-  expect(IntercomClient.prototype.updateUser).toHaveBeenCalledWith({
-    state_code: "US_ME",
-    user_id: "test-pid",
-    user_hash: "test-hash",
-    external_id: "123456",
-  });
 
   expect(SegmentClient.prototype.identify).toHaveBeenCalledExactlyOnceWith(
     "test-pid",
   );
 });
 
-test("identify to Intercom only when we have user hash but no ID", () => {
-  vi.spyOn(IntercomClient.prototype, "updateUser");
-  vi.spyOn(SegmentClient.prototype, "identify");
-
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "US_ME",
-    intercomUserHash: "test-hash",
-  });
-  vi.spyOn(store.authClient, "userProperties", "get").mockReturnValue({
-    sub: "test-userid",
-    email: "test@example.com",
-  });
-
-  store.identifyToTrackers();
-
-  expect(IntercomClient.prototype.updateUser).toHaveBeenCalledWith({
-    state_code: "US_ME",
-    user_id: "test-userid",
-    user_hash: "test-hash",
-    email: "test@example.com",
-  });
-  expect(SegmentClient.prototype.identify).not.toHaveBeenCalled();
-});
-
 test("do not identify to trackers when user has no hash", () => {
-  vi.spyOn(IntercomClient.prototype, "updateUser");
   vi.spyOn(SegmentClient.prototype, "identify");
 
   vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
@@ -191,6 +152,5 @@ test("do not identify to trackers when user has no hash", () => {
 
   store.identifyToTrackers();
 
-  expect(IntercomClient.prototype.updateUser).not.toHaveBeenCalled();
   expect(SegmentClient.prototype.identify).not.toHaveBeenCalled();
 });

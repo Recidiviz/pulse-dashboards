@@ -26,7 +26,6 @@ import {
 } from "~auth0-jii";
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 
-import { IntercomClient } from "../apis/Intercom/IntercomClient";
 import {
   SegmentClient,
   SegmentClientExternals,
@@ -35,8 +34,6 @@ import { StateCode } from "../configs/types";
 
 export class UserStore {
   authClient: AuthClient<typeof metadataSchema>;
-
-  intercomClient: IntercomClient;
 
   segmentClient: SegmentClient;
 
@@ -50,8 +47,6 @@ export class UserStore {
       },
       { metadataNamespace, metadataSchema },
     );
-
-    this.intercomClient = new IntercomClient();
 
     this.segmentClient = new SegmentClient(new SegmentExternals(this));
   }
@@ -99,7 +94,6 @@ export class UserStore {
   }
 
   logOut() {
-    this.intercomClient.logOut();
     this.authClient.logOut();
   }
 
@@ -109,30 +103,6 @@ export class UserStore {
     // non-JII users (e.g. Recidiviz employees) will not have this property
     if (this.pseudonymizedId) {
       this.segmentClient.identify(this.pseudonymizedId);
-
-      this.intercomClient.updateUser({
-        state_code: this.authClient.appMetadata.stateCode,
-        user_id: this.pseudonymizedId,
-        // schema requires that these fields will also exist
-        user_hash: this.authClient.appMetadata.intercomUserHash as string,
-        // referring directly to auth data in case this.externalId was locally overridden somehow
-        external_id: this.authClient.appMetadata.externalId,
-      });
-    }
-    // may be present in absence of external ID; use alternative identifiers if so
-    else if (
-      this.authClient.appMetadata.intercomUserHash &&
-      this.authClient.userProperties?.sub
-    ) {
-      // we still want to enable intercom here but we will not identify the user to Segment,
-      // since we can't guarantee that this ID has no PII in it (e.g. an email address).
-      // this will not disable tracking, just keep the user anonymous
-      this.intercomClient.updateUser({
-        state_code: this.authClient.appMetadata.stateCode,
-        user_hash: this.authClient.appMetadata.intercomUserHash,
-        user_id: this.authClient.userProperties.sub,
-        email: this.authClient.userProperties.email,
-      });
     }
   }
 
