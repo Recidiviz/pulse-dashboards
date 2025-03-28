@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { validateRequest } from "twilio";
+import { validateRequest } from "twilio/lib/webhooks/webhooks";
 import { describe, test, vi } from "vitest";
 
 import { fakePersonOne } from "~@jii-texting-server/utils/test/constants";

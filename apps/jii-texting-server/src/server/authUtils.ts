@@ -18,7 +18,7 @@
 import { captureException } from "@sentry/node";
 import { FastifyReply } from "fastify";
 import { OAuth2Client } from "google-auth-library";
-import { validateRequest } from "twilio";
+import { validateRequest } from "twilio/lib/webhooks/webhooks";
 
 import {
   RequestWithStateCodeParam,

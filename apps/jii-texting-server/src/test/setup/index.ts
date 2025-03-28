@@ -46,7 +46,7 @@ const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
 
-vi.mock("twilio", () => ({
+vi.mock("twilio/lib/webhooks/webhooks", () => ({
   validateRequest: vi.fn(),
 }));
 
