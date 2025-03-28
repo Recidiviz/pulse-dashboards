@@ -43,7 +43,10 @@ const MandatoryMinimums: React.FC<MandatoryMinimumsProps> = ({
       handleRecommendationUpdate(mandatoryMinimumAutoSelectionRecommendation);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [
+    hasMandatoryMinimumFVEnabled,
+    mandatoryMinimumAutoSelectionRecommendation,
+  ]);
 
   if (!hasMandatoryMinimumFVEnabled || !mandatoryMinimums?.length) {
     return null;
