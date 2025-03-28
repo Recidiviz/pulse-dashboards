@@ -21,7 +21,10 @@ import { rem } from "polished";
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { SupervisionSupervisorPagePresenter } from "../../InsightsStore/presenters/SupervisionSupervisorPagePresenter";
 import { pluralize, toTitleCase } from "../../utils";
 import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
@@ -44,18 +47,18 @@ const OfficersTooltipHeading = styled.div`
 `;
 
 const InsightsSupervisorOutcomeTooltip: React.FC<{
-  title: string;
+  title?: string;
   officers: { pseudonymizedId: string; displayName: string }[];
 }> = ({ title, officers }) => {
   return (
-    <React.Fragment key={title}>
-      <OfficersTooltipHeading>{title}</OfficersTooltipHeading>
+    <>
+      {title && <OfficersTooltipHeading>{title}</OfficersTooltipHeading>}
       <div>
         {officers.map((officer) => (
           <div key={officer.pseudonymizedId}>{officer.displayName}</div>
         ))}
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
@@ -65,6 +68,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
   presenter: SupervisionSupervisorPagePresenter;
 }) {
   const [initialPageLoad, setInitialPageLoad] = useState<boolean>(true);
+  const { outcomesModule } = useFeatureVariants();
 
   const {
     supervisorInfo,
@@ -91,7 +95,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         allOfficers.length,
         toTitleCase(labels.supervisionOfficerLabel),
       )}`,
-      tooltip: (
+      tooltip: outcomesModule ? (
         <>
           {!!officersIncludedInOutcomes?.length && (
             <InsightsSupervisorOutcomeTooltip
@@ -104,6 +108,12 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
               title="EXCLUDED FROM OUTCOMES"
               officers={officersExcludedFromOutcomes}
             />
+          )}
+        </>
+      ) : (
+        <>
+          {!!allOfficers?.length && (
+            <InsightsSupervisorOutcomeTooltip officers={allOfficers} />
           )}
         </>
       ),
