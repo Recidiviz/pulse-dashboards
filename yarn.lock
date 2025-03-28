@@ -30049,7 +30049,7 @@ __metadata:
     ts-node: "npm:^10.9.1"
     tslib: "npm:^2.3.0"
     tsx: "npm:^4.17.0"
-    twilio: "npm:^5.4.5"
+    twilio: "npm:^5.5.1"
     typescript: "npm:5.7.3"
     typescript-eslint: "npm:^8.19.0"
     use-onclickoutside: "npm:^0.4.0"
@@ -33559,9 +33559,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twilio@npm:^5.4.5":
-  version: 5.4.5
-  resolution: "twilio@npm:5.4.5"
+"twilio@npm:^5.5.1":
+  version: 5.5.1
+  resolution: "twilio@npm:5.5.1"
   dependencies:
     axios: "npm:^1.7.8"
     dayjs: "npm:^1.11.9"
@@ -33570,7 +33570,7 @@ __metadata:
     qs: "npm:^6.9.4"
     scmp: "npm:^2.1.0"
     xmlbuilder: "npm:^13.0.2"
-  checksum: 10c0/8ef600653e630957a0cd52d128edd9982fa7854bba9ea9b93c22500bf0f3e11e59e910ebc19a14ecc5efb9772d55a78ad9b747e64df6a183625942c233c68873
+  checksum: 10c0/4401cf8192c9e5514edb111a2c0d397070b1f893ecbb28b2796a2cd5f9af8fe6de35157a4dc490ed2953b68fe3c11a43168d5d090c0eef4645354bbc399b414d
   languageName: node
   linkType: hard
 
