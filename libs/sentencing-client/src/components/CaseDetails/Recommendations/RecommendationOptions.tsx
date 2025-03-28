@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { formatListWithAnd } from "../../../utils/utils";
+import { formatListWithAnd, formatPercentage } from "../../../utils/utils";
 import CheckIcon from "../../assets/green-check-icon.svg?react";
 import { InfoIconWithTooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
@@ -77,16 +77,17 @@ export const HistoricalOutcomes: React.FC<{ option: RecommendationOption }> = ({
   return (
     <Styled.RecommendationOutcome>
       <Styled.PercentageWrapper>
-        <Styled.Percentage>{recidivismRate ?? "--"}%</Styled.Percentage>
+        <Styled.Percentage>
+          {formatPercentage(recidivismRate) ?? "—%"}
+        </Styled.Percentage>
         <Styled.PercentageLabel>Recidivism Rate</Styled.PercentageLabel>
       </Styled.PercentageWrapper>
       <Styled.PercentageWrapper>
         <Styled.Percentage>
-          {historicalSentencingRate ??
-            (isMissingRecidivismAndHistoricalSentencingRates ? "--" : "0")}
-          %
+          {formatPercentage(historicalSentencingRate) ??
+            (isMissingRecidivismAndHistoricalSentencingRates ? "—%" : "0")}
         </Styled.Percentage>
-        <Styled.PercentageLabel>Historical Sentencing</Styled.PercentageLabel>
+        <Styled.PercentageLabel>Of Previous Sentences</Styled.PercentageLabel>
       </Styled.PercentageWrapper>
     </Styled.RecommendationOutcome>
   );
