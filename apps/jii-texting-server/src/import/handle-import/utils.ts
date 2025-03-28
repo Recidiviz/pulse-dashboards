@@ -45,7 +45,7 @@ export async function transformAndLoadPersonData(
   const existingPeopleExternalIds = (await prismaClient.person.findMany()).map(
     (p) => p.externalId,
   );
-  const newPeopleExternalIds: string[] = [];
+  const processedExternalIds: string[] = [];
 
   // Load new people data
   // We do this in a for loop since we are using AsyncGenerator (needs to be iterated over)
@@ -74,10 +74,6 @@ export async function transformAndLoadPersonData(
       district: personData.district,
     };
 
-    if (!existingPeopleExternalIds.includes(newPerson.externalId)) {
-      newPeopleExternalIds.push(newPerson.externalId);
-    }
-
     // Load data
     await prismaClient.person.upsert({
       where: {
@@ -87,14 +83,19 @@ export async function transformAndLoadPersonData(
         ...newPerson,
         groups: { connect: { id: group.id } },
       },
-      update: newPerson,
+      update: {
+        ...newPerson,
+        groups: { connect: { id: group.id } },
+      },
     });
+
+    processedExternalIds.push(newPerson.externalId);
   }
 
-  // If existing Person not in new people, set Groups to empty array
+  // If existing Person not in the set of processed external ids, set Groups to empty array
   const noLongerEligiblePeopleExternalIds = existingPeopleExternalIds.filter(
     (existingPersonExternalId) =>
-      !newPeopleExternalIds.includes(existingPersonExternalId),
+      !processedExternalIds.includes(existingPersonExternalId),
   );
 
   for await (const noLongerEligiblePeopleExternalId of noLongerEligiblePeopleExternalIds) {

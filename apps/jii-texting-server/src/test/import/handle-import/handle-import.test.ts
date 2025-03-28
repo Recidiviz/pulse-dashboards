@@ -28,10 +28,13 @@ import { testPrismaClient, testServer } from "~jii-texting-server/test/setup";
 describe("handle_import", () => {
   describe("import people data", () => {
     test("should upsert existing people and add new people", async () => {
-      // Set up test so that existing person has opt out date
+      // Set up test so that existing person has opt out date and no group
       await testPrismaClient.person.update({
         where: { personId: fakePersonOne.personId },
-        data: { lastOptOutDate: new Date("2025-01-01") },
+        data: {
+          lastOptOutDate: new Date("2025-01-01"),
+          groups: { set: [] },
+        },
       });
 
       dataProviderSingleton.setData([
@@ -77,14 +80,21 @@ describe("handle_import", () => {
 
       expect(response.statusCode).toBe(200);
 
-      const dbPeople = await testPrismaClient.person.findMany({});
+      const dbPeople = await testPrismaClient.person.findMany({
+        include: { groups: true },
+      });
 
       // Check that the new person was created
-      // Check that old person lastOptOutDate has not changed
+      // Check that old person lastOptOutDate has not changed and group was set
       expect(dbPeople).toEqual([
         expect.objectContaining({
           externalId: fakePersonOne.externalId,
           lastOptOutDate: new Date("2025-01-01"),
+          groups: expect.arrayContaining([
+            expect.objectContaining({
+              groupName: fakeFullyEligibleGroup.groupName,
+            }),
+          ]),
         }),
         expect.objectContaining({ externalId: "new-person-ext" }),
       ]);
