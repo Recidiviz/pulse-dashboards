@@ -63,7 +63,7 @@ export function DispositionChart({
     insight && getDispositionChartSubtitle(insight);
 
   let chart;
-  if (!orderedDataPoints.length) {
+  if (!dispositionNumRecords) {
     chart = <NoDataMessage />;
   } else if (recommendationType === RecommendationOptionType.SentenceType) {
     chart = (

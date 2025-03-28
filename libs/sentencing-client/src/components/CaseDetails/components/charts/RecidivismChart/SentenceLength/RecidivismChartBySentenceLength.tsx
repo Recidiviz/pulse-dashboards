@@ -115,7 +115,7 @@ export function RecidivismChartBySentenceLength({
       <CommonStyled.ChartLegend>
         {recidivismChartLegend}
       </CommonStyled.ChartLegend>
-      {!insight ? (
+      {!rollupRecidivismNumRecords ? (
         <NoDataMessage />
       ) : (
         <Styled.RecidivismChartPlotContainer
