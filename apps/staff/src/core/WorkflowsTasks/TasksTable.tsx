@@ -41,6 +41,14 @@ const CaseTypeCell = observer(function SupervisionCell({
   return (row.original.person as Client).caseType;
 });
 
+const SupervisionLevelCell = observer(function SupervisionCell({
+  row,
+}: {
+  row: Row<SupervisionTask>;
+}) {
+  return (row.original.person as Client).supervisionLevel;
+});
+
 function TaskInfoCell({ row }: { row: Row<SupervisionTask> }) {
   return row.original.dueDateDisplayLong;
 }
@@ -76,6 +84,12 @@ export const TasksTable = observer(function TasksTable({
       id: "person.caseType",
       enableSorting: false,
       cell: CaseTypeCell,
+    },
+    {
+      header: "Supervision Level",
+      id: "person.supervisionLevel",
+      enableSorting: false,
+      cell: SupervisionLevelCell,
     },
     {
       header: "Frequency",

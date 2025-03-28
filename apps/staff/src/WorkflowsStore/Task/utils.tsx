@@ -17,6 +17,7 @@
 
 // Contact compliance rules taken from:
 // https://github.com/Recidiviz/recidiviz-data/blob/main/recidiviz/calculator/pipeline/utils/state_utils/us_id/us_id_supervision_compliance.py
+import { TenantId } from "../../RootStore/types";
 import { SupervisionTasksCaseType } from "./types";
 
 type ContactStandard = { contacts: number; days: number };
@@ -117,3 +118,39 @@ export const US_ID_SUPERVISION_EMPLOYMENT_VERIFICATION_COMPLIANCE: Record<
     days: 30,
   },
 };
+
+export function taskPageDescriptionForState(state?: TenantId): React.ReactNode {
+  switch (state) {
+    case "US_ID":
+      return "The clients below might have upcoming requirements this month. Hiding a below task will not change an officer's timeliness percentage in the Operations metrics.";
+    case "US_TX":
+      return (
+        <>
+          The clients listed below have upcoming requirements due this month
+          that have not yet been completed. Data is refreshed from OIMS nightly.
+          For more information on how this tool calculates contacts & due dates
+          for most offices click{" "}
+          <a
+            href="https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub"
+            target="_blank"
+            rel="noreferrer"
+          >
+            here
+          </a>{" "}
+          and for designated 'Critically Understaffed' offices click{" "}
+          <a
+            href={
+              "https://docs.google.com/document/d/e/2PACX-1vTIXGLHHXQ0STYmapw4pzAcW3j3I8455jaaEH6d61-btlzkiPzS-GQaYJu3aG32o8B1i1mzRWwXbHbV/pub"
+            }
+            target="_blank"
+            rel="noreferrer"
+          >
+            here
+          </a>
+          .
+        </>
+      );
+    default:
+      return "The clients below might have upcoming requirements this month.";
+  }
+}

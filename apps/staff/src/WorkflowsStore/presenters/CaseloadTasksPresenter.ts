@@ -30,6 +30,7 @@ import TenantStore from "../../RootStore/TenantStore";
 import { PartialRecord } from "../../utils/typeUtils";
 import { taskDueDateComparator } from "../Task/TasksBase";
 import { SupervisionTask } from "../Task/types";
+import { taskPageDescriptionForState } from "../Task/utils";
 import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
 
@@ -191,13 +192,6 @@ export class CaseloadTasksPresenter {
 
   // Text shown at the top of the Tasks page
   get pageDescription() {
-    switch (this.tenantStore.currentTenantId) {
-      case "US_ID":
-        return "The clients below might have upcoming requirements this month. Hiding a below task will not change an officer's timeliness percentage in the Operations metrics.";
-      case "US_TX":
-        return "The clients below might have upcoming requirements this month. Data is refreshed from the OMS overnight and daily.";
-      default:
-        return "The clients below might have upcoming requirements this month.";
-    }
+    return taskPageDescriptionForState(this.tenantStore.currentTenantId);
   }
 }
