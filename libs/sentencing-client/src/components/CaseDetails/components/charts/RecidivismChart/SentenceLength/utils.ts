@@ -24,6 +24,7 @@ import {
   plot,
   pointerY,
   rectX,
+  text,
   tip,
 } from "@observablehq/plot";
 
@@ -185,6 +186,30 @@ export function getRecidivismPlot(
               insetBottom: RECT_INSET,
               insetTop: RECT_INSET,
               fill: "#2B54691A",
+            }),
+          ),
+      text(transformedSeries, {
+        x: "eventRate",
+        y: "name",
+        dy: 25,
+        dx: 2,
+        text: (d) => `${convertDecimalToPercentage(d.eventRate)}%`,
+        fontSize: 12,
+        fill: "#001F1F",
+        opacity: isFocused && !forReport ? 0.3 : 1,
+      }),
+      forReport
+        ? null
+        : text(
+            transformedSeries,
+            pointerY({
+              x: "eventRate",
+              y: "name",
+              dy: 25,
+              dx: 2,
+              text: (d) => `${convertDecimalToPercentage(d.eventRate)}%`,
+              fontSize: 12,
+              fill: "#000000",
             }),
           ),
       dot(transformedSeries, {
