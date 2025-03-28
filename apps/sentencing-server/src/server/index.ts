@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { appRouter, createContext } from "~@sentencing-server/trpc";
-import { registerImportRoutes } from "~sentencing-server/server/utils";
 import { buildCommonServer } from "~server-setup-plugin";
 
 export function buildServer() {
@@ -32,8 +31,6 @@ export function buildServer() {
       audience: process.env["AUTH0_AUDIENCE"],
     },
   });
-
-  registerImportRoutes(server);
 
   return server;
 }

@@ -28,7 +28,7 @@ import {
   offenseImportSchema,
   opportunityImportSchema,
   staffImportSchema,
-} from "~sentencing-server/import/handle-import/models";
+} from "~@sentencing-server/import/models";
 
 const zodSchemaMap: Record<string, z.ZodTypeAny> = {
   case: z.array(caseImportSchema),

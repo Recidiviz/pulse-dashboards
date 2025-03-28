@@ -28,7 +28,6 @@ import { beforeAll, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
 import type { AppRouter } from "~@sentencing-server/trpc";
-import { MockImportRoutesHandler } from "~fastify-data-import-plugin/testkit";
 import { buildServer } from "~sentencing-server/server";
 import { seed } from "~sentencing-server/test/setup/seed";
 import { resetDb } from "~sentencing-server/test/setup/utils";
@@ -39,25 +38,20 @@ export const testPort = process.env["PORT"]
 export const testHost = process.env["HOST"] ?? "localhost";
 
 export let testTRPCClient: CreateTRPCProxyClient<AppRouter>;
-export let testServer: ReturnType<typeof buildServer>;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 
 const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
 
-vi.mock("~fastify-data-import-plugin", () => ({
-  ImportRoutesHandler: MockImportRoutesHandler,
-}));
-
-beforeAll(async() => {
+beforeAll(async () => {
   init({
     dsn: process.env["SENTRY_DSN"],
     transport: sentryTransport,
     maxValueLength: 10000,
   });
 
-  testServer = buildServer();
+  const testServer = buildServer();
 
   // Override he jwtVerify function to always pass
   testServer.addHook("preHandler", (req, reply, done) => {

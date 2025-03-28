@@ -32,16 +32,13 @@
         {
           "projects": ["@sentencing-server/prisma"],
           "target": "prisma-generate"
-        },
-        {
-          "projects": ["@jii-texting-server/prisma"],
-          "target": "prisma-generate"
         }
       ],
       "options": {
         "commands": [
           "tsc -p ./tsconfig.app.json",
-          "tsc -p ./tsconfig.spec.json"
+          "tsc -p ./tsconfig.spec.json",
+          "tsc -p ./tsconfig.zod.json"
         ],
         "cwd": "{projectRoot}"
       }

@@ -85,6 +85,7 @@
       "~repo": ["plugins/repo/src/index.ts"],
       "~sentencing-client": ["libs/sentencing-client/src/index.ts"],
       "~sentencing-server/*": ["apps/sentencing-server/src/*"],
+      "~sentencing-server/test/*": ["apps/sentencing-server/__tests__/*"],
       "~server-setup-plugin": ["libs/common/server-setup-plugin/src/index.ts"],
       "~server-setup-plugin/*": ["libs/common/server-setup-plugin/src/*"],
       "~shared-assets/*": ["libs/shared-assets/src/*"],

@@ -25,11 +25,11 @@ export default defineConfig({
 
   plugins: [nxViteTsPaths()],
   test: {
-    setupFiles: ["src/test/setup/index.ts"],
+    setupFiles: ["__tests__/setup/index.ts"],
     globals: true,
     cache: { dir: "../../node_modules/.vitest" },
     environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
     poolOptions: {
       forks: {

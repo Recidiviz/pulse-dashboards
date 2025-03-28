@@ -9,6 +9,9 @@
     {
       "path": "./tsconfig.spec.json"
     },
+    {
+      "path": "./tsconfig.zod.json"
+    },
   ],
   "compilerOptions": {
     "strict": true,

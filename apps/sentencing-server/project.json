@@ -5,13 +5,6 @@
   "projectType": "application",
   "tags": ["sentencing-server"],
   "targets": {
-    "test-zod": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "tsx test-zod/index.ts",
-        "cwd": "{projectRoot}"
-      }
-    },
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
