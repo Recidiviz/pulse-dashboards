@@ -148,6 +148,7 @@ export const usMeEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
     stateCode: "US_ME",
     officerId: "OFFICER8",
     caseType: "GENERAL",
+    caseTypeRawText: "GENERAL",
     supervisionType: "PROBATION",
     supervisionLevel: "MEDIUM",
     supervisionLevelStart: new Date("2019-12-20"),

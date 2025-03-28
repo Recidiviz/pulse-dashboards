@@ -36,6 +36,7 @@ export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
     stateCode: "US_ND",
     officerId: "OFFICER3",
     caseType: "GENERAL",
+    caseTypeRawText: "GENERAL",
     supervisionType: "PROBATION",
     supervisionLevel: "MEDIUM",
     supervisionLevelStart: new Date("2019-12-20"),

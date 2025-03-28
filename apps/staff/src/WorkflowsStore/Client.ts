@@ -17,7 +17,7 @@
 
 import dedent from "dedent";
 import { deleteField, FieldValue, serverTimestamp } from "firebase/firestore";
-import { mapValues, toUpper } from "lodash";
+import { capitalize, mapValues, toUpper } from "lodash";
 import { action, makeObservable, override } from "mobx";
 import { format as formatPhone } from "phone-fns";
 import { toast } from "react-hot-toast";
@@ -124,7 +124,9 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   supervisionStartDate?: Date;
 
-  rawCaseType?: string;
+  _caseType?: string;
+
+  caseTypeRawText?: string;
 
   currentBalance?: number;
 
@@ -176,7 +178,8 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   updateRecord(record: ClientRecord): void {
     super.updateRecord(record);
     this.supervisionLevelStart = record.supervisionLevelStart;
-    this.rawCaseType = record.caseType;
+    this._caseType = record.caseType;
+    this.caseTypeRawText = record.caseTypeRawText;
     this.address = record.address;
     this.rawPhoneNumber = record.phoneNumber;
     this.expirationDate = record.expirationDate;
@@ -222,33 +225,13 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   }
 
   get caseType(): string {
-    if (this.stateCode !== "US_TX") return this.rawCaseType ?? "Unknown";
-
-    // Update fallback to futureproof
-    switch (this.rawCaseType) {
-      case "GENERAL":
-        return "Regular";
-      case "SEX_OFFENSE":
-        return "Sex offender";
-      case "DRUG_COURT":
-        return "Substance abuse";
-      case "MENTAL_HEALTH_COURT":
-        return "Mentally ill";
-      case "SERIOUS_MENTAL_ILLNESS_OR_DISABILITY":
-        return "Intellectually disabled";
-      case "ELECTRONIC_MONITORING":
-        return "Electronic monitoring";
-      case "INTENSE_SUPERVISION":
-        return "Super-intensive supervision";
-      case "DAY_REPORTING":
-        return "Day/district resource center";
-      case "PHYSICAL_ILLNESS_OR_DISABILITY":
-        return "Terminally ill / Physically handicapped";
-      case "INTERNAL_UNKNOWN":
-      case "EXTERNAL_UNKNOWN":
-      default:
-        return "Unknown";
+    if (this.stateCode === "US_TX") {
+      // This is the raw text we get from the state
+      return capitalize(this.caseTypeRawText ?? "Unknown");
     }
+
+    // This is the enum we use for case type internally
+    return this._caseType ?? "Unknown";
   }
 
   get phoneNumber(): string | undefined {

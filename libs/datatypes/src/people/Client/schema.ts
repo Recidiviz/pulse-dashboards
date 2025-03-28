@@ -30,6 +30,7 @@ const optionalClientInformation = z
     supervisionLevel: z.string(),
     supervisionLevelStart: dateStringSchema,
     caseType: z.string(),
+    caseTypeRawText: z.string(),
     address: z.string(),
     phoneNumber: z.string(),
     supervisionStartDate: dateStringSchema,
