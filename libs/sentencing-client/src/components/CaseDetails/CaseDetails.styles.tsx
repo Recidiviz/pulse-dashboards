@@ -1287,6 +1287,13 @@ export const InputRowWrapper = styled.div`
   gap: 18px;
 `;
 
+export const RollupLoading = styled(InputDescription)`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 16px;
+`;
+
 export const RollupOffenseCategory = styled.div`
   display: flex;
   flex-direction: column;

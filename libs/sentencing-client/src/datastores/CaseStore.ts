@@ -18,7 +18,7 @@
 import { palette } from "@recidiviz/design-system";
 import { captureException } from "@sentry/react";
 import { keyBy } from "lodash";
-import { flowResult, makeAutoObservable } from "mobx";
+import { flowResult, makeAutoObservable, runInAction } from "mobx";
 import toast from "react-hot-toast";
 
 import { isDemoMode } from "~client-env-utils";
@@ -51,6 +51,8 @@ export class CaseStore {
 
   insight?: Insight;
 
+  insightLoading?: boolean;
+
   activeCaseId?: string;
 
   constructor(public readonly psiStore: PSIStore) {
@@ -61,6 +63,7 @@ export class CaseStore {
     this.counties = [];
     this.insight = undefined;
     this.activeCaseId = undefined;
+    this.insightLoading = false;
   }
 
   get stateCode() {
@@ -116,6 +119,10 @@ export class CaseStore {
     const gender = currentCase.client?.gender;
     if (!gender) return;
 
+    runInAction(() => {
+      this.insightLoading = true;
+    });
+
     await flowResult(
       this.loadInsight(
         offense,
@@ -125,6 +132,11 @@ export class CaseStore {
         isViolentOffense,
       ),
     );
+
+    runInAction(() => {
+      this.insightLoading = false;
+    });
+
     return this.insight;
   }
 

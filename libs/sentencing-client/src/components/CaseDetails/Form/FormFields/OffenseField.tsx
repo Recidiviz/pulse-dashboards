@@ -211,12 +211,14 @@ function OffenseField({ isRequired }: FormFieldProps) {
 
   /** Fetch insights on previously saved values */
   useEffect(() => {
-    caseStore.getInsight(
-      caseAttributes?.offense,
-      caseStore.caseAttributes?.lsirScore ?? undefined,
-      isViolentSexOffense.isSexOffense,
-      isViolentSexOffense.isViolentOffense,
-    );
+    if (!caseStore.insightLoading) {
+      caseStore.getInsight(
+        caseAttributes?.offense,
+        caseStore.caseAttributes?.lsirScore ?? undefined,
+        isViolentSexOffense.isSexOffense,
+        isViolentSexOffense.isViolentOffense,
+      );
+    }
     // We only need to call this once on load to update/clear previously fetched insights
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

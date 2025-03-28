@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { ChangeEvent, useEffect } from "react";
 
+import { MiniLoader } from "../../../MiniLoader/MiniLoader";
 import { useStore } from "../../../StoreProvider/StoreProvider";
 import * as Styled from "../../CaseDetails.styles";
 import {
@@ -97,12 +98,15 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
 
   /** Fetch insights on previously saved values */
   useEffect(() => {
-    caseStore.getInsight(
-      caseStore.caseAttributes.offense,
-      caseAttributes?.lsirScore ?? undefined,
-      caseAttributes?.isCurrentOffenseSexual ?? isCurrentOffenseSexualDefault,
-      caseAttributes?.isCurrentOffenseViolent ?? isCurrentOffenseViolentDefault,
-    );
+    if (!caseStore.insightLoading) {
+      caseStore.getInsight(
+        caseStore.caseAttributes.offense,
+        caseAttributes?.lsirScore ?? undefined,
+        caseAttributes?.isCurrentOffenseSexual ?? isCurrentOffenseSexualDefault,
+        caseAttributes?.isCurrentOffenseViolent ??
+          isCurrentOffenseViolentDefault,
+      );
+    }
     // We only need to call this once on load to update/clear previously fetched insights
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -136,7 +140,13 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
         </Styled.InputDescription>
       )}
 
-      {showRollup && (
+      {caseStore.insightLoading && (
+        <Styled.RollupLoading>
+          <MiniLoader dark /> Gathering historical records...
+        </Styled.RollupLoading>
+      )}
+
+      {showRollup && !caseStore.insightLoading && (
         <Styled.RollupOffenseCategory>
           <Styled.InputLabel>Recidivism Cohort</Styled.InputLabel>
           <span>{insight.rollupOffenseDescription}</span>
