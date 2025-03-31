@@ -18,7 +18,6 @@
 import { keyBy } from "lodash";
 
 import { CaseInsight, Offenses } from "../../../../src/api";
-import { convertDecimalToPercentage } from "../../../../src/utils/utils";
 import { OTHER_OPTION } from "../Form/constants";
 import { RecommendationType } from "../types";
 import {
@@ -70,12 +69,11 @@ export const generateRecommendationOptions = (
       const datapoints = rollUpRecidivismSeriesByKey[key]?.dataPoints;
       const recidivismRate =
         datapoints?.[datapoints.length - 1]?.eventRate &&
-        convertDecimalToPercentage(
-          datapoints?.[datapoints.length - 1].eventRate,
-        );
+        datapoints?.[datapoints.length - 1].eventRate * 100;
+
       const historicalSentencingRate =
         dispositionDataByKey[key]?.percentage &&
-        convertDecimalToPercentage(dispositionDataByKey[key].percentage);
+        dispositionDataByKey[key].percentage * 100;
 
       return {
         key: option.label,
