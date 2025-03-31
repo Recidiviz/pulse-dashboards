@@ -38,13 +38,6 @@
         "libs/@jii-texting-server/utils/src/index.ts"
       ],
       "~@jii-texting-server/utils/*": ["libs/@jii-texting-server/utils/src/*"],
-      "~@sentencing-server/import": [
-        "apps/@sentencing-server/import/src/index.ts"
-      ],
-      "~@sentencing-server/import/*": ["apps/@sentencing-server/import/src/*"],
-      "~@sentencing-server/import/test/*": [
-        "apps/@sentencing-server/import/__tests__/*"
-      ],
       "~@sentencing-server/prisma": [
         "libs/@sentencing-server/prisma/src/index.ts"
       ],
@@ -54,6 +47,9 @@
         "libs/@sentencing-server/trpc-types/src/index.ts"
       ],
       "~@sentencing-server/trpc/*": ["libs/@sentencing-server/trpc/src/*"],
+      "~@sentencing/import": ["apps/@sentencing/import/src/index.ts"],
+      "~@sentencing/import/*": ["apps/@sentencing/import/src/*"],
+      "~@sentencing/import/test/*": ["apps/@sentencing/import/__tests__/*"],
       "~auth": ["libs/auth/src/index.ts"],
       "~auth0-jii": ["libs/auth0-jii/src/index.ts"],
       "~case-notes-server/*": ["apps/case-notes-server/src/*"],

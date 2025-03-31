@@ -349,7 +349,7 @@ if (
             process.stdout,
           );
 
-          await $`COMMIT_SHA=${currentRevision} nx container @sentencing-server/import --configuration ${deployEnv}`.pipe(
+          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/import --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
@@ -357,7 +357,7 @@ if (
             process.stdout,
           );
 
-          await $`COMMIT_SHA=${currentRevision} nx container @sentencing-server/import --configuration cherry-pick`.pipe(
+          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/import --configuration cherry-pick`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "demo") {
