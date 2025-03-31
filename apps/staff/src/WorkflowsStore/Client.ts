@@ -118,7 +118,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
 
   address?: string;
 
-  private rawPhoneNumber?: string;
+  private _rawPhoneNumber?: string;
 
   expirationDate?: Date;
 
@@ -181,7 +181,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     this._caseType = record.caseType;
     this.caseTypeRawText = record.caseTypeRawText;
     this.address = record.address;
-    this.rawPhoneNumber = record.phoneNumber;
+    this._rawPhoneNumber = record.phoneNumber;
     this.expirationDate = record.expirationDate;
     this.currentBalance = record.currentBalance;
     this.lastPaymentDate = record.lastPaymentDate;
@@ -234,9 +234,13 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this._caseType ?? "Unknown";
   }
 
+  get rawPhoneNumber(): string | undefined {
+    return this._rawPhoneNumber;
+  }
+
   get phoneNumber(): string | undefined {
-    return this.rawPhoneNumber
-      ? formatPhone("(NNN) NNN-NNNN", this.rawPhoneNumber)
+    return this._rawPhoneNumber
+      ? formatPhone("(NNN) NNN-NNNN", this._rawPhoneNumber)
       : undefined;
   }
 
@@ -361,7 +365,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     const userEnteredPhoneNumber = this.milestoneMessagesUpdates?.recipient;
     return userEnteredPhoneNumber?.length
       ? userEnteredPhoneNumber
-      : this.rawPhoneNumber;
+      : this._rawPhoneNumber;
   }
 
   get personType(): PersonType {
@@ -369,9 +373,9 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
   }
 
   milestonesPhoneNumberDoesNotMatchClient(enteredPhoneNumber: string): boolean {
-    if (!enteredPhoneNumber || !this.rawPhoneNumber) return false;
+    if (!enteredPhoneNumber || !this._rawPhoneNumber) return false;
     return (
-      clearPhoneNumberFormatting(enteredPhoneNumber) !== this.rawPhoneNumber
+      clearPhoneNumberFormatting(enteredPhoneNumber) !== this._rawPhoneNumber
     );
   }
 

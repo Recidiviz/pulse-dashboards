@@ -64,6 +64,15 @@ export const MilestonesItem = styled.span`
   display: block;
 `;
 
+export const PhoneNumber = styled.a`
+  color: ${palette.signal.links};
+  text-decoration: none;
+
+  &:hover {
+    color: ${palette.signal.links};
+  }
+`;
+
 export const DetailsSubheading = styled.dt`
   ${typography.Sans14}
   color: rgba(53, 83, 98, 0.5);

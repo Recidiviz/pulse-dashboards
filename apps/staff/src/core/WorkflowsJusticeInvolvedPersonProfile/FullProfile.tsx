@@ -57,7 +57,7 @@ import {
   SentenceProgress,
   SupervisionProgress,
 } from "./SentenceProgress";
-import { Divider } from "./styles";
+import { Divider, PhoneNumber } from "./styles";
 import {
   ClientProfileProps,
   PersonProfileProps,
@@ -306,7 +306,13 @@ function ContactDetails({
       <ContactCell>
         <ContactLabel>Contacts</ContactLabel>
         <ContactValue className="fs-exclude">
-          {person.phoneNumber || "Phone number unavailable"}
+          {person.phoneNumber ? (
+            <PhoneNumber href={`tel:${person.rawPhoneNumber}`}>
+              {person.phoneNumber}
+            </PhoneNumber>
+          ) : (
+            "Phone number unavailable"
+          )}
         </ContactValue>
         <ContactValue className="fs-exclude">
           {person.emailAddress || "Email unavailable"}

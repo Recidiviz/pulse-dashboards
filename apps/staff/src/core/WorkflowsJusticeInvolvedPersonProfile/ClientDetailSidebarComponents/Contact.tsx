@@ -23,6 +23,7 @@ import {
   DetailsList,
   DetailsSection,
   DetailsSubheading,
+  PhoneNumber,
   SecureDetailsContent,
 } from "../styles";
 import { ClientProfileProps } from "../types";
@@ -41,7 +42,11 @@ export function Contact({
           {client.phoneNumber && (
             <>
               <DetailsSubheading>Telephone</DetailsSubheading>
-              <SecureDetailsContent>{client.phoneNumber}</SecureDetailsContent>
+              <SecureDetailsContent>
+                <PhoneNumber href={`tel:${client.rawPhoneNumber}`}>
+                  {client.phoneNumber}
+                </PhoneNumber>
+              </SecureDetailsContent>
             </>
           )}
           {client.emailAddress && (
