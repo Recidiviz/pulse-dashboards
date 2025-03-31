@@ -67,7 +67,7 @@ main:
                         raise: ${e}
             - check_handle_import_result:
                 switch:
-                  - condition: ${etl_result.status != 200}
+                  - condition: ${etl_result.code != 200}
                     assign:
                       - all_files_etl_success: false
                     next: break
