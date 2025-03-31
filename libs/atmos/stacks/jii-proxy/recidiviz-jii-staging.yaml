@@ -5,10 +5,12 @@ settings:
     project_id: recidiviz-jii-staging
     registry_repo_name: jii-proxy
     product: jii-proxy-server
+    production_project_number: 933674685667
 
 # # The variables set here are automatically provided to all components used in this stack.
 vars:
   project_id: "{{ .settings.context.project_id }}"
+  location: "{{ .settings.context.location }}"
 
 # Defines which catalogs to import into this configuration to create in recidiviz-jii-staging
 # import:
@@ -28,9 +30,8 @@ terraform:
 
 components:
   terraform:
-    vendor/artifact-registry:
+    artifact_registry:
       vars:
-        location: "{{ .settings.context.location }}"
         repository_id: "{{ .settings.context.registry_repo_name }}"
         format: DOCKER
         cleanup_policies:
@@ -44,3 +45,11 @@ components:
             id: keep-minimum-versions
             most_recent_versions:
               keep_count: 15
+        members:
+          readers:
+            - serviceAccount:service-{{ .settings.context.production_project_number }}@serverless-robot-prod.iam.gserviceaccount.com
+      metadata:
+        component: vendor/artifact-registry
+    apps/jii-proxy:
+      vars:
+        artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
