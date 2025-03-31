@@ -19,7 +19,8 @@ import moment from "moment";
 
 import { CaseInsight } from "../../../../../api";
 import { printFormattedRecordString } from "../../../../../utils/utils";
-import ciLegendImg from "../../../../assets/ci-legend.png";
+import sentenceLengthCiLegendImg from "../../../../assets/sentence-length-ci-legend.png";
+import sentenceTypeCiLegendImg from "../../../../assets/sentence-type-ci-legend.png";
 import { RecommendationOptionType } from "../../../Recommendations/constants";
 import { INDIVIDUALS_STRING } from "../common/constants";
 import { getDescriptionGender } from "../common/utils";
@@ -80,14 +81,17 @@ export function RecidivismChartExplanation({
           `The shaded areas represent 95% confidence intervals, or the range of
       possible values for the true recidivism rate.`}
       </Styled.TextWrapper>
-      {!isTooltip &&
-        recommendationOptionType === RecommendationOptionType.SentenceType && (
-          <img
-            src={ciLegendImg}
-            height="68px"
-            alt="Confidence Intervals (95%): Shaded areas represent the range of possible values for the true recidivism rate."
-          />
-        )}
+      {!isTooltip && (
+        <img
+          src={
+            recommendationOptionType === RecommendationOptionType.SentenceType
+              ? sentenceTypeCiLegendImg
+              : sentenceLengthCiLegendImg
+          }
+          height="68px"
+          alt="Confidence Intervals (95%): Shaded areas represent the range of possible values for the true recidivism rate."
+        />
+      )}
     </Styled.TextContainer>
   );
 }
