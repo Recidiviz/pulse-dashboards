@@ -435,29 +435,33 @@ function getWelcomeText(
   return `${welcomeText}, ${userName}`;
 }
 
-function getSerialListSeparator(index: number, arrayLength: number): string {
+function getSerialListSeparator(
+  index: number,
+  arrayLength: number,
+  conjunction = "and",
+): string {
   if (arrayLength < 2) {
     return "";
   }
 
   // if exactly two items: no comma, just "and"
   if (arrayLength === 2) {
-    return index === 0 ? " and " : "";
+    return index === 0 ? ` ${conjunction} ` : "";
   }
 
   // if more than two items, separate with commas until the second to last item, then
   // separate with ", and"
   // eslint-disable-next-line no-nested-ternary
   return index === arrayLength - 2
-    ? ", and "
+    ? `, ${conjunction} `
     : index < arrayLength - 2
       ? ", "
       : "";
 }
 
-function generateSerialListString(arr: string[]): string {
+function generateSerialListString(arr: string[], conjunction = "and"): string {
   return arr.reduce((acc, curr, index) => {
-    const separator = getSerialListSeparator(index, arr.length);
+    const separator = getSerialListSeparator(index, arr.length, conjunction);
     return `${acc}${curr}${separator}`;
   }, "");
 }

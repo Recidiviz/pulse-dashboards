@@ -26,6 +26,7 @@ import UsTxFieldContactUnscheduledTask from "../WorkflowsStore/Task/UsTxFieldCon
 import usTxHomeContactEdgeCaseTask from "../WorkflowsStore/Task/UsTxHomeContactEdgeCaseTask";
 import usTxHomeContactScheduledTask from "../WorkflowsStore/Task/UsTxHomeContactScheduledTask";
 import usTxHomeContactUnscheduledTask from "../WorkflowsStore/Task/UsTxHomeContactUnscheduledTask";
+import usTxTypeAgnosticContactTask from "../WorkflowsStore/Task/UsTxTypeAgnosticContactTask";
 
 const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   name: "Texas",
@@ -52,6 +53,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
     tasks: {
       usTxCollateralContactScheduled: {
         constructor: usTxCollateralContactScheduled,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usTxTypeAgnosticContact: {
+        constructor: usTxTypeAgnosticContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usTxHomeContactScheduled: {
@@ -124,6 +129,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
           {
             value: "usTxElectronicContactUnscheduled",
             label: "Electronic Contact, Unsch.",
+          },
+          {
+            value: "usTxTypeAgnosticContact",
+            label: "Generic Contact",
           },
           {
             value: "usTxAssessment",

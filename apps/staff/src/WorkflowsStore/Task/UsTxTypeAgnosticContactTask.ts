@@ -15,23 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fieldToDate } from "~datatypes";
+import { capitalize } from "lodash";
 
-import { formatDate } from "../../utils";
+import { generateSerialListString } from "../../utils";
 import { Task } from "./Task";
-import { UsTxSimpleContactTaskType } from "./types";
 
-abstract class UsTxContactTask<
-  T extends UsTxSimpleContactTaskType,
-> extends Task<T> {
-  get lastContactDate(): string | undefined {
-    if (!this.details.lastContactDate) return;
-    return formatDate(fieldToDate(this.details.lastContactDate));
+class UsTxTypeAgnosticContactTask extends Task<"usTxTypeAgnosticContact"> {
+  get displayName() {
+    return this.allowedContactTypes;
+  }
+
+  get allowedContactTypes(): string {
+    const allowedTypes = this.details.contactTypesAccepted
+      .split(",")
+      .map((type) => type.toLowerCase());
+
+    allowedTypes[0] = capitalize(allowedTypes[0]);
+
+    return generateSerialListString(allowedTypes, "or");
   }
 
   get additionalDetails(): string {
-    return this.lastContactDate
-      ? `Last contact on ${this.lastContactDate}`
+    return this.details.lastContactDate
+      ? `Last contact on ${this.details.lastContactDate}`
       : "No previous visit on record.";
   }
 
@@ -40,4 +46,4 @@ abstract class UsTxContactTask<
   }
 }
 
-export default UsTxContactTask;
+export default UsTxTypeAgnosticContactTask;

@@ -49,6 +49,7 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   employment: "Employment Verification",
   employmentNeed: "Unemployed",
   usTxCollateralContactScheduled: "Collateral Contacts",
+  usTxTypeAgnosticContact: "Contacts",
   usTxHomeContactScheduled: "Home Contacts (Scheduled)",
   usTxHomeContactUnscheduled: "Home Contacts (Unscheduled)",
   usTxHomeContactEdgeCase: "Home Contacts (Misc.)",

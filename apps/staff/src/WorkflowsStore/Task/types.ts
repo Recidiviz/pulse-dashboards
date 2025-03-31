@@ -60,6 +60,14 @@ type UsTxContactDetails = {
   frequency: string;
 };
 
+type UsTxTypeAgnosticContactDetails = {
+  contactDueDate: string;
+  frequency: string;
+  lastContactDate: string | null;
+  overdueFlag: boolean;
+  contactTypesAccepted: string;
+};
+
 type UsTxEdgeCaseContactDetails = {
   reasonForContact: string;
 };
@@ -88,6 +96,7 @@ export const SUPERVISION_TASK_TYPES = [
   "assessment",
   "contact",
   "employment",
+  "usTxTypeAgnosticContact",
   "usTxCollateralContactScheduled",
   "usTxHomeContactScheduled",
   "usTxHomeContactUnscheduled",
@@ -106,6 +115,7 @@ export type SupervisionDetails =
   | UsIdContactDetails
   | UsIdEmploymentDetails
   | UsTxContactDetails
+  | UsTxTypeAgnosticContactDetails
   | UsTxEdgeCaseContactDetails
   | UsTxAssessmentDetails;
 
@@ -115,6 +125,7 @@ export type SupervisionDetailsForTask = {
   contact: UsIdContactDetails;
   employment: UsIdEmploymentDetails;
   usTxCollateralContactScheduled: UsTxContactDetails;
+  usTxTypeAgnosticContact: UsTxTypeAgnosticContactDetails;
   usTxHomeContactScheduled: UsTxContactDetails;
   usTxHomeContactUnscheduled: UsTxContactDetails;
   usTxHomeContactEdgeCase: UsTxEdgeCaseContactDetails;
@@ -158,7 +169,7 @@ export type SupervisionNeed = {
 
 export type TasksStateCode = "US_ID" | "US_TX";
 
-export type UsTxContactTaskType =
+export type UsTxSimpleContactTaskType =
   | "usTxCollateralContactScheduled"
   | "usTxHomeContactScheduled"
   | "usTxHomeContactUnscheduled"
@@ -170,7 +181,11 @@ export type UsTxContactTaskType =
 // TODO: Derive these from tenant configs
 type TasksForState = {
   US_ID: "homeVisit" | "assessment" | "contact" | "employment";
-  US_TX: UsTxContactTaskType | "usTxHomeContactEdgeCase" | "usTxAssessment";
+  US_TX:
+    | UsTxSimpleContactTaskType
+    | "usTxTypeAgnosticContact"
+    | "usTxHomeContactEdgeCase"
+    | "usTxAssessment";
 };
 
 export interface SupervisionTasksRecord<T extends TasksStateCode> {
