@@ -1,0 +1,46 @@
+# Infrastructure configuration for components for the jii-proxy-server app that will be deployed to recidiviz-jii-staging
+settings:
+  context:
+    location: us-central1
+    project_id: recidiviz-jii-staging
+    registry_repo_name: jii-proxy
+    product: jii-proxy-server
+
+# # The variables set here are automatically provided to all components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+
+# Defines which catalogs to import into this configuration to create in recidiviz-jii-staging
+# import:
+
+terraform:
+  # Describes where the Terraform state file for these centrally-managed components is stored
+  # https://atmos.tools/core-concepts/components/terraform/backends#google-cloud-storage-backend
+  backend_type: gcs
+  backend:
+    gcs:
+      bucket: recidiviz-jii-staging-tf-state
+  # This provides the default configuration for our Terraform providers
+  # https://atmos.tools/core-concepts/components/terraform/providers
+  providers:
+    google:
+      project: recidiviz-jii-staging
+
+components:
+  terraform:
+    vendor/artifact-registry:
+      vars:
+        location: "{{ .settings.context.location }}"
+        repository_id: "{{ .settings.context.registry_repo_name }}"
+        format: DOCKER
+        cleanup_policies:
+          delete-untagged:
+            action: DELETE
+            id: delete-untagged
+            condition:
+              tag_state: UNTAGGED
+          keep-minimum-versions:
+            action: KEEP
+            id: keep-minimum-versions
+            most_recent_versions:
+              keep_count: 15

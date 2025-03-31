@@ -1,0 +1,26 @@
+{
+  "name": "jii-proxy-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "targets": {
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "staging": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-jii-staging/jii-proxy/jii-proxy-server:latest"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    }
+  }
+}
