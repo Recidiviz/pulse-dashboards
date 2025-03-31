@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { query, where } from "firebase/firestore";
+import { or, query, where } from "firebase/firestore";
 import { observable, runInAction } from "mobx";
 import { Mock } from "vitest";
 
@@ -27,6 +27,7 @@ vi.mock("firebase/firestore");
 const queryMock = query as Mock;
 const whereMock = where as Mock;
 const collectionMock = vi.fn();
+const orMock = or as Mock;
 
 let rootStoreMock: RootStore;
 let sub: LocationSubscription;
@@ -121,6 +122,56 @@ describe("LocationSubscription tests", () => {
       // This is choosing the locationIdType for location search
       // instead of searchField for US_ID since the locations have idType = facilityId
       expect(whereMock).toHaveBeenCalledWith("idType", "==", "facilityId");
+    });
+  });
+
+  describe("when there are more than one LOCATION searchType", () => {
+    beforeEach(() => {
+      vi.resetAllMocks();
+      orMock.mockImplementation((...args) => args.join("||"));
+      whereMock.mockImplementation(
+        (_fieldPath, searchOp, selectedSearchIds) =>
+          `${searchOp}, ${selectedSearchIds.length === 0 ? "[]" : selectedSearchIds}`,
+      );
+
+      rootStoreMock = observable({
+        currentTenantId: "US_ND",
+        workflowsStore: {
+          caseloadDistrict: "TEST",
+          activeSystem: "SUPERVISION",
+          systemConfigFor: vi.fn(() => ({
+            search: [
+              { searchType: "LOCATION", searchField: ["facilityId"] },
+              {
+                searchType: "LOCATION",
+                locationIdType: "crcFacilityId",
+                search: ["metadata", "craFacilities"],
+              },
+            ],
+          })),
+        },
+        firestoreStore: {
+          collection: collectionMock,
+        },
+      }) as unknown as RootStore;
+      sub = new LocationSubscription(rootStoreMock);
+    });
+
+    test("it queries for one LOCATION OR the other", () => {
+      sub.subscribe();
+
+      runInAction(() => {
+        // @ts-ignore
+        rootStoreMock.currentTenantId = "US_ID";
+      });
+
+      expect(whereMock).toHaveBeenCalledWith("idType", "==", "facilityId");
+      expect(whereMock).toHaveBeenCalledWith("idType", "==", "crcFacilityId");
+      expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_ID");
+      expect(orMock).toHaveBeenCalledWith(
+        "==, facilityId",
+        "==, crcFacilityId",
+      );
     });
   });
 });

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Query, query, where } from "firebase/firestore";
+import { and, or, Query, query, where } from "firebase/firestore";
 
 import { LocationRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -32,18 +32,35 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
   get dataSource(): Query | undefined {
     const { search } =
       this.rootStore.workflowsStore.systemConfigFor("INCARCERATION");
-    // TODO #7238 Handle multiple LOCATION search types per system
-    const searchConfig = search.find((s) => s.searchType === "LOCATION");
-    if (!searchConfig) return;
 
-    const { searchField, locationIdType } = searchConfig;
     const stateCode = this.rootStore.currentTenantId;
     if (!stateCode) return;
 
+    // The conditions that are applied with a logical OR
+    // A person should match if they match searchId1 OR searchId2
+    const orConditions = search
+      .filter((s) => s.searchType === "LOCATION")
+      .map((searchConfig) => {
+        const whereClause = where(
+          "idType",
+          "==",
+          searchConfig.locationIdType ?? searchConfig.searchField[0],
+        );
+        return whereClause;
+      });
+
+    // The conditions that are applied with a logical AND
+    // A person should match if they have a specific stateCode AND they match any of the searchIds
+    const andConditions = [
+      where("stateCode", "==", stateCode),
+      or(...orConditions),
+    ];
+
+    const constraints = and(...andConditions);
+
     return query(
       this.rootStore.firestoreStore.collection({ key: "locations" }),
-      where("stateCode", "==", stateCode),
-      where("idType", "==", locationIdType ?? searchField[0]),
+      constraints,
     );
   }
 }

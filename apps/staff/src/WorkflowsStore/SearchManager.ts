@@ -74,10 +74,6 @@ export class SearchManager {
       or(...orConditions),
     ];
 
-    // if (true) {
-    //   andConditions.push(where("allEligibleOpportunities", "!=", []));
-    // }
-
     const constraints = and(...andConditions);
 
     return constraints;
