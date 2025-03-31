@@ -37,12 +37,12 @@ components:
         format: DOCKER
         cleanup_policies:
           delete-untagged:
-            type: DELETE
+            action: DELETE
             id: delete-untagged
             condition:
               tag_state: UNTAGGED
           keep-minimum-versions:
-            type: KEEP
+            action: KEEP
             id: keep-minimum-versions
             most_recent_versions:
               keep_count: 15
