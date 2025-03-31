@@ -367,15 +367,26 @@ if (
           );
         }
 
-        if (deployEnv === "staging" || deployEnv === "production") {
-          await $`nx run atmos:apply --component=apps/sentencing --stack=recidiviz-dashboard-${deployEnv}--sentencing --terraform-opts=\"-auto-approve -var server_container_version=${currentRevision} -var migrate_db_container_version=${currentRevision} -var import_container_version=${currentRevision}\"`.pipe(
-            process.stdout,
-          );
-        } else if (deployEnv === "demo") {
-          await $`nx run atmos:apply --component=apps/sentencing --stack=recidiviz-dashboard-staging--sentencing-demo --terraform-opts=\"-auto-approve -var server_container_version=${currentRevision} -var migrate_db_container_version=${currentRevision} -var import_container_version=${currentRevision}\"`.pipe(
+        // Deploy any changes to the artifact registry if we're on staging
+        if (deployEnv === "staging") {
+          await $`nx run atmos:apply --component=artifact_registry --stack=recidiviz-dashboard-${deployEnv}--sentencing --terraform-opts=\"-auto-approve\"`.pipe(
             process.stdout,
           );
         }
+
+        // Deploy the import, migration, and server infrastructure changes for the applicable environment
+        let stack;
+        if (deployEnv === "staging") {
+          stack = `recidiviz-dashboard-${deployEnv}--sentencing`;
+        } else if (deployEnv === "production") {
+          stack = `recidiviz-dashboard-${deployEnv}--sentencing`;
+        } else if (deployEnv === "demo") {
+          stack = "recidiviz-dashboard-staging--sentencing-demo";
+        }
+
+        await $`nx run atmos:apply --component=apps/sentencing --stack=${stack} --terraform-opts=\"-auto-approve -var server_container_version=${currentRevision} -var migrate_db_container_version=${currentRevision} -var import_container_version=${currentRevision}\"`.pipe(
+          process.stdout,
+        );
 
         retryDeploy = false;
         successfullyDeployed.push("Sentencing Server");
