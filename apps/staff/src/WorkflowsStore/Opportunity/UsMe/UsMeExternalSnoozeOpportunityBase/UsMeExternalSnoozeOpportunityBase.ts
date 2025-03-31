@@ -54,13 +54,14 @@ export class UsMeExternalSnoozeOpportunityBase<
 
     const { activeMetadataDenial } = this;
     if (!activeMetadataDenial) return undefined;
-    const { reasons, otherReason, updatedBy, startDate } = activeMetadataDenial;
+    const { denialReasons, otherText, officerEmail, startDate } =
+      activeMetadataDenial;
 
     return {
-      reasons,
-      otherReason,
+      reasons: denialReasons,
+      otherReason: otherText,
       updated: {
-        by: updatedBy,
+        by: officerEmail,
         date: Timestamp.fromDate(startDate),
       },
     };
@@ -72,11 +73,11 @@ export class UsMeExternalSnoozeOpportunityBase<
 
     const { activeMetadataDenial } = this;
     if (!activeMetadataDenial) return undefined;
-    const { startDate, endDate, updatedBy } = activeMetadataDenial;
+    const { startDate, endDate, officerEmail } = activeMetadataDenial;
 
     return {
       snoozedOn: formatISO(startDate),
-      snoozedBy: updatedBy,
+      snoozedBy: officerEmail,
       snoozeForDays: differenceInDays(endDate, startDate),
     };
   }

@@ -99,6 +99,7 @@ export const DenialCaseNoteModal = observer(function DenialCaseNoteModal({
       ? startOfToday()
       : maybeSnoozeUntilDate;
 
+  // If you make changes here, ensure they're reflected in usMeDenialMetadataSchema (just camelCased)
   const noteText = JSON.stringify(
     {
       is_recidiviz_snooze_note: true,

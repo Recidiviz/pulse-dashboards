@@ -86,10 +86,10 @@ export function custodyLevelReason<C extends string>(criterionId: C) {
 
 export const usMeDenialMetadataSchema = z
   .object({
-    updatedBy: z.string(),
+    officerEmail: z.string(),
     startDate: dateStringSchema,
     endDate: dateStringSchema,
-    reasons: z.string().array(),
-    otherReason: nullishAsUndefined(z.string()),
+    denialReasons: z.string().array(),
+    otherText: nullishAsUndefined(z.string()),
   })
   .nullish();

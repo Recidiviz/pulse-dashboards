@@ -50,10 +50,10 @@ export const usMeEarlyTerminationReferralsFixture =
       isAlmostEligible: false,
       metadata: {
         denial: {
-          updatedBy: "officer.smith@example.com",
+          officerEmail: "officer.smith@example.com",
           startDate: "2021-12-01",
           endDate: "2022-01-01",
-          reasons: ["BENEFIT", "CONDUCT"],
+          denialReasons: ["BENEFIT", "CONDUCT"],
         },
       },
     },

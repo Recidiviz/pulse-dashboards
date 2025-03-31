@@ -54,10 +54,10 @@ function initOpportunity({
         ...usMeFurloughReleaseEligibleRecordFixture,
         metadata: {
           denial: {
-            updatedBy: "casenote",
+            officerEmail: "casenote",
             startDate: "2022-12-01",
             endDate: "2022-12-25",
-            reasons: ["CASENOTE"],
+            denialReasons: ["CASENOTE"],
           },
         },
       }
