@@ -26,6 +26,7 @@ import {
 } from "~hydration-utils";
 
 import { WorkflowsTasksConfig } from "../../core/models/types";
+import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { TaskValidationError } from "../../errors";
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -200,9 +201,10 @@ export abstract class TasksBase<
     ]);
   }
 
-  trackPreviewed(): void {
+  trackPreviewed(selectedCategory: SupervisionTaskCategory): void {
     this.rootStore.analyticsStore.trackTaskPreviewed({
       justiceInvolvedPersonId: this.person.pseudonymizedId,
+      selectedCategory,
       taskTypes: [
         ...(this.tasks?.map((task) => task.type) ?? []),
         ...(this.needs?.map((need) => need.type) ?? []),

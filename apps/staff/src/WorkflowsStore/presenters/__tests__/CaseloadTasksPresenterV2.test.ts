@@ -34,6 +34,10 @@ tk.freeze(now);
 
 const mockAnalyticsStore = {
   trackTaskFilterSelected: vi.fn(),
+  trackTaskFilterChanged: vi.fn(),
+  trackTaskTableCategorySelected: vi.fn(),
+  trackTaskFiltersReset: vi.fn(),
+  trackTaskViewChanged: vi.fn(),
 } as any as AnalyticsStore;
 
 const mockTenantStore = {
@@ -125,28 +129,15 @@ describe("CaseloadTasksPresenterV2", () => {
       presenter = getPresenter({});
     });
 
-    it("is initialized to 'ALL_TASKS'", () => {
-      expect(presenter.selectedCategory).toEqual("ALL_TASKS");
-    });
-
-    it("updates stored selected category when changes", () => {
-      presenter.selectedTaskCategory = "employment";
-      expect(presenter.selectedCategory).toEqual("employment");
-    });
-
-    it("keeps the same category when selected twice", () => {
-      presenter.selectedTaskCategory = "employment";
-      presenter.selectedTaskCategory = "employment";
-      expect(presenter.selectedCategory).toEqual("employment");
-    });
-
     it("logs category selection to the analytics store", () => {
       presenter.selectedTaskCategory = "employment";
       expect(
-        mockAnalyticsStore.trackTaskFilterSelected,
+        mockAnalyticsStore.trackTaskTableCategorySelected,
       ).toHaveBeenLastCalledWith({
-        selectedSearchIds: ["1", "2"],
-        taskCategory: "employment",
+        newTabRowCount: 0,
+        previousCategory: "ALL_TASKS",
+        selectedCaseloadIds: ["1", "2"],
+        selectedCategory: "employment",
       });
     });
   });
@@ -289,6 +280,62 @@ describe("CaseloadTasksPresenterV2", () => {
       expect(presenter.countForCategory("DUE_THIS_MONTH")).toEqual(1);
     });
 
+    it("logs filter changes", () => {
+      presenter.setFilter("supervisionLevel", { value: "Low" });
+
+      expect(
+        mockAnalyticsStore.trackTaskFilterChanged,
+      ).toHaveBeenLastCalledWith({
+        changedFilterValue: "Low",
+        changedFilterCategory: "supervisionLevel",
+        changedFilterSelected: true,
+        selectedFilters: {
+          supervisionLevel: ["Low"],
+        },
+      });
+
+      presenter.setFilter("supervisionLevel", { value: "High" });
+
+      expect(
+        mockAnalyticsStore.trackTaskFilterChanged,
+      ).toHaveBeenLastCalledWith({
+        changedFilterValue: "High",
+        changedFilterCategory: "supervisionLevel",
+        changedFilterSelected: true,
+        selectedFilters: {
+          supervisionLevel: ["Low", "High"],
+        },
+      });
+
+      presenter.setFilter("caseType", { value: "General" });
+
+      expect(
+        mockAnalyticsStore.trackTaskFilterChanged,
+      ).toHaveBeenLastCalledWith({
+        changedFilterValue: "General",
+        changedFilterCategory: "caseType",
+        changedFilterSelected: true,
+        selectedFilters: {
+          supervisionLevel: ["Low", "High"],
+          caseType: ["General"],
+        },
+      });
+
+      presenter.unsetFilter("supervisionLevel", { value: "High" });
+
+      expect(
+        mockAnalyticsStore.trackTaskFilterChanged,
+      ).toHaveBeenLastCalledWith({
+        changedFilterValue: "High",
+        changedFilterCategory: "supervisionLevel",
+        changedFilterSelected: false,
+        selectedFilters: {
+          supervisionLevel: ["Low"],
+          caseType: ["General"],
+        },
+      });
+    });
+
     it("can filter on multiple values per field", () => {
       presenter.setFilter("supervisionLevel", { value: "Limited" });
       presenter.setFilter("supervisionLevel", { value: "Low" });
@@ -357,6 +404,16 @@ describe("CaseloadTasksPresenterV2", () => {
       presenter.setFilter("displayName", { value: "Bob" });
       presenter.resetFilters();
       expect(presenter.selectedFilters).toEqual({});
+
+      expect(mockAnalyticsStore.trackTaskFiltersReset).toHaveBeenLastCalledWith(
+        {
+          selectedFiltersBeforeReset: {
+            caseType: ["general"],
+            displayName: ["Bob"],
+            supervisionLevel: ["Low", "High"],
+          },
+        },
+      );
     });
 
     it("toggles filters", () => {

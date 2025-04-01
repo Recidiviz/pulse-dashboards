@@ -68,7 +68,7 @@ type SelectedFilters = PartialRecord<
 >;
 
 export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
-  selectedCategory: SupervisionTaskCategory;
+  private selectedCategory: SupervisionTaskCategory;
   private _selectedFilters: SelectedFilters = {};
   private tableViewSelectPresenter: TableViewSelectPresenter;
 
@@ -108,16 +108,18 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   get selectedTaskCategory(): SupervisionTaskCategory {
-    return this.selectedCategory;
+    return this.showListView ? "ALL_TASKS_OLD" : this.selectedCategory;
   }
 
   set selectedTaskCategory(newCategory: SupervisionTaskCategory) {
-    this.selectedCategory = newCategory;
-
-    this.analyticsStore.trackTaskFilterSelected({
-      taskCategory: this.selectedCategory,
-      selectedSearchIds: this.workflowsStore.searchStore.selectedSearchIds,
+    this.analyticsStore.trackTaskTableCategorySelected({
+      selectedCategory: newCategory,
+      previousCategory: this.selectedCategory,
+      newTabRowCount: this.countForCategory(newCategory),
+      selectedCaseloadIds: this.workflowsStore.searchStore.selectedSearchIds,
     });
+
+    this.selectedCategory = newCategory;
   }
 
   // Selection controls
@@ -254,12 +256,16 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
 
     if (!this._selectedFilters[field]) {
       this._selectedFilters[field] = [value];
-      return;
-    }
-
-    if (!this.filterIsSelected(field, option)) {
+    } else if (!this.filterIsSelected(field, option)) {
       this._selectedFilters[field]?.push(value);
     }
+
+    this.analyticsStore.trackTaskFilterChanged({
+      changedFilterCategory: field,
+      changedFilterValue: option.value,
+      changedFilterSelected: true,
+      selectedFilters: this._selectedFilters,
+    });
   }
 
   unsetFilter(field: TaskFilterField, option: TaskFilterOption) {
@@ -272,6 +278,13 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
         (f) => f !== value,
       );
     }
+
+    this.analyticsStore.trackTaskFilterChanged({
+      changedFilterCategory: field,
+      changedFilterValue: option.value,
+      changedFilterSelected: false,
+      selectedFilters: this._selectedFilters,
+    });
   }
 
   toggleFilter(field: TaskFilterField, option: TaskFilterOption) {
@@ -283,6 +296,9 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   resetFilters() {
+    this.analyticsStore.trackTaskFiltersReset({
+      selectedFiltersBeforeReset: this._selectedFilters,
+    });
     this._selectedFilters = {};
   }
 
@@ -290,11 +306,21 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     return Object.values(this._selectedFilters).flatMap((x) => x).length;
   }
 
+  trackFilterDropdownOpened() {
+    this.analyticsStore.trackTaskFilterDropdownOpened();
+  }
+
+  // List vs Table controls
+
   get showListView() {
     return this.tableViewSelectPresenter.showListView;
   }
 
   set showListView(showListView: boolean) {
+    this.analyticsStore.trackTaskViewChanged({
+      newViewType: showListView ? "list" : "table",
+      oldViewType: this.showListView ? "list" : "table",
+    });
     this.tableViewSelectPresenter.showListView = showListView;
   }
 

@@ -18,6 +18,7 @@
 import { Hydratable } from "~hydration-utils";
 
 import { WorkflowsTasksConfig } from "../../core/models/types";
+import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { Expect, Extends } from "../../utils/typeUtils";
@@ -207,7 +208,7 @@ export interface SupervisionTaskInterface extends Hydratable {
   orderedTasks: SupervisionTask[];
   readyOrderedTasks: SupervisionTask[];
   tasksConfig?: WorkflowsTasksConfig;
-  trackPreviewed: () => void;
+  trackPreviewed: (task: SupervisionTaskCategory) => void;
 }
 
 export class SupervisionTasks<T extends TasksStateCode> extends TasksBase<

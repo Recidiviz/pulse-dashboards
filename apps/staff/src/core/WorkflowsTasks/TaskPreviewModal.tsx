@@ -29,6 +29,7 @@ import {
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
+import { SupervisionTaskCategory } from "./fixtures";
 import { PreviewTasks } from "./PreviewTasks";
 
 export const TaskItemDivider = styled.hr`
@@ -51,7 +52,15 @@ const TaskItemHeader = styled.div`
   text-transform: uppercase;
 `;
 
-export const TaskPreviewModal = observer(function TaskPreviewModal() {
+interface SelectedTaskCategoryInterface {
+  selectedTaskCategory: SupervisionTaskCategory;
+}
+
+export const TaskPreviewModal = observer(function TaskPreviewModal({
+  presenter,
+}: {
+  presenter: SelectedTaskCategoryInterface;
+}) {
   const {
     workflowsStore: { selectedClient },
   } = useRootStore();
@@ -64,7 +73,11 @@ export const TaskPreviewModal = observer(function TaskPreviewModal() {
   return (
     <WorkflowsPreviewModal
       isOpen={!!selectedClient}
-      onAfterOpen={() => selectedClient.supervisionTasks?.trackPreviewed()}
+      onAfterOpen={() =>
+        selectedClient.supervisionTasks?.trackPreviewed(
+          presenter.selectedTaskCategory,
+        )
+      }
       pageContent={
         <article>
           <Heading person={selectedClient} />

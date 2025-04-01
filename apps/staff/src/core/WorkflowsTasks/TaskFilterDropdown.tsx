@@ -166,7 +166,10 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
 
   return (
     <Dropdown>
-      <FilterDropdownToggle>
+      <FilterDropdownToggle
+        // TODO(#7899): Replace with a proper onMenuOpen handler
+        onMouseUp={() => presenter.trackFilterDropdownOpened()}
+      >
         <FilterIcon /> Filters
         <FilterDownArrow />
       </FilterDropdownToggle>

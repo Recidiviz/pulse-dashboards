@@ -80,7 +80,7 @@ export const ManagedComponent = observer(function WorkflowsTaskBody({
       </TaskCategories>
 
       {getViewElement(presenter)}
-      <TaskPreviewModal />
+      <TaskPreviewModal presenter={presenter} />
     </TasksBodyContainer>
   );
 });

@@ -133,6 +133,30 @@ type OpportunityTrackingMetadata = {
 type TasksTrackingMetadata = {
   justiceInvolvedPersonId: string;
   taskTypes: (SupervisionTaskType | SupervisionNeedType)[];
+  selectedCategory: SupervisionTaskCategory;
+};
+
+type TasksViewChangedMetadata = {
+  newViewType: "table" | "list";
+  oldViewType: "table" | "list";
+};
+
+type TasksFilterChangedMetadata = {
+  changedFilterCategory: string;
+  changedFilterValue: string;
+  changedFilterSelected: boolean;
+  selectedFilters: Record<string, string[]>;
+};
+
+type TasksFiltersResetMetadata = {
+  selectedFiltersBeforeReset: Record<string, string[]>;
+};
+
+type TasksTableCategoryMetadata = {
+  selectedCategory: SupervisionTaskCategory;
+  previousCategory: SupervisionTaskCategory;
+  newTabRowCount: number;
+  selectedCaseloadIds: string[];
 };
 
 type SnoozeTrackingMetadata = OpportunityTrackingMetadata & {
@@ -394,6 +418,33 @@ export default class AnalyticsStore {
     this.track("frontend.task_header_toggled", { title });
   }
 
+  trackTaskViewChanged(metadata: TasksViewChangedMetadata): void {
+    this.track("frontend.tasks_view_changed", metadata);
+  }
+
+  trackTaskFilterChanged(metadata: TasksFilterChangedMetadata): void {
+    this.track("frontend.tasks_filter_changed", metadata);
+  }
+
+  trackTaskFiltersReset(metadata: TasksFiltersResetMetadata): void {
+    this.track("frontend.tasks_filters_reset", metadata);
+  }
+
+  trackTaskFilterDropdownOpened(): void {
+    this.track("frontend.task_filter_dropdown_opened");
+  }
+
+  trackTaskTableCategorySelected(metadata: TasksTableCategoryMetadata): void {
+    this.track("frontend.task_table_category_selected", metadata);
+  }
+
+  trackTaskFilterSelected(metadata: {
+    taskCategory: SupervisionTaskCategory;
+    selectedSearchIds: string[];
+  }): void {
+    this.track("frontend.task_filter_selected", metadata);
+  }
+
   trackOpportunityMarkedSubmitted(metadata: OpportunityTrackingMetadata): void {
     this.track("frontend.opportunity_marked_submitted", metadata);
   }
@@ -419,13 +470,6 @@ export default class AnalyticsStore {
       Pick<OpportunityTrackingMetadata, "justiceInvolvedPersonId">,
   ): void {
     this.track("frontend.person_id_copied_to_clipboard", metadata);
-  }
-
-  trackTaskFilterSelected(metadata: {
-    taskCategory: SupervisionTaskCategory;
-    selectedSearchIds: string[];
-  }): void {
-    this.track("frontend.task_filter_selected", metadata);
   }
 
   trackMilestonesTabClick(metadata: { tab: MilestonesTab }) {

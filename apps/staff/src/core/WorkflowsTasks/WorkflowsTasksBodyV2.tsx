@@ -86,10 +86,10 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
                 DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
                 DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
               }}
-              activeTab={presenter.selectedCategory}
+              activeTab={presenter.selectedTaskCategory}
               setActiveTab={(tab: SupervisionTaskCategory) => {
                 runInAction(() => {
-                  presenter.selectedCategory = tab;
+                  presenter.selectedTaskCategory = tab;
                 });
               }}
             />
@@ -97,7 +97,7 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
           <TasksTable presenter={presenter} />
         </>
       )}
-      <TaskPreviewModal />
+      <TaskPreviewModal presenter={presenter} />
     </>
   );
 });
