@@ -42,10 +42,11 @@
     },
     "dev": {
       "executor": "nx:run-commands",
+      "dependsOn": ["build"],
       "options": {
         "commands": [
-          "nx build jii-functions -c development --watch",
-          "sleep 10 && firebase --config firebase.jii.json --project recidiviz-jii-staging emulators:start"
+          "firebase --config firebase.jii.json --project recidiviz-jii-staging emulators:start",
+          "nx build jii-functions -c development --watch --deleteOutputPath false"
         ]
       }
     },
