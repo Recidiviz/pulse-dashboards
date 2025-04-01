@@ -102,6 +102,7 @@ export const SUPERVISION_TASK_TYPES = [
   "usTxHomeContactScheduled",
   "usTxHomeContactUnscheduled",
   "usTxHomeContactEdgeCase",
+  "usTxOfficeContactScheduled",
   "usTxFieldContactScheduled",
   "usTxFieldContactUnscheduled",
   "usTxElectronicContactScheduled",
@@ -130,6 +131,7 @@ export type SupervisionDetailsForTask = {
   usTxHomeContactScheduled: UsTxContactDetails;
   usTxHomeContactUnscheduled: UsTxContactDetails;
   usTxHomeContactEdgeCase: UsTxEdgeCaseContactDetails;
+  usTxOfficeContactScheduled: UsTxContactDetails;
   usTxFieldContactScheduled: UsTxContactDetails;
   usTxFieldContactUnscheduled: UsTxContactDetails;
   usTxElectronicContactScheduled: UsTxContactDetails;
@@ -174,6 +176,7 @@ export type UsTxSimpleContactTaskType =
   | "usTxCollateralContactScheduled"
   | "usTxHomeContactScheduled"
   | "usTxHomeContactUnscheduled"
+  | "usTxOfficeContactScheduled"
   | "usTxFieldContactScheduled"
   | "usTxFieldContactUnscheduled"
   | "usTxElectronicContactScheduled"

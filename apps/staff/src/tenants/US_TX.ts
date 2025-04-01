@@ -26,6 +26,7 @@ import UsTxFieldContactUnscheduledTask from "../WorkflowsStore/Task/UsTxFieldCon
 import usTxHomeContactEdgeCaseTask from "../WorkflowsStore/Task/UsTxHomeContactEdgeCaseTask";
 import usTxHomeContactScheduledTask from "../WorkflowsStore/Task/UsTxHomeContactScheduledTask";
 import usTxHomeContactUnscheduledTask from "../WorkflowsStore/Task/UsTxHomeContactUnscheduledTask";
+import UsTxOfficeContactScheduledTask from "../WorkflowsStore/Task/UsTxOfficeContactScheduledTask";
 import usTxTypeAgnosticContactTask from "../WorkflowsStore/Task/UsTxTypeAgnosticContactTask";
 
 const US_TX_CONFIG: TenantConfig<"US_TX"> = {
@@ -71,6 +72,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
         constructor: usTxHomeContactEdgeCaseTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
+      usTxOfficeContactScheduled: {
+        constructor: UsTxOfficeContactScheduledTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
       usTxFieldContactScheduled: {
         constructor: UsTxFieldContactScheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
@@ -113,6 +118,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
           {
             value: "usTxHomeContactEdgeCase",
             label: "Home Contact, Misc.",
+          },
+          {
+            value: "usTxOfficeContactScheduled",
+            label: "Office Contact",
           },
           {
             value: "usTxFieldContactScheduled",
