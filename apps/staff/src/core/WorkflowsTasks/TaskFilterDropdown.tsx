@@ -77,20 +77,42 @@ const FilterGroupHeader = styled.div`
   padding: 0;
 `;
 
+const SelectOnlyButton = styled.div`
+  border: none;
+  background-color: rgb(231, 235, 238);
+  border-radius: 4px;
+  color: ${palette.pine4};
+  display: none;
+`;
+
 const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)`
   padding-left: 0;
+  padding-right: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
   color: ${palette.pine4};
   height: 17px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
+  justify-content: space-between;
 
   &:last-child {
     margin-bottom: 0;
   }
+
+  &:hover {
+    & > ${SelectOnlyButton} {
+      display: block;
+    }
+  }
+`;
+
+const FilterOptionLabel = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+
+  white-space: nowrap;
+  overflow: hidden;
 `;
 
 const FilterGroupColumns = styled.div`
@@ -117,16 +139,28 @@ const ClearAllButton = styled(DropdownMenuItem)`
 const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
   option,
   onClick,
+  onClickOnly,
   checked,
 }: {
   option: TaskFilterOption;
   onClick: () => void;
+  onClickOnly: () => void;
   checked: boolean;
 }) {
   return (
     <StyledFilterDropdownMenuItem onClick={() => onClick()} key={option.value}>
-      <input readOnly type={"checkbox"} checked={checked} />{" "}
-      {option.label ?? option.value}
+      <FilterOptionLabel>
+        <input readOnly type={"checkbox"} checked={checked} />{" "}
+        {option.label ?? option.value}
+      </FilterOptionLabel>
+      <SelectOnlyButton
+        onClick={(e) => {
+          onClickOnly();
+          e.stopPropagation();
+        }}
+      >
+        ONLY
+      </SelectOnlyButton>
     </StyledFilterDropdownMenuItem>
   );
 });
@@ -151,6 +185,7 @@ const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
           option={option}
           checked={presenter.filterIsSelected(field, option)}
           onClick={() => presenter.toggleFilter(field, option)}
+          onClickOnly={() => presenter.setOnlyFilterForField(field, option)}
         />
       ))}
     </FilterGroup>

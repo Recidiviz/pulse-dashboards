@@ -1337,6 +1337,7 @@ export const TxPopulationFilterOptions: PopulationFilters = {
       { label: "Low-Moderate", value: "MEDIUM" },
       { label: "Low", value: "MINIMUM" },
       { label: "Annual", value: "LIMITED" },
+      { label: "In-custody", value: "IN_CUSTODY" },
     ],
   },
 };

@@ -146,6 +146,7 @@ type TasksFilterChangedMetadata = {
   changedFilterValue: string;
   changedFilterSelected: boolean;
   selectedFilters: Record<string, string[]>;
+  onlyClicked: boolean;
 };
 
 type TasksFiltersResetMetadata = {

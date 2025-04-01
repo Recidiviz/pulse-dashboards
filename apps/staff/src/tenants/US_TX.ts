@@ -160,6 +160,9 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
           {
             value: "High",
           },
+          {
+            value: "In-custody",
+          },
         ],
       },
       {
@@ -169,6 +172,9 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
         options: [
           {
             value: "Regular",
+          },
+          {
+            value: "Annual",
           },
           {
             value: "Sex offender",
@@ -193,6 +199,12 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
           },
           {
             value: "Terminally ill / Physically handicapped",
+          },
+          {
+            value: "Medically recommended intensive supervision",
+          },
+          {
+            value: "Non-reporting",
           },
         ],
       },

@@ -86,6 +86,8 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
       workflowsStore,
       featureVariants,
     );
+
+    this.initializeFilters();
   }
 
   get taskConfig(): WorkflowsTasksConfig {
@@ -100,6 +102,22 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
 
   get taskCategories(): SupervisionTaskCategory[] {
     return this.tenantStore.taskCategories;
+  }
+
+  initializeFilters() {
+    const {
+      taskConfig: { filters },
+    } = this;
+
+    if (!filters) return;
+
+    this._selectedFilters = {};
+
+    for (const filter of filters) {
+      this._selectedFilters[filter.field] = filter.options.map(
+        (option) => option.value,
+      );
+    }
   }
 
   // Tab categories used in the new tasks view
@@ -265,6 +283,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
       changedFilterValue: option.value,
       changedFilterSelected: true,
       selectedFilters: this._selectedFilters,
+      onlyClicked: false,
     });
   }
 
@@ -284,6 +303,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
       changedFilterValue: option.value,
       changedFilterSelected: false,
       selectedFilters: this._selectedFilters,
+      onlyClicked: false,
     });
   }
 
@@ -295,15 +315,25 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     }
   }
 
+  setOnlyFilterForField(field: TaskFilterField, option: TaskFilterOption) {
+    const { value } = option;
+
+    this._selectedFilters[field] = [value];
+
+    this.analyticsStore.trackTaskFilterChanged({
+      changedFilterCategory: field,
+      changedFilterValue: option.value,
+      changedFilterSelected: true,
+      selectedFilters: this._selectedFilters,
+      onlyClicked: true,
+    });
+  }
+
   resetFilters() {
     this.analyticsStore.trackTaskFiltersReset({
       selectedFiltersBeforeReset: this._selectedFilters,
     });
-    this._selectedFilters = {};
-  }
-
-  get selectedFilterCount(): number {
-    return Object.values(this._selectedFilters).flatMap((x) => x).length;
+    this.initializeFilters();
   }
 
   trackFilterDropdownOpened() {
