@@ -20,12 +20,15 @@ import _ from "lodash";
 import { CaseInsight } from "../../../../api";
 import { convertDecimalToPercentage } from "../../../../utils/utils";
 import { getSentenceLengthBucketLabel } from "../../components/charts/common/utils";
-import { getRecidivismPlot } from "../../components/charts/RecidivismChart/SentenceLength/utils";
+import { RecidivismChartFootnote } from "../../components/charts/RecidivismChart/SentenceLength/RecidivismChartFootnote";
+import {
+  getCompleteRollupRecidivismSeries,
+  getRecidivismPlot,
+} from "../../components/charts/RecidivismChart/SentenceLength/utils";
 import { RecommendationOptionTemplateBase } from "../types";
 import { getRecidivismPlotForSentenceType } from "./Plot";
 import * as Styled from "./Report.styles";
-import { getRecommendationOrderIndex } from "./utils";
-import { getChartCaptions } from "./utils";
+import { getChartCaptions, getRecommendationOrderIndex } from "./utils";
 
 interface RecidivismRatePlotsBySentenceTypeProps {
   insight: CaseInsight;
@@ -113,23 +116,42 @@ export function RecidivismRateSectionForSentenceType({
 
 interface RecidivismRateSectionForSentenceLengthProps {
   insight: CaseInsight;
+  recommendationOptionsTemplate: RecommendationOptionTemplateBase[];
 }
 
 export function RecidivismRateSectionForSentenceLength({
   insight,
+  recommendationOptionsTemplate,
 }: RecidivismRateSectionForSentenceLengthProps) {
-  const plot = getRecidivismPlot(insight, 830, false, true);
+  const { missingSeriesLabels } = getCompleteRollupRecidivismSeries(
+    recommendationOptionsTemplate,
+    insight.rollupRecidivismSeries,
+  );
+
+  const plot = getRecidivismPlot(
+    insight,
+    830,
+    false,
+    true,
+    recommendationOptionsTemplate,
+  );
   return (
-    <div
-      style={{ marginLeft: "-6px" }}
-      ref={(ref) => {
-        if (!ref || !plot) {
-          return undefined;
-        }
-        ref.replaceChildren();
-        ref.appendChild(plot);
-      }}
-    />
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <div
+        style={{ marginLeft: "-6px" }}
+        ref={(ref) => {
+          if (!ref || !plot) {
+            return undefined;
+          }
+          ref.replaceChildren();
+          ref.appendChild(plot);
+        }}
+      />
+      <RecidivismChartFootnote
+        missingSeriesLabels={missingSeriesLabels}
+        isReport
+      />
+    </div>
   );
 }
 

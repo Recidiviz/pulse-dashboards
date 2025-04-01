@@ -76,6 +76,7 @@ export const Insights = ({
               insight={insight}
               selectedRecommendation={selectedRecommendation}
               recommendationType={recommendationType}
+              baseOptionsTemplate={geoConfig.recommendation.baseOptionsTemplate}
             />
           </Styled.Chart>
 

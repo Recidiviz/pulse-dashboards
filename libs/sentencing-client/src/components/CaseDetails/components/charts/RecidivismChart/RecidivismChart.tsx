@@ -17,6 +17,7 @@
 
 import { CaseInsight } from "../../../../../api";
 import { RecommendationOptionType } from "../../../Recommendations/constants";
+import { RecommendationOptionTemplateBase } from "../../../Recommendations/types";
 import { SelectedRecommendation } from "../../../types";
 import { RecidivismChartBySentenceLength } from "./SentenceLength/RecidivismChartBySentenceLength";
 import { RecidivismChartBySentenceType } from "./SentenceType/RecidivismChartBySentenceType";
@@ -26,6 +27,7 @@ interface RecidivismChartProps {
   orgName: string;
   selectedRecommendation: SelectedRecommendation;
   recommendationType: RecommendationOptionType;
+  baseOptionsTemplate: RecommendationOptionTemplateBase[];
 }
 
 export function RecidivismChart({
@@ -33,6 +35,7 @@ export function RecidivismChart({
   insight,
   orgName,
   selectedRecommendation,
+  baseOptionsTemplate,
 }: RecidivismChartProps) {
   return recommendationType === RecommendationOptionType.SentenceType ? (
     <RecidivismChartBySentenceType
@@ -41,6 +44,10 @@ export function RecidivismChart({
       selectedRecommendation={selectedRecommendation}
     />
   ) : (
-    <RecidivismChartBySentenceLength insight={insight} orgName={orgName} />
+    <RecidivismChartBySentenceLength
+      insight={insight}
+      orgName={orgName}
+      baseOptionsTemplate={baseOptionsTemplate}
+    />
   );
 }

@@ -85,3 +85,14 @@ export const ChartLegendDot = styled.div<{
   border-radius: 50%;
   background: ${(props) => props.$backgroundColor};
 `;
+
+export const ChartFootnote = styled.div<{ isReport?: boolean }>`
+  color: "#2B5469CC";
+  margin-top: 32px;
+
+  ${({ isReport }) =>
+    isReport &&
+    `
+      font-size: 12px;
+    `}
+`;

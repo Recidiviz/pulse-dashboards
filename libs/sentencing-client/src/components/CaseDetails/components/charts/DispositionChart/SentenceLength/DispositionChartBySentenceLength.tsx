@@ -135,7 +135,7 @@ export function DispositionChartBySentenceLength({
   const numExcludedDataPoints = excludedDataPoints.length;
 
   const excludedDataPointsLegend = numExcludedDataPoints ? (
-    <div style={{ marginTop: 16, color: "#2B5469CC" }}>
+    <CommonStyled.ChartFootnote>
       {`Note: ${excludedDataPoints
         .map((v) => v.title)
         .join(", ")
@@ -143,7 +143,7 @@ export function DispositionChartBySentenceLength({
           /,(?=[^,]+$)/,
           " and",
         )} had zero values and ${numExcludedDataPoints === 1 ? "is" : "are"} not represented in the chart.`}
-    </div>
+    </CommonStyled.ChartFootnote>
   ) : null;
 
   const getLabel = useCallback(

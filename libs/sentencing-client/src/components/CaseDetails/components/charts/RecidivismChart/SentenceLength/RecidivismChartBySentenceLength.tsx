@@ -21,6 +21,7 @@ import { printFormattedRecordString } from "../../../../../../../src/utils/utils
 import { CaseInsight } from "../../../../../../api";
 import { InfoIconWithTooltip } from "../../../../../Tooltip/Tooltip";
 import { RecommendationOptionType } from "../../../../Recommendations/constants";
+import { RecommendationOptionTemplateBase } from "../../../../Recommendations/types";
 import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
 import {
   getSentenceLengthBucketLabel,
@@ -31,7 +32,12 @@ import * as CommonStyled from "../../components/Styles";
 import { RECIDIVISM_RATES_CHART_TITLE } from "../../constants";
 import * as Styled from "../RecidivismChart.styles";
 import { RecidivismChartExplanation } from "../RecidivismChartExplanation";
-import { getRecidivismPlot, getRecidivismPlotSubtitle } from "./utils";
+import { RecidivismChartFootnote } from "./RecidivismChartFootnote";
+import {
+  getCompleteRollupRecidivismSeries,
+  getRecidivismPlot,
+  getRecidivismPlotSubtitle,
+} from "./utils";
 
 const DEFAULT_PLOT_WIDTH = 704;
 
@@ -40,6 +46,7 @@ interface RecidivismChartBySentenceLengthProps {
   orgName: string;
   plotWidth?: number;
   hideInfoTooltip?: boolean;
+  baseOptionsTemplate: RecommendationOptionTemplateBase[];
 }
 
 export function RecidivismChartBySentenceLength({
@@ -47,16 +54,31 @@ export function RecidivismChartBySentenceLength({
   orgName,
   plotWidth = DEFAULT_PLOT_WIDTH,
   hideInfoTooltip,
+  baseOptionsTemplate,
 }: RecidivismChartBySentenceLengthProps) {
   const [isPlotFocused, setIsPlotFocused] = useState(false);
   const { rollupRecidivismNumRecords, rollupRecidivismSeries } = insight ?? {};
 
+  const { completeRollupRecidivismSeries, missingSeriesLabels } =
+    getCompleteRollupRecidivismSeries(
+      baseOptionsTemplate,
+      rollupRecidivismSeries,
+    );
+
   const recidivismPlotSubtitle = insight && getRecidivismPlotSubtitle(insight);
-  const plot = insight && getRecidivismPlot(insight, plotWidth, isPlotFocused);
+  const plot =
+    insight &&
+    getRecidivismPlot(
+      insight,
+      plotWidth,
+      isPlotFocused,
+      undefined,
+      baseOptionsTemplate,
+    );
 
   const recidivismChartLegend = useMemo(
     () =>
-      sortDataForSentenceLengthCharts(rollupRecidivismSeries ?? []).map(
+      sortDataForSentenceLengthCharts(completeRollupRecidivismSeries ?? []).map(
         ({
           recommendationType,
           sentenceLengthBucketStart,
@@ -77,7 +99,7 @@ export function RecidivismChartBySentenceLength({
           );
         },
       ),
-    [rollupRecidivismSeries],
+    [completeRollupRecidivismSeries],
   );
 
   return (
@@ -119,18 +141,21 @@ export function RecidivismChartBySentenceLength({
       {!rollupRecidivismNumRecords ? (
         <NoDataMessage />
       ) : (
-        <Styled.RecidivismChartPlotContainer
-          onMouseOver={() => setIsPlotFocused(true)}
-          onMouseOut={() => setIsPlotFocused(false)}
-          $width={plotWidth}
-          ref={(ref) => {
-            if (!ref || !plot) {
-              return;
-            }
-            ref.replaceChildren();
-            ref.appendChild(plot);
-          }}
-        />
+        <>
+          <Styled.RecidivismChartPlotContainer
+            onMouseOver={() => setIsPlotFocused(true)}
+            onMouseOut={() => setIsPlotFocused(false)}
+            $width={plotWidth}
+            ref={(ref) => {
+              if (!ref || !plot) {
+                return;
+              }
+              ref.replaceChildren();
+              ref.appendChild(plot);
+            }}
+          />
+          <RecidivismChartFootnote missingSeriesLabels={missingSeriesLabels} />
+        </>
       )}
     </>
   );

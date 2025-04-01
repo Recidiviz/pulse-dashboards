@@ -30,6 +30,10 @@ import {
 
 import { CaseInsight } from "../../../../../../api";
 import { convertDecimalToPercentage } from "../../../../../../utils/utils";
+import {
+  RecommendationOptionTemplateBase,
+  RollupRecidivismSeries,
+} from "../../../../Recommendations/types";
 import { SENTENCE_TYPE_TO_COLOR } from "../../common/constants";
 import {
   getSentenceLengthBucketLabel,
@@ -85,11 +89,16 @@ export function getRecidivismPlot(
   plotWidth: number,
   isFocused = true,
   forReport = false,
+  baseOptionsTemplate?: RecommendationOptionTemplateBase[],
 ) {
   const { rollupRecidivismSeries } = insight;
+  const { completeRollupRecidivismSeries } = getCompleteRollupRecidivismSeries(
+    baseOptionsTemplate,
+    rollupRecidivismSeries,
+  );
 
   const transformedSeries = sortDataForSentenceLengthCharts(
-    rollupRecidivismSeries,
+    completeRollupRecidivismSeries ?? [],
   ).map((series) => {
     const {
       dataPoints,
@@ -108,6 +117,15 @@ export function getRecidivismPlot(
       (a, b) => a.cohortMonths - b.cohortMonths,
     )[series.dataPoints.length - 1];
 
+    if (!lastDataPoint) {
+      return {
+        name: `${name}*`,
+        eventRate: null,
+        upperCI: null,
+        lowerCI: null,
+      };
+    }
+
     return {
       name,
       ...lastDataPoint,
@@ -120,14 +138,22 @@ export function getRecidivismPlot(
   // Make the domain the closest 5% multiple on either end of the min and max values
   const xDomainStart =
     Math.floor(
-      Math.min(...transformedSeries.map((series) => series.lowerCI)) * 20,
+      Math.min(
+        ...transformedSeries
+          .map((series) => series.lowerCI)
+          .filter((v): v is number => v !== null),
+      ) * 20,
     ) * 5;
   const xDomainEnd =
     Math.ceil(
-      Math.max(...transformedSeries.map((series) => series.upperCI)) * 20,
+      Math.max(
+        ...transformedSeries
+          .map((series) => series.upperCI)
+          .filter((v): v is number => v !== null),
+      ) * 20,
     ) * 5;
 
-  const margin = forReport ? 20 : 200;
+  const margin = 20;
 
   return plot({
     width: plotWidth,
@@ -244,4 +270,65 @@ export function getRecidivismPlot(
           ),
     ],
   });
+}
+
+export function getCompleteRollupRecidivismSeries(
+  baseOptionsTemplate?: RecommendationOptionTemplateBase[],
+  rollupRecidivismSeries?: RollupRecidivismSeries[],
+): {
+  completeRollupRecidivismSeries?: RollupRecidivismSeries[];
+  missingSeriesLabels?: string[];
+} {
+  if (!rollupRecidivismSeries || !baseOptionsTemplate) return {};
+
+  const completeRollupRecidivismSeries = [...rollupRecidivismSeries];
+
+  baseOptionsTemplate.forEach((option) => {
+    if (
+      !option.recommendationType &&
+      !option.sentenceLengthBucketStart &&
+      !option.sentenceLengthBucketEnd
+    ) {
+      return;
+    }
+
+    const isSeriesPresent = completeRollupRecidivismSeries.some((item) =>
+      option.recommendationType
+        ? item.recommendationType === option.recommendationType
+        : item.sentenceLengthBucketStart === option.sentenceLengthBucketStart &&
+          item.sentenceLengthBucketEnd === option.sentenceLengthBucketEnd,
+    );
+
+    if (!isSeriesPresent) {
+      const missingSeries: RollupRecidivismSeries = {
+        recommendationType: option.recommendationType ?? "Incarceration",
+        sentenceLengthBucketStart: option.sentenceLengthBucketStart ?? 0,
+        sentenceLengthBucketEnd: option.sentenceLengthBucketEnd ?? -1,
+        dataPoints: [],
+      };
+
+      completeRollupRecidivismSeries.push(missingSeries);
+    }
+  });
+
+  const missingSeriesLabels = completeRollupRecidivismSeries
+    .filter(
+      (series) =>
+        !rollupRecidivismSeries?.find(
+          (s) =>
+            series.recommendationType === s.recommendationType &&
+            series.sentenceLengthBucketStart === s.sentenceLengthBucketStart &&
+            series.sentenceLengthBucketEnd === s.sentenceLengthBucketEnd,
+        ),
+    )
+    .map((series) => {
+      const label = getSentenceLengthBucketLabel(
+        series.recommendationType,
+        series.sentenceLengthBucketStart,
+        series.sentenceLengthBucketEnd,
+      );
+      return label;
+    });
+
+  return { completeRollupRecidivismSeries, missingSeriesLabels };
 }

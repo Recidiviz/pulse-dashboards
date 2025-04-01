@@ -156,7 +156,8 @@ export function Report({
   geoConfig,
 }: ReportProps) {
   const recommendationOptionType = geoConfig.recommendation.type;
-  const recommendationOrder = geoConfig.recommendation.baseOptionsTemplate;
+  const recommendationOptionsTemplate =
+    geoConfig.recommendation.baseOptionsTemplate;
 
   const gender = (
     insight?.gender || insight?.rollupGender
@@ -168,12 +169,12 @@ export function Report({
       recommendationOptionType === RecommendationOptionType.SentenceType ? (
         <DispositionSectionForSentenceType
           insight={insight}
-          recommendationOrder={recommendationOrder}
+          recommendationOrder={recommendationOptionsTemplate}
         />
       ) : (
         <DispositionSectionForSentenceLength
           insight={insight}
-          recommendationOrder={recommendationOrder}
+          recommendationOrder={recommendationOptionsTemplate}
         />
       );
   } else {
@@ -187,10 +188,13 @@ export function Report({
     (recommendationOptionType === RecommendationOptionType.SentenceType ? (
       <RecidivismRateSectionForSentenceType
         insight={insight}
-        recommendationOrder={recommendationOrder}
+        recommendationOrder={recommendationOptionsTemplate}
       />
     ) : (
-      <RecidivismRateSectionForSentenceLength insight={insight} />
+      <RecidivismRateSectionForSentenceLength
+        insight={insight}
+        recommendationOptionsTemplate={recommendationOptionsTemplate}
+      />
     ));
 
   return (
