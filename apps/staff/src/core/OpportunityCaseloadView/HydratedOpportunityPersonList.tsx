@@ -71,13 +71,15 @@ import {
   formatWorkflowsDate,
 } from "../../utils/formatStrings";
 import {
+  Client,
   JusticeInvolvedPerson,
   Opportunity,
   OpportunityTab,
   OpportunityTabGroup,
 } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
-import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
+import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
+import { Resident } from "../../WorkflowsStore/Resident";
 import { CaseloadSelect } from "../CaseloadSelect";
 import InsightsPill from "../InsightsPill";
 import PersonId from "../PersonId";
@@ -211,7 +213,8 @@ export type OpportunityTableColumnId =
   | "ASSIGNED_STAFF_NAME"
   | "STATUS"
   | "ELIGIBILITY_DATE"
-  | "ELIGIBLE_FOR"
+  | "RELEASE_DATE"
+  | "SUPERVISION_EXPIRATION_DATE"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
   | "CTA_BUTTON"
@@ -230,7 +233,7 @@ type OpportunityPersonListProps = {
 };
 
 type OpportunityCaseloadComponentProps = {
-  presenter: OpportunityCaseloadPresenter;
+  presenter: OpportunityPersonListPresenter;
 };
 
 export function PersonIdCell({ row }: { row: Row<Opportunity> }) {
@@ -459,6 +462,50 @@ const TableView = observer(function TableView({
       },
     },
     {
+      header: presenter.releaseDateHeader,
+      id: "RELEASE_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        const { person } = opp;
+        if (person instanceof Resident) {
+          return person.releaseDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const { person } = row.original;
+        if (!(person instanceof Resident)) {
+          return "—";
+        }
+        if (person.onLifeSentence) {
+          return "Serving a life sentence";
+        }
+        return `${formatWorkflowsDate(person.releaseDate)}`;
+      },
+    },
+    {
+      header: "Sentence End",
+      id: "SUPERVISION_EXPIRATION_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: (opp: Opportunity) => {
+        const { person } = opp;
+        if (person instanceof Client) {
+          return person.expirationDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const { person, sentenceExpiration } = row.original;
+        if (!(person instanceof Client)) {
+          return "—";
+        }
+        if (sentenceExpiration) {
+          return `${formatWorkflowsDate(sentenceExpiration)}`;
+        }
+        return `${formatWorkflowsDate(person.expirationDate)}`;
+      },
+    },
+    {
       header: "Last Viewed",
       id: "LAST_VIEWED",
       accessorFn: (opp: Opportunity) => opp.lastViewed?.date,
@@ -554,7 +601,7 @@ const TableView = observer(function TableView({
 const ManagedComponent = observer(function HydratedOpportunityPersonList({
   presenter,
 }: {
-  presenter: OpportunityCaseloadPresenter;
+  presenter: OpportunityPersonListPresenter;
 }) {
   const { opportunityTableView } = useFeatureVariants();
   const { isMobile, isTablet } = useIsMobile(true);
@@ -719,14 +766,16 @@ function usePresenter({
   opportunityType,
   supervisionPresenter,
 }: OpportunityPersonListProps) {
-  const { workflowsStore, analyticsStore, firestoreStore } = useRootStore();
+  const { workflowsStore, analyticsStore, firestoreStore, tenantStore } =
+    useRootStore();
   const opportunityConfigs = useOpportunityConfigurations();
   const featureVariants = useFeatureVariants();
   const config = opportunityConfigs[opportunityType];
 
-  return new OpportunityCaseloadPresenter(
+  return new OpportunityPersonListPresenter(
     analyticsStore,
     firestoreStore,
+    tenantStore,
     workflowsStore,
     config,
     featureVariants,

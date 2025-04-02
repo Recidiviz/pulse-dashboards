@@ -28,12 +28,9 @@ import { insightsUrl, workflowsUrl } from "../../core/views";
 import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
+import TenantStore from "../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
 import { toTitleCase } from "../../utils";
-import {
-  opportunitiesBySubcategory,
-  opportunitiesByTab,
-} from "../../WorkflowsStore/utils";
 import {
   Opportunity,
   OpportunityTab,
@@ -42,6 +39,7 @@ import {
 import { OpportunityConfiguration } from "../Opportunity/OpportunityConfigurations";
 import { CollectionDocumentSubscription } from "../subscriptions";
 import { JusticeInvolvedPerson } from "../types";
+import { opportunitiesBySubcategory, opportunitiesByTab } from "../utils";
 import { WorkflowsStore } from "../WorkflowsStore";
 import {
   TableViewSelectInterface,
@@ -53,7 +51,9 @@ import {
  * current view of a single opportunity, including who is eligible and the user's
  * visual settings such as tab grouping and tab ordering.
  */
-export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
+export class OpportunityPersonListPresenter
+  implements TableViewSelectInterface
+{
   readonly isSupervisorHomepage: boolean;
   readonly displayTabGroups: OpportunityTabGroup[];
   readonly showZeroGrantsPill: boolean;
@@ -70,6 +70,7 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
   constructor(
     private readonly analyticsStore: AnalyticsStore,
     private readonly firestoreStore: FirestoreStore,
+    private readonly tenantStore: TenantStore,
     private readonly workflowsStore: WorkflowsStore,
     public readonly config: OpportunityConfiguration,
     featureVariants: FeatureVariantRecord,
@@ -144,15 +145,25 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
         some(opportunities, (opp) => !!opp.person.assignedStaffId),
       STATUS: true,
       ELIGIBILITY_DATE: some(opportunities, (opp) => !!opp.eligibilityDate),
-      ELIGIBLE_FOR: some(
-        opportunities,
-        (opp: Opportunity) =>
-          !opp.denied &&
-          !opp.isSubmitted &&
-          !opp.almostEligible &&
-          opp.eligibilityDate &&
-          opp.eligibilityDate < startOfToday(),
-      ),
+      // TODO(#7921): More gracefully handle these special cases
+      RELEASE_DATE:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        ![
+          // Michigan facilities opportunities have both min and max release dates,
+          // and the release date on the Resident object doesn't agree with them
+          "usMiSecurityClassificationCommitteeReview",
+          "usMiAddInPersonSecurityClassificationCommitteeReview",
+          "usMiWardenInPersonSecurityClassificationCommitteeReview",
+        ].includes(this.opportunityType),
+      SUPERVISION_EXPIRATION_DATE:
+        this.workflowsStore.activeSystem === "SUPERVISION" &&
+        ![
+          // the Eligibility Date column for FULL_TERM_DISCHARGE opportunities
+          // will already display the supervision expiration date
+          "pastFTRD",
+          "usMiPastFTRD",
+          "usTnExpiration",
+        ].includes(this.opportunityType),
       LAST_VIEWED: true,
       ALMOST_ELIGIBLE_STATUS: some(
         opportunities,
@@ -347,8 +358,12 @@ export class OpportunityCaseloadPresenter implements TableViewSelectInterface {
   get eligibilityDateHeader() {
     // Header text for the "eligibility date" column in table view
     const { eligibilityDateText } = this.config;
-    if (!eligibilityDateText) return "Eligibility Date";
-    return toTitleCase(eligibilityDateText.toLowerCase());
+    return eligibilityDateText ?? "Eligibility Date";
+  }
+
+  get releaseDateHeader() {
+    // Header text for the "release date" column in table view
+    return this.tenantStore.releaseDateCopy;
   }
 
   get submittedForHeader() {

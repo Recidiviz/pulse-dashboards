@@ -27,7 +27,7 @@ import { rem } from "polished";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { OpportunityCaseloadPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadPresenter";
+import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 
 const TallerDropdownToggle = styled(DropdownToggle)`
   height: 40px;
@@ -56,7 +56,7 @@ const SelectedOpportunityTypeIndicator = styled.span`
 export const OpportunityTypeSelect = observer(function OpportunityTypeSelect({
   presenter,
 }: {
-  presenter: OpportunityCaseloadPresenter;
+  presenter: OpportunityPersonListPresenter;
 }) {
   const { opportunityConfigs, selectedOpportunityType, opportunityTypes } =
     presenter;

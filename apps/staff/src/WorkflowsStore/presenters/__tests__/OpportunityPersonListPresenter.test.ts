@@ -21,13 +21,14 @@ import { mockOpportunity } from "../../../core/__tests__/testUtils";
 import FirestoreStore from "../../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
+import TenantStore from "../../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../../RootStore/types";
 import { OpportunityConfiguration } from "../../Opportunity/OpportunityConfigurations";
 import { OpportunityTab, OpportunityTabGroups } from "../../Opportunity/types";
 import { WorkflowsStore } from "../../WorkflowsStore";
-import { OpportunityCaseloadPresenter } from "../OpportunityCaseloadPresenter";
+import { OpportunityPersonListPresenter } from "../OpportunityPersonListPresenter";
 
-let presenter: OpportunityCaseloadPresenter;
+let presenter: OpportunityPersonListPresenter;
 
 const analyticsStore = {
   trackOpportunityTabClicked: vi.fn(),
@@ -37,6 +38,8 @@ const mockUpdateCustomTabOrderings = vi.fn();
 const firestoreStore = {
   updateCustomTabOrderings: mockUpdateCustomTabOrderings,
 } as any as FirestoreStore;
+
+const tenantStore = {} as any as TenantStore;
 
 const mockOpportunities = {
   [mockOpportunity.type]: [mockOpportunity],
@@ -60,10 +63,11 @@ function getPresenter({
   config?: OpportunityConfiguration;
   supervisionPresenter?: SupervisionOpportunityPresenter;
   workflowsStore?: WorkflowsStore;
-}): OpportunityCaseloadPresenter {
-  return new OpportunityCaseloadPresenter(
+}): OpportunityPersonListPresenter {
+  return new OpportunityPersonListPresenter(
     analyticsStore,
     firestoreStore,
+    tenantStore,
     workflowsStore,
     config,
     FEATURE_VARIANTS_WITH_OPP_TABS,
@@ -273,7 +277,7 @@ describe("table view columns", () => {
     presenter = getPresenter({});
   });
 
-  test("show Eligibility Date and Eligible For columns when viewing opportunity that became eligible in the past", () => {
+  test("show Eligibility Date column when viewing opportunity that became eligible in the past", () => {
     tk.freeze(new Date(2000, 1, 1));
     vi.spyOn(
       mockWorkflowsStore,
@@ -289,10 +293,9 @@ describe("table view columns", () => {
     });
     presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
     expect(presenter.enabledColumnIds["ELIGIBILITY_DATE"]).toBeTrue();
-    expect(presenter.enabledColumnIds["ELIGIBLE_FOR"]).toBeTrue();
   });
 
-  test("show Eligibility Date but not Eligible For column when viewing opportunity that will become eligible in the future", () => {
+  test("show Eligibility Date column when viewing opportunity that will become eligible in the future", () => {
     tk.freeze(new Date(2000, 1, 1));
     vi.spyOn(
       mockWorkflowsStore,
@@ -308,7 +311,6 @@ describe("table view columns", () => {
     });
     presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
     expect(presenter.enabledColumnIds["ELIGIBILITY_DATE"]).toBeTrue();
-    expect(presenter.enabledColumnIds["ELIGIBLE_FOR"]).toBeFalse();
   });
 
   test("don't show Instance Details column when opportunity doesn't have them", () => {
