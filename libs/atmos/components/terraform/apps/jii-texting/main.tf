@@ -10,7 +10,7 @@ locals {
   prod_env      = local.env_secrets["env_prod_jii_texting_server"]
 
   server_image = "${var.artifact_registry_repo}/jii-texting-server:${var.server_version}"
-  job_image    = "${var.artifact_registry_repo}/jii-texting-jobs:${var.server_version}"
+  processor_job_image    = "${var.artifact_registry_repo}/jii-texting-jobs/processor:${var.server_version}"
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
@@ -103,7 +103,7 @@ module "process-jii-to-text-wf" {
 module "process-jii-cloud-run-job" {
   source                        = "../../vendor/cloud-run-job-exec"
   name                          = "process-jii"
-  image                         = local.job_image
+  image                         = local.processor_job_image
   project_id                    = var.project_id
   location                      = var.location
   env_vars                      = local.env_vars

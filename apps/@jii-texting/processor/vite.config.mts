@@ -21,7 +21,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/jii-texting-jobs",
+  cacheDir: "../../node_modules/.vite/apps/@jii-texting/processor",
 
   plugins: [nxViteTsPaths()],
   test: {
@@ -43,7 +43,7 @@ export default defineConfig({
       },
     },
     coverage: {
-      reportsDirectory: "../../coverage/apps/jii-texting-jobs",
+      reportsDirectory: "../../coverage/apps/@jii-texting/processor",
       provider: "v8",
     },
     // We need to set this up this way because:

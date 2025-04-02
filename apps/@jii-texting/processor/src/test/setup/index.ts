@@ -22,8 +22,8 @@ import {
 } from "@prisma/jii-texting-server/client";
 import { afterEach, beforeEach, vi } from "vitest";
 
+import { seed } from "~@jii-texting/processor/test/setup/seed";
 import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
-import { seed } from "~jii-texting-jobs/test/setup/seed";
 
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 

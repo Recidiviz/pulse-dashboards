@@ -22,14 +22,14 @@ import {
 } from "@prisma/jii-texting-server/client";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 
+import { processJii } from "~@jii-texting/processor/scripts/process-jii";
+import { testPrismaClient } from "~@jii-texting/processor/test/setup/index";
 import {
   fakePersonOne,
   fakeWorkflowExecutionOne,
   fakeWorkflowExecutionThree,
   fakeWorkflowExecutionTwo,
 } from "~@jii-texting-server/utils/test/constants";
-import { processJii } from "~jii-texting-jobs/scripts/process-jii";
-import { testPrismaClient } from "~jii-texting-jobs/test/setup/index";
 import { TwilioAPIClient } from "~twilio-api";
 
 vi.mock("~twilio-api");

@@ -18,7 +18,7 @@
 import { Command } from "@commander-js/extra-typings";
 import { StateCode } from "@prisma/jii-texting-server/client";
 
-import { processJii } from "~jii-texting-jobs/scripts/process-jii";
+import { processJii } from "~@jii-texting/processor/scripts/process-jii";
 
 // Define CLI
 const program = new Command()

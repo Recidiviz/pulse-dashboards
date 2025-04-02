@@ -1,7 +1,7 @@
 {
-  "name": "jii-texting-jobs",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/jii-texting-jobs/src",
+  "name": "@jii-texting/processor",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@jii-texting/processor/src",
   "projectType": "application",
   "targets": {    
     "create-base-package-json": {
@@ -14,7 +14,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server",
+        "command": "../../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server",
         "cwd": "{projectRoot}"
       }
     },
@@ -32,7 +32,7 @@
       "options": {
         "platform": "node",
         "target": "node20",
-        "outputPath": "dist/apps/jii-texting-jobs",
+        "outputPath": "dist/apps/@jii-texting/processor",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.app.json",
@@ -71,14 +71,14 @@
         "staging": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs:$COMMIT_SHA",
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs:latest"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs/processor:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs/processor:latest"
           ]
         },
         "cherry-pick": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs/processor:$COMMIT_SHA"
           ]
         }
       },
@@ -96,10 +96,10 @@
           "target": "docker"
         }
       ],
-      "outputs": ["{workspaceRoot}/coverage/apps/jii-texting-jobs"],
+      "outputs": ["{workspaceRoot}/coverage/apps/@jii-texting/processor"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @jii-texting-server/prisma && cd apps/jii-texting-jobs && vitest",
+        "command": "nx prisma-deploy @jii-texting-server/prisma && cd apps/@jii-texting/processor && vitest",
         "cwd": "{workspaceRoot}"
       }
     },
@@ -111,5 +111,5 @@
       }
     }
   },
-  "tags": ["jii-texting-jobs"]
+  "tags": ["jii-texting-server"]
 }

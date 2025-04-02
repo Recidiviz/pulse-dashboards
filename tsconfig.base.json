@@ -38,6 +38,7 @@
         "libs/@jii-texting-server/utils/src/index.ts"
       ],
       "~@jii-texting-server/utils/*": ["libs/@jii-texting-server/utils/src/*"],
+      "~@jii-texting/processor/*": ["apps/@jii-texting/processor/src/*"],
       "~@sentencing-server/prisma": [
         "libs/@sentencing-server/prisma/src/index.ts"
       ],
@@ -78,7 +79,6 @@
       "~firestore-config": ["libs/firestore-config/src/index.ts"],
       "~fixture-generator": ["libs/fixture-generator/src/index.ts"],
       "~hydration-utils": ["libs/hydration-utils/src/index.ts"],
-      "~jii-texting-jobs/*": ["apps/jii-texting-jobs/src/*"],
       "~jii-texting-server/*": ["apps/jii-texting-server/src/*"],
       "~repo": ["plugins/repo/src/index.ts"],
       "~sentencing-client": ["libs/sentencing-client/src/index.ts"],

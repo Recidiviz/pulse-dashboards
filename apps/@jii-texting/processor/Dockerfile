@@ -11,11 +11,11 @@ RUN apt-get install dumb-init
 RUN corepack enable
 
 # Copy over the package.json, yarn.lock, and .yarnrc.yml files since they are changed less often
-COPY dist/apps/jii-texting-jobs/package.json dist/apps/jii-texting-jobs/yarn.lock dist/apps/jii-texting-jobs/.yarnrc.yml ./
+COPY dist/apps/@jii-texting/processor/package.json dist/apps/@jii-texting/processor/yarn.lock dist/apps/@jii-texting/processor/.yarnrc.yml ./
 RUN yarn workspaces focus --production
 
 # Copy over the rest of the files as late as we can
-COPY dist/apps/jii-texting-jobs .
+COPY dist/apps/@jii-texting/processor .
 RUN yarn prisma generate
 
 CMD ["dumb-init", "node", "--import=extensionless/register", "main.js"]
