@@ -89,3 +89,10 @@ resource "google_project_iam_member" "airflow-pubsub-publisher" {
   role    = "roles/pubsub.publisher"
   member  = "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
 }
+
+# Grant Workflow Invoker role to Google Workflows service account to allow it to execute Workflows
+resource "google_project_iam_member" "workflow-executor" {
+  project = var.project_id
+  role    = "roles/workflows.admin"
+  member  = google_service_account.workflows.member
+}

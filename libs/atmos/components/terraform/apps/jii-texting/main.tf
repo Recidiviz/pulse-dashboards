@@ -77,6 +77,10 @@ module "handle-jii-texting-export-wf" {
     }
   }
   workflow_source = file("${path.module}/workflows/handle-jii-texting-export.workflows.yaml")
+  env_vars = {
+    PROJECT_ID = var.project_id
+    CLOUD_RUN_SERVICE_URL   = module.cloud-run.service_uri
+  }
 }
 
 # Configure a Google Workflow that executes the main processing of JII texts,

@@ -11,5 +11,38 @@ main:
     - init:
         assign:
           - state_code: ${message.state_code}
-    - return_state_code:
-        return: ${state_code}
+          - cloud_run_service_url: ${sys.get_env("CLOUD_RUN_SERVICE_URL")}
+          - project_id: ${sys.get_env("PROJECT_ID")}
+          - current_date_str: ${text.substring(time.format(sys.now()), 0, 10)}
+          - dry_run: ${sys.get_env("PROJECT_ID") != "recidiviz-dashboard-production"}
+    - get_latest_logic_execution:
+        call: http.get
+        args:
+          url: ${cloud_run_service_url + "/workflow-executions/latest/" + state_code}
+          auth:
+            type: OIDC
+        result: latest_logic_execution_result
+    - assign_latest_logic_execution:
+        assign:
+          - latest_logic_execution: ${latest_logic_execution_result.body.workflowExecution}
+    - should_trigger_logic_execution:
+        switch: 
+          - condition: ${text.substring(latest_logic_execution.workflowExecutionTime, 0, 10) != current_date_str or latest_logic_execution == null}
+            next: run_logic
+        next: skip_logic
+    - skip_logic:
+        return: ${"Did not trigger logic execution"}
+    - run_logic:
+        call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.run
+        args:
+          workflow_id: process-jii-to-text
+          location: us-central1
+          project_id: ${project_id}
+          argument: 
+            dryRun: ${dry_run}
+            stateCode: ${state_code}
+          connector_params:
+            skip_polling: true
+        result: workflow
+    - finish:
+        return: ${workflow}
