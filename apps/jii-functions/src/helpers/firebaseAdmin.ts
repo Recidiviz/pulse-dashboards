@@ -53,10 +53,13 @@ function getFirebaseApp(): App {
     private_key: dataSourceCredentialPrivateKey.value().replace(/\\n/gm, "\n"),
   };
 
-  return firebaseAdmin.initializeApp({
+  // cache the app object so we don't try to reinitialize it later
+  firebaseApp = firebaseAdmin.initializeApp({
     projectId: dataSourceProject.value(),
     credential: firebaseAdmin.credential.cert(firebaseCredential),
   });
+
+  return firebaseApp;
 }
 
 /**
