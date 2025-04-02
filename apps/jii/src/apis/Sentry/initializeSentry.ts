@@ -69,11 +69,18 @@ export function initializeSentry(): void {
     return event;
   };
 
+  const reverseProxyHost = import.meta.env["VITE_REVERSE_PROXY_HOST"];
+
   init({
     dsn,
     environment,
     integrations,
     beforeSend,
     tracesSampleRate: isOffline ? 0 : 1,
+    ...(reverseProxyHost
+      ? {
+          tunnel: `https://${reverseProxyHost}/sentry/`,
+        }
+      : {}),
   });
 }
