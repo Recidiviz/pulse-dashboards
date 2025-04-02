@@ -163,7 +163,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Validated by OTrack data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["UsUtDates", "Milestones", "Contact"],
+      sidebarComponents: ["UsUtDates", "Milestones", "Contact", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_UT",
       subcategoryHeadings: [

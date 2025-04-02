@@ -39,7 +39,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "UNREPORTED",
-          text: "Client has an out of state charge, an unreported disposition or a delinquent adjudication on an offense that makes them ineligible per form 402",
+          text: "Client has an out of state charge or an unreported disposition on an offense that makes them ineligible per form 402",
         },
         {
           key: "DRUG",
@@ -127,7 +127,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "See domestic violence section of integrated case summary for PFA orders",
         },
         {
-          text: "Does not have out of state charges, unreported dispositions, or delinquent adjudications for ineligible offenses",
+          text: "Does not have out of state charges or unreported dispositions for ineligible offenses",
           tooltip:
             'Click "complete checklist" to see full list of ineligible offenses',
         },

@@ -30,7 +30,7 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: null,
       displayName: "Overdue for Drug Transition Program",
       dynamicEligibilityText: "resident[|s] are past their DTP date",
-      eligibilityDateText: null,
+      eligibilityDateText: "DTP date",
       eligibleCriteriaCopy: [
         {
           key: "usAzIncarcerationPastAcisDtpDate",
@@ -90,6 +90,22 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
         },
+        {
+          key: "custodyLevelIsMinimumOrMedium",
+          text: "Not currently classified as Minimum or Medium Custody",
+          tooltip:
+            "Inmates must be currently classified by the department as minimum or medium custody as determined by an objective risk assessment.",
+        },
+        {
+          key: "usAzNoViolationsAndEligibleLegalStatus",
+          text: "Has one or more violations preventing eligibility",
+          tooltip:
+            "Inmates must have no major violent violations and no nonviolent violations within the last 6 months.",
+        },
+        {
+          key: "usAzNoDtpRemovalsFromSelfImprovementPrograms",
+          text: "Has been removed from a Self Improvement Program during the current incarceration",
+        },
       ],
       initialHeader: null,
       isAlert: false,
@@ -129,7 +145,7 @@ export const mockApiOpportunityConfigurationResponse = {
       displayName: "Overdue for Standard Transition Program",
       dynamicEligibilityText:
         "resident[|s] may be past their Standard Transition Program date",
-      eligibilityDateText: null,
+      eligibilityDateText: "TPR date",
       eligibleCriteriaCopy: [
         {
           key: "usAzIncarcerationPastAcisTprDate",
@@ -186,6 +202,22 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzNoActiveFelonyDetainers",
           text: "Has one or more felony detainers",
         },
+        {
+          key: "custodyLevelIsMinimumOrMedium",
+          text: "Not currently classified as Minimum or Medium Custody",
+          tooltip:
+            "Inmates must be currently classified by the department as minimum or medium custody as determined by an objective risk assessment.",
+        },
+        {
+          key: "usAzNoViolationsAndEligibleLegalStatus",
+          text: "Has one or more violations preventing eligibility",
+          tooltip:
+            "Inmates must have no major violent violations and no nonviolent violations within the last 6 months.",
+        },
+        {
+          key: "usAzNoTprRemovalsFromSelfImprovementPrograms",
+          text: "Has been removed from a Self Improvement Program during the current incarceration",
+        },
       ],
       initialHeader: null,
       isAlert: false,
@@ -225,7 +257,7 @@ export const mockApiOpportunityConfigurationResponse = {
       displayName: "Drug Transition Program Release",
       dynamicEligibilityText:
         "inmate[|s] may be eligible for Drug Transition Program Release",
-      eligibilityDateText: null,
+      eligibilityDateText: "DTP or Projected DTP",
       eligibleCriteriaCopy: [
         {
           key: "usAzNoActiveFelonyDetainers",
@@ -284,6 +316,22 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Has not enrolled in or met functional literacy requirement",
           tooltip:
             "The inmate must not have failed to achieve functional literacy as required by section 41-1604.07, subsection F, unless the inmate is enrolled in a program that prepares the inmate to achieve functional literacy.",
+        },
+        {
+          key: "custodyLevelIsMinimumOrMedium",
+          text: "Not currently classified as Minimum or Medium Custody",
+          tooltip:
+            "Inmates must be currently classified by the department as minimum or medium custody as determined by an objective risk assessment.",
+        },
+        {
+          key: "usAzNoViolationsAndEligibleLegalStatus",
+          text: "Has one or more violations preventing eligibility",
+          tooltip:
+            "Inmates must have no major violent violations and no nonviolent violations within the last 6 months.",
+        },
+        {
+          key: "usAzNoDtpRemovalsFromSelfImprovementPrograms",
+          text: "Has been removed from a Self Improvement Program during the current incarceration",
         },
       ],
       initialHeader: null,
@@ -406,7 +454,7 @@ export const mockApiOpportunityConfigurationResponse = {
       displayName: "Standard Transition Program Release",
       dynamicEligibilityText:
         "inmate[|s] may be eligible for Standard Transition Program Release",
-      eligibilityDateText: null,
+      eligibilityDateText: "TPR or Projected TPR",
       eligibleCriteriaCopy: [
         { key: "usAzNoActiveFelonyDetainers", text: "No felony detainers" },
         {
@@ -463,6 +511,22 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzNoActiveFelonyDetainers",
           text: "Has one or more felony detainers",
+        },
+        {
+          key: "custodyLevelIsMinimumOrMedium",
+          text: "Not currently classified as Minimum or Medium Custody",
+          tooltip:
+            "Inmates must be currently classified by the department as minimum or medium custody as determined by an objective risk assessment.",
+        },
+        {
+          key: "usAzNoViolationsAndEligibleLegalStatus",
+          text: "Has one or more violations preventing eligibility",
+          tooltip:
+            "Inmates must have no major violent violations and no nonviolent violations within the last 6 months.",
+        },
+        {
+          key: "usAzNoTprRemovalsFromSelfImprovementPrograms",
+          text: "Has been removed from a Self Improvement Program during the current incarceration",
         },
       ],
       initialHeader: null,

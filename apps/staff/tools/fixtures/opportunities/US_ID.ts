@@ -217,12 +217,11 @@ export const mockApiOpportunityConfigurationResponse = {
       displayName: "Release from Supervision",
       dynamicEligibilityText:
         "client[|s] [is|are] nearing or past their full-term release date",
-      eligibilityDateText: null,
+      eligibilityDateText: "Full-term release date",
       eligibleCriteriaCopy: [
         {
           key: "supervisionPastFullTermCompletionDate",
           text: "{{daysPast eligibleDate}} days past FTRD ({{date eligibleDate}})",
-          tooltip: null,
         },
       ],
       emptyTabCopy: [],
@@ -235,7 +234,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "supervisionPastFullTermCompletionDate",
           text: "{{daysUntil eligibleDate}} days until FTRD ({{date eligibleDate}})",
-          tooltip: null,
         },
       ],
       initialHeader:
@@ -332,6 +330,24 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usIdIncarcerationWithin3YearsOfTpdAndLifeSentence",
+          text: "Life sentence AND Tentative Parole Date (TPD) within 3 years",
+          tooltip:
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
+        },
+        {
+          key: "incarcerationWithin7YearsOfFtcdOrTpd",
+          text: "Tentative Parole Date (TPD) within seven (7) years OR Full Term Release Date (FTRD) within seven (7) years",
+          tooltip:
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
+        },
+        {
+          key: "incarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd",
+          text: "Parole Eligibility Date (PED) within seven (7) years AND Parole Hearing Date (PHD) within seven (7) years AND Full Term Release Date (FTRD) within 20 years",
+          tooltip:
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
+        },
+        {
+          key: "incarcerationWithin3YearsOfTpdAndLifeSentence",
           text: "Life sentence AND Tentative Parole Date (TPD) within 3 years",
           tooltip:
             "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
@@ -475,6 +491,24 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Life sentence AND Tentative Parole Date (TPD) within 1 year",
           tooltip:
             "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
+        },
+        {
+          key: "incarcerationWithin18MonthsOfFtcdOrTpd",
+          text: "Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months",
+          tooltip:
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within eighteen (18) months OR\n        Full Term Release Date (FTRD) within eighteen (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
+        },
+        {
+          key: "incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd",
+          text: "Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years",
+          tooltip:
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within eighteen (18) months OR\n        Full Term Release Date (FTRD) within eighteen (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
+        },
+        {
+          key: "incarcerationWithin1YearOfTpdAndLifeSentence",
+          text: "Life sentence AND Tentative Parole Date (TPD) within 1 year",
+          tooltip:
+            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within eighteen (18) months OR\n        Full Term Release Date (FTRD) within eighteen (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
         },
       ],
       emptyTabCopy: [],

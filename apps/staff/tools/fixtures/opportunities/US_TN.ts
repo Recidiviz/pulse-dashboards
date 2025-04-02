@@ -618,6 +618,10 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Overall risk score of 'minimum' for at least two years",
         },
         {
+          key: "assessedRiskLowWhileOnSupervisionAtLeast2Years",
+          text: "Overall risk score of 'minimum' for at least two years",
+        },
+        {
           key: "usTnNoSupervisionSanctionWithin1Year",
           text: "Has not been sanctioned in the past year",
         },

@@ -24,11 +24,26 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [],
+      denialReasons: [
+        {
+          key: "COS",
+          text: "Not current on Supervision and Crime Victim Fund fees (if applicable)",
+        },
+        {
+          key: "RESTITUTION",
+          text: "Court-mandated restitution and Post Secondary Education Reimbursement (if applicable) not yet paid in full",
+        },
+        {
+          key: "FEES",
+          text: "Court costs, fines, and related fees not yet paid in full",
+        },
+        { key: "Other", text: "Other, please specify a reason" },
+      ],
       denialText: null,
       deniedTabTitle: null,
       displayName: "Annual Report Status",
-      dynamicEligibilityText: "clients maybe eligible for Annual Report Status",
+      dynamicEligibilityText:
+        "clients may be eligible for Annual Report Status",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -37,11 +52,13 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usTxNotConvictedOfIneligibleOffenseForArs",
-          text: "Have no current or prior convictions or deferred adjudication for a nonqualifying offense",
+          text: "Has no current or prior convictions or deferred adjudication for a non-qualifying offense",
         },
         {
           key: "usTxNoWarrantWithSustainedViolationWithin7Years",
-          text: "Have no warrant issued during the previous seven years of the current parole\nsupervision period. This does not apply to a warrant issued where subsequently\nan investigation or administrative review did not sustain a violation.",
+          text: "Has no warrant issued during the previous seven years of the current parole\nsupervision period",
+          tooltip:
+            "This does not apply to a warrant issued where subsequently an investigation or administrative review did not sustain a violation.",
         },
       ],
       emptyTabCopy: [],
@@ -59,14 +76,14 @@ export const mockApiOpportunityConfigurationResponse = {
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
       nonOmsCriteria: [
         {
-          text: "Be current on Supervision and Crime Victim Fund fees (if applicable), which\ncontinue to be due for payment each month unless paid in advance",
+          text: "Must be current on Supervision and Crime Victim Fund fees (if applicable)",
+          tooltip:
+            "Fees continue to be due for payment each month unless paid in advance.",
         },
         {
-          text: "Ensure court-mandated restitution and Post Secondary Education\nReimbursement (if applicable) are paid in full",
+          text: "Must have court-mandated restitution and Post Secondary Education Reimbursement (if applicable) paid in full",
         },
-        {
-          text: "Ensure court costs, fines, and related fees are paid in full",
-        },
+        { text: "Must have court costs, fines, and related fees paid in full" },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
@@ -74,12 +91,12 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [],
-      snooze: null,
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_TX",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Supervision clients may be eligible transfer to Annual Report Status if they meet certain criteria. The official policy doc can be found here (https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Nov 5, 2013. Review potentially eligible clients below.",
+        "Supervision clients may be eligible transfer to Annual Report Status if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Nov 5, 2013. \n\nReview potentially eligible clients below.",
       submittedTabTitle: null,
       supportsSubmitted: false,
       systemType: "SUPERVISION",
