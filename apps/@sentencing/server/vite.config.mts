@@ -21,7 +21,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: "../../node_modules/.vite/apps/sentencing-server",
+  cacheDir: "../../../node_modules/.vite/apps/@sentencing/server",
 
   plugins: [nxViteTsPaths()],
   test: {
@@ -37,7 +37,7 @@ export default defineConfig({
       },
     },
     coverage: {
-      reportsDirectory: "../../coverage/apps/sentencing-server",
+      reportsDirectory: "../../../coverage/apps/@sentencing/server",
       provider: "v8",
     },
     // We need to set this up this way because:

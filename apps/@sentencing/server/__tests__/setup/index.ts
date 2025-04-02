@@ -26,11 +26,11 @@ import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
 import { beforeAll, beforeEach, vi } from "vitest";
 
+import { buildServer } from "~@sentencing/server/server";
+import { seed } from "~@sentencing/server/test/setup/seed";
+import { resetDb } from "~@sentencing/server/test/setup/utils";
 import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
 import type { AppRouter } from "~@sentencing-server/trpc";
-import { buildServer } from "~sentencing-server/server";
-import { seed } from "~sentencing-server/test/setup/seed";
-import { resetDb } from "~sentencing-server/test/setup/utils";
 
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])

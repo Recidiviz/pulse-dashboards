@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { buildServer } from "~sentencing-server/server";
+import { buildServer } from "~@sentencing/server/server";
 
 const host = process.env["HOST"] ?? "localhost";
 const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3002;

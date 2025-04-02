@@ -18,12 +18,12 @@
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
-import { testTRPCClient } from "~sentencing-server/test/setup";
+import { testTRPCClient } from "~@sentencing/server/test/setup";
 import {
   fakeCase,
   fakeClient,
   fakeStaff,
-} from "~sentencing-server/test/setup/seed";
+} from "~@sentencing/server/test/setup/seed";
 
 describe("Server", () => {
   test("should include trpc routes", async () => {

@@ -345,7 +345,7 @@ if (
         // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
 
         if (deployEnv === "staging") {
-          await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration ${deployEnv}`.pipe(
+          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
 
@@ -353,7 +353,7 @@ if (
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
-          await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration cherry-pick`.pipe(
+          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/server --configuration cherry-pick`.pipe(
             process.stdout,
           );
 
@@ -362,7 +362,7 @@ if (
           );
         } else if (deployEnv === "demo") {
           // There's no import for demo mode
-          await $`COMMIT_SHA=${currentRevision} nx container sentencing-server --configuration demo`.pipe(
+          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/server --configuration demo`.pipe(
             process.stdout,
           );
         }

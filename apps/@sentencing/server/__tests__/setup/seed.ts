@@ -36,8 +36,8 @@ import {
   OffenseCreateInput,
   OpportunityCreateInput,
   StaffCreateInput,
-} from "~sentencing-server/test/setup/types";
-import { createFakeRecidivismSeries } from "~sentencing-server/test/setup/utils";
+} from "~@sentencing/server/test/setup/types";
+import { createFakeRecidivismSeries } from "~@sentencing/server/test/setup/utils";
 
 const FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_START = 0;
 const FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_END = 20;

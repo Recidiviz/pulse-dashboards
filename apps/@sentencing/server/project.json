@@ -1,14 +1,14 @@
 {
-  "name": "sentencing-server",
+  "name": "@sentencing/server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/sentencing-server/src",
+  "sourceRoot": "apps/@sentencing/server/src",
   "projectType": "application",
   "tags": ["sentencing-server"],
   "targets": {
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/load_env_files.sh --env env_sentencing_server --env_staging env_staging_sentencing_server --env_prod env_prod_sentencing_server --env_test env_test_sentencing_server --env_preview env_preview_sentencing_server --env_demo env_demo_sentencing_server",
+        "command": "../../../tools/load_env_files.sh --env env_sentencing_server --env_staging env_staging_sentencing_server --env_prod env_prod_sentencing_server --env_test env_test_sentencing_server --env_preview env_preview_sentencing_server --env_demo env_demo_sentencing_server",
         "cwd": "{projectRoot}"
       }
     },
@@ -72,7 +72,7 @@
       ],
       "options": {
         "platform": "node",
-        "outputPath": "dist/apps/sentencing-server",
+        "outputPath": "dist/apps/@sentencing/server",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
         "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
@@ -127,7 +127,7 @@
         "build"
       ],
       "options": {
-        "buildTarget": "sentencing-server:build"
+        "buildTarget": "@sentencing/server:build"
       }
     },
     "test": {
@@ -145,7 +145,7 @@
       "outputs": ["{workspaceRoot}/coverage/apps/sentencing-server"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @sentencing-server/prisma && cd apps/sentencing-server && vitest",
+        "command": "nx prisma-deploy @sentencing-server/prisma && cd apps/@sentencing/server && vitest",
         "cwd": "{workspaceRoot}"
       }
     },
@@ -192,7 +192,7 @@
     "create-preview-db": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/clone_sentencing_db.sh",
+        "command": "../../../tools/clone_sentencing_db.sh",
         "cwd": "{projectRoot}"
       }
     },
@@ -242,7 +242,7 @@
     "cleanup-preview-resources": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/cleanup_sentencing_preview_resources.sh",
+        "command": "../../../tools/cleanup_sentencing_preview_resources.sh",
         "cwd": "{projectRoot}"
       }
     }
