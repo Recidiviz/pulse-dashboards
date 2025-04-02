@@ -26,7 +26,7 @@ import {
   Firestore,
   getDoc,
   getDocs,
-  getFirestore,
+  initializeFirestore,
   query,
   where,
 } from "firebase/firestore";
@@ -56,7 +56,10 @@ export class FirestoreAPIClient implements FirestoreAPI {
 
     this.app = initializeApp({ projectId, apiKey });
 
-    this.db = getFirestore(this.app);
+    const reverseProxyHost = import.meta.env["VITE_REVERSE_PROXY_HOST"];
+    this.db = initializeFirestore(this.app, {
+      ...(reverseProxyHost ? { host: `${reverseProxyHost}/firestore` } : {}),
+    });
   }
 
   async authenticate(firebaseToken: string) {

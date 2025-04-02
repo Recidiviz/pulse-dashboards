@@ -26,7 +26,7 @@ import {
   Firestore,
   getDoc,
   getDocs,
-  getFirestore,
+  initializeFirestore,
   Query,
   query,
   QueryFieldFilterConstraint,
@@ -60,7 +60,9 @@ beforeEach(() => {
   // we generally don't care about their return values and can verify behavior by inspecting their arguments.
   // the mock return values are only useful to verify which function was called
   vi.mocked(initializeApp).mockReturnValue(appMock as unknown as FirebaseApp);
-  vi.mocked(getFirestore).mockReturnValue(dbMock as unknown as Firestore);
+  vi.mocked(initializeFirestore).mockReturnValue(
+    dbMock as unknown as Firestore,
+  );
   vi.mocked(getAuth).mockReturnValue(authMock as unknown as Auth);
   vi.mocked(collection).mockReturnValue(
     collectionMock as unknown as CollectionReference,
@@ -79,7 +81,7 @@ test("initialize", () => {
     projectId: "project-xx",
     apiKey: "api-xx",
   });
-  expect(getFirestore).toHaveBeenCalledExactlyOnceWith(appMock);
+  expect(initializeFirestore).toHaveBeenCalledExactlyOnceWith(appMock, {});
 });
 
 test("authenticate", async () => {
