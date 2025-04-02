@@ -28,15 +28,13 @@ import { ResidentProfileProps } from "../../types";
 
 const DateCalculationInfo = styled(Sans14)`
   color: ${palette.slate70};
+  &:hover {
+    color: ${palette.slate};
+  }
 `;
 
 const DateMethodologyText = styled(Sans14)`
   display: inline;
-
-  color: ${palette.slate70};
-  &:hover {
-    color: ${palette.slate};
-  }
 
   border-bottom: 1px dashed ${palette.pine3};
   padding-bottom: ${rem(spacing.xxs)};
@@ -124,19 +122,19 @@ export function UsAzDates({
       <DatesTable dates={dates} highlightPastDates />
 
       {!hasAcisDates && (
-        <DateCalculationInfo>
-          <Link
-            to={
-              "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view"
-            }
-            target="_blank"
-          >
+        <Link
+          to={
+            "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view"
+          }
+          target="_blank"
+        >
+          <DateCalculationInfo>
             <DateMethodologyText>
               {"How are these dates calculated? "}
-              <Icon kind="Info" size={12} />
             </DateMethodologyText>
-          </Link>
-        </DateCalculationInfo>
+            <Icon kind="Info" size={12} />
+          </DateCalculationInfo>
+        </Link>
       )}
     </DetailsSection>
   );
