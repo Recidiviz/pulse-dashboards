@@ -17,37 +17,23 @@
 
 import express, { NextFunction, Request, Response } from "express";
 import jwt from "express-jwt";
-import rateLimit from "express-rate-limit";
-import firebaseAdmin from "firebase-admin";
-import { App } from "firebase-admin/app";
-import { defineSecret, defineString } from "firebase-functions/params";
+import { defineString } from "firebase-functions/params";
 import { onRequest } from "firebase-functions/v2/https";
 import jwks from "jwks-rsa";
-import toUpper from "lodash/toUpper";
 
 import { getAuth0Config, metadataNamespace, metadataSchema } from "~auth0-jii";
 
+import {
+  firebaseAdminSecrets,
+  getFirebaseToken,
+} from "../helpers/firebaseAdmin";
+import { useRateLimiter } from "../helpers/ratelimit";
+
 const tenantKey = defineString("AUTH0_TENANT_KEY");
-// Firestore is running in a different Firebase project than these functions
-const dataSourceProject = defineString("DATA_SOURCE_FIREBASE_PROJECT");
-// this is the service account key we will use to authenticate
-const dataSourceCredential = defineSecret("DATA_SOURCE_FIREBASE_CREDENTIAL");
-// the full credential exceeds the secrets character limit,
-// which is why the private key field is stored separately (it is by far the largest value)
-const dataSourceCredentialPrivateKey = defineSecret(
-  "DATA_SOURCE_FIREBASE_CREDENTIAL_PRIVATE_KEY",
-);
 
 const app = express();
 
-// matches the params set for the staff server, as a reasonable baseline
-const limiter = rateLimit({
-  windowMs: 1000, // 1 second = 1000ms
-  max: 15, // each IP address gets 15 requests per 1 second
-  standardHeaders: true, // return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // disabling the `X-RateLimit-*` headers
-});
-app.use(limiter);
+useRateLimiter(app);
 
 const jwtMiddleware = (
   request: Request,
@@ -73,10 +59,6 @@ const jwtMiddleware = (
 };
 app.use(jwtMiddleware);
 
-// there can only be one firebase app instance, but we have to access the credentials within the function;
-// therefore we will cache it here the first time it's accessed
-let firebaseApp: App;
-
 app.get("/", async (request, response): Promise<void> => {
   const { user } = request;
 
@@ -95,35 +77,7 @@ app.get("/", async (request, response): Promise<void> => {
       user[`${metadataNamespace}/app_metadata`],
     );
 
-    const stateCode = metadata.stateCode;
-    const externalId = metadata.externalId;
-    const recidivizAllowedStates = (metadata.allowedStates ?? []).map(toUpper);
-    const permissions = metadata.permissions ?? [];
-
-    const firebaseCredential = {
-      ...JSON.parse(dataSourceCredential.value()),
-      // this string may contain newlines, which we need to render as \n codes for valid JSON
-      private_key: dataSourceCredentialPrivateKey
-        .value()
-        .replace(/\\n/gm, "\n"),
-    };
-
-    firebaseApp =
-      firebaseApp ??
-      firebaseAdmin.initializeApp({
-        projectId: dataSourceProject.value(),
-        credential: firebaseAdmin.credential.cert(firebaseCredential),
-      });
-
-    const firebaseToken = await firebaseAdmin
-      .auth(firebaseApp)
-      .createCustomToken(uid, {
-        app: "jii",
-        stateCode,
-        externalId,
-        recidivizAllowedStates,
-        permissions,
-      });
+    const firebaseToken = await getFirebaseToken(uid, metadata);
 
     response.json({ firebaseToken });
   } catch (err) {
@@ -137,7 +91,7 @@ app.get("/", async (request, response): Promise<void> => {
 export const firebaseToken = onRequest(
   {
     cors: true,
-    secrets: [dataSourceCredential, dataSourceCredentialPrivateKey],
+    secrets: [...firebaseAdminSecrets],
   },
   app,
 );

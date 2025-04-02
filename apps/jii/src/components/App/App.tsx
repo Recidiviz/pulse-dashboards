@@ -38,6 +38,7 @@ import { GenericLayoutRoute } from "../GenericLayoutRoute/GenericLayoutRoute";
 import { NotFound } from "../NotFound/NotFound";
 import { OpportunityInfoPage } from "../OpportunityInfoPage/OpportunityInfoPage";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
+import { PageEdovoLanding } from "../pages/PageEdovoLanding";
 import { PageEligibilityHome } from "../pages/PageEligibilityHome";
 import { PageHome } from "../pages/PageHome";
 import { PageOpportunityComparison } from "../pages/PageOpportunityComparison";
@@ -140,6 +141,10 @@ export function App() {
                 <Route
                   path={routes.AfterLogin.path}
                   element={<PageAfterLogin />}
+                />
+                <Route
+                  path={routes.EdovoLandingPage.path}
+                  element={<PageEdovoLanding />}
                 />
 
                 <Route path="*" element={<NotFound />} />

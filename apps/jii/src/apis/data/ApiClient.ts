@@ -171,4 +171,14 @@ export class ApiClient implements DataAPI {
       throw e;
     }
   }
+
+  async validateEdovoToken(token: string): Promise<unknown> {
+    const response = await fetch(`${API_URL_BASE}/edovoToken`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.json();
+  }
 }

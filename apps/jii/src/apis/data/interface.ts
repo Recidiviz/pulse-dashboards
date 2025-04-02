@@ -64,4 +64,6 @@ export interface DataAPI {
     residentExternalId: string,
     opportunity: IncarcerationOpportunityId,
   ): Promise<OpportunityRecord<O>>;
+
+  validateEdovoToken(token: string): Promise<unknown>;
 }

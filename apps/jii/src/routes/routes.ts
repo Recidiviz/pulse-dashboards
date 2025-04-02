@@ -25,6 +25,8 @@ export const ReturnToPathFragment = route("", {
   searchParams: { returnToPath: string() },
 });
 
+export const EdovoLandingPage = route("edovo/:token");
+
 const InfoPage = route(":pageSlug");
 
 export const State = route(":stateSlug", types(ReturnToPathFragment), {

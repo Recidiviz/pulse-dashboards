@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,5 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./functions/edovoToken";
-export * from "./functions/firebaseToken";
+import { Express } from "express";
+import rateLimit from "express-rate-limit";
+
+/**
+ * Applies rate limiter middleware to the provided Express app with standard settings
+ */
+export function useRateLimiter(app: Express) {
+  // matches the params set for the staff server, as a reasonable baseline
+  const limiter = rateLimit({
+    windowMs: 1000, // 1 second = 1000ms
+    max: 15, // each IP address gets 15 requests per 1 second
+    standardHeaders: true, // return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // disabling the `X-RateLimit-*` headers
+  });
+  app.use(limiter);
+}

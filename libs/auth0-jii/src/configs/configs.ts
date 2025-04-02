@@ -103,3 +103,5 @@ export const metadataSchema = z
       message: "externalId and pseudonymizedId must both be present",
     },
   );
+
+export type UserAppMetadata = z.infer<typeof metadataSchema>;
