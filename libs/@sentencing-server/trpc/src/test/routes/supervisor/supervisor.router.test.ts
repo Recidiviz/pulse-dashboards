@@ -133,6 +133,14 @@ describe("getSupervisorDashboardStats", () => {
           staffId: "staff-1",
         },
         {
+          id: "fake-case-5",
+          externalId: "case-5-external",
+          stateCode: "US_ID",
+          dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days in the future, should not count towards completion
+          selectedRecommendation: "Term", // Completed case
+          staffId: "staff-1",
+        },
+        {
           id: "fake-case-3",
           externalId: "case-3-external",
           stateCode: "US_ID",
@@ -165,7 +173,7 @@ describe("getSupervisorDashboardStats", () => {
     const expectedStaffStats = [
       expect.objectContaining({
         caseCompletionRate: 50,
-        activeCasesAssigned: 2,
+        activeCasesAssigned: 3, // 3 active cases (1 due date in the future, 2 due dates in the past)
         totalCasesDueLast30Days: 2,
       }),
       expect.objectContaining({

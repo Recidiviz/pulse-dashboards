@@ -25,13 +25,19 @@ type StaffData = Prisma.StaffGetPayload<
   typeof PRISMA_STAFF_GET_ARGS_FOR_SUPERVISOR
 >;
 
-const lastThirtyDays = moment().utc().subtract(30, "days").toDate();
-
 const calculateRate = (numerator: number, denominator: number): number =>
   denominator === 0 ? 0 : (numerator / denominator) * 100;
 
-const isDueWithinLast30Days = (dueDate: Date | null): boolean =>
-  moment(dueDate).utc() >= moment(lastThirtyDays).utc();
+export const isDueWithinLast30Days = (dueDate: Date | null): boolean => {
+  if (!dueDate) return false;
+
+  const dueMoment = moment(dueDate).utc();
+  const thirtyDaysAgo = moment().utc().subtract(30, "days");
+  const now = moment().utc();
+
+  // "[)" means include the lower boundary (30 days ago) and exclude the upper boundary (now)
+  return dueMoment.isBetween(thirtyDaysAgo, now, undefined, "[)");
+};
 
 const isCompletedWithinLast30Days = (
   caseInfo: Pick<Case, "selectedRecommendation" | "dueDate">,
