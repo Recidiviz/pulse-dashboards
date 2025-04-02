@@ -53,3 +53,6 @@ components:
     apps/jii-proxy:
       vars:
         artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
+        # TODO(#7849): See if we can remove this once we're going through a load balancer
+        members:
+          - allUsers # public access: https://cloud.google.com/run/docs/authenticating/public

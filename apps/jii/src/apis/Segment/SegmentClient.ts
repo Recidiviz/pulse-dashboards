@@ -41,8 +41,25 @@ export class SegmentClient {
     this.segment = new AnalyticsBrowser();
 
     const writeKey = import.meta.env["VITE_SEGMENT_WRITE_KEY"];
+    const reverseProxyHost = import.meta.env["VITE_REVERSE_PROXY_HOST"];
     if (writeKey) {
-      this.segment.load({ writeKey });
+      if (reverseProxyHost) {
+        this.segment.load(
+          {
+            writeKey,
+            cdnURL: `https://${reverseProxyHost}/segment-cdn`,
+          },
+          {
+            integrations: {
+              "Segment.io": {
+                apiHost: `${reverseProxyHost}/segment-api/v1`,
+              },
+            },
+          },
+        );
+      } else {
+        this.segment.load({ writeKey });
+      }
     }
   }
 

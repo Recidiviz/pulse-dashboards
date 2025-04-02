@@ -21,6 +21,14 @@
         }
       },
       "defaultConfiguration": "dev"
+    },
+    "deploy-latest": {
+      "executor": "nx:run-commands",
+      "configurations": {
+        "staging": {
+          "command": "gcloud run deploy jii-proxy-server --image us-central1-docker.pkg.dev/recidiviz-jii-staging/jii-proxy/jii-proxy-server:latest --region us-central1 --project recidiviz-jii-staging"
+        }
+      }
     }
   }
 }

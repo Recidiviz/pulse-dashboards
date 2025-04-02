@@ -18,3 +18,8 @@ variable "server_version" {
   description = "The version tag of the image that we are deploying"
   default     = "latest"
 }
+
+variable "members" {
+  type        = list(string)
+  description = "Users/SAs to be given invoker access to the service"
+}
