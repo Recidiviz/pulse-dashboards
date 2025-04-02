@@ -63,7 +63,11 @@ const columns: ColumnDef<{
     cell: (cell) => {
       const completionRate = cell.getValue<number>();
 
-      return <div>{formatPercentage(completionRate)}</div>;
+      return (
+        <Styled.StatCell percentage={completionRate}>
+          {formatPercentage(completionRate)}
+        </Styled.StatCell>
+      );
     },
   },
   {
@@ -111,14 +115,18 @@ export const SupervisorDashboard = ({
             <Styled.StatLabel>Cases Due</Styled.StatLabel>
           </Styled.StatCard>
           <Styled.StatCard>
-            <Styled.Stat>{teamUsageRate}</Styled.Stat>
+            <Styled.Stat percentage={topLineStats?.teamUsageRate}>
+              {teamUsageRate}
+            </Styled.Stat>
             <Styled.StatLabel>
               Team Usage{" "}
               <InfoIconWithTooltip content="Team usage is the percent of investigators with cases due in the last 30 days who recorded a recommendation for at least one of those cases in the tool" />
             </Styled.StatLabel>
           </Styled.StatCard>
           <Styled.StatCard>
-            <Styled.Stat>{totalCaseCompletionRate}</Styled.Stat>
+            <Styled.Stat percentage={topLineStats?.totalCaseCompletionRate}>
+              {totalCaseCompletionRate}
+            </Styled.Stat>
             <Styled.StatLabel>
               Case Completion{" "}
               <InfoIconWithTooltip content="Case completion is the percent of cases due in the last 30 days for which a recommendation was recorded in the tool" />

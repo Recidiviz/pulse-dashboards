@@ -383,11 +383,28 @@ export const StatCard = styled.div`
   padding: 20px;
 `;
 
-export const Stat = styled.div`
+const getStatColor = (percentage?: number): string => {
+  if (percentage === undefined) {
+    return palette.data.forest1;
+  }
+  if (percentage < 40) {
+    return palette.data.crimson1;
+  }
+  if (percentage < 80) {
+    return palette.data.gold1;
+  }
+  return palette.signal.highlight;
+};
+
+export const Stat = styled.div<{ percentage?: number }>`
   ${typography.Header34}
   font-size: 42px;
   margin-bottom: 8px;
-  color: ${palette.data.forest1};
+  color: ${({ percentage }) => getStatColor(percentage)};
+`;
+
+export const StatCell = styled.div<{ percentage?: number }>`
+  color: ${({ percentage }) => getStatColor(percentage)};
 `;
 
 export const StatLabel = styled.div`
