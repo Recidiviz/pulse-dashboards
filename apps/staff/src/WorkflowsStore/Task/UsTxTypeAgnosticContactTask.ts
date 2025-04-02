@@ -26,7 +26,7 @@ class UsTxTypeAgnosticContactTask extends Task<"usTxTypeAgnosticContact"> {
   }
 
   get allowedContactTypes(): string {
-    const allowedTypes = this.details.contactTypesAccepted
+    const allowedTypes = (this.details.contactTypesAccepted ?? "Contact")
       .split(",")
       .map((type) => type.toLowerCase());
 
