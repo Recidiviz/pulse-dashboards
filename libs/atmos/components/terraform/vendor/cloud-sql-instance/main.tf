@@ -15,18 +15,30 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
+provider "google" {
+  project = var.project_id
+}
 
 # Data from Google Secrets Manager is added in this terraform module's scope
 # The following secrets are used to configure the instance:
 # =========================================================
 # Instance ID i.e. `recidiviz-staging:us-east1:dev-case-triage-data`
-data "google_secret_manager_secret_version" "cloudsql_instance_id" { secret = "${var.base_secret_name}_cloudsql_instance_id" }
+data "google_secret_manager_secret_version" "cloudsql_instance_id" {
+  secret = "${var.base_secret_name}_cloudsql_instance_id"
+  version = "latest"
+}
 
 # Default username
-data "google_secret_manager_secret_version" "db_user" { secret = "${var.base_secret_name}_db_user" }
+data "google_secret_manager_secret_version" "db_user" {
+  secret = "${var.base_secret_name}_db_user"
+  version = "latest"
+}
 
 # Password for the default user
-data "google_secret_manager_secret_version" "db_password" { secret = "${var.base_secret_name}_db_password" }
+data "google_secret_manager_secret_version" "db_password" {
+  secret  = "${var.base_secret_name}_db_password"
+  version = "latest"
+}
 
 # (Optional) Readonly user name
 data "google_secret_manager_secret_version" "db_readonly_user" {
@@ -173,8 +185,8 @@ resource "google_bigquery_connection" "default_db_bq_connection" {
   connection_id = "${var.instance_key}_cloudsql"
   friendly_name = "${local.bq_connection_friendly_name} Cloud SQL Postgres"
   # TODO(#7285): Migrate Justice Counts connection to be in same region as instance
-  location    = var.instance_key == "justice_counts" ? "us" : var.region
-  description = "Connection to the ${local.bq_connection_friendly_name} Cloud SQL database"
+  location      = var.instance_key == "justice_counts" ? "us" : var.region
+  description   = "Connection to the ${local.bq_connection_friendly_name} Cloud SQL database"
 
   cloud_sql {
     instance_id = data.google_secret_manager_secret_version.cloudsql_instance_id.secret_data
