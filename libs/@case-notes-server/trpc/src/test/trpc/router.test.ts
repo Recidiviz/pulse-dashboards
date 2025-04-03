@@ -242,20 +242,23 @@ describe("search", () => {
       vertex_filter:
         'external_id: ANY("fake-external-id") AND state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
       env: "test",
-      results: JSON.stringify({
-        "exact-match-id": {
+      results: JSON.stringify([
+        {
+          documentId: "exact-match-id",
           isExactMatch: true,
           isVertexMatch: true,
         },
-        "exact-match-id-2": {
+        {
+          documentId: "exact-match-id-2",
           isExactMatch: true,
           isVertexMatch: false,
         },
-        "doc-id": {
+        {
+          documentId: "doc-id",
           isExactMatch: false,
           isVertexMatch: true,
         },
-      }),
+      ]),
     });
   });
 
@@ -346,20 +349,23 @@ describe("search", () => {
       vertex_filter:
         'external_id: ANY("fake-external-id") AND state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
       env: "test",
-      results: JSON.stringify({
-        "exact-match-id": {
+      results: JSON.stringify([
+        {
+          documentId: "exact-match-id",
           isExactMatch: true,
           isVertexMatch: true,
         },
-        "exact-match-id-2": {
+        {
+          documentId: "exact-match-id-2",
           isExactMatch: true,
           isVertexMatch: false,
         },
-        "doc-id": {
+        {
+          documentId: "doc-id",
           isExactMatch: false,
           isVertexMatch: true,
         },
-      }),
+      ]),
     });
   });
 
@@ -437,20 +443,23 @@ describe("search", () => {
       vertex_filter:
         'state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
       env: "test",
-      results: JSON.stringify({
-        "exact-match-id": {
+      results: JSON.stringify([
+        {
+          documentId: "exact-match-id",
           isExactMatch: true,
           isVertexMatch: true,
         },
-        "exact-match-id-2": {
+        {
+          documentId: "exact-match-id-2",
           isExactMatch: true,
           isVertexMatch: false,
         },
-        "doc-id": {
+        {
+          documentId: "doc-id",
           isExactMatch: false,
           isVertexMatch: true,
         },
-      }),
+      ]),
     });
   });
 
@@ -524,16 +533,14 @@ describe("search", () => {
       vertex_filter:
         'external_id: ANY("fake-external-id") AND state_code: ANY("US_IX") AND NOT note_type: ANY("Investigation (Confidential)", "Mental Health (Confidential)", "FIAT - Confidential")',
       env: "test",
-      results: JSON.stringify({
-        "exact-match-id": {
+      results: JSON.stringify([
+        {
+          documentId: "exact-match-id",
           isExactMatch: false,
           isVertexMatch: true,
         },
-        "doc-id": {
-          isExactMatch: false,
-          isVertexMatch: true,
-        },
-      }),
+        { documentId: "doc-id", isExactMatch: false, isVertexMatch: true },
+      ]),
     });
   });
 });

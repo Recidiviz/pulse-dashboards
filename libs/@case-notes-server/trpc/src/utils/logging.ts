@@ -54,19 +54,9 @@ export async function logResults(options: {
     projectId,
   });
 
-  const resultsToLog = results.reduce(
-    (
-      acc: Record<string, { isExactMatch: boolean; isVertexMatch: boolean }>,
-      result,
-    ) => {
-      acc[result.documentId] = _.pick(result, [
-        "isExactMatch",
-        "isVertexMatch",
-      ]);
-      return acc;
-    },
-    {},
-  );
+  const resultsToLog = results.map((result) => {
+    return _.pick(result, ["documentId", "isExactMatch", "isVertexMatch"]);
+  });
 
   await bigQueryClient
     .dataset(datasetId)
