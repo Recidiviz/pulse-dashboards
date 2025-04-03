@@ -9,8 +9,9 @@ locals {
   staging_env   = local.env_secrets["env_staging_jii_texting_server"]
   prod_env      = local.env_secrets["env_prod_jii_texting_server"]
 
-  server_image = "${var.artifact_registry_repo}/jii-texting-server:${var.server_version}"
-  processor_job_image    = "${var.artifact_registry_repo}/jii-texting-jobs/processor:${var.server_version}"
+  server_image        = "${var.artifact_registry_repo}/jii-texting-server:${var.server_version}"
+  processor_job_image = "${var.artifact_registry_repo}/jii-texting-jobs/processor:${var.server_version}"
+  import_job_image    = "${var.artifact_registry_repo}/jii-texting-jobs/import:${var.server_version}"
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
@@ -78,8 +79,8 @@ module "handle-jii-texting-export-wf" {
   }
   workflow_source = file("${path.module}/workflows/handle-jii-texting-export.workflows.yaml")
   env_vars = {
-    PROJECT_ID = var.project_id
-    CLOUD_RUN_SERVICE_URL   = module.cloud-run.service_uri
+    PROJECT_ID            = var.project_id
+    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
   }
 }
 
@@ -108,5 +109,20 @@ module "process-jii-cloud-run-job" {
   location                      = var.location
   env_vars                      = local.env_vars
   cloud_run_deletion_protection = false
+  volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [var.cloudsql_instance] } }]
+}
+
+# Configure a Cloud Run job that will import the data into our CloudSQL DB
+module "jii-texting-etl-job" {
+  source                        = "../../vendor/cloud-run-job-exec"
+  name                          = "jii-texting-etl"
+  image                         = local.import_job_image
+  project_id                    = var.project_id
+  location                      = var.location
+  env_vars                      = local.env_vars
+  cloud_run_deletion_protection = false
+  exec                          = false
+  timeout                       = "3600s"
+  max_retries                   = 1
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [var.cloudsql_instance] } }]
 }

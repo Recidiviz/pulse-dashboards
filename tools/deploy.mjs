@@ -441,8 +441,10 @@ if (deployEnv === "staging" || deployEnv === "production") {
             process.stdout,
           );
           // Push the docker container for the Cloud Run jobs
-
           await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/processor --configuration ${deployEnv}`.pipe(
+            process.stdout,
+          );
+          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/import --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
@@ -450,8 +452,10 @@ if (deployEnv === "staging" || deployEnv === "production") {
             process.stdout,
           );
           // Push the docker container for the Cloud Run jobs
-
           await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/processor --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
+          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/import --configuration cherry-pick`.pipe(
             process.stdout,
           );
         }
