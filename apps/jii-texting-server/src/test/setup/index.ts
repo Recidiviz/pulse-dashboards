@@ -22,7 +22,6 @@ import sentryTestkit from "sentry-testkit";
 import { afterAll, beforeAll, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
-import { MockImportRoutesHandler } from "~fastify-data-import-plugin/testkit";
 import { buildServer } from "~jii-texting-server/server";
 import { seed } from "~jii-texting-server/test/setup/seed";
 import { resetDb } from "~jii-texting-server/test/setup/utils";
@@ -37,10 +36,6 @@ export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 export let mockVerifyIdToken: ReturnType<typeof vi.fn>;
 export let mockGetPayload: ReturnType<typeof vi.fn>;
 export let mockTwilioVaildateRequest: ReturnType<typeof vi.fn>;
-
-vi.mock("~fastify-data-import-plugin", () => ({
-  ImportRoutesHandler: MockImportRoutesHandler,
-}));
 
 const { testkit, sentryTransport } = sentryTestkit();
 

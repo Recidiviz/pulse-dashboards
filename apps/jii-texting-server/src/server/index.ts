@@ -19,7 +19,6 @@ import { setupFastifyErrorHandler } from "@sentry/node";
 import Fastify from "fastify";
 
 import registerRoutes from "~jii-texting-server/server/routes";
-import { registerImportRoutes } from "~jii-texting-server/server/utils";
 import registerTwilioWebhooks from "~jii-texting-server/server/webhooks";
 
 export function buildServer() {
@@ -32,7 +31,6 @@ export function buildServer() {
   setupFastifyErrorHandler(server);
 
   registerTwilioWebhooks(server);
-  registerImportRoutes(server);
   registerRoutes(server);
 
   return server;
