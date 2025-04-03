@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type * from "./Hydratable/types";
-export * from "./Hydratable/utils";
-export * from "./HydratesFromSource/HydratesFromSource";
-export * from "./Hydrator/Hydrator";
-export * from "./Hydrator/HydratorWithDirectHydration";
-export * from "./Hydrator/HydratorWithErrorLogging";
-export type * from "./types";
-export * from "./utils/castToError";
-export * from "./utils/unpackAggregatedErrors";
-export * from "./withPresenterManager/withPresenterManager";
+import { observer } from "mobx-react-lite";
+import React, { useEffect } from "react";
+
+import { isHydrationUntouched } from "../Hydratable/utils";
+import { HydratorProps } from "./types";
+
+/**
+ * Observes the provided `hydratable` and renders `children` immediately.
+ * Also initiates hydration of the model if it is not already pending.
+ */
+export const HydratorWithDirectHydration: React.FC<HydratorProps> = observer(
+  function Hydrator({ children, hydratable }) {
+    const needsHydration = isHydrationUntouched(hydratable);
+
+    useEffect(() => {
+      if (needsHydration) {
+        hydratable.hydrate();
+      }
+    }, [hydratable, needsHydration]);
+
+    return children;
+  },
+);

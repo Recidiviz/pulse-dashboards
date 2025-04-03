@@ -69,7 +69,7 @@ const DisabledMessage = styled.div`
   padding: ${rem(spacing.sm)} ${rem(spacing.md)};
 `;
 
-type SelectOption = { label: string; value: string };
+export type SelectOption = { label: string; value: string };
 
 type SelectGroupedOptions = { label: string; options: SelectOption[] };
 
@@ -162,7 +162,7 @@ const Option = ({ children, ...props }: OptionProps<SelectOption, true>) => {
   );
 };
 
-const MultiValue = ({
+export const MultiValue = ({
   children,
   ...props
 }: MultiValueProps<SelectOption, true>) => {
@@ -173,7 +173,7 @@ const MultiValue = ({
   );
 };
 
-const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
+export const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
   return (
     <components.MultiValueRemove {...props}>
       <Icon kind="CloseOutlined" size={14} />
@@ -190,7 +190,10 @@ const ClearAll = (searchFieldTitle: string) =>
     );
   };
 
-const ScrollShadow = styled.div<{ show: boolean; side: "top" | "bottom" }>`
+export const ScrollShadow = styled.div<{
+  show: boolean;
+  side: "top" | "bottom";
+}>`
   background: linear-gradient(
     ${({ side }) => (side === "top" ? 180 : 360)}deg,
     #ffffff 3.13%,
@@ -206,7 +209,7 @@ const ScrollShadow = styled.div<{ show: boolean; side: "top" | "bottom" }>`
   z-index: ${zindex.tooltip - 1};
 `;
 
-const MenuListWithShadow = (
+export const MenuListWithShadow = (
   entriesNumber: number,
   isDisabled: boolean,
   searchFieldTitle: string,
@@ -282,6 +285,125 @@ type CaseloadSelectProps = {
   hideIndicators?: boolean;
 };
 
+export const caseloadSelectStyles = (
+  isMobile: any,
+  hideIndicators: boolean,
+  disableAdditionalSelections: boolean,
+): Partial<StylesConfig<SelectOption, true, GroupBase<SelectOption>>> => ({
+  clearIndicator: (base) => ({
+    ...base,
+    color: palette.slate85,
+    cursor: "pointer",
+    fontSize: rem(14),
+    margin: `0 ${rem(spacing.sm)}`,
+    padding: 0,
+    textTransform: "capitalize",
+    "&:hover": {
+      color: palette.slate,
+    },
+  }),
+  indicatorsContainer: (base) => ({
+    ...base,
+    display: hideIndicators ? "none" : "inherit",
+  }),
+  multiValue: (base) => ({
+    ...base,
+    alignItems: "center",
+    background: "transparent",
+    border: `1px solid ${palette.slate20}`,
+    borderRadius: rem(8),
+    height: rem(30),
+    margin: 0,
+    padding: rem(spacing.sm),
+  }),
+  multiValueLabel: (base) => ({
+    ...base,
+    color: palette.slate85,
+    fontSize: isMobile ? rem(12) : rem(14),
+    lineHeight: rem(16),
+    padding: 0,
+  }),
+  multiValueRemove: (base) => ({
+    ...base,
+    color: rgba(palette.slate, 0.4),
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "transparent",
+      color: palette.slate60,
+    },
+  }),
+  valueContainer: (base) => ({
+    ...base,
+    padding: 0,
+    gap: rem(spacing.sm),
+    color: palette.slate60,
+  }),
+  container: (base) => ({
+    ...base,
+    margin: isMobile && "0 -1rem",
+  }),
+  menuList: (base) => ({
+    ...base,
+    maxHeight: rem(300),
+    padding: `${rem(spacing.sm)} 0`,
+  }),
+  control: (base, state) => ({
+    ...base,
+    borderWidth: state.menuIsOpen ? "0" : `1px`,
+    borderStyle: "solid",
+    borderColor: `${palette.slate10} !important`,
+    borderRadius: state.menuIsOpen ? "8px 8px 0 0" : rem(8),
+    minHeight: rem(48),
+    padding: `${rem(isMobile ? spacing.md : spacing.sm)} ${rem(spacing.md)}`,
+    margin: 0,
+    boxShadow:
+      state.menuIsOpen && !isMobile
+        ? "0px 10px 40px rgba(53, 83, 98, 0.3)"
+        : "none",
+  }),
+  menu: (base) => ({
+    ...base,
+    zIndex: zindex.tooltip - 1,
+    margin: 0,
+    border: "none",
+    borderTop: `1px solid ${palette.slate20}`,
+    borderRadius: "0 0 8px 8px",
+    boxShadow: !isMobile ? "0px 15px 20px rgba(53, 83, 98, 0.2)" : "none",
+  }),
+  option: (base) => ({
+    ...base,
+    backgroundColor: "none",
+    color: disableAdditionalSelections ? palette.slate20 : palette.pine3,
+    pointerEvents: disableAdditionalSelections ? "none" : "initial",
+    padding: isMobile
+      ? `${rem(10)} ${rem(spacing.xl)}`
+      : `${rem(spacing.sm)} ${rem(spacing.md)}`,
+
+    "&:hover": {
+      backgroundColor: palette.slate10,
+    },
+  }),
+  group: (base) => ({
+    ...base,
+    paddingTop: `${rem(spacing.sm)}`,
+    borderBottom: `1px solid ${palette.slate10}`,
+
+    "&:nth-last-child(2)": {
+      paddingTop: `${rem(spacing.md)}`,
+      borderBottom: "none",
+    },
+  }),
+  groupHeading: (base) => ({
+    ...base,
+    padding: `${rem(2)} ${rem(spacing.md)}`,
+    marginBottom: `${rem(8)}`,
+    color: palette.slate60,
+    fontSize: `${rem(12)}`,
+    lineHeight: `${rem(14.4)}`,
+    textTransform: "capitalize",
+  }),
+});
+
 export const CaseloadSelect = observer(function CaseloadSelect({
   hideIndicators = false,
 }: CaseloadSelectProps) {
@@ -327,123 +449,6 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     searchTitle,
   );
 
-  const styles: Partial<
-    StylesConfig<SelectOption, true, GroupBase<SelectOption>>
-  > = {
-    clearIndicator: (base) => ({
-      ...base,
-      color: palette.slate85,
-      cursor: "pointer",
-      fontSize: rem(14),
-      margin: `0 ${rem(spacing.sm)}`,
-      padding: 0,
-      textTransform: "capitalize",
-      "&:hover": {
-        color: palette.slate,
-      },
-    }),
-    indicatorsContainer: (base) => ({
-      ...base,
-      display: hideIndicators ? "none" : "inherit",
-    }),
-    multiValue: (base) => ({
-      ...base,
-      alignItems: "center",
-      background: "transparent",
-      border: `1px solid ${palette.slate20}`,
-      borderRadius: rem(8),
-      height: rem(30),
-      margin: 0,
-      padding: rem(spacing.sm),
-    }),
-    multiValueLabel: (base) => ({
-      ...base,
-      color: palette.slate85,
-      fontSize: isMobile ? rem(12) : rem(14),
-      lineHeight: rem(16),
-      padding: 0,
-    }),
-    multiValueRemove: (base) => ({
-      ...base,
-      color: rgba(palette.slate, 0.4),
-      cursor: "pointer",
-      "&:hover": {
-        backgroundColor: "transparent",
-        color: palette.slate60,
-      },
-    }),
-    valueContainer: (base) => ({
-      ...base,
-      padding: 0,
-      gap: rem(spacing.sm),
-      color: palette.slate60,
-    }),
-    container: (base) => ({
-      ...base,
-      margin: isMobile && "0 -1rem",
-    }),
-    menuList: (base) => ({
-      ...base,
-      maxHeight: rem(300),
-      padding: `${rem(spacing.sm)} 0`,
-    }),
-    control: (base, state) => ({
-      ...base,
-      borderWidth: state.menuIsOpen ? "0" : `1px`,
-      borderStyle: "solid",
-      borderColor: `${palette.slate10} !important`,
-      borderRadius: state.menuIsOpen ? "8px 8px 0 0" : rem(8),
-      minHeight: rem(48),
-      padding: `${rem(isMobile ? spacing.md : spacing.sm)} ${rem(spacing.md)}`,
-      margin: 0,
-      boxShadow:
-        state.menuIsOpen && !isMobile
-          ? "0px 10px 40px rgba(53, 83, 98, 0.3)"
-          : "none",
-    }),
-    menu: (base) => ({
-      ...base,
-      zIndex: zindex.tooltip - 1,
-      margin: 0,
-      border: "none",
-      borderTop: `1px solid ${palette.slate20}`,
-      borderRadius: "0 0 8px 8px",
-      boxShadow: !isMobile ? "0px 15px 20px rgba(53, 83, 98, 0.2)" : "none",
-    }),
-    option: (base) => ({
-      ...base,
-      backgroundColor: "none",
-      color: disableAdditionalSelections ? palette.slate20 : palette.pine3,
-      pointerEvents: disableAdditionalSelections ? "none" : "initial",
-      padding: isMobile
-        ? `${rem(10)} ${rem(spacing.xl)}`
-        : `${rem(spacing.sm)} ${rem(spacing.md)}`,
-
-      "&:hover": {
-        backgroundColor: palette.slate10,
-      },
-    }),
-    group: (base) => ({
-      ...base,
-      paddingTop: `${rem(spacing.sm)}`,
-      borderBottom: `1px solid ${palette.slate10}`,
-
-      "&:nth-last-child(2)": {
-        paddingTop: `${rem(spacing.md)}`,
-        borderBottom: "none",
-      },
-    }),
-    groupHeading: (base) => ({
-      ...base,
-      padding: `${rem(2)} ${rem(spacing.md)}`,
-      marginBottom: `${rem(8)}`,
-      color: palette.slate60,
-      fontSize: `${rem(12)}`,
-      lineHeight: `${rem(14.4)}`,
-      textTransform: "capitalize",
-    }),
-  };
-
   const defaultOptions = {
     classNamePrefix: "CaseloadSelect",
     className: "CaseloadSelect",
@@ -460,7 +465,11 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     },
     options: buildSelectOptionsFromSearchableGroup(availableSearchables),
     placeholder: `Search for one or more ${pluralizeWord(searchTitle)} …`,
-    styles,
+    styles: caseloadSelectStyles(
+      isMobile,
+      hideIndicators,
+      disableAdditionalSelections,
+    ),
     value: buildSelectOptionsFromSearchables(selectedSearchables),
     // use of satisfies narrows isMulti from boolean to true,
     // which the custom components defined here will require

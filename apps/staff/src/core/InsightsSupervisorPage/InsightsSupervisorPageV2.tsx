@@ -29,7 +29,9 @@ import { SupervisionSupervisorPagePresenter } from "../../InsightsStore/presente
 import { pluralize, toTitleCase } from "../../utils";
 import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
+import { InsightsManagedSupervisorRosterModal } from "../InsightsSupervisorRosterModal/InsightsManagedSupervisorRosterModal";
 import ModelHydrator from "../ModelHydrator";
+import { Spacer } from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
 import { insightsUrl } from "../views";
 import { InsightsBreadcrumbs } from "./InsightsBreadcrumbs";
 import { InsightsOutcomesModule } from "./InsightsOutcomesModule";
@@ -82,7 +84,37 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     allOfficers,
     pageTitle,
     highlightedOfficersByMetric,
+    userCanSubmitRosterChangeRequest,
   } = presenter;
+
+  let teamTooltip;
+
+  if (userCanSubmitRosterChangeRequest) teamTooltip = undefined;
+  else if (outcomesModule)
+    teamTooltip = (
+      <>
+        {!!officersIncludedInOutcomes?.length && (
+          <InsightsSupervisorOutcomeTooltip
+            title="INCLUDED IN OUTCOMES"
+            officers={officersIncludedInOutcomes}
+          />
+        )}
+        {!!officersExcludedFromOutcomes?.length && (
+          <InsightsSupervisorOutcomeTooltip
+            title="EXCLUDED FROM OUTCOMES"
+            officers={officersExcludedFromOutcomes}
+          />
+        )}
+      </>
+    );
+  else
+    teamTooltip = (
+      <>
+        {allOfficers?.length > 0 && (
+          <InsightsSupervisorOutcomeTooltip officers={allOfficers} />
+        )}
+      </>
+    );
 
   const infoItems = [
     {
@@ -91,29 +123,18 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     },
     {
       title: "team",
-      info: `${pluralize(
-        allOfficers.length,
-        toTitleCase(labels.supervisionOfficerLabel),
-      )}`,
-      tooltip: outcomesModule ? (
+      tooltip: teamTooltip,
+      info: (
         <>
-          {!!officersIncludedInOutcomes?.length && (
-            <InsightsSupervisorOutcomeTooltip
-              title="INCLUDED IN OUTCOMES"
-              officers={officersIncludedInOutcomes}
-            />
+          {pluralize(
+            allOfficers.length,
+            toTitleCase(labels.supervisionOfficerLabel),
           )}
-          {!!officersExcludedFromOutcomes?.length && (
-            <InsightsSupervisorOutcomeTooltip
-              title="EXCLUDED FROM OUTCOMES"
-              officers={officersExcludedFromOutcomes}
-            />
-          )}
-        </>
-      ) : (
-        <>
-          {!!allOfficers?.length && (
-            <InsightsSupervisorOutcomeTooltip officers={allOfficers} />
+          {userCanSubmitRosterChangeRequest && (
+            <>
+              <Spacer size={spacing.sm} />
+              <InsightsManagedSupervisorRosterModal />
+            </>
           )}
         </>
       ),

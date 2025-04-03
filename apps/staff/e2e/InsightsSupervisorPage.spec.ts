@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { expect, test } from "@playwright/test";
+import { expect, Page, test } from "@playwright/test";
 
 test.describe("Supervisors Page", () => {
   test.describe("US_MI user", () => {
@@ -47,7 +47,6 @@ test.describe("Supervisors Page", () => {
       await expect(page.getByRole("main")).toContainText(
         "How might I work with my team to improve these metrics?",
       );
-      
       // Click the first staff member page found
       await page
         .getByRole("main")
@@ -158,6 +157,88 @@ test.describe("Supervisors Page", () => {
       await expect(main).not.toContainText(
         "Jack Hernandez is in the top 10% of agents in the state for highest program/treatment starts rate this year.",
       );
+    });
+  });
+
+  test.describe("Roster change request modal", () => {
+    const loadPage = async (page: Page, hasFv = true) => {
+      await page.route(
+        "http://localhost:3001/api/offlineUser?*",
+        async (route) => {
+          const response = await route.fetch();
+          const json = await response.json();
+          json["https://dashboard.recidiviz.org/app_metadata"].stateCode =
+            "us_tn";
+          json["https://dashboard.recidiviz.org/app_metadata"].routes = {
+            insights: true,
+          };
+          json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
+            { reportIncorrectRosters: hasFv ? {} : undefined };
+          await route.fulfill({ response, json });
+        },
+      );
+      await page.goto("/");
+    };
+
+    test("Button does not appear", async ({ page }) => {
+      await loadPage(page, false);
+      const main = page.getByRole("main");
+      await main.waitFor({ state: "attached", timeout: 10000 });
+      const button = main.locator("button", { hasText: "View" });
+      expect(button).not.toBeVisible();
+    });
+
+    test("Expect modal's first view to work as it should", async ({ page }) => {
+      await loadPage(page);
+
+      const main = page.getByRole("main");
+      await main.waitFor({ state: "attached", timeout: 10000 });
+      await expect(main).toContainText("View");
+      const button = main.locator("button", { hasText: "View" });
+      await button.click();
+      const rosterModal = page.locator('div[class^="ReactModal__Content"]', {
+        hasText: "Officers on Your Team",
+      });
+      rosterModal.waitFor();
+      await expect(rosterModal).toContainText("Walter Harris");
+      const toStaffPage = rosterModal.locator("a", {
+        hasText: "Walter Harris",
+      });
+      await toStaffPage.click();
+      await main.waitFor({ state: "attached", timeout: 10000 });
+      expect(page.url()).toContain("staff");
+    });
+
+    test("Expect modal's second view to work as it should", async ({
+      page,
+    }) => {
+      await loadPage(page);
+
+      const main = page.getByRole("main");
+      await main.waitFor({ state: "attached", timeout: 10000 });
+      await expect(main).toContainText("View");
+      const button = main.locator("button", { hasText: "View" });
+      await button.click();
+      const rosterModal = page.locator(
+        'div[class^="styles__RosterRequestViewContainer"]',
+      );
+      await rosterModal.waitFor();
+      const selectOfficerForRemovalButton = rosterModal
+        .locator("button", {
+          hasText: "Remove",
+        })
+        .first();
+
+      await selectOfficerForRemovalButton.waitFor();
+      await selectOfficerForRemovalButton.evaluate((button) =>
+        (button as HTMLButtonElement).click(),
+      );
+      await rosterModal.waitFor();
+      const submitButton = rosterModal
+        .getByRole("button")
+        .filter({ hasText: "Request Removal" });
+      await submitButton.waitFor();
+      expect(submitButton).toBeDefined();
     });
   });
 });

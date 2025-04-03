@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { mapKeys, snakeCase } from "lodash";
+
 import {
   ActionStrategy,
   actionStrategySchema,
@@ -231,7 +233,11 @@ export class InsightsAPIClient implements InsightsAPI {
     props: RosterChangeRequest,
   ): Promise<RosterChangeRequestResponse> {
     const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/roster_change_request`;
-    const fetchedData = await this.apiStore.post(endpoint, props);
+    const fetchedData = await this.apiStore.post(
+      endpoint,
+      // TODO (#7866): Remove `mapKeys` `snakeCase` once the backend has implemented this
+      mapKeys(props, (_, k) => snakeCase(k)),
+    );
     return rosterChangeRequestResponseSchema.parse(fetchedData);
   }
 

@@ -106,6 +106,10 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     return this.supervisionStore.userCanAccessAllSupervisors;
   }
 
+  get userCanSubmitRosterChangeRequest() {
+    return this.supervisionStore.userCanSubmitRosterChangeRequest;
+  }
+
   /**
    * Provides a list of all officers excluded from outcomes in this supervisor's unit.
    * @returns An array of `SupervisionOfficer` or `undefined` if data is not available.

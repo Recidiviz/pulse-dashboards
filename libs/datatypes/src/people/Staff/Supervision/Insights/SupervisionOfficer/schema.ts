@@ -19,6 +19,7 @@ import { z } from "zod";
 
 import { addDisplayName } from "../../../../../people/utils/addDisplayName";
 import { fullNameSchema } from "../../../../../people/utils/fullNameSchema";
+import { nullishAsUndefined } from "../../../../../utils/zod";
 
 export const supervisionOfficerSchema = z
   .object({
@@ -29,8 +30,8 @@ export const supervisionOfficerSchema = z
     district: z.string(),
     supervisorExternalIds: z.array(z.string()),
     // TODO #6793 Make includeInOutcomes a required field once endpoint response has this field
-    includeInOutcomes: z.boolean().optional(),
-    zeroGrantOpportunities: z.array(z.string()).optional(),
+    includeInOutcomes: nullishAsUndefined(z.boolean()),
+    zeroGrantOpportunities: nullishAsUndefined(z.array(z.string())),
     avgDailyPopulation: z
       .number()
       .transform((avgDailyPopulation) => Math.round(avgDailyPopulation))

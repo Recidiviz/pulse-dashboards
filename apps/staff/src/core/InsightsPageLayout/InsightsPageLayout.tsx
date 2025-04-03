@@ -159,7 +159,7 @@ type InsightsPageLayoutProps = {
   pageTitle?: string;
   infoItems?: {
     title: string;
-    info: string | number | undefined | null;
+    info: string | number | undefined | null | ReactNode;
     tooltip?: ReactNode;
   }[];
   pageSubtitle?: string;

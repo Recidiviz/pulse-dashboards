@@ -20,6 +20,7 @@ import { flowResult, makeAutoObservable } from "mobx";
 import { RosterChangeRequest } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
+import { RosterChangeRequestParams } from "../../core/InsightsSupervisorRosterModal/types";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 
 export class SupervisionSupervisorRosterModalPresenter implements Hydratable {
@@ -42,9 +43,15 @@ export class SupervisionSupervisorRosterModalPresenter implements Hydratable {
       expectPopulated: [
         this.expectOfficersPopulated,
         this.expectSupervisorPopulated,
+        this.expectOfficersOnSupervisorTeam,
       ],
       populate: async () => {
         await Promise.all([
+          flowResult(
+            this.supervisionStore.populateOfficersForSupervisor(
+              supervisorPseudoId,
+            ),
+          ),
           flowResult(this.supervisionStore.populateAllSupervisionOfficers()),
           flowResult(
             this.supervisionStore.populateSupervisionOfficerSupervisors,
@@ -71,11 +78,20 @@ export class SupervisionSupervisorRosterModalPresenter implements Hydratable {
       this.userCanSubmitRosterChangeRequest &&
       this.supervisionStore.supervisionOfficers === undefined
     )
-      throw new Error("failed to populate officers");
+      throw new Error("failed to populate all officers");
   }
 
   private expectSupervisorPopulated() {
     if (!this.supervisorInfo) throw new Error("failed to populate supervisor");
+  }
+
+  private expectOfficersOnSupervisorTeam() {
+    if (
+      this.supervisionStore.officersBySupervisorPseudoId.get(
+        this.supervisorPseudoId,
+      ) === undefined
+    )
+      throw new Error("failed to populate officers on supervisor's team");
   }
 
   // ==============================
@@ -95,10 +111,16 @@ export class SupervisionSupervisorRosterModalPresenter implements Hydratable {
   /**
    * Gets the list of supervision officers from the store.
    */
-  get officers() {
+  get allOfficers() {
     return this.userCanSubmitRosterChangeRequest
       ? this.supervisionStore.supervisionOfficers
       : [];
+  }
+
+  get officersOnSupervisorTeam() {
+    return this.supervisionStore.officersBySupervisorPseudoId.get(
+      this.supervisorPseudoId,
+    );
   }
 
   get labels() {
@@ -110,9 +132,7 @@ export class SupervisionSupervisorRosterModalPresenter implements Hydratable {
   // ==============================
 
   async submitRosterChangeRequestIntercomTicket(
-    ...args: Parameters<
-      InsightsSupervisionStore["submitRosterChangeRequestIntercomTicket"]
-    >
+    ...args: RosterChangeRequestParams
   ) {
     return await flowResult(
       this.supervisionStore.submitRosterChangeRequestIntercomTicket(...args),

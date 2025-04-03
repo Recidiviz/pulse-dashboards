@@ -81,7 +81,7 @@ test("initial hydration state is 'needs hydration'", async () => {
 test("expected data when presenter is 'hydrated'", async () => {
   await presenter.hydrate();
 
-  expect(presenter.officers).toContainValues(supervisionOfficerFixture);
+  expect(presenter.allOfficers).toContainValues(supervisionOfficerFixture);
 });
 
 test("trackViewed sends analytics event", () => {
@@ -161,6 +161,10 @@ test("supervisorId not found in supervisionOfficerSupervisors", async () => {
     InsightsSupervisionStore.prototype,
     "populateAllSupervisionOfficers",
   ).mockImplementation(() => ({}) as any);
+  vi.spyOn(
+    InsightsSupervisionStore.prototype,
+    "populateOfficersForSupervisor",
+  ).mockImplementation(() => ({}) as any);
   await presenter.hydrate();
   expect(presenter.hydrationState).toMatchInlineSnapshot(`
     {
@@ -171,8 +175,9 @@ test("supervisorId not found in supervisionOfficerSupervisors", async () => {
 
   expect(unpackAggregatedErrors(presenter)).toMatchInlineSnapshot(`
     [
-      [Error: failed to populate officers],
+      [Error: failed to populate all officers],
       [Error: failed to populate supervisor],
+      [Error: failed to populate officers on supervisor's team],
     ]
   `);
 });

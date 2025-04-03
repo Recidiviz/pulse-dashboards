@@ -20,13 +20,16 @@ import qs from "qs";
 
 import { isOfflineMode } from "~client-env-utils";
 
-type OfflineUserOptions = {
+import { ActiveFeatureVariantRecord } from "../RootStore/types";
+
+export type OfflineUserOptions = {
   email?: string;
   name?: string;
   stateCode?: string;
   allowedSupervisionLocationIds?: string[];
   allowedSupervisionLocationLevel?: string;
   allowedStates?: string[];
+  featureVariants?: ActiveFeatureVariantRecord
 };
 
 export async function fetchOfflineUser(
