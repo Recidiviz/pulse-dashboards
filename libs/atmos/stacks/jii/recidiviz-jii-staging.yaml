@@ -1,0 +1,30 @@
+# Infrastructure configuration for components for the JII app that will be deployed to staging
+settings:
+  context:
+    project_id: recidiviz-jii-staging
+    product: jii
+
+# The variables set here are automatically provided to any components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+
+terraform:
+  # Describes where the Terraform state file for these centrally-managed components is stored
+  # https://atmos.tools/core-concepts/components/terraform/backends#google-cloud-storage-backend
+  backend_type: gcs
+  backend:
+    gcs:
+      bucket: "{{ .settings.context.project_id }}-tf-state"
+  # This provides the default configuration for our Terraform providers
+  # https://atmos.tools/core-concepts/components/terraform/providers
+  providers:
+    google:
+      project: "{{ .settings.context.project_id }}"
+
+components:
+  terraform:
+    secrets:
+      vars:
+        sops_file: sops/recidiviz-jii-staging.enc.yaml
+        location: us-central1
+        deletion_policy: DELETE
