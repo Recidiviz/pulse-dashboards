@@ -745,6 +745,8 @@ export const TnPopulationFilterOptions: PopulationFilters = {
       { label: "Secondary", value: "6P2" },
       { label: "Intermediate", value: "6P3" },
       { label: "Transitional", value: "6P4" },
+      { label: "Low", value: "8LO" },
+      { label: "Moderate", value: "8MO" },
       { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
