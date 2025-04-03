@@ -10,66 +10,17 @@ main:
           - dry_run: ${args.dryRun}
           - cloud_run_service_url: ${sys.get_env("CLOUD_RUN_SERVICE_URL")}
           - bucket_id: ${sys.get_env("BUCKET_ID")}
-          - all_files_etl_success: true
-    - get_metric_export_file_names:
-        steps:
-          - get_objects_list:
-              try:
-                call: googleapis.storage.v1.objects.list
-                args:
-                  bucket: ${bucket_id}
-                  delimiter: /
-                  prefix: ${state_code + "/"}
-                result: metric_export_objects_list
-              except:
-                as: e
-                steps:
-                  - raise_get_objects_list_error:
-                      raise: ${e}
-          - assign_metric_export_file_names:
-              assign:
-                - metric_export_file_names: []
-          - get_file_names:
-              for:
-                value: metric_export_object
-                index: _
-                in: ${metric_export_objects_list.items}
-                steps:
-                  - append_file_name:
-                      assign:
-                        - metric_export_file_names: ${list.concat(metric_export_file_names, metric_export_object.name)}
-          - check_length_metric_export_file_names:
-              switch:
-                - condition: ${len(metric_export_file_names) == 0}
-                  next: return
-    - etl_files_loop:
-        for:
-          value: metric_export_file_name
-          index: _
-          in: ${metric_export_file_names}
-          steps:
-            - call_etl_endpoint:
-                try:
-                  call: http.post
-                  args:
-                    url: ${cloud_run_service_url + "/handle_import"}
-                    auth:
-                      type: OIDC
-                    body:
-                      bucketId: ${bucket_id}
-                      objectId: ${metric_export_file_name}
-                    timeout: 1800
-                  result: etl_result
-                except:
-                  as: e
-                  steps:
-                    - raise_call_etl_endpoint_error:
-                        raise: ${e}
-            - check_handle_import_result:
-                switch:
-                  - condition: ${etl_result.code != 200}
-                    assign:
-                      - all_files_etl_success: false
-                    next: break
+          - import_job_name: ${sys.get_env("IMPORT_JOB_NAME")}
+    - import_data:
+        call: googleapis.run.v2.projects.locations.jobs.run
+        args:
+          name: ${import_job_name}
+          body:
+            overrides:
+              containerOverrides:
+                env:
+                  - name: STATE_CODE
+                    value: ${state_code}
+        result: job_execution
     - return:
-        return: ${metric_export_file_names}
+        return: ${job_execution}

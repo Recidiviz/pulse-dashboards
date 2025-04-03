@@ -96,3 +96,24 @@ resource "google_project_iam_member" "workflow-executor" {
   role    = "roles/workflows.admin"
   member  = google_service_account.workflows.member
 }
+
+# Grant cloud run job executor so the Workflows service account can execute Cloud Run jobs with env variable overrides
+resource "google_project_iam_member" "cloudrunjobexecutor" {
+  project = var.project_id
+  role    = "roles/run.jobsExecutorWithOverrides"
+  member  = google_service_account.workflows.member
+}
+
+# Grant the Workflows service account access to view cloud run job status
+resource "google_project_iam_member" "cloud-run-viewer" {
+  project = var.project_id
+  role    = "roles/run.viewer"
+  member  = google_service_account.workflows.member
+}
+
+# Grant Cloud Run job SA permission to run with overrides
+resource "google_project_iam_member" "job-with-overrides" {
+  project = var.project_id
+  role    = "roles/run.jobsExecutorWithOverrides"
+  member  = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
+}

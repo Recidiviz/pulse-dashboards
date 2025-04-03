@@ -13,6 +13,8 @@ locals {
   processor_job_image = "${var.artifact_registry_repo}/jii-texting-jobs/processor:${var.server_version}"
   import_job_image    = "${var.artifact_registry_repo}/jii-texting-jobs/import:${var.server_version}"
 
+  import_job_name = "jii-texting-import"
+
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
   env_vars = nonsensitive([
@@ -84,22 +86,6 @@ module "handle-jii-texting-export-wf" {
   }
 }
 
-# Configure a Google Workflow that executes the main processing of JII texts,
-# which will be executed by the handle-jii-texting-gcs-upload-wf
-module "process-jii-to-text-wf" {
-  project_id            = var.project_id
-  region                = var.location
-  source                = "../../vendor/google-workflows-workflow"
-  service_account_email = google_service_account.workflows.email
-  workflow_name         = "process-jii-to-text"
-
-  workflow_source = file("${path.module}/workflows/process-jii-to-text.workflows.yaml")
-  env_vars = {
-    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
-    BUCKET_ID             = var.etl_bucket_name
-  }
-}
-
 # Configure a Cloud Run job that will process the JII eligible for texts on a given day
 module "process-jii-cloud-run-job" {
   source                        = "../../vendor/cloud-run-job-exec"
@@ -113,9 +99,9 @@ module "process-jii-cloud-run-job" {
 }
 
 # Configure a Cloud Run job that will import the data into our CloudSQL DB
-module "jii-texting-etl-job" {
+module "import-job" {
   source                        = "../../vendor/cloud-run-job-exec"
-  name                          = "jii-texting-etl"
+  name                          = local.import_job_name
   image                         = local.import_job_image
   project_id                    = var.project_id
   location                      = var.location
@@ -125,4 +111,21 @@ module "jii-texting-etl-job" {
   timeout                       = "3600s"
   max_retries                   = 1
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [var.cloudsql_instance] } }]
+}
+
+# Configure a Google Workflow that executes the main processing of JII texts,
+# which will be executed by the handle-jii-texting-gcs-upload-wf
+module "process-jii-to-text-wf" {
+  project_id            = var.project_id
+  region                = var.location
+  source                = "../../vendor/google-workflows-workflow"
+  service_account_email = google_service_account.workflows.email
+  workflow_name         = "process-jii-to-text"
+
+  workflow_source = file("${path.module}/workflows/process-jii-to-text.workflows.yaml")
+  env_vars = {
+    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
+    BUCKET_ID             = var.etl_bucket_name
+    IMPORT_JOB_NAME       = module.import-job.id
+  }
 }
