@@ -45,7 +45,7 @@
           "{workspaceRoot}/.yarnrc.yml",
           "{projectRoot}/scripts/*"
         ],
-        "external": ["@prisma/jii-texting-server"],
+        "external": ["@prisma/jii-texting-server", "commander"],
         "generatePackageJson": true,
         "minify": true,
         "esbuildOptions": {

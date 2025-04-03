@@ -18,4 +18,6 @@ RUN yarn workspaces focus --production
 COPY dist/apps/@jii-texting/processor .
 RUN yarn prisma generate
 
-CMD ["dumb-init", "node", "--import=extensionless/register", "main.js"]
+ENTRYPOINT ["dumb-init", "--", "node", "--import=extensionless/register", "main.js"]
+
+CMD []
