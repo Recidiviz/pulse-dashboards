@@ -31,9 +31,9 @@ const calculateRate = (numerator: number, denominator: number): number =>
 export const isDueWithinLast30Days = (dueDate: Date | null): boolean => {
   if (!dueDate) return false;
 
-  const dueMoment = moment(dueDate).utc();
-  const thirtyDaysAgo = moment().utc().subtract(30, "days");
-  const now = moment().utc();
+  const dueMoment = moment(dueDate).utc().startOf("day");
+  const now = moment().utc().startOf("day");
+  const thirtyDaysAgo = now.clone().subtract(30, "days").startOf("day");
 
   // "[)" means include the lower boundary (30 days ago) and exclude the upper boundary (now)
   return dueMoment.isBetween(thirtyDaysAgo, now, undefined, "[)");

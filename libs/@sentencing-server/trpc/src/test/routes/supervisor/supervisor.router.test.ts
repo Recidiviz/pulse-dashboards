@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TRPCError } from "@trpc/server";
+import moment from "moment";
 
 import { PRISMA_STAFF_GET_ARGS_FOR_SUPERVISOR } from "~@sentencing-server/trpc/routes/supervisor/constants";
 import { getSupervisorDashboardStats } from "~@sentencing-server/trpc/routes/supervisor/utils";
@@ -120,7 +121,7 @@ describe("getSupervisorDashboardStats", () => {
           id: "fake-case-1",
           externalId: "case-1-external",
           stateCode: "US_ID",
-          dueDate: new Date(), // Within the last 30 days
+          dueDate: moment().subtract(1, "days").toDate(), // Within the last 30 days
           selectedRecommendation: "Probation", // Completed case
           staffId: "staff-1",
         },
@@ -128,7 +129,7 @@ describe("getSupervisorDashboardStats", () => {
           id: "fake-case-2",
           externalId: "case-2-external",
           stateCode: "US_ID",
-          dueDate: new Date(), // Within the last 30 days
+          dueDate: moment().subtract(1, "days").toDate(), // Within the last 30 days
           selectedRecommendation: undefined, // Incomplete case
           staffId: "staff-1",
         },
@@ -136,7 +137,7 @@ describe("getSupervisorDashboardStats", () => {
           id: "fake-case-5",
           externalId: "case-5-external",
           stateCode: "US_ID",
-          dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days in the future, should not count towards completion
+          dueDate: moment().add(15, "days").toDate(), // 15 days in the future, should not count towards completion
           selectedRecommendation: "Term", // Completed case
           staffId: "staff-1",
         },
@@ -144,7 +145,7 @@ describe("getSupervisorDashboardStats", () => {
           id: "fake-case-3",
           externalId: "case-3-external",
           stateCode: "US_ID",
-          dueDate: new Date("2025-02-01"), // Past due date
+          dueDate: moment("2025-02-01", "YYYY-MM-DD").toDate(), // Past due date
           selectedRecommendation: "Rider", // Completed case
           staffId: "staff-2",
         },
@@ -152,7 +153,7 @@ describe("getSupervisorDashboardStats", () => {
           id: "fake-case-4",
           externalId: "case-4-external",
           stateCode: "US_ID",
-          dueDate: new Date("2025-01-15"), // Past due date
+          dueDate: moment("2025-01-15", "YYYY-MM-DD").toDate(), // Past due date
           selectedRecommendation: undefined, // Incomplete case
           staffId: "staff-2",
         },
@@ -173,7 +174,7 @@ describe("getSupervisorDashboardStats", () => {
     const expectedStaffStats = [
       expect.objectContaining({
         caseCompletionRate: 50,
-        activeCasesAssigned: 3, // 3 active cases (1 due date in the future, 2 due dates in the past)
+        activeCasesAssigned: 1, // 1 active case (1 due date in the future, 2 due dates in the past)
         totalCasesDueLast30Days: 2,
       }),
       expect.objectContaining({

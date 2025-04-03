@@ -23,7 +23,7 @@ describe("isDueWithinLast30Days", () => {
   // Freeze time to a fixed date so that the computed boundaries remain consistent.
   beforeAll(() => {
     vitest.useFakeTimers();
-    vitest.setSystemTime(new Date("2025-03-31T00:00:00Z"));
+    vitest.setSystemTime(new Date("2025-03-31T09:03:00Z"));
   });
 
   afterAll(() => {
@@ -57,5 +57,12 @@ describe("isDueWithinLast30Days", () => {
   it("should return false for dueDate exactly equal to now", () => {
     const now = moment().utc().toDate();
     expect(isDueWithinLast30Days(now)).toBe(false);
+  });
+
+  it("should include due date exactly 30 days ago regardless of the time portion", () => {
+    // With system time set to 2025-03-31T09:03:00Z, a due date of 2025-03-04T00:00:00.000Z
+    // should be considered within the past 30 days.
+    const boundaryDueDate = moment("2025-03-01T00:00:00.000Z").utc().toDate();
+    expect(isDueWithinLast30Days(boundaryDueDate)).toBe(true); // This would fail if we were considering the time portion.
   });
 });
