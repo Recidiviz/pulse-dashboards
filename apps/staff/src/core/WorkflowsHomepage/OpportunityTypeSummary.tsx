@@ -22,6 +22,7 @@ import {
   spacing,
   typography,
 } from "@recidiviz/design-system";
+import { groupBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
@@ -32,7 +33,11 @@ import { PersonInitialsAvatar } from "~ui";
 
 import { useOpportunityConfigurations } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { countOpportunities, Opportunity } from "../../WorkflowsStore";
+import {
+  countOpportunities,
+  Opportunity,
+  OpportunityTabGroup,
+} from "../../WorkflowsStore";
 import InsightsPill from "../InsightsPill";
 import { insightsUrl, workflowsUrl } from "../views";
 
@@ -150,21 +155,25 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   showZeroGrantsPill?: boolean;
 }): React.ReactElement | null {
   const { isMobile } = useIsMobile(true);
-  const { eligibilityTextForCount, urlSection, zeroGrantsTooltip } =
+  const { eligibilityTextForCount, urlSection, zeroGrantsTooltip, tabGroups } =
     useOpportunityConfigurations()[opportunityType];
 
+  // TODO(#7966): the number of avatars shown is not always correct
   const defaultAvatarsShown = 4;
+  const totalOpportunityCount = countOpportunities(opportunities);
   const sliceIndex =
-    opportunities.length > defaultAvatarsShown
+    totalOpportunityCount > defaultAvatarsShown
       ? defaultAvatarsShown - 1
       : defaultAvatarsShown;
   const previewOpportunities = opportunities.slice(0, sliceIndex);
-  const numOpportunitiesToDisplay = opportunities.length - sliceIndex;
+  const additionalOpportunityCount = totalOpportunityCount - sliceIndex;
 
-  const reviewStatusText = opportunities[0].config.deniedTabTitle;
-  const numIneligible = opportunities.filter((opp) => opp.denial).length;
-  const submittedText = opportunities[0].config.submittedTabTitle;
-  const numSubmitted = opportunities.filter((opp) => opp.isSubmitted).length;
+  // there should always be at least one tab group to display the tab names from
+  const tabGroup = Object.keys(tabGroups)[0] as OpportunityTabGroup;
+  const tabNames = tabGroups[tabGroup] ?? [];
+  const opportunitiesByTab = groupBy(opportunities, (opp) =>
+    opp.tabTitle(tabGroup),
+  );
 
   const navigationURL = officerPseudoId
     ? insightsUrl("supervisionOpportunity", {
@@ -181,19 +190,20 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
     >
       <OpportunityHeaderWrapper $isMobile={isMobile}>
         <OpportunityHeader $isMobile={isMobile}>
-          {eligibilityTextForCount(countOpportunities(opportunities))}
+          {eligibilityTextForCount(totalOpportunityCount)}
         </OpportunityHeader>
         <ReviewStatusWrapper>
-          {numIneligible > 0 && (
-            <ReviewStatusCount>
-              {reviewStatusText}: {numIneligible}
-            </ReviewStatusCount>
-          )}
-          {numSubmitted > 0 && (
-            <ReviewStatusCount>
-              {submittedText}: {numSubmitted}
-            </ReviewStatusCount>
-          )}
+          {tabNames.map((tabName) => {
+            const opps = opportunitiesByTab[tabName];
+            if (opps && opps.length > 0) {
+              return (
+                <ReviewStatusCount>
+                  {tabName}: {opportunitiesByTab[tabName].length}
+                </ReviewStatusCount>
+              );
+            }
+            return null;
+          })}
         </ReviewStatusWrapper>
         <ViewAllLabel
           $isMobile={isMobile}
@@ -230,11 +240,11 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
               />
             </ClientAvatarWrapper>
           ))}
-          {numOpportunitiesToDisplay > 0 && (
+          {additionalOpportunityCount > 0 && (
             <ClientAvatarWrapper>
               <PersonInitialsAvatar
                 size={isMobile ? 40 : 56}
-                name={`+ ${numOpportunitiesToDisplay}`}
+                name={`+ ${additionalOpportunityCount}`}
                 splitName={false}
               />
             </ClientAvatarWrapper>

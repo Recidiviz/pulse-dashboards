@@ -381,14 +381,18 @@ describe("WorkflowsHomepage", () => {
   });
 
   test("render opportunities where all clients are marked ineligible", () => {
-    const opp = { ...mockOpportunity, denial: DENIED_UPDATE };
+    const opp = {
+      ...mockOpportunity,
+      denial: DENIED_UPDATE,
+      tabTitle: () => "Marked Ineligible",
+    };
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
-        opportunityTypes: ["pastFTRD"],
+        opportunityTypes: ["LSU"],
         allOpportunitiesByType: {
-          pastFTRD: [opp],
+          LSU: [opp],
         },
         hasOpportunities: () => true,
       },
@@ -402,7 +406,7 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "Some clients are nearing or past their full-term release date",
+        "Some clients may be eligible for the Limited Supervision Unit",
       ),
     ).toBeInTheDocument();
 
@@ -410,10 +414,15 @@ describe("WorkflowsHomepage", () => {
   });
 
   test("header does not include ineligible or submitted opps in count", () => {
-    const deniedOpp = { ...mockOpportunity, denial: DENIED_UPDATE };
+    const deniedOpp = {
+      ...mockOpportunity,
+      denial: DENIED_UPDATE,
+      tabTitle: () => "Marked Ineligible",
+    };
     const submittedOpp = {
       ...mockOpportunity,
       isSubmitted: true,
+      tabTitle: () => "Pending",
     };
     const otherOpp = {
       ...mockOpportunity,
@@ -423,9 +432,9 @@ describe("WorkflowsHomepage", () => {
       workflowsStore: {
         ...baseWorkflowsStoreMock,
         opportunitiesLoaded: () => true,
-        opportunityTypes: ["pastFTRD"],
+        opportunityTypes: ["LSU"],
         allOpportunitiesByType: {
-          pastFTRD: [deniedOpp, submittedOpp, otherOpp],
+          LSU: [deniedOpp, submittedOpp, otherOpp],
         },
         hasOpportunities: () => true,
       },
@@ -439,40 +448,26 @@ describe("WorkflowsHomepage", () => {
 
     expect(
       screen.getByText(
-        "1 client is nearing or past their full-term release date",
+        "1 client may be eligible for the Limited Supervision Unit",
       ),
     ).toBeInTheDocument();
 
     expect(screen.getByText("Marked Ineligible: 1")).toBeInTheDocument();
-    expect(screen.getByText("Submitted: 1")).toBeInTheDocument();
+    expect(screen.getByText("Pending: 1")).toBeInTheDocument();
   });
 
   test("review status uses overridden text for alert opps", () => {
     const firstOpp = {
       ...mockOpportunity,
-      config: {
-        ...mockOpportunity.config,
-        isAlert: true,
-        deniedTabTitle: "Overridden",
-      },
-      denial: DENIED_UPDATE,
+      tabTitle: (tabGroup?: string) =>
+        tabGroup === "ELIGIBILITY STATUS" ? "Overridden" : "Other",
     };
     const secondOpp = {
       ...mockOpportunity,
-      config: {
-        ...mockOpportunity.config,
-        isAlert: true,
-        deniedTabTitle: "Overridden",
-      },
       person: { recordId: "2" },
     };
     const thirdOpp = {
       ...mockOpportunity,
-      config: {
-        ...mockOpportunity.config,
-        isAlert: true,
-        deniedTabTitle: "Overridden",
-      },
       person: { recordId: "3" },
     };
     useRootStoreMock.mockReturnValue({
