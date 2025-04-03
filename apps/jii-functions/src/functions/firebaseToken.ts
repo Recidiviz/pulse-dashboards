@@ -59,7 +59,9 @@ const jwtMiddleware = (
 };
 app.use(jwtMiddleware);
 
-app.get("/", async (request, response): Promise<void> => {
+// there is only one route in this app, but Firebase rewrite rules may affect what it is.
+// using a wildcard route means we don't have to keep it manually in sync with the config
+app.get("/*", async (request, response): Promise<void> => {
   const { user } = request;
 
   // middleware should have taken care of this for us

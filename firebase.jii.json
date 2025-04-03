@@ -6,6 +6,20 @@
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
+          "source": "/auth/auth0",
+          "function": {
+            "functionId": "firebaseToken",
+            "region": "us-central1"
+          }
+        },
+        {
+          "source": "/auth/edovo",
+          "function": {
+            "functionId": "edovoToken",
+            "region": "us-central1"
+          }
+        },
+        {
           "source": "**",
           "destination": "/index.html"
         }
@@ -35,6 +49,20 @@
       "public": "dist/apps/jii",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
+        {
+          "source": "/auth/auth0",
+          "function": {
+            "functionId": "firebaseToken",
+            "region": "us-central1"
+          }
+        },
+        {
+          "source": "/auth/edovo",
+          "function": {
+            "functionId": "edovoToken",
+            "region": "us-central1"
+          }
+        },
         {
           "source": "**",
           "destination": "/index.html"

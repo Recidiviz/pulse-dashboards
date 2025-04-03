@@ -67,7 +67,7 @@ test("authenticate", async () => {
   await waitFor(() => expect(client.isAuthenticated).toBeTrue());
   expect(fetchMock.mock.lastCall).toMatchInlineSnapshot(`
     [
-      "http://localhost:9999/functions/firebaseToken",
+      "http://localhost:9999/functions/auth/auth0",
       {
         "headers": {
           "Authorization": "Bearer test-auth0-access-token",

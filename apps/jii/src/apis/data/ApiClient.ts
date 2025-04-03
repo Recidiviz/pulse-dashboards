@@ -54,7 +54,7 @@ export class ApiClient implements DataAPI {
 
     // this function will only run the first time auth is checked
     this.authentication = lazyObservable(async (sink) => {
-      const response = await fetch(`${API_URL_BASE}/firebaseToken`, {
+      const response = await fetch(`${API_URL_BASE}/auth/auth0`, {
         headers: {
           Authorization: `Bearer ${await externals.authClient.getTokenSilently()}`,
         },
@@ -173,7 +173,7 @@ export class ApiClient implements DataAPI {
   }
 
   async validateEdovoToken(token: string): Promise<unknown> {
-    const response = await fetch(`${API_URL_BASE}/edovoToken`, {
+    const response = await fetch(`${API_URL_BASE}/auth/edovo`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

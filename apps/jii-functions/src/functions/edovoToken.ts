@@ -24,7 +24,11 @@ import { z } from "zod";
 
 import { UserAppMetadata } from "~auth0-jii";
 
-import { getFirebaseToken, lookupResident } from "../helpers/firebaseAdmin";
+import {
+  firebaseAdminSecrets,
+  getFirebaseToken,
+  lookupResident,
+} from "../helpers/firebaseAdmin";
 import { useRateLimiter } from "../helpers/ratelimit";
 
 // this one is properly a secret, it's a private key
@@ -67,7 +71,9 @@ app.use((request: Request, response: Response, next: NextFunction) => {
   handler(request, response, next);
 });
 
-app.get("/", async (request, response): Promise<void> => {
+// there is only one route in this app, but Firebase rewrite rules may affect what it is.
+// using a wildcard route means we don't have to keep it manually in sync with the config
+app.get("/*", async (request, response): Promise<void> => {
   const user = edovoPayloadSchema.safeParse(request.user);
 
   if (!user.success) {
@@ -124,6 +130,14 @@ app.use(
 );
 
 export const edovoToken = onRequest(
-  { cors: true, secrets: [EDOVO_API_KEY, EDOVO_JWKS_URL, EDOVO_TOKEN_ISSUER] },
+  {
+    cors: true,
+    secrets: [
+      EDOVO_API_KEY,
+      EDOVO_JWKS_URL,
+      EDOVO_TOKEN_ISSUER,
+      ...firebaseAdminSecrets,
+    ],
+  },
   app,
 );
