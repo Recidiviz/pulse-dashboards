@@ -11,6 +11,13 @@ main:
           - cloud_run_service_url: ${sys.get_env("CLOUD_RUN_SERVICE_URL")}
           - bucket_id: ${sys.get_env("BUCKET_ID")}
           - import_job_name: ${sys.get_env("IMPORT_JOB_NAME")}
+    - create_workflow_execution:
+        call: http.post
+        args:
+          url: ${cloud_run_service_url + "/workflow-executions/" + state_code}
+          auth:
+            type: OIDC
+        result: workflow_execution
     - import_data:
         call: googleapis.run.v2.projects.locations.jobs.run
         args:
@@ -21,6 +28,6 @@ main:
                 env:
                   - name: STATE_CODE
                     value: ${state_code}
-        result: job_execution
+        result: import_job_execution
     - return:
-        return: ${job_execution}
+        return: ${import_job_execution}
