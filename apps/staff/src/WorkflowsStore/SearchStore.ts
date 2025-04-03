@@ -98,6 +98,7 @@ export class SearchStore {
         if (
           !this.workflowsStore.user.updates.selectedSearchIds &&
           this.workflowsStore.user.info.hasCaseload &&
+          this.searchType &&
           ["OFFICER", "INCARCERATION_OFFICER"].includes(this.searchType)
         ) {
           const defaultCaseloadIds = [this.workflowsStore.user.info.id];
@@ -133,7 +134,8 @@ export class SearchStore {
     };
   }
 
-  get searchType(): SearchType {
+  // This should only ever return undefined if none of the search configs' FV are enabled
+  get searchType(): SearchType | undefined {
     if (this.searchTypeOverride) return this.searchTypeOverride;
     const systemConfig = this.workflowsStore.activeSystemConfig;
 
@@ -143,7 +145,7 @@ export class SearchStore {
       this.workflowsStore.activeSystem === "ALL"
     )
       return "ALL";
-    return systemConfig.search[0].searchType;
+    return systemConfig.search[0]?.searchType;
   }
 
   get supervisorSearchIds(): string[] | undefined {

@@ -402,7 +402,7 @@ export default class AnalyticsStore {
   trackCaseloadSearch(metadata: {
     searchCount: number;
     isDefault: boolean;
-    searchType: SearchType;
+    searchType?: SearchType;
   }): void {
     this.track("frontend.caseload_search", metadata);
   }
