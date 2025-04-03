@@ -102,6 +102,7 @@ export const MenuButton = observer(function MenuButton({
         toast(message, {
           id: "submittedToast", // prevent duplicate toasts
           position: "bottom-left",
+          duration: 7000,
         });
       }
     });

@@ -150,12 +150,23 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       }
 
       if (submittedOpportunityStatus) {
-        toast(
-          `${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`,
-          {
-            position: "bottom-left",
-          },
-        );
+        if (opportunity.subcategory) {
+          toast(
+            `${opportunity.person.displayName} is marked as "${opportunity.subcategoryHeadingFor(opportunity.subcategory)}" in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`,
+            {
+              position: "bottom-left",
+              duration: 7000,
+            },
+          );
+        } else {
+          toast(
+            `${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`,
+            {
+              position: "bottom-left",
+              duration: 7000,
+            },
+          );
+        }
       }
     };
 

@@ -566,7 +566,10 @@ export class OpportunityBase<
     const toastStatus = newSubcategory
       ? this.subcategoryHeadingFor(newSubcategory)
       : this.submittedTabTitle;
-    return `Marked ${this.person.displayName} as ${toastStatus} for ${this.config.label}`;
+
+    return newSubcategory
+      ? `Marked ${this.person.displayName} as ${this.submittedTabTitle}:"${toastStatus}" for ${this.config.label}`
+      : `Marked ${this.person.displayName} as "${toastStatus}" for ${this.config.label}`;
   }
 
   async setDenialReasons(reasons: string[]): Promise<void> {
