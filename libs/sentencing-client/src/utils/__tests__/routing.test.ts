@@ -19,11 +19,15 @@ import { psiRoute, psiUrl } from "../routing";
 
 test("psiRoute returns the relative route template string for a PSI page", () => {
   expect(psiRoute({ routeName: "psi" })).toBe("");
-  expect(psiRoute({ routeName: "dashboard" })).toBe(
-    "/dashboard/:staffPseudoId",
+  expect(psiRoute({ routeName: "dashboard" })).toBe("/dashboard");
+  expect(psiRoute({ routeName: "supervisorDashboard" })).toBe(
+    "/dashboard/supervisor/:staffPseudoId",
+  );
+  expect(psiRoute({ routeName: "staffDashboard" })).toBe(
+    "/dashboard/staff/:staffPseudoId",
   );
   expect(psiRoute({ routeName: "caseDetails" })).toBe(
-    "/dashboard/:staffPseudoId/case/:caseId",
+    "/dashboard/staff/:staffPseudoId/case/:caseId",
   );
 });
 
@@ -37,11 +41,21 @@ test("psiUrl returns the url route string for a PSI page", () => {
     psiUrl("dashboard", {
       staffPseudoId: "123",
     }),
-  ).toBe("/psi/dashboard/123");
+  ).toBe("/psi/dashboard");
+  expect(
+    psiUrl("supervisorDashboard", {
+      staffPseudoId: "123",
+    }),
+  ).toBe("/psi/dashboard/supervisor/123");
+  expect(
+    psiUrl("staffDashboard", {
+      staffPseudoId: "123",
+    }),
+  ).toBe("/psi/dashboard/staff/123");
   expect(
     psiUrl("caseDetails", {
       staffPseudoId: "123",
       caseId: "456",
     }),
-  ).toBe("/psi/dashboard/123/case/456");
+  ).toBe("/psi/dashboard/staff/123/case/456");
 });

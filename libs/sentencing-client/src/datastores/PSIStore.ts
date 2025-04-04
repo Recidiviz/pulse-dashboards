@@ -26,7 +26,9 @@ import { OfflineAPIClient } from "../api/OfflineAPIClient";
 import { GEO_CONFIG } from "../geoConfigs/geoConfigs";
 import { GeoConfig, StateCode } from "../geoConfigs/types";
 import { CaseStore } from "./CaseStore";
+import { ROUTE_PERMISSIONS } from "./constants";
 import { StaffStore } from "./StaffStore";
+import { SupervisorStore } from "./SupervisorStore";
 import {
   CreateOrUpdateRecommendationTrackingMetadata,
   FeatureVariant,
@@ -38,6 +40,7 @@ import {
   PageOrClickTrackingMetadata,
   RecommendationStatusFilterMetadata,
   RecommendedDispositionTrackingMetadata,
+  RoutePermission,
   SortOrderTrackingMetadata,
   UserStateCode,
 } from "./types";
@@ -53,6 +56,8 @@ export interface RootStore {
     getToken?: (
       options?: GetTokenSilentlyOptions,
     ) => Promise<string> | undefined;
+    getRoutePermission: (route: string) => boolean;
+    routes: RoutePermission[];
   };
   analyticsStore: {
     rootStore: RootStore;
@@ -103,6 +108,8 @@ export interface RootStore {
 export class PSIStore {
   staffStore: StaffStore;
 
+  supervisorStore: SupervisorStore;
+
   caseStore: CaseStore;
 
   apiClient: APIClient | OfflineAPIClient;
@@ -115,6 +122,7 @@ export class PSIStore {
       ? new OfflineAPIClient(this)
       : new APIClient(this);
     this.staffStore = new StaffStore(this);
+    this.supervisorStore = new SupervisorStore(this);
     this.caseStore = new CaseStore(this);
     this.analyticsStore = this.rootStore.analyticsStore;
   }
@@ -162,7 +170,14 @@ export class PSIStore {
     return this.rootStore.userStore.activeFeatureVariants;
   }
 
+  get routePermissions(): RoutePermission[] {
+    return this.rootStore.userStore.routes;
+  }
+
   get isSupervisor(): boolean {
-    return Boolean(this.activeFeatureVariants.psiSupervisor);
+    const psiSupervisionPermission = this.routePermissions.find(
+      ([route]) => route === ROUTE_PERMISSIONS.psiSupervision,
+    );
+    return psiSupervisionPermission ? psiSupervisionPermission[1] : false;
   }
 }

@@ -15,36 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-import { Navigate } from "react-router-dom";
+import { flowResult } from "mobx";
 
-import { psiUrl } from "../../utils/routing";
-import { ErrorMessage } from "../Error";
-import { useStore } from "../StoreProvider/StoreProvider";
+import { SupervisorInfoFixture } from "../../api/offlineFixtures";
+import { createMockPSIStore } from "../../utils/test";
 
-export const Dashboard = observer(function Dashboard() {
-  const psiStore = useStore();
+const psiStore = createMockPSIStore();
+const { supervisorStore } = psiStore;
 
-  if (!psiStore || !psiStore.staffPseudoId) return null;
+test("loads supervisor info", async () => {
+  vi.spyOn(psiStore.apiClient, "getSupervisorInfo").mockResolvedValue(
+    SupervisorInfoFixture,
+  );
 
-  const staffPseudoIdParam = {
-    staffPseudoId: psiStore.staffPseudoId,
-  };
-
-  if (psiStore.isSupervisor) {
-    return (
-      <Navigate
-        replace
-        to={psiUrl("supervisorDashboard", staffPseudoIdParam)}
-      />
-    );
-  }
-
-  if (!psiStore.isSupervisor) {
-    return (
-      <Navigate replace to={psiUrl("staffDashboard", staffPseudoIdParam)} />
-    );
-  }
-
-  return <ErrorMessage />;
+  expect(supervisorStore.supervisorInfo).toBeUndefined();
+  await flowResult(supervisorStore.loadSupervisorInfo());
+  expect(supervisorStore.supervisorInfo).toBeDefined();
+  expect(supervisorStore.supervisorInfo).toEqual(SupervisorInfoFixture);
 });

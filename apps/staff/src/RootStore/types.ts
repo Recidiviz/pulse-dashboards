@@ -100,8 +100,7 @@ export type FeatureVariant =
   | "usTnCompliantReporting2025Policy"
   | "reportIncorrectRosters"
   | "tableMultiSortEnabled"
-  | "supervisionTasksNavLink"
-  | "psiSupervisor";
+  | "supervisionTasksNavLink";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -152,7 +151,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   offenseOverrideControls: {},
   protectiveFactors: {},
   editCountyFields: {},
-  psiSupervisor: {},
   usIdCaseManagerSearch: {},
   usIdCRCFacilitySearch: {},
   opportunityTableView: {},

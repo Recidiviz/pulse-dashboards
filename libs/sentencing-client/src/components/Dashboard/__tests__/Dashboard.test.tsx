@@ -20,11 +20,17 @@
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
-import { StaffInfoFixture } from "../../../api/offlineFixtures";
+import {
+  StaffInfoFixture,
+  SupervisorInfoFixture,
+} from "../../../api/offlineFixtures";
 import { PSIStore } from "../../../datastores/PSIStore";
 import { StaffPresenter } from "../../../presenters/StaffPresenter";
+import { SupervisorPresenter } from "../../../presenters/SupervisorPresenter";
 import { createMockPSIStore } from "../../../utils/test";
-import { Dashboard } from "../Dashboard";
+import { StoreProvider } from "../../StoreProvider/StoreProvider";
+import { StaffDashboard } from "../StaffDashboard";
+import { SupervisorDashboard } from "../SupervisorDashboard";
 
 let psiStore: PSIStore;
 let presenter: StaffPresenter;
@@ -45,9 +51,13 @@ test("welcome message shows on first login", async () => {
   );
 
   const screen = render(
-    <MemoryRouter initialEntries={[`/psi/dashboard/${psiStore.staffPseudoId}`]}>
-      <Dashboard psiStore={psiStore} />
-    </MemoryRouter>,
+    <StoreProvider store={psiStore}>
+      <MemoryRouter
+        initialEntries={[`/psi/dashboard/${psiStore.staffPseudoId}`]}
+      >
+        <StaffDashboard psiStore={psiStore} />
+      </MemoryRouter>
+    </StoreProvider>,
   );
 
   const welcomeMessage = await screen.findByText(
@@ -71,9 +81,13 @@ test("welcome message no longer shows after user closes it", async () => {
   }
 
   const screen = render(
-    <MemoryRouter initialEntries={[`/psi/dashboard/${psiStore.staffPseudoId}`]}>
-      <Dashboard psiStore={psiStore} />
-    </MemoryRouter>,
+    <StoreProvider store={psiStore}>
+      <MemoryRouter
+        initialEntries={[`/psi/dashboard/staff/${psiStore.staffPseudoId}`]}
+      >
+        <StaffDashboard psiStore={psiStore} />
+      </MemoryRouter>
+    </StoreProvider>,
   );
 
   const welcomeMessage = await screen.queryByText(
@@ -95,9 +109,13 @@ test("shows cases default sorted by last name", async () => {
   if (!data) return;
 
   const screen = render(
-    <MemoryRouter initialEntries={[`/psi/dashboard/${psiStore.staffPseudoId}`]}>
-      <Dashboard psiStore={psiStore} />
-    </MemoryRouter>,
+    <StoreProvider store={psiStore}>
+      <MemoryRouter
+        initialEntries={[`/psi/dashboard/staff/${psiStore.staffPseudoId}`]}
+      >
+        <StaffDashboard psiStore={psiStore} />
+      </MemoryRouter>
+    </StoreProvider>,
   );
 
   // Blanda Furman
@@ -120,4 +138,39 @@ test("shows cases default sorted by last name", async () => {
   expect(client1.compareDocumentPosition(client2)).toBe(4);
   expect(client2.compareDocumentPosition(client3)).toBe(4);
   expect(client3.compareDocumentPosition(client1)).toBe(2);
+});
+
+test("SupervisorDashboard displays PSI Team Dashboard header and performance highlights", async () => {
+  // Mock the API to return fixture data for supervisor info
+  vi.spyOn(psiStore.apiClient, "getSupervisorInfo").mockResolvedValue(
+    SupervisorInfoFixture,
+  );
+
+  // Create and hydrate the supervisor presenter
+  const supervisorPresenter = new SupervisorPresenter(psiStore.supervisorStore);
+  await supervisorPresenter.hydrate();
+
+  const screen = render(
+    <StoreProvider store={psiStore}>
+      <MemoryRouter
+        initialEntries={[`/psi/dashboard/supervisor/${psiStore.staffPseudoId}`]}
+      >
+        <SupervisorDashboard psiStore={psiStore} />
+      </MemoryRouter>
+    </StoreProvider>,
+  );
+
+  const headerText = await screen.findByText(/PSI Team Dashboard/i);
+  expect(headerText).toBeInTheDocument();
+
+  const performanceHighlightsText = await screen.findByText(
+    /Performance Highlights/i,
+  );
+  expect(performanceHighlightsText).toBeInTheDocument();
+
+  const staffName =
+    SupervisorInfoFixture.supervisorDashboardStats?.staffStats[0].fullName ??
+    "";
+  const janeDoeStaff = await screen.findByText(staffName);
+  expect(janeDoeStaff).toBeInTheDocument();
 });

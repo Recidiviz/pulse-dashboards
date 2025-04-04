@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,34 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const ERROR_TOAST_DURATION = 3000;
+import { Supervisor } from "..";
 
-export const ROUTE_PERMISSIONS = {
-  psiSupervision: "psiSupervision",
+export const SupervisorInfoFixture: Supervisor = {
+  supervisorDashboardStats: {
+    topLineStats: {
+      casesDue: 12,
+      teamUsageRate: 0.75,
+      totalCaseCompletionRate: 0.85,
+    },
+    staffStats: [
+      {
+        caseCompletionRate: 0.9,
+        activeCasesAssigned: 13,
+        pseudonymizedId: "staff-pseudo-001",
+        stateCode: "US_ND",
+        fullName: "John Doe",
+        hasLoggedIn: true,
+        email: "staff.member@example.com",
+        supervisorId: null,
+      },
+    ],
+  },
+  cases: [],
+  pseudonymizedId: "pseudo-001",
+  stateCode: "US_ND",
+  fullName: "Jane Doe",
+  hasLoggedIn: true,
+  email: "jane.doe@example.com",
+  supervisorId: null,
+  externalId: undefined,
 };

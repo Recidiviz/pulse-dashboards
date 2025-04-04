@@ -352,7 +352,7 @@ export default class UserStore {
     const routes: RoutePermission[] = routePermissions.map(
       ([fullRoute, permission]: RoutePermission) => {
         const urlComponents = fullRoute.split("_");
-        const route = urlComponents.at(-1);
+        const route = urlComponents[urlComponents.length - 1];
         return [route, permission];
       },
     );

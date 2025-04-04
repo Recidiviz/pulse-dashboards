@@ -19,8 +19,10 @@ export const psiRootPath = "psi";
 
 export const PSI_PATHS: Record<PSIPage, string> = {
   psi: `/${psiRootPath}`,
-  dashboard: `/${psiRootPath}/dashboard/:staffPseudoId`,
-  caseDetails: `/${psiRootPath}/dashboard/:staffPseudoId/case/:caseId`,
+  dashboard: `/${psiRootPath}/dashboard`,
+  staffDashboard: `/${psiRootPath}/dashboard/staff/:staffPseudoId`,
+  caseDetails: `/${psiRootPath}/dashboard/staff/:staffPseudoId/case/:caseId`,
+  supervisorDashboard: `/${psiRootPath}/dashboard/supervisor/:staffPseudoId`,
 };
 
 export type PSIPage = keyof typeof PSI_PAGES;
@@ -28,6 +30,8 @@ export type PSIPage = keyof typeof PSI_PAGES;
 export const PSI_PAGES = {
   psi: psiRootPath,
   dashboard: "dashboard",
+  staffDashboard: "staffDashboard",
+  supervisorDashboard: "supervisorDashboard",
   caseDetails: "caseDetails",
 } as const;
 

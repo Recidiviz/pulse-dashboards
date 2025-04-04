@@ -38,25 +38,12 @@ export class StaffPresenter implements Hydratable {
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         () => {
-          const isNotPopulated = this.isSupervisor
-            ? this.staffStore.supervisorInfo === undefined
-            : this.staffStore.staffInfo === undefined;
-
-          if (isNotPopulated) {
-            throw new Error(
-              this.isSupervisor
-                ? "Failed to load supervisor info"
-                : "Failed to load staff info",
-            );
-          }
+          if (this.staffStore.staffInfo === undefined)
+            throw new Error("Failed to load staff info");
         },
       ],
       populate: async () => {
-        if (this.isSupervisor) {
-          await flowResult(this.staffStore.loadSupervisorInfo());
-        } else {
-          await flowResult(this.staffStore.loadStaffInfo());
-        }
+        await flowResult(this.staffStore.loadStaffInfo());
       },
     });
   }
@@ -73,16 +60,8 @@ export class StaffPresenter implements Hydratable {
     return this.staffStore.psiStore.staffPseudoId;
   }
 
-  get isSupervisor() {
-    return this.staffStore.isSupervisor;
-  }
-
   get staffInfo() {
     return this.staffStore.staffInfo;
-  }
-
-  get supervisorInfo() {
-    return this.staffStore.supervisorInfo;
   }
 
   get caseTableData() {

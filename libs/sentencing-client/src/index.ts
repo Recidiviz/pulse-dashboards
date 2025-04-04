@@ -17,6 +17,9 @@
 
 export * from "./components/CaseDetails";
 export * from "./components/Dashboard";
+export * from "./components/Dashboard/StaffDashboard";
+export * from "./components/Dashboard/SupervisorDashboard";
+export * from "./components/StoreProvider/StoreProvider";
 export * from "./datastores/PSIStore";
 export * from "./datastores/types";
 export * from "./utils/routing";

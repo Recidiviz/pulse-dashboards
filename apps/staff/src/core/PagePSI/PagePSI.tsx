@@ -28,7 +28,15 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { CaseDetails, Dashboard, psiRoute, psiUrl } from "~sentencing-client";
+import {
+  CaseDetails,
+  Dashboard,
+  psiRoute,
+  psiUrl,
+  StaffDashboard,
+  StoreProvider,
+  SupervisorDashboard,
+} from "~sentencing-client";
 
 import NotFound from "../../components/NotFound";
 import {
@@ -77,33 +85,43 @@ const PagePSI: React.FC = function PagePSI() {
         </ErrorPage>
       }
     >
-      <Wrapper>
-        <NavigationLayout />
-        <Main isMobile={isMobile}>
-          <Routes>
-            <Route
-              index
-              element={
-                <Navigate
-                  to={psiUrl("dashboard", {
-                    staffPseudoId: psiStore.staffPseudoId,
-                  })}
-                  replace
-                />
-              }
-            />
-            <Route
-              path={psiRoute({ routeName: "dashboard" })}
-              element={<Dashboard psiStore={psiStore} />}
-            />
-            <Route
-              path={psiRoute({ routeName: "caseDetails" })}
-              element={<CaseDetails psiStore={psiStore} />}
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Main>
-      </Wrapper>
+      <StoreProvider store={psiStore}>
+        <Wrapper>
+          <NavigationLayout />
+          <Main isMobile={isMobile}>
+            <Routes>
+              <Route
+                index
+                element={
+                  <Navigate
+                    to={psiUrl("dashboard", {
+                      staffPseudoId: psiStore.staffPseudoId,
+                    })}
+                    replace
+                  />
+                }
+              />
+              <Route
+                path={psiRoute({ routeName: "dashboard" })}
+                element={<Dashboard />}
+              />
+              <Route
+                path={psiRoute({ routeName: "staffDashboard" })}
+                element={<StaffDashboard psiStore={psiStore} />}
+              />
+              <Route
+                path={psiRoute({ routeName: "supervisorDashboard" })}
+                element={<SupervisorDashboard psiStore={psiStore} />}
+              />
+              <Route
+                path={psiRoute({ routeName: "caseDetails" })}
+                element={<CaseDetails psiStore={psiStore} />}
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Main>
+        </Wrapper>
+      </StoreProvider>
     </ErrorBoundary>
   );
 };

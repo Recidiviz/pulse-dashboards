@@ -17,7 +17,7 @@
 
 import { PathwaysPageRootPath, PathwaysSection, ViewRootPath } from "../views";
 
-export type RoutePermission = (string | any)[];
+export type RoutePermission = [route: string, permission: boolean];
 
 export type NavigationSection = keyof Navigation;
 

@@ -45,6 +45,8 @@ export const createMockRootStore = (
       isImpersonating: false,
       activeFeatureVariants: {},
       stateCode: stateCodeOverride,
+      getRoutePermission: (route: string) => true,
+      routes: [["psi", true]],
     },
     analyticsStore: {
       rootStore: {} as RootStore,

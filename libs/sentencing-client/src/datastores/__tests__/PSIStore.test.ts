@@ -19,11 +19,15 @@ import { createMockPSIStore } from "../../utils/test";
 
 const psiStore = createMockPSIStore();
 
-test("psiStaffStore is initialized when psiStore is instantiated", () => {
+test("StaffStore is initialized when psiStore is instantiated", () => {
   expect(psiStore.staffStore).toBeDefined();
 });
 
-test("psiCaseStore is initialized when psiStore is instantiated", () => {
+test("SupervisorStore is initialized when psiStore is instantiated", () => {
+  expect(psiStore.staffStore).toBeDefined();
+});
+
+test("CaseStore is initialized when psiStore is instantiated", () => {
   expect(psiStore.caseStore).toBeDefined();
 });
 

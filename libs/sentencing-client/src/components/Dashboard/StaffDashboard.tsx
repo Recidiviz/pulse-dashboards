@@ -15,30 +15,46 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
+import { withPresenterManager } from "~hydration-utils";
+
+import { PSIStore } from "../../datastores/PSIStore";
+import { StaffPresenter } from "../../presenters/StaffPresenter";
 import CloseIcon from "../assets/close-icon.svg?react";
+import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { CaseListTable } from "./CaseListTable";
 import * as Styled from "./Dashboard.styles";
-import { StaffDashboardProps } from "./types";
 
-export const StaffDashboard: React.FC<StaffDashboardProps> = (
-  staffDashboardProps,
-) => {
+const ManagedComponent = observer(function StaffDashboard({
+  presenter,
+}: {
+  presenter: StaffPresenter;
+}) {
   const {
     staffInfo,
     staffPseudoId,
     caseTableData,
     geoConfig,
     setIsFirstLogin,
+    trackDashboardPageViewed,
     trackIndividualCaseClicked,
     trackRecommendationStatusFilterChanged,
     trackDashboardSortOrderChanged,
-  } = staffDashboardProps;
+  } = presenter;
 
+  const [initialPageLoad, setInitialPageLoad] = useState(true);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(
     !staffInfo?.hasLoggedIn,
   );
+
+  if (!staffPseudoId || !caseTableData) return null;
+
+  if (initialPageLoad) {
+    trackDashboardPageViewed();
+    setInitialPageLoad(false);
+  }
 
   const handleFirstLogin = () => {
     if (!staffInfo?.hasLoggedIn) {
@@ -47,10 +63,8 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = (
     }
   };
 
-  if (!caseTableData) return null;
-
   return (
-    <>
+    <Styled.PageContainer>
       {/* Welcome Message */}
       {showWelcomeMessage && (
         <Styled.WelcomeMessage>
@@ -86,6 +100,19 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = (
           }}
         />
       </Styled.Cases>
-    </>
+    </Styled.PageContainer>
   );
-};
+});
+
+function usePresenter({ psiStore }: { psiStore: PSIStore }) {
+  const { staffStore } = psiStore;
+
+  return new StaffPresenter(staffStore);
+}
+
+export const StaffDashboard = withPresenterManager({
+  usePresenter,
+  ManagedComponent,
+  managerIsObserver: true,
+  HydratorComponent: PageHydrator,
+});

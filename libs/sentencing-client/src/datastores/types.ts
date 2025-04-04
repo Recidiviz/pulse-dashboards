@@ -95,11 +95,12 @@ export type FeatureVariant =
   | "offenseOverrideControls"
   | "protectiveFactors"
   | "editCountyFields"
-  | "mandatoryMinimum"
-  | "psiSupervisor";
+  | "mandatoryMinimum";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
   variant?: string;
   activeTenants?: StateCode[];
 };
+
+export type RoutePermission = [route: string, permission: boolean];

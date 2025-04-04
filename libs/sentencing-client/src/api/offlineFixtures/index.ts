@@ -17,3 +17,4 @@
 
 export * from "./CaseDetailsFixtures";
 export * from "./StaffInfoFixtures";
+export * from "./SupervisorInfoFixtures";
