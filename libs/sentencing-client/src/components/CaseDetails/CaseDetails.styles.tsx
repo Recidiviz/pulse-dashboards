@@ -1530,3 +1530,12 @@ export const DisclaimerWrapper = styled.div`
   padding: 0 24px;
   font-weight: 500;
 `;
+
+export const ExternalOpportunityButton = styled.button`
+  padding: 10px 20px;
+  border: 1px solid ${customPalette.white.white2};
+  border-radius: 4px;
+  width: max-content;
+  display: flex;
+  align-items: center;
+`;

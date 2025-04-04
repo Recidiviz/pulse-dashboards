@@ -28,6 +28,8 @@ import { keyBy, mapValues, pick } from "lodash";
 import { Fragment, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+import { isDemoMode } from "~client-env-utils";
+
 import { CaseStore } from "../../../../src/datastores/CaseStore";
 import { Opportunities as OpportunitiesType } from "../../../api";
 import { OpportunityViewOrigin } from "../../../datastores/types";
@@ -104,9 +106,9 @@ type OpportunityWithOppNameProviderName = OpportunitiesType[number] & {
   opportunityNameProviderName: string;
 };
 
-function getColumns(geoConfig: GeoConfig) {
-  const { ExternalOpportunityLogo } = geoConfig;
-
+function getColumns(
+  ExternalOpportunityLogo: GeoConfig["ExternalOpportunityLogo"],
+) {
   return [
     {
       header: "Opportunity & Provider",
@@ -201,9 +203,11 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
     pageSize: 7,
   });
 
+  const ExternalOpportunityLogo = geoConfig.ExternalOpportunityLogo;
+
   const table = useReactTable<OpportunityWithOppNameProviderName>({
     data,
-    columns: getColumns(geoConfig),
+    columns: getColumns(ExternalOpportunityLogo),
     state: {
       globalFilter,
       pagination,
@@ -413,6 +417,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
   const toggleOpportunity = (
     opportunityNameProviderName: string,
     origin: "table" | "modal",
+    source: "internal" | "external",
     rowId?: string,
   ) => {
     const isRemovingOpportunity = recommendedOpportunities.find(
@@ -422,11 +427,14 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
         ].opportunityName === opp.opportunityName,
     );
 
-    updateRecommendedOpportunities(
-      opportunityDisplayNameToOpportunityNameProviderName[
-        opportunityNameProviderName
-      ],
-    );
+    // For now, only update opportunities if the source is internal
+    if (source === "internal") {
+      updateRecommendedOpportunities(
+        opportunityDisplayNameToOpportunityNameProviderName[
+          opportunityNameProviderName
+        ],
+      );
+    }
 
     toast(
       `An opportunity has been ${isRemovingOpportunity ? `removed from` : `added to`} your
@@ -606,6 +614,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
                                 toggleOpportunity(
                                   cell.row.original.opportunityNameProviderName,
                                   "table",
+                                  cell.row.original.source,
                                   row.id,
                                 )
                               }
@@ -662,26 +671,50 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
           </Styled.Table>
         </Styled.TableWrapper>
 
-        {/* Pagination */}
-        {hasPagination && (
-          <Styled.Pagination>
-            <Styled.Pages>
-              {pagePrompt} <span>of</span> {totalRowCount}
-            </Styled.Pages>
-            <Styled.PaginationButton
-              onClick={() => table.getCanPreviousPage() && table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          {isDemoMode() && (
+            <Styled.ExternalOpportunityButton
+              onClick={() => {
+                window.open(
+                  "https://www.findhelp.com/",
+                  "_blank",
+                  "noopener,noreferrer",
+                );
+              }}
             >
-              <LeftArrowIcon />
-            </Styled.PaginationButton>
-            <Styled.PaginationButton
-              onClick={() => table.getCanNextPage() && table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              <RightArrowIcon />
-            </Styled.PaginationButton>
-          </Styled.Pagination>
-        )}
+              <span style={{ marginRight: 10 }}>Explore all Opportunities</span>
+              {ExternalOpportunityLogo && <ExternalOpportunityLogo />}
+            </Styled.ExternalOpportunityButton>
+          )}
+          {/* Pagination */}
+          {hasPagination && (
+            <Styled.Pagination>
+              <Styled.Pages>
+                {pagePrompt} <span>of</span> {totalRowCount}
+              </Styled.Pages>
+              <Styled.PaginationButton
+                onClick={() =>
+                  table.getCanPreviousPage() && table.previousPage()
+                }
+                disabled={!table.getCanPreviousPage()}
+              >
+                <LeftArrowIcon />
+              </Styled.PaginationButton>
+              <Styled.PaginationButton
+                onClick={() => table.getCanNextPage() && table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                <RightArrowIcon />
+              </Styled.PaginationButton>
+            </Styled.Pagination>
+          )}
+        </div>
       </Styled.OpportunitiesTableWrapper>
 
       {/* Opportunity Modal */}
@@ -716,6 +749,7 @@ export const Opportunities: React.FC<OpportunitiesProps> = ({
               selectedOpportunity.providerName,
             ),
             "modal",
+            selectedOpportunity.source,
             selectedRowId,
           )
         }
