@@ -66,6 +66,7 @@ import { UsOrEarnedDischargeSentenceOpportunity } from "./UsOr/UsOrEarnedDischar
 import { UsPaAdminSupervisionOpportunity } from "./UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
 import {
   UsTnCustodyLevelDowngradeOpportunity,
+  UsTnInitialClassificationOpportunity,
   UsTnSuspensionOfDirectSupervisionOpportunity,
 } from "./UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
@@ -135,6 +136,7 @@ export const opportunityConstructors = {
 
   // US_TN
   usTnAnnualReclassification: UsTnAnnualReclassificationReviewOpportunity,
+  usTnInitialClassification: UsTnInitialClassificationOpportunity,
   compliantReporting: CompliantReportingOpportunity,
   usTnCompliantReporting2025Policy: UsTnCompliantReporting2025PolicyOpportunity,
   usTnExpiration: UsTnExpirationOpportunity,

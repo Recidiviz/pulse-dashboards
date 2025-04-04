@@ -31,6 +31,7 @@ import {
   UsTnCustodyLevelDowngradeOpportunity,
   UsTnSharedReclassificationDraftData,
 } from "../UsTn";
+import { UsTnInitialClassificationOpportunity } from "../UsTn/UsTnInitialClassificationOpportunity";
 import { FormBase } from "./FormBase";
 
 function formatViolationNotes(
@@ -45,6 +46,7 @@ export class UsTnReclassificationReviewForm extends FormBase<
   UsTnSharedReclassificationDraftData,
   | UsTnCustodyLevelDowngradeOpportunity
   | UsTnAnnualReclassificationReviewOpportunity
+  | UsTnInitialClassificationOpportunity
 > {
   navigateToFormText = "Auto-fill Paperwork";
 

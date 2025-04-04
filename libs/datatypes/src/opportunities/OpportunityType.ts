@@ -77,6 +77,7 @@ const constructedOpportunityTypes = [
   "usTnExpiration",
   "supervisionLevelDowngrade",
   "usTnAnnualReclassification",
+  "usTnInitialClassification",
   "usTnSuspensionOfDirectSupervision",
 
   // US_UT

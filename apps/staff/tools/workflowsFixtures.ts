@@ -85,6 +85,7 @@ import { usTnCompliantReporting2025PolicyReferrals } from "./fixtures/usTnCompli
 import { usTnCompliantReportingReferrals } from "./fixtures/usTnCompliantReportingReferrals";
 import { usTnCustodyLevelDowngradeFixture } from "./fixtures/usTnCustodyLevelDowngradeReferrals";
 import { usTnExpirationFixture } from "./fixtures/usTnExpirationReferrals";
+import { usTnInitialClassificationFixture } from "./fixtures/usTnInitialClassificationReferrals";
 import { usTxSupervisionTasksData } from "./fixtures/usTxSupervisionTasks";
 import { usUtEarlyTerminationReferrals } from "./fixtures/usUtEarlyTerminationReferrals";
 import { FirestoreFixture, fixtureFromParsedRecords } from "./fixtures/utils";
@@ -193,6 +194,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usTnCustodyLevelDowngradeReferrals: usTnCustodyLevelDowngradeFixture,
   usTnExpirationReferrals: usTnExpirationFixture,
   usTnAnnualReclassificationReferrals: usTnAnnualReclassificationReviewFixture,
+  usTnInitialClassificationReferrals: usTnInitialClassificationFixture,
   usMoOverdueRestrictiveHousingInitialHearingReferrals,
   usMoOverdueRestrictiveHousingReviewHearingReferrals,
   usUtEarlyTerminationReferrals,

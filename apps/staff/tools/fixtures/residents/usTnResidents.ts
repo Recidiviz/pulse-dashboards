@@ -59,7 +59,10 @@ export const usTnResidents: ResidentFixture[] = [
     metadata: {},
   },
   {
-    allEligibleOpportunities: ["usTnAnnualReclassification"],
+    allEligibleOpportunities: [
+      "usTnAnnualReclassification",
+      "usTnInitialClassification",
+    ],
     stateCode: "US_TN",
     personExternalId: "RES003",
     displayId: "dRES003",
@@ -78,7 +81,10 @@ export const usTnResidents: ResidentFixture[] = [
     metadata: {},
   },
   {
-    allEligibleOpportunities: ["usTnAnnualReclassification"],
+    allEligibleOpportunities: [
+      "usTnAnnualReclassification",
+      "usTnInitialClassification",
+    ],
     stateCode: "US_TN",
     personExternalId: "RES004",
     displayId: "dRES004",
