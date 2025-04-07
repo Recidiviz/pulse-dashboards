@@ -466,6 +466,17 @@ function generateSerialListString(arr: string[], conjunction = "and"): string {
   }, "");
 }
 
+function formatDollarAmount(text: string) {
+  let textTokens = text.split(" ");
+  textTokens = textTokens.map((x) =>
+    x.startsWith("$") && x.includes(".")
+      ? "$" + parseFloat(x.slice(1)).toFixed(2)
+      : x,
+  );
+
+  return textTokens.join(" ");
+}
+
 export {
   convertCurlyQuotesToStraight,
   decrypt,
@@ -475,6 +486,7 @@ export {
   formatDateToISO,
   formatDaysToYearsMonthsPast,
   formatDistrictLabel,
+  formatDollarAmount,
   formatDueDateFromToday,
   formatDurationFromDays,
   formatDurationFromOptionalDays,

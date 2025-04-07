@@ -30,6 +30,7 @@ import React, { ReactElement } from "react";
 import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
+import { formatDollarAmount } from "../../utils/formatStrings";
 import { Opportunity, OpportunityRequirement } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { InfoButton } from "./InfoButton";
@@ -101,17 +102,19 @@ export const CriteriaList = observer(function CriteriaList({
       </InfoTooltipWrapper>
     );
 
+    const parsedText = formatDollarAmount(text);
+
     const recommendedLanguageElem = (
       <>
         <OpportunityRecommendedLanguageModal opportunity={opportunity}>
-          {text}
+          {parsedText}
         </OpportunityRecommendedLanguageModal>
         {tooltip && <> {tooltipElem}</>}
       </>
     );
 
     // if text doesn't need to be wrapped, split it so we can prevent orphaned tooltips
-    const textTokens = text.split(" ");
+    const textTokens = parsedText.split(" ");
     const splitTextElem = (
       <>
         {textTokens.slice(0, -1).join(" ")}{" "}
@@ -123,9 +126,9 @@ export const CriteriaList = observer(function CriteriaList({
     );
 
     return (
-      <CriterionWrapper key={key ?? text} alert={alert}>
+      <CriterionWrapper key={key ?? parsedText} alert={alert}>
         {isHeading ? (
-          <CriterionHeading isFirst={i === 0}>{text}</CriterionHeading>
+          <CriterionHeading isFirst={i === 0}>{parsedText}</CriterionHeading>
         ) : (
           <>
             {iconType}
@@ -178,7 +181,6 @@ export const CriteriaList = observer(function CriteriaList({
             {opportunity.config.omsCriteriaHeader}
           </CriteriaSectionHeading>
         )}
-
       {opportunity.requirementsAlmostMet.map(almostMetReqToCriterion)}
       {opportunity.requirementsMet.map(metReqToCriterion)}
 

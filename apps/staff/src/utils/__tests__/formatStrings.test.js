@@ -461,4 +461,17 @@ describe("formatStrings", () => {
       );
     });
   });
+  describe("formatDollarAmount", () => {
+    it("format dollar amount within a sentence rounded to two decimal places", () => {
+      const originalString = "Unpaid balance of $503.09834917";
+      const result = utils.formatDollarAmount(originalString);
+      expect(result).toEqual("Unpaid balance of $503.10");
+    });
+
+    it("format dollar amount within a sentence with no decimals", () => {
+      const originalString = "Unpaid balance of $90";
+      const result = utils.formatDollarAmount(originalString);
+      expect(result).toEqual("Unpaid balance of $90");
+    });
+  });
 });
