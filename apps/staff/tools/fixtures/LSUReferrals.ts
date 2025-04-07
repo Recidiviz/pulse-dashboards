@@ -134,10 +134,6 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
         usIdIncomeVerifiedWithin3Months: null,
       },
       eligibleCriteria: {
-        negativeDaWithin90Days: {
-          latestUaDates: ["2022-09-08"],
-          latestUaResults: [false],
-        },
         noFelonyWithin24Months: null,
         usIdNoActiveNco: {
           activeNco: false,

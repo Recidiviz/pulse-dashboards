@@ -90,7 +90,6 @@ test("optional criteria have sane fallbacks", () => {
         riskLevel: "LOW",
         eligibleDate: "2022-01-03",
       },
-      negativeDaWithin90Days: null,
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },

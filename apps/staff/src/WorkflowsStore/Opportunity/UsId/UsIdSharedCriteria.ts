@@ -31,7 +31,7 @@ export const eligibleCriteriaLsuED = z
         latestUaResults: z.array(z.boolean()),
       }),
       { latestUaDates: [], latestUaResults: [] },
-    ),
+    ).optional(),
   })
   .passthrough();
 

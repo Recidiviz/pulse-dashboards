@@ -92,7 +92,10 @@ export const LSUEarnedDischargeCommonRequirementsMet = (
   const requirements: OpportunityRequirement[] = [];
   const { negativeDaWithin90Days } = eligibleCriteria;
 
-  if (!some(negativeDaWithin90Days?.latestUaResults)) {
+  if (
+    negativeDaWithin90Days &&
+    !some(negativeDaWithin90Days?.latestUaResults)
+  ) {
     // TODO(#2468): Reassess how to indicate no UA required
     if (negativeDaWithin90Days.latestUaDates.length === 0) {
       requirements.push({
