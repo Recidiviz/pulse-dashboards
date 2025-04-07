@@ -335,24 +335,12 @@ describe("prefilledDataTransformer", () => {
     oppRecord.formInformation.activeRecommendations = [
       {
         Recommendation: "RECA",
-        Pathway: "P",
-        PathwayName: "PATHWAY",
-        TreatmentGoal: "T",
-        VantagePointTitle: "REC A",
       },
       {
         Recommendation: "RECB",
-        Pathway: "P",
-        PathwayName: "PATHWAY",
-        TreatmentGoal: "T",
-        VantagePointTitle: "REC B",
       },
       {
         Recommendation: "RECA",
-        Pathway: "P",
-        PathwayName: "PATHWAY",
-        TreatmentGoal: "T",
-        VantagePointTitle: "REC A",
       },
     ];
 

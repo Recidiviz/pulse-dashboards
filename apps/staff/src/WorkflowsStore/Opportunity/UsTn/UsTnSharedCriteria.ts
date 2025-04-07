@@ -29,11 +29,12 @@ const eventNote = z.object({
 export const formInformationSchema = z.object({
   activeRecommendations: z.array(
     z.object({
-      Pathway: z.string(),
-      PathwayName: z.string(),
       Recommendation: z.string(),
-      TreatmentGoal: z.string(),
-      VantagePointTitle: z.string(),
+      // // May also include these fields we're not using and therefore don't need to validate:
+      // Pathway: z.string(),
+      // PathwayName: z.string(),
+      // TreatmentGoal: z.string(),
+      // VantagePointTitle: z.string(),
     }),
   ),
   classificationType: z.string(),
