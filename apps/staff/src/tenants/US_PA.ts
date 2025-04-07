@@ -42,6 +42,7 @@ const US_PA_CONFIG: TenantConfig<"US_PA"> = {
     workflows: ["home", "clients"],
     revocations: [],
   },
+  featureVariants: { zeroGrantsFlag: {} },
 };
 
 export default US_PA_CONFIG;

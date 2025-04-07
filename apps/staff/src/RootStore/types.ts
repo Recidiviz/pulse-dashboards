@@ -62,6 +62,7 @@ export type UserAppMetadata = {
 // but also so that we don't have an empty union when there are no feature variants in use
 export type FeatureVariant =
   | "TEST"
+  // WORKFLOWS
   | "enableSnooze"
   | "supervisionUnrestrictedSearch"
   | "usTnExpiration"
@@ -69,38 +70,41 @@ export type FeatureVariant =
   | "usCaEnableSMS"
   | "usMoOverdueRHPilot"
   | "formRevertButton"
-  | "insightsLeadershipPageAllDistricts"
-  | "insightsOnboarding"
   | "hideDenialRevert"
   | "workflowsSupervisorSearch"
-  | "supervisorHomepageWorkflows"
-  | "supervisorHomepageVitals"
   | "usPaSpecialCircumstances"
-  | "lastSyncedDate"
   | "caseNoteSearch"
-  | "actionStrategies"
   | "nonOMSCriteria"
   | "submittedOpportunityStatus"
   | "personSpecificOppBanners"
   | "sortableOpportunityTabs"
   | "fullWidthTimeline"
-  | "zeroGrantsFlag"
   | "usOrEarnedDischargeSentence"
   | "oppTabSubcategories"
-  | "offenseOverrideControls"
-  | "protectiveFactors"
-  | "editCountyFields"
   | "usIdCRCFacilitySearch"
   | "usIdCaseManagerSearch"
   | "opportunityTableView"
   | "usTnSuspensionOfDirectSupervision"
   | "usMeCaseNoteSnooze"
-  | "outcomesModule"
-  | "mandatoryMinimum"
   | "usTnCompliantReporting2025Policy"
-  | "reportIncorrectRosters"
   | "tableMultiSortEnabled"
-  | "supervisionTasksNavLink";
+  | "supervisionTasksNavLink"
+  // INSIGHTS
+  | "insightsLeadershipPageAllDistricts"
+  | "insightsOnboarding"
+  | "supervisorHomepageWorkflows"
+  | "supervisorHomepageVitals"
+  | "actionStrategies"
+  | "zeroGrantsFlag"
+  | "outcomesModule"
+  | "reportIncorrectRosters"
+  // WORKFLOWS & INSIGHTS
+  | "lastSyncedDate"
+  // SENTENCING
+  | "offenseOverrideControls"
+  | "protectiveFactors"
+  | "editCountyFields"
+  | "mandatoryMinimum";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -191,7 +195,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnExpiration: {},
         usTnExpirationSubmitToTomis: {},
         usTnSuspensionOfDirectSupervision: {},
-        zeroGrantsFlag: { activeTenants: ["US_ID", "US_MI", "US_TN"] },
+        zeroGrantsFlag: { activeTenants: ["US_ID", "US_MI", "US_TN", "US_PA"] },
         supervisionTasksNavLink: { activeTenants: ["US_ID"] },
       }
     : {
