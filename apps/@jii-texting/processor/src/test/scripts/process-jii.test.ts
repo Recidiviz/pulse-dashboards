@@ -25,6 +25,7 @@ import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 import { processJii } from "~@jii-texting/processor/scripts/process-jii";
 import { testPrismaClient } from "~@jii-texting/processor/test/setup/index";
 import {
+  fakeMissingDA,
   fakePersonOne,
   fakeWorkflowExecutionOne,
   fakeWorkflowExecutionThree,
@@ -235,6 +236,66 @@ describe("one person in DB with initial text sent once", () => {
         errorMessage: null,
         errorCode: null,
       } as unknown as MessageInstance);
+
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      const personWithMessageSeries =
+        await testPrismaClient.person.findFirstOrThrow({
+          where: {
+            personId: fakePersonOne.personId,
+          },
+          include: {
+            messageSeries: true,
+          },
+        });
+
+      expect(personWithMessageSeries.messageSeries.length).toBe(2);
+    });
+
+    test("eligibility text sent even when person group changes", async () => {
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "message body",
+        status: "queued",
+        sid: "twilio-message-sid",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await testPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          groups: { set: [] },
+        },
+      });
+
+      const newGroup = await testPrismaClient.group.findFirstOrThrow({
+        where: {
+          groupName: fakeMissingDA.groupName,
+        },
+      });
+
+      // Change the existing person's group in the setup
+      await testPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          groups: {
+            connect: {
+              id: newGroup.id,
+            },
+          },
+        },
+        select: { groups: true },
+      });
 
       await processJii({
         stateCode: StateCode.US_ID,
@@ -544,6 +605,84 @@ describe("one person with initial and eligibility message series", () => {
       });
 
     expect(newMessageAttempt.status).toBe(MessageAttemptStatus.SUCCESS);
+  });
+
+  describe("eligiblity text is successful and group changes after", () => {
+    beforeEach(async () => {
+      await testPrismaClient.messageAttempt.update({
+        where: {
+          twilioMessageSid: "message-sid-2",
+        },
+        data: {
+          status: MessageAttemptStatus.SUCCESS,
+        },
+      });
+
+      await testPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          groups: { set: [] },
+        },
+      });
+
+      const newGroup = await testPrismaClient.group.findFirstOrThrow({
+        where: {
+          groupName: fakeMissingDA.groupName,
+        },
+      });
+
+      // Change the existing person's group in the setup
+      await testPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          groups: {
+            connect: {
+              id: newGroup.id,
+            },
+          },
+        },
+        select: { groups: true },
+      });
+    });
+
+    test("eligiblity text sent for new group", async () => {
+      vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+        sid: "message-sid-2",
+        status: "sent",
+      } as MessageInstance);
+
+      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+        body: "message body",
+        status: "queued",
+        sid: "twilio-message-sid",
+        dateCreated: new Date(),
+        dateSent: new Date(),
+        errorMessage: null,
+        errorCode: null,
+      } as unknown as MessageInstance);
+
+      await processJii({
+        stateCode: StateCode.US_ID,
+        dryRun: false,
+        workflowExecutionId: fakeWorkflowExecutionOne.id,
+      });
+
+      const personWithMessageSeries =
+        await testPrismaClient.person.findFirstOrThrow({
+          where: {
+            personId: fakePersonOne.personId,
+          },
+          include: {
+            messageSeries: true,
+          },
+        });
+
+      expect(personWithMessageSeries.messageSeries.length).toBe(3);
+    });
   });
 });
 

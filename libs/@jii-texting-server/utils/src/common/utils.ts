@@ -326,61 +326,190 @@ export async function sendText(
 }
 
 /**
- * Returns True if we have sent the max number of attempts for a MessageSeries of
- * the provided messageType and the latest attempt has status=FAILURE, which implies
+ * Returns True if we have sent the max number of attempts for a MessageSeries
+ * and the latest attempt has status=FAILURE, which implies
  * the other MessageAttempts are also failures
  *
- * @param messageSeriesList A list of MessageSeries objects for a given JII
- * @param messageType The MessageType of the MessageSeries we care about
+ * @param messageSeries A MessageSeries object for a given JII
  * @returns True if all associated MessageAttempts in the series have failed
  */
 function allTextAttemptsForSeriesFailed(
-  messageType: MessageType,
-  messageSeriesList: MessageSeriesWithAttemptsAndGroup[],
+  messageSeries: MessageSeriesWithAttemptsAndGroup,
 ) {
-  const messageSeries = messageSeriesList.find(
-    (series) => series.messageType === messageType,
+  const messageAttempts = messageSeries.messageAttempts.sort(
+    messageAttemptSortByCreatedTimestampDesc,
   );
 
-  if (messageSeries) {
-    const messageAttempts = messageSeries.messageAttempts.sort(
-      messageAttemptSortByCreatedTimestampDesc,
-    );
-
-    if (
-      messageAttempts.length === MAX_RETRY_ATTEMPTS &&
-      messageAttempts[0].status === MessageAttemptStatus.FAILURE
-    ) {
-      return true;
-    }
+  if (
+    messageAttempts.length === MAX_RETRY_ATTEMPTS &&
+    messageAttempts[0].status === MessageAttemptStatus.FAILURE
+  ) {
+    return true;
   }
 
   return false;
 }
 
 /**
- * Returns True if there is a successful MessageAttempt for the eligibility text
- * MessageSeries
+ * Returns the action taken given the provided input when the latest message
+ * sent is an initial text.
  *
- * @param messageSeriesList A list of MessageSeries objects for a given JII
- * @returns True if there is a successful MessageAttempt in a MessageSeries where messageType=ELIGIBIILTY_TEXT
+ * @param prisma Prisma client used to query the DB
+ * @param twilio Twilio client used to send messages
+ * @param workflowExecutionId WorkflowExecution id to associate message attempts with
+ * @param personMetadata Information needed when sending a text to a given person
+ * @param groupName Name of the person's current group
+ * @param groupId Id of the person's current group
+ * @param latestMessageAttemptStatus Status of the latest MessageAttempt that was sent to this person
+ * @param shouldRetry Whether or not the message should be retried
+ * @param dryRun Whether or not to make request to Twilio
+ * @param latestMessageSeriesId If provided, the MessageSeries that any new MessageAttempts should be associated with
+ * @returns ScriptAction that is taken for this person
  */
-function eligibilityTextSucceeded(
-  messageSeriesList: MessageSeriesWithAttemptsAndGroup[],
-) {
-  const eligibilityTextMessageSeries = messageSeriesList.find(
-    (series) => series.messageType === MessageType.ELIGIBILITY_TEXT,
-  );
+async function handleLatestMessageTypeIsInitialText(
+  prisma: PrismaClient,
+  twilio: TwilioAPIClient,
+  workflowExecutionId: string,
+  personMetadata: PersonDataForMessage,
+  groupName: string,
+  groupId: string,
+  latestMessageAttemptStatus: MessageAttemptStatus,
+  shouldRetry: boolean,
+  dryRun = true,
+  latestMessageSeriesId?: string,
+): Promise<ScriptAction> {
+  // If the last message we sent was a sucessfully delivered initial text,
+  // then send an eligibility text.
+  if (latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS) {
+    if (dryRun) return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
 
-  if (eligibilityTextMessageSeries) {
-    const messageAttempts = eligibilityTextMessageSeries.messageAttempts.sort(
-      messageAttemptSortByCreatedTimestampDesc,
+    const message = await sendText(
+      MessageType.ELIGIBILITY_TEXT,
+      personMetadata,
+      groupName,
+      groupId,
+      workflowExecutionId,
+      prisma,
+      twilio,
     );
 
-    if (messageAttempts[0].status === MessageAttemptStatus.SUCCESS) return true;
+    if (message) {
+      return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    } else {
+      return ScriptAction.ERROR;
+    }
   }
 
-  return false;
+  // Retry the message and add an attempt to the existing series by
+  // passing the latestMessageSeriesId to sendText
+  if (
+    latestMessageAttemptStatus === MessageAttemptStatus.FAILURE &&
+    shouldRetry
+  ) {
+    if (dryRun) return ScriptAction.INITIAL_MESSAGE_SENT;
+
+    const message = await sendText(
+      MessageType.INITIAL_TEXT,
+      personMetadata,
+      groupName,
+      groupId,
+      workflowExecutionId,
+      prisma,
+      twilio,
+      latestMessageSeriesId,
+    );
+
+    if (message) {
+      return ScriptAction.INITIAL_MESSAGE_SENT;
+    } else {
+      return ScriptAction.ERROR;
+    }
+  }
+
+  return ScriptAction.NOOP;
+}
+
+/**
+ * Returns the action taken given the provided input when the latest message
+ * sent is an eligibility text.
+ *
+ * @param prisma Prisma client used to query the DB
+ * @param twilio Twilio client used to send messages
+ * @param workflowExecutionId WorkflowExecution id to associate message attempts with
+ * @param personMetadata Information needed when sending a text to a given person
+ * @param currentGroupName Name of the person's current group
+ * @param currentGroupId Id of the person's current group
+ * @param previousGroupId Id of the group that the person was in when the latest MessageAttempt was sent
+ * @param latestMessageAttemptStatus Status of the latest MessageAttempt that was sent to this person
+ * @param shouldRetry Whether or not the message should be retried
+ * @param dryRun Whether or not to make request to Twilio
+ * @param latestMessageSeriesId If provided, the MessageSeries that any new MessageAttempts should be associated with
+ * @returns ScriptAction that is taken for this person
+ */
+async function handleLatestMessageTypeIsEligibilityText(
+  prisma: PrismaClient,
+  twilio: TwilioAPIClient,
+  workflowExecutionId: string,
+  personMetadata: PersonDataForMessage,
+  currentGroupName: string,
+  currentGroupId: string,
+  previousGroupId: string,
+  latestMessageAttemptStatus: MessageAttemptStatus,
+  shouldRetry: boolean,
+  dryRun = true,
+  latestMessageSeriesId?: string,
+): Promise<ScriptAction> {
+  // If the latest eligibility text succeeded, but the person's group is different,
+  // then send a new eligibility text
+  if (
+    latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS &&
+    currentGroupId === previousGroupId
+  ) {
+    if (dryRun) return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+
+    const message = await sendText(
+      MessageType.ELIGIBILITY_TEXT,
+      personMetadata,
+      currentGroupName,
+      currentGroupId,
+      workflowExecutionId,
+      prisma,
+      twilio,
+    );
+
+    if (message) {
+      return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    } else {
+      return ScriptAction.ERROR;
+    }
+  }
+
+  // Retry the message and add an attempt to the existing series by
+  // passing the latestMessageSeriesId to sendText
+  if (
+    latestMessageAttemptStatus === MessageAttemptStatus.FAILURE &&
+    shouldRetry
+  ) {
+    if (dryRun) return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    const message = await sendText(
+      MessageType.ELIGIBILITY_TEXT,
+      personMetadata,
+      currentGroupName,
+      currentGroupId,
+      workflowExecutionId,
+      prisma,
+      twilio,
+      latestMessageSeriesId,
+    );
+
+    if (message) {
+      return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    } else {
+      return ScriptAction.ERROR;
+    }
+  }
+
+  return ScriptAction.NOOP;
 }
 
 /**
@@ -412,7 +541,7 @@ export async function processIndividualJii(
 ): Promise<ScriptAction> {
   // TODO(#7573): Reevaluate when JII can be in multiple topics
   // Assumes that we only have one topic/group pairing per JII
-  const group = jii.groups[0];
+  const currentGroup = jii.groups[0];
 
   const personMetadata: PersonDataForMessage = {
     givenName: jii.givenName,
@@ -422,23 +551,26 @@ export async function processIndividualJii(
     district: jii.district,
   };
 
-  // Get the relevant MessageSeries objects for the given group
-  const messageSeriesList: MessageSeriesWithAttemptsAndGroup[] =
-    jii.messageSeries.filter((series) => series.group.id === group.id);
+  if (personHasOptedOut(jii)) return ScriptAction.SKIPPED;
 
-  // If there are no MessageSeries entries for this group, we have never sent this JII a text for this group. Thus, send an initial text.
+  // Get the relevant MessageSeries objects for the given group
+  // TODO(#7573): Reevaluate when there are multiple topics/state, e.g. do we need to filter by group?
+  const messageSeriesList = jii.messageSeries;
+
+  // If there are no MessageSeries entries, we have never sent this JII a text. Thus, send an initial text.
   // TODO(#7573): Reevaluate when there are multiple topics/state, e.g. will the topics share an initial text or will there be different ones?
   if (!messageSeriesList.length) {
     if (dryRun) {
+      // Don't send requests to Twilio on a dry run, but omit the action that would've been taken
       return ScriptAction.INITIAL_MESSAGE_SENT;
     }
 
-    // TODO: check if topic/group are active?
+    // TODO(#7636): Check if topic/group are active
     const message = await sendText(
       MessageType.INITIAL_TEXT,
       personMetadata,
-      group.groupName,
-      group.id,
+      currentGroup.groupName,
+      currentGroup.id,
       workflowExecutionId,
       prisma,
       twilio,
@@ -451,112 +583,82 @@ export async function processIndividualJii(
     }
   }
 
-  // TODO(#7742): Revisit the eligibility text succeeded logic to potentially
-  // resend if it's been 90 days since the last text
+  // Get the latest MessageSeries and the latestMessageAttempt of that series
+  const {
+    series: latestMessageSeries,
+    latestAttemptForSeries: latestMessageAttempt,
+  } = messageSeriesList
+    .map((series) => {
+      // Get the latest attempt for each series
+      const orderedMessageAttempts =
+        getOrderedMessageAttempts(messageSeriesList);
+      const latestMessageAttempt = orderedMessageAttempts[0];
+
+      return { series: series, latestAttemptForSeries: latestMessageAttempt };
+    })
+    .sort(
+      ({ latestAttemptForSeries: a }, { latestAttemptForSeries: b }) =>
+        b.createdTimestamp.getTime() - a.createdTimestamp.getTime(),
+    )[0];
+
+  if (latestMessageSeries === undefined) return ScriptAction.ERROR;
+
+  const { groupId: latestMessageGroupId, messageType: latestMessageType } =
+    latestMessageSeries;
+
   if (
-    allTextAttemptsForSeriesFailed(
-      MessageType.INITIAL_TEXT,
-      messageSeriesList,
-    ) ||
-    allTextAttemptsForSeriesFailed(
-      MessageType.ELIGIBILITY_TEXT,
-      messageSeriesList,
-    ) ||
-    eligibilityTextSucceeded(messageSeriesList) ||
-    personHasOptedOut(jii)
-  ) {
+    allTextAttemptsForSeriesFailed(latestMessageSeries) ||
+    (latestMessageType === MessageType.ELIGIBILITY_TEXT &&
+      latestMessageGroupId === currentGroup.id &&
+      latestMessageAttempt.status === MessageAttemptStatus.SUCCESS)
+  )
     return ScriptAction.SKIPPED;
-  }
 
-  // Get MessageAttempt objects ordered by descending createdTimestamp
-  const orderedMessageAttempts = getOrderedMessageAttempts(messageSeriesList);
-  const latestMessageAttempt = orderedMessageAttempts[0];
-
-  let latestMessageAttemptStatus: MessageAttemptStatus;
-  if (!dryRun) {
+  let updatedMessageAttemptStatus: MessageAttemptStatus;
+  if (dryRun) {
+    updatedMessageAttemptStatus = latestMessageAttempt.status;
+  } else {
     // Update status for the latest message attempt by querying Twilio
-    latestMessageAttemptStatus = await updateMessageAttempt(
+    updatedMessageAttemptStatus = await updateMessageAttempt(
       prisma,
       twilio,
       latestMessageAttempt.status,
       latestMessageAttempt.twilioMessageSid,
     );
-  } else {
-    latestMessageAttemptStatus = latestMessageAttempt.status;
   }
 
-  // Get the latest MessageSeries by finding the one that contains the
-  // messageAttempt with an ID equivalent to the latest MessageAttempt
-  const latestMessageSeries = jii.messageSeries.find((series) =>
-    series.messageAttempts
-      .flatMap((attempt) => attempt.id)
-      .includes(latestMessageAttempt.id),
-  );
+  const shouldRetry =
+    latestMessageSeries.messageAttempts.length < MAX_RETRY_ATTEMPTS;
 
-  if (latestMessageSeries === undefined) return ScriptAction.ERROR;
-
-  // If the last message we sent was a sucessfully delivered initial text,
-  // then send an eligibility text.
-  if (
-    latestMessageSeries.messageType === MessageType.INITIAL_TEXT &&
-    latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS
-  ) {
-    if (dryRun) return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
-
-    const message = await sendText(
-      MessageType.ELIGIBILITY_TEXT,
-      personMetadata,
-      group.groupName,
-      group.id,
-      workflowExecutionId,
+  if (latestMessageType === MessageType.INITIAL_TEXT) {
+    return await handleLatestMessageTypeIsInitialText(
       prisma,
       twilio,
-    );
-
-    if (message) {
-      return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
-    } else {
-      return ScriptAction.ERROR;
-    }
-  }
-
-  // If we've made MAX_RETRY_ATTEMPTS for a given message series,
-  // skip any other actions.
-  if (latestMessageSeries.messageAttempts.length === MAX_RETRY_ATTEMPTS) {
-    return ScriptAction.SKIPPED;
-  }
-
-  // If we've made less than the maximum retry attempts and the latest attempt was a failure,
-  // send the message again
-  if (
-    latestMessageSeries.messageAttempts.length < MAX_RETRY_ATTEMPTS &&
-    latestMessageAttemptStatus === MessageAttemptStatus.FAILURE
-  ) {
-    const scriptAction =
-      latestMessageSeries.messageType === MessageType.INITIAL_TEXT
-        ? ScriptAction.INITIAL_MESSAGE_SENT
-        : ScriptAction.ELIGIBILITY_MESSAGE_SENT;
-
-    if (dryRun) return scriptAction;
-
-    // Otherwise, send the message again
-    // TODO(#7703): Incorporate buffers between retries
-    const message = await sendText(
-      latestMessageSeries.messageType,
-      personMetadata,
-      group.groupName,
-      group.id,
       workflowExecutionId,
-      prisma,
-      twilio,
+      personMetadata,
+      currentGroup.groupName,
+      currentGroup.id,
+      updatedMessageAttemptStatus,
+      shouldRetry,
+      dryRun,
       latestMessageSeries.id,
     );
+  }
 
-    if (message) {
-      return scriptAction;
-    } else {
-      return ScriptAction.ERROR;
-    }
+  if (latestMessageType === MessageType.ELIGIBILITY_TEXT) {
+    return await handleLatestMessageTypeIsEligibilityText(
+      prisma,
+      twilio,
+      workflowExecutionId,
+      personMetadata,
+      currentGroup.groupName,
+      currentGroup.id,
+      latestMessageGroupId,
+      updatedMessageAttemptStatus,
+      shouldRetry,
+      dryRun,
+      latestMessageSeries.id,
+    );
   }
 
   return ScriptAction.NOOP;
