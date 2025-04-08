@@ -43,6 +43,9 @@ const NON_PATHWAYS_TENANTS = [
   US_UT,
 ] as const;
 
+// Tenants whose configs we'd like to keep around, but don't actually want to show as available states
+export const DEPRECATED_TENANTS = [US_OR] as const;
+
 /**
  * Tenants that have access to the Recidiviz Dashboard, including Pathways, Operations, and Workflows.
  */

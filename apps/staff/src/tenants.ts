@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { uniq } from "lodash";
+import { difference, uniq } from "lodash";
 
 import { TenantConfig } from "./core/models/types";
 import {
   DASHBOARD_TENANTS,
+  DEPRECATED_TENANTS,
   US_AR,
   US_AZ,
   US_CA,
@@ -103,7 +104,7 @@ export const TENANT_CONFIGS: TenantConfigs = {
         ],
       },
     },
-    availableStateCodes: ALL_TENANTS,
+    availableStateCodes: difference(ALL_TENANTS, DEPRECATED_TENANTS),
     enableUserRestrictions: true,
   },
   CSG: CSG_CONFIG,
