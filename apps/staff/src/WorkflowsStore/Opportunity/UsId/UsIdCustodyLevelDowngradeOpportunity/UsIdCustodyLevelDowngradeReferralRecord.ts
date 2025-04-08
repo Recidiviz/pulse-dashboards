@@ -21,7 +21,7 @@ import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 export const usIdCustodyLevelDowngradeSchema = opportunitySchemaBase.extend({
   metadata: z.object({
-    eligibleDate: dateStringSchema,
+    eligibleDate: dateStringSchema.optional(),
   }),
 });
 

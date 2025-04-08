@@ -83,7 +83,7 @@ export const usIdLsuSchema = opportunitySchemaBase.extend({
       usIdIncomeVerifiedWithin3Months: z.null().transform(() => true),
     })
     .partial(),
-  eligibleStartDate: dateStringSchema,
+  eligibleStartDate: dateStringSchema.optional(),
 });
 
 export type LSUReferralRecord = z.infer<typeof usIdLsuSchema>;

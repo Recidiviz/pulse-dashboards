@@ -109,7 +109,7 @@ export const usIdEarnedDischargeSchema = opportunitySchemaBase.extend({
       }),
     })
     .pipe(collapsedCriteriaSchema),
-  eligibleStartDate: dateStringSchema,
+  eligibleStartDate: dateStringSchema.optional(),
 });
 
 export type EarnedDischargeReferralRecord = z.infer<
