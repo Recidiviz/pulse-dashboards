@@ -55,8 +55,6 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
 }) => {
   const { zeroGrantsFlag } = useFeatureVariants();
 
-  const isOverflowing = officersWithEligibleClients.length > 7;
-
   return (
     <CardWrapper>
       <CardHeader>
@@ -76,7 +74,7 @@ export const InsightsSupervisorOpportunityDetailCard: React.FC<
           </InsightsTooltip>
         ) : undefined}
       </CardHeader>
-      <SupervisorDetailCardList isOverflowing={isOverflowing}>
+      <SupervisorDetailCardList>
         {officersWithEligibleClients.map((officer) => {
           const showZeroGrantsPill =
             zeroGrantsFlag &&

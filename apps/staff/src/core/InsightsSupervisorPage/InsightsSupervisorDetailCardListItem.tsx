@@ -57,6 +57,7 @@ const LIST_ITEM_WIDTH = `100%`;
 const OfficerListItem = styled.li`
   width: ${LIST_ITEM_WIDTH};
   height: ${LIST_ITEM_HEIGHT};
+  min-height: ${LIST_ITEM_HEIGHT};
   gap: 0;
   border-top: ${rem(1)} solid ${palette.slate20};
   color: ${palette.pine1};

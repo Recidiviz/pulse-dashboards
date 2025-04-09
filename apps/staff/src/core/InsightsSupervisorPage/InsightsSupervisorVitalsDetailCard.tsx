@@ -33,7 +33,6 @@ type InsightsSupervisorVitalsDetailCardProps = {
 export const InsightsSupervisorVitalsDetailCard: React.FC<
   InsightsSupervisorVitalsDetailCardProps
 > = ({ vitalsMetricDetails }) => {
-  const isOverflowing = vitalsMetricDetails.officersWithMetricValues.length > 7;
   return (
     <CardWrapper>
       <CardHeader>
@@ -41,7 +40,7 @@ export const InsightsSupervisorVitalsDetailCard: React.FC<
           <CardTitle>{vitalsMetricDetails.label}</CardTitle>
         </CardHeaderText>
       </CardHeader>
-      <SupervisorDetailCardList isOverflowing={isOverflowing}>
+      <SupervisorDetailCardList>
         {vitalsMetricDetails.officersWithMetricValues.map((officer) => {
           const showPill = officer.metricValue < 80;
           return (
