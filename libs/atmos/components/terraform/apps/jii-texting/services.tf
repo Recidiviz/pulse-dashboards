@@ -20,27 +20,33 @@ resource "google_project_service" "pubsub" {
 resource "google_service_account" "eventarc" {
   account_id   = "jii-texting-eventarc-sa"
   display_name = "Eventarc Service Account"
+
+  // Don't create this resource for demo resourcing
+  count = var.configure_infra ? 1 : 0
 }
 
 # Grant Eventarc SA permission to invoke Workflows
 resource "google_project_iam_member" "workflowsinvoker" {
   project = var.project_id
   role    = "roles/workflows.invoker"
-  member  = "serviceAccount:${google_service_account.eventarc.email}"
+  member  = "serviceAccount:${google_service_account.eventarc[0].email}"
+  count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
 # Grant Eventarc SA permission to receive events
 resource "google_project_iam_member" "eventreceiver" {
   project = var.project_id
   role    = "roles/eventarc.eventReceiver"
-  member  = "serviceAccount:${google_service_account.eventarc.email}"
+  member  = "serviceAccount:${google_service_account.eventarc[0].email}"
+  count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
 # Grant Eventarc SA permission to write logs
 resource "google_project_iam_member" "logwriter" {
   project = var.project_id
   role    = "roles/logging.logWriter"
-  member  = "serviceAccount:${google_service_account.eventarc.email}"
+  member  = "serviceAccount:${google_service_account.eventarc[0].email}"
+  count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
 # Grant the Cloud Storage service account permission to publish Pub/Sub topics
@@ -61,26 +67,34 @@ resource "google_project_iam_member" "tokencreator" {
 resource "google_service_account" "workflows" {
   account_id   = "jii-texting-workflows-sa"
   display_name = "Google Workflows Service Account"
+
+  // Don't create this resource for demo resourcing
+  count = var.configure_infra ? 1 : 0
 }
 
 # Grant Cloud Run invoker role to Google Workflows service account
 resource "google_project_iam_member" "runinvoker" {
   project = var.project_id
   role    = "roles/run.invoker"
-  member  = google_service_account.workflows.member
+  member  = google_service_account.workflows[0].member
+  count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
 # Grant Cloud Storage Object Viewer role to Google Workflows service account
 resource "google_project_iam_member" "storageobjectviewer" {
   project = var.project_id
   role    = "roles/storage.objectViewer"
-  member  = google_service_account.workflows.member
+  member  = google_service_account.workflows[0].member
+  count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
 # Create Pub/Sub topic for a successful export of JII Texting views
 resource "google_pubsub_topic" "jii_texting_export_success_topic" {
   name    = "jii_texting_export_success"
   project = var.project_id
+
+  // Don't create this resource for demo resourcing
+  count = var.configure_infra ? 1 : 0
 }
 
 # Grant Pub/Sub role to Airflow service account in data platform project
@@ -94,21 +108,24 @@ resource "google_project_iam_member" "airflow-pubsub-publisher" {
 resource "google_project_iam_member" "workflow-executor" {
   project = var.project_id
   role    = "roles/workflows.admin"
-  member  = google_service_account.workflows.member
+  member  = google_service_account.workflows[0].member
+  count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
 # Grant cloud run job executor so the Workflows service account can execute Cloud Run jobs with env variable overrides
 resource "google_project_iam_member" "cloudrunjobexecutor" {
   project = var.project_id
   role    = "roles/run.jobsExecutorWithOverrides"
-  member  = google_service_account.workflows.member
+  member  = google_service_account.workflows[0].member
+  count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
 # Grant the Workflows service account access to view cloud run job status
 resource "google_project_iam_member" "cloud-run-viewer" {
   project = var.project_id
   role    = "roles/run.viewer"
-  member  = google_service_account.workflows.member
+  member  = google_service_account.workflows[0].member
+  count   = length(google_service_account.eventarc) > 0 ? 1 : 0
 }
 
 # Grant Cloud Run job SA permission to run with overrides

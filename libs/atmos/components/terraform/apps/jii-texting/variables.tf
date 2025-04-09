@@ -29,12 +29,38 @@ variable "server_version" {
   default     = "latest"
 }
 
-variable "cloudsql_instance" {
-  type        = string
-  description = "Cloud SQL instance connection string, used to mount a unix socket in Cloud Run"
-}
-
 variable "etl_bucket_name" {
   type        = string
   description = "The name of the GCS bucket that contains the ETL data"
+  default     = null
+}
+
+variable "sql_instance_name" {
+  type        = string
+  description = "The name of the SQL instance"
+  default     = "jii-texting"
+}
+
+variable "sql_base_secret_name" {
+  type        = string
+  description = "The name of the SQL secret prefixes"
+  default     = "jii_texting"
+}
+
+variable "database_secondary_zone" {
+  type        = string
+  description = "The secondary zone for the DB"
+  default     = null
+}
+
+variable "configure_infra" {
+  type        = bool
+  description = "Whether or not to configure demo resources"
+  default     = true
+}
+
+variable "processor_job_name" {
+  type        = string
+  description = "The name of the SQL instance"
+  default     = "process-jii"
 }

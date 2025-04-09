@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/* eslint-disable no-console -- this is a script that prints its output */
-
 import fs from "fs";
 import path from "path";
 
@@ -25,6 +23,7 @@ const AtmosFilesToClean = [
   /^\.terraform\.lock\.hcl$/,
   /^.+\.tfvars\.json$/,
   /^providers_override\.tf\.json$/,
+  /^backend\.tf\.json$/,
 ];
 
 function clean(file) {

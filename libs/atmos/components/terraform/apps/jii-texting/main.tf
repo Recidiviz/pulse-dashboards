@@ -26,8 +26,32 @@ locals {
   ])
 }
 
+module "database" {
+  source = "../../vendor/cloud-sql-instance"
+
+  project_id                 = var.project_id
+  create_bigquery_connection = false
+  instance_key               = var.sql_instance_name
+  base_secret_name           = var.sql_base_secret_name
+  database_version           = "POSTGRES_16"
+  has_readonly_user          = false
+  region                     = var.location
+  zone                       = "us-central1-a"
+  secondary_zone             = var.database_secondary_zone
+  tier                       = "db-custom-1-3840"
+  additional_databases       = ["us_id"]
+  insights_config = {
+    query_insights_enabled : true
+    query_string_length : 1024
+    record_application_tags : false
+    record_client_address : false
+  }
+}
+
 module "cloud-run" {
   source = "../../vendor/cloud-run"
+
+  count = var.configure_infra ? 1 : 0
 
   service_name = "jii-texting-server"
   location     = var.location
@@ -49,7 +73,7 @@ module "cloud-run" {
   volumes = [{
     name = "cloudsql"
     cloud_sql_instance = {
-      instances = [var.cloudsql_instance]
+      instances = [module.database.connection_name]
     }
     }
   ]
@@ -61,16 +85,17 @@ module "cloud-run" {
 # Configure a Google Workflow that is executed when a message is published to
 # the jii_texting_export_success_topic 
 module "handle-jii-texting-export-wf" {
+  count                 = var.configure_infra ? 1 : 0
   project_id            = var.project_id
   region                = var.location
   source                = "../../vendor/google-workflows-workflow"
-  service_account_email = google_service_account.workflows.email
+  service_account_email = google_service_account.workflows[0].email
   workflow_name         = "handle-jii-texting-export-wf"
   workflow_trigger = {
     event_arc = {
       name                  = "handle-jii-texting-export-wf"
-      service_account_email = google_service_account.eventarc.email
-      pubsub_topic_id       = google_pubsub_topic.jii_texting_export_success_topic.id
+      service_account_email = google_service_account.eventarc[0].email
+      pubsub_topic_id       = google_pubsub_topic.jii_texting_export_success_topic[0].id
       matching_criteria = [
         {
           attribute = "type"
@@ -82,24 +107,25 @@ module "handle-jii-texting-export-wf" {
   workflow_source = file("${path.module}/workflows/handle-jii-texting-export.workflows.yaml")
   env_vars = {
     PROJECT_ID            = var.project_id
-    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
+    CLOUD_RUN_SERVICE_URL = module.cloud-run[0].service_uri
   }
 }
 
 # Configure a Cloud Run job that will process the JII eligible for texts on a given day
 module "process-jii-cloud-run-job" {
   source                        = "../../vendor/cloud-run-job-exec"
-  name                          = "process-jii"
+  name                          = var.processor_job_name
   image                         = local.processor_job_image
   project_id                    = var.project_id
   location                      = var.location
   env_vars                      = local.env_vars
   cloud_run_deletion_protection = false
-  volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [var.cloudsql_instance] } }]
+  volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
 }
 
 # Configure a Cloud Run job that will import the data into our CloudSQL DB
 module "import-job" {
+  count                         = var.configure_infra ? 1 : 0
   source                        = "../../vendor/cloud-run-job-exec"
   name                          = local.import_job_name
   image                         = local.import_job_image
@@ -110,22 +136,23 @@ module "import-job" {
   exec                          = false
   timeout                       = "3600s"
   max_retries                   = 1
-  volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [var.cloudsql_instance] } }]
+  volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
 }
 
 # Configure a Google Workflow that executes the main processing of JII texts,
 # which will be executed by the handle-jii-texting-gcs-upload-wf
 module "process-jii-to-text-wf" {
+  count                 = var.configure_infra ? 1 : 0
   project_id            = var.project_id
   region                = var.location
   source                = "../../vendor/google-workflows-workflow"
-  service_account_email = google_service_account.workflows.email
+  service_account_email = google_service_account.workflows[0].email
   workflow_name         = "process-jii-to-text"
 
   workflow_source = file("${path.module}/workflows/process-jii-to-text.workflows.yaml")
   env_vars = {
-    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
+    CLOUD_RUN_SERVICE_URL = module.cloud-run[0].service_uri
     BUCKET_ID             = var.etl_bucket_name
-    IMPORT_JOB_NAME       = module.import-job.id
+    IMPORT_JOB_NAME       = module.import-job[0].id
   }
 }

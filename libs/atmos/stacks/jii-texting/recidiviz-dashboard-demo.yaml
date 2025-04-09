@@ -1,0 +1,41 @@
+# Infrastructure configuration for components for the JII app that will be deployed to recidiviz-dashboard-staging
+settings:
+  context:
+    location: us-central1
+    project_id: recidiviz-dashboard-staging
+    project_number: 626425930051
+    data_platform_project_number: 984160736970
+    product: jii-texting-demo
+
+# The variables set here are automatically provided to all components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+
+# Defines which catalogs to import into this configuration to create in recidiviz-dashboard-staging
+# import:
+
+terraform:
+  # Describes where the Terraform state file for these centrally-managed components is stored
+  # https://atmos.tools/core-concepts/components/terraform/backends#google-cloud-storage-backend
+  backend_type: gcs
+  backend:
+    gcs:
+      bucket: recidiviz-dashboard-staging-tf-state
+  # This provides the default configuration for our Terraform providers
+  # https://atmos.tools/core-concepts/components/terraform/providers
+  providers:
+    google:
+      project: recidiviz-dashboard-staging
+
+components:
+  terraform:
+    apps/jii-texting:
+      vars:
+        project_number: "{{ .settings.context.project_number }}"
+        data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
+        location: "{{ .settings.context.location }}"
+        artifact_registry_repo: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.registry_repo_name }}"
+        sql_instance_name: jii-texting-demo
+        sql_base_secret_name: jii_texting_demo
+        configure_infra: false
+        processor_job_name: process-jii-demo

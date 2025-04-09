@@ -30,25 +30,6 @@ terraform:
 
 components:
   terraform:
-    postgres-instance:
-      vars:
-        create_bigquery_connection: false
-        instance_key: jii_texting
-        base_secret_name: jii_texting
-        database_version: POSTGRES_16
-        has_readonly_user: false
-        region: "{{ .settings.context.location }}"
-        availability_type: REGIONAL
-        zone: us-central1-a
-        secondary_zone: us-central1-b
-        tier: db-custom-1-3840
-        insights_config:
-          query_insights_enabled: true
-          query_string_length: 1024
-          record_application_tags: false
-          record_client_address: false
-      metadata:
-        component: vendor/cloud-sql-instance
     gcs-buckets:
       vars:
         prefix: "{{ .vars.project_id }}"
@@ -78,8 +59,7 @@ components:
       vars:
         project_number: "{{ .settings.context.project_number }}"
         location: "{{ .settings.context.location }}"
-        # Pass the `connection-name` output from our `postgres-instance` component to the jii-texting app
-        cloudsql_instance: !terraform.output postgres-instance {{ .stack }} connection_name
+        database_secondary_zone: us-central1-b
         artifact_registry_repo: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.registry_repo_name }}"
         # The 'name' output uses the name of the first bucket, so ensure that the ETL bucket is the first one in the list
         etl_bucket_name: !terraform.output gcs-buckets {{ .stack }} name
