@@ -19,28 +19,23 @@ import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router-dom";
 
-import { AuthClientHydrator } from "~auth";
-
+import { AuthManagerHydrator } from "../AuthManagerHydrator/AuthManagerHydrator";
 import { PageContainer } from "../BaseLayout/BaseLayout";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { ScrollToTop } from "../ScrollToTop/ScrollToTop";
-import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageviewTracking } from "../usePageviewTracking/usePageviewTracking";
 
 export const PageRoot = withErrorBoundary(
   observer(function AppRoot() {
-    const {
-      userStore: { authClient },
-    } = useRootStore();
     usePageviewTracking();
 
     return (
-      <AuthClientHydrator authClient={authClient}>
+      <AuthManagerHydrator>
         <PageContainer>
           <Outlet />
         </PageContainer>
         <ScrollToTop />
-      </AuthClientHydrator>
+      </AuthManagerHydrator>
     );
   }),
   { fallback: ErrorPage },

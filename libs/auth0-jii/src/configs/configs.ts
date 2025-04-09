@@ -105,3 +105,9 @@ export const metadataSchema = z
   );
 
 export type UserAppMetadata = z.infer<typeof metadataSchema>;
+
+export const tokenAuthResponseSchema = z.object({
+  firebaseToken: z.string(),
+  user: metadataSchema,
+});
+export type TokenAuthResponse = z.infer<typeof tokenAuthResponseSchema>;

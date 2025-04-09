@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
-
-import { IdentityTracker } from "../IdentityTracker/IdentityTracker";
-import { RequiresLogin } from "../RequiresLogin/RequiresLogin";
-import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";
-import { ResidentsHydrator } from "../ResidentsHydrator/ResidentsHydrator";
-
-export const PageResidentsRoot = observer(function PageResidentsRoot() {
-  return (
-    <RequiresLogin>
-      <RequiresStateAuth>
-        <IdentityTracker />
-        <ResidentsHydrator />
-      </RequiresStateAuth>
-    </RequiresLogin>
-  );
-});
+export const API_URL_BASE = import.meta.env["VITE_API_URL_BASE"];

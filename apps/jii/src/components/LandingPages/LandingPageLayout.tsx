@@ -112,7 +112,9 @@ export const LandingPageLayout: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const {
-    userStore: { authClient },
+    userStore: {
+      authManager: { authClient },
+    },
   } = useRootStore();
   const [{ returnToPath }] = useTypedSearchParams(ReturnToPathFragment);
 
@@ -136,7 +138,7 @@ export const LandingPageLayout: FC<{ children: ReactNode }> = ({
               <Button
                 kind="link"
                 onClick={() =>
-                  authClient.logIn({
+                  authClient?.logIn({
                     targetPath: returnToPath ?? window.location.pathname,
                   })
                 }

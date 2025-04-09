@@ -17,15 +17,11 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { AuthClient } from "~auth";
-import {
-  getAuth0Config,
-  metadataNamespace,
-  metadataSchema,
-  Permission,
-} from "~auth0-jii";
+import { Permission } from "~auth0-jii";
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 
+import { AuthManager } from "../apis/auth/AuthManager";
+import { isAuthorizedState } from "../apis/auth/types";
 import {
   SegmentClient,
   SegmentClientExternals,
@@ -33,68 +29,75 @@ import {
 import { StateCode } from "../configs/types";
 
 export class UserStore {
-  authClient: AuthClient<typeof metadataSchema>;
-
   segmentClient: SegmentClient;
 
-  constructor(private externals: { stateCode: StateCode }) {
-    makeAutoObservable(this, {}, { autoBind: true });
+  authManager: AuthManager;
 
-    this.authClient = new AuthClient(
-      {
-        ...getAuth0Config(import.meta.env["VITE_AUTH_ENV"]),
-        redirect_uri: `${window.location.origin}/after-login`,
-      },
-      { metadataNamespace, metadataSchema },
+  constructor(private externals: { stateCode: StateCode }) {
+    makeAutoObservable(
+      this,
+      { authManager: false, segmentClient: false },
+      { autoBind: true },
     );
 
+    this.authManager = new AuthManager();
+
     this.segmentClient = new SegmentClient(new SegmentExternals(this));
+  }
+
+  private get authState() {
+    return this.authManager.authState;
   }
 
   get isAuthorizedForCurrentState(): boolean {
     if (isOfflineMode()) return true;
 
-    const { stateCode, allowedStates } = this.authClient.appMetadata;
+    if (isAuthorizedState(this.authState)) {
+      const { stateCode, allowedStates } = this.authState.userProfile;
 
-    const isUserState = stateCode === this.externals.stateCode;
-    const isRecidivizUser = stateCode === "RECIDIVIZ";
-    const isRecidivizAllowedState = allowedStates?.includes(
-      this.externals.stateCode,
-    );
+      const isUserState = stateCode === this.externals.stateCode;
 
-    return (
-      (isUserState ||
-        (isRecidivizUser && (isDemoMode() || isRecidivizAllowedState))) ??
-      false
-    );
+      if (isUserState) return true;
+
+      const isRecidivizUser = stateCode === "RECIDIVIZ";
+      const isRecidivizAllowedState = allowedStates?.includes(
+        this.externals.stateCode,
+      );
+
+      if (isRecidivizUser && (isDemoMode() || isRecidivizAllowedState))
+        return true;
+    }
+
+    return false;
   }
 
   get externalId(): string | undefined {
-    try {
-      return this.authClient.appMetadata.externalId;
-    } catch {
-      return undefined;
+    if (isAuthorizedState(this.authState)) {
+      return this.authState.userProfile.externalId;
     }
+    return undefined;
   }
 
   get pseudonymizedId(): string | undefined {
-    try {
-      return this.authClient.appMetadata.pseudonymizedId;
-    } catch {
-      return undefined;
+    if (isAuthorizedState(this.authState)) {
+      return this.authState.userProfile.pseudonymizedId;
     }
+    return undefined;
   }
 
   hasPermission(permission: Permission): boolean {
     if (isOfflineMode()) return true;
 
-    return (
-      this.authClient.appMetadata.permissions?.includes(permission) ?? false
-    );
+    if (isAuthorizedState(this.authState)) {
+      return (
+        this.authState.userProfile.permissions?.includes(permission) ?? false
+      );
+    }
+    return false;
   }
 
   logOut() {
-    this.authClient.logOut();
+    this.authManager.authClient?.logOut();
   }
 
   identifyToTrackers() {
@@ -107,12 +110,10 @@ export class UserStore {
   }
 
   get isRecidivizUser(): boolean {
-    try {
-      return this.authClient.appMetadata.stateCode === "RECIDIVIZ";
-    } catch {
-      // appMetadata may throw if, e.g., a user isn't logged in yet. this is fine
-      return false;
+    if (isAuthorizedState(this.authState)) {
+      return this.authState.userProfile.stateCode === "RECIDIVIZ";
     }
+    return false;
   }
 
   get stateCode() {
@@ -120,7 +121,10 @@ export class UserStore {
   }
 
   get user() {
-    return this.authClient.userProperties;
+    if (isAuthorizedState(this.authState)) {
+      return this.authState.userProfile;
+    }
+    return;
   }
 }
 

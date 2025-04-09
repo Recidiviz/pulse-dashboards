@@ -19,8 +19,7 @@ import { render, screen } from "@testing-library/react";
 import { configure } from "mobx";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-import { AuthClient } from "~auth";
-
+import type { AuthManager } from "../../apis/auth/AuthManager";
 import { RootStore } from "../../datastores/RootStore";
 import { EmailVerification, State } from "../../routes/routes";
 import { useRootStore } from "../StoreProvider/useRootStore";
@@ -28,14 +27,14 @@ import { PageHome } from "./PageHome";
 
 vi.mock("../StoreProvider/useRootStore");
 
-let authClient: AuthClient;
+let authManager: AuthManager;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
 
   const rootStore = new RootStore();
   vi.mocked(useRootStore).mockReturnValue(rootStore);
-  authClient = rootStore.userStore.authClient;
+  authManager = rootStore.userStore.authManager;
 });
 
 afterEach(() => {
@@ -55,8 +54,8 @@ function renderHome() {
 }
 
 test("landing page if unauthorized", async () => {
-  vi.spyOn(authClient, "isAuthorized", "get").mockReturnValue(false);
-  vi.spyOn(authClient, "isEmailVerificationRequired", "get").mockReturnValue(
+  vi.spyOn(authManager, "isAuthorized", "get").mockReturnValue(false);
+  vi.spyOn(authManager, "isEmailVerificationRequired", "get").mockReturnValue(
     false,
   );
 
@@ -69,8 +68,8 @@ test("landing page if unauthorized", async () => {
 });
 
 test("email verification page if needed", () => {
-  vi.spyOn(authClient, "isAuthorized", "get").mockReturnValue(false);
-  vi.spyOn(authClient, "isEmailVerificationRequired", "get").mockReturnValue(
+  vi.spyOn(authManager, "isAuthorized", "get").mockReturnValue(false);
+  vi.spyOn(authManager, "isEmailVerificationRequired", "get").mockReturnValue(
     true,
   );
 
@@ -80,7 +79,7 @@ test("email verification page if needed", () => {
 });
 
 test("state page if authorized", () => {
-  vi.spyOn(authClient, "isAuthorized", "get").mockReturnValue(true);
+  vi.spyOn(authManager, "isAuthorized", "get").mockReturnValue(true);
 
   renderHome();
 

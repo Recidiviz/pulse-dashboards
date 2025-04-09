@@ -31,11 +31,15 @@ beforeEach(async () => {
 });
 
 test("authorized", () => {
-  vi.spyOn(
-    rootStore.userStore.authClient,
-    "appMetadata",
-    "get",
-  ).mockReturnValue({ stateCode: "US_XX", permissions: ["enhanced"] });
+  vi.spyOn(rootStore.userStore.authManager, "authState", "get").mockReturnValue(
+    {
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_XX",
+        permissions: ["enhanced"],
+      },
+    },
+  );
 
   render(
     <RequiresPermission permissionId="enhanced">protected</RequiresPermission>,
@@ -45,11 +49,14 @@ test("authorized", () => {
 });
 
 test("unauthorized", () => {
-  vi.spyOn(
-    rootStore.userStore.authClient,
-    "appMetadata",
-    "get",
-  ).mockReturnValue({ stateCode: "US_XX" });
+  vi.spyOn(rootStore.userStore.authManager, "authState", "get").mockReturnValue(
+    {
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_XX",
+      },
+    },
+  );
 
   render(
     <RequiresPermission permissionId="enhanced">protected</RequiresPermission>,

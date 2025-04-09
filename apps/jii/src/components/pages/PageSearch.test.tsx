@@ -55,11 +55,15 @@ afterEach(() => {
 });
 
 test("it should render the search page", async () => {
-  vi.spyOn(
-    rootStore.userStore.authClient,
-    "appMetadata",
-    "get",
-  ).mockReturnValue({ stateCode: "US_ME", permissions: ["enhanced"] });
+  vi.spyOn(rootStore.userStore.authManager, "authState", "get").mockReturnValue(
+    {
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+        permissions: ["enhanced"],
+      },
+    },
+  );
 
   render(
     <MemoryRouter>
@@ -73,11 +77,15 @@ test("it should render the search page", async () => {
 });
 
 test("it should not render the search page", async () => {
-  vi.spyOn(
-    rootStore.userStore.authClient,
-    "appMetadata",
-    "get",
-  ).mockReturnValue({ stateCode: "US_ME", permissions: [] });
+  vi.spyOn(rootStore.userStore.authManager, "authState", "get").mockReturnValue(
+    {
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+        permissions: [],
+      },
+    },
+  );
 
   render(
     <MemoryRouter>

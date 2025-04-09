@@ -31,11 +31,14 @@ beforeEach(async () => {
 });
 
 test("authorized", () => {
-  vi.spyOn(
-    rootStore.userStore.authClient,
-    "appMetadata",
-    "get",
-  ).mockReturnValue({ stateCode: "US_ME" });
+  vi.spyOn(rootStore.userStore.authManager, "authState", "get").mockReturnValue(
+    {
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+      },
+    },
+  );
 
   render(<RequiresStateAuth>protected</RequiresStateAuth>);
 
@@ -43,11 +46,14 @@ test("authorized", () => {
 });
 
 test("unauthorized", () => {
-  vi.spyOn(
-    rootStore.userStore.authClient,
-    "appMetadata",
-    "get",
-  ).mockReturnValue({ stateCode: "US_XX" });
+  vi.spyOn(rootStore.userStore.authManager, "authState", "get").mockReturnValue(
+    {
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_XX",
+      },
+    },
+  );
 
   render(<RequiresStateAuth>protected</RequiresStateAuth>);
 

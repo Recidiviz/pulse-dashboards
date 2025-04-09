@@ -29,7 +29,7 @@ export const PageState: FC = () => {
   const { stateSlug } = useTypedParams(State);
 
   try {
-    if (userStore.authClient.isAuthorized) {
+    if (userStore.authManager.isAuthorized) {
       if (userStore.isAuthorizedForCurrentState) {
         // known residents should be sent to their homepage
         if (userStore.pseudonymizedId) {
@@ -52,7 +52,7 @@ export const PageState: FC = () => {
     // fall through
   }
 
-  if (userStore.authClient.isEmailVerificationRequired) {
+  if (userStore.authManager.isEmailVerificationRequired) {
     return <Redirect to={EmailVerification.buildPath({})} />;
   }
 

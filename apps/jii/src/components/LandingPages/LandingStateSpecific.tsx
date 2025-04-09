@@ -83,10 +83,15 @@ function usePresenter() {
   const [{ returnToPath }] = useTypedSearchParams(State);
   const {
     loginConfigStore,
-    userStore: { authClient },
+    userStore: {
+      authManager: { authClient },
+    },
   } = useRootStore();
 
   usePageTitle(stateConfigsByUrlSlug[stateSlug]?.displayName);
+
+  // In practice we don't expect anyone to get here if they aren't using Auth0 to log in
+  if (!authClient) throw new Error("Missing required configuration");
 
   return new LandingStateSpecificPresenter(
     loginConfigStore,

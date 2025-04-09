@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,31 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
+import { FC, ReactNode } from "react";
 
-import { stateConfigsByStateCode } from "../../configs/stateConstants";
-import { EmailVerification, State } from "../../routes/routes";
-import { Redirect } from "../Redirect/Redirect";
+import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
-import { PageLanding } from "./PageLanding";
 
-export const PageHome = observer(function PageHome() {
+export const AuthManagerHydrator: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const {
     userStore: { authManager },
-    stateCode,
   } = useRootStore();
 
-  if (authManager.isAuthorized)
-    return (
-      <Redirect
-        to={State.buildPath({
-          stateSlug: stateConfigsByStateCode[stateCode].urlSlug,
-        })}
-      />
-    );
-
-  if (authManager.isEmailVerificationRequired)
-    return <Redirect to={EmailVerification.buildPath({})} />;
-
-  return <PageLanding />;
-});
+  return <PageHydrator hydratable={authManager}>{children}</PageHydrator>;
+};

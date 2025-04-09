@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { observer } from "mobx-react-lite";
+import { matchPath } from "react-router-dom";
 
-import { IdentityTracker } from "../IdentityTracker/IdentityTracker";
-import { RequiresLogin } from "../RequiresLogin/RequiresLogin";
-import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";
-import { ResidentsHydrator } from "../ResidentsHydrator/ResidentsHydrator";
+import { EdovoLandingPage } from "../routes/routes";
 
-export const PageResidentsRoot = observer(function PageResidentsRoot() {
-  return (
-    <RequiresLogin>
-      <RequiresStateAuth>
-        <IdentityTracker />
-        <ResidentsHydrator />
-      </RequiresStateAuth>
-    </RequiresLogin>
-  );
-});
+export function isEdovoEnv(): boolean {
+  // we run under a custom edovo subdomain to pass through network filters
+  if (window.location.hostname.endsWith(".edovo.com")) return true;
+  // testing environments may not iframe the custom domain URL
+  if (
+    window.parent !== window.top &&
+    // could be various domains under edovo.com or tedovo.com
+    window.parent.location.hostname.endsWith("edovo.com")
+  )
+    return true;
+  // force the value if we are currently on the edovo landing page
+  if (matchPath(EdovoLandingPage.path, window.location.pathname)) return true;
+
+  return false;
+}

@@ -161,8 +161,4 @@ export class OfflineAPIClient implements DataAPI {
 
     return fixture;
   }
-
-  async validateEdovoToken(token: string): Promise<unknown> {
-    return {};
-  }
 }

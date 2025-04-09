@@ -31,15 +31,16 @@ beforeEach(async () => {
 });
 
 test("side effect", () => {
-  vi.spyOn(
-    rootStore.userStore.authClient,
-    "appMetadata",
-    "get",
-  ).mockReturnValue({
-    stateCode: "US_ME",
-    externalId: "123456",
-    pseudonymizedId: "test-pid",
-  });
+  vi.spyOn(rootStore.userStore.authManager, "authState", "get").mockReturnValue(
+    {
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+        externalId: "123456",
+        pseudonymizedId: "test-pid",
+      },
+    },
+  );
 
   vi.spyOn(rootStore.userStore, "identifyToTrackers");
 

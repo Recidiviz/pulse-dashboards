@@ -22,7 +22,7 @@ import { onRequest } from "firebase-functions/v2/https";
 import jwks from "jwks-rsa";
 import { z } from "zod";
 
-import { UserAppMetadata } from "~auth0-jii";
+import { tokenAuthResponseSchema, UserAppMetadata } from "~auth0-jii";
 
 import {
   firebaseAdminSecrets,
@@ -104,7 +104,9 @@ app.get("/*", async (request, response): Promise<void> => {
       userMetadata,
     );
 
-    response.json({ firebaseToken, user: userMetadata });
+    response.json(
+      tokenAuthResponseSchema.parse({ firebaseToken, user: userMetadata }),
+    );
   } else {
     response
       .status(403)

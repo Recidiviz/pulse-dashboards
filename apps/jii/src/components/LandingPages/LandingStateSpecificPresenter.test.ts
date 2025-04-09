@@ -32,7 +32,8 @@ describe("valid state URL", () => {
   beforeEach(async () => {
     presenter = new LandingStateSpecificPresenter(
       rootStore.loginConfigStore,
-      rootStore.userStore.authClient,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      rootStore.userStore.authManager.authClient!,
       "maine",
     );
 
@@ -45,14 +46,18 @@ describe("valid state URL", () => {
   });
 
   test("login with a specific connection", () => {
-    vi.spyOn(rootStore.userStore.authClient, "logIn");
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    vi.spyOn(rootStore.userStore.authManager.authClient!, "logIn");
     vi.stubGlobal("location", { pathname: "/maine" });
 
     const connection = presenter.selectorOptions[0].value;
 
     presenter.setSelectedConnection(connection);
     presenter.goToLogin();
-    expect(rootStore.userStore.authClient.logIn).toHaveBeenCalledWith({
+    expect(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      rootStore.userStore.authManager.authClient!.logIn,
+    ).toHaveBeenCalledWith({
       targetPath: "/maine",
       connection: connection.connectionName,
     });
@@ -63,7 +68,8 @@ describe("invalid state URL", () => {
   test("cannot hydrate", async () => {
     presenter = new LandingStateSpecificPresenter(
       rootStore.loginConfigStore,
-      rootStore.userStore.authClient,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      rootStore.userStore.authManager.authClient!,
       "narnia",
     );
 

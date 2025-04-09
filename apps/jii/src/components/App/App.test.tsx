@@ -186,23 +186,32 @@ describe("protected routes", () => {
     vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
 
     vi.spyOn(
-      rootStore.userStore.authClient,
-      "appMetadata",
+      rootStore.userStore.authManager,
+      "authState",
       "get",
     ).mockReturnValue({
-      stateCode: "US_ME",
-      externalId: residentFixture.personExternalId,
-      pseudonymizedId: personPseudoId,
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+        externalId: residentFixture.personExternalId,
+        pseudonymizedId: personPseudoId,
+      },
     });
   });
 
   describe("search page", () => {
     beforeEach(() => {
       vi.spyOn(
-        rootStore.userStore.authClient,
-        "appMetadata",
+        rootStore.userStore.authManager,
+        "authState",
         "get",
-      ).mockReturnValue({ stateCode: "US_ME", permissions: ["enhanced"] });
+      ).mockReturnValue({
+        status: "authorized",
+        userProfile: {
+          stateCode: "US_ME",
+          permissions: ["enhanced"],
+        },
+      });
 
       container = render(
         <MemoryRouter

@@ -80,8 +80,15 @@ describe("with resident ID from URL", () => {
     await flowResult(rootStore.populateResidentsStore());
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     store = rootStore.residentsStore!;
-    vi.spyOn(store.userStore.authClient, "appMetadata", "get").mockReturnValue({
-      stateCode: "US_ME",
+    vi.spyOn(
+      rootStore.userStore.authManager,
+      "authState",
+      "get",
+    ).mockReturnValue({
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+      },
     });
 
     presenter = new SingleResidentHydratorPresenter(
@@ -115,10 +122,17 @@ describe("with resident ID from user data", () => {
     await flowResult(rootStore.populateResidentsStore());
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     store = rootStore.residentsStore!;
-    vi.spyOn(store.userStore.authClient, "appMetadata", "get").mockReturnValue({
-      stateCode: "US_ME",
-      externalId: testResident.personExternalId,
-      pseudonymizedId: testResident.pseudonymizedId,
+    vi.spyOn(
+      rootStore.userStore.authManager,
+      "authState",
+      "get",
+    ).mockReturnValue({
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+        externalId: testResident.personExternalId,
+        pseudonymizedId: testResident.pseudonymizedId,
+      },
     });
 
     presenter = new SingleResidentHydratorPresenter(
@@ -154,10 +168,17 @@ describe("fetching data for wrong user", () => {
     await flowResult(rootStore.populateResidentsStore());
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     store = rootStore.residentsStore!;
-    vi.spyOn(store.userStore.authClient, "appMetadata", "get").mockReturnValue({
-      stateCode: "US_ME",
-      externalId: testResident.personExternalId,
-      pseudonymizedId: testResident.pseudonymizedId,
+    vi.spyOn(
+      rootStore.userStore.authManager,
+      "authState",
+      "get",
+    ).mockReturnValue({
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+        externalId: testResident.personExternalId,
+        pseudonymizedId: testResident.pseudonymizedId,
+      },
     });
 
     presenter = new SingleResidentHydratorPresenter(

@@ -86,8 +86,8 @@ export class RootStore {
         get stateCode() {
           return store.stateCode;
         },
-        get authClient() {
-          return store.userStore.authClient;
+        get authManager() {
+          return store.userStore.authManager;
         },
         get config() {
           return store.residentsStore?.config;

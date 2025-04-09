@@ -18,7 +18,6 @@
 import { makeObservable, when } from "mobx";
 import { ILazyObservable, lazyObservable } from "mobx-utils";
 
-import { AuthClient } from "~auth";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentOpportunitySchemas } from "../../configs/residentsOpportunitySchemas";
@@ -28,9 +27,8 @@ import {
   StateCode,
   StateLandingPageConfig,
 } from "../../configs/types";
+import { AuthManager } from "../auth/AuthManager";
 import { DataAPI } from "./interface";
-
-const API_URL_BASE = import.meta.env["VITE_API_URL_BASE"];
 
 export class ApiClient implements DataAPI {
   private firestoreClient: FirestoreAPIClient;
@@ -40,7 +38,7 @@ export class ApiClient implements DataAPI {
   constructor(
     private externals: {
       stateCode: StateCode;
-      authClient: AuthClient;
+      authManager: AuthManager;
       config?: ResidentsConfig;
     },
   ) {
@@ -53,20 +51,13 @@ export class ApiClient implements DataAPI {
     );
 
     // this function will only run the first time auth is checked
-    this.authentication = lazyObservable(async (sink) => {
-      const response = await fetch(`${API_URL_BASE}/auth/auth0`, {
-        headers: {
-          Authorization: `Bearer ${await externals.authClient.getTokenSilently()}`,
-        },
-      });
-      let firebaseToken: string;
-      if (response.ok) {
-        firebaseToken = (await response.json()).firebaseToken;
-      } else {
-        throw new Error("Unable to retrieve Firebase token");
-      }
+    this.authentication = lazyObservable(async (updateValue) => {
+      // note that we are assuming the auth flow is already complete by the time this is called,
+      // otherwise this would result in an error being thrown
+      const firebaseToken = await this.externals.authManager.getFirebaseToken();
+
       await this.firestoreClient.authenticate(firebaseToken);
-      sink(true);
+      updateValue(true);
     }, false);
   }
 
@@ -170,15 +161,5 @@ export class ApiClient implements DataAPI {
       console.log(e);
       throw e;
     }
-  }
-
-  async validateEdovoToken(token: string): Promise<unknown> {
-    const response = await fetch(`${API_URL_BASE}/auth/edovo`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.json();
   }
 }

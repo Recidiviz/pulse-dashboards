@@ -40,13 +40,14 @@ let rootStore: RootStore;
 beforeEach(() => {
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
-  vi.spyOn(
-    rootStore.userStore.authClient,
-    "appMetadata",
-    "get",
-  ).mockReturnValue({
-    stateCode: "US_ME",
-  });
+  vi.spyOn(rootStore.userStore.authManager, "authState", "get").mockReturnValue(
+    {
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+      },
+    },
+  );
 
   residentsStore = new ResidentsStore(rootStore, residentsConfigByState.US_ME);
   presenter = new ResidentsSearchPresenter(residentsStore, rootStore.uiStore);

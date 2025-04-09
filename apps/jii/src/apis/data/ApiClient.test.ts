@@ -18,33 +18,31 @@
 import { waitFor } from "@testing-library/react";
 import { z } from "zod";
 
-import type { AuthClient } from "~auth";
 import { usMeResidents, usMeSccpFixtures } from "~datatypes";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
+import type { AuthManager } from "../auth/AuthManager";
 import { ApiClient } from "./ApiClient";
-
-vi.hoisted(() => {
-  vi.stubEnv("VITE_API_URL_BASE", "http://localhost:9999/functions");
-});
 
 vi.mock("~firestore-api");
 
 let client: ApiClient;
-const getTokenMock = vi.fn();
+const getFirebaseTokenMock = vi.fn();
 
 const projectIdMock = "test-project-id";
 const apiKeyMock = "test-api-key";
 
 beforeEach(() => {
-  getTokenMock.mockReturnValue("test-auth0-access-token");
+  getFirebaseTokenMock.mockResolvedValue("test-firebase-token");
   vi.stubEnv("VITE_FIRESTORE_PROJECT", projectIdMock);
   vi.stubEnv("VITE_FIRESTORE_API_KEY", apiKeyMock);
 
   client = new ApiClient({
     stateCode: "US_ME",
-    authClient: { getTokenSilently: getTokenMock } as unknown as AuthClient,
+    authManager: {
+      getFirebaseToken: getFirebaseTokenMock,
+    } as unknown as AuthManager,
     config: residentsConfigByState.US_ME,
   });
 });
@@ -58,23 +56,9 @@ test("firestore client", () => {
 });
 
 test("authenticate", async () => {
-  fetchMock.mockResponse(
-    JSON.stringify({ firebaseToken: "test-firebase-token" }),
-  );
-
   expect(client.isAuthenticated).toBeFalse();
 
   await waitFor(() => expect(client.isAuthenticated).toBeTrue());
-  expect(fetchMock.mock.lastCall).toMatchInlineSnapshot(`
-    [
-      "http://localhost:9999/functions/auth/auth0",
-      {
-        "headers": {
-          "Authorization": "Bearer test-auth0-access-token",
-        },
-      },
-    ]
-  `);
 
   expect(FirestoreAPIClient.prototype.authenticate).toHaveBeenCalledWith(
     "test-firebase-token",
@@ -83,9 +67,6 @@ test("authenticate", async () => {
 
 describe("after authentication", () => {
   beforeEach(async () => {
-    fetchMock.mockResponse(
-      JSON.stringify({ firebaseToken: "test-firebase-token" }),
-    );
     await waitFor(() => expect(client.isAuthenticated).toBeTrue());
   });
 

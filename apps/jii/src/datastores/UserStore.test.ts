@@ -37,10 +37,13 @@ beforeEach(() => {
 
   store = new UserStore(externalsStub);
 
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "US_ME",
-    externalId: "123456",
-    pseudonymizedId: "test-pid",
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "US_ME",
+      externalId: "123456",
+      pseudonymizedId: "test-pid",
+    },
   });
 });
 
@@ -51,10 +54,13 @@ afterEach(() => {
 test("state authorization for external user", () => {
   expect(store.isAuthorizedForCurrentState).toBeTrue();
 
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "US_XX",
-    externalId: "123456",
-    pseudonymizedId: "test-pid",
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "US_XX",
+      externalId: "123456",
+      pseudonymizedId: "test-pid",
+    },
   });
 
   expect(store.isAuthorizedForCurrentState).toBeFalse();
@@ -65,26 +71,35 @@ test("state authorization for external demo user", () => {
 
   expect(store.isAuthorizedForCurrentState).toBeTrue();
 
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "US_XX",
-    externalId: "123456",
-    pseudonymizedId: "test-pid",
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "US_XX",
+      externalId: "123456",
+      pseudonymizedId: "test-pid",
+    },
   });
 
   expect(store.isAuthorizedForCurrentState).toBeFalse();
 });
 
 test("state authorization for internal user", () => {
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "RECIDIVIZ",
-    allowedStates: ["US_ME"],
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "RECIDIVIZ",
+      allowedStates: ["US_ME"],
+    },
   });
 
   expect(store.isAuthorizedForCurrentState).toBeTrue();
 
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "RECIDIVIZ",
-    allowedStates: ["US_XX"],
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "RECIDIVIZ",
+      allowedStates: ["US_XX"],
+    },
   });
   expect(store.isAuthorizedForCurrentState).toBeFalse();
 });
@@ -92,16 +107,21 @@ test("state authorization for internal user", () => {
 test("authorize all states for internal demo user", () => {
   vi.mocked(isDemoMode).mockReturnValue(true);
 
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "RECIDIVIZ",
-    allowedStates: ["US_ME"],
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "RECIDIVIZ",
+      allowedStates: ["US_ME"],
+    },
   });
-
   expect(store.isAuthorizedForCurrentState).toBeTrue();
 
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "RECIDIVIZ",
-    allowedStates: ["US_XX"],
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "RECIDIVIZ",
+      allowedStates: ["US_XX"],
+    },
   });
   expect(store.isAuthorizedForCurrentState).toBeTrue();
 });
@@ -110,9 +130,12 @@ test("has permission", () => {
   expect(store.hasPermission("enhanced")).toBeFalse();
 
   // note that this is irrespective of state code
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "US_ME",
-    permissions: ["enhanced"],
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "US_ME",
+      permissions: ["enhanced"],
+    },
   });
   expect(store.hasPermission("enhanced")).toBeTrue();
 });
@@ -126,10 +149,11 @@ test("reads pseudonymizedId from app metadata", () => {
 });
 
 test("log out", () => {
-  vi.spyOn(store.authClient, "logOut");
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  vi.spyOn(store.authManager.authClient!, "logOut");
 
   store.logOut();
-  expect(store.authClient.logOut).toHaveBeenCalled();
+  expect(store.authManager.authClient?.logOut).toHaveBeenCalled();
 });
 
 test("identify to trackers", () => {
@@ -142,12 +166,15 @@ test("identify to trackers", () => {
   );
 });
 
-test("do not identify to trackers when user has no hash", () => {
+test("do not identify to trackers when user has no pseudo ID", () => {
   vi.spyOn(SegmentClient.prototype, "identify");
 
-  vi.spyOn(store.authClient, "appMetadata", "get").mockReturnValue({
-    stateCode: "RECIDIVIZ",
-    allowedStates: ["US_ME"],
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "RECIDIVIZ",
+      allowedStates: ["US_ME"],
+    },
   });
 
   store.identifyToTrackers();

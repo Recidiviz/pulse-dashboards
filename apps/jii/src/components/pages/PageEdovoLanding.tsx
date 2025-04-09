@@ -16,21 +16,8 @@
 // =============================================================================
 
 import { Loading } from "@recidiviz/design-system";
-import { useEffect } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
-
-import { EdovoLandingPage } from "../../routes/routes";
-import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageEdovoLanding = () => {
-  const { token } = useTypedParams(EdovoLandingPage);
-  const { apiClient } = useRootStore();
-
-  // proof of concept
-  useEffect(() => {
-    // eslint-disable-next-line no-console
-    apiClient.validateEdovoToken(token).then((r) => console.log(r));
-  });
-
+  // TODO(#7749): handle auth state
   return <Loading />;
 };

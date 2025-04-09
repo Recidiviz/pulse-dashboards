@@ -25,10 +25,15 @@ import { usePageTitle } from "../usePageTitle/usePageTitle";
 
 export const PageAfterLogin: FC = observer(function PageAfterLogin() {
   const {
-    userStore: { authClient },
+    userStore: {
+      authManager: { authClient },
+    },
   } = useRootStore();
 
   usePageTitle(undefined);
+
+  // In practice we don't expect anyone to ever end up here except via Auth0 redirect
+  if (!authClient) throw new Error("Missing required configuration");
 
   return <HandleRedirectAfterLogin authClient={authClient} />;
 });
