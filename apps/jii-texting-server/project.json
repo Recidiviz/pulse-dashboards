@@ -147,6 +147,11 @@
         "tty": true
       },
       "configurations": {
+        "demo": {
+          "commands": [
+            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-staging--jii-texting-demo --terraform-opts=\"-auto-approve -var server_version={args.tag}\""
+          ]
+        },
         "staging": {
           "commands": [
             "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-staging--jii-texting --terraform-opts=\"-auto-approve -var server_version={args.tag}\""
@@ -223,6 +228,12 @@
           "args": [
             "--project recidiviz-dashboard-production",
             "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:jii-texting"
+          ]
+        },
+        "demo": {
+          "args": [
+            "--project recidiviz-dashboard-staging",
+            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:jii-texting-demo"
           ]
         }
       },

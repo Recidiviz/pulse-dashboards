@@ -403,7 +403,11 @@ if (
   }
 }
 
-if (deployEnv === "staging" || deployEnv === "production") {
+if (
+  deployEnv === "staging" ||
+  deployEnv === "production" ||
+  deployEnv === "demo"
+) {
   const deployJiiTextingServerPrompt = await inquirer.prompt({
     type: "confirm",
     name: "deployJiiTextingServer",
@@ -415,7 +419,11 @@ if (deployEnv === "staging" || deployEnv === "production") {
 
     // Start docker and configure docker to upload to container registry
     // Only needed for staging deploys
-    if (deployEnv === "staging" || (deployEnv === "production" && isCpDeploy)) {
+    if (
+      deployEnv === "staging" ||
+      (deployEnv === "production" && isCpDeploy) ||
+      deployEnv === "demo"
+    ) {
       try {
         await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
           process.stdout,
@@ -456,6 +464,10 @@ if (deployEnv === "staging" || deployEnv === "production") {
             process.stdout,
           );
           await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/import --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
+        } else if (deployEnv === "demo") {
+          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/processor --configuration demo`.pipe(
             process.stdout,
           );
         }

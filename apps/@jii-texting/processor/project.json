@@ -80,6 +80,12 @@
           "tags": [
             "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs/processor:$COMMIT_SHA"
           ]
+        },
+        "demo": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs/processor:$COMMIT_SHA"
+          ]
         }
       },
       "defaultConfiguration": "dev"
