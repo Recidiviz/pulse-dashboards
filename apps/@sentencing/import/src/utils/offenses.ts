@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma, PrismaClient } from "@prisma/sentencing-server/client";
+import { Prisma, PrismaClient } from "@prisma/sentencing/client";
 import { z } from "zod";
 
 import { offenseImportSchema } from "~@sentencing/import/models";
-import { PLACEHOLDER_SIGNIFIER } from "~@sentencing-server/prisma";
+import { PLACEHOLDER_SIGNIFIER } from "~@sentencing/prisma";
 
 export async function transformAndLoadOffenseData(
   prismaClient: PrismaClient,

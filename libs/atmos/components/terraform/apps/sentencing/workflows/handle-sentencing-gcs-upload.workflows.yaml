@@ -1,4 +1,4 @@
-# This Workflow takes the state code and executes the sentencing-server-import job with the state code as an environment variable.
+# This Workflow takes the state code and executes the sentencing-import job with the state code as an environment variable.
 
 main:
   params: [event]

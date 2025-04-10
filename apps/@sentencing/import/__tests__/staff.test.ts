@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { StateCode } from "@prisma/sentencing-server/client";
+import { StateCode } from "@prisma/sentencing/client";
 import { describe, expect, test } from "vitest";
 
 import { STAFF_FILE_NAME } from "~@sentencing/import/constants";

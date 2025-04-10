@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/sentencing-client/src",
   "projectType": "library",
-  "implicitDependencies": ["!sentencing-server"],
+  "implicitDependencies": ["!sentencing"],
   "tags": [],
   "targets": {
     "lint-files": {
@@ -17,7 +17,7 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         }
       ],

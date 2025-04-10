@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { FILE_NAME_TO_SCHEMA_AND_LOADER_FN } from "~@sentencing/import/constants";
-import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
+import { getPrismaClientForStateCode } from "~@sentencing/prisma";
 import { ImportHandler } from "~data-import-plugin";
 
 export function getImportHandler() {

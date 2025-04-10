@@ -58,7 +58,7 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
 
 If you install the [Vitest VS Code extension](https://marketplace.visualstudio.com/items?itemName=ZixuanChen.vitest-explorer), you can run tests from the editor. It should work out of the box with our current setup!
 
-NOTE: If your test need certain environment variables to be set, you can add them to the `vitest.config.ts` file in the project you are testing. See `apps/sentencing-server/vite.config.mts` for an example.
+NOTE: If your test need certain environment variables to be set, you can add them to the `vitest.config.ts` file in the project you are testing. See `apps/sentencing/vite.config.mts` for an example.
 
 ### Nx Development
 

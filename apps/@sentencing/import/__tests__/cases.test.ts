@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { ReportType, StateCode } from "@prisma/sentencing-server/client";
+import { ReportType, StateCode } from "@prisma/sentencing/client";
 import { describe, expect, test } from "vitest";
 
 import { CASES_FILE_NAME } from "~@sentencing/import/constants";

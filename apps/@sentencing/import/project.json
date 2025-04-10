@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/@sentencing/import/src",
   "projectType": "application",
-  "tags": ["sentencing-server"],
+  "tags": ["sentencing"],
   "targets": {
     "test-zod": {
       "executor": "nx:run-commands",
@@ -30,7 +30,7 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         }
       ],
@@ -56,7 +56,7 @@
       "dependsOn": [
         "create-base-package-json",
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         "load-env-files"
@@ -74,12 +74,12 @@
         "assets": [
           {
             "glob": "prisma/schema.prisma",
-            "input": "{workspaceRoot}/libs/@sentencing-server/prisma",
+            "input": "{workspaceRoot}/libs/@sentencing/prisma",
             "output": "."
           },
           "{workspaceRoot}/.yarnrc.yml"
         ],
-        "external": ["@prisma/sentencing-server"]
+        "external": ["@prisma/sentencing"]
       },
       "configurations": {
         "dev": {},
@@ -98,18 +98,18 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "docker"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/apps/@sentencing/import"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @sentencing-server/prisma && cd apps/@sentencing/import && vitest",
+        "command": "nx prisma-deploy @sentencing/prisma && cd apps/@sentencing/import && vitest",
         "cwd": "{workspaceRoot}"
       }
     },

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/sentencing-server/client";
+import { StateCode } from "@prisma/sentencing/client";
 import { init } from "@sentry/node";
 import {
   CreateTRPCProxyClient,
@@ -26,11 +26,11 @@ import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
 import { beforeAll, beforeEach, vi } from "vitest";
 
+import { getPrismaClientForStateCode } from "~@sentencing/prisma";
 import { buildServer } from "~@sentencing/server/server";
 import { seed } from "~@sentencing/server/test/setup/seed";
 import { resetDb } from "~@sentencing/server/test/setup/utils";
-import { getPrismaClientForStateCode } from "~@sentencing-server/prisma";
-import type { AppRouter } from "~@sentencing-server/trpc";
+import type { AppRouter } from "~@sentencing/trpc";
 
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])

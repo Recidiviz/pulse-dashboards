@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Gender, PrismaClient } from "@prisma/sentencing-server/client";
+import { Gender, PrismaClient } from "@prisma/sentencing/client";
 import { z } from "zod";
 
 import { clientImportSchema } from "~@sentencing/import/models";

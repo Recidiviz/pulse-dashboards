@@ -15,7 +15,7 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         }
       ],
@@ -178,7 +178,7 @@
       "executor": "@nx/vite:build",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         "env-prod"
@@ -198,7 +198,7 @@
       "executor": "@nx/vite:build",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         "env-staging"
@@ -218,7 +218,7 @@
       "executor": "@nx/vite:build",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         "env-preview-ci"
@@ -238,7 +238,7 @@
       "executor": "@nx/vite:build",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         "env-demo"
@@ -258,7 +258,7 @@
       "executor": "@nx/vite:build",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         "env-build-e2e"

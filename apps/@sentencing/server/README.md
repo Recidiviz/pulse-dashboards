@@ -18,32 +18,32 @@ Env Files
 
 Staging
 
-- [Cloud Run](https://console.cloud.google.com/run/detail/us-central1/sentencing-server/metrics?project=recidiviz-dashboard-staging)
-- [Cloud Run DB Migration Job](https://console.cloud.google.com/run/jobs/details/us-central1/sentencing-server-migrate-db/executions?project=recidiviz-dashboard-staging)
-- [Data Import Task Queue](https://console.cloud.google.com/cloudtasks/queue/us-central1/sentencing-server-import-queue/tasks?project=recidiviz-dashboard-staging)
+- [Cloud Run](https://console.cloud.google.com/run/detail/us-central1/sentencing/metrics?project=recidiviz-dashboard-staging)
+- [Cloud Run DB Migration Job](https://console.cloud.google.com/run/jobs/details/us-central1/sentencing-migrate-db/executions?project=recidiviz-dashboard-staging)
+- [Data Import Task Queue](https://console.cloud.google.com/cloudtasks/queue/us-central1/sentencing-import-queue/tasks?project=recidiviz-dashboard-staging)
 - [Cloud SQL Databases](https://console.cloud.google.com/sql/instances/sentencing-db/studio?project=recidiviz-dashboard-staging)
 
 Production
 
-- [Cloud Run](https://console.cloud.google.com/run/detail/us-central1/sentencing-server/metrics?project=recidiviz-dashboard-production)
-- [Cloud Run DB Migration Job](https://console.cloud.google.com/run/jobs/details/us-central1/sentencing-server-migrate-db/executions?project=recidiviz-dashboard-production)
-- [Data Import Task Queue](https://console.cloud.google.com/cloudtasks/queue/us-central1/sentencing-server-import-queue/tasks?project=recidiviz-dashboard-production)
+- [Cloud Run](https://console.cloud.google.com/run/detail/us-central1/sentencing/metrics?project=recidiviz-dashboard-production)
+- [Cloud Run DB Migration Job](https://console.cloud.google.com/run/jobs/details/us-central1/sentencing-migrate-db/executions?project=recidiviz-dashboard-production)
+- [Data Import Task Queue](https://console.cloud.google.com/cloudtasks/queue/us-central1/sentencing-import-queue/tasks?project=recidiviz-dashboard-production)
 - [Cloud SQL Databases](https://console.cloud.google.com/sql/instances/sentencing-db/studio?project=recidiviz-dashboard-production)
 
 ## Development
 
 If you haven't already, follow the setup instructions in the root README to install dependencies.
 
-1. Get env variables by running `nx load-env-files sentencing-server`
+1. Get env variables by running `nx load-env-files sentencing`
 
    This way, `nx` will automatically pick up the correct environment variables based on the targets you are running.
 
 2. Make sure you have your Docker daemon running.
-3. Start the server with `nx dev sentencing-server`.
+3. Start the server with `nx dev sentencing`.
 
 ### Updating the prisma schema
 
-Instructions for updating the prisma schema are in the [prisma README](../../libs/@sentencing-server/prisma/README.md).
+Instructions for updating the prisma schema are in the [prisma README](../../libs/@sentencing/prisma/README.md).
 
 ### Add support for a new state
 
@@ -55,9 +55,9 @@ Note: this process is the same for both staging and production.
 
 2. Next, add a new environment variable for the new state's database connection string to `env_[prod/staging]_sentencing_server` in Google Secrets. The naming convention for these environment variables is `DATABASE_URL_{STATE_ABBREVIATION}`. For example, if you wanted to add support for the state of California, you would add an environment variable called `DATABASE_URL_US_CA` with the connection string for the California database.
 
-3. Under the `migrate-db` target in the `sentencing-server` `project.json` file, append `DATABASE_URL_{STATE_ABBREVIATION}=$DATABASE_URL_{STATE_ABBREVIATION}` to the `--set-env-vars` portion of the `command`. This will ensure that the database migration job has the correct environment variables.
+3. Under the `migrate-db` target in the `sentencing` `project.json` file, append `DATABASE_URL_{STATE_ABBREVIATION}=$DATABASE_URL_{STATE_ABBREVIATION}` to the `--set-env-vars` portion of the `command`. This will ensure that the database migration job has the correct environment variables.
 
-4. Under the `deploy-app` target in the `sentencing-server` `project.json` file, add `"DATABASE_URL_{STATE_ABBREVIATION}": "$DATABASE_URL_{STATE_ABBREVIATION}"` to the `envVars` dictionary. This will ensure that the server has the correct environment variables.
+4. Under the `deploy-app` target in the `sentencing` `project.json` file, add `"DATABASE_URL_{STATE_ABBREVIATION}": "$DATABASE_URL_{STATE_ABBREVIATION}"` to the `envVars` dictionary. This will ensure that the server has the correct environment variables.
 
 ## Testing
 
@@ -67,13 +67,13 @@ We have integration tests for the server + database.
 
 In order to run these tests:
 
-1. Get any necessary env variables from [GSM](https://console.cloud.google.com/security/secret-manager/secret/env_test_sentencing_server/versions?project=recidiviz-dashboard-staging) and put them in an `.env.test` file (the name must match exactly for nx to pick up on the variables) in the `apps/sentencing-server` directory.
+1. Get any necessary env variables from [GSM](https://console.cloud.google.com/security/secret-manager/secret/env_test_sentencing_server/versions?project=recidiviz-dashboard-staging) and put them in an `.env.test` file (the name must match exactly for nx to pick up on the variables) in the `apps/sentencing` directory.
 2. Make sure you have your Docker daemon running.
-3. Run `nx test sentencing-server` to run the tests.
+3. Run `nx test sentencing` to run the tests.
 
 ### Testing zod schemas
 
-If you'd like to test the zod import schemas against a downloaded JSONLines file of expected data, you can run `nx test-zod sentencing-server {path-to-jsonlines-file} {name-of-schema}`. This will run the zod schema against each line of the file and log any errors.
+If you'd like to test the zod import schemas against a downloaded JSONLines file of expected data, you can run `nx test-zod sentencing {path-to-jsonlines-file} {name-of-schema}`. This will run the zod schema against each line of the file and log any errors.
 
 The valid schema names are the keys of the `zodSchemaMap` object found in `test-zod/index.ts`
 

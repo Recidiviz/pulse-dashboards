@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { appRouter, createContext } from "~@sentencing-server/trpc";
+import { appRouter, createContext } from "~@sentencing/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 
 export function buildServer() {

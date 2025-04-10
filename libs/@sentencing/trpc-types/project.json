@@ -1,0 +1,29 @@
+{
+  "name": "@sentencing/trpc-types",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@sentencing/trpc-types",
+  "projectType": "library",
+  "tags": ["sentencing"],
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@sentencing/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "command": "tsc -p ./tsconfig.lib.json",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

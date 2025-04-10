@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/sentencing-server/client";
+import { StateCode } from "@prisma/sentencing/client";
 
 import { OFFENSES_FILE_NAME } from "~@sentencing/import/constants";
 import { getImportHandler } from "~@sentencing/import/handler";

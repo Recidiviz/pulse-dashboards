@@ -1,6 +1,6 @@
 # sentencing-client
 
-This library contains the client-side components of the Sentencing project that are used by the `staff` application and communicate with the `sentencing-server` application.
+This library contains the client-side components of the Sentencing project that are used by the `staff` application and communicate with the `sentencing` application.
 
 ## Running lint and unit tests
 

@@ -42,5 +42,5 @@ components:
         service_account_id: sentencing-demo
         sql_instance_name: sentencing-demo
         sql_base_secret_name: sentencing_demo
-        server_name: sentencing-server-demo
+        server_name: sentencing-demo
         migrate_db_name: sentencing-migrate-db-demo

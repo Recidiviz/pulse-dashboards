@@ -1,0 +1,483 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["tracing", "omitApi", "fullTextSearchPostgres"]
+  output          = "../../../../node_modules/@prisma/sentencing/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StateCode {
+  US_AL
+  US_AK
+  US_AZ
+  US_AR
+  US_CA
+  US_CO
+  US_CT
+  US_DE
+  US_FL
+  US_GA
+  US_HI
+  US_ID
+  US_IL
+  US_IN
+  US_IA
+  US_KS
+  US_KY
+  US_LA
+  US_ME
+  US_MD
+  US_MA
+  US_MI
+  US_MN
+  US_MS
+  US_MO
+  US_MT
+  US_NE
+  US_NV
+  US_NH
+  US_NJ
+  US_NM
+  US_NY
+  US_NC
+  US_ND
+  US_OH
+  US_OK
+  US_OR
+  US_PA
+  US_RI
+  US_SC
+  US_SD
+  US_TN
+  US_TX
+  US_UT
+  US_VT
+  US_VA
+  US_WA
+  US_WV
+  US_WI
+  US_WY
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  TRANS
+  TRANS_FEMALE
+  TRANS_MALE
+  INTERNAL_UNKNOWN
+  EXTERNAL_UNKNOWN
+}
+
+model Staff {
+  externalId      String    @id
+  pseudonymizedId String    @unique
+  stateCode       StateCode
+  fullName        String
+
+  hasLoggedIn Boolean @default(false)
+
+  email        String
+  cases        Case[]
+  // TODO(Recidiviz/recidiviz-data#40011) Make this a self-relation and update metric exports to include supervisee data
+  supervisorId String?
+}
+
+model Client {
+  externalId      String    @id
+  pseudonymizedId String    @unique
+  stateCode       StateCode
+  fullName        String
+
+  gender    Gender
+  birthDate DateTime
+  cases     Case[]
+
+  // County and District fields must be mutually exclusive (this is currently enforced via SQL)
+  // If a county is ever set, it will always include the district, and must be the single source of truth for both fields
+  // A district is only ever set when it is ingested and does not include a county
+  county     County?   @relation(fields: [countyId], references: [id])
+  countyId   String?
+  district   District? @relation(fields: [districtId], references: [id])
+  districtId String?
+
+  // Whether the gender is locked and cannot be changed
+  isGenderLocked Boolean @default(false)
+  // Whether the county of residence is locked and cannot be changed
+  isCountyLocked Boolean @default(false)
+}
+
+enum ReportType {
+  FullPSI
+  FileReview
+  FileReviewWithUpdatedLSIRScore
+}
+
+enum SubstanceUseDiagnosis {
+  None
+  Mild
+  Moderate
+  Severe
+}
+
+enum AsamCareRecommendation {
+  LongTermRemissionMonitoring
+  OutpatientTherapy
+  MedicallyManagedOutpatient
+  IntensiveOutpatient
+  HighIntensityOutpatient
+  MedicallyManagedIntensiveOutpatient
+  ClinicallyManagedLowIntensityResidential
+  ClinicallyManagedHighIntensityResidential
+  MedicallyManagedResidential
+  MedicallyManagedInpatient
+  None
+}
+
+enum MentalHealthDiagnosis {
+  BipolarDisorder
+  BorderlinePersonalityDisorder
+  DelusionalDisorder
+  MajorDepressiveDisorder
+  PsychoticDisorder
+  Schizophrenia
+  SchizoaffectiveDisorder
+  Other
+  None
+}
+
+enum Plea {
+  Guilty
+  NotGuilty
+  AlfordPlea
+}
+
+enum NeedToBeAddressed {
+  AngerManagement
+  CaseManagement
+  DomesticViolenceIssues
+  ClothingAndToiletries
+  Education
+  FamilyServices
+  FoodInsecurity
+  FinancialAssistance
+  Healthcare
+  GeneralReEntrySupport
+  HousingOpportunities
+  JobTrainingOrOpportunities
+  MentalHealth
+  SubstanceUse
+  Transportation
+  Other
+}
+
+enum CaseStatus {
+  NotYetStarted
+  InProgress
+  Complete
+}
+
+enum PriorCriminalHistoryCriterion {
+  None
+  Significant
+}
+
+enum DiagnosedMentalHealthDiagnosisCriterion {
+  BipolarDisorder
+  BorderlinePersonalityDisorder
+  DelusionalDisorder
+  MajorDepressiveDisorder
+  PsychoticDisorder
+  Schizophrenia
+  SchizoaffectiveDisorder
+  Other
+  Any
+}
+
+enum AsamLevelOfCareRecommendationCriterion {
+  LongTermRemissionMonitoring
+  OutpatientTherapy
+  MedicallyManagedOutpatient
+  IntensiveOutpatient
+  HighIntensityOutpatient
+  MedicallyManagedIntensiveOutpatient
+  ClinicallyManagedLowIntensityResidential
+  ClinicallyManagedHighIntensityResidential
+  MedicallyManagedResidential
+  MedicallyManagedInpatient
+  Any
+}
+
+enum DiagnosedSubstanceUseDisorderCriterion {
+  Mild
+  Moderate
+  Severe
+  Any
+}
+
+enum OnboardingTopic {
+  OffenseLsirScore
+  PrimaryNeeds
+  ProtectiveFactors
+  AdditionalNeeds
+  Done
+}
+
+enum ProtectiveFactor {
+  NoPriorCriminalConvictions
+  NoHistoryOfViolentBehavior
+  NoSubstanceAbuseIssues
+  NoDiagnosisOfAMentalIllness
+  HistoryOfSuccessUnderSupervision
+  LengthyPeriodsOfSobrietyAfterCompletingTreatment
+  StableHousing
+  SteadyEmployment
+  FinancialStability
+  HighSchoolDiplomaOrHigherEducation
+  StrongSocialSupportNetwork
+  CloseFamilyTies
+  ActivelyParticipatingInTreatmentPrograms
+  EnrolledInEducationalOrVocationalTraining
+  ActiveInvolvementInCommunityActivities
+  Other
+}
+
+model Opportunity {
+  id                  String              @id @default(cuid())
+  lastUpdatedAt       DateTime
+  opportunityName     String
+  providerName        String
+  description         String?
+  providerPhoneNumber String?
+  providerWebsite     String?
+  providerAddress     String?
+  needsAddressed      NeedToBeAddressed[]
+  additionalNotes     String?
+
+  // Eligibility Criteria
+  developmentalDisabilityDiagnosisCriterion             Boolean
+  noCurrentOrPriorSexOffenseCriterion                   Boolean
+  noCurrentOrPriorViolentOffenseCriterion               Boolean
+  noPendingFelonyChargesInAnotherCountyOrStateCriterion Boolean
+  entryOfGuiltyPleaCriterion                            Boolean
+  veteranStatusCriterion                                Boolean
+  priorCriminalHistoryCriterion                         PriorCriminalHistoryCriterion?
+  diagnosedMentalHealthDiagnosisCriterion               DiagnosedMentalHealthDiagnosisCriterion[]
+  asamLevelOfCareRecommendationCriterion                AsamLevelOfCareRecommendationCriterion?
+  diagnosedSubstanceUseDisorderCriterion                DiagnosedSubstanceUseDisorderCriterion?
+  minLsirScoreCriterion                                 Int?
+  maxLsirScoreCriterion                                 Int?
+  minAge                                                Int?
+  maxAge                                                Int?
+  district                                              String?
+  genders                                               Gender[]
+  genericDescription                                    String?
+  counties                                              String[]
+  active                                                Boolean                                   @default(true)
+
+  cases Case[]
+
+  // This is the best way to identify unique opportunities
+  @@unique([opportunityName, providerName])
+}
+
+model Offense {
+  id                String             @id @default(cuid())
+  stateCode         StateCode
+  name              String             @unique
+  isViolentOffense  Boolean?
+  isSexOffense      Boolean?
+  frequency         Int                @default(0)
+  mandatoryMinimums MandatoryMinimum[]
+
+  Case                  Case[]
+  insightOffenses       Insight[] @relation("InsightOffenses")
+  insightRollupOffenses Insight[] @relation("InsightRollupOffenses")
+}
+
+model MandatoryMinimum {
+  id                    String  @id @default(cuid())
+  sentenceType          String
+  minimumSentenceLength Int?
+  maximumSentenceLength Int?
+  statuteNumber         String?
+  statuteLink           String?
+
+  offense   Offense @relation(fields: [offenseId], references: [id], onDelete: Cascade)
+  offenseId String
+
+  @@unique([offenseId, sentenceType])
+}
+
+model Case {
+  externalId String    @id
+  id         String    @unique @default(cuid())
+  stateCode  StateCode
+
+  // These relationships are only optional because data loading for staff, client,
+  // and cases happens independently and in random order, so the referenced staff
+  // or client may not exist yet
+  staff    Staff?  @relation(fields: [staffId], references: [externalId])
+  staffId  String?
+  client   Client? @relation(fields: [clientId], references: [externalId])
+  clientId String?
+
+  // County and District fields must be mutually exclusive (this is currently enforced via SQL)
+  // If a county is ever set, it will always include the district, and must be the single source of truth for both fields
+  // A district is only ever set when it is ingested and does not include a county
+  county     County?   @relation(fields: [countyId], references: [id])
+  countyId   String?
+  district   District? @relation(fields: [districtId], references: [id])
+  districtId String?
+
+  dueDate            DateTime?
+  lsirLevel          String?
+  reportType         ReportType?
+  // Whether the LSIR score is locked and cannot be changed
+  isLsirScoreLocked  Boolean     @default(false)
+  // Whether the report type is locked and cannot be changed
+  isReportTypeLocked Boolean     @default(false)
+  // Whether the county of sentencing is locked and cannot be changed
+  isCountyLocked     Boolean     @default(false)
+  isCancelled        Boolean     @default(false)
+
+  // Mutable Attributes
+  lsirScore Int?
+
+  offense   Offense? @relation(fields: [offenseId], references: [id])
+  offenseId String?
+
+  isCurrentOffenseViolent Boolean?
+  isCurrentOffenseSexual  Boolean?
+
+  previouslyIncarceratedOrUnderSupervision Boolean?
+  hasPreviousFelonyConviction              Boolean?
+  hasPreviousViolentOffenseConviction      Boolean?
+  hasPreviousSexOffenseConviction          Boolean?
+  previousTreatmentCourt                   String?
+  hasPreviousTreatmentCourt                Boolean?
+
+  substanceUseDisorderDiagnosis SubstanceUseDiagnosis?
+  asamCareRecommendation        AsamCareRecommendation?
+
+  mentalHealthDiagnoses      MentalHealthDiagnosis[]
+  otherMentalHealthDiagnosis String?
+
+  hasDevelopmentalDisability         Boolean?
+  isVeteran                          Boolean?
+  plea                               Plea?
+  hasOpenChildProtectiveServicesCase Boolean?
+  needsToBeAddressed                 NeedToBeAddressed[]
+  otherNeedToBeAddressed             String?
+  protectiveFactors                  ProtectiveFactor[]
+  otherProtectiveFactor              String?
+
+  currentOnboardingTopic OnboardingTopic @default(OffenseLsirScore)
+
+  // Case Recommendation Fields
+  status                       CaseStatus    @default(NotYetStarted)
+  selectedRecommendation       String?
+  recommendedMinSentenceLength Int?
+  recommendedMaxSentenceLength Int?
+  recommendedOpportunities     Opportunity[]
+  recommendationSummary        String?
+}
+
+model Insight {
+  id                         String    @id @default(cuid())
+  stateCode                  StateCode
+  gender                     Gender
+  offense                    Offense   @relation(name: "InsightOffenses", fields: [offenseId], references: [id])
+  offenseId                  String
+  assessmentScoreBucketStart Int
+  assessmentScoreBucketEnd   Int
+
+  // Rollup Recidivism Data
+  rollupStateCode                  StateCode
+  rollupGender                     Gender?
+  rollupAssessmentScoreBucketStart Int?
+  rollupAssessmentScoreBucketEnd   Int?
+  rollupOffense                    Offense?           @relation(name: "InsightRollupOffenses", fields: [rollupOffenseId], references: [id])
+  rollupOffenseId                  String?
+  rollupNcicCategory               String?
+  rollupCombinedOffenseCategory    String?
+  rollupViolentOffense             Boolean?
+  rollupRecidivismNumRecords       Int
+  rollupRecidivismSeries           RecidivismSeries[]
+
+  // Disposition Data
+  dispositionNumRecords Int
+  dispositionData       Disposition[]
+
+  @@unique([gender, offenseId, assessmentScoreBucketStart, assessmentScoreBucketEnd])
+}
+
+model RecidivismSeries {
+  id                        String                     @id @default(cuid())
+  recommendationType        String?
+  // The default range is 0 to -1 (equivalent to 0 to infinity)
+  sentenceLengthBucketStart Int                        @default(0)
+  sentenceLengthBucketEnd   Int                        @default(-1)
+  dataPoints                RecidvismSeriesDataPoint[]
+
+  // These should always be linked to an insight and deleted when the insight is deleted
+  insight   Insight @relation(fields: [insightId], references: [id], onDelete: Cascade)
+  insightId String
+
+  // There should only be one series per recommendation type for each insight
+  @@unique([insightId, recommendationType, sentenceLengthBucketStart, sentenceLengthBucketEnd])
+}
+
+model RecidvismSeriesDataPoint {
+  id           String @id @default(cuid())
+  cohortMonths Int
+  eventRate    Float
+  lowerCI      Float
+  upperCI      Float
+
+  // These should always be linked to a series and deleted when the series is deleted
+  recidivismSeries   RecidivismSeries @relation(fields: [recidivismSeriesId], references: [id], onDelete: Cascade)
+  recidivismSeriesId String
+
+  // There should only be one data point per cohort month for each series
+  @@unique([recidivismSeriesId, cohortMonths])
+}
+
+model Disposition {
+  id                        String  @id @default(cuid())
+  recommendationType        String?
+  // The default range is 0 to -1 (equivalent to 0 to infinity)
+  sentenceLengthBucketStart Int     @default(0)
+  sentenceLengthBucketEnd   Int     @default(-1)
+  percentage                Float
+
+  // These should always be linked to an insight and deleted when the insight is deleted
+  insight   Insight @relation(fields: [insightId], references: [id], onDelete: Cascade)
+  insightId String
+
+  // There should only be one disposition percentage per recommendation type for each insight
+  @@unique([insightId, recommendationType, sentenceLengthBucketStart, sentenceLengthBucketEnd])
+}
+
+model County {
+  id         String    @id @default(cuid())
+  stateCode  StateCode
+  name       String    @unique @db.Citext
+  district   District? @relation(fields: [districtId], references: [id])
+  districtId String?
+  Case       Case[]
+  Client     Client[]
+}
+
+model District {
+  id        String    @id @default(cuid())
+  stateCode StateCode
+  name      String    @unique @db.Citext
+  counties  County[]
+  Case      Case[]
+  Client    Client[]
+}

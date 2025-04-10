@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Prisma } from "@prisma/sentencing-server/client";
+import type { Prisma } from "@prisma/sentencing/client";
 
 export type StaffCreateInput = Prisma.StaffCreateInput;
 export type ClientCreateInput = Prisma.ClientCreateInput;

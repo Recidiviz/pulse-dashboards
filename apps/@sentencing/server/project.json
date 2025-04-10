@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/@sentencing/server/src",
   "projectType": "application",
-  "tags": ["sentencing-server"],
+  "tags": ["sentencing"],
   "targets": {
     "load-env-files": {
       "executor": "nx:run-commands",
@@ -23,7 +23,7 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         }
       ],
@@ -39,11 +39,11 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "docker"
         },
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-seed"
         }
       ],
@@ -65,7 +65,7 @@
       "dependsOn": [
         "create-base-package-json",
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         "load-env-files"
@@ -83,18 +83,18 @@
         "assets": [
           {
             "glob": "prisma/schema.prisma",
-            "input": "{workspaceRoot}/libs/@sentencing-server/prisma",
+            "input": "{workspaceRoot}/libs/@sentencing/prisma",
             "output": "."
           },
           {
             "glob": "prisma/migrations/**/*",
-            "input": "{workspaceRoot}/libs/@sentencing-server/prisma",
+            "input": "{workspaceRoot}/libs/@sentencing/prisma",
             "output": "."
           },
           "{projectRoot}/scripts/*",
           "{workspaceRoot}/.yarnrc.yml"
         ],
-        "external": ["@prisma/sentencing-server"]
+        "external": ["@prisma/sentencing"]
       },
       "configurations": {
         "dev": {},
@@ -117,11 +117,11 @@
       "executor": "@nx/vite:preview-server",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "docker"
         },
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-seed"
         },
         "build"
@@ -134,18 +134,18 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "docker"
         }
       ],
-      "outputs": ["{workspaceRoot}/coverage/apps/sentencing-server"],
+      "outputs": ["{workspaceRoot}/coverage/apps/sentencing"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @sentencing-server/prisma && cd apps/@sentencing/server && vitest",
+        "command": "nx prisma-deploy @sentencing/prisma && cd apps/@sentencing/server && vitest",
         "cwd": "{workspaceRoot}"
       }
     },
@@ -164,26 +164,26 @@
         "staging": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server:$COMMIT_SHA",
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server:latest"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing:latest"
           ]
         },
         "cherry-pick": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing:$COMMIT_SHA"
           ]
         },
         "preview": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server-preview:$VERSION"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-preview:$VERSION"
           ]
         },
         "demo": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing:$COMMIT_SHA"
           ]
         }
       },
@@ -200,7 +200,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["load-env-files"],
       "options": {
-        "command": "gcloud run jobs deploy ss-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID-$VERSION,DATABASE_URL_US_ND=$DATABASE_URL_US_ND-$VERSION",
+        "command": "gcloud run jobs deploy ss-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID-$VERSION,DATABASE_URL_US_ND=$DATABASE_URL_US_ND-$VERSION",
         "args": [
           "--project recidiviz-dashboard-staging",
           "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
@@ -215,7 +215,7 @@
         "name": "ss-preview-$VERSION",
         "region": "us-central1",
         "project": "recidiviz-dashboard-staging",
-        "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server-preview:$VERSION",
+        "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-preview:$VERSION",
         "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
         "memory": "512Mi",
         "envVars": {

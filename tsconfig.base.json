@@ -23,9 +23,7 @@
       "@prisma/jii-texting-server/client": [
         "node_modules/@prisma/jii-texting-server/client"
       ],
-      "@prisma/sentencing-server/client": [
-        "node_modules/@prisma/sentencing-server/client"
-      ],
+      "@prisma/sentencing/client": ["node_modules/@prisma/sentencing/client"],
       "~@case-notes-server/trpc": ["libs/@case-notes-server/trpc/src/index.ts"],
       "~@case-notes-server/trpc/*": ["libs/@case-notes-server/trpc/src/*"],
       "~@jii-texting-server/prisma": [
@@ -40,20 +38,16 @@
       "~@jii-texting-server/utils/*": ["libs/@jii-texting-server/utils/src/*"],
       "~@jii-texting/import/*": ["apps/@jii-texting/import/src/*"],
       "~@jii-texting/processor/*": ["apps/@jii-texting/processor/src/*"],
-      "~@sentencing-server/prisma": [
-        "libs/@sentencing-server/prisma/src/index.ts"
-      ],
-      "~@sentencing-server/prisma/*": ["libs/@sentencing-server/prisma/src/*"],
-      "~@sentencing-server/trpc": ["libs/@sentencing-server/trpc/src/index.ts"],
-      "~@sentencing-server/trpc-types": [
-        "libs/@sentencing-server/trpc-types/src/index.ts"
-      ],
-      "~@sentencing-server/trpc/*": ["libs/@sentencing-server/trpc/src/*"],
       "~@sentencing/import": ["apps/@sentencing/import/src/index.ts"],
       "~@sentencing/import/*": ["apps/@sentencing/import/src/*"],
       "~@sentencing/import/test/*": ["apps/@sentencing/import/__tests__/*"],
+      "~@sentencing/prisma": ["libs/@sentencing/prisma/src/index.ts"],
+      "~@sentencing/prisma/*": ["libs/@sentencing/prisma/src/*"],
       "~@sentencing/server/*": ["apps/@sentencing/server/src/*"],
       "~@sentencing/server/test/*": ["apps/@sentencing/server/__tests__/*"],
+      "~@sentencing/trpc": ["libs/@sentencing/trpc/src/index.ts"],
+      "~@sentencing/trpc-types": ["libs/@sentencing/trpc-types/src/index.ts"],
+      "~@sentencing/trpc/*": ["libs/@sentencing/trpc/src/*"],
       "~auth": ["libs/auth/src/index.ts"],
       "~auth0-jii": ["libs/auth0-jii/src/index.ts"],
       "~case-notes-server/*": ["apps/case-notes-server/src/*"],
