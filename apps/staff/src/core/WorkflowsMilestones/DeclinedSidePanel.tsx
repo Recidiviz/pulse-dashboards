@@ -20,8 +20,8 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
 import GrayAlert from "../../assets/static/images/grayAlert.svg?react";
+import { reasonsIncludesOtherKey } from "../../core/utils/workflowsUtils";
 import { Client } from "../../WorkflowsStore";
-import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import Banner from "./Banner";
@@ -68,10 +68,9 @@ const DeclinedSidePanel = observer(function DeclinedSidePanel({
           <SidePanelHeader>Reasons</SidePanelHeader>
           <MilestonesList>
             {milestonesDeclinedReasons?.reasons.map((reason) => {
-              const reasonText =
-                reason === OTHER_KEY
-                  ? `Other reason: ${milestonesDeclinedReasons.otherReason}`
-                  : DECLINED_REASONS_MAP[reason];
+              const reasonText = reasonsIncludesOtherKey([reason])
+                ? `Other reason: ${milestonesDeclinedReasons.otherReason}`
+                : DECLINED_REASONS_MAP[reason];
               return (
                 <MilestonesItem key={reason}>
                   <BulletPoint>&#x2022;</BulletPoint>

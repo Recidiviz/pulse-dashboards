@@ -39,7 +39,7 @@ import AcknowledgementCheckbox from "../../../../src/components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";
 import { formatDateToISO, formatWorkflowsDate } from "../../../utils";
 import { Client, Opportunity } from "../../../WorkflowsStore";
-import { OTHER_KEY } from "../../../WorkflowsStore/utils";
+import { reasonsIncludesOtherKey } from "../../utils/workflowsUtils";
 import { DenialConfirmationModalProps } from "../DenialConfirmationModals";
 
 const Acknowledgement = styled.div`
@@ -122,7 +122,9 @@ export function buildJustificationReasons(
       if (reasons.includes(code)) {
         out.push({
           code,
-          description: code === OTHER_KEY ? otherReason : description,
+          description: reasonsIncludesOtherKey([code])
+            ? otherReason
+            : description,
         });
       }
     },

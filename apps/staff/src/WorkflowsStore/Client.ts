@@ -32,6 +32,7 @@ import {
   SpecialConditionCode,
 } from "~datatypes";
 
+import { reasonsIncludesOtherKey } from "../core/utils/workflowsUtils";
 import { workflowsUrl } from "../core/views";
 import {
   DeclineReason,
@@ -50,7 +51,6 @@ import {
   clearPhoneNumberFormatting,
   formatSupervisionType,
   fractionalDateBetweenTwoDates,
-  OTHER_KEY,
 } from "./utils";
 
 export const UNKNOWN = "Unknown" as const;
@@ -383,7 +383,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     reasons: DeclineReason[],
     otherReason?: string,
   ): Promise<void> {
-    const otherReasonField = reasons.includes(OTHER_KEY)
+    const otherReasonField = reasonsIncludesOtherKey(reasons)
       ? { otherReason }
       : { otherReason: deleteField() };
 

@@ -21,8 +21,8 @@ import { observer } from "mobx-react-lite";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { Opportunity } from "../../WorkflowsStore";
-import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { OtherReasonInput, OtherReasonInputWrapper } from "../sharedComponents";
+import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
 import { DropdownItem } from "./DropdownItem";
 
 export const DenialMenuOptions = observer(function DenialMenuOptions({
@@ -54,7 +54,7 @@ export const DenialMenuOptions = observer(function DenialMenuOptions({
         </DropdownMenuItem>
       ))}
 
-      {reasons?.includes(OTHER_KEY) && (
+      {reasonsIncludesOtherKey(reasons) && (
         <OtherReasonInputWrapper>
           <OtherReasonInput
             defaultValue={opportunity.denial?.otherReason}

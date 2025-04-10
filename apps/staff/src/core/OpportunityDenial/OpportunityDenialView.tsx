@@ -29,8 +29,9 @@ import Slider from "../../components/Slider";
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { formatDateToISO } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
-import { getSnoozeUntilDate, OTHER_KEY } from "../../WorkflowsStore/utils";
+import { getSnoozeUntilDate } from "../../WorkflowsStore/utils";
 import { OtherReasonInput } from "../sharedComponents";
+import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import {
   buildDenialReasonsListText,
@@ -213,11 +214,11 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const unsetSlider = maxManualSnoozeDays && !sliderDays;
   const otherReasonInvalid =
-    reasons.includes(OTHER_KEY) &&
+    reasonsIncludesOtherKey(reasons) &&
     (otherReason ?? "").length < minOtherReasonCharLength;
 
   const otherReasonChanged =
-    reasons.includes(OTHER_KEY) &&
+    reasonsIncludesOtherKey(reasons) &&
     otherReason === opportunity.denial?.otherReason;
 
   const reasonsUnchanged =
@@ -315,7 +316,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           ),
         )}
 
-        {reasons.includes(OTHER_KEY) && (
+        {reasonsIncludesOtherKey(reasons) && (
           <OtherReasonSection>
             <OtherReasonLabel htmlFor="OtherReasonInput">
               Enter at least 3 characters

@@ -16,9 +16,12 @@
 // =============================================================================
 
 import { palette } from "@recidiviz/design-system";
+import { some } from "lodash";
 import { rgba } from "polished";
 
+import { toTitleCase } from "../../utils/formatStrings";
 import { type Opportunity } from "../../WorkflowsStore";
+import { OTHER_KEY } from "../../WorkflowsStore/utils";
 
 export const OPPORTUNITY_STATUS_COLORS = {
   eligible: {
@@ -140,4 +143,8 @@ export function useStatusColors({
   }
 
   return OPPORTUNITY_STATUS_COLORS.eligible;
+}
+
+export function reasonsIncludesOtherKey(reasons?: string[]) {
+  return some(reasons, (reason) => toTitleCase(reason).includes(OTHER_KEY));
 }

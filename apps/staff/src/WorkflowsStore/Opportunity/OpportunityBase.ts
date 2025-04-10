@@ -35,6 +35,7 @@ import {
 } from "~hydration-utils";
 
 import { StatusPalette } from "../../core/utils/workflowsUtils";
+import { reasonsIncludesOtherKey } from "../../core/utils/workflowsUtils";
 import {
   AutoSnoozeUpdate,
   Denial,
@@ -53,11 +54,7 @@ import {
   UpdateFunction,
 } from "../subscriptions";
 import { JusticeInvolvedPerson } from "../types";
-import {
-  getSnoozeUntilDate,
-  OTHER_KEY,
-  snoozeUntilDateInTheFuture,
-} from "../utils";
+import { getSnoozeUntilDate, snoozeUntilDateInTheFuture } from "../utils";
 import { FormBase } from "./Forms/FormBase";
 import { SnoozeConfiguration } from "./OpportunityConfigurations/modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import {
@@ -588,7 +585,7 @@ export class OpportunityBase<
     }
 
     // clear irrelevant "other" text if necessary
-    const deletions = reasons.includes(OTHER_KEY)
+    const deletions = reasonsIncludesOtherKey(reasons)
       ? undefined
       : { otherReason: true };
 

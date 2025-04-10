@@ -27,6 +27,7 @@ import { DeclineReason } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 import { OtherReasonInput } from "../sharedComponents";
+import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
 import {
   ActionButton,
   MenuItem,
@@ -69,7 +70,7 @@ const DeclineMessageView = observer(function DeclineMessageView({
   };
 
   const disableConfirmButton =
-    reasons.length === 0 || (reasons.includes(OTHER_KEY) && !otherReason);
+    reasons.length === 0 || (reasonsIncludesOtherKey(reasons) && !otherReason);
 
   return (
     <SidePanelContents>
@@ -93,7 +94,7 @@ const DeclineMessageView = observer(function DeclineMessageView({
             </Checkbox>
           </MenuItem>
         ))}
-        {reasons.includes(OTHER_KEY) && (
+        {reasonsIncludesOtherKey(reasons) && (
           <OtherReasonWrapper>
             <OtherReasonInput
               placeholder="Please specify a reason…"

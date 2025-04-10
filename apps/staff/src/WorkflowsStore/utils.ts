@@ -148,6 +148,8 @@ export function staffNameComparator(a: StaffRecord, b: StaffRecord): number {
   return 0;
 }
 
+// Note that denial reason of type 'Other' will create an 'other reasons' denial text box,
+// regardless of the case (ex: 'OTHER', 'other', 'Other', etc) of the denial reason
 export const OTHER_KEY = "Other";
 
 type Entries<T> = {
