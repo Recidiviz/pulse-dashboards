@@ -24,13 +24,13 @@ provider "google" {
 # =========================================================
 # Instance ID i.e. `recidiviz-staging:us-east1:dev-case-triage-data`
 data "google_secret_manager_secret_version" "cloudsql_instance_id" {
-  secret = "${var.base_secret_name}_cloudsql_instance_id"
+  secret  = "${var.base_secret_name}_cloudsql_instance_id"
   version = "latest"
 }
 
 # Default username
 data "google_secret_manager_secret_version" "db_user" {
-  secret = "${var.base_secret_name}_db_user"
+  secret  = "${var.base_secret_name}_db_user"
   version = "latest"
 }
 
@@ -185,8 +185,8 @@ resource "google_bigquery_connection" "default_db_bq_connection" {
   connection_id = "${var.instance_key}_cloudsql"
   friendly_name = "${local.bq_connection_friendly_name} Cloud SQL Postgres"
   # TODO(#7285): Migrate Justice Counts connection to be in same region as instance
-  location      = var.instance_key == "justice_counts" ? "us" : var.region
-  description   = "Connection to the ${local.bq_connection_friendly_name} Cloud SQL database"
+  location    = var.instance_key == "justice_counts" ? "us" : var.region
+  description = "Connection to the ${local.bq_connection_friendly_name} Cloud SQL database"
 
   cloud_sql {
     instance_id = data.google_secret_manager_secret_version.cloudsql_instance_id.secret_data
@@ -204,4 +204,22 @@ resource "google_sql_database" "databases" {
   for_each = var.additional_databases
   name     = each.value
   instance = google_sql_database_instance.data.name
+}
+
+resource "google_secret_manager_secret" "db_url" {
+  for_each  = var.additional_databases
+  secret_id = "${var.base_secret_name}_${each.value}_db_url"
+  replication {
+    user_managed {
+      replicas {
+        location = var.region
+      }
+    }
+  }
+}
+
+resource "google_secret_manager_secret_version" "db_url_secret_version" {
+  for_each    = var.additional_databases
+  secret      = google_secret_manager_secret.db_url[each.key].id
+  secret_data = "postgresql://${data.google_secret_manager_secret_version.db_user.secret_data}:${data.google_secret_manager_secret_version.db_password.secret_data}@localhost/${each.value}?&host=/cloudsql/${data.google_secret_manager_secret_version.cloudsql_instance_id.secret_data}"
 }

@@ -3,11 +3,12 @@ data "sops_file" "env" {
 }
 
 locals {
-  is_production = var.project_id == "recidiviz-dashboard-production"
-  env_secrets   = yamldecode(data.sops_file.env.raw)
-  shared_env    = local.env_secrets["env_jii_texting_server"]
-  staging_env   = local.env_secrets["env_staging_jii_texting_server"]
-  prod_env      = local.env_secrets["env_prod_jii_texting_server"]
+  is_production     = var.project_id == "recidiviz-dashboard-production"
+  env_secrets       = yamldecode(data.sops_file.env.raw)
+  shared_env        = local.env_secrets["env_jii_texting_server"]
+  staging_env       = local.env_secrets["env_staging_jii_texting_server"]
+  prod_env          = local.env_secrets["env_prod_jii_texting_server"]
+  processor_job_env = local.env_secrets[var.processor_job_env_secret_id]
 
   server_image        = "${var.artifact_registry_repo}/jii-texting-server:${var.server_version}"
   processor_job_image = "${var.artifact_registry_repo}/jii-texting-jobs/processor:${var.server_version}"
@@ -19,6 +20,14 @@ locals {
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
   env_vars = nonsensitive([
     for key, value in merge(local.shared_env, local.is_production ? local.prod_env : local.staging_env) : {
+      # The values are sensitive so we want to omit them from the plans
+      value = sensitive(value)
+      name  = key
+    }
+  ])
+
+  processor_job_env_vars = nonsensitive([
+    for key, value in merge(local.shared_env, var.demo_mode ? local.processor_job_env : null) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -51,7 +60,7 @@ module "database" {
 module "cloud-run" {
   source = "../../vendor/cloud-run"
 
-  count = var.configure_infra ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 
   service_name = "jii-texting-server"
   location     = var.location
@@ -85,7 +94,7 @@ module "cloud-run" {
 # Configure a Google Workflow that is executed when a message is published to
 # the jii_texting_export_success_topic 
 module "handle-jii-texting-export-wf" {
-  count                 = var.configure_infra ? 1 : 0
+  count                 = var.demo_mode ? 0 : 1
   project_id            = var.project_id
   region                = var.location
   source                = "../../vendor/google-workflows-workflow"
@@ -118,14 +127,14 @@ module "process-jii-cloud-run-job" {
   image                         = local.processor_job_image
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.env_vars
+  env_vars                      = local.processor_job_env_vars
   cloud_run_deletion_protection = false
   volumes                       = [{ name = "cloudsql", cloud_sql_instance = { instances = [module.database.connection_name] } }]
 }
 
 # Configure a Cloud Run job that will import the data into our CloudSQL DB
 module "import-job" {
-  count                         = var.configure_infra ? 1 : 0
+  count                         = var.demo_mode ? 0 : 1
   source                        = "../../vendor/cloud-run-job-exec"
   name                          = local.import_job_name
   image                         = local.import_job_image
@@ -142,7 +151,7 @@ module "import-job" {
 # Configure a Google Workflow that executes the main processing of JII texts,
 # which will be executed by the handle-jii-texting-gcs-upload-wf
 module "process-jii-to-text-wf" {
-  count                 = var.configure_infra ? 1 : 0
+  count                 = var.demo_mode ? 0 : 1
   project_id            = var.project_id
   region                = var.location
   source                = "../../vendor/google-workflows-workflow"

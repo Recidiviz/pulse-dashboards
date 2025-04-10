@@ -5,23 +5,23 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
   {
     "attributes": {
       "code": "TECHNICAL",
-      "description": "Taedium quibusdam capitulus speciosus debitis suasoria vacuus cito.",
+      "description": "Conor coma uberrime utrum spes adnuo laboriosam suasoria tredecim color.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "ALL",
   },
   {
     "attributes": {
-      "code": "TECHNICAL",
-      "description": "Terreo vitae tempore delicate cura ars.",
+      "code": "FELONY",
+      "description": "Claudeo spiculum curiositas statim brevis inflammatio ubi tabgo desidero.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "ALL",
   },
   {
     "attributes": {
-      "code": "TECHNICAL",
-      "description": "Curia tam advoco.",
+      "code": "FELONY",
+      "description": "Asporto occaecati curvo aduro clam tabernus civitas crinis rem.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "ALL",
@@ -33,24 +33,24 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
 [
   {
     "attributes": {
-      "code": "IZEGS",
-      "description": "Cilicium optio sumptus sub bis atavus somnus exercitationem decipio.",
+      "code": "PYTJJ",
+      "description": "Cursus terminatio auditor abduco utrum utrum non amaritudo doloremque.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "ALL",
   },
   {
     "attributes": {
-      "code": "GVVZB",
-      "description": "Auxilium verecundia perferendis auctus demum adimpleo.",
+      "code": "MTXIQ",
+      "description": "Usitas vindico debeo allatus tandem thymum confero artificiose uredo.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "ALL",
   },
   {
     "attributes": {
-      "code": "PDZKY",
-      "description": "Vigor audax amicitia libero vigilo claro.",
+      "code": null,
+      "description": "Uter dapifer summisse depraedor cohors.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "ALL",
@@ -62,24 +62,24 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
 [
   {
     "attributes": {
-      "code": "FELONY",
-      "description": "GENERAL SUPPORT SERVICES (IDENTIFICATION)",
+      "code": "TECHNICAL",
+      "description": "TRANSPORTATION (PUBLIC TRANSPORTATION)",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "treatment_referrals",
   },
   {
     "attributes": {
-      "code": "TECHNICAL",
-      "description": "GENERAL SUPPORT SERVICES (CLOTHING)",
-    },
-    "eventDate": 2023-01-01T00:00:00.000Z,
-    "metricId": "treatment_referrals",
-  },
-  {
-    "attributes": {
-      "code": "TECHNICAL",
+      "code": "NON-TECHNICAL",
       "description": "SHELTER/RESIDENTIAL/HOUSING (TRANSITIONAL HOUSING)",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "treatment_referrals",
+  },
+  {
+    "attributes": {
+      "code": "TECHNICAL",
+      "description": "EMPLOYMENT (EMPLOYMENT WORKSHOPS)",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "treatment_referrals",
@@ -91,24 +91,24 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
 [
   {
     "attributes": {
-      "code": "GYWSA",
-      "description": null,
+      "code": "FPMQD",
+      "description": "Vigor amicitia vigilo thema comptus color clam atavus uxor.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "treatment_referrals",
   },
   {
     "attributes": {
-      "code": "ZXWWE",
-      "description": "Xiphias tepidus conor vito coma sto uberrime aestus utrum sulum.",
+      "code": "TWPIF",
+      "description": "Cunae confero vir callide assentator.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "treatment_referrals",
   },
   {
     "attributes": {
-      "code": "BBGOD",
-      "description": null,
+      "code": "XWFNE",
+      "description": "Succedo doloremque rem victus bene condico.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "treatment_referrals",
@@ -120,7 +120,7 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
 [
   {
     "attributes": {
-      "code": "NON-TECHNICAL",
+      "code": "FELONY",
       "description": "ISSUE #2 PAROLE WARRANT",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
@@ -128,8 +128,8 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
   },
   {
     "attributes": {
-      "code": "TECHNICAL",
-      "description": "RETURN FOR PAROLE REVOCATION PROCESS",
+      "code": "FELONY",
+      "description": "REINSTATE PAROLE",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "violation_responses",
@@ -149,24 +149,24 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
 [
   {
     "attributes": {
-      "code": "JRJLH",
-      "description": "Quibusdam capitulus speciosus debitis suasoria vacuus cito civitas.",
-    },
-    "eventDate": 2023-01-01T00:00:00.000Z,
-    "metricId": "violation_responses",
-  },
-  {
-    "attributes": {
-      "code": "UYTMK",
-      "description": "Adhaero curia tam advoco.",
-    },
-    "eventDate": 2023-01-01T00:00:00.000Z,
-    "metricId": "violation_responses",
-  },
-  {
-    "attributes": {
       "code": null,
-      "description": "Verto desipio vergo vehemens.",
+      "description": "Suasoria tredecim color despecto ulciscor claudeo spiculum.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violation_responses",
+  },
+  {
+    "attributes": {
+      "code": "RFOWT",
+      "description": "Tersus asporto occaecati curvo aduro clam.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violation_responses",
+  },
+  {
+    "attributes": {
+      "code": "HKQVI",
+      "description": "Uter optio sub atavus exercitationem ut turba voluptas.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "violation_responses",
@@ -179,7 +179,15 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
   {
     "attributes": {
       "code": "NON-TECHNICAL",
-      "description": "Depromo tabgo cotidie causa cotidie allatus totus vitium.",
+      "description": "Crebro creber circumvenio taedium capitulus debitis vacuus.",
+    },
+    "eventDate": 2023-01-01T00:00:00.000Z,
+    "metricId": "violations",
+  },
+  {
+    "attributes": {
+      "code": "TECHNICAL",
+      "description": "Tempore cura caelum curia advoco patior tui vapulus averto.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "violations",
@@ -187,15 +195,7 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
   {
     "attributes": {
       "code": "FELONY",
-      "description": "Bestia cilicium casus tenuis repellendus.",
-    },
-    "eventDate": 2023-01-01T00:00:00.000Z,
-    "metricId": "violations",
-  },
-  {
-    "attributes": {
-      "code": "NON-TECHNICAL",
-      "description": "Illum sunt crebro speculum creber currus.",
+      "description": "Cattus usque acceptus ipsam eum vesica cariosus adversus veniam utilis.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "violations",
@@ -207,24 +207,24 @@ exports[`function: ClientEventRawFactory > should generate realistic client even
 [
   {
     "attributes": {
-      "code": "NIWMH",
-      "description": "Speculum curiositas abduco statim mollitia brevis angustus inflammatio.",
+      "code": "KGWKO",
+      "description": "Cunabula amet esse.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "violations",
   },
   {
     "attributes": {
-      "code": "WCTAM",
-      "description": "Tepesco tersus virgo asporto texo occaecati.",
+      "code": "KTAPQ",
+      "description": "Vulnus pel desipio considero arbitro tenax usitas.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "violations",
   },
   {
     "attributes": {
-      "code": "LNBKH",
-      "description": "Cresco civitas confero crinis varius rem aeger tripudio.",
+      "code": "YSSPW",
+      "description": "Adhuc thesaurus vulgaris antepono aranea aeger confugo theca maxime talio.",
     },
     "eventDate": 2023-01-01T00:00:00.000Z,
     "metricId": "violations",

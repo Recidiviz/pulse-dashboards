@@ -53,6 +53,7 @@ libs/staff-shared-server/package.json
 apps/jii-texting-server/package.json
 apps/@jii-texting/import/package.json
 apps/@jii-texting/processor/package.json
+apps/@jii-texting/seed-demo/package.json
 apps/@sentencing/server/package.json
 apps/@sentencing/import/package.json
 

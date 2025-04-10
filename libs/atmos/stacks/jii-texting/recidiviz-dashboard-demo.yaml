@@ -6,6 +6,7 @@ settings:
     project_number: 626425930051
     data_platform_project_number: 984160736970
     product: jii-texting-demo
+    registry_repo_name: jii-texting
 
 # The variables set here are automatically provided to all components used in this stack.
 vars:
@@ -37,5 +38,29 @@ components:
         artifact_registry_repo: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.registry_repo_name }}"
         sql_instance_name: jii-texting-demo
         sql_base_secret_name: jii_texting_demo
-        configure_infra: false
+        demo_mode: true
         processor_job_name: process-jii-demo
+        processor_job_env_secret_id: env_demo_jii_texting_processor_job
+    seed-demo:
+      vars:
+        exec: true
+        name: jii-texting-seed-demo
+        location: "{{ .settings.context.location }}"
+        cloud_run_deletion_protection: false
+        image: '{{ (atmos.Component "apps/jii-texting" "recidiviz-dashboard-staging--jii-texting").vars.artifact_registry_repo }}/jii-texting-jobs/seed-demo:{{ .vars.seed_demo_container_version }}'
+        max_retries: 1
+        volumes:
+          - name: cloudsql
+            cloud_sql_instance:
+              instances:
+                - '{{ (atmos.Component "apps/jii-texting" .stack).outputs.database_connection_name }}'
+        volume_mounts:
+          - name: cloudsql
+            mount_path: /cloudsql
+        env_secret_vars:
+          - name: DATABASE_URL_US_ID
+            value_source:
+              - secret_key_ref:
+                  secret: jii_texting_demo_us_id_db_url
+      metadata:
+        component: vendor/cloud-run-job-exec

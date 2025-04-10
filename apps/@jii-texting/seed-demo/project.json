@@ -1,0 +1,89 @@
+{
+  "name": "@jii-texting/seed-demo",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@jii-texting/seed-demo/src",
+  "projectType": "application",
+  "targets": {    
+    "create-base-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/create-base-package-json.mts {projectRoot}",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "create-base-package-json",
+        {
+          "projects": ["@jii-texting-server/prisma"],
+          "target": "prisma-generate"
+        }, 
+        "load-env-files"
+      ],
+      "options": {
+        "platform": "node",
+        "target": "node20",
+        "outputPath": "dist/apps/@jii-texting/seed-demo",
+        "bundle": true,
+        "main": "{projectRoot}/src/main.ts",
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "prisma/schema.prisma",
+            "input": "{workspaceRoot}/libs/@jii-texting-server/prisma",
+            "output": "."
+          },
+          "{workspaceRoot}/.yarnrc.yml",
+          "{projectRoot}/scripts/*"
+        ],
+        "external": ["@prisma/jii-texting-server"],
+        "generatePackageJson": true,
+        "minify": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "cwd": "{projectRoot}",
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "demo": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs/seed-demo:$COMMIT_SHA"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "run-local-job": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx src/main.ts --state-code=US_ID"
+      }
+    }
+  },
+  "tags": ["jii-texting-server"]
+}

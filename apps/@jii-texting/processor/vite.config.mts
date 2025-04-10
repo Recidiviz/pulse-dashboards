@@ -22,8 +22,6 @@ import { defineConfig } from "vite";
 export default defineConfig({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/@jii-texting/processor",
-
-  plugins: [nxViteTsPaths()],
   test: {
     setupFiles: ["src/test/setup/index.ts", "src/setupTests.ts"],
     globals: true,
@@ -59,4 +57,5 @@ export default defineConfig({
         "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
     },
   },
+  plugins: [nxViteTsPaths()],
 });

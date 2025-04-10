@@ -74,3 +74,4 @@ components:
         artifact_registry_repo: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.registry_repo_name }}"
         # The 'name' output uses the name of the first bucket, so ensure that the ETL bucket is the first one in the list
         etl_bucket_name: !terraform.output gcs-buckets {{ .stack }} name
+        processor_job_env_secret_id: env_staging_jii_texting_processor_job

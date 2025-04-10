@@ -53,14 +53,19 @@ variable "database_secondary_zone" {
   default     = null
 }
 
-variable "configure_infra" {
+variable "demo_mode" {
   type        = bool
   description = "Whether or not to configure demo resources"
-  default     = true
+  default     = false
 }
 
 variable "processor_job_name" {
   type        = string
   description = "The name of the SQL instance"
   default     = "process-jii"
+}
+
+variable "processor_job_env_secret_id" {
+  type        = string
+  description = "The secret id for where to find the env vars for the processor job"
 }

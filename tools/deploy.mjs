@@ -470,13 +470,21 @@ if (
           await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/processor --configuration demo`.pipe(
             process.stdout,
           );
+          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/seed-demo --configuration demo`.pipe(
+            process.stdout,
+          );
         }
 
         // TODO(#7617) Check if ETL Cloud Run Job is running before DB migration
-
         await $`COMMIT_SHA=${currentRevision} nx run jii-texting-server:deploy --configuration=${deployEnv} --tag=${currentRevision} --migrate=true`.pipe(
           process.stdout,
         );
+
+        if (deployEnv === "demo") {
+          await $`nx run atmos:apply --component=seed-demo --stack=recidiviz-dashboard-staging--jii-texting-demo --terraform-opts=\"-auto-approve -var server_version=${currentRevision}\"`.pipe(
+            process.stdout,
+          );
+        }
 
         retryDeploy = false;
         successfullyDeployed.push("JII Texting Server");

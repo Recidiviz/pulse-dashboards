@@ -22,7 +22,7 @@ resource "google_service_account" "eventarc" {
   display_name = "Eventarc Service Account"
 
   // Don't create this resource for demo resourcing
-  count = var.configure_infra ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 }
 
 # Grant Eventarc SA permission to invoke Workflows
@@ -69,7 +69,7 @@ resource "google_service_account" "workflows" {
   display_name = "Google Workflows Service Account"
 
   // Don't create this resource for demo resourcing
-  count = var.configure_infra ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 }
 
 # Grant Cloud Run invoker role to Google Workflows service account
@@ -94,7 +94,7 @@ resource "google_pubsub_topic" "jii_texting_export_success_topic" {
   project = var.project_id
 
   // Don't create this resource for demo resourcing
-  count = var.configure_infra ? 1 : 0
+  count = var.demo_mode ? 0 : 1
 }
 
 # Grant Pub/Sub role to Airflow service account in data platform project

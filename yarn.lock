@@ -4574,10 +4574,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@faker-js/faker@npm:^8.4.1":
-  version: 8.4.1
-  resolution: "@faker-js/faker@npm:8.4.1"
-  checksum: 10c0/4f2aecddcfdc2cc8b50b2d15d1e37302a7c7a5bbd184ae910a9d271bc11248533ca74dcdd4a9ccbe20410553e7af0f6a4d334c5b955635e09a32ddf4a64942d4
+"@faker-js/faker@npm:^9.6.0":
+  version: 9.6.0
+  resolution: "@faker-js/faker@npm:9.6.0"
+  checksum: 10c0/57f76aba8744ac5f588bfcf55e61ab6f1b61664f0d1cd6cc9d9ae5bf9376bdb48d867487ace638bee393de126257b7fe6ebd602c9efd3346e7ee10e8643f1cdc
   languageName: node
   linkType: hard
 
@@ -29972,7 +29972,7 @@ __metadata:
     "@dnd-kit/sortable": "npm:^8.0.0"
     "@eslint/eslintrc": "npm:^3.2.0"
     "@eslint/js": "npm:~9.20.0"
-    "@faker-js/faker": "npm:^8.4.1"
+    "@faker-js/faker": "npm:^9.6.0"
     "@fastify/cors": "npm:^10.0.2"
     "@firebase/rules-unit-testing": "npm:^2.0.2"
     "@floating-ui/react": "npm:^0.26.1"
