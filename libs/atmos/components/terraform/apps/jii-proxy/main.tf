@@ -37,6 +37,29 @@ resource "google_project_service" "compute" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "certificate_manager" {
+  project            = var.project_id
+  service            = "certificatemanager.googleapis.com"
+  disable_on_destroy = false
+}
+
+data "google_secret_manager_secret_version" "edovo_ssl_certificate" {
+  project = var.project_id
+  secret  = "EDOVO_SSL_CERTIFICATE"
+}
+
+data "google_secret_manager_secret_version" "edovo_ssl_private_key" {
+  project = var.project_id
+  secret  = "EDOVO_SSL_PRIVATE_KEY"
+}
+
+resource "google_compute_ssl_certificate" "edovo_ssl" {
+  project     = var.project_id
+  name_prefix = "edovo-ssl-certificate-"
+  private_key = data.google_secret_manager_secret_version.edovo_ssl_private_key.secret_data
+  certificate = data.google_secret_manager_secret_version.edovo_ssl_certificate.secret_data
+}
+
 resource "google_compute_region_network_endpoint_group" "serverless_neg" {
   depends_on = [google_project_service.compute]
 
@@ -64,6 +87,7 @@ module "load-balancer" {
       ]
 
       enable_cdn = false
+      protocol   = "HTTPS"
 
       log_config = {
         enable      = true
@@ -71,4 +95,7 @@ module "load-balancer" {
       }
     }
   }
+
+  ssl              = true
+  ssl_certificates = [google_compute_ssl_certificate.edovo_ssl.id]
 }
