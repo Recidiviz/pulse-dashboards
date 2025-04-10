@@ -31,7 +31,7 @@ export const supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFor
         .object({
           supervisionLevelHigherThanAssessmentLevel: z.object({
             latestAssessmentDate: dateStringSchema.nullable(),
-            assessmentLevel: z.string().transform(toTitleCase),
+            assessmentLevel: z.string().transform(toTitleCase).nullable(),
             supervisionLevel: z.string().transform(fmt),
           }),
         })
