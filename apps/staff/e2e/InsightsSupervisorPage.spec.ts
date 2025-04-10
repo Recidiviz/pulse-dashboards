@@ -173,7 +173,7 @@ test.describe("Supervisors Page", () => {
             insights: true,
           };
           json["https://dashboard.recidiviz.org/app_metadata"].featureVariants =
-            { reportIncorrectRosters: hasFv ? {} : undefined };
+            hasFv ? { reportIncorrectRosters: {} } : {};
           await route.fulfill({ response, json });
         },
       );
@@ -184,8 +184,15 @@ test.describe("Supervisors Page", () => {
       await loadPage(page, false);
       const main = page.getByRole("main");
       await main.waitFor({ state: "attached", timeout: 10000 });
-      const button = main.locator("button", { hasText: "View" });
-      expect(button).not.toBeVisible();
+      const pageLayout = main.locator(
+        "_react=InsightsPageLayout__PageWrapper",
+        {
+          hasText: "Overview",
+        },
+      );
+      await pageLayout.waitFor({ state: "visible", timeout: 10000 });
+      const button = pageLayout.locator("button", { hasText: /^View$/ });
+      await expect(button).toHaveCount(0);
     });
 
     test("Expect modal's first view to work as it should", async ({ page }) => {
@@ -233,7 +240,7 @@ test.describe("Supervisors Page", () => {
       await selectOfficerForRemovalButton.evaluate((button) =>
         (button as HTMLButtonElement).click(),
       );
-      await rosterModal.waitFor();
+      await rosterModal.waitFor({ state: "visible" });
       const submitButton = rosterModal
         .getByRole("button")
         .filter({ hasText: "Request Removal" });
