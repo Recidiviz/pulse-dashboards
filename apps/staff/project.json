@@ -326,6 +326,13 @@
         "cwd": "{projectRoot}",
         "command": "bash -c '. load_environment.sh env_dev_demo_server && ts-node tools/migrate-formUpdates.ts'"
       }
+    },
+    "delete-data-from-state": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node tools/deleteDataFromState.ts {args.dbEnv} {args.stateCode}"
+      }
     }
   }
 }

@@ -17,6 +17,8 @@
 
 import { Firestore, Query } from "@google-cloud/firestore";
 
+const MAX_BATCH_SIZE = 2500;
+
 export function getDb(): Firestore {
   return new Firestore({
     projectId: "demo-dev",
@@ -29,14 +31,14 @@ export function getDb(): Firestore {
 }
 
 // batch delete source: https://firebase.google.com/docs/firestore/manage-data/delete-data#collections
-async function deleteQueryBatch(
+export async function deleteQueryBatch(
   db: Firestore,
   query: Query,
   resolve: () => void,
 ) {
   const snapshot = await query.get();
 
-  const batchSize = snapshot.size;
+  const batchSize = Math.min(snapshot.size, MAX_BATCH_SIZE);
   if (batchSize === 0) {
     // When there are no documents left, we are done
     resolve();
@@ -45,10 +47,12 @@ async function deleteQueryBatch(
 
   // Delete documents in a batch
   const batch = db.batch();
-  snapshot.docs.forEach((doc) => {
+  snapshot.docs.slice(0, batchSize).forEach((doc) => {
     batch.delete(doc.ref);
   });
   await batch.commit();
+  // eslint-disable-next-line no-console
+  console.log(`Deleted ${batchSize} documents`);
 
   // Recurse on the next process tick, to avoid
   // exploding the stack.
