@@ -18,7 +18,7 @@ locals {
 
   server_image_name = "sentencing-server"
 
-  migrate_db_image_name = "sentencing"
+  migrate_db_image_name = "sentencing-server"
 
   import_image_name = "sentencing-data-import"
   import_job_name   = "sentencing-data-import"
