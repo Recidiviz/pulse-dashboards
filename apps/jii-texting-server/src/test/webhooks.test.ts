@@ -16,10 +16,14 @@
 // =============================================================================
 
 import { validateRequest } from "twilio/lib/webhooks/webhooks";
-import { describe, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { fakePersonOne } from "~@jii-texting-server/utils/test/constants";
-import { testPrismaClient, testServer } from "~jii-texting-server/test/setup";
+import {
+  mockDatasetFn,
+  testPrismaClient,
+  testServer,
+} from "~jii-texting-server/test/setup";
 
 describe("POST /webhook/twilio/incoming_message/US_ID", () => {
   describe("authenticated requests", () => {
@@ -60,6 +64,51 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
       expect(persons.length).toBe(1);
       // Validate person has opted out
       expect(persons[0].lastOptOutDate).not.toBeNull();
+
+      expect(mockDatasetFn).toHaveBeenCalledExactlyOnceWith("jii-texting");
+    });
+
+    test("START message from existing person resets lastOptOutDate", async () => {
+      // Set up test so that the person has opted out
+      const person = await testPrismaClient.person.update({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        data: {
+          lastOptOutDate: new Date(),
+        },
+      });
+
+      const twilioMessageSid = "incoming-message-sid-1";
+
+      const response = await testServer.inject({
+        method: "POST",
+        url: "/webhook/twilio/incoming_message/US_ID",
+        headers: {
+          "x-twilio-signature": "signature",
+        },
+        payload: {
+          values: {
+            MessageSid: twilioMessageSid,
+            From: `+1${person.phoneNumber}`,
+            Body: "START",
+            OptOutType: "START",
+          },
+        },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+      });
+
+      const updatedPerson = await testPrismaClient.person.findFirstOrThrow({
+        where: {
+          personId: person.personId,
+        },
+      });
+
+      // Validate person lastOptOutDate reset
+      expect(updatedPerson.lastOptOutDate).toBeNull();
     });
 
     test("incoming message success for non-existent person", async () => {

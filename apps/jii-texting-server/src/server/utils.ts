@@ -20,3 +20,23 @@ import { StateCode } from "@prisma/jii-texting-server/client";
 export function isValidStateCode(stateCode: string) {
   return (Object.values(StateCode) as string[]).includes(stateCode);
 }
+
+export function isOptOut(optOutString: string) {
+  // Based on values detailed here https://help.twilio.com/articles/223134027-Twilio-support-for-opt-out-keywords-SMS-STOP-filtering
+  switch (optOutString) {
+    case "STOP":
+    case "STOPALL":
+    case "UNSUBSCRIBE":
+    case "CANCEL":
+    case "END":
+    case "QUIT":
+      return true;
+    case "START":
+    case "YES":
+    case "UNSTOP":
+      return false;
+    default:
+      console.log(`Received unexpected OptOutType: ${optOutString}`);
+      return undefined;
+  }
+}

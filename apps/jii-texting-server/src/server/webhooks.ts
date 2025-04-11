@@ -15,11 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { BigQuery } from "@google-cloud/bigquery";
+import { captureException } from "@sentry/node";
 import { FastifyInstance } from "fastify";
 
 import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
+import { BQ_DATASET_ID, BQ_REPLIES_VIEW_ID } from "~@jii-texting-server/utils";
 import { getAuthenticateTwilioWebhookRequestFn } from "~jii-texting-server/server/authUtils";
 import { TwilioWebhookRequest } from "~jii-texting-server/server/types";
+import { isOptOut } from "~jii-texting-server/server/utils";
 
 /**
  * Encapsulates the routes for Twilio webhooks
@@ -68,27 +72,41 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
 
       // If the person exists and the person has opted out, update their record
       if (people && optOutType) {
+        const isValidOptOut = isOptOut(optOutType);
+
         await prisma.person.updateMany({
           where: {
             phoneNumber: fromPhoneNumber,
           },
           data: {
-            lastOptOutDate: new Date(),
+            lastOptOutDate: isValidOptOut ? new Date() : null,
           },
         });
 
-        const updatedPseudonymizedIds: string[] = [];
-
-        people.forEach((person) => {
-          updatedPseudonymizedIds.push(person.pseudonymizedId);
+        const updatedPseudoIds = people.map((person) => {
+          return person.pseudonymizedId;
         });
 
-        request.log.info(
-          `Updated opt-out for people: ${updatedPseudonymizedIds}`,
-        );
+        request.log.info(`Updated opt-out for people: ${updatedPseudoIds}`);
       }
 
-      // TODO(#7406): Write replies to BQ instead of DB
+      try {
+        const bigQueryClient = new BigQuery({
+          projectId: process.env["DATA_PLATFORM_PROJECT_ID"],
+        });
+
+        await bigQueryClient
+          .dataset(BQ_DATASET_ID)
+          .table(BQ_REPLIES_VIEW_ID)
+          .insert({
+            ...request.body.values,
+            From: fromPhoneNumber,
+            TimeReceived: new Date().toISOString(),
+          });
+      } catch (e) {
+        captureException(`Failed to write incoming message to BQ: ${e}`);
+      }
+
       response.status(200).send("Incoming message handled");
     },
   );

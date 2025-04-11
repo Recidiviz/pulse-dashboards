@@ -25,7 +25,7 @@ export default defineConfig({
 
   plugins: [nxViteTsPaths()],
   test: {
-    setupFiles: ["src/test/setup/index.ts"],
+    setupFiles: ["src/test/setup/index.ts", "src/test/setupTests.ts"],
     globals: true,
     cache: { dir: "../../node_modules/.vitest" },
     environment: "node",
@@ -64,6 +64,7 @@ export default defineConfig({
         "https://d469d84bb29f6e77828e286a793ede9d@o432474.ingest.us.sentry.io/4508728082890752",
       SENTRY_ENV: "test",
       TWILIO_AUTH_TOKEN: process.env["TWILIO_AUTH_TOKEN"] ?? "token",
+      DATA_PLATFORM_PROJECT_ID: "test",
     },
   },
 });

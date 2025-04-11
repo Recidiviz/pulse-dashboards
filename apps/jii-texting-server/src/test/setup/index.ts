@@ -19,7 +19,7 @@ import { StateCode } from "@prisma/jii-texting-server/client";
 import { init } from "@sentry/node";
 import { OAuth2Client } from "google-auth-library";
 import sentryTestkit from "sentry-testkit";
-import { afterAll, beforeAll, beforeEach, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
 import { buildServer } from "~jii-texting-server/server";
@@ -45,6 +45,31 @@ vi.mock("twilio/lib/webhooks/webhooks", () => ({
   validateRequest: vi.fn(),
 }));
 
+export const mockInsertFn = vi.fn();
+export const mockTableFn = vi.fn().mockImplementation(() => {
+  return {
+    insert: mockInsertFn,
+  };
+});
+export const mockDatasetFn = vi.fn().mockImplementation(() => {
+  return {
+    table: mockTableFn,
+  };
+});
+
+vi.mock("@google-cloud/bigquery", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@google-cloud/bigquery")>();
+  return {
+    ...actual,
+    BigQuery: vi.fn().mockImplementation(() => {
+      return {
+        dataset: mockDatasetFn,
+      };
+    }),
+  };
+});
+
 beforeAll(async () => {
   init({
     dsn: process.env["SENTRY_DSN"],
@@ -65,7 +90,6 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  vi.restoreAllMocks();
   testkit.reset();
 
   await resetDb(testPrismaClient);
@@ -81,6 +105,10 @@ beforeEach(async () => {
   vi.spyOn(OAuth2Client.prototype, "verifyIdToken").mockImplementation(
     mockVerifyIdToken,
   );
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 afterAll(async () => {

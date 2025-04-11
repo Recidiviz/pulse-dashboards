@@ -29,6 +29,8 @@ export interface TwilioIncomingMessageRequestType {
     From: string;
     Body: string;
     OptOutType?: string;
+    AccountSid: string;
+    MessagingServiceSid: string;
   };
 }
 

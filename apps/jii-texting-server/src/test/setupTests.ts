@@ -15,16 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/****************************
- * State Agnostic Constants *
- ****************************/
-export const MAX_RETRY_ATTEMPTS = 3;
-export const BQ_DATASET_ID = "jii-texting";
-export const BQ_REPLIES_VIEW_ID = "replies";
+import jestExtendedMatchers from "jest-extended";
+import { expect } from "vitest";
 
-/****************************
- * Idaho LSU Constants *
- ****************************/
-export const US_ID_LSU_VISIT_LINK =
-  "\n\nSee all requirements at rviz.co/id_lsu.";
-export const US_ID_LSU_LEARN_MORE = "\n\nLearn more at rviz.co/id_lsu.";
+expect.extend(jestExtendedMatchers);
