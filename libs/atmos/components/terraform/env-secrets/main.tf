@@ -1,5 +1,5 @@
 data "sops_file" "env" {
-  for_each = local.source_files
+  for_each    = local.source_files
   source_file = "./secrets/${each.value}"
 }
 
@@ -21,28 +21,31 @@ locals {
 
   # Create a map of nonsensitive map of keys from the SOPS file to use in `for_each`
   env_secret_names = nonsensitive(toset([
-    for key, _ in local.env_secrets: key
+    for key, _ in local.env_secrets : key
   ]))
 }
 
 
 resource "google_secret_manager_secret" "env_secrets" {
-  for_each = local.env_secret_names
+  for_each  = local.env_secret_names
   secret_id = each.value
   replication {
-    auto {
+    user_managed {
+      replicas {
+        location = var.location
+      }
     }
   }
 }
 
 resource "google_secret_manager_secret_version" "env_secrets_version" {
   for_each = local.env_secret_names
-  secret = google_secret_manager_secret.env_secrets[each.key].name
+  secret   = google_secret_manager_secret.env_secrets[each.key].name
   # Convert YAML dictionary to .env syntax
   secret_data = join("\n", [
     for key, value in yamldecode(
       data.sops_file.env[local.env_secrets[each.value]["yaml_file"]].raw
-    )[each.key]: join("", [key, "=", value])
+    )[each.key] : join("", [key, "=", value])
   ])
   deletion_policy = "DISABLE"
 }

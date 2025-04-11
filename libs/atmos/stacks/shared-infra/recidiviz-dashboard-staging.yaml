@@ -3,6 +3,8 @@ settings:
   context:
     project_id: recidiviz-dashboard-staging
     product: shared-infra
+    location: us-central1
+
 
 # The variables set here are automatically provided to all components used in this stack.
 # vars:
@@ -27,11 +29,12 @@ terraform:
 components:
   terraform:
     env-secrets:
-      var:
+      vars:
         project_id: "{{ .settings.context.project_id }}"
+        location: "{{ .settings.context.location }}"
       metadata:
         component: env-secrets
       settings:
         depends_on:
           sops_file:
-            file: "libs/atmos/components/terraform/env-secrets/env-secrets.enc.yaml"
+            file: libs/atmos/components/terraform/env-secrets/env-secrets.enc.yaml
