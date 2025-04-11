@@ -16,7 +16,7 @@ locals {
 
   registry_repo_name = "sentencing"
 
-  server_image_name = "sentencing"
+  server_image_name = "sentencing-server"
 
   migrate_db_image_name = "sentencing"
 
