@@ -28,7 +28,8 @@ module "cloud-run" {
     }
   ]
 
-  members = var.members
+  members = ["allUsers"] # allow unauthenticated access: https://cloud.google.com/run/docs/authenticating/public
+  ingress = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 }
 
 resource "google_project_service" "compute" {
@@ -37,11 +38,6 @@ resource "google_project_service" "compute" {
   disable_on_destroy = false
 }
 
-resource "google_project_service" "certificate_manager" {
-  project            = var.project_id
-  service            = "certificatemanager.googleapis.com"
-  disable_on_destroy = false
-}
 
 data "google_secret_manager_secret_version" "edovo_ssl_certificate" {
   project = var.project_id
