@@ -75,7 +75,7 @@ variable "sql_base_secret_name" {
 variable "server_name" {
   type        = string
   description = "The name of the SQL instance"
-  default     = "sentencing"
+  default     = "sentencing-server"
 }
 
 variable "migrate_db_name" {
