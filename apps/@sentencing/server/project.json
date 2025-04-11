@@ -164,14 +164,14 @@
         "staging": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing:$COMMIT_SHA",
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing:latest"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server:latest"
           ]
         },
         "cherry-pick": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server:$COMMIT_SHA"
           ]
         },
         "preview": {
@@ -183,7 +183,7 @@
         "demo": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing:$COMMIT_SHA"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server:$COMMIT_SHA"
           ]
         }
       },
