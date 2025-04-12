@@ -19,7 +19,10 @@ import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import { Opportunity } from "../../WorkflowsStore";
+import {
+  Opportunity,
+  UsTnInitialClassificationOpportunity,
+} from "../../WorkflowsStore";
 import { UsTnReclassificationReviewForm } from "../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { Resident } from "../../WorkflowsStore/Resident";
 import {
@@ -44,6 +47,15 @@ const WorkflowsUsTnReclassForm = ({
   if (!(resident instanceof Resident)) {
     return <div />;
   }
+
+  const isInitialClassification =
+    opportunity instanceof UsTnInitialClassificationOpportunity;
+  const packetName = isInitialClassification
+    ? "Classification Packet"
+    : "Reclassification Packet";
+  const dataProviso = isInitialClassification
+    ? ""
+    : "Please review any data pre-filled from previous Classification scores for questions 3, 4, 5 and 9 in the Classification Assessment Form.";
 
   const onClickDownload = async () => {
     let contents: DocxTemplateFormContents;
@@ -77,17 +89,14 @@ const WorkflowsUsTnReclassForm = ({
       resident.rootStore.getTokenSilently,
     );
 
-    downloadZipFile(
-      `${resident.displayName} - Reclassification Packet.zip`,
-      documents,
-    );
+    downloadZipFile(`${resident.displayName} - ${packetName}.zip`, documents);
   };
 
   return (
     <FormContainer
-      heading="Reclassification Packet"
+      heading={packetName}
       agencyName="TDOC"
-      dataProviso="Please review any data pre-filled from previous Classification scores for questions 3, 4, 5 and 9 in the Classification Assessment Form."
+      dataProviso={dataProviso}
       downloadButtonLabel={form.downloadText}
       onClickDownload={async () => onClickDownload()}
       opportunity={form.opportunity}
