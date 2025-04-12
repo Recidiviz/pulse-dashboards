@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`UsIdCRCResidentWorkerReferralRecord (new schema) > eligible record for incarcerationWithin3YearsOfTpdAndLifeSentence 1`] = `
+exports[`UsIdCRCResidentWorkerReferralRecord > eligible record for incarcerationWithin3YearsOfTpdAndLifeSentence 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
@@ -27,7 +27,7 @@ exports[`UsIdCRCResidentWorkerReferralRecord (new schema) > eligible record for 
 }
 `;
 
-exports[`UsIdCRCResidentWorkerReferralRecord (new schema) > eligible record for incarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd 1`] = `
+exports[`UsIdCRCResidentWorkerReferralRecord > eligible record for incarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
@@ -52,7 +52,7 @@ exports[`UsIdCRCResidentWorkerReferralRecord (new schema) > eligible record for 
 }
 `;
 
-exports[`UsIdCRCResidentWorkerReferralRecord (new schema) > eligible record with incarcerationWithin7YearsOfFtcdOrTpd 1`] = `
+exports[`UsIdCRCResidentWorkerReferralRecord > eligible record with incarcerationWithin7YearsOfFtcdOrTpd 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
@@ -68,53 +68,6 @@ exports[`UsIdCRCResidentWorkerReferralRecord (new schema) > eligible record with
     "usIdNotDetainersForXcrcAndCrc": null,
   },
   "externalId": "testCRC01",
-  "ineligibleCriteria": {},
-  "isAlmostEligible": false,
-  "isEligible": true,
-  "metadata": {},
-  "stateCode": "US_ID",
-}
-`;
-
-exports[`UsIdCRCResidentWorkerReferralRecord multiple criteria > transforms eligible record with multiple temporal criteria 1`] = `
-{
-  "caseNotes": {},
-  "eligibleCriteria": {
-    "custodyLevelIsMinimum": {
-      "custodyLevel": "MINIMUM",
-    },
-    "notServingForSexualOffense": null,
-    "usIdIncarcerationWithin7YearsOfFtcdOrTpd": {
-      "fullTermCompletionDate": 2023-10-10T00:00:00.000Z,
-      "tentativeParoleDate": null,
-    },
-    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
-    "usIdNotDetainersForXcrcAndCrc": null,
-  },
-  "externalId": "crc-work-release-eligible-01",
-  "ineligibleCriteria": {},
-  "isAlmostEligible": false,
-  "isEligible": true,
-  "metadata": {},
-  "stateCode": "US_ID",
-}
-`;
-
-exports[`transforms eligible record with life temporal criteria 1`] = `
-{
-  "caseNotes": {},
-  "eligibleCriteria": {
-    "custodyLevelIsMinimum": {
-      "custodyLevel": "MINIMUM",
-    },
-    "notServingForSexualOffense": null,
-    "usIdIncarcerationWithin3YearsOfTpdAndLifeSentence": {
-      "tentativeParoleDate": 2025-08-14T00:00:00.000Z,
-    },
-    "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
-    "usIdNotDetainersForXcrcAndCrc": null,
-  },
-  "externalId": "crc-work-release-eligible-02",
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,

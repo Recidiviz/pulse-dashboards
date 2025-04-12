@@ -26,22 +26,11 @@ import {
 
 export const usIdExpandedCRCSchema = opportunitySchemaBase.extend({
   eligibleCriteria: crcSharedCriteria.extend({
-    usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: z
-      .object({
-        // old schema
-        // TODO(#7697): Remove the old schema once backend changes have been deployed to prod
-        fullTermCompletionDate: dateStringSchema.nullable(),
-        paroleEligibilityDate: dateStringSchema.nullable(),
-        tentativeParoleDate: dateStringSchema.nullable(),
-      })
-      .or(
-        z.object({
-          // new schema
-          fullTermCompletionDate: dateStringSchema.nullable(),
-          paroleEligibilityDate: dateStringSchema.nullable(),
-          groupProjectedParoleReleaseDate: dateStringSchema.nullable(),
-        }),
-      ),
+    usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: z.object({
+      fullTermCompletionDate: dateStringSchema.nullable(),
+      paroleEligibilityDate: dateStringSchema.nullable(),
+      groupProjectedParoleReleaseDate: dateStringSchema.nullable(),
+    }),
     usIdInCrcFacilityOrPwccUnit1: z.object({
       crcStartDate: dateStringSchema,
       facilityName: z.string(),
