@@ -134,3 +134,10 @@ resource "google_project_iam_member" "job-with-overrides" {
   role    = "roles/run.jobsExecutorWithOverrides"
   member  = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
 }
+
+# Grant Cloud Run job SA permission to run with overrides
+resource "google_project_iam_member" "secret-accessor" {
+  project = var.project_id
+  role    = "roles/secretmanager.secretAccessor"
+  member  = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
+}

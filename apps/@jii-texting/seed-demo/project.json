@@ -71,6 +71,7 @@
         "demo": {
           "push": true,
           "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs/seed-demo:latest",
             "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-jobs/seed-demo:$COMMIT_SHA"
           ]
         }

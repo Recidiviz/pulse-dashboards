@@ -14,7 +14,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server",
+        "command": "../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server --env_demo env_demo_jii_texting_server",
         "cwd": "{projectRoot}"
       }
     },
@@ -194,6 +194,12 @@
           "tags": [
             "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server/preview:$VERSION"
           ]
+        },
+        "demo": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server:$COMMIT_SHA"
+          ]
         }
       },
       "defaultConfiguration": "dev"
@@ -215,25 +221,28 @@
       "executor": "nx:run-commands",
       "dependsOn": ["load-env-files"],
       "options": {
-        "command": "gcloud run jobs deploy jii-texting-migrate-db --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server:$COMMIT_SHA --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID"
+        "command": "gcloud run jobs deploy jii-texting-migrate-db --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID"
       },
       "configurations": {
         "staging": {
           "args": [
             "--project recidiviz-dashboard-staging",
-            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:jii-texting"
+            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:jii-texting",
+            "--image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server:$COMMIT_SHA"
           ]
         },
         "production": {
           "args": [
             "--project recidiviz-dashboard-production",
-            "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:jii-texting"
+            "--set-cloudsql-instances recidiviz-dashboard-production:us-central1:jii-texting",
+            "--image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server:$COMMIT_SHA"
           ]
         },
         "demo": {
           "args": [
             "--project recidiviz-dashboard-staging",
-            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:jii-texting-demo"
+            "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:jii-texting-demo",
+            "--image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/jii-texting/jii-texting-server:latest"
           ]
         }
       },

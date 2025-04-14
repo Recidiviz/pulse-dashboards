@@ -473,6 +473,9 @@ if (
           await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/seed-demo --configuration demo`.pipe(
             process.stdout,
           );
+          await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration demo`.pipe(
+            process.stdout,
+          );
         }
 
         // TODO(#7617) Check if ETL Cloud Run Job is running before DB migration

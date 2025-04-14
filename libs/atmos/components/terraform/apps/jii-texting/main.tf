@@ -69,11 +69,10 @@ module "database" {
 module "cloud-run" {
   source = "../../vendor/cloud-run"
 
-  count = var.demo_mode ? 0 : 1
-
-  service_name = "jii-texting-server"
-  location     = var.location
-  project_id   = var.project_id
+  service_name           = var.server_name
+  location               = var.location
+  project_id             = var.project_id
+  create_service_account = var.demo_mode ? false : true
 
   containers = [
     {
@@ -125,7 +124,7 @@ module "handle-jii-texting-export-wf" {
   workflow_source = file("${path.module}/workflows/handle-jii-texting-export.workflows.yaml")
   env_vars = {
     PROJECT_ID            = var.project_id
-    CLOUD_RUN_SERVICE_URL = module.cloud-run[0].service_uri
+    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
   }
 }
 
@@ -169,7 +168,7 @@ module "process-jii-to-text-wf" {
 
   workflow_source = file("${path.module}/workflows/process-jii-to-text.workflows.yaml")
   env_vars = {
-    CLOUD_RUN_SERVICE_URL = module.cloud-run[0].service_uri
+    CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
     BUCKET_ID             = var.etl_bucket_name
     IMPORT_JOB_NAME       = module.import-job[0].id
   }

@@ -70,6 +70,12 @@ variable "processor_job_env_secret_id" {
   description = "The secret id for where to find the env vars for the processor job"
 }
 
+variable "server_name" {
+  type        = string
+  description = "The name of the Cloud Run service"
+  default     = "jii-texting-server"
+}
+
 variable "server_env_secret_id" {
   type        = string
   description = "The secret id for where to find the env vars for the server"

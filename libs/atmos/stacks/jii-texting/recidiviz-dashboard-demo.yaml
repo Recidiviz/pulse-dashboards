@@ -41,20 +41,23 @@ components:
         demo_mode: true
         processor_job_name: process-jii-demo
         processor_job_env_secret_id: env_demo_jii_texting_processor_job
+        server_name: jii-texting-demo
         server_env_secret_id: env_demo_jii_texting_server
     seed-demo:
+      deps:
+        - component: apps/jii-texting
       vars:
         exec: true
         name: jii-texting-seed-demo
         location: "{{ .settings.context.location }}"
         cloud_run_deletion_protection: false
-        image: '{{ (atmos.Component "apps/jii-texting" "recidiviz-dashboard-staging--jii-texting").vars.artifact_registry_repo }}/jii-texting-jobs/seed-demo:{{ .vars.seed_demo_container_version }}'
+        image: '{{ (atmos.Component "apps/jii-texting" "recidiviz-dashboard-staging--jii-texting").vars.artifact_registry_repo }}/jii-texting-jobs/seed-demo:latest'
         max_retries: 1
         volumes:
           - name: cloudsql
             cloud_sql_instance:
               instances:
-                - '{{ (atmos.Component "apps/jii-texting" .stack).outputs.database_connection_name }}'
+                - '{{ (atmos.Component "apps/jii-texting" .stack).outputs.db_connection_name }}'
         volume_mounts:
           - name: cloudsql
             mount_path: /cloudsql
