@@ -649,4 +649,165 @@ describe("FirestoreStore", () => {
       ]);
     });
   });
+
+  describe("updateSnoozeCompanions", () => {
+    test("Should verify if a snooze triggers companion snoozes and update snooze companions with provided changes", async () => {
+      const mockCompanionOpportunities = [
+        { type: "type1" },
+        { type: "type2" },
+      ] as unknown as Opportunity[];
+
+      const mockOpportunity = {
+        config: {
+          snoozeCompanionOpportunityTypes: ["type1", "type2"],
+        },
+        snoozeCompanionOpportunities: mockCompanionOpportunities,
+      } as unknown as Opportunity;
+
+      store = new FirestoreStore({ rootStore: mockRootStore });
+
+      const updateSpy = vi
+        .spyOn(store, "updateOpportunity")
+        .mockResolvedValue();
+
+      const changes = {
+        manualSnooze: {
+          snoozeForDays: 7,
+          snoozedBy: "test-user",
+          snoozedOn: "2025-04-10",
+        },
+      };
+
+      await store.updateSnoozeCompanions(mockOpportunity, changes);
+
+      expect(updateSpy).toHaveBeenCalledTimes(2);
+      expect(updateSpy).toHaveBeenCalledWith(
+        mockCompanionOpportunities[0],
+        changes,
+      );
+      expect(updateSpy).toHaveBeenCalledWith(
+        mockCompanionOpportunities[1],
+        changes,
+      );
+    });
+
+    test("Should update companion snoozes when updateOpportunityAutoSnooze is called", async () => {
+      const mockCompanionOpportunities = [
+        { type: "type1" },
+        { type: "type2" },
+      ] as unknown as Opportunity[];
+
+      const mockOpportunity = {
+        config: {
+          snoozeCompanionOpportunityTypes: ["type1", "type2"],
+        },
+        snoozeCompanionOpportunities: mockCompanionOpportunities,
+      } as unknown as Opportunity;
+
+      store = new FirestoreStore({ rootStore: mockRootStore });
+
+      const updateSpy = vi
+        .spyOn(store, "updateOpportunity")
+        .mockResolvedValue();
+
+      const snoozeUpdate = {
+        snoozeUntil: "2025-04-20",
+        snoozedBy: "test-user",
+        snoozedOn: "2025-04-10",
+      };
+
+      await store.updateOpportunityAutoSnooze(
+        mockOpportunity,
+        snoozeUpdate,
+        false,
+      );
+
+      expect(updateSpy).toHaveBeenCalledTimes(3); // 1 for the main opportunity, 2 for companions
+      expect(updateSpy).toHaveBeenCalledWith(mockCompanionOpportunities[0], {
+        autoSnooze: snoozeUpdate,
+      });
+      expect(updateSpy).toHaveBeenCalledWith(mockCompanionOpportunities[1], {
+        autoSnooze: snoozeUpdate,
+      });
+    });
+
+    test("Should update companion snoozes when updateOpportunityManualSnooze is called", async () => {
+      const mockCompanionOpportunities = [
+        { type: "type1" },
+      ] as unknown as Opportunity[];
+
+      const mockOpportunity = {
+        config: {
+          snoozeCompanionOpportunityTypes: ["type1"],
+        },
+        snoozeCompanionOpportunities: mockCompanionOpportunities,
+      } as unknown as Opportunity;
+
+      store = new FirestoreStore({ rootStore: mockRootStore });
+
+      const updateSpy = vi
+        .spyOn(store, "updateOpportunity")
+        .mockResolvedValue();
+
+      const snoozeUpdate = {
+        snoozeForDays: 10,
+        snoozedBy: "test-user",
+        snoozedOn: "2025-04-10",
+      };
+
+      await store.updateOpportunityManualSnooze(
+        mockOpportunity,
+        snoozeUpdate,
+        false,
+      );
+
+      expect(updateSpy).toHaveBeenCalledTimes(2); // 1 for the main opportunity, 1 for the companion
+      expect(updateSpy).toHaveBeenCalledWith(mockCompanionOpportunities[0], {
+        manualSnooze: snoozeUpdate,
+      });
+    });
+
+    test("Should update companion snoozes when updateOpportunityDenial is called", async () => {
+      const mockCompanionOpportunities = [
+        { type: "type1" },
+        { type: "type2" },
+      ] as unknown as Opportunity[];
+
+      const mockOpportunity = {
+        config: {
+          snoozeCompanionOpportunityTypes: ["type1", "type2"],
+        },
+        snoozeCompanionOpportunities: mockCompanionOpportunities,
+      } as unknown as Opportunity;
+
+      store = new FirestoreStore({ rootStore: mockRootStore });
+
+      const updateSpy = vi
+        .spyOn(store, "updateOpportunity")
+        .mockResolvedValue();
+
+      const denialUpdate = { reasons: ["reason1"], otherReason: "other" };
+      mockServerTimestamp.mockReturnValue("mock-timestamp");
+
+      await store.updateOpportunityDenial(
+        "test-user",
+        mockOpportunity,
+        denialUpdate,
+      );
+
+      expect(updateSpy).toHaveBeenCalledTimes(3); // 1 for the main opportunity, 2 for companions
+      expect(updateSpy).toHaveBeenCalledWith(mockCompanionOpportunities[0], {
+        denial: {
+          ...denialUpdate,
+          updated: { by: "test-user", date: "mock-timestamp" },
+        },
+      });
+      expect(updateSpy).toHaveBeenCalledWith(mockCompanionOpportunities[1], {
+        denial: {
+          ...denialUpdate,
+          updated: { by: "test-user", date: "mock-timestamp" },
+        },
+      });
+    });
+  });
 });

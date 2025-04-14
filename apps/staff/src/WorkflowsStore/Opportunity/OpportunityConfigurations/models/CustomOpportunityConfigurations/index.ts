@@ -27,6 +27,7 @@ import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration"
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
+import { UsNdTransferToMinFacility } from "./UsNd/UsNdTransferToMinFacility";
 import { UsOrEarnedDischargeSentenceConfiguration } from "./UsOr/UsOrEarnedDischargeSentenceConfiguration";
 import { CompliantReportingConfiguration } from "./UsTn/CompliantReportingConfiguration";
 
@@ -49,6 +50,8 @@ const customOpportunityConfigurations: Partial<
   compliantReporting: CompliantReportingConfiguration,
   LSU: LSUConfiguration,
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceConfiguration,
+  // This is a non-constructed opportunity that is being customized
+  ["usNdTransferToMinFacility" as OpportunityType]: UsNdTransferToMinFacility,
 };
 
 export function apiOpportunityConfigurationFactory(

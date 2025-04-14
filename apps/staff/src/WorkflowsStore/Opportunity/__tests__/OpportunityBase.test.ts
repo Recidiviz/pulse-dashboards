@@ -1040,3 +1040,60 @@ describe("updateOpportunityEligibility", () => {
     ).toHaveBeenCalledWith(opp);
   });
 });
+
+describe("snoozeCompanionOpportunities", () => {
+  test("Should return an empty array when snoozeCompanions feature is disabled", () => {
+    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
+      snoozeCompanions: {},
+    });
+    expect(opp.snoozeCompanionOpportunities).toEqual([]);
+  });
+
+  test("Should return companion opportunities that match the types defined in the config", () => {
+    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
+      snoozeCompanions: {},
+    });
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      snoozeCompanionOpportunityTypes: ["opp1", "opp2"],
+    } as any);
+
+    const opportunities = [
+      { type: "opp1" },
+      { type: "opp2" },
+      { type: "opp3" },
+    ] as unknown as Opportunity[];
+
+    vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue(
+      opportunities,
+    );
+
+    expect(opp.snoozeCompanionOpportunities).toEqual([
+      { type: "opp1" },
+      { type: "opp2" },
+    ]);
+
+    expect(opp.snoozeCompanionOpportunities).not.toContainEqual({
+      type: "opp3",
+    });
+  });
+
+  test("Should return an empty array when no matching companion opportunities exist", () => {
+    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
+      snoozeCompanions: {},
+    });
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      snoozeCompanionOpportunityTypes: ["opp1", "opp2"],
+    } as any);
+
+    const opportunities = [
+      { type: "opp3" },
+      { type: "opp4" },
+    ] as unknown as Opportunity[];
+
+    vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue(
+      opportunities,
+    );
+
+    expect(opp.snoozeCompanionOpportunities).toEqual([]);
+  });
+});

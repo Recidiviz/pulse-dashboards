@@ -392,6 +392,7 @@ export default class FirestoreStore {
           autoSnooze: { ...snoozeUpdate },
         };
 
+    await this.updateSnoozeCompanions(opportunity, changes);
     return this.updateOpportunity(opportunity, changes);
   }
 
@@ -406,7 +407,23 @@ export default class FirestoreStore {
           manualSnooze: { ...snoozeUpdate },
         };
 
+    await this.updateSnoozeCompanions(opportunity, changes);
     return this.updateOpportunity(opportunity, changes);
+  }
+
+  async updateSnoozeCompanions(
+    opportunity: Opportunity,
+    changes: Record<string, unknown>,
+  ): Promise<void[] | undefined> {
+    if (!opportunity.snoozeCompanionOpportunities?.length) {
+      return;
+    }
+
+    return Promise.all(
+      opportunity.snoozeCompanionOpportunities.map((opp: Opportunity) =>
+        this.updateOpportunity(opp, changes),
+      ),
+    );
   }
 
   async updateOpportunityDenial(
@@ -436,6 +453,7 @@ export default class FirestoreStore {
       },
     };
 
+    await this.updateSnoozeCompanions(opportunity, changes);
     return this.updateOpportunity(opportunity, changes);
   }
 
@@ -582,11 +600,13 @@ export default class FirestoreStore {
   }
 
   async deleteOpportunityDenialAndSnooze(opportunity: Opportunity) {
-    return this.updateOpportunity(opportunity, {
+    const changes = {
       denial: deleteField(),
       autoSnooze: deleteField(),
       manualSnooze: deleteField(),
-    });
+    };
+    await this.updateSnoozeCompanions(opportunity, changes);
+    return this.updateOpportunity(opportunity, changes);
   }
 
   async getOpportunitiesForJIIAndOpportunityType(

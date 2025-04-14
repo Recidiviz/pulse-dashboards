@@ -148,4 +148,5 @@ export const mockOpportunity: Opportunity<Client> = {
   highlightCalloutText: "Highlight me!",
   labelAddendum: undefined,
   accordionKey: "pastFTRD",
+  snoozeCompanionOpportunities: [],
 };

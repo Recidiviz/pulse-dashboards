@@ -85,4 +85,7 @@ export interface OpportunityConfiguration {
   // Map tabs to lists of the subcategories of Submitted that we are allowed to
   // transition to from that tab. If not present, we show one Mark Submitted button
   markSubmittedOptionsByTab?: Partial<Record<OpportunityTab, string[]>>;
+
+  // List of opportunity types to snooze concurrently when the primary opportunity is snoozed
+  snoozeCompanionOpportunityTypes?: OpportunityType[];
 }

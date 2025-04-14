@@ -144,6 +144,8 @@ export const apiOpportunityConfigurationSchema = z.object({
   highlightCasesOnHomepage: z.boolean().default(false),
   highlightedCaseCtaCopy: nullishAsUndefined(z.string()),
   overdueOpportunityCalloutCopy: nullishAsUndefined(z.string()),
+
+  snoozeCompanionOpportunityTypes: z.array(z.string()).optional(),
 });
 
 export const apiOpportunityConfigurationResponseSchema = z.object({

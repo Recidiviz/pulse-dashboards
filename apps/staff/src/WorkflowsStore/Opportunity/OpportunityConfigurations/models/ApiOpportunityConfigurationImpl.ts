@@ -19,6 +19,8 @@ import assertNever from "assert-never";
 import { add, nextDay } from "date-fns";
 import simplur from "simplur";
 
+import { OpportunityType } from "~datatypes";
+
 import {
   allFeatureVariants,
   FeatureVariant,
@@ -315,5 +317,11 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
 
   get markSubmittedOptionsByTab() {
     return this.configurationObject.markSubmittedOptionsByTab;
+  }
+
+  get snoozeCompanionOpportunityTypes(): OpportunityType[] {
+    // TODO(#8022): Once this configuration is available via the admin panel, it should be appear here
+    return (this.configurationObject.snoozeCompanionOpportunityTypes ??
+      []) as OpportunityType[];
   }
 }

@@ -807,4 +807,17 @@ export class OpportunityBase<
   get customStatusPalette(): StatusPalette | undefined {
     return undefined;
   }
+
+  // Used to get opportunities to be concurrently snoozed when the primary opportunity is snoozed
+  get snoozeCompanionOpportunities() {
+    if (!this.rootStore.userStore.activeFeatureVariants.snoozeCompanions) {
+      return [];
+    }
+
+    const snoozeCompanionOpportunityTypes =
+      this.config.snoozeCompanionOpportunityTypes ?? [];
+    return this.person.flattenedOpportunities.filter((opp) =>
+      snoozeCompanionOpportunityTypes.includes(opp.type),
+    );
+  }
 }

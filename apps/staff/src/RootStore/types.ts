@@ -103,7 +103,8 @@ export type FeatureVariant =
   | "offenseOverrideControls"
   | "protectiveFactors"
   | "editCountyFields"
-  | "mandatoryMinimum";
+  | "mandatoryMinimum"
+  | "snoozeCompanions";
 
 export type FeatureVariantValue = {
   activeDate?: Date;
@@ -164,6 +165,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   reportIncorrectRosters: {},
   tableMultiSortEnabled: {},
   supervisionTasksNavLink: {},
+  snoozeCompanions: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

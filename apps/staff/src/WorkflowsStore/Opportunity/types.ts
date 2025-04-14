@@ -166,6 +166,7 @@ export interface Opportunity<
   customStatusPalette?: StatusPalette;
   sentenceStart?: Date | undefined;
   sentenceExpiration?: Date | undefined;
+  snoozeCompanionOpportunities?: Opportunity[];
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
