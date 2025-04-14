@@ -28,6 +28,3 @@ components:
         sops_file: sops/recidiviz-jii-production.enc.yaml
         location: us-central1
         deletion_policy: DELETE
-    encryption-keys:
-      vars: 
-        name: edovo

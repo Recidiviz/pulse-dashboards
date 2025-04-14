@@ -64,7 +64,7 @@ app.use((request: Request, response: Response, next: NextFunction) => {
         "X-Api-Key": EDOVO_API_KEY.value(),
       },
     }),
-    issuer: EDOVO_TOKEN_ISSUER.value(),
+    issuer: EDOVO_TOKEN_ISSUER.value().split(","),
     algorithms: ["RS256"],
   });
 

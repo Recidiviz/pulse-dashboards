@@ -29,6 +29,3 @@ components:
         location: us-central1
         deletion_policy: DELETE
 
-    encryption-keys:
-      vars: 
-        name: edovo
