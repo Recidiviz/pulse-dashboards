@@ -15,12 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentRecord } from "../../../src/FirestoreStore";
+import { ResidentFixture } from "../residents";
 
-export const usArResidents: Omit<
-  WorkflowsResidentRecord,
-  "personType" | "recordId"
->[] = [
+export const usArResidents: ResidentFixture[] = [
   {
     allEligibleOpportunities: [],
     stateCode: "US_AR",
@@ -202,11 +199,8 @@ export const usArResidents: Omit<
     },
   },
   {
-    // TODO(#7787): Allow types that exist only in static configs
     allEligibleOpportunities: [
-      // @ts-expect-error - these types are only defined in the admin panel and fixtures
       "usArInstitutionalWorkerStatus",
-      // @ts-expect-error - these types are only defined in the admin panel and fixtures
       "usArWorkRelease",
     ],
     stateCode: "US_AR",
@@ -268,11 +262,8 @@ export const usArResidents: Omit<
     },
   },
   {
-    // TODO(#7787): Allow types that exist only in static configs
     allEligibleOpportunities: [
-      // @ts-expect-error - these types are only defined in the admin panel and fixtures
       "usArInstitutionalWorkerStatus",
-      // @ts-expect-error - these types are only defined in the admin panel and fixtures
       "usArWorkRelease",
     ],
     stateCode: "US_AR",
