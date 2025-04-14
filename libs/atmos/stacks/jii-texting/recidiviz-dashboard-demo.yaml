@@ -41,6 +41,7 @@ components:
         demo_mode: true
         processor_job_name: process-jii-demo
         processor_job_env_secret_id: env_demo_jii_texting_processor_job
+        server_env_secret_id: env_demo_jii_texting_server
     seed-demo:
       vars:
         exec: true

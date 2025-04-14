@@ -9,6 +9,7 @@ locals {
   staging_env       = local.env_secrets["env_staging_jii_texting_server"]
   prod_env          = local.env_secrets["env_prod_jii_texting_server"]
   processor_job_env = local.env_secrets[var.processor_job_env_secret_id]
+  server_env        = local.env_secrets[var.server_env_secret_id]
 
   server_image        = "${var.artifact_registry_repo}/jii-texting-server:${var.server_version}"
   processor_job_image = "${var.artifact_registry_repo}/jii-texting-jobs/processor:${var.server_version}"
@@ -28,6 +29,14 @@ locals {
 
   processor_job_env_vars = nonsensitive([
     for key, value in merge(local.shared_env, var.demo_mode ? local.processor_job_env : null) : {
+      # The values are sensitive so we want to omit them from the plans
+      value = sensitive(value)
+      name  = key
+    }
+  ])
+
+  server_env_vars = nonsensitive([
+    for key, value in merge(local.shared_env, var.demo_mode ? local.server_env : null) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -70,7 +79,7 @@ module "cloud-run" {
     {
       container_image = local.server_image
 
-      env_vars = local.env_vars
+      env_vars = local.server_env_vars
 
       volume_mounts = [{
         name       = "cloudsql"
