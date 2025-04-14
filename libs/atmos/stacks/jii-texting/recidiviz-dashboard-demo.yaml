@@ -32,6 +32,7 @@ components:
   terraform:
     apps/jii-texting:
       vars:
+        server_service_account_id: jii-texting-demo
         project_number: "{{ .settings.context.project_number }}"
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
         location: "{{ .settings.context.location }}"

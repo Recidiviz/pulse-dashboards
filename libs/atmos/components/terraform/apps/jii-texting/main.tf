@@ -69,10 +69,11 @@ module "database" {
 module "cloud-run" {
   source = "../../vendor/cloud-run"
 
-  service_name           = var.server_name
-  location               = var.location
-  project_id             = var.project_id
-  create_service_account = var.demo_mode ? false : true
+  service_name    = var.server_name
+  location        = var.location
+  project_id      = var.project_id
+  service_account = google_service_account.cloudrunservice.email
+
 
   containers = [
     {
