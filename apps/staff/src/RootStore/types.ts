@@ -74,7 +74,6 @@ export type FeatureVariant =
   | "workflowsSupervisorSearch"
   | "usPaSpecialCircumstances"
   | "caseNoteSearch"
-  | "nonOMSCriteria"
   | "submittedOpportunityStatus"
   | "personSpecificOppBanners"
   | "sortableOpportunityTabs"
@@ -144,7 +143,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   lastSyncedDate: {},
   caseNoteSearch: {},
   actionStrategies: {},
-  nonOMSCriteria: {},
   submittedOpportunityStatus: {},
   personSpecificOppBanners: {},
   sortableOpportunityTabs: {},
@@ -174,9 +172,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         enableSnooze: {},
         fullWidthTimeline: { activeTenants: ["US_AZ", "US_UT"] },
         insightsOnboarding: {},
-        nonOMSCriteria: {
-          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA", "US_UT"],
-        },
         opportunityTableView: { activeTenants: ["US_TX"] },
         oppTabSubcategories: { activeTenants: ["US_AZ", "US_UT"] },
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },

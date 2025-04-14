@@ -29,7 +29,6 @@ import { rem } from "polished";
 import React, { ReactElement } from "react";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { formatDollarAmount } from "../../utils/formatStrings";
 import { Opportunity, OpportunityRequirement } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
@@ -84,8 +83,6 @@ export const CriteriaList = observer(function CriteriaList({
   opportunity: Opportunity;
 }): React.ReactElement {
   const colors = useStatusColors(opportunity);
-
-  const featureVariants = useFeatureVariants();
 
   const alert = opportunity.config.isAlert;
   const methodologyUrl = opportunity.config.methodologyUrl;
@@ -175,7 +172,6 @@ export const CriteriaList = observer(function CriteriaList({
       {opportunity.requirementsAlmostMet.length +
         opportunity.requirementsMet.length >
         0 &&
-        featureVariants.nonOMSCriteria &&
         !!opportunity.config.omsCriteriaHeader && (
           <CriteriaSectionHeading isFirst={true}>
             {opportunity.config.omsCriteriaHeader}
@@ -184,15 +180,14 @@ export const CriteriaList = observer(function CriteriaList({
       {opportunity.requirementsAlmostMet.map(almostMetReqToCriterion)}
       {opportunity.requirementsMet.map(metReqToCriterion)}
 
-      {featureVariants.nonOMSCriteria &&
-        opportunity.nonOMSRequirements.length > 0 && (
-          <>
-            <CriteriaSectionHeading>
-              {opportunity.config.nonOmsCriteriaHeader}
-            </CriteriaSectionHeading>
-            {opportunity.nonOMSRequirements.map(nonOMSReqToCriterion)}
-          </>
-        )}
+      {opportunity.nonOMSRequirements.length > 0 && (
+        <>
+          <CriteriaSectionHeading>
+            {opportunity.config.nonOmsCriteriaHeader}
+          </CriteriaSectionHeading>
+          {opportunity.nonOMSRequirements.map(nonOMSReqToCriterion)}
+        </>
+      )}
     </Wrapper>
   );
 });
