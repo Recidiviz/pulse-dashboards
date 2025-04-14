@@ -4635,6 +4635,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fastify/formbody@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "@fastify/formbody@npm:8.0.2"
+  dependencies:
+    fast-querystring: "npm:^1.1.2"
+    fastify-plugin: "npm:^5.0.0"
+  checksum: 10c0/7eba1a9751d9b1f790a4a9740273521b226d361d00996165d273727233441e802694d6841af01bf2dce006521d1b8303064bf16129dd86f7c6842bee65e194d5
+  languageName: node
+  linkType: hard
+
 "@fastify/forwarded@npm:^3.0.0":
   version: 3.0.0
   resolution: "@fastify/forwarded@npm:3.0.0"
@@ -19785,7 +19795,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-querystring@npm:^1.0.0":
+"fast-querystring@npm:^1.0.0, fast-querystring@npm:^1.1.2":
   version: 1.1.2
   resolution: "fast-querystring@npm:1.1.2"
   dependencies:
@@ -29974,6 +29984,7 @@ __metadata:
     "@eslint/js": "npm:~9.20.0"
     "@faker-js/faker": "npm:^9.6.0"
     "@fastify/cors": "npm:^10.0.2"
+    "@fastify/formbody": "npm:^8.0.2"
     "@firebase/rules-unit-testing": "npm:^2.0.2"
     "@floating-ui/react": "npm:^0.26.1"
     "@google-cloud/bigquery": "npm:^7.9.1"

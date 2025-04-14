@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import formbody from "@fastify/formbody";
 import { setupFastifyErrorHandler } from "@sentry/node";
 import Fastify from "fastify";
 
@@ -26,6 +27,9 @@ export function buildServer() {
   const server = Fastify({
     logger: true,
   });
+
+  // Add this plugin to support application/x-www-form-urlencoded requests as made by Twilio
+  server.register(formbody);
 
   // Ensure Sentry is setup before starting the server
   setupFastifyErrorHandler(server);

@@ -23,6 +23,7 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@faker-js/faker": "^9.6.0",
     "@fastify/cors": "^10.0.2",
+    "@fastify/formbody": "^8.0.2",
     "@floating-ui/react": "^0.26.1",
     "@google-cloud/bigquery": "^7.9.1",
     "@google-cloud/discoveryengine": "^1.14.0",

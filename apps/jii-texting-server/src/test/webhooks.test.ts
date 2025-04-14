@@ -40,15 +40,14 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
         url: "/webhook/twilio/incoming_message/US_ID",
         headers: {
           "x-twilio-signature": "signature",
+          "content-type": "application/x-www-form-urlencoded",
         },
-        payload: {
-          values: {
-            MessageSid: twilioMessageSid,
-            From: `+1${existingPersonPhoneNumber}`,
-            Body: "This is a reply",
-            OptOutType: "STOP",
-          },
-        },
+        payload: new URLSearchParams({
+          MessageSid: twilioMessageSid,
+          From: `+1${existingPersonPhoneNumber}`,
+          Body: "This is a reply",
+          OptOutType: "STOP",
+        }).toString(),
       });
 
       expect(response).toMatchObject({
@@ -86,15 +85,14 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
         url: "/webhook/twilio/incoming_message/US_ID",
         headers: {
           "x-twilio-signature": "signature",
+          "content-type": "application/x-www-form-urlencoded",
         },
-        payload: {
-          values: {
-            MessageSid: twilioMessageSid,
-            From: `+1${person.phoneNumber}`,
-            Body: "START",
-            OptOutType: "START",
-          },
-        },
+        payload: new URLSearchParams({
+          MessageSid: twilioMessageSid,
+          From: `+1${person.phoneNumber}`,
+          Body: "START",
+          OptOutType: "START",
+        }).toString(),
       });
 
       expect(response).toMatchObject({
@@ -119,14 +117,13 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
         url: "/webhook/twilio/incoming_message/US_ID",
         headers: {
           "x-twilio-signature": "signature",
+          "content-type": "application/x-www-form-urlencoded",
         },
-        payload: {
-          values: {
-            MessageSid: twilioMessageSid,
-            From: `+11111111111`,
-            Body: "This is a reply",
-          },
-        },
+        payload: new URLSearchParams({
+          MessageSid: twilioMessageSid,
+          From: `+11111111111`,
+          Body: "This is a reply",
+        }).toString(),
       });
 
       expect(response).toMatchObject({
@@ -171,6 +168,7 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
         url: "/webhook/twilio/incoming_message/US_ID",
         headers: {
           "x-twilio-signature": "signature",
+          "content-type": "application/x-www-form-urlencoded",
         },
         payload: {
           values: {

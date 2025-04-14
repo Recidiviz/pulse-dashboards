@@ -52,7 +52,7 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
         `Incoming messaged received by webhook for ${stateCode}`,
       );
 
-      const { OptOutType: optOutType, From: fromNumber } = request.body.values;
+      const { OptOutType: optOutType, From: fromNumber } = request.body;
 
       // Remove the international code prefix, i.e. +1, for internal use
       const fromPhoneNumber = fromNumber.substring(2);
@@ -99,7 +99,7 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
           .dataset(BQ_DATASET_ID)
           .table(BQ_REPLIES_VIEW_ID)
           .insert({
-            ...request.body.values,
+            ...request.body,
             From: fromPhoneNumber,
             TimeReceived: new Date().toISOString(),
           });
