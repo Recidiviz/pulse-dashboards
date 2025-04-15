@@ -245,17 +245,25 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: "",
         },
         {
-          key: "usTnNoArrestsInPast6Months",
-          text: "Negative arrest check on {{date record.metadata.latestNegativeArrestCheck.contactDate}}",
-          tooltip: "Client has had no arrests in the past 6 months",
+          key: "onUnassignedFor60Days",
+          text: "On intake for 60+ days",
+          tooltip: "Clients must be on intake for 60 days",
         },
         {
           key: "noSupervisionViolationReportWithin6Months",
           text: "No violations in the past 6 months",
         },
         {
+          key: "noSupervisionViolationReportSinceUnassignedSupervisionLevel",
+          text: "No violations since being placed on Community Supervision",
+        },
+        {
           key: "usTnNoSupervisionSanctionWithin3Months",
           text: "No sanctions in the past 3 months",
+        },
+        {
+          key: "usTnNoSupervisionSanctionSinceUnassignedSupervisionLevel",
+          text: "No sanctions since being placed on Community Supervision",
         },
         {
           key: "latestDrugTestIsNegativeOrMissing",
@@ -264,16 +272,39 @@ export const mockApiOpportunityConfigurationResponse = {
             "Tested negative on their most recent drug screen or have no drug tests",
         },
         {
-          key: "usTnFeeScheduleOrPermanentExemption",
-          text: " {{#if  (eq latestFeeContactDate null)}}\nHas permanent exemption {{currentExemptions}}\n\n{{else}}\n {{#if  (eq currentExemptions null)}}\nLatest FEEP on {{date latestFeeContactDate}}\n{{else}}\nLatest FEEP on {{date latestFeeContactDate}}, has permanent exemption {{currentExemptions}}\n{{/if}}\n{{/if}}\n\n\n\n\n",
-          tooltip:
-            "Clients who've had a FEEP code in the last 90 days are surfaced as eligible or have a permanent exemption",
+          key: "noPositiveDrugScreensSinceUnassignedSupervisionLevel",
+          text: "No positive drug screens since being placed on Community\nSupervision.",
+        },
+        {
+          key: "usTnNoArrestsInPast6Months",
+          text: "Negative arrest check on {{date record.metadata.latestNegativeArrestCheck.contactDate}}",
+          tooltip: "Client has had no arrests in the past 6 months",
         },
         {
           key: "usTnAssessedNotHighOnStrongRDomains",
           text: "No high needs as of {{date assessmentDate}}",
           tooltip:
             "Have addressed or are addressing any highly assessed criminogenic needs.",
+        },
+        {
+          key: "assessedRiskLowAfterUnassignedSupervisionLevel",
+          text: "Assessed Low after starting on Intake, latest assessment on {{date assessmentDate}}",
+        },
+        {
+          key: "usTnThreeFaceToFaceContactsWithin60DaysOfUnassignedSupervisionStart",
+          text: "Three face-to-face contacts since intake start on \n\n{{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
+          tooltip:
+            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discrection.",
+        },
+        {
+          key: "usTnHomeVisitSinceUnassignedSupervisionLevel",
+          text: "First home visit since intake on {{date eligibleDate}}",
+        },
+        {
+          key: "usTnFeeScheduleOrPermanentExemption",
+          text: " {{#if  (eq latestFeeContactDate null)}}\nHas permanent exemption {{currentExemptions}}\n\n{{else}}\n {{#if  (eq currentExemptions null)}}\nLatest FEEP on {{date latestFeeContactDate}}\n{{else}}\nLatest FEEP on {{date latestFeeContactDate}}, has permanent exemption {{currentExemptions}}\n{{/if}}\n{{/if}}\n\n\n\n\n",
+          tooltip:
+            "Clients who've had a FEEP code in the last 90 days are surfaced as eligible or have a permanent exemption",
         },
         {
           key: "usTnNotOnCommunitySupervisionForLife",
@@ -290,37 +321,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usTnNotInDayReportingCenterLocation",
           text: "Not in day reporting center",
-        },
-        {
-          key: "onUnassignedFor60Days",
-          text: "On intake for 60+ days",
-          tooltip: "Clients must be on intake for 60 days",
-        },
-        {
-          key: "assessedRiskLowAfterUnassignedSupervisionLevel",
-          text: "Assessed Low after starting on Intake, latest assessment on {{date assessment_date}}",
-        },
-        {
-          key: "usTnThreeFaceToFaceContactsWithin60DaysOfUnassignedSupervisionLevel",
-          text: "Three face-to-face contacts since intake start on {{faceToFaceContactsArray}}",
-          tooltip:
-            "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discrection.",
-        },
-        {
-          key: "usTnHomeVisitSinceUnassignedSupervisionLevel",
-          text: "First home visit since intake on {{date eligibleDate}}",
-        },
-        {
-          key: "usTnNoSupervisionSanctionSinceUnassignedSupervisionLevel",
-          text: "No sanctions since being placed on Community Supervision",
-        },
-        {
-          key: "noSupervisionViolationReportSinceUnassignedSupervisionLevel",
-          text: "No violations since being placed on Community Supervision",
-        },
-        {
-          key: "noPositiveDrugScreensSinceUnassignedSupervisionLevel",
-          text: "No positive drug screens since being placed on Community\nSupervision.",
         },
       ],
       emptyTabCopy: [],
@@ -352,8 +352,8 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: "Clients must be on intake for 60 days",
         },
         {
-          key: "usTnThreeFaceToFaceContactsWithin60DaysOfUnassignedSupervisionLevel",
-          text: "Did not have 3 face to face contacts within 60 days of starting Intake. Has had contacts on {{faceToFaceContactsArray}}",
+          key: "usTnThreeFaceToFaceContactsWithin60DaysOfUnassignedSupervisionStart",
+          text: "Did not have 3 face to face contacts within 60 days of starting Intake. Has had contacts on {{#each faceToFaceContactsArray as |obj|}}\n{{date obj.contactDate}} ({{obj.contactType}});\n{{/each}}",
           tooltip:
             "Clients must have three face-to-face contacts within the first 60 days of being placed on Community Supervision. Note: Clients with a third contact scheduled in the future can be eligible based on officer discrection.",
         },
@@ -380,6 +380,16 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Not currently on supervision for highly publicized case",
           tooltip:
             "For reference, all current offenses are listed in client record.",
+        },
+        {
+          text: "Approved by judge if in relevant county or judicial district",
+          tooltip:
+            "Certain judicial districts and counties require case-by-case judge approval.",
+        },
+        {
+          text: "Upcoming sentence expiration date checked",
+          tooltip:
+            "There's no official policy cutoff for sentence expiration dates that are too soon for someone to be moved to Compliant  Reporting.",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
@@ -566,18 +576,31 @@ export const mockApiOpportunityConfigurationResponse = {
       zeroGrantsTooltip: null,
     },
     usTnInitialClassification: {
-      callToAction: null,
+      callToAction: "Auto-fill paperwork",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [],
+      denialReasons: [
+        {
+          key: "START",
+          text: "Has already had an initial classification since latest start in TDOC custody",
+        },
+        { key: "MAX", text: "Is on Maximum Custody" },
+        { key: "OTHER", text: "Please specify a reason" },
+      ],
       denialText: null,
       deniedTabTitle: null,
       displayName: "Initial Classification",
       dynamicEligibilityText:
         " resident[|s] may be need Initial Classification",
       eligibilityDateText: null,
-      eligibleCriteriaCopy: [],
+      eligibleCriteriaCopy: [
+        {
+          key: "notHasInitialClassificationInStatePrisonCustody",
+          text: "Has not had initial classification since latest start in TDOC custody",
+        },
+        { key: "custodyLevelIsNotMax", text: "Custody level is not Max" },
+      ],
       emptyTabCopy: [],
       firestoreCollection: "US_TN-initialClassificationReferrals",
       hideDenialRevert: false,
@@ -585,24 +608,31 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightedCaseCtaCopy: null,
       homepagePosition: 7,
       ineligibleCriteriaCopy: [],
-      initialHeader: null,
+      initialHeader:
+        "Complete and submit new classification paperwork for eligible residents. ",
       isAlert: false,
       markSubmittedOptionsByTab: [],
-      methodologyUrl: "x",
+      methodologyUrl:
+        "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Validated by data from TOMIS",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [],
-      snooze: null,
+      sidebarComponents: [
+        "Incarceration",
+        "CaseNotes",
+        "UsTnCommonlyUsedOverrideCodes",
+      ],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_TN",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
-      subheading: null,
+      subheading:
+        "This tool helps staff identify residents who have not had an Initial Classification since their latest start in TDOC custody. ",
       submittedTabTitle: null,
-      supportsSubmitted: false,
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,
       tabPrefaceCopy: [],

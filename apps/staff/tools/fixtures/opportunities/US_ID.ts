@@ -833,8 +833,7 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "supervisionLevelHigherThanAssessmentLevel",
-          text: "Current supervision level: {{supervisionLevel}}; Last risk score: {{assessmentLevel}} {{#if latestAssessmentDate}}(as of {{date latestAssessmentDate}}){{else}}(assessment date unknown){{/if}}",
-          tooltip: null,
+          text: "Current supervision level: {{supervisionLevel}}; {{#if assessmentLevel}}Last risk score: {{assessmentLevel}} {{#if latestAssessmentDate}}(as of {{date latestAssessmentDate}}){{else}}(assessment date unknown){{/if}}{{else}}Has not yet been assessed{{/if}}",
         },
       ],
       emptyTabCopy: [],

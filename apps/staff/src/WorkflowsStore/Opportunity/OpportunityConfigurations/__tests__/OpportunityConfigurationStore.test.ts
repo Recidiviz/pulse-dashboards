@@ -22,7 +22,7 @@ const rootStore = new RootStore();
 let store: OpportunityConfigurationStore;
 
 beforeEach(() => {
-  rootStore.tenantStore.setCurrentTenantId("US_OR");
+  rootStore.tenantStore.setCurrentTenantId("US_ID");
   store = new OpportunityConfigurationStore(rootStore);
   store.mockHydrated();
 });
@@ -33,8 +33,8 @@ test("changing tenant ID resets store", async () => {
 });
 
 test("getOpportunityTypeFromUrl for existing opportunity url", async () => {
-  expect(store.getOpportunityTypeFromUrl("earnedDischargeSentence")).toBe(
-    "usOrEarnedDischargeSentence",
+  expect(store.getOpportunityTypeFromUrl("earnedDischarge")).toBe(
+    "earnedDischarge",
   );
 });
 

@@ -25,7 +25,6 @@ import * as US_MI from "./US_MI";
 import * as US_MO from "./US_MO";
 import * as US_ND from "./US_ND";
 import * as US_NE from "./US_NE";
-import * as US_OR from "./US_OR";
 import * as US_PA from "./US_PA";
 import * as US_TN from "./US_TN";
 import * as US_TX from "./US_TX";
@@ -38,7 +37,6 @@ const allConfigs = {
   ...US_ME.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_MI.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_NE.mockApiOpportunityConfigurationResponse.enabledConfigs,
-  ...US_OR.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_PA.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_TX.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_UT.mockApiOpportunityConfigurationResponse.enabledConfigs,
