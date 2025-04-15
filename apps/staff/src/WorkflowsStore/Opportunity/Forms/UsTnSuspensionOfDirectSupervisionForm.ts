@@ -48,11 +48,9 @@ export class UsTnSuspensionOfDirectSupervisionForm extends FormBase<
         sentenceDate,
         supervisionDuration,
         supervisionOfficeLocation,
-        latestNcic,
       },
     } = this.opportunity.record;
 
-    const { contactDate, contactType, contactComment } = latestNcic || {};
     const allConvictionCounties = convictionCounties?.join(",");
 
     const {
@@ -79,10 +77,6 @@ export class UsTnSuspensionOfDirectSupervisionForm extends FormBase<
       ? formatWorkflowsDate(sentenceDate)
       : "";
 
-    const formattedContactDate = contactDate
-      ? formatWorkflowsDate(contactDate)
-      : "";
-
     return {
       downloadDate,
       clientName,
@@ -97,9 +91,6 @@ export class UsTnSuspensionOfDirectSupervisionForm extends FormBase<
       assignedStaffFullName,
       district,
       supervisionOfficeLocation,
-      latestNcicDate: formattedContactDate,
-      latestNcicType: contactType,
-      latestNcicContactComment: contactComment,
     };
   }
 }

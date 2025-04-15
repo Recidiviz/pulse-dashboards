@@ -29,13 +29,6 @@ export const usTnSuspensionOfDirectSupervisionSchema =
         sentenceDate: dateStringSchema,
         supervisionDuration: z.string(),
         supervisionOfficeLocation: z.string(),
-        latestNcic: z
-          .object({
-            contactDate: dateStringSchema,
-            contactType: z.string(),
-            contactComment: z.string(),
-          })
-          .partial(),
       })
       .partial(),
     metadata: z
@@ -71,7 +64,4 @@ export type UsTnSuspensionOfDirectSupervisionDraftData = {
   assignedStaffFullName: string;
   district: string;
   supervisionOfficeLocation: string;
-  latestNcicDate: string;
-  latestNcicType: string;
-  latestNcicContactComment: string;
 };
