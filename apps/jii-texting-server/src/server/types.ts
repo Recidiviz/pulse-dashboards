@@ -23,9 +23,11 @@ export type RequestWithStateCodeParam = FastifyRequest<{
   };
 }>;
 
+// Derived from https://www.twilio.com/docs/messaging/guides/webhook-request
 export interface TwilioIncomingMessageRequestType {
   MessageSid: string;
   From: string;
+  To: string;
   Body: string;
   OptOutType?: string;
   AccountSid: string;

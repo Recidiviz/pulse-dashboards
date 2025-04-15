@@ -100,6 +100,7 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
             ...request.body,
             From: fromPhoneNumber,
             TimeReceived: new Date().toISOString(),
+            StateCode: stateCode,
           });
 
         console.log("Logged incoming message to BigQuery");
