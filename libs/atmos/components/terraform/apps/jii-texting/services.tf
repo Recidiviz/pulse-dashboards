@@ -1,9 +1,3 @@
-# Create a service account
-resource "google_service_account" "cloudrunservice" {
-  account_id   = var.server_service_account_id
-  display_name = "JII Texting Service Account for the Cloud Run service"
-}
-
 # Enable Workflows API
 resource "google_project_service" "workflows" {
   service            = "workflows.googleapis.com"
