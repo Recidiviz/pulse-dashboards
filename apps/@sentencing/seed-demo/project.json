@@ -1,0 +1,106 @@
+{
+  "name": "@sentencing/seed-demo",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@sentencing/seed-demo/src",
+  "projectType": "application",
+  "targets": {
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_sentencing_server --env_demo env_demo_sentencing_server",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@sentencing/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "command": "echo 'No tests for this library'",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "create-base-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/create-base-package-json.mts {projectRoot}",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "create-base-package-json",
+        {
+          "projects": ["@sentencing-server/prisma"],
+          "target": "prisma-generate"
+        },
+        "load-env-files"
+      ],
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/@sentencing/seed-demo",
+        "bundle": true,
+        "main": "{projectRoot}/src/seed.ts",
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "generatePackageJson": true,
+        "target": "node20",
+        "minify": true,
+        "assets": [
+          {
+            "glob": "prisma/schema.prisma",
+            "input": "{workspaceRoot}/libs/@sentencing-server/prisma",
+            "output": "."
+          },
+          "{workspaceRoot}/.yarnrc.yml"
+        ],
+        "external": ["@prisma/sentencing-server"]
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "cwd": "{projectRoot}",
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "demo": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-seed-demo:$VERSION"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    }
+  },
+  "tags": ["sentencing-server"]
+}

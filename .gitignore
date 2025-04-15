@@ -56,6 +56,7 @@ apps/@jii-texting/processor/package.json
 apps/@jii-texting/seed-demo/package.json
 apps/@sentencing/server/package.json
 apps/@sentencing/import/package.json
+apps/@sentencing/seed-demo/package.json
 
 # Redis dump
 dump.rdb

@@ -361,8 +361,13 @@ if (
             process.stdout,
           );
         } else if (deployEnv === "demo") {
-          // There's no import for demo mode
           await $`COMMIT_SHA=${currentRevision} nx container @sentencing/server --configuration demo`.pipe(
+            process.stdout,
+          );
+
+          // There is no import job for demo, instead we have a cloud run job that
+          // seeds the demo database
+          await $`COMMIT_SHA=${currentRevision} nx container @sentencing/seed-demo --configuration demo`.pipe(
             process.stdout,
           );
         }
@@ -387,6 +392,13 @@ if (
         await $`nx run atmos:apply --component=apps/sentencing --stack=${stack} --terraform-opts=\"-auto-approve -var server_container_version=${currentRevision} -var migrate_db_container_version=${currentRevision} -var import_container_version=${currentRevision}\"`.pipe(
           process.stdout,
         );
+
+        // If we're in demo mode, deploy the seed demo job
+        if (deployEnv === "demo") {
+          await $`nx run atmos:apply --component=apps/sentencing-seed-demo --stack=${stack} --terraform-opts=\"-auto-approve -var container_version=${currentRevision}\"`.pipe(
+            process.stdout,
+          );
+        }
 
         retryDeploy = false;
         successfullyDeployed.push("Sentencing Server");
