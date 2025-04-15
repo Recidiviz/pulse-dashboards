@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { captureException } from "@sentry/node";
-import { FastifyReply } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
 import { OAuth2Client } from "google-auth-library";
 import { validateRequest } from "twilio/lib/webhooks/webhooks";
 
@@ -83,6 +83,18 @@ export function getAuthenticateInternalRequestPreHandlerFn(email: string) {
 }
 
 /**
+ * Returns the full raw URL of the request
+ *
+ * @param request The given request object
+ * @returns a string representing the full raw URL of a request
+ */
+function getFullUrl(request: FastifyRequest): string {
+  const protocol = request.headers["x-forwarded-proto"] || "http";
+  const host = request.headers.host;
+  return `${protocol}://${host}${request.raw.url}`;
+}
+
+/**
  * Authenticates requests to the Twilio webhooks on the JII Texting Server by validating
  * that the request with the Twilio library validateRequest method
  * @param token The expected Twilio Auth token
@@ -98,12 +110,14 @@ export function getAuthenticateTwilioWebhookRequestFn(twilioAuthToken: string) {
         return;
       }
 
+      const body = request.body as unknown as Record<string, string>;
+
       // Validate the Twilio request with the Twilio library
       const isValidTwilioRequest = validateRequest(
         twilioAuthToken,
         twilioSignature as string,
-        request.url,
-        request.params,
+        getFullUrl(request),
+        body,
       );
 
       if (!isValidTwilioRequest) {

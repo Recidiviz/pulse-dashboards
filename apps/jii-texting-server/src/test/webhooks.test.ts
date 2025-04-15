@@ -21,6 +21,8 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { fakePersonOne } from "~@jii-texting-server/utils/test/constants";
 import {
   mockDatasetFn,
+  testHost,
+  testPort,
   testPrismaClient,
   testServer,
 } from "~jii-texting-server/test/setup";
@@ -140,15 +142,15 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
       const response = await testServer.inject({
         method: "POST",
         url: "/webhook/twilio/incoming_message/US_ID",
-        headers: {},
-        payload: {
-          values: {
-            MessageSid: twilioMessageSid,
-            From: `+1${existingPersonPhoneNumber}`,
-            Body: "This is a reply",
-            OptOutType: "STOP",
-          },
+        headers: {
+          "content-type": "application/x-www-form-urlencoded",
         },
+        payload: new URLSearchParams({
+          MessageSid: twilioMessageSid,
+          From: `+1${existingPersonPhoneNumber}`,
+          Body: "This is a reply",
+          OptOutType: "STOP",
+        }).toString(),
       });
 
       expect(response.statusCode).toBe(403);
@@ -163,27 +165,35 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
       const existingPersonPhoneNumber = fakePersonOne.phoneNumber;
       const twilioMessageSid = "incoming-message-sid-1";
 
+      const requestParams: Record<string, string> = {
+        MessageSid: twilioMessageSid,
+        From: `+1${existingPersonPhoneNumber}`,
+        Body: "This is a reply",
+        OptOutType: "STOP",
+      };
+
       const response = await testServer.inject({
         method: "POST",
         url: "/webhook/twilio/incoming_message/US_ID",
         headers: {
           "x-twilio-signature": "signature",
           "content-type": "application/x-www-form-urlencoded",
+          host: `localhost:${testPort}`,
         },
-        payload: {
-          values: {
-            MessageSid: twilioMessageSid,
-            From: `+1${existingPersonPhoneNumber}`,
-            Body: "This is a reply",
-            OptOutType: "STOP",
-          },
-        },
+        payload: new URLSearchParams(requestParams).toString(),
       });
 
       expect(response.statusCode).toBe(403);
       expect(JSON.parse(response.body)).toMatchObject({
         error: "Invalid Twilio request",
       });
+
+      expect(validateRequest).toHaveBeenCalledWith(
+        "test-token",
+        "signature",
+        `http://${testHost}:${testPort}/webhook/twilio/incoming_message/US_ID`,
+        requestParams,
+      );
     });
   });
 });
