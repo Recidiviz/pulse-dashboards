@@ -55,7 +55,7 @@
       "dependsOn": [
         "create-base-package-json",
         {
-          "projects": ["@sentencing-server/prisma"],
+          "projects": ["@sentencing/prisma"],
           "target": "prisma-generate"
         },
         "load-env-files"
@@ -72,12 +72,12 @@
         "assets": [
           {
             "glob": "prisma/schema.prisma",
-            "input": "{workspaceRoot}/libs/@sentencing-server/prisma",
+            "input": "{workspaceRoot}/libs/@sentencing/prisma",
             "output": "."
           },
           "{workspaceRoot}/.yarnrc.yml"
         ],
-        "external": ["@prisma/sentencing-server"]
+        "external": ["@prisma/sentencing"]
       }
     },
     "container": {
@@ -95,12 +95,12 @@
         "demo": {
           "push": true,
           "tags": [
-            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-seed-demo:$VERSION"
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-seed-demo:$COMMIT_SHA"
           ]
         }
       },
       "defaultConfiguration": "dev"
     }
   },
-  "tags": ["sentencing-server"]
+  "tags": ["sentencing"]
 }

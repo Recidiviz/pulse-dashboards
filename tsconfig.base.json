@@ -39,15 +39,6 @@
       "~@jii-texting/import/*": ["apps/@jii-texting/import/src/*"],
       "~@jii-texting/processor/*": ["apps/@jii-texting/processor/src/*"],
       "~@jii-texting/seed-demo/*": ["apps/@jii-texting/seed-demo/src/*"],
-      "~@sentencing-server/prisma": [
-        "libs/@sentencing-server/prisma/src/index.ts"
-      ],
-      "~@sentencing-server/prisma/*": ["libs/@sentencing-server/prisma/src/*"],
-      "~@sentencing-server/trpc": ["libs/@sentencing-server/trpc/src/index.ts"],
-      "~@sentencing-server/trpc-types": [
-        "libs/@sentencing-server/trpc-types/src/index.ts"
-      ],
-      "~@sentencing-server/trpc/*": ["libs/@sentencing-server/trpc/src/*"],
       "~@sentencing/import": ["apps/@sentencing/import/src/index.ts"],
       "~@sentencing/import/*": ["apps/@sentencing/import/src/*"],
       "~@sentencing/import/test/*": ["apps/@sentencing/import/__tests__/*"],

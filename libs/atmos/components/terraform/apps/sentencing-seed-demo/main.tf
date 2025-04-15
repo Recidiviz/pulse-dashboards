@@ -5,10 +5,10 @@ data "sops_file" "env" {
 locals {
   env_secrets = yamldecode(data.sops_file.env.raw)
 
-  env = local.env_secrets["env_demo_sentencing_seed"]
+  demo_env = local.env_secrets["env_demo_sentencing_seed"]
 
   env_vars = nonsensitive([
-    for key, value in env : {
+    for key, value in local.demo_env : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
