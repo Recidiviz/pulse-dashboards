@@ -48,9 +48,7 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
       const { stateCode } = request.params;
       const prisma = getPrismaClientForStateCode(stateCode);
 
-      request.log.info(
-        `Incoming messaged received by webhook for ${stateCode}`,
-      );
+      console.log(`Incoming messaged received by webhook for ${stateCode}`);
 
       const { OptOutType: optOutType, From: fromNumber } = request.body;
 
@@ -65,7 +63,7 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
       });
 
       if (!people) {
-        request.log.info(
+        console.log(
           `Received incoming message from phone number without associated Person`,
         );
       }
@@ -87,7 +85,7 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
           return person.pseudonymizedId;
         });
 
-        request.log.info(`Updated opt-out for people: ${updatedPseudoIds}`);
+        console.log(`Updated opt-out for people: ${updatedPseudoIds}`);
       }
 
       try {
@@ -103,11 +101,14 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
             From: fromPhoneNumber,
             TimeReceived: new Date().toISOString(),
           });
+
+        console.log("Logged incoming message to BigQuery");
       } catch (e) {
         captureException(`Failed to write incoming message to BQ: ${e}`);
       }
 
-      response.status(200).send("Incoming message handled");
+      console.log("Incoming message handled");
+      response.status(200);
     },
   );
 }

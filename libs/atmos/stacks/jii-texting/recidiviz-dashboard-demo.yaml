@@ -67,5 +67,9 @@ components:
             value_source:
               - secret_key_ref:
                   secret: jii_texting_demo_us_id_db_url
+          - name: PHONE_NUMBERS
+            value_source:
+              - secret_key_ref:
+                  secret: jii_texting_demo_phone_numbers
       metadata:
         component: vendor/cloud-run-job-exec

@@ -21,6 +21,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { fakePersonOne } from "~@jii-texting-server/utils/test/constants";
 import {
   mockDatasetFn,
+  mockTableFn,
   testHost,
   testPort,
   testPrismaClient,
@@ -66,7 +67,8 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
       // Validate person has opted out
       expect(persons[0].lastOptOutDate).not.toBeNull();
 
-      expect(mockDatasetFn).toHaveBeenCalledExactlyOnceWith("jii-texting");
+      expect(mockDatasetFn).toHaveBeenCalledExactlyOnceWith("jii_texting");
+      expect(mockTableFn).toHaveBeenCalledExactlyOnceWith("incoming_messages");
     });
 
     test("START message from existing person resets lastOptOutDate", async () => {
