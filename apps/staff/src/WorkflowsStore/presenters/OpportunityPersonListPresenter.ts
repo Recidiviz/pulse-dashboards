@@ -127,6 +127,11 @@ export class OpportunityPersonListPresenter
   }
 
   set showListView(showListView: boolean) {
+    this.analyticsStore.trackOpportunityTableViewPreferenceChanged({
+      newViewType: showListView ? "list" : "table",
+      oldViewType: this.showListView ? "list" : "table",
+      opportunityType: this.opportunityType,
+    });
     this.tableViewSelectPresenter.showListView = showListView;
   }
 

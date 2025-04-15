@@ -136,7 +136,7 @@ type TasksTrackingMetadata = {
   selectedCategory: SupervisionTaskCategory;
 };
 
-type TasksViewChangedMetadata = {
+type TableViewChangedMetadata = {
   newViewType: "table" | "list";
   oldViewType: "table" | "list";
 };
@@ -387,6 +387,12 @@ export default class AnalyticsStore {
     this.track("frontend.opportunity_tab_order_changed", metadata);
   }
 
+  trackOpportunityTableViewPreferenceChanged(
+    metadata: TableViewChangedMetadata & { opportunityType: OpportunityType },
+  ) {
+    this.track("frontend.opportunity_table_view_preference_changed", metadata);
+  }
+
   trackSetOpportunityStatus<
     Metadata extends OpportunityTrackingMetadata & {
       status: OpportunityStatus;
@@ -419,7 +425,7 @@ export default class AnalyticsStore {
     this.track("frontend.task_header_toggled", { title });
   }
 
-  trackTaskViewChanged(metadata: TasksViewChangedMetadata): void {
+  trackTaskViewChanged(metadata: TableViewChangedMetadata): void {
     this.track("frontend.tasks_view_changed", metadata);
   }
 
