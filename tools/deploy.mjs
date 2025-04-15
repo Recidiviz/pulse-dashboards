@@ -496,7 +496,7 @@ if (
         );
 
         if (deployEnv === "demo") {
-          await $`nx run atmos:apply --component=seed-demo --stack=recidiviz-dashboard-staging--jii-texting-demo --terraform-opts=\"-auto-approve -var server_version=${currentRevision}\"`.pipe(
+          await $`nx run atmos:apply --component=seed-demo --stack=recidiviz-dashboard-staging--jii-texting-demo --terraform-opts=\"-auto-approve\"`.pipe(
             process.stdout,
           );
         }

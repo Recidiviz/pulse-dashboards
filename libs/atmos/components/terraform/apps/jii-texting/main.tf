@@ -28,7 +28,7 @@ locals {
   ])
 
   processor_job_env_vars = nonsensitive([
-    for key, value in merge(local.shared_env, var.demo_mode ? local.processor_job_env : null) : {
+    for key, value in merge(local.shared_env, local.processor_job_env) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -36,7 +36,7 @@ locals {
   ])
 
   server_env_vars = nonsensitive([
-    for key, value in merge(local.shared_env, var.demo_mode ? local.server_env : null) : {
+    for key, value in merge(local.shared_env, local.server_env) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
