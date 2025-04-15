@@ -50,7 +50,15 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
 
       console.log(`Incoming messaged received by webhook for ${stateCode}`);
 
-      const { OptOutType: optOutType, From: fromNumber } = request.body;
+      const {
+        OptOutType: optOutType,
+        From: fromNumber,
+        To,
+        MessageSid,
+        Body,
+        MessagingServiceSid,
+        AccountSid,
+      } = request.body;
 
       // Remove the international code prefix, i.e. +1, for internal use
       const fromPhoneNumber = fromNumber.substring(2);
@@ -97,10 +105,15 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
           .dataset(BQ_DATASET_ID)
           .table(BQ_REPLIES_VIEW_ID)
           .insert({
-            ...request.body,
-            From: fromPhoneNumber,
-            TimeReceived: new Date().toISOString(),
-            StateCode: stateCode,
+            to: To.substring(2),
+            from: fromNumber,
+            message_sid: MessageSid,
+            body: Body,
+            opt_out_type: optOutType,
+            account_sid: AccountSid,
+            messaging_service_sid: MessagingServiceSid,
+            time_received: new Date().toISOString(),
+            state_code: stateCode,
           });
 
         console.log("Logged incoming message to BigQuery");
