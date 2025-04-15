@@ -40,7 +40,7 @@ export const usIdResidents: ResidentFixture[] = [
       tentativeParoleDate: "2025-02-10",
       nextParoleHearingDate: "2024-09-15",
       initialParoleHearingDate: "2020-03-12",
-      crcFacilities: ["CRC LRC", "LRC"],
+      crcFacilities: ["CRC LRC"],
     },
   },
   {
@@ -67,7 +67,7 @@ export const usIdResidents: ResidentFixture[] = [
       tentativeParoleDate: "2025-02-10",
       nextParoleHearingDate: "2024-09-15",
       initialParoleHearingDate: "2021-03-12",
-      crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
+      crcFacilities: ["CRC LRC", "CRC PRC"],
     },
   },
   {
@@ -91,7 +91,7 @@ export const usIdResidents: ResidentFixture[] = [
       tentativeParoleDate: "2026-02-10",
       nextParoleHearingDate: "2024-09-15",
       initialParoleHearingDate: "2018-05-18",
-      crcFacilities: ["CRC PRC", "PRC"],
+      crcFacilities: ["CRC PRC"],
     },
   },
   {
@@ -115,7 +115,7 @@ export const usIdResidents: ResidentFixture[] = [
       tentativeParoleDate: "2025-09-10",
       nextParoleHearingDate: "2024-09-15",
       initialParoleHearingDate: "2023-03-12",
-      crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
+      crcFacilities: ["CRC LRC", "CRC PRC"],
     },
   },
 ];

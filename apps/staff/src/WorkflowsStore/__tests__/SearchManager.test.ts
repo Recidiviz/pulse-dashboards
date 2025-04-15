@@ -375,7 +375,7 @@ describe("matchingPersonsGrouped", () => {
     expect(clientSearchManager.matchingPersonsGrouped).toEqual(expected);
   });
 
-  test("searchFieldValue is adjusted for 'duplicate' CRC locations", () => {
+  test("searchFieldValue is adjusted for CRC locations", () => {
     const residentRecords = usIdResidents;
     const incarcerationSystemConfig = {
       search: [
@@ -398,15 +398,15 @@ describe("matchingPersonsGrouped", () => {
       } as unknown as Resident;
     });
     searchStoreMock.workflowsStore.justiceInvolvedPersons = {
-      [residents[0].pseudonymizedId]: residents[0], // crcFacilities: ["CRC LRC", "LRC"]
-      [residents[1].pseudonymizedId]: residents[1], // crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
-      [residents[2].pseudonymizedId]: residents[2], // crcFacilities: ["CRC PRC", "PRC"],
-      [residents[3].pseudonymizedId]: residents[3], // crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
+      [residents[0].pseudonymizedId]: residents[0], // crcFacilities: ["CRC LRC"]
+      [residents[1].pseudonymizedId]: residents[1], // crcFacilities: ["CRC LRC", "CRC PRC"],
+      [residents[2].pseudonymizedId]: residents[2], // crcFacilities: ["CRC PRC"],
+      [residents[3].pseudonymizedId]: residents[3], // crcFacilities: ["CRC LRC", "CRC PRC"],
     };
     // @ts-ignore
-    searchStoreMock.selectedSearchIds = ["LRC"];
+    searchStoreMock.selectedSearchIds = ["CRC LRC"];
     const expected = {
-      LRC: [residents[0], residents[1], residents[3]],
+      "CRC LRC": [residents[0], residents[1], residents[3]],
     };
     expect(residentSearchManager.matchingPersonsGrouped).toEqual(expected);
   });
@@ -434,16 +434,16 @@ describe("matchingPersonsGrouped", () => {
       } as unknown as Resident;
     });
     searchStoreMock.workflowsStore.justiceInvolvedPersons = {
-      [residents[0].pseudonymizedId]: residents[0], // crcFacilities: ["CRC LRC", "LRC"]
-      [residents[1].pseudonymizedId]: residents[1], // crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
-      [residents[2].pseudonymizedId]: residents[2], // crcFacilities: ["CRC PRC", "PRC"],
-      [residents[3].pseudonymizedId]: residents[3], // crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"],
+      [residents[0].pseudonymizedId]: residents[0], // crcFacilities: ["CRC LRC"]
+      [residents[1].pseudonymizedId]: residents[1], // crcFacilities: ["CRC LRC", "CRC PRC"],
+      [residents[2].pseudonymizedId]: residents[2], // crcFacilities: ["CRC PRC"],
+      [residents[3].pseudonymizedId]: residents[3], // crcFacilities: ["CRC LRC", "CRC PRC"],
     };
     // @ts-ignore
-    searchStoreMock.selectedSearchIds = ["LRC", "PRC"];
+    searchStoreMock.selectedSearchIds = ["CRC LRC", "CRC PRC"];
     const expected = {
-      LRC: [residents[0], residents[1], residents[3]],
-      PRC: [residents[2], residents[1], residents[3]],
+      "CRC LRC": [residents[0], residents[1], residents[3]],
+      "CRC PRC": [residents[2], residents[1], residents[3]],
     };
     expect(residentSearchManager.matchingPersonsGrouped).toEqual(expected);
   });

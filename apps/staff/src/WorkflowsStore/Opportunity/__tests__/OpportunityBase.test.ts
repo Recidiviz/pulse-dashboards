@@ -116,7 +116,7 @@ function createTestUnit() {
       district: "DISTRICT1",
       // Clients don't have crcFacilities, but adding them here to test analytics logic for array searchFields
       // @ts-ignore
-      metadata: { crcFacilities: ["CRC LRC", "CRC PRC", "LRC", "PRC"] },
+      metadata: { crcFacilities: ["CRC LRC", "CRC PRC", "LRC CRC"] },
     },
     root,
   );
@@ -738,12 +738,13 @@ describe("tracking", () => {
   });
 
   test("list view tracking for multiple search types, one of which is CRC facility", () => {
+    vi.spyOn(root, "currentTenantId", "get").mockReturnValue("US_ID");
     root.workflowsStore.supervisionStaffSubscription.data =
       mockSupervisionOfficers;
     root.workflowsStore.updateActiveSystem("SUPERVISION");
     // Both location and officer search are used
     root.workflowsStore.searchStore = {
-      selectedSearchIds: ["LRC", mockSupervisionOfficers[0].id],
+      selectedSearchIds: ["CRC LRC", mockSupervisionOfficers[0].id],
     } as unknown as SearchStore;
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
@@ -775,6 +776,50 @@ describe("tracking", () => {
       tabTitle: opp.tabTitle(),
       opportunityId: opp.sentryTrackingId,
     });
+
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledTimes(2);
+  });
+
+  test("list view tracking for multiple search types, one of which has CRC in middle of id", () => {
+    vi.spyOn(root, "currentTenantId", "get").mockReturnValue("US_ID");
+    root.workflowsStore.supervisionStaffSubscription.data =
+      mockSupervisionOfficers;
+    root.workflowsStore.updateActiveSystem("SUPERVISION");
+    // Both location and officer search are used
+    root.workflowsStore.searchStore = {
+      selectedSearchIds: ["LRC CRC", mockSupervisionOfficers[0].id],
+    } as unknown as SearchStore;
+    vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
+      search: [
+        {
+          searchType: "LOCATION",
+          searchField: ["metadata", "crcFacilities"],
+          searchTitle: "",
+        },
+        { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
+      ],
+    });
+    vi.spyOn(AnalyticsStore.prototype, "trackSurfacedInList");
+    opp.trackListViewed();
+
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+      searchField: "officerId",
+      // this is the pseudonymized version of the selected id
+      searchIdValue: mockSupervisionOfficers[0].pseudonymizedId,
+      tabTitle: opp.tabTitle(),
+      opportunityId: opp.sentryTrackingId,
+    });
+    expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledWith({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      opportunityType: opp.type,
+      searchField: "metadata.crcFacilities",
+      searchIdValue: "LRC CRC",
+      tabTitle: opp.tabTitle(),
+      opportunityId: opp.sentryTrackingId,
+    });
+
     expect(root.analyticsStore.trackSurfacedInList).toHaveBeenCalledTimes(2);
   });
 

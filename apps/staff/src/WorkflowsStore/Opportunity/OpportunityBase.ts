@@ -633,19 +633,24 @@ export class OpportunityBase<
           selectedSearchIds?.includes(id),
         );
 
-        // Pseudonymize staff IDs
-        const pseudoSearchIds = activeSearchIdValues.map((value) =>
-          value === this.person.assignedStaffId
+        const modifiedSearchIds = activeSearchIdValues.map((value) => {
+          // Remove the CRC prefix from facility id if it exists
+          const withoutPrefix =
+            this.rootStore.currentTenantId === "US_ID"
+              ? value.replace(/^CRC /, "")
+              : value;
+          // Pseudonymize staff IDs
+          return withoutPrefix === this.person.assignedStaffId
             ? this.person.assignedStaffPseudoId
-            : value,
-        );
+            : withoutPrefix;
+        });
 
         // For each searchField, if the person matches based on that searchField fire the event
-        if (pseudoSearchIds.length > 0) {
+        if (modifiedSearchIds.length > 0) {
           this.rootStore.analyticsStore.trackSurfacedInList({
             justiceInvolvedPersonId: this.person.pseudonymizedId,
             opportunityType: this.type,
-            searchIdValue: pseudoSearchIds.join(","),
+            searchIdValue: modifiedSearchIds.join(","),
             searchField: searchField,
             tabTitle: this.tabTitle(),
             opportunityId: this.sentryTrackingId,
