@@ -90,3 +90,12 @@ variable "availability_type" {
   type    = string
   default = "ZONAL"
 }
+
+variable "private_network" {
+  type    = string
+  default = null
+}
+variable "enable_private_path_for_google_cloud_services" {
+  type    = string
+  default = false
+}

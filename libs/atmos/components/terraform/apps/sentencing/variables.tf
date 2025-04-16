@@ -117,3 +117,9 @@ variable "service_account_id" {
   description = "The name of the service account"
   default     = "sentencing"
 }
+
+variable "private_network" {
+  type        = string
+  description = "(Optional_ The private network to use for the SQL instance"
+  default     = null
+}

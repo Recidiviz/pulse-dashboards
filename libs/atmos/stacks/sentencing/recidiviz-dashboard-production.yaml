@@ -41,3 +41,15 @@ components:
         server_env_key: env_prod_sentencing_server
         migrate_db_env_key: env_prod_sentencing_migrate_db
         data_import_env_key: env_prod_sentencing_data_import
+        private_network: projects/recidiviz-dashboard-production/global/networks/default
+    apps/postgres-bq-data-transfer:
+      vars:
+        dataset_name: sentencing_dashboards_db
+        assets: '["Staff"]'
+        service_account_email: '{{ (atmos.Component "apps/sentencing" .stack).outputs.service_account_email }}'
+        postgressql_host: 10.73.192.4
+        postgresql_username: '{{ (atmos.Component "apps/sentencing" .stack).outputs.database_user_name }}'
+        postgresql_password: '{{ (atmos.Component "apps/sentencing" .stack).vars.database_user_password }}'
+        postgresql_databases:
+          - us_id
+          - us_nd

@@ -125,7 +125,9 @@ resource "google_sql_database_instance" "data" {
 
 
     ip_configuration {
-      ipv4_enabled = true
+      ipv4_enabled                                  = true
+      private_network                               = var.private_network
+      enable_private_path_for_google_cloud_services = var.enable_private_path_for_google_cloud_services
     }
 
     location_preference {
