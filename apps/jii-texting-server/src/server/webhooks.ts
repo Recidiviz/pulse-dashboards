@@ -106,7 +106,7 @@ async function registerTwilioWebhooks(server: FastifyInstance) {
           .table(BQ_REPLIES_VIEW_ID)
           .insert({
             to: To.substring(2),
-            from: fromNumber,
+            from: fromPhoneNumber,
             message_sid: MessageSid,
             body: Body,
             opt_out_type: optOutType,
