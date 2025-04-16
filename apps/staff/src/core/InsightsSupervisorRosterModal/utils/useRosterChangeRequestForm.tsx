@@ -148,8 +148,7 @@ export const useRosterChangeRequestForm = (
       formApi,
       meta: { supervisorPseudoId, trackSubmitted, isDemo, handleSubmit },
       value: { requestChangeType, affectedOfficers, requestNote },
-    }) =>
-    {
+    }) => {
       const requestName = `${requestChangeType === "ADD" ? "Add to" : "Remove from"} Team Request`;
       const affectedOfficersExternalIds = affectedOfficers.map(
         (o) => o.externalId,
@@ -168,7 +167,7 @@ export const useRosterChangeRequestForm = (
         formApi.store.state.submissionAttempts % 2 === 0;
       // Clear any previous toast notifications.
       toast.remove();
-      // Make the request in a wrapped toast, which has functionality for each response state.
+      const TOAST_DURATION = 4000;
       await (
         isDemo
           ? handleDemoSubmit(
@@ -186,6 +185,7 @@ export const useRosterChangeRequestForm = (
           formApi.reset();
           toast.success(`${requestName} was successfully submitted.`, {
             position: "bottom-left",
+            duration: TOAST_DURATION,
           });
           presenter.view = "ROSTER";
           return response;
@@ -195,7 +195,10 @@ export const useRosterChangeRequestForm = (
             ...trackSubmittedParamsBase,
             error: e.message,
           });
-          toast.error(e.message, { position: "bottom-left" });
+          toast.error(e.message, {
+            duration: TOAST_DURATION,
+            position: "bottom-left",
+          });
           throw e;
         });
     },
