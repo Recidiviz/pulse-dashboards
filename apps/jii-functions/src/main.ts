@@ -15,5 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+// calling this here first will auto-instrument imported modules
+import "./helpers/initSentry";
+
 export * from "./functions/edovoToken";
 export * from "./functions/firebaseToken";

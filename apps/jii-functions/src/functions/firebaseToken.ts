@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { setupExpressErrorHandler } from "@sentry/node";
 import express, { NextFunction, Request, Response } from "express";
 import jwt from "express-jwt";
 import { defineString } from "firebase-functions/params";
@@ -27,13 +28,13 @@ import {
   firebaseAdminSecrets,
   getFirebaseToken,
 } from "../helpers/firebaseAdmin";
-import { useRateLimiter } from "../helpers/ratelimit";
+import { rateLimiter } from "../helpers/middleware";
 
 const tenantKey = defineString("AUTH0_TENANT_KEY");
 
 const app = express();
 
-useRateLimiter(app);
+app.use(rateLimiter());
 
 const jwtMiddleware = (
   request: Request,
@@ -89,6 +90,8 @@ app.get("/*", async (request, response): Promise<void> => {
     });
   }
 });
+
+setupExpressErrorHandler(app);
 
 export const firebaseToken = onRequest(
   {

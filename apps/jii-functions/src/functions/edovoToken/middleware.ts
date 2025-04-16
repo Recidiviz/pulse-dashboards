@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { setUser } from "@sentry/node";
 import { createPrivateKey } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import jwt from "express-jwt";
-import { error as logError, info as logInfo } from "firebase-functions/logger";
 import { compactDecrypt } from "jose";
 import jwks from "jwks-rsa";
 
@@ -39,8 +39,9 @@ function getRequestToken(request: Request) {
 
   const token = /^Bearer (.+)$/.exec(header)?.[1];
   if (!token) {
-    logError("Invalid Authorization header:", header);
-    throw new Error("Bearer authorization is required");
+    throw new Error(
+      `Bearer authorization is required. Invalid header: ${header}`,
+    );
   }
   return token;
 }
@@ -56,8 +57,9 @@ export async function decryptToken(
 ) {
   try {
     const encryptedToken = getRequestToken(request);
+
     // only encrypted tokens can be logged because they contain PII
-    logInfo("Encrypted ID token:", encryptedToken);
+    setUser({ id: encryptedToken });
 
     // decrypting gets us a signed JWT to pass on to the next middleware
     const { plaintext: decryptedToken } = await compactDecrypt(
@@ -100,28 +102,4 @@ export function verifyToken(
   });
 
   handler(request, response, next);
-}
-
-/**
- * Express middleware that converts thrown errors into JSON responses.
- * Should be applied last (after the endpoint function)
- */
-export function errorHandler(
-  error: Error,
-  request: Request,
-  response: Response,
-  // if we don't define the fourth arg, express won't recognize this as an error handler.
-  // we don't need to use it because we are terminating all requests here
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction,
-) {
-  logError(error);
-  // this is what the JWT middleware throws
-  if (error.name === "UnauthorizedError") {
-    // we might want to clean up this message eventually
-    // but forwarding the original will help with testing
-    response.status(401).json({ error });
-  } else {
-    response.status(500).json({ error });
-  }
 }

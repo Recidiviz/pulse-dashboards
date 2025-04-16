@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { setupExpressErrorHandler } from "@sentry/node";
 import express from "express";
 import { onRequest } from "firebase-functions/v2/https";
 
@@ -24,13 +25,13 @@ import {
   firebaseAdminSecrets,
   getFirebaseToken,
 } from "../../helpers/firebaseAdmin";
-import { useRateLimiter } from "../../helpers/ratelimit";
+import { errorHandler, rateLimiter } from "../../helpers/middleware";
 import {
   checkRecidivizEmployeeRoster,
   checkResidentsRoster,
   edovoIdTokenPayloadSchema,
 } from "./helpers";
-import { decryptToken, errorHandler, verifyToken } from "./middleware";
+import { decryptToken, verifyToken } from "./middleware";
 import {
   EDOVO_API_KEY,
   EDOVO_JWKS_URL,
@@ -40,10 +41,8 @@ import {
 
 const app = express();
 
-useRateLimiter(app);
-
+app.use(rateLimiter());
 app.use(decryptToken);
-
 app.use(verifyToken);
 
 // there is only one route in this app, but Firebase rewrite rules may affect what it is.
@@ -80,6 +79,8 @@ app.get("/*", async (request, response): Promise<void> => {
       .json({ error: "You are not authorized to access this application" });
   }
 });
+
+setupExpressErrorHandler(app);
 
 app.use(errorHandler);
 

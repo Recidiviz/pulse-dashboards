@@ -15,19 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Express } from "express";
-import rateLimit from "express-rate-limit";
+import { init } from "@sentry/node";
 
-/**
- * Applies rate limiter middleware to the provided Express app with standard settings
- */
-export function useRateLimiter(app: Express) {
-  // matches the params set for the staff server, as a reasonable baseline
-  const limiter = rateLimit({
-    windowMs: 1000, // 1 second = 1000ms
-    max: 15, // each IP address gets 15 requests per 1 second
-    standardHeaders: true, // return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // disabling the `X-RateLimit-*` headers
-  });
-  app.use(limiter);
-}
+init({
+  dsn: "https://9854b2227e71fa6bd5191e28c0e14320@o432474.ingest.us.sentry.io/4509159316979712",
+  environment: process.env["SENTRY_ENV"],
+});
