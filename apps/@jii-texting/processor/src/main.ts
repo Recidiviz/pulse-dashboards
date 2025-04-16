@@ -39,7 +39,7 @@ function main() {
 
   processJii({
     stateCode: options.stateCode as StateCode,
-    dryRun: options.dryRun as boolean,
+    dryRun: Boolean(options.dryRun),
     workflowExecutionId: options.workflowExecutionId as string,
   });
 }

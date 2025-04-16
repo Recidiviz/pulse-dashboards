@@ -34,7 +34,7 @@ export type processJiiArguments = {
 
 export async function processJii({
   stateCode,
-  dryRun,
+  dryRun = true,
   workflowExecutionId,
 }: processJiiArguments) {
   console.log(
