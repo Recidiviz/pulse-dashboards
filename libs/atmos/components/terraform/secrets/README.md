@@ -21,7 +21,7 @@ Alternatively, you can use the following plugins to edit inside your IDE:
 Once modified, plan / apply the Terraform component, for example:
 
 ```bash
-nx run atmos:cli terraform apply secrets -s recidiviz-jii-staging--jii
+yarn atmos:apply secrets -s recidiviz-jii-staging--jii
 ```
 
 ## Input Variables

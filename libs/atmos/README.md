@@ -19,19 +19,14 @@ Running the `atmos` command will bring up a friendly interface which can be used
 
 You can access the atmos CLI shell by running:
 ```bash
-nx run atmos:cli
-```
-
-To run custom `atmos` commands, launch the container by running:
-```bash
-nx run atmos:shell
+yarn atmos
 ```
 
 To download the latest set of vendored components, run the following:
 ```bash
-nx run atmos:vendor-pull --github-token=$(gh auth token)
+GITHUB_TOKEN=$(gh auth token) yarn atmos:vendor-pull 
 # Target a specific component
-nx run atmos:vendor-pull --github-token=$(gh auth token) -c cloud-sql-instance
+GITHUB_TOKEN=$(gh auth token) yarn atmos:vendor-pull  -c cloud-sql-instance
 ```
 
 <img src="./docs/img/atmos-tui.png"/>
@@ -61,10 +56,4 @@ atmos terraform import \
 ## Atmos installation
 Atmos can be installed locally via `brew install atmos` or you can use our `atmos-runner` docker image
 
-## Using `docker compose`
-The `atmos-shell` service provides an environment for running our atmos scripts, or the atmos cli directly.
-```bash
-docker compose -f docker-compose.yaml run --remove-orphans atmos-shell
-nx run atmos:
-```
 

@@ -15,5 +15,5 @@ Alternatively, you can use the following plugins to edit inside your IDE:
       * **Be sure to clear any `.decrypted` files after use!**
 Once modified, plan / apply the Terraform component:
 ```bash
-nx run atmos:cli terraform apply env-secrets -s recidiviz-dashboard-staging--shared-infra
+yarn atmos:apply env-secrets -s recidiviz-dashboard-staging--shared-infra
 ```

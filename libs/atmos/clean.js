@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import fs from "fs";
-import path from "path";
+const fs = require("fs");
+const path = require("path");
+const chalk = require("chalk");
 
 const AtmosFilesToClean = [
   /^\.terraform$/,
@@ -28,31 +29,39 @@ const AtmosFilesToClean = [
 
 function clean(file) {
   const target = `${file.path}/${file.name}`;
-  console.log(`Cleaning ${target}`);
+  console.log(chalk.dim(`rm ${target}`));
   fs.rmSync(target, { recursive: true, force: true });
 }
 
-function cleanDirectory(dirPath) {
-  fs.readdir(dirPath, { withFileTypes: true }, (err, files) => {
-    if (err) {
-      console.error(`Error reading directory: ${err}`);
-      return;
+function walkDirectory(dirPath, accumulateMatcher, accumulator) {
+  const files = fs.readdirSync(dirPath, { withFileTypes: true });
+
+  return files.reduce((targets, file) => {
+    const fullPath = path.join(dirPath, file.name);
+
+    if (accumulateMatcher(file)) {
+      targets.push(file);
+    } else if (file.isDirectory()) {
+      walkDirectory(fullPath, accumulateMatcher, accumulator);
     }
-
-    files.forEach((file) => {
-      const fullPath = path.join(dirPath, file.name);
-
-      const shouldClean = AtmosFilesToClean.reduce((found, pattern) => {
-        return found || pattern.test(file.name);
-      }, false);
-
-      if (shouldClean) {
-        clean(file);
-      } else if (file.isDirectory()) {
-        cleanDirectory(fullPath);
-      }
-    });
-  });
+    return targets;
+  }, accumulator);
 }
 
-cleanDirectory("./components/terraform");
+module.exports = function cleanAtmosFiles() {
+  const filesToClean = walkDirectory(
+    "./components/terraform",
+    (file) =>
+      AtmosFilesToClean.reduce((found, pattern) => {
+        return found || pattern.test(file.name);
+      }, false),
+    [],
+  );
+
+  if (filesToClean.length) {
+    console.log("Cleaning generated atmos files:");
+    for (const file of filesToClean) {
+      clean(file);
+    }
+  }
+};

@@ -149,17 +149,17 @@
       "configurations": {
         "demo": {
           "commands": [
-            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-staging--jii-texting-demo --terraform-opts=\"-auto-approve -var server_version={args.tag}\""
+            "yarn atmos:apply apps/jii-texting -s recidiviz-dashboard-staging--jii-texting-demo -- -auto-approve -var server_version={args.tag}"
           ]
         },
         "staging": {
           "commands": [
-            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-staging--jii-texting --terraform-opts=\"-auto-approve -var server_version={args.tag}\""
+            "yarn atmos:apply apps/jii-texting -s recidiviz-dashboard-staging--jii-texting -- -auto-approve -var server_version={args.tag}"
           ]
         },
         "production": {
           "commands": [
-            "nx run atmos:apply --component=apps/jii-texting --stack=recidiviz-dashboard-production--jii-texting --terraform-opts=\"-auto-approve -var server_version={args.tag}\""
+            "yarn atmos:apply apps/jii-texting -s recidiviz-dashboard-production--jii-texting -- -auto-approve -var server_version={args.tag}"
           ]
         }
       }

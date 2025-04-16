@@ -23,6 +23,9 @@ spec:
       included_paths:
         - "**/*.tf"
         - "**/README.md"
+      excluded_paths:
+        - examples
+        - tests
       targets:
         - components/terraform/vendor/{{.Component}}
     - component: cloud-run
@@ -47,6 +50,8 @@ spec:
       source: components/terraform/vendor/cloud-storage-bucket
       excluded_paths:
         - "**/versions.tf"
+        - examples
+        - tests
       targets:
         - components/terraform/vendor/{{.Component}}
     - component: lb-http

@@ -374,7 +374,7 @@ if (
 
         // Deploy any changes to the artifact registry if we're on staging
         if (deployEnv === "staging") {
-          await $`nx run atmos:apply --component=artifact_registry --stack=recidiviz-dashboard-${deployEnv}--sentencing --terraform-opts=\"-auto-approve\"`.pipe(
+          await $`yarn atmos:apply artifact_registry -s recidiviz-dashboard-${deployEnv}--sentencing -- -auto-approve`.pipe(
             process.stdout,
           );
         }
@@ -389,13 +389,16 @@ if (
           stack = "recidiviz-dashboard-staging--sentencing-demo";
         }
 
-        await $`nx run atmos:apply --component=apps/sentencing --stack=${stack} --terraform-opts=\"-auto-approve -var server_container_version=${currentRevision} -var migrate_db_container_version=${currentRevision} -var import_container_version=${currentRevision}\"`.pipe(
+        await $`yarn atmos:apply apps/sentencing -s ${stack} -- -auto-approve \\\
+          -var server_container_version=${currentRevision} \\\
+          -var migrate_db_container_version=${currentRevision} \\\
+          -var import_container_version=${currentRevision}`.pipe(
           process.stdout,
         );
 
         // If we're in demo mode, deploy the seed demo job
         if (deployEnv === "demo") {
-          await $`nx run atmos:apply --component=apps/sentencing-seed-demo --stack=${stack} --terraform-opts=\"-auto-approve -var container_version=${currentRevision}\"`.pipe(
+          await $`yarn atmos:apply apps/sentencing-seed-demo -s ${stack} -- -auto-approve -var container_version=${currentRevision}`.pipe(
             process.stdout,
           );
         }
@@ -496,7 +499,7 @@ if (
         );
 
         if (deployEnv === "demo") {
-          await $`nx run atmos:apply --component=seed-demo --stack=recidiviz-dashboard-staging--jii-texting-demo --terraform-opts=\"-auto-approve\"`.pipe(
+          await $`yarn atmos:apply seed-demo -s recidiviz-dashboard-staging--jii-texting-demo -- -auto-approve`.pipe(
             process.stdout,
           );
         }
@@ -684,7 +687,7 @@ if (slackChannel !== null && slackMessage !== null) {
       unfurl_media: false,
     });
     if (slackMessageResponse.ok) {
-      console.log("Succesfully posted to Slack");
+      console.log("Successfully posted to Slack");
     } else {
       throw slackMessageResponse;
     }

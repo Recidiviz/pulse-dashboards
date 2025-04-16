@@ -4,41 +4,6 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "cli": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "atmos",
-        "color": true,
-        "cwd": "{projectRoot}"
-      }
-    },
-    "plan": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "atmos terraform plan {args.component} -s {args.stack} -- {args.terraform-opts}",
-        "color": true,
-        "cwd": "{projectRoot}",
-        "tty": true
-      }
-    },
-    "apply": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "atmos terraform apply {args.component} -s {args.stack} -- {args.terraform-opts}",
-        "debug": true,
-        "color": true,
-        "cwd": "{projectRoot}",
-        "tty": true
-      }
-    },
-    "vendor-pull": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "atmos vendor pull",
-        "color": true,
-        "cwd": "{projectRoot}"
-      }
-    },
     "lint-files": {
       "executor": "nx:run-commands",
       "options": {
@@ -55,9 +20,7 @@
     },
     "validate-workflows-yaml": {
       "executor": "nx:run-commands",
-      "inputs": [
-        "{projectRoot}/components/terraform/apps/jii-texting/workflows"
-      ],
+      "inputs": ["{projectRoot}/components/terraform/apps/jii-texting/workflows"],
       "options": {
         "command": "v8r -s https://json.schemastore.org/workflows.json '**.workflows.{yaml,yml}'",
         "cwd": "{projectRoot}/components/terraform/apps/jii-texting/workflows"
