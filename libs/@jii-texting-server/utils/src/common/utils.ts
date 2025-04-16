@@ -20,6 +20,7 @@ import {
   MessageType,
   PrismaClient,
 } from "@prisma/jii-texting-server/client";
+import { captureException } from "@sentry/node";
 import {
   MessageInstance,
   MessageStatus,
@@ -250,7 +251,7 @@ export async function sendText(
   twilio: TwilioAPIClient,
   messageSeriesId?: string,
 ) {
-  const { phoneNumber, externalId } = personMetadata;
+  const { phoneNumber, externalId, pseudonymizedId } = personMetadata;
 
   try {
     // TODO(#7745): Get the copy from group table or state-level
@@ -271,6 +272,11 @@ export async function sendText(
       errorMessage,
       errorCode,
     } = await twilio.createMessage(messageBody, phoneNumber);
+
+    console.log(
+      `Created ${messageType} via Twilio client for ${personMetadata.pseudonymizedId}`,
+    );
+
     const messageStatus = mapTwilioStatusToInternalStatus(status);
     // Note: the timezone we get from Twilio doesn't matter because Prisma converts
     // to UTC under the hood on creation of dates
@@ -318,9 +324,15 @@ export async function sendText(
       });
     }
 
+    console.log(
+      `Persisted ${messageType} message in DB for ${personMetadata.pseudonymizedId}`,
+    );
     return sid;
   } catch (e) {
-    console.log(`Error in sendText for ${externalId}: ${e}`);
+    console.log(
+      `Encountered error in sending ${messageType} to ${personMetadata.pseudonymizedId}`,
+    );
+    captureException(`Error in sendText for ${pseudonymizedId}: ${e}`);
     return undefined;
   }
 }
@@ -378,10 +390,17 @@ async function handleLatestMessageTypeIsInitialText(
   dryRun = true,
   latestMessageSeriesId?: string,
 ): Promise<ScriptAction> {
+  const { pseudonymizedId } = personMetadata;
+  console.log(
+    `Processing handleLatestMessageTypeIsInitialText for ${pseudonymizedId}`,
+  );
   // If the last message we sent was a sucessfully delivered initial text,
   // then send an eligibility text.
   if (latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS) {
-    if (dryRun) return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    if (dryRun) {
+      console.log(`Skipped sending eligibility message for ${pseudonymizedId}`);
+      return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    }
 
     const message = await sendText(
       MessageType.ELIGIBILITY_TEXT,
@@ -391,6 +410,10 @@ async function handleLatestMessageTypeIsInitialText(
       workflowExecutionId,
       prisma,
       twilio,
+    );
+
+    console.log(
+      `Executed sendText logic for eligibility text to ${pseudonymizedId}`,
     );
 
     if (message) {
@@ -406,7 +429,10 @@ async function handleLatestMessageTypeIsInitialText(
     latestMessageAttemptStatus === MessageAttemptStatus.FAILURE &&
     shouldRetry
   ) {
-    if (dryRun) return ScriptAction.INITIAL_MESSAGE_SENT;
+    if (dryRun) {
+      console.log(`Skipped resending initial message for ${pseudonymizedId}`);
+      return ScriptAction.INITIAL_MESSAGE_SENT;
+    }
 
     const message = await sendText(
       MessageType.INITIAL_TEXT,
@@ -417,6 +443,10 @@ async function handleLatestMessageTypeIsInitialText(
       prisma,
       twilio,
       latestMessageSeriesId,
+    );
+
+    console.log(
+      `Executed sendText logic for resending initial text to ${pseudonymizedId}`,
     );
 
     if (message) {
@@ -459,13 +489,22 @@ async function handleLatestMessageTypeIsEligibilityText(
   dryRun = true,
   latestMessageSeriesId?: string,
 ): Promise<ScriptAction> {
+  const { pseudonymizedId } = personMetadata;
+  console.log(
+    `Processing handleLatestMessageTypeIsEligibilityText for ${pseudonymizedId}`,
+  );
   // If the latest eligibility text succeeded, but the person's group is different,
   // then send a new eligibility text
   if (
     latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS &&
-    currentGroupId === previousGroupId
+    currentGroupId !== previousGroupId
   ) {
-    if (dryRun) return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    if (dryRun) {
+      console.log(
+        `Skipped sending eligibility message for new group for ${pseudonymizedId}`,
+      );
+      return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    }
 
     const message = await sendText(
       MessageType.ELIGIBILITY_TEXT,
@@ -475,6 +514,10 @@ async function handleLatestMessageTypeIsEligibilityText(
       workflowExecutionId,
       prisma,
       twilio,
+    );
+
+    console.log(
+      `Executed sendText logic for sending eligibility text for new group to ${pseudonymizedId}`,
     );
 
     if (message) {
@@ -490,7 +533,11 @@ async function handleLatestMessageTypeIsEligibilityText(
     latestMessageAttemptStatus === MessageAttemptStatus.FAILURE &&
     shouldRetry
   ) {
-    if (dryRun) return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    if (dryRun) {
+      console.log(`Skipped resending initial message for ${pseudonymizedId}`);
+      return ScriptAction.ELIGIBILITY_MESSAGE_SENT;
+    }
+
     const message = await sendText(
       MessageType.ELIGIBILITY_TEXT,
       personMetadata,
@@ -500,6 +547,10 @@ async function handleLatestMessageTypeIsEligibilityText(
       prisma,
       twilio,
       latestMessageSeriesId,
+    );
+
+    console.log(
+      `Executed sendText logic for resending eligibility text to ${pseudonymizedId}`,
     );
 
     if (message) {
@@ -542,6 +593,9 @@ export async function processIndividualJii(
   // TODO(#7573): Reevaluate when JII can be in multiple topics
   // Assumes that we only have one topic/group pairing per JII
   const currentGroup = jii.groups[0];
+  console.log(
+    `Processing ${jii.pseudonymizedId} in ${currentGroup.groupName} where dryRun is ${dryRun}`,
+  );
 
   const personMetadata: PersonDataForMessage = {
     givenName: jii.givenName,
@@ -549,6 +603,7 @@ export async function processIndividualJii(
     externalId: jii.externalId,
     poName: jii.poName,
     district: jii.district,
+    pseudonymizedId: jii.pseudonymizedId,
   };
 
   if (personHasOptedOut(jii)) return ScriptAction.SKIPPED;
@@ -562,6 +617,7 @@ export async function processIndividualJii(
   if (!messageSeriesList.length) {
     if (dryRun) {
       // Don't send requests to Twilio on a dry run, but omit the action that would've been taken
+      console.log(`Skipped sending initial message for ${jii.pseudonymizedId}`);
       return ScriptAction.INITIAL_MESSAGE_SENT;
     }
 
@@ -574,6 +630,10 @@ export async function processIndividualJii(
       workflowExecutionId,
       prisma,
       twilio,
+    );
+
+    console.log(
+      `Executed sendText logic for sending initial text to ${jii.pseudonymizedId}`,
     );
 
     if (message) {

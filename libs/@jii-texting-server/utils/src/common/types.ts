@@ -79,6 +79,7 @@ export const PERSON_SELECT_DATA_FOR_MESSAGE = {
     phoneNumber: true,
     district: true,
     externalId: true,
+    pseudonymizedId: true,
   } satisfies Prisma.PersonSelectScalar,
 };
 
