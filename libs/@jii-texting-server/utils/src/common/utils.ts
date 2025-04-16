@@ -65,12 +65,13 @@ export function mapTwilioStatusToInternalStatus(
     case "scheduled":
     case "queued":
     case "sending":
+    case "sent":
       return MessageAttemptStatus.IN_PROGRESS;
     case "failed":
     case "undelivered":
       return MessageAttemptStatus.FAILURE;
     case "delivered":
-    case "sent":
+    case "read":
       return MessageAttemptStatus.SUCCESS;
     default:
       // DISCUSS: Newly added so that we persist the status
@@ -87,11 +88,11 @@ export function mapTwilioStatusToInternalStatus(
  * @returns The MessageAttempt objects with internal ID, twilioMessageSid, status, and date created, ordered by descending createdTimestamp
  */
 export function getOrderedMessageAttempts(
-  messageSeries: MessageSeriesWithAttemptsAndGroup[],
+  messageSeries: MessageSeriesWithAttemptsAndGroup,
 ) {
-  return messageSeries
-    .flatMap((series) => series.messageAttempts)
-    .sort(messageAttemptSortByCreatedTimestampDesc);
+  return messageSeries.messageAttempts.sort(
+    messageAttemptSortByCreatedTimestampDesc,
+  );
 }
 
 /**
@@ -650,8 +651,7 @@ export async function processIndividualJii(
   } = messageSeriesList
     .map((series) => {
       // Get the latest attempt for each series
-      const orderedMessageAttempts =
-        getOrderedMessageAttempts(messageSeriesList);
+      const orderedMessageAttempts = getOrderedMessageAttempts(series);
       const latestMessageAttempt = orderedMessageAttempts[0];
 
       return { series: series, latestAttemptForSeries: latestMessageAttempt };

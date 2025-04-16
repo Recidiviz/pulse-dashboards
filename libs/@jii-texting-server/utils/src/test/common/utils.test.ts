@@ -62,7 +62,7 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
       },
     };
 
-    const result = getOrderedMessageAttempts([messageSeries]);
+    const result = getOrderedMessageAttempts(messageSeries);
     expect(result[0].id).toBe("attempt-id-1");
   });
 
@@ -94,7 +94,7 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
       },
     };
 
-    const result = getOrderedMessageAttempts([messageSeries]);
+    const result = getOrderedMessageAttempts(messageSeries);
     expect(
       result.map(
         (attempt: {
@@ -105,81 +105,5 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
         }) => attempt.id,
       ),
     ).toEqual(["attempt-id-2", "attempt-id-1"]);
-  });
-
-  test("multiple MessageSeries with multiple attempts", async () => {
-    const messageSeriesOne: MessageSeriesWithAttemptsAndGroup = {
-      messageType: MessageType.INITIAL_TEXT,
-      id: "message-series-id",
-      personExternalId: "person-ext-id-1",
-      groupId: "group-id-1",
-      messageAttempts: [
-        {
-          id: "attempt-id-1",
-          twilioMessageSid: "initial-msg-id-1",
-          status: MessageAttemptStatus.IN_PROGRESS,
-          createdTimestamp: new Date("2025-03-04"),
-        },
-        {
-          id: "attempt-id-2",
-          twilioMessageSid: "initial-msg-id-1",
-          status: MessageAttemptStatus.SUCCESS,
-          createdTimestamp: new Date("2025-03-05"),
-        },
-      ],
-      group: {
-        id: "group-id-1",
-        topicId: "topic-id",
-        status: Status.ACTIVE,
-        messageCopyTemplate: "Template",
-      },
-    };
-
-    const messageSeriesTwo: MessageSeriesWithAttemptsAndGroup = {
-      messageType: MessageType.ELIGIBILITY_TEXT,
-      id: "message-series-id-2",
-      personExternalId: "person-ext-id-1",
-      groupId: "group-id-1",
-      messageAttempts: [
-        {
-          id: "eligibility-attempt-id-1",
-          twilioMessageSid: "eligibility-msg-id-1",
-          status: MessageAttemptStatus.FAILURE,
-          createdTimestamp: new Date("2025-03-06"),
-        },
-        {
-          id: "eligibility-attempt-id-2",
-          twilioMessageSid: "eligibility-msg-id-2",
-          status: MessageAttemptStatus.FAILURE,
-          createdTimestamp: new Date("2025-03-07"),
-        },
-      ],
-      group: {
-        id: "group-id-1",
-        topicId: "topic-id",
-        status: Status.ACTIVE,
-        messageCopyTemplate: "Template",
-      },
-    };
-
-    const result = getOrderedMessageAttempts([
-      messageSeriesOne,
-      messageSeriesTwo,
-    ]);
-    expect(
-      result.map(
-        (attempt: {
-          id: string;
-          twilioMessageSid: string;
-          status: MessageAttemptStatus;
-          createdTimestamp: Date;
-        }) => attempt.id,
-      ),
-    ).toEqual([
-      "eligibility-attempt-id-2",
-      "eligibility-attempt-id-1",
-      "attempt-id-2",
-      "attempt-id-1",
-    ]);
   });
 });

@@ -180,7 +180,7 @@ describe("one person in DB with initial text sent once", () => {
   test("validate Twilio getMessage call", async () => {
     vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
       sid: "message-sid-1",
-      status: "sent",
+      status: "delivered",
     } as MessageInstance);
 
     await processJii({
@@ -198,7 +198,7 @@ describe("one person in DB with initial text sent once", () => {
     beforeEach(() => {
       vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
         sid: "message-sid-1",
-        status: "sent",
+        status: "delivered",
       } as MessageInstance);
     });
 
@@ -443,7 +443,7 @@ describe("one person in DB with three initial text attempts", () => {
     beforeEach(() => {
       vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
         sid: "message-sid-3",
-        status: "sent",
+        status: "delivered",
       } as MessageInstance);
     });
 
@@ -570,7 +570,7 @@ describe("one person with initial and eligibility message series", () => {
   test("validate Twilio getMessage call", async () => {
     vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
       sid: "message-sid-2",
-      status: "sent",
+      status: "delivered",
     } as MessageInstance);
 
     await processJii({
@@ -590,7 +590,7 @@ describe("one person with initial and eligibility message series", () => {
   test("validate MessageAttempt is updated", async () => {
     vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
       sid: "message-sid-2",
-      status: "sent",
+      status: "delivered",
     } as MessageInstance);
 
     await processJii({
@@ -607,81 +607,98 @@ describe("one person with initial and eligibility message series", () => {
     expect(newMessageAttempt.status).toBe(MessageAttemptStatus.SUCCESS);
   });
 
-  describe("eligiblity text is successful and group changes after", () => {
+  describe("eligiblity text is successful", () => {
     beforeEach(async () => {
-      await testPrismaClient.messageAttempt.update({
-        where: {
-          twilioMessageSid: "message-sid-2",
-        },
-        data: {
-          status: MessageAttemptStatus.SUCCESS,
-        },
-      });
+      vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+        sid: "message-sid-2",
+        status: "delivered",
+      } as MessageInstance);
+    });
 
-      await testPrismaClient.person.update({
-        where: {
-          personId: fakePersonOne.personId,
-        },
-        data: {
-          groups: { set: [] },
-        },
-      });
+    describe("group stays the same", () => {
+      test("eligibility text not sent on next run", async () => {
+        await processJii({
+          stateCode: StateCode.US_ID,
+          dryRun: false,
+          workflowExecutionId: fakeWorkflowExecutionOne.id,
+        });
 
-      const newGroup = await testPrismaClient.group.findFirstOrThrow({
-        where: {
-          groupName: fakeMissingDA.groupName,
-        },
-      });
-
-      // Change the existing person's group in the setup
-      await testPrismaClient.person.update({
-        where: {
-          personId: fakePersonOne.personId,
-        },
-        data: {
-          groups: {
-            connect: {
-              id: newGroup.id,
+        const personWithMessageSeries =
+          await testPrismaClient.person.findFirstOrThrow({
+            where: {
+              personId: fakePersonOne.personId,
             },
-          },
-        },
-        select: { groups: true },
+            include: {
+              messageSeries: true,
+            },
+          });
+
+        expect(personWithMessageSeries.messageSeries.length).toBe(2);
       });
     });
 
-    test("eligiblity text sent for new group", async () => {
-      vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
-        sid: "message-sid-2",
-        status: "sent",
-      } as MessageInstance);
-
-      vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
-        body: "message body",
-        status: "queued",
-        sid: "twilio-message-sid",
-        dateCreated: new Date(),
-        dateSent: new Date(),
-        errorMessage: null,
-        errorCode: null,
-      } as unknown as MessageInstance);
-
-      await processJii({
-        stateCode: StateCode.US_ID,
-        dryRun: false,
-        workflowExecutionId: fakeWorkflowExecutionOne.id,
-      });
-
-      const personWithMessageSeries =
-        await testPrismaClient.person.findFirstOrThrow({
+    describe("group changes", () => {
+      beforeEach(async () => {
+        await testPrismaClient.person.update({
           where: {
             personId: fakePersonOne.personId,
           },
-          include: {
-            messageSeries: true,
+          data: {
+            groups: { set: [] },
           },
         });
 
-      expect(personWithMessageSeries.messageSeries.length).toBe(3);
+        const newGroup = await testPrismaClient.group.findFirstOrThrow({
+          where: {
+            groupName: fakeMissingDA.groupName,
+          },
+        });
+
+        // Change the existing person's group in the setup
+        await testPrismaClient.person.update({
+          where: {
+            personId: fakePersonOne.personId,
+          },
+          data: {
+            groups: {
+              connect: {
+                id: newGroup.id,
+              },
+            },
+          },
+          select: { groups: true },
+        });
+      });
+
+      test("eligiblity text sent for new group", async () => {
+        vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+          body: "message body",
+          status: "queued",
+          sid: "twilio-message-sid",
+          dateCreated: new Date(),
+          dateSent: new Date(),
+          errorMessage: null,
+          errorCode: null,
+        } as unknown as MessageInstance);
+
+        await processJii({
+          stateCode: StateCode.US_ID,
+          dryRun: false,
+          workflowExecutionId: fakeWorkflowExecutionOne.id,
+        });
+
+        const personWithMessageSeries =
+          await testPrismaClient.person.findFirstOrThrow({
+            where: {
+              personId: fakePersonOne.personId,
+            },
+            include: {
+              messageSeries: true,
+            },
+          });
+
+        expect(personWithMessageSeries.messageSeries.length).toBe(3);
+      });
     });
   });
 });
@@ -698,7 +715,7 @@ test.each([
   async (district, groupName) => {
     vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
       sid: "message-sid-1",
-      status: "sent",
+      status: "delivered",
     } as MessageInstance);
 
     const group = await testPrismaClient.group.findFirstOrThrow({

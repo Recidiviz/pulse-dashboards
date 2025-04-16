@@ -23,11 +23,7 @@ import { processJii } from "~@jii-texting/processor/scripts/process-jii";
 // Define CLI
 const program = new Command()
   .option("-s, --state-code <code>", "State code to run the Cloud Run job for")
-  .option(
-    "-d, --dry-run [run]",
-    "Whether or not this is a dry run; messages will not be sent if equal to `true`",
-    true,
-  )
+  .option("-d, --dry-run", "Run the script without sending messages")
   .option(
     "-w, --workflow-execution-id <id>",
     "The Workflow execution ID that triggered this script",
@@ -39,7 +35,7 @@ function main() {
 
   processJii({
     stateCode: options.stateCode as StateCode,
-    dryRun: Boolean(options.dryRun),
+    dryRun: options.dryRun ? true : false,
     workflowExecutionId: options.workflowExecutionId as string,
   });
 }
