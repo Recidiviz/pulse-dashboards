@@ -39,6 +39,7 @@ import AcknowledgementCheckbox from "../../../../src/components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";
 import { formatDateToISO, formatWorkflowsDate } from "../../../utils";
 import { Client, Opportunity } from "../../../WorkflowsStore";
+import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { reasonsIncludesOtherKey } from "../../utils/workflowsUtils";
 import { DenialConfirmationModalProps } from "../DenialConfirmationModals";
 
@@ -196,7 +197,9 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
       setPhase("FAILED");
     else if (phase === "SUBMITTED" && omsSnoozeStatus === "SUCCESS") {
       setPhase("SUCCEEDED");
-      toast("Note successfully synced to DOCSTARS");
+      toast(
+        <OpportunityStatusUpdateToast toastText="Note successfully synced to DOCSTARS" />,
+      );
       onSuccessFn();
     }
   }, [opportunity, phase, onSuccessFn]);

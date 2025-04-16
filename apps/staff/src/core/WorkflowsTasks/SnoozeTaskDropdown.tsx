@@ -30,6 +30,7 @@ import styled from "styled-components/macro";
 
 import { SupervisionTask, SupervisionTaskType } from "../../WorkflowsStore";
 import { WorkflowsTasksConfig } from "../models/types";
+import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 
 const Wrapper = styled.div`
   grid-column-start: 2;
@@ -117,7 +118,7 @@ const snoozeTaskToast = (
   return toast(
     (t) => (
       <ToastWrapper>
-        {toastText}
+        <OpportunityStatusUpdateToast toastText={toastText} />
         <UndoButton
           type="submit"
           onClick={() => {

@@ -30,6 +30,7 @@ import { useFeatureVariants } from "../../components/StoreProvider";
 import { formatDateToISO } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
 import { getSnoozeUntilDate } from "../../WorkflowsStore/utils";
+import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 import { OtherReasonInput } from "../sharedComponents";
 import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
@@ -156,7 +157,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const postDenialToast = () => {
     if (submittedOpportunityStatus) {
       toast(
-        `${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`,
+        <OpportunityStatusUpdateToast
+          toastText={`${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
+        />,
         {
           id: "denialToast", // prevent duplicate toasts
           position: "bottom-left",

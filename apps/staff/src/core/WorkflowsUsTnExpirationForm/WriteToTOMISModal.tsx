@@ -41,6 +41,7 @@ import {
   PagePreview,
   SmallPagePreviewWithHover,
 } from "../controls/WorkflowsNotePreview";
+import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 
 const TOMIS_FONT_FAMILY = "Verdana, sans-serif";
 
@@ -227,7 +228,11 @@ export const WriteToTOMISModal = observer(function WriteToTOMISModal({
         });
         // Once OMS writeback has successfully occurred, mark this person as Pending
         opportunity.markSubmittedAndGenerateToast().then((message) => {
-          if (message) toast(message, { position: "bottom-left" });
+          if (message) {
+            toast(<OpportunityStatusUpdateToast toastText={message} />, {
+              position: "bottom-left",
+            });
+          }
         });
       })
       .catch((e: Error) => {

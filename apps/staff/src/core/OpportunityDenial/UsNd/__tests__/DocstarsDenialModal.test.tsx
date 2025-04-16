@@ -26,6 +26,7 @@ import { useRootStore } from "../../../../components/StoreProvider";
 import { Opportunity } from "../../../../WorkflowsStore";
 import { OTHER_KEY } from "../../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../../__tests__/testUtils";
+import { OpportunityStatusUpdateToast } from "../../../opportunityStatusUpdateToast";
 import {
   buildJustificationReasons,
   DocstarsDenialModal,
@@ -316,7 +317,7 @@ describe("DocstarsDenialModal", () => {
     await waitFor(() => {
       expect(onSuccessFn).toHaveBeenCalledOnce();
       expect(toast).toHaveBeenCalledExactlyOnceWith(
-        "Note successfully synced to DOCSTARS",
+        <OpportunityStatusUpdateToast toastText="Note successfully synced to DOCSTARS" />,
       );
     });
   });

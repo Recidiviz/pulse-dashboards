@@ -31,6 +31,7 @@ import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
+import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 
 const StatusAwareToggle = styled(DropdownToggle).attrs({
   kind: "secondary",
@@ -88,7 +89,9 @@ export const MenuButton = observer(function MenuButton({
     await opportunity.deleteSubmitted();
     // The person may become either Eligible or Almost Eligible
     toast(
-      `Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${config.label}`,
+      <OpportunityStatusUpdateToast
+        toastText={`Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${config.label}`}
+      />,
       {
         id: "eligibleToast", // prevent duplicate toasts
         position: "bottom-left",
@@ -99,7 +102,7 @@ export const MenuButton = observer(function MenuButton({
   const markSubmittedAndToast = async (subcategory?: string) => {
     opportunity.markSubmittedAndGenerateToast(subcategory).then((message) => {
       if (message) {
-        toast(message, {
+        toast(<OpportunityStatusUpdateToast toastText={message} />, {
           id: "submittedToast", // prevent duplicate toasts
           position: "bottom-left",
           duration: 7000,

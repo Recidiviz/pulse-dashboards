@@ -30,6 +30,7 @@ import { Opportunity } from "../../WorkflowsStore";
 import { getLinkToForm } from "../../WorkflowsStore/utils";
 import { desktopLinkGate } from "../desktopLinkGate";
 import { MenuButton } from "../OpportunityDenial/MenuButton";
+import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { WORKFLOWS_PATHS } from "../views";
 import { TextLink } from "../WorkflowsMilestones/styles";
@@ -152,7 +153,9 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       if (submittedOpportunityStatus) {
         if (opportunity.subcategory) {
           toast(
-            `${opportunity.person.displayName} is marked as "${opportunity.subcategoryHeadingFor(opportunity.subcategory)}" in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`,
+            <OpportunityStatusUpdateToast
+              toastText={`${opportunity.person.displayName} is marked as "${opportunity.subcategoryHeadingFor(opportunity.subcategory)}" in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
+            />,
             {
               position: "bottom-left",
               duration: 7000,
@@ -160,7 +163,9 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
           );
         } else {
           toast(
-            `${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`,
+            <OpportunityStatusUpdateToast
+              toastText={`${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
+            />,
             {
               position: "bottom-left",
               duration: 7000,
