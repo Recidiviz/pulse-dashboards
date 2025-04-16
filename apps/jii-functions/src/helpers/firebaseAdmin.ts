@@ -81,16 +81,6 @@ export async function getFirebaseToken(
   });
 }
 
-/**
- * Looks up and returns the Firestore document data matching the specified resident.
- * @returns undefined if missing, or an untyped object because the ~datatypes lib
- * is not currently compatible with this environment
- */
-export async function lookupResident(stateCode: string, residentId: string) {
-  const firestore = firebaseAdmin.firestore(getFirebaseApp());
-  const residentDoc = await firestore
-    .doc(`residents/${stateCode.toLowerCase()}_${residentId}`)
-    .get();
-
-  return residentDoc.data();
+export function getFirestore() {
+  return firebaseAdmin.firestore(getFirebaseApp());
 }

@@ -104,10 +104,18 @@ export const metadataSchema = z
     },
   );
 
+/**
+ * Represents fields expected to be found in the Auth0 app metadata object
+ */
 export type UserAppMetadata = z.infer<typeof metadataSchema>;
+
+const tokenAuthUserSchema = metadataSchema.and(
+  z.object({ name: z.string().optional() }),
+);
+export type TokenAuthUser = z.infer<typeof tokenAuthUserSchema>;
 
 export const tokenAuthResponseSchema = z.object({
   firebaseToken: z.string(),
-  user: metadataSchema,
+  user: tokenAuthUserSchema,
 });
 export type TokenAuthResponse = z.infer<typeof tokenAuthResponseSchema>;
