@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Loading } from "@recidiviz/design-system";
+import { Redirect } from "../Redirect/Redirect";
 
 export const PageEdovoLanding = () => {
-  // TODO(#7749): handle auth state
-  return <Loading />;
+  return <Redirect to="/" />;
 };

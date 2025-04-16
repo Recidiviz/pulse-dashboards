@@ -54,19 +54,23 @@ export async function decryptToken(
   response: Response,
   next: NextFunction,
 ) {
-  const encryptedToken = getRequestToken(request);
-  // only encrypted tokens can be logged because they contain PII
-  logInfo("Encrypted ID token:", encryptedToken);
+  try {
+    const encryptedToken = getRequestToken(request);
+    // only encrypted tokens can be logged because they contain PII
+    logInfo("Encrypted ID token:", encryptedToken);
 
-  // decrypting gets us a signed JWT to pass on to the next middleware
-  const { plaintext: decryptedToken } = await compactDecrypt(
-    encryptedToken,
-    createPrivateKey(EDOVO_TOKEN_PRIVATE_KEY.value()),
-  );
+    // decrypting gets us a signed JWT to pass on to the next middleware
+    const { plaintext: decryptedToken } = await compactDecrypt(
+      encryptedToken,
+      createPrivateKey(EDOVO_TOKEN_PRIVATE_KEY.value()),
+    );
 
-  // updating this header in place because that's where the JWT middleware will look
-  request.headers.authorization = `Bearer ${decryptedToken}`;
-  next();
+    // updating this header in place because that's where the JWT middleware will look
+    request.headers.authorization = `Bearer ${decryptedToken}`;
+    next();
+  } catch (e) {
+    next(`${e}`);
+  }
 }
 
 /**

@@ -20,6 +20,7 @@ import { matchPath } from "react-router-dom";
 
 import { tokenAuthResponseSchema, UserAppMetadata } from "~auth0-jii";
 import {
+  castToError,
   HydrationState,
   isHydrated,
   isHydrationInProgress,
@@ -75,7 +76,6 @@ export class EdovoAuthHandler implements AuthHandler {
       },
     });
 
-    // TODO(#7749): handle error responses, set error override
     if (response.ok) {
       const { firebaseToken, user } = tokenAuthResponseSchema.parse(
         await response.json(),
@@ -86,6 +86,14 @@ export class EdovoAuthHandler implements AuthHandler {
         this.userProfile = user;
         this.hydrationStateOverride = undefined;
       });
+    } else {
+      const authError =
+        (await response.json())["error"] ??
+        new Error("Unable to verify your account");
+      this.hydrationStateOverride = {
+        status: "failed",
+        error: castToError(authError),
+      };
     }
   }
 
