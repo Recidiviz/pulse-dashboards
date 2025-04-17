@@ -24,7 +24,7 @@
 import * as Path from "node:path";
 
 import chalk from "chalk";
-import execa from "execa";
+import { execaSync } from "execa";
 import { fileURLToPath } from "url";
 
 import clean from "./clean.mjs";
@@ -39,7 +39,7 @@ const args = [...process.argv.slice(2)];
 
 console.log(chalk.dim("> "), `atmos ${args.join(" ")}`);
 
-execa.sync("atmos", args, {
+execaSync("atmos", args, {
   stdio: "inherit",
   env: { FORCE_COLOR: "1" },
 });
