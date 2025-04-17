@@ -42,7 +42,7 @@ const CheckboxContainer = styled.div`
 const ContentContainer = styled.div`
   display: grid;
   grid-template: 13px 13px repeat(${GRID_ROW_COUNT}, 1fr) / 36% 13% 3% 35% 13%;
-  height: 465px;
+  height: 425px;
   font-size: ${rem(8)};
 `;
 
@@ -69,10 +69,7 @@ const CheckListRow = ({
         leftBorder={true}
         rowSpan={labelSpan}
       >
-        <label
-          htmlFor={field}
-          style={{ marginBottom: "0", whiteSpace: "pre-wrap" }}
-        >
+        <label htmlFor={field} style={{ marginBottom: "0" }}>
           {label}
         </label>
       </BasicCell>
