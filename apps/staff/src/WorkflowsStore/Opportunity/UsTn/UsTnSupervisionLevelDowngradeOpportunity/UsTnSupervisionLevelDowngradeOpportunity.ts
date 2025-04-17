@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/react";
 import { DocumentData } from "firebase/firestore";
 
+import { OpportunityValidationError } from "../../../../errors";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
@@ -39,8 +41,21 @@ export class UsTnSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       ).parse(record);
 
     if (parsedRecord !== undefined) {
-      const validateRecord = getSLDValidator(client);
-      validateRecord(parsedRecord);
+      try {
+        const validateRecord = getSLDValidator(client);
+        validateRecord(parsedRecord);
+      } catch (e) {
+        if (e instanceof OpportunityValidationError) {
+          // If the opportunity record and client supervision levels differ, capture it in
+          // sentry and update the opportunity with the client's formatted supervision level
+          captureException(e);
+          parsedRecord.eligibleCriteria.supervisionLevelHigherThanAssessmentLevel.supervisionLevel =
+            client.supervisionLevel;
+        } else {
+          // If there's some other kind of error, abort creating this opportunity
+          throw e;
+        }
+      }
     }
 
     super(client, "supervisionLevelDowngrade", client.rootStore, parsedRecord);
