@@ -47,5 +47,5 @@ export const US_ID_CONFIG: GeoConfig = {
   omsSystem: "Atlas",
   ExternalOpportunityLogo: FindhelpLogo,
   orgName: "IDOC",
-  infoPageLink: "recidiviz.org/sentencing/idaho",
+  infoPageLink: "https://www.recidiviz.org/sentencing/idaho",
 };

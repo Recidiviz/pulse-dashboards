@@ -91,7 +91,7 @@ export const Title = styled.div`
 export const SnapshotContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 `;
 
 export const SectionTitle = styled.div<{ noMargin?: boolean }>`
@@ -156,11 +156,11 @@ export const HistoricalDetails = styled(CaseOverview)`
 `;
 
 export const HistoricalBreakdown = styled.div`
-  margin-bottom: 76px;
+  margin-bottom: 32px;
 `;
 
 export const CumulativeBreakdown = styled.div`
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 `;
 
 export const DispositionCardWrapper = styled.div`
