@@ -50,4 +50,5 @@ export type GeoConfig = {
     React.SVGProps<SVGSVGElement>
   >;
   infoPageLink?: string;
+  convertDistrictToDistrictCodeFn?: (district?: string | null) => string | null;
 };

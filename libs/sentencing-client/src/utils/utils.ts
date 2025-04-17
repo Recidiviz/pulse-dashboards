@@ -126,7 +126,7 @@ export const convertCountyToDistrictCode = (county?: string) => {
 /**
  * Converts a district name (e.g. "DISTRICT 4") to the district code (e.g. "D4")
  */
-export const convertDistrictToDistrictCode = (district?: string) => {
+export const convertDistrictToDistrictCode = (district?: string | null) => {
   const match = district?.match(/district (\d+)/i);
   return match ? `D${match[1]}` : null;
 };

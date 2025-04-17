@@ -161,6 +161,7 @@ export class CaseDetailsPresenter implements Hydratable {
         filterEligibleOpportunities(
           opportunity,
           this.caseEligibilityAttributes,
+          this.geoConfig.convertDistrictToDistrictCodeFn,
         ),
     );
   }

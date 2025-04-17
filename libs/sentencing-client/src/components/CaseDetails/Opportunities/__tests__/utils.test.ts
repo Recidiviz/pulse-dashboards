@@ -22,6 +22,7 @@ import {
   filterEligibleOpportunities,
   formatPhoneNumberWithExtension,
 } from "../utils";
+import { convertDistrictToDistrictCode } from "./../../../../utils/utils";
 
 describe("filterEligibleOpportunities", () => {
   const opportunity: Opportunities[number] = {
@@ -78,7 +79,13 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
   });
 
   it("should return true for opportunities within the district and false for opportunities outside the district", () => {
@@ -102,11 +109,23 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     attributes.countyOfSentencing = "District 7 - Wallace"; // does not match criterion
     attributes.districtOfResidence = "DISTRICT 7"; // does not match criterion
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should fallback on matching district of residence if district of residence and sentencing differ", () => {
@@ -129,13 +148,31 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     attributes.districtOfResidence = "DISTRICT 2"; // district (of residence) is the fallback and does not match criteron
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     attributes.countyOfSentencing = "District 2 - Caldera"; // district sentencing matches district of residence and both do not match criteron
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should fallback on matching district of sentencing if district of residence is null", () => {
@@ -159,13 +196,31 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     attributes.districtOfSentencing = "District 2";
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     attributes.districtOfResidence = "DISTRICT 1";
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
   });
 
   it("should return false if age criteria are not met", () => {
@@ -188,16 +243,40 @@ describe("filterEligibleOpportunities", () => {
       needsToBeAddressed: ["Education"],
       lsirScore: 10,
     };
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     attributes.age = 66; // above maxAge
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     attributes.age = 65; // at maxAge
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     attributes.age = 18; // at minAge
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
   });
 
   it("should return false if developmental disability criterion is not met", () => {
@@ -221,7 +300,13 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should return false if sex offense criterion is not met, and true if the criterion is met", () => {
@@ -245,15 +330,33 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     attributes.hasPreviousSexOffenseConviction = false; // matches criterion
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     attributes.isCurrentOffenseSexual = true; // current offense flag now does not match criterion
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should return false if violent offense criterion is not met, and true if the criterion is met", () => {
@@ -277,15 +380,33 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     attributes.hasPreviousViolentOffenseConviction = false; // matches criterion
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     attributes.isCurrentOffenseViolent = true; // current offense flag now does not match criterion
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should return false if criminal history criterion is not met", () => {
@@ -309,7 +430,13 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should return false if plea criterion is not met", () => {
@@ -333,7 +460,13 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should return false if veteran status criterion is not met", () => {
@@ -357,7 +490,13 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should handle mental health diagnosis criterion cases", () => {
@@ -380,14 +519,32 @@ describe("filterEligibleOpportunities", () => {
       needsToBeAddressed: ["Education"],
       lsirScore: 10,
     };
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     // If criteria is "Any", `mentalHealthDiagnoses` must contain one item that is not "None"
     attributes.mentalHealthDiagnoses = [NONE_OPTION];
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     attributes.mentalHealthDiagnoses = ["BipolarDisorder"];
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     // If criteria has a non-Any value, the `mentalHealthDiagnoses` must include at least one item from the list
     const updatedOpportunity: Opportunities[number] = {
@@ -399,14 +556,22 @@ describe("filterEligibleOpportunities", () => {
     };
 
     attributes.mentalHealthDiagnoses = ["PsychoticDisorder"];
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      false,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     attributes.mentalHealthDiagnoses = ["DelusionalDisorder", "Schizophrenia"];
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      true,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
   });
 
   it("should handle substance use disorder criterion cases", () => {
@@ -429,10 +594,22 @@ describe("filterEligibleOpportunities", () => {
       needsToBeAddressed: ["Education"],
       lsirScore: 10,
     };
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     attributes.substanceUseDisorderDiagnosis = "Moderate"; // matches criterion
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     // If criteria is "Any", the `substanceUseDisorderDiagnosis` should not be `null`
     let updatedOpportunity: Opportunities[number] = {
@@ -440,13 +617,21 @@ describe("filterEligibleOpportunities", () => {
       diagnosedSubstanceUseDisorderCriterion: "Any",
     };
     attributes.substanceUseDisorderDiagnosis = null;
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      false,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
     attributes.substanceUseDisorderDiagnosis = "Severe";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      true,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     // If criteria is "Mild", `substanceUseDisorderDiagnosis` can be Mild | Moderate | Severe
     updatedOpportunity = {
@@ -454,21 +639,37 @@ describe("filterEligibleOpportunities", () => {
       diagnosedSubstanceUseDisorderCriterion: "Mild",
     };
     attributes.substanceUseDisorderDiagnosis = null;
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      false,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
     attributes.substanceUseDisorderDiagnosis = "Mild";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      true,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
     attributes.substanceUseDisorderDiagnosis = "Moderate";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      true,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
     attributes.substanceUseDisorderDiagnosis = "Severe";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      true,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     // If criteria is "Moderate", `substanceUseDisorderDiagnosis` can be Moderate | Severe
     updatedOpportunity = {
@@ -476,21 +677,37 @@ describe("filterEligibleOpportunities", () => {
       diagnosedSubstanceUseDisorderCriterion: "Moderate",
     };
     attributes.substanceUseDisorderDiagnosis = null;
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      false,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
     attributes.substanceUseDisorderDiagnosis = "Mild";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      false,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
     attributes.substanceUseDisorderDiagnosis = "Moderate";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      true,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
     attributes.substanceUseDisorderDiagnosis = "Severe";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      true,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     // If criteria is "Severe", `substanceUseDisorderDiagnosis` can only be Severe
     updatedOpportunity = {
@@ -498,21 +715,37 @@ describe("filterEligibleOpportunities", () => {
       diagnosedSubstanceUseDisorderCriterion: "Severe",
     };
     attributes.substanceUseDisorderDiagnosis = null;
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      false,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
     attributes.substanceUseDisorderDiagnosis = "Mild";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      false,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
     attributes.substanceUseDisorderDiagnosis = "Moderate";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      false,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
     attributes.substanceUseDisorderDiagnosis = "Severe";
-    expect(filterEligibleOpportunities(updatedOpportunity, attributes)).toBe(
-      true,
-    );
+    expect(
+      filterEligibleOpportunities(
+        updatedOpportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
   });
 
   it("should return false if ASAM level of care recommendation criterion is not met", () => {
@@ -536,7 +769,13 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 10,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should handle needs addressed criterion cases", () => {
@@ -559,14 +798,32 @@ describe("filterEligibleOpportunities", () => {
       needsToBeAddressed: ["AngerManagement"], // does not match criterion
       lsirScore: 10,
     };
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     // should bypass needs addressed criterion if no needs are selected for client
     attributes.needsToBeAddressed = [];
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     attributes.needsToBeAddressed = ["AngerManagement", "Education"];
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
   });
 
   it("should return false if LSIR score criterion is below min criterion", () => {
@@ -590,7 +847,13 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 4, // below minLsirScoreCriterion
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should return false if LSIR score is above max criterion", () => {
@@ -614,7 +877,13 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 30, // above maxLsirScoreCriterion
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should return true if LSIR score is at/within the criterion range", () => {
@@ -637,15 +906,33 @@ describe("filterEligibleOpportunities", () => {
       needsToBeAddressed: ["Education"],
       lsirScore: 5, // at maxLsirScoreCriterion
     };
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     // At minLsirScoreCriterion
     attributes.lsirScore = 25;
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     // Within minLsirScoreCriterion and maxLsirScoreCriterion
     attributes.lsirScore = 20;
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
   });
 
   it("should handle no eligiblity criteria correctly", () => {
@@ -702,7 +989,11 @@ describe("filterEligibleOpportunities", () => {
     };
 
     expect(
-      filterEligibleOpportunities(opportunityWithNoCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithNoCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(true);
   });
 
@@ -727,7 +1018,13 @@ describe("filterEligibleOpportunities", () => {
       lsirScore: 30,
     };
 
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
   });
 
   it("should skip evaluating excluded attributes", () => {
@@ -752,23 +1049,47 @@ describe("filterEligibleOpportunities", () => {
     };
 
     // `isVeteran` attribute does not meet the opportunity criteria
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     // Exclude `isVeteran` from attributes
     delete attributes["isVeteran"];
 
     // Should skip evaluating the `isVeteran` criteria and return `true` as all other criteria match
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
 
     // Set age attribute to not match the opportunity criteria
     attributes.age = 70;
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(false);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(false);
 
     // Exclude `age` from attributes
     delete attributes["age"];
 
     // Should skip evaluating the `age` criteria and return `true` as all other criteria match
-    expect(filterEligibleOpportunities(opportunity, attributes)).toBe(true);
+    expect(
+      filterEligibleOpportunities(
+        opportunity,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
+    ).toBe(true);
   });
 
   it("should handle genders criterion", () => {
@@ -826,19 +1147,31 @@ describe("filterEligibleOpportunities", () => {
     };
 
     expect(
-      filterEligibleOpportunities(opportunityWithGendersCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithGendersCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(true);
 
     attributes.clientGender = "MALE";
 
     expect(
-      filterEligibleOpportunities(opportunityWithGendersCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithGendersCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(false);
 
     attributes.clientGender = "TRANS_MALE";
 
     expect(
-      filterEligibleOpportunities(opportunityWithGendersCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithGendersCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(true);
   });
 
@@ -898,14 +1231,22 @@ describe("filterEligibleOpportunities", () => {
     };
 
     expect(
-      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithCountiesCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(true);
 
     attributes.countyOfSentencing = "Unknown";
     attributes.countyOfResidence = "Unknown";
 
     expect(
-      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithCountiesCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(false);
 
     // Should fail validation because we're only changing county of sentencing, and if it's not the same as county of residence,
@@ -914,27 +1255,43 @@ describe("filterEligibleOpportunities", () => {
     attributes.countyOfResidence = "Random";
 
     expect(
-      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithCountiesCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(false);
 
     // Should now pass validation because both county of sentencing & residence is the same and included in the `counties` list
     attributes.countyOfResidence = "Twin Falls";
     expect(
-      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithCountiesCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(true);
 
     attributes.countyOfSentencing = "Caldwell";
     attributes.countyOfResidence = "Caldwell";
 
     expect(
-      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithCountiesCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(true);
 
     attributes.countyOfSentencing = "Caldwell";
     attributes.countyOfResidence = "UNKNOWN";
 
     expect(
-      filterEligibleOpportunities(opportunityWithCountiesCriteria, attributes),
+      filterEligibleOpportunities(
+        opportunityWithCountiesCriteria,
+        attributes,
+        convertDistrictToDistrictCode,
+      ),
     ).toBe(true);
   });
 });

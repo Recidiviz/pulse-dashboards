@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { Opportunities } from "../../../api";
-import { convertDistrictToDistrictCode } from "../../../utils/utils";
 import {
   AGE_KEY,
   ASAM_CARE_RECOMMENDATION_KEY,
@@ -80,6 +79,7 @@ export const getEligibilityCriteria = (opportunity: Opportunities[number]) => {
 export const filterEligibleOpportunities = (
   opportunity: Opportunities[number],
   attributes: EligibilityAttributes,
+  convertDistrictToDistrictCodeFn?: (district?: string | null) => string | null,
 ) => {
   const {
     minAge,
@@ -157,9 +157,10 @@ export const filterEligibleOpportunities = (
     hasMatchingDistricts || !districtOfResidence
       ? districtOfSentencing
       : districtOfResidence;
-  const isDistrictEligible =
-    districtName &&
-    opportunityDistrict === convertDistrictToDistrictCode(districtName);
+  const district = convertDistrictToDistrictCodeFn
+    ? convertDistrictToDistrictCodeFn(districtName)
+    : districtName;
+  const isDistrictEligible = district && opportunityDistrict === district;
 
   if (!isDistrictEligible) return false;
 

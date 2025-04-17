@@ -18,6 +18,7 @@
 import FindhelpLogo from "../../components/assets/findhelp.svg?react";
 import { RecommendationOptionType } from "../../components/CaseDetails/Recommendations/constants";
 import { RecommendationType } from "../../components/CaseDetails/types";
+import { convertDistrictToDistrictCode } from "../../utils/utils";
 import { GeoConfig } from "../types";
 import { generateIdahoSummary } from "./utils";
 
@@ -48,4 +49,5 @@ export const US_ID_CONFIG: GeoConfig = {
   ExternalOpportunityLogo: FindhelpLogo,
   orgName: "IDOC",
   infoPageLink: "https://www.recidiviz.org/sentencing/idaho",
+  convertDistrictToDistrictCodeFn: convertDistrictToDistrictCode,
 };
