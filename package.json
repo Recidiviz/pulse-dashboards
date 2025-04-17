@@ -340,10 +340,10 @@
   "scripts": {
     "prepare": "husky",
     "lint-import-paths": "node tools/lint-import-paths.mjs",
-    "atmos": "node libs/atmos/atmos-executor.js",
-    "atmos:plan": "node libs/atmos/atmos-executor.js terraform plan",
-    "atmos:apply": "node libs/atmos/atmos-executor.js terraform apply",
-    "atmos:vendor-pull": "node libs/atmos/atmos-executor.js vendor pull",
+    "atmos": "node libs/atmos/atmos-executor.mjs",
+    "atmos:plan": "node libs/atmos/atmos-executor.mjs terraform plan",
+    "atmos:apply": "node libs/atmos/atmos-executor.mjs terraform apply",
+    "atmos:vendor-pull": "node libs/atmos/atmos-executor.mjs vendor pull",
     "deploy": "node tools/deploy.mjs"
   },
   "nx": {},

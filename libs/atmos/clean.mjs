@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const fs = require("fs");
-const path = require("path");
-const chalk = require("chalk");
+import chalk from "chalk";
+import fs from "fs";
+import path from "path";
 
 const AtmosFilesToClean = [
   /^\.terraform$/,
@@ -48,7 +48,7 @@ function walkDirectory(dirPath, accumulateMatcher, accumulator) {
   }, accumulator);
 }
 
-module.exports = function cleanAtmosFiles() {
+export default function cleanAtmosFiles() {
   const filesToClean = walkDirectory(
     "./components/terraform",
     (file) =>
@@ -64,4 +64,4 @@ module.exports = function cleanAtmosFiles() {
       clean(file);
     }
   }
-};
+}

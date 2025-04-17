@@ -21,12 +21,16 @@
 // yarn atmos:apply env-secrets -s recidiviz-dashboard-staging--shared-infra
 // GITHUB_TOKEN=$(gh auth token) yarn atmos:vendor-pull
 
-const execa = require("execa");
-const chalk = require("chalk");
-const clean = require("./clean");
+import * as Path from "node:path";
+
+import chalk from "chalk";
+import execa from "execa";
+import { fileURLToPath } from "url";
+
+import clean from "./clean.mjs";
 
 if (!process.cwd().endsWith("libs/atmos")) {
-  process.chdir("./libs/atmos");
+  process.chdir(Path.dirname(fileURLToPath(import.meta.url)));
 }
 
 clean();

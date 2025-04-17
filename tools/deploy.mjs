@@ -389,9 +389,9 @@ if (
           stack = "recidiviz-dashboard-staging--sentencing-demo";
         }
 
-        await $`yarn atmos:apply apps/sentencing -s ${stack} -- -auto-approve \\\
-          -var server_container_version=${currentRevision} \\\
-          -var migrate_db_container_version=${currentRevision} \\\
+        await $`yarn atmos:apply apps/sentencing -s ${stack} -- -auto-approve \
+          -var server_container_version=${currentRevision} \
+          -var migrate_db_container_version=${currentRevision} \
           -var import_container_version=${currentRevision}`.pipe(
           process.stdout,
         );
