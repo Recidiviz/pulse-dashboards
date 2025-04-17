@@ -17,6 +17,7 @@
 
 import {
   US_CA,
+  US_IA,
   US_PA,
   US_TX,
 } from "../../RootStore/TenantStore/dashboardTenants";
@@ -39,7 +40,7 @@ import {
 import { FILTER_TYPES, METRIC_MODES } from "./constants";
 
 export type FilterOptions = Record<
-  PathwaysTenants | "US_DEMO" | "US_PA" | "US_CA" | "US_TX",
+  PathwaysTenants | "US_DEMO" | "US_PA" | "US_CA" | "US_TX" | "US_IA",
   PopulationFilters
 >;
 
@@ -1344,6 +1345,56 @@ export const TxPopulationFilterOptions: PopulationFilters = {
   },
 };
 
+export const IaPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+  [FILTER_TYPES.SUPERVISION_LEVEL]: {
+    ...DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL],
+    options: [
+      { label: "Level 0", value: "LEVEL 0" },
+      { label: "Level 1", value: "LEVEL 1" },
+      { label: "Level 2", value: "LEVEL 2" },
+      { label: "Level 3", value: "LEVEL 3" },
+      { label: "Level 4", value: "LEVEL 4" },
+      { label: "Level 5", value: "LEVEL 5" },
+      { label: "Low Risk Probation", value: "LOW RISK PROBATION" },
+      { label: "Global Positioning", value: "GLOBAL POSITIONING" },
+      { label: "Absconded", value: "ABSCONDED" },
+      { label: "Minimum Risk Program", value: "MINIMUM RISK PROGRAM" },
+      {
+        label: "Detained by non-Iowa Jurisdiction",
+        value: "DETAINED BY NON-IOWA JURISDICTION",
+      },
+      { label: "In Jail", value: "IN JAIL" },
+      { label: "Escaped", value: "ESCAPED" },
+      { label: "Paroled to Detainer", value: "PAROLED TO DETAINER" },
+      { label: "In Prison", value: "IN PRISON" },
+      { label: "Day Reporting", value: "DAY REPORTING" },
+      { label: "Jail (Designated Site)", value: "JAIL (DESIGNATED SITE)" },
+      { label: "Intensive Supervision", value: "INTENSIVE SUPERVISION" },
+      {
+        label: "Detained by Another State",
+        value: "DETAINED BY ANOTHER STATE",
+      },
+      { label: "Electronic Monitoring", value: "ELECTRONIC MONITORING" },
+      { label: "Radio Frequency", value: "RADIO FREQUENCY" },
+      {
+        label: "Global Positioning Satellite",
+        value: "GLOBAL POSITIONING SATELLITE",
+      },
+      {
+        label: "Day Reporting Supervision",
+        value: "DAY REPORTING SUPERVISION",
+      },
+      {
+        label: "Concurrent Prison Sentence",
+        value: "CONCURRENT PRISON SENTENCE",
+      },
+      { label: "Warrant", value: "WARRANT" },
+      { label: "Diversion Program", value: "DIVERSION PROGRAM" },
+    ],
+  },
+};
+
 export const DemoPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.AGE_GROUP]: {
@@ -1518,6 +1569,7 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
 
 const filterOptions: FilterOptions = {
   [US_CA]: CaPopulationFilterOptions,
+  [US_IA]: IaPopulationFilterOptions,
   [US_ID]: IdPopulationFilterOptions,
   [US_MO]: MoPopulationFilterOptions,
   [US_ND]: NdPopulationFilterOptions,
