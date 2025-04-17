@@ -31,6 +31,7 @@
         "tsConfig": "apps/jii-functions/tsconfig.app.json",
         "generatePackageJson": true,
         "target": "node20",
+        "sourcemap": true,
         "esbuildConfig": "{projectRoot}/esbuild.config.js",
         "assets": ["{workspaceRoot}/.yarnrc.yml"]
       },

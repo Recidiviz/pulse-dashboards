@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const { build } = require("esbuild");
 const fs = require("fs");
 const path = require("path");
+const { sentryEsbuildPlugin } = require("@sentry/esbuild-plugin");
+const { execSync } = require("child_process");
+const dotenv = require("dotenv");
 
 // we need to translate dotenv files into the build output
 const dotenvPlugin = {
@@ -48,7 +50,27 @@ const dotenvPlugin = {
   },
 };
 
-build({
-  sourcemap: true,
-  plugins: [dotenvPlugin],
-});
+const plugins = [dotenvPlugin];
+
+if (process.env.SENTRY_ENV !== "development") {
+  const secretVars = dotenv.parse(
+    execSync(`sops decrypt ${path.join(__dirname, ".enc.env.build")}`),
+  );
+  if (secretVars.SENTRY_AUTH_TOKEN) {
+    // Sentry sourcemap plugin must be last
+    plugins.push(
+      sentryEsbuildPlugin({
+        org: "recidiviz-inc",
+        project: "jii-backend",
+        authToken: secretVars.SENTRY_AUTH_TOKEN,
+        sourcemaps: {
+          assets: ["**/*.cjs", "**/*.cjs.map"],
+        },
+      }),
+    );
+  }
+}
+
+module.exports = {
+  plugins,
+};
