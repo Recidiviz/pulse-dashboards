@@ -45,8 +45,7 @@ exports.onExecutePostLogin = async (event, api) => {
     (email?.length ?? 0) > 1 && emailSplit[emailSplit.length - 1].toLowerCase();
 
   const DENY_MESSAGE =
-    "There was a problem authorizing your account. Please contact your organization administrator. " +
-    "If you don’t know your administrator, contact feedback@recidiviz.org.";
+    "There was a problem authorizing your account. Please contact feedback@recidiviz.org.";
 
   if (app_metadata.skip_sync_permissions) {
     return;

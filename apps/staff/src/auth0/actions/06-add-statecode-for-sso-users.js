@@ -11,8 +11,7 @@ exports.onExecutePostLogin = async (event, api) => {
   });
   const { app_metadata } = event.user;
   const DENY_MESSAGE =
-    "There was a problem authorizing your account. Please contact your organization administrator. " +
-    "If you don’t know your administrator, contact feedback@recidiviz.org.";
+    "There was a problem authorizing your account. Please contact feedback@recidiviz.org.";
 
   if (!app_metadata.state_code) {
     const connectionToStateCode = {

@@ -57,7 +57,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     environment: event.secrets.SENTRY_ENV,
   });
   const clientMessage =
-    "There was a problem registering your account. Please contact your organization administrator, if you don’t know your administrator, contact feedback@recidiviz.org.";
+    "There was a problem registering your account. Please contact feedback@recidiviz.org.";
 
   /** Extract domain for registration **/
   const email = event.user.email;
