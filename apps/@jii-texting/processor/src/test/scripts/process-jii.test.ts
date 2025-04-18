@@ -20,6 +20,7 @@ import {
   MessageType,
   StateCode,
 } from "@prisma/jii-texting-server/client";
+import moment from "moment";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 
 import { processJii } from "~@jii-texting/processor/scripts/process-jii";
@@ -511,6 +512,140 @@ describe("one person in DB with three initial text attempts", () => {
   });
 });
 
+describe("one person with initial and eligibility message series with MANUAL group", () => {
+  beforeEach(async () => {
+    const topic = await testPrismaClient.topic.findFirstOrThrow();
+
+    const group = await testPrismaClient.group.create({
+      data: {
+        groupName: "MANUAL",
+        id: "MANUAL",
+        topic: { connect: { id: topic.id } },
+      },
+    });
+
+    const person = await testPrismaClient.person.findFirstOrThrow({
+      where: { personId: fakePersonOne.personId },
+      include: { groups: true },
+    });
+
+    // Insert first MessageSeries
+    await testPrismaClient.messageSeries.create({
+      data: {
+        messageType: MessageType.INITIAL_TEXT,
+        group: { connect: { id: group.id } },
+        person: { connect: { personId: person?.personId } },
+        messageAttempts: {
+          create: [
+            {
+              twilioMessageSid: "message-sid-1",
+              body: "Hello world",
+              phoneNumber: person.phoneNumber,
+              status: MessageAttemptStatus.SUCCESS,
+              createdTimestamp: fakeWorkflowExecutionOne.workflowExecutionTime,
+              workflowExecutionId: fakeWorkflowExecutionOne.id,
+            },
+          ],
+        },
+      },
+    });
+
+    // Insert second MessageSeries
+    await testPrismaClient.messageSeries.create({
+      data: {
+        messageType: MessageType.ELIGIBILITY_TEXT,
+        group: { connect: { id: group.id } },
+        person: { connect: { personId: person?.personId } },
+        messageAttempts: {
+          create: [
+            {
+              twilioMessageSid: "message-sid-2",
+              body: "Hello world",
+              status: MessageAttemptStatus.SUCCESS,
+              phoneNumber: person.phoneNumber,
+              createdTimestamp: fakeWorkflowExecutionTwo.workflowExecutionTime,
+              workflowExecutionId: fakeWorkflowExecutionTwo.id,
+            },
+          ],
+        },
+      },
+    });
+
+    vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({
+      sid: "message-sid-2",
+      status: "delivered",
+    } as MessageInstance);
+  });
+
+  test("latest text sent within last 90 days", async () => {
+    vi.useFakeTimers();
+    const fiveDaysFromLatestMessageAttempt = moment(
+      fakeWorkflowExecutionTwo.workflowExecutionTime,
+    ).add(moment.duration({ days: 5 }));
+
+    vi.setSystemTime(fiveDaysFromLatestMessageAttempt.toDate());
+
+    await processJii({
+      stateCode: StateCode.US_ID,
+      dryRun: false,
+      workflowExecutionId: fakeWorkflowExecutionOne.id,
+    });
+
+    const personWithMessageSeries =
+      await testPrismaClient.person.findFirstOrThrow({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        include: {
+          messageSeries: true,
+        },
+      });
+
+    expect(personWithMessageSeries.messageSeries.length).toBe(2);
+
+    vi.useRealTimers();
+  });
+
+  test("latest text sent more than 90 days ago", async () => {
+    vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+      body: "message body",
+      status: "queued",
+      sid: "twilio-message-sid",
+      dateCreated: new Date(),
+      dateSent: new Date(),
+      errorMessage: null,
+      errorCode: null,
+    } as unknown as MessageInstance);
+
+    vi.useFakeTimers();
+    const over90DaysFromLatestMessageAttempt = moment(
+      fakeWorkflowExecutionTwo.workflowExecutionTime,
+    ).add(moment.duration({ days: 91 }));
+
+    vi.setSystemTime(over90DaysFromLatestMessageAttempt.toDate());
+
+    await processJii({
+      stateCode: StateCode.US_ID,
+      dryRun: false,
+      workflowExecutionId: fakeWorkflowExecutionOne.id,
+    });
+
+    const personWithMessageSeries =
+      await testPrismaClient.person.findFirstOrThrow({
+        where: {
+          personId: fakePersonOne.personId,
+        },
+        include: {
+          messageSeries: true,
+        },
+      });
+
+    expect(personWithMessageSeries.messageSeries.length).toBe(3);
+
+    vi.useRealTimers();
+  });
+});
+
 describe("one person with initial and eligibility message series", () => {
   beforeEach(async () => {
     const person = await testPrismaClient.person.findFirstOrThrow({
@@ -616,7 +751,14 @@ describe("one person with initial and eligibility message series", () => {
     });
 
     describe("group stays the same", () => {
-      test("eligibility text not sent on next run", async () => {
+      test("eligibility text not sent on run within 90 days", async () => {
+        vi.useFakeTimers();
+        const fiveDaysFromLatestMessageAttempt = moment(
+          fakeWorkflowExecutionTwo.workflowExecutionTime,
+        ).add(moment.duration({ days: 5 }));
+
+        vi.setSystemTime(fiveDaysFromLatestMessageAttempt.toDate());
+
         await processJii({
           stateCode: StateCode.US_ID,
           dryRun: false,
@@ -634,6 +776,47 @@ describe("one person with initial and eligibility message series", () => {
           });
 
         expect(personWithMessageSeries.messageSeries.length).toBe(2);
+
+        vi.useRealTimers();
+      });
+
+      test("eligibility text sent if 90 days after", async () => {
+        vi.mocked(TwilioAPIClient.prototype.createMessage).mockResolvedValue({
+          body: "message body",
+          status: "queued",
+          sid: "twilio-message-sid",
+          dateCreated: new Date(),
+          dateSent: new Date(),
+          errorMessage: null,
+          errorCode: null,
+        } as unknown as MessageInstance);
+
+        vi.useFakeTimers();
+        const over90DaysFromLatestMessageAttempt = moment(
+          fakeWorkflowExecutionTwo.workflowExecutionTime,
+        ).add(moment.duration({ days: 91 }));
+
+        vi.setSystemTime(over90DaysFromLatestMessageAttempt.toDate());
+
+        await processJii({
+          stateCode: StateCode.US_ID,
+          dryRun: false,
+          workflowExecutionId: fakeWorkflowExecutionOne.id,
+        });
+
+        const personWithMessageSeries =
+          await testPrismaClient.person.findFirstOrThrow({
+            where: {
+              personId: fakePersonOne.personId,
+            },
+            include: {
+              messageSeries: true,
+            },
+          });
+
+        expect(personWithMessageSeries.messageSeries.length).toBe(3);
+
+        vi.useRealTimers();
       });
     });
 

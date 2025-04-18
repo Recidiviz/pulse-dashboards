@@ -21,6 +21,7 @@ import {
   PrismaClient,
 } from "@prisma/jii-texting-server/client";
 import { captureException } from "@sentry/node";
+import moment from "moment";
 import {
   MessageInstance,
   MessageStatus,
@@ -496,10 +497,7 @@ async function handleLatestMessageTypeIsEligibilityText(
   );
   // If the latest eligibility text succeeded, but the person's group is different,
   // then send a new eligibility text
-  if (
-    latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS &&
-    currentGroupId !== previousGroupId
-  ) {
+  if (latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS) {
     if (dryRun) {
       console.log(
         `Skipped sending eligibility message for new group for ${pseudonymizedId}`,
@@ -572,6 +570,18 @@ async function handleLatestMessageTypeIsEligibilityText(
  */
 function personHasOptedOut(jii: PersonWithMessageSeriesAndGroup) {
   return jii.lastOptOutDate != null;
+}
+
+/**
+ * Returns the difference in days between dateOne and dateTwo.
+ * This will be done like dateOne minus dateTwo, so dateOne < dateTwo, then the result will be negative
+ *
+ * @param dateOne
+ * @param dateTwo
+ * @returns number of days between the two dates
+ */
+function diffInDays(dateOne: Date, dateTwo: Date) {
+  return moment(dateOne).diff(moment(dateTwo), "days");
 }
 
 /**
@@ -666,11 +676,27 @@ export async function processIndividualJii(
   const { groupId: latestMessageGroupId, messageType: latestMessageType } =
     latestMessageSeries;
 
+  const daysSinceLatestMessageAttempt = diffInDays(
+    new Date(),
+    latestMessageAttempt.createdTimestamp,
+  );
+
+  // TODO(#8136): Remove once it's been 90 days since the April manual launch
+  if (
+    latestMessageGroupId === "MANUAL" &&
+    daysSinceLatestMessageAttempt >= 0 &&
+    daysSinceLatestMessageAttempt < 90
+  ) {
+    return ScriptAction.SKIPPED;
+  }
+
   if (
     allTextAttemptsForSeriesFailed(latestMessageSeries) ||
     (latestMessageType === MessageType.ELIGIBILITY_TEXT &&
       latestMessageGroupId === currentGroup.id &&
-      latestMessageAttempt.status === MessageAttemptStatus.SUCCESS)
+      latestMessageAttempt.status === MessageAttemptStatus.SUCCESS &&
+      daysSinceLatestMessageAttempt >= 0 &&
+      daysSinceLatestMessageAttempt < 90)
   )
     return ScriptAction.SKIPPED;
 
