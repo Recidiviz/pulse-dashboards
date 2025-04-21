@@ -19,8 +19,8 @@
  * State Agnostic Constants *
  ****************************/
 export const MAX_RETRY_ATTEMPTS = 3;
-export const BQ_DATASET_ID = "jii_texting";
-export const BQ_REPLIES_VIEW_ID = "incoming_messages";
+export const BQ_DATASET_ID = "twilio_webhook_requests";
+export const BQ_REPLIES_VIEW_ID = "jii_texting_incoming_messages";
 
 /****************************
  * Idaho LSU Constants *

@@ -67,8 +67,12 @@ describe("POST /webhook/twilio/incoming_message/US_ID", () => {
       // Validate person has opted out
       expect(persons[0].lastOptOutDate).not.toBeNull();
 
-      expect(mockDatasetFn).toHaveBeenCalledExactlyOnceWith("jii_texting");
-      expect(mockTableFn).toHaveBeenCalledExactlyOnceWith("incoming_messages");
+      expect(mockDatasetFn).toHaveBeenCalledExactlyOnceWith(
+        "twilio_webhook_requests",
+      );
+      expect(mockTableFn).toHaveBeenCalledExactlyOnceWith(
+        "jii_texting_incoming_messages",
+      );
     });
 
     test("START message from existing person resets lastOptOutDate", async () => {
