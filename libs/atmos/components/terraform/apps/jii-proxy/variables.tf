@@ -35,3 +35,9 @@ variable "server_version" {
   description = "The version tag of the image that we are deploying"
   default     = "latest"
 }
+
+variable "env_vars" {
+  type        = map(string)
+  description = "Environment variables"
+  default     = {}
+}

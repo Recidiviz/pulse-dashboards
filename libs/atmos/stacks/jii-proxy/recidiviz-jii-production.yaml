@@ -19,3 +19,5 @@ components:
     apps/jii-proxy:
       vars:
         artifact_registry_repo: '{{ (atmos.Component "apps/jii-proxy" "recidiviz-jii-staging--jii-proxy-server").vars.artifact_registry_repo }}'
+        env_vars:
+          OPPORTUNITIES_APP_URL: "https://opportunities.app"

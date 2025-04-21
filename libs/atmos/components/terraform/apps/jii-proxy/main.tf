@@ -25,6 +25,12 @@ module "cloud-run" {
   containers = [
     {
       container_image = "${var.artifact_registry_repo}/jii-proxy-server:${var.server_version}"
+      env_vars = [
+        for key, value in var.env_vars : {
+          name  = key
+          value = value
+        }
+      ]
     }
   ]
 

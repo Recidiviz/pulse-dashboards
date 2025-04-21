@@ -29,6 +29,12 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 
+    location / {
+        proxy_pass ${OPPORTUNITIES_APP_URL}/;
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
     # Note: there are a few other directives that could be useful to us that I've seen in sample
     # code, but don't seem to be strictly necessary for this to function. So we don't need to look
     # for them later, listing them here:
