@@ -26,6 +26,18 @@
           {
             "key": "Reporting-Endpoints",
             "value": "csp-endpoint=\"https://o432474.ingest.us.sentry.io/api/5385222/security/?sentry_key=4349c85a99054a4799fb4117d6adea32\""
+          },
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store"
+          },
+          {
+            "key": "Expires",
+            "value": "0"
+          },
+          {
+            "key": "Pragma",
+            "value": "no-cache"
           }
         ]
       }
