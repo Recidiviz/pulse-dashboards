@@ -362,8 +362,10 @@ export class OpportunityPersonListPresenter
 
   get eligibilityDateHeader() {
     // Header text for the "eligibility date" column in table view
-    const { eligibilityDateText } = this.config;
-    return eligibilityDateText ?? "Eligibility Date";
+    return (
+      this.config.eligibilityDateTextForTab(this.activeTab) ??
+      "Eligibility Date"
+    );
   }
 
   get releaseDateHeader() {

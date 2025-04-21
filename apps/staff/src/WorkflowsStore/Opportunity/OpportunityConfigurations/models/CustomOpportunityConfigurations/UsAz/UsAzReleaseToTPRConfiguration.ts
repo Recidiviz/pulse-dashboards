@@ -17,10 +17,19 @@
 
 import { OpportunityType } from "~datatypes";
 
+import { OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsAzReleaseToTPRConfiguration extends ApiOpportunityConfiguration {
   get linkedOverdueOpportunityType(): OpportunityType {
     return "usAzOverdueForACISTPR";
+  }
+
+  eligibilityDateTextForTab(tab?: OpportunityTab): string | undefined {
+    if (tab === "Fast Trackers" || tab === "Eligible Now") {
+      return "TPR Date";
+    } else {
+      return "TPR or Projected TPR";
+    }
   }
 }

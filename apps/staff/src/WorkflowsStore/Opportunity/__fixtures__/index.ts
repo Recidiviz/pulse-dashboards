@@ -59,6 +59,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   priority: "HIGH",
   tabGroups: { "ELIGIBILITY STATUS": [] },
   eligibilityTextForCount: (count: number) => "cool",
+  eligibilityDateTextForTab: () => "Eligibility Date",
   omsCriteriaHeader: "OMS Requirements",
   eligibleCriteriaCopy: {},
   ineligibleCriteriaCopy: {},

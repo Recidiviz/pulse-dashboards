@@ -104,6 +104,7 @@ export const mockOpportunity: Opportunity<Client> = {
         count,
       );
     },
+    eligibilityDateTextForTab: () => "Eligibility Date",
     callToAction:
       "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
     compareBy: [{ field: "reviewStatus" }],

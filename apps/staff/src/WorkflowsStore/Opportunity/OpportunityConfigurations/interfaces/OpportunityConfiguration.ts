@@ -47,6 +47,7 @@ export interface OpportunityConfiguration {
   eligibilityTextForCount: (count: number) => string;
   denialButtonText?: string;
   eligibilityDateText?: string;
+  eligibilityDateTextForTab: (tab: OpportunityTab) => string | undefined;
   hideDenialRevert?: boolean;
   isEnabled: boolean;
   methodologyUrl: string;

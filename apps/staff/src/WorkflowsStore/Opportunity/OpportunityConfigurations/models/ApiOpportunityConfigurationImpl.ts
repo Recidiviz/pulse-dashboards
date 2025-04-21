@@ -140,9 +140,14 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get denialButtonText() {
     return this.configurationObject.denialText;
   }
+
   get eligibilityDateText() {
     return this.configurationObject.eligibilityDateText;
   }
+  eligibilityDateTextForTab(tab?: OpportunityTab): string | undefined {
+    return this.eligibilityDateText;
+  }
+
   get hideDenialRevert() {
     return this.configurationObject.hideDenialRevert;
   }
