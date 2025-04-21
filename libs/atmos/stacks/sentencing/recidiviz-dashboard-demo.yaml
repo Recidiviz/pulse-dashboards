@@ -12,21 +12,13 @@ vars:
   project_id: "{{ .settings.context.project_id }}"
   location: "{{ .settings.context.location }}"
 
-# Defines which catalogs to import into this configuration to create in recidiviz-dashboard-staging
-# import:
-
 terraform:
-  # Describes where the Terraform state file for these centrally-managed components is stored
-  # https://atmos.tools/core-concepts/components/terraform/backends#google-cloud-storage-backend
-  backend_type: gcs
   backend:
     gcs:
       bucket: recidiviz-dashboard-demo-tf-state
-  # This provides the default configuration for our Terraform providers
-  # https://atmos.tools/core-concepts/components/terraform/providers
-  providers:
-    google:
-      project: recidiviz-dashboard-staging
+
+import:
+  - ../@defaults/terraform-backend
 
 components:
   terraform:

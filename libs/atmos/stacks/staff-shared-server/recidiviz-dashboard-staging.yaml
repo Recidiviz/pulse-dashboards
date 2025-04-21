@@ -1,0 +1,24 @@
+# Infrastructure configuration for components for the sentencing app that will be deployed to staging
+settings:
+  context:
+    project_id: recidiviz-dashboard-staging
+    project_number: 626425930051
+    product: staff-shared-server
+    location: us-central1
+
+# The variables set here are automatically provided to any components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+
+# Defines which catalogs to import into this configuration to create in recidiviz-dashboard-staging
+import:
+  - ../@defaults/terraform-backend
+  - ../@defaults/vendor/artifact-registry
+
+components:
+  terraform:
+    artifact_registry:
+      vars:
+        project_id: "{{ .settings.context.project_id }}"
+        location: "{{ .settings.context.location }}"
+        repository_id: staff-shared-server

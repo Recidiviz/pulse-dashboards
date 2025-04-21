@@ -1,0 +1,19 @@
+# This defaults file configures an artifact registry repository with some sensible cleanup values
+components:
+  terraform:
+    artifact_registry:
+      metadata:
+        component: vendor/artifact-registry
+      vars:
+        format: DOCKER
+        cleanup_policies:
+          delete-untagged:
+            action: DELETE
+            id: delete-untagged
+            condition:
+              tag_state: UNTAGGED
+          keep-minimum-versions:
+            action: KEEP
+            id: keep-minimum-versions
+            most_recent_versions:
+              keep_count: 15

@@ -1,0 +1,14 @@
+# This defaults file configures our Terraform backend + google provider for the
+# enclosing stack's {{ .settings.context.project_id }}
+terraform:
+  # Describes where the Terraform state file for these centrally-managed components is stored
+  # https://atmos.tools/core-concepts/components/terraform/backends#google-cloud-storage-backend
+  backend_type: gcs
+  backend:
+    gcs:
+      bucket: "{{ .settings.context.project_id }}-tf-state"
+  # This provides the default configuration for our Terraform providers
+  # https://atmos.tools/core-concepts/components/terraform/providers
+  providers:
+    google:
+      project: "{{ .settings.context.project_id }}"

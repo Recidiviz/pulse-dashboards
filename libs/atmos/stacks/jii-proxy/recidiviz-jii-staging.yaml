@@ -12,44 +12,19 @@ vars:
   project_id: "{{ .settings.context.project_id }}"
   location: "{{ .settings.context.location }}"
 
-# Defines which catalogs to import into this configuration to create in recidiviz-jii-staging
-# import:
-
-terraform:
-  # Describes where the Terraform state file for these centrally-managed components is stored
-  # https://atmos.tools/core-concepts/components/terraform/backends#google-cloud-storage-backend
-  backend_type: gcs
-  backend:
-    gcs:
-      bucket: recidiviz-jii-staging-tf-state
-  # This provides the default configuration for our Terraform providers
-  # https://atmos.tools/core-concepts/components/terraform/providers
-  providers:
-    google:
-      project: recidiviz-jii-staging
+import:
+  - ../@defaults/terraform-backend
+  - ../@defaults/vendor/artifact-registry
 
 components:
   terraform:
     artifact_registry:
       vars:
         repository_id: "{{ .settings.context.registry_repo_name }}"
-        format: DOCKER
-        cleanup_policies:
-          delete-untagged:
-            action: DELETE
-            id: delete-untagged
-            condition:
-              tag_state: UNTAGGED
-          keep-minimum-versions:
-            action: KEEP
-            id: keep-minimum-versions
-            most_recent_versions:
-              keep_count: 15
         members:
           readers:
             - serviceAccount:service-{{ .settings.context.production_project_number }}@serverless-robot-prod.iam.gserviceaccount.com
-      metadata:
-        component: vendor/artifact-registry
+
     apps/jii-proxy:
       vars:
         artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'

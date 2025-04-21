@@ -12,21 +12,9 @@ settings:
 vars:
   project_id: "{{ .settings.context.project_id }}"
 
-# Defines which catalogs to import into this configuration to create in recidiviz-dashboard-staging
-# import:
-
-terraform:
-  # Describes where the Terraform state file for these centrally-managed components is stored
-  # https://atmos.tools/core-concepts/components/terraform/backends#google-cloud-storage-backend
-  backend_type: gcs
-  backend:
-    gcs:
-      bucket: recidiviz-dashboard-production-tf-state
-  # This provides the default configuration for our Terraform providers
-  # https://atmos.tools/core-concepts/components/terraform/providers
-  providers:
-    google:
-      project: recidiviz-dashboard-production
+import:
+  - ../@defaults/terraform-backend
+  - ../@defaults/vendor/artifact-registry
 
 components:
   terraform:
@@ -50,11 +38,20 @@ components:
           jii-texting-etl-data: "serviceAccount:{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com,serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
       metadata:
         component: vendor/cloud-storage-bucket
-    vendor/artifact-registry:
+
+    artifact_registry:
       vars:
         location: us-central1
         format: DOCKER
         repository_id: "{{ .settings.context.registry_repo_name }}"
+      # This component was moved from vendor/artifact-registry to artifact_registry in our atmos configuration
+      # Configure Terraform to use the original workspace key so we don't need to recreate state
+      metadata:
+        terraform_workspace: "{{ .stack }}"
+      backend:
+        gcs:
+          prefix: vendor-artifact-registry
+
     apps/jii-texting:
       vars:
         project_number: "{{ .settings.context.project_number }}"

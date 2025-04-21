@@ -20,11 +20,10 @@ import fs from "fs";
 import path from "path";
 
 const AtmosFilesToClean = [
-  /^\.terraform$/,
-  /^\.terraform\.lock\.hcl$/,
   /^.+\.tfvars\.json$/,
   /^providers_override\.tf\.json$/,
   /^backend\.tf\.json$/,
+  /^\.planfile$/,
 ];
 
 function clean(file) {
