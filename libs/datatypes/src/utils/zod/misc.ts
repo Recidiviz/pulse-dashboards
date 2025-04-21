@@ -22,3 +22,17 @@ export function nullishAsUndefined<T extends z.ZodTypeAny>(schema: T) {
     return output === null ? undefined : output;
   });
 }
+
+export const getReadableSupervisionLocation = (
+  location: string | undefined | null,
+) =>
+  location &&
+  [
+    "NOT_APPLICABLE",
+    "EXTERNAL_UNKNOWN",
+    "UNKNOWN",
+    "NULL",
+    "UNKNOWN LOCATION",
+  ].includes(location.toUpperCase().trim())
+    ? "N/A"
+    : location;

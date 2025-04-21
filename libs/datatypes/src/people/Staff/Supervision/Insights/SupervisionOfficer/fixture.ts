@@ -154,6 +154,18 @@ export const rawSupervisionOfficerFixture = [
     email: "officer7@recidiviz.org",
     district: "Unit 2",
   },
+  {
+    externalId: "so11",
+    pseudonymizedId: "hashed-so11",
+    fullName: {
+      givenNames: "Jacquline",
+      surname: "Fordman",
+    },
+    supervisorExternalIds: [supervisionOfficerSupervisorsFixture[3].externalId],
+    avgDailyPopulation: 7.7,
+    email: "officer8@recidiviz.org",
+    district: "NOT_APPLICABLE",
+  },
 ] satisfies RawSupervisionOfficer[];
 
 export const supervisionOfficerFixture = rawSupervisionOfficerFixture.map(

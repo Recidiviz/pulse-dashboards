@@ -17,6 +17,7 @@
 
 import { z } from "zod";
 
+import { getReadableSupervisionLocation } from "../../../../../utils/zod";
 import { addDisplayName } from "../../../../utils/addDisplayName";
 import { fullNameSchema } from "../../../../utils/fullNameSchema";
 
@@ -27,8 +28,14 @@ export const supervisionOfficerSupervisorSchema = z
     fullName: fullNameSchema,
     pseudonymizedId: z.string(),
     hasOutliers: z.boolean(),
-    supervisionLocationForListPage: z.string().nullable(),
-    supervisionLocationForSupervisorPage: z.string().nullable(),
+    supervisionLocationForListPage: z
+      .string()
+      .nullable()
+      .transform((l) => getReadableSupervisionLocation(l)),
+    supervisionLocationForSupervisorPage: z
+      .string()
+      .nullable()
+      .transform((l) => getReadableSupervisionLocation(l)),
   })
   .transform(addDisplayName);
 

@@ -39,14 +39,14 @@ exports[`function: SupervisionOfficerRawFactory > should generate realistic supe
     "avgDailyPopulation": 43,
     "displayName": "Monique Mayert",
     "district": "Unit 1",
-    "email": "officerso9@recidiviz.org",
-    "externalId": "so9",
+    "email": "officerso10@recidiviz.org",
+    "externalId": "so10",
     "fullName": {
       "givenNames": "Monique",
       "middleNames": undefined,
       "surname": "Mayert",
     },
-    "pseudonymizedId": "hashed-so9",
+    "pseudonymizedId": "hashed-so10",
     "supervisorExternalIds": [
       "nbgC8L",
     ],

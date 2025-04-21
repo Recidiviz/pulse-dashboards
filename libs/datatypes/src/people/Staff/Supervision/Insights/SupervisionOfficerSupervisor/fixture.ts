@@ -62,6 +62,24 @@ export const rawSupervisionOfficerSupervisorFixture: RawSupervisionOfficerSuperv
       hasOutliers: false,
       email: null,
     },
+    {
+      fullName: { givenNames: "Cora", surname: "Matterson" },
+      externalId: "cmatterson567",
+      supervisionLocationForListPage: "EXTERNAL_UNKNOWN",
+      supervisionLocationForSupervisorPage: null,
+      pseudonymizedId: "hashed-cmatterson567",
+      hasOutliers: false,
+      email: null,
+    },
+    {
+      fullName: { givenNames: "Jared", surname: "Williams" },
+      externalId: "jwilliams345",
+      supervisionLocationForListPage: null,
+      supervisionLocationForSupervisorPage: "NULL",
+      pseudonymizedId: "hashed-jwilliams345",
+      hasOutliers: false,
+      email: null,
+    },
   ];
 export const supervisionOfficerSupervisorsFixture =
   rawSupervisionOfficerSupervisorFixture.map((b) =>

@@ -64,3 +64,35 @@ exports[`transformations 4`] = `
   "supervisionLocationForSupervisorPage": null,
 }
 `;
+
+exports[`transformations 5`] = `
+{
+  "displayName": "Cora Matterson",
+  "email": null,
+  "externalId": "cmatterson567",
+  "fullName": {
+    "givenNames": "Cora",
+    "surname": "Matterson",
+  },
+  "hasOutliers": false,
+  "pseudonymizedId": "hashed-cmatterson567",
+  "supervisionLocationForListPage": "N/A",
+  "supervisionLocationForSupervisorPage": null,
+}
+`;
+
+exports[`transformations 6`] = `
+{
+  "displayName": "Jared Williams",
+  "email": null,
+  "externalId": "jwilliams345",
+  "fullName": {
+    "givenNames": "Jared",
+    "surname": "Williams",
+  },
+  "hasOutliers": false,
+  "pseudonymizedId": "hashed-jwilliams345",
+  "supervisionLocationForListPage": null,
+  "supervisionLocationForSupervisorPage": "N/A",
+}
+`;
