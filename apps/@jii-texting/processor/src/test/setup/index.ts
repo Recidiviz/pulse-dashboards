@@ -24,6 +24,7 @@ import { afterEach, beforeEach, vi } from "vitest";
 
 import { seed } from "~@jii-texting/processor/test/setup/seed";
 import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
+import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting-server/utils";
 
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 
@@ -42,9 +43,18 @@ async function resetDb(prismaClient: PrismaClient) {
 beforeEach(async () => {
   await resetDb(testPrismaClient);
   await seed(testPrismaClient);
+  vi.useFakeTimers();
+
+  // Set the system to be later than the earliest time we want to send messages
+  vi.setSystemTime(
+    new Date(
+      Date.UTC(2025, 3, 1, EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS + 1, 0, 0),
+    ),
+  );
 });
 
 afterEach(() => {
   vi.clearAllMocks();
   vi.restoreAllMocks();
+  vi.useRealTimers();
 });

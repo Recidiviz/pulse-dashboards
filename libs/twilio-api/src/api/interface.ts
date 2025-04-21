@@ -20,7 +20,7 @@ import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 export interface ITwilioAPI {
   createMessage(
     body: string,
-    serviceId: string,
     recipientPhoneNumber: string,
+    sendAt?: Date,
   ): Promise<MessageInstance>;
 }

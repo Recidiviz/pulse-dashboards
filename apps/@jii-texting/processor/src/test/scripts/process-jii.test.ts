@@ -25,6 +25,7 @@ import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 
 import { processJii } from "~@jii-texting/processor/scripts/process-jii";
 import { testPrismaClient } from "~@jii-texting/processor/test/setup/index";
+import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting-server/utils/common/constants";
 import {
   fakeMissingDA,
   fakePersonOne,
@@ -36,7 +37,7 @@ import { TwilioAPIClient } from "~twilio-api";
 
 vi.mock("~twilio-api");
 
-vi.stubEnv("TWILIO_MESSAGING_SERVICE_SID_US_ID", "");
+vi.stubEnv("TWILIO_MESSAGING_SERVICE_SID_US_ID", "test-msg-service-sid");
 
 describe("one person in DB without prior messages, thus send initial text", () => {
   test("validate Twilio createMessage call", async () => {
@@ -64,6 +65,44 @@ describe("one person in DB without prior messages, thus send initial text", () =
       Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
     `);
     expect(spy.mock.calls[0][1]).toBe(fakePersonOne.phoneNumber);
+    expect(spy.mock.calls[0][2]).toBeUndefined();
+  });
+
+  test("validate Twilio createMessage for schedule send message", async () => {
+    // Set the system time to be earlier than the earliest time we want to send the message
+    vi.setSystemTime(
+      new Date(
+        Date.UTC(2025, 3, 1, EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS - 1, 0, 0),
+      ),
+    );
+
+    const spy = vi
+      .spyOn(TwilioAPIClient.prototype, "createMessage")
+      .mockResolvedValue({
+        sid: "twilio-message-sid",
+        status: "scheduled",
+      } as MessageInstance);
+
+    await processJii({
+      stateCode: StateCode.US_ID,
+      dryRun: false,
+      workflowExecutionId: fakeWorkflowExecutionOne.id,
+    });
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy.mock.calls[0][0]).toMatchInlineSnapshot(`
+      "Hi Jane, we’re reaching out on behalf of the Idaho Department of Correction (IDOC). You’re now subscribed to receive updates about potential opportunities such as the Limited Supervision Unit (LSU), which offers a lower level of supervision.
+
+      We’ll let you know by texting this number if you meet the criteria for specific programs. Receiving this message does not mean you’re already eligible for any opportunity.
+
+      If you have questions, reach out to John Doe.
+
+      Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
+    `);
+    expect(spy.mock.calls[0][1]).toBe(fakePersonOne.phoneNumber);
+    expect(spy.mock.calls[0][2]).toStrictEqual(
+      new Date(`2025-04-01T18:00:00.000Z`),
+    );
   });
 
   test("validate Prisma write on Twilio createMessage success", async () => {

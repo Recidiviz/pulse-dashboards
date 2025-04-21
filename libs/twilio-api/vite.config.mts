@@ -35,5 +35,14 @@ export default defineConfig({
       reportsDirectory: "../../coverage/libs/twilio-api",
       provider: "v8",
     },
+    // We need to set this up this way because:
+    // 1. The vitest vscode extension doesn't load any environment variables, so it needs backups
+    // 2. The env variables for local testing and CI are different
+    // NOTE: none of these are true secrets, they are all fine to put in this file
+    env: {
+      SENTRY_DSN:
+        "https://d469d84bb29f6e77828e286a793ede9d@o432474.ingest.us.sentry.io/4508728082890752",
+      SENTRY_ENV: "test",
+    },
   },
 });

@@ -15,9 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { init } from "@sentry/node";
+import sentryTestkit from "sentry-testkit";
 import createTwilioClient, { Twilio } from "twilio";
 
 import { TwilioAPIClient } from "../TwilioAPIClient";
+
+const { testkit, sentryTransport } = sentryTestkit();
+
+export { testkit };
+
+export async function testAndGetSentryReports(expectedLength = 1) {
+  // Use waitFor because sentry-testkit can be async
+  const sentryReports = await vi.waitFor(async () => {
+    const reports = testkit.reports();
+    expect(reports).toHaveLength(expectedLength);
+
+    return reports;
+  });
+
+  return sentryReports;
+}
 
 const mockCreateFn = vi.fn();
 
@@ -32,6 +50,15 @@ vi.mock("twilio");
 describe("TwilioAPIClient", () => {
   beforeEach(() => {
     vi.mocked(createTwilioClient).mockReturnValue(mockTwilioClient);
+
+    init({
+      dsn: process.env["SENTRY_DSN"],
+      transport: sentryTransport,
+    });
+  });
+
+  afterEach(() => {
+    testkit.reset();
   });
 
   test("createMessage with subaccount", async () => {
@@ -52,6 +79,36 @@ describe("TwilioAPIClient", () => {
     expect(mockCreateFn).toHaveBeenCalledExactlyOnceWith({
       body: "Hello",
       to: "phonenumber",
+    });
+  });
+
+  test("scheduled createMessage without subaccount doesn't include MessagingServiceSid", async () => {
+    const client = new TwilioAPIClient("account-sid", "token");
+    await client.createMessage("Hello", "phonenumber", new Date(2025, 4, 1));
+
+    const sentryReports = await testAndGetSentryReports();
+    expect(sentryReports[0].error?.message).toContain(
+      "Attempted to schedule send message without MessagingServiceSid. Check Twilio for messages that might have been sent earlier than expected",
+    );
+
+    expect(mockCreateFn).toHaveBeenCalledExactlyOnceWith({
+      body: "Hello",
+      to: "phonenumber",
+      sendAt: new Date(2025, 4, 1),
+      scheduleType: "fixed",
+    });
+  });
+
+  test("scheduled createMessage with subaccount includes MessagingServiceSid", async () => {
+    const client = new TwilioAPIClient("account-sid", "token", "subaccount");
+    await client.createMessage("Hello", "phonenumber", new Date(2025, 4, 1));
+
+    expect(mockCreateFn).toHaveBeenCalledExactlyOnceWith({
+      body: "Hello",
+      to: "phonenumber",
+      messagingServiceSid: "subaccount",
+      sendAt: new Date(2025, 4, 1),
+      scheduleType: "fixed",
     });
   });
 });

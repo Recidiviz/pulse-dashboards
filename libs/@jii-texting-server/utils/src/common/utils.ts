@@ -35,6 +35,7 @@ import {
   ScriptAction,
 } from "~@jii-texting-server/utils";
 import {
+  EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS,
   MAX_RETRY_ATTEMPTS,
   US_ID_LSU_LEARN_MORE,
   US_ID_LSU_VISIT_LINK,
@@ -263,6 +264,19 @@ export async function sendText(
       groupName,
     );
 
+    // If it's currently earlier than EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS, schedule send the message for later
+    const nowUTC = new Date();
+    const nowUTCHour = nowUTC.getUTCHours();
+
+    let sendAt: Date | undefined = undefined;
+
+    // TODO(#8153): Revisit desired time when adding a new state, topic, or group
+    if (nowUTCHour < EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS) {
+      // Change the Date() by setting the UTC hours to the desired UTC hours for Idaho
+      nowUTC.setUTCHours(EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS);
+      sendAt = nowUTC;
+    }
+
     // Send message via Twilio client
     // TODO(#7574): Schedule send if the job is running at odd hours
     const {
@@ -273,7 +287,7 @@ export async function sendText(
       dateSent,
       errorMessage,
       errorCode,
-    } = await twilio.createMessage(messageBody, phoneNumber);
+    } = await twilio.createMessage(messageBody, phoneNumber, sendAt);
 
     console.log(
       `Created ${messageType} via Twilio client for ${personMetadata.pseudonymizedId}`,

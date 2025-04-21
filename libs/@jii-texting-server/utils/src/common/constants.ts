@@ -28,3 +28,4 @@ export const BQ_REPLIES_VIEW_ID = "jii_texting_incoming_messages";
 export const US_ID_LSU_VISIT_LINK =
   "\n\nSee all requirements at rviz.co/id_lsu.";
 export const US_ID_LSU_LEARN_MORE = "\n\nLearn more at rviz.co/id_lsu.";
+export const EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS = 18;

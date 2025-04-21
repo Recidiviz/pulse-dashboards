@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/node";
 import createTwilioClient, { Twilio } from "twilio";
 
 import { ITwilioAPI } from "./interface";
@@ -30,17 +31,34 @@ export class TwilioAPIClient implements ITwilioAPI {
     this.subaccountSid = subaccountSid;
   }
 
-  async createMessage(body: string, recipientPhoneNumber: string) {
+  async createMessage(
+    body: string,
+    recipientPhoneNumber: string,
+    sendAt?: Date,
+  ) {
     const createMessageBody = {
       body: body,
       to: recipientPhoneNumber,
     };
+
+    if (sendAt !== undefined && this.subaccountSid === undefined) {
+      // In order to schedule send a message, the messagingServiceSid parameter must have a value
+      // Otherwise, it will be sent immediately
+      // As determined by https://www.twilio.com/docs/messaging/features/message-scheduling
+      console.log(`Sent message immediately, rather than scheduled`);
+      captureException(
+        `Attempted to schedule send message without MessagingServiceSid. Check Twilio for messages that might have been sent earlier than expected`,
+      );
+    }
 
     const message = await this.client.messages.create({
       ...createMessageBody,
       ...(this.subaccountSid === undefined
         ? {}
         : { messagingServiceSid: this.subaccountSid }),
+      ...(sendAt === undefined
+        ? {}
+        : { sendAt: sendAt, scheduleType: "fixed" }),
     });
 
     return message;
