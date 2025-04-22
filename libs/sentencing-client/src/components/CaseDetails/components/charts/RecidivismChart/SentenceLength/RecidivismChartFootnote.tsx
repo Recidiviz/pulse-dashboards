@@ -27,8 +27,9 @@ export const RecidivismChartFootnote: React.FC<{
   return (
     <CommonStyled.ChartFootnote isReport={isReport}>
       *Note: There is insufficient data for{" "}
-      {formatListWithAnd(missingSeriesLabels, "")} and they are not represented
-      in the chart.
+      {formatListWithAnd(missingSeriesLabels, "")} and{" "}
+      {missingSeriesLabels.length > 1 ? "they are" : "it is"} not represented in
+      the chart.
     </CommonStyled.ChartFootnote>
   );
 };

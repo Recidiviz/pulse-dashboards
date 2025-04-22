@@ -68,7 +68,7 @@ export const eligibilityCriteriaToLabelName: Record<
   [VETERAN_STATUS_CRITERION_KEY]: "Veteran",
   [DEVELOPMENTAL_DISABILITY_DIAGNOSIS_CRITERION_KEY]:
     "Has developmental disability diagnosis",
-  [MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY]: "Mental health diagnosis(es)",
+  [MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY]: "Mental health diagnoses",
   [DIAGNOSED_SUBSTANCE_USE_SEVERITY_CRITERIA_KEY]:
     "Substance use disorder severity",
   [ASAM_CARE_RECOMMENDATION_CRITERIA_KEY]: "ASAM level of care recommendation",
