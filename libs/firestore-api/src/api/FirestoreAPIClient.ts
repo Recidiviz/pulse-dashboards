@@ -51,7 +51,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
     private stateCode: string,
     projectId: string,
     apiKey: string,
-    proxyHost?: string,
+    private proxyHost?: string,
   ) {
     this.offlineClient = new FirestoreOfflineAPIClient(stateCode);
 
@@ -64,6 +64,13 @@ export class FirestoreAPIClient implements FirestoreAPI {
 
   async authenticate(firebaseToken: string) {
     const auth = getAuth(this.app);
+    if (this.proxyHost) {
+      // there seems to be no documented API for changing this config,
+      // but editing it directly works! Because we are using custom tokens
+      // this is the only auth domain we actually communicate with, which is
+      // why we don't e.g. pass a custom auth domain to initializeApp()
+      auth.config.apiHost = `${this.proxyHost}/firebase-auth`;
+    }
     await signInWithCustomToken(auth, firebaseToken);
   }
 
