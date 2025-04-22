@@ -20,7 +20,7 @@ If you make changes to the prisma schema, you will need to run `nx prisma-migrat
 ### Local development workflow
 
 1. Run the command in the `Development` section above to get the latest environment variables for development from Google Secrets Manager.
-2. Develop as needed in the `schema.prisma` file in the `@jii-texting-server` library.
+2. Develop as needed in the `schema.prisma` file in the `@jii-texting` library.
 3. Run `nx prisma-format @jii-texting/prisma` to format the file. You can also use the `Prisma` VSCode extension to aid in development.
 4. Run `nx prisma-generate @jii-texting/prisma` to generate the Prisma client so that it's up-to-date according to the latest changes. Note, you'll see errors in other libraries that use a different Prisma schema.
 5. Run `nx docker @jii-texting/prisma` to start a local Docker container.

@@ -249,5 +249,5 @@
       "defaultConfiguration": "staging"
     }
   },
-  "tags": ["jii-texting-server"]
+  "tags": ["jii-texting"]
 }

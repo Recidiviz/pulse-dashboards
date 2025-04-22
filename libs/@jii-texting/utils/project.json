@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@jii-texting/utils/src",
   "projectType": "library",
-  "tags": ["jii-texting-server"],
+  "tags": ["jii-texting"],
   "targets": {
     "load-env-files": {
       "executor": "nx:run-commands",
