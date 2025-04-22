@@ -17,13 +17,13 @@
 
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { fakeWorkflowExecutionOne } from "~@jii-texting/utils/test/constants";
 import {
   mockGetPayload,
   testPrismaClient,
   testServer,
-} from "~jii-texting-server/test/setup";
-import { testAndGetSentryReports } from "~jii-texting-server/test/setup/utils";
+} from "~@jii-texting/server/test/setup";
+import { testAndGetSentryReports } from "~@jii-texting/server/test/setup/utils";
+import { fakeWorkflowExecutionOne } from "~@jii-texting/utils/test/constants";
 
 vi.stubEnv("GOOGLE_WORKFLOWS_SERVICE_ACCOUNT_EMAIL", "valid@example.com");
 

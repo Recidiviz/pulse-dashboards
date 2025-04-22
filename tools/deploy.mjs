@@ -460,7 +460,7 @@ if (
         if (deployEnv === "staging") {
           // Push the docker container for the Cloud Run service
 
-          await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration ${deployEnv}`.pipe(
+          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/server --configuration ${deployEnv}`.pipe(
             process.stdout,
           );
           // Push the docker container for the Cloud Run jobs
@@ -471,7 +471,7 @@ if (
             process.stdout,
           );
         } else if (deployEnv === "production" && isCpDeploy) {
-          await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration cherry-pick`.pipe(
+          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/server --configuration cherry-pick`.pipe(
             process.stdout,
           );
           // Push the docker container for the Cloud Run jobs
@@ -488,13 +488,13 @@ if (
           await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/seed-demo --configuration demo`.pipe(
             process.stdout,
           );
-          await $`COMMIT_SHA=${currentRevision} nx container jii-texting-server --configuration demo`.pipe(
+          await $`COMMIT_SHA=${currentRevision} nx container @jii-texting/server --configuration demo`.pipe(
             process.stdout,
           );
         }
 
         // TODO(#7617) Check if ETL Cloud Run Job is running before DB migration
-        await $`COMMIT_SHA=${currentRevision} nx run jii-texting-server:deploy --configuration=${deployEnv} --tag=${currentRevision} --migrate=true`.pipe(
+        await $`COMMIT_SHA=${currentRevision} nx run @jii-texting/server:deploy --configuration=${deployEnv} --tag=${currentRevision} --migrate=true`.pipe(
           process.stdout,
         );
 

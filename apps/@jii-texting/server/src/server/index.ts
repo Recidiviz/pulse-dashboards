@@ -15,31 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma, PrismaClient } from "@prisma/jii-texting/client";
-import { expect, vi } from "vitest";
+import formbody from "@fastify/formbody";
+import { setupFastifyErrorHandler } from "@sentry/node";
+import Fastify from "fastify";
 
-import { testkit } from "~jii-texting-server/test/setup";
+import registerRoutes from "~@jii-texting/server/server/routes";
+import registerTwilioWebhooks from "~@jii-texting/server/server/webhooks";
 
-const PRISMA_TABLES = Prisma.dmmf.datamodel.models
-  .map((model) => model.name)
-  .filter((table) => table);
-
-export async function resetDb(prismaClient: PrismaClient) {
-  await prismaClient.$transaction(
-    PRISMA_TABLES.map((table) =>
-      prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),
-    ),
-  );
-}
-
-export async function testAndGetSentryReports(expectedLength = 1) {
-  // Use waitFor because sentry-testkit can be async
-  const sentryReports = await vi.waitFor(async () => {
-    const reports = testkit.reports();
-    expect(reports).toHaveLength(expectedLength);
-
-    return reports;
+export function buildServer() {
+  // Instantiate Fastify with some config
+  const server = Fastify({
+    logger: true,
   });
 
-  return sentryReports;
+  // Add this plugin to support application/x-www-form-urlencoded requests as made by Twilio
+  server.register(formbody);
+
+  // Ensure Sentry is setup before starting the server
+  setupFastifyErrorHandler(server);
+
+  registerTwilioWebhooks(server);
+  registerRoutes(server);
+
+  return server;
 }

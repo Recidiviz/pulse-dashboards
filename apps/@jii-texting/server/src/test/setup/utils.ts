@@ -15,20 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { buildServer } from "~jii-texting-server/server";
-const host = process.env["HOST"] ?? "localhost";
-const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;
+import { Prisma, PrismaClient } from "@prisma/jii-texting/client";
+import { expect, vi } from "vitest";
 
-const server = buildServer();
+import { testkit } from "~@jii-texting/server/test/setup";
 
-// Start listening.
-server.listen({ port, host }, (err) => {
-  if (err) {
-    server.log.error(err);
-    process.exit(1);
-  } else {
-    console.log(`[ ready ] http://${host}:${port}`);
-  }
-});
+const PRISMA_TABLES = Prisma.dmmf.datamodel.models
+  .map((model) => model.name)
+  .filter((table) => table);
 
-export default server;
+export async function resetDb(prismaClient: PrismaClient) {
+  await prismaClient.$transaction(
+    PRISMA_TABLES.map((table) =>
+      prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),
+    ),
+  );
+}
+
+export async function testAndGetSentryReports(expectedLength = 1) {
+  // Use waitFor because sentry-testkit can be async
+  const sentryReports = await vi.waitFor(async () => {
+    const reports = testkit.reports();
+    expect(reports).toHaveLength(expectedLength);
+
+    return reports;
+  });
+
+  return sentryReports;
+}

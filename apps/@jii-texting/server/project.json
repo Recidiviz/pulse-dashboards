@@ -1,7 +1,7 @@
 {
-  "name": "jii-texting-server",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/jii-texting-server/src",
+  "name": "@jii-texting/server",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@jii-texting/server/src",
   "projectType": "application",
   "targets": {
     "test-zod": {
@@ -14,7 +14,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server --env_demo env_demo_jii_texting_server",
+        "command": "../../../tools/load_env_files.sh --env env_jii_texting_server --env_staging env_staging_jii_texting_server --env_prod env_prod_jii_texting_server --env_test env_test_jii_texting_server --env_demo env_demo_jii_texting_server",
         "cwd": "{projectRoot}"
       }
     },
@@ -68,7 +68,7 @@
       ],
       "options": {
         "platform": "node",
-        "outputPath": "dist/apps/jii-texting-server",
+        "outputPath": "dist/apps/@jii-texting/server",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
         "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
@@ -118,7 +118,7 @@
         }
       ],
       "options": {
-        "buildTarget": "jii-texting-server:build"
+        "buildTarget": "@jii-texting/server:build"
       }
     },
     "test": {
@@ -133,10 +133,10 @@
           "target": "docker"
         }
       ],
-      "outputs": ["{workspaceRoot}/coverage/apps/jii-texting-server"],
+      "outputs": ["{workspaceRoot}/coverage/apps/@jii-texting/server"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @jii-texting/prisma && cd apps/jii-texting-server && vitest",
+        "command": "nx prisma-deploy @jii-texting/prisma && cd apps/@jii-texting/server && vitest",
         "cwd": "{workspaceRoot}"
       }
     },

@@ -23,8 +23,8 @@ import { validateRequest } from "twilio/lib/webhooks/webhooks";
 import {
   RequestWithStateCodeParam,
   TwilioWebhookRequest,
-} from "~jii-texting-server/server/types";
-import { isValidStateCode } from "~jii-texting-server/server/utils";
+} from "~@jii-texting/server/server/types";
+import { isValidStateCode } from "~@jii-texting/server/server/utils";
 
 export async function verifyGoogleIdToken(
   authorizationHeaders: string | undefined,

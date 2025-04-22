@@ -15,27 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import formbody from "@fastify/formbody";
-import { setupFastifyErrorHandler } from "@sentry/node";
-import Fastify from "fastify";
+// @ts-check
 
-import registerRoutes from "~jii-texting-server/server/routes";
-import registerTwilioWebhooks from "~jii-texting-server/server/webhooks";
+import tseslint from "typescript-eslint";
 
-export function buildServer() {
-  // Instantiate Fastify with some config
-  const server = Fastify({
-    logger: true,
-  });
+import baseConfig from "../../../eslint.config.mjs";
 
-  // Add this plugin to support application/x-www-form-urlencoded requests as made by Twilio
-  server.register(formbody);
-
-  // Ensure Sentry is setup before starting the server
-  setupFastifyErrorHandler(server);
-
-  registerTwilioWebhooks(server);
-  registerRoutes(server);
-
-  return server;
-}
+export default tseslint.config(baseConfig, {
+  files: ["**/*.ts", "**/*.tsx"],
+  rules: {
+    // This enforces that we use absolute imports for all of the code in this project
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [".*"],
+      },
+    ],
+  },
+});

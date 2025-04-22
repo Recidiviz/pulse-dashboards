@@ -22,9 +22,9 @@ import sentryTestkit from "sentry-testkit";
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
-import { buildServer } from "~jii-texting-server/server";
-import { seed } from "~jii-texting-server/test/setup/seed";
-import { resetDb } from "~jii-texting-server/test/setup/utils";
+import { buildServer } from "~@jii-texting/server/server";
+import { seed } from "~@jii-texting/server/test/setup/seed";
+import { resetDb } from "~@jii-texting/server/test/setup/utils";
 
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])

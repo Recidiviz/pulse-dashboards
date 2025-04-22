@@ -11,18 +11,18 @@ RUN apt-get update -y && apt-get install -y openssl
 RUN apt-get install dumb-init
 
 # Copy over the scripts since they should rarely be changed
-COPY dist/apps/jii-texting-server/scripts ./scripts
+COPY dist/apps/@jii-texting/server/scripts ./scripts
 RUN chmod +x scripts/*.sh
 
 # Enable corepack so newer versions of yarn can be installed
 RUN corepack enable
 
 # Copy over the package.json, yarn.lock, and .yarnrc.yml files since they are changed less often
-COPY dist/apps/jii-texting-server/package.json dist/apps/jii-texting-server/yarn.lock dist/apps/jii-texting-server/.yarnrc.yml ./
+COPY dist/apps/@jii-texting/server/package.json dist/apps/@jii-texting/server/yarn.lock dist/apps/@jii-texting/server/.yarnrc.yml ./
 RUN yarn workspaces focus --production
 
 # Copy over the rest of the files as late as we can
-COPY dist/apps/jii-texting-server .
+COPY dist/apps/@jii-texting/server .
 RUN yarn prisma generate
 
 RUN chown -R node:node .

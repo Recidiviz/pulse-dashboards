@@ -19,8 +19,8 @@ import { StateCode } from "@prisma/jii-texting/client";
 import { FastifyInstance } from "fastify";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
-import { getAuthenticateInternalRequestPreHandlerFn } from "~jii-texting-server/server/authUtils";
-import { RequestWithStateCodeParam } from "~jii-texting-server/server/types";
+import { getAuthenticateInternalRequestPreHandlerFn } from "~@jii-texting/server/server/authUtils";
+import { RequestWithStateCodeParam } from "~@jii-texting/server/server/types";
 
 /**
  * Encapsulates the routes for the JII texting server

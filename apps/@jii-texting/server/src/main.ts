@@ -15,21 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// @ts-check
+import { buildServer } from "~@jii-texting/server/server";
+const host = process.env["HOST"] ?? "localhost";
+const port = process.env["PORT"] ? Number(process.env["PORT"]) : 3000;
 
-import tseslint from "typescript-eslint";
+const server = buildServer();
 
-import baseConfig from "../../eslint.config.mjs";
-
-export default tseslint.config(baseConfig, {
-  files: ["**/*.ts", "**/*.tsx"],
-  rules: {
-    // This enforces that we use absolute imports for all of the code in this project
-    "no-restricted-imports": [
-      "error",
-      {
-        patterns: [".*"],
-      },
-    ],
-  },
+// Start listening.
+server.listen({ port, host }, (err) => {
+  if (err) {
+    server.log.error(err);
+    process.exit(1);
+  } else {
+    console.log(`[ ready ] http://${host}:${port}`);
+  }
 });
+
+export default server;

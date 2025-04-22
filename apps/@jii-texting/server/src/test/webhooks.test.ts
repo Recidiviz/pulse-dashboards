@@ -18,7 +18,6 @@
 import { validateRequest } from "twilio/lib/webhooks/webhooks";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { fakePersonOne } from "~@jii-texting/utils/test/constants";
 import {
   mockDatasetFn,
   mockTableFn,
@@ -26,7 +25,8 @@ import {
   testPort,
   testPrismaClient,
   testServer,
-} from "~jii-texting-server/test/setup";
+} from "~@jii-texting/server/test/setup";
+import { fakePersonOne } from "~@jii-texting/utils/test/constants";
 
 describe("POST /webhook/twilio/incoming_message/US_ID", () => {
   describe("authenticated requests", () => {
