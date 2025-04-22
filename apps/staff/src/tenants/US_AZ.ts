@@ -24,7 +24,7 @@ const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
   domain: "corrections.az.gov",
   availableStateCodes: [dashboard.US_AZ],
   enableUserRestrictions: false,
-  workflowsSupportedSystems: ["INCARCERATION"],
+  workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemConfigs: {
     INCARCERATION: {
       search: [
