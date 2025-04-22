@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { Prisma, StateCode, Status } from "@prisma/jii-texting-server/client";
+import { Prisma, StateCode, Status } from "@prisma/jii-texting/client";
 
 // WORKFLOW EXECUTIONS
 export const fakeWorkflowExecutionOne = {

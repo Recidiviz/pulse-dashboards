@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "@prisma/jii-texting-server/client";
+import { PrismaClient } from "@prisma/jii-texting/client";
 import z from "zod";
 
 import { personImportSchema } from "~@jii-texting/import/models";

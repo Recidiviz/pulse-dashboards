@@ -19,8 +19,8 @@ import { BigQuery } from "@google-cloud/bigquery";
 import { captureException } from "@sentry/node";
 import { FastifyInstance } from "fastify";
 
-import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
-import { BQ_DATASET_ID, BQ_REPLIES_VIEW_ID } from "~@jii-texting-server/utils";
+import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
+import { BQ_DATASET_ID, BQ_REPLIES_VIEW_ID } from "~@jii-texting/utils";
 import { getAuthenticateTwilioWebhookRequestFn } from "~jii-texting-server/server/authUtils";
 import { TwilioWebhookRequest } from "~jii-texting-server/server/types";
 import { isOptOut } from "~jii-texting-server/server/utils";

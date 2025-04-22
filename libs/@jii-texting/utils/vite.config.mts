@@ -21,24 +21,30 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   root: __dirname,
-  cacheDir: "../../../node_modules/.vite/libs/@jii-texting-server/prisma",
+  cacheDir: "../../../node_modules/.vite/libs/@jii-texting/utils",
 
   plugins: [nxViteTsPaths()],
   test: {
-    name: "@jii-texting-server/prisma",
+    name: "@jii-texting/utils",
     globals: true,
     cache: { dir: "../../../node_modules/.vitest" },
     environment: "node",
     include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
     coverage: {
-      reportsDirectory: "../../../coverage/libs/@jii-texting-server/prisma",
+      reportsDirectory: "../../../coverage/libs/@jii-texting/utils",
       provider: "v8",
     },
+    // We need to set this up this way because:
+    // 1. The vitest vscode extension doesn't load any environment variables, so it needs backups
+    // 2. The env variables for local testing and CI are different
+    // NOTE: none of these are true secrets, they are all fine to put in this file
     env: {
       DATABASE_URL:
+        process.env["DATABASE_URL"] ??
         "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
       DATABASE_URL_US_ID:
+        process.env["DATABASE_URL_US_ID"] ??
         "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
     },
   },

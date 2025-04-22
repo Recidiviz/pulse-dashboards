@@ -17,7 +17,7 @@
 
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { fakeWorkflowExecutionOne } from "~@jii-texting-server/utils/test/constants";
+import { fakeWorkflowExecutionOne } from "~@jii-texting/utils/test/constants";
 import {
   mockGetPayload,
   testPrismaClient,

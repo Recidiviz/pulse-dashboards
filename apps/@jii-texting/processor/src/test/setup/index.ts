@@ -15,16 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Prisma,
-  PrismaClient,
-  StateCode,
-} from "@prisma/jii-texting-server/client";
+import { Prisma, PrismaClient, StateCode } from "@prisma/jii-texting/client";
 import { afterEach, beforeEach, vi } from "vitest";
 
+import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import { seed } from "~@jii-texting/processor/test/setup/seed";
-import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
-import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting-server/utils";
+import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting/utils";
 
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 

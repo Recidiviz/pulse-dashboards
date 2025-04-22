@@ -20,25 +20,17 @@
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "paths": {
-      "@prisma/jii-texting-server/client": [
-        "node_modules/@prisma/jii-texting-server/client"
-      ],
+      "@prisma/jii-texting/client": ["node_modules/@prisma/jii-texting/client"],
       "@prisma/sentencing/client": ["node_modules/@prisma/sentencing/client"],
       "~@case-notes-server/trpc": ["libs/@case-notes-server/trpc/src/index.ts"],
       "~@case-notes-server/trpc/*": ["libs/@case-notes-server/trpc/src/*"],
-      "~@jii-texting-server/prisma": [
-        "libs/@jii-texting-server/prisma/src/index.ts"
-      ],
-      "~@jii-texting-server/prisma/*": [
-        "libs/@jii-texting-server/prisma/src/*"
-      ],
-      "~@jii-texting-server/utils": [
-        "libs/@jii-texting-server/utils/src/index.ts"
-      ],
-      "~@jii-texting-server/utils/*": ["libs/@jii-texting-server/utils/src/*"],
       "~@jii-texting/import/*": ["apps/@jii-texting/import/src/*"],
+      "~@jii-texting/prisma": ["libs/@jii-texting/prisma/src/index.ts"],
+      "~@jii-texting/prisma/*": ["libs/@jii-texting/prisma/src/*"],
       "~@jii-texting/processor/*": ["apps/@jii-texting/processor/src/*"],
       "~@jii-texting/seed-demo/*": ["apps/@jii-texting/seed-demo/src/*"],
+      "~@jii-texting/utils": ["libs/@jii-texting/utils/src/index.ts"],
+      "~@jii-texting/utils/*": ["libs/@jii-texting/utils/src/*"],
       "~@sentencing/import": ["apps/@sentencing/import/src/index.ts"],
       "~@sentencing/import/*": ["apps/@sentencing/import/src/*"],
       "~@sentencing/import/test/*": ["apps/@sentencing/import/__tests__/*"],

@@ -1,7 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["tracing", "omitApi", "fullTextSearchPostgres"]
-  output          = "../../../../node_modules/@prisma/jii-texting-server/client"
+  output          = "../../../../node_modules/@prisma/jii-texting/client"
 }
 
 datasource db {

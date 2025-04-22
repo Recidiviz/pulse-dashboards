@@ -19,20 +19,20 @@ import {
   MessageAttemptStatus,
   MessageType,
   StateCode,
-} from "@prisma/jii-texting-server/client";
+} from "@prisma/jii-texting/client";
 import moment from "moment";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 
 import { processJii } from "~@jii-texting/processor/scripts/process-jii";
 import { testPrismaClient } from "~@jii-texting/processor/test/setup/index";
-import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting-server/utils/common/constants";
+import { EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS } from "~@jii-texting/utils/common/constants";
 import {
   fakeMissingDA,
   fakePersonOne,
   fakeWorkflowExecutionOne,
   fakeWorkflowExecutionThree,
   fakeWorkflowExecutionTwo,
-} from "~@jii-texting-server/utils/test/constants";
+} from "~@jii-texting/utils/test/constants";
 import { TwilioAPIClient } from "~twilio-api";
 
 vi.mock("~twilio-api");

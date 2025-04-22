@@ -1,7 +1,7 @@
 {
-  "name": "@jii-texting-server/utils",
+  "name": "@jii-texting/utils",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/@jii-texting-server/utils/src",
+  "sourceRoot": "libs/@jii-texting/utils/src",
   "projectType": "library",
   "tags": ["jii-texting-server"],
   "targets": {
@@ -22,7 +22,7 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "dependsOn": [        {
-        "projects": ["@jii-texting-server/prisma"],
+        "projects": ["@jii-texting/prisma"],
         "target": "prisma-generate"
       }],
       "options": {
@@ -37,18 +37,18 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
         },
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "docker"
         }
       ],
-      "outputs": ["{workspaceRoot}/coverage/libs/@jii-texting-server/utils"],
+      "outputs": ["{workspaceRoot}/coverage/libs/@jii-texting/utils"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @jii-texting-server/prisma --accept-data-loss && cd libs/@jii-texting-server/utils && vitest",
+        "command": "nx prisma-deploy @jii-texting/prisma --accept-data-loss && cd libs/@jii-texting/utils && vitest",
         "cwd": "{workspaceRoot}"
       }
     }

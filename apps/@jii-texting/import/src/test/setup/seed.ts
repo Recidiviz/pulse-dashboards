@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "@prisma/jii-texting-server/client";
+import { PrismaClient } from "@prisma/jii-texting/client";
 
 import {
   fakeFullyEligibleGroup,
   fakePersonOne,
   fakeTopic,
   fakeTrustedTesterGroup,
-} from "~@jii-texting-server/utils/test/constants";
+} from "~@jii-texting/utils/test/constants";
 
 export async function seed(prismaClient: PrismaClient) {
   const topic = await prismaClient.topic.create({

@@ -15,29 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "@prisma/jii-texting-server/client/index.js";
-
-const prismaClients: Record<string, PrismaClient> = {};
-
-export function getPrismaClientForStateCode(stateCode: string) {
-  // TODO(#7206): Dynamically create the URL with a helper
-  const dbUrl = process.env[`DATABASE_URL_${stateCode}`];
-
-  if (!dbUrl) {
-    throw Error(
-      `Attempted to access unsupported database for state ${stateCode}`,
-    );
-  }
-
-  if (!prismaClients[dbUrl]) {
-    prismaClients[dbUrl] = new PrismaClient({
-      datasources: {
-        db: {
-          url: process.env[`DATABASE_URL_${stateCode}`],
-        },
-      },
-    });
-  }
-
-  return prismaClients[dbUrl];
-}
+export * from "~@jii-texting/utils/common/constants";
+export * from "~@jii-texting/utils/common/types";
+export * from "~@jii-texting/utils/common/utils";

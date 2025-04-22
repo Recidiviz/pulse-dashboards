@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { FILE_NAME_TO_SCHEMA_AND_LOADER_FN } from "~@jii-texting/import/constants";
-import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
+import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import { ImportHandler } from "~data-import-plugin";
 
 export function getImportHandler() {

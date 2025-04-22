@@ -15,15 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/jii-texting-server/client";
+import { StateCode } from "@prisma/jii-texting/client";
 
-import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
+import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import {
   PERSON_INCLUDE_MESSAGE_SERIES_AND_GROUP,
   PersonWithMessageSeriesAndGroup,
   processIndividualJii,
   ScriptAction,
-} from "~@jii-texting-server/utils";
+} from "~@jii-texting/utils";
 import { TwilioAPIClient } from "~twilio-api";
 
 export type processJiiArguments = {

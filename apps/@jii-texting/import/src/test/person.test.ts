@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/jii-texting-server/client";
+import { StateCode } from "@prisma/jii-texting/client";
 import { beforeAll, describe, expect, test } from "vitest";
 
 import { PERSON_FILE_NAME } from "~@jii-texting/import/constants";
@@ -28,7 +28,7 @@ import {
 import {
   fakeFullyEligibleGroup,
   fakePersonOne,
-} from "~@jii-texting-server/utils/test/constants";
+} from "~@jii-texting/utils/test/constants";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
 let importHandler: ReturnType<typeof getImportHandler>;

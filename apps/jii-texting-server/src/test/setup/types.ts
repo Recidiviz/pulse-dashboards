@@ -15,6 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Prisma } from "@prisma/jii-texting-server/client";
+import type { Prisma } from "@prisma/jii-texting/client";
 
 export type PersonCreateInput = Prisma.PersonCreateInput;

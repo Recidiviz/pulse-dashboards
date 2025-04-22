@@ -19,14 +19,14 @@ import {
   MessageAttemptStatus,
   MessageType,
   Status,
-} from "@prisma/jii-texting-server/client";
+} from "@prisma/jii-texting/client";
 import { MessageStatus } from "twilio/lib/rest/api/v2010/account/message";
 
 import {
   getOrderedMessageAttempts,
   mapTwilioStatusToInternalStatus,
   MessageSeriesWithAttemptsAndGroup,
-} from "~@jii-texting-server/utils";
+} from "~@jii-texting/utils";
 
 test.each([
   ["accepted", MessageAttemptStatus.IN_PROGRESS],

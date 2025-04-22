@@ -18,7 +18,7 @@
 import { validateRequest } from "twilio/lib/webhooks/webhooks";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { fakePersonOne } from "~@jii-texting-server/utils/test/constants";
+import { fakePersonOne } from "~@jii-texting/utils/test/constants";
 import {
   mockDatasetFn,
   mockTableFn,

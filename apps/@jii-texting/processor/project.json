@@ -24,7 +24,7 @@
       "dependsOn": [
         "create-base-package-json",
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
         }, 
         "load-env-files"
@@ -39,13 +39,13 @@
         "assets": [
           {
             "glob": "prisma/schema.prisma",
-            "input": "{workspaceRoot}/libs/@jii-texting-server/prisma",
+            "input": "{workspaceRoot}/libs/@jii-texting/prisma",
             "output": "."
           },
           "{workspaceRoot}/.yarnrc.yml",
           "{projectRoot}/scripts/*"
         ],
-        "external": ["@prisma/jii-texting-server", "commander"],
+        "external": ["@prisma/jii-texting", "commander"],
         "generatePackageJson": true,
         "minify": true,
         "esbuildOptions": {
@@ -94,18 +94,18 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
         },
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "docker"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/apps/@jii-texting/processor"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @jii-texting-server/prisma && cd apps/@jii-texting/processor && vitest",
+        "command": "nx prisma-deploy @jii-texting/prisma && cd apps/@jii-texting/processor && vitest",
         "cwd": "{workspaceRoot}"
       }
     },

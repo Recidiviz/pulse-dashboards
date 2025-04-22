@@ -17,7 +17,7 @@
 
 import { describe, expect, test } from "vitest";
 
-import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
+import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 
 describe("prisma", () => {
   test("should return the same instance of a prisma client for a state code if it already exists", async () => {

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma } from "@prisma/jii-texting-server/client";
+import { Prisma } from "@prisma/jii-texting/client";
 
 export const MESSAGE_ATTEMPT_SELECT = {
   select: {

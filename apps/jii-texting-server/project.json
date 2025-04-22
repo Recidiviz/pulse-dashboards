@@ -29,7 +29,7 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
         }
       ],
@@ -61,7 +61,7 @@
       "dependsOn": [
         "create-base-package-json",
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
         },
         "load-env-files"
@@ -79,18 +79,18 @@
         "assets": [
           {
             "glob": "prisma/schema.prisma",
-            "input": "{workspaceRoot}/libs/@jii-texting-server/prisma",
+            "input": "{workspaceRoot}/libs/@jii-texting/prisma",
             "output": "."
           },
           {
             "glob": "prisma/migrations/**/*",
-            "input": "{workspaceRoot}/libs/@jii-texting-server/prisma",
+            "input": "{workspaceRoot}/libs/@jii-texting/prisma",
             "output": "."
           },
           "{projectRoot}/scripts/*",
           "{workspaceRoot}/.yarnrc.yml"
         ],
-        "external": ["@prisma/jii-texting-server"]
+        "external": ["@prisma/jii-texting"]
       },
       "configurations": {
         "dev": {},
@@ -109,11 +109,11 @@
       "executor": "@nx/vite:preview-server",
       "dependsOn": [
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "docker"
         },
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "prisma-seed"
         }
       ],
@@ -125,18 +125,18 @@
       "executor": "nx:run-commands",
       "dependsOn": [
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
         },
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "docker"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/apps/jii-texting-server"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @jii-texting-server/prisma && cd apps/jii-texting-server && vitest",
+        "command": "nx prisma-deploy @jii-texting/prisma && cd apps/jii-texting-server && vitest",
         "cwd": "{workspaceRoot}"
       }
     },

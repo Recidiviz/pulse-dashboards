@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/jii-texting-server/client";
+import { StateCode } from "@prisma/jii-texting/client";
 
 export function isValidStateCode(stateCode: string) {
   return (Object.values(StateCode) as string[]).includes(stateCode);

@@ -24,7 +24,7 @@
       "dependsOn": [
         "create-base-package-json",
         {
-          "projects": ["@jii-texting-server/prisma"],
+          "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
         }, 
         "load-env-files"
@@ -39,13 +39,13 @@
         "assets": [
           {
             "glob": "prisma/schema.prisma",
-            "input": "{workspaceRoot}/libs/@jii-texting-server/prisma",
+            "input": "{workspaceRoot}/libs/@jii-texting/prisma",
             "output": "."
           },
           "{workspaceRoot}/.yarnrc.yml",
           "{projectRoot}/scripts/*"
         ],
-        "external": ["@prisma/jii-texting-server"],
+        "external": ["@prisma/jii-texting"],
         "generatePackageJson": true,
         "minify": true,
         "esbuildOptions": {

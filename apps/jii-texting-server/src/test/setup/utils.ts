@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma, PrismaClient } from "@prisma/jii-texting-server/client";
+import { Prisma, PrismaClient } from "@prisma/jii-texting/client";
 import { expect, vi } from "vitest";
 
 import { testkit } from "~jii-texting-server/test/setup";

@@ -1,7 +1,7 @@
 {
-  "name": "@jii-texting-server/prisma",
+  "name": "@jii-texting/prisma",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/@jii-texting-server/prisma/src",
+  "sourceRoot": "libs/@jii-texting/prisma/src",
   "projectType": "library",
   "targets": {
     "load-env-files": {
@@ -31,7 +31,7 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/coverage/libs/@jii-texting-server/prisma"],
+      "outputs": ["{workspaceRoot}/coverage/libs/@jii-texting/prisma"],
       "cache": true,
       "options": {
         "command": "vitest",

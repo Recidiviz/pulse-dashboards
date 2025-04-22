@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/jii-texting-server/client";
+import { StateCode } from "@prisma/jii-texting/client";
 import { init } from "@sentry/node";
 import { OAuth2Client } from "google-auth-library";
 import sentryTestkit from "sentry-testkit";
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 
-import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma";
+import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import { buildServer } from "~jii-texting-server/server";
 import { seed } from "~jii-texting-server/test/setup/seed";
 import { resetDb } from "~jii-texting-server/test/setup/utils";

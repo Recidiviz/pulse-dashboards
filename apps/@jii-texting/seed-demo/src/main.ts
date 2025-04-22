@@ -21,9 +21,9 @@ import {
   PrismaClient,
   StateCode,
   Status,
-} from "@prisma/jii-texting-server/client";
+} from "@prisma/jii-texting/client";
 
-import { getPrismaClientForStateCode } from "~@jii-texting-server/prisma/utils";
+import { getPrismaClientForStateCode } from "~@jii-texting/prisma/utils";
 
 const PRISMA_TABLES = Prisma.dmmf.datamodel.models
   .map((model) => model.name)

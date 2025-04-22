@@ -19,7 +19,7 @@ import {
   MessageAttemptStatus,
   MessageType,
   PrismaClient,
-} from "@prisma/jii-texting-server/client";
+} from "@prisma/jii-texting/client";
 import { captureException } from "@sentry/node";
 import moment from "moment";
 import {
@@ -33,13 +33,13 @@ import {
   PersonDataForMessage,
   PersonWithMessageSeriesAndGroup,
   ScriptAction,
-} from "~@jii-texting-server/utils";
+} from "~@jii-texting/utils";
 import {
   EARLIEST_LSU_MESSAGE_SEND_UTC_HOURS,
   MAX_RETRY_ATTEMPTS,
   US_ID_LSU_LEARN_MORE,
   US_ID_LSU_VISIT_LINK,
-} from "~@jii-texting-server/utils/common/constants";
+} from "~@jii-texting/utils/common/constants";
 import { TwilioAPIClient } from "~twilio-api";
 
 function messageAttemptSortByCreatedTimestampDesc(
