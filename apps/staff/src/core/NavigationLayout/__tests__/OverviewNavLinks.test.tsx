@@ -78,7 +78,7 @@ describe("OverviewNavLinks tests", () => {
           workflows: ["page1"],
         },
       },
-      workflowsStore: { allowSupervisionTasks: false },
+      workflowsStore: { isSupervisionTasksConfigured: false },
       currentTenantId: "US_ID",
     };
 
@@ -115,7 +115,7 @@ describe("OverviewNavLinks tests", () => {
   });
 
   it("Should render a link for Tasks page if enabled", async () => {
-    rootStoreMock.workflowsStore.isSupervisionTasksEnabled = true;
+    rootStoreMock.workflowsStore.isSupervisionTasksLinkEnabled = true;
     renderLinks();
 
     await waitFor(() =>
@@ -124,7 +124,7 @@ describe("OverviewNavLinks tests", () => {
   });
 
   it("Should not render a link for Tasks page if user doesn't have workflows permissions", () => {
-    rootStoreMock.workflowsStore.allowSupervisionTasks = true;
+    rootStoreMock.workflowsStore.isSupervisionTasksConfigured = true;
     delete rootStoreMock.userStore.userAllowedNavigation.workflows;
     renderLinks();
     expect(screen.queryByText("Tasks")).not.toBeInTheDocument();

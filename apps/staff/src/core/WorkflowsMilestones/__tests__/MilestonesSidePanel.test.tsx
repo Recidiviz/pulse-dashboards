@@ -45,7 +45,7 @@ const baseRootStoreMock = {
     formatSupervisionLevel: () => null,
     caseloadLoaded: () => false,
     justiceInvolvedPersonTitle: "client",
-    allowSupervisionTasks: false,
+    isSupervisionTasksConfigured: false,
   },
   firestoreStore: {
     doc: vi.fn(),

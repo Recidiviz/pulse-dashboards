@@ -43,7 +43,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const {
     workflowsStore,
     workflowsStore: {
-      isSupervisionTasksEnabled,
+      isSupervisionTasksLinkEnabled,
       workflowsSupportedSystems,
       supportsMultipleSystems,
       homepage,
@@ -83,7 +83,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
       {enableMilestones && (
         <NavLink to={workflowsUrl("milestones")}>Kudos</NavLink>
       )}
-      {isSupervisionTasksEnabled && (
+      {isSupervisionTasksLinkEnabled && (
         <NavLink
           to={workflowsUrl("tasks")}
           onClick={() => workflowsStore.updateActiveSystem("SUPERVISION")}

@@ -882,53 +882,53 @@ describe("hasOpportunities", () => {
   });
 });
 
-describe("isSupervisionTasksEnabled", () => {
+describe("isSupervisionTasksLinkEnabled", () => {
   test("when tasks allowed, route exists, FV active", async () => {
     setUser({ supervisionTasksNavLink: {} }, "US_ME", {
-      workflowsSupervision: true,
+      tasks: true,
     });
     runInAction(() => {
       workflowsStore.updateActiveSystem("SUPERVISION");
       rootStore.tenantStore.currentTenantId = "US_ME";
     });
     await waitForHydration();
-    expect(workflowsStore.isSupervisionTasksEnabled).toBeTrue();
+    expect(workflowsStore.isSupervisionTasksLinkEnabled).toBeTrue();
   });
 
   test("when task config is missing", async () => {
     setUser({ supervisionTasksNavLink: {} }, "US_MO", {
-      workflowsSupervision: true,
+      tasks: true,
     });
     runInAction(() => {
       workflowsStore.updateActiveSystem("SUPERVISION");
       rootStore.tenantStore.currentTenantId = "US_MO";
     });
     await waitForHydration();
-    expect(workflowsStore.isSupervisionTasksEnabled).toBeFalse();
+    expect(workflowsStore.isSupervisionTasksLinkEnabled).toBeFalse();
   });
 
   test("when route permission is missing", async () => {
     setUser({ supervisionTasksNavLink: {} }, "US_ME", {
-      workflowsSupervision: false,
+      tasks: false,
     });
     runInAction(() => {
       workflowsStore.updateActiveSystem("SUPERVISION");
       rootStore.tenantStore.currentTenantId = "US_ME";
     });
     await waitForHydration();
-    expect(workflowsStore.isSupervisionTasksEnabled).toBeFalse();
+    expect(workflowsStore.isSupervisionTasksLinkEnabled).toBeFalse();
   });
 
   test("when feature variant is missing", async () => {
     setUser({}, "US_ME", {
-      workflowsSupervision: true,
+      tasks: true,
     });
     runInAction(() => {
       workflowsStore.updateActiveSystem("SUPERVISION");
       rootStore.tenantStore.currentTenantId = "US_ME";
     });
     await waitForHydration();
-    expect(workflowsStore.isSupervisionTasksEnabled).toBeFalse();
+    expect(workflowsStore.isSupervisionTasksLinkEnabled).toBeFalse();
   });
 });
 

@@ -722,7 +722,7 @@ export class WorkflowsStore implements Hydratable {
   /**
    * Whether this tenant has the supervision tasks feature.
    */
-  get allowSupervisionTasks(): boolean {
+  get isSupervisionTasksConfigured(): boolean {
     const {
       rootStore: { currentTenantId },
     } = this;
@@ -730,11 +730,14 @@ export class WorkflowsStore implements Hydratable {
     return !!TENANT_CONFIGS[currentTenantId]?.workflowsTasksConfig;
   }
 
-  get isSupervisionTasksEnabled(): boolean {
+  /**
+   * Whether the current user should see a link to Tasks in the nav bar
+   */
+  get isSupervisionTasksLinkEnabled(): boolean {
     return (
-      this.allowSupervisionTasks &&
+      this.isSupervisionTasksConfigured &&
       !!this.featureVariants["supervisionTasksNavLink"] &&
-      this.rootStore.userStore.getRoutePermission("workflowsSupervision")
+      this.rootStore.userStore.getRoutePermission("tasks")
     );
   }
 

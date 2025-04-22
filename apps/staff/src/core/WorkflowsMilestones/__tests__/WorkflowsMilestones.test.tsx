@@ -56,7 +56,7 @@ const baseWorkflowsStoreMock = {
   justiceInvolvedPersonTitle: "client",
   milestonesClients: [],
   workflowsStore: {
-    allowSupervisionTasks: false,
+    isSupervisionTasksConfigured: false,
   },
   getMilestonesClientsByStatus: () => [],
 };

@@ -77,10 +77,10 @@ export type TaskFactory<PersonType extends JusticeInvolvedPerson> = (
 const createClientSupervisionTasks: TaskFactory<Client> = (
   person,
 ): SupervisionTaskInterface | undefined => {
-  const { allowSupervisionTasks } = person.rootStore.workflowsStore;
-  if (!(person instanceof Client && allowSupervisionTasks)) return;
+  const { isSupervisionTasksConfigured } = person.rootStore.workflowsStore;
+  if (!(person instanceof Client && isSupervisionTasksConfigured)) return;
 
-  // Checking `allowSupervisionTasks` ensures this will be an appropriate state code
+  // Checking `isSupervisionTasksConfigured` ensures this will be an appropriate state code
   // but TS currently has no way of knowing that
   // @ts-expect-error
   return new SupervisionTasks(person.rootStore.currentTenantId, person);
