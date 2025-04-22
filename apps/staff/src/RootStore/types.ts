@@ -194,6 +194,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnSuspensionOfDirectSupervision: {},
         zeroGrantsFlag: { activeTenants: ["US_ID", "US_MI", "US_TN", "US_PA"] },
         supervisionTasksNavLink: { activeTenants: ["US_ID"] },
+        usTnCompliantReporting2025Policy: {},
       }
     : {
         ...allFeatureVariants,

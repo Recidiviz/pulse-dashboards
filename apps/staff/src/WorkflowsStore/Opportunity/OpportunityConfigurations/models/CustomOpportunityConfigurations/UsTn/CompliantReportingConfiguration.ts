@@ -15,10 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FeatureVariant } from "../../../../../../RootStore/types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class CompliantReportingConfiguration extends ApiOpportunityConfiguration {
   get supportsAlmostEligible() {
     return true;
+  }
+
+  get inverseFeatureVariant() {
+    return "usTnCompliantReporting2025Policy" as FeatureVariant;
   }
 }
