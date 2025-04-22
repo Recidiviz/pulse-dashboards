@@ -25,6 +25,7 @@ export default defineConfig({
 
   plugins: [nxViteTsPaths()],
   test: {
+    name: "@jii-texting/server",
     setupFiles: ["src/test/setup/index.ts", "src/test/setupTests.ts"],
     globals: true,
     cache: { dir: "../../node_modules/.vitest" },

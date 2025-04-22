@@ -25,6 +25,7 @@ export default defineConfig({
 
   plugins: [nxViteTsPaths()],
   test: {
+    name: "@sentencing/server",
     setupFiles: ["__tests__/setup/index.ts"],
     globals: true,
     cache: { dir: "../../node_modules/.vitest" },
