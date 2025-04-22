@@ -141,3 +141,13 @@ resource "google_project_iam_member" "secret-accessor" {
   role    = "roles/secretmanager.secretAccessor"
   member  = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com"
 }
+
+# Allow unauthenticated (public) access to the Cloud Run service, e.g. for Twilio to make requests to the webhook
+resource "google_cloud_run_service_iam_binding" "default" {
+  location = module.cloud-run.location
+  service  = module.cloud-run.service_name
+  role     = "roles/run.invoker"
+  members = [
+    "allUsers"
+  ]
+}

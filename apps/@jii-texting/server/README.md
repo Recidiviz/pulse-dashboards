@@ -1,3 +1,13 @@
+# JII Texting Server
+
+This is the server component of the JII Texting project. It is a [Fastify](https://fastify.dev/) server that provides APIs needed for the JII texting product
+
+Some technical details:
+
+- The server uses [Prisma](https://www.prisma.io/) to interact with the database.
+- The server is configured to allow public access, specifically to allow Twilio to make requests to webhooks for incoming messages. Thus, any new routes will need authentication at the route level. 
+
+
 ## Deployment
 
 Build the container:
