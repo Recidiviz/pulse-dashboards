@@ -22,6 +22,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import { isTestEnv } from "~client-env-utils";
 
+import { proxyHost } from "../../utils/proxy";
+
 export type SegmentClientExternals = {
   isRecidivizUser: boolean;
   stateCode: string;
@@ -41,7 +43,7 @@ export class SegmentClient {
     this.segment = new AnalyticsBrowser();
 
     const writeKey = import.meta.env["VITE_SEGMENT_WRITE_KEY"];
-    const reverseProxyHost = import.meta.env["VITE_REVERSE_PROXY_HOST"];
+    const reverseProxyHost = proxyHost();
     if (writeKey) {
       if (reverseProxyHost) {
         this.segment.load(

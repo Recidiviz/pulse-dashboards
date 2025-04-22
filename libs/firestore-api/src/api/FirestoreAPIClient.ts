@@ -51,14 +51,14 @@ export class FirestoreAPIClient implements FirestoreAPI {
     private stateCode: string,
     projectId: string,
     apiKey: string,
+    proxyHost?: string,
   ) {
     this.offlineClient = new FirestoreOfflineAPIClient(stateCode);
 
     this.app = initializeApp({ projectId, apiKey });
 
-    const reverseProxyHost = import.meta.env["VITE_REVERSE_PROXY_HOST"];
     this.db = initializeFirestore(this.app, {
-      ...(reverseProxyHost ? { host: `${reverseProxyHost}/firestore` } : {}),
+      ...(proxyHost ? { host: `${proxyHost}/firestore` } : {}),
     });
   }
 

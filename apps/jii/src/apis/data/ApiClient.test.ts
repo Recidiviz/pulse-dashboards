@@ -22,10 +22,12 @@ import { usMeResidents, usMeSccpFixtures } from "~datatypes";
 import { FilterParams, FirestoreAPIClient } from "~firestore-api";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
+import { proxyHost } from "../../utils/proxy";
 import type { AuthManager } from "../auth/AuthManager";
 import { ApiClient } from "./ApiClient";
 
 vi.mock("~firestore-api");
+vi.mock("../../utils/proxy");
 
 let client: ApiClient;
 const getFirebaseTokenMock = vi.fn();
@@ -52,6 +54,7 @@ test("firestore client", () => {
     "US_ME",
     projectIdMock,
     apiKeyMock,
+    undefined,
   );
 });
 
@@ -171,4 +174,23 @@ describe("after authentication", () => {
       expect(fetched).toEqual([]);
     });
   });
+});
+
+test("with proxy option", () => {
+  vi.mocked(proxyHost).mockReturnValue("foo.bar");
+
+  client = new ApiClient({
+    stateCode: "US_ME",
+    authManager: {
+      getFirebaseToken: getFirebaseTokenMock,
+    } as unknown as AuthManager,
+    config: residentsConfigByState.US_ME,
+  });
+
+  expect(FirestoreAPIClient).toHaveBeenLastCalledWith(
+    "US_ME",
+    projectIdMock,
+    apiKeyMock,
+    "foo.bar",
+  );
 });

@@ -19,7 +19,7 @@ import { MockInstance } from "vitest";
 
 import { HydrationState } from "~hydration-utils";
 
-import { isEdovoEnv } from "../../utils/isEdovoEnv";
+import { isEdovoEnv } from "../../utils/edovo";
 import { Auth0AuthHandler } from "./Auth0AuthHandler";
 import { AuthManager } from "./AuthManager";
 import { EdovoAuthHandler } from "./EdovoAuthHandler";
@@ -27,7 +27,7 @@ import { AuthorizedUserProperties } from "./types";
 
 vi.mock("./Auth0AuthHandler");
 vi.mock("./EdovoAuthHandler");
-vi.mock("../../utils/isEdovoEnv");
+vi.mock("../../utils/edovo");
 
 let manager: AuthManager;
 

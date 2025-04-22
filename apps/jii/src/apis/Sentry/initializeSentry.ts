@@ -29,6 +29,8 @@ import {
   useNavigationType,
 } from "react-router-dom";
 
+import { proxyHost } from "../../utils/proxy";
+
 /**
  * Initializes Sentry globally in the browser. Sentry init depends on two environment variables,
  * VITE_SENTRY_DSN and VITE_SENTRY_ENV. If VITE_SENTRY_DSN is missing, Sentry will operate in
@@ -69,7 +71,7 @@ export function initializeSentry(): void {
     return event;
   };
 
-  const reverseProxyHost = import.meta.env["VITE_REVERSE_PROXY_HOST"];
+  const reverseProxyHost = proxyHost();
 
   init({
     dsn,

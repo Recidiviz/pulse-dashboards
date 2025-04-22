@@ -27,6 +27,7 @@ import {
   StateCode,
   StateLandingPageConfig,
 } from "../../configs/types";
+import { proxyHost } from "../../utils/proxy";
 import { AuthManager } from "../auth/AuthManager";
 import { DataAPI } from "./interface";
 
@@ -48,6 +49,7 @@ export class ApiClient implements DataAPI {
       externals.stateCode,
       import.meta.env["VITE_FIRESTORE_PROJECT"],
       import.meta.env["VITE_FIRESTORE_API_KEY"],
+      proxyHost(),
     );
 
     // this function will only run the first time auth is checked

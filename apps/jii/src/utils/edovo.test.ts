@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isEdovoEnv } from "./isEdovoEnv";
+import { isEdovoEnv } from "./edovo";
 
 function edovoSubdomain() {
   vi.stubGlobal("location", {

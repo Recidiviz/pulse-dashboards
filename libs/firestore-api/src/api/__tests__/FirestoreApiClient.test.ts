@@ -84,6 +84,13 @@ test("initialize", () => {
   expect(initializeFirestore).toHaveBeenCalledExactlyOnceWith(appMock, {});
 });
 
+test("initialize with proxy", () => {
+  client = new FirestoreAPIClient("US_XX", "project-xx", "api-xx", "foo.bar");
+  expect(initializeFirestore).toHaveBeenLastCalledWith(appMock, {
+    host: "foo.bar/firestore",
+  });
+});
+
 test("authenticate", async () => {
   client.authenticate("token-xx");
   expect(getAuth).toHaveBeenCalledExactlyOnceWith(appMock);

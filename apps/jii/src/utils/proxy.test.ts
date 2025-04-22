@@ -15,22 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { matchPath } from "react-router-dom";
+import { proxyHost } from "./proxy";
 
-import { EdovoLandingPage } from "../routes/routes";
+const TEST_HOST = "opportunities.edovo.com";
 
-export function isEdovoEnv(): boolean {
-  // we run under a custom edovo subdomain to pass through network filters
-  if (window.location.hostname.endsWith(".edovo.com")) return true;
-  // testing environments may not iframe the custom domain URL
-  if (
-    window.parent !== window.top &&
-    // could be various domains under edovo.com or tedovo.com
-    window.parent.location.hostname.endsWith("edovo.com")
-  )
-    return true;
-  // force the value if we are currently on the edovo landing page
-  if (matchPath(EdovoLandingPage.path, window.location.pathname)) return true;
+test("active", () => {
+  vi.stubGlobal("location", {
+    hostname: TEST_HOST,
+  });
 
-  return false;
-}
+  vi.stubEnv("VITE_REVERSE_PROXY_HOST", TEST_HOST);
+
+  expect(proxyHost()).toBe(TEST_HOST);
+});
+
+test("inactive if env is missing", () => {
+  vi.stubGlobal("location", {
+    hostname: TEST_HOST,
+  });
+  expect(proxyHost()).toBeUndefined();
+});
+
+test("inactive if not on subdomain", () => {
+  vi.stubEnv("VITE_REVERSE_PROXY_HOST", TEST_HOST);
+
+  expect(proxyHost()).toBeUndefined();
+});
