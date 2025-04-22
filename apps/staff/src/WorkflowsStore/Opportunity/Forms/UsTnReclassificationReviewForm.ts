@@ -82,7 +82,7 @@ export class UsTnReclassificationReviewForm extends FormBase<
       date: formatDate(new Date()),
     };
     if (record) {
-      const { formInformation, eligibleCriteria } = record;
+      const { formInformation } = record;
       out.lastCafDate = formatDate(formInformation.lastCafDate);
       out.lastCafTotal = formInformation.lastCafTotal;
       out.latestClassificationDate = formatDate(
@@ -96,15 +96,10 @@ export class UsTnReclassificationReviewForm extends FormBase<
         ?.map(({ incompatibleOffenderId }) => incompatibleOffenderId)
         .join(", ");
 
-      // These reverse checks are needed because unknown criteria pass through.
-      // Checking that a criteria required for one opportunity is absent verifies
-      // that we're dealing with the other type.
-      if (!("custodyLevelComparedToRecommended" in eligibleCriteria)) {
-        out.currentCustodyLevel =
-          eligibleCriteria.custodyLevelHigherThanRecommended.custodyLevel;
-      } else if (!("custodyLevelHigherThanRecommended" in eligibleCriteria)) {
-        out.currentCustodyLevel =
-          eligibleCriteria.custodyLevelComparedToRecommended.custodyLevel;
+      if (this.opportunity instanceof UsTnInitialClassificationOpportunity) {
+        out.currentCustodyLevel = "NOT YET CLASSIFIED";
+      } else {
+        out.currentCustodyLevel = this.person.displayCustodyLevel;
       }
 
       const justifications: string[] = ["Justification for classification: "];
@@ -176,9 +171,12 @@ export class UsTnReclassificationReviewForm extends FormBase<
       out.recommendationJustification = justifications.join("\n");
 
       assessmentQuestionNumbers.forEach((q) => {
-        // If we haven't calculated a score, skip this one
+        // If we haven't calculated a score or the question should be left blank
+        // (for initial classifications), skip this one
         if (!(`q${q}Score` in formInformation)) return;
         const score = formInformation[`q${q}Score`];
+        if (score === null) return;
+
         if (q === 1 && score === 5) {
           // special logic because two options give the same score
           const recentWeapon = some(

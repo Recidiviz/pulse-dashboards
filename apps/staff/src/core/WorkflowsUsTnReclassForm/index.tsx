@@ -54,7 +54,7 @@ const WorkflowsUsTnReclassForm = ({
     ? "Classification Packet"
     : "Reclassification Packet";
   const dataProviso = isInitialClassification
-    ? ""
+    ? "Please fill in questions 3 and 4 in the Classification Assessment form and, if applicable, fill in Schedule B."
     : "Please review any data pre-filled from previous Classification scores for questions 3, 4, 5 and 9 in the Classification Assessment Form.";
 
   const onClickDownload = async () => {

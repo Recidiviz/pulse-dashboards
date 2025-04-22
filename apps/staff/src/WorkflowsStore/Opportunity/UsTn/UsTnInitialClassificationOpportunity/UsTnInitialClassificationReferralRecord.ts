@@ -24,16 +24,27 @@ import { formInformationSchema as formInformation } from "../UsTnSharedCriteria"
 export const usTnInitialClassificationSchema = opportunitySchemaBase.extend({
   eligibleCriteria: z
     .object({
-      custodyLevelComparedToRecommended: z.object({
-        custodyLevel: z
-          .string()
-          .nullable()
-          .transform((custodyLevel) => custodyLevel ?? "NOT YET CLASSIFIED"),
-        recommendedCustodyLevel: z.string().nullable(),
-      }),
+      // TODO(#8145): remove once #41006 is in prod
+      custodyLevelComparedToRecommended: z
+        .object({
+          custodyLevel: z
+            .string()
+            .nullable()
+            .transform((custodyLevel) => custodyLevel ?? "NOT YET CLASSIFIED"),
+          recommendedCustodyLevel: z.string().nullable(),
+        })
+        .optional(),
     })
     .passthrough(),
-  formInformation: formInformation.partial(),
+  formInformation: formInformation
+    .extend({
+      q3Score: z.null(),
+      q4Score: z.null(),
+      q5Score: z.null(),
+      q9Score: z.null(),
+    })
+    .partial()
+    .or(formInformation.partial()),
   formReclassificationDueDate: dateStringSchema.optional(),
 });
 

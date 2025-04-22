@@ -69,6 +69,7 @@ import { usTnAnnualReclassificationReviewSchema } from "../src/WorkflowsStore/Op
 import { usTnCompliantReporting2025PolicySchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnCompliantReporting2025PolicyOpportunity";
 import { usTnCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnCustodyLevelDowngradeOpportunity/UsTnCustodyLevelDowngradeReferralRecord";
 import { usTnExpirationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnExpirationOpportunity/UsTnExpirationReferralRecord";
+import { usTnInitialClassificationSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnInitialClassificationOpportunity/UsTnInitialClassificationReferralRecord";
 import { usTnSupervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSupervisionLevelDowngradeOpportunity/UsTnSupervisionLevelDowngradeReferralRecord";
 import { usTnSuspensionOfDirectSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsTn/UsTnSuspensionOfDirectSupervisionOpportunity/UsTnSuspensionOfDirectSupervisionReferralRecord";
 import { usUtEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsUt";
@@ -166,6 +167,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usTnAnnualReclassification: usTnAnnualReclassificationReviewSchema,
   usTnCustodyLevelDowngrade: usTnCustodyLevelDowngradeSchema,
   usTnExpiration: usTnExpirationSchema,
+  usTnInitialClassification: usTnInitialClassificationSchema,
   usTnSuspensionOfDirectSupervision: usTnSuspensionOfDirectSupervisionSchema,
 
   // US_UT

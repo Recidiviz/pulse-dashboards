@@ -21,7 +21,10 @@ import tk from "timekeeper";
 import { assessmentQuestionNumbers } from "../../../../core/Paperwork/US_TN/CustodyReclassification/assessmentQuestions";
 import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
-import { UsTnAnnualReclassificationReviewOpportunity } from "../../UsTn";
+import {
+  UsTnAnnualReclassificationReviewOpportunity,
+  UsTnInitialClassificationOpportunity,
+} from "../../UsTn";
 import { UsTnReclassificationReviewForm } from "../UsTnReclassificationReviewForm";
 
 // To adapt this to a new form/opportunity, change the type of `form` and update the opp and
@@ -39,7 +42,9 @@ let formUpdates: ((typeof opp)["updates"] & {
 
 type PartialFormData = ReturnType<(typeof form)["prefilledDataTransformer"]>;
 
-function createTestUnit() {
+function createTestUnit(
+  { initialClassification } = { initialClassification: false },
+) {
   const rootStore = new RootStore();
   rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
   personRecord = {
@@ -54,6 +59,7 @@ function createTestUnit() {
     officerId: "zzz",
     allEligibleOpportunities: [],
     facilityId: "facility1",
+    custodyLevel: "MINIMUM",
     metadata: {},
   };
 
@@ -64,13 +70,13 @@ function createTestUnit() {
     formInformation: {
       q1Score: 3,
       q2Score: 0,
-      q3Score: 0,
-      q4Score: 0,
-      q5Score: -2,
+      q3Score: initialClassification ? null : 0,
+      q4Score: initialClassification ? null : 0,
+      q5Score: initialClassification ? null : -2,
       q6Score: -4,
       q7Score: 2,
       q8Score: 3,
-      q9Score: 2,
+      q9Score: initialClassification ? null : 2,
       q6Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
       q7Notes: [{ eventDate: "2022-08-22", noteBody: "Some note" }],
       q8Notes: [
@@ -110,7 +116,11 @@ function createTestUnit() {
   formUpdates = {};
 
   const person = new Resident(personRecord, rootStore);
-  opp = new UsTnAnnualReclassificationReviewOpportunity(person, baseRecord);
+  if (initialClassification) {
+    opp = new UsTnInitialClassificationOpportunity(person, baseRecord);
+  } else {
+    opp = new UsTnAnnualReclassificationReviewOpportunity(person, baseRecord);
+  }
   oppRecord = opp.record;
   vi.spyOn(opp, "record", "get").mockImplementation(() => oppRecord as any);
   vi.spyOn(opp.form, "updates", "get").mockImplementation(
@@ -150,320 +160,344 @@ const baseResult: PartialFormData = {
     "Justification for classification: \nLevel of Care: LOC\nLatest PREA screening: Unavailable",
 };
 
-beforeEach(() => {
-  configure({ safeDescriptors: false });
-  tk.freeze("2020-02-29T12:00");
-  createTestUnit();
-});
-
-afterEach(() => {
-  vi.resetAllMocks();
-  tk.reset();
-  configure({ safeDescriptors: true });
-});
-
-describe("prefilledDataTransformer", () => {
-  test("fills fields", () => {
-    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>(
-      baseResult,
-    );
+describe("Annual Reclassification", () => {
+  beforeEach(() => {
+    configure({ safeDescriptors: false });
+    tk.freeze("2020-02-29T12:00");
+    createTestUnit();
   });
 
-  test("handles 0 scores appropriately", () => {
-    oppRecord.formInformation.q1Score = 0;
-    oppRecord.formInformation.q2Score = 0;
-    oppRecord.formInformation.q3Score = 0;
-    oppRecord.formInformation.q4Score = 0;
-    oppRecord.formInformation.q5Score = 0;
-    oppRecord.formInformation.q6Score = 0;
-    oppRecord.formInformation.q7Score = 0;
-    oppRecord.formInformation.q8Score = 0;
-    oppRecord.formInformation.q9Score = 0;
+  afterEach(() => {
+    vi.resetAllMocks();
+    tk.reset();
+    configure({ safeDescriptors: true });
+  });
 
-    expect(form.prefilledDataTransformer()).toStrictEqual({
-      ...baseResult,
-      q1Selection: -1,
-      q2Selection: 0,
-      q3Selection: 0,
-      q4Selection: 0,
-      q5Selection: 1,
-      q6Selection: 3,
-      q7Selection: -1,
-      q8Selection: -1,
-      q9Selection: -1,
+  describe("prefilledDataTransformer", () => {
+    test("fills fields", () => {
+      expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>(
+        baseResult,
+      );
+    });
+
+    test("handles 0 scores appropriately", () => {
+      oppRecord.formInformation.q1Score = 0;
+      oppRecord.formInformation.q2Score = 0;
+      oppRecord.formInformation.q3Score = 0;
+      oppRecord.formInformation.q4Score = 0;
+      oppRecord.formInformation.q5Score = 0;
+      oppRecord.formInformation.q6Score = 0;
+      oppRecord.formInformation.q7Score = 0;
+      oppRecord.formInformation.q8Score = 0;
+      oppRecord.formInformation.q9Score = 0;
+
+      expect(form.prefilledDataTransformer()).toStrictEqual({
+        ...baseResult,
+        q1Selection: -1,
+        q2Selection: 0,
+        q3Selection: 0,
+        q4Selection: 0,
+        q5Selection: 1,
+        q6Selection: 3,
+        q7Selection: -1,
+        q8Selection: -1,
+        q9Selection: -1,
+      });
+    });
+
+    test("handles unexpected score appropriately", () => {
+      for (const i of assessmentQuestionNumbers) {
+        const key = `q${i}Score` as `q${typeof i}Score`;
+        const temp = oppRecord.formInformation[key];
+        oppRecord.formInformation[key] = 20;
+        // eslint-disable-next-line no-loop-func
+        expect(() => form.prefilledDataTransformer()).toBeDefined();
+
+        // form information should not contain nulls for reclassification opportunities
+        expect(temp).not.toBeNull();
+        // @ts-ignore - we already check it's not null
+        oppRecord.formInformation[key] = temp;
+      }
+    });
+
+    test("disambiguates question 1", () => {
+      oppRecord.formInformation.q1Score = 5;
+
+      oppRecord.caseNotes["ASSAULTIVE DISCIPLINARIES"] = [
+        {
+          noteTitle: "AOW - 3", // Weapon, serious injury
+          eventDate: new Date("2016-02-01"), // 48 months out
+        },
+      ];
+
+      expect(form.prefilledDataTransformer()).toStrictEqual({
+        ...baseResult,
+        q1Selection: 3,
+      });
+
+      oppRecord.caseNotes["ASSAULTIVE DISCIPLINARIES"] = [
+        {
+          noteTitle: "AOW - 1", // Weapon, no serious injury
+          eventDate: new Date("2019-02-01"), // 12 months out
+        },
+      ];
+
+      expect(form.prefilledDataTransformer()).toStrictEqual({
+        ...baseResult,
+        q1Selection: 1,
+      });
+    });
+
+    test("formats q3Notes", () => {
+      oppRecord.formInformation.currentOffenses = [
+        "Offense1",
+        "Offense2",
+        "Offense1",
+      ];
+
+      expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+        ...baseResult,
+        q3Note: "Offense1, Offense2",
+      });
+    });
+
+    test("formats q6Notes", () => {
+      oppRecord.formInformation.q6Notes = [
+        {
+          noteBody: "Class C Incident Details: Some details",
+          eventDate: new Date("2019-02-01"),
+        },
+        {
+          noteBody: "Class A Incident Details: Some other details",
+          eventDate: new Date("2020-02-01"),
+        },
+      ];
+
+      expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+        ...baseResult,
+        q6Note:
+          "2/1/19 - Class C Incident Details: Some details, 2/1/20 - Class A Incident Details: Some other details",
+      });
+    });
+
+    test("formats q7Notes", () => {
+      oppRecord.formInformation.q7Notes = [
+        {
+          noteBody: "Class C Incident Details: Some details",
+          eventDate: new Date("2019-02-01"),
+        },
+        {
+          noteBody: "Class A Incident Details: Some other details",
+          eventDate: new Date("2020-02-01"),
+        },
+      ];
+
+      expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+        ...baseResult,
+        q7Note:
+          "2/1/19 - Class C Incident Details: Some details, 2/1/20 - Class A Incident Details: Some other details",
+      });
+    });
+
+    test("formats q8Notes (old format)", () => {
+      oppRecord.formInformation.q8Notes = [
+        {
+          detainerFelonyFlag: true,
+          detainerMisdemeanorFlag: false,
+          detainerReceivedDate: new Date("2019-02-01"),
+        },
+        {
+          detainerFelonyFlag: false,
+          detainerMisdemeanorFlag: true,
+          detainerReceivedDate: new Date("2020-02-01"),
+        },
+      ];
+
+      expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+        ...baseResult,
+        q8Note: "2/1/19 - Felony; 2/1/20 - Misdemeanor",
+      });
+    });
+
+    test("formats q8Notes (new format)", () => {
+      oppRecord.formInformation.q8Notes = [
+        {
+          detainerFelonyFlag: false,
+          detainerMisdemeanorFlag: false,
+          detainerReceivedDate: new Date("2019-02-01"),
+          jurisdiction: "TN",
+          description: "DESCRIPTION",
+          chargePending: true,
+        },
+        {
+          detainerFelonyFlag: false,
+          detainerMisdemeanorFlag: true,
+          detainerReceivedDate: new Date("2020-02-01"),
+          jurisdiction: "TN",
+          description: "DESCRIPTION",
+          chargePending: false,
+        },
+      ];
+
+      expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+        ...baseResult,
+        q8Note:
+          "2/1/19 - DESCRIPTION - Jurisdiction: TN - Charge Pending; 2/1/20 - Misdemeanor - DESCRIPTION - Jurisdiction: TN - No Charge Pending",
+      });
+    });
+
+    test("formats recommendationJustification", () => {
+      oppRecord.formInformation.activeRecommendations = [
+        {
+          Recommendation: "RECA",
+        },
+        {
+          Recommendation: "RECB",
+        },
+        {
+          Recommendation: "RECA",
+        },
+      ];
+
+      expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
+        ...baseResult,
+        recommendationJustification:
+          "Justification for classification: \nLevel of Care: LOC\nLatest PREA screening: Unavailable\nActive Recommendations: RECA, RECB",
+      });
     });
   });
 
-  test("handles unexpected score appropriately", () => {
+  describe("derivedData", () => {
+    test("Passes through fields by default", () => {
+      formUpdates = {
+        omsId: "foo",
+        q6Note: "bar",
+      };
+      expect(form.derivedData.omsId).toBe("foo");
+      expect(form.derivedData.q6Note).toBe("bar");
+    });
+
+    test("Expands multiple choice", () => {
+      formUpdates = {
+        statusAtHearing: "GEN",
+      };
+      expect(form.derivedData.statusAtHearingSelectedGEN).toBe(true);
+      expect(form.derivedData).not.toHaveProperty("statusAtHearingOther");
+    });
+
+    test("Expands multiple choice (other)", () => {
+      formUpdates = {
+        statusAtHearing: "SEG",
+      };
+      expect(form.derivedData.statusAtHearingOther).toBe("SEG");
+    });
+
+    describe("CAF", () => {
+      test("Full form", () => {
+        formUpdates = {
+          q1Selection: 0,
+          q2Selection: 0,
+          q3Selection: 0,
+          q4Selection: 0,
+          q5Selection: 0,
+          q6Selection: 0,
+          q7Selection: 0,
+          q8Selection: 0,
+          q9Selection: 0,
+        };
+        expect(form.derivedData.q1Selected0).toBe(true);
+        expect(form.derivedData.q1Score).toBe(3);
+        expect(form.derivedData.scheduleAText).toBe("Complete Schedule B");
+        expect(form.derivedData.scheduleAScore).toBe(3);
+        expect(form.derivedData.q5Selected0).toBe(true);
+        expect(form.derivedData.q5Score).toBe(-2);
+        expect(form.derivedData.totalText).toBe("MINIMUM");
+        expect(form.derivedData.totalScore).toBe(4);
+      });
+
+      test("Blank in Schedule A", () => {
+        oppRecord.formInformation = {};
+        formUpdates = {
+          // q1 is missing
+          q2Selection: 1,
+          q3Selection: 3,
+          q4Selection: 3,
+          q5Selection: 0,
+          q6Selection: 0,
+          q7Selection: 0,
+          q8Selection: 0,
+          q9Selection: 0,
+        };
+        expect(form.derivedData).not.toHaveProperty("q1Selected0");
+        expect(form.derivedData).not.toHaveProperty("q1Score");
+        expect(form.derivedData.scheduleAText).toBe("");
+        expect(form.derivedData.scheduleAScore).toBe("");
+        expect(form.derivedData.q5Selected0).toBe(true); // Schedule B questions are still filled out
+        expect(form.derivedData.q5Score).toBe(-2);
+        expect(form.derivedData.totalText).toBe("");
+        expect(form.derivedData.totalScore).toBe("");
+      });
+
+      test("Blank in Schedule B", () => {
+        oppRecord.formInformation = {};
+        formUpdates = {
+          q1Selection: 0,
+          q2Selection: 0,
+          q3Selection: 0,
+          q4Selection: 0,
+          // q5 is missing
+          q6Selection: 0,
+          q7Selection: 0,
+          q8Selection: 0,
+          q9Selection: 0,
+        };
+        expect(form.derivedData.q1Selected0).toBe(true);
+        expect(form.derivedData.q1Score).toBe(3);
+        expect(form.derivedData.scheduleAText).toBe("Complete Schedule B");
+        expect(form.derivedData.scheduleAScore).toBe(3);
+        expect(form.derivedData).not.toHaveProperty("q5Selected0");
+        expect(form.derivedData).not.toHaveProperty("q5Score");
+        expect(form.derivedData.totalText).toBe("");
+        expect(form.derivedData.totalScore).toBe("");
+      });
+
+      test("High Schedule A Score", () => {
+        formUpdates = {
+          q1Selection: 2,
+          q2Selection: 1,
+          q3Selection: 3,
+          q4Selection: 3,
+          q5Selection: 0,
+          q6Selection: 0,
+          q7Selection: 0,
+          q8Selection: 0,
+          q9Selection: 0,
+        };
+        expect(form.derivedData.scheduleAText).toBe("MAXIMUM");
+        expect(form.derivedData.scheduleAScore).toBe(18);
+        expect(form.derivedData).not.toHaveProperty("q5Selected0"); // Schedule B is skipped
+        expect(form.derivedData).not.toHaveProperty("q5Score");
+        expect(form.derivedData.totalText).toBe("MAXIMUM");
+        expect(form.derivedData.totalScore).toBe(18);
+      });
+    });
+  });
+});
+
+describe("Initial Classification", () => {
+  beforeEach(() => {
+    createTestUnit({ initialClassification: true });
+  });
+
+  test("questions that start as null have no selection", () => {
+    const prefilledData = form.prefilledDataTransformer();
     for (const i of assessmentQuestionNumbers) {
-      const key = `q${i}Score` as `q${typeof i}Score`;
-      const temp = oppRecord.formInformation[key];
-      oppRecord.formInformation[key] = 20;
-      // eslint-disable-next-line no-loop-func
-      expect(() => form.prefilledDataTransformer()).toBeDefined();
-      oppRecord.formInformation[key] = temp;
+      const key = `q${i}Selection`;
+      if ([3, 4, 5, 9].includes(i)) {
+        expect(prefilledData).not.toHaveProperty(key);
+      } else {
+        expect(prefilledData).toHaveProperty(key);
+      }
     }
-  });
-
-  test("disambiguates question 1", () => {
-    oppRecord.formInformation.q1Score = 5;
-
-    oppRecord.caseNotes["ASSAULTIVE DISCIPLINARIES"] = [
-      {
-        noteTitle: "AOW - 3", // Weapon, serious injury
-        eventDate: new Date("2016-02-01"), // 48 months out
-      },
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual({
-      ...baseResult,
-      q1Selection: 3,
-    });
-
-    oppRecord.caseNotes["ASSAULTIVE DISCIPLINARIES"] = [
-      {
-        noteTitle: "AOW - 1", // Weapon, no serious injury
-        eventDate: new Date("2019-02-01"), // 12 months out
-      },
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual({
-      ...baseResult,
-      q1Selection: 1,
-    });
-  });
-
-  test("formats q3Notes", () => {
-    oppRecord.formInformation.currentOffenses = [
-      "Offense1",
-      "Offense2",
-      "Offense1",
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
-      ...baseResult,
-      q3Note: "Offense1, Offense2",
-    });
-  });
-
-  test("formats q6Notes", () => {
-    oppRecord.formInformation.q6Notes = [
-      {
-        noteBody: "Class C Incident Details: Some details",
-        eventDate: new Date("2019-02-01"),
-      },
-      {
-        noteBody: "Class A Incident Details: Some other details",
-        eventDate: new Date("2020-02-01"),
-      },
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
-      ...baseResult,
-      q6Note:
-        "2/1/19 - Class C Incident Details: Some details, 2/1/20 - Class A Incident Details: Some other details",
-    });
-  });
-
-  test("formats q7Notes", () => {
-    oppRecord.formInformation.q7Notes = [
-      {
-        noteBody: "Class C Incident Details: Some details",
-        eventDate: new Date("2019-02-01"),
-      },
-      {
-        noteBody: "Class A Incident Details: Some other details",
-        eventDate: new Date("2020-02-01"),
-      },
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
-      ...baseResult,
-      q7Note:
-        "2/1/19 - Class C Incident Details: Some details, 2/1/20 - Class A Incident Details: Some other details",
-    });
-  });
-
-  test("formats q8Notes (old format)", () => {
-    oppRecord.formInformation.q8Notes = [
-      {
-        detainerFelonyFlag: true,
-        detainerMisdemeanorFlag: false,
-        detainerReceivedDate: new Date("2019-02-01"),
-      },
-      {
-        detainerFelonyFlag: false,
-        detainerMisdemeanorFlag: true,
-        detainerReceivedDate: new Date("2020-02-01"),
-      },
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
-      ...baseResult,
-      q8Note: "2/1/19 - Felony; 2/1/20 - Misdemeanor",
-    });
-  });
-
-  test("formats q8Notes (new format)", () => {
-    oppRecord.formInformation.q8Notes = [
-      {
-        detainerFelonyFlag: false,
-        detainerMisdemeanorFlag: false,
-        detainerReceivedDate: new Date("2019-02-01"),
-        jurisdiction: "TN",
-        description: "DESCRIPTION",
-        chargePending: true,
-      },
-      {
-        detainerFelonyFlag: false,
-        detainerMisdemeanorFlag: true,
-        detainerReceivedDate: new Date("2020-02-01"),
-        jurisdiction: "TN",
-        description: "DESCRIPTION",
-        chargePending: false,
-      },
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
-      ...baseResult,
-      q8Note:
-        "2/1/19 - DESCRIPTION - Jurisdiction: TN - Charge Pending; 2/1/20 - Misdemeanor - DESCRIPTION - Jurisdiction: TN - No Charge Pending",
-    });
-  });
-
-  test("formats recommendationJustification", () => {
-    oppRecord.formInformation.activeRecommendations = [
-      {
-        Recommendation: "RECA",
-      },
-      {
-        Recommendation: "RECB",
-      },
-      {
-        Recommendation: "RECA",
-      },
-    ];
-
-    expect(form.prefilledDataTransformer()).toStrictEqual<PartialFormData>({
-      ...baseResult,
-      recommendationJustification:
-        "Justification for classification: \nLevel of Care: LOC\nLatest PREA screening: Unavailable\nActive Recommendations: RECA, RECB",
-    });
-  });
-});
-
-describe("derivedData", () => {
-  test("Passes through fields by default", () => {
-    formUpdates = {
-      omsId: "foo",
-      q6Note: "bar",
-    };
-    expect(form.derivedData.omsId).toBe("foo");
-    expect(form.derivedData.q6Note).toBe("bar");
-  });
-
-  test("Expands multiple choice", () => {
-    formUpdates = {
-      statusAtHearing: "GEN",
-    };
-    expect(form.derivedData.statusAtHearingSelectedGEN).toBe(true);
-    expect(form.derivedData).not.toHaveProperty("statusAtHearingOther");
-  });
-
-  test("Expands multiple choice (other)", () => {
-    formUpdates = {
-      statusAtHearing: "SEG",
-    };
-    expect(form.derivedData.statusAtHearingOther).toBe("SEG");
-  });
-
-  describe("CAF", () => {
-    test("Full form", () => {
-      formUpdates = {
-        q1Selection: 0,
-        q2Selection: 0,
-        q3Selection: 0,
-        q4Selection: 0,
-        q5Selection: 0,
-        q6Selection: 0,
-        q7Selection: 0,
-        q8Selection: 0,
-        q9Selection: 0,
-      };
-      expect(form.derivedData.q1Selected0).toBe(true);
-      expect(form.derivedData.q1Score).toBe(3);
-      expect(form.derivedData.scheduleAText).toBe("Complete Schedule B");
-      expect(form.derivedData.scheduleAScore).toBe(3);
-      expect(form.derivedData.q5Selected0).toBe(true);
-      expect(form.derivedData.q5Score).toBe(-2);
-      expect(form.derivedData.totalText).toBe("MINIMUM");
-      expect(form.derivedData.totalScore).toBe(4);
-    });
-
-    test("Blank in Schedule A", () => {
-      oppRecord.formInformation = {};
-      formUpdates = {
-        // q1 is missing
-        q2Selection: 1,
-        q3Selection: 3,
-        q4Selection: 3,
-        q5Selection: 0,
-        q6Selection: 0,
-        q7Selection: 0,
-        q8Selection: 0,
-        q9Selection: 0,
-      };
-      expect(form.derivedData).not.toHaveProperty("q1Selected0");
-      expect(form.derivedData).not.toHaveProperty("q1Score");
-      expect(form.derivedData.scheduleAText).toBe("");
-      expect(form.derivedData.scheduleAScore).toBe("");
-      expect(form.derivedData.q5Selected0).toBe(true); // Schedule B questions are still filled out
-      expect(form.derivedData.q5Score).toBe(-2);
-      expect(form.derivedData.totalText).toBe("");
-      expect(form.derivedData.totalScore).toBe("");
-    });
-
-    test("Blank in Schedule B", () => {
-      oppRecord.formInformation = {};
-      formUpdates = {
-        q1Selection: 0,
-        q2Selection: 0,
-        q3Selection: 0,
-        q4Selection: 0,
-        // q5 is missing
-        q6Selection: 0,
-        q7Selection: 0,
-        q8Selection: 0,
-        q9Selection: 0,
-      };
-      expect(form.derivedData.q1Selected0).toBe(true);
-      expect(form.derivedData.q1Score).toBe(3);
-      expect(form.derivedData.scheduleAText).toBe("Complete Schedule B");
-      expect(form.derivedData.scheduleAScore).toBe(3);
-      expect(form.derivedData).not.toHaveProperty("q5Selected0");
-      expect(form.derivedData).not.toHaveProperty("q5Score");
-      expect(form.derivedData.totalText).toBe("");
-      expect(form.derivedData.totalScore).toBe("");
-    });
-
-    test("High Schedule A Score", () => {
-      formUpdates = {
-        q1Selection: 2,
-        q2Selection: 1,
-        q3Selection: 3,
-        q4Selection: 3,
-        q5Selection: 0,
-        q6Selection: 0,
-        q7Selection: 0,
-        q8Selection: 0,
-        q9Selection: 0,
-      };
-      expect(form.derivedData.scheduleAText).toBe("MAXIMUM");
-      expect(form.derivedData.scheduleAScore).toBe(18);
-      expect(form.derivedData).not.toHaveProperty("q5Selected0"); // Schedule B is skipped
-      expect(form.derivedData).not.toHaveProperty("q5Score");
-      expect(form.derivedData.totalText).toBe("MAXIMUM");
-      expect(form.derivedData.totalScore).toBe(18);
-    });
   });
 });

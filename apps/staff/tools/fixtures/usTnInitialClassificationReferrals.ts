@@ -28,10 +28,6 @@ const data: UsTnInitialClassificationReferralRecordRaw[] = [
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
-      custodyLevelComparedToRecommended: {
-        custodyLevel: "MINIMUM",
-        recommendedCustodyLevel: "MINIMUM",
-      },
     },
     ineligibleCriteria: {},
     caseNotes: {
@@ -73,9 +69,9 @@ const data: UsTnInitialClassificationReferralRecordRaw[] = [
       statusAtHearingSeg: "GEN",
       q1Score: 0,
       q2Score: 0,
-      q3Score: 4,
-      q4Score: 0,
-      q5Score: -2,
+      q3Score: null,
+      q4Score: null,
+      q5Score: null,
       q6Score: -2,
       q7Score: 5,
       q7Notes: {
@@ -83,7 +79,7 @@ const data: UsTnInitialClassificationReferralRecordRaw[] = [
         eventDate: relativeFixtureDate({ years: -1, months: -2, days: -20 }),
       },
       q8Score: 0,
-      q9Score: 0,
+      q9Score: null,
     },
     isEligible: true,
     isAlmostEligible: false,
@@ -95,10 +91,6 @@ const data: UsTnInitialClassificationReferralRecordRaw[] = [
     eligibleCriteria: {
       usTnAtLeast12MonthsSinceLatestAssessment: null,
       custodyLevelIsNotMax: null,
-      custodyLevelComparedToRecommended: {
-        custodyLevel: "CLOSE",
-        recommendedCustodyLevel: "MEDIUM",
-      },
     },
     ineligibleCriteria: {},
     caseNotes: {
@@ -141,13 +133,13 @@ const data: UsTnInitialClassificationReferralRecordRaw[] = [
       statusAtHearingSeg: "GEN",
       q1Score: 0,
       q2Score: 0,
-      q3Score: 4,
-      q4Score: 4,
-      q5Score: -2,
+      q3Score: null,
+      q4Score: null,
+      q5Score: null,
       q6Score: -1,
       q7Score: 2,
       q8Score: 3,
-      q9Score: 2,
+      q9Score: null,
       q6Notes: [
         {
           eventDate: relativeFixtureDate({ months: -4, days: 13 }),
