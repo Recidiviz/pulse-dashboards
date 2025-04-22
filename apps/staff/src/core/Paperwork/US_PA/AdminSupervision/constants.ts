@@ -61,12 +61,7 @@ export const INJURY_OFFENSE_LABEL_INFO: LabelInfo[] = [
     field: "offense18_29",
   },
   {
-    label: "18 Pa. C.S. Ch. 30 rel. to Human Trafficking",
-    rowSpan: 1,
-    field: "offense18_30",
-  },
-  {
-    label: "18 Pa. C.S. Ch. 31 rel. to Sexual Offenses",
+    label: "18 Pa. C.S. Ch. 31 rel. to Sexual Assault",
     rowSpan: 1,
     field: "offense18_31",
   },
@@ -86,10 +81,9 @@ export const INJURY_OFFENSE_LABEL_INFO: LabelInfo[] = [
     field: "offense18_49",
   },
   {
-    label:
-      "Any crime of violence defined in 42 Pa.C.S. §  9714(g), or any attempt, conspiracy or solicitation  to commit a crime of violence defined in 42  Pa.C.S. § 9714(g), including any equivalent crime committed in another jurisdiction.",
-    rowSpan: 5,
-    field: "offenseConspiracyToCommitCrime",
+    label: `30 Pa. C.S. 5502.1 Relating to Homicide by  watercraft under influence of alcohol or controlled substance or\n30 Pa. C.S. 5502.2 Relating to Homicide by  watercraft or\n30 Pa. C.S. 5502.3 Relating to Aggravated Assault by watercraft under influence of alcohol or controlled substance or\n30 Pa. C.S. 5502.4 Relating to Aggravated Assault  by watercraft`,
+    rowSpan: 10,
+    field: "offense30_5502",
   },
   {
     label:
@@ -120,27 +114,21 @@ export const INJURY_OFFENSE_LABEL_INFO: LabelInfo[] = [
   },
   {
     label:
-      "An attempt or conspiracy or solicitation to commit a personal injury crime*",
-    rowSpan: 5,
-    field: "offensePersonalInjury",
-  },
-  {
-    label:
       "75 Pa.C.S Ch. 38 Relating to driving after imbibing  alcohol or utilizing drugs in cases of bodily injury.",
-    rowSpan: 4,
+    rowSpan: 3,
     field: "offense75_38",
   },
   {
-    label: "30 Pa.C.S. § 5502.4 Relating to aggravated assault by watercraft.",
-    rowSpan: 3,
-    field: "offense30_5502_4",
+    label: "Named in a PFA Order (or history of PFAs)",
+    rowSpan: 1,
+    field: "offensePFAOrder",
   },
 ];
 
 export const OTHER_OFFENSE_LABEL_INFO: LabelInfo[] = [
-  { label: "18 Pa. C.S. 4302 Incest*", rowSpan: 1, field: "offense18_4302" },
+  { label: "18 Pa. C.S. 4302 Incest", rowSpan: 1, field: "offense18_4302" },
   {
-    label: "18 Pa. C.S. 5901 Open Lewdness*",
+    label: "18 Pa. C.S. 5901 Open Lewdness",
     rowSpan: 1,
     field: "offense18_5901",
   },
@@ -156,34 +144,35 @@ export const OTHER_OFFENSE_LABEL_INFO: LabelInfo[] = [
     field: "offense18_5903",
   },
   {
-    label: "18 Pa. C.S. Ch. 76 Internet Child Pornography*",
+    label: "18 Pa. C.S. Ch. 76 Internet Child Pornography",
     rowSpan: 1,
     field: "offense18_76",
   },
   {
     label: "42 Pa. C.S. §§ 9799.14, 9799.55 Megan’s Law Registration",
-    rowSpan: 1,
+    rowSpan: 2,
     field: "offense42_9799",
   },
   {
     label: "18 Pa. C.S. 6312 Sexual Abuse of Children",
-    rowSpan: 2,
+    rowSpan: 1,
     field: "offense18_6312",
   },
   {
-    label: "18 Pa. C.S. 6318 Unlawful Contact with Minor*",
+    label: "18 Pa. C.S. 6318 Unlawful Contact with Minor",
     rowSpan: 1,
     field: "offense18_6318",
   },
   {
-    label: "18 Pa. C.S. 6320 Sexual Abuse of Children*",
+    label: "18 Pa. C.S. 6320 Sexual Abuse of Children",
     rowSpan: 1,
     field: "offense18_6320",
   },
   {
-    label: "42 Pa. C.S. 9712 Firearm Enhancement",
-    rowSpan: 3,
-    field: "offense42_9712",
+    label:
+      "Any crime of violence defined in 42 Pa.C.S. §  9714(g), or any attempt, conspiracy or solicitation  to commit a crime of violence defined in 42  Pa.C.S. § 9714(g), including any equivalent crime committed in another jurisdiction.",
+    rowSpan: 6,
+    field: "offenseConspiracyToCommitCrime",
   },
   {
     label: "18 Pa. C.S. Firearms or Dangerous Articles",
@@ -207,34 +196,25 @@ export const OTHER_OFFENSE_LABEL_INFO: LabelInfo[] = [
     field: "offenseSexuallyViolentPredator",
   },
   {
-    label: "Named in a PFA Order (or history of PFAs)",
+    label: "42 Pa. C.S. 9712 Firearm Enhancement",
     rowSpan: 1,
-    field: "offensePFAOrder",
+    field: "offense42_9712",
   },
   {
-    label: "18 Pa.C.S. 2803 Aggravated Hazing",
-    rowSpan: 1,
-    field: "offense18_2803",
-  },
-  {
-    label:
-      "30 Pa. C.S. 5502.1 Relating to Homicide by watercraft under influence of alcohol or controlled substance",
-    rowSpan: 3,
-    field: "offense30_5502_1",
-  },
-  {
-    label: "30 Pa.C.S. § 5502.2 Relating to homicide by watercraft",
+    label: "An attempt or conspiracy to commit a personal injury crime",
     rowSpan: 2,
-    field: "offense30_5502_2",
+    field: "offensePersonalInjury",
   },
   {
-    label:
-      "30 Pa.C.S. § 5502.3 Relating to aggravated  assault by watercraft while operating under the  influence.",
-    rowSpan: 4,
-    field: "offense30_5502_3",
+    label: "Enhanced Supervision Level within the past 12  months",
+    rowSpan: 2,
+    field: "enhancedSupervisionLevelPast12Months",
   },
-  // The following are filler rows to match the PA form layout.
-  { label: "", rowSpan: 3 },
+  {
+    label: "Maximum Supervision Level within the past 12  months",
+    rowSpan: 2,
+    field: "maximumSupervisionLevelPast12Months",
+  },
 ];
 
 export const CRITERIA_LABELS: LabelInfo[] = [
@@ -260,20 +240,20 @@ export const CRITERIA_LABELS: LabelInfo[] = [
   },
 ];
 
-export const GRID_ROW_COUNT = 37;
+export const GRID_ROW_COUNT = 33;
 
 export const GRAY_BACKGROUND = "#353535";
 export const BLUE_BACKGROUND = "#d8e6fc";
 
 export const strings = {
-  instructions: `Instructions: Review current offenses and criminal history for crimes which would disqualify reentrant for administrative parole. Any conviction (and/or delinquent adjudication for offenses designated with an asterisk *) will preclude assignment to Administrative Parole.`,
+  instructions: `Instructions: Review current offenses and criminal history for crimes which would disqualify the reentrant for administrative parole. Any conviction and/or delinquent adjudication for offenses listed below will preclude assignment to Administrative Parole.`,
   continueHeader: `If any "YES" is checked above, then the reentrant is not eligible for Administrative Parole. If "NONE", continue with the below questionnaire.`,
   dispositionHeader: `Are there any unreported dispositions in the reentrant's criminal history for any of the above listed personal injury crimes/other offenses? (Note date/offense below)`,
   eligibilityHeader: `Eligible for Administrative Parole?`,
   dispositionNotes: `List unreported disposition information:`,
   agentSignature: `Agent Signature`,
   agentName: `Agent Name (Printed)`,
-  footer: `DC-P 402 | rvsd. 01.2024`,
+  footer: `DC-P 402 | rvsd. 04.2025`,
   addendumFooter: `DC-P 402A | rvsd. 01.2024`,
 } as const;
 

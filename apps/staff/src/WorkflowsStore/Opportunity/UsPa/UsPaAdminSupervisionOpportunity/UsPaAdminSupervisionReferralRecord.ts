@@ -63,10 +63,7 @@ export type UsPaAdminSupervisionDraftData = {
   offense18_37: boolean;
   offense18_49: boolean;
   offenseConspiracyToCommitCrime: boolean;
-  offense30_5502_1: boolean;
-  offense30_5502_2: boolean;
-  offense30_5502_3: boolean;
-  offense30_5502_4: boolean;
+  offense30_5502: boolean;
   offense75_38: boolean;
   offense75_3731: boolean;
   offense75_3732: boolean;
@@ -114,4 +111,6 @@ export type UsPaAdminSupervisionDraftData = {
   reviewICOTSRecords: boolean;
   notDeliveryRelated: boolean;
   unclearRecords: boolean;
+  enhancedSupervisionLevelPast12Months: boolean;
+  maximumSupervisionLevelPast12Months: boolean;
 };
