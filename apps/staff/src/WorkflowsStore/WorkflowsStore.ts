@@ -768,6 +768,7 @@ export class WorkflowsStore implements Hydratable {
   formatSupervisionLevel(levelId: string | undefined): string {
     return (
       this.supervisionLevels.find((opt) => opt.value === levelId)?.label ??
+      levelId ??
       UNKNOWN
     );
   }

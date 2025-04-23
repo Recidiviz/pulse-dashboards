@@ -16,7 +16,6 @@
 // =============================================================================
 
 import {
-  US_CA,
   US_IA,
   US_PA,
   US_TX,
@@ -40,7 +39,7 @@ import {
 import { FILTER_TYPES, METRIC_MODES } from "./constants";
 
 export type FilterOptions = Record<
-  PathwaysTenants | "US_DEMO" | "US_PA" | "US_CA" | "US_TX" | "US_IA",
+  PathwaysTenants | "US_DEMO" | "US_PA" | "US_TX" | "US_IA",
   PopulationFilters
 >;
 
@@ -371,6 +370,7 @@ export const DefaultPopulationFilterOptions: PopulationFilters = {
     setFilters: setFilters(FILTER_TYPES.SUPERVISION_LEVEL),
     options: [
       { label: "All", value: "ALL" },
+      { label: "Limited", value: "LIMITED" },
       { label: "Minimum", value: "MINIMUM" },
       { label: "Medium", value: "MEDIUM" },
       { label: "Maximum", value: "MAXIMUM" },
@@ -1201,6 +1201,7 @@ export const NdPopulationFilterOptions: PopulationFilters = {
       { label: "Maximum", value: "MAXIMUM" },
       { label: "Diversion", value: "DIVERSION" },
       { label: "Interstate compact", value: "INTERSTATE_COMPACT" },
+      { label: "Unassigned", value: "UNASSIGNED" },
       { label: "Unknown", value: "UNKNOWN" },
     ],
     get defaultOption(): FilterOption {
@@ -1309,23 +1310,6 @@ export const PaPopulationFilterOptions: PopulationFilters = {
     get defaultValue(): string {
       return this.defaultOption.value;
     },
-  },
-};
-
-export const CaPopulationFilterOptions: PopulationFilters = {
-  ...DefaultPopulationFilterOptions,
-  [FILTER_TYPES.SUPERVISION_LEVEL]: {
-    ...DefaultPopulationFilterOptions[FILTER_TYPES.SUPERVISION_LEVEL],
-    options: [
-      { label: "All", value: "ALL" },
-      { label: "High", value: "HIGH" },
-      { label: "Intake", value: "INTAKE" },
-      { label: "Limited", value: "LIMITED" },
-      { label: "Maximum", value: "MAXIMUM" },
-      { label: "Minimum", value: "MINIMUM" },
-      { label: "Medium", value: "MEDIUM" },
-      { label: "Residential Program", value: "RESIDENTIAL_PROGRAM" },
-    ],
   },
 };
 
@@ -1568,7 +1552,6 @@ export const defaultPopulationFilterValues: PopulationFilterValues = {
 };
 
 const filterOptions: FilterOptions = {
-  [US_CA]: CaPopulationFilterOptions,
   [US_IA]: IaPopulationFilterOptions,
   [US_ID]: IdPopulationFilterOptions,
   [US_MO]: MoPopulationFilterOptions,
