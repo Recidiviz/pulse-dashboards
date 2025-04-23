@@ -20,7 +20,6 @@ import { format, isEqual } from "date-fns";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { Denial, Submission } from "../../FirestoreStore";
 import { Opportunity } from "../../WorkflowsStore";
 
@@ -127,8 +126,6 @@ const MarkedIneligibleReasons: React.FC<{
   >;
   denialReasons?: string[];
 }> = ({ opportunity, actedOnTextAndResurfaceTextPair, denialReasons }) => {
-  const { enableSnooze } = useFeatureVariants();
-
   if (opportunity.isSubmitted) {
     return (
       <MarkedIneligibleReasonsText className="MarkedIneligibleReasonsText">
@@ -137,7 +134,7 @@ const MarkedIneligibleReasons: React.FC<{
     );
   }
 
-  if (!denialReasons || !enableSnooze) return null;
+  if (!denialReasons) return null;
 
   const ineligibleReasonsList = buildDenialReasonsListText(
     opportunity,

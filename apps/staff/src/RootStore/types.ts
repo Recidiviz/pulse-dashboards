@@ -63,7 +63,7 @@ export type UserAppMetadata = {
 export type FeatureVariant =
   | "TEST"
   // WORKFLOWS
-  | "enableSnooze"
+  | "disableSnoozeSlider"
   | "supervisionUnrestrictedSearch"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
@@ -127,10 +127,10 @@ export type ActiveFeatureVariantRecord = Partial<
 >;
 export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
+  disableSnoozeSlider: {},
   usTnExpiration: {},
   usTnExpirationSubmitToTomis: {},
   usCaEnableSMS: {},
-  enableSnooze: {},
   supervisionUnrestrictedSearch: {},
   formRevertButton: {},
   usMoOverdueRHPilot: {},
@@ -171,7 +171,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
   import.meta.env.VITE_DEPLOY_ENV === "production"
     ? {
         actionStrategies: { activeTenants: ["US_MI"] },
-        enableSnooze: {},
+        disableSnoozeSlider: { activeTenants: ["US_MO"] },
         fullWidthTimeline: { activeTenants: ["US_AZ", "US_UT"] },
         insightsOnboarding: {},
         opportunityTableView: { activeTenants: ["US_TX"] },
@@ -198,6 +198,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
       }
     : {
         ...allFeatureVariants,
+        disableSnoozeSlider: { activeTenants: ["US_MO"] },
         opportunityTableView: isDemoMode() ? undefined : {},
         // Currently disabled because the last synced date doesn't exist on the backend yet.
         lastSyncedDate: undefined,

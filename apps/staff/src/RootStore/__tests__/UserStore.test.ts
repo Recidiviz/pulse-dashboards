@@ -976,8 +976,8 @@ describe("feature variants", () => {
         "TEST": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
+        "disableSnoozeSlider": {},
         "editCountyFields": {},
-        "enableSnooze": {},
         "formRevertButton": {},
         "fullWidthTimeline": {},
         "hideDenialRevert": {},
@@ -1025,8 +1025,8 @@ describe("feature variants", () => {
         "TEST": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
+        "disableSnoozeSlider": {},
         "editCountyFields": {},
-        "enableSnooze": {},
         "formRevertButton": {},
         "fullWidthTimeline": {},
         "hideDenialRevert": {},
@@ -1072,8 +1072,8 @@ describe("feature variants", () => {
       {
         "actionStrategies": {},
         "caseNoteSearch": {},
+        "disableSnoozeSlider": {},
         "editCountyFields": {},
-        "enableSnooze": {},
         "formRevertButton": {},
         "fullWidthTimeline": {},
         "hideDenialRevert": {},
@@ -1202,13 +1202,11 @@ describe("feature variants", () => {
     runInAction(() => {
       store.user = getMockUserObject({
         featureVariants: { TEST: { variant: "a" } },
-        demoModeFeatureVariants: { enableSnooze: {} },
+        demoModeFeatureVariants: {},
       });
     });
 
-    expect(store.activeFeatureVariants).toEqual({
-      enableSnooze: {},
-    });
+    expect(store.activeFeatureVariants).toEqual({});
   });
 
   test("demo mode with demo variant not defined", () => {

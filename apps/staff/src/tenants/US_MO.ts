@@ -95,6 +95,7 @@ const US_MO_CONFIG: TenantConfig<"US_MO"> = {
     revocations: [],
     methodology: ["system"],
   },
+  featureVariants: { disableSnoozeSlider: {} },
   tableColumns: enabledTableColumns[pathways.US_MO],
 };
 

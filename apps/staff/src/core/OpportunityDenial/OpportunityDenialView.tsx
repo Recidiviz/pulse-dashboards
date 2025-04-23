@@ -115,7 +115,8 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     opportunity?.autoSnooze?.snoozeUntil,
   );
 
-  const { enableSnooze, submittedOpportunityStatus } = useFeatureVariants();
+  const { disableSnoozeSlider, submittedOpportunityStatus } =
+    useFeatureVariants();
 
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
@@ -123,7 +124,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const snoozeConfig = opportunity.config.snooze;
 
-  const snoozeEnabled = enableSnooze && snoozeConfig !== undefined;
+  const snoozeEnabled = snoozeConfig !== undefined;
 
   let releaseDate: Date | undefined;
   const { person } = opportunity;
@@ -252,7 +253,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const snoozeSection = (
     <>
-      {maxManualSnoozeDays && (
+      {maxManualSnoozeDays && !disableSnoozeSlider && (
         <SliderWrapper>
           <SliderLabel>Snooze for:</SliderLabel>
           <Slider

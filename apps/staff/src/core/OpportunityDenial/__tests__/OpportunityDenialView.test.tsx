@@ -52,9 +52,7 @@ function getCheckbox(reason: string) {
 describe("OpportunityDenialView", () => {
   beforeEach(() => {
     timekeeper.freeze("2023-10-5");
-    useFeatureVariantsMock.mockReturnValue({
-      enableSnooze: true,
-    });
+    useFeatureVariantsMock.mockReturnValue({});
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         currentUserEmail: "mock-email",
@@ -491,10 +489,10 @@ describe("OpportunityDenialView", () => {
     });
   });
 
-  describe("enableSnooze featureVariant is not set", () => {
+  describe("disableSnoozeSlider featureVariant is set", () => {
     beforeEach(() => {
       vi.resetAllMocks();
-      useFeatureVariantsMock.mockReturnValue({});
+      useFeatureVariantsMock.mockReturnValue({ disableSnoozeSlider: true });
     });
 
     it("does not show the slider even if config is set", () => {

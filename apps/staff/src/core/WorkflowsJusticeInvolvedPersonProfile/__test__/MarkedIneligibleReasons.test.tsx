@@ -18,9 +18,7 @@
 import { render, screen } from "@testing-library/react";
 import { Timestamp } from "firebase/firestore";
 import { BrowserRouter } from "react-router-dom";
-import { Mock } from "vitest";
 
-import { useFeatureVariants } from "../../../components/StoreProvider";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import MarkedIneligibleReasons, {
@@ -31,8 +29,6 @@ import MarkedIneligibleReasons, {
 } from "../MarkedIneligibleReasons";
 
 vi.mock("../../../components/StoreProvider");
-
-const useFeatureVariantsMock = useFeatureVariants as Mock;
 
 describe("buildDenialReasonsListText", () => {
   test("override opportunities", () => {
@@ -149,7 +145,6 @@ describe("buildResurfaceText", () => {
 
 describe("MarkedIneligibleReasons", () => {
   beforeEach(() => {
-    useFeatureVariantsMock.mockReturnValue({ enableSnooze: {} });
     const opp = {
       ...mockOpportunity,
       config: { ...mockOpportunity.config, isAlert: true },
