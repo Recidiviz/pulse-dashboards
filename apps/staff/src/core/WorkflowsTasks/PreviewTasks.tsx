@@ -20,9 +20,11 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import StopwatchIcon from "../../assets/static/images/stopwatch.svg?react";
 import useIsMobile from "../../hooks/useIsMobile";
-import { formatDate } from "../../utils";
+import { formatDate, formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
+import { formatDateString } from "../models/utils";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
@@ -88,13 +90,15 @@ const TaskSnoozedDate = styled(Sans14)`
   line-height: 2;
 `;
 
-const TaskItemV2 = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
+const TaskItemWrapper = styled.div`
   min-height: ${rem(75)};
   padding: 1.5rem 0;
+  position: relative;
+`;
+
+const TaskItemV2 = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
   display: grid;
   grid-template-columns: 180px 180px auto;
-  align-content: center;
-  position: relative;
 `;
 
 const TaskInfo = styled.div`
@@ -117,6 +121,41 @@ const TaskTimeline = styled.div`
 const TaskTimelineDueDate = styled.div<{ overdue: boolean }>`
   color: ${({ overdue }) => (overdue ? palette.signal.error : palette.pine4)};
 `;
+
+const SnoozedTaskIcon = styled.span`
+  color: ${palette.slate60};
+`;
+
+const SnoozedTaskText = styled.span`
+  color: ${palette.pine1};
+`;
+
+const SnoozedTaskInfoBox = styled.div`
+  ${typography.Sans14}
+  background-color: ${palette.marble4};
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
+
+  display: flex;
+  flex-direction: row;
+  gap: ${rem(10)};
+`;
+
+const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
+  if (!task.isSnoozed || !task.snoozeInfo) return null;
+  const { snoozedBy, snoozedUntil, snoozedOn } = task.snoozeInfo;
+
+  const snoozeText = `This task will be hidden until ${formatWorkflowsDate(snoozedUntil)}. Marked as hidden by ${snoozedBy} on ${formatWorkflowsDate(formatDateString(snoozedOn))}.`;
+  return (
+    <SnoozedTaskInfoBox>
+      <SnoozedTaskIcon>
+        <StopwatchIcon />
+      </SnoozedTaskIcon>
+      <SnoozedTaskText>{snoozeText}</SnoozedTaskText>
+    </SnoozedTaskInfoBox>
+  );
+};
 
 const TaskPreview = ({
   task,
@@ -143,9 +182,10 @@ const TaskPreview = ({
               {task.dueDateDisplayShort}
             </TaskDueDate>
           </TaskTitle>
-          {task.snoozedUntil && (
+          {task.snoozeInfo?.snoozedUntil && (
             <TaskSnoozedDate>
-              {"Hidden from Tasks list until " + formatDate(task.snoozedUntil)}
+              {"Hidden from Tasks list until " +
+                formatDate(task.snoozeInfo.snoozedUntil)}
             </TaskSnoozedDate>
           )}
           <TaskDetails>{task.additionalDetails}</TaskDetails>
@@ -168,27 +208,30 @@ const TaskPreview = ({
 const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
   return (
     <>
-      <TaskItemV2>
-        <TaskInfo>
-          <TaskName>{task.displayName}</TaskName>
-          <TaskFrequency>
-            <i className="fa fa-refresh" /> {task.frequency}
-          </TaskFrequency>
-        </TaskInfo>
-        <TaskTimeline>
-          <div>{task.additionalDetails}</div>
-          <TaskTimelineDueDate overdue={task.isOverdue}>
-            {task.dueDateDisplayShort}
-          </TaskTimelineDueDate>
-        </TaskTimeline>
-        <SnoozeTaskDropdown
-          task={task}
-          taskConfig={
-            task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
-          }
-          operationsInfoInToast={false} // only for Texas
-        />
-      </TaskItemV2>
+      <TaskItemWrapper>
+        <TaskItemV2>
+          <TaskInfo>
+            <TaskName>{task.displayName}</TaskName>
+            <TaskFrequency>
+              <i className="fa fa-refresh" /> {task.frequency}
+            </TaskFrequency>
+          </TaskInfo>
+          <TaskTimeline>
+            <div>{task.additionalDetails}</div>
+            <TaskTimelineDueDate overdue={task.isOverdue}>
+              {task.dueDateDisplayShort}
+            </TaskTimelineDueDate>
+          </TaskTimeline>
+          <SnoozeTaskDropdown
+            task={task}
+            taskConfig={
+              task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
+            }
+            operationsInfoInToast={false} // only for Texas
+          />
+        </TaskItemV2>
+        <SnoozedTaskInfo task={task} />
+      </TaskItemWrapper>
       <TaskItemDivider />
     </>
   );

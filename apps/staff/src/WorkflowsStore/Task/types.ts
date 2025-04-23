@@ -19,7 +19,10 @@ import { Hydratable } from "~hydration-utils";
 
 import { WorkflowsTasksConfig } from "../../core/models/types";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
-import { SupervisionTaskUpdate } from "../../FirestoreStore";
+import {
+  SharedSnoozeUpdate,
+  SupervisionTaskUpdate,
+} from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { Expect, Extends } from "../../utils/typeUtils";
 import { Client } from "../Client";
@@ -139,6 +142,10 @@ export type SupervisionDetailsForTask = {
   usTxAssessment: UsTxAssessmentDetails;
 };
 
+export type SnoozeInfo = {
+  snoozedUntil: Date; // calculated based on snoozedOn
+} & SharedSnoozeUpdate;
+
 export type SupervisionTask<
   T extends SupervisionTaskType = SupervisionTaskType,
 > = {
@@ -148,7 +155,7 @@ export type SupervisionTask<
   details: SupervisionDetailsForTask[T];
   isOverdue: boolean;
   isSnoozed: boolean;
-  snoozedUntil?: Date;
+  snoozeInfo?: SnoozeInfo;
   dueDateFromToday: string;
   rootStore: RootStore;
   person: JusticeInvolvedPerson;

@@ -26,6 +26,7 @@ import { RootStore } from "../../RootStore";
 import { formatDate, formatDueDateFromToday } from "../../utils";
 import { JusticeInvolvedPerson } from "../types";
 import {
+  SnoozeInfo,
   SupervisionDetailsForTask,
   SupervisionTask,
   SupervisionTaskRecord,
@@ -58,7 +59,7 @@ export abstract class Task<
   ) {
     makeObservable(this, {
       updates: true,
-      snoozedUntil: computed,
+      snoozeInfo: computed,
       isSnoozed: computed,
       updateSupervisionTask: action,
     });
@@ -109,18 +110,21 @@ export abstract class Task<
     return "";
   }
 
-  get snoozedUntil(): Date | undefined {
+  get snoozeInfo(): SnoozeInfo | undefined {
     if (!this.updates?.snoozedOn) return;
-
-    return addDays(
-      parseISO(this.updates.snoozedOn),
-      this.updates.snoozeForDays,
-    );
+    return {
+      snoozedBy: this.updates.snoozedBy,
+      snoozedOn: this.updates.snoozedOn,
+      snoozedUntil: addDays(
+        parseISO(this.updates.snoozedOn),
+        this.updates.snoozeForDays,
+      ),
+    };
   }
 
   get isSnoozed(): boolean {
-    if (!this.snoozedUntil) return false;
-    return this.snoozedUntil >= startOfToday();
+    if (!this.snoozeInfo) return false;
+    return this.snoozeInfo.snoozedUntil >= startOfToday();
   }
 
   updateSupervisionTask(snoozeForDays?: number): void {

@@ -108,8 +108,8 @@ describe("Task", () => {
       expect(task.details).toEqual(homeVisitTaskRecord.details);
     });
 
-    test("snoozedUntil", () => {
-      expect(task.snoozedUntil).toBeUndefined();
+    test("snoozeInfo", () => {
+      expect(task.snoozeInfo).toBeUndefined();
     });
 
     test("isSnoozed", () => {
@@ -117,17 +117,42 @@ describe("Task", () => {
     });
   });
 
+  describe("Task with snooze that expired in the past", () => {
+    beforeEach(() => {
+      mockUpdates = {
+        snoozedBy: "tester@example.com",
+        snoozedOn: "2000-01-01",
+        snoozeForDays: 30,
+      };
+      createTestUnit(mockUpdates);
+    });
+
+    test("snoozeInfo contains details of a past snooze", () => {
+      expect(task.snoozeInfo).not.toBeUndefined();
+      expect(task.snoozeInfo?.snoozedBy).toEqual("tester@example.com");
+      expect(task.snoozeInfo?.snoozedOn).toEqual("2000-01-01");
+      expect(task.snoozeInfo?.snoozedUntil).toEqual(new Date(2000, 0, 31));
+    });
+
+    test("task is not snoozed", () => {
+      expect(task.isSnoozed).toBeFalse();
+    });
+  });
+
   describe("Task with updates", () => {
     beforeEach(() => {
       mockUpdates = {
-        snoozedBy: "tester@test.org",
+        snoozedBy: "tester@example.com",
         snoozedOn: testDate,
         snoozeForDays: 30,
       };
       createTestUnit(mockUpdates);
     });
-    test("snoozedUntil", () => {
-      expect(task.snoozedUntil).toEqual(new Date(2023, 5, 17));
+    test("snoozeInfo", () => {
+      expect(task.snoozeInfo).not.toBeUndefined();
+      expect(task.snoozeInfo?.snoozedBy).toEqual("tester@example.com");
+      expect(task.snoozeInfo?.snoozedOn).toEqual(testDate);
+      expect(task.snoozeInfo?.snoozedUntil).toEqual(new Date(2023, 5, 17));
     });
 
     test("isSnoozed", () => {
