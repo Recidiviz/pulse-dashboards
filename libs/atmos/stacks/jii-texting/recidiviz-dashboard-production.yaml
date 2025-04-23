@@ -57,7 +57,9 @@ components:
         project_number: "{{ .settings.context.project_number }}"
         location: "{{ .settings.context.location }}"
         database_secondary_zone: us-central1-b
-        artifact_registry_repo: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.registry_repo_name }}"
+        artifact_registry_repo: '{{ (atmos.Component "apps/jii-texting" "recidiviz-dashboard-staging--jii-texting").vars.artifact_registry_repo }}'
         # The 'name' output uses the name of the first bucket, so ensure that the ETL bucket is the first one in the list
         etl_bucket_name: !terraform.output gcs-buckets {{ .stack }} name
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
+        processor_job_env_secret_id: env_prod_jii_texting_processor_job
+        server_env_secret_id: env_prod_jii_texting_server
