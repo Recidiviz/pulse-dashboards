@@ -19,11 +19,10 @@ import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router-dom";
 
 import { AppLayout } from "../AppLayout/AppLayout";
-import { MenuBar } from "../AppLayout/MenuBar";
 
 /**
  * Page layout that renders nested routes with empty header bar (no resident-specific navigation).
  */
 export const GenericLayoutRoute = observer(function GenericLayoutRoute() {
-  return <AppLayout header={<MenuBar />} main={<Outlet />} />;
+  return <AppLayout main={<Outlet />} />;
 });

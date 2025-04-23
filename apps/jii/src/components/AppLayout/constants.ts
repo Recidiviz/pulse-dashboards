@@ -23,4 +23,10 @@ export const HEADER_PORTAL_ID = "app-layout-header-portal";
 
 export const STICKY_HEADER_ZINDEX = zindex.modal.backdrop - 20;
 
-export const COLLAPSIBLE_MENU_BREAKPOINT = 550;
+export const HEADER_HEIGHT = 64;
+
+export const HEADER_BORDER_WIDTH = 1;
+
+export const HIDDEN_HEADER_OFFSET = HEADER_HEIGHT + HEADER_BORDER_WIDTH;
+
+export const HEADER_ANIMATION_OPTIONS = "300ms ease-in-out";

@@ -21,25 +21,16 @@ import { rem } from "polished";
 import { FC } from "react";
 // we are using useParams to make a custom hook in this file
 // eslint-disable-next-line no-restricted-imports
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
 import { State } from "../../routes/routes";
 import { RouteParams } from "../../routes/utils";
-import { COLLAPSIBLE_MENU_BREAKPOINT } from "../AppLayout/constants";
-import {
-  Dropdown,
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownToggle,
-} from "../Dropdown/Dropdown";
 import { useResidentsContext } from "../ResidentsHydrator/context";
-import {
-  LinkProps,
-  ResidentNavMenuPresenter,
-} from "./ResidentNavMenuPresenter";
+import { NavMenu } from "./NavMenu";
+import { ResidentNavBarPresenter } from "./ResidentNavBarPresenter";
 
 const BORDER = 4;
 
@@ -47,87 +38,34 @@ const Wrapper = styled.nav`
   ${typography.Sans14}
 
   display: flex;
-  gap: ${rem(spacing.lg)};
+  gap: ${rem(spacing.sm)};
   align-items: stretch;
   align-self: stretch;
 
-  & > * {
+  & > a,
+  & > button {
     align-content: center;
     color: ${palette.slate85};
     flex: 1 0 auto;
     min-width: ${rem(72)};
-    padding: ${rem(BORDER)} 0;
+    padding: 0 0 ${rem(BORDER)};
     text-align: center;
     text-decoration: none;
-  }
 
-  a.active {
-    border-top: ${rem(BORDER)} solid ${palette.pine4};
-    color: ${palette.pine1};
-    padding-top: 0;
-  }
-
-  @media (max-width: ${COLLAPSIBLE_MENU_BREAKPOINT - 1}px) {
-    align-items: flex-end;
-    flex-direction: column;
-    margin-bottom: ${rem(spacing.lg)};
-
-    & > * {
-      padding: 0 ${rem(BORDER)};
-    }
-
-    a.active {
-      border-top: none;
-      border-right: ${rem(BORDER)} solid ${palette.pine4};
-      padding-right: 0;
+    &.active {
+      border-bottom: ${rem(BORDER)} solid ${palette.pine4};
+      color: ${palette.pine1};
+      padding-bottom: 0;
     }
   }
 `;
 
-const ResponsiveDropdownMenu = styled(DropdownMenu)`
-  @media (max-width: ${COLLAPSIBLE_MENU_BREAKPOINT - 1}px) {
-    max-width: 80vw;
-
-    & > button {
-      height: auto;
-      padding: ${rem(spacing.md)};
-      white-space: normal;
-    }
-  }
-`;
-
-const OpportunitiesMenu: FC<{ links: Array<LinkProps> }> = observer(
-  function OpportunitiesMenu({ links }) {
-    const navigate = useNavigate();
-
-    return (
-      <Dropdown>
-        <DropdownToggle kind="borderless" showCaret>
-          Opportunities
-        </DropdownToggle>
-        <ResponsiveDropdownMenu alignment="right">
-          {links.map((link) => (
-            // preferably these would be React Router Links but the design system
-            // Dropdown component does not support this
-            <DropdownMenuItem onClick={() => navigate(link.to)} key={link.to}>
-              {link.children}
-            </DropdownMenuItem>
-          ))}
-        </ResponsiveDropdownMenu>
-      </Dropdown>
-    );
-  },
-);
-
-const ManagedComponent: FC<{ presenter: ResidentNavMenuPresenter }> = observer(
+const ManagedComponent: FC<{ presenter: ResidentNavBarPresenter }> = observer(
   function ResidentNavMenu({ presenter }) {
     return (
       <Wrapper>
-        {presenter.homeLink && <NavLink end {...presenter.homeLink} />}
-        {presenter.opportunityLinks && (
-          <OpportunitiesMenu links={presenter.opportunityLinks} />
-        )}
-        {presenter.searchLink && <NavLink end {...presenter.searchLink} />}
+        {presenter.homeLink && <NavLink {...presenter.homeLink} />}
+        <NavMenu links={presenter.menuLinks} />
       </Wrapper>
     );
   },
@@ -157,14 +95,14 @@ function usePresenter() {
 
   const routeParams = useParamsResidentOptional();
 
-  return new ResidentNavMenuPresenter(
+  return new ResidentNavBarPresenter(
     residentsStore.config,
     residentsStore.userStore,
     routeParams,
   );
 }
 
-export const ResidentNavMenu = withPresenterManager({
+export const ResidentNavBar = withPresenterManager({
   usePresenter,
   ManagedComponent,
   managerIsObserver: true,

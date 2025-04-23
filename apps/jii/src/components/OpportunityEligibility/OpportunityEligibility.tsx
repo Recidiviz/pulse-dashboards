@@ -25,7 +25,12 @@ import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { PAGE_LAYOUT_HEADER_GAP } from "../AppLayout/constants";
+import {
+  HEADER_ANIMATION_OPTIONS,
+  HEADER_HEIGHT,
+  HIDDEN_HEADER_OFFSET,
+  PAGE_LAYOUT_HEADER_GAP,
+} from "../AppLayout/constants";
 import { FullBleedContainer } from "../BaseLayout/BaseLayout";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { useResidentsContext } from "../ResidentsHydrator/context";
@@ -37,10 +42,10 @@ import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresent
 import { RequirementsSection } from "./RequirementsSection";
 
 const Background = styled(FullBleedContainer)`
-  height: ${rem(400)};
+  height: ${rem(400 + HEADER_HEIGHT)};
   pointer-events: none;
   position: absolute;
-  top: -${rem(spacing.xl)};
+  top: -${rem(spacing.xl + HEADER_HEIGHT)};
 `;
 
 const TOC_WIDTH = rem(120);
@@ -76,6 +81,7 @@ const TableOfContents = styled.nav`
   @media (${STICKY_TOC_BREAKPOINT}) {
     position: sticky;
     margin-top: 0;
+    transition: transform ${HEADER_ANIMATION_OPTIONS};
   }
 
   align-self: start;
@@ -112,7 +118,7 @@ const ManagedComponent: FC<{
 
   const tocLabelId = useId();
   const {
-    uiStore: { stickyHeaderHeight },
+    uiStore: { stickyHeaderHeight, hideHeaderBar },
   } = useRootStore();
 
   return (
@@ -122,7 +128,12 @@ const ManagedComponent: FC<{
         <Headline>{presenter.title}</Headline>
         <TableOfContents
           aria-labelledby={tocLabelId}
-          style={{ top: `${stickyHeaderHeight + PAGE_LAYOUT_HEADER_GAP}px` }}
+          style={{
+            top: `${stickyHeaderHeight + PAGE_LAYOUT_HEADER_GAP}px`,
+            transform: hideHeaderBar
+              ? `translateY(-${rem(HIDDEN_HEADER_OFFSET)})`
+              : undefined,
+          }}
         >
           <h2 id={tocLabelId}>On this page</h2>
           <ul>

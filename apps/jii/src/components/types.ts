@@ -15,26 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
-import { rem } from "polished";
-import { FC, ReactNode } from "react";
-import styled from "styled-components/macro";
-
-import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
-import { HEADER_BORDER_WIDTH } from "./constants";
-
-const FullWidthWrapper = styled(FullBleedContainer)`
-  background: ${palette.white};
-  border-bottom: ${rem(HEADER_BORDER_WIDTH)} solid ${palette.slate20};
-`;
-
-export const HeaderBarContainer: FC<{
-  className?: string;
-  children: ReactNode;
-}> = ({ children, className }) => {
-  return (
-    <FullWidthWrapper className={className}>
-      <PageContainer>{children}</PageContainer>
-    </FullWidthWrapper>
-  );
+/**
+ * Simplified version of props for React Router Link
+ */
+export type SimpleLinkProps = {
+  children: string;
+  to: string;
 };
+
+/**
+ * Simplified version of props for React Router NavLink.
+ * Send end=true to match entire URL for active state, or false to match descendant links
+ */
+export type SimpleNavLinkProps = SimpleLinkProps & { end: boolean };

@@ -21,7 +21,7 @@ import { FC, memo } from "react";
 import styled from "styled-components/macro";
 
 import { GoButton } from "../ButtonLink/GoButton";
-import { LinkProps } from "../ResidentNavMenu/ResidentNavMenuPresenter";
+import { SimpleLinkProps } from "../types";
 
 const Wrapper = styled.article`
   border: 1px solid ${palette.slate20};
@@ -47,7 +47,7 @@ const Wrapper = styled.article`
 
 export const TeaserLink: FC<{
   teaserText: string;
-  linkProps: LinkProps;
+  linkProps: SimpleLinkProps;
   imageUrl: string;
 }> = memo(function ComparisonLink({ teaserText, linkProps, imageUrl }) {
   return (

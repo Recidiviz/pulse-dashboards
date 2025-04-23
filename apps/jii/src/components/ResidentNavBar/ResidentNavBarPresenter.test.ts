@@ -21,9 +21,9 @@ import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { UserStore } from "../../datastores/UserStore";
-import { ResidentNavMenuPresenter } from "./ResidentNavMenuPresenter";
+import { ResidentNavBarPresenter } from "./ResidentNavBarPresenter";
 
-let presenter: ResidentNavMenuPresenter;
+let presenter: ResidentNavBarPresenter;
 let userStore: UserStore;
 
 const testResident = usMeResidents[0];
@@ -42,7 +42,7 @@ afterEach(() => {
 
 describe("with resident route", () => {
   beforeEach(() => {
-    presenter = new ResidentNavMenuPresenter(
+    presenter = new ResidentNavBarPresenter(
       residentsConfigByState.US_ME,
       userStore,
       { stateSlug, personPseudoId: testResident.pseudonymizedId },
@@ -53,31 +53,37 @@ describe("with resident route", () => {
     expect(presenter.homeLink).toEqual({
       children: "Home",
       to: `/maine/${testResident.pseudonymizedId}`,
+      end: true,
     });
   });
 
   test("links exclude search", () => {
-    expect(presenter.searchLink).toBeUndefined();
+    expect(
+      presenter.menuLinks.find((l) => l.children === "Search"),
+    ).toBeUndefined();
   });
 
   test("links include search", () => {
     vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
 
-    expect(presenter.searchLink).toEqual({
+    expect(presenter.menuLinks.at(-1)).toEqual({
       children: "Search",
       to: "/maine/search",
+      end: true,
     });
   });
 
   test("links to opportunities", () => {
-    expect(presenter.opportunityLinks).toMatchInlineSnapshot(`
+    expect(presenter.menuLinks).toMatchInlineSnapshot(`
       [
         {
           "children": "Work Release",
+          "end": false,
           "to": "/maine/anonres001/eligibility/work-release",
         },
         {
           "children": "Supervised Community Confinement Program (SCCP)",
+          "end": false,
           "to": "/maine/anonres001/eligibility/sccp",
         },
       ]
@@ -87,7 +93,7 @@ describe("with resident route", () => {
 
 describe("with non-resident route", () => {
   beforeEach(() => {
-    presenter = new ResidentNavMenuPresenter(
+    presenter = new ResidentNavBarPresenter(
       residentsConfigByState.US_ME,
       userStore,
       { stateSlug },
@@ -95,20 +101,23 @@ describe("with non-resident route", () => {
   });
 
   test("links exclude search", () => {
-    expect(presenter.searchLink).toBeUndefined();
+    expect(
+      presenter.menuLinks.find((l) => l.children === "Search"),
+    ).toBeUndefined();
   });
 
   test("links include search", () => {
     vi.spyOn(userStore, "hasPermission").mockReturnValue(true);
 
-    expect(presenter.searchLink).toEqual({
+    expect(presenter.menuLinks.at(-1)).toEqual({
       children: "Search",
       to: "/maine/search",
+      end: true,
     });
   });
 
   test("no resident-specific links", () => {
     expect(presenter.homeLink).toBeUndefined();
-    expect(presenter.opportunityLinks).toBeUndefined();
+    expect(presenter.menuLinks).toEqual([]);
   });
 });

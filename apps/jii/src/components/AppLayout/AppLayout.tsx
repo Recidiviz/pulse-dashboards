@@ -15,21 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
+import { palette, spacing } from "@recidiviz/design-system";
+import cn from "classnames";
+import { throttle } from "lodash";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { FC, ReactNode, useLayoutEffect } from "react";
+import { FC, ReactNode, useEffect, useLayoutEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
 
 import { useSkipNav } from "../SkipNav/SkipNav";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { Wordmark } from "../Wordmark/Wordmark";
 import {
+  HEADER_ANIMATION_OPTIONS,
+  HEADER_HEIGHT,
   HEADER_PORTAL_ID,
+  HIDDEN_HEADER_OFFSET,
   PAGE_LAYOUT_HEADER_GAP,
   STICKY_HEADER_ZINDEX,
 } from "./constants";
+import { HeaderBarContainer } from "./HeaderBarContainer";
 
 const Wrapper = styled.div<{ scrollMargin: number }>`
   display: grid;
@@ -52,9 +60,24 @@ const Header = styled.header`
   left: 0;
   right: 0;
   z-index: ${STICKY_HEADER_ZINDEX};
+  transition: transform ${HEADER_ANIMATION_OPTIONS};
 
-  @media (max-height: 599px) {
-    position: static;
+  &.hideHeaderBar {
+    transform: translateY(-${rem(HIDDEN_HEADER_OFFSET)});
+  }
+`;
+
+const LogoLink = styled(Link)``;
+
+const HeaderBar = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${rem(spacing.md)};
+  justify-content: stretch;
+  height: ${rem(HEADER_HEIGHT)};
+
+  ${LogoLink} {
+    margin-right: auto;
   }
 `;
 
@@ -80,18 +103,64 @@ function useHeaderMeasurement() {
   return { measureRef, stickyHeaderHeight };
 }
 
+function useScrollHide() {
+  const lastScrollPosition = useRef(0);
+  const { uiStore } = useRootStore();
+
+  useEffect(() => {
+    const updateScroll = throttle(
+      action("onscroll header updates", () => {
+        const { scrollY, innerHeight } = window;
+        // bar does not disappear until you've scrolled a certain amount
+        if (scrollY < innerHeight / 3) {
+          uiStore.hideHeaderBar = false;
+        } else if (scrollY > lastScrollPosition.current) {
+          // if scrolling down: hide
+          uiStore.hideHeaderBar = true;
+        } else if (scrollY < lastScrollPosition.current) {
+          // if scrolling up: show
+          uiStore.hideHeaderBar = false;
+        }
+
+        lastScrollPosition.current = scrollY;
+      }),
+      100,
+    );
+
+    window.addEventListener("scroll", updateScroll);
+    return () => window.removeEventListener("scroll", updateScroll);
+  }, [uiStore]);
+}
+
 export const AppLayout: FC<{ header?: ReactNode; main: ReactNode }> = observer(
   function AppLayout({ main, header }) {
     const { MainContent, SkipNav, SkipNavController } = useSkipNav();
 
     const { measureRef, stickyHeaderHeight } = useHeaderMeasurement();
+    const {
+      uiStore: { hideHeaderBar },
+    } = useRootStore();
+
+    useScrollHide();
 
     return (
       <SkipNavController>
         <SkipNav />
         <Wrapper scrollMargin={stickyHeaderHeight + PAGE_LAYOUT_HEADER_GAP}>
-          <Header ref={measureRef}>
-            {header}
+          <Header
+            ref={measureRef}
+            className={cn({
+              hideHeaderBar,
+            })}
+          >
+            <HeaderBarContainer>
+              <HeaderBar>
+                <LogoLink to="/">
+                  <Wordmark />
+                </LogoLink>
+                {header}
+              </HeaderBar>
+            </HeaderBarContainer>
             {/* This is a placeholder for components that may be rendered by ./HeaderPortal.
             This component should not give it any children or otherwise interfere with it */}
             <div id={HEADER_PORTAL_ID} />

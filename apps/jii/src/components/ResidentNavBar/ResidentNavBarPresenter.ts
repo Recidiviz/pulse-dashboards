@@ -21,13 +21,9 @@ import { ResidentsConfig } from "../../configs/types";
 import { UserStore } from "../../datastores/UserStore";
 import { State } from "../../routes/routes";
 import { RouteParams } from "../../routes/utils";
+import { SimpleNavLinkProps } from "../types";
 
-export type LinkProps = {
-  children: string;
-  to: string;
-};
-
-export class ResidentNavMenuPresenter {
+export class ResidentNavBarPresenter {
   constructor(
     private config: ResidentsConfig,
     private userStore: UserStore,
@@ -38,44 +34,42 @@ export class ResidentNavMenuPresenter {
     makeAutoObservable(this);
   }
 
-  get homeLink(): LinkProps | undefined {
+  get homeLink(): SimpleNavLinkProps | undefined {
     if (!("personPseudoId" in this.routeParams)) return;
 
     return {
       children: "Home",
       to: State.Resident.buildPath(this.routeParams),
+      end: true,
     };
   }
 
-  get searchLink(): LinkProps | undefined {
-    if (!this.userStore.hasPermission("enhanced")) return;
+  get menuLinks(): Array<SimpleNavLinkProps> {
+    const links: Array<SimpleNavLinkProps> = [];
 
-    return {
-      children: "Search",
-      to: State.Search.buildPath({
-        stateSlug: this.routeParams.stateSlug,
-      }),
-    };
-  }
-
-  get opportunityLinks(): Array<LinkProps> | undefined {
     const { routeParams } = this;
+    if ("personPseudoId" in routeParams) {
+      links.push(
+        ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
+          children: c.name,
+          to: State.Resident.Eligibility.Opportunity.buildPath({
+            ...routeParams,
+            opportunitySlug: c.urlSlug,
+          }),
+          end: false,
+        })),
+      );
+    }
 
-    if (!("personPseudoId" in routeParams)) return;
-
-    const links = [];
-
-    links.push(
-      ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
-        children: c.name,
-        to: State.Resident.Eligibility.Opportunity.buildPath({
-          ...routeParams,
-          opportunitySlug: c.urlSlug,
+    if (this.userStore.hasPermission("enhanced")) {
+      links.push({
+        children: "Search",
+        to: State.Search.buildPath({
+          stateSlug: this.routeParams.stateSlug,
         }),
-      })),
-    );
-
-    if (!links.length) return;
+        end: true,
+      });
+    }
 
     return links;
   }

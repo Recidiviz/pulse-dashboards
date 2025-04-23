@@ -36,6 +36,12 @@ export class UiStore {
    */
   stickyHeaderHeight = 0;
 
+  /**
+   * Controls header bar visibility, which other layout elements
+   * may need to respond to independently. Changes in response to scroll events.
+   */
+  hideHeaderBar = false;
+
   constructor() {
     makeAutoObservable(this);
   }

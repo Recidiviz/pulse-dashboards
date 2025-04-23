@@ -19,9 +19,8 @@ import { ErrorBoundary } from "@sentry/react";
 import { Outlet } from "react-router-dom";
 
 import { AppLayout } from "../AppLayout/AppLayout";
-import { MenuBar } from "../AppLayout/MenuBar";
 import { ErrorPageMainContent } from "../ErrorPage/ErrorPageMainContent";
-import { ResidentNavMenu } from "../ResidentNavMenu/ResidentNavMenu";
+import { ResidentNavBar } from "../ResidentNavBar/ResidentNavBar";
 
 /**
  * Page layout that renders nested routes with resident navigation in header bar
@@ -29,11 +28,7 @@ import { ResidentNavMenu } from "../ResidentNavMenu/ResidentNavMenu";
 export const ResidentsLayoutRoute = () => {
   return (
     <AppLayout
-      header={
-        <MenuBar>
-          <ResidentNavMenu />
-        </MenuBar>
-      }
+      header={<ResidentNavBar />}
       main={
         <ErrorBoundary fallback={ErrorPageMainContent}>
           <Outlet />

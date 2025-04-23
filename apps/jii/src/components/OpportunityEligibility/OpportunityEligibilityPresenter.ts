@@ -23,7 +23,7 @@ import { OpportunityConfig } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { EligibilityReport } from "../../models/EligibilityReport/types";
 import { State } from "../../routes/routes";
-import { LinkProps } from "../ResidentNavMenu/ResidentNavMenuPresenter";
+import { SimpleLinkProps } from "../types";
 
 export class OpportunityEligibilityPresenter {
   constructor(
@@ -97,7 +97,7 @@ export class OpportunityEligibilityPresenter {
     });
   }
 
-  get tableOfContentsLinks(): Array<LinkProps> {
+  get tableOfContentsLinks(): Array<SimpleLinkProps> {
     const links = [
       ...this.additionalSections.map((section) => ({
         children: section.heading,
@@ -130,10 +130,13 @@ export class OpportunityEligibilityPresenter {
         break;
     }
 
+    // gradient includes a little extra padding to account for the header;
+    // it extends behind it to smooth out the animated transitions
     return colors
       ? `linear-gradient(
       180deg,
       ${colors[0]} 0%,
+      ${colors[0]} 13%,
       ${colors[1]} 100%
     )`
       : "none";

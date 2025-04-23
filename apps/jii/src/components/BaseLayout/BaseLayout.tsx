@@ -21,7 +21,7 @@ import styled from "styled-components/macro";
 
 import { PAGE_WIDTH } from "../../utils/constants";
 
-const PAGE_PADDING = rem(spacing.xl);
+export const PAGE_PADDING = rem(spacing.md);
 
 /**
  * Constrained to a desired max width, with left and right padding
