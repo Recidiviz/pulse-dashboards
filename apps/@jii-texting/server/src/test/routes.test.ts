@@ -176,3 +176,78 @@ describe("POST /workflows-executions", () => {
     });
   });
 });
+
+describe("GET /utils/is-weekend", () => {
+  beforeEach(() => {
+    mockGetPayload.mockReturnValueOnce({
+      email_verified: true,
+      email: "valid@example.com",
+    });
+  });
+
+  test("is weekend", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2025-04-20T00:00:00.000Z"));
+    const response = await testServer.inject({
+      method: "GET",
+      url: "/utils/is-weekend",
+      headers: {
+        Authorization: "Bearer valid-token",
+      },
+    });
+
+    expect(JSON.parse(response.body)).toMatchObject({
+      date: "2025-04-20",
+      isWeekend: true,
+    });
+    vi.useRealTimers();
+  });
+
+  test("input is weekend", async () => {
+    const response = await testServer.inject({
+      method: "GET",
+      url: "/utils/is-weekend?date=2025-04-20T12:50:33.000000Z",
+      headers: {
+        Authorization: "Bearer valid-token",
+      },
+    });
+
+    expect(JSON.parse(response.body)).toMatchObject({
+      date: "2025-04-20",
+      isWeekend: true,
+    });
+  });
+
+  test("is weekday", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2025-04-23T00:00:00.000Z"));
+    const response = await testServer.inject({
+      method: "GET",
+      url: "/utils/is-weekend",
+      headers: {
+        Authorization: "Bearer valid-token",
+      },
+    });
+
+    expect(JSON.parse(response.body)).toMatchObject({
+      date: "2025-04-23",
+      isWeekend: false,
+    });
+    vi.useRealTimers();
+  });
+
+  test("input is weekday", async () => {
+    const response = await testServer.inject({
+      method: "GET",
+      url: "/utils/is-weekend?date=2025-04-22T12:50:33.000000Z",
+      headers: {
+        Authorization: "Bearer valid-token",
+      },
+    });
+
+    expect(JSON.parse(response.body)).toMatchObject({
+      date: "2025-04-22",
+      isWeekend: false,
+    });
+  });
+});

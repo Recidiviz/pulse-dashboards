@@ -16,7 +16,8 @@
 // =============================================================================
 
 import { StateCode } from "@prisma/jii-texting/client";
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyRequest } from "fastify";
+import moment from "moment";
 
 import { getPrismaClientForStateCode } from "~@jii-texting/prisma";
 import { getAuthenticateInternalRequestPreHandlerFn } from "~@jii-texting/server/server/authUtils";
@@ -44,7 +45,11 @@ async function registerRoutes(server: FastifyInstance) {
   server.get(
     "/workflow-executions/latest/:stateCode",
     {
-      preHandler: [getAuthenticateInternalRequestPreHandlerFn(email)],
+      preHandler: [
+        getAuthenticateInternalRequestPreHandlerFn<RequestWithStateCodeParam>(
+          email,
+        ),
+      ],
     },
     async (request: RequestWithStateCodeParam, response) => {
       const { stateCode: stateCodeStr } = request.params;
@@ -73,7 +78,11 @@ async function registerRoutes(server: FastifyInstance) {
   server.post(
     "/workflow-executions/:stateCode",
     {
-      preHandler: [getAuthenticateInternalRequestPreHandlerFn(email)],
+      preHandler: [
+        getAuthenticateInternalRequestPreHandlerFn<RequestWithStateCodeParam>(
+          email,
+        ),
+      ],
     },
     async (request: RequestWithStateCodeParam, response) => {
       const { stateCode: stateCodeStr } = request.params;
@@ -89,6 +98,55 @@ async function registerRoutes(server: FastifyInstance) {
 
       response.status(200).send({
         workflowExecutionId: workflowExecution.id,
+      });
+    },
+  );
+
+  /**
+   * Returns whether or not it is the weekend for the date, if provided. If no
+   * date is provided, then will return the result for the current date in UTC.
+   *
+   * @param date The date of the request
+   * @returns True if it is a Saturday or Sunday, False otherwise
+   */
+  server.get(
+    "/utils/is-weekend",
+    {
+      preHandler: [
+        getAuthenticateInternalRequestPreHandlerFn<
+          FastifyRequest<{ Querystring: { date?: string } }>
+        >(email),
+      ],
+      schema: {
+        querystring: {
+          type: "object",
+          properties: {
+            date: { type: "string" },
+          },
+        },
+      },
+    },
+    async (
+      request: FastifyRequest<{ Querystring: { date?: string } }>,
+      response,
+    ) => {
+      const { date } = request.query;
+
+      const parsedDate =
+        date === undefined ? moment.utc() : moment.utc(date, moment.ISO_8601);
+
+      if (!parsedDate.isValid()) {
+        return response
+          .code(400)
+          .send({ error: "Invalid date format. Expecting ISO 8601 format" });
+      }
+
+      const day = parsedDate.day(); // 0 = Sunday, 6 = Saturday
+      const isWeekend = day === 0 || day === 6;
+
+      response.status(200).send({
+        date: parsedDate.format("YYYY-MM-DD"),
+        isWeekend,
       });
     },
   );

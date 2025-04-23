@@ -20,10 +20,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { OAuth2Client } from "google-auth-library";
 import { validateRequest } from "twilio/lib/webhooks/webhooks";
 
-import {
-  RequestWithStateCodeParam,
-  TwilioWebhookRequest,
-} from "~@jii-texting/server/server/types";
+import { TwilioWebhookRequest } from "~@jii-texting/server/server/types";
 import { isValidStateCode } from "~@jii-texting/server/server/utils";
 
 export async function verifyGoogleIdToken(
@@ -60,17 +57,22 @@ export async function verifyGoogleIdToken(
  * Auth token is associated with the expected email;
  * @param email The service account email authorized to make requests to the endpoint
  */
-export function getAuthenticateInternalRequestPreHandlerFn(email: string) {
-  return async (request: RequestWithStateCodeParam, reply: FastifyReply) => {
-    // Validate the state code in the URL
-    const { stateCode: stateCodeStr } = request.params;
+export function getAuthenticateInternalRequestPreHandlerFn<
+  T extends FastifyRequest,
+>(email: string) {
+  return async (request: T, reply: FastifyReply) => {
+    if (request.params && Object.hasOwn(request.params, "stateCode")) {
+      // Validate the state code in the URL
+      const { stateCode: stateCodeStr } = request.params as {
+        stateCode: string;
+      };
 
-    if (!isValidStateCode(stateCodeStr)) {
-      reply.status(400).send({ error: "Invalid state code" });
-      captureException(`Invalid state code received: ${stateCodeStr}`);
-      return;
+      if (!isValidStateCode(stateCodeStr)) {
+        reply.status(400).send({ error: "Invalid state code" });
+        captureException(`Invalid state code received: ${stateCodeStr}`);
+        return;
+      }
     }
-
     // Validate that the token in the request is from the expected service account
     try {
       await verifyGoogleIdToken(request.headers.authorization, email);
