@@ -58,10 +58,11 @@ function createTestUnit() {
     ineligibleCriteria: {},
     caseNotes: {},
     formInformation: {
-      drugCharge: true,
-      statue14: false,
-      statue30: true,
-      statue37: false,
+      drugConviction: true,
+      statute14: false,
+      statute30: true,
+      statute37: false,
+      drugUnreportedDisposition: true,
     },
     isEligible: true,
     isAlmostEligible: false,
@@ -98,8 +99,10 @@ describe("prefilledDataTransformer", () => {
         "currentGradeOfSupervisionLevel": "Medium",
         "dateOfReview": "Dec 12, 2023",
         "guiltyPADrugCharge": true,
+        "noDispositionPADrugCharge": true,
         "paroleNumber": "pei1",
         "reentrantName": "Test, Joe",
+        "unreportedPersonalInjuryDispositions": false,
       }
     `);
   });

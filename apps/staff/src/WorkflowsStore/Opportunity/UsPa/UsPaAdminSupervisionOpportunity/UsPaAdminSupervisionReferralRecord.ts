@@ -33,10 +33,11 @@ export const usPaAdminSupervisionSchema = opportunitySchemaBase.extend({
     .passthrough(),
   formInformation: z
     .object({
-      drugCharge: z.boolean(),
-      statue14: z.boolean(),
-      statue30: z.boolean(),
-      statue37: z.boolean(),
+      drugConviction: z.boolean(),
+      statute14: z.boolean(),
+      statute30: z.boolean(),
+      statute37: z.boolean(),
+      drugUnreportedDisposition: z.boolean(),
     })
     .partial(),
 });
@@ -91,7 +92,7 @@ export type UsPaAdminSupervisionDraftData = {
   criteriaFulfilledTreatmentRequirements: boolean;
   criteriaFulfilledSpecialConditions: boolean;
   criteriaFinancialEfforts: boolean;
-  unreportedDispositions: boolean;
+  unreportedPersonalInjuryDispositions: boolean;
   eligibleForAdministrativeParole: boolean;
   guiltyPADrugCharge: boolean;
   noDispositionPADrugCharge: boolean;

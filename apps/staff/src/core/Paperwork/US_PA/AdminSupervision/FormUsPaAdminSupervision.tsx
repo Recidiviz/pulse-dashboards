@@ -79,7 +79,6 @@ const formDownloader = async (
     contents.criteriaFulfilledSpecialConditions === false;
   contents.criteriaFinancialEffortsNo =
     contents.criteriaFinancialEfforts === false;
-  contents.unreportedDispositionsNo = contents.unreportedDispositions === false;
   contents.eligibleForAdministrativeParoleNo =
     contents.eligibleForAdministrativeParole === false;
 
@@ -107,7 +106,9 @@ export const FormUsPaAdminSupervision = observer(
       return null;
     }
 
-    const showProviso = opportunity.record?.formInformation?.drugCharge;
+    const showProviso =
+      opportunity.record?.formInformation?.drugConviction ||
+      opportunity.record?.formInformation?.drugUnreportedDisposition;
 
     const client = opportunity.person;
 

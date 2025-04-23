@@ -47,10 +47,11 @@ export class UsPaAdminSupervisionForm extends FormBase<
     const {
       eligibleCriteria,
       formInformation: {
-        drugCharge: guiltyPADrugCharge,
-        statue14: charge780_11314,
-        statue30: charge780_11330,
-        statue37: charge780_11337,
+        drugConviction: guiltyPADrugCharge,
+        statute14: charge780_11314,
+        statute30: charge780_11330,
+        statute37: charge780_11337,
+        drugUnreportedDisposition: noDispositionPADrugCharge,
       },
     } = this.opportunity.record;
 
@@ -72,6 +73,8 @@ export class UsPaAdminSupervisionForm extends FormBase<
       charge780_11314,
       charge780_11330,
       charge780_11337,
+      unreportedPersonalInjuryDispositions: false,
+      noDispositionPADrugCharge,
     };
   }
 }

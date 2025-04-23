@@ -32,10 +32,11 @@ const rawRecord: UsPaAdminSupervisionReferralRecordRaw = {
   },
   ineligibleCriteria: {},
   formInformation: {
-    drugCharge: true,
-    statue14: false,
-    statue30: true,
-    statue37: false,
+    drugConviction: true,
+    statute14: false,
+    statute30: true,
+    statute37: false,
+    drugUnreportedDisposition: true,
   },
   isEligible: true,
   isAlmostEligible: false,
@@ -68,10 +69,11 @@ test("parses empty ineligible offenses array", () => {
       },
     },
     formInformation: {
-      drugCharge: true,
-      statue14: false,
-      statue30: true,
-      statue37: false,
+      drugConviction: true,
+      statute14: false,
+      statute30: true,
+      statute37: false,
+      drugUnreportedDisposition: true,
     },
   };
   expect(usPaAdminSupervisionSchema.parse(testRecord)).toMatchSnapshot();

@@ -44,7 +44,7 @@ const CriteriaChecklist: React.FC = () => {
         row={2}
         column={6}
         span={2}
-        field={"unreportedDispositions"}
+        field={"unreportedPersonalInjuryDispositions"}
       />
       {CRITERIA_LABELS.map(({ label, field }, index) => {
         const row = index < 2 ? 4 : 5;
