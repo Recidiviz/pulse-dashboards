@@ -104,6 +104,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     return this.tenantStore.taskCategories;
   }
 
+  // Set the initial state of the filters, which is having every option selected
   initializeFilters() {
     const {
       taskConfig: { filters },
@@ -184,8 +185,10 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   taskMatchesFilters(task: SupervisionTask): boolean {
+    const filters = Object.entries(this.selectedFiltersForType("task"));
+
     return every(
-      Object.entries(this.selectedFiltersForType("task")),
+      filters,
       ([field, options]: [TaskFilterFieldForTask, string[]]) =>
         // @ts-expect-error searchable fields are restricted to strings but TS does not know that
         options.includes(task[field]),
@@ -201,8 +204,10 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   personMatchesFilters(person: JusticeInvolvedPerson): boolean {
+    const filters = Object.entries(this.selectedFiltersForType("person"));
+
     const matchesPeopleFilters = every(
-      Object.entries(this.selectedFiltersForType("person")),
+      filters,
       ([field, options]: [TaskFilterFieldForPerson, string[]]) =>
         // @ts-expect-error searchable fields are restricted to strings but TS does not know that
         options.includes(person[field]),
@@ -269,6 +274,16 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     return Boolean(this._selectedFilters[field]?.includes(value));
   }
 
+  get allFiltersSelected(): boolean {
+    const { filters } = this;
+
+    return every(
+      filters,
+      (filter) =>
+        this._selectedFilters[filter.field]?.length === filter.options.length,
+    );
+  }
+
   setFilter(field: TaskFilterField, option: TaskFilterOption) {
     const { value } = option;
 
@@ -329,11 +344,22 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     });
   }
 
+  // Reselect all filters to restore the initial state of showing everyone
+  // Basically the same as calling initalizeFilters() but with logging
   resetFilters() {
     this.analyticsStore.trackTaskFiltersReset({
       selectedFiltersBeforeReset: this._selectedFilters,
     });
     this.initializeFilters();
+  }
+
+  // Deselect all filters. No tasks or people will show after this
+  clearFilters() {
+    for (const field in this._selectedFilters) {
+      // @ts-expect-error TS doesn't know that the keys of this._selectedFilters are the keys of this._selectedFilters
+      this._selectedFilters[field] = [];
+    }
+    this.analyticsStore.trackTaskFiltersCleared();
   }
 
   trackFilterDropdownOpened() {

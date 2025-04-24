@@ -192,6 +192,26 @@ const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
   );
 });
 
+const ClearAll = observer(function ClearAll({
+  presenter,
+}: {
+  presenter: CaseloadTasksPresenterV2;
+}) {
+  if (presenter.allFiltersSelected) {
+    return (
+      <ClearAllButton onClick={() => presenter.clearFilters()}>
+        Clear all filters
+      </ClearAllButton>
+    );
+  }
+
+  return (
+    <ClearAllButton onClick={() => presenter.resetFilters()}>
+      Select all filters
+    </ClearAllButton>
+  );
+});
+
 export const TaskFilterDropdown = observer(function TaskFilterDropdown({
   presenter,
 }: {
@@ -237,9 +257,7 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
               ))}
           </FilterGroupColumn>
         </FilterGroupColumns>
-        <ClearAllButton key="clear" onClick={() => presenter.resetFilters()}>
-          Clear all filters
-        </ClearAllButton>
+        <ClearAll presenter={presenter} key="clear" />
       </FilterDropdownMenu>
     </Dropdown>
   );

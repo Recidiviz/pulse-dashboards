@@ -437,6 +437,10 @@ export default class AnalyticsStore {
     this.track("frontend.tasks_filters_reset", metadata);
   }
 
+  trackTaskFiltersCleared(): void {
+    this.track("frontend.tasks_filters_cleared");
+  }
+
   trackTaskFilterDropdownOpened(): void {
     this.track("frontend.task_filter_dropdown_opened");
   }

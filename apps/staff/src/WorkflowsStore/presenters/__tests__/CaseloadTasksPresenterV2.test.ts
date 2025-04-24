@@ -37,6 +37,7 @@ const mockAnalyticsStore = {
   trackTaskFilterChanged: vi.fn(),
   trackTaskTableCategorySelected: vi.fn(),
   trackTaskFiltersReset: vi.fn(),
+  trackTaskFiltersCleared: vi.fn(),
   trackTaskViewChanged: vi.fn(),
 } as any as AnalyticsStore;
 
@@ -444,6 +445,19 @@ describe("CaseloadTasksPresenterV2", () => {
       );
     });
 
+    it("clearing sets a cleared entry for all filter fields", () => {
+      presenter.clearFilters();
+      expect(presenter.selectedFilters).toEqual({
+        district: [],
+        supervisionLevel: [],
+        type: [],
+      });
+
+      expect(
+        mockAnalyticsStore.trackTaskFiltersCleared,
+      ).toHaveBeenLastCalledWith();
+    });
+
     it("toggles filters", () => {
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
@@ -483,6 +497,28 @@ describe("CaseloadTasksPresenterV2", () => {
       expect(
         presenter.filterIsSelected("district", { value: "District 10" }),
       ).toBeTruthy();
+    });
+
+    it("can track when all filters are selected", () => {
+      expect(presenter.allFiltersSelected).toBeTrue();
+      // Deselect high
+      presenter.toggleFilter("supervisionLevel", { value: "High" });
+      expect(presenter.allFiltersSelected).toBeFalse();
+      // Deselect low
+      presenter.toggleFilter("supervisionLevel", { value: "Low" });
+      expect(presenter.allFiltersSelected).toBeFalse();
+      // Reselect high
+      presenter.toggleFilter("supervisionLevel", { value: "High" });
+      expect(presenter.allFiltersSelected).toBeFalse();
+      // Reselect low
+      presenter.toggleFilter("supervisionLevel", { value: "Low" });
+      expect(presenter.allFiltersSelected).toBeTrue();
+      // Deselect all
+      presenter.clearFilters();
+      expect(presenter.allFiltersSelected).toBeFalse();
+      // Reselect all
+      presenter.resetFilters();
+      expect(presenter.allFiltersSelected).toBeTrue();
     });
   });
 });
