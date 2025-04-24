@@ -33,6 +33,7 @@ export const usTnSuspensionOfDirectSupervisionSchema =
       .partial(),
     metadata: z
       .object({
+        tabName: z.string().optional(),
         latestNegativeArrestCheck: z.object({
           contactDate: dateStringSchema,
           contactType: z.string(),

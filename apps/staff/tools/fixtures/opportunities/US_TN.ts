@@ -770,8 +770,22 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       stateCode: "US_TN",
-      subcategoryHeadings: [],
-      subcategoryOrderings: [],
+      subcategoryHeadings: [
+        {
+          subcategory: "INSUFFICIENT_TIME_ACCRUED",
+          text: "Insuffienct Time Accrued",
+        },
+        {
+          subcategory: "HAS_FINES_FEES_BALANCE",
+          text: "Has Fines/Fees Balance",
+        },
+      ],
+      subcategoryOrderings: [
+        {
+          tab: "Almost Eligible",
+          texts: ["INSUFFICIENT_TIME_ACCRUED", "HAS_FINES_FEES_BALANCE"],
+        },
+      ],
       subheading:
         "Suspension of Direct Supervision is a type of supervision for clients on parole that removes the requirement for clients to meet in person with officers. Clients will remain on parole and must adhere to all rules and conditions. For official policy details, see Policy #708.05.",
       submittedTabTitle: null,

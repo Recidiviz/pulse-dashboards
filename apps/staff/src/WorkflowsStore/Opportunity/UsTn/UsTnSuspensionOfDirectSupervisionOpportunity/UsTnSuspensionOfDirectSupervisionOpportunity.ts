@@ -44,4 +44,9 @@ export class UsTnSuspensionOfDirectSupervisionOpportunity extends OpportunityBas
       client.rootStore,
     );
   }
+
+  get subcategory() {
+    if (this.isSubmitted || this.denied) return;
+    if (this.almostEligible) return this.record.metadata.tabName;
+  }
 }

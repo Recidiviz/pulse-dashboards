@@ -166,6 +166,7 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "compliantReporting",
       "usTnCompliantReporting2025Policy",
+      "usTnSuspensionOfDirectSupervision",
     ],
     currentEmployers: [
       {
@@ -199,6 +200,7 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "compliantReporting",
       "usTnCompliantReporting2025Policy",
+      "usTnSuspensionOfDirectSupervision",
     ],
     emailAddress: "sarah@example.com",
   },
@@ -342,6 +344,7 @@ export const US_TN_CLIENTS: ClientFixture[] = [
     allEligibleOpportunities: [
       "compliantReporting",
       "usTnCompliantReporting2025Policy",
+      "usTnSuspensionOfDirectSupervision",
     ],
   },
 ];
