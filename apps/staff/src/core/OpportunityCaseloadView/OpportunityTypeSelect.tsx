@@ -20,6 +20,8 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
+  Icon,
+  IconSVG,
   spacing,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
@@ -41,15 +43,16 @@ const FixedWidthText = styled.span`
   overflow: hidden;
 `;
 
-const FlexWrapper = styled.div`
+export const FlexWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
-const SelectedOpportunityTypeIndicator = styled.span`
-  width: 8px;
-  border-top: 2px solid;
+export const SelectedCheckmarkIndicator = styled(Icon).attrs({
+  kind: IconSVG.Check,
+  size: 8,
+})`
   margin-left: ${rem(spacing.sm)};
 `;
 
@@ -82,7 +85,7 @@ export const OpportunityTypeSelect = observer(function OpportunityTypeSelect({
             <FlexWrapper>
               {opportunityConfigs[oppType].label}
               {oppType === selectedOpportunityType && (
-                <SelectedOpportunityTypeIndicator />
+                <SelectedCheckmarkIndicator />
               )}
             </FlexWrapper>
           </DropdownMenuItem>

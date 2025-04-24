@@ -33,15 +33,16 @@ import { RosterChangeRequest, rosterChangeRequestSchema } from "~datatypes";
 
 import { humanReadableTitleCase } from "../../../../utils";
 import { SelectOption } from "../../../CaseloadSelect";
+import {
+  FlexWrapper,
+  SelectedCheckmarkIndicator,
+} from "../../../OpportunityCaseloadView/OpportunityTypeSelect";
 
-const StyledDropdownMenuItem = styled(DropdownMenuItem)<{
-  disabled?: boolean;
-}>`
+const StyledDropdownMenuItem = styled(DropdownMenuItem)`
   ${typography.Sans14}
-  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
-  cursor: ${({ disabled }) => (disabled ? "default" : "auto")};
   height: ${rem(28)};
   color: ${palette.pine1};
+  min-width: ${rem(116)};
   :hover {
     background-color: ${palette.pine4};
     color: ${palette.white};
@@ -49,9 +50,11 @@ const StyledDropdownMenuItem = styled(DropdownMenuItem)<{
 `;
 
 const StyledDropdownMenu = styled(DropdownMenu)`
-  min-width: ${rem(84)};
   padding-top: ${rem(8)};
   padding-bottom: ${rem(8)};
+  max-width: ${rem(116)};
+  width: ${rem(116)};
+  min-width: ${rem(116)};
 `;
 
 /**
@@ -106,26 +109,30 @@ export const Control = (
           <StyledDropdownMenu alignment="right">
             {rosterChangeRequestSchema.shape.requestChangeType.options.map(
               (action) => {
-                const disabled = requestChangeType === action;
+                const selected = requestChangeType === action;
+
                 return (
                   <StyledDropdownMenuItem
                     as={DropdownItem}
                     key={action}
                     onClick={(e: React.MouseEvent<HTMLDivElement>) => {
                       e.stopPropagation();
-                      if (!disabled) handleSetValue(action)();
+                      if (!selected) handleSetValue(action)();
                     }}
                     onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
                       e.stopPropagation();
                     }}
-                    children={humanReadableTitleCase(action)}
-                    disabled={disabled}
                     // Touch screen
                     onTouchEnd={(e: React.TouchEvent<HTMLDivElement>) => {
                       e.stopPropagation();
-                      if (!disabled) handleSetValue(action)();
+                      if (!selected) handleSetValue(action)();
                     }}
-                  />
+                  >
+                    <FlexWrapper>
+                      <div>{humanReadableTitleCase(action)}</div>
+                      {selected && <SelectedCheckmarkIndicator />}
+                    </FlexWrapper>
+                  </StyledDropdownMenuItem>
                 );
               },
             )}
