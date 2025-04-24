@@ -54,7 +54,19 @@
             ".js": ".js"
           }
         }
-      }
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {
+          "sourcemap": true,
+          "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
+        },
+        "cherry-pick": {
+          "sourcemap": true,
+          "esbuildConfig": "{workspaceRoot}/libs/common/server-setup-plugin/esbuild.config.js"
+        }
+      },
+      "defaultConfiguration": "dev"
     },
     "container": {
       "executor": "@nx-tools/nx-container:build",

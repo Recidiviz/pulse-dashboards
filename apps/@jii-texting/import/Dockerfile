@@ -18,4 +18,7 @@ RUN yarn workspaces focus --production
 COPY dist/apps/@jii-texting/import .
 RUN yarn prisma generate
 
-CMD ["dumb-init", "node", "--import=extensionless/register", "main.js"]
+# Make sure to:
+# 1. Use the extensionless package so directory imports can be resolved
+# 2. import the sentry module before the main.js file in order for packages to be instrumented
+CMD ["dumb-init", "node", "--import=extensionless/register", "--import", "./sentry/index.js", "main.js"]
