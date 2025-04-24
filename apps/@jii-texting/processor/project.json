@@ -47,13 +47,7 @@
         ],
         "external": ["@prisma/jii-texting", "commander"],
         "generatePackageJson": true,
-        "minify": true,
-        "esbuildOptions": {
-          "sourcemap": true,
-          "outExtension": {
-            ".js": ".js"
-          }
-        }
+        "minify": true
       },
       "configurations": {
         "dev": {},
