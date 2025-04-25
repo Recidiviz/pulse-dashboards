@@ -15,6 +15,8 @@ main:
           - project_id: ${sys.get_env("PROJECT_ID")}
           - current_date_str: ${text.substring(time.format(sys.now()), 0, 10)}
           - dry_run: ${sys.get_env("PROJECT_ID") != "recidiviz-dashboard-production"}
+          - archive_bucket_id: ${sys.get_env("ARCHIVE_BUCKET_ID")}
+          - etl_bucket_id: ${sys.get_env("ETL_BUCKET_ID")}
     - get_latest_logic_execution:
         call: http.get
         args:
@@ -44,5 +46,64 @@ main:
           connector_params:
             skip_polling: true
         result: workflow
+    - archive_etl_data:
+        call: archive_files
+        args:
+          state_code: ${state_code}
+          etl_bucket_id: ${etl_bucket_id}
+          archive_bucket_id: ${archive_bucket_id}
+          current_date_str: ${current_date_str}
     - finish:
         return: ${workflow}
+
+archive_files:
+  params: [state_code, etl_bucket_id, archive_bucket_id, current_date_str]
+  steps:
+    - get_objects_list:
+        try:
+          call: googleapis.storage.v1.objects.list
+          args:
+            bucket: ${etl_bucket_id}
+            delimiter: /
+            prefix: ${state_code + "/"}
+          result: metric_export_objects_list
+        except:
+          as: e
+          steps:
+            - raise_get_objects_list_error:
+                raise: ${e}
+    - assign_metric_export_file_names:
+        assign:
+          - metric_export_file_names: []
+    - get_file_names:
+        for:
+          value: metric_export_object
+          index: _
+          in: ${metric_export_objects_list.items}
+          steps:
+            - append_file_name:
+                assign:
+                  - metric_export_file_names: ${list.concat(metric_export_file_names, metric_export_object.name)}
+    - archive_all_files:
+        for:
+          value: metric_export_file_name
+          index: _
+          in: ${metric_export_file_names}
+          steps:
+            - assign_object_name:
+                assign:
+                  - destination_object: ${current_date_str + "/" + metric_export_file_name}
+            - copy_file:
+                try:
+                  call: googleapis.storage.v1.objects.copy
+                  args:
+                    destinationBucket: ${archive_bucket_id}
+                    destinationObject: ${text.url_encode(destination_object)}
+                    sourceBucket: ${etl_bucket_id}
+                    sourceObject: ${text.url_encode(metric_export_file_name)}
+                  result: etl_result
+                except:
+                  as: e
+                  steps:
+                    - raise_copy_error:
+                        raise: ${e}

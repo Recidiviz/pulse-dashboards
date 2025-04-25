@@ -23,9 +23,11 @@ components:
         prefix: "{{ .vars.project_id }}"
         names:
           - jii-texting-etl-data
+          - jii-texting-etl-data-archive
         log_bucket: "{{ .vars.project_id }}-gcs-object-logs"
         versioning:
           jii-texting-etl-data: true
+          jii-texting-etl-data-archive: true
         location: "{{ .settings.context.location }}"
         storage_class: STANDARD
         lifecycle_rules:
@@ -36,6 +38,7 @@ components:
         set_admin_roles: true
         bucket_admins:
           jii-texting-etl-data: "serviceAccount:{{ .settings.context.data_platform_project_number }}-compute@developer.gserviceaccount.com,serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
+          jii-texting-etl-data-archive: "serviceAccount:{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
       metadata:
         component: vendor/cloud-storage-bucket
 
@@ -59,5 +62,7 @@ components:
         artifact_registry_repo: "{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ .settings.context.registry_repo_name }}"
         # The 'name' output uses the name of the first bucket, so ensure that the ETL bucket is the first one in the list
         etl_bucket_name: !terraform.output gcs-buckets {{ .stack }} name
+        # The 'names_list' output uses the same order as the the list of names, so ensure that the archive bucket is second
+        archive_bucket_name: !terraform.output gcs-buckets {{ .stack }} names_list[1]
         processor_job_env_secret_id: env_staging_jii_texting_processor_job
         server_env_secret_id: env_staging_jii_texting_server

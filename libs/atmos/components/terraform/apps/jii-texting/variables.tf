@@ -80,3 +80,8 @@ variable "server_env_secret_id" {
   type        = string
   description = "The secret id for where to find the env vars for the server"
 }
+
+variable "archive_bucket_name" {
+  type        = string
+  description = "The bucket id for where the archived data should be stored"
+}
