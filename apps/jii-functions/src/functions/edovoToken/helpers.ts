@@ -38,7 +38,7 @@ export async function checkResidentsRoster(
 ): Promise<TokenAuthUser | undefined> {
   const stateCode = `US_${userData.STATE}`;
   const userResidentRecord = (
-    await getFirestore()
+    await (await getFirestore())
       .doc(`residents/${stateCode.toLowerCase()}_${userData.USER_ID}`)
       .get()
   ).data();
@@ -63,7 +63,7 @@ export async function checkRecidivizEmployeeRoster(
   userData: EdovoIdTokenPayload,
 ): Promise<TokenAuthUser | undefined> {
   const employeeRecord = (
-    await getFirestore()
+    await (await getFirestore())
       .doc(`JII-edovoToRecidivizMappings/${userData.USER_ID}`)
       .get()
   ).data();

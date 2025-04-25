@@ -22,12 +22,7 @@ import jwt from "express-jwt";
 import { compactDecrypt } from "jose";
 import jwks from "jwks-rsa";
 
-import {
-  EDOVO_API_KEY,
-  EDOVO_JWKS_URL,
-  EDOVO_TOKEN_ISSUER,
-  EDOVO_TOKEN_PRIVATE_KEY,
-} from "./secrets";
+import { secrets } from "../../helpers/secrets";
 
 /**
  * Extracts a bearer auth token from Express request headers,
@@ -64,7 +59,7 @@ export async function decryptToken(
     // decrypting gets us a signed JWT to pass on to the next middleware
     const { plaintext: decryptedToken } = await compactDecrypt(
       encryptedToken,
-      createPrivateKey(EDOVO_TOKEN_PRIVATE_KEY.value()),
+      createPrivateKey(await secrets.getLatestValue("EDOVO_TOKEN_PRIVATE_KEY")),
     );
 
     // updating this header in place because that's where the JWT middleware will look
@@ -80,26 +75,27 @@ export async function decryptToken(
  * using their public key as retrieved from an API endpoint.
  * Will throw if the JWT is missing or invalid.
  */
-export function verifyToken(
+export async function verifyToken(
   request: Request,
   response: Response,
   next: NextFunction,
 ) {
-  // we have to create this inside the middleware function in order to access secrets
-  const handler = jwt({
-    secret: jwks.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: EDOVO_JWKS_URL.value(),
-      requestHeaders: {
-        "X-Api-Key": EDOVO_API_KEY.value(),
-      },
-    }),
-    // different edovo environments we support will have different issuers
-    issuer: EDOVO_TOKEN_ISSUER.value().split(","),
-    algorithms: ["RS256"],
-  });
+  try {
+    const handler = jwt({
+      secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: await secrets.getLatestValue("EDOVO_JWKS_URL"),
+        requestHeaders: {
+          "X-Api-Key": await secrets.getLatestValue("EDOVO_API_KEY"),
+        },
+      }),
+      algorithms: ["RS256"],
+    });
 
-  handler(request, response, next);
+    handler(request, response, next);
+  } catch (e) {
+    next(`${e}`);
+  }
 }

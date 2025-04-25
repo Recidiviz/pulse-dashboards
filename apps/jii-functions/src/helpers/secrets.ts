@@ -15,21 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { defineSecret } from "firebase-functions/params";
+import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 
-/**
- * Secret key for the Edovo JWKS endpoint
- */
-export const EDOVO_API_KEY = defineSecret("EDOVO_API_KEY");
-/**
- * Private key for decrypting the ID token
- */
-export const EDOVO_TOKEN_PRIVATE_KEY = defineSecret("EDOVO_TOKEN_PRIVATE_KEY");
-/**
- * URL for the edovo JWKS endpoint
- */
-export const EDOVO_JWKS_URL = defineSecret("EDOVO_JWKS_URL");
-/**
- * Expected issuer values. Expect a comma-separated string of values
- */
-export const EDOVO_TOKEN_ISSUER = defineSecret("EDOVO_TOKEN_ISSUER");
+class Secrets {
+  private client: SecretManagerServiceClient;
+
+  constructor() {
+    this.client = new SecretManagerServiceClient();
+  }
+
+  async getLatestValue(secretName: string): Promise<string> {
+    const name = `projects/${process.env["SECRETS_PROJECT"]}/secrets/${secretName}/versions/latest`;
+    const [secret] = await this.client.accessSecretVersion({ name });
+    const secretValue = secret.payload?.data?.toString();
+    if (!secretValue) {
+      throw new Error(`missing data found for ${name}`);
+    }
+    return secretValue;
+  }
+}
+
+// client instantiation depends on environment vars so a global singleton should be fine,
+// no need to keep creating new SDK clients
+export const secrets = new Secrets();

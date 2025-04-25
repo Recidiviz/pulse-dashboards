@@ -17,40 +17,37 @@
 
 import firebaseAdmin from "firebase-admin";
 import { App } from "firebase-admin/app";
-import { defineSecret, defineString } from "firebase-functions/params";
+import { defineString } from "firebase-functions/params";
 import toUpper from "lodash/toUpper";
 
 import { UserAppMetadata } from "~auth0-jii";
 
+import { secrets } from "./secrets";
+
 // Firestore is running in a different Firebase project than these functions
 const dataSourceProject = defineString("DATA_SOURCE_FIREBASE_PROJECT");
-// this is the service account key we will use to authenticate
-const dataSourceCredential = defineSecret("DATA_SOURCE_FIREBASE_CREDENTIAL");
-// the full credential exceeds the secrets character limit,
-// which is why the private key field is stored separately (it is by far the largest value)
-const dataSourceCredentialPrivateKey = defineSecret(
-  "DATA_SOURCE_FIREBASE_CREDENTIAL_PRIVATE_KEY",
-);
-
-/**
- * Functions calling helpers need to include these secrets in their configuration
- */
-export const firebaseAdminSecrets = [
-  dataSourceCredential,
-  dataSourceCredentialPrivateKey,
-];
 
 // there can only be one firebase app instance, but we have to access the credentials within the function;
 // therefore we will cache it here the first time it's accessed
 let firebaseApp: App | undefined;
 
-function getFirebaseApp(): App {
+async function getFirebaseApp(): Promise<App> {
   if (firebaseApp) return firebaseApp;
 
+  // this is the service account key we will use to authenticate
+  const dataSourceCredential = await secrets.getLatestValue(
+    "DATA_SOURCE_FIREBASE_CREDENTIAL",
+  );
+  // the full credential exceeds the secrets character limit,
+  // which is why the private key field is stored separately (it is by far the largest value)
+  const dataSourceCredentialPrivateKey = await secrets.getLatestValue(
+    "DATA_SOURCE_FIREBASE_CREDENTIAL_PRIVATE_KEY",
+  );
+
   const firebaseCredential = {
-    ...JSON.parse(dataSourceCredential.value()),
+    ...JSON.parse(dataSourceCredential),
     // this string may contain newlines, which we need to render as \n codes for valid JSON
-    private_key: dataSourceCredentialPrivateKey.value().replace(/\\n/gm, "\n"),
+    private_key: dataSourceCredentialPrivateKey.replace(/\\n/gm, "\n"),
   };
 
   // cache the app object so we don't try to reinitialize it later
@@ -72,7 +69,7 @@ export async function getFirebaseToken(
   uid: string,
   { stateCode, externalId, allowedStates, permissions }: UserAppMetadata,
 ) {
-  return firebaseAdmin.auth(getFirebaseApp()).createCustomToken(uid, {
+  return firebaseAdmin.auth(await getFirebaseApp()).createCustomToken(uid, {
     app: "jii",
     stateCode,
     externalId,
@@ -81,6 +78,6 @@ export async function getFirebaseToken(
   });
 }
 
-export function getFirestore() {
-  return firebaseAdmin.firestore(getFirebaseApp());
+export async function getFirestore() {
+  return firebaseAdmin.firestore(await getFirebaseApp());
 }

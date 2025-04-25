@@ -21,10 +21,7 @@ import { onRequest } from "firebase-functions/v2/https";
 
 import { tokenAuthResponseSchema } from "~auth0-jii";
 
-import {
-  firebaseAdminSecrets,
-  getFirebaseToken,
-} from "../../helpers/firebaseAdmin";
+import { getFirebaseToken } from "../../helpers/firebaseAdmin";
 import { errorHandler, rateLimiter } from "../../helpers/middleware";
 import {
   checkRecidivizEmployeeRoster,
@@ -32,12 +29,6 @@ import {
   edovoIdTokenPayloadSchema,
 } from "./helpers";
 import { decryptToken, verifyToken } from "./middleware";
-import {
-  EDOVO_API_KEY,
-  EDOVO_JWKS_URL,
-  EDOVO_TOKEN_ISSUER,
-  EDOVO_TOKEN_PRIVATE_KEY,
-} from "./secrets";
 
 const app = express();
 
@@ -87,13 +78,6 @@ app.use(errorHandler);
 export const edovoToken = onRequest(
   {
     cors: true,
-    secrets: [
-      EDOVO_API_KEY,
-      EDOVO_JWKS_URL,
-      EDOVO_TOKEN_ISSUER,
-      EDOVO_TOKEN_PRIVATE_KEY,
-      ...firebaseAdminSecrets,
-    ],
   },
   app,
 );

@@ -24,10 +24,7 @@ import jwks from "jwks-rsa";
 
 import { getAuth0Config, metadataNamespace, metadataSchema } from "~auth0-jii";
 
-import {
-  firebaseAdminSecrets,
-  getFirebaseToken,
-} from "../helpers/firebaseAdmin";
+import { getFirebaseToken } from "../helpers/firebaseAdmin";
 import { rateLimiter } from "../helpers/middleware";
 
 const tenantKey = defineString("AUTH0_TENANT_KEY");
@@ -96,7 +93,6 @@ setupExpressErrorHandler(app);
 export const firebaseToken = onRequest(
   {
     cors: true,
-    secrets: [...firebaseAdminSecrets],
   },
   app,
 );
