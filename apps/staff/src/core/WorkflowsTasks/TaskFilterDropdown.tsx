@@ -21,12 +21,14 @@ import {
   DropdownMenuItem,
   DropdownToggle,
   palette,
+  spacing,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import Checkbox from "../../components/Checkbox";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { TaskFilterField, TaskFilterOption } from "../models/types";
 
@@ -59,7 +61,6 @@ const FilterDropdownMenu = styled(DropdownMenu)`
 const FilterGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
   overflow: hidden;
   white-space: nowrap;
 
@@ -75,14 +76,15 @@ const FilterGroupHeader = styled.div`
   font-size: ${rem(12)};
   font-weight: 700;
   padding: 0;
+  padding-bottom: ${rem(spacing.xs)};
 `;
 
 const SelectOnlyButton = styled.div`
   border: none;
-  background-color: rgb(231, 235, 238);
-  border-radius: 4px;
   color: ${palette.pine4};
   display: none;
+  padding-right: ${rem(spacing.xs)};
+  margin-left: ${rem(spacing.xs)};
 `;
 
 const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)`
@@ -90,7 +92,8 @@ const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)`
   padding-right: 0;
   overflow: hidden;
   color: ${palette.pine4};
-  height: 17px;
+  // 17px text height plus 4px padding top and bottom
+  height: 25px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -104,6 +107,13 @@ const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)`
       display: block;
     }
   }
+
+  &:active,
+  &:focus {
+    // Override the default color inversion on hover
+    background-color: ${palette.slate10};
+    color: ${palette.pine4};
+  }
 `;
 
 const FilterOptionLabel = styled.div`
@@ -113,6 +123,14 @@ const FilterOptionLabel = styled.div`
 
   white-space: nowrap;
   overflow: hidden;
+`;
+
+const FilterCheckboxContainer = styled.div`
+  & label.Checkbox__container {
+    margin-bottom: 0;
+    margin-top: 8px;
+    padding-left: 0;
+  }
 `;
 
 const FilterGroupColumns = styled.div`
@@ -127,13 +145,10 @@ const FilterGroupColumn = styled.div`
   width: 210px;
 `;
 
-const ClearAllButton = styled(DropdownMenuItem)`
-  margin-top: 8px;
-  margin-bottom: 0 !important;
-  padding-left: 0;
+const ClearAllButton = styled(StyledFilterDropdownMenuItem)`
+  margin-top: ${rem(spacing.md)};
   text-transform: uppercase;
   font-weight: 700;
-  color: ${palette.pine4};
 `;
 
 const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
@@ -148,9 +163,19 @@ const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
   checked: boolean;
 }) {
   return (
-    <StyledFilterDropdownMenuItem onClick={() => onClick()} key={option.value}>
+    <StyledFilterDropdownMenuItem
+      preventCloseOnClickEvent
+      onClick={() => onClick()}
+      key={option.value}
+    >
       <FilterOptionLabel>
-        <input readOnly type={"checkbox"} checked={checked} />{" "}
+        <FilterCheckboxContainer>
+          <Checkbox
+            checked={checked}
+            value={option.value}
+            onChange={() => onClick()}
+          />
+        </FilterCheckboxContainer>
         {option.label ?? option.value}
       </FilterOptionLabel>
       <SelectOnlyButton
@@ -199,14 +224,20 @@ const ClearAll = observer(function ClearAll({
 }) {
   if (presenter.allFiltersSelected) {
     return (
-      <ClearAllButton onClick={() => presenter.clearFilters()}>
+      <ClearAllButton
+        preventCloseOnClickEvent
+        onClick={() => presenter.clearFilters()}
+      >
         Clear all filters
       </ClearAllButton>
     );
   }
 
   return (
-    <ClearAllButton onClick={() => presenter.resetFilters()}>
+    <ClearAllButton
+      preventCloseOnClickEvent
+      onClick={() => presenter.resetFilters()}
+    >
       Select all filters
     </ClearAllButton>
   );

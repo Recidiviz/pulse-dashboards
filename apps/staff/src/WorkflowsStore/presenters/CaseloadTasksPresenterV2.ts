@@ -305,13 +305,9 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   unsetFilter(field: TaskFilterField, option: TaskFilterOption) {
     const { value } = option;
 
-    if (this._selectedFilters[field]?.length === 1) {
-      delete this._selectedFilters[field];
-    } else {
-      this._selectedFilters[field] = this._selectedFilters[field]?.filter(
-        (f) => f !== value,
-      );
-    }
+    this._selectedFilters[field] = this._selectedFilters[field]?.filter(
+      (f) => f !== value,
+    );
 
     this.analyticsStore.trackTaskFilterChanged({
       changedFilterCategory: field,

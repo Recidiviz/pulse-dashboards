@@ -520,5 +520,11 @@ describe("CaseloadTasksPresenterV2", () => {
       presenter.resetFilters();
       expect(presenter.allFiltersSelected).toBeTrue();
     });
+
+    it("keep an empty list of selected filters when removing the last filter from a group", () => {
+      presenter.setOnlyFilterForField("supervisionLevel", { value: "Low" });
+      presenter.toggleFilter("supervisionLevel", { value: "Low" });
+      expect(presenter.selectedFilters.supervisionLevel).toEqual([]);
+    });
   });
 });
