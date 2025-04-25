@@ -165,6 +165,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["UsUtDates", "Milestones", "Contact", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_UT",
       subcategoryHeadings: [
         { subcategory: "REPORT_DUE_ELIGIBLE", text: "Eligible" },

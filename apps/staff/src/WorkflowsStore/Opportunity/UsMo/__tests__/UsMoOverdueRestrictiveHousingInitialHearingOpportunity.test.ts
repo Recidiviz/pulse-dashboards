@@ -330,6 +330,19 @@ export const orderedDates: (Date | undefined)[] = [
 describe("Test custom compare function", () => {
   let opportunities: UsMoOverdueRestrictiveHousingInitialHearingOpportunity[];
   beforeEach(() => {
+    const mockConfig = {
+      ...root.workflowsRootStore.opportunityConfigurationStore.opportunities[
+        UsMoOverdueRestrictiveHousingInitialHearingOpportunity.prototype.type
+      ],
+      compareBy: [
+        { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
+      ] as SortParam[],
+    };
+    vi.spyOn(
+      UsMoOverdueRestrictiveHousingInitialHearingOpportunity.prototype,
+      "config",
+      "get",
+    ).mockReturnValue(mockConfig);
     freeze(new Date(2022, 7, 1));
   });
 
@@ -342,6 +355,7 @@ describe("Test custom compare function", () => {
       shuffle(orderedReviewStatuses),
       shuffledDates,
     );
+
     opportunities.sort((a, b) => a.compare(b));
     expect(
       evaluateForUndefinedDatesFirstOnly(

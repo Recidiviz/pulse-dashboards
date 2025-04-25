@@ -25,6 +25,7 @@ import { RootStore } from "../../../../RootStore";
 import { Resident } from "../../../Resident";
 import { DocumentSubscription } from "../../../subscriptions";
 import { OpportunityStatus } from "../..";
+import { SortParam } from "../../OpportunityConfigurations/interfaces/shared";
 import {
   usMoOverdueRestrictiveHousingReleaseReferralRecordFixture,
   usMoPersonRecord,
@@ -351,6 +352,19 @@ export const orderedDates: (Date | undefined)[] = [
 describe("Test custom compare function", () => {
   let opportunities: UsMoOverdueRestrictiveHousingReleaseOpportunity[];
   beforeEach(() => {
+    const mockConfig = {
+      ...root.workflowsRootStore.opportunityConfigurationStore.opportunities[
+        UsMoOverdueRestrictiveHousingReleaseOpportunity.prototype.type
+      ],
+      compareBy: [
+        { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
+      ] as SortParam[],
+    };
+    vi.spyOn(
+      UsMoOverdueRestrictiveHousingReleaseOpportunity.prototype,
+      "config",
+      "get",
+    ).mockReturnValue(mockConfig);
     freeze(new Date(2022, 7, 1));
   });
 

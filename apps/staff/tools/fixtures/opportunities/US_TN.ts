@@ -66,6 +66,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "FinesAndFees",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_TN",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -86,9 +87,10 @@ export const mockApiOpportunityConfigurationResponse = {
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
+        { key: "COURT", text: "Court mandates supervision at a higher level" },
         {
-          key: "COURT",
-          text: "COURT: Court mandates supervision at a higher level",
+          key: "SCORE",
+          text: "New StrongR 2.0 score cut offs mean the new supervision level is aligned with the latest assessment score",
         },
         { key: "Other", text: "Other: please specify a reason" },
       ],
@@ -102,7 +104,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "supervisionLevelHigherThanAssessmentLevel",
           text: "Current supervision level: {{opportunity.person.supervisionLevel}}; Last risk score: {{assessmentLevel}} {{#if latestAssessmentDate}}(as of {{date latestAssessmentDate}}){{else}}(assessment date unknown){{/if}}",
-          tooltip: null,
         },
       ],
       emptyTabCopy: [],
@@ -125,6 +126,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_TN",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -188,6 +190,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "UsTnCommonlyUsedOverrideCodes",
       ],
       snooze: null,
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_TN",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -490,6 +493,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "UsTnCommonlyUsedOverrideCodes",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_TN",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -561,6 +565,7 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: {
         autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
       },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_TN",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -675,7 +680,17 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "onSupervisionAtLeast2Years",
           text: "On supervision for at least two years",
           tooltip:
-            "On supervision for two years, including compliant reporting, unless removed from compliant reporting due to the imposition of a sanction.",
+            "On supervision for two years, including Compliant Reporting, unless removed from Compliant Reporting due to the imposition of a sanction.",
+        },
+        {
+          key: "assessedRiskLowWhileOnSupervisionAtLeast2Years",
+          text: "Overall risk score of 'minimum' for at least two years",
+        },
+        {
+          key: "onSupervisionAtLeast2YearsAndAssessedRiskLowWhileOnSupervisionAtLeast2Years",
+          text: "On supervision with an overall risk score of 'minimum' for at least two years",
+          tooltip:
+            "On supervision with a 'minimum' risk score for two years, including time on Compliant Reporting unless removed from Compliant Reporting due to the imposition of a sanction.",
         },
         {
           key: "noSupervisionViolationReportWithin2Years",
@@ -686,10 +701,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usTnNoWarrantWithin2Years",
           text: "No warrants in past two years",
-        },
-        {
-          key: "assessedRiskLowWhileOnSupervisionAtLeast2Years",
-          text: "Overall risk score of 'minimum' for at least two years",
         },
         {
           key: "usTnNoSupervisionSanctionWithin1Year",
@@ -726,6 +737,12 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightedCaseCtaCopy: null,
       homepagePosition: 5,
       ineligibleCriteriaCopy: [
+        {
+          key: "onSupervisionAtLeast2YearsAndAssessedRiskLowWhileOnSupervisionAtLeast2Years",
+          text: "Within 60 days of being on supervision with an overall risk score of 'minimum' for at least two years",
+          tooltip:
+            "On supervision with a 'minimum' risk score for two years, including time on Compliant Reporting unless removed from Compliant Reporting due to the imposition of a sanction.",
+        },
         {
           key: "hasFinesFeesBalanceOf0OrIsExempt",
           text: "Unpaid balance of ${{amountOwed}}",
@@ -769,6 +786,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_TN",
       subcategoryHeadings: [
         {

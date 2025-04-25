@@ -75,6 +75,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ID",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -187,6 +188,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ID",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -252,6 +254,7 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: {
         autoSnoozeParams: { params: { days: 30 }, type: "snoozeDays" },
       },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ID",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -334,24 +337,6 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
         },
-        {
-          key: "incarcerationWithin7YearsOfFtcdOrTpd",
-          text: "Tentative Parole Date (TPD) within seven (7) years OR Full Term Release Date (FTRD) within seven (7) years",
-          tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
-        },
-        {
-          key: "incarcerationWithin7YearsOfPedAndPhdAnd20YearsOfFtcd",
-          text: "Parole Eligibility Date (PED) within seven (7) years AND Parole Hearing Date (PHD) within seven (7) years AND Full Term Release Date (FTRD) within 20 years",
-          tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
-        },
-        {
-          key: "incarcerationWithin3YearsOfTpdAndLifeSentence",
-          text: "Life sentence AND Tentative Parole Date (TPD) within 3 years",
-          tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
-        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_ID-CRCResidentWorkerReferrals",
@@ -383,6 +368,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ID",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -492,24 +478,6 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (18) months OR\n        Full Term Release Date (FTRD) within seven (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
         },
-        {
-          key: "incarcerationWithin18MonthsOfFtcdOrTpd",
-          text: "Tentative Parole Date (TPD) within eighteen (18) months OR Full Term Release Date (FTRD) within eighteen (18) months",
-          tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within eighteen (18) months OR\n        Full Term Release Date (FTRD) within eighteen (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
-        },
-        {
-          key: "incarcerationWithin18MonthsOfEprdAnd15YearsOfFtcd",
-          text: "Early Release Date (EPRD) within 18 months AND Full Term Release Date (FTRD) within 15 years",
-          tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within eighteen (18) months OR\n        Full Term Release Date (FTRD) within eighteen (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
-        },
-        {
-          key: "incarcerationWithin1YearOfTpdAndLifeSentence",
-          text: "Life sentence AND Tentative Parole Date (TPD) within 1 year",
-          tooltip:
-            "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within eighteen (18) months OR\n        Full Term Release Date (FTRD) within eighteen (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
-        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_ID-CRCWorkReleaseReferrals",
@@ -541,6 +509,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ID",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -767,6 +736,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "CaseNotes",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ID",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -856,6 +826,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ID",
       subcategoryHeadings: [],
       subcategoryOrderings: [],

@@ -120,6 +120,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
       snooze: null,
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_AZ",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -232,6 +233,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
       snooze: null,
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_AZ",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -376,6 +378,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
       snooze: null,
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_AZ",
       subcategoryHeadings: [
         { subcategory: "HOME_PLAN_IN_PROGRESS", text: "Home Plan in Progress" },
@@ -571,6 +574,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
       snooze: null,
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_AZ",
       subcategoryHeadings: [
         { subcategory: "HOME_PLAN_IN_PROGRESS", text: "Home Plan in Progress" },

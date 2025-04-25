@@ -49,7 +49,7 @@ export const US_PA: InsightsConfig = {
   docLabel: "DOC",
   exclusionReasonDescription: "--",
   learnMoreUrl:
-    "https://drive.google.com/file/d/1NvTuKhN-N1-ba1KMI562_z9ka932JqXQ/view",
+    "https://docs.google.com/document/d/e/2PACX-1vQtoN37YkmqHVxIThm9-I5_kPaWTBoLAWS8nkuJm13mnwS8re_mTP1wb98_Ui3dVPvBG7rQeWswBjXG/pub",
   metrics: [
     {
       name: "incarceration_starts",

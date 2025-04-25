@@ -141,6 +141,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ND",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -195,9 +196,9 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usNdNoDetainersOrWarrants",
-          text: "No felony warrants or detainers",
+          text: "No warrants or detainers",
           tooltip:
-            "Active felony warrants or detainers disqualify a resident from transfer to ATP",
+            "Active (misdemeanor or felony) warrants or detainers disqualify a resident from transfer to ATP",
         },
         {
           key: "usNdNotServingIneligibleOffenseForAtpWorkRelease",
@@ -295,6 +296,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ND",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -365,6 +367,17 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usNdNotEnrolledInRelevantProgram",
           text: "Not currently enrolled in a core program",
         },
+        {
+          key: "usNdNoDetainersOrFelonyWarrants",
+          text: "No felony warrants or detainers",
+          tooltip:
+            "Active felony warrants or detainers disqualify a resident from transfer to minimum housing",
+        },
+        {
+          key: "usNdNotInAnOrientationUnit",
+          text: "Not in ORU or has been there more than 3 weeks",
+          tooltip: "",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_ND-TransferToMinFacility",
@@ -381,6 +394,12 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usNdNotEnrolledInRelevantProgram",
           text: "Currently enrolled in a program",
         },
+        {
+          key: "usNdNotInAnOrientationUnit",
+          text: "Currently in the third week of orientation",
+          tooltip:
+            "A resident becomes eligible after 3 weeks in the ORU or a transfer to another unit",
+        },
       ],
       initialHeader: null,
       isAlert: false,
@@ -395,6 +414,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["Incarceration", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 60 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_ND",
       subcategoryHeadings: [],
       subcategoryOrderings: [],

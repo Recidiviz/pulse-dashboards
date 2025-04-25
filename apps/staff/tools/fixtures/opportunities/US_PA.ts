@@ -38,6 +38,10 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Client is named in a PFA order or has a history of PFAs",
         },
         {
+          key: "SEX",
+          text: "Client is an SVP or is supervised under the sex offender protocol",
+        },
+        {
           key: "UNREPORTED",
           text: "Client has an out of state charge or an unreported disposition on an offense that makes them ineligible per form 402",
         },
@@ -46,8 +50,8 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Client has a drug offense that makes them ineligible per form 402a",
         },
         {
-          key: "SEX",
-          text: "Client is an SVP or is supervised under the sex offender protocol",
+          key: "VIOLENT",
+          text: "Client was convicted of a crime of violence as defined by 42 Pa.C.S. § 9714(g)",
         },
         {
           key: "DUI",
@@ -92,6 +96,10 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Reentrants designated as a sexually violent predator shall not be supervised below the maximum level of supervision. All other reentrants supervised under the sex offender protocol shall be supervised at no less than the medium level of supervision. ",
         },
+        {
+          key: "supervisionLevelIsNotHighOrMaxForOneYear",
+          text: "Not supervised under enhanced or maximum supervision within the past 12 months",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_PA-adminSupervisionReferrals",
@@ -127,7 +135,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "See domestic violence section of integrated case summary for PFA orders",
         },
         {
-          text: "Does not have out of state charges or unreported dispositions for ineligible offenses",
+          text: "Does not have out of state charges for ineligible offenses",
           tooltip:
             'Click "complete checklist" to see full list of ineligible offenses',
         },
@@ -144,6 +152,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_PA",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -249,6 +258,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: null,
       stateCode: "US_PA",
       subcategoryHeadings: [],
       subcategoryOrderings: [],

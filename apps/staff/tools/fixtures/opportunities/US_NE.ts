@@ -18,5 +18,73 @@
 import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
 export const mockApiOpportunityConfigurationResponse = {
-  enabledConfigs: {},
+  enabledConfigs: {
+    usNeConditionalLowRiskOverride: {
+      callToAction:
+        "Review clients who may be eligible for Conditional Low Risk and complete an override request",
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "Override to Conditional Low Risk",
+      dynamicEligibilityText:
+        "[client|clients] may be eligible for an override to Conditional Low Risk",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        {
+          key: "onParoleAtLeastOneYear",
+          text: "Time on supervision: {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
+        },
+        {
+          key: "supervisionLevelIsMinimum",
+          text: "Current supervision level: {{supervisionLevel}}",
+        },
+        {
+          key: "noSupervisionViolationWithin6Months",
+          text: "No severe supervision violations in the last 6 months",
+          tooltip:
+            "The lowest severity violations (levels 1 and 2) do not disqualify someone for a CLR override",
+        },
+        {
+          key: "usNeCompliantWithSpecialConditions",
+          text: "Compliant with any applicable special conditions",
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "US_NE-ConditionalLowRiskOverrideReferrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 1,
+      ineligibleCriteriaCopy: [],
+      initialHeader: null,
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl: "TBD",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
+      notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: [],
+      snooze: null,
+      snoozeCompanionOpportunityTypes: null,
+      stateCode: "US_NE",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading:
+        "Supervision overrides to the current risk levels and contact standards will be considered on a case-by-case basis unless stipulated in protocol. The official policy documentation can be found here.",
+      submittedTabTitle: null,
+      supportsSubmitted: false,
+      systemType: "SUPERVISION",
+      tabGroups: null,
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "ConditionalLowRiskOverride",
+      zeroGrantsTooltip: null,
+    },
+  },
 } as const satisfies ApiOpportunityConfigurationResponse;
