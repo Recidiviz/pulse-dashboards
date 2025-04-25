@@ -31,6 +31,7 @@ const US_TN_CONFIG: TenantConfig<"US_TN"> = {
   stateCode: "TN",
   domain: "tn.gov",
   pathwaysNameOverride: "Pathways",
+  supervisionEndCopyOverride: "Expiration",
   availableStateCodes: [pathways.US_TN],
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,

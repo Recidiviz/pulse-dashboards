@@ -24,7 +24,10 @@ import toast from "react-hot-toast";
 import { Link, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 import { getLinkToForm } from "../../WorkflowsStore/utils";
@@ -104,6 +107,8 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     hideHeader = false,
     onDenialButtonClick = () => null,
   }) {
+    const { tenantStore } = useRootStore();
+
     const { hideDenialRevert, submittedOpportunityStatus } =
       useFeatureVariants();
 
@@ -137,6 +142,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     const [actedOnText, resurfaceText] = buildActedOnTextAndResurfaceText(
       opportunity,
       snoozeUntil,
+      tenantStore.labels,
     );
 
     const showRevertLink = !(

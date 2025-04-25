@@ -26,7 +26,10 @@ import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Slider from "../../components/Slider";
-import { useFeatureVariants } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import { formatDateToISO } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
 import { getSnoozeUntilDate } from "../../WorkflowsStore/utils";
@@ -100,6 +103,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   opportunity?: Opportunity;
   onSubmit?: () => void;
 }): JSX.Element | null {
+  const {
+    tenantStore: { labels },
+  } = useRootStore();
+
   const [reasons, setReasons] = useState<string[]>(
     opportunity?.denial?.reasons ?? [],
   );
@@ -270,7 +277,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       )}
       {snoozeUntilDate !== undefined && (
         <SnoozeUntilReminderText>
-          <div>{buildResurfaceText(opportunity, snoozeUntilDate)}</div>
+          <div>{buildResurfaceText(opportunity, snoozeUntilDate, labels)}</div>
           <br />
           <div>{buildDenialReasonsListText(opportunity, reasons)}</div>
         </SnoozeUntilReminderText>

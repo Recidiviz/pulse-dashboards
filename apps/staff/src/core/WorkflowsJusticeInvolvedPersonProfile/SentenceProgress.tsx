@@ -268,7 +268,9 @@ export function IncarcerationProgress({
   } = resident;
 
   const {
-    tenantStore: { releaseDateCopy },
+    tenantStore: {
+      labels: { releaseDateCopy },
+    },
   } = useRootStore();
 
   if (onLifeSentence) {

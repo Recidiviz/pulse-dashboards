@@ -484,7 +484,7 @@ const TableView = observer(function TableView({
       },
     },
     {
-      header: "Sentence End",
+      header: presenter.supervisionEndHeader,
       id: "SUPERVISION_EXPIRATION_DATE",
       enableSorting: true,
       sortingFn: "datetime",

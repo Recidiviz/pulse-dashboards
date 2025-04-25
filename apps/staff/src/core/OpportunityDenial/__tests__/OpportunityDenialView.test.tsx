@@ -18,12 +18,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import timekeeper from "timekeeper";
-import { Mock } from "vitest";
 
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
+import { RootStore } from "../../../RootStore";
 import { Opportunity } from "../../../WorkflowsStore";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
@@ -34,8 +34,8 @@ vi.mock("../../WorkflowsJusticeInvolvedPersonProfile/Heading", () => ({
   Heading: () => <div>Mock Person Heading</div>,
 }));
 
-const useRootStoreMock = useRootStore as Mock;
-const useFeatureVariantsMock = useFeatureVariants as Mock;
+const useRootStoreMock = vi.mocked(useRootStore);
+const useFeatureVariantsMock = vi.mocked(useFeatureVariants);
 
 function renderElement(opportunity: Opportunity) {
   render(
@@ -57,7 +57,13 @@ describe("OpportunityDenialView", () => {
       workflowsStore: {
         currentUserEmail: "mock-email",
       },
-    });
+      tenantStore: {
+        labels: {
+          releaseDateCopy: "Release",
+          supervisionEndDateCopy: "End",
+        },
+      },
+    } as unknown as RootStore);
   });
 
   afterEach(() => {
@@ -422,7 +428,7 @@ describe("OpportunityDenialView", () => {
 
       expect(
         screen.getByText(
-          "February 1, 2025 is Client Name's supervision end date.",
+          "February 1, 2025 is Client Name's Supervision End Date.",
         ),
       ).toBeInTheDocument();
     });
@@ -492,7 +498,15 @@ describe("OpportunityDenialView", () => {
   describe("disableSnoozeSlider featureVariant is set", () => {
     beforeEach(() => {
       vi.resetAllMocks();
-      useFeatureVariantsMock.mockReturnValue({ disableSnoozeSlider: true });
+      useFeatureVariantsMock.mockReturnValue({ disableSnoozeSlider: {} });
+      useRootStoreMock.mockReturnValue({
+        tenantStore: {
+          labels: {
+            releaseDateCopy: "Release",
+            supervisionEndDateCopy: "End",
+          },
+        },
+      } as unknown as RootStore);
     });
 
     it("does not show the slider even if config is set", () => {

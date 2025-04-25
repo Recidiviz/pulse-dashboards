@@ -67,10 +67,17 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   DOCName?: string;
   internalSystemName?: string;
   availableStateCodes: TenantId[];
-  enableUserRestrictions: boolean;
   navigation?: Navigation;
+  featureVariants?: FeatureVariantRecord; // default values for all users in this tenant
+
+  // Product-specific settings
+
+  enableUserRestrictions: boolean; // used for Lantern
   vitalsMetrics?: VitalsMetric[];
-  tableColumns?: TableColumns;
+  tableColumns?: TableColumns; // used for Pathways
+  pathwaysNameOverride?: "Pathways" | "System-Level Trends";
+
+  // Workflows
   workflowsSupportedSystems?: SystemId[];
   workflowsSystemConfigs?: {
     INCARCERATION?: WorkflowsSystemConfig<WorkflowsResidentRecord, TENANT_ID>;
@@ -80,14 +87,15 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   workflowsHomepageName?: string;
   workflowsTasksConfig?: WorkflowsTasksConfig;
   milestoneTypes?: MilestoneType[];
-  pathwaysNameOverride?: "Pathways" | "System-Level Trends";
   workflowsStaffFilterFn?: StaffFilterFunction;
+  releaseDateCopyOverride?: string;
+  supervisionEndCopyOverride?: string;
+  incarcerationStaffTitleOverride?: string;
+
+  // Insights
   insightsLaunchedDistricts?: string[];
   insightsLanternState?: boolean;
-  releaseDateCopyOverride?: string;
   insightsUnitState?: boolean;
-  incarcerationStaffTitleOverride?: string;
-  featureVariants?: FeatureVariantRecord;
 };
 
 /**

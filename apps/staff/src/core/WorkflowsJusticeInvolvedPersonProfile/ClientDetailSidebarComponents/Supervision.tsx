@@ -17,6 +17,7 @@
 
 import React from "react";
 
+import { useRootStore } from "../../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";
 import { WORKFLOWS_METHODOLOGY_URL } from "../../utils/constants";
 import WorkflowsOfficerName from "../../WorkflowsOfficerName";
@@ -35,6 +36,11 @@ import { ClientProfileProps } from "../types";
 export function Supervision({
   client,
 }: ClientProfileProps): React.ReactElement {
+  const {
+    tenantStore: {
+      labels: { supervisionEndDateCopy },
+    },
+  } = useRootStore();
   const tooltip = client.detailsCopy?.supervisionStartDate?.tooltip;
 
   return (
@@ -54,7 +60,7 @@ export function Supervision({
             )}
           </SecureDetailsContent>
           <PartialTime person={client} />
-          <DetailsSubheading>Expiration</DetailsSubheading>
+          <DetailsSubheading>{supervisionEndDateCopy}</DetailsSubheading>
           <SecureDetailsContent>
             {formatWorkflowsDate(client.expirationDate)}
           </SecureDetailsContent>

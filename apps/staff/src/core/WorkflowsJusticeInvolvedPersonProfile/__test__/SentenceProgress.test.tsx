@@ -36,15 +36,15 @@ describe("IncarcerationProgress", () => {
     } as Resident;
 
     useRootStoreMock.mockReturnValue({
-      tenantStore: { releaseDateCopy: "Some Custom Copy" },
+      tenantStore: { labels: { releaseDateCopy: "Some Custom Copy" } },
     });
 
     render(<IncarcerationProgress resident={mockResident} />);
 
-    const relaseDateText = screen.queryByText("Some Custom Copy", {
+    const releaseDateText = screen.queryByText("Some Custom Copy", {
       exact: false,
     });
-    expect(relaseDateText).toBeInTheDocument();
+    expect(releaseDateText).toBeInTheDocument();
 
     // Make sure default copy is not appearing
     const defaultText = screen.queryByText("Release", { exact: false });

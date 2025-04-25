@@ -370,7 +370,12 @@ export class OpportunityPersonListPresenter
 
   get releaseDateHeader() {
     // Header text for the "release date" column in table view
-    return this.tenantStore.releaseDateCopy;
+    return this.tenantStore.labels.releaseDateCopy;
+  }
+
+  get supervisionEndHeader() {
+    // Header text for the "supervision end date" column in table view
+    return this.tenantStore.labels.supervisionEndDateCopy;
   }
 
   get submittedForHeader() {

@@ -39,6 +39,7 @@ const US_AR_CONFIG: TenantConfig<"US_AR"> = {
   navigation: {
     workflows: ["home", "residents"],
   },
+  releaseDateCopyOverride: "Projected Release",
 };
 
 export default US_AR_CONFIG;

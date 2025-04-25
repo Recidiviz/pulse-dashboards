@@ -19,6 +19,8 @@ import { render, screen } from "@testing-library/react";
 import { Timestamp } from "firebase/firestore";
 import { BrowserRouter } from "react-router-dom";
 
+import { useRootStore } from "../../../components/StoreProvider";
+import { RootStore } from "../../../RootStore";
 import { OTHER_KEY } from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import MarkedIneligibleReasons, {
@@ -29,6 +31,15 @@ import MarkedIneligibleReasons, {
 } from "../MarkedIneligibleReasons";
 
 vi.mock("../../../components/StoreProvider");
+
+const mockTenantStore = {
+  labels: { releaseDateCopy: "Release", supervisionEndDateCopy: "End" },
+};
+
+const useRootStoreMock = vi.mocked(useRootStore);
+useRootStoreMock.mockReturnValue({
+  tenantStore: mockTenantStore,
+} as unknown as RootStore);
 
 describe("buildDenialReasonsListText", () => {
   test("override opportunities", () => {
@@ -117,7 +128,13 @@ describe("buildResurfaceText", () => {
       deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
-    expect(buildResurfaceText(testOpp, new Date(2023, 9, 15))).toEqual(
+    expect(
+      buildResurfaceText(
+        testOpp,
+        new Date(2023, 9, 15),
+        mockTenantStore.labels,
+      ),
+    ).toEqual(
       "Client Name may be surfaced again on or after October 15, 2023.",
     );
   });
@@ -128,7 +145,9 @@ describe("buildResurfaceText", () => {
       deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
-    expect(buildResurfaceText(testOpp, undefined)).toBeUndefined();
+    expect(
+      buildResurfaceText(testOpp, undefined, mockTenantStore.labels),
+    ).toBeUndefined();
   });
 
   test("end of supervision term", () => {
@@ -137,9 +156,9 @@ describe("buildResurfaceText", () => {
       deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 10),
     };
-    expect(buildResurfaceText(testOpp, new Date(2025, 1, 1))).toEqual(
-      "February 1, 2025 is Client Name's supervision end date.",
-    );
+    expect(
+      buildResurfaceText(testOpp, new Date(2025, 1, 1), mockTenantStore.labels),
+    ).toEqual("February 1, 2025 is Client Name's Supervision End Date.");
   });
 });
 
@@ -164,6 +183,7 @@ describe("MarkedIneligibleReasons", () => {
     const testText = buildActedOnTextAndResurfaceText(
       opp,
       new Date(2023, 9, 15),
+      mockTenantStore.labels,
     );
     render(
       <BrowserRouter>

@@ -36,6 +36,11 @@ import getDistrictKeyMap, { DistrictKeyMap } from "./districtKeyMappings";
 import { LANTERN_TENANTS } from "./lanternTenants";
 import methodology from "./methodology";
 
+type TenantConfigLabelType =
+  | "supervisionEndDateCopy"
+  | "incarcerationStaffTitle"
+  | "releaseDateCopy";
+
 export const CURRENT_TENANT_IN_SESSION = "adminUserCurrentTenantInSession";
 const TENANT_ID_QUERY_PARAM = "tenantId";
 
@@ -246,20 +251,17 @@ export default class TenantStore {
     );
   }
 
-  get releaseDateCopy(): string {
-    if (!this.currentTenantId) return "";
-    return (
-      this.tenantConfigs[this.currentTenantId].releaseDateCopyOverride ??
-      "Release"
-    );
-  }
-
-  get incarcerationStaffTitle(): string {
-    if (!this.currentTenantId) return "";
-    return (
-      this.tenantConfigs[this.currentTenantId]
-        .incarcerationStaffTitleOverride ?? "Case Manager"
-    );
+  // Copy used for the Workflows tool, with reasonable defaults
+  get labels(): Record<TenantConfigLabelType, string> {
+    const config = this.currentTenantId
+      ? this.tenantConfigs[this.currentTenantId]
+      : undefined;
+    return {
+      releaseDateCopy: config?.releaseDateCopyOverride ?? "Release",
+      supervisionEndDateCopy: config?.supervisionEndCopyOverride ?? "End",
+      incarcerationStaffTitle:
+        config?.incarcerationStaffTitleOverride ?? "Case Manager",
+    };
   }
 
   get tenantFeatureVariants(): FeatureVariantRecord {

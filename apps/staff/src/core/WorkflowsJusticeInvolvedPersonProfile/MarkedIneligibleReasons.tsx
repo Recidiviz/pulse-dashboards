@@ -76,9 +76,11 @@ export function buildActedOnText({
 
 export function buildResurfaceText(
   opportunity: Opportunity,
-  snoozeUntil?: Date,
+  snoozeUntil: Date | undefined,
+  labels: { releaseDateCopy: string; supervisionEndDateCopy: string },
 ): string | undefined {
   if (!snoozeUntil) return;
+  const { supervisionEndDateCopy, releaseDateCopy } = labels;
   const dateStr = format(snoozeUntil, "LLLL d, yyyy");
   const { person } = opportunity;
   if (
@@ -86,14 +88,14 @@ export function buildResurfaceText(
     person.expirationDate instanceof Date &&
     isEqual(snoozeUntil, person.expirationDate)
   ) {
-    return `${dateStr} is ${person.displayPreferredName}'s supervision end date.`;
+    return `${dateStr} is ${person.displayPreferredName}'s Supervision ${supervisionEndDateCopy} Date.`;
   }
   if (
     "releaseDate" in person &&
     person.releaseDate instanceof Date &&
     isEqual(snoozeUntil, person.releaseDate)
   ) {
-    return `${dateStr} is ${person.displayPreferredName}'s release date.`;
+    return `${dateStr} is ${person.displayPreferredName}'s ${releaseDateCopy} Date.`;
   }
   return `${person.displayPreferredName} may be surfaced again on or after ${dateStr}.`;
 }
@@ -112,10 +114,11 @@ export function buildDenialReasonsListText(
 
 export function buildActedOnTextAndResurfaceText(
   opportunity: Opportunity,
-  snoozeUntil?: Date,
+  snoozeUntil: Date | undefined,
+  labels: { releaseDateCopy: string; supervisionEndDateCopy: string },
 ) {
   const actedOnText = buildActedOnText(opportunity);
-  const resurfaceText = buildResurfaceText(opportunity, snoozeUntil);
+  const resurfaceText = buildResurfaceText(opportunity, snoozeUntil, labels);
   return [actedOnText, resurfaceText];
 }
 

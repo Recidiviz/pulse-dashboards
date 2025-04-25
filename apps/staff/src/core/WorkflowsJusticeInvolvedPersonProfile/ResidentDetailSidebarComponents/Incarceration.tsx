@@ -42,7 +42,9 @@ const ReleaseDate = observer(function ReleaseDate({
   opportunity,
 }: ResidentWithOptionalOpportunityProps): React.ReactElement {
   const {
-    tenantStore: { releaseDateCopy },
+    tenantStore: {
+      labels: { releaseDateCopy },
+    },
   } = useRootStore();
   if (
     opportunity &&
@@ -72,7 +74,9 @@ export function Incarceration({
   opportunity,
 }: ResidentWithOptionalOpportunityProps): React.ReactElement {
   const {
-    tenantStore: { incarcerationStaffTitle: incarcerationStaffTitleCopy },
+    tenantStore: {
+      labels: { incarcerationStaffTitle },
+    },
   } = useRootStore();
 
   return (
@@ -92,9 +96,7 @@ export function Incarceration({
 
           {resident.assignedStaffId && (
             <>
-              <DetailsSubheading>
-                {incarcerationStaffTitleCopy}
-              </DetailsSubheading>
+              <DetailsSubheading>{incarcerationStaffTitle}</DetailsSubheading>
               <SecureDetailsContent>
                 <WorkflowsOfficerName officerId={resident.assignedStaffId} />
               </SecureDetailsContent>

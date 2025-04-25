@@ -19,11 +19,15 @@ import { render } from "@testing-library/react";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import { Mock } from "vitest";
 
-import { useFeatureVariants } from "../../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../../components/StoreProvider";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityModule } from "../OpportunityModule";
 
 vi.mock("../../../components/StoreProvider");
+const useRootStoreMock = useRootStore as Mock;
 const useFeatureVariantsMock = useFeatureVariants as Mock;
 
 vi.mock("react-router-dom", async () => ({
@@ -41,6 +45,9 @@ test.each([
 ])(
   "set last viewed from %s path",
   (testName: string, path: string, shouldCallSetLastViewed: boolean) => {
+    useRootStoreMock.mockReturnValue({
+      tenantStore: { labels: {} },
+    });
     useFeatureVariantsMock.mockReturnValue({});
     vi.mocked(useLocation, { partial: true }).mockReturnValue({
       pathname: path,
