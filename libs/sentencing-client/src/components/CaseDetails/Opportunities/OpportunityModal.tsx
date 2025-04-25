@@ -17,18 +17,22 @@
 
 import moment from "moment";
 
-import { Opportunities as OpportunitiesType } from "../../../api";
+import { Case, Opportunities as OpportunitiesType } from "../../../api";
 import { Modal } from "../../Modal/Modal";
 import { Tooltip } from "../../Tooltip/Tooltip";
 import * as Styled from "../CaseDetails.styles";
 import { NeedsIcons } from "../components/NeedsIcons/NeedsIcons";
-import { parseNeedsToBeAddressedValue } from "../Form/utils";
+import {
+  parseMentalHealthDiagnosesValue,
+  parseNeedsToBeAddressedValue,
+} from "../Form/utils";
 import {
   ASAM_CARE_RECOMMENDATION_CRITERIA_KEY,
   DIAGNOSED_SUBSTANCE_USE_SEVERITY_CRITERIA_KEY,
   eligibilityCriteriaToLabelName,
   MAX_AGE_KEY,
   MAX_LSIR_SCORE_CRITERIA_KEY,
+  MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY,
   MIN_AGE_KEY,
   MIN_LSIR_SCORE_CRITERIA_KEY,
   OPPORTUNITY_TOOLTIP_WIDTH,
@@ -68,6 +72,17 @@ const displayEligibilityCriterias = (
   // We only need to display the `<label>: <val>` for LSI-R score and lists, because `val` for all other
   // properties will be a boolean, which we can represent by only displaying the descriptive `label`
   const val = shouldDisplayLabelValue || isArray ? value : undefined;
+
+  if (key === MENTAL_HEALTH_DIAGNOSES_CRITERIA_KEY) {
+    return (
+      <div key={key}>
+        {label}:{" "}
+        {parseMentalHealthDiagnosesValue(
+          val as Case["mentalHealthDiagnoses"],
+        )?.map((item) => <div key={item}>&bull; {item}</div>)}
+      </div>
+    );
+  }
 
   return Array.isArray(val) ? (
     <div key={key}>
