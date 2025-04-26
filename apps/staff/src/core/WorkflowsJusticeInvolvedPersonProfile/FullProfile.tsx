@@ -171,6 +171,12 @@ const CasenoteSearchWrapper = styled.div`
   }
 `;
 
+const ProfileDetailsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
+`;
+
 export const DETAILS_NOT_AVAILABLE_STRING = "currently not available";
 
 function AdditionalDetails({ person }: PersonProfileProps): React.ReactElement {
@@ -408,15 +414,23 @@ export const FullProfile = observer(
             </>
           )}
           <Content isMobile={isTablet}>
-            <div className="ProfileDetails">
-              <SectionHeading>{sidebarHeadingText}</SectionHeading>
-              <Divider />
-              <AdditionalDetails person={person} />
-            </div>
+            <ProfileDetailsWrapper>
+              {person.supervisionTasks?.orderedTasks && (
+                <div>
+                  <SectionHeading>Tasks</SectionHeading>
+                  <Divider />
+                  <PreviewTasks person={person} showSnoozeDropdown={false} />
+                </div>
+              )}
+              <div>
+                <SectionHeading>{sidebarHeadingText}</SectionHeading>
+                <Divider />
+                <AdditionalDetails person={person} />
+              </div>
+            </ProfileDetailsWrapper>
             <div>
               <SectionHeading>Opportunities</SectionHeading>
               <OpportunitiesAccordion person={person} formLinkButton />
-              <PreviewTasks person={person} showSnoozeDropdown={false} />
             </div>
           </Content>
         </Wrapper>

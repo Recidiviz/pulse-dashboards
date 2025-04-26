@@ -36,6 +36,10 @@ export const TaskItemDivider = styled.hr`
   border-top: 1px solid ${palette.slate10};
   margin: 0 -${rem(spacing.md)};
   min-width: 100%;
+
+  &:last-child {
+    display: none;
+  }
 `;
 
 const TaskItemHeader = styled.div`
