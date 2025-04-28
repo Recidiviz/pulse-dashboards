@@ -98,4 +98,5 @@ resource "google_workflows_workflow" "workflow" {
   source_contents         = var.workflow_source
   user_env_vars           = var.env_vars
   call_log_level          = "LOG_ALL_CALLS"
+  execution_history_level = "EXECUTION_HISTORY_DETAILED"
 }
