@@ -65,6 +65,7 @@ export type FeatureVariant =
   // WORKFLOWS
   | "disableSnoozeSlider"
   | "supervisionUnrestrictedSearch"
+  | "usAzFacilitySearch"
   | "usTnExpiration"
   | "usTnExpirationSubmitToTomis"
   | "usCaEnableSMS"
@@ -128,6 +129,7 @@ export type ActiveFeatureVariantRecord = Partial<
 export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
   disableSnoozeSlider: {},
+  usAzFacilitySearch: {},
   usTnExpiration: {},
   usTnExpirationSubmitToTomis: {},
   usCaEnableSMS: {},
@@ -185,6 +187,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         },
         supervisionUnrestrictedSearch: {},
         supervisorHomepageWorkflows: {},
+        usAzFacilitySearch: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},
         usMoOverdueRHPilot: {},
