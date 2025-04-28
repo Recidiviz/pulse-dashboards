@@ -42,6 +42,8 @@ let jiiStore: JusticeInvolvedPersonsStore | undefined;
 
 beforeEach(async () => {
   configure({ safeDescriptors: false });
+  vi.useFakeTimers();
+  vi.runAllTimersAsync();
 
   // ROOTSTORE =========================================================
   const mockRootStore = new RootStore();
@@ -76,6 +78,12 @@ beforeEach(async () => {
   mockRootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated(
     MOCK_OPPORTUNITY_CONFIGS,
   );
+
+  vi.spyOn(
+    mockRootStore.firestoreStore,
+    "getOpportunitiesForJIIAndOpportunityType",
+  ).mockResolvedValue([]);
+
   // @ts-ignore
   opportunityConstructors["mockUsXxOpp"] = MockOpportunity;
   // @ts-ignore
@@ -86,6 +94,7 @@ beforeEach(async () => {
 
 afterAll(() => {
   configure({ safeDescriptors: true });
+  vi.useRealTimers();
 });
 
 describe("JusticeInvolvedPersonsStore", () => {
@@ -193,6 +202,8 @@ describe("JusticeInvolvedPersonsStore", () => {
 
   describe("after population of all caseloads + opportunities", () => {
     beforeEach(async () => {
+      vi.useFakeTimers();
+      vi.runAllTimersAsync();
       await presenter.populateOpportunitiesForOfficers(officersExternalIds);
     });
 

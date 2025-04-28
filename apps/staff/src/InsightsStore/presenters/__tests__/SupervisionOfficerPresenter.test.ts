@@ -52,6 +52,8 @@ let presenter: SupervisionOfficerPagePresenter;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
+  vi.useFakeTimers();
+  vi.runAllTimersAsync();
   vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
     () => pseudoId,
   );
@@ -110,12 +112,18 @@ const initPresenter = async (
     undefined,
   );
 
+  vi.spyOn(
+    rootStore.firestoreStore,
+    "getOpportunitiesForJIIAndOpportunityType",
+  ).mockResolvedValue([]);
+
   vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(true);
 };
 
 afterEach(() => {
   vi.restoreAllMocks();
   configure({ safeDescriptors: true });
+  vi.useRealTimers();
 });
 
 const officerCases = [
@@ -126,6 +134,12 @@ const officerCases = [
 describe.each(officerCases)("test officer %s", (label, testOfficer) => {
   beforeEach(() => {
     initPresenter(testOfficer);
+    vi.useFakeTimers();
+    vi.runAllTimersAsync();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   describe("with unit data already hydrated", () => {

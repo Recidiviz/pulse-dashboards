@@ -48,6 +48,9 @@ let presenter: SupervisionOfficerOpportunitiesPresenter;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
+  vi.useFakeTimers();
+  vi.runAllTimersAsync();
+
   vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
     () => pseudoId,
   );
@@ -111,8 +114,9 @@ const initPresenter = async (
 };
 
 afterEach(() => {
-  vi.restoreAllMocks();
   configure({ safeDescriptors: true });
+  vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
 const officerCases = [

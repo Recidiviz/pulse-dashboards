@@ -72,6 +72,8 @@ let rootStore: RootStore;
 
 beforeEach(async () => {
   configure({ safeDescriptors: false });
+  vi.useFakeTimers();
+  vi.runAllTimersAsync();
 
   // USER STORE =========================================================
   vi.spyOn(UserStore.prototype, "userPseudoId", "get").mockImplementation(
@@ -141,13 +143,16 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
-  vi.restoreAllMocks();
   configure({ safeDescriptors: true });
+  vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
 describe("Opportunity details methods", () => {
   beforeEach(() => {
     rootStore.tenantStore.setCurrentTenantId("US_XX" as TenantId);
+    vi.useFakeTimers();
+    vi.runAllTimersAsync();
 
     // OPPORTUNITIES ========================================================
     oppConfigStore.mockHydrated(MOCK_OPPORTUNITY_CONFIGS);

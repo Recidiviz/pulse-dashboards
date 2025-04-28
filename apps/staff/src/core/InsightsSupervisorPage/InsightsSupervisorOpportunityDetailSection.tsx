@@ -20,10 +20,10 @@ import { observer } from "mobx-react-lite";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { ModelHydratorWithoutLoader } from "../../InsightsStore/hydrators/ModelHydratorWithoutLoader";
 import { SupervisionSupervisorOpportunitiesPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorOpportunitiesPresenter";
 import { Body, Grid } from "../InsightsPageLayout/InsightsPageLayout";
 import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
+import ModelHydrator from "../ModelHydrator";
 import { Wrapper } from "./InsightsBreadcrumbs";
 import { EmptyCard } from "./InsightsStaffCardV2";
 import { InsightsSupervisorOpportunityDetailCard } from "./InsightsSupervisorOpportunityDetailCard";
@@ -61,30 +61,32 @@ const ManagedComponent: React.FC<{
 
   return (
     <>
-      {opportunitiesDetails && isWorkflowsEnabled && (
+      {isWorkflowsEnabled && (
         <InsightsPageSection
           sectionTitle="Opportunities"
           sectionDescription={`Take action on opportunities that ${labels.supervisionJiiLabel}s may be eligible for.`}
         >
           <Wrapper>
             <Body>
-              {opportunitiesDetails.length > 0 ? (
-                <Grid>
-                  {opportunitiesDetails.map((opportunityDetail) => (
-                    <InsightsSupervisorOpportunityDetailCard
-                      opportunityInfo={opportunityDetail}
-                      labels={labels}
-                      key={opportunityDetail.label}
-                    />
-                  ))}
-                </Grid>
-              ) : (
-                <EmptyCard
-                  message={
-                    labels.supervisorHasNoOfficersWithEligibleClientsLabel
-                  }
-                />
-              )}
+              <ModelHydrator hydratable={presenter}>
+                {opportunitiesDetails && opportunitiesDetails.length > 0 ? (
+                  <Grid>
+                    {opportunitiesDetails.map((opportunityDetail) => (
+                      <InsightsSupervisorOpportunityDetailCard
+                        opportunityInfo={opportunityDetail}
+                        labels={labels}
+                        key={opportunityDetail.label}
+                      />
+                    ))}
+                  </Grid>
+                ) : (
+                  <EmptyCard
+                    message={
+                      labels.supervisorHasNoOfficersWithEligibleClientsLabel
+                    }
+                  />
+                )}
+              </ModelHydrator>
             </Body>
           </Wrapper>
         </InsightsPageSection>
@@ -94,7 +96,6 @@ const ManagedComponent: React.FC<{
 });
 
 export const InsightsSupervisorOpportunityDetailSection = withPresenterManager({
-  HydratorComponent: ModelHydratorWithoutLoader,
   usePresenter,
   managerIsObserver: true,
   ManagedComponent,

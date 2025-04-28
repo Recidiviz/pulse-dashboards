@@ -16,9 +16,10 @@
 // =============================================================================
 
 import { initial, join, last } from "lodash";
-import { flowResult } from "mobx";
+import { flowResult, when } from "mobx";
 
 import { OpportunityType } from "~datatypes";
+import { isHydrationFinished, isHydrationUntouched } from "~hydration-utils";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
@@ -183,19 +184,27 @@ export function WithJusticeInvolvedPersonStore<
 
       const {
         justiceInvolvedPersonsStore: { caseloadByOfficerExternalId },
+        justiceInvolvedPersonsStore,
       } = this;
 
       await flowResult(
-        this.justiceInvolvedPersonsStore.populateCaseloadForSupervisionOfficer(
+        justiceInvolvedPersonsStore.populateCaseloadForSupervisionOfficer(
           officerExternalId,
         ),
       );
 
+      const clients = caseloadByOfficerExternalId.get(officerExternalId);
+      if (!clients) return;
+
       // Hydrate the opportunities for each client on the officer's caseload
-      for (const client of caseloadByOfficerExternalId.get(officerExternalId) ??
-        []) {
-        client.opportunityManager.hydrate();
-      }
+      return await Promise.all(
+        clients.map(async (client) => {
+          if (isHydrationUntouched(client.opportunityManager))
+            client.opportunityManager.hydrate();
+
+          await when(() => isHydrationFinished(client.opportunityManager));
+        }),
+      );
     }
 
     /**
