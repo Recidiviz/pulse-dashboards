@@ -243,7 +243,7 @@ export class UsTnReclassificationReviewForm extends FormBase<
     const out: Record<string, any> = { ...formData };
 
     out.downloadDate = format(new Date(), "MM/dd/yyyy");
-    out.downloadTime = format(new Date(), "hh:mm bb");
+    out.downloadTime = format(new Date(), "hh:mm aa");
 
     // Add tabs before newlines so the underlining looks right in these big blocks
     [
