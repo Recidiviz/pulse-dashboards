@@ -17,6 +17,13 @@ main:
           - dry_run: ${sys.get_env("PROJECT_ID") != "recidiviz-dashboard-production"}
           - archive_bucket_id: ${sys.get_env("ARCHIVE_BUCKET_ID")}
           - etl_bucket_id: ${sys.get_env("ETL_BUCKET_ID")}
+    - get_is_weekend:
+        call: http.get
+        args:
+          url: ${cloud_run_service_url + "/utils/is-weekend"}
+          auth:
+            type: OIDC
+        result: is_weekend_result
     - get_latest_logic_execution:
         call: http.get
         args:
@@ -27,8 +34,11 @@ main:
     - assign_latest_logic_execution:
         assign:
           - latest_logic_execution: ${latest_logic_execution_result.body.workflowExecution}
+          - is_weekend: ${is_weekend_result.body.isWeekend}
     - should_trigger_logic_execution:
         switch: 
+          - condition: ${is_weekend == true}
+            next: archive_etl_data
           - condition: ${text.substring(latest_logic_execution.workflowExecutionTime, 0, 10) != current_date_str or latest_logic_execution == null}
             next: run_logic
         next: skip_logic
@@ -53,8 +63,8 @@ main:
           etl_bucket_id: ${etl_bucket_id}
           archive_bucket_id: ${archive_bucket_id}
           current_date_str: ${current_date_str}
-    - finish:
-        return: ${workflow}
+        next: end
+
 
 archive_files:
   params: [state_code, etl_bucket_id, archive_bucket_id, current_date_str]
