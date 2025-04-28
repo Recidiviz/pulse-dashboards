@@ -3,13 +3,14 @@ data "sops_file" "env" {
 }
 
 locals {
-  is_production     = var.project_id == "recidiviz-dashboard-production"
-  env_secrets       = yamldecode(data.sops_file.env.raw)
-  shared_env        = local.env_secrets["env_jii_texting_server"]
-  staging_env       = local.env_secrets["env_staging_jii_texting_server"]
-  prod_env          = local.env_secrets["env_prod_jii_texting_server"]
-  processor_job_env = local.env_secrets[var.processor_job_env_secret_id]
-  server_env        = local.env_secrets[var.server_env_secret_id]
+  is_production        = var.project_id == "recidiviz-dashboard-production"
+  env_secrets          = yamldecode(data.sops_file.env.raw)
+  shared_server_env    = local.env_secrets["env_jii_texting_server"]
+  shared_processor_env = local.env_secrets["env_jii_texting_processor_job"]
+  shared_import_env    = local.env_secrets["env_jii_texting_import_job"]
+  processor_job_env    = local.env_secrets[var.processor_job_env_secret_id]
+  server_env           = local.env_secrets[var.server_env_secret_id]
+  import_env           = local.env_secrets[var.import_job_env_secret_id]
 
   server_image        = "${var.artifact_registry_repo}/jii-texting-server:${var.server_version}"
   processor_job_image = "${var.artifact_registry_repo}/jii-texting-jobs/processor:${var.server_version}"
@@ -19,8 +20,8 @@ locals {
 
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
-  env_vars = nonsensitive([
-    for key, value in merge(local.shared_env, local.is_production ? local.prod_env : local.staging_env) : {
+  import_job_env_vars = nonsensitive([
+    for key, value in merge(local.shared_import_env, var.demo_mode ? null : local.import_env) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -28,7 +29,7 @@ locals {
   ])
 
   processor_job_env_vars = nonsensitive([
-    for key, value in merge(local.shared_env, local.processor_job_env) : {
+    for key, value in merge(local.shared_processor_env, local.processor_job_env) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -36,7 +37,7 @@ locals {
   ])
 
   server_env_vars = nonsensitive([
-    for key, value in merge(local.shared_env, local.server_env) : {
+    for key, value in merge(local.shared_server_env, local.server_env) : {
       # The values are sensitive so we want to omit them from the plans
       value = sensitive(value)
       name  = key
@@ -151,7 +152,7 @@ module "import-job" {
   image                         = local.import_job_image
   project_id                    = var.project_id
   location                      = var.location
-  env_vars                      = local.env_vars
+  env_vars                      = local.import_job_env_vars
   cloud_run_deletion_protection = false
   exec                          = false
   timeout                       = "3600s"

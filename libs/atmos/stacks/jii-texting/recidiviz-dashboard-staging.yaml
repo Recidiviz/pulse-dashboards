@@ -66,3 +66,4 @@ components:
         archive_bucket_name: !terraform.output gcs-buckets {{ .stack }} names_list[1]
         processor_job_env_secret_id: env_staging_jii_texting_processor_job
         server_env_secret_id: env_staging_jii_texting_server
+        import_job_env_secret_id: env_staging_jii_texting_import_job

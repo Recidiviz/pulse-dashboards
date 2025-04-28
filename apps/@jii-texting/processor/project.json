@@ -46,6 +46,7 @@
           "{projectRoot}/scripts/*"
         ],
         "external": ["@prisma/jii-texting", "commander"],
+        "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
         "generatePackageJson": true,
         "minify": true
       },

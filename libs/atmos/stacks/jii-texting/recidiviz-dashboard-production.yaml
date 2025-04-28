@@ -68,3 +68,4 @@ components:
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
         processor_job_env_secret_id: env_prod_jii_texting_processor_job
         server_env_secret_id: env_prod_jii_texting_server
+        import_job_env_secret_id: env_prod_jii_texting_import_job
