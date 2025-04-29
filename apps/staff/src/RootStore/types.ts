@@ -89,6 +89,7 @@ export type FeatureVariant =
   | "usTnCompliantReporting2025Policy"
   | "tableMultiSortEnabled"
   | "supervisionTasksNavLink"
+  | "usIaEarlyDischargeCustomizations"
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
@@ -168,6 +169,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   tableMultiSortEnabled: {},
   supervisionTasksNavLink: {},
   snoozeCompanions: {},
+  usIaEarlyDischargeCustomizations: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
