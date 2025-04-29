@@ -22,7 +22,9 @@ export const mockApiOpportunityConfigurationResponse = {
     usMoOverdueRestrictiveHousingInitialHearing: {
       callToAction:
         "Review residents and prepare necessary paperwork for their hearing.",
-      compareBy: [{ field: "eligibilityDate" }],
+      compareBy: [
+        { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
+      ],
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
@@ -76,7 +78,7 @@ export const mockApiOpportunityConfigurationResponse = {
           type: "snoozeUntil",
         },
       },
-      snoozeCompanionOpportunityTypes: null,
+      snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MO",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -105,7 +107,9 @@ export const mockApiOpportunityConfigurationResponse = {
     usMoOverdueRestrictiveHousingRelease: {
       callToAction:
         "Review residents for release and prepare necessary paperwork for their return to general population.",
-      compareBy: [{ field: "eligibilityDate" }],
+      compareBy: [
+        { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
+      ],
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
@@ -157,7 +161,7 @@ export const mockApiOpportunityConfigurationResponse = {
           type: "snoozeUntil",
         },
       },
-      snoozeCompanionOpportunityTypes: null,
+      snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MO",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
@@ -186,7 +190,9 @@ export const mockApiOpportunityConfigurationResponse = {
     usMoOverdueRestrictiveHousingReviewHearing: {
       callToAction:
         "Review residents and prepare necessary paperwork for their next hearing",
-      compareBy: [{ field: "eligibilityDate" }],
+      compareBy: [
+        { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
+      ],
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
@@ -232,7 +238,7 @@ export const mockApiOpportunityConfigurationResponse = {
           type: "snoozeUntil",
         },
       },
-      snoozeCompanionOpportunityTypes: null,
+      snoozeCompanionOpportunityTypes: [],
       stateCode: "US_MO",
       subcategoryHeadings: [],
       subcategoryOrderings: [],

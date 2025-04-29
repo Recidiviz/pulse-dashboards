@@ -21,7 +21,7 @@ export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usUtEarlyTermination: {
       callToAction:
-        "Review the clients and submit a report to the court for those who are strong candidates",
+        "Review the clients and submit a report for those who are strong candidates",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -42,7 +42,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "TREATMENT",
           text: "Has not completed treatment or programming",
         },
-        { key: "POLYGRAPH", text: "Needs to complete exit polygraph" },
+        { key: "POLYGRAPH", text: "Exit polygraph required and outstanding" },
         { key: "Other", text: "Other, please enter a reason" },
       ],
       denialText: null,
@@ -123,7 +123,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "At this time, there are no clients who have a report due. Please navigate to one of the other tabs.",
         },
         {
-          tab: "Report submitted",
+          tab: "Report Submitted",
           text: "At this time, there are no clients who have a report submitted. Please navigate to one of the other tabs.",
         },
       ],
@@ -153,7 +153,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       initialHeader:
-        "Review the clients and submit a report to the court for those who are strong candidates",
+        "Review the clients and submit a report to the court or BOPP for those who are strong candidates",
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://dashboard.recidiviz.org",
@@ -165,7 +165,7 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["UsUtDates", "Milestones", "Contact", "CaseNotes"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
-      snoozeCompanionOpportunityTypes: null,
+      snoozeCompanionOpportunityTypes: [],
       stateCode: "US_UT",
       subcategoryHeadings: [
         { subcategory: "REPORT_DUE_ELIGIBLE", text: "Eligible" },
@@ -178,8 +178,8 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       subheading:
-        "UDC Early Termination policy allows agents to apply to the courts to end a client's probation or parole at the halfway mark or sooner. Reports must be filed with the court 30 days before the early termination review date, or earlier at the agent’s discretion.",
-      submittedTabTitle: "Report submitted",
+        "UDC Early Termination policy allows agents to apply to the courts or BOPP to end a client's probation or parole at the halfway mark or sooner. For clients who meet all of the criteria, reports must be filed with the court or Board 30 days before the early termination review date, or earlier at the agent’s discretion.",
+      submittedTabTitle: "Report Submitted",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: [
@@ -188,7 +188,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tabs: [
             "Report Due",
             "Early Requests",
-            "Report submitted",
+            "Report Submitted",
             "Marked Ineligible",
           ],
         },
@@ -203,7 +203,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "This tab contains cases not yet at their Early Termination Report Due Date that meet stability benchmarks set by UDC and are eligible for Early Termination consideration as per the Sentencing Guidelines.",
         },
         {
-          tab: "Report submitted",
+          tab: "Report Submitted",
           text: "This tab contains cases marked by the user as having a report submitted to the court or to the Board of Pardons and Parole.",
         },
         {

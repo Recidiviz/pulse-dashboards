@@ -37,7 +37,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usCaAssessmentLevel3OrLower",
           text: "Currently has a CSRA risk score of 3 or lower",
           tooltip:
-            "Category B Cases: Primarily reserved for parolees whose risk level is moderate with a CSRA score of 2. Per user feedback, Recidiviz also surfaces clients with CSRA scores of 3 for your review.",
+            "Category B Cases: Primarily reserved for parolees whose risk level is moderate with a CSRA score of 2.\n\nPer user feedback, Recidiviz also surfaces clients with CSRA scores of 3 for your review.",
         },
         {
           key: "supervisionLevelIsHighFor6Months",
@@ -49,7 +49,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usCaHousingTypeIsNotTransient",
           text: "Has maintained residence stability in a positive living environment",
           tooltip:
-            "Based on Objective 1 from the Case Conference Review, the following should be considered: (1) Has the parolee been in the same pro-social living situation for the review period, or when the most recent move was to improve overall living conditions, and will continue to be available to the parolee. (2) Has the parolee been in two or more living situations for the review period with any move not improving the living conditions. (3) Has the parolee demonstrated an unstable living environment, is transient or routinely difficult to see at the residence of record.",
+            "Based on Objective 1 from the Case Conference Review, the following should be considered: (1) Has the parolee been in the same pro-social living situation for the review period, or when the most recent move was to improve\noverall living conditions, and will continue to be available to the parolee. (2) Has the parolee been in two or more living situations for the review period with any move not improving the living conditions. (3) Has the parolee demonstrated an unstable living environment, is transient or routinely difficult to see at the residence of record.",
         },
         {
           key: "noSupervisionViolationWithin6Months",
@@ -77,13 +77,13 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
-      snoozeCompanionOpportunityTypes: null,
+      snoozeCompanionOpportunityTypes: [],
       stateCode: "US_CA",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading: null,
       submittedTabTitle: null,
-      supportsSubmitted: true,
+      supportsSubmitted: false,
       systemType: "SUPERVISION",
       tabGroups: null,
       tabPrefaceCopy: [],

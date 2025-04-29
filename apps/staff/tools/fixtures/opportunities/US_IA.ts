@@ -24,9 +24,7 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [
-        { key: "FINES & FEES", text: "TKTKTK figure out probationer/parolee" },
-      ],
+      denialReasons: [{ key: "FINES & FEES", text: "TKTKTK fines & fees" }],
       denialText: null,
       deniedTabTitle: null,
       displayName: "Early Discharge",
@@ -34,8 +32,22 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
+          key: "usIaSupervisionLevelIs0NotAvailable12Or3",
+          text: "Is on supervision level 3, 2, 1, or 0 - Not available for supervision (ICOTS)",
+        },
+        {
           key: "usIaNoOpenSupervisionModifiers",
-          text: "The client has no open supervision modifiers",
+          text: "Has no open supervision modifiers",
+        },
+        {
+          key: "supervisionCaseTypeIsNotSexOffense",
+          text: "Does not have a sex offender specialty",
+        },
+        {
+          key: "usIaNotServingIneligibleOffenseForEarlyDischarge",
+          text: "Is not serving for an offense that is ineligible for early discharge",
+          tooltip:
+            "See CBC-FS-02 Appendix A for a list of all ineligible offenses",
         },
       ],
       emptyTabCopy: [],
@@ -50,14 +62,20 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://docs.google.com/document/d/e/2PACX-1vQqlFtl1xFx92rX0jlal5N92klcsaALS2G9djBYNh-UNxuynROOOGXlb9zJg2NDeX11ZUxWclVD-kBo/pub",
-      nonOmsCriteria: [{ text: "The client consents to early discharge" }],
-      nonOmsCriteriaHeader: null,
+      nonOmsCriteria: [
+        {
+          text: "Has no pending criminal charges",
+          tooltip: "Run NCIC check to determine status of pending charges",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements for officers to check",
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Requirements validated by data from ICON",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: [],
       stateCode: "US_IA",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
