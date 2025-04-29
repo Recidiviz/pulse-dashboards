@@ -46,9 +46,34 @@ export type AutoSnoozeUpdate = {
   snoozeForDays?: never;
 } & SharedSnoozeUpdate;
 
+export type SupervisorAction = UpdateLog & {
+  type: "APPROVAL" | "DENIAL";
+  revisionRequest?: string;
+};
+
+type SupervisorResponse = {
+  supervisorResponse?: SupervisorAction;
+};
+
+type OfficerApprovalAction = {
+  type: "APPROVAL";
+};
+
+type OfficerDenialAction = {
+  type: "DENIAL";
+  actionPlan: string;
+  denialReasons: string[];
+  requestedSnoozeLength: number;
+};
+
+export type OfficerAction = UpdateLog &
+  SupervisorResponse &
+  (OfficerApprovalAction | OfficerDenialAction);
+
 export type OpportunityUpdate = {
   denial?: Denial;
   submitted?: Submission;
+  actionHistory?: OfficerAction[];
   manualSnooze?: ManualSnoozeUpdate;
   autoSnooze?: AutoSnoozeUpdate;
   omsSnooze?: ExternalRequestUpdate<{ snoozeUntil: string }>;
