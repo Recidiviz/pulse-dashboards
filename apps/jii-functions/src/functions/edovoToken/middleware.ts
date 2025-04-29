@@ -23,6 +23,7 @@ import { compactDecrypt } from "jose";
 import jwks from "jwks-rsa";
 
 import { secrets } from "../../helpers/secrets";
+import { edovoIdTokenPayloadSchema } from "./helpers";
 
 /**
  * Extracts a bearer auth token from Express request headers,
@@ -55,6 +56,8 @@ export async function decryptToken(
 
     // only encrypted tokens can be logged because they contain PII
     setUser({ id: encryptedToken });
+    // store the encrypted version in case we need it for more logging
+    response.locals["encryptedEdovoToken"] = encryptedToken;
 
     // decrypting gets us a signed JWT to pass on to the next middleware
     const { plaintext: decryptedToken } = await compactDecrypt(
@@ -66,7 +69,7 @@ export async function decryptToken(
     request.headers.authorization = `Bearer ${decryptedToken}`;
     next();
   } catch (e) {
-    next(`${e}`);
+    next(e);
   }
 }
 
@@ -96,6 +99,25 @@ export async function verifyToken(
 
     handler(request, response, next);
   } catch (e) {
-    next(`${e}`);
+    next(e);
+  }
+}
+
+/**
+ * Parses user data in the token payload and stores it in response.locals.userData
+ */
+export function validateEdovoPayload(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) {
+  try {
+    response.locals["userData"] = edovoIdTokenPayloadSchema.parse(request.user);
+    next();
+  } catch (e) {
+    response
+      .status(401)
+      .json({ error: "Your credentials contain invalid identity data" });
+    next(e);
   }
 }

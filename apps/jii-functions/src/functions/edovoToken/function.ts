@@ -16,62 +16,103 @@
 // =============================================================================
 
 import { setupExpressErrorHandler } from "@sentry/node";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { onRequest } from "firebase-functions/v2/https";
 
 import { tokenAuthResponseSchema } from "~auth0-jii";
 
 import { getFirebaseToken } from "../../helpers/firebaseAdmin";
 import { errorHandler, rateLimiter } from "../../helpers/middleware";
-import {
-  checkRecidivizEmployeeRoster,
-  checkResidentsRoster,
-  edovoIdTokenPayloadSchema,
-} from "./helpers";
-import { decryptToken, verifyToken } from "./middleware";
+import { segment } from "../../helpers/segment";
+import { checkRecidivizEmployeeRoster, checkResidentsRoster } from "./helpers";
+import { decryptToken, validateEdovoPayload, verifyToken } from "./middleware";
 
 const app = express();
 
 app.use(rateLimiter());
 app.use(decryptToken);
 app.use(verifyToken);
+app.use(validateEdovoPayload);
 
 // there is only one route in this app, but Firebase rewrite rules may affect what it is.
 // using a wildcard route means we don't have to keep it manually in sync with the config
-app.get("/*", async (request, response): Promise<void> => {
-  const user = edovoIdTokenPayloadSchema.safeParse(request.user);
+app.get("/*", async (request, response, next): Promise<void> => {
+  try {
+    const { userData } = response.locals;
+    // middleware should have populated this or thrown an error, but just to be safe
+    if (!userData) throw new Error("Missing expected user data");
 
-  if (!user.success) {
-    response.status(400).json({ error: user.error });
-    return;
-  }
+    let firebaseToken: string;
+    let isRecidiviz = false;
+    const { encryptedEdovoToken } = response.locals;
 
-  let firebaseToken: string;
+    let userProfile = await checkResidentsRoster(userData);
+    if (!userProfile) {
+      userProfile = await checkRecidivizEmployeeRoster(userData);
+      isRecidiviz = !!userProfile;
+    }
 
-  const userData = user.data;
+    if (userProfile) {
+      firebaseToken = await getFirebaseToken(
+        `${userData.STATE}_${userData.USER_ID}`,
+        userProfile,
+      );
 
-  let userProfile = await checkResidentsRoster(userData);
-  if (!userProfile) {
-    userProfile = await checkRecidivizEmployeeRoster(userData);
-  }
+      response.json(
+        tokenAuthResponseSchema.parse({ firebaseToken, user: userProfile }),
+      );
+      segment.track("backend_edovo_login_succeeded", {
+        isRecidiviz,
+        pseudonymizedId: userProfile.pseudonymizedId,
+        stateCode: userProfile.stateCode,
+        encryptedEdovoToken,
+      });
+    } else {
+      response
+        .status(403)
+        .json({ error: "You are not authorized to access this application" });
 
-  if (userProfile) {
-    firebaseToken = await getFirebaseToken(
-      `US_${userData.STATE}_${userData.USER_ID}`,
-      userProfile,
-    );
-
-    response.json(
-      tokenAuthResponseSchema.parse({ firebaseToken, user: userProfile }),
-    );
-  } else {
-    response
-      .status(403)
-      .json({ error: "You are not authorized to access this application" });
+      segment.track("backend_edovo_login_denied", {
+        isRecidiviz: isRecidiviz,
+        stateCode: `US_${userData.STATE}`,
+        encryptedEdovoToken,
+      });
+    }
+    await segment.flush();
+  } catch (e) {
+    next(e);
   }
 });
 
-setupExpressErrorHandler(app);
+setupExpressErrorHandler(app, {
+  // we should only be throwing errors in case of malfunction,
+  // not for routine login failures
+  shouldHandleError: () => true,
+});
+
+app.use(
+  async (
+    error: Error,
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) => {
+    const { encryptedEdovoToken, userData } = response.locals;
+    let stateCode: string | undefined;
+    if (userData?.STATE) {
+      stateCode = userData.STATE;
+    }
+
+    next(error);
+
+    segment.track("backend_edovo_login_internal_error", {
+      isRecidiviz: false,
+      stateCode,
+      encryptedEdovoToken,
+    });
+    await segment.flush();
+  },
+);
 
 app.use(errorHandler);
 

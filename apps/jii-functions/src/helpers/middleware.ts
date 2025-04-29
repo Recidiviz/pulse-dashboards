@@ -40,16 +40,15 @@ export function errorHandler(
   request: Request,
   response: Response,
   // if we don't define the fourth arg, express won't recognize this as an error handler.
-  // we don't need to use it because we are terminating all requests here
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   next: NextFunction,
 ) {
-  // this is what the JWT middleware throws
-  if (error.name === "UnauthorizedError") {
-    // we might want to clean up this message eventually
-    // but forwarding the original will help with testing
-    response.status(401).json({ error });
+  if (
+    // this is what the JWT middleware throws
+    error.name === "UnauthorizedError"
+  ) {
+    response.status(401).json({ error: "Your credentials are invalid" });
   } else {
-    response.status(500).json({ error });
+    response.status(500).json({ error: "An unexpected error occurred" });
   }
 }

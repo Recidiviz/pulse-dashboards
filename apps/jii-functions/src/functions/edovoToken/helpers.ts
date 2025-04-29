@@ -23,10 +23,16 @@ import { getFirestore } from "../../helpers/firebaseAdmin";
 import { getAllowedStates } from "../../helpers/recidivizAllowedStates";
 
 export const edovoIdTokenPayloadSchema = z
-  .object({ USER_ID: z.string(), STATE: z.string().toUpperCase() })
+  .object({
+    USER_ID: z.string(),
+    STATE: z
+      .string()
+      .toUpperCase()
+      .transform((s) => `US_${s}`),
+  })
   .transform((user) => {
     // known cases where our ID formats do not match
-    if (user.STATE === "ME") {
+    if (user.STATE === "US_ME") {
       return { ...user, USER_ID: user.USER_ID.replace(/^0+/, "") };
     }
     return user;
@@ -36,10 +42,9 @@ type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;
 export async function checkResidentsRoster(
   userData: EdovoIdTokenPayload,
 ): Promise<TokenAuthUser | undefined> {
-  const stateCode = `US_${userData.STATE}`;
   const userResidentRecord = (
     await (await getFirestore())
-      .doc(`residents/${stateCode.toLowerCase()}_${userData.USER_ID}`)
+      .doc(`residents/${userData.STATE.toLowerCase()}_${userData.USER_ID}`)
       .get()
   ).data();
 
@@ -52,7 +57,7 @@ export async function checkResidentsRoster(
     .parse(userResidentRecord);
 
   return {
-    stateCode,
+    stateCode: userData.STATE,
     externalId: userData.USER_ID,
     pseudonymizedId,
     permissions: ["live_data"],
