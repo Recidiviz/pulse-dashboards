@@ -53,6 +53,7 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   usTxHomeContactScheduled: "Home Contacts (Scheduled)",
   usTxHomeContactUnscheduled: "Home Contacts (Unscheduled)",
   usTxHomeContactEdgeCase: "Home Contacts (Misc.)",
+  usTxInCustodyContact: "In-Custody Contacts",
   usTxOfficeContactScheduled: "Office Contacts",
   usTxFieldContactScheduled: "Field Contacts (Scheduled)",
   usTxFieldContactUnscheduled: "Field Contacts (Unscheduled)",
