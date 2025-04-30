@@ -1,5 +1,5 @@
-# This is a basic Workflow that takes the state code and determines if we should 
-# execute the process-jii-to-text Workflow 
+# This is a basic Workflow that takes the state code and determines if we should
+# execute the process-jii-to-text Workflow
 
 main:
   params: [event]
@@ -36,7 +36,7 @@ main:
           - latest_logic_execution: ${latest_logic_execution_result.body.workflowExecution}
           - is_weekend: ${is_weekend_result.body.isWeekend}
     - should_trigger_logic_execution:
-        switch: 
+        switch:
           - condition: ${is_weekend == true}
             next: archive_etl_data
           - condition: ${text.substring(latest_logic_execution.workflowExecutionTime, 0, 10) != current_date_str or latest_logic_execution == null}
@@ -50,70 +50,21 @@ main:
           workflow_id: process-jii-to-text
           location: us-central1
           project_id: ${project_id}
-          argument: 
+          argument:
             dryRun: ${dry_run}
             stateCode: ${state_code}
           connector_params:
             skip_polling: true
         result: workflow
     - archive_etl_data:
-        call: archive_files
+        call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.run
         args:
-          state_code: ${state_code}
-          etl_bucket_id: ${etl_bucket_id}
-          archive_bucket_id: ${archive_bucket_id}
-          current_date_str: ${current_date_str}
+          workflow_id: archive-files
+          location: us-central1
+          project_id: ${project_id}
+          argument:
+            state_code: ${state_code}
+            etl_bucket_id: ${etl_bucket_id}
+            archive_bucket_id: ${archive_bucket_id}
+            current_date_str: ${current_date_str}
         next: end
-
-
-archive_files:
-  params: [state_code, etl_bucket_id, archive_bucket_id, current_date_str]
-  steps:
-    - get_objects_list:
-        try:
-          call: googleapis.storage.v1.objects.list
-          args:
-            bucket: ${etl_bucket_id}
-            delimiter: /
-            prefix: ${state_code + "/"}
-          result: metric_export_objects_list
-        except:
-          as: e
-          steps:
-            - raise_get_objects_list_error:
-                raise: ${e}
-    - assign_metric_export_file_names:
-        assign:
-          - metric_export_file_names: []
-    - get_file_names:
-        for:
-          value: metric_export_object
-          index: _
-          in: ${metric_export_objects_list.items}
-          steps:
-            - append_file_name:
-                assign:
-                  - metric_export_file_names: ${list.concat(metric_export_file_names, metric_export_object.name)}
-    - archive_all_files:
-        for:
-          value: metric_export_file_name
-          index: _
-          in: ${metric_export_file_names}
-          steps:
-            - assign_object_name:
-                assign:
-                  - destination_object: ${current_date_str + "/" + metric_export_file_name}
-            - copy_file:
-                try:
-                  call: googleapis.storage.v1.objects.copy
-                  args:
-                    destinationBucket: ${archive_bucket_id}
-                    destinationObject: ${text.url_encode(destination_object)}
-                    sourceBucket: ${etl_bucket_id}
-                    sourceObject: ${text.url_encode(metric_export_file_name)}
-                  result: etl_result
-                except:
-                  as: e
-                  steps:
-                    - raise_copy_error:
-                        raise: ${e}

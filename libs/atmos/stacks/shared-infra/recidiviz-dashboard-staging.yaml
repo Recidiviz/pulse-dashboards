@@ -1,10 +1,9 @@
-# Infrastructure configuration for components for the JII app that will be deployed to recidiviz-dashboard-staging
+# Infrastructure configuration for components shared between apps that will be deployed to recidiviz-dashboard-staging
 settings:
   context:
     project_id: recidiviz-dashboard-staging
     product: shared-infra
     location: us-central1
-
 
 # The variables set here are automatically provided to all components used in this stack.
 # vars:
@@ -25,3 +24,7 @@ components:
         depends_on:
           sops_file:
             file: libs/atmos/components/terraform/env-secrets/env-secrets.enc.yaml
+    apps/shared-infra:
+      vars:
+        project_id: "{{ .settings.context.project_id }}"
+        location: "{{ .settings.context.location }}"

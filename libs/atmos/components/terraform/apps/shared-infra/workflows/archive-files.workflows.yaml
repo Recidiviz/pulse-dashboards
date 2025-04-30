@@ -1,0 +1,51 @@
+main:
+  params: [args]
+  steps:
+    - get_objects_list:
+        try:
+          call: googleapis.storage.v1.objects.list
+          args:
+            bucket: ${args.etl_bucket_id}
+            delimiter: /
+            prefix: ${args.state_code + "/"}
+          result: metric_export_objects_list
+        except:
+          as: e
+          steps:
+            - raise_get_objects_list_error:
+                raise: ${e}
+    - assign_metric_export_file_names:
+        assign:
+          - metric_export_file_names: []
+    - get_file_names:
+        for:
+          value: metric_export_object
+          index: _
+          in: ${metric_export_objects_list.items}
+          steps:
+            - append_file_name:
+                assign:
+                  - metric_export_file_names: ${list.concat(metric_export_file_names, metric_export_object.name)}
+    - archive_all_files:
+        for:
+          value: metric_export_file_name
+          index: _
+          in: ${metric_export_file_names}
+          steps:
+            - assign_object_name:
+                assign:
+                  - destination_object: ${args.current_date_str + "/" + metric_export_file_name}
+            - copy_file:
+                try:
+                  call: googleapis.storage.v1.objects.copy
+                  args:
+                    destinationBucket: ${args.archive_bucket_id}
+                    destinationObject: ${text.url_encode(destination_object)}
+                    sourceBucket: ${args.etl_bucket_id}
+                    sourceObject: ${text.url_encode(metric_export_file_name)}
+                  result: etl_result
+                except:
+                  as: e
+                  steps:
+                    - raise_copy_error:
+                        raise: ${e}
