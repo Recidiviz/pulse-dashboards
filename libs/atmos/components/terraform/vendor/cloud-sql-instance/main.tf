@@ -128,6 +128,10 @@ resource "google_sql_database_instance" "data" {
       ipv4_enabled                                  = true
       private_network                               = var.private_network
       enable_private_path_for_google_cloud_services = var.enable_private_path_for_google_cloud_services
+      # The following SSL enforcement options only allow connections encrypted with SSL/TLS and with
+      # valid client certificates. Please check the API reference for other SSL enforcement options:
+      # https://cloud.google.com/sql/docs/postgres/admin-api/rest/v1beta4/instances#ipconfiguration
+      ssl_mode = "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"
     }
 
     location_preference {
