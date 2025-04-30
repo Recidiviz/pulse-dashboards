@@ -176,6 +176,18 @@ export type CopyCTAMetadata = OpportunityTrackingMetadata & {
   date: Date;
 };
 
+type UsIaEarlyDischargeActionsMetadata = {
+  staffId: string;
+  justiceInvolvedPersonId: string;
+  action: {
+    type: string;
+    actionPlan?: string;
+    revisionRequest?: string;
+    additionalNotes?: string;
+  };
+  currentStatus: string;
+};
+
 export default class AnalyticsStore {
   rootStore;
   segment;
@@ -527,6 +539,12 @@ export default class AnalyticsStore {
 
   trackAlmostEligibleCopyCTAClicked(metadata: CopyCTAMetadata) {
     this.track("frontend.almost_eligible_copy_cta_clicked", metadata);
+  }
+
+  trackUsIaEarlyDischargeOpportunityActions(
+    metadata: UsIaEarlyDischargeActionsMetadata,
+  ) {
+    this.track("frontend.us_ia_early_discharge_opportunity_actions", metadata);
   }
 
   /****************************
