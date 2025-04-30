@@ -33,17 +33,34 @@ export function UsUtDates({
   const reportDue = halfTime ? add(halfTime, { days: -30 }) : undefined;
   const finalReportDue = endDate ? add(endDate, { days: -30 }) : undefined;
 
+  // If the report due date was in the past, we only show that date for people who are
+  // Eligible for ET, not Almost Eligible or ineligible
+  const earlyTermOpp = client.opportunities.usUtEarlyTermination;
+  const isEligibleForET =
+    !!earlyTermOpp &&
+    earlyTermOpp.length === 1 &&
+    earlyTermOpp[0].record.isEligible;
+  const reportDueInFuture = reportDue && reportDue >= new Date();
+  const displayReportDueDate = isEligibleForET || reportDueInFuture;
+  const optionalReportDueDate = displayReportDueDate
+    ? [
+        {
+          label: "ET Report Due",
+          date: reportDue,
+          tooltip:
+            "Early Termination report due date, equivalent to 30 days before the client's half-time date",
+        },
+      ]
+    : [];
+
   const dates = [
     { label: "Start", date: startDate },
+    ...optionalReportDueDate,
     {
-      label: "ET Report Due",
-      date: reportDue,
-      tooltip: "Equivalent to 30 days before the client's half-time date",
-    },
-    {
-      label: "Early Termination Review",
+      label: "ET Review",
       date: halfTime,
-      tooltip: "Equivalent to the client's half-time date",
+      tooltip:
+        "Early Termination review date, equivalent to the client's half-time date",
     },
     {
       label: "Final Report Due",

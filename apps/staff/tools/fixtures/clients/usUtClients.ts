@@ -31,7 +31,8 @@ export const US_UT_CLIENTS: ClientFixture[] = [
     supervisionType: "PROBATION",
     supervisionLevel: "MEDIUM",
     supervisionStartDate: "2020-05-06",
-    expirationDate: "2022-12-31",
+    expirationDate: "2023-02-11",
+    phoneNumber: "385-555-5555",
     allEligibleOpportunities: ["usUtEarlyTermination"],
   },
   {
@@ -48,6 +49,7 @@ export const US_UT_CLIENTS: ClientFixture[] = [
     supervisionLevel: "MEDIUM",
     supervisionStartDate: "2019-06-07",
     expirationDate: "2022-12-31",
+    phoneNumber: "801-555-5555",
     allEligibleOpportunities: ["usUtEarlyTermination"],
   },
   {
@@ -63,7 +65,8 @@ export const US_UT_CLIENTS: ClientFixture[] = [
     supervisionType: "PROBATION",
     supervisionLevel: "MEDIUM",
     supervisionStartDate: "2021-09-20",
-    expirationDate: "2022-12-31",
+    expirationDate: "2023-01-20",
+    phoneNumber: "435-555-5555",
     allEligibleOpportunities: ["usUtEarlyTermination"],
   },
 ];
