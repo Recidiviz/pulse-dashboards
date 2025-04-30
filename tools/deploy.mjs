@@ -48,11 +48,22 @@ const [slackToken] = await secretClient.accessSecretVersion({
   name: "projects/recidiviz-123/secrets/deploy_slack_bot_authorization_token/versions/latest",
 });
 
-console.log("Installing yarn packages...");
-await $`yarn install`.pipe(process.stdout);
-
-console.log("Updating atmos...");
-await $`brew install atmos`.pipe(process.stdout);
+const owner = "Recidiviz";
+const repo = "pulse-dashboards";
+const currentRevision = (await $`git rev-parse --short HEAD`).stdout.trim();
+const octokit = new Octokit({
+  auth: deployScriptPat.payload.data.toString(),
+});
+const slack = new SlackClient(slackToken.payload.data.toString());
+let latestRelease;
+let latestReleaseVersion;
+let generatedReleaseNotes;
+let nextVersion = "deploy-candidate";
+let publishReleaseNotes;
+let releaseNotes;
+let isCpDeploy;
+const successfullyDeployed = [];
+let deployingLatestMain = true;
 
 // Determine which environment to deploy
 const { deployEnv } = await inquirer.prompt({
@@ -85,23 +96,6 @@ if (deployEnv === "preview") {
   );
   process.exit();
 }
-
-const owner = "Recidiviz";
-const repo = "pulse-dashboards";
-const currentRevision = (await $`git rev-parse --short HEAD`).stdout.trim();
-const octokit = new Octokit({
-  auth: deployScriptPat.payload.data.toString(),
-});
-const slack = new SlackClient(slackToken.payload.data.toString());
-let latestRelease;
-let latestReleaseVersion;
-let generatedReleaseNotes;
-let nextVersion = "deploy-candidate";
-let publishReleaseNotes;
-let releaseNotes;
-let isCpDeploy;
-const successfullyDeployed = [];
-let deployingLatestMain = true;
 
 if (deployEnv === "staging") {
   const mainBranch = await octokit.rest.repos.getBranch({
@@ -187,13 +181,32 @@ if (deployEnv === "production") {
   publishReleaseNotes = false;
 }
 
-const deployBackendPrompt = await inquirer.prompt({
-  type: "confirm",
-  name: "deployBackend",
-  message: "Would you like to deploy the backend?",
+const deployServicesPrompt = await inquirer.prompt({
+  type: "checkbox",
+  name: "deployServices",
+  message: "Which services would you like to deploy?",
+  choices: [
+    { name: "Staff backend", checked: true},
+    { name: "Staff frontend", checked: true},
+    { name: "Sentencing server", checked: true},
+    { name: "JII texting server", checked: true},
+    { name: "Case notes server", checked: true},
+  ],
 });
 
-if (deployBackendPrompt.deployBackend) {
+const deployBackend = deployServicesPrompt.deployServices.includes("Staff backend");
+const deployFrontend = deployServicesPrompt.deployServices.includes("Staff frontend");
+const deploySentencing = deployServicesPrompt.deployServices.includes("Sentencing server");
+const deployJII = deployServicesPrompt.deployServices.includes("JII texting server");
+const deployCaseNotes = deployServicesPrompt.deployServices.includes("Case notes server");
+
+console.log("Installing yarn packages...");
+await $`yarn install`.pipe(process.stdout);
+
+console.log("Updating atmos...");
+await $`brew install atmos`.pipe(process.stdout);
+
+if (deployBackend) {
   console.log("Building backend application ...");
   await $`nx build staff-shared-server`.pipe(process.stdout);
 
@@ -203,18 +216,18 @@ if (deployBackendPrompt.deployBackend) {
     try {
       switch (deployEnv) {
         case "production":
-          await $`gcloud app deploy dist/libs/staff-shared-server/gae-production.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
+          await $`gcloud app deploy -q dist/libs/staff-shared-server/gae-production.yaml --project recidiviz-dashboard-production --version ${gaeVersion}`.pipe(
             process.stdout,
           );
           publishReleaseNotes = true;
           break;
         case "demo":
-          await $`gcloud app deploy dist/libs/staff-shared-server/gae-staging-demo.yaml --project recidiviz-dashboard-staging`.pipe(
+          await $`gcloud app deploy -q dist/libs/staff-shared-server/gae-staging-demo.yaml --project recidiviz-dashboard-staging`.pipe(
             process.stdout,
           );
           break;
         default:
-          await $`gcloud app deploy dist/libs/staff-shared-server/gae-staging.yaml --project recidiviz-dashboard-staging`.pipe(
+          await $`gcloud app deploy -q dist/libs/staff-shared-server/gae-staging.yaml --project recidiviz-dashboard-staging`.pipe(
             process.stdout,
           );
           break;
@@ -233,14 +246,7 @@ if (deployBackendPrompt.deployBackend) {
   } while (retryBackend);
 }
 
-const deployFrontendPrompt = await inquirer.prompt({
-  type: "confirm",
-  name: "deployFrontend",
-  message:
-    "Would you like to deploy the frontend? You will have the opportunity to preview.",
-});
-
-if (deployFrontendPrompt.deployFrontend) {
+if (deployFrontend) {
   // Build the application
   console.log("Building frontend application...");
   switch (deployEnv) {
@@ -254,53 +260,35 @@ if (deployFrontendPrompt.deployFrontend) {
       await $`nx build-staging staff`.pipe(process.stdout);
   }
 
-  // Run a preview
-  // This deploys a preview application instead of doing `firebase serve`, because `firebase serve`
-  // is exited with ctrl-c, and even though hypothetically we could catch the SIGINT or do something
-  // clever with `screen` and piping output, this is much easier.
-  console.log("Deploying preview application...");
-  await $`firebase hosting:channel:deploy ${nextVersion} -P ${deployEnv}  --expires 1h`.pipe(
-    process.stdout,
-  );
-
-  // Ask if the preview is good. If not, exit.
-  const continuePrompt = await inquirer.prompt({
-    type: "confirm",
-    name: "continueRelease",
-    message: `Would you like to deploy to ${deployEnv}?`,
-    default: false,
-  });
-  if (continuePrompt.continueRelease) {
-    let retryFrontend = false;
-    do {
-      // Deploy the app with the tag name in a comment
-      console.log("Deploying application to Firebase...");
-      try {
-        switch (deployEnv) {
-          case "production":
-            await $`firebase deploy --only hosting -P production -m "Version ${nextVersion} - Commit hash ${currentRevision}"`.pipe(
-              process.stdout,
-            );
-            publishReleaseNotes = true;
-            break;
-          default:
-            await $`firebase deploy --only hosting -P ${deployEnv} -m "${currentRevision}"`.pipe(
-              process.stdout,
-            );
-        }
-        retryFrontend = false;
-        successfullyDeployed.push("Frontend");
-      } catch (e) {
-        const retryFrontendPrompt = await inquirer.prompt({
-          type: "confirm",
-          name: "retryFrontend",
-          message: `Frontend deploy failed with error: ${e}. Retry?`,
-          default: false,
-        });
-        retryFrontend = retryFrontendPrompt.retryFrontend;
+  let retryFrontend = false;
+  do {
+    // Deploy the app with the tag name in a comment
+    console.log("Deploying application to Firebase...");
+    try {
+      switch (deployEnv) {
+        case "production":
+          await $`firebase deploy --only hosting -P production -m "Version ${nextVersion} - Commit hash ${currentRevision}"`.pipe(
+            process.stdout,
+          );
+          publishReleaseNotes = true;
+          break;
+        default:
+          await $`firebase deploy --only hosting -P ${deployEnv} -m "${currentRevision}"`.pipe(
+            process.stdout,
+          );
       }
-    } while (retryFrontend);
-  }
+      retryFrontend = false;
+      successfullyDeployed.push("Frontend");
+    } catch (e) {
+      const retryFrontendPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryFrontend",
+        message: `Frontend deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryFrontend = retryFrontendPrompt.retryFrontend;
+    }
+  } while (retryFrontend);
 }
 
 if (
@@ -308,13 +296,7 @@ if (
   deployEnv === "production" ||
   deployEnv === "demo"
 ) {
-  const deploySentencingServerPrompt = await inquirer.prompt({
-    type: "confirm",
-    name: "deploySentencingServer",
-    message: "Would you like to deploy the Sentencing Server?",
-  });
-
-  if (deploySentencingServerPrompt.deploySentencingServer) {
+  if (deploySentencing) {
     console.log("Building and deploying the application...");
 
     // Start docker and configure docker to upload to container registry
@@ -423,13 +405,7 @@ if (
   deployEnv === "production" ||
   deployEnv === "demo"
 ) {
-  const deployJiiTextingServerPrompt = await inquirer.prompt({
-    type: "confirm",
-    name: "deployJiiTextingServer",
-    message: "Would you like to deploy the JII Texting Server?",
-  });
-
-  if (deployJiiTextingServerPrompt.deployJiiTextingServer) {
+  if (deployJII) {
     console.log("Building and deploying the application...");
 
     // Start docker and configure docker to upload to container registry
@@ -524,13 +500,7 @@ if (
   deployEnv === "production" ||
   deployEnv === "demo"
 ) {
-  const deployCaseNotesServerPrompt = await inquirer.prompt({
-    type: "confirm",
-    name: "deployCaseNotesServer",
-    message: "Would you like to deploy the Case Notes Server?",
-  });
-
-  if (deployCaseNotesServerPrompt.deployCaseNotesServer) {
+  if (deployCaseNotes) {
     console.log("Building and deploying the application...");
 
     // Start docker and configure docker to upload to container registry
