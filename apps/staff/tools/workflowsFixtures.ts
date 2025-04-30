@@ -59,6 +59,7 @@ import { usAzOverdueForACISTPRReferrals } from "./fixtures/usAzOverdueForACISTPR
 import { usAzReleaseToDTPReferrals } from "./fixtures/usAzReleaseToDTPReferrals";
 import { usAzReleaseToTPRReferrals } from "./fixtures/usAzReleaseToTPRReferrals";
 import { usCaSupervisionLevelDowngradeReferrals } from "./fixtures/usCaSupervisionLevelDowngradeReferrals";
+import { usIaEarlyDischargeReferralsFixture } from "./fixtures/usIaEarlyDischargeReferrals";
 import { usIdCRCResidentWorkerReferrals } from "./fixtures/UsIdCRCResidentWorkerReferrals";
 import { usIdCRCWorkReleaseReferrals } from "./fixtures/UsIdCRCWorkReleaseReferrals";
 import { usIdCustodyLevelDowngradeReferrals } from "./fixtures/usIdCustodyLevelDowngradeReferrals";
@@ -199,6 +200,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usMoOverdueRestrictiveHousingInitialHearingReferrals,
   usMoOverdueRestrictiveHousingReviewHearingReferrals,
   usUtEarlyTerminationReferrals,
+  usIaEarlyDischargeReferrals: usIaEarlyDischargeReferralsFixture,
 } as const;
 
 const FIXTURES_TO_LOAD = [

@@ -34,8 +34,10 @@ import {
   isHydrated,
 } from "~hydration-utils";
 
-import { StatusPalette } from "../../core/utils/workflowsUtils";
-import { reasonsIncludesOtherKey } from "../../core/utils/workflowsUtils";
+import {
+  reasonsIncludesOtherKey,
+  StatusPalette,
+} from "../../core/utils/workflowsUtils";
 import {
   AutoSnoozeUpdate,
   Denial,
