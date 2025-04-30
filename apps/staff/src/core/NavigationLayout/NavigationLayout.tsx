@@ -34,6 +34,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { isOfflineMode } from "~client-env-utils";
+import { psiUrl } from "~sentencing-client";
 
 import Drawer from "../../components/Drawer/Drawer";
 import { useRootStore } from "../../components/StoreProvider";
@@ -338,14 +339,38 @@ function InsightsLink({ enabled }: OptionalLinkProps) {
   );
 }
 
-function PSILink({ enabled }: OptionalLinkProps) {
+function PSIStaffLink({
+  enabled,
+  staffPseudoId,
+}: {
+  enabled: boolean;
+  staffPseudoId?: string;
+}) {
   const { isMobile } = useIsMobile(true);
 
-  if (!enabled) return null;
+  if (!enabled || !staffPseudoId) return null;
   return (
-    <NavLink to={`/${DASHBOARD_VIEWS.psi}`}>
+    <NavLink to={psiUrl("staffDashboard", { staffPseudoId })}>
       {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
-      Go to PSI
+      Go to PSI Case Dashboard
+    </NavLink>
+  );
+}
+
+function PSISupervisorLink({
+  enabled,
+  staffPseudoId,
+}: {
+  enabled: boolean;
+  staffPseudoId?: string;
+}) {
+  const { isMobile } = useIsMobile(true);
+
+  if (!enabled || !staffPseudoId) return null;
+  return (
+    <NavLink to={psiUrl("supervisorDashboard", { staffPseudoId })}>
+      {isMobile && <Icon kind={IconSVG.Operations} width={20} />}
+      Go to PSI Supervisor Dashboard
     </NavLink>
   );
 }
@@ -423,6 +448,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
       currentTenantId,
       userStore,
       tenantStore,
+      psiStore,
       workflowsStore: { homepage },
     } = useRootStore();
     const userAllowedNavigation = userStore?.userAllowedNavigation;
@@ -449,15 +475,19 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
     const isInsightsLanternState =
       tenantStore && tenantStore.insightsLanternState;
 
-    const isPsiStaff =
-      enabledPSI &&
-      userStore.userPseudoId &&
-      !userStore.isRecidivizUser &&
-      import.meta.env.VITE_DEPLOY_ENV === "production";
-
     const isDevOrStagingOrOfflineEnv =
       ["staging", "dev"].includes(import.meta.env.VITE_DEPLOY_ENV) ||
       isOfflineMode();
+
+      const isPsiStaff =
+      (import.meta.env.VITE_DEPLOY_ENV === "production" && 
+        enabledPSI && 
+        userStore.userPseudoId &&
+        !userStore.isRecidivizUser &&
+        !!psiStore.staffPseudoId) ||
+      (isDevOrStagingOrOfflineEnv && enabledPSI);
+
+    const isPsiSupervisor = isPsiStaff && psiStore.isSupervisor;
 
     const quickLinks = (
       <>
@@ -474,9 +504,14 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <WorkflowsLink enabled={enableWorkflows} homepage={homepage} />
         <WorkflowsSystemLinks />
         <InsightsLink enabled={enabledInsights} />
-        {(isPsiStaff || isDevOrStagingOrOfflineEnv) && (
-          <PSILink enabled={enabledPSI} />
-        )}
+        <PSISupervisorLink
+          enabled={isPsiSupervisor}
+          staffPseudoId={psiStore.staffPseudoId}
+          />
+        <PSIStaffLink
+          enabled={isPsiStaff}
+          staffPseudoId={psiStore.staffPseudoId}
+        />
         <LogoutLink enabled={!isOfflineMode()} />
       </>
     );

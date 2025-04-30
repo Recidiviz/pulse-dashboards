@@ -81,6 +81,9 @@ describe("CoreLayout tests", () => {
       workflowsStore: {
         homepage: "home",
       },
+      psiStore: {
+        staffPseudoId: "staff-pseudo-id",
+      },
     };
 
     useRootStoreMock.mockReturnValue(rootStoreMock);
