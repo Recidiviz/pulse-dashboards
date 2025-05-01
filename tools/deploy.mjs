@@ -186,19 +186,24 @@ const deployServicesPrompt = await inquirer.prompt({
   name: "deployServices",
   message: "Which services would you like to deploy?",
   choices: [
-    { name: "Staff backend", checked: true},
-    { name: "Staff frontend", checked: true},
-    { name: "Sentencing server", checked: true},
-    { name: "JII texting server", checked: true},
-    { name: "Case notes server", checked: true},
+    { name: "Staff backend", checked: true },
+    { name: "Staff frontend", checked: true },
+    { name: "Sentencing server", checked: true },
+    { name: "JII texting server", checked: true },
+    { name: "Case notes server", checked: true },
   ],
 });
 
-const deployBackend = deployServicesPrompt.deployServices.includes("Staff backend");
-const deployFrontend = deployServicesPrompt.deployServices.includes("Staff frontend");
-const deploySentencing = deployServicesPrompt.deployServices.includes("Sentencing server");
-const deployJII = deployServicesPrompt.deployServices.includes("JII texting server");
-const deployCaseNotes = deployServicesPrompt.deployServices.includes("Case notes server");
+const deployBackend =
+  deployServicesPrompt.deployServices.includes("Staff backend");
+const deployFrontend =
+  deployServicesPrompt.deployServices.includes("Staff frontend");
+const deploySentencing =
+  deployServicesPrompt.deployServices.includes("Sentencing server");
+const deployJII =
+  deployServicesPrompt.deployServices.includes("JII texting server");
+const deployCaseNotes =
+  deployServicesPrompt.deployServices.includes("Case notes server");
 
 console.log("Installing yarn packages...");
 await $`yarn install`.pipe(process.stdout);
@@ -378,9 +383,14 @@ if (
           process.stdout,
         );
 
-        // If we're in demo mode, deploy the seed demo job
         if (deployEnv === "demo") {
+          // If we're in demo mode, deploy the seed demo job
           await $`yarn atmos:apply apps/sentencing-seed-demo -s ${stack} -- -auto-approve -var container_version=${currentRevision}`.pipe(
+            process.stdout,
+          );
+        } else if (deployEnv === "production") {
+          // If we're on production, deploy any changes to the bigquery data transfer
+          await $`yarn atmos:apply postgres-bq-data-transfer -s recidiviz-dashboard-production--sentencing -- -auto-approve`.pipe(
             process.stdout,
           );
         }
