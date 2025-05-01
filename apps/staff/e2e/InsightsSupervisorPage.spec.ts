@@ -203,9 +203,11 @@ test.describe("Supervisors Page", () => {
       await expect(main).toContainText("View");
       const button = main.locator("button", { hasText: "View" });
       await button.click();
-      const rosterModal = page.locator('div[class^="ReactModal__Content"]', {
-        hasText: "Officers on Your Team",
-      });
+      const rosterModal = page
+        .locator('div[class^="ReactModal__Content"]')
+        .filter({
+          hasText: /officers on .*'s Team/,
+        });
       rosterModal.waitFor();
       await expect(rosterModal).toContainText("Walter Harris");
       const toStaffPage = rosterModal.locator("a", {

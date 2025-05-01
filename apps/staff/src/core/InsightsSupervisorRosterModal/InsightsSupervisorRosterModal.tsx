@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { toTitleCase } from "@artsy/to-title-case";
 import {
   Button,
   Modal,
@@ -108,12 +107,13 @@ const InsightsSupervisorRosterModal: React.FC<RosterModalType> = ({
     closeModal,
     openModal,
     isModalOpen,
+    supervisorInfo,
     officersOnSupervisorTeam,
     labels: { supervisionOfficerLabel },
   },
 }) => {
   const { isMobile } = useIsMobile(true);
-  const title = `${officersOnSupervisorTeam?.length} ${toTitleCase(pluralize(supervisionOfficerLabel, officersOnSupervisorTeam?.length))} on Your Team`;
+  const title = `${officersOnSupervisorTeam?.length} ${pluralize(supervisionOfficerLabel, officersOnSupervisorTeam?.length)} on ${supervisorInfo?.displayName}'s Team`;
 
   return (
     <>
