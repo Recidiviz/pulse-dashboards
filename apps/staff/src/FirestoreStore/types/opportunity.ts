@@ -55,11 +55,11 @@ type SupervisorResponse = {
   supervisorResponse?: SupervisorAction;
 };
 
-type OfficerApprovalAction = {
+export type OfficerApprovalAction = {
   type: "APPROVAL";
 };
 
-type OfficerDenialAction = {
+export type OfficerDenialAction = {
   type: "DENIAL";
   actionPlan: string;
   denialReasons: string[];

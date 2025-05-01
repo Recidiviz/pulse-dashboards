@@ -491,6 +491,52 @@ describe("FirestoreStore", () => {
       ]);
     });
 
+    test("updateOpportunityActionHistory", async () => {
+      const update = [
+        {
+          type: "DENIAL" as any,
+          actionPlan: "test-plan",
+          denialReasons: ["reason1", "reason2"],
+          requestedSnoozeLength: 30,
+          by: "test-officer-email",
+          date: mockServerTimestamp(),
+          supervisorReponse: undefined,
+        },
+      ];
+      await store.updateOpportunityActionHistory(opp, update);
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        {
+          actionHistory: [
+            {
+              by: "test-officer-email",
+              date: "mock-timestamp",
+              type: "DENIAL",
+              actionPlan: "test-plan",
+              denialReasons: ["reason1", "reason2"],
+              requestedSnoozeLength: 30,
+            },
+          ],
+        },
+        {
+          merge: true,
+        },
+      ]);
+    });
+
+    test("deleteOpportunityActionHistory", async () => {
+      await store.deleteOpportunityActionHistory(opp);
+      expect(mockSetDoc.mock.calls).toContainEqual([
+        "test-doc-ref",
+        {
+          actionHistory: "mock-delete-fn",
+        },
+        {
+          merge: true,
+        },
+      ]);
+    });
+
     test("updateMilestonesMessages", async () => {
       const milestonesMessagesUpdate: PartialWithFieldValue<MilestonesMessage> =
         {

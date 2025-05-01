@@ -71,6 +71,7 @@ import {
   FormUpdate,
   ManualSnoozeUpdate,
   MilestonesMessage,
+  OfficerAction,
   OpportunityUpdateWithForm,
   PersonUpdateType,
   SupervisionTaskUpdate,
@@ -394,6 +395,22 @@ export default class FirestoreStore {
 
     await this.updateSnoozeCompanions(opportunity, changes);
     return this.updateOpportunity(opportunity, changes);
+  }
+
+  async deleteOpportunityActionHistory(opportunity: Opportunity) {
+    return this.updateOpportunity(opportunity, {
+      actionHistory: deleteField(),
+    });
+  }
+
+  async updateOpportunityActionHistory(
+    opportunity: Opportunity,
+    actionHistory: OfficerAction[],
+  ): Promise<void> {
+    const update = {
+      actionHistory,
+    };
+    return this.updateOpportunity(opportunity, update);
   }
 
   async updateOpportunityManualSnooze(

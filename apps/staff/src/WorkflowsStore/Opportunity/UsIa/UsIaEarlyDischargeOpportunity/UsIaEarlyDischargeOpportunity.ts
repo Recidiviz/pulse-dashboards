@@ -17,6 +17,12 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 
+import {
+  OfficerAction,
+  OfficerApprovalAction,
+  OfficerDenialAction,
+  SupervisorAction,
+} from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
@@ -35,5 +41,30 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       client.rootStore,
       usIaEarlyDischargeSchema.parse(record),
     );
+  }
+
+  get actionHistory(): OfficerAction[] | undefined {
+    return this.updates?.actionHistory;
+  }
+
+  // TODO(#8239): add a new officer action to the action history array
+  // and call the updateOpportunityActionHistory firestore fn
+  async setOfficerAction(
+    officerActionParams: OfficerApprovalAction | OfficerDenialAction,
+  ): Promise<void> {
+    return;
+  }
+
+  // TODO(#8239): modify the most recent officer action to have a supervisor response
+  // and call the updateOpportunityActionHistory
+  async setSupervisorResponse(
+    supervisorResponseParams: Omit<SupervisorAction, "date" | "by">,
+  ): Promise<void> {
+    return;
+  }
+
+  // TODO(#8239): call the relevant deletion firestore fn
+  async deleteActionHistory(): Promise<void> {
+    return;
   }
 }
