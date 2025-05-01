@@ -17,8 +17,10 @@
 
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
+import styled from "styled-components/macro";
 
-import { Client, SupervisionTask } from "../../WorkflowsStore";
+import { formatDate, formatDueDateFromToday } from "../../utils/formatStrings";
+import { SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
 import PersonId from "../PersonId";
@@ -33,24 +35,18 @@ function PersonIdCell({ row }: { row: Row<SupervisionTask> }) {
   );
 }
 
-const CaseTypeCell = observer(function SupervisionCell({
-  row,
-}: {
-  row: Row<SupervisionTask>;
-}) {
-  return (row.original.person as Client).caseType;
-});
+const KeepTogether = styled.span`
+  white-space: nowrap;
+`;
 
-const SupervisionLevelCell = observer(function SupervisionCell({
-  row,
-}: {
-  row: Row<SupervisionTask>;
-}) {
-  return (row.original.person as Client).supervisionLevel;
-});
-
-function TaskInfoCell({ row }: { row: Row<SupervisionTask> }) {
-  return row.original.dueDateDisplayLong;
+function TaskDateCell({ row }: { row: Row<SupervisionTask> }) {
+  const { dueDate } = row.original;
+  return (
+    <>
+      {formatDate(dueDate)}{" "}
+      <KeepTogether>{`(${formatDueDateFromToday(dueDate)})`}</KeepTogether>
+    </>
+  );
 }
 
 function FrequencyCell({ row }: { row: Row<SupervisionTask> }) {
@@ -65,31 +61,32 @@ export const TasksTable = observer(function TasksTable({
   const columns: ColumnDef<SupervisionTask>[] = [
     {
       header: "Name",
-      id: "person.displayName",
+      id: "name",
       accessorKey: "person.displayName",
       enableSorting: true,
       sortingFn: "text",
     },
     {
       // TODO(#6737): Make the column header the same as the label displayed when copied
-      header: "DOC ID",
-      id: "person.displayId",
+      header: "ID",
+      id: "id",
       accessorKey: "person.displayId",
       enableSorting: true,
       sortingFn: "alphanumeric",
       cell: PersonIdCell,
     },
     {
-      header: "Case Type",
-      id: "person.caseType",
-      enableSorting: false,
-      cell: CaseTypeCell,
+      header: "Task",
+      id: "task",
+      accessorKey: "displayName",
+      enableSorting: true,
     },
     {
-      header: "Supervision Level",
-      id: "person.supervisionLevel",
-      enableSorting: false,
-      cell: SupervisionLevelCell,
+      header: "Recommended",
+      id: "date",
+      enableSorting: true,
+      accessorKey: "dueDate",
+      cell: TaskDateCell,
     },
     {
       header: "Frequency",
@@ -98,19 +95,25 @@ export const TasksTable = observer(function TasksTable({
       cell: FrequencyCell,
     },
     {
+      header: "Supervision Level",
+      id: "supervisionLevel",
+      accessorKey: "person.supervisionLevel",
+      enableSorting: true,
+    },
+    {
+      header: "Case Type",
+      id: "caseType",
+      accessorKey: "person.caseType",
+      enableSorting: true,
+    },
+    {
       header: "Tasks due",
       id: "tasksDue",
-      enableSorting: false,
+      enableSorting: true,
       accessorFn: (task) => {
         const person = task.person;
         return person.supervisionTasks?.tasks.length ?? 0;
       },
-    },
-    {
-      header: "Task",
-      id: "dueDateDisplayLong",
-      enableSorting: false,
-      cell: TaskInfoCell,
     },
   ];
 

@@ -33,13 +33,18 @@ import styled from "styled-components/macro";
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
+import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
 
 const Table = styled.table`
   width: 100%;
   ${typography.Sans14};
   text-align: left;
-`;
+
+  border-collapse: separate;
+  border-spacing: 0;
+  flex: 1 1 auto;
+`; // necessary to keep the border at the bottom of the sticky table header
 
 const SortableHeader = styled.div<{ $sortable?: boolean }>`
   display: inline-flex;
@@ -48,7 +53,12 @@ const SortableHeader = styled.div<{ $sortable?: boolean }>`
   cursor: ${({ $sortable }) => ($sortable ? "pointer" : "default")};
 `;
 
-const TableHeader = styled.thead`
+const TableHeader = styled.thead<{
+  $isMobile: boolean;
+}>`
+  position: sticky;
+  top: ${({ $isMobile }) => ($isMobile ? 0 : rem(NAV_BAR_HEIGHT))};
+
   width: 100%;
   background-color: ${palette.marble1};
 `;
@@ -56,6 +66,7 @@ const TableHeader = styled.thead`
 const SharedTableCellStyles = `
   height: 49px;
   padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
+  border-bottom: 1px solid ${palette.slate10};
 `;
 
 const HeaderCell = styled.th`
@@ -106,8 +117,6 @@ const Cell = styled.td<{
 `;
 
 const Row = styled.tr<{ $isSelected?: boolean }>`
-  border-bottom: 1px solid ${palette.slate10};
-
   ${Cell} {
     ${({ $isSelected }) => $isSelected && "background-color: #EDF4FC;"}
     transition: all 0.15s ease-in-out;
@@ -212,7 +221,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
 
   return (
     <Table>
-      <TableHeader>
+      <TableHeader $isMobile={isMobile}>
         {table.getHeaderGroups().map((headerGroup) => (
           <Row key={headerGroup.id}>
             {headerGroup.headers.map((header) => (

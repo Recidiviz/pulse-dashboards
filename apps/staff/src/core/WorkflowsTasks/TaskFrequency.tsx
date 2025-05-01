@@ -15,12 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rem } from "polished";
+import styled from "styled-components/macro";
+
 import { SupervisionTask } from "../../WorkflowsStore";
+
+const FrequencyWrapper = styled.div`
+  display: flex;
+  gap: ${rem(6)};
+`;
 
 export function TaskFrequency({ task }: { task: SupervisionTask }) {
   return (
-    <div>
-      <i className="fa fa-refresh" /> {task.frequency}
-    </div>
+    <FrequencyWrapper>
+      <i className="fa fa-refresh" />
+      <span>{task.frequency}</span>
+    </FrequencyWrapper>
   );
 }
