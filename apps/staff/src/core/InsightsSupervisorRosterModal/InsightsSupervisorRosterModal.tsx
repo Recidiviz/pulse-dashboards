@@ -29,6 +29,7 @@ import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import ChevronLeft from "../../assets/static/images/chevronLeft.svg";
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionSupervisorRosterModalPresenter } from "../../InsightsStore/presenters/SupervisionSupervisorRosterModalPresenter";
 import ModelHydrator from "../ModelHydrator";
@@ -149,7 +150,7 @@ const InsightsSupervisorRosterModal: React.FC<RosterModalType> = ({
               <ModalTitle>{title}</ModalTitle>
             ) : (
               <Button
-                name="Back" // TODO (#7858): Add Left-Chevron icon to the design-system library to use here
+                name="Back"
                 kind="link"
                 role="button"
                 color={rgba("#00113380", 0.5)}
@@ -157,7 +158,7 @@ const InsightsSupervisorRosterModal: React.FC<RosterModalType> = ({
                   presenter.view = "ROSTER";
                 }}
               >
-                Back
+                <img src={ChevronLeft} alt="Back"></img>
               </Button>
             )}
             <CloseButton

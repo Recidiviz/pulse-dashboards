@@ -1,0 +1,29 @@
+<svg
+  width="16"
+  height="16"
+  viewBox="0 0 16 16"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <g clip-path="url(#clip0)">
+    <path
+      d="M8 0.5C12.1239 0.5 15.5 3.87614 15.5 8C15.5 12.1239 12.1239 15.5 8 15.5C3.87614 15.5 0.5 12.1239 0.5 8C0.5 3.87614 3.87614 0.5 8 0.5Z"
+      stroke="#2B5469"
+      stroke-opacity="0.2"
+    />
+    <path
+      d="M7 11C7 11.6 7.4 12 8 12C8.6 12 9 11.6 9 11C9 10.4 8.6 10 8 10C7.4 10 7 10.4 7 11Z"
+      fill="#E0A852"
+    />
+    <path
+      d="M7.5 9H8.5C8.77614 9 9 8.77614 9 8.5V4.5C9 4.22386 8.77614 4 8.5 4H7.5C7.22386 4 7 4.22386 7 4.5V8.5C7 8.77614 7.22386 9 7.5 9Z"
+      fill="#E0A852"
+    />
+  </g>
+  <defs>
+    <clipPath id="clip0">
+      <rect width="16" height="16" fill="white" />
+    </clipPath>
+  </defs>
+</svg>
+<!-- TODO (#8283): Backport once asset flow is updated --->

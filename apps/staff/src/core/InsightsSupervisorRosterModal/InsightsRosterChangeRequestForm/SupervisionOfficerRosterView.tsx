@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, IconSVG } from "@recidiviz/design-system";
 import pluralize from "pluralize";
 
 import { PersonInitialsAvatar } from "~ui";
 
+import IneligibleIcon from "../../../assets/static/images/ineligibleIcon.svg";
 import { InsightsTooltip } from "../../InsightsPageLayout/InsightsPageLayout";
 import { insightsUrl } from "../../views";
 import {
@@ -84,8 +84,10 @@ export const SupervisionOfficerRosterView = ({
                           maxWidth={354}
                           contents={tooltipContentForExcludedOfficers}
                         >
-                          {/*TODO (#7858): Add Error icon to the design-system library to use here */}
-                          <Icon kind={IconSVG.Error} size={16} />
+                          <img
+                            src={IneligibleIcon}
+                            alt="This is an excluded officer"
+                          />
                         </InsightsTooltip>
                       )}
                       <OfficerRemoveLinkButton
