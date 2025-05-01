@@ -11,6 +11,10 @@ main:
         assign:
           - state_code: ${message.state_code}
           - job_name: ${sys.get_env("JOB_NAME")}
+          - project_id: ${sys.get_env("PROJECT_ID")}
+          - current_date_str: ${text.substring(time.format(sys.now()), 0, 10)}
+          - archive_bucket_id: ${sys.get_env("ARCHIVE_BUCKET_ID")}
+          - etl_bucket_id: ${sys.get_env("ETL_BUCKET_ID")}
     - run_job:
         call: googleapis.run.v2.projects.locations.jobs.run
         args:
@@ -22,5 +26,16 @@ main:
                   - name: STATE_CODE
                     value: ${state_code}
         result: job_execution
+    - archive_etl_data:
+        call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.run
+        args:
+          workflow_id: archive-files
+          location: us-central1
+          project_id: ${project_id}
+          argument:
+            state_code: ${state_code}
+            etl_bucket_id: ${etl_bucket_id}
+            archive_bucket_id: ${archive_bucket_id}
+            current_date_str: ${current_date_str}
     - finish:
         return: ${job_execution}

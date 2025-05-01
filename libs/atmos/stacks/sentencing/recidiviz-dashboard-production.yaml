@@ -4,6 +4,7 @@ settings:
     project_id: recidiviz-dashboard-production
     project_number: 13012629248
     data_platform_project_number: 688733534196
+    data_platform_project_id: recidiviz-123
     product: sentencing
     location: us-central1
 
@@ -21,6 +22,7 @@ components:
       vars:
         project_number: "{{ .settings.context.project_number }}"
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
+        data_platform_project_id: "{{ .settings.context.data_platform_project_id }}"
         artifact_registry_repo: '{{ (atmos.Component "apps/sentencing" "recidiviz-dashboard-staging--sentencing").vars.artifact_registry_repo }}'
         artifact_registry_project_id: '{{ (atmos.Component "apps/sentencing" "recidiviz-dashboard-staging--sentencing").vars.project_id }}'
         database_availability_type: REGIONAL

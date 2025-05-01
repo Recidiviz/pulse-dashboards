@@ -23,6 +23,9 @@ locals {
   import_image_name = "sentencing-data-import"
   import_job_name   = "sentencing-data-import"
 
+  etl_bucket_name     = "sentencing-etl-data"
+  archive_bucket_name = "${local.etl_bucket_name}-archive"
+
   # This list needs to be marked as nonsensitive so it can be used in `for_each`
   # the keys are not sensitive, so it is fine if they end up in the Terraform resource names
   server_env_vars = nonsensitive([
@@ -181,7 +184,7 @@ module "gcs_bucket" {
   project_id = var.project_id
   location   = var.location
   prefix     = var.project_id
-  names      = ["sentencing-etl-data"]
+  names      = [local.etl_bucket_name, local.archive_bucket_name]
   logging = {
     log_bucket = "${var.project_id}-gcs-object-logs"
   }
@@ -199,7 +202,12 @@ module "gcs_bucket" {
   }]
   set_admin_roles = true
   bucket_admins = {
-    "sentencing-etl-data" = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com,serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+    (local.etl_bucket_name) = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com,serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+  }
+
+  set_viewer_roles = true
+  bucket_viewers = {
+    (local.archive_bucket_name) = "serviceAccount:cloud-build-ci-cd@${var.data_platform_project_id}.iam.gserviceaccount.com"
   }
 }
 
@@ -229,6 +237,9 @@ module "handle-sentencing-gcs-upload" {
   }
   workflow_source = file("${path.module}/workflows/handle-sentencing-gcs-upload.workflows.yaml")
   env_vars = {
-    JOB_NAME = module.import-job[0].id
+    PROJECT_ID        = var.project_id
+    JOB_NAME          = module.import-job[0].id
+    ARCHIVE_BUCKET_ID = local.archive_bucket_name
+    ETL_BUCKET_ID     = local.etl_bucket_name
   }
 }
