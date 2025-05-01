@@ -20,3 +20,15 @@ output "db_connection_name" {
   value     = module.database.connection_name
   sensitive = true
 }
+
+output "database_user_name" {
+  description = "The connection name for the created database"
+  value       = module.database.database_user_name
+  sensitive   = true
+}
+
+output "database_user_password" {
+  description = "The connection name for the created database"
+  value       = module.database.database_user_password
+  sensitive   = true
+}
