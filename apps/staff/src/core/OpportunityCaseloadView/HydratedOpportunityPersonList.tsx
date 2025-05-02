@@ -126,25 +126,27 @@ const Flex = `
   height: 100%;
 `;
 
-const MaxWidthFlexWrapper = styled.div`
+// Styles for empty tabs, shared with Tasks
+export const MaxWidthFlexWrapper = styled.div`
   ${Flex}
   ${MaxWidth}
 `;
+export const EmptyTabGroupWrapper = styled.div`
+  width: 100%;
+  margin-top: ${rem(spacing.md)};
+  flex-grow: 1;
 
-const EmptyTabGroupWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  width: 100%;
-  flex-grow: 1;
-  margin-top: ${rem(spacing.md)};
+  flex-direction: column;
+  gap: ${rem(spacing.md)};
 
   border: 1px dashed ${palette.slate30};
   background-color: ${palette.marble2};
 `;
-
-const EmptyTabText = styled(Sans18)`
+export const EmptyTabText = styled(Sans18)`
   color: ${palette.slate80};
   width: 50%;
 `;

@@ -24,9 +24,11 @@ import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/Caselo
 import { MaxWidth } from "../sharedComponents";
 import { TaskListGroup } from "./TaskListGroup";
 import { TaskListItemV2 } from "./TaskListItemV2";
+import { EmptyTasksTabView } from "./TasksTable";
 
 const TasksListContainer = styled.div`
   ${MaxWidth}
+  height: 100%;
 `;
 
 type AllTasksViewProps = {
@@ -49,6 +51,16 @@ export const TasksList = observer(function TasksList({
   const taskGroups = [overdue, dueThisWeek, dueThisMonth, upcoming];
   const labels = ["Overdue", "Due this week", "Due this month", "Upcoming"];
   const uuids = taskGroups.map((_, i) => `${i}`);
+
+  if (
+    overdue.length +
+      dueThisWeek.length +
+      dueThisMonth.length +
+      upcoming.length ===
+    0
+  ) {
+    return <EmptyTasksTabView presenter={presenter} />;
+  }
 
   return (
     <TasksListContainer>

@@ -36,6 +36,7 @@ import FirestoreStore from "../../FirestoreStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
 import { FeatureVariantRecord } from "../../RootStore/types";
+import { pluralizeWord } from "../../utils/formatStrings";
 import { PartialRecord } from "../../utils/typeUtils";
 import { taskDueDateComparator } from "../Task/TasksBase";
 import { SupervisionTask } from "../Task/types";
@@ -102,6 +103,25 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
 
   get taskCategories(): SupervisionTaskCategory[] {
     return this.tenantStore.taskCategories;
+  }
+
+  get emptyTabText() {
+    // "caseload" or "caseloads"
+    const caseloadTerm = pluralizeWord(
+      "caseload",
+      this.workflowsStore.searchStore.selectedSearchables.length,
+    );
+
+    switch (this.selectedCategory) {
+      case "ALL_TASKS":
+        return `There are no contacts or assessments currently overdue or due within the next month for the selected ${caseloadTerm}.`;
+      case "DUE_THIS_MONTH":
+        return `There are no contacts or assessments currently due within the next month for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
+      case "DUE_THIS_WEEK":
+        return `There are no contacts or assessments due within the next week for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
+      case "OVERDUE":
+        return `There are no overdue contacts or assessments for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
+    }
   }
 
   // Set the initial state of the filters, which is having every option selected

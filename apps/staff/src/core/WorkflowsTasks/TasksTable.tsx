@@ -17,12 +17,18 @@
 
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { formatDate, formatDueDateFromToday } from "../../utils/formatStrings";
 import { SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
+import {
+  EmptyTabGroupWrapper,
+  EmptyTabText,
+  MaxWidthFlexWrapper,
+} from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
 import PersonId from "../PersonId";
 import { TaskFrequency } from "./TaskFrequency";
 
@@ -53,11 +59,36 @@ function FrequencyCell({ row }: { row: Row<SupervisionTask> }) {
   return <TaskFrequency task={row.original} />;
 }
 
+export const EmptyTasksTabView = ({
+  presenter,
+}: {
+  presenter: CaseloadTasksPresenterV2;
+}) => {
+  return (
+    <MaxWidthFlexWrapper>
+      <EmptyTabGroupWrapper>
+        <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
+        <EmptyTabText>
+          If you think this is inaccurate, please contact support at{" "}
+          <Link to={"mailto:feedback@recidiviz.org"}>
+            feedback@recidiviz.org
+          </Link>
+          .
+        </EmptyTabText>
+      </EmptyTabGroupWrapper>
+    </MaxWidthFlexWrapper>
+  );
+};
+
 export const TasksTable = observer(function TasksTable({
   presenter,
 }: {
   presenter: CaseloadTasksPresenterV2;
 }) {
+  if (presenter.orderedTasksForSelectedCategory.length === 0) {
+    return <EmptyTasksTabView presenter={presenter} />;
+  }
+
   const columns: ColumnDef<SupervisionTask>[] = [
     {
       header: "Name",
