@@ -86,6 +86,7 @@ const TaskFrequencyDetails = styled.div`
   flex-direction: row;
   font-size: 12px;
   gap: 12px;
+  color: ${palette.slate80};
 `;
 
 type TaskListItemProps = {

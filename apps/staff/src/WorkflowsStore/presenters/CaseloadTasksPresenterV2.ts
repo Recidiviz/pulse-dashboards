@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { isThisMonth, isThisWeek } from "date-fns";
-import { every, some } from "lodash";
+import { every, some, uniq } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import {
@@ -182,6 +182,12 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
         });
       })
       .sort(taskDueDateComparator);
+  }
+
+  orderedPersonsForCategory(
+    category: SupervisionTaskCategory,
+  ): JusticeInvolvedPerson[] {
+    return uniq(this.orderedTasksForCategory(category).map((t) => t.person));
   }
 
   taskMatchesFilters(task: SupervisionTask): boolean {

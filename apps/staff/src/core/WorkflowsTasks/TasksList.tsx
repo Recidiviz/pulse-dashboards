@@ -16,10 +16,10 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
 import { Accordion } from "react-accessible-accordion";
 import styled from "styled-components/macro";
 
+import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { MaxWidth } from "../sharedComponents";
 import { TaskListGroup } from "./TaskListGroup";
@@ -36,35 +36,36 @@ type AllTasksViewProps = {
 export const TasksList = observer(function TasksList({
   presenter,
 }: AllTasksViewProps) {
-  const { clientsWithOverdueTasks, clientsWithUpcomingTasks } = presenter;
+  const overdue = presenter.orderedPersonsForCategory("OVERDUE");
+  const dueThisWeek = presenter.orderedPersonsForCategory("DUE_THIS_WEEK");
+  const dueThisMonth = presenter.orderedPersonsForCategory("DUE_THIS_MONTH");
+  const upcoming = presenter.clientsWithUpcomingTasks.filter((person) => {
+    return (
+      !overdue.includes(person) &&
+      !dueThisWeek.includes(person) &&
+      !dueThisMonth.includes(person)
+    );
+  });
+  const taskGroups = [overdue, dueThisWeek, dueThisMonth, upcoming];
+  const labels = ["Overdue", "Due this week", "Due this month", "Upcoming"];
+  const uuids = taskGroups.map((_, i) => `${i}`);
 
   return (
     <TasksListContainer>
-      <Accordion
-        allowMultipleExpanded
-        allowZeroExpanded
-        preExpanded={["0", "1"]}
-      >
-        {clientsWithOverdueTasks.length ? (
-          <TaskListGroup
-            title={"Overdue"}
-            uuid={"0"}
-            items={clientsWithOverdueTasks}
-            renderer={(person) => (
-              <TaskListItemV2 person={person} key={person.recordId} />
-            )}
-          />
-        ) : null}
-        {clientsWithUpcomingTasks.length ? (
-          <TaskListGroup
-            title={"Due this month"}
-            uuid={"1"}
-            items={clientsWithUpcomingTasks}
-            renderer={(person) => (
-              <TaskListItemV2 person={person} key={person.recordId} />
-            )}
-          />
-        ) : null}
+      <Accordion allowMultipleExpanded allowZeroExpanded preExpanded={uuids}>
+        {taskGroups.map((tasks, i) => {
+          return tasks.length ? (
+            <TaskListGroup
+              title={labels[i]}
+              key={labels[i]}
+              uuid={uuids[i]}
+              items={tasks}
+              renderer={(person: JusticeInvolvedPerson) => (
+                <TaskListItemV2 person={person} key={person.recordId} />
+              )}
+            />
+          ) : null;
+        })}
       </Accordion>
     </TasksListContainer>
   );

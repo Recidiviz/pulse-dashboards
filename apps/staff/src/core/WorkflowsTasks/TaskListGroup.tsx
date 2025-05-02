@@ -33,6 +33,25 @@ const CountPill = styled(Pill)`
   background-color: ${palette.slate10};
 `;
 
+const TaskListItemButton = styled(AccordionItemButton)`
+  &:hover,
+  :active {
+    color: ${palette.pine1};
+
+    ${CountPill} {
+      color: ${palette.pine1};
+      background-color: ${palette.slate20};
+    }
+  }
+`;
+
+const AlignedIcon = styled(Icon)<{
+  $align: boolean;
+}>`
+  ${({ $align }) =>
+    $align ? `vertical-align: middle;` : `vertical-align: baseline;`}
+`;
+
 type TaskListGroupProps<T = any> = {
   title: string;
   uuid: string;
@@ -54,18 +73,19 @@ export const TaskListGroup: React.FC<TaskListGroupProps> = ({
     >
       <Divider />
       <AccordionItemHeading>
-        <AccordionItemButton>
+        <TaskListItemButton>
           <AccordionItemState>
             {({ expanded }) => (
-              <Icon
+              <AlignedIcon
                 kind={"DownChevron"}
-                size={14}
+                size={12}
                 rotate={expanded ? 0 : 270}
+                $align={!!expanded}
               />
             )}
           </AccordionItemState>{" "}
           {title} <CountPill color={"white"}>{items.length}</CountPill>
-        </AccordionItemButton>
+        </TaskListItemButton>
       </AccordionItemHeading>
       <AccordionItemPanel>
         {items.map((item) => renderer(item))}

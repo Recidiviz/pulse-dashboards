@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, spacing, TooltipTrigger } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
@@ -78,32 +78,36 @@ const PersonId: React.FC<{
   }, [isCopied, stateIdDescriptor]);
 
   return (
-    <PersonIdWithCopyIcon
-      title={`Copy ${stateIdDescriptor} to clipboard`}
-      className="fs-exclude"
-      onClick={(e) => {
-        // if PersonId is in a clickable element, prevent other effects of the click,
-        // such as opening a modal or following a link
-        e.preventDefault();
-        e.stopPropagation();
-        copyToClipboard();
-
-        if (opportunity) {
-          analyticsStore.trackPersonIdCopiedtoClipboard({
-            justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
-            opportunityType: opportunity.type,
-            opportunityId: opportunity.sentryTrackingId,
-          });
-        } else if (pseudoId) {
-          analyticsStore.trackPersonIdCopiedtoClipboard({
-            justiceInvolvedPersonId: pseudoId,
-          });
-        }
-      }}
-      shiftIcon={shiftIcon}
+    <TooltipTrigger
+      contents={`Copy ${stateIdDescriptor} to clipboard`}
+      positionY={"top"}
     >
-      {children}
-    </PersonIdWithCopyIcon>
+      <PersonIdWithCopyIcon
+        className="fs-exclude"
+        onClick={(e) => {
+          // if PersonId is in a clickable element, prevent other effects of the click,
+          // such as opening a modal or following a link
+          e.preventDefault();
+          e.stopPropagation();
+          copyToClipboard();
+
+          if (opportunity) {
+            analyticsStore.trackPersonIdCopiedtoClipboard({
+              justiceInvolvedPersonId: opportunity.person.pseudonymizedId,
+              opportunityType: opportunity.type,
+              opportunityId: opportunity.sentryTrackingId,
+            });
+          } else if (pseudoId) {
+            analyticsStore.trackPersonIdCopiedtoClipboard({
+              justiceInvolvedPersonId: pseudoId,
+            });
+          }
+        }}
+        shiftIcon={shiftIcon}
+      >
+        {children}
+      </PersonIdWithCopyIcon>
+    </TooltipTrigger>
   );
 };
 
