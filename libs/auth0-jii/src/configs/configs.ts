@@ -77,7 +77,7 @@ export const metadataNamespace = "https://jii.recidiviz.org";
 /**
  * This should match the fields added to app_metadata in the Auth0 actions in `../auth0/actions`
  */
-export const metadataSchema = z
+export const authorizedUserProfileSchema = z
   .object({
     stateCode: z.string(),
     externalId: z.string().optional(),
@@ -107,15 +107,10 @@ export const metadataSchema = z
 /**
  * Represents fields expected to be found in the Auth0 app metadata object
  */
-export type UserAppMetadata = z.infer<typeof metadataSchema>;
-
-const tokenAuthUserSchema = metadataSchema.and(
-  z.object({ name: z.string().optional() }),
-);
-export type TokenAuthUser = z.infer<typeof tokenAuthUserSchema>;
+export type AuthorizedUserProfile = z.infer<typeof authorizedUserProfileSchema>;
 
 export const tokenAuthResponseSchema = z.object({
   firebaseToken: z.string(),
-  user: tokenAuthUserSchema,
+  user: authorizedUserProfileSchema,
 });
 export type TokenAuthResponse = z.infer<typeof tokenAuthResponseSchema>;

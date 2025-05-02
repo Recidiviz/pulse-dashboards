@@ -18,7 +18,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { matchPath } from "react-router-dom";
 
-import { tokenAuthResponseSchema, UserAppMetadata } from "~auth0-jii";
+import { AuthorizedUserProfile, tokenAuthResponseSchema } from "~auth0-jii";
 import {
   castToError,
   HydrationState,
@@ -35,7 +35,7 @@ import { AuthHandler } from "./types";
  * an instance of this class on a page that does not have the required URL.
  */
 export class EdovoAuthHandler implements AuthHandler {
-  userProfile?: UserAppMetadata;
+  userProfile?: AuthorizedUserProfile;
 
   private firebaseToken?: string;
 

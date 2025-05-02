@@ -18,7 +18,11 @@
 import { makeAutoObservable, runInAction } from "mobx";
 
 import { AuthClient } from "~auth";
-import { getAuth0Config, metadataNamespace, metadataSchema } from "~auth0-jii";
+import {
+  authorizedUserProfileSchema,
+  getAuth0Config,
+  metadataNamespace,
+} from "~auth0-jii";
 import {
   castToError,
   HydrationState,
@@ -30,7 +34,7 @@ import { API_URL_BASE } from "./constants";
 import { AuthHandler, AuthorizedUserProperties } from "./types";
 
 export class Auth0AuthHandler implements AuthHandler {
-  authClient: AuthClient<typeof metadataSchema>;
+  authClient: AuthClient<typeof authorizedUserProfileSchema>;
   firebaseToken?: string;
 
   constructor() {
@@ -41,7 +45,7 @@ export class Auth0AuthHandler implements AuthHandler {
         ...getAuth0Config(import.meta.env["VITE_AUTH_ENV"]),
         redirect_uri: `${window.location.origin}/after-login`,
       },
-      { metadataNamespace, metadataSchema },
+      { metadataNamespace, metadataSchema: authorizedUserProfileSchema },
     );
   }
 

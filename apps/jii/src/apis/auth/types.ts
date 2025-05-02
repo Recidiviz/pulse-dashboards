@@ -16,11 +16,11 @@
 // =============================================================================
 
 import { AuthClient } from "~auth";
-import { UserAppMetadata } from "~auth0-jii";
+import { AuthorizedUserProfile } from "~auth0-jii";
 import { Hydratable } from "~hydration-utils";
 
 export type AuthorizedUserProperties = {
-  userProfile: UserAppMetadata & { name?: string };
+  userProfile: AuthorizedUserProfile & { name?: string };
 };
 
 export interface AuthHandler

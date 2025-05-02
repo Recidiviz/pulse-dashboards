@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { getAuth0Config, metadataSchema } from "./configs";
+import { authorizedUserProfileSchema, getAuth0Config } from "./configs";
 
 describe("auth0 client config", () => {
   test("staging tenant", () => {
@@ -62,7 +62,7 @@ describe("auth0 client config", () => {
 describe("user metadata schema", () => {
   test("for JII users", () => {
     expect(
-      metadataSchema.parse({
+      authorizedUserProfileSchema.parse({
         stateCode: "US_ME",
         externalId: "123456",
         pseudonymizedId: "asnvawepeawhfeuawoghuil",
@@ -82,7 +82,10 @@ describe("user metadata schema", () => {
 
   test("all IDs must be present", () => {
     expect(() =>
-      metadataSchema.parse({ stateCode: "US_ME", externalId: "123456" }),
+      authorizedUserProfileSchema.parse({
+        stateCode: "US_ME",
+        externalId: "123456",
+      }),
     ).toThrowErrorMatchingInlineSnapshot(`
       [ZodError: [
         {
@@ -94,7 +97,7 @@ describe("user metadata schema", () => {
     `);
 
     expect(() =>
-      metadataSchema.parse({
+      authorizedUserProfileSchema.parse({
         stateCode: "US_ME",
         pseudonymizedId: "adfasdfasdfase",
       }),
@@ -111,7 +114,7 @@ describe("user metadata schema", () => {
 
   test("for Recidiviz users", () => {
     expect(
-      metadataSchema.parse({
+      authorizedUserProfileSchema.parse({
         stateCode: "RECIDIVIZ",
         allowedStates: ["US_ME"],
         permissions: ["enhanced", "live_data"],
@@ -132,7 +135,7 @@ describe("user metadata schema", () => {
 
   test("ignores unknown permissions", () => {
     expect(
-      metadataSchema.parse({
+      authorizedUserProfileSchema.parse({
         stateCode: "RECIDIVIZ",
         allowedStates: ["US_ME"],
         permissions: ["enhanced", "some_new_thing"],

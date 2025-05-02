@@ -19,8 +19,9 @@ import firebaseAdmin from "firebase-admin";
 import { App } from "firebase-admin/app";
 import { defineString } from "firebase-functions/params";
 import toUpper from "lodash/toUpper";
+import { z } from "zod";
 
-import { UserAppMetadata } from "~auth0-jii";
+import { AuthorizedUserProfile } from "~auth0-jii";
 
 import { secrets } from "./secrets";
 
@@ -67,7 +68,7 @@ async function getFirebaseApp(): Promise<App> {
  */
 export async function getFirebaseToken(
   uid: string,
-  { stateCode, externalId, allowedStates, permissions }: UserAppMetadata,
+  { stateCode, externalId, allowedStates, permissions }: AuthorizedUserProfile,
 ) {
   return firebaseAdmin.auth(await getFirebaseApp()).createCustomToken(uid, {
     app: "jii",
@@ -80,4 +81,30 @@ export async function getFirebaseToken(
 
 export async function getFirestore() {
   return firebaseAdmin.firestore(await getFirebaseApp());
+}
+
+export async function checkResidentsRoster(
+  stateCode: string,
+  userId: string,
+): Promise<AuthorizedUserProfile | undefined> {
+  const userResidentRecord = (
+    await (await getFirestore())
+      .doc(`residents/${stateCode.toLowerCase()}_${userId}`)
+      .get()
+  ).data();
+
+  if (!userResidentRecord) return;
+
+  // in practice this should always parse, but we can't import the full schema from ~datatypes
+  // due to Vite dependency issues. We only care about this field anyway
+  const { pseudonymizedId } = z
+    .object({ pseudonymizedId: z.string() })
+    .parse(userResidentRecord);
+
+  return {
+    stateCode: stateCode,
+    externalId: userId,
+    pseudonymizedId,
+    permissions: ["live_data"],
+  };
 }

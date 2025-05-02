@@ -22,17 +22,25 @@ import { onRequest } from "firebase-functions/v2/https";
 import { tokenAuthResponseSchema } from "~auth0-jii";
 
 import { getFirebaseToken } from "../../helpers/firebaseAdmin";
-import { errorHandler, rateLimiter } from "../../helpers/middleware";
+import {
+  errorHandler,
+  makeRateLimiter,
+  makeValidateUserPayload,
+} from "../../helpers/middleware";
 import { segment } from "../../helpers/segment";
-import { checkRecidivizEmployeeRoster, checkResidentsRoster } from "./helpers";
-import { decryptToken, validateEdovoPayload, verifyToken } from "./middleware";
+import {
+  checkRecidivizEmployeeRoster,
+  edovoIdTokenPayloadSchema,
+  lookupResident,
+} from "./helpers";
+import { decryptToken, verifyToken } from "./middleware";
 
 const app = express();
 
-app.use(rateLimiter());
+app.use(makeRateLimiter());
 app.use(decryptToken);
 app.use(verifyToken);
-app.use(validateEdovoPayload);
+app.use(makeValidateUserPayload(edovoIdTokenPayloadSchema));
 
 // there is only one route in this app, but Firebase rewrite rules may affect what it is.
 // using a wildcard route means we don't have to keep it manually in sync with the config
@@ -46,7 +54,7 @@ app.get("/*", async (request, response, next): Promise<void> => {
     let isRecidiviz = false;
     const { encryptedEdovoToken } = response.locals;
 
-    let userProfile = await checkResidentsRoster(userData);
+    let userProfile = await lookupResident(userData);
     if (!userProfile) {
       userProfile = await checkRecidivizEmployeeRoster(userData);
       isRecidiviz = !!userProfile;

@@ -15,33 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Storage } from "@google-cloud/storage";
+import { NextFunction, Request, Response } from "express";
+import jwt from "express-jwt";
 import { defineString } from "firebase-functions/params";
 
-const RECIDIVIZ_ALLOWED_STATES_PROJECT_ID = defineString(
-  "RECIDIVIZ_ALLOWED_STATES_PROJECT_ID",
-);
-const RECIDIVIZ_ALLOWED_STATES_BUCKET_NAME = defineString(
-  "RECIDIVIZ_ALLOWED_STATES_BUCKET_NAME",
-);
+const AUTH0_PUBLIC_KEY = defineString("AUTH0_PUBLIC_KEY");
 
-export async function getAllowedStates(email: string) {
-  const storage = new Storage({
-    projectId: RECIDIVIZ_ALLOWED_STATES_PROJECT_ID.value(),
+/**
+ * Express middleware that will verify a JWT signed by the Auth0 service account.
+ * Will throw if the JWT is missing or invalid.
+ */
+export async function verifyToken(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) {
+  const handler = jwt({
+    secret: AUTH0_PUBLIC_KEY.value().replace(/\\n/g, "\n"),
+    algorithms: ["RS256"],
   });
 
-  const recidivizAuthBucketName = RECIDIVIZ_ALLOWED_STATES_BUCKET_NAME.value();
-  const jsonFile = (
-    await storage
-      .bucket(recidivizAuthBucketName)
-      .file(`${email}.json`)
-      .download()
-  )[0];
-
-  const contents = JSON.parse(jsonFile.toString());
-  const allowedStates: Array<string> = (contents.allowedStates ?? []).map(
-    (sc: string) => sc.toUpperCase(),
-  );
-
-  return allowedStates;
+  handler(request, response, next);
 }

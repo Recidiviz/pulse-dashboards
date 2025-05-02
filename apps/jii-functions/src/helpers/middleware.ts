@@ -17,11 +17,12 @@
 
 import { NextFunction, Request, Response } from "express";
 import rateLimit from "express-rate-limit";
+import { z } from "zod";
 
 /**
  * Applies rate limiter middleware to the provided Express app with standard settings
  */
-export function rateLimiter() {
+export function makeRateLimiter() {
   // matches the params set for the staff server, as a reasonable baseline
   return rateLimit({
     windowMs: 1000, // 1 second = 1000ms
@@ -51,4 +52,25 @@ export function errorHandler(
   } else {
     response.status(500).json({ error: "An unexpected error occurred" });
   }
+}
+
+/**
+ * Parses user data in the request, using the provided schema, and stores it in response.locals.userData
+ */
+export function makeValidateUserPayload(schema: z.ZodTypeAny) {
+  return function validateUserPayload(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
+    try {
+      response.locals["userData"] = schema.parse(request.user);
+      next();
+    } catch (e) {
+      response
+        .status(401)
+        .json({ error: "Your credentials contain invalid identity data" });
+      next(e);
+    }
+  };
 }

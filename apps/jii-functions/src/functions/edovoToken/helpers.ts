@@ -17,10 +17,13 @@
 
 import { z } from "zod";
 
-import { TokenAuthUser } from "~auth0-jii";
+import { AuthorizedUserProfile } from "~auth0-jii";
 
-import { getFirestore } from "../../helpers/firebaseAdmin";
-import { getAllowedStates } from "../../helpers/recidivizAllowedStates";
+import {
+  checkResidentsRoster,
+  getFirestore,
+} from "../../helpers/firebaseAdmin";
+import { getRecidivizUserProfile } from "../../helpers/recidivizUsers";
 
 export const edovoIdTokenPayloadSchema = z
   .object({
@@ -39,34 +42,15 @@ export const edovoIdTokenPayloadSchema = z
   });
 type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;
 
-export async function checkResidentsRoster(
+export async function lookupResident(
   userData: EdovoIdTokenPayload,
-): Promise<TokenAuthUser | undefined> {
-  const userResidentRecord = (
-    await (await getFirestore())
-      .doc(`residents/${userData.STATE.toLowerCase()}_${userData.USER_ID}`)
-      .get()
-  ).data();
-
-  if (!userResidentRecord) return;
-
-  // in practice this should always parse, but we can't import the full schema from ~datatypes
-  // due to Vite dependency issues. We only care about this field anyway
-  const { pseudonymizedId } = z
-    .object({ pseudonymizedId: z.string() })
-    .parse(userResidentRecord);
-
-  return {
-    stateCode: userData.STATE,
-    externalId: userData.USER_ID,
-    pseudonymizedId,
-    permissions: ["live_data"],
-  };
+): Promise<AuthorizedUserProfile | undefined> {
+  return checkResidentsRoster(userData.STATE, userData.USER_ID);
 }
 
 export async function checkRecidivizEmployeeRoster(
   userData: EdovoIdTokenPayload,
-): Promise<TokenAuthUser | undefined> {
+): Promise<AuthorizedUserProfile | undefined> {
   const employeeRecord = (
     await (await getFirestore())
       .doc(`JII-edovoToRecidivizMappings/${userData.USER_ID}`)
@@ -75,14 +59,7 @@ export async function checkRecidivizEmployeeRoster(
 
   if (!employeeRecord) return;
 
-  const { email, name } = z
-    .object({ email: z.string(), name: z.string().optional() })
-    .parse(employeeRecord);
+  const { email } = z.object({ email: z.string() }).parse(employeeRecord);
 
-  return {
-    stateCode: "RECIDIVIZ",
-    name,
-    allowedStates: await getAllowedStates(email),
-    permissions: ["enhanced", "live_data"],
-  };
+  return getRecidivizUserProfile(email);
 }

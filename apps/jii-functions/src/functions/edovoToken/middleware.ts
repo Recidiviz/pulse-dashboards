@@ -23,7 +23,6 @@ import { compactDecrypt } from "jose";
 import jwks from "jwks-rsa";
 
 import { secrets } from "../../helpers/secrets";
-import { edovoIdTokenPayloadSchema } from "./helpers";
 
 /**
  * Extracts a bearer auth token from Express request headers,
@@ -99,25 +98,6 @@ export async function verifyToken(
 
     handler(request, response, next);
   } catch (e) {
-    next(e);
-  }
-}
-
-/**
- * Parses user data in the token payload and stores it in response.locals.userData
- */
-export function validateEdovoPayload(
-  request: Request,
-  response: Response,
-  next: NextFunction,
-) {
-  try {
-    response.locals["userData"] = edovoIdTokenPayloadSchema.parse(request.user);
-    next();
-  } catch (e) {
-    response
-      .status(401)
-      .json({ error: "Your credentials contain invalid identity data" });
     next(e);
   }
 }

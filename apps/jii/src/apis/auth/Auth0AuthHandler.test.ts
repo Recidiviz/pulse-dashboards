@@ -17,7 +17,7 @@
 
 import { configure } from "mobx";
 
-import { UserAppMetadata } from "~auth0-jii";
+import { AuthorizedUserProfile } from "~auth0-jii";
 
 import { Auth0AuthHandler } from "./Auth0AuthHandler";
 
@@ -105,7 +105,7 @@ describe("hydration", () => {
 test("user profile", () => {
   expect(handler.userProfile).toBeUndefined();
 
-  const mockProfile: UserAppMetadata = {
+  const mockProfile: AuthorizedUserProfile = {
     stateCode: "US_XX",
     pseudonymizedId: "abc344",
     externalId: "123adbc",

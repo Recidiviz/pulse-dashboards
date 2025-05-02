@@ -22,16 +22,20 @@ import { defineString } from "firebase-functions/params";
 import { onRequest } from "firebase-functions/v2/https";
 import jwks from "jwks-rsa";
 
-import { getAuth0Config, metadataNamespace, metadataSchema } from "~auth0-jii";
+import {
+  authorizedUserProfileSchema,
+  getAuth0Config,
+  metadataNamespace,
+} from "~auth0-jii";
 
 import { getFirebaseToken } from "../helpers/firebaseAdmin";
-import { rateLimiter } from "../helpers/middleware";
+import { makeRateLimiter } from "../helpers/middleware";
 
 const tenantKey = defineString("AUTH0_TENANT_KEY");
 
 const app = express();
 
-app.use(rateLimiter());
+app.use(makeRateLimiter());
 
 const jwtMiddleware = (
   request: Request,
@@ -72,7 +76,7 @@ app.get("/*", async (request, response): Promise<void> => {
     // @ts-expect-error sub comes from the Auth0 token
     const uid: string = user.sub;
 
-    const metadata = metadataSchema.parse(
+    const metadata = authorizedUserProfileSchema.parse(
       // @ts-expect-error metadata comes from the Auth0 token
       user[`${metadataNamespace}/app_metadata`],
     );
