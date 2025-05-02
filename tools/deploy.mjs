@@ -181,17 +181,23 @@ if (deployEnv === "production") {
   publishReleaseNotes = false;
 }
 
+const deployServicesChoices = [
+  { name: "Staff backend", checked: true },
+  { name: "Staff frontend", checked: true },
+  { name: "Sentencing server", checked: true },
+  { name: "JII texting server", checked: true },
+  { name: "Case notes server", checked: true },
+];
+
+if (deployEnv === "demo") {
+  deployServicesChoices.push({ name: "Demo fixtures", checked: true });
+}
+
 const deployServicesPrompt = await inquirer.prompt({
   type: "checkbox",
   name: "deployServices",
   message: "Which services would you like to deploy?",
-  choices: [
-    { name: "Staff backend", checked: true },
-    { name: "Staff frontend", checked: true },
-    { name: "Sentencing server", checked: true },
-    { name: "JII texting server", checked: true },
-    { name: "Case notes server", checked: true },
-  ],
+  choices: deployServicesChoices,
 });
 
 const deployBackend =
@@ -204,6 +210,8 @@ const deployJII =
   deployServicesPrompt.deployServices.includes("JII texting server");
 const deployCaseNotes =
   deployServicesPrompt.deployServices.includes("Case notes server");
+const deployDemoFixtures =
+  deployServicesPrompt.deployServices.includes("Demo fixtures");
 
 console.log("Installing yarn packages...");
 await $`yarn install`.pipe(process.stdout);
@@ -568,6 +576,27 @@ if (
         retryDeploy = retryDeployPrompt.retryDeploy;
       }
     } while (retryDeploy);
+  }
+}
+
+if (deployEnv === "demo") {
+  if (deployDemoFixtures) {
+    let retryFixtures = false;
+    do {
+      console.log("Updating demo fixtures ...");
+      successfullyDeployed.push("Demo fixtures");
+      try {
+        await $`nx load-demo-fixtures staff`.pipe(process.stdout);
+      } catch (e) {
+        const retryFixturesPrompt = await inquirer.prompt({
+          type: "confirm",
+          name: "retryFixtures",
+          message: `Demo fixtures deploy failed with error: ${e}. Retry?`,
+          default: false,
+        });
+        retryFixtures = retryFixturesPrompt.retryFixtures;
+      }
+    } while (retryFixtures);
   }
 }
 
