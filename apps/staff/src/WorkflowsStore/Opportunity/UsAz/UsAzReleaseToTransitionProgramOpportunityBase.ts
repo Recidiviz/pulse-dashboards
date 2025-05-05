@@ -49,6 +49,7 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
 
   tabTitle(): OpportunityTab {
     if (this.isSubmitted) return this.submittedTabTitle;
+    if (this.denied) return this.deniedTabTitle;
     if (this.almostEligible) return "Almost Eligible";
     switch (this.record.metadata.tabDescription) {
       case "FAST_TRACK":
@@ -89,7 +90,7 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
     if (this.isSubmitted) {
       return this.submittedUpdate
         ?.subcategory as UsAzTransitionProgramSubcategory;
-    } else if (this.almostEligible) {
+    } else if (this.almostEligible && !this.denied) {
       if (this.tprDateInLessThan180Days) {
         return "PROJECTED_TPR_IN_LESS_THAN_180_DAYS";
       } else {

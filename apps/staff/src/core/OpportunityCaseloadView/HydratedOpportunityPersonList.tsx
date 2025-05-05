@@ -105,10 +105,6 @@ const MaxWidthWrapper = styled.div`
   ${MaxWidth}
 `;
 
-const HorizontalScrollWrapper = styled.div`
-  overflow-x: scroll;
-`;
-
 const RightAlignedWrapper = styled.div`
   text-align: right;
   padding-right: ${rem(spacing.xl)};
@@ -308,20 +304,18 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
   );
 
   return (
-    <HorizontalScrollWrapper>
-      <CaseloadTable
-        expandedLastColumn
-        data={opportunities}
-        columns={displayedColumns}
-        onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
-        onRowRender={(opp) => {
-          opp.trackListViewed();
-        }}
-        shouldHighlightRow={(opp) => presenter.shouldHighlightOpportunity(opp)}
-        manualSorting={manualSorting}
-        enableMultiSort={presenter.tableMultiSortEnabled}
-      />
-    </HorizontalScrollWrapper>
+    <CaseloadTable
+      expandedLastColumn
+      data={opportunities}
+      columns={displayedColumns}
+      onRowClick={(opp) => presenter.handleOpportunityClick(opp)}
+      onRowRender={(opp) => {
+        opp.trackListViewed();
+      }}
+      shouldHighlightRow={(opp) => presenter.shouldHighlightOpportunity(opp)}
+      manualSorting={manualSorting}
+      enableMultiSort={presenter.tableMultiSortEnabled}
+    />
   );
 });
 

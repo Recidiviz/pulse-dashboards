@@ -336,6 +336,21 @@ describe("table view columns", () => {
   });
 
   test("show Snooze Ends In column when viewing denied opportunities", () => {
+    vi.spyOn(
+      mockWorkflowsStore,
+      "allOpportunitiesByType",
+      "get",
+    ).mockReturnValue({
+      [mockOpportunity.type]: [
+        {
+          ...mockOpportunity,
+          tabTitle: () => mockOpportunity.deniedTabTitle,
+          snoozeForDays: 30,
+        },
+      ],
+    });
+    presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
+    expect(presenter.enabledColumnIds["SNOOZE_ENDS_IN"]).toBeFalse();
     presenter.activeTab = mockOpportunity.deniedTabTitle as OpportunityTab;
     expect(presenter.enabledColumnIds["SNOOZE_ENDS_IN"]).toBeTrue();
   });

@@ -175,7 +175,9 @@ export class OpportunityPersonListPresenter
         (opp: Opportunity) =>
           !opp.denied && !opp.isSubmitted && opp.almostEligibleStatusMessage,
       ),
-      SNOOZE_ENDS_IN: this.isViewingDeniedTab,
+      SNOOZE_ENDS_IN:
+        this.isViewingDeniedTab &&
+        some(opportunities, (opp: Opportunity) => !!this.snoozeEndsInDays(opp)),
       SUBMITTED_FOR: this.isViewingSubmittedTab,
       CTA_BUTTON: true,
     };

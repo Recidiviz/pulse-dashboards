@@ -77,7 +77,7 @@ const OpportunityHeaderWrapper = styled.div<{
   $isMobile: boolean;
 }>`
   padding-right: ${({ $isMobile }) => ($isMobile ? 0 : rem(spacing.xxl))};
-  width: ${({ $isMobile }) => (!$isMobile ? rem(550) : "100%")};
+  width: ${({ $isMobile }) => (!$isMobile ? rem(750) : "100%")};
 
   ${({ $isMobile }) => $isMobile && "order: 2;"}
 `;

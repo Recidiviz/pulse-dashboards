@@ -457,9 +457,14 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [],
+      denialReasons: [
+        {
+          key: "Other",
+          text: "Other, please enter a reason",
+        },
+      ],
       denialText: null,
-      deniedTabTitle: null,
+      deniedTabTitle: "Incorrect",
       displayName: "Standard Transition Program Release",
       dynamicEligibilityText:
         "inmate[|s] may be eligible for Standard Transition Program Release",
@@ -569,6 +574,14 @@ export const mockApiOpportunityConfigurationResponse = {
           tab: "Almost Eligible",
           texts: ["HOME_PLAN_IN_PROGRESS", "AWAITING_HOME_PLAN_APPROVAL"],
         },
+        {
+          tab: "Incorrect",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
       ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
@@ -622,7 +635,13 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Fast Trackers", "Eligible Now", "Almost Eligible", "Pending"],
+          tabs: [
+            "Fast Trackers",
+            "Eligible Now",
+            "Almost Eligible",
+            "Pending",
+            "Incorrect",
+          ],
         },
       ],
       tabPrefaceCopy: [
@@ -640,6 +659,10 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Pending",
+          text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
+        },
+        {
+          tab: "Incorrect",
           text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
         },
       ],
