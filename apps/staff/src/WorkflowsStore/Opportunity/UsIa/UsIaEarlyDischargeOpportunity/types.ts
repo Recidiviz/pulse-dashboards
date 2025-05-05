@@ -15,6 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./types";
-export * from "./UsIaEarlyDischargeOpportunity";
-export * from "./UsIaEarlyDischargeOpportunitySchema";
+export type UsIaClientStatus =
+  | "ELIGIBLE_NOW"
+  | "ACTION_PLAN_REVIEW"
+  | "ACTION_PLAN_REVIEW_REVISION"
+  | "DISCHARGE_FORM_REVIEW"
+  | "READY_FOR_DISCHARGE"
+  | "DENIED"
+  | "SUBMITTED";

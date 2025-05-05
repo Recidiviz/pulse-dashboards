@@ -26,6 +26,8 @@ import {
 } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
+import { OpportunityTab } from "../../types";
+import { UsIaClientStatus } from "./types";
 import {
   UsIaEarlyDischargeReferralRecord,
   usIaEarlyDischargeSchema,
@@ -46,6 +48,90 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
 
   get actionHistory(): OfficerAction[] | undefined {
     return this.updates?.actionHistory;
+  }
+  
+  get latestAction() {
+    return this.actionHistory?.at(-1);
+  }
+
+  get clientStatus(): UsIaClientStatus {
+    const officerAction = this.latestAction;
+    const supervisorResponse = officerAction?.supervisorResponse;
+
+    if (this.denied) {
+      return "DENIED";
+    }
+
+    if (this.isSubmitted) {
+      return "SUBMITTED";
+    }
+
+    if (officerAction) {
+      if (!supervisorResponse) {
+        // Officer submits their approval/denial of a client for supervisor review
+        if (officerAction.type === "APPROVAL") {
+          return "DISCHARGE_FORM_REVIEW";
+        }
+        if (officerAction.type === "DENIAL") {
+          return "ACTION_PLAN_REVIEW";
+        }
+      } else {
+        // Supervisor responds to officer's approval/denial by either approving, denying (with an action plan)
+        // or requesting revisions to an action plan
+        if (officerAction.type === "APPROVAL") {
+          if (supervisorResponse.type === "APPROVAL") {
+            return "READY_FOR_DISCHARGE";
+          }
+          if (supervisorResponse.type === "DENIAL") {
+            return "ACTION_PLAN_REVIEW";
+          }
+        }
+        // Supervisor requests revisions to an officer's denial and action plan
+        if (
+          officerAction.type === "DENIAL" &&
+          supervisorResponse.type === "DENIAL"
+        ) {
+          return "ACTION_PLAN_REVIEW_REVISION";
+        }
+      }
+    }
+
+    return "ELIGIBLE_NOW";
+  }
+
+  get eligibleStatusMessage(): string | undefined {
+    if (this.clientStatus === "READY_FOR_DISCHARGE") {
+      return "Ready for Discharge";
+    }
+    if (
+      this.clientStatus === "ACTION_PLAN_REVIEW" ||
+      this.clientStatus === "ACTION_PLAN_REVIEW_REVISION"
+    ) {
+      return "Action Plan Review";
+    }
+    if (this.clientStatus === "DISCHARGE_FORM_REVIEW") {
+      return "Discharge Form Review";
+    }
+
+    return "Eligible Now";
+  }
+
+  tabTitle(): OpportunityTab {
+    switch (this.clientStatus) {
+      case "DENIED":
+        return this.deniedTabTitle;
+      case "SUBMITTED":
+        return this.submittedTabTitle;
+      case "ACTION_PLAN_REVIEW_REVISION":
+        return "Revisions Requests";
+      case "ACTION_PLAN_REVIEW":
+      case "DISCHARGE_FORM_REVIEW":
+        return "Supervisor Review";
+      case "READY_FOR_DISCHARGE":
+        return "Ready for Discharge";
+      default:
+        return "Eligible Now";
+    }
   }
 
   async setOfficerAction(

@@ -199,7 +199,13 @@ export type OpportunityTab =
   | "Fast Trackers" // For US_AZ TPR/DTP opportunities
   | "Pending"
   | "Report Due" // "Report Due" and "Early Requests" for US_UT Early Termination
-  | "Early Requests";
+  | "Early Requests"
+  // For US_IA Early Discharge opportunity
+  | "Ready for Discharge"
+  | "Revisions Requests"
+  | "Supervisor Review"
+  | "Forms Submitted"
+  | "Snoozed";
 
 export type OpportunityTabGroup =
   | "ELIGIBILITY STATUS"
