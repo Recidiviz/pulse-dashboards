@@ -34,6 +34,12 @@ export const US_UT_CLIENTS: ClientFixture[] = [
     expirationDate: "2023-02-11",
     phoneNumber: "385-555-5555",
     allEligibleOpportunities: ["usUtEarlyTermination"],
+    milestones: [
+      {
+        text: "Employed, studying, or with another source of income for 6+ months.",
+        type: "US_UT_EMPLOYED_6_MONTHS",
+      },
+    ],
   },
   {
     personName: {
@@ -51,6 +57,12 @@ export const US_UT_CLIENTS: ClientFixture[] = [
     expirationDate: "2022-12-31",
     phoneNumber: "801-555-5555",
     allEligibleOpportunities: ["usUtEarlyTermination"],
+    milestones: [
+      {
+        text: "Employed, studying, or with another source of income for 6+ months.",
+        type: "US_UT_EMPLOYED_6_MONTHS",
+      },
+    ],
   },
   {
     personName: {
@@ -68,5 +80,11 @@ export const US_UT_CLIENTS: ClientFixture[] = [
     expirationDate: "2023-01-20",
     phoneNumber: "435-555-5555",
     allEligibleOpportunities: ["usUtEarlyTermination"],
+    milestones: [
+      {
+        text: "Employed, studying, or with another source of income for 6+ months.",
+        type: "US_UT_EMPLOYED_6_MONTHS",
+      },
+    ],
   },
 ];

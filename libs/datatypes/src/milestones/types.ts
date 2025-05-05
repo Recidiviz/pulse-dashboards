@@ -20,6 +20,7 @@ export const profileMilestoneTypes = [
   "MONTHS_WITHOUT_VIOLATION",
   "MONTHS_ON_SUPERVISION",
   "MONTHS_WITH_CURRENT_EMPLOYER",
+  "US_UT_EMPLOYED_6_MONTHS",
 ] as const;
 
 export const congratulationsMilestoneTypes = [

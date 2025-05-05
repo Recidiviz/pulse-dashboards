@@ -18,31 +18,6 @@
 import { ExternalSystemRequestStatus, UpdateLog } from "./metadata";
 import { Denial } from "./opportunity";
 
-export const profileMilestoneTypes = [
-  "BIRTHDAY_THIS_MONTH",
-  "MONTHS_WITHOUT_VIOLATION",
-  "MONTHS_ON_SUPERVISION",
-  "MONTHS_WITH_CURRENT_EMPLOYER",
-] as const;
-export const congratulationsMilestoneTypes = [
-  "HOUSING_TYPE_IS_NOT_TRANSIENT",
-  "SUSTAINABLE_HOUSING_6_MONTHS",
-  "SUSTAINABLE_HOUSING_12_MONTHS",
-  "NO_VIOLATION_WITHIN_6_MONTHS",
-  "NO_VIOLATION_WITHIN_12_MONTHS",
-  "GAINED_EMPLOYMENT",
-  "EMPLOYED_6_MONTHS",
-  "EMPLOYED_12_MONTHS",
-  "PARTICIPATED_IN_PROGRAMMING_FOR_6_TO_8_MONTHS",
-  "PARTICIPATED_IN_PROGRAMMING_FOR_12_TO_14_MONTHS",
-] as const;
-export type MilestoneType =
-  | (typeof profileMilestoneTypes)[number]
-  | (typeof congratulationsMilestoneTypes)[number];
-export type Milestone = {
-  type: MilestoneType;
-  text: string;
-};
 export const TextMessageStatuses: Record<TextMessageStatus, TextMessageStatus> =
   {
     CONGRATULATED_ANOTHER_WAY: "CONGRATULATED_ANOTHER_WAY",
