@@ -62,3 +62,11 @@ spec:
         - "**/README.md"
       targets:
         - components/terraform/vendor/{{.Component}}
+    - component: google-workflows-workflow
+      source: "github.com/GoogleCloudPlatform/terraform-google-cloud-workflows.git?ref={{.Version}}"
+      version: main
+      included_paths:
+        - "*.tf"
+        - README.md
+      targets:
+        - components/terraform/vendor/{{.Component}}

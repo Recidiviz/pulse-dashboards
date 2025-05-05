@@ -69,6 +69,8 @@ variable "workflow_trigger" {
   })
 
   description = "Trigger for the Workflow . Cloud Scheduler OR Event Arc"
+
+  # RECIDIVIZ MODIFICATION: Deleted validation block
   default = {}
 }
 
@@ -84,6 +86,7 @@ variable "service_account_create" {
   default     = false
 }
 
+# Added as RECIDIVIZ MODIFICATION
 variable "env_vars" {
   type = map(string)
   description = "Environment variables (cleartext)"

@@ -15,10 +15,9 @@
  */
 
 locals {
-  enable_eventarc  = var.workflow_trigger.event_arc == null ? 0 : 1
-  enable_scheduler = var.workflow_trigger.cloud_scheduler == null ? 0 : 1
-  service_account_email = (var.service_account_email
-  )
+  enable_eventarc       = var.workflow_trigger.event_arc == null ? 0 : 1
+  enable_scheduler      = var.workflow_trigger.cloud_scheduler == null ? 0 : 1
+  service_account_email = var.service_account_email # RECIDIVIZ MODIFICATION
   cloud_scheduler_args = (
     try(var.workflow_trigger.cloud_scheduler.argument, null) == null ?
     jsonencode({}) :
@@ -65,7 +64,7 @@ resource "google_cloud_scheduler_job" "workflow" {
   count            = local.enable_scheduler
   project          = var.project_id
   name             = var.workflow_trigger.cloud_scheduler.name
-  description      = "Cloud Scheduler for Workflow Job"
+  description      = "Cloud Scheduler for Workflow Job" # RECIDIVIZ MODIFICATION
   schedule         = var.workflow_trigger.cloud_scheduler.cron
   time_zone        = var.workflow_trigger.cloud_scheduler.time_zone
   attempt_deadline = var.workflow_trigger.cloud_scheduler.deadline
@@ -86,16 +85,20 @@ resource "google_cloud_scheduler_job" "workflow" {
       scope                 = "https://www.googleapis.com/auth/cloud-platform"
     }
   }
+
 }
 
+# RECIDIVIZ MODIFICATION: Deleted random_string and service_account resource
+
 resource "google_workflows_workflow" "workflow" {
-  name                    = var.workflow_name
-  region                  = var.region
-  description             = var.workflow_description
-  service_account         = local.service_account_email
-  project                 = var.project_id
-  labels                  = var.workflow_labels
-  source_contents         = var.workflow_source
+  name            = var.workflow_name
+  region          = var.region
+  description     = var.workflow_description
+  service_account = local.service_account_email
+  project         = var.project_id
+  labels          = var.workflow_labels
+  source_contents = var.workflow_source
+  # RECIDIVIZ MODIFICATIONS
   user_env_vars           = var.env_vars
   call_log_level          = "LOG_ALL_CALLS"
   execution_history_level = "EXECUTION_HISTORY_DETAILED"
