@@ -43,5 +43,6 @@ export const usIaEarlyDischargeReferralsFixture =
       isEligible: true,
       isAlmostEligible: false,
       formInformation: {},
+      eligibleDate: "2024-01-01",
     },
   ]);

@@ -183,6 +183,18 @@ export class OpportunityPersonListPresenter
     };
   }
 
+  /**
+   * Returns a custom initial state for the opportunity table view based on the opportunity type
+   */
+  get initialTableState() {
+    if (this.opportunityType === "usIaEarlyDischarge") {
+      return {
+        sorting: [{ id: "SUPERVISION_EXPIRATION_DATE", desc: false }],
+      };
+    }
+    return undefined;
+  }
+
   submittedForDays(opp: Opportunity): number | undefined {
     if (!opp.submittedUpdate) return;
     return differenceInDays(opp.submittedUpdate.date.toDate(), startOfToday());

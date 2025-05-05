@@ -20,43 +20,47 @@ import { z } from "zod";
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 // TODO(#8266) Flesh out zod schema based on actual structure
-export const usIaEarlyDischargeSchema = opportunitySchemaBase.extend({
-  eligibleCriteria: z
-    .object({
-      noSupervisionViolationWithin6Months: z.boolean().nullable(),
-      supervisionCaseTypeIsNotSexOffense: z.boolean().nullable(),
-      usIaNoOpenSupervisionModifiers: z.boolean().nullable(),
-      usIaNotServingIneligibleOffenseForEarlyDischarge: z.boolean().nullable(),
-      usIaSupervisionFeesPaid: z
-        .object({
-          supervisionFeeBalance: z.number().nullable(),
-        })
-        .nullable(),
-      usIaSupervisionLevelIs0NotAvailable12Or3: z
-        .object({
-          supervisionLevelRawText: z.string().nullable(),
-        })
-        .nullable(),
-      usIa90DaysPassedSinceCaseAssignment: z
-        .object({
-          caseAssignmentDate: dateStringSchema,
-        })
-        .nullish(),
-      usIaNotWithin30DaysOfReleaseDate: z
-        .object({
-          releaseDate: dateStringSchema,
-        })
-        .nullish(),
-      usIaNotExcludedFromEarlyDischargePerBoardOrParoleOrder: z
-        .object({
-          boardOrParoleOrder: z.string().nullable(),
-        })
-        .nullish(),
-    })
-    .passthrough(),
-  ineligibleCriteria: z.object({}).passthrough(),
-  formInformation: z.object({}).passthrough(),
-});
+export const usIaEarlyDischargeSchema = opportunitySchemaBase
+  .extend({
+    eligibleCriteria: z
+      .object({
+        noSupervisionViolationWithin6Months: z.boolean().nullable(),
+        supervisionCaseTypeIsNotSexOffense: z.boolean().nullable(),
+        usIaNoOpenSupervisionModifiers: z.boolean().nullable(),
+        usIaNotServingIneligibleOffenseForEarlyDischarge: z
+          .boolean()
+          .nullable(),
+        usIaSupervisionFeesPaid: z
+          .object({
+            supervisionFeeBalance: z.number().nullable(),
+          })
+          .nullable(),
+        usIaSupervisionLevelIs0NotAvailable12Or3: z
+          .object({
+            supervisionLevelRawText: z.string().nullable(),
+          })
+          .nullable(),
+        usIa90DaysPassedSinceCaseAssignment: z
+          .object({
+            caseAssignmentDate: dateStringSchema,
+          })
+          .nullish(),
+        usIaNotWithin30DaysOfReleaseDate: z
+          .object({
+            releaseDate: dateStringSchema,
+          })
+          .nullish(),
+        usIaNotExcludedFromEarlyDischargePerBoardOrParoleOrder: z
+          .object({
+            boardOrParoleOrder: z.string().nullable(),
+          })
+          .nullish(),
+      })
+      .passthrough(),
+    ineligibleCriteria: z.object({}).passthrough(),
+    formInformation: z.object({}).passthrough(),
+  })
+  .passthrough();
 
 export type UsIaEarlyDischargeReferralRecordRaw = z.input<
   typeof usIaEarlyDischargeSchema

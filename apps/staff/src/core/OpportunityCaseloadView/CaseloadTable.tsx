@@ -23,6 +23,7 @@ import {
   getSortedRowModel,
   SortDirection,
   SortingState,
+  TableState,
   useReactTable,
 } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
@@ -185,6 +186,7 @@ type CaseloadTableProps<TData> = {
   onRowRender?: (row: TData) => void;
   manualSorting?: CaseloadTableManualSorting;
   enableMultiSort?: boolean;
+  initialState?: Partial<TableState>;
 };
 
 export const CaseloadTable = observer(function CaseloadTable<TData>({
@@ -196,6 +198,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   onRowRender = () => undefined,
   manualSorting = undefined,
   enableMultiSort = false,
+  initialState = undefined,
 }: CaseloadTableProps<TData>) {
   const { isMobile } = useIsMobile(true);
   const table = useReactTable({
@@ -217,6 +220,7 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
           maxMultiSortColCount: 3,
         }
       : {}),
+    initialState,
   });
 
   return (

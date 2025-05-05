@@ -23,6 +23,7 @@ const US_IA_CONFIG: TenantConfig<"US_IA"> = {
   stateCode: "IA",
   domain: "doc.iowa.gov",
   availableStateCodes: [dashboard.US_IA],
+  supervisionEndCopyOverride: "Termination Date",
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsSystemConfigs: {
