@@ -59,10 +59,9 @@ exports.onExecutePostLogin = async (event, api) => {
       .setIssuedAt()
       .setExpirationTime("1m")
       .sign(privateKey);
-    const response = await fetch(
-      "https://authorizeduserprofile-6pktp5icna-uc.a.run.app",
-      { headers: { Authorization: `Bearer ${jwt}` } },
-    );
+    const response = await fetch(event.secrets.USER_PROFILE_API_URL, {
+      headers: { Authorization: `Bearer ${jwt}` },
+    });
     if (response.ok) {
       for (const [k, v] of Object.entries(
         (await response.json()).userProfile,
