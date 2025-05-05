@@ -3,7 +3,7 @@
 exports[`copy for person where district=DISTRICT 5 and group=ELIGIBLE_MISSING_FINES_AND_FEES 1`] = `
 "Hi Jane, IDOC records show you meet most requirements but have a remaining step to be considered for the Limited Supervision Unit (LSU). If you make fine/fee payments for 3 months in a row (even small payments count), you may qualify.
 
-LSU is a lower level of supervision with monthly online check-ins for those in good standing (for example, no active no-contact orders, and no new misdemeanors). It reduces your monthly supervision fee from $60 to $30. LSU is optional, and this message does not mean you have already been transferred.
+LSU is a lower level of supervision with monthly online check-ins for those in good standing (for example, no active no-contact orders, and no new misdemeanors). It reduces your monthly supervision fee from $60 to $40. LSU is optional, and this message does not mean you have already been transferred.
 
 You can reach out to John Doe or a specialist at D5general@idoc.idaho.gov or 208-644-7268 to make payments or with questions about LSU. They must verify that you are in compliance with your conditions of supervision. If you are, they can help you apply.
 
@@ -15,7 +15,7 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where district=District 1 and group=ELIGIBLE_MISSING_FINES_AND_FEES 1`] = `
 "Hi Jane, IDOC records show you meet most requirements but have a remaining step to be considered for the Limited Supervision Unit (LSU). If you make fine/fee payments for 3 months in a row (even small payments count), you may qualify.
 
-LSU is a lower level of supervision with monthly online check-ins for those in good standing (for example, no active no-contact orders, and no new misdemeanors). It reduces your monthly supervision fee from $60 to $30. LSU is optional, and this message does not mean you have already been transferred.
+LSU is a lower level of supervision with monthly online check-ins for those in good standing (for example, no active no-contact orders, and no new misdemeanors). It reduces your monthly supervision fee from $60 to $40. LSU is optional, and this message does not mean you have already been transferred.
 
 You can reach out to John Doe or email D1Connect@idoc.idaho.gov to make payments or with questions about LSU. They must verify that you are in compliance with your conditions of supervision. If you are, they can help you apply.
 
@@ -27,7 +27,7 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where district=District 2 and group=MISSING_INCOME_VERIFICATION 1`] = `
 "Hi Jane, IDOC records show you may soon be eligible to apply for the Limited Supervision Unit (LSU), a lower level of supervision for those meeting all their required conditions. This message does not mean you are already eligible.
 
-LSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($30 vs. $60/month).
+LSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($40 vs. $60/month).
 
 To qualify, you’ll need to provide your PO with documents like pay-stubs proving you have full-time employment, are a student, or other income sources like a pension.
 
@@ -43,7 +43,7 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where district=District 7 and group=MISSING_INCOME_VERIFICATION 1`] = `
 "Hi Jane, IDOC records show you may soon be eligible to apply for the Limited Supervision Unit (LSU), a lower level of supervision for those meeting all their required conditions. This message does not mean you are already eligible.
 
-LSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($30 vs. $60/month).
+LSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($40 vs. $60/month).
 
 To qualify, you’ll need to provide your PO with documents like pay-stubs proving you have full-time employment, are a student, or other income sources like a pension.
 
@@ -59,7 +59,7 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where district=district 3 and group=MISSING_DA 1`] = `
 "Hi Jane, IDOC records show you may soon be eligible to apply for the Limited Supervision Unit (LSU), a lower level of supervision for those meeting all their required conditions. This message does not mean you are already eligible.
 
-LSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($30 instead of $60/month).
+LSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($40 instead of $60/month).
 
 To qualify, you’ll need to provide your PO with a negative urine analysis test.
 
@@ -75,7 +75,7 @@ Reply STOP to stop receiving these messages at any time. We’re unable to respo
 exports[`copy for person where district=district 4 and group=TWO_MISSING_CRITERIA 1`] = `
 "Hi Jane, IDOC records show you may soon be eligible to apply for the Limited Supervision Unit (LSU), a lower level of supervision for those meeting all their required conditions.
 
-LSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($30 instead of $60/month).
+LSU is optional but offers benefits like monthly online check-ins and reduced supervision fees ($40 instead of $60/month).
 
 To qualify, you’ll need to provide your PO with:
 1. Documents like pay-stubs proving you have full-time employment, are a student, or other income sources like a pension, and
