@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { DocumentData } from "@google-cloud/firestore";
+import { Timestamp } from "firebase/firestore";
 
 import {
   OfficerAction,
@@ -47,24 +48,65 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     return this.updates?.actionHistory;
   }
 
-  // TODO(#8239): add a new officer action to the action history array
-  // and call the updateOpportunityActionHistory firestore fn
   async setOfficerAction(
     officerActionParams: OfficerApprovalAction | OfficerDenialAction,
   ): Promise<void> {
-    return;
+    const officerAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: this.currentUserEmail,
+      ...officerActionParams,
+    };
+    const updatedActionHistory = (this.actionHistory ?? []).concat(
+      officerAction,
+    );
+
+    // TODO(#8246): Start calling segment event fn here once we have the
+    // opportunity tab/status functions
+
+    await this.rootStore.firestoreStore.updateOpportunityActionHistory(
+      this,
+      updatedActionHistory,
+    );
   }
 
-  // TODO(#8239): modify the most recent officer action to have a supervisor response
-  // and call the updateOpportunityActionHistory
   async setSupervisorResponse(
     supervisorResponseParams: Omit<SupervisorAction, "date" | "by">,
   ): Promise<void> {
-    return;
+    const supervisorResponse = {
+      date: Timestamp.fromDate(new Date()),
+      by: this.currentUserEmail,
+      ...supervisorResponseParams,
+    };
+
+    const mostRecentOfficerAction = this.actionHistory?.at(-1);
+
+    if (!this.actionHistory || !mostRecentOfficerAction) {
+      throw new Error(
+        `Supervisor cannot respond when there is no existing Action History`,
+      );
+    }
+
+    const updatedOfficerAction = {
+      ...mostRecentOfficerAction,
+      supervisorResponse,
+    };
+
+    const updatedActionHistory = this.actionHistory
+      .slice(0, -1)
+      .concat(updatedOfficerAction);
+
+    // TODO(#8246): Start calling segment event fn here once we have the
+    // opportunity tab/status functions
+
+    await this.rootStore.firestoreStore.updateOpportunityActionHistory(
+      this,
+      updatedActionHistory,
+    );
   }
 
-  // TODO(#8239): call the relevant deletion firestore fn
   async deleteActionHistory(): Promise<void> {
-    return;
+    // TODO(#8246): Call relevant segment event for status change
+
+    await this.rootStore.firestoreStore.deleteOpportunityActionHistory(this);
   }
 }
