@@ -33,6 +33,7 @@ import styled, { createGlobalStyle } from "styled-components/macro";
 
 import { initializeSentry } from "../../apis/Sentry/initializeSentry";
 import * as routes from "../../routes/routes";
+import { EligibilityRouteContext } from "../EligibilityRouteContext/EligibilityRouteContext";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { GenericLayoutRoute } from "../GenericLayoutRoute/GenericLayoutRoute";
 import { NotFound } from "../NotFound/NotFound";
@@ -94,7 +95,10 @@ export function App() {
                       element={<SingleResidentHydrator />}
                     >
                       <Route index element={<PageSingleResidentHome />} />
-                      <Route path={routes.State.Resident.Eligibility.path}>
+                      <Route
+                        path={routes.State.Resident.Eligibility.path}
+                        element={<EligibilityRouteContext />}
+                      >
                         <Route index element={<PageEligibilityHome />} />
                         <Route
                           path={

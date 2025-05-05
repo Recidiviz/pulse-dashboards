@@ -222,7 +222,8 @@ describe("populate resident eligibility report", () => {
   });
 
   test("fails if config is missing", () => {
-    store.config.incarcerationOpportunities = {};
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    store.config.eligibility!.incarcerationOpportunities = {};
 
     expect(() =>
       store.populateEligibilityReportFromData(oppId, res, opp),

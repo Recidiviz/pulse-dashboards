@@ -21,18 +21,16 @@ import { MemoryRouter } from "react-router-dom";
 
 import { usMeResidents } from "~datatypes";
 
-import { residentsConfigByState } from "../../configs/residentsConfig";
 import {
   IncarcerationOpportunityId,
   OpportunityConfig,
 } from "../../configs/types";
+import { usMeEligibilityConfig } from "../../configs/US_ME/eligibility/config";
 import { State } from "../../routes/routes";
 import { TableOfContents } from "./TableOfContents";
 
-const stateConfig = residentsConfigByState.US_ME;
-
 const opportunityId: IncarcerationOpportunityId = "usMeSCCP";
-const oppConfig = stateConfig.incarcerationOpportunities[
+const oppConfig = usMeEligibilityConfig.incarcerationOpportunities[
   opportunityId
 ] as OpportunityConfig;
 

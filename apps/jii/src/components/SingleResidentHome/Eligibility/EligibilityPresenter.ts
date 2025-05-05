@@ -18,8 +18,8 @@
 import { ascending } from "d3-array";
 
 import {
+  EligibilityModuleConfig,
   IncarcerationOpportunityId,
-  ResidentsConfig,
 } from "../../../configs/types";
 import { eligibilityStatusEnum } from "../../../models/EligibilityReport/types";
 import { OpportunityData } from "../../SingleResidentHydrator/context";
@@ -34,7 +34,7 @@ function getStatusSortOrder(d: OpportunityData) {
 export class EligibilityPresenter {
   constructor(
     private opportunityData: Array<OpportunityData>,
-    private residentsConfig: ResidentsConfig,
+    private eligibilityConfig: EligibilityModuleConfig,
   ) {}
 
   get opportunities() {
@@ -50,7 +50,7 @@ export class EligibilityPresenter {
   get comparison() {
     // for now we are not worried about supporting multiple comparisons,
     // because there is no use case for it
-    const comparisonConfig = this.residentsConfig.comparisons?.[0];
+    const comparisonConfig = this.eligibilityConfig.comparisons?.[0];
     if (
       comparisonConfig &&
       this.isOpportunityEnabled(comparisonConfig.opportunities[0]) &&

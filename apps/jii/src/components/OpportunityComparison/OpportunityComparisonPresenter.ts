@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsConfig } from "../../configs/types";
+import { EligibilityModuleConfig } from "../../configs/types";
 import { opportunitySlugToIdOrThrow } from "../../configs/US_ME/residents/utils";
 import { IdTuple } from "./types";
 import { findMatchingComparisonConfig } from "./utils";
@@ -23,20 +23,20 @@ import { findMatchingComparisonConfig } from "./utils";
 export class OpportunityComparisonPresenter {
   constructor(
     public opportunitySlugs: [string, string],
-    private residentsConfig: ResidentsConfig,
+    private eligibilityConfig: EligibilityModuleConfig,
   ) {}
 
   private get opportunityIds() {
     return <IdTuple>(
       this.opportunitySlugs.map((s) =>
-        opportunitySlugToIdOrThrow(s, this.residentsConfig),
+        opportunitySlugToIdOrThrow(s, this.eligibilityConfig),
       )
     );
   }
 
   private get comparisonConfig() {
     const match = findMatchingComparisonConfig(
-      this.residentsConfig,
+      this.eligibilityConfig,
       this.opportunityIds,
     );
 
@@ -53,7 +53,7 @@ export class OpportunityComparisonPresenter {
     // important that these follow the same order as they are used in the config,
     // because the table contents are ordered
     return this.comparisonConfig.opportunities.map((id) => {
-      const config = this.residentsConfig.incarcerationOpportunities[id];
+      const config = this.eligibilityConfig.incarcerationOpportunities[id];
       // if we got to this point the config should never be undefined,
       // since it was checked in this.opportunityIds
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

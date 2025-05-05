@@ -44,9 +44,16 @@ const ManagedComponent: FC<{
 
 function usePresenter(props: ComparisonTeaserInCopyProps) {
   const {
-    residentsStore: { config },
+    residentsStore: {
+      config: { eligibility },
+    },
   } = useResidentsContext();
-  return new ComparisonTeaserInCopyPresenter(props, config);
+
+  // mainly for type safety, we don't expect to be rendering this
+  // in situations where the eligibility module is not enabled
+  if (!eligibility) return null;
+
+  return new ComparisonTeaserInCopyPresenter(props, eligibility);
 }
 
 export const ComparisonTeaserInCopy = withPresenterManager({

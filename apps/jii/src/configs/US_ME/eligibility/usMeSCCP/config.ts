@@ -15,8 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityConfig } from "../../types";
-import { commonTrackedCriteria, defaultStatusLabels } from "../commonConfigs";
+import { OpportunityConfig } from "../../../types";
+import {
+  commonTrackedCriteria,
+  defaultStatusLabels,
+} from "../../commonConfigs";
 import aboutPage from "./aboutPage.md?raw";
 import aboutSummary from "./aboutSummary.md?raw";
 import nextStepsBody from "./nextStepsBody.md?raw";

@@ -18,13 +18,14 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { ProgressModuleConfig } from "../../configs/types";
 import { State } from "../../routes/routes";
 import { formatFullDate } from "../../utils/date";
 import { GoButton } from "../ButtonLink/GoButton";
-import { useResidentsContext } from "../ResidentsHydrator/context";
 import { useSingleResidentContext } from "../SingleResidentHydrator/context";
 
 const ItemsWrapper = styled.dl`
@@ -45,31 +46,30 @@ const ItemValue = styled.dd`
   margin: 0;
 `;
 
-export const Progress = observer(function Progress() {
-  const { resident } = useSingleResidentContext();
-  const {
-    residentsStore: {
-      config: { progressPage },
-    },
-  } = useResidentsContext();
-  const urlParams = useTypedParams(State.Resident);
+export const Progress: FC<{ config: ProgressModuleConfig }> = observer(
+  function Progress({ config }) {
+    const { resident } = useSingleResidentContext();
+    const urlParams = useTypedParams(State.Resident);
 
-  return (
-    <div>
-      <ItemsWrapper>
-        <ItemHeading>Current release date</ItemHeading>
-        <ItemValue>
-          {resident.releaseDate ? formatFullDate(resident.releaseDate) : "N/A"}
-        </ItemValue>
-      </ItemsWrapper>
-      <GoButton
-        to={State.Resident.Progress.InfoPage.buildPath({
-          ...urlParams,
-          pageSlug: progressPage.urlSlug,
-        })}
-      >
-        {progressPage.linkText}
-      </GoButton>
-    </div>
-  );
-});
+    return (
+      <div>
+        <ItemsWrapper>
+          <ItemHeading>Current release date</ItemHeading>
+          <ItemValue>
+            {resident.releaseDate
+              ? formatFullDate(resident.releaseDate)
+              : "N/A"}
+          </ItemValue>
+        </ItemsWrapper>
+        <GoButton
+          to={State.Resident.Progress.InfoPage.buildPath({
+            ...urlParams,
+            pageSlug: config.progressPage.urlSlug,
+          })}
+        >
+          {config.progressPage.linkText}
+        </GoButton>
+      </div>
+    );
+  },
+);

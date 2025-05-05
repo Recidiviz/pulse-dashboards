@@ -136,8 +136,9 @@ export class ApiClient implements DataAPI {
     await when(() => this.isAuthenticated);
     try {
       const collectionName =
-        this.externals.config?.incarcerationOpportunities[opportunityId]
-          ?.firestoreCollection;
+        this.externals.config?.eligibility?.incarcerationOpportunities[
+          opportunityId
+        ]?.firestoreCollection;
 
       if (!collectionName) {
         throw new Error(

@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityConfig } from "../../types";
+import { OpportunityConfig } from "../../../types";
 import {
   commonTrackedCriteria,
   defaultStatusLabels,
   ineligibleReasonEligibleDate,
-} from "../commonConfigs";
+} from "../../commonConfigs";
 import aboutPage from "./aboutPage.md?raw";
 import aboutSummary from "./aboutSummary.md?raw";
 import applicationPage from "./applicationPage.md?raw";

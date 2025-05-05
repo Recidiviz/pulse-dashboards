@@ -15,17 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { IncarcerationOpportunityId, ResidentsConfig } from "../../types";
+import {
+  EligibilityModuleConfig,
+  IncarcerationOpportunityId,
+} from "../../types";
 
 function opportunityIdsByUrlSlug(
-  residentsConfig: ResidentsConfig,
+  eligibilityConfig: EligibilityModuleConfig,
 ): Map<string, IncarcerationOpportunityId> {
   return new Map(
-    Object.entries(residentsConfig.incarcerationOpportunities).map(
-      ([id, config]) => {
+    Object.entries(eligibilityConfig.incarcerationOpportunities).map(
+      ([id, opportunityConfig]) => {
         return [
-          config.urlSlug,
-          id as keyof typeof residentsConfig.incarcerationOpportunities,
+          opportunityConfig.urlSlug,
+          id as keyof typeof eligibilityConfig.incarcerationOpportunities,
         ];
       },
     ),
@@ -38,9 +41,9 @@ function opportunityIdsByUrlSlug(
  */
 export function opportunitySlugToIdOrThrow(
   slug: string,
-  residentsConfig: ResidentsConfig,
+  eligibilityConfig: EligibilityModuleConfig,
 ) {
-  const idMapping = opportunityIdsByUrlSlug(residentsConfig);
+  const idMapping = opportunityIdsByUrlSlug(eligibilityConfig);
 
   const id = idMapping.get(slug);
   if (!id) {

@@ -17,7 +17,7 @@
 
 import { captureException } from "@sentry/react";
 
-import { ResidentsConfig } from "../../configs/types";
+import { EligibilityModuleConfig } from "../../configs/types";
 import { ComparisonTeaserProps } from "../OpportunityComparison/ComparisonTeaser";
 import { IdTuple, idTupleSchema } from "../OpportunityComparison/types";
 import { findMatchingComparisonConfig } from "../OpportunityComparison/utils";
@@ -27,7 +27,7 @@ export type ComparisonTeaserInCopyProps = { opportunityTypes?: string };
 export class ComparisonTeaserInCopyPresenter {
   constructor(
     private props: ComparisonTeaserInCopyProps,
-    private residentsConfig: ResidentsConfig,
+    private eligibilityConfig: EligibilityModuleConfig,
   ) {}
 
   private get opportunityIds(): IdTuple {
@@ -36,7 +36,7 @@ export class ComparisonTeaserInCopyPresenter {
 
   private get comparisonConfig() {
     const match = findMatchingComparisonConfig(
-      this.residentsConfig,
+      this.eligibilityConfig,
       this.opportunityIds,
     );
 

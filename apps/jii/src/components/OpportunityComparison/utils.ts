@@ -17,7 +17,7 @@
 
 import { isEqual } from "lodash";
 
-import { ResidentsConfig } from "../../configs/types";
+import { EligibilityModuleConfig } from "../../configs/types";
 import { IdTuple } from "./types";
 
 /**
@@ -25,10 +25,10 @@ import { IdTuple } from "./types";
  * Order of the IDs does not matter
  */
 export function findMatchingComparisonConfig(
-  residentsConfig: ResidentsConfig,
+  eligibilityConfig: EligibilityModuleConfig,
   opportunityIds: IdTuple,
 ) {
-  return residentsConfig.comparisons?.find((config) =>
+  return eligibilityConfig.comparisons?.find((config) =>
     isEqual([...config.opportunities].sort(), [...opportunityIds].sort()),
   );
 }

@@ -25,7 +25,7 @@ import {
 } from "~datatypes";
 import { hydrationFailure } from "~hydration-utils";
 
-import { usMeResidentsConfig } from "../../configs/US_ME/residents/residentsConfig";
+import { usMeEligibilityConfig } from "../../configs/US_ME/eligibility/config";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
 import { UsMeSCCPEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
@@ -44,22 +44,22 @@ const expectedData = {
     {
       opportunityId: "usMeWorkRelease",
       opportunityConfig:
-        usMeResidentsConfig.incarcerationOpportunities.usMeWorkRelease,
+        usMeEligibilityConfig.incarcerationOpportunities.usMeWorkRelease,
       eligibilityReport: new UsMeWorkReleaseEligibilityReport(
         testResident,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        usMeResidentsConfig.incarcerationOpportunities.usMeWorkRelease!,
+        usMeEligibilityConfig.incarcerationOpportunities.usMeWorkRelease!,
         usMeWorkReleaseFixtures.RES001Eligible,
       ),
     },
     {
       opportunityId: "usMeSCCP",
       opportunityConfig:
-        usMeResidentsConfig.incarcerationOpportunities.usMeSCCP,
+        usMeEligibilityConfig.incarcerationOpportunities.usMeSCCP,
       eligibilityReport: new UsMeSCCPEligibilityReport(
         testResident,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        usMeResidentsConfig.incarcerationOpportunities.usMeSCCP!,
+        usMeEligibilityConfig.incarcerationOpportunities.usMeSCCP!,
         outputFixture(usMeSccpFixtures.RES001almostEligibleMonthsRemaining),
       ),
     },

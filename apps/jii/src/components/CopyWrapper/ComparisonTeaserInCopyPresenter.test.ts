@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usMeResidentsConfig } from "../../configs/US_ME/residents/residentsConfig";
+import { usMeEligibilityConfig } from "../../configs/US_ME/eligibility/config";
 import { ComparisonTeaserInCopyPresenter } from "./ComparisonTeaserInCopyPresenter";
 
 test("comparison found", () => {
@@ -23,12 +23,12 @@ test("comparison found", () => {
     {
       opportunityTypes: '["usMeWorkRelease", "usMeSCCP"]',
     },
-    usMeResidentsConfig,
+    usMeEligibilityConfig,
   );
   expect(presenter.linkProps).toBeDefined();
   expect(presenter.linkProps).toEqual({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    config: usMeResidentsConfig.comparisons![0],
+    config: usMeEligibilityConfig.comparisons![0],
   });
 });
 
@@ -37,7 +37,7 @@ test("comparison not found", () => {
     {
       opportunityTypes: '["usMeWorkRelease", "someInvalidId"]',
     },
-    usMeResidentsConfig,
+    usMeEligibilityConfig,
   );
 
   expect(presenter.linkProps).toBeUndefined();

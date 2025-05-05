@@ -23,9 +23,10 @@ describe("requirements configs should match criteria in schema", () => {
   describe.each(Object.entries(residentsConfigByState))(
     "%s",
     (stateCode, stateConfig) => {
-      test.each(Object.entries(stateConfig.incarcerationOpportunities))(
-        "%s",
-        (oppId, oppConfig) => {
+      if (stateConfig.eligibility) {
+        test.each(
+          Object.entries(stateConfig.eligibility.incarcerationOpportunities),
+        )("%s", (oppId, oppConfig) => {
           const schema =
             residentOpportunitySchemas[oppId as IncarcerationOpportunityId];
           expect(
@@ -35,8 +36,8 @@ describe("requirements configs should match criteria in schema", () => {
               schema.shape.eligibleCriteria.keyof().options,
             ),
           );
-        },
-      );
+        });
+      }
     },
   );
 });

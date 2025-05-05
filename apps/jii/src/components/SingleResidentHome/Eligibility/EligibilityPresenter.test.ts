@@ -20,6 +20,7 @@ import { when } from "mobx";
 import { usMeResidents } from "~datatypes";
 import { isHydrated } from "~hydration-utils";
 
+import { usMeEligibilityConfig } from "../../../configs/US_ME/eligibility/config";
 import { usMeResidentsConfig } from "../../../configs/US_ME/residents/residentsConfig";
 import { ResidentsStore } from "../../../datastores/ResidentsStore";
 import { RootStore } from "../../../datastores/RootStore";
@@ -42,7 +43,7 @@ describe("with NA opportunities", () => {
 
     presenter = new EligibilityPresenter(
       hydrator.residentData.opportunities,
-      usMeResidentsConfig,
+      usMeEligibilityConfig,
     );
   });
 
@@ -53,7 +54,7 @@ describe("with NA opportunities", () => {
       ),
     ).toBeUndefined();
     expect(presenter.opportunities.length).toBe(
-      Object.keys(usMeResidentsConfig.incarcerationOpportunities).length - 1,
+      Object.keys(usMeEligibilityConfig.incarcerationOpportunities).length - 1,
     );
   });
 
@@ -75,12 +76,12 @@ describe("without NA opportunities", () => {
 
     presenter = new EligibilityPresenter(
       hydrator.residentData.opportunities,
-      usMeResidentsConfig,
+      usMeEligibilityConfig,
     );
   });
 
   test("opportunities are not filtered", () => {
-    Object.keys(usMeResidentsConfig.incarcerationOpportunities).forEach(
+    Object.keys(usMeEligibilityConfig.incarcerationOpportunities).forEach(
       (key) => {
         expect(
           presenter.opportunities.find((d) => d.opportunityId === key),
@@ -91,7 +92,9 @@ describe("without NA opportunities", () => {
 
   test("comparison is included", () => {
     expect(presenter.comparison).toBeDefined();
-    expect(presenter.comparison).toEqual(usMeResidentsConfig.comparisons?.[0]);
+    expect(presenter.comparison).toEqual(
+      usMeEligibilityConfig.comparisons?.[0],
+    );
   });
 });
 
@@ -108,7 +111,7 @@ describe("opportunity sorting", () => {
 
     presenter = new EligibilityPresenter(
       hydrator.residentData.opportunities,
-      usMeResidentsConfig,
+      usMeEligibilityConfig,
     );
 
     const { opportunities } = presenter;
@@ -132,7 +135,7 @@ describe("opportunity sorting", () => {
 
     presenter = new EligibilityPresenter(
       hydrator.residentData.opportunities,
-      usMeResidentsConfig,
+      usMeEligibilityConfig,
     );
 
     const { opportunities } = presenter;

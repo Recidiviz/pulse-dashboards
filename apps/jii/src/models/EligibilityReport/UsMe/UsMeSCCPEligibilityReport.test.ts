@@ -17,13 +17,13 @@
 
 import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
-import { residentsConfigByState } from "../../../configs/residentsConfig";
 import { OpportunityConfig } from "../../../configs/types";
+import { usMeEligibilityConfig } from "../../../configs/US_ME/eligibility/config";
 import { UsMeSCCPEligibilityReport } from "./UsMeSCCPEligibilityReport";
 
 let report: UsMeSCCPEligibilityReport;
 
-const config = residentsConfigByState.US_ME.incarcerationOpportunities
+const config = usMeEligibilityConfig.incarcerationOpportunities
   .usMeSCCP as OpportunityConfig;
 
 describe("fully eligible, needs to serve half", () => {

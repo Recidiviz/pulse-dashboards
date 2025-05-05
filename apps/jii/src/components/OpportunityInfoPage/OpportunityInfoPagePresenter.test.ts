@@ -17,18 +17,16 @@
 
 import { outputFixture, usMeResidents, usMeSccpFixtures } from "~datatypes";
 
-import { residentsConfigByState } from "../../configs/residentsConfig";
 import {
   IncarcerationOpportunityId,
   OpportunityConfig,
 } from "../../configs/types";
+import { usMeEligibilityConfig } from "../../configs/US_ME/eligibility/config";
 import { UsMeSCCPEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
 import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
 
-const stateConfig = residentsConfigByState.US_ME;
-
 const opportunityId: IncarcerationOpportunityId = "usMeSCCP";
-const oppConfig = stateConfig.incarcerationOpportunities[
+const oppConfig = usMeEligibilityConfig.incarcerationOpportunities[
   opportunityId
 ] as OpportunityConfig;
 

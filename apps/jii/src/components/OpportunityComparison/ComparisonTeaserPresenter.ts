@@ -17,14 +17,14 @@
 
 import {
   ComparisonPageConfig,
+  EligibilityModuleConfig,
   IncarcerationOpportunityId,
-  ResidentsConfig,
 } from "../../configs/types";
 
 export class ComparisonTeaserPresenter {
   constructor(
     private config: ComparisonPageConfig,
-    private opportunities: ResidentsConfig["incarcerationOpportunities"],
+    private opportunities: EligibilityModuleConfig["incarcerationOpportunities"],
   ) {}
 
   get text() {

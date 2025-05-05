@@ -15,38 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
 import { FC } from "react";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
+import { Outlet } from "react-router-dom";
 
-import calendarImgUrl from "../../assets/images/calendar-clock.svg";
-import { State } from "../../routes/routes";
+import { NotFound } from "../NotFound/NotFound";
 import { useResidentsContext } from "../ResidentsHydrator/context";
-import { TeaserLink } from "../TeaserLink/TeaserLink";
+import { EligibilityRouteContextProvider } from "./context";
 
-export const ProgressPageTeaser: FC = () => {
-  const {
-    residentsStore: {
-      config: { progress },
-    },
-  } = useResidentsContext();
-  const urlParams = useTypedParams(State.Resident);
+export const EligibilityRouteContext: FC = observer(
+  function EligibilityRouteContext() {
+    const {
+      residentsStore: {
+        config: { eligibility },
+      },
+    } = useResidentsContext();
 
-  const progressPage = progress?.progressPage;
+    if (!eligibility) return <NotFound />;
 
-  // not expected to render if this is missing, but we check for type safety
-  if (!progressPage) return null;
-
-  return (
-    <TeaserLink
-      teaserText={progressPage.teaserText}
-      imageUrl={calendarImgUrl}
-      linkProps={{
-        children: progressPage.linkText,
-        to: State.Resident.Progress.InfoPage.buildPath({
-          ...urlParams,
-          pageSlug: progressPage.urlSlug,
-        }),
-      }}
-    />
-  );
-};
+    return (
+      <EligibilityRouteContextProvider value={{ config: eligibility }}>
+        <Outlet />
+      </EligibilityRouteContextProvider>
+    );
+  },
+);

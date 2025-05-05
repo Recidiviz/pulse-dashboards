@@ -23,8 +23,8 @@ import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
+import { EligibilityModuleConfig } from "../../../configs/types";
 import { ComparisonTeaser } from "../../OpportunityComparison/ComparisonTeaser";
-import { useResidentsContext } from "../../ResidentsHydrator/context";
 import { useSingleResidentContext } from "../../SingleResidentHydrator/context";
 import { EligibilityPresenter } from "./EligibilityPresenter";
 import { OpportunityCard } from "./OpportunityCard";
@@ -51,11 +51,10 @@ const ManagedComponent: FC<{ presenter: EligibilityPresenter }> = observer(
   },
 );
 
-function usePresenter() {
+type EligibilityProps = { config: EligibilityModuleConfig };
+
+function usePresenter({ config }: EligibilityProps) {
   const { opportunities } = useSingleResidentContext();
-  const {
-    residentsStore: { config },
-  } = useResidentsContext();
 
   return new EligibilityPresenter(opportunities, config);
 }

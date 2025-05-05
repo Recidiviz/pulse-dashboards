@@ -15,13 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usMeResidentsConfig } from "../../configs/US_ME/residents/residentsConfig";
+import { usMeEligibilityConfig } from "../../configs/US_ME/eligibility/config";
 import { OpportunityComparisonPresenter } from "./OpportunityComparisonPresenter";
 
 test("maps slugs to correct config", () => {
   const presenter = new OpportunityComparisonPresenter(
     ["work-release", "sccp"],
-    usMeResidentsConfig,
+    usMeEligibilityConfig,
   );
 
   expect(presenter.pageContents).toMatchSnapshot();
@@ -30,11 +30,11 @@ test("maps slugs to correct config", () => {
 test("order doesn't matter", () => {
   const presenter1 = new OpportunityComparisonPresenter(
     ["work-release", "sccp"],
-    usMeResidentsConfig,
+    usMeEligibilityConfig,
   );
   const presenter2 = new OpportunityComparisonPresenter(
     ["sccp", "work-release"],
-    usMeResidentsConfig,
+    usMeEligibilityConfig,
   );
 
   expect(presenter1.pageContents).toEqual(presenter2.pageContents);
@@ -45,7 +45,7 @@ test("no matching config", () => {
   // as of the time of writing; at scale though we expect this to be less common
   const presenter = new OpportunityComparisonPresenter(
     ["work-release", "work-release"],
-    usMeResidentsConfig,
+    usMeEligibilityConfig,
   );
   expect(() => presenter.pageContents).toThrowErrorMatchingInlineSnapshot(
     `[Error: No comparison page found for work-release and work-release]`,
@@ -55,7 +55,7 @@ test("no matching config", () => {
 test("no matching opportunity", () => {
   const presenter = new OpportunityComparisonPresenter(
     ["work-release", "invalid-slug"],
-    usMeResidentsConfig,
+    usMeEligibilityConfig,
   );
   expect(() => presenter.pageContents).toThrowErrorMatchingInlineSnapshot(
     `[Error: No opportunity ID matches url segment invalid-slug]`,

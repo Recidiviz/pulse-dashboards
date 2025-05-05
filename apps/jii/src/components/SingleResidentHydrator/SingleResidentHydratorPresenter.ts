@@ -21,9 +21,9 @@ import { ResidentRecord } from "~datatypes";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 import {
+  EligibilityModuleConfig,
   IncarcerationOpportunityId,
   OpportunityRecord,
-  ResidentsConfig,
 } from "../../configs/types";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { SingleResidentContext } from "./context";
@@ -50,13 +50,15 @@ export class SingleResidentHydratorPresenter implements Hydratable {
 
   private get opportunityTypes() {
     return Object.keys(
-      this.residentsStore.config.incarcerationOpportunities,
-    ) as Array<keyof ResidentsConfig["incarcerationOpportunities"]>;
+      this.residentsStore.config.eligibility?.incarcerationOpportunities ?? [],
+    ) as Array<keyof EligibilityModuleConfig["incarcerationOpportunities"]>;
   }
 
   private opportunityConfig(opportunityType: IncarcerationOpportunityId) {
     const config =
-      this.residentsStore.config.incarcerationOpportunities[opportunityType];
+      this.residentsStore.config.eligibility?.incarcerationOpportunities[
+        opportunityType
+      ];
     // in practice we do not expect this and the check is mainly for type safety
     if (!config) {
       throw new Error(`Missing configuration for ${opportunityType}`);

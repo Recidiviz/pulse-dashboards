@@ -48,9 +48,14 @@ export class ResidentNavBarPresenter {
     const links: Array<SimpleNavLinkProps> = [];
 
     const { routeParams } = this;
-    if ("personPseudoId" in routeParams) {
+    if (
+      "personPseudoId" in routeParams &&
+      this.config.eligibility?.incarcerationOpportunities
+    ) {
       links.push(
-        ...Object.values(this.config.incarcerationOpportunities).map((c) => ({
+        ...Object.values(
+          this.config.eligibility.incarcerationOpportunities,
+        ).map((c) => ({
           children: c.name,
           to: State.Resident.Eligibility.Opportunity.buildPath({
             ...routeParams,

@@ -44,7 +44,8 @@ let residentsStore: ResidentsStore;
 const opportunityId: IncarcerationOpportunityId = "usMeSCCP";
 const eligibleResident = usMeResidents[0];
 const stateConfig = residentsConfigByState.US_ME;
-const opportunityConfig = stateConfig.incarcerationOpportunities[
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const opportunityConfig = stateConfig.eligibility!.incarcerationOpportunities[
   opportunityId
 ] as OpportunityConfig;
 const eligibilityReport = new UsMeSCCPEligibilityReport(

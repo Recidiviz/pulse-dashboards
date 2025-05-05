@@ -59,23 +59,25 @@ const ModuleHeading = styled.h2`
 export const SingleResidentHome = memo(function SingleResidentHome() {
   const {
     residentsStore: {
-      config: {
-        home: { eligibility, progress },
-      },
+      config: { progress, eligibility },
     },
   } = useResidentsContext();
 
   return (
     <Wrapper>
       <SectionsWrapper>
-        <SectionModule>
-          <ModuleHeading>{progress.title}</ModuleHeading>
-          <Progress />
-        </SectionModule>
-        <SectionModule>
-          <ModuleHeading>{eligibility.title}</ModuleHeading>
-          <Eligibility />
-        </SectionModule>
+        {progress && (
+          <SectionModule>
+            <ModuleHeading>{progress.home.title}</ModuleHeading>
+            <Progress config={progress} />
+          </SectionModule>
+        )}
+        {eligibility && (
+          <SectionModule>
+            <ModuleHeading>{eligibility.home.title}</ModuleHeading>
+            <Eligibility config={eligibility} />
+          </SectionModule>
+        )}
       </SectionsWrapper>
       <Footer />
     </Wrapper>

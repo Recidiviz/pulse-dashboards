@@ -26,10 +26,16 @@ import { useResidentsContext } from "./ResidentsHydrator/context";
 export const ProgressInfoPage: FC = () => {
   const {
     residentsStore: {
-      config: { progressPage },
+      config: { progress },
     },
   } = useResidentsContext();
+
   const urlParams = useTypedParams(State.Resident.Progress.InfoPage);
+
+  const progressPage = progress?.progressPage;
+
+  // not expected to render if this is missing, but we check for type safety
+  if (!progressPage) return null;
 
   // at the moment there is only one progress page,
   // so if the page URL is wrong somehow just redirect

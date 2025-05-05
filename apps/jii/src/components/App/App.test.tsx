@@ -27,6 +27,7 @@ import { usMeResidents } from "~datatypes";
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { stateConfigsByStateCode } from "../../configs/stateConstants";
 import { ComparisonPageConfig, OpportunityConfig } from "../../configs/types";
+import { usMeProgressModuleConfig } from "../../configs/US_ME/progress/config";
 import { RootStore } from "../../datastores/RootStore";
 import * as routes from "../../routes/routes";
 import * as hooks from "../StoreProvider/useRootStore";
@@ -273,8 +274,8 @@ describe("protected routes", () => {
     ).toBeInTheDocument();
   });
 
-  const sccpConfig = residentsConfigByState.US_ME.incarcerationOpportunities
-    .usMeSCCP as OpportunityConfig;
+  const sccpConfig = residentsConfigByState.US_ME.eligibility
+    ?.incarcerationOpportunities.usMeSCCP as OpportunityConfig;
 
   describe("homepage", () => {
     beforeEach(() => {
@@ -323,7 +324,7 @@ describe("protected routes", () => {
             routes.State.Resident.Progress.InfoPage.buildPath({
               stateSlug: stateConfigsByStateCode.US_ME.urlSlug,
               personPseudoId,
-              pageSlug: residentsConfigByState.US_ME.progressPage.urlSlug,
+              pageSlug: usMeProgressModuleConfig.progressPage.urlSlug,
             }),
           ]}
         >
@@ -336,7 +337,7 @@ describe("protected routes", () => {
       expect(
         await screen.findByRole("heading", {
           level: 1,
-          name: residentsConfigByState.US_ME.progressPage.heading,
+          name: usMeProgressModuleConfig.progressPage.heading,
         }),
       ).toBeInTheDocument();
     });
@@ -344,7 +345,7 @@ describe("protected routes", () => {
     it("should be accessible", async () => {
       await screen.findByRole("heading", {
         level: 1,
-        name: residentsConfigByState.US_ME.progressPage.heading,
+        name: usMeProgressModuleConfig.progressPage.heading,
       });
 
       expect(await axe(container)).toHaveNoViolations();
@@ -352,7 +353,7 @@ describe("protected routes", () => {
 
     it("should set the page title", () => {
       expect(window.document.title).toBe(
-        `${residentsConfigByState.US_ME.progressPage.heading} – Opportunities`,
+        `${usMeProgressModuleConfig.progressPage.heading} – Opportunities`,
       );
     });
   });
@@ -377,8 +378,8 @@ describe("protected routes", () => {
     it("should render", async () => {
       expect(
         await screen.findByRole("heading", {
-          name: residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP
-            ?.name,
+          name: residentsConfigByState.US_ME.eligibility
+            ?.incarcerationOpportunities.usMeSCCP?.name,
           level: 1,
         }),
       ).toBeInTheDocument();
@@ -386,8 +387,8 @@ describe("protected routes", () => {
 
     it("should be accessible", async () => {
       await screen.findByRole("heading", {
-        name: residentsConfigByState.US_ME.incarcerationOpportunities.usMeSCCP
-          ?.name,
+        name: residentsConfigByState.US_ME.eligibility
+          ?.incarcerationOpportunities.usMeSCCP?.name,
         level: 1,
       });
 
@@ -490,8 +491,8 @@ describe("protected routes", () => {
   );
 
   describe("opportunity comparison page", () => {
-    const comparisonConfig = residentsConfigByState.US_ME
-      .comparisons?.[0] as ComparisonPageConfig;
+    const comparisonConfig = residentsConfigByState.US_ME.eligibility
+      ?.comparisons?.[0] as ComparisonPageConfig;
 
     beforeEach(() => {
       container = render(
@@ -503,8 +504,8 @@ describe("protected routes", () => {
               opportunitySlug1: sccpConfig.urlSlug,
               opportunitySlug2:
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                residentsConfigByState.US_ME.incarcerationOpportunities
-                  .usMeWorkRelease!.urlSlug,
+                residentsConfigByState.US_ME.eligibility!
+                  .incarcerationOpportunities.usMeWorkRelease!.urlSlug,
             }),
           ]}
         >

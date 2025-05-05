@@ -27,12 +27,6 @@ import { NonEmptyArray } from "../utils/types";
 import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
 import { stateCodes } from "./stateConstants";
 
-export type ProfileField = {
-  label: string;
-  value: string;
-  moreInfo?: string;
-};
-
 export type RequirementCopy = { criterion: string; ineligibleReason?: string };
 
 export type SummaryContent = {
@@ -118,17 +112,7 @@ export type ComparisonPageConfig = {
 };
 
 export type ResidentsConfig = {
-  headerProfileFields: Array<ProfileField>;
-  incarcerationOpportunities: Partial<
-    Record<IncarcerationOpportunityId, OpportunityConfig>
-  >;
   home: {
-    progress: {
-      title: string;
-    };
-    eligibility: {
-      title: string;
-    };
     footer: {
       about: {
         title: string;
@@ -140,9 +124,26 @@ export type ResidentsConfig = {
       };
     };
   };
+  eligibility?: EligibilityModuleConfig;
+  progress?: ProgressModuleConfig;
+};
+
+export type EligibilityModuleConfig = {
+  home: {
+    title: string;
+  };
+  incarcerationOpportunities: Partial<
+    Record<IncarcerationOpportunityId, OpportunityConfig>
+  >;
   // this is an array to support later expansion, but for now we don't support
   // there being more than one of these pages in the implementation
   comparisons?: [ComparisonPageConfig];
+};
+
+export type ProgressModuleConfig = {
+  home: {
+    title: string;
+  };
   progressPage: FullPageConfig & { teaserText: string };
 };
 

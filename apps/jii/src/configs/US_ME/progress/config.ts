@@ -15,20 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usMeEligibilityConfig } from "../../configs/US_ME/eligibility/config";
-import { ComparisonTeaserPresenter } from "./ComparisonTeaserPresenter";
+import { ProgressModuleConfig } from "../../types";
+import progressPageBody from "./progressPageBody.md?raw";
 
-test("link params", () => {
-  const presenter = new ComparisonTeaserPresenter(
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    usMeEligibilityConfig.comparisons![0],
-    usMeEligibilityConfig.incarcerationOpportunities,
-  );
-
-  expect(presenter.link.params).toMatchInlineSnapshot(`
-    {
-      "opportunitySlug1": "work-release",
-      "opportunitySlug2": "sccp",
-    }
-  `);
-});
+export const usMeProgressModuleConfig: ProgressModuleConfig = {
+  home: {
+    title: "Your Progress",
+  },
+  progressPage: {
+    heading: "Calculating Important Dates",
+    body: progressPageBody,
+    linkText: "See date calculations",
+    urlSlug: "calculating-dates",
+    teaserText: `Learn more how important dates are calculated,
+    including how good time affects your sentence and release date.`,
+  },
+};

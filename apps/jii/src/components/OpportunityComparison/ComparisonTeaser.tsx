@@ -52,9 +52,15 @@ export type ComparisonTeaserProps = { config: ComparisonPageConfig };
 function usePresenter({ config }: ComparisonTeaserProps) {
   const {
     residentsStore: {
-      config: { incarcerationOpportunities },
+      config: { eligibility },
     },
   } = useResidentsContext();
+  const incarcerationOpportunities = eligibility?.incarcerationOpportunities;
+
+  // in practice we don't expect this to be rendered if the config is missing,
+  // but we bail out if so for type safety
+  if (!incarcerationOpportunities) return null;
+
   return new ComparisonTeaserPresenter(config, incarcerationOpportunities);
 }
 

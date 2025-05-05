@@ -208,7 +208,8 @@ export class ResidentsStore {
       return;
     }
 
-    const config = this.config.incarcerationOpportunities[opportunityId];
+    const config =
+      this.config.eligibility?.incarcerationOpportunities[opportunityId];
 
     if (!config) {
       throw new Error(`Opportunity ${opportunityId} is not configured`);

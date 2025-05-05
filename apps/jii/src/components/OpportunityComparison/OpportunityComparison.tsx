@@ -26,7 +26,7 @@ import { withPresenterManager } from "~hydration-utils";
 import { State } from "../../routes/routes";
 import { GoButton } from "../ButtonLink/GoButton";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
-import { useResidentsContext } from "../ResidentsHydrator/context";
+import { useEligibilityRouteContext } from "../EligibilityRouteContext/context";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { OpportunityComparisonPresenter } from "./OpportunityComparisonPresenter";
 
@@ -141,9 +141,7 @@ function usePresenter() {
   const { opportunitySlug1, opportunitySlug2 } = useTypedParams(
     State.Resident.Eligibility.Comparison,
   );
-  const {
-    residentsStore: { config },
-  } = useResidentsContext();
+  const { config } = useEligibilityRouteContext();
 
   return new OpportunityComparisonPresenter(
     [opportunitySlug1, opportunitySlug2],

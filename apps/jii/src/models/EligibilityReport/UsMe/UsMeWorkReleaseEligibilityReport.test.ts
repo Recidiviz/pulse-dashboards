@@ -17,13 +17,13 @@
 
 import { usMeResidents, usMeWorkReleaseFixtures } from "~datatypes";
 
-import { residentsConfigByState } from "../../../configs/residentsConfig";
 import { OpportunityConfig } from "../../../configs/types";
+import { usMeEligibilityConfig } from "../../../configs/US_ME/eligibility/config";
 import { UsMeWorkReleaseEligibilityReport } from "./UsMeWorkReleaseEligibilityReport";
 
 let report: UsMeWorkReleaseEligibilityReport;
 
-const config = residentsConfigByState.US_ME.incarcerationOpportunities
+const config = usMeEligibilityConfig.incarcerationOpportunities
   .usMeWorkRelease as OpportunityConfig;
 
 describe("eligible", () => {
