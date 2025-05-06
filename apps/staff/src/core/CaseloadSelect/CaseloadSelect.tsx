@@ -271,10 +271,18 @@ const StyledModal = styled(Modal)`
   }
 `;
 
-const ModalCloseButton = styled(Button).attrs({ kind: "link" })`
+const ModalButtonRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const ModalButton = styled(Button).attrs({ kind: "link" })`
   color: ${palette.signal.links};
   text-decoration: none !important;
+  padding: ${rem(spacing.sm)} 0;
 `;
+
+const ModalCloseButton = styled(ModalButton).attrs({ kind: "link" })``;
 
 const ModalHeader = styled(Serif24)`
   color: ${palette.pine2};
@@ -344,7 +352,7 @@ export const caseloadSelectStyles = (
   }),
   menuList: (base) => ({
     ...base,
-    maxHeight: rem(300),
+    maxHeight: rem(isMobile ? 900 : 300),
     padding: `${rem(spacing.sm)} 0`,
   }),
   control: (base, state) => ({
@@ -490,7 +498,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
         <CaseloadSelectMobileButton onClick={() => setModalIsOpen(true)}>
           {selectedSearchIds.length > 0
             ? `${selectedSearchIds.length} selected`
-            : `None selected`}
+            : "Click to search caseloads"}
           &nbsp;
           <Icon kind={IconSVG.DownChevron} width={8} />
         </CaseloadSelectMobileButton>
@@ -498,9 +506,14 @@ export const CaseloadSelect = observer(function CaseloadSelect({
           isOpen={modalIsOpen}
           onRequestClose={() => setModalIsOpen(false)}
         >
-          <ModalCloseButton onClick={() => setModalIsOpen(false)}>
-            Cancel
-          </ModalCloseButton>
+          <ModalButtonRow>
+            <ModalCloseButton onClick={() => setModalIsOpen(false)}>
+              Back
+            </ModalCloseButton>
+            <ModalButton onClick={() => updateSelectedSearch([])}>
+              Clear
+            </ModalButton>
+          </ModalButtonRow>
           <ModalHeader>Search</ModalHeader>
           <ReactSelect menuIsOpen isClearable={false} {...defaultOptions} />
         </StyledModal>

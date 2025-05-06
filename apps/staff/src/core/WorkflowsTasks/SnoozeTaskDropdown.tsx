@@ -28,6 +28,7 @@ import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
+import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionTask, SupervisionTaskType } from "../../WorkflowsStore";
 import { WorkflowsTasksConfig } from "../models/types";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
@@ -110,6 +111,7 @@ const snoozeTaskToast = (
   task: SupervisionTask<SupervisionTaskType>,
   snoozeForDays: number,
   operationsInfoInToast: boolean,
+  isMobile: boolean,
 ) => {
   const personName = task.person.displayName;
   let toastText = `${personName}'s ${task.displayName} will be hidden from this list for ${snoozeForDays} days.`;
@@ -132,7 +134,7 @@ const snoozeTaskToast = (
     ),
     {
       className: "SnoozeTaskToast",
-      duration: 7000,
+      duration: isMobile ? 4000 : 7000,
     },
   );
 };
@@ -153,6 +155,8 @@ export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
   taskConfig,
   operationsInfoInToast,
 }: SnoozeTaskDropdownProps) {
+  const { isMobile } = useIsMobile(true);
+
   if (!taskConfig || !taskConfig?.snoozeForOptionsInDays) return null;
 
   return (
@@ -187,7 +191,12 @@ export const SnoozeTaskDropdown = observer(function SnoozeTaskDropdown({
                     key={`snooze-days-${option}`}
                     onClick={() => {
                       task.updateSupervisionTask(option);
-                      snoozeTaskToast(task, option, operationsInfoInToast);
+                      snoozeTaskToast(
+                        task,
+                        option,
+                        operationsInfoInToast,
+                        isMobile,
+                      );
                     }}
                   >
                     {option} days

@@ -25,11 +25,16 @@ const FrequencyWrapper = styled.div`
   gap: ${rem(6)};
 `;
 
+const FrequencyText = styled.span`
+  min-width: fit-content;
+  display: inline-block;
+`;
+
 export function TaskFrequency({ task }: { task: SupervisionTask }) {
   return (
     <FrequencyWrapper>
       <i className="fa fa-refresh" />
-      <span>{task.frequency}</span>
+      <FrequencyText>{task.frequency}</FrequencyText>
     </FrequencyWrapper>
   );
 }

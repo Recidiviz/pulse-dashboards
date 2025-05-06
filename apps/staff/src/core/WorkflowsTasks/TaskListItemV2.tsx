@@ -25,6 +25,7 @@ import styled from "styled-components/macro";
 import { PersonInitialsAvatar } from "~ui";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import {
   Client,
   JusticeInvolvedPerson,
@@ -48,7 +49,7 @@ const TaskClientItem = styled.div`
   align-items: center;
   gap: ${rem(spacing.sm)};
   margin-right: ${rem(spacing.md)};
-  min-width: fit-content;
+  max-width: 66%;
 `;
 
 const TaskClientName = styled(Sans16).attrs({ as: "span" })`
@@ -63,10 +64,10 @@ const TaskListPersonId = styled.span`
   font-size: ${rem(16)};
 `;
 
-const TaskPersonDetails = styled.div`
+const TaskPersonDetails = styled.div<{ isMobile: boolean }>`
   display: flex;
-  flex-direction: row;
-  gap: ${rem(8)};
+  flex-direction: ${({ isMobile }) => (isMobile ? "column" : "row")};
+  gap: ${({ isMobile }) => rem(isMobile ? 2 : 8)};
 `;
 
 const DueDateText = styled(Sans12)<{ overdue: boolean }>`
@@ -81,11 +82,12 @@ function TaskDueDate({ task }: { task: SupervisionTask }) {
   );
 }
 
-const TaskFrequencyDetails = styled.div`
+const TaskFrequencyDetails = styled.div<{ isMobile: boolean }>`
   display: flex;
-  flex-direction: row;
+  flex-direction: ${({ isMobile }) => (isMobile ? "column" : "row")};
   font-size: 12px;
-  gap: 12px;
+  gap: ${({ isMobile }) => (isMobile ? "2px" : "12px")};
+  align-items: ${({ isMobile }) => (isMobile ? "flex-end" : "center")};
   color: ${palette.slate80};
 `;
 
@@ -97,12 +99,16 @@ type TaskListItemProps = {
 export const TaskListItemV2: React.FC<TaskListItemProps> = observer(
   function TaskListItem({ person, task }: TaskListItemProps) {
     const { workflowsStore } = useRootStore();
+    const { isMobile } = useIsMobile(true);
+
     const orderedTasks = person.supervisionTasks?.orderedTasks ?? [];
     const readyOrderedTasks = person.supervisionTasks?.readyOrderedTasks ?? [];
     const taskToDisplay = task || readyOrderedTasks[0];
+
     if (!taskToDisplay) {
       return null;
     }
+
     return (
       <TaskListTooltip person={person} tasks={orderedTasks}>
         <TaskClient
@@ -111,11 +117,13 @@ export const TaskListItemV2: React.FC<TaskListItemProps> = observer(
           }
         >
           <TaskClientItem>
-            <PersonInitialsAvatar
-              name={person.displayName}
-              size={38}
-              solidColor={palette.slate30}
-            />
+            {!isMobile && (
+              <PersonInitialsAvatar
+                name={person.displayName}
+                size={38}
+                solidColor={palette.slate30}
+              />
+            )}
             <div>
               <TaskClientName>{person.displayName}</TaskClientName>
               <PersonId
@@ -124,7 +132,7 @@ export const TaskListItemV2: React.FC<TaskListItemProps> = observer(
               >
                 <TaskListPersonId> {person.displayId}</TaskListPersonId>
               </PersonId>
-              <TaskPersonDetails>
+              <TaskPersonDetails isMobile={isMobile}>
                 <Sans12>
                   {(person as Client).caseType},{" "}
                   {(person as Client).supervisionLevel}
@@ -133,9 +141,9 @@ export const TaskListItemV2: React.FC<TaskListItemProps> = observer(
               </TaskPersonDetails>
             </div>
           </TaskClientItem>
-          <TaskFrequencyDetails>
+          <TaskFrequencyDetails isMobile={isMobile}>
             <div>{task ? null : simplur`${orderedTasks.length} task[|s]`}</div>
-            <div>•</div>
+            {!isMobile && <div>•</div>}
             <TaskFrequency task={taskToDisplay} />
           </TaskFrequencyDetails>
         </TaskClient>
