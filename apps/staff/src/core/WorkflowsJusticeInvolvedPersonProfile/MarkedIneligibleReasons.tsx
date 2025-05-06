@@ -83,21 +83,38 @@ export function buildResurfaceText(
   const { supervisionEndDateCopy, releaseDateCopy } = labels;
   const dateStr = format(snoozeUntil, "LLLL d, yyyy");
   const { person } = opportunity;
+  const usAzTprDtpAdditionalInformation = `Thank you for flagging an error in this person's TPR date in ACIS. Recidiviz will automatically report this information to Central Time Comp. If you have questions for their team, you're encouraged to reach out to them directly via email.`;
+
+  let endDateString;
+
   if (
     "expirationDate" in person &&
     person.expirationDate instanceof Date &&
     isEqual(snoozeUntil, person.expirationDate)
   ) {
-    return `${dateStr} is ${person.displayPreferredName}'s Supervision ${supervisionEndDateCopy} Date.`;
-  }
-  if (
+    endDateString = `${dateStr} is ${person.displayPreferredName}'s Supervision ${supervisionEndDateCopy} Date.`;
+  } else if (
     "releaseDate" in person &&
     person.releaseDate instanceof Date &&
     isEqual(snoozeUntil, person.releaseDate)
   ) {
-    return `${dateStr} is ${person.displayPreferredName}'s ${releaseDateCopy} Date.`;
+    endDateString = `${dateStr} is ${person.displayPreferredName}'s ${releaseDateCopy} Date.`;
+  } else {
+    endDateString = `${person.displayPreferredName} may be surfaced again on or after ${dateStr}.`;
   }
-  return `${person.displayPreferredName} may be surfaced again on or after ${dateStr}.`;
+
+  if (
+    [
+      "usAzOverdueForACISTPR",
+      "usAzOverdueForACISDTP",
+      "usAzReleaseToDTP",
+      "usAzReleaseToTPR",
+    ].includes(opportunity.type)
+  ) {
+    return endDateString + usAzTprDtpAdditionalInformation;
+  }
+
+  return endDateString;
 }
 
 export function buildDenialReasonsListText(
