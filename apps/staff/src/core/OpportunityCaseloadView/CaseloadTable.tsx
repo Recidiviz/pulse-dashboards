@@ -47,6 +47,10 @@ const Table = styled.table`
   flex: 1 1 auto;
 `; // necessary to keep the border at the bottom of the sticky table header
 
+const ScrollContainer = styled.div<{ $isMobile: boolean }>`
+  ${({ $isMobile }) => $isMobile && `overflow-x: scroll;`}
+`;
+
 const SortableHeader = styled.div<{ $sortable?: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -224,59 +228,61 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   });
 
   return (
-    <Table>
-      <TableHeader $isMobile={isMobile}>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <Row key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <HeaderCell key={header.id}>
-                <SortableHeader
-                  $sortable={header.column.getCanSort()}
-                  onClick={header.column.getToggleSortingHandler()}
-                >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                  {header.column.getCanSort() && (
-                    <SortIconWrapper
-                      $sortDirection={header.column.getIsSorted()}
-                    >
-                      <SortIcon />
-                    </SortIconWrapper>
-                  )}
-                </SortableHeader>
-              </HeaderCell>
-            ))}
-          </Row>
-        ))}
-      </TableHeader>
-      <TableBody>
-        {table.getRowModel().rows.map((row) => {
-          onRowRender(row.original);
-          return (
-            <Row
-              key={row.id}
-              onClick={() => {
-                onRowClick(row.original);
-              }}
-              $isSelected={shouldHighlightRow(row.original)}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <Cell
-                  key={cell.id}
-                  className={"fs-exclude"}
-                  $expandedLastColumn={expandedLastColumn}
-                  $isMobile={isMobile}
-                  $columns={columns.length}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Cell>
+    <ScrollContainer $isMobile={isMobile}>
+      <Table>
+        <TableHeader $isMobile={isMobile}>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Row key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <HeaderCell key={header.id}>
+                  <SortableHeader
+                    $sortable={header.column.getCanSort()}
+                    onClick={header.column.getToggleSortingHandler()}
+                  >
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                    {header.column.getCanSort() && (
+                      <SortIconWrapper
+                        $sortDirection={header.column.getIsSorted()}
+                      >
+                        <SortIcon />
+                      </SortIconWrapper>
+                    )}
+                  </SortableHeader>
+                </HeaderCell>
               ))}
             </Row>
-          );
-        })}
-      </TableBody>
-    </Table>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.map((row) => {
+            onRowRender(row.original);
+            return (
+              <Row
+                key={row.id}
+                onClick={() => {
+                  onRowClick(row.original);
+                }}
+                $isSelected={shouldHighlightRow(row.original)}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <Cell
+                    key={cell.id}
+                    className={"fs-exclude"}
+                    $expandedLastColumn={expandedLastColumn}
+                    $isMobile={isMobile}
+                    $columns={columns.length}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Cell>
+                ))}
+              </Row>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </ScrollContainer>
   );
 });
