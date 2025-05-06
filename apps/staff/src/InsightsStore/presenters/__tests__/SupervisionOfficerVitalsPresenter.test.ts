@@ -40,14 +40,21 @@ beforeEach(() => {
   vi.spyOn(UserStore.prototype, "isRecidivizUser", "get").mockImplementation(
     () => false,
   );
-
+  const rootStore = new RootStore();
   store = new InsightsSupervisionStore(
-    new RootStore().insightsStore,
+    rootStore.insightsStore,
     InsightsConfigFixture,
   );
   store.setOfficerPseudoId(testOfficerPseudoId);
-
-  presenter = new SupervisionOfficerVitalsPresenter(store, testOfficerPseudoId);
+  const { workflowsRootStore } = rootStore;
+  workflowsRootStore.populateJusticeInvolvedPersonsStore();
+  if (workflowsRootStore.justiceInvolvedPersonsStore) {
+    presenter = new SupervisionOfficerVitalsPresenter(
+      store,
+      workflowsRootStore.justiceInvolvedPersonsStore,
+      testOfficerPseudoId,
+    );
+  }
 });
 
 afterEach(() => {
@@ -127,6 +134,7 @@ test("vitalsMetricDetails when there are no VitalsMetricForOfficer for a metric"
         "metric30DDelta": 1,
         "metricValue": 99,
         "officerPseudonymizedId": "hashed-so1",
+        "tasks": undefined,
       },
     ]
   `);
@@ -167,6 +175,7 @@ test("vitalsMetricDetails when an officer supervises themself", () => {
         "metric30DDelta": 1,
         "metricValue": 99,
         "officerPseudonymizedId": "hashed-so1",
+        "tasks": undefined,
       },
     ]
   `);
@@ -229,6 +238,7 @@ test("vitalsmetricDetails when an officer has multiple supervisors", () => {
         "metric30DDelta": 1,
         "metricValue": 99,
         "officerPseudonymizedId": "hashed-so1",
+        "tasks": undefined,
       },
     ]
   `);

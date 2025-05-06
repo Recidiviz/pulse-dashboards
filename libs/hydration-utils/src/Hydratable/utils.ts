@@ -17,6 +17,7 @@
 
 import assertNever from "assert-never";
 import { identity, isError } from "lodash";
+import { when } from "mobx";
 
 import { Hydratable, HydrationState } from "./types";
 
@@ -151,4 +152,16 @@ export function compositeHydrationState(
       hydratables.map((h) => h.hydrationState),
     )}`,
   );
+}
+
+/**
+ * Starts hydration if it is untouched, and returns a promise that resolves when
+ * hydration is finished.
+ */
+export async function awaitHydration(hydratable: Hydratable): Promise<void> {
+  if (isHydrationUntouched(hydratable)) {
+    hydratable.hydrate();
+  }
+
+  await when(() => isHydrationFinished(hydratable));
 }

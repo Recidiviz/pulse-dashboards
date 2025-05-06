@@ -55,7 +55,7 @@ export class SupervisionOfficerDetailPresenter extends WithJusticeInvolvedPerson
       expectPopulated: [
         ...this.expectPopulated(),
         ...this.expectOutcomesDependenciesPopulated(),
-        () => this.expectClientsPopulated(this.officerExternalId),
+        () => this.expectCaseloadPopulated(this.officerExternalId),
       ],
       populate: async () => {
         await Promise.all([...this.populateMethods()]);

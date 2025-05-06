@@ -159,6 +159,13 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
           store.populateOutcomesForSupervisor(testSupervisor.pseudonymizedId),
         ),
       ]);
+      const clients = await jiiStore.caseloadByOfficerExternalId.get(
+        testOfficer.externalId,
+      );
+      if (clients)
+        await Promise.all(
+          clients.map((client) => client.opportunityManager.hydrate()),
+        );
     });
 
     test("is immediately hydrated", async () => {

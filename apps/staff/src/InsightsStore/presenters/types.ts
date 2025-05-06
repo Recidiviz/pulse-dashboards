@@ -30,6 +30,8 @@ import {
   VitalsMetricForOfficer,
 } from "~datatypes";
 
+import { SupervisionTask } from "../../WorkflowsStore";
+
 /**
  * This type represents the combined officer and corresponding outcomes data, where all
  * necessary related objects are guaranteed to exist.
@@ -138,4 +140,5 @@ export type SupervisorVitalsMetricDetail = {
 
 export type OfficerVitalsMetricDetail = VitalsMetricForOfficer & {
   label: string;
+  tasks?: SupervisionTask[];
 };

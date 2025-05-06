@@ -46,6 +46,9 @@ export class JusticeInvolvedPersonsStore {
       officerExternalId,
     );
 
+    // If another call to this method has finished in the meantime, we don't
+    // want to overwrite the caseload that's already there.
+    if (this.caseloadByOfficerExternalId.has(officerExternalId)) return;
     this.caseloadByOfficerExternalId.set(
       officerExternalId,
       clientData.map((c) => new Client(c, this.firestoreStore.rootStore)),

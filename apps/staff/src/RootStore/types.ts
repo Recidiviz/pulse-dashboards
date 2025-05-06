@@ -99,6 +99,7 @@ export type FeatureVariant =
   | "zeroGrantsFlag"
   | "outcomesModule"
   | "reportIncorrectRosters"
+  | "operationsDrilldown"
   // WORKFLOWS & INSIGHTS
   | "lastSyncedDate"
   // SENTENCING
@@ -170,6 +171,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisionTasksNavLink: {},
   snoozeCompanions: {},
   usIaEarlyDischargeCustomizations: {},
+  operationsDrilldown: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -217,6 +219,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
         tableMultiSortEnabled: undefined,
         supervisionTasksNavLink: { activeTenants: ["US_ID"] },
+        operationsDrilldown: undefined, // off by default because component isn't display-ready
       };
 
 export type LanternMethodologyByTenant = {

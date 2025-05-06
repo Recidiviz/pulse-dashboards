@@ -19,6 +19,7 @@ import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { useFeatureVariants } from "../../components/StoreProvider";
 import { OfficerVitalsMetricDetail } from "../../InsightsStore/presenters/types";
 import InsightsPill from "../InsightsPill";
 
@@ -69,6 +70,7 @@ type InsightsStaffVitalsDetailCardProps = {
 export const InsightsStaffVitalsDetailCard: React.FC<
   InsightsStaffVitalsDetailCardProps
 > = ({ vitalsMetricDetails }) => {
+  const { operationsDrilldown } = useFeatureVariants();
   const positiveDelta = vitalsMetricDetails.metric30DDelta > 0;
   const deltaText = `${positiveDelta ? "+" : ""}${Math.round(vitalsMetricDetails.metric30DDelta)}% in past 30 days`;
   const showPill = vitalsMetricDetails.metricValue < 80;
@@ -78,6 +80,13 @@ export const InsightsStaffVitalsDetailCard: React.FC<
         <StaffCardTitle>{vitalsMetricDetails.label}</StaffCardTitle>
         <MetricValue>{`${vitalsMetricDetails.metricValue}%`}</MetricValue>
         <DeltaValue positiveDelta={positiveDelta}>{deltaText}</DeltaValue>
+        {operationsDrilldown &&
+          vitalsMetricDetails.tasks &&
+          vitalsMetricDetails.tasks.map((task) => (
+            <div key={task.key}>
+              {task.dueDateDisplayShort} {task.person.displayName}
+            </div>
+          ))}
       </StaffCardBody>
       {showPill && (
         <PillWrapper>

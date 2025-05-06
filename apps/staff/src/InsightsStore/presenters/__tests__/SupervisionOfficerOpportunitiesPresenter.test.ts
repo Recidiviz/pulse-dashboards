@@ -110,6 +110,11 @@ const initPresenter = async (
     undefined,
   );
 
+  vi.spyOn(
+    rootStore.firestoreStore,
+    "getOpportunitiesForJIIAndOpportunityType",
+  ).mockResolvedValue([]);
+
   vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(true);
 };
 
@@ -142,6 +147,13 @@ describe.each(officerCases)("test officer %s", (label, testOfficer) => {
           ),
         ),
       ]);
+      const clients = await jiiStore.caseloadByOfficerExternalId.get(
+        testOfficer.externalId,
+      );
+      if (clients)
+        await Promise.all(
+          clients.map((client) => client.opportunityManager.hydrate()),
+        );
     });
 
     test("is immediately hydrated", async () => {

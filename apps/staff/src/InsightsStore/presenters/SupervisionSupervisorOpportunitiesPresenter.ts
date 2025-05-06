@@ -53,6 +53,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
 
     this.justiceInvolvedPersonsStore = justiceInvolvedPersonsStore;
     this.opportunityMapping = "opportunitiesEligible";
+    this.personFieldsToHydrate = ["opportunityManager"];
 
     makeObservable<
       SupervisionSupervisorOpportunitiesPresenter,
@@ -69,7 +70,6 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         allOfficers: true,
         hydrate: true,
         hydrator: true,
-        populateOpportunitiesForOfficers: true,
         populateCaseload: true,
         hydrationState: true,
         initializeOpportunityDetail: true,
@@ -95,10 +95,9 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
       expectPopulated: [
         this.expectOfficersPopulated,
         this.expectOpportunityConfigurationStorePopulated,
-        () =>
-          this.expectClientsForOfficersPopulated(
-            this.allOfficers.map((o) => o.externalId),
-          ),
+        ...this.allOfficers.map(
+          (o) => () => this.expectCaseloadPopulated(o.externalId),
+        ),
       ],
     });
   }
@@ -148,8 +147,10 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     const { allOfficers } = this;
 
     if (allOfficers) {
-      await this.populateOpportunitiesForOfficers(
-        allOfficers.map((officer) => officer.externalId),
+      await Promise.all(
+        allOfficers.map((officer) =>
+          this.populateCaseloadForOfficer(officer.externalId),
+        ),
       );
     }
   }

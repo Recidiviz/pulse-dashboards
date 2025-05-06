@@ -22,7 +22,6 @@ import { InsightsConfigFixture, supervisionOfficerFixture } from "~datatypes";
 
 import { RootStore } from "../../../RootStore";
 import { TenantId } from "../../../RootStore/types";
-import { JusticeInvolvedPerson } from "../../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { MOCK_OPPORTUNITY_CONFIGS } from "../../../WorkflowsStore/Opportunity/__fixtures__";
 import { opportunityConstructors } from "../../../WorkflowsStore/Opportunity/opportunityConstructors";
@@ -107,10 +106,10 @@ describe("JusticeInvolvedPersonsStore", () => {
   });
 
   describe("prior to population of caseload", () => {
-    describe("Method: expectClientsPopulated", () => {
+    describe("Method: expectCaseloadPopulated", () => {
       it("should throw when an externalId is undefined", () => {
         expect(() =>
-          presenter.expectClientsPopulated(undefined),
+          presenter.expectCaseloadPopulated(undefined),
         ).toThrowErrorMatchingInlineSnapshot(
           `[Error: Officer \`externalId\` is undefined.]`,
         );
@@ -118,7 +117,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
       it("should throw when an externalId leads to an undefined on the caseload", () => {
         expect(() =>
-          presenter.expectClientsPopulated(officersExternalIds[0]),
+          presenter.expectCaseloadPopulated(officersExternalIds[0]),
         ).toThrowErrorMatchingInlineSnapshot(
           `[Error: Failed to populate clients for externalId OFFICER4]`,
         );
@@ -127,51 +126,8 @@ describe("JusticeInvolvedPersonsStore", () => {
       it("should not throw when isWorkflowsEnabled is false", () => {
         vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(false);
         expect(() =>
-          presenter.expectClientsPopulated(officersExternalIds[0]),
+          presenter.expectCaseloadPopulated(officersExternalIds[0]),
         ).not.toThrow();
-      });
-    });
-
-    describe("Method: expectClientsForOfficersPopulated", () => {
-      it("should throw when an externalId is undefined", () => {
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated(undefined),
-        ).toThrowErrorMatchingInlineSnapshot(
-          `[Error: List of officer \`externalIds\` is undefined.]`,
-        );
-      });
-
-      it(`throws when a defined externalId gets an undefined list of clients from the caseload`, () => {
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated(officersExternalIds),
-        ).toThrowErrorMatchingInlineSnapshot(
-          `
-            [Error: Failed to populate clients for the externalIds 
-                      OFFICER4, so2, so3, so6 and so7 of [OFFICER4,so2,so3,so6,so7]]
-          `,
-        );
-      });
-
-      it("should not throw when isWorkflowsEnabled is false", () => {
-        vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(false);
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated(officersExternalIds),
-        ).not.toThrow();
-      });
-
-      it(`throws when only some of the externalIds get an undefined from the caseload`, async () => {
-        await presenter.populateOpportunitiesForOfficers([
-          officersExternalIds[0],
-          OFFICER_WITH_NO_CLIENTS.externalId,
-        ]);
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated(officersExternalIds),
-        ).toThrowErrorMatchingInlineSnapshot(
-          `
-            [Error: Failed to populate clients for the externalIds 
-                      so2, so3 and so6 of [OFFICER4,so2,so3,so6,so7]]
-          `,
-        );
       });
     });
   });
@@ -190,7 +146,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
     it("should have populated clients for the officer", () => {
       expect(() =>
-        presenter.expectClientsPopulated(officersExternalIds[0]),
+        presenter.expectCaseloadPopulated(officersExternalIds[0]),
       ).not.toThrow();
     });
 
@@ -204,7 +160,12 @@ describe("JusticeInvolvedPersonsStore", () => {
     beforeEach(async () => {
       vi.useFakeTimers();
       vi.runAllTimersAsync();
-      await presenter.populateOpportunitiesForOfficers(officersExternalIds);
+      presenter.personFieldsToHydrate = ["opportunityManager"];
+      await Promise.all(
+        officersExternalIds.map((id) =>
+          presenter.populateCaseloadForOfficer(id),
+        ),
+      );
     });
 
     it("should have all officers present as keys", () => {
@@ -218,16 +179,16 @@ describe("JusticeInvolvedPersonsStore", () => {
       ).toBeTrue();
     });
 
-    describe("Method: expectClientsPopulated", () => {
+    describe("Method: expectCaseloadPopulated", () => {
       it("should not throw", () => {
         expect(() =>
-          presenter.expectClientsPopulated(officersExternalIds[0]),
+          presenter.expectCaseloadPopulated(officersExternalIds[0]),
         ).not.toThrow();
       });
 
       it("should throw for an undefined externalId", () => {
         expect(() =>
-          presenter.expectClientsPopulated(undefined),
+          presenter.expectCaseloadPopulated(undefined),
         ).toThrowErrorMatchingInlineSnapshot(
           `[Error: Officer \`externalId\` is undefined.]`,
         );
@@ -239,7 +200,7 @@ describe("JusticeInvolvedPersonsStore", () => {
 
         // NOTE: We expect this to fail because, when the externalId is valid, we expect the caseload to be an empty list.
         expect(() =>
-          presenter.expectClientsPopulated(ASSUMED_VALID_EXTERNAL_ID),
+          presenter.expectCaseloadPopulated(ASSUMED_VALID_EXTERNAL_ID),
         ).toThrowErrorMatchingInlineSnapshot(
           `[Error: Failed to populate clients for externalId CASELOAD_DNE]`,
         );
@@ -248,91 +209,8 @@ describe("JusticeInvolvedPersonsStore", () => {
       it("should not throw when isWorkflowsEnabled is false", () => {
         vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(false);
         expect(() =>
-          presenter.expectClientsPopulated(officersExternalIds[0]),
+          presenter.expectCaseloadPopulated(officersExternalIds[0]),
         ).not.toThrow();
-      });
-    });
-
-    describe("Method: expectClientsForOfficersPopulated", () => {
-      it("should not throw", () => {
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated(officersExternalIds),
-        ).not.toThrow();
-      });
-
-      it("should not throw for an empty list of externalIds", () => {
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated([]),
-        ).not.toThrow();
-      });
-
-      it("should throw for an assumed valid externalId on the caseload that returns undefined", () => {
-        // We assume that this externalId was retrieved from some valid source.
-        const ASSUMED_VALID_EXTERNAL_IDS = ["CASELOAD_DNE", "CASELOAD_DNE2"];
-
-        // NOTE: We expect this to fail because, when the externalId is valid, we expect the caseload to be an empty list.
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated(
-            ASSUMED_VALID_EXTERNAL_IDS,
-          ),
-        ).toThrowErrorMatchingInlineSnapshot(
-          `
-            [Error: Failed to populate clients for the externalIds 
-                      CASELOAD_DNE and CASELOAD_DNE2 of [CASELOAD_DNE,CASELOAD_DNE2]]
-          `,
-        );
-      });
-
-      it("should throw for some externalIds on the caseload that return undefined", () => {
-        // We assume that this externalId was retrieved from some valid source.
-        const ASSUMED_VALID_EXTERNAL_IDS = ["CASELOAD_DNE", "CASELOAD_DNE2"];
-
-        // NOTE: We expect this to fail because, when the externalId is valid, we expect the caseload to be an empty list.
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated([
-            ...ASSUMED_VALID_EXTERNAL_IDS,
-            officersExternalIds[0],
-            OFFICER_WITH_NO_CLIENTS.externalId,
-          ]),
-        ).toThrowErrorMatchingInlineSnapshot(
-          `
-          [Error: Failed to populate clients for the externalIds 
-                    CASELOAD_DNE and CASELOAD_DNE2 of [CASELOAD_DNE,CASELOAD_DNE2,OFFICER4,so7]]
-        `,
-        );
-      });
-
-      it("should throw for undefined externalIds", () => {
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated(undefined),
-        ).toThrowErrorMatchingInlineSnapshot(
-          `[Error: List of officer \`externalIds\` is undefined.]`,
-        );
-      });
-
-      it("should not throw when isWorkflowsEnabled is false", () => {
-        vi.spyOn(presenter, "isWorkflowsEnabled", "get").mockReturnValue(false);
-        expect(() =>
-          presenter.expectClientsForOfficersPopulated(officersExternalIds),
-        ).not.toThrow();
-      });
-    });
-
-    describe("Method: findClientsForOfficer", () => {
-      const TEST_OFFICER_ID = officersExternalIds[0];
-      let clients: JusticeInvolvedPerson[] | undefined;
-
-      it(`returns an array when the valid officerExternalId, ${TEST_OFFICER_ID}, is provided`, () => {
-        clients = presenter.findClientsForOfficer(TEST_OFFICER_ID);
-        expect(clients).toBeDefined();
-        expect(clients).toBeArray();
-      });
-
-      it(`all clients are supervised by officer with externalId ${TEST_OFFICER_ID}`, () => {
-        clients = presenter.findClientsForOfficer(TEST_OFFICER_ID);
-        expect(
-          clients?.every((c) => c.assignedStaffId === TEST_OFFICER_ID),
-        ).toBeTrue();
       });
     });
 

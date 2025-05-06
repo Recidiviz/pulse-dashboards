@@ -33,12 +33,19 @@ function withPresenter(Component: ComponentType<StaffVitalsProps>) {
   }) {
     const {
       insightsStore: { supervisionStore },
+      workflowsRootStore: { justiceInvolvedPersonsStore },
     } = useRootStore();
 
-    if (!supervisionStore || !supervisionStore?.isVitalsEnabled) return null;
+    if (
+      !supervisionStore ||
+      !supervisionStore?.isVitalsEnabled ||
+      !justiceInvolvedPersonsStore
+    )
+      return null;
 
     const presenter = new SupervisionOfficerVitalsPresenter(
       supervisionStore,
+      justiceInvolvedPersonsStore,
       officerPseudoId,
     );
 

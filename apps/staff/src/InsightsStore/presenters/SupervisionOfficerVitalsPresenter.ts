@@ -15,13 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult, makeAutoObservable } from "mobx";
+import { makeObservable } from "mobx";
 
 import { SupervisionVitalsMetric } from "~datatypes";
-import { FlowMethod, Hydratable, HydratesFromSource } from "~hydration-utils";
+import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
+import {
+  JusticeInvolvedPerson,
+  SupervisionTask,
+  SupervisionTaskType,
+} from "../../WorkflowsStore";
+import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsAPI } from "../api/interface";
+import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
+import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
 import { OfficerVitalsMetricDetail } from "./types";
 import { labelForVitalsMetricId } from "./utils";
 
@@ -30,30 +38,59 @@ import { labelForVitalsMetricId } from "./utils";
  * data related to an officer's vitals metrics within the Recidiviz platform.
  * It handles data hydration, data aggregation, and user-specific contextual information.
  */
-export class SupervisionOfficerVitalsPresenter implements Hydratable {
+export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPersonStore(
+  SupervisionOfficerPresenterBase,
+) {
   // ==============================
   // Properties and Constructor
   // ==============================
 
   private fetchedOfficerVitalsMetrics?: SupervisionVitalsMetric[];
-  private hydrator: HydratesFromSource;
 
   constructor(
     protected supervisionStore: InsightsSupervisionStore,
+    protected justiceInvolvedPersonStore: JusticeInvolvedPersonsStore,
     public officerPseudoId: string,
   ) {
-    makeAutoObservable(
-      this,
-      { vitalsMetricDetails: false },
-      { autoBind: true },
-    );
+    super(supervisionStore, officerPseudoId);
+    this.justiceInvolvedPersonsStore = justiceInvolvedPersonStore;
+
+    makeObservable<
+      SupervisionOfficerVitalsPresenter,
+      | "expectVitalsForOfficerPopulated"
+      | "populateVitalsForOfficer"
+      | "expectCaseloadPopulated"
+      | "findClientsForOfficer"
+    >(this, {
+      expectVitalsForOfficerPopulated: true,
+      populateVitalsForOfficer: true,
+      isDrilldownEnabled: true,
+      expectCaseloadPopulated: true,
+      findClientsForOfficer: true,
+    });
+
+    this.personFieldsToHydrate = ["supervisionTasks"];
 
     this.hydrator = new HydratesFromSource({
-      expectPopulated: this.expectPopulated(),
+      expectPopulated: [
+        this.expectVitalsForOfficerPopulated,
+        () =>
+          this.isDrilldownEnabled &&
+          this.expectCaseloadPopulated(this.officerExternalId),
+      ],
       populate: async () => {
-        await Promise.all(this.populateMethods());
+        await this.populateSupervisionOfficer();
+        await this.populateVitalsForOfficer();
+        if (this.officerExternalId && this.isDrilldownEnabled) {
+          await this.populateCaseloadForOfficer(this.officerExternalId);
+        }
       },
     });
+  }
+
+  get clients(): JusticeInvolvedPerson[] | undefined {
+    if (!this.officerExternalId) return undefined;
+    return this.findClientsForOfficer(this.officerExternalId);
   }
 
   /**
@@ -88,6 +125,7 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
           metric.metricId,
           this.supervisionStore.vitalsMetricsConfig,
         ),
+        tasks: this.getTasksOfType(this.taskTypeMapping[metric.metricId]),
         // The vitalsMetrics array will have one entry for officers
         ...metric.vitalsMetrics[0],
       });
@@ -95,17 +133,41 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
     return formattedMetrics;
   }
 
+  private get taskTypeMapping() {
+    const tasks =
+      this.supervisionStore.insightsStore.rootStore.tenantStore
+        .tasksConfiguration?.tasks ?? {};
+    return Object.fromEntries(
+      Object.entries(tasks).flatMap(([taskName, { vitalsMetricId }]) =>
+        vitalsMetricId
+          ? [[vitalsMetricId, taskName as SupervisionTaskType]]
+          : [],
+      ),
+    );
+  }
+
+  get isDrilldownEnabled() {
+    const { operationsDrilldown } =
+      this.supervisionStore.insightsStore.rootStore.userStore
+        .activeFeatureVariants;
+    return operationsDrilldown && Object.keys(this.taskTypeMapping).length > 0;
+  }
+
+  private getTasksOfType(
+    taskType?: SupervisionTaskType,
+  ): SupervisionTask[] | undefined {
+    if (!taskType) return undefined;
+    if (!this.officerExternalId) return undefined;
+    const clients = this.findClientsForOfficer(this.officerExternalId) ?? [];
+    return clients.flatMap((client) => {
+      const tasks = client.supervisionTasks?.tasks ?? [];
+      return tasks.filter((task) => task.type === taskType);
+    });
+  }
+
   // ==============================
   // Hydration and Initialization
   // ==============================
-
-  /**
-   * Returns an array of promises representing the methods required to populate
-   * the necessary data for this presenter.
-   */
-  populateMethods() {
-    return [flowResult(this.populateVitalsForOfficer())];
-  }
 
   /**
    * Fetch vitals metrics for current officer.
@@ -120,28 +182,10 @@ export class SupervisionOfficerVitalsPresenter implements Hydratable {
       );
   }
 
-  /**
-   * Returns an array of expectations for whether the necessary data has been populated.
-   */
-  expectPopulated() {
-    return [this.expectVitalsForOfficerPopulated];
-  }
-
   private expectVitalsForOfficerPopulated() {
     if (!this.officerVitalsMetrics)
       throw new Error(
         `Failed to populate vitals metrics for officer ${this.officerPseudoId}`,
       );
-  }
-
-  /**
-   * Initiates hydration for all data needed within this presenter class
-   */
-  async hydrate(): Promise<void> {
-    return this.hydrator.hydrate();
-  }
-
-  get hydrationState() {
-    return this.hydrator.hydrationState;
   }
 }

@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord, MilestoneType, StaffRecord } from "~datatypes";
+import {
+  ClientRecord,
+  MilestoneType,
+  StaffRecord,
+  VitalsMetricId,
+} from "~datatypes";
 import { FirestoreCollectionName } from "~firestore-api";
 import { Hydratable } from "~hydration-utils";
 
@@ -121,6 +126,7 @@ export type WorkflowsTasksConfig = {
         updates?: SupervisionTaskUpdate[K],
       ) => Task<K>;
       snoozeForOptionsInDays?: Array<ValidSnoozeForDays>;
+      vitalsMetricId?: VitalsMetricId;
     };
   };
   filters?: TaskFilterSection[];

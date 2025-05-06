@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { initial, join, last } from "lodash";
-import { flowResult, when } from "mobx";
+import { flowResult } from "mobx";
 
 import { OpportunityType } from "~datatypes";
-import { isHydrationFinished, isHydrationUntouched } from "~hydration-utils";
+import { awaitHydration, Hydratable, isHydrated } from "~hydration-utils";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
@@ -35,6 +34,13 @@ import {
  */
 type SupervisionBasePresenterWithHydratable =
   ConstrainedAbstractConstructor<SupervisionBasePresenter>;
+
+export type PersonHydratableField = {
+  [K in keyof JusticeInvolvedPerson]: Required<JusticeInvolvedPerson>[K] extends Hydratable
+    ? K
+    : never;
+}[keyof JusticeInvolvedPerson] &
+  string;
 
 /**
  * This is a mixin ({@Link https://www.typescriptlang.org/docs/handbook/mixins.html}) that adds methods to a class
@@ -60,6 +66,8 @@ export function WithJusticeInvolvedPersonStore<
 
     private _opportunityMapping: JusticeInvolvedPersonOpportunityMapping =
       "opportunities";
+
+    protected personFieldsToHydrate: PersonHydratableField[] = [];
 
     /**
      * Checks if workflows are enabled based on user permissions.
@@ -161,8 +169,7 @@ export function WithJusticeInvolvedPersonStore<
     }
 
     /**
-     * Populate the caseload map for this officer. This SKIPS opportunity
-     * hydration for the officer's clients.
+     * Populate the caseload map for this officer.
      * @param officerExternalId - External ID of the relevant officer.
      */
     async populateCaseloadForOfficer(officerExternalId: string) {
@@ -173,50 +180,18 @@ export function WithJusticeInvolvedPersonStore<
           officerExternalId,
         ),
       );
-    }
 
-    /**
-     * Hydrates the opportunities for each of the clients that belong to the officer.
-     * @param officerExternalId - The external ID of the officer to populate opportunities for.
-     */
-    protected async populateOpportunitiesForOfficer(officerExternalId: string) {
-      if (!this.justiceInvolvedPersonsStore) return;
-
-      const {
-        justiceInvolvedPersonsStore: { caseloadByOfficerExternalId },
-        justiceInvolvedPersonsStore,
-      } = this;
-
-      await flowResult(
-        justiceInvolvedPersonsStore.populateCaseloadForSupervisionOfficer(
-          officerExternalId,
-        ),
-      );
-
-      const clients = caseloadByOfficerExternalId.get(officerExternalId);
+      const clients = this.findClientsForOfficer(officerExternalId);
       if (!clients) return;
+      const hydrations: Promise<void>[] = [];
 
-      // Hydrate the opportunities for each client on the officer's caseload
-      return await Promise.all(
-        clients.map(async (client) => {
-          if (isHydrationUntouched(client.opportunityManager))
-            client.opportunityManager.hydrate();
+      for (const client of clients) {
+        for (const field of this.personFieldsToHydrate) {
+          if (client[field]) hydrations.push(awaitHydration(client[field]));
+        }
+      }
 
-          await when(() => isHydrationFinished(client.opportunityManager));
-        }),
-      );
-    }
-
-    /**
-     * Hydrates the opportunities for each of the clients that belong to the officers.
-     * @param officerExternalIds - The external ID of the officer to populate opportunities for.
-     */
-    async populateOpportunitiesForOfficers(officerExternalIds: string[]) {
-      await Promise.all(
-        officerExternalIds.map((officerExternalId) =>
-          this.populateOpportunitiesForOfficer(officerExternalId),
-        ),
-      );
+      return await Promise.all(hydrations);
     }
 
     /**
@@ -224,50 +199,28 @@ export function WithJusticeInvolvedPersonStore<
      * @protected
      * @param officerExternalId
      */
-    protected expectClientsPopulated(officerExternalId: string | undefined) {
+    protected expectCaseloadPopulated(officerExternalId: string | undefined) {
       if (!this.isWorkflowsEnabled) return;
 
       if (!officerExternalId)
         throw new Error("Officer `externalId` is undefined.");
 
-      if (
-        this.isWorkflowsEnabled &&
-        this.findClientsForOfficer(officerExternalId) === undefined
-      )
+      const clients = this.findClientsForOfficer(officerExternalId);
+
+      if (!clients)
         throw new Error(
           `Failed to populate clients for externalId ${officerExternalId}`,
         );
-    }
 
-    /**
-     * If workflows is enabled, this method will throw an error if the clients are not populated for the officers.
-     * @protected
-     * @param {string[]} officerExternalIds
-     */
-    protected expectClientsForOfficersPopulated(
-      officerExternalIds: string[] | undefined,
-    ) {
-      if (!this.isWorkflowsEnabled) return;
-
-      if (!officerExternalIds)
-        throw new Error("List of officer `externalIds` is undefined.");
-
-      if (officerExternalIds.length === 1)
-        return this.expectClientsPopulated(officerExternalIds?.[0]);
-
-      const undefinedCaseloads = officerExternalIds?.filter(
-        (externalId) => this.findClientsForOfficer(externalId) === undefined,
-      );
-
-      if (undefinedCaseloads.length)
-        throw new Error(
-          `Failed to populate clients for the externalIds 
-          ${
-            join(initial(undefinedCaseloads), ", ") +
-            (undefinedCaseloads.length > 1 ? " and " : "") +
-            last(undefinedCaseloads)
-          } of [${officerExternalIds}]`,
-        );
+      for (const client of clients) {
+        for (const field of this.personFieldsToHydrate) {
+          if (!client[field] || !isHydrated(client[field])) {
+            throw new Error(
+              `Failed to populate ${field} for client ${client.externalId} of officer ${officerExternalId}`,
+            );
+          }
+        }
+      }
     }
   }
   return BasePresenterWithJusticeInvolvedPersonsStore;

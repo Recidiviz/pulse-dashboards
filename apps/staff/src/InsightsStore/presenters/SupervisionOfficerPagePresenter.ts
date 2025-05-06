@@ -39,10 +39,10 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
 
     makeObservable<
       SupervisionOfficerPagePresenter,
-      "expectClientsPopulated" | "populateCaseload"
+      "expectCaseloadPopulated" | "populateCaseload"
     >(this, {
       isWorkflowsEnabled: true,
-      expectClientsPopulated: true,
+      expectCaseloadPopulated: true,
       populateCaseload: true,
       clients: true,
       numClientsOnCaseload: true,
@@ -50,11 +50,13 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
       hydrationState: override,
     });
 
+    this.personFieldsToHydrate = ["opportunityManager"];
+
     this.hydrator = new HydratesFromSource({
       expectPopulated: [
         ...this.expectPopulated(),
         ...this.expectOutcomesDependenciesPopulated(),
-        () => this.expectClientsPopulated(this.officerExternalId),
+        () => this.expectCaseloadPopulated(this.officerExternalId),
       ],
       populate: async () => {
         await Promise.all(super.populateMethods());
@@ -69,7 +71,7 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
 
   private async populateCaseload() {
     if (!this.isWorkflowsEnabled || !this.officerExternalId) return;
-    await this.populateOpportunitiesForOfficer(this.officerExternalId);
+    await this.populateCaseloadForOfficer(this.officerExternalId);
   }
 
   // TODO(#5780): move to infoItems presenter

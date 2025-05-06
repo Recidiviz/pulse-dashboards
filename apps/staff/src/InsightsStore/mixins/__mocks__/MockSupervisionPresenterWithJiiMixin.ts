@@ -17,7 +17,10 @@
 
 import { JusticeInvolvedPersonsStore } from "../../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsSupervisionStore } from "../../stores/InsightsSupervisionStore";
-import { WithJusticeInvolvedPersonStore } from "../WithJusticeInvolvedPersonsPresenterMixin";
+import {
+  PersonHydratableField,
+  WithJusticeInvolvedPersonStore,
+} from "../WithJusticeInvolvedPersonsPresenterMixin";
 import { MockSupervisionBasePresenter } from "./MockSupervisionBasePresenter";
 
 /**
@@ -37,6 +40,7 @@ export class MockSupervisionPresenterWithJiiMixin extends WithJusticeInvolvedPer
   findClientsForOfficer = super.findClientsForOfficer;
   countOpportunitiesForOfficer = super.countOpportunitiesForOfficer;
   opportunitiesByTypeForOfficer = super.opportunitiesByTypeForOfficer;
-  expectClientsPopulated = super.expectClientsPopulated;
-  expectClientsForOfficersPopulated = super.expectClientsForOfficersPopulated;
+  expectCaseloadPopulated = super.expectCaseloadPopulated;
+
+  public personFieldsToHydrate: PersonHydratableField[] = [];
 }
