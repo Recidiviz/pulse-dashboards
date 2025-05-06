@@ -37,8 +37,8 @@ class UsTxTypeAgnosticContactTask extends Task<"usTxTypeAgnosticContact"> {
 
   get additionalDetails(): string {
     return this.details.lastContactDate
-      ? `Last contact on ${this.details.lastContactDate}`
-      : "No previous visit on record.";
+      ? `Last contact: ${this.details.lastContactDate}`
+      : "No previous visit on record";
   }
 
   get frequency(): string {

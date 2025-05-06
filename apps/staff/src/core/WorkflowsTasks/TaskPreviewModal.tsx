@@ -15,12 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { palette, Sans12, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
+import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import {
   Contact,
   Milestones,
@@ -28,8 +31,8 @@ import {
 } from "../WorkflowsJusticeInvolvedPersonProfile";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
+import { PreviewModalFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
-import { SupervisionTaskCategory } from "./fixtures";
 import { PreviewTasks } from "./PreviewTasks";
 
 export const TaskItemDivider = styled.hr`
@@ -42,11 +45,11 @@ export const TaskItemDivider = styled.hr`
   }
 `;
 
-const TaskItemHeader = styled.div`
+const TaskItemHeader = styled(Sans12)`
   background-color: ${palette.marble2};
   border-bottom: 1px solid ${palette.slate10};
+  border-top: 1px solid ${palette.slate10};
   color: ${palette.slate70};
-  font-family: "Public Sans", sans-serif;
   font-weight: 700;
   margin: 0 -${rem(spacing.md)};
   min-width: 100%;
@@ -56,14 +59,31 @@ const TaskItemHeader = styled.div`
   text-transform: uppercase;
 `;
 
-interface SelectedTaskCategoryInterface {
-  selectedTaskCategory: SupervisionTaskCategory;
-}
+const TaskPreviewFooter = ({
+  currentClient,
+  navigableClients,
+}: {
+  currentClient: Client;
+  navigableClients: JusticeInvolvedPerson[];
+}) => {
+  const { workflowsStore } = useRootStore();
+
+  return (
+    <PreviewModalFooter
+      currentItem={currentClient}
+      navigableItems={navigableClients}
+      onNavigate={(nextClient: Client) => {
+        workflowsStore.updateSelectedPerson(nextClient.pseudonymizedId);
+      }}
+      itemLabel={"Client"}
+    />
+  );
+};
 
 export const TaskPreviewModal = observer(function TaskPreviewModal({
   presenter,
 }: {
-  presenter: SelectedTaskCategoryInterface;
+  presenter: CaseloadTasksPresenter | CaseloadTasksPresenterV2;
 }) {
   const {
     workflowsStore: { selectedClient },
@@ -73,6 +93,9 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
 
   const opportunitiesToDisplay = !!Object.values(selectedClient.opportunities)
     .length;
+
+  const showFooter =
+    presenter instanceof CaseloadTasksPresenterV2 && !presenter.showListView;
 
   return (
     <WorkflowsPreviewModal
@@ -99,6 +122,14 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
           <Milestones client={selectedClient} />
           <Contact client={selectedClient} />
         </article>
+      }
+      footerContent={
+        showFooter ? (
+          <TaskPreviewFooter
+            currentClient={selectedClient}
+            navigableClients={presenter.navigablePeople}
+          />
+        ) : undefined
       }
     />
   );

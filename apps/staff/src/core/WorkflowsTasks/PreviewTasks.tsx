@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans14, Sans16, typography } from "@recidiviz/design-system";
+import {
+  palette,
+  Sans14,
+  Sans16,
+  spacing,
+  typography,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
@@ -98,7 +104,7 @@ const TaskItemWrapper = styled.div`
 
 const TaskItemV2 = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
   display: grid;
-  grid-template-columns: 180px 180px auto;
+  grid-template-columns: ${rem(175)} ${rem(175)} auto;
 `;
 
 const TaskInfo = styled.div`
@@ -107,15 +113,45 @@ const TaskInfo = styled.div`
 `;
 
 const TaskFrequency = styled.div`
-  font-size: ${rem(12)};
+  font-size: ${rem(14)};
   margin-top: ${rem(6)};
 `;
 
-const TaskTimeline = styled.div`
-  font-size: ${rem(12)};
+const TaskTimelineGroup = styled.div`
+  display: grid;
+  align-items: baseline;
+  grid-template-rows: 1fr auto;
+  grid-template-columns: ${rem(16)} auto;
+  column-gap: ${rem(6)};
+  row-gap: 0;
+`;
+
+const TaskTimelineIcon = styled.div`
+  height: 100%;
+  overflow: hidden;
+`;
+
+const TaskTimelineLineWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  margin-top: ${rem(spacing.xs)};
+
   display: flex;
-  flex-direction: column;
-  gap: ${rem(16)};
+  justify-content: center;
+`;
+
+const TaskTimelineLine = styled.div`
+  width: ${rem(1)};
+  height: 100%;
+  background-color: ${palette.slate60};
+`;
+
+const TaskTimelineText = styled.div`
+  font-size: ${rem(14)};
+
+  &:not(:last-child) {
+    padding-bottom: ${rem(16)};
+  }
 `;
 
 const TaskTimelineDueDate = styled.div<{ overdue: boolean }>`
@@ -141,6 +177,33 @@ const SnoozedTaskInfoBox = styled.div`
   flex-direction: row;
   gap: ${rem(10)};
 `;
+
+const TaskTimelineDonut = ({
+  filled = false,
+  lineBelow = false,
+}: {
+  filled?: boolean;
+  lineBelow?: boolean;
+}) => {
+  return (
+    <TaskTimelineIcon>
+      <svg viewBox="0 0 14 14" aria-hidden={true}>
+        <circle cx="50%" cy="50%" r="48%" fill={palette.slate20} />
+        <circle
+          cx="50%"
+          cy="50%"
+          r="25%"
+          fill={filled ? palette.slate60 : "white"}
+        />
+      </svg>
+      {lineBelow && (
+        <TaskTimelineLineWrapper>
+          <TaskTimelineLine />
+        </TaskTimelineLineWrapper>
+      )}
+    </TaskTimelineIcon>
+  );
+};
 
 const SnoozedTaskInfo = ({ task }: { task: SupervisionTask }) => {
   if (!task.isSnoozed || !task.snoozeInfo) return null;
@@ -216,12 +279,21 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
               <i className="fa fa-refresh" /> {task.frequency}
             </TaskFrequency>
           </TaskInfo>
-          <TaskTimeline>
-            <div>{task.additionalDetails}</div>
-            <TaskTimelineDueDate overdue={task.isOverdue}>
-              {task.dueDateDisplayShort}
-            </TaskTimelineDueDate>
-          </TaskTimeline>
+
+          <TaskTimelineGroup>
+            <TaskTimelineDonut filled lineBelow />
+            <TaskTimelineText>
+              <div>{task.additionalDetails}</div>
+            </TaskTimelineText>
+
+            <TaskTimelineDonut />
+            <TaskTimelineText>
+              <TaskTimelineDueDate overdue={task.isOverdue}>
+                {task.dueDateDisplayShort}
+              </TaskTimelineDueDate>
+            </TaskTimelineText>
+          </TaskTimelineGroup>
+
           <SnoozeTaskDropdown
             task={task}
             taskConfig={

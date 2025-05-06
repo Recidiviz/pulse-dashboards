@@ -17,7 +17,7 @@
 
 import { isThisMonth, isThisWeek } from "date-fns";
 import { every, some, uniq } from "lodash";
-import { makeAutoObservable } from "mobx";
+import { action, makeAutoObservable, reaction } from "mobx";
 
 import {
   TaskFilterField,
@@ -72,6 +72,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   private selectedCategory: SupervisionTaskCategory;
   private _selectedFilters: SelectedFilters = {};
   private tableViewSelectPresenter: TableViewSelectPresenter;
+  private _navigablePeople: JusticeInvolvedPerson[] = [];
 
   constructor(
     protected workflowsStore: WorkflowsStore,
@@ -80,7 +81,19 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     protected firestoreStore: FirestoreStore,
     protected featureVariants: FeatureVariantRecord,
   ) {
-    makeAutoObservable(this);
+    // only update the list of tasks to navigate through when necessary,
+    // to avoid changing the list when a task is snoozed
+    reaction(
+      () => this.workflowsStore.selectedPerson,
+      (nextClient: JusticeInvolvedPerson | undefined) => {
+        if (!nextClient || !this._navigablePeople.includes(nextClient))
+          this.updateNavigablePeople();
+      },
+    );
+    makeAutoObservable(this, {
+      updateNavigablePeople: action,
+    });
+
     this.selectedCategory = "ALL_TASKS";
     this.tableViewSelectPresenter = new TableViewSelectPresenter(
       firestoreStore,
@@ -269,6 +282,31 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
           (person.supervisionTasks?.upcomingTasks.length ?? 0) > 0,
       )
       .sort(sortPeopleByNextTaskDueDate);
+  }
+
+  // Handle setting and getting the ordered list of people available to navigate between
+  // in the footer of the task preview modal
+
+  /**
+   * This function is called from a reaction to update the list of people whenever
+   * the preview modal is opened/closed or a person from a different category is selected.
+   * This ensures that the currently selected person is always found within the list of
+   * navigable people, so we can display reasonable numbers in the footer.
+   * The list is not updated when the sort order of the table is changed or when different
+   * filters are selected.
+   */
+  updateNavigablePeople() {
+    this._navigablePeople = this.orderedTasksForSelectedCategory
+      // Map all tasks in this category to clients
+      .map((task) => task.person)
+      // Filter out consecutive repeats
+      .filter((client, i, allClients) => {
+        return i === 0 || client !== allClients[i - 1];
+      });
+  }
+
+  get navigablePeople(): JusticeInvolvedPerson[] {
+    return this._navigablePeople;
   }
 
   // Filter controls

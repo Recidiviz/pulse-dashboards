@@ -68,7 +68,6 @@ export function OpportunityPreviewModal({
             <OpportunityProfileFooter
               currentOpportunity={opportunity}
               navigableOpportunities={navigableOpportunities}
-              modalRef={modalRef}
             />
           }
         />

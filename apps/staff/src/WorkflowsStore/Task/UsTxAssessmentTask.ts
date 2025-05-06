@@ -30,8 +30,8 @@ class UsTxAssessmentTask extends Task<"usTxAssessment"> {
 
   get additionalDetails(): string {
     return this.lastAssessment
-      ? `Last assessment on ${this.lastAssessment}`
-      : "No previous assessment on record.";
+      ? `Last assessment: ${this.lastAssessment}`
+      : "No previous assessment on record";
   }
 
   get frequency(): string {

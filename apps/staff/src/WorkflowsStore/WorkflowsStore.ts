@@ -329,6 +329,10 @@ export class WorkflowsStore implements Hydratable {
     return notifications?.filter(({ id }) => !dismissedIds.includes(id));
   }
 
+  /**
+   * Get the client or resident record corresponding to the person with the given
+   * pseudonymized ID from Firestore
+   */
   async fetchPerson(personId: string): Promise<void> {
     if (!this.rootStore.currentTenantId) return;
 
@@ -393,6 +397,7 @@ export class WorkflowsStore implements Hydratable {
     );
   }
 
+  // Update the selected person to the person with the given pseudonymized ID
   async updateSelectedPerson(personId?: string): Promise<void> {
     if (personId && !has(this.justiceInvolvedPersons, personId)) {
       await this.fetchPerson(personId);

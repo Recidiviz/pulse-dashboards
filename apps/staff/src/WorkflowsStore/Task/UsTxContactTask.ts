@@ -31,8 +31,8 @@ abstract class UsTxContactTask<
 
   get additionalDetails(): string {
     return this.lastContactDate
-      ? `Last contact on ${this.lastContactDate}`
-      : "No previous visit on record.";
+      ? `Last contact: ${this.lastContactDate}`
+      : "No previous visit on record";
   }
 
   get frequency(): string {

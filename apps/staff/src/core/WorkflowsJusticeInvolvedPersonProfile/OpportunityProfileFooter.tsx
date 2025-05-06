@@ -27,10 +27,11 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 
-type OpportunityProfileFooterProps = {
-  navigableOpportunities?: Opportunity[];
-  currentOpportunity: Opportunity;
-  modalRef: React.MutableRefObject<HTMLDivElement | null>;
+type PreviewModalFooterProps<T> = {
+  navigableItems?: T[];
+  currentItem: T;
+  itemLabel: string;
+  onNavigate: (nextItem: T) => void;
 };
 
 const FooterWrapper = styled.div`
@@ -56,81 +57,93 @@ const NavigationKeyboardShortcutIcon = styled.span`
   border-radius: 2px;
 `;
 
-export const OpportunityProfileFooter: React.FC<
-  OpportunityProfileFooterProps
-> = ({ currentOpportunity, navigableOpportunities, modalRef }) => {
+export const OpportunityProfileFooter = ({
+  currentOpportunity,
+  navigableOpportunities,
+}: {
+  currentOpportunity: Opportunity;
+  navigableOpportunities?: Opportunity[];
+}) => {
   const { workflowsStore } = useRootStore();
-  const { justiceInvolvedPersonTitle } = workflowsStore;
 
-  const currentOpportunityIndex =
-    currentOpportunity && navigableOpportunities
-      ? navigableOpportunities.indexOf(currentOpportunity)
-      : -1;
-  const totalOpportunities = navigableOpportunities?.length ?? 0;
+  return (
+    <PreviewModalFooter
+      currentItem={currentOpportunity}
+      navigableItems={navigableOpportunities}
+      onNavigate={(opp: Opportunity) => {
+        workflowsStore.updateSelectedPersonAndOpportunity(opp);
+        opp.trackPreviewed();
+      }}
+      itemLabel={"Opportunity"}
+    />
+  );
+};
+
+// TODO(#8340) don't use `any` here
+export const PreviewModalFooter: React.FC<PreviewModalFooterProps<any>> = ({
+  currentItem,
+  navigableItems,
+  itemLabel,
+  onNavigate,
+}) => {
+  const currentItemIndex = navigableItems
+    ? navigableItems.indexOf(currentItem)
+    : -1;
+  const totalItems = navigableItems?.length ?? 0;
 
   // returns true if there is a {next/previous} JII eligible in the same opportunity
   // direction is 1 for next, -1 for previous
-  const canNavigateOpportunity = useCallback(
-    (direction: number) => {
-      if (!navigableOpportunities || currentOpportunityIndex === -1) {
+  const canNavigateItem = useCallback(
+    (direction: 1 | -1) => {
+      if (!navigableItems || currentItemIndex === -1) {
         return false;
       }
-      const nextOpportunityIndex = currentOpportunityIndex + direction;
-      return (
-        nextOpportunityIndex > -1 &&
-        nextOpportunityIndex < navigableOpportunities?.length
-      ); // not out of range of items
+      const nextItemIndex = currentItemIndex + direction;
+      return nextItemIndex > -1 && nextItemIndex < navigableItems?.length; // not out of range of items
     },
-    [currentOpportunityIndex, navigableOpportunities],
+    [currentItemIndex, navigableItems],
   );
 
-  const navigateOpportunity = useCallback(
-    (direction: number) => {
-      if (!navigableOpportunities || !canNavigateOpportunity(direction)) {
+  const navigateItem = useCallback(
+    (direction: 1 | -1) => {
+      if (!navigableItems || !canNavigateItem(direction)) {
         return false;
       }
-      const nextOpportunityIndex = currentOpportunityIndex + direction;
-      const nextOpportunity = navigableOpportunities[nextOpportunityIndex];
+      const nextItemIndex = currentItemIndex + direction;
+      const nextItem = navigableItems[nextItemIndex];
 
-      workflowsStore.updateSelectedPersonAndOpportunity(nextOpportunity);
-
-      nextOpportunity.trackPreviewed();
+      onNavigate(nextItem);
     },
-    [
-      canNavigateOpportunity,
-      currentOpportunityIndex,
-      navigableOpportunities,
-      workflowsStore,
-    ],
+    [canNavigateItem, onNavigate, currentItemIndex, navigableItems],
   );
 
   // Keyboard shortcuts
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") {
-        navigateOpportunity(1);
+        navigateItem(1);
       } else if (e.key === "ArrowLeft") {
-        navigateOpportunity(-1);
+        navigateItem(-1);
       }
     };
     window.addEventListener("keydown", listener);
     return () => {
       window.removeEventListener("keydown", listener);
     };
-  }, [navigateOpportunity]);
+  }, [navigateItem]);
 
   const previousTooltip = (
     <NavigationKeyboardShortcutTooltip>
       <NavigationKeyboardShortcutIcon>
         <i className="fa fa-long-arrow-left" />
       </NavigationKeyboardShortcutIcon>
-      Previous {justiceInvolvedPersonTitle} Opportunity
+      Previous {itemLabel}
     </NavigationKeyboardShortcutTooltip>
   );
 
   const nextTooltip = (
     <NavigationKeyboardShortcutTooltip>
-      Next {justiceInvolvedPersonTitle} Opportunity
+      Next {itemLabel}
       <NavigationKeyboardShortcutIcon>
         <i className="fa fa-long-arrow-right" />
       </NavigationKeyboardShortcutIcon>
@@ -141,22 +154,23 @@ export const OpportunityProfileFooter: React.FC<
     <FooterWrapper>
       <TooltipTrigger contents={previousTooltip}>
         <Button
-          onClick={() => navigateOpportunity(-1)}
+          onClick={() => navigateItem(-1)}
           kind="secondary"
           shape="block"
-          disabled={!canNavigateOpportunity(-1)}
+          disabled={!canNavigateItem(-1)}
+          aria-label={`Previous ${itemLabel}`}
         >
           <i className="fa fa-angle-left" />
         </Button>
       </TooltipTrigger>
-      {currentOpportunityIndex + 1} / {totalOpportunities}
+      {currentItemIndex + 1} / {totalItems}
       <TooltipTrigger contents={nextTooltip}>
         <Button
-          onClick={() => navigateOpportunity(1)}
+          onClick={() => navigateItem(1)}
           kind="secondary"
           shape="block"
-          disabled={!canNavigateOpportunity(1)}
-          aria-label="Next Opportunity"
+          disabled={!canNavigateItem(1)}
+          aria-label={`Next ${itemLabel}`}
         >
           <i className="fa fa-angle-right" />
         </Button>
