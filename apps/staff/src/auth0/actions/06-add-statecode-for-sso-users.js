@@ -17,6 +17,7 @@ exports.onExecutePostLogin = async (event, api) => {
     const connectionToStateCode = {
       [event.secrets.RECIDIVIZ_CONNECTION_ID]: "recidiviz",
       // NOTE: delete the following lines for staging
+      [event.secrets.US_IA_CONNECTION_ID]: "us_ia",
       [event.secrets.US_ID_CONNECTION_ID]: "us_id",
       [event.secrets.US_MI_CONNECTION_ID]: "us_mi",
       [event.secrets.US_ME_CONNECTION_ID]: "us_me",
