@@ -24,6 +24,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     US_AZ: ["azadc.gov", "corecivic.com", "geogroup.com"],
     US_CA: ["cdcr.ca.gov"],
     US_CO: ["state.co.us", "coag.gov"],
+    US_IA: ["iowa.gov"],
     US_ID: ["idoc.idaho.gov"],
     US_ME: ["maine.gov"],
     US_MI: ["michigan.gov"],
