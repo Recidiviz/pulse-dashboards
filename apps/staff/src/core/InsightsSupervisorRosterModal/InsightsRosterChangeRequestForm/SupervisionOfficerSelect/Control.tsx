@@ -23,6 +23,7 @@ import {
   palette,
   typography,
 } from "@recidiviz/design-system";
+import { memoize } from "lodash";
 import { rem } from "polished";
 import React from "react";
 import DropdownItem from "react-bootstrap/esm/DropdownItem";
@@ -75,69 +76,71 @@ const StyledDropdownMenu = styled(DropdownMenu)`
  * References
  * - {@link https://react-select.com/components#:~:text=Custom%20Control%20Example}
  */
-export const Control = (
-  requestChangeType: RosterChangeRequest["requestChangeType"],
-  setValue: (value: RosterChangeRequest["requestChangeType"]) => void,
-) =>
-  function Control({ children, ...props }: ControlProps<SelectOption, true>) {
-    const handleSetValue =
-      (val: RosterChangeRequest["requestChangeType"]) => () => {
-        setValue(val);
-        props.clearValue();
-      };
+export const Control = memoize( // Must be wrapped in memoize to avoid unnecessary rerenders
+  (
+    requestChangeType: RosterChangeRequest["requestChangeType"],
+    setValue: (value: RosterChangeRequest["requestChangeType"]) => void,
+  ) =>
+    function Control({ children, ...props }: ControlProps<SelectOption, true>) {
+      const handleSetValue =
+        (val: RosterChangeRequest["requestChangeType"]) => () => {
+          setValue(val);
+          props.clearValue();
+        };
 
-    return (
-      <components.Control {...props}>
-        {children}
-        <Dropdown>
-          <DropdownToggleButton
-            style={{
-              color: palette.pine1,
-            }}
-            {...({ as: DropdownToggleButton } as any)}
-            showCaret
-            kind="borderless"
-            onMouseDown={(e) => {
-              e.stopPropagation();
-            }}
-            onTouchEnd={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            {humanReadableTitleCase(requestChangeType)}
-          </DropdownToggleButton>
-          <StyledDropdownMenu alignment="right">
-            {rosterChangeRequestSchema.shape.requestChangeType.options.map(
-              (action) => {
-                const selected = requestChangeType === action;
+      return (
+        <components.Control {...props}>
+          {children}
+          <Dropdown>
+            <DropdownToggleButton
+              style={{
+                color: palette.pine1,
+              }}
+              {...({ as: DropdownToggleButton } as any)}
+              showCaret
+              kind="borderless"
+              onMouseDown={(e) => {
+                e.stopPropagation();
+              }}
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              {humanReadableTitleCase(requestChangeType)}
+            </DropdownToggleButton>
+            <StyledDropdownMenu alignment="right">
+              {rosterChangeRequestSchema.shape.requestChangeType.options.map(
+                (action) => {
+                  const selected = requestChangeType === action;
 
-                return (
-                  <StyledDropdownMenuItem
-                    as={DropdownItem}
-                    key={action}
-                    onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-                      e.stopPropagation();
-                      if (!selected) handleSetValue(action)();
-                    }}
-                    onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
-                      e.stopPropagation();
-                    }}
-                    // Touch screen
-                    onTouchEnd={(e: React.TouchEvent<HTMLDivElement>) => {
-                      e.stopPropagation();
-                      if (!selected) handleSetValue(action)();
-                    }}
-                  >
-                    <FlexWrapper>
-                      <div>{humanReadableTitleCase(action)}</div>
-                      {selected && <SelectedCheckmarkIndicator />}
-                    </FlexWrapper>
-                  </StyledDropdownMenuItem>
-                );
-              },
-            )}
-          </StyledDropdownMenu>
-        </Dropdown>
-      </components.Control>
-    );
-  };
+                  return (
+                    <StyledDropdownMenuItem
+                      as={DropdownItem}
+                      key={action}
+                      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                        e.stopPropagation();
+                        if (!selected) handleSetValue(action)();
+                      }}
+                      onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
+                        e.stopPropagation();
+                      }}
+                      // Touch screen
+                      onTouchEnd={(e: React.TouchEvent<HTMLDivElement>) => {
+                        e.stopPropagation();
+                        if (!selected) handleSetValue(action)();
+                      }}
+                    >
+                      <FlexWrapper>
+                        <div>{humanReadableTitleCase(action)}</div>
+                        {selected && <SelectedCheckmarkIndicator />}
+                      </FlexWrapper>
+                    </StyledDropdownMenuItem>
+                  );
+                },
+              )}
+            </StyledDropdownMenu>
+          </Dropdown>
+        </components.Control>
+      );
+    },
+);
