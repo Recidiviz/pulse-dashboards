@@ -120,6 +120,20 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
       },
     ],
   },
+  {
+    stateCode: "US_TX",
+    externalId: "006",
+    officerId: "OFFICER1",
+    tasks: [
+      {
+        type: "usTxInCustodyContact",
+        dueDate: "2022-03-19",
+        details: {
+          reasonForContact: "In-Custody Contact",
+        },
+      },
+    ],
+  },
 ];
 
 export const usTxSupervisionTasksData: FirestoreFixture<

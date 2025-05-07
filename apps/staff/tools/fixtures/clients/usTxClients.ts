@@ -163,4 +163,33 @@ export const US_TX_CLIENTS: ClientFixture[] = [
     ],
     milestones: [],
   },
+  {
+    personName: {
+      givenNames: "John",
+      surname: "Smith",
+      middleNames: "Jacob Jingleheimer",
+    },
+    personExternalId: "006",
+    displayId: "d006",
+    pseudonymizedId: "p006",
+    stateCode: "US_TX",
+    officerId: "OFFICER1",
+    district: "DISTRICT 1",
+    caseType: "GENERAL",
+    caseTypeRawText: "Regular",
+    supervisionType: "PROBATION",
+    supervisionLevel: "IN_CUSTODY",
+    supervisionLevelStart: "2021-06-20",
+    address: "103 Cedar Road",
+    phoneNumber: "5555559876",
+    supervisionStartDate: "2021-07-01",
+    expirationDate: "2023-01-01",
+    allEligibleOpportunities: [],
+    currentEmployers: [
+      {
+        name: "Cow store",
+      },
+    ],
+    milestones: [],
+  },
 ];

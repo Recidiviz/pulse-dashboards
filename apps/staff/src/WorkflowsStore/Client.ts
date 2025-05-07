@@ -234,6 +234,17 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this._caseType ?? "Unknown";
   }
 
+  get isInCustody(): boolean {
+    // Note that we are only handling in-custody for Texas, but there's no reason
+    // not to expand it to other states
+    if (this.stateCode !== "US_TX") {
+      return false;
+    }
+
+    // TODO(#8230): Check against dedicated in-custody flag
+    return this.supervisionLevel === "In-custody";
+  }
+
   get rawPhoneNumber(): string | undefined {
     return this._rawPhoneNumber;
   }

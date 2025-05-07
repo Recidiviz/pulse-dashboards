@@ -15,11 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import useIsMobile from "../../hooks/useIsMobile";
 import { formatDate, formatDueDateFromToday } from "../../utils/formatStrings";
 import { SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
@@ -30,7 +33,26 @@ import {
   MaxWidthFlexWrapper,
 } from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
 import PersonId from "../PersonId";
+import { WorkflowsStatusPill } from "../WorkflowsStatusPill/WorkflowsStatusPill";
 import { TaskFrequency } from "./TaskFrequency";
+
+const PersonNameElement = styled.div<{ $isMobile: boolean }>`
+  display: flex;
+  flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
+  align-items: ${({ $isMobile }) => ($isMobile ? "flex-start" : "center")};
+  text-wrap: nowrap;
+  gap: ${({ $isMobile }) => rem($isMobile ? spacing.xs : spacing.sm)};
+`;
+
+function PersonNameCell({ row }: { row: Row<SupervisionTask> }) {
+  const { isMobile } = useIsMobile(true);
+  const { person } = row.original;
+  return (
+    <PersonNameElement $isMobile={isMobile}>
+      {person.displayName} <WorkflowsStatusPill person={person} />
+    </PersonNameElement>
+  );
+}
 
 function PersonIdCell({ row }: { row: Row<SupervisionTask> }) {
   const { person } = row.original;
@@ -96,6 +118,7 @@ export const TasksTable = observer(function TasksTable({
       accessorKey: "person.displayName",
       enableSorting: true,
       sortingFn: "text",
+      cell: PersonNameCell,
     },
     {
       // TODO(#6737): Make the column header the same as the label displayed when copied
