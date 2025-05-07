@@ -163,9 +163,12 @@ export type AnyWorkflowsSystemConfig =
   | WorkflowsSystemConfig<ClientRecord, any>
   | WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
 
+export type SearchIcon = "flag";
+
 export type Searchable = {
   searchLabel: string;
   searchId: string;
+  icon?: SearchIcon;
 };
 
 export type SearchableGroup = {

@@ -51,7 +51,7 @@ import {
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
-import { Searchable, SearchableGroup } from "../models/types";
+import { Searchable, SearchableGroup, SearchIcon } from "../models/types";
 
 // This is a query limitation imposed by Firestore
 const SELECTED_SEARCH_LIMIT = 30;
@@ -69,7 +69,7 @@ const DisabledMessage = styled.div`
   padding: ${rem(spacing.sm)} ${rem(spacing.md)};
 `;
 
-export type SelectOption = { label: string; value: string };
+export type SelectOption = { label: string; value: string; icon?: SearchIcon };
 
 type SelectGroupedOptions = { label: string; options: SelectOption[] };
 
@@ -92,6 +92,7 @@ const buildSelectOptionsFromSearchables = (
   return searchables.map((searchable) => ({
     label: searchable.searchLabel,
     value: searchable.searchId,
+    icon: searchable.icon,
   }));
 };
 
@@ -162,13 +163,53 @@ const Option = ({ children, ...props }: OptionProps<SelectOption, true>) => {
   );
 };
 
+const IconContainer = styled.div`
+  display: flex;
+  justify-content: center;
+
+  padding: ${rem(spacing.xs)};
+
+  background-color: rgba(226, 244, 255, 1);
+  border-radius: 50%;
+`;
+
+const SearchIconElement = styled.i`
+  color: rgba(0, 161, 255, 1);
+`;
+
+const SearchableIcon = ({ icon }: { icon?: SearchIcon }) => {
+  switch (icon) {
+    case "flag":
+      return (
+        <IconContainer>
+          <SearchIconElement className="fa fa-flag" />
+        </IconContainer>
+      );
+    default:
+      return null;
+  }
+};
+
+const MultiValueContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${rem(spacing.xs)};
+`;
+
 export const MultiValue = ({
   children,
   ...props
 }: MultiValueProps<SelectOption, true>) => {
+  const {
+    data: { icon },
+  } = props;
+
   return (
     <components.MultiValue className="fs-exclude" {...props}>
-      {children}
+      <MultiValueContainer>
+        <SearchableIcon icon={icon} />
+        {children}
+      </MultiValueContainer>
     </components.MultiValue>
   );
 };

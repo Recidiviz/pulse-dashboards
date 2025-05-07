@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,32 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StaffRecord } from "~datatypes";
-
-import { Searchable, SearchIcon } from "../core/models/types";
-
-export class Officer implements Searchable {
-  record: StaffRecord;
-
-  constructor(record: StaffRecord) {
-    this.record = record;
-  }
-
-  get searchLabel(): string {
-    return `${this.record.givenNames} ${this.record.surname}`.trim();
-  }
-
-  get searchId(): string {
-    return this.record.id;
-  }
-
-  get icon(): SearchIcon | undefined {
-    if (
-      this.record.recordType === "supervisionStaff" &&
-      this.record.stateSpecificData?.stateCode === "US_TX" &&
-      this.record.stateSpecificData.isInUnderstaffedOffice
-    ) {
-      return "flag";
-    }
-  }
-}
+export * from "./WorkflowsUnderstaffedPill";

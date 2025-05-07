@@ -21,11 +21,24 @@ import { ParsedRecord } from "~datatypes";
 
 import { workflowsStaffRecordBaseSchema } from "../../staffWorkflowsRecordBaseSchema";
 
+const usTxSupervisionStaffStateSpecificSchema = z.object({
+  stateCode: z.literal("US_TX"),
+  isInUnderstaffedOffice: z.boolean().default(false),
+});
+
+const supervisionStaffStateSpecificSchema = z.union([
+  usTxSupervisionStaffStateSpecificSchema,
+  // This is here to allow for future state-specific schemas to be added
+  // since z.union requires the first argument to have at least two elements
+  z.undefined(),
+]);
+
 // TODO: (#6249) Change schema name to `workflowsSupervisionStaffRecordSchema`
 export const supervisionStaffRecordSchema =
   workflowsStaffRecordBaseSchema.extend({
     recordType: z.literal("supervisionStaff").default("supervisionStaff"),
     supervisorExternalId: z.string().nullish(),
+    stateSpecificData: supervisionStaffStateSpecificSchema.optional(),
   });
 
 /**

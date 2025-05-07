@@ -157,6 +157,10 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER1' 1`] = `
   "pseudonymizedId": "p001",
   "recordType": "supervisionStaff",
   "stateCode": "US_TX",
+  "stateSpecificData": {
+    "isInUnderstaffedOffice": false,
+    "stateCode": "US_TX",
+  },
   "supervisorExternalId": "SUPERVISOR1",
   "surname": "Linkus",
 }
@@ -171,6 +175,10 @@ exports[`supervision staff schema for 'US_TX' 'OFFICER2' 1`] = `
   "pseudonymizedId": "p002",
   "recordType": "supervisionStaff",
   "stateCode": "US_TX",
+  "stateSpecificData": {
+    "isInUnderstaffedOffice": true,
+    "stateCode": "US_TX",
+  },
   "supervisorExternalId": "SUPERVISOR2",
   "surname": "Dent",
 }

@@ -37,6 +37,10 @@ export const Divider = styled.hr`
 export const TasksHeader = styled(Serif34)`
   color: ${palette.pine2};
   margin-bottom: ${rem(spacing.md)};
+
+  display: flex;
+  align-items: center;
+  gap: ${rem(spacing.sm)};
 `;
 
 export const TasksCaption = styled(Sans14)`

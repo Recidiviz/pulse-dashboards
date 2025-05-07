@@ -18,6 +18,7 @@
 import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import React from "react";
 import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
@@ -30,6 +31,7 @@ import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/Caselo
 import { TableViewToggle } from "../OpportunityCaseloadView/TableViewToggle";
 import { MaxWidth } from "../sharedComponents";
 import WorkflowsCaseloadTabs from "../WorkflowsCaseloadControlBar";
+import { WorkflowsUnderstaffedPill } from "../WorkflowsUnderstaffed";
 import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
 import { TasksDescription } from "./styles";
 import { TasksHeader } from "./styles";
@@ -63,7 +65,10 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
 }) {
   return (
     <>
-      <TasksHeader>Tasks</TasksHeader>
+      <TasksHeader>
+        Tasks
+        <WorkflowsUnderstaffedPill />
+      </TasksHeader>
 
       <TasksTopbarContainer>
         <TasksDescription>{presenter.pageDescription}</TasksDescription>

@@ -157,6 +157,10 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Linkus",
     supervisorExternalId: "SUPERVISOR1",
     pseudonymizedId: "p001",
+    stateSpecificData: {
+      stateCode: "US_TX" as const,
+      isInUnderstaffedOffice: false,
+    },
   },
   {
     email: "tx-test-officer-2@example.com",
@@ -167,6 +171,10 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     surname: "Dent",
     supervisorExternalId: "SUPERVISOR2",
     pseudonymizedId: "p002",
+    stateSpecificData: {
+      stateCode: "US_TX" as const,
+      isInUnderstaffedOffice: true,
+    },
   },
 
   // US_UT - UTAH
