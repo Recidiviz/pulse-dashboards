@@ -369,7 +369,7 @@ function allTextAttemptsForSeriesFailed(
   );
 
   if (
-    messageAttempts.length === MAX_RETRY_ATTEMPTS &&
+    messageAttempts.length >= MAX_RETRY_ATTEMPTS &&
     messageAttempts[0].status === MessageAttemptStatus.FAILURE
   ) {
     return true;
