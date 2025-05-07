@@ -239,7 +239,7 @@ module "handle-sentencing-gcs-upload" {
   env_vars = {
     PROJECT_ID        = var.project_id
     JOB_NAME          = module.import-job[0].id
-    ARCHIVE_BUCKET_ID = local.archive_bucket_name
-    ETL_BUCKET_ID     = local.etl_bucket_name
+    ARCHIVE_BUCKET_ID = module.gcs_bucket[0].names[local.archive_bucket_name]
+    ETL_BUCKET_ID     = module.gcs_bucket[0].names[local.etl_bucket_name]
   }
 }
