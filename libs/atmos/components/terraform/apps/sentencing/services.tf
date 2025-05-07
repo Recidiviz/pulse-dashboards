@@ -18,6 +18,12 @@ resource "google_project_iam_member" "cloudrundjobexecutor" {
   member  = "serviceAccount:${google_service_account.default.email}"
 }
 
+resource "google_project_iam_member" "logwriter" {
+  project = var.project_id
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.default.email}"
+}
+
 # Grant Workflows invoker so the service account can invoke Workflows
 resource "google_project_iam_member" "workflowsinvoker" {
   project = var.project_id

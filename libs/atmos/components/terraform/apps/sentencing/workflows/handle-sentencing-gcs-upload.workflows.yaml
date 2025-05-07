@@ -16,16 +16,34 @@ main:
           - archive_bucket_id: ${sys.get_env("ARCHIVE_BUCKET_ID")}
           - etl_bucket_id: ${sys.get_env("ETL_BUCKET_ID")}
     - run_job:
-        call: googleapis.run.v2.projects.locations.jobs.run
-        args:
-          name: ${job_name}
-          body:
-            overrides:
-              containerOverrides:
-                env:
-                  - name: STATE_CODE
-                    value: ${state_code}
-        result: job_execution
+        # Trigger the import cloud run job
+        # If there is a timeout error, ignore it and move onto the next step
+        # Fail on any other errors
+        try:
+          call: googleapis.run.v2.projects.locations.jobs.run
+          args:
+            name: ${job_name}
+            body:
+              overrides:
+                containerOverrides:
+                  env:
+                    - name: STATE_CODE
+                      value: ${state_code}
+          result: job_execution
+        except:
+          as: e
+          steps:
+            - known_errors:
+                switch:
+                  - condition: ${"TimeoutError" in e.tags}
+                    steps:
+                      - log_error:
+                          call: sys.log
+                          args:
+                            data: "Timed out waiting for the job to finish. This is likely not an issue. Moving on to the next step, please check the status of the job."
+                    next: archive_etl_data
+            - unhandled_exception:
+                raise: ${e}
     - archive_etl_data:
         call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.run
         args:
