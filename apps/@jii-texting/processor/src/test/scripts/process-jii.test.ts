@@ -558,7 +558,7 @@ describe("one person with initial and eligibility message series with MANUAL gro
     const group = await testPrismaClient.group.create({
       data: {
         groupName: "MANUAL",
-        id: "MANUAL",
+        id: "group-id-1",
         topic: { connect: { id: topic.id } },
       },
     });

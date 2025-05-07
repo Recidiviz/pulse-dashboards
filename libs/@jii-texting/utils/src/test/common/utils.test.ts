@@ -59,6 +59,7 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
         topicId: "topic-id",
         status: Status.ACTIVE,
         messageCopyTemplate: "Template",
+        groupName: "GROUP_ONE",
       },
     };
 
@@ -91,6 +92,7 @@ describe("getOrderedMessageAttemptFromMessageSeries", () => {
         topicId: "topic-id",
         status: Status.ACTIVE,
         messageCopyTemplate: "Template",
+        groupName: "GROUP_ONE",
       },
     };
 

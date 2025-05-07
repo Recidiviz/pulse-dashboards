@@ -48,6 +48,7 @@ export const MESSAGE_SERIES_INCLUDE_ATTEMPTS_AND_GROUP = {
         topicId: true,
         messageCopyTemplate: true,
         status: true,
+        groupName: true,
       },
     },
   } satisfies Prisma.MessageSeriesInclude,

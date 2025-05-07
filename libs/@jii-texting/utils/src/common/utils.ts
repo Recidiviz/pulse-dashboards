@@ -687,8 +687,10 @@ export async function processIndividualJii(
 
   if (latestMessageSeries === undefined) return ScriptAction.ERROR;
 
-  const { groupId: latestMessageGroupId, messageType: latestMessageType } =
-    latestMessageSeries;
+  const {
+    group: { groupName: latestMessageGroupName, id: latestMessageGroupId },
+    messageType: latestMessageType,
+  } = latestMessageSeries;
 
   const daysSinceLatestMessageAttempt = diffInDays(
     new Date(),
@@ -697,7 +699,7 @@ export async function processIndividualJii(
 
   // TODO(#8136): Remove once it's been 90 days since the April manual launch
   if (
-    latestMessageGroupId === "MANUAL" &&
+    latestMessageGroupName === "MANUAL" &&
     daysSinceLatestMessageAttempt >= 0 &&
     daysSinceLatestMessageAttempt < 90
   ) {
