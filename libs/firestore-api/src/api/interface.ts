@@ -18,7 +18,7 @@
 import { where } from "firebase/firestore";
 import { z } from "zod";
 
-import { ResidentRecord, StaffRecord } from "~datatypes";
+import { ResidentRecord } from "~datatypes";
 
 import { FirestoreCollectionKey } from "../types";
 
@@ -26,17 +26,24 @@ export type FilterParams = Parameters<typeof where>;
 
 export interface FirestoreAPI {
   authenticate(firebaseToken: string): Promise<void>;
-  staffRecordsWithSupervisor(
-    supervisorExternalId: string,
-  ): Promise<StaffRecord[]>;
 
-  residents(filters?: Array<FilterParams>): Promise<Array<ResidentRecord>>;
+  residents(
+    stateCode: string,
+    filters?: Array<FilterParams>,
+  ): Promise<Array<ResidentRecord>>;
 
-  resident(externalId: string): Promise<ResidentRecord | undefined>;
+  resident(
+    stateCode: string,
+    externalId: string,
+  ): Promise<ResidentRecord | undefined>;
 
-  residentByPseudoId(pseudoId: string): Promise<ResidentRecord | undefined>;
+  residentByPseudoId(
+    stateCode: string,
+    pseudoId: string,
+  ): Promise<ResidentRecord | undefined>;
 
   recordForExternalId<Schema extends z.ZodTypeAny>(
+    stateCode: string,
     collection: FirestoreCollectionKey,
     externalId: string,
     recordSchema: Schema,

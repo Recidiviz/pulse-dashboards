@@ -26,14 +26,14 @@ import {
   SegmentClient,
   SegmentClientExternals,
 } from "../apis/Segment/SegmentClient";
-import { StateCode } from "../configs/types";
+import { stateConfigsByUrlSlug } from "../configs/stateConstants";
 
 export class UserStore {
   segmentClient: SegmentClient;
 
   authManager: AuthManager;
 
-  constructor(private externals: { stateCode: StateCode }) {
+  constructor() {
     makeAutoObservable(
       this,
       { authManager: false, segmentClient: false },
@@ -49,20 +49,21 @@ export class UserStore {
     return this.authManager.authState;
   }
 
-  get isAuthorizedForCurrentState(): boolean {
+  isAuthorizedForStateUrl(urlSlug: string): boolean {
+    // for convenience we don't bother with this in offline mode
     if (isOfflineMode()) return true;
 
-    if (isAuthorizedState(this.authState)) {
+    const activeStateCode = stateConfigsByUrlSlug[urlSlug]?.stateCode;
+
+    if (activeStateCode && isAuthorizedState(this.authState)) {
       const { stateCode, allowedStates } = this.authState.userProfile;
 
-      const isUserState = stateCode === this.externals.stateCode;
+      const isUserState = stateCode === activeStateCode;
 
       if (isUserState) return true;
 
       const isRecidivizUser = stateCode === "RECIDIVIZ";
-      const isRecidivizAllowedState = allowedStates?.includes(
-        this.externals.stateCode,
-      );
+      const isRecidivizAllowedState = allowedStates?.includes(activeStateCode);
 
       if (isRecidivizUser && (isDemoMode() || isRecidivizAllowedState))
         return true;
@@ -116,10 +117,6 @@ export class UserStore {
     return false;
   }
 
-  get stateCode() {
-    return this.externals.stateCode;
-  }
-
   get user() {
     if (isAuthorizedState(this.authState)) {
       return this.authState.userProfile;
@@ -132,9 +129,5 @@ class SegmentExternals implements SegmentClientExternals {
   constructor(private userStore: UserStore) {}
   get isRecidivizUser() {
     return this.userStore.isRecidivizUser;
-  }
-
-  get stateCode() {
-    return this.userStore.stateCode;
   }
 }

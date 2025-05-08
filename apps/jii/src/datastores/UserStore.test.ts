@@ -24,8 +24,6 @@ import { UserStore } from "./UserStore";
 
 vi.mock("~client-env-utils");
 
-const externalsStub = { stateCode: "US_ME" } as const;
-
 let store: UserStore;
 
 beforeEach(() => {
@@ -35,7 +33,7 @@ beforeEach(() => {
   // make sure we are verifying the non-test behavior
   vi.mocked(isTestEnv).mockReturnValue(false);
 
-  store = new UserStore(externalsStub);
+  store = new UserStore();
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
@@ -52,7 +50,7 @@ afterEach(() => {
 });
 
 test("state authorization for external user", () => {
-  expect(store.isAuthorizedForCurrentState).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
@@ -63,13 +61,13 @@ test("state authorization for external user", () => {
     },
   });
 
-  expect(store.isAuthorizedForCurrentState).toBeFalse();
+  expect(store.isAuthorizedForStateUrl("maine")).toBeFalse();
 });
 
 test("state authorization for external demo user", () => {
   vi.mocked(isDemoMode).mockReturnValue(true);
 
-  expect(store.isAuthorizedForCurrentState).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
@@ -80,7 +78,7 @@ test("state authorization for external demo user", () => {
     },
   });
 
-  expect(store.isAuthorizedForCurrentState).toBeFalse();
+  expect(store.isAuthorizedForStateUrl("maine")).toBeFalse();
 });
 
 test("state authorization for internal user", () => {
@@ -92,7 +90,7 @@ test("state authorization for internal user", () => {
     },
   });
 
-  expect(store.isAuthorizedForCurrentState).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
@@ -101,7 +99,7 @@ test("state authorization for internal user", () => {
       allowedStates: ["US_XX"],
     },
   });
-  expect(store.isAuthorizedForCurrentState).toBeFalse();
+  expect(store.isAuthorizedForStateUrl("maine")).toBeFalse();
 });
 
 test("authorize all states for internal demo user", () => {
@@ -114,7 +112,7 @@ test("authorize all states for internal demo user", () => {
       allowedStates: ["US_ME"],
     },
   });
-  expect(store.isAuthorizedForCurrentState).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
 
   vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
     status: "authorized",
@@ -123,7 +121,7 @@ test("authorize all states for internal demo user", () => {
       allowedStates: ["US_XX"],
     },
   });
-  expect(store.isAuthorizedForCurrentState).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
 });
 
 test("has permission", () => {

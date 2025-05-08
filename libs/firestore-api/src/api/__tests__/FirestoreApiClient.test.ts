@@ -55,6 +55,8 @@ const whereMock = "WHERE MOCK";
 const queryMock = "QUERY MOCK";
 const docMock = "DOC MOCK";
 
+const stateCodeMock = "US_XX";
+
 beforeEach(() => {
   // these mocks all get passed around to one another for the SDK to use internally;
   // we generally don't care about their return values and can verify behavior by inspecting their arguments.
@@ -73,7 +75,7 @@ beforeEach(() => {
   vi.mocked(query).mockReturnValue(queryMock as unknown as Query);
   vi.mocked(doc).mockReturnValue(docMock as unknown as DocumentReference);
 
-  client = new FirestoreAPIClient("US_XX", "project-xx", "api-xx");
+  client = new FirestoreAPIClient("project-xx", "api-xx");
 });
 
 test("initialize", () => {
@@ -85,7 +87,7 @@ test("initialize", () => {
 });
 
 test("initialize with proxy", () => {
-  client = new FirestoreAPIClient("US_XX", "project-xx", "api-xx", "foo.bar");
+  client = new FirestoreAPIClient("project-xx", "api-xx", "foo.bar");
   expect(initializeFirestore).toHaveBeenLastCalledWith(appMock, {
     host: "foo.bar/firestore",
   });
@@ -117,12 +119,12 @@ describe("residents", () => {
   });
 
   test("parsed result", async () => {
-    const result = await client.residents();
+    const result = await client.residents(stateCodeMock);
     expect(result).toEqual(expectedFixture);
   });
 
   test("no filters", async () => {
-    await client.residents();
+    await client.residents(stateCodeMock);
 
     expect(collection).toHaveBeenCalledExactlyOnceWith(dbMock, "residents");
     expect(where).toHaveBeenCalledExactlyOnceWith("stateCode", "==", "US_XX");
@@ -131,7 +133,7 @@ describe("residents", () => {
   });
 
   test("with filters", async () => {
-    await client.residents([["facilityId", "==", "foo"]]);
+    await client.residents(stateCodeMock, [["facilityId", "==", "foo"]]);
 
     expect(collection).toHaveBeenCalledExactlyOnceWith(dbMock, "residents");
     expect(where).toHaveBeenCalledWith("stateCode", "==", "US_XX");
@@ -148,7 +150,7 @@ describe("residents", () => {
   test("demo data", async () => {
     vi.mocked(isDemoMode).mockReturnValue(true);
 
-    await client.residents();
+    await client.residents(stateCodeMock);
 
     expect(collection).toHaveBeenCalledExactlyOnceWith(
       dbMock,
@@ -174,7 +176,7 @@ describe("resident by pseudo ID", () => {
   test("parsed result", async () => {
     vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
 
-    const result = await client.residentByPseudoId(testId);
+    const result = await client.residentByPseudoId(stateCodeMock, testId);
 
     expect(vi.mocked(where).mock.calls).toEqual([
       ["stateCode", "==", "US_XX"],
@@ -190,7 +192,7 @@ describe("resident by pseudo ID", () => {
 
     vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
 
-    const result = await client.residentByPseudoId(testId);
+    const result = await client.residentByPseudoId(stateCodeMock, testId);
     expect(result).toBeUndefined();
   });
 
@@ -202,7 +204,7 @@ describe("resident by pseudo ID", () => {
     vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
 
     await expect(
-      client.residentByPseudoId(testId),
+      client.residentByPseudoId(stateCodeMock, testId),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error: Found 3 documents matching pseudonymizedId = anonres001 in residents, but only one was expected]`,
     );
@@ -212,7 +214,7 @@ describe("resident by pseudo ID", () => {
     vi.mocked(isDemoMode).mockReturnValue(true);
     vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
 
-    await client.residentByPseudoId(testId);
+    await client.residentByPseudoId(stateCodeMock, testId);
 
     expect(collection).toHaveBeenCalledExactlyOnceWith(
       dbMock,
@@ -229,7 +231,12 @@ describe("recordForExternalId", () => {
       exists: () => false,
     } as unknown as DocumentSnapshot);
 
-    await client.recordForExternalId({ key: "residents" }, "foo123", z.any());
+    await client.recordForExternalId(
+      stateCodeMock,
+      { key: "residents" },
+      "foo123",
+      z.any(),
+    );
 
     expect(doc).toHaveBeenCalledExactlyOnceWith(
       dbMock,
@@ -257,7 +264,12 @@ describe("recordForExternalId", () => {
     ])("should pass with missing fields (%o)", async (obj) => {
       mockDataFn.mockReturnValue(obj);
       expect(
-        await client.recordForExternalId({ raw: "foo" }, "abc123", z.any()),
+        await client.recordForExternalId(
+          stateCodeMock,
+          { raw: "foo" },
+          "abc123",
+          z.any(),
+        ),
       ).toEqual(obj);
     });
 
@@ -267,7 +279,12 @@ describe("recordForExternalId", () => {
     ])("should pass %o", async (obj) => {
       mockDataFn.mockReturnValue(obj);
       expect(
-        await client.recordForExternalId({ raw: "foo" }, "abc123", z.any()),
+        await client.recordForExternalId(
+          stateCodeMock,
+          { raw: "foo" },
+          "abc123",
+          z.any(),
+        ),
       ).toEqual(obj);
     });
   });

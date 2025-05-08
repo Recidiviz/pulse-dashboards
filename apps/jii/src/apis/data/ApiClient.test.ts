@@ -34,6 +34,7 @@ const getFirebaseTokenMock = vi.fn();
 
 const projectIdMock = "test-project-id";
 const apiKeyMock = "test-api-key";
+const stateCodeMock = "US_ME";
 
 beforeEach(() => {
   getFirebaseTokenMock.mockResolvedValue("test-firebase-token");
@@ -41,7 +42,6 @@ beforeEach(() => {
   vi.stubEnv("VITE_FIRESTORE_API_KEY", apiKeyMock);
 
   client = new ApiClient({
-    stateCode: "US_ME",
     authManager: {
       getFirebaseToken: getFirebaseTokenMock,
     } as unknown as AuthManager,
@@ -51,7 +51,6 @@ beforeEach(() => {
 
 test("firestore client", () => {
   expect(FirestoreAPIClient).toHaveBeenCalledExactlyOnceWith(
-    "US_ME",
     projectIdMock,
     apiKeyMock,
     undefined,
@@ -81,11 +80,14 @@ describe("after authentication", () => {
         record,
       );
 
-      const fetched = await client.residentById(record.personExternalId);
+      const fetched = await client.residentById(
+        stateCodeMock,
+        record.personExternalId,
+      );
 
       expect(
         FirestoreAPIClient.prototype.resident,
-      ).toHaveBeenCalledExactlyOnceWith(record.personExternalId);
+      ).toHaveBeenCalledExactlyOnceWith(stateCodeMock, record.personExternalId);
       expect(fetched).toEqual(record);
     });
 
@@ -95,7 +97,7 @@ describe("after authentication", () => {
       );
 
       await expect(
-        client.residentById(record.personExternalId),
+        client.residentById(stateCodeMock, record.personExternalId),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
         `[Error: No data found for resident RES001]`,
       );
@@ -110,12 +112,17 @@ describe("after authentication", () => {
         FirestoreAPIClient.prototype.recordForExternalId,
       ).mockResolvedValue(record);
 
-      const fetched = await client.residentEligibility("abc123", "usMeSCCP");
+      const fetched = await client.residentEligibility(
+        stateCodeMock,
+        "abc123",
+        "usMeSCCP",
+      );
 
       expect(
         vi.mocked(FirestoreAPIClient.prototype.recordForExternalId).mock
           .calls[0],
       ).toEqual([
+        stateCodeMock,
         { raw: "US_ME-SCCPReferrals" },
         "abc123",
         expect.any(z.ZodType),
@@ -130,7 +137,7 @@ describe("after authentication", () => {
       ).mockResolvedValue(undefined);
 
       await expect(
-        client.residentEligibility("abc123", "usMeSCCP"),
+        client.residentEligibility(stateCodeMock, "abc123", "usMeSCCP"),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
         `[Error: Missing usMeSCCP record for abc123]`,
       );
@@ -145,31 +152,31 @@ describe("after authentication", () => {
         ...records,
       ]);
 
-      const fetched = await client.residents();
+      const fetched = await client.residents(stateCodeMock);
 
       expect(FirestoreAPIClient.prototype.residents).toHaveBeenCalled();
       expect(fetched).toEqual(records);
     });
 
     test("no filters", async () => {
-      await client.residents();
+      await client.residents(stateCodeMock);
       expect(
         FirestoreAPIClient.prototype.residents,
-      ).toHaveBeenCalledExactlyOnceWith(undefined);
+      ).toHaveBeenCalledExactlyOnceWith(stateCodeMock, undefined);
     });
 
     test("filtered", async () => {
       const filter: FilterParams = ["foo", "==", "bar"];
-      await client.residents([filter]);
+      await client.residents(stateCodeMock, [filter]);
       expect(
         FirestoreAPIClient.prototype.residents,
-      ).toHaveBeenCalledExactlyOnceWith([filter]);
+      ).toHaveBeenCalledExactlyOnceWith(stateCodeMock, [filter]);
     });
 
     test("does not exist", async () => {
       vi.mocked(FirestoreAPIClient.prototype.residents).mockResolvedValue([]);
 
-      const fetched = await client.residents();
+      const fetched = await client.residents(stateCodeMock);
 
       expect(fetched).toEqual([]);
     });
@@ -180,7 +187,6 @@ test("with proxy option", () => {
   vi.mocked(proxyHost).mockReturnValue("foo.bar");
 
   client = new ApiClient({
-    stateCode: "US_ME",
     authManager: {
       getFirebaseToken: getFirebaseTokenMock,
     } as unknown as AuthManager,
@@ -188,7 +194,6 @@ test("with proxy option", () => {
   });
 
   expect(FirestoreAPIClient).toHaveBeenLastCalledWith(
-    "US_ME",
     projectIdMock,
     apiKeyMock,
     "foo.bar",

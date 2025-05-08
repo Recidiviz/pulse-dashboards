@@ -34,7 +34,7 @@ describe("with NA opportunities", () => {
     // this resident should have an associated NA work release opportunity
     const residentPseudoId = usMeResidents[3].pseudonymizedId;
     const hydrator = new SingleResidentHydratorPresenter(
-      new ResidentsStore(new RootStore(), usMeResidentsConfig),
+      new ResidentsStore(new RootStore(), "US_ME", usMeResidentsConfig),
       residentPseudoId,
     );
 
@@ -67,7 +67,7 @@ describe("without NA opportunities", () => {
   beforeEach(async () => {
     const residentPseudoId = usMeResidents[0].pseudonymizedId;
     const hydrator = new SingleResidentHydratorPresenter(
-      new ResidentsStore(new RootStore(), usMeResidentsConfig),
+      new ResidentsStore(new RootStore(), "US_ME", usMeResidentsConfig),
       residentPseudoId,
     );
 
@@ -102,7 +102,7 @@ describe("opportunity sorting", () => {
   test("config order when statuses match", async () => {
     const residentPseudoId = usMeResidents[5].pseudonymizedId;
     const hydrator = new SingleResidentHydratorPresenter(
-      new ResidentsStore(new RootStore(), usMeResidentsConfig),
+      new ResidentsStore(new RootStore(), "US_ME", usMeResidentsConfig),
       residentPseudoId,
     );
 
@@ -126,7 +126,7 @@ describe("opportunity sorting", () => {
   test("in status order", async () => {
     const residentPseudoId = usMeResidents[7].pseudonymizedId;
     const hydrator = new SingleResidentHydratorPresenter(
-      new ResidentsStore(new RootStore(), usMeResidentsConfig),
+      new ResidentsStore(new RootStore(), "US_ME", usMeResidentsConfig),
       residentPseudoId,
     );
 

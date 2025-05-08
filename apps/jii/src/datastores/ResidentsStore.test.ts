@@ -30,7 +30,11 @@ let store: ResidentsStore;
 
 beforeEach(() => {
   vi.restoreAllMocks();
-  store = new ResidentsStore(new RootStore(), residentsConfigByState.US_ME);
+  store = new ResidentsStore(
+    new RootStore(),
+    "US_ME",
+    residentsConfigByState.US_ME,
+  );
 });
 
 describe("populate residents", () => {
@@ -71,7 +75,9 @@ describe("populate residents", () => {
     const filter: FilterParams = ["foo", "==", "bar"];
     await flowResult(store.populateResidents([filter]));
 
-    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledWith([filter]);
+    expect(OfflineAPIClient.prototype.residents).toHaveBeenCalledWith("US_ME", [
+      filter,
+    ]);
   });
 
   test("refetches with force refresh", async () => {

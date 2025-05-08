@@ -23,12 +23,14 @@ import { OfflineAPIClient } from "./OfflineAPIClient";
 
 let api: OfflineAPIClient;
 
+const stateCodeMock = "US_ME";
+
 beforeEach(() => {
   api = new OfflineAPIClient(new RootStore());
 });
 
 test("residents should reflect state code", async () => {
-  const residents = await api.residents();
+  const residents = await api.residents(stateCodeMock);
   // sanity check
   expect(residents.length).toBeGreaterThan(0);
   residents.forEach((r) => expect(r.stateCode).toBe("US_ME"));
@@ -37,14 +39,17 @@ test("residents should reflect state code", async () => {
 test("fetch single resident", async () => {
   const expectedRes = usMeResidents[0];
 
-  const fetched = await api.residentById(expectedRes.personExternalId);
+  const fetched = await api.residentById(
+    stateCodeMock,
+    expectedRes.personExternalId,
+  );
 
   expect(fetched).toEqual(expectedRes);
 });
 
 test("missing single resident", async () => {
   await expect(
-    api.residentById("does-not-exist"),
+    api.residentById(stateCodeMock, "does-not-exist"),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
     `[Error: Missing data for resident does-not-exist in US_ME]`,
   );
@@ -53,7 +58,7 @@ test("missing single resident", async () => {
 test("local config object", async () => {
   const expectedConfig = residentsConfigByState.US_ME;
 
-  const fetched = await api.residentsConfig();
+  const fetched = await api.residentsConfig(stateCodeMock);
 
   expect(fetched).toEqual(expectedConfig);
 });
@@ -64,6 +69,7 @@ test("eligibility record", async () => {
   );
 
   const fetched = await api.residentEligibility(
+    stateCodeMock,
     usMeResidents[3].personExternalId,
     "usMeSCCP",
   );
@@ -73,7 +79,7 @@ test("eligibility record", async () => {
 
 test("missing eligibility record", async () => {
   await expect(
-    api.residentEligibility("does-not-exist", "usMeSCCP"),
+    api.residentEligibility(stateCodeMock, "does-not-exist", "usMeSCCP"),
   ).rejects.toThrowErrorMatchingInlineSnapshot(
     `[Error: Unable to find usMeSCCP record for does-not-exist]`,
   );

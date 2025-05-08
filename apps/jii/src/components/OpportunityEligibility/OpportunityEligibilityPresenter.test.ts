@@ -39,7 +39,7 @@ const opportunityConfig = stateConfig.eligibility!.incarcerationOpportunities[
 ] as OpportunityConfig;
 
 beforeEach(() => {
-  residentsStore = new ResidentsStore(new RootStore(), stateConfig);
+  residentsStore = new ResidentsStore(new RootStore(), "US_ME", stateConfig);
 });
 
 describe("eligible resident", () => {

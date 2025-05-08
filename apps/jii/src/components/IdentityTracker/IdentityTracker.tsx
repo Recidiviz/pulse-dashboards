@@ -23,7 +23,7 @@ import { useRootStore } from "../StoreProvider/useRootStore";
 
 /**
  * Triggers a one-time side effect, when an authorized user is detected, that identifies
- * the user to third-party tracking services (e.g. Intercom). NOTE that this component
+ * the user to third-party tracking services (e.g. Segment). NOTE that this component
  * should only be rendered in auth-protected contexts because it requires some Auth0 metadata,
  * which may cause errors if it is accessed for unauthenticated users.
  */
@@ -32,7 +32,7 @@ export const IdentityTracker = observer(function IdentityTracker() {
   useEffect(
     () =>
       when(
-        () => userStore.isAuthorizedForCurrentState,
+        () => userStore.authManager.isAuthorized,
         () => {
           userStore.identifyToTrackers();
         },

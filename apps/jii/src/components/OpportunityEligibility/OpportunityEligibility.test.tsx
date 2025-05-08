@@ -56,7 +56,7 @@ const eligibilityReport = new UsMeSCCPEligibilityReport(
 
 beforeEach(() => {
   const rootStore = new RootStore();
-  residentsStore = new ResidentsStore(rootStore, stateConfig);
+  residentsStore = new ResidentsStore(rootStore, "US_ME", stateConfig);
 
   vi.mocked(useRootStore).mockReturnValue(rootStore);
   vi.mocked(useResidentsContext).mockReturnValue({ residentsStore });

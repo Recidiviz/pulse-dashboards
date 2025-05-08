@@ -23,10 +23,14 @@ import {
   HydrationState,
 } from "~hydration-utils";
 
+import { StateCode } from "../../configs/types";
 import { RootStore } from "../../datastores/RootStore";
 
 export class ResidentsHydratorPresenter implements Hydratable {
-  constructor(private rootStore: RootStore) {
+  constructor(
+    private rootStore: RootStore,
+    private stateCode: StateCode,
+  ) {
     makeAutoObservable(this, {}, { autoBind: true });
 
     this.hydrator = new HydratesFromSource({
@@ -46,12 +50,15 @@ export class ResidentsHydratorPresenter implements Hydratable {
   }
 
   private async populateStore() {
-    await flowResult(this.rootStore.populateResidentsStore());
+    await flowResult(this.rootStore.populateResidentsStore(this.stateCode));
   }
 
   private expectStorePopulated() {
     if (this.rootStore.residentsStore === undefined)
-      throw new Error("missing expected residentsStore");
+      throw new Error("failed to create residentsStore");
+    if (this.rootStore.residentsStore.stateCode !== this.stateCode) {
+      throw new Error("failed to replace previous residentsStore");
+    }
   }
 
   get residentsStore() {

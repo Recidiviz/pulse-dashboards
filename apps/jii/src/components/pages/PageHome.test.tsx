@@ -28,11 +28,12 @@ import { PageHome } from "./PageHome";
 vi.mock("../StoreProvider/useRootStore");
 
 let authManager: AuthManager;
+let rootStore: RootStore;
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
 
-  const rootStore = new RootStore();
+  rootStore = new RootStore();
   vi.mocked(useRootStore).mockReturnValue(rootStore);
   authManager = rootStore.userStore.authManager;
 });
@@ -80,6 +81,9 @@ test("email verification page if needed", () => {
 
 test("state page if authorized", () => {
   vi.spyOn(authManager, "isAuthorized", "get").mockReturnValue(true);
+  vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
+    stateCode: "US_ME",
+  });
 
   renderHome();
 

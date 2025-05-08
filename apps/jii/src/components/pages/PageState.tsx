@@ -30,7 +30,7 @@ export const PageState: FC = () => {
 
   try {
     if (userStore.authManager.isAuthorized) {
-      if (userStore.isAuthorizedForCurrentState) {
+      if (userStore.isAuthorizedForStateUrl(stateSlug)) {
         // known residents should be sent to their homepage
         if (userStore.pseudonymizedId) {
           return (

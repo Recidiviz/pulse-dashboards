@@ -38,7 +38,6 @@ export class ApiClient implements DataAPI {
 
   constructor(
     private externals: {
-      stateCode: StateCode;
       authManager: AuthManager;
       config?: ResidentsConfig;
     },
@@ -46,7 +45,6 @@ export class ApiClient implements DataAPI {
     makeObservable<this, "isAuthenticated">(this, { isAuthenticated: true });
 
     this.firestoreClient = new FirestoreAPIClient(
-      externals.stateCode,
       import.meta.env["VITE_FIRESTORE_PROJECT"],
       import.meta.env["VITE_FIRESTORE_API_KEY"],
       proxyHost(),
@@ -93,23 +91,26 @@ export class ApiClient implements DataAPI {
    * Fetches residents config object matching state code from {@link externals}.
    * This comes from a local static file, not an API backend
    */
-  async residentsConfig() {
+  async residentsConfig(stateCode: StateCode) {
     const { residentsConfigByState } = await import(
       "../../configs/residentsConfig"
     );
-    return residentsConfigByState[this.externals.stateCode];
+    return residentsConfigByState[stateCode];
   }
 
-  async residents(filters?: Array<FilterParams>) {
+  async residents(stateCode: StateCode, filters?: Array<FilterParams>) {
     await when(() => this.isAuthenticated);
 
-    return await this.firestoreClient.residents(filters);
+    return await this.firestoreClient.residents(stateCode, filters);
   }
 
-  async residentById(residentExternalId: string) {
+  async residentById(stateCode: StateCode, residentExternalId: string) {
     await when(() => this.isAuthenticated);
 
-    const record = await this.firestoreClient.resident(residentExternalId);
+    const record = await this.firestoreClient.resident(
+      stateCode,
+      residentExternalId,
+    );
     if (!record) {
       throw new Error(`No data found for resident ${residentExternalId}`);
     }
@@ -117,11 +118,13 @@ export class ApiClient implements DataAPI {
     return record;
   }
 
-  async residentByPseudoId(residentPseudoId: string) {
+  async residentByPseudoId(stateCode: StateCode, residentPseudoId: string) {
     await when(() => this.isAuthenticated);
 
-    const record =
-      await this.firestoreClient.residentByPseudoId(residentPseudoId);
+    const record = await this.firestoreClient.residentByPseudoId(
+      stateCode,
+      residentPseudoId,
+    );
     if (!record) {
       throw new Error(`No data found for resident ${residentPseudoId}`);
     }
@@ -130,6 +133,7 @@ export class ApiClient implements DataAPI {
   }
 
   async residentEligibility<O extends IncarcerationOpportunityId>(
+    stateCode: StateCode,
     residentExternalId: string,
     opportunityId: O,
   ) {
@@ -149,6 +153,7 @@ export class ApiClient implements DataAPI {
       const schema = residentOpportunitySchemas[opportunityId];
 
       const record = await this.firestoreClient.recordForExternalId(
+        stateCode,
         { raw: collectionName },
         residentExternalId,
         schema,

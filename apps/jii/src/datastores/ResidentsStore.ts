@@ -28,6 +28,7 @@ import {
   IncarcerationOpportunityId,
   OpportunityRecord,
   ResidentsConfig,
+  StateCode,
 } from "../configs/types";
 import { EligibilityReport } from "../models/EligibilityReport/types";
 import type { RootStore } from "./RootStore";
@@ -58,6 +59,7 @@ export class ResidentsStore {
 
   constructor(
     private readonly rootStore: RootStore,
+    public readonly stateCode: StateCode,
     public readonly config: ResidentsConfig,
   ) {
     makeAutoObservable(this);
@@ -86,7 +88,7 @@ export class ResidentsStore {
   ): FlowMethod<DataAPI["residents"], void> {
     if (!forceRefresh && this.areAllResidentsPopulated()) return;
 
-    const residents = yield this.apiClient.residents(filters);
+    const residents = yield this.apiClient.residents(this.stateCode, filters);
     set(this.residentsByExternalId, keyBy(residents, "personExternalId"));
   }
 
@@ -104,7 +106,10 @@ export class ResidentsStore {
   ): FlowMethod<DataAPI["residentById"], void> {
     if (this.isResidentPopulated(residentExternalId)) return;
 
-    const resident = yield this.apiClient.residentById(residentExternalId);
+    const resident = yield this.apiClient.residentById(
+      this.stateCode,
+      residentExternalId,
+    );
     this.residentsByExternalId.set(resident.personExternalId, resident);
   }
 
@@ -130,7 +135,10 @@ export class ResidentsStore {
   ): FlowMethod<DataAPI["residentById"], void> {
     if (this.isResidentWithPseudoIdPopulated(residentPseudoId)) return;
 
-    const resident = yield this.apiClient.residentByPseudoId(residentPseudoId);
+    const resident = yield this.apiClient.residentByPseudoId(
+      this.stateCode,
+      residentPseudoId,
+    );
     this.residentsByExternalId.set(resident.personExternalId, resident);
   }
 
@@ -163,6 +171,7 @@ export class ResidentsStore {
       return;
 
     const eligibilityRecord = yield this.apiClient.residentEligibility(
+      this.stateCode,
       residentExternalId,
       opportunityId,
     );
@@ -232,9 +241,5 @@ export class ResidentsStore {
         mapping,
       );
     }
-  }
-
-  get stateCode() {
-    return this.userStore.stateCode;
   }
 }

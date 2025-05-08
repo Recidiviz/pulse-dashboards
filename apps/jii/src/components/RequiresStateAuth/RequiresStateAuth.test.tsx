@@ -40,7 +40,7 @@ test("authorized", () => {
     },
   );
 
-  render(<RequiresStateAuth>protected</RequiresStateAuth>);
+  render(<RequiresStateAuth stateUrlSlug="maine">protected</RequiresStateAuth>);
 
   expect(screen.getByText("protected")).toBeInTheDocument();
 });
@@ -55,7 +55,7 @@ test("unauthorized", () => {
     },
   );
 
-  render(<RequiresStateAuth>protected</RequiresStateAuth>);
+  render(<RequiresStateAuth stateUrlSlug="maine">protected</RequiresStateAuth>);
 
   expect(screen.queryByText("protected")).not.toBeInTheDocument();
   expect(screen.getByText("Authorization required")).toBeInTheDocument();

@@ -22,12 +22,13 @@ import { NotAuthorized } from "~auth";
 
 import { useRootStore } from "../StoreProvider/useRootStore";
 
-export const RequiresStateAuth: FC<{ children: ReactNode }> = observer(
-  function RequiresStateAuth({ children }) {
-    const { userStore } = useRootStore();
+export const RequiresStateAuth: FC<{
+  children: ReactNode;
+  stateUrlSlug: string;
+}> = observer(function RequiresStateAuth({ children, stateUrlSlug }) {
+  const { userStore } = useRootStore();
 
-    if (userStore.isAuthorizedForCurrentState) return children;
+  if (userStore.isAuthorizedForStateUrl(stateUrlSlug)) return children;
 
-    return <NotAuthorized />;
-  },
-);
+  return <NotAuthorized />;
+});

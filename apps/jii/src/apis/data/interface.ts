@@ -37,30 +37,40 @@ export interface DataAPI {
    */
   stateLandingPageConfig(stateCode: StateCode): Promise<StateLandingPageConfig>;
   /**
-   * Fetches residents application config object for the active StateCode.
+   * Fetches residents application config object for the given StateCode.
    */
-  residentsConfig(): Promise<ResidentsConfig>;
+  residentsConfig(stateCode: StateCode): Promise<ResidentsConfig>;
   /**
-   * Fetches data for available residents for the active StateCode, applying
+   * Fetches data for available residents for the given StateCode, applying
    * additional filters as specified.
    */
-  residents(filters?: Array<FilterParams>): Promise<Array<ResidentRecord>>;
+  residents(
+    stateCode: StateCode,
+    filters?: Array<FilterParams>,
+  ): Promise<Array<ResidentRecord>>;
   /**
    * Fetches data for the resident with personExternalId matching `residentExternalId`
-   * for the active StateCode. Throws if a match cannot be found.
+   * for the given StateCode. Throws if a match cannot be found.
    */
-  residentById(residentExternalId: string): Promise<ResidentRecord>;
+  residentById(
+    stateCode: StateCode,
+    residentExternalId: string,
+  ): Promise<ResidentRecord>;
   /**
    * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
-   * for the active StateCode. Throws if a match cannot be found.
+   * for the given StateCode. Throws if a match cannot be found.
    */
-  residentByPseudoId(residentPseudoId: string): Promise<ResidentRecord>;
+  residentByPseudoId(
+    stateCode: StateCode,
+    residentPseudoId: string,
+  ): Promise<ResidentRecord>;
   /**
    * Fetches the opportunity eligibility record for the specified resident
-   * and opportunity type for the active StateCode. Throws if a record is not found.
+   * and opportunity type for the given StateCode. Throws if a record is not found.
    * (i.e., unlike Workflows this API requires a record even for ineligible residents.)
    */
   residentEligibility<O extends IncarcerationOpportunityId>(
+    stateCode: StateCode,
     residentExternalId: string,
     opportunity: IncarcerationOpportunityId,
   ): Promise<OpportunityRecord<O>>;

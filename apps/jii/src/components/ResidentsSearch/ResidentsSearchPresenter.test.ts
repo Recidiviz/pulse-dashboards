@@ -49,7 +49,11 @@ beforeEach(() => {
     },
   );
 
-  residentsStore = new ResidentsStore(rootStore, residentsConfigByState.US_ME);
+  residentsStore = new ResidentsStore(
+    rootStore,
+    "US_ME",
+    residentsConfigByState.US_ME,
+  );
   presenter = new ResidentsSearchPresenter(residentsStore, rootStore.uiStore);
 });
 

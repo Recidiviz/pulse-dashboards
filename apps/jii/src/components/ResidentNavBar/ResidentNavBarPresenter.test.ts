@@ -32,7 +32,7 @@ const stateSlug = "maine";
 beforeEach(() => {
   configure({ safeDescriptors: false });
 
-  userStore = new UserStore({ stateCode: "US_ME" });
+  userStore = new UserStore();
   vi.spyOn(userStore, "hasPermission").mockReturnValue(false);
 });
 

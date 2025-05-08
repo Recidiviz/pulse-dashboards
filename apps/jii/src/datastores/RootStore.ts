@@ -50,16 +50,13 @@ export class RootStore {
 
   loginConfigStore: LoginConfigStore;
 
-  // for convenience, this is a constant while we only have one state onboarded
-  readonly stateCode: StateCode = "US_ME";
-
   constructor() {
     makeObservable(this, {
       populateResidentsStore: true,
       residentsStore: true,
     });
 
-    this.userStore = new UserStore(this);
+    this.userStore = new UserStore();
 
     this.uiStore = new UiStore();
 
@@ -83,9 +80,6 @@ export class RootStore {
       const externals = {
         // these are getters rather than static properties so that the API client
         // can can observe changes to these values rather than getting a one-time snapshot
-        get stateCode() {
-          return store.stateCode;
-        },
         get authManager() {
           return store.userStore.authManager;
         },
@@ -98,13 +92,12 @@ export class RootStore {
     }
   }
 
-  *populateResidentsStore(): FlowMethod<
-    DataAPI["residentsConfig"],
-    ResidentsStore
-  > {
-    const config = yield this.apiClient.residentsConfig();
+  *populateResidentsStore(
+    stateCode: StateCode,
+  ): FlowMethod<DataAPI["residentsConfig"], ResidentsStore> {
+    const config = yield this.apiClient.residentsConfig(stateCode);
 
-    const residentsStore = new ResidentsStore(this, config);
+    const residentsStore = new ResidentsStore(this, stateCode, config);
     this.residentsStore = residentsStore;
 
     return residentsStore;

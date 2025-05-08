@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,25 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { flowResult } from "mobx";
+import { matchPath } from "react-router-dom";
 
-import { OfflineAPIClient } from "../apis/data/OfflineAPIClient";
-import { residentsConfigByState } from "../configs/residentsConfig";
-import { RootStore } from "./RootStore";
+import { stateConfigsByUrlSlug } from "../configs/stateConstants";
+import { StateCode } from "../configs/types";
+import { State } from "../routes/routes";
 
-let store: RootStore;
+export function stateCodeFromCurrentUrl(): StateCode | undefined {
+  const pathMatch = matchPath(
+    { path: State.path, end: false },
+    window.location.pathname,
+  );
 
-beforeEach(() => {
-  store = new RootStore();
-});
+  const stateSlug = pathMatch?.params.stateSlug;
+  if (!stateSlug) return;
 
-test("initialize residents datastore", async () => {
-  vi.spyOn(OfflineAPIClient.prototype, "residentsConfig");
-  expect(store.residentsStore).toBeUndefined();
-
-  await flowResult(store.populateResidentsStore("US_ME"));
-
-  expect(store.residentsStore).toBeDefined();
-  expect(store.apiClient.residentsConfig).toHaveBeenCalledWith("US_ME");
-  expect(store.residentsStore?.config).toEqual(residentsConfigByState.US_ME);
-});
+  return stateConfigsByUrlSlug[stateSlug]?.stateCode;
+}

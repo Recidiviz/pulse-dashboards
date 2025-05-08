@@ -33,7 +33,7 @@ afterEach(() => {
 });
 
 beforeEach(() => {
-  presenter = new ResidentsHydratorPresenter(store);
+  presenter = new ResidentsHydratorPresenter(store, "US_ME");
 });
 
 test("hydrate", async () => {

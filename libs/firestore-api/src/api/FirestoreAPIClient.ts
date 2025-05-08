@@ -32,29 +32,22 @@ import {
 } from "firebase/firestore";
 import { z } from "zod";
 
-import { ResidentRecord, residentRecordSchema, StaffRecord } from "~datatypes";
+import { ResidentRecord, residentRecordSchema } from "~datatypes";
 
 import { FirestoreCollectionKey } from "../types";
 import { collectionNameForKey } from "../utils/collectionNameForKey";
-import { FirestoreOfflineAPIClient } from "./FirestoreOfflineAPIClient";
 import { FilterParams, FirestoreAPI } from "./interface";
 
 export class FirestoreAPIClient implements FirestoreAPI {
-  // TODO(#5322): remove reference to this when endpoints are live
-  private offlineClient: FirestoreOfflineAPIClient;
-
   private app: FirebaseApp;
 
   private db: Firestore;
 
   constructor(
-    private stateCode: string,
     projectId: string,
     apiKey: string,
     private proxyHost?: string,
   ) {
-    this.offlineClient = new FirestoreOfflineAPIClient(stateCode);
-
     this.app = initializeApp({ projectId, apiKey });
 
     this.db = initializeFirestore(this.app, {
@@ -74,17 +67,11 @@ export class FirestoreAPIClient implements FirestoreAPI {
     await signInWithCustomToken(auth, firebaseToken);
   }
 
-  staffRecordsWithSupervisor(
-    supervisorExternalId: string,
-  ): Promise<StaffRecord[]> {
-    return this.offlineClient.staffRecordsWithSupervisor(supervisorExternalId);
-  }
-
-  async residents(filters: Array<FilterParams> = []) {
+  async residents(stateCode: string, filters: Array<FilterParams> = []) {
     const snapshot = await getDocs(
       query(
         collection(this.db, collectionNameForKey({ key: "residents" })),
-        where("stateCode", "==", this.stateCode),
+        where("stateCode", "==", stateCode),
         ...filters.map((params) => where(...params)),
       ),
     );
@@ -100,16 +87,18 @@ export class FirestoreAPIClient implements FirestoreAPI {
       .filter((r): r is ResidentRecord => !!r);
   }
 
-  resident(externalId: string) {
+  resident(stateCode: string, externalId: string) {
     return this.recordForExternalId(
+      stateCode,
       { key: "residents" },
       externalId,
       residentRecordSchema,
     );
   }
 
-  residentByPseudoId(pseudoId: string) {
+  residentByPseudoId(stateCode: string, pseudoId: string) {
     return this.recordForUniqueId(
+      stateCode,
       { key: "residents" },
       "pseudonymizedId",
       pseudoId,
@@ -118,6 +107,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
   }
 
   async recordForExternalId<Schema extends z.ZodTypeAny>(
+    stateCode: string,
     collectionKey: FirestoreCollectionKey,
     externalId: string,
     recordSchema: Schema,
@@ -126,7 +116,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
       doc(
         this.db,
         collectionNameForKey(collectionKey),
-        `${this.stateCode.toLowerCase()}_${externalId}`,
+        `${stateCode.toLowerCase()}_${externalId}`,
       ),
     );
 
@@ -141,6 +131,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
    * Will throw if more than one record is found
    */
   private async recordForUniqueId<Schema extends z.ZodTypeAny>(
+    stateCode: string,
     collectionKey: FirestoreCollectionKey,
     fieldName: string,
     fieldValue: string,
@@ -150,7 +141,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
     const snapshot = await getDocs(
       query(
         collection(this.db, resolvedCollectionName),
-        where("stateCode", "==", this.stateCode),
+        where("stateCode", "==", stateCode),
         where(fieldName, "==", fieldValue),
       ),
     );

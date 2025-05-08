@@ -36,12 +36,9 @@ import { DataAPI } from "./interface";
 export class OfflineAPIClient implements DataAPI {
   private firestoreClient: FirestoreAPI;
 
-  constructor(private externals: { stateCode: StateCode }) {
-    this.firestoreClient = new FirestoreOfflineAPIClient(externals.stateCode);
-  }
-
-  private get stateCode() {
-    return this.externals.stateCode;
+  // have to accept an argument for compatibility, but we don't need it for anything
+  constructor(externals: unknown) {
+    this.firestoreClient = new FirestoreOfflineAPIClient();
   }
 
   /**
@@ -67,33 +64,35 @@ export class OfflineAPIClient implements DataAPI {
   }
 
   /**
-   * Fetches residents config object matching {@link stateCode}
+   * Fetches residents config object matching `stateCode`
    */
-  async residentsConfig() {
+  async residentsConfig(stateCode: StateCode) {
     const { residentsConfigByState } = await import(
       "../../configs/residentsConfig"
     );
-    return residentsConfigByState[this.stateCode];
+    return residentsConfigByState[stateCode];
   }
 
   /**
-   * Fetches fixture data for all residents matching {@link stateCode}
+   * Fetches fixture data for all residents matching `stateCode`
    */
-  async residents() {
-    return this.firestoreClient.residents();
+  async residents(stateCode: StateCode) {
+    return this.firestoreClient.residents(stateCode);
   }
 
   /**
    * Fetches fixture data for the resident with personExternalId matching `residentExternalId`
-   * and {@link stateCode}. Throws if a match cannot be found.
+   * and `stateCode`. Throws if a match cannot be found.
    */
-  async residentById(residentExternalId: string) {
-    const residentFixture =
-      await this.firestoreClient.resident(residentExternalId);
+  async residentById(stateCode: StateCode, residentExternalId: string) {
+    const residentFixture = await this.firestoreClient.resident(
+      stateCode,
+      residentExternalId,
+    );
 
     if (!residentFixture) {
       throw new Error(
-        `Missing data for resident ${residentExternalId} in ${this.stateCode}`,
+        `Missing data for resident ${residentExternalId} in ${stateCode}`,
       );
     }
 
@@ -102,15 +101,17 @@ export class OfflineAPIClient implements DataAPI {
 
   /**
    * Fetches data for the resident with pseudonymizedId matching `residentPseudoId`
-   * and {@link stateCode}. Throws if a match cannot be found.
+   * and `stateCode`. Throws if a match cannot be found.
    */
-  async residentByPseudoId(residentPseudoId: string) {
-    const residentFixture =
-      await this.firestoreClient.residentByPseudoId(residentPseudoId);
+  async residentByPseudoId(stateCode: StateCode, residentPseudoId: string) {
+    const residentFixture = await this.firestoreClient.residentByPseudoId(
+      stateCode,
+      residentPseudoId,
+    );
 
     if (!residentFixture) {
       throw new Error(
-        `Missing data for resident ${residentPseudoId} in ${this.stateCode}`,
+        `Missing data for resident ${residentPseudoId} in ${stateCode}`,
       );
     }
 
@@ -123,6 +124,7 @@ export class OfflineAPIClient implements DataAPI {
    * the resident is not currently eligible).
    */
   async residentEligibility<O extends IncarcerationOpportunityId>(
+    stateCode: StateCode,
     residentExternalId: string,
     opportunityId: O,
   ): Promise<OpportunityRecord<O>> {
@@ -132,7 +134,7 @@ export class OfflineAPIClient implements DataAPI {
       case "usMeSCCP": {
         const parsedFixture = Object.values(usMeSccpFixtures).find((f) =>
           isMatch(outputFixture(f), {
-            stateCode: this.stateCode,
+            stateCode: stateCode,
             externalId: residentExternalId,
           }),
         );
@@ -143,7 +145,7 @@ export class OfflineAPIClient implements DataAPI {
       case "usMeWorkRelease": {
         fixture = Object.values(usMeWorkReleaseFixtures).find((f) =>
           isMatch(f, {
-            stateCode: this.stateCode,
+            stateCode: stateCode,
             externalId: residentExternalId,
           }),
         );

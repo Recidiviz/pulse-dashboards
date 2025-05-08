@@ -16,16 +16,19 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { State } from "../../routes/routes";
 import { IdentityTracker } from "../IdentityTracker/IdentityTracker";
 import { RequiresLogin } from "../RequiresLogin/RequiresLogin";
 import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";
 import { ResidentsHydrator } from "../ResidentsHydrator/ResidentsHydrator";
 
 export const PageResidentsRoot = observer(function PageResidentsRoot() {
+  const { stateSlug } = useTypedParams(State);
   return (
     <RequiresLogin>
-      <RequiresStateAuth>
+      <RequiresStateAuth stateUrlSlug={stateSlug}>
         <IdentityTracker />
         <ResidentsHydrator />
       </RequiresStateAuth>

@@ -77,7 +77,7 @@ afterEach(() => {
 describe("with resident ID from URL", () => {
   beforeEach(async () => {
     const rootStore = new RootStore();
-    await flowResult(rootStore.populateResidentsStore());
+    await flowResult(rootStore.populateResidentsStore("US_ME"));
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     store = rootStore.residentsStore!;
     vi.spyOn(
@@ -119,7 +119,7 @@ describe("with resident ID from URL", () => {
 describe("with resident ID from user data", () => {
   beforeEach(async () => {
     const rootStore = new RootStore();
-    await flowResult(rootStore.populateResidentsStore());
+    await flowResult(rootStore.populateResidentsStore("US_ME"));
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     store = rootStore.residentsStore!;
     vi.spyOn(
@@ -165,7 +165,7 @@ describe("fetching data for wrong user", () => {
 
   beforeEach(async () => {
     const rootStore = new RootStore();
-    await flowResult(rootStore.populateResidentsStore());
+    await flowResult(rootStore.populateResidentsStore("US_ME"));
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     store = rootStore.residentsStore!;
     vi.spyOn(

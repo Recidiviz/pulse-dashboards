@@ -23,10 +23,10 @@ import { v4 as uuidv4 } from "uuid";
 import { isTestEnv } from "~client-env-utils";
 
 import { proxyHost } from "../../utils/proxy";
+import { stateCodeFromCurrentUrl } from "../../utils/stateCodeFromCurrentUrl";
 
 export type SegmentClientExternals = {
   isRecidivizUser: boolean;
-  stateCode: string;
 };
 
 /**
@@ -82,7 +82,7 @@ export class SegmentClient {
     return {
       sessionId: this.sessionId,
       // this is part of a user's pseudonymized ID, but not all users are guaranteed to have one of those
-      stateCode: this.externals.stateCode,
+      stateCode: stateCodeFromCurrentUrl(),
       // in most cases these users will be untracked and Segment will just be disabled,
       // but sometimes we do track them intentionally (and sometimes by accident!), so it may
       // be helpful to have an explicit flag for filtering downstream

@@ -15,48 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  allResidents,
-  outputFixtureArray,
-  StaffRecord,
-  supervisionStaffFixtures,
-} from "~datatypes";
+import { allResidents } from "~datatypes";
 
 import { FirestoreAPI } from "./interface";
 
 export class FirestoreOfflineAPIClient implements FirestoreAPI {
-  constructor(private stateCode: string) {}
-
   async authenticate(): Promise<void> {
     return;
   }
 
-  async staffRecordsWithSupervisor(
-    supervisorExternalId: string,
-  ): Promise<StaffRecord[]> {
-    return outputFixtureArray(supervisionStaffFixtures).filter(
-      (staffRecord) =>
-        staffRecord.stateCode === this.stateCode &&
-        staffRecord.supervisorExternalId === supervisorExternalId,
-    );
+  async residents(stateCode: string) {
+    return allResidents.filter((r) => r.stateCode === stateCode);
   }
 
-  async residents() {
-    return allResidents.filter((r) => r.stateCode === this.stateCode);
-  }
-
-  async resident(externalId: string) {
+  async resident(stateCode: string, externalId: string) {
     const residentFixture = allResidents.find(
-      (r) =>
-        r.stateCode === this.stateCode && r.personExternalId === externalId,
+      (r) => r.stateCode === stateCode && r.personExternalId === externalId,
     );
 
     return residentFixture ? residentFixture : undefined;
   }
 
-  async residentByPseudoId(pseudoId: string) {
+  async residentByPseudoId(stateCode: string, pseudoId: string) {
     const residentFixture = allResidents.find(
-      (r) => r.stateCode === this.stateCode && r.pseudonymizedId === pseudoId,
+      (r) => r.stateCode === stateCode && r.pseudonymizedId === pseudoId,
     );
 
     return residentFixture ? residentFixture : undefined;

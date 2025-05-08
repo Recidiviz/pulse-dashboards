@@ -17,7 +17,11 @@
 
 import { observer } from "mobx-react-lite";
 
-import { stateConfigsByStateCode } from "../../configs/stateConstants";
+import {
+  stateCodes,
+  stateConfigsByStateCode,
+} from "../../configs/stateConstants";
+import { StateCode } from "../../configs/types";
 import { EmailVerification, State } from "../../routes/routes";
 import { Redirect } from "../Redirect/Redirect";
 import { useRootStore } from "../StoreProvider/useRootStore";
@@ -25,11 +29,21 @@ import { PageLanding } from "./PageLanding";
 
 export const PageHome = observer(function PageHome() {
   const {
-    userStore: { authManager },
-    stateCode,
+    userStore: { authManager, user, isRecidivizUser },
   } = useRootStore();
 
-  if (authManager.isAuthorized)
+  let stateCode: StateCode | undefined;
+
+  try {
+    stateCode = stateCodes.parse(user?.stateCode);
+  } catch {
+    if (isRecidivizUser) {
+      // TODO(#8277): selection UI for when there is more than one possible code?
+      stateCode = "US_ME";
+    }
+  }
+
+  if (authManager.isAuthorized && stateCode)
     return (
       <Redirect
         to={State.buildPath({

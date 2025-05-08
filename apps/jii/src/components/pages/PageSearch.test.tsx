@@ -41,7 +41,7 @@ let rootStore: RootStore;
 beforeEach(async () => {
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
-  await flowResult(rootStore.populateResidentsStore());
+  await flowResult(rootStore.populateResidentsStore("US_ME"));
   vi.mocked(useRootStore).mockReturnValue(rootStore);
   vi.mocked(useResidentsContext).mockReturnValue({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
