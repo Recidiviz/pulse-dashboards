@@ -32,7 +32,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "RESTITUTION",
-          text: "Restitution, fines or fees haven't been paid consistently",
+          text: "Insufficient restitution, fines, or fees effort",
         },
         {
           key: "CASE ACTION PLAN",
@@ -43,7 +43,15 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Has not completed treatment or programming",
         },
         { key: "POLYGRAPH", text: "Exit polygraph required and outstanding" },
-        { key: "Other", text: "Other, please enter a reason" },
+        { key: "HOUSING", text: "Unstable housing situation" },
+        { key: "EMPLOYMENT", text: "Unstable employment situation" },
+        { key: "DRUG SCREEN", text: "No drug screen in the past six months" },
+        {
+          key: "WARRANT/CHARGES IN OTHER STATE",
+          text: "Pending warrant or charges in another state",
+        },
+        { key: "ICOTS", text: "ICOTS in" },
+        { key: "OTHER", text: "Other" },
       ],
       denialText: null,
       deniedTabTitle: "Marked Ineligible",
@@ -149,7 +157,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "supervisionContinuousEmploymentFor3Months",
-          text: "Has not demonstrated employment stability ",
+          text: "Has not demonstrated employment stability or is not currently employed ",
         },
       ],
       initialHeader:

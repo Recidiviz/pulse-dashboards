@@ -325,6 +325,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usTnNotInDayReportingCenterLocation",
           text: "Not in day reporting center",
         },
+        {
+          key: "usTnNotInDayReportingCenter",
+          text: "Not in day reporting center",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "usTnCompliantReporting2025PolicyReferrals",
@@ -679,16 +683,6 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "onSupervisionAtLeast2Years",
-          text: "On supervision for at least two years",
-          tooltip:
-            "On supervision for two years, including Compliant Reporting, unless removed from Compliant Reporting due to the imposition of a sanction.",
-        },
-        {
-          key: "assessedRiskLowWhileOnSupervisionAtLeast2Years",
-          text: "Overall risk score of 'minimum' for at least two years",
-        },
-        {
           key: "onSupervisionAtLeast2YearsAndAssessedRiskLowWhileOnSupervisionAtLeast2Years",
           text: "On supervision with an overall risk score of 'minimum' for at least two years",
           tooltip:
@@ -793,7 +787,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [
         {
           subcategory: "INSUFFICIENT_TIME_ACCRUED",
-          text: "Insufficient Time Accrued",
+          text: "Approaching Eligibility Date",
         },
         {
           subcategory: "HAS_FINES_FEES_BALANCE",

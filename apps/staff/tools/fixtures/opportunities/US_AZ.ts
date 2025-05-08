@@ -670,5 +670,111 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "TPR",
       zeroGrantsTooltip: null,
     },
+    usAzTransferToAdministrativeSupervision: {
+      callToAction:
+        "Review clients who may be eligible for Administrative Supervision and complete the checklist for them.",
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        { key: "something", text: "A denial reason" },
+        { key: "Other", text: "Other" },
+      ],
+      denialText: null,
+      deniedTabTitle: "Marked Ineligible",
+      displayName: "Administrative Supervision",
+      dynamicEligibilityText:
+        "client[|s] may be eligible for transfer to Administrative Supervision.",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        {
+          key: "usAzNoDisqualifyingConvictions",
+          text: "Eligible underlying offense(s)",
+          tooltip:
+            "To be eligible for Administrative Supervision, clients must not have current convictions of sex offense, domestic violence, arson or homicide, unless the client qualifies for administrative supervision under section 1.8.",
+        },
+        {
+          key: "usAzMeetsHousingCriteria",
+          text: "Meets housing criteria",
+          tooltip:
+            "Not classified as homeless in their home release plan. A client may also meet this requirement once they have achieved stable housing while on supervision.",
+        },
+        {
+          key: "usAzMeetsEmploymentCriteria",
+          text: "Meets employment criteria",
+          tooltip:
+            "Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4. A client may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, application for disability status, inability to work, or retirement. For the purpose of this policy, clients providing caregiving for a family member may also be considered to meet this condition. ",
+        },
+        {
+          key: "usAzMeetsMentalHealthCriteria",
+          text: "Meets mental health criteria",
+          tooltip: "Mental Health Score of 3 or below and not SMI-C.",
+        },
+      ],
+      emptyTabCopy: [
+        {
+          tab: "Eligible Now",
+          text: "At this time, there are no clients who are currently eligible. Please navigate to one of the other tabs.",
+        },
+        {
+          tab: "Almost Eligible",
+          text: "At this time, there are no clients who are almost eligible. Please navigate to one of the other tabs.",
+        },
+      ],
+      firestoreCollection: "US_AZ-TransferToAdminSupervision",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 5,
+      ineligibleCriteriaCopy: [],
+      initialHeader:
+        "View low-needs clients who qualify for transfer to Administrative Supervision.",
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl:
+        "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
+      nonOmsCriteria: [
+        {
+          text: "ORAS medium or lower",
+          tooltip:
+            "To be eligible for Administrative Supervision, clients must have an ORAS risk determination of medium or lower, unless they qualify for administrative supervision under section 1.8.",
+        },
+        {
+          text: "Initial intake and needs assessment complete",
+          tooltip:
+            "Has completed initial intake and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (eg. telephone or by video call).",
+        },
+        {
+          text: "Meets substance use disorder criteria ",
+          tooltip:
+            "Not currently dealing with substance use issues, as assessed in ORAS question 5.4. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from this requirement. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
+        },
+        {
+          text: "No recent disqualifying violations.",
+          tooltip:
+            "Clients with any risk score and with current convictions of any offense, including sex offense, domestic violence, arson, or homicide, are eligible for administrative supervision if they meet criteria 1.3 - 1.7, and \nupon completion of 15 consecutive months of supervision with no violations.\nSuch decisions are conditional on supervisor approval.",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check ",
+      notifications: [],
+      omsCriteriaHeader: "Validated by data from ACIS",
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: ["Supervision"],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_AZ",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading: null,
+      submittedTabTitle: null,
+      supportsSubmitted: false,
+      systemType: "SUPERVISION",
+      tabGroups: null,
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "AdminSupervision",
+      zeroGrantsTooltip: null,
+    },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;
