@@ -57,6 +57,7 @@ type SupervisorResponse = {
 
 export type OfficerApprovalAction = {
   type: "APPROVAL";
+  notes?: string;
 };
 
 export type OfficerDenialAction = {

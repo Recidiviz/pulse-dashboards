@@ -88,6 +88,10 @@ export const SpecialConditionsCopy = styled.div`
   ${typography.Body12}
 `;
 
+const SmallDetailsCopy = styled.div`
+  ${typography.Sans12}
+`;
+
 export const CaseNoteTitle = styled.span`
   font-weight: 700;
 `;
@@ -100,6 +104,10 @@ export type EmptySpecialConditionCopy = {
   parole: string;
   probation: string;
 };
+
+export const SecureSmallDetailsCopy = styled(SmallDetailsCopy).attrs({
+  className: "fs-exclude",
+})``;
 
 export const SecureDetailsContent = styled(DetailsContent).attrs({
   className: "fs-exclude",
@@ -149,4 +157,20 @@ export const Divider = styled.hr`
   :last-child {
     display: none;
   }
+`;
+
+export const DetailsBox = styled.div`
+  border: 1px solid ${palette.slate10};
+  border-radius: 4px;
+  padding: ${rem(spacing.md)} 12px;
+  display: flex;
+  flex-direction: column;
+  color: ${palette.slate};
+`;
+
+export const SmallDetailsHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${rem(spacing.sm)};
+  align-items: center;
 `;

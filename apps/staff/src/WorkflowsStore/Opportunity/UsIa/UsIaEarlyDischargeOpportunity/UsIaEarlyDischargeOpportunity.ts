@@ -46,10 +46,15 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     );
   }
 
+  get userName(): string {
+    // We'll fall back to the user's email
+    return this.rootStore.userStore.userFullName ?? this.currentUserEmail;
+  }
+
   get actionHistory(): OfficerAction[] | undefined {
     return this.updates?.actionHistory;
   }
-  
+
   get latestAction() {
     return this.actionHistory?.at(-1);
   }
@@ -139,7 +144,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   ): Promise<void> {
     const officerAction = {
       date: Timestamp.fromDate(new Date()),
-      by: this.currentUserEmail,
+      by: this.userName,
       ...officerActionParams,
     };
     const updatedActionHistory = (this.actionHistory ?? []).concat(
@@ -160,7 +165,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   ): Promise<void> {
     const supervisorResponse = {
       date: Timestamp.fromDate(new Date()),
-      by: this.currentUserEmail,
+      by: this.userName,
       ...supervisorResponseParams,
     };
 
