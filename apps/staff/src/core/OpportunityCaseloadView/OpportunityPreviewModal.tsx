@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useRef, useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";
@@ -30,6 +30,19 @@ type OpportunityCaseloadProps = {
 };
 
 type OPPORTUNITY_SIDE_PANEL_VIEW = "OPPORTUNITY_PREVIEW" | "MARK_INELIGIBLE";
+
+type OpportunitySidePanelContextType = {
+  setCurrentView(view: OPPORTUNITY_SIDE_PANEL_VIEW): void;
+};
+
+export const OpportunitySidePanelContext =
+  createContext<OpportunitySidePanelContextType>({
+    setCurrentView: () => null,
+  });
+
+export function useOpportunitySidePanel() {
+  return useContext(OpportunitySidePanelContext);
+}
 
 export function OpportunityPreviewModal({
   opportunity,
@@ -48,9 +61,11 @@ export function OpportunityPreviewModal({
     setCurrentView("OPPORTUNITY_PREVIEW");
   }
 
+  let panelContent: JSX.Element;
+
   switch (currentView) {
     case "OPPORTUNITY_PREVIEW":
-      return (
+      panelContent = (
         <WorkflowsPreviewModal
           isOpen={!!opportunity}
           onAfterOpen={() => opportunity?.trackPreviewed()}
@@ -72,8 +87,9 @@ export function OpportunityPreviewModal({
           }
         />
       );
+      break;
     case "MARK_INELIGIBLE":
-      return (
+      panelContent = (
         <WorkflowsPreviewModal
           isOpen={!!opportunity}
           onClose={() => resetPreviewView()}
@@ -87,7 +103,14 @@ export function OpportunityPreviewModal({
           }
         />
       );
+      break;
     default:
-      return <div />;
+      panelContent = <div />;
   }
+
+  return (
+    <OpportunitySidePanelContext.Provider value={{ setCurrentView }}>
+      {panelContent}
+    </OpportunitySidePanelContext.Provider>
+  );
 }

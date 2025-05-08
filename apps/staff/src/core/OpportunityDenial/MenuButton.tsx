@@ -15,49 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Button,
-  Dropdown,
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownToggle,
-  palette,
-  spacing,
-} from "@recidiviz/design-system";
+import { Dropdown, DropdownMenu } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import toast from "react-hot-toast";
-import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
+import { UsIaEarlyDischargeOpportunity } from "../../WorkflowsStore/Opportunity/UsIa";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
-
-const StatusAwareToggle = styled(DropdownToggle).attrs({
-  kind: "secondary",
-  shape: "block",
-  showCaret: true,
-})`
-  max-width: 11rem;
-  height: 40px;
-  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
-`;
-
-const StatusAwareButton = styled(Button).attrs({
-  kind: "secondary",
-  shape: "block",
-})`
-  max-width: 11rem;
-  height: 40px;
-  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
-`;
-
-const OpportunityStatusDropdownMenuItem = styled(DropdownMenuItem)`
-  :focus {
-    background-color: ${palette.slate10};
-    color: ${palette.pine2};
-  }
-`;
+import {
+  OpportunityStatusDropdownMenuItem,
+  StatusAwareButton,
+  StatusAwareToggle,
+} from "./MenuButton.styles";
+import UsIaMenuButton from "./UsIa/UsIaMenuButton";
 
 export const MenuButton = observer(function MenuButton({
   opportunity,
@@ -112,6 +83,19 @@ export const MenuButton = observer(function MenuButton({
   };
 
   const { submittedSubcategories } = opportunity;
+
+  /**
+   * TODO(#8376): If/where possible, we should explore a clean way to unify the UsIaMenuButton and MenuButton components.
+   */
+  if (opportunity instanceof UsIaEarlyDischargeOpportunity) {
+    return (
+      <UsIaMenuButton
+        opportunity={opportunity}
+        markSubmittedAndToast={markSubmittedAndToast}
+        deleteSubmitted={deleteSubmitted}
+      />
+    );
+  }
 
   if (submittedOpportunityStatus && config.supportsSubmitted) {
     return (
