@@ -49,6 +49,7 @@ import { PageProgressInfoPage } from "../pages/PageProgressInfoPage";
 import { PageResidentsRoot } from "../pages/PageResidentsRoot";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
+import { PageSelectState } from "../pages/PageSelectState";
 import { PageSingleResidentHome } from "../pages/PageSingleResidentHome";
 import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
@@ -149,6 +150,10 @@ export function App() {
                 <Route
                   path={routes.EdovoLandingPage.path}
                   element={<PageEdovoLanding />}
+                />
+                <Route
+                  path={routes.StateSelect.path}
+                  element={<PageSelectState />}
                 />
 
                 <Route path="*" element={<NotFound />} />

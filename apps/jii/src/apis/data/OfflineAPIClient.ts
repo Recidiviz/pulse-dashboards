@@ -29,7 +29,6 @@ import {
   IncarcerationOpportunityId,
   OpportunityRecord,
   StateCode,
-  StateLandingPageConfig,
 } from "../../configs/types";
 import { DataAPI } from "./interface";
 
@@ -49,18 +48,6 @@ export class OfflineAPIClient implements DataAPI {
       "../../configs/landingPageConfig"
     );
     return landingPageConfig;
-  }
-
-  /**
-   * Fetches application config object for a state-specific landing page (pre-login)
-   */
-  async stateLandingPageConfig(
-    stateCode: StateCode,
-  ): Promise<StateLandingPageConfig> {
-    const { getConfig } = await import(
-      `../../configs/${stateCode}/landingPageConfig/config.ts`
-    );
-    return getConfig(import.meta.env["VITE_AUTH_ENV"]);
   }
 
   /**

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,16 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsConfig, StateCode } from "./types";
-import { usIdResidentsConfig } from "./US_ID/residents/config";
-import { usMaResidentsConfig } from "./US_MA/residents/config";
-import { usMeResidentsConfig } from "./US_ME/residents/residentsConfig";
+import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 
-/**
- * All configuration objects for the residents application are locally defined.
- */
-export const residentsConfigByState: Record<StateCode, ResidentsConfig> = {
-  US_ID: usIdResidentsConfig,
-  US_MA: usMaResidentsConfig,
-  US_ME: usMeResidentsConfig,
-};
+import { stateConfigs } from "../../configs/stateConstants";
+import { State } from "../../routes/routes";
+import { NotFound } from "../NotFound/NotFound";
+import { useRootStore } from "../StoreProvider/useRootStore";
+
+export const PageSelectState = observer(function PageSelectState() {
+  const {
+    userStore: { isRecidivizUser },
+  } = useRootStore();
+
+  if (!isRecidivizUser) return <NotFound />;
+
+  return (
+    <div>
+      {stateConfigs.map((c) => (
+        <p key={c.stateCode}>
+          <Link to={State.buildPath({ stateSlug: c.urlSlug })}>
+            {c.displayName}
+          </Link>
+        </p>
+      ))}
+    </div>
+  );
+});

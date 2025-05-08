@@ -180,21 +180,3 @@ export type LandingPageConfig = {
     selectorPlaceholder: string;
   };
 };
-
-export type StateLandingPageConfig = {
-  copy: {
-    intro: string;
-    selectorLabel: string;
-    selectorPlaceholder: string;
-    useCases: {
-      intro: string;
-      examples: Array<{
-        icon: string;
-        description: string;
-      }>;
-    };
-  };
-  connections: {
-    [key: string]: { displayName: string; connectionName: string };
-  };
-};

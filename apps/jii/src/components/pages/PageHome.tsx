@@ -22,7 +22,7 @@ import {
   stateConfigsByStateCode,
 } from "../../configs/stateConstants";
 import { StateCode } from "../../configs/types";
-import { EmailVerification, State } from "../../routes/routes";
+import { EmailVerification, State, StateSelect } from "../../routes/routes";
 import { Redirect } from "../Redirect/Redirect";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { PageLanding } from "./PageLanding";
@@ -38,8 +38,7 @@ export const PageHome = observer(function PageHome() {
     stateCode = stateCodes.parse(user?.stateCode);
   } catch {
     if (isRecidivizUser) {
-      // TODO(#8277): selection UI for when there is more than one possible code?
-      stateCode = "US_ME";
+      return <Redirect to={StateSelect.buildPath({})} />;
     }
   }
 

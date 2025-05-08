@@ -25,7 +25,6 @@ import {
   IncarcerationOpportunityId,
   ResidentsConfig,
   StateCode,
-  StateLandingPageConfig,
 } from "../../configs/types";
 import { proxyHost } from "../../utils/proxy";
 import { AuthManager } from "../auth/AuthManager";
@@ -73,18 +72,6 @@ export class ApiClient implements DataAPI {
       "../../configs/landingPageConfig"
     );
     return landingPageConfig;
-  }
-
-  /**
-   * Fetches application config object for a state-specific landing page (pre-login)
-   */
-  async stateLandingPageConfig(
-    stateCode: StateCode,
-  ): Promise<StateLandingPageConfig> {
-    const { getConfig } = await import(
-      `../../configs/${stateCode}/landingPageConfig/config.ts`
-    );
-    return getConfig(import.meta.env["VITE_AUTH_ENV"]);
   }
 
   /**

@@ -15,95 +15,47 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
-import { observer } from "mobx-react-lite";
-import { rem } from "polished";
-import { FC } from "react";
+import { Button } from "@recidiviz/design-system";
 import {
   useTypedParams,
   useTypedSearchParams,
 } from "react-router-typesafe-routes/dom";
-import styled from "styled-components/macro";
-
-import { withPresenterManager } from "~hydration-utils";
 
 import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
-import { State } from "../../routes/routes";
-import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
+import { ReturnToPathFragment, State } from "../../routes/routes";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
-import { LandingPageCopyWrapper } from "./LandingPageCopyWrapper";
-import { LandingPageSelector } from "./LandingPageSelector";
-import { LandingStateSpecificPresenter } from "./LandingStateSpecificPresenter";
 
-const ExamplesWrapper = styled.ul`
-  ${typography.Body14}
-
-  color: ${palette.slate85};
-  column-gap: ${rem(spacing.xl)};
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(${rem(175)}, 100%), 1fr));
-  list-style-type: none;
-  margin: 1em 0;
-  padding: 0;
-  row-gap: ${rem(spacing.lg)};
-`;
-
-const ManagedComponent: FC<{
-  presenter: LandingStateSpecificPresenter;
-}> = observer(function LandingStateSpecific({ presenter }) {
-  return (
-    <>
-      <LandingPageCopyWrapper>{presenter.copy.intro}</LandingPageCopyWrapper>
-      <LandingPageSelector
-        label={presenter.copy.selectorLabel}
-        placeholder={presenter.copy.selectorPlaceholder}
-        options={presenter.selectorOptions}
-        onChange={presenter.setSelectedConnection}
-        disableButton={!presenter.selectedConnectionName}
-        onButtonClick={presenter.goToLogin}
-      />
-      <LandingPageCopyWrapper>
-        {presenter.copy.useCases.intro}
-      </LandingPageCopyWrapper>
-      <ExamplesWrapper>
-        {presenter.copy.useCases.examples.map((e) => (
-          <li key={e.description}>
-            <Icon kind={e.icon} size={32} />
-            <p>{e.description}</p>
-          </li>
-        ))}
-      </ExamplesWrapper>
-    </>
-  );
-});
-
-function usePresenter() {
+export const LandingStateSpecific = () => {
   const { stateSlug } = useTypedParams(State);
-  const [{ returnToPath }] = useTypedSearchParams(State);
+  usePageTitle(stateConfigsByUrlSlug[stateSlug]?.displayName);
   const {
-    loginConfigStore,
     userStore: {
       authManager: { authClient },
     },
   } = useRootStore();
+  const [{ returnToPath }] = useTypedSearchParams(ReturnToPathFragment);
 
-  usePageTitle(stateConfigsByUrlSlug[stateSlug]?.displayName);
-
-  // In practice we don't expect anyone to get here if they aren't using Auth0 to log in
-  if (!authClient) throw new Error("Missing required configuration");
-
-  return new LandingStateSpecificPresenter(
-    loginConfigStore,
-    authClient,
-    stateSlug,
-    returnToPath,
+  // In many cases this page is just a placeholder that non-staff users are not
+  // really expected to encounter. Where there is something more useful to do here,
+  // state-specific behavior or content should be substituted as needed
+  return (
+    <div>
+      <h1>{stateConfigsByUrlSlug[stateSlug]?.displayName}</h1>
+      {authClient && (
+        <p>
+          <Button
+            kind="secondary"
+            onClick={() =>
+              authClient.logIn({
+                targetPath: returnToPath ?? window.location.pathname,
+              })
+            }
+          >
+            Staff login
+          </Button>
+        </p>
+      )}
+    </div>
   );
-}
-
-export const LandingStateSpecific = withPresenterManager({
-  usePresenter,
-  managerIsObserver: false,
-  HydratorComponent: MainContentHydrator,
-  ManagedComponent,
-});
+};

@@ -94,15 +94,15 @@ describe("public routes", () => {
 
     it("should render", async () => {
       expect(
-        await screen.findByRole("combobox", {
-          name: "Select your facility to log in to Opportunities",
+        await screen.findByRole("button", {
+          name: "Staff login",
         }),
       ).toBeInTheDocument();
     });
 
     it("should be accessible", async () => {
-      await screen.findByRole("combobox", {
-        name: "Select your facility to log in to Opportunities",
+      await screen.findByRole("button", {
+        name: "Staff login",
       });
 
       expect(await axe(container)).toHaveNoViolations();

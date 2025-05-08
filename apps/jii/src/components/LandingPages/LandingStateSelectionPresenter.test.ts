@@ -28,5 +28,5 @@ test("constructs URL when a state is selected", async () => {
 
   expect(presenter.stateLandingPageUrl).toBeUndefined();
   presenter.setSelectedOption(presenter.selectOptions[0].value);
-  expect(presenter.stateLandingPageUrl).toMatchInlineSnapshot(`"/maine"`);
+  expect(presenter.stateLandingPageUrl).toMatchInlineSnapshot(`"/idaho"`);
 });

@@ -20,24 +20,22 @@ import { residentOpportunitySchemas } from "./residentsOpportunitySchemas";
 import { IncarcerationOpportunityId } from "./types";
 
 describe("requirements configs should match criteria in schema", () => {
-  describe.each(Object.entries(residentsConfigByState))(
-    "%s",
-    (stateCode, stateConfig) => {
-      if (stateConfig.eligibility) {
-        test.each(
-          Object.entries(stateConfig.eligibility.incarcerationOpportunities),
-        )("%s", (oppId, oppConfig) => {
-          const schema =
-            residentOpportunitySchemas[oppId as IncarcerationOpportunityId];
-          expect(
-            Object.keys(oppConfig.requirements.summary.trackedCriteria),
-          ).toEqual(
-            expect.arrayContaining(
-              schema.shape.eligibleCriteria.keyof().options,
-            ),
-          );
-        });
-      }
-    },
-  );
+  describe.each(
+    Object.entries(residentsConfigByState).filter(
+      ([stateCode, stateConfig]) => !!stateConfig.eligibility,
+    ),
+  )("%s", (stateCode, stateConfig) => {
+    test.each(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      Object.entries(stateConfig.eligibility!.incarcerationOpportunities),
+    )("%s", (oppId, oppConfig) => {
+      const schema =
+        residentOpportunitySchemas[oppId as IncarcerationOpportunityId];
+      expect(
+        Object.keys(oppConfig.requirements.summary.trackedCriteria),
+      ).toEqual(
+        expect.arrayContaining(schema.shape.eligibleCriteria.keyof().options),
+      );
+    });
+  });
 });

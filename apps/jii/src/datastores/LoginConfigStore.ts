@@ -15,16 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable, set } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 import { FlowMethod } from "~hydration-utils";
 
 import { DataAPI } from "../apis/data/interface";
-import {
-  LandingPageConfig,
-  StateCode,
-  StateLandingPageConfig,
-} from "../configs/types";
+import { LandingPageConfig } from "../configs/types";
 
 export type LoginConfigStoreExternals = { apiClient: DataAPI };
 
@@ -35,17 +31,7 @@ export class LoginConfigStore {
 
   landingPageConfig?: LandingPageConfig;
 
-  stateLandingPageConfigs: Map<StateCode, StateLandingPageConfig> = new Map();
-
   *populateLandingPageConfig(): FlowMethod<DataAPI["landingPageConfig"], void> {
     this.landingPageConfig = yield this.externals.apiClient.landingPageConfig();
-  }
-
-  *populateStateLandingPageConfig(
-    stateCode: StateCode,
-  ): FlowMethod<DataAPI["stateLandingPageConfig"], void> {
-    const config =
-      yield this.externals.apiClient.stateLandingPageConfig(stateCode);
-    set(this.stateLandingPageConfigs, { [stateCode]: config });
   }
 }

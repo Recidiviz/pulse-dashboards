@@ -61,3 +61,5 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
 });
 
 export const SiteRoot = route("", types(ReturnToPathFragment));
+
+export const StateSelect = route("state-select");
