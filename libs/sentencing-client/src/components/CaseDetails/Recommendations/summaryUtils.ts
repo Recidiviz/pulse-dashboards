@@ -27,15 +27,27 @@ import { GenerateRecommendationProps, SummaryProps } from "./types";
 const normalizedProtectiveFactors: Partial<
   Record<Case["protectiveFactors"][number], string>
 > = {
-  HighSchoolDiplomaOrHigherEducation: "a high level of academic achievement",
-  ActivelyParticipatingInTreatmentPrograms:
-    "been actively participating in treatment programs",
-  ActiveInvolvementInCommunityActivities:
-    "been actively involved in community activities",
-  HistoryOfSuccessUnderSupervision: "had previous success under supervision",
+  NoPriorCriminalConvictions: "has no prior criminal convictions",
+  NoHistoryOfViolentBehavior: "has no history of violent behavior",
+  NoSubstanceAbuseIssues: "has no substance abuse issues",
+  NoDiagnosisOfAMentalIllness: "has no diagnosis of a mental illness",
+  HistoryOfSuccessUnderSupervision:
+    "has previously had success under supervision",
   LengthyPeriodsOfSobrietyAfterCompletingTreatment:
     "had lengthy periods of sobriety after completing treatment",
-  StrongSocialSupportNetwork: "a strong social support network",
+  StableHousing: "has stable housing",
+  SteadyEmployment: "has steady employment",
+  FinancialStability: "is financially stable",
+  HighSchoolDiplomaOrHigherEducation:
+    "has a high level of academic achievement",
+  StrongSocialSupportNetwork: "has a strong social support network",
+  CloseFamilyTies: "has close family ties",
+  ActivelyParticipatingInTreatmentPrograms:
+    "has been actively participating in treatment programs",
+  EnrolledInEducationalOrVocationalTraining:
+    "is enrolled in educational or vocational training",
+  ActiveInvolvementInCommunityActivities:
+    "is actively involved in community activities",
 };
 
 export const formatProtectiveFactorsList = (

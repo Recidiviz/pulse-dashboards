@@ -23,7 +23,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { PSIStore } from "../../datastores/PSIStore";
 import { CaseDetailsPresenter } from "../../presenters/CaseDetailsPresenter";
 import { psiUrl } from "../../utils/routing";
-import { pluralizeDuplicates } from "../../utils/utils";
+import { deduplicateAndPluralize } from "../../utils/utils";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 import { CaseAttributes } from "./CaseAttributes";
@@ -226,8 +226,8 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
               insight={caseAttributes.insight}
               externalId={caseAttributes.externalId}
               selectedRecommendation={selectedRecommendation}
-              opportunityDescriptions={pluralizeDuplicates(
-                opportunityDescriptions ?? [],
+              opportunityDescriptions={deduplicateAndPluralize(
+                opportunityDescriptions,
               )}
               needs={caseAttributes.needsToBeAddressed}
               protectiveFactors={caseAttributes.protectiveFactors}

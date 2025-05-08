@@ -116,6 +116,17 @@ export const pluralizeDuplicates = (items: string[]) => {
 };
 
 /**
+ * Deduplicates and pluralizes each item in a list
+ */
+export const deduplicateAndPluralize = (items?: string[]) => {
+  if (!items) return [];
+  const formattedItems = items.map((item) => Pluralize(item));
+  const uniqueItems = new Set(formattedItems);
+
+  return Array.from(uniqueItems);
+};
+
+/**
  * Converts a county name (e.g. "District 3 - Caldwell") to the district code (e.g. "D3")
  */
 export const convertCountyToDistrictCode = (county?: string) => {

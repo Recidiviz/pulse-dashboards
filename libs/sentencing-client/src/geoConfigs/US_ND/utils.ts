@@ -33,9 +33,9 @@ const sentenceLengthRangeText = (
     return `be sentenced to a period of incarceration`;
   }
   if (sentenceLengthStart === 0 && sentenceLengthEnd === 1) {
-    return "be given a sentence of less than one year";
+    return "be sentenced to a period of incarceration of less than one year";
   }
-  return `be given a sentence between ${sentenceLengthStart} and ${sentenceLengthEnd} years`;
+  return `be sentenced to a period of incarceration between ${sentenceLengthStart} and ${sentenceLengthEnd} years`;
 };
 
 /** North Dakota recommendation summary generator */
@@ -60,13 +60,24 @@ export const generateNorthDakotaSummary = (
     hasSingleProtectiveFactor,
   } = props;
 
-  const needsListExclusions: Case["needsToBeAddressed"] = [
-    "CaseManagement",
+  const probationExclusionList: Case["needsToBeAddressed"] = [
     "ClothingAndToiletries",
-    "FoodInsecurity",
-    "Transportation",
+    "GeneralReEntrySupport",
     OTHER_OPTION,
   ];
+
+  const defaultExclusionList: Case["needsToBeAddressed"] = [
+    "CaseManagement",
+    "FoodInsecurity",
+    "Transportation",
+    ...probationExclusionList,
+  ];
+
+  const needsListExclusions =
+    recommendation === RecommendationType.Probation
+      ? probationExclusionList
+      : defaultExclusionList;
+
   const formattedNeedsList = formatNeedsList(needs, needsListExclusions);
   const needsList = formatListWithAnd(formattedNeedsList, "needs", true);
   const sentenceLengthRange = sentenceLengthRangeText(
@@ -74,7 +85,7 @@ export const generateNorthDakotaSummary = (
     sentenceLengthEnd,
   );
 
-  const introSentence = `After careful consideration of the details of this case, it is recommended that ${salutation} ${name} ${sentenceLengthRange} with the North Dakota Department of Corrections and Rehabilitation${recommendation === OTHER_OPTION ? `.` : `, followed by a period of supervised probation.`}`;
+  const introSentence = `After careful consideration of the details of this case, it is recommended that ${salutation} ${name} ${sentenceLengthRange} with the North Dakota Department of Corrections and Rehabilitation.`;
   const theseFactorsSuggestPhrase = hasSingleProtectiveFactor
     ? `, suggesting`
     : `. These factors suggest`;
@@ -87,18 +98,21 @@ export const generateNorthDakotaSummary = (
       ? `for success in the community.`
       : `that may contribute to ${possessive} successful reintegration into the community upon ${possessive} release.`;
   const protectiveFactorsSentence = hasProtectiveFactors
-    ? `${protectiveFactorsIntroPhrase}${salutation} ${name} has ${protectiveFactorsList}${theseFactorsSuggestPhrase} a solid foundation ${protectiveFactorsEndPhrase}\n\n`
+    ? `${protectiveFactorsIntroPhrase}${salutation} ${name} ${protectiveFactorsList}${theseFactorsSuggestPhrase} a solid foundation ${protectiveFactorsEndPhrase}\n\n`
     : ``;
+  const conclusionSentence = `\n\nShould the defendant be eligible, it is recommended that the Court consider a period of supervised probation after incarceration in order to provide the structure needed to hold ${salutation} ${name} accountable to desist from additional criminal behavior, help ${object} access resources, and support ${object} in making the changes necessary to build a more stable and productive future.`;
 
-  const defaultTemplate = `${introSentence}\n\n${protectiveFactorsSentence}During this time, it is further recommended that a comprehensive plan be developed to address ${possessive} ${needsList} needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support ${possessive} eventual transition, such as ${opportunitiesList}.\n\nGiven this support and structure, it is hoped that ${salutation} ${name} will make the changes necessary to build a more stable and productive future.`;
+  // Templates
 
-  const noNeedsTemplate = `${introSentence}\n\n${protectiveFactorsSentence}During this time, it is further recommended that a comprehensive plan be developed to address ${possessive} needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support ${possessive} eventual transition, such as ${opportunitiesList}.\n\nGiven this support and structure, it is hoped that ${salutation} ${name} will make the changes necessary to build a more stable and productive future.`;
+  const defaultTemplate = `${introSentence}\n\n${protectiveFactorsSentence}During this time, it is further recommended that a comprehensive plan be developed to address ${possessive} ${needsList} needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support ${possessive} eventual transition, such as ${opportunitiesList}.${conclusionSentence}`;
 
-  const noOpportunitiesTemplate = `${introSentence}\n\n${protectiveFactorsSentence}During this time, it is further recommended that a comprehensive plan be developed to address ${possessive} ${needsList} needs, both while incarcerated and in preparation for reentry.\n\nGiven this support and structure, it is hoped that ${salutation} ${name} will make the changes necessary to build a more stable and productive future.`;
+  const noNeedsTemplate = `${introSentence}\n\n${protectiveFactorsSentence}During this time, it is further recommended that a comprehensive plan be developed to address ${possessive} needs, both while incarcerated and in preparation for reentry. A variety of local resources are available to support ${possessive} eventual transition, such as ${opportunitiesList}.${conclusionSentence}`;
 
-  const noOpportunitiesNoNeedsTemplate = `${introSentence}\n\n${protectiveFactorsSentence}During this time, it is further recommended that a comprehensive plan be developed to address ${possessive} needs, both while incarcerated and in preparation for reentry.\n\nGiven this support and structure, it is hoped that ${salutation} ${name} will make the changes necessary to build a more stable and productive future.`;
+  const noOpportunitiesTemplate = `${introSentence}\n\n${protectiveFactorsSentence}During this time, it is further recommended that a comprehensive plan be developed to address ${possessive} ${needsList} needs, both while incarcerated and in preparation for reentry.${conclusionSentence}`;
 
-  const overSixYearRecommendationTemplate = `After careful consideration of the details of this case, it is recommended that ${salutation} ${name} be given a sentence of at least 6 years with the North Dakota Department of Corrections and Rehabilitation. Hopefully the defendant will take advantage of the resources available to ${object} while incarcerated and make the changes necessary to set ${possessive} life on a better path.`;
+  const noOpportunitiesNoNeedsTemplate = `${introSentence}\n\n${protectiveFactorsSentence}During this time, it is further recommended that a comprehensive plan be developed to address ${possessive} needs, both while incarcerated and in preparation for reentry.${conclusionSentence}`;
+
+  const overSixYearRecommendationTemplate = `After careful consideration of the details of this case, it is recommended that ${salutation} ${name} be given a sentence of at least 6 years with the North Dakota Department of Corrections and Rehabilitation.${conclusionSentence}`;
 
   const probationRecommendationTemplate = `After careful consideration of the details of this case, it is recommended that ${salutation} ${name} be sentenced to a period of supervised probation.\n\n${protectiveFactorsSentence}To provide a clear path forward, it is further recommended that a comprehensive plan be developed to address ${possessive} ${needsList}${hasNeeds ? ` needs` : ``} while on supervision.${hasOpportunities ? ` A variety of local resources are available to meet ${possessive} needs, such as ${opportunitiesList}.` : ``}\n\nGiven this support and structure, it is hoped that ${salutation} ${name} will make the changes necessary to build a more stable and productive future.`;
 
