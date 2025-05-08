@@ -62,6 +62,7 @@ export class EarlyTerminationForm extends FormBase<
         priorCourtDate,
         sentenceLengthMonths,
         crimeNames,
+        probationStartDate,
         probationExpirationDate,
         probationOfficerFullName,
         statesAttorneyPhoneNumber,
@@ -79,6 +80,7 @@ export class EarlyTerminationForm extends FormBase<
       priorCourtDate: moment(priorCourtDate).format(FORM_DATE_FORMAT),
       supervisionStartDate:
         moment(supervisionStartDate).format(FORM_DATE_FORMAT),
+      probationStartDate: moment(probationStartDate).format(FORM_DATE_FORMAT),
       probationExpirationDate: moment(probationExpirationDate).format(
         FORM_DATE_FORMAT,
       ),

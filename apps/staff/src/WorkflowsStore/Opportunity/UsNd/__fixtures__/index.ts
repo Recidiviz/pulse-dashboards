@@ -88,6 +88,7 @@ export const usNdEarlyTerminationReferralRecord: UsNdEarlyTerminationReferralRec
       priorCourtDate: "2020-01-03",
       sentenceLengthMonths: "36",
       crimeNames: ["CHARGE 1", "CHARGE 2"],
+      probationStartDate: "2020-12-02",
       probationExpirationDate: "2022-12-02",
       probationOfficerFullName: "Karl Fog",
       criminalNumber: "12345",

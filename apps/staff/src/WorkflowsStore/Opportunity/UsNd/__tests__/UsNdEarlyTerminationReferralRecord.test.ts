@@ -30,6 +30,7 @@ const rawRecord = {
     priorCourtDate: "2022-01-01",
     sentenceLengthMonths: "24",
     crimeNames: ["Crime1", "crime2"],
+    probationStartDate: "2021-05-01",
     probationExpirationDate: "2024-05-01",
     probationOfficerFullName: "Fakename Officername",
   },

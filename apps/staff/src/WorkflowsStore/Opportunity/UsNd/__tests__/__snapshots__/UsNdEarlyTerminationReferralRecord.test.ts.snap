@@ -89,6 +89,7 @@ exports[`ineligiibleCriteria 1`] = `
       "priorCourtDate": 2022-01-01T00:00:00.000Z,
       "probationExpirationDate": 2024-05-01T00:00:00.000Z,
       "probationOfficerFullName": "Fakename Officername",
+      "probationStartDate": 2021-05-01T00:00:00.000Z,
       "sentenceLengthMonths": 24,
     },
     "ineligibleCriteria": {
@@ -157,6 +158,7 @@ exports[`transform record 1`] = `
     "priorCourtDate": 2022-01-01T00:00:00.000Z,
     "probationExpirationDate": 2024-05-01T00:00:00.000Z,
     "probationOfficerFullName": "Fakename Officername",
+    "probationStartDate": 2021-05-01T00:00:00.000Z,
     "sentenceLengthMonths": 24,
   },
   "ineligibleCriteria": {},

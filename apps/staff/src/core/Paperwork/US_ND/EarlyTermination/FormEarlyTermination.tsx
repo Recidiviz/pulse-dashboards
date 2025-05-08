@@ -160,8 +160,8 @@ export const FormEarlyTermination: React.FC = () => {
             />{" "}
             supervised probation starting{" "}
             <DOCXFormInput
-              name="supervisionStartDate"
-              placeholder="Supervision start date"
+              name="probationStartDate"
+              placeholder="Probation start date"
             />{" "}
             for the crime of: <br />
             <FormTextarea name="crimeNames" style={{ width: "100%" }} />

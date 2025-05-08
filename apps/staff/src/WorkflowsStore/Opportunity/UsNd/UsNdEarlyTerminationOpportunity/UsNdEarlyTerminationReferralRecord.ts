@@ -32,6 +32,7 @@ export const usNdEarlyTerminationSchema = opportunitySchemaBase.extend({
       priorCourtDate: dateStringSchema,
       sentenceLengthMonths: stringToIntSchema,
       crimeNames: z.array(z.string()),
+      probationStartDate: dateStringSchema,
       probationExpirationDate: dateStringSchema,
       probationOfficerFullName: z.string(),
       statesAttorneyPhoneNumber: z.string(),
@@ -93,6 +94,7 @@ export type UsNdEarlyTerminationDraftData = {
   priorCourtDate: string;
   sentenceLengthMonths: string;
   crimeNames: string;
+  probationStartDate: string;
   probationExpirationDate: string;
   probationOfficerFullName: string;
   statesAttorneyNumber: string;

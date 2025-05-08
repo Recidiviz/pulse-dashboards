@@ -65,7 +65,7 @@ export const CLIENT_DETAILS_COPY: Record<string, ClientDetailsCopy> = {
   US_ND: {
     supervisionStartDate: {
       tooltip:
-        "This date is included in the filled form as the date that the Defendant was sentenced; in rare cases, the sentencing date and supervision start date may differ. Double check the date in the form to ensure that the sentencing date and supervision start date match in this case.",
+        "This date is the date that the Defendant was sentenced; in rare cases, the sentencing date and supervision start date may differ.",
     },
   },
 };
