@@ -222,11 +222,17 @@ export const ValueRemover = (props: MultiValueRemoveProps<SelectOption>) => {
   );
 };
 
-const ClearAll = (searchFieldTitle: string) =>
+const ClearAll = (searchFieldTitle: string, searchTitleIgnoreCase = false) =>
   function ClearAllButton(props: ClearIndicatorProps<SelectOption, true>) {
     return (
       <components.ClearIndicator {...props}>
-        <>Clear {pluralizeWord(searchFieldTitle)}</>
+        <>
+          Clear{" "}
+          {pluralizeWord({
+            term: searchFieldTitle,
+            justAppendS: searchTitleIgnoreCase,
+          })}
+        </>
       </components.ClearIndicator>
     );
   };
@@ -254,6 +260,7 @@ export const MenuListWithShadow = (
   entriesNumber: number,
   isDisabled: boolean,
   searchFieldTitle: string,
+  searchTitleIgnoreCase?: boolean,
 ) =>
   function MenuList({ children, ...props }: MenuListProps<SelectOption, true>) {
     const topShadow = useInView();
@@ -270,7 +277,11 @@ export const MenuListWithShadow = (
           {isDisabled && (
             <DisabledMessage>
               Cannot select more than {SELECTED_SEARCH_LIMIT}{" "}
-              {pluralizeWord(searchFieldTitle)}.
+              {pluralizeWord({
+                term: searchFieldTitle,
+                justAppendS: searchTitleIgnoreCase,
+              })}
+              .
             </DisabledMessage>
           )}
           {children}
@@ -461,6 +472,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   const {
     supportsMultipleSystems,
     activeSystem,
+    activeSystemConfig,
     searchStore: {
       selectedSearchables,
       selectedSearchIds,
@@ -476,12 +488,16 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       ? "caseload"
       : searchTitleOverride(activeSystem, "caseload");
 
+  const searchTitleIgnoreCase = activeSystemConfig?.search.filter(
+    (search) => search.searchType === searchType,
+  )[0]?.searchTitleIgnoreCase;
+
   const customComponents: SelectComponentsConfig<
     SelectOption,
     true,
     GroupBase<SelectOption>
   > = {
-    ClearIndicator: ClearAll(searchTitle),
+    ClearIndicator: ClearAll(searchTitle, searchTitleIgnoreCase),
     DropdownIndicator: null,
     IndicatorsContainer: Indicators(isMobile),
     MultiValueRemove: ValueRemover,
@@ -496,6 +512,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     availableSearchables.length,
     disableAdditionalSelections,
     searchTitle,
+    searchTitleIgnoreCase,
   );
 
   const defaultOptions = {
@@ -513,7 +530,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
       });
     },
     options: buildSelectOptionsFromSearchableGroup(availableSearchables),
-    placeholder: `Search for one or more ${pluralizeWord(searchTitle)} …`,
+    placeholder: `Search for one or more ${pluralizeWord({ term: searchTitle, justAppendS: searchTitleIgnoreCase })} …`,
     styles: caseloadSelectStyles(
       isMobile,
       hideIndicators,

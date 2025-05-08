@@ -113,10 +113,10 @@ const currentLevelAlmostEligibleText = (
     eligibleDate,
     new Date(),
   );
-  return `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord(
-    "day",
-    currentLevelEligibilityDaysRemaining,
-  )} on ${supervisionLevel.toLowerCase()}`;
+  return `Needs ${currentLevelEligibilityDaysRemaining} more ${pluralizeWord({
+    term: "day",
+    count: currentLevelEligibilityDaysRemaining,
+  })} on ${supervisionLevel.toLowerCase()}`;
 };
 
 const sanctionsAlmostEligibleText = (latestHighSanctionDate: Date) => {
@@ -129,8 +129,10 @@ const sanctionsAlmostEligibleText = (latestHighSanctionDate: Date) => {
   );
   return {
     text: `Needs ${seriousSanctionsEligibilityDaysRemaining} more ${pluralizeWord(
-      "day",
-      seriousSanctionsEligibilityDaysRemaining,
+      {
+        term: "day",
+        count: seriousSanctionsEligibilityDaysRemaining,
+      },
     )} without sanction higher than level 1`,
     seriousSanctionsEligibilityDate,
   };

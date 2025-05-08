@@ -352,19 +352,16 @@ export class SearchStore {
   }
 
   handleSearchPillClick(searchType: SearchType, system: SystemId): void {
-    const { activeSystem, activePage, updateActiveSystem } =
-      this.workflowsStore;
+    const { updateActiveSystem } = this.workflowsStore;
 
     // Updating the active system and searchTypeOverride narrows down the
     // availableSearchables to match the selected search pill
-    activeSystem !== "ALL" && activePage.page === "home"
-      ? updateActiveSystem("ALL")
-      : updateActiveSystem(system);
 
     // Clicking on the currently selected pill de-selects it
     // Do not clear the selected search ids
     if (this.searchTypeOverride === searchType) {
       this.setSearchTypeOverride(undefined);
+      updateActiveSystem("ALL");
       return;
     } else {
       // Clicking on a pill that is not currently selected:
@@ -372,6 +369,7 @@ export class SearchStore {
       this.setSearchTypeOverride(searchType);
       // clears the selected search ids since the search type changes
       this.updateSelectedSearch([]);
+      updateActiveSystem(system);
     }
   }
 }

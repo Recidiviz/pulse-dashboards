@@ -149,8 +149,20 @@ const violationCountLabel = (count: string): string =>
 /**
  * @returns appropriately singular or plural form of `term` including irregular terms
  */
-const pluralizeWord = (term: string, count?: number): string => {
+const pluralizeWord = ({
+  term,
+  count,
+  justAppendS = false,
+}: {
+  term: string;
+  count?: number;
+  justAppendS?: boolean;
+}): string => {
   if (count) return Pluralize(term, count);
+
+  if (justAppendS) {
+    return `${term}s`;
+  }
 
   return Pluralize(term);
 };
@@ -159,7 +171,7 @@ const pluralizeWord = (term: string, count?: number): string => {
  * @returns `count` with appropriately singular or plural form of `term`
  */
 const pluralize = (count: number, term: string): string => {
-  return `${count} ${pluralizeWord(term, count)}`;
+  return `${count} ${pluralizeWord({ term: term, count: count })}`;
 };
 
 function getPeriodLabelFromMetricPeriodMonthsFilter(

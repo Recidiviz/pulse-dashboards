@@ -70,7 +70,9 @@ const CaseloadTypeSelect = observer(
               }
               active={searchType === searchConfig.searchType}
             >
-              {toTitleCase(searchConfig.searchTitle)}
+              {searchConfig.searchTitleIgnoreCase
+                ? searchConfig.searchTitle
+                : toTitleCase(searchConfig.searchTitle)}
             </PillButton>
           ));
         })}

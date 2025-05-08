@@ -43,10 +43,10 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
       <WorkflowsResults
         callToActionText={simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
           selectedSearchIds.length,
-        ]} ${pluralizeWord(
-          workflowsSearchFieldTitle,
-          selectedSearchIds.length,
-        )}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
+        ]} ${pluralizeWord({
+          term: workflowsSearchFieldTitle,
+          count: selectedSearchIds.length,
+        })}['s|'] caseloads have any tasks. Search for another ${workflowsSearchFieldTitle}.`}
       />
     </TasksBodyContainer>
   );

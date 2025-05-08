@@ -120,10 +120,10 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
 
   get emptyTabText() {
     // "caseload" or "caseloads"
-    const caseloadTerm = pluralizeWord(
-      "caseload",
-      this.workflowsStore.searchStore.selectedSearchables.length,
-    );
+    const caseloadTerm = pluralizeWord({
+      term: "caseload",
+      count: this.workflowsStore.searchStore.selectedSearchables.length,
+    });
 
     switch (this.selectedCategory) {
       case "ALL_TASKS":

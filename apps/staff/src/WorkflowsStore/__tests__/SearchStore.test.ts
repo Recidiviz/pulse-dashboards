@@ -778,9 +778,7 @@ describe("trackCaseloadSearch - default caseload", () => {
       searchStore.handleSearchPillClick("LOCATION", "INCARCERATION");
       expect(searchStore.searchTypeOverride).toBeUndefined();
       expect(mockUpdatedSelectedSearchIds).not.toHaveBeenCalled();
-      expect(updateActiveSystemConfigMock).toHaveBeenCalledWith(
-        "INCARCERATION",
-      );
+      expect(updateActiveSystemConfigMock).toHaveBeenCalledWith("ALL");
     });
 
     test("when not-currently selected pill was clicked", () => {
@@ -796,7 +794,9 @@ describe("trackCaseloadSearch - default caseload", () => {
     test("when activeSystem is INCARCERATION", () => {
       workflowsStore.activeSystem = "INCARCERATION";
       searchStore.handleSearchPillClick("OFFICER", "INCARCERATION");
-      expect(updateActiveSystemConfigMock).toHaveBeenCalledWith("ALL");
+      expect(updateActiveSystemConfigMock).toHaveBeenCalledWith(
+        "INCARCERATION",
+      );
     });
   });
 });

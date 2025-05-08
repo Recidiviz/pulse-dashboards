@@ -126,7 +126,10 @@ function hydrateServedXPortionOfSentence(
   // the difference will be negative if the eligible date is in the future;
   // flip the sign to get the time remaining for display purposes
   const timeRemaining = -(isDays ? daysDifference : monthsDifference);
-  const timeUnit = pluralizeWord(isDays ? "day" : "month", timeRemaining);
+  const timeUnit = pluralizeWord({
+    term: isDays ? "day" : "month",
+    count: timeRemaining,
+  });
 
   const servedCondition =
     monthsDifference >= -3 && monthsDifference < 0

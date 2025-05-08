@@ -255,10 +255,10 @@ const VizPopulationSnapshot: React.FC<VizPopulationOverTimeProps> = ({
               isRate
                 ? `(${pluralize(caseloadData.count, "admission")} / ${
                     caseloadData.caseload
-                  } unique ${pluralizeWord(
-                    "person",
-                    caseloadData.caseload,
-                  )} on caseload)`
+                  } unique ${pluralizeWord({
+                    term: "person",
+                    count: caseloadData.caseload,
+                  })} on caseload)`
                 : undefined
             }
           />

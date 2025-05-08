@@ -31,7 +31,7 @@ const WorkflowsMilestones = observer(
       workflowsStore: { justiceInvolvedPersonTitle },
     } = useRootStore();
 
-    const title = pluralizeWord(justiceInvolvedPersonTitle);
+    const title = pluralizeWord({ term: justiceInvolvedPersonTitle });
 
     return (
       <WorkflowsNavLayout>

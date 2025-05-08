@@ -149,6 +149,7 @@ export type SearchConfig<R, T extends TenantConfigId> = {
   searchType: SearchType;
   searchField: Leaves<R & { metadata: { stateCode: T } }> & string[];
   searchTitle: string;
+  searchTitleIgnoreCase?: boolean;
   searchOp?: "in" | "array-contains-any";
   locationIdType?: "facilityId" | "facilityUnitId" | "crcFacilityId";
   onlySurfaceEligible?: boolean;

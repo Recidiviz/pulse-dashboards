@@ -31,7 +31,8 @@ const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
         {
           searchType: "INCARCERATION_OFFICER",
           searchField: ["officerId"],
-          searchTitle: "officer",
+          searchTitle: "COIII",
+          searchTitleIgnoreCase: true,
         },
         {
           searchType: "LOCATION",
@@ -39,6 +40,16 @@ const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
           searchTitle: "facility",
           locationIdType: "facilityId",
           restrictedToFeatureVariant: "usAzFacilitySearch",
+        },
+      ],
+    },
+    SUPERVISION: {
+      search: [
+        {
+          searchType: "OFFICER",
+          searchField: ["officerId"],
+          searchTitle: "CRO",
+          searchTitleIgnoreCase: true,
         },
       ],
     },

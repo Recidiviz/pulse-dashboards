@@ -59,14 +59,20 @@ export const AllCaseloads = observer(function AllCaseloads() {
   const {
     workflowsStore: {
       justiceInvolvedPersonTitle,
+      activeSystemConfig,
       searchStore: {
         selectedSearchables,
         workflowsSearchFieldTitle,
         caseloadPersonsGrouped,
         caseloadPersons,
+        searchType,
       },
     },
   } = useRootStore();
+
+  const searchTitleIgnoreCase = activeSystemConfig?.search.filter(
+    (search) => search.searchType === searchType,
+  )[0]?.searchTitleIgnoreCase;
 
   const allCaseloadsViz = (
     <>
@@ -92,9 +98,10 @@ export const AllCaseloads = observer(function AllCaseloads() {
       initial={
         <WorkflowsResults
           headerText={`All ${toTitleCase(justiceInvolvedPersonTitle)}s`}
-          callToActionText={`Search for ${pluralizeWord(
-            workflowsSearchFieldTitle,
-          )} above to view their entire caseload.`}
+          callToActionText={`Search for ${pluralizeWord({
+            term: workflowsSearchFieldTitle,
+            justAppendS: searchTitleIgnoreCase,
+          })} above to view their entire caseload.`}
         />
       }
       hydrated={
