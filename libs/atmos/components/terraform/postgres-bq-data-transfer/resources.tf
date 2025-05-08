@@ -78,6 +78,7 @@ resource "google_bigquery_data_transfer_config" "transfer_config" {
   destination_dataset_id= google_bigquery_dataset.transfer_dataset[each.key].dataset_id
   data_source_id="cross_region_copy"
   params={
+      "overwrite_destination_table": "true",
       "source_project_id": var.project_id,
       "source_dataset_id":  google_bigquery_dataset.regional_transfer_dataset[each.key].dataset_id
   }
