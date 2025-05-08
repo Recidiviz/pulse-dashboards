@@ -16,6 +16,9 @@
 // =============================================================================
 
 export const constructedOpportunityTypes = [
+  // US_AR
+  "usArInstitutionalWorkerStatus",
+
   // US_AZ
   "usAzOverdueForACISDTP",
   "usAzOverdueForACISTPR",

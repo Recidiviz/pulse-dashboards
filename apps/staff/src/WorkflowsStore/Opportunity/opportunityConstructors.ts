@@ -40,6 +40,7 @@ import {
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
 } from ".";
+import { UsArInstitutionalWorkerStatusOpportunity } from "./UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusOpportunity";
 import { UsAzOverdueForAcisDtpOpportunity } from "./UsAz/UsAzOverdueForAcisDtpOpportunity/UsAzOverdueForAcisDtpOpportunity";
 import { UsAzOverdueForAcisTprOpportunity } from "./UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprOpportunity";
 import { UsAzReleaseToDTPOpportunity } from "./UsAz/UsAzReleaseToDTPOpportunity";
@@ -75,6 +76,9 @@ import { UsTnCompliantReporting2025PolicyOpportunity } from "./UsTn/UsTnComplian
 import { UsUtEarlyTerminationOpportunity } from "./UsUt";
 
 export const opportunityConstructors = {
+  // US_AR
+  usArInstitutionalWorkerStatus: UsArInstitutionalWorkerStatusOpportunity,
+
   // US_AZ
   usAzOverdueForACISDTP: UsAzOverdueForAcisDtpOpportunity,
   usAzOverdueForACISTPR: UsAzOverdueForAcisTprOpportunity,

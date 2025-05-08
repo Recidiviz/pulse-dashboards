@@ -29,7 +29,10 @@ import {
   useRootStore,
 } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
-import { Opportunity } from "../../WorkflowsStore";
+import {
+  Opportunity,
+  UsArInstitutionalWorkerStatusOpportunity,
+} from "../../WorkflowsStore";
 import { getLinkToForm } from "../../WorkflowsStore/utils";
 import { desktopLinkGate } from "../desktopLinkGate";
 import { MenuButton } from "../OpportunityDenial/MenuButton";
@@ -42,6 +45,7 @@ import MarkedIneligibleReasons, {
   buildActedOnTextAndResurfaceText,
 } from "./MarkedIneligibleReasons";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
+import { UsArApprovedVisitors } from "./UsAr/UsARApprovedVisitors";
 
 const Wrapper = styled.div<{
   background: string;
@@ -226,6 +230,10 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
             )}
           </ActionButtons>
         )}
+        {opportunity.record?.approvedVisitors &&
+          opportunity instanceof UsArInstitutionalWorkerStatusOpportunity && (
+            <UsArApprovedVisitors opportunity={opportunity} />
+          )}
       </Wrapper>
     );
   },

@@ -40,6 +40,7 @@ import {
 
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
+import { usArInstitutionalWorkerStatusSchema } from "../src/WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusReferralRecord";
 import { usAzOverdueForAcisDtpSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzOverdueForAcisDtpOpportunity/UsAzOverdueForAcisDtpReferralRecord";
 import { usAzOverdueForAcisTprSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprReferralRecord";
 import { usAzReleaseToTransitionProgramSchemaBase } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTransitionProgramBaseSchema";
@@ -98,6 +99,9 @@ function getDb() {
 const db = getDb();
 
 const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
+  // US_AR
+  usArInstitutionalWorkerStatus: usArInstitutionalWorkerStatusSchema,
+
   // US_AZ
   usAzReleaseToTPR: usAzReleaseToTransitionProgramSchemaBase,
   usAzReleaseToDTP: usAzReleaseToTransitionProgramSchemaBase,
