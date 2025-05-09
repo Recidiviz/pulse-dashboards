@@ -67,6 +67,15 @@ export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
       },
     ],
     emailAddress: "jamie@example.com",
+    activeSentences: [
+      {
+        sentenceId: 1,
+        offenseType: "CRIME",
+        isSexOffense: false,
+        countyCode: "COUNTY",
+        dateImposed: new Date("2020-01-03"),
+      },
+    ],
   };
 export const usNdEarlyTerminationAlmostEligibleClientRecord: RequireKeys<ClientRecord> =
   {

@@ -179,6 +179,15 @@ export const usMeEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
       },
     ],
     emailAddress: "laura@example.com",
+    activeSentences: [
+      {
+        sentenceId: 1,
+        offenseType: "CRIME",
+        isSexOffense: false,
+        countyCode: "COUNTY",
+        dateImposed: new Date("2020-01-03"),
+      },
+    ],
   };
 
 export const usMeEarlyTerminationAlmostEligibleRestitutionClientRecord: RequireKeys<ClientRecord> =

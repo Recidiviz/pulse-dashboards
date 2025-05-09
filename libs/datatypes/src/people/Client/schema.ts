@@ -47,6 +47,15 @@ const optionalClientInformation = z
         r.flatMap((m) => (milestoneTypes.includes(m.type) ? [m] : [])),
       ),
     emailAddress: z.string(),
+    activeSentences: z.array(
+      z.object({
+        sentenceId: z.number(),
+        offenseType: z.string(),
+        isSexOffense: z.boolean(),
+        countyCode: z.string(),
+        dateImposed: dateStringSchema,
+      }),
+    ),
   })
   .partial();
 

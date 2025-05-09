@@ -28,6 +28,7 @@ import {
   Opportunity,
 } from "../../WorkflowsStore";
 import {
+  ActiveSentences,
   ClientEmployer,
   ClientHousing,
   ClientProfileDetails,
@@ -49,6 +50,8 @@ import {
   UsMiEarlyDischargeIcDetails,
   UsMiRecommendedSupervisionLevel,
   UsMoIncarceration,
+  UsNeORASScores,
+  UsNeSpecialConditions,
 } from "./OpportunityDetailSidebarComponents";
 import {
   Incarceration,
@@ -81,6 +84,7 @@ export const ClientDetailSidebarComponents = {
   Milestones,
   ClientProfileDetails,
   UsUtDates,
+  ActiveSentences,
 };
 
 type ClientDetailComponentName = keyof typeof ClientDetailSidebarComponents;
@@ -96,6 +100,8 @@ export const OpportunityDetailSidebarComponents = {
   UsMiRestrictiveHousing,
   UsAzAcisInformation,
   UsIaActionPlansAndNotes,
+  UsNeORASScores,
+  UsNeSpecialConditions,
 };
 
 export const ResidentDetailSidebarComponents = {
