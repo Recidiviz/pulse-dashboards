@@ -18,7 +18,6 @@
 import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
 import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
@@ -29,7 +28,7 @@ import {
 } from "../../components/StoreProvider";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { TableViewToggle } from "../OpportunityCaseloadView/TableViewToggle";
-import { MaxWidth } from "../sharedComponents";
+import { MaxWidthWithSidebar } from "../sharedComponents";
 import WorkflowsCaseloadTabs from "../WorkflowsCaseloadControlBar";
 import { WorkflowsUnderstaffedPill } from "../WorkflowsUnderstaffed";
 import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
@@ -49,7 +48,7 @@ const TasksTopbarContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  ${MaxWidth}
+  ${MaxWidthWithSidebar}
 `;
 
 const TableControls = styled.div`

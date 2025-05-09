@@ -131,7 +131,21 @@ export const Banner = styled.div`
 export const MaxWidth = `
   max-width: 75vw;
 
-  @media screen and (max-width: ${cssVars.breakpointSxs}) {
+  @media screen and (max-width: ${cssVars.breakpointSm}) {
+    max-width: 90vw;
+  }
+
+  @media screen and (max-width: ${cssVars.breakpointXs}) {
+    max-width: unset;
+  }
+`;
+
+// Fits content to the left of a 480px sidebar at 1440px viewport width,
+// but takes up more space on a smaller-width screen
+export const MaxWidthWithSidebar = `
+  max-width: 64vw;
+
+  @media screen and (max-width: ${cssVars.breakpointSm}) {
     max-width: 90vw;
   }
 

@@ -34,11 +34,8 @@ import { WorkflowsTasksConfig } from "../models/types";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 
 const Wrapper = styled.div`
-  grid-column-start: 2;
   justify-self: end;
   cursor: pointer;
-  position: absolute;
-  top: 1.25rem;
 `;
 
 const SnoozeTaskDropdownButton = styled(DropdownToggle)`

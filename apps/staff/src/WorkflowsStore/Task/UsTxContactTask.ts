@@ -17,7 +17,7 @@
 
 import { fieldToDate } from "~datatypes";
 
-import { formatDate } from "../../utils";
+import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Task } from "./Task";
 import { UsTxSimpleContactTaskType } from "./types";
 
@@ -26,7 +26,7 @@ abstract class UsTxContactTask<
 > extends Task<T> {
   get lastContactDate(): string | undefined {
     if (!this.details.lastContactDate) return;
-    return formatDate(fieldToDate(this.details.lastContactDate));
+    return formatWorkflowsDate(fieldToDate(this.details.lastContactDate));
   }
 
   get additionalDetails(): string {

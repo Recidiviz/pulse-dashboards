@@ -16,18 +16,23 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React from "react";
 import simplur from "simplur";
+import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { pluralizeWord } from "../../utils";
 import { CaseloadSelect } from "../CaseloadSelect";
+import { MaxWidthWithSidebar } from "../sharedComponents";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
 import { TasksBodyContainer } from "./styles";
 import { WorkflowsTasksBody } from "./WorkflowsTasksBody";
 import { WorkflowsTasksBodyV2 } from "./WorkflowsTasksBodyV2";
+
+const CaseloadSelectWrapper = styled.div`
+  ${MaxWidthWithSidebar}
+`;
 
 const WorkflowsTasks = observer(function WorkflowsTasks() {
   const {
@@ -61,8 +66,10 @@ const WorkflowsTasks = observer(function WorkflowsTasks() {
   );
 
   return (
-    <WorkflowsNavLayout limitedWidth={false}>
-      <CaseloadSelect />
+    <WorkflowsNavLayout limitedWidth={currentTenantId === "US_ID"}>
+      <CaseloadSelectWrapper>
+        <CaseloadSelect />
+      </CaseloadSelectWrapper>
       <CaseloadTasksHydrator
         initial={initial}
         empty={empty}

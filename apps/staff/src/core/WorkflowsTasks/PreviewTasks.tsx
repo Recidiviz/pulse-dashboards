@@ -104,7 +104,7 @@ const TaskItemWrapper = styled.div`
 
 const TaskItemV2 = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
   display: grid;
-  grid-template-columns: ${rem(175)} ${rem(175)} auto;
+  grid-template-columns: 3fr 4fr 1fr;
 `;
 
 const TaskInfo = styled.div`

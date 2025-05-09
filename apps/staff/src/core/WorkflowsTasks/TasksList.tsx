@@ -21,13 +21,13 @@ import styled from "styled-components/macro";
 
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
-import { MaxWidth } from "../sharedComponents";
+import { MaxWidthWithSidebar } from "../sharedComponents";
 import { TaskListGroup } from "./TaskListGroup";
 import { TaskListItemV2 } from "./TaskListItemV2";
 import { EmptyTasksTabView } from "./TasksTable";
 
 const TasksListContainer = styled.div`
-  ${MaxWidth}
+  ${MaxWidthWithSidebar}
   height: 100%;
 `;
 

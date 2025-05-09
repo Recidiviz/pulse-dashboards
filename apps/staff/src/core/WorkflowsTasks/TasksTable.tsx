@@ -23,7 +23,10 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import useIsMobile from "../../hooks/useIsMobile";
-import { formatDate, formatDueDateFromToday } from "../../utils/formatStrings";
+import {
+  formatDueDateFromToday,
+  formatWorkflowsDate,
+} from "../../utils/formatStrings";
 import { SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
@@ -71,7 +74,7 @@ function TaskDateCell({ row }: { row: Row<SupervisionTask> }) {
   const { dueDate } = row.original;
   return (
     <>
-      {formatDate(dueDate)}{" "}
+      {formatWorkflowsDate(dueDate)}{" "}
       <KeepTogether>{`(${formatDueDateFromToday(dueDate)})`}</KeepTogether>
     </>
   );

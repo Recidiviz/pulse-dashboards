@@ -17,7 +17,7 @@
 
 import { fieldToDate } from "~datatypes";
 
-import { formatDate } from "../../utils/formatStrings";
+import { formatWorkflowsDate } from "../../utils/formatStrings";
 import { Task } from "./Task";
 
 class UsTxAssessmentTask extends Task<"usTxAssessment"> {
@@ -25,7 +25,7 @@ class UsTxAssessmentTask extends Task<"usTxAssessment"> {
 
   get lastAssessment(): string | undefined {
     if (this.details.eventType !== "assessment_completed") return;
-    return formatDate(fieldToDate(this.details.eventDate));
+    return formatWorkflowsDate(fieldToDate(this.details.eventDate));
   }
 
   get additionalDetails(): string {
