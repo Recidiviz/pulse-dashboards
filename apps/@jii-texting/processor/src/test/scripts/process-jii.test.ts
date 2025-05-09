@@ -20,7 +20,9 @@ import {
   MessageType,
   StateCode,
 } from "@prisma/jii-texting/client";
+import { init } from "@sentry/node";
 import moment from "moment";
+import sentryTestkit from "sentry-testkit";
 import { MessageInstance } from "twilio/lib/rest/api/v2010/account/message";
 
 import { processJii } from "~@jii-texting/processor/scripts/process-jii";
@@ -38,6 +40,29 @@ import { TwilioAPIClient } from "~twilio-api";
 vi.mock("~twilio-api");
 
 vi.stubEnv("TWILIO_MESSAGING_SERVICE_SID_US_ID", "test-msg-service-sid");
+
+const { testkit, sentryTransport } = sentryTestkit();
+
+export async function testAndGetSentryReports(expectedLength = 1) {
+  // Use waitFor because sentry-testkit can be async
+  const sentryReports = await vi.waitFor(async () => {
+    const reports = testkit.reports();
+    expect(reports).toHaveLength(expectedLength);
+
+    return reports;
+  });
+
+  return sentryReports;
+}
+
+beforeEach(() => {
+  init({
+    dsn: process.env["SENTRY_DSN"],
+    transport: sentryTransport,
+  });
+});
+
+afterEach(() => testkit.reset());
 
 describe("one person in DB without prior messages, thus send initial text", () => {
   test("validate Twilio createMessage call", async () => {
@@ -816,6 +841,10 @@ describe("one person with initial and eligibility message series", () => {
 
         expect(personWithMessageSeries.messageSeries.length).toBe(2);
 
+        // Ensure captureException not called
+        const sentryReports = await testAndGetSentryReports(0);
+        expect(sentryReports.length).toBe(0);
+
         vi.useRealTimers();
       });
 
@@ -854,6 +883,10 @@ describe("one person with initial and eligibility message series", () => {
           });
 
         expect(personWithMessageSeries.messageSeries.length).toBe(3);
+
+        // Ensure captureException not called
+        const sentryReports = await testAndGetSentryReports(0);
+        expect(sentryReports.length).toBe(0);
 
         vi.useRealTimers();
       });

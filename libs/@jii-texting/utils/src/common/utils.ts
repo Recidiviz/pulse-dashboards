@@ -502,6 +502,7 @@ async function handleLatestMessageTypeIsEligibilityText(
   previousGroupId: string,
   latestMessageAttemptStatus: MessageAttemptStatus,
   shouldRetry: boolean,
+  daysSinceLastMessageAttempt: number,
   dryRun = true,
   latestMessageSeriesId?: string,
 ): Promise<ScriptAction> {
@@ -511,7 +512,10 @@ async function handleLatestMessageTypeIsEligibilityText(
   );
   // If the latest eligibility text succeeded, but the person's group is different,
   // then send a new eligibility text
-  if (latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS) {
+  if (
+    latestMessageAttemptStatus === MessageAttemptStatus.SUCCESS &&
+    (currentGroupId !== previousGroupId || daysSinceLastMessageAttempt >= 90)
+  ) {
     if (dryRun) {
       console.log(
         `Skipped sending eligibility message for new group for ${pseudonymizedId}`,
@@ -758,6 +762,7 @@ export async function processIndividualJii(
       latestMessageGroupId,
       updatedMessageAttemptStatus,
       shouldRetry,
+      daysSinceLatestMessageAttempt,
       dryRun,
       latestMessageSeries.id,
     );
