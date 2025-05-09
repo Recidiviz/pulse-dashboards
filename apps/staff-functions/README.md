@@ -39,6 +39,17 @@ To create a new firebase function for a new environment (1️⃣) or in an alrea
 
 #### Testing and Deploying
 
+> [!WARNING]  
+> Added May 9, 2025 by @danielsmc: the deploy process for functions is currently broken. I added
+> I added https://github.com/Recidiviz/pulse-dashboards/issues/8403 to fix this, but for now here are the steps that worked for me:
+>
+> - `nx build staff-functions -c production`
+> - In `dist/apps/staff-functions`:
+>   - `cp ../../../.yarnrc.yml .`
+>   - `yarn`
+>   - `rm -r node_modules .yarn`
+> - Back at root: `firebase deploy --only functions --config firebase.json --project production-backend`
+
 1. Use Nx commands to deploy these functions to Firebase. There are separate configurations with corresponding dotenv viles that will build and deploy the functions source for staging or production; run `nx deploy staff-functions -c staging` or `nx deploy staff-functions -c production` accordingly.
 1. Click the link returned in the terminal after a successful upload of the function.
 1. Click on "Functions" to see the list of functions. The new function should be in the list.

@@ -53,20 +53,32 @@ export abstract class FirestoreExporter<T> {
     const bucket = defineString(this.outputBucketEnvVar).value();
 
     return onSchedule(schedule, async () => {
-      const db = admin.firestore();
-      const { docs } = await this.docsQuery(db).get();
+      const baseQuery = this.docsQuery(admin.firestore());
 
-      const newlineJson = docs
-        .map((snapshot) =>
-          JSON.stringify(this.firestoreDocToExportData(snapshot)),
-        )
-        .filter(Boolean)
-        .join("\n");
+      let lastDoc;
+      const jsons: string[] = [];
+
+      while (true) {
+        const query: Query<DocumentData> = lastDoc
+          ? baseQuery.limit(50).startAfter(lastDoc)
+          : baseQuery.limit(50);
+
+        // eslint-disable-next-line no-await-in-loop
+        const { docs, empty } = await query.get();
+        if (empty) break;
+        lastDoc = docs[docs.length - 1];
+        for (const doc of docs) {
+          const data = this.firestoreDocToExportData(doc);
+          if (data) {
+            jsons.push(JSON.stringify(data));
+          }
+        }
+      }
 
       storage
         .bucket(bucket)
         .file(`${formatDate(new Date())}.json`)
-        .save(newlineJson);
+        .save(jsons.join("\n"));
     });
   }
 
@@ -74,6 +86,8 @@ export abstract class FirestoreExporter<T> {
 
   /**
    * Returns the document query that will get the firestore docs to export
+   * If the query includes a select, it should include an orderBy on the same field
+   * so we can paginate through the results
    */
   abstract docsQuery(db: Firestore): Query<DocumentData>;
 

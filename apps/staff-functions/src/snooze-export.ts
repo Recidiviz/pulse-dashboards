@@ -43,7 +43,8 @@ class SnoozeExporter extends FirestoreExporter<SnoozeState> {
   docsQuery(db: Firestore) {
     return db
       .collectionGroup("clientOpportunityUpdates")
-      .where("denial", "!=", null);
+      .where("denial", "!=", null)
+      .orderBy("denial");
   }
 
   firestoreDocToExportData(doc: QueryDocumentSnapshot) {

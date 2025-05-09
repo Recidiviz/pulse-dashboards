@@ -35,7 +35,8 @@ class OverrideDistrictExporter extends FirestoreExporter<OverrideDistrictExport>
   docsQuery(db: Firestore) {
     return db
       .collection("userUpdates")
-      .where("overrideDistrictIds", "!=", null);
+      .where("overrideDistrictIds", "!=", null)
+      .orderBy("overrideDistrictIds");
   }
 
   firestoreDocToExportData(docSnapshot: QueryDocumentSnapshot) {
