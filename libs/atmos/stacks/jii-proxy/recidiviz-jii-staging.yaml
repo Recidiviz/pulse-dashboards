@@ -29,4 +29,5 @@ components:
       vars:
         artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
         env_vars:
-          OPPORTUNITIES_APP_URL: "https://staging.opportunities.app"
+          OPPORTUNITIES_APP_URL: "https://recidiviz-jii-staging.web.app"
+        managed_certificate_domains: [staging.opportunities.app]

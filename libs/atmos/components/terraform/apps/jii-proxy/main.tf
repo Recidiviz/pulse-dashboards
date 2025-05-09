@@ -62,6 +62,7 @@ resource "google_compute_ssl_certificate" "edovo_ssl" {
   certificate = data.google_secret_manager_secret_version.edovo_ssl_certificate.secret_data
 }
 
+
 resource "google_compute_region_network_endpoint_group" "serverless_neg" {
   depends_on = [google_project_service.compute]
 
@@ -98,6 +99,7 @@ module "load-balancer" {
     }
   }
 
-  ssl              = true
-  ssl_certificates = [google_compute_ssl_certificate.edovo_ssl.id]
+  ssl                             = true
+  ssl_certificates                = [google_compute_ssl_certificate.edovo_ssl.id]
+  managed_ssl_certificate_domains = var.managed_certificate_domains
 }

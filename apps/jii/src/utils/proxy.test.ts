@@ -17,27 +17,69 @@
 
 import { proxyHost } from "./proxy";
 
-const TEST_HOST = "opportunities.edovo.com";
+const TEST_EDOVO_HOST = "opportunities.edovo.com";
+const TEST_BASE_HOST = "opportunities.app";
 
-test("active", () => {
-  vi.stubGlobal("location", {
-    hostname: TEST_HOST,
+describe("edovo proxy", () => {
+  test("active on edovo domain hostname", () => {
+    vi.stubGlobal("location", {
+      hostname: TEST_EDOVO_HOST,
+    });
+
+    vi.stubEnv("VITE_EDOVO_REVERSE_PROXY_HOST", TEST_EDOVO_HOST);
+
+    expect(proxyHost()).toBe(TEST_EDOVO_HOST);
   });
 
-  vi.stubEnv("VITE_REVERSE_PROXY_HOST", TEST_HOST);
+  test("takes precedence over base proxy", () => {
+    vi.stubGlobal("location", {
+      hostname: TEST_EDOVO_HOST,
+    });
 
-  expect(proxyHost()).toBe(TEST_HOST);
-});
+    vi.stubEnv("VITE_REVERSE_PROXY_HOST", TEST_BASE_HOST);
+    vi.stubEnv("VITE_EDOVO_REVERSE_PROXY_HOST", TEST_EDOVO_HOST);
 
-test("inactive if env is missing", () => {
-  vi.stubGlobal("location", {
-    hostname: TEST_HOST,
+    expect(proxyHost()).toBe(TEST_EDOVO_HOST);
   });
-  expect(proxyHost()).toBeUndefined();
+
+  test("inactive if not on subdomain", () => {
+    vi.stubEnv("VITE_EDOVO_REVERSE_PROXY_HOST", TEST_EDOVO_HOST);
+
+    expect(proxyHost()).toBeUndefined();
+  });
+
+  test("inactive if env is missing", () => {
+    vi.stubGlobal("location", {
+      hostname: TEST_EDOVO_HOST,
+    });
+    expect(proxyHost()).toBeUndefined();
+  });
+
+  test("does not fall back to other proxy settings when triggered by URL", () => {
+    vi.stubGlobal("location", {
+      hostname: TEST_EDOVO_HOST,
+    });
+
+    vi.stubEnv("VITE_REVERSE_PROXY_HOST", TEST_BASE_HOST);
+
+    expect(proxyHost()).toBeUndefined();
+  });
 });
 
-test("inactive if not on subdomain", () => {
-  vi.stubEnv("VITE_REVERSE_PROXY_HOST", TEST_HOST);
+describe("base proxy", () => {
+  test("active based on env var", () => {
+    vi.stubEnv("VITE_REVERSE_PROXY_HOST", TEST_BASE_HOST);
+    expect(proxyHost()).toBe(TEST_BASE_HOST);
+  });
 
-  expect(proxyHost()).toBeUndefined();
+  test("inactive if env is unset", () => {
+    expect(proxyHost()).toBeUndefined();
+  });
+
+  test("edovo proxy setting ignored", () => {
+    vi.stubEnv("VITE_REVERSE_PROXY_HOST", TEST_BASE_HOST);
+    vi.stubEnv("VITE_EDOVO_REVERSE_PROXY_HOST", TEST_EDOVO_HOST);
+
+    expect(proxyHost()).toBe(TEST_BASE_HOST);
+  });
 });

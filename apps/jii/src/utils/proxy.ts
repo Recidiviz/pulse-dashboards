@@ -24,7 +24,7 @@ import { isEdovoSubdomain } from "./edovo";
  */
 export function proxyHost(): string | undefined {
   if (isEdovoSubdomain()) {
-    return import.meta.env["VITE_REVERSE_PROXY_HOST"];
+    return import.meta.env["VITE_EDOVO_REVERSE_PROXY_HOST"];
   }
-  return;
+  return import.meta.env["VITE_REVERSE_PROXY_HOST"];
 }

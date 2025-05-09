@@ -41,3 +41,8 @@ variable "env_vars" {
   description = "Environment variables"
   default     = {}
 }
+
+variable "managed_certificate_domains" {
+  type        = list(string)
+  description = "Domains that should have Google-managed SSL certs in the load balancer"
+}
