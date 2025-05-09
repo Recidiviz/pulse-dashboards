@@ -21,8 +21,8 @@ import { nodeProfilingIntegration } from "@sentry/profiling-node";
 init({
   dsn: process.env["SENTRY_DSN"],
   environment: process.env["SENTRY_ENV"],
-  tracesSampleRate: 0.25,
-  profilesSampleRate: 0.1,
+  tracesSampleRate: 0,
+  profilesSampleRate: 0,
   integrations: [nodeProfilingIntegration(), prismaIntegration()],
   maxValueLength: 5000,
 });
