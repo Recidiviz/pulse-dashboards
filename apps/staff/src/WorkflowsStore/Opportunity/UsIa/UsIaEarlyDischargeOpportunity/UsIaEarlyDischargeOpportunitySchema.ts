@@ -59,6 +59,11 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
       .passthrough(),
     ineligibleCriteria: z.object({}).passthrough(),
     formInformation: z.object({}).passthrough(),
+    metadata: z
+      .object({
+        victimFlag: z.boolean().optional(),
+      })
+      .passthrough(),
   })
   .passthrough();
 

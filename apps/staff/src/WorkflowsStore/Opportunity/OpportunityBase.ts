@@ -753,13 +753,15 @@ export class OpportunityBase<
     } = this;
 
     // Because these criteria aren't associated with a referral record, they don't have reasons
-    return nonOmsCriteria.map((req) =>
-      hydrateReq({
-        raw: req,
-        opportunity: this,
-        formatters: this.criteriaFormatters,
-      }),
-    );
+    return nonOmsCriteria
+      .map((req) =>
+        hydrateReq({
+          raw: req,
+          opportunity: this,
+          formatters: this.criteriaFormatters,
+        }),
+      )
+      .filter((req) => req.text);
   }
 
   get almostEligible(): boolean {

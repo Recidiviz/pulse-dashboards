@@ -26,7 +26,7 @@ import {
 } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityTab } from "../../types";
+import { OpportunityRequirement, OpportunityTab } from "../../types";
 import { UsIaClientStatus } from "./types";
 import {
   UsIaEarlyDischargeReferralRecord,
@@ -199,5 +199,15 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     // TODO(#8246): Call relevant segment event for status change
 
     await this.rootStore.firestoreStore.deleteOpportunityActionHistory(this);
+  }
+
+  get requirementsMet(): OpportunityRequirement[] {
+    // TODO(#8393): If victim exists, treat item like an almost eligible criteria
+    const victimReqText = this.record.metadata.victimFlag
+      ? "There are one or more registered victims for this case"
+      : "There is no registered victim";
+    return super.requirementsMet.concat({
+      text: victimReqText,
+    });
   }
 }
