@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
+import useIsMobile from "../../hooks/useIsMobile";
 import { isClient, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { TooltipContainer } from "../sharedComponents";
 import { MilestonesSection } from "./MilestonesSection";
@@ -43,6 +44,7 @@ type WorkflowsTooltipProps = {
   person: JusticeInvolvedPerson;
   contents?: React.ReactNode;
   children: React.ReactElement;
+  displayOnMobile?: boolean;
 };
 
 export const WorkflowsTooltip: React.FC<WorkflowsTooltipProps> = observer(
@@ -50,9 +52,17 @@ export const WorkflowsTooltip: React.FC<WorkflowsTooltipProps> = observer(
     person,
     contents = <TooltipDetails person={person} />,
     children,
+    displayOnMobile = false,
   }) {
     useHydrateOpportunities(person);
+    const { isMobile } = useIsMobile(true);
 
-    return <TooltipTrigger contents={contents}>{children}</TooltipTrigger>;
+    const shouldDisplayTooltip = displayOnMobile || !isMobile;
+
+    return (
+      <TooltipTrigger contents={shouldDisplayTooltip && contents}>
+        {children}
+      </TooltipTrigger>
+    );
   },
 );

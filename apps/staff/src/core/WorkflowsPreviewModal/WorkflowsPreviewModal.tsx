@@ -63,6 +63,9 @@ const StyledDrawerModal = styled(DrawerModal)<{
     max-height: unset !important;
     width: 100% !important;
     height: 100% !important;
+
+    // add padding to the bottom of the modal to account for the footer
+    padding-bottom: ${rem(NAV_BAR_HEIGHT - 1)} !important;
     `
         : `
     height: calc(100vh - ${rem(NAV_BAR_HEIGHT)}) !important;
@@ -88,7 +91,10 @@ const StyledDrawerModal = styled(DrawerModal)<{
     width: 100% !important;
     height: 100% !important;
     right: 0 !important;
-    border-radius: 0 !important;`
+    border-radius: 0 !important;
+    // add padding to the bottom of the modal to account for the footer
+    padding-bottom: 63px; !important;
+    `
     }
   }`}
 `;

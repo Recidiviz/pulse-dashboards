@@ -21,6 +21,7 @@ import styled from "styled-components/macro";
 
 import ListViewIcon from "../../assets/static/images/oppListView.svg?react";
 import TableViewIcon from "../../assets/static/images/oppTableView.svg?react";
+import useIsMobile from "../../hooks/useIsMobile";
 import { TableViewSelectInterface } from "../../WorkflowsStore/presenters/TableViewSelectPresenter";
 
 const ViewTypeButton = styled(Button)<{ $selected: boolean }>`
@@ -52,9 +53,11 @@ export const TableViewToggle = observer(function TableViewToggle({
 }: {
   presenter: TableViewSelectInterface;
 }) {
+  const { isMobile } = useIsMobile(true);
+
   return (
     <ButtonGroup>
-      <ButtonTooltipTrigger contents="List View">
+      <ButtonTooltipTrigger contents={!isMobile && "List View"}>
         <ViewTypeButton
           kind={presenter.showListView ? "primary" : "secondary"}
           shape={"block"}
@@ -66,7 +69,7 @@ export const TableViewToggle = observer(function TableViewToggle({
           <ListViewIcon />
         </ViewTypeButton>
       </ButtonTooltipTrigger>
-      <ButtonTooltipTrigger contents="Table View">
+      <ButtonTooltipTrigger contents={!isMobile && "Table View"}>
         <ViewTypeButton
           kind={presenter.showListView ? "secondary" : "primary"}
           shape={"block"}

@@ -40,6 +40,7 @@ describe("initIntercomSettings tests", () => {
     expect(Intercom).toHaveBeenCalledWith({
       app_id: mockIntercomAppId,
       hide_default_launcher: true,
+      z_index: 999,
     });
   });
 });

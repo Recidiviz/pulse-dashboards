@@ -25,6 +25,7 @@ import { useCallback, useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 
 type PreviewModalFooterProps<T> = {
@@ -86,6 +87,7 @@ export const PreviewModalFooter: React.FC<PreviewModalFooterProps<any>> = ({
   itemLabel,
   onNavigate,
 }) => {
+  const { isMobile } = useIsMobile(true);
   const currentItemIndex = navigableItems
     ? navigableItems.indexOf(currentItem)
     : -1;
@@ -152,7 +154,7 @@ export const PreviewModalFooter: React.FC<PreviewModalFooterProps<any>> = ({
 
   return (
     <FooterWrapper>
-      <TooltipTrigger contents={previousTooltip}>
+      <TooltipTrigger contents={!isMobile && previousTooltip}>
         <Button
           onClick={() => navigateItem(-1)}
           kind="secondary"
@@ -164,7 +166,7 @@ export const PreviewModalFooter: React.FC<PreviewModalFooterProps<any>> = ({
         </Button>
       </TooltipTrigger>
       {currentItemIndex + 1} / {totalItems}
-      <TooltipTrigger contents={nextTooltip}>
+      <TooltipTrigger contents={!isMobile && nextTooltip}>
         <Button
           onClick={() => navigateItem(1)}
           kind="secondary"

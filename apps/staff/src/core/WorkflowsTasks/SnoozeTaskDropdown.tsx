@@ -132,6 +132,7 @@ const snoozeTaskToast = (
     {
       className: "SnoozeTaskToast",
       duration: isMobile ? 4000 : 7000,
+      style: { zIndex: 99999 },
     },
   );
 };

@@ -24,6 +24,7 @@ import styled from "styled-components/macro";
 
 import copyIcon from "../../assets/static/images/copy.svg";
 import { useRootStore } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 
 export const PersonIdWithCopyIcon = styled.span<{ shiftIcon: boolean }>`
@@ -63,6 +64,7 @@ const PersonId: React.FC<{
   opportunity = undefined,
   pseudoId = undefined,
 }) => {
+  const { isMobile } = useIsMobile(true);
   const [isCopied, copyToClipboard] = useClipboard(personId, {
     successDuration: 5000,
   });
@@ -79,7 +81,7 @@ const PersonId: React.FC<{
 
   return (
     <TooltipTrigger
-      contents={`Copy ${stateIdDescriptor} to clipboard`}
+      contents={!isMobile && `Copy ${stateIdDescriptor} to clipboard`}
       positionY={"top"}
     >
       <PersonIdWithCopyIcon

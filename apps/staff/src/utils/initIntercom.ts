@@ -19,7 +19,7 @@ import Intercom from "@intercom/messenger-js-sdk";
 
 function initIntercom() {
   const appId = import.meta.env.VITE_INTERCOM_APP_ID;
-  Intercom({ app_id: appId, hide_default_launcher: true });
+  Intercom({ app_id: appId, hide_default_launcher: true, z_index: 999 });
 }
 
 export default initIntercom;

@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
+import useIsMobile from "../../hooks/useIsMobile";
 import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import {
   SupervisionTask,
@@ -108,15 +109,29 @@ type TaskClientTooltipProps = {
   person: JusticeInvolvedPerson;
   tasks: SupervisionTask<SupervisionTaskType>[];
   children: React.ReactElement;
+  displayOnMobile?: boolean;
 };
 
 export const TaskListTooltip: React.FC<TaskClientTooltipProps> = observer(
-  function TaskListTooltip({ person, tasks, children }) {
+  function TaskListTooltip({
+    person,
+    tasks,
+    children,
+    displayOnMobile = false,
+  }) {
     useHydrateOpportunities(person);
+
+    const { isMobile } = useIsMobile(true);
+
+    const shouldDisplayTooltip = displayOnMobile || !isMobile;
 
     return (
       <TooltipTrigger
-        contents={<TooltipDetails person={person} tasks={tasks} />}
+        contents={
+          shouldDisplayTooltip && (
+            <TooltipDetails person={person} tasks={tasks} />
+          )
+        }
       >
         {children}
       </TooltipTrigger>
