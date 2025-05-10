@@ -50,9 +50,9 @@ const optionalClientInformation = z
     activeSentences: z.array(
       z.object({
         sentenceId: z.number(),
-        offenseType: z.string(),
-        isSexOffense: z.boolean(),
-        countyCode: z.string(),
+        offenseType: z.string().nullable(),
+        isSexOffense: z.boolean().nullable(),
+        countyCode: z.string().nullable(),
         dateImposed: dateStringSchema,
       }),
     ),

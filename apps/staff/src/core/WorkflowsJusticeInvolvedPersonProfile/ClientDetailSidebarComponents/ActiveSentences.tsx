@@ -36,28 +36,45 @@ export const ActiveSentences: React.FC<ClientProfileProps> = ({ client }) => {
       <DetailsHeading>Active Sentences</DetailsHeading>
       <SecureDetailsContent>
         <DetailsList>
-          {activeSentences.map((sentence) => (
-            <SecureDetailsContent key={sentence.sentenceId}>
-              <DetailsList>
-                <DetailsSubheading>Offense Type</DetailsSubheading>
-                <SecureDetailsContent>
-                  {toTitleCase(sentence.offenseType)}
-                </SecureDetailsContent>
-                <DetailsSubheading>Date Imposed</DetailsSubheading>
-                <SecureDetailsContent>
-                  {formatWorkflowsDate(sentence.dateImposed)}
-                </SecureDetailsContent>
-                <DetailsSubheading>County</DetailsSubheading>
-                <SecureDetailsContent>
-                  {toTitleCase(sentence.countyCode)}
-                </SecureDetailsContent>
-                <DetailsSubheading>Sex Offense</DetailsSubheading>
-                <SecureDetailsContent>
-                  {sentence.isSexOffense ? "Yes" : "No"}
-                </SecureDetailsContent>
-              </DetailsList>
-            </SecureDetailsContent>
-          ))}
+          {activeSentences.map(
+            ({
+              sentenceId,
+              offenseType,
+              dateImposed,
+              countyCode,
+              isSexOffense,
+            }) => (
+              <SecureDetailsContent key={sentenceId}>
+                <DetailsList>
+                  <DetailsSubheading>Offense Type</DetailsSubheading>
+                  <SecureDetailsContent>
+                    {offenseType ? toTitleCase(offenseType) : "Unknown"}
+                  </SecureDetailsContent>
+                  <DetailsSubheading>Date Imposed</DetailsSubheading>
+                  <SecureDetailsContent>
+                    {formatWorkflowsDate(dateImposed)}
+                  </SecureDetailsContent>
+                  {countyCode && (
+                    <>
+                      <DetailsSubheading>County</DetailsSubheading>
+                      <SecureDetailsContent>
+                        {toTitleCase(countyCode)}
+                      </SecureDetailsContent>
+                    </>
+                  )}
+                  {isSexOffense === null && (
+                    <>
+                      {" "}
+                      <DetailsSubheading>Sex Offense</DetailsSubheading>
+                      <SecureDetailsContent>
+                        {isSexOffense ? "Yes" : "No"}
+                      </SecureDetailsContent>
+                    </>
+                  )}
+                </DetailsList>
+              </SecureDetailsContent>
+            ),
+          )}
           {activeSentences.length === 0 && (
             <DetailsSubheading>No active sentences.</DetailsSubheading>
           )}
