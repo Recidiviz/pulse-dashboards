@@ -1320,7 +1320,7 @@ export const TxPopulationFilterOptions: PopulationFilters = {
     options: [
       { label: "All", value: "ALL" },
       { label: "High", value: "MAXIMUM" },
-      { label: "Medium", value: "HIGH" },
+      { label: "Moderate", value: "HIGH" },
       { label: "Low-Moderate", value: "MEDIUM" },
       { label: "Low", value: "MINIMUM" },
       { label: "Annual", value: "LIMITED" },

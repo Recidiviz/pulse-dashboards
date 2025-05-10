@@ -173,7 +173,7 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
             value: "Low-Moderate",
           },
           {
-            value: "Medium",
+            value: "Moderate",
           },
           {
             value: "High",
