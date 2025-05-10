@@ -114,15 +114,18 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
           },
           {
             value: "usTxHomeContactScheduled",
-            label: "Home Contact, Sch.",
+            shortLabel: "Home Contact, Sch.",
+            label: "Home Contact, Scheduled",
           },
           {
             value: "usTxHomeContactUnscheduled",
-            label: "Home Contact, Unsch.",
+            shortLabel: "Home Contact, Unsch.",
+            label: "Home Contact, Unscheduled",
           },
           {
             value: "usTxHomeContactEdgeCase",
-            label: "Home Contact, Misc.",
+            shortLabel: "Home Contact, Misc.",
+            label: "Home Contact, Miscellaneous",
           },
           {
             value: "usTxInCustodyContact",
@@ -134,19 +137,23 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
           },
           {
             value: "usTxFieldContactScheduled",
-            label: "Field Contact, Sch.",
+            shortLabel: "Field Contact, Sch.",
+            label: "Field Contact, Scheduled",
           },
           {
             value: "usTxFieldContactUnscheduled",
-            label: "Field Contact, Unsch.",
+            shortLabel: "Field Contact, Unsch.",
+            label: "Field Contact, Unscheduled",
           },
           {
             value: "usTxElectronicContactScheduled",
-            label: "Electronic Contact, Sch.",
+            shortLabel: "Electronic Contact, Sch.",
+            label: "Electronic Contact, Scheduled",
           },
           {
             value: "usTxElectronicContactUnscheduled",
-            label: "Electronic Contact, Unsch.",
+            shortLabel: "Electronic Contact, Unsch.",
+            label: "Electronic Contact, Unscheduled",
           },
           {
             value: "usTxTypeAgnosticContact",

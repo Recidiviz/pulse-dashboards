@@ -56,6 +56,10 @@
       transform: rotate(45deg);
     }
 
+    .Checkbox__input:checked:disabled ~ & {
+      background-color: $slate-30;
+    }
+
     .Checkbox__input:checked ~ & {
       background-color: $signal-links;
     }

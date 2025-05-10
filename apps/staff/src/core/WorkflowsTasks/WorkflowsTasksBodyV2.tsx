@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
 import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -26,6 +27,7 @@ import {
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
+import useIsMobile from "../../hooks/useIsMobile";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { TableViewToggle } from "../OpportunityCaseloadView/TableViewToggle";
 import { MaxWidthWithSidebar } from "../sharedComponents";
@@ -44,17 +46,22 @@ const TasksTabUnderline = styled.div`
   border-bottom: #00113326 1px solid;
 `;
 
-const TasksTopbarContainer = styled.div`
+const TasksTopbarContainer = styled.div<{ $isMobile: boolean }>`
   display: flex;
-  flex-direction: row;
+  ${({ $isMobile }) =>
+    $isMobile
+      ? `flex-direction: column;`
+      : `flex-direction: row;
+         gap: ${rem(spacing.sm)};
+    `};
   justify-content: space-between;
   ${MaxWidthWithSidebar}
 `;
 
-const TableControls = styled.div`
+const TableControls = styled.div<{ $isMobile: boolean }>`
   display: flex;
   flex-direction: row;
-  gap: ${rem(8)};
+  gap: ${({ $isMobile }) => ($isMobile ? rem(spacing.lg) : rem(spacing.md))};
 `;
 
 export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
@@ -62,6 +69,7 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
 }: {
   presenter: CaseloadTasksPresenterV2;
 }) {
+  const { isMobile } = useIsMobile(true);
   return (
     <>
       <TasksHeader>
@@ -69,9 +77,9 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
         <WorkflowsUnderstaffedPill />
       </TasksHeader>
 
-      <TasksTopbarContainer>
+      <TasksTopbarContainer $isMobile={isMobile}>
         <TasksDescription>{presenter.pageDescription}</TasksDescription>
-        <TableControls>
+        <TableControls $isMobile={isMobile}>
           <TableViewToggle presenter={presenter} />
           <TaskFilterDropdown presenter={presenter} />
         </TableControls>

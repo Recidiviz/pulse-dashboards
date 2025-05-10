@@ -334,9 +334,9 @@ const ModalButton = styled(Button).attrs({ kind: "link" })`
   padding: ${rem(spacing.sm)} 0;
 `;
 
-const ModalCloseButton = styled(ModalButton).attrs({ kind: "link" })``;
+export const ModalCloseButton = styled(ModalButton).attrs({ kind: "link" })``;
 
-const ModalHeader = styled(Serif24)`
+export const ModalHeader = styled(Serif24)`
   color: ${palette.pine2};
   padding-top: ${rem(spacing.md)};
 `;

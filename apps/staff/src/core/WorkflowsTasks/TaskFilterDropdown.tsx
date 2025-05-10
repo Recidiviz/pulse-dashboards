@@ -29,8 +29,10 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import Checkbox from "../../components/Checkbox";
+import useIsMobile from "../../hooks/useIsMobile";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { TaskFilterField, TaskFilterOption } from "../models/types";
+import { MobileTaskFilterModal } from "./MobileTaskFilterModal";
 
 const FilterDropdownToggle = styled(DropdownToggle)`
   padding: 12px 16px;
@@ -58,20 +60,22 @@ const FilterDropdownMenu = styled(DropdownMenu)`
   padding: 24px 22px;
 `;
 
-const FilterGroup = styled.div`
+export const FilterGroup = styled.div<{ $isMobile: boolean }>`
   display: flex;
   flex-direction: column;
   overflow: hidden;
   white-space: nowrap;
 
   &:not(:first-child) {
-    margin-top: 18px;
+    margin-top: ${({ $isMobile }) => ($isMobile ? rem(12) : "18px")};
     padding-top: 18px;
     border-top: ${palette.slate30} 1px solid;
   }
+
+  ${({ $isMobile }) => $isMobile && `gap: ${rem(spacing.xs)};`}
 `;
 
-const FilterGroupHeader = styled.div`
+export const FilterGroupHeader = styled.div`
   text-transform: uppercase;
   font-size: ${rem(12)};
   font-weight: 700;
@@ -176,7 +180,7 @@ const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
             onChange={() => onClick()}
           />
         </FilterCheckboxContainer>
-        {option.label ?? option.value}
+        {option.shortLabel ?? option.label ?? option.value}
       </FilterOptionLabel>
       <SelectOnlyButton
         onClick={(e) => {
@@ -202,7 +206,7 @@ const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
   title: string;
 }) {
   return (
-    <FilterGroup>
+    <FilterGroup $isMobile={false}>
       <FilterGroupHeader>{title}</FilterGroupHeader>
       {options.map((option) => (
         <TaskFilterDropdownItem
@@ -248,7 +252,40 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
 }: {
   presenter: CaseloadTasksPresenterV2;
 }) {
+  const { isMobile } = useIsMobile(true);
+
   const { filters } = presenter;
+
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isMobile) setModalIsOpen(false);
+  }, [isMobile]);
+
+  if (isMobile) {
+    return (
+      <>
+        <Dropdown>
+          <FilterDropdownToggle
+            // TODO(#7899): Replace with a proper onMenuOpen handler
+            onMouseUp={() => {
+              presenter.trackFilterDropdownOpened();
+              setModalIsOpen(true);
+            }}
+          >
+            <FilterIcon /> Filters
+            <FilterDownArrow />
+          </FilterDropdownToggle>
+        </Dropdown>
+
+        <MobileTaskFilterModal
+          presenter={presenter}
+          modalIsOpen={modalIsOpen}
+          setModalIsOpen={setModalIsOpen}
+        />
+      </>
+    );
+  }
 
   return (
     <Dropdown>

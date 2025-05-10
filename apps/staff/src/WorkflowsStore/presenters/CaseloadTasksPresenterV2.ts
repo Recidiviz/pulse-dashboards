@@ -186,35 +186,37 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     );
   }
 
+  allTasksForCategory(category: SupervisionTaskCategory): SupervisionTask[] {
+    return this.filteredPeople.flatMap((person) => {
+      const { supervisionTasks } = person;
+
+      if (!supervisionTasks) return [];
+
+      return supervisionTasks.readyOrderedTasks.filter((t) => {
+        if (!this.taskMatchesFilters(t)) return false;
+
+        switch (category) {
+          case "ALL_TASKS":
+            return true;
+          case "OVERDUE":
+            return t.isOverdue;
+          case "DUE_THIS_WEEK":
+            return !t.isOverdue && isThisWeek(t.dueDate);
+          case "DUE_THIS_MONTH":
+            return (
+              !t.isOverdue && !isThisWeek(t.dueDate) && isThisMonth(t.dueDate)
+            );
+          default:
+            return false;
+        }
+      });
+    });
+  }
+
   orderedTasksForCategory(
     category: SupervisionTaskCategory,
   ): SupervisionTask[] {
-    return this.filteredPeople
-      .flatMap((person) => {
-        const { supervisionTasks } = person;
-
-        if (!supervisionTasks) return [];
-
-        return supervisionTasks.readyOrderedTasks.filter((t) => {
-          if (!this.taskMatchesFilters(t)) return false;
-
-          switch (category) {
-            case "ALL_TASKS":
-              return true;
-            case "OVERDUE":
-              return t.isOverdue;
-            case "DUE_THIS_WEEK":
-              return !t.isOverdue && isThisWeek(t.dueDate);
-            case "DUE_THIS_MONTH":
-              return (
-                !t.isOverdue && !isThisWeek(t.dueDate) && isThisMonth(t.dueDate)
-              );
-            default:
-              return false;
-          }
-        });
-      })
-      .sort(taskDueDateComparator);
+    return this.allTasksForCategory(category).sort(taskDueDateComparator);
   }
 
   orderedPersonsForCategory(
@@ -232,6 +234,27 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
         // @ts-expect-error searchable fields are restricted to strings but TS does not know that
         options.includes(task[field]),
     );
+  }
+
+  // Return the number of visible tasks in the current category where .
+  // Assumes the given filter is set; if the filter is not set, will always return 0.
+  numTasksMatchingFilter(
+    type: TaskFilterType,
+    field: TaskFilterField,
+    option: TaskFilterOption,
+  ): number {
+    const visibleTasks = this.allTasksForCategory(this.selectedCategory);
+    return visibleTasks.filter((task) => {
+      if (type === "task") {
+        // @ts-expect-error we don't currently narrow the type of field adequately
+        // but field should always be TaskFilterFieldForTask here
+        return task[field] === option.value;
+      } else if (type === "person") {
+        // @ts-expect-error same as above, with TaskFilterFieldForPerson
+        return task.person[field] === option.value;
+      }
+      return false;
+    }).length;
   }
 
   get orderedTasksForSelectedCategory(): SupervisionTask[] {

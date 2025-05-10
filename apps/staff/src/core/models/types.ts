@@ -132,7 +132,11 @@ export type WorkflowsTasksConfig = {
   filters?: TaskFilterSection[];
 };
 
-export type TaskFilterOption = { value: string; label?: string };
+export type TaskFilterOption = {
+  value: string;
+  label?: string;
+  shortLabel?: string;
+};
 export type TaskFilterFieldForPerson = keyof Client;
 export type TaskFilterFieldForTask = keyof SupervisionTask;
 export type TaskFilterField = TaskFilterFieldForPerson | TaskFilterFieldForTask;
