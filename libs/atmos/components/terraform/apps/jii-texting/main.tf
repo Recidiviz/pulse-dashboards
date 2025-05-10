@@ -59,6 +59,7 @@ module "database" {
   secondary_zone             = var.database_secondary_zone
   tier                       = "db-custom-1-3840"
   additional_databases       = ["us_id"]
+  private_network = "projects/${var.project_id}/global/networks/default"
   insights_config = {
     query_insights_enabled : true
     query_string_length : 1024

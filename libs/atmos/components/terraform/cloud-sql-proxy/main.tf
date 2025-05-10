@@ -49,6 +49,10 @@ resource "google_container_node_pool" "primary_nodes" {
   location   = var.region
   node_count = 1
 
+  network_config {
+    enable_private_nodes = true
+  }
+
   node_config {
     machine_type = "e2-medium"
     oauth_scopes = [
@@ -98,7 +102,8 @@ resource "kubernetes_deployment" "cloud_sql_proxy" {
           args = concat([
             "--address=0.0.0.0",
             "--structured-logs",
-            "--credentials-file=/secrets/cloudsql/credentials.json"
+            "--credentials-file=/secrets/cloudsql/credentials.json",
+            "--private-ip"
             ], [
             for connection, port in var.sql_instance_connections :
             "${var.project_id}:${var.region}:${connection}?port=${port}"
