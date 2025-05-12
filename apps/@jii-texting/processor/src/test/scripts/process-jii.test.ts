@@ -106,7 +106,11 @@ describe("one person in DB without prior messages, thus send initial text", () =
       .mockResolvedValue({
         sid: "twilio-message-sid",
         status: "scheduled",
-      } as MessageInstance);
+        body: "blah",
+        phoneNumber: fakePersonOne.phoneNumber,
+        dateCreated: new Date(),
+        dateSend: new Date(),
+      } as unknown as MessageInstance);
 
     await processJii({
       stateCode: StateCode.US_ID,
@@ -126,6 +130,15 @@ describe("one person in DB without prior messages, thus send initial text", () =
     `);
     expect(spy.mock.calls[0][1]).toBe(fakePersonOne.phoneNumber);
     expect(spy.mock.calls[0][2]).toStrictEqual(
+      new Date(`2025-04-01T18:00:00.000Z`),
+    );
+
+    const newMessage = await testPrismaClient.messageAttempt.findFirstOrThrow({
+      where: { twilioMessageSid: "twilio-message-sid" },
+    });
+
+    expect(newMessage.status).toBe(MessageAttemptStatus.IN_PROGRESS);
+    expect(newMessage.requestedSendTimestamp).toStrictEqual(
       new Date(`2025-04-01T18:00:00.000Z`),
     );
   });

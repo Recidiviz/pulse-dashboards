@@ -311,6 +311,7 @@ export async function sendText(
           messageSeriesId: messageSeriesId,
           error: errorMessage,
           errorCode: errorCode,
+          ...(sendAt === undefined ? {} : { requestedSendTimestamp: sendAt }),
         },
       });
     } else {
@@ -333,6 +334,9 @@ export async function sendText(
                 lastUpdatedTimestamp: dateCreated,
                 error: errorMessage,
                 errorCode: errorCode,
+                ...(sendAt === undefined
+                  ? {}
+                  : { requestedSendTimestamp: sendAt }),
               },
             ],
           },
