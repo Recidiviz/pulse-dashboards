@@ -19,19 +19,12 @@ import { waitFor } from "@testing-library/react";
 import { keyBy } from "lodash";
 import { configure, set } from "mobx";
 
-import { isDemoMode } from "~client-env-utils";
 import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
-
-vi.mock("~client-env-utils", () => ({
-  isTestEnv: () => true,
-  isOfflineMode: vi.fn(),
-  isDemoMode: vi.fn(),
-}));
 
 let residentsStore: ResidentsStore;
 let presenter: ResidentsSearchPresenter;
@@ -88,73 +81,38 @@ describe("hydration", () => {
       expect(presenter.hydrationState.status).toBe("hydrated"),
     );
 
-    expect(presenter.selectOptions).toMatchSnapshot();
-    expect(residentsStore.populateResidents).toHaveBeenLastCalledWith([
-      ["facilityId", "==", "MOUNTAIN VIEW CORRECTIONAL FACILITY"],
-      ["custodyLevel", "in", ["MINIMUM", "COMMUNITY"]],
-    ]);
+    expect(presenter.residentFilterOptions).toMatchInlineSnapshot(`
+      [
+        {
+          "label": "FACILITY NAME",
+          "value": "FACILITY NAME",
+        },
+      ]
+    `);
+    expect(presenter.residentFilterDefaultOption).toBeUndefined();
+    expect(presenter.selectOptions).toEqual([]);
+    expect(residentsStore.populateResidents).toHaveBeenCalled();
   });
 });
 
 describe("facility filter", () => {
-  test("default value", () => {
-    expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(`
-      {
-        "label": "Mountain View Correctional Facility Pilot",
-        "value": "MVCF PILOT",
-      }
-    `);
+  beforeEach(async () => {
+    await presenter.hydrate();
   });
 
   test("set value", async () => {
-    vi.spyOn(residentsStore, "populateResidents");
-
-    presenter.setResidentsFilter("__ALL__");
+    presenter.setResidentsFilter("FACILITY NAME");
     expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(`
       {
-        "label": "All",
-        "value": "__ALL__",
+        "label": "FACILITY NAME",
+        "value": "FACILITY NAME",
       }
     `);
-
-    expect(residentsStore.populateResidents).toHaveBeenLastCalledWith(
-      undefined,
-      true,
-    );
-
-    presenter.setResidentsFilter("MVCF PILOT");
-
-    expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(
-      `
-      {
-        "label": "Mountain View Correctional Facility Pilot",
-        "value": "MVCF PILOT",
-      }
-    `,
-    );
-
-    expect(residentsStore.populateResidents).toHaveBeenLastCalledWith(
-      [
-        ["facilityId", "==", "MOUNTAIN VIEW CORRECTIONAL FACILITY"],
-        ["custodyLevel", "in", ["MINIMUM", "COMMUNITY"]],
-      ],
-      true,
-    );
   });
 
-  test("demo mode", () => {
-    vi.mocked(isDemoMode).mockReturnValue(true);
-
-    expect(presenter.residentFilterOptions).toEqual([
-      {
-        label: "All",
-        value: "__ALL__",
-      },
-    ]);
-
-    expect(presenter.residentFilterDefaultOption).toEqual({
-      label: "All",
-      value: "__ALL__",
-    });
+  test("residents become searchable once filter is selected", () => {
+    expect(presenter.selectOptions).toEqual([]);
+    presenter.setResidentsFilter("FACILITY NAME");
+    expect(presenter.selectOptions).toMatchSnapshot();
   });
 });

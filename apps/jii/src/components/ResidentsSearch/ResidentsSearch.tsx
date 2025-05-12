@@ -62,7 +62,7 @@ const ManagedComponent: FC<{ presenter: ResidentsSearchPresenter }> = observer(
         <Header34 as="h1">Look up a resident</Header34>
 
         <FilterLabel id={filterLabelId}>
-          Filter residents:
+          Select a location to filter by:
           <Selector
             labelId={filterLabelId}
             options={presenter.residentFilterOptions}
@@ -72,23 +72,28 @@ const ManagedComponent: FC<{ presenter: ResidentsSearchPresenter }> = observer(
           />
         </FilterLabel>
 
-        <Body16 as="p" id={residentLabelId}>
-          Search for a resident to explore what they will see in Opportunities.
-        </Body16>
-        <Selector
-          labelId={residentLabelId}
-          options={presenter.selectOptions}
-          onChange={(value) => {
-            // this should land you on the selected resident's homepage
-            navigate(
-              State.Resident.buildPath({
-                ...urlParams,
-                personPseudoId: value.pseudonymizedId,
-              }),
-            );
-          }}
-          placeholder="Start typing a resident's name or DOC ID …"
-        />
+        {presenter.enableResidentSearch && (
+          <>
+            <Body16 as="p" id={residentLabelId}>
+              Search for a resident to explore what they will see in
+              Opportunities.
+            </Body16>
+            <Selector
+              labelId={residentLabelId}
+              options={presenter.selectOptions}
+              onChange={(value) => {
+                // this should land you on the selected resident's homepage
+                navigate(
+                  State.Resident.buildPath({
+                    ...urlParams,
+                    personPseudoId: value.pseudonymizedId,
+                  }),
+                );
+              }}
+              placeholder="Start typing a resident's name or DOC ID …"
+            />
+          </>
+        )}
       </div>
     );
   },

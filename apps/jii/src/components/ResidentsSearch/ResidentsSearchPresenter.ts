@@ -16,11 +16,10 @@
 // =============================================================================
 
 import { ascending } from "d3-array";
+import { uniq } from "lodash";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { isDemoMode, isOfflineMode } from "~client-env-utils";
 import { ResidentRecord } from "~datatypes";
-import { FilterParams } from "~firestore-api";
 import {
   Hydratable,
   HydratesFromSource,
@@ -29,11 +28,6 @@ import {
 
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { UiStore } from "../../datastores/UiStore";
-
-const ALL_RESIDENTS_VALUE = "__ALL__";
-const PILOT_RESIDENTS_VALUE = "MVCF PILOT";
-const PILOT_FACILITY_ID = "MOUNTAIN VIEW CORRECTIONAL FACILITY";
-const PILOT_CUSTODY_LEVELS = ["MINIMUM", "COMMUNITY"];
 
 type SelectOption = { label: string; value: string };
 
@@ -48,9 +42,7 @@ export class ResidentsSearchPresenter implements Hydratable {
 
     this.hydrationSource = new HydratesFromSource({
       populate: async () => {
-        await flowResult(
-          this.residentsStore.populateResidents(this.residentsFilterParams),
-        );
+        await flowResult(this.residentsStore.populateResidents());
       },
       expectPopulated: [this.expectResidentsPopulated],
     });
@@ -71,40 +63,35 @@ export class ResidentsSearchPresenter implements Hydratable {
   }
 
   private get residents(): Array<ResidentRecord> {
-    const { selectedResidentsFilterOptionValue } = this.uiStore;
+    return Array.from(this.residentsStore.residentsByExternalId.values());
+  }
 
-    return Array.from(this.residentsStore.residentsByExternalId.values())
-      .filter(
-        (r) =>
-          !selectedResidentsFilterOptionValue ||
-          selectedResidentsFilterOptionValue === ALL_RESIDENTS_VALUE ||
-          (r.facilityId === PILOT_FACILITY_ID &&
-            PILOT_CUSTODY_LEVELS.includes(r.custodyLevel as string)),
-      )
+  private get filteredResidents(): Array<ResidentRecord> {
+    const { selectedFacilityIdFilterOptionValue } = this.uiStore;
+
+    return this.residents
+      .filter((r) => r.facilityId === selectedFacilityIdFilterOptionValue)
       .sort((a, b) => ascending(a.personName.surname, b.personName.surname));
   }
 
   get selectOptions() {
-    return this.residents.map((r) => ({
+    return this.filteredResidents.map((r) => ({
       value: r,
       label: `${r.personName.givenNames} ${r.personName.surname} (${r.personExternalId})`,
     }));
   }
 
-  get residentFilterOptions(): [SelectOption, ...Array<SelectOption>] {
-    const options: [SelectOption, ...Array<SelectOption>] = [
-      { label: "All", value: ALL_RESIDENTS_VALUE },
-    ];
+  private get facilities() {
+    return uniq(
+      this.residents.map((r) => r.facilityId).filter((f): f is string => !!f),
+    );
+  }
 
-    // for convenience this is just hardcoded for the pilot
-    if (!isOfflineMode() && !isDemoMode()) {
-      options.push({
-        label: "Mountain View Correctional Facility Pilot",
-        value: PILOT_RESIDENTS_VALUE,
-      });
-    }
-
-    return options;
+  get residentFilterOptions(): Array<SelectOption> {
+    return this.facilities.map((facilityId) => ({
+      value: facilityId,
+      label: facilityId,
+    }));
   }
 
   /**
@@ -112,34 +99,28 @@ export class ResidentsSearchPresenter implements Hydratable {
    * away from the page (passing a default only affects which option is selected when the component mounts)
    */
   get residentFilterDefaultOption() {
-    const { selectedResidentsFilterOptionValue } = this.uiStore;
+    const {
+      selectedFacilityIdFilterOptionValue: selectedResidentsFilterOptionValue,
+    } = this.uiStore;
     if (selectedResidentsFilterOptionValue) {
       return this.residentFilterOptions.find(
         (o) => o.value === selectedResidentsFilterOptionValue,
       );
     }
 
-    return this.residentFilterOptions.at(-1);
-  }
-
-  private get residentsFilterParams(): Array<FilterParams> | undefined {
-    const { residentFilterDefaultOption: residentsFilterDefaultOption } = this;
-    if (!residentsFilterDefaultOption) return;
-
-    if (residentsFilterDefaultOption.value === PILOT_RESIDENTS_VALUE) {
-      return [
-        ["facilityId", "==", PILOT_FACILITY_ID],
-        ["custodyLevel", "in", PILOT_CUSTODY_LEVELS],
-      ];
-    }
-
     return;
   }
 
   setResidentsFilter(value: string) {
-    if (value !== this.uiStore.selectedResidentsFilterOptionValue) {
-      this.uiStore.selectedResidentsFilterOptionValue = value;
-      this.residentsStore.populateResidents(this.residentsFilterParams, true);
+    if (value !== this.uiStore.selectedFacilityIdFilterOptionValue) {
+      this.uiStore.selectedFacilityIdFilterOptionValue = value;
     }
+  }
+
+  get enableResidentSearch(): boolean {
+    return !!(
+      this.uiStore.selectedFacilityIdFilterOptionValue &&
+      this.filteredResidents.length > 0
+    );
   }
 }
