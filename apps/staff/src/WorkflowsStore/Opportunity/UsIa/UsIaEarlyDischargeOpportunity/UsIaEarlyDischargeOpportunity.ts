@@ -18,6 +18,7 @@
 import { DocumentData } from "@google-cloud/firestore";
 import { Timestamp } from "firebase/firestore";
 
+import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import {
   OfficerAction,
   OfficerApprovalAction,
@@ -131,6 +132,18 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     }
 
     return "Eligible Now";
+  }
+
+  get customStatusPalette() {
+    if (
+      this.clientStatus === "ACTION_PLAN_REVIEW" ||
+      this.clientStatus === "ACTION_PLAN_REVIEW_REVISION"
+    ) {
+      return OPPORTUNITY_STATUS_COLORS.almostEligible;
+    }
+    if (this.clientStatus === "DISCHARGE_FORM_REVIEW") {
+      return OPPORTUNITY_STATUS_COLORS.submitted;
+    }
   }
 
   tabTitle(): OpportunityTab {
