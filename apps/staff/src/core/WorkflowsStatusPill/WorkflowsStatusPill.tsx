@@ -16,13 +16,14 @@
 // =============================================================================
 
 import { Pill, spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 
 const StyledPill = styled(Pill)`
   font-size: 12px;
-  padding: ${spacing.xs} ${spacing.sm};
+  padding: ${rem(spacing.xs)} ${rem(spacing.sm)};
   height: 22px;
 `;
 

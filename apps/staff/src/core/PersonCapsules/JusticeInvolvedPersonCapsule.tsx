@@ -35,6 +35,7 @@ import { PersonInitialsAvatar } from "~ui";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import PersonId from "../PersonId";
 import { Separator } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
+import { WorkflowsStatusPill } from "../WorkflowsStatusPill/WorkflowsStatusPill";
 
 export type JusticeInvolvedPersonCapsuleProps = {
   avatarSize: "md" | "lg";
@@ -72,6 +73,10 @@ const PersonInfo = styled.div``;
 const personStatusStyles = css`
   color: ${palette.slate70};
   text-wrap: balance;
+
+  display: flex;
+  align-items: baseline;
+  gap: ${rem(spacing.sm)};
 `;
 
 const PersonStatusSm = styled(Sans14)`
@@ -176,6 +181,7 @@ export const JusticeInvolvedPersonCapsule = observer(
             className={`WorkflowsStatus__${person.externalId} fs-exclude`}
           >
             {status}
+            <WorkflowsStatusPill person={person} />
           </StatusEl>
         </PersonInfo>
       </Wrapper>
