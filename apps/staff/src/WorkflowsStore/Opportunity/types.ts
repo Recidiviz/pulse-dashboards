@@ -167,6 +167,9 @@ export interface Opportunity<
   sentenceStart?: Date | undefined;
   sentenceExpiration?: Date | undefined;
   snoozeCompanionOpportunities?: Opportunity[];
+  requiresRevertConfirmation: boolean;
+  revertConfirmationCopy: RevertConfirmationCopy;
+  handleAdditionalUndoActions: () => Promise<void>;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
@@ -227,3 +230,8 @@ export interface OpportunityManagerInterface extends Hydratable {
   opportunities: OpportunityMapping;
   setSelectedOpportunityTypes: (opportunityTypes: OpportunityType[]) => void;
 }
+
+export type RevertConfirmationCopy = {
+  headerText: string;
+  descriptionText: string;
+};

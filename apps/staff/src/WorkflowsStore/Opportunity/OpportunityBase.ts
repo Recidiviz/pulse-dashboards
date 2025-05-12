@@ -68,6 +68,7 @@ import {
   OpportunityStatus,
   OpportunityTab,
   OpportunityTabGroup,
+  RevertConfirmationCopy,
 } from "./types";
 import { buildOpportunityCompareFunction } from "./utils/compareUtils";
 import {
@@ -828,5 +829,19 @@ export class OpportunityBase<
     return this.person.flattenedOpportunities.filter((opp) =>
       snoozeCompanionOpportunityTypes.includes(opp.type),
     );
+  }
+
+  // Used to determine whether or not an included opportunity requires a "Revert Changes" confirmation step
+  requiresRevertConfirmation = false;
+
+  // Returns custom copy for the "Revert Changes" confirmation step
+  revertConfirmationCopy: RevertConfirmationCopy = {
+    headerText: "Are you sure you want to revert changes?",
+    descriptionText: "This action cannot be undone.",
+  };
+
+  // Used to execute additional opportunity-specific actions when the "Revert Changes" confirmation is triggered
+  async handleAdditionalUndoActions(): Promise<void> {
+    return undefined;
   }
 }

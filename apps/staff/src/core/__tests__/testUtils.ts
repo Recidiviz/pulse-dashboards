@@ -150,4 +150,10 @@ export const mockOpportunity: Opportunity<Client> = {
   labelAddendum: undefined,
   accordionKey: "pastFTRD",
   snoozeCompanionOpportunities: [],
+  requiresRevertConfirmation: false,
+  revertConfirmationCopy: {
+    headerText: "Are you sure you want to revert changes?",
+    descriptionText: "This action cannot be undone.",
+  },
+  handleAdditionalUndoActions: async () => undefined,
 };

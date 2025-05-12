@@ -26,7 +26,11 @@ import {
 } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityRequirement, OpportunityTab } from "../../types";
+import {
+  OpportunityRequirement,
+  OpportunityTab,
+  RevertConfirmationCopy,
+} from "../../types";
 import { UsIaClientStatus } from "./types";
 import {
   UsIaEarlyDischargeReferralRecord,
@@ -45,6 +49,14 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       usIaEarlyDischargeSchema.parse(record),
     );
   }
+
+  requiresRevertConfirmation = true;
+
+  revertConfirmationCopy: RevertConfirmationCopy = {
+    headerText: "Are you sure you want to revert all changes?",
+    descriptionText:
+      "Reverting all changes will delete any action plans and notes connected to this client. Client will be placed in the Eligible Now tab.",
+  };
 
   get userName(): string {
     // We'll fall back to the user's email
@@ -209,5 +221,9 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     return super.requirementsMet.concat({
       text: victimReqText,
     });
+  }
+
+  async handleAdditionalUndoActions(): Promise<void> {
+    await this.deleteActionHistory();
   }
 }

@@ -19,7 +19,7 @@ import { Button, palette, spacing, typography } from "@recidiviz/design-system";
 import { parseISO } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
@@ -45,6 +45,7 @@ import MarkedIneligibleReasons, {
   buildActedOnTextAndResurfaceText,
 } from "./MarkedIneligibleReasons";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
+import { RevertChangesConfirmationModal } from "./RevertChangesConfirmationModal";
 import { UsArApprovedVisitors } from "./UsAr/UsARApprovedVisitors";
 
 const Wrapper = styled.div<{
@@ -56,7 +57,7 @@ const Wrapper = styled.div<{
   border-style: solid;
   border-width: 1px 0;
   color: ${palette.pine1};
-  margin: $0;
+  margin: 0;
   padding: ${rem(spacing.md)};
 `;
 
@@ -123,6 +124,9 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     const { pathname } = useLocation();
     const { officerPseudoId } = useParams();
 
+    const [isRevertConfirmationModalOpen, setRevertConfirmationModalOpen] =
+      useState(false);
+
     useEffect(() => {
       if (isVisible) {
         if (pathname.startsWith(WORKFLOWS_PATHS.workflows)) {
@@ -153,7 +157,9 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       hideDenialRevert && opportunity.config.hideDenialRevert
     );
 
-    const handleUndoClick = async () => {
+    const handleUndoAction = async () => {
+      await opportunity.handleAdditionalUndoActions();
+
       if (opportunity.denial) {
         await opportunity.deleteOpportunityDenialAndSnooze();
       } else if (opportunity.isSubmitted) {
@@ -182,6 +188,14 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
             },
           );
         }
+      }
+    };
+
+    const handleUndoClick = () => {
+      if (opportunity.requiresRevertConfirmation) {
+        setRevertConfirmationModalOpen(true);
+      } else {
+        handleUndoAction();
       }
     };
 
@@ -234,6 +248,17 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
           opportunity instanceof UsArInstitutionalWorkerStatusOpportunity && (
             <UsArApprovedVisitors opportunity={opportunity} />
           )}
+
+        {isRevertConfirmationModalOpen && (
+          <RevertChangesConfirmationModal
+            onConfirm={() => {
+              handleUndoAction();
+              setRevertConfirmationModalOpen(false);
+            }}
+            onCancel={() => setRevertConfirmationModalOpen(false)}
+            {...opportunity.revertConfirmationCopy}
+          />
+        )}
       </Wrapper>
     );
   },
