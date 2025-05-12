@@ -19,8 +19,21 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 
+    # included for backwards compatibility while testing, remove when frontend change is live
     location /firebase-auth/ {
         proxy_pass https://identitytoolkit.googleapis.com/;
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /gcp-identitytoolkit/ {
+        proxy_pass https://identitytoolkit.googleapis.com/;
+        proxy_http_version 1.1;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+    
+    location /gcp-securetoken/ {
+        proxy_pass https://securetoken.googleapis.com/;
         proxy_http_version 1.1;
         proxy_set_header X-Real-IP $remote_addr;
     }

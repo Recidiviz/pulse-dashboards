@@ -59,10 +59,10 @@ export class FirestoreAPIClient implements FirestoreAPI {
     const auth = getAuth(this.app);
     if (this.proxyHost) {
       // there seems to be no documented API for changing this config,
-      // but editing it directly works! Because we are using custom tokens
-      // this is the only auth domain we actually communicate with, which is
-      // why we don't e.g. pass a custom auth domain to initializeApp()
-      auth.config.apiHost = `${this.proxyHost}/firebase-auth`;
+      // but editing it directly works! Only making the overrides necessary
+      // to support custom token logins, not every possible API call
+      auth.config.apiHost = `${this.proxyHost}/gcp-identitytoolkit`;
+      auth.config.tokenApiHost = `${this.proxyHost}/gcp-securetoken`;
     }
     await signInWithCustomToken(auth, firebaseToken);
   }
