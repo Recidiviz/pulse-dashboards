@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { VitalsMetricId } from "~datatypes";
 import { Hydratable } from "~hydration-utils";
 
 import { WorkflowsTasksConfig } from "../../core/models/types";
@@ -166,6 +167,7 @@ export type SupervisionTask<
   dueDateDisplayShort: string;
   frequency: string;
   additionalDetails?: string;
+  vitalsMetricId?: VitalsMetricId;
   updateSupervisionTask: (snoozeForDays?: number) => void;
 };
 

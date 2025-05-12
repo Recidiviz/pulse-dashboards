@@ -26,6 +26,7 @@ import { US_ID_SUPERVISION_LEVEL_CONTACT_COMPLIANCE } from "./utils";
 
 class UsIdContactTask extends Task<"contact"> {
   displayName = "Contact";
+  vitalsMetricId = "timely_contact" as const;
 
   get lastContacted(): string | undefined {
     if (!this.details.lastContacted) return;

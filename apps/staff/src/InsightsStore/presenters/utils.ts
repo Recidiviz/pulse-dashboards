@@ -128,18 +128,6 @@ export function getLocationWithoutLabel(
     : location ?? undefined;
 }
 
-export const labelForVitalsMetricId = (
-  metricId: string,
-  vitalsMetricsConfigs?: InsightsSupervisionStore["vitalsMetricsConfig"],
-): string => {
-  const config = vitalsMetricsConfigs?.find((c) => c.metricId === metricId);
-
-  if (!config)
-    throw new Error(`There is no vitals config for metricId, ${metricId}.`);
-
-  return config.titleDisplayName;
-};
-
 export function getHighlightedOfficersByMetric(
   metricConfigs: Map<string, MetricConfig> | undefined,
   officers: SupervisionOfficer[] | undefined,

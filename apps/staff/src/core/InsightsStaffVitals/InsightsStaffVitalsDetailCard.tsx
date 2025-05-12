@@ -15,24 +15,51 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { OfficerVitalsMetricDetail } from "../../InsightsStore/presenters/types";
 import InsightsPill from "../InsightsPill";
 
-export const StaffCardWrapper = styled.div`
+const HoverCta = styled.div`
+  display: none;
+  ${typography.Sans14};
+  color: ${palette.pine4};
+  border-bottom: 1px solid ${palette.pine4}; // text-decoration won't draw under the icon
+  position: absolute;
+  top: ${rem(spacing.md)};
+  right: ${rem(spacing.md)};
+
+  svg {
+    margin-left: ${rem(spacing.xs)};
+  }
+`;
+
+export const StaffCardWrapper = styled.div<{ isDrilldownEnabled?: boolean }>`
   flex: 1 1 0px;
   height: ${rem(130)};
   padding: ${rem(spacing.lg)} ${rem(0)} ${rem(spacing.md)} ${rem(spacing.lg)};
-  border-radius: ${rem(4)};
+  border-radius: ${rem(2)};
   border: ${rem(1)} solid ${palette.slate30};
   border-top-width: ${rem(1)};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  position: relative;
+
+  ${({ isDrilldownEnabled }) =>
+    isDrilldownEnabled &&
+    css`
+      &:hover {
+        border-color: ${palette.pine4};
+        cursor: pointer;
+
+        ${HoverCta} {
+          display: block;
+        }
+      }
+    `}
 `;
 
 const StaffCardTitle = styled.div`
@@ -65,28 +92,40 @@ const DeltaValue = styled.div<{ positiveDelta: boolean }>`
 
 type InsightsStaffVitalsDetailCardProps = {
   vitalsMetricDetails: OfficerVitalsMetricDetail;
+  onClick: (metricId: string) => void;
+  isDrilldownEnabled: boolean;
 };
 
 export const InsightsStaffVitalsDetailCard: React.FC<
   InsightsStaffVitalsDetailCardProps
-> = ({ vitalsMetricDetails }) => {
-  const { operationsDrilldown } = useFeatureVariants();
-  const positiveDelta = vitalsMetricDetails.metric30DDelta > 0;
-  const deltaText = `${positiveDelta ? "+" : ""}${Math.round(vitalsMetricDetails.metric30DDelta)}% in past 30 days`;
-  const showPill = vitalsMetricDetails.metricValue < 80;
+> = ({ vitalsMetricDetails, onClick, isDrilldownEnabled }) => {
+  const {
+    metricId,
+    metric30DDelta,
+    metricValue,
+    tasks,
+    titleDisplayName,
+    bodyDisplayName,
+  } = vitalsMetricDetails;
+  const positiveDelta = metric30DDelta > 0;
+  const deltaText = `${positiveDelta ? "+" : ""}${Math.round(metric30DDelta)}% in past 30 days`;
+  const showPill = metricValue < 80;
+  const hasOverdueClients = tasks.some((task) => task.isOverdue);
+  const hoverCta = `See ${hasOverdueClients ? "Overdue " : ""}${bodyDisplayName}s`;
+
   return (
-    <StaffCardWrapper>
+    <StaffCardWrapper
+      onClick={() => onClick(metricId)}
+      isDrilldownEnabled={isDrilldownEnabled}
+    >
+      <HoverCta>
+        {hoverCta}
+        <Icon kind="Arrow" size={14} style={{ display: "inline" }} />
+      </HoverCta>
       <StaffCardBody>
-        <StaffCardTitle>{vitalsMetricDetails.label}</StaffCardTitle>
-        <MetricValue>{`${vitalsMetricDetails.metricValue}%`}</MetricValue>
+        <StaffCardTitle>{titleDisplayName}</StaffCardTitle>
+        <MetricValue>{`${metricValue}%`}</MetricValue>
         <DeltaValue positiveDelta={positiveDelta}>{deltaText}</DeltaValue>
-        {operationsDrilldown &&
-          vitalsMetricDetails.tasks &&
-          vitalsMetricDetails.tasks.map((task) => (
-            <div key={task.key}>
-              {task.dueDateDisplayShort} {task.person.displayName}
-            </div>
-          ))}
       </StaffCardBody>
       {showPill && (
         <PillWrapper>

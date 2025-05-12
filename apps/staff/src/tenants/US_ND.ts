@@ -24,6 +24,8 @@ import {
   PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
+import UsNdContactTask from "../WorkflowsStore/Task/UsNdContactTask";
+import UsNdRiskAssessmentTask from "../WorkflowsStore/Task/UsNdRiskAssessmentTask";
 
 const US_ND_CONFIG: TenantConfig<"US_ND"> = {
   name: "North Dakota",
@@ -32,6 +34,19 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
+  workflowsTasksConfig: {
+    collection: "usNdSupervisionTasks",
+    methodologyUrl:
+      "https://docs.google.com/document/d/1BmzbVFUQhbWOs9IOwR-gykUHNtZin5iUyzPdn8zRdx4/edit",
+    tasks: {
+      assessment: {
+        constructor: UsNdRiskAssessmentTask,
+      },
+      contact: {
+        constructor: UsNdContactTask,
+      },
+    },
+  },
   workflowsSystemConfigs: {
     INCARCERATION: {
       search: [

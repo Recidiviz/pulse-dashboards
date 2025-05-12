@@ -16,14 +16,15 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import { ComponentType } from "react";
+import { ComponentType, useState } from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionOfficerVitalsPresenter } from "../../InsightsStore/presenters/SupervisionOfficerVitalsPresenter";
 import { Body, Grid } from "../InsightsPageLayout/InsightsPageLayout";
 import InsightsPageSection from "../InsightsPageSection/InsightsPageSection";
+import { InsightsStaffVitalsDetailCard } from "../InsightsStaffVitals/InsightsStaffVitalsDetailCard";
+import { VitalsTaskDrilldownModal } from "../InsightsStaffVitals/VitalsTaskDrilldownModal";
 import ModelHydrator from "../ModelHydrator";
-import { InsightsStaffVitalsDetailCard } from "./InsightsStaffVitalsDetailCard";
 
 function withPresenter(Component: ComponentType<StaffVitalsProps>) {
   return observer(function StaffVitalsWrapper({
@@ -65,9 +66,23 @@ export const InsightsStaffVitals = withPresenter(
   observer(function InsightsStaffVitalsSection({
     presenter,
   }: StaffVitalsProps) {
-    const { vitalsMetricDetails } = presenter;
+    const [modalOpen, setModalOpen] = useState(false);
+
+    const {
+      vitalsMetricDetails,
+      selectedMetricDetails,
+      setSelectedMetricId,
+      isDrilldownEnabled,
+      labels,
+      officerRecord,
+    } = presenter;
 
     if (vitalsMetricDetails.length === 0) return;
+
+    const handleCardClick = (metricId: string) => {
+      setSelectedMetricId(metricId);
+      setModalOpen(true);
+    };
 
     return (
       <InsightsPageSection sectionTitle="Operations">
@@ -76,13 +91,24 @@ export const InsightsStaffVitals = withPresenter(
             {vitalsMetricDetails.map((metric) => {
               return (
                 <InsightsStaffVitalsDetailCard
-                  key={metric.label}
+                  key={metric.metricId}
                   vitalsMetricDetails={metric}
+                  isDrilldownEnabled={isDrilldownEnabled}
+                  onClick={handleCardClick}
                 />
               );
             })}
           </Grid>
         </Body>
+        {isDrilldownEnabled && (
+          <VitalsTaskDrilldownModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            metricDetails={selectedMetricDetails}
+            labels={labels}
+            officer={officerRecord}
+          />
+        )}
       </InsightsPageSection>
     );
   }),

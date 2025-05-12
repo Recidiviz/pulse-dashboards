@@ -108,7 +108,6 @@ describe("with vitals data already hydrated", () => {
     expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
       [
         {
-          "label": "Timely Contact",
           "officersWithMetricValues": [
             {
               "displayName": "Walter Harris",
@@ -117,6 +116,7 @@ describe("with vitals data already hydrated", () => {
               "officerPseudonymizedId": "hashed-so1",
             },
           ],
+          "titleDisplayName": "Timely Contact",
         },
       ]
     `);
@@ -139,8 +139,8 @@ describe("with vitals data already hydrated", () => {
     expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
       [
         {
-          "label": "Timely Contact",
           "officersWithMetricValues": [],
+          "titleDisplayName": "Timely Contact",
         },
       ]
     `);
@@ -167,7 +167,7 @@ test("throw an when vitalsMetricDetails does not find a vitalsMetricConfig for a
   expect(
     () => presenter.vitalsMetricDetails,
   ).toThrowErrorMatchingInlineSnapshot(
-    `[Error: There is no vitals config for metricId, fake_id.]`,
+    `[Error: Missing configuration for metric fake_id]`,
   );
 });
 

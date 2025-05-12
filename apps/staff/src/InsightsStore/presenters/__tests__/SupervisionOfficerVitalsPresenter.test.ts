@@ -130,11 +130,13 @@ test("vitalsMetricDetails when there are no VitalsMetricForOfficer for a metric"
   expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
     [
       {
-        "label": "Timely Contact",
+        "bodyDisplayName": "Contact",
         "metric30DDelta": 1,
+        "metricId": "timely_contact",
         "metricValue": 99,
         "officerPseudonymizedId": "hashed-so1",
-        "tasks": undefined,
+        "tasks": [],
+        "titleDisplayName": "Timely Contact",
       },
     ]
   `);
@@ -171,11 +173,13 @@ test("vitalsMetricDetails when an officer supervises themself", () => {
   expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
     [
       {
-        "label": "Timely Contact",
+        "bodyDisplayName": "Contact",
         "metric30DDelta": 1,
+        "metricId": "timely_contact",
         "metricValue": 99,
         "officerPseudonymizedId": "hashed-so1",
-        "tasks": undefined,
+        "tasks": [],
+        "titleDisplayName": "Timely Contact",
       },
     ]
   `);
@@ -234,11 +238,13 @@ test("vitalsmetricDetails when an officer has multiple supervisors", () => {
   expect(presenter.vitalsMetricDetails).toMatchInlineSnapshot(`
     [
       {
-        "label": "Timely Contact",
+        "bodyDisplayName": "Contact",
         "metric30DDelta": 1,
+        "metricId": "timely_contact",
         "metricValue": 99,
         "officerPseudonymizedId": "hashed-so1",
-        "tasks": undefined,
+        "tasks": [],
+        "titleDisplayName": "Timely Contact",
       },
     ]
   `);
@@ -302,7 +308,7 @@ test("throw an error when vitalsMetricDetails does not find a vitalsMetricConfig
   expect(
     () => presenter.vitalsMetricDetails,
   ).toThrowErrorMatchingInlineSnapshot(
-    `[Error: There is no vitals config for metricId, fake_id.]`,
+    `[Error: Missing configuration for metric fake_id]`,
   );
 });
 

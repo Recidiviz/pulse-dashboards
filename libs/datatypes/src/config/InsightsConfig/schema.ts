@@ -72,10 +72,27 @@ export const insightsConfigSchema = z.object({
   outliersHover: z.string(),
   vitalsMetricsMethodologyUrl: z.string().optional(),
   vitalsMetrics: z.array(
-    z.object({
-      metricId: z.string(),
-      titleDisplayName: z.string(),
-    }),
+    z
+      .object({
+        metricId: z.string(),
+        titleDisplayName: z.string(),
+      })
+      // TODO Remove this when bodyDisplayName is added to the backend
+      .transform(
+        (metricConfig) =>
+          ({
+            ...metricConfig,
+            bodyDisplayName:
+              {
+                timely_risk_assessment: "Assessment",
+                timely_contact: "Contact",
+              }[metricConfig.metricId] ?? "Client",
+          }) as {
+            metricId: string;
+            titleDisplayName: string;
+            bodyDisplayName: string;
+          },
+      ),
   ),
   caseloadCategories: z.array(caseloadCategorySchema).optional(),
   actionStrategyCopy: actionStrategyCopySchema,

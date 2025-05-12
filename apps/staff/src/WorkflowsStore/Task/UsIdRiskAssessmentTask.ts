@@ -22,6 +22,7 @@ import { Task } from "./Task";
 
 class UsIdRiskAssessmentTask extends Task<"assessment"> {
   displayName = "Risk assessment";
+  vitalsMetricId = "timely_risk_assessment" as const;
 
   get dueDateDisplayLong() {
     return `${this.displayName} due ${this.dueDateFromToday}`;

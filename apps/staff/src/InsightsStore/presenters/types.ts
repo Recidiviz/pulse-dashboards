@@ -134,11 +134,13 @@ export type VitalsMetricDetailForOfficer = Pick<
   Pick<VitalsMetricForOfficer, "officerPseudonymizedId" | "metricValue">;
 
 export type SupervisorVitalsMetricDetail = {
-  label: string;
+  titleDisplayName: string;
   officersWithMetricValues: VitalsMetricDetailForOfficer[];
 };
 
 export type OfficerVitalsMetricDetail = VitalsMetricForOfficer & {
-  label: string;
-  tasks?: SupervisionTask[];
+  metricId: string;
+  titleDisplayName: string;
+  bodyDisplayName: string;
+  tasks: SupervisionTask[];
 };

@@ -115,8 +115,14 @@ export class InsightsSupervisionStore {
     });
   }
 
-  get vitalsMetricsConfig() {
-    return this.config.vitalsMetrics;
+  getVitalsMetricConfig(metricId: string) {
+    const config = this.config.vitalsMetrics.find(
+      (c) => c.metricId === metricId,
+    );
+    if (!config) {
+      throw new Error(`Missing configuration for metric ${metricId}`);
+    }
+    return config;
   }
 
   private get allCaseloadCategories(): Set<string> {

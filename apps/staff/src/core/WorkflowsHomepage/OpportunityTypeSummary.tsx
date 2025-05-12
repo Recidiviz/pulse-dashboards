@@ -197,7 +197,7 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
             const opps = opportunitiesByTab[tabName];
             if (opps && opps.length > 0) {
               return (
-                <ReviewStatusCount>
+                <ReviewStatusCount key={tabName}>
                   {tabName}: {opportunitiesByTab[tabName].length}
                 </ReviewStatusCount>
               );

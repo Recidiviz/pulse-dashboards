@@ -219,7 +219,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
         tableMultiSortEnabled: undefined,
         supervisionTasksNavLink: { activeTenants: ["US_ID"] },
-        operationsDrilldown: undefined, // off by default because component isn't display-ready
+        operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
       };
 
 export type LanternMethodologyByTenant = {

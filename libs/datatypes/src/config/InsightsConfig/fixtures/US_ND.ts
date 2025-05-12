@@ -99,8 +99,13 @@ export const US_ND: InsightsConfig = {
     {
       metricId: "timely_risk_assessment",
       titleDisplayName: "Timely Risk Assessment",
+      bodyDisplayName: "Assessment",
     },
-    { metricId: "timely_contact", titleDisplayName: "Timely Contact" },
+    {
+      metricId: "timely_contact",
+      titleDisplayName: "Timely Contact",
+      bodyDisplayName: "Contact",
+    },
   ],
   vitalsMetricsMethodologyUrl:
     "https://drive.google.com/file/d/1gWA2aFu0VtL9c9ysv3PuhWjVjj7jYPNc/view?usp=sharing",

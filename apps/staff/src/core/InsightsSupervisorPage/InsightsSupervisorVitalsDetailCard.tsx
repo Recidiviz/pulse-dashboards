@@ -37,7 +37,7 @@ export const InsightsSupervisorVitalsDetailCard: React.FC<
     <CardWrapper>
       <CardHeader>
         <CardHeaderText>
-          <CardTitle>{vitalsMetricDetails.label}</CardTitle>
+          <CardTitle>{vitalsMetricDetails.titleDisplayName}</CardTitle>
         </CardHeaderText>
       </CardHeader>
       <SupervisorDetailCardList>

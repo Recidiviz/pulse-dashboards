@@ -45,12 +45,10 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
       assessment: {
         constructor: UsIdRiskAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
-        vitalsMetricId: "timely_risk_assessment",
       },
       contact: {
         constructor: UsIdContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
-        vitalsMetricId: "timely_contact",
       },
       homeVisit: {
         constructor: UsIdHomeVisitTask,

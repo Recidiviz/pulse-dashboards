@@ -108,8 +108,13 @@ export const US_ID: InsightsConfig = {
     {
       metricId: "timely_risk_assessment",
       titleDisplayName: "Timely Risk Assessment",
+      bodyDisplayName: "Assessment",
     },
-    { metricId: "timely_contact", titleDisplayName: "Timely F2F Contact" },
+    {
+      metricId: "timely_contact",
+      titleDisplayName: "Timely F2F Contact",
+      bodyDisplayName: "Contact",
+    },
   ],
   vitalsMetricsMethodologyUrl: "https://www.recidiviz.org/",
   worseThanRateLabel: "Far above the statewide rate",

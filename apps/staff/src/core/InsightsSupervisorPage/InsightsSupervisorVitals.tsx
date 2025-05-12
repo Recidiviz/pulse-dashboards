@@ -77,7 +77,7 @@ export const InsightsSupervisorVitals = withPresenter(
             {vitalsMetricDetails.map((metric) => {
               return (
                 <InsightsSupervisorVitalsDetailCard
-                  key={metric.label}
+                  key={metric.titleDisplayName}
                   vitalsMetricDetails={metric}
                 />
               );

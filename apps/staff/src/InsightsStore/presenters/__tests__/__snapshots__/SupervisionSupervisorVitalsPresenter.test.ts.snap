@@ -3,7 +3,6 @@
 exports[`with vitals data already hydrated > has vitalsMetricDetails 1`] = `
 [
   {
-    "label": "Timely Contact",
     "officersWithMetricValues": [
       {
         "displayName": "Jason Nelson",
@@ -48,9 +47,9 @@ exports[`with vitals data already hydrated > has vitalsMetricDetails 1`] = `
         "officerPseudonymizedId": "hashed-so7",
       },
     ],
+    "titleDisplayName": "Timely Contact",
   },
   {
-    "label": "Timely Risk Assessment",
     "officersWithMetricValues": [
       {
         "displayName": "John Harris",
@@ -95,6 +94,7 @@ exports[`with vitals data already hydrated > has vitalsMetricDetails 1`] = `
         "officerPseudonymizedId": "hashed-so9",
       },
     ],
+    "titleDisplayName": "Timely Risk Assessment",
   },
 ]
 `;

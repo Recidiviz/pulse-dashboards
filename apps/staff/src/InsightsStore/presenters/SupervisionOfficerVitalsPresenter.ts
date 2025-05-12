@@ -17,21 +17,16 @@
 
 import { makeObservable } from "mobx";
 
-import { SupervisionVitalsMetric } from "~datatypes";
+import { SupervisionVitalsMetric, VitalsMetricId } from "~datatypes";
 import { FlowMethod, HydratesFromSource } from "~hydration-utils";
 
-import {
-  JusticeInvolvedPerson,
-  SupervisionTask,
-  SupervisionTaskType,
-} from "../../WorkflowsStore";
+import { JusticeInvolvedPerson, SupervisionTask } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { InsightsAPI } from "../api/interface";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionOfficerPresenterBase } from "./SupervisionOfficerPresenterBase";
-import { OfficerVitalsMetricDetail } from "./types";
-import { labelForVitalsMetricId } from "./utils";
+import { ConfigLabels, OfficerVitalsMetricDetail } from "./types";
 
 /**
  * The `SupervisionOfficerVitalsPresenter` class is responsible for managing and presenting
@@ -47,6 +42,8 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
 
   private fetchedOfficerVitalsMetrics?: SupervisionVitalsMetric[];
 
+  private _selectedMetricId: string | undefined;
+
   constructor(
     protected supervisionStore: InsightsSupervisionStore,
     protected justiceInvolvedPersonStore: JusticeInvolvedPersonsStore,
@@ -61,12 +58,17 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
       | "populateVitalsForOfficer"
       | "expectCaseloadPopulated"
       | "findClientsForOfficer"
+      | "_selectedMetricId"
     >(this, {
       expectVitalsForOfficerPopulated: true,
       populateVitalsForOfficer: true,
       isDrilldownEnabled: true,
       expectCaseloadPopulated: true,
       findClientsForOfficer: true,
+      vitalsMetricDetails: true,
+      selectedMetricDetails: true,
+      _selectedMetricId: true,
+      setSelectedMetricId: true,
     });
 
     this.personFieldsToHydrate = ["supervisionTasks"];
@@ -117,52 +119,51 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
     const metrics = this.officerVitalsMetrics;
     if (!metrics) return [];
 
-    const formattedMetrics: OfficerVitalsMetricDetail[] = [];
-    metrics.forEach((metric) => {
-      if (metric.vitalsMetrics.length === 0) return;
-      formattedMetrics.push({
-        label: labelForVitalsMetricId(
-          metric.metricId,
-          this.supervisionStore.vitalsMetricsConfig,
-        ),
-        tasks: this.getTasksOfType(this.taskTypeMapping[metric.metricId]),
-        // The vitalsMetrics array will have one entry for officers
-        ...metric.vitalsMetrics[0],
-      });
-    });
-    return formattedMetrics;
-  }
-
-  private get taskTypeMapping() {
-    const tasks =
-      this.supervisionStore.insightsStore.rootStore.tenantStore
-        .tasksConfiguration?.tasks ?? {};
-    return Object.fromEntries(
-      Object.entries(tasks).flatMap(([taskName, { vitalsMetricId }]) =>
-        vitalsMetricId
-          ? [[vitalsMetricId, taskName as SupervisionTaskType]]
-          : [],
-      ),
+    return metrics.flatMap((metric) =>
+      metric.vitalsMetrics.length > 0 ? [this.detailsForMetric(metric)] : [],
     );
   }
 
-  get isDrilldownEnabled() {
-    const { operationsDrilldown } =
-      this.supervisionStore.insightsStore.rootStore.userStore
-        .activeFeatureVariants;
-    return operationsDrilldown && Object.keys(this.taskTypeMapping).length > 0;
+  private detailsForMetric(
+    metric: SupervisionVitalsMetric,
+  ): OfficerVitalsMetricDetail {
+    const { bodyDisplayName, titleDisplayName } =
+      this.supervisionStore.getVitalsMetricConfig(metric.metricId);
+    return {
+      metricId: metric.metricId,
+      bodyDisplayName,
+      titleDisplayName,
+      tasks: this.getTasksForMetric(metric.metricId),
+      // The vitalsMetrics array will have one entry for officers
+      ...metric.vitalsMetrics[0],
+    };
   }
 
-  private getTasksOfType(
-    taskType?: SupervisionTaskType,
-  ): SupervisionTask[] | undefined {
-    if (!taskType) return undefined;
-    if (!this.officerExternalId) return undefined;
+  get isDrilldownEnabled(): boolean {
+    return !!this.supervisionStore.insightsStore.rootStore.userStore
+      .activeFeatureVariants.operationsDrilldown;
+  }
+
+  private getTasksForMetric(metricId: VitalsMetricId): SupervisionTask[] {
+    if (!this.officerExternalId) return [];
     const clients = this.findClientsForOfficer(this.officerExternalId) ?? [];
     return clients.flatMap((client) => {
       const tasks = client.supervisionTasks?.tasks ?? [];
-      return tasks.filter((task) => task.type === taskType);
+      return tasks.filter((task) => task.vitalsMetricId === metricId);
     });
+  }
+
+  get selectedMetricDetails(): OfficerVitalsMetricDetail | undefined {
+    if (!this._selectedMetricId) return undefined;
+    const metric = this.officerVitalsMetrics?.find(
+      (m) => m.metricId === this._selectedMetricId,
+    );
+    if (!metric) return undefined;
+    return this.detailsForMetric(metric);
+  }
+
+  setSelectedMetricId(metricId?: string): void {
+    this._selectedMetricId = metricId;
   }
 
   // ==============================
@@ -187,5 +188,9 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
       throw new Error(
         `Failed to populate vitals metrics for officer ${this.officerPseudoId}`,
       );
+  }
+
+  get labels(): ConfigLabels {
+    return this.supervisionStore.labels;
   }
 }

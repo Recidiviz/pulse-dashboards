@@ -19,7 +19,7 @@ import { addDays, isPast, parseISO, startOfToday } from "date-fns";
 import { deleteField } from "firebase/firestore";
 import { action, computed, makeObservable } from "mobx";
 
-import { fieldToDate } from "~datatypes";
+import { fieldToDate, VitalsMetricId } from "~datatypes";
 
 import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
@@ -50,6 +50,8 @@ export abstract class Task<
 
   /* ex: Risk assessment */
   abstract displayName: string;
+
+  vitalsMetricId?: VitalsMetricId = undefined;
 
   constructor(
     rootStore: RootStore,

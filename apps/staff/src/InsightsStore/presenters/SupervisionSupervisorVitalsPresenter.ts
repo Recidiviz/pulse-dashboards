@@ -26,7 +26,6 @@ import {
   SupervisorVitalsMetricDetail,
   VitalsMetricDetailForOfficer,
 } from "./types";
-import { labelForVitalsMetricId } from "./utils";
 
 /**
  * The `SupervisionSupervisorVitalsPresenter` class is responsible for managing and presenting
@@ -103,11 +102,11 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
       const sortedMetrics = [...metric.vitalsMetrics].sort((a, b) =>
         ascending(a.metricValue, b.metricValue),
       );
+      const { titleDisplayName } = this.supervisionStore.getVitalsMetricConfig(
+        metric.metricId,
+      );
       return {
-        label: labelForVitalsMetricId(
-          metric.metricId,
-          this.supervisionStore.vitalsMetricsConfig,
-        ),
+        titleDisplayName,
         officersWithMetricValues: this.mergeOfficerNames(sortedMetrics),
       };
     });
