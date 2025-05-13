@@ -199,10 +199,7 @@ export const usArResidents: ResidentFixture[] = [
     },
   },
   {
-    allEligibleOpportunities: [
-      "usArInstitutionalWorkerStatus",
-      "usArWorkRelease",
-    ],
+    allEligibleOpportunities: ["usArInstitutionalWorkerStatus"],
     stateCode: "US_AR",
     personExternalId: "AR_RES004",
     displayId: "RES004",
@@ -262,10 +259,7 @@ export const usArResidents: ResidentFixture[] = [
     },
   },
   {
-    allEligibleOpportunities: [
-      "usArInstitutionalWorkerStatus",
-      "usArWorkRelease",
-    ],
+    allEligibleOpportunities: ["usArInstitutionalWorkerStatus"],
     stateCode: "US_AR",
     personExternalId: "AR_RES005",
     displayId: "RES005",

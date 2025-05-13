@@ -48,7 +48,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "supervisionLevelIsMinimum",
-          text: "Current supervision level: {{supervisionLevel}}",
+          text: "Current supervision level: {{opportunity.person.supervisionLevel}}",
         },
         {
           key: "noSupervisionViolationWithin6Months",
@@ -66,6 +66,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usNeCompliantWithSpecialConditions",
           text: "Compliant with any applicable special conditions",
         },
+        {
+          key: "notSupervisionWithin1MonthOfProjectedCompletionDateMinExternal",
+          text: "More than one month until Earned Discharge Date",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_NE-ConditionalLowRiskOverrideReferrals",
@@ -78,10 +82,13 @@ export const mockApiOpportunityConfigurationResponse = {
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "TBD",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        { text: "NCJIS check" },
+        { text: "Compliance with Case Plan" },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Validated by NICaMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
@@ -90,6 +97,9 @@ export const mockApiOpportunityConfigurationResponse = {
         "Supervision",
         "Contact",
         "CaseNotes",
+        "ActiveSentences",
+        "UsNeORASScores",
+        "UsNeSpecialConditions",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
@@ -97,8 +107,8 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Supervision overrides to the current risk levels and contact standards will be considered on a case-by-case basis unless stipulated in protocol. The official policy documentation can be found here.",
-      submittedTabTitle: null,
+        "This alert surfaces people who may be appropriate for an override to Conditional Low Risk based on strong indicators of stability in the data. Consider supervision overrides to the current risk levels and contact standards on a case-by-case basis for clients meeting stability criteria.",
+      submittedTabTitle: "Submitted",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
@@ -136,13 +146,17 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "supervisionLevelIsMedium",
-          text: "Current supervision level: {{supervisionLevel}}",
+          text: "Current supervision level: {{opportunity.person.supervisionLevel}}",
         },
         {
           key: "noTopThreeSeverityLevelSupervisionViolationWithin6Months",
           text: "No severe supervision violations in the last 6 months",
           tooltip:
             "The lowest severity violations (levels 1 and 2) do not disqualify someone for a Low override",
+        },
+        {
+          key: "notSupervisionWithin1MonthOfProjectedCompletionDateMinExternal",
+          text: "More than one month until Earned Discharge Date",
         },
         {
           key: "usNeCompliantWithSpecialConditions",
@@ -160,10 +174,13 @@ export const mockApiOpportunityConfigurationResponse = {
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "TBD",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        { text: "NCJIS Check" },
+        { text: "Compliance with Case Plan" },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: null,
+      omsCriteriaHeader: "Validated by NICaMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [
@@ -172,6 +189,9 @@ export const mockApiOpportunityConfigurationResponse = {
         "Supervision",
         "Contact",
         "CaseNotes",
+        "ActiveSentences",
+        "UsNeORASScores",
+        "UsNeSpecialConditions",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
@@ -179,8 +199,8 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Supervision overrides to the current risk levels and contact standards will be considered on a case-by-case basis unless stipulated in protocol. The official policy documentation can be found here.",
-      submittedTabTitle: null,
+        "This alert surfaces people who may be appropriate for an override to Low based on strong indicators of stability in the data. Consider supervision overrides to the current risk levels and contact standards on a case-by-case basis for clients meeting stability criteria.",
+      submittedTabTitle: "Submitted",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,

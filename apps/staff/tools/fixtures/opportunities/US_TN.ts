@@ -233,6 +233,8 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "On supervision for highly publicized case, sex offense or domestic violence",
         },
         { key: "FEE", text: "No effort to pay fees" },
+        { key: "JUDGE", text: "Denied by judge order" },
+        { key: "EXPIRE", text: "Too close to expiration date" },
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
@@ -320,10 +322,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Not currently on supervision for domestic violence",
           tooltip:
             'Client doesn\'t have a DV offense listed in "type of offense". For reference, all current offenses are listed in client record. ',
-        },
-        {
-          key: "usTnNotInDayReportingCenterLocation",
-          text: "Not in day reporting center",
         },
         {
           key: "usTnNotInDayReportingCenter",
@@ -712,9 +710,9 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "latestDrugTestIsNegative",
-          text: "Has successfully passed the most recent drug screen",
+          text: "Has successfully passed the most recent drug screen ({{date latestDrugScreenDate}})",
           tooltip:
-            "Clients must have successfully passed the most recent drug screen prior to the request for Suspension of Direct Supervision.",
+            "Clients must have successfully passed the most recent drug screen prior to the request for Suspension of Direct Supervision. In some cases, a more recent screen may be required at the discretion of administrators or the ACCS.",
         },
         {
           key: "usTnNotOnCommunitySupervisionForLife",

@@ -457,14 +457,9 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [
-        {
-          key: "Other",
-          text: "Other, please enter a reason",
-        },
-      ],
-      denialText: null,
-      deniedTabTitle: "Incorrect",
+      denialReasons: [{ key: "OTHER", text: "Other, please enter a reason" }],
+      denialText: "Submit Correction",
+      deniedTabTitle: null,
       displayName: "Standard Transition Program Release",
       dynamicEligibilityText:
         "inmate[|s] may be eligible for Standard Transition Program Release",
@@ -575,7 +570,7 @@ export const mockApiOpportunityConfigurationResponse = {
           texts: ["HOME_PLAN_IN_PROGRESS", "AWAITING_HOME_PLAN_APPROVAL"],
         },
         {
-          tab: "Incorrect",
+          tab: "Marked Ineligible",
           texts: [
             "HOME_PLAN_IN_PROGRESS",
             "AWAITING_HOME_PLAN_APPROVAL",
@@ -640,7 +635,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Eligible Now",
             "Almost Eligible",
             "Pending",
-            "Incorrect",
+            "Marked Ineligible",
           ],
         },
       ],
@@ -662,7 +657,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
         },
         {
-          tab: "Incorrect",
+          tab: "Marked Ineligible",
           text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
         },
       ],
