@@ -299,9 +299,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           <MenuItem
             data-testid={`OpportunityDenialView__checkbox-${code}`}
             key={code}
-            onClick={() => {
+            onClick={(e) => {
               const updatedReasons = xor(reasons, [code]).sort();
               setReasons(updatedReasons);
+              e.preventDefault();
 
               if (snoozeEnabled) {
                 if (defaultAutoSnoozeFn && updatedReasons.length) {
@@ -320,7 +321,6 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
               value={code}
               checked={reasons.includes(code) || false}
               name="denial reason"
-              disabled
             >
               {description}
             </Checkbox>

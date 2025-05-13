@@ -82,13 +82,15 @@ const DeclineMessageView = observer(function DeclineMessageView({
         {Object.entries(DECLINED_REASONS_MAP).map(([code, description]) => (
           <MenuItem
             key={code}
-            onClick={() => setReasons(xor(reasons, [code]) as DeclineReason[])}
+            onClick={(e) => {
+              setReasons(xor(reasons, [code]) as DeclineReason[]);
+              e.preventDefault();
+            }}
           >
             <Checkbox
               value={code}
               checked={reasons.includes(code as DeclineReason)}
               name="denial reason"
-              disabled
             >
               {description}
             </Checkbox>
