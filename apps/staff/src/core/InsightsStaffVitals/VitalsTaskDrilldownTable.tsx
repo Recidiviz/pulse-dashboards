@@ -120,7 +120,7 @@ const StatusIcon = ({
       size="16"
       style={{
         marginLeft: rem(spacing.sm),
-        verticalAlign: "middle",
+        verticalAlign: "top",
       }}
     />
   </TooltipTrigger>

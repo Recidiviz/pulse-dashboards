@@ -17,7 +17,6 @@
 
 import {
   Button,
-  DrawerModal,
   Icon,
   palette,
   spacing,
@@ -30,10 +29,13 @@ import styled from "styled-components/macro";
 
 import { SupervisionOfficer } from "~datatypes";
 
+import useIsMobile from "../../hooks/useIsMobile";
 import {
   ConfigLabels,
   OfficerVitalsMetricDetail,
 } from "../../InsightsStore/presenters/types";
+import { StyledDrawerModalV2 } from "../InsightsInfoModal/InsightsInfoModalV2";
+import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import { VitalsTaskDrilldownTable } from "./VitalsTaskDrilldownTable";
 
 const ModalControls = styled.div`
@@ -46,6 +48,7 @@ const ModalControls = styled.div`
   background: white;
   padding: 1rem;
   border-bottom: ${rem(1)} solid ${palette.slate20};
+  height: ${rem(NAV_BAR_HEIGHT)};
 
   Button {
     grid-column: 2;
@@ -96,13 +99,18 @@ export const VitalsTaskDrilldownModal = observer(
     labels,
     officer,
   }: VitalsTaskDrilldownModalProps) {
+    const { isMobile } = useIsMobile(true);
     if (!officer || !metricDetails) return null;
     const { tasks, bodyDisplayName, titleDisplayName } = metricDetails;
 
     const overdueCount = tasks.filter((task) => task.isOverdue).length;
 
     return (
-      <DrawerModal isOpen={isOpen} onRequestClose={onClose}>
+      <StyledDrawerModalV2
+        isOpen={isOpen}
+        onRequestClose={onClose}
+        isMobile={isMobile}
+      >
         <ModalControls>
           <Button kind="link" onClick={onClose}>
             <Icon kind="Close" size="14" color={palette.pine2} />
@@ -123,10 +131,10 @@ export const VitalsTaskDrilldownModal = observer(
             bodyDisplayName={bodyDisplayName}
           />
           <FooterText>
-            {bodyDisplayName}s due more than 30 days from now are not shown.
+            {bodyDisplayName}s due more than 30 days from today are not shown.
           </FooterText>
         </ModalContent>
-      </DrawerModal>
+      </StyledDrawerModalV2>
     );
   },
 );

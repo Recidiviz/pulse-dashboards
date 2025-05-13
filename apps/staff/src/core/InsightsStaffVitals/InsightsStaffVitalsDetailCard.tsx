@@ -53,6 +53,7 @@ export const StaffCardWrapper = styled.div<{ isDrilldownEnabled?: boolean }>`
     css`
       &:hover {
         border-color: ${palette.pine4};
+        box-shadow: inset 0 0 0 ${rem(1)} ${palette.pine4};
         cursor: pointer;
 
         ${HoverCta} {
@@ -82,12 +83,17 @@ const MetricValue = styled.div`
   line-height: ${rem(45)};
 `;
 
-const DeltaValue = styled.div<{ positiveDelta: boolean }>`
+const DeltaValue = styled.div<{ delta: number }>`
   ${typography.Sans12}
-  ${({ positiveDelta }) =>
-    positiveDelta
-      ? `color: ${palette.pine4};`
-      : `color: ${palette.signal.error};`}
+  color: ${({ delta }) => {
+    if (delta > 0) {
+      return palette.pine4;
+    }
+    if (delta < 0) {
+      return palette.signal.error;
+    }
+    return palette.slate85;
+  }};
 `;
 
 type InsightsStaffVitalsDetailCardProps = {
@@ -107,8 +113,12 @@ export const InsightsStaffVitalsDetailCard: React.FC<
     titleDisplayName,
     bodyDisplayName,
   } = vitalsMetricDetails;
-  const positiveDelta = metric30DDelta > 0;
-  const deltaText = `${positiveDelta ? "+" : ""}${Math.round(metric30DDelta)}% in past 30 days`;
+
+  const delta = Math.round(metric30DDelta);
+  const deltaText =
+    delta !== 0
+      ? `${delta > 0 ? "+" : ""}${delta}% in past 30 days`
+      : "0% change in past 30 days";
   const showPill = metricValue < 80;
   const hasOverdueClients = tasks.some((task) => task.isOverdue);
   const hoverCta = `See ${hasOverdueClients ? "Overdue " : ""}${bodyDisplayName}s`;
@@ -125,7 +135,7 @@ export const InsightsStaffVitalsDetailCard: React.FC<
       <StaffCardBody>
         <StaffCardTitle>{titleDisplayName}</StaffCardTitle>
         <MetricValue>{`${metricValue}%`}</MetricValue>
-        <DeltaValue positiveDelta={positiveDelta}>{deltaText}</DeltaValue>
+        <DeltaValue delta={delta}>{deltaText}</DeltaValue>
       </StaffCardBody>
       {showPill && (
         <PillWrapper>
