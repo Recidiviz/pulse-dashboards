@@ -220,6 +220,9 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         tableMultiSortEnabled: undefined,
         supervisionTasksNavLink: { activeTenants: ["US_ID"] },
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
+        reportIncorrectRosters: {
+          activeTenants: ["US_TN"],
+        },
       };
 
 export type LanternMethodologyByTenant = {
