@@ -110,6 +110,7 @@ export interface Opportunity<
   readonly type: OpportunityType;
   previewBannerText?: string;
   denial: Denial | undefined;
+  denialReasons: DenialReasonsMap;
   manualSnooze: ManualSnoozeUpdate | undefined;
   autoSnooze: AutoSnoozeUpdate | undefined;
   manualSnoozeUntilDate: Date | undefined;

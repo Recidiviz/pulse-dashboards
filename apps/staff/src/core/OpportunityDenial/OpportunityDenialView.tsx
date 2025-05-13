@@ -285,6 +285,8 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     </>
   );
 
+  const denialReasons = opportunity.denialReasons;
+
   return (
     <SidePanelContents
       className="OpportunityDenial"
@@ -293,39 +295,37 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       <Heading person={opportunity.person} trackingOpportunity={opportunity} />
       <SidePanelHeader>{prompt}</SidePanelHeader>
       <>
-        {Object.entries(opportunity.config.denialReasons).map(
-          ([code, description]) => (
-            <MenuItem
-              data-testid={`OpportunityDenialView__checkbox-${code}`}
-              key={code}
-              onClick={() => {
-                const updatedReasons = xor(reasons, [code]).sort();
-                setReasons(updatedReasons);
+        {Object.entries(denialReasons).map(([code, description]) => (
+          <MenuItem
+            data-testid={`OpportunityDenialView__checkbox-${code}`}
+            key={code}
+            onClick={() => {
+              const updatedReasons = xor(reasons, [code]).sort();
+              setReasons(updatedReasons);
 
-                if (snoozeEnabled) {
-                  if (defaultAutoSnoozeFn && updatedReasons.length) {
-                    setAutoSnoozeUntil(
-                      formatDateToISO(
-                        defaultAutoSnoozeFn(startOfToday(), opportunity),
-                      ),
-                    );
-                  } else {
-                    setAutoSnoozeUntil(undefined);
-                  }
+              if (snoozeEnabled) {
+                if (defaultAutoSnoozeFn && updatedReasons.length) {
+                  setAutoSnoozeUntil(
+                    formatDateToISO(
+                      defaultAutoSnoozeFn(startOfToday(), opportunity),
+                    ),
+                  );
+                } else {
+                  setAutoSnoozeUntil(undefined);
                 }
-              }}
+              }
+            }}
+          >
+            <Checkbox
+              value={code}
+              checked={reasons.includes(code) || false}
+              name="denial reason"
+              disabled
             >
-              <Checkbox
-                value={code}
-                checked={reasons.includes(code) || false}
-                name="denial reason"
-                disabled
-              >
-                {description}
-              </Checkbox>
-            </MenuItem>
-          ),
-        )}
+              {description}
+            </Checkbox>
+          </MenuItem>
+        ))}
 
         {reasonsIncludesOtherKey(reasons) && (
           <OtherReasonSection>

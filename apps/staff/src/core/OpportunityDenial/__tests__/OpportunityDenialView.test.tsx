@@ -131,6 +131,12 @@ describe("OpportunityDenialView", () => {
             [OTHER_KEY]: "Other, please specify a reason",
           },
         },
+        denialReasons: {
+          reason1: "The first reason",
+          reason2: "The second reason",
+          reason3: "The third reason",
+          [OTHER_KEY]: "Other, please specify a reason",
+        },
       };
 
       if (reasons.length > 0) {
@@ -355,6 +361,10 @@ describe("OpportunityDenialView", () => {
         },
         denial: {
           reasons: ["CODE"],
+        },
+        denialReasons: {
+          CODE: "Denial reason",
+          CODE2: "Denial reason2",
         },
       });
     });

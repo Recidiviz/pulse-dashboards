@@ -222,6 +222,10 @@ export class OpportunityBase<
     }
   }
 
+  get denialReasons() {
+    return this.config.denialReasons;
+  }
+
   get manualSnooze(): ManualSnoozeUpdate | undefined {
     if (this.updates?.manualSnooze?.snoozedBy) {
       return this.updates?.manualSnooze;

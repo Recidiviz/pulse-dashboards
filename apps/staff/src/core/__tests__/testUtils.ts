@@ -51,6 +51,7 @@ export const mockOpportunity: Opportunity<Client> = {
     stateCode: "US_OZ",
     expirationDate: new Date(2025, 1, 1),
   } as Client,
+  denialReasons: { CODE: "Denial Code", [OTHER_KEY]: "Other" },
   defaultEligibility: "ELIGIBLE",
   denial: undefined,
   lastViewed: undefined,

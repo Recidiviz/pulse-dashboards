@@ -62,4 +62,41 @@ export class UsTnCompliantReporting2025PolicyOpportunity extends OpportunityBase
   get eligibilityDate(): Date | undefined {
     return super.eligibilityDate ?? this.record?.metadata.eligibleDate;
   }
+
+  get denialReasons() {
+    let keys: string[];
+    if (this.record?.metadata.taskName === "MINIMUM (LOW)") {
+      keys = [
+        "FELONY",
+        "REPORTING",
+        "CONDITIONS",
+        "NEEDS",
+        "CASE",
+        "FEE",
+        "JUDGE",
+        "EXPIRE",
+        "Other",
+      ];
+    } else if (this.record?.metadata.taskName === "INTAKE") {
+      keys = [
+        "CONTACT",
+        "FELONY",
+        "REPORTING",
+        "CONDITIONS",
+        "CASE",
+        "FEE",
+        "JUDGE",
+        "EXPIRE",
+        "Other",
+      ];
+    } else {
+      return this.config.denialReasons;
+    }
+
+    return Object.fromEntries(
+      Object.entries(this.config.denialReasons).filter(([key]) =>
+        keys.includes(key),
+      ),
+    );
+  }
 }
