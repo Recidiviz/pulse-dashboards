@@ -89,4 +89,7 @@ export interface OpportunityConfiguration {
 
   // List of opportunity types to snooze concurrently when the primary opportunity is snoozed
   snoozeCompanionOpportunityTypes?: OpportunityType[];
+
+  // An optional sorted array of strings that will determine the order of case notes on the client side panel
+  caseNoteHeaders: string[];
 }

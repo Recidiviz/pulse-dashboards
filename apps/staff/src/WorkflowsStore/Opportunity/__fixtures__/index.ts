@@ -57,6 +57,7 @@ export class TestOpportunity<
 
 export const mockUsXxOppConfig: OpportunityConfiguration = {
   priority: "HIGH",
+  caseNoteHeaders: [],
   tabGroups: { "ELIGIBILITY STATUS": [] },
   eligibilityTextForCount: (count: number) => "cool",
   eligibilityDateTextForTab: () => "Eligibility Date",

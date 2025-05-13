@@ -329,4 +329,8 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return (this.configurationObject.snoozeCompanionOpportunityTypes ??
       []) as OpportunityType[];
   }
+
+  get caseNoteHeaders(): string[] {
+    return (this.configurationObject.caseNoteHeaders ?? []) as string[];
+  }
 }

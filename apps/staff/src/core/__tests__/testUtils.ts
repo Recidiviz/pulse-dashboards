@@ -44,6 +44,7 @@ export const mockOpportunityConfigs = Object.fromEntries(
 export const mockOpportunity: Opportunity<Client> = {
   record: {},
   almostEligible: false,
+  caseNoteHeaders: [],
   person: {
     displayPreferredName: "Client Name",
     recordId: "123",
@@ -140,6 +141,7 @@ export const mockOpportunity: Opportunity<Client> = {
     overdueOpportunityCalloutCopy: "overdue",
     zeroGrantsTooltip:
       "Officer has not granted this opportunity in the past 12 months",
+    caseNoteHeaders: [],
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

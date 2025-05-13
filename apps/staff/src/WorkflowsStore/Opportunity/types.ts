@@ -170,6 +170,7 @@ export interface Opportunity<
   requiresRevertConfirmation: boolean;
   revertConfirmationCopy: RevertConfirmationCopy;
   handleAdditionalUndoActions: () => Promise<void>;
+  caseNoteHeaders: string[];
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

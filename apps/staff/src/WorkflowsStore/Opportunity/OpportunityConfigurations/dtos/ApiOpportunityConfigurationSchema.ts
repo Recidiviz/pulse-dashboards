@@ -146,6 +146,9 @@ export const apiOpportunityConfigurationSchema = z.object({
   overdueOpportunityCalloutCopy: nullishAsUndefined(z.string()),
 
   snoozeCompanionOpportunityTypes: z.array(z.string()),
+  // TODO(#8429): Add caseNoteHeaders field to the admin panel config
+  // This field is currently never defined on the backend
+  caseNoteHeaders: nullishAsUndefined(z.array(z.string())),
 });
 
 export const apiOpportunityConfigurationResponseSchema = z.object({

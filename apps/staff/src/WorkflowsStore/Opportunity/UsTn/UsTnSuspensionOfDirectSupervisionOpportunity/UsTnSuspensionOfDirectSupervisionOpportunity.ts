@@ -49,4 +49,16 @@ export class UsTnSuspensionOfDirectSupervisionOpportunity extends OpportunityBas
     if (this.isSubmitted || this.denied) return;
     if (this.almostEligible) return this.record.metadata.tabName;
   }
+
+  // TODO(#8429): Add caseNoteHeaders field to the admin panel config
+  get caseNoteHeaders() {
+    return [
+      "Latest Employment-Related Contact",
+      "Latest SPEC, SPET, or XSPE Contact",
+      "All ARRP Contacts",
+      "Latest NCIC Check (BBNN or BBNP)",
+      "All DRUN, DRUM, and DRUX Contacts",
+      "All DRUP and FSW-Related Contacts",
+    ];
+  }
 }

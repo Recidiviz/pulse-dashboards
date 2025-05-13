@@ -50,8 +50,20 @@ export function CaseNotes({
   let { caseNotesTitle } = opportunity;
 
   caseNotesTitle ??= "Relevant Contact Notes";
+  let caseNoteHeaders;
 
-  if (Object.keys(caseNotes).length === 0) {
+  if (opportunity.caseNoteHeaders?.length > 0) {
+    caseNoteHeaders = [
+      ...opportunity.caseNoteHeaders,
+      ...Object.keys(caseNotes).filter(
+        (header) => !opportunity.caseNoteHeaders.includes(header),
+      ),
+    ];
+  } else {
+    caseNoteHeaders = Object.keys(caseNotes);
+  }
+
+  if (caseNoteHeaders.length === 0) {
     return (
       <DetailsSection>
         <DetailsHeading>{caseNotesTitle}</DetailsHeading>
@@ -65,14 +77,15 @@ export function CaseNotes({
       <DetailsHeading>{caseNotesTitle}</DetailsHeading>
       <SecureDetailsContent>
         <DetailsList>
-          {Object.keys(caseNotes).map((section: string) => {
-            const notes = caseNotes[section];
-            return (
-              <React.Fragment key={section}>
-                <DetailsSubheading>{section}</DetailsSubheading>
-                <DetailsList className="fs-exclude">
-                  {notes.length > 0 ? (
-                    notes
+          {caseNoteHeaders.map((caseNoteHeader) => {
+            const notes = caseNotes[caseNoteHeader];
+
+            if (notes && notes.length > 0) {
+              return (
+                <React.Fragment key={caseNoteHeader}>
+                  <DetailsSubheading>{caseNoteHeader}</DetailsSubheading>
+                  <DetailsList className="fs-exclude">
+                    {notes
                       .sort((noteA, noteB) =>
                         descending(noteA.eventDate, noteB.eventDate),
                       )
@@ -92,13 +105,22 @@ export function CaseNotes({
                             )}
                           </SecureDetailsContent>
                         );
-                      })
-                  ) : (
-                    <SecureDetailsContent>None</SecureDetailsContent>
-                  )}
-                </DetailsList>
-              </React.Fragment>
-            );
+                      })}
+                  </DetailsList>
+                </React.Fragment>
+              );
+            } else {
+              return (
+                <React.Fragment key={caseNoteHeader}>
+                  <DetailsSubheading>{caseNoteHeader}</DetailsSubheading>
+                  <DetailsList className="fs-exclude">
+                    <SecureDetailsContent>
+                      No relevant contact notes found
+                    </SecureDetailsContent>
+                  </DetailsList>
+                </React.Fragment>
+              );
+            }
           })}
         </DetailsList>
       </SecureDetailsContent>

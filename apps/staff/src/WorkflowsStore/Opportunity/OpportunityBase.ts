@@ -844,4 +844,8 @@ export class OpportunityBase<
   async handleAdditionalUndoActions(): Promise<void> {
     return undefined;
   }
+
+  get caseNoteHeaders() {
+    return this.config.caseNoteHeaders;
+  }
 }
