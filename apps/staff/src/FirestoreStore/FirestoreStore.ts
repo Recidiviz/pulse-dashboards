@@ -232,6 +232,17 @@ export default class FirestoreStore {
   }
 
   /**
+   * All updates to userUpdates in Firestore should utilitize this method, which first
+   * sets the user email to all lowercase.
+   */
+  updateUserUpdatesDocument(userEmail: string, update: any) {
+    const userUpdatesDocId = userEmail.toLowerCase();
+    const doc = this.doc({ key: "userUpdates" }, userUpdatesDocId);
+
+    return this.updateDocument(doc, update);
+  }
+
+  /**
    * All updates to Firestore should utilitize this method, which first checks that the user is an impersonator.
    * Do not use the Firestore setDoc directly.
    */
@@ -505,7 +516,7 @@ export default class FirestoreStore {
     stateCode: string,
     selectedSearchIds: string[],
   ): Promise<void> | undefined {
-    return this.updateDocument(this.doc({ key: "userUpdates" }, userEmail), {
+    return this.updateUserUpdatesDocument(userEmail, {
       stateCode,
       selectedSearchIds,
     });
@@ -515,7 +526,7 @@ export default class FirestoreStore {
     userEmail: string,
     dismissedOpportunityNotificationIds: string[],
   ) {
-    return this.updateDocument(this.doc({ key: "userUpdates" }, userEmail), {
+    return this.updateUserUpdatesDocument(userEmail, {
       dismissedOpportunityNotificationIds,
     });
   }
@@ -527,7 +538,7 @@ export default class FirestoreStore {
     customTabOrdering: OpportunityTab[],
   ) {
     // Add the new opportunity-ordering pair to the existing record
-    const doc = this.doc({ key: "userUpdates" }, userEmail);
+    const doc = this.doc({ key: "userUpdates" }, userEmail.toLowerCase());
     const previousCustomOrderings =
       (await getDoc(doc)).get("customTabOrderings") ?? {};
     const customTabOrderings = {
@@ -537,14 +548,13 @@ export default class FirestoreStore {
         [tabGroupToUpdate]: customTabOrdering,
       },
     };
-    return this.updateDocument(doc, {
+    return this.updateUserUpdatesDocument(userEmail, {
       customTabOrderings,
     });
   }
 
   async updateListViewPreference(userEmail: string, showListView: boolean) {
-    const doc = this.doc({ key: "userUpdates" }, userEmail);
-    return this.updateDocument(doc, {
+    return this.updateUserUpdatesDocument(userEmail, {
       showListView,
     });
   }
