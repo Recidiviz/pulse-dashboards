@@ -118,7 +118,9 @@ export const TasksTable = observer(function TasksTable({
     {
       header: "Name",
       id: "name",
-      accessorKey: "person.displayName",
+      accessorFn: (task: SupervisionTask) =>
+        // Sort by surname if available, full displayed name if not
+        task.person.record.personName.surname ?? task.person.displayName,
       enableSorting: true,
       sortingFn: "text",
       cell: PersonNameCell,

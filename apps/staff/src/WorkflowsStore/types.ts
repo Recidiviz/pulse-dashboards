@@ -18,6 +18,7 @@
 import {
   ClientRecord,
   FullName,
+  StaffRecord,
   WorkflowsJusticeInvolvedPersonRecord,
 } from "~datatypes";
 
@@ -63,6 +64,7 @@ export type JusticeInvolvedPerson = {
   fullName: FullName;
   displayName: string;
   displayPreferredName: string;
+  assignedStaff: StaffRecord | undefined;
   assignedStaffId?: string;
   assignedStaffPseudoId?: string;
   assignedStaffFullName: string;

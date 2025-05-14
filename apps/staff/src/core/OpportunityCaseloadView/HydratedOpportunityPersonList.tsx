@@ -419,9 +419,13 @@ const TableView = observer(function TableView({
     {
       header: "Name",
       id: "PERSON_NAME",
-      accessorFn: (opp: Opportunity) => opp.person.displayName,
+      accessorFn: (opp: Opportunity) =>
+        // Sort by surname if available, full displayed name if not
+        opp.person.record.personName.surname ?? opp.person.displayName,
       enableSorting: true,
       sortingFn: "text",
+      cell: ({ row }: { row: Row<Opportunity> }) =>
+        row.original.person.displayName,
     },
     {
       // TODO(#7453): Update this heading if other opportunities use instanceDetails
@@ -557,7 +561,9 @@ const TableView = observer(function TableView({
     {
       header: "Assigned to",
       id: "ASSIGNED_STAFF_NAME",
-      accessorFn: (opp: Opportunity) => opp.person.assignedStaffFullName,
+      // Sort by surname if available, full displayed name if not
+      accessorFn: (opp: Opportunity) =>
+        opp.person.assignedStaff?.surname ?? opp.person.assignedStaffFullName,
       enableSorting: true,
       sortingFn: "text",
       cell: OfficerNameCell,
