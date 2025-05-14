@@ -11,6 +11,7 @@ main:
           - cloud_run_service_url: ${sys.get_env("CLOUD_RUN_SERVICE_URL")}
           - bucket_id: ${sys.get_env("BUCKET_ID")}
           - import_job_name: ${sys.get_env("IMPORT_JOB_NAME")}
+          - process_job_name: ${sys.get_env("PROCESS_JOB_NAME")}
     - create_workflow_execution:
         call: http.post
         args:
@@ -29,5 +30,27 @@ main:
                   - name: STATE_CODE
                     value: ${state_code}
         result: import_job_execution
+    - assign_process_data_args:
+        assign:
+          - process_data_args:
+              - ${"--state-code=" + state_code}
+              - ${"--workflow-execution-id=" + workflow_execution.body.workflowExecutionId}
+    - process_data_switch:
+        switch:
+          - condition: ${dry_run}
+            next: append_dry_run_argument
+        next: process_data
+    - append_dry_run_argument:
+        assign:
+          - process_data_args: ${list.concat(process_data_args, "--dry-run")}
+    - process_data:
+        call: googleapis.run.v2.projects.locations.jobs.run
+        args:
+          name: ${process_job_name}
+          body:
+            overrides:
+              containerOverrides:
+                args: ${process_data_args}
+        result: process_job_execution
     - return:
-        return: ${import_job_execution}
+        return: ${process_job_execution}

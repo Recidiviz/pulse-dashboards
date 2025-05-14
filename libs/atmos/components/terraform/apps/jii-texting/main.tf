@@ -59,7 +59,7 @@ module "database" {
   secondary_zone             = var.database_secondary_zone
   tier                       = "db-custom-1-3840"
   additional_databases       = ["us_id"]
-  private_network = "projects/${var.project_id}/global/networks/default"
+  private_network            = "projects/${var.project_id}/global/networks/default"
   insights_config = {
     query_insights_enabled : true
     query_string_length : 1024
@@ -176,5 +176,6 @@ module "process-jii-to-text-wf" {
     CLOUD_RUN_SERVICE_URL = module.cloud-run.service_uri
     BUCKET_ID             = var.etl_bucket_name
     IMPORT_JOB_NAME       = module.import-job[0].id
+    PROCESS_JOB_NAME      = module.process-jii-cloud-run-job.id
   }
 }
