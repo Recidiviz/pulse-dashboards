@@ -65,6 +65,10 @@ export const constructedOpportunityTypes = [
   "usMoOverdueRestrictiveHousingInitialHearing",
   "usMoOverdueRestrictiveHousingReviewHearing",
 
+  // US_NE
+  "usNeConditionalLowRiskOverride",
+  "usNeOverrideModerateToLow",
+
   // US_ND
   "earlyTermination",
 

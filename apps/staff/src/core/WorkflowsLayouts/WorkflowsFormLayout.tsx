@@ -52,6 +52,7 @@ import WorkflowsLSUForm from "../WorkflowsLSUForm";
 import WorkflowsUsAzReleaseToTransitionProgramForm from "../WorkflowsUsAzReleaseToTransitionProgramForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm3043 from "../WorkflowsUsCaSupervisionLevelDowngradeForm3043";
+import WorkflowsUsNeSupervisionDowngradeForm from "../WorkflowsUsNeSupervisionDowngradeForm";
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 import WorkflowsUsTnReclassForm from "../WorkflowsUsTnReclassForm";
 
@@ -111,6 +112,7 @@ const FormComponents = {
   MediumTrustee,
   WorkflowsUsAzReleaseToTransitionProgramForm,
   FormUsTnSuspensionOfDirectSupervision,
+  WorkflowsUsNeSupervisionDowngradeForm,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;

@@ -64,6 +64,7 @@ import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } fr
 import { UsMoOverdueRestrictiveHousingInitialHearingOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingInitialHearingOpportunity";
 import { UsMoOverdueRestrictiveHousingReleaseOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingOpportunity } from "./UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity";
+import { UsNeSupervisionDowngradeOpportunity } from "./UsNe";
 import { UsOrEarnedDischargeSentenceOpportunity } from "./UsOr/UsOrEarnedDischargeSentenceOpportunity";
 import { UsPaAdminSupervisionOpportunity } from "./UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
 import {
@@ -131,6 +132,10 @@ export const opportunityConstructors = {
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingReviewHearingOpportunity,
 
+  // US_NE
+  usNeConditionalLowRiskOverride: UsNeSupervisionDowngradeOpportunity,
+  usNeOverrideModerateToLow: UsNeSupervisionDowngradeOpportunity,
+
   // US_ND
   earlyTermination: UsNdEarlyTerminationOpportunity,
 
@@ -157,6 +162,14 @@ export const opportunityConstructors = {
   usUtEarlyTermination: UsUtEarlyTerminationOpportunity,
 } as const satisfies Record<
   OpportunityType,
-  | (new (c: Resident, r: DocumentData) => Opportunity<Resident>)
-  | (new (c: Client, r: DocumentData) => Opportunity<Client>)
+  | (new (
+      resident: Resident,
+      record: DocumentData,
+      opportunityType: OpportunityType,
+    ) => Opportunity<Resident>)
+  | (new (
+      client: Client,
+      record: DocumentData,
+      opportunityType: OpportunityType,
+    ) => Opportunity<Client>)
 >;

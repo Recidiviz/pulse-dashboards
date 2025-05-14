@@ -15,10 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { captureException } from "@sentry/react";
 import React from "react";
-import { z } from "zod";
 
+import { UsNeSupervisionDowngradeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsNe";
 import {
   DetailsHeading,
   DetailsList,
@@ -28,31 +27,20 @@ import {
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
 
-const specialConditionsSchema = z.array(
-  z.object({
-    specialConditionType: z.string(),
-    compliance: z.string().nullable(),
-  }),
-);
-
 export const UsNeSpecialConditions: React.FC<OpportunityProfileProps> = ({
   opportunity,
 }) => {
-  const result = specialConditionsSchema.safeParse(
-    opportunity.record?.metadata?.specialConditions,
-  );
-  if (!result.success) {
-    captureException(result.error);
+  if (!(opportunity instanceof UsNeSupervisionDowngradeOpportunity)) {
     return null;
   }
-  const scores = result.data;
+  const { specialConditions } = opportunity.record.metadata;
 
   return (
     <DetailsSection>
       <DetailsHeading>Special Conditions</DetailsHeading>
       <SecureDetailsContent>
         <DetailsList>
-          {scores.map(({ specialConditionType, compliance }) => (
+          {specialConditions.map(({ specialConditionType, compliance }) => (
             <React.Fragment key={specialConditionType}>
               <DetailsSubheading>{specialConditionType}</DetailsSubheading>
               <SecureDetailsContent>
@@ -60,6 +48,9 @@ export const UsNeSpecialConditions: React.FC<OpportunityProfileProps> = ({
               </SecureDetailsContent>
             </React.Fragment>
           ))}
+          {specialConditions.length === 0 && (
+            <DetailsSubheading>None</DetailsSubheading>
+          )}
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>

@@ -15,13 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { captureException } from "@sentry/react";
 import React from "react";
-import { z } from "zod";
-
-import { dateStringSchema } from "~datatypes";
 
 import { formatWorkflowsDate } from "../../../../utils";
+import { UsNeSupervisionDowngradeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsNe";
 import {
   DetailsHeading,
   DetailsList,
@@ -31,21 +28,14 @@ import {
 } from "../../styles";
 import { OpportunityProfileProps } from "../../types";
 
-const recentOrasScoresSchema = z.array(
-  z.object({ assessmentLevel: z.string(), assessmentDate: dateStringSchema }),
-);
-
 export const UsNeORASScores: React.FC<OpportunityProfileProps> = ({
   opportunity,
 }) => {
-  const result = recentOrasScoresSchema.safeParse(
-    opportunity.record?.metadata?.recentOrasScores,
-  );
-  if (!result.success) {
-    captureException(result.error);
+  if (!(opportunity instanceof UsNeSupervisionDowngradeOpportunity)) {
     return null;
   }
-  const scores = result.data;
+
+  const scores = opportunity.record.metadata.recentOrasScores;
 
   return (
     <DetailsSection>

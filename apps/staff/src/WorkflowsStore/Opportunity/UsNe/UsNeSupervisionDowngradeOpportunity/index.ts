@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,31 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { TenantConfig } from "../core/models/types";
-import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
-
-const US_NE_CONFIG: TenantConfig<"US_NE"> = {
-  name: "Nebraska",
-  stateCode: "NE",
-  domain: "corrections.nebraska.gov",
-  availableStateCodes: [dashboard.US_NE],
-  enableUserRestrictions: false,
-  workflowsSupportedSystems: ["SUPERVISION"],
-  workflowsSystemConfigs: {
-    SUPERVISION: {
-      search: [
-        {
-          searchType: "OFFICER",
-          searchField: ["officerId"],
-          searchTitle: "officer",
-        },
-      ],
-    },
-  },
-  navigation: {
-    workflows: ["home", "clients"],
-  },
-  supervisionEndCopyOverride: "Supervision End Date",
-};
-
-export default US_NE_CONFIG;
+export * from "./UsNeSupervisionDowngradeOpportunity";
+export * from "./UsNeSupervisionDowngradeOpportunityReferralRecord";

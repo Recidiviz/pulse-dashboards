@@ -135,7 +135,7 @@ export class OpportunityManager<PersonType extends JusticeInvolvedPerson>
       let opp;
       try {
         opp = constructor
-          ? new constructor(this.person as any, record)
+          ? new constructor(this.person as any, record, opportunityType)
           : new OpportunityBase<JusticeInvolvedPerson, OpportunityRecordBase>(
               this.person,
               opportunityType,
