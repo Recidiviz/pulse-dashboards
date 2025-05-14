@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { createPrivateKey } from "crypto";
+import { compactDecrypt } from "jose";
 import { z } from "zod";
 
 import { AuthorizedUserProfile } from "~auth0-jii";
@@ -24,19 +26,20 @@ import {
   getFirestore,
 } from "../../helpers/firebaseAdmin";
 import { getRecidivizUserProfile } from "../../helpers/recidivizUsers";
+import { secrets } from "../../helpers/secrets";
 
 export const edovoIdTokenPayloadSchema = z
   .object({
-    USER_ID: z.string(),
-    STATE: z
+    inmate_id: z.string(),
+    facility_state: z
       .string()
       .toUpperCase()
       .transform((s) => `US_${s}`),
   })
   .transform((user) => {
     // known cases where our ID formats do not match
-    if (user.STATE === "US_ME") {
-      return { ...user, USER_ID: user.USER_ID.replace(/^0+/, "") };
+    if (user.facility_state === "US_ME") {
+      return { ...user, inmate_id: user.inmate_id.replace(/^0+/, "") };
     }
     return user;
   });
@@ -45,7 +48,7 @@ type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;
 export async function lookupResident(
   userData: EdovoIdTokenPayload,
 ): Promise<AuthorizedUserProfile | undefined> {
-  return checkResidentsRoster(userData.STATE, userData.USER_ID);
+  return checkResidentsRoster(userData.facility_state, userData.inmate_id);
 }
 
 export async function checkRecidivizEmployeeRoster(
@@ -53,7 +56,7 @@ export async function checkRecidivizEmployeeRoster(
 ): Promise<AuthorizedUserProfile | undefined> {
   const employeeRecord = (
     await (await getFirestore())
-      .doc(`JII-edovoToRecidivizMappings/${userData.USER_ID}`)
+      .doc(`JII-edovoToRecidivizMappings/${userData.inmate_id}`)
       .get()
   ).data();
 
@@ -62,4 +65,14 @@ export async function checkRecidivizEmployeeRoster(
   const { email } = z.object({ email: z.string() }).parse(employeeRecord);
 
   return getRecidivizUserProfile(email);
+}
+
+export async function getDecryptedToken(encryptedToken: string) {
+  // decrypting gets us a signed JWT to pass on to the next middleware
+  const { plaintext } = await compactDecrypt(
+    encryptedToken,
+    createPrivateKey(await secrets.getLatestValue("EDOVO_TOKEN_PRIVATE_KEY")),
+  );
+
+  return plaintext.toString();
 }

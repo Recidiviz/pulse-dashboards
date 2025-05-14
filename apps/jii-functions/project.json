@@ -63,6 +63,18 @@
           "args": "--project jii-production"
         }
       }
+    },
+    "decode-token": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx src/tools/decodeJWE.ts",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
+      },
+      "defaultConfiguration": "production"
     }
   },
   "tags": ["scope:server"]

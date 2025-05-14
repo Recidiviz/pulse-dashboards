@@ -15,14 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { setUser } from "@sentry/node";
-import { createPrivateKey } from "crypto";
+import { setExtras } from "@sentry/node";
 import { NextFunction, Request, Response } from "express";
 import jwt from "express-jwt";
-import { compactDecrypt } from "jose";
 import jwks from "jwks-rsa";
 
 import { secrets } from "../../helpers/secrets";
+import { getDecryptedToken } from "./helpers";
 
 /**
  * Extracts a bearer auth token from Express request headers,
@@ -53,16 +52,15 @@ export async function decryptToken(
   try {
     const encryptedToken = getRequestToken(request);
 
-    // only encrypted tokens can be logged because they contain PII
-    setUser({ id: encryptedToken });
+    // only encrypted tokens can be logged because they contain PII.
+    // using Sentry "extra data" because the size limits are more permissive than tags.
+    // also renaming the property because "encryptedToken" runs afoul of Sentry's data scrubbers
+    setExtras({ edovoJWE: encryptedToken });
     // store the encrypted version in case we need it for more logging
     response.locals["encryptedEdovoToken"] = encryptedToken;
 
     // decrypting gets us a signed JWT to pass on to the next middleware
-    const { plaintext: decryptedToken } = await compactDecrypt(
-      encryptedToken,
-      createPrivateKey(await secrets.getLatestValue("EDOVO_TOKEN_PRIVATE_KEY")),
-    );
+    const decryptedToken = await getDecryptedToken(encryptedToken);
 
     // updating this header in place because that's where the JWT middleware will look
     request.headers.authorization = `Bearer ${decryptedToken}`;
