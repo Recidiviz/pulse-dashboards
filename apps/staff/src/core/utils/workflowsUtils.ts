@@ -19,7 +19,6 @@ import { palette } from "@recidiviz/design-system";
 import { some } from "lodash";
 import { rgba } from "polished";
 
-import { toTitleCase } from "../../utils/formatStrings";
 import { type Opportunity } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
 
@@ -146,5 +145,11 @@ export function useStatusColors({
 }
 
 export function reasonsIncludesOtherKey(reasons?: string[]) {
-  return some(reasons, (reason) => toTitleCase(reason).includes(OTHER_KEY));
+  return reasonsIncludesKey(OTHER_KEY, reasons);
+}
+
+export function reasonsIncludesKey(key: string, reasons?: string[]) {
+  return some(reasons, (reason) =>
+    reason.toUpperCase().includes(key.toUpperCase()),
+  );
 }
