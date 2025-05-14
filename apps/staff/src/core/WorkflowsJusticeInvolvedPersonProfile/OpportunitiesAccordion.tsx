@@ -123,10 +123,12 @@ const NoOpportunities = styled.div`
 export const AccordionSection = observer(function AccordionSection({
   opportunity,
   formLinkButton = false,
+  hideActionButtons = false,
   onDenialButtonClick = () => null,
 }: {
   opportunity: Opportunity;
   formLinkButton?: boolean;
+  hideActionButtons?: boolean;
   onDenialButtonClick?: () => void;
 }) {
   const colors = useStatusColors(opportunity);
@@ -147,6 +149,7 @@ export const AccordionSection = observer(function AccordionSection({
                 isVisible={expanded}
                 opportunity={opportunity}
                 formLinkButton={formLinkButton && !!opportunity.form}
+                hideActionButtons={hideActionButtons}
                 onDenialButtonClick={onDenialButtonClick}
               />
             )}

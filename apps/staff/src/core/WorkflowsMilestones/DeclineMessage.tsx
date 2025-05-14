@@ -26,14 +26,9 @@ import { useRootStore } from "../../components/StoreProvider";
 import { DeclineReason } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
-import { OtherReasonInput } from "../sharedComponents";
+import { TextAreaInput, TextAreaWrapper } from "../sharedComponents";
 import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
-import {
-  ActionButton,
-  MenuItem,
-  OtherReasonWrapper,
-  SidePanelContents,
-} from "./styles";
+import { ActionButton, MenuItem, SidePanelContents } from "./styles";
 
 export const DECLINED_REASONS_MAP: Record<DeclineReason, string> = {
   MILESTONE_NOT_MET: "Client has not met one or more milestones",
@@ -97,15 +92,15 @@ const DeclineMessageView = observer(function DeclineMessageView({
           </MenuItem>
         ))}
         {reasonsIncludesOtherKey(reasons) && (
-          <OtherReasonWrapper>
-            <OtherReasonInput
+          <TextAreaWrapper>
+            <TextAreaInput
               placeholder="Please specify a reason…"
               onChange={debounce(
                 (event) => setOtherReason(event.target.value),
                 500,
               )}
             />
-          </OtherReasonWrapper>
+          </TextAreaWrapper>
         )}
       </>
       <ActionButton

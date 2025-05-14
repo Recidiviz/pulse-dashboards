@@ -19,11 +19,11 @@ import { palette, Sans14, typography } from "@recidiviz/design-system";
 import { differenceInDays, isAfter, parseISO, startOfToday } from "date-fns";
 import { isEqual, xor } from "lodash";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
+import { CharacterCountTextField } from "../../components/CharacterCountTextField";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Slider from "../../components/Slider";
 import {
@@ -33,8 +33,8 @@ import {
 import { formatDateToISO } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
 import { getSnoozeUntilDate } from "../../WorkflowsStore/utils";
+import { DEFAULT_MAX_CHAR_LENGTH, DEFAULT_MIN_CHAR_LENGTH } from "../constants";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
-import { OtherReasonInput } from "../sharedComponents";
 import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import {
@@ -44,7 +44,6 @@ import {
 import {
   ActionButton,
   MenuItem,
-  OtherReasonWrapper,
   SidePanelContents,
   SidePanelHeader,
 } from "../WorkflowsMilestones/styles";
@@ -71,30 +70,6 @@ const SnoozeUntilReminderText = styled(Sans14)`
   margin: 1rem 0;
   color: ${palette.slate85};
 `;
-
-const OtherReasonLabel = styled.label`
-  ${typography.Sans12}
-  color: ${palette.slate85};
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  padding: 0.5rem 1.1rem 0;
-  margin-bottom: 0;
-`;
-
-const OtherReasonLength = styled.span<{ otherReasonInvalid: boolean }>`
-  color: ${(props) =>
-    props.otherReasonInvalid ? palette.data.crimson1 : palette.slate85};
-`;
-
-const OtherReasonSection = styled(OtherReasonWrapper)`
-  background: ${palette.marble3};
-  border-radius: ${rem(4)};
-  border: 2px solid transparent;
-`;
-
-const maxOtherReasonCharLength = 1600;
-const minOtherReasonCharLength = 3;
 
 export const OpportunityDenialView = observer(function OpportunityDenialView({
   opportunity,
@@ -226,7 +201,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const unsetSlider = maxManualSnoozeDays && !sliderDays;
   const otherReasonInvalid =
     reasonsIncludesOtherKey(reasons) &&
-    (otherReason ?? "").length < minOtherReasonCharLength;
+    (otherReason ?? "").length < DEFAULT_MIN_CHAR_LENGTH;
 
   const otherReasonChanged =
     reasonsIncludesOtherKey(reasons) &&
@@ -328,26 +303,15 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         ))}
 
         {reasonsIncludesOtherKey(reasons) && (
-          <OtherReasonSection>
-            <OtherReasonLabel htmlFor="OtherReasonInput">
-              Enter at least 3 characters
-              <span>
-                <OtherReasonLength otherReasonInvalid={otherReasonInvalid}>
-                  {(otherReason ?? "").length}
-                </OtherReasonLength>{" "}
-                / {maxOtherReasonCharLength}
-              </span>
-            </OtherReasonLabel>
-            <OtherReasonInput
-              data-testid="OtherReasonInput"
-              id="OtherReasonInput"
-              maxLength={maxOtherReasonCharLength}
-              minLength={minOtherReasonCharLength}
-              defaultValue={otherReason}
-              placeholder="Please specify a reason…"
-              onChange={(event) => setOtherReason(event.target.value)}
-            />
-          </OtherReasonSection>
+          <CharacterCountTextField
+            data-testid="OtherReasonInput"
+            id="OtherReasonInput"
+            maxLength={DEFAULT_MAX_CHAR_LENGTH}
+            minLength={DEFAULT_MIN_CHAR_LENGTH}
+            value={otherReason}
+            placeholder="Please specify a reason…"
+            onChange={(newValue) => setOtherReason(newValue)}
+          />
         )}
       </>
       {snoozeEnabled && !savingWillUnsnooze && snoozeSection}

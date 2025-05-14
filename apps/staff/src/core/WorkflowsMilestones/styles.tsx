@@ -27,15 +27,6 @@ import {
 import { rem } from "polished";
 import styled, { css, keyframes } from "styled-components/macro";
 
-export const OtherReasonWrapper = styled.div`
-  ${typography.Sans16}
-  display: block;
-  margin: ${rem(spacing.sm)} 0;
-  > textarea {
-    padding: 1rem;
-    max-height: 10rem;
-  }
-`;
 export const MenuItem = styled.div`
   > .Checkbox__container {
     width: 100%;

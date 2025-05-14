@@ -18,15 +18,8 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
-import {
-  Client,
-  JusticeInvolvedPerson,
-  Opportunity,
-} from "../../WorkflowsStore";
+import { useRootStore } from "../../components/StoreProvider";
+import { Client } from "../../WorkflowsStore";
 import {
   ActiveSentences,
   ClientEmployer,
@@ -39,9 +32,6 @@ import {
   Supervision,
 } from "./ClientDetailSidebarComponents";
 import { UsUtDates } from "./ClientDetailSidebarComponents/UsUtDates";
-import { Heading } from "./Heading";
-import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
-import { OpportunityBanner } from "./OpportunityBanner";
 import {
   CaseNotes,
   EligibilityDate,
@@ -53,6 +43,7 @@ import {
   UsNeORASScores,
   UsNeSpecialConditions,
 } from "./OpportunityDetailSidebarComponents";
+import { OpportunityOverview } from "./OpportunityOverview";
 import {
   Incarceration,
   ResidentHousing,
@@ -65,14 +56,7 @@ import { UsIdParoleDates } from "./ResidentDetailSidebarComponents/US_ID/UsIdPar
 import { UsIdPastTwoYearsAlert } from "./ResidentDetailSidebarComponents/US_ID/UsIdPastTwoYearsAlert";
 import { UsMiRestrictiveHousing } from "./ResidentDetailSidebarComponents/US_MI/UsMiRestrictiveHousingDetails";
 import { Divider } from "./styles";
-
-type OpportunitySidebarProfileProps = {
-  opportunity?: Opportunity;
-  formLinkButton?: boolean;
-  formView?: boolean;
-  onDenialButtonClick?: () => void;
-  selectedPerson: JusticeInvolvedPerson | undefined;
-};
+import { OpportunitySidebarProfileProps } from "./types";
 
 export const ClientDetailSidebarComponents = {
   Supervision,
@@ -146,7 +130,6 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     const {
       workflowsStore: { selectedResident, justiceInvolvedPersonTitle },
     } = useRootStore();
-    const { personSpecificOppBanners } = useFeatureVariants();
 
     const selectedPerson = opportunity?.person;
 
@@ -156,23 +139,13 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
 
     return (
       <article>
-        <Heading person={selectedPerson} trackingOpportunity={opportunity} />
-        {personSpecificOppBanners && opportunity.previewBannerText && (
-          <OpportunityBanner
-            opportunity={opportunity}
-            title={justiceInvolvedPersonTitle}
-          />
-        )}
-        <AccordionWrapper
-          allowZeroExpanded
-          preExpanded={[opportunity.accordionKey]}
-        >
-          <AccordionSection
-            opportunity={opportunity}
-            formLinkButton={formLinkButton}
-            onDenialButtonClick={onDenialButtonClick}
-          />
-        </AccordionWrapper>
+        <OpportunityOverview
+          opportunity={opportunity}
+          formLinkButton={formLinkButton}
+          onDenialButtonClick={onDenialButtonClick}
+          justiceInvolvedPersonTitle={justiceInvolvedPersonTitle}
+        />
+
         {opportunity.config.sidebarComponents.map((componentName) => {
           if (componentName in FormViewOnlyComponent && !formView) return null;
           if (

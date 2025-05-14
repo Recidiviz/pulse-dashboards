@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,36 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
-import { Client } from "../../WorkflowsStore";
-import { Resident } from "../../WorkflowsStore/Resident";
+import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 
-export type PersonProfileProps = {
-  person: JusticeInvolvedPerson;
+export type OPPORTUNITY_SIDE_PANEL_VIEW =
+  | "OPPORTUNITY_PREVIEW"
+  | "MARK_INELIGIBLE"
+  | "US_IA_MARK_ELIGIBLE_FOR_APPROVAL";
+
+export type OpportunitySidePanelContextType = {
+  setCurrentView(view: OPPORTUNITY_SIDE_PANEL_VIEW): void;
 };
 
-export type ClientProfileProps = {
-  client: Client;
+export type SidePanelConfigProps = {
+  onAfterOpen?: () => void;
+  onBackClick?: () => void;
+  pageContent: JSX.Element;
+  footerContent?: JSX.Element;
 };
 
-export type ResidentProfileProps = {
-  resident: Resident;
-};
-
-export type OpportunityProfileProps = {
+export type SidePanelConfigSetupProps = {
   opportunity: Opportunity;
-};
-
-export type ClientWithOpportunityProps = ClientProfileProps &
-  OpportunityProfileProps;
-
-export type ResidentWithOptionalOpportunityProps = ResidentProfileProps &
-  Partial<OpportunityProfileProps>;
-
-export type OpportunitySidebarProfileProps = {
-  opportunity?: Opportunity;
-  formLinkButton?: boolean;
-  formView?: boolean;
-  onDenialButtonClick?: () => void;
   selectedPerson: JusticeInvolvedPerson | undefined;
+  resetPreviewView: () => void;
+  navigableOpportunities: Opportunity[] | undefined;
 };

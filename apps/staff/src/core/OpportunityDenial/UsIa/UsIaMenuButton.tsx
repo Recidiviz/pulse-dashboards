@@ -92,7 +92,7 @@ const UsIaMenuButton = observer(function MenuButton({
     ELIGIBLE_NOW: [
       {
         label: "Submit for Supervisor Approval",
-        onClick: () => null,
+        onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
       },
       {
         label: "Mark as Ineligible",

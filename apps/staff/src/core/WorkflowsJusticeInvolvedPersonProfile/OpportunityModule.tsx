@@ -101,6 +101,7 @@ type OpportunityModuleProps = {
   isVisible?: boolean;
   opportunity: Opportunity;
   hideHeader?: boolean;
+  hideActionButtons?: boolean;
   onDenialButtonClick?: () => void;
 };
 
@@ -110,6 +111,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     isVisible,
     opportunity,
     hideHeader = false,
+    hideActionButtons = false,
     onDenialButtonClick = () => null,
   }) {
     const { tenantStore } = useRootStore();
@@ -156,6 +158,9 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     const showRevertLink = !(
       hideDenialRevert && opportunity.config.hideDenialRevert
     );
+
+    const showActionButtons =
+      (showUpdateStatusButton || formLinkButton) && !hideActionButtons;
 
     const handleUndoAction = async () => {
       await opportunity.handleAdditionalUndoActions();
@@ -212,7 +217,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
             denialReasons={opportunity.denial?.reasons}
           />
         )}
-        {(showUpdateStatusButton || formLinkButton) && (
+        {showActionButtons && (
           <ActionButtons isMobile={isLaptop}>
             {formLinkButton && opportunity?.form && (
               <Link to={linkToForm}>

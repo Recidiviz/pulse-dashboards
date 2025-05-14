@@ -92,7 +92,17 @@ export const OtherReasonInputWrapper = styled.div`
   margin: ${rem(spacing.sm)} 2.5rem 1rem;
 `;
 
-export const OtherReasonInput = styled.textarea.attrs({ type: "text" })`
+export const TextAreaWrapper = styled.div`
+  ${typography.Sans16}
+  display: block;
+  margin: ${rem(spacing.sm)} 0;
+  > textarea {
+    padding: 1rem;
+    max-height: 10rem;
+  }
+`;
+
+export const TextAreaInput = styled.textarea.attrs({ type: "text" })`
   background: ${palette.marble3};
   border-radius: ${rem(4)};
   border: 2px solid transparent;

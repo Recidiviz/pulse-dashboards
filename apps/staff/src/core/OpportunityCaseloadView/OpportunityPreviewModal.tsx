@@ -22,17 +22,17 @@ import { OpportunityDenialView } from "../OpportunityDenial";
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityProfileFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
+import {
+  OPPORTUNITY_SIDE_PANEL_VIEW,
+  OpportunitySidePanelContextType,
+  SidePanelConfigProps,
+} from "./types";
+import { getUsIaSidePanelViewConfigs } from "./UsIa/UsIaSidePanelViews";
 
 type OpportunityCaseloadProps = {
   opportunity?: Opportunity;
   navigableOpportunities?: Opportunity[];
   selectedPerson: JusticeInvolvedPerson | undefined;
-};
-
-type OPPORTUNITY_SIDE_PANEL_VIEW = "OPPORTUNITY_PREVIEW" | "MARK_INELIGIBLE";
-
-type OpportunitySidePanelContextType = {
-  setCurrentView(view: OPPORTUNITY_SIDE_PANEL_VIEW): void;
 };
 
 export const OpportunitySidePanelContext =
@@ -61,56 +61,65 @@ export function OpportunityPreviewModal({
     setCurrentView("OPPORTUNITY_PREVIEW");
   }
 
-  let panelContent: JSX.Element;
+  // Used for setting up a new side panel view config
+  const panelConfigSetupProps = {
+    opportunity,
+    selectedPerson,
+    resetPreviewView,
+    navigableOpportunities,
+  };
 
-  switch (currentView) {
-    case "OPPORTUNITY_PREVIEW":
-      panelContent = (
-        <WorkflowsPreviewModal
-          isOpen={!!opportunity}
-          onAfterOpen={() => opportunity?.trackPreviewed()}
-          onClose={() => resetPreviewView()}
-          contentRef={modalRef}
-          pageContent={
-            <OpportunityProfile
-              opportunity={opportunity}
-              formLinkButton={!!opportunity?.form}
-              onDenialButtonClick={() => setCurrentView("MARK_INELIGIBLE")}
-              selectedPerson={selectedPerson}
-            />
-          }
-          footerContent={
-            <OpportunityProfileFooter
-              currentOpportunity={opportunity}
-              navigableOpportunities={navigableOpportunities}
-            />
-          }
+  const defaultProps = {
+    isOpen: true,
+    onClose: resetPreviewView,
+    contentRef: modalRef,
+  };
+
+  const sidePanelViewConfigs: Record<
+    OPPORTUNITY_SIDE_PANEL_VIEW,
+    SidePanelConfigProps
+  > = {
+    OPPORTUNITY_PREVIEW: {
+      onAfterOpen: () => opportunity.trackPreviewed(),
+      pageContent: (
+        <OpportunityProfile
+          opportunity={opportunity}
+          formLinkButton={!!opportunity.form}
+          onDenialButtonClick={() => setCurrentView("MARK_INELIGIBLE")}
+          selectedPerson={selectedPerson}
         />
-      );
-      break;
-    case "MARK_INELIGIBLE":
-      panelContent = (
-        <WorkflowsPreviewModal
-          isOpen={!!opportunity}
-          onClose={() => resetPreviewView()}
-          onBackClick={() => resetPreviewView()}
-          contentRef={modalRef}
-          pageContent={
-            <OpportunityDenialView
-              onSubmit={() => resetPreviewView()}
-              opportunity={opportunity}
-            />
-          }
+      ),
+      footerContent: (
+        <OpportunityProfileFooter
+          currentOpportunity={opportunity}
+          navigableOpportunities={navigableOpportunities}
         />
-      );
-      break;
-    default:
-      panelContent = <div />;
-  }
+      ),
+    },
+    MARK_INELIGIBLE: {
+      onBackClick: resetPreviewView,
+      pageContent: (
+        <OpportunityDenialView
+          opportunity={opportunity}
+          onSubmit={resetPreviewView}
+        />
+      ),
+    },
+    ...getUsIaSidePanelViewConfigs(panelConfigSetupProps),
+  };
+
+  const { onAfterOpen, onBackClick, pageContent, footerContent } =
+    sidePanelViewConfigs[currentView];
 
   return (
     <OpportunitySidePanelContext.Provider value={{ setCurrentView }}>
-      {panelContent}
+      <WorkflowsPreviewModal
+        {...defaultProps}
+        onAfterOpen={onAfterOpen}
+        onBackClick={onBackClick}
+        pageContent={pageContent}
+        footerContent={footerContent}
+      />
     </OpportunitySidePanelContext.Provider>
   );
 }
