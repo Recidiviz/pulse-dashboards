@@ -180,7 +180,7 @@ export const JusticeInvolvedPersonCapsule = observer(
           <StatusEl
             className={`WorkflowsStatus__${person.externalId} fs-exclude`}
           >
-            {status}
+            <div>{status}</div>
             <WorkflowsStatusPill person={person} />
           </StatusEl>
         </PersonInfo>
