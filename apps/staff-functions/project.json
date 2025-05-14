@@ -75,5 +75,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["scope:server"]
 }

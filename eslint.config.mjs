@@ -83,8 +83,16 @@ export default tseslint.config(
           allow: [],
           depConstraints: [
             {
-              sourceTag: "*",
-              onlyDependOnLibsWithTags: ["*"],
+              sourceTag: "scope:client",
+              onlyDependOnLibsWithTags: ["scope:client", "scope:universal"],
+            },
+            {
+              sourceTag: "scope:server",
+              onlyDependOnLibsWithTags: ["scope:server", "scope:universal"],
+            },
+            {
+              sourceTag: "scope:universal",
+              onlyDependOnLibsWithTags: ["scope:universal"],
             },
           ],
         },

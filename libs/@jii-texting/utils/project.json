@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@jii-texting/utils/src",
   "projectType": "library",
-  "tags": ["jii-texting"],
+  "tags": ["jii-texting", "scope:server"],
   "targets": {
     "load-env-files": {
       "executor": "nx:run-commands",
@@ -21,10 +21,12 @@
     },
     "typecheck": {
       "executor": "nx:run-commands",
-      "dependsOn": [        {
-        "projects": ["@jii-texting/prisma"],
-        "target": "prisma-generate"
-      }],
+      "dependsOn": [
+        {
+          "projects": ["@jii-texting/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
       "options": {
         "commands": [
           "tsc -p ./tsconfig.lib.json",

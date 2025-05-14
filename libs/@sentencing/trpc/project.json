@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@sentencing/trpc/src",
   "projectType": "library",
-  "tags": ["sentencing"],
+  "tags": ["sentencing", "scope:server"],
   "targets": {
     "update-findhelp-labels": {
       "executor": "nx:run-commands",

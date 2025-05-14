@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/@sentencing/import/src",
   "projectType": "application",
-  "tags": ["sentencing"],
+  "tags": ["sentencing", "scope:server"],
   "targets": {
     "test-zod": {
       "executor": "nx:run-commands",

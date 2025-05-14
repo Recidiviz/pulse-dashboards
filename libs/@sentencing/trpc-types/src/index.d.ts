@@ -17,4 +17,6 @@
 
 // Put types that need to be exported to other apps here
 
+// intended use of TRPC to share from server to client
+// eslint-disable-next-line @nx/enforce-module-boundaries
 export type { AppRouter } from "~@sentencing/trpc";

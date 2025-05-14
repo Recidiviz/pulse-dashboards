@@ -17,6 +17,8 @@
 
 import { createTRPCReact } from "@trpc/react-query";
 
-import { AppRouter } from "~@case-notes-server/trpc/router";
+// intended use of TRPC
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import type { AppRouter } from "~@case-notes-server/trpc/router";
 
 export const trpc = createTRPCReact<AppRouter>();

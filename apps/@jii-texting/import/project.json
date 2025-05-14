@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/@jii-texting/import/src",
   "projectType": "application",
-  "targets": {    
+  "targets": {
     "create-base-package-json": {
       "executor": "nx:run-commands",
       "options": {
@@ -26,7 +26,7 @@
         {
           "projects": ["@jii-texting/prisma"],
           "target": "prisma-generate"
-        }, 
+        },
         "load-env-files"
       ],
       "options": {
@@ -117,5 +117,5 @@
       }
     }
   },
-  "tags": ["jii-texting"]
+  "tags": ["jii-texting", "scope:server"]
 }

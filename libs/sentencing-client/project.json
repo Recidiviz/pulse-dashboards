@@ -4,7 +4,7 @@
   "sourceRoot": "libs/sentencing-client/src",
   "projectType": "library",
   "implicitDependencies": ["!sentencing"],
-  "tags": [],
+  "tags": ["scope:client"],
   "targets": {
     "lint-files": {
       "executor": "nx:run-commands",

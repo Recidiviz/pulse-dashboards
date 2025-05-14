@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/hydration-utils/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["scope:client"],
   "targets": {
     "lint-files": {
       "executor": "nx:run-commands",

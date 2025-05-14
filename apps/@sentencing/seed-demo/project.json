@@ -102,5 +102,5 @@
       "defaultConfiguration": "dev"
     }
   },
-  "tags": ["sentencing"]
+  "tags": ["sentencing", "scope:server"]
 }
