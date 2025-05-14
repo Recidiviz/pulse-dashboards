@@ -28,6 +28,7 @@ import {
   snoozeUntilDateInTheFuture,
   staffNameComparator,
   usCaFilterByRoleSubtype,
+  usMiFilterByUserDistrict,
 } from "../utils";
 
 test("staffNameComparator", () => {
@@ -140,6 +141,91 @@ describe("fractionalDateBetweenTwoDates", () => {
     );
 
     expect(fractionalDate).toEqual(twoThirdsDate);
+  });
+});
+
+describe("usMiFilterByUserDistrict", () => {
+  const usMiUser: CombinedUserRecord = {
+    info: {
+      email: "testEmail",
+      givenNames: "testGivenNames",
+      id: "testId",
+      stateCode: "US_MI",
+      surname: "testSurname",
+      recordType: "supervisionStaff",
+      pseudonymizedId: "test",
+    },
+  };
+
+  it("should return all district 10s", () => {
+    const user: CombinedUserRecord = {
+      info: {
+        ...usMiUser.info,
+        district: "10 - WEST",
+      },
+    };
+
+    const expected: StaffFilter = {
+      filterField: "district",
+      filterValues: [
+        "10 - WEST",
+        "10 - CENTRAL",
+        "10 - NORTHEAST",
+        "10 - NORTHWEST",
+      ],
+    };
+
+    expect(usMiFilterByUserDistrict(user, {})).toEqual(expected);
+  });
+
+  it("should return district 1", () => {
+    const user: CombinedUserRecord = {
+      info: {
+        ...usMiUser.info,
+        district: "district 1",
+      },
+    };
+    const expected: StaffFilter = {
+      filterField: "district",
+      filterValues: ["district 1"],
+    };
+
+    expect(usMiFilterByUserDistrict(user, {})).toEqual(expected);
+  });
+
+  it("should return district overrides if set", () => {
+    const user: CombinedUserRecord = {
+      info: {
+        ...usMiUser.info,
+        district: "10 - WEST",
+      },
+      updates: {
+        stateCode: "US_MI",
+        overrideDistrictIds: ["override 1", "override 2"],
+      },
+    };
+
+    const expected: StaffFilter = {
+      filterField: "district",
+      filterValues: ["override 1", "override 2"],
+    };
+
+    expect(usMiFilterByUserDistrict(user, {})).toEqual(expected);
+  });
+
+  it("can be overridden by a feature flag", () => {
+    const user: CombinedUserRecord = {
+      info: {
+        ...usMiUser.info,
+        district: "10 - WEST",
+      },
+    };
+
+    expect(
+      usMiFilterByUserDistrict(user, {
+        supervisionUnrestrictedSearch: {},
+      }),
+    ).toBeUndefined();
   });
 });
 

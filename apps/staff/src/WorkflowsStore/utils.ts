@@ -186,6 +186,32 @@ export function getSystemIdFromPage(page: WorkflowsPage): SystemId | undefined {
   }
 }
 
+export const usMiFilterByUserDistrict: StaffFilterFunction = (
+  user: CombinedUserRecord,
+  featureVariants: ActiveFeatureVariantRecord,
+) => {
+  const staffFilter = filterByUserDistrict(user, featureVariants);
+
+  if (
+    !featureVariants.supervisionUnrestrictedSearch &&
+    !user.updates?.overrideDistrictIds
+  ) {
+    if (user.info.stateCode === "US_MI" && user.info.district?.includes("10")) {
+      return {
+        filterField: "district",
+        filterValues: [
+          "10 - WEST",
+          "10 - CENTRAL",
+          "10 - NORTHEAST",
+          "10 - NORTHWEST",
+        ],
+      };
+    }
+  }
+
+  return staffFilter;
+};
+
 export const filterByUserDistrict: StaffFilterFunction = (
   user: CombinedUserRecord,
   featureVariants: ActiveFeatureVariantRecord,

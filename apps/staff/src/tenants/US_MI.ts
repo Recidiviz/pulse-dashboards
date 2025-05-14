@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
-import { filterByUserDistrict } from "../WorkflowsStore/utils";
+import { usMiFilterByUserDistrict } from "../WorkflowsStore/utils";
 
 const US_MI_CONFIG: TenantConfig<"US_MI"> = {
   name: "Michigan",
@@ -26,7 +26,7 @@ const US_MI_CONFIG: TenantConfig<"US_MI"> = {
   domain: "michigan.gov",
   availableStateCodes: [dashboard.US_MI],
   enableUserRestrictions: false,
-  workflowsStaffFilterFn: filterByUserDistrict,
+  workflowsStaffFilterFn: usMiFilterByUserDistrict,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
   workflowsSystemConfigs: {
     SUPERVISION: {
