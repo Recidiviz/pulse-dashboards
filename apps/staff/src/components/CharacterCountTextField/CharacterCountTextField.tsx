@@ -21,6 +21,7 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { TextAreaInput, TextAreaWrapper } from "../../core/sharedComponents";
+import { TextFieldHeader } from "../../core/WorkflowsJusticeInvolvedPersonProfile/styles";
 
 const Section = styled(TextAreaWrapper)`
   background: ${palette.marble3};
@@ -51,6 +52,7 @@ type CharacterCountTextFieldProps = {
   maxLength?: number;
   placeholder?: string;
   isOptional?: boolean;
+  header?: string;
 };
 
 export const CharacterCountTextField: React.FC<
@@ -63,28 +65,37 @@ export const CharacterCountTextField: React.FC<
   maxLength = 1600,
   placeholder,
   isOptional = false,
+  header,
 }) => {
   const invalid = isOptional
     ? value.length > 0 && value.length < minLength // If it's an optional field, and the user has entered something, enforce minLength requirement
     : value.length < minLength;
 
   return (
-    <Section>
-      <Label htmlFor={id}>
-        Enter at least {minLength} characters
-        <span>
-          <Count invalid={invalid}>{value.length}</Count> / {maxLength}
-        </span>
-      </Label>
-      <TextAreaInput
-        id={id}
-        data-testid={id}
-        minLength={minLength}
-        maxLength={maxLength}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </Section>
+    <div>
+      {header && (
+        <TextFieldHeader>
+          {header}
+          {!isOptional && <div style={{ color: "red" }}>*</div>}
+        </TextFieldHeader>
+      )}
+      <Section>
+        <Label htmlFor={id}>
+          Enter at least {minLength} characters
+          <span>
+            <Count invalid={invalid}>{value.length}</Count> / {maxLength}
+          </span>
+        </Label>
+        <TextAreaInput
+          id={id}
+          data-testid={id}
+          minLength={minLength}
+          maxLength={maxLength}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      </Section>
+    </div>
   );
 };

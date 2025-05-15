@@ -363,6 +363,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
               value={actionPlanText}
               placeholder="Please specify why this client is not eligible for early discharge. This will be reviewed by a supervisor…"
               onChange={(newValue) => setActionPlanText(newValue)}
+              header="Action Plan"
             />
           )}
       </>

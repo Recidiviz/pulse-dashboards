@@ -180,4 +180,5 @@ export const TextFieldHeader = styled.div`
   color: ${palette.slate85};
   margin-top: ${rem(spacing.sm)};
   margin-bottom: ${rem(spacing.md)};
+  display: flex;
 `;

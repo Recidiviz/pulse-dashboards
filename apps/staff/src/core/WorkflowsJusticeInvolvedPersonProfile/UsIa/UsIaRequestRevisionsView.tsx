@@ -39,7 +39,6 @@ import {
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { Heading } from "../Heading";
 import { UsIaActionPlansAndNotes } from "../OpportunityDetailSidebarComponents";
-import { TextFieldHeader } from "../styles";
 
 const TextFieldContainer = styled.div`
   margin-bottom: ${rem(spacing.md)};
@@ -109,9 +108,9 @@ export const UsIaRequestRevisionsView = observer(
         <UsIaActionPlansAndNotes opportunity={opportunity} />
 
         <TextFieldContainer>
-          <TextFieldHeader>Revisions</TextFieldHeader>
           <CharacterCountTextField
             data-testid="RevisionsRequestInput"
+            header="Revisions"
             id="RevisionsRequestInput"
             maxLength={DEFAULT_MAX_CHAR_LENGTH}
             minLength={DEFAULT_MIN_CHAR_LENGTH}

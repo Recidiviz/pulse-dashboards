@@ -33,7 +33,6 @@ import {
 } from "../../constants";
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { OpportunityOverview } from "../OpportunityOverview";
-import { TextFieldHeader } from "../styles";
 
 const ConfirmationOfDataInvestigationContainer = styled.div`
   display: flex;
@@ -131,17 +130,16 @@ export const UsIaOfficerApprovalView = observer(
             I confirm that all requirements have been checked.
           </Checkbox>
 
-          <div>
-            <TextFieldHeader>Additional Notes</TextFieldHeader>
-            <CharacterCountTextField
-              id="additional-notes"
-              value={additionalNotes}
-              onChange={(newValue) => setAdditionalNotes(newValue)}
-              minLength={DEFAULT_MIN_CHAR_LENGTH}
-              maxLength={DEFAULT_MAX_CHAR_LENGTH}
-              placeholder="Add notes for supervisor review..."
-            />
-          </div>
+          <CharacterCountTextField
+            id="additional-notes"
+            header="Additional Notes"
+            value={additionalNotes}
+            onChange={(newValue) => setAdditionalNotes(newValue)}
+            minLength={DEFAULT_MIN_CHAR_LENGTH}
+            maxLength={DEFAULT_MAX_CHAR_LENGTH}
+            placeholder="Add notes for supervisor review..."
+            isOptional={true}
+          />
 
           <SaveButton
             shape="block"
