@@ -55,7 +55,7 @@ const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
     },
   },
   navigation: {
-    workflows: ["home", "residents"],
+    workflows: ["home", "clients", "residents"],
   },
   incarcerationStaffTitleOverride: "COIII",
   releaseDateCopyOverride: "SED",
