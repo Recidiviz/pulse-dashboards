@@ -27,13 +27,6 @@ import {
 import { rem } from "polished";
 import styled, { css, keyframes } from "styled-components/macro";
 
-export const MenuItem = styled.div`
-  > .Checkbox__container {
-    width: 100%;
-    height: 100%;
-  }
-`;
-
 export const BannerTextWrapper = styled.div`
   display: flex;
   flex-flow: row nowrap;
@@ -56,11 +49,6 @@ export const SidePanelBanner = styled.div`
   padding: 1rem;
   align-items: center;
   justify-content: space-between;
-`;
-
-export const SidePanelHeader = styled(Sans16)`
-  color: ${palette.pine1};
-  padding: 1rem 0;
 `;
 
 export const Warning = styled(Sans12)`
@@ -96,13 +84,6 @@ export const ButtonsContainer = styled.div`
   justify-content: flex-end;
   width: 100%;
   align-items: center;
-`;
-
-export const ActionButton = styled(Button)<{ width?: string }>`
-  border-radius: 4px;
-  color: ${palette.marble1};
-  width: ${({ width }) => width || `100%`};
-  margin-bottom: 0.75rem;
 `;
 
 export const AlreadyCongratulatedButton = styled(Button)`
@@ -161,11 +142,6 @@ export const OptOutText = styled.div``;
 export const TextLink = styled.span`
   text-decoration: underline;
   cursor: pointer;
-`;
-
-export const SidePanelContents = styled.div`
-  display: flex;
-  flex-flow: column nowrap;
 `;
 
 // Define the pulse animation

@@ -16,9 +16,11 @@
 // =============================================================================
 
 import {
+  Button,
   palette,
   Sans12,
   Sans14,
+  Sans16,
   Sans18,
   spacing,
   typography,
@@ -120,6 +122,30 @@ export const TooltipTealStar = styled(TealStar)`
   margin-right: 0.375rem;
   height: 16px;
   width: 16px;
+`;
+
+export const ActionButton = styled(Button)<{ width?: string }>`
+  border-radius: 4px;
+  color: ${palette.marble1};
+  width: ${({ width }) => width || `100%`};
+  margin-bottom: 0.75rem;
+`;
+
+export const MenuItem = styled.div`
+  > .Checkbox__container {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+export const SidePanelContents = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+`;
+
+export const SidePanelHeader = styled(Sans16)`
+  color: ${palette.pine1};
+  padding: 1rem 0;
 `;
 
 export const Banner = styled.div`

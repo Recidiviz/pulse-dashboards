@@ -20,7 +20,8 @@ import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 export type OPPORTUNITY_SIDE_PANEL_VIEW =
   | "OPPORTUNITY_PREVIEW"
   | "MARK_INELIGIBLE"
-  | "US_IA_MARK_ELIGIBLE_FOR_APPROVAL";
+  | "US_IA_MARK_ELIGIBLE_FOR_APPROVAL"
+  | "US_IA_REQUEST_REVISIONS";
 
 export type OpportunitySidePanelContextType = {
   setCurrentView(view: OPPORTUNITY_SIDE_PANEL_VIEW): void;

@@ -22,6 +22,7 @@ import styled from "styled-components/macro";
 import GrayAlert from "../../assets/static/images/grayAlert.svg?react";
 import { reasonsIncludesOtherKey } from "../../core/utils/workflowsUtils";
 import { Client } from "../../WorkflowsStore";
+import { SidePanelContents, SidePanelHeader } from "../sharedComponents";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import Banner from "./Banner";
@@ -31,8 +32,6 @@ import {
   MilestonesItem,
   MilestonesList,
   MilestonesText,
-  SidePanelContents,
-  SidePanelHeader,
   TextLink,
 } from "./styles";
 

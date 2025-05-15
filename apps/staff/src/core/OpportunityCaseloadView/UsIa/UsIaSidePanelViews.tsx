@@ -16,13 +16,16 @@
 // =============================================================================
 
 import { UsIaOfficerApprovalView } from "../../WorkflowsJusticeInvolvedPersonProfile/UsIa/UsIaOfficerApprovalView";
+import { UsIaRequestRevisionsView } from "../../WorkflowsJusticeInvolvedPersonProfile/UsIa/UsIaRequestRevisionsView";
 import { SidePanelConfigProps, SidePanelConfigSetupProps } from "../types";
 
 export function getUsIaSidePanelViewConfigs(
   panelConfigSetupProps: SidePanelConfigSetupProps,
-): Record<"US_IA_MARK_ELIGIBLE_FOR_APPROVAL", SidePanelConfigProps> {
-  const { opportunity, selectedPerson, resetPreviewView } =
-    panelConfigSetupProps;
+): Record<
+  "US_IA_MARK_ELIGIBLE_FOR_APPROVAL" | "US_IA_REQUEST_REVISIONS",
+  SidePanelConfigProps
+> {
+  const { opportunity, resetPreviewView } = panelConfigSetupProps;
 
   return {
     US_IA_MARK_ELIGIBLE_FOR_APPROVAL: {
@@ -31,7 +34,17 @@ export function getUsIaSidePanelViewConfigs(
       pageContent: (
         <UsIaOfficerApprovalView
           opportunity={opportunity}
-          selectedPerson={selectedPerson}
+          resetPreviewView={resetPreviewView}
+        />
+      ),
+    },
+    US_IA_REQUEST_REVISIONS: {
+      onAfterOpen: () => opportunity.trackPreviewed(),
+      onBackClick: resetPreviewView,
+      pageContent: (
+        <UsIaRequestRevisionsView
+          opportunity={opportunity}
+          resetPreviewView={resetPreviewView}
         />
       ),
     },

@@ -30,6 +30,12 @@ import {
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
+import {
+  ActionButton,
+  MenuItem,
+  SidePanelContents,
+  SidePanelHeader,
+} from "../../core/sharedComponents";
 import { formatDateToISO } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
 import { UsIaEarlyDischargeOpportunity } from "../../WorkflowsStore/Opportunity/UsIa";
@@ -45,12 +51,6 @@ import {
   buildDenialReasonsListText,
   buildResurfaceText,
 } from "../WorkflowsJusticeInvolvedPersonProfile/MarkedIneligibleReasons";
-import {
-  ActionButton,
-  MenuItem,
-  SidePanelContents,
-  SidePanelHeader,
-} from "../WorkflowsMilestones/styles";
 import { DenialConfirmationModals } from "./DenialConfirmationModals";
 
 const SliderWrapper = styled.div`
@@ -334,7 +334,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           >
             <Checkbox
               value={code}
-              checked={reasons.includes(code) || false}
+              checked={reasons.includes(code)}
               name="denial reason"
             >
               {description}

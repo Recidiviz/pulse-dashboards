@@ -39,6 +39,7 @@ type DropdownOptionsByStatus = {
   [key in UsIaClientStatus]: DropdownOption[];
 };
 
+// TODO(#8459) Add tests for menu button for all client status states
 const UsIaMenuButton = observer(function MenuButton({
   opportunity,
   markSubmittedAndToast,
@@ -65,7 +66,7 @@ const UsIaMenuButton = observer(function MenuButton({
 
       toast(
         <OpportunityStatusUpdateToast
-          toastText={`Action Plan has been approved. ${opportunity.person.displayName} will now be snoozed for ${latestAction.requestedSnoozeLength} before reappearing`}
+          toastText={`Action Plan has been approved. ${opportunity.person.displayName} will now be snoozed for ${latestAction.requestedSnoozeLength} days before reappearing`}
         />,
         {
           id: "snoozeApprovalToast",
@@ -100,14 +101,17 @@ const UsIaMenuButton = observer(function MenuButton({
       },
     ],
     ACTION_PLAN_REVIEW: [
-      { label: "Request Revisions", onClick: () => null }, // TODO(#8360): This should trigger the revision request state
+      {
+        label: "Request Revisions",
+        onClick: () => setCurrentView("US_IA_REQUEST_REVISIONS"),
+      },
       { label: "Approve Snooze", onClick: () => supervisorApprovalAndToast() },
     ],
     ACTION_PLAN_REVIEW_REVISION: [
       { label: "Edit Action Plan", onClick: () => null }, // TODO(#8360): This should trigger the edit action plan state
       {
         label: "Mark as Eligible",
-        onClick: () => null,
+        onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
       },
     ],
     DISCHARGE_FORM_REVIEW: [

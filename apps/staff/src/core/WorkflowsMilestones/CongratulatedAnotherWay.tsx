@@ -20,15 +20,12 @@ import { useContext } from "react";
 import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";
 import useHydrateOpportunities from "../../hooks/useHydrateOpportunities";
 import { Client } from "../../WorkflowsStore";
+import { SidePanelContents } from "../sharedComponents";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import WorkflowsPreviewModalContext from "../WorkflowsPreviewModal/WorkflowsPreviewModalContext";
 import Banner from "./Banner";
 import OpportunityAvailableCTA from "./OpportunityAvailableCTA";
-import {
-  ButtonsContainer,
-  ButtonWithLoader,
-  SidePanelContents,
-} from "./styles";
+import { ButtonsContainer, ButtonWithLoader } from "./styles";
 
 interface CongratulatedAnotherWayProps {
   client: Client;

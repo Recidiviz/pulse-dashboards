@@ -21,16 +21,18 @@ import { Dispatch, SetStateAction } from "react";
 import { useRootStore } from "../../components/StoreProvider";
 import { Client } from "../../WorkflowsStore";
 import { formatPhoneNumber } from "../../WorkflowsStore/utils";
+import {
+  ActionButton,
+  SidePanelContents,
+  SidePanelHeader,
+} from "../sharedComponents";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./NewMilestonesSidePanel";
 import {
-  ActionButton,
   ButtonsContainer,
   PhoneNumber,
   ReviewInfo,
   ReviewMessage,
-  SidePanelContents,
-  SidePanelHeader,
 } from "./styles";
 
 interface ReviewMessageProps {

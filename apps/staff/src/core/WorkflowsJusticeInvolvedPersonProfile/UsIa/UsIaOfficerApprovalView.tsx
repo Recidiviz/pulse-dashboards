@@ -25,6 +25,7 @@ import styled from "styled-components/macro";
 import { CharacterCountTextField } from "../../../components/CharacterCountTextField/CharacterCountTextField";
 import Checkbox from "../../../components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";
+import { Opportunity } from "../../../WorkflowsStore";
 import { UsIaEarlyDischargeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
 import {
   DEFAULT_MAX_CHAR_LENGTH,
@@ -32,7 +33,7 @@ import {
 } from "../../constants";
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { OpportunityOverview } from "../OpportunityOverview";
-import { OpportunitySidebarProfileProps } from "../types";
+import { TextFieldHeader } from "../styles";
 
 const ConfirmationOfDataInvestigationContainer = styled.div`
   display: flex;
@@ -55,20 +56,19 @@ const Header = styled.div`
   }
 `;
 
-const TextFieldHeader = styled.div`
-  ${typography.Sans16}
-  color: ${palette.slate85};
-  margin-top: ${rem(spacing.sm)};
-  margin-bottom: ${rem(spacing.md)};
-`;
-
 const SaveButton = styled(Button)`
   width: fit-content;
   padding: 14px ${rem(spacing.md)};
 `;
 
-export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
-  observer(function UsIaOfficerApprovalView({ opportunity }) {
+export const UsIaOfficerApprovalView = observer(
+  function UsIaOfficerApprovalView({
+    opportunity,
+    resetPreviewView,
+  }: {
+    opportunity: Opportunity;
+    resetPreviewView: () => void;
+  }) {
     const {
       workflowsStore: { justiceInvolvedPersonTitle },
     } = useRootStore();
@@ -77,7 +77,7 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
     const [additionalNotes, setAdditionalNotes] = useState("");
 
     if (
-      !opportunity?.person ||
+      !opportunity.person ||
       !(opportunity instanceof UsIaEarlyDischargeOpportunity)
     ) {
       return null;
@@ -105,6 +105,8 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
             duration: 7000,
           },
         );
+
+        resetPreviewView();
       }
     };
 
@@ -151,4 +153,5 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
         </ConfirmationOfDataInvestigationContainer>
       </article>
     );
-  });
+  },
+);

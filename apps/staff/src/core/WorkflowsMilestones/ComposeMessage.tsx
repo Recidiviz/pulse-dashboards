@@ -25,17 +25,19 @@ import {
 import { TextMessageStatuses } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { validatePhoneNumber } from "../../WorkflowsStore/utils";
+import {
+  ActionButton,
+  SidePanelContents,
+  SidePanelHeader,
+} from "../sharedComponents";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { ClientMilestones } from "./MilestonesCaseloadView";
 import { NEW_MILESTONES_SIDE_PANEL_VIEW } from "./NewMilestonesSidePanel";
 import PhoneNumberInput from "./PhoneNumberInput";
 import {
-  ActionButton,
   AlreadyCongratulatedButton,
   ButtonsContainer,
   OptOutText,
-  SidePanelContents,
-  SidePanelHeader,
   TextLink,
   Warning,
   WideTooltipTrigger,

@@ -26,9 +26,14 @@ import { useRootStore } from "../../components/StoreProvider";
 import { DeclineReason } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";
 import { OTHER_KEY } from "../../WorkflowsStore/utils";
-import { TextAreaInput, TextAreaWrapper } from "../sharedComponents";
+import {
+  ActionButton,
+  MenuItem,
+  SidePanelContents,
+  TextAreaInput,
+  TextAreaWrapper,
+} from "../sharedComponents";
 import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
-import { ActionButton, MenuItem, SidePanelContents } from "./styles";
 
 export const DECLINED_REASONS_MAP: Record<DeclineReason, string> = {
   MILESTONE_NOT_MET: "Client has not met one or more milestones",

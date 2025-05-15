@@ -174,3 +174,10 @@ export const SmallDetailsHeader = styled.div`
   margin-bottom: ${rem(spacing.sm)};
   align-items: center;
 `;
+
+export const TextFieldHeader = styled.div`
+  ${typography.Sans16}
+  color: ${palette.slate85};
+  margin-top: ${rem(spacing.sm)};
+  margin-bottom: ${rem(spacing.md)};
+`;

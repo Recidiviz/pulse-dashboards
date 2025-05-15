@@ -24,15 +24,11 @@ import {
   formatPhoneNumber,
   optionalFieldToDate,
 } from "../../WorkflowsStore/utils";
+import { SidePanelContents } from "../sharedComponents";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import Banner from "./Banner";
-import {
-  PhoneNumber,
-  ReviewInfo,
-  ReviewMessage,
-  SidePanelContents,
-} from "./styles";
+import { PhoneNumber, ReviewInfo, ReviewMessage } from "./styles";
 
 interface ErrorViewProps {
   client: Client;

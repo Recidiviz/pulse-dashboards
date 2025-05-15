@@ -25,6 +25,7 @@ import {
   formatPhoneNumber,
   optionalFieldToDate,
 } from "../../WorkflowsStore/utils";
+import { SidePanelContents } from "../sharedComponents";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import WorkflowsPreviewModalContext from "../WorkflowsPreviewModal/WorkflowsPreviewModalContext";
 import Banner from "./Banner";
@@ -35,7 +36,6 @@ import {
   PhoneNumber,
   ReviewInfo,
   ReviewMessage,
-  SidePanelContents,
 } from "./styles";
 
 interface MessageSentViewProps {
