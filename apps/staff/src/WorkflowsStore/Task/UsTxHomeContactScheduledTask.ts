@@ -18,7 +18,17 @@
 import UsTxContactTask from "./UsTxContactTask";
 
 class UsTxHomeContactScheduledTask extends UsTxContactTask<"usTxHomeContactScheduled"> {
-  displayName = "Home contact (scheduled)";
+  get displayName(): string {
+    if (this.details.officerInCriticallyUnderstaffedLocation) {
+      // Fallthrough to the final return is intentional
+      switch (this.details.overrideContactType) {
+        case "SCHEDULED HOME (VIRTUAL)":
+          return "Electronic contact in lieu of home visit (scheduled)";
+      }
+    }
+
+    return "Home contact (scheduled)";
+  }
 }
 
 export default UsTxHomeContactScheduledTask;

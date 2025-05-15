@@ -104,6 +104,20 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           reasonForContact: "Initial Home Contact",
         },
       },
+      {
+        type: "usTxHomeContactScheduled",
+        dueDate: "2022-03-26",
+        details: {
+          overrideContactType: "SCHEDULED HOME (VIRTUAL)",
+          officerInCriticallyUnderstaffedLocation: true,
+          contactDueDate: "2022-03-26",
+          lastContactDate: null,
+          contactCount: 2,
+          overdueFlag: false,
+          typeOfContact: "SCHEDULED HOME",
+          frequency: "2 MONTHS",
+        },
+      },
     ],
   },
   {
