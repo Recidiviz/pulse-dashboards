@@ -239,7 +239,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const otherReasonChanged =
     reasonsIncludesOtherKey(reasons) &&
-    otherReason === opportunity.denial?.otherReason;
+    !(otherReason === opportunity.denial?.otherReason);
 
   const reasonsUnchanged =
     isEqual(new Set(reasons), new Set(opportunity.denial?.reasons)) &&
