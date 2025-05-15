@@ -180,12 +180,10 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         disableSnoozeSlider: { activeTenants: ["US_MO"] },
         fullWidthTimeline: { activeTenants: ["US_AZ", "US_UT"] },
         insightsOnboarding: {},
-        opportunityTableView: { activeTenants: ["US_TX"] },
+        opportunityTableView: {},
         oppTabSubcategories: { activeTenants: ["US_AZ", "US_UT"] },
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
-        sortableOpportunityTabs: {
-          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_UT"],
-        },
+        sortableOpportunityTabs: {},
         submittedOpportunityStatus: {
           activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA", "US_UT"],
         },
@@ -206,7 +204,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
     : {
         ...allFeatureVariants,
         disableSnoozeSlider: { activeTenants: ["US_MO"] },
-        opportunityTableView: isDemoMode() ? undefined : {},
         // Currently disabled because the last synced date doesn't exist on the backend yet.
         lastSyncedDate: undefined,
         // Undefined so that Recidiviz users see both FVs in staging
