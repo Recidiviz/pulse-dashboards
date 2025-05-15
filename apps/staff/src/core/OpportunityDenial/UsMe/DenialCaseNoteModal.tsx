@@ -35,7 +35,7 @@ import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
-import { formatDateToISO } from "../../../utils";
+import { formatDate, formatDateToISO } from "../../../utils";
 import { DenialConfirmationModalProps } from "../DenialConfirmationModals";
 
 const StyledModal = styled(Modal)`
@@ -149,13 +149,15 @@ export const DenialCaseNoteModal = observer(function DenialCaseNoteModal({
         </Button>
       </ModalControls>
       <ModalTitle>Copy the note below into CORIS</ModalTitle>
-      Here are more details about exactly how to create the note.
+      You must copy & paste this exact text in the case note in CORIS.
       <NotePreview>{noteText}</NotePreview>
       <ModalButton kind="primary" shape="block" onClick={onClickCopy}>
         {justCopied ? "Note Copied!" : "Copy Note"}
       </ModalButton>
-      Once a case note is created, this person will be marked ineligible within
-      a few days.
+      Note: Once the case note is created in CORIS, within 1-2 days this client
+      will be automatically moved to 'Marked Ineligible' status.{" "}
+      {opportunity.person.displayName} may be surfaced again on or after{" "}
+      {formatDate(snoozeUntilDate)}.
       {hasCopied && (
         <ModalButton kind="primary" shape="block" onClick={onClickSubmitted}>
           I Have Created the Case Note in CORIS

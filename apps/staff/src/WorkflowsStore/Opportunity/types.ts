@@ -95,6 +95,7 @@ export interface Opportunity<
 > extends Hydratable {
   config: OpportunityConfiguration;
   record: DocumentData | undefined;
+  actedOnTextAddition?: string;
   almostEligible: boolean;
   // TODO: move this to status component once almost-eligible is standardized on TES
   almostEligibleStatusMessage?: string;
@@ -119,6 +120,7 @@ export interface Opportunity<
   isSnoozed: boolean;
   snoozeForDays?: number;
   omsSnoozeStatus?: ExternalSystemRequestStatus;
+  opportunityDenialViewButtonText?: string;
   deleteOpportunityDenialAndSnooze: () => Promise<void>;
   lastViewed: UpdateLog | undefined;
   setLastViewed: () => void;
@@ -172,6 +174,7 @@ export interface Opportunity<
   revertConfirmationCopy: RevertConfirmationCopy;
   handleAdditionalUndoActions: () => Promise<void>;
   caseNoteHeaders: string[];
+  generateCaseNoteText?: string;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

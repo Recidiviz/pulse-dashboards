@@ -88,4 +88,16 @@ export class UsMeExternalSnoozeOpportunityBase<
 
     return undefined;
   }
+
+  get opportunityDenialViewButtonText(): string {
+    return "Generate case note text";
+  }
+
+  get actedOnTextAddition(): string {
+    return ", subject to supporting case note entered into CORIS.";
+  }
+
+  get generateCaseNoteText(): string {
+    return `MDOC requires that you create a case note in CORIS to document that this client has been reviewed before they can be marked ineligible for ${this.config.label}. Click the button below to generate the case note text that you must enter in CORIS.`;
+  }
 }

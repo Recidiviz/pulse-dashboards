@@ -48,6 +48,7 @@ export function buildActedOnText({
   submittedTabTitle,
   submittedUpdate,
   subcategoryCopy,
+  actedOnTextAddition,
 }: {
   denial?: Denial;
   isSubmitted: boolean;
@@ -57,6 +58,7 @@ export function buildActedOnText({
   submittedTabTitle: string;
   submittedUpdate?: Submission;
   subcategoryCopy?: string;
+  actedOnTextAddition?: string;
 }): string | undefined {
   if (!isSubmitted && !denial) return;
 
@@ -67,6 +69,13 @@ export function buildActedOnText({
   if (!actionBy || !actionDate) return;
 
   const subcategorySubstr = subcategoryCopy ? `: ${subcategoryCopy}` : "";
+
+  if (denial && actedOnTextAddition) {
+    return `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}${subcategorySubstr} by ${actionBy} on ${format(
+      actionDate,
+      "LLLL d, yyyy",
+    )}${actedOnTextAddition}`;
+  }
 
   return `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}${subcategorySubstr} by ${actionBy} on ${format(
     actionDate,
@@ -101,6 +110,10 @@ export function buildResurfaceText(
     endDateString = `${dateStr} is ${person.displayPreferredName}'s ${releaseDateCopy} Date.`;
   } else {
     endDateString = `${person.displayPreferredName} may be surfaced again on or after ${dateStr}.`;
+  }
+
+  if (opportunity.generateCaseNoteText) {
+    return opportunity.generateCaseNoteText;
   }
 
   if (

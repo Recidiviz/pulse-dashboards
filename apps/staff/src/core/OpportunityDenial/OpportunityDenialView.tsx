@@ -374,7 +374,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         width="117px"
         onClick={handleSave}
       >
-        Save
+        {opportunity.opportunityDenialViewButtonText
+          ? opportunity.opportunityDenialViewButtonText
+          : "Save"}
       </ActionButton>
       {DenialConfirmationModal ? (
         <DenialConfirmationModal
