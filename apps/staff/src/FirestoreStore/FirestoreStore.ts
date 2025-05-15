@@ -143,10 +143,19 @@ export default class FirestoreStore {
             impersonatedStateCode: appMetadata.stateCode,
           }
         : undefined;
-      const firebaseToken = await fetchFirebaseToken(
-        auth0Token,
-        impersonationParams,
-      );
+
+      let firebaseToken;
+      try {
+        firebaseToken = await fetchFirebaseToken(
+          auth0Token,
+          impersonationParams,
+        );
+      } catch (e) {
+        throw new Error(
+          `Error in fetchFirebaseToken for ${appMetadata.pseudonymizedId}: ${e}`,
+        );
+      }
+
       const auth = getAuth(this.app);
       if (this.useOfflineFirestore) {
         connectAuthEmulator(auth, "http://localhost:9099");
