@@ -227,13 +227,24 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    // TODO(#8393): If victim exists, treat item like an almost eligible criteria
-    const victimReqText = this.record.metadata.victimFlag
-      ? "There are one or more registered victims for this case"
-      : "There is no registered victim";
-    return super.requirementsMet.concat({
-      text: victimReqText,
-    });
+    // TODO(#8463): Handle conditional violations criteria
+    const customReqs = [];
+    const victimReqText = "Has no DOC-registered victim";
+    if (!this.record.metadata.victimFlag) {
+      customReqs.push({ text: victimReqText });
+    }
+    return super.requirementsMet.concat(customReqs);
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    // TODO(#8463): Handle conditional violations criteria
+    const customReqs = [];
+    const victimReqText =
+      "There are one or more registered victims for this case";
+    if (this.record.metadata.victimFlag) {
+      customReqs.push({ text: victimReqText });
+    }
+    return super.requirementsAlmostMet.concat(customReqs);
   }
 
   async handleAdditionalUndoActions(): Promise<void> {
