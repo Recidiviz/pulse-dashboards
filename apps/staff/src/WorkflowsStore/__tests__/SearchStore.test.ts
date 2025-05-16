@@ -508,11 +508,9 @@ describe("selectedSearchIds", () => {
       // user selects themselves
       searchStore.updateSelectedSearch([searchStore.selectedSearchIds[0]]);
 
-      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
-        mockSupervisor.info.email,
-        "US_ND",
-        [searchStore.selectedSearchIds[0]],
-      );
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([
+        searchStore.selectedSearchIds[0],
+      ]);
       expect(searchStore.selectedSearchIds).toEqual([
         searchStore.selectedSearchIds[0],
       ]);
@@ -523,11 +521,10 @@ describe("selectedSearchIds", () => {
         "ID2",
       ]);
 
-      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
-        mockSupervisor.info.email,
-        "US_ND",
-        [searchStore.selectedSearchIds[0], "ID2"],
-      );
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([
+        searchStore.selectedSearchIds[0],
+        "ID2",
+      ]);
       expect(searchStore.selectedSearchIds).toEqual([
         searchStore.selectedSearchIds[0],
         "ID2",
@@ -557,11 +554,9 @@ describe("default selected caseload", () => {
       };
 
       new SearchStore(workflowsStore as unknown as WorkflowsStore);
-      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
-        mockOfficer.info.email,
-        "US_ND",
-        [mockOfficer.info.id],
-      );
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([
+        mockOfficer.info.id,
+      ]);
     });
 
     test("defaults to self when no selected search and the state is search-by-incarceration-officer", async () => {
@@ -583,11 +578,9 @@ describe("default selected caseload", () => {
       };
 
       new SearchStore(workflowsStore as unknown as WorkflowsStore);
-      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
-        mockOfficer.info.email,
-        "US_ND",
-        [mockOfficer.info.id],
-      );
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([
+        mockOfficer.info.id,
+      ]);
     });
 
     test("defaults to no selected search if the user has no saved search and the state is not search-by-officer", async () => {
@@ -784,11 +777,7 @@ describe("trackCaseloadSearch - default caseload", () => {
     test("when not-currently selected pill was clicked", () => {
       searchStore.handleSearchPillClick("OFFICER", "INCARCERATION");
       expect(searchStore.searchTypeOverride).toEqual("OFFICER");
-      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith(
-        "test-officer-1@example.com",
-        "US_ND",
-        [],
-      );
+      expect(mockUpdatedSelectedSearchIds).toHaveBeenCalledWith([]);
     });
 
     test("when activeSystem is INCARCERATION", () => {

@@ -255,7 +255,6 @@ export class OpportunityPersonListPresenter
     if (this.shouldShowAllTabs) {
       this.firestoreStore
         .updateCustomTabOrderings(
-          this.workflowsStore.currentUserEmail,
           this.opportunityType,
           this.activeTabGroup,
           newTabOrder,

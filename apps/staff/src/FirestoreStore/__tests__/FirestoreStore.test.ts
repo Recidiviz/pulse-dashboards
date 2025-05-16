@@ -81,7 +81,7 @@ afterAll(() => {
 
 describe("FirestoreStore", () => {
   let store: FirestoreStore;
-  let mockRootStore = {} as RootStore;
+  let mockRootStore: RootStore;
   const opp: Opportunity = {
     person: { recordId: "us_id_123" },
     firestoreUpdateDocId: "LSU",
@@ -90,6 +90,12 @@ describe("FirestoreStore", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     tk.freeze(new Date("2022-01-01"));
+    mockRootStore = {
+      userStore: { user: { email: "user@domain.gov" } },
+      tenantStore: {
+        currentTenantId: "us_ca",
+      },
+    } as unknown as RootStore;
     store = new FirestoreStore({ rootStore: mockRootStore });
   });
 
@@ -196,6 +202,7 @@ describe("FirestoreStore", () => {
 
     test("Does not call setDoc when user is impersonating", () => {
       mockRootStore = {
+        ...mockRootStore,
         isImpersonating: true,
       } as unknown as RootStore;
       store = new FirestoreStore({ rootStore: mockRootStore });
@@ -212,6 +219,7 @@ describe("FirestoreStore", () => {
 
     test("Calls setDoc when user is not impersonating", () => {
       mockRootStore = {
+        ...mockRootStore,
         isImpersonating: false,
       } as unknown as RootStore;
       store = new FirestoreStore({ rootStore: mockRootStore });
@@ -228,6 +236,7 @@ describe("FirestoreStore", () => {
 
     test("Does not call updateDocument/updatePerson when user is impersonating", () => {
       mockRootStore = {
+        ...mockRootStore,
         isImpersonating: true,
       } as unknown as RootStore;
       store = new FirestoreStore({ rootStore: mockRootStore });
@@ -245,7 +254,9 @@ describe("FirestoreStore", () => {
 
     test("Does not call updateDocument/updatePerson for Recidiviz user in prod", () => {
       mockRootStore = {
+        ...mockRootStore,
         userStore: {
+          ...mockRootStore.userStore,
           isRecidivizUser: true,
         },
       } as unknown as RootStore;
@@ -268,10 +279,9 @@ describe("FirestoreStore", () => {
 
     test("Calls setDoc when user is not impersonating", () => {
       mockRootStore = {
+        ...mockRootStore,
         isImpersonating: false,
-        userStore: {
-          isRecidivizUser: false,
-        },
+        userStore: { ...mockRootStore.userStore, isRecidivizUser: false },
       } as unknown as RootStore;
       store = new FirestoreStore({ rootStore: mockRootStore });
       store.updateClientUpdatesV2Document("", {} as DocumentReference, {});
@@ -282,8 +292,10 @@ describe("FirestoreStore", () => {
   describe("firestore updates", () => {
     beforeEach(() => {
       mockRootStore = {
+        ...mockRootStore,
         isImpersonating: false,
         userStore: {
+          ...mockRootStore.userStore,
           isRecidivizUser: false,
         },
       } as unknown as RootStore;
@@ -649,12 +661,11 @@ describe("FirestoreStore", () => {
     test("updateSelectedSearchIds", () => {
       const selectedSearchIds = ["id1", "id2"];
       const userEmail = "user@domain.gov";
-      const stateCode = "us_ca";
       const update = {
         stateCode: "us_ca",
         selectedSearchIds,
       };
-      store.updateSelectedSearchIds(userEmail, stateCode, selectedSearchIds);
+      store.updateSelectedSearchIds(selectedSearchIds);
       expect(mockDoc.mock.calls).toEqual([
         [undefined, "userUpdates", userEmail],
       ]);
@@ -677,7 +688,6 @@ describe("FirestoreStore", () => {
       ];
       const userEmail = "user@domain.gov";
       store.updateDismissedOpportunityNotificationIds(
-        userEmail,
         dismissedOpportunityNotificationIds,
       );
       expect(mockDoc.mock.calls).toEqual([

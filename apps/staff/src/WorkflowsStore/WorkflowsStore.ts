@@ -232,11 +232,8 @@ export class WorkflowsStore implements Hydratable {
       // we don't really ever expect the user to change during a session,
       // so to prevent memory leaks we will not overwrite existing subscription objects
       if (!this.userUpdatesSubscription) {
-        this.userUpdatesSubscription = new CollectionDocumentSubscription(
-          firestoreStore,
-          { key: "userUpdates" },
-          email.toLowerCase(),
-        );
+        this.userUpdatesSubscription =
+          firestoreStore.buildUserUpdatesSubscription();
       }
       this.userUpdatesSubscription.hydrate();
 
@@ -391,10 +388,10 @@ export class WorkflowsStore implements Hydratable {
   dismissOpportunityNotification(notificationId: string): void {
     if (!this.user) return;
 
-    this.rootStore.firestoreStore.updateDismissedOpportunityNotificationIds(
-      this.user.info.email,
-      [...this.dismissedOpportunityNotificationIds, notificationId],
-    );
+    this.rootStore.firestoreStore.updateDismissedOpportunityNotificationIds([
+      ...this.dismissedOpportunityNotificationIds,
+      notificationId,
+    ]);
   }
 
   // Update the selected person to the person with the given pseudonymized ID

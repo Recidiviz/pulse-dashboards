@@ -190,8 +190,6 @@ export class SearchStore {
     if (!user || !this.workflowsStore.rootStore.currentTenantId) return;
 
     this.workflowsStore.rootStore.firestoreStore.updateSelectedSearchIds(
-      user.info.email,
-      this.workflowsStore.rootStore.currentTenantId,
       searchIds,
     );
 

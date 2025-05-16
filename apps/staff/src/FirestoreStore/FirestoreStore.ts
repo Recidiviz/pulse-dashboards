@@ -63,6 +63,7 @@ import {
   OpportunityTabGroup,
   UsTnExpirationOpportunity,
 } from "../WorkflowsStore";
+import { CollectionDocumentSubscription } from "../WorkflowsStore/subscriptions";
 import { getMonthYearFromDate } from "../WorkflowsStore/utils";
 import {
   AutoSnoozeUpdate,
@@ -75,6 +76,7 @@ import {
   OpportunityUpdateWithForm,
   PersonUpdateType,
   SupervisionTaskUpdate,
+  UserUpdateRecord,
   UsTnExpirationOpportunityUpdate,
   WorkflowsResidentRecord,
 } from "./types";
@@ -240,14 +242,28 @@ export default class FirestoreStore {
       };
   }
 
+  private get userUpdatesKey() {
+    const email = this.rootStore.userStore.user?.email?.toLowerCase();
+    if (!email) {
+      throw new Error("Trying to access user updates without a user email");
+    }
+    return email;
+  }
+
+  buildUserUpdatesSubscription() {
+    return new CollectionDocumentSubscription<UserUpdateRecord>(
+      this,
+      { key: "userUpdates" },
+      this.userUpdatesKey,
+    );
+  }
+
   /**
    * All updates to userUpdates in Firestore should utilitize this method, which first
    * sets the user email to all lowercase.
    */
-  updateUserUpdatesDocument(userEmail: string, update: any) {
-    const userUpdatesDocId = userEmail.toLowerCase();
-    const doc = this.doc({ key: "userUpdates" }, userUpdatesDocId);
-
+  updateUserUpdatesDocument(update: PartialWithFieldValue<UserUpdateRecord>) {
+    const doc = this.doc({ key: "userUpdates" }, this.userUpdatesKey);
     return this.updateDocument(doc, update);
   }
 
@@ -521,33 +537,29 @@ export default class FirestoreStore {
   }
 
   updateSelectedSearchIds(
-    userEmail: string,
-    stateCode: string,
     selectedSearchIds: string[],
   ): Promise<void> | undefined {
-    return this.updateUserUpdatesDocument(userEmail, {
-      stateCode,
+    return this.updateUserUpdatesDocument({
+      stateCode: this.rootStore.tenantStore.currentTenantId,
       selectedSearchIds,
     });
   }
 
   updateDismissedOpportunityNotificationIds(
-    userEmail: string,
     dismissedOpportunityNotificationIds: string[],
   ) {
-    return this.updateUserUpdatesDocument(userEmail, {
+    return this.updateUserUpdatesDocument({
       dismissedOpportunityNotificationIds,
     });
   }
 
   async updateCustomTabOrderings(
-    userEmail: string,
     opportunityToUpdate: OpportunityType,
     tabGroupToUpdate: OpportunityTabGroup,
     customTabOrdering: OpportunityTab[],
   ) {
     // Add the new opportunity-ordering pair to the existing record
-    const doc = this.doc({ key: "userUpdates" }, userEmail.toLowerCase());
+    const doc = this.doc({ key: "userUpdates" }, this.userUpdatesKey);
     const previousCustomOrderings =
       (await getDoc(doc)).get("customTabOrderings") ?? {};
     const customTabOrderings = {
@@ -557,13 +569,13 @@ export default class FirestoreStore {
         [tabGroupToUpdate]: customTabOrdering,
       },
     };
-    return this.updateUserUpdatesDocument(userEmail, {
+    return this.updateUserUpdatesDocument({
       customTabOrderings,
     });
   }
 
-  async updateListViewPreference(userEmail: string, showListView: boolean) {
-    return this.updateUserUpdatesDocument(userEmail, {
+  async updateListViewPreference(showListView: boolean) {
+    return this.updateUserUpdatesDocument({
       showListView,
     });
   }

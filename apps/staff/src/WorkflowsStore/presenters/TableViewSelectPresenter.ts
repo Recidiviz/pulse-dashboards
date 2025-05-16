@@ -51,9 +51,6 @@ export class TableViewSelectPresenter implements TableViewSelectInterface {
   }
 
   set showListView(showListView: boolean) {
-    this.firestoreStore.updateListViewPreference(
-      this.workflowsStore.currentUserEmail,
-      showListView,
-    );
+    this.firestoreStore.updateListViewPreference(showListView);
   }
 }
