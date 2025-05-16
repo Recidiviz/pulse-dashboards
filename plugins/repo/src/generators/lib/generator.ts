@@ -42,7 +42,6 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
   await createLibrary();
   extendProjectConfig();
   updateTsconfig();
-  updateEslintConfig();
   updateViteConfig();
   makeFilesFromTemplates();
   addLicenseHeaders();
@@ -98,7 +97,7 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
         "lint-files": {
           executor: "nx:run-commands",
           options: {
-            command: "eslint --max-warnings 0",
+            command: "eslint --max-warnings 0 --no-warn-ignored",
             cwd: "{projectRoot}",
           },
         },
@@ -143,19 +142,6 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
 
       return config;
     });
-  }
-
-  function updateEslintConfig() {
-    if (options.libType === "react") {
-      updateJson(tree, `${PROJECT_ROOT}/.eslintrc.json`, (config) => {
-        // these settings together let the linter recognize components wrapped in Mobx observers
-        // and require they be named functions (which is helpful for debugging)
-        config.rules = { "react/display-name": ["error"] };
-        config.settings = { componentWrapperFunctions: ["observer"] };
-
-        return config;
-      });
-    }
   }
 
   function updateViteConfig() {

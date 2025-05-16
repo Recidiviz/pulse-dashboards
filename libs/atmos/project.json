@@ -7,20 +7,22 @@
     "lint-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "eslint --max-warnings 0",
+        "command": "eslint --max-warnings 0 --no-warn-ignored",
         "cwd": "{projectRoot}"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "eslint 'components/terraform/apps/jii-texting/workflows/*.{yaml,yml}' --max-warnings 0",
+        "command": "eslint 'components/terraform/apps/jii-texting/workflows/*.{yaml,yml}' --max-warnings 0 --no-warn-ignored",
         "cwd": "{projectRoot}"
       }
     },
     "validate-workflows-yaml": {
       "executor": "nx:run-commands",
-      "inputs": ["{projectRoot}/components/terraform/apps/jii-texting/workflows"],
+      "inputs": [
+        "{projectRoot}/components/terraform/apps/jii-texting/workflows"
+      ],
       "options": {
         "command": "v8r -s https://json.schemastore.org/workflows.json '**.workflows.{yaml,yml}'",
         "cwd": "{projectRoot}/components/terraform/apps/jii-texting/workflows"
