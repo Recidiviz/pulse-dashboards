@@ -58,7 +58,7 @@ import {
   CaseStatusToDisplay,
   RecommendationStatusFilter,
 } from "./types";
-import { isBeforeDueDate } from "./utils";
+import { isBeforeDueDateWithExtraDayOffset } from "./utils";
 
 type CaseListTableProps = {
   caseTableData: CaseListTableCases;
@@ -144,7 +144,9 @@ const columns = [
     ) => {
       const statusValue = status.getValue();
       const isCancelledStatus = status.cell.row.original.isCancelled;
-      const statusOrArchived = isBeforeDueDate(status.cell.row.original.dueDate)
+      const statusOrArchived = isBeforeDueDateWithExtraDayOffset(
+        status.cell.row.original.dueDate,
+      )
         ? CaseStatusToDisplay[statusValue]
         : ARCHIVED_STATUS;
       const statusToDisplay = isCancelledStatus
@@ -250,7 +252,7 @@ export const CaseListTable = ({
   const dropdownRef = useDetectOutsideClick(() => setShowFilterDropdown(false));
 
   const [data, setData] = useState(
-    caseTableData.filter((dp) => isBeforeDueDate(dp.dueDate)), // Hide archived cases on initial load
+    caseTableData.filter((dp) => isBeforeDueDateWithExtraDayOffset(dp.dueDate)), // Hide archived cases on initial load
   );
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([
@@ -315,7 +317,7 @@ export const CaseListTable = ({
             // Include the case if it is cancelled and the CANCELLED_STATUS filter is active
             return includesCancelled;
           }
-          if (!isBeforeDueDate(datapoint.dueDate)) {
+          if (!isBeforeDueDateWithExtraDayOffset(datapoint.dueDate)) {
             // Include the case if it is archived and the ARCHIVED_STATUS filter is active
             return includesArchived;
           }

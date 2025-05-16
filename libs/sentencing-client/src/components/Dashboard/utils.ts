@@ -17,7 +17,23 @@
 
 import moment from "moment";
 
-export const isBeforeDueDate = (dueDate: Date | null) => {
+export const isBeforeDueDate = (dueDate: Date | null, offset?: number) => {
   if (!dueDate) return;
-  return moment().utc() < moment(dueDate).utc().add(1, "day");
+
+  return (
+    moment().utc() <
+    moment(dueDate)
+      .utc()
+      .add(offset ?? 1, "day")
+  );
+};
+
+export const isBeforeDueDateWithExtraDayOffset = (dueDate: Date | null) => {
+  if (!dueDate) return;
+  /**
+   * This due date offset will allow PSI an extra day to access their due cases within
+   * the Active status filter before they get archived
+   * @example a case that's due on 5/15/2025 should be archived on 5/17/2025
+   */
+  return isBeforeDueDate(dueDate, 2);
 };

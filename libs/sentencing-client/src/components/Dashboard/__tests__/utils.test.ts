@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isBeforeDueDate } from "../utils";
+import { isBeforeDueDate, isBeforeDueDateWithExtraDayOffset } from "../utils";
 
 describe("isBeforeDueDate", () => {
   it("should return true if today is before due date", () => {
@@ -43,4 +43,19 @@ describe("isBeforeDueDate", () => {
 
     expect(isBeforeDueDate(today)).toBe(true);
   });
+});
+
+test("isBeforeDueDateWithExtraDayOffset", () => {
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  const yesterday = new Date();
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  const twoDaysAgo = new Date();
+  twoDaysAgo.setUTCDate(twoDaysAgo.getUTCDate() - 2);
+
+  expect(isBeforeDueDateWithExtraDayOffset(today)).toBe(true);
+  expect(isBeforeDueDateWithExtraDayOffset(tomorrow)).toBe(true);
+  expect(isBeforeDueDateWithExtraDayOffset(yesterday)).toBe(true);
+  expect(isBeforeDueDateWithExtraDayOffset(twoDaysAgo)).toBe(false);
 });
