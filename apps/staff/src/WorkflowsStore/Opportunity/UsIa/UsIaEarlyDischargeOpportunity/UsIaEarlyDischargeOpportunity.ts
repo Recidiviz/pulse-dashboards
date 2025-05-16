@@ -250,4 +250,8 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   async handleAdditionalUndoActions(): Promise<void> {
     await this.deleteActionHistory();
   }
+
+  get showRevertLinkFallback(): boolean {
+    return this.clientStatus !== "ELIGIBLE_NOW";
+  }
 }

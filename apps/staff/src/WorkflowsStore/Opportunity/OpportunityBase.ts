@@ -849,6 +849,12 @@ export class OpportunityBase<
     return undefined;
   }
 
+  // Used to supplement the default revert link display logic and show the "Revert Changes" link based on opportunity-specific
+  // custom logic when default conditions fail
+  get showRevertLinkFallback(): boolean {
+    return false;
+  }
+
   get caseNoteHeaders() {
     return this.config.caseNoteHeaders;
   }

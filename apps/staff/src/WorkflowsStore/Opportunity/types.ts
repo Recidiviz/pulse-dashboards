@@ -173,6 +173,7 @@ export interface Opportunity<
   requiresRevertConfirmation: boolean;
   revertConfirmationCopy: RevertConfirmationCopy;
   handleAdditionalUndoActions: () => Promise<void>;
+  showRevertLinkFallback: boolean;
   caseNoteHeaders: string[];
   generateCaseNoteText?: string;
 }

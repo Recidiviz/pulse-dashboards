@@ -159,4 +159,5 @@ export const mockOpportunity: Opportunity<Client> = {
     descriptionText: "This action cannot be undone.",
   },
   handleAdditionalUndoActions: async () => undefined,
+  showRevertLinkFallback: false,
 };

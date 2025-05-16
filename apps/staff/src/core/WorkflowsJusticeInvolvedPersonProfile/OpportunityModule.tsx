@@ -155,9 +155,18 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       tenantStore.labels,
     );
 
-    const showRevertLink = !(
-      hideDenialRevert && opportunity.config.hideDenialRevert
-    );
+    const hasActedOnAndResurfaceText = actedOnText && resurfaceText;
+
+    const shouldHideDenialRevert =
+      hideDenialRevert && opportunity.config.hideDenialRevert;
+
+    const denialRevertEnabled =
+      !shouldHideDenialRevert && hasActedOnAndResurfaceText;
+
+    const showRevertLink =
+      denialRevertEnabled ||
+      opportunity.isSubmitted ||
+      opportunity.showRevertLinkFallback;
 
     const showActionButtons =
       (showUpdateStatusButton || formLinkButton) && !hideActionButtons;
@@ -238,13 +247,11 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
                   opportunity={opportunity}
                   onDenialButtonClick={onDenialButtonClick}
                 />
-                {showRevertLink &&
-                  ((actedOnText && resurfaceText) ||
-                    opportunity.isSubmitted) && (
-                    <RevertChangesButtonLink onClick={handleUndoClick}>
-                      Revert Changes
-                    </RevertChangesButtonLink>
-                  )}
+                {showRevertLink && (
+                  <RevertChangesButtonLink onClick={handleUndoClick}>
+                    Revert Changes
+                  </RevertChangesButtonLink>
+                )}
               </>
             )}
           </ActionButtons>
