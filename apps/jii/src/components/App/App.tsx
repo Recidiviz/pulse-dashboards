@@ -45,6 +45,7 @@ import { PageHome } from "../pages/PageHome";
 import { PageOpportunityComparison } from "../pages/PageOpportunityComparison";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
 import { PageOpportunityEligibilityHome } from "../pages/PageOpportunityEligibilityHome";
+import { PageOrijinSSO } from "../pages/PageOrijinSSO";
 import { PageProgressInfoPage } from "../pages/PageProgressInfoPage";
 import { PageResidentsRoot } from "../pages/PageResidentsRoot";
 import { PageRoot } from "../pages/PageRoot";
@@ -158,6 +159,10 @@ export function App() {
 
                 <Route path="*" element={<NotFound />} />
               </Route>
+              <Route
+                path={routes.OrijinSSOPage.path}
+                element={<PageOrijinSSO />}
+              />
             </Route>
           </SentryRoutes>
         </StyledApp>

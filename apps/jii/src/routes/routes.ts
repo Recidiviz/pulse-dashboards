@@ -25,6 +25,8 @@ export const ReturnToPathFragment = route("", {
   searchParams: { returnToPath: string() },
 });
 
+export const OrijinSSOPage = route("orijin/sso");
+
 export const EdovoLandingPage = route("edovo/:token");
 
 const InfoPage = route(":pageSlug");

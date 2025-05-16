@@ -219,6 +219,8 @@ export class AuthClient<AppMetadata extends z.ZodType<object> = z.ZodTypeAny>
    * Redirects to the Auth0 login flow.
    * @param targetPath User's final destination after successful login. Defaults to the current path,
    * pass a different value to override
+   * @param connection The name of the connection to use for login.
+   * If not provided, the default connection will be used.
    */
   async logIn({
     targetPath,
