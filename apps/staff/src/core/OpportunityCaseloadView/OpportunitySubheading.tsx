@@ -72,7 +72,10 @@ const OpportunitySubheading = ({ subheading }: OpportunitySubheadingProps) => {
 
   return (
     <OpportunityStyledSubheading>
-      <StyledMarkdownView markdown={visibleSubheading} />
+      <StyledMarkdownView
+        markdown={visibleSubheading}
+        options={{ openLinksInNewWindow: true }}
+      />
       {isMobile &&
         subheading.length > MOBILE_SUBHEADING_CUTOFF &&
         (expanded ? (
