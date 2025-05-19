@@ -196,7 +196,8 @@ if (deployEnv === "demo") {
 const deployServicesPrompt = await inquirer.prompt({
   type: "checkbox",
   name: "deployServices",
-  message: "Which services would you like to deploy?",
+  message:
+    "Deploying all services by default. Press 'Enter' to proceed or deselect the services you wish to exclude.",
   choices: deployServicesChoices,
 });
 
