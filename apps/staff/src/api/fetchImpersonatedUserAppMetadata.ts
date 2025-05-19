@@ -40,5 +40,9 @@ export async function fetchImpersonatedUserAppMetadata(
     );
   }
   const userAppMetadata = await response.json();
-  return userAppMetadata;
+  return {
+    ...userAppMetadata,
+    allowedSupervisionLocationIds:
+      userAppMetadata.allowedSupervisionLocationIds?.split(","),
+  };
 }
