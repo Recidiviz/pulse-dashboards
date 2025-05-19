@@ -213,6 +213,9 @@ const deployCaseNotes =
 const deployDemoFixtures =
   deployServicesPrompt.deployServices.includes("Demo fixtures");
 
+console.log("Running nx reset...");
+await $`nx reset`.pipe(process.stdout);
+
 console.log("Installing yarn packages...");
 await $`yarn install`.pipe(process.stdout);
 
