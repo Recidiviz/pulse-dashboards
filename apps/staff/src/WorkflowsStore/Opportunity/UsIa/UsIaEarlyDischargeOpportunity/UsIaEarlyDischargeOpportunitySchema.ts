@@ -24,7 +24,6 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z
       .object({
-        noSupervisionViolationWithin6Months: z.boolean().nullable(),
         supervisionCaseTypeIsNotSexOffense: z.boolean().nullable(),
         usIaNoOpenSupervisionModifiers: z.boolean().nullable(),
         usIaNotServingIneligibleOffenseForEarlyDischarge: z
