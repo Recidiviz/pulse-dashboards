@@ -31,7 +31,7 @@ test("transforms record with FTCD and PED set", () => {
       notServingForSexualOffense: null,
       usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-      usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
+      incarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
         fullTermCompletionDate: "2022-08-12",
         paroleEligibilityDate: "2022-03-19",
         groupProjectedParoleReleaseDate: null,
@@ -63,7 +63,7 @@ test("transforms record with TPD set", () => {
       notServingForSexualOffense: null,
       usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-      usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
+      incarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
         fullTermCompletionDate: null,
         paroleEligibilityDate: null,
         groupProjectedParoleReleaseDate: "2022-07-11",
@@ -95,7 +95,7 @@ test("transforms record with caseNotes set", () => {
       notServingForSexualOffense: null,
       usIdNotDetainersForXcrcAndCrc: null,
       usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years: null,
-      usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
+      incarcerationWithin6MonthsOfFtcdOrPedOrTpd: {
         fullTermCompletionDate: null,
         paroleEligibilityDate: null,
         groupProjectedParoleReleaseDate: "2022-07-11",
