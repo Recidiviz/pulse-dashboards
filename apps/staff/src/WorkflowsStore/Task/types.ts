@@ -65,8 +65,11 @@ type UsTxContactDetails = {
   frequency: string;
 };
 
-type UsTxHomeContactScheduledDetails = UsTxContactDetails & {
-  overrideContactType: null | "SCHEDULED HOME (VIRTUAL)";
+type UsTxOverridableContactDetails = UsTxContactDetails & {
+  overrideContactType:
+    | null
+    | "SCHEDULED HOME (VIRTUAL)"
+    | "UNSCHEDULED HOME (VIRTUAL)";
   officerInCriticallyUnderstaffedLocation: boolean;
 };
 
@@ -76,6 +79,8 @@ type UsTxTypeAgnosticContactDetails = {
   lastContactDate: string | null;
   overdueFlag: boolean;
   contactTypesAccepted: string;
+  officerInCriticallyUnderstaffedLocation: boolean;
+  overrideContactTypesAccepted: string;
 };
 
 type UsTxEdgeCaseContactDetails = {
@@ -138,8 +143,8 @@ export type SupervisionDetailsForTask = {
   employment: UsIdEmploymentDetails;
   usTxCollateralContactScheduled: UsTxContactDetails;
   usTxTypeAgnosticContact: UsTxTypeAgnosticContactDetails;
-  usTxHomeContactScheduled: UsTxHomeContactScheduledDetails;
-  usTxHomeContactUnscheduled: UsTxContactDetails;
+  usTxHomeContactScheduled: UsTxOverridableContactDetails;
+  usTxHomeContactUnscheduled: UsTxOverridableContactDetails;
   usTxHomeContactEdgeCase: UsTxEdgeCaseContactDetails;
   usTxInCustodyContact: UsTxContactDetails;
   usTxOfficeContactScheduled: UsTxContactDetails;
