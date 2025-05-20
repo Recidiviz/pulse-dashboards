@@ -205,7 +205,13 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
             value: "Sex offender",
           },
           {
-            value: "Substance abuse",
+            value: "Substance abuse - phase 1",
+          },
+          {
+            value: "Substance abuse - phase 2",
+          },
+          {
+            value: "Substance abuse - phase 3",
           },
           {
             value: "Mentally ill",
