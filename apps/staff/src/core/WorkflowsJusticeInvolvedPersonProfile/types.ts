@@ -45,6 +45,8 @@ export type OpportunitySidebarProfileProps = {
   opportunity?: Opportunity;
   formLinkButton?: boolean;
   formView?: boolean;
+  shouldTrackOpportunityPreviewed?: boolean;
   onDenialButtonClick?: () => void;
+  onSubmit?: () => void;
   selectedPerson: JusticeInvolvedPerson | undefined;
 };

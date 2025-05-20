@@ -86,6 +86,7 @@ import PersonId from "../PersonId";
 import { Heading, MaxWidth } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
 import { EligibilityStatusPill } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityModuleHeader";
+import { OpportunitySidePanelProvider } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
 import { CaseloadTable, CaseloadTableManualSorting } from "./CaseloadTable";
@@ -652,7 +653,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
   } = presenter;
 
   return (
-    <>
+    <OpportunitySidePanelProvider>
       <MaxWidthWrapper>
         <Heading isMobile={isMobile}>
           {presenter.label}{" "}
@@ -761,7 +762,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         navigableOpportunities={presenter.navigablePeople}
         selectedPerson={presenter.selectedPerson}
       />
-    </>
+    </OpportunitySidePanelProvider>
   );
 });
 

@@ -49,6 +49,7 @@ import {
 import { UsUtDates } from "./ClientDetailSidebarComponents/UsUtDates";
 import ClientDetailsInput from "./ClientDetailsInput";
 import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
+import { OpportunitySidePanelProvider } from "./OpportunitySidePanelContext";
 import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
 import { ResidentHousing } from "./ResidentDetailSidebarComponents/ResidentHousing";
@@ -430,7 +431,9 @@ export const FullProfile = observer(
             </ProfileDetailsWrapper>
             <div>
               <SectionHeading>Opportunities</SectionHeading>
-              <OpportunitiesAccordion person={person} formLinkButton />
+              <OpportunitySidePanelProvider>
+                <OpportunitiesAccordion person={person} formLinkButton />
+              </OpportunitySidePanelProvider>
             </div>
           </Content>
         </Wrapper>

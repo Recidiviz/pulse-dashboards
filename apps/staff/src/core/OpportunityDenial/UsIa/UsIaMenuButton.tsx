@@ -19,12 +19,13 @@ import { Dropdown, DropdownMenu } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
 
+import { useRootStore } from "../../../components/StoreProvider";
 import {
   UsIaClientStatus,
   UsIaEarlyDischargeOpportunity,
 } from "../../../WorkflowsStore/Opportunity/UsIa";
-import { useOpportunitySidePanel } from "../../OpportunityCaseloadView/OpportunityPreviewModal";
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
+import { useOpportunitySidePanel } from "../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import {
   OpportunityStatusDropdownMenuItem,
   StatusAwareToggle,
@@ -49,6 +50,7 @@ const UsIaMenuButton = observer(function MenuButton({
   markSubmittedAndToast: (subcategory?: string) => Promise<void>;
   deleteSubmitted: () => Promise<void>;
 }) {
+  const { workflowsStore } = useRootStore();
   const { setCurrentView } = useOpportunitySidePanel();
   const { latestAction, clientStatus } = opportunity;
 
@@ -161,7 +163,12 @@ const UsIaMenuButton = observer(function MenuButton({
         {dropdownOptionsByStatus[clientStatus].map((option) => (
           <OpportunityStatusDropdownMenuItem
             key={option.label}
-            onClick={option.onClick}
+            onClick={() => {
+              option.onClick();
+              workflowsStore.updateSelectedOpportunityOnFullProfile(
+                opportunity,
+              );
+            }}
           >
             {option.label}
           </OpportunityStatusDropdownMenuItem>

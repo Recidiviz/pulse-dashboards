@@ -24,6 +24,7 @@ export type OPPORTUNITY_SIDE_PANEL_VIEW =
   | "US_IA_REQUEST_REVISIONS";
 
 export type OpportunitySidePanelContextType = {
+  currentView: OPPORTUNITY_SIDE_PANEL_VIEW;
   setCurrentView(view: OPPORTUNITY_SIDE_PANEL_VIEW): void;
 };
 
@@ -32,11 +33,15 @@ export type SidePanelConfigProps = {
   onBackClick?: () => void;
   pageContent: JSX.Element;
   footerContent?: JSX.Element;
+  onSubmit?: () => void;
 };
 
 export type SidePanelConfigSetupProps = {
   opportunity: Opportunity;
   selectedPerson: JusticeInvolvedPerson | undefined;
-  resetPreviewView: () => void;
   navigableOpportunities: Opportunity[] | undefined;
+  shouldTrackOpportunityPreviewed?: boolean;
+  resetPreviewView: () => void;
+  onSubmit?: () => void;
+  handleTrackPreviewed: () => void;
 };

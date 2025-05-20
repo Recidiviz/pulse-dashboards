@@ -125,6 +125,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
     opportunity,
     formLinkButton = false,
     formView = false,
+    shouldTrackOpportunityPreviewed = true,
     onDenialButtonClick = () => null,
   }) {
     const {
@@ -144,6 +145,7 @@ export const OpportunityProfile: React.FC<OpportunitySidebarProfileProps> =
           formLinkButton={formLinkButton}
           onDenialButtonClick={onDenialButtonClick}
           justiceInvolvedPersonTitle={justiceInvolvedPersonTitle}
+          shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
         />
 
         {opportunity.config.sidebarComponents.map((componentName) => {

@@ -25,26 +25,42 @@ export function getUsIaSidePanelViewConfigs(
   "US_IA_MARK_ELIGIBLE_FOR_APPROVAL" | "US_IA_REQUEST_REVISIONS",
   SidePanelConfigProps
 > {
-  const { opportunity, resetPreviewView } = panelConfigSetupProps;
+  const {
+    opportunity,
+    selectedPerson,
+    resetPreviewView,
+    onSubmit,
+    handleTrackPreviewed,
+    shouldTrackOpportunityPreviewed,
+  } = panelConfigSetupProps;
 
   return {
     US_IA_MARK_ELIGIBLE_FOR_APPROVAL: {
-      onAfterOpen: () => opportunity.trackPreviewed(),
+      onAfterOpen: handleTrackPreviewed,
       onBackClick: resetPreviewView,
       pageContent: (
         <UsIaOfficerApprovalView
           opportunity={opportunity}
-          resetPreviewView={resetPreviewView}
+          selectedPerson={selectedPerson}
+          shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
+          onSubmit={() => {
+            onSubmit?.();
+            resetPreviewView();
+          }}
         />
       ),
     },
     US_IA_REQUEST_REVISIONS: {
-      onAfterOpen: () => opportunity.trackPreviewed(),
+      onAfterOpen: handleTrackPreviewed,
       onBackClick: resetPreviewView,
       pageContent: (
         <UsIaRequestRevisionsView
           opportunity={opportunity}
-          resetPreviewView={resetPreviewView}
+          selectedPerson={selectedPerson}
+          onSubmit={() => {
+            onSubmit?.();
+            resetPreviewView();
+          }}
         />
       ),
     },

@@ -32,11 +32,11 @@ import styled from "styled-components/macro";
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
-import { OpportunityDenialView } from "../OpportunityDenial";
+import { OpportunityPreviewModal } from "../OpportunityCaseloadView/OpportunityPreviewModal";
 import { useStatusColors } from "../utils/workflowsUtils";
-import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { OpportunityModule } from "./OpportunityModule";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
+import { useOpportunitySidePanel } from "./OpportunitySidePanelContext";
 
 const OpportunityWrapper = styled.div<{ background: string; border: string }>`
   background-color: ${({ background: backgroundColor }) => backgroundColor};
@@ -124,11 +124,13 @@ export const AccordionSection = observer(function AccordionSection({
   opportunity,
   formLinkButton = false,
   hideActionButtons = false,
+  shouldTrackOpportunityPreviewed = true,
   onDenialButtonClick = () => null,
 }: {
   opportunity: Opportunity;
   formLinkButton?: boolean;
   hideActionButtons?: boolean;
+  shouldTrackOpportunityPreviewed?: boolean;
   onDenialButtonClick?: () => void;
 }) {
   const colors = useStatusColors(opportunity);
@@ -150,6 +152,9 @@ export const AccordionSection = observer(function AccordionSection({
                 opportunity={opportunity}
                 formLinkButton={formLinkButton && !!opportunity.form}
                 hideActionButtons={hideActionButtons}
+                shouldTrackOpportunityPreviewed={
+                  shouldTrackOpportunityPreviewed
+                }
                 onDenialButtonClick={onDenialButtonClick}
               />
             )}
@@ -173,6 +178,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
     workflowsStore,
     workflowsStore: { opportunityTypes, selectedOpportunityOnFullProfile },
   } = useRootStore();
+  const { setCurrentView } = useOpportunitySidePanel();
 
   const opportunities = sortBy(
     Object.values(person.opportunities)
@@ -195,6 +201,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
     >
       {opportunities.map((opportunity) => {
         if (!opportunity) return undefined;
+
         return (
           <AccordionSection
             key={`${opportunity.accordionKey}-${opportunity.selectId}`}
@@ -204,24 +211,22 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
               workflowsStore.updateSelectedOpportunityOnFullProfile(
                 opportunity,
               );
+              setCurrentView("MARK_INELIGIBLE");
             }}
           />
         );
       })}
-      <WorkflowsPreviewModal
-        isOpen={!!selectedOpportunityOnFullProfile}
-        clearSelectedPersonOnClose={false}
+      <OpportunityPreviewModal
+        opportunity={selectedOpportunityOnFullProfile}
+        selectedPerson={person}
         onClose={() =>
           workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
         }
-        pageContent={
-          <OpportunityDenialView
-            onSubmit={() =>
-              workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
-            }
-            opportunity={selectedOpportunityOnFullProfile}
-          />
+        onSubmit={() =>
+          workflowsStore.updateSelectedOpportunityOnFullProfile(undefined)
         }
+        clearSelectedPersonOnClose={false}
+        shouldTrackOpportunityPreviewed={false}
       />
     </AccordionWrapper>
   );

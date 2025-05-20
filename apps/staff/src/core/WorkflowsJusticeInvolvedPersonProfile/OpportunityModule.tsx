@@ -102,6 +102,7 @@ type OpportunityModuleProps = {
   opportunity: Opportunity;
   hideHeader?: boolean;
   hideActionButtons?: boolean;
+  shouldTrackOpportunityPreviewed?: boolean;
   onDenialButtonClick?: () => void;
 };
 
@@ -112,6 +113,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     opportunity,
     hideHeader = false,
     hideActionButtons = false,
+    shouldTrackOpportunityPreviewed = true,
     onDenialButtonClick = () => null,
   }) {
     const { tenantStore } = useRootStore();
@@ -135,9 +137,11 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
           // Only set last viewed from workflows, not from insights
           opportunity.setLastViewed();
         }
-        opportunity.trackPreviewed();
+        if (shouldTrackOpportunityPreviewed) {
+          opportunity.trackPreviewed();
+        }
       }
-    }, [opportunity, isVisible, pathname]);
+    }, [opportunity, isVisible, pathname, shouldTrackOpportunityPreviewed]);
 
     const colors = useStatusColors(opportunity);
     const showUpdateStatusButton =

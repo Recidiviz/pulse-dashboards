@@ -25,7 +25,6 @@ import styled from "styled-components/macro";
 import { CharacterCountTextField } from "../../../components/CharacterCountTextField/CharacterCountTextField";
 import Checkbox from "../../../components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";
-import { Opportunity } from "../../../WorkflowsStore";
 import { UsIaEarlyDischargeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
 import {
   DEFAULT_MAX_CHAR_LENGTH,
@@ -33,6 +32,7 @@ import {
 } from "../../constants";
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { OpportunityOverview } from "../OpportunityOverview";
+import { OpportunitySidebarProfileProps } from "../types";
 
 const ConfirmationOfDataInvestigationContainer = styled.div`
   display: flex;
@@ -60,13 +60,11 @@ const SaveButton = styled(Button)`
   padding: 14px ${rem(spacing.md)};
 `;
 
-export const UsIaOfficerApprovalView = observer(
-  function UsIaOfficerApprovalView({
+export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
+  observer(function UsIaOfficerApprovalView({
     opportunity,
-    resetPreviewView,
-  }: {
-    opportunity: Opportunity;
-    resetPreviewView: () => void;
+    shouldTrackOpportunityPreviewed = true,
+    onSubmit,
   }) {
     const {
       workflowsStore: { justiceInvolvedPersonTitle },
@@ -76,7 +74,7 @@ export const UsIaOfficerApprovalView = observer(
     const [additionalNotes, setAdditionalNotes] = useState("");
 
     if (
-      !opportunity.person ||
+      !opportunity?.person ||
       !(opportunity instanceof UsIaEarlyDischargeOpportunity)
     ) {
       return null;
@@ -104,9 +102,8 @@ export const UsIaOfficerApprovalView = observer(
             duration: 7000,
           },
         );
-
-        resetPreviewView();
       }
+      onSubmit?.();
     };
 
     return (
@@ -114,6 +111,7 @@ export const UsIaOfficerApprovalView = observer(
         <OpportunityOverview
           opportunity={opportunity}
           justiceInvolvedPersonTitle={justiceInvolvedPersonTitle}
+          shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
           hideActionButtons
         />
         <ConfirmationOfDataInvestigationContainer>
@@ -151,5 +149,4 @@ export const UsIaOfficerApprovalView = observer(
         </ConfirmationOfDataInvestigationContainer>
       </article>
     );
-  },
-);
+  });

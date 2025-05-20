@@ -15,17 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createContext, useContext, useRef, useState } from "react";
+import { useRef } from "react";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { OpportunityProfileFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
+import { useOpportunitySidePanel } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import {
   OPPORTUNITY_SIDE_PANEL_VIEW,
-  OpportunitySidePanelContextType,
   SidePanelConfigProps,
+  SidePanelConfigSetupProps,
 } from "./types";
 import { getUsIaSidePanelViewConfigs } from "./UsIa/UsIaSidePanelViews";
 
@@ -33,25 +34,22 @@ type OpportunityCaseloadProps = {
   opportunity?: Opportunity;
   navigableOpportunities?: Opportunity[];
   selectedPerson: JusticeInvolvedPerson | undefined;
+  onClose?: () => void;
+  onSubmit?: () => void;
+  clearSelectedPersonOnClose?: boolean;
+  shouldTrackOpportunityPreviewed?: boolean;
 };
-
-export const OpportunitySidePanelContext =
-  createContext<OpportunitySidePanelContextType>({
-    setCurrentView: () => null,
-  });
-
-export function useOpportunitySidePanel() {
-  return useContext(OpportunitySidePanelContext);
-}
 
 export function OpportunityPreviewModal({
   opportunity,
   navigableOpportunities,
   selectedPerson,
+  onClose,
+  onSubmit,
+  clearSelectedPersonOnClose,
+  shouldTrackOpportunityPreviewed = true,
 }: OpportunityCaseloadProps): JSX.Element | null {
-  const [currentView, setCurrentView] = useState<OPPORTUNITY_SIDE_PANEL_VIEW>(
-    "OPPORTUNITY_PREVIEW",
-  );
+  const { currentView, setCurrentView } = useOpportunitySidePanel();
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -61,17 +59,26 @@ export function OpportunityPreviewModal({
     setCurrentView("OPPORTUNITY_PREVIEW");
   }
 
+  const handleTrackPreviewed = () =>
+    shouldTrackOpportunityPreviewed && opportunity.trackPreviewed();
+
   // Used for setting up a new side panel view config
-  const panelConfigSetupProps = {
+  const panelConfigSetupProps: SidePanelConfigSetupProps = {
     opportunity,
     selectedPerson,
     resetPreviewView,
     navigableOpportunities,
+    onSubmit,
+    handleTrackPreviewed,
+    shouldTrackOpportunityPreviewed,
   };
 
   const defaultProps = {
     isOpen: true,
-    onClose: resetPreviewView,
+    onClose: () => {
+      onClose?.();
+      resetPreviewView();
+    },
     contentRef: modalRef,
   };
 
@@ -80,19 +87,21 @@ export function OpportunityPreviewModal({
     SidePanelConfigProps
   > = {
     OPPORTUNITY_PREVIEW: {
-      onAfterOpen: () => opportunity.trackPreviewed(),
+      onAfterOpen: handleTrackPreviewed,
       pageContent: (
         <OpportunityProfile
           opportunity={opportunity}
           formLinkButton={!!opportunity.form}
           onDenialButtonClick={() => setCurrentView("MARK_INELIGIBLE")}
           selectedPerson={selectedPerson}
+          shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
         />
       ),
       footerContent: (
         <OpportunityProfileFooter
           currentOpportunity={opportunity}
           navigableOpportunities={navigableOpportunities}
+          handleTrackPreviewed={handleTrackPreviewed}
         />
       ),
     },
@@ -101,7 +110,10 @@ export function OpportunityPreviewModal({
       pageContent: (
         <OpportunityDenialView
           opportunity={opportunity}
-          onSubmit={resetPreviewView}
+          onSubmit={() => {
+            onSubmit?.();
+            resetPreviewView();
+          }}
         />
       ),
     },
@@ -112,14 +124,13 @@ export function OpportunityPreviewModal({
     sidePanelViewConfigs[currentView];
 
   return (
-    <OpportunitySidePanelContext.Provider value={{ setCurrentView }}>
-      <WorkflowsPreviewModal
-        {...defaultProps}
-        onAfterOpen={onAfterOpen}
-        onBackClick={onBackClick}
-        pageContent={pageContent}
-        footerContent={footerContent}
-      />
-    </OpportunitySidePanelContext.Provider>
+    <WorkflowsPreviewModal
+      {...defaultProps}
+      onAfterOpen={onAfterOpen}
+      onBackClick={onBackClick}
+      pageContent={pageContent}
+      footerContent={footerContent}
+      clearSelectedPersonOnClose={clearSelectedPersonOnClose}
+    />
   );
 }

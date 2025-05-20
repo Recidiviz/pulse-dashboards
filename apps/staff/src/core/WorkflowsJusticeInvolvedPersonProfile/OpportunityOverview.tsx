@@ -27,6 +27,7 @@ type OpportunityOverviewProps = {
   onDenialButtonClick?: () => void;
   justiceInvolvedPersonTitle: string;
   hideActionButtons?: boolean;
+  shouldTrackOpportunityPreviewed?: boolean;
 };
 
 export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
@@ -35,6 +36,7 @@ export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
   onDenialButtonClick,
   justiceInvolvedPersonTitle,
   hideActionButtons,
+  shouldTrackOpportunityPreviewed = true,
 }) => {
   const { personSpecificOppBanners } = useFeatureVariants();
   const selectedPerson = opportunity?.person;
@@ -57,6 +59,7 @@ export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
           formLinkButton={formLinkButton}
           onDenialButtonClick={onDenialButtonClick}
           hideActionButtons={hideActionButtons}
+          shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
         />
       </AccordionWrapper>
     </>

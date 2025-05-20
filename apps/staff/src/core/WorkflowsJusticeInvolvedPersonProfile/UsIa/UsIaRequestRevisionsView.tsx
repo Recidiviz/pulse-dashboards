@@ -30,7 +30,6 @@ import {
   SidePanelContents,
   SidePanelHeader,
 } from "../../../core/sharedComponents";
-import { Opportunity } from "../../../WorkflowsStore";
 import { UsIaEarlyDischargeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
 import {
   DEFAULT_MAX_CHAR_LENGTH,
@@ -39,18 +38,16 @@ import {
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { Heading } from "../Heading";
 import { UsIaActionPlansAndNotes } from "../OpportunityDetailSidebarComponents";
+import { OpportunitySidebarProfileProps } from "../types";
 
 const TextFieldContainer = styled.div`
   margin-bottom: ${rem(spacing.md)};
 `;
 
-export const UsIaRequestRevisionsView = observer(
-  function UsIaRequestRevisionsView({
+export const UsIaRequestRevisionsView: React.FC<OpportunitySidebarProfileProps> =
+  observer(function UsIaRequestRevisionsView({
     opportunity,
-    resetPreviewView,
-  }: {
-    opportunity?: Opportunity;
-    resetPreviewView: () => void;
+    onSubmit,
   }): JSX.Element | null {
     const [revisionRequest, setRevisionRequest] = useState("");
 
@@ -79,7 +76,7 @@ export const UsIaRequestRevisionsView = observer(
         },
       );
 
-      resetPreviewView();
+      onSubmit?.();
     };
 
     return (
@@ -129,5 +126,4 @@ export const UsIaRequestRevisionsView = observer(
         </ActionButton>
       </SidePanelContents>
     );
-  },
-);
+  });

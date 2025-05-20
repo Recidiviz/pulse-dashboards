@@ -61,9 +61,11 @@ const NavigationKeyboardShortcutIcon = styled.span`
 export const OpportunityProfileFooter = ({
   currentOpportunity,
   navigableOpportunities,
+  handleTrackPreviewed,
 }: {
   currentOpportunity: Opportunity;
   navigableOpportunities?: Opportunity[];
+  handleTrackPreviewed: () => void;
 }) => {
   const { workflowsStore } = useRootStore();
 
@@ -73,7 +75,7 @@ export const OpportunityProfileFooter = ({
       navigableItems={navigableOpportunities}
       onNavigate={(opp: Opportunity) => {
         workflowsStore.updateSelectedPersonAndOpportunity(opp);
-        opp.trackPreviewed();
+        handleTrackPreviewed();
       }}
       itemLabel={"Opportunity"}
     />
