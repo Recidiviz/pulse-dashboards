@@ -42,16 +42,14 @@ import { UsIaEarlyDischargeOpportunity } from "../../WorkflowsStore/Opportunity/
 import { getSnoozeUntilDate } from "../../WorkflowsStore/utils";
 import { DEFAULT_MAX_CHAR_LENGTH, DEFAULT_MIN_CHAR_LENGTH } from "../constants";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
-import {
-  reasonsIncludesKey,
-  reasonsIncludesOtherKey,
-} from "../utils/workflowsUtils";
+import { reasonsIncludesOtherKey } from "../utils/workflowsUtils";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import {
   buildDenialReasonsListText,
   buildResurfaceText,
 } from "../WorkflowsJusticeInvolvedPersonProfile/MarkedIneligibleReasons";
 import { DenialConfirmationModals } from "./DenialConfirmationModals";
+import { UsIaManageActionPlan } from "./UsIa/UsIaManageActionPlan";
 
 const SliderWrapper = styled.div`
   width: 100%;
@@ -75,8 +73,6 @@ const SnoozeUntilReminderText = styled(Sans14)`
   color: ${palette.slate85};
 `;
 
-const PUBLIC_SAFETY_KEY = "PUBLIC SAFETY";
-
 export const OpportunityDenialView = observer(function OpportunityDenialView({
   opportunity,
   onSubmit = () => null,
@@ -88,14 +84,20 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     tenantStore: { labels },
   } = useRootStore();
 
-  const [reasons, setReasons] = useState<string[]>(
-    opportunity?.denial?.reasons ?? [],
-  );
+  const isIaEDOpportunity =
+    opportunity instanceof UsIaEarlyDischargeOpportunity;
+
+  // The `UsIaEarlyDischargeOpportunity` temporarily stores denial reasons in a separate field
+  // until the denial is submitted.
+  const initialDenialReasons =
+    isIaEDOpportunity && opportunity.latestAction?.type === "DENIAL"
+      ? opportunity.latestAction.denialReasons
+      : opportunity?.denial?.reasons;
+
+  const [reasons, setReasons] = useState<string[]>(initialDenialReasons ?? []);
   const [otherReason, setOtherReason] = useState<string>(
     opportunity?.denial?.otherReason ?? "",
   );
-
-  const [actionPlanText, setActionPlanText] = useState<string>("");
 
   const [snoozeForDays, setSnoozeForDays] = useState<number>(
     opportunity?.manualSnooze?.snoozeForDays ?? 0,
@@ -188,38 +190,12 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     onSubmit();
   };
 
-  const submitUsIaEarlyDischargeActionPlan = async (
-    usIaOpportunity: UsIaEarlyDischargeOpportunity,
-  ) => {
-    // If client is being moved into Action Plan Review, we should
-    // delete denials and submissions, if applicable.
-    if (opportunity.denied) {
-      await opportunity.deleteOpportunityDenialAndSnooze();
-    }
-    if (opportunity.isSubmitted) {
-      await opportunity.deleteSubmitted();
-    }
-    await usIaOpportunity.setOfficerAction({
-      type: "DENIAL",
-      actionPlan: actionPlanText,
-      denialReasons: reasons,
-      requestedSnoozeLength: sliderDays,
-    });
-    postDenialToast();
-    onSubmit();
-  };
-
-  const isIaEDOpportunity =
-    opportunity instanceof UsIaEarlyDischargeOpportunity;
-
   const DenialConfirmationModal =
     denialConfirmationModalName &&
     DenialConfirmationModals[denialConfirmationModalName];
 
   const handleSave = () => {
-    if (isIaEDOpportunity && reasonsIncludesKey(PUBLIC_SAFETY_KEY, reasons)) {
-      submitUsIaEarlyDischargeActionPlan(opportunity);
-    } else if (denialConfirmationModalName) {
+    if (denialConfirmationModalName) {
       setShowConfirmationModal(true);
     } else {
       submitDenial();
@@ -249,16 +225,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     sliderDays === opportunity?.manualSnooze?.snoozeForDays ||
     !maxManualSnoozeDays; // true if autoSnooze
 
-  const actionPlanInvalid =
-    isIaEDOpportunity &&
-    reasonsIncludesKey(PUBLIC_SAFETY_KEY, reasons) &&
-    actionPlanText.length < DEFAULT_MIN_CHAR_LENGTH;
-
   const disableSaveButton =
     (reasonsUnchanged && (sliderUnchanged || reasons.length === 0)) ||
     unsetSlider ||
-    otherReasonInvalid ||
-    actionPlanInvalid;
+    otherReasonInvalid;
 
   const snoozeUntilDate = autoSnoozeUntil
     ? parseISO(autoSnoozeUntil)
@@ -300,7 +270,11 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     </>
   );
 
-  const denialReasons = opportunity.denialReasons;
+  const denialReasonsMap = opportunity.denialReasons;
+
+  const snoozeSlider = snoozeEnabled && !savingWillUnsnooze && snoozeSection;
+
+  const showSnoozeSliderAndSaveButton = !isIaEDOpportunity; // The opportunities listed here will render their own slider and save button
 
   return (
     <SidePanelContents
@@ -310,7 +284,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       <Heading person={opportunity.person} trackingOpportunity={opportunity} />
       <SidePanelHeader>{prompt}</SidePanelHeader>
       <>
-        {Object.entries(denialReasons).map(([code, description]) => (
+        {Object.entries(denialReasonsMap).map(([code, description]) => (
           <MenuItem
             data-testid={`OpportunityDenialView__checkbox-${code}`}
             key={code}
@@ -353,31 +327,34 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
             onChange={(newValue) => setOtherReason(newValue)}
           />
         )}
-        {isIaEDOpportunity &&
-          reasonsIncludesKey(PUBLIC_SAFETY_KEY, reasons) && (
-            <CharacterCountTextField
-              data-testid="ActionPlanInput"
-              id="ActionPlanInput"
-              maxLength={DEFAULT_MAX_CHAR_LENGTH}
-              minLength={DEFAULT_MIN_CHAR_LENGTH}
-              value={actionPlanText}
-              placeholder="Please specify why this client is not eligible for early discharge. This will be reviewed by a supervisor…"
-              onChange={(newValue) => setActionPlanText(newValue)}
-              header="Action Plan"
-            />
-          )}
+        {isIaEDOpportunity && (
+          <UsIaManageActionPlan
+            opportunity={opportunity}
+            reasons={reasons}
+            sliderDays={sliderDays}
+            postDenialToast={postDenialToast}
+            onSubmit={onSubmit}
+            onSave={handleSave}
+            snoozeSlider={snoozeSlider || undefined}
+            disableSaveButton={disableSaveButton}
+          />
+        )}
       </>
-      {snoozeEnabled && !savingWillUnsnooze && snoozeSection}
-      <ActionButton
-        data-testid="OpportunityDenialView__button"
-        disabled={disableSaveButton}
-        width="117px"
-        onClick={handleSave}
-      >
-        {opportunity.opportunityDenialViewButtonText
-          ? opportunity.opportunityDenialViewButtonText
-          : "Save"}
-      </ActionButton>
+      {showSnoozeSliderAndSaveButton && (
+        <>
+          {snoozeSlider}
+          <ActionButton
+            data-testid="OpportunityDenialView__button"
+            disabled={disableSaveButton}
+            width="117px"
+            onClick={handleSave}
+          >
+            {opportunity.opportunityDenialViewButtonText
+              ? opportunity.opportunityDenialViewButtonText
+              : "Save"}
+          </ActionButton>
+        </>
+      )}
       {DenialConfirmationModal ? (
         <DenialConfirmationModal
           opportunity={opportunity}

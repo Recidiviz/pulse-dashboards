@@ -66,7 +66,7 @@ const UsIaMenuButton = observer(function MenuButton({
 
       toast(
         <OpportunityStatusUpdateToast
-          toastText={`Action Plan has been approved. ${opportunity.person.displayName} will now be snoozed for ${latestAction.requestedSnoozeLength} days before reappearing`}
+          toastText={`Action Plan has been approved. ${opportunity.person.displayName} will now be snoozed for ${latestAction.requestedSnoozeLength} days before reappearing.`}
         />,
         {
           id: "snoozeApprovalToast",
@@ -108,7 +108,10 @@ const UsIaMenuButton = observer(function MenuButton({
       { label: "Approve Snooze", onClick: () => supervisorApprovalAndToast() },
     ],
     ACTION_PLAN_REVIEW_REVISION: [
-      { label: "Edit Action Plan", onClick: () => null }, // TODO(#8360): This should trigger the edit action plan state
+      {
+        label: "Edit Action Plan",
+        onClick: () => setCurrentView("MARK_INELIGIBLE"),
+      },
       {
         label: "Mark as Eligible",
         onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
