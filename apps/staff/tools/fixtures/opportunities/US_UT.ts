@@ -21,7 +21,7 @@ export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usUtEarlyTermination: {
       callToAction:
-        "Review the clients and submit a report for those who are strong candidates",
+        "Review the clients and submit a report for those who are good candidates for Early Termination.",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -91,10 +91,10 @@ export const mockApiOpportunityConfigurationResponse = {
             "UDC BENCHMARK: Client has had continuous employment for at least three months",
         },
         {
-          key: "usUtNoMedhighSupervisionViolationWithin3Months",
+          key: "usUtNoMedhighSupervisionViolationWithin12Months",
           text: "No recent violation history",
           tooltip:
-            "UDC BENCHMARK: Client has had no medium/high supervision violations in the last three months.",
+            "UDC BENCHMARK: Client has had no medium/high supervision violations in the last 12 months.",
         },
         {
           key: "onSupervisionAtLeast6Months",
@@ -102,15 +102,15 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: "UDC BENCHMARK",
         },
         {
-          key: "usUtNoRiskLevelIncreaseOf15Percent",
+          key: "usUtNoRiskLevelIncreaseOf5Percent",
           text: "No recent increase in risk score",
           tooltip:
-            "UDC BENCHMARK: Risk score has not increased in more than 15% in the past year",
+            "UDC BENCHMARK: Risk score has not increased in more than 5% in the past year",
         },
         {
-          key: "atLeast3MonthsSinceMostRecentPositiveDrugTest",
+          key: "atLeast6MonthsSinceMostRecentPositiveDrugTest",
           text: "No recent positive drug test",
-          tooltip: "UDC BENCHMARK: No positive drug test in the past 3 months",
+          tooltip: "UDC BENCHMARK: No positive drug test in the past 6 months",
         },
         {
           key: "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
@@ -165,10 +165,15 @@ export const mockApiOpportunityConfigurationResponse = {
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl: "https://dashboard.recidiviz.org",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        { text: "If relevant, negative drug test within the last 6 months" },
+        {
+          text: "{{#if (or record.ineligibleCriteria.usUtHasCompletedOrderedAssessments (eq record.ineligibleCriteria.usUtHasCompletedOrderedAssessments null))}}Confirm that clinical assessment confirmed need for treatment{{/if}}",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
-      omsCriteriaHeader: "Validated by OTrack data",
+      omsCriteriaHeader: "Validated by O-Track data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsUtDates", "Milestones", "Contact", "CaseNotes"],
@@ -186,7 +191,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       subheading:
-        "UDC Early Termination policy allows agents to apply to the courts or BOPP to end a client's probation or parole at the halfway mark or sooner. For clients who meet all of the criteria, reports must be filed with the court or Board 30 days before the early termination review date, or earlier at the agent’s discretion.",
+        "The Utah Sentencing Commission’s 2025 Adult Sentencing, Release, & Supervision Guidelines establish criteria for early termination of probation and parole. The guidelines outline when agents should submit a recommendation to the Court or Board of Pardons and Parole (BOPP) to end supervision at the halfway point—or earlier. For clients who meet all criteria, reports must be submitted to the Court or BOPP at least 30 days before the early termination review date, or earlier at the agent’s discretion.",
       submittedTabTitle: "Report Submitted",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
@@ -204,11 +209,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tabPrefaceCopy: [
         {
           tab: "Report Due",
-          text: "This tab contains cases approaching or past their Early Termination Report Due Date that meet stability benchmarks set by UDC. It also contains cases that are missing one or two indicators of stability for Early Terminations.",
+          text: "This tab contains eligible cases approaching or past their early termination report due date that meet stability benchmarks set by UDC. It also contains cases almost eligible that are missing one or two indicators of stability for Early Terminations.",
         },
         {
           tab: "Early Requests",
-          text: "This tab contains cases not yet at their Early Termination Report Due Date that meet stability benchmarks set by UDC and are eligible for Early Termination consideration as per the Sentencing Guidelines.",
+          text: "This tab contains cases not yet at their early termination report due date that meet stability benchmarks set by UDC and are eligible for Early Termination consideration as per the Sentencing Guidelines.",
         },
         {
           tab: "Report Submitted",
@@ -216,7 +221,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Marked Ineligible",
-          text: "This tab contains cases marked ineligible within this tool (status updates do not sync to OTrack).",
+          text: "This tab contains cases marked ineligible within this tool (status updates do not sync to O-Track).",
         },
       ],
       tooltipEligibilityText: null,

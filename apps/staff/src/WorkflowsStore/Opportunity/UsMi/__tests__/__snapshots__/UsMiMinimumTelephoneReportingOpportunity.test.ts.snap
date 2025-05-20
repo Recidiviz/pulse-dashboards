@@ -20,7 +20,6 @@ exports[`fully eligible > requirements met 1`] = `
   },
   {
     "text": "More than 90 days remaining until full-term discharge.",
-    "tooltip": undefined,
   },
 ]
 `;

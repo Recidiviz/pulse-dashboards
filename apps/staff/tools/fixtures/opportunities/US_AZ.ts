@@ -25,8 +25,15 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [],
-      denialText: null,
+      denialReasons: [
+        { key: "Detainer", text: "Active felony detainer" },
+        { key: "Intake", text: "Currently in intake and assessment" },
+        { key: "Conviction", text: "Prior disqualifying conviction" },
+        { key: "Violation", text: "Recent disqualifying violation" },
+        { key: "Refusal to sign", text: "Declined to sign agreement form" },
+        { key: "Other", text: "Other" },
+      ],
+      denialText: "Mark as Incorrect",
       deniedTabTitle: null,
       displayName: "Overdue for Drug Transition Program",
       dynamicEligibilityText: "resident[|s] are past their DTP date",
@@ -119,7 +126,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
-      snooze: null,
+      snooze: { defaultSnoozeDays: 4, maxSnoozeDays: 10 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
       subcategoryHeadings: [],
@@ -141,9 +148,10 @@ export const mockApiOpportunityConfigurationResponse = {
       denialAdjective: "incorrect",
       denialNoun: null,
       denialReasons: [
-        { key: "Detainer", text: "Has an active felony detainer" },
+        { key: "Detainer", text: "Active felony detainer" },
         { key: "Intake", text: "Currently in intake and assessment" },
-        { key: "Violation", text: "Has recent disqualifying violations " },
+        { key: "Conviction", text: "Prior disqualifying conviction" },
+        { key: "Violation", text: "Recent disqualifying violation " },
         { key: "Refusal to sign", text: "Declined to sign agreement form" },
         { key: "Other", text: "Other" },
       ],
@@ -259,8 +267,19 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [],
-      denialText: null,
+      denialReasons: [
+        { key: "Detainer", text: "Active felony detainer" },
+        { key: "Intake", text: "Currently in intake and assessment" },
+        { key: "Conviction", text: "Prior disqualifying conviction" },
+        {
+          key: "Misconduct involving weapons",
+          text: "Misconduct Involving Weapons: requires Time Comp review",
+        },
+        { key: "Violation", text: "Recent disqualifying violation" },
+        { key: "Refusal to sign", text: "Declined to sign agreement form" },
+        { key: "Other", text: "Other" },
+      ],
+      denialText: "Submit correction",
       deniedTabTitle: null,
       displayName: "Drug Transition Program Release",
       dynamicEligibilityText:
@@ -383,7 +402,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: "overdue for their DTP date",
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
-      snooze: null,
+      snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
       subcategoryHeadings: [
@@ -457,7 +476,18 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [{ key: "OTHER", text: "Other, please enter a reason" }],
+      denialReasons: [
+        { key: "Detainer", text: "Active felony detainer" },
+        { key: "Intake", text: "Currently in intake and assessment" },
+        { key: "Conviction", text: "Prior disqualifying conviction" },
+        {
+          key: "Misconduct involving weapons",
+          text: "Misconduct Involving Weapons conviction: requires Time Comp review",
+        },
+        { key: "Violation", text: "Recent disqualifying violation" },
+        { key: "Refusal to sign", text: "Declined to sign agreement form" },
+        { key: "Other", text: "Other" },
+      ],
       denialText: "Submit Correction",
       deniedTabTitle: null,
       displayName: "Standard Transition Program Release",
@@ -587,7 +617,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: "overdue for their STP date",
       priority: "NORMAL",
       sidebarComponents: ["UsAzDates", "CaseNotes", "Incarceration"],
-      snooze: null,
+      snooze: { defaultSnoozeDays: 15, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
       subcategoryHeadings: [
@@ -672,7 +702,31 @@ export const mockApiOpportunityConfigurationResponse = {
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
-        { key: "something", text: "A denial reason" },
+        { key: "RISK_LEVEL", text: "Ineligible risk level" },
+        {
+          key: "INELIGIBLE_OFFENSES",
+          text: "Current conviction for an ineligible offense",
+        },
+        {
+          key: "INITIAL_INTAKE",
+          text: "Has not yet completed initial intake and needs assessment",
+        },
+        {
+          key: "HOMELESS",
+          text: "Classified as homeless in their home release plan",
+        },
+        {
+          key: "EMPLOYMENT",
+          text: "Not currently employed, disabled, retired, or in school",
+        },
+        {
+          key: "MENTAL_HEALTH",
+          text: "Ineligible mental health score or SMI-C",
+        },
+        {
+          key: "SUBSTANCE",
+          text: "Currently dealing with substance use issues",
+        },
         { key: "Other", text: "Other" },
       ],
       denialText: null,
@@ -683,27 +737,45 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "usAzNoDisqualifyingConvictions",
-          text: "Eligible underlying offense(s)",
+          key: "usAzEligibleRiskLevel",
+          text: "ORAS risk determination of medium or lower",
           tooltip:
-            "To be eligible for Administrative Supervision, clients must not have current convictions of sex offense, domestic violence, arson or homicide, unless the client qualifies for administrative supervision under section 1.8.",
+            "1.1 ORAS risk determination of medium or lower, unless the client qualifies for administrative supervision under section \n1.1.1 Clients that score Minimum on the Initial Community Risk Assessment and who therefore do not receive the ORAS assessment are not required to meet criteria 1.1 above.",
         },
         {
-          key: "usAzMeetsHousingCriteria",
-          text: "Meets housing criteria",
+          key: "usAzIneligibleOffensesBut15MonthsViolationFree",
+          text: "No current convictions of sex offense, domestic violence, arson, or homicide",
           tooltip:
-            "Not classified as homeless in their home release plan. A client may also meet this requirement once they have achieved stable housing while on supervision.",
+            "1.2 No current convictions of sex offense, domestic violence, arson or homicide, unless the client qualifies for administrative supervision under section \n1.8 Clients with any risk score and with current convictions of any offense, including sex offense, domestic violence, arson, or homicide, are eligible for administrative supervision if they meet criteria 1.3 - 1.7, and upon completion of 15 consecutive months of supervision with no violations. Such decisions are conditional on supervisor approval.",
         },
         {
-          key: "usAzMeetsEmploymentCriteria",
-          text: "Meets employment criteria",
+          key: "usAzRiskReleaseAssessmentIsCompleted",
+          text: "Initial intake and needs assessment complete",
           tooltip:
-            "Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4. A client may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, application for disability status, inability to work, or retirement. For the purpose of this policy, clients providing caregiving for a family member may also be considered to meet this condition. ",
+            "1.3 Has completed initial intake and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (eg. telephone or by video call).",
         },
         {
-          key: "usAzMeetsMentalHealthCriteria",
-          text: "Meets mental health criteria",
-          tooltip: "Mental Health Score of 3 or below and not SMI-C.",
+          key: "usAzNotHomelessInReleasePlan",
+          text: "Not classified as homeless in home release plan",
+          tooltip:
+            "1.4 Not classified as homeless in their home release plan. A client may also meet this requirement once they have achieved stable housing while on supervision.",
+        },
+        {
+          key: "usAzOrasEmployedDisabledRetiredOrStudent",
+          text: "Currently employed, disabled, retired, or in school",
+          tooltip:
+            "1.5 Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4. A client may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, application for disability status, inability to work, or retirement. For the purpose of this policy, clients providing caregiving for a family member may also be considered to meet this condition.",
+        },
+        {
+          key: "usAzMentalHealthScore3OrBelow",
+          text: "Mental Health Score of 3 or below and not SMI-C",
+          tooltip: "1.6 Mental Health Score of 3 or below and not SMI-C.",
+        },
+        {
+          key: "usAzOrasHasSubstanceUseIssues",
+          text: "Not currently dealing with substance use issues",
+          tooltip:
+            "1.7 Not currently dealing with substance use issues, as assessed in ORAS question 5.4. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from this requirement. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
       ],
       emptyTabCopy: [
@@ -714,6 +786,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           tab: "Almost Eligible",
           text: "At this time, there are no clients who are almost eligible. Please navigate to one of the other tabs.",
+        },
+        {
+          tab: "Marked Ineligible",
+          text: "At this time, there are no clients who are marked ineligible. Please navigate to one of the other tabs.",
         },
       ],
       firestoreCollection: "US_AZ-TransferToAdminSupervision",
@@ -728,29 +804,8 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
-      nonOmsCriteria: [
-        {
-          text: "ORAS medium or lower",
-          tooltip:
-            "To be eligible for Administrative Supervision, clients must have an ORAS risk determination of medium or lower, unless they qualify for administrative supervision under section 1.8.",
-        },
-        {
-          text: "Initial intake and needs assessment complete",
-          tooltip:
-            "Has completed initial intake and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (eg. telephone or by video call).",
-        },
-        {
-          text: "Meets substance use disorder criteria ",
-          tooltip:
-            "Not currently dealing with substance use issues, as assessed in ORAS question 5.4. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from this requirement. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
-        },
-        {
-          text: "No recent disqualifying violations.",
-          tooltip:
-            "Clients with any risk score and with current convictions of any offense, including sex offense, domestic violence, arson, or homicide, are eligible for administrative supervision if they meet criteria 1.3 - 1.7, and \nupon completion of 15 consecutive months of supervision with no violations.\nSuch decisions are conditional on supervisor approval.",
-        },
-      ],
-      nonOmsCriteriaHeader: "Requirements to check ",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Validated by data from ACIS",
       overdueOpportunityCalloutCopy: null,

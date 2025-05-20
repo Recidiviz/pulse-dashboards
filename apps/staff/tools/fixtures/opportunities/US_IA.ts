@@ -24,7 +24,32 @@ export const mockApiOpportunityConfigurationResponse = {
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
-      denialReasons: [{ key: "FINES & FEES", text: "TKTKTK fines & fees" }],
+      denialReasons: [
+        { key: "FINES & FEES", text: "Has unpaid court fees or restitution " },
+        { key: "PENDING", text: "Has pending criminal charges" },
+        {
+          key: "PROGRAMMING",
+          text: "Has not completed mandated interventions/programming",
+        },
+        { key: "SPECIAL", text: "Is not compliant with special conditions" },
+        { key: "PUBLIC SAFETY", text: "Poses a public safety risk" },
+        {
+          key: "COURT",
+          text: "Is excluded from early discharge via court order ",
+        },
+        {
+          key: "DENIED",
+          text: "Has recently been denied early discharge in court",
+        },
+        {
+          key: "VIOLATIONS",
+          text: "Has pending violations (TKTK final copy here) ",
+        },
+        {
+          key: "INTERSTATE",
+          text: "Is an interstate compact case and has been denied early discharge by other state ",
+        },
+      ],
       denialText: null,
       deniedTabTitle: "Snoozed",
       displayName: "Early Discharge",
@@ -33,21 +58,53 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "usIaSupervisionLevelIs0NotAvailable12Or3",
-          text: "Is on supervision level 3, 2, 1, or 0 - Not available for supervision (ICOTS)",
+          text: "Is on supervision {{lowerCase supervisionLevelRawText}}",
+          tooltip:
+            "Client must be on supervision level 0 - Not available for supervision (ICOTS), 1, 2, or 3",
+        },
+        {
+          key: "usIaServingSupervisionCaseAtLeast90Days",
+          text: "90 days have passed since case assignment",
+          tooltip:
+            "Case assignment is defined as whenever a client began supervision or began serving a new sentence",
         },
         {
           key: "usIaNoOpenSupervisionModifiers",
           text: "Has no open supervision modifiers",
+          tooltip:
+            "This includes all modifiers except those that specify out of state supervision",
         },
         {
           key: "supervisionCaseTypeIsNotSexOffense",
-          text: "Does not have a sex offender specialty",
+          text: "Has no sex offender specialty",
+        },
+        {
+          key: "usIaSupervisionFeesPaid",
+          text: "Has paid their most recent supervision fee",
         },
         {
           key: "usIaNotServingIneligibleOffenseForEarlyDischarge",
           text: "Is not serving for an offense that is ineligible for early discharge",
           tooltip:
             "See CBC-FS-02 Appendix A for a list of all ineligible offenses",
+        },
+        {
+          key: "notServingALifeSentenceOnSupervisionOrSupervisionOutOfState",
+          text: "Is not serving a lifetime sentence",
+        },
+        {
+          key: "notSupervisionPastFullTermCompletionDateOrUpcoming30Days",
+          text: "Is not within 30 days of discharge date",
+          tooltip:
+            "Discharge date is determined by the maximum value of the client's TDD (tentative discharge date) and/or SDD (supervision discharge date)",
+        },
+        {
+          key: "usIaNotExcludedFromEarlyDischargeByParoleCondition",
+          text: "Is not excluded from early discharge by board of parole condition",
+        },
+        {
+          key: "noSupervisionViolationReportWithin6MonthsUsingResponseDate",
+          text: "Has no violation reports in the past 6 months",
         },
       ],
       emptyTabCopy: [],
@@ -68,7 +125,20 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: "Run NCIC check to determine status of pending charges",
         },
         {
+          text: "Has completed any court-ordered interventions and/or programming",
+        },
+        { text: "Has paid restitution in full" },
+        {
+          text: "Has paid court fees in full (for probation) or has consistent payments or a payment plan (for parole)",
+        },
+        {
+          text: "Not excluded from early discharge via court order (for probation)",
+        },
+        {
           text: "{{#if record.metadata.victimFlag}}Registered victim has been contacted{{/if}}",
+        },
+        {
+          text: "DNA has been collected (in cases where DNA collection is required)",
         },
       ],
       nonOmsCriteriaHeader: "Requirements for officers to check",
@@ -76,7 +146,7 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Requirements validated by data from ICON",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["ClientProfileDetails"],
+      sidebarComponents: ["UsIaActionPlansAndNotes", "ClientProfileDetails"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_IA",

@@ -210,7 +210,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify clients due or overdue for a classification review, which are generally mandated after six months of supervision and at six-month intervals thereafter, though some clients must receive a classification review earlier than six months by policy. Agents may reconsider the supervision level for a client based on developments in their case and behavior; per FOA Field Memorandum 2023-211, agents are presumptively required to downgrade clients’ supervision level during each classification review, provided that they have “satisfactorily completed” the prior six months on supervision. Review clients who meet the time threshold for classification review and downgrade their supervision level in COMS.",
+        "This alert helps staff identify clients due or overdue for a classification review, which are generally mandated after six months of supervision and at six-month intervals thereafter, though some clients must receive a classification review earlier than six months by policy. Agents may reconsider the supervision level for a client based on developments in their case and behavior; per FOA Field Memorandum 2023-211, agents are presumptively required to downgrade clients’ supervision level during each classification review, provided that they have “satisfactorily completed” the prior six months on supervision. Review clients who meet the time threshold for classification review and downgrade their supervision level in COMS.\n\nThe criteria are based off of OP 06.04.130I.",
       submittedTabTitle: null,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
@@ -389,7 +389,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Early Discharge is the termination of the period of probation or parole before the full-term discharge date. Early discharge reviews are mandated, at minimum, once clients have served half of their original term of supervision.<br /><br />Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
+        "Early Discharge is the termination of the period of probation or parole before the full-term discharge date. Early discharge reviews are mandated, at minimum, once clients have served half of their original term of supervision.<br /><br />Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.\n\nThe criteria are based off of OP 06.05.135 for Parole and 06.04.130H for Probation.",
       submittedTabTitle: null,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
@@ -463,7 +463,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "supervisionNotPastFullTermCompletionDateOrUpcoming90Days",
           text: "More than 90 days remaining until full-term discharge.",
-          tooltip: null,
         },
       ],
       emptyTabCopy: [],
@@ -491,7 +490,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Minimum Telephone Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts.<br /><br />Review clients who meet the requirements for minimum telephone reporting and transfer them to telephone reporting in COMS.",
+        "Minimum Telephone Reporting is a level of supervision that uses an interactive voice recognition system, rather than requiring regular face-to-face contacts.<br /><br />Review clients who meet the requirements for minimum telephone reporting and transfer them to telephone reporting in COMS.\n\nThe criteria are based off of OP 06.04.130K.",
       submittedTabTitle: null,
       supportsSubmitted: true,
       systemType: "SUPERVISION",
@@ -803,7 +802,6 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usMiNotServingIneligibleOffensesForDowngradeFromSupervisionLevel",
           text: "Not serving for an offense ineligible for a lower supervision level",
-          tooltip: null,
         },
       ],
       emptyTabCopy: [],
@@ -835,7 +833,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "This alert helps staff identify clients who are eligible for a downgrade in their supervision level during their first six months on supervision. The tool will surface clients who have not yet received a COMPAS but are being supervised at a level other than medium or whose supervision level is not aligned with their COMPAS score.<br /><br />Review clients within their first six months of supervision and whose supervision level does not match their risk level and downgrade their supervision level in COMS.",
+        "This alert helps staff identify clients who are eligible for a downgrade in their supervision level during their first six months on supervision. The tool will surface clients who have not yet received a COMPAS but are being supervised at a level other than medium or whose supervision level is not aligned with their COMPAS score.<br /><br />Review clients within their first six months of supervision and whose supervision level does not match their risk level and downgrade their supervision level in COMS.\n\nThe criteria are based off of OP 06.04.130I.",
       submittedTabTitle: null,
       supportsSubmitted: true,
       systemType: "SUPERVISION",

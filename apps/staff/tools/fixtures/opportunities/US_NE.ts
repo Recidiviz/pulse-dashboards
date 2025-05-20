@@ -64,7 +64,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usNeCompliantWithSpecialConditions",
-          text: "Compliant with any applicable special conditions",
+          text: "Compliant with applicable special conditions",
         },
         {
           key: "notSupervisionWithin1MonthOfProjectedCompletionDateMinExternal",
@@ -93,7 +93,6 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: [
         "EligibilityDate",
-        "Milestones",
         "Supervision",
         "Contact",
         "CaseNotes",
@@ -160,7 +159,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usNeCompliantWithSpecialConditions",
-          text: "Compliant with any applicable special conditions",
+          text: "Compliant with applicable special conditions",
         },
       ],
       emptyTabCopy: [],
@@ -185,7 +184,6 @@ export const mockApiOpportunityConfigurationResponse = {
       priority: "NORMAL",
       sidebarComponents: [
         "EligibilityDate",
-        "Milestones",
         "Supervision",
         "Contact",
         "CaseNotes",
