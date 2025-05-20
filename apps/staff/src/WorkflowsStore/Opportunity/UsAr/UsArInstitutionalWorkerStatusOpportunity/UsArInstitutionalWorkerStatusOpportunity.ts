@@ -18,6 +18,8 @@
 import { DocumentData } from "firebase/firestore";
 
 import { Resident } from "../../../Resident";
+import { FormBase } from "../../Forms/FormBase";
+import { UsArInstitutionalWorkerStatusOpportunityForm } from "../../Forms/UsArInstitutionalWorkerStatusOpportunityForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
   UsArInstitutionalWorkerStatusReferralRecord,
@@ -28,12 +30,19 @@ export class UsArInstitutionalWorkerStatusOpportunity extends OpportunityBase<
   Resident,
   UsArInstitutionalWorkerStatusReferralRecord
 > {
+  directDownloadForm: FormBase<any, any>;
+
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usArInstitutionalWorkerStatus",
       resident.rootStore,
       usArInstitutionalWorkerStatusSchema.parse(record),
+    );
+
+    this.directDownloadForm = new UsArInstitutionalWorkerStatusOpportunityForm(
+      this,
+      resident.rootStore,
     );
   }
 

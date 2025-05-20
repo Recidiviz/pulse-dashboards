@@ -31,7 +31,7 @@ import styled from "styled-components/macro";
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { FormLastEdited } from "../FormLastEdited";
-import { REACTIVE_INPUT_UPDATE_DELAY } from "./utils";
+import { createDownloadLabel, REACTIVE_INPUT_UPDATE_DELAY } from "./utils";
 
 const FormHeaderBar = styled.div`
   display: flex;
@@ -139,14 +139,6 @@ export const FormContainer = observer(function FormContainer({
     }
   };
 
-  const createDownloadLabel = (
-    formIsDownloading: boolean,
-    buttonIsDisabled: boolean | undefined,
-  ): string => {
-    if (buttonIsDisabled) return "Download Unavailable";
-    return formIsDownloading ? "Downloading..." : downloadButtonLabel;
-  };
-
   return (
     <FormContainerElement>
       <FormHeaderBar>
@@ -181,6 +173,7 @@ export const FormContainer = observer(function FormContainer({
             {createDownloadLabel(
               form.formIsDownloading,
               isDownloadButtonDisabled,
+              downloadButtonLabel,
             )}
           </DownloadButton>
         </FormHeaderSection>

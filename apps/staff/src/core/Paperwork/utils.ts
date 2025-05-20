@@ -235,3 +235,12 @@ export const downloadZipFile = (
     captureException(e);
   }
 };
+
+export const createDownloadLabel = (
+  formIsDownloading: boolean,
+  buttonIsDisabled: boolean | undefined,
+  downloadButtonLabel: string,
+): string => {
+  if (buttonIsDisabled) return "Download Unavailable";
+  return formIsDownloading ? "Downloading..." : downloadButtonLabel;
+};

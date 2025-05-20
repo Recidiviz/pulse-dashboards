@@ -19,74 +19,78 @@ import { z } from "zod";
 
 import { opportunitySchemaBase } from "~datatypes";
 
+import { nullishAsUndefined } from "../../schemaHelpers";
+
+const usArApprovedVisitorSchema = z.object({
+  firstName: nullishAsUndefined(z.string()),
+  lastName: nullishAsUndefined(z.string()),
+  partyId: nullishAsUndefined(z.string()),
+  dateOfBirth: nullishAsUndefined(z.string()),
+  dateOfBirthIsApproximate: nullishAsUndefined(z.boolean()),
+  relationshipType: nullishAsUndefined(z.string()),
+  race: nullishAsUndefined(z.string()),
+  sex: nullishAsUndefined(z.string()),
+  checklist: z.object({
+    canShareMedInfo: z.boolean(),
+    canShareMhInfo: z.boolean(),
+    canShareDentalInfo: z.boolean(),
+    emergencyNotify: z.boolean(),
+    emergencyNotifyAlt: z.boolean(),
+    canMakeMedDecisions: z.boolean(),
+    livesWithResident: z.boolean(),
+    victimOfResident: z.boolean(),
+    accompliceOfResident: z.boolean(),
+    hasCriminalHistory: z.boolean(),
+    worksInLe: z.boolean(),
+    isDepCareGuardian: z.boolean(),
+    authorizedToClaimProperty: z.boolean(),
+  }),
+  middleName: z.string().nullable(),
+  mailingAddress: z
+    .object({
+      apartmentNumber: z.string().nullable(),
+      city: z.string().nullable(),
+      poBox: z.string().nullable(),
+      state: z.string().nullable(),
+      streetName: z.string().nullable(),
+      streetNumber: z.string().nullable(),
+      streetType: z.string().nullable(),
+      suiteNumber: z.string().nullable(),
+      zipCode: z.string().nullable(),
+      addressLine1: nullishAsUndefined(z.string()).optional(),
+      addressLine2: nullishAsUndefined(z.string()).optional(),
+    })
+    .nullable(),
+  physicalAddress: z
+    .object({
+      apartmentNumber: z.string().nullable(),
+      city: z.string().nullable(),
+      poBox: z.string().nullable(),
+      state: z.string().nullable(),
+      streetName: z.string().nullable(),
+      streetNumber: z.string().nullable(),
+      streetType: z.string().nullable(),
+      suiteNumber: z.string().nullable(),
+      zipCode: z.string().nullable(),
+      addressLine1: nullishAsUndefined(z.string()).optional(),
+      addressLine2: nullishAsUndefined(z.string()).optional(),
+    })
+    .nullable(),
+  relationshipComments: z.string().nullable(),
+  relationshipStatus: z.string().nullable(),
+  relationshipStatusDate: z.string().nullable(),
+  seqNum: z.string().nullable(),
+  suffix: z.string().nullable(),
+  visitationDurDays: z.string().nullable(),
+  visitationReviewDate: z.string().nullable(),
+  visitationSpecialCondition1: z.string().nullable(),
+  visitationSpecialCondition2: z.string().nullable(),
+  visitationStatusReason: z.string().nullable(),
+});
+
 export const usArInstitutionalWorkerStatusSchema = opportunitySchemaBase
   .extend({
-    approvedVisitors: z
-      .array(
-        z.object({
-          checklist: z.object({
-            accompliceOfResident: z.boolean(),
-            authorizedToClaimProperty: z.boolean(),
-            canMakeMedDecisions: z.boolean(),
-            canShareDentalInfo: z.boolean(),
-            canShareMedInfo: z.boolean(),
-            canShareMhInfo: z.boolean(),
-            emergencyNotify: z.boolean(),
-            emergencyNotifyAlt: z.boolean(),
-            hasCriminalHistory: z.boolean(),
-            isDepCareGuardian: z.boolean(),
-            livesWithResident: z.boolean(),
-            victimOfResident: z.boolean(),
-            worksInLe: z.boolean(),
-          }),
-          dateOfBirth: z.string().nullable(),
-          dateOfBirthIsApproximate: z.boolean().nullable(),
-          firstName: z.string().nullable(),
-          lastName: z.string().nullable(),
-          middleName: z.string().nullable(),
-          partyId: z.string().nullable(),
-          mailingAddress: z
-            .object({
-              apartmentNumber: z.string().nullable(),
-              city: z.string().nullable(),
-              poBox: z.string().nullable(),
-              state: z.string().nullable(),
-              streetName: z.string().nullable(),
-              streetNumber: z.string().nullable(),
-              streetType: z.string().nullable(),
-              suiteNumber: z.string().nullable(),
-              zipCode: z.string().nullable(),
-            })
-            .nullable(),
-          physicalAddress: z
-            .object({
-              apartmentNumber: z.string().nullable(),
-              city: z.string().nullable(),
-              poBox: z.string().nullable(),
-              state: z.string().nullable(),
-              streetName: z.string().nullable(),
-              streetNumber: z.string().nullable(),
-              streetType: z.string().nullable(),
-              suiteNumber: z.string().nullable(),
-              zipCode: z.string().nullable(),
-            })
-            .nullable(),
-          race: z.string().nullable(),
-          relationshipComments: z.string().nullable(),
-          relationshipStatus: z.string().nullable(),
-          relationshipStatusDate: z.string().nullable(),
-          relationshipType: z.string().nullable(),
-          seqNum: z.string().nullable(),
-          sex: z.string().nullable(),
-          suffix: z.string().nullable(),
-          visitationDurDays: z.string().nullable(),
-          visitationReviewDate: z.string().nullable(),
-          visitationSpecialCondition1: z.string().nullable(),
-          visitationSpecialCondition2: z.string().nullable(),
-          visitationStatusReason: z.string().nullable(),
-        }),
-      )
-      .nullable(),
+    approvedVisitors: z.array(usArApprovedVisitorSchema),
   })
   .passthrough();
 
@@ -97,3 +101,11 @@ export type UsArInstitutionalWorkerStatusReferralRecord = z.infer<
 export type UsArInstitutionalWorkerStatusReferralRecordRaw = z.input<
   typeof usArInstitutionalWorkerStatusSchema
 >;
+
+export type UsArApprovedVisitor = z.infer<typeof usArApprovedVisitorSchema>;
+export type UsArApprovedVisitorWithChecklist = Partial<UsArApprovedVisitor> &
+  Pick<UsArApprovedVisitor, "checklist">;
+
+export type UsArInstitutionalWorkerStatusDraftData = {
+  visitors: UsArApprovedVisitorWithChecklist[];
+};
