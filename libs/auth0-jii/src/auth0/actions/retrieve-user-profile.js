@@ -37,20 +37,25 @@ exports.onExecutePostLogin = async (event, api) => {
   let stateCode;
   let userId;
 
-  const { email } = event.user;
-  if (email?.toLowerCase().endsWith("@recidiviz.org")) {
+  let { email } = event.user;
+  email = email?.toLowerCase();
+  if (email?.endsWith("@recidiviz.org")) {
     stateCode = "RECIDIVIZ";
     userId = email;
-  } else {
-    // as state-specific connections are enabled they should be added here,
-    // to set the appropriate state code and ID for the user logging in
-    const connectionToStateCode = {
-      // these are not secret so much as they just vary by environment
-      // e.g. event.secrets.US_MA_CONNECTION_ID. replace as needed
-      ["US_MA_connection_id_TKTK"]: "US_MA",
-    };
-    stateCode = connectionToStateCode[event.connection.id];
-    // expect userId retrieval to vary by state? it should be in the profile somewhere
+  } else if (
+    email?.endsWith("@orijin.works") ||
+    email?.endsWith("@learner.orijin.works")
+  ) {
+    // This metadata comes from the Orijin SAML mappings. To view this configuration
+    // you must go to the Auth0 dashboard and select:
+    // Auth0 -> Authentication -> Enterprise -> SAML -> connection -> Mappings
+    stateCode = event.user.state_code;
+    userId = event.user.external_id;
+    // Orijin users do not have access to the emails associated with their accounts
+    // skip email verification
+    if (!event.user.app_metadata.skipEmailVerification) {
+      api.user.setAppMetadata("skipEmailVerification", true);
+    }
   }
 
   if (stateCode && userId) {
