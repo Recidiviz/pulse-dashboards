@@ -22,6 +22,7 @@ import { OpportunityType } from "~datatypes";
 import CONFIG_FIXTURES from "../../../tools/fixtures/opportunities";
 import { AutoSnoozeUpdate, ManualSnoozeUpdate } from "../../FirestoreStore";
 import { Client, Opportunity } from "../../WorkflowsStore";
+import { OpportunityBase } from "../../WorkflowsStore/Opportunity/OpportunityBase";
 import { OpportunityConfiguration } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations";
 import { apiOpportunityConfigurationSchema } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/dtos/ApiOpportunityConfigurationSchema";
 import { formatEligibilityText } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/models/ApiOpportunityConfigurationImpl";
@@ -160,4 +161,10 @@ export const mockOpportunity: Opportunity<Client> = {
   },
   handleAdditionalUndoActions: async () => undefined,
   showRevertLinkFallback: false,
+  eligibilityStatusLabel(includeReasons?: boolean) {
+    return OpportunityBase.prototype.eligibilityStatusLabel.call(
+      this,
+      includeReasons,
+    );
+  },
 };

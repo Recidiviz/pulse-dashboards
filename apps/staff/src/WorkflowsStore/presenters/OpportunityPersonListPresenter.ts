@@ -559,6 +559,14 @@ export class OpportunityPersonListPresenter
     return this.config.overdueOpportunityCalloutCopy;
   }
 
+  get hasMultipleDistinctStatusesInTab() {
+    return (
+      new Set(
+        this.peopleInActiveTab.map((person) => person.eligibilityStatusLabel()),
+      ).size > 1
+    );
+  }
+
   dismissNotification(id: string) {
     this.workflowsStore.dismissOpportunityNotification(id);
   }

@@ -24,6 +24,7 @@ import { MockInstance } from "vitest";
 import { OpportunityRecordBase, OpportunityType } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
+import { mockOpportunity } from "../../../core/__tests__/testUtils";
 import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
@@ -32,7 +33,7 @@ import { mockSupervisionOfficers } from "../../__fixtures__";
 import { Client } from "../../Client";
 import { SearchStore } from "../../SearchStore";
 import { DocumentSubscription, UpdateFunction } from "../../subscriptions";
-import { OTHER_KEY } from "../../utils";
+import { dateToTimestamp, OTHER_KEY } from "../../utils";
 import { ineligibleClientRecord } from "../__fixtures__";
 import { FormBase } from "../Forms/FormBase";
 import {
@@ -1147,5 +1148,101 @@ describe("snoozeCompanionOpportunities", () => {
     );
 
     expect(opp.snoozeCompanionOpportunities).toEqual([]);
+  });
+});
+
+describe("eligibilityStatusLabel", () => {
+  test("eligibilityStatusLabel returns null until hydrated", () => {
+    const opportunity = {
+      ...mockOpportunity,
+      hydrationState: { status: "loading" },
+    };
+
+    expect(opportunity.eligibilityStatusLabel()).toBeNull();
+
+    runInAction(() => {
+      opportunity.hydrationState = { status: "hydrated" };
+    });
+
+    expect(opportunity.eligibilityStatusLabel()).not.toBeNull();
+  });
+
+  test("inferred eligible", () => {
+    expect(mockOpportunity.eligibilityStatusLabel()).toBe("Eligible");
+  });
+
+  test("eligible with custom eligibility test", () => {
+    const opportunity: Opportunity = {
+      ...mockOpportunity,
+      eligibleStatusMessage: "custom status",
+    };
+    expect(opportunity.eligibilityStatusLabel()).toBe("custom status");
+  });
+
+  test("inferred maybe eligible", () => {
+    const maybeOpportunity = {
+      ...mockOpportunity,
+      defaultEligibility: "MAYBE",
+    };
+    expect(maybeOpportunity.eligibilityStatusLabel()).toBe("May be eligible");
+  });
+
+  describe("ineligible", () => {
+    const denied = {
+      ...mockOpportunity,
+      denial: {
+        reasons: ["foo", "bar"],
+        updated: { by: "test@test.gov", date: dateToTimestamp("2022-03-15") },
+      },
+    };
+
+    test("without reasons", () => {
+      expect(denied.eligibilityStatusLabel()).toBe("Currently ineligible");
+    });
+
+    test("with reasons", () => {
+      expect(denied.eligibilityStatusLabel(true)).toBe(
+        "Currently ineligible (foo, bar)",
+      );
+    });
+  });
+
+  test("ignore reverted denial", () => {
+    const revertedDenialOpportunity = {
+      ...mockOpportunity,
+      denial: {
+        reasons: [],
+        updated: { by: "test@test.gov", date: dateToTimestamp("2022-03-15") },
+      },
+    };
+    expect(revertedDenialOpportunity.eligibilityStatusLabel()).not.toBe(
+      "Currently ineligible",
+    );
+    expect(revertedDenialOpportunity.eligibilityStatusLabel()).toBe("Eligible");
+  });
+
+  describe("almost eligible", () => {
+    const almost = {
+      ...mockOpportunity,
+      almostEligible: true,
+      almostEligibleStatusMessage: "test message",
+    };
+
+    test("without reasons", () => {
+      expect(almost.eligibilityStatusLabel()).toBe("Almost eligible");
+    });
+
+    test("with reasons", () => {
+      expect(almost.eligibilityStatusLabel(true)).toBe("test message");
+    });
+  });
+
+  test("submitted", () => {
+    const submitted = {
+      ...mockOpportunity,
+      isSubmitted: true,
+    };
+
+    expect(submitted.eligibilityStatusLabel()).toBe("Submitted");
   });
 });

@@ -21,7 +21,7 @@ import { isHydrated } from "~hydration-utils";
 
 import { Opportunity } from "../../WorkflowsStore";
 import { usePersonTracking } from "../hooks/usePersonTracking";
-import { EligibilityStatus, WorkflowProgress } from "../OpportunityStatus";
+import { WorkflowProgress } from "../OpportunityStatus";
 import {
   JusticeInvolvedPersonCapsule,
   JusticeInvolvedPersonCapsuleProps,
@@ -52,7 +52,7 @@ export const OpportunityCapsule = observer(function OpportunityCapsule({
       <>
         {opportunity.showEligibilityStatus("OpportunityCapsule") && (
           <>
-            <EligibilityStatus opportunity={opportunity} includeReasons />
+            {opportunity.eligibilityStatusLabel(true)}
             {showProgress && " • "}
           </>
         )}

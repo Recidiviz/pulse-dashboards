@@ -520,7 +520,9 @@ const TableView = observer(function TableView({
     {
       header: "Status",
       id: "STATUS",
-      enableSorting: false,
+      enableSorting: presenter.hasMultipleDistinctStatusesInTab,
+      accessorFn: (opp: Opportunity) => opp.eligibilityStatusLabel(),
+      sortingFn: "text",
       cell: EligibilityStatusCell,
     },
     {

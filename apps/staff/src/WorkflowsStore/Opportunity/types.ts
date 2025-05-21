@@ -176,6 +176,7 @@ export interface Opportunity<
   showRevertLinkFallback: boolean;
   caseNoteHeaders: string[];
   generateCaseNoteText?: string;
+  eligibilityStatusLabel: (includeReasons?: boolean) => string | null;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

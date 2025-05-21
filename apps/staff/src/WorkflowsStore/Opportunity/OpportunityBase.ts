@@ -858,4 +858,41 @@ export class OpportunityBase<
   get caseNoteHeaders() {
     return this.config.caseNoteHeaders;
   }
+
+  eligibilityStatusLabel(includeReasons?: boolean): string | null {
+    const {
+      almostEligible,
+      almostEligibleStatusMessage,
+      eligibleStatusMessage,
+      defaultEligibility,
+      denial,
+      isSubmitted,
+      config: { isAlert, submittedTabTitle },
+    } = this;
+
+    if (!isHydrated(this)) return null;
+
+    if (denial?.reasons.length) {
+      const statusText = isAlert ? "Override" : "Currently ineligible";
+      const withReasons = includeReasons
+        ? ` (${denial.reasons.join(", ")})`
+        : "";
+
+      return `${statusText}${withReasons}`;
+    }
+
+    if (isSubmitted) {
+      return submittedTabTitle;
+    }
+
+    if (almostEligible) {
+      return includeReasons && almostEligibleStatusMessage
+        ? almostEligibleStatusMessage
+        : "Almost eligible";
+    }
+
+    if (defaultEligibility === "MAYBE") return "May be eligible";
+
+    return eligibleStatusMessage ?? "Eligible";
+  }
 }

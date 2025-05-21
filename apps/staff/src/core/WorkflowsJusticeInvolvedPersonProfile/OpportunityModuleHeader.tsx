@@ -22,7 +22,6 @@ import styled from "styled-components/macro";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
-import { EligibilityStatus } from "../OpportunityStatus";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { Separator } from "./styles";
 
@@ -67,7 +66,7 @@ export const EligibilityStatusPill = observer(function EligibilityStatusPill({
       textColor={colors.badgeText}
       $borderColor={colors.badgeBorder}
     >
-      <EligibilityStatus opportunity={opportunity} />
+      {opportunity.eligibilityStatusLabel()}
     </EligibilityStatusPillStyled>
   );
 });
@@ -102,7 +101,7 @@ export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
                 color: palette.pine1,
               }}
             >
-              <EligibilityStatus opportunity={opportunity} />
+              {opportunity.eligibilityStatusLabel()}
             </span>
           </>
         )}
