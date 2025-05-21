@@ -77,13 +77,11 @@ export type FeatureVariant =
   | "caseNoteSearch"
   | "submittedOpportunityStatus"
   | "personSpecificOppBanners"
-  | "sortableOpportunityTabs"
   | "fullWidthTimeline"
   | "usOrEarnedDischargeSentence"
   | "oppTabSubcategories"
   | "usIdCRCFacilitySearch"
   | "usIdCaseManagerSearch"
-  | "opportunityTableView"
   | "usTnSuspensionOfDirectSupervision"
   | "usMeCaseNoteSnooze"
   | "usTnCompliantReporting2025Policy"
@@ -150,7 +148,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   actionStrategies: {},
   submittedOpportunityStatus: {},
   personSpecificOppBanners: {},
-  sortableOpportunityTabs: {},
   fullWidthTimeline: {},
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
@@ -160,7 +157,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   editCountyFields: {},
   usIdCaseManagerSearch: {},
   usIdCRCFacilitySearch: {},
-  opportunityTableView: {},
   usTnSuspensionOfDirectSupervision: {},
   usMeCaseNoteSnooze: {},
   outcomesModule: {},
@@ -180,10 +176,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         disableSnoozeSlider: { activeTenants: ["US_MO"] },
         fullWidthTimeline: { activeTenants: ["US_AZ", "US_UT"] },
         insightsOnboarding: {},
-        opportunityTableView: {},
         oppTabSubcategories: { activeTenants: ["US_AZ", "US_UT"] },
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
-        sortableOpportunityTabs: {},
         submittedOpportunityStatus: {
           activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA", "US_UT"],
         },

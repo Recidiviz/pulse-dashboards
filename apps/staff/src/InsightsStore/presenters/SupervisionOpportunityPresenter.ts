@@ -74,11 +74,4 @@ export class SupervisionOpportunityPresenter extends SupervisionOfficerOpportuni
       (opp) => opp.selectId === this.supervisionStore.opportunityPseudoId,
     );
   }
-
-  /* Should the displayed page be limited in width and vertically centered? */
-  get shouldLimitWidth(): boolean {
-    const { activeFeatureVariants } =
-      this.supervisionStore.insightsStore.rootStore.userStore;
-    return !activeFeatureVariants.opportunityTableView;
-  }
 }

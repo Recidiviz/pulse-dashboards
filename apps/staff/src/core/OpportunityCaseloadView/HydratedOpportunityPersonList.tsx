@@ -609,7 +609,6 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
 }: {
   presenter: OpportunityPersonListPresenter;
 }) {
-  const { opportunityTableView } = useFeatureVariants();
   const { isMobile, isTablet } = useIsMobile(true);
 
   // Use MouseSensor instead of PointerSensor to disable drag-and-drop on touch screens
@@ -684,13 +683,11 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
             handleDismiss={handleNotificationDismiss}
           />
         )}
-        {opportunityTableView && (
-          <FlexWrapper>
-            <OpportunityTypeSelect presenter={presenter} />
-            {!presenter.isSupervisorHomepage && !isTablet && <CaseloadSelect />}
-            <TableViewToggle presenter={presenter} />
-          </FlexWrapper>
-        )}
+        <FlexWrapper>
+          <OpportunityTypeSelect presenter={presenter} />
+          {!presenter.isSupervisorHomepage && !isTablet && <CaseloadSelect />}
+          <TableViewToggle presenter={presenter} />
+        </FlexWrapper>
       </MaxWidthWrapper>
 
       {

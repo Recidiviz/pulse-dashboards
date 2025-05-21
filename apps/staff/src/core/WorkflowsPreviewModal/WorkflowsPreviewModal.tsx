@@ -26,10 +26,7 @@ import { rem } from "polished";
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import useModalTimeoutDismissal from "./hooks/useModalTimeoutDismissal";
@@ -157,7 +154,6 @@ export function WorkflowsPreviewModal({
   contentRef,
 }: PreviewModalProps): JSX.Element {
   const { workflowsStore } = useRootStore();
-  const { opportunityTableView } = useFeatureVariants();
   const { isMobile } = useIsMobile(true);
   const CLOSE_TIMEOUT_MS = 1000;
   const MODAL_WIDTH = 480;
@@ -207,9 +203,9 @@ export function WorkflowsPreviewModal({
           contentRef.current = node;
         }
       }}
-      shouldCloseOnOverlayClick={!opportunityTableView}
-      $overrideStyles={!!opportunityTableView}
-      disableBackgroundScroll={isMobile || !opportunityTableView}
+      shouldCloseOnOverlayClick={false}
+      $overrideStyles={true}
+      disableBackgroundScroll={isMobile}
     >
       <ModalControls>
         {onBackClick && (

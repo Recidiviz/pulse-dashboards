@@ -18,21 +18,16 @@
 import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React from "react";
 import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { OpportunityCaseloadViewPresenter } from "../../WorkflowsStore/presenters/OpportunityCaseloadViewPresenter";
 import { CaseloadSelect } from "../CaseloadSelect";
 import ModelHydrator from "../ModelHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
-import WorkflowsResults from "../WorkflowsResults";
 import { HydratedOpportunityPersonList } from "./HydratedOpportunityPersonList";
 
 const Wrapper = styled.div`
@@ -46,45 +41,16 @@ const ManagedComponent = observer(function OpportunityCaseloadView({
 }: {
   presenter: OpportunityCaseloadViewPresenter;
 }) {
-  const { selectedSearchIds, opportunityType, hasOpportunities } = presenter;
-  const { opportunityTableView } = useFeatureVariants();
+  const { opportunityType } = presenter;
   const { isTablet } = useIsMobile(true);
 
-  const selectedSearchIdsCount = selectedSearchIds?.length || 0;
-
-  if (opportunityTableView) {
-    return (
-      // If we're displaying the table view, the Workflows layout should fill the screen.
-      <WorkflowsNavLayout limitedWidth={false}>
-        <Wrapper>
-          {isTablet && <CaseloadSelect />}
-          <ModelHydrator hydratable={presenter}>
-            <HydratedOpportunityPersonList opportunityType={opportunityType} />
-          </ModelHydrator>
-        </Wrapper>
-      </WorkflowsNavLayout>
-    );
-  }
-
   return (
-    // Not displaying table view, the Workflows layout should be centered and limited-width.
-    <WorkflowsNavLayout limitedWidth={true}>
+    // The Workflows layout should fill the screen.
+    <WorkflowsNavLayout limitedWidth={false}>
       <Wrapper>
-        <CaseloadSelect />
+        {isTablet && <CaseloadSelect />}
         <ModelHydrator hydratable={presenter}>
-          <React.Fragment>
-            {(selectedSearchIdsCount === 0 || !hasOpportunities) && (
-              <WorkflowsResults
-                headerText={presenter.ctaTextAndHeaderText.headerText}
-                callToActionText={presenter.ctaTextAndHeaderText.ctaText}
-              />
-            )}
-            {selectedSearchIdsCount > 0 && hasOpportunities && (
-              <HydratedOpportunityPersonList
-                opportunityType={opportunityType}
-              />
-            )}
-          </React.Fragment>
+          <HydratedOpportunityPersonList opportunityType={opportunityType} />
         </ModelHydrator>
       </Wrapper>
     </WorkflowsNavLayout>

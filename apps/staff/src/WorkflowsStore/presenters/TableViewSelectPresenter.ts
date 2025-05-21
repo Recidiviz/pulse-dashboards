@@ -28,7 +28,6 @@ export interface TableViewSelectInterface {
 
 export class TableViewSelectPresenter implements TableViewSelectInterface {
   private readonly updatesSubscription?: CollectionDocumentSubscription<UserUpdateRecord>;
-  private readonly tableViewEnabled: boolean;
 
   constructor(
     private readonly firestoreStore: FirestoreStore,
@@ -36,16 +35,13 @@ export class TableViewSelectPresenter implements TableViewSelectInterface {
     featureVariants: FeatureVariantRecord,
   ) {
     this.updatesSubscription = this.workflowsStore.userUpdatesSubscription;
-    this.tableViewEnabled = !!featureVariants.opportunityTableView;
 
     makeAutoObservable(this);
   }
 
   get showListView() {
     return (
-      // if the user doesn't have access to table view,
-      !this.tableViewEnabled ||
-      // or their preference stored in firestore is to show list view
+      // if user's preference stored in firestore is to show list view
       !!this.updatesSubscription?.data?.showListView
     );
   }

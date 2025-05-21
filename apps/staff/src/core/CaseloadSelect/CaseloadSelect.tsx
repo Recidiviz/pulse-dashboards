@@ -43,12 +43,9 @@ import ReactSelect, {
   SelectComponentsConfig,
   StylesConfig,
 } from "react-select";
-import styled, { css } from "styled-components/macro";
+import styled from "styled-components/macro";
 
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { pluralizeWord } from "../../utils";
 import { Searchable, SearchableGroup, SearchIcon } from "../models/types";
@@ -295,16 +292,10 @@ export const MenuListWithShadow = (
     );
   };
 
-const CaseloadSelectContainer = styled(Sans14)<{
-  $opportunityTableView: boolean;
-}>`
+const CaseloadSelectContainer = styled(Sans14)`
   color: ${palette.slate85};
   margin-bottom: ${rem(spacing.lg)};
-  ${({ $opportunityTableView }) =>
-    $opportunityTableView &&
-    css`
-      flex: 1;
-    `}
+  flex: 1;
 `;
 
 const CaseloadSelectMobileButton = styled(Button).attrs({ kind: "link" })`
@@ -547,11 +538,9 @@ export const CaseloadSelect = observer(function CaseloadSelect({
     if (!isMobile) setModalIsOpen(false);
   }, [isMobile]);
 
-  const { opportunityTableView } = useFeatureVariants();
-
   if (isMobile) {
     return (
-      <CaseloadSelectContainer $opportunityTableView={!!opportunityTableView}>
+      <CaseloadSelectContainer>
         Caseloads:
         <CaseloadSelectMobileButton onClick={() => setModalIsOpen(true)}>
           {selectedSearchIds.length > 0
@@ -580,7 +569,7 @@ export const CaseloadSelect = observer(function CaseloadSelect({
   }
 
   return (
-    <CaseloadSelectContainer $opportunityTableView={!!opportunityTableView}>
+    <CaseloadSelectContainer>
       <ReactSelect {...defaultOptions} />
     </CaseloadSelectContainer>
   );

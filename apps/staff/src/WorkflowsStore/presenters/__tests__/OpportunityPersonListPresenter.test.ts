@@ -48,9 +48,7 @@ const mockWorkflowsStore = {
   allOpportunitiesByType: mockOpportunities,
 } as any as WorkflowsStore;
 
-const FEATURE_VARIANTS_WITH_OPP_TABS: FeatureVariantRecord = {
-  sortableOpportunityTabs: {},
-};
+const FEATURE_VARIANTS: FeatureVariantRecord = {};
 
 const ORDERED_TABS = ["Eligible Now", "Almost Eligible", "Marked Ineligible"];
 const UNORDERED_TABS = ["Other"];
@@ -70,7 +68,7 @@ function getPresenter({
     tenantStore,
     workflowsStore,
     config,
-    FEATURE_VARIANTS_WITH_OPP_TABS,
+    FEATURE_VARIANTS,
     mockOpportunity.type,
     supervisionPresenter,
   );
