@@ -588,10 +588,7 @@ describe("markSubmittedAndGenerateToast", () => {
   beforeEach(() => {
     vi.spyOn(root.firestoreStore, "updateOpportunitySubmitted");
   });
-  test("marks submitted when feature variant is set and opportunity supports submitted", async () => {
-    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
-      submittedOpportunityStatus: {},
-    });
+  test("marks submitted when opportunity supports submitted", async () => {
     vi.spyOn(opp, "config", "get").mockReturnValue({
       supportsSubmitted: true,
     } as OpportunityConfiguration);
@@ -601,22 +598,7 @@ describe("markSubmittedAndGenerateToast", () => {
     expect(message).not.toBeUndefined();
   });
 
-  test("doesn't mark submitted without feature variant", async () => {
-    vi.spyOn(opp, "config", "get").mockReturnValue({
-      supportsSubmitted: true,
-    } as OpportunityConfiguration);
-    const message = await opp.markSubmittedAndGenerateToast();
-
-    expect(
-      root.firestoreStore.updateOpportunitySubmitted,
-    ).not.toHaveBeenCalled();
-    expect(message).toBeUndefined();
-  });
-
   test("doesn't mark submitted when opportunity doesn't support submitted", async () => {
-    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
-      submittedOpportunityStatus: {},
-    });
     const message = await opp.markSubmittedAndGenerateToast();
 
     expect(
@@ -880,9 +862,6 @@ describe("tracking", () => {
       // delete the denial from the record
       const { denial, ...rest } = updatesSub.data;
       mockHydration({ updateData: rest });
-    });
-    vi.spyOn(root.userStore, "activeFeatureVariants", "get").mockReturnValue({
-      submittedOpportunityStatus: {},
     });
 
     mockDenied();

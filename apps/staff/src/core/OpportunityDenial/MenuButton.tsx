@@ -37,8 +37,7 @@ export const MenuButton = observer(function MenuButton({
   opportunity: Opportunity;
   onDenialButtonClick?: () => void;
 }) {
-  const { oppTabSubcategories, submittedOpportunityStatus } =
-    useFeatureVariants();
+  const { oppTabSubcategories } = useFeatureVariants();
 
   const { config } = opportunity;
 
@@ -97,7 +96,7 @@ export const MenuButton = observer(function MenuButton({
     );
   }
 
-  if (submittedOpportunityStatus && config.supportsSubmitted) {
+  if (config.supportsSubmitted) {
     return (
       <Dropdown>
         <StatusAwareToggle>{toggleText}</StatusAwareToggle>

@@ -75,7 +75,6 @@ export type FeatureVariant =
   | "workflowsSupervisorSearch"
   | "usPaSpecialCircumstances"
   | "caseNoteSearch"
-  | "submittedOpportunityStatus"
   | "personSpecificOppBanners"
   | "fullWidthTimeline"
   | "usOrEarnedDischargeSentence"
@@ -146,7 +145,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   lastSyncedDate: {},
   caseNoteSearch: {},
   actionStrategies: {},
-  submittedOpportunityStatus: {},
   personSpecificOppBanners: {},
   fullWidthTimeline: {},
   zeroGrantsFlag: {},
@@ -178,9 +176,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         insightsOnboarding: {},
         oppTabSubcategories: { activeTenants: ["US_AZ", "US_UT"] },
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
-        submittedOpportunityStatus: {
-          activeTenants: ["US_OR", "US_ME", "US_MI", "US_AZ", "US_PA", "US_UT"],
-        },
         supervisionUnrestrictedSearch: {},
         supervisorHomepageWorkflows: {},
         usAzFacilitySearch: {},

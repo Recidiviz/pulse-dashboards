@@ -527,13 +527,8 @@ export class OpportunityBase<
   async markSubmittedAndGenerateToast(
     newSubcategory?: string,
   ): Promise<string | undefined> {
-    // Do nothing if this user doesn't have access to the submitted status
-    // or this opportunity doesn't support the submitted status
-    if (
-      !this.config.supportsSubmitted ||
-      !this.rootStore.userStore.activeFeatureVariants.submittedOpportunityStatus
-    )
-      return;
+    // Do nothing if this opportunity doesn't support the submitted status
+    if (!this.config.supportsSubmitted) return;
 
     // Return no toast if marking the opportunity as submitted would do nothing,
     // or throw an error in egregious cases

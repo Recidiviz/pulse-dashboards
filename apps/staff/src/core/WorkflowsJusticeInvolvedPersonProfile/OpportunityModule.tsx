@@ -118,8 +118,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
   }) {
     const { tenantStore } = useRootStore();
 
-    const { hideDenialRevert, submittedOpportunityStatus } =
-      useFeatureVariants();
+    const { hideDenialRevert } = useFeatureVariants();
 
     // We use isLaptop here, rather than isTablet or isMobile, as we've seen issues with profile formatting
     // on screen sizes smaller than desktop.
@@ -145,7 +144,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
 
     const colors = useStatusColors(opportunity);
     const showUpdateStatusButton =
-      opportunity.config.supportsDenial || submittedOpportunityStatus;
+      opportunity.config.supportsDenial || opportunity.config.supportsSubmitted;
 
     const snoozeUntil: Date | undefined =
       opportunity.manualSnoozeUntilDate ??
@@ -184,28 +183,26 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         await opportunity.deleteSubmitted();
       }
 
-      if (submittedOpportunityStatus) {
-        if (opportunity.subcategory) {
-          toast(
-            <OpportunityStatusUpdateToast
-              toastText={`${opportunity.person.displayName} is marked as "${opportunity.subcategoryHeadingFor(opportunity.subcategory)}" in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
-            />,
-            {
-              position: "bottom-left",
-              duration: 7000,
-            },
-          );
-        } else {
-          toast(
-            <OpportunityStatusUpdateToast
-              toastText={`${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
-            />,
-            {
-              position: "bottom-left",
-              duration: 7000,
-            },
-          );
-        }
+      if (opportunity.subcategory) {
+        toast(
+          <OpportunityStatusUpdateToast
+            toastText={`${opportunity.person.displayName} is marked as "${opportunity.subcategoryHeadingFor(opportunity.subcategory)}" in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
+          />,
+          {
+            position: "bottom-left",
+            duration: 7000,
+          },
+        );
+      } else {
+        toast(
+          <OpportunityStatusUpdateToast
+            toastText={`${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
+          />,
+          {
+            position: "bottom-left",
+            duration: 7000,
+          },
+        );
       }
     };
 

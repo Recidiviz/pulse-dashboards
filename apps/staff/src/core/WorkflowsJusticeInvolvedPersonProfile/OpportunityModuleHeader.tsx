@@ -20,10 +20,8 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
-import { Separator } from "./styles";
 
 const TitleText = styled(Sans16)`
   color: ${palette.pine1};
@@ -45,8 +43,6 @@ const OpportunityLabelWithPill = styled.span`
   margin-right: ${rem(spacing.md)};
   line-height: 2;
 `;
-
-const OpportunityLabelWithoutPill = styled.span``;
 
 type OpportunityModuleHeaderProps = {
   opportunity: Opportunity;
@@ -73,38 +69,13 @@ export const EligibilityStatusPill = observer(function EligibilityStatusPill({
 
 export const OpportunityModuleHeader: React.FC<OpportunityModuleHeaderProps> =
   observer(function OpportunityModuleHeader({ opportunity }) {
-    const { submittedOpportunityStatus } = useFeatureVariants();
-
-    if (submittedOpportunityStatus) {
-      return (
-        <TitleText>
-          <OpportunityLabelWithPill>
-            {opportunity.config.label}
-            {opportunity.labelAddendum}
-          </OpportunityLabelWithPill>
-          <EligibilityStatusPill opportunity={opportunity} />
-        </TitleText>
-      );
-    }
-
     return (
       <TitleText>
-        <OpportunityLabelWithoutPill>
+        <OpportunityLabelWithPill>
           {opportunity.config.label}
-        </OpportunityLabelWithoutPill>
-        {opportunity.showEligibilityStatus("OpportunityModuleHeader") && (
-          <>
-            <Separator> • </Separator>
-            <span
-              className="EligibilityStatus"
-              style={{
-                color: palette.pine1,
-              }}
-            >
-              {opportunity.eligibilityStatusLabel()}
-            </span>
-          </>
-        )}
+          {opportunity.labelAddendum}
+        </OpportunityLabelWithPill>
+        <EligibilityStatusPill opportunity={opportunity} />
       </TitleText>
     );
   });
