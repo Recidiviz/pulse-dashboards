@@ -15,35 +15,135 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "~datatypes";
+
 import { UsIaEarlyDischargeReferralRecordRaw } from "../../src/WorkflowsStore/Opportunity/UsIa";
 import { fixtureWithIdKey } from "./utils";
 
-// TODO(#8267) Flesh out fixtures for demo mode
 export const usIaEarlyDischargeReferralsFixture =
   fixtureWithIdKey<UsIaEarlyDischargeReferralRecordRaw>("externalId", [
     {
       stateCode: "US_IA",
-      externalId: "ed-external-id-1",
+      externalId: "001",
       eligibleCriteria: {
-        noSupervisionViolationWithin6Months: null,
+        noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
+        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+          eligibleDate: relativeFixtureDate({ months: -11 }),
+        },
         supervisionCaseTypeIsNotSexOffense: null,
+        supervisionTypeIsNotInvestigation: null,
         usIaNoOpenSupervisionModifiers: null,
+        usIaNotExcludedFromEarlyDischargeByParoleConditions: null,
         usIaNotServingIneligibleOffenseForEarlyDischarge: null,
-        usIaSupervisionFeesPaid: {
-          supervisionFeeBalance: 1,
+        usIaServingSupervisionCaseAtLeast90Days: {
+          supervisionCaseStartDate: relativeFixtureDate({ months: -16 }),
         },
+        usIaSupervisionFeesPaid: null,
         usIaSupervisionLevelIs0NotAvailable12Or3: {
-          supervisionLevelRawText: "LEVEL 2",
+          supervisionLevelRawText: "LEVEL 3",
         },
-        usIa90DaysPassedSinceCaseAssignment: null,
-        usIaNotWithin30DaysOfReleaseDate: null,
-        usIaNotExcludedFromEarlyDischargePerBoardOrParoleOrder: null,
       },
       ineligibleCriteria: {},
       isEligible: true,
       isAlmostEligible: false,
       formInformation: {},
-      eligibleDate: "2024-01-01",
+      eligibleDate: relativeFixtureDate({ months: -12 }),
+      metadata: {
+        victimFlag: true,
+      },
+    },
+    {
+      stateCode: "US_IA",
+      externalId: "002",
+      eligibleCriteria: {
+        noSupervisionViolationReportWithin6MonthsUsingResponseDate: true,
+        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: true,
+        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+          eligibleDate: relativeFixtureDate({ months: -7 }),
+        },
+        supervisionCaseTypeIsNotSexOffense: true,
+        supervisionTypeIsNotInvestigation: true,
+        usIaNoOpenSupervisionModifiers: null,
+        usIaNotExcludedFromEarlyDischargeByParoleConditions: null,
+        usIaNotServingIneligibleOffenseForEarlyDischarge: null,
+        usIaServingSupervisionCaseAtLeast90Days: {
+          supervisionCaseStartDate: relativeFixtureDate({ months: -17 }),
+        },
+        usIaSupervisionFeesPaid: null,
+        usIaSupervisionLevelIs0NotAvailable12Or3: {
+          supervisionLevelRawText: "LEVEL 3",
+        },
+      },
+      ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
+      formInformation: {},
+      eligibleDate: relativeFixtureDate({ months: -14 }),
+      metadata: {
+        victimFlag: true,
+      },
+    },
+    {
+      stateCode: "US_IA",
+      externalId: "003",
+      eligibleCriteria: {
+        noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
+        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+          eligibleDate: relativeFixtureDate({ months: -1 }),
+        },
+        supervisionCaseTypeIsNotSexOffense: true,
+        supervisionTypeIsNotInvestigation: true,
+        usIaNoOpenSupervisionModifiers: true,
+        usIaNotExcludedFromEarlyDischargeByParoleConditions: null,
+        usIaNotServingIneligibleOffenseForEarlyDischarge: true,
+        usIaServingSupervisionCaseAtLeast90Days: {
+          supervisionCaseStartDate: relativeFixtureDate({ months: -2 }),
+        },
+        usIaSupervisionFeesPaid: null,
+        usIaSupervisionLevelIs0NotAvailable12Or3: {
+          supervisionLevelRawText: "LEVEL 1",
+        },
+      },
+      ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
+      formInformation: {},
+      eligibleDate: relativeFixtureDate({ months: -17 }),
+      metadata: {
+        victimFlag: true,
+      },
+    },
+    {
+      stateCode: "US_IA",
+      externalId: "004",
+      eligibleCriteria: {
+        noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: true,
+        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+          eligibleDate: relativeFixtureDate({ months: -3 }),
+        },
+        supervisionCaseTypeIsNotSexOffense: null,
+        supervisionTypeIsNotInvestigation: true,
+        usIaNoOpenSupervisionModifiers: null,
+        usIaNotExcludedFromEarlyDischargeByParoleConditions: true,
+        usIaNotServingIneligibleOffenseForEarlyDischarge: true,
+        usIaServingSupervisionCaseAtLeast90Days: {
+          supervisionCaseStartDate: relativeFixtureDate({ months: -8 }),
+        },
+        usIaSupervisionFeesPaid: {
+          supervisionFeeBalance: 2000,
+        },
+        usIaSupervisionLevelIs0NotAvailable12Or3: {
+          supervisionLevelRawText: "LEVEL 2",
+        },
+      },
+      ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
+      formInformation: {},
+      eligibleDate: relativeFixtureDate({ months: -18 }),
       metadata: {
         victimFlag: true,
       },

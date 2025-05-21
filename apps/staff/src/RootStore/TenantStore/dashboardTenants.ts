@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { PATHWAYS_TENANTS } from "./pathwaysTenants";
+import { ProvisionedStateCode } from "./types";
 
 export const US_AZ = "US_AZ";
 export const US_AR = "US_AR";
@@ -29,6 +30,10 @@ export const US_PA = "US_PA";
 export const US_TX = "US_TX";
 export const US_UT = "US_UT";
 
+/**
+ * NOTE: When adding new tenants, please also add the state code to the `stateCodes` object
+ * in `libs/staff-shared-server/src/server/constants/stateCodes.js`
+ */
 const NON_PATHWAYS_TENANTS = [
   US_AZ,
   US_AR,
@@ -52,4 +57,4 @@ export const DEPRECATED_TENANTS = [US_OR] as const;
 export const DASHBOARD_TENANTS = [
   ...NON_PATHWAYS_TENANTS,
   ...PATHWAYS_TENANTS,
-] as const;
+] as const satisfies readonly ProvisionedStateCode[];

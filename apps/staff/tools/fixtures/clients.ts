@@ -18,6 +18,7 @@
 import { RawClientRecord } from "~datatypes";
 
 import { US_CA_CLIENTS } from "./clients/usCaClients";
+import { US_IA_CLIENTS } from "./clients/usIaClients";
 import { US_ID_CLIENTS } from "./clients/usIdClients";
 import { US_ME_CLIENTS } from "./clients/usMeClients";
 import { US_MI_CLIENTS } from "./clients/usMiClients";
@@ -32,6 +33,7 @@ export type ClientFixture = PersonFixture<RawClientRecord>;
 
 const data: ClientFixture[] = [
   ...US_CA_CLIENTS,
+  ...US_IA_CLIENTS,
   ...US_ID_CLIENTS,
   ...US_ME_CLIENTS,
   ...US_MI_CLIENTS,
