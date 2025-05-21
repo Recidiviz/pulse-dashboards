@@ -17,7 +17,7 @@
 
 import { FieldValue } from "@google-cloud/firestore";
 import { deleteField, serverTimestamp } from "firebase/firestore";
-import { action, computed, makeObservable, toJS } from "mobx";
+import { action, computed, makeObservable, runInAction, toJS } from "mobx";
 
 import { OpportunityType } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
@@ -57,6 +57,8 @@ export class FormBase<
 
   updatesSubscription: DocumentSubscription<FormUpdate<FormDisplayType>>;
 
+  formIsReverting = false; // Reactive inputs will observe this and cancel their updates
+
   constructor(opportunity: OpportunityModel, rootStore: RootStore) {
     this.opportunity = opportunity;
     this.person = opportunity.person;
@@ -69,6 +71,8 @@ export class FormBase<
       prefilledData: computed,
       currentUserEmail: computed,
       formIsDownloading: computed,
+      formIsReverting: true,
+      revert: action,
       markDownloading: action,
       hydrate: action,
       hydrationState: computed,
@@ -177,13 +181,18 @@ export class FormBase<
   /**
    * Clear all drafted data from the form.
    */
-  async clearDraftData() {
-    const { person } = this.opportunity;
+  async revert() {
+    this.formIsReverting = true;
+    await this.waitForPendingUpdates();
+
     await this.rootStore.firestoreStore.updateForm(
-      person.recordId,
+      this.opportunity.person.recordId,
       { data: deleteField() },
       this.formId,
     );
+    runInAction(() => {
+      this.formIsReverting = false;
+    });
   }
 
   /**
@@ -219,6 +228,12 @@ export class FormBase<
     if (this.opportunity.reviewStatus === "PENDING") {
       this.recordStatusInProgress();
     }
+  }
+
+  waitForPendingUpdates(): Promise<void> {
+    // This waits for all firestore updates (not just ours) but doing it this way
+    // avoids fussy bookkeeping and shouldn't differ in practice.
+    return this.rootStore.firestoreStore.waitForPendingUpdates();
   }
 
   /**

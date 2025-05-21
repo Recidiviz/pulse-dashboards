@@ -41,7 +41,9 @@ import {
   serverTimestamp,
   setDoc,
   Timestamp,
+  waitForPendingWrites,
   where,
+  writeBatch,
 } from "firebase/firestore";
 import { mapValues, pickBy } from "lodash";
 import { makeAutoObservable } from "mobx";
@@ -318,11 +320,18 @@ export default class FirestoreStore {
       return;
     }
 
-    // First add the state code to the `clientUpdatesV2` document
-    await this.updatePerson(recordId, { stateCode: recordId.slice(0, 5) });
-
-    // Then update the document with the actual update
-    await this.updateDocument(docRef, update);
+    // Batching might speed things up by one round trip, but it also lets us waitForPendingUpdates without
+    // possibly missing the second update.
+    const batch = writeBatch(this.db);
+    // Adding the stateCode ensures that the person document actually exists. See #3845
+    const personDocRef = this.doc({ key: "clientUpdatesV2" }, `${recordId}`);
+    batch.set(
+      personDocRef,
+      { stateCode: recordId.slice(0, 5) },
+      { merge: true },
+    );
+    batch.set(docRef, { ...update }, { merge: true });
+    await batch.commit();
   }
 
   // Function to add an update in `clientUpdatesV2`. All JusticeInvolvedPerson updates (both Clients and Residents)
@@ -681,5 +690,9 @@ export default class FirestoreStore {
     );
 
     return results.docs.map((result) => result.data());
+  }
+
+  waitForPendingUpdates(): Promise<void> {
+    return waitForPendingWrites(this.db);
   }
 }

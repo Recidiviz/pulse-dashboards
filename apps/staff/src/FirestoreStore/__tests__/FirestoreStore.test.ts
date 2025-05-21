@@ -23,6 +23,7 @@ import {
   PartialWithFieldValue,
   serverTimestamp,
   setDoc,
+  writeBatch,
 } from "firebase/firestore";
 import tk from "timekeeper";
 import { Mock } from "vitest";
@@ -97,6 +98,15 @@ describe("FirestoreStore", () => {
       },
     } as unknown as RootStore;
     store = new FirestoreStore({ rootStore: mockRootStore });
+    vi.mocked(writeBatch).mockImplementation(() => ({
+      // mocking set with setDoc lets us assert that docs have been set without caring if
+      // they're batched or not.
+      // @ts-ignore: set() is really a chainable method and setDoc() returns a promise instead
+      set: setDoc,
+      update: vi.fn(),
+      delete: vi.fn(),
+      commit: vi.fn(),
+    }));
   });
 
   afterEach(() => {

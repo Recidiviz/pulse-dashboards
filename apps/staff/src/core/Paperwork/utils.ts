@@ -18,7 +18,7 @@
 import { captureException } from "@sentry/react";
 import saveAs from "file-saver";
 import { debounce, isString, throttle } from "lodash";
-import { reaction } from "mobx";
+import { autorun, reaction } from "mobx";
 import PizZip from "pizzip";
 import { rem } from "polished";
 import * as React from "react";
@@ -204,6 +204,18 @@ function useReactiveInput<
       updateFirestoreRef.current(event.target.value);
     }
   };
+
+  useEffect(() => {
+    return autorun(() => {
+      if (form.formIsDownloading) {
+        updateFirestoreRef.current?.flush();
+      }
+      if (form.formIsReverting) {
+        updateFirestoreRef.current?.cancel();
+        setValue(fetchFromStore());
+      }
+    });
+  });
 
   useEffect(() => {
     return reaction(

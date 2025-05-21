@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { add, format, parseISO, sub } from "date-fns";
-import { DocumentData } from "firebase/firestore";
+import { DocumentData, writeBatch } from "firebase/firestore";
 import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
 import { MockInstance } from "vitest";
@@ -190,6 +190,13 @@ beforeEach(() => {
   vi.spyOn(AnalyticsStore.prototype, "trackOpportunitySnoozed");
 
   mockUserStateCode.mockReturnValue(mockUser.info.stateCode);
+
+  vi.mocked(writeBatch).mockImplementation(() => ({
+    set: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    commit: vi.fn(),
+  }));
 });
 
 afterEach(() => {

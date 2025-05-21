@@ -31,7 +31,7 @@ import styled from "styled-components/macro";
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 import { FormLastEdited } from "../FormLastEdited";
-import { createDownloadLabel, REACTIVE_INPUT_UPDATE_DELAY } from "./utils";
+import { createDownloadLabel } from "./utils";
 
 const FormHeaderBar = styled.div`
   display: flex;
@@ -119,10 +119,7 @@ export const FormContainer = observer(function FormContainer({
   const handleDownloadClick = async () => {
     form.markDownloading();
 
-    // Wait for any inputs to save their state
-    await new Promise((resolve) =>
-      setTimeout(resolve, REACTIVE_INPUT_UPDATE_DELAY),
-    );
+    await form.waitForPendingUpdates();
 
     try {
       if (!isMissingContent) {
@@ -158,11 +155,11 @@ export const FormContainer = observer(function FormContainer({
         <FormHeaderSection>
           {formRevertButton && form.allowRevert && (
             <RevertButton
-              disabled={!form.formLastUpdated}
+              disabled={!form.formLastUpdated || form.formIsReverting}
               className="WorkflowsFormRevertButton"
-              onClick={() => form.clearDraftData()}
+              onClick={() => form.revert()}
             >
-              Revert All Edits
+              {form.formIsReverting ? "Reverting..." : "Revert All Edits"}
             </RevertButton>
           )}
           <DownloadButton

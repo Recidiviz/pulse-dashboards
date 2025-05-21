@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { writeBatch } from "firebase/firestore";
 import { configure } from "mobx";
 
 import { RootStore } from "../../../../RootStore";
@@ -67,6 +68,12 @@ beforeEach(() => {
   createTestUnit();
   vi.spyOn(AnalyticsStore.prototype, "trackReferralFormDownloaded");
   vi.spyOn(AnalyticsStore.prototype, "trackReferralFormViewed");
+  vi.mocked(writeBatch).mockImplementation(() => ({
+    set: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    commit: vi.fn(),
+  }));
 });
 
 afterEach(() => {
@@ -230,11 +237,11 @@ describe("form update", () => {
   });
 });
 
-describe("form clear data", () => {
+describe("revert", () => {
   test("calls updateForm with no referralForm field", async () => {
     vi.spyOn(rootStore.firestoreStore, "updateForm");
     vi.spyOn(rootStore.firestoreStore, "updateOpportunity");
-    await form.clearDraftData();
+    await form.revert();
     expect(rootStore.firestoreStore.updateForm).toHaveBeenCalledWith(
       client.recordId,
       { data: undefined },

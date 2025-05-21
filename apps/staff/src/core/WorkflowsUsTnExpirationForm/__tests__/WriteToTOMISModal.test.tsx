@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { DocumentData, Timestamp } from "firebase/firestore";
+import { DocumentData, Timestamp, writeBatch } from "firebase/firestore";
 import { configure } from "mobx";
 import ReactModal from "react-modal";
 import tk from "timekeeper";
@@ -70,6 +70,12 @@ beforeEach(() => {
   ReactModal.setAppElement(document.createElement("div"));
   // this lets us spy on observables, e.g. computed getters
   configure({ safeDescriptors: false });
+  vi.mocked(writeBatch).mockImplementation(() => ({
+    set: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    commit: vi.fn(),
+  }));
 });
 
 afterEach(async () => {
