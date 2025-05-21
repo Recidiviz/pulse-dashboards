@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { OpportunityDenialView } from "../OpportunityDenial";
@@ -53,11 +53,15 @@ export function OpportunityPreviewModal({
 
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  if (!opportunity) return null;
-
-  function resetPreviewView() {
+  const resetPreviewView = useCallback(() => {
     setCurrentView("OPPORTUNITY_PREVIEW");
-  }
+  }, [setCurrentView]);
+
+  useEffect(() => {
+    resetPreviewView();
+  }, [selectedPerson, resetPreviewView]);
+
+  if (!opportunity) return null;
 
   const handleTrackPreviewed = () =>
     shouldTrackOpportunityPreviewed && opportunity.trackPreviewed();
