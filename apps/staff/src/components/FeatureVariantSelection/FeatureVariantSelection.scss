@@ -1,0 +1,50 @@
+@import "@recidiviz/design-system/dist/scss/typography/mixins";
+@import "../../core/CoreConstants.module.scss";
+
+.FeatureVariantSelection {
+  margin-bottom: 2rem;
+  width: 100%;
+
+  &__heading {
+    @include sans-16;
+    color: $slate-85;
+    margin-bottom: 1rem;
+  }
+
+  &__select-item-container {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 0 30px;
+  }
+
+  &__select-item {
+    width: 32%;
+    min-width: 450px;
+    display: flex;
+    align-items: center;
+    color: $pine-1;
+    background: $white;
+    box-shadow: $inset-shadow-20;
+    border-radius: 0.5rem;
+    padding: 1.5rem 2.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid $marble-3;
+    cursor: pointer;
+
+    .Checkbox__label {
+      @include sans-24;
+      color: $pine-1;
+    }
+
+    @media screen and (max-width: $core-breakpoint-xs) {
+      min-width: 100%;
+    }
+
+    &:hover {
+      border: 1px solid $signal-notifications;
+    }
+  }
+}
+.FeatureVariantSelection__select-item .Checkbox__box {
+  top: 6px; // or whatever value aligns best
+}

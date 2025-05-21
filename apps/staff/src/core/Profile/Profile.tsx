@@ -24,6 +24,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
 
+import FeatureVariantSelection from "../../components/FeatureVariantSelection";
 import StateSelection from "../../components/StateSelection";
 import { useUserStore } from "../../components/StoreProvider";
 import useLogout from "../../hooks/useLogout";
@@ -94,6 +95,7 @@ function Profile() {
             )}
           </div>
           <StateSelection />
+          {showFeatureVariants && <FeatureVariantSelection />}
           <div>
             <Link to="/">
               <Button className="Profile__button">Back to dashboard</Button>
