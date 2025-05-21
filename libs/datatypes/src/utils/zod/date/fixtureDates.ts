@@ -27,7 +27,8 @@ import {
 /**
  * dates in demo fixtures will be shifted relative to this date
  */
-export const CURRENT_DATE_FIXTURE = parseISO("2021-12-16");
+export const CURRENT_DATE_STRING_FIXTURE = "2021-12-16";
+export const CURRENT_DATE_FIXTURE = parseISO(CURRENT_DATE_STRING_FIXTURE);
 
 /**
  * Returns an ISO date string representing the "fixture current" date

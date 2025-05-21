@@ -45,6 +45,7 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
     usTnFacilityAdmissionDate: dateStringSchema.nullish(),
     usMePortionNeededEligibleDate: dateStringSchema.nullish(),
     gender: z.string(),
+    metadata: z.object({}).passthrough().optional(),
   })
   .transform((input) => ({
     ...input,

@@ -24,6 +24,7 @@ import {
   FixtureMapping,
   incarcerationStaffFixtures,
   ParsedRecord,
+  rawUsMaResidents,
   supervisionStaffFixtures,
   usMeAnnualReclassificationFixtures,
   usMeMediumTrusteeFixtures,
@@ -96,6 +97,7 @@ const fsSettings: FirebaseFirestore.Settings = FIREBASE_CREDENTIAL
   ? {
       projectId: FIREBASE_PROJECT,
       keyFilename: FIREBASE_CREDENTIAL,
+      ignoreUndefinedProperties: true,
     }
   : {
       projectId: "demo-dev",
@@ -132,7 +134,10 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
     (fixtures) => fixtureFromParsedRecords<ParsedRecord>("id", fixtures),
   ),
   clients: clientsData,
-  residents: residentsData,
+  residents: {
+    idFunc: residentsData.idFunc,
+    data: [...residentsData.data, ...rawUsMaResidents],
+  },
   locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,
   usTxSupervisionTasks: usTxSupervisionTasksData,

@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rawUsMaResidents, usMaResidents } from "./US_MA/fixtures";
-import { rawUsMeResidents, usMeResidents } from "./US_ME/fixtures";
+import { rawUsMaResidentMetadataFixtures } from "./fixtures";
+import { usMaResidentMetadataSchema } from "./schema";
 
-// re-exporting state fixtures for convenience
-export { rawUsMaResidents, rawUsMeResidents, usMaResidents, usMeResidents };
-
-export const allResidents = [...usMeResidents, ...usMaResidents];
-
-export const rawAllResidents = [...rawUsMeResidents, ...rawUsMaResidents];
+test("MA resident metadata schema", () => {
+  expect(
+    rawUsMaResidentMetadataFixtures.map((f) =>
+      usMaResidentMetadataSchema.parse(f),
+    ),
+  ).toMatchSnapshot();
+});
