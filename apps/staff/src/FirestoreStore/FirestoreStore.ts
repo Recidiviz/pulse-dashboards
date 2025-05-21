@@ -156,7 +156,7 @@ export default class FirestoreStore {
         );
       } catch (e) {
         throw new Error(
-          `Error in fetchFirebaseToken for ${appMetadata.pseudonymizedId}: ${e}`,
+          `Error in fetchFirebaseToken for ${appMetadata.userHash}: ${e}`,
         );
       }
 
