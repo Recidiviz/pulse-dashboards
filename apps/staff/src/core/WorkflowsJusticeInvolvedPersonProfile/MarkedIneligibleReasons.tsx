@@ -83,6 +83,27 @@ export function buildActedOnText({
   )}.`;
 }
 
+export function getusAzTprDtpAdditionalInformation(
+  opportunity: Opportunity,
+): JSX.Element | undefined {
+  const usAzTprDtpAdditionalInformation = `Thank you for flagging an error in this person's TPR date in ACIS. Recidiviz will automatically report this information to Central Time Comp. If you have questions for their team, you're encouraged to reach out to them directly via email.`;
+  if (
+    [
+      "usAzOverdueForACISTPR",
+      "usAzOverdueForACISDTP",
+      "usAzReleaseToDTP",
+      "usAzReleaseToTPR",
+    ].includes(opportunity.type)
+  ) {
+    return (
+      <>
+        <div>{usAzTprDtpAdditionalInformation}</div>
+        <br />
+      </>
+    );
+  }
+}
+
 export function buildResurfaceText(
   opportunity: Opportunity,
   snoozeUntil: Date | undefined,
@@ -92,7 +113,6 @@ export function buildResurfaceText(
   const { supervisionEndDateCopy, releaseDateCopy } = labels;
   const dateStr = format(snoozeUntil, "LLLL d, yyyy");
   const { person } = opportunity;
-  const usAzTprDtpAdditionalInformation = `Thank you for flagging an error in this person's TPR date in ACIS. Recidiviz will automatically report this information to Central Time Comp. If you have questions for their team, you're encouraged to reach out to them directly via email.`;
 
   let endDateString;
 
@@ -114,17 +134,6 @@ export function buildResurfaceText(
 
   if (opportunity.generateCaseNoteText) {
     return opportunity.generateCaseNoteText;
-  }
-
-  if (
-    [
-      "usAzOverdueForACISTPR",
-      "usAzOverdueForACISDTP",
-      "usAzReleaseToDTP",
-      "usAzReleaseToTPR",
-    ].includes(opportunity.type)
-  ) {
-    return endDateString + usAzTprDtpAdditionalInformation;
   }
 
   return endDateString;
@@ -186,6 +195,7 @@ const MarkedIneligibleReasons: React.FC<{
         <>
           {" "}
           <div>{actedOnTextAndResurfaceText} </div> <br />
+          {getusAzTprDtpAdditionalInformation(opportunity)}
         </>
       )}
       {opportunity.denial && (

@@ -47,6 +47,7 @@ import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import {
   buildDenialReasonsListText,
   buildResurfaceText,
+  getusAzTprDtpAdditionalInformation,
 } from "../WorkflowsJusticeInvolvedPersonProfile/MarkedIneligibleReasons";
 import { DenialConfirmationModals } from "./DenialConfirmationModals";
 import { UsIaManageActionPlan } from "./UsIa/UsIaManageActionPlan";
@@ -264,6 +265,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         <SnoozeUntilReminderText>
           <div>{buildResurfaceText(opportunity, snoozeUntilDate, labels)}</div>
           <br />
+          {getusAzTprDtpAdditionalInformation(opportunity)}
           <div>{buildDenialReasonsListText(opportunity, reasons)}</div>
         </SnoozeUntilReminderText>
       )}
