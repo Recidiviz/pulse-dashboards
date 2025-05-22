@@ -25,8 +25,8 @@ import { isHydrated } from "~hydration-utils";
 import { useRootStore } from "../../components/StoreProvider";
 
 type TasksHydrator = {
-  initial: React.ReactNode;
-  empty: React.ReactNode;
+  initial?: React.ReactNode;
+  empty?: React.ReactNode;
   hydrated: React.ReactNode;
 };
 

@@ -36,6 +36,7 @@ import { CaseNoteSearch } from "../CaseNoteSearch";
 import { trpc } from "../CaseNoteSearch/trpc";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { ProfileCapsule } from "../PersonCapsules";
+import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
 import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { PreviewTasks } from "../WorkflowsTasks/PreviewTasks";
@@ -426,7 +427,14 @@ export const FullProfile = observer(
                 <div>
                   <SectionHeading>Tasks</SectionHeading>
                   <Divider />
-                  <PreviewTasks person={person} showSnoozeDropdown={false} />
+                  <CaseloadTasksHydrator
+                    hydrated={
+                      <PreviewTasks
+                        person={person}
+                        showSnoozeDropdown={false}
+                      />
+                    }
+                  />
                 </div>
               )}
               <div>
