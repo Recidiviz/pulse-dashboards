@@ -489,6 +489,21 @@ function formatDollarAmount(text: string) {
   return textTokens.join(" ");
 }
 
+function htmlStringToString(htmlString?: string): string {
+  if (!htmlString) return "";
+  return (
+    htmlString
+      // replace breaks and divs with new line
+      .replace(/<br>|<div>|<\/div>/gi, "\n")
+      // remove any other tags
+      .replace(/<[^>]*>/gi, "")
+      // replace the non-breaking space special character with a space
+      .replace(/&nbsp;/gi, " ")
+      // remove leading and trailing quotes
+      .replace(/^"|"$/g, "")
+  );
+}
+
 export {
   convertCurlyQuotesToStraight,
   decrypt,
@@ -525,6 +540,7 @@ export {
   getTrailingLabelFromMetricPeriodMonthsFilter,
   getWelcomeText,
   hashEmailAddress,
+  htmlStringToString,
   humanReadableTitleCase,
   matrixViolationTypeToLabel,
   numberFromOfficerId,

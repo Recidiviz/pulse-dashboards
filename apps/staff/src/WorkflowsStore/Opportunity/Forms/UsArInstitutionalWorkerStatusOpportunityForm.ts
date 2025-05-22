@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { htmlStringToString } from "../../../utils/formatStrings";
 import { UsArInstitutionalWorkerStatusOpportunity } from "../UsAr";
 import { UsArInstitutionalWorkerStatusDraftData } from "../UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusReferralRecord";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
@@ -57,7 +58,9 @@ export class UsArInstitutionalWorkerStatusOpportunityForm extends FormBase<
             },
             relationshipStatus: visitor.relationshipStatus,
             relationshipStatusDate: visitor.relationshipStatusDate,
-            relationshipComments: visitor.relationshipComments,
+            relationshipComments: htmlStringToString(
+              visitor.relationshipComments,
+            ),
             visitationReviewDate: visitor.visitationReviewDate,
             visitationDurDays: visitor.visitationDurDays,
             visitationSpecialCondition1: visitor.visitationSpecialCondition1,

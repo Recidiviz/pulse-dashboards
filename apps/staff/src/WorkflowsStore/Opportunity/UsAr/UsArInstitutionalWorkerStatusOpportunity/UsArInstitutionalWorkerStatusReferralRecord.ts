@@ -76,7 +76,7 @@ const usArApprovedVisitorSchema = z.object({
       addressLine2: nullishAsUndefined(z.string()).optional(),
     })
     .nullable(),
-  relationshipComments: z.string().nullable(),
+  relationshipComments: nullishAsUndefined(z.string()),
   relationshipStatus: z.string().nullable(),
   relationshipStatusDate: z.string().nullable(),
   seqNum: z.string().nullable(),

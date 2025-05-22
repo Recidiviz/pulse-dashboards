@@ -474,4 +474,32 @@ describe("formatStrings", () => {
       expect(result).toEqual("Unpaid balance of $90");
     });
   });
+
+  describe("htmlStringToString", () => {
+    it("replaces <br> with new line", () => {
+      const originalString = "submitted on DATE <br> by: PERSON <BR>";
+      const result = utils.htmlStringToString(originalString);
+      expect(result).toEqual(`submitted on DATE 
+ by: PERSON 
+`);
+    });
+
+    it("replaces nbsp with space", () => {
+      const originalString = "submitted on DATE&nbsp;by: PERSON";
+      const result = utils.htmlStringToString(originalString);
+      expect(result).toEqual("submitted on DATE by: PERSON");
+    });
+
+    it("removes leading and trailing quotes", () => {
+      const originalString = `"submitted on DATE by: PERSON"`;
+      const result = utils.htmlStringToString(originalString);
+      expect(result).toEqual("submitted on DATE by: PERSON");
+    });
+
+    it("replaces <p> tags with empty string", () => {
+      const originalString = "submitted on DATE, <p>by: PERSON</p>";
+      const result = utils.htmlStringToString(originalString);
+      expect(result).toEqual("submitted on DATE, by: PERSON");
+    });
+  });
 });
