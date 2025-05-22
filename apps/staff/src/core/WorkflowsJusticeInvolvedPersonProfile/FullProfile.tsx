@@ -49,6 +49,7 @@ import {
 import { UsUtDates } from "./ClientDetailSidebarComponents/UsUtDates";
 import ClientDetailsInput from "./ClientDetailsInput";
 import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
+import { UsIaActionPlansAndNotes } from "./OpportunityDetailSidebarComponents/US_IA";
 import { OpportunitySidePanelProvider } from "./OpportunitySidePanelContext";
 import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
@@ -237,6 +238,11 @@ const ClientDetails = observer(function ClientDetails({
         </>
       )}
       <SpecialConditions client={client} />
+      {client.opportunities.usIaEarlyDischarge?.length && (
+        <UsIaActionPlansAndNotes
+          opportunity={client.opportunities.usIaEarlyDischarge[0]}
+        />
+      )}
     </>
   );
 });
