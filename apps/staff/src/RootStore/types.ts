@@ -83,7 +83,6 @@ export type FeatureVariant =
   | "usTnSuspensionOfDirectSupervision"
   | "usMeCaseNoteSnooze"
   | "usTnCompliantReporting2025Policy"
-  | "tableMultiSortEnabled"
   | "supervisionTasksNavLink"
   | "usIaEarlyDischargeCustomizations"
   // INSIGHTS
@@ -159,7 +158,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   mandatoryMinimum: {},
   usTnCompliantReporting2025Policy: {},
   reportIncorrectRosters: {},
-  tableMultiSortEnabled: {},
   supervisionTasksNavLink: {},
   snoozeCompanions: {},
   usIaEarlyDischargeCustomizations: {},
@@ -200,7 +198,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
         },
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
-        tableMultiSortEnabled: undefined,
         supervisionTasksNavLink: { activeTenants: ["US_ID"] },
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
         reportIncorrectRosters: {

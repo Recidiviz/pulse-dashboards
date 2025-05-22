@@ -315,7 +315,7 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
       }}
       shouldHighlightRow={(opp) => presenter.shouldHighlightOpportunity(opp)}
       manualSorting={manualSorting}
-      enableMultiSort={presenter.tableMultiSortEnabled}
+      enableMultiSort={false}
       initialState={presenter.initialTableState}
     />
   );

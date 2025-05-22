@@ -57,7 +57,6 @@ export class OpportunityPersonListPresenter
   readonly isSupervisorHomepage: boolean;
   readonly displayTabGroups: OpportunityTabGroup[];
   readonly showZeroGrantsPill: boolean;
-  readonly tableMultiSortEnabled: boolean;
   private _activeTabGroup: OpportunityTabGroup;
   private userSelectedTab?: OpportunityTab;
   private userOrderedTabs?: OpportunityTab[];
@@ -92,8 +91,6 @@ export class OpportunityPersonListPresenter
     );
 
     this.updatesSubscription = this.workflowsStore.userUpdatesSubscription;
-
-    this.tableMultiSortEnabled = !!featureVariants.tableMultiSortEnabled;
 
     this.showZeroGrantsPill = !!(
       featureVariants.zeroGrantsFlag &&
