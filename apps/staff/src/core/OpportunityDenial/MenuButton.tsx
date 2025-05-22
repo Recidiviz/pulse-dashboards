@@ -19,7 +19,6 @@ import { Dropdown, DropdownMenu } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { UsIaEarlyDischargeOpportunity } from "../../WorkflowsStore/Opportunity/UsIa";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
@@ -37,8 +36,6 @@ export const MenuButton = observer(function MenuButton({
   opportunity: Opportunity;
   onDenialButtonClick?: () => void;
 }) {
-  const { oppTabSubcategories } = useFeatureVariants();
-
   const { config } = opportunity;
 
   // If we don't support submission or denial, show no button
@@ -104,9 +101,7 @@ export const MenuButton = observer(function MenuButton({
           {
             // If there are subcategories for submitted, show a menu option for each submitted category
             // eslint-disable-next-line no-nested-ternary
-            oppTabSubcategories &&
-            submittedSubcategories &&
-            submittedSubcategories.length > 0 ? (
+            submittedSubcategories && submittedSubcategories.length > 0 ? (
               <>
                 {submittedSubcategories.map((subcategory) => (
                   <OpportunityStatusDropdownMenuItem

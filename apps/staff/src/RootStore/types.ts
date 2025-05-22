@@ -78,7 +78,6 @@ export type FeatureVariant =
   | "personSpecificOppBanners"
   | "fullWidthTimeline"
   | "usOrEarnedDischargeSentence"
-  | "oppTabSubcategories"
   | "usIdCRCFacilitySearch"
   | "usIdCaseManagerSearch"
   | "usTnSuspensionOfDirectSupervision"
@@ -149,7 +148,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   fullWidthTimeline: {},
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
-  oppTabSubcategories: {},
   offenseOverrideControls: {},
   protectiveFactors: {},
   editCountyFields: {},
@@ -174,7 +172,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         disableSnoozeSlider: { activeTenants: ["US_MO"] },
         fullWidthTimeline: { activeTenants: ["US_AZ", "US_UT"] },
         insightsOnboarding: {},
-        oppTabSubcategories: { activeTenants: ["US_AZ", "US_UT"] },
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
         supervisionUnrestrictedSearch: {},
         supervisorHomepageWorkflows: {},
