@@ -89,7 +89,9 @@ export function UsIaActionPlansAndNotes({
 }: OpportunityProfileProps): React.ReactElement | null {
   if (
     !(opportunity instanceof UsIaEarlyDischargeOpportunity) ||
-    !opportunity.latestAction
+    !opportunity.latestAction ||
+    (opportunity.latestAction.type === "APPROVAL" &&
+      !opportunity.latestAction.notes)
   ) {
     return null;
   }
