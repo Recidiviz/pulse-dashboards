@@ -93,8 +93,6 @@ export type FeatureVariant =
   | "outcomesModule"
   | "reportIncorrectRosters"
   | "operationsDrilldown"
-  // WORKFLOWS & INSIGHTS
-  | "lastSyncedDate"
   // SENTENCING
   | "offenseOverrideControls"
   | "protectiveFactors"
@@ -138,7 +136,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisorHomepageWorkflows: {},
   supervisorHomepageVitals: {},
   usPaSpecialCircumstances: {},
-  lastSyncedDate: {},
   caseNoteSearch: {},
   actionStrategies: {},
   zeroGrantsFlag: {},
@@ -184,7 +181,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         ...allFeatureVariants,
         disableSnoozeSlider: { activeTenants: ["US_MO"] },
         // Currently disabled because the last synced date doesn't exist on the backend yet.
-        lastSyncedDate: undefined,
         // Undefined so that Recidiviz users see both FVs in staging
         usOrEarnedDischargeSentence: undefined,
         usMeCaseNoteSnooze: isDemoMode() ? undefined : {},

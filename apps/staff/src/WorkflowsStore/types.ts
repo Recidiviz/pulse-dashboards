@@ -116,10 +116,6 @@ export type JusticeInvolvedPerson = {
    */
   personType: PersonType;
   /**
-   * The date when the data about this person was most recently synced from the state
-   */
-  lastDataFromState: Date;
-  /**
    * Optional text to display on all opportunities this person is eligible for.
    */
   bannerText?: string;

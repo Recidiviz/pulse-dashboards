@@ -28,7 +28,6 @@ import { JusticeInvolvedPerson } from "../../WorkflowsStore";
 import CaseloadHydrator from "../CaseloadHydrator/CaseloadHydrator";
 import { ProfileCapsule } from "../PersonCapsules";
 import { SectionLabelText } from "../sharedComponents";
-import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import WorkflowsResults from "../WorkflowsResults";
 
 const CaseloadWrapper = styled.ul`
@@ -111,7 +110,6 @@ export const AllCaseloads = observer(function AllCaseloads() {
           })`}
         >
           {allCaseloadsViz}
-          <WorkflowsLastSynced date={caseloadPersons[0]?.lastDataFromState} />
         </WorkflowsResults>
       }
       empty={null}

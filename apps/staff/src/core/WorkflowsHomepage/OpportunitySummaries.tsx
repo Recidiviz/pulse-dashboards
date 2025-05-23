@@ -19,7 +19,6 @@ import { OpportunityType } from "~datatypes";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
-import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import { OpportunityCaseHighlights } from "./OpportunityCaseHighlights";
 import OpportunityTypeSummary from "./OpportunityTypeSummary";
 
@@ -39,13 +38,6 @@ export const OpportunitySummaries = function OpportunitySummaries({
   zeroGrantOpportunities?: string[];
 }) {
   const { zeroGrantsFlag } = useFeatureVariants();
-
-  // TODO(#5959): Hide the last synced date from the supervisor homepage.
-  // take the last synced date from an arbitrary person's record
-  const firstOpportunityPerson = Object.values(opportunitiesByType).find(
-    (opp) => opp.length,
-  )?.[0]?.person;
-  const lastSyncedDate = firstOpportunityPerson?.lastDataFromState;
 
   return (
     <div>
@@ -74,7 +66,6 @@ export const OpportunitySummaries = function OpportunitySummaries({
         }
         return null;
       })}
-      <WorkflowsLastSynced date={lastSyncedDate} />
     </div>
   );
 };

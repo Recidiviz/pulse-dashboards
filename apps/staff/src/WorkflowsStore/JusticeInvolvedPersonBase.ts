@@ -143,10 +143,6 @@ export abstract class JusticeInvolvedPersonBase<
     return this.record.officerId ?? undefined;
   }
 
-  get lastDataFromState(): Date {
-    return new Date("July 25, 2024");
-  }
-
   get assignedStaff(): StaffRecord | undefined {
     return this.rootStore.workflowsStore?.availableOfficers.find(
       (o) => o.id === this.assignedStaffId,

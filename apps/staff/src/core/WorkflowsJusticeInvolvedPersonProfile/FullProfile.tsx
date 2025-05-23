@@ -37,7 +37,6 @@ import { trpc } from "../CaseNoteSearch/trpc";
 import { usePersonTracking } from "../hooks/usePersonTracking";
 import { ProfileCapsule } from "../PersonCapsules";
 import { CaseloadTasksHydrator } from "../TasksHydrator/TasksHydrator";
-import WorkflowsLastSynced from "../WorkflowsLastSynced";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import { PreviewTasks } from "../WorkflowsTasks/PreviewTasks";
 import {
@@ -429,7 +428,6 @@ export const FullProfile = observer(
             </div>
           </Content>
         </Wrapper>
-        <WorkflowsLastSynced date={person.lastDataFromState} />
       </WorkflowsNavLayout>
     );
   },
