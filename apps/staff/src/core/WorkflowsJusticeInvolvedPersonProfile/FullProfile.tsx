@@ -55,11 +55,7 @@ import { OpportunitySidePanelProvider } from "./OpportunitySidePanelContext";
 import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
 import { ResidentHousing } from "./ResidentDetailSidebarComponents/ResidentHousing";
-import {
-  IncarcerationProgress,
-  SentenceProgress,
-  SupervisionProgress,
-} from "./SentenceProgress";
+import { SentenceProgress } from "./SentenceProgress";
 import { Divider, PhoneNumber } from "./styles";
 import {
   ClientProfileProps,
@@ -197,20 +193,12 @@ function AdditionalDetails({ person }: PersonProfileProps): React.ReactElement {
 const ClientDetails = observer(function ClientDetails({
   client,
 }: ClientProfileProps): React.ReactElement {
-  const { fullWidthTimeline } = useFeatureVariants();
-
   return (
     <>
       {client.stateCode === "US_UT" ? (
         <UsUtDates client={client} />
       ) : (
         <>
-          {!fullWidthTimeline && (
-            <>
-              <SupervisionProgress client={client} />
-              <Divider />
-            </>
-          )}
           <PartialTime person={client} />
           {client.portionServedDates.length > 0 && <Divider />}
         </>
@@ -251,20 +239,8 @@ const ClientDetails = observer(function ClientDetails({
 const ResidentDetails = observer(function ResidentDetails({
   resident,
 }: ResidentProfileProps): React.ReactElement {
-  // MO residents don't have start/end dates or officer IDs in their resident record,
-  // so we do not show the sidebar timeline for MO residents
-  const { fullWidthTimeline } = useFeatureVariants();
-  const isMoResident = resident.stateCode === "US_MO";
-  const showSidebarTimeline = !isMoResident && !fullWidthTimeline;
-
   return (
     <>
-      {showSidebarTimeline && (
-        <>
-          <IncarcerationProgress resident={resident} />
-          <Divider />
-        </>
-      )}
       <PartialTime person={resident} />
       {resident.portionServedDates.length > 0 && <Divider />}
       <ResidentHousing resident={resident} />
@@ -355,7 +331,7 @@ export const FullProfile = observer(
       userStore,
     } = useRootStore();
     const { isTablet, isMobile } = useIsMobile(true);
-    const { caseNoteSearch, fullWidthTimeline } = useFeatureVariants();
+    const { caseNoteSearch } = useFeatureVariants();
 
     usePersonTracking(person, () => {
       person?.trackProfileViewed();
@@ -363,9 +339,11 @@ export const FullProfile = observer(
 
     if (!person) return null;
 
+    // MO residents don't have start/end dates or officer IDs in their resident record,
+    // so we do not show the sidebar timeline for MO residents
     const isMoResident =
       person instanceof Resident && person.stateCode === "US_MO";
-    const showFullWidthTimeline = !isMoResident && fullWidthTimeline;
+    const showFullWidthTimeline = !isMoResident;
     const sidebarHeadingText = showFullWidthTimeline
       ? "Additional information"
       : "Progress toward success";

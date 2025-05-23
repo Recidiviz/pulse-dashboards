@@ -75,7 +75,6 @@ export type FeatureVariant =
   | "workflowsSupervisorSearch"
   | "usPaSpecialCircumstances"
   | "caseNoteSearch"
-  | "fullWidthTimeline"
   | "usOrEarnedDischargeSentence"
   | "usIdCRCFacilitySearch"
   | "usIdCaseManagerSearch"
@@ -142,7 +141,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   lastSyncedDate: {},
   caseNoteSearch: {},
   actionStrategies: {},
-  fullWidthTimeline: {},
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
   offenseOverrideControls: {},
@@ -166,7 +164,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
     ? {
         actionStrategies: { activeTenants: ["US_MI"] },
         disableSnoozeSlider: { activeTenants: ["US_MO"] },
-        fullWidthTimeline: { activeTenants: ["US_AZ", "US_UT"] },
         insightsOnboarding: {},
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
         supervisionUnrestrictedSearch: {},
