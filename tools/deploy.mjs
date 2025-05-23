@@ -187,6 +187,8 @@ const deployServicesChoices = [
   { name: "Sentencing server", checked: true },
   { name: "JII texting server", checked: true },
   { name: "Case notes server", checked: true },
+  { name: "Opportunities frontend", checked: true },
+  { name: "Opportunities backend", checked: true },
 ];
 
 if (deployEnv === "demo") {
@@ -213,6 +215,12 @@ const deployCaseNotes =
   deployServicesPrompt.deployServices.includes("Case notes server");
 const deployDemoFixtures =
   deployServicesPrompt.deployServices.includes("Demo fixtures");
+const deployOppsFrontend = deployServicesPrompt.deployServices.includes(
+  "Opportunities frontend",
+);
+const deployOppsBackend = deployServicesPrompt.deployServices.includes(
+  "Opportunities backend",
+);
 
 console.log("Running nx reset...");
 await $`nx reset`.pipe(process.stdout);
@@ -578,6 +586,75 @@ if (
           type: "confirm",
           name: "retryDeploy",
           message: `Case notes server deploy failed with error: ${e}. Retry?`,
+          default: false,
+        });
+        retryDeploy = retryDeployPrompt.retryDeploy;
+      }
+    } while (retryDeploy);
+  }
+}
+
+if (
+  // there is no demo backend for Opportunities, it shares the staging backend
+  deployEnv === "staging" ||
+  deployEnv === "production"
+) {
+  if (deployOppsBackend) {
+    let retryDeploy = false;
+
+    do {
+      try {
+        await $`nx deploy jii-functions --configuration ${deployEnv}`.pipe(
+          process.stdout,
+        );
+
+        retryDeploy = false;
+        successfullyDeployed.push("Opportunities backend");
+      } catch (e) {
+        const retryDeployPrompt = await inquirer.prompt({
+          type: "confirm",
+          name: "retryDeploy",
+          message: `Opportunities backend deploy failed with error: ${e}. Retry?`,
+          default: false,
+        });
+        retryDeploy = retryDeployPrompt.retryDeploy;
+      }
+    } while (retryDeploy);
+  }
+}
+
+if (
+  deployEnv === "staging" ||
+  deployEnv === "production" ||
+  deployEnv === "demo"
+) {
+  if (deployOppsFrontend) {
+    // building separately because we want to pass extra args
+    // to the deploy command but not the build command
+    await $`nx build jii --configuration ${deployEnv}`.pipe(process.stdout);
+
+    let retryDeploy = false;
+    do {
+      try {
+        let deployMessage = `${currentRevision}`;
+        if (deployEnv === "production") {
+          deployMessage = `Version ${nextVersion} - Commit hash ${currentRevision}`;
+          publishReleaseNotes = true;
+        }
+
+        // we built the project manually first,
+        // skipping dependencies avoids passing arbitrary extra args to the build command
+        await $`nx deploy jii --configuration ${deployEnv} --excludeTaskDependencies -m "${deployMessage}"`.pipe(
+          process.stdout,
+        );
+
+        retryDeploy = false;
+        successfullyDeployed.push("Opportunities frontend");
+      } catch (e) {
+        const retryDeployPrompt = await inquirer.prompt({
+          type: "confirm",
+          name: "retryDeploy",
+          message: `Opportunities frontend deploy failed with error: ${e}. Retry?`,
           default: false,
         });
         retryDeploy = retryDeployPrompt.retryDeploy;
