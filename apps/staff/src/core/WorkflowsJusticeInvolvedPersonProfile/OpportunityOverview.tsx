@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { Heading } from "./Heading";
 import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
@@ -38,13 +37,12 @@ export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
   hideActionButtons,
   shouldTrackOpportunityPreviewed = true,
 }) => {
-  const { personSpecificOppBanners } = useFeatureVariants();
   const selectedPerson = opportunity?.person;
 
   return (
     <>
       <Heading person={selectedPerson} trackingOpportunity={opportunity} />
-      {personSpecificOppBanners && opportunity.previewBannerText && (
+      {opportunity.previewBannerText && (
         <OpportunityBanner
           opportunity={opportunity}
           title={justiceInvolvedPersonTitle}

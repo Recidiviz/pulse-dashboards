@@ -358,17 +358,7 @@ export class OpportunityBase<
    * Text displayed as a header when this opportunity is previewed
    */
   get previewBannerText(): string | undefined {
-    switch (this.person.stateCode) {
-      case "US_AZ":
-      case "US_MI":
-      case "US_ME":
-      case "US_OR":
-      case "US_TN":
-        // Placeholder text until the text comes from the config
-        return "Reminder: There are 2 weeks remaining in the competition for this opportunity.";
-      default:
-        return;
-    }
+    return;
   }
 
   /**

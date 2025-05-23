@@ -75,7 +75,6 @@ export type FeatureVariant =
   | "workflowsSupervisorSearch"
   | "usPaSpecialCircumstances"
   | "caseNoteSearch"
-  | "personSpecificOppBanners"
   | "fullWidthTimeline"
   | "usOrEarnedDischargeSentence"
   | "usIdCRCFacilitySearch"
@@ -143,7 +142,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   lastSyncedDate: {},
   caseNoteSearch: {},
   actionStrategies: {},
-  personSpecificOppBanners: {},
   fullWidthTimeline: {},
   zeroGrantsFlag: {},
   usOrEarnedDischargeSentence: {},
@@ -192,7 +190,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         lastSyncedDate: undefined,
         // Undefined so that Recidiviz users see both FVs in staging
         usOrEarnedDischargeSentence: undefined,
-        personSpecificOppBanners: undefined,
         usMeCaseNoteSnooze: isDemoMode() ? undefined : {},
         outcomesModule: {
           activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
