@@ -122,6 +122,7 @@ export const SUPERVISION_TASK_TYPES = [
   "usTxFieldContactUnscheduled",
   "usTxElectronicContactScheduled",
   "usTxElectronicContactUnscheduled",
+  "usTxElectronicOrOfficeContact",
   "usTxAssessment",
 ] as const;
 
@@ -152,6 +153,7 @@ export type SupervisionDetailsForTask = {
   usTxFieldContactUnscheduled: UsTxContactDetails;
   usTxElectronicContactScheduled: UsTxContactDetails;
   usTxElectronicContactUnscheduled: UsTxContactDetails;
+  usTxElectronicOrOfficeContact: UsTxTypeAgnosticContactDetails;
   usTxAssessment: UsTxAssessmentDetails;
 };
 
@@ -204,12 +206,16 @@ export type UsTxSimpleContactTaskType =
   | "usTxElectronicContactScheduled"
   | "usTxElectronicContactUnscheduled";
 
+export type UsTxAgnosticContactTaskType =
+  | "usTxTypeAgnosticContact"
+  | "usTxElectronicOrOfficeContact";
+
 // TODO: Derive these from tenant configs
 type TasksForState = {
   US_ID: "homeVisit" | "assessment" | "contact" | "employment";
   US_TX:
     | UsTxSimpleContactTaskType
-    | "usTxTypeAgnosticContact"
+    | UsTxAgnosticContactTaskType
     | "usTxHomeContactEdgeCase"
     | "usTxAssessment";
 };

@@ -17,10 +17,15 @@
 
 import { capitalize } from "lodash";
 
-import { generateSerialListString } from "../../utils";
-import { Task } from "./Task";
+import { fieldToDate } from "~datatypes";
 
-class UsTxTypeAgnosticContactTask extends Task<"usTxTypeAgnosticContact"> {
+import { formatWorkflowsDate, generateSerialListString } from "../../utils";
+import { Task } from "./Task";
+import { UsTxAgnosticContactTaskType } from "./types";
+
+class UsTxTypeAgnosticContactTask<
+  T extends UsTxAgnosticContactTaskType,
+> extends Task<T> {
   get displayName() {
     return this.allowedContactTypes;
   }
@@ -38,9 +43,14 @@ class UsTxTypeAgnosticContactTask extends Task<"usTxTypeAgnosticContact"> {
     return generateSerialListString(allowedTypes, "or");
   }
 
+  get lastContactDate(): string | undefined {
+    if (!this.details.lastContactDate) return;
+    return formatWorkflowsDate(fieldToDate(this.details.lastContactDate));
+  }
+
   get additionalDetails(): string {
     return this.details.lastContactDate
-      ? `Last contact: ${this.details.lastContactDate}`
+      ? `Last contact: ${this.lastContactDate}`
       : "No previous visit on record";
   }
 

@@ -97,6 +97,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
         constructor: UsTxElectronicContactUnscheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
+      usTxElectronicOrOfficeContact: {
+        constructor: usTxTypeAgnosticContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
       usTxAssessment: {
         constructor: UsTxAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
@@ -154,6 +158,10 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
             value: "usTxElectronicContactUnscheduled",
             shortLabel: "Electronic Contact, Unsch.",
             label: "Electronic Contact, Unscheduled",
+          },
+          {
+            value: "usTxElectronicOrOfficeContact",
+            label: "Electronic or Office Contact",
           },
           {
             value: "usTxTypeAgnosticContact",
