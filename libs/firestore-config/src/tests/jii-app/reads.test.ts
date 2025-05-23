@@ -76,6 +76,28 @@ function testGet(
   ]);
 }
 
+function testPseudoIdQuery(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  collectionNames: Array<string>,
+  stateCode: string,
+  pseudoId: string,
+) {
+  return Promise.all([
+    ...collectionNames.map(async (collectionName) => {
+      await assertFn(
+        getDocs(
+          query(
+            collection(db, collectionName),
+            where("stateCode", "==", stateCode),
+            where("pseudonymizedId", "==", pseudoId),
+          ),
+        ),
+      );
+    }),
+  ]);
+}
+
 function testList(
   db: FirestoreInstance,
   assertFn: AssertFn,
@@ -107,22 +129,38 @@ describe("app = jii", () => {
     });
 
     // eslint-disable-next-line vitest/expect-expect
-    test("can read their own ETL documents", () => {
-      return testGet(
+    test("can read their own ETL documents", async () => {
+      await testGet(
         db,
         assertSucceeds,
         ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
         "us_me_user",
       );
+
+      await testPseudoIdQuery(
+        db,
+        assertSucceeds,
+        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "US_ME",
+        "pid-user",
+      );
     });
 
     // eslint-disable-next-line vitest/expect-expect
-    test("cannot read anyone else's ETL documents", () => {
-      return testGet(
+    test("cannot read anyone else's ETL documents", async () => {
+      await testGet(
         db,
         assertFails,
         ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
         "us_me_other-user",
+      );
+
+      await testPseudoIdQuery(
+        db,
+        assertFails,
+        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        "US_ME",
+        "pid-other-user",
       );
     });
 

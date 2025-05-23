@@ -26,6 +26,7 @@ export function getMEUser(testEnv: RulesTestEnvironment) {
     app: "jii",
     stateCode: "US_ME",
     externalId: "user",
+    pseudonymizedId: "pid-user",
     recidivizAllowedStates: [],
     permissions: ["live_data"],
   });

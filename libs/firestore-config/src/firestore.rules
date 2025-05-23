@@ -72,6 +72,12 @@ service cloud.firestore {
     return ((request.auth.token.stateCode.lower() + "_" + request.auth.token.externalId))
   }
 
+  function pseudonymizedIdMatchesTarget() {
+    return resource != null && 
+    request.auth.token.stateCode == resource.data.stateCode &&
+    request.auth.token.pseudonymizedId == resource.data.pseudonymizedId
+  }
+
   function notAStaffCollection(collectionName) {
     return !(collectionName.lower().matches(".*staff.*"));
   }
@@ -108,12 +114,12 @@ service cloud.firestore {
               // generally have both, but checking the ID first avoids edge cases around missing data
               // as well as unnecessary reads for single document lookups
               (stateCodeMatchesPrefix(documentPath[0]) || stateCodeMatchesTarget())
-              )
-             ||
-            // without enhanced permission you are restricted to documents whose ID
-            // matches your state code + external ID (i.e. your own data)
-            docIdMatchesUserId(documentPath)
-            
+            ) ||
+            // without enhanced permission you are restricted to your own data: 
+            // documents whose ID matches your state code + external ID ...
+            docIdMatchesUserId(documentPath) ||
+            // ... or whose stateCode + pseudoId fields match your auth token
+            pseudonymizedIdMatchesTarget()
           )
         )
       )

@@ -68,12 +68,19 @@ async function getFirebaseApp(): Promise<App> {
  */
 export async function getFirebaseToken(
   uid: string,
-  { stateCode, externalId, allowedStates, permissions }: AuthorizedUserProfile,
+  {
+    stateCode,
+    externalId,
+    allowedStates,
+    permissions,
+    pseudonymizedId,
+  }: AuthorizedUserProfile,
 ) {
   return firebaseAdmin.auth(await getFirebaseApp()).createCustomToken(uid, {
     app: "jii",
     stateCode,
     externalId,
+    pseudonymizedId,
     recidivizAllowedStates: (allowedStates ?? []).map(toUpper),
     permissions,
   });
