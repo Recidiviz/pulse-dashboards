@@ -61,6 +61,7 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
     metadata: z
       .object({
         victimFlag: z.boolean().optional(),
+        violationsPast6MonthsFlag: z.boolean().optional(),
       })
       .passthrough(),
   })

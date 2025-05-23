@@ -227,22 +227,33 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    // TODO(#8463): Handle conditional violations criteria
     const customReqs = [];
-    const victimReqText = "Has no DOC-registered victim";
-    if (!this.record.metadata.victimFlag) {
-      customReqs.push({ text: victimReqText });
+    const { victimFlag, violationsPast6MonthsFlag } = this.record.metadata;
+
+    if (!victimFlag) {
+      customReqs.push({ text: "Has no DOC-registered victim" });
+    }
+    if (!violationsPast6MonthsFlag) {
+      customReqs.push({
+        text: "Client has had no violation incidents filed in the past 6 months",
+      });
     }
     return super.requirementsMet.concat(customReqs);
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {
-    // TODO(#8463): Handle conditional violations criteria
     const customReqs = [];
-    const victimReqText =
-      "There are one or more registered victims for this case";
-    if (this.record.metadata.victimFlag) {
-      customReqs.push({ text: victimReqText });
+    const { victimFlag, violationsPast6MonthsFlag } = this.record.metadata;
+
+    if (victimFlag) {
+      customReqs.push({
+        text: "There are one or more registered victims for this case",
+      });
+    }
+    if (violationsPast6MonthsFlag) {
+      customReqs.push({
+        text: "Client has had violations incidents filed in the past 6 months. Please review incident history...",
+      });
     }
     return super.requirementsAlmostMet.concat(customReqs);
   }
