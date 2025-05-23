@@ -825,6 +825,9 @@ describe("tracking", () => {
   });
 
   test("denying a submitted event tracks both changes", async () => {
+    vi.spyOn(opp, "config", "get").mockReturnValue({
+      supportsSubmitted: true,
+    } as OpportunityConfiguration);
     vi.spyOn(AnalyticsStore.prototype, "trackOpportunityUnsubmitted");
     mockSubmitted();
     const reasons = ["test1", "test2"];
@@ -880,7 +883,7 @@ describe("tracking", () => {
       root.analyticsStore.trackSetOpportunityStatus,
     ).toHaveBeenLastCalledWith({
       justiceInvolvedPersonId: client.pseudonymizedId,
-      status: "SUBMITTED",
+      status: "PENDING",
       opportunityType: opp.type,
       opportunityId: opp.sentryTrackingId,
     });

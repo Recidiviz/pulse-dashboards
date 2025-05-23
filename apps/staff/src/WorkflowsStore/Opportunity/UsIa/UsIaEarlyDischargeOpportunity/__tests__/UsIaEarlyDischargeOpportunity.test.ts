@@ -19,6 +19,7 @@
 
 import { Timestamp } from "firebase/firestore";
 
+import { RootStore } from "../../../../../RootStore";
 import { UsIaEarlyDischargeOpportunity } from "../UsIaEarlyDischargeOpportunity";
 
 describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
@@ -34,6 +35,18 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
       hydrate: vi.fn(),
       hydrationState: { status: "hydrated" },
     };
+    // set up a mock configuration for this opportunity
+    // @ts-ignore setting a read-only property that is undefined
+    opportunity.type = "usIaEarlyDischarge";
+    opportunity.rootStore = {
+      workflowsRootStore: {
+        opportunityConfigurationStore: {
+          opportunities: {
+            [opportunity.type]: { supportsSubmitted: true },
+          },
+        },
+      },
+    } as unknown as RootStore;
   });
 
   it("returns ELIGIBLE_NOW status by default", () => {

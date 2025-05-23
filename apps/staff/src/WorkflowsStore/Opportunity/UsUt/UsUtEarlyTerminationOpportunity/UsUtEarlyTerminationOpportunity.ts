@@ -46,7 +46,6 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
   }
 
   tabTitle(): OpportunityTab {
-    if (this.isSubmitted) return this.submittedTabTitle;
     if (this.denied) return this.deniedTabTitle;
     switch (this.record.metadata.tabName) {
       case "REPORT_DUE_ELIGIBLE":
@@ -54,18 +53,34 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
         return "Report Due";
       case "EARLY_REQUESTS":
         return "Early Requests";
+      case "REPORT_SUBMITTED":
+        return "Report Submitted";
       default:
         return "Other";
     }
   }
 
   get subcategory() {
-    if (this.isSubmitted || this.denied) return;
+    if (this.denied) return;
 
     switch (this.record.metadata.tabName) {
       case "REPORT_DUE_ELIGIBLE":
       case "REPORT_DUE_ALMOST_ELIGIBLE":
         return this.record.metadata.tabName;
     }
+  }
+
+  eligibilityStatusLabel(includeReasons?: boolean) {
+    switch (this.record.metadata.tabName) {
+      case "REPORT_DUE_ELIGIBLE":
+        return "Report Due - Eligible";
+      case "REPORT_DUE_ALMOST_ELIGIBLE":
+        return "Report Due - Almost Eligible";
+      case "EARLY_REQUESTS":
+      case "REPORT_SUBMITTED":
+        return this.tabTitle();
+    }
+
+    return super.eligibilityStatusLabel(includeReasons);
   }
 }

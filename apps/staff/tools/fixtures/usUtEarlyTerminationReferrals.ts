@@ -150,6 +150,49 @@ const data: UsUtEarlyTerminationReferralRecordRaw[] = [
       ],
     },
   },
+  {
+    stateCode: "US_UT",
+    externalId: "UT004",
+    eligibleCriteria: {
+      atLeast3MonthsSinceMostRecentPositiveDrugTest: null,
+      onSupervisionAtLeast6Months: null,
+      supervisionContinuousEmploymentFor3Months: null,
+      supervisionHousingIsPermanentFor3Months: null,
+      usUtHasCompletedOrderedAssessments: null,
+      usUtNoMedhighSupervisionViolationWithin3Months: null,
+      usUtNoRiskLevelIncreaseOf15Percent: null,
+      usUtRiskReductionForEt: null,
+      usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate: null,
+    },
+    ineligibleCriteria: {},
+    isEligible: true,
+    isAlmostEligible: false,
+    metadata: {
+      tabName: "REPORT_SUBMITTED",
+    },
+    caseNotes: {
+      "Accomplishments (in the past year)": [
+        {
+          eventDate: "2021-10-08",
+          noteTitle: "CONDITIONS",
+          noteBody: "By having achieved maximum earned compliance credits.",
+        },
+        {
+          eventDate: "2021-10-08",
+          noteTitle: "CONDITIONS",
+          noteBody:
+            "By having completed all special & standard conditions of probation/parole.",
+        },
+      ],
+      "Latest LS/RNR": [
+        {
+          eventDate: "2021-11-30",
+          noteTitle: "Score",
+          noteBody: "16 - MODERATE",
+        },
+      ],
+    },
+  },
 ];
 
 export const usUtEarlyTerminationReferrals: FirestoreFixture<UsUtEarlyTerminationReferralRecordRaw> =

@@ -192,8 +192,8 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       subheading:
         "The Utah Sentencing Commission’s 2025 Adult Sentencing, Release, & Supervision Guidelines establish criteria for early termination of probation and parole. The guidelines outline when agents should submit a recommendation to the Court or Board of Pardons and Parole (BOPP) to end supervision at the halfway point—or earlier. For clients who meet all criteria, reports must be submitted to the Court or BOPP at least 30 days before the early termination review date, or earlier at the agent’s discretion.",
-      submittedTabTitle: "Report Submitted",
-      supportsSubmitted: true,
+      submittedTabTitle: null,
+      supportsSubmitted: false,
       systemType: "SUPERVISION",
       tabGroups: [
         {
@@ -217,7 +217,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           tab: "Report Submitted",
-          text: "This tab contains cases marked by the user as having a report submitted to the court or to the Board of Pardons and Parole.",
+          text: "This tab contains cases that have had a report submitted to the court or to the Board of Pardons and Parole within the past 4 months.",
         },
         {
           tab: "Marked Ineligible",

@@ -266,7 +266,7 @@ export class OpportunityBase<
   }
 
   get isSubmitted(): boolean {
-    return !!this.submittedUpdate;
+    return this.config.supportsSubmitted && !!this.submittedUpdate;
   }
 
   get isSnoozed(): boolean {

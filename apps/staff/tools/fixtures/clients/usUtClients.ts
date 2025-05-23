@@ -87,4 +87,28 @@ export const US_UT_CLIENTS: ClientFixture[] = [
       },
     ],
   },
+
+  {
+    personName: {
+      givenNames: "Abigail",
+      surname: "Besser",
+    },
+    personExternalId: "UT004",
+    displayId: "123004",
+    pseudonymizedId: "p004",
+    stateCode: "US_UT",
+    officerId: "UTOFFICER1",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionStartDate: "2021-09-20",
+    expirationDate: "2023-01-20",
+    phoneNumber: "435-555-5555",
+    allEligibleOpportunities: ["usUtEarlyTermination"],
+    milestones: [
+      {
+        text: "Employed, studying, or with another source of income for 6+ months.",
+        type: "US_UT_EMPLOYED_6_MONTHS",
+      },
+    ],
+  },
 ];

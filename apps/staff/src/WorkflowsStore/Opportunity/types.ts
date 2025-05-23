@@ -206,10 +206,16 @@ export type OpportunityTab =
   | "Assessment Complete"
   | "In Progress"
   | "Submitted"
-  | "Fast Trackers" // For US_AZ TPR/DTP opportunities
+
+  // For US_AZ TPR/DTP opportunities
+  | "Fast Trackers"
   | "Pending"
-  | "Report Due" // "Report Due" and "Early Requests" for US_UT Early Termination
+
+  // For US_UT Early Termination
+  | "Report Due"
   | "Early Requests"
+  | "Report Submitted"
+
   // For US_IA Early Discharge opportunity
   | "Ready for Discharge"
   | "Revisions Requests"
