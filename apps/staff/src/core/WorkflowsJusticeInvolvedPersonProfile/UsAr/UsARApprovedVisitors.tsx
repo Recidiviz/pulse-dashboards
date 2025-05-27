@@ -117,8 +117,8 @@ export const UsArApprovedVisitors = observer(function UsArApprovedVisitors({
   const resident = opportunity.person;
 
   const formDownloader = async (): Promise<void> => {
-    const fileNameFormatter = (firstName?: string): string =>
-      `${firstName} - Approved Relative Associate Form`;
+    const fileNameFormatter = (fullName?: string): string =>
+      `${(fullName ?? "").replace(/\//g, "-")} - Approved Relative Associate Form`;
 
     const pdfTemplateName = "institutional_worker_status_form";
 
