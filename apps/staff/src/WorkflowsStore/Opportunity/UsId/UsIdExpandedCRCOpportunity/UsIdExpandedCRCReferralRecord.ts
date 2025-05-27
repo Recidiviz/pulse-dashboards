@@ -26,21 +26,11 @@ import {
 
 export const usIdExpandedCRCSchema = opportunitySchemaBase.extend({
   eligibleCriteria: crcSharedCriteria.extend({
-    incarcerationWithin6MonthsOfFtcdOrPedOrTpd: z
-      .object({
-        fullTermCompletionDate: dateStringSchema.nullable(),
-        paroleEligibilityDate: dateStringSchema.nullable(),
-        groupProjectedParoleReleaseDate: dateStringSchema.nullable(),
-      })
-      .optional(),
-    // TODO(#8524): Remove the below criteria and make the above one required
-    usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd: z
-      .object({
-        fullTermCompletionDate: dateStringSchema.nullable(),
-        paroleEligibilityDate: dateStringSchema.nullable(),
-        groupProjectedParoleReleaseDate: dateStringSchema.nullable(),
-      })
-      .optional(),
+    incarcerationWithin6MonthsOfFtcdOrPedOrTpd: z.object({
+      fullTermCompletionDate: dateStringSchema.nullable(),
+      paroleEligibilityDate: dateStringSchema.nullable(),
+      groupProjectedParoleReleaseDate: dateStringSchema.nullable(),
+    }),
     usIdInCrcFacilityOrPwccUnit1: z.object({
       crcStartDate: dateStringSchema,
       facilityName: z.string(),
