@@ -720,7 +720,7 @@ export class OpportunityBase<
       eligibleCriteriaCopy,
       this,
       this.criteriaFormatters,
-    );
+    ).filter((req) => req.text);
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {
