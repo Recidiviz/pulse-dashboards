@@ -173,6 +173,7 @@ exports.onExecutePreUserRegistration = async (event, api) => {
     api.user.setAppMetadata("userHash", restrictions.userHash);
     api.user.setAppMetadata("district", restrictions.district);
     api.user.setAppMetadata("externalId", restrictions.externalId);
+    api.user.setAppMetadata("pseudonymizedId", restrictions.pseudonymizedId);
     api.user.setAppMetadata("featureVariants", restrictions.featureVariants);
 
     // TODO #3170 Remove these once UserAppMetadata has been transitioned
