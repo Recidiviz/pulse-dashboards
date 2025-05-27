@@ -188,6 +188,7 @@ export const usMeEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
         dateImposed: new Date("2020-01-03"),
       },
     ],
+    metadata: {},
   };
 
 export const usMeEarlyTerminationAlmostEligibleRestitutionClientRecord: RequireKeys<ClientRecord> =

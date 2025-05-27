@@ -21,4 +21,3 @@ export * from "./SentenceDates";
 export * from "./US_IA";
 export * from "./US_MI";
 export * from "./US_MO";
-export * from "./US_NE";

@@ -30,6 +30,8 @@ import {
   Milestones,
   SpecialConditions,
   Supervision,
+  UsNeORASScores,
+  UsNeSpecialConditions,
 } from "./ClientDetailSidebarComponents";
 import { UsUtDates } from "./ClientDetailSidebarComponents/UsUtDates";
 import {
@@ -40,8 +42,6 @@ import {
   UsMiEarlyDischargeIcDetails,
   UsMiRecommendedSupervisionLevel,
   UsMoIncarceration,
-  UsNeORASScores,
-  UsNeSpecialConditions,
 } from "./OpportunityDetailSidebarComponents";
 import { OpportunityOverview } from "./OpportunityOverview";
 import {
@@ -69,6 +69,8 @@ export const ClientDetailSidebarComponents = {
   ClientProfileDetails,
   UsUtDates,
   ActiveSentences,
+  UsNeORASScores,
+  UsNeSpecialConditions,
 };
 
 type ClientDetailComponentName = keyof typeof ClientDetailSidebarComponents;
@@ -84,8 +86,6 @@ export const OpportunityDetailSidebarComponents = {
   UsMiRestrictiveHousing,
   UsAzAcisInformation,
   UsIaActionPlansAndNotes,
-  UsNeORASScores,
-  UsNeSpecialConditions,
 };
 
 export const ResidentDetailSidebarComponents = {

@@ -17,7 +17,7 @@
 
 import React from "react";
 
-import { UsNeSupervisionDowngradeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsNe";
+import { formatWorkflowsDate } from "../../../../utils";
 import {
   DetailsHeading,
   DetailsList,
@@ -25,32 +25,27 @@ import {
   DetailsSubheading,
   SecureDetailsContent,
 } from "../../styles";
-import { OpportunityProfileProps } from "../../types";
+import { ClientProfileProps } from "../../types";
 
-export const UsNeSpecialConditions: React.FC<OpportunityProfileProps> = ({
-  opportunity,
-}) => {
-  if (!(opportunity instanceof UsNeSupervisionDowngradeOpportunity)) {
+export const UsNeORASScores: React.FC<ClientProfileProps> = ({ client }) => {
+  if (client.record.metadata?.stateCode !== "US_NE") {
     return null;
   }
-  const { specialConditions } = opportunity.record.metadata;
+  const { lastFourOrasScores } = client.record.metadata;
 
   return (
     <DetailsSection>
-      <DetailsHeading>Special Conditions</DetailsHeading>
+      <DetailsHeading>Recent ORAS Scores</DetailsHeading>
       <SecureDetailsContent>
         <DetailsList>
-          {specialConditions.map(({ specialConditionType, compliance }) => (
-            <React.Fragment key={specialConditionType}>
-              <DetailsSubheading>{specialConditionType}</DetailsSubheading>
-              <SecureDetailsContent>
-                Compliant: {compliance ?? "Unknown"}
-              </SecureDetailsContent>
+          {lastFourOrasScores.map(({ assessmentDate, assessmentLevel }) => (
+            <React.Fragment key={assessmentDate.toString()}>
+              <DetailsSubheading>
+                {formatWorkflowsDate(assessmentDate)}
+              </DetailsSubheading>
+              <SecureDetailsContent>{assessmentLevel}</SecureDetailsContent>
             </React.Fragment>
           ))}
-          {specialConditions.length === 0 && (
-            <DetailsSubheading>None</DetailsSubheading>
-          )}
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>

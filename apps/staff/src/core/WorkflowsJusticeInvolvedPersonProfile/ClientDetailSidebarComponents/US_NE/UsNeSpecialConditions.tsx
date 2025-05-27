@@ -17,8 +17,6 @@
 
 import React from "react";
 
-import { formatWorkflowsDate } from "../../../../utils";
-import { UsNeSupervisionDowngradeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsNe";
 import {
   DetailsHeading,
   DetailsList,
@@ -26,30 +24,32 @@ import {
   DetailsSubheading,
   SecureDetailsContent,
 } from "../../styles";
-import { OpportunityProfileProps } from "../../types";
+import { ClientProfileProps } from "../../types";
 
-export const UsNeORASScores: React.FC<OpportunityProfileProps> = ({
-  opportunity,
+export const UsNeSpecialConditions: React.FC<ClientProfileProps> = ({
+  client,
 }) => {
-  if (!(opportunity instanceof UsNeSupervisionDowngradeOpportunity)) {
+  if (client.record.metadata?.stateCode !== "US_NE") {
     return null;
   }
-
-  const scores = opportunity.record.metadata.recentOrasScores;
+  const { specialConditions } = client.record.metadata;
 
   return (
     <DetailsSection>
-      <DetailsHeading>Recent ORAS Scores</DetailsHeading>
+      <DetailsHeading>Special Conditions</DetailsHeading>
       <SecureDetailsContent>
         <DetailsList>
-          {scores.map(({ assessmentDate, assessmentLevel }) => (
-            <React.Fragment key={assessmentDate.toString()}>
-              <DetailsSubheading>
-                {formatWorkflowsDate(assessmentDate)}
-              </DetailsSubheading>
-              <SecureDetailsContent>{assessmentLevel}</SecureDetailsContent>
+          {specialConditions.map(({ specialConditionType, compliance }) => (
+            <React.Fragment key={specialConditionType}>
+              <DetailsSubheading>{specialConditionType}</DetailsSubheading>
+              <SecureDetailsContent>
+                Compliant: {compliance ?? "Unknown"}
+              </SecureDetailsContent>
             </React.Fragment>
           ))}
+          {specialConditions.length === 0 && (
+            <DetailsSubheading>None</DetailsSubheading>
+          )}
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>

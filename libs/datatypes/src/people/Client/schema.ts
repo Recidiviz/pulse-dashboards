@@ -20,7 +20,9 @@ import { z } from "zod";
 import { milestoneSchema } from "../../milestones/schema";
 import { milestoneTypes } from "../../milestones/types";
 import { dateStringSchema } from "../../utils/zod";
+import { personMetadataSchema } from "../utils/personMetadataSchema";
 import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
+import { usNeClientMetadataSchema } from "./US_NE/metadata/schema";
 import { clientEmployerSchema, specialConditionCodeSchema } from "./utils";
 
 const optionalClientInformation = z
@@ -56,6 +58,7 @@ const optionalClientInformation = z
         dateImposed: dateStringSchema,
       }),
     ),
+    metadata: personMetadataSchema([usNeClientMetadataSchema]),
   })
   .partial();
 
