@@ -34,7 +34,7 @@ export const usIaEarlyDischargeReferralsFixture =
         supervisionCaseTypeIsNotSexOffense: null,
         supervisionTypeIsNotInvestigation: null,
         usIaNoOpenSupervisionModifiers: null,
-        usIaNotExcludedFromEarlyDischargeByParoleConditions: null,
+        usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
         usIaNotServingIneligibleOffenseForEarlyDischarge: null,
         usIaServingSupervisionCaseAtLeast90Days: {
           supervisionCaseStartDate: relativeFixtureDate({ months: -16 }),
@@ -57,15 +57,25 @@ export const usIaEarlyDischargeReferralsFixture =
       stateCode: "US_IA",
       externalId: "002",
       eligibleCriteria: {
-        noSupervisionViolationReportWithin6MonthsUsingResponseDate: true,
-        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: true,
+        noSupervisionViolationReportWithin6MonthsUsingResponseDate: {
+          latestViolationReportDates: null,
+          violationExpirationDate: relativeFixtureDate({ months: -6 }),
+        },
+        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
+          lifeSentence: false,
+          ineligibleOffenses: null,
+        },
         notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
           eligibleDate: relativeFixtureDate({ months: -7 }),
         },
-        supervisionCaseTypeIsNotSexOffense: true,
-        supervisionTypeIsNotInvestigation: true,
+        supervisionCaseTypeIsNotSexOffense: {
+          rawSexOffenseCaseTypes: null,
+        },
+        supervisionTypeIsNotInvestigation: {
+          rawSupervisionTypes: null,
+        },
         usIaNoOpenSupervisionModifiers: null,
-        usIaNotExcludedFromEarlyDischargeByParoleConditions: null,
+        usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
         usIaNotServingIneligibleOffenseForEarlyDischarge: null,
         usIaServingSupervisionCaseAtLeast90Days: {
           supervisionCaseStartDate: relativeFixtureDate({ months: -17 }),
@@ -82,6 +92,31 @@ export const usIaEarlyDischargeReferralsFixture =
       eligibleDate: relativeFixtureDate({ months: -14 }),
       metadata: {
         victimFlag: true,
+        victimContactInfo: [
+          {
+            VictimFirstNm: "Jane",
+            VictimLastNm: "Smith",
+            EmailAddress: "jane.smith@email.com",
+            CellPhone: "000-555-1234",
+            Address1: "123 Fake St",
+            City: "Des Moines",
+            State: "IA",
+            ZipCode: "50309",
+          },
+          {
+            VictimFirstNm: "Alice",
+            VictimMiddleNm: "B.",
+            VictimLastNm: "Johnson",
+            EmailAddress: "alice.johnson@email.com",
+            CellPhone: "000-555-5555",
+            Address1: "456 Fake Ave",
+            City: "Cedar Rapids",
+            State: "IA",
+            ZipCode: "52401",
+            Country: "USA",
+          },
+        ],
+        violationsPast6MonthsFlag: true,
       },
     },
     {
@@ -93,11 +128,19 @@ export const usIaEarlyDischargeReferralsFixture =
         notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
           eligibleDate: relativeFixtureDate({ months: -1 }),
         },
-        supervisionCaseTypeIsNotSexOffense: true,
-        supervisionTypeIsNotInvestigation: true,
-        usIaNoOpenSupervisionModifiers: true,
-        usIaNotExcludedFromEarlyDischargeByParoleConditions: null,
-        usIaNotServingIneligibleOffenseForEarlyDischarge: true,
+        supervisionCaseTypeIsNotSexOffense: {
+          rawSexOffenseCaseTypes: null,
+        },
+        supervisionTypeIsNotInvestigation: {
+          rawSupervisionTypes: null,
+        },
+        usIaNoOpenSupervisionModifiers: {
+          openSupervisionModifiers: null,
+        },
+        usIaNotExcludedFromEarlyDischargeByParoleCondition: null,
+        usIaNotServingIneligibleOffenseForEarlyDischarge: {
+          ineligibleOffenses: null,
+        },
         usIaServingSupervisionCaseAtLeast90Days: {
           supervisionCaseStartDate: relativeFixtureDate({ months: -2 }),
         },
@@ -113,6 +156,23 @@ export const usIaEarlyDischargeReferralsFixture =
       eligibleDate: relativeFixtureDate({ months: -17 }),
       metadata: {
         victimFlag: true,
+        victimContactInfo: [
+          {
+            VictimFirstNm: "Alice",
+            VictimMiddleNm: "B.",
+            VictimLastNm: "Johnson",
+            EmailAddress: "alice.johnson@email.com",
+            CellPhone: "000-555-5555",
+            Address1: "456 Fake Ave",
+            City: "Cedar Rapids",
+            State: "IA",
+            ZipCode: "52401",
+            Country: "USA",
+          },
+        ],
+        dnaRequiredFlag: true,
+        dnaSubmittedFlag: true,
+        mostRecentDnaSubmittedDate: relativeFixtureDate({ days: -10 }),
       },
     },
     {
@@ -120,20 +180,30 @@ export const usIaEarlyDischargeReferralsFixture =
       externalId: "004",
       eligibleCriteria: {
         noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
-        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: true,
+        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
+          lifeSentence: false,
+          ineligibleOffenses: null,
+        },
         notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
           eligibleDate: relativeFixtureDate({ months: -3 }),
         },
         supervisionCaseTypeIsNotSexOffense: null,
-        supervisionTypeIsNotInvestigation: true,
+        supervisionTypeIsNotInvestigation: {
+          rawSupervisionTypes: null,
+        },
         usIaNoOpenSupervisionModifiers: null,
-        usIaNotExcludedFromEarlyDischargeByParoleConditions: true,
-        usIaNotServingIneligibleOffenseForEarlyDischarge: true,
+        usIaNotExcludedFromEarlyDischargeByParoleCondition: {
+          conditions: null,
+        },
+        usIaNotServingIneligibleOffenseForEarlyDischarge: {
+          ineligibleOffenses: null,
+        },
         usIaServingSupervisionCaseAtLeast90Days: {
           supervisionCaseStartDate: relativeFixtureDate({ months: -8 }),
         },
         usIaSupervisionFeesPaid: {
-          supervisionFeeBalance: 2000,
+          initialBalance: 2000,
+          currentBalance: 2000,
         },
         usIaSupervisionLevelIs0NotAvailable12Or3: {
           supervisionLevelRawText: "LEVEL 2",
@@ -144,8 +214,6 @@ export const usIaEarlyDischargeReferralsFixture =
       isAlmostEligible: false,
       formInformation: {},
       eligibleDate: relativeFixtureDate({ months: -18 }),
-      metadata: {
-        victimFlag: true,
-      },
+      metadata: {},
     },
   ]);

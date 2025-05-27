@@ -19,41 +19,68 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
-// TODO(#8266) Flesh out zod schema based on actual structure
 export const usIaEarlyDischargeSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z
       .object({
-        supervisionCaseTypeIsNotSexOffense: z.boolean().nullable(),
-        usIaNoOpenSupervisionModifiers: z.boolean().nullable(),
-        usIaNotServingIneligibleOffenseForEarlyDischarge: z
-          .boolean()
-          .nullable(),
-        usIaSupervisionFeesPaid: z
-          .object({
-            supervisionFeeBalance: z.number().nullable(),
-          })
-          .nullable(),
         usIaSupervisionLevelIs0NotAvailable12Or3: z
           .object({
             supervisionLevelRawText: z.string().nullable(),
           })
           .nullable(),
-        usIa90DaysPassedSinceCaseAssignment: z
+        noSupervisionViolationReportWithin6MonthsUsingResponseDate: z
           .object({
-            caseAssignmentDate: dateStringSchema,
+            latestViolationReportDates: z.array(dateStringSchema).nullable(),
+            violationExpirationDate: dateStringSchema.nullable(),
           })
-          .nullish(),
-        usIaNotWithin30DaysOfReleaseDate: z
+          .nullable(),
+        usIaNoOpenSupervisionModifiers: z
           .object({
-            releaseDate: dateStringSchema,
+            openSupervisionModifiers: z.array(z.string()).nullable(),
           })
-          .nullish(),
-        usIaNotExcludedFromEarlyDischargePerBoardOrParoleOrder: z
+          .nullable(),
+        supervisionCaseTypeIsNotSexOffense: z
           .object({
-            boardOrParoleOrder: z.string().nullable(),
+            rawSexOffenseCaseTypes: z.array(z.string()).nullable(),
           })
-          .nullish(),
+          .nullable(),
+        usIaSupervisionFeesPaid: z
+          .object({
+            initialBalance: z.number().nullable(),
+            currentBalance: z.number().nullable(),
+          })
+          .nullable(),
+        usIaNotServingIneligibleOffenseForEarlyDischarge: z
+          .object({
+            ineligibleOffenses: z.array(z.string()).nullable(),
+          })
+          .nullable(),
+        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: z
+          .object({
+            eligibleDate: dateStringSchema,
+          })
+          .nullable(),
+        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: z
+          .object({
+            lifeSentence: z.boolean().nullable(),
+            ineligibleOffenses: z.array(z.string()).nullable(),
+          })
+          .nullable(),
+        supervisionTypeIsNotInvestigation: z
+          .object({
+            rawSupervisionTypes: z.array(z.string()).nullable(),
+          })
+          .nullable(),
+        usIaServingSupervisionCaseAtLeast90Days: z
+          .object({
+            supervisionCaseStartDate: dateStringSchema,
+          })
+          .nullable(),
+        usIaNotExcludedFromEarlyDischargeByParoleCondition: z
+          .object({
+            conditions: z.array(z.string()).nullable(),
+          })
+          .nullable(),
       })
       .passthrough(),
     ineligibleCriteria: z.object({}).passthrough(),
@@ -62,6 +89,31 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
       .object({
         victimFlag: z.boolean().optional(),
         violationsPast6MonthsFlag: z.boolean().optional(),
+        victimContactInfo: z
+          .array(
+            z.object({
+              VictimFirstNm: z.string().optional(),
+              VictimMiddleNm: z.string().optional(),
+              VictimLastNm: z.string().optional(),
+              VictimSuffix: z.string().optional(),
+              HomePhone: z.string().optional(),
+              WorkPhone: z.string().optional(),
+              CellPhone: z.string().optional(),
+              OtherPhone: z.string().optional(),
+              Fax: z.string().optional(),
+              EmailAddress: z.string().optional(),
+              Address1: z.string().optional(),
+              Address2: z.string().optional(),
+              City: z.string().optional(),
+              State: z.string().optional(),
+              ZipCode: z.string().optional(),
+              Country: z.string().optional(),
+            }),
+          )
+          .optional(),
+        dnaRequiredFlag: z.boolean().optional(),
+        dnaSubmittedFlag: z.boolean().optional(),
+        mostRecentDnaSubmittedDate: dateStringSchema.optional(),
       })
       .passthrough(),
   })
