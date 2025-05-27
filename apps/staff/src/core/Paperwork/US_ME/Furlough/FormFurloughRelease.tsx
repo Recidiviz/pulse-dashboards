@@ -33,7 +33,7 @@ import {
   renderMultipleDocx,
 } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
-import { fillPDF, PDFFillerFunc } from "../../PDFFormFiller";
+import { fillPDF, getPdfTemplate, PDFFillerFunc } from "../../PDFFormFiller";
 import { downloadZipFile } from "../../utils";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
@@ -108,16 +108,16 @@ export const FormFurloughRelease = observer(function FormWorkRelease({
     });
 
     const pdfTemplateName = "furlough_program_review";
+    const pdfTemplate = await getPdfTemplate(
+      resident.stateCode,
+      `${pdfTemplateName}.pdf`,
+      getTokenSilently,
+    );
 
     if (!contents) return;
 
     const [pdfFileContents, docxFiles] = await Promise.all([
-      fillPDF(
-        resident.stateCode,
-        `${pdfTemplateName}.pdf`,
-        fillerFunc(contents),
-        getTokenSilently,
-      ),
+      fillPDF(fillerFunc(contents), pdfTemplate),
       renderMultipleDocx(fileInputs, getTokenSilently),
     ]);
 

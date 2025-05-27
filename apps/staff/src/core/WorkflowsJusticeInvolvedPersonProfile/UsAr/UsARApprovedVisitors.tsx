@@ -29,7 +29,11 @@ import { Opportunity } from "../../../WorkflowsStore";
 import { UsArInstitutionalWorkerStatusOpportunity } from "../../../WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusOpportunity";
 import { UsArApprovedVisitorWithChecklist } from "../../../WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusReferralRecord";
 import { DownloadButton } from "../../Paperwork/FormContainer";
-import { fillPDF, PDFFillerFunc } from "../../Paperwork/PDFFormFiller";
+import {
+  fillPDF,
+  getPdfTemplate,
+  PDFFillerFunc,
+} from "../../Paperwork/PDFFormFiller";
 import { createDownloadLabel, downloadZipFile } from "../../Paperwork/utils";
 import { DetailsHeading, Divider } from "../styles";
 
@@ -122,6 +126,12 @@ export const UsArApprovedVisitors = observer(function UsArApprovedVisitors({
 
     const pdfTemplateName = "institutional_worker_status_form";
 
+    const pdfTemplate = await getPdfTemplate(
+      resident.stateCode,
+      `${pdfTemplateName}.pdf`,
+      getTokenSilently,
+    );
+
     downloadZipFile(
       `Approved Relative Associate Forms - ${resident.displayName}.zip`,
       await Promise.all(
@@ -131,10 +141,8 @@ export const UsArApprovedVisitors = observer(function UsArApprovedVisitors({
             return {
               filename: `${fileNameFormatter(visitorFullName)}.pdf`,
               fileContents: await fillPDF(
-                resident.stateCode,
-                `${pdfTemplateName}.pdf`,
                 fillerFunc({ ...toJS(visitor) }),
-                getTokenSilently,
+                pdfTemplate,
               ),
             };
           },

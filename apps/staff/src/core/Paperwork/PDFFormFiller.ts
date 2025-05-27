@@ -17,7 +17,13 @@
 
 import { captureException } from "@sentry/react";
 import { saveAs } from "file-saver";
-import type { PDFDocument, PDFForm } from "pdf-lib";
+import type {
+  PDFCheckBox,
+  PDFDocument,
+  PDFForm,
+  PDFRadioGroup,
+  PDFTextField,
+} from "pdf-lib";
 
 import { fetchWorkflowsTemplates } from "../../api/fetchWorkflowsTemplates";
 
@@ -31,26 +37,18 @@ export type PDFFillerFunc = (
 
 // fillerFunc() is the callback responsible for actually filling out the form.
 // It is passed a set(fieldName, value) function for setting fields. For more
-// advance manipulation, it's also passed the PDFForm object and the PDFDoc object.
-// If you need to reference pdf-lib itself, don't forget to import it dynamically.
+// advance manipulation, it's also passed the PDFDocument object and the necessary
+// objects from the pdf-lib.
 //
 // After setting the fields, calling `form.flatten()` will bake the form into a
 // static PDF. To generate the boilerplate needed to fill all the fields in a
 // given PDF, run: `nx pdfformfiller-boilerplate staff server/assets/workflowsTemplates/path/to/your.pdf`
 
 export async function fillPDF(
-  stateCode: string,
-  templateName: string,
   fillerFunc: PDFFillerFunc,
-  getTokenSilently: () => Promise<any>,
+  [template, pdfLib]: [ArrayBuffer, PDFLib],
 ) {
-  // While the template is being downloaded, we also dynamically import pdf-lib as
-  // a separate code chunk. Otherwise it would add 200k to the bundle for everyone.
-  const [template, pdfLib] = await Promise.all([
-    fetchWorkflowsTemplates(stateCode, templateName, getTokenSilently),
-    import("pdf-lib"),
-  ]);
-  const { PDFCheckBox, PDFDocument, PDFRadioGroup, PDFTextField } = pdfLib;
+  const { PDFCheckBox, PDFRadioGroup, PDFTextField, PDFDocument } = pdfLib;
   const doc = await PDFDocument.load(template);
   const form = doc.getForm();
 
@@ -84,6 +82,29 @@ export async function fillPDF(
   return pdfBytes;
 }
 
+type PDFLib = {
+  PDFCheckBox: typeof PDFCheckBox;
+  PDFRadioGroup: typeof PDFRadioGroup;
+  PDFTextField: typeof PDFTextField;
+  PDFDocument: typeof PDFDocument;
+};
+
+// TODO #8610 Refactor to return closured fillPDF
+export async function getPdfTemplate(
+  stateCode: string,
+  templateName: string,
+  getTokenSilently: () => Promise<any>,
+): Promise<[ArrayBuffer, PDFLib]> {
+  // While the template is being downloaded, we also dynamically import pdf-lib as
+  // a separate code chunk. Otherwise it would add 200k to the bundle for everyone.
+  const [template, pdfLib] = await Promise.all([
+    fetchWorkflowsTemplates(stateCode, templateName, getTokenSilently),
+    import("pdf-lib"),
+  ]);
+  const { PDFDocument, PDFCheckBox, PDFRadioGroup, PDFTextField } = pdfLib;
+  return [template, { PDFCheckBox, PDFRadioGroup, PDFTextField, PDFDocument }];
+}
+
 export async function fillAndSavePDF(
   fileName: string,
   stateCode: string,
@@ -91,12 +112,13 @@ export async function fillAndSavePDF(
   fillerFunc: PDFFillerFunc,
   getTokenSilently: () => Promise<any>,
 ) {
-  const pdfBytes = await fillPDF(
+  const pdfTemplate = await getPdfTemplate(
     stateCode,
     templateName,
-    fillerFunc,
     getTokenSilently,
   );
+
+  const pdfBytes = await fillPDF(fillerFunc, pdfTemplate);
 
   const blob = new Blob([pdfBytes]);
   saveAs(blob, fileName);
