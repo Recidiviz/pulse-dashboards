@@ -25,6 +25,8 @@ const US_PA_CONFIG: TenantConfig<"US_PA"> = {
   domain: "pa.gov",
   availableStateCodes: [dashboards.US_PA],
   workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsMethodologyUrl:
+    "https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub",
   workflowsSystemConfigs: {
     SUPERVISION: {
       search: [

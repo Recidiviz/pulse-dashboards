@@ -86,6 +86,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   workflowsHomepage?: WorkflowsPage;
   workflowsHomepageName?: string;
   workflowsTasksConfig?: WorkflowsTasksConfig;
+  workflowsMethodologyUrl?: string;
   milestoneTypes?: MilestoneType[];
   workflowsStaffFilterFn?: StaffFilterFunction;
   releaseDateCopyOverride?: string;

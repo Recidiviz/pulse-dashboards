@@ -26,6 +26,8 @@ const US_IA_CONFIG: TenantConfig<"US_IA"> = {
   supervisionEndCopyOverride: "Termination Date",
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsMethodologyUrl:
+    "https://drive.google.com/file/d/1a3py-AnYR5imGtCLQRxDM2-0zZdXn_xn/view",
   workflowsSystemConfigs: {
     SUPERVISION: {
       search: [

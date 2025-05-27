@@ -268,4 +268,9 @@ export default class TenantStore {
     if (!this.currentTenantId) return {};
     return this.tenantConfigs[this.currentTenantId].featureVariants ?? {};
   }
+
+  get workflowsMethodologyUrl(): string | undefined {
+    if (!this.currentTenantId) return;
+    return this.tenantConfigs[this.currentTenantId].workflowsMethodologyUrl;
+  }
 }

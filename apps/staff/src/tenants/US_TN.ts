@@ -36,6 +36,8 @@ const US_TN_CONFIG: TenantConfig<"US_TN"> = {
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
+  workflowsMethodologyUrl:
+    "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view?usp=sharing",
   workflowsSystemConfigs: {
     INCARCERATION: {
       search: [

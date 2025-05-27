@@ -27,6 +27,8 @@ const US_MO_CONFIG: TenantConfig<"US_MO"> = {
   availableStateCodes: [pathways.US_MO],
   enableUserRestrictions: true,
   workflowsSupportedSystems: ["INCARCERATION"],
+  workflowsMethodologyUrl:
+    "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
   workflowsSystemConfigs: {
     INCARCERATION: {
       search: [

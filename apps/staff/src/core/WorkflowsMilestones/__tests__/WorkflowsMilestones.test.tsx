@@ -50,6 +50,9 @@ const baseRootStoreMock = {
       isHydrated: true,
     },
   },
+  tenantStore: {
+    workflowsMethodologyUrl: "METHODOLOGY_URL",
+  },
 };
 const baseWorkflowsStoreMock = {
   caseloadLoaded: () => false,

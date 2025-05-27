@@ -26,6 +26,8 @@ const US_ME_CONFIG: TenantConfig<"US_ME"> = {
   availableStateCodes: [dashboard.US_ME],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["INCARCERATION", "SUPERVISION"],
+  workflowsMethodologyUrl:
+    "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view?usp=sharing",
   workflowsSystemConfigs: {
     INCARCERATION: {
       search: [

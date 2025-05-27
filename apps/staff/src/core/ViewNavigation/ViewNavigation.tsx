@@ -23,11 +23,11 @@ import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import MethodologyLogo from "../../assets/static/images/methodology.svg?react";
+import { useRootStore } from "../../components/StoreProvider";
 import { TenantId } from "../../RootStore/types";
 import { appendActiveClassName } from "../../utils/navigation";
 import { UserAvatar } from "../Avatar";
 import { useCoreStore } from "../CoreStoreProvider";
-import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { DASHBOARD_VIEWS } from "../views";
 
 type OptionalLinkProps = { enabled: boolean };
@@ -75,11 +75,14 @@ function MethodologyLink({
     </>
   );
 
+  const rootStore = useRootStore();
+  const workflowsMethodologyUrl = rootStore.tenantStore.workflowsMethodologyUrl;
+
   if (view === DASHBOARD_VIEWS.workflows) {
     return (
       <a
         className="ViewNavigation__navlink"
-        href={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
+        href={workflowsMethodologyUrl}
         target="_blank"
         rel="noopener noreferrer"
       >

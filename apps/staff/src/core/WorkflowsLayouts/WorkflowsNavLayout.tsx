@@ -21,15 +21,11 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
-import {
-  PartiallyTypedRootStore,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout, OverviewNavLinks } from "../NavigationLayout";
 import { MaxWidth } from "../sharedComponents";
-import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import { workflowsUrl } from "../views";
 
 const Wrapper = styled.div`
@@ -77,45 +73,43 @@ const BackButtonWrapper = styled.div<{ $fixed: boolean }>`
 export const WorkflowsNavLayout: React.FC<{
   limitedWidth?: boolean;
   children?: React.ReactNode;
-}> =
-  // TODO(#5636) Eliminate PartiallyTypedRootStore
-  observer(function WorkflowsNavLayout({ limitedWidth = true, children }) {
-    const {
-      currentTenantId,
-      workflowsStore: {
-        homepage: workflowsHomepage,
-        activePageIsHomepage,
-        activePageIsTasks,
-      },
-      tenantStore,
-    } = useRootStore() as PartiallyTypedRootStore;
-    const { isMobile, isLaptop } = useIsMobile(true);
+}> = observer(function WorkflowsNavLayout({ limitedWidth = true, children }) {
+  const {
+    workflowsStore: {
+      homepage: workflowsHomepage,
+      activePageIsHomepage,
+      activePageIsTasks,
+    },
+    tenantStore,
+  } = useRootStore();
+  const { isMobile, isLaptop } = useIsMobile(true);
 
-    const workflowsMethodology = WORKFLOWS_METHODOLOGY_URL[currentTenantId];
-    const tasksMethodology =
-      tenantStore?.tasksConfiguration?.methodologyUrl ?? workflowsMethodology;
+  const workflowsMethodologyUrl = tenantStore.workflowsMethodologyUrl;
 
-    return (
-      <Wrapper>
-        <NavigationLayout
-          externalMethodologyUrl={
-            activePageIsTasks ? tasksMethodology : workflowsMethodology
-          }
-        >
-          <OverviewNavLinks />
-        </NavigationLayout>
-        {!activePageIsHomepage && (
-          <BackButtonWrapper $fixed={!isLaptop && limitedWidth}>
-            <NavigationBackButton
-              action={{ url: workflowsUrl(workflowsHomepage) }}
-            >
-              Home
-            </NavigationBackButton>
-          </BackButtonWrapper>
-        )}
-        <Main isMobile={isMobile} $limitedWidth={limitedWidth}>
-          {children}
-        </Main>
-      </Wrapper>
-    );
-  });
+  const tasksMethodology =
+    tenantStore?.tasksConfiguration?.methodologyUrl ?? workflowsMethodologyUrl;
+
+  return (
+    <Wrapper>
+      <NavigationLayout
+        externalMethodologyUrl={
+          activePageIsTasks ? tasksMethodology : workflowsMethodologyUrl
+        }
+      >
+        <OverviewNavLinks />
+      </NavigationLayout>
+      {!activePageIsHomepage && (
+        <BackButtonWrapper $fixed={!isLaptop && limitedWidth}>
+          <NavigationBackButton
+            action={{ url: workflowsUrl(workflowsHomepage) }}
+          >
+            Home
+          </NavigationBackButton>
+        </BackButtonWrapper>
+      )}
+      <Main isMobile={isMobile} $limitedWidth={limitedWidth}>
+        {children}
+      </Main>
+    </Wrapper>
+  );
+});

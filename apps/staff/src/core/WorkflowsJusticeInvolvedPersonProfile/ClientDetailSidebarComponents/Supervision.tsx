@@ -19,7 +19,6 @@ import React from "react";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";
-import { WORKFLOWS_METHODOLOGY_URL } from "../../utils/constants";
 import WorkflowsOfficerName from "../../WorkflowsOfficerName";
 import { InfoButton } from "../InfoButton";
 import { PartialTime } from "../PartialTime";
@@ -39,6 +38,7 @@ export function Supervision({
   const {
     tenantStore: {
       labels: { supervisionEndDateCopy },
+      workflowsMethodologyUrl,
     },
   } = useRootStore();
   const tooltip = client.detailsCopy?.supervisionStartDate?.tooltip;
@@ -53,9 +53,7 @@ export function Supervision({
             {formatWorkflowsDate(client.supervisionStartDate)}{" "}
             {tooltip && (
               <InfoTooltipWrapper contents={tooltip} maxWidth={340}>
-                <InfoButton
-                  infoUrl={WORKFLOWS_METHODOLOGY_URL[client.stateCode]}
-                />
+                <InfoButton infoUrl={workflowsMethodologyUrl} />
               </InfoTooltipWrapper>
             )}
           </SecureDetailsContent>

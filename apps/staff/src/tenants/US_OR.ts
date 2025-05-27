@@ -25,6 +25,8 @@ const US_OR_CONFIG: TenantConfig<"US_OR"> = {
   availableStateCodes: [dashboard.US_OR],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsMethodologyUrl:
+    "https://drive.google.com/file/d/1-V5qxOjurPggO4NrHSRBDB_pn8gmYjoa/view",
   workflowsSystemConfigs: {
     SUPERVISION: {
       search: [

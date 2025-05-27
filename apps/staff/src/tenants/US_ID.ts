@@ -37,6 +37,8 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,
+  workflowsMethodologyUrl:
+    "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
   workflowsTasksConfig: {
     collection: "usIdSupervisionTasks",
     methodologyUrl:

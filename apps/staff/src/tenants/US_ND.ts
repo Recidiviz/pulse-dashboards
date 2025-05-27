@@ -34,6 +34,8 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
+  workflowsMethodologyUrl:
+    "https://drive.google.com/file/d/1eHbSEOjjT9FvxffSbXOYEfOYPJheeu6t/view",
   workflowsTasksConfig: {
     collection: "usNdSupervisionTasks",
     methodologyUrl:

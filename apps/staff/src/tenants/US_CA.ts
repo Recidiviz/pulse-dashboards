@@ -29,6 +29,8 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
   availableStateCodes: [dashboard.US_CA],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
+  workflowsMethodologyUrl:
+    "https://drive.google.com/file/d/1qIXF7G6CY_pVbNTNTyHvYJF1lAIgiy1n/view?usp=sharing",
   workflowsStaffFilterFn: usCaFilterByRoleSubtype,
   workflowsSystemConfigs: {
     SUPERVISION: {

@@ -39,6 +39,8 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsHomepage: "tasks",
   workflowsHomepageName: "Tasks",
+  workflowsMethodologyUrl:
+    "https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub",
   workflowsSystemConfigs: {
     SUPERVISION: {
       search: [

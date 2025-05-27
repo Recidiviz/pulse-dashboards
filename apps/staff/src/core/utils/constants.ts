@@ -63,32 +63,3 @@ export const filtersOrder = [
   FILTER_TYPES.AGE_GROUP,
   FILTER_TYPES.RACE,
 ];
-
-export const WORKFLOWS_METHODOLOGY_URL: Record<string, string> = {
-  US_AZ:
-    "https://docs.google.com/document/d/e/2PACX-1vQdaopTwajMs7exIRMLm6OtZQuPXI_gOb7W96CHNcpJ0Wez5a2qd3Ag_mpOpOcHobXo1FOnmnfF2JnL/pub",
-  US_CA:
-    "https://drive.google.com/file/d/1qIXF7G6CY_pVbNTNTyHvYJF1lAIgiy1n/view?usp=sharing",
-  US_TN:
-    "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view?usp=sharing",
-  US_ND:
-    "https://drive.google.com/file/d/1eHbSEOjjT9FvxffSbXOYEfOYPJheeu6t/view",
-  US_IA:
-    "https://drive.google.com/file/d/1a3py-AnYR5imGtCLQRxDM2-0zZdXn_xn/view",
-  US_ID:
-    "https://drive.google.com/file/d/1pum9mrOIvGoBIwwE3dQEITod7O5mcYGm/view?usp=sharing",
-  US_ME:
-    "https://drive.google.com/file/d/1RIzASrkIaynsnUns8HGwyVxL8arqXlYH/view?usp=sharing",
-  US_MO:
-    "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
-  US_MI:
-    "https://drive.google.com/file/d/1tdYaic6jvsdTZHZTeGzUVtHL7_SGfyk5/view",
-  US_OR:
-    "https://drive.google.com/file/d/1-V5qxOjurPggO4NrHSRBDB_pn8gmYjoa/view",
-  US_PA:
-    "https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub",
-  US_TX:
-    "https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub",
-  US_UT:
-    "https://docs.google.com/document/d/e/2PACX-1vR3uKKRbdWXDRUz8v1km5oZNNeYuB3yUmWsZLut8RlPCAQqjUi4Cle3fXeivhYKYm8By--6nNRWFIUO/pub",
-};

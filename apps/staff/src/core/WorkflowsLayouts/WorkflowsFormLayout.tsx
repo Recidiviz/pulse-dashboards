@@ -43,7 +43,6 @@ import { FormWorkRelease } from "../Paperwork/US_ME/WorkRelease/FormWorkRelease"
 import { FormUsMiSCCReview } from "../Paperwork/US_MI/SCCReview/FormUsMiSCCReview";
 import { FormUsPaAdminSupervision } from "../Paperwork/US_PA/AdminSupervision/FormUsPaAdminSupervision";
 import { FormUsTnSuspensionOfDirectSupervision } from "../Paperwork/US_TN/SuspensionOfDirectSupervision/FormUsTnSuspensionOfDirectSupervision";
-import { WORKFLOWS_METHODOLOGY_URL } from "../utils/constants";
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
@@ -166,8 +165,9 @@ const HydratedWorkflowsFormLayout = observer(
       opportunity.form?.trackViewed();
     });
 
-    const { currentTenantId } = useRootStore();
-    if (!currentTenantId) return;
+    const {
+      tenantStore: { workflowsMethodologyUrl },
+    } = useRootStore();
 
     const formContents = opportunity.form?.formContents;
 
@@ -203,7 +203,7 @@ const HydratedWorkflowsFormLayout = observer(
       <Wrapper>
         <Sidebar>
           <NavigationLayout
-            externalMethodologyUrl={WORKFLOWS_METHODOLOGY_URL[currentTenantId]}
+            externalMethodologyUrl={workflowsMethodologyUrl}
             isFixed={false}
           />
           <SidebarSection>
