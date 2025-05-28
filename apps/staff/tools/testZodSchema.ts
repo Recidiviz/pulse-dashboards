@@ -206,6 +206,7 @@ type SchemaKey = keyof typeof OPPORTUNITY_SCHEMAS | keyof typeof OTHER_SCHEMAS;
 function getTestParams(key: SchemaKey): {
   schema: z.ZodTypeAny;
   firestoreCollection: string;
+  isOpportunity?: boolean;
 } {
   if (key in OPPORTUNITY_SCHEMAS) {
     const schema = OPPORTUNITY_SCHEMAS[key as OpportunityType];
@@ -214,7 +215,7 @@ function getTestParams(key: SchemaKey): {
     }
     const { firestoreCollection } =
       mockOpportunityConfigs[key as OpportunityType];
-    return { schema, firestoreCollection };
+    return { schema, firestoreCollection, isOpportunity: true };
   }
   if (key in OTHER_SCHEMAS) {
     return OTHER_SCHEMAS[key as keyof typeof OTHER_SCHEMAS];
@@ -235,41 +236,99 @@ const opportunityPassthroughTestSchema = z.object({
   }),
 });
 
-async function testCollection(opportunityType: SchemaKey, limit?: number) {
-  const { schema, firestoreCollection } = getTestParams(opportunityType);
+function validateDocument(
+  doc: FirebaseFirestore.QueryDocumentSnapshot,
+  schema: z.ZodTypeAny,
+  firestoreCollection: string,
+  isOpportunity?: boolean,
+) {
+  const raw = doc.data();
+  // The client schema expects the record id to be injected
+  if (firestoreCollection === "clients") raw.recordId = "stub";
+  if (isOpportunity) {
+    // To ensure that opportunity schemas pass through criteria they don't recognize,
+    // we inject these additional criteria and check that they're still there after the
+    // schema parses.
+    raw.eligibleCriteria.PASSTHROUGH_NULL = null;
+    raw.eligibleCriteria.PASSTHROUGH_OBJ = { test: "valid" };
+    raw.ineligibleCriteria.INELIGIBLE_PASSTHROUGH_NULL = null;
+    raw.ineligibleCriteria.INELIGIBLE_PASSTHROUGH_OBJ = { test: "valid" };
+  }
+  return isOpportunity
+    ? schema.pipe(opportunityPassthroughTestSchema).safeParse(raw)
+    : schema.safeParse(raw);
+}
+
+async function testCollection(opportunityType: SchemaKey, stateCode?: string) {
+  const { schema, firestoreCollection, isOpportunity } =
+    getTestParams(opportunityType);
   const coll = db.collection(firestoreCollection);
-  const query = limit ? coll.limit(limit) : coll;
 
   let succeeded = 0;
   let failed = 0;
   const failures: Record<string, z.ZodIssue[]> = {};
-  (await query.get()).docs.forEach((d) => {
-    const raw = d.data();
-    const isOpportunity = !!raw.eligibleCriteria;
-    if (isOpportunity) {
-      raw.eligibleCriteria.PASSTHROUGH_NULL = null;
-      raw.eligibleCriteria.PASSTHROUGH_OBJ = { test: "valid" };
-      raw.ineligibleCriteria.INELIGIBLE_PASSTHROUGH_NULL = null;
-      raw.ineligibleCriteria.INELIGIBLE_PASSTHROUGH_OBJ = { test: "valid" };
+
+  const chunkSize = 1000;
+  let lastDoc: FirebaseFirestore.QueryDocumentSnapshot | null = null;
+  let hasMore = true;
+
+  while (hasMore) {
+    // Build query for current chunk
+    let query = coll.limit(chunkSize);
+    if (stateCode) {
+      query = query.where("stateCode", "==", stateCode);
     }
-    const result = isOpportunity
-      ? schema.pipe(opportunityPassthroughTestSchema).safeParse(raw)
-      : schema.safeParse(raw);
-    if (result.success) {
-      succeeded += 1;
-    } else {
-      failed += 1;
-      failures[d.id] = result.error.issues;
+    if (lastDoc) {
+      query = query.startAfter(lastDoc);
     }
-  });
+
+    // eslint-disable-next-line no-await-in-loop
+    const snapshot = await query.get();
+    const docs = snapshot.docs;
+
+    if (docs.length === 0) {
+      hasMore = false;
+      break;
+    }
+
+    // Process current chunk
+    for (const d of docs) {
+      const result = validateDocument(
+        d,
+        schema,
+        firestoreCollection,
+        isOpportunity,
+      );
+      if (result.success) {
+        succeeded += 1;
+      } else {
+        failed += 1;
+        if (result.error.issues) {
+          failures[d.id] = result.error.issues;
+        }
+      }
+    }
+
+    // Check for failures after processing the chunk
+    if (failed > 0) {
+      return { succeeded, failed, failures };
+    }
+
+    console.log(`Checked ${succeeded} records...`);
+
+    // Set up for next iteration
+    lastDoc = docs[docs.length - 1];
+    hasMore = docs.length === chunkSize;
+  }
+
   return { succeeded, failed, failures };
 }
 
-async function automatic({ limit }: Args) {
+async function automatic({ stateCode }: Args) {
   Object.keys(ALL_SCHEMAS).forEach(async (schemaKey) => {
     const { failures, ...result } = await testCollection(
       schemaKey as SchemaKey,
-      limit,
+      stateCode,
     );
     // don't print failures so we don't leave PII in the github logs
     console.log(result.failed ? "❌" : "✅", schemaKey, result);
@@ -279,11 +338,11 @@ async function automatic({ limit }: Args) {
 
 async function manual(args: Args) {
   let schemaKey;
-  let limit;
+  let stateCode = args.stateCode;
   if (args.schemaKey) {
-    ({ schemaKey, limit } = args);
+    ({ schemaKey } = args);
   } else {
-    ({ schemaKey, limit } = await prompts([
+    ({ schemaKey } = await prompts([
       {
         type: "select",
         name: "schemaKey",
@@ -293,12 +352,6 @@ async function manual(args: Args) {
           value: k,
         })),
       },
-      {
-        type: "number",
-        name: "limit",
-        message: "Sample size limit? (enter 0 to test entire collection)",
-        initial: 0,
-      },
     ]));
   }
 
@@ -306,13 +359,31 @@ async function manual(args: Args) {
     console.error("Unrecognized collection name");
   }
 
+  if (!stateCode && schemaKey in OTHER_SCHEMAS) {
+    const { maybeStateCode } = await prompts([
+      {
+        type: "text",
+        name: "maybeStateCode",
+        message: "Enter a state code to filter by, or leave blank for all",
+      },
+    ]);
+    if (maybeStateCode.length > 0) {
+      stateCode = maybeStateCode.toUpperCase();
+    }
+  }
+
   const { failures, ...result } = await testCollection(
     schemaKey as SchemaKey,
-    limit,
+    stateCode,
   );
 
   if (result.failed) {
     console.log(JSON.stringify(failures, null, 2));
+    process.exitCode = 1;
+  } else if (result.succeeded === 0) {
+    console.log(
+      "Found no records to test! Either the collection is empty or the state code filter didn't match anything.",
+    );
     process.exitCode = 1;
   }
   console.log(result);
@@ -334,17 +405,16 @@ parser.add_argument("-s", "--schema", {
   help: "Test SCHEMA",
 });
 
-parser.add_argument("-l", "--limit", {
-  dest: "limit",
-  type: "int",
+parser.add_argument("--state_code", {
+  dest: "stateCode",
   default: null,
-  help: "Test only this many records (ignored by --all)",
+  help: "Only test STATE_CODE",
 });
 
 type Args = {
   all: boolean;
   schemaKey?: string;
-  limit?: number;
+  stateCode?: string;
 };
 
 const args = parser.parse_args() as Args;
