@@ -502,4 +502,36 @@ describe("formatStrings", () => {
       expect(result).toEqual("submitted on DATE, by: PERSON");
     });
   });
+
+  describe("appendDateSuffixIfMissing", () => {
+    const { appendDateSuffixIfMissing } = utils;
+
+    // labels that already contain “Date” should stay the same
+    test.each([
+      ["Termination Date", "Termination Date"],
+      ["termination DATE", "termination DATE"],
+      ["Date", "Date"],
+      ["Date of Termination", "Date of Termination"],
+    ])("does not change '%s'", (input, expected) => {
+      expect(appendDateSuffixIfMissing(input)).toBe(expected);
+    });
+
+    // labels lacking “Date” get “ Date” appended
+    test.each([
+      ["Termination", "Termination Date"],
+      ["End", "End Date"],
+      ["SomethingWithDateInBetween Date", "SomethingWithDateInBetween Date"],
+    ])("appends 'Date' suffix to '%s'", (input, expected) => {
+      expect(appendDateSuffixIfMissing(input)).toBe(expected);
+    });
+
+    // preserves casing of the word “date”
+    test.each([
+      ["end", "end date"],
+      ["END", "END DATE"],
+      ["End", "End Date"],
+    ])("matches casing for '%s'", (input, expected) => {
+      expect(appendDateSuffixIfMissing(input)).toBe(expected);
+    });
+  });
 });

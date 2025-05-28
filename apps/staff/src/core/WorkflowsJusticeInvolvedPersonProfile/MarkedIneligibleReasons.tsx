@@ -21,7 +21,9 @@ import { rem } from "polished";
 import styled from "styled-components/macro";
 
 import { Denial, Submission } from "../../FirestoreStore";
+import { appendDateSuffixIfMissing } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
+import { formatSupervisionEndDatePhrase } from "./utils";
 
 const MarkedIneligibleReasonsText = styled.div`
   ${typography.Sans14}
@@ -121,13 +123,13 @@ export function buildResurfaceText(
     person.expirationDate instanceof Date &&
     isEqual(snoozeUntil, person.expirationDate)
   ) {
-    endDateString = `${dateStr} is ${person.displayPreferredName}'s Supervision ${supervisionEndDateCopy} Date.`;
+    endDateString = `${dateStr} is ${person.displayPreferredName}'s ${formatSupervisionEndDatePhrase(supervisionEndDateCopy)}.`;
   } else if (
     "releaseDate" in person &&
     person.releaseDate instanceof Date &&
     isEqual(snoozeUntil, person.releaseDate)
   ) {
-    endDateString = `${dateStr} is ${person.displayPreferredName}'s ${releaseDateCopy} Date.`;
+    endDateString = `${dateStr} is ${person.displayPreferredName}'s ${appendDateSuffixIfMissing(releaseDateCopy)}.`;
   } else {
     endDateString = `${person.displayPreferredName} may be surfaced again on or after ${dateStr}.`;
   }

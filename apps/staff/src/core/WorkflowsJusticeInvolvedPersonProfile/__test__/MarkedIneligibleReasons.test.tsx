@@ -29,6 +29,7 @@ import MarkedIneligibleReasons, {
   buildDenialReasonsListText,
   buildResurfaceText,
 } from "../MarkedIneligibleReasons";
+import { formatSupervisionEndDatePhrase } from "../utils";
 
 vi.mock("../../../components/StoreProvider");
 
@@ -160,6 +161,26 @@ describe("buildResurfaceText", () => {
       buildResurfaceText(testOpp, new Date(2025, 1, 1), mockTenantStore.labels),
     ).toEqual("February 1, 2025 is Client Name's Supervision End Date.");
   });
+
+  test.each([
+    ["Supervision End Date", "Supervision End Date"],
+    ["End", "Supervision End Date"],
+    ["Termination Date", "Supervision Termination Date"],
+  ])(
+    "end of supervision term copy with supervisionEndDateCopy '%s'",
+    (supervisionEndDateCopy, expected) => {
+      const testOpp = {
+        ...mockOpportunity,
+        deniedTabTitle: "Marked Ineligible",
+        snoozedOnDate: new Date(2023, 9, 10),
+      };
+      const labels = { releaseDateCopy: "Release", supervisionEndDateCopy };
+
+      expect(buildResurfaceText(testOpp, new Date(2025, 1, 1), labels)).toEqual(
+        `February 1, 2025 is Client Name's ${expected}.`,
+      );
+    },
+  );
 });
 
 describe("MarkedIneligibleReasons", () => {
@@ -212,5 +233,15 @@ describe("MarkedIneligibleReasons", () => {
 
   test("otherReason text", () => {
     expect(screen.getByText('"Other Reason"')).toBeInTheDocument();
+  });
+});
+
+describe("formatSupervisionEndDatePhrase", () => {
+  test.each([
+    ["Supervision End Date", "Supervision End Date"],
+    ["End", "Supervision End Date"],
+    ["Termination Date", "Supervision Termination Date"],
+  ])('given "%s" as end date copy, returns "%s"', (input, expected) => {
+    expect(formatSupervisionEndDatePhrase(input)).toBe(expected);
   });
 });

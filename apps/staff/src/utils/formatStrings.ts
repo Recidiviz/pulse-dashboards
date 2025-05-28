@@ -504,7 +504,34 @@ function htmlStringToString(htmlString?: string): string {
   );
 }
 
+/**
+ * Append the word “ Date” (with a leading space) to a label
+ * unless it already contains “date” as a standalone word (case-insensitive).
+ * The suffix will also match the casing of the existing label:
+ *  - all-lower → " date"
+ *  - all-upper → " DATE"
+ *  - mixed case/title → " Date"
+ */
+function appendDateSuffixIfMissing(label: string): string {
+  const dateStringRegex = /\bdate\b/i;
+
+  if (dateStringRegex.test(label)) {
+    return label;
+  }
+
+  let suffix = "Date";
+
+  if (label === label.toLowerCase()) {
+    suffix = "date";
+  } else if (label === label.toUpperCase()) {
+    suffix = "DATE";
+  }
+
+  return `${label} ${suffix}`;
+}
+
 export {
+  appendDateSuffixIfMissing,
   convertCurlyQuotesToStraight,
   decrypt,
   encrypt,
