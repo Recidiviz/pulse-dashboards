@@ -200,6 +200,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
       : record.milestones;
   }
 
+  get metadata() {
+    return this.record.metadata ?? {};
+  }
+
   get profileUrl(): string {
     return workflowsUrl("clientProfile", {
       justiceInvolvedPersonId: this.pseudonymizedId,

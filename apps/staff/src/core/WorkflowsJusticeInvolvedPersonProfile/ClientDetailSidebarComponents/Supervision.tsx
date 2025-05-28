@@ -31,6 +31,7 @@ import {
   SecureDetailsContent,
 } from "../styles";
 import { ClientProfileProps } from "../types";
+import { UsNeSupervisionDetails } from "./US_NE/UsNeSupervisionDetails";
 
 export function Supervision({
   client,
@@ -62,6 +63,7 @@ export function Supervision({
           <SecureDetailsContent>
             {formatWorkflowsDate(client.expirationDate)}
           </SecureDetailsContent>
+          <StateSpecificSupervisionDetails client={client} />
 
           <DetailsSubheading>Assigned to</DetailsSubheading>
           <SecureDetailsContent>
@@ -71,4 +73,15 @@ export function Supervision({
       </SecureDetailsContent>
     </DetailsSection>
   );
+}
+
+function StateSpecificSupervisionDetails({
+  client,
+}: ClientProfileProps): React.ReactElement | null {
+  switch (client.stateCode) {
+    case "US_NE":
+      return <UsNeSupervisionDetails client={client} />;
+    default:
+      return null;
+  }
 }

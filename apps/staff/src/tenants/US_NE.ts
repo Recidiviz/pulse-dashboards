@@ -41,7 +41,7 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
   navigation: {
     workflows: ["home", "clients"],
   },
-  supervisionEndCopyOverride: "Supervision End Date",
+  supervisionEndCopyOverride: "Tentative Release Date",
 };
 
 export default US_NE_CONFIG;

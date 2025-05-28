@@ -15,27 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { formatWorkflowsDate } from "../../../../utils";
+import { DetailsSubheading, SecureDetailsContent } from "../../styles";
+import { ClientProfileProps } from "../../types";
 
-import { dateStringSchema } from "../../../../utils/zod";
+export function UsNeSupervisionDetails({
+  client: { metadata },
+}: ClientProfileProps): React.ReactElement | null {
+  if (metadata.stateCode !== "US_NE") return null;
 
-export const usNeClientMetadataSchema = z.object({
-  stateCode: z.literal("US_NE"),
-  paroleEarnedDischargeDate: dateStringSchema.nullable(),
-  lastFourOrasScores: z
-    .array(
-      z.object({
-        assessmentDate: dateStringSchema,
-        assessmentLevel: z.string().nullable(),
-      }),
-    )
-    .nullable(),
-  specialConditions: z
-    .array(
-      z.object({
-        specialConditionType: z.string(),
-        compliance: z.string().nullable(),
-      }),
-    )
-    .nullable(),
-});
+  const dateString = metadata.paroleEarnedDischargeDate
+    ? formatWorkflowsDate(metadata.paroleEarnedDischargeDate)
+    : "Unknown";
+
+  return (
+    <>
+      <DetailsSubheading>Parole Earned Discharge Date</DetailsSubheading>
+      <SecureDetailsContent>{dateString}</SecureDetailsContent>
+    </>
+  );
+}

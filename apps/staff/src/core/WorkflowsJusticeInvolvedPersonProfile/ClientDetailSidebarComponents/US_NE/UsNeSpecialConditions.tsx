@@ -27,12 +27,12 @@ import {
 import { ClientProfileProps } from "../../types";
 
 export const UsNeSpecialConditions: React.FC<ClientProfileProps> = ({
-  client,
+  client: { metadata },
 }) => {
-  if (client.record.metadata?.stateCode !== "US_NE") {
+  if (metadata.stateCode !== "US_NE") {
     return null;
   }
-  const { specialConditions } = client.record.metadata;
+  const specialConditions = metadata.specialConditions ?? [];
 
   return (
     <DetailsSection>

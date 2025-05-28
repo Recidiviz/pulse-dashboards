@@ -27,11 +27,13 @@ import {
 } from "../../styles";
 import { ClientProfileProps } from "../../types";
 
-export const UsNeORASScores: React.FC<ClientProfileProps> = ({ client }) => {
-  if (client.record.metadata?.stateCode !== "US_NE") {
+export const UsNeORASScores: React.FC<ClientProfileProps> = ({
+  client: { metadata },
+}) => {
+  if (metadata.stateCode !== "US_NE") {
     return null;
   }
-  const { lastFourOrasScores } = client.record.metadata;
+  const lastFourOrasScores = metadata.lastFourOrasScores ?? [];
 
   return (
     <DetailsSection>
