@@ -728,12 +728,6 @@ export const mockApiOpportunityConfigurationResponse = {
             "Shall be within six months of release (generally calculated from the parole eligibility date, full-term release, or tentative parole date). Those who are past their parole eligibility date or within six months of a tentative parole date may also be considered, on a case by case basis",
         },
         {
-          key: "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrTpd",
-          text: "Is within 6 months of release",
-          tooltip:
-            "Shall be within six months of release (generally calculated from the parole eligibility date, full-term release, or tentative parole date). Those who are past their parole eligibility date or within six months of a tentative parole date may also be considered, on a case by case basis",
-        },
-        {
           key: "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years",
           text: "No escape attempts in the last 10 years",
           tooltip:

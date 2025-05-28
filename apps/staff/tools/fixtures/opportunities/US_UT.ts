@@ -26,31 +26,23 @@ export const mockApiOpportunityConfigurationResponse = {
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
-        {
-          key: "CRIMINAL CONDUCT",
-          text: "Client engaged in new criminal conduct",
-        },
+        { key: "PENDING CHARGES", text: "Pending warrant or charges" },
         {
           key: "RESTITUTION",
           text: "Insufficient restitution, fines, or fees effort",
         },
         {
-          key: "CASE ACTION PLAN",
-          text: "Insufficient progress in the Case Action Plan",
-        },
-        {
           key: "TREATMENT",
           text: "Has not completed treatment or programming",
         },
-        { key: "POLYGRAPH", text: "Exit polygraph required and outstanding" },
         { key: "HOUSING", text: "Unstable housing situation" },
         { key: "EMPLOYMENT", text: "Unstable employment situation" },
-        { key: "DRUG SCREEN", text: "No drug screen in the past six months" },
         {
-          key: "WARRANT/CHARGES IN OTHER STATE",
-          text: "Pending warrant or charges in another state",
+          key: "SEX OFFENSE",
+          text: "Has a sex offense charge inappropriate for early termination",
         },
-        { key: "ICOTS", text: "ICOTS in" },
+        { key: "DRUG SCREEN", text: "No drug screen in the past six months" },
+        { key: "ICOTS", text: "Interstate Compact (ICOTS) in" },
         { key: "OTHER", text: "Other" },
       ],
       denialText: null,
@@ -64,65 +56,65 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usUtHasCompletedOrderedAssessments",
           text: "Treatment completed",
           tooltip:
-            "SENTENCING COMMISSION GUIDELINE: Completion of ordered assessments and any recommended treatment or programming by a licensed provider. For the purposes of this section, persons voluntarily engaged in ongoing care after having completing ordered treatment\nshall be considered as having completed treatment. If no treatment is ordered, then this requirement has been met.",
+            "AP&P BENCHMARK: Completion of ordered assessments and any recommended treatment or programming by a licensed provider. For the purposes of this section, persons voluntarily engaged in ongoing care after having completing ordered treatment\nshall be considered as having completed treatment. If no treatment is ordered, then this requirement has been met.",
         },
         {
           key: "usUtRiskReductionForEt",
           text: "Decline in risk score",
           tooltip:
-            "SENTENCING COMMISSION GUIDELINE: Risk reduction as indicated by ANY of the following:\n1. Overall reduction of 5 percent or more on LS/RNR or other validated risk assessment.\n2. Reduction by one level on LS/RNR or other validated risk assessment (e.g., high to moderate).\n3. Maintaining an overall risk level of moderate or low on LS/RNR or other validated risk assessment.",
+            "AP&P BENCHMARK: Risk reduction as indicated by ANY of the following:\n1. Overall reduction of 5 percent or more on LS/RNR or other validated risk assessment.\n2. Reduction by one level on LS/RNR or other validated risk assessment (e.g., high to moderate).\n3. Maintaining an overall risk level of moderate or low on LS/RNR or other validated risk assessment.",
         },
         {
           key: "supervisionHousingIsPermanentOrTemporaryFor3Months",
           text: "Past early termination review date (half-time date)",
           tooltip:
-            "UDC BENCHMARK: A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
+            "SENTENCING COMMISSION GUIDELINE: A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
         },
         {
           key: "supervisionHousingIsPermanentFor3Months",
           text: "Stable housing",
           tooltip:
-            "UDC BENCHMARK: Client has had stable housing for at least three months. ",
+            "AP&P BENCHMARK: Client has had stable housing for at least three months. ",
         },
         {
           key: "supervisionContinuousEmploymentFor3Months",
           text: "Stable employment",
           tooltip:
-            "UDC BENCHMARK: Client has had continuous employment for at least three months",
+            "AP&P BENCHMARK: Client has had continuous employment for at least three months",
         },
         {
           key: "usUtNoMedhighSupervisionViolationWithin12Months",
           text: "No recent violation history",
           tooltip:
-            "UDC BENCHMARK: Client has had no medium/high supervision violations in the last 12 months.",
+            "AP&P BENCHMARK: Client has had no medium/high supervision violations in the last 12 months.",
         },
         {
           key: "onSupervisionAtLeast6Months",
           text: "On supervision for at least 6 months",
-          tooltip: "UDC BENCHMARK",
+          tooltip: "AP&P BENCHMARK: On supervision for at least 6 months",
         },
         {
           key: "usUtNoRiskLevelIncreaseOf5Percent",
           text: "No recent increase in risk score",
           tooltip:
-            "UDC BENCHMARK: Risk score has not increased in more than 5% in the past year",
+            "AP&P BENCHMARK: Risk score has not increased in more than 5% in the past year",
         },
         {
           key: "atLeast6MonthsSinceMostRecentPositiveDrugTest",
           text: "No recent positive drug test",
-          tooltip: "UDC BENCHMARK: No positive drug test in the past 6 months",
+          tooltip: "AP&P BENCHMARK: No positive drug test in the past 6 months",
         },
         {
           key: "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
           text: "Is past early termination review date (half-time date)",
           tooltip:
-            "UDC BENCHMARK: A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
+            "SENTENCING COMMISSION GUIDELINE: A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
         },
         {
           key: "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
           text: "Is past early termination review date (half-time date)",
           tooltip:
-            "UDC BENCHMARK: A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
+            "SENTENCING COMMISSION GUIDELINE: A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
         },
       ],
       emptyTabCopy: [
@@ -164,7 +156,8 @@ export const mockApiOpportunityConfigurationResponse = {
         "Review the clients and submit a report to the court or BOPP for those who are strong candidates",
       isAlert: false,
       markSubmittedOptionsByTab: [],
-      methodologyUrl: "https://dashboard.recidiviz.org",
+      methodologyUrl:
+        "https://docs.google.com/document/d/e/2PACX-1vR3uKKRbdWXDRUz8v1km5oZNNeYuB3yUmWsZLut8RlPCAQqjUi4Cle3fXeivhYKYm8By--6nNRWFIUO/pub",
       nonOmsCriteria: [
         { text: "If relevant, negative drug test within the last 6 months" },
         {

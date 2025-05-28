@@ -276,6 +276,14 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "EXCLUDED OFFENSE: On parole for an offense resulting in death or serious bodily injury or an offense involving the discharge of a firearm",
         },
         {
+          key: "EXCLUDED CURRENT OFFENSE",
+          text: "EXCLUDED CURRENT OFFENSE: On probation for MCL 750.81 or MCL 750.84, for an offense requiring a mandatory probation term (750.411H, 750.411I, 750.136b), or for a sex offense",
+        },
+        {
+          key: "EXCLUDED NEW OFFENSE",
+          text: "EXCLUDED NEW OFFENSE: A new offense while on probation that is a felony, assaultive misdemeanor, or requires SORA registration",
+        },
+        {
           key: "JUDGE",
           text: "JUDGE: County Judge declined client for consideration",
         },

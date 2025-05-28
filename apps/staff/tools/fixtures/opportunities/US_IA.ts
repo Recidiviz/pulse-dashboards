@@ -53,7 +53,8 @@ export const mockApiOpportunityConfigurationResponse = {
       denialText: null,
       deniedTabTitle: "Snoozed",
       displayName: "Early Discharge",
-      dynamicEligibilityText: "client[|s] may be eligible for early discharge",
+      dynamicEligibilityText:
+        "client[|s] are awaiting actions related to Early Discharge",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -67,6 +68,12 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "90 days have passed since case assignment",
           tooltip:
             "Case assignment is defined as whenever a client began supervision or began serving a new sentence",
+        },
+        {
+          key: "noSupervisionViolationReportWithin6MonthsUsingResponseDate",
+          text: "Has no violation reports in the past 6 months",
+          tooltip:
+            'This is defined by whether there were any Reports of Violation submitted in ICON in the past 6 months. See "Relevant Contact Notes" section below to review all violation incidents entered in ICON',
         },
         {
           key: "usIaNoOpenSupervisionModifiers",
@@ -90,7 +97,8 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "notServingALifeSentenceOnSupervisionOrSupervisionOutOfState",
-          text: "Is not serving a lifetime sentence",
+          text: '{{#unless (eq opportunity.person.supervisionType "PROBATION")}}Is not serving a lifetime sentence{{/unless}}',
+          tooltip: "",
         },
         {
           key: "notSupervisionPastFullTermCompletionDateOrUpcoming30Days",
@@ -100,11 +108,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usIaNotExcludedFromEarlyDischargeByParoleCondition",
-          text: "Is not excluded from early discharge by board of parole condition",
-        },
-        {
-          key: "noSupervisionViolationReportWithin6MonthsUsingResponseDate",
-          text: "Has no violation reports in the past 6 months",
+          text: '{{#unless (eq opportunity.person.supervisionType "PROBATION")}}Is not excluded from early discharge by board of parole condition{{/unless}}',
         },
       ],
       emptyTabCopy: [],
@@ -122,23 +126,32 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteria: [
         {
           text: "Has no pending criminal charges",
-          tooltip: "Run NCIC check to determine status of pending charges",
+          tooltip:
+            'Run NCIC check for pending charges + see "Relevant Contact Notes" section below for any active warrants & detainers entered in ICON',
         },
         {
           text: "Has completed any court-ordered interventions and/or programming",
+          tooltip:
+            'See "Relevant Contact Notes" section below for any required programming entered in ICON',
         },
-        { text: "Has paid restitution in full" },
+        { text: "Has paid restitution in full", tooltip: "" },
         {
-          text: "Has paid court fees in full (for probation) or has consistent payments or a payment plan (for parole)",
-        },
-        {
-          text: "Not excluded from early discharge via court order (for probation)",
+          text: '{{#if (or (eq opportunity.person.supervisionType "PROBATION") (eq opportunity.person.supervisionType "DUAL"))}}Not excluded from early discharge via court order (for probation clients only){{/if}}',
+          tooltip: "",
         },
         {
           text: "{{#if record.metadata.victimFlag}}Registered victim has been contacted{{/if}}",
         },
         {
-          text: "DNA has been collected (in cases where DNA collection is required)",
+          text: "{{#if record.metadata.dnaRequiredFlag}}{{#unless record.metadata.dnaSubmittedFlag}}DNA has been collected{{/unless}}{{/if}}",
+          tooltip:
+            "ICON indicates that for this client, DNA is required to be collected but has not yet been collected",
+        },
+        {
+          text: '{{#if (or (eq opportunity.person.supervisionType "PAROLE") (eq opportunity.person.supervisionType "DUAL"))}}Has consistent payments or a payment plan for court fees (for parole clients){{/if}}',
+        },
+        {
+          text: '{{#if (or (eq opportunity.person.supervisionType "PROBATION") (eq opportunity.person.supervisionType "DUAL"))}}Has paid court fees in full (for probation clients){{/if}}',
         },
       ],
       nonOmsCriteriaHeader: "Requirements for officers to check",
@@ -146,7 +159,11 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Requirements validated by data from ICON",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: ["UsIaActionPlansAndNotes", "ClientProfileDetails"],
+      sidebarComponents: [
+        "UsIaActionPlansAndNotes",
+        "ClientProfileDetails",
+        "CaseNotes",
+      ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_IA",

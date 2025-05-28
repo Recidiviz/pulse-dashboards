@@ -702,7 +702,6 @@ export const mockApiOpportunityConfigurationResponse = {
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
-        { key: "RISK_LEVEL", text: "Ineligible risk level" },
         {
           key: "INELIGIBLE_OFFENSES",
           text: "Current conviction for an ineligible offense",
@@ -712,16 +711,8 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Has not yet completed initial intake and needs assessment",
         },
         {
-          key: "HOMELESS",
-          text: "Classified as homeless in their home release plan",
-        },
-        {
           key: "EMPLOYMENT",
           text: "Not currently employed, disabled, retired, or in school",
-        },
-        {
-          key: "MENTAL_HEALTH",
-          text: "Ineligible mental health score or SMI-C",
         },
         {
           key: "SUBSTANCE",
@@ -729,7 +720,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         { key: "Other", text: "Other" },
       ],
-      denialText: null,
+      denialText: "Mark ineligible",
       deniedTabTitle: "Marked Ineligible",
       displayName: "Administrative Supervision",
       dynamicEligibilityText:
@@ -740,42 +731,42 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzEligibleRiskLevel",
           text: "ORAS risk determination of medium or lower",
           tooltip:
-            "1.1 ORAS risk determination of medium or lower, unless the client qualifies for administrative supervision under section \n1.1.1 Clients that score Minimum on the Initial Community Risk Assessment and who therefore do not receive the ORAS assessment are not required to meet criteria 1.1 above.",
+            "(1.1) ORAS risk determination of medium or lower, unless the client qualifies for administrative supervision under section 1.8.\n\n(1.1.1) Clients that score Minimum on the Initial Community Risk Assessment and who therefore do not receive the ORAS assessment are not required to meet criteria 1.1 above.",
         },
         {
           key: "usAzIneligibleOffensesBut15MonthsViolationFree",
           text: "No current convictions of sex offense, domestic violence, arson, or homicide",
           tooltip:
-            "1.2 No current convictions of sex offense, domestic violence, arson or homicide, unless the client qualifies for administrative supervision under section \n1.8 Clients with any risk score and with current convictions of any offense, including sex offense, domestic violence, arson, or homicide, are eligible for administrative supervision if they meet criteria 1.3 - 1.7, and upon completion of 15 consecutive months of supervision with no violations. Such decisions are conditional on supervisor approval.",
+            "(1.2) No current convictions of sex offense, domestic violence, arson or homicide, unless the client qualifies for administrative supervision under section 1.8.",
         },
         {
           key: "usAzRiskReleaseAssessmentIsCompleted",
           text: "Initial intake and needs assessment complete",
           tooltip:
-            "1.3 Has completed initial intake and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (eg. telephone or by video call).",
+            "(1.3) Has completed initial intake and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (eg. telephone or by video call).",
         },
         {
           key: "usAzNotHomelessInReleasePlan",
           text: "Not classified as homeless in home release plan",
           tooltip:
-            "1.4 Not classified as homeless in their home release plan. A client may also meet this requirement once they have achieved stable housing while on supervision.",
+            "(1.4) Not classified as homeless in their home release plan. A client may also meet this requirement once they have achieved stable housing while on supervision.",
         },
         {
           key: "usAzOrasEmployedDisabledRetiredOrStudent",
           text: "Currently employed, disabled, retired, or in school",
           tooltip:
-            "1.5 Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4. A client may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, application for disability status, inability to work, or retirement. For the purpose of this policy, clients providing caregiving for a family member may also be considered to meet this condition.",
+            "(1.5) Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4. A client may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, application for disability status, inability to work, or retirement. For the purpose of this policy, clients providing caregiving for a family member may also be considered to meet this condition.",
         },
         {
           key: "usAzMentalHealthScore3OrBelow",
           text: "Mental Health Score of 3 or below and not SMI-C",
-          tooltip: "1.6 Mental Health Score of 3 or below and not SMI-C.",
+          tooltip: "(1.6) Mental Health Score of 3 or below and not SMI-C.",
         },
         {
           key: "usAzOrasHasSubstanceUseIssues",
           text: "Not currently dealing with substance use issues",
           tooltip:
-            "1.7 Not currently dealing with substance use issues, as assessed in ORAS question 5.4. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from this requirement. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
+            "(1.7) Not currently dealing with substance use issues, as assessed in ORAS question 5.4. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from this requirement. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
       ],
       emptyTabCopy: [
@@ -803,7 +794,7 @@ export const mockApiOpportunityConfigurationResponse = {
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
-        "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
+        "https://drive.google.com/file/d/1Z7heBZYSj9RuEa0o6q4gW12M7ej1Ak9b/view",
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
