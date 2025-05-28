@@ -40,4 +40,23 @@ export class UsMiEarlyDischargeOpportunity extends OpportunityBase<
   get eligibilityDate(): Date | undefined {
     return super.eligibilityDate ?? this.record?.metadata.eligibleDate;
   }
+
+  get denialReasons() {
+    let keysToExclude: string[];
+    if (this.record?.metadata.supervisionType.toLowerCase() === "parole") {
+      keysToExclude = ["EXCLUDED CURRENT OFFENSE", "EXCLUDED NEW OFFENSE"];
+    } else if (
+      this.record?.metadata.supervisionType.toLowerCase() === "probation"
+    ) {
+      keysToExclude = ["EXCLUDED OFFENSE"];
+    } else {
+      return this.config.denialReasons;
+    }
+
+    return Object.fromEntries(
+      Object.entries(this.config.denialReasons).filter(
+        ([key]) => !keysToExclude.includes(key),
+      ),
+    );
+  }
 }
