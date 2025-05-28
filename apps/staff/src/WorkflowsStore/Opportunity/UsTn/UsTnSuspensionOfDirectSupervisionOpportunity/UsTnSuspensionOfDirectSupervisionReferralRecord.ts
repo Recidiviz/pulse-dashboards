@@ -63,6 +63,17 @@ export type UsTnSuspensionOfDirectSupervisionDraftData = {
   expirationDate: string;
   supervisionDuration: string;
   assignedStaffFullName: string;
+  assignedStaffPhoneNumber: string;
   district: string;
   supervisionOfficeLocation: string;
+  employment: string;
+  residence: string;
+  compliance: string;
+  casePlanGoals: string;
+  programs: string;
+  arrests: string;
+  ncicCheck: string;
+  substanceUse: string;
+  conditions: string;
+  other: string;
 };

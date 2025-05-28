@@ -31,7 +31,8 @@ const Checkbox = styled.input.attrs({
   margin: 0 0.25em 0 0;
 `;
 
-export interface DOCXFormCheckboxProps<DraftData> {
+export interface DOCXFormCheckboxProps<DraftData>
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   name: Extract<keyof DraftData, string>;
   invert?: boolean;
   toggleable?: boolean;

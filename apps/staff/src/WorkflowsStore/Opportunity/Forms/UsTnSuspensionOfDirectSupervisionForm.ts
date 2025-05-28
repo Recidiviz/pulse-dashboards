@@ -29,7 +29,7 @@ export class UsTnSuspensionOfDirectSupervisionForm extends FormBase<
   allowRevert = false;
 
   get formContents(): OpportunityFormComponentName {
-    return "FormUsTnSuspensionOfDirectSupervision";
+    return "WorkflowsFormUsTnSuspensionOfDirectSupervision";
   }
 
   get formType(): string {
@@ -61,6 +61,7 @@ export class UsTnSuspensionOfDirectSupervisionForm extends FormBase<
       displayName: clientName,
       phoneNumber,
       expirationDate,
+      currentEmployers,
     } = this.person;
 
     // supervisionDuration is either 'Life', a number as a string representing the number of years, or undefined
@@ -91,6 +92,9 @@ export class UsTnSuspensionOfDirectSupervisionForm extends FormBase<
       assignedStaffFullName,
       district,
       supervisionOfficeLocation,
+      employment: currentEmployers
+        ?.map((employer) => `${employer.name}, ${employer.address}`)
+        .join(";"),
     };
   }
 }
