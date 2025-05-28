@@ -21,6 +21,8 @@ import { z } from "zod";
 import { usMeXPortionServedEnum } from "../../opportunities/UsMe/UsMeSCCP/schema";
 import { dateStringSchema } from "../../utils/zod/date/dateStringSchema";
 import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
+import { personMetadataSchema } from "../utils/personMetadataSchema";
+import { usMaResidentMetadataSchema } from "./US_MA/metadata/schema";
 
 /**
  * Magic date that appears in data sometimes and is equivalent to null
@@ -45,7 +47,7 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
     usTnFacilityAdmissionDate: dateStringSchema.nullish(),
     usMePortionNeededEligibleDate: dateStringSchema.nullish(),
     gender: z.string(),
-    metadata: z.object({}).passthrough().optional(),
+    metadata: personMetadataSchema([usMaResidentMetadataSchema]),
   })
   .transform((input) => ({
     ...input,

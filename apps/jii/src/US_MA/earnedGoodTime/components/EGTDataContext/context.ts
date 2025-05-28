@@ -15,10 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
+import { createContext } from "react";
 
-export const usMaResidentsConfig: ResidentsConfig = {
-  home,
-  egt: true,
+import { UsMaResidentMetadata } from "~datatypes";
+
+import { useRequiredContext } from "../../../../utils/useRequiredContext";
+
+export type EGTDataContext = {
+  // this is not currently state agnostic, but for now we only have one state.
+  // as that changes we expect this to evolve somehow
+  data: UsMaResidentMetadata;
 };
+
+const context = createContext<EGTDataContext | undefined>(undefined);
+
+export const EGTDataContextProvider = context.Provider;
+
+export function useEGTDataContext() {
+  return useRequiredContext(context);
+}

@@ -15,10 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
+import { Outlet } from "react-router-dom";
 
-export const usMaResidentsConfig: ResidentsConfig = {
-  home,
-  egt: true,
+import { EGTDataContext } from "./DataContext";
+
+/**
+ * Provides a context with resident metadata narrowed to a type that supports EGT features
+ * and renders an Outlet. Consume this context with `useEGTDataContext()`
+ */
+export const EGTDataRouteContext = () => {
+  return (
+    <EGTDataContext>
+      <Outlet />
+    </EGTDataContext>
+  );
 };

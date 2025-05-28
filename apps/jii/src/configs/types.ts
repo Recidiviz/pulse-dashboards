@@ -126,6 +126,8 @@ export type ResidentsConfig = {
   };
   eligibility?: EligibilityModuleConfig;
   progress?: ProgressModuleConfig;
+  // unlike other configs this one will not contain copy, so it's just a feature flag for now
+  egt?: boolean;
 };
 
 export type EligibilityModuleConfig = {

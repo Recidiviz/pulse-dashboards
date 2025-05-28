@@ -33,6 +33,8 @@ import styled, { createGlobalStyle } from "styled-components/macro";
 
 import { initializeSentry } from "../../apis/Sentry/initializeSentry";
 import * as routes from "../../routes/routes";
+import { EGTDataRouteContext } from "../../US_MA/earnedGoodTime/components/EGTDataContext/RouteContext";
+import { PageEGT } from "../../US_MA/earnedGoodTime/components/pages/PageEGT";
 import { EligibilityRouteContext } from "../EligibilityRouteContext/EligibilityRouteContext";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { GenericLayoutRoute } from "../GenericLayoutRoute/GenericLayoutRoute";
@@ -131,6 +133,12 @@ export function App() {
                         path={routes.State.Resident.Progress.InfoPage.path}
                         element={<PageProgressInfoPage />}
                       />
+                      <Route
+                        path={routes.State.Resident.EGT.path}
+                        element={<EGTDataRouteContext />}
+                      >
+                        <Route index element={<PageEGT />} />
+                      </Route>
                     </Route>
                     <Route
                       path={routes.State.Search.path}

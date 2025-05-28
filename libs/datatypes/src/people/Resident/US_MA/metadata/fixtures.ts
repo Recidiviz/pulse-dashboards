@@ -36,6 +36,7 @@ function creditDateString(...differences: Array<Duration>) {
 export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
   {
     // normal case: adjustment equals credits
+    stateCode: "US_MA",
     originalMaxReleaseDate: relativeFixtureDate({ years: 5, months: 2 }),
     // other release dates calculated relative to the original,
     // using number of days since that's how the policies are applied
@@ -157,6 +158,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
   },
   {
     // no release date
+    stateCode: "US_MA",
     rtsDate: null,
     adjustedMaxReleaseDate: null,
     originalMaxReleaseDate: null,
@@ -197,6 +199,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
   },
   {
     // can't earn any more time
+    stateCode: "US_MA",
     originalMaxReleaseDate: relativeFixtureDate({
       years: 2,
       months: -1,

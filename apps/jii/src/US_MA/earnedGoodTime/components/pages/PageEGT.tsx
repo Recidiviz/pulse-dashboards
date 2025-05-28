@@ -15,10 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
+import { Homepage } from "../Homepage/Homepage";
 
-export const usMaResidentsConfig: ResidentsConfig = {
-  home,
-  egt: true,
+export const PageEGT = () => {
+  return <Homepage />;
 };

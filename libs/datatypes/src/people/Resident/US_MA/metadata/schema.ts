@@ -31,6 +31,7 @@ const nullZeroNumberSchema = z
   .transform((i) => i ?? 0);
 
 export const usMaResidentMetadataSchema = z.object({
+  stateCode: z.literal("US_MA"),
   rtsDate: dateStringSchema.nullable(),
   adjustedMaxReleaseDate: dateStringSchema.nullable(),
   originalMaxReleaseDate: dateStringSchema.nullable(),
@@ -59,7 +60,7 @@ export const usMaResidentMetadataSchema = z.object({
       activityCode: z.string(),
       activity: z.string(),
       activityType: z.string(),
-      rating: z.string(),
+      rating: z.string().nullable(),
     }),
   ),
   lastUpdatedDate: dateStringSchema,

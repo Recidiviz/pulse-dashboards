@@ -15,13 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rawUsMaResidentMetadataFixtures } from "./fixtures";
-import { usMaResidentMetadataSchema } from "./schema";
+import { route } from "react-router-typesafe-routes/dom";
 
-test("MA resident metadata schema", () => {
-  expect(
-    rawUsMaResidentMetadataFixtures.map((f) =>
-      usMaResidentMetadataSchema.parse(f),
-    ),
-  ).toMatchSnapshot();
-});
+export const EGT = route("earned-good-time");

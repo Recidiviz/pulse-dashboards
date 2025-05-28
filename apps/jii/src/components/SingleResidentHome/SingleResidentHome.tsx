@@ -18,8 +18,11 @@
 import { palette, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { memo } from "react";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { State } from "../../routes/routes";
+import { Redirect } from "../Redirect/Redirect";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { Eligibility } from "./Eligibility";
 import { Footer } from "./Footer";
@@ -59,9 +62,16 @@ const ModuleHeading = styled.h2`
 export const SingleResidentHome = memo(function SingleResidentHome() {
   const {
     residentsStore: {
-      config: { progress, eligibility },
+      config: { progress, eligibility, egt },
     },
   } = useResidentsContext();
+  const residentUrlParams = useTypedParams(State.Resident);
+
+  // EGT does not yet appear on the homepage, so if it's the only module enabled
+  // we have to redirect the user elsewhere
+  if (egt && !eligibility && !progress) {
+    return <Redirect to={State.Resident.EGT.buildPath(residentUrlParams)} />;
+  }
 
   return (
     <Wrapper>

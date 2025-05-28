@@ -17,6 +17,8 @@
 
 import { route, string, types } from "react-router-typesafe-routes/dom";
 
+import { EGT } from "../US_MA/earnedGoodTime/routes/paths";
+
 export const EmailVerification = route("verify");
 
 export const AfterLogin = route("after-login");
@@ -57,6 +59,7 @@ export const State = route(":stateSlug", types(ReturnToPathFragment), {
           InfoPage,
         },
       ),
+      EGT,
     },
   ),
   Search: route("search"),
