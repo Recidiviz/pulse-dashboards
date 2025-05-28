@@ -218,14 +218,24 @@ function MethodologyLink({
   externalMethodologyUrl?: string;
 }) {
   const { isMobile } = useIsMobile(true);
+  const { analyticsStore } = useRootStore();
 
   const linkContents = (
     <>
       {isMobile && <Icon kind={IconSVG.NeedsRiskAssessment} width={20} />}
-      Methodology
+      How it works
       {externalMethodologyUrl && <Icon kind={IconSVG.Open} width={15} />}
     </>
   );
+
+  const handleMethodologyLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+  ) => {
+    analyticsStore.trackMethodologyLinkClicked({
+      path: location.pathname,
+      methodologyLink: e.currentTarget.href,
+    });
+  };
 
   if (externalMethodologyUrl) {
     return (
@@ -233,6 +243,7 @@ function MethodologyLink({
         href={externalMethodologyUrl}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={handleMethodologyLinkClick}
       >
         {linkContents}
       </a>
@@ -250,6 +261,7 @@ function MethodologyLink({
         pathname: `/${DASHBOARD_VIEWS.methodology}/${methodologyView}`,
         search: `?stateCode=${currentTenantId}`,
       }}
+      onClick={handleMethodologyLinkClick}
     >
       {linkContents}
     </NavLink>
@@ -479,9 +491,9 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
       ["staging", "dev"].includes(import.meta.env.VITE_DEPLOY_ENV) ||
       isOfflineMode();
 
-      const isPsiStaff =
-      (import.meta.env.VITE_DEPLOY_ENV === "production" && 
-        enabledPSI && 
+    const isPsiStaff =
+      (import.meta.env.VITE_DEPLOY_ENV === "production" &&
+        enabledPSI &&
         userStore.userPseudoId &&
         !userStore.isRecidivizUser &&
         !!psiStore.staffPseudoId) ||
@@ -507,7 +519,7 @@ export const NavigationLayout: React.FC<NavigationLayoutProps> = observer(
         <PSISupervisorLink
           enabled={isPsiSupervisor}
           staffPseudoId={psiStore.staffPseudoId}
-          />
+        />
         <PSIStaffLink
           enabled={isPsiStaff}
           staffPseudoId={psiStore.staffPseudoId}

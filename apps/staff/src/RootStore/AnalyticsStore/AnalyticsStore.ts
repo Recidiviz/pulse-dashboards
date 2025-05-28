@@ -417,6 +417,20 @@ export default class AnalyticsStore {
     this.track("frontend.profile_viewed", metadata);
   }
 
+  trackMethodologyLinkClicked(metadata: {
+    path: string;
+    methodologyLink: string;
+  }): void {
+    this.track("frontend.methodology_link_clicked", metadata);
+  }
+  /* TODO(#4601): Remove redirect after confirming no longer in use */
+  trackMethodologyLinkRedirectedTo(metadata: {
+    path: string;
+    methodologyLink: string;
+  }): void {
+    this.track("frontend.methodology_link_redirected_to", metadata);
+  }
+
   trackCaseloadSearch(metadata: {
     searchCount: number;
     isDefault: boolean;

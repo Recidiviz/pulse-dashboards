@@ -71,12 +71,23 @@ function MethodologyLink({
   const linkContents = (
     <>
       <MethodologyLogo className="ViewNavigation__icon" />
-      <div className="ViewNavigation__navlink-heading">Methodology</div>
+      <div className="ViewNavigation__navlink-heading">How it works</div>
     </>
   );
 
-  const rootStore = useRootStore();
-  const workflowsMethodologyUrl = rootStore.tenantStore.workflowsMethodologyUrl;
+  const {
+    analyticsStore,
+    tenantStore: { workflowsMethodologyUrl },
+  } = useRootStore();
+
+  const handleMethodologyLinkClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+  ) => {
+    analyticsStore.trackMethodologyLinkClicked({
+      path: location.pathname,
+      methodologyLink: e.currentTarget.href,
+    });
+  };
 
   if (view === DASHBOARD_VIEWS.workflows) {
     return (
@@ -85,6 +96,7 @@ function MethodologyLink({
         href={workflowsMethodologyUrl}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={handleMethodologyLinkClick}
       >
         {linkContents}
       </a>
@@ -98,10 +110,12 @@ function MethodologyLink({
   return (
     <NavLink
       className="ViewNavigation__navlink"
+      target="_blank"
       to={{
         pathname: `/${DASHBOARD_VIEWS.methodology}/${methodologyView}`,
         search: `?stateCode=${currentTenantId}`,
       }}
+      onClick={handleMethodologyLinkClick}
     >
       {linkContents}
     </NavLink>

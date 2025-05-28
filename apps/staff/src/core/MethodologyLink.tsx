@@ -22,6 +22,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { Link } from "react-router-dom";
 
+import { useRootStore } from "../components/StoreProvider";
 import { convertToSlug } from "../utils/navigation";
 import styles from "./CoreConstants.module.scss";
 import { useCoreStore } from "./CoreStoreProvider";
@@ -31,6 +32,8 @@ const MethodologyLink: React.FC<{ path: string; chartTitle?: string }> = ({
   chartTitle,
 }) => {
   const { currentTenantId } = useCoreStore();
+  const { analyticsStore } = useRootStore();
+
   return (
     <Link
       className="MethodologyLink DetailsGroup__button"
@@ -40,13 +43,19 @@ const MethodologyLink: React.FC<{ path: string; chartTitle?: string }> = ({
         search: `?stateCode=${currentTenantId}`,
       }}
       target="_blank"
+      onClick={(e) =>
+        analyticsStore.trackMethodologyLinkClicked({
+          path: location.pathname,
+          methodologyLink: e.currentTarget.href,
+        })
+      }
     >
       <Icon
         className="DetailsGroup__icon"
         kind={IconSVG.Open}
         fill={styles.signalLinks}
       />
-      Methodology
+      How it works
     </Link>
   );
 };

@@ -84,6 +84,9 @@ describe("CoreLayout tests", () => {
       psiStore: {
         staffPseudoId: "staff-pseudo-id",
       },
+      analyticsStore: {
+        trackMethodologyLinkClicked: vi.fn(),
+      },
     };
 
     useRootStoreMock.mockReturnValue(rootStoreMock);

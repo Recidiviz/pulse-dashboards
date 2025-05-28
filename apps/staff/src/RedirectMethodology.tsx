@@ -23,11 +23,13 @@ import {
   useParams,
 } from "react-router-dom";
 
+import { useRootStore } from "./components/StoreProvider";
 import { DASHBOARD_PATHS } from "./core/views";
 
 export const RedirectMethodology: React.FC = () => {
   const { dashboard } = useParams();
   const { search, hash } = useLocation();
+  const { analyticsStore } = useRootStore();
 
   const pathWithParams =
     generatePath(DASHBOARD_PATHS.methodology, {
@@ -35,6 +37,11 @@ export const RedirectMethodology: React.FC = () => {
     }) +
     search +
     hash;
+
+  analyticsStore.trackMethodologyLinkRedirectedTo({
+    path: location.pathname,
+    methodologyLink: pathWithParams,
+  });
 
   return <Navigate replace to={pathWithParams} />;
 };
