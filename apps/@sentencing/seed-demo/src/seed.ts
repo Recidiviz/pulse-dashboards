@@ -34,6 +34,20 @@ const PRISMA_TABLES = Prisma.dmmf.datamodel.models
   .map((model) => model.name)
   .filter((table) => table);
 
+// Hard code these ids so that we don't need to update our Auth0 profiles each time there is a seeding change.
+const STAFF_PSEUDO_IDS = [
+  "c3ecfffc-983c-4004-8a13-f17ae31bc37a",
+  "6d419cb0-30ba-4bf9-aa06-b41ce6e54fdc",
+  "43e7c106-e1e8-4a85-a209-14463b4be4e6",
+  "26535117-4912-47e8-b66c-0e0cf7b2660f",
+  "e29b8258-40d4-4c78-9af4-374325c15fa3",
+  "55908201-0f17-4e91-bd0e-513dd0ea164b",
+  "c149f6f9-c543-4037-99e3-eb90ca75d73d",
+  "5fba4df3-a085-46d7-b134-cd0a949c69a6",
+  "ece1b5bb-0907-44c5-8574-028fb18f1bcc",
+  "66157ec4-2dbf-49fe-9a70-46203fad4d77 ",
+];
+
 export async function resetDb(prismaClient: PrismaClient) {
   await prismaClient.$transaction(
     PRISMA_TABLES.map((table) =>
@@ -51,14 +65,12 @@ async function main() {
 
   await resetDb(prisma);
 
-  const numberOfStaff = 10;
-
   const staff: Prisma.StaffCreateInput[] = [];
 
-  for (let i = 0; i < numberOfStaff; i++) {
+  for (const pseudoId of STAFF_PSEUDO_IDS) {
     staff.push({
       externalId: faker.string.uuid(),
-      pseudonymizedId: faker.string.uuid(),
+      pseudonymizedId: pseudoId,
       fullName: faker.person.fullName(),
       email: faker.internet.email(),
       stateCode: StateCode.US_ID,
