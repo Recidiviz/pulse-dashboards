@@ -272,6 +272,33 @@ describe("one person in DB with initial text sent once", () => {
     ).toHaveBeenCalledExactlyOnceWith("message-sid-1");
   });
 
+  test("getMessage called with error", async () => {
+    vi.mocked(TwilioAPIClient.prototype.getMessage).mockRejectedValueOnce(
+      new Error("test"),
+    );
+
+    // Ensure test has correct setup with one existing MessageAttempt
+    const currentMessageAttempt =
+      await testPrismaClient.messageAttempt.findFirstOrThrow({
+        where: { twilioMessageSid: "message-sid-1" },
+      });
+    expect(currentMessageAttempt.status).toBe(MessageAttemptStatus.IN_PROGRESS);
+
+    await processJii({
+      stateCode: StateCode.US_ID,
+      dryRun: false,
+      workflowExecutionId: fakeWorkflowExecutionOne.id,
+    });
+
+    const newMessageAttempt =
+      await testPrismaClient.messageAttempt.findFirstOrThrow({
+        where: { twilioMessageSid: "message-sid-1" },
+      });
+
+    // Ensure message has the same status
+    expect(newMessageAttempt.status).toBe(MessageAttemptStatus.IN_PROGRESS);
+  });
+
   describe("initial text sent successfully", () => {
     beforeEach(() => {
       vi.mocked(TwilioAPIClient.prototype.getMessage).mockResolvedValue({

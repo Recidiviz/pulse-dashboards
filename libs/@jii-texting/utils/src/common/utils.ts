@@ -728,13 +728,23 @@ export async function processIndividualJii(
   if (dryRun) {
     updatedMessageAttemptStatus = latestMessageAttempt.status;
   } else {
-    // Update status for the latest message attempt by querying Twilio
-    updatedMessageAttemptStatus = await updateMessageAttempt(
-      prisma,
-      twilio,
-      latestMessageAttempt.status,
-      latestMessageAttempt.twilioMessageSid,
-    );
+    try {
+      // Update status for the latest message attempt by querying Twilio
+      updatedMessageAttemptStatus = await updateMessageAttempt(
+        prisma,
+        twilio,
+        latestMessageAttempt.status,
+        latestMessageAttempt.twilioMessageSid,
+      );
+    } catch (error) {
+      console.log(
+        `Encountered error updating latest message status for ${jii.pseudonymizedId}`,
+      );
+      captureException(
+        `Error in sendText for ${jii.pseudonymizedId}: ${error}`,
+      );
+      return ScriptAction.ERROR;
+    }
   }
 
   const shouldRetry =
