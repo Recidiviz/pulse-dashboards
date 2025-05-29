@@ -228,7 +228,12 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
 
   get requirementsMet(): OpportunityRequirement[] {
     const customReqs = [];
-    const { victimFlag, violationsPast6MonthsFlag } = this.record.metadata;
+    const {
+      victimFlag,
+      violationsPast6MonthsFlag,
+      dnaRequiredFlag,
+      dnaSubmittedFlag,
+    } = this.record.metadata;
 
     if (!victimFlag) {
       customReqs.push({ text: "Has no DOC-registered victim" });
@@ -236,6 +241,15 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     if (!violationsPast6MonthsFlag) {
       customReqs.push({
         text: "Client has had no violation incidents filed in the past 6 months",
+      });
+    }
+    if (!dnaRequiredFlag) {
+      customReqs.push({
+        text: "DNA is not required to be collected",
+      });
+    } else if (dnaSubmittedFlag) {
+      customReqs.push({
+        text: "DNA has been collected",
       });
     }
     return super.requirementsMet.concat(customReqs);
