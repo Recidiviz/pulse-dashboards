@@ -378,6 +378,12 @@ export default class AnalyticsStore {
     this.track("frontend.referral_form_downloaded", metadata);
   }
 
+  trackDirectDownloadFormDownloaded(
+    metadata: OpportunityTrackingMetadata & { formId: string },
+  ): void {
+    this.track("frontend.direct_download_form_downloaded", metadata);
+  }
+
   trackSurfacedInList<
     Metadata extends OpportunityTrackingMetadata & {
       searchIdValue: string | undefined;

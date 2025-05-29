@@ -178,6 +178,16 @@ export class FormBase<
     });
   }
 
+  // Records when  a non-referral form is downloaded, for example Approved Visitors forms
+  recordDirectDownloadFormDownloaded(): void {
+    this.rootStore.analyticsStore.trackDirectDownloadFormDownloaded({
+      justiceInvolvedPersonId: this.opportunity.person.pseudonymizedId,
+      opportunityType: this.type,
+      opportunityId: this.sentryTrackingId,
+      formId: this.formId,
+    });
+  }
+
   /**
    * Clear all drafted data from the form.
    */

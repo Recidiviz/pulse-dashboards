@@ -156,6 +156,7 @@ export const UsArApprovedVisitors = observer(function UsArApprovedVisitors({
 
     try {
       await formDownloader();
+      opportunity.directDownloadForm.recordDirectDownloadFormDownloaded();
       toast("Successfully downloaded visitor forms.", {
         position: "bottom-left",
       });
