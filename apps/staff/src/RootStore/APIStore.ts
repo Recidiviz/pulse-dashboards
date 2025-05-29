@@ -15,84 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import dedent from "dedent";
+import axios, { AxiosInstance } from "axios";
 
 import UserStore from "./UserStore";
 
-interface RequestProps {
-  path: string;
-  method: "GET" | "POST" | "PATCH" | "DELETE";
-  body?: Record<string, unknown>;
-  retrying?: boolean;
-}
-
-type ExternalSMSMessageRequest = {
-  recipientExternalId: string;
-  recipientPhoneNumber: string;
-  senderId: string;
-  message: string;
-  userHash: string;
-};
-
 export class APIStore {
   userStore: UserStore;
+  client: AxiosInstance;
 
   constructor(userStore: UserStore) {
     this.userStore = userStore;
-  }
-
-  async request({
-    path,
-    method,
-    body,
-    retrying = false,
-  }: RequestProps): Promise<any> {
-    if (!this.userStore.getToken) {
-      return Promise.reject();
-    }
-
-    const token = await this.userStore.getToken();
-
-    const headers: HeadersInit = {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
-
-    const response = await fetch(path, {
-      body: method !== "GET" ? JSON.stringify(body) : null,
-      method,
-      headers,
+    this.client = axios.create({
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
-
-    const json = await response.json();
-
-    if (!response.ok) {
-      throw new Error(
-        dedent`API request failed.
-            Status: ${response.status} - ${response.statusText}
-            Errors: ${JSON.stringify(json.errors ?? json)}`,
-      );
-    }
-    return json;
+    this.client.interceptors.request.use(async (config) => {
+      if (!this.userStore.getToken) return Promise.reject();
+      const token = await this.userStore.getToken();
+      config.headers.Authorization = `Bearer ${token}`;
+      return config;
+    });
   }
 
-  async get(path: string, body: Record<string, string> = {}): Promise<any> {
-    return this.request({ path, body, method: "GET" });
-  }
-
-  async post(path: string, body: Record<string, unknown> = {}): Promise<any> {
-    return this.request({ path, body, method: "POST" });
-  }
-
-  async patch(path: string, body: Record<string, unknown> = {}): Promise<any> {
-    return this.request({ path, body, method: "PATCH" });
-  }
-
-  async postExternalSMSMessage(body: ExternalSMSMessageRequest): Promise<any> {
+  async postExternalSMSMessage(body: {
+    recipientExternalId: string;
+    recipientPhoneNumber: string;
+    senderId: string;
+    message: string;
+    userHash: string;
+  }): Promise<any> {
     const stateCode = this.userStore.isRecidivizUser
       ? this.userStore.rootStore?.currentTenantId
       : this.userStore.stateCode;
-    return this.post(
+    return this.client.post(
       `${import.meta.env.VITE_NEW_BACKEND_API_URL}/workflows/external_request/${stateCode}/enqueue_sms_request`,
       body,
     );

@@ -74,27 +74,27 @@ export class InsightsAPIClient implements InsightsAPI {
 
   async init() {
     const endpoint = `${this.baseUrl}/configuration`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    return insightsConfigSchema.parse(fetchedData.config);
+    const { data } = await this.apiStore.client.get(endpoint);
+    return insightsConfigSchema.parse(data.config);
   }
 
   async actionStrategies(supervisorPseudoId: string): Promise<ActionStrategy> {
     const endpoint = `${this.baseUrl}/action_strategies/${supervisorPseudoId}`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    return actionStrategySchema.parse(fetchedData);
+    const { data } = await this.apiStore.client.get(endpoint);
+    return actionStrategySchema.parse(data);
   }
 
   async patchActionStrategies(
     props: ActionStrategySurfacedEvent,
   ): Promise<ActionStrategySurfacedEvent> {
     const endpoint = `${this.baseUrl}/action_strategies/${props.userPseudonymizedId}`;
-    const fetchedData = await this.apiStore.patch(endpoint, props);
+    const { data } = await this.apiStore.client.patch(endpoint, props);
     const {
       userPseudonymizedId,
       officerPseudonymizedId,
       actionStrategy,
       timestamp,
-    } = fetchedData;
+    } = data;
     return {
       userPseudonymizedId,
       officerPseudonymizedId,
@@ -105,8 +105,8 @@ export class InsightsAPIClient implements InsightsAPI {
 
   async userInfo(userPseudoId: string): Promise<UserInfo> {
     const endpoint = `${this.baseUrl}/user-info/${userPseudoId}`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    return userInfoSchema.parse(fetchedData);
+    const { data } = await this.apiStore.client.get(endpoint);
+    return userInfoSchema.parse(data);
   }
 
   async patchUserInfo(
@@ -114,14 +114,14 @@ export class InsightsAPIClient implements InsightsAPI {
     props: PatchUserInfoProps,
   ): Promise<UserInfo> {
     const endpoint = `${this.baseUrl}/user-info/${userPseudoId}`;
-    const fetchedData = await this.apiStore.patch(endpoint, props);
-    return userInfoSchema.parse(fetchedData);
+    const { data } = await this.apiStore.client.patch(endpoint, props);
+    return userInfoSchema.parse(data);
   }
 
   async metricBenchmarks(): Promise<MetricBenchmark[]> {
     const endpoint = `${this.baseUrl}/benchmarks`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const benchmarkData = fetchedData.metrics as Array<unknown>;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const benchmarkData = data.metrics as Array<unknown>;
     return benchmarkData.map((d) => {
       return metricBenchmarkSchema.parse(d);
     });
@@ -131,8 +131,8 @@ export class InsightsAPIClient implements InsightsAPI {
     SupervisionOfficerSupervisor[]
   > {
     const endpoint = `${this.baseUrl}/supervisors`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const supervisorData = fetchedData.supervisors as Array<unknown>;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const supervisorData = data.supervisors as Array<unknown>;
     return supervisorData.map((b) =>
       supervisionOfficerSupervisorSchema.parse(b),
     );
@@ -142,8 +142,8 @@ export class InsightsAPIClient implements InsightsAPI {
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficer>> {
     const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/officers`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const officerData = fetchedData.officers as Array<unknown>;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const officerData = data.officers as Array<unknown>;
     return officerData.map((b) => supervisionOfficerSchema.parse(b));
   }
 
@@ -151,15 +151,15 @@ export class InsightsAPIClient implements InsightsAPI {
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionOfficerOutcomes>> {
     const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/outcomes`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const outcomesData = fetchedData.outcomes as Array<unknown>;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const outcomesData = data.outcomes as Array<unknown>;
     return outcomesData.map((b) => supervisionOfficerOutcomesSchema.parse(b));
   }
 
   async allSupervisionOfficers(): Promise<Array<SupervisionOfficer>> {
     const endpoint = `${this.baseUrl}/officers`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const officerData = fetchedData.officers as Array<unknown>;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const officerData = data.officers as Array<unknown>;
     return officerData.map((b) => supervisionOfficerSchema.parse(b));
   }
 
@@ -167,8 +167,8 @@ export class InsightsAPIClient implements InsightsAPI {
     officerPseudoId: string,
   ): Promise<SupervisionOfficer> {
     const endpoint = `${this.baseUrl}/officer/${officerPseudoId}`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const officerData = fetchedData.officer as unknown;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const officerData = data.officer as unknown;
     return supervisionOfficerSchema.parse(officerData);
   }
 
@@ -176,8 +176,8 @@ export class InsightsAPIClient implements InsightsAPI {
     officerPseudoId: string,
   ): Promise<SupervisionOfficerOutcomes> {
     const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/outcomes`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const outcomesData = fetchedData.outcomes as unknown;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const outcomesData = data.outcomes as unknown;
     return supervisionOfficerOutcomesSchema.parse(outcomesData);
   }
 
@@ -186,15 +186,15 @@ export class InsightsAPIClient implements InsightsAPI {
     metricId: string,
   ): Promise<SupervisionOfficerMetricEvent[]> {
     const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/events?metric_id=${metricId}`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const eventsData = fetchedData.events as Array<unknown>;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const eventsData = data.events as Array<unknown>;
     return eventsData.map((b) => supervisionOfficerMetricEventSchema.parse(b));
   }
 
   async clientInfo(clientPseudoId: string): Promise<ClientInfo> {
     const endpoint = `${this.baseUrl}/client/${clientPseudoId}`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const clientData = fetchedData.client as unknown;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const clientData = data.client as unknown;
     return clientInfoSchema.parse(clientData);
   }
 
@@ -207,8 +207,8 @@ export class InsightsAPIClient implements InsightsAPI {
     }/client/${clientPseudoId}/events?period_end_date=${formatDateToISO(
       endDate,
     )}`;
-    const fetchedData = await this.apiStore.get(endpoint);
-    const eventsData = fetchedData.events as Array<unknown>;
+    const { data } = await this.apiStore.client.get(endpoint);
+    const eventsData = data.events as Array<unknown>;
     return eventsData.map((b) => clientEventSchema.parse(b));
   }
 
@@ -216,16 +216,20 @@ export class InsightsAPIClient implements InsightsAPI {
     supervisorPseudoId: string,
   ): Promise<Array<SupervisionVitalsMetric>> {
     const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/vitals`;
-    const fetchedData = (await this.apiStore.get(endpoint)) as Array<unknown>;
-    return fetchedData.map((b) => supervisionVitalsMetricSchema.parse(b));
+    const { data } = await this.apiStore.client.get(endpoint);
+    return (data as Array<unknown>).map((b) =>
+      supervisionVitalsMetricSchema.parse(b),
+    );
   }
 
   async vitalsForOfficer(
     officerPseudoId: string,
   ): Promise<Array<SupervisionVitalsMetric>> {
     const endpoint = `${this.baseUrl}/officer/${officerPseudoId}/vitals`;
-    const fetchedData = (await this.apiStore.get(endpoint)) as Array<unknown>;
-    return fetchedData.map((b) => supervisionVitalsMetricSchema.parse(b));
+    const { data } = await this.apiStore.client.get(endpoint);
+    return (data as Array<unknown>).map((b) =>
+      supervisionVitalsMetricSchema.parse(b),
+    );
   }
 
   async submitRosterChangeRequestIntercomTicket(
@@ -233,12 +237,12 @@ export class InsightsAPIClient implements InsightsAPI {
     props: RosterChangeRequest,
   ): Promise<RosterChangeRequestResponse> {
     const endpoint = `${this.baseUrl}/supervisor/${supervisorPseudoId}/roster_change_request`;
-    const fetchedData = await this.apiStore.post(
+    const { data } = await this.apiStore.client.post(
       endpoint,
       // TODO (#7866): Remove `mapKeys` `snakeCase` once the backend has implemented this
       mapKeys(props, (_, k) => snakeCase(k)),
     );
-    return rosterChangeRequestResponseSchema.parse(fetchedData);
+    return rosterChangeRequestResponseSchema.parse(data);
   }
 
   /**
@@ -248,7 +252,7 @@ export class InsightsAPIClient implements InsightsAPI {
   async downloadStateConfiguration(stateCode: string): Promise<InsightsConfig> {
     const endpoint = `${import.meta.env.VITE_NEW_BACKEND_API_URL}/outliers/${stateCode}/configuration`;
 
-    const data = await this.apiStore.get(endpoint);
+    const { data } = await this.apiStore.client.get(endpoint);
 
     return insightsConfigSchema.parse(data.config);
   }

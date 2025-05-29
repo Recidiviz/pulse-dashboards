@@ -55,7 +55,7 @@ export class OpportunityConfigurationAPIClient
     }
     try {
       // this await isn't redundant, because without it we don't catch the error
-      return await this.apiStore.get(endpoint);
+      return (await this.apiStore.client.get(endpoint)).data;
     } catch (e) {
       // This isn't optimal error handling, but the backend sends a 401
       // for non-workflows enabled states, and apiStore doesn't throw a

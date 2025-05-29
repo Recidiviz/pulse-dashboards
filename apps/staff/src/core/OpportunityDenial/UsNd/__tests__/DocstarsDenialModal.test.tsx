@@ -47,7 +47,7 @@ const mockRootStore = () => {
   (useRootStore as Mock).mockReturnValue({
     workflowsStore: { currentUserEmail: "mock-email@nd.gov" },
     userStore: { stateCode: "US_ND" },
-    apiStore: { post: apiPost },
+    apiStore: { client: { post: apiPost } },
     firestoreStore: {
       updateOmsSnoozeStatus,
     },

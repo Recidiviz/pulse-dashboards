@@ -197,7 +197,7 @@ describe("WriteToTOMISModal", () => {
 
   test("submit success", async () => {
     vi.spyOn(opp, "setCompletedIfEligible");
-    vi.spyOn(root.apiStore, "post").mockResolvedValue("success");
+    vi.spyOn(root.apiStore.client, "post").mockResolvedValue("success");
     expect(submitButton).toBeInTheDocument();
 
     expect(opp.setCompletedIfEligible).not.toHaveBeenCalled();
@@ -210,7 +210,7 @@ describe("WriteToTOMISModal", () => {
   test("submit failure", async () => {
     const now = new Date(2023, 2, 10);
     tk.freeze(now);
-    vi.spyOn(root.apiStore, "post").mockImplementation((path, body) => {
+    vi.spyOn(root.apiStore.client, "post").mockImplementation((...args) => {
       throw Error("test error");
     });
     vi.spyOn(root.firestoreStore, "updateOpportunity");

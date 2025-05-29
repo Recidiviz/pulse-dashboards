@@ -69,6 +69,7 @@
     "acorn": "^6.0.7",
     "assert-never": "^1.2.1",
     "axios": "^1.7.9",
+    "axios-mock-adapter": "^2.1.0",
     "bootstrap": "^4.6.2",
     "boring-avatars": "^1.10.1",
     "build-url": "^6.0.1",
