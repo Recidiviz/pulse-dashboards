@@ -215,7 +215,7 @@ const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
         </FilterCheckboxContainer>
         {option.shortLabel ?? option.label ?? option.value}
       </FilterOptionLabel>
-      {checked && <FilterCount $isZero={count === 0}>{count}</FilterCount>}
+      {<FilterCount $isZero={count === 0}>{count}</FilterCount>}
       <SelectOnlyButton
         onClick={(e) => {
           onClickOnly();
