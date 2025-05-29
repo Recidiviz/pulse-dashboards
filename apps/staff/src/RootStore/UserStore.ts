@@ -29,9 +29,9 @@ import {
   computed,
   entries,
   makeAutoObservable,
+  observable,
   runInAction,
-  when,
-} from "mobx";
+  when} from "mobx";
 import { now } from "mobx-utils";
 import qs from "qs";
 
@@ -59,12 +59,15 @@ import type RootStore from ".";
 import {
   ActiveFeatureVariantRecord,
   defaultRecidivizUserFeatureVariantsActive,
+  FeatureVariant,
+  FeatureVariantOverrideRecord,
   InternalTenantId,
   TenantId,
   UserAppMetadata,
 } from "./types";
 
 const METADATA_NAMESPACE = import.meta.env.VITE_METADATA_NAMESPACE;
+export const SESSION_FEATURE_VARIANT_OVERRIDES = "featureVariantOverrides";
 
 type ConstructorProps = {
   authSettings?: Auth0ClientOptions;
@@ -106,6 +109,8 @@ export default class UserStore {
 
   logout?: (options?: LogoutOptions) => void;
 
+  featureVariantOverrides: FeatureVariantOverrideRecord;
+
   readonly rootStore?: typeof RootStore;
 
   constructor({ authSettings, rootStore }: ConstructorProps) {
@@ -118,8 +123,11 @@ export default class UserStore {
       getTokenSilently: action.bound,
       loginWithRedirect: action.bound,
       activeFeatureVariants: computed.struct,
+      featureVariantOverrides: observable
+
     });
 
+    this.featureVariantOverrides = this.getFeatureVariantOverrides();
     this.authSettings = authSettings;
     this.rootStore = rootStore;
 
@@ -401,10 +409,32 @@ export default class UserStore {
   get stateName(): string {
     return TENANT_CONFIGS[this.stateCode].name;
   }
+  /**
+   * Sets the override for a specific feature variant. This is only available for Recidiviz users.
+   */
+  setFeatureVariantOverride(featureVariant: FeatureVariant, override: boolean): void {
+    if (!(this.isRecidivizUser || this.isImpersonating || this.isCSGUser))  return;
 
+    this.featureVariantOverrides[featureVariant] = override;
+
+    sessionStorage.setItem(
+      SESSION_FEATURE_VARIANT_OVERRIDES,
+      JSON.stringify(this.featureVariantOverrides)
+      );
+  }
+  /**
+   * Gets the overrides for feature variants from session storage.
+   */
+  getFeatureVariantOverrides(): FeatureVariantOverrideRecord {
+    const sessionOverrides = sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES);
+    return sessionOverrides
+      ? (JSON.parse(sessionOverrides) as FeatureVariantOverrideRecord)
+      : {};
+  }
   /**
    * All feature variants currently active for this user, taking into account
-   * the activeDate for each feature and observing the current Date for reactivity
+   * the activeDate for each feature and observing the current Date for reactivity. 
+   * All overrides take ultimate precedence.
    */
   get activeFeatureVariants(): ActiveFeatureVariantRecord {
     if (this.userIsLoading || !this.isAuthorized) {
@@ -424,7 +454,7 @@ export default class UserStore {
 
     fvs = { ...tenantFeatureVariants, ...fvs };
 
-    return Object.entries(fvs).reduce(
+    const activeVariants: ActiveFeatureVariantRecord = Object.entries(fvs).reduce(
       (activeVariants, [variantName, variantInfo]) => {
         if (!variantInfo) return activeVariants;
 
@@ -440,16 +470,28 @@ export default class UserStore {
           !activeTenants.includes(currentTenantId)
         )
           return activeVariants;
-
+        
         return {
           ...activeVariants,
           [variantName]: { ...(variant && { variant }) },
         };
       },
-      {},
+      {}
     );
-  }
 
+    const sessionOverrides = this.featureVariantOverrides;
+    Object.entries(sessionOverrides).forEach(([variant, override]) => {
+      const typedVariant = variant as FeatureVariant;
+      if (override) {
+        if (activeVariants[typedVariant]) {
+          delete activeVariants[typedVariant];
+        } else {
+          activeVariants[typedVariant] = {};
+        }
+      }
+    });
+    return activeVariants;
+  }
   /**
    * Returns whether the user is authorized for specific state code.
    */

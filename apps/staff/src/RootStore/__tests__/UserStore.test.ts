@@ -35,8 +35,7 @@ import { TENANT_CONFIGS } from "../../tenants";
 import isIE11 from "../../utils/isIE11";
 import RootStore from "..";
 import { FeatureVariant, TenantId } from "../types";
-import UserStore from "../UserStore";
-
+import UserStore, { SESSION_FEATURE_VARIANT_OVERRIDES } from "../UserStore";
 vi.mock("@auth0/auth0-spa-js");
 vi.mock("@sentry/react");
 vi.mock("firebase/firestore");
@@ -939,6 +938,7 @@ describe("feature variants", () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    sessionStorage.clear();
     store = new UserStore({
       rootStore: {
         currentTenantId: tenantId,
@@ -1243,6 +1243,95 @@ describe("feature variants", () => {
       TENANTFV: {},
     });
   });
+
+  test("setFeatureVariantOverride sets and persists an override", () => {
+    runInAction(() => {
+      store.user = getMockUserObject({ stateCode: "RECIDIVIZ" });
+    });
+    store.setFeatureVariantOverride("TEST", true);
+    expect(store.getFeatureVariantOverrides()).toEqual({ TEST: true });
+    expect(sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES)).toContain('"TEST":true');
+  });
+
+  test("setFeatureVariantOverride toggles override off", () => {
+    runInAction(() => {
+      store.user = getMockUserObject({ stateCode: "RECIDIVIZ" });
+    });
+    store.setFeatureVariantOverride("TEST", true);
+    store.setFeatureVariantOverride("TEST", false);
+    expect(store.getFeatureVariantOverrides()).toEqual({ TEST: false });
+    expect(sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES)).toContain('"TEST":false');
+  }); 
+
+  test("getFeatureVariantOverrides returns empty object if nothing set", () => {
+    expect(store.getFeatureVariantOverrides()).toEqual({});
+  }); 
+
+  test("activeFeatureVariants toggles feature when override is set", () => {
+    runInAction(() => {
+      store.user = getMockUserObject({ 
+        featureVariants: { TEST: {} },
+        stateCode: "RECIDIVIZ",
+      });
+    });
+    expect(store.activeFeatureVariants["TEST"]).toEqual({});
+
+    // Toggle FV off
+    store.setFeatureVariantOverride("TEST", true);
+    expect(store.activeFeatureVariants["TEST"]).toBeUndefined();
+
+    // Toggle FV back on
+    store.setFeatureVariantOverride("TEST", false);
+    expect(store.activeFeatureVariants["TEST"]).toEqual({});
+  });
+
+  test("activeFeatureVariants toggles feature on if not present", () => {
+    runInAction(() => {
+      store.user = getMockUserObject({ 
+        featureVariants: {},
+        stateCode: "RECIDIVIZ", 
+      });
+    });
+    store.setFeatureVariantOverride("EXTRA_FV" as any, true);
+    expect((store.activeFeatureVariants as any)["EXTRA_FV"]).toEqual({});
+
+    store.setFeatureVariantOverride("EXTRA_FV" as any, false);
+    expect((store.activeFeatureVariants as any)["EXTRA_FV"]).toBeUndefined();
+
+  });
+
+  test("non-Recidiviz user cannot set a feature variant override", () => {
+    runInAction(() => {
+      store.user = getMockUserObject({
+        stateCode: "US_XX",
+      });
+    });
+    store.setFeatureVariantOverride("TEST", true);
+    expect(store.getFeatureVariantOverrides()).toEqual({});
+    expect(sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES)).toBeNull();
+  });
+
+  test("loads feature variant overrides from session storage on initialization", () => {
+  // Set some overrides in sessionStorage
+    const overrides = { TEST: true, EXTRA_FV: false };
+    sessionStorage.setItem(
+      SESSION_FEATURE_VARIANT_OVERRIDES,
+      JSON.stringify(overrides)
+    );
+
+    // Create a new UserStore instance
+    const newStore = new UserStore({
+      rootStore: {
+        currentTenantId: tenantId,
+        tenantStore: {
+          tenantFeatureVariants: {},
+        },
+      } as unknown as typeof RootStore,
+    });
+    // Ensure the overrides are loaded into the new store
+    expect(newStore.getFeatureVariantOverrides()).toEqual(overrides);
+  });
+
 });
 
 describe("impersonateUser", () => {

@@ -19,6 +19,7 @@
 import { isDemoMode } from "~client-env-utils";
 
 import { CSG, RECIDIVIZ_TENANT } from "../tenants";
+import { PartialRecord } from "../utils/typeUtils";
 import { DASHBOARD_TENANTS } from "./TenantStore/dashboardTenants";
 import * as lantern from "./TenantStore/lanternTenants";
 import * as pathways from "./TenantStore/pathwaysTenants";
@@ -113,11 +114,13 @@ export type FeatureVariantValue = {
  */
 export type FeatureVariantMapping = Record<FeatureVariant, FeatureVariantValue>;
 export type FeatureVariantRecord = Partial<FeatureVariantMapping>;
-export type ActiveFeatureVariantRecord = Partial<
-  Record<
-    FeatureVariant,
-    Omit<FeatureVariantValue, "activeDate" | "activeTenants">
-  >
+export type ActiveFeatureVariantRecord = PartialRecord<
+  FeatureVariant,
+  Omit<FeatureVariantValue, "activeDate" | "activeTenants">
+>;
+export type FeatureVariantOverrideRecord = PartialRecord<
+  FeatureVariant,
+  boolean
 >;
 export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
