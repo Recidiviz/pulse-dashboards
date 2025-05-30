@@ -23,7 +23,7 @@ import { StateCode, StateConfig } from "./types";
 /**
  * This is the source of truth for valid, enabled state codes in the application
  */
-export const stateCodes = z.enum(["US_ID", "US_MA", "US_ME"]);
+export const stateCodes = z.enum(["US_ID", "US_MA", "US_ME", "US_UT"]);
 
 /**
  * Given all state codes in tuple form, expects a corresponding tuple of config objects
@@ -42,6 +42,7 @@ export const stateConfigs: StateConfigArray<typeof stateCodes.options> = [
   { stateCode: "US_ID", displayName: "Idaho", urlSlug: "idaho" },
   { stateCode: "US_MA", displayName: "Massachusetts", urlSlug: "mass" },
   { stateCode: "US_ME", displayName: "Maine", urlSlug: "maine" },
+  { stateCode: "US_UT", displayName: "Utah", urlSlug: "utah" },
 ];
 
 /**

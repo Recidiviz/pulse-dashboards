@@ -26,6 +26,7 @@ import { ResidentsHydrator } from "../ResidentsHydrator/ResidentsHydrator";
 
 export const PageResidentsRoot = observer(function PageResidentsRoot() {
   const { stateSlug } = useTypedParams(State);
+
   return (
     <RequiresLogin>
       <RequiresStateAuth stateUrlSlug={stateSlug}>

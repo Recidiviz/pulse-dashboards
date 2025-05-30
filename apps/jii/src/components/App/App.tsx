@@ -56,8 +56,8 @@ import { PageSelectState } from "../pages/PageSelectState";
 import { PageSingleResidentHome } from "../pages/PageSingleResidentHome";
 import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
+import { ReentryRedirect } from "../pages/ReentryRedirect";
 import { ResidentsLayoutRoute } from "../ResidentsLayoutRoute/ResidentsLayoutRoute";
-import { SingleResidentHydrator } from "../SingleResidentHydrator/SingleResidentHydrator";
 import { StoreProvider } from "../StoreProvider/StoreProvider";
 
 const StyledApp = styled.div`
@@ -96,7 +96,7 @@ export function App() {
                   <Route element={<ResidentsLayoutRoute />}>
                     <Route
                       path={routes.State.Resident.path}
-                      element={<SingleResidentHydrator />}
+                      element={<ReentryRedirect />}
                     >
                       <Route index element={<PageSingleResidentHome />} />
                       <Route

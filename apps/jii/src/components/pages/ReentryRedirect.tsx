@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,18 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentsConfig, StateCode } from "./types";
-import { usIdResidentsConfig } from "./US_ID/residents/config";
-import { usMaResidentsConfig } from "./US_MA/residents/config";
-import { usMeResidentsConfig } from "./US_ME/residents/residentsConfig";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-/**
- * All configuration objects for the residents application are locally defined.
- */
-export const residentsConfigByState: Record<StateCode, ResidentsConfig> = {
-  US_ID: usIdResidentsConfig,
-  US_MA: usMaResidentsConfig,
-  US_ME: usMeResidentsConfig,
-  // This config is just a placeholder for TS typing since Utah will always get redirect to the reentry tool
-  US_UT: usIdResidentsConfig,
-};
+import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
+import { State } from "../../routes/routes";
+import { SingleResidentHydrator } from "../SingleResidentHydrator/SingleResidentHydrator";
+
+export function ReentryRedirect() {
+  const { stateSlug, personPseudoId } = useTypedParams(State.Resident);
+  const stateCode = stateConfigsByUrlSlug[stateSlug]?.stateCode;
+
+  // Redirect to the reentry tool for Idaho and Utah
+  if (stateCode === "US_ID" || stateCode === "US_UT") {
+    window.location.replace(
+      `${import.meta.env["VITE_REENTRY_URL"]}/${personPseudoId}`,
+    );
+  }
+
+  return <SingleResidentHydrator />;
+}
