@@ -124,9 +124,9 @@ const Flex = `
 `;
 
 // Styles for empty tabs, shared with Tasks
-export const MaxWidthFlexWrapper = styled.div`
+export const MaxWidthFlexWrapper = styled.div<{ fullWidth?: boolean }>`
   ${Flex}
-  ${MaxWidth}
+  ${({ fullWidth }) => !fullWidth && MaxWidth}
 `;
 export const EmptyTabGroupWrapper = styled.div`
   width: 100%;
@@ -728,7 +728,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
       {/* eslint-disable-next-line no-nested-ternary */}
       {peopleInActiveTab.length === 0 ? (
         /* Empty tab display */
-        <MaxWidthFlexWrapper>
+        <MaxWidthFlexWrapper fullWidth={!presenter.showListView}>
           <EmptyTabGroupWrapper>
             <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
           </EmptyTabGroupWrapper>
