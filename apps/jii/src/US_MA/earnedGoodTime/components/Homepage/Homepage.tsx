@@ -15,45 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { pick } from "lodash";
-
+import { hydrateTemplate } from "../../../../configs/hydrateTemplate";
 import { useEGTDataContext } from "../EGTDataContext/context";
+import { DatesSection } from "./DatesSection";
 
 export const Homepage = () => {
-  const { data } = useEGTDataContext();
-  // this is a placeholder UI as proof of concept, will replace shortly
+  const { data, copy } = useEGTDataContext();
+
   return (
     <div>
-      <article>
-        <h2>Important dates</h2>
-        <pre>
-          {JSON.stringify(
-            pick(data, [
-              "adjustedMaxReleaseDate",
-              "originalMaxReleaseDate",
-              "rtsDate",
-              "totalStateCreditDaysCalculated",
-            ]),
-            undefined,
-            2,
-          )}
-        </pre>
-      </article>
-
-      <article>
-        <h2>Time you've earned</h2>
-        <pre>
-          {JSON.stringify(
-            pick(data, [
-              "totalCompletionCredit",
-              "totalStateCredit",
-              "creditActivity",
-            ]),
-            undefined,
-            2,
-          )}
-        </pre>
-      </article>
+      <aside>{hydrateTemplate(copy.home.lastUpdated, data)}</aside>
+      <DatesSection />
     </div>
   );
 };

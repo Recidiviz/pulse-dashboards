@@ -20,11 +20,13 @@ import { createContext } from "react";
 import { UsMaResidentMetadata } from "~datatypes";
 
 import { useRequiredContext } from "../../../../utils/useRequiredContext";
+import { UsMaEgtCopy } from "../../configs/US_MA/copy";
 
 export type EGTDataContext = {
   // this is not currently state agnostic, but for now we only have one state.
   // as that changes we expect this to evolve somehow
   data: UsMaResidentMetadata;
+  copy: UsMaEgtCopy;
 };
 
 const context = createContext<EGTDataContext | undefined>(undefined);

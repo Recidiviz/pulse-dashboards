@@ -15,18 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { format } from "date-fns";
-
 import { dateStringSchema } from "~datatypes";
 
+const fullDateFormatter = new Intl.DateTimeFormat(undefined, {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
 export function formatFullDate(date: Date) {
-  return format(date, "MMMM d, yyyy");
+  return fullDateFormatter.format(date);
 }
 
 /**
  * Extracts any dates found in input text and reformats them
  * with {@link formatFullDate}. If none are found or if the date strings
- * turn out to be invalid or unparseable, returns the input string unaltered
+ * turn out to be invalid or unparsable, returns the input string unaltered
  */
 export function formatISODatesInText(text: string): string {
   try {

@@ -18,23 +18,35 @@
 import { toTitleCase } from "@artsy/to-title-case";
 import { isFuture } from "date-fns";
 import Handlebars from "handlebars";
+import pluralize from "pluralize";
 
 import { dateStringSchema } from "~datatypes";
 
 import { formatFullDate, formatISODatesInText } from "../utils/date";
 
-Handlebars.registerHelper("titleCase", (s: string) => toTitleCase(s));
-Handlebars.registerHelper("lowerCase", (s: string) => s.toLowerCase());
-Handlebars.registerHelper("formatFullDate", (d: Date | string) => {
+const prepareAndFormatDate = (d: Date | string) => {
   const dateToFormat = d instanceof Date ? d : dateStringSchema.parse(d);
   return formatFullDate(dateToFormat);
-});
+};
+
+Handlebars.registerHelper("titleCase", (s: string) => toTitleCase(s));
+Handlebars.registerHelper("lowerCase", (s: string) => s.toLowerCase());
+Handlebars.registerHelper("formatFullDate", prepareAndFormatDate);
+Handlebars.registerHelper(
+  "formatFullDateOptional",
+  (d: Date | string | null) => (d ? prepareAndFormatDate(d) : "—"),
+);
 Handlebars.registerHelper("isFutureDate", (d: Date) => isFuture(d));
 Handlebars.registerHelper("and", (a: unknown, b: unknown) => a && b);
 Handlebars.registerHelper("or", (a: unknown, b: unknown) => a || b);
 Handlebars.registerHelper("equals", (a: unknown, b: unknown) => a === b);
 Handlebars.registerHelper("formatDatesInText", (s: string) =>
   formatISODatesInText(s),
+);
+Handlebars.registerHelper(
+  "pluralize",
+  (word: string, count: number, includeNumber?: boolean) =>
+    pluralize(word, count, includeNumber),
 );
 
 /**

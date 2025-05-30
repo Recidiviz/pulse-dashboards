@@ -19,6 +19,7 @@ import { observer } from "mobx-react-lite";
 import { FC, ReactNode } from "react";
 
 import { useSingleResidentContext } from "../../../../components/SingleResidentHydrator/context";
+import { usMaEGTCopy } from "../../configs/US_MA/copy";
 import { EGTDataContextProvider } from "./context";
 
 /**
@@ -41,6 +42,7 @@ export const EGTDataContext: FC<{ children: ReactNode }> = observer(
       <EGTDataContextProvider
         value={{
           data,
+          copy: usMaEGTCopy,
         }}
       >
         {children}
