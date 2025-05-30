@@ -65,12 +65,14 @@ type AssessmentQuestionProps = {
   questionSpec: AssessmentQuestionSpec;
   questionNumber: AssessmentQuestionNumber;
   disabled?: boolean;
+  supportingText?: string;
 };
 
 const AssessmentQuestion: React.FC<AssessmentQuestionProps> = ({
   questionSpec,
   questionNumber,
   disabled,
+  supportingText,
 }) => {
   const selectionKey = `q${questionNumber}Selection`;
   const opportunityForm = useOpportunityFormContext();
@@ -89,6 +91,7 @@ const AssessmentQuestion: React.FC<AssessmentQuestionProps> = ({
       title={`${questionNumber}. ${questionSpec.title}`}
       score={disabled ? undefined : score}
       scoreText="SCORE"
+      supportingText={supportingText}
     >
       {questionSpec.canBeNone ? (
         <Option

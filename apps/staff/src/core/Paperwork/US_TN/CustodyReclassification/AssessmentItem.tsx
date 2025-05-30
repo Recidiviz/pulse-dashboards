@@ -16,6 +16,7 @@
 // =============================================================================
 
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
+import { palette } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
 const Item = styled.div`
@@ -57,10 +58,17 @@ export const SubItem = styled.div`
   align-items: flex-start;
 `;
 
+export const SupportText = styled.em`
+  margin-top: 0.2em;
+  font-size: 0.8em;
+  color: ${palette.text.caption};
+`;
+
 type AssessmentItemProps = {
   title: string;
   score?: number;
   scoreText: string;
+  supportingText?: string;
   children?: React.ReactNode;
 };
 
@@ -69,10 +77,12 @@ const AssessmentItem: React.FC<AssessmentItemProps> = ({
   score,
   scoreText,
   children,
+  supportingText,
 }) => (
   <Item>
     <LeftColumn>
       <div>{title}</div>
+      {supportingText && <SupportText>{supportingText}</SupportText>}
       <div>{children}</div>
     </LeftColumn>
     <ScoreContainer>

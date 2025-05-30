@@ -17,7 +17,7 @@
 
 import { runInAction, toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Opportunity,
@@ -25,6 +25,7 @@ import {
 } from "../../WorkflowsStore";
 import { UsTnReclassificationReviewForm } from "../../WorkflowsStore/Opportunity/Forms/UsTnReclassificationReviewForm";
 import { Resident } from "../../WorkflowsStore/Resident";
+import { DialogModal, DialogView, ModalText } from "../DialogModal";
 import {
   DocxTemplateFormContents,
   FileGeneratorArgs,
@@ -43,7 +44,7 @@ const WorkflowsUsTnReclassForm = ({
   const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
   const form = opportunity.form as UsTnReclassificationReviewForm;
   const resident = opportunity.person;
-
+  const [showCafScoresModal, setShowCafScoresModal] = useState(true);
   if (!(resident instanceof Resident)) {
     return <div />;
   }
@@ -101,6 +102,29 @@ const WorkflowsUsTnReclassForm = ({
       onClickDownload={async () => onClickDownload()}
       opportunity={form.opportunity}
     >
+      <DialogModal isOpen={showCafScoresModal}>
+        <DialogView
+          title="About CAF Scores"
+          onSubmit={() => setShowCafScoresModal(false)}
+          isSubmitDisabled={false}
+          submitButtonText="Got it"
+        >
+          <ModalText
+            style={{
+              textAlign: "justify",
+            }}
+          >
+            <b>For questions 3, 4, 5 and 9</b> Recidiviz is auto-filling scores
+            from this resident's <b>last completed CAF</b> directly from eTOMIS.
+            <br />
+            <br />
+            <b>For questions 1, 2, 6, 7 and 8</b> Recidiviz is auto-filling
+            scores based on any{" "}
+            <b>changes to the resident's disciplinary record</b> using data from
+            eTOMIS.
+          </ModalText>
+        </DialogView>
+      </DialogModal>
       <FormViewer formRef={formRef}>
         <ClassificationCustodyAssessment />
       </FormViewer>

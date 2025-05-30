@@ -16,15 +16,11 @@
 // =============================================================================
 
 import {
-  Button,
-  Icon,
   Loading,
-  Modal,
   palette,
   Sans16,
   Sans24,
   spacing,
-  typography,
 } from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
 import { startOfToday } from "date-fns";
@@ -35,10 +31,16 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
 
-import AcknowledgementCheckbox from "../../../../src/components/Checkbox";
+import Checkbox from "../../../components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";
 import { formatDateToISO, formatWorkflowsDate } from "../../../utils";
 import { Client, Opportunity } from "../../../WorkflowsStore";
+import { DialogModal } from "../../DialogModal";
+import {
+  DialogModalControls,
+  DialogView,
+  ModalText,
+} from "../../DialogModal/DialogView";
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { reasonsIncludesOtherKey } from "../../utils/workflowsUtils";
 import { DenialConfirmationModalProps } from "../DenialConfirmationModals";
@@ -48,16 +50,6 @@ const Acknowledgement = styled.div`
   flex-direction: row;
   align-items: center;
   margin-top: ${rem(spacing.lg)};
-`;
-
-const StyledModal = styled(Modal)`
-  .ReactModal__Content {
-    padding: ${rem(spacing.lg)} ${rem(spacing.xl)} ${rem(spacing.xl)};
-    max-width: 85vw;
-    width: ${rem(600)};
-    display: flex;
-    flex-direction: column;
-  }
 `;
 
 const CenteredContainer = styled.div`
@@ -73,41 +65,6 @@ const ModalTitle = styled(Sans24)`
   color: ${palette.pine1};
   padding: ${rem(spacing.md)} ${rem(spacing.xl)};
   text-align: center;
-`;
-
-const ModalControls = styled.div`
-  padding: 0 0 ${rem(spacing.sm)};
-  text-align: right;
-`;
-
-const ActionButton = styled(Button).attrs({ kind: "primary", shape: "block" })`
-  margin: ${rem(spacing.lg)} ${rem(spacing.xl)} ${rem(spacing.sm)};
-  padding: ${rem(spacing.md)};
-  flex: none;
-`;
-
-const ModalText = styled(Sans16)`
-  color: ${palette.slate80};
-  margin: ${rem(spacing.sm)} 0;
-`;
-
-const ConfirmationContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  justify-content: center;
-  align-items: stretch;
-`;
-
-const ConfirmationLabel = styled.dt`
-  ${typography.Sans16}
-  color: rgba(53, 83, 98, 0.5);
-  margin-bottom: ${rem(spacing.xs)};
-`;
-
-const ConfirmationField = styled.dd.attrs({ className: "fs-exclude" })`
-  ${typography.Sans16}
-  color: rgba(53, 83, 98, 0.9);
 `;
 
 type JustificationReason = { code: string; description: string };
@@ -247,36 +204,36 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
     }
   };
 
-  const closeButtonControls = (
-    <ModalControls>
-      <Button kind="link" onClick={onCloseFn}>
-        <Icon kind="Close" size="14" color={palette.pine2} />
-      </Button>
-    </ModalControls>
-  );
+  const closeButtonControls = <DialogModalControls onClose={onCloseFn} />;
 
   const submissionModal = (
-    <div data-testid="docstars-confirmation-screen">
-      {closeButtonControls}
-      <ConfirmationContainer>
-        <ModalTitle>Confirm DOCSTARS Note</ModalTitle>
-        <dl>
-          <ConfirmationLabel>Client Name</ConfirmationLabel>{" "}
-          <ConfirmationField>
-            {opportunity.person.displayPreferredName}
-          </ConfirmationField>
-          <ConfirmationLabel>Client ID</ConfirmationLabel>{" "}
-          <ConfirmationField>{opportunity.person.externalId}</ConfirmationField>
-          <ConfirmationLabel>Supervision End Date</ConfirmationLabel>
-          <ConfirmationField>
-            {formatWorkflowsDate((opportunity.person as Client).expirationDate)}
-          </ConfirmationField>
-          <ConfirmationLabel>New Early Termination Date</ConfirmationLabel>
-          <ConfirmationField>
-            {formatWorkflowsDate(snoozeUntilDate)}
-          </ConfirmationField>
-          <ConfirmationLabel>Justification Reasons</ConfirmationLabel>
-          <ConfirmationField>
+    <DialogView
+      title="Confirm DOCSTARS Note"
+      dataTestIdPrefixes={{
+        container: "docstars-confirmation-screen",
+        submitButton: "docstars-submit-button",
+      }}
+      onSubmit={onSubmitButtonClick}
+      onClose={onCloseFn}
+      data={[
+        {
+          label: "Client Name",
+          value: opportunity.person.displayPreferredName,
+        },
+        { label: "Client ID", value: opportunity.person.externalId },
+        {
+          label: "Supervision End Date",
+          value: formatWorkflowsDate(
+            (opportunity.person as Client).expirationDate,
+          ),
+        },
+        {
+          label: "New Early Termination Date",
+          value: formatWorkflowsDate(snoozeUntilDate),
+        },
+        {
+          label: "Justification Reasons",
+          value: (
             <ul>
               {buildJustificationReasons(opportunity, reasons, otherReason).map(
                 ({ code, description }) => (
@@ -286,32 +243,27 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
                 ),
               )}
             </ul>
-          </ConfirmationField>
-          <ConfirmationLabel>Staff ID</ConfirmationLabel>{" "}
-          <ConfirmationField>{currentUserEmail}</ConfirmationField>
-        </dl>
-        <Acknowledgement>
-          <AcknowledgementCheckbox
-            name={"acknowledgement-checkbox"}
-            checked={isAcknowledgementChecked}
-            value={"acknowledgement-checkbox"}
-            onChange={handleAcknowledgementCheckboxChange}
-          />
-          <Sans16>
-            By clicking this box, I confirm that I have consulted with my direct
-            supervisor regarding the client's ineligibility for early
-            termination due to the reasons indicated on the previous screen.
-          </Sans16>
-        </Acknowledgement>
-        <ActionButton
-          data-testid="docstars-submit-button"
-          onClick={onSubmitButtonClick}
-          disabled={!isAcknowledgementChecked}
-        >
-          Acknowledge and Save to DOCSTARS
-        </ActionButton>
-      </ConfirmationContainer>
-    </div>
+          ),
+        },
+        { label: "Staff ID", value: currentUserEmail },
+      ]}
+      isSubmitDisabled={!isAcknowledgementChecked}
+      submitButtonText="Acknowledge and Save to DOCSTARS"
+    >
+      <Acknowledgement>
+        <Checkbox
+          name={"acknowledgement-checkbox"}
+          checked={isAcknowledgementChecked}
+          onChange={handleAcknowledgementCheckboxChange}
+          value={"acknowledgement-checkbox"}
+        />
+        <Sans16>
+          By clicking this box, I confirm that I have consulted with my direct
+          supervisor regarding the client's ineligibility for early termination
+          due to the reasons indicated on the previous screen.
+        </Sans16>
+      </Acknowledgement>
+    </DialogView>
   );
 
   const loadingModal = (
@@ -346,8 +298,8 @@ export const DocstarsDenialModal = observer(function DocstarsDenialModal({
   };
 
   return (
-    <StyledModal isOpen={showModal} onRequestClose={onCloseFn}>
+    <DialogModal isOpen={showModal} onRequestClose={onCloseFn}>
       {modalContent[phase]}
-    </StyledModal>
+    </DialogModal>
   );
 });

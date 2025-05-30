@@ -66,6 +66,13 @@ const ClassificationCustodyAssessment: React.FC = () => {
 
   const scheduleA = numberedQuestions.slice(0, 4);
   const scheduleB = numberedQuestions.slice(4);
+  const handleSupportingText = (questionNumber: AssessmentQuestionNumber) => {
+    if ([1, 2, 6, 7, 8].includes(questionNumber))
+      return "**This score has been pre-filled based on data from eTOMIS and logic calculated by Recidiviz. If incorrect, please reach out to feedback@recidiviz.org to notify us.";
+    else if ([3, 4, 5, 9].includes(questionNumber))
+      return "**This score has been pre-filled directly from eTOMIS from the resident's previous Classification. If incorrect, please correct in eTOMIS when updating this resident's next Classification.";
+    else return undefined;
+  };
 
   const {
     scheduleAScore,
@@ -108,6 +115,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
                   questionSpec={q}
                   questionNumber={i}
                   key={i}
+                  supportingText={handleSupportingText(i)}
                 />
               ))}
             </div>
@@ -134,6 +142,7 @@ const ClassificationCustodyAssessment: React.FC = () => {
                   questionNumber={i}
                   key={i}
                   disabled={scheduleBSkipped}
+                  supportingText={handleSupportingText(i)}
                 />
               ))}
             </div>
