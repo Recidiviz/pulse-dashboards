@@ -1000,6 +1000,7 @@ describe("feature variants", () => {
         "usTnCompliantReporting2025Policy": {},
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
+        "usTnInitialClassification": {},
         "usTnSuspensionOfDirectSupervision": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
@@ -1045,6 +1046,7 @@ describe("feature variants", () => {
         "usTnCompliantReporting2025Policy": {},
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
+        "usTnInitialClassification": {},
         "usTnSuspensionOfDirectSupervision": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
@@ -1088,6 +1090,7 @@ describe("feature variants", () => {
         "usTnCompliantReporting2025Policy": {},
         "usTnExpiration": {},
         "usTnExpirationSubmitToTomis": {},
+        "usTnInitialClassification": {},
         "usTnSuspensionOfDirectSupervision": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
@@ -1250,7 +1253,9 @@ describe("feature variants", () => {
     });
     store.setFeatureVariantOverride("TEST", true);
     expect(store.getFeatureVariantOverrides()).toEqual({ TEST: true });
-    expect(sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES)).toContain('"TEST":true');
+    expect(sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES)).toContain(
+      '"TEST":true',
+    );
   });
 
   test("setFeatureVariantOverride toggles override off", () => {
@@ -1260,16 +1265,18 @@ describe("feature variants", () => {
     store.setFeatureVariantOverride("TEST", true);
     store.setFeatureVariantOverride("TEST", false);
     expect(store.getFeatureVariantOverrides()).toEqual({ TEST: false });
-    expect(sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES)).toContain('"TEST":false');
-  }); 
+    expect(sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES)).toContain(
+      '"TEST":false',
+    );
+  });
 
   test("getFeatureVariantOverrides returns empty object if nothing set", () => {
     expect(store.getFeatureVariantOverrides()).toEqual({});
-  }); 
+  });
 
   test("activeFeatureVariants toggles feature when override is set", () => {
     runInAction(() => {
-      store.user = getMockUserObject({ 
+      store.user = getMockUserObject({
         featureVariants: { TEST: {} },
         stateCode: "RECIDIVIZ",
       });
@@ -1287,9 +1294,9 @@ describe("feature variants", () => {
 
   test("activeFeatureVariants toggles feature on if not present", () => {
     runInAction(() => {
-      store.user = getMockUserObject({ 
+      store.user = getMockUserObject({
         featureVariants: {},
-        stateCode: "RECIDIVIZ", 
+        stateCode: "RECIDIVIZ",
       });
     });
     store.setFeatureVariantOverride("EXTRA_FV" as any, true);
@@ -1297,7 +1304,6 @@ describe("feature variants", () => {
 
     store.setFeatureVariantOverride("EXTRA_FV" as any, false);
     expect((store.activeFeatureVariants as any)["EXTRA_FV"]).toBeUndefined();
-
   });
 
   test("non-Recidiviz user cannot set a feature variant override", () => {
@@ -1308,15 +1314,17 @@ describe("feature variants", () => {
     });
     store.setFeatureVariantOverride("TEST", true);
     expect(store.getFeatureVariantOverrides()).toEqual({});
-    expect(sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES)).toBeNull();
+    expect(
+      sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES),
+    ).toBeNull();
   });
 
   test("loads feature variant overrides from session storage on initialization", () => {
-  // Set some overrides in sessionStorage
+    // Set some overrides in sessionStorage
     const overrides = { TEST: true, EXTRA_FV: false };
     sessionStorage.setItem(
       SESSION_FEATURE_VARIANT_OVERRIDES,
-      JSON.stringify(overrides)
+      JSON.stringify(overrides),
     );
 
     // Create a new UserStore instance
@@ -1331,7 +1339,6 @@ describe("feature variants", () => {
     // Ensure the overrides are loaded into the new store
     expect(newStore.getFeatureVariantOverrides()).toEqual(overrides);
   });
-
 });
 
 describe("impersonateUser", () => {
