@@ -170,6 +170,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
         supervisionUnrestrictedSearch: {},
         supervisorHomepageWorkflows: {},
+        supervisorHomepageVitals: { activeTenants: ["US_ID", "US_ND"] },
+        operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
         usAzFacilitySearch: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},
