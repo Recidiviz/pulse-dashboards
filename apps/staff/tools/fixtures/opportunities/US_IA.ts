@@ -143,7 +143,7 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "{{#if record.metadata.victimFlag}}Registered victim has been contacted{{/if}}",
         },
         {
-          text: "{{#if record.metadata.dnaRequiredFlag}}{{#unless record.metadata.dnaSubmittedFlag}}DNA has been collected{{/unless}}{{/if}}",
+          text: "{{#if record.metadata.dnaRequiredFlag}}{{#unless record.metadata.dnaSubmittedFlag}}DNA is required to be collected and has not yet been collected{{/unless}}{{/if}}",
           tooltip:
             "ICON indicates that for this client, DNA is required to be collected but has not yet been collected",
         },

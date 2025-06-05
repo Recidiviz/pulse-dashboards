@@ -165,7 +165,8 @@ export const mockApiOpportunityConfigurationResponse = {
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "adminSupervision",
-      zeroGrantsTooltip: null,
+      zeroGrantsTooltip:
+        "This agent has not granted any clients this opportunity in the past 12 months.",
     },
     usPaSpecialCircumstancesSupervision: {
       callToAction:
