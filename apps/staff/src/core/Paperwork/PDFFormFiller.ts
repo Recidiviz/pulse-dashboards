@@ -17,6 +17,7 @@
 
 import { captureException } from "@sentry/react";
 import { saveAs } from "file-saver";
+import { toJS } from "mobx";
 import type {
   PDFCheckBox,
   PDFDocument,
@@ -27,13 +28,66 @@ import type {
 
 import { fetchWorkflowsTemplates } from "../../api/fetchWorkflowsTemplates";
 
-type SetFunc = (fieldName: string, value?: string | boolean | number) => void;
+export type SetFunc = (
+  fieldName: string,
+  value?: string | boolean | number,
+) => void;
 
 export type PDFFillerFunc = (
+  formData: any,
   set: SetFunc,
-  form: PDFForm,
-  doc: PDFDocument,
+  form?: PDFForm,
+  doc?: PDFDocument,
 ) => Promise<void>;
+
+type FillPDFFunc = (formData: any) => Promise<Uint8Array<ArrayBufferLike>>;
+
+type PDFLib = {
+  PDFCheckBox: typeof PDFCheckBox;
+  PDFRadioGroup: typeof PDFRadioGroup;
+  PDFTextField: typeof PDFTextField;
+  PDFDocument: typeof PDFDocument;
+};
+
+const fillPDF: (
+  fillerFunc: PDFFillerFunc,
+  [template, pdfLib]: [ArrayBuffer, PDFLib],
+) => FillPDFFunc =
+  (fillerFunc: PDFFillerFunc, [template, pdfLib]: [ArrayBuffer, PDFLib]) =>
+  async (formData: any) => {
+    const { PDFCheckBox, PDFRadioGroup, PDFTextField, PDFDocument } = pdfLib;
+
+    const doc = await PDFDocument.load(template);
+    const form = doc.getForm();
+    const set: SetFunc = (fieldName, value) => {
+      const field = form.getField(fieldName); // If fieldName doesn't exist, this will throw
+
+      if (field instanceof PDFTextField) {
+        field.setText((value ?? "").toString());
+      } else if (field instanceof PDFCheckBox) {
+        if (value) {
+          field.check();
+        } else {
+          field.uncheck();
+        }
+      } else if (field instanceof PDFRadioGroup) {
+        if (value) {
+          field.select(value.toString());
+        } else {
+          field.clear();
+        }
+      }
+    };
+
+    try {
+      await fillerFunc(formData, set, form, doc);
+    } catch (e) {
+      captureException(e);
+    }
+
+    const pdfBytes = await doc.save();
+    return pdfBytes;
+  };
 
 // fillerFunc() is the callback responsible for actually filling out the form.
 // It is passed a set(fieldName, value) function for setting fields. For more
@@ -43,58 +97,12 @@ export type PDFFillerFunc = (
 // After setting the fields, calling `form.flatten()` will bake the form into a
 // static PDF. To generate the boilerplate needed to fill all the fields in a
 // given PDF, run: `nx pdfformfiller-boilerplate staff server/assets/workflowsTemplates/path/to/your.pdf`
-
-export async function fillPDF(
-  fillerFunc: PDFFillerFunc,
-  [template, pdfLib]: [ArrayBuffer, PDFLib],
-) {
-  const { PDFCheckBox, PDFRadioGroup, PDFTextField, PDFDocument } = pdfLib;
-  const doc = await PDFDocument.load(template);
-  const form = doc.getForm();
-
-  const set: SetFunc = (fieldName, value) => {
-    const field = form.getField(fieldName); // If fieldName doesn't exist, this will throw
-
-    if (field instanceof PDFTextField) {
-      field.setText((value ?? "").toString());
-    } else if (field instanceof PDFCheckBox) {
-      if (value) {
-        field.check();
-      } else {
-        field.uncheck();
-      }
-    } else if (field instanceof PDFRadioGroup) {
-      if (value) {
-        field.select(value.toString());
-      } else {
-        field.clear();
-      }
-    }
-  };
-
-  try {
-    await fillerFunc(set, form, doc);
-  } catch (e) {
-    captureException(e);
-  }
-
-  const pdfBytes = await doc.save();
-  return pdfBytes;
-}
-
-type PDFLib = {
-  PDFCheckBox: typeof PDFCheckBox;
-  PDFRadioGroup: typeof PDFRadioGroup;
-  PDFTextField: typeof PDFTextField;
-  PDFDocument: typeof PDFDocument;
-};
-
-// TODO #8610 Refactor to return closured fillPDF
 export async function getPdfTemplate(
   stateCode: string,
   templateName: string,
   getTokenSilently: () => Promise<any>,
-): Promise<[ArrayBuffer, PDFLib]> {
+  fillerFunc: PDFFillerFunc,
+) {
   // While the template is being downloaded, we also dynamically import pdf-lib as
   // a separate code chunk. Otherwise it would add 200k to the bundle for everyone.
   const [template, pdfLib] = await Promise.all([
@@ -102,7 +110,11 @@ export async function getPdfTemplate(
     import("pdf-lib"),
   ]);
   const { PDFDocument, PDFCheckBox, PDFRadioGroup, PDFTextField } = pdfLib;
-  return [template, { PDFCheckBox, PDFRadioGroup, PDFTextField, PDFDocument }];
+
+  return fillPDF(fillerFunc, [
+    template,
+    { PDFCheckBox, PDFRadioGroup, PDFTextField, PDFDocument },
+  ]);
 }
 
 export async function fillAndSavePDF(
@@ -110,15 +122,17 @@ export async function fillAndSavePDF(
   stateCode: string,
   templateName: string,
   fillerFunc: PDFFillerFunc,
+  formData: any,
   getTokenSilently: () => Promise<any>,
 ) {
   const pdfTemplate = await getPdfTemplate(
     stateCode,
     templateName,
     getTokenSilently,
+    fillerFunc,
   );
 
-  const pdfBytes = await fillPDF(fillerFunc, pdfTemplate);
+  const pdfBytes = await pdfTemplate({ ...toJS(formData) });
 
   const blob = new Blob([pdfBytes]);
   saveAs(blob, fileName);

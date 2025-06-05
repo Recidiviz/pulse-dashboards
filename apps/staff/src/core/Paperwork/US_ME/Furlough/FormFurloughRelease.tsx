@@ -33,7 +33,7 @@ import {
   renderMultipleDocx,
 } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
-import { fillPDF, getPdfTemplate, PDFFillerFunc } from "../../PDFFormFiller";
+import { getPdfTemplate, PDFFillerFunc, SetFunc } from "../../PDFFormFiller";
 import { downloadZipFile } from "../../utils";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
@@ -53,9 +53,10 @@ const FormPreviewPage = styled.img`
 
 const previewImages = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10];
 
-const fillerFunc: (
+const fillerFunc: PDFFillerFunc = async (
   formData: Partial<UsMeFurloughReleaseDraftData>,
-) => PDFFillerFunc = (formData) => async (set, form, doc) => {
+  set: SetFunc,
+): Promise<void> => {
   set("RESIDENTS NAME", formData.residentName);
   set("FACILITY HOUSING UNIT", formData.facilityHousingUnit);
   set("MDOC NUMBER", formData.mdocNo);
@@ -112,12 +113,13 @@ export const FormFurloughRelease = observer(function FormWorkRelease({
       resident.stateCode,
       `${pdfTemplateName}.pdf`,
       getTokenSilently,
+      fillerFunc,
     );
 
     if (!contents) return;
 
     const [pdfFileContents, docxFiles] = await Promise.all([
-      fillPDF(fillerFunc(contents), pdfTemplate),
+      pdfTemplate(contents),
       renderMultipleDocx(fileInputs, getTokenSilently),
     ]);
 

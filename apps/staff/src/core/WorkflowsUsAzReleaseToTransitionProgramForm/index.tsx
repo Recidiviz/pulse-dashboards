@@ -22,7 +22,11 @@ import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
 import { UsAzReleaseToTransitionProgramDraftData } from "../../WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTransitionProgramBaseSchema";
 import { FormContainer } from "../Paperwork/FormContainer";
-import { fillAndSavePDF, PDFFillerFunc } from "../Paperwork/PDFFormFiller";
+import {
+  fillAndSavePDF,
+  PDFFillerFunc,
+  SetFunc,
+} from "../Paperwork/PDFFormFiller";
 import previewImage from "./assets/ADCRR1001-11preview.png";
 
 const FormPreviewPage = styled.img`
@@ -30,9 +34,10 @@ const FormPreviewPage = styled.img`
   width: 100%;
 `;
 
-const fillerFunc: (
+const fillerFunc: PDFFillerFunc = async (
   formData: Partial<UsAzReleaseToTransitionProgramDraftData>,
-) => PDFFillerFunc = (formData) => async (set, form, doc) => {
+  set: SetFunc,
+): Promise<void> => {
   set("Drug Transition Program", formData.isDTPRelease);
   set("Standard Transition Program", !formData.isDTPRelease);
 
@@ -66,7 +71,8 @@ const WorkflowsUsAzReleaseToTransitionProgramForm = observer(
         `${opportunity.person.displayName} - Transition Program Agreement.pdf`,
         "US_AZ",
         "ADCRR1001-11.pdf",
-        fillerFunc(formData),
+        fillerFunc,
+        formData,
         getTokenSilently,
       );
     };

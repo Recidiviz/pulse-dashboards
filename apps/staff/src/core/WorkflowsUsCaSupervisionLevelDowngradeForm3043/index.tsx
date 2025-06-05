@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { PDFForm } from "pdf-lib";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -26,6 +27,7 @@ import {
   fillAndSavePDF,
   fixRadioGroups,
   PDFFillerFunc,
+  SetFunc,
 } from "../Paperwork/PDFFormFiller";
 import p1 from "./assets/p1.png";
 import p2 from "./assets/p2.png";
@@ -37,9 +39,13 @@ const FormPreviewPage = styled.img`
 
 const previewImages = [p1, p2];
 
-const fillerFunc: (
+const fillerFunc: PDFFillerFunc = async (
   formData: Partial<UsCaSupervisionLevelDowngradeSharedDraftData>,
-) => PDFFillerFunc = (formData) => async (set, form, doc) => {
+  set: SetFunc,
+  form?: PDFForm,
+): Promise<void> => {
+  if (!form) return Promise.resolve();
+
   set("CDCR #", formData.cdcNumber);
   set("SupervisedPersonsName Last FirstMIRow1", formData.fullName);
   set("Parole Unit", formData.unit);
@@ -65,7 +71,8 @@ const Form3043UsCaSupervisionLeveDowngrade = observer(
         `${opportunity.person.displayName} - CDCR 3043.pdf`,
         "US_CA",
         "CDCR3043.pdf",
-        fillerFunc(formData),
+        fillerFunc,
+        formData,
         getTokenSilently,
       );
     };

@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
+import { PDFDocument, PDFForm } from "pdf-lib";
 import * as React from "react";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -27,12 +28,17 @@ import {
   fillAndSavePDF,
   fixRadioGroups,
   PDFFillerFunc,
+  SetFunc,
 } from "../Paperwork/PDFFormFiller";
 import FormCDCR1657 from "../Paperwork/US_CA/SupervisionLevelDowngrade/FormCDCR1657";
 
-const fillerFunc: (
-  formData: Partial<UsCaSupervisionLevelDowngradeDraftData>,
-) => PDFFillerFunc = (formData) => async (set, form, doc) => {
+const fillerFunc: PDFFillerFunc = async (
+  formData: UsCaSupervisionLevelDowngradeDraftData,
+  set: SetFunc,
+  form?: PDFForm,
+  doc?: PDFDocument,
+): Promise<void> => {
+  if (!form || !doc) return Promise.resolve();
   const totalObjectiveScore =
     formData.objectiveScore1 &&
     formData.objectiveScore2 &&
@@ -168,7 +174,8 @@ const FormUsCaSupervisionLeveDowngrade = observer(
         `${opportunity.person.displayName} - CDCR 1657.pdf`,
         "US_CA",
         "CDCR1657.pdf",
-        fillerFunc(formData),
+        fillerFunc,
+        formData,
         getTokenSilently,
       );
     };

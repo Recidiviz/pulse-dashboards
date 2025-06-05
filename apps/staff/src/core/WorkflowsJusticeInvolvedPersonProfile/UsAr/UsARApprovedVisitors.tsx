@@ -30,9 +30,9 @@ import { UsArInstitutionalWorkerStatusOpportunity } from "../../../WorkflowsStor
 import { UsArApprovedVisitorWithChecklist } from "../../../WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusReferralRecord";
 import { DownloadButton } from "../../Paperwork/FormContainer";
 import {
-  fillPDF,
   getPdfTemplate,
   PDFFillerFunc,
+  SetFunc,
 } from "../../Paperwork/PDFFormFiller";
 import { createDownloadLabel, downloadZipFile } from "../../Paperwork/utils";
 import { DetailsHeading, Divider } from "../styles";
@@ -54,9 +54,10 @@ const DownloadFormsButton = styled(DownloadButton)`
   background-color: ${palette.signal.links};
 `;
 
-const fillerFunc: (
+const fillerFunc: PDFFillerFunc = async (
   formData: UsArApprovedVisitorWithChecklist,
-) => PDFFillerFunc = (formData) => async (set, form, doc) => {
+  set: SetFunc,
+) => {
   set("firstName", formData.firstName ?? "");
   set("lastName", formData.lastName ?? "");
   set("middleName", formData.middleName ?? "");
@@ -130,6 +131,7 @@ export const UsArApprovedVisitors = observer(function UsArApprovedVisitors({
       resident.stateCode,
       `${pdfTemplateName}.pdf`,
       getTokenSilently,
+      fillerFunc,
     );
 
     downloadZipFile(
@@ -140,10 +142,7 @@ export const UsArApprovedVisitors = observer(function UsArApprovedVisitors({
             const visitorFullName = `${visitor.firstName} ${visitor.lastName}`;
             return {
               filename: `${fileNameFormatter(visitorFullName)}.pdf`,
-              fileContents: await fillPDF(
-                fillerFunc({ ...toJS(visitor) }),
-                pdfTemplate,
-              ),
+              fileContents: await pdfTemplate({ ...toJS(visitor) }),
             };
           },
         ),
