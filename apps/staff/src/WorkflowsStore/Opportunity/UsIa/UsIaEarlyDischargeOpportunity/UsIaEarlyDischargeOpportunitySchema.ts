@@ -57,7 +57,7 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
           .nullable(),
         notSupervisionPastFullTermCompletionDateOrUpcoming30Days: z
           .object({
-            eligibleDate: dateStringSchema,
+            eligibleDate: dateStringSchema.nullable(),
           })
           .nullable(),
         notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: z
