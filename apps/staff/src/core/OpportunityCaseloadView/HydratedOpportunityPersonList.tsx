@@ -719,7 +719,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         )
       }
 
-      {presenter.tabPrefaceText && presenter.showListView && (
+      {presenter.tabPrefaceText && (
         <OpportunityPageExplainer>
           {presenter.tabPrefaceText}
         </OpportunityPageExplainer>

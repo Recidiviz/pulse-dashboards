@@ -17,6 +17,7 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab } from "../../types";
@@ -71,6 +72,8 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
   }
 
   eligibilityStatusLabel(includeReasons?: boolean) {
+    if (this.denied) return super.eligibilityStatusLabel(includeReasons);
+
     switch (this.record.metadata.tabName) {
       case "REPORT_DUE_ELIGIBLE":
         return "Report Due - Eligible";
@@ -79,8 +82,13 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
       case "EARLY_REQUESTS":
       case "REPORT_SUBMITTED":
         return this.tabTitle();
+      default:
+        return "Other";
     }
+  }
 
-    return super.eligibilityStatusLabel(includeReasons);
+  get customStatusPalette() {
+    if (this.record.metadata.tabName === "REPORT_SUBMITTED")
+      return OPPORTUNITY_STATUS_COLORS.submitted;
   }
 }
