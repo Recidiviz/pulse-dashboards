@@ -19,11 +19,6 @@ import UsTxContactTask from "./UsTxContactTask";
 
 class UsTxInCustodyContactTask extends UsTxContactTask<"usTxInCustodyContact"> {
   displayName = "In-custody contact";
-
-  // TODO(#8192): Get in-custody contact frequency from record
-  get frequency(): string {
-    return "Weekly";
-  }
 }
 
 export default UsTxInCustodyContactTask;
