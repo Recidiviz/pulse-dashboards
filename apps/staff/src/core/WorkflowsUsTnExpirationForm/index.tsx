@@ -18,7 +18,6 @@
 import {
   animation,
   Button,
-  palette,
   Sans14,
   spacing,
   TooltipTrigger,
@@ -28,6 +27,8 @@ import { rem } from "polished";
 import { useEffect, useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { formatDate } from "../../utils";

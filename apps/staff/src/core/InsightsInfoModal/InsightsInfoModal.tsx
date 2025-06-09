@@ -19,7 +19,6 @@ import {
   Button,
   Icon,
   Modal,
-  palette,
   spacing,
   typography,
 } from "@recidiviz/design-system";
@@ -28,6 +27,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 

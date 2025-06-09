@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { useState } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import SearchIconComponent from "../../../../assets/static/images/search.svg?react";
 import { PrototypePill } from "../../common/Styles";

@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Pill, spacing, typography } from "@recidiviz/design-system";
+import { Pill, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import ClientEventsTableImage from "../../assets/static/images/ClientEventsTableImage.png";
 import DotPlotAgentImage from "../../assets/static/images/DotPlot-Agent.png";

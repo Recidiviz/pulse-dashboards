@@ -16,8 +16,9 @@
 // =============================================================================
 
 import { toTitleCase } from "@artsy/to-title-case";
-import { palette } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { ConfigLabels } from "../../InsightsStore/presenters/types";

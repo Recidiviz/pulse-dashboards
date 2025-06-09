@@ -17,13 +17,14 @@
 
 import {
   Button,
-  palette,
   spacing,
   TooltipTrigger,
   typography,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 export const DetailsSection = styled.dl``;
 
@@ -75,13 +76,13 @@ export const PhoneNumber = styled.a`
 
 export const DetailsSubheading = styled.dt`
   ${typography.Sans14}
-  color: rgba(53, 83, 98, 0.5);
+  color: ${palette.slate50};
   margin-bottom: ${rem(spacing.xs)};
 `;
 
 export const DetailsContent = styled.dd`
   ${typography.Sans14}
-  color: rgba(53, 83, 98, 0.9);
+  color: ${palette.slate90};
 `;
 
 export const SpecialConditionsCopy = styled.div`

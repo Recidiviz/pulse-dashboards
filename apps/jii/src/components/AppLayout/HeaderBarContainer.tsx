@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 import { HEADER_BORDER_WIDTH } from "./constants";

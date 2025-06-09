@@ -20,7 +20,6 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle as DropdownToggleButton,
-  palette,
   typography,
 } from "@recidiviz/design-system";
 import { memoize } from "lodash";
@@ -31,6 +30,7 @@ import { components, ControlProps } from "react-select";
 import styled from "styled-components/macro";
 
 import { RosterChangeRequest, rosterChangeRequestSchema } from "~datatypes";
+import { palette } from "~design-system";
 
 import { humanReadableTitleCase } from "../../../../utils";
 import { SelectOption } from "../../../CaseloadSelect";
@@ -81,7 +81,7 @@ export const Control = memoize( // Must be wrapped in memoize to avoid unnecessa
     requestChangeType: RosterChangeRequest["requestChangeType"],
     setValue: (value: RosterChangeRequest["requestChangeType"]) => void,
   ) =>
-    function Control({ children, ...props }: ControlProps<SelectOption, true>) {
+    (function Control({ children, ...props }: ControlProps<SelectOption, true>) {
       const handleSetValue =
         (val: RosterChangeRequest["requestChangeType"]) => () => {
           setValue(val);
@@ -142,5 +142,5 @@ export const Control = memoize( // Must be wrapped in memoize to avoid unnecessa
           </Dropdown>
         </components.Control>
       );
-    },
+    }),
 );

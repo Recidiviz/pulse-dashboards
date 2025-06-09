@@ -17,9 +17,11 @@
 
 /* eslint-disable no-redeclare */
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled, { css } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import WorkflowsCaseloadTabs from "./WorkflowsCaseloadTabs";
 import { WorkflowsTabGroupSelector } from "./WorkflowsTabGroupSelector";

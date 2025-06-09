@@ -18,7 +18,6 @@
 import "@rmwc/select/styles";
 
 import { MDCSelectFoundation } from "@material/select";
-import { palette } from "@recidiviz/design-system";
 import {
   Select,
   SelectHelperTextProps,
@@ -29,6 +28,8 @@ import { observer } from "mobx-react-lite";
 import * as React from "react";
 import { useRef } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useOpportunityFormContext } from "./OpportunityFormContext";
 import { useReactiveInput } from "./utils";

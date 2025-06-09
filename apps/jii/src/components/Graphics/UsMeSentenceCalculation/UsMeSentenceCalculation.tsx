@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import diagram1Url from "./diagram1.svg";
 import diagram2Url from "./diagram2.svg";

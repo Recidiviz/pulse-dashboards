@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import { createContext, JSX, ReactNode, useContext, useId } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { STICKY_HEADER_ZINDEX } from "../AppLayout/constants";
 

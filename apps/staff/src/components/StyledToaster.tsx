@@ -17,8 +17,9 @@
 
 import "./StyledToaster.scss";
 
-import { palette } from "@recidiviz/design-system";
 import { Toaster } from "react-hot-toast";
+
+import { palette } from "~design-system";
 
 const StyledToaster = () => (
   <Toaster

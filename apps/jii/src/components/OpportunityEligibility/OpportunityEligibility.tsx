@@ -16,13 +16,14 @@
 // =============================================================================
 
 import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, useId } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import {

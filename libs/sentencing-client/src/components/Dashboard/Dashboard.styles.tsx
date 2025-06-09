@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { SortDirection } from "@tanstack/react-table";
 import { rem } from "polished";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { customPalette } from "../styles/palette";
 import { RecommendationStatusFilter } from "./types";
@@ -278,6 +280,7 @@ export const Offense = styled.div<{ isNotSpecified: boolean }>`
   ${({ isNotSpecified }) => isNotSpecified && `color: ${palette.slate60};`}
 `;
 
+// TODO(#8709): Add colors to design system or change to design system colors
 const statusToCSS = {
   "Not yet started": `
     color: rgba(58, 80, 90, 1);

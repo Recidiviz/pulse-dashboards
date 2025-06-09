@@ -16,8 +16,9 @@
 // =============================================================================
 
 // TODO(#4108): Consider and apply refactoring `UsTnAnnualReclassificationReview...` and `UsTnCustodyLevelDowngrade...` files to remove duplicated logic.
-import { palette } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 const Item = styled.div`
   display: flex;

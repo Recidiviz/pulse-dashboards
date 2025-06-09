@@ -16,7 +16,7 @@
 // =============================================================================
 
 import {
-  palette,
+  // palette,
   Pill,
   Sans14,
   Serif34,
@@ -24,6 +24,8 @@ import {
 } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled, { FlattenSimpleInterpolation } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { MaxWidth } from "../sharedComponents";
 

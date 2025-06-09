@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans14, spacing } from "@recidiviz/design-system";
+import { Sans14, spacing } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
 import { useEffect, useState } from "react";
 import styled, { css } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 interface PillNavProps {
   items: string[];

@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import simplur from "simplur";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 // TODO(#6719): Combine this with the one in OpportunityCaseHighlights
 const Container = styled.section`

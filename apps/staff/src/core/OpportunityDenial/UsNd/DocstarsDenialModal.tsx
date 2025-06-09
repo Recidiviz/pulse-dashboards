@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Loading,
-  palette,
-  Sans16,
-  Sans24,
-  spacing,
-} from "@recidiviz/design-system";
+import { Loading, Sans16, Sans24, spacing } from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
 import { startOfToday } from "date-fns";
 import { Timestamp } from "firebase/firestore";
@@ -30,6 +24,8 @@ import { rem } from "polished";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import Checkbox from "../../../components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";

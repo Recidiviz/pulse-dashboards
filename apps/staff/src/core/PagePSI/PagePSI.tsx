@@ -15,12 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  ErrorPage,
-  palette,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { ErrorPage, spacing, typography } from "@recidiviz/design-system";
 import { ErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -28,6 +23,7 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { palette } from "~design-system";
 import {
   CaseDetails,
   Dashboard,

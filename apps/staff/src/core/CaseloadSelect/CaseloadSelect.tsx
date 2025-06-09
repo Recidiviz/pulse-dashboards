@@ -20,7 +20,6 @@ import {
   Icon,
   IconSVG,
   Modal,
-  palette,
   Pill,
   Sans14,
   Serif24,
@@ -44,6 +43,8 @@ import ReactSelect, {
   StylesConfig,
 } from "react-select";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
@@ -166,12 +167,13 @@ const IconContainer = styled.div`
 
   padding: ${rem(spacing.xs)};
 
+  // TODO(#8709): Add color to design system or change to design system color
   background-color: rgba(226, 244, 255, 1);
   border-radius: 50%;
 `;
 
 const SearchIconElement = styled.i`
-  color: rgba(0, 161, 255, 1);
+  color: ${palette.logoBlue};
 `;
 
 const SearchableIcon = ({ icon }: { icon?: SearchIcon }) => {
@@ -240,8 +242,8 @@ export const ScrollShadow = styled.div<{
 }>`
   background: linear-gradient(
     ${({ side }) => (side === "top" ? 180 : 360)}deg,
-    #ffffff 3.13%,
-    rgba(255, 255, 255, 0) 109.62%
+    ${palette.marble1} 3.13%,
+    ${palette.marble1} 109.62%
   );
   pointer-events: none;
   position: absolute;
@@ -409,7 +411,7 @@ export const caseloadSelectStyles = (
     margin: 0,
     boxShadow:
       state.menuIsOpen && !isMobile
-        ? "0px 10px 40px rgba(53, 83, 98, 0.3)"
+        ? `0px 10px 40px ${palette.slate30}`
         : "none",
   }),
   menu: (base) => ({
@@ -419,7 +421,7 @@ export const caseloadSelectStyles = (
     border: "none",
     borderTop: `1px solid ${palette.slate20}`,
     borderRadius: "0 0 8px 8px",
-    boxShadow: !isMobile ? "0px 15px 20px rgba(53, 83, 98, 0.2)" : "none",
+    boxShadow: !isMobile ? `0px 10px 40px ${palette.slate20}` : "none",
   }),
   option: (base) => ({
     ...base,

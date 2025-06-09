@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Icon,
-  IconSVG,
-  palette,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { Icon, IconSVG, spacing, typography } from "@recidiviz/design-system";
 import { groupBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -29,6 +23,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { OpportunityType } from "~datatypes";
+import { palette } from "~design-system";
 import { PersonInitialsAvatar } from "~ui";
 
 import { useOpportunityConfigurations } from "../../components/StoreProvider";

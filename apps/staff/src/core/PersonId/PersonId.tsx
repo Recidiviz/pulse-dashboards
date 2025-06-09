@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, TooltipTrigger } from "@recidiviz/design-system";
+import { spacing, TooltipTrigger } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import copyIcon from "../../assets/static/images/copy.svg";
 import { useRootStore } from "../../components/StoreProvider";
@@ -40,7 +42,7 @@ export const PersonIdWithCopyIcon = styled.span<{ shiftIcon: boolean }>`
     vertical-align: ${(props) => (props.shiftIcon ? "-15%" : "0")};
   }
   &:hover {
-    background: rgba(53, 83, 98, 0.05);
+    background: ${palette.slate05};
     cursor: pointer;
   }
   &:active {

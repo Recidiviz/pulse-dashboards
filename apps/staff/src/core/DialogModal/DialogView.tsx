@@ -18,7 +18,6 @@
 import {
   Button,
   Icon,
-  palette,
   Sans16,
   Sans24,
   spacing,
@@ -26,6 +25,8 @@ import {
 } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 const ModalTitle = styled(Sans24)`
   color: ${palette.pine1};
@@ -59,13 +60,13 @@ const ConfirmationContainer = styled.div`
 
 const ConfirmationLabel = styled.dt`
   ${typography.Sans16}
-  color: rgba(53, 83, 98, 0.5);
+  color: ${palette.slate50};
   margin-bottom: ${rem(spacing.xs)};
 `;
 
 const ConfirmationField = styled.dd.attrs({ className: "fs-exclude" })`
   ${typography.Sans16}
-  color: rgba(53, 83, 98, 0.9);
+  color: ${palette.slate90};
 `;
 
 type DialogViewProps = {

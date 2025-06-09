@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import cn from "classnames";
 import { throttle } from "lodash";
 import { action } from "mobx";
@@ -25,6 +25,8 @@ import { FC, ReactNode, useEffect, useLayoutEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useSkipNav } from "../SkipNav/SkipNav";
 import { useRootStore } from "../StoreProvider/useRootStore";

@@ -15,17 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Icon,
-  IconSVG,
-  iconToDataURI,
-  palette,
-} from "@recidiviz/design-system";
+import { Icon, IconSVG, iconToDataURI } from "@recidiviz/design-system";
 import { debounce } from "lodash";
 import { reaction } from "mobx";
 import { rgba } from "polished";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { PersonUpdateType } from "../../FirestoreStore";
 import { Client } from "../../WorkflowsStore";

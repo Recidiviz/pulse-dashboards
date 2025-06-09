@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, palette } from "@recidiviz/design-system";
+import { animation } from "@recidiviz/design-system";
 import { darken } from "polished";
 import styled, { css } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { FormViewerContextData } from "../../FormViewer";
 import { Input as TnInput } from "../../US_TN/CompliantReporting/styles";

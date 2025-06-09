@@ -18,7 +18,7 @@
 import "@material/textfield/dist/mdc.textfield.css";
 
 import type { MDCTextFieldFoundation } from "@material/textfield";
-import { Icon, IconSVG, palette, Sans16 } from "@recidiviz/design-system";
+import { Icon, IconSVG, Sans16 } from "@recidiviz/design-system";
 import {
   TextField,
   TextFieldHelperTextProps,
@@ -29,6 +29,8 @@ import { observer } from "mobx-react-lite";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useOpportunityFormContext } from "./OpportunityFormContext";
 import {

@@ -17,8 +17,10 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { palette, Pill, typography } from "@recidiviz/design-system";
+import { Pill, typography } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 const TabWrapper = styled.div`
   display: flex;

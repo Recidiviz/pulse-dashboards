@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans14, spacing, typography } from "@recidiviz/design-system";
+import { Sans14, spacing, typography } from "@recidiviz/design-system";
 import { scaleTime } from "d3-scale";
 import {
   differenceInMonths,
@@ -27,6 +27,8 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../utils";

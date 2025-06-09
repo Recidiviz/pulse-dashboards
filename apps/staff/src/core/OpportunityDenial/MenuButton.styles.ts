@@ -19,11 +19,12 @@ import {
   Button,
   DropdownMenuItem,
   DropdownToggle,
-  palette,
   spacing,
 } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 export const StatusAwareToggle = styled(DropdownToggle).attrs({
   kind: "secondary",

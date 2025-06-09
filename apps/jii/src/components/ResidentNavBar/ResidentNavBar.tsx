@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
@@ -24,6 +24,7 @@ import { FC } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { State } from "../../routes/routes";

@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
+import { Icon, spacing, typography } from "@recidiviz/design-system";
 import { rem, transparentize } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 const PromptElement = styled.div`
   background-color: ${transparentize(0.9, palette.signal.highlight)};

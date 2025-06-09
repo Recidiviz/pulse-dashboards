@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, IconSVG, palette } from "@recidiviz/design-system";
+import { Icon, IconSVG } from "@recidiviz/design-system";
 import React from "react";
 import simplur from "simplur";
 
 import { OpportunityInfo } from "~datatypes";
+import { palette } from "~design-system";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { ConfigLabels } from "../../InsightsStore/presenters/types";

@@ -15,16 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  palette,
-  Sans14,
-  Sans16,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import StopwatchIcon from "../../assets/static/images/stopwatch.svg?react";
 import useIsMobile from "../../hooks/useIsMobile";
@@ -77,7 +73,7 @@ const TaskDivider = styled(Sans16)`
 `;
 
 const TaskDetails = styled(Sans14)`
-  color: rgba(53, 83, 98, 0.9);
+  color: ${palette.slate90};
   align-self: flex-start;
   padding: 0.5rem 0 0 0;
   white-space: pre-line;

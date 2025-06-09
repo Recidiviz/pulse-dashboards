@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, palette } from "@recidiviz/design-system";
+import { animation } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { transparentize } from "polished";
 import * as React from "react";
 import { MutableRefObject, useRef } from "react";
 import AutosizeInput from "react-input-autosize";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useOpportunityFormContext } from "./OpportunityFormContext";
 import { useAnimatedValue, useReactiveInput } from "./utils";

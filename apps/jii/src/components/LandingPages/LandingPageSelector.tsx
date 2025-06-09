@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, palette, spacing } from "@recidiviz/design-system";
+import { Button, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useId } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { Selector, SelectorProps } from "../Selector/Selector";
 

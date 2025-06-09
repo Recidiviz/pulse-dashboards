@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Pill, Sans14, spacing } from "@recidiviz/design-system";
+import { Pill, Sans14, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 export const PrototypePill = styled(Pill).attrs({
   color: "#CFF5F6",

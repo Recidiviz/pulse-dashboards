@@ -20,13 +20,14 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
-  palette,
   Sans14,
   typography,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { SupervisionTask, SupervisionTaskType } from "../../WorkflowsStore";

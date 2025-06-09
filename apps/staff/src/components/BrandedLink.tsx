@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 /**
  * A React Router link styled with Recidiviz brand colors

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import {
   ColumnDef,
   flexRender,
@@ -30,6 +30,8 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Dispatch, SetStateAction } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import useIsMobile from "../../hooks/useIsMobile";

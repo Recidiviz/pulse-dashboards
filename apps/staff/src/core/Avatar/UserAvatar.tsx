@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import Avatar from "boring-avatars";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useUserStore } from "../../components/StoreProvider";
 
@@ -61,7 +62,7 @@ export const AvatarInitials = styled.div`
   left: 0;
   bottom: 0;
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(${palette.marble1}, 0.1);
   border-radius: 8px;
 `;
 

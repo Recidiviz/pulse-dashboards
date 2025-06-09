@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { insightsUrl } from "../views";
 

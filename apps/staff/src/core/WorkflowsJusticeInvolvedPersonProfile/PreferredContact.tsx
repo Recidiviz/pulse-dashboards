@@ -15,17 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Dropdown,
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownToggle,
-  palette,
-  Sans14,
-} from "@recidiviz/design-system";
+import { Dropdown, DropdownMenu, DropdownMenuItem, DropdownToggle, Sans14 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import {
   contactMethods,

@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans14 } from "@recidiviz/design-system";
+import { Sans14 } from "@recidiviz/design-system";
 import { add } from "date-fns";
 import pluralize from "pluralize";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { fractionalDateBetweenTwoDates } from "../../../WorkflowsStore/utils";
 import { DateInfo, DatesTable } from "../DatesTable";

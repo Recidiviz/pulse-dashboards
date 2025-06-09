@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import GreenCheckmark from "../../assets/static/images/greenCheckmark.svg?react";

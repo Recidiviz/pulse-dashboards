@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import { captureException } from "@sentry/react";
 import { keyBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 import toast from "react-hot-toast";
 
+import { palette } from "~design-system";
 import { FlowMethod } from "~hydration-utils";
 import { PSIStore } from "~sentencing-client";
 

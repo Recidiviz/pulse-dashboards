@@ -15,13 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Icon,
-  palette,
-  spacing,
-  TooltipTrigger,
-  typography,
-} from "@recidiviz/design-system";
+import { Icon, spacing, TooltipTrigger, typography } from "@recidiviz/design-system";
 import {
   ColumnDef,
   flexRender,
@@ -34,6 +28,8 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useMemo } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import { formatWorkflowsDate } from "../../utils";

@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, transparentize } from "polished";
 import { useEffect, useState } from "react";
 import Select from "react-select";
+
+import { palette } from "~design-system";
 
 import { useOpportunityFormContext } from "./OpportunityFormContext";
 

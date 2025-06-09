@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { OpportunityType } from "~datatypes";
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";

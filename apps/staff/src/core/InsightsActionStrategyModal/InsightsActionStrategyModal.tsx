@@ -15,14 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Button,
-  DrawerModal,
-  Icon,
-  palette,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { Button, DrawerModal, Icon, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { now } from "mobx-utils";
 import { rem } from "polished";
@@ -31,6 +24,7 @@ import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
 import { ActionStrategyCopy } from "~datatypes";
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";

@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, typography } from "@recidiviz/design-system";
+import { typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import React, { ChangeEvent, useState } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { Client } from "../../WorkflowsStore";
 

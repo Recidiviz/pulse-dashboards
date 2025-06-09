@@ -16,9 +16,11 @@
 // =============================================================================
 
 import { Pill, typography } from "@recidiviz/design-system";
-import { rem, rgba } from "polished";
+import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { InsightsTooltip } from "../InsightsPageLayout/InsightsPageLayout";
 
@@ -36,14 +38,14 @@ interface InsightsPillProps {
 
 /**
  * A small pink pill with a optional tooltip used to flag certain
- * officers and opportunities pofrom the insights supervisor homepage views.
+ * officers and opportunities from the insights supervisor homepage views.
  */
 const InsightsPill: FC<InsightsPillProps> = ({ tooltipCopy, label }) => {
   return (
     <InsightsTooltip contents={tooltipCopy}>
       <PillWrapper
-        color={rgba(255, 220, 229, 1)}
-        textColor={rgba(76, 12, 28, 1)}
+        color={palette.pink}
+        textColor={palette.darkPink}
         filled={true}
       >
         {label}

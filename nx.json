@@ -9,7 +9,8 @@
       "!{projectRoot}/**/__tests__/**/?(*.).[jt]s?(x)?(.snap)",
       "!{projectRoot}/tsconfig.test.json",
       "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/eslint.config.mjs"
+      "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/src/test-setup.[jt]s"
     ]
   },
   "plugins": [

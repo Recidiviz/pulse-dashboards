@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, Sans14, spacing } from "@recidiviz/design-system";
+import { Icon, Sans14, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { UsAzResidentMetadata } from "../../../../FirestoreStore";
 import { optionalFieldToDate } from "../../../../WorkflowsStore/utils";

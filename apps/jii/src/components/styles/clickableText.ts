@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, palette } from "@recidiviz/design-system";
+import { animation } from "@recidiviz/design-system";
 import { css } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 /**
  * Styles for links and buttons that appear within running text

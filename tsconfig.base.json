@@ -55,6 +55,7 @@
         "libs/common/data-import-plugin/src/testkit/index.ts"
       ],
       "~datatypes": ["libs/datatypes/src/index.ts"],
+      "~design-system": ["libs/design-system/src/index.ts"],
       "~firestore-api": ["libs/firestore-api/src/index.ts"],
       "~firestore-config": ["libs/firestore-config/src/index.ts"],
       "~fixture-generator": ["libs/fixture-generator/src/index.ts"],

@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans18 } from "@recidiviz/design-system";
+import { Sans18 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import GrayAlert from "../../assets/static/images/grayAlert.svg?react";
 import { reasonsIncludesOtherKey } from "../../core/utils/workflowsUtils";

@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, typography } from "@recidiviz/design-system";
+import { typography } from "@recidiviz/design-system";
 import { reduce } from "lodash";
 import { uniq } from "lodash/fp";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import TealStarBase from "../../assets/static/images/tealStar.svg?react";
 import { useRootStore } from "../../components/StoreProvider";

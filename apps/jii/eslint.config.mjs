@@ -19,7 +19,10 @@
 
 import tseslint from "typescript-eslint";
 
-import baseConfig, { reactConfig } from "../../eslint.config.mjs";
+import baseConfig, {
+  designSystemRestrictedImports,
+  reactConfig,
+} from "../../eslint.config.mjs";
 
 export default tseslint.config(baseConfig, reactConfig, {
   files: ["**/*.*js", "**/*.*jsx", "**/*.*ts", "**/*.*tsx"],
@@ -51,6 +54,7 @@ export default tseslint.config(baseConfig, reactConfig, {
             message:
               "Please use components from src/components/Dropdown instead",
           },
+          designSystemRestrictedImports,
         ],
       },
     ],

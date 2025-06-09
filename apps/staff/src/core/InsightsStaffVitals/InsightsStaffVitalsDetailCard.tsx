@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
+import { Icon, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled, { css } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { OfficerVitalsMetricDetail } from "../../InsightsStore/presenters/types";
 import InsightsPill from "../InsightsPill";

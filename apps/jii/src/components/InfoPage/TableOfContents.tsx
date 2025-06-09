@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { captureException } from "@sentry/react";
 import { compiler } from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
@@ -23,6 +23,8 @@ import { rem } from "polished";
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { styles } from "../CopyWrapper/CopyWrapper";
 

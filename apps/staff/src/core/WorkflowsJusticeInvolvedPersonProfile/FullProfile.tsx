@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans16, spacing, typography } from "@recidiviz/design-system";
+import { Sans16, spacing, typography } from "@recidiviz/design-system";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { toJS } from "mobx";
@@ -24,6 +24,8 @@ import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 import superjson from "superjson";
+
+import { palette } from "~design-system";
 
 import {
   useFeatureVariants,

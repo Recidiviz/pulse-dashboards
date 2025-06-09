@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../../components/StoreProvider";
 import { formatWorkflowsDate } from "../../../utils";

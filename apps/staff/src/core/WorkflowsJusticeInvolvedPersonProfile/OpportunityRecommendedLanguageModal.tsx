@@ -15,22 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Body16,
-  Button,
-  Icon,
-  Modal,
-  palette,
-  Sans14,
-  Sans16,
-  Sans24,
-  spacing,
-} from "@recidiviz/design-system";
+import { Body16, Button, Icon, Modal, Sans14, Sans16, Sans24, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import React, { useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { CopyCTAMetadata } from "../../RootStore/AnalyticsStore/AnalyticsStore";

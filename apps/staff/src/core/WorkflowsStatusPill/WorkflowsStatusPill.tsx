@@ -19,6 +19,8 @@ import { Pill, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { palette } from "~design-system";
+
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 
 const StyledPill = styled(Pill)`
@@ -34,11 +36,7 @@ export const WorkflowsStatusPill = ({
 }) => {
   if (person instanceof Client && person.isInCustody) {
     return (
-      <StyledPill
-        color={"rgba(255, 220, 229, 1)"}
-        textColor={"rgba(76, 12, 28, 1)"}
-        filled
-      >
+      <StyledPill color={palette.pink} textColor={palette.darkPink} filled>
         In Custody
       </StyledPill>
     );

@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import Markdown from "markdown-to-jsx";
 import { rem } from "polished";
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import styled, { css } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { ProgressPageTeaser } from "../ProgressPageTeaser/ProgressPageTeaser";
 import { clickableText } from "../styles/clickableText";

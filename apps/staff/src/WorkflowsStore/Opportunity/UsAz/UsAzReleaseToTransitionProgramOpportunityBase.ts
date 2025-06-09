@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import { DocumentData } from "firebase/firestore";
+
+import { palette } from "~design-system";
 
 import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
 import { OpportunityUpdate } from "../../../FirestoreStore";

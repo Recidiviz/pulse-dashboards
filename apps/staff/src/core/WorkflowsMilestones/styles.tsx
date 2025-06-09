@@ -15,17 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Button,
-  palette,
-  Sans12,
-  Sans16,
-  spacing,
-  TooltipTrigger,
-  typography,
-} from "@recidiviz/design-system";
+import { Button, Sans12, Sans16, spacing, TooltipTrigger, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled, { css, keyframes } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 export const BannerTextWrapper = styled.div`
   display: flex;

@@ -24,12 +24,13 @@ import "@fontsource/libre-baskerville";
 
 import {
   GlobalStyle as GlobalStyleBase,
-  palette,
   typography,
 } from "@recidiviz/design-system";
 import { ErrorBoundary, withSentryReactRouterV6Routing } from "@sentry/react";
 import { Route, Routes } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { initializeSentry } from "../../apis/Sentry/initializeSentry";
 import * as routes from "../../routes/routes";

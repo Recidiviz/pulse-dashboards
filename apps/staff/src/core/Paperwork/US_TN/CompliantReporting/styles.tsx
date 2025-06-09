@@ -30,16 +30,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
-import {
-  animation,
-  Icon,
-  IconSVG,
-  iconToDataURI,
-  palette,
-} from "@recidiviz/design-system";
+import { animation, Icon, IconSVG, iconToDataURI } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
 import * as React from "react";
 import styled, { css } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import type { FormViewerContextData } from "../../FormViewer";
 import FormInput from "./FormInput";

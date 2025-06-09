@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, zindex } from "@recidiviz/design-system";
+import { spacing, zindex } from "@recidiviz/design-system";
 import { rem } from "polished";
 import ReactSelect, {
   ActionMeta,
@@ -24,20 +24,20 @@ import ReactSelect, {
   PropsValue,
 } from "react-select";
 
+import { palette } from "~design-system";
+
 import useIsMobile from "../../../../hooks/useIsMobile";
-import
-  {
-    caseloadSelectStyles,
-    MenuListWithShadow,
-    MultiValue as MultiValueOverride,
-    SelectOption,
-    ValueRemover,
-  } from "../../../CaseloadSelect";
-import
-  {
-    InsightsRosterChangeRequestFormOptions,
-    SelectOptionWithLocation,
-  } from "../../types";
+import {
+  caseloadSelectStyles,
+  MenuListWithShadow,
+  MultiValue as MultiValueOverride,
+  SelectOption,
+  ValueRemover,
+} from "../../../CaseloadSelect";
+import {
+  InsightsRosterChangeRequestFormOptions,
+  SelectOptionWithLocation,
+} from "../../types";
 import { ClearIndicator } from "./ClearIndicator";
 import { Control } from "./Control";
 import { Option } from "./Option";
@@ -93,9 +93,7 @@ export const SupervisionOfficerSelect = ({
     minHeight: rem(48),
     padding: `${rem(spacing.sm)} ${rem(spacing.md)}`,
     margin: 0,
-    boxShadow: state.menuIsOpen
-      ? "0px 10px 40px rgba(53, 83, 98, 0.3)"
-      : "none", // Optional shadow when menu is open (currently disabled)
+    boxShadow: state.menuIsOpen ? `0px 10px 40px ${palette.slate30}` : "none", // Optional shadow when menu is open (currently disabled)
   });
 
   // Customize the menu (dropdown list) styles.
@@ -106,7 +104,7 @@ export const SupervisionOfficerSelect = ({
     border: "none",
     borderTop: `1px solid ${palette.slate20}`, // Top border to separate from control
     borderRadius: "0 0 8px 8px", // Rounded corners at the bottom
-    boxShadow: "0px 15px 20px rgba(53, 83, 98, 0.2)", // Shadow for depth effect
+    boxShadow: `0px 15px 20px ${palette.slate20}`, // Shadow for depth effect
   });
 
   // Render the ReactSelect component with custom styles and components.

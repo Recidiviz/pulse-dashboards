@@ -23,11 +23,13 @@ import {
   useFloating,
   useInteractions,
 } from "@floating-ui/react";
-import { Button, Icon, palette, spacing } from "@recidiviz/design-system";
+import { Button, Icon, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC, memo, useEffect, useId, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { STICKY_HEADER_ZINDEX } from "../AppLayout/constants";
 import { PAGE_PADDING } from "../BaseLayout/BaseLayout";

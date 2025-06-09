@@ -15,15 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  palette,
-  Sans12,
-  Sans14,
-  Sans24,
-  spacing,
-} from "@recidiviz/design-system";
+import { Sans12, Sans14, Sans24, spacing } from "@recidiviz/design-system";
 import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 export const NoteFormHeader = styled.div`
   display: flex;

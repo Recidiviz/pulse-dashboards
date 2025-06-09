@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans16, typography } from "@recidiviz/design-system";
+import { Sans16, typography } from "@recidiviz/design-system";
 import { Text } from "@visx/text";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { TARGET_LINE_WIDTH } from "./constants";
 

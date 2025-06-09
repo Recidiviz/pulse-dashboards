@@ -15,17 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  palette,
-  spacing,
-  TooltipTrigger,
-  typography,
-} from "@recidiviz/design-system";
+import { spacing, TooltipTrigger, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { now } from "mobx-utils";
 import { rem } from "polished";
 import { ReactNode, useEffect, useState } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";

@@ -21,7 +21,6 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
-  palette,
   Sans24,
   spacing,
   typography,
@@ -33,6 +32,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { CaseNoteSearchResults } from "~datatypes";
+import { palette } from "~design-system";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import {

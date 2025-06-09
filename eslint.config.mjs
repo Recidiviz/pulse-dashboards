@@ -136,6 +136,12 @@ const getWorkingReactConfig = () => {
 };
 const workingReactConfig = getWorkingReactConfig();
 
+export const designSystemRestrictedImports = {
+  name: "@recidiviz/design-system",
+  importNames: ["palette"],
+  message: "Please import from ~design-system instead.",
+};
+
 export const reactConfig = tseslint.config(
   {
     files: ["**/*.*ts", "**/*.*tsx", "**/*.*js", "**/*.*jsx"],
@@ -155,6 +161,7 @@ export const reactConfig = tseslint.config(
               name: "styled-components",
               message: "Please import from styled-components/macro.",
             },
+            designSystemRestrictedImports,
           ],
         },
       ],

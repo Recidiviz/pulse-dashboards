@@ -16,7 +16,7 @@
 // =============================================================================
 
 import {
-  palette,
+  // palette,
   Pill,
   spacing,
   TooltipTrigger,
@@ -26,6 +26,7 @@ import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
@@ -69,6 +70,7 @@ const ManagedComponent = observer(function WorkflowsUnderstaffedPill({
   return (
     <TooltipTrigger contents={<TooltipDetails />}>
       <UnderstaffedPillElement
+        // TODO(#8709): Add color to design system or change to design system color
         color={"rgba(226, 244, 255, 1)"}
         filled
         textColor={palette.pine2}

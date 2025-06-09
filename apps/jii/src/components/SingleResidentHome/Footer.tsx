@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { CSSProperties, memo } from "react";
 import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";

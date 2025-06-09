@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Pill, spacing } from "@recidiviz/design-system";
+import { Pill, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { formatWorkflowsDate } from "../../../../utils";
 import { WithCaseNotes } from "../../../../WorkflowsStore";

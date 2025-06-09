@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
-
 import { TargetStatus } from "~datatypes";
+import { palette } from "~design-system";
 
 export const TARGET_LINE_WIDTH = 2;
 

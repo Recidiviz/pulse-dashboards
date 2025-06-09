@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { defer } from "lodash";
 import { rem, rgba } from "polished";
 import {
@@ -31,6 +31,8 @@ import WindowScroller from "react-virtualized/dist/commonjs/WindowScroller";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList, FixedSizeList as List } from "react-window";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import useIsMobile from "../../hooks/useIsMobile";
 

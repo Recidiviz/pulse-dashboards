@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Loading, palette, spacing } from "@recidiviz/design-system";
+import { Loading, spacing } from "@recidiviz/design-system";
 import { scaleLinear } from "d3-scale";
 import { observer } from "mobx-react-lite";
 import { matchPath, useLocation } from "react-router-dom";
+
+import { palette } from "~design-system";
 
 import {
   MARGIN,

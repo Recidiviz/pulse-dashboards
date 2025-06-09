@@ -15,18 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Button,
-  palette,
-  Sans12,
-  Sans24,
-  spacing,
-} from "@recidiviz/design-system";
+import { Button, Sans12, Sans24, spacing } from "@recidiviz/design-system";
 import * as Sentry from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useFeatureVariants } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";

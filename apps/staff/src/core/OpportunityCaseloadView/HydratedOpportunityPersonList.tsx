@@ -33,14 +33,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import {
-  palette,
-  Sans14,
-  Sans16,
-  Sans18,
-  spacing,
-  TooltipTrigger,
-} from "@recidiviz/design-system";
+import { Sans14, Sans16, Sans18, spacing, TooltipTrigger } from "@recidiviz/design-system";
 import { ColumnDef, Row, SortingState } from "@tanstack/react-table";
 import { orderBy } from "lodash";
 import { observer } from "mobx-react-lite";
@@ -57,6 +50,7 @@ import {
 import styled from "styled-components/macro";
 
 import { OpportunityType } from "~datatypes";
+import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import {
@@ -254,7 +248,7 @@ export function OfficerNameCell({ row }: { row: Row<Opportunity> }) {
     <WorkflowsOfficerName officerId={row.original.person.assignedStaffId} />
   ) : (
     // for type safety, but we should not show this column for anyone without an officer
-    "—"
+    ("—")
   );
 }
 
@@ -689,7 +683,6 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
           <TableViewToggle presenter={presenter} />
         </FlexWrapper>
       </MaxWidthWrapper>
-
       {
         /* Sortable tab control bar */
         presenter.displayTabs && (
@@ -718,28 +711,26 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
           </DndContext>
         )
       }
-
       {presenter.tabPrefaceText && (
         <OpportunityPageExplainer>
           {presenter.tabPrefaceText}
         </OpportunityPageExplainer>
       )}
-
       {/* eslint-disable-next-line no-nested-ternary */}
       {peopleInActiveTab.length === 0 ? (
         /* Empty tab display */
-        <MaxWidthFlexWrapper fullWidth={!presenter.showListView}>
+        (<MaxWidthFlexWrapper fullWidth={!presenter.showListView}>
           <EmptyTabGroupWrapper>
             <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
           </EmptyTabGroupWrapper>
-        </MaxWidthFlexWrapper>
+        </MaxWidthFlexWrapper>)
       ) : // eslint-disable-next-line no-nested-ternary
       !presenter.showListView ? (
         /* Table view */
-        <TableView presenter={presenter} />
+        (<TableView presenter={presenter} />)
       ) : peopleInActiveTabBySubcategory ? (
         /* List view subcategories display */
-        (presenter.subcategoryOrder ?? [])
+        ((presenter.subcategoryOrder ?? [])
           .filter((category) => peopleInActiveTabBySubcategory[category])
           .map((category) => (
             <div key={category}>
@@ -750,12 +741,11 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
                 items={peopleInActiveTabBySubcategory[category]}
               />
             </div>
-          ))
+          )))
       ) : (
         /* List view with no subcategories */
-        <CaseloadOpportunityGrid items={peopleInActiveTab} />
+        (<CaseloadOpportunityGrid items={peopleInActiveTab} />)
       )}
-
       <OpportunityPreviewModal
         opportunity={presenter.selectedOpportunity}
         navigableOpportunities={presenter.navigablePeople}

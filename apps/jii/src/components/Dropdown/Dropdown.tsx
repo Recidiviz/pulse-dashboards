@@ -20,10 +20,11 @@
 import {
   DropdownMenuItem as OriginalDropdownMenuItem,
   DropdownToggle as OriginalDropdownToggle,
-  palette,
   typography,
 } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 export {
   Dropdown,

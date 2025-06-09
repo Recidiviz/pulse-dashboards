@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, spacing } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { FC, memo } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { GoButton } from "../ButtonLink/GoButton";
 import { SimpleLinkProps } from "../types";

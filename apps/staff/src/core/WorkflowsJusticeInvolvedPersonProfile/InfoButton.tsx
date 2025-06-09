@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette } from "@recidiviz/design-system";
+import { Icon } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 export const InfoLink = styled.a`
   color: ${palette.slate30};

@@ -22,7 +22,6 @@ import {
   DropdownToggle,
   Icon,
   IconSVG,
-  palette,
   spacing,
   typography,
   zindex,
@@ -34,6 +33,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { isOfflineMode } from "~client-env-utils";
+import { palette } from "~design-system";
 import { psiUrl } from "~sentencing-client";
 
 import Drawer from "../../components/Drawer/Drawer";
@@ -132,9 +132,9 @@ const DropdownProfile = styled(Dropdown)`
 const DropdownProfileMenu = styled(DropdownMenu)`
   background: #ffffff;
   box-shadow:
-    0px 0px 1px rgba(43, 84, 105, 0.1),
-    0px 4px 8px rgba(43, 84, 105, 0.06),
-    0px 8px 56px rgba(43, 84, 105, 0.12);
+    0px 0px 1px ${palette.slate10},
+    0px 4px 8px ${palette.slate05},
+    0px 8px 56px ${palette.slate15};
   border-radius: 8px;
   padding: 12px 0;
   width: max-content;
@@ -162,6 +162,7 @@ const DrawerBodyStyles = {
 };
 
 const DrawerOverlayStyles = {
+  // TODO(#8709): Add color to design system or change to design system color
   background: "rgba(1, 35, 34, 0.7)",
   backdropFilter: "blur(1px)",
 };

@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, palette, Sans16, spacing } from "@recidiviz/design-system";
+import { Button, Sans16, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { useState } from "react";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import useIsMobile from "../../hooks/useIsMobile";
 

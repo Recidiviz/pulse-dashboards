@@ -16,7 +16,6 @@
 // =============================================================================
 
 import {
-  palette,
   Sans14,
   Sans16,
   Sans18,
@@ -30,6 +29,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled, { css } from "styled-components/macro";
 
+import { palette } from "~design-system";
 import { PersonInitialsAvatar } from "~ui";
 
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";

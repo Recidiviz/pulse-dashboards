@@ -18,7 +18,7 @@
 import Chart from "chart.js";
 import ChartAnnotationsPlugin from "chartjs-plugin-annotation";
 
-export default (function () {
+export default ((function() {
   // Extras required for our Chart.js configuration
   Chart.plugins.register(ChartAnnotationsPlugin);
-})();
+})());

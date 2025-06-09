@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { rgba } from "polished";
 import { components, OptionProps } from "react-select";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { SelectOption } from "../../../CaseloadSelect";
 import { SelectOptionWithLocation } from "../../types";
@@ -28,7 +29,7 @@ const SelectOptionWrapper = styled.div`
   justify-content: space-between;
 `;
 const SelectOptionLocation = styled.div`
-  color: ${rgba(43, 84, 105, 0.5)};
+  color: ${palette.slate50};
 `;
 
 export const Option = ({

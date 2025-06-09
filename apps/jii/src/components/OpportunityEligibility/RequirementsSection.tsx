@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, spacing, typography } from "@recidiviz/design-system";
+import { Icon, spacing, typography } from "@recidiviz/design-system";
 import Markdown from "markdown-to-jsx";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
 import { FC, Fragment } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { RequirementsSectionContent } from "../../models/EligibilityReport/types";
 import { GoButton } from "../ButtonLink/GoButton";

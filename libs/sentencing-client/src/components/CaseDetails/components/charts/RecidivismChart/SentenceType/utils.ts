@@ -29,7 +29,8 @@ import {
   text,
   tip,
 } from "@observablehq/plot";
-import { palette } from "@recidiviz/design-system";
+
+import { palette } from "~design-system";
 
 import { CaseInsight } from "../../../../../../api";
 import { convertDecimalToPercentage } from "../../../../../../utils/utils";

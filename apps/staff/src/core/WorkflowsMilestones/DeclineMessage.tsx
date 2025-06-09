@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans18 } from "@recidiviz/design-system";
+import { Sans18 } from "@recidiviz/design-system";
 import { debounce, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { useRootStore } from "../../components/StoreProvider";

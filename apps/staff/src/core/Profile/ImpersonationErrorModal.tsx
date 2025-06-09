@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, Icon, Modal, palette } from "@recidiviz/design-system";
+import { Button, Icon, Modal } from "@recidiviz/design-system";
 import { useEffect, useState } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import {
   PartiallyTypedRootStore,

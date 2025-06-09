@@ -17,12 +17,12 @@
 
 import "./DashboardLayout.scss";
 
-import { palette } from "@recidiviz/design-system";
 import cn from "classnames";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
+import { palette } from "~design-system";
 import { PSI_PATHS } from "~sentencing-client";
 
 import IE11Banner from "../components/IE11Banner";

@@ -15,12 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  palette,
-  spacing,
-  Tooltip,
-  typography,
-} from "@recidiviz/design-system";
+import { spacing, Tooltip, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -29,6 +24,7 @@ import { ResponsiveXYFrame } from "semiotic";
 import styled from "styled-components/macro";
 
 import { TargetStatus } from "~datatypes";
+import { palette } from "~design-system";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { MetricWithConfig } from "../../InsightsStore/presenters/types";

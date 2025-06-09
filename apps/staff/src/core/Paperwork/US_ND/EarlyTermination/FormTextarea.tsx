@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, palette } from "@recidiviz/design-system";
+import { animation } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { transparentize } from "polished";
 import * as React from "react";
@@ -23,6 +23,8 @@ import { MutableRefObject, useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import type { TextareaAutosizeProps } from "react-textarea-autosize/dist/declarations/src";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { UsNdEarlyTerminationDraftData } from "../../../../WorkflowsStore";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";

@@ -50,6 +50,7 @@ export const Tooltip: React.FC<
   }
   return (
     <TooltipTrigger
+      // TODO(#8709): Add color to design system or change to design system color
       backgroundColor="rgba(0, 31, 31, 1)"
       contents={<TooltipContent headerText={headerText} content={content} />}
       maxWidth={width ?? 318}

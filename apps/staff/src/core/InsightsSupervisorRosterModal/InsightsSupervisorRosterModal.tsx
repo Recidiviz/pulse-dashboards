@@ -15,18 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Button,
-  Modal,
-  palette,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { Button, Modal, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import pluralize from "pluralize";
 import { rem, rgba } from "polished";
 import React from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import ChevronLeft from "../../assets/static/images/chevronLeft.svg";
 import useIsMobile from "../../hooks/useIsMobile";
@@ -153,6 +149,7 @@ const InsightsSupervisorRosterModal: React.FC<RosterModalType> = ({
                 name="Back"
                 kind="link"
                 role="button"
+                // TODO(#8709): Add color to design system or change to design system color
                 color={rgba("#00113380", 0.5)}
                 onClick={() => {
                   presenter.view = "ROSTER";
@@ -167,6 +164,7 @@ const InsightsSupervisorRosterModal: React.FC<RosterModalType> = ({
               kind="link"
               icon="Close"
               iconSize={14}
+              // TODO(#8709): Add color to design system or change to design system color
               color={rgba("#00113380", 0.5)}
               onClick={(e) => {
                 e.preventDefault();

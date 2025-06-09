@@ -15,13 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans14, typography } from "@recidiviz/design-system";
+import { Sans14, typography } from "@recidiviz/design-system";
 import { differenceInDays, isAfter, parseISO, startOfToday } from "date-fns";
 import { isEqual, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { CharacterCountTextField } from "../../components/CharacterCountTextField";
 import Checkbox from "../../components/Checkbox/Checkbox";

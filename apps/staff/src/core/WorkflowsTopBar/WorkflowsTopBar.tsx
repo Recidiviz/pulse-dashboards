@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Assets, palette, spacing } from "@recidiviz/design-system";
+import { Assets, spacing } from "@recidiviz/design-system";
 import React from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { headerHeight } from "../../assets/styles/spec/settings/baseColors.scss";
 

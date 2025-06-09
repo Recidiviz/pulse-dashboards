@@ -15,15 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  animation,
-  Button,
-  palette,
-  TooltipTrigger,
-} from "@recidiviz/design-system";
+import { animation, Button, TooltipTrigger } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem, transparentize } from "polished";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { EarlyTerminationForm } from "../../../../WorkflowsStore";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";

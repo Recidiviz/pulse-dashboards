@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 export const DropdownItem = styled.div<{ first?: boolean }>`
   color: ${(props) => (props.first ? palette.pine3 : palette.pine4)};

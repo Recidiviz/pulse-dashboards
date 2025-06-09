@@ -21,7 +21,6 @@ import {
   Icon,
   Loading,
   Modal,
-  palette,
   Sans14,
   Sans16,
   Sans24,
@@ -35,6 +34,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { Client, UsTnExpirationOpportunity } from "../../WorkflowsStore";
 import {

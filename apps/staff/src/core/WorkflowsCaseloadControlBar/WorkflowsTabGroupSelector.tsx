@@ -21,10 +21,11 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownToggle,
-  palette,
   typography,
 } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 const SelectorDropdown = styled(Dropdown)``;
 const SelectorDropdownToggleButtonText = styled.div`
@@ -45,9 +46,9 @@ const SelectorDropdownMenu = styled(DropdownMenu).attrs({
 })`
   background: #ffffff;
   box-shadow:
-    0px 0px 1px rgba(43, 84, 105, 0.1),
-    0px 4px 8px rgba(43, 84, 105, 0.06),
-    0px 8px 56px rgba(43, 84, 105, 0.12);
+    0px 0px 1px ${palette.slate10},
+    0px 4px 8px ${palette.slate05},
+    0px 8px 56px ${palette.slate15};
   border-radius: 8px;
   padding: 12px 0;
   width: max-content;

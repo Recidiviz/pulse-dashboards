@@ -15,9 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, typography } from "@recidiviz/design-system";
+import { typography } from "@recidiviz/design-system";
 import { StylesConfig } from "react-select";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import {
   HeaderCell as DashboardHeaderCell,
@@ -62,7 +64,7 @@ export const Body = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  background-color: rgba(244, 245, 246, 1);
+  background-color: ${palette.marble3};
   border: 1px solid ${palette.marble5};
   flex-grow: 1;
   overflow-y: auto;
@@ -278,6 +280,7 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 7px;
+  // TODO(#8709): Add color to design system or change to design system color
   color: rgba(0, 17, 51, 1);
   ${typography.Sans14}
 `;
@@ -386,6 +389,7 @@ export const RecommendationOption = styled.div<{
   border: 1px solid ${palette.slate20};
   ${({ selected }) =>
     selected &&
+    // TODO(#8709): Add color to design system or change to design system color
     `
     background-color: rgba(43, 105, 105, 0.03);
     border: 1px solid rgba(0, 102, 95, 0.4);
@@ -703,6 +707,7 @@ export const Notification = styled.div`
 export const CarouselButton = styled.div`
   display: flex;
   align-items: center;
+  // TODO(#8709): Add color to design system or change to design system color
   background-color: rgba(241, 255, 253, 1);
   color: ${palette.text.links};
   border-radius: 3px;
@@ -953,7 +958,8 @@ export const AddRecommendationButton = styled(EditCaseDetailsButton)<{
     svg path {
       ${({ isAdded }) =>
         isAdded
-          ? `fill: rgba(134, 152, 161, 1);`
+          ? // TODO(#8709): Add color to design system or change to design system color
+            `fill: rgba(134, 152, 161, 1);`
           : `stroke: rgba(134, 152, 161, 1);`}
     }
     ${({ isAdded }) => isAdded && `border: 1px solid transparent;`};

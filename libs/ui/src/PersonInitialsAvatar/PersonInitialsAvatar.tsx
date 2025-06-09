@@ -15,11 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { palette, Sans14 } from "@recidiviz/design-system";
+import { Sans14 } from "@recidiviz/design-system";
 import Avatar from "boring-avatars";
 import { rem } from "polished";
 import React from "react";
 import styled, { css } from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 interface AvatarProps {
   name: string;

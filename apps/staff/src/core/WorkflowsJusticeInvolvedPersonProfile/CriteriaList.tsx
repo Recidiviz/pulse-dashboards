@@ -15,19 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Icon,
-  IconSVG,
-  palette,
-  Sans14,
-  Sans16,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { Icon, IconSVG, Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React, { ReactElement } from "react";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { formatDollarAmount } from "../../utils/formatStrings";
 import { Opportunity, OpportunityRequirement } from "../../WorkflowsStore";

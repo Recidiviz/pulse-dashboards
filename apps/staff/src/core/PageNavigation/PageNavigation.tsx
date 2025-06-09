@@ -17,11 +17,12 @@
 
 import "./PageNavigation.scss";
 
-import { palette } from "@recidiviz/design-system";
 import cx from "classnames";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
+
+import { palette } from "~design-system";
 
 import {
   PartiallyTypedRootStore,

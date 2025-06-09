@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, Pill } from "@recidiviz/design-system";
+import { Icon, Pill } from "@recidiviz/design-system";
 import React, { ReactNode } from "react";
 import {
   AccordionItem,
@@ -25,6 +25,8 @@ import {
   AccordionItemState,
 } from "react-accessible-accordion";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Divider } from "./styles";

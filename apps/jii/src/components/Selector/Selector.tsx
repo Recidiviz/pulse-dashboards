@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, palette, Sans16 } from "@recidiviz/design-system";
+import { Icon, Sans16 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import ReactSelect, {
   components,
@@ -23,6 +23,8 @@ import ReactSelect, {
   PropsValue,
 } from "react-select";
 import { ValuesType } from "utility-types";
+
+import { palette } from "~design-system";
 
 function DropdownIndicator<Option>(
   props: DropdownIndicatorProps<Option, false>,
