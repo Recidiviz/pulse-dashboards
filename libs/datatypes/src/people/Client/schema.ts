@@ -23,6 +23,7 @@ import { dateStringSchema } from "../../utils/zod";
 import { personMetadataSchema } from "../utils/personMetadataSchema";
 import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
 import { usNeClientMetadataSchema } from "./US_NE/metadata/schema";
+import { usUtClientMetadataSchema } from "./US_UT/metadata/schema";
 import { clientEmployerSchema, specialConditionCodeSchema } from "./utils";
 
 const optionalClientInformation = z
@@ -58,7 +59,10 @@ const optionalClientInformation = z
         dateImposed: dateStringSchema,
       }),
     ),
-    metadata: personMetadataSchema([usNeClientMetadataSchema]),
+    metadata: personMetadataSchema([
+      usNeClientMetadataSchema,
+      usUtClientMetadataSchema,
+    ]),
   })
   .partial();
 

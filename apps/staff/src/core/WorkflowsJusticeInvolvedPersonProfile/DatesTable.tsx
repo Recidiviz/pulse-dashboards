@@ -31,7 +31,8 @@ const DateTable = styled.table`
   color: ${palette.slate80};
   border-spacing: 0;
   border-collapse: separate;
-  margin: ${rem(spacing.md)} 0;
+  margin-top: ${rem(spacing.md)};
+  margin-bottom: ${rem(spacing.lg)};
   width: 100%;
 `;
 
@@ -107,7 +108,7 @@ export function DatesTable({
 }) {
   const today = new Date();
   return (
-    <DateTable>
+    <DateTable className="fs-exclude">
       <tbody>
         {dates.map(({ label, date, tooltip, highlight }) => (
           <DateTableRow key={label}>

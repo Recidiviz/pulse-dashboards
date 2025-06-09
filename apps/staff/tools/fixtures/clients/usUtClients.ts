@@ -40,6 +40,29 @@ export const US_UT_CLIENTS: ClientFixture[] = [
         type: "US_UT_EMPLOYED_6_MONTHS",
       },
     ],
+    metadata: {
+      stateCode: "US_UT",
+      interstateCompactIn: false,
+      sentences: [
+        {
+          projectedCompletionDate: "2023-02-11",
+          courtCaseNumber: "200345678",
+          statutes: ["11-34-5(6)", "11-34-5(1.1)"],
+        },
+        {
+          projectedCompletionDate: "2023-02-11",
+          courtCaseNumber: "201654321",
+          statutes: [
+            "70-14-35",
+            "70-15(2)(B)",
+            "75-302(1)(A)(II)",
+            "75-305",
+            "75-307.5",
+            "89-5-112.9",
+          ],
+        },
+      ],
+    },
   },
   {
     personName: {
@@ -63,6 +86,17 @@ export const US_UT_CLIENTS: ClientFixture[] = [
         type: "US_UT_EMPLOYED_6_MONTHS",
       },
     ],
+    metadata: {
+      stateCode: "US_UT",
+      interstateCompactIn: false,
+      sentences: [
+        {
+          projectedCompletionDate: "2022-12-31",
+          courtCaseNumber: "21113579",
+          statutes: ["34-94-85", "512-346"],
+        },
+      ],
+    },
   },
   {
     personName: {
@@ -86,6 +120,22 @@ export const US_UT_CLIENTS: ClientFixture[] = [
         type: "US_UT_EMPLOYED_6_MONTHS",
       },
     ],
+    metadata: {
+      stateCode: "US_UT",
+      interstateCompactIn: false,
+      sentences: [
+        {
+          projectedCompletionDate: "2023-01-20",
+          courtCaseNumber: "2109485700",
+          statutes: ["74-56(1)", "74-56(2.1)", "74-56(3)"],
+        },
+        {
+          projectedCompletionDate: "2023-12-20",
+          courtCaseNumber: "2133858300",
+          statutes: ["15328"],
+        },
+      ],
+    },
   },
 
   {
@@ -110,5 +160,21 @@ export const US_UT_CLIENTS: ClientFixture[] = [
         type: "US_UT_EMPLOYED_6_MONTHS",
       },
     ],
+    metadata: {
+      stateCode: "US_UT",
+      interstateCompactIn: true,
+      sentences: [
+        {
+          projectedCompletionDate: "2023-01-20",
+          courtCaseNumber: "21124680",
+          statutes: ["01.2364"],
+        },
+        {
+          projectedCompletionDate: undefined,
+          courtCaseNumber: "C21328999",
+          statutes: ["41-5-1(A)+(B)(III)"],
+        },
+      ],
+    },
   },
 ];
