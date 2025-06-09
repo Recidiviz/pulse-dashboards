@@ -194,24 +194,18 @@ const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
   checked: boolean;
   count: number;
 }) {
-  const disabled = checked && count === 0;
   return (
     <StyledFilterDropdownMenuItem
       preventCloseOnClickEvent
       onClick={(e) => {
         e.preventDefault();
-        if (!disabled) onClick();
+        onClick();
       }}
       key={option.value}
-      $disabled={disabled}
     >
-      <FilterOptionLabel $disabled={disabled}>
+      <FilterOptionLabel $disabled={false}>
         <FilterCheckboxContainer>
-          <Checkbox
-            checked={checked}
-            value={option.value}
-            disabled={disabled}
-          />
+          <Checkbox checked={checked} value={option.value} />
         </FilterCheckboxContainer>
         {option.shortLabel ?? option.label ?? option.value}
       </FilterOptionLabel>
