@@ -196,7 +196,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
         },
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
-        supervisionTasksNavLink: { activeTenants: ["US_ID"] },
+        supervisionTasksNavLink: { activeTenants: ["US_ID", "US_NE"] },
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],

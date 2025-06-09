@@ -19,10 +19,10 @@ import simplur from "simplur";
 
 import { fieldToDate } from "~datatypes";
 
-import { formatDate } from "../../utils";
-import { Task } from "./Task";
-import { SupervisionTasksCaseType } from "./types";
-import { US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE } from "./utils";
+import { formatDate } from "../../../utils";
+import { Task } from "../Task";
+import { SupervisionTasksCaseType } from "../types";
+import { US_ID_SUPERVISION_LEVEL_HOME_VISIT_COMPLIANCE } from "../utils";
 
 class UsIdHomeVisitTask extends Task<"homeVisit"> {
   displayName = "Home contact";

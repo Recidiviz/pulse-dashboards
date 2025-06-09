@@ -57,6 +57,12 @@ type UsIdEmploymentDetails = {
   lastContacted?: string;
 };
 
+type UsNeAssessmentDetails = {
+  assessmentDueDate: string | null;
+  mostRecentAssessmentDate: string | null;
+  isFirstAssessment: boolean;
+};
+
 type UsTxContactDetails = {
   contactCount: number;
   lastContactDate: string | null;
@@ -111,6 +117,7 @@ export const SUPERVISION_TASK_TYPES = [
   "assessment",
   "contact",
   "employment",
+  "usNeAssessment",
   "usTxTypeAgnosticContact",
   "usTxCollateralContactScheduled",
   "usTxHomeContactScheduled",
@@ -132,6 +139,7 @@ export type SupervisionDetails =
   | UsIdAssessmentDetails
   | UsIdContactDetails
   | UsIdEmploymentDetails
+  | UsNeAssessmentDetails
   | UsTxContactDetails
   | UsTxTypeAgnosticContactDetails
   | UsTxEdgeCaseContactDetails
@@ -142,6 +150,7 @@ export type SupervisionDetailsForTask = {
   assessment: UsIdAssessmentDetails;
   contact: UsIdContactDetails;
   employment: UsIdEmploymentDetails;
+  usNeAssessment: UsNeAssessmentDetails;
   usTxCollateralContactScheduled: UsTxContactDetails;
   usTxTypeAgnosticContact: UsTxTypeAgnosticContactDetails;
   usTxHomeContactScheduled: UsTxOverridableContactDetails;

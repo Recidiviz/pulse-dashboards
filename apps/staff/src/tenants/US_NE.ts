@@ -17,6 +17,7 @@
 
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
+import UsNeAssessmentTask from "../WorkflowsStore/Task/US_NE/UsNeAssessmentTask";
 
 const US_NE_CONFIG: TenantConfig<"US_NE"> = {
   name: "Nebraska",
@@ -27,6 +28,45 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsMethodologyUrl:
     "https://drive.google.com/file/d/1PuZnoNTddYoKVA0CSpRDoNvCIBWJxg_I/view",
+  workflowsTasksConfig: {
+    collection: "usNeSupervisionTasks",
+    tasks: {
+      usNeAssessment: {
+        constructor: UsNeAssessmentTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+    },
+    filters: [
+      {
+        title: "Task Type",
+        field: "type",
+        type: "task",
+        options: [
+          {
+            value: "usNeAssessment",
+            label: "ORAS Assessment",
+          },
+        ],
+      },
+      // TODO: Need to figure out formatting
+      // {
+      //   title: "Supervision Level",
+      //   field: "supervisionLevel",
+      //   type: "person",
+      //   options: [],
+      // },
+      {
+        title: "Case Type",
+        field: "caseType",
+        type: "person",
+        options: [
+          { value: "General" },
+          { value: "Sex offense" },
+          { value: "Domestic violence" },
+        ],
+      },
+    ],
+  },
   workflowsSystemConfigs: {
     SUPERVISION: {
       search: [
@@ -39,7 +79,7 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
     },
   },
   navigation: {
-    workflows: ["home", "clients"],
+    workflows: ["home", "clients", "tasks"],
   },
   supervisionEndCopyOverride: "Tentative Release Date",
 };

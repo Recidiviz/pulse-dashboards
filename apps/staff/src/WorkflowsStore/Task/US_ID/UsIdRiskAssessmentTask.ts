@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,15 +15,45 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Task } from "./Task";
+import { fieldToDate } from "~datatypes";
 
-class UsNdRiskAssessmentTask extends Task<"assessment"> {
+import { formatDate } from "../../../utils";
+import { Task } from "../Task";
+
+class UsIdRiskAssessmentTask extends Task<"assessment"> {
   displayName = "Risk assessment";
   vitalsMetricId = "timely_risk_assessment" as const;
 
+  get dueDateDisplayLong() {
+    return `${this.displayName} due ${this.dueDateFromToday}`;
+  }
+
+  get dueDateDisplayShort() {
+    return `Due ${this.dueDateFromToday}`;
+  }
+
   get additionalDetails(): string | undefined {
-    return undefined;
+    let details = "";
+
+    if (this.lastAssessedOn) {
+      details += `Last assessed on ${this.lastAssessedOn}; `;
+    }
+
+    if (this.riskLevel) {
+      details += `Score: ${this.riskLevel}`;
+    }
+
+    return details;
+  }
+
+  get lastAssessedOn(): string | undefined {
+    if (!this.details.lastAssessedOn) return;
+    return formatDate(fieldToDate(this.details.lastAssessedOn));
+  }
+
+  get riskLevel(): string | null {
+    return this.details.riskLevel;
   }
 }
 
-export default UsNdRiskAssessmentTask;
+export default UsIdRiskAssessmentTask;

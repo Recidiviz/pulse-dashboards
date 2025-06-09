@@ -15,41 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { capitalize } from "lodash";
-
 import { fieldToDate } from "~datatypes";
 
-import { formatWorkflowsDate, generateSerialListString } from "../../utils";
-import { Task } from "./Task";
-import { UsTxAgnosticContactTaskType } from "./types";
+import { formatWorkflowsDate } from "../../../utils/formatStrings";
+import { Task } from "../Task";
+import { UsTxSimpleContactTaskType } from "../types";
 
-class UsTxTypeAgnosticContactTask<
-  T extends UsTxAgnosticContactTaskType,
+abstract class UsTxContactTask<
+  T extends UsTxSimpleContactTaskType,
 > extends Task<T> {
-  get displayName() {
-    return this.allowedContactTypes;
-  }
-
-  get allowedContactTypes(): string {
-    const rawTypes = this.details.officerInCriticallyUnderstaffedLocation
-      ? this.details.overrideContactTypesAccepted
-      : this.details.contactTypesAccepted;
-    const allowedTypes = (rawTypes ?? "Contact")
-      .split(",")
-      .map((type) => type.toLowerCase());
-
-    allowedTypes[0] = capitalize(allowedTypes[0]);
-
-    return generateSerialListString(allowedTypes, "or");
-  }
-
   get lastContactDate(): string | undefined {
     if (!this.details.lastContactDate) return;
     return formatWorkflowsDate(fieldToDate(this.details.lastContactDate));
   }
 
   get additionalDetails(): string {
-    return this.details.lastContactDate
+    return this.lastContactDate
       ? `Last contact: ${this.lastContactDate}`
       : "No previous visit on record";
   }
@@ -59,4 +40,4 @@ class UsTxTypeAgnosticContactTask<
   }
 }
 
-export default UsTxTypeAgnosticContactTask;
+export default UsTxContactTask;

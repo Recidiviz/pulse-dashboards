@@ -26,7 +26,7 @@ import { Client } from "../../Client";
 import { JusticeInvolvedPerson } from "../../types";
 import { homeVisitTaskRecord, supervisionTaskClientRecord } from "../fixtures";
 import { SupervisionTask, SupervisionTaskType } from "../types";
-import UsIdHomeVisitTask from "../UsIdHomeVisitTask";
+import UsIdHomeVisitTask from "../US_ID/UsIdHomeVisitTask";
 
 vi.mock("../../subscriptions");
 vi.mock("firebase/firestore");

@@ -15,15 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Task } from "./Task";
+import { Task } from "../Task";
 
-class UsNdContactTask extends Task<"contact"> {
-  displayName = "Contact";
-  vitalsMetricId = "timely_contact" as const;
+class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
+  displayName = "Home contact";
 
-  get additionalDetails(): string | undefined {
-    return undefined;
+  get additionalDetails(): string {
+    return this.details.reasonForContact;
+  }
+
+  get frequency(): string {
+    return this.additionalDetails;
   }
 }
 
-export default UsNdContactTask;
+export default UsTxHomeContactEdgeCaseTask;

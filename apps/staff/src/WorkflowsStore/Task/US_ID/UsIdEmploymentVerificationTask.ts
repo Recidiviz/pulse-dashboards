@@ -19,10 +19,10 @@ import simplur from "simplur";
 
 import { fieldToDate } from "~datatypes";
 
-import { formatDate } from "../../utils";
-import { Task } from "./Task";
-import { SupervisionTasksCaseType } from "./types";
-import { US_ID_SUPERVISION_EMPLOYMENT_VERIFICATION_COMPLIANCE } from "./utils";
+import { formatDate } from "../../../utils";
+import { Task } from "../Task";
+import { SupervisionTasksCaseType } from "../types";
+import { US_ID_SUPERVISION_EMPLOYMENT_VERIFICATION_COMPLIANCE } from "../utils";
 
 class UsIdEmploymentVerificationTask extends Task<"employment"> {
   displayName = "Employment";

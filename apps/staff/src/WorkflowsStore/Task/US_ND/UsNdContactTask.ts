@@ -15,29 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fieldToDate } from "~datatypes";
+import { Task } from "../Task";
 
-import { formatWorkflowsDate } from "../../utils/formatStrings";
-import { Task } from "./Task";
-import { UsTxSimpleContactTaskType } from "./types";
+class UsNdContactTask extends Task<"contact"> {
+  displayName = "Contact";
+  vitalsMetricId = "timely_contact" as const;
 
-abstract class UsTxContactTask<
-  T extends UsTxSimpleContactTaskType,
-> extends Task<T> {
-  get lastContactDate(): string | undefined {
-    if (!this.details.lastContactDate) return;
-    return formatWorkflowsDate(fieldToDate(this.details.lastContactDate));
-  }
-
-  get additionalDetails(): string {
-    return this.lastContactDate
-      ? `Last contact: ${this.lastContactDate}`
-      : "No previous visit on record";
-  }
-
-  get frequency(): string {
-    return `Every ${this.details.frequency.toLowerCase()}`;
+  get additionalDetails(): string | undefined {
+    return undefined;
   }
 }
 
-export default UsTxContactTask;
+export default UsNdContactTask;

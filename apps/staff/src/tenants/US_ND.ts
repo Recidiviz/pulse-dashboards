@@ -24,8 +24,8 @@ import {
   PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import UsNdContactTask from "../WorkflowsStore/Task/UsNdContactTask";
-import UsNdRiskAssessmentTask from "../WorkflowsStore/Task/UsNdRiskAssessmentTask";
+import UsNdContactTask from "../WorkflowsStore/Task/US_ND/UsNdContactTask";
+import UsNdRiskAssessmentTask from "../WorkflowsStore/Task/US_ND/UsNdRiskAssessmentTask";
 
 const US_ND_CONFIG: TenantConfig<"US_ND"> = {
   name: "North Dakota",

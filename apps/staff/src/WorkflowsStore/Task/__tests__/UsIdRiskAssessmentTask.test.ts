@@ -18,7 +18,7 @@
 import { RootStore } from "../../../RootStore";
 import { JusticeInvolvedPerson } from "../../types";
 import { SupervisionTaskRecord } from "../types";
-import UsIdRiskAssessmentTask from "../UsIdRiskAssessmentTask";
+import UsIdRiskAssessmentTask from "../US_ID/UsIdRiskAssessmentTask";
 
 const mockPerson = {} as JusticeInvolvedPerson;
 describe("UsIdRiskAssessmentTask", () => {

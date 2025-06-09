@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,28 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fieldToDate } from "~datatypes";
+import { Task } from "../Task";
 
-import { formatWorkflowsDate } from "../../utils/formatStrings";
-import { Task } from "./Task";
+class UsNdRiskAssessmentTask extends Task<"assessment"> {
+  displayName = "Risk assessment";
+  vitalsMetricId = "timely_risk_assessment" as const;
 
-class UsTxAssessmentTask extends Task<"usTxAssessment"> {
-  displayName = "Assessment";
-
-  get lastAssessment(): string | undefined {
-    if (this.details.eventType !== "assessment_completed") return;
-    return formatWorkflowsDate(fieldToDate(this.details.eventDate));
-  }
-
-  get additionalDetails(): string {
-    return this.lastAssessment
-      ? `Last assessment: ${this.lastAssessment}`
-      : "No previous assessment on record";
-  }
-
-  get frequency(): string {
-    return `Every ${this.details.frequency.toLowerCase()}`;
+  get additionalDetails(): string | undefined {
+    return undefined;
   }
 }
 
-export default UsTxAssessmentTask;
+export default UsNdRiskAssessmentTask;

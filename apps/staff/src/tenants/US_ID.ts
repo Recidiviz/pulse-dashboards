@@ -24,10 +24,10 @@ import {
   PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
-import UsIdContactTask from "../WorkflowsStore/Task/UsIdContactTask";
-import UsIdEmploymentVerificationTask from "../WorkflowsStore/Task/UsIdEmploymentVerificationTask";
-import UsIdHomeVisitTask from "../WorkflowsStore/Task/UsIdHomeVisitTask";
-import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/UsIdRiskAssessmentTask";
+import UsIdContactTask from "../WorkflowsStore/Task/US_ID/UsIdContactTask";
+import UsIdEmploymentVerificationTask from "../WorkflowsStore/Task/US_ID/UsIdEmploymentVerificationTask";
+import UsIdHomeVisitTask from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTask";
+import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdRiskAssessmentTask";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
 const US_ID_CONFIG: TenantConfig<"US_ID"> = {

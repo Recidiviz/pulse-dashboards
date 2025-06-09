@@ -17,18 +17,18 @@
 
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
-import UsTxAssessmentTask from "../WorkflowsStore/Task/UsTxAssessmentTask";
-import usTxCollateralContactScheduled from "../WorkflowsStore/Task/UsTxCollateralContactScheduled";
-import UsTxElectronicContactScheduledTask from "../WorkflowsStore/Task/UsTxElectronicContactScheduledTask";
-import UsTxElectronicContactUnscheduledTask from "../WorkflowsStore/Task/UsTxElectronicContactUnscheduledTask";
-import UsTxFieldContactScheduledTask from "../WorkflowsStore/Task/UsTxFieldContactScheduledTask";
-import UsTxFieldContactUnscheduledTask from "../WorkflowsStore/Task/UsTxFieldContactUnscheduledTask";
-import usTxHomeContactEdgeCaseTask from "../WorkflowsStore/Task/UsTxHomeContactEdgeCaseTask";
-import usTxHomeContactScheduledTask from "../WorkflowsStore/Task/UsTxHomeContactScheduledTask";
-import usTxHomeContactUnscheduledTask from "../WorkflowsStore/Task/UsTxHomeContactUnscheduledTask";
-import UsTxInCustodyContactTask from "../WorkflowsStore/Task/UsTxInCustodyContactTask";
-import UsTxOfficeContactScheduledTask from "../WorkflowsStore/Task/UsTxOfficeContactScheduledTask";
-import usTxTypeAgnosticContactTask from "../WorkflowsStore/Task/UsTxTypeAgnosticContactTask";
+import UsTxAssessmentTask from "../WorkflowsStore/Task/US_TX/UsTxAssessmentTask";
+import usTxCollateralContactScheduled from "../WorkflowsStore/Task/US_TX/UsTxCollateralContactScheduled";
+import UsTxElectronicContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxElectronicContactScheduledTask";
+import UsTxElectronicContactUnscheduledTask from "../WorkflowsStore/Task/US_TX/UsTxElectronicContactUnscheduledTask";
+import UsTxFieldContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxFieldContactScheduledTask";
+import UsTxFieldContactUnscheduledTask from "../WorkflowsStore/Task/US_TX/UsTxFieldContactUnscheduledTask";
+import usTxHomeContactEdgeCaseTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactEdgeCaseTask";
+import usTxHomeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactScheduledTask";
+import usTxHomeContactUnscheduledTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactUnscheduledTask";
+import UsTxInCustodyContactTask from "../WorkflowsStore/Task/US_TX/UsTxInCustodyContactTask";
+import UsTxOfficeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxOfficeContactScheduledTask";
+import usTxTypeAgnosticContactTask from "../WorkflowsStore/Task/US_TX/UsTxTypeAgnosticContactTask";
 
 const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   name: "Texas",
