@@ -15,17 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { expectTypeOf, test } from "vitest";
+import { z } from "zod";
 
-import {
-  RawResidentRecord,
-  ResidentRecord,
-  UnparsedResidentRecord,
-} from "./schema";
+import { nullishAsUndefined } from "../../../../utils/zod";
 
-test("unparsed type mirrors transformations from parsed type", () => {
-  const unit = {} as UnparsedResidentRecord;
-  expectTypeOf(unit).toEqualTypeOf<
-    RawResidentRecord & Pick<ResidentRecord, "personType">
-  >();
+export const usIdResidentMetadataSchema = z.object({
+  stateCode: z.literal("US_ID"),
+  crcFacilities: z.array(z.string()),
+  initialParoleHearingDate: nullishAsUndefined(z.string()),
+  nextParoleHearingDate: nullishAsUndefined(z.string()),
+  tentativeParoleDate: nullishAsUndefined(z.string()),
 });

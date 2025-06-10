@@ -17,15 +17,18 @@
 
 import { Required as RequireKeys } from "utility-types";
 
-import { ClientRecord, UsMeWorkReleaseRecordRaw } from "~datatypes";
+import {
+  ClientRecord,
+  ResidentRecord,
+  UsMeWorkReleaseRecordRaw,
+} from "~datatypes";
 
-import { WorkflowsResidentRecord } from "../../../../FirestoreStore";
 import {
   UsMeEarlyTerminationReferralRecordRaw,
   UsMeFurloughReleaseReferralRecordRaw,
 } from "..";
 
-export const usMePersonRecord: WorkflowsResidentRecord = {
+export const usMePersonRecord: ResidentRecord = {
   recordId: "us_me_111",
   personType: "RESIDENT",
   stateCode: "US_ME",
@@ -39,8 +42,8 @@ export const usMePersonRecord: WorkflowsResidentRecord = {
   pseudonymizedId: "p111",
   custodyLevel: "MINIMUM",
   officerId: "CASE_MANAGER_1",
-  admissionDate: "2020-03-10",
-  releaseDate: "2025-05-20",
+  admissionDate: new Date("2020-03-10"),
+  releaseDate: new Date("2025-05-20"),
   allEligibleOpportunities: [
     "usMeSCCP",
     "usMeFurloughRelease",
@@ -50,7 +53,7 @@ export const usMePersonRecord: WorkflowsResidentRecord = {
   metadata: {},
 };
 
-export const usMePersonRecordShorterSentence: WorkflowsResidentRecord = {
+export const usMePersonRecordShorterSentence: ResidentRecord = {
   recordId: "us_me_112",
   personType: "RESIDENT",
   stateCode: "US_ME",
@@ -64,8 +67,8 @@ export const usMePersonRecordShorterSentence: WorkflowsResidentRecord = {
   pseudonymizedId: "p112",
   custodyLevel: "MINIMUM",
   officerId: "CASE_MANAGER_1",
-  admissionDate: "2020-03-10",
-  releaseDate: "2024-05-20",
+  admissionDate: new Date("2020-03-10"),
+  releaseDate: new Date("2024-05-20"),
   allEligibleOpportunities: ["usMeSCCP"],
 
   metadata: {},

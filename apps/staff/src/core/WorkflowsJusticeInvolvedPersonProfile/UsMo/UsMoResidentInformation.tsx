@@ -18,10 +18,12 @@
 import React from "react";
 import z from "zod";
 
-import { sanctionsSchema } from "../../../WorkflowsStore";
+import { usMoSanctionsSchema } from "~datatypes";
+
 import { UsMoSanctions } from "../ResidentDetailSidebarComponents/US_MO/UsMoSanctions";
 import { UsMoSolitary } from "../ResidentDetailSidebarComponents/US_MO/UsMoSolitary";
 import { ResidentProfileProps } from "../types";
+
 export function UsMoResidentInformation({
   resident,
 }: ResidentProfileProps): React.ReactElement | null {
@@ -36,7 +38,7 @@ export function UsMoResidentInformation({
       <UsMoSolitary person={resident} />
       <UsMoSanctions
         sanctions={z
-          .array(sanctionsSchema)
+          .array(usMoSanctionsSchema)
           .parse(metadata.d1SanctionInfoPastYear)}
       />
     </>

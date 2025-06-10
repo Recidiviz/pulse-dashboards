@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentRecord } from "../../../../FirestoreStore";
+import { ResidentRecord } from "~datatypes";
+
 import { UsMoOverdueRestrictiveHousingInitialHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingInitialHearingOpportunity/UsMoOverdueRestrictiveHousingInitialHearingReferralRecord";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
 import { UsMoOverdueRestrictiveHousingReleaseReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReleaseOpportunity";
 import { UsMoOverdueRestrictiveHousingReviewHearingReferralRecordRaw } from "../UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
 
-export const usMoPersonRecord: WorkflowsResidentRecord = {
+export const usMoPersonRecord: ResidentRecord = {
   recordId: "us_mo_111",
   personType: "RESIDENT",
   stateCode: "US_MO",
@@ -35,8 +36,8 @@ export const usMoPersonRecord: WorkflowsResidentRecord = {
   pseudonymizedId: "p111",
   custodyLevel: "MINIMUM",
   officerId: "CASE_MANAGER_1",
-  admissionDate: "2020-03-10",
-  releaseDate: "2025-05-20",
+  admissionDate: new Date("2020-03-10"),
+  releaseDate: new Date("2025-05-20"),
   allEligibleOpportunities: [
     "usMoOverdueRestrictiveHousingRelease",
     "usMoOverdueRestrictiveHousingInitialHearing",

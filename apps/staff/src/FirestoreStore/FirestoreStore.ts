@@ -49,7 +49,13 @@ import { mapValues, pickBy } from "lodash";
 import { makeAutoObservable } from "mobx";
 
 import { isOfflineMode } from "~client-env-utils";
-import { ClientRecord, clientRecordSchema, OpportunityType } from "~datatypes";
+import {
+  ClientRecord,
+  clientRecordSchema,
+  OpportunityType,
+  ResidentRecord,
+  residentRecordSchema,
+} from "~datatypes";
 import {
   collectionNameForKey,
   FIRESTORE_GENERAL_COLLECTION_MAP,
@@ -80,7 +86,6 @@ import {
   SupervisionTaskUpdate,
   UserUpdateRecord,
   UsTnExpirationOpportunityUpdate,
-  WorkflowsResidentRecord,
 } from "./types";
 
 function getFirestoreProjectId() {
@@ -221,7 +226,7 @@ export default class FirestoreStore {
   async getResident(
     residentId: string,
     stateCode: string,
-  ): Promise<WorkflowsResidentRecord | undefined> {
+  ): Promise<ResidentRecord | undefined> {
     // TODO(#1763) index clients by pseudo ID and go back to a simple getDoc lookup
     const results = await getDocs(
       query(
@@ -234,14 +239,10 @@ export default class FirestoreStore {
 
     const result = results.docs[0];
     if (result.exists())
-      return {
-        ...(result.data() as Omit<
-          WorkflowsResidentRecord,
-          "recordId" | "personType"
-        >),
+      return residentRecordSchema.parse({
+        ...result.data(),
         recordId: result.id,
-        personType: "RESIDENT",
-      };
+      });
   }
 
   private get userUpdatesKey() {

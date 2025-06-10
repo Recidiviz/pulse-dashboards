@@ -22,6 +22,7 @@ import { IDisposer, keepAlive } from "mobx-utils";
 import {
   ClientRecord,
   OpportunityType,
+  ResidentRecord,
   SupervisionStaffRecord,
 } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
@@ -33,7 +34,6 @@ import FirestoreStore, {
   MilestonesMessage,
   TextMessageStatus,
   UserUpdateRecord,
-  WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { FeatureVariant, TenantId } from "../../RootStore/types";
@@ -226,7 +226,7 @@ function populateClients(clients: ClientRecord[]): void {
   });
 }
 
-function populateResidents(residents: WorkflowsResidentRecord[]): void {
+function populateResidents(residents: ResidentRecord[]): void {
   runInAction(() => {
     workflowsStore.residentsSubscription.data = residents;
     workflowsStore.residentsSubscription.hydrationState = {

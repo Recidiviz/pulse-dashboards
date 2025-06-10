@@ -15,12 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord, OpportunityType } from "~datatypes";
+import { ClientRecord, OpportunityType, ResidentRecord } from "~datatypes";
 
-import {
-  CombinedUserRecord,
-  WorkflowsResidentRecord,
-} from "../../../../FirestoreStore";
+import { CombinedUserRecord } from "../../../../FirestoreStore";
 import { UsTnCustodyLevelDowngradeReferralRecordRaw } from "../..";
 import { CompliantReportingReferralRecordRaw } from "../CompliantReportingOpportunity";
 import { UsTnAnnualReclassificationReviewReferralRecordRaw } from "../UsTnAnnualReclassificationReviewOpportunity";
@@ -72,7 +69,7 @@ export const compliantReportingEligibleClientRecord: ClientRecord = {
   personType: "CLIENT",
 };
 
-export const residentRecordBase: WorkflowsResidentRecord = {
+export const residentRecordBase: ResidentRecord = {
   recordId: "us_tn_002",
   personName: {
     givenNames: "Barney",
@@ -85,7 +82,7 @@ export const residentRecordBase: WorkflowsResidentRecord = {
   stateCode: "US_TN",
   officerId: "CASEMANAGER1",
   custodyLevel: "MEDIUM",
-  releaseDate: "2024-12-31",
+  releaseDate: new Date("2024-12-31"),
   allEligibleOpportunities: [],
   personType: "RESIDENT",
 
@@ -420,11 +417,10 @@ export const UsTnExpirationReferralRecordFixture: UsTnExpirationReferralRecordRa
     isAlmostEligible: false,
   };
 
-export const UsTnCustodyLevelDowngradeEligibleResidentRecord: WorkflowsResidentRecord =
-  {
-    ...residentRecordBase,
-    allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
-  };
+export const UsTnCustodyLevelDowngradeEligibleResidentRecord: ResidentRecord = {
+  ...residentRecordBase,
+  allEligibleOpportunities: ["usTnCustodyLevelDowngrade"],
+};
 
 export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDowngradeReferralRecordRaw =
   {
@@ -482,7 +478,7 @@ export const UsTnCustodyLevelDowngradeReferralRecordFixture: UsTnCustodyLevelDow
     isAlmostEligible: false,
   };
 
-export const UsTnAnnualReclassificationEligibleResidentRecord: WorkflowsResidentRecord =
+export const UsTnAnnualReclassificationEligibleResidentRecord: ResidentRecord =
   {
     ...residentRecordBase,
     allEligibleOpportunities: ["usTnAnnualReclassification"],

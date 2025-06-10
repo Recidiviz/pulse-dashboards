@@ -46,6 +46,8 @@ export const rawUsMaResidents: Array<
   pseudonymizedId: randPseudonymizedId(),
   facilityId: "DEMO FACILITY",
   metadata: rawUsMaResidentMetadataFixtures[i],
+  recordId: `us_ma_${i}`,
+  allEligibleOpportunities: [],
 }));
 
 export const usMaResidents: Array<ResidentRecord> = rawUsMaResidents.map((r) =>

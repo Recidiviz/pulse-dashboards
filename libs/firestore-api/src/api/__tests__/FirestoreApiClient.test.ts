@@ -111,6 +111,7 @@ describe("residents", () => {
       data() {
         return f;
       },
+      id: f.recordId,
     })),
   } as unknown as QuerySnapshot;
 
@@ -169,6 +170,7 @@ describe("resident by pseudo ID", () => {
       data() {
         return f;
       },
+      id: f.recordId,
     })),
     size: 1,
   } as unknown as QuerySnapshot;

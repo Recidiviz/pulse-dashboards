@@ -34,7 +34,7 @@ export const UsMeSCCPEligibilityDate = observer(
       <>
         <DetailsSubheading>SCCP Eligibility Date</DetailsSubheading>
         <SecureDetailsContent>
-          {formatWorkflowsDate(sccpDate)}
+          {formatWorkflowsDate(new Date(sccpDate))}
         </SecureDetailsContent>
       </>
     );

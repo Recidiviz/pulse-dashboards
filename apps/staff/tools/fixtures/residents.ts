@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { WorkflowsResidentRecord } from "../../src/FirestoreStore/types";
+import { RawResidentRecord } from "~datatypes";
+
 import { usArResidents } from "./residents/usArResidents";
 import { usAzResidents } from "./residents/usAzResidents";
 import { usIdResidents } from "./residents/usIdResidents";
@@ -25,7 +26,7 @@ import { usMoResidents } from "./residents/usMoResidents";
 import { usTnResidents } from "./residents/usTnResidents";
 import { FirestoreFixture, PersonFixture } from "./utils";
 
-export type ResidentFixture = PersonFixture<WorkflowsResidentRecord>;
+export type ResidentFixture = PersonFixture<RawResidentRecord>;
 
 const data: ResidentFixture[] = [
   ...usAzResidents,

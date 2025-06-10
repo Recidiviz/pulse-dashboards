@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsAzResidentMetadata } from "../../../../../FirestoreStore";
+import { ResidentMetadata } from "~datatypes";
+
 import { metadataToDates } from "../UsAzDates";
 
 describe("UsAzDates metadataToDates tests", () => {
@@ -39,14 +40,14 @@ describe("UsAzDates metadataToDates tests", () => {
         value.toISOString(),
       ]),
     ),
-  } as UsAzResidentMetadata;
+  } as ResidentMetadata<"US_AZ">;
 
   const FAKE_TOOLTIP = "TOOLTIP";
 
   it("shows Projected TPR, SED, and CSED when there is no real TPR date", () => {
     const metadataUnderTest = {
       ...FAKE_METADATA,
-      acisTprDate: null,
+      acisTprDate: undefined,
     };
     const dates = metadataToDates(metadataUnderTest, false, FAKE_TOOLTIP);
     expect(dates).toEqual([
@@ -64,7 +65,7 @@ describe("UsAzDates metadataToDates tests", () => {
   it("shows Projected DTP, SED, and CSED when there is no real DTP date", () => {
     const metadataUnderTest = {
       ...FAKE_METADATA,
-      acisDtpDate: null,
+      acisDtpDate: undefined,
     };
     const dates = metadataToDates(metadataUnderTest, true, FAKE_TOOLTIP);
     expect(dates).toEqual([
@@ -104,8 +105,8 @@ describe("UsAzDates metadataToDates tests", () => {
   it("passes through null dates", () => {
     const metadataUnderTest = {
       ...FAKE_METADATA,
-      ercdDate: null,
-      csbdDate: null,
+      ercdDate: undefined,
+      csbdDate: undefined,
     };
     const dates = metadataToDates(metadataUnderTest, false, FAKE_TOOLTIP);
     expect(dates).toEqual([

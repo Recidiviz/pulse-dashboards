@@ -15,14 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord, MilestoneType, StaffRecord } from "~datatypes";
+import {
+  ClientRecord,
+  MilestoneType,
+  ResidentRecord,
+  StaffRecord,
+} from "~datatypes";
 import { FirestoreCollectionName } from "~firestore-api";
 import { Hydratable } from "~hydration-utils";
 
-import {
-  SupervisionTaskUpdate,
-  WorkflowsResidentRecord,
-} from "../../FirestoreStore";
+import { SupervisionTaskUpdate } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import {
   FeatureVariant,
@@ -80,7 +82,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   // Workflows
   workflowsSupportedSystems?: SystemId[];
   workflowsSystemConfigs?: {
-    INCARCERATION?: WorkflowsSystemConfig<WorkflowsResidentRecord, TENANT_ID>;
+    INCARCERATION?: WorkflowsSystemConfig<ResidentRecord, TENANT_ID>;
     SUPERVISION?: WorkflowsSystemConfig<ClientRecord, TENANT_ID>;
   };
   workflowsHomepage?: WorkflowsPage;
@@ -161,7 +163,7 @@ export type WorkflowsSystemConfig<R, T extends TenantConfigId> = {
 
 export type AnyWorkflowsSystemConfig =
   | WorkflowsSystemConfig<ClientRecord, any>
-  | WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
+  | WorkflowsSystemConfig<ResidentRecord, any>;
 
 export type SearchIcon = "flag";
 

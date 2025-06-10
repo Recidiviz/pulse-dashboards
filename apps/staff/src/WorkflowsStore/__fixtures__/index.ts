@@ -21,6 +21,7 @@ import {
   incarcerationStaffRecordSchema,
   makeRecordFixture,
   outputFixtureArray,
+  ResidentRecord,
   SupervisionStaffRecord,
   supervisionStaffRecordSchema,
 } from "~datatypes";
@@ -29,7 +30,6 @@ import {
   CombinedUserRecord,
   LocationRecord,
   UserRecord,
-  WorkflowsResidentRecord,
 } from "../../FirestoreStore";
 
 // INCARCERATION
@@ -49,11 +49,11 @@ export const mockIncarcerationOfficers: Array<
   IncarcerationStaffRecord["output"]
 > = outputFixtureArray(incarcerationStaffTestFixtures);
 
-export const mockResidents: WorkflowsResidentRecord[] = [
+export const mockResidents: ResidentRecord[] = [
   {
     recordId: "999",
     personType: "RESIDENT",
-    admissionDate: "2023-03-23",
+    admissionDate: new Date("2023-03-23"),
     allEligibleOpportunities: ["usMeSCCP"],
     custodyLevel: "MINIMUM",
     facilityId: "MOUNTAIN VIEW CORRECTIONAL FACILITY",
@@ -65,7 +65,7 @@ export const mockResidents: WorkflowsResidentRecord[] = [
       surname: "Sanders",
     },
     pseudonymizedId: "p999",
-    releaseDate: "2023-09-22",
+    releaseDate: new Date("2023-09-22"),
     unitId: "UNIT E",
     personExternalId: "999",
     displayId: "d999",

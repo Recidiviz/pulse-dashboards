@@ -17,7 +17,8 @@
 
 import React from "react";
 
-import { UsArResidentMetadata } from "../../../FirestoreStore";
+import { ResidentMetadata } from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../utils";
 import {
   DetailsHeading,
@@ -59,7 +60,7 @@ function UsArGoodTimeClassification({
     noIncarcerationSanctionsWithin6Months,
   },
 }: {
-  metadata: UsArResidentMetadata;
+  metadata: ResidentMetadata<"US_AR">;
 }): React.ReactElement {
   return (
     <DetailsSection>
@@ -96,7 +97,7 @@ function UsArGoodTimeClassification({
 function UsArCurrentStatus({
   metadata: { currentLocation, currentSentences },
 }: {
-  metadata: UsArResidentMetadata;
+  metadata: ResidentMetadata<"US_AR">;
 }): React.ReactElement {
   return (
     <DetailsSection>
@@ -109,14 +110,17 @@ function UsArCurrentStatus({
           <SecureDetailsContent>None</SecureDetailsContent>
         ) : (
           currentSentences.map(
-            ({ sentenceId, startDate, endDate, initialTimeServedDays }) => (
-              <SecureDetailsContent key={`${sentenceId}-${startDate}`}>
-                {new Date(endDate) > new Date() ? "Serving" : "Served"} sentence{" "}
-                {sentenceId} from {formatWorkflowsDate(new Date(startDate))} to{" "}
-                {formatWorkflowsDate(new Date(endDate))} with{" "}
-                {initialTimeServedDays || "no"} initial days served
-              </SecureDetailsContent>
-            ),
+            ({ sentenceId, startDate, endDate, initialTimeServedDays }) => {
+              return !endDate || !startDate ? undefined : (
+                <SecureDetailsContent key={`${sentenceId}-${startDate}`}>
+                  {new Date(endDate) > new Date() ? "Serving" : "Served"}{" "}
+                  sentence {sentenceId} from{" "}
+                  {formatWorkflowsDate(new Date(startDate))} to{" "}
+                  {formatWorkflowsDate(new Date(endDate))} with{" "}
+                  {initialTimeServedDays || "no"} initial days served
+                </SecureDetailsContent>
+              );
+            },
           )
         )}
       </DetailsList>
@@ -127,7 +131,7 @@ function UsArCurrentStatus({
 function UsArReleaseDates({
   metadata: { paroleEligibilityDate, maxFlatReleaseDate, projectedReleaseDate },
 }: {
-  metadata: UsArResidentMetadata;
+  metadata: ResidentMetadata<"US_AR">;
 }): React.ReactElement {
   return (
     <DetailsSection>
@@ -153,7 +157,7 @@ function UsArReleaseDates({
 function UsArProgramming({
   metadata: { programAchievement },
 }: {
-  metadata: UsArResidentMetadata;
+  metadata: ResidentMetadata<"US_AR">;
 }): React.ReactElement {
   return (
     <DetailsSection>

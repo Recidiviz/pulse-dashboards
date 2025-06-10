@@ -19,11 +19,10 @@ import { and, FieldPath, or, query, where } from "firebase/firestore";
 import { observable } from "mobx";
 import { Mock } from "vitest";
 
-import { ClientRecord } from "~datatypes";
+import { ClientRecord, ResidentRecord } from "~datatypes";
 
 import { usIdResidents } from "../../../tools/fixtures/residents/usIdResidents";
 import { WorkflowsSystemConfig } from "../../core/models/types";
-import { WorkflowsResidentRecord } from "../../FirestoreStore";
 import { Client } from "../Client";
 import { Resident } from "../Resident";
 import { SearchManager } from "../SearchManager";
@@ -44,7 +43,7 @@ let residentSearchManager: SearchManager;
 let testClient: Client;
 let clientRecord: ClientRecord;
 let testResident: Resident;
-let residentRecord: WorkflowsResidentRecord;
+let residentRecord: ResidentRecord;
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -381,7 +380,7 @@ describe("matchingPersonsGrouped", () => {
       search: [
         { searchType: "LOCATION", searchField: ["metadata", "crcFacilities"] },
       ],
-    } as WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
+    } as WorkflowsSystemConfig<ResidentRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
       () => incarcerationSystemConfig,
     );
@@ -417,7 +416,7 @@ describe("matchingPersonsGrouped", () => {
       search: [
         { searchType: "LOCATION", searchField: ["metadata", "crcFacilities"] },
       ],
-    } as WorkflowsSystemConfig<WorkflowsResidentRecord, any>;
+    } as WorkflowsSystemConfig<ResidentRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
       () => incarcerationSystemConfig,
     );

@@ -78,7 +78,13 @@ export * from "./people/Client/utils";
 // -----------------------------------------------------------------------------
 export * from "./people/Resident/fixtures";
 export * from "./people/Resident/schema";
+export type * from "./people/Resident/US_AR/metadata/schema";
+export type * from "./people/Resident/US_AZ/metadata/schema";
+export type * from "./people/Resident/US_ID/metadata/schema";
 export type * from "./people/Resident/US_MA/metadata/schema";
+export type * from "./people/Resident/US_ME/metadata/schema";
+export * from "./people/Resident/US_MO/metadata/schema";
+export type * from "./people/Resident/US_ND/metadata/schema";
 
 // Staff Exports: Includes fixtures and schema related to Staff
 // -----------------------------------------------------------------------------

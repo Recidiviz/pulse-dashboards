@@ -92,5 +92,5 @@ export function personMetadataSchema<
       : stateMetadataSchemas
   ) satisfies AtLeastOne<z.ZodDiscriminatedUnionOption<"stateCode">>;
 
-  return z.discriminatedUnion("stateCode", allSchemas).optional();
+  return z.discriminatedUnion("stateCode", allSchemas);
 }

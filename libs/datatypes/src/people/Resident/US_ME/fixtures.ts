@@ -41,6 +41,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ months: 35 }),
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: -1 }),
     portionServedNeeded: "2/3" as const,
+    recordId: "us_me_001",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -61,6 +64,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ months: 26 }),
     portionServedNeeded: "2/3" as const,
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: 2 }),
+    recordId: "us_me_002",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -80,6 +86,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ years: 2 }),
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: -3 }),
     portionServedNeeded: "1/2" as const,
+    recordId: "us_me_003",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -101,6 +110,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
       months: -3,
     }),
     portionServedNeeded: "1/2" as const,
+    recordId: "us_me_004",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -120,6 +132,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ years: 2, months: 5 }),
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: 5 }),
     portionServedNeeded: "1/2" as const,
+    recordId: "us_me_005",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -139,6 +154,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ months: 26 }),
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: -10 }),
     portionServedNeeded: "2/3" as const,
+    recordId: "us_me_006",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -158,6 +176,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ months: 24 }),
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: -3 }),
     portionServedNeeded: "1/2" as const,
+    recordId: "us_me_007",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -177,6 +198,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ months: 32 }),
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: -4 }),
     portionServedNeeded: "2/3" as const,
+    recordId: "us_me_008",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -199,6 +223,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
       months: 1,
     }),
     portionServedNeeded: "1/2" as const,
+    recordId: "us_me_009",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -215,6 +242,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     unitId: "UNIT B",
     custodyLevel: "MEDIUM",
     admissionDate: relativeFixtureDate({ years: -1, months: -7 }),
+    recordId: "us_me_998",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
   {
     officerId: "OFFICER5",
@@ -234,6 +264,9 @@ export const rawUsMeResidents: Array<RawResidentRecord> = [
     releaseDate: relativeFixtureDate({ years: 3, months: 5 }),
     usMePortionNeededEligibleDate: relativeFixtureDate({ months: 11 }),
     portionServedNeeded: "1/2" as const,
+    recordId: "us_me_999",
+    allEligibleOpportunities: [],
+    metadata: {},
   },
 ];
 

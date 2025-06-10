@@ -244,7 +244,8 @@ function validateDocument(
 ) {
   const raw = doc.data();
   // The client schema expects the record id to be injected
-  if (firestoreCollection === "clients") raw.recordId = "stub";
+  if (firestoreCollection === "clients" || firestoreCollection === "residents")
+    raw.recordId = "stub";
   if (isOpportunity) {
     // To ensure that opportunity schemas pass through criteria they don't recognize,
     // we inject these additional criteria and check that they're still there after the

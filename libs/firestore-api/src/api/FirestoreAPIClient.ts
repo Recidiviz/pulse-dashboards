@@ -78,7 +78,10 @@ export class FirestoreAPIClient implements FirestoreAPI {
     return snapshot.docs
       .map((d) => {
         try {
-          return residentRecordSchema.parse(d.data());
+          return residentRecordSchema.parse({
+            ...d.data(),
+            recordId: d.id,
+          });
         } catch (e) {
           console.error(e);
           return;
@@ -122,7 +125,10 @@ export class FirestoreAPIClient implements FirestoreAPI {
 
     if (!snapshot.exists()) return;
 
-    return recordSchema.parse(snapshot.data());
+    return recordSchema.parse({
+      ...snapshot.data(),
+      recordId: snapshot.id,
+    });
   }
 
   /**
@@ -153,6 +159,9 @@ export class FirestoreAPIClient implements FirestoreAPI {
       );
     }
 
-    return recordSchema.parse(snapshot.docs[0].data());
+    return recordSchema.parse({
+      ...snapshot.docs[0].data(),
+      recordId: snapshot.docs[0].id,
+    });
   }
 }

@@ -42,14 +42,14 @@ export const usArResidents: ResidentFixture[] = [
       currentLocation: "1230456",
       currentSentences: [
         {
-          sentenceId: 555666888889999,
+          sentenceId: "555666888889999",
           startDate: "2015-10-12",
           endDate: "2016-06-08",
           initialTimeServedDays: 12,
           personId: 1,
         },
         {
-          sentenceId: 222881257772134,
+          sentenceId: "222881257772134",
           startDate: "2005-02-12",
           endDate: "2008-04-22",
           initialTimeServedDays: 19,
@@ -102,14 +102,14 @@ export const usArResidents: ResidentFixture[] = [
       currentLocation: "1230456",
       currentSentences: [
         {
-          sentenceId: 555666888889999,
+          sentenceId: "555666888889999",
           startDate: "2015-10-12",
           endDate: "2016-06-08",
           initialTimeServedDays: 12,
           personId: 2,
         },
         {
-          sentenceId: 222881257772134,
+          sentenceId: "222881257772134",
           startDate: "2005-02-12",
           endDate: "2008-04-22",
           initialTimeServedDays: 19,
@@ -162,14 +162,14 @@ export const usArResidents: ResidentFixture[] = [
       currentLocation: "1230456",
       currentSentences: [
         {
-          sentenceId: 555666888889999,
+          sentenceId: "555666888889999",
           startDate: "2015-10-12",
           endDate: "2016-06-08",
           initialTimeServedDays: 12,
           personId: 3,
         },
         {
-          sentenceId: 222881257772134,
+          sentenceId: "222881257772134",
           startDate: "2005-02-12",
           endDate: "2008-04-22",
           initialTimeServedDays: 19,
@@ -222,14 +222,14 @@ export const usArResidents: ResidentFixture[] = [
       currentLocation: "1230457",
       currentSentences: [
         {
-          sentenceId: 555666888889998,
+          sentenceId: "555666888889998",
           startDate: "2016-04-12",
           endDate: "2017-01-08",
           initialTimeServedDays: 15,
           personId: 4,
         },
         {
-          sentenceId: 222881257772133,
+          sentenceId: "222881257772133",
           startDate: "2006-08-12",
           endDate: "2009-10-22",
           initialTimeServedDays: 20,
@@ -282,14 +282,14 @@ export const usArResidents: ResidentFixture[] = [
       currentLocation: "1230458",
       currentSentences: [
         {
-          sentenceId: 555666888889997,
+          sentenceId: "555666888889997",
           startDate: "2014-07-12",
           endDate: "2015-03-08",
           initialTimeServedDays: 10,
           personId: 5,
         },
         {
-          sentenceId: 222881257772132,
+          sentenceId: "222881257772132",
           startDate: "2003-05-12",
           endDate: "2006-07-22",
           initialTimeServedDays: 18,

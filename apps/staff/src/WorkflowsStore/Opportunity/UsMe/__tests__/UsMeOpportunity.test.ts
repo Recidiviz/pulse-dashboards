@@ -19,7 +19,6 @@ import { configure } from "mobx";
 import tk from "timekeeper";
 
 import { mockOpportunityConfigs } from "../../../../core/__tests__/testUtils";
-import { UsMeResidentMetadata } from "../../../../FirestoreStore";
 import { RootStore } from "../../../../RootStore";
 import { TenantId } from "../../../../RootStore/types";
 import { Client } from "../../../Client";
@@ -49,11 +48,10 @@ function createResidentTestUnit(
 ) {
   root = new RootStore();
 
-  // @ts-ignore
   const residentRecordWithMetadata: typeof usMePersonRecord = {
     ...usMePersonRecord,
     metadata: {
-      ...(usMePersonRecord.metadata as UsMeResidentMetadata),
+      ...usMePersonRecord.metadata,
       stateCode: "US_ME",
       portionServedNeeded,
     },

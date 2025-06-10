@@ -17,8 +17,9 @@
 
 import React from "react";
 
+import { UsMoSanctionInfo } from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../../utils";
-import { UsMoSanctionInfo } from "../../../../WorkflowsStore/Opportunity/UsMo";
 import {
   DetailsHeading,
   SecureDetailsContent,

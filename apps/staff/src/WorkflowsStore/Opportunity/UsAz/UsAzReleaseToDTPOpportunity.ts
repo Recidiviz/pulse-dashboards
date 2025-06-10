@@ -17,7 +17,6 @@
 
 import { DocumentData } from "firebase/firestore";
 
-import { UsAzResidentMetadata } from "../../../FirestoreStore";
 import { Resident } from "../../Resident";
 import { UsAzReleaseToTransitionProgramForm } from "../Forms/UsAzReleaseToTransitionProgramForm";
 import {
@@ -47,15 +46,23 @@ export class UsAzReleaseToDTPOpportunity extends UsAzReleaseToTransitionProgramO
     );
   }
 
-  get eligibilityDate(): Date {
-    const metadata = this.person.metadata as UsAzResidentMetadata;
-    return (
-      super.eligibilityDate ??
-      new Date(
-        metadata.acisDtpDate ??
-          metadata.projectedDtpDate ??
-          metadata.projectedTprDate,
-      )
-    );
+  get eligibilityDate(): Date | undefined {
+    if (super.eligibilityDate) return super.eligibilityDate;
+
+    const { metadata } = this.person;
+    if (
+      metadata.stateCode !== "US_AZ" ||
+      (!metadata.acisDtpDate &&
+        !metadata.projectedDtpDate &&
+        !metadata.projectedTprDate)
+    )
+      return undefined;
+
+    const secondaryDate =
+      metadata.acisDtpDate ??
+      metadata.projectedDtpDate ??
+      metadata.projectedTprDate;
+
+    return secondaryDate ? new Date(secondaryDate) : undefined;
   }
 }

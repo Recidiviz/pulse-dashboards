@@ -18,16 +18,17 @@
 import { addYears } from "date-fns";
 import { uniqBy } from "lodash";
 
+import { ResidentRecord } from "~datatypes";
+
 import { workflowsUrl } from "../core/views";
-import { PortionServedDates, WorkflowsResidentRecord } from "../FirestoreStore";
-import { ResidentMetadata } from "../FirestoreStore/types";
+import { PortionServedDates } from "../FirestoreStore";
 import { JusticeInvolvedPersonBase } from "./JusticeInvolvedPersonBase";
 import { PersonType } from "./types";
-import { fractionalDateBetweenTwoDates, optionalFieldToDate } from "./utils";
+import { fractionalDateBetweenTwoDates } from "./utils";
 
 const LIFE_SENTENCE_THRESHOLD = addYears(new Date(), 200);
 
-export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord> {
+export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
   get profileUrl(): string {
     return workflowsUrl("residentProfile", {
       justiceInvolvedPersonId: this.pseudonymizedId,
@@ -67,16 +68,15 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
   }
 
   get admissionDate(): Date | undefined {
-    return optionalFieldToDate(this.record.admissionDate);
+    return this.record.admissionDate;
   }
 
   get releaseDate(): Date | undefined {
-    return optionalFieldToDate(this.record.releaseDate);
+    return this.record.releaseDate;
   }
 
   get onLifeSentence(): boolean | undefined {
     const { releaseDate } = this.record;
-
     if (!releaseDate) return;
 
     return new Date(releaseDate) > LIFE_SENTENCE_THRESHOLD;
@@ -91,22 +91,22 @@ export class Resident extends JusticeInvolvedPersonBase<WorkflowsResidentRecord>
       return;
     }
 
-    return optionalFieldToDate(this.record.metadata.sccpEligibilityDate);
+    return this.record.metadata.sccpEligibilityDate;
   }
 
   get usTnFacilityAdmissionDate(): Date | undefined {
-    return optionalFieldToDate(this.record.usTnFacilityAdmissionDate);
+    return this.record.usTnFacilityAdmissionDate;
   }
 
-  get metadata(): ResidentMetadata {
+  get metadata() {
     return this.record.metadata;
   }
 
   get portionServedDates(): PortionServedDates {
     if (this.onLifeSentence) return [];
 
-    const startDate = optionalFieldToDate(this.record.admissionDate);
-    const endDate = optionalFieldToDate(this.record.releaseDate);
+    const startDate = this.record.admissionDate;
+    const endDate = this.record.releaseDate;
     const halfTimeDate = fractionalDateBetweenTwoDates(startDate, endDate, 0.5);
     const twoThirdsTimeDate = fractionalDateBetweenTwoDates(
       startDate,

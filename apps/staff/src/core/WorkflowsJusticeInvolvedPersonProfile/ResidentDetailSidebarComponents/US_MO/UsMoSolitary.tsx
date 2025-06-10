@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { UsMoSolitaryAssignmentInfoPastYear } from "~datatypes";
+
 import { formatWorkflowsDate } from "../../../../utils";
-import { UsMoSolitaryAssignmentInfoPastYear } from "../../../../WorkflowsStore/Opportunity/UsMo";
 import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
   DetailsHeading,
@@ -45,7 +46,7 @@ export function UsMoSolitary({
       ? formatWorkflowsDate(new Date(solitaryStartDate))
       : "START DATE UNAVAILABLE";
     const endDateText =
-      solitaryEndDate !== null
+      solitaryEndDate !== undefined
         ? formatWorkflowsDate(new Date(solitaryEndDate))
         : "Present";
     return `${startDateText} - ${endDateText}`;

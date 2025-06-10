@@ -19,36 +19,53 @@ import { isEqual } from "date-fns";
 import { z } from "zod";
 
 import { usMeXPortionServedEnum } from "../../opportunities/UsMe/UsMeSCCP/schema";
+import { nullishAsUndefined } from "../../utils/zod";
 import { dateStringSchema } from "../../utils/zod/date/dateStringSchema";
-import { justiceInvolvedPersonRecordSchema } from "../JusticeInvolvedPerson/schema";
 import { personMetadataSchema } from "../utils/personMetadataSchema";
+import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
+import { usArResidentMetadataSchema } from "./US_AR/metadata/schema";
+import { usAzResidentMetadataSchema } from "./US_AZ/metadata/schema";
+import { usIdResidentMetadataSchema } from "./US_ID/metadata/schema";
 import { usMaResidentMetadataSchema } from "./US_MA/metadata/schema";
+import { usMeResidentMetadataSchema } from "./US_ME/metadata/schema";
+import { usMoResidentMetadataSchema } from "./US_MO/metadata/schema";
+import { usNdResidentMetadataSchema } from "./US_ND/metadata/schema";
 
 /**
  * Magic date that appears in data sometimes and is equivalent to null
  */
 const MISSING_DATE_SENTINEL = new Date(9999, 11, 1);
 
-export const residentRecordSchema = justiceInvolvedPersonRecordSchema
-  .extend({
-    facilityId: z.string().nullish(),
-    unitId: z.string().nullish(),
-    facilityUnitId: z.string().nullish(),
-    custodyLevel: z.string().nullish(),
-    admissionDate: dateStringSchema.nullish(),
-    releaseDate: dateStringSchema.nullish().transform((d) => {
-      if (d && isEqual(d, MISSING_DATE_SENTINEL)) {
-        return null;
-      }
-      return d;
+export const residentRecordSchema = workflowsJusticeInvolvedPersonRecordSchema
+  .merge(
+    z.object({
+      facilityId: z.string().nullish(),
+      unitId: z.string().nullish(),
+      facilityUnitId: z.string().nullish(),
+      custodyLevel: z.string().nullish(),
+      admissionDate: nullishAsUndefined(dateStringSchema),
+      releaseDate: nullishAsUndefined(dateStringSchema).transform((d) => {
+        if (d && isEqual(d, MISSING_DATE_SENTINEL)) {
+          return undefined;
+        }
+        return d;
+      }),
+      portionServedNeeded: usMeXPortionServedEnum.nullish(),
+      sccpEligibilityDate: dateStringSchema.nullish(),
+      usTnFacilityAdmissionDate: nullishAsUndefined(dateStringSchema),
+      usMePortionNeededEligibleDate: dateStringSchema.nullish(),
+      gender: z.string(),
+      metadata: personMetadataSchema([
+        usArResidentMetadataSchema,
+        usAzResidentMetadataSchema,
+        usIdResidentMetadataSchema,
+        usMeResidentMetadataSchema,
+        usMaResidentMetadataSchema,
+        usMoResidentMetadataSchema,
+        usNdResidentMetadataSchema,
+      ]),
     }),
-    portionServedNeeded: usMeXPortionServedEnum.nullish(),
-    sccpEligibilityDate: dateStringSchema.nullish(),
-    usTnFacilityAdmissionDate: dateStringSchema.nullish(),
-    usMePortionNeededEligibleDate: dateStringSchema.nullish(),
-    gender: z.string(),
-    metadata: personMetadataSchema([usMaResidentMetadataSchema]),
-  })
+  )
   .transform((input) => ({
     ...input,
     personType: "RESIDENT" as const,
@@ -57,17 +74,10 @@ export const residentRecordSchema = justiceInvolvedPersonRecordSchema
 /**
  * Data from the Recidiviz data platform about an incarcerated person
  */
-export type ResidentRecord = z.output<typeof residentRecordSchema>;
+export type ResidentRecord = z.infer<typeof residentRecordSchema>;
 /**
  * A Resident record in its raw form, as stored in Firestore
  */
 export type RawResidentRecord = z.input<typeof residentRecordSchema>;
 
-/**
- * A Resident record in its raw form, with a discriminating `personType` string literal added.
- * Should only be used in parts of the codebase where, for legacy reasons, resident records
- * are not parsed with Zod.
- */
-export type UnparsedResidentRecord = RawResidentRecord & {
-  personType: "RESIDENT";
-};
+export type ResidentMetadata<S> = ResidentRecord["metadata"] & { stateCode: S };

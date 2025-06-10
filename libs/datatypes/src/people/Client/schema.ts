@@ -62,7 +62,7 @@ const optionalClientInformation = z
     metadata: personMetadataSchema([
       usNeClientMetadataSchema,
       usUtClientMetadataSchema,
-    ]),
+    ]).optional(),
   })
   .partial();
 

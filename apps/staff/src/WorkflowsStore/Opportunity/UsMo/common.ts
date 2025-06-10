@@ -18,7 +18,7 @@
 import { mapValues } from "lodash";
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
+import { dateStringSchema, usMoSanctionsSchema } from "~datatypes";
 
 import { stringToIntSchema } from "../schemaHelpers";
 
@@ -48,24 +48,11 @@ const cdvSchema = z.object({
 
 export type UsMoConductViolationInfo = z.infer<typeof cdvSchema>;
 
-export const sanctionsSchema = z.object({
-  sanctionCode: z.string().nullable(),
-  sanctionExpirationDate: dateStringSchema.nullable(),
-  sanctionId: z.number().nullable(),
-  sanctionStartDate: dateStringSchema.nullable(),
-});
-export type UsMoSanctionInfo = z.infer<typeof sanctionsSchema>;
-
 const cdvMetadata = z.object({
   majorCdvs: z.array(cdvSchema),
   cdvsSinceLastHearing: z.array(cdvSchema),
   numMinorCdvsBeforeLastHearing: stringToIntSchema,
 });
-
-export type UsMoSolitaryAssignmentInfoPastYear = {
-  endDate: string | null;
-  startDate: string | null;
-};
 
 export type UsMoConductViolationMetadata = z.infer<typeof cdvMetadata>;
 
@@ -123,7 +110,7 @@ const nonOptionalMetadata = z
 
 const optionalMetadata = z
   .object({
-    allSanctions: z.array(sanctionsSchema),
+    allSanctions: z.array(usMoSanctionsSchema),
     mentalHealthAssessmentScore: z.string().nullable(),
     classesRecent: z.array(classesSchema),
     aicScore: z.string(),

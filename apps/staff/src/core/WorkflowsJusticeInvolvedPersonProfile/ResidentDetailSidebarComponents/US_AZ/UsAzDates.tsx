@@ -20,9 +20,9 @@ import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { ResidentMetadata } from "~datatypes";
 import { palette } from "~design-system";
 
-import { UsAzResidentMetadata } from "../../../../FirestoreStore";
 import { optionalFieldToDate } from "../../../../WorkflowsStore/utils";
 import { DateInfo, DatesTable } from "../../DatesTable";
 import { DetailsHeading, DetailsSection } from "../../styles";
@@ -43,7 +43,7 @@ const DateMethodologyText = styled(Sans14)`
 `;
 
 export function metadataToDates(
-  metadata: UsAzResidentMetadata,
+  metadata: ResidentMetadata<"US_AZ">,
   useDtp: boolean,
   inTableTooltip: string,
 ): DateInfo[] {

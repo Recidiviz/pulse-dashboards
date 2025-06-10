@@ -18,16 +18,13 @@
 import {
   ClientRecord,
   FullName,
+  ResidentRecord,
   StaffRecord,
   WorkflowsJusticeInvolvedPersonRecord,
 } from "~datatypes";
 
 import { AnyWorkflowsSystemConfig, StaffFilter } from "../core/models/types";
-import {
-  CombinedUserRecord,
-  PersonUpdateRecord,
-  WorkflowsResidentRecord,
-} from "../FirestoreStore";
+import { CombinedUserRecord, PersonUpdateRecord } from "../FirestoreStore";
 import { ActiveFeatureVariantRecord } from "../RootStore/types";
 import { Client } from "./Client";
 import {
@@ -126,10 +123,10 @@ export type PersonType = "CLIENT" | "RESIDENT";
 export type PersonRecordType =
   | WorkflowsJusticeInvolvedPersonRecord
   | ClientRecord
-  | WorkflowsResidentRecord;
+  | ResidentRecord;
 
 export type PersonClassForRecord<RecordType extends PersonRecordType> =
-  RecordType extends WorkflowsResidentRecord
+  RecordType extends ResidentRecord
     ? Resident
     : RecordType extends ClientRecord
       ? Client

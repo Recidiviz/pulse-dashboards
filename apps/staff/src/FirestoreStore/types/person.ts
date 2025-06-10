@@ -15,13 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  UnparsedResidentRecord,
-  WorkflowsJusticeInvolvedPersonRecord,
-} from "~datatypes";
-
-import { ResidentMetadata } from ".";
-
 export type PersonUpdateType = "preferredName" | "preferredContactMethod";
 export const contactMethods = ["Call", "Text", "Email", "None"];
 export type ContactMethodType = (typeof contactMethods)[number];
@@ -37,11 +30,3 @@ export type PersonUpdateRecord = {
   preferredName?: string;
   preferredContactMethod?: ContactMethodType;
 };
-
-/**
- * Data from the Recidiviz data platform about an incarcerated person
- */
-export type WorkflowsResidentRecord = WorkflowsJusticeInvolvedPersonRecord &
-  UnparsedResidentRecord & {
-    metadata: ResidentMetadata;
-  };

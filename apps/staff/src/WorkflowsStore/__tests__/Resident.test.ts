@@ -17,7 +17,8 @@
 
 import { configure } from "mobx";
 
-import { WorkflowsResidentRecord } from "../../FirestoreStore";
+import { ResidentRecord } from "~datatypes";
+
 import { RootStore } from "../../RootStore";
 import { Resident } from "../Resident";
 
@@ -25,7 +26,7 @@ vi.mock("../subscriptions");
 
 let rootStore: RootStore;
 let testResident: Resident;
-let record: WorkflowsResidentRecord;
+let record: ResidentRecord;
 
 function createTestUnit() {
   testResident = new Resident(record, rootStore);
@@ -54,8 +55,8 @@ beforeEach(() => {
     custodyLevel: "LEVEL1",
     facilityId: "FACILITY1",
     unitId: "UNIT1",
-    admissionDate: "2021-11-01",
-    releaseDate: "2029-06-01",
+    admissionDate: new Date("2021-11-01"),
+    releaseDate: new Date("2029-06-01"),
     personType: "RESIDENT",
     metadata: {},
   };
@@ -66,10 +67,7 @@ afterEach(() => {
   vi.resetAllMocks();
 });
 
-const PROPERTIES_FROM_RECORD: [
-  keyof Resident,
-  keyof WorkflowsResidentRecord,
-][] = [
+const PROPERTIES_FROM_RECORD: [keyof Resident, keyof ResidentRecord][] = [
   ["custodyLevel", "custodyLevel"],
   ["facilityId", "facilityId"],
   ["unitId", "unitId"],
@@ -96,7 +94,7 @@ test("SCCP eligibility date", () => {
     ...record,
     metadata: {
       stateCode: "US_ME",
-      sccpEligibilityDate: "2026-01-01",
+      sccpEligibilityDate: new Date("2026-01-01"),
       portionServedNeeded: "1/2",
     },
   };
@@ -109,7 +107,7 @@ test("life sentence", () => {
   createTestUnit();
   expect(testResident.onLifeSentence).toBeFalse();
 
-  record.releaseDate = "2525-05-25";
+  record.releaseDate = new Date("2525-05-25");
   createTestUnit();
   expect(testResident.onLifeSentence).toBeTrue();
 });
