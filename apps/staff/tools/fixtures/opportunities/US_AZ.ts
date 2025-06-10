@@ -795,7 +795,19 @@ export const mockApiOpportunityConfigurationResponse = {
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1Z7heBZYSj9RuEa0o6q4gW12M7ej1Ak9b/view",
-      nonOmsCriteria: [],
+      nonOmsCriteria: [
+        {
+          text: "{{#if record.metadata_is_maybe_eligible_missing_1_4}}text to show if missing 1.4{{/if}}",
+          tooltip: "hello",
+        },
+        {
+          text: "{{#if record.metadata.metadata_is_maybe_eligible_missing_1_5}}text to show if missing 1.5{{/if}}",
+          tooltip: "test 2",
+        },
+        {
+          text: "{{#if record.metadata.metadata_is_maybe_eligible_missing_1_7}}text to show if missing 1.7{{/if}}",
+        },
+      ],
       nonOmsCriteriaHeader: null,
       notifications: [],
       omsCriteriaHeader: "Validated by data from ACIS",

@@ -39,15 +39,19 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "DENIED",
-          text: "Has recently been denied early discharge in court",
+          text: "Has recently been denied early discharge by court or county attorney",
         },
         {
           key: "VIOLATIONS",
-          text: "Has pending violations (TKTK final copy here) ",
+          text: "Has recently incurred serious violations or has pending violation reports",
         },
         {
-          key: "INTERSTATE",
-          text: "Is an interstate compact case and has been denied early discharge by other state ",
+          key: "INTERSTATE (IC-IN)",
+          text: "Is serving an ICOTS case and sending state has denied or disregarded early discharge request",
+        },
+        {
+          key: "INTERSTATE (IC-OUT)",
+          text: "Is serving an ICOTS case and supervising state has failed to provide progress report",
         },
       ],
       denialText: null,
@@ -88,12 +92,14 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usIaSupervisionFeesPaid",
           text: "Has paid their most recent supervision fee",
+          tooltip:
+            "This is defined by whether a client has paid their most recent $300 supervision fee, regardless of the status of other types of fines or fees",
         },
         {
           key: "usIaNotServingIneligibleOffenseForEarlyDischarge",
           text: "Is not serving for an offense that is ineligible for early discharge",
           tooltip:
-            "See CBC-FS-02 Appendix A for a list of all ineligible offenses",
+            "See CBC-FS-02 Appendix A for a list of all ineligible offenses. Note that this only includes Iowa statutes, not NCIC or other state statute codes",
         },
         {
           key: "notServingALifeSentenceOnSupervisionOrSupervisionOutOfState",
