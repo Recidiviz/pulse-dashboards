@@ -25,6 +25,7 @@ import { palette } from "~design-system";
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";
+import { FOOTER_HEIGHT } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
 import useModalTimeoutDismissal from "./hooks/useModalTimeoutDismissal";
 import WorkflowsPreviewModalContext from "./WorkflowsPreviewModalContext";
 
@@ -37,7 +38,6 @@ const StyledDrawerModal = styled(DrawerModal)<{
       ? `.ReactModal__Overlay {
     width: 0 !important;
     backdrop-filter: unset;
-    
     // Stop the preview modal from being given a higher z-index than the nav bar,
     // which would block dropdown menus from the top bar
     z-index: unset !important;
@@ -48,7 +48,10 @@ const StyledDrawerModal = styled(DrawerModal)<{
     box-shadow: unset;
     border: 1px solid ${palette.slate20};
     right: 0 !important;
-
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    
     ${
       isMobile
         ? `
@@ -121,11 +124,13 @@ const Wrapper = styled.div`
   hr + hr {
     display: none;
   }
+  max-height: calc(100% - ${FOOTER_HEIGHT}px);
+  overflow-y: auto;
 `;
 
 const Footer = styled.div`
-  position: sticky;
-  bottom: 0;
+  flex-grow: 0;
+  flex-shrink: 0;
 `;
 
 type PreviewModalProps = {

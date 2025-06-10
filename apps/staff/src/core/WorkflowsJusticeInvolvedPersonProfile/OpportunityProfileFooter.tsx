@@ -25,6 +25,8 @@ import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore";
 
+export const FOOTER_HEIGHT = 53;
+
 type PreviewModalFooterProps<T> = {
   navigableItems?: T[];
   currentItem: T;
@@ -40,6 +42,7 @@ const FooterWrapper = styled.div`
   justify-content: center;
   align-items: center;
   gap: 7px;
+  height: ${FOOTER_HEIGHT}px;
 `;
 
 const NavigationKeyboardShortcutTooltip = styled(Sans16)`
