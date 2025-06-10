@@ -408,15 +408,11 @@ if (
           await $`yarn atmos:apply apps/sentencing-seed-demo -s ${stack} -- -auto-approve -var container_version=${currentRevision}`.pipe(
             process.stdout,
           );
+        } else if (deployEnv === "production") {
+          await $`yarn atmos:apply postgres-bq-data-transfer -s recidiviz-dashboard-production--sentencing -- -auto-approve`.pipe(
+            process.stdout,
+          );
         }
-        // TODO(hashicorp/terraform-provider-google#22619): Disable automatic Terraform updates of the
-        //  BigQuery Data Transfer Service jobs until this issue is resolved.
-        //  If we're on production, deploy any changes to the bigquery data transfer
-        // else if (deployEnv === "production") {
-        //  await $`yarn atmos:apply postgres-bq-data-transfer -s recidiviz-dashboard-production--sentencing -- -auto-approve`.pipe(
-        //    process.stdout,
-        //  );
-        // }
 
         retryDeploy = false;
         successfullyDeployed.push("Sentencing Server");

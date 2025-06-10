@@ -80,7 +80,9 @@ components:
         service_account_email: "{{ .settings.context.project_number }}-compute@developer.gserviceaccount.com"
         postgresql:
           host: !terraform.output cloud-sql-proxy recidiviz-dashboard-production--shared-infra cloud_sql_proxy_ip
-          port: !terraform.output cloud-sql-proxy recidiviz-dashboard-production--shared-infra ports["jii-texting"]
+          # For more info on quoting YQ expressions see:
+          # https://atmos.tools/core-concepts/stacks/yaml-functions/terraform.output/#using-yq-expressions-to-provide-a-default-value
+          port: !terraform.output cloud-sql-proxy recidiviz-dashboard-production--shared-infra ".ports[""jii-texting""]"
           username: !terraform.output apps/jii-texting database_user_name
           password: !terraform.output apps/jii-texting database_user_password
           databases:
