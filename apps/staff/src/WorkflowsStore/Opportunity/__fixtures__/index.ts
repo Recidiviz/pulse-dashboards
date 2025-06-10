@@ -93,6 +93,8 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   highlightCasesOnHomepage: false,
   highlightedCaseCtaCopy: "highlighted CTA",
   overdueOpportunityCalloutCopy: "overdue",
+  enableProgressiveLoading: false,
+  progressiveLoadingBatchSize: 50,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

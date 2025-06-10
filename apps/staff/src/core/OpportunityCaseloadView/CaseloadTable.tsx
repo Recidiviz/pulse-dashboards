@@ -28,7 +28,7 @@ import {
 } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
@@ -38,6 +38,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
+import { usePreprocessedData } from "./utils";
 
 const Table = styled.table`
   width: 100%;
@@ -178,6 +179,22 @@ const SortIconWrapper = styled.div<{
   }};
 `;
 
+const LoadMoreRows = styled.button`
+  ${typography.Sans18};
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${palette.pine4};
+  margin: ${rem(spacing.md)} auto ${rem(spacing.xl)} auto;
+  border: none;
+  background-color: transparent;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 export type CaseloadTableManualSorting = {
   sorting: SortingState;
   setSorting: Dispatch<SetStateAction<SortingState>>;
@@ -193,6 +210,8 @@ type CaseloadTableProps<TData> = {
   manualSorting?: CaseloadTableManualSorting;
   enableMultiSort?: boolean;
   initialState?: Partial<TableState>;
+  enableProgressiveLoading?: boolean;
+  progressiveLoadingBatchSize?: number;
 };
 
 export const CaseloadTable = observer(function CaseloadTable<TData>({
@@ -205,10 +224,39 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
   manualSorting = undefined,
   enableMultiSort = false,
   initialState = undefined,
+  enableProgressiveLoading = false,
+  progressiveLoadingBatchSize = 0,
 }: CaseloadTableProps<TData>) {
   const { isMobile } = useIsMobile(true);
-  const table = useReactTable({
+
+  const [progressiveLoading, setProgressiveLoading] = useState({
+    pageIndex: 0,
+    pageSize: progressiveLoadingBatchSize,
+  });
+
+  /**
+   * If progressive loading is enabled, we need to ensure that the initial table state logic is ran on the entire
+   * dataset before the table limits the dataset to the batch size. This way, the visible data will be correctly
+   * pre-processed based on the initial state (e.g. initial sorting), and subsequent table actions (e.g. column sorting)
+   * will only apply to the visible batch of data.
+   */
+  const preprocessedData = usePreprocessedData(
     data,
+    columns,
+    enableProgressiveLoading,
+    initialState,
+  );
+
+  const visibleData = useMemo(
+    () =>
+      enableProgressiveLoading
+        ? preprocessedData.slice(0, progressiveLoading.pageSize)
+        : preprocessedData,
+    [preprocessedData, enableProgressiveLoading, progressiveLoading.pageSize],
+  );
+
+  const table = useReactTable({
+    data: visibleData,
     columns: columns,
     getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
@@ -228,6 +276,18 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
       : {}),
     initialState,
   });
+
+  const showLoadMoreButton =
+    enableProgressiveLoading &&
+    progressiveLoading.pageSize &&
+    data.length > progressiveLoading.pageSize;
+
+  const loadMoreRows = () => {
+    setProgressiveLoading((prev) => ({
+      ...prev,
+      pageSize: prev.pageSize + progressiveLoadingBatchSize,
+    }));
+  };
 
   return (
     <ScrollContainer $isMobile={isMobile}>
@@ -285,6 +345,9 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
           })}
         </TableBody>
       </Table>
+      {showLoadMoreButton && (
+        <LoadMoreRows onClick={loadMoreRows}>Load more</LoadMoreRows>
+      )}
     </ScrollContainer>
   );
 });

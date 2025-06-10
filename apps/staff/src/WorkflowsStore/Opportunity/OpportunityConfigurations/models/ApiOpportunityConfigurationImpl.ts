@@ -333,4 +333,19 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   get caseNoteHeaders(): string[] {
     return (this.configurationObject.caseNoteHeaders ?? []) as string[];
   }
+
+  /**
+   * Used to enable the progressive loading feature within Table View to display an initial
+   * batch size of rows with a button that allows the user to load more batches of rows.
+   * Starts with a default of 30 rows, but can be overridden by the opportunity.
+   *
+   * NOTE: If an opportunity uses subcategories, each subcategory renders its own table and progressive loading
+   * instance, meaning each subcategory will have its own "Load more" button and the batch size will be applied
+   * to each subcategory's table.
+   *
+   * TODO(#8663): Discuss with product how to best handle progressive loading for opportunities with subcategories
+   * and implement accordingly.
+   */
+  enableProgressiveLoading = false;
+  progressiveLoadingBatchSize = 30;
 }

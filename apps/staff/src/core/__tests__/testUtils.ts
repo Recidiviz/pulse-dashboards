@@ -144,6 +144,8 @@ export const mockOpportunity: Opportunity<Client> = {
     zeroGrantsTooltip:
       "Officer has not granted this opportunity in the past 12 months",
     caseNoteHeaders: [],
+    enableProgressiveLoading: false,
+    progressiveLoadingBatchSize: 50,
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

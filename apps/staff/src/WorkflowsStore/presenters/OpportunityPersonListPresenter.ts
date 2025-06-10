@@ -190,6 +190,13 @@ export class OpportunityPersonListPresenter
     return undefined;
   }
 
+  get progressiveLoadingConfig() {
+    return {
+      enabled: this.config.enableProgressiveLoading,
+      batchSize: this.config.progressiveLoadingBatchSize,
+    };
+  }
+
   submittedForDays(opp: Opportunity): number | undefined {
     if (!opp.submittedUpdate) return;
     return differenceInDays(opp.submittedUpdate.date.toDate(), startOfToday());

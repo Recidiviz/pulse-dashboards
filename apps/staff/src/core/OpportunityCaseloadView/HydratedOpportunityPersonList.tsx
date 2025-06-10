@@ -311,6 +311,8 @@ const OpportunityCaseloadTable = observer(function OpportunityCaseloadTable({
       manualSorting={manualSorting}
       enableMultiSort={false}
       initialState={presenter.initialTableState}
+      enableProgressiveLoading={presenter.progressiveLoadingConfig.enabled}
+      progressiveLoadingBatchSize={presenter.progressiveLoadingConfig.batchSize}
     />
   );
 });
