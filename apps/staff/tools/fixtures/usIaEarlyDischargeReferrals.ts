@@ -43,6 +43,9 @@ export const usIaEarlyDischargeReferralsFixture =
         usIaSupervisionLevelIs0NotAvailable12Or3: {
           supervisionLevelRawText: "LEVEL 3",
         },
+        supervisionLevelIsNotResidentialProgram: {
+          supervisionLevelRawText: "LEVEL 3",
+        },
       },
       ineligibleCriteria: {},
       isEligible: true,
@@ -83,6 +86,9 @@ export const usIaEarlyDischargeReferralsFixture =
         usIaSupervisionFeesPaid: null,
         usIaSupervisionLevelIs0NotAvailable12Or3: {
           supervisionLevelRawText: "LEVEL 3",
+        },
+        supervisionLevelIsNotResidentialProgram: {
+          supervisionLevelRawText: "LEVEL 1",
         },
       },
       ineligibleCriteria: {},
@@ -148,6 +154,9 @@ export const usIaEarlyDischargeReferralsFixture =
         usIaSupervisionLevelIs0NotAvailable12Or3: {
           supervisionLevelRawText: "LEVEL 1",
         },
+        supervisionLevelIsNotResidentialProgram: {
+          supervisionLevelRawText: null,
+        },
       },
       ineligibleCriteria: {},
       isEligible: true,
@@ -208,6 +217,7 @@ export const usIaEarlyDischargeReferralsFixture =
         usIaSupervisionLevelIs0NotAvailable12Or3: {
           supervisionLevelRawText: "LEVEL 2",
         },
+        supervisionLevelIsNotResidentialProgram: null,
       },
       ineligibleCriteria: {},
       isEligible: true,

@@ -81,6 +81,11 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
             conditions: z.array(z.string()).nullable(),
           })
           .nullable(),
+        supervisionLevelIsNotResidentialProgram: z
+          .object({
+            supervisionLevelRawText: z.string().nullable(),
+          })
+          .nullable(),
       })
       .passthrough(),
     ineligibleCriteria: z.object({}).passthrough(),
