@@ -15,20 +15,32 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # =============================================================================
 
-
+# TODO: Remove in favor of database_credentials output once we move to stores
 output "db_connection_name" {
   value     = module.database.connection_name
   sensitive = true
 }
 
+# TODO: Remove in favor of database_credentials output once we move to stores
 output "database_user_name" {
   description = "The connection name for the created database"
   value       = module.database.database_user_name
   sensitive   = true
 }
 
+# TODO: Remove in favor of database_credentials output once we move to stores
 output "database_user_password" {
   description = "The connection name for the created database"
   value       = module.database.database_user_password
+  sensitive = true
+}
+
+output "database_credentials" {
+  description = "A map of credential values for the created database"
+  value       = {
+    "connection_name" = module.database.connection_name
+    "username" = module.database.database_user_name
+    "password" = module.database.database_user_password
+  }
   sensitive   = true
 }

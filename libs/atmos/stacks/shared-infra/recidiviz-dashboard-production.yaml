@@ -20,6 +20,12 @@ components:
         sql_instance_connections:
           sentencing-db: 5432
           jii-texting: 5433
+      hooks:
+        store-outputs:
+          outputs:
+            ip: .cloud_sql_proxy_ip
+            ports: .ports
+
     apps/shared-infra:
       vars:
         location: "{{ .settings.context.location }}"

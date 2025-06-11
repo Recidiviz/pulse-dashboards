@@ -67,3 +67,7 @@ components:
         processor_job_env_secret_id: env_staging_jii_texting_processor_job
         server_env_secret_id: env_staging_jii_texting_server
         import_job_env_secret_id: env_staging_jii_texting_import_job
+      hooks:
+        store-outputs:
+          outputs:
+            database_credentials: .database_credentials

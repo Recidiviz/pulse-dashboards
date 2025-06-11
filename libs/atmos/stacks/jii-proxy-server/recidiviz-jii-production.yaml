@@ -18,7 +18,7 @@ components:
   terraform:
     apps/jii-proxy:
       vars:
-        artifact_registry_repo: '{{ (atmos.Component "apps/jii-proxy" "recidiviz-jii-staging--jii-proxy-server").vars.artifact_registry_repo }}'
+        artifact_registry_repo: !store jii-staging recidiviz-jii-staging--jii-proxy-server artifact_registry url
         env_vars:
           OPPORTUNITIES_APP_URL: "https://recidiviz-jii-production.web.app"
         managed_certificate_domains: [opportunities.app]

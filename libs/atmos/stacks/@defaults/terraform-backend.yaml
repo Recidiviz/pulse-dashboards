@@ -12,3 +12,22 @@ terraform:
   providers:
     google:
       project: "{{ .settings.context.project_id }}"
+
+  # This YAML stanza configures the Atmos hook which will store outputs after running apply
+  # https://atmos.tools/core-concepts/stacks/hooks/#supported-lifecycle-events
+  # https://atmos.tools/core-concepts/stacks/hooks/#store
+  hooks:
+    store-outputs:
+      # Determine where we store outputs based on the project_id
+      name: !template "{{ index .settings.context.project_to_store .settings.context.project_id }}"
+      events:
+        - after-terraform-apply
+      command: store
+
+settings:
+  context:
+    # Map of project id to store name (defined in atmos.yaml)
+    project_to_store:
+      recidiviz-dashboard-staging: gsm-staging
+      recidiviz-dashboard-production: gsm-prod
+      recidiviz-jii-staging: jii-staging

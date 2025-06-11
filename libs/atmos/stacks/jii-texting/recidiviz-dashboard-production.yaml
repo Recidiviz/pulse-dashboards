@@ -67,7 +67,11 @@ components:
         processor_job_env_secret_id: env_prod_jii_texting_processor_job
         server_env_secret_id: env_prod_jii_texting_server
         import_job_env_secret_id: env_prod_jii_texting_import_job
-    
+      hooks:
+        store-outputs:
+          outputs:
+            database_credentials: .database_credentials
+
     postgres-bq-data-transfer:
       vars:
         dataset_name: jii_texting_dashboards_db

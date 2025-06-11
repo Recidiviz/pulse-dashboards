@@ -17,3 +17,7 @@ components:
             id: keep-minimum-versions
             most_recent_versions:
               keep_count: 15
+      hooks:
+        store-outputs:
+          outputs:
+            url: "{{ .vars.location }}-docker.pkg.dev/{{ .vars.project_id }}/{{ .vars.repository_id }}"

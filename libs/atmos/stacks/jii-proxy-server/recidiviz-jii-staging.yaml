@@ -27,7 +27,7 @@ components:
 
     apps/jii-proxy:
       vars:
-        artifact_registry_repo: '{{ .settings.context.location }}-docker.pkg.dev/{{ .settings.context.project_id }}/{{ (atmos.Component "artifact_registry" .stack).outputs.artifact_name }}'
+        artifact_registry_repo: !store jii-staging artifact_registry url
         env_vars:
           OPPORTUNITIES_APP_URL: "https://recidiviz-jii-staging.web.app"
         managed_certificate_domains: [staging.opportunities.app]

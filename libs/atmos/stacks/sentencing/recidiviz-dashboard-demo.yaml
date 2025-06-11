@@ -36,6 +36,12 @@ components:
         sql_base_secret_name: sentencing_demo
         server_name: sentencing-server-demo
         migrate_db_name: sentencing-migrate-db-demo
+    hooks:
+      store-outputs:
+        outputs:
+          database_credentials: .database_credentials
+          service_account_email: .service_account_email
+
     apps/sentencing-seed-demo:
       vars:
         artifact_registry_repo: '{{ (atmos.Component "apps/sentencing" "recidiviz-dashboard-staging--sentencing").vars.artifact_registry_repo }}'

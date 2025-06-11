@@ -30,6 +30,32 @@ templates:
     evaluations: 3
     gomplate:
       enabled: true
+
+stores:
+  gsm-staging:
+    type: google-secret-manager
+    options:
+      project_id: recidiviz-dashboard-staging
+      prefix: atmos_
+      locations:
+        - us-central1
+
+  gsm-prod:
+    type: google-secret-manager
+    options:
+      project_id: recidiviz-dashboard-production
+      prefix: atmos_
+      locations:
+        - us-central1
+
+  jii-staging:
+    type: google-secret-manager
+    options:
+      project_id: recidiviz-jii-staging
+      prefix: atmos_
+      locations:
+        - us-central1
+
 logs:
-  file: /dev/stderr
+  file: /dev/stdout
   level: Info
