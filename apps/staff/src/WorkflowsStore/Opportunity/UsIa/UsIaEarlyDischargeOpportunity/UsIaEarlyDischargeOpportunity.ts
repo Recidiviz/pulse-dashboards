@@ -240,7 +240,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     }
     if (!violationsPast6MonthsFlag) {
       customReqs.push({
-        text: "Client has had no violation incidents filed in the past 6 months",
+        text: "Has no violation incidents in the past 6 months",
       });
     }
     if (!dnaRequiredFlag) {
@@ -266,7 +266,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     }
     if (violationsPast6MonthsFlag) {
       customReqs.push({
-        text: "Client has had violations incidents filed in the past 6 months. Please review incident history...",
+        text: "Has violation incidents filed in the past 6 months. Please review incident history...",
       });
     }
     return super.requirementsAlmostMet.concat(customReqs);
