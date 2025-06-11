@@ -340,7 +340,7 @@
     "html2canvas": "https://github.com/ohaibbq/html2canvas.git#commit=555f194698ef453c488be3804d5c1f30b83f4353"
   },
   "scripts": {
-    "prepare": "husky",
+    "postinstall": "husky",
     "lint-import-paths": "node tools/lint-import-paths.mjs",
     "atmos": "node libs/atmos/atmos-executor.mjs",
     "atmos:plan": "node libs/atmos/atmos-executor.mjs terraform plan",
