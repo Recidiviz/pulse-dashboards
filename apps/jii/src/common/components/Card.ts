@@ -15,22 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
-import { Chip, ChipColor } from "../../common/components/Chip";
-import { EligibilityStatus } from "../../models/EligibilityReport/types";
+import { palette } from "~design-system";
 
-const statusStyles: Record<EligibilityStatus, ChipColor> = {
-  ELIGIBLE: "green",
-  ALMOST_ELIGIBLE: "yellow",
-  INELIGIBLE: "gray",
-  // we don't expect this to be displayed
-  NA: "gray",
-};
-
-export const EligibilityStatusChip: FC<{
-  value: EligibilityStatus;
-  label: string;
-}> = ({ value, label }) => {
-  return <Chip color={statusStyles[value]}>{label}</Chip>;
-};
+export const Card = styled.section`
+  border: 1px solid ${palette.slate20};
+  border-radius: ${rem(spacing.sm)};
+  margin: ${rem(spacing.sm)} 0;
+  padding: ${rem(spacing.lg)};
+`;

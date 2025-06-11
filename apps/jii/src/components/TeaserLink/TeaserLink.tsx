@@ -20,19 +20,19 @@ import { rem } from "polished";
 import { FC, memo } from "react";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
-
+import { Card } from "../../common/components/Card";
 import { GoButton } from "../ButtonLink/GoButton";
 import { SimpleLinkProps } from "../types";
 
-const Wrapper = styled.article`
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(spacing.sm)};
+const Wrapper = styled(Card)`
   display: flex;
   flex-wrap: wrap;
   gap: ${rem(spacing.lg)};
-  margin: ${rem(spacing.xl)} 0;
-  padding: ${rem(spacing.xl)};
+  /* styled-components specificity hack -_- */
+  && {
+    margin: ${rem(spacing.xl)} 0;
+    padding: ${rem(spacing.xl)};
+  }
 
   & > img {
     flex: 0 0 40px;

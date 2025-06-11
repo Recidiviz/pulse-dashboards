@@ -15,22 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
-
-import { Chip, ChipColor } from "../../common/components/Chip";
-import { EligibilityStatus } from "../../models/EligibilityReport/types";
-
-const statusStyles: Record<EligibilityStatus, ChipColor> = {
-  ELIGIBLE: "green",
-  ALMOST_ELIGIBLE: "yellow",
-  INELIGIBLE: "gray",
-  // we don't expect this to be displayed
-  NA: "gray",
-};
-
-export const EligibilityStatusChip: FC<{
-  value: EligibilityStatus;
-  label: string;
-}> = ({ value, label }) => {
-  return <Chip color={statusStyles[value]}>{label}</Chip>;
-};
+export * from "./DatesSection";

@@ -34,7 +34,8 @@ Handlebars.registerHelper("lowerCase", (s: string) => s.toLowerCase());
 Handlebars.registerHelper("formatFullDate", prepareAndFormatDate);
 Handlebars.registerHelper(
   "formatFullDateOptional",
-  (d: Date | string | null) => (d ? prepareAndFormatDate(d) : "—"),
+  (d: Date | string | null, fallback = "—") =>
+    d ? prepareAndFormatDate(d) : fallback,
 );
 Handlebars.registerHelper("isFutureDate", (d: Date) => isFuture(d));
 Handlebars.registerHelper("and", (a: unknown, b: unknown) => a && b);

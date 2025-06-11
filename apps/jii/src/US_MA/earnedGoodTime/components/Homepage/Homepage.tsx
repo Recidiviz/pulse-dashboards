@@ -15,17 +15,48 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing, typography } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
+import { rem } from "polished";
+import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
+
+import { HeaderPortal } from "../../../../components/AppLayout/HeaderPortal";
+import {
+  FullBleedContainer,
+  PageContainer,
+} from "../../../../components/BaseLayout/BaseLayout";
 import { hydrateTemplate } from "../../../../configs/hydrateTemplate";
 import { useEGTDataContext } from "../EGTDataContext/context";
 import { DatesSection } from "./DatesSection";
 
-export const Homepage = () => {
+const LastUpdatedBanner = styled(FullBleedContainer)`
+  ${typography.Sans14}
+
+  background: ${palette.marble2};
+  color: ${palette.slate85};
+  text-align: center;
+
+  ${PageContainer} {
+    padding-bottom: ${rem(spacing.md)};
+    padding-top: ${rem(spacing.md)};
+  }
+`;
+
+export const Homepage = observer(function Homepage() {
   const { data, copy } = useEGTDataContext();
 
   return (
     <div>
-      <aside>{hydrateTemplate(copy.home.lastUpdated, data)}</aside>
+      <HeaderPortal>
+        <LastUpdatedBanner as="aside">
+          <PageContainer>
+            {hydrateTemplate(copy.lastUpdated, data)}
+          </PageContainer>
+        </LastUpdatedBanner>
+      </HeaderPortal>
       <DatesSection />
     </div>
   );
-};
+});

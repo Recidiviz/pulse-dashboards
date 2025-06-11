@@ -17,22 +17,25 @@
 
 // where handlebars is invoked, assume a UsMaResidentMetadata object as the template context
 export const usMaEGTCopy = {
+  lastUpdated:
+    "This information was last updated on {{formatFullDate lastUpdatedDate}}",
   home: {
-    lastUpdated:
-      "This information was last updated on {{formatFullDate lastUpdatedDate}}",
-    moreInfoButton: "Learn more",
     dates: {
       sectionTitle: "Important dates",
       rts: {
         label: "Release-to-supervision date",
         tag: "RTS",
-        value: "{{formatFullDateOptional rtsDate}}",
-        moreInfo: "Lorem ipsum",
+        value: "{{formatFullDateOptional rtsDate 'No RTS date'}}",
+        summary: `The RTS Date is a release to parole supervision without the need for a 
+          parole hearing, based upon completion credits earned through programming 
+          and education pursuant to M.G.L.c.127, §129D.`,
+        moreInfoLink: "Learn more about RTS",
       },
       maxRelease: {
         label: "Maximum release / wrap date",
         tag: "MAX",
-        value: "{{formatFullDateOptional adjustedMaxReleaseDate}}",
+        value:
+          "{{formatFullDateOptional adjustedMaxReleaseDate 'No MAX date'}}",
         summary: `You’ve earned {{pluralize "days" totalStateCreditDaysCalculated true}} off your maximum release / wrap date.`,
         breakdown: {
           original: {
@@ -52,8 +55,8 @@ export const usMaEGTCopy = {
       parole: {
         label: "Parole eligibility date",
         tag: "PE",
-        value:
-          "Ask your Institutional Parole Officer about parole eligibility date calculations.",
+        summary:
+          "Questions regarding the calculation of parole eligibility dates should be directed to the Institutional Parole Officer.",
       },
     },
   },

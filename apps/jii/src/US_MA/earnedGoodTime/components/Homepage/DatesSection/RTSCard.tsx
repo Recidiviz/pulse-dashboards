@@ -15,22 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import { Card } from "../../../../../common/components/Card";
+import { GoButton } from "../../../../../components/ButtonLink/GoButton";
+import { useEGTDataContext } from "../../EGTDataContext/context";
+import { SlateCopy } from "../styles";
+import { DateInfo } from "./DateInfo";
 
-import { Chip, ChipColor } from "../../common/components/Chip";
-import { EligibilityStatus } from "../../models/EligibilityReport/types";
+export const RTSCard = () => {
+  const {
+    copy: {
+      home: { dates },
+    },
+  } = useEGTDataContext();
 
-const statusStyles: Record<EligibilityStatus, ChipColor> = {
-  ELIGIBLE: "green",
-  ALMOST_ELIGIBLE: "yellow",
-  INELIGIBLE: "gray",
-  // we don't expect this to be displayed
-  NA: "gray",
-};
-
-export const EligibilityStatusChip: FC<{
-  value: EligibilityStatus;
-  label: string;
-}> = ({ value, label }) => {
-  return <Chip color={statusStyles[value]}>{label}</Chip>;
+  return (
+    <Card>
+      <DateInfo {...dates.rts} />
+      <SlateCopy>{dates.rts.summary}</SlateCopy>
+      <GoButton to="#">{dates.rts.moreInfoLink}</GoButton>
+    </Card>
+  );
 };
