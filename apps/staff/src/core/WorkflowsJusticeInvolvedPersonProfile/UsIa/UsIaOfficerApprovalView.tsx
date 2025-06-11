@@ -133,6 +133,7 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
           <CharacterCountTextField
             id="additional-notes"
             header="Additional Notes"
+            label="Enter any additional information"
             value={additionalNotes}
             onChange={(newValue) => setAdditionalNotes(newValue)}
             minLength={DEFAULT_MIN_CHAR_LENGTH}

@@ -55,6 +55,7 @@ type CharacterCountTextFieldProps = {
   placeholder?: string;
   isOptional?: boolean;
   header?: string;
+  label?: string;
 };
 
 export const CharacterCountTextField: React.FC<
@@ -68,6 +69,7 @@ export const CharacterCountTextField: React.FC<
   placeholder,
   isOptional = false,
   header,
+  label,
 }) => {
   const invalid = isOptional
     ? value.length > 0 && value.length < minLength // If it's an optional field, and the user has entered something, enforce minLength requirement
@@ -83,7 +85,7 @@ export const CharacterCountTextField: React.FC<
       )}
       <Section>
         <Label htmlFor={id}>
-          Enter at least {minLength} characters
+          {label ? label : `Enter at least ${minLength} characters`}
           <span>
             <Count invalid={invalid}>{value.length}</Count> / {maxLength}
           </span>
