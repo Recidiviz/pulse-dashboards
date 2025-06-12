@@ -46,21 +46,38 @@ describe("UsIaMenuButton", () => {
   });
 
   const menuOptionsByStatus = [
-    ["ELIGIBLE_NOW", ["Submit for Supervisor Approval", "Mark as Ineligible"]],
-    ["ACTION_PLAN_REVIEW", ["Request Revisions", "Approve Snooze"]],
-    ["ACTION_PLAN_REVIEW_REVISION", ["Edit Action Plan", "Mark as Eligible"]],
+    [
+      "ELIGIBLE_NOW",
+      "Update Eligibility",
+      ["Submit for Supervisor Approval", "Mark as Ineligible"],
+    ],
+    ["ACTION_PLAN_REVIEW", "Review", ["Request Revisions", "Approve Snooze"]],
+    [
+      "ACTION_PLAN_REVIEW_REVISION",
+      "Update Eligibility",
+      ["Edit Action Plan", "Mark as Eligible"],
+    ],
     [
       "DISCHARGE_FORM_REVIEW",
+      "Review",
       ["Approve Discharge and Forms", "Mark as Ineligible"],
     ],
-    ["READY_FOR_DISCHARGE", ["Mark Submitted", "Mark as Ineligible"]],
-    ["DENIED", ["Update Ineligiblity"]],
-    ["SUBMITTED", ["Revert from Submitted", "Mark as Ineligible"]],
+    [
+      "READY_FOR_DISCHARGE",
+      "Update Eligibility",
+      ["Mark Submitted", "Mark as Ineligible"],
+    ],
+    ["DENIED", "Update Eligibility", ["Change Snooze/Denial Reason"]],
+    [
+      "SUBMITTED",
+      "Update Eligibility",
+      ["Revert from Submitted", "Mark as Ineligible"],
+    ],
   ];
 
   test.each(menuOptionsByStatus)(
     "renders appropriate menu options for %s status",
-    (clientStatus, expectedOptions) => {
+    (clientStatus, buttonLabel, expectedOptions) => {
       opportunity = {
         clientStatus,
       } as unknown as UsIaEarlyDischargeOpportunity;
@@ -75,11 +92,13 @@ describe("UsIaMenuButton", () => {
         </OpportunitySidePanelProvider>,
       );
 
-      fireEvent.click(screen.getByText("Update Eligibility"));
+      const menuButton = screen.getByRole("button");
+      fireEvent.click(menuButton);
 
       const menuDropdownOptions = screen.getAllByRole("menuitem");
       const labels = menuDropdownOptions.map((node) => node.textContent);
 
+      expect(menuButton.textContent).toEqual(buttonLabel);
       expect(labels.length).toEqual(expectedOptions.length);
       expect(labels).toEqual(expectedOptions);
     },

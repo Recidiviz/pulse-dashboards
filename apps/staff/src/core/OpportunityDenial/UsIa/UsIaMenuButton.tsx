@@ -20,27 +20,15 @@ import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
 
 import { useRootStore } from "../../../components/StoreProvider";
-import {
-  UsIaClientStatus,
-  UsIaEarlyDischargeOpportunity,
-} from "../../../WorkflowsStore/Opportunity/UsIa";
+import { UsIaEarlyDischargeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
 import { useOpportunitySidePanel } from "../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import {
   OpportunityStatusDropdownMenuItem,
   StatusAwareToggle,
 } from "../MenuButton.styles";
+import { MenuConfig } from "./types";
 
-type DropdownOption = {
-  label: string;
-  onClick: () => void;
-};
-
-type DropdownOptionsByStatus = {
-  [key in UsIaClientStatus]: DropdownOption[];
-};
-
-// TODO(#8459) Add tests for menu button for all client status states
 const UsIaMenuButton = observer(function MenuButton({
   opportunity,
   markSubmittedAndToast,
@@ -91,76 +79,98 @@ const UsIaMenuButton = observer(function MenuButton({
     );
   };
 
-  const dropdownOptionsByStatus: DropdownOptionsByStatus = {
-    ELIGIBLE_NOW: [
-      {
-        label: "Submit for Supervisor Approval",
-        onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
-      },
-      {
-        label: "Mark as Ineligible",
-        onClick: () => setCurrentView("MARK_INELIGIBLE"),
-      },
-    ],
-    ACTION_PLAN_REVIEW: [
-      {
-        label: "Request Revisions",
-        onClick: () => setCurrentView("US_IA_REQUEST_REVISIONS"),
-      },
-      { label: "Approve Snooze", onClick: () => supervisorApprovalAndToast() },
-    ],
-    ACTION_PLAN_REVIEW_REVISION: [
-      {
-        label: "Edit Action Plan",
-        onClick: () => setCurrentView("MARK_INELIGIBLE"),
-      },
-      {
-        label: "Mark as Eligible",
-        onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
-      },
-    ],
-    DISCHARGE_FORM_REVIEW: [
-      {
-        label: "Approve Discharge and Forms",
-        onClick: () => supervisorApprovalAndToast(),
-      },
-      {
-        label: "Mark as Ineligible",
-        onClick: () => setCurrentView("MARK_INELIGIBLE"),
-      },
-    ],
-    READY_FOR_DISCHARGE: [
-      { label: "Mark Submitted", onClick: () => markSubmittedAndToast() },
-      {
-        label: "Mark as Ineligible",
-        onClick: () => setCurrentView("MARK_INELIGIBLE"),
-      },
-    ],
-    DENIED: [
-      {
-        label: "Update Ineligiblity",
-        onClick: () => {
-          setCurrentView("MARK_INELIGIBLE");
+  const menuConfig: MenuConfig = {
+    ELIGIBLE_NOW: {
+      options: [
+        {
+          label: "Submit for Supervisor Approval",
+          onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
         },
-      },
-    ],
-    SUBMITTED: [
-      {
-        label: "Revert from Submitted",
-        onClick: () => deleteSubmitted(),
-      },
-      {
-        label: "Mark as Ineligible",
-        onClick: () => setCurrentView("MARK_INELIGIBLE"),
-      },
-    ],
+        {
+          label: "Mark as Ineligible",
+          onClick: () => setCurrentView("MARK_INELIGIBLE"),
+        },
+      ],
+    },
+    ACTION_PLAN_REVIEW: {
+      buttonLabel: "Review",
+      options: [
+        {
+          label: "Request Revisions",
+          onClick: () => setCurrentView("US_IA_REQUEST_REVISIONS"),
+        },
+        {
+          label: "Approve Snooze",
+          onClick: () => supervisorApprovalAndToast(),
+        },
+      ],
+    },
+    ACTION_PLAN_REVIEW_REVISION: {
+      options: [
+        {
+          label: "Edit Action Plan",
+          onClick: () => setCurrentView("MARK_INELIGIBLE"),
+        },
+        {
+          label: "Mark as Eligible",
+          onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
+        },
+      ],
+    },
+    DISCHARGE_FORM_REVIEW: {
+      buttonLabel: "Review",
+      options: [
+        {
+          label: "Approve Discharge and Forms",
+          onClick: () => supervisorApprovalAndToast(),
+        },
+        {
+          label: "Mark as Ineligible",
+          onClick: () => setCurrentView("MARK_INELIGIBLE"),
+        },
+      ],
+    },
+    READY_FOR_DISCHARGE: {
+      options: [
+        { label: "Mark Submitted", onClick: () => markSubmittedAndToast() },
+        {
+          label: "Mark as Ineligible",
+          onClick: () => setCurrentView("MARK_INELIGIBLE"),
+        },
+      ],
+    },
+    DENIED: {
+      options: [
+        {
+          label: "Change Snooze/Denial Reason",
+          onClick: () => {
+            setCurrentView("MARK_INELIGIBLE");
+          },
+        },
+      ],
+    },
+    SUBMITTED: {
+      options: [
+        {
+          label: "Revert from Submitted",
+          onClick: () => deleteSubmitted(),
+        },
+        {
+          label: "Mark as Ineligible",
+          onClick: () => setCurrentView("MARK_INELIGIBLE"),
+        },
+      ],
+    },
   };
+
+  const { buttonLabel = "Update Eligibility", options } =
+    menuConfig[clientStatus];
 
   return (
     <Dropdown>
-      <StatusAwareToggle>Update Eligibility</StatusAwareToggle>
+      <StatusAwareToggle>{buttonLabel}</StatusAwareToggle>
       <DropdownMenu>
-        {dropdownOptionsByStatus[clientStatus].map((option) => (
+        {options.map((option) => (
           <OpportunityStatusDropdownMenuItem
             key={option.label}
             onClick={() => {
