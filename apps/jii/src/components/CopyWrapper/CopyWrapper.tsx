@@ -24,6 +24,7 @@ import styled, { css } from "styled-components/macro";
 
 import { palette } from "~design-system";
 
+import { PolicyCallout } from "../../common/components/PolicyCallout";
 import { ProgressPageTeaser } from "../ProgressPageTeaser/ProgressPageTeaser";
 import { clickableText } from "../styles/clickableText";
 import { ComparisonTeaserInCopy } from "./ComparisonTeaserInCopy";
@@ -165,6 +166,7 @@ export const CopyWrapper: FC<{ children: string; className?: string }> = ({
           ComparisonTeaser: { component: ComparisonTeaserInCopy },
           ProgressPageTeaser: { component: ProgressPageTeaserInCopy },
           Graphic: { component: Graphic },
+          PolicyCallout: { component: PolicyCallout },
         },
       }}
     >

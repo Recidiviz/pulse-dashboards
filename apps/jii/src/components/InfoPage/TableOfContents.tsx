@@ -53,7 +53,7 @@ export const TableOfContents: FC<{ body: string }> = observer(
 
       const entries = bodyElements.filter((e) => e.type === "h2");
 
-      if (!entries) return;
+      if (!entries.length) return;
 
       return (
         <Wrapper>

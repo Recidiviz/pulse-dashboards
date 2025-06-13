@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import creditsInfoPage from "./creditsInfoPage.md?raw";
+import rtsInfoPage from "./rtsInfoPage.md?raw";
+
 // where handlebars is invoked, assume a UsMaResidentMetadata object as the template context
 export const usMaEGTCopy = {
   lastUpdated:
@@ -60,6 +63,19 @@ export const usMaEGTCopy = {
       },
     },
   },
+  infoPages: {
+    rts: {
+      heading: "Release-to-supervision date",
+      body: rtsInfoPage,
+    },
+    credits: {
+      heading: "Earned Good Time, Boosts, and Completion Credits",
+      body: creditsInfoPage,
+    },
+  },
+  topLinkText: "Back to top",
+  definitionsLinksHeading: "Other definitions",
+  homeLink: "Back to home",
 };
 
 export type UsMaEgtCopy = typeof usMaEGTCopy;

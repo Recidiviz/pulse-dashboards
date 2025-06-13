@@ -35,6 +35,7 @@ import { palette } from "~design-system";
 import { initializeSentry } from "../../apis/Sentry/initializeSentry";
 import * as routes from "../../routes/routes";
 import { EGTDataRouteContext } from "../../US_MA/earnedGoodTime/components/EGTDataContext/RouteContext";
+import { PageDefinition } from "../../US_MA/earnedGoodTime/components/pages/PageDefinition";
 import { PageEGT } from "../../US_MA/earnedGoodTime/components/pages/PageEGT";
 import { EligibilityRouteContext } from "../EligibilityRouteContext/EligibilityRouteContext";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
@@ -139,6 +140,10 @@ export function App() {
                         element={<EGTDataRouteContext />}
                       >
                         <Route index element={<PageEGT />} />
+                        <Route
+                          path={routes.State.Resident.EGT.Definition.path}
+                          element={<PageDefinition />}
+                        />
                       </Route>
                     </Route>
                     <Route

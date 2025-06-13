@@ -21,43 +21,32 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { LinkedInfoPage } from "../../common/components/LinkedInfoPage/LinkedInfoPage";
-import { State } from "../../routes/routes";
-import { HeaderPortal } from "../AppLayout/HeaderPortal";
-import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
-import { BreadcrumbsNav } from "./BreadcrumbsNav";
-import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
+import { LinkedInfoPage } from "../../../../common/components/LinkedInfoPage/LinkedInfoPage";
+import { State } from "../../../../routes/routes";
+import { BackLink } from "../BackLink/BackLink";
+import { useEGTDataContext } from "../EGTDataContext/context";
+import { DefinitionPagePresenter } from "./DefinitionPresenter";
 
 const ManagedComponent: FC<{
-  presenter: OpportunityInfoPagePresenter;
-}> = observer(function OpportunityInfoPage({ presenter }) {
+  presenter: DefinitionPagePresenter;
+}> = observer(function Definition({ presenter }) {
   return (
     <>
-      <HeaderPortal>
-        <BreadcrumbsNav />
-      </HeaderPortal>
+      <BackLink {...presenter.backLink} />
       <LinkedInfoPage contents={presenter} />
     </>
   );
 });
 
 function usePresenter() {
-  const { pageSlug } = useTypedParams(
-    State.Resident.Eligibility.Opportunity.InfoPage,
-  );
-  const {
-    opportunity: { opportunityConfig, eligibilityReport },
-  } = useResidentOpportunityContext();
+  const { pageSlug } = useTypedParams(State.Resident.EGT.Definition);
+  const { copy } = useEGTDataContext();
 
-  return new OpportunityInfoPagePresenter(
-    opportunityConfig,
-    pageSlug,
-    eligibilityReport,
-  );
+  return new DefinitionPagePresenter(pageSlug, copy);
 }
 
-export const OpportunityInfoPage = withPresenterManager({
+export const Definition = withPresenterManager({
   usePresenter,
-  managerIsObserver: true,
+  managerIsObserver: false,
   ManagedComponent,
 });

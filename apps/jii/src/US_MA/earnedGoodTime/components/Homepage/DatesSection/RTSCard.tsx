@@ -17,6 +17,7 @@
 
 import { Card } from "../../../../../common/components/Card";
 import { GoButton } from "../../../../../components/ButtonLink/GoButton";
+import { State } from "../../../../../routes/routes";
 import { useEGTDataContext } from "../../EGTDataContext/context";
 import { SlateCopy } from "../styles";
 import { DateInfo } from "./DateInfo";
@@ -32,7 +33,13 @@ export const RTSCard = () => {
     <Card>
       <DateInfo {...dates.rts} />
       <SlateCopy>{dates.rts.summary}</SlateCopy>
-      <GoButton to="#">{dates.rts.moreInfoLink}</GoButton>
+      <GoButton
+        to={State.Resident.EGT.$.Definition.buildRelativePath({
+          pageSlug: "rts",
+        })}
+      >
+        {dates.rts.moreInfoLink}
+      </GoButton>
     </Card>
   );
 };
