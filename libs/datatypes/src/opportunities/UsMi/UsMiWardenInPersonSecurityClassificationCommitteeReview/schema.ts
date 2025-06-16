@@ -24,11 +24,10 @@ import { usMiSecurityClassificationCommitteeReviewSchema } from "../UsMiSecurity
 const possiblyIneligibleCriteria = z
   .object({
     usMiPastWardenInPersonReviewForSccDate: z.object({
-      solitaryStartDate: dateStringSchema.nullable(),
+      // TODO(#8767): Make optional once hydrated
+      solitaryStartDate: dateStringSchema.nullish(),
       latestWardenInPersonSccReviewDate: dateStringSchema.nullable(),
       nextSccDate: dateStringSchema.nullable(),
-      numberOfExpectedReviews: z.number().nullable(),
-      numberOfReviews: z.number().nullable(),
     }),
     usMiInSolitaryConfinementAtLeastSixMonths: z.object({
       eligibleDate: dateStringSchema,

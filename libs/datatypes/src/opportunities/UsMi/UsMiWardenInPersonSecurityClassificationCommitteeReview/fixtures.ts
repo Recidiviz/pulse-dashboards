@@ -35,8 +35,6 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
           solitaryStartDate: relativeFixtureDate({ days: -20 }),
           latestWardenInPersonSccReviewDate: relativeFixtureDate({ days: -15 }),
           nextSccDate: relativeFixtureDate({ days: 5 }),
-          numberOfExpectedReviews: null,
-          numberOfReviews: null,
         },
         usMiInSolitaryConfinementAtLeastSixMonths: {
           eligibleDate: relativeFixtureDate({ days: -20 }),
@@ -94,8 +92,6 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
           solitaryStartDate: relativeFixtureDate({ days: -30 }),
           latestWardenInPersonSccReviewDate: null,
           nextSccDate: relativeFixtureDate({ days: 2 }),
-          numberOfExpectedReviews: 2,
-          numberOfReviews: 1,
         },
         usMiInSolitaryConfinementAtLeastSixMonths: {
           eligibleDate: relativeFixtureDate({ days: -50 }),
@@ -160,8 +156,6 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
           solitaryStartDate: relativeFixtureDate({ days: -30 }),
           latestWardenInPersonSccReviewDate: null,
           nextSccDate: relativeFixtureDate({ days: 2 }),
-          numberOfExpectedReviews: null,
-          numberOfReviews: null,
         },
       },
       metadata: {
@@ -187,8 +181,6 @@ export const usMiWardenInPersonSecurityClassificationCommitteeReviewFixtures = {
           solitaryStartDate: relativeFixtureDate({ days: -30 }),
           latestWardenInPersonSccReviewDate: null,
           nextSccDate: relativeFixtureDate({ days: 2 }),
-          numberOfExpectedReviews: 2,
-          numberOfReviews: 1,
         },
       },
       formInformation: {

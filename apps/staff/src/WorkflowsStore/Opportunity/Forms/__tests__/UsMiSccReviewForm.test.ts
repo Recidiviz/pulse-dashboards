@@ -68,8 +68,6 @@ function createTestUnit() {
         facilitySolitaryStartDate: null,
         latestSccReviewDate: null,
         nextSccDate: null,
-        numberOfExpectedReviews: 2,
-        numberOfReviews: 1,
       },
     },
     ineligibleCriteria: {},

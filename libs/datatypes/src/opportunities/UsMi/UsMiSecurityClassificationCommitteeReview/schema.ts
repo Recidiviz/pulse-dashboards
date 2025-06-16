@@ -24,11 +24,10 @@ import { opportunitySchemaBase } from "../../utils/opportunitySchemaBase";
 const possiblyIneligibleCriteria = z
   .object({
     usMiPastSecurityClassificationCommitteeReviewDate: z.object({
-      facilitySolitaryStartDate: dateStringSchema.nullable(),
+      // TODO(#8767): Make optional once hydrated
+      facilitySolitaryStartDate: dateStringSchema.nullish(),
       latestSccReviewDate: dateStringSchema.nullable(),
       nextSccDate: dateStringSchema.nullable(),
-      numberOfExpectedReviews: z.number().nullable(),
-      numberOfReviews: z.number().nullable(),
     }),
   })
   .partial()

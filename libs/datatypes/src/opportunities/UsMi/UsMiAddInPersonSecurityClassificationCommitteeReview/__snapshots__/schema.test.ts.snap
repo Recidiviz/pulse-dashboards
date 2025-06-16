@@ -29,8 +29,6 @@ exports[`schema for almostEligible1 1`] = `
     "usMiPastAddInPersonReviewForSccDate": {
       "latestAddInPersonSccReviewDate": null,
       "nextSccDate": 2021-12-18T00:00:00.000Z,
-      "numberOfExpectedReviews": null,
-      "numberOfReviews": null,
       "solitaryStartDate": 2021-11-16T00:00:00.000Z,
     },
   },
@@ -58,8 +56,6 @@ exports[`schema for almostEligible2 1`] = `
     "usMiPastAddInPersonReviewForSccDate": {
       "latestAddInPersonSccReviewDate": null,
       "nextSccDate": 2021-12-18T00:00:00.000Z,
-      "numberOfExpectedReviews": 2,
-      "numberOfReviews": 1,
       "solitaryStartDate": 2021-11-16T00:00:00.000Z,
     },
   },
@@ -112,8 +108,6 @@ exports[`schema for fullyEligible1 1`] = `
     "usMiPastAddInPersonReviewForSccDate": {
       "latestAddInPersonSccReviewDate": 2021-12-01T00:00:00.000Z,
       "nextSccDate": 2021-12-21T00:00:00.000Z,
-      "numberOfExpectedReviews": null,
-      "numberOfReviews": null,
       "solitaryStartDate": 2021-11-26T00:00:00.000Z,
     },
   },
@@ -172,8 +166,6 @@ exports[`schema for fullyEligible2 1`] = `
     "usMiPastAddInPersonReviewForSccDate": {
       "latestAddInPersonSccReviewDate": null,
       "nextSccDate": 2021-12-18T00:00:00.000Z,
-      "numberOfExpectedReviews": 2,
-      "numberOfReviews": 1,
       "solitaryStartDate": 2021-11-16T00:00:00.000Z,
     },
   },
