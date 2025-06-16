@@ -41,9 +41,10 @@ import {
 import { mockOpportunityConfigs } from "../src/core/__tests__/testUtils";
 import { supervisionLevelDowngradeReferralRecordSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/SupervisionLevelDowngradeReferralRecord";
 import { usArInstitutionalWorkerStatusSchema } from "../src/WorkflowsStore/Opportunity/UsAr/UsArInstitutionalWorkerStatusOpportunity/UsArInstitutionalWorkerStatusReferralRecord";
+import { usAzReleaseToTPRSchema } from "../src/WorkflowsStore/Opportunity/UsAz";
 import { usAzOverdueForAcisDtpSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzOverdueForAcisDtpOpportunity/UsAzOverdueForAcisDtpReferralRecord";
 import { usAzOverdueForAcisTprSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprReferralRecord";
-import { usAzReleaseToTransitionProgramSchemaBase } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToTransitionProgramBaseSchema";
+import { usAzReleaseToDTPSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { usIaEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsIa";
 import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity";
@@ -103,8 +104,8 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usArInstitutionalWorkerStatus: usArInstitutionalWorkerStatusSchema,
 
   // US_AZ
-  usAzReleaseToTPR: usAzReleaseToTransitionProgramSchemaBase,
-  usAzReleaseToDTP: usAzReleaseToTransitionProgramSchemaBase,
+  usAzReleaseToTPR: usAzReleaseToTPRSchema,
+  usAzReleaseToDTP: usAzReleaseToDTPSchema,
   usAzOverdueForACISTPR: usAzOverdueForAcisTprSchema,
   usAzOverdueForACISDTP: usAzOverdueForAcisDtpSchema,
 

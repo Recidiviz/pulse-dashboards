@@ -19,8 +19,8 @@ import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatDate, formatNameLastFirst } from "../../../utils/formatStrings";
 import { UsAzOverdueForAcisDtpOpportunity } from "../UsAz/UsAzOverdueForAcisDtpOpportunity/UsAzOverdueForAcisDtpOpportunity";
 import { UsAzOverdueForAcisTprOpportunity } from "../UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprOpportunity";
-import { UsAzReleaseToDTPOpportunity } from "../UsAz/UsAzReleaseToDTPOpportunity";
-import { UsAzReleaseToTPROpportunity } from "../UsAz/UsAzReleaseToTPROpportunity";
+import { UsAzReleaseToDTPOpportunity } from "../UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPOpportunity";
+import { UsAzReleaseToTPROpportunity } from "../UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
 import { UsAzReleaseToTransitionProgramDraftData } from "../UsAz/UsAzReleaseToTransitionProgramBaseSchema";
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 

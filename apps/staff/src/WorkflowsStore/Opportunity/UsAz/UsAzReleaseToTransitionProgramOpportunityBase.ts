@@ -19,7 +19,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { palette } from "~design-system";
 
-import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";
+import { OPPORTUNITY_STATUS_COLORS, StatusPalette } from "../../../core/utils/workflowsUtils";
 import { OpportunityUpdate } from "../../../FirestoreStore";
 import { Resident } from "../../Resident";
 import { OpportunityBase } from "../OpportunityBase";
@@ -134,8 +134,8 @@ export abstract class UsAzReleaseToTransitionProgramOpportunityBase<
         text: palette.pine4,
         icon: palette.signal.highlight,
         buttonFill: palette.signal.links,
-      };
-    }
+      } as StatusPalette;
+    } 
 
     return undefined;
   }

@@ -15,4 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+export * from "./UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPOpportunity";
+export * from "./UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPReferralRecord";
+export * from "./UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
+export * from "./UsAzReleaseToTPROpportunity/UsAzReleaseToTPRReferralRecord";
 export * from "./UsAzReleaseToTransitionProgramOpportunityBase";

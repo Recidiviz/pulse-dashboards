@@ -328,7 +328,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzWithin7DaysOfRecidivizDtpDate",
-          text: "Upcoming DTP date in Recidiviz{{#if recidivizDtpDate}}: {{date recidivizDtpDate}}{{/if}}",
+          text: "Upcoming projected DTP date{{#if recidivizDtpDate}}: {{date recidivizDtpDate}}{{/if}}",
         },
       ],
       emptyTabCopy: [],
@@ -370,7 +370,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzWithin7DaysOfRecidivizDtpDate",
-          text: "Upcoming DTP date in Recidiviz{{#if recidivizDtpDate}}: {{date recidivizDtpDate}}{{/if}}",
+          text: "Upcoming projected DTP date{{#if recidivizDtpDate}}: {{date recidivizDtpDate}}{{/if}}",
         },
       ],
       initialHeader: null,
@@ -547,7 +547,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzWithin7DaysOfRecidivizTprDate",
-          text: "Upcoming TPR date in Recidiviz{{#if recidivizTprDate}}: {{date recidivizTprDate}}{{/if}}",
+          text: "Upcoming projected TPR date{{#if recidivizTprDate}}: {{date recidivizTprDate}}{{/if}}",
         },
       ],
       emptyTabCopy: [],
@@ -589,7 +589,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzWithin7DaysOfRecidivizTprDate",
-          text: "Upcoming TPR date in Recidiviz{{#if recidivizTprDate}}: {{date recidivizTprDate}}{{/if}}",
+          text: "Upcoming projected TPR date{{#if recidivizTprDate}}: {{date recidivizTprDate}}{{/if}}",
         },
       ],
       initialHeader: null,

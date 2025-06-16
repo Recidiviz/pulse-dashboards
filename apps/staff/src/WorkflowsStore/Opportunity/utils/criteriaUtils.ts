@@ -133,7 +133,7 @@ const formatterHelperFunctions: Record<string, (...raw: any) => any> = {
   usMiSegregationDisplayName,
 };
 
-type Reason = Record<string, any>;
+export type Reason = Record<string, any>;
 
 export type UntypedCriteriaFormatters = Record<
   string,
