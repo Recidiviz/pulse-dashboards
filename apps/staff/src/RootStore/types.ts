@@ -84,6 +84,7 @@ export type FeatureVariant =
   | "usTnCompliantReporting2025Policy"
   | "supervisionTasksNavLink"
   | "usIaEarlyDischargeCustomizations"
+  | "usIaEarlyDischargeForms"
   | "usTnInitialClassification"
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
@@ -158,6 +159,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   supervisionTasksNavLink: {},
   snoozeCompanions: {},
   usIaEarlyDischargeCustomizations: {},
+  usIaEarlyDischargeForms: {},
   operationsDrilldown: {},
   usTnInitialClassification: {},
 };

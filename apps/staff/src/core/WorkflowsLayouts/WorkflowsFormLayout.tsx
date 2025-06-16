@@ -35,6 +35,7 @@ import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { OpportunityDenialView } from "../OpportunityDenial";
 import { OpportunityFormProvider } from "../Paperwork/OpportunityFormContext";
+import { FormUsIaEarlyDischargeParole } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeParole";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import AnnualClassificationReview from "../Paperwork/US_ME/AnnualReclassificationReview/AnnualReclassificationReview";
 import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
@@ -48,6 +49,7 @@ import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
 import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
+import { OpportunitySidePanelProvider } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
 import WorkflowsUsAzReleaseToTransitionProgramForm from "../WorkflowsUsAzReleaseToTransitionProgramForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
@@ -107,6 +109,7 @@ const FormComponents = {
   WorkflowsUsCaSupervisionLevelDowngradeForm3043,
   FormFurloughRelease,
   FormUsPaAdminSupervision,
+  FormUsIaEarlyDischargeParole,
   AnnualClassificationReview,
   FormUsMiSCCReview,
   MediumTrustee,
@@ -202,20 +205,22 @@ const HydratedWorkflowsFormLayout = observer(
 
     return (
       <Wrapper>
-        <Sidebar>
-          <NavigationLayout
-            externalMethodologyUrl={workflowsMethodologyUrl}
-            isFixed={false}
-          />
-          <SidebarSection>
-            <BackButtonWrapper>
-              <NavigationBackButton action={{ onClick: handleBack }}>
-                Back
-              </NavigationBackButton>
-            </BackButtonWrapper>
-            {sidebarContents}
-          </SidebarSection>
-        </Sidebar>
+        <OpportunitySidePanelProvider>
+          <Sidebar>
+            <NavigationLayout
+              externalMethodologyUrl={workflowsMethodologyUrl}
+              isFixed={false}
+            />
+            <SidebarSection>
+              <BackButtonWrapper>
+                <NavigationBackButton action={{ onClick: handleBack }}>
+                  Back
+                </NavigationBackButton>
+              </BackButtonWrapper>
+              {sidebarContents}
+            </SidebarSection>
+          </Sidebar>
+        </OpportunitySidePanelProvider>
 
         <FormWrapper>
           {FormComponent && (

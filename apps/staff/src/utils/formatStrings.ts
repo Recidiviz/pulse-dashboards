@@ -429,6 +429,14 @@ function rangeString({ min, max }: { min?: number; max?: number }) {
   return `${min} - ${max}`;
 }
 
+function formatNameFirstLast(fullName: FullName): string {
+  const { givenNames = "N/A", middleNames, surname = "Unknown" } = fullName;
+
+  if (middleNames?.length) return `${givenNames} ${middleNames[0]}. ${surname}`;
+
+  return `${givenNames} ${surname}`;
+}
+
 function formatNameLastFirst(fullName: FullName): string {
   const { givenNames = "N/A", middleNames, surname = "Unknown" } = fullName;
 
@@ -547,6 +555,7 @@ export {
   formatISODateString,
   formatLargeNumber,
   formatName,
+  formatNameFirstLast,
   formatNameLastFirst,
   formatOfficerLabel,
   formatPercent,

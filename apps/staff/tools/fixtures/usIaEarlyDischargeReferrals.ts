@@ -50,7 +50,39 @@ export const usIaEarlyDischargeReferralsFixture =
       ineligibleCriteria: {},
       isEligible: true,
       isAlmostEligible: false,
-      formInformation: {},
+      formInformation: {
+        USCitizenshipStatus: "US Citizen",
+        charges: [
+          {
+            CauseNumber: "CN123",
+            CrimeCdOffenseType: "Felony",
+            Jurisdiction: "County Court",
+            classificationTypeRawText: "Felony",
+            counts: 1,
+            description: "Sample offense",
+            statute: "XYZ-123",
+          },
+        ],
+        penalties: [
+          {
+            PenaltyDays: 10,
+            PenaltyMonths: 1,
+            PenaltyYears: 0,
+            ProsecutingAttorneys: "John Doe",
+            SentencePenaltyModifier: "None",
+            SentencePenaltyType: "Fine",
+            TDD: "2025-01-01",
+            judgeFullName: null,
+          },
+        ],
+        staffAttributes: [
+          {
+            StaffTitle: null,
+            WorkUnit: "Case Management",
+            officerExternalId: "OFFICER-001",
+          },
+        ],
+      },
       eligibleDate: relativeFixtureDate({ months: -12 }),
       metadata: {
         victimFlag: true,
@@ -94,7 +126,39 @@ export const usIaEarlyDischargeReferralsFixture =
       ineligibleCriteria: {},
       isEligible: true,
       isAlmostEligible: false,
-      formInformation: {},
+      formInformation: {
+        USCitizenshipStatus: "Non-Citizen",
+        charges: [
+          {
+            CauseNumber: "CN456",
+            CrimeCdOffenseType: "Misdemeanor",
+            Jurisdiction: "County Court",
+            classificationTypeRawText: "Misdemeanor",
+            counts: 2,
+            description: "Another sample offense",
+            statute: "ABC-789",
+          },
+        ],
+        penalties: [
+          {
+            PenaltyDays: 5,
+            PenaltyMonths: 0,
+            PenaltyYears: 1,
+            ProsecutingAttorneys: "Jane Prosecutor",
+            SentencePenaltyModifier: "Reduced",
+            SentencePenaltyType: "Probation",
+            TDD: "2026-05-05",
+            judgeFullName: null,
+          },
+        ],
+        staffAttributes: [
+          {
+            StaffTitle: "Officer",
+            WorkUnit: "Special Unit",
+            officerExternalId: "OFFICER-002",
+          },
+        ],
+      },
       eligibleDate: relativeFixtureDate({ months: -14 }),
       metadata: {
         victimFlag: true,
@@ -161,7 +225,39 @@ export const usIaEarlyDischargeReferralsFixture =
       ineligibleCriteria: {},
       isEligible: true,
       isAlmostEligible: false,
-      formInformation: {},
+      formInformation: {
+        USCitizenshipStatus: "US Citizen",
+        charges: [
+          {
+            CauseNumber: "CN789",
+            CrimeCdOffenseType: "Felony",
+            Jurisdiction: "Municipal Court",
+            classificationTypeRawText: "Felony",
+            counts: 1,
+            description: "Minor offense",
+            statute: "XYZ-456",
+          },
+        ],
+        penalties: [
+          {
+            PenaltyDays: 20,
+            PenaltyMonths: 2,
+            PenaltyYears: 0,
+            ProsecutingAttorneys: "Sam Prosecutor",
+            SentencePenaltyModifier: "None",
+            SentencePenaltyType: "Fine",
+            TDD: "2025-07-01",
+            judgeFullName: null,
+          },
+        ],
+        staffAttributes: [
+          {
+            StaffTitle: null,
+            WorkUnit: "Central Unit",
+            officerExternalId: "OFFICER-003",
+          },
+        ],
+      },
       eligibleDate: relativeFixtureDate({ months: -17 }),
       metadata: {
         victimFlag: true,
@@ -222,7 +318,39 @@ export const usIaEarlyDischargeReferralsFixture =
       ineligibleCriteria: {},
       isEligible: true,
       isAlmostEligible: false,
-      formInformation: {},
+      formInformation: {
+        USCitizenshipStatus: "US Citizen",
+        charges: [
+          {
+            CauseNumber: "CN987",
+            CrimeCdOffenseType: "Misdemeanor",
+            Jurisdiction: "District Court",
+            classificationTypeRawText: "Misdemeanor",
+            counts: 1,
+            description: "Example offense",
+            statute: "ABC-123",
+          },
+        ],
+        penalties: [
+          {
+            PenaltyDays: 15,
+            PenaltyMonths: 1,
+            PenaltyYears: 2,
+            ProsecutingAttorneys: "Alex Prosecutor",
+            SentencePenaltyModifier: "Increased",
+            SentencePenaltyType: "Incarceration",
+            TDD: "2026-10-10",
+            judgeFullName: null,
+          },
+        ],
+        staffAttributes: [
+          {
+            StaffTitle: "Supervisor",
+            WorkUnit: "Department X",
+            officerExternalId: "OFFICER-004",
+          },
+        ],
+      },
       eligibleDate: relativeFixtureDate({ months: -18 }),
       metadata: {},
     },

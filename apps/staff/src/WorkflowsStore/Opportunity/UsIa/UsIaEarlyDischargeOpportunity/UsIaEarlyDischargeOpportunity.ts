@@ -26,6 +26,7 @@ import {
   SupervisorAction,
 } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
+import { UsIaEarlyDischargeForm } from "../../Forms/UsIaEarlyDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
   OpportunityRequirement,
@@ -42,6 +43,8 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   Client,
   UsIaEarlyDischargeReferralRecord
 > {
+  form?: UsIaEarlyDischargeForm = undefined;
+
   constructor(client: Client, record: DocumentData) {
     super(
       client,
@@ -49,6 +52,16 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       client.rootStore,
       usIaEarlyDischargeSchema.parse(record),
     );
+
+    const {
+      workflowsStore: {
+        featureVariants: { usIaEarlyDischargeForms },
+      },
+    } = client.rootStore;
+
+    if (usIaEarlyDischargeForms) {
+      this.form = new UsIaEarlyDischargeForm(this, client.rootStore);
+    }
   }
 
   requiresRevertConfirmation = true;

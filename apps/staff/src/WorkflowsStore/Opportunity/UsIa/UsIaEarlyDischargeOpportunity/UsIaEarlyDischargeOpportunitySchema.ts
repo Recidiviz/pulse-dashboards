@@ -89,7 +89,48 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
       })
       .passthrough(),
     ineligibleCriteria: z.object({}).passthrough(),
-    formInformation: z.object({}).passthrough(),
+    formInformation: z
+      .object({
+        USCitizenshipStatus: z.string().nullish(),
+        charges: z
+          .array(
+            z.object({
+              CauseNumber: z.string(),
+              CrimeCdOffenseType: z.string(),
+              Jurisdiction: z.string(),
+              classificationTypeRawText: z.string(),
+              counts: z.number(),
+              description: z.string(),
+              statute: z.string(),
+            }),
+          )
+          .default([]),
+        penalties: z
+          .array(
+            z.object({
+              PenaltyDays: z.coerce.number(),
+              PenaltyMonths: z.coerce.number(),
+              PenaltyYears: z.coerce.number(),
+              ProsecutingAttorneys: z.string(),
+              SentencePenaltyModifier: z.string(),
+              SentencePenaltyType: z.string(),
+              TDD: z.string(),
+              // TODO: make this JSON at the BQ level
+              judgeFullName: z.string().nullable(),
+            }),
+          )
+          .default([]),
+        staffAttributes: z
+          .array(
+            z.object({
+              StaffTitle: z.string().nullable(),
+              WorkUnit: z.string(),
+              officerExternalId: z.string(),
+            }),
+          )
+          .default([]),
+      })
+      .passthrough(),
     metadata: z
       .object({
         victimFlag: z.boolean().optional(),
@@ -123,6 +164,29 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
       .passthrough(),
   })
   .passthrough();
+
+export type UsIaEarlyDischargeDraftData = {
+  usCitizenshipStatus: string;
+  todaysDate: string;
+  iconNumber: string;
+  clientFullName: string;
+  causeNumber: string;
+  jurisdiction: string;
+  counts: number;
+  description: string;
+  supervisionType: string;
+  supervisionStartDate: string;
+  classificationTypeRawText: string;
+  supervisionEndDate: string;
+  sentencePenaltyType: string;
+  penaltyDays: number;
+  penaltyMonths: number;
+  penaltyYears: number;
+  sentencePenaltyModifier: string;
+  officerFullName: string;
+  staffTitle: string;
+  workUnit: string;
+};
 
 export type UsIaEarlyDischargeReferralRecordRaw = z.input<
   typeof usIaEarlyDischargeSchema
