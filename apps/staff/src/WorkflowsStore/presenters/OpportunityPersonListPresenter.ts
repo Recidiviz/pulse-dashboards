@@ -164,6 +164,9 @@ export class OpportunityPersonListPresenter
           "usMiPastFTRD",
           "usTnExpiration",
         ].includes(this.opportunityType),
+      US_NE_PEDD_DATE:
+        this.workflowsStore.activeSystem === "SUPERVISION" &&
+        this.tenantStore.currentTenantId === "US_NE",
       LAST_VIEWED: true,
       ALMOST_ELIGIBLE_STATUS: some(
         opportunities,
@@ -210,11 +213,6 @@ export class OpportunityPersonListPresenter
         new Date(opp.autoSnooze.snoozeUntil),
       );
     }
-  }
-
-  eligibleForDays(opp: Opportunity): number | undefined {
-    if (!opp.eligibilityDate || opp.eligibilityDate > startOfToday()) return;
-    return differenceInDays(startOfToday(), opp.eligibilityDate);
   }
 
   get isViewingDeniedTab() {

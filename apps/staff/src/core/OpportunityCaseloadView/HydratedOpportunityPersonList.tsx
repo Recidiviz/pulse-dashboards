@@ -33,8 +33,15 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { Sans14, Sans16, Sans18, spacing, TooltipTrigger } from "@recidiviz/design-system";
+import {
+  Sans14,
+  Sans16,
+  Sans18,
+  spacing,
+  TooltipTrigger,
+} from "@recidiviz/design-system";
 import { ColumnDef, Row, SortingState } from "@tanstack/react-table";
+import { differenceInDays, startOfToday } from "date-fns";
 import { orderBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem, rgba } from "polished";
@@ -208,6 +215,7 @@ export type OpportunityTableColumnId =
   | "ELIGIBILITY_DATE"
   | "RELEASE_DATE"
   | "SUPERVISION_EXPIRATION_DATE"
+  | "US_NE_PEDD_DATE"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
   | "CTA_BUTTON"
@@ -243,12 +251,32 @@ export function PersonIdCell({ row }: { row: Row<Opportunity> }) {
   );
 }
 
+const KeepTogether = styled.span`
+  white-space: nowrap;
+`;
+
+function EligibilityDateCell({ row }: { row: Row<Opportunity> }) {
+  const { eligibilityDate } = row.original;
+  if (!eligibilityDate) return "-";
+  if (eligibilityDate > startOfToday())
+    return formatWorkflowsDate(eligibilityDate);
+  const eligibleForDays = differenceInDays(startOfToday(), eligibilityDate);
+  return (
+    <>
+      {formatWorkflowsDate(eligibilityDate)}{" "}
+      <KeepTogether>
+        {`(${formatDurationFromOptionalDays(eligibleForDays)} ago)`}
+      </KeepTogether>
+    </>
+  );
+}
+
 export function OfficerNameCell({ row }: { row: Row<Opportunity> }) {
   return row.original.person.assignedStaffId ? (
     <WorkflowsOfficerName officerId={row.original.person.assignedStaffId} />
   ) : (
     // for type safety, but we should not show this column for anyone without an officer
-    ("—")
+    "—"
   );
 }
 
@@ -447,17 +475,7 @@ const TableView = observer(function TableView({
       enableSorting: true,
       sortingFn: "datetime",
       accessorFn: (opp: Opportunity) => opp.eligibilityDate,
-      cell: ({ row }: { row: Row<Opportunity> }) => {
-        const { eligibilityDate } = row.original;
-        const eligibleForDays = presenter.eligibleForDays(row.original);
-        if (eligibilityDate && eligibleForDays) {
-          return `${formatWorkflowsDate(eligibilityDate)} (${formatDurationFromOptionalDays(eligibleForDays)} ago)`;
-        } else if (eligibilityDate) {
-          return formatWorkflowsDate(eligibilityDate);
-        } else {
-          return "—";
-        }
-      },
+      cell: EligibilityDateCell,
     },
     {
       header: presenter.releaseDateHeader,
@@ -479,6 +497,28 @@ const TableView = observer(function TableView({
           return "Serving a life sentence";
         }
         return `${formatWorkflowsDate(person.releaseDate)}`;
+      },
+    },
+    {
+      header: "Parole Earned Discharge Date",
+      id: "US_NE_PEDD_DATE",
+      enableSorting: true,
+      sortingFn: "datetime",
+      accessorFn: ({ person }: Opportunity) => {
+        if (person instanceof Client && person.metadata.stateCode === "US_NE") {
+          return person.metadata.paroleEarnedDischargeDate;
+        }
+      },
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const { person } = row.original;
+        if (
+          person instanceof Client &&
+          person.metadata.stateCode === "US_NE" &&
+          person.metadata.paroleEarnedDischargeDate
+        ) {
+          return formatWorkflowsDate(person.metadata.paroleEarnedDischargeDate);
+        }
+        return "-";
       },
     },
     {
@@ -721,18 +761,18 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
       {/* eslint-disable-next-line no-nested-ternary */}
       {peopleInActiveTab.length === 0 ? (
         /* Empty tab display */
-        (<MaxWidthFlexWrapper fullWidth={!presenter.showListView}>
+        <MaxWidthFlexWrapper fullWidth={!presenter.showListView}>
           <EmptyTabGroupWrapper>
             <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
           </EmptyTabGroupWrapper>
-        </MaxWidthFlexWrapper>)
+        </MaxWidthFlexWrapper>
       ) : // eslint-disable-next-line no-nested-ternary
       !presenter.showListView ? (
         /* Table view */
-        (<TableView presenter={presenter} />)
+        <TableView presenter={presenter} />
       ) : peopleInActiveTabBySubcategory ? (
         /* List view subcategories display */
-        ((presenter.subcategoryOrder ?? [])
+        (presenter.subcategoryOrder ?? [])
           .filter((category) => peopleInActiveTabBySubcategory[category])
           .map((category) => (
             <div key={category}>
@@ -743,10 +783,10 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
                 items={peopleInActiveTabBySubcategory[category]}
               />
             </div>
-          )))
+          ))
       ) : (
         /* List view with no subcategories */
-        (<CaseloadOpportunityGrid items={peopleInActiveTab} />)
+        <CaseloadOpportunityGrid items={peopleInActiveTab} />
       )}
       <OpportunityPreviewModal
         opportunity={presenter.selectedOpportunity}
