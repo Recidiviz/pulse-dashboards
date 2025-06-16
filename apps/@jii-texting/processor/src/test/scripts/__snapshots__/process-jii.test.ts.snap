@@ -12,12 +12,16 @@ Learn more at rviz.co/id_lsu.
 Reply STOP to stop receiving these messages at any time. We’re unable to respond to messages sent to this number."
 `;
 
-exports[`copy for person where district=District 1 and group=ELIGIBLE_MISSING_FINES_AND_FEES 1`] = `
-"Hi Jane, IDOC records show you meet most requirements but have a remaining step to be considered for the Limited Supervision Unit (LSU). If you make fine/fee payments for 3 months in a row (even small payments count), you may qualify.
+exports[`copy for person where district=District 1 and group=FULLY_ELIGIBLE 1`] = `
+"Hi Jane, IDOC records show that you have met most of the requirements to be considered for the Limited Supervision Unit (LSU). LSU is a lower level of supervision with monthly online check-ins for those in good standing (for example, no new misdemeanors).
 
-LSU is a lower level of supervision with monthly online check-ins for those in good standing (for example, no active no-contact orders, and no new misdemeanors). It reduces your monthly supervision fee from $60 to $40. LSU is optional, and this message does not mean you have already been transferred.
+This message does not mean that you have already been transferred to LSU. To fully qualify, your PO will need to check that:
+1. You have no active no-contact orders.
+2. You have made payments towards your fines/fees at least 3 months in a row (even small payments count).
 
-You can reach out to John Doe or email D1Connect@idoc.idaho.gov to make payments or with questions about LSU. They must verify that you are in compliance with your conditions of supervision. If you are, they can help you apply.
+You may also be required to provide your PO with a negative urine analysis test.
+
+If you believe you meet these conditions or have questions, please contact John Doe or email D1Connect@idoc.idaho.gov; they can confirm your eligibility and help you apply. Approval for LSU is not guaranteed.
 
 Learn more at rviz.co/id_lsu.
 

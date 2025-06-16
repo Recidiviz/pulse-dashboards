@@ -999,7 +999,7 @@ describe("one person with initial and eligibility message series", () => {
 });
 
 test.each([
-  ["District 1", "ELIGIBLE_MISSING_FINES_AND_FEES"],
+  ["District 1", "FULLY_ELIGIBLE"],
   ["District 2", "MISSING_INCOME_VERIFICATION"],
   ["district 3", "MISSING_DA"],
   ["district 4", "TWO_MISSING_CRITERIA"],
