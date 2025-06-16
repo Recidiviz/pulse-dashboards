@@ -62,10 +62,15 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Must be compliant with all court-ordered conditions and special conditions ",
         },
         {
+          text: "Has not failed to make payment toward fines/fees/restitution",
+        },
+        {
           text: "Must have established a record of progress toward successful completion of Court-ordered obligations for local incarceration and community service",
         },
         {
-          text: "Has not failed to make payment toward fines/fees/restitution",
+          text: "If relevant based on client history and officer discretion, must have had a negative UA within the past 90 days",
+          tooltip:
+            "Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year ",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
@@ -180,6 +185,9 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Has not failed to make payment toward fines/fees/restitution",
         },
         { text: "Has not failed NCIC check" },
+        {
+          text: "If relevant based on client history and officer discretion, must have had a negative UA within the past 90 days",
+        },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
@@ -355,6 +363,10 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within seven (7) years OR\n        Full Term Release Date (FTRD) within seven (7) years\n    2. Parole Eligibility Date (PED) within seven (7) years AND\n        Parole Hearing Date (PHD) within seven (7) years AND\n        Full Term Release Date (FTRD) within 20 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 3 years",
         },
+        {
+          key: "usIdNotServingARiderSentence",
+          text: "Not serving for a rider sentence",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_ID-CRCResidentWorkerReferrals",
@@ -367,7 +379,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "notServingForViolentOffense",
           text: "Serving for a violent offense and eligible for CRC placement with an override",
         },
-        { key: "notDeniedForCRC", text: "Has a CRC Termer Denied case note" },
+        {
+          key: "usIdNotDeniedForCrc",
+          text: "Has a CRC Termer Denied case note",
+        },
       ],
       initialHeader: null,
       isAlert: false,
@@ -515,6 +530,10 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "The resident must fulfill one of the following three conditions:\n    1. Tentative Parole Date (TPD) within eighteen (18) months OR\n        Full Term Release Date (FTRD) within eighteen (18) months\n    2. Early Release Date (EPRD) within 18 months AND\n        Full Term Release Date (FTRD) within 15 years\n    3. Life sentence AND\n        Tentative Parole Date (TPD) within 1 year",
         },
+        {
+          key: "usIdNotServingARiderSentence",
+          text: "Not serving for a rider sentence",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_ID-CRCWorkReleaseReferrals",
@@ -527,7 +546,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "notServingForViolentOffense",
           text: "Serving for a violent offense and eligible for CRC placement with an override",
         },
-        { key: "notDeniedForCRC", text: "Has a CRC Termer Denied case note" },
+        {
+          key: "usIdNotDeniedForCrc",
+          text: "Has a CRC Termer Denied case note",
+        },
       ],
       initialHeader: null,
       isAlert: false,

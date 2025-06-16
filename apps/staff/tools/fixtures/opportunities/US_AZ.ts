@@ -322,6 +322,14 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzNoIneligibleDtpOffenseConvictions",
           text: "No disqualifying convictions",
         },
+        {
+          key: "usAzIncarcerationWithin6MonthsOfAcisDtpDate",
+          text: "Upcoming DTP date in ACIS{{#if acisDtpDate}}: {{date acisDtpDate}}{{/if}}",
+        },
+        {
+          key: "usAzWithin7DaysOfRecidivizDtpDate",
+          text: "Upcoming DTP date in Recidiviz{{#if recidivizDtpDate}}: {{date recidivizDtpDate}}{{/if}}",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-DTPReferrals",
@@ -359,6 +367,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzNoDtpRemovalsFromSelfImprovementPrograms",
           text: "Has been removed from a Self Improvement Program during the current incarceration",
+        },
+        {
+          key: "usAzWithin7DaysOfRecidivizDtpDate",
+          text: "Upcoming DTP date in Recidiviz{{#if recidivizDtpDate}}: {{date recidivizDtpDate}}{{/if}}",
         },
       ],
       initialHeader: null,
@@ -529,6 +541,14 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usAzNoIneligibleTprOffenseConvictions",
           text: "No disqualifying convictions",
         },
+        {
+          key: "usAzIncarcerationWithin6MonthsOfAcisTprDate",
+          text: "Upcoming TPR date in ACIS{{#if acisTprDate}}: {{date acisTprDate}}{{/if}}",
+        },
+        {
+          key: "usAzWithin7DaysOfRecidivizTprDate",
+          text: "Upcoming TPR date in Recidiviz{{#if recidivizTprDate}}: {{date recidivizTprDate}}{{/if}}",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_AZ-TPRReferrals",
@@ -566,6 +586,10 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usAzNoTprRemovalsFromSelfImprovementPrograms",
           text: "Has been removed from a Self Improvement Program during the current incarceration",
+        },
+        {
+          key: "usAzWithin7DaysOfRecidivizTprDate",
+          text: "Upcoming TPR date in Recidiviz{{#if recidivizTprDate}}: {{date recidivizTprDate}}{{/if}}",
         },
       ],
       initialHeader: null,
@@ -797,15 +821,19 @@ export const mockApiOpportunityConfigurationResponse = {
         "https://drive.google.com/file/d/1Z7heBZYSj9RuEa0o6q4gW12M7ej1Ak9b/view",
       nonOmsCriteria: [
         {
-          text: "{{#if record.metadata_is_maybe_eligible_missing_1_4}}text to show if missing 1.4{{/if}}",
-          tooltip: "hello",
+          text: "{{#if record.metadata.isMaybeEligibleMissing14}}Requires validation of criteria (1.4): Not classified as homeless in their home release plan.{{/if}}",
+          tooltip:
+            "Alternate Eligibility: An offender may also meet this requirement once on supervision once they have achieved stable housing.",
         },
         {
-          text: "{{#if record.metadata.metadata_is_maybe_eligible_missing_1_5}}text to show if missing 1.5{{/if}}",
-          tooltip: "test 2",
+          text: "{{#if record.metadata.isMaybeEligibleMissing15}}Requires validation of criteria (1.5): Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4.{{/if}}",
+          tooltip:
+            "Alternate Eligibility: An offender may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, or retirement. For the purpose of this policy, people providing caregiving for a family member may also be considered to meet this condition. ",
         },
         {
-          text: "{{#if record.metadata.metadata_is_maybe_eligible_missing_1_7}}text to show if missing 1.7{{/if}}",
+          text: "{{#if record.metadata.isMaybeEligibleMissing17}}Requires validation of criteria (1.7): Not currently dealing with substance uses issues, as assessed in ORAS question 5.4. {{/if}}",
+          tooltip:
+            "Alternate Eligibility: An offender may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
       ],
       nonOmsCriteriaHeader: null,

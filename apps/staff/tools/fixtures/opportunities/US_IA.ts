@@ -47,7 +47,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "INTERSTATE (IC-IN)",
-          text: "Is serving an ICOTS case and sending state has denied or disregarded early discharge request",
+          text: "Is serving an ICOTS case and sentencing state did not approve early discharge",
         },
         {
           key: "INTERSTATE (IC-OUT)",
