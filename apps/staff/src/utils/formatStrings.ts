@@ -250,6 +250,10 @@ function formatWorkflowsDate(date?: Date): string {
   return formatDate(date, "MMM d, yyyy");
 }
 
+function formatWorkflowsDateWithTime(date?: Date): string {
+  return formatDate(date, "MMM d, yyyy h:mm a");
+}
+
 function formatWorkflowsDateString(
   date?: string | null,
   fallback = "Unknown",
@@ -561,6 +565,7 @@ export {
   formatPercent,
   formatWorkflowsDate,
   formatWorkflowsDateString,
+  formatWorkflowsDateWithTime,
   formatYearsMonthsFromNow,
   genderValueToHumanReadable,
   genderValueToLabel,

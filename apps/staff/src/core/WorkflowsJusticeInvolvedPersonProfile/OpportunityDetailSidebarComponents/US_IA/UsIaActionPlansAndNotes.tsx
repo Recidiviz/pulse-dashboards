@@ -21,7 +21,10 @@ import { Timestamp } from "firebase/firestore";
 import React from "react";
 import styled from "styled-components/macro";
 
-import { formatWorkflowsDate } from "../../../../../src/utils";
+import {
+  formatWorkflowsDate,
+  formatWorkflowsDateWithTime,
+} from "../../../../../src/utils";
 import PersonIcon from "../../../../assets/static/images/person.svg?react";
 import { OfficerAction } from "../../../../FirestoreStore";
 import { UsIaEarlyDischargeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsIa/index";
@@ -79,48 +82,58 @@ function PersonHeader({
         <PersonIcon />
         <Sans12>{personName}</Sans12>
       </PersonInfoWrapper>
-      <Sans12>{formatWorkflowsDate(date.toDate())}</Sans12>
+      <Sans12>{formatWorkflowsDateWithTime(date.toDate())}</Sans12>
     </SmallDetailsHeader>
   );
 }
+
+function ActionEntry({
+  action,
+}: {
+  action: OfficerAction;
+}): React.ReactElement | null {
+  if (isApprovalWithEmptyNotes(action)) {
+    return null;
+  }
+  const response = action.supervisorResponse;
+  return (
+    <>
+      {response?.revisionRequest && (
+        <DetailsBox>
+          <PersonHeader personName={response.by} date={response.date} />
+          <SecureSmallDetailsCopy>
+            {response.revisionRequest}
+          </SecureSmallDetailsCopy>
+        </DetailsBox>
+      )}
+      <DetailsBox>
+        <PersonHeader personName={action.by} date={action.date} />
+        <OfficerActionContents action={action}></OfficerActionContents>
+      </DetailsBox>
+    </>
+  );
+}
+
+const isApprovalWithEmptyNotes = (action: OfficerAction) =>
+  action.type === "APPROVAL" && !action.notes;
 
 export function UsIaActionPlansAndNotes({
   opportunity,
 }: OpportunityProfileProps): React.ReactElement | null {
   if (
     !(opportunity instanceof UsIaEarlyDischargeOpportunity) ||
-    !opportunity.latestAction ||
-    (opportunity.latestAction.type === "APPROVAL" &&
-      !opportunity.latestAction.notes)
+    !opportunity.mostRecentActions?.length ||
+    opportunity.mostRecentActions.every(isApprovalWithEmptyNotes)
   ) {
     return null;
   }
 
-  const latestSupervisorResponse = opportunity.latestAction.supervisorResponse;
-
   return (
     <DetailsSection>
       <DetailsHeading>Action Plans and Notes</DetailsHeading>
-      <DetailsBox>
-        <PersonHeader
-          personName={opportunity.latestAction.by}
-          date={opportunity.latestAction.date}
-        />
-        <OfficerActionContents
-          action={opportunity.latestAction}
-        ></OfficerActionContents>
-      </DetailsBox>
-      {latestSupervisorResponse?.revisionRequest && (
-        <DetailsBox style={{ marginTop: spacing.md }}>
-          <PersonHeader
-            personName={latestSupervisorResponse.by}
-            date={latestSupervisorResponse.date}
-          />
-          <SecureSmallDetailsCopy>
-            {latestSupervisorResponse.revisionRequest}
-          </SecureSmallDetailsCopy>
-        </DetailsBox>
-      )}
+      {opportunity.mostRecentActions.reverse().map((action) => (
+        <ActionEntry action={action} />
+      ))}
     </DetailsSection>
   );
 }

@@ -85,6 +85,10 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     return this.actionHistory?.at(-1);
   }
 
+  get mostRecentActions() {
+    return this.actionHistory?.slice(-2);
+  }
+
   get clientStatus(): UsIaClientStatus {
     const officerAction = this.latestAction;
     const supervisorResponse = officerAction?.supervisorResponse;

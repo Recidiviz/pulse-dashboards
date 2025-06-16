@@ -167,6 +167,9 @@ export const DetailsBox = styled.div`
   display: flex;
   flex-direction: column;
   color: ${palette.slate};
+  &:not(:first-child) {
+    margin-top: ${rem(spacing.md)};
+  }
 `;
 
 export const SmallDetailsHeader = styled.div`
