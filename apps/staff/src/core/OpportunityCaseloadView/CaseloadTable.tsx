@@ -20,6 +20,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   SortDirection,
   SortingState,
@@ -28,7 +29,7 @@ import {
 } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
@@ -38,7 +39,6 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
-import { usePreprocessedData } from "./utils";
 
 const Table = styled.table`
   width: 100%;
@@ -229,34 +229,17 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
 }: CaseloadTableProps<TData>) {
   const { isMobile } = useIsMobile(true);
 
+  /*
+   * NOTE: When progressive loading is enabled, the column sorting will sort the entire dataset
+   *       and not exclusively the rows that are currently displayed.
+   */
   const [progressiveLoading, setProgressiveLoading] = useState({
     pageIndex: 0,
     pageSize: progressiveLoadingBatchSize,
   });
 
-  /**
-   * If progressive loading is enabled, we need to ensure that the initial table state logic is ran on the entire
-   * dataset before the table limits the dataset to the batch size. This way, the visible data will be correctly
-   * pre-processed based on the initial state (e.g. initial sorting), and subsequent table actions (e.g. column sorting)
-   * will only apply to the visible batch of data.
-   */
-  const preprocessedData = usePreprocessedData(
-    data,
-    columns,
-    enableProgressiveLoading,
-    initialState,
-  );
-
-  const visibleData = useMemo(
-    () =>
-      enableProgressiveLoading
-        ? preprocessedData.slice(0, progressiveLoading.pageSize)
-        : preprocessedData,
-    [preprocessedData, enableProgressiveLoading, progressiveLoading.pageSize],
-  );
-
   const table = useReactTable({
-    data: visibleData,
+    data,
     columns: columns,
     getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
@@ -274,7 +257,13 @@ export const CaseloadTable = observer(function CaseloadTable<TData>({
           maxMultiSortColCount: 3,
         }
       : {}),
+    ...(enableProgressiveLoading
+      ? { getPaginationRowModel: getPaginationRowModel() }
+      : {}),
     initialState,
+    state: {
+      ...(enableProgressiveLoading ? { pagination: progressiveLoading } : {}),
+    },
   });
 
   const showLoadMoreButton =
