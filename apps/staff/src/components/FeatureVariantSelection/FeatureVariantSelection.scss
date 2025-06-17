@@ -21,7 +21,8 @@
     width: 32%;
     min-width: 450px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     color: $pine-1;
     background: $white;
     box-shadow: $inset-shadow-20;
@@ -34,6 +35,11 @@
     .Checkbox__label {
       @include sans-24;
       color: $pine-1;
+    }
+
+    .Override__label {
+      font-size: 0.6em;
+      color: $slate-60;
     }
 
     @media screen and (max-width: $core-breakpoint-xs) {

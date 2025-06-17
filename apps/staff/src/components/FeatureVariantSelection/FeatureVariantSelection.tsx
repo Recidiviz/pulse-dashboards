@@ -22,17 +22,20 @@ import React from "react";
 
 import Checkbox from "../../components/Checkbox";
 import { useFeatureVariants } from "../../components/StoreProvider";
+import { useUserStore } from "../../components/StoreProvider";
 import { allFeatureVariants, FeatureVariant } from "../../RootStore/types";
 
-const FeatureVariantSelection: React.FC = () => {
-  const activeFeatureVariants = useFeatureVariants();
 
-  type Item = { name: string; active: boolean; variant?: string };
+const FeatureVariantSelection: React.FC = () => {
+  const userStore = useUserStore();
+  const activeFeatureVariants = useFeatureVariants();
+  type Item = { name: string; active: boolean; variant?: string; override?: boolean };
 
   const items: Item[] = Object.keys(allFeatureVariants).map((fv) => ({
     name: fv,
     active: fv in activeFeatureVariants,
     variant: activeFeatureVariants[fv as FeatureVariant]?.variant,
+    override: userStore.featureVariantOverrides[fv as FeatureVariant],
   }));
 
   items.sort((a, b) => (a.name > b.name ? 1 : -1));
@@ -41,14 +44,23 @@ const FeatureVariantSelection: React.FC = () => {
     <div className="FeatureVariantSelection">
       <div className="FeatureVariantSelection__heading">Selected Feature Variants</div>
       <div className="FeatureVariantSelection__select-item-container">
-        {items.map(({ name, active, variant }) => (
+        {items.map(({ name, active, variant, override }) => (
           <div className="FeatureVariantSelection__select-item" key={name}>
             <Checkbox
               value={variant || ""}
               checked={active || false}
               name={name}
+               onChange={() => {
+                  userStore.setFeatureVariantOverride(
+                  name as FeatureVariant,
+                  !override
+                );
+              }}
             >
               {name}
+            <div className="Override__label">
+              {override && `Overridden`}
+            </div>
             </Checkbox>
           </div>
         ))}
