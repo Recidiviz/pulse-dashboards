@@ -20,14 +20,21 @@ const { sentryEsbuildPlugin } = require("@sentry/esbuild-plugin");
 module.exports = {
   plugins: [
     // This plugin will upload any generated sourcemaps to Sentry and then delete them before they are included in the docker image
-    // It automatically tags the release with the commit sha, so it will be easy to cross reference issues with the code that caused them
     sentryEsbuildPlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
-      debug: true,
+      // We disable this sourcemap upload because it is non-deterministic and forces a rebuild on every single deploy
       sourcemaps: {
+        disable: true,
+        // This still works even though the sourcemaps are disabled **shrug**
         filesToDeleteAfterUpload: ["**/*.js.map"],
+      },
+      // legacy sourcemaps are deterministic on the build output, so this is preferable
+      release: {
+        uploadLegacySourcemaps: {
+          paths: ["dist/apps/@sentencing/server"],
+        },
       },
     }),
   ],
