@@ -200,12 +200,26 @@ export const MultiValue = ({
   ...props
 }: MultiValueProps<SelectOption, true>) => {
   const {
+    data,
     data: { icon },
+    selectProps,
   } = props;
+
+  const handleRemove = () => {
+    // Filter out the item to remove
+    const newValues = Array.isArray(selectProps?.value)
+      ? selectProps.value.filter((item) => item.value !== data.value)
+      : [];
+    // Update the selected values
+    selectProps.onChange(newValues, {
+      action: "remove-value",
+      removedValue: data,
+    });
+  };
 
   return (
     <components.MultiValue className="fs-exclude" {...props}>
-      <MultiValueContainer>
+      <MultiValueContainer onTouchStart={handleRemove}>
         <SearchableIcon icon={icon} />
         {children}
       </MultiValueContainer>
@@ -307,6 +321,11 @@ const CaseloadSelectMobileButton = styled(Button).attrs({ kind: "link" })`
 
 const StyledModal = styled(Modal)`
   .ReactModal__Content {
+    font-family: "Public Sans", sans-serif;
+    font-weight: 500;
+    font-size: 0.875rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
     max-width: unset;
     max-height: unset;
     width: 100%;
@@ -394,6 +413,7 @@ export const caseloadSelectStyles = (
   container: (base) => ({
     ...base,
     margin: isMobile && "0 -1rem",
+    fontSize: rem(16),
   }),
   menuList: (base) => ({
     ...base,
