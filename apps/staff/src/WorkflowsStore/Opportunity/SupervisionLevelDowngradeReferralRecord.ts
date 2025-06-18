@@ -62,7 +62,7 @@ export function getBaseSLDValidator(
 
     if (supervisionLevel !== client.supervisionLevel)
       throw new OpportunityValidationError(
-        `Supervision level in criteria ("${supervisionLevel}") does not match formatted supervision level in client record ("${client.supervisionLevel}")`,
+        `Supervision level in criteria ("${supervisionLevel}") does not match formatted supervision level in client record ("${client.supervisionLevel}") for client ${client.pseudonymizedId} in ${client.stateCode}`,
       );
   };
 
