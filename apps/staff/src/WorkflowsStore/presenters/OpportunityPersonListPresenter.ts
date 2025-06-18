@@ -19,6 +19,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { differenceInDays, startOfToday } from "date-fns";
 import { difference, intersection, some } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
+import pluralize from "pluralize";
 import toast from "react-hot-toast";
 
 import { OpportunityType } from "~datatypes";
@@ -450,6 +451,14 @@ export class OpportunityPersonListPresenter
     }
   }
 
+  get searchIdsNotSelectedCtaText() {
+    const {
+      searchStore: { workflowsSearchFieldTitle },
+      justiceInvolvedPersonTitle,
+    } = this.workflowsStore;
+    return `Search for ${pluralize(workflowsSearchFieldTitle)} above to review and refer eligible ${pluralize(justiceInvolvedPersonTitle)} for opportunities.`;
+  }
+
   get emptyTabText() {
     if (this.activeTab) {
       return (
@@ -459,6 +468,14 @@ export class OpportunityPersonListPresenter
     }
     // When we don't have an active tab, there are no people in our current tab group
     return `Please select a different grouping. None of the ${this.justiceInvolvedPersonTitle}s were able to be grouped by ${toTitleCase(this.activeTabGroup.toLowerCase())}.`;
+  }
+
+  get selectedSearchablesCount() {
+    return this.workflowsStore.searchStore.selectedSearchables.length;
+  }
+
+  get workflowsSearchFieldTitle() {
+    return this.workflowsStore.searchStore.workflowsSearchFieldTitle;
   }
 
   get tabPrefaceText(): string | undefined {

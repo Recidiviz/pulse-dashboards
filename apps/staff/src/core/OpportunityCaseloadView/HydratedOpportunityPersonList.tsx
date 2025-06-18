@@ -740,7 +740,11 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
             >
               <WorkflowsCaseloadControlBar
                 title={"Group by"}
-                tabBadges={presenter.tabBadges}
+                tabBadges={
+                  presenter.selectedSearchablesCount > 0
+                    ? presenter.tabBadges
+                    : {}
+                }
                 tabs={presenter.displayTabs}
                 activeTab={presenter.activeTab}
                 setActiveTab={handleTabClick}
@@ -759,11 +763,16 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         </OpportunityPageExplainer>
       )}
       {/* eslint-disable-next-line no-nested-ternary */}
-      {peopleInActiveTab.length === 0 ? (
+      {peopleInActiveTab.length === 0 ||
+      presenter.selectedSearchablesCount === 0 ? (
         /* Empty tab display */
         <MaxWidthFlexWrapper fullWidth={!presenter.showListView}>
           <EmptyTabGroupWrapper>
-            <EmptyTabText>{presenter.emptyTabText}</EmptyTabText>
+            <EmptyTabText>
+              {presenter.selectedSearchablesCount > 0
+                ? presenter.emptyTabText
+                : presenter.searchIdsNotSelectedCtaText}
+            </EmptyTabText>
           </EmptyTabGroupWrapper>
         </MaxWidthFlexWrapper>
       ) : // eslint-disable-next-line no-nested-ternary
