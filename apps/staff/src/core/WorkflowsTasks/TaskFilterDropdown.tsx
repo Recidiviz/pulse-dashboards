@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Dropdown, DropdownMenu, DropdownMenuItem, DropdownToggle, spacing } from "@recidiviz/design-system";
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownToggle,
+  spacing,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import React from "react";
@@ -36,12 +42,21 @@ import { MobileTaskFilterModal } from "./MobileTaskFilterModal";
 const FilterDropdownToggle = styled(DropdownToggle)`
   padding: 12px 16px;
   height: 40px;
+
+  &:hover {
+    // Override the default color inversion on hover
+    background-color: ${palette.slate10};
+    color: ${palette.pine4};
+  }
+  &:focus {
+    background-color: unset;
+  }
 `;
 
 const FilterIcon = styled.i.attrs({
   className: "fa fa-filter",
-})`
-  color: ${palette.slate30};
+})<{ $filters: boolean }>`
+  color: ${({ $filters }) => ($filters ? palette.pine4 : palette.slate30)};
   margin-top: -2px;
   padding-right: 4px;
 `;
@@ -99,6 +114,12 @@ const SelectOnlyButton = styled.div`
   ${FilterRightText}
   color: ${palette.pine4};
   display: none;
+  padding: unset;
+
+  &:hover {
+    background-color: ${palette.slate10};
+    border-radius: 10px;
+  }
 `;
 
 const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)<{
@@ -123,8 +144,10 @@ const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)<{
     !$disabled &&
     `
   &:hover {
+    color: ${palette.pine1};
     & > ${SelectOnlyButton} {
       display: block;
+      color: ${palette.pine1};
     }
 
     & > ${FilterCount} {
@@ -135,8 +158,8 @@ const StyledFilterDropdownMenuItem = styled(DropdownMenuItem)<{
   &:active,
   &:focus {
     // Override the default color inversion on hover
-    background-color: ${palette.slate10};
-    color: ${palette.pine4};
+    background-color: unset;
+    color: ${palette.pine1};
   }
 
   ${({ $disabled }) => $disabled && `cursor: not-allowed !important;`}
@@ -174,6 +197,10 @@ const ClearAllButton = styled(StyledFilterDropdownMenuItem)`
   margin-top: ${rem(spacing.md)};
   text-transform: uppercase;
   font-weight: 700;
+
+  &:hover {
+    margin-left: unset;
+  }
 `;
 
 const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
@@ -189,18 +216,24 @@ const TaskFilterDropdownItem = observer(function TaskFilterDropdownItem({
   checked: boolean;
   count: number;
 }) {
+  const disabled = count === 0;
   return (
     <StyledFilterDropdownMenuItem
       preventCloseOnClickEvent
       onClick={(e) => {
         e.preventDefault();
-        onClick();
+        if (!disabled) onClick();
       }}
       key={option.value}
+      $disabled={disabled}
     >
       <FilterOptionLabel $disabled={false}>
         <FilterCheckboxContainer>
-          <Checkbox checked={checked} value={option.value} />
+          <Checkbox
+            checked={checked}
+            value={option.value}
+            disabled={disabled}
+          />
         </FilterCheckboxContainer>
         {option.shortLabel ?? option.label ?? option.value}
       </FilterOptionLabel>
@@ -240,7 +273,7 @@ const TaskFilterDropdownGroup = observer(function TaskFilterDropdownGroup({
           checked={presenter.filterIsSelected(field, option)}
           onClick={() => presenter.toggleFilter(field, option)}
           onClickOnly={() => presenter.setOnlyFilterForField(field, option)}
-          count={presenter.numTasksMatchingFilter(type, field, option)}
+          count={presenter.numTasks(type, field, option)}
         />
       ))}
     </FilterGroup>
@@ -266,7 +299,7 @@ const ClearAll = observer(function ClearAll({
   return (
     <ClearAllButton
       preventCloseOnClickEvent
-      onClick={() => presenter.resetFilters()}
+      onClick={() => presenter.selectAllFilters()}
     >
       Select all filters
     </ClearAllButton>
@@ -299,7 +332,7 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
               setModalIsOpen(true);
             }}
           >
-            <FilterIcon /> Filters
+            <FilterIcon $filters={presenter.someFiltersSet} /> Filters
             <FilterDownArrow />
           </FilterDropdownToggle>
         </Dropdown>
@@ -312,14 +345,13 @@ export const TaskFilterDropdown = observer(function TaskFilterDropdown({
       </>
     );
   }
-
   return (
     <Dropdown>
       <FilterDropdownToggle
         // TODO(#7899): Replace with a proper onMenuOpen handler
         onMouseUp={() => presenter.trackFilterDropdownOpened()}
       >
-        <FilterIcon /> Filters
+        <FilterIcon $filters={presenter.someFiltersSet} /> Filters
         <FilterDownArrow />
       </FilterDropdownToggle>
       <FilterDropdownMenu>

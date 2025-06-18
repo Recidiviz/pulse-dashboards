@@ -235,7 +235,7 @@ describe("CaseloadTasksPresenterV2", () => {
     it("filters people by selected task types", () => {
       presenter.toggleFilter("type", { value: "employment" });
       expect(presenter.clientsWithUpcomingTasks).toHaveLength(1);
-      expect(presenter.clientsWithOverdueTasks).toHaveLength(2);
+      expect(presenter.clientsWithOverdueTasks).toHaveLength(1);
     });
 
     it("can filter by a single option", () => {
@@ -305,6 +305,20 @@ describe("CaseloadTasksPresenterV2", () => {
       expect(presenter.countForCategory("DUE_THIS_MONTH")).toEqual(1);
     });
 
+    it("allTasksForCategory returns all tasks when applyFilter is false", () => {
+      // First, no filters are set
+      // allTasksForCategory should return the same number of tasks, regardless of applyFilter
+      expect(presenter.allTasksForCategory("ALL_TASKS", true)).toHaveLength(5);
+      expect(presenter.allTasksForCategory("ALL_TASKS", false)).toHaveLength(5);
+
+      // Next, set filter
+      presenter.setOnlyFilterForField("supervisionLevel", { value: "Low" });
+
+      // allTasksForCategory should return a different number of tasks depending on applyFilter
+      expect(presenter.allTasksForCategory("ALL_TASKS", true)).toHaveLength(3);
+      expect(presenter.allTasksForCategory("ALL_TASKS", false)).toHaveLength(5);
+    });
+
     it("logs filter changes", () => {
       presenter.unsetFilter("supervisionLevel", { value: "Low" });
 
@@ -315,11 +329,7 @@ describe("CaseloadTasksPresenterV2", () => {
         changedFilterCategory: "supervisionLevel",
         changedFilterSelected: false,
         onlyClicked: false,
-        selectedFilters: {
-          district: ["D1", "D31", "D10", "D7"],
-          supervisionLevel: ["Medium", "High", "Limited"],
-          type: ["employment", "assessment", "homeVisit", "contact"],
-        },
+        selectedFilters: {},
       });
 
       presenter.unsetFilter("supervisionLevel", { value: "High" });
@@ -331,11 +341,7 @@ describe("CaseloadTasksPresenterV2", () => {
         changedFilterCategory: "supervisionLevel",
         changedFilterSelected: false,
         onlyClicked: false,
-        selectedFilters: {
-          district: ["D1", "D31", "D10", "D7"],
-          supervisionLevel: ["Medium", "Limited"],
-          type: ["employment", "assessment", "homeVisit", "contact"],
-        },
+        selectedFilters: {},
       });
 
       presenter.setOnlyFilterForField("district", { value: "D31" });
@@ -349,8 +355,6 @@ describe("CaseloadTasksPresenterV2", () => {
         onlyClicked: true,
         selectedFilters: {
           district: ["D31"],
-          supervisionLevel: ["Medium", "Limited"],
-          type: ["employment", "assessment", "homeVisit", "contact"],
         },
       });
     });
@@ -381,43 +385,39 @@ describe("CaseloadTasksPresenterV2", () => {
       presenter = getPresenter({ workflowsStore: mockWorkflowsStore });
     });
 
-    it("starts with all filters selected", () => {
-      expect(presenter.selectedFilters).toEqual({
-        district: ["D1", "D31", "D10", "D7"],
-        supervisionLevel: ["Low", "Medium", "High", "Limited"],
-        type: ["employment", "assessment", "homeVisit", "contact"],
-      });
+    it("starts with no filters selected", () => {
+      expect(presenter.selectedFilters).toEqual({});
     });
 
     it("stores multiple selected filters", () => {
       presenter.setOnlyFilterForField("supervisionLevel", { value: "Low" });
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeTruthy();
+      ).toBeTrue();
 
       presenter.setFilter("supervisionLevel", { value: "High" });
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTruthy();
+      ).toBeTrue();
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeTruthy();
+      ).toBeTrue();
     });
 
     it("setFilter() does not deselect selected filters", () => {
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTruthy();
+      ).toBeFalse();
 
       presenter.setFilter("supervisionLevel", { value: "High" });
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTruthy();
+      ).toBeTrue();
 
       presenter.unsetFilter("supervisionLevel", { value: "High" });
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeFalsy();
+      ).toBeFalse();
     });
 
     it("resetting sets all filters", () => {
@@ -425,7 +425,7 @@ describe("CaseloadTasksPresenterV2", () => {
       presenter.setFilter("supervisionLevel", { value: "High" });
       presenter.setOnlyFilterForField("caseType", { value: "general" });
       presenter.setOnlyFilterForField("displayName", { value: "Bob" });
-      presenter.resetFilters();
+      presenter.selectAllFilters();
       expect(presenter.selectedFilters).toEqual({
         district: ["D1", "D31", "D10", "D7"],
         supervisionLevel: ["Low", "Medium", "High", "Limited"],
@@ -438,8 +438,6 @@ describe("CaseloadTasksPresenterV2", () => {
             caseType: ["general"],
             displayName: ["Bob"],
             supervisionLevel: ["Low", "High"],
-            district: ["D1", "D31", "D10", "D7"],
-            type: ["employment", "assessment", "homeVisit", "contact"],
           },
         },
       );
@@ -448,9 +446,9 @@ describe("CaseloadTasksPresenterV2", () => {
     it("clearing sets a cleared entry for all filter fields", () => {
       presenter.clearFilters();
       expect(presenter.selectedFilters).toEqual({
-        district: [],
-        supervisionLevel: [],
-        type: [],
+        district: undefined,
+        supervisionLevel: undefined,
+        type: undefined,
       });
 
       expect(
@@ -461,12 +459,12 @@ describe("CaseloadTasksPresenterV2", () => {
     it("toggles filters", () => {
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTruthy();
+      ).toBeFalse();
 
       presenter.toggleFilter("supervisionLevel", { value: "High" });
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeFalsy();
+      ).toBeTrue();
     });
 
     it("can toggle multiple filters", () => {
@@ -474,57 +472,52 @@ describe("CaseloadTasksPresenterV2", () => {
       presenter.toggleFilter("supervisionLevel", { value: "Low" });
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeFalsy();
+      ).toBeTrue();
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeFalsy();
+      ).toBeTrue();
 
       presenter.toggleFilter("supervisionLevel", { value: "High" });
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTruthy();
+      ).toBeFalse();
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeFalsy();
+      ).toBeTrue();
 
       presenter.toggleFilter("district", { value: "District 10" });
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "High" }),
-      ).toBeTruthy();
+      ).toBeFalse();
       expect(
         presenter.filterIsSelected("supervisionLevel", { value: "Low" }),
-      ).toBeFalsy();
+      ).toBeTrue();
       expect(
         presenter.filterIsSelected("district", { value: "District 10" }),
-      ).toBeTruthy();
+      ).toBeTrue();
     });
 
     it("can track when all filters are selected", () => {
-      expect(presenter.allFiltersSelected).toBeTrue();
+      // By default, no filters are selected
+      expect(presenter.allFiltersSelected).toBeFalse();
+      // Select high
+      presenter.toggleFilter("supervisionLevel", { value: "High" });
+      expect(presenter.allFiltersSelected).toBeFalse();
+      // Select low
+      presenter.toggleFilter("supervisionLevel", { value: "Low" });
+      expect(presenter.allFiltersSelected).toBeFalse();
       // Deselect high
       presenter.toggleFilter("supervisionLevel", { value: "High" });
       expect(presenter.allFiltersSelected).toBeFalse();
       // Deselect low
       presenter.toggleFilter("supervisionLevel", { value: "Low" });
       expect(presenter.allFiltersSelected).toBeFalse();
-      // Reselect high
-      presenter.toggleFilter("supervisionLevel", { value: "High" });
-      expect(presenter.allFiltersSelected).toBeFalse();
-      // Reselect low
-      presenter.toggleFilter("supervisionLevel", { value: "Low" });
+      // Reselect all
+      presenter.selectAllFilters();
       expect(presenter.allFiltersSelected).toBeTrue();
       // Deselect all
       presenter.clearFilters();
       expect(presenter.allFiltersSelected).toBeFalse();
-      // Reselect all
-      presenter.resetFilters();
-      expect(presenter.allFiltersSelected).toBeTrue();
-    });
-
-    it("keep an empty list of selected filters when removing the last filter from a group", () => {
-      presenter.setOnlyFilterForField("supervisionLevel", { value: "Low" });
-      presenter.toggleFilter("supervisionLevel", { value: "Low" });
-      expect(presenter.selectedFilters.supervisionLevel).toEqual([]);
     });
   });
 });

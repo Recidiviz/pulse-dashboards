@@ -182,19 +182,19 @@ const MobileTaskFilterItem = observer(function MobileTaskFilterItem({
         e.preventDefault();
         onClick();
       }}
-      disabled={checked && count === 0}
+      disabled={count === 0}
     >
       <FilterOption>
         <BiggerCheckboxContainer>
           <Checkbox
             checked={checked}
             value={option.value}
-            disabled={checked && count === 0}
+            disabled={count === 0}
           />
         </BiggerCheckboxContainer>
         <FilterOptionText>{option.label ?? option.value}</FilterOptionText>
       </FilterOption>
-      {checked && <FilterCount $isZero={count === 0}>{count}</FilterCount>}
+      {<FilterCount $isZero={count === 0}>{count}</FilterCount>}
     </FilterOptionRow>
   );
 });
@@ -213,7 +213,7 @@ const MobileClearAll = observer(function ClearAll({
   }
 
   return (
-    <MobileClearAllButton onClick={() => presenter.resetFilters()}>
+    <MobileClearAllButton onClick={() => presenter.selectAllFilters()}>
       Select all filters
     </MobileClearAllButton>
   );
@@ -243,7 +243,7 @@ const MobileTaskFilterGroup = observer(function MobileTaskFilterGroup({
             option={option}
             checked={checked}
             onClick={() => presenter.toggleFilter(field, option)}
-            count={presenter.numTasksMatchingFilter(type, field, option)}
+            count={presenter.numTasks(type, field, option)}
           />
         );
       })}

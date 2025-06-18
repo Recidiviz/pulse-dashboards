@@ -100,8 +100,6 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
       workflowsStore,
       featureVariants,
     );
-
-    this.initializeFilters();
   }
 
   get taskConfig(): WorkflowsTasksConfig {
@@ -137,23 +135,6 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     }
   }
 
-  // Set the initial state of the filters, which is having every option selected
-  initializeFilters() {
-    const {
-      taskConfig: { filters },
-    } = this;
-
-    if (!filters) return;
-
-    this._selectedFilters = {};
-
-    for (const filter of filters) {
-      this._selectedFilters[filter.field] = filter.options.map(
-        (option) => option.value,
-      );
-    }
-  }
-
   // Tab categories used in the new tasks view
   get displayedTaskCategories(): SupervisionTaskCategory[] {
     return [...TEMPORAL_TASK_CATEGORIES];
@@ -174,6 +155,17 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     this.selectedCategory = newCategory;
   }
 
+  get someFiltersSet(): boolean {
+    const { filters } = this;
+
+    return some(
+      filters,
+      (filter) =>
+        this._selectedFilters[filter.field] &&
+        this._selectedFilters[filter.field]?.length !== 0,
+    );
+  }
+
   // Selection controls
   selectPerson(person: JusticeInvolvedPerson) {
     this.workflowsStore.updateSelectedPerson(person.pseudonymizedId);
@@ -186,14 +178,23 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     );
   }
 
-  allTasksForCategory(category: SupervisionTaskCategory): SupervisionTask[] {
-    return this.filteredPeople.flatMap((person) => {
+  allTasksForCategory(
+    category: SupervisionTaskCategory,
+    applyFilter = true,
+  ): SupervisionTask[] {
+    // If applyFilter is true, only return tasks for people that match the currently selected filters
+    // If applyFilter is false, return tasks for all people (regardless of filters)
+    const people = applyFilter
+      ? this.filteredPeople
+      : this.workflowsStore.caseloadPersons;
+
+    return people.flatMap((person) => {
       const { supervisionTasks } = person;
 
       if (!supervisionTasks) return [];
 
       return supervisionTasks.readyOrderedTasks.filter((t) => {
-        if (!this.taskMatchesFilters(t)) return false;
+        if (applyFilter && !this.taskMatchesFilters(t)) return false;
 
         switch (category) {
           case "ALL_TASKS":
@@ -236,15 +237,15 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     );
   }
 
-  // Return the number of visible tasks in the current category where .
-  // Assumes the given filter is set; if the filter is not set, will always return 0.
-  numTasksMatchingFilter(
+  // Return the number of total tasks, regardless of the current category and filters.
+  numTasks(
     type: TaskFilterType,
     field: TaskFilterField,
     option: TaskFilterOption,
   ): number {
-    const visibleTasks = this.allTasksForCategory(this.selectedCategory);
-    return visibleTasks.filter((task) => {
+    const allTasks = this.allTasksForCategory("ALL_TASKS", false);
+
+    return allTasks.filter((task) => {
       if (type === "task") {
         // @ts-expect-error we don't currently narrow the type of field adequately
         // but field should always be TaskFilterFieldForTask here
@@ -392,9 +393,17 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   unsetFilter(field: TaskFilterField, option: TaskFilterOption) {
     const { value } = option;
 
-    this._selectedFilters[field] = this._selectedFilters[field]?.filter(
-      (f) => f !== value,
-    );
+    if (this._selectedFilters[field]?.length === 1) {
+      // If only 1 filter selected, clear filters of that type
+      this._selectedFilters = Object.fromEntries(
+        Object.entries(this._selectedFilters).filter(([k, v]) => k !== field),
+      );
+    } else {
+      // If more than 1 filter selected, remove deselected filter
+      this._selectedFilters[field] = this._selectedFilters[field]?.filter(
+        (f) => f !== value,
+      );
+    }
 
     this.analyticsStore.trackTaskFilterChanged({
       changedFilterCategory: field,
@@ -427,21 +436,31 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     });
   }
 
-  // Reselect all filters to restore the initial state of showing everyone
-  // Basically the same as calling initalizeFilters() but with logging
-  resetFilters() {
+  // Select all filters
+  selectAllFilters() {
     this.analyticsStore.trackTaskFiltersReset({
       selectedFiltersBeforeReset: this._selectedFilters,
     });
-    this.initializeFilters();
+
+    const {
+      taskConfig: { filters },
+    } = this;
+
+    if (!filters) return;
+
+    this._selectedFilters = {};
+
+    for (const filter of filters) {
+      this._selectedFilters[filter.field] = filter.options.map(
+        (option) => option.value,
+      );
+    }
   }
 
-  // Deselect all filters. No tasks or people will show after this
+  // Deselect all filters. All tasks and people will show after this
   clearFilters() {
-    for (const field in this._selectedFilters) {
-      // @ts-expect-error TS doesn't know that the keys of this._selectedFilters are the keys of this._selectedFilters
-      this._selectedFilters[field] = [];
-    }
+    this._selectedFilters = {};
+
     this.analyticsStore.trackTaskFiltersCleared();
   }
 
