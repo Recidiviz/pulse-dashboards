@@ -471,6 +471,9 @@ export class OpportunityPersonListPresenter
   }
 
   get selectedSearchablesCount() {
+    // The opportunity person list within the supervisor homepage is officer-specific, so
+    // there will be exactly 1 officer selected, even though nobody has been searched for
+    if (this.isSupervisorHomepage) return 1;
     return this.workflowsStore.searchStore.selectedSearchables.length;
   }
 
