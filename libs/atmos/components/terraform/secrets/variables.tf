@@ -31,3 +31,9 @@ variable "deletion_policy_overrides" {
   default = {}
   description = "Map of secret names to deletion policy overrides for the secret"
 }
+
+variable "accessors" {
+  type = list(string)
+  default = []
+  description = "List of accounts (e.g. service accounts) that should have Secret Accessor permission for the secret"
+}

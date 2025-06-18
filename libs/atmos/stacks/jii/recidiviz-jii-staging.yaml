@@ -18,4 +18,5 @@ components:
         sops_file: sops/recidiviz-jii-staging.enc.yaml
         location: us-central1
         deletion_policy: DELETE
+        accessors: ["serviceAccount:937048170521-compute@developer.gserviceaccount.com"]
 
