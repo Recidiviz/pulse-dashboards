@@ -37,29 +37,29 @@ export class UsIaEarlyDischargeForm extends FormBase<
       formInformation: {
         USCitizenshipStatus,
         // TODO: Handle multiple charges, penalties, and staff attributes
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        charges: [charge, ..._],
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        penalties: [penalty, ...__],
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        staffAttributes: [staff, ...___],
+        charges: [charge],
+        penalties: [penalty],
+        staffAttributes: [staff],
       },
     } = this.opportunity.record;
 
     const {
-      CauseNumber,
-      Jurisdiction,
+      causeNumber,
+      jurisdiction,
       counts,
       description,
       classificationTypeRawText,
+      statute,
     } = charge;
 
     const {
-      SentencePenaltyType,
-      PenaltyDays,
-      PenaltyMonths,
-      PenaltyYears,
-      SentencePenaltyModifier,
+      sentencePenaltyType,
+      penaltyDays,
+      penaltyMonths,
+      penaltyYears,
+      sentencePenaltyModifier,
+      judgeFullName,
+      prosecutingAttorneys,
     } = penalty;
 
     const {
@@ -69,30 +69,35 @@ export class UsIaEarlyDischargeForm extends FormBase<
       expirationDate,
     } = this.person;
 
-    const { StaffTitle, WorkUnit } = staff;
+    const { staffTitle, workUnit } = staff;
 
     return {
       usCitizenshipStatus: USCitizenshipStatus || "",
       todaysDate: formatWorkflowsDate(new Date()),
       iconNumber: externalId,
       clientFullName: formatNameFirstLast(this.person.fullName),
-      causeNumber: CauseNumber,
-      jurisdiction: Jurisdiction,
+      causeNumber,
+      jurisdiction,
       counts,
       description,
+      statute,
       supervisionType,
       supervisionStartDate: formatWorkflowsDate(supervisionStartDate),
       classificationTypeRawText,
+      judgeFullName: judgeFullName
+        ? formatNameFirstLast(JSON.parse(judgeFullName))
+        : "",
+      prosecutingAttorneys: prosecutingAttorneys || "",
       supervisionEndDate: formatWorkflowsDate(expirationDate),
-      sentencePenaltyType: SentencePenaltyType,
-      sentencePenaltyModifier: SentencePenaltyModifier,
-      penaltyDays: PenaltyDays,
-      penaltyMonths: PenaltyMonths,
-      penaltyYears: PenaltyYears,
+      sentencePenaltyType: sentencePenaltyType || "type",
+      sentencePenaltyModifier: sentencePenaltyModifier || "modifier",
+      penaltyDays: penaltyDays || "10",
+      penaltyMonths: penaltyMonths || "0",
+      penaltyYears: penaltyYears || "3",
       // TODO: Replace with actual officer name
       officerFullName: 'Todd "TODO" Todderson',
-      staffTitle: StaffTitle || "",
-      workUnit: WorkUnit,
+      staffTitle: staffTitle || "",
+      workUnit,
     };
   }
 }

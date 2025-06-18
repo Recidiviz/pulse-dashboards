@@ -95,9 +95,9 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
         charges: z
           .array(
             z.object({
-              CauseNumber: z.string(),
-              CrimeCdOffenseType: z.string(),
-              Jurisdiction: z.string(),
+              causeNumber: z.string(),
+              crimeCdOffenseType: z.string(),
+              jurisdiction: z.string(),
               classificationTypeRawText: z.string(),
               counts: z.number(),
               description: z.string(),
@@ -108,13 +108,13 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
         penalties: z
           .array(
             z.object({
-              PenaltyDays: z.coerce.number(),
-              PenaltyMonths: z.coerce.number(),
-              PenaltyYears: z.coerce.number(),
-              ProsecutingAttorneys: z.string(),
-              SentencePenaltyModifier: z.string(),
-              SentencePenaltyType: z.string(),
-              TDD: z.string(),
+              penaltyDays: z.string().nullable(),
+              penaltyMonths: z.string().nullable(),
+              penaltyYears: z.string().nullable(),
+              prosecutingAttorneys: z.string().nullable(),
+              sentencePenaltyModifier: z.string().nullable(),
+              sentencePenaltyType: z.string().nullable(),
+              tdd: z.string().nullable(),
               // TODO: make this JSON at the BQ level
               judgeFullName: z.string().nullable(),
             }),
@@ -123,8 +123,8 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
         staffAttributes: z
           .array(
             z.object({
-              StaffTitle: z.string().nullable(),
-              WorkUnit: z.string(),
+              staffTitle: z.string().nullable(),
+              workUnit: z.string(),
               officerExternalId: z.string(),
             }),
           )
@@ -174,15 +174,18 @@ export type UsIaEarlyDischargeDraftData = {
   jurisdiction: string;
   counts: number;
   description: string;
+  statute: string;
   supervisionType: string;
   supervisionStartDate: string;
   classificationTypeRawText: string;
   supervisionEndDate: string;
   sentencePenaltyType: string;
-  penaltyDays: number;
-  penaltyMonths: number;
-  penaltyYears: number;
+  penaltyDays: string;
+  penaltyMonths: string;
+  penaltyYears: string;
   sentencePenaltyModifier: string;
+  judgeFullName: string;
+  prosecutingAttorneys: string;
   officerFullName: string;
   staffTitle: string;
   workUnit: string;
