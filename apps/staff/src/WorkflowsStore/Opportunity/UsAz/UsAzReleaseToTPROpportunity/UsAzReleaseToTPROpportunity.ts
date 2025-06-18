@@ -91,8 +91,12 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {
-    if (this.record.ineligibleCriteria.usAzWithin7DaysOfRecidivizTprDate)
+    if (
+      this.record.ineligibleCriteria.usAzWithin7DaysOfRecidivizTprDate &&
+      !this.record.eligibleCriteria.usAzIncarcerationWithin6MonthsOfAcisTprDate
+    ) {
       return super.requirementsAlmostMet;
+    }
 
     const {
       record: {
