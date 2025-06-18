@@ -30,6 +30,8 @@ Application projects (a project in Nx ) (found in `apps/**`) are the primary ent
 
    For alternative Yarn installation options, see [Yarn Installation](https://yarnpkg.com/en/docs/install).
 
+   If you have classic Yarn (currently v1.22.22) and are struggling to get brew to upgrade, you may need to install corepack and yarn [as described here]([url](https://yarnpkg.com/getting-started/install#updating-yarn))).
+
 1. Install dependencies:
 
    `yarn install`
