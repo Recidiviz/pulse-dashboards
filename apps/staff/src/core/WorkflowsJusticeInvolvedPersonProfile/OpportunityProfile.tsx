@@ -39,6 +39,7 @@ import {
   EligibilityDate,
   SentenceDates,
   UsIaActionPlansAndNotes,
+  UsIaVictimContactInfo,
   UsMiEarlyDischargeIcDetails,
   UsMiRecommendedSupervisionLevel,
   UsMoIncarceration,
@@ -86,6 +87,7 @@ export const OpportunityDetailSidebarComponents = {
   UsMiRestrictiveHousing,
   UsAzAcisInformation,
   UsIaActionPlansAndNotes,
+  UsIaVictimContactInfo,
 };
 
 export const ResidentDetailSidebarComponents = {
