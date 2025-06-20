@@ -298,6 +298,7 @@
     "pdfformfiller-boilerplate": {
       "executor": "nx:run-commands",
       "options": {
+        "cwd": "{projectRoot}",
         "command": "vite-node tools/pdfFormFillerBoilerplate.mjs"
       }
     },

@@ -89,6 +89,9 @@ export const constructedOpportunityTypes = [
   "usTnInitialClassification",
   "usTnSuspensionOfDirectSupervision",
 
+  // US_TX
+  "usTxAnnualReportStatus",
+
   // US_UT
   "usUtEarlyTermination",
 ] as const;

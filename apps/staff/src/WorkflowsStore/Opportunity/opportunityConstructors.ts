@@ -74,6 +74,7 @@ import {
 } from "./UsTn";
 import { UsTnAnnualReclassificationReviewOpportunity } from "./UsTn/UsTnAnnualReclassificationReviewOpportunity/UsTnAnnualReclassificationReviewOpportunity";
 import { UsTnCompliantReporting2025PolicyOpportunity } from "./UsTn/UsTnCompliantReporting2025PolicyOpportunity";
+import { UsTxAnnualReportStatusOpportunity } from "./UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
 import { UsUtEarlyTerminationOpportunity } from "./UsUt";
 
 export const opportunityConstructors = {
@@ -157,6 +158,9 @@ export const opportunityConstructors = {
   supervisionLevelDowngrade: UsTnSupervisionLevelDowngradeOpportunity,
   usTnSuspensionOfDirectSupervision:
     UsTnSuspensionOfDirectSupervisionOpportunity,
+
+  // US_TX
+  usTxAnnualReportStatus: UsTxAnnualReportStatusOpportunity,
 
   // US_UT
   usUtEarlyTermination: UsUtEarlyTerminationOpportunity,
