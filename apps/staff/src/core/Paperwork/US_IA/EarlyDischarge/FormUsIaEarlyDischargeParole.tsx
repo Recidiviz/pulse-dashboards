@@ -19,16 +19,21 @@ import { runInAction, toJS } from "mobx";
 import React from "react";
 
 import { Opportunity } from "../../../../WorkflowsStore";
-import { UsIaEarlyDischargeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsIa";
-import { downloadSingle } from "../../DOCXFormGenerator";
+import {
+  UsIaEarlyDischargeDraftData,
+  UsIaEarlyDischargeOpportunity,
+} from "../../../../WorkflowsStore/Opportunity/UsIa";
+import { FileGeneratorArgs, renderMultipleDocx } from "../../DOCXFormGenerator";
 import { FormContainer } from "../../FormContainer";
 import FormViewer from "../../FormViewer";
+import { downloadZipFile } from "../../utils";
 import { CbcDischargeReport } from "./CbcDischargeReport";
+import { ParoleDischarge } from "./ParoleDischargeOrder";
 
 const formDownloader = async (
   opportunity: UsIaEarlyDischargeOpportunity,
 ): Promise<void> => {
-  let contents: Record<string, unknown> = {};
+  let contents: Partial<UsIaEarlyDischargeDraftData> = {};
   // we are not mutating any observables here, just telling Mobx not to track this access
   runInAction(() => {
     contents = {
@@ -38,13 +43,27 @@ const formDownloader = async (
 
   const client = opportunity.person;
 
-  await downloadSingle(
-    `${client?.displayName} - CBC Discharge Report.docx`,
-    client.stateCode,
-    "cbc_discharge_report_template.docx",
-    contents,
-    client.rootStore.getTokenSilently,
-  );
+  const fileInputs: FileGeneratorArgs[] = [
+    [
+      `${client.displayName} - CBC Discharge Report.docx`,
+      client.stateCode,
+      "cbc_discharge_report_template.docx",
+      contents,
+    ],
+    [
+      `${client.displayName} - Parole Discharge Order.docx`,
+      client.stateCode,
+      "parole_discharge_order_template.docx",
+      contents,
+    ],
+  ];
+
+  downloadZipFile(`${client?.displayName} Parole Discharge Packet.zip`, [
+    ...(await renderMultipleDocx(
+      fileInputs,
+      client.rootStore.getTokenSilently,
+    )),
+  ]);
 };
 
 export function FormUsIaEarlyDischargeParole({
@@ -68,6 +87,7 @@ export function FormUsIaEarlyDischargeParole({
     >
       <FormViewer formRef={formRef}>
         <CbcDischargeReport />
+        <ParoleDischarge />
       </FormViewer>
     </FormContainer>
   );

@@ -60,6 +60,7 @@ export class UsIaEarlyDischargeForm extends FormBase<
       sentencePenaltyModifier,
       judgeFullName,
       prosecutingAttorneys,
+      tdd,
     } = penalty;
 
     const {
@@ -88,6 +89,7 @@ export class UsIaEarlyDischargeForm extends FormBase<
         ? formatNameFirstLast(JSON.parse(judgeFullName))
         : "",
       prosecutingAttorneys: prosecutingAttorneys || "",
+      tdd: tdd ? formatWorkflowsDate(new Date(tdd)) : "",
       supervisionEndDate: formatWorkflowsDate(expirationDate),
       sentencePenaltyType: sentencePenaltyType || "type",
       sentencePenaltyModifier: sentencePenaltyModifier || "modifier",
@@ -98,6 +100,9 @@ export class UsIaEarlyDischargeForm extends FormBase<
       officerFullName: 'Todd "TODO" Todderson',
       staffTitle: staffTitle || "",
       workUnit,
+      dischargeDate: "",
+      supervisorSignatureDate: "",
+      directorSignatureDate: "",
     };
   }
 }

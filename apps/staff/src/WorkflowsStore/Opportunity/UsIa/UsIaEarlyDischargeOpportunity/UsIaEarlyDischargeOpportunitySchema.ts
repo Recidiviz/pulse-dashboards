@@ -186,9 +186,16 @@ export type UsIaEarlyDischargeDraftData = {
   sentencePenaltyModifier: string;
   judgeFullName: string;
   prosecutingAttorneys: string;
+  tdd: string;
   officerFullName: string;
   staffTitle: string;
   workUnit: string;
+
+  dischargeDate: string;
+  supervisorSignature: string;
+  directorSignature: string;
+  supervisorSignatureDate: string;
+  directorSignatureDate: string;
 };
 
 export type UsIaEarlyDischargeReferralRecordRaw = z.input<
