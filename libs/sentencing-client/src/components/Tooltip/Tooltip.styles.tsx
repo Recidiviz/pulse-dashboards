@@ -18,25 +18,28 @@
 import { typography } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
-
 import { customPalette } from "../styles/palette";
 
-export const TooltipContentContainer = styled.div`
-  padding: 12px;
-`;
-
 export const TooltipHeader = styled.div`
-  ${typography.Sans14}
-  color: ${palette.white};
-  font-weight: 500;
   margin-bottom: 8px;
+  font-weight: 500;
 `;
 
 export const TooltipBody = styled.div`
-  ${typography.Sans12}
-  color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
+`;
+
+export const TooltipContentContainer = styled.div`
+  padding: 12px;
+  color: white;
+
+  & > TooltipHeader {
+    ${typography.Sans14}
+  }
+
+  & > TooltipBody {
+    ${typography.Sans12}
+  }
 `;
 
 export const TooltipContentSection = styled.div`

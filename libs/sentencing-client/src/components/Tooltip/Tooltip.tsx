@@ -28,9 +28,10 @@ import {
 export const TooltipContent: React.FC<{
   headerText?: string;
   content: string | React.ReactNode;
-}> = ({ headerText, content }) => {
+  styleOverrides?: React.CSSProperties;
+}> = ({ headerText, content, styleOverrides }) => {
   return (
-    <TooltipContentContainer>
+    <TooltipContentContainer style={styleOverrides}>
       {headerText && <TooltipHeader>{headerText}</TooltipHeader>}
       <TooltipBody>{content}</TooltipBody>
     </TooltipContentContainer>

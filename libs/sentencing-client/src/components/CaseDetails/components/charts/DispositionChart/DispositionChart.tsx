@@ -25,7 +25,7 @@ import * as CommonStyled from "../components/Styles";
 import { SENTENCE_DISTRIBUTION_TEXT } from "../constants";
 import * as Styled from "./DispositionChart.styles";
 import { DispositionChartExplanation } from "./DispositionChartExplanation";
-import { DispositionChartBySentenceLength } from "./SentenceLength/DispositionChartBySentenceLength";
+import { DispositionDonutChart } from "./DispositionDonutChart";
 import { DispositionChartBySentenceType } from "./SentenceType/DispositionChartBySentenceType";
 import { getDispositionChartSubtitle } from "./utils";
 
@@ -78,12 +78,13 @@ export function DispositionChart({
     );
   } else {
     chart = (
-      <Styled.DispositionChartBySentenceLengthContainer>
-        <DispositionChartBySentenceLength
-          dataPoints={orderedDataPoints}
-          totalNumOffenses={dispositionNumRecords ?? 0}
+      <Styled.DispositionDonutChartContainer>
+        <DispositionDonutChart
+          datapoints={sortedDataPoints}
+          selectedRecommendation={selectedRecommendation}
+          numberOfRecords={dispositionNumRecords}
         />
-      </Styled.DispositionChartBySentenceLengthContainer>
+      </Styled.DispositionDonutChartContainer>
     );
   }
 

@@ -15,8 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FC } from "react";
+
 import { Staff } from "../api";
 import { RecommendationOptionType } from "../components/CaseDetails/Recommendations/constants";
+import { CustomReportProps } from "../components/CaseDetails/Recommendations/report/types";
 import {
   RecommendationOptionTemplateBase,
   SummaryProps,
@@ -51,4 +54,5 @@ export type GeoConfig = {
   >;
   infoPageLink?: string;
   convertDistrictToDistrictCodeFn?: (district?: string | null) => string | null;
+  reportTemplate: FC<CustomReportProps>;
 };

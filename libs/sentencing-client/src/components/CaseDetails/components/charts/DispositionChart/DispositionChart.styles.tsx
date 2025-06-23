@@ -66,9 +66,20 @@ export const DispositionChartCircleLabel = styled.div<{
   color: ${(props) => props.$color};
 `;
 
-export const DispositionChartBySentenceLengthContainer = styled.div`
+export const DispositionDonutChartContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 47px;
+`;
+
+export const DonutChartContainer = styled.div<{ isReport?: boolean }>`
+  display: flex;
+  gap: 24px;
+  ${({ isReport }) =>
+    !isReport && `flex-direction: column; align-items: center; gap: 0px;`}
+
+  path:hover {
+    cursor: default;
+  }
 `;

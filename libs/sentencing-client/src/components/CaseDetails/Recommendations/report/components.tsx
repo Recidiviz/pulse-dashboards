@@ -16,16 +16,30 @@
 // =============================================================================
 
 import _ from "lodash";
+import moment from "moment";
+import React from "react";
 
 import { CaseInsight } from "../../../../api";
-import { convertDecimalToPercentage } from "../../../../utils/utils";
-import { getSentenceLengthBucketLabel } from "../../components/charts/common/utils";
+import {
+  convertDecimalToPercentage,
+  printFormattedRecordString,
+} from "../../../../utils/utils";
+import InfoIcon from "../../../assets/info-icon.svg?react";
+import RecidivizLogo from "../../../assets/recidiviz-logo-bw.png";
+import { INDIVIDUALS_STRING } from "../../components/charts/common/constants";
+import {
+  getSentenceLengthBucketLabel,
+  getSubtitleGender,
+  getSubtitleLsirScore,
+} from "../../components/charts/common/utils";
+import * as CommonStyled from "../../components/charts/components/Styles";
+import { OffenseText } from "../../components/charts/RecidivismChart/RecidivismChartExplanation";
 import { RecidivismChartFootnote } from "../../components/charts/RecidivismChart/SentenceLength/RecidivismChartFootnote";
 import {
   getCompleteRollupRecidivismSeries,
   getRecidivismPlot,
 } from "../../components/charts/RecidivismChart/SentenceLength/utils";
-import { RecommendationOptionTemplateBase } from "../types";
+import { DispositionData, RecommendationOptionTemplateBase } from "../types";
 import { getRecidivismPlotForSentenceType } from "./Plot";
 import * as Styled from "./Report.styles";
 import { getChartCaptions, getRecommendationOrderIndex } from "./utils";
@@ -116,15 +130,15 @@ export function RecidivismRateSectionForSentenceType({
 
 interface RecidivismRateSectionForSentenceLengthProps {
   insight: CaseInsight;
-  recommendationOptionsTemplate: RecommendationOptionTemplateBase[];
+  recommendationOrder: RecommendationOptionTemplateBase[];
 }
 
 export function RecidivismRateSectionForSentenceLength({
   insight,
-  recommendationOptionsTemplate,
+  recommendationOrder,
 }: RecidivismRateSectionForSentenceLengthProps) {
   const { missingSeriesLabels } = getCompleteRollupRecidivismSeries(
-    recommendationOptionsTemplate,
+    recommendationOrder,
     insight.rollupRecidivismSeries,
   );
 
@@ -133,7 +147,7 @@ export function RecidivismRateSectionForSentenceLength({
     830,
     false,
     true,
-    recommendationOptionsTemplate,
+    recommendationOrder,
   );
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -178,23 +192,15 @@ function DispositionElement({
 }
 
 interface DispositionSectionForSentenceTypeProps {
-  insight: CaseInsight;
-  recommendationOrder: RecommendationOptionTemplateBase[];
+  datapoints: DispositionData[];
 }
 
 export function DispositionSectionForSentenceType({
-  insight,
-  recommendationOrder,
+  datapoints,
 }: DispositionSectionForSentenceTypeProps) {
-  const sortedDispositionData = [...insight.dispositionData].sort(
-    (a, b) =>
-      getRecommendationOrderIndex(a, recommendationOrder) -
-      getRecommendationOrderIndex(b, recommendationOrder),
-  );
-
   return (
     <>
-      {sortedDispositionData.map((dp) => {
+      {datapoints.map((dp) => {
         const historicalSentencingPercentage = convertDecimalToPercentage(
           dp.percentage,
         );
@@ -212,23 +218,15 @@ export function DispositionSectionForSentenceType({
 }
 
 interface DispositionSectionForSentenceLengthProps {
-  insight: CaseInsight;
-  recommendationOrder: RecommendationOptionTemplateBase[];
+  datapoints: DispositionData[];
 }
 
 export function DispositionSectionForSentenceLength({
-  insight,
-  recommendationOrder,
+  datapoints,
 }: DispositionSectionForSentenceLengthProps) {
-  const sortedDispositionData = [...insight.dispositionData].sort(
-    (a, b) =>
-      getRecommendationOrderIndex(a, recommendationOrder) -
-      getRecommendationOrderIndex(b, recommendationOrder),
-  );
-
   return (
     <>
-      {sortedDispositionData.map((dp) => {
+      {datapoints.map((dp) => {
         const historicalSentencingPercentage = convertDecimalToPercentage(
           dp.percentage,
         );
@@ -250,3 +248,168 @@ export function DispositionSectionForSentenceLength({
     </>
   );
 }
+
+export function ReportHeader() {
+  return (
+    <Styled.Header>
+      <div>Report Attachment</div>
+      <div>{moment().utc().format("MMMM DD, YYYY")}</div>
+    </Styled.Header>
+  );
+}
+
+function Footer() {
+  return (
+    <Styled.Footer>
+      <div>
+        Report provided by
+        <img src={RecidivizLogo} width="38px" alt="Recidiviz logo" />
+      </div>
+    </Styled.Footer>
+  );
+}
+
+export function ReportFooter({ infoPageLink }: { infoPageLink?: string }) {
+  return (
+    <>
+      {infoPageLink && (
+        <Styled.InfoPageLink>
+          <InfoIcon />
+          <span>
+            Visit <strong> {infoPageLink} </strong> to learn more about the
+            information presented in this report.
+          </span>
+        </Styled.InfoPageLink>
+      )}
+
+      <Styled.Disclaimer>
+        <span>DISCLAIMER</span> This report is generated by Recidiviz and is for
+        informational purposes only. Recidiviz does not guarantee the accuracy,
+        completeness, validity, timeliness, or suitability of the information in
+        this report and is not liable for any errors, omissions, or consequences
+        of using the information. The information is not legal advice. Data on
+        past conduct is not a guarantee of future outcomes. Users are solely
+        responsible for their use of the information and agree that Recidiviz is
+        not liable for any claim, loss, or damage arising from the use of this
+        report.
+      </Styled.Disclaimer>
+      <Footer />
+    </>
+  );
+}
+
+interface AttributeChipsProps {
+  insight?: CaseInsight;
+  isV2?: boolean;
+}
+
+export function HistoricalSentencingAttributeChips({
+  insight,
+  isV2,
+}: AttributeChipsProps) {
+  if (!insight) return null;
+  const numberOfRecords = insight?.dispositionNumRecords.toLocaleString();
+  const genderString = getSubtitleGender(insight.gender);
+  const lsirScore = getSubtitleLsirScore(
+    insight.assessmentScoreBucketStart,
+    insight.assessmentScoreBucketEnd,
+  );
+
+  return (
+    <Styled.AttributesContainer isV2={isV2}>
+      {numberOfRecords && (
+        <Styled.NumberOfRecords isV2={isV2}>
+          {numberOfRecords}{" "}
+          {printFormattedRecordString(insight?.dispositionNumRecords)}
+        </Styled.NumberOfRecords>
+      )}
+      <Styled.AttributeChipsWrapper isV2={isV2}>
+        {genderString && genderString !== INDIVIDUALS_STRING && (
+          <Styled.AttributeChip>{genderString}</Styled.AttributeChip>
+        )}
+        {lsirScore && <Styled.AttributeChip>{lsirScore}</Styled.AttributeChip>}
+        <Styled.AttributeChip>{insight?.offense}</Styled.AttributeChip>
+      </Styled.AttributeChipsWrapper>
+    </Styled.AttributesContainer>
+  );
+}
+
+export function CumulativeRecidivismRatesAttributeChips({
+  insight,
+}: AttributeChipsProps) {
+  if (!insight) return null;
+
+  const genderString = getSubtitleGender(insight.rollupGender);
+  const lsirScore = getSubtitleLsirScore(
+    insight.rollupAssessmentScoreBucketStart,
+    insight.rollupAssessmentScoreBucketEnd,
+  );
+  const numberOfRecords = insight?.rollupRecidivismNumRecords.toLocaleString();
+
+  return (
+    <Styled.AttributesContainer>
+      {numberOfRecords && (
+        <Styled.NumberOfRecords>
+          {numberOfRecords}{" "}
+          {printFormattedRecordString(insight?.rollupRecidivismNumRecords)}
+        </Styled.NumberOfRecords>
+      )}
+      <Styled.AttributeChipsWrapper>
+        {genderString && genderString !== INDIVIDUALS_STRING && (
+          <Styled.AttributeChip>{genderString}</Styled.AttributeChip>
+        )}
+        {lsirScore && <Styled.AttributeChip>{lsirScore}</Styled.AttributeChip>}
+        <Styled.AttributeChip>
+          <OffenseText
+            rollupOffenseDescription={insight.rollupOffenseDescription}
+          />
+        </Styled.AttributeChip>
+      </Styled.AttributeChipsWrapper>
+    </Styled.AttributesContainer>
+  );
+}
+
+export function renderMultilineText(text?: string): React.ReactNode {
+  if (!text) return null;
+  const paragraphs = text.split("\n");
+
+  return paragraphs.map((line, i) => {
+    const isLastLine = i === paragraphs.length - 1;
+    return (
+      <React.Fragment key={line}>
+        {line}
+        {!isLastLine && <br />}
+      </React.Fragment>
+    );
+  });
+}
+
+interface ExcludedDataPointsLegendProps {
+  excludedDataPoints: DispositionData[];
+}
+
+export const ExcludedDataPointsLegend: React.FC<
+  ExcludedDataPointsLegendProps
+> = ({ excludedDataPoints }) => {
+  const count = excludedDataPoints.length;
+  if (count === 0) return null;
+
+  const labels = excludedDataPoints
+    .map((v) =>
+      getSentenceLengthBucketLabel(
+        v.recommendationType,
+        v.sentenceLengthBucketStart,
+        v.sentenceLengthBucketEnd,
+      ),
+    )
+    .join(", ")
+    .replace(/,(?=[^,]+$)/, " and");
+
+  return (
+    <CommonStyled.ChartFootnote>
+      {`Note: ${labels} had zero values and ${
+        count === 1 ? "is" : "are"
+      } not represented in the chart.`}
+    </CommonStyled.ChartFootnote>
+  );
+};

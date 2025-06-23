@@ -16,10 +16,11 @@
 // =============================================================================
 
 import { typography } from "@recidiviz/design-system";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
 
 import { palette } from "~design-system";
 
+import FlagIcon from "../../../assets/flag-icon.svg?react";
 import { customPalette } from "../../../styles/palette";
 
 const REPORT_PAGE_HEIGHT = 1340;
@@ -84,16 +85,91 @@ export const Page = styled.div`
   }
 `;
 
-export const Title = styled.div`
+export const Title = styled.div<{ isV2?: boolean }>`
   ${typography.Serif34}
   max-width: 424px;
-  margin-bottom: 32px;
+  margin-bottom: ${({ isV2 }) => (isV2 ? 8 : 32)}px;
+  margin-top: ${({ isV2 }) => (isV2 ? 32 : 0)}px;
 `;
 
 export const SnapshotContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
+`;
+
+export const CaseOverviewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+export const SectionTitleWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+export const Section = styled.div`
+  margin: 24px 0;
+`;
+
+export const CaseDetailsContainer = styled.div`
+  height: fit-content;
+  max-height: 200px;
+  display: flex;
+  border: 0.5px solid ${customPalette.black};
+  border-radius: 4px;
+  padding: 16px;
+  gap: 12px;
+`;
+
+export const ListContainer = styled.div`
+  display: flex;
+  gap: 5px;
+`;
+
+export const ListWrapper = styled.div`
+  ${typography.Sans14}
+  font-weight: 600;
+`;
+
+export const List = styled.div`
+  height: fit-content;
+  max-height: 125px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+`;
+
+export const ListItem = styled.span`
+  ${typography.Sans12}
+  font-weight: 400;
+  max-width: 225px;
+`;
+
+export const HistoricalOutcomeRow = styled.div`
+  display: flex;
+  border-top: 2px solid #000;
+`;
+
+export const HistoricalOutcomeSidebar = styled.div`
+  min-width: 271px;
+  width: 271px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 20px 16px;
+  background-color: rgba(238, 238, 238, 1);
+`;
+
+export const HistoricalOutcomeContent = styled.div`
+  flex: 1;
+  padding-left: 24px;
+  padding-bottom: 24px;
 `;
 
 export const SectionTitle = styled.div<{ noMargin?: boolean }>`
@@ -106,12 +182,54 @@ export const SectionTitle = styled.div<{ noMargin?: boolean }>`
   }
 `;
 
-export const AttributesContainer = styled.div`
+export const SentenceDistributionTitle = styled(SectionTitle)`
+  width: 80px;
+  font-weight: 600;
+`;
+
+export const HistoricalOutcomeReference = styled.div`
+  ${typography.Sans18}
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-weight: 700;
+
+  span {
+    font-weight: 400;
+  }
+`;
+
+export const SubtitleText = styled.span`
+  font-size: 10px;
+  font-weight: 400;
+`;
+
+export const SubtitleIcon = styled(FlagIcon)`
+  margin-bottom: 1px;
+  margin-right: 4px;
+`;
+
+export const RecommendationSummary = styled.div`
+  ${typography.Sans12}
+  margin-top: 8px;
+`;
+
+export const AttributesContainer = styled.div<{ isV2?: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
   margin-bottom: 8px;
+
+  ${({ isV2 }) =>
+    isV2 &&
+    `
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      align-items: unset;
+      margin-bottom: 24px;
+  `};
 `;
 
 export const TitleAttributesWrapper = styled.div`
@@ -146,6 +264,7 @@ export const OverviewTitle = styled.div`
 export const Name = styled.div`
   ${typography.Sans16}
   font-weight: 600;
+  text-transform: capitalize;
 `;
 
 export const HistoricalDetails = styled(CaseOverview)`
@@ -289,14 +408,37 @@ export const CumulativeRecidivismRateExplanationContainer = styled.div`
   gap: 11px;
 `;
 
-export const NumberOfRecords = styled.div`
-  ${typography.Sans12}
-  font-size: 10px;
-  font-weight: 400;
-  margin-bottom: 4px;
+export const NumberOfRecords = styled.div<{ isV2?: boolean }>`
+  ${({ isV2 }) =>
+    isV2
+      ? css`
+          ${typography.Sans16}
+          width: fit-content;
+          padding: 8px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          color: white;
+          margin-bottom: 4px;
+          background-color: rgba(80, 80, 80, 1);
+
+          span {
+            ${typography.Sans12}
+            font-weight: 400;
+            font-size: 10px;
+            text-transform: uppercase;
+          }
+        `
+      : css`
+          ${typography.Sans12}
+          font-size: 10px;
+          font-weight: 400;
+          margin-bottom: 4px;
+        `}
 `;
 
-export const AttributeChipsWrapper = styled.div`
+export const AttributeChipsWrapper = styled.div<{ isV2?: boolean }>`
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
@@ -304,6 +446,13 @@ export const AttributeChipsWrapper = styled.div`
   div:first-child {
     text-transform: capitalize;
   }
+
+  ${({ isV2 }) =>
+    isV2 &&
+    `
+      height: fit-content;
+      margin-top: 16px;
+  `}
 `;
 
 export const AttributeChip = styled.div`
@@ -368,10 +517,14 @@ export const Explanation = styled.span`
 `;
 
 export const InfoPageLink = styled.div`
+  ${typography.Sans12}
   display: flex;
+  align-items: center;
   gap: 16px;
-  width: 100%;
-  padding: 16px;
+  width: 826px;
+  padding: 8px 16px;
   border-radius: 4px;
   background-color: ${palette.marble5};
+  position: absolute;
+  bottom: 125px;
 `;

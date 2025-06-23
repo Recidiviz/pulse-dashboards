@@ -113,7 +113,7 @@ export function getRecidivismPlot(
       sentenceLengthBucketEnd,
     );
 
-    const lastDataPoint = dataPoints.sort(
+    const lastDataPoint = [...dataPoints].sort(
       (a, b) => a.cohortMonths - b.cohortMonths,
     )[series.dataPoints.length - 1];
 

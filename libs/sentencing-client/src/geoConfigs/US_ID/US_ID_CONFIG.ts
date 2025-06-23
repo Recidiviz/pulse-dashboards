@@ -17,6 +17,7 @@
 
 import FindhelpLogo from "../../components/assets/findhelp.svg?react";
 import { RecommendationOptionType } from "../../components/CaseDetails/Recommendations/constants";
+import ReportTemplateV1 from "../../components/CaseDetails/Recommendations/report/ReportTemplateV1";
 import { RecommendationType } from "../../components/CaseDetails/types";
 import { convertDistrictToDistrictCode } from "../../utils/utils";
 import { GeoConfig } from "../types";
@@ -45,6 +46,7 @@ export const US_ID_CONFIG: GeoConfig = {
     ],
     summaryGenerator: generateIdahoSummary,
   },
+  reportTemplate: ReportTemplateV1,
   omsSystem: "Atlas",
   ExternalOpportunityLogo: FindhelpLogo,
   orgName: "IDOC",

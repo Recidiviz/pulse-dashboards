@@ -67,6 +67,22 @@ export const ChartTooltipContentSection = styled.div`
   }
 `;
 
+export const ChartLegendContainer = styled.div<{ isReport?: boolean }>`
+  display: flex;
+  ${({ isReport }) => isReport && `flex-direction: column; gap: 10px;`}
+`;
+
+export const ChartLegendWrapper = styled.div<{ isReport?: boolean }>`
+  display: flex;
+  align-items: center;
+  min-width: ${({ isReport }) => (isReport ? "fit-content" : "500px")};
+  margin-top: ${({ isReport }) => (isReport ? "0" : "21px")};
+
+  & > div {
+    margin-top: ${({ isReport }) => (isReport ? "0" : "35px")};
+  }
+`;
+
 export const ChartLegend = styled.div`
   display: flex;
 `;

@@ -230,7 +230,9 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                 opportunityDescriptions,
               )}
               needs={caseAttributes.needsToBeAddressed}
+              otherNeed={caseAttributes.otherNeedToBeAddressed}
               protectiveFactors={caseAttributes.protectiveFactors}
+              otherProtectiveFactor={caseAttributes.otherProtectiveFactor}
               gender={caseAttributes.client?.gender}
               savedSummary={savedSummary}
               hideSummaryReport={hideSummaryReport}

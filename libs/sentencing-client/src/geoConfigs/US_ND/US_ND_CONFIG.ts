@@ -24,6 +24,7 @@ import {
   REPORT_TYPE_KEY,
 } from "../../components/CaseDetails/constants";
 import { RecommendationOptionType } from "../../components/CaseDetails/Recommendations/constants";
+import ReportTemplateV2 from "../../components/CaseDetails/Recommendations/report/ReportTemplateV2";
 import { RecommendationType } from "../../components/CaseDetails/types";
 import { GeoConfig } from "../types";
 import { generateNorthDakotaSummary } from "./utils";
@@ -70,6 +71,7 @@ export const US_ND_CONFIG: GeoConfig = {
     ],
     summaryGenerator: generateNorthDakotaSummary,
   },
+  reportTemplate: ReportTemplateV2,
   omsSystem: "DOCSTARS",
   orgName: "DOCR",
   infoPageLink: "https://www.recidiviz.org/sentencing/nd",

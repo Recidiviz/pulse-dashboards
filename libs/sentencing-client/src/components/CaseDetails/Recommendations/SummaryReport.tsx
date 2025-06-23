@@ -32,6 +32,10 @@ import DownloadIcon from "../../assets/download-icon.svg?react";
 import RefreshIcon from "../../assets/refresh-icon.svg?react";
 import * as Styled from "../CaseDetails.styles";
 import { PDF_PAGE_WIDTH } from "../constants";
+import {
+  parseNeedsToBeAddressedValue,
+  parseProtectiveFactorsValue,
+} from "../Form/utils";
 import { MutableCaseAttributes, SelectedRecommendation } from "../types";
 import { Report } from "./report/Report";
 import { generateRecommendationSummary } from "./summaryUtils";
@@ -61,6 +65,8 @@ type SummaryReportProps = {
   updateAttributes: (attributes?: MutableCaseAttributes) => Promise<void>;
   isCreatingRecommendation: boolean;
   savedSummary?: string | null;
+  otherNeed?: string | null;
+  otherProtectiveFactor?: string | null;
 };
 
 export const SummaryReport: React.FC<SummaryReportProps> = ({
@@ -72,7 +78,9 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   externalId,
   selectedRecommendation,
   needs,
+  otherNeed,
   protectiveFactors,
+  otherProtectiveFactor,
   opportunityDescriptions,
   gender,
   analytics,
@@ -194,6 +202,9 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
       selectedRecommendation={selectedRecommendation}
       insight={insight}
       geoConfig={geoConfig}
+      protectiveFactors={parseProtectiveFactorsValue(protectiveFactors)}
+      needs={parseNeedsToBeAddressedValue(needs)}
+      recommendationSummary={summaryValue}
     />
   );
 

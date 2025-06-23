@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,29 +15,24 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const BW_COLOR_SCHEME = [
-  "rgb(0,0,0)",
-  "rgb(58,58,58)",
-  "rgb(93,93,93)",
-  "rgb(138,138,138)",
-  "rgb(183,183,183)",
-  "rgb(228,228,228)",
-];
+import { ReactNode } from "react";
 
-export const SENTENCE_TYPE_TO_COLOR: { [key: string]: string } = {
-  Probation: "#25636F",
-  Rider: "#D9A95F",
-  Term: "#BA4F4F",
-  "< 1 Year": "#90AEB5",
-  "1-2 Years": "#D9A95F",
-  "3-5 Years": "#BA4F4F",
-  "6+ Years": "#4C6290",
-};
+import { CaseInsight } from "../../../../api";
+import { GeoConfig } from "../../../../geoConfigs/types";
+import { SelectedRecommendation } from "../../../CaseDetails/types";
+import { RecommendationOptionType } from "../constants";
 
-export const RECOMMENDATION_TYPE_TO_BORDER_COLOR: { [key: string]: string } = {
-  Probation: "#003331",
-  Rider: "#C78F38",
-  Term: "#B6253D",
-};
-
-export const INDIVIDUALS_STRING = "individuals";
+export interface CustomReportProps {
+  fullName?: string;
+  selectedRecommendation: SelectedRecommendation;
+  age?: number;
+  gender?: string;
+  insight?: CaseInsight;
+  geoConfig: GeoConfig;
+  recommendationOptionType: RecommendationOptionType;
+  dispositionSection: ReactNode;
+  recidivismRateSection?: ReactNode;
+  protectiveFactors?: string[] | null;
+  needs?: string[] | null;
+  recommendationSummary?: string;
+}
