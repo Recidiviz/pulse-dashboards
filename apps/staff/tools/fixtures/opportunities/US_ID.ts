@@ -377,7 +377,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "notServingForViolentOffense",
-          text: "Serving for a violent offense and eligible for CRC placement with an override",
+          text: "Serving for a violent offense",
         },
         {
           key: "usIdNotDeniedForCrc",
@@ -544,7 +544,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "notServingForViolentOffense",
-          text: "Serving for a violent offense and eligible for CRC placement with an override",
+          text: "Serving for a violent offense",
         },
         {
           key: "usIdNotDeniedForCrc",
@@ -772,7 +772,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "notServingForViolentOffense",
-          text: "Serving for a violent offense and eligible for CRC placement with an override",
+          text: "Serving for a violent offense",
         },
         {
           key: "usIdInCrcFacilityOrPwccUnit1For60Days",

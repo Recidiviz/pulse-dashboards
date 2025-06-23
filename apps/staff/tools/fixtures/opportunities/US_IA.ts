@@ -77,7 +77,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "noSupervisionViolationReportWithin6MonthsUsingResponseDate",
           text: "Has no violation reports in the past 6 months",
           tooltip:
-            'This is defined by whether there were any Reports of Violation submitted in ICON in the past 6 months. See "Relevant Contact Notes" section below to review all violation incidents entered in ICON',
+            "This is defined by whether there were any Reports of Violation submitted in ICON in the past 6 months. This does not include reports that were dismissed or resulted in a reinstatement",
         },
         {
           key: "usIaNoOpenSupervisionModifiers",
@@ -110,7 +110,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "notSupervisionPastFullTermCompletionDateOrUpcoming30Days",
           text: "Is not within 30 days of discharge date",
           tooltip:
-            "Discharge date is determined by the maximum value of the client's TDD (tentative discharge date) and/or SDD (supervision discharge date)",
+            "Discharge date is determined by the primary TDD (tentative discharge date) and/or SDD (supervision discharge date)",
         },
         {
           key: "usIaNotExcludedFromEarlyDischargeByParoleCondition",
@@ -169,6 +169,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "UsIaActionPlansAndNotes",
         "ClientProfileDetails",
         "CaseNotes",
+        "UsIaVictimContactInfo",
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],

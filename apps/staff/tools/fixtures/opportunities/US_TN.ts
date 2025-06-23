@@ -600,7 +600,7 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: null,
       displayName: "Initial Classification",
       dynamicEligibilityText:
-        " resident[|s] may be need Initial Classification",
+        " resident[|s] may need an Initial Classification",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {

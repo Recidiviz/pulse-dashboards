@@ -19,19 +19,19 @@ import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore
 
 export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
-    usTxAnnualReportingStatus: {
+    usTxAnnualReportStatus: {
       callToAction: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
         {
-          key: "RESTITUTION",
-          text: "Does not demonstrate a good faith effort to comply with restitution, supervision and crime victim fees",
+          key: "FEES ",
+          text: "Client does not demonstrate a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
         },
         {
-          key: "FEES",
-          text: "Does not demonstrate a good faith effort to comply with court costs, fines and related fees",
+          key: "RESTITUTION",
+          text: "Client has not maintained compliance with all restitution obligations in accordance to PD/POP-3.1.6 for the preceding two years of supervision",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],
@@ -44,44 +44,39 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "supervisionLevelIsMinimumFor3Years",
-          text: "Successfully complete three years on low supervision",
-          tooltip: "as determined by the Texas Risk Assessment System score",
+          text: "The client has satisfactorily completed three years on Low supervision",
+          tooltip: "As determined by the Texas Risk Assessment System (TRAS)",
         },
         {
           key: "usTxNoWarrantWithSustainedViolationWithin2Years",
-          text: "Has no warrant issued during the previous two years of the current parole\nsupervision period",
-          tooltip:
-            "This does not apply to a warrant issued where subsequently an investigation or administrative review did not sustain a violation.",
-        },
-        {
-          key: "noSupervisionSustainedViolationWithin2Years",
-          text: "Have no parole violations during the previous two years of the current parole supervision period",
+          text: "The client has not had a warrant issued within the preceding two years of supervision.  This does not apply to a warrant issued in which a subsequent investigation or administrative review did not sustain the violation.",
         },
       ],
       emptyTabCopy: [],
-      firestoreCollection: "US_TX-annualReportingStatusReferrals",
+      firestoreCollection: "US_TX-annualReportStatusReferrals",
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 1,
       ineligibleCriteriaCopy: [],
       initialHeader:
-        "Review clients who may be eligible to transfer to Annual Report Status",
+        "Review clients who may be eligible for Annual Report Status",
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
       nonOmsCriteria: [
         {
-          text: "Demonstrate a good faith effort to comply with restitution, supervision and crime victim fees, if applicable",
+          text: "The client has demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
         },
         {
-          text: "Demonstrate a good faith effort to comply with court costs, fines and related fees, if applicable",
+          text: "The client has maintained compliance with all restitution obligations  for the preceding two years of supervision",
+          tooltip: "In accordance to PD/POP-3.1.6",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [],
-      omsCriteriaHeader: "Requirements validated by OIMS data",
+      omsCriteriaHeader: " Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: [],
@@ -91,14 +86,14 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Supervision clients may be eligible transfer to Annual Report Status if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Nov 5, 2013. \n\nReview potentially eligible clients below.",
+        "Supervision clients may be eligible for Annual Report Status if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Nov 5, 2013. Review potentially eligible clients below.",
       submittedTabTitle: null,
       supportsSubmitted: false,
       systemType: "SUPERVISION",
       tabGroups: null,
       tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for Annual Report Status",
-      urlSection: "AnnualReportingStatus",
+      urlSection: "AnnualReportStatus",
       zeroGrantsTooltip: null,
     },
     usTxEarlyReleaseFromSupervision: {
@@ -108,16 +103,12 @@ export const mockApiOpportunityConfigurationResponse = {
       denialNoun: null,
       denialReasons: [
         {
-          key: "RESTITUTION",
-          text: "Does not demonstrate a good faith effort to comply with restitution, supervision and crime victim fees",
-        },
-        {
           key: "FEES",
-          text: "Does not demonstrate a good faith effort to comply with court costs, fines and related fees",
+          text: "Client does not demonstrate a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
         },
         {
-          key: "OFFENSE",
-          text: "Has a felony conviction that include the use of a child or an intent to commit sexual assault, bodily harm, etc",
+          key: "RESTITUTION",
+          text: "Client has not maintained compliance with all restitution obligations in accordance to PD/POP-3.1.6 for the preceding two years of supervision",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],
@@ -143,12 +134,9 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Have been under supervision for at least one half of the time that remained on their sentence when released to parole or mandatory supervision",
         },
         {
-          key: "onSupervisionAtLeast2Years",
-          text: "Have been on supervision for two years or more",
-        },
-        {
-          key: "supervisionLevelIsMinimumFor1Year",
-          text: "Successfully complete one year on Low supervisionas determined by the Texas Risk Assessment System score",
+          key: "supervisionLevelIsMinimumFor3Years",
+          text: "The client has satisfactorily completed three years on Low supervision",
+          tooltip: "As determined by the Texas Risk Assessment System (TRAS)",
         },
       ],
       emptyTabCopy: [],
@@ -166,15 +154,11 @@ export const mockApiOpportunityConfigurationResponse = {
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
       nonOmsCriteria: [
         {
-          text: "Demonstrate a good faith effort to comply with restitution, supervision and crime victim fees, if applicable",
+          text: "The client has demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
         },
         {
-          text: "Demonstrate a good faith effort to comply with court costs, fines and related fees, if applicable",
-        },
-        {
-          text: "Have no felony convictions that include the use of a child or an intent to commit sexual assault, bodily harm, etc",
-          tooltip:
-            "Have no current or prior felony convictions or deferred adjudication, including juvenile convictions for the offense that includes the use of a child in the commission of a crime, nor any offenses that were pled down to a lesser degree but may have included an intent to commit sexual assault, bodily harm, etc.",
+          text: "The client has maintained compliance with all restitution obligations  for the preceding two years of supervision",
+          tooltip: "In accordance to PD/POP-3.1.6",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
@@ -189,7 +173,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "\nSupervision clients may be eligible transfer to Early Release From Supervision if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Nov 5, 2013. Review potentially eligible clients below.",
+        "Supervision clients may be eligible transfer to Early Release From Supervision if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Nov 5, 2013. Review potentially eligible clients below.",
       submittedTabTitle: null,
       supportsSubmitted: false,
       systemType: "SUPERVISION",
