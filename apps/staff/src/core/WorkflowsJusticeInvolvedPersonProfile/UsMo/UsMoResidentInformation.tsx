@@ -16,9 +16,6 @@
 // =============================================================================
 
 import React from "react";
-import z from "zod";
-
-import { usMoSanctionsSchema } from "~datatypes";
 
 import { UsMoSanctions } from "../ResidentDetailSidebarComponents/US_MO/UsMoSanctions";
 import { UsMoSolitary } from "../ResidentDetailSidebarComponents/US_MO/UsMoSolitary";
@@ -36,11 +33,7 @@ export function UsMoResidentInformation({
   return (
     <>
       <UsMoSolitary person={resident} />
-      <UsMoSanctions
-        sanctions={z
-          .array(usMoSanctionsSchema)
-          .parse(metadata.d1SanctionInfoPastYear)}
-      />
+      <UsMoSanctions sanctions={metadata.d1SanctionInfoPastYear} />
     </>
   );
 }

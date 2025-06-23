@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMoSolitaryAssignmentInfoPastYear } from "~datatypes";
-
 import { formatWorkflowsDate } from "../../../../utils";
 import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
@@ -39,15 +37,15 @@ export function UsMoSolitary({
     metadata;
 
   const SOLITARY_CONFINEMENT_DATE_COPY = (
-    solitaryStartDate: UsMoSolitaryAssignmentInfoPastYear["startDate"],
-    solitaryEndDate: UsMoSolitaryAssignmentInfoPastYear["endDate"],
+    solitaryStartDate: Date | undefined,
+    solitaryEndDate: Date | undefined,
   ) => {
     const startDateText = solitaryStartDate
-      ? formatWorkflowsDate(new Date(solitaryStartDate))
+      ? formatWorkflowsDate(solitaryStartDate)
       : "START DATE UNAVAILABLE";
     const endDateText =
       solitaryEndDate !== undefined
-        ? formatWorkflowsDate(new Date(solitaryEndDate))
+        ? formatWorkflowsDate(solitaryEndDate)
         : "Present";
     return `${startDateText} - ${endDateText}`;
   };
@@ -60,15 +58,13 @@ export function UsMoSolitary({
       </DetailsSubheading>
       {solitaryAssignmentInfoPastYear &&
       solitaryAssignmentInfoPastYear.length > 0 ? (
-        solitaryAssignmentInfoPastYear.map(
-          ({ startDate, endDate }: UsMoSolitaryAssignmentInfoPastYear) => {
-            return (
-              <SecureDetailsContent key={`${startDate}${endDate}`}>
-                {SOLITARY_CONFINEMENT_DATE_COPY(startDate, endDate)}
-              </SecureDetailsContent>
-            );
-          },
-        )
+        solitaryAssignmentInfoPastYear.map(({ startDate, endDate }) => {
+          return (
+            <SecureDetailsContent key={`${startDate}${endDate}`}>
+              {SOLITARY_CONFINEMENT_DATE_COPY(startDate, endDate)}
+            </SecureDetailsContent>
+          );
+        })
       ) : (
         <SecureDetailsContent>None</SecureDetailsContent>
       )}

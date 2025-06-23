@@ -27,13 +27,10 @@ export const usMoSanctionsSchema = z.object({
 });
 export type UsMoSanctionInfo = z.infer<typeof usMoSanctionsSchema>;
 
-export const usMoSolitaryAssignmentInfoPastYearSchema = z.object({
-  endDate: nullishAsUndefined(z.string()),
-  startDate: nullishAsUndefined(z.string()),
+const usMoSolitaryAssignmentInfoPastYearSchema = z.object({
+  endDate: nullishAsUndefined(dateStringSchema),
+  startDate: nullishAsUndefined(dateStringSchema),
 });
-export type UsMoSolitaryAssignmentInfoPastYear = z.infer<
-  typeof usMoSolitaryAssignmentInfoPastYearSchema
->;
 
 export const usMoResidentMetadataSchema = z.object({
   stateCode: z.literal("US_MO"),
