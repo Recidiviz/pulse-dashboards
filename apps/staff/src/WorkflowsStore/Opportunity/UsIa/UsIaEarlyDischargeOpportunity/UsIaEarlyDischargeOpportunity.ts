@@ -262,11 +262,11 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     }
     if (!dnaRequiredFlag) {
       customReqs.push({
-        text: "DNA is not required to be collected",
+        text: "DNA is not required to be collected or uploaded to CODIS",
       });
     } else if (dnaSubmittedFlag) {
       customReqs.push({
-        text: "DNA has been collected",
+        text: "DNA has been collected and successfully uploaded to CODIS",
       });
     }
     return super.requirementsMet.concat(customReqs);
@@ -274,7 +274,12 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
 
   get requirementsAlmostMet(): OpportunityRequirement[] {
     const customReqs = [];
-    const { victimFlag, violationsPast6MonthsFlag } = this.record.metadata;
+    const {
+      victimFlag,
+      violationsPast6MonthsFlag,
+      dnaRequiredFlag,
+      dnaSubmittedFlag,
+    } = this.record.metadata;
 
     if (victimFlag) {
       customReqs.push({
@@ -284,6 +289,11 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     if (violationsPast6MonthsFlag) {
       customReqs.push({
         text: "Has violation incidents filed in the past 6 months. Please review incident history...",
+      });
+    }
+    if (dnaRequiredFlag && !dnaSubmittedFlag) {
+      customReqs.push({
+        text: "DNA is required to be collected but has not yet been successfully uploaded to CODIS",
       });
     }
     return super.requirementsAlmostMet.concat(customReqs);
