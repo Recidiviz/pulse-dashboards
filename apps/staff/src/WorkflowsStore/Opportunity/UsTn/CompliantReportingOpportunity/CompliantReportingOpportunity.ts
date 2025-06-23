@@ -44,7 +44,7 @@ import {
 const CRITERIA: Record<string, Partial<OpportunityRequirement>> = {
   drug: {
     tooltip:
-      "Policy requirement: Passed drug screen in the last 12 months for non-drug offenders. Passed 2 drug screens in last 12 months for drug offenders, most recent is negative.",
+      "Policy requirement: Passed drug screen in the last 12 months for non-drug offenders. Passed 2 drug screens in last 12 months for drug offenders, most recent is negative. Recidiviz uses the RNA to determine whether a client is a drug offender (moderate or high drug/alcohol risk level) or non-drug offender (low drug/alcohol risk level).",
   },
   timeOnSupervision: {
     tooltip:
