@@ -34,23 +34,28 @@ export async function transformAndLoadCaseData(
 ) {
   // Load new case data
   // We do this in an for loop instead of Promise.all to avoid a prisma pool connection error
-  for await (const caseData of data) {
-    const staffExternalIds = (
+
+  const staffExternalIds = new Set(
+    (
       await prismaClient.staff.findMany({
         select: { externalId: true },
       })
-    ).map(({ externalId }) => externalId);
+    ).map(({ externalId }) => externalId),
+  );
 
-    const clientExternalIds = (
+  const clientExternalIds = new Set(
+    (
       await prismaClient.client.findMany({
         select: { externalId: true },
       })
-    ).map(({ externalId }) => externalId);
+    ).map(({ externalId }) => externalId),
+  );
 
+  for await (const caseData of data) {
     // Check if the staff and clients exist in the db - if not, we'll link
     // them later
-    const staffId = staffExternalIds.find((id) => id === caseData.staff_id);
-    const clientId = clientExternalIds.find((id) => id === caseData.client_id);
+    const staffExists = staffExternalIds.has(caseData.staff_id);
+    const clientExists = clientExternalIds.has(caseData.client_id);
 
     const newCase = {
       externalId: caseData.external_id,
@@ -67,17 +72,17 @@ export async function transformAndLoadCaseData(
       isCancelled: caseData.investigation_status === CANCELLED_STATUS,
     };
 
-    const createStaffConnection = staffId
+    const createStaffConnection = staffExists
       ? {
           connect: {
-            externalId: staffId,
+            externalId: caseData.staff_id,
           },
         }
       : undefined;
-    const createClientConnection = clientId
+    const createClientConnection = clientExists
       ? {
           connect: {
-            externalId: clientId,
+            externalId: caseData.client_id,
           },
         }
       : undefined;
@@ -112,19 +117,19 @@ export async function transformAndLoadCaseData(
         : undefined;
 
     // For staff and client, since the incoming data is the source of truth, we can disconnect if there is no associated staffId or clientId
-    const updateStaffConnection = staffId
+    const updateStaffConnection = staffExists
       ? {
           connect: {
-            externalId: staffId,
+            externalId: caseData.staff_id,
           },
         }
       : {
           disconnect: true,
         };
-    const updateClientConnection = clientId
+    const updateClientConnection = clientExists
       ? {
           connect: {
-            externalId: clientId,
+            externalId: caseData.client_id,
           },
         }
       : {
