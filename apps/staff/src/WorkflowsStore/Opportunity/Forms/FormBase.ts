@@ -146,6 +146,11 @@ export class FormBase<
       opportunityType: this.type,
       opportunityId: this.sentryTrackingId,
     });
+
+    // return early for IA ED due to their customized opportunity submission flow
+    if (this.opportunity.type === "usIaEarlyDischarge") {
+      return;
+    }
     // only automatically mark an opportunity as submitted upon form download if there
     // are no subcategories of submitted, because the user should manually pick
     // a subcategory of the submitted status if there exist subcategories
