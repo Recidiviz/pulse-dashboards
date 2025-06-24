@@ -59,6 +59,7 @@ import WorkflowsUsNeSupervisionDowngradeForm from "../WorkflowsUsNeSupervisionDo
 import WorkflowsUsTnExpirationForm from "../WorkflowsUsTnExpirationForm";
 import WorkflowsUsTnReclassForm from "../WorkflowsUsTnReclassForm";
 import WorkflowsUsTxAnnualReportStatusForm from "../WorkflowsUsTxAnnualReportStatusForm";
+import WorkflowsUsTxEarlyReleaseFromSupervisionForm from "../WorkflowsUsTxEarlyReleaseFromSupervisionForm";
 
 export const FORM_SIDEBAR_WIDTH = 400;
 
@@ -120,6 +121,7 @@ const FormComponents = {
   WorkflowsFormUsTnSuspensionOfDirectSupervision,
   WorkflowsUsNeSupervisionDowngradeForm,
   WorkflowsUsTxAnnualReportStatusForm,
+  WorkflowsUsTxEarlyReleaseFromSupervisionForm,
 };
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;

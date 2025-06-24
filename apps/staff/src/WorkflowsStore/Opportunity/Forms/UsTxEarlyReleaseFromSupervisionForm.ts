@@ -16,22 +16,22 @@
 // =============================================================================
 
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
-import { UsTxAnnualReportStatusOpportunity } from "../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
-import { UsTxAnnualReportStatusDraftData } from "../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
+import { UsTxEarlyReleaseFromSupervisionOpportunity } from "../UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
+import { UsTxEarlyReleaseFromSupervisionDraftData } from "../UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 import { FormBase } from "./FormBase";
 
-export class UsTxAnnualReportStatusForm extends FormBase<
-  UsTxAnnualReportStatusDraftData,
-  UsTxAnnualReportStatusOpportunity
+export class UsTxEarlyReleaseFromSupervisionForm extends FormBase<
+  UsTxEarlyReleaseFromSupervisionDraftData,
+  UsTxEarlyReleaseFromSupervisionOpportunity
 > {
   navigateToFormText = "Download Form";
   allowRevert = false;
 
   get formContents(): OpportunityFormComponentName {
-    return "WorkflowsUsTxAnnualReportStatusForm";
+    return "WorkflowsUsTxEarlyReleaseFromSupervisionForm";
   }
 
-  prefilledDataTransformer(): Partial<UsTxAnnualReportStatusDraftData> {
+  prefilledDataTransformer(): Partial<UsTxEarlyReleaseFromSupervisionDraftData> {
     if (!this.opportunity.record || !this.person) return {};
 
     const clientName = this.person.displayName;
@@ -41,10 +41,13 @@ export class UsTxAnnualReportStatusForm extends FormBase<
         month: "long",
         year: "numeric",
       });
-    const threeYearsTRASCheck = true;
-    const complianceFeesAndEducationCheck = true;
+
+    const atLeastHalfTimeCheck = true;
+    const minimumThreeYearsSupervisionCheck = true;
+    const goodFaithFeesAndEducationCheck = true;
     const restitutionObligationsCheck = true;
     const warrantCheck = true;
+    const noViolationsCertificateCheck = true;
     const societyBestInterestCheck = true;
     const officerName = this.person.assignedStaffFullName;
 
@@ -52,10 +55,12 @@ export class UsTxAnnualReportStatusForm extends FormBase<
       clientName,
       clientId,
       eligibilityMonthString,
-      threeYearsTRASCheck,
-      complianceFeesAndEducationCheck,
+      atLeastHalfTimeCheck,
+      minimumThreeYearsSupervisionCheck,
+      goodFaithFeesAndEducationCheck,
       restitutionObligationsCheck,
       warrantCheck,
+      noViolationsCertificateCheck,
       societyBestInterestCheck,
       officerName,
     };

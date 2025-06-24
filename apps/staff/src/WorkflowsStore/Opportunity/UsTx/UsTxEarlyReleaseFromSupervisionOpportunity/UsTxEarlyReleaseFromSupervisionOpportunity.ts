@@ -22,25 +22,25 @@ import { opportunitySchemaBase } from "~datatypes";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
-import { UsTxAnnualReportStatusForm } from "../../Forms/UsTxAnnualReportStatusForm";
+import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { UsTxAnnualReportStatusDraftData } from "./UsTxAnnualReportStatusOpportunityReferralRecord";
+import { UsTxEarlyReleaseFromSupervisionDraftData } from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 
-export class UsTxAnnualReportStatusOpportunity extends OpportunityBase<
+export class UsTxEarlyReleaseFromSupervisionOpportunity extends OpportunityBase<
   Client,
   OpportunityRecordBase,
-  OpportunityUpdateWithForm<UsTxAnnualReportStatusDraftData>
+  OpportunityUpdateWithForm<UsTxEarlyReleaseFromSupervisionDraftData>
 > {
-  form: UsTxAnnualReportStatusForm;
+  form: UsTxEarlyReleaseFromSupervisionForm;
 
   constructor(client: Client, record: DocumentData) {
     super(
       client,
-      "usTxAnnualReportStatus",
+      "usTxEarlyReleaseFromSupervision",
       client.rootStore,
       opportunitySchemaBase.parse(record),
     );
 
-    this.form = new UsTxAnnualReportStatusForm(this, this.rootStore);
+    this.form = new UsTxEarlyReleaseFromSupervisionForm(this, this.rootStore);
   }
 }
