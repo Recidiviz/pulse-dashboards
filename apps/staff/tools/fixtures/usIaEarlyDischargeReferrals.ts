@@ -310,7 +310,7 @@ export const usIaEarlyDischargeReferralsFixture =
             Country: "USA",
           },
         ],
-        dnaRequiredFlag: true,
+        dnaRequirementStatus: "Maybe Required",
         dnaSubmittedFlag: true,
         mostRecentDnaSubmittedDate: relativeFixtureDate({ days: -10 }),
       },

@@ -19,6 +19,12 @@ import { z } from "zod";
 
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
+const dnaStatus = z.enum([
+  "Definitely Required",
+  "Maybe Required",
+  "Not Required",
+]);
+
 export const usIaEarlyDischargeSchema = opportunitySchemaBase
   .extend({
     eligibleCriteria: z
@@ -157,8 +163,8 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
             }),
           )
           .nullish(),
-        dnaRequiredFlag: z.boolean().optional(),
         dnaSubmittedFlag: z.boolean().optional(),
+        dnaRequirementStatus: dnaStatus.optional(),
         mostRecentDnaSubmittedDate: dateStringSchema.nullish(),
       })
       .passthrough(),
