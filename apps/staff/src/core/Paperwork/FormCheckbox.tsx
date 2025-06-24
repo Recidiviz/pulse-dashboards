@@ -22,7 +22,7 @@ import styled from "styled-components/macro";
 
 import { useOpportunityFormContext } from "./OpportunityFormContext";
 
-const Checkbox = styled.input.attrs({
+export const Checkbox = styled.input.attrs({
   type: "checkbox",
 })`
   height: 9px;

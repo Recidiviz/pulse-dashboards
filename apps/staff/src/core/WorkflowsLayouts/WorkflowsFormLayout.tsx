@@ -36,6 +36,7 @@ import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { OpportunityDenialView } from "../OpportunityDenial";
 import { OpportunityFormProvider } from "../Paperwork/OpportunityFormContext";
 import { FormUsIaEarlyDischargeParole } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeParole";
+import { FormUsIaEarlyDischargeProbation } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeProbation";
 import { FormEarnedDischarge } from "../Paperwork/US_ID/EarnedDischarge/FormEarnedDischarge";
 import AnnualClassificationReview from "../Paperwork/US_ME/AnnualReclassificationReview/AnnualReclassificationReview";
 import { FormFurloughRelease } from "../Paperwork/US_ME/Furlough/FormFurloughRelease";
@@ -111,6 +112,7 @@ const FormComponents = {
   FormFurloughRelease,
   FormUsPaAdminSupervision,
   FormUsIaEarlyDischargeParole,
+  FormUsIaEarlyDischargeProbation,
   AnnualClassificationReview,
   FormUsMiSCCReview,
   MediumTrustee,

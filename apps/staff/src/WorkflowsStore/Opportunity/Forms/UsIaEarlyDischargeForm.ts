@@ -28,7 +28,10 @@ export class UsIaEarlyDischargeForm extends FormBase<
   UsIaEarlyDischargeOpportunity
 > {
   get formContents(): OpportunityFormComponentName {
-    return "FormUsIaEarlyDischargeParole";
+    if (this.person.supervisionType === "PAROLE") {
+      return "FormUsIaEarlyDischargeParole";
+    }
+    return "FormUsIaEarlyDischargeProbation";
   }
 
   prefilledDataTransformer(): Partial<UsIaEarlyDischargeDraftData> {
@@ -72,9 +75,11 @@ export class UsIaEarlyDischargeForm extends FormBase<
 
     const { staffTitle, workUnit } = staff;
 
+    const todaysDate = formatWorkflowsDate(new Date());
+
     return {
       usCitizenshipStatus: USCitizenshipStatus || "",
-      todaysDate: formatWorkflowsDate(new Date()),
+      todaysDate,
       iconNumber: externalId,
       clientFullName: formatNameFirstLast(this.person.fullName),
       causeNumber,
@@ -103,6 +108,14 @@ export class UsIaEarlyDischargeForm extends FormBase<
       dischargeDate: "",
       supervisorSignatureDate: "",
       directorSignatureDate: "",
+
+      hasCompletedProbation: false,
+      probationCompletionStatus: "",
+      probationCompletionDate: todaysDate,
+      remainsFinanciallyLiable: false,
+      grantedDeferredJudgement: false,
+      hasOtherProbationDischargeOrder: false,
+      otherProbationDischargeOrderDetails: "",
     };
   }
 }

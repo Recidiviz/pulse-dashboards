@@ -18,6 +18,7 @@
 import { observer } from "mobx-react-lite";
 import { rem, transparentize } from "polished";
 import { useEffect, useState } from "react";
+import * as React from "react";
 import Select from "react-select";
 
 import { palette } from "~design-system";
@@ -27,11 +28,13 @@ import { useOpportunityFormContext } from "./OpportunityFormContext";
 export interface DOCXFormDropdownProps<DraftData> {
   name: Extract<keyof DraftData, string>;
   menuItems: string[];
+  style?: React.CSSProperties;
 }
 
 export const DOCXFormDropdown = observer(function FormInput<DraftData>({
   name,
   menuItems,
+  style = {},
 }: DOCXFormDropdownProps<DraftData>) {
   const opportunityForm = useOpportunityFormContext();
   const formValue = opportunityForm.formData[name];
@@ -52,6 +55,7 @@ export const DOCXFormDropdown = observer(function FormInput<DraftData>({
     <div
       style={{
         minWidth: "55%",
+        ...style,
       }}
     >
       <Select

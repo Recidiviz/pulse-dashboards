@@ -15,8 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import * as React from "react";
+
 import { UsIaEarlyDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsIa";
+import { DOCXFormDropdown } from "../../DOCXFormDropdown";
 import DOCXFormInput, { DOCXFormInputProps } from "../../DOCXFormInput";
+import DOCXFormCheckbox from "../../FormCheckbox";
 
 export type UsIaEarlyDischargeInputProps =
   DOCXFormInputProps<UsIaEarlyDischargeDraftData>;
@@ -25,4 +29,35 @@ export const FormUsIaEarlyDischargeInput = (
   props: UsIaEarlyDischargeInputProps,
 ): React.ReactElement => {
   return <DOCXFormInput<UsIaEarlyDischargeDraftData> {...props} />;
+};
+
+type CheckboxProps = {
+  name: Extract<keyof UsIaEarlyDischargeDraftData, string>;
+  invert?: boolean;
+  toggleable?: boolean;
+  label?: string;
+};
+
+export const FormUsIaEarlyDischargeCheckbox: React.FC<CheckboxProps> = (
+  props: CheckboxProps,
+) => {
+  const checkbox = <DOCXFormCheckbox<UsIaEarlyDischargeDraftData> {...props} />;
+  return props.label ? (
+    <label style={{ marginBottom: 0 }}>
+      {checkbox}
+      {props.label}
+    </label>
+  ) : (
+    checkbox
+  );
+};
+
+type DropdownProps = {
+  name: Extract<keyof UsIaEarlyDischargeDraftData, string>;
+  menuItems: string[];
+  style?: React.CSSProperties;
+};
+
+export const FormUsIaEarlyDischargeDropdown = (props: DropdownProps) => {
+  return <DOCXFormDropdown<UsIaEarlyDischargeDraftData> {...props} />;
 };

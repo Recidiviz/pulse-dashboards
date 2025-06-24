@@ -196,6 +196,14 @@ export type UsIaEarlyDischargeDraftData = {
   directorSignature: string;
   supervisorSignatureDate: string;
   directorSignatureDate: string;
+
+  hasCompletedProbation: boolean;
+  probationCompletionStatus: string;
+  probationCompletionDate: string;
+  remainsFinanciallyLiable: boolean;
+  grantedDeferredJudgement: boolean;
+  hasOtherProbationDischargeOrder: boolean;
+  otherProbationDischargeOrderDetails: string;
 };
 
 export type UsIaEarlyDischargeReferralRecordRaw = z.input<
