@@ -28,6 +28,8 @@ import {
   usTnAnnualReclassificationReviewSchema,
 } from "./UsTnAnnualReclassificationReviewReferralRecord";
 
+export const NO_RELEASE_DATE_TEXT =
+  "This resident's release date is currently not available. If applicable, please update TOMIS with the latest judgment order.";
 export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase<
   Resident,
   UsTnAnnualReclassificationReviewReferralRecord,
@@ -62,5 +64,11 @@ export class UsTnAnnualReclassificationReviewOpportunity extends OpportunityBase
       return `Due ${formatDate(this.eligibilityDate)}`;
     }
     return "Not Yet Classified";
+  }
+
+  get previewBannerText() {
+    if (!this.person.releaseDate) {
+      return NO_RELEASE_DATE_TEXT;
+    }
   }
 }

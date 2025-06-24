@@ -21,6 +21,7 @@ import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Resident } from "../../../Resident";
 import { UsTnReclassificationReviewForm } from "../../Forms/UsTnReclassificationReviewForm";
 import { OpportunityBase } from "../../OpportunityBase";
+import { NO_RELEASE_DATE_TEXT } from "../UsTnAnnualReclassificationReviewOpportunity";
 import { UsTnSharedReclassificationDraftData } from "../UsTnSharedCriteria";
 import {
   UsTnCustodyLevelDowngradeReferralRecord,
@@ -46,5 +47,11 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
     );
 
     this.form = new UsTnReclassificationReviewForm(this, resident.rootStore);
+  }
+
+  get previewBannerText() {
+    if (!this.person.releaseDate) {
+      return NO_RELEASE_DATE_TEXT;
+    }
   }
 }
