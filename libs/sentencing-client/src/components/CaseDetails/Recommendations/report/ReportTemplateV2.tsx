@@ -42,8 +42,13 @@ const ReportTemplateV2: React.FC<CustomReportProps> = ({
   needs,
   recommendationSummary,
 }) => {
+  const protectiveFactorsList = sliceAndFilterListItems(
+    protectiveFactors ?? [],
+    8,
+  );
+  const needsList = sliceAndFilterListItems(needs ?? [], 8);
   const hasProtectiveFactorsOrNeeds = Boolean(
-    protectiveFactors?.length || needs?.length,
+    protectiveFactorsList?.length || needsList?.length,
   );
   const recommendationOptionsTemplate =
     geoConfig.recommendation.baseOptionsTemplate;
@@ -83,29 +88,27 @@ const ReportTemplateV2: React.FC<CustomReportProps> = ({
           <Styled.SectionTitle>Case Details</Styled.SectionTitle>
           <Styled.CaseDetailsContainer>
             {/* Protective Factors */}
-            {protectiveFactors && protectiveFactors.length > 0 && (
+            {protectiveFactorsList && protectiveFactorsList.length > 0 && (
               <Styled.ListContainer>
                 <ProtectiveFactorsIcon />
                 <Styled.ListWrapper>
                   Mitigating Risk Factors
                   <Styled.List>
-                    {sliceAndFilterListItems(protectiveFactors, 8).map(
-                      (factor) => (
-                        <Styled.ListItem key={factor}>{factor}</Styled.ListItem>
-                      ),
-                    )}
+                    {protectiveFactorsList.map((factor) => (
+                      <Styled.ListItem key={factor}>{factor}</Styled.ListItem>
+                    ))}
                   </Styled.List>
                 </Styled.ListWrapper>
               </Styled.ListContainer>
             )}
             {/* Areas of Need */}
-            {needs && needs.length > 0 && (
+            {needsList && needsList.length > 0 && (
               <Styled.ListContainer>
                 <MagnifyingGlassIcon />
                 <Styled.ListWrapper>
                   Areas of Need
                   <Styled.List>
-                    {sliceAndFilterListItems(needs, 8).map((need) => (
+                    {needsList.map((need) => (
                       <Styled.ListItem key={need}>{need}</Styled.ListItem>
                     ))}
                   </Styled.List>

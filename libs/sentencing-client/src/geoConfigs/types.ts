@@ -55,4 +55,7 @@ export type GeoConfig = {
   infoPageLink?: string;
   convertDistrictToDistrictCodeFn?: (district?: string | null) => string | null;
   reportTemplate: FC<CustomReportProps>;
+  hideRecommendationOptionsStats?: boolean;
+  hideRecidivismRatesChart?: boolean;
+  showFactorsAndNeeds?: boolean;
 };

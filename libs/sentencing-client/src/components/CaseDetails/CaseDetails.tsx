@@ -31,6 +31,7 @@ import * as Styled from "./CaseDetails.styles";
 import { CaseOnboarding } from "./CaseOnboarding/CaseOnboarding";
 import { OnboardingTopic } from "./CaseOnboarding/types";
 import EditCaseDetailsModal from "./EditCaseDetailsModal";
+import FactorsAndNeeds from "./FactorsAndNeeds/FactorsAndNeeds";
 import { Insights } from "./Insights/Insights";
 import { Opportunities } from "./Opportunities/Opportunities";
 import Recommendations from "./Recommendations/Recommendations";
@@ -157,6 +158,13 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
           />
           <Styled.Body>
             <Styled.InsightsOpportunitiesWrapper>
+              {/* Factors and Needs */}
+              {geoConfig.showFactorsAndNeeds && (
+                <FactorsAndNeeds
+                  needs={caseAttributes.needsToBeAddressed}
+                  protectiveFactors={caseAttributes.protectiveFactors}
+                />
+              )}
               {/* Insights */}
               <Insights
                 insight={caseAttributes.insight}
@@ -230,9 +238,7 @@ const CaseDetailsWithPresenter = observer(function CaseDetailsWithPresenter({
                 opportunityDescriptions,
               )}
               needs={caseAttributes.needsToBeAddressed}
-              otherNeed={caseAttributes.otherNeedToBeAddressed}
               protectiveFactors={caseAttributes.protectiveFactors}
-              otherProtectiveFactor={caseAttributes.otherProtectiveFactor}
               gender={caseAttributes.client?.gender}
               savedSummary={savedSummary}
               hideSummaryReport={hideSummaryReport}

@@ -43,9 +43,9 @@ const ScrollContainer = styled.div`
 
 const SCROLL_SPEED_OFFSET = 200;
 
-const DraggableScrollContainer: React.FC<PropsWithChildren> = ({
-  children,
-}) => {
+const DraggableScrollContainer: React.FC<
+  PropsWithChildren & { hideArrowButtons?: boolean }
+> = ({ children, hideArrowButtons = false }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const [isDragging, setIsDragging] = useState(false);
@@ -131,14 +131,16 @@ const DraggableScrollContainer: React.FC<PropsWithChildren> = ({
 
   return (
     <ScrollControlsContainer>
-      <Styled.CarouselButtons>
-        <Styled.CarouselButton onClick={handleScrollLeft}>
-          <ChevronIcon />
-        </Styled.CarouselButton>
-        <Styled.CarouselButton onClick={handleScrollRight}>
-          <ChevronIcon />
-        </Styled.CarouselButton>
-      </Styled.CarouselButtons>
+      {!hideArrowButtons && (
+        <Styled.CarouselButtons>
+          <Styled.CarouselButton onClick={handleScrollLeft}>
+            <ChevronIcon />
+          </Styled.CarouselButton>
+          <Styled.CarouselButton onClick={handleScrollRight}>
+            <ChevronIcon />
+          </Styled.CarouselButton>
+        </Styled.CarouselButtons>
+      )}
       <ScrollContainer ref={scrollRef}>{children}</ScrollContainer>
     </ScrollControlsContainer>
   );

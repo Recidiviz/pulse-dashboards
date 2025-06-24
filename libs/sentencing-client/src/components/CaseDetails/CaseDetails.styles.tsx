@@ -98,6 +98,22 @@ export const BackLink = styled.div<{ leftMargin?: number }>`
   }
 `;
 
+export const ModuleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 22px 24px 22px;
+`;
+
+export const ModuleSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: ${palette.white};
+  border-radius: 10px;
+  padding: 24px;
+`;
+
 export const IconWrapper = styled.div``;
 
 /** Case Attributes */
@@ -755,6 +771,63 @@ export const Chart = styled.div<{
   padding: 24px;
   border: 1px solid #2b54691a;
   margin-right: ${(props) => props.$marginRight}px;
+`;
+
+/** Factors and Needs */
+export const FactorsNeedsContainer = styled.div`
+  display: flex;
+  gap: 24px;
+`;
+
+export const FactorsNeedsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const FactorsNeedsTitle = styled.div`
+  ${typography.Sans18}
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: ${palette.pine1};
+  border-bottom: 1px solid ${palette.marble5};
+  padding-bottom: 8px;
+  padding-right: 8px;
+`;
+
+export const FactorsNeedsList = styled.div`
+  ${typography.Sans14}
+  max-height: 200px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  color: ${palette.pine1};
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-gutter: stable;
+
+  /* WebKit browsers (Chrome, Safari, Edge) */
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: ${palette.slate30};
+    border-radius: 4px;
+  }
+
+  /* Firefox */
+  scrollbar-width: auto;
+  scrollbar-color: ${palette.slate30};
+`;
+
+export const FactorsNeedsListItem = styled.div`
+  margin-right: 8px;
+  max-width: 220px;
 `;
 
 /** Opportunities */

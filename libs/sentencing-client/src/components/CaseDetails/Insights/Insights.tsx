@@ -67,18 +67,24 @@ export const Insights = ({
       </Styled.InsightsHeaderWrapper>
 
       {/* Charts */}
-      <DraggableScrollContainer>
+      <DraggableScrollContainer
+        hideArrowButtons={geoConfig.hideRecidivismRatesChart}
+      >
         <Styled.Charts>
           {/* Recidivism Rates Chart */}
-          <Styled.Chart $marginRight={16}>
-            <RecidivismChart
-              orgName={geoConfig.orgName}
-              insight={insight}
-              selectedRecommendation={selectedRecommendation}
-              recommendationType={recommendationType}
-              baseOptionsTemplate={geoConfig.recommendation.baseOptionsTemplate}
-            />
-          </Styled.Chart>
+          {!geoConfig.hideRecidivismRatesChart && (
+            <Styled.Chart $marginRight={16}>
+              <RecidivismChart
+                orgName={geoConfig.orgName}
+                insight={insight}
+                selectedRecommendation={selectedRecommendation}
+                recommendationType={recommendationType}
+                baseOptionsTemplate={
+                  geoConfig.recommendation.baseOptionsTemplate
+                }
+              />
+            </Styled.Chart>
+          )}
 
           {/* Previous Sentence Rates Chart */}
           <Styled.Chart>

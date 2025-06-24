@@ -75,4 +75,7 @@ export const US_ND_CONFIG: GeoConfig = {
   omsSystem: "DOCSTARS",
   orgName: "DOCR",
   infoPageLink: "https://www.recidiviz.org/sentencing/nd",
+  hideRecommendationOptionsStats: true,
+  hideRecidivismRatesChart: true,
+  showFactorsAndNeeds: true,
 };

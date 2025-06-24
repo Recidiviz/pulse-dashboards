@@ -18,7 +18,7 @@
 import _ from "lodash";
 
 import { CaseInsight } from "../../../../api";
-import { OTHER_OPTION } from "../../Form/constants";
+import { filterOtherOption } from "../../utils";
 import { RecommendationOptionTemplateBase } from "../types";
 
 type RecommendationType = NonNullable<
@@ -151,4 +151,4 @@ export function getRecommendationOrderIndex(
 
 // Filters out the "Other" option and slices the list to the specified length
 export const sliceAndFilterListItems = (items: string[] = [], length: number) =>
-  items.filter((item) => item !== OTHER_OPTION).slice(0, length);
+  filterOtherOption(items).slice(0, length);

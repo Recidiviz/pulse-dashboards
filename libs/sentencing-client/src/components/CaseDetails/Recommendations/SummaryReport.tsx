@@ -65,8 +65,6 @@ type SummaryReportProps = {
   updateAttributes: (attributes?: MutableCaseAttributes) => Promise<void>;
   isCreatingRecommendation: boolean;
   savedSummary?: string | null;
-  otherNeed?: string | null;
-  otherProtectiveFactor?: string | null;
 };
 
 export const SummaryReport: React.FC<SummaryReportProps> = ({
@@ -78,9 +76,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
   externalId,
   selectedRecommendation,
   needs,
-  otherNeed,
   protectiveFactors,
-  otherProtectiveFactor,
   opportunityDescriptions,
   gender,
   analytics,

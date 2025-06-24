@@ -133,7 +133,8 @@ export const RecommendationOptionBase: React.FC<RecommendationsOptionProps> = ({
 export const RecommendationRadioOption: React.FC<{
   optionProps: RecommendationsOptionProps;
   firstName?: string;
-}> = ({ optionProps, firstName }) => {
+  hideRecommendationOptionsStats?: boolean;
+}> = ({ optionProps, firstName, hideRecommendationOptionsStats }) => {
   const {
     isSelectedRecommendation,
     option,
@@ -158,7 +159,9 @@ export const RecommendationRadioOption: React.FC<{
           }
         />
       )}
-      {!isNoneOrOther && <HistoricalOutcomes option={option} />}
+      {!hideRecommendationOptionsStats && !isNoneOrOther && (
+        <HistoricalOutcomes option={option} />
+      )}
     </RecommendationOptionBase>
   );
 };

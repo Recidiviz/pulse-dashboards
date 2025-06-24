@@ -123,6 +123,9 @@ const Recommendations: React.FC<RecommendationsProps> = ({
                   <RecommendationRadioOption
                     optionProps={baseProps}
                     firstName={firstName}
+                    hideRecommendationOptionsStats={
+                      geoConfig.hideRecommendationOptionsStats
+                    }
                   />
                 </Fragment>
               );
