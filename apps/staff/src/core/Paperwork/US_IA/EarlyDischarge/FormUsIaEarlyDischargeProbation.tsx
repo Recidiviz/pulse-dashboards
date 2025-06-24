@@ -20,6 +20,7 @@ import React from "react";
 
 import { Opportunity } from "../../../../WorkflowsStore";
 import {
+  packDraftData,
   UsIaEarlyDischargeDraftData,
   UsIaEarlyDischargeOpportunity,
 } from "../../../../WorkflowsStore/Opportunity/UsIa";
@@ -40,6 +41,9 @@ const formDownloader = async (
       ...toJS(opportunity?.form?.formData),
     };
   });
+
+  // @ts-expect-error We know the draft data is fully defined
+  contents = packDraftData(contents);
 
   const client = opportunity.person;
 

@@ -20,6 +20,7 @@ import * as React from "react";
 import { UsIaEarlyDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsIa";
 import { DOCXFormDropdown } from "../../DOCXFormDropdown";
 import DOCXFormInput, { DOCXFormInputProps } from "../../DOCXFormInput";
+import DOCXFormTextArea, { FormTextAreaProps } from "../../DOCXFormTextArea";
 import DOCXFormCheckbox from "../../FormCheckbox";
 
 export type UsIaEarlyDischargeInputProps =
@@ -60,4 +61,12 @@ type DropdownProps = {
 
 export const FormUsIaEarlyDischargeDropdown = (props: DropdownProps) => {
   return <DOCXFormDropdown<UsIaEarlyDischargeDraftData> {...props} />;
+};
+
+type TextAreaProps = FormTextAreaProps<UsIaEarlyDischargeDraftData>;
+
+export const FormUsIaEarlyDischargeTextArea = (
+  props: TextAreaProps,
+): React.ReactElement => {
+  return <DOCXFormTextArea<UsIaEarlyDischargeDraftData> {...props} />;
 };

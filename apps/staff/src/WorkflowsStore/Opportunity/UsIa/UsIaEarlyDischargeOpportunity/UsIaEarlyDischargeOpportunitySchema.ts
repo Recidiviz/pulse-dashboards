@@ -108,22 +108,22 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
         penalties: z
           .array(
             z.object({
-              penaltyDays: z.string().nullable(),
-              penaltyMonths: z.string().nullable(),
-              penaltyYears: z.string().nullable(),
-              prosecutingAttorneys: z.string().nullable(),
-              sentencePenaltyModifier: z.string().nullable(),
-              sentencePenaltyType: z.string().nullable(),
-              tdd: z.string().nullable(),
+              penaltyDays: z.string(),
+              penaltyMonths: z.string(),
+              penaltyYears: z.string(),
+              prosecutingAttorneys: z.string(),
+              sentencePenaltyModifier: z.string(),
+              sentencePenaltyType: z.string(),
+              tdd: z.string(),
               // TODO: make this JSON at the BQ level
-              judgeFullName: z.string().nullable(),
+              judgeFullName: z.string(),
             }),
           )
           .default([]),
         staffAttributes: z
           .array(
             z.object({
-              staffTitle: z.string().nullable(),
+              staffTitle: z.string(),
               workUnit: z.string(),
               officerExternalId: z.string(),
             }),
@@ -165,28 +165,56 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
   })
   .passthrough();
 
+type SentencePenaltyTypeKey = `sentencePenaltyType${number}`;
+type PenaltyDaysKey = `penaltyDays${number}`;
+type PenaltyMonthsKey = `penaltyMonths${number}`;
+type PenaltyYearsKey = `penaltyYears${number}`;
+type SentencePenaltyModifierKey = `sentencePenaltyModifier${number}`;
+type JudgeFullNameKey = `judgeFullName${number}`;
+type ProsecutingAttorneysKey = `prosecutingAttorneys${number}`;
+type TddKey = `tdd${number}`;
+export type PenaltyRecords = Record<
+  | SentencePenaltyTypeKey
+  | PenaltyDaysKey
+  | PenaltyMonthsKey
+  | PenaltyYearsKey
+  | SentencePenaltyModifierKey
+  | JudgeFullNameKey
+  | ProsecutingAttorneysKey
+  | TddKey,
+  string
+>;
+
+type CauseNumberKey = `causeNumber${number}`;
+type JurisdictionKey = `jurisdiction${number}`;
+type CountsKey = `counts${number}`;
+type DescriptionKey = `description${number}`;
+type StatuteKey = `statute${number}`;
+type ClassificationTypeRawTextKey = `classificationTypeRawText${number}`;
+type CrimeCdOffenseTypeKey = `crimeCdOffenseType${number}`;
+export type ChargeRecords = Record<
+  | CauseNumberKey
+  | JurisdictionKey
+  | CountsKey
+  | DescriptionKey
+  | StatuteKey
+  | ClassificationTypeRawTextKey
+  | CrimeCdOffenseTypeKey,
+  string
+>;
+
 export type UsIaEarlyDischargeDraftData = {
   usCitizenshipStatus: string;
   todaysDate: string;
   iconNumber: string;
   clientFullName: string;
-  causeNumber: string;
-  jurisdiction: string;
-  counts: number;
-  description: string;
-  statute: string;
   supervisionType: string;
   supervisionStartDate: string;
-  classificationTypeRawText: string;
   supervisionEndDate: string;
-  sentencePenaltyType: string;
-  penaltyDays: string;
-  penaltyMonths: string;
-  penaltyYears: string;
-  sentencePenaltyModifier: string;
-  judgeFullName: string;
-  prosecutingAttorneys: string;
-  tdd: string;
+
+  numberOfCharges: number;
+  numberOfPenalties: number;
+
   officerFullName: string;
   staffTitle: string;
   workUnit: string;
@@ -204,7 +232,88 @@ export type UsIaEarlyDischargeDraftData = {
   grantedDeferredJudgement: boolean;
   hasOtherProbationDischargeOrder: boolean;
   otherProbationDischargeOrderDetails: string;
-};
+} & PenaltyRecords &
+  ChargeRecords;
+
+export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
+  const {
+    usCitizenshipStatus,
+    todaysDate,
+    iconNumber,
+    clientFullName,
+    supervisionType,
+    supervisionStartDate,
+    supervisionEndDate,
+    officerFullName,
+    staffTitle,
+    workUnit,
+    dischargeDate,
+    supervisorSignature,
+    directorSignature,
+    supervisorSignatureDate,
+    directorSignatureDate,
+    hasCompletedProbation,
+    probationCompletionStatus,
+    probationCompletionDate,
+    remainsFinanciallyLiable,
+    grantedDeferredJudgement,
+    hasOtherProbationDischargeOrder,
+    otherProbationDischargeOrderDetails,
+  } = draftData;
+
+  const penalties = [];
+  for (let i = 0; i < draftData.numberOfPenalties; i++) {
+    penalties.push({
+      penaltyDays: draftData[`penaltyDays${i}`],
+      penaltyMonths: draftData[`penaltyMonths${i}`],
+      penaltyYears: draftData[`penaltyYears${i}`],
+      sentencePenaltyType: draftData[`sentencePenaltyType${i}`],
+      sentencePenaltyModifier: draftData[`sentencePenaltyModifier${i}`],
+      prosecutingAttorneys: draftData[`prosecutingAttorneys${i}`],
+      tdd: draftData[`tdd${i}`],
+      judgeFullName: draftData[`judgeFullName${i}`],
+    });
+  }
+
+  const charges = [];
+  for (let i = 0; i < draftData.numberOfCharges; i++) {
+    charges.push({
+      causeNumber: draftData[`causeNumber${i}`],
+      jurisdiction: draftData[`jurisdiction${i}`],
+      counts: String(draftData[`counts${i}`]),
+      description: draftData[`description${i}`],
+      statute: draftData[`statute${i}`],
+      classificationTypeRawText: draftData[`classificationTypeRawText${i}`],
+    });
+  }
+
+  return {
+    usCitizenshipStatus,
+    todaysDate,
+    iconNumber,
+    clientFullName,
+    supervisionType,
+    supervisionStartDate,
+    supervisionEndDate,
+    officerFullName,
+    staffTitle,
+    workUnit,
+    dischargeDate,
+    supervisorSignature,
+    directorSignature,
+    supervisorSignatureDate,
+    directorSignatureDate,
+    hasCompletedProbation,
+    probationCompletionStatus,
+    probationCompletionDate,
+    remainsFinanciallyLiable,
+    grantedDeferredJudgement,
+    hasOtherProbationDischargeOrder,
+    otherProbationDischargeOrderDetails,
+    charges,
+    penalties,
+  };
+}
 
 export type UsIaEarlyDischargeReferralRecordRaw = z.input<
   typeof usIaEarlyDischargeSchema

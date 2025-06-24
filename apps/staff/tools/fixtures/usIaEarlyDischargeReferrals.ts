@@ -56,11 +56,20 @@ export const usIaEarlyDischargeReferralsFixture =
           {
             causeNumber: "CN123",
             crimeCdOffenseType: "Felony",
-            jurisdiction: "County Court",
+            jurisdiction: "Polk",
             classificationTypeRawText: "Felony",
             counts: 1,
             description: "Sample offense",
             statute: "XYZ-123",
+          },
+          {
+            causeNumber: "FT987",
+            crimeCdOffenseType: "Felony",
+            jurisdiction: "Monroe",
+            classificationTypeRawText: "Felony",
+            counts: 2,
+            description: "Some other offense",
+            statute: "LMN-444",
           },
         ],
         penalties: [
@@ -78,10 +87,24 @@ export const usIaEarlyDischargeReferralsFixture =
               surname: "Sheindlin",
             }),
           },
+          {
+            penaltyDays: "21",
+            penaltyMonths: "3",
+            penaltyYears: "1",
+            prosecutingAttorneys: "Jane Doe",
+            sentencePenaltyModifier: "Increased",
+            sentencePenaltyType: "Jail",
+            tdd: "2025-03-01",
+            judgeFullName: JSON.stringify({
+              givenNames: "Judy",
+              middleNames: "",
+              surname: "Sheindlin",
+            }),
+          },
         ],
         staffAttributes: [
           {
-            staffTitle: null,
+            staffTitle: "Probation Officer",
             workUnit: "Case Management",
             officerExternalId: "OFFICER-001",
           },
@@ -264,7 +287,7 @@ export const usIaEarlyDischargeReferralsFixture =
         ],
         staffAttributes: [
           {
-            staffTitle: null,
+            staffTitle: "Parole Officer",
             workUnit: "Central Unit",
             officerExternalId: "OFFICER-003",
           },

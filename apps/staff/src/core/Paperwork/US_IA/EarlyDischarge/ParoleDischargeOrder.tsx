@@ -18,6 +18,7 @@
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 import idocLogo from "./assets/idocLogo.png";
 import { FormPage } from "./constants";
@@ -174,13 +175,15 @@ const SentenceTable = styled.table`
 `;
 
 function SentenceInformation() {
+  const form = useOpportunityFormContext();
+
   return (
     <SentenceTable>
       <colgroup>
         <col style={{ width: "16%" }} />
         <col style={{ width: "11%" }} />
-        <col style={{ width: "48%" }} />
-        <col style={{ width: "10%" }} />
+        <col style={{ width: "45%" }} />
+        <col style={{ width: "13%" }} />
         <col style={{ width: "15%" }} />
       </colgroup>
       <thead>
@@ -193,19 +196,25 @@ function SentenceInformation() {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>$DATE</td>
-          <td>
-            <FormUsIaEarlyDischargeInput name="jurisdiction" />
-          </td>
-          <td>
-            <FormUsIaEarlyDischargeInput name="statute" />
-          </td>
-          <td>$TERM</td>
-          <td>
-            <FormUsIaEarlyDischargeInput name="tdd" />
-          </td>
-        </tr>
+        {[...Array(form.formData.numberOfPenalties).keys()].map((i) => (
+          <tr key={i}>
+            <td>$DATE</td>
+            <td>
+              <FormUsIaEarlyDischargeInput name={`jurisdiction${i}`} />
+            </td>
+            <td>
+              <FormUsIaEarlyDischargeInput name={`statute${i}`} />
+            </td>
+            <td>
+              <FormUsIaEarlyDischargeInput name={`penaltyDays${i}`} />,
+              <FormUsIaEarlyDischargeInput name={`penaltyMonths${i}`} />,
+              <FormUsIaEarlyDischargeInput name={`penaltyYears${i}`} />
+            </td>
+            <td>
+              <FormUsIaEarlyDischargeInput name={`tdd${i}`} />
+            </td>
+          </tr>
+        ))}
       </tbody>
     </SentenceTable>
   );

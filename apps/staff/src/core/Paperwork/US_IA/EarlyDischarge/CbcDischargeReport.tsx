@@ -19,9 +19,13 @@ import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 import { FormPage } from "./constants";
-import { FormUsIaEarlyDischargeInput } from "./FormComponents";
+import {
+  FormUsIaEarlyDischargeInput,
+  FormUsIaEarlyDischargeTextArea,
+} from "./FormComponents";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -97,9 +101,15 @@ const ChargeDetailsTable = styled.table`
   & span {
     padding: ${rem(spacing.xxs)};
   }
+
+  & textarea {
+    width: 90%;
+    font-family: Arial, sans-serif;
+  }
 `;
 
 function ChargeTable() {
+  const form = useOpportunityFormContext();
   return (
     <ChargeDetailsTable>
       <thead>
@@ -112,20 +122,33 @@ function ChargeTable() {
       <tbody>
         <tr>
           <td>
-            <FormUsIaEarlyDischargeInput name="jurisdiction" />
-            <FormUsIaEarlyDischargeInput name="causeNumber" />
-            {/* TODO: make the description input multi-line */}
-            <FormUsIaEarlyDischargeInput name="description" />
+            <FormUsIaEarlyDischargeInput name="jurisdiction0" />
+            <FormUsIaEarlyDischargeInput name="causeNumber0" />
+            <FormUsIaEarlyDischargeTextArea name="description0" />
           </td>
           <td>
-            <FormUsIaEarlyDischargeInput name="counts" />
-            <FormUsIaEarlyDischargeInput name="statute" />
+            <FormUsIaEarlyDischargeInput name="counts0" />
+            <FormUsIaEarlyDischargeInput name="statute0" />
           </td>
           <td>
             <FormUsIaEarlyDischargeInput name="supervisionType" />
             <FormUsIaEarlyDischargeInput name="supervisionStartDate" />
           </td>
         </tr>
+        {[...Array(form.formData.numberOfCharges - 1).keys()].map((i) => (
+          <tr key={i}>
+            <td>
+              <FormUsIaEarlyDischargeInput name={`jurisdiction${i + i}`} />
+              <FormUsIaEarlyDischargeInput name={`causeNumber${i + 1}`} />
+              <FormUsIaEarlyDischargeTextArea name={`description${i + 1}`} />
+            </td>
+            <td>
+              <FormUsIaEarlyDischargeInput name={`counts${i + 1}`} />
+              <FormUsIaEarlyDischargeInput name={`statute${i + 1}`} />
+            </td>
+            <td />
+          </tr>
+        ))}
       </tbody>
     </ChargeDetailsTable>
   );
@@ -143,17 +166,23 @@ const SectionHeader = styled.div`
 `;
 
 function SentenceAndProgressInformation() {
+  const form = useOpportunityFormContext();
   return (
     <SentenceInformationContainer>
       <SectionHeader>
         Sentence Date Penalty Type Penalty Value Penalty Modifier
       </SectionHeader>
+      {[...Array(form.formData.numberOfPenalties).keys()].map((i) => (
+        <div key={i}>
+          SENTENCE_DATE{" "}
+          <FormUsIaEarlyDischargeInput name={`sentencePenaltyType${i}`} />{" "}
+          <FormUsIaEarlyDischargeInput name={`penaltyDays${i}`} />,
+          <FormUsIaEarlyDischargeInput name={`penaltyMonths${i}`} />,
+          <FormUsIaEarlyDischargeInput name={`penaltyYears${i}`} />{" "}
+          <FormUsIaEarlyDischargeInput name={`sentencePenaltyModifier${i}`} />
+        </div>
+      ))}
       <div>
-        SENTENCE_DATE <FormUsIaEarlyDischargeInput name="sentencePenaltyType" />{" "}
-        <FormUsIaEarlyDischargeInput name="penaltyDays" />,
-        <FormUsIaEarlyDischargeInput name="penaltyMonths" />,
-        <FormUsIaEarlyDischargeInput name="penaltyYears" />{" "}
-        <FormUsIaEarlyDischargeInput name="sentencePenaltyModifier" />
         <SectionHeader>
           Progress of Supervision/Restitution Status/Recommendations:
         </SectionHeader>
@@ -196,9 +225,11 @@ function SubmissionAndSignature() {
           <td>
             Region/Work Unit: <FormUsIaEarlyDischargeInput name="workUnit" />
             Distribution: Judge{" "}
-            <FormUsIaEarlyDischargeInput name="judgeFullName" />, County
-            Attorney <FormUsIaEarlyDischargeInput name="prosecutingAttorneys" />
-            , File // Parolee, File{" "}
+            <FormUsIaEarlyDischargeInput name="judgeFullName0" />, County
+            Attorney{" "}
+            {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
+            <FormUsIaEarlyDischargeInput name="prosecutingAttorneys0" />, File
+            // Parolee, File{" "}
             <FormUsIaEarlyDischargeInput name="officerFullName" />{" "}
             <FormUsIaEarlyDischargeInput name="staffTitle" />
           </td>

@@ -18,6 +18,8 @@
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { formatNameFirstLast, formatWorkflowsDate } from "../../../utils";
 import {
+  ChargeRecords,
+  PenaltyRecords,
   UsIaEarlyDischargeDraftData,
   UsIaEarlyDischargeOpportunity,
 } from "../UsIa";
@@ -39,32 +41,60 @@ export class UsIaEarlyDischargeForm extends FormBase<
     const {
       formInformation: {
         USCitizenshipStatus,
-        // TODO: Handle multiple charges, penalties, and staff attributes
-        charges: [charge],
-        penalties: [penalty],
+        charges,
+        penalties,
+        // TODO: Handle multiple staff attributes
         staffAttributes: [staff],
       },
     } = this.opportunity.record;
 
-    const {
-      causeNumber,
-      jurisdiction,
-      counts,
-      description,
-      classificationTypeRawText,
-      statute,
-    } = charge;
+    const numberOfCharges = charges.length;
+    const chargeData: ChargeRecords = {};
 
-    const {
-      sentencePenaltyType,
-      penaltyDays,
-      penaltyMonths,
-      penaltyYears,
-      sentencePenaltyModifier,
-      judgeFullName,
-      prosecutingAttorneys,
-      tdd,
-    } = penalty;
+    for (let i = 0; i < numberOfCharges; i++) {
+      const {
+        causeNumber,
+        jurisdiction,
+        counts,
+        description,
+        classificationTypeRawText,
+        statute,
+      } = charges[i];
+
+      chargeData[`causeNumber${i}`] = causeNumber;
+      chargeData[`jurisdiction${i}`] = jurisdiction;
+      chargeData[`counts${i}`] = `${counts}`;
+      chargeData[`description${i}`] = description;
+      chargeData[`classificationTypeRawText${i}`] = classificationTypeRawText;
+      chargeData[`statute${i}`] = statute;
+    }
+
+    const numberOfPenalties = penalties.length;
+    const penaltyData: PenaltyRecords = {};
+
+    for (let i = 0; i < numberOfPenalties; i++) {
+      const {
+        penaltyDays,
+        penaltyMonths,
+        penaltyYears,
+        sentencePenaltyType,
+        sentencePenaltyModifier,
+        prosecutingAttorneys,
+        tdd,
+        judgeFullName,
+      } = penalties[i];
+
+      penaltyData[`penaltyDays${i}`] = penaltyDays;
+      penaltyData[`penaltyMonths${i}`] = penaltyMonths;
+      penaltyData[`penaltyYears${i}`] = penaltyYears;
+      penaltyData[`sentencePenaltyType${i}`] = sentencePenaltyType;
+      penaltyData[`sentencePenaltyModifier${i}`] = sentencePenaltyModifier;
+      penaltyData[`prosecutingAttorneys${i}`] = prosecutingAttorneys;
+      penaltyData[`tdd${i}`] = tdd ? formatWorkflowsDate(new Date(tdd)) : "";
+      penaltyData[`judgeFullName${i}`] = judgeFullName
+        ? formatNameFirstLast(JSON.parse(judgeFullName))
+        : "";
+    }
 
     const {
       externalId,
@@ -82,25 +112,9 @@ export class UsIaEarlyDischargeForm extends FormBase<
       todaysDate,
       iconNumber: externalId,
       clientFullName: formatNameFirstLast(this.person.fullName),
-      causeNumber,
-      jurisdiction,
-      counts,
-      description,
-      statute,
       supervisionType,
       supervisionStartDate: formatWorkflowsDate(supervisionStartDate),
-      classificationTypeRawText,
-      judgeFullName: judgeFullName
-        ? formatNameFirstLast(JSON.parse(judgeFullName))
-        : "",
-      prosecutingAttorneys: prosecutingAttorneys || "",
-      tdd: tdd ? formatWorkflowsDate(new Date(tdd)) : "",
       supervisionEndDate: formatWorkflowsDate(expirationDate),
-      sentencePenaltyType: sentencePenaltyType || "type",
-      sentencePenaltyModifier: sentencePenaltyModifier || "modifier",
-      penaltyDays: penaltyDays || "10",
-      penaltyMonths: penaltyMonths || "0",
-      penaltyYears: penaltyYears || "3",
       // TODO: Replace with actual officer name
       officerFullName: 'Todd "TODO" Todderson',
       staffTitle: staffTitle || "",
@@ -116,6 +130,11 @@ export class UsIaEarlyDischargeForm extends FormBase<
       grantedDeferredJudgement: false,
       hasOtherProbationDischargeOrder: false,
       otherProbationDischargeOrderDetails: "",
+
+      numberOfCharges,
+      ...chargeData,
+      numberOfPenalties,
+      ...penaltyData,
     };
   }
 }

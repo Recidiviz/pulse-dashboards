@@ -41,7 +41,7 @@ function Header() {
   return (
     <HeaderContainer>
       IN THE IOWA DISTRICT COURT IN AND FOR{" "}
-      <FormUsIaEarlyDischargeInput name="jurisdiction" /> COUNTY
+      <FormUsIaEarlyDischargeInput name="jurisdiction0" /> COUNTY
     </HeaderContainer>
   );
 }
