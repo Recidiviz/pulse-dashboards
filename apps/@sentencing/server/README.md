@@ -59,6 +59,10 @@ Note: this process is the same for both staging and production.
 
 4. Under the `deploy-app` target in the `sentencing` `project.json` file, add `"DATABASE_URL_{STATE_ABBREVIATION}": "$DATABASE_URL_{STATE_ABBREVIATION}"` to the `envVars` dictionary. This will ensure that the server has the correct environment variables.
 
+### Why the Prisma schema and migration files are included in the build
+
+The Prisma schema and corresponding migration files are included in the build for this app because the docker container is reused for database migrations (and both of those are needed to run `prisma migrate`). We could create a new container for migrations, but that seems like overkill for now. If this becomes a problem in the future, we can revisit this decision.
+
 ## Testing
 
 ### Integration tests
