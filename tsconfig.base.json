@@ -21,7 +21,6 @@
     "noPropertyAccessFromIndexSignature": true,
     "paths": {
       "@prisma/jii-texting/client": ["node_modules/@prisma/jii-texting/client"],
-      "@prisma/sentencing/client": ["node_modules/@prisma/sentencing/client"],
       "~@case-notes-server/trpc": ["libs/@case-notes-server/trpc/src/index.ts"],
       "~@case-notes-server/trpc/*": ["libs/@case-notes-server/trpc/src/*"],
       "~@jii-texting/import/*": ["apps/@jii-texting/import/src/*"],
@@ -37,6 +36,9 @@
       "~@sentencing/import/test/*": ["apps/@sentencing/import/__tests__/*"],
       "~@sentencing/prisma": ["libs/@sentencing/prisma/src/index.ts"],
       "~@sentencing/prisma/*": ["libs/@sentencing/prisma/src/*"],
+      "~@sentencing/prisma/client": [
+        "libs/@sentencing/prisma/src/client/client.ts"
+      ],
       "~@sentencing/server/*": ["apps/@sentencing/server/src/*"],
       "~@sentencing/server/test/*": ["apps/@sentencing/server/__tests__/*"],
       "~@sentencing/trpc": ["libs/@sentencing/trpc/src/index.ts"],

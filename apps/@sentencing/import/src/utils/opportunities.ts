@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "@prisma/sentencing/client";
 import _ from "lodash";
 import { z } from "zod";
 
 import { opportunityImportSchema } from "~@sentencing/import/models";
+import { PrismaClient } from "~@sentencing/prisma/client";
 
 export async function transformAndLoadOpportunityData(
   prismaClient: PrismaClient,

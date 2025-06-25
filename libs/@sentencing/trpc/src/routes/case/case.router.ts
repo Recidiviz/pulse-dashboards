@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma } from "@prisma/sentencing/client";
 import { captureException } from "@sentry/node";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
+import { Prisma } from "~@sentencing/prisma/client";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
   getCaseInputSchema,

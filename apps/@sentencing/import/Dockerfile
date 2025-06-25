@@ -2,10 +2,10 @@
 FROM node:20-slim
 WORKDIR /usr/src/app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 # Cloud run requires the host to be 0.0.0.0
-ENV HOST 0.0.0.0
-ENV PORT 8080
+ENV HOST=0.0.0.0
+ENV PORT=8080
 
 RUN apt-get update -y && apt-get install -y openssl
 RUN apt-get install dumb-init
@@ -19,7 +19,6 @@ RUN yarn workspaces focus --production
 
 # Copy over the rest of the files as late as we can
 COPY dist/apps/@sentencing/import .
-RUN yarn prisma generate
 
 RUN chown -R node:node .
 USER node

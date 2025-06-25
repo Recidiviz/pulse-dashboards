@@ -15,16 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Gender,
-  ProtectiveFactor,
-  ReportType,
-} from "@prisma/sentencing/client";
 import { TRPCError } from "@trpc/server";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
+import {
+  Gender,
+  ProtectiveFactor,
+  ReportType,
+} from "~@sentencing/prisma/client";
 import { testAndGetSentryReports } from "~@sentencing/trpc/test/common/utils";
 import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";
 import {

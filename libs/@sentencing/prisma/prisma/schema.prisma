@@ -1,7 +1,7 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["tracing", "omitApi", "fullTextSearchPostgres"]
-  output          = "../../../../node_modules/@prisma/sentencing/client"
+  provider        = "prisma-client"
+  previewFeatures = ["fullTextSearchPostgres", "queryCompiler", "driverAdapters"]
+  output          = "../src/client"
 }
 
 datasource db {

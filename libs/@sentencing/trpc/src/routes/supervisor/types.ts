@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Staff } from "@prisma/sentencing/client";
+import type { Staff } from "~@sentencing/prisma/client";
 
 type StaffStats = Omit<Staff, "externalId"> & {
   caseCompletionRate: number;

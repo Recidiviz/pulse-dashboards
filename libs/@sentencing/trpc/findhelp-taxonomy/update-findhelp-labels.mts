@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { NeedToBeAddressed } from "@prisma/sentencing/client";
 import axios from "axios";
 
+import { NeedToBeAddressed } from "~@sentencing/prisma/client";
 import {
   ServiceTaxonomy,
   TaxonomyNode,

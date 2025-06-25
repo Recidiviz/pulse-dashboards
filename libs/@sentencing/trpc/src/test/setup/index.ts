@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/sentencing/client";
 import { init } from "@sentry/node";
 import {
   CreateTRPCProxyClient,
@@ -34,6 +33,7 @@ import superjson from "superjson";
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@sentencing/prisma";
+import { StateCode } from "~@sentencing/prisma/client";
 import { createContext } from "~@sentencing/trpc/context";
 import { AppRouter, appRouter } from "~@sentencing/trpc/router";
 import { mswServer } from "~@sentencing/trpc/test/setup/msw";

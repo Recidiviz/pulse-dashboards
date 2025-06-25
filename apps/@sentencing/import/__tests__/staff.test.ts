@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { StateCode } from "@prisma/sentencing/client";
 import { describe, expect, test } from "vitest";
 
 import { STAFF_FILE_NAME } from "~@sentencing/import/constants";
@@ -27,6 +26,7 @@ import {
   TEST_STATE_CODE,
 } from "~@sentencing/import/test/setup/constants";
 import { fakeCase, fakeStaff } from "~@sentencing/import/test/setup/seed";
+import { StateCode } from "~@sentencing/prisma/client";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
 let importHandler: ReturnType<typeof getImportHandler>;

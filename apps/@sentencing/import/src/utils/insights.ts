@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma, PrismaClient } from "@prisma/sentencing/client";
 import z from "zod";
 
 import { insightImportSchema } from "~@sentencing/import/models";
+import { Prisma, PrismaClient } from "~@sentencing/prisma/client";
 
 function transformRecidivismSeries(
   rawRecidivismSeries: z.infer<typeof insightImportSchema>["recidivism_series"],

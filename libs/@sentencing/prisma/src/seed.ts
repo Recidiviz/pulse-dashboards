@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+
 import {
   AsamLevelOfCareRecommendationCriterion,
   CaseStatus,
@@ -28,7 +29,7 @@ import {
   ReportType,
   StateCode,
   SubstanceUseDiagnosis,
-} from "@prisma/sentencing/client";
+} from "~@sentencing/prisma/client";
 
 const prisma = new PrismaClient();
 

@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Case, Prisma, PrismaClient } from "@prisma/sentencing/client";
 import moment from "moment";
 
+import { Case, Prisma, PrismaClient } from "~@sentencing/prisma/client";
 import { PRISMA_STAFF_GET_ARGS_FOR_SUPERVISOR } from "~@sentencing/trpc/routes/supervisor/constants";
 import { SupervisorStats } from "~@sentencing/trpc/routes/supervisor/types";
 

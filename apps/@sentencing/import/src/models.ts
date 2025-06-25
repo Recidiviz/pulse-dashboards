@@ -15,6 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import z from "zod";
+import { zu } from "zod_utilz";
+
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
 import {
   AsamLevelOfCareRecommendationCriterion,
   DiagnosedMentalHealthDiagnosisCriterion,
@@ -23,11 +27,7 @@ import {
   NeedToBeAddressed,
   PriorCriminalHistoryCriterion,
   StateCode,
-} from "@prisma/sentencing/client";
-import z from "zod";
-import { zu } from "zod_utilz";
-
-import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
+} from "~@sentencing/prisma/client";
 
 export const nameSchema = zu.stringToJSON().pipe(
   z.object({

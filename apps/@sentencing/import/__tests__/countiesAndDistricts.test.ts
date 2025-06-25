@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/sentencing/client";
-
 import { COUNTIES_AND_DISTRICTS_FILES_NAME } from "~@sentencing/import/constants";
 import { getImportHandler } from "~@sentencing/import/handler";
 import { testPrismaClient } from "~@sentencing/import/test/setup";
@@ -24,6 +22,7 @@ import {
   TEST_COUNTIES_AND_DISTRICTS_FILES_NAME,
   TEST_STATE_CODE,
 } from "~@sentencing/import/test/setup/constants";
+import { StateCode } from "~@sentencing/prisma/client";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
 let importHandler: ReturnType<typeof getImportHandler>;

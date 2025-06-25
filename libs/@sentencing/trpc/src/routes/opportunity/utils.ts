@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { NeedToBeAddressed } from "@prisma/sentencing/client";
 import axios, { AxiosError } from "axios";
 import _ from "lodash";
 
+import { NeedToBeAddressed } from "~@sentencing/prisma/client";
 import {
   AUTH_ENDPOINT,
   NEEDS_TO_LABELS,

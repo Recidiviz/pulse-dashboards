@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+
 import {
   AsamLevelOfCareRecommendationCriterion,
   DiagnosedSubstanceUseDisorderCriterion,
@@ -26,13 +27,10 @@ import {
   PrismaClient,
   ReportType,
   StateCode,
-} from "@prisma/sentencing/client";
-
+} from "~@sentencing/prisma/client";
 import { getPrismaClientForStateCode } from "~@sentencing/prisma/utils";
 
-const PRISMA_TABLES = Prisma.dmmf.datamodel.models
-  .map((model) => model.name)
-  .filter((table) => table);
+const PRISMA_TABLES = Object.values(Prisma.ModelName);
 
 // Hard code these ids so that we don't need to update our Auth0 profiles each time there is a seeding change.
 const STAFF_PSEUDO_IDS = [

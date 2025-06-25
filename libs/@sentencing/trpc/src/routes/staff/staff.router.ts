@@ -15,9 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Prisma } from "@prisma/sentencing/client";
 import { TRPCError } from "@trpc/server";
 
+import { Prisma } from "~@sentencing/prisma/client";
 import { baseProcedure, router } from "~@sentencing/trpc/init";
 import {
   getStaffInputSchema,

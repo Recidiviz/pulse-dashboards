@@ -93,8 +93,7 @@
           },
           "{projectRoot}/scripts/*",
           "{workspaceRoot}/.yarnrc.yml"
-        ],
-        "external": ["@prisma/sentencing"]
+        ]
       },
       "configurations": {
         "dev": {},

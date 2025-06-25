@@ -20,7 +20,7 @@ import type {
   County,
   Offense,
   Prisma,
-} from "@prisma/sentencing/client";
+} from "~@sentencing/prisma/client";
 
 export type GetCaseInput = Pick<Prisma.CaseWhereUniqueInput, "id">;
 

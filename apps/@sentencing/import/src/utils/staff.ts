@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient } from "@prisma/sentencing/client";
 import z from "zod";
 
 import { staffImportSchema } from "~@sentencing/import/models";
+import { PrismaClient } from "~@sentencing/prisma/client";
 
 export async function transformAndLoadStaffData(
   prismaClient: PrismaClient,

@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { ReportType, StateCode } from "@prisma/sentencing/client";
 import { describe, expect, test } from "vitest";
 
 import { CASES_FILE_NAME } from "~@sentencing/import/constants";
@@ -32,6 +31,7 @@ import {
   fakeCounty,
   fakeStaff,
 } from "~@sentencing/import/test/setup/seed";
+import { ReportType, StateCode } from "~@sentencing/prisma/client";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
 let importHandler: ReturnType<typeof getImportHandler>;

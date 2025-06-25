@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Gender } from "@prisma/sentencing/client";
 import { z } from "zod";
+
+import { Gender } from "~@sentencing/prisma/client";
 
 export const getInsightSchema = z.object({
   offenseName: z.string(),

@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Gender, StateCode } from "@prisma/sentencing/client";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
+import { Gender, StateCode } from "~@sentencing/prisma/client";
 import { testAndGetSentryReports } from "~@sentencing/trpc/test/common/utils";
 import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";
 import {

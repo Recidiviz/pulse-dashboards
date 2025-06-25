@@ -15,6 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { z } from "zod";
+
+import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
 import {
   AsamCareRecommendation,
   CaseStatus,
@@ -26,10 +29,7 @@ import {
   ProtectiveFactor,
   ReportType,
   SubstanceUseDiagnosis,
-} from "@prisma/sentencing/client";
-import { z } from "zod";
-
-import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
+} from "~@sentencing/prisma/client";
 import {
   GetCaseInput,
   OpportunityNameIdentifier,

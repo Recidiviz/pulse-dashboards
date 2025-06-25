@@ -15,15 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException } from "@sentry/node";
+import _ from "lodash";
+
 import {
   Gender,
   Prisma,
   PrismaClient,
   StateCode,
-} from "@prisma/sentencing/client";
-import { captureException } from "@sentry/node";
-import _ from "lodash";
-
+} from "~@sentencing/prisma/client";
 import { INSIGHT_INCLUDES_AND_OMITS } from "~@sentencing/trpc/routes/common/constants";
 
 type Insight = Prisma.InsightGetPayload<typeof INSIGHT_INCLUDES_AND_OMITS>;

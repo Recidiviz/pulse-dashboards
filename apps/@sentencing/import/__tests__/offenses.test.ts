@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { StateCode } from "@prisma/sentencing/client";
-
 import { OFFENSES_FILE_NAME } from "~@sentencing/import/constants";
 import { getImportHandler } from "~@sentencing/import/handler";
 import { testPrismaClient } from "~@sentencing/import/test/setup";
@@ -28,6 +26,7 @@ import {
   fakeMandatoryMinimum,
   fakeOffense,
 } from "~@sentencing/import/test/setup/seed";
+import { StateCode } from "~@sentencing/prisma/client";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
 let importHandler: ReturnType<typeof getImportHandler>;

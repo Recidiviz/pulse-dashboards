@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+
 import {
   CaseStatus,
   Gender,
@@ -26,8 +27,7 @@ import {
   ReportType,
   StateCode,
   SubstanceUseDiagnosis,
-} from "@prisma/sentencing/client";
-
+} from "~@sentencing/prisma/client";
 import {
   CaseCreateInput,
   ClientCreateInput,

@@ -16,12 +16,6 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import {
-  AsamLevelOfCareRecommendationCriterion,
-  DiagnosedMentalHealthDiagnosisCriterion,
-  Gender,
-  PriorCriminalHistoryCriterion,
-} from "@prisma/sentencing/client";
 import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITIES_FILE_NAME } from "~@sentencing/import/constants";
@@ -33,6 +27,12 @@ import {
 } from "~@sentencing/import/test/setup/constants";
 import { fakeOpportunity } from "~@sentencing/import/test/setup/seed";
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
+import {
+  AsamLevelOfCareRecommendationCriterion,
+  DiagnosedMentalHealthDiagnosisCriterion,
+  Gender,
+  PriorCriminalHistoryCriterion,
+} from "~@sentencing/prisma/client";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
 const lastUpdatedDate = new Date(1, 1, 1);

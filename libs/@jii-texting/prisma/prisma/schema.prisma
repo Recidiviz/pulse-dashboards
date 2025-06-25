@@ -1,7 +1,6 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["tracing", "omitApi", "fullTextSearchPostgres"]
-  output          = "../../../../node_modules/@prisma/jii-texting/client"
+  provider = "prisma-client-js"
+  output   = "../../../../node_modules/@prisma/jii-texting/client"
 }
 
 datasource db {
@@ -100,8 +99,8 @@ model Person {
 }
 
 model MessageSeries {
-  id               String      @id @default(cuid())
-  messageType      MessageType
+  id          String      @id @default(cuid())
+  messageType MessageType
 
   person           Person           @relation(fields: [personExternalId], references: [externalId])
   personExternalId String
@@ -124,7 +123,7 @@ model MessageAttempt {
   errorCode              Int?
 
   messageSeries       MessageSeries     @relation(fields: [messageSeriesId], references: [id])
-  messageSeriesId           String
+  messageSeriesId     String
   workflowExecution   WorkflowExecution @relation(fields: [workflowExecutionId], references: [id])
   workflowExecutionId String
   clicks              Click[]

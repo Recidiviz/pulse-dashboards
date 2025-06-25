@@ -15,10 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PrismaClient, ReportType } from "@prisma/sentencing/client";
 import { z } from "zod";
 
 import { caseImportSchema } from "~@sentencing/import/models";
+import { PrismaClient, ReportType } from "~@sentencing/prisma/client";
 
 const EXTERNAL_REPORT_TYPE_TO_INTERNAL_REPORT_TYPE = {
   "PSI Assigned Full": ReportType.FullPSI,

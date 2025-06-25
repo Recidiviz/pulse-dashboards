@@ -16,11 +16,10 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import { Prisma, PrismaClient } from "@prisma/sentencing/client";
 
-const PRISMA_TABLES = Prisma.dmmf.datamodel.models
-  .map((model) => model.name)
-  .filter((table) => table);
+import { Prisma, PrismaClient } from "~@sentencing/prisma/client";
+
+const PRISMA_TABLES = Object.values(Prisma.ModelName);
 
 export async function resetDb(prismaClient: PrismaClient) {
   await prismaClient.$transaction(

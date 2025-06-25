@@ -15,8 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { NeedToBeAddressed } from "@prisma/sentencing/client";
 import _ from "lodash";
+
+import { NeedToBeAddressed } from "~@sentencing/prisma/client";
 
 export const AUTH_ENDPOINT = "https://api.auntberthaqa.com/v3/authenticate";
 

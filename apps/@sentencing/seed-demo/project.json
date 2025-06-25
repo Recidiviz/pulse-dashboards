@@ -69,15 +69,7 @@
         "generatePackageJson": true,
         "target": "node20",
         "minify": true,
-        "assets": [
-          {
-            "glob": "prisma/schema.prisma",
-            "input": "{workspaceRoot}/libs/@sentencing/prisma",
-            "output": "."
-          },
-          "{workspaceRoot}/.yarnrc.yml"
-        ],
-        "external": ["@prisma/sentencing"]
+        "assets": ["{workspaceRoot}/.yarnrc.yml"]
       }
     },
     "container": {

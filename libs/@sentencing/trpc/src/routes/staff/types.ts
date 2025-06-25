@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { Prisma } from "@prisma/sentencing/client";
+import type { Prisma } from "~@sentencing/prisma/client";
 
 export type GetStaffInput = Pick<
   Prisma.StaffWhereUniqueInput,

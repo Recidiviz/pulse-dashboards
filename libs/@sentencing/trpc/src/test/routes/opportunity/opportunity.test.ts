@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { NeedToBeAddressed } from "@prisma/sentencing/client";
 import { http, HttpResponse } from "msw";
 import { describe, expect, test } from "vitest";
 
 import { OPPORTUNITY_UNKNOWN_PROVIDER_NAME } from "~@sentencing/prisma";
+import { NeedToBeAddressed } from "~@sentencing/prisma/client";
 import { Programs } from "~@sentencing/trpc/routes/opportunity/types";
 import { testAndGetSentryReports } from "~@sentencing/trpc/test/common/utils";
 import { testPrismaClient, testTRPCClient } from "~@sentencing/trpc/test/setup";

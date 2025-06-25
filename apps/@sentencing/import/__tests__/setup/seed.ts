@@ -16,17 +16,6 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
-import {
-  CaseStatus,
-  Gender,
-  OnboardingTopic,
-  Plea,
-  PrismaClient,
-  ProtectiveFactor,
-  ReportType,
-  StateCode,
-  SubstanceUseDiagnosis,
-} from "@prisma/sentencing/client";
 
 import {
   CaseCreateInput,
@@ -38,6 +27,17 @@ import {
   StaffCreateInput,
 } from "~@sentencing/import/test/setup/types";
 import { createFakeRecidivismSeries } from "~@sentencing/import/test/setup/utils";
+import {
+  CaseStatus,
+  Gender,
+  OnboardingTopic,
+  Plea,
+  PrismaClient,
+  ProtectiveFactor,
+  ReportType,
+  StateCode,
+  SubstanceUseDiagnosis,
+} from "~@sentencing/prisma/client";
 
 const FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_START = 0;
 const FAKE_INSIGHT_ASSESMENT_SCORE_BUCKET_END = 20;
