@@ -102,6 +102,7 @@ describe("almost eligible on probation at least a year", () => {
     expect(opp.almostEligible).toBeTrue();
     expect(opp.requirementsAlmostMet).toEqual([
       {
+        key: "pastEarnedDischargeEligibleDate",
         text: "Needs 16 more months on supervision",
         tooltip:
           "If on probation, served minimum sentence according to the court; " +
@@ -142,6 +143,7 @@ describe("almost eligible days remaining on length of stay", () => {
     expect(opp.almostEligible).toBeTrue();
     expect(opp.requirementsAlmostMet).toEqual([
       {
+        key: "pastEarnedDischargeEligibleDate",
         text: "Needs 1 more day on supervision",
         tooltip:
           "If on probation, served minimum sentence according to the court; " +

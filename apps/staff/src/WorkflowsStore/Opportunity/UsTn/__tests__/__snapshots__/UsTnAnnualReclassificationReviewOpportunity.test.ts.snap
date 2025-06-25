@@ -3,10 +3,12 @@
 exports[`Annual Reclassification Opportunity for fully eligible resident > requirements met 1`] = `
 [
   {
+    "key": "usTnAtLeast12MonthsSinceLatestAssessment",
     "text": "At least 12 months since last reclassification date",
     "tooltip": undefined,
   },
   {
+    "key": "custodyLevelIsNotMax",
     "text": "Custody level is not maximum",
     "tooltip": undefined,
   },

@@ -224,12 +224,15 @@ export function hydrateUntypedCriteria(
   return Object.entries(criteriaCopy).flatMap(([criteria, raw]) =>
     criteria in recordCriteria
       ? [
-          hydrateReq({
-            raw,
-            opportunity,
-            criteria: recordCriteria[criteria] ?? {},
-            formatters,
-          }),
+          {
+            key: criteria,
+            ...hydrateReq({
+              raw,
+              opportunity,
+              criteria: recordCriteria[criteria] ?? {},
+              formatters,
+            }),
+          },
         ]
       : [],
   );

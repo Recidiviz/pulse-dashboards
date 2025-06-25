@@ -53,10 +53,10 @@ describe("hydrateUntypedCriteria", () => {
       mockOpportunity,
     );
     expect(hydrated).toEqual([
-      { text: "FIRST" },
-      { text: "SECOND" },
-      { text: "THIRD" },
-      { text: "FOURTH" },
+      { key: "first", text: "FIRST" },
+      { key: "second", text: "SECOND" },
+      { key: "third", text: "THIRD" },
+      { key: "fourth", text: "FOURTH" },
     ]);
   });
 
@@ -78,7 +78,10 @@ describe("hydrateUntypedCriteria", () => {
       criteriaCopy,
       mockOpportunity,
     );
-    expect(hydrated).toEqual([{ text: "FIRST" }, { text: "FOURTH" }]);
+    expect(hydrated).toEqual([
+      { key: "first", text: "FIRST" },
+      { key: "fourth", text: "FOURTH" },
+    ]);
   });
 
   it("skips criteria that are not present in criteriaCopy", () => {
@@ -100,7 +103,10 @@ describe("hydrateUntypedCriteria", () => {
       criteriaCopy,
       mockOpportunity,
     );
-    expect(hydrated).toEqual([{ text: "FIRST" }, { text: "FOURTH" }]);
+    expect(hydrated).toEqual([
+      { key: "first", text: "FIRST" },
+      { key: "fourth", text: "FOURTH" },
+    ]);
   });
 
   it("includes criteria no matter what the reason value is", () => {
@@ -123,9 +129,9 @@ describe("hydrateUntypedCriteria", () => {
       mockOpportunity,
     );
     expect(hydrated).toEqual([
-      { text: "FIRST" },
-      { text: "SECOND" },
-      { text: "THIRD" },
+      { key: "first", text: "FIRST" },
+      { key: "second", text: "SECOND" },
+      { key: "third", text: "THIRD" },
     ]);
   });
 });

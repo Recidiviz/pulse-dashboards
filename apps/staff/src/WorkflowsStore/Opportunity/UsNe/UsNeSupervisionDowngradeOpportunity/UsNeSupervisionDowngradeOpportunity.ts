@@ -32,6 +32,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { DocumentData } from "@google-cloud/firestore";
+import { differenceInDays, startOfToday } from "date-fns";
 
 import { OpportunityType } from "~datatypes";
 
@@ -65,5 +66,29 @@ export class UsNeSupervisionDowngradeOpportunity extends OpportunityBase<
     );
 
     this.form = new UsNeSupervisionDowngradeForm(this, this.rootStore);
+  }
+
+  // Helper for dependently switching a criteria to almost eligible
+  get onParoleAtLeastOneYear(): boolean {
+    if (!this.person.supervisionStartDate) return false;
+    return (
+      differenceInDays(startOfToday(), this.person.supervisionStartDate) > 365
+    );
+  }
+
+  get requirementsMet() {
+    if (this.onParoleAtLeastOneYear) return super.requirementsMet;
+    return super.requirementsMet.filter(
+      ({ key }) => key !== "onParoleAtLeast6Months",
+    );
+  }
+
+  get requirementsAlmostMet() {
+    const paroleReq = super.requirementsMet.find(
+      ({ key }) => key === "onParoleAtLeast6Months",
+    );
+    if (this.onParoleAtLeastOneYear || !paroleReq)
+      return super.requirementsAlmostMet;
+    return [...super.requirementsAlmostMet, paroleReq];
   }
 }

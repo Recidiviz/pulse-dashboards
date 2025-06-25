@@ -3,12 +3,15 @@
 exports[`fully eligible > requirements met 1`] = `
 [
   {
+    "key": "usTnNoZeroToleranceCodesSpans",
     "text": "No zero tolerance codes since most recent sentence imposed date",
   },
   {
+    "key": "usTnNotOnLifeSentenceOrLifetimeSupervision",
     "text": "Not on lifetime supervision or lifetime sentence",
   },
   {
+    "key": "supervisionPastFullTermCompletionDate",
     "text": "180 days past expiration date (Feb 2, 2022)",
   },
 ]
