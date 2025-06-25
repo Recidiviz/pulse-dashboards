@@ -20,6 +20,7 @@ import { UsIaClientStatus } from "../../../WorkflowsStore/Opportunity/UsIa";
 export type DropdownOption = {
   label: string;
   onClick: () => void;
+  tooltip?: string;
 };
 
 export type MenuLabelWithOptions = {

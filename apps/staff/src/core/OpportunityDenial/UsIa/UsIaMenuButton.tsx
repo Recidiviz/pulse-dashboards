@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Dropdown, DropdownMenu } from "@recidiviz/design-system";
+import {
+  Dropdown,
+  DropdownMenu,
+  TooltipTrigger,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
 
@@ -79,6 +83,7 @@ const UsIaMenuButton = observer(function MenuButton({
     );
   };
 
+  // TODO(#8669): Add tooltip copy to menu options
   const menuConfig: MenuConfig = {
     ELIGIBLE_NOW: {
       options: [
@@ -170,19 +175,28 @@ const UsIaMenuButton = observer(function MenuButton({
     <Dropdown>
       <StatusAwareToggle>{buttonLabel}</StatusAwareToggle>
       <DropdownMenu>
-        {options.map((option) => (
-          <OpportunityStatusDropdownMenuItem
-            key={option.label}
-            onClick={() => {
-              option.onClick();
-              workflowsStore.updateSelectedOpportunityOnFullProfile(
-                opportunity,
-              );
-            }}
-          >
-            {option.label}
-          </OpportunityStatusDropdownMenuItem>
-        ))}
+        {options.map((option) => {
+          const contents = (
+            <OpportunityStatusDropdownMenuItem
+              key={option.label}
+              onClick={() => {
+                option.onClick();
+                workflowsStore.updateSelectedOpportunityOnFullProfile(
+                  opportunity,
+                );
+              }}
+            >
+              {option.label}
+            </OpportunityStatusDropdownMenuItem>
+          );
+          return option.tooltip ? (
+            <TooltipTrigger contents={option.tooltip}>
+              {contents}
+            </TooltipTrigger>
+          ) : (
+            contents
+          );
+        })}
       </DropdownMenu>
     </Dropdown>
   );
