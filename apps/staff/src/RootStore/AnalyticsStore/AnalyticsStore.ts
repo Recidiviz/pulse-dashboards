@@ -176,16 +176,18 @@ export type CopyCTAMetadata = OpportunityTrackingMetadata & {
   date: Date;
 };
 
-type UsIaEarlyDischargeActionsMetadata = {
+export type UsIaEarlyDischargeActionsMetadata = {
   staffId: string;
   justiceInvolvedPersonId: string;
-  action: {
+  action?: {
     type: string;
     actionPlan?: string;
     revisionRequest?: string;
     additionalNotes?: string;
+    supervisorResponseType?: string;
   };
   currentStatus: string;
+  revert?: boolean;
 };
 
 export default class AnalyticsStore {

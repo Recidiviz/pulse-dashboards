@@ -25,6 +25,7 @@ import {
   OfficerDenialAction,
   SupervisorAction,
 } from "../../../../FirestoreStore";
+import { UsIaEarlyDischargeActionsMetadata } from "../../../../RootStore/AnalyticsStore/AnalyticsStore";
 import { Client } from "../../../Client";
 import { UsIaEarlyDischargeForm } from "../../Forms/UsIaEarlyDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
@@ -193,8 +194,22 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       officerAction,
     );
 
-    // TODO(#8246): Start calling segment event fn here once we have the
-    // opportunity tab/status functions
+    const { userPseudoId } = this.rootStore.userStore;
+
+    const actionMetadata: UsIaEarlyDischargeActionsMetadata["action"] =
+      officerAction.type === "DENIAL"
+        ? {
+            type: officerAction.type,
+            actionPlan: officerAction.actionPlan,
+          }
+        : { type: officerAction.type, additionalNotes: officerAction.notes };
+
+    this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
+      staffId: userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: this.clientStatus,
+    });
 
     await this.rootStore.firestoreStore.updateOpportunityActionHistory(
       this,
@@ -228,8 +243,19 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       .slice(0, -1)
       .concat(updatedOfficerAction);
 
-    // TODO(#8246): Start calling segment event fn here once we have the
-    // opportunity tab/status functions
+    const { userPseudoId } = this.rootStore.userStore;
+    const actionMetadata: UsIaEarlyDischargeActionsMetadata["action"] = {
+      type: mostRecentOfficerAction.type,
+      supervisorResponseType: supervisorResponse.type,
+      revisionRequest: supervisorResponse.revisionRequest,
+    };
+
+    this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
+      staffId: userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: this.clientStatus,
+    });
 
     await this.rootStore.firestoreStore.updateOpportunityActionHistory(
       this,
@@ -238,7 +264,22 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   }
 
   async deleteActionHistory(): Promise<void> {
-    // TODO(#8246): Call relevant segment event for status change
+    const { userPseudoId } = this.rootStore.userStore;
+    const actionMetadata: UsIaEarlyDischargeActionsMetadata["action"] = this
+      .latestAction
+      ? {
+          type: this.latestAction.type,
+          supervisorResponseType: this.latestAction.supervisorResponse?.type,
+        }
+      : undefined;
+
+    this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
+      staffId: userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: this.clientStatus,
+      revert: true,
+    });
 
     await this.rootStore.firestoreStore.deleteOpportunityActionHistory(this);
   }
