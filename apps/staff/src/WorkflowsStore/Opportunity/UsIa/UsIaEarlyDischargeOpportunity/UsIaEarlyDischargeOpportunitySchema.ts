@@ -117,19 +117,16 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
               penaltyDays: z.string(),
               penaltyMonths: z.string(),
               penaltyYears: z.string(),
-              prosecutingAttorneys: z.string(),
               sentencePenaltyModifier: z.string(),
               sentencePenaltyType: z.string(),
               tdd: z.string(),
-              // TODO: make this JSON at the BQ level
-              judgeFullName: z.string(),
             }),
           )
           .default([]),
         staffAttributes: z
           .array(
             z.object({
-              staffTitle: z.string(),
+              staffTitle: z.string().nullable().default(""),
               workUnit: z.string(),
               officerExternalId: z.string(),
             }),
@@ -176,8 +173,6 @@ type PenaltyDaysKey = `penaltyDays${number}`;
 type PenaltyMonthsKey = `penaltyMonths${number}`;
 type PenaltyYearsKey = `penaltyYears${number}`;
 type SentencePenaltyModifierKey = `sentencePenaltyModifier${number}`;
-type JudgeFullNameKey = `judgeFullName${number}`;
-type ProsecutingAttorneysKey = `prosecutingAttorneys${number}`;
 type TddKey = `tdd${number}`;
 export type PenaltyRecords = Record<
   | SentencePenaltyTypeKey
@@ -185,8 +180,6 @@ export type PenaltyRecords = Record<
   | PenaltyMonthsKey
   | PenaltyYearsKey
   | SentencePenaltyModifierKey
-  | JudgeFullNameKey
-  | ProsecutingAttorneysKey
   | TddKey,
   string
 >;
@@ -275,9 +268,7 @@ export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
       penaltyYears: draftData[`penaltyYears${i}`],
       sentencePenaltyType: draftData[`sentencePenaltyType${i}`],
       sentencePenaltyModifier: draftData[`sentencePenaltyModifier${i}`],
-      prosecutingAttorneys: draftData[`prosecutingAttorneys${i}`],
       tdd: draftData[`tdd${i}`],
-      judgeFullName: draftData[`judgeFullName${i}`],
     });
   }
 

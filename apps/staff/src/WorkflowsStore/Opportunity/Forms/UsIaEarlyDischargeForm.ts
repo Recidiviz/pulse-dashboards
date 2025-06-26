@@ -79,9 +79,7 @@ export class UsIaEarlyDischargeForm extends FormBase<
         penaltyYears,
         sentencePenaltyType,
         sentencePenaltyModifier,
-        prosecutingAttorneys,
         tdd,
-        judgeFullName,
       } = penalties[i];
 
       penaltyData[`penaltyDays${i}`] = penaltyDays;
@@ -89,11 +87,7 @@ export class UsIaEarlyDischargeForm extends FormBase<
       penaltyData[`penaltyYears${i}`] = penaltyYears;
       penaltyData[`sentencePenaltyType${i}`] = sentencePenaltyType;
       penaltyData[`sentencePenaltyModifier${i}`] = sentencePenaltyModifier;
-      penaltyData[`prosecutingAttorneys${i}`] = prosecutingAttorneys;
       penaltyData[`tdd${i}`] = tdd ? formatWorkflowsDate(new Date(tdd)) : "";
-      penaltyData[`judgeFullName${i}`] = judgeFullName
-        ? formatNameFirstLast(JSON.parse(judgeFullName))
-        : "";
     }
 
     const {

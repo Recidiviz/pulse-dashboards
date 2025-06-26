@@ -224,14 +224,7 @@ function SubmissionAndSignature() {
           </td>
           <td>
             Region/Work Unit: <FormUsIaEarlyDischargeInput name="workUnit" />
-            Distribution: Judge{" "}
-            <FormUsIaEarlyDischargeInput name="judgeFullName0" />, County
-            Attorney{" "}
-            {/* eslint-disable-next-line react/jsx-no-comment-textnodes */}
-            <FormUsIaEarlyDischargeInput name="prosecutingAttorneys0" />, File
-            // Parolee, File{" "}
-            <FormUsIaEarlyDischargeInput name="officerFullName" />{" "}
-            <FormUsIaEarlyDischargeInput name="staffTitle" />
+            Distribution: Judge Attorney , File // Parolee, File
           </td>
         </tr>
       </tbody>
