@@ -320,6 +320,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       violationsPast6MonthsFlag,
       dnaSubmittedFlag,
       dnaRequirementStatus,
+      openInterventionsFlag,
     } = this.record.metadata;
 
     if (victimFlag) {
@@ -342,6 +343,11 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
           text: "DNA might be required to be collected and uploaded to CODIS. Please review DNA requirements based on charges.",
         });
       }
+    }
+    if (openInterventionsFlag) {
+      customReqs.push({
+        text: "Has open interventions in ICON. Please ensure client has completed court-ordered interventions.",
+      });
     }
     return super.requirementsAlmostMet.concat(customReqs);
   }

@@ -163,6 +163,7 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
         dnaSubmittedFlag: z.boolean().optional(),
         dnaRequirementStatus: dnaStatus.optional(),
         mostRecentDnaSubmittedDate: dateStringSchema.nullish(),
+        openInterventionsFlag: z.boolean().optional(),
       })
       .passthrough(),
   })
