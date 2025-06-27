@@ -7250,9 +7250,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recidiviz/design-system@npm:^5.10.0":
-  version: 5.10.0
-  resolution: "@recidiviz/design-system@npm:5.10.0"
+"@recidiviz/design-system@npm:^5.11.0":
+  version: 5.11.0
+  resolution: "@recidiviz/design-system@npm:5.11.0"
   dependencies:
     "@fontsource/libre-baskerville": "npm:^4.1.0"
     "@fontsource/public-sans": "npm:^4.5.3"
@@ -7268,7 +7268,7 @@ __metadata:
     react: ">17.0.0"
     react-dom: ">17.0.0"
     styled-components: ^5.2.1
-  checksum: 10c0/09a5f1d8c037be0f6cfe5ca6822755980c02e13053d631789f914f693897d43e384faa14c351c4d42b920adb7e8e18aff642cfd97f07f50db509259f02a01e8e
+  checksum: 10c0/ee3c9f2668b5f9da1e44260ec1e082372d04bb12b290348c302f0d37b30276d024cc61570857a8ad751bf10f409497fba7a5a0ad2193fadbbcfe53a907af0dd6
   languageName: node
   linkType: hard
 
@@ -28601,7 +28601,7 @@ __metadata:
     "@prisma/client": "npm:^6.10.1"
     "@react-spring/web": "npm:^9.7.4"
     "@recidiviz/auth": "npm:^1.0.1"
-    "@recidiviz/design-system": "npm:^5.10.0"
+    "@recidiviz/design-system": "npm:^5.11.0"
     "@rmwc/select": "npm:^14.0.11"
     "@rmwc/textfield": "npm:^14.0.11"
     "@segment/analytics-next": "npm:^1.72.1"

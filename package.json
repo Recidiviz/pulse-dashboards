@@ -40,7 +40,7 @@
     "@prisma/client": "^6.10.1",
     "@react-spring/web": "^9.7.4",
     "@recidiviz/auth": "^1.0.1",
-    "@recidiviz/design-system": "^5.10.0",
+    "@recidiviz/design-system": "^5.11.0",
     "@rmwc/select": "^14.0.11",
     "@rmwc/textfield": "^14.0.11",
     "@segment/analytics-next": "^1.72.1",

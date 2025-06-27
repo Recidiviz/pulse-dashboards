@@ -90,10 +90,12 @@ const UsIaMenuButton = observer(function MenuButton({
         {
           label: "Submit for Supervisor Approval",
           onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
+          tooltip: "To confirm all requirements checked",
         },
         {
           label: "Mark as Ineligible",
           onClick: () => setCurrentView("MARK_INELIGIBLE"),
+          tooltip: "To select a denial reason",
         },
       ],
     },
@@ -103,10 +105,12 @@ const UsIaMenuButton = observer(function MenuButton({
         {
           label: "Request Revisions",
           onClick: () => setCurrentView("US_IA_REQUEST_REVISIONS"),
+          tooltip: "To move to 'Revisions Requests'",
         },
         {
           label: "Approve Snooze",
           onClick: () => supervisorApprovalAndToast(),
+          tooltip: "To move to 'Snoozed'",
         },
       ],
     },
@@ -128,19 +132,26 @@ const UsIaMenuButton = observer(function MenuButton({
         {
           label: "Approve Discharge and Forms",
           onClick: () => supervisorApprovalAndToast(),
+          tooltip: "To move to 'Ready for Discharge'",
         },
         {
           label: "Mark as Ineligible",
           onClick: () => setCurrentView("MARK_INELIGIBLE"),
+          tooltip: "To move to 'Snoozed'",
         },
       ],
     },
     READY_FOR_DISCHARGE: {
       options: [
-        { label: "Mark Submitted", onClick: () => markSubmittedAndToast() },
+        {
+          label: "Mark Submitted",
+          onClick: () => markSubmittedAndToast(),
+          tooltip: "To move to 'Forms Submitted'",
+        },
         {
           label: "Mark as Ineligible",
           onClick: () => setCurrentView("MARK_INELIGIBLE"),
+          tooltip: "To move to 'Snoozed'",
         },
       ],
     },
@@ -151,6 +162,7 @@ const UsIaMenuButton = observer(function MenuButton({
           onClick: () => {
             setCurrentView("MARK_INELIGIBLE");
           },
+          tooltip: "Update denial reason or snooze length",
         },
       ],
     },
@@ -159,10 +171,12 @@ const UsIaMenuButton = observer(function MenuButton({
         {
           label: "Revert from Submitted",
           onClick: () => deleteSubmitted(),
+          tooltip: "To move to 'Ready for Discharge'",
         },
         {
           label: "Mark as Ineligible",
           onClick: () => setCurrentView("MARK_INELIGIBLE"),
+          tooltip: "To move to 'Snoozed'",
         },
       ],
     },
