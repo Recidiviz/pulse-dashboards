@@ -7,11 +7,6 @@ exports[`transforms record with FTCD and PED set 1`] = `
     "custodyLevelIsMinimum": {
       "custodyLevel": "MINIMUM",
     },
-    "incarcerationWithin6MonthsOfFtcdOrPedOrTpd": {
-      "fullTermCompletionDate": 2022-08-12T00:00:00.000Z,
-      "groupProjectedParoleReleaseDate": null,
-      "paroleEligibilityDate": 2022-03-19T00:00:00.000Z,
-    },
     "notServingForSexualOffense": null,
     "usIdInCrcFacilityOrPwccUnit1": {
       "crcStartDate": 2022-02-06T00:00:00.000Z,
@@ -19,6 +14,11 @@ exports[`transforms record with FTCD and PED set 1`] = `
     },
     "usIdInCrcFacilityOrPwccUnit1For60Days": {
       "sixtyDaysInCrcFacilityDate": 2022-04-07T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd": {
+      "fullTermCompletionDate": 2022-08-12T00:00:00.000Z,
+      "groupProjectedParoleReleaseDate": null,
+      "paroleEligibilityDate": 2022-03-19T00:00:00.000Z,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNotDetainersForXcrcAndCrc": null,
@@ -39,11 +39,6 @@ exports[`transforms record with TPD set 1`] = `
     "custodyLevelIsMinimum": {
       "custodyLevel": "MINIMUM",
     },
-    "incarcerationWithin6MonthsOfFtcdOrPedOrTpd": {
-      "fullTermCompletionDate": null,
-      "groupProjectedParoleReleaseDate": 2022-07-11T00:00:00.000Z,
-      "paroleEligibilityDate": null,
-    },
     "notServingForSexualOffense": null,
     "usIdInCrcFacilityOrPwccUnit1": {
       "crcStartDate": 2022-02-06T00:00:00.000Z,
@@ -51,6 +46,11 @@ exports[`transforms record with TPD set 1`] = `
     },
     "usIdInCrcFacilityOrPwccUnit1For60Days": {
       "sixtyDaysInCrcFacilityDate": 2022-04-07T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd": {
+      "fullTermCompletionDate": null,
+      "groupProjectedParoleReleaseDate": 2022-07-11T00:00:00.000Z,
+      "paroleEligibilityDate": null,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNotDetainersForXcrcAndCrc": null,
@@ -77,11 +77,6 @@ exports[`transforms record with caseNotes set 1`] = `
     "custodyLevelIsMinimum": {
       "custodyLevel": "MINIMUM",
     },
-    "incarcerationWithin6MonthsOfFtcdOrPedOrTpd": {
-      "fullTermCompletionDate": null,
-      "groupProjectedParoleReleaseDate": 2022-07-11T00:00:00.000Z,
-      "paroleEligibilityDate": null,
-    },
     "notServingForSexualOffense": null,
     "usIdInCrcFacilityOrPwccUnit1": {
       "crcStartDate": 2022-02-06T00:00:00.000Z,
@@ -89,6 +84,11 @@ exports[`transforms record with caseNotes set 1`] = `
     },
     "usIdInCrcFacilityOrPwccUnit1For60Days": {
       "sixtyDaysInCrcFacilityDate": 2022-04-07T00:00:00.000Z,
+    },
+    "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd": {
+      "fullTermCompletionDate": null,
+      "groupProjectedParoleReleaseDate": 2022-07-11T00:00:00.000Z,
+      "paroleEligibilityDate": null,
     },
     "usIdNoAbsconsionEscapeAndEludingPoliceOffensesWithin10Years": null,
     "usIdNotDetainersForXcrcAndCrc": null,

@@ -746,7 +746,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Shall have resided in a CRC or minimum custody employment release program (such as PWCC’s Unit 1) for a minimum of 60 days",
         },
         {
-          key: "incarcerationWithin6MonthsOfFtcdOrPedOrTpd",
+          key: "usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd",
           text: "Is within 6 months of release",
           tooltip:
             "Shall be within six months of release (generally calculated from the parole eligibility date, full-term release, or tentative parole date). Those who are past their parole eligibility date or within six months of a tentative parole date may also be considered, on a case by case basis",
