@@ -18,6 +18,7 @@
 import { Sans12, spacing } from "@recidiviz/design-system";
 import { addDays } from "date-fns";
 import { Timestamp } from "firebase/firestore";
+import { observer } from "mobx-react-lite";
 import React from "react";
 import styled from "styled-components/macro";
 
@@ -117,23 +118,25 @@ function ActionEntry({
 const isApprovalWithEmptyNotes = (action: OfficerAction) =>
   action.type === "APPROVAL" && !action.notes;
 
-export function UsIaActionPlansAndNotes({
-  opportunity,
-}: OpportunityProfileProps): React.ReactElement | null {
-  if (
-    !(opportunity instanceof UsIaEarlyDischargeOpportunity) ||
-    !opportunity.mostRecentActions?.length ||
-    opportunity.mostRecentActions.every(isApprovalWithEmptyNotes)
-  ) {
-    return null;
-  }
+export const UsIaActionPlansAndNotes = observer(
+  function UsIaActionPlansAndNotes({
+    opportunity,
+  }: OpportunityProfileProps): React.ReactElement | null {
+    if (
+      !(opportunity instanceof UsIaEarlyDischargeOpportunity) ||
+      !opportunity.mostRecentActions?.length ||
+      opportunity.mostRecentActions.every(isApprovalWithEmptyNotes)
+    ) {
+      return null;
+    }
 
-  return (
-    <DetailsSection>
-      <DetailsHeading>Action Plans and Notes</DetailsHeading>
-      {opportunity.mostRecentActions.reverse().map((action) => (
-        <ActionEntry action={action} />
-      ))}
-    </DetailsSection>
-  );
-}
+    return (
+      <DetailsSection>
+        <DetailsHeading>Action Plans and Notes</DetailsHeading>
+        {opportunity.mostRecentActions.reverse().map((action) => (
+          <ActionEntry action={action} />
+        ))}
+      </DetailsSection>
+    );
+  },
+);

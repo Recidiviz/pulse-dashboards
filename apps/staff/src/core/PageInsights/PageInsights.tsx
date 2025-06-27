@@ -35,6 +35,7 @@ import InsightsSupervisorPageV2 from "../InsightsSupervisorPage/InsightsSupervis
 import InsightsSupervisorsListPage from "../InsightsSupervisorsListPage";
 import ModelHydrator from "../ModelHydrator";
 import { insightsRoute } from "../views";
+import { OpportunitySidePanelProvider } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 
 const PageInsights: React.FC = observer(function PageInsights() {
   window.scrollTo({
@@ -44,66 +45,68 @@ const PageInsights: React.FC = observer(function PageInsights() {
 
   return (
     <InsightsActionStrategyModalProvider>
-      <InsightsNavLayout>
-        <ModelHydrator
-          hydratable={
-            new SupervisionPresenter(insightsStore, workflowsRootStore)
-          }
-        >
-          <Routes>
-            <Route element={<InsightsRoute />}>
-              <Route
-                path={insightsRoute({ routeName: "supervision" })}
-                element={<InsightsSupervisionHome />}
-              />
-              <Route
-                path={insightsRoute({
-                  routeName: "supervisionSupervisorsList",
-                })}
-                element={<InsightsSupervisorsListPage />}
-              />
-
-              <Route
-                path={insightsRoute({ routeName: "supervisionSupervisor" })}
-                element={<InsightsSupervisorPageV2 />}
-              />
-
-              {
+      <OpportunitySidePanelProvider>
+        <InsightsNavLayout>
+          <ModelHydrator
+            hydratable={
+              new SupervisionPresenter(insightsStore, workflowsRootStore)
+            }
+          >
+            <Routes>
+              <Route element={<InsightsRoute />}>
                 <Route
-                  path={insightsRoute({ routeName: "supervisionStaff" })}
-                  element={<InsightsStaffPageV2 />}
+                  path={insightsRoute({ routeName: "supervision" })}
+                  element={<InsightsSupervisionHome />}
                 />
-              }
-
-              {[
-                insightsRoute({ routeName: "supervisionStaffMetric" }),
-                insightsRoute({ routeName: "supervisionClientDetail" }),
-              ].map((path) => (
                 <Route
-                  key={path}
-                  path={path}
-                  element={<InsightsMetricPage />}
+                  path={insightsRoute({
+                    routeName: "supervisionSupervisorsList",
+                  })}
+                  element={<InsightsSupervisorsListPage />}
                 />
-              ))}
+
+                <Route
+                  path={insightsRoute({ routeName: "supervisionSupervisor" })}
+                  element={<InsightsSupervisorPageV2 />}
+                />
+
+                {
+                  <Route
+                    path={insightsRoute({ routeName: "supervisionStaff" })}
+                    element={<InsightsStaffPageV2 />}
+                  />
+                }
+
+                {[
+                  insightsRoute({ routeName: "supervisionStaffMetric" }),
+                  insightsRoute({ routeName: "supervisionClientDetail" }),
+                ].map((path) => (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={<InsightsMetricPage />}
+                  />
+                ))}
+                <Route
+                  path={insightsRoute({ routeName: "supervisionOpportunity" })}
+                  element={<InsightsOpportunityPage />}
+                />
+                <Route
+                  path={insightsRoute({
+                    routeName: "supervisionOpportunityForm",
+                  })}
+                  element={<InsightsOpportunityFormPage />}
+                />
+              </Route>
               <Route
-                path={insightsRoute({ routeName: "supervisionOpportunity" })}
-                element={<InsightsOpportunityPage />}
+                path={insightsRoute({ routeName: "supervisionOnboarding" })}
+                element={<InsightsOnboardingPage />}
               />
-              <Route
-                path={insightsRoute({
-                  routeName: "supervisionOpportunityForm",
-                })}
-                element={<InsightsOpportunityFormPage />}
-              />
-            </Route>
-            <Route
-              path={insightsRoute({ routeName: "supervisionOnboarding" })}
-              element={<InsightsOnboardingPage />}
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </ModelHydrator>
-      </InsightsNavLayout>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ModelHydrator>
+        </InsightsNavLayout>
+      </OpportunitySidePanelProvider>
     </InsightsActionStrategyModalProvider>
   );
 });

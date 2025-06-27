@@ -16,10 +16,8 @@
 // =============================================================================
 
 import { spacing, typography } from "@recidiviz/design-system";
-import assertNever from "assert-never";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 
@@ -33,7 +31,7 @@ import { usePersonTracking } from "../hooks/usePersonTracking";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
-import { OpportunityDenialView } from "../OpportunityDenial";
+import { OpportunityPreviewPanel } from "../OpportunityCaseloadView/OpportunityPreviewPanel";
 import { OpportunityFormProvider } from "../Paperwork/OpportunityFormContext";
 import { FormUsIaEarlyDischargeParole } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeParole";
 import { FormUsIaEarlyDischargeProbation } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeProbation";
@@ -49,8 +47,7 @@ import { WorkflowsFormUsTnSuspensionOfDirectSupervision } from "../Paperwork/US_
 import WorkflowsCompliantReportingForm from "../WorkflowsCompliantReportingForm/WorkflowsCompliantReportingForm";
 import WorkflowsEarlyTerminationDeferredForm from "../WorkflowsEarlyTerminationDeferredForm/WorkflowsEarlyTerminationDeferredForm";
 import WorkflowsEarlyTerminationForm from "../WorkflowsEarlyTerminationForm/WorkflowsEarlyTerminationForm";
-import { OpportunityProfile } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
-import { OpportunitySidePanelProvider } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
+import { useOpportunitySidePanel } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import WorkflowsLSUForm from "../WorkflowsLSUForm";
 import WorkflowsUsAzReleaseToTransitionProgramForm from "../WorkflowsUsAzReleaseToTransitionProgramForm";
 import WorkflowsUsCaSupervisionLevelDowngradeForm from "../WorkflowsUsCaSupervisionLevelDowngradeForm";
@@ -126,8 +123,6 @@ const FormComponents = {
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;
 
-type FormSidebarView = "OPPORTUNITY" | "DENIAL";
-
 /**
  * A wrapper for the FormLayout that's used from workflows views - access to
  * state fields in the store is consolidated here and passed into the layout component.
@@ -166,10 +161,9 @@ const HydratedWorkflowsFormLayout = observer(
   }: {
     opportunity: Opportunity;
   }) {
-    const selectedPerson = opportunity.person;
-    const [currentView, setCurrentView] =
-      useState<FormSidebarView>("OPPORTUNITY");
+    const { currentView, setCurrentView } = useOpportunitySidePanel();
     const navigate = useNavigate();
+    const selectedPerson = opportunity.person;
 
     usePersonTracking(selectedPerson, () => {
       opportunity.form?.trackViewed();
@@ -183,50 +177,34 @@ const HydratedWorkflowsFormLayout = observer(
 
     const FormComponent = formContents && FormComponents[formContents];
 
-    const sidebarContents =
-      currentView === "DENIAL" ? (
-        <OpportunityDenialView
-          opportunity={opportunity}
-          onSubmit={() => setCurrentView("OPPORTUNITY")}
-        />
-      ) : (
-        <OpportunityProfile
-          opportunity={opportunity}
-          formLinkButton={false}
-          onDenialButtonClick={() => setCurrentView("DENIAL")}
-          selectedPerson={selectedPerson}
-          formView
-        />
-      );
-
     const handleBack = () => {
-      if (currentView === "DENIAL") {
-        setCurrentView("OPPORTUNITY");
-      } else if (currentView === "OPPORTUNITY") {
+      if (currentView === "OPPORTUNITY_PREVIEW") {
         navigate(-1);
       } else {
-        assertNever(currentView);
+        setCurrentView("OPPORTUNITY_PREVIEW");
       }
     };
 
     return (
       <Wrapper>
-        <OpportunitySidePanelProvider>
-          <Sidebar>
-            <NavigationLayout
-              externalMethodologyUrl={workflowsMethodologyUrl}
-              isFixed={false}
+        <Sidebar>
+          <NavigationLayout
+            externalMethodologyUrl={workflowsMethodologyUrl}
+            isFixed={false}
+          />
+          <SidebarSection>
+            <BackButtonWrapper>
+              <NavigationBackButton action={{ onClick: handleBack }}>
+                Back
+              </NavigationBackButton>
+            </BackButtonWrapper>
+            <OpportunityPreviewPanel
+              opportunity={opportunity}
+              selectedPerson={selectedPerson}
+              isFormView
             />
-            <SidebarSection>
-              <BackButtonWrapper>
-                <NavigationBackButton action={{ onClick: handleBack }}>
-                  Back
-                </NavigationBackButton>
-              </BackButtonWrapper>
-              {sidebarContents}
-            </SidebarSection>
-          </Sidebar>
-        </OpportunitySidePanelProvider>
+          </SidebarSection>
+        </Sidebar>
 
         <FormWrapper>
           {FormComponent && (

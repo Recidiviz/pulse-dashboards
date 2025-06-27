@@ -29,6 +29,7 @@ import { OpportunityCaseloadView } from "../OpportunityCaseloadView";
 import { workflowsRoute } from "../views";
 import WorkflowsHomepage from "../WorkflowsHomepage";
 import { FullProfile } from "../WorkflowsJusticeInvolvedPersonProfile";
+import { OpportunitySidePanelProvider } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import { WorkflowsFormLayoutWrapper } from "../WorkflowsLayouts";
 import WorkflowsMilestones from "../WorkflowsMilestones/WorkflowsMilestones";
 import WorkflowsRoute from "../WorkflowsRoute/WorkflowsRoute";
@@ -79,55 +80,59 @@ const PageWorkflows: React.FC = () => {
 
   return (
     <ModelHydrator hydratable={workflowsStore}>
-      <Routes>
-        <Route element={<WorkflowsRoute />}>
-          <Route
-            path={workflowsRoute({ routeName: "home" })}
-            element={<WorkflowsHomepage />}
-          />
+      <OpportunitySidePanelProvider>
+        <Routes>
+          <Route element={<WorkflowsRoute />}>
+            <Route
+              path={workflowsRoute({ routeName: "home" })}
+              element={<WorkflowsHomepage />}
+            />
 
-          <Route
-            path={workflowsRoute({ routeName: "milestones" })}
-            element={<WorkflowsMilestones />}
-          />
-          {[
-            workflowsRoute({
-              routeName: "clientProfile",
-            }),
-            workflowsRoute({ routeName: "residentProfile" }),
-          ].map((path) => {
-            return <Route key={path} path={path} element={<FullProfile />} />;
-          })}
-          {[
-            workflowsRoute({
-              routeName: "clients",
-            }),
-            workflowsRoute({ routeName: "residents" }),
-          ].map((path) => {
-            return <Route key={path} path={path} element={<CaseloadView />} />;
-          })}
+            <Route
+              path={workflowsRoute({ routeName: "milestones" })}
+              element={<WorkflowsMilestones />}
+            />
+            {[
+              workflowsRoute({
+                routeName: "clientProfile",
+              }),
+              workflowsRoute({ routeName: "residentProfile" }),
+            ].map((path) => {
+              return <Route key={path} path={path} element={<FullProfile />} />;
+            })}
+            {[
+              workflowsRoute({
+                routeName: "clients",
+              }),
+              workflowsRoute({ routeName: "residents" }),
+            ].map((path) => {
+              return (
+                <Route key={path} path={path} element={<CaseloadView />} />
+              );
+            })}
 
-          <Route
-            path={workflowsRoute({
-              routeName: "tasks",
-            })}
-            element={<WorkflowsTasks />}
-          />
-          <Route
-            path={workflowsRoute({
-              routeName: "opportunityClients",
-            })}
-            element={<OpportunityCaseloadView />}
-          />
-          <Route
-            path={workflowsRoute({
-              routeName: "opportunityAction",
-            })}
-            element={<WorkflowsFormLayoutWrapper />}
-          />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
+            <Route
+              path={workflowsRoute({
+                routeName: "tasks",
+              })}
+              element={<WorkflowsTasks />}
+            />
+            <Route
+              path={workflowsRoute({
+                routeName: "opportunityClients",
+              })}
+              element={<OpportunityCaseloadView />}
+            />
+            <Route
+              path={workflowsRoute({
+                routeName: "opportunityAction",
+              })}
+              element={<WorkflowsFormLayoutWrapper />}
+            />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </OpportunitySidePanelProvider>
     </ModelHydrator>
   );
 };

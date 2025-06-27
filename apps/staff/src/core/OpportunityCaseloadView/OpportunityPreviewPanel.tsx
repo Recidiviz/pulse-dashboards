@@ -38,9 +38,10 @@ type OpportunityCaseloadProps = {
   onSubmit?: () => void;
   clearSelectedPersonOnClose?: boolean;
   shouldTrackOpportunityPreviewed?: boolean;
+  isFormView?: boolean;
 };
 
-export function OpportunityPreviewModal({
+export function OpportunityPreviewPanel({
   opportunity,
   navigableOpportunities,
   selectedPerson,
@@ -48,6 +49,7 @@ export function OpportunityPreviewModal({
   onSubmit,
   clearSelectedPersonOnClose,
   shouldTrackOpportunityPreviewed = true,
+  isFormView,
 }: OpportunityCaseloadProps): JSX.Element | null {
   const { currentView, setCurrentView } = useOpportunitySidePanel();
 
@@ -95,7 +97,7 @@ export function OpportunityPreviewModal({
       pageContent: (
         <OpportunityProfile
           opportunity={opportunity}
-          formLinkButton={!!opportunity.form}
+          formLinkButton={!isFormView && !!opportunity.form}
           onDenialButtonClick={() => setCurrentView("MARK_INELIGIBLE")}
           selectedPerson={selectedPerson}
           shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
@@ -127,7 +129,9 @@ export function OpportunityPreviewModal({
   const { onAfterOpen, onBackClick, pageContent, footerContent } =
     sidePanelViewConfigs[currentView];
 
-  return (
+  return isFormView ? (
+    sidePanelViewConfigs[currentView].pageContent
+  ) : (
     <WorkflowsPreviewModal
       {...defaultProps}
       onAfterOpen={onAfterOpen}

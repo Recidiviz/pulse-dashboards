@@ -87,13 +87,12 @@ import PersonId from "../PersonId";
 import { Heading, MaxWidth } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
 import { EligibilityStatusPill } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityModuleHeader";
-import { OpportunitySidePanelProvider } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import CaseloadOpportunityGrid from "./CaseloadOpportunityGrid";
 import { CaseloadTable, CaseloadTableManualSorting } from "./CaseloadTable";
 import { LinkedOpportunityCallout } from "./LinkedOpportunityCallout";
 import OpportunityNotifications from "./OpportunityNotifications";
-import { OpportunityPreviewModal } from "./OpportunityPreviewModal";
+import { OpportunityPreviewPanel } from "./OpportunityPreviewPanel";
 import OpportunitySubheading from "./OpportunitySubheading";
 import { OpportunityTypeSelect } from "./OpportunityTypeSelect";
 import { TableViewToggle } from "./TableViewToggle";
@@ -690,7 +689,7 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
   } = presenter;
 
   return (
-    <OpportunitySidePanelProvider>
+    <>
       <MaxWidthWrapper>
         <Heading isMobile={isMobile}>
           {presenter.label}{" "}
@@ -797,12 +796,12 @@ const ManagedComponent = observer(function HydratedOpportunityPersonList({
         /* List view with no subcategories */
         <CaseloadOpportunityGrid items={peopleInActiveTab} />
       )}
-      <OpportunityPreviewModal
+      <OpportunityPreviewPanel
         opportunity={presenter.selectedOpportunity}
         navigableOpportunities={presenter.navigablePeople}
         selectedPerson={presenter.selectedPerson}
       />
-    </OpportunitySidePanelProvider>
+    </>
   );
 });
 

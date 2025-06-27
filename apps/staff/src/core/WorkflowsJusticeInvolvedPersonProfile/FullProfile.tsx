@@ -52,7 +52,6 @@ import { UsUtDates } from "./ClientDetailSidebarComponents/UsUtDates";
 import ClientDetailsInput from "./ClientDetailsInput";
 import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
 import { UsIaActionPlansAndNotes } from "./OpportunityDetailSidebarComponents/US_IA";
-import { OpportunitySidePanelProvider } from "./OpportunitySidePanelContext";
 import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
 import { ResidentHousing } from "./ResidentDetailSidebarComponents/ResidentHousing";
@@ -424,9 +423,7 @@ export const FullProfile = observer(
             </ProfileDetailsWrapper>
             <div>
               <SectionHeading>Opportunities</SectionHeading>
-              <OpportunitySidePanelProvider>
-                <OpportunitiesAccordion person={person} formLinkButton />
-              </OpportunitySidePanelProvider>
+              <OpportunitiesAccordion person={person} formLinkButton />
             </div>
           </Content>
         </Wrapper>

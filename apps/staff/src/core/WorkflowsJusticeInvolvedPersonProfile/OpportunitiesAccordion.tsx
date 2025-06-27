@@ -34,7 +34,7 @@ import { palette } from "~design-system";
 import { useRootStore } from "../../components/StoreProvider";
 import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
 import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
-import { OpportunityPreviewModal } from "../OpportunityCaseloadView/OpportunityPreviewModal";
+import { OpportunityPreviewPanel } from "../OpportunityCaseloadView/OpportunityPreviewPanel";
 import { useStatusColors } from "../utils/workflowsUtils";
 import { OpportunityModule } from "./OpportunityModule";
 import { OpportunityModuleHeader } from "./OpportunityModuleHeader";
@@ -218,7 +218,7 @@ export const OpportunitiesAccordion = observer(function OpportunitiesAccordion({
           />
         );
       })}
-      <OpportunityPreviewModal
+      <OpportunityPreviewPanel
         opportunity={selectedOpportunityOnFullProfile}
         selectedPerson={person}
         onClose={() =>

@@ -34,7 +34,6 @@ import {
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
 import { PreviewModalFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
-import { OpportunitySidePanelProvider } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { PreviewTasks } from "./PreviewTasks";
 
@@ -101,41 +100,39 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
     presenter instanceof CaseloadTasksPresenterV2 && !presenter.showListView;
 
   return (
-    <OpportunitySidePanelProvider>
-      <WorkflowsPreviewModal
-        isOpen={!!selectedClient}
-        onAfterOpen={() =>
-          selectedClient.supervisionTasks?.trackPreviewed(
-            presenter.selectedTaskCategory,
-          )
-        }
-        pageContent={
-          <article>
-            <Heading person={selectedClient} />
-            <TaskItemHeader>Tasks</TaskItemHeader>
-            <PreviewTasks person={selectedClient} showSnoozeDropdown />
-            <TaskItemDivider />
-            {opportunitiesToDisplay && (
-              <>
-                <TaskItemHeader>Opportunities</TaskItemHeader>
-                <OpportunitiesAccordion hideEmpty person={selectedClient} />
-              </>
-            )}
-            <TaskItemHeader>Client Details</TaskItemHeader>
-            <Supervision client={selectedClient} />
-            <Milestones client={selectedClient} />
-            <Contact client={selectedClient} />
-          </article>
-        }
-        footerContent={
-          showFooter ? (
-            <TaskPreviewFooter
-              currentClient={selectedClient}
-              navigableClients={presenter.navigablePeople}
-            />
-          ) : undefined
-        }
-      />
-    </OpportunitySidePanelProvider>
+    <WorkflowsPreviewModal
+      isOpen={!!selectedClient}
+      onAfterOpen={() =>
+        selectedClient.supervisionTasks?.trackPreviewed(
+          presenter.selectedTaskCategory,
+        )
+      }
+      pageContent={
+        <article>
+          <Heading person={selectedClient} />
+          <TaskItemHeader>Tasks</TaskItemHeader>
+          <PreviewTasks person={selectedClient} showSnoozeDropdown />
+          <TaskItemDivider />
+          {opportunitiesToDisplay && (
+            <>
+              <TaskItemHeader>Opportunities</TaskItemHeader>
+              <OpportunitiesAccordion hideEmpty person={selectedClient} />
+            </>
+          )}
+          <TaskItemHeader>Client Details</TaskItemHeader>
+          <Supervision client={selectedClient} />
+          <Milestones client={selectedClient} />
+          <Contact client={selectedClient} />
+        </article>
+      }
+      footerContent={
+        showFooter ? (
+          <TaskPreviewFooter
+            currentClient={selectedClient}
+            navigableClients={presenter.navigablePeople}
+          />
+        ) : undefined
+      }
+    />
   );
 });
