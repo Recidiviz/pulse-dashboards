@@ -298,7 +298,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     }
     if (!violationsPast6MonthsFlag) {
       customReqs.push({
-        text: "Has no violation incidents in the past 6 months",
+        text: "Has no violation incidents dated within the past 6 months",
       });
     }
     if (dnaRequirementStatus === "Not Required") {
@@ -325,12 +325,12 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
 
     if (victimFlag) {
       customReqs.push({
-        text: "There are one or more registered victims for this case",
+        text: "There are one or more registered victims in this case. Please complete victim notification.",
       });
     }
     if (violationsPast6MonthsFlag) {
       customReqs.push({
-        text: "Has violation incidents filed in the past 6 months. Please review incident history...",
+        text: "Has violation incidents dated within the past 6 months. Please review incident history.",
       });
     }
     if (!dnaSubmittedFlag) {
@@ -340,7 +340,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
         });
       } else if (dnaRequirementStatus === "Maybe Required") {
         customReqs.push({
-          text: "DNA might be required to be collected and uploaded to CODIS. Please review DNA requirements based on charges.",
+          text: "DNA might be required to be collected but has not yet been successfully uploaded to CODIS. Please review DNA requirements based on charges.",
         });
       }
     }
