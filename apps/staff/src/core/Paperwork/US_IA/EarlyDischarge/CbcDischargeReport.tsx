@@ -16,9 +16,11 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 import { FormPage } from "./constants";
@@ -52,13 +54,19 @@ function FormHeader() {
 }
 
 const ClientDetailsTable = styled.table`
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
   margin-top: ${rem(14)};
-  width: fit-content;
+  width: 100%;
 `;
 
 function ClientDetails() {
   return (
     <ClientDetailsTable>
+      <colgroup>
+        <col style={{ width: "22%" }} />
+        <col style={{ width: "78%" }} />
+      </colgroup>
       <tbody>
         <tr>
           <td>Date:</td>
@@ -84,15 +92,23 @@ function ClientDetails() {
             <FormUsIaEarlyDischargeInput name="usCitizenshipStatus" />
           </td>
         </tr>
+        <tr>
+          <td />
+          <td />
+        </tr>
       </tbody>
     </ClientDetailsTable>
   );
 }
 
 const ChargeDetailsTable = styled.table`
-  margin-top: ${rem(12)};
-  width: 92%;
+  margin-top: 0.5rem;
+  width: 100%;
   table-layout: fixed;
+
+  &:last-child {
+    border-bottom: 1px solid black;
+  }
 
   & thead {
     line-height: 112%;
@@ -108,53 +124,162 @@ const ChargeDetailsTable = styled.table`
   }
 `;
 
-function ChargeTable() {
-  const form = useOpportunityFormContext();
+const CHARGE_DETAILS_TABLE_COL_WIDTHS = [21, 23, 15, 27, 14];
+
+function ChargeTableCol({ colNumbers }: { colNumbers: number[] }) {
+  let width = 0;
+  colNumbers.forEach((colNumber) => {
+    width += CHARGE_DETAILS_TABLE_COL_WIDTHS[colNumber];
+  });
+  return <col style={{ width: `${width}%` }} />;
+}
+
+function ChargeTable({
+  form,
+  chargeNumber,
+}: {
+  form: UsIaEarlyDischargeForm;
+  chargeNumber: number;
+}) {
+  const { formData } = form;
+
+  const chargeExternalId = formData[`chargeExternalId${chargeNumber}`];
+  const penaltyIds = [];
+
+  for (let i = 0; i < (formData.numberOfPenalties ?? 0); i++) {
+    if (formData[`penaltyChargeExternalId${i}`] === chargeExternalId) {
+      penaltyIds.push(i);
+    }
+  }
+
   return (
-    <ChargeDetailsTable>
-      <thead>
-        <tr>
-          <th>Jurisdiction Cause Number Offense Description </th>
-          <th>Charge Count Class TDD</th>
-          <th>Supervision Status Start Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <FormUsIaEarlyDischargeInput name="jurisdiction0" />
-            <FormUsIaEarlyDischargeInput name="causeNumber0" />
-            <FormUsIaEarlyDischargeTextArea name="description0" />
-          </td>
-          <td>
-            <FormUsIaEarlyDischargeInput name="counts0" />
-            <FormUsIaEarlyDischargeInput name="statute0" />
-          </td>
-          <td>
-            <FormUsIaEarlyDischargeInput name="supervisionType" />
-            <FormUsIaEarlyDischargeInput name="supervisionStartDate" />
-          </td>
-        </tr>
-        {[...Array(form.formData.numberOfCharges - 1).keys()].map((i) => (
-          <tr key={i}>
-            <td>
-              <FormUsIaEarlyDischargeInput name={`jurisdiction${i + i}`} />
-              <FormUsIaEarlyDischargeInput name={`causeNumber${i + 1}`} />
-              <FormUsIaEarlyDischargeTextArea name={`description${i + 1}`} />
-            </td>
-            <td>
-              <FormUsIaEarlyDischargeInput name={`counts${i + 1}`} />
-              <FormUsIaEarlyDischargeInput name={`statute${i + 1}`} />
-            </td>
-            <td />
+    <div>
+      <ChargeDetailsTable>
+        <colgroup>
+          <ChargeTableCol colNumbers={[0]} />
+          <ChargeTableCol colNumbers={[1]} />
+          <ChargeTableCol colNumbers={[2]} />
+          <ChargeTableCol colNumbers={[3]} />
+          <ChargeTableCol colNumbers={[4]} />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Jurisdiction</th>
+            <th>Cause Number</th>
+            <th>Charge Count</th>
+            <th>Class</th>
+            <th>TDD</th>
           </tr>
-        ))}
-      </tbody>
-    </ChargeDetailsTable>
+          <tr>
+            <th>Offense Description</th>
+            <th />
+            <th />
+            <th />
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <FormUsIaEarlyDischargeInput
+                name={`jurisdiction${chargeNumber}`}
+              />
+            </td>
+            <td>
+              <FormUsIaEarlyDischargeInput
+                name={`causeNumber${chargeNumber}`}
+              />
+            </td>
+            <td>
+              <FormUsIaEarlyDischargeInput name={`counts${chargeNumber}`} />
+            </td>
+            <td>
+              <FormUsIaEarlyDischargeInput
+                name={`classificationTypeRawText${chargeNumber}`}
+              />
+            </td>
+            <td>
+              <FormUsIaEarlyDischargeTextArea name={`tdd${chargeNumber}`} />
+            </td>
+          </tr>
+          <tr>
+            <td colSpan={5}>
+              <FormUsIaEarlyDischargeTextArea
+                name={`description${chargeNumber}`}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </ChargeDetailsTable>
+      <ChargeDetailsTable>
+        <colgroup>
+          <ChargeTableCol colNumbers={[0, 1]} />
+          <ChargeTableCol colNumbers={[2, 3, 4]} />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Supervision Status</th>
+            <th>Start Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <FormUsIaEarlyDischargeInput name="supervisionType" />
+            </td>
+            <td>
+              <FormUsIaEarlyDischargeInput name="supervisionStartDate" />
+            </td>
+          </tr>
+        </tbody>
+      </ChargeDetailsTable>
+      <ChargeDetailsTable>
+        <colgroup>
+          <col style={{ width: "17%" }} />
+          <col style={{ width: "27%" }} />
+          <ChargeTableCol colNumbers={[2]} />
+          <ChargeTableCol colNumbers={[3, 4]} />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Sentence Date</th>
+            <th>Penalty Type</th>
+            <th>Penalty Value</th>
+            <th>Penalty Modifier</th>
+          </tr>
+        </thead>
+        <tbody>
+          {penaltyIds.map((penaltyId) => (
+            <tr key={penaltyId}>
+              <td>
+                <FormUsIaEarlyDischargeInput
+                  name={`sentenceDate${penaltyId}`}
+                />
+              </td>
+              <td>
+                <FormUsIaEarlyDischargeInput
+                  name={`sentencePenaltyType${penaltyId}`}
+                />
+              </td>
+              <td>
+                <FormUsIaEarlyDischargeInput
+                  name={`penaltyValue${penaltyId}`}
+                />
+              </td>
+              <td>
+                <FormUsIaEarlyDischargeTextArea
+                  name={`sentencePenaltyModifier${penaltyId}`}
+                />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </ChargeDetailsTable>
+    </div>
   );
 }
 
-const SentenceInformationContainer = styled.div`
+const ProgressAndRecommendationsContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: ${rem(30)};
@@ -165,30 +290,14 @@ const SectionHeader = styled.div`
   font-weight: 600;
 `;
 
-function SentenceAndProgressInformation() {
-  const form = useOpportunityFormContext();
+function ProgressAndRecommendations() {
   return (
-    <SentenceInformationContainer>
+    <ProgressAndRecommendationsContainer>
       <SectionHeader>
-        Sentence Date Penalty Type Penalty Value Penalty Modifier
+        Progress of Supervision/Restitution Status/Recommendations:
       </SectionHeader>
-      {[...Array(form.formData.numberOfPenalties).keys()].map((i) => (
-        <div key={i}>
-          SENTENCE_DATE{" "}
-          <FormUsIaEarlyDischargeInput name={`sentencePenaltyType${i}`} />{" "}
-          <FormUsIaEarlyDischargeInput name={`penaltyDays${i}`} />,
-          <FormUsIaEarlyDischargeInput name={`penaltyMonths${i}`} />,
-          <FormUsIaEarlyDischargeInput name={`penaltyYears${i}`} />{" "}
-          <FormUsIaEarlyDischargeInput name={`sentencePenaltyModifier${i}`} />
-        </div>
-      ))}
-      <div>
-        <SectionHeader>
-          Progress of Supervision/Restitution Status/Recommendations:
-        </SectionHeader>
-        <div>TODO: Add statuses</div>
-      </div>
-    </SentenceInformationContainer>
+      <div>TODO: Add statuses</div>
+    </ProgressAndRecommendationsContainer>
   );
 }
 
@@ -256,19 +365,27 @@ function Footer() {
   );
 }
 
-export const CbcDischargeReport = () => {
+export const CbcDischargeReport = observer(function CbcDischargeReport() {
+  const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
+
+  const {
+    formData: { numberOfCharges },
+  } = form;
+
   return (
-    <PrintablePageMargin>
-      <PrintablePage>
+    <PrintablePageMargin stretchable>
+      <PrintablePage stretchable>
         <FormPage>
           <FormHeader />
           <ClientDetails />
-          <ChargeTable />
-          <SentenceAndProgressInformation />
+          {[...Array(numberOfCharges).keys()].map((i) => (
+            <ChargeTable form={form} chargeNumber={i} key={i} />
+          ))}
+          <ProgressAndRecommendations />
           <SubmissionAndSignature />
           <Footer />
         </FormPage>
       </PrintablePage>
     </PrintablePageMargin>
   );
-};
+});

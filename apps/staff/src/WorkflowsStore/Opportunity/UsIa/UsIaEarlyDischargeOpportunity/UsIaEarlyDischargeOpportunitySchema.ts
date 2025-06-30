@@ -108,18 +108,20 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
               counts: z.number(),
               description: z.string(),
               statute: z.string(),
+              tdd: z.string(),
+              sdd: z.string(),
+              chargeExternalId: z.string(),
             }),
           )
           .default([]),
         penalties: z
           .array(
             z.object({
-              penaltyDays: z.string(),
-              penaltyMonths: z.string(),
-              penaltyYears: z.string(),
+              penaltyValue: z.string(),
               sentencePenaltyModifier: z.string(),
               sentencePenaltyType: z.string(),
-              tdd: z.string(),
+              sentenceDate: z.string(),
+              chargeExternalId: z.string(),
             }),
           )
           .default([]),
@@ -169,22 +171,21 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
   })
   .passthrough();
 
+type PenaltyChargeExternalIdKey = `penaltyChargeExternalId${number}`;
 type SentencePenaltyTypeKey = `sentencePenaltyType${number}`;
-type PenaltyDaysKey = `penaltyDays${number}`;
-type PenaltyMonthsKey = `penaltyMonths${number}`;
-type PenaltyYearsKey = `penaltyYears${number}`;
+type PenaltyValueKey = `penaltyValue${number}`;
 type SentencePenaltyModifierKey = `sentencePenaltyModifier${number}`;
-type TddKey = `tdd${number}`;
+type SentenceDateKey = `sentenceDate${number}`;
 export type PenaltyRecords = Record<
+  | PenaltyChargeExternalIdKey
   | SentencePenaltyTypeKey
-  | PenaltyDaysKey
-  | PenaltyMonthsKey
-  | PenaltyYearsKey
+  | PenaltyValueKey
   | SentencePenaltyModifierKey
-  | TddKey,
+  | SentenceDateKey,
   string
 >;
 
+type ChargeExternalIdKey = `chargeExternalId${number}`;
 type CauseNumberKey = `causeNumber${number}`;
 type JurisdictionKey = `jurisdiction${number}`;
 type CountsKey = `counts${number}`;
@@ -192,14 +193,19 @@ type DescriptionKey = `description${number}`;
 type StatuteKey = `statute${number}`;
 type ClassificationTypeRawTextKey = `classificationTypeRawText${number}`;
 type CrimeCdOffenseTypeKey = `crimeCdOffenseType${number}`;
+type TddKey = `tdd${number}`;
+type SddKey = `sdd${number}`;
 export type ChargeRecords = Record<
+  | ChargeExternalIdKey
   | CauseNumberKey
   | JurisdictionKey
   | CountsKey
   | DescriptionKey
   | StatuteKey
   | ClassificationTypeRawTextKey
-  | CrimeCdOffenseTypeKey,
+  | CrimeCdOffenseTypeKey
+  | TddKey
+  | SddKey,
   string
 >;
 
@@ -264,24 +270,30 @@ export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
   const penalties = [];
   for (let i = 0; i < draftData.numberOfPenalties; i++) {
     penalties.push({
-      penaltyDays: draftData[`penaltyDays${i}`],
-      penaltyMonths: draftData[`penaltyMonths${i}`],
-      penaltyYears: draftData[`penaltyYears${i}`],
-      sentencePenaltyType: draftData[`sentencePenaltyType${i}`],
-      sentencePenaltyModifier: draftData[`sentencePenaltyModifier${i}`],
-      tdd: draftData[`tdd${i}`],
+      penaltyValue: draftData[`penaltyValue${i}`],
+      penaltyType: draftData[`sentencePenaltyType${i}`],
+      penaltyModifier: draftData[`sentencePenaltyModifier${i}`],
+      sentenceDate: draftData[`sentenceDate${i}`],
+      chargeExternalId: draftData[`penaltyChargeExternalId${i}`],
     });
   }
 
   const charges = [];
   for (let i = 0; i < draftData.numberOfCharges; i++) {
+    const chargePenalties = penalties.filter((p) => {
+      return p.chargeExternalId === draftData[`chargeExternalId${i}`];
+    });
+
     charges.push({
       causeNumber: draftData[`causeNumber${i}`],
       jurisdiction: draftData[`jurisdiction${i}`],
       counts: String(draftData[`counts${i}`]),
       description: draftData[`description${i}`],
       statute: draftData[`statute${i}`],
-      classificationTypeRawText: draftData[`classificationTypeRawText${i}`],
+      classification: draftData[`classificationTypeRawText${i}`],
+      tdd: draftData[`tdd${i}`],
+      sdd: draftData[`sdd${i}`],
+      chargePenalties,
     });
   }
 

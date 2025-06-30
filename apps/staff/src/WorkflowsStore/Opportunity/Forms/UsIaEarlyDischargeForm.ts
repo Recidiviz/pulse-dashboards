@@ -53,20 +53,26 @@ export class UsIaEarlyDischargeForm extends FormBase<
 
     for (let i = 0; i < numberOfCharges; i++) {
       const {
+        chargeExternalId,
         causeNumber,
         jurisdiction,
         counts,
         description,
         classificationTypeRawText,
         statute,
+        sdd,
+        tdd,
       } = charges[i];
 
+      chargeData[`chargeExternalId${i}`] = chargeExternalId;
       chargeData[`causeNumber${i}`] = causeNumber;
       chargeData[`jurisdiction${i}`] = jurisdiction;
       chargeData[`counts${i}`] = `${counts}`;
       chargeData[`description${i}`] = description;
       chargeData[`classificationTypeRawText${i}`] = classificationTypeRawText;
       chargeData[`statute${i}`] = statute;
+      chargeData[`tdd${i}`] = tdd ? formatWorkflowsDate(new Date(tdd)) : "";
+      chargeData[`sdd${i}`] = sdd ? formatWorkflowsDate(new Date(sdd)) : "";
     }
 
     const numberOfPenalties = penalties.length;
@@ -74,20 +80,18 @@ export class UsIaEarlyDischargeForm extends FormBase<
 
     for (let i = 0; i < numberOfPenalties; i++) {
       const {
-        penaltyDays,
-        penaltyMonths,
-        penaltyYears,
+        chargeExternalId,
         sentencePenaltyType,
         sentencePenaltyModifier,
-        tdd,
+        sentenceDate,
+        penaltyValue,
       } = penalties[i];
 
-      penaltyData[`penaltyDays${i}`] = penaltyDays;
-      penaltyData[`penaltyMonths${i}`] = penaltyMonths;
-      penaltyData[`penaltyYears${i}`] = penaltyYears;
+      penaltyData[`penaltyChargeExternalId${i}`] = chargeExternalId;
+      penaltyData[`penaltyValue${i}`] = penaltyValue;
       penaltyData[`sentencePenaltyType${i}`] = sentencePenaltyType;
       penaltyData[`sentencePenaltyModifier${i}`] = sentencePenaltyModifier;
-      penaltyData[`tdd${i}`] = tdd ? formatWorkflowsDate(new Date(tdd)) : "";
+      penaltyData[`sentenceDate${i}`] = sentenceDate;
     }
 
     const {

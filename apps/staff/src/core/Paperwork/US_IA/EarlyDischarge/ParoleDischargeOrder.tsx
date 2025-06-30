@@ -206,9 +206,7 @@ function SentenceInformation() {
               <FormUsIaEarlyDischargeInput name={`statute${i}`} />
             </td>
             <td>
-              <FormUsIaEarlyDischargeInput name={`penaltyDays${i}`} />,
-              <FormUsIaEarlyDischargeInput name={`penaltyMonths${i}`} />,
-              <FormUsIaEarlyDischargeInput name={`penaltyYears${i}`} />
+              <FormUsIaEarlyDischargeInput name={`penaltyValue${i}`} />
             </td>
             <td>
               <FormUsIaEarlyDischargeInput name={`tdd${i}`} />
