@@ -206,8 +206,6 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     setSnoozeForDays(value);
   };
 
-  const disableSlider = reasons.length === 0;
-
   const unsetSlider = maxManualSnoozeDays && !sliderDays;
   const otherReasonInvalid =
     reasonsIncludesOtherKey(reasons) &&
@@ -250,7 +248,6 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           <SliderLabel>Snooze for:</SliderLabel>
           <Slider
             data-testid="OpportunityDenialView__slider"
-            disabled={disableSlider}
             max={maxManualSnoozeDays}
             value={sliderDays}
             onChange={handleSliderChange}

@@ -25,7 +25,7 @@ interface SliderProps {
   max: number;
   onChange: (value: number) => void;
   tooltipLabelFormatter?: (value: number) => string;
-  disabled: boolean;
+  disabled?: boolean;
   step?: number;
   value?: number;
 }
