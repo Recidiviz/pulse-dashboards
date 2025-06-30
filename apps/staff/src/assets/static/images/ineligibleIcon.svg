@@ -25,5 +25,5 @@
       <rect width="16" height="16" fill="white" />
     </clipPath>
   </defs>
+<!-- TODO (#8283): Backport once asset flow is updated -->
 </svg>
-<!-- TODO (#8283): Backport once asset flow is updated --->
