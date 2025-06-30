@@ -100,7 +100,7 @@ const createDocstarsRequestBody = (
     opportunity,
     reasons,
     otherReason,
-  ),
+  ).map(({ code, ...rest }) => ({ code: code.slice(0, 10), ...rest })), // DOCSTARS has a 10-character limit
 });
 
 export const DocstarsDenialModal = observer(function DocstarsDenialModal({
