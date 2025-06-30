@@ -35,7 +35,7 @@ export const PageState: FC = () => {
         if (userStore.pseudonymizedId) {
           return (
             <Redirect
-              to={State.Resident.Eligibility.buildPath({
+              to={State.Resident.buildPath({
                 stateSlug,
                 personPseudoId: userStore.pseudonymizedId,
               })}
