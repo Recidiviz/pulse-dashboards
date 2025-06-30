@@ -27,12 +27,20 @@ import { supervisionOfficerSupervisorSchema } from "../../SupervisionOfficerSupe
 import { supervisionOfficerSchema } from "../schema";
 import { rawSupervisionOfficerFactory } from "./factory";
 
-faker.seed(FIXTURE_SEED_DEFAULT);
-
 const getTestSupervisors = (count = 5) =>
   rawSupervisionOfficerSupervisorFactory()
     .buildList(count)
     .map((s) => supervisionOfficerSupervisorSchema.parse(s));
+
+const TEST_DATE = new Date("2023-01-01T00:00:00Z");
+beforeAll(() => {
+  faker.seed(FIXTURE_SEED_DEFAULT);
+  vi.useFakeTimers({ now: TEST_DATE });
+});
+
+afterAll(() => {
+  vi.useRealTimers();
+});
 
 describe("function: SupervisionOfficerRawFactory", () => {
   it("should generate a valid supervision officer", () => {

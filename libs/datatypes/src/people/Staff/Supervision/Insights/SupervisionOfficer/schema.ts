@@ -20,6 +20,7 @@ import { z } from "zod";
 import { addDisplayName } from "../../../../../people/utils/addDisplayName";
 import { fullNameSchema } from "../../../../../people/utils/fullNameSchema";
 import {
+  dateStringSchema,
   getReadableSupervisionLocation as handleUnknownSupervisonLocation,
   nullishAsUndefined,
 } from "../../../../../utils/zod";
@@ -39,6 +40,7 @@ export const supervisionOfficerSchema = z
       .number()
       .transform((avgDailyPopulation) => Math.round(avgDailyPopulation))
       .nullable(),
+    latestLoginDate: dateStringSchema.nullable().default(null),
   })
   .transform(addDisplayName);
 

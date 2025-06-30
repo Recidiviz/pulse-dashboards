@@ -31,6 +31,7 @@ import { SupervisionSupervisorPagePresenter } from "../../InsightsStore/presente
 import { pluralize, toTitleCase } from "../../utils";
 import InsightsHighlightedOfficersBanner from "../InsightsHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
+import { InsightsManagedUsageCard } from "../InsightsStaffUsage/InsightsStaffUsageCard";
 import { InsightsManagedSupervisorRosterModal } from "../InsightsSupervisorRosterModal/InsightsManagedSupervisorRosterModal";
 import ModelHydrator from "../ModelHydrator";
 import { Spacer } from "../Paperwork/US_ND/EarlyTermination/FormEarlyTermination";
@@ -87,6 +88,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     pageTitle,
     highlightedOfficersByMetric,
     userCanSubmitRosterChangeRequest,
+    userCanViewUsageActivity,
   } = presenter;
 
   let teamTooltip;
@@ -179,6 +181,7 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         />
       }
     >
+      {userCanViewUsageActivity && <InsightsManagedUsageCard />}
       <InsightsOutcomesModule labels={labels} timePeriod={timePeriod} />
       <InsightsSupervisorOpportunityDetailSection />
       <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />

@@ -180,6 +180,10 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     );
   }
 
+  get userCanViewUsageActivity(): boolean {
+    return this.supervisionStore.userCanViewUsageActivity;
+  }
+
   /**
    * Tracks the event when a supervisor's page is viewed by the user.
    */

@@ -15,6 +15,7 @@ exports[`outlierOfficersData 1`] = `
       "surname": "Harris",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-12-16T00:00:00.000Z,
     "outlierMetrics": [
       {
         "benchmark": {
@@ -1345,6 +1346,7 @@ exports[`outlierOfficersData 1`] = `
       "surname": "Nelson",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": null,
     "outlierMetrics": [
       {
         "benchmark": {
@@ -3670,6 +3672,7 @@ exports[`outlierOfficersData 1`] = `
       "surname": "Boyd",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-11-16T00:00:00.000Z,
     "outlierMetrics": [
       {
         "benchmark": {
@@ -6579,6 +6582,7 @@ exports[`outlierOfficersData 1`] = `
       "surname": "Mann",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-11-15T00:00:00.000Z,
     "outlierMetrics": [
       {
         "benchmark": {

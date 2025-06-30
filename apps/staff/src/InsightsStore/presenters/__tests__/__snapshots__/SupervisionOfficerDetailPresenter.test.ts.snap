@@ -14,6 +14,7 @@ exports[`has officerOutcomesData 1`] = `
     "surname": "Harris",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": 2021-12-16T00:00:00.000Z,
   "outlierMetrics": [
     {
       "benchmark": {
@@ -1347,6 +1348,7 @@ exports[`with unit data already hydrated > has officerOutcomesData 1`] = `
     "surname": "Harris",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": 2021-12-16T00:00:00.000Z,
   "outlierMetrics": [
     {
       "benchmark": {

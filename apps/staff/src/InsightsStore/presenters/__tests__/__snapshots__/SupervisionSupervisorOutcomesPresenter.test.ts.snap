@@ -15,6 +15,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
       "surname": "Harris",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-12-16T00:00:00.000Z,
     "outlierMetrics": [
       {
         "benchmark": {
@@ -1345,6 +1346,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
       "surname": "Nelson",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": null,
     "outlierMetrics": [
       {
         "benchmark": {
@@ -3670,6 +3672,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
       "surname": "Boyd",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-11-16T00:00:00.000Z,
     "outlierMetrics": [
       {
         "benchmark": {
@@ -6579,6 +6582,7 @@ exports[`outcomesDataForOutlierOfficers 1`] = `
       "surname": "Mann",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-11-15T00:00:00.000Z,
     "outlierMetrics": [
       {
         "benchmark": {
@@ -9115,6 +9119,7 @@ Map {
             "surname": "Harris",
           },
           "includeInOutcomes": true,
+          "latestLoginDate": 2021-12-16T00:00:00.000Z,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -11864,6 +11869,7 @@ Map {
             "surname": "Nelson",
           },
           "includeInOutcomes": true,
+          "latestLoginDate": null,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -14189,6 +14195,7 @@ Map {
             "surname": "Boyd",
           },
           "includeInOutcomes": true,
+          "latestLoginDate": 2021-11-16T00:00:00.000Z,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -18261,6 +18268,7 @@ Map {
             "surname": "Mann",
           },
           "includeInOutcomes": true,
+          "latestLoginDate": 2021-11-15T00:00:00.000Z,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -20803,6 +20811,7 @@ Map {
             "surname": "Harris",
           },
           "includeInOutcomes": true,
+          "latestLoginDate": 2021-12-16T00:00:00.000Z,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -23556,6 +23565,7 @@ Map {
             "surname": "Boyd",
           },
           "includeInOutcomes": true,
+          "latestLoginDate": 2021-11-16T00:00:00.000Z,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -27568,6 +27578,7 @@ Map {
             "surname": "Mann",
           },
           "includeInOutcomes": true,
+          "latestLoginDate": 2021-11-15T00:00:00.000Z,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -30722,6 +30733,7 @@ Map {
             "surname": "Harris",
           },
           "includeInOutcomes": true,
+          "latestLoginDate": 2021-12-16T00:00:00.000Z,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -32871,6 +32883,7 @@ Map {
             "surname": "Nelson",
           },
           "includeInOutcomes": true,
+          "latestLoginDate": null,
           "outlierMetrics": [
             {
               "benchmark": {
@@ -35202,6 +35215,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "surname": "Harris",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-12-16T00:00:00.000Z,
     "pseudonymizedId": "hashed-so1",
     "supervisorExternalIds": [
       "agonzalez123",
@@ -35223,6 +35237,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "surname": "Hernandez",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-12-15T00:00:00.000Z,
     "pseudonymizedId": "hashed-so2",
     "supervisorExternalIds": [
       "agonzalez123",
@@ -35239,6 +35254,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "surname": "Nelson",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": null,
     "pseudonymizedId": "hashed-so3",
     "supervisorExternalIds": [
       "agonzalez123",
@@ -35255,6 +35271,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "surname": "Boyd",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-11-16T00:00:00.000Z,
     "pseudonymizedId": "hashed-so9",
     "supervisorExternalIds": [
       "agonzalez123",
@@ -35271,6 +35288,7 @@ exports[`returns the officers with outcomes data 1`] = `
       "surname": "Mann",
     },
     "includeInOutcomes": true,
+    "latestLoginDate": 2021-11-15T00:00:00.000Z,
     "pseudonymizedId": "hashed-so10",
     "supervisorExternalIds": [
       "agonzalez123",

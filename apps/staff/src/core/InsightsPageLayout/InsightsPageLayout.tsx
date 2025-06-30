@@ -60,7 +60,7 @@ export const Header = styled.div`
   flex-basis: 66%;
 `;
 
-const Title = styled.div<{
+export const Title = styled.div<{
   isMobile: boolean;
 }>`
   ${typography.Sans24}
@@ -69,6 +69,9 @@ const Title = styled.div<{
   color: ${palette.pine2};
   margin-top: ${rem(spacing.lg)};
   margin-bottom: ${rem(spacing.md)};
+  display: flex;
+  gap: ${rem(spacing.sm)};
+  flex-direction: row;
 `;
 
 export const InfoSection = styled.div<{
@@ -153,7 +156,7 @@ export const Grid = styled.div`
 `;
 
 type InsightsPageLayoutProps = {
-  pageTitle?: string;
+  pageTitle?: string | ReactNode;
   infoItems?: {
     title: string;
     info: string | number | undefined | null | ReactNode;

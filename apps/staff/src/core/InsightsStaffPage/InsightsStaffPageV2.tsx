@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
+import { rem } from "polished";
 import { useState } from "react";
 
 import { withPresenterManager } from "~hydration-utils";
@@ -24,6 +26,12 @@ import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionOfficerPagePresenter } from "../../InsightsStore/presenters/SupervisionOfficerPagePresenter";
 import { ManagedStaffHighlightedOfficersBanner } from "../InsightsHighlightedOfficersBanner/InsightsManagedStaffHighlightedOfficersBanner";
 import InsightsPageLayout from "../InsightsPageLayout";
+import { Title } from "../InsightsPageLayout/InsightsPageLayout";
+import InsightsPill from "../InsightsPill";
+import {
+  getLatestLoginDate,
+  hasNoLoginActivityInLast30Days,
+} from "../InsightsStaffUsage/InsightsStaffUsageCard";
 import { InsightsBreadcrumbs } from "../InsightsSupervisorPage/InsightsBreadcrumbs";
 import ModelHydrator from "../ModelHydrator";
 import { insightsUrl } from "../views";
@@ -47,6 +55,7 @@ const ManagedComponent = observer(function StaffPage({
     labels,
     userCanAccessAllSupervisors,
     numClientsOnCaseload,
+    userCanViewUsageActivity,
   } = presenter;
 
   // TODO(#5780): move infoItems to presenter
@@ -68,6 +77,14 @@ const ManagedComponent = observer(function StaffPage({
           officerOutcomesData?.caseloadCategoryName) ||
         null,
     },
+    ...(officerRecord && userCanViewUsageActivity
+      ? [
+          {
+            title: "Last Login",
+            info: getLatestLoginDate(officerRecord),
+          },
+        ]
+      : []),
   ];
 
   if (initialPageLoad) {
@@ -77,7 +94,25 @@ const ManagedComponent = observer(function StaffPage({
 
   return (
     <InsightsPageLayout
-      pageTitle={officerRecord?.displayName}
+      pageTitle={
+        userCanViewUsageActivity ? (
+          <Title isMobile={false}>
+            <div style={{ marginRight: rem(spacing.sm) }}>
+              {officerRecord?.displayName}
+            </div>{" "}
+            {officerRecord && hasNoLoginActivityInLast30Days(officerRecord) && (
+              <InsightsPill
+                label="No Login for 30 Days"
+                tooltipCopy={
+                  "It has been more than 30 days since the last login."
+                }
+              />
+            )}
+          </Title>
+        ) : (
+          officerRecord?.displayName
+        )
+      }
       infoItems={infoItems}
       contentsAboveTitle={
         supervisorsInfo &&

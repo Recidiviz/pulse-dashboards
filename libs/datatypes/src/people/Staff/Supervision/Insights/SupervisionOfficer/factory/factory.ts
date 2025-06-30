@@ -53,6 +53,13 @@ export const rawSupervisionOfficerFactory = (
       email: `officer${metricInfo.externalId}@recidiviz.org`,
       supervisorExternalIds: [...supervisors.map((s) => s.externalId)],
       district,
+      latestLoginDate: each(() =>
+        faker.helpers.weightedArrayElement([
+          { weight: 6, value: faker.date.recent({ days: 30 }).toISOString() },
+          { weight: 2, value: faker.date.past({ years: 1 }).toISOString() },
+          { weight: 1, value: null },
+        ]),
+      ),
       ...metricInfo,
     };
   });

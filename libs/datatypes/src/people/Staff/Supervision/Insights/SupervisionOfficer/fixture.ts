@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { relativeFixtureDate } from "../../../../../utils/zod";
 import { usIdSupervisionStaffFixtures } from "../../Workflows/fixture";
 import { supervisionOfficerSupervisorsFixture } from "../SupervisionOfficerSupervisor/fixture";
 import { RawSupervisionOfficer, supervisionOfficerSchema } from "./schema";
@@ -36,6 +37,7 @@ export const rawSupervisionOfficerFixture = [
     includeInOutcomes: true,
     email: "officer1@recidiviz.org",
     district: "Unit 1",
+    latestLoginDate: relativeFixtureDate({ days: 0 }),
   },
   {
     externalId: "so2",
@@ -49,6 +51,7 @@ export const rawSupervisionOfficerFixture = [
     includeInOutcomes: true,
     email: null,
     district: "Unit 1",
+    latestLoginDate: relativeFixtureDate({ days: -1 }),
   },
   {
     externalId: "so3",
@@ -62,6 +65,7 @@ export const rawSupervisionOfficerFixture = [
     includeInOutcomes: true,
     email: "officer3@recidiviz.org",
     district: "Unit 1",
+    latestLoginDate: null,
   },
   {
     externalId: "so4",
@@ -76,6 +80,7 @@ export const rawSupervisionOfficerFixture = [
     includeInOutcomes: true,
     email: "officer4@recidiviz.org",
     district: "Unit 1",
+    latestLoginDate: relativeFixtureDate({ days: -7 }),
   },
   {
     externalId: "so5",
@@ -89,6 +94,7 @@ export const rawSupervisionOfficerFixture = [
     includeInOutcomes: true,
     email: "officer5@recidiviz.org",
     district: "Unit 1",
+    latestLoginDate: null,
   },
   {
     externalId: "so8",
@@ -102,6 +108,7 @@ export const rawSupervisionOfficerFixture = [
     includeInOutcomes: true,
     email: "officer8@recidiviz.org",
     district: "Unit 4",
+    latestLoginDate: relativeFixtureDate({ days: -29 }),
   },
   {
     externalId: "so9",
@@ -115,6 +122,7 @@ export const rawSupervisionOfficerFixture = [
     includeInOutcomes: true,
     email: "officer9@recidiviz.org",
     district: "Unit 1",
+    latestLoginDate: relativeFixtureDate({ days: -30 }),
   },
   {
     externalId: "so10",
@@ -128,6 +136,7 @@ export const rawSupervisionOfficerFixture = [
     includeInOutcomes: true,
     email: "officer10@recidiviz.org",
     district: "Unit 1",
+    latestLoginDate: relativeFixtureDate({ days: -31 }),
   },
   // Officers excluded from outcomes
   {
@@ -141,6 +150,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: null,
     email: "officer6@recidiviz.org",
     district: "Unit 3",
+    latestLoginDate: relativeFixtureDate({ days: -101 }),
   },
   {
     externalId: "so7",
@@ -153,6 +163,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 7.7,
     email: "officer7@recidiviz.org",
     district: "Unit 2",
+    latestLoginDate: relativeFixtureDate({ days: -365 }),
   },
   {
     externalId: "so11",
@@ -165,6 +176,7 @@ export const rawSupervisionOfficerFixture = [
     avgDailyPopulation: 7.7,
     email: "officer8@recidiviz.org",
     district: "NOT_APPLICABLE",
+    latestLoginDate: null,
   },
 ] satisfies RawSupervisionOfficer[];
 

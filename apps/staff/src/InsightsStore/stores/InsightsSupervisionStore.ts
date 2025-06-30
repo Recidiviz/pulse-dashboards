@@ -189,6 +189,13 @@ export class InsightsSupervisionStore {
     );
   }
 
+  get userCanViewUsageActivity(): boolean {
+    return (
+      "insightsStaffUsage" in
+      this.insightsStore.rootStore.userStore.activeFeatureVariants
+    );
+  }
+
   get currentSupervisorUser(): SupervisionOfficerSupervisor | undefined {
     if (this.userInfo?.role === "supervision_officer_supervisor") {
       return this.userInfo.entity;

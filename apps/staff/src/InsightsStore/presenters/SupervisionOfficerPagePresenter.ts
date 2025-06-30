@@ -85,6 +85,10 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
     return this.clients?.length;
   }
 
+  get userCanViewUsageActivity(): boolean {
+    return this.supervisionStore.userCanViewUsageActivity;
+  }
+
   protected expectMetricsPopulated() {
     if (isExcludedSupervisionOfficer(this.fetchedOfficerRecord)) return;
     super.expectMetricsPopulated();

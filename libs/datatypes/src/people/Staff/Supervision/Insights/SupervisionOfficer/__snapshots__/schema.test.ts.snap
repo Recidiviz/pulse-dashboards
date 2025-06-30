@@ -12,6 +12,7 @@ exports[`transformations 1`] = `
     "surname": "Harris",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": 2021-12-16T00:00:00.000Z,
   "pseudonymizedId": "hashed-so1",
   "supervisorExternalIds": [
     "agonzalez123",
@@ -36,6 +37,7 @@ exports[`transformations 2`] = `
     "surname": "Hernandez",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": 2021-12-15T00:00:00.000Z,
   "pseudonymizedId": "hashed-so2",
   "supervisorExternalIds": [
     "agonzalez123",
@@ -55,6 +57,7 @@ exports[`transformations 3`] = `
     "surname": "Nelson",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": null,
   "pseudonymizedId": "hashed-so3",
   "supervisorExternalIds": [
     "agonzalez123",
@@ -75,6 +78,7 @@ exports[`transformations 4`] = `
     "surname": "Campbell",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": 2021-12-09T00:00:00.000Z,
   "pseudonymizedId": "hashed-so4",
   "supervisorExternalIds": [
     "dlee456",
@@ -94,6 +98,7 @@ exports[`transformations 5`] = `
     "surname": "Ramirez",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": null,
   "pseudonymizedId": "hashed-so5",
   "supervisorExternalIds": [
     "rsmith789",
@@ -113,6 +118,7 @@ exports[`transformations 6`] = `
     "surname": "Ramirez",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": 2021-11-17T00:00:00.000Z,
   "pseudonymizedId": "hashed-so8",
   "supervisorExternalIds": [
     "rsmith789",
@@ -132,6 +138,7 @@ exports[`transformations 7`] = `
     "surname": "Boyd",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": 2021-11-16T00:00:00.000Z,
   "pseudonymizedId": "hashed-so9",
   "supervisorExternalIds": [
     "agonzalez123",
@@ -151,6 +158,7 @@ exports[`transformations 8`] = `
     "surname": "Mann",
   },
   "includeInOutcomes": true,
+  "latestLoginDate": 2021-11-15T00:00:00.000Z,
   "pseudonymizedId": "hashed-so10",
   "supervisorExternalIds": [
     "agonzalez123",
@@ -169,6 +177,7 @@ exports[`transformations 9`] = `
     "givenNames": "John",
     "surname": "Harris",
   },
+  "latestLoginDate": 2021-09-06T00:00:00.000Z,
   "pseudonymizedId": "hashed-so6",
   "supervisorExternalIds": [
     "agonzalez123",
@@ -187,6 +196,7 @@ exports[`transformations 10`] = `
     "givenNames": "Larry",
     "surname": "Hernandez",
   },
+  "latestLoginDate": 2020-12-16T00:00:00.000Z,
   "pseudonymizedId": "hashed-so7",
   "supervisorExternalIds": [
     "agonzalez123",
@@ -205,6 +215,7 @@ exports[`transformations 11`] = `
     "givenNames": "Jacquline",
     "surname": "Fordman",
   },
+  "latestLoginDate": null,
   "pseudonymizedId": "hashed-so11",
   "supervisorExternalIds": [
     "cthomas321",

@@ -425,6 +425,27 @@ test.each([
   },
 );
 
+test.each([
+  [true, true],
+  [false, false],
+])(
+  "%s that user can access usage activity (hasFeatureVariant: %s)",
+  (expected, hasFeatureVariant) => {
+    vi.spyOn(
+      store.insightsStore.rootStore.userStore,
+      "activeFeatureVariants",
+      "get",
+    ).mockReturnValue(
+      hasFeatureVariant
+        ? {
+            insightsStaffUsage: {},
+          }
+        : {},
+    );
+    expect(store.userCanViewUsageActivity).toBe(expected);
+  },
+);
+
 test("current user record for supervisor", async () => {
   vi.spyOn(
     store.insightsStore.rootStore.userStore,

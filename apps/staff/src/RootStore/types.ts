@@ -96,6 +96,7 @@ export type FeatureVariant =
   | "outcomesModule"
   | "reportIncorrectRosters"
   | "operationsDrilldown"
+  | "insightsStaffUsage"
   // SENTENCING
   | "offenseOverrideControls"
   | "protectiveFactors"
@@ -162,6 +163,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usIaEarlyDischargeForms: {},
   operationsDrilldown: {},
   usTnInitialClassification: {},
+  insightsStaffUsage: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
