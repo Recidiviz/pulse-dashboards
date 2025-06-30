@@ -77,6 +77,9 @@ export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
       },
     ],
     metadata: {},
+    hasAnyInStateSentences: true,
+    hasAnyOutOfStateSentences: false,
+    custodialAuthority: "OTHER_STATE",
   };
 export const usNdEarlyTerminationAlmostEligibleClientRecord: RequireKeys<ClientRecord> =
   {

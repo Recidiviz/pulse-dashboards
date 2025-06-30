@@ -391,6 +391,44 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this.record.personType;
   }
 
+  get sentencedBy(): string | undefined {
+    if (!this.rootStore.currentTenantId) return;
+
+    const sentencedByStates = [];
+    if (this.record.hasAnyInStateSentences) {
+      sentencedByStates.push(
+        TENANT_CONFIGS[this.rootStore.currentTenantId].name,
+      );
+    }
+    if (this.record.hasAnyOutOfStateSentences) {
+      sentencedByStates.push("Other State");
+    }
+
+    // When `undefined`, the "Sentenced By" field will not be displayed in the `Supervision` sidebar component
+    return sentencedByStates.join(" & ") || undefined;
+  }
+
+  get supervisedIn(): string | undefined {
+    if (!this.rootStore.currentTenantId) return;
+
+    const { custodialAuthority } = this.record;
+
+    switch (custodialAuthority) {
+      case "SUPERVISION_AUTHORITY":
+      case "STATE_PRISON":
+        return TENANT_CONFIGS[this.rootStore.currentTenantId]?.name;
+      case "OTHER_STATE":
+        return "Other State";
+      case "FEDERAL_PRISON":
+        return "Federal Court";
+      case "OTHER_COUNTRY":
+        return "Other Country";
+      default:
+        // When `undefined`, the "Supervised In" field will not be displayed in the `Supervision` sidebar component
+        return undefined;
+    }
+  }
+
   milestonesPhoneNumberDoesNotMatchClient(enteredPhoneNumber: string): boolean {
     if (!enteredPhoneNumber || !this._rawPhoneNumber) return false;
     return (

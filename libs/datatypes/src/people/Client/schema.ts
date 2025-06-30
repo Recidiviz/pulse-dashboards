@@ -59,6 +59,9 @@ const optionalClientInformation = z
         dateImposed: dateStringSchema,
       }),
     ),
+    hasAnyInStateSentences: z.boolean().nullish(),
+    hasAnyOutOfStateSentences: z.boolean().nullish(),
+    custodialAuthority: z.string().nullish(),
     metadata: personMetadataSchema([
       usNeClientMetadataSchema,
       usUtClientMetadataSchema,

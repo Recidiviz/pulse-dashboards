@@ -69,6 +69,20 @@ export function Supervision({
           <SecureDetailsContent>
             <WorkflowsOfficerName officerId={client.assignedStaffId} />
           </SecureDetailsContent>
+
+          {client.sentencedBy && (
+            <>
+              <DetailsSubheading>Sentenced by</DetailsSubheading>
+              <SecureDetailsContent>{client.sentencedBy}</SecureDetailsContent>
+            </>
+          )}
+
+          {client.supervisedIn && (
+            <>
+              <DetailsSubheading>Supervised in</DetailsSubheading>
+              <SecureDetailsContent>{client.supervisedIn}</SecureDetailsContent>
+            </>
+          )}
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>

@@ -191,6 +191,9 @@ export const usMeEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
         dateImposed: new Date("2020-01-03"),
       },
     ],
+    hasAnyInStateSentences: true,
+    hasAnyOutOfStateSentences: false,
+    custodialAuthority: null,
     metadata: {},
   };
 

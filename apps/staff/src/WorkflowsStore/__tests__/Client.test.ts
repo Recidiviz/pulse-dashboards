@@ -26,6 +26,7 @@ import { MilestonesMessage } from "../../FirestoreStore";
 import FirestoreStore from "../../FirestoreStore/FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { APIStore } from "../../RootStore/APIStore";
+import { TENANT_CONFIGS } from "../../tenants";
 import { Client } from "../Client";
 import { MilestonesMessageUpdateSubscription } from "../subscriptions/MilestonesMessageUpdateSubscription";
 import { OTHER_KEY } from "../utils";
@@ -106,6 +107,9 @@ describe("Client", () => {
       stateCode: "US_XX",
       personType: "CLIENT",
       phoneNumber: "1112223333",
+      custodialAuthority: "SUPERVISION_AUTHORITY",
+      hasAnyInStateSentences: false,
+      hasAnyOutOfStateSentences: false,
       milestones: [
         {
           type: "NO_VIOLATION_WITHIN_6_MONTHS",
@@ -429,5 +433,102 @@ describe("Client", () => {
   test("searchIdValues", () => {
     createTestUnit();
     expect(testClient.searchIdValues).toEqual(["DISTRICT1", "OFFICER1"]);
+  });
+
+  describe("supervisedIn", () => {
+    const tenantId = "US_CA";
+    const tenantName = TENANT_CONFIGS[tenantId].name;
+
+    beforeEach(() => {
+      vi.spyOn(rootStore, "currentTenantId", "get").mockReturnValue(tenantId);
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    test.each<[string, string | undefined]>([
+      ["SUPERVISION_AUTHORITY", tenantName],
+      ["STATE_PRISON", tenantName],
+      ["OTHER_STATE", "Other State"],
+      ["FEDERAL_PRISON", "Federal Court"],
+      ["OTHER_COUNTRY", "Other Country"],
+      ["UNKNOWN", undefined],
+    ])(
+      "when custodialAuthority is %s → supervisedIn returns %s",
+      (authority, expected) => {
+        record.custodialAuthority = authority;
+        createTestUnit();
+        expect(testClient.supervisedIn).toEqual(expected);
+      },
+    );
+
+    test("returns undefined when there is no currentTenantId", () => {
+      const rootStore = {
+        ...mockRootStore,
+        currentTenantId: undefined,
+      } as unknown as RootStore;
+      testClient = new Client({ ...record }, rootStore);
+
+      expect(testClient.supervisedIn).toBeUndefined();
+    });
+  });
+
+  describe("sentencedBy", () => {
+    const tenantId = "US_IA";
+    const tenantName = TENANT_CONFIGS[tenantId].name;
+
+    beforeEach(() => {
+      vi.spyOn(rootStore, "currentTenantId", "get").mockReturnValue(tenantId);
+      vi.spyOn(mockRootStore, "currentTenantId", "get").mockReturnValue(
+        tenantId,
+      );
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    test("no in-state and no out-of-state sentences", () => {
+      record.hasAnyInStateSentences = false;
+      record.hasAnyOutOfStateSentences = false;
+      createTestUnit();
+
+      expect(testClient.sentencedBy).toBeUndefined();
+    });
+
+    test("only in-state sentence", () => {
+      record.hasAnyInStateSentences = true;
+      record.hasAnyOutOfStateSentences = false;
+      createTestUnit();
+
+      expect(testClient.sentencedBy).toEqual(tenantName);
+    });
+
+    test("only out-of-state sentence", () => {
+      record.hasAnyInStateSentences = false;
+      record.hasAnyOutOfStateSentences = true;
+      createTestUnit();
+
+      expect(testClient.sentencedBy).toEqual("Other State");
+    });
+
+    test("both in-state and out-of-state sentences", () => {
+      record.hasAnyInStateSentences = true;
+      record.hasAnyOutOfStateSentences = true;
+      createTestUnit();
+
+      expect(testClient.sentencedBy).toEqual(`${tenantName} & Other State`);
+    });
+
+    test("returns undefined when there is no currentTenantId", () => {
+      const rootStore = {
+        ...mockRootStore,
+        currentTenantId: undefined,
+      } as unknown as RootStore;
+      testClient = new Client({ ...record }, rootStore);
+
+      expect(testClient.sentencedBy).toBeUndefined();
+    });
   });
 });
