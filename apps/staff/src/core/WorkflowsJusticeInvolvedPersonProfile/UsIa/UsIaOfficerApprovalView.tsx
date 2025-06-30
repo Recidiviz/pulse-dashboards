@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, spacing, typography } from "@recidiviz/design-system";
+import {
+  Button,
+  spacing,
+  TooltipTrigger,
+  typography,
+} from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { useState } from "react";
@@ -141,14 +146,15 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
             placeholder="Add notes for supervisor review..."
             isOptional={true}
           />
-
-          <SaveButton
-            shape="block"
-            disabled={!canSubmit}
-            onClick={handleSubmit}
-          >
-            Save
-          </SaveButton>
+          <TooltipTrigger contents="To move to 'Supervisor Review'">
+            <SaveButton
+              shape="block"
+              disabled={!canSubmit}
+              onClick={handleSubmit}
+            >
+              Save
+            </SaveButton>
+          </TooltipTrigger>
         </ConfirmationOfDataInvestigationContainer>
       </article>
     );
