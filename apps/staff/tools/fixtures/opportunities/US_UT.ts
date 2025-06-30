@@ -65,12 +65,6 @@ export const mockApiOpportunityConfigurationResponse = {
             "AP&P BENCHMARK: Risk reduction as indicated by ANY of the following:\n1. Overall reduction of 5 percent or more on LS/RNR or other validated risk assessment.\n2. Reduction by one level on LS/RNR or other validated risk assessment (e.g., high to moderate).\n3. Maintaining an overall risk level of moderate or low on LS/RNR or other validated risk assessment.",
         },
         {
-          key: "supervisionHousingIsPermanentOrTemporaryFor3Months",
-          text: "Past early termination review date (half-time date)",
-          tooltip:
-            "SENTENCING COMMISSION GUIDELINE: A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
-        },
-        {
           key: "supervisionHousingIsPermanentFor3Months",
           text: "Stable housing",
           tooltip:
@@ -105,12 +99,6 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip: "AP&P BENCHMARK: No positive drug test in the past 6 months",
         },
         {
-          key: "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
-          text: "Is past early termination review date (half-time date)",
-          tooltip:
-            "SENTENCING COMMISSION GUIDELINE: A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
-        },
-        {
           key: "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
           text: "Is past early termination review date (half-time date)",
           tooltip:
@@ -135,11 +123,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "usUtHasCompletedOrderedAssessments",
-          text: "Has not yet completed ordered assessments, recommended treatment or programming ",
-        },
-        {
-          key: "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
-          text: "Meets all criteria except for being past the early termination review date",
+          text: "Has not yet completed ordered assessments, recommended treatment or programming",
         },
         {
           key: "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
@@ -148,8 +132,26 @@ export const mockApiOpportunityConfigurationResponse = {
             "A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
         },
         {
+          key: "supervisionHousingIsPermanentFor3Months",
+          text: "Has not demonstrated housing stability or is not currently housed",
+          tooltip:
+            "AP&P BENCHMARK: Client has had stable housing for at least three months.",
+        },
+        {
           key: "supervisionContinuousEmploymentFor3Months",
-          text: "Has not demonstrated employment stability or is not currently employed ",
+          text: "Has not demonstrated employment stability or is not currently employed",
+          tooltip:
+            "AP&P BENCHMARK: Client has had continuous employment for at least three months",
+        },
+        {
+          key: "atLeast6MonthsSinceMostRecentPositiveDrugTest",
+          text: "Recent positive drug test",
+          tooltip: "AP&P BENCHMARK: No positive drug test in the past 6 months",
+        },
+        {
+          key: "onSupervisionAtLeast6Months",
+          text: "Has not been on supervision for at least 6 months",
+          tooltip: "AP&P BENCHMARK: On supervision for at least 6 months",
         },
       ],
       initialHeader:
@@ -159,7 +161,9 @@ export const mockApiOpportunityConfigurationResponse = {
       methodologyUrl:
         "https://docs.google.com/document/d/e/2PACX-1vR3uKKRbdWXDRUz8v1km5oZNNeYuB3yUmWsZLut8RlPCAQqjUi4Cle3fXeivhYKYm8By--6nNRWFIUO/pub",
       nonOmsCriteria: [
-        { text: "If relevant, negative drug test within the last 6 months" },
+        {
+          text: "{{#unless (or record.ineligibleCriteria.atLeast6MonthsSinceMostRecentPositiveDrugTest (eq record.ineligibleCriteria.atLeast6MonthsSinceMostRecentPositiveDrugTest null))}}If relevant, negative drug test within the last 6 months{{/unless}}",
+        },
         {
           text: "{{#if (or record.ineligibleCriteria.usUtHasCompletedOrderedAssessments (eq record.ineligibleCriteria.usUtHasCompletedOrderedAssessments null))}}Confirm that clinical assessment confirmed need for treatment{{/if}}",
         },
@@ -174,12 +178,15 @@ export const mockApiOpportunityConfigurationResponse = {
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_UT",
       subcategoryHeadings: [
-        { subcategory: "REPORT_DUE_ELIGIBLE", text: "Eligible" },
-        { subcategory: "REPORT_DUE_ALMOST_ELIGIBLE", text: "Almost Eligible" },
+        { subcategory: "REPORT_DUE_ELIGIBLE", text: "All Benchmarks Met" },
+        {
+          subcategory: "REPORT_DUE_ALMOST_ELIGIBLE",
+          text: "Almost All Benchmarks Met",
+        },
       ],
       subcategoryOrderings: [
         {
-          tab: "Report Due",
+          tab: "Report Due - Benchmarks Met",
           texts: ["REPORT_DUE_ELIGIBLE", "REPORT_DUE_ALMOST_ELIGIBLE"],
         },
       ],
@@ -192,6 +199,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "ELIGIBILITY STATUS",
           tabs: [
+            "Report Due – Benchmarks Met",
             "Report Due",
             "Early Requests",
             "Report Submitted",
@@ -201,8 +209,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       tabPrefaceCopy: [
         {
-          tab: "Report Due",
+          tab: "Report Due – Benchmarks Met",
           text: "This tab contains eligible cases approaching or past their early termination report due date that meet stability benchmarks set by UDC. It also contains cases almost eligible that are missing one or two indicators of stability for Early Terminations.",
+        },
+        {
+          tab: "Report Due",
+          text: "This tab contains additional cases approaching or past their early termination report due date, even if they are missing one or two indicators of stability for Early Terminations.",
         },
         {
           tab: "Early Requests",

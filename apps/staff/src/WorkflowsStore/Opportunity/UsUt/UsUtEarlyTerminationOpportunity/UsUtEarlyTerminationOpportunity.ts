@@ -51,6 +51,8 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
     switch (this.record.metadata.tabName) {
       case "REPORT_DUE_ELIGIBLE":
       case "REPORT_DUE_ALMOST_ELIGIBLE":
+        return "Report Due – Benchmarks Met";
+      case "REPORT_DUE_INELIGIBLE":
         return "Report Due";
       case "EARLY_REQUESTS":
         return "Early Requests";
@@ -76,9 +78,11 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
 
     switch (this.record.metadata.tabName) {
       case "REPORT_DUE_ELIGIBLE":
-        return "Report Due - Eligible";
+        return "Report Due – All Benchmarks Met";
       case "REPORT_DUE_ALMOST_ELIGIBLE":
-        return "Report Due - Almost Eligible";
+        return "Report Due – Almost All Benchmarks Met";
+      case "REPORT_DUE_INELIGIBLE":
+        return "Report Due";
       case "EARLY_REQUESTS":
       case "REPORT_SUBMITTED":
         return this.tabTitle();

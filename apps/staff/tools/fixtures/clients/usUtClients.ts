@@ -137,7 +137,6 @@ export const US_UT_CLIENTS: ClientFixture[] = [
       ],
     },
   },
-
   {
     personName: {
       givenNames: "Abigail",
@@ -168,6 +167,45 @@ export const US_UT_CLIENTS: ClientFixture[] = [
           projectedCompletionDate: "2023-01-20",
           courtCaseNumber: "21124680",
           statutes: ["01.2364"],
+        },
+        {
+          projectedCompletionDate: undefined,
+          courtCaseNumber: "C21328999",
+          statutes: ["41-5-1(A)+(B)(III)"],
+        },
+      ],
+    },
+  },
+  {
+    personName: {
+      givenNames: "Lenny",
+      surname: "Heath",
+    },
+    personExternalId: "UT005",
+    displayId: "123005",
+    pseudonymizedId: "p005",
+    stateCode: "US_UT",
+    officerId: "UTOFFICER1",
+    supervisionType: "PROBATION",
+    supervisionLevel: "MEDIUM",
+    supervisionStartDate: "2021-09-12",
+    expirationDate: "2023-01-11",
+    phoneNumber: "435-555-5555",
+    allEligibleOpportunities: ["usUtEarlyTermination"],
+    milestones: [
+      {
+        text: "Employed, studying, or with another source of income for 6+ months.",
+        type: "US_UT_EMPLOYED_6_MONTHS",
+      },
+    ],
+    metadata: {
+      stateCode: "US_UT",
+      interstateCompactIn: false,
+      sentences: [
+        {
+          projectedCompletionDate: "2023-01-20",
+          courtCaseNumber: "21124680",
+          statutes: ["77.26.77"],
         },
         {
           projectedCompletionDate: undefined,
