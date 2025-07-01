@@ -29,7 +29,6 @@ export const usIdExpandedCRCSchema = opportunitySchemaBase.extend({
     usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: z.object({
       fullTermCompletionDate: dateStringSchema.nullable(),
       paroleEligibilityDate: dateStringSchema.nullable(),
-      groupProjectedParoleReleaseDate: dateStringSchema.nullable(),
     }),
     usIdInCrcFacilityOrPwccUnit1: z.object({
       crcStartDate: dateStringSchema,

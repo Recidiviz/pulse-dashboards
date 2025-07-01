@@ -34,7 +34,6 @@ test("transforms record with FTCD and PED set", () => {
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: {
         fullTermCompletionDate: "2022-08-12",
         paroleEligibilityDate: "2022-03-19",
-        groupProjectedParoleReleaseDate: null,
       },
       usIdInCrcFacilityOrPwccUnit1: {
         crcStartDate: "2022-02-06",
@@ -66,7 +65,6 @@ test("transforms record with TPD set", () => {
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: {
         fullTermCompletionDate: null,
         paroleEligibilityDate: null,
-        groupProjectedParoleReleaseDate: "2022-07-11",
       },
       usIdInCrcFacilityOrPwccUnit1: {
         crcStartDate: "2022-02-06",
@@ -98,7 +96,6 @@ test("transforms record with caseNotes set", () => {
       usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: {
         fullTermCompletionDate: null,
         paroleEligibilityDate: null,
-        groupProjectedParoleReleaseDate: "2022-07-11",
       },
       usIdInCrcFacilityOrPwccUnit1: {
         crcStartDate: "2022-02-06",

@@ -34,7 +34,6 @@ export const usIdExpandedCRCReferrals: FirestoreFixture<UsIdExpandedCRCReferralR
           usIdIncarcerationWithin6MonthsOfFtcdOrPedOrEprd: {
             fullTermCompletionDate: "2024-03-12",
             paroleEligibilityDate: "2023-11-03",
-            groupProjectedParoleReleaseDate: null,
           },
           usIdInCrcFacilityOrPwccUnit1: {
             crcStartDate: "2021-02-15",
