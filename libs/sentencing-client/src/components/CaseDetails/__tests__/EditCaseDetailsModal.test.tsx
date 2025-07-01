@@ -28,6 +28,7 @@ import {
 import { PSIStore } from "../../../datastores/PSIStore";
 import { CaseDetailsPresenter } from "../../../presenters/CaseDetailsPresenter";
 import { CaseDetails } from "../CaseDetails";
+import { PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT } from "../Recommendations/constants";
 
 let psiStore: PSIStore;
 let presenter: CaseDetailsPresenter;
@@ -139,7 +140,7 @@ test("shows all of the non-nested fields", async () => {
   const draftLsirScoreField = await screen.getByText(LSIR_SCORE_FIELD_LABEL);
   const genderField = await screen.getByText(GENDER_FIELD_LABEL);
   const reportTypeField = await screen.getByText(REPORT_TYPE_FIELD_LABEL);
-  const PRIMARY_NEEDS_FIELD_LABEL = `What are ${formatPossessiveName(presenter.caseAttributes.client?.firstName)} primary needs? Select all that apply.`;
+  const PRIMARY_NEEDS_FIELD_LABEL = `What are ${formatPossessiveName(presenter.caseAttributes.client?.firstName)} primary needs? Select up to ${PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT} that apply.`;
   const primaryNeedsField = await screen.getByText(PRIMARY_NEEDS_FIELD_LABEL);
   const substanceUseDisorderField = await screen.getByText(
     SUBSTANCE_USE_DISORDER_FIELD_LABEL,

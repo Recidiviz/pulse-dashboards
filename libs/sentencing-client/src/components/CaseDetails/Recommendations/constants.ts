@@ -63,3 +63,5 @@ export const needToDisplayNameMap: NeedsToDisplayName = {
   HousingOpportunities: "Housing",
   JobTrainingOrOpportunities: "Vocational Training",
 };
+
+export const PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT = 8;

@@ -60,6 +60,31 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
     insight &&
     insight.rollupOffense !== insight.offense;
 
+  const rollupContent = !geoConfig.hideRecidivismRatesChart && (
+    <>
+      {caseStore.insightLoading && (
+        <Styled.RollupLoading>
+          <MiniLoader dark /> Gathering historical records...
+        </Styled.RollupLoading>
+      )}
+
+      {showRollup && !caseStore.insightLoading && (
+        <Styled.RollupOffenseCategory>
+          <Styled.InputLabel>Recidivism Cohort</Styled.InputLabel>
+          <span>{insight.rollupOffenseDescription}</span>
+          <Styled.InputDescription>
+            In order to provide recidivism rates based on a sufficient sample
+            size, we need to broaden the group of similar cases we use to
+            compare this case to. The new cohort may include all genders, risk
+            scores, and/or a more general category of offense. A description of
+            the cohort is listed above. If you think this categorization is
+            inaccurate, reach out to Recidiviz.
+          </Styled.InputDescription>
+        </Styled.RollupOffenseCategory>
+      )}
+    </>
+  );
+
   const updateLsirScore = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value.trim());
     form.updateForm(
@@ -140,26 +165,7 @@ function LsirScoreField({ isRequired }: FormFieldProps) {
         </Styled.InputDescription>
       )}
 
-      {caseStore.insightLoading && (
-        <Styled.RollupLoading>
-          <MiniLoader dark /> Gathering historical records...
-        </Styled.RollupLoading>
-      )}
-
-      {showRollup && !caseStore.insightLoading && (
-        <Styled.RollupOffenseCategory>
-          <Styled.InputLabel>Recidivism Cohort</Styled.InputLabel>
-          <span>{insight.rollupOffenseDescription}</span>
-          <Styled.InputDescription>
-            In order to provide recidivism rates based on a sufficient sample
-            size, we need to broaden the group of similar cases we use to
-            compare this case to. The new cohort may include all genders, risk
-            scores, and/or a more general category of offense. A description of
-            the cohort is listed above. If you think this categorization is
-            inaccurate, reach out to Recidiviz.
-          </Styled.InputDescription>
-        </Styled.RollupOffenseCategory>
-      )}
+      {rollupContent}
     </>
   );
 }

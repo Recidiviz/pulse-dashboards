@@ -797,7 +797,7 @@ export const FactorsNeedsTitle = styled.div`
 
 export const FactorsNeedsList = styled.div`
   ${typography.Sans14}
-  max-height: 200px;
+  max-height: 170px;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;

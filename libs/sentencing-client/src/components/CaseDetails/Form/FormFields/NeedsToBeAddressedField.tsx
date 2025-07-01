@@ -26,13 +26,14 @@ import {
   NeedsToBeAddressed,
   OTHER_NEED_TO_BE_ADDRESSED_KEY,
 } from "../../constants";
+import { PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT } from "../../Recommendations/constants";
 import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../constants";
 import { MultiSelectRadioInput } from "../Elements/MultiSelectRadioInput";
 import { TextArea } from "../Elements/TextArea";
 import { form } from "../FormStore";
 import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
-import { parseNeedsToBeAddressedValue } from "../utils";
+import { isSelectionOverLimit, parseNeedsToBeAddressedValue } from "../utils";
 
 const needsToBeAddressedOptions = [
   ...Object.values(NeedsToBeAddressed),
@@ -63,6 +64,17 @@ function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
 
   const updateSelections = (option: string | null) => {
     if (option === null) return;
+
+    if (
+      isSelectionOverLimit(
+        multiInputValues,
+        option,
+        PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT,
+      )
+    ) {
+      return;
+    }
+
     // Clear out Other text field input when "Not Sure Yet" is selected or "Other" option is de-selected
     if (
       option === NOT_SURE_YET_OPTION ||
@@ -95,7 +107,8 @@ function NeedsToBeAddressedField({ isRequired }: FormFieldProps) {
   return (
     <>
       <Styled.InputLabel>
-        What are {formattedFirstName} primary needs? Select all that apply.{" "}
+        What are {formattedFirstName} primary needs? Select up to{" "}
+        {PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT} that apply.{" "}
         {isRequired && <span>Required*</span>}
       </Styled.InputLabel>
 

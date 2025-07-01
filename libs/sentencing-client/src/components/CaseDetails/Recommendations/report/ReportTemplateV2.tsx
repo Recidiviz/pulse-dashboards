@@ -21,14 +21,13 @@ import MagnifyingGlassIcon from "../../../assets/magnifying-glass-black-icon.svg
 import ProtectiveFactorsIcon from "../../../assets/protective-factors-icon.svg?react";
 import { SENTENCE_DISTRIBUTION_TEXT } from "../../components/charts/constants";
 import { DispositionChartExplanation } from "../../components/charts/DispositionChart/DispositionChartExplanation";
-import { OTHER_OPTION } from "../../Form/constants";
+import { NONE_OPTION, OTHER_OPTION } from "../../Form/constants";
 import {
   HistoricalSentencingAttributeChips,
   renderMultilineText,
 } from "./components";
 import * as Styled from "./Report.styles";
 import { CustomReportProps } from "./types";
-import { sliceAndFilterListItems } from "./utils";
 
 const ReportTemplateV2: React.FC<CustomReportProps> = ({
   fullName,
@@ -42,13 +41,8 @@ const ReportTemplateV2: React.FC<CustomReportProps> = ({
   needs,
   recommendationSummary,
 }) => {
-  const protectiveFactorsList = sliceAndFilterListItems(
-    protectiveFactors ?? [],
-    8,
-  );
-  const needsList = sliceAndFilterListItems(needs ?? [], 8);
   const hasProtectiveFactorsOrNeeds = Boolean(
-    protectiveFactorsList?.length || needsList?.length,
+    protectiveFactors?.length || needs?.length,
   );
   const recommendationOptionsTemplate =
     geoConfig.recommendation.baseOptionsTemplate;
@@ -57,7 +51,9 @@ const ReportTemplateV2: React.FC<CustomReportProps> = ({
   )?.recommendationType;
 
   const incarcerationSuffix =
-    selectedRecommendationType || selectedRecommendation === OTHER_OPTION
+    selectedRecommendationType ||
+    (selectedRecommendation &&
+      [OTHER_OPTION, NONE_OPTION].includes(selectedRecommendation))
       ? ""
       : "Incarceration";
 
@@ -88,13 +84,13 @@ const ReportTemplateV2: React.FC<CustomReportProps> = ({
           <Styled.SectionTitle>Case Details</Styled.SectionTitle>
           <Styled.CaseDetailsContainer>
             {/* Protective Factors */}
-            {protectiveFactorsList && protectiveFactorsList.length > 0 && (
+            {protectiveFactors && protectiveFactors.length > 0 && (
               <Styled.ListContainer>
                 <ProtectiveFactorsIcon />
                 <Styled.ListWrapper>
                   Mitigating Risk Factors
                   <Styled.List>
-                    {protectiveFactorsList.map((factor) => (
+                    {protectiveFactors.map((factor) => (
                       <Styled.ListItem key={factor}>{factor}</Styled.ListItem>
                     ))}
                   </Styled.List>
@@ -102,13 +98,13 @@ const ReportTemplateV2: React.FC<CustomReportProps> = ({
               </Styled.ListContainer>
             )}
             {/* Areas of Need */}
-            {needsList && needsList.length > 0 && (
+            {needs && needs.length > 0 && (
               <Styled.ListContainer>
                 <MagnifyingGlassIcon />
                 <Styled.ListWrapper>
                   Areas of Need
                   <Styled.List>
-                    {needsList.map((need) => (
+                    {needs.map((need) => (
                       <Styled.ListItem key={need}>{need}</Styled.ListItem>
                     ))}
                   </Styled.List>

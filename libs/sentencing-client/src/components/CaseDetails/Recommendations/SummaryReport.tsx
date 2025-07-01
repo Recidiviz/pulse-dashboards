@@ -93,7 +93,8 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     trackCaseStatusCompleteClicked,
   } = analytics;
   const targetRef = useRef<HTMLDivElement>(null);
-  const hasPrevSavedRecommendation = Boolean(savedSummary);
+  const hasPrevSavedRecommendation =
+    Boolean(savedSummary) || savedSummary === "";
   const defaultRecommendationSummary = hasPrevSavedRecommendation
     ? savedSummary
     : generateRecommendationSummary({
@@ -204,6 +205,19 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     />
   );
 
+  const copyButton = !geoConfig.hideRecidivismRatesChart && (
+    <Styled.ActionButton kind="bordered" onClick={handleCopySummaryToClipboard}>
+      {hasCopiedText ? (
+        <>
+          <CheckIcon /> Copied to clipboard
+        </>
+      ) : (
+        <>
+          <CopyIcon /> Copy to clipboard
+        </>
+      )}
+    </Styled.ActionButton>
+  );
   return (
     <Styled.RecommendationSummaryReport>
       <Styled.SummaryReportWrapper>
@@ -238,20 +252,8 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
             )}
           </Styled.SummaryTextAreaWrapper>
           <Styled.ActionButtonRowWrapper>
-            <Styled.ActionButton
-              kind="bordered"
-              onClick={handleCopySummaryToClipboard}
-            >
-              {hasCopiedText ? (
-                <>
-                  <CheckIcon /> Copied to clipboard
-                </>
-              ) : (
-                <>
-                  <CopyIcon /> Copy to clipboard
-                </>
-              )}
-            </Styled.ActionButton>
+            {copyButton}
+
             {hasPrevSavedRecommendation && (
               <Styled.ActionButton kind="bordered" onClick={regenerateSummary}>
                 <RefreshIcon /> Regenerate

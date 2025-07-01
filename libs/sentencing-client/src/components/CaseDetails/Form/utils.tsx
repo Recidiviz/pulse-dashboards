@@ -286,3 +286,25 @@ export const highlightMatchedText = (
     ),
   );
 };
+
+/**
+ * Returns a boolean based on whether or not an added option would make the list of selections
+ * exceed the given limit. Used in multi-select radio input components.
+ *
+ * If the option is already included in the selections, it returns false, because it would be
+ * deselected from the list. If the option is "Not Sure Yet", it also returns false, because that
+ * particular option deselects all other options.
+ */
+export const isSelectionOverLimit = (
+  selections: string[] | null,
+  option: string | null,
+  limit: number,
+): boolean | undefined => {
+  if (!option || !selections) return;
+
+  return (
+    !selections.includes(option) &&
+    selections.length >= limit &&
+    option !== NOT_SURE_YET_OPTION
+  );
+};

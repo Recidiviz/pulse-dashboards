@@ -31,11 +31,12 @@ const ScrollControlsContainer = styled.div`
   position: relative;
 `;
 
-const ScrollContainer = styled.div`
+const ScrollContainer = styled.div<{ isCursorGrab?: boolean }>`
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  cursor: grab;
+  cursor: ${({ isCursorGrab }) => (isCursorGrab ? "grab" : "default")};
+  display: flex;
   user-select: none;
   padding: 0 22px 0 22px;
   margin-right: 40px;
@@ -141,7 +142,9 @@ const DraggableScrollContainer: React.FC<
           </Styled.CarouselButton>
         </Styled.CarouselButtons>
       )}
-      <ScrollContainer ref={scrollRef}>{children}</ScrollContainer>
+      <ScrollContainer ref={scrollRef} isCursorGrab={!hideArrowButtons}>
+        {children}
+      </ScrollContainer>
     </ScrollControlsContainer>
   );
 };

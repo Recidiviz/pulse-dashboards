@@ -47,7 +47,11 @@ import {
   YES_OPTION,
 } from "../constants";
 import { CountyDistrict } from "../types";
-import { getFilteredCountyOptions, transformUpdates } from "../utils";
+import {
+  getFilteredCountyOptions,
+  isSelectionOverLimit,
+  transformUpdates,
+} from "../utils";
 
 describe("transformUpdates", () => {
   it("should handle updates with SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY key and NONE_OPTION correctly", () => {
@@ -273,5 +277,40 @@ describe("getFilteredCountyOptions", () => {
     const result = getFilteredCountyOptions(countiesOptions, countyDistrict);
 
     expect(result).toEqual([]);
+  });
+});
+
+describe("isSelectionOverLimit", () => {
+  const makeSelections = (n: number) =>
+    Array.from({ length: n }, (_, i) => `option${i}`);
+
+  it("returns undefined if `option` is null", () => {
+    expect(isSelectionOverLimit(makeSelections(2), null, 3)).toBeUndefined();
+  });
+
+  it("returns undefined if `selections` is null", () => {
+    expect(isSelectionOverLimit(null, "option1", 3)).toBeUndefined();
+  });
+
+  it("returns false when adding under the limit", () => {
+    const selections = makeSelections(2);
+    expect(isSelectionOverLimit(selections, "new option", 3)).toBe(false);
+  });
+
+  it("returns false when deselecting an existing item even if at limit", () => {
+    const selections = makeSelections(3);
+    expect(isSelectionOverLimit(selections, "option1", 3)).toBe(false);
+  });
+
+  it("returns true when adding beyond the limit", () => {
+    const selections = makeSelections(3);
+    expect(isSelectionOverLimit(selections, "new option", 3)).toBe(true);
+  });
+
+  it("returns false when option is NOT_SURE_YET_OPTION, even if at or over limit", () => {
+    const selections = makeSelections(5);
+    expect(isSelectionOverLimit(selections, NOT_SURE_YET_OPTION, 3)).toBe(
+      false,
+    );
   });
 });

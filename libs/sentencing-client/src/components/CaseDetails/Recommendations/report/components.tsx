@@ -376,7 +376,8 @@ export function renderMultilineText(text?: string): React.ReactNode {
   return paragraphs.map((line, i) => {
     const isLastLine = i === paragraphs.length - 1;
     return (
-      <React.Fragment key={line}>
+      // eslint-disable-next-line react/no-array-index-key
+      <React.Fragment key={line + i}>
         {line}
         {!isLastLine && <br />}
       </React.Fragment>

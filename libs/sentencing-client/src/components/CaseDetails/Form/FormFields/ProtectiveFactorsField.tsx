@@ -25,13 +25,14 @@ import {
   PROTECTIVE_FACTORS_KEY,
   ProtectiveFactors,
 } from "../../constants";
+import { PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT } from "../../Recommendations/constants";
 import { NOT_SURE_YET_OPTION, OTHER_OPTION } from "../constants";
 import { MultiSelectRadioInput } from "../Elements/MultiSelectRadioInput";
 import { TextArea } from "../Elements/TextArea";
 import { form } from "../FormStore";
 import { FormFieldProps } from "../types";
 import { useFormField } from "../useFormFields";
-import { parseProtectiveFactorsValue } from "../utils";
+import { isSelectionOverLimit, parseProtectiveFactorsValue } from "../utils";
 
 const protectiveFactorsOptions = [
   ...Object.values(ProtectiveFactors),
@@ -60,6 +61,17 @@ function ProtectiveFactorsField({ isRequired }: FormFieldProps) {
 
   const updateSelections = (option: string | null) => {
     if (option === null) return;
+
+    if (
+      isSelectionOverLimit(
+        multiInputValues,
+        option,
+        PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT,
+      )
+    ) {
+      return;
+    }
+
     // Clear out Other text field input when "Not Sure Yet" is selected or "Other" option is de-selected
     if (
       option === NOT_SURE_YET_OPTION ||
@@ -92,7 +104,8 @@ function ProtectiveFactorsField({ isRequired }: FormFieldProps) {
   return (
     <>
       <Styled.InputLabel>
-        Which protective factors describe {firstName}? Select all that apply.{" "}
+        Which protective factors describe {firstName}? Select up to{" "}
+        {PROTECTIVE_FACTORS_NEEDS_LIST_LIMIT} that apply.{" "}
         {isRequired && <span>Required*</span>}
       </Styled.InputLabel>
 
