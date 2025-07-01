@@ -17,29 +17,19 @@
 
 import { z } from "zod";
 
-import { basePastFTRDSchema } from "../../PastFTRDReferralRecord";
+import { opportunitySchemaBase } from "~datatypes";
+
 import { eligibleDateSchema } from "../../schemaHelpers";
 
-const eligibleCriteria = z
+const eligibleAndIneligibleCriteria = z
   .object({
-    supervisionTwoDaysPastFullTermCompletionDate: eligibleDateSchema,
+    supervisionTwoDaysPastFullTermCompletionDate: eligibleDateSchema.optional(),
   })
-  .passthrough()
-  .transform((data) => {
-    const {
-      supervisionTwoDaysPastFullTermCompletionDate,
-      ...restEligibleCriteria
-    } = data;
+  .passthrough();
 
-    return {
-      ...restEligibleCriteria,
-      supervisionPastFullTermCompletionDate:
-        supervisionTwoDaysPastFullTermCompletionDate,
-    };
-  });
-
-export const usMiPastFTRDSchema = basePastFTRDSchema.extend({
-  eligibleCriteria,
+export const usMiPastFTRDSchema = opportunitySchemaBase.extend({
+  eligibleCriteria: eligibleAndIneligibleCriteria,
+  ineligibleCriteria: eligibleAndIneligibleCriteria,
 });
 
 export type UsMiPastFTRDReferralRecord = z.infer<typeof usMiPastFTRDSchema>;
