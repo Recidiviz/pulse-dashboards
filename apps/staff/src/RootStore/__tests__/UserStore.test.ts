@@ -1004,6 +1004,7 @@ describe("feature variants", () => {
         "usTnExpirationSubmitToTomis": {},
         "usTnInitialClassification": {},
         "usTnSuspensionOfDirectSupervision": {},
+        "usTnTEPENotesForAll": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
       }
@@ -1052,6 +1053,7 @@ describe("feature variants", () => {
         "usTnExpirationSubmitToTomis": {},
         "usTnInitialClassification": {},
         "usTnSuspensionOfDirectSupervision": {},
+        "usTnTEPENotesForAll": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
       }
@@ -1098,6 +1100,7 @@ describe("feature variants", () => {
         "usTnExpirationSubmitToTomis": {},
         "usTnInitialClassification": {},
         "usTnSuspensionOfDirectSupervision": {},
+        "usTnTEPENotesForAll": {},
         "workflowsSupervisorSearch": {},
         "zeroGrantsFlag": {},
       }

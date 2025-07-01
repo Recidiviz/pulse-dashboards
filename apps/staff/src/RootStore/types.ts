@@ -86,6 +86,7 @@ export type FeatureVariant =
   | "usIaEarlyDischargeCustomizations"
   | "usIaEarlyDischargeForms"
   | "usTnInitialClassification"
+  | "usTnTEPENotesForAll"
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
@@ -164,6 +165,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   operationsDrilldown: {},
   usTnInitialClassification: {},
   insightsStaffUsage: {},
+  usTnTEPENotesForAll: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -188,6 +190,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         supervisionTasksNavLink: { activeTenants: ["US_ID"] },
         usTnCompliantReporting2025Policy: {},
         usTnInitialClassification: {},
+        usTnTEPENotesForAll: {},
       }
     : {
         ...allFeatureVariants,
