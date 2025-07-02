@@ -45,6 +45,7 @@ import {
   getEnhancedDemoMEUser,
   getEnhancedMEUser,
   getMEUser,
+  getMultistateUser,
   getRecidivizUser,
 } from "./utils";
 
@@ -385,6 +386,32 @@ describe("app = jii", () => {
     // eslint-disable-next-line vitest/expect-expect
     test("can read data from demo ETL collections", async () => {
       await testAllETLReadsForState(db, assertSucceeds, "US_ME", "DEMO_");
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("cannot read anything from live collections", () => {
+      return testAllReadsForState(db, assertFails, "US_ME");
+    });
+  });
+
+  describe("Multi-state enhanced demo user", () => {
+    beforeEach(() => {
+      db = getMultistateUser(testEnv).firestore();
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("can read data from Maine demo ETL collections", async () => {
+      await testAllETLReadsForState(db, assertSucceeds, "US_ME", "DEMO_");
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("can read data from other state demo ETL collections", async () => {
+      await testAllETLReadsForState(db, assertSucceeds, "US_XX", "DEMO_");
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("cannot read data from third state demo ETL collections", async () => {
+      await testAllETLReadsForState(db, assertFails, "US_YY", "DEMO_");
     });
 
     // eslint-disable-next-line vitest/expect-expect

@@ -76,12 +76,16 @@ export async function getFirebaseToken(
     pseudonymizedId,
   }: AuthorizedUserProfile,
 ) {
+  const allowedStatesNormalized = (allowedStates ?? []).map(toUpper);
+
   return firebaseAdmin.auth(await getFirebaseApp()).createCustomToken(uid, {
     app: "jii",
     stateCode,
     externalId,
     pseudonymizedId,
-    recidivizAllowedStates: (allowedStates ?? []).map(toUpper),
+    // we do need both of these due to special handling for Recidiviz staff across apps
+    recidivizAllowedStates: allowedStatesNormalized,
+    allowedStates: allowedStatesNormalized,
     permissions,
   });
 }

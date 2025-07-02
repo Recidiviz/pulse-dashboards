@@ -87,3 +87,13 @@ export function getXXUser(testEnv: RulesTestEnvironment) {
     permissions: ["live_data"],
   });
 }
+
+export function getMultistateUser(testEnv: RulesTestEnvironment) {
+  return testEnv.authenticatedContext("staffuser@example.com", {
+    app: "jii",
+    stateCode: "PARTNER",
+    recidivizAllowedStates: [],
+    allowedStates: ["US_ME", "US_XX"],
+    permissions: ["enhanced"],
+  });
+}

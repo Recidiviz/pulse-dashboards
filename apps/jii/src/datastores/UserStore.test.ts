@@ -124,6 +124,20 @@ test("authorize all states for internal demo user", () => {
   expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
 });
 
+test("authorize multiple states for user", () => {
+  vi.spyOn(store.authManager, "authState", "get").mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "PARTNER",
+      allowedStates: ["US_ME", "US_MA"],
+    },
+  });
+
+  expect(store.isAuthorizedForStateUrl("maine")).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("mass")).toBeTrue();
+  expect(store.isAuthorizedForStateUrl("idaho")).toBeFalse();
+});
+
 test("has permission", () => {
   expect(store.hasPermission("enhanced")).toBeFalse();
 
@@ -178,4 +192,30 @@ test("do not identify to trackers when user has no pseudo ID", () => {
   store.identifyToTrackers();
 
   expect(SegmentClient.prototype.identify).not.toHaveBeenCalled();
+});
+
+test("allowed states", () => {
+  const authStateSpy = vi
+    .spyOn(store.authManager, "authState", "get")
+    .mockReturnValue({
+      status: "authorized",
+      userProfile: {
+        stateCode: "US_ME",
+        externalId: "123456",
+        pseudonymizedId: "test-pid",
+      },
+    });
+
+  expect(store.allowedStates).toEqual(["US_ME"]);
+
+  authStateSpy.mockReturnValue({
+    status: "authorized",
+    userProfile: {
+      stateCode: "PARTNER",
+      allowedStates: ["US_ME", "US_MA", "US_ID"],
+    },
+  });
+  expect(store.allowedStates).toEqual(
+    expect.arrayContaining(["US_ME", "US_MA", "US_ID"]),
+  );
 });

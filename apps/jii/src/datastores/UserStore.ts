@@ -26,7 +26,8 @@ import {
   SegmentClient,
   SegmentClientExternals,
 } from "../apis/Segment/SegmentClient";
-import { stateConfigsByUrlSlug } from "../configs/stateConstants";
+import { stateCodes, stateConfigsByUrlSlug } from "../configs/stateConstants";
+import { StateCode } from "../configs/types";
 
 export class UserStore {
   segmentClient: SegmentClient;
@@ -62,11 +63,13 @@ export class UserStore {
 
       if (isUserState) return true;
 
-      const isRecidivizUser = stateCode === "RECIDIVIZ";
-      const isRecidivizAllowedState = allowedStates?.includes(activeStateCode);
+      // various users (e.g. Recidiviz staff, tablet provider staff) may have
+      // multi state access, at least in some environments
+      const isAllowedState = allowedStates?.includes(activeStateCode);
+      if (isAllowedState) return true;
 
-      if (isRecidivizUser && (isDemoMode() || isRecidivizAllowedState))
-        return true;
+      // for recidiviz users, assume blanket access in demo mode
+      if (stateCode === "RECIDIVIZ" && isDemoMode()) return true;
     }
 
     return false;
@@ -115,6 +118,19 @@ export class UserStore {
       return this.authState.userProfile.stateCode === "RECIDIVIZ";
     }
     return false;
+  }
+
+  get allowedStates(): Array<StateCode> {
+    if (isAuthorizedState(this.authState)) {
+      const userStateCodes = [
+        this.authState.userProfile.stateCode,
+        ...(this.authState.userProfile.allowedStates ?? []),
+      ];
+      // the reason we don't just return userStateCodes is to deduplicate values
+      // and to narrow the type (userProfile "state codes" can be any string, e.g. "RECIDIVIZ")
+      return stateCodes.options.filter((sc) => userStateCodes.includes(sc));
+    }
+    return [];
   }
 
   get user() {

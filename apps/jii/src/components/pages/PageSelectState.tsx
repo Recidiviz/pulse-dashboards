@@ -25,14 +25,18 @@ import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageSelectState = observer(function PageSelectState() {
   const {
-    userStore: { isRecidivizUser },
+    userStore: { allowedStates },
   } = useRootStore();
 
-  if (!isRecidivizUser) return <NotFound />;
+  const allowedConfigs = stateConfigs.filter((c) =>
+    allowedStates.includes(c.stateCode),
+  );
+
+  if (!allowedConfigs.length) return <NotFound />;
 
   return (
     <div>
-      {stateConfigs.map((c) => (
+      {allowedConfigs.map((c) => (
         <p key={c.stateCode}>
           <Link to={State.buildPath({ stateSlug: c.urlSlug })}>
             {c.displayName}
