@@ -204,7 +204,7 @@ const UsIaMenuButton = observer(function MenuButton({
             </OpportunityStatusDropdownMenuItem>
           );
           return option.tooltip ? (
-            <TooltipTrigger contents={option.tooltip}>
+            <TooltipTrigger key={option.tooltip} contents={option.tooltip}>
               {contents}
             </TooltipTrigger>
           ) : (
