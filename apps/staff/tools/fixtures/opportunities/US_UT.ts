@@ -107,7 +107,11 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       emptyTabCopy: [
         {
-          tab: "Report Due",
+          tab: "Report Due (Benchmarks Met)",
+          text: "At this time, there are no clients who have a report due and benchmarks met. Please navigate to one of the other tabs.",
+        },
+        {
+          tab: "Report Due (Other)",
           text: "At this time, there are no clients who have a report due. Please navigate to one of the other tabs.",
         },
         {
@@ -186,7 +190,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       subcategoryOrderings: [
         {
-          tab: "Report Due - Benchmarks Met",
+          tab: "Report Due (Benchmarks Met)",
           texts: ["REPORT_DUE_ELIGIBLE", "REPORT_DUE_ALMOST_ELIGIBLE"],
         },
       ],
@@ -199,8 +203,8 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "ELIGIBILITY STATUS",
           tabs: [
-            "Report Due – Benchmarks Met",
-            "Report Due",
+            "Report Due (Benchmarks Met)",
+            "Report Due (Other)",
             "Early Requests",
             "Report Submitted",
             "Marked Ineligible",
@@ -209,11 +213,11 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       tabPrefaceCopy: [
         {
-          tab: "Report Due – Benchmarks Met",
+          tab: "Report Due (Benchmarks Met)",
           text: "This tab contains eligible cases approaching or past their early termination report due date that meet stability benchmarks set by UDC. It also contains cases almost eligible that are missing one or two indicators of stability for Early Terminations.",
         },
         {
-          tab: "Report Due",
+          tab: "Report Due (Other)",
           text: "This tab contains additional cases approaching or past their early termination report due date, even if they are missing one or two indicators of stability for Early Terminations.",
         },
         {
