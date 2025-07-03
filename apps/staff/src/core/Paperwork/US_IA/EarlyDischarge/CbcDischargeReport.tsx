@@ -340,24 +340,30 @@ const SubmissionAndSignature = observer(function SubmissionAndSignature({
           <SignatureCell>
             <SignatureField
               form={form}
-              signatureField="officerSignatureCbcForm"
+              formType="cbc"
+              signatureField="officerSignatureCbc"
+              signatureFieldType="officer"
               displaySignatureButton={form.currentUserIsSupervisingOfficer}
               additionalFieldsToSave={[
                 "officerFullName",
                 "staffTitle",
                 "workUnit",
               ]}
-              idField="officerSignatureIdCbcForm"
+              idField="officerSignatureIdCbc"
             />
           </SignatureCell>
           <td />
           <SignatureCell>
             <SignatureField
               form={form}
-              signatureField="supervisorSignatureCbcForm"
-              displaySignatureButton={form.currentUserCanSignCbcSupervisorField}
-              additionalFieldsToSave={["supervisorFullName", "supervisorTitle"]}
-              idField="supervisorSignatureIdCbcForm"
+              formType="cbc"
+              signatureField="approverSignatureCbc"
+              signatureFieldType="approver"
+              displaySignatureButton={form.currentUserCanSignApproverField(
+                "cbc",
+              )}
+              additionalFieldsToSave={["approverFullName", "approverTitle"]}
+              idField="approverSignatureIdCbc"
             />
           </SignatureCell>
         </tr>
@@ -371,7 +377,7 @@ const SubmissionAndSignature = observer(function SubmissionAndSignature({
           <td />
           <td>
             <FormUsIaEarlyDischargeInput
-              name="supervisorFullName"
+              name="approverFullName"
               placeholder="District Supervisor's Name"
             />
           </td>
@@ -386,20 +392,10 @@ const SubmissionAndSignature = observer(function SubmissionAndSignature({
           <td />
           <td>
             <FormUsIaEarlyDischargeInput
-              name="supervisorTitle"
+              name="approverTitle"
               placeholder="District Supervisor's Title"
             />
           </td>
-        </tr>
-        <tr>
-          <td>
-            <FormUsIaEarlyDischargeInput
-              name="workUnit"
-              placeholder="Supervising Officer's Unit"
-            />
-          </td>
-          <td />
-          <td />
         </tr>
         <tr>
           <td colSpan={3}>

@@ -24,6 +24,7 @@ import {
   FormUsIaEarlyDischargeCheckbox,
   FormUsIaEarlyDischargeDropdown,
   FormUsIaEarlyDischargeInput,
+  FormUsIaEarlyDischargeTextArea,
 } from "./FormComponents";
 
 const MarginedFormPage = styled(FormPage)`
@@ -69,6 +70,10 @@ const CaseTable = styled.table`
   & td:nth-child(2) {
     border-right: ${borderStyle};
   }
+
+  & td textarea {
+    width: 10rem;
+  }
 `;
 
 const BoldCell = styled.td`
@@ -92,7 +97,9 @@ function CaseSummary() {
         <tr>
           <td />
           <td>Plaintiff,</td>
-          <td>Case No(s). $CASE_NUMBERS</td>
+          <td>
+            Case No(s). <FormUsIaEarlyDischargeTextArea name="caseNumbers" />
+          </td>
         </tr>
         <tr>
           <td>vs.</td>
@@ -152,6 +159,10 @@ const CheckboxRow = styled.div`
     margin-right: 0.5rem;
     margin-left: 0.5rem;
   }
+
+  & textarea {
+    width: 25rem;
+  }
 `;
 
 function Checkboxes() {
@@ -162,12 +173,15 @@ function Checkboxes() {
         <div>
           The defendant was{" "}
           <FormUsIaEarlyDischargeDropdown
-            name="probationCompletionStatus"
+            name="clientStatusProbationForm"
             menuItems={["Incarcerated", "Deceased", "Deported"]}
             style={{ display: "inline-block", minWidth: "5rem" }}
           />{" "}
           as of
-          <FormUsIaEarlyDischargeInput name="probationCompletionDate" />
+          <FormUsIaEarlyDischargeInput
+            name="clientStatusDateProbationForm"
+            style={{ minWidth: "4rem" }}
+          />
         </div>
       </CheckboxRow>
       <CheckboxRow>
@@ -189,10 +203,7 @@ function Checkboxes() {
         <FormUsIaEarlyDischargeCheckbox name="hasOtherProbationDischargeOrder" />
         <div>
           Other:{" "}
-          <FormUsIaEarlyDischargeInput
-            name="otherProbationDischargeOrderDetails"
-            style={{ minWidth: "4rem" }}
-          />
+          <FormUsIaEarlyDischargeTextArea name="otherProbationDischargeOrderDetails" />
         </div>
       </CheckboxRow>
     </CheckboxContainer>

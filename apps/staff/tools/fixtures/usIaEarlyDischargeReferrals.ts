@@ -373,4 +373,78 @@ export const usIaEarlyDischargeReferralsFixture =
       eligibleDate: relativeFixtureDate({ months: -18 }),
       metadata: {},
     },
+    {
+      stateCode: "US_IA",
+      externalId: "005",
+      eligibleCriteria: {
+        noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
+        notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: {
+          lifeSentence: false,
+          ineligibleOffenses: null,
+        },
+        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+          eligibleDate: relativeFixtureDate({ months: -3 }),
+        },
+        supervisionCaseTypeIsNotSexOffense: null,
+        supervisionTypeIsNotInvestigation: {
+          rawSupervisionTypes: null,
+        },
+        usIaNoOpenSupervisionModifiers: null,
+        usIaNotExcludedFromEarlyDischargeByParoleCondition: {
+          conditions: null,
+        },
+        usIaNotServingIneligibleOffenseForEarlyDischarge: {
+          ineligibleOffenses: null,
+        },
+        usIaServingSupervisionCaseAtLeast90Days: {
+          supervisionCaseStartDate: relativeFixtureDate({ months: -8 }),
+        },
+        usIaSupervisionFeesPaid: {
+          initialBalance: 2000,
+          currentBalance: 2000,
+        },
+        usIaSupervisionLevelIs0NotAvailable12Or3: {
+          supervisionLevelRawText: "LEVEL 2",
+        },
+        supervisionLevelIsNotResidentialProgram: null,
+      },
+      ineligibleCriteria: {},
+      isEligible: true,
+      isAlmostEligible: false,
+      formInformation: {
+        USCitizenshipStatus: "US Citizen",
+        charges: [
+          {
+            causeNumber: "CN989",
+            crimeCdOffenseType: "Misdemeanor",
+            jurisdiction: "District Court",
+            classificationTypeRawText: "Misdemeanor",
+            counts: 1,
+            description: "Example offense",
+            statute: "ABC-123",
+            tdd: "2026-10-10",
+            sdd: "",
+            chargeExternalId: "CHARGE-001",
+          },
+        ],
+        penalties: [
+          {
+            penaltyValue: "2, 1, 15",
+            sentencePenaltyModifier: "Increased",
+            sentencePenaltyType: "Incarceration",
+            sentenceDate: "2024-10-10",
+            chargeExternalId: "CHARGE-001",
+          },
+        ],
+        staffAttributes: [
+          {
+            staffTitle: "Supervisor",
+            workUnit: "Department X",
+            officerExternalId: "OFFICER-004",
+          },
+        ],
+      },
+      eligibleDate: relativeFixtureDate({ months: -18 }),
+      metadata: {},
+    },
   ]);

@@ -190,6 +190,12 @@ export type UsIaEarlyDischargeActionsMetadata = {
   revert?: boolean;
 };
 
+export type UsIaEarlyDischargeReferralFormSignatureMetadata = {
+  justiceInvolvedPersonId: string;
+  formType: "cbc" | "parole";
+  signatureField: "officer" | "approver";
+};
+
 export default class AnalyticsStore {
   rootStore;
   segment;
@@ -567,6 +573,24 @@ export default class AnalyticsStore {
     metadata: UsIaEarlyDischargeActionsMetadata,
   ) {
     this.track("frontend.us_ia_early_discharge_opportunity_actions", metadata);
+  }
+
+  trackUsIaEarlyDischargeReferralFormSignatureAdded(
+    metadata: UsIaEarlyDischargeReferralFormSignatureMetadata,
+  ) {
+    this.track(
+      "frontend.us_ia_early_discharge_referral_form_signature_added",
+      metadata,
+    );
+  }
+
+  trackUsIaEarlyDischargeReferralFormSignatureRemoved(
+    metadata: UsIaEarlyDischargeReferralFormSignatureMetadata,
+  ) {
+    this.track(
+      "frontend.us_ia_early_discharge_referral_form_signature_removed",
+      metadata,
+    );
   }
 
   /****************************

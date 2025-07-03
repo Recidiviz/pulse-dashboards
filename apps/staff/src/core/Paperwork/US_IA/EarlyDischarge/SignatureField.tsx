@@ -21,6 +21,7 @@ import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
 
 import { useRootStore } from "../../../../components/StoreProvider";
+import { PartialRecord } from "../../../../utils/typeUtils";
 import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { UsIaEarlyDischargeDraftData } from "../../../../WorkflowsStore/Opportunity/UsIa";
 import { FormUsIaEarlyDischargeInput } from "./FormComponents";
@@ -44,16 +45,25 @@ const SignatureField = observer(function SignatureField({
   form,
   signatureField,
   displaySignatureButton,
-  additionalFieldsToSave,
   idField,
+  signatureFieldType,
+  formType,
+  fieldsToPopulate = {},
+  additionalFieldsToSave = [],
 }: {
   form: UsIaEarlyDischargeForm;
   signatureField: keyof UsIaEarlyDischargeDraftData;
   displaySignatureButton: boolean;
-  additionalFieldsToSave: (keyof UsIaEarlyDischargeDraftData)[];
   idField: keyof UsIaEarlyDischargeDraftData;
+  signatureFieldType: "officer" | "approver";
+  formType: "cbc" | "parole";
+  fieldsToPopulate?: PartialRecord<
+    keyof UsIaEarlyDischargeDraftData,
+    string | boolean
+  >;
+  additionalFieldsToSave?: (keyof UsIaEarlyDischargeDraftData)[];
 }) {
-  const { userStore } = useRootStore();
+  const { userStore, analyticsStore } = useRootStore();
 
   const isSigned = !!form.formData[signatureField];
 
@@ -74,6 +84,20 @@ const SignatureField = observer(function SignatureField({
           idField,
           userStore.userAppMetadata?.externalId ?? "",
         );
+        // Save any additional fields that need to be populated when signed
+        Object.entries(fieldsToPopulate).forEach(([field, value]) => {
+          if (value === undefined) return;
+
+          form.updateDraftData(
+            field as keyof UsIaEarlyDischargeDraftData,
+            value,
+          );
+        });
+        analyticsStore.trackUsIaEarlyDischargeReferralFormSignatureAdded({
+          justiceInvolvedPersonId: form.opportunity.person.pseudonymizedId,
+          formType,
+          signatureField: signatureFieldType,
+        });
       } else {
         // Remove all edits to the fields related to the officer signature
         // so that they don't override the fields if a different
@@ -83,6 +107,15 @@ const SignatureField = observer(function SignatureField({
           form.clearDraftData(field);
         });
         form.clearDraftData(idField);
+        // Clear any additional fields that were populated when signed
+        Object.entries(fieldsToPopulate).forEach(([field, value]) => {
+          form.clearDraftData(field as keyof UsIaEarlyDischargeDraftData);
+        });
+        analyticsStore.trackUsIaEarlyDischargeReferralFormSignatureRemoved({
+          justiceInvolvedPersonId: form.opportunity.person.pseudonymizedId,
+          formType,
+          signatureField: signatureFieldType,
+        });
       }
     });
   };
@@ -92,6 +125,14 @@ const SignatureField = observer(function SignatureField({
   const buttonStyle = isSigned
     ? { fontFamily: "Snell Roundhand, cursive" }
     : { fontFamily: "Arial, sans-serif" };
+
+  let placeholderText: string | undefined = undefined;
+  if (!isSigned) {
+    placeholderText =
+      signatureFieldType === "officer"
+        ? "Supervising Officer's Signature"
+        : "Director's Signature";
+  }
 
   const officerSignatureButton = displaySignatureButton ? (
     <SignatureButton onClick={onClickButton}>{buttonText}</SignatureButton>
@@ -104,7 +145,7 @@ const SignatureField = observer(function SignatureField({
         // which triggers the animation effect
         key={isSigned ? "signed" : "unsigned"}
         name={signatureField}
-        placeholder={isSigned ? undefined : "Supervising Officer's Signature"}
+        placeholder={placeholderText}
         style={buttonStyle}
         readOnly
       />

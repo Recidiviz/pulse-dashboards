@@ -18,11 +18,14 @@
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { formatWorkflowsDate } from "../../../../utils";
+import { UsIaEarlyDischargeForm } from "../../../../WorkflowsStore/Opportunity/Forms/UsIaEarlyDischargeForm";
 import { useOpportunityFormContext } from "../../OpportunityFormContext";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 import idocLogo from "./assets/idocLogo.png";
 import { FormPage } from "./constants";
 import { FormUsIaEarlyDischargeInput } from "./FormComponents";
+import SignatureField from "./SignatureField";
 
 const LogoComponent = styled.img`
   width: 4.15rem;
@@ -156,7 +159,10 @@ function DischargeInformation() {
       </div>
       <div>
         <FieldLabel>Date of Discharge:</FieldLabel>{" "}
-        <FormUsIaEarlyDischargeInput name="dischargeDate" />
+        <FormUsIaEarlyDischargeInput
+          name="dischargeDate"
+          style={{ minWidth: "4rem" }}
+        />
       </div>
     </DischargeInformationContainer>
   );
@@ -174,15 +180,56 @@ const SentenceTable = styled.table`
   }
 `;
 
+function SentenceRows({
+  form,
+  chargeNumber,
+}: {
+  form: UsIaEarlyDischargeForm;
+  chargeNumber: number;
+}) {
+  const matchingPenalties = [];
+  for (let p = 0; p < (form.formData.numberOfPenalties ?? 0); p++) {
+    if (
+      form.formData[`penaltyChargeExternalId${p}`] ===
+      form.formData[`chargeExternalId${chargeNumber}`]
+    ) {
+      matchingPenalties.push(p);
+    }
+  }
+  return (
+    <>
+      {matchingPenalties.map((p) => (
+        <tr key={`${chargeNumber}-${p}`}>
+          <td>
+            <FormUsIaEarlyDischargeInput name={`sentenceDate${p}`} />
+          </td>
+          <td>
+            <FormUsIaEarlyDischargeInput name={`jurisdiction${chargeNumber}`} />
+          </td>
+          <td>
+            <FormUsIaEarlyDischargeInput name={`statute${chargeNumber}`} />
+          </td>
+          <td>
+            <FormUsIaEarlyDischargeInput name={`penaltyValue${p}`} />
+          </td>
+          <td>
+            <FormUsIaEarlyDischargeInput name={`tdd${chargeNumber}`} />
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+}
+
 function SentenceInformation() {
-  const form = useOpportunityFormContext();
+  const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
 
   return (
     <SentenceTable>
       <colgroup>
         <col style={{ width: "16%" }} />
-        <col style={{ width: "11%" }} />
-        <col style={{ width: "45%" }} />
+        <col style={{ width: "15%" }} />
+        <col style={{ width: "41%" }} />
         <col style={{ width: "13%" }} />
         <col style={{ width: "15%" }} />
       </colgroup>
@@ -196,22 +243,8 @@ function SentenceInformation() {
         </tr>
       </thead>
       <tbody>
-        {[...Array(form.formData.numberOfPenalties).keys()].map((i) => (
-          <tr key={i}>
-            <td>$DATE</td>
-            <td>
-              <FormUsIaEarlyDischargeInput name={`jurisdiction${i}`} />
-            </td>
-            <td>
-              <FormUsIaEarlyDischargeInput name={`statute${i}`} />
-            </td>
-            <td>
-              <FormUsIaEarlyDischargeInput name={`penaltyValue${i}`} />
-            </td>
-            <td>
-              <FormUsIaEarlyDischargeInput name={`tdd${i}`} />
-            </td>
-          </tr>
+        {[...Array(form.formData.numberOfCharges).keys()].map((i) => (
+          <SentenceRows form={form} chargeNumber={i} key={i} />
         ))}
       </tbody>
     </SentenceTable>
@@ -230,38 +263,56 @@ const SignatureContainer = styled.div`
   }
 `;
 
-function Signatures() {
+function Signatures({ form }: { form: UsIaEarlyDischargeForm }) {
   return (
     <SignatureContainer>
       <div>
         <div>
-          <FormUsIaEarlyDischargeInput
-            name="officerSignatureParoleDischargeForm"
-            style={{ width: "100%", fontFamily: "Snell Roundhand, cursive" }}
+          <SignatureField
+            form={form}
+            signatureField="officerSignatureParole"
+            displaySignatureButton={form.currentUserIsSupervisingOfficer}
+            idField="officerSignatureIdParole"
+            signatureFieldType="officer"
+            formType="parole"
+            fieldsToPopulate={{
+              officerSignatureDateParole: formatWorkflowsDate(new Date()),
+            }}
           />
         </div>
         <div>&nbsp;Probation/Parole Supervisor</div>
         <div>
           &nbsp;Date{" "}
           <FormUsIaEarlyDischargeInput
-            name="officerSignatureDate"
+            name="officerSignatureDateParole"
             style={{ width: "100%" }}
+            readOnly
           />
         </div>
       </div>
       <div>
         <div>
-          <FormUsIaEarlyDischargeInput
-            name="supervisorSignatureParoleDischargeForm"
-            style={{ width: "100%", fontFamily: "Snell Roundhand, cursive" }}
+          <SignatureField
+            form={form}
+            signatureField="approverSignatureParole"
+            displaySignatureButton={form.currentUserCanSignApproverField(
+              "parole",
+            )}
+            idField="approverSignatureIdParole"
+            signatureFieldType="approver"
+            formType="parole"
+            fieldsToPopulate={{
+              approverSignatureDateParole: formatWorkflowsDate(new Date()),
+            }}
           />
         </div>
         <div>&nbsp;District Director</div>
         <div>
           &nbsp;Date{" "}
           <FormUsIaEarlyDischargeInput
-            name="supervisorSignatureDate"
+            name="approverSignatureDateParole"
             style={{ width: "100%" }}
+            readOnly
           />
         </div>
       </div>
@@ -312,6 +363,8 @@ function LegalInformation() {
 }
 
 export const ParoleDischarge = () => {
+  const form = useOpportunityFormContext() as UsIaEarlyDischargeForm;
+
   return (
     <PrintablePageMargin>
       <PrintablePage>
@@ -322,7 +375,7 @@ export const ParoleDischarge = () => {
             <MainStatement />
             <DischargeInformation />
             <SentenceInformation />
-            <Signatures />
+            <Signatures form={form} />
             <LegalInformation />
           </FormBody>
         </FormPage>

@@ -51,14 +51,17 @@ export class UsIaEarlyDischargeForm extends FormBase<
     return !!this.getCurrentUserFromFormRecord();
   }
 
-  get currentUserCanSignCbcSupervisorField(): boolean {
+  currentUserCanSignApproverField(formType: "cbc" | "parole"): boolean {
     const { userStore } = this.rootStore;
-    if (!this.formData.officerSignatureCbcForm) return false;
+    const signatureField =
+      formType === "cbc" ? "officerSignatureCbc" : "officerSignatureParole";
 
-    return (
-      userStore.userAppMetadata?.externalId !==
-      this.formData.officerSignatureIdCbcForm
-    );
+    if (!this.formData[signatureField]) return false;
+
+    const idField =
+      formType === "cbc" ? "officerSignatureIdCbc" : "officerSignatureIdParole";
+
+    return userStore.userAppMetadata?.externalId !== this.formData[idField];
   }
 
   prefilledDataTransformer(): Partial<UsIaEarlyDischargeDraftData> {
@@ -94,6 +97,8 @@ export class UsIaEarlyDischargeForm extends FormBase<
       chargeData[`tdd${i}`] = tdd ? formatWorkflowsDate(new Date(tdd)) : "";
       chargeData[`sdd${i}`] = sdd ? formatWorkflowsDate(new Date(sdd)) : "";
     }
+
+    const caseNumbers = charges.map((charge) => charge.causeNumber).join(", ");
 
     const numberOfPenalties = penalties.length;
     const penaltyData: PenaltyRecords = {};
@@ -143,24 +148,12 @@ export class UsIaEarlyDischargeForm extends FormBase<
       officerFullName,
       staffTitle,
       workUnit,
-      dischargeDate: "",
-      supervisorSignatureDate: "",
-      officerSignatureDate: "",
-      supervisorSignatureCbcForm: "",
-      officerSignatureCbcForm: "",
-      supervisorSignatureParoleDischargeForm: "",
-      officerSignatureParoleDischargeForm: "",
-      progressAndRecommendations: "",
-      supervisorFullName: "",
-      supervisorTitle: "",
+      caseNumbers,
 
       hasCompletedProbation: false,
-      probationCompletionStatus: "",
-      probationCompletionDate: todaysDate,
       remainsFinanciallyLiable: false,
       grantedDeferredJudgement: false,
       hasOtherProbationDischargeOrder: false,
-      otherProbationDischargeOrderDetails: "",
 
       numberOfCharges,
       ...chargeData,

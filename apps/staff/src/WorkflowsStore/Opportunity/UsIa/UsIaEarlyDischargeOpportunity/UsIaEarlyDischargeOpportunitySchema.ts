@@ -226,22 +226,24 @@ export type UsIaEarlyDischargeDraftData = {
   workUnit: string;
 
   dischargeDate: string;
-  supervisorFullName: string;
-  supervisorTitle: string;
-  officerSignatureCbcForm: string;
-  officerSignatureIdCbcForm: string;
-  supervisorSignatureCbcForm: string;
-  supervisorSignatureIdCbcForm: string;
-  officerSignatureParoleDischargeForm: string;
-  officerSignatureIdParoleDischargeForm: string;
-  supervisorSignatureParoleDischargeForm: string;
-  officerSignatureDate: string;
-  supervisorSignatureDate: string;
+  approverFullName: string;
+  approverTitle: string;
+  officerSignatureCbc: string;
+  officerSignatureIdCbc: string;
+  approverSignatureCbc: string;
+  approverSignatureIdCbc: string;
+  officerSignatureParole: string;
+  officerSignatureIdParole: string;
+  officerSignatureDateParole: string;
+  approverSignatureParole: string;
+  approverSignatureDateParole: string;
+  approverSignatureIdParole: string;
   progressAndRecommendations: string;
+  caseNumbers: string;
 
   hasCompletedProbation: boolean;
-  probationCompletionStatus: string;
-  probationCompletionDate: string;
+  clientStatusProbationForm: string;
+  clientStatusDateProbationForm: string;
   remainsFinanciallyLiable: boolean;
   grantedDeferredJudgement: boolean;
   hasOtherProbationDischargeOrder: boolean;
@@ -262,22 +264,23 @@ export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
     staffTitle,
     workUnit,
     dischargeDate,
-    supervisorSignatureDate,
-    officerSignatureDate,
+    approverSignatureDateParole,
+    officerSignatureDateParole,
     hasCompletedProbation,
-    probationCompletionStatus,
-    probationCompletionDate,
+    clientStatusProbationForm,
+    clientStatusDateProbationForm,
+    caseNumbers,
     remainsFinanciallyLiable,
     grantedDeferredJudgement,
     hasOtherProbationDischargeOrder,
     otherProbationDischargeOrderDetails,
     progressAndRecommendations,
-    supervisorTitle,
-    supervisorFullName,
-    officerSignatureCbcForm,
-    officerSignatureParoleDischargeForm,
-    supervisorSignatureCbcForm,
-    supervisorSignatureParoleDischargeForm,
+    approverTitle,
+    approverFullName,
+    officerSignatureCbc,
+    officerSignatureParole,
+    approverSignatureCbc,
+    approverSignatureParole,
   } = draftData;
 
   const penalties = [];
@@ -322,18 +325,19 @@ export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
     staffTitle,
     workUnit,
     dischargeDate,
-    supervisorSignatureDate,
-    officerSignatureDate,
-    officerSignatureCbcForm,
-    officerSignatureParoleDischargeForm,
-    supervisorSignatureCbcForm,
-    supervisorSignatureParoleDischargeForm,
-    supervisorTitle,
-    supervisorFullName,
+    approverSignatureDateParole,
+    officerSignatureDateParole,
+    officerSignatureCbc,
+    officerSignatureParole,
+    approverSignatureCbc,
+    approverSignatureParole,
+    approverTitle,
+    approverFullName,
     progressAndRecommendations,
     hasCompletedProbation,
-    probationCompletionStatus,
-    probationCompletionDate,
+    clientStatusProbationForm,
+    clientStatusDateProbationForm,
+    caseNumbers,
     remainsFinanciallyLiable,
     grantedDeferredJudgement,
     hasOtherProbationDischargeOrder,

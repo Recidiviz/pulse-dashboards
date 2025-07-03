@@ -55,7 +55,7 @@ const formDownloader = async (
       contents,
     ],
     [
-      `${client.displayName} - Probation Discharge Order.docx`,
+      `${client.displayName} - Proposed Probation Discharge Order.docx`,
       client.stateCode,
       "probation_discharge_order_template.docx",
       contents,

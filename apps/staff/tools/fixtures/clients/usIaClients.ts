@@ -96,4 +96,23 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     expirationDate: relativeFixtureDate({ months: 9 }),
     allEligibleOpportunities: ["usIaEarlyDischarge"],
   },
+  {
+    personName: {
+      givenNames: "Stephen",
+      surname: "Grinder",
+    },
+    personExternalId: "005",
+    displayId: "12350",
+    pseudonymizedId: "p005",
+    stateCode: "US_IA",
+    officerId: "OFFICER1",
+    supervisionType: "PAROLE",
+    supervisionLevel: "LEVEL 2",
+    supervisionLevelStart: relativeFixtureDate({ months: -10 }),
+    supervisionStartDate: relativeFixtureDate({ months: -12 }),
+    address: "102 Bedrock Lane",
+    phoneNumber: "5555555680",
+    expirationDate: relativeFixtureDate({ months: 11 }),
+    allEligibleOpportunities: ["usIaEarlyDischarge"],
+  },
 ];
