@@ -15,40 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import jsPDF from "jspdf";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
+import React, { useEffect, useState } from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
-import { UsTxAnnualReportStatusOpportunity } from "../../WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
-import { UsTxAnnualReportStatusDraftData } from "../../WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
 import { FormContainer } from "../Paperwork/FormContainer";
-import {
-  fillAndSavePDF,
-  PDFFillerFunc,
-  SetFunc,
-} from "../Paperwork/PDFFormFiller";
-import previewImage from "./assets/PSV-323Dpreview.png";
-
-const FormPreviewPage = styled.img`
-  height: auto;
-  width: 100%;
-`;
-
-const fillerFunc: PDFFillerFunc = async (
-  formData: Partial<UsTxAnnualReportStatusDraftData>,
-  set: SetFunc,
-): Promise<void> => {
-  set("{clientName}", formData.clientName);
-  set("{clientId}", formData.clientId);
-  set("{eligibilityMonth}", formData.eligibilityMonthString);
-  set("{Y1}", formData.threeYearsTRASCheck);
-  set("{Y2}", formData.complianceFeesAndEducationCheck);
-  set("{Y3}", formData.restitutionObligationsCheck);
-  set("{Y4}", formData.warrantCheck);
-  set("{Y5}", formData.societyBestInterestCheck);
-  set("{officerName}", formData.officerName);
-};
+import FormViewer from "../Paperwork/FormViewer";
+import { generate } from "../Paperwork/PDFFormGenerator";
+import { PrintablePage } from "../Paperwork/styles";
+import FormPSV323D from "../Paperwork/US_TX/UsTxAnnualReportStatus/PSV-323D";
 
 const WorkflowsUsTxAnnualReportStatusForm = observer(
   function WorkflowsUsTxAnnualReportStatusForm({
@@ -56,23 +32,22 @@ const WorkflowsUsTxAnnualReportStatusForm = observer(
   }: {
     opportunity: Opportunity;
   }) {
-    const { getTokenSilently } = useRootStore();
+    const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+    const [isMissingContent, setIsMissingContent] = useState(false);
 
-    if (!(opportunity instanceof UsTxAnnualReportStatusOpportunity)) {
-      return null;
-    }
+    useEffect(() => {
+      // prevent the ability to download form before it has been rendered
+      const pages = formRef.current?.querySelectorAll(PrintablePage);
+      setIsMissingContent(!(pages && pages.length > 0));
+    }, [formRef]);
 
     const onClickDownload = async () => {
-      const formData = opportunity.form.formData;
-      if (!formData) return;
-
-      await fillAndSavePDF(
-        `${opportunity.person.displayName} - Annual Reporting Status Form.pdf`,
-        "US_TX",
-        "PSV-323D.pdf",
-        fillerFunc,
-        formData,
-        getTokenSilently,
+      return generate(formRef.current, `${PrintablePage}`).then(
+        (pdf: jsPDF) => {
+          pdf.save(
+            `${opportunity.person.displayName} - Annual Reporting Status Form.pdf`,
+          );
+        },
       );
     };
 
@@ -80,14 +55,14 @@ const WorkflowsUsTxAnnualReportStatusForm = observer(
       <FormContainer
         agencyName="TDCJ"
         heading={opportunity.config.label}
+        isMissingContent={isMissingContent}
         onClickDownload={onClickDownload}
         downloadButtonLabel="Download Form"
         opportunity={opportunity}
       >
-        <FormPreviewPage
-          src={previewImage}
-          alt={`Annual Reporting Status Form preview`}
-        ></FormPreviewPage>
+        <FormViewer formRef={formRef}>
+          <FormPSV323D />
+        </FormViewer>
       </FormContainer>
     );
   },
