@@ -28,6 +28,7 @@ import {
   FormUsIaEarlyDischargeInput,
   FormUsIaEarlyDischargeTextArea,
 } from "./FormComponents";
+import SignatureField from "./SignatureField";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -116,11 +117,6 @@ const ChargeDetailsTable = styled.table`
 
   & span {
     padding: ${rem(spacing.xxs)};
-  }
-
-  & textarea {
-    width: 90%;
-    font-family: Arial, sans-serif;
   }
 `;
 
@@ -296,61 +292,140 @@ function ProgressAndRecommendations() {
       <SectionHeader>
         Progress of Supervision/Restitution Status/Recommendations:
       </SectionHeader>
-      <div>TODO: Add statuses</div>
+      <div>
+        <FormUsIaEarlyDischargeTextArea name="progressAndRecommendations" />
+      </div>
     </ProgressAndRecommendationsContainer>
   );
 }
 
 const SubmissionAndSignatureTable = styled.table`
-  width: 80%;
+  width: 100%;
   margin-top: ${rem(30)};
 `;
 
-function SubmissionAndSignature() {
+const SignatureCell = styled.td`
+  border-bottom: 1px solid black;
+  margin-right: 1rem;
+`;
+
+const SubmissionAndSignature = observer(function SubmissionAndSignature({
+  form,
+}: {
+  form: UsIaEarlyDischargeForm;
+}) {
   return (
     <SubmissionAndSignatureTable>
       <colgroup>
-        <col style={{ width: "50%" }} />
-        <col style={{ width: "50%" }} />
+        <col style={{ width: "48%" }} />
+        <col style={{ width: "4%" }} />
+        <col style={{ width: "48%" }} />
       </colgroup>
       <thead>
         <tr>
           <td>Respectfully submitted,</td>
-          <td></td>
+          <td />
+          <td />
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>
             <br />
-            <br />
-            Signature will go here
-            <br />
-            <br />
-            <FormUsIaEarlyDischargeInput name="officerFullName" />
-            <FormUsIaEarlyDischargeInput name="staffTitle" />
-            <FormUsIaEarlyDischargeInput name="workUnit" />
           </td>
+          <td />
+          <td />
+        </tr>
+        <tr>
+          <SignatureCell>
+            <SignatureField
+              form={form}
+              signatureField="officerSignatureCbcForm"
+              displaySignatureButton={form.currentUserIsSupervisingOfficer}
+              additionalFieldsToSave={[
+                "officerFullName",
+                "staffTitle",
+                "workUnit",
+              ]}
+              idField="officerSignatureIdCbcForm"
+            />
+          </SignatureCell>
+          <td />
+          <SignatureCell>
+            <SignatureField
+              form={form}
+              signatureField="supervisorSignatureCbcForm"
+              displaySignatureButton={form.currentUserCanSignCbcSupervisorField}
+              additionalFieldsToSave={["supervisorFullName", "supervisorTitle"]}
+              idField="supervisorSignatureIdCbcForm"
+            />
+          </SignatureCell>
+        </tr>
+        <tr>
           <td>
-            Region/Work Unit: <FormUsIaEarlyDischargeInput name="workUnit" />
-            Distribution: Judge Attorney , File // Parolee, File
+            <FormUsIaEarlyDischargeInput
+              name="officerFullName"
+              placeholder="Supervising Officer's Name"
+            />
+          </td>
+          <td />
+          <td>
+            <FormUsIaEarlyDischargeInput
+              name="supervisorFullName"
+              placeholder="District Supervisor's Name"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <FormUsIaEarlyDischargeInput
+              name="staffTitle"
+              placeholder="Supervising Officer's Title"
+            />
+          </td>
+          <td />
+          <td>
+            <FormUsIaEarlyDischargeInput
+              name="supervisorTitle"
+              placeholder="District Supervisor's Title"
+            />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <FormUsIaEarlyDischargeInput
+              name="workUnit"
+              placeholder="Supervising Officer's Unit"
+            />
+          </td>
+          <td />
+          <td />
+        </tr>
+        <tr>
+          <td colSpan={3}>
+            Region/Work Unit:{" "}
+            <FormUsIaEarlyDischargeInput
+              name="workUnit"
+              placeholder="Supervising Officer's Unit"
+            />
+            <br />
+            Distribution: Judge, County Attorney, File // Parolee, File
           </td>
         </tr>
       </tbody>
     </SubmissionAndSignatureTable>
   );
-}
+});
 
 const FooterContainer = styled.div`
+  margin-top: auto;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   align-items: center;
 `;
 
 const FooterText = styled.div`
-  color: #757575;
   font-size: ${rem(9)};
 `;
 
@@ -358,8 +433,9 @@ function Footer() {
   return (
     <FooterContainer>
       <FooterText>
-        0000000 - <FormUsIaEarlyDischargeInput name="clientFullName" /> Page 1
-        of 1 <FormUsIaEarlyDischargeInput name="todaysDate" />
+        <FormUsIaEarlyDischargeInput name="iconNumber" /> -{" "}
+        <FormUsIaEarlyDischargeInput name="clientFullName" /> Page 1 of 1{" "}
+        <FormUsIaEarlyDischargeInput name="todaysDate" />
       </FooterText>
     </FooterContainer>
   );
@@ -382,7 +458,7 @@ export const CbcDischargeReport = observer(function CbcDischargeReport() {
             <ChargeTable form={form} chargeNumber={i} key={i} />
           ))}
           <ProgressAndRecommendations />
-          <SubmissionAndSignature />
+          <SubmissionAndSignature form={form} />
           <Footer />
         </FormPage>
       </PrintablePage>

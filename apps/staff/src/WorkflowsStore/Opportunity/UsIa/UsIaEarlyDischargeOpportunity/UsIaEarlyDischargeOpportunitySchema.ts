@@ -226,10 +226,18 @@ export type UsIaEarlyDischargeDraftData = {
   workUnit: string;
 
   dischargeDate: string;
-  supervisorSignature: string;
-  directorSignature: string;
+  supervisorFullName: string;
+  supervisorTitle: string;
+  officerSignatureCbcForm: string;
+  officerSignatureIdCbcForm: string;
+  supervisorSignatureCbcForm: string;
+  supervisorSignatureIdCbcForm: string;
+  officerSignatureParoleDischargeForm: string;
+  officerSignatureIdParoleDischargeForm: string;
+  supervisorSignatureParoleDischargeForm: string;
+  officerSignatureDate: string;
   supervisorSignatureDate: string;
-  directorSignatureDate: string;
+  progressAndRecommendations: string;
 
   hasCompletedProbation: boolean;
   probationCompletionStatus: string;
@@ -254,10 +262,8 @@ export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
     staffTitle,
     workUnit,
     dischargeDate,
-    supervisorSignature,
-    directorSignature,
     supervisorSignatureDate,
-    directorSignatureDate,
+    officerSignatureDate,
     hasCompletedProbation,
     probationCompletionStatus,
     probationCompletionDate,
@@ -265,6 +271,13 @@ export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
     grantedDeferredJudgement,
     hasOtherProbationDischargeOrder,
     otherProbationDischargeOrderDetails,
+    progressAndRecommendations,
+    supervisorTitle,
+    supervisorFullName,
+    officerSignatureCbcForm,
+    officerSignatureParoleDischargeForm,
+    supervisorSignatureCbcForm,
+    supervisorSignatureParoleDischargeForm,
   } = draftData;
 
   const penalties = [];
@@ -309,10 +322,15 @@ export function packDraftData(draftData: UsIaEarlyDischargeDraftData) {
     staffTitle,
     workUnit,
     dischargeDate,
-    supervisorSignature,
-    directorSignature,
     supervisorSignatureDate,
-    directorSignatureDate,
+    officerSignatureDate,
+    officerSignatureCbcForm,
+    officerSignatureParoleDischargeForm,
+    supervisorSignatureCbcForm,
+    supervisorSignatureParoleDischargeForm,
+    supervisorTitle,
+    supervisorFullName,
+    progressAndRecommendations,
     hasCompletedProbation,
     probationCompletionStatus,
     probationCompletionDate,

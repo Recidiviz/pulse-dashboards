@@ -236,7 +236,7 @@ function Signatures() {
       <div>
         <div>
           <FormUsIaEarlyDischargeInput
-            name="supervisorSignature"
+            name="officerSignatureParoleDischargeForm"
             style={{ width: "100%", fontFamily: "Snell Roundhand, cursive" }}
           />
         </div>
@@ -244,7 +244,7 @@ function Signatures() {
         <div>
           &nbsp;Date{" "}
           <FormUsIaEarlyDischargeInput
-            name="supervisorSignatureDate"
+            name="officerSignatureDate"
             style={{ width: "100%" }}
           />
         </div>
@@ -252,7 +252,7 @@ function Signatures() {
       <div>
         <div>
           <FormUsIaEarlyDischargeInput
-            name="directorSignature"
+            name="supervisorSignatureParoleDischargeForm"
             style={{ width: "100%", fontFamily: "Snell Roundhand, cursive" }}
           />
         </div>
@@ -260,7 +260,7 @@ function Signatures() {
         <div>
           &nbsp;Date{" "}
           <FormUsIaEarlyDischargeInput
-            name="directorSignatureDate"
+            name="supervisorSignatureDate"
             style={{ width: "100%" }}
           />
         </div>

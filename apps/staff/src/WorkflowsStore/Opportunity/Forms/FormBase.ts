@@ -211,6 +211,31 @@ export class FormBase<
   }
 
   /**
+   * Clear draft data for a specific field in the form.
+   */
+  async clearDraftData(name: string) {
+    const { person } = this.opportunity;
+
+    const update = {
+      referralForm: {
+        updated: {
+          by: this.currentUserEmail,
+          date: serverTimestamp(),
+        },
+        data: { [name]: deleteField() },
+      },
+    };
+
+    await this.rootStore.firestoreStore.updateForm(
+      person.recordId,
+      update.referralForm,
+      this.formId,
+    );
+
+    this.recordEdit();
+  }
+
+  /**
    * Update drafted data for the form.
    */
   async updateDraftData(

@@ -27,6 +27,8 @@ type PrintablePageProps = {
 export const PrintablePage = styled.div.attrs({
   className: "form-page",
 })<PrintablePageProps>`
+  display: flex;
+  flex-direction: column;
   background-color: white;
   height: ${(p) =>
     p.stretchable

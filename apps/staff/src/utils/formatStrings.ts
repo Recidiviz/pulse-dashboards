@@ -542,8 +542,13 @@ function appendDateSuffixIfMissing(label: string): string {
   return `${label} ${suffix}`;
 }
 
+/** Capitalizes human names (accounting for things like hyphens and apostrophes)  */
+const capitalizeName = (name: string) =>
+  name.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+
 export {
   appendDateSuffixIfMissing,
+  capitalizeName,
   convertCurlyQuotesToStraight,
   decrypt,
   encrypt,

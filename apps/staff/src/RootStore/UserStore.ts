@@ -31,7 +31,8 @@ import {
   makeAutoObservable,
   observable,
   runInAction,
-  when} from "mobx";
+  when,
+} from "mobx";
 import { now } from "mobx-utils";
 import qs from "qs";
 
@@ -53,6 +54,7 @@ import {
   UNRESTRICTED_PAGES,
 } from "../core/views";
 import { TENANT_CONFIGS } from "../tenants";
+import { capitalizeName } from "../utils";
 import isIE11 from "../utils/isIE11";
 import { getAllowedMethodology } from "../utils/navigation";
 import type RootStore from ".";
@@ -123,8 +125,7 @@ export default class UserStore {
       getTokenSilently: action.bound,
       loginWithRedirect: action.bound,
       activeFeatureVariants: computed.struct,
-      featureVariantOverrides: observable
-
+      featureVariantOverrides: observable,
     });
 
     this.featureVariantOverrides = this.getFeatureVariantOverrides();
@@ -412,28 +413,34 @@ export default class UserStore {
   /**
    * Sets the override for a specific feature variant. This is only available for Recidiviz users.
    */
-  setFeatureVariantOverride(featureVariant: FeatureVariant, override: boolean): void {
-    if (!(this.isRecidivizUser || this.isImpersonating || this.isCSGUser))  return;
+  setFeatureVariantOverride(
+    featureVariant: FeatureVariant,
+    override: boolean,
+  ): void {
+    if (!(this.isRecidivizUser || this.isImpersonating || this.isCSGUser))
+      return;
 
     this.featureVariantOverrides[featureVariant] = override;
 
     sessionStorage.setItem(
       SESSION_FEATURE_VARIANT_OVERRIDES,
-      JSON.stringify(this.featureVariantOverrides)
-      );
+      JSON.stringify(this.featureVariantOverrides),
+    );
   }
   /**
    * Gets the overrides for feature variants from session storage.
    */
   getFeatureVariantOverrides(): FeatureVariantOverrideRecord {
-    const sessionOverrides = sessionStorage.getItem(SESSION_FEATURE_VARIANT_OVERRIDES);
+    const sessionOverrides = sessionStorage.getItem(
+      SESSION_FEATURE_VARIANT_OVERRIDES,
+    );
     return sessionOverrides
       ? (JSON.parse(sessionOverrides) as FeatureVariantOverrideRecord)
       : {};
   }
   /**
    * All feature variants currently active for this user, taking into account
-   * the activeDate for each feature and observing the current Date for reactivity. 
+   * the activeDate for each feature and observing the current Date for reactivity.
    * All overrides take ultimate precedence.
    */
   get activeFeatureVariants(): ActiveFeatureVariantRecord {
@@ -454,30 +461,29 @@ export default class UserStore {
 
     fvs = { ...tenantFeatureVariants, ...fvs };
 
-    const activeVariants: ActiveFeatureVariantRecord = Object.entries(fvs).reduce(
-      (activeVariants, [variantName, variantInfo]) => {
-        if (!variantInfo) return activeVariants;
+    const activeVariants: ActiveFeatureVariantRecord = Object.entries(
+      fvs,
+    ).reduce((activeVariants, [variantName, variantInfo]) => {
+      if (!variantInfo) return activeVariants;
 
-        const { variant, activeDate, activeTenants } = variantInfo;
-        // check date once a minute so there isn't too much lag when we cross the threshold
-        if (activeDate && new Date(activeDate).getTime() > now(1000 * 60))
-          return activeVariants;
+      const { variant, activeDate, activeTenants } = variantInfo;
+      // check date once a minute so there isn't too much lag when we cross the threshold
+      if (activeDate && new Date(activeDate).getTime() > now(1000 * 60))
+        return activeVariants;
 
-        const currentTenantId = this.rootStore?.currentTenantId;
-        if (
-          activeTenants &&
-          currentTenantId &&
-          !activeTenants.includes(currentTenantId)
-        )
-          return activeVariants;
-        
-        return {
-          ...activeVariants,
-          [variantName]: { ...(variant && { variant }) },
-        };
-      },
-      {}
-    );
+      const currentTenantId = this.rootStore?.currentTenantId;
+      if (
+        activeTenants &&
+        currentTenantId &&
+        !activeTenants.includes(currentTenantId)
+      )
+        return activeVariants;
+
+      return {
+        ...activeVariants,
+        [variantName]: { ...(variant && { variant }) },
+      };
+    }, {});
 
     const sessionOverrides = this.featureVariantOverrides;
     Object.entries(sessionOverrides).forEach(([variant, override]) => {
@@ -634,5 +640,14 @@ export default class UserStore {
 
   get userSurname(): string | undefined {
     return this.user?.info?.family_name || this.user?.family_name;
+  }
+
+  get userFullNameFromAdminPanel() {
+    if (!this.userAppMetadata) {
+      return "";
+    }
+
+    const { firstName = "", lastName = "" } = this.userAppMetadata;
+    return capitalizeName([firstName, lastName].join(" ").trim());
   }
 }

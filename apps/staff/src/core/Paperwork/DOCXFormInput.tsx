@@ -32,6 +32,7 @@ export interface DOCXFormInputProps<DraftData> {
   name: Extract<keyof DraftData, string>;
   placeholder?: string;
   style?: React.InputHTMLAttributes<HTMLInputElement>["style"];
+  readOnly?: boolean;
 }
 
 const StyledAutosizeInput = styled.span`

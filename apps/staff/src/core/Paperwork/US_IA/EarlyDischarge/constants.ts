@@ -23,6 +23,7 @@ export const FORM_US_IA_CBC_REPORT_FONT_FAMILY = "Arial, sans-serif";
 export const FormPage = styled.div`
   font-family: ${FORM_US_IA_CBC_REPORT_FONT_FAMILY};
   display: flex;
+  flex-grow: 1;
   height: 100%;
   justify-content: flex-start;
   flex-direction: column;

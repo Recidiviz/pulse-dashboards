@@ -57,6 +57,8 @@ export type UserAppMetadata = {
   intercomId?: string;
   district?: string;
   externalId?: string;
+  firstName?: string;
+  lastName?: string;
 };
 
 // TEST is useful for testing, as the name suggests,

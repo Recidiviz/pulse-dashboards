@@ -36,16 +36,36 @@ export class UsIaEarlyDischargeForm extends FormBase<
     return "FormUsIaEarlyDischargeProbation";
   }
 
+  getCurrentUserFromFormRecord() {
+    const { staffAttributes } = this.opportunity.record.formInformation;
+    const { userStore } = this.rootStore;
+
+    const staff = staffAttributes.find(
+      (s) => s.officerExternalId === userStore.userAppMetadata?.externalId,
+    );
+
+    return staff;
+  }
+
+  get currentUserIsSupervisingOfficer(): boolean {
+    return !!this.getCurrentUserFromFormRecord();
+  }
+
+  get currentUserCanSignCbcSupervisorField(): boolean {
+    const { userStore } = this.rootStore;
+    if (!this.formData.officerSignatureCbcForm) return false;
+
+    return (
+      userStore.userAppMetadata?.externalId !==
+      this.formData.officerSignatureIdCbcForm
+    );
+  }
+
   prefilledDataTransformer(): Partial<UsIaEarlyDischargeDraftData> {
     if (!this.opportunity.record || !this.person) return {};
+
     const {
-      formInformation: {
-        USCitizenshipStatus,
-        charges,
-        penalties,
-        // TODO: Handle multiple staff attributes
-        staffAttributes: [staff],
-      },
+      formInformation: { USCitizenshipStatus, charges, penalties },
     } = this.opportunity.record;
 
     const numberOfCharges = charges.length;
@@ -101,7 +121,14 @@ export class UsIaEarlyDischargeForm extends FormBase<
       expirationDate,
     } = this.person;
 
-    const { staffTitle, workUnit } = staff;
+    const { userStore } = this.rootStore;
+
+    const staff = this.getCurrentUserFromFormRecord();
+
+    const staffTitle = staff?.staffTitle || "";
+    const workUnit = staff?.workUnit || "";
+    const officerFullName =
+      (staff && userStore.userFullNameFromAdminPanel) ?? "";
 
     const todaysDate = formatWorkflowsDate(new Date());
 
@@ -113,13 +140,19 @@ export class UsIaEarlyDischargeForm extends FormBase<
       supervisionType,
       supervisionStartDate: formatWorkflowsDate(supervisionStartDate),
       supervisionEndDate: formatWorkflowsDate(expirationDate),
-      // TODO: Replace with actual officer name
-      officerFullName: 'Todd "TODO" Todderson',
-      staffTitle: staffTitle || "",
+      officerFullName,
+      staffTitle,
       workUnit,
       dischargeDate: "",
       supervisorSignatureDate: "",
-      directorSignatureDate: "",
+      officerSignatureDate: "",
+      supervisorSignatureCbcForm: "",
+      officerSignatureCbcForm: "",
+      supervisorSignatureParoleDischargeForm: "",
+      officerSignatureParoleDischargeForm: "",
+      progressAndRecommendations: "",
+      supervisorFullName: "",
+      supervisorTitle: "",
 
       hasCompletedProbation: false,
       probationCompletionStatus: "",
