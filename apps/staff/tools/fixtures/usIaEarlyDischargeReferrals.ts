@@ -28,7 +28,7 @@ export const usIaEarlyDischargeReferralsFixture =
       eligibleCriteria: {
         noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
         notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
-        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+        notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
           eligibleDate: relativeFixtureDate({ months: -11 }),
         },
         supervisionCaseTypeIsNotSexOffense: null,
@@ -119,7 +119,7 @@ export const usIaEarlyDischargeReferralsFixture =
           lifeSentence: false,
           ineligibleOffenses: null,
         },
-        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+        notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
           eligibleDate: relativeFixtureDate({ months: -7 }),
         },
         supervisionCaseTypeIsNotSexOffense: {
@@ -214,7 +214,7 @@ export const usIaEarlyDischargeReferralsFixture =
       eligibleCriteria: {
         noSupervisionViolationReportWithin6MonthsUsingResponseDate: null,
         notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: null,
-        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+        notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
           eligibleDate: relativeFixtureDate({ months: -1 }),
         },
         supervisionCaseTypeIsNotSexOffense: {
@@ -308,7 +308,7 @@ export const usIaEarlyDischargeReferralsFixture =
           lifeSentence: false,
           ineligibleOffenses: null,
         },
-        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: {
+        notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: {
           eligibleDate: relativeFixtureDate({ months: -3 }),
         },
         supervisionCaseTypeIsNotSexOffense: null,

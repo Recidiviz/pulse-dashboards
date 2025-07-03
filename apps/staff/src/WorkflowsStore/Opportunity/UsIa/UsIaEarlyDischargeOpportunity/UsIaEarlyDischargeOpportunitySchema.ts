@@ -61,11 +61,12 @@ export const usIaEarlyDischargeSchema = opportunitySchemaBase
             ineligibleOffenses: z.array(z.string()).nullable(),
           })
           .nullable(),
-        notSupervisionPastFullTermCompletionDateOrUpcoming30Days: z
+        notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days: z
           .object({
             eligibleDate: dateStringSchema.nullable(),
           })
-          .nullable(),
+          // TODO(#8879): Update to `nullable()` when the `recidiviz-data` changes are deployed
+          .nullish(),
         notServingALifeSentenceOnSupervisionOrSupervisionOutOfState: z
           .object({
             lifeSentence: z.boolean().nullable(),
