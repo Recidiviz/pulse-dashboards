@@ -119,9 +119,9 @@ export class UserSubscription extends FirestoreQuerySubscription<UserRecord> {
       workflowsStore: { activeSystem },
     } = this.rootStore;
 
-    const canAccessSupervision = userStore.getRoutePermission(
-      "workflowsSupervision",
-    );
+    const canAccessSupervision =
+      userStore.getRoutePermission("workflowsSupervision") ||
+      userStore.canUserAccessTasks;
     const canAccessFacilities = userStore.getRoutePermission(
       "workflowsFacilities",
     );

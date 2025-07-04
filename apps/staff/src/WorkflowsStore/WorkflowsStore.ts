@@ -76,6 +76,7 @@ import {
   StaffSubscription,
   UserSubscription,
 } from "./subscriptions";
+import { SupervisionTask } from "./Task/types";
 import { WorkflowsTasksStore } from "./Task/WorkflowsTasksStore";
 import {
   EligibilityStatus,
@@ -447,7 +448,10 @@ export class WorkflowsStore implements Hydratable {
     }
 
     const userAllowedSystems: Array<SystemId> = [];
-    if (this.rootStore.userStore.getRoutePermission("workflowsSupervision")) {
+    if (
+      this.rootStore.userStore.getRoutePermission("workflowsSupervision") ||
+      this.rootStore.userStore.canUserAccessTasks
+    ) {
       userAllowedSystems.push("SUPERVISION");
     }
     if (this.rootStore.userStore.getRoutePermission("workflowsFacilities")) {
@@ -718,6 +722,16 @@ export class WorkflowsStore implements Hydratable {
   }
 
   /**
+   * All non-snoozed tasks on the selected caseload, in no particular order.
+   */
+  get supervisionTasks(): SupervisionTask[] {
+    return this.caseloadPersons.flatMap(
+      (person) =>
+        person.supervisionTasks?.tasks.filter((task) => !task.isSnoozed) ?? [],
+    );
+  }
+
+  /**
    * Whether this tenant has the supervision tasks feature.
    */
   get isSupervisionTasksConfigured(): boolean {
@@ -732,10 +746,14 @@ export class WorkflowsStore implements Hydratable {
    * Whether the current user should see a link to Tasks in the nav bar
    */
   get isSupervisionTasksLinkEnabled(): boolean {
+    const { currentTenantConfig } = this.rootStore.tenantStore;
     return (
       this.isSupervisionTasksConfigured &&
-      !!this.featureVariants["supervisionTasksNavLink"] &&
-      this.rootStore.userStore.getRoutePermission("tasks")
+      // the current user is allowed to see tasks, and
+      this.rootStore.userStore.canUserAccessTasks &&
+      // the workflows home page is not tasks
+      !!currentTenantConfig &&
+      currentTenantConfig.workflowsHomepage !== "tasks"
     );
   }
 

@@ -28,7 +28,7 @@ import {
 import { HydrationState } from "~hydration-utils";
 
 import { mockOpportunityConfigs } from "../../core/__tests__/testUtils";
-import { SystemId } from "../../core/models/types";
+import { SystemId, TenantConfig } from "../../core/models/types";
 import FirestoreStore, {
   CombinedUserRecord,
   MilestonesMessage,
@@ -883,8 +883,15 @@ describe("hasOpportunities", () => {
 });
 
 describe("isSupervisionTasksLinkEnabled", () => {
-  test("when tasks allowed, route exists, FV active", async () => {
-    setUser({ supervisionTasksNavLink: {} }, "US_ME", {
+  test("when tasks allowed, route exists, and homepage is not tasks", async () => {
+    vi.spyOn(
+      rootStore.tenantStore,
+      "currentTenantConfig",
+      "get",
+    ).mockReturnValue({
+      workflowsHomepage: "home",
+    } as unknown as TenantConfig<"US_ME">);
+    setUser({}, "US_ME", {
       tasks: true,
     });
     runInAction(() => {
@@ -896,7 +903,14 @@ describe("isSupervisionTasksLinkEnabled", () => {
   });
 
   test("when task config is missing", async () => {
-    setUser({ supervisionTasksNavLink: {} }, "US_MO", {
+    vi.spyOn(
+      rootStore.tenantStore,
+      "currentTenantConfig",
+      "get",
+    ).mockReturnValue({
+      workflowsHomepage: "home",
+    } as unknown as TenantConfig<"US_ME">);
+    setUser({}, "US_MO", {
       tasks: true,
     });
     runInAction(() => {
@@ -908,7 +922,14 @@ describe("isSupervisionTasksLinkEnabled", () => {
   });
 
   test("when route permission is missing", async () => {
-    setUser({ supervisionTasksNavLink: {} }, "US_ME", {
+    vi.spyOn(
+      rootStore.tenantStore,
+      "currentTenantConfig",
+      "get",
+    ).mockReturnValue({
+      workflowsHomepage: "home",
+    } as unknown as TenantConfig<"US_ME">);
+    setUser({}, "US_ME", {
       tasks: false,
     });
     runInAction(() => {
@@ -919,7 +940,14 @@ describe("isSupervisionTasksLinkEnabled", () => {
     expect(workflowsStore.isSupervisionTasksLinkEnabled).toBeFalse();
   });
 
-  test("when feature variant is missing", async () => {
+  test("when homepage is /tasks", async () => {
+    vi.spyOn(
+      rootStore.tenantStore,
+      "currentTenantConfig",
+      "get",
+    ).mockReturnValue({
+      workflowsHomepage: "tasks",
+    } as unknown as TenantConfig<"US_ME">);
     setUser({}, "US_ME", {
       tasks: true,
     });

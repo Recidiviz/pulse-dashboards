@@ -15,8 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isEmpty } from "lodash";
 import pluralize from "pluralize";
+import simplur from "simplur";
 
+import { isHydrated } from "~hydration-utils";
+
+import { Client } from "../Client";
 import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
 import { WorkflowsStore } from "../WorkflowsStore";
 import { CaseloadOpportunitiesPresenter } from "./CaseloadOpportunitiesPresenter";
@@ -27,6 +32,29 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     private opportunityConfigurationStore: OpportunityConfigurationStore,
   ) {
     super(workflowsStore);
+  }
+
+  hydrate() {
+    // Hydrate opportunities
+    super.hydrate();
+
+    // Only hydrate tasks when we are in supervision and the user has access to supervision tasks
+    if (
+      this.workflowsStore.activeSystem !== "INCARCERATION" &&
+      this.workflowsStore.rootStore.userStore.canUserAccessTasks
+    ) {
+      this.workflowsStore.caseloadPersons.forEach((person) => {
+        // it's possible that caseloadPersons is a mix of clients and residents
+        // when multiple caseloads from different system types are selected
+        if (
+          person instanceof Client &&
+          person.supervisionTasks &&
+          !isHydrated(person.supervisionTasks)
+        ) {
+          person.supervisionTasks.hydrate();
+        }
+      });
+    }
   }
 
   private get listOfSelectedOpportunitiesText() {
@@ -92,5 +120,71 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
 
   get supportsMultipleSystems() {
     return this.workflowsStore.supportsMultipleSystems;
+  }
+
+  get showTasksSummary() {
+    return (
+      this.workflowsStore.isSupervisionTasksConfigured &&
+      this.workflowsStore.hasSupervisionTasks &&
+      this.workflowsStore.rootStore.userStore.canUserAccessTasks
+    );
+  }
+
+  get tasks() {
+    return this.workflowsStore.supervisionTasks;
+  }
+
+  get ctaAndHeaderText(): { ctaText?: string; headerText?: string } {
+    const {
+      workflowsSearchFieldTitle,
+      justiceInvolvedPersonTitle,
+      listOfSelectedOpportunities,
+      searchResultLabel,
+    } = this.labels;
+
+    const selectedSearchIdsCount = this.selectedSearchIds?.length || 0;
+
+    // If the user has access to tasks, check whether there are any tasks
+    // in addition to checking whether there are any opportunities
+    const noOpportunities =
+      isEmpty(this.opportunitiesByType) ||
+      Object.values(this.opportunitiesByType || {}).every((opps) =>
+        isEmpty(opps),
+      );
+    const noSearchResults = !this.showTasksSummary && noOpportunities;
+
+    const salutation = this.userGivenNames
+      ? `Hi, ${this.userGivenNames}.`
+      : "Hi.";
+    // If no search ids are selected, show a welcome message
+    if (selectedSearchIdsCount === 0)
+      return {
+        headerText: salutation,
+        ctaText: this.supportsMultipleSystems
+          ? `Search above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`
+          : `Search for ${pluralize(
+              workflowsSearchFieldTitle,
+            )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
+                opportunities like ${listOfSelectedOpportunities}.`,
+      };
+    // Else if no opportunities are found, show a call to action to select another search id
+    else if (noSearchResults)
+      return {
+        ctaText:
+          this.supportsMultipleSystems ||
+          workflowsSearchFieldTitle === "caseload"
+            ? "None of the selected caseloads are eligible for opportunities. Search for another caseload."
+            : simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
+                selectedSearchIdsCount,
+              ]} ${pluralize(
+                workflowsSearchFieldTitle,
+                selectedSearchIdsCount,
+              )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`,
+      };
+    // else show the header text with the number of opportunities found
+    else
+      return {
+        headerText: `${salutation} We’ve found some outstanding items across ${selectedSearchIdsCount} ${searchResultLabel}`,
+      };
   }
 }

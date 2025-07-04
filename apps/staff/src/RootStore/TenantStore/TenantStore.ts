@@ -273,4 +273,9 @@ export default class TenantStore {
     if (!this.currentTenantId) return;
     return this.tenantConfigs[this.currentTenantId].workflowsMethodologyUrl;
   }
+
+  get currentTenantConfig() {
+    if (!this.currentTenantId) return;
+    return this.tenantConfigs[this.currentTenantId];
+  }
 }

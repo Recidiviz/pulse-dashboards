@@ -589,6 +589,10 @@ export default class UserStore {
     return routePermission[1];
   }
 
+  get canUserAccessTasks(): boolean {
+    return this.getRoutePermission("tasks");
+  }
+
   setAuthError(error: Error): void {
     runInAction(() => {
       this.userIsLoading = false;

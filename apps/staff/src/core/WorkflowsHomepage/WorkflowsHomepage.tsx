@@ -15,10 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isEmpty } from "lodash";
 import { observer } from "mobx-react-lite";
-import pluralize from "pluralize";
-import simplur from "simplur";
 
 import { withPresenterManager } from "~hydration-utils";
 
@@ -30,6 +27,7 @@ import ModelHydrator from "../ModelHydrator";
 import { WorkflowsNavLayout } from "../WorkflowsLayouts";
 import WorkflowsResults from "../WorkflowsResults";
 import { OpportunitySummaries } from "./OpportunitySummaries";
+import { TasksSummary } from "./TasksSummary";
 
 const ManagedComponent = observer(function WorkflowsHomepage({
   presenter,
@@ -37,67 +35,20 @@ const ManagedComponent = observer(function WorkflowsHomepage({
   presenter: WorkflowsHomepagePresenter;
 }) {
   const {
-    selectedSearchIds,
     activeOpportunityTypes,
     opportunitiesByType,
-    supportsMultipleSystems,
-    userGivenNames,
     hasOpportunities,
-    labels: {
-      workflowsSearchFieldTitle,
-      justiceInvolvedPersonTitle,
-      listOfSelectedOpportunities,
-      searchResultLabel,
-    },
+    showTasksSummary,
+    tasks,
+    ctaAndHeaderText: { headerText, ctaText },
   } = presenter;
-
-  const selectedSearchIdsCount = selectedSearchIds?.length || 0;
-
-  const ctaAndHeaderText = () => {
-    const salutation = userGivenNames ? `Hi, ${userGivenNames}.` : "Hi.";
-    // If no search ids are selected, show a welcome message
-    if (selectedSearchIdsCount === 0)
-      return {
-        headerText: salutation,
-        ctaText: supportsMultipleSystems
-          ? `Search above to review and refer people eligible for opportunities like ${listOfSelectedOpportunities}.`
-          : `Search for ${pluralize(
-              workflowsSearchFieldTitle,
-            )} above to review and refer eligible ${justiceInvolvedPersonTitle}s for
-                opportunities like ${listOfSelectedOpportunities}.`,
-      };
-    // Else if no opportunities are found, show a call to action to select another search id
-    else if (
-      isEmpty(opportunitiesByType) ||
-      Object.values(opportunitiesByType || {}).every((opps) => isEmpty(opps))
-    )
-      return {
-        ctaText:
-          supportsMultipleSystems || workflowsSearchFieldTitle === "caseload"
-            ? "None of the selected caseloads are eligible for opportunities. Search for another caseload."
-            : simplur`None of the ${justiceInvolvedPersonTitle}s on the selected ${[
-                selectedSearchIdsCount,
-              ]} ${pluralize(
-                workflowsSearchFieldTitle,
-                selectedSearchIdsCount,
-              )}['s|'] caseloads are eligible for opportunities. Search for another ${workflowsSearchFieldTitle}.`,
-      };
-    // else show the header text with the number of opportunities found
-    else
-      return {
-        headerText: `${salutation} We’ve found some outstanding items across ${selectedSearchIdsCount} ${searchResultLabel}`,
-      };
-  };
 
   return (
     <WorkflowsNavLayout>
       <CaseloadTypeSelect />
       <CaseloadSelect />
       <ModelHydrator hydratable={presenter}>
-        <WorkflowsResults
-          headerText={ctaAndHeaderText().headerText}
-          callToActionText={ctaAndHeaderText().ctaText}
-        >
+        <WorkflowsResults headerText={headerText} callToActionText={ctaText}>
           {hasOpportunities &&
             activeOpportunityTypes &&
             opportunitiesByType && (
@@ -106,6 +57,7 @@ const ManagedComponent = observer(function WorkflowsHomepage({
                 opportunitiesByType={opportunitiesByType}
               />
             )}
+          {showTasksSummary && <TasksSummary tasks={tasks} />}
         </WorkflowsResults>
       </ModelHydrator>
     </WorkflowsNavLayout>
