@@ -38,6 +38,7 @@ export function UsIdParoleDates({
     initialParoleHearingDate,
     nextParoleHearingDate,
     tentativeParoleDate,
+    paroleEligibilityDate,
   } = metadata;
 
   return (
@@ -55,6 +56,10 @@ export function UsIdParoleDates({
         <DetailsSubheading>Tentative Parole Date</DetailsSubheading>
         <SecureDetailsContent>
           {formatWorkflowsDateString(tentativeParoleDate, "Not set")}
+        </SecureDetailsContent>
+        <DetailsSubheading>Parole Eligibility Date</DetailsSubheading>
+        <SecureDetailsContent>
+          {formatWorkflowsDateString(paroleEligibilityDate, "Not set")}
         </SecureDetailsContent>
       </DetailsList>
     </DetailsSection>

@@ -25,4 +25,5 @@ export const usIdResidentMetadataSchema = z.object({
   initialParoleHearingDate: nullishAsUndefined(z.string()),
   nextParoleHearingDate: nullishAsUndefined(z.string()),
   tentativeParoleDate: nullishAsUndefined(z.string()),
+  paroleEligibilityDate: nullishAsUndefined(z.string()),
 });
