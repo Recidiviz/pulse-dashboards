@@ -953,7 +953,7 @@ describe("isSupervisionTasksLinkEnabled", () => {
     });
     runInAction(() => {
       workflowsStore.updateActiveSystem("SUPERVISION");
-      rootStore.tenantStore.currentTenantId = "US_ME";
+      rootStore.tenantStore.currentTenantId = "US_TX";
     });
     await waitForHydration();
     expect(workflowsStore.isSupervisionTasksLinkEnabled).toBeFalse();

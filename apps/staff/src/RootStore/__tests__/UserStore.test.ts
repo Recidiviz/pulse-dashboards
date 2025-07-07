@@ -707,6 +707,51 @@ describe("userAllowedNavigation", () => {
     expect(store.userAllowedNavigation).toEqual(expected);
   });
 
+  test("disallows tasks route with workflows permission but not tasks permission", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    TENANT_CONFIGS[stateCode].navigation = {
+      workflows: ["home", "tasks", "clients", "residents"],
+    };
+    const userAppMetadata = {
+      [metadataField]: {
+        stateCode,
+        routes: {
+          workflowsSupervision: true,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...userAppMetadata });
+    await store.authorize(mockHandleUrl);
+    const expected = {
+      workflows: ["home", "clients", "residents"],
+      methodology: [],
+    };
+    expect(store.userAllowedNavigation).toEqual(expected);
+  });
+
+  // TODO(#7827): update this test to ensure tasks route grants access to workflows homepage
+  test("disallows workflows home route when tasks is set but workflows is not", async () => {
+    mockIsAuthenticated.mockResolvedValue(true);
+    TENANT_CONFIGS[stateCode].navigation = {
+      workflows: ["home", "tasks", "clients", "residents"],
+    };
+    const userAppMetadata = {
+      [metadataField]: {
+        stateCode,
+        routes: {
+          tasks: true,
+        },
+      },
+    };
+    mockGetUser.mockResolvedValue({ email_verified: true, ...userAppMetadata });
+    await store.authorize(mockHandleUrl);
+    const expected = {
+      workflows: ["tasks", "clients", "residents"],
+      methodology: [],
+    };
+    expect(store.userAllowedNavigation).toEqual(expected);
+  });
+
   describe("when the browser isIE11", () => {
     let userAppMetadata;
     beforeEach(() => {

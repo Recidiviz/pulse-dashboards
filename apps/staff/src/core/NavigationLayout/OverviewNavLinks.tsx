@@ -61,6 +61,7 @@ export const OverviewNavLinks: React.FC = observer(function OverviewNavLinks() {
   const workflowsHomepageName = homepageNameOverride ?? "Opportunities";
 
   // TODO(#7613): Dynamically dedupe nav links when homepage is a normal tab
+  // and/or consider using userAllowedNavigation.workflows[0] instead of homepage
   return (
     <>
       {enabledInsights && (

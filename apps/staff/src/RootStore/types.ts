@@ -84,7 +84,6 @@ export type FeatureVariant =
   | "usTnSuspensionOfDirectSupervision"
   | "usMeCaseNoteSnooze"
   | "usTnCompliantReporting2025Policy"
-  | "supervisionTasksNavLink"
   | "usIaEarlyDischargeCustomizations"
   | "usIaEarlyDischargeForms"
   | "usTnInitialClassification"
@@ -160,7 +159,6 @@ export const allFeatureVariants: FeatureVariantMapping = {
   mandatoryMinimum: {},
   usTnCompliantReporting2025Policy: {},
   reportIncorrectRosters: {},
-  supervisionTasksNavLink: {},
   snoozeCompanions: {},
   usIaEarlyDischargeCustomizations: {},
   usIaEarlyDischargeForms: {},
@@ -189,7 +187,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnExpirationSubmitToTomis: {},
         usTnSuspensionOfDirectSupervision: {},
         zeroGrantsFlag: { activeTenants: ["US_ID", "US_MI", "US_TN", "US_PA"] },
-        supervisionTasksNavLink: { activeTenants: ["US_ID"] },
         usTnCompliantReporting2025Policy: {},
         usTnInitialClassification: {},
         usTnTEPENotesForAll: {},
@@ -205,7 +202,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
           activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"],
         },
         usTnCompliantReporting2025Policy: isDemoMode() ? undefined : {},
-        supervisionTasksNavLink: { activeTenants: ["US_ID", "US_NE"] },
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],

@@ -143,7 +143,8 @@ export default class FirestoreStore {
       appMetadata.stateCode === "recidiviz" ||
       isOfflineMode() ||
       appMetadata.routes?.workflowsSupervision ||
-      appMetadata.routes?.workflowsFacilities;
+      appMetadata.routes?.workflowsFacilities ||
+      appMetadata.routes?.tasks;
 
     if (shouldGenerateToken) {
       const impersonationParams = impersonatedEmail

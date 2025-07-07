@@ -525,16 +525,39 @@ export default class UserStore {
     }
 
     /* Remove pages that may be allowed for the tenant but restricted for the user */
-    Object.keys(navigation).forEach((page) => {
-      if (!this.isUserAllowedRoute(page)) {
-        // System page permissions are on the page level,
-        // so remove them as necessary from the system key array
+    Object.entries(navigation).forEach((navigationEntry) => {
+      const [page, allConfiguredSubpages] = navigationEntry as [
+        NavigationSection,
+        string[],
+      ];
+
+      // The system page will be handled separately later
+      if (page === DASHBOARD_VIEWS.system) return;
+
+      // For routes with no configured subpages (e.g. psi, operations), the user
+      // can keep access iff they are allowed to access the main route
+      if (allConfiguredSubpages.length === 0) {
+        if (!this.isUserAllowedRoute(page)) {
+          delete allowed[page];
+        }
+        return;
+      }
+
+      // Filter the configured subpages to only the allowed ones
+      const userAllowedSubpages = allConfiguredSubpages.filter((subpage) =>
+        this.isUserAllowedRoute(page, subpage),
+      );
+      allowed[page] = userAllowedSubpages;
+
+      // If there are no available subpages now, remove the entry from navigation
+      if (userAllowedSubpages.length === 0) {
+        delete allowed[page];
+
+        // System page permissions are also included in the array associated with the
+        // key `system`, so remove them as necessary from the value for `system`
         if (PathwaysPageIdList.includes(page)) {
           allowed.system?.splice(allowed.system?.indexOf(page), 1);
         }
-        // Do not delete the system view from allowed navigation if it exists
-        if (page !== DASHBOARD_VIEWS.system)
-          delete allowed[page as NavigationSection];
       }
     });
 
@@ -565,24 +588,49 @@ export default class UserStore {
     return { ...allowed, ...getAllowedMethodology(allowed) };
   }
 
-  isUserAllowedRoute(pageName: string): boolean {
+  /**
+   * Return true if the user should be allowed access to the route /pageName/subpageName
+   * or, if subpageName is not provided, to the route /pageName
+   */
+  isUserAllowedRoute(pageName: string, subpageName?: string): boolean {
     return (
-      this.getRoutePermission(pageName) || UNRESTRICTED_PAGES.includes(pageName)
+      this.getRoutePermission(pageName, subpageName) ||
+      UNRESTRICTED_PAGES.includes(pageName)
     );
   }
 
-  getRoutePermission(route: string): boolean {
+  /**
+   * Return true if the user has a route permission called `route`
+   * or should be allowed access to the route /pageName/subpageName
+   * or, if subpageName is not provided, to the route /pageName
+   */
+  getRoutePermission(route: string, subpage?: string): boolean {
     if (this.isRecidivizUser) return true;
 
+    const isTasksAccessibleSubpage = Boolean(
+      subpage && ["tasks", "clients", "residents"].includes(subpage),
+    );
+
     const routePermission = this.routes.find(
-      (r) =>
-        r[0] === route ||
+      // permissionName represents a route permission of the user, such as added in the admin panel
+      ([permissionName, isAllowed]) =>
+        permissionName === route ||
         // special case for the "workflows" route:
         // there are actual multiple "routes" in the config that control the same URL route.
-        // if any of them are true then the route should be permitted
-        (route === "workflows" && r[0].startsWith("workflows") && r[1]) ||
+        // if any of them are true then the route should be permitted,
+        // unless the subpage is "tasks", which is controlled with a different route permission
+        (route === "workflows" &&
+          permissionName.startsWith("workflows") &&
+          isAllowed &&
+          subpage !== "tasks") ||
+        // special case for "tasks": the route permission tasks grants access to
+        // /workflows/tasks, clients, and residents, but not other workflows routes
+        (route === "workflows" &&
+          permissionName === "tasks" &&
+          isAllowed &&
+          isTasksAccessibleSubpage) ||
         // special case for the "lantern" route, which maps to the "revocations" navigation item
-        (route === "revocations" && r[0] === "lantern"),
+        (route === "revocations" && permissionName === "lantern"),
     );
     // If the route does not exist in the RoutePermissions object, default to false;
     if (!routePermission) return false;
@@ -626,7 +674,7 @@ export default class UserStore {
     if (token instanceof Error) {
       this.userIsLoading = true;
       this.isAuthorized = false;
-      await this.logout();
+      this.logout();
       await this.loginWithRedirect();
     }
     return token;

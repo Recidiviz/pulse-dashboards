@@ -202,7 +202,6 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
   releaseDateCopyOverride: "Full Term Release Date",
   featureVariants: {
     outcomesModule: {},
-    supervisionTasksNavLink: {},
   },
 };
 
