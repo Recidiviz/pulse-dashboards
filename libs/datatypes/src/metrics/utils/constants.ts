@@ -59,6 +59,7 @@ export type TargetStatus = z.infer<typeof targetStatusSchema>;
 export const VITALS_METRIC_IDS = z.enum([
   "timely_risk_assessment",
   "timely_contact",
+  "timely_contact_due_date_based",
 ]);
 export type VitalsMetricId = z.infer<typeof VITALS_METRIC_IDS>;
 

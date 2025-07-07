@@ -16,12 +16,14 @@
 // =============================================================================
 
 import { Icon, spacing, typography } from "@recidiviz/design-system";
+import { subMonths } from "date-fns";
 import { rem } from "polished";
 import styled, { css } from "styled-components/macro";
 
 import { palette } from "~design-system";
 
 import { OfficerVitalsMetricDetail } from "../../InsightsStore/presenters/types";
+import { formatDate } from "../../utils/formatStrings";
 import InsightsPill from "../InsightsPill";
 
 const HoverCta = styled.div`
@@ -98,6 +100,62 @@ const DeltaValue = styled.div<{ delta: number }>`
   }};
 `;
 
+function monthBefore(date: Date) {
+  const previousMonth = subMonths(date, 1);
+  return formatDate(previousMonth, "MMMM");
+}
+
+function deltaText({
+  metricId,
+  delta,
+  metricDate,
+  previousMetricDate,
+}: {
+  metricId: string;
+  delta: number;
+  metricDate?: Date;
+  previousMetricDate?: Date;
+}) {
+  // TODO(#8919) no need to check `metricDate` here
+  // If there is a current date but no previous date, the delta was not calculated/is not meaningful
+  if (
+    metricId === "timely_contact_due_date_based" &&
+    metricDate &&
+    !previousMetricDate
+  )
+    return "";
+
+  const sign = delta > 0 ? "+" : "";
+  const change = delta === 0 ? " change" : "";
+  const dateComparison =
+    previousMetricDate && metricId === "timely_contact_due_date_based"
+      ? `compared to ${monthBefore(previousMetricDate)}`
+      : `in past 30 days`;
+
+  return `${sign}${delta}%${change} ${dateComparison}`;
+}
+
+function titleText({
+  metricId,
+  titleDisplayName,
+  metricDate,
+}: OfficerVitalsMetricDetail) {
+  let dateAddendum;
+  if (!metricDate) {
+    // TODO(#8919) this case will be unnecessary
+    dateAddendum = "";
+  } else if (metricId === "timely_contact_due_date_based") {
+    // The due-date-based contacts metric is calculated based on the month before the
+    // current metric date. For example, when the end date is July 1,
+    // the metric was calculated for the entire month of June.
+    dateAddendum = `in ${monthBefore(metricDate)}`;
+  } else {
+    dateAddendum = `as of ${formatDate(metricDate, "MMMM d")}`;
+  }
+
+  return `${titleDisplayName} ${dateAddendum}`;
+}
+
 type InsightsStaffVitalsDetailCardProps = {
   vitalsMetricDetails: OfficerVitalsMetricDetail;
   onClick: (metricId: string) => void;
@@ -112,15 +170,12 @@ export const InsightsStaffVitalsDetailCard: React.FC<
     metric30DDelta,
     metricValue,
     tasks,
-    titleDisplayName,
     bodyDisplayName,
+    metricDate,
+    previousMetricDate,
   } = vitalsMetricDetails;
 
   const delta = Math.round(metric30DDelta);
-  const deltaText =
-    delta !== 0
-      ? `${delta > 0 ? "+" : ""}${delta}% in past 30 days`
-      : "0% change in past 30 days";
   const showPill = metricValue < 80;
   const hasOverdueClients = tasks.some((task) => task.isOverdue);
   const hoverCta = `See ${hasOverdueClients ? "Overdue " : ""}${bodyDisplayName}s`;
@@ -135,9 +190,11 @@ export const InsightsStaffVitalsDetailCard: React.FC<
         <Icon kind="Arrow" size={14} style={{ display: "inline" }} />
       </HoverCta>
       <StaffCardBody>
-        <StaffCardTitle>{titleDisplayName}</StaffCardTitle>
+        <StaffCardTitle>{titleText(vitalsMetricDetails)}</StaffCardTitle>
         <MetricValue>{`${metricValue}%`}</MetricValue>
-        <DeltaValue delta={delta}>{deltaText}</DeltaValue>
+        <DeltaValue delta={delta}>
+          {deltaText({ metricId, delta, metricDate, previousMetricDate })}
+        </DeltaValue>
       </StaffCardBody>
       {showPill && (
         <PillWrapper>

@@ -77,8 +77,10 @@ describe("with vitals data already hydrated", () => {
           "vitalsMetrics": [
             {
               "metric30DDelta": -7,
+              "metricDate": 2021-12-16T00:00:00.000Z,
               "metricValue": 87,
               "officerPseudonymizedId": "hashed-so1",
+              "previousMetricDate": 2021-11-16T00:00:00.000Z,
             },
           ],
         },
@@ -87,8 +89,10 @@ describe("with vitals data already hydrated", () => {
           "vitalsMetrics": [
             {
               "metric30DDelta": -4,
+              "metricDate": 2021-12-16T00:00:00.000Z,
               "metricValue": 99,
               "officerPseudonymizedId": "hashed-so1",
+              "previousMetricDate": 2021-11-16T00:00:00.000Z,
             },
           ],
         },

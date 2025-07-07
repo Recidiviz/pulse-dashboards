@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { rawSupervisionOfficerFixture } from "../../people/Staff/Supervision/Insights/SupervisionOfficer/fixture";
+import { relativeFixtureDate } from "../../utils/zod";
 import { VITALS_METRIC_IDS } from "../utils/constants";
 import {
   RawSupervisionVitalsMetric,
@@ -115,7 +116,12 @@ export const rawSupervisionVitalsMetricFixture: RawSupervisionVitalsMetric[] = [
   {
     metricId: VITALS_METRIC_IDS.enum.timely_contact,
     vitalsMetrics: timelyContactValues.map((contact, idx) => {
-      return { ...contact, officerPseudonymizedId: allOfficerPseudoIds[idx] };
+      return {
+        ...contact,
+        officerPseudonymizedId: allOfficerPseudoIds[idx],
+        metricDate: relativeFixtureDate(),
+        previousMetricDate: relativeFixtureDate({ days: -30 }),
+      };
     }),
   },
   {
@@ -124,6 +130,8 @@ export const rawSupervisionVitalsMetricFixture: RawSupervisionVitalsMetric[] = [
       return {
         ...assessment,
         officerPseudonymizedId: allOfficerPseudoIds[idx],
+        metricDate: relativeFixtureDate(),
+        previousMetricDate: relativeFixtureDate({ days: -30 }),
       };
     }),
   },

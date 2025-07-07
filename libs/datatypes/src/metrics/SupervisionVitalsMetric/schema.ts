@@ -17,12 +17,17 @@
 
 import { z } from "zod";
 
+import { dateStringSchema, nullishAsUndefined } from "../../utils/zod";
 import { VITALS_METRIC_IDS } from "../utils/constants";
 
 const vitalsMetricForOfficerSchema = z.object({
   officerPseudonymizedId: z.string(),
   metricValue: z.number(),
   metric30DDelta: z.number(),
+  // optional for backward compatibility
+  // TODO(#8919) remove optional()
+  metricDate: dateStringSchema.optional(),
+  previousMetricDate: nullishAsUndefined(dateStringSchema),
 });
 
 export const supervisionVitalsMetricSchema = z.object({
