@@ -17,18 +17,19 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 
-import { OpportunityRecordBase } from "~datatypes";
-import { opportunitySchemaBase } from "~datatypes";
-
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsTxAnnualReportStatusForm } from "../../Forms/UsTxAnnualReportStatusForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { UsTxAnnualReportStatusDraftData } from "./UsTxAnnualReportStatusOpportunityReferralRecord";
+import {
+  UsTxAnnualReportStatusDraftData,
+  UsTxAnnualReportStatusReferralRecord,
+  usTxAnnualReportStatusSchema,
+} from "./UsTxAnnualReportStatusOpportunityReferralRecord";
 
 export class UsTxAnnualReportStatusOpportunity extends OpportunityBase<
   Client,
-  OpportunityRecordBase,
+  UsTxAnnualReportStatusReferralRecord,
   OpportunityUpdateWithForm<UsTxAnnualReportStatusDraftData>
 > {
   form: UsTxAnnualReportStatusForm;
@@ -38,7 +39,7 @@ export class UsTxAnnualReportStatusOpportunity extends OpportunityBase<
       client,
       "usTxAnnualReportStatus",
       client.rootStore,
-      opportunitySchemaBase.parse(record),
+      usTxAnnualReportStatusSchema.parse(record),
     );
 
     this.form = new UsTxAnnualReportStatusForm(this, this.rootStore);

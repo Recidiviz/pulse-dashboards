@@ -36,6 +36,13 @@ export class UsTxAnnualReportStatusForm extends FormBase<
 
     const clientName = this.person.displayName;
     const clientId = this.person.displayId;
+
+    const {
+      formInformation: { tdcjId },
+    } = this.opportunity.record;
+
+    const tdcjIdAndSid = tdcjId ? tdcjId + " / " + clientId : clientId;
+
     const eligibilityMonthString =
       this.opportunity.eligibilityDate?.toLocaleString("en-US", {
         month: "long",
@@ -57,7 +64,7 @@ export class UsTxAnnualReportStatusForm extends FormBase<
 
     return {
       clientName,
-      clientId,
+      tdcjIdAndSid,
       eligibilityMonthString,
       threeYearsTRASCheckYes,
       threeYearsTRASCheckNo,

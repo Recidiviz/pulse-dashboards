@@ -17,18 +17,19 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 
-import { OpportunityRecordBase } from "~datatypes";
-import { opportunitySchemaBase } from "~datatypes";
-
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
 import { UsTxEarlyReleaseFromSupervisionForm } from "../../Forms/UsTxEarlyReleaseFromSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
-import { UsTxEarlyReleaseFromSupervisionDraftData } from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
+import {
+  UsTxEarlyReleaseFromSupervisionDraftData,
+  UsTxEarlyReleaseFromSupervisionReferralRecord,
+  usTxEarlyReleaseFromSupervisionSchema,
+} from "../UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 
 export class UsTxEarlyReleaseFromSupervisionOpportunity extends OpportunityBase<
   Client,
-  OpportunityRecordBase,
+  UsTxEarlyReleaseFromSupervisionReferralRecord,
   OpportunityUpdateWithForm<UsTxEarlyReleaseFromSupervisionDraftData>
 > {
   form: UsTxEarlyReleaseFromSupervisionForm;
@@ -38,7 +39,7 @@ export class UsTxEarlyReleaseFromSupervisionOpportunity extends OpportunityBase<
       client,
       "usTxEarlyReleaseFromSupervision",
       client.rootStore,
-      opportunitySchemaBase.parse(record),
+      usTxEarlyReleaseFromSupervisionSchema.parse(record),
     );
 
     this.form = new UsTxEarlyReleaseFromSupervisionForm(this, this.rootStore);
