@@ -15,42 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import jsPDF from "jspdf";
 import { observer } from "mobx-react-lite";
-import styled from "styled-components/macro";
+import React, { useEffect, useState } from "react";
 
-import { useRootStore } from "../../components/StoreProvider";
 import { Opportunity } from "../../WorkflowsStore";
-import { UsTxEarlyReleaseFromSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
-import { UsTxEarlyReleaseFromSupervisionDraftData } from "../../WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 import { FormContainer } from "../Paperwork/FormContainer";
-import {
-  fillAndSavePDF,
-  PDFFillerFunc,
-  SetFunc,
-} from "../Paperwork/PDFFormFiller";
-import previewImage from "./assets/ERS-Checklist-preview.png";
-
-const FormPreviewPage = styled.img`
-  height: auto;
-  width: 100%;
-`;
-
-const fillerFunc: PDFFillerFunc = async (
-  formData: Partial<UsTxEarlyReleaseFromSupervisionDraftData>,
-  set: SetFunc,
-): Promise<void> => {
-  set("{clientName}", formData.clientName);
-  set("{clientId}", formData.clientId);
-  set("{eligibilityMonth}", formData.eligibilityMonthString);
-  set("{Y1}", formData.atLeastHalfTimeCheck);
-  set("{Y2}", formData.minimumThreeYearsSupervisionCheck);
-  set("{Y3}", formData.goodFaithFeesAndEducationCheck);
-  set("{Y4}", formData.restitutionObligationsCheck);
-  set("{Y5}", formData.warrantCheck);
-  set("{Y6}", formData.noViolationsCertificateCheck);
-  set("{Y7}", formData.societyBestInterestCheck);
-  set("{officerName}", formData.officerName);
-};
+import FormViewer from "../Paperwork/FormViewer";
+import { generate } from "../Paperwork/PDFFormGenerator";
+import { PrintablePage } from "../Paperwork/styles";
+import ERSChecklist from "../Paperwork/US_TX/UsTxEarlyReleaseFromSupervision/ERS-Checklist";
 
 const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
   function WorkflowsUsTxEarlyReleaseFromSupervisionForm({
@@ -58,23 +32,22 @@ const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
   }: {
     opportunity: Opportunity;
   }) {
-    const { getTokenSilently } = useRootStore();
+    const formRef = React.useRef() as React.MutableRefObject<HTMLDivElement>;
+    const [isMissingContent, setIsMissingContent] = useState(false);
 
-    if (!(opportunity instanceof UsTxEarlyReleaseFromSupervisionOpportunity)) {
-      return null;
-    }
+    useEffect(() => {
+      // prevent the ability to download form before it has been rendered
+      const pages = formRef.current?.querySelectorAll(PrintablePage);
+      setIsMissingContent(!(pages && pages.length > 0));
+    }, [formRef]);
 
     const onClickDownload = async () => {
-      const formData = opportunity.form.formData;
-      if (!formData) return;
-
-      await fillAndSavePDF(
-        `${opportunity.person.displayName} - Early Release From Supervision Form.pdf`,
-        "US_TX",
-        "ERSChecklist.pdf",
-        fillerFunc,
-        formData,
-        getTokenSilently,
+      return generate(formRef.current, `${PrintablePage}`).then(
+        (pdf: jsPDF) => {
+          pdf.save(
+            `${opportunity.person.displayName} - Early Release From Supervision Form.pdf`,
+          );
+        },
       );
     };
 
@@ -82,14 +55,14 @@ const WorkflowsUsTxEarlyReleaseFromSupervisionForm = observer(
       <FormContainer
         agencyName="TDCJ"
         heading={opportunity.config.label}
+        isMissingContent={isMissingContent}
         onClickDownload={onClickDownload}
         downloadButtonLabel="Download Form"
         opportunity={opportunity}
       >
-        <FormPreviewPage
-          src={previewImage}
-          alt={`Early Release From Supervision Form preview`}
-        ></FormPreviewPage>
+        <FormViewer formRef={formRef}>
+          <ERSChecklist />
+        </FormViewer>
       </FormContainer>
     );
   },

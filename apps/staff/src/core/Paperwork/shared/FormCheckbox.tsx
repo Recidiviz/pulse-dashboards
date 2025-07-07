@@ -16,50 +16,39 @@
 // =============================================================================
 
 import { observer } from "mobx-react-lite";
-import React, { MutableRefObject, useRef } from "react";
+import React from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
 
-import { useOpportunityFormContext } from "../../OpportunityFormContext";
-import { useAnimatedValue, useReactiveInput } from "../../utils";
-import { Input } from "./styles";
-import { FormDataType } from "./types";
+import { useOpportunityFormContext } from "../OpportunityFormContext";
+import { FormDataFieldName } from "./../US_TX/types";
+import { Checkbox } from "./styles";
 
-export type FormInputValueGetter = (value: any) => any;
-
-export type FormInputValueBuilder = (data: any, value: string) => string;
-
-type FormInputProps = StyledComponentProps<
+export type FormCheckboxProps = StyledComponentProps<
   "input",
   DefaultTheme,
-  object,
-  never
+  { type: "checkbox" },
+  "type"
 > & {
-  name: keyof FormDataType;
+  name: FormDataFieldName;
 };
 
-const FormInput: React.FC<FormInputProps> = ({ name, ...props }) => {
-  const form = useOpportunityFormContext();
-  const [value, onChange] = useReactiveInput<HTMLInputElement>(name, form);
-  const inputRef = useRef<HTMLInputElement>(
-    null,
-  ) as MutableRefObject<HTMLInputElement>;
-
-  const hasAnimated = useAnimatedValue(inputRef, value);
+const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
+  const opportunityForm = useOpportunityFormContext();
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    opportunityForm.updateDraftData(name, event.target.checked);
+  };
 
   return (
-    <Input
+    <Checkbox
       {...props}
-      value={hasAnimated ? value : ""}
-      ref={inputRef}
+      checked={!!opportunityForm.formData[name]}
       id={name}
       name={name}
-      type="text"
       onChange={onChange}
+      type="checkbox"
       className="fs-exclude"
-      autoComplete="off"
     />
   );
 };
 
-// Only re-render changed inputs
-export default observer(FormInput);
+export default observer(FormCheckbox);

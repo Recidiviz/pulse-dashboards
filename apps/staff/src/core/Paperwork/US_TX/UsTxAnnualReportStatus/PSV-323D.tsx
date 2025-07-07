@@ -18,11 +18,11 @@
 import React, { useContext } from "react";
 
 import { FormViewerContext } from "../../FormViewer";
+import FormCheckbox from "../../shared/FormCheckbox";
+import FormHeader from "../../shared/FormHeader";
+import FormInput from "../../shared/FormInput";
+import { FormContainer, Grid, Item, Row } from "../../shared/styles";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
-import FormCheckbox from "./FormCheckbox";
-import FormHeader from "./FormHeader";
-import FormInput from "./FormInput";
-import { FormContainer, Grid, Item, Row } from "./styles";
 
 const FormPSV323D: React.FC = () => {
   const formViewerContext = useContext(FormViewerContext);
@@ -32,7 +32,11 @@ const FormPSV323D: React.FC = () => {
       <PrintablePage>
         <FormContainer {...formViewerContext}>
           <Item style={{ padding: "unset" }}>
-            <FormHeader title="Clients who meet the following criteria may be recommended for annual reporting." />
+            <FormHeader
+              titleLineOne="Annual Reporting"
+              titleLineTwo="Checklist, Recommendation, and Determination Form"
+              subTitle="Clients who meet the following criteria may be recommended for annual reporting."
+            />
             <Row paddingLeft>
               <Item>
                 Client Name:
@@ -200,7 +204,7 @@ const FormPSV323D: React.FC = () => {
               Supervising Officer Recommend Client for Annual Report
             </Item>
           </Grid>
-          <Grid columns="4.4fr 1.45fr 1.45fr">
+          <Grid columns="4.44fr 1.45fr 1.45fr">
             <Item>
               Signature confirms that all checklist information has been
               thoroughly reviewed.
@@ -213,13 +217,13 @@ const FormPSV323D: React.FC = () => {
               ></FormCheckbox>
             </Item>
           </Grid>
-          <Grid columns="0.75fr 3.65fr 1.45fr 1.45fr">
+          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
             <Item></Item>
             <Item textAlignCenter>No</Item>
             <Item></Item>
           </Grid>
-          <Grid columns="0.75fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <Item>Remarks:</Item>
             <FormInput name="supervisingOfficerRemarks" />
           </Grid>
@@ -245,7 +249,7 @@ const FormPSV323D: React.FC = () => {
               Concur with Supervising Officer's Decision
             </Item>
           </Grid>
-          <Grid columns="4.4fr 1.45fr 1.45fr">
+          <Grid columns="4.44fr 1.45fr 1.45fr">
             <Item>
               Signature confirms that all checklist information has been
               thoroughly reviewed.
@@ -258,13 +262,13 @@ const FormPSV323D: React.FC = () => {
               ></FormCheckbox>
             </Item>
           </Grid>
-          <Grid columns="0.75fr 3.65fr 1.45fr 1.45fr">
+          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
             <Item></Item>
             <Item textAlignCenter>No</Item>
             <Item></Item>
           </Grid>
-          <Grid columns="0.75fr 6.5fr" style={{ borderBottom: "1px solid" }}>
+          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <Item>Remarks:</Item>
             <FormInput name="unitSupervisorRemarks" />
           </Grid>
@@ -278,7 +282,7 @@ const FormPSV323D: React.FC = () => {
               Concur with Supervising Officer's Decision
             </Item>
           </Grid>
-          <Grid columns="4.4fr 1.45fr 1.45fr">
+          <Grid columns="4.44fr 1.45fr 1.45fr">
             <Item>
               Signature confirms that all checklist information has been
               thoroughly reviewed.
@@ -286,14 +290,14 @@ const FormPSV323D: React.FC = () => {
             <Item textAlignCenter>Yes</Item>
             <Item></Item>
           </Grid>
-          <Grid columns="0.75fr 3.65fr 1.45fr 1.45fr">
+          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
             <Item></Item>
             <Item textAlignCenter>No</Item>
             <Item></Item>
           </Grid>
           <Grid
-            columns="0.75fr 6.5fr"
+            columns="0.745fr 6.5fr"
             style={{ borderBottom: "1px solid", borderRight: "1px solid" }}
           >
             <Item>Remarks:</Item>
@@ -308,7 +312,7 @@ const FormPSV323D: React.FC = () => {
               Concur with Supervising Officer's Decision
             </Item>
           </Grid>
-          <Grid columns="4.4fr 1.45fr 1.45fr">
+          <Grid columns="4.44fr 1.45fr 1.45fr">
             <Item>
               Signature confirms that all checklist information has been
               thoroughly reviewed.
@@ -316,14 +320,14 @@ const FormPSV323D: React.FC = () => {
             <Item textAlignCenter>Yes</Item>
             <Item></Item>
           </Grid>
-          <Grid columns="0.75fr 3.65fr 1.45fr 1.45fr">
+          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
             <Item></Item>
             <Item textAlignCenter>No</Item>
             <Item></Item>
           </Grid>
           <Grid
-            columns="0.75fr 6.5fr"
+            columns="0.745fr 6.5fr"
             style={{ borderBottom: "1px solid", borderRight: "1px solid" }}
           >
             <Item>Remarks:</Item>
@@ -336,7 +340,7 @@ const FormPSV323D: React.FC = () => {
             <Item>Date:</Item>
             <Item textAlignCenter>Final Authority</Item>
           </Grid>
-          <Grid columns="4.4fr 1.45fr 1.45fr">
+          <Grid columns="4.44fr 1.45fr 1.45fr">
             <Item>
               Signature confirms that all checklist information has been
               thoroughly reviewed.
@@ -344,14 +348,14 @@ const FormPSV323D: React.FC = () => {
             <Item textAlignCenter>Yes</Item>
             <Item></Item>
           </Grid>
-          <Grid columns="0.75fr 3.65fr 1.45fr 1.45fr">
+          <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
             <Item></Item>
             <Item textAlignCenter>No</Item>
             <Item></Item>
           </Grid>
           <Grid
-            columns="0.75fr 6.5fr"
+            columns="0.745fr 6.5fr"
             style={{ borderBottom: "1px solid", borderRight: "1px solid" }}
           >
             <Item>Remarks:</Item>

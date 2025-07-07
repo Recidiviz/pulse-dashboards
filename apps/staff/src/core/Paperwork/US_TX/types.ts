@@ -1,3 +1,4 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 // Recidiviz - a data platform for criminal justice reform
 // Copyright (C) 2025 Recidiviz, Inc.
 //
@@ -15,6 +16,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTxAnnualReportStatusDraftData } from "../../../../WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
+import { UsTxAnnualReportStatusDraftData } from "apps/staff/src/WorkflowsStore/Opportunity/UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
+import { UsTxEarlyReleaseFromSupervisionDraftData } from "apps/staff/src/WorkflowsStore/Opportunity/UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
 
-export type FormDataType = Partial<UsTxAnnualReportStatusDraftData>;
+export type FormDataFieldName =
+  | keyof UsTxAnnualReportStatusDraftData
+  | keyof UsTxEarlyReleaseFromSupervisionDraftData;

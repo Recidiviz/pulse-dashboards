@@ -42,7 +42,7 @@ import styled, { css } from "styled-components/macro";
 
 import { palette } from "~design-system";
 
-import type { FormViewerContextData } from "../../FormViewer";
+import type { FormViewerContextData } from "../FormViewer";
 
 const EDIT_BACKGROUND = iconToDataURI(
   <Icon kind={IconSVG.Edit} color={palette.slate60} />,
@@ -50,7 +50,7 @@ const EDIT_BACKGROUND = iconToDataURI(
 
 export const Input = styled.input`
   border-width: 0;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: normal;
   padding: 1px 3px;
   margin-bottom: 0;
@@ -115,19 +115,24 @@ export const Item = styled.div<ItemProps>(
   },
 );
 
+export const ErsItem = styled(Item)`
+  line-height: unset;
+`;
+
 interface RowProps {
   paddingLeft?: boolean;
   justifyContentStart?: boolean;
+  unsetMargin?: boolean;
 }
 
 export const Row = styled.div<RowProps>(
-  ({ paddingLeft, justifyContentStart }) => {
+  ({ paddingLeft, justifyContentStart, unsetMargin }) => {
     return `
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: ${justifyContentStart ? "start" : "space-between"};
-    margin-bottom: 4px;
+    margin-bottom: ${unsetMargin ? "unset" : "4px"};
     width: 100%;
     padding-left: ${paddingLeft ? "60px" : "0pt"};
   `;

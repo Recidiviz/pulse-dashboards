@@ -22,6 +22,7 @@ import { DIMENSIONS_PX } from "./PDFFormGenerator";
 
 type PrintablePageProps = {
   stretchable?: boolean;
+  lineHeight?: number;
 };
 
 export const PrintablePage = styled.div.attrs({
@@ -50,7 +51,7 @@ export const PrintablePage = styled.div.attrs({
   font-size: 9px;
   position: relative;
 
-  line-height: 1.3;
+  line-height: ${({ lineHeight }) => lineHeight ?? 1.3};
 `;
 
 export const PrintablePageMargin = styled.div<{ stretchable?: boolean }>`

@@ -36,7 +36,9 @@ import React from "react";
 import styled from "styled-components/macro";
 
 interface FormHeaderProps {
-  title: string;
+  titleLineOne: string;
+  titleLineTwo: string;
+  subTitle: string;
 }
 
 const FormHeaderContainer = styled.div`
@@ -56,13 +58,17 @@ const FormHeaderHeading = styled.h1`
   letter-spacing: unset;
 `;
 
-const FormHeader: React.FC<FormHeaderProps> = ({ title }) => (
+const FormHeader: React.FC<FormHeaderProps> = ({
+  titleLineOne,
+  titleLineTwo,
+  subTitle,
+}) => (
   <FormHeaderContainer>
     <FormHeaderHeading>
-      <strong>Annual Reporting</strong>
-      <br /> <strong>Checklist, Recommendation, and Determination Form</strong>
+      <strong>{titleLineOne}</strong>
+      <br /> <strong>{titleLineTwo}</strong>
       <br />
-      <em>{title}</em>
+      <em>{subTitle}</em>
     </FormHeaderHeading>
   </FormHeaderContainer>
 );
