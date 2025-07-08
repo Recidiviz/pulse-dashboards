@@ -187,6 +187,7 @@ export type UsIaEarlyDischargeActionsMetadata = {
     supervisorResponseType?: string;
   };
   currentStatus: string;
+  subsequentStatus: string;
   revert?: boolean;
 };
 

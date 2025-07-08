@@ -204,17 +204,20 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
           }
         : { type: officerAction.type, additionalNotes: officerAction.notes };
 
-    this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
-      staffId: userPseudoId ?? this.currentUserEmail,
-      justiceInvolvedPersonId: this.person.pseudonymizedId,
-      action: actionMetadata,
-      currentStatus: this.clientStatus,
-    });
+    const originalStatus = this.clientStatus;
 
     await this.rootStore.firestoreStore.updateOpportunityActionHistory(
       this,
       updatedActionHistory,
     );
+
+    this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
+      staffId: userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: originalStatus,
+      subsequentStatus: this.clientStatus,
+    });
   }
 
   async setSupervisorResponse(
@@ -250,17 +253,20 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       revisionRequest: supervisorResponse.revisionRequest,
     };
 
-    this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
-      staffId: userPseudoId ?? this.currentUserEmail,
-      justiceInvolvedPersonId: this.person.pseudonymizedId,
-      action: actionMetadata,
-      currentStatus: this.clientStatus,
-    });
+    const originalStatus = this.clientStatus;
 
     await this.rootStore.firestoreStore.updateOpportunityActionHistory(
       this,
       updatedActionHistory,
     );
+
+    this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
+      staffId: userPseudoId ?? this.currentUserEmail,
+      justiceInvolvedPersonId: this.person.pseudonymizedId,
+      action: actionMetadata,
+      currentStatus: originalStatus,
+      subsequentStatus: this.clientStatus,
+    });
   }
 
   async deleteActionHistory(): Promise<void> {
@@ -273,15 +279,18 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
         }
       : undefined;
 
+    const originalStatus = this.clientStatus;
+
+    await this.rootStore.firestoreStore.deleteOpportunityActionHistory(this);
+
     this.rootStore.analyticsStore.trackUsIaEarlyDischargeOpportunityActions({
       staffId: userPseudoId ?? this.currentUserEmail,
       justiceInvolvedPersonId: this.person.pseudonymizedId,
       action: actionMetadata,
-      currentStatus: this.clientStatus,
+      currentStatus: originalStatus,
+      subsequentStatus: this.clientStatus,
       revert: true,
     });
-
-    await this.rootStore.firestoreStore.deleteOpportunityActionHistory(this);
   }
 
   get requirementsMet(): OpportunityRequirement[] {
