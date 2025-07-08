@@ -487,14 +487,7 @@ export class InsightsSupervisionStore {
    */
   get isVitalsEnabled() {
     const { userStore } = this.insightsStore.rootStore;
-
-    // Check if...
-    return (
-      // ...the user has allowed navigation to vitals (previously named operations) and...
-      userStore.getRoutePermission("operations") &&
-      // ...if the active feature variant for supervisorHomepageVitals is enabled.
-      !!userStore.activeFeatureVariants.supervisorHomepageVitals
-    );
+    return !!userStore.activeFeatureVariants.supervisorHomepageVitals;
   }
 
   /**
