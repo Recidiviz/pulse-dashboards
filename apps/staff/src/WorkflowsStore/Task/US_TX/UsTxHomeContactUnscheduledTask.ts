@@ -15,9 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Client } from "../../Client";
 import UsTxContactTask from "./UsTxContactTask";
 
-class UsTxHomeContactScheduledTask extends UsTxContactTask<"usTxHomeContactUnscheduled"> {
+class UsTxHomeContactUnscheduledTask extends UsTxContactTask<"usTxHomeContactUnscheduled"> {
   get displayName(): string {
     if (this.details.officerInCriticallyUnderstaffedLocation) {
       // Fallthrough to the final return is intentional
@@ -29,6 +30,18 @@ class UsTxHomeContactScheduledTask extends UsTxContactTask<"usTxHomeContactUnsch
 
     return "Home contact (unscheduled)";
   }
+
+  get frequency(): string {
+    const client = this.person as Client;
+    const high = client.supervisionLevel === "High";
+    const moderate = client.supervisionLevel === "Moderate";
+    const so = client.caseTypeRawText === "SEX OFFENDER";
+    const sisp = client.caseTypeRawText === "SUPER-INTENSIVE SUPERVISION";
+    if ((high && so) || (high && sisp) || (moderate && sisp)) {
+      return "Twice per month";
+    }
+    return super.frequency;
+  }
 }
 
-export default UsTxHomeContactScheduledTask;
+export default UsTxHomeContactUnscheduledTask;
