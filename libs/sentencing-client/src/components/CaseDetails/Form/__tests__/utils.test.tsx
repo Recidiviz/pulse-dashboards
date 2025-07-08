@@ -40,6 +40,7 @@ import {
   SUBSTANCE_USER_DISORDER_DIAGNOSIS_KEY,
 } from "../../constants";
 import {
+  asamLevelOfCareRecommendation,
   mentalHealthDiagnoses,
   NO_OPTION,
   NONE_OPTION,
@@ -48,6 +49,7 @@ import {
 } from "../constants";
 import { CountyDistrict } from "../types";
 import {
+  formatFormEnumValue,
   getFilteredCountyOptions,
   isSelectionOverLimit,
   transformUpdates,
@@ -311,6 +313,16 @@ describe("isSelectionOverLimit", () => {
     const selections = makeSelections(5);
     expect(isSelectionOverLimit(selections, NOT_SURE_YET_OPTION, 3)).toBe(
       false,
+    );
+  });
+});
+
+describe("formatFormEnumValue", () => {
+  it("should transform asamLevelOfCareRecommendation values to their proper enum", () => {
+    Object.entries(asamLevelOfCareRecommendation).forEach(
+      ([enumValue, displayValue]) => {
+        expect(formatFormEnumValue(displayValue)).toBe(enumValue);
+      },
     );
   });
 });

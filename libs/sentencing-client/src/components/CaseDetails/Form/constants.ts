@@ -57,7 +57,7 @@ export const asamLevelOfCareRecommendation: Record<
   ClinicallyManagedHighIntensityResidential:
     "3.5 Clinically Managed High-Intensity Residential",
   MedicallyManagedResidential: "3.7 Medically Managed Residential",
-  MedicallyManagedInpatient: "4 Medically Managed Inpatient",
+  MedicallyManagedInpatient: "4.0 Medically Managed Inpatient",
   None: NONE_OPTION,
 };
 
