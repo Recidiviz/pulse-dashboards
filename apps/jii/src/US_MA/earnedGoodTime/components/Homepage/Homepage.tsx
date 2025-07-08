@@ -30,6 +30,7 @@ import {
 import { hydrateTemplate } from "../../../../configs/hydrateTemplate";
 import { useEGTDataContext } from "../EGTDataContext/context";
 import { DatesSection } from "./DatesSection";
+import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
 
 const LastUpdatedBanner = styled(FullBleedContainer)`
   ${typography.Sans14}
@@ -57,6 +58,7 @@ export const Homepage = observer(function Homepage() {
         </LastUpdatedBanner>
       </HeaderPortal>
       <DatesSection />
+      <TotalTimeEarnedSection />
     </div>
   );
 });

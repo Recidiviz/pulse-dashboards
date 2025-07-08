@@ -17,36 +17,46 @@
 
 import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
-import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { Chip } from "../../../../../common/components/Chip";
+import { Card } from "../../../../../common/components/Card";
 import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
 import { useEGTDataContext } from "../../EGTDataContext/context";
-import { CardHeading, CardValue } from "../styles";
+import { CardHeading, CardValue, SectionHeading } from "../styles";
 
-const Wrapper = styled.div`
-  &:not(:last-child) {
-    margin-bottom: ${rem(spacing.lg)};
-  }
+const CardWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  gap: ${rem(spacing.md)};
 `;
 
-export const DateInfo: FC<{
-  tag: string;
-  label: string;
-  value?: string;
-  muted?: boolean;
-}> = ({ tag, label, value, muted }) => {
-  const { data } = useEGTDataContext();
+export const TotalTimeEarnedSection = () => {
+  const {
+    data,
+    copy: {
+      home: { totalTimeEarned },
+    },
+  } = useEGTDataContext();
+
   return (
-    <Wrapper>
-      <CardHeading>
-        {label}
-        <Chip color={muted ? "gray" : "green"}>
-          <abbr>{tag}</abbr>
-        </Chip>
-      </CardHeading>
-      {value && <CardValue>{hydrateTemplate(value, data)}</CardValue>}
-    </Wrapper>
+    <section>
+      <SectionHeading>{totalTimeEarned.sectionTitle}</SectionHeading>
+      <CardWrapper>
+        <Card style={{ flex: "1" }}>
+          <CardHeading>{totalTimeEarned.egt.label}</CardHeading>
+          <CardValue>
+            {hydrateTemplate(totalTimeEarned.egt.value, data)}
+          </CardValue>
+        </Card>
+        <Card style={{ flex: "1" }}>
+          <CardHeading>{totalTimeEarned.credits.label}</CardHeading>
+          <CardValue>
+            {hydrateTemplate(totalTimeEarned.credits.value, data)}
+          </CardValue>
+        </Card>
+      </CardWrapper>
+    </section>
   );
 };

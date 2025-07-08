@@ -33,3 +33,19 @@ export const SectionHeading = styled.h2`
 export const SlateCopy = styled(CopyWrapper)`
   color: ${palette.slate85};
 `;
+
+export const CardHeading = styled.h3`
+  ${typography.Sans18}
+
+  align-items: center;
+  display: flex;
+  gap: 1em;
+  justify-content: space-between;
+  margin-bottom: ${rem(spacing.sm)};
+`;
+
+export const CardValue = styled.div`
+  ${typography.Sans24};
+
+  font-size: ${rem(34)};
+`;

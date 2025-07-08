@@ -62,6 +62,17 @@ export const usMaEGTCopy = {
           "Questions regarding the calculation of parole eligibility dates should be directed to the Institutional Parole Officer.",
       },
     },
+    totalTimeEarned: {
+      sectionTitle: "Total time you’ve earned",
+      egt: {
+        label: "Earned Good Time + Boosts",
+        value: `{{pluralize "days" totalStateCredit true}}`,
+      },
+      credits: {
+        label: "Completion Credits",
+        value: `{{pluralize "days" totalCompletionCredit true}}`,
+      },
+    },
   },
   infoPages: {
     rts: {
