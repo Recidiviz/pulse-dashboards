@@ -72,10 +72,17 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row justifyContentStart unsetMargin>
             <ErsItem width={25}>
-              <FormCheckbox name="atLeastHalfTimeCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="atLeastHalfTimeCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
-              <FormCheckbox name="atLeastHalfTimeCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="atLeastHalfTimeCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
           </Row>
@@ -95,10 +102,17 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row justifyContentStart unsetMargin>
             <ErsItem width={25}>
-              <FormCheckbox name="minimumThreeYearsSupervisionCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="minimumThreeYearsSupervisionCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
-              <FormCheckbox name="minimumThreeYearsSupervisionCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="minimumThreeYearsSupervisionCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
           </Row>
@@ -119,10 +133,17 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row justifyContentStart unsetMargin>
             <ErsItem width={25}>
-              <FormCheckbox name="goodFaithFeesAndEducationCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="goodFaithFeesAndEducationCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
-              <FormCheckbox name="goodFaithFeesAndEducationCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="goodFaithFeesAndEducationCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
             <Row paddingLeft>
@@ -144,10 +165,17 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row justifyContentStart unsetMargin>
             <ErsItem width={25}>
-              <FormCheckbox name="restitutionObligationsCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="restitutionObligationsCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
-              <FormCheckbox name="restitutionObligationsCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="restitutionObligationsCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
           </Row>
@@ -168,10 +196,14 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row justifyContentStart unsetMargin>
             <ErsItem width={25}>
-              <FormCheckbox name="warrantCheckYes"></FormCheckbox>
+              <FormCheckbox toggleable name="warrantCheck"></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
-              <FormCheckbox name="warrantCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="warrantCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
           </Row>
@@ -192,10 +224,17 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row justifyContentStart unsetMargin>
             <ErsItem width={25}>
-              <FormCheckbox name="noViolationsCertificateCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="noViolationsCertificateCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
-              <FormCheckbox name="noViolationsCertificateCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="noViolationsCertificateCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
           </Row>
@@ -215,10 +254,17 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row justifyContentStart unsetMargin>
             <ErsItem width={25}>
-              <FormCheckbox name="societyBestInterestCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="societyBestInterestCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem width={25}>
-              <FormCheckbox name="societyBestInterestCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="societyBestInterestCheck"
+              ></FormCheckbox>
             </ErsItem>
             <ErsItem>Comments:</ErsItem>
           </Row>

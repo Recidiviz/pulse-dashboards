@@ -71,10 +71,17 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row justifyContentStart>
             <Item width={25}>
-              <FormCheckbox name="threeYearsTRASCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="threeYearsTRASCheck"
+              ></FormCheckbox>
             </Item>
             <Item width={25}>
-              <FormCheckbox name="threeYearsTRASCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="threeYearsTRASCheck"
+              ></FormCheckbox>
             </Item>
             <Item>Comments:</Item>
           </Row>
@@ -95,10 +102,17 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row justifyContentStart>
             <Item width={25}>
-              <FormCheckbox name="complianceFeesAndEducationCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="complianceFeesAndEducationCheck"
+              ></FormCheckbox>
             </Item>
             <Item width={25}>
-              <FormCheckbox name="complianceFeesAndEducationCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="complianceFeesAndEducationCheck"
+              ></FormCheckbox>
             </Item>
             <Item>Comments:</Item>
           </Row>
@@ -120,10 +134,17 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row justifyContentStart>
             <Item width={25}>
-              <FormCheckbox name="restitutionObligationsCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="restitutionObligationsCheck"
+              ></FormCheckbox>
             </Item>
             <Item width={25}>
-              <FormCheckbox name="restitutionObligationsCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="restitutionObligationsCheck"
+              ></FormCheckbox>
             </Item>
           </Row>
           <Row justifyContentStart>
@@ -138,10 +159,14 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row justifyContentStart>
             <Item width={25}>
-              <FormCheckbox name="warrantCheckYes"></FormCheckbox>
+              <FormCheckbox toggleable name="warrantCheck"></FormCheckbox>
             </Item>
             <Item width={25}>
-              <FormCheckbox name="warrantCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="warrantCheck"
+              ></FormCheckbox>
             </Item>
             <Item>Comments:</Item>
           </Row>
@@ -161,10 +186,17 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row justifyContentStart>
             <Item width={25}>
-              <FormCheckbox name="societyBestInterestCheckYes"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                name="societyBestInterestCheck"
+              ></FormCheckbox>
             </Item>
             <Item width={25}>
-              <FormCheckbox name="societyBestInterestCheckNo"></FormCheckbox>
+              <FormCheckbox
+                toggleable
+                invert
+                name="societyBestInterestCheck"
+              ></FormCheckbox>
             </Item>
             <Item>Comments:</Item>
           </Row>

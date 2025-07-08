@@ -48,16 +48,11 @@ export class UsTxAnnualReportStatusForm extends FormBase<
         month: "long",
         year: "numeric",
       });
-    const threeYearsTRASCheckYes = true;
-    const threeYearsTRASCheckNo = false;
-    const complianceFeesAndEducationCheckYes = true;
-    const complianceFeesAndEducationCheckNo = false;
-    const restitutionObligationsCheckYes = true;
-    const restitutionObligationsCheckNo = false;
-    const warrantCheckYes = true;
-    const warrantCheckNo = false;
-    const societyBestInterestCheckYes = true;
-    const societyBestInterestCheckNo = false;
+    const threeYearsTRASCheck = true;
+    const complianceFeesAndEducationCheck = true;
+    const restitutionObligationsCheck = true;
+    const warrantCheck = true;
+    const societyBestInterestCheck = true;
     const officerName = this.person.assignedStaffFullName;
     const supervisingOfficerRecommendYes = false;
     const unitSupervisorConcurWithSupervisingOfficerYes = false;
@@ -66,16 +61,11 @@ export class UsTxAnnualReportStatusForm extends FormBase<
       clientName,
       tdcjIdAndSid,
       eligibilityMonthString,
-      threeYearsTRASCheckYes,
-      threeYearsTRASCheckNo,
-      complianceFeesAndEducationCheckYes,
-      complianceFeesAndEducationCheckNo,
-      restitutionObligationsCheckYes,
-      restitutionObligationsCheckNo,
-      warrantCheckYes,
-      warrantCheckNo,
-      societyBestInterestCheckYes,
-      societyBestInterestCheckNo,
+      threeYearsTRASCheck,
+      complianceFeesAndEducationCheck,
+      restitutionObligationsCheck,
+      warrantCheck,
+      societyBestInterestCheck,
       officerName,
       supervisingOfficerRecommendYes,
       unitSupervisorConcurWithSupervisingOfficerYes,

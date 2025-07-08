@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { deleteField, FieldValue } from "firebase/firestore";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { DefaultTheme, StyledComponentProps } from "styled-components/macro";
@@ -30,18 +31,29 @@ export type FormCheckboxProps = StyledComponentProps<
   "type"
 > & {
   name: FormDataFieldName;
+  invert?: boolean;
+  toggleable?: boolean;
 };
 
-const FormCheckbox: React.FC<FormCheckboxProps> = ({ name, ...props }) => {
+const FormCheckbox: React.FC<FormCheckboxProps> = ({
+  name,
+  invert,
+  toggleable,
+  ...props
+}) => {
   const opportunityForm = useOpportunityFormContext();
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    opportunityForm.updateDraftData(name, event.target.checked);
+    let newVal: boolean | FieldValue = event.target.checked !== !!invert;
+    if (toggleable && !event.target.checked) newVal = deleteField();
+    opportunityForm.updateDraftData(name, newVal);
   };
+
+  const value = opportunityForm.formData[name];
 
   return (
     <Checkbox
       {...props}
-      checked={!!opportunityForm.formData[name]}
+      checked={value !== undefined && value !== !!invert}
       id={name}
       name={name}
       onChange={onChange}

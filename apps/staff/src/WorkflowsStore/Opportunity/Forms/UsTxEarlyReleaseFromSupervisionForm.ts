@@ -49,40 +49,26 @@ export class UsTxEarlyReleaseFromSupervisionForm extends FormBase<
         year: "numeric",
       });
 
-    const atLeastHalfTimeCheckYes = true;
-    const atLeastHalfTimeCheckNo = false;
-    const minimumThreeYearsSupervisionCheckYes = true;
-    const minimumThreeYearsSupervisionCheckNo = false;
-    const goodFaithFeesAndEducationCheckYes = true;
-    const goodFaithFeesAndEducationCheckNo = false;
-    const restitutionObligationsCheckYes = true;
-    const restitutionObligationsCheckNo = false;
-    const warrantCheckYes = true;
-    const warrantCheckNo = false;
-    const noViolationsCertificateCheckYes = true;
-    const noViolationsCertificateCheckNo = false;
-    const societyBestInterestCheckYes = true;
-    const societyBestInterestCheckNo = false;
+    const atLeastHalfTimeCheck = true;
+    const minimumThreeYearsSupervisionCheck = true;
+    const goodFaithFeesAndEducationCheck = true;
+    const restitutionObligationsCheck = true;
+    const warrantCheck = true;
+    const noViolationsCertificateCheck = true;
+    const societyBestInterestCheck = true;
     const officerName = this.person.assignedStaffFullName;
 
     return {
       clientName,
       tdcjIdAndSid,
       eligibilityMonthString,
-      atLeastHalfTimeCheckYes,
-      atLeastHalfTimeCheckNo,
-      minimumThreeYearsSupervisionCheckYes,
-      minimumThreeYearsSupervisionCheckNo,
-      goodFaithFeesAndEducationCheckYes,
-      goodFaithFeesAndEducationCheckNo,
-      restitutionObligationsCheckYes,
-      restitutionObligationsCheckNo,
-      warrantCheckYes,
-      warrantCheckNo,
-      noViolationsCertificateCheckYes,
-      noViolationsCertificateCheckNo,
-      societyBestInterestCheckYes,
-      societyBestInterestCheckNo,
+      atLeastHalfTimeCheck,
+      minimumThreeYearsSupervisionCheck,
+      goodFaithFeesAndEducationCheck,
+      restitutionObligationsCheck,
+      warrantCheck,
+      noViolationsCertificateCheck,
+      societyBestInterestCheck,
       officerName,
     };
   }
