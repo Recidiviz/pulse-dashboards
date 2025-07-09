@@ -45,8 +45,10 @@ export class UsMiClassificationReviewOpportunity extends OpportunityBase<
     if (!this.record) return;
     return (
       super.eligibilityDate ??
-      this.record.eligibleCriteria.usMiClassificationReviewPastDueDate
-        .eligibleDate
+      this.record.eligibleCriteria.usMiPastInitialClassificationReviewDate
+        ?.eligibleDate ??
+      this.record.eligibleCriteria.usMiSixMonthsPastLastClassificationReviewDate
+        ?.eligibleDate
     );
   }
 }

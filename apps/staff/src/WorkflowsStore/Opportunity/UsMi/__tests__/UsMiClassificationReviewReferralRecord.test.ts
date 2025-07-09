@@ -154,3 +154,42 @@ test("transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionLeve
 
   expect(schema.parse(rawRecord)).toMatchSnapshot();
 });
+
+test("transforms records with eligible and ineligible criteria", () => {
+  const rawRecord: RawRecord = {
+    stateCode: "US_MI",
+    externalId: "cr-eligible-4",
+    eligibleCriteria: {
+      usMiNotAlreadyOnLowestEligibleSupervisionLevel: {
+        supervisionLevel: "MAXIMUM",
+        requiresSoRegistration: null,
+      },
+    },
+    ineligibleCriteria: {
+      usMiPastInitialClassificationReviewDate: {
+        eligibleDate: "2022-12-12",
+      },
+    },
+    metadata: { recommendedSupervisionLevel: "MEDIUM" },
+    caseNotes: {
+      "Recommended supervision level": [
+        {
+          eventDate: null,
+          noteBody: "MEDIUM",
+          noteTitle: null,
+        },
+      ],
+      "Recent employment (last 6 months)": [
+        {
+          eventDate: "2022-10-23",
+          noteBody: "Got a new job",
+          noteTitle: "Employed at Big Bob's Burger Joint",
+        },
+      ],
+    },
+    isEligible: false,
+    isAlmostEligible: true,
+  };
+
+  expect(schema.parse(rawRecord)).toMatchSnapshot();
+});

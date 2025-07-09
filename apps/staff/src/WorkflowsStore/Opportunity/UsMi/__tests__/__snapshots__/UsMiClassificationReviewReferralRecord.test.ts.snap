@@ -19,12 +19,12 @@ exports[`transform record for initial CR 1`] = `
     ],
   },
   "eligibleCriteria": {
-    "usMiClassificationReviewPastDueDate": {
-      "eligibleDate": 2022-12-12T00:00:00.000Z,
-    },
     "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
       "requiresSoRegistration": null,
       "supervisionLevel": "MAXIMUM",
+    },
+    "usMiPastInitialClassificationReviewDate": {
+      "eligibleDate": 2022-12-12T00:00:00.000Z,
     },
   },
   "externalId": "cr-eligible-1",
@@ -42,10 +42,10 @@ exports[`transform record for missing usMiNotAlreadyOnLowestEligibleSupervisionL
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "usMiClassificationReviewPastDueDate": {
+    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": null,
+    "usMiSixMonthsPastLastClassificationReviewDate": {
       "eligibleDate": 2023-03-14T00:00:00.000Z,
     },
-    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": null,
   },
   "externalId": "cr-eligible-3",
   "ineligibleCriteria": {},
@@ -68,18 +68,57 @@ exports[`transform record for six-month CR 1`] = `
     ],
   },
   "eligibleCriteria": {
-    "usMiClassificationReviewPastDueDate": {
-      "eligibleDate": 2019-01-12T00:00:00.000Z,
-    },
     "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
       "requiresSoRegistration": null,
       "supervisionLevel": "MAXIMUM",
+    },
+    "usMiSixMonthsPastLastClassificationReviewDate": {
+      "eligibleDate": 2019-01-12T00:00:00.000Z,
     },
   },
   "externalId": "cr-eligible-2",
   "ineligibleCriteria": {},
   "isAlmostEligible": false,
   "isEligible": true,
+  "metadata": {
+    "recommendedSupervisionLevel": "MEDIUM",
+  },
+  "stateCode": "US_MI",
+}
+`;
+
+exports[`transforms records with eligible and ineligible criteria 1`] = `
+{
+  "caseNotes": {
+    "Recent employment (last 6 months)": [
+      {
+        "eventDate": 2022-10-23T00:00:00.000Z,
+        "noteBody": "Got a new job",
+        "noteTitle": "Employed at Big Bob's Burger Joint",
+      },
+    ],
+    "Recommended supervision level": [
+      {
+        "eventDate": null,
+        "noteBody": "MEDIUM",
+        "noteTitle": null,
+      },
+    ],
+  },
+  "eligibleCriteria": {
+    "usMiNotAlreadyOnLowestEligibleSupervisionLevel": {
+      "requiresSoRegistration": null,
+      "supervisionLevel": "MAXIMUM",
+    },
+  },
+  "externalId": "cr-eligible-4",
+  "ineligibleCriteria": {
+    "usMiPastInitialClassificationReviewDate": {
+      "eligibleDate": 2022-12-12T00:00:00.000Z,
+    },
+  },
+  "isAlmostEligible": true,
+  "isEligible": false,
   "metadata": {
     "recommendedSupervisionLevel": "MEDIUM",
   },

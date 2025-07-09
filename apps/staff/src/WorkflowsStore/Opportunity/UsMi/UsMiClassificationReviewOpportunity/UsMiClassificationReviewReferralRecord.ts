@@ -23,49 +23,29 @@ import { eligibleDateSchema } from "../../schemaHelpers";
 
 export const usMiClassificationReviewSchemaForSupervisionLevelFormatter = (
   formatter: (raw: string) => string = (s) => s,
-) =>
-  opportunitySchemaBase.extend({
-    eligibleCriteria: z
-      .object({
-        usMiNotAlreadyOnLowestEligibleSupervisionLevel: z
-          .object({
-            supervisionLevel: z.string().transform(formatter).nullable(),
-            requiresSoRegistration: z.boolean().nullable(),
-          })
-          .nullable(),
-        usMiPastInitialClassificationReviewDate: eligibleDateSchema.optional(),
-        usMiSixMonthsPastLastClassificationReviewDate:
-          eligibleDateSchema.optional(),
-      })
-      .passthrough()
-      .refine(
-        (r) =>
-          (r.usMiPastInitialClassificationReviewDate ||
-            r.usMiSixMonthsPastLastClassificationReviewDate) &&
-          !(
-            r.usMiPastInitialClassificationReviewDate &&
-            r.usMiSixMonthsPastLastClassificationReviewDate
-          ),
-        "Exactly one of usMiPastInitialClassificationReviewDate or usMiSixMonthsPastLastClassificationReviewDate must be present",
-      )
-      .transform(
-        ({
-          usMiPastInitialClassificationReviewDate,
-          usMiSixMonthsPastLastClassificationReviewDate,
-          ...rest
-        }) => ({
-          usMiClassificationReviewPastDueDate:
-            usMiPastInitialClassificationReviewDate ??
-            // the refine above verifies that at least one of these is non-null
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            usMiSixMonthsPastLastClassificationReviewDate!,
-          ...rest,
-        }),
-      ),
+) => {
+  const eligibleAndIneligibleCriteria = z
+    .object({
+      usMiNotAlreadyOnLowestEligibleSupervisionLevel: z
+        .object({
+          supervisionLevel: z.string().transform(formatter).nullable(),
+          requiresSoRegistration: z.boolean().nullable(),
+        })
+        .nullable(),
+      usMiPastInitialClassificationReviewDate: eligibleDateSchema,
+      usMiSixMonthsPastLastClassificationReviewDate: eligibleDateSchema,
+    })
+    .partial()
+    .passthrough();
+
+  return opportunitySchemaBase.extend({
+    eligibleCriteria: eligibleAndIneligibleCriteria,
+    ineligibleCriteria: eligibleAndIneligibleCriteria,
     metadata: z.object({
       recommendedSupervisionLevel: z.string().optional(),
     }),
   });
+};
 
 export type UsMiClassificationReviewReferralRecordRaw = z.input<
   ReturnType<typeof usMiClassificationReviewSchemaForSupervisionLevelFormatter>
