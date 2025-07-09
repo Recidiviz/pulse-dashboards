@@ -39,7 +39,7 @@ const FormPSV323D: React.FC = () => {
             />
             <Row paddingLeft>
               <Item>
-                Client Name:
+                Client's Name:
                 <FormInput
                   name="clientName"
                   placeholder="Enter First, Last Name"
@@ -53,7 +53,7 @@ const FormPSV323D: React.FC = () => {
                 <FormInput name="tdcjIdAndSid" style={{ width: 175 }} />
               </Item>
               <Item>
-                Eligibility Month
+                Eligibility Month:
                 <FormInput
                   name="eligibilityMonthString"
                   style={{ width: 175 }}
@@ -145,6 +145,12 @@ const FormPSV323D: React.FC = () => {
                 invert
                 name="restitutionObligationsCheck"
               ></FormCheckbox>
+            </Item>
+            <Item>Comments:</Item>
+          </Row>
+          <Row paddingLeft>
+            <Item>
+              <FormInput name="comment3" style={{ width: 500 }} />
             </Item>
           </Row>
           <Row justifyContentStart>
