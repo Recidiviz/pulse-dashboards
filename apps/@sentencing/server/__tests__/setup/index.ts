@@ -16,11 +16,7 @@
 // =============================================================================
 
 import { init } from "@sentry/node";
-import {
-  CreateTRPCProxyClient,
-  createTRPCProxyClient,
-  httpBatchLink,
-} from "@trpc/client";
+import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
 import { beforeAll, beforeEach, vi } from "vitest";
@@ -37,7 +33,7 @@ export const testPort = process.env["PORT"]
   : 3003;
 export const testHost = process.env["HOST"] ?? "localhost";
 
-export let testTRPCClient: CreateTRPCProxyClient<AppRouter>;
+export let testTRPCClient: TRPCClient<AppRouter>;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 
 const { testkit, sentryTransport } = sentryTestkit();
@@ -71,7 +67,7 @@ beforeAll(async () => {
     }
   });
 
-  testTRPCClient = createTRPCProxyClient<AppRouter>({
+  testTRPCClient = createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
         url: `http://${testHost}:${testPort}`,
@@ -81,10 +77,10 @@ beforeAll(async () => {
             StateCode: "US_ID",
           };
         },
+        // Required to get Date objects to serialize correctly.
+        transformer: superjson,
       }),
     ],
-    // Required to get Date objects to serialize correctly.
-    transformer: superjson,
   });
 });
 

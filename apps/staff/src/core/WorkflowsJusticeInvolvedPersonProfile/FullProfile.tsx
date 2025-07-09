@@ -363,10 +363,10 @@ export const FullProfile = observer(
               StateCode: `${stateCode}`,
             };
           },
+          // Required to get Date objects to serialize correctly.
+          transformer: superjson,
         }),
       ],
-      // Required to get Date objects to serialize correctly.
-      transformer: superjson,
     });
 
     return (

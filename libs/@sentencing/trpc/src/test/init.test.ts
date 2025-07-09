@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { describe, expect, test } from "vitest";
@@ -28,7 +28,7 @@ describe("init trpc", () => {
   describe("auth", () => {
     test("should throw an error if authorization fails", async () => {
       // Don't pass authorization headers so that authorization fails
-      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+      const customTestTRPCClient = createTRPCClient<AppRouter>({
         links: [
           httpBatchLink({
             url: `http://${testHost}:${testPort}`,
@@ -37,10 +37,10 @@ describe("init trpc", () => {
                 StateCode: "US_ID",
               };
             },
+            // Required to get Date objects to serialize correctly.
+            transformer: superjson,
           }),
         ],
-        // Required to get Date objects to serialize correctly.
-        transformer: superjson,
       });
 
       await expect(() =>
@@ -58,7 +58,7 @@ describe("init trpc", () => {
   describe("state code", () => {
     test("should throw error if there is no state code in the header", async () => {
       // Don't pass a state code
-      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+      const customTestTRPCClient = createTRPCClient<AppRouter>({
         links: [
           httpBatchLink({
             url: `http://${testHost}:${testPort}`,
@@ -67,10 +67,10 @@ describe("init trpc", () => {
                 Authorization: "Bearer test-token",
               };
             },
+            // Required to get Date objects to serialize correctly.
+            transformer: superjson,
           }),
         ],
-        // Required to get Date objects to serialize correctly.
-        transformer: superjson,
       });
 
       await expect(() =>
@@ -87,7 +87,7 @@ describe("init trpc", () => {
     });
 
     test("should throw error if the state code isn't supported", async () => {
-      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+      const customTestTRPCClient = createTRPCClient<AppRouter>({
         links: [
           httpBatchLink({
             url: `http://${testHost}:${testPort}`,
@@ -98,10 +98,10 @@ describe("init trpc", () => {
                 StateCode: "US_ME",
               };
             },
+            // Required to get Date objects to serialize correctly.
+            transformer: superjson,
           }),
         ],
-        // Required to get Date objects to serialize correctly.
-        transformer: superjson,
       });
 
       await expect(() =>

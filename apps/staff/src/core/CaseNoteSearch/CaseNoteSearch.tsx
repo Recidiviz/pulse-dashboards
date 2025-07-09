@@ -17,7 +17,7 @@
 
 import DomPurify from "dompurify";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 
 import { isOfflineMode } from "~client-env-utils";
 import { CaseNoteSearchResults } from "~datatypes";
@@ -91,22 +91,29 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
   const [scrollPosition, setScrollPosition] = React.useState(0);
 
   const { selectedPerson } = workflowsStore;
-  if (!selectedPerson) return null;
 
   const shouldUseOfflineData = isOfflineMode();
 
-  const logResults = (numResults?: number, error?: string) => {
-    if (shouldUseOfflineData) {
-      return;
-    }
+  const logResults = useCallback(
+    (numResults?: number, error?: string) => {
+      if (!selectedPerson || shouldUseOfflineData) {
+        return;
+      }
 
-    analyticsStore.trackCaseNoteSearch({
-      userPseudonymizedId: userStore.userPseudoId,
-      clientPseudonymizedId: selectedPerson.pseudonymizedId,
-      numResults,
-      error,
-    });
-  };
+      analyticsStore.trackCaseNoteSearch({
+        userPseudonymizedId: userStore.userPseudoId,
+        clientPseudonymizedId: selectedPerson.pseudonymizedId,
+        numResults,
+        error,
+      });
+    },
+    [
+      analyticsStore,
+      userStore.userPseudoId,
+      selectedPerson,
+      shouldUseOfflineData,
+    ],
+  );
 
   const {
     data,
@@ -115,10 +122,12 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
     hasNextPage,
     isFetching,
     isFetchingNextPage,
+    error,
   } = trpc.search.useInfiniteQuery(
     {
       query: searchQuery,
-      clientExternalId: selectedPerson.externalId,
+      // This query will only execute if selected person is true
+      clientExternalId: selectedPerson?.externalId,
       userExternalId: userStore.externalId,
     },
     {
@@ -126,12 +135,24 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
         lastPage.nextPageToken && lastPage.nextPageToken?.length > 0
           ? lastPage.nextPageToken
           : null,
-      enabled: searchQuery !== "" && !shouldUseOfflineData,
-      cacheTime: 0,
-      onSuccess: (data) => logResults(data.pages.flat().length, undefined),
-      onError: (err) => logResults(undefined, err?.message),
+      enabled: selectedPerson && searchQuery !== "" && !shouldUseOfflineData,
+      gcTime: 0,
     },
   );
+
+  useEffect(() => {
+    if (!selectedPerson || shouldUseOfflineData) {
+      return;
+    }
+
+    if (error) {
+      logResults(undefined, error.message);
+    } else if (data) {
+      logResults(data.pages.flat().length, undefined);
+    }
+  }, [error, logResults, data, selectedPerson, shouldUseOfflineData]);
+
+  if (!selectedPerson) return null;
 
   const isNoteView = currentView === "NOTE_VIEW";
 

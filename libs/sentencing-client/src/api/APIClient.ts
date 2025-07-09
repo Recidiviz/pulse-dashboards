@@ -15,11 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  CreateTRPCProxyClient,
-  createTRPCProxyClient,
-  httpBatchLink,
-} from "@trpc/client";
+import { createTRPCClient, httpBatchLink, type TRPCClient } from "@trpc/client";
 import _ from "lodash";
 import { runInAction, when } from "mobx";
 import moment from "moment";
@@ -30,7 +26,7 @@ import type { AppRouter } from "~@sentencing/trpc-types";
 import { FormAttributes } from "../components/CaseDetails/types";
 import { PSIStore } from "../datastores/PSIStore";
 
-export type tRPCClient = CreateTRPCProxyClient<AppRouter>;
+export type tRPCClient = TRPCClient<AppRouter>;
 
 export type Staff = Awaited<ReturnType<APIClient["getStaffInfo"]>>;
 
@@ -85,7 +81,7 @@ export class APIClient {
 
     const rootStore = this.psiStore.rootStore;
 
-    return createTRPCProxyClient<AppRouter>({
+    return createTRPCClient<AppRouter>({
       links: [
         httpBatchLink({
           url: this.baseUrl,
@@ -99,10 +95,10 @@ export class APIClient {
               StateCode: `${stateCode}`,
             };
           },
+          // Required to get Date objects to serialize correctly.
+          transformer: superjson,
         }),
       ],
-      // Required to get Date objects to serialize correctly.
-      transformer: superjson,
     });
   }
 

@@ -27,7 +27,8 @@ import { getIsAuth0Authorized } from "~server-setup-plugin";
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
 
-export async function createContext({ req, res }: CreateFastifyContextOptions) {
+export async function createContext(opts: CreateFastifyContextOptions) {
+  const { req, res } = opts;
   const stateCode = req.headers[STATE_CODE_HEADER_KEY];
 
   if (!stateCode || typeof stateCode !== "string") {
@@ -48,7 +49,7 @@ export async function createContext({ req, res }: CreateFastifyContextOptions) {
     });
   }
 
-  const auth0Authorized = await getIsAuth0Authorized({ req, res });
+  const auth0Authorized = await getIsAuth0Authorized(opts);
 
   return {
     req,

@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createTRPCProxyClient } from "@trpc/client";
+import { createTRPCClient } from "@trpc/client";
 import { beforeEach, expect, Mock, vi } from "vitest";
 
 import { createMockPSIStore } from "../../utils/test";
@@ -23,7 +23,7 @@ import { APIClient, tRPCClient } from "../APIClient";
 import { CaseDetailsFixture, StaffInfoFixture } from "../offlineFixtures";
 
 vi.mock("@trpc/client", () => ({
-  createTRPCProxyClient: vi.fn(),
+  createTRPCClient: vi.fn(),
   httpBatchLink: vi.fn(),
 }));
 
@@ -33,6 +33,8 @@ let apiClient: APIClient;
 const caseId = Object.keys(CaseDetailsFixture)[0];
 
 beforeEach(() => {
+  // update to TRPC v11 broke the typing for this mock and it's not worth the effort to fix it. In an ideal world we would be using msw-trpc for mocking out requests
+  // @ts-expect-error: mockTRPCClient is a loose mock for testing purposes
   mockTRPCClient = {
     staff: {
       getStaff: {
@@ -76,7 +78,7 @@ beforeEach(() => {
       },
     },
   };
-  (createTRPCProxyClient as Mock).mockReturnValue(mockTRPCClient);
+  (createTRPCClient as Mock).mockReturnValue(mockTRPCClient);
   apiClient = new APIClient(psiStore);
 });
 

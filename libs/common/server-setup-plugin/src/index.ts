@@ -22,13 +22,14 @@ import {
   fastifyTRPCPlugin,
   FastifyTRPCPluginOptions,
 } from "@trpc/server/adapters/fastify";
-import { NodeHTTPCreateContextFn } from "@trpc/server/dist/adapters/node-http";
-import Fastify, { FastifyReply, FastifyRequest } from "fastify";
+import Fastify from "fastify";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 
 type BuildServerOptions<TRouter extends AnyRouter> = {
   appRouter: TRouter;
-  createContext: NodeHTTPCreateContextFn<TRouter, FastifyRequest, FastifyReply>;
+  createContext: NonNullable<
+    FastifyTRPCPluginOptions<TRouter>["trpcOptions"]["createContext"]
+  >;
   auth0Options: {
     domain: string;
     audience: string;

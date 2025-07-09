@@ -17,7 +17,7 @@
 
 /* eslint-disable no-await-in-loop -- We have to wait for a prompt */
 
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import inquirer from "inquirer";
 import superjson from "superjson";
 import { parseArgs } from "util";
@@ -76,7 +76,7 @@ async function main() {
     }
   });
 
-  const trpcClient = createTRPCProxyClient<AppRouter>({
+  const trpcClient = createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
         url: `http://${testHost}:${testPort}`,
@@ -87,10 +87,10 @@ async function main() {
             StateCode: stateCode,
           };
         },
+        // Required to get Date objects to serialize correctly.
+        transformer: superjson,
       }),
     ],
-    // Required to get Date objects to serialize correctly.
-    transformer: superjson,
   });
 
   let keepSearching = true;

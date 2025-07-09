@@ -255,7 +255,7 @@ export function SearchView({
         </EmptyWrapper>
       );
       break;
-    case "loading":
+    case "pending":
       resultsViz = (
         <EmptyWrapper>
           <EmptyTitle>Loading...</EmptyTitle>

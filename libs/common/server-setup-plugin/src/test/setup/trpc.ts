@@ -24,8 +24,9 @@ import {
   procedurePlugin,
 } from "~server-setup-plugin/trpc";
 
-export async function createContext({ req, res }: CreateFastifyContextOptions) {
-  const auth0Authorized = await getIsAuth0Authorized({ req, res });
+export async function createContext(opts: CreateFastifyContextOptions) {
+  const { req, res } = opts;
+  const auth0Authorized = await getIsAuth0Authorized(opts);
 
   return {
     req,

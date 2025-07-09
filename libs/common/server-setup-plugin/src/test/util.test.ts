@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { describe, expect, test } from "vitest";
@@ -32,14 +32,14 @@ describe("init trpc", () => {
   describe("auth", () => {
     test("should be marked as unauthorized if there is no authorization header", async () => {
       // Don't pass authorization headers
-      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+      const customTestTRPCClient = createTRPCClient<AppRouter>({
         links: [
           httpBatchLink({
             url: `http://${testHost}:${testPort}`,
+            // Required to get Date objects to serialize correctly.
+            transformer: superjson,
           }),
         ],
-        // Required to get Date objects to serialize correctly.
-        transformer: superjson,
       });
 
       await expect(() =>
@@ -84,7 +84,7 @@ describe("init trpc", () => {
         },
       );
 
-      const customTestTRPCClient = createTRPCProxyClient<AppRouter>({
+      const customTestTRPCClient = createTRPCClient<AppRouter>({
         links: [
           httpBatchLink({
             url: `http://${testHost}:${customTestPort}`,
@@ -94,10 +94,10 @@ describe("init trpc", () => {
                 StateCode: "US_ID",
               };
             },
+            // Required to get Date objects to serialize correctly.
+            transformer: superjson,
           }),
         ],
-        // Required to get Date objects to serialize correctly.
-        transformer: superjson,
       });
 
       await expect(() =>

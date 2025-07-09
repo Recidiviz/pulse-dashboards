@@ -16,6 +16,6 @@
 // =============================================================================
 
 export type CASE_NOTE_SEARCH_VIEWS = "SEARCH_VIEW" | "NOTE_VIEW";
-export type SearchStatus = "error" | "loading" | "success";
+export type SearchStatus = "error" | "pending" | "success";
 
 export type SortOrder = "Relevance" | "Date";
