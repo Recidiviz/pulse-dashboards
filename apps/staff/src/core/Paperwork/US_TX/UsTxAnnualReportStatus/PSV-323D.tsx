@@ -50,7 +50,7 @@ const FormPSV323D: React.FC = () => {
             <Row paddingLeft justifyContentStart>
               <Item>
                 TDCJ/SID #:
-                <FormInput name="tdcjIdAndSid" style={{ width: 175 }} />
+                <FormInput name="tdcjNumberAndSid" style={{ width: 175 }} />
               </Item>
               <Item>
                 Eligibility Month:

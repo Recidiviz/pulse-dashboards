@@ -38,7 +38,7 @@ import { opportunitySchemaBase } from "~datatypes";
 export const usTxAnnualReportStatusSchema = opportunitySchemaBase.extend({
   formInformation: z
     .object({
-      tdcjId: z.string(),
+      tdcjNumber: z.string(),
     })
     .partial(),
 });
@@ -49,7 +49,7 @@ export type UsTxAnnualReportStatusReferralRecord = z.infer<
 
 export type UsTxAnnualReportStatusDraftData = {
   clientName: string;
-  tdcjIdAndSid: string;
+  tdcjNumberAndSid: string;
   eligibilityMonthString: string;
   threeYearsTRASCheck: boolean;
   comment1: string;

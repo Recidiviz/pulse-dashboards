@@ -39,7 +39,7 @@ export const usTxEarlyReleaseFromSupervisionSchema =
   opportunitySchemaBase.extend({
     formInformation: z
       .object({
-        tdcjId: z.string(),
+        tdcjNumber: z.string(),
       })
       .partial(),
   });
@@ -50,7 +50,7 @@ export type UsTxEarlyReleaseFromSupervisionReferralRecord = z.infer<
 
 export type UsTxEarlyReleaseFromSupervisionDraftData = {
   clientName: string;
-  tdcjIdAndSid: string;
+  tdcjNumberAndSid: string;
   eligibilityMonthString: string;
   atLeastHalfTimeCheck: boolean;
   comment1: string;

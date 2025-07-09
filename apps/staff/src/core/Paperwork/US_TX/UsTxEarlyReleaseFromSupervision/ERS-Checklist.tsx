@@ -50,7 +50,7 @@ const ERSChecklist: React.FC = () => {
             <Row paddingLeft justifyContentStart>
               <ErsItem>
                 TDCJ/SID #:
-                <FormInput name="tdcjIdAndSid" style={{ width: 175 }} />
+                <FormInput name="tdcjNumberAndSid" style={{ width: 175 }} />
               </ErsItem>
               <ErsItem>
                 Eligibility Month
