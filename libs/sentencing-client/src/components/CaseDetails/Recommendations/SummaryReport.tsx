@@ -39,6 +39,7 @@ import {
 import { MutableCaseAttributes, SelectedRecommendation } from "../types";
 import { Report } from "./report/Report";
 import { generateRecommendationSummary } from "./summaryUtils";
+import { useReportSummaryOverflowDetector } from "./useReportSummaryOverflowDetector";
 
 const BUTTON_CHANGE_TIMEOUT = 5000;
 const TOAST_TIMEOUT = 3000;
@@ -93,6 +94,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     trackCaseStatusCompleteClicked,
   } = analytics;
   const targetRef = useRef<HTMLDivElement>(null);
+
   const hasPrevSavedRecommendation =
     Boolean(savedSummary) || savedSummary === "";
   const defaultRecommendationSummary = hasPrevSavedRecommendation
@@ -113,6 +115,9 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
     defaultRecommendationSummary ?? "",
   );
 
+  const { ReportSummaryOverflowDetector, showOverflowError, willOverflow } =
+    useReportSummaryOverflowDetector(geoConfig.hideRecidivismRatesChart);
+
   const saveSummary = async (value: string) => {
     await updateAttributes({ recommendationSummary: value });
     toast(() => <span>Recommendation summary changes saved</span>, {
@@ -128,6 +133,11 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
 
   const handleSummaryChangeAndSave = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
+
+    if (willOverflow(value)) {
+      return;
+    }
+
     setSummaryValue(value);
     debouncedSave(value);
   };
@@ -143,6 +153,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
       geoConfig,
     });
     setSummaryValue(regeneratedSummary ?? "");
+    willOverflow(regeneratedSummary ?? "");
     /**
      * Remove the saved recommendation so next time a user enters this flow,
      * it falls back to the default behavior of auto-generating a summary.
@@ -218,6 +229,7 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
       )}
     </Styled.ActionButton>
   );
+
   return (
     <Styled.RecommendationSummaryReport>
       <Styled.SummaryReportWrapper>
@@ -243,7 +255,15 @@ export const SummaryReport: React.FC<SummaryReportProps> = ({
             <Styled.TextArea
               value={summaryValue}
               onChange={handleSummaryChangeAndSave}
+              hasError={showOverflowError}
             />
+            {ReportSummaryOverflowDetector}
+            {showOverflowError && (
+              <Styled.ErrorMessage style={{ fontSize: "0.7rem" }}>
+                Summary exceeds the allowable length for the report. Please
+                shorten to ensure it fits the space.
+              </Styled.ErrorMessage>
+            )}
             {hasPrevSavedRecommendation && (
               <Styled.InputDescription>
                 This is the version of the summary you last edited. To

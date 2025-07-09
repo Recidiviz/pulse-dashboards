@@ -33,6 +33,7 @@ import { customPalette } from "../styles/palette";
 import { OnboardingTopic } from "./CaseOnboarding/types";
 import { PDF_PAGE_WIDTH } from "./constants";
 import { SelectOption } from "./Form/types";
+import { RecommendationSummary } from "./Recommendations/report/Report.styles";
 import { FormAttributes, ProfileStrength } from "./types";
 
 const RECOMMENDATION_PANEL_HEIGHT_OFFSET = 244;
@@ -1222,10 +1223,11 @@ export const CheckboxWrapper = styled.div`
   }
 `;
 
-export const TextArea = styled.textarea`
+export const TextArea = styled.textarea<{ hasError?: boolean }>`
   min-height: 117px;
   padding: 12px 16px;
-  border: 1px solid ${palette.slate20};
+  border: 1px solid
+    ${({ hasError }) => (hasError ? palette.signal.error : palette.slate20)};
   border-radius: 8px;
   color: ${palette.pine3};
   margin-top: 8px;
@@ -1238,7 +1240,8 @@ export const TextArea = styled.textarea`
   }
 
   &:focus {
-    border-color: ${palette.pine4};
+    border-color: ${({ hasError }) =>
+      hasError ? palette.signal.error : palette.pine4};
   }
 `;
 
@@ -1617,4 +1620,16 @@ export const ExternalOpportunityButton = styled.button`
   width: max-content;
   display: flex;
   align-items: center;
+`;
+
+export const ReportSummaryOverflowDetector = styled(RecommendationSummary)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 835px;
+  height: auto;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  visibility: hidden;
+  border: 1px solid red;
 `;

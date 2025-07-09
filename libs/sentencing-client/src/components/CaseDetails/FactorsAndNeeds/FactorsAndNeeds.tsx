@@ -61,7 +61,7 @@ const FactorsAndNeeds: React.FC<FactorsAndNeedsProps> = ({
               </Styled.FactorsNeedsTitle>
               <Styled.FactorsNeedsList>
                 {protectiveFactorsList.map((factor) => (
-                  <Styled.FactorsNeedsListItem>
+                  <Styled.FactorsNeedsListItem key={factor}>
                     {factor}
                   </Styled.FactorsNeedsListItem>
                 ))}
@@ -77,7 +77,7 @@ const FactorsAndNeeds: React.FC<FactorsAndNeedsProps> = ({
               </Styled.FactorsNeedsTitle>
               <Styled.FactorsNeedsList>
                 {needsList.map((need) => (
-                  <Styled.FactorsNeedsListItem>
+                  <Styled.FactorsNeedsListItem key={need}>
                     {need}
                   </Styled.FactorsNeedsListItem>
                 ))}
