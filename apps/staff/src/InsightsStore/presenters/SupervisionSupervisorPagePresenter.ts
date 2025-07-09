@@ -42,6 +42,7 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
       },
       expectPopulated: this.expectPopulated(),
     });
+    this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
   get isWorkflowsEnabled() {
@@ -108,6 +109,10 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
 
   get userCanSubmitRosterChangeRequest() {
     return this.supervisionStore.userCanSubmitRosterChangeRequest;
+  }
+
+  get isUserEnriched() {
+    return this.supervisionStore.isUserEnriched;
   }
 
   /**

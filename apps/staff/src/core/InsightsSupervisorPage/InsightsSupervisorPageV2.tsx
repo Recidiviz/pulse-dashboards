@@ -89,11 +89,13 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     highlightedOfficersByMetric,
     userCanSubmitRosterChangeRequest,
     userCanViewUsageActivity,
+    isUserEnriched,
   } = presenter;
 
   let teamTooltip;
 
-  if (userCanSubmitRosterChangeRequest) teamTooltip = undefined;
+  if (userCanSubmitRosterChangeRequest || isUserEnriched)
+    teamTooltip = undefined;
   else if (outcomesModule)
     teamTooltip = (
       <>
@@ -125,24 +127,28 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
       title: supervisionLocationInfo.locationLabel,
       info: supervisionLocationInfo.supervisionLocationForSupervisorPage,
     },
-    {
-      title: "team",
-      tooltip: teamTooltip,
-      info: (
-        <>
-          {pluralize(
-            allOfficers.length,
-            toTitleCase(labels.supervisionOfficerLabel),
-          )}
-          {userCanSubmitRosterChangeRequest && (
-            <>
-              <Spacer size={spacing.sm} />
-              <InsightsManagedSupervisorRosterModal />
-            </>
-          )}
-        </>
-      ),
-    },
+    ...(isUserEnriched
+      ? []
+      : [
+          {
+            title: "team",
+            tooltip: teamTooltip,
+            info: (
+              <>
+                {pluralize(
+                  allOfficers.length,
+                  toTitleCase(labels.supervisionOfficerLabel),
+                )}
+                {userCanSubmitRosterChangeRequest && (
+                  <>
+                    <Spacer size={spacing.sm} />
+                    <InsightsManagedSupervisorRosterModal />
+                  </>
+                )}
+              </>
+            ),
+          },
+        ]),
   ];
 
   if (initialPageLoad) {

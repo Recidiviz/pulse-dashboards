@@ -20,7 +20,10 @@ import { configure } from "mobx";
 import { MemoryRouter } from "react-router-dom";
 import { Mock } from "vitest";
 
-import { InsightsConfigFixture } from "~datatypes";
+import {
+  InsightsConfigFixture,
+  supervisionOfficerSupervisorsFixture,
+} from "~datatypes";
 
 import {
   useFeatureVariants,
@@ -53,7 +56,7 @@ beforeEach(() => {
   });
   vi.spyOn(rootStore.userStore, "userAppMetadata", "get").mockReturnValue({
     externalId: "user",
-    pseudonymizedId: "hashed-user",
+    pseudonymizedId: supervisionOfficerSupervisorsFixture[0].pseudonymizedId,
     stateCode: "us_mi",
   });
 });

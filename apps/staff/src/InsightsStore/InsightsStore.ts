@@ -45,7 +45,7 @@ export class InsightsStore {
       () => {
         return {
           tenant: this.rootStore.currentTenantId,
-          user: this.rootStore.userStore.user,
+          ...this.rootStore.userStore.user,
         };
       },
       () => {

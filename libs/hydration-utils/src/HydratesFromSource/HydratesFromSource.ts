@@ -42,7 +42,15 @@ type HydrationSource = {
  *   and updates its own hydration status based on the progress of the populators
  */
 export class HydratesFromSource implements Hydratable {
-  constructor(public source: HydrationSource) {
+  constructor(
+    public source: HydrationSource,
+    /**
+     * If true, the hydration will be skipped and the hydration state will be set to hydrated.
+     * This is useful for cases where the data is not available yet OR not needed, but the presenter needs to be hydrated
+     * to render the page.
+     */
+    public isIgnored = false,
+  ) {
     makeAutoObservable(this);
   }
 
@@ -69,7 +77,7 @@ export class HydratesFromSource implements Hydratable {
 
   private isSourcePopulated(): boolean {
     try {
-      this.aggregateExpectPopulated();
+      if (!this.isIgnored) this.aggregateExpectPopulated();
       return true;
     } catch {
       return false;

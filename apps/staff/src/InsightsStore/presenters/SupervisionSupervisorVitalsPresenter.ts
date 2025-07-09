@@ -55,6 +55,7 @@ export class SupervisionSupervisorVitalsPresenter implements Hydratable {
         await Promise.all(this.populateMethods());
       },
     });
+    this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
   /**

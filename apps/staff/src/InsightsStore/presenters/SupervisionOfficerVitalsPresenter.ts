@@ -88,6 +88,7 @@ export class SupervisionOfficerVitalsPresenter extends WithJusticeInvolvedPerson
         }
       },
     });
+    this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
   get clients(): JusticeInvolvedPerson[] | undefined {

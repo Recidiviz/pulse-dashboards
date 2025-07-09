@@ -148,7 +148,7 @@ export * from "./metrics/SupervisionVitalsMetric/schema";
 export * from "./metrics/utils/constants";
 
 // =============================================================================
-// Utils
+// System
 // =============================================================================
 
 // System: Types related to the system, such as the User, metadata, etc.

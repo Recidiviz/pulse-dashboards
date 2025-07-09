@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { AxiosError, HttpStatusCode } from "axios";
 import { index } from "d3-array";
 import { parseISO } from "date-fns";
 import { uniq } from "lodash";
@@ -60,9 +61,11 @@ export class InsightsSupervisionStore {
 
   actionStrategies?: ActionStrategy;
 
+  officersBySupervisorPseudoId: Map<string, SupervisionOfficer[]> = new Map();
+
   userInfo?: UserInfo;
 
-  officersBySupervisorPseudoId: Map<string, SupervisionOfficer[]> = new Map();
+  isUserEnriched = false;
 
   supervisorPseudoId?: string;
 
@@ -219,9 +222,6 @@ export class InsightsSupervisionStore {
       // if the user is a supervisor, the only record they need is their own
       return [this.currentSupervisorUser];
     }
-    throw new Error(
-      "User is not a supervisor but cannot access all supervisors",
-    );
   }
 
   get supervisionOfficers(): SupervisionOfficer[] | undefined {
@@ -635,8 +635,76 @@ export class InsightsSupervisionStore {
     if (!pseudonymizedId) {
       throw new Error("Missing pseudonymizedId for user");
     }
-    this.userInfo =
-      yield this.insightsStore.apiClient.userInfo(pseudonymizedId);
+
+    let userInfo: UserInfo | undefined;
+
+    try {
+      userInfo = yield this.insightsStore.apiClient.userInfo(pseudonymizedId);
+    } catch (error) {
+      if (
+        !(
+          error instanceof AxiosError &&
+          error?.status === HttpStatusCode.NotFound
+        )
+      )
+        throw error;
+    }
+    if (userInfo?.entity && userInfo?.role) {
+      this.userInfo = userInfo;
+      return;
+    }
+
+    const {
+      externalId,
+      userEmail: email,
+      userFullName,
+      userGivenName,
+      userMiddleName,
+      userSurname,
+      isImpersonating,
+    } = this.insightsStore.rootStore.userStore;
+
+    const { firstName, lastName } = userAppMetadata;
+    const isImpersonatedUserName =
+      firstName &&
+      lastName &&
+      isImpersonating &&
+      userFullName === "Impersonated User";
+    const displayName = isImpersonatedUserName
+      ? `${firstName} ${lastName}`
+      : userFullName;
+
+    if (!externalId || !userFullName)
+      throw new Error(
+        `Missing auth0 info for user: ${Object.entries({
+          externalId,
+          displayName,
+          userPseudonymizedId: pseudonymizedId,
+        })
+          .map(([key, value]) => `${key}: ${value}`)
+          .join(", ")}`,
+      );
+
+    this.userInfo = {
+      entity: {
+        pseudonymizedId,
+        externalId,
+        email: email ?? null,
+        displayName,
+        fullName: {
+          givenNames: isImpersonatedUserName ? firstName : userGivenName,
+          middleNames: isImpersonatedUserName ? undefined : userMiddleName,
+          surname: isImpersonatedUserName ? lastName : userSurname,
+        },
+        hasOutliers: false,
+      },
+      role: "supervision_officer_supervisor",
+      metadata: {
+        hasSeenOnboarding: false,
+      },
+    } as UserInfo;
+
+    if (!this.userCanAccessAllSupervisors) this.isUserEnriched = true;
   }
 
   /**
@@ -930,8 +998,16 @@ export class InsightsSupervisionStore {
   *patchUserInfoForCurrentUser(
     props: PatchUserInfoProps,
   ): FlowMethod<InsightsAPI["patchUserInfo"], void> {
-    const { userAppMetadata, isRecidivizUser, isCSGUser, isImpersonating } =
-      this.insightsStore.rootStore.userStore;
+    const {
+      rootStore: {
+        userStore: {
+          userAppMetadata,
+          isRecidivizUser,
+          isCSGUser,
+          isImpersonating,
+        },
+      },
+    } = this.insightsStore;
 
     // Recidiviz and CSG users might not have pseudonymizedIds, but should have an experience
     // similar to leadership users.

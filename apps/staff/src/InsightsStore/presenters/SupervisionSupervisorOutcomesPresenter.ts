@@ -73,6 +73,7 @@ export class SupervisionSupervisorOutcomesPresenter implements Hydratable {
         this.expectOfficerOutcomesPopulated,
       ],
     });
+    this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
   get officersIncludedInOutcomes() {

@@ -685,9 +685,15 @@ export default class UserStore {
   }
 
   get userFullName(): string | undefined {
-    const givenName = this.user?.info?.givenNames || this.user?.given_name;
-    const surname = this.user?.info?.family_name || this.user?.family_name;
-    return [givenName ?? "", surname ?? ""].join(" ").trim();
+    return [this.userGivenName ?? "", this.userSurname ?? ""].join(" ").trim();
+  }
+
+  get userGivenName(): string | undefined {
+    return this.user?.info?.givenNames || this.user?.given_name;
+  }
+
+  get userMiddleName(): string | undefined {
+    return this.user?.info?.middleNames || this.user?.middle_name;
   }
 
   get userSurname(): string | undefined {

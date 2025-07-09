@@ -585,33 +585,6 @@ test("current supervisor user with supervisors list permission does hydrate via 
   ).toHaveBeenCalled();
 });
 
-test("non-supervisor user without supervisors list permission errors in hydration", async () => {
-  vi.spyOn(
-    store.insightsStore.rootStore.userStore,
-    "userAppMetadata",
-    "get",
-  ).mockReturnValue({
-    pseudonymizedId: "hashed-leadership123",
-    stateCode: "us_mi",
-    routes: observable({
-      insights: true,
-      "insights_supervision_supervisors-list": false,
-    }),
-  });
-
-  vi.spyOn(store.insightsStore.apiClient, "supervisionOfficerSupervisors");
-  await flowResult(store.populateUserInfo());
-
-  await expect(
-    flowResult(store.populateSupervisionOfficerSupervisors()),
-  ).rejects.toThrow(
-    "User is not a supervisor but cannot access all supervisors",
-  );
-  expect(
-    store.insightsStore.apiClient.supervisionOfficerSupervisors,
-  ).not.toHaveBeenCalled();
-});
-
 test("patch user info: set hasSeenOnboarding", async () => {
   vi.spyOn(
     store.insightsStore.rootStore.userStore,

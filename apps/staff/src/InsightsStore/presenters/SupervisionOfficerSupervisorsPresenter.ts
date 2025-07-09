@@ -47,6 +47,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
           this.supervisionStore.populateSupervisionOfficerSupervisors(),
         ),
     });
+    this.hydrator.isIgnored = this.supervisionStore.isUserEnriched;
   }
 
   private hydrator: HydratesFromSource;
