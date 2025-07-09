@@ -1,0 +1,27 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./tsconfig.local.json"
+    },
+    {
+      "path": "./tsconfig.evaluate.json"
+    }
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "target": "ESNext",
+    "module": "es2022",
+    "moduleResolution": "Node",
+    "types": ["vite/client", "node"],
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "name": "@reentry/intake-agent",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@reentry/langgraph/src",
+  "projectType": "library",
+  "tags": ["reentry"],
+  "targets": {
+    "local": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx local/index.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "mermaid": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx local/mermaid.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "evaluate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx evaluate/index.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "langgraph": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx @langchain/langgraph-cli dev"
+      }
+    },
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json",
+          "tsc -p ./tsconfig.local.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "docker": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "docker compose up --wait"
+      }
+    }
+  }
+}
