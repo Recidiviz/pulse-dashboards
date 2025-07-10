@@ -85,6 +85,13 @@ export class SupervisionOfficerPagePresenter extends WithJusticeInvolvedPersonSt
     return this.clients?.length;
   }
 
+  get shouldShowAvgDailyCaseload(): boolean {
+    // This number is inaccurate and not useful for US_TX
+    return (
+      this.supervisionStore.insightsStore.rootStore.currentTenantId !== "US_TX"
+    );
+  }
+
   get userCanViewUsageActivity(): boolean {
     return this.supervisionStore.userCanViewUsageActivity;
   }

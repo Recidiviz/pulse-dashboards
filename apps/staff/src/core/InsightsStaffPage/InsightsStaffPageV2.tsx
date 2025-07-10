@@ -55,37 +55,40 @@ const ManagedComponent = observer(function StaffPage({
     labels,
     userCanAccessAllSupervisors,
     numClientsOnCaseload,
+    shouldShowAvgDailyCaseload,
     userCanViewUsageActivity,
   } = presenter;
 
+  type InfoItem = NonNullable<
+    React.ComponentProps<typeof InsightsPageLayout>["infoItems"]
+  >[number];
+
   // TODO(#5780): move infoItems to presenter
-  const infoItems = [
-    {
-      title: "active clients",
-      info: numClientsOnCaseload,
-    },
-    // TODO(#5780): move infoItems to presenter
-    {
-      title: "avg daily caseload",
-      info: officerRecord?.avgDailyPopulation,
-    },
-    { title: "email", info: officerRecord?.email },
-    {
-      title: "caseload type",
-      info:
-        (presenter.areCaseloadCategoryBreakdownsEnabled &&
-          officerOutcomesData?.caseloadCategoryName) ||
-        null,
-    },
-    ...(officerRecord && userCanViewUsageActivity
-      ? [
-          {
-            title: "Last Login",
-            info: getLatestLoginDate(officerRecord),
-          },
-        ]
-      : []),
-  ];
+  const infoItems = (
+    [
+      {
+        title: "active clients",
+        info: numClientsOnCaseload,
+      },
+      shouldShowAvgDailyCaseload && {
+        title: "avg daily caseload",
+        info: officerRecord?.avgDailyPopulation,
+      },
+      { title: "email", info: officerRecord?.email },
+      {
+        title: "caseload type",
+        info:
+          (presenter.areCaseloadCategoryBreakdownsEnabled &&
+            officerOutcomesData?.caseloadCategoryName) ||
+          null,
+      },
+      officerRecord &&
+        userCanViewUsageActivity && {
+          title: "Last Login",
+          info: getLatestLoginDate(officerRecord),
+        },
+    ] satisfies (InfoItem | false | undefined)[]
+  ).filter(Boolean) as InfoItem[];
 
   if (initialPageLoad) {
     presenter.trackStaffPageViewed();
