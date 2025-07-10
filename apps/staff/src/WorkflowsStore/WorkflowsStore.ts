@@ -746,15 +746,13 @@ export class WorkflowsStore implements Hydratable {
    * Whether the current user should see a link to Tasks in the nav bar
    */
   get isSupervisionTasksLinkEnabled(): boolean {
-    const { currentTenantConfig } = this.rootStore.tenantStore;
     return (
       // tasks is available in the current tenant, and
       this.isSupervisionTasksConfigured &&
       // the current user is allowed to see tasks, and
       this.rootStore.userStore.canUserAccessTasks &&
       // the workflows home page is not tasks
-      !!currentTenantConfig &&
-      currentTenantConfig.workflowsHomepage !== "tasks"
+      this.homepage !== "tasks"
     );
   }
 
@@ -869,7 +867,20 @@ export class WorkflowsStore implements Hydratable {
   get homepage(): WorkflowsPage {
     const { currentTenantId } = this.rootStore;
     if (!currentTenantId) return "home";
-    return TENANT_CONFIGS[currentTenantId].workflowsHomepage ?? "home";
+
+    const allowedWorkflowsPages =
+      this.rootStore.userStore.userAllowedNavigation?.workflows;
+    const homepageForTenant =
+      TENANT_CONFIGS[currentTenantId].workflowsHomepage ?? "home";
+    // If the user is not able to access the default homepage for the tenant,
+    // the homepage should be the first workflows page they are able to access
+    if (
+      !allowedWorkflowsPages ||
+      allowedWorkflowsPages.length === 0 ||
+      allowedWorkflowsPages.includes(homepageForTenant)
+    )
+      return homepageForTenant;
+    return allowedWorkflowsPages[0];
   }
 
   get homepageNameOverride(): string | undefined {

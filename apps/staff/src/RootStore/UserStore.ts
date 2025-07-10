@@ -526,10 +526,8 @@ export default class UserStore {
 
     /* Remove pages that may be allowed for the tenant but restricted for the user */
     Object.entries(navigation).forEach((navigationEntry) => {
-      const [page, allConfiguredSubpages] = navigationEntry as [
-        NavigationSection,
-        string[],
-      ];
+      const page = navigationEntry[0] as NavigationSection;
+      const allConfiguredSubpages = navigationEntry[1];
 
       // The system page will be handled separately later
       if (page === DASHBOARD_VIEWS.system) return;
@@ -547,6 +545,8 @@ export default class UserStore {
       const userAllowedSubpages = allConfiguredSubpages.filter((subpage) =>
         this.isUserAllowedRoute(page, subpage),
       );
+      // @ts-expect-error TS can't correctly narrow userAllowedSubpages
+      // but this should be safe as it's just a filtered version of allConfiguredSubpages
       allowed[page] = userAllowedSubpages;
 
       // If there are no available subpages now, remove the entry from navigation

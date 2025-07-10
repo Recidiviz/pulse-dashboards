@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
+import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsTxAssessmentTask from "../WorkflowsStore/Task/US_TX/UsTxAssessmentTask";
 import usTxCollateralContactScheduled from "../WorkflowsStore/Task/US_TX/UsTxCollateralContactScheduled";
@@ -37,8 +38,8 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   availableStateCodes: [dashboard.US_TX],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION"],
-  workflowsHomepage: "tasks",
-  workflowsHomepageName: "Tasks",
+  workflowsHomepage: "home",
+  workflowsHomepageName: "Home",
   workflowsMethodologyUrl:
     "https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub",
   workflowsSystemConfigs: {
@@ -252,7 +253,8 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
     ],
   },
   navigation: {
-    workflows: ["tasks", "clients"],
+    insights: [INSIGHTS_PAGES.supervision],
+    workflows: ["home", "tasks", "clients"],
   },
 };
 

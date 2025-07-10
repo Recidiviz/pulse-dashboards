@@ -15,13 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PathwaysPageRootPath, PathwaysSection, ViewRootPath } from "../views";
+import {
+  PathwaysPageRootPath,
+  PathwaysSection,
+  ViewRootPath,
+  WorkflowsPage,
+} from "../views";
 
 export type RoutePermission = [route: string, permission: boolean];
 
 export type NavigationSection = keyof Navigation;
 
+type WorkflowsNavigation = Record<"workflows", WorkflowsPage[]>;
+
+type PathwaysNavigation = Record<PathwaysPageRootPath, PathwaysSection[]>;
+
 export type Navigation = Partial<
-  Record<ViewRootPath, string[]> &
-    Record<PathwaysPageRootPath, PathwaysSection[]>
+  Record<Exclude<ViewRootPath, "workflows">, string[]> &
+    WorkflowsNavigation &
+    PathwaysNavigation
 >;

@@ -729,7 +729,6 @@ describe("userAllowedNavigation", () => {
     expect(store.userAllowedNavigation).toEqual(expected);
   });
 
-  // TODO(#7827): update this test to ensure tasks route grants access to workflows homepage
   test("disallows workflows home route when tasks is set but workflows is not", async () => {
     mockIsAuthenticated.mockResolvedValue(true);
     TENANT_CONFIGS[stateCode].navigation = {
