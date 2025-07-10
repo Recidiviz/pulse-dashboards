@@ -49,7 +49,7 @@ const TabButton = styled.div<{ $active: boolean }>`
   ${typography.Sans16}
 
   background-color: ${palette.marble1};
-  color: ${(props) => (props.$active ? palette.pine4 : palette.slate60)};
+  color: ${(props) => (props.$active ? palette.pine4 : palette.text.secondary)};
   padding: 0.5rem 0.25rem;
   border-bottom: 2px solid;
   border-bottom-color: ${(props) =>

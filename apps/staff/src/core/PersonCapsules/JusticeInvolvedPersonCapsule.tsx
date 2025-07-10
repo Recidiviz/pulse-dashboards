@@ -71,7 +71,7 @@ const Wrapper = styled.div<{ nameHoverState: boolean }>`
 const PersonInfo = styled.div``;
 
 const personStatusStyles = css`
-  color: ${palette.slate70};
+  color: ${palette.text.secondary};
   text-wrap: balance;
 
   display: flex;

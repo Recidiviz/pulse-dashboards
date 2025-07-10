@@ -30,7 +30,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { Opportunity } from "../../WorkflowsStore/Opportunity";
 
 export const PersonIdWithCopyIcon = styled.span<{ shiftIcon: boolean }>`
-  color: ${palette.data.teal1};
+  color: ${palette.text.secondary};
   padding: 0 ${rem(spacing.xs)};
   border-radius: ${rem(spacing.xs / 2)};
   transition: all 0.3s ease;

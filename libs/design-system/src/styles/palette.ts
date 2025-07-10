@@ -109,6 +109,8 @@ const text = {
   caption: basePalette.slate85,
   links: signal.links,
   normal: basePalette.pine4,
+  primary: rgba(47, 55, 55, 1),
+  secondary: rgba(94, 110, 110, 1),
 };
 
 export const palette = {

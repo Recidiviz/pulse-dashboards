@@ -76,13 +76,13 @@ export const PhoneNumber = styled.a`
 
 export const DetailsSubheading = styled.dt`
   ${typography.Sans14}
-  color: ${palette.slate50};
+  color: ${palette.text.secondary};
   margin-bottom: ${rem(spacing.xs)};
 `;
 
 export const DetailsContent = styled.dd`
   ${typography.Sans14}
-  color: ${palette.slate90};
+  color: ${palette.text.primary};
 `;
 
 export const SpecialConditionsCopy = styled.div`

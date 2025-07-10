@@ -362,6 +362,10 @@ export const caseloadSelectStyles = (
   hideIndicators: boolean,
   disableAdditionalSelections: boolean,
 ): Partial<StylesConfig<SelectOption, true, GroupBase<SelectOption>>> => ({
+  placeholder: (base) => ({
+    ...base,
+    color: palette.text.secondary,
+  }),
   clearIndicator: (base) => ({
     ...base,
     color: palette.slate85,
