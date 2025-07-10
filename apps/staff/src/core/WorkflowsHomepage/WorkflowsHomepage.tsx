@@ -38,7 +38,8 @@ const ManagedComponent = observer(function WorkflowsHomepage({
     activeOpportunityTypes,
     opportunitiesByType,
     hasOpportunities,
-    showTasksSummary,
+    showTasksSummaryTop,
+    showTasksSummaryBottom,
     tasks,
     ctaAndHeaderText: { headerText, ctaText },
   } = presenter;
@@ -49,6 +50,7 @@ const ManagedComponent = observer(function WorkflowsHomepage({
       <CaseloadSelect />
       <ModelHydrator hydratable={presenter}>
         <WorkflowsResults headerText={headerText} callToActionText={ctaText}>
+          {showTasksSummaryTop && <TasksSummary tasks={tasks} />}
           {hasOpportunities &&
             activeOpportunityTypes &&
             opportunitiesByType && (
@@ -57,7 +59,7 @@ const ManagedComponent = observer(function WorkflowsHomepage({
                 opportunitiesByType={opportunitiesByType}
               />
             )}
-          {showTasksSummary && <TasksSummary tasks={tasks} />}
+          {showTasksSummaryBottom && <TasksSummary tasks={tasks} />}
         </WorkflowsResults>
       </ModelHydrator>
     </WorkflowsNavLayout>

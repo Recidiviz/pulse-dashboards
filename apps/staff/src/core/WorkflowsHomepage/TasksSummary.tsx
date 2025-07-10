@@ -30,7 +30,13 @@ export const TasksSummary = observer(function TasksSummary({
 }) {
   const numTasks = tasks.length;
   const people = uniq(tasks.map((task) => task.person));
-  const headerText = simplur`${numTasks} [task has an overdue or upcoming due date|tasks have overdue or upcoming due dates]`;
+  const headerText = simplur`${people.length} [client has|clients have] tasks with overdue or upcoming due dates`;
+
+  const numOverdue = tasks.filter((task) => task.isOverdue).length;
+  const reviewStatusCounts = {
+    "Overdue Tasks": numOverdue,
+    "Upcoming Tasks": numTasks - numOverdue,
+  };
 
   return (
     <WorkflowsHomepageSummary
@@ -39,6 +45,7 @@ export const TasksSummary = observer(function TasksSummary({
       headerText={headerText}
       totalCount={numTasks}
       people={people}
+      reviewStatusCounts={reviewStatusCounts}
       showZeroGrantsPill={false}
     />
   );

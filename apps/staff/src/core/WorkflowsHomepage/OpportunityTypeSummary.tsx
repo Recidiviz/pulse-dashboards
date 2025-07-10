@@ -48,7 +48,6 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
 
   // there should always be at least one tab group to display the tab names from
   const tabGroup = Object.keys(tabGroups)[0] as OpportunityTabGroup;
-  const tabNames = tabGroups[tabGroup] ?? [];
   const numOpportunitiesByTab = countBy(opportunities, (opp) =>
     opp.tabTitle(tabGroup),
   );
@@ -64,7 +63,6 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
     <WorkflowsHomepageSummary
       url={navigationURL}
       headerText={eligibilityTextForCount(totalOpportunityCount)}
-      reviewStatuses={tabNames}
       reviewStatusCounts={numOpportunitiesByTab}
       totalCount={totalOpportunityCount}
       people={people}

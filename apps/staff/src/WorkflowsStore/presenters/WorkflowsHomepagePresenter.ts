@@ -19,7 +19,12 @@ import { isEmpty } from "lodash";
 import pluralize from "pluralize";
 import simplur from "simplur";
 
-import { isHydrated } from "~hydration-utils";
+import {
+  compositeHydrationState,
+  Hydratable,
+  HydrationState,
+  isHydrated,
+} from "~hydration-utils";
 
 import { Client } from "../Client";
 import { OpportunityConfigurationStore } from "../Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
@@ -34,15 +39,20 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
     super(workflowsStore);
   }
 
+  get shouldHydrateTasks() {
+    // Only hydrate tasks when we are in supervision and the user has access to supervision tasks
+    return (
+      this.workflowsStore.activeSystem !== "INCARCERATION" &&
+      this.workflowsStore.rootStore.userStore.canUserAccessTasks
+    );
+  }
+
   hydrate() {
     // Hydrate opportunities
     super.hydrate();
 
-    // Only hydrate tasks when we are in supervision and the user has access to supervision tasks
-    if (
-      this.workflowsStore.activeSystem !== "INCARCERATION" &&
-      this.workflowsStore.rootStore.userStore.canUserAccessTasks
-    ) {
+    // Possibly hydrate tasks
+    if (this.shouldHydrateTasks) {
       this.workflowsStore.caseloadPersons.forEach((person) => {
         // it's possible that caseloadPersons is a mix of clients and residents
         // when multiple caseloads from different system types are selected
@@ -54,6 +64,33 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
           person.supervisionTasks.hydrate();
         }
       });
+    }
+  }
+
+  get hydrationState(): HydrationState {
+    if (this.isDebug) {
+      return { status: "hydrated" };
+    }
+
+    const opportunityHydrators = [this.workflowsStore as Hydratable].concat(
+      this.workflowsStore.caseloadPersons
+        .map((person) => person.opportunityManager)
+        .concat(),
+    );
+
+    if (this.shouldHydrateTasks) {
+      // If tasks are available, take into account tasks in the hydration state,
+      // so that we continue hydration until both tasks and opportunities are hydrated
+      const taskHydrators = this.workflowsStore.caseloadPersons
+        .flatMap((person) =>
+          person.supervisionTasks ? [person.supervisionTasks] : [],
+        )
+        .concat();
+      return compositeHydrationState(
+        opportunityHydrators.concat(taskHydrators),
+      );
+    } else {
+      return compositeHydrationState(opportunityHydrators);
     }
   }
 
@@ -128,6 +165,17 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
       this.workflowsStore.hasSupervisionTasks &&
       this.workflowsStore.rootStore.userStore.canUserAccessTasks
     );
+  }
+
+  get showTasksSummaryTop() {
+    return (
+      this.showTasksSummary &&
+      this.workflowsStore.rootStore.currentTenantId === "US_TX"
+    );
+  }
+
+  get showTasksSummaryBottom() {
+    return this.showTasksSummary && !this.showTasksSummaryTop;
   }
 
   get tasks() {

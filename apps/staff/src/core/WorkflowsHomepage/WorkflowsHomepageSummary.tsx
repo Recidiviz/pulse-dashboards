@@ -143,7 +143,6 @@ type ZeroGrantsSettings =
 type WorkflowsHomepageSummaryProps = ZeroGrantsSettings & {
   url: string;
   headerText: string;
-  reviewStatuses?: readonly string[];
   reviewStatusCounts?: Record<string, number>;
   totalCount: number;
   people: readonly JusticeInvolvedPerson[];
@@ -153,7 +152,6 @@ export const WorkflowsHomepageSummary = observer(
   function WorkflowsHomepageSummary({
     url,
     headerText,
-    reviewStatuses = [],
     reviewStatusCounts = {},
     totalCount,
     people,
@@ -175,8 +173,7 @@ export const WorkflowsHomepageSummary = observer(
         <HomepageHeaderWrapper $isMobile={isMobile}>
           <HomepageHeader $isMobile={isMobile}>{headerText}</HomepageHeader>
           <ReviewStatusWrapper>
-            {reviewStatuses.map((status) => {
-              const count = reviewStatusCounts[status];
+            {Object.entries(reviewStatusCounts).map(([status, count]) => {
               if (count > 0) {
                 return (
                   <ReviewStatusCount key={status}>
