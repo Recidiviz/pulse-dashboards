@@ -27,6 +27,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { formatDate, formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
 import { formatDateString } from "../models/utils";
+import { Divider } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
@@ -308,36 +309,47 @@ const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
 export const PreviewTasks = observer(function PreviewTasks({
   person,
   showSnoozeDropdown,
-}: PersonProfileProps & { showSnoozeDropdown: boolean }) {
+  empty,
+}: PersonProfileProps & {
+  showSnoozeDropdown: boolean;
+  empty?: React.ReactNode;
+}) {
   const tasks = person.supervisionTasks?.orderedTasks ?? [];
   const needs = person.supervisionTasks?.needs ?? [];
 
-  if (!tasks.length && !needs.length) return null;
+  if (!tasks.length && !needs.length && empty) {
+    return empty;
+  } else if (!tasks.length && !needs.length) {
+    return null;
+  }
 
   return (
-    <TasksWrapper>
-      <TaskItems>
-        {tasks.map((task) => {
-          if (person.stateCode === "US_ID")
+    <>
+      <Divider />
+      <TasksWrapper>
+        <TaskItems>
+          {tasks.map((task) => {
+            if (person.stateCode === "US_ID")
+              return (
+                <TaskPreview
+                  task={task}
+                  showSnoozeDropdown={showSnoozeDropdown}
+                />
+              );
+            return <TaskPreviewV2 task={task} key={task.key} />;
+          })}
+          {needs.map((need) => {
             return (
-              <TaskPreview
-                task={task}
-                showSnoozeDropdown={showSnoozeDropdown}
-              />
+              <div key={`${need.type}`}>
+                <TaskItem key={need.type}>
+                  <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
+                </TaskItem>
+                <TaskItemDivider />
+              </div>
             );
-          return <TaskPreviewV2 task={task} key={task.key} />;
-        })}
-        {needs.map((need) => {
-          return (
-            <div key={`${need.type}`}>
-              <TaskItem key={need.type}>
-                <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
-              </TaskItem>
-              <TaskItemDivider />
-            </div>
-          );
-        })}
-      </TaskItems>
-    </TasksWrapper>
+          })}
+        </TaskItems>
+      </TasksWrapper>
+    </>
   );
 });

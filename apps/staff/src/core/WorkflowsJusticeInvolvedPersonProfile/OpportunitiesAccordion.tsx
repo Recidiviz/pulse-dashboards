@@ -105,7 +105,7 @@ export const AccordionWrapper = styled(Accordion)`
   }
 `;
 
-const NoOpportunities = styled.div`
+export const NoOpportunities = styled.div`
   align-items: center;
   background: ${rgba(palette.slate, 0.05)};
   border: 1px solid ${palette.slate20};

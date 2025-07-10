@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans16, spacing, typography } from "@recidiviz/design-system";
+import { Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { toJS } from "mobx";
@@ -50,7 +50,10 @@ import {
 } from "./ClientDetailSidebarComponents";
 import { UsUtDates } from "./ClientDetailSidebarComponents/UsUtDates";
 import ClientDetailsInput from "./ClientDetailsInput";
-import { OpportunitiesAccordion } from "./OpportunitiesAccordion";
+import {
+  NoOpportunities,
+  OpportunitiesAccordion,
+} from "./OpportunitiesAccordion";
 import { UsIaActionPlansAndNotes } from "./OpportunityDetailSidebarComponents/US_IA";
 import { PartialTime } from "./PartialTime";
 import { PreferredContact } from "./PreferredContact";
@@ -369,6 +372,13 @@ export const FullProfile = observer(
       ],
     });
 
+    const empty = (
+      <NoOpportunities>
+        <Sans16>None for now</Sans16>
+        <Sans14>New tasks will appear here.</Sans14>
+      </NoOpportunities>
+    );
+
     return (
       <WorkflowsNavLayout>
         <Wrapper isMobile={isMobile}>
@@ -404,12 +414,13 @@ export const FullProfile = observer(
               {person.supervisionTasks?.orderedTasks && (
                 <div>
                   <SectionHeading>Tasks</SectionHeading>
-                  <Divider />
                   <CaseloadTasksHydrator
+                    empty={empty}
                     hydrated={
                       <PreviewTasks
                         person={person}
                         showSnoozeDropdown={false}
+                        empty={empty}
                       />
                     }
                   />
