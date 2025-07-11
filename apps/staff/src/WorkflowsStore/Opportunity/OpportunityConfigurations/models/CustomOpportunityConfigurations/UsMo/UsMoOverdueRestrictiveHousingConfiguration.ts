@@ -44,8 +44,7 @@ export class UsMoOverdueRestrictiveHousingConfiguration extends ApiOpportunityCo
         )}`,
         "Due this week",
         "Coming up",
-        "Overridden",
-        "Missing Review Date",
+        this.deniedTabTitle,
       ],
     } as const;
   }
