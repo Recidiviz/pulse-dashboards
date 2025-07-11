@@ -37,6 +37,7 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   domain: "tdcj.texas.gov",
   availableStateCodes: [dashboard.US_TX],
   enableUserRestrictions: false,
+  supervisionDisplayIdCopy: "SID",
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsHomepage: "home",
   workflowsHomepageName: "Home",

@@ -461,7 +461,10 @@ const TableView = observer(function TableView({
     },
     {
       // TODO(#6737): Make the column header the same as the label displayed when copied
-      header: "ID",
+      header:
+        presenter.config.systemType === "SUPERVISION"
+          ? presenter.supervisionDisplayIdCopy
+          : presenter.facilitiesDisplayIdCopy,
       id: "PERSON_DISPLAY_ID",
       accessorFn: (opp: Opportunity) => opp.person.displayId,
       enableSorting: true,

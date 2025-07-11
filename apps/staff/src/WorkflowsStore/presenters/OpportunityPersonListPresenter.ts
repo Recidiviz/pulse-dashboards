@@ -585,6 +585,14 @@ export class OpportunityPersonListPresenter
     );
   }
 
+  get supervisionDisplayIdCopy() {
+    return this.tenantStore.supervisionDisplayIdCopy ?? "ID";
+  }
+
+  get facilitiesDisplayIdCopy() {
+    return this.tenantStore.facilitiesDisplayIdCopy ?? "ID";
+  }
+
   dismissNotification(id: string) {
     this.workflowsStore.dismissOpportunityNotification(id);
   }

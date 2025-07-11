@@ -166,6 +166,10 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     );
   }
 
+  get supervisionDisplayIdCopy() {
+    return this.tenantStore.supervisionDisplayIdCopy ?? "ID";
+  }
+
   // Selection controls
   selectPerson(person: JusticeInvolvedPerson) {
     this.workflowsStore.updateSelectedPerson(person.pseudonymizedId);

@@ -71,6 +71,8 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   availableStateCodes: TenantId[];
   navigation?: Navigation;
   featureVariants?: FeatureVariantRecord; // default values for all users in this tenant
+  facilitiesDisplayIdCopy?: string;
+  supervisionDisplayIdCopy?: string;
 
   // Product-specific settings
 

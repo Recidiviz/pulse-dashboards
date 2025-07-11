@@ -127,7 +127,7 @@ export const TasksTable = observer(function TasksTable({
     },
     {
       // TODO(#6737): Make the column header the same as the label displayed when copied
-      header: "ID",
+      header: presenter.supervisionDisplayIdCopy,
       id: "id",
       accessorKey: "person.displayId",
       enableSorting: true,

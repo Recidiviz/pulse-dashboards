@@ -251,6 +251,20 @@ export default class TenantStore {
     );
   }
 
+  get supervisionDisplayIdCopy(): string | undefined {
+    const config = this.currentTenantId
+      ? this.tenantConfigs[this.currentTenantId]
+      : undefined;
+    return config?.supervisionDisplayIdCopy;
+  }
+
+  get facilitiesDisplayIdCopy(): string | undefined {
+    const config = this.currentTenantId
+      ? this.tenantConfigs[this.currentTenantId]
+      : undefined;
+    return config?.facilitiesDisplayIdCopy;
+  }
+
   // Copy used for the Workflows tool, with reasonable defaults
   get labels(): Record<TenantConfigLabelType, string> {
     const config = this.currentTenantId

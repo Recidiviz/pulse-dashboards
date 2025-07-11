@@ -71,11 +71,18 @@ const PersonId: React.FC<{
     successDuration: 5000,
   });
 
-  const { currentTenantId, analyticsStore } = useRootStore();
+  const { tenantStore, analyticsStore, workflowsStore } = useRootStore();
 
   // TODO(#6737): Parameterize this and pull from same source as insights if possible
-  const stateIdDescriptor =
-    currentTenantId === "US_AZ" ? "ADC number" : `${docLabel} ID`;
+  let stateIdDescriptor = `${docLabel} ID`;
+  if (
+    workflowsStore.activeSystem === "SUPERVISION" &&
+    tenantStore?.supervisionDisplayIdCopy
+  ) {
+    stateIdDescriptor = tenantStore.supervisionDisplayIdCopy;
+  } else if (tenantStore?.facilitiesDisplayIdCopy) {
+    stateIdDescriptor = tenantStore.facilitiesDisplayIdCopy;
+  }
 
   useEffect(() => {
     if (isCopied) toast(`${stateIdDescriptor} copied!`, { duration: 5000 });
