@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,17 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-/**
- * Handler that will be called during the execution of a PostLogin flow.
- *
- * @param {Event} event - Details about the user and the context in which they are logging in.
- * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
- */
-exports.onExecutePostLogin = async (event, api) => {
-  // this ID should match demo app in auth0 configs/Applications
-  if (event.client.client_id === "fwgl9sl9sSyrPR8pda6ghv8dGJKGpsDC") return;
+import type { EdovoIdTokenPayload } from "./functions/edovoToken/helpers";
 
-  if (!event.user.app_metadata.permissions?.includes("live_data")) {
-    api.access.deny("You don't have permission to access this application.");
+declare global {
+  namespace Express {
+    interface Locals {
+      userData: EdovoIdTokenPayload | undefined;
+    }
   }
-};
+}

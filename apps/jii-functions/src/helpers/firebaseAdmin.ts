@@ -21,7 +21,7 @@ import { defineString } from "firebase-functions/params";
 import toUpper from "lodash/toUpper";
 import { z } from "zod";
 
-import { AuthorizedUserProfile } from "~auth0-jii";
+import { AuthorizedUserProfile, ResidentUserProfile } from "~auth0-jii";
 
 import { secrets } from "./secrets";
 
@@ -94,6 +94,18 @@ export async function getFirestore() {
   return firebaseAdmin.firestore(await getFirebaseApp());
 }
 
+function getResidentPseudoId(
+  residentRecord: firebaseAdmin.firestore.DocumentData,
+) {
+  // in practice this should always parse, but we can't import the full schema from ~datatypes
+  // due to Vite dependency issues. We only care about this field anyway
+  const { pseudonymizedId } = z
+    .object({ pseudonymizedId: z.string() })
+    .parse(residentRecord);
+
+  return pseudonymizedId;
+}
+
 export async function checkResidentsRoster(
   stateCode: string,
   userId: string,
@@ -106,16 +118,37 @@ export async function checkResidentsRoster(
 
   if (!userResidentRecord) return;
 
-  // in practice this should always parse, but we can't import the full schema from ~datatypes
-  // due to Vite dependency issues. We only care about this field anyway
-  const { pseudonymizedId } = z
-    .object({ pseudonymizedId: z.string() })
-    .parse(userResidentRecord);
+  const pseudonymizedId = getResidentPseudoId(userResidentRecord);
 
   return {
     stateCode: stateCode,
     externalId: userId,
     pseudonymizedId,
     permissions: ["live_data"],
+  };
+}
+
+export async function checkDemoResidentsRoster(
+  stateCode: string,
+  userId: string,
+): Promise<ResidentUserProfile | undefined> {
+  const userDemoResidentRecord = (
+    await (await getFirestore())
+      .collection(`DEMO_residents`)
+      .where("stateCode", "==", stateCode)
+      .where("personExternalId", "==", userId)
+      .limit(1)
+      .get()
+  ).docs[0]?.data();
+
+  if (!userDemoResidentRecord) return;
+
+  const pseudonymizedId = getResidentPseudoId(userDemoResidentRecord);
+
+  return {
+    stateCode: stateCode,
+    externalId: userId,
+    pseudonymizedId,
+    permissions: [],
   };
 }

@@ -75,25 +75,39 @@ export function getAuth0Config(tenantKey: string): {
 export const metadataNamespace = "https://jii.recidiviz.org";
 
 /**
- * This should match the fields added to app_metadata in the Auth0 actions in `../auth0/actions`
+ * Constrained set of fields that are expected to exist for a valid resident user.
+ * Should match the fields added to app_metadata in the Auth0 actions in `../auth0/actions`
+ */
+export const residentUserProfileSchema = z.object({
+  stateCode: z.string(),
+  externalId: z.string(),
+  pseudonymizedId: z.string(),
+  // accepts and discards unknown strings, to avoid breaking if new permissions are added before schema update
+  permissions: z
+    .array(z.string())
+    .transform((v) =>
+      v.filter((p): p is Permission => permissionSchema.safeParse(p).success),
+    ),
+});
+export type ResidentUserProfile = z.infer<typeof residentUserProfileSchema>;
+
+/**
+ * Based on and broader than {@link residentUserProfileSchema} since it may represent
+ * different types of authorized users.
+ * Should match any valid combination of fields added to app_metadata in the Auth0 actions in `../auth0/actions`
  */
 export const authorizedUserProfileSchema = z
   .object({
-    stateCode: z.string(),
-    externalId: z.string().optional(),
-    pseudonymizedId: z.string().optional(),
+    stateCode: residentUserProfileSchema.shape.stateCode,
+    externalId: residentUserProfileSchema.shape.externalId.optional(),
+    pseudonymizedId: residentUserProfileSchema.shape.pseudonymizedId.optional(),
+    permissions: residentUserProfileSchema.shape.permissions.optional(),
     allowedStates: z.array(z.string()).optional(),
-    // accepts and discards unknown strings, to avoid breaking if new permissions are added before schema update
-    permissions: z
-      .array(z.string())
-      .transform((v) =>
-        v.filter((p): p is Permission => permissionSchema.safeParse(p).success),
-      )
-      .optional(),
   })
   .refine(
     (d) => {
       // verify that external IDs and their related properties travel together;
+      // extra safeguard since we've made both properties optional in this schema
       if (d.externalId || d.pseudonymizedId) {
         return !!(d.externalId && d.pseudonymizedId);
       }

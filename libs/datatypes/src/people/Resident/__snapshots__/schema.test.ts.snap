@@ -1,9 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`schema for 'US_MA' 'AHb2c6' 1`] = `
+exports[`schema for 'US_MA' 'RES001' 1`] = `
 {
   "allEligibleOpportunities": [],
-  "displayId": "JGtr1K",
+  "displayId": "RES001",
   "facilityId": "DEMO FACILITY",
   "gender": "MALE",
   "metadata": {
@@ -91,23 +91,79 @@ exports[`schema for 'US_MA' 'AHb2c6' 1`] = `
     "totalStateCredit": 63,
     "totalStateCreditDaysCalculated": 63,
   },
-  "personExternalId": "AHb2c6",
+  "personExternalId": "RES001",
   "personName": {
-    "givenNames": "Leroy",
+    "givenNames": "Laurence",
     "middleNames": undefined,
-    "surname": "Moen",
+    "surname": "Baumbach",
   },
   "personType": "RESIDENT",
-  "pseudonymizedId": "dJ5fLxnJrhLd3PcT",
-  "recordId": "us_ma_0",
+  "pseudonymizedId": "anonres001",
+  "recordId": "us_ma_RES001",
   "stateCode": "US_MA",
 }
 `;
 
-exports[`schema for 'US_MA' 'SAHawR' 1`] = `
+exports[`schema for 'US_MA' 'RES002' 1`] = `
 {
   "allEligibleOpportunities": [],
-  "displayId": "QYMcBt",
+  "displayId": "RES002",
+  "facilityId": "DEMO FACILITY",
+  "gender": "MALE",
+  "metadata": {
+    "adjustedMaxReleaseDate": null,
+    "creditActivity": [
+      {
+        "BOOST": 0,
+        "COMPLETION": 0,
+        "EARNED_GOOD_TIME": 7.5,
+        "activity": "Institutional Employment",
+        "creditDate": 2021-08-31T00:00:00.000Z,
+        "rating": "S",
+      },
+      {
+        "BOOST": 0,
+        "COMPLETION": 0,
+        "EARNED_GOOD_TIME": 7.5,
+        "activity": "Institutional Employment",
+        "creditDate": 2021-09-30T00:00:00.000Z,
+        "rating": "S",
+      },
+      {
+        "BOOST": 0,
+        "COMPLETION": 0,
+        "EARNED_GOOD_TIME": 7.5,
+        "activity": "Institutional Employment",
+        "creditDate": 2021-10-31T00:00:00.000Z,
+        "rating": "S",
+      },
+    ],
+    "lastUpdatedDate": 2021-12-16T00:00:00.000Z,
+    "originalMaxReleaseDate": null,
+    "rtsDate": null,
+    "stateCode": "US_MA",
+    "totalCompletionCredit": 80,
+    "totalCompletionCreditDaysCalculated": 0,
+    "totalStateCredit": 988,
+    "totalStateCreditDaysCalculated": 0,
+  },
+  "personExternalId": "RES002",
+  "personName": {
+    "givenNames": "Dan",
+    "middleNames": "Michael",
+    "surname": "Krajcik",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres002",
+  "recordId": "us_ma_RES002",
+  "stateCode": "US_MA",
+}
+`;
+
+exports[`schema for 'US_MA' 'RES003' 1`] = `
+{
+  "allEligibleOpportunities": [],
+  "displayId": "RES003",
   "facilityId": "DEMO FACILITY",
   "gender": "MALE",
   "metadata": {
@@ -163,71 +219,15 @@ exports[`schema for 'US_MA' 'SAHawR' 1`] = `
     "totalStateCredit": 133,
     "totalStateCreditDaysCalculated": 1,
   },
-  "personExternalId": "SAHawR",
+  "personExternalId": "RES003",
   "personName": {
-    "givenNames": "Lonnie",
-    "middleNames": "Jack",
-    "surname": "Weimann",
+    "givenNames": "Israel",
+    "middleNames": "Nixon",
+    "surname": "Willms",
   },
   "personType": "RESIDENT",
-  "pseudonymizedId": "WkhSJBeikeuSwTHD",
-  "recordId": "us_ma_2",
-  "stateCode": "US_MA",
-}
-`;
-
-exports[`schema for 'US_MA' 'fR1ywV' 1`] = `
-{
-  "allEligibleOpportunities": [],
-  "displayId": "f3TSaZ",
-  "facilityId": "DEMO FACILITY",
-  "gender": "MALE",
-  "metadata": {
-    "adjustedMaxReleaseDate": null,
-    "creditActivity": [
-      {
-        "BOOST": 0,
-        "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
-        "activity": "Institutional Employment",
-        "creditDate": 2021-08-31T00:00:00.000Z,
-        "rating": "S",
-      },
-      {
-        "BOOST": 0,
-        "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
-        "activity": "Institutional Employment",
-        "creditDate": 2021-09-30T00:00:00.000Z,
-        "rating": "S",
-      },
-      {
-        "BOOST": 0,
-        "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
-        "activity": "Institutional Employment",
-        "creditDate": 2021-10-31T00:00:00.000Z,
-        "rating": "S",
-      },
-    ],
-    "lastUpdatedDate": 2021-12-16T00:00:00.000Z,
-    "originalMaxReleaseDate": null,
-    "rtsDate": null,
-    "stateCode": "US_MA",
-    "totalCompletionCredit": 80,
-    "totalCompletionCreditDaysCalculated": 0,
-    "totalStateCredit": 988,
-    "totalStateCreditDaysCalculated": 0,
-  },
-  "personExternalId": "fR1ywV",
-  "personName": {
-    "givenNames": "Frank",
-    "middleNames": undefined,
-    "surname": "Thompson",
-  },
-  "personType": "RESIDENT",
-  "pseudonymizedId": "3HjQFGyJnaqhhDjI",
-  "recordId": "us_ma_1",
+  "pseudonymizedId": "anonres003",
+  "recordId": "us_ma_RES003",
   "stateCode": "US_MA",
 }
 `;

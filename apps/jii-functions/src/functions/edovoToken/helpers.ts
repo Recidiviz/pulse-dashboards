@@ -43,7 +43,7 @@ export const edovoIdTokenPayloadSchema = z
     }
     return user;
   });
-type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;
+export type EdovoIdTokenPayload = z.infer<typeof edovoIdTokenPayloadSchema>;
 
 export async function lookupResident(
   userData: EdovoIdTokenPayload,

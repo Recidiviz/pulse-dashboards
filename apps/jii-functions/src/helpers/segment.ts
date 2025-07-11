@@ -43,6 +43,7 @@ class SegmentClient {
       stateCode?: string;
       encryptedEdovoToken?: string;
       pseudonymizedId?: string;
+      isDemoUser?: boolean;
     },
   ): void {
     if (this.analytics) {

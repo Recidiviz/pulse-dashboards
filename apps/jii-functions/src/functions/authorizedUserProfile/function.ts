@@ -20,7 +20,10 @@ import express, { Response } from "express";
 import { onRequest } from "firebase-functions/v2/https";
 import { z } from "zod";
 
-import { checkResidentsRoster } from "../../helpers/firebaseAdmin";
+import {
+  checkDemoResidentsRoster,
+  checkResidentsRoster,
+} from "../../helpers/firebaseAdmin";
 import {
   errorHandler,
   makeRateLimiter,
@@ -55,17 +58,31 @@ app.get(
         // assumed to be a valid user email, though this will throw if it isn't
         const userProfile = await getRecidivizUserProfile(userData.userId);
         response.json({ userProfile });
-      } else {
-        const userProfile = await checkResidentsRoster(
-          userData.stateCode,
-          userData.userId,
-        );
-        if (userProfile) {
-          response.json({ userProfile });
-        } else {
-          response.status(404).json({ error: "User not found" });
-        }
+        return;
       }
+
+      const userProfile = await checkResidentsRoster(
+        userData.stateCode,
+        userData.userId,
+      );
+      if (userProfile) {
+        response.json({ userProfile });
+        return;
+      }
+
+      // fallback: if not a real user, check if they're a demo user
+      const demoUserProfile = await checkDemoResidentsRoster(
+        userData.stateCode,
+        userData.userId,
+      );
+      if (demoUserProfile) {
+        response.json({
+          userProfile: demoUserProfile,
+        });
+        return;
+      }
+
+      response.status(404).json({ error: "User not found" });
     } catch (e) {
       next(e);
     }

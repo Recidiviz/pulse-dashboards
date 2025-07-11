@@ -21,7 +21,10 @@ import { onRequest } from "firebase-functions/v2/https";
 
 import { tokenAuthResponseSchema } from "~auth0-jii";
 
-import { getFirebaseToken } from "../../helpers/firebaseAdmin";
+import {
+  checkDemoResidentsRoster,
+  getFirebaseToken,
+} from "../../helpers/firebaseAdmin";
 import {
   errorHandler,
   makeRateLimiter,
@@ -54,15 +57,26 @@ app.get("/*", async (request, response, next): Promise<void> => {
     let isRecidiviz = false;
     const { encryptedEdovoToken } = response.locals;
 
+    // the order of these checks is important; earlier ones
+    // are intentionally chosen to supersede later ones that address edge cases
     let userProfile = await lookupResident(userData);
     if (!userProfile) {
       userProfile = await checkRecidivizEmployeeRoster(userData);
       isRecidiviz = !!userProfile;
     }
+    if (!userProfile) {
+      const demoUserMatch = await checkDemoResidentsRoster(
+        userData.facility_state,
+        userData.inmate_id,
+      );
+      if (demoUserMatch) {
+        userProfile = demoUserMatch;
+      }
+    }
 
     if (userProfile) {
       firebaseToken = await getFirebaseToken(
-        `${userData.STATE}_${userData.USER_ID}`,
+        `${userData.facility_state}_${userData.inmate_id}`,
         userProfile,
       );
 
@@ -71,6 +85,7 @@ app.get("/*", async (request, response, next): Promise<void> => {
       );
       segment.track("backend_edovo_login_succeeded", {
         isRecidiviz,
+        isDemoUser: !userProfile.permissions?.includes("live_data"),
         pseudonymizedId: userProfile.pseudonymizedId,
         stateCode: userProfile.stateCode,
         encryptedEdovoToken,
@@ -82,7 +97,7 @@ app.get("/*", async (request, response, next): Promise<void> => {
 
       segment.track("backend_edovo_login_denied", {
         isRecidiviz: isRecidiviz,
-        stateCode: `US_${userData.STATE}`,
+        stateCode: userData.facility_state,
         encryptedEdovoToken,
       });
     }
@@ -107,8 +122,8 @@ app.use(
   ) => {
     const { encryptedEdovoToken, userData } = response.locals;
     let stateCode: string | undefined;
-    if (userData?.STATE) {
-      stateCode = userData.STATE;
+    if (userData?.facility_state) {
+      stateCode = userData.facility_state;
     }
 
     next(error);

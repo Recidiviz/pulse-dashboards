@@ -20,11 +20,7 @@ import { range } from "d3-array";
 
 import { FIXTURE_SEED_DEFAULT } from "~fixture-generator";
 
-import {
-  fullNameFactory,
-  randId,
-  randPseudonymizedId,
-} from "../../utils/factories";
+import { fullNameFactory } from "../../utils/factories";
 import {
   RawResidentRecord,
   ResidentRecord,
@@ -37,18 +33,21 @@ faker.seed(FIXTURE_SEED_DEFAULT);
 
 export const rawUsMaResidents: Array<
   RawResidentRecord & { metadata: RawUsMaResidentMetadata }
-> = range(3).map((i) => ({
-  stateCode: "US_MA",
-  personExternalId: randId(),
-  displayId: randId(),
-  gender: "MALE",
-  personName: fullNameFactory("male").build(),
-  pseudonymizedId: randPseudonymizedId(),
-  facilityId: "DEMO FACILITY",
-  metadata: rawUsMaResidentMetadataFixtures[i],
-  recordId: `us_ma_${i}`,
-  allEligibleOpportunities: [],
-}));
+> = range(3).map((i) => {
+  const resId = `RES${String(i + 1).padStart(3, "0")}`;
+  return {
+    stateCode: "US_MA",
+    personExternalId: resId,
+    displayId: resId,
+    gender: "MALE",
+    personName: fullNameFactory("male").build(),
+    pseudonymizedId: `anon${resId.toLowerCase()}`,
+    facilityId: "DEMO FACILITY",
+    metadata: rawUsMaResidentMetadataFixtures[i],
+    recordId: `us_ma_${resId}`,
+    allEligibleOpportunities: [],
+  };
+});
 
 export const usMaResidents: Array<ResidentRecord> = rawUsMaResidents.map((r) =>
   residentRecordSchema.parse(r),
