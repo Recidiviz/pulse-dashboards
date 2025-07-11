@@ -670,19 +670,14 @@ export class InsightsSupervisionStore {
       lastName &&
       isImpersonating &&
       userFullName === "Impersonated User";
-    const displayName = isImpersonatedUserName
-      ? `${firstName} ${lastName}`
-      : userFullName;
+    const displayName =
+      isImpersonatedUserName || !userFullName
+        ? `${firstName} ${lastName}`
+        : userFullName;
 
-    if (!externalId || !userFullName)
+    if (!externalId)
       throw new Error(
-        `Missing auth0 info for user: ${Object.entries({
-          externalId,
-          displayName,
-          userPseudonymizedId: pseudonymizedId,
-        })
-          .map(([key, value]) => `${key}: ${value}`)
-          .join(", ")}`,
+        `Missing auth0 info for user with pseudo id: ${pseudonymizedId}`,
       );
 
     this.userInfo = {
