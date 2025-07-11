@@ -47,11 +47,19 @@ export function relativeFixtureDate(...differences: Array<Duration>) {
 }
 
 /**
+ * This class is functionally identical to Date, it just serves
+ * to "brand" dates as already shifted for inspection at runtime
+ */
+class ShiftedDate extends Date {}
+
+/**
  * Shifts a given date forward by the difference between the current date
  * and the static "current date" used for fixture data, bringing the dates
  * in fixtures up to date relative to today.
  */
-export function shiftFixtureDate(storedDate: Date): Date {
+export function shiftFixtureDate(storedDate: Date | ShiftedDate): ShiftedDate {
+  if (storedDate instanceof ShiftedDate) return storedDate;
+
   const offsetDays = differenceInDays(new Date(), CURRENT_DATE_FIXTURE);
-  return addDays(storedDate, offsetDays);
+  return new ShiftedDate(addDays(storedDate, offsetDays));
 }

@@ -17,6 +17,7 @@
 
 import { MockInstance } from "vitest";
 
+import { isDemoMode } from "~client-env-utils";
 import { HydrationState } from "~hydration-utils";
 
 import { isEdovoEnv } from "../../utils/edovo";
@@ -25,6 +26,7 @@ import { AuthManager } from "./AuthManager";
 import { EdovoAuthHandler } from "./EdovoAuthHandler";
 import { AuthorizedUserProperties } from "./types";
 
+vi.mock("~client-env-utils");
 vi.mock("./Auth0AuthHandler");
 vi.mock("./EdovoAuthHandler");
 vi.mock("../../utils/edovo");
@@ -96,6 +98,44 @@ describe("using auth0", () => {
         status: "authorized",
         userProfile: mockUserProfile,
       });
+    });
+  });
+
+  describe("demo user", () => {
+    test("always when in demo env", () => {
+      vi.mocked(isDemoMode).mockReturnValue(true);
+      expect(manager.isDemoUser).toBeTrue();
+    });
+
+    test("false before hydration", () => {
+      vi.spyOn(handler, "hydrationState", "get").mockReturnValue({
+        status: "needs hydration",
+      });
+      expect(manager.isDemoUser).toBeFalse();
+    });
+
+    test("depends on live_data permission", () => {
+      vi.spyOn(handler, "hydrationState", "get").mockReturnValue({
+        status: "hydrated",
+      });
+
+      vi.spyOn(handler, "userProfile", "get").mockReturnValue({
+        stateCode: "US_XX",
+      });
+      expect(manager.isDemoUser).toBeFalse();
+
+      vi.spyOn(handler, "userProfile", "get").mockReturnValue({
+        stateCode: "US_XX",
+        permissions: [],
+      });
+
+      expect(manager.isDemoUser).toBeTrue();
+
+      vi.spyOn(handler, "userProfile", "get").mockReturnValue({
+        stateCode: "US_XX",
+        permissions: ["live_data"],
+      });
+      expect(manager.isDemoUser).toBeFalse();
     });
   });
 });

@@ -17,12 +17,23 @@
 
 // here we should not be accessing the raw mapping directly, only the mapping function
 /* eslint no-restricted-syntax: ["error", "Identifier[name=FIRESTORE_GENERAL_COLLECTION_MAP]"] */
+/* eslint no-restricted-properties: ["error", 
+  { 
+    "property": "parse", 
+    "message": "use this.parseFirestoreDocument() instead of calling schema parse methods directly" 
+  },
+  { 
+    "property": "safeParse", 
+    "message": "use this.parseFirestoreDocument() instead of calling schema parse methods directly" 
+  },
+] */
 
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getAuth, signInWithCustomToken } from "firebase/auth";
 import {
   collection,
   doc,
+  DocumentData,
   Firestore,
   getDoc,
   getDocs,
@@ -32,10 +43,14 @@ import {
 } from "firebase/firestore";
 import { z } from "zod";
 
-import { ResidentRecord, residentRecordSchema } from "~datatypes";
+import {
+  ResidentRecord,
+  residentRecordSchema,
+  shiftAllDates,
+} from "~datatypes";
 
 import { FirestoreCollectionKey } from "../types";
-import { collectionNameForKey } from "../utils/collectionNameForKey";
+import { collectionNameFromConfig } from "../utils/collectionNames";
 import { FilterParams, FirestoreAPI } from "./interface";
 
 export class FirestoreAPIClient implements FirestoreAPI {
@@ -46,6 +61,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
   constructor(
     projectId: string,
     apiKey: string,
+    private isDemoMode: () => boolean,
     private proxyHost?: string,
   ) {
     this.app = initializeApp({ projectId, apiKey });
@@ -67,10 +83,33 @@ export class FirestoreAPIClient implements FirestoreAPI {
     await signInWithCustomToken(auth, firebaseToken);
   }
 
+  private parseFirestoreDocument<Schema extends z.ZodTypeAny>(
+    schema: Schema,
+    data: DocumentData,
+  ): z.infer<Schema> {
+    // this is the one place where we're allowed to call this method,
+    // to add logic for time-shifting dates in demo mode
+    // eslint-disable-next-line no-restricted-properties
+    const result = schema.parse(data);
+    if (this.isDemoMode()) {
+      // this is safe to call if dates have already been timeshifted,
+      // but if they haven't it will ensure that they are. This is applicable
+      // when demo data is fetched based on user permissions rather than environment config
+      return shiftAllDates(result);
+    }
+    return result;
+  }
+
   async residents(stateCode: string, filters: Array<FilterParams> = []) {
     const snapshot = await getDocs(
       query(
-        collection(this.db, collectionNameForKey({ key: "residents" })),
+        collection(
+          this.db,
+          collectionNameFromConfig({
+            name: { key: "residents" },
+            demo: this.isDemoMode(),
+          }),
+        ),
         where("stateCode", "==", stateCode),
         ...filters.map((params) => where(...params)),
       ),
@@ -78,7 +117,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
     return snapshot.docs
       .map((d) => {
         try {
-          return residentRecordSchema.parse({
+          return this.parseFirestoreDocument(residentRecordSchema, {
             ...d.data(),
             recordId: d.id,
           });
@@ -118,14 +157,17 @@ export class FirestoreAPIClient implements FirestoreAPI {
     const snapshot = await getDoc(
       doc(
         this.db,
-        collectionNameForKey(collectionKey),
+        collectionNameFromConfig({
+          name: collectionKey,
+          demo: this.isDemoMode(),
+        }),
         `${stateCode.toLowerCase()}_${externalId}`,
       ),
     );
 
     if (!snapshot.exists()) return;
 
-    return recordSchema.parse({
+    return this.parseFirestoreDocument(recordSchema, {
       ...snapshot.data(),
       recordId: snapshot.id,
     });
@@ -143,7 +185,10 @@ export class FirestoreAPIClient implements FirestoreAPI {
     fieldValue: string,
     recordSchema: Schema,
   ): Promise<z.infer<Schema> | undefined> {
-    const resolvedCollectionName = collectionNameForKey(collectionKey);
+    const resolvedCollectionName = collectionNameFromConfig({
+      name: collectionKey,
+      demo: this.isDemoMode(),
+    });
     const snapshot = await getDocs(
       query(
         collection(this.db, resolvedCollectionName),
@@ -159,7 +204,7 @@ export class FirestoreAPIClient implements FirestoreAPI {
       );
     }
 
-    return recordSchema.parse({
+    return this.parseFirestoreDocument(recordSchema, {
       ...snapshot.docs[0].data(),
       recordId: snapshot.docs[0].id,
     });

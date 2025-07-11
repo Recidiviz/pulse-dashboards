@@ -275,11 +275,37 @@
         "command": "bash -c '. load_environment.sh env_sync_content && vite-node tools/verifyFeatureVariantDocumentation.ts'"
       }
     },
-    "load-demo-fixtures": {
+    "env-demo-fixtures": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "bash -c '. load_environment.sh env_dev_server && vite-node tools/loadWorkflowsFixtures.ts'"
+        "command": "vite-node tools/loadEnvironment.ts"
+      },
+      "configurations": {
+        "staging": {
+          "args": [
+            "--env env_demo_fixtures_staging",
+            "--filename .env.load-demo-fixtures.staging"
+          ]
+        },
+        "production": {
+          "args": [
+            "--env env_demo_fixtures_production",
+            "--filename .env.load-demo-fixtures.production"
+          ]
+        }
+      }
+    },
+    "load-demo-fixtures": {
+      "executor": "nx:run-commands",
+      "dependsOn": [{ "target": "env-demo-fixtures", "params": "forward" }],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "vite-node tools/loadWorkflowsFixtures.ts"
+      },
+      "configurations": {
+        "staging": {},
+        "production": {}
       }
     },
     "sync-content": {

@@ -46,6 +46,7 @@ export class ApiClient implements DataAPI {
     this.firestoreClient = new FirestoreAPIClient(
       import.meta.env["VITE_FIRESTORE_PROJECT"],
       import.meta.env["VITE_FIRESTORE_API_KEY"],
+      () => this.externals.authManager.isDemoUser,
       proxyHost(),
     );
 

@@ -30,7 +30,7 @@
           "headers": [
             {
               "key": "Content-Security-Policy",
-              "value": "frame-ancestors https://*.edovo.com https://*.tedovo.com https://*.connectedcorrections.com;"
+              "value": "frame-ancestors https://*.edovo.com https://*.tedovo.com https://*.learnedovo.com https://*.connectedcorrections.com;"
             },
             {
               "key": "Referrer-Policy",
@@ -74,7 +74,7 @@
           "headers": [
             {
               "key": "Content-Security-Policy",
-              "value": "frame-ancestors https://*.edovo.com https://*.tedovo.com https://*.connectedcorrections.com;"
+              "value": "frame-ancestors https://*.edovo.com https://*.tedovo.com https://*.learnedovo.com https://*.connectedcorrections.com;"
             },
             {
               "key": "Referrer-Policy",

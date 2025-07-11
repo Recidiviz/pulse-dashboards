@@ -92,12 +92,7 @@ export class UserStore {
   hasPermission(permission: Permission): boolean {
     if (isOfflineMode()) return true;
 
-    if (isAuthorizedState(this.authState)) {
-      return (
-        this.authState.userProfile.permissions?.includes(permission) ?? false
-      );
-    }
-    return false;
+    return !!this.authManager.permissions?.includes(permission);
   }
 
   logOut() {

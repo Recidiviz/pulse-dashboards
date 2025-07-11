@@ -23,3 +23,8 @@ export type FirestoreCollectionName =
 export type FirestoreCollectionKey =
   | { key: FirestoreCollectionName; raw?: never }
   | { raw: string; key?: never };
+
+export type FirestoreCollectionKeyConfig = {
+  name: FirestoreCollectionKey;
+  demo: boolean;
+};

@@ -129,6 +129,7 @@
     "langsmith": "^0.3.37",
     "lodash": "^4.17.21",
     "make-cancellable-promise": "^1.0.0",
+    "map-obj": "^5.0.2",
     "markdown-to-jsx": "^7.4.7",
     "mobx": "^6.0.4",
     "mobx-react-lite": "^3.1.6",

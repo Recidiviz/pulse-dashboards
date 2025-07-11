@@ -18,12 +18,30 @@
 import { isDemoMode } from "~client-env-utils";
 
 import { FIRESTORE_GENERAL_COLLECTION_MAP } from "../constants";
-import { FirestoreCollectionKey } from "../types";
+import { FirestoreCollectionKey, FirestoreCollectionKeyConfig } from "../types";
 
-export function collectionNameForKey(collectionKey: FirestoreCollectionKey) {
-  let collectionName = collectionKey.key
-    ? FIRESTORE_GENERAL_COLLECTION_MAP[collectionKey.key]
-    : collectionKey.raw;
-  if (isDemoMode()) collectionName = `DEMO_${collectionName}`;
+/**
+ * Given a Firestore collection specifier and a demo flag,
+ * returns the collection name that should be used in Firestore queries
+ */
+export function collectionNameFromConfig({
+  name,
+  demo,
+}: FirestoreCollectionKeyConfig) {
+  let collectionName = name.key
+    ? FIRESTORE_GENERAL_COLLECTION_MAP[name.key]
+    : name.raw;
+  if (demo) collectionName = `DEMO_${collectionName}`;
   return collectionName;
+}
+
+/**
+ * Given a Firestore collection specifier, returns the collection name that should
+ * be used in Firestore queries. In demo environments (identified via environment variable)
+ * names will be automatically prefixed to their demo data equivalents.
+ */
+export function collectionNameForCurrentEnv(
+  collectionKey: FirestoreCollectionKey,
+) {
+  return collectionNameFromConfig({ name: collectionKey, demo: isDemoMode() });
 }

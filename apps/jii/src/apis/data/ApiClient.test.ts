@@ -53,6 +53,7 @@ test("firestore client", () => {
   expect(FirestoreAPIClient).toHaveBeenCalledExactlyOnceWith(
     projectIdMock,
     apiKeyMock,
+    expect.any(Function),
     undefined,
   );
 });
@@ -196,6 +197,7 @@ test("with proxy option", () => {
   expect(FirestoreAPIClient).toHaveBeenLastCalledWith(
     projectIdMock,
     apiKeyMock,
+    expect.any(Function),
     "foo.bar",
   );
 });

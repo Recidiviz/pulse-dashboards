@@ -57,7 +57,7 @@ import {
   residentRecordSchema,
 } from "~datatypes";
 import {
-  collectionNameForKey,
+  collectionNameForCurrentEnv,
   FIRESTORE_GENERAL_COLLECTION_MAP,
   FirestoreCollectionKey,
 } from "~firestore-api";
@@ -175,11 +175,11 @@ export default class FirestoreStore {
   }
 
   collection(collectionKey: FirestoreCollectionKey) {
-    return collection(this.db, collectionNameForKey(collectionKey));
+    return collection(this.db, collectionNameForCurrentEnv(collectionKey));
   }
 
   doc(collectionKey: FirestoreCollectionKey, ...paths: string[]) {
-    return doc(this.db, collectionNameForKey(collectionKey), ...paths);
+    return doc(this.db, collectionNameForCurrentEnv(collectionKey), ...paths);
   }
 
   async getClient(

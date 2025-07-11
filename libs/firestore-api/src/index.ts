@@ -20,4 +20,4 @@ export * from "./api/FirestoreOfflineAPIClient";
 export * from "./api/interface";
 export * from "./constants";
 export * from "./types";
-export * from "./utils/collectionNameForKey";
+export * from "./utils/collectionNames";

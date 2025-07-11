@@ -38,6 +38,10 @@ const validEnvs = [
   "env_production",
   // env vars to sync content from the Pathways content google sheet
   "env_sync_content",
+  // env vars to load local fixtures to staging demo collections in Firestore
+  "env_demo_fixtures_staging",
+  // env vars to load local fixtures to production demo collections in Firestore
+  "env_demo_fixtures_production",
 ];
 
 const args = parseArgs(validEnvs);

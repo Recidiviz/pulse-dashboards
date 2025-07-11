@@ -33,9 +33,11 @@ import {
   QuerySnapshot,
   where,
 } from "firebase/firestore";
+import { pick } from "lodash";
+import tk from "timekeeper";
+import { Mock } from "vitest";
 import { z } from "zod";
 
-import { isDemoMode } from "~client-env-utils";
 import { allResidents, rawAllResidents } from "~datatypes";
 
 import { FirestoreAPIClient } from "../FirestoreAPIClient";
@@ -43,7 +45,6 @@ import { FirestoreAPIClient } from "../FirestoreAPIClient";
 vi.mock("firebase/app");
 vi.mock("firebase/auth");
 vi.mock("firebase/firestore");
-vi.mock("~client-env-utils");
 
 let client: FirestoreAPIClient;
 
@@ -56,6 +57,8 @@ const queryMock = "QUERY MOCK";
 const docMock = "DOC MOCK";
 
 const stateCodeMock = "US_XX";
+
+const demoModeStub: Mock<() => boolean> = vi.fn();
 
 beforeEach(() => {
   // these mocks all get passed around to one another for the SDK to use internally;
@@ -75,7 +78,7 @@ beforeEach(() => {
   vi.mocked(query).mockReturnValue(queryMock as unknown as Query);
   vi.mocked(doc).mockReturnValue(docMock as unknown as DocumentReference);
 
-  client = new FirestoreAPIClient("project-xx", "api-xx");
+  client = new FirestoreAPIClient("project-xx", "api-xx", demoModeStub);
 });
 
 test("initialize", () => {
@@ -87,7 +90,12 @@ test("initialize", () => {
 });
 
 test("initialize with proxy", () => {
-  client = new FirestoreAPIClient("project-xx", "api-xx", "foo.bar");
+  client = new FirestoreAPIClient(
+    "project-xx",
+    "api-xx",
+    demoModeStub,
+    "foo.bar",
+  );
   expect(initializeFirestore).toHaveBeenLastCalledWith(appMock, {
     host: "foo.bar/firestore",
   });
@@ -149,14 +157,38 @@ describe("residents", () => {
   });
 
   test("demo data", async () => {
-    vi.mocked(isDemoMode).mockReturnValue(true);
+    tk.freeze(new Date(2025, 6, 8));
 
-    await client.residents(stateCodeMock);
+    demoModeStub.mockReturnValue(true);
+
+    const result = await client.residents(stateCodeMock);
 
     expect(collection).toHaveBeenCalledExactlyOnceWith(
       dbMock,
       "DEMO_residents",
     );
+
+    expect(
+      // just want to verify that date fields have been changed
+      result.map((r) => pick(r, ["admissionDate", "releaseDate"])),
+    ).not.toEqual(
+      expectedFixture.map((r) => pick(r, ["admissionDate", "releaseDate"])),
+    );
+    expect(result.map((r) => pick(r, ["admissionDate", "releaseDate"])))
+      .toMatchInlineSnapshot(`
+      [
+        {
+          "admissionDate": 2017-06-08T00:00:00.000Z,
+          "releaseDate": 2028-06-08T00:00:00.000Z,
+        },
+        {
+          "admissionDate": 2021-09-09T00:00:00.000Z,
+          "releaseDate": 2027-09-08T00:00:00.000Z,
+        },
+      ]
+    `);
+
+    tk.reset();
   });
 });
 
@@ -213,21 +245,36 @@ describe("resident by pseudo ID", () => {
   });
 
   test("demo data", async () => {
-    vi.mocked(isDemoMode).mockReturnValue(true);
+    tk.freeze(new Date(2025, 6, 8));
+    demoModeStub.mockReturnValue(true);
     vi.mocked(getDocs).mockResolvedValue(mockSnapshot);
 
-    await client.residentByPseudoId(stateCodeMock, testId);
+    const result = await client.residentByPseudoId(stateCodeMock, testId);
 
     expect(collection).toHaveBeenCalledExactlyOnceWith(
       dbMock,
       "DEMO_residents",
     );
+
+    expect(
+      // just want to verify that date fields have been changed
+      pick(result, ["admissionDate", "releaseDate"]),
+    ).not.toEqual(pick(expectedFixture, ["admissionDate", "releaseDate"]));
+    expect(pick(result, ["admissionDate", "releaseDate"]))
+      .toMatchInlineSnapshot(`
+      {
+        "admissionDate": 2017-06-08T00:00:00.000Z,
+        "releaseDate": 2028-06-08T00:00:00.000Z,
+      }
+    `);
+
+    tk.reset();
   });
 });
 
 describe("recordForExternalId", () => {
   test("demo data", async () => {
-    vi.mocked(isDemoMode).mockReturnValue(true);
+    demoModeStub.mockReturnValue(true);
     vi.mocked(getDoc).mockResolvedValue({
       // for this test we don't actually care what the data is
       exists: () => false,

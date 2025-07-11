@@ -17,6 +17,8 @@
 
 import { makeAutoObservable } from "mobx";
 
+import { AuthorizedUserProfile } from "~auth0-jii";
+import { isDemoMode as isDemoEnv } from "~client-env-utils";
 import { Hydratable, HydrationState, isHydrated } from "~hydration-utils";
 
 import { isEdovoEnv } from "../../utils/edovo";
@@ -79,5 +81,20 @@ export class AuthManager implements Hydratable {
    */
   getFirebaseToken() {
     return this.handler.getFirebaseToken();
+  }
+
+  get permissions(): AuthorizedUserProfile["permissions"] {
+    if ("userProfile" in this.authState) {
+      return this.authState.userProfile.permissions;
+    }
+    return;
+  }
+
+  get isDemoUser(): boolean {
+    if (isDemoEnv()) return true;
+    if (this.permissions) {
+      return !this.permissions.includes("live_data");
+    }
+    return false;
   }
 }

@@ -195,6 +195,13 @@ if (deployEnv === "demo") {
   deployServicesChoices.push({ name: "Demo fixtures", checked: true });
 }
 
+if (deployEnv === "production") {
+  deployServicesChoices.push({
+    name: "Opportunities test data",
+    checked: true,
+  });
+}
+
 const deployServicesPrompt = await inquirer.prompt({
   type: "checkbox",
   name: "deployServices",
@@ -220,6 +227,9 @@ const deployOppsFrontend = deployServicesPrompt.deployServices.includes(
 );
 const deployOppsBackend = deployServicesPrompt.deployServices.includes(
   "Opportunities backend",
+);
+const deployOppsTestData = deployServicesPrompt.deployServices.includes(
+  "Opportunities test data",
 );
 
 console.log("Running nx reset...");
@@ -659,6 +669,25 @@ if (
   }
 }
 
+if (deployOppsTestData) {
+  let retryFixtures = false;
+  do {
+    console.log("Updating production test data fixtures ...");
+    successfullyDeployed.push("Opportunities production test data");
+    try {
+      await $`nx load-demo-fixtures staff -c production`.pipe(process.stdout);
+    } catch (e) {
+      const retryFixturesPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryFixtures",
+        message: `Opportunities production test data deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryFixtures = retryFixturesPrompt.retryFixtures;
+    }
+  } while (retryFixtures);
+}
+
 if (deployEnv === "demo") {
   if (deployDemoFixtures) {
     let retryFixtures = false;
@@ -666,7 +695,7 @@ if (deployEnv === "demo") {
       console.log("Updating demo fixtures ...");
       successfullyDeployed.push("Demo fixtures");
       try {
-        await $`nx load-demo-fixtures staff`.pipe(process.stdout);
+        await $`nx load-demo-fixtures staff -c staging`.pipe(process.stdout);
       } catch (e) {
         const retryFixturesPrompt = await inquirer.prompt({
           type: "confirm",
