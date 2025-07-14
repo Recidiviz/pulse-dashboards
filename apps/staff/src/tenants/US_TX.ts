@@ -42,7 +42,7 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   workflowsHomepage: "home",
   workflowsHomepageName: "Home",
   workflowsMethodologyUrl:
-    "https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub",
+    "https://docs.google.com/document/d/e/2PACX-1vQ2vXowyvhHi5o0NZsWBlQbmTveRcirOsOBghxbv_1JjhMZyMnL-RAJ9VwMuMMsLmSXwpoF6N1SvkLm/pub",
   workflowsSystemConfigs: {
     SUPERVISION: {
       search: [
@@ -56,6 +56,8 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   },
   workflowsTasksConfig: {
     collection: "usTxSupervisionTasks",
+    methodologyUrl:
+      "https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub",
     tasks: {
       usTxCollateralContactScheduled: {
         constructor: usTxCollateralContactScheduled,
