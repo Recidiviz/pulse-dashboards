@@ -1,0 +1,25 @@
+# Infrastructure configuration for components for the sentencing app that will be deployed to staging
+settings:
+  context:
+    project_id: recidiviz-dashboard-staging
+    project_number: 626425930051
+    data_platform_project_number: 984160736970
+    data_platform_project_id: recidiviz-staging
+    product: reentry
+    location: us-central1
+
+# The variables set here are automatically provided to any components used in this stack.
+vars:
+  project_id: "{{ .settings.context.project_id }}"
+
+import:
+  - ../@defaults/terraform-backend
+
+components:
+  terraform:
+    apps/reentry:
+      vars:
+        location: "{{ .settings.context.location }}"
+        project_number: "{{ .settings.context.project_number }}"
+        data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
+        data_platform_project_id: "{{ .settings.context.data_platform_project_id }}"
