@@ -48,9 +48,6 @@ export default defineConfig({
     // 2. The env variables for local testing and CI are different
     // NOTE: none of these are true secrets, they are all fine to put in this file
     env: {
-      CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL:
-        process.env["CLOUD_STORAGE_NOTIFICATION_IAM_EMAIL"] ??
-        "test-csn@fake.com",
       DATABASE_URL:
         process.env["DATABASE_URL"] ??
         "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
