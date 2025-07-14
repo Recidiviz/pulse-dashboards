@@ -35,6 +35,9 @@
       "~@reentry/intake-agent/evaluate/*": [
         "libs/@reentry/intake-agent/evaluate/*"
       ],
+      "~@reentry/prisma": ["libs/@reentry/prisma/src/index.ts"],
+      "~@reentry/prisma/*": ["libs/@reentry/prisma/src/*"],
+      "~@reentry/prisma/client": ["libs/@reentry/prisma/src/client/client.ts"],
       "~@sentencing/import": ["apps/@sentencing/import/src/index.ts"],
       "~@sentencing/import/*": ["apps/@sentencing/import/src/*"],
       "~@sentencing/import/test/*": ["apps/@sentencing/import/__tests__/*"],
