@@ -33,9 +33,6 @@ export class UsTnInitialClassificationOpportunity extends OpportunityBase<
   UsTnInitialClassificationReferralRecord,
   OpportunityUpdateWithForm<UsTnSharedReclassificationDraftData>
 > {
-  // TODO(#6707) move to configuration
-  readonly caseNotesTitle = "Relevant Information For Classification";
-
   form: UsTnReclassificationReviewForm;
 
   constructor(resident: Resident, record: DocumentData) {

@@ -149,6 +149,8 @@ export const apiOpportunityConfigurationSchema = z.object({
   // TODO(#8429): Add caseNoteHeaders field to the admin panel config
   // This field is currently never defined on the backend
   caseNoteHeaders: nullishAsUndefined(z.array(z.string())),
+
+  caseNotesTitle: nullishAsUndefined(z.string()),
 });
 
 export const apiOpportunityConfigurationResponseSchema = z.object({

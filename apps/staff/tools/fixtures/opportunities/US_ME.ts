@@ -90,6 +90,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "earlyTermination",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMeFurloughRelease: {
       callToAction:
@@ -189,6 +190,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "furloughRelease",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMeMediumTrustee: {
       callToAction:
@@ -265,6 +267,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "mediumTrustee",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMeReclassificationReview: {
       callToAction:
@@ -332,6 +335,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "annualReclassification",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMeSCCP: {
       callToAction:
@@ -405,6 +409,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "SCCP",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMeWorkRelease: {
       callToAction:
@@ -468,6 +473,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "workRelease",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

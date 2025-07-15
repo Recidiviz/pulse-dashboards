@@ -80,6 +80,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "compliantReporting",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     supervisionLevelDowngrade: {
       callToAction: "Change their supervision level in TOMIS.",
@@ -140,6 +141,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "supervisionLevelDowngrade",
       zeroGrantsTooltip: null,
+      caseNotesTitle: "Relevant Contact Codes",
     },
     usTnAnnualReclassification: {
       callToAction:
@@ -204,6 +206,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "annualReclassification",
       zeroGrantsTooltip: null,
+      caseNotesTitle: "Relevant Information For Classification",
     },
     usTnCompliantReporting2025Policy: {
       callToAction: "Auto-fill referral",
@@ -438,6 +441,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "usTnCompliantReporting2025Policy",
       zeroGrantsTooltip: null,
+      caseNotesTitle: "Other Relevant Information",
     },
     usTnCustodyLevelDowngrade: {
       callToAction: "Review and update custody levels.",
@@ -510,6 +514,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "custodyLevelDowngrade",
       zeroGrantsTooltip: null,
+      caseNotesTitle: "Relevant Information for Classification",
     },
     usTnExpiration: {
       callToAction:
@@ -582,6 +587,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "expiration",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usTnInitialClassification: {
       callToAction: "Auto-fill paperwork",
@@ -648,6 +654,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "initialClassification",
       zeroGrantsTooltip: null,
+      caseNotesTitle: "Relevant Information For Classification",
     },
     usTnSuspensionOfDirectSupervision: {
       callToAction: "Generate request",
@@ -808,6 +815,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "suspensionOfDirectSupervision",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

@@ -127,6 +127,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "addInPersonSecurityClassificationCommitteeReview",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMiClassificationReview: {
       callToAction:
@@ -219,6 +220,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "classificationReview",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMiEarlyDischarge: {
       callToAction:
@@ -406,6 +408,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "earlyDischarge",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMiMinimumTelephoneReporting: {
       callToAction:
@@ -507,6 +510,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "minimumTelephoneReporting",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMiPastFTRD: {
       callToAction:
@@ -574,6 +578,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for discharge",
       urlSection: "pastFTRD",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMiReclassificationRequest: {
       callToAction:
@@ -665,6 +670,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "reclassificationRequest",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMiSecurityClassificationCommitteeReview: {
       callToAction:
@@ -770,6 +776,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "securityClassificationCommitteeReview",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMiSupervisionLevelDowngrade: {
       callToAction:
@@ -850,6 +857,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "supervisionLevelMismatch",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMiWardenInPersonSecurityClassificationCommitteeReview: {
       callToAction:
@@ -959,6 +967,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "wardenInPersonSecurityClassificationCommitteeReview",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

@@ -146,6 +146,7 @@ export const mockOpportunity: Opportunity<Client> = {
     caseNoteHeaders: [],
     enableProgressiveLoading: false,
     progressiveLoadingBatchSize: 50,
+    caseNotesTitle: "Additional Information",
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

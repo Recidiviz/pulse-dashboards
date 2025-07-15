@@ -90,6 +90,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for supervision downgrade",
       urlSection: "supervisionLevelDowngrade",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

@@ -95,6 +95,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for Annual Report Status",
       urlSection: "AnnualReportStatus",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usTxEarlyReleaseFromSupervision: {
       callToAction: null,
@@ -182,6 +183,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for Early Release From Supervision",
       urlSection: "EarlyReleaseFromSupervision",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

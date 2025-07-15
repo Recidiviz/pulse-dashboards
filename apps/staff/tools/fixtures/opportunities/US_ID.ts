@@ -94,6 +94,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for transfer to LSU",
       urlSection: "LSU",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     earnedDischarge: {
       callToAction:
@@ -210,6 +211,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for Earned Discharge",
       urlSection: "earnedDischarge",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     pastFTRD: {
       callToAction:
@@ -276,6 +278,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for discharge",
       urlSection: "pastFTRD",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usIdCRCResidentWorker: {
       callToAction:
@@ -443,6 +446,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "CRCResidentWorker",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usIdCRCWorkRelease: {
       callToAction:
@@ -610,6 +614,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "CRCWorkRelease",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usIdCustodyLevelDowngrade: {
       callToAction: "Review eligible residents and reclassify in Atlas.",
@@ -683,6 +688,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "custodyLevelDowngrade",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usIdExpandedCRC: {
       callToAction:
@@ -838,6 +844,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "expandedCRC",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usIdSupervisionLevelDowngrade: {
       callToAction: "Change their supervision level in Atlas",
@@ -901,6 +908,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for supervision downgrade",
       urlSection: "supervisionLevelMismatch",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

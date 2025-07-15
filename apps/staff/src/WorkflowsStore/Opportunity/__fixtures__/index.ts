@@ -95,6 +95,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   overdueOpportunityCalloutCopy: "overdue",
   enableProgressiveLoading: false,
   progressiveLoadingBatchSize: 50,
+  caseNotesTitle: "Mock Case Notes Title",
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

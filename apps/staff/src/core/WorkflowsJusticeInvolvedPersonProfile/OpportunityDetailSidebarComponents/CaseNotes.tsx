@@ -47,9 +47,8 @@ export function CaseNotes({
   if (opportunity.person?.stateCode === "US_AZ")
     return <UsAzAcisInformation opportunity={opportunity} />;
 
-  let { caseNotesTitle } = opportunity;
+  const { caseNotesTitle } = opportunity;
 
-  caseNotesTitle ??= "Relevant Contact Notes";
   let caseNoteHeaders;
 
   if (opportunity.caseNoteHeaders?.length > 0) {

@@ -155,6 +155,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "earlyTermination",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usNdATP: {
       callToAction: "Review residents who may be eligible for ATP",
@@ -310,6 +311,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "ATP",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usNdTransferToMinFacility: {
       callToAction: "Review clients overdue for minimum housing referral",
@@ -428,6 +430,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "TransferToMinFacility",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

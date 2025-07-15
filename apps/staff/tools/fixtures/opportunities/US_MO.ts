@@ -103,6 +103,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "overdueRestrictiveHousingInitialHearing",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMoOverdueRestrictiveHousingRelease: {
       callToAction:
@@ -186,6 +187,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "overdueRestrictiveHousingRelease",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usMoOverdueRestrictiveHousingReviewHearing: {
       callToAction:
@@ -263,6 +265,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "overdueRestrictiveHousingReviewHearing",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

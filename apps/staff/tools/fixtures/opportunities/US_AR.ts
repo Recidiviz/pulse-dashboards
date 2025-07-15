@@ -94,6 +94,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for 309",
       urlSection: "institutionalWorkerStatus",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

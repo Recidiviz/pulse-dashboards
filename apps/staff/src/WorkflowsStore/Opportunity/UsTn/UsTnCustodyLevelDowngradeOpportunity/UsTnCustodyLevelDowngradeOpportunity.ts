@@ -35,9 +35,6 @@ export class UsTnCustodyLevelDowngradeOpportunity extends OpportunityBase<
 > {
   form: UsTnReclassificationReviewForm;
 
-  // TODO(#6707) move to configuration
-  readonly caseNotesTitle = "Relevant Information For Classification";
-
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,

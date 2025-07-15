@@ -844,6 +844,10 @@ export class OpportunityBase<
     return this.config.caseNoteHeaders;
   }
 
+  get caseNotesTitle() {
+    return (this.config.caseNotesTitle ??= "Relevant Contact Notes");
+  }
+
   eligibilityStatusLabel(includeReasons?: boolean): string | null {
     const {
       almostEligible,

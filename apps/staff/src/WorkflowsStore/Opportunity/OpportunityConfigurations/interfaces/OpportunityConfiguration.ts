@@ -93,6 +93,8 @@ export interface OpportunityConfiguration {
   // An optional sorted array of strings that will determine the order of case notes on the client side panel
   caseNoteHeaders: string[];
 
+  caseNotesTitle?: string;
+
   /**
    * Used to enable the progressive loading feature within Table View to display an initial
    * batch size of rows with a button that allows the user to load more batches of rows.

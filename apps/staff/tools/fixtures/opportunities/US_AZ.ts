@@ -140,6 +140,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "OverdueForDTP",
       zeroGrantsTooltip: null,
+      caseNotesTitle: "Additional Information from ACIS",
     },
     usAzOverdueForACISTPR: {
       callToAction:
@@ -260,6 +261,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "OverdueForTPR",
       zeroGrantsTooltip: null,
+      caseNotesTitle: "Additional Information from ACIS",
     },
     usAzReleaseToDTP: {
       callToAction:
@@ -481,6 +483,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "DTP",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usAzReleaseToTPR: {
       callToAction:
@@ -718,6 +721,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "TPR",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usAzTransferToAdministrativeSupervision: {
       callToAction:
@@ -856,6 +860,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "AdminSupervision",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

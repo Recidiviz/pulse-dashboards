@@ -115,6 +115,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "ConditionalLowRiskOverride",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
     usNeOverrideModerateToLow: {
       callToAction:
@@ -206,6 +207,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "OverrideModerateToLow",
       zeroGrantsTooltip: null,
+      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

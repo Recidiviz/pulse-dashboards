@@ -33,8 +33,6 @@ export class UsTnCompliantReporting2025PolicyOpportunity extends OpportunityBase
 
   readonly hideUnknownCaseNoteDates = true;
 
-  readonly caseNotesTitle = "Other Relevant Information";
-
   constructor(client: Client, record: DocumentData) {
     super(
       client,

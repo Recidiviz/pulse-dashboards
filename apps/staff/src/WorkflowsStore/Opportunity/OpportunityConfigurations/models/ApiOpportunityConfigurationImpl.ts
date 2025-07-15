@@ -334,6 +334,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return (this.configurationObject.caseNoteHeaders ?? []) as string[];
   }
 
+  get caseNotesTitle() {
+    return this.configurationObject.caseNotesTitle;
+  }
+
   /**
    * Used to enable the progressive loading feature within Table View to display an initial
    * batch size of rows with a button that allows the user to load more batches of rows.
