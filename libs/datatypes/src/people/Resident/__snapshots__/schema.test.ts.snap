@@ -82,6 +82,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
         "rating": "S",
       },
     ],
+    "isEgtDisabled": false,
     "lastUpdatedDate": 2021-12-16T00:00:00.000Z,
     "originalMaxReleaseDate": 2027-02-16T00:00:00.000Z,
     "rtsDate": 2026-11-15T00:00:00.000Z,
@@ -138,6 +139,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
         "rating": "S",
       },
     ],
+    "isEgtDisabled": false,
     "lastUpdatedDate": 2021-12-16T00:00:00.000Z,
     "originalMaxReleaseDate": null,
     "rtsDate": null,
@@ -210,6 +212,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
         "rating": "S",
       },
     ],
+    "isEgtDisabled": false,
     "lastUpdatedDate": 2021-12-16T00:00:00.000Z,
     "originalMaxReleaseDate": 2023-11-04T00:00:00.000Z,
     "rtsDate": null,
@@ -228,6 +231,38 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
   "personType": "RESIDENT",
   "pseudonymizedId": "anonres003",
   "recordId": "us_ma_RES003",
+  "stateCode": "US_MA",
+}
+`;
+
+exports[`schema for 'US_MA' 'RES004' 1`] = `
+{
+  "allEligibleOpportunities": [],
+  "displayId": "RES004",
+  "facilityId": "DEMO FACILITY",
+  "gender": "MALE",
+  "metadata": {
+    "adjustedMaxReleaseDate": null,
+    "creditActivity": [],
+    "isEgtDisabled": true,
+    "lastUpdatedDate": 2021-12-16T00:00:00.000Z,
+    "originalMaxReleaseDate": null,
+    "rtsDate": null,
+    "stateCode": "US_MA",
+    "totalCompletionCredit": 0,
+    "totalCompletionCreditDaysCalculated": 0,
+    "totalStateCredit": 0,
+    "totalStateCreditDaysCalculated": 0,
+  },
+  "personExternalId": "RES004",
+  "personName": {
+    "givenNames": "Marty",
+    "middleNames": undefined,
+    "surname": "Fahey",
+  },
+  "personType": "RESIDENT",
+  "pseudonymizedId": "anonres004",
+  "recordId": "us_ma_RES004",
   "stateCode": "US_MA",
 }
 `;

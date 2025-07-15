@@ -60,6 +60,7 @@ const creditActivitySchema = z.object({
 
 export const usMaResidentMetadataSchema = z.object({
   stateCode: z.literal("US_MA"),
+  isEgtDisabled: z.boolean().nullish(),
   rtsDate: dateStringSchema.nullable(),
   adjustedMaxReleaseDate: dateStringSchema.nullable(),
   originalMaxReleaseDate: dateStringSchema.nullable(),

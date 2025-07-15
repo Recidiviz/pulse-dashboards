@@ -37,6 +37,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
   {
     // normal case: adjustment equals credits
     stateCode: "US_MA",
+    isEgtDisabled: false,
     originalMaxReleaseDate: relativeFixtureDate({ years: 5, months: 2 }),
     // other release dates calculated relative to the original,
     // using number of days since that's how the policies are applied
@@ -132,6 +133,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
   {
     // no release date
     stateCode: "US_MA",
+    isEgtDisabled: false,
     rtsDate: null,
     adjustedMaxReleaseDate: null,
     originalMaxReleaseDate: null,
@@ -170,6 +172,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
   {
     // can't earn any more time
     stateCode: "US_MA",
+    isEgtDisabled: false,
     originalMaxReleaseDate: relativeFixtureDate({
       years: 2,
       months: -1,
@@ -229,6 +232,20 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
       },
     ],
     lastUpdatedDate: CURRENT_DATE_STRING_FIXTURE,
+  },
+  {
+    // no EGT data
+    stateCode: "US_MA",
+    isEgtDisabled: true,
+    originalMaxReleaseDate: null,
+    adjustedMaxReleaseDate: null,
+    rtsDate: null,
+    totalCompletionCredit: null,
+    totalCompletionCreditDaysCalculated: null,
+    totalStateCredit: null,
+    totalStateCreditDaysCalculated: null,
+    lastUpdatedDate: CURRENT_DATE_STRING_FIXTURE,
+    creditActivity: [],
   },
 ];
 

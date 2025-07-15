@@ -30,6 +30,7 @@ import {
 import { hydrateTemplate } from "../../../../configs/hydrateTemplate";
 import { useEGTDataContext } from "../EGTDataContext/context";
 import { DatesSection } from "./DatesSection";
+import { EmptyState } from "./EmptyState";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
 
 const LastUpdatedBanner = styled(FullBleedContainer)`
@@ -57,8 +58,14 @@ export const Homepage = observer(function Homepage() {
           </PageContainer>
         </LastUpdatedBanner>
       </HeaderPortal>
-      <DatesSection />
-      <TotalTimeEarnedSection />
+      {data.isEgtDisabled ? (
+        <EmptyState />
+      ) : (
+        <>
+          <DatesSection />
+          <TotalTimeEarnedSection />
+        </>
+      )}
     </div>
   );
 });

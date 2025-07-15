@@ -33,7 +33,7 @@ faker.seed(FIXTURE_SEED_DEFAULT);
 
 export const rawUsMaResidents: Array<
   RawResidentRecord & { metadata: RawUsMaResidentMetadata }
-> = range(3).map((i) => {
+> = range(4).map((i) => {
   const resId = `RES${String(i + 1).padStart(3, "0")}`;
   return {
     stateCode: "US_MA",
