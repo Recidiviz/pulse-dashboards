@@ -132,13 +132,6 @@ export class UserStore {
     return [];
   }
 
-  get user() {
-    if (isAuthorizedState(this.authState)) {
-      return this.authState.userProfile;
-    }
-    return;
-  }
-
   getUserProperty(key: UserPropertyKey) {
     return localStorage.getItem(key);
   }

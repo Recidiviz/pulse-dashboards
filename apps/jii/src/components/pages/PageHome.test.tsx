@@ -21,7 +21,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import type { AuthManager } from "../../apis/auth/AuthManager";
 import { RootStore } from "../../datastores/RootStore";
-import { EmailVerification, State } from "../../routes/routes";
+import { EmailVerification, State, StateSelect } from "../../routes/routes";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { PageHome } from "./PageHome";
 
@@ -48,6 +48,10 @@ function renderHome() {
       <Routes>
         <Route path="/" element={<PageHome />} />
         <Route path={State.path} element={<div>state page</div>} />
+        <Route
+          path={StateSelect.path}
+          element={<div>state selection page</div>}
+        />
         <Route path={EmailVerification.path} element={<div>verify page</div>} />
       </Routes>
     </MemoryRouter>,
@@ -55,7 +59,6 @@ function renderHome() {
 }
 
 test("landing page if unauthorized", async () => {
-  vi.spyOn(authManager, "isAuthorized", "get").mockReturnValue(false);
   vi.spyOn(authManager, "isEmailVerificationRequired", "get").mockReturnValue(
     false,
   );
@@ -69,7 +72,6 @@ test("landing page if unauthorized", async () => {
 });
 
 test("email verification page if needed", () => {
-  vi.spyOn(authManager, "isAuthorized", "get").mockReturnValue(false);
   vi.spyOn(authManager, "isEmailVerificationRequired", "get").mockReturnValue(
     true,
   );
@@ -80,12 +82,22 @@ test("email verification page if needed", () => {
 });
 
 test("state page if authorized", () => {
-  vi.spyOn(authManager, "isAuthorized", "get").mockReturnValue(true);
-  vi.spyOn(rootStore.userStore, "user", "get").mockReturnValue({
-    stateCode: "US_ME",
-  });
+  vi.spyOn(rootStore.userStore, "allowedStates", "get").mockReturnValue([
+    "US_ME",
+  ]);
 
   renderHome();
 
   expect(screen.getByText("state page")).toBeInTheDocument();
+});
+
+test("state selection page if authorized for multiple", () => {
+  vi.spyOn(rootStore.userStore, "allowedStates", "get").mockReturnValue([
+    "US_ME",
+    "US_ID",
+  ]);
+
+  renderHome();
+
+  expect(screen.getByText("state selection page")).toBeInTheDocument();
 });
