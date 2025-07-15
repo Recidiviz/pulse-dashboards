@@ -37,6 +37,7 @@ import * as routes from "../../routes/routes";
 import { EGTDataRouteContext } from "../../US_MA/earnedGoodTime/components/EGTDataContext/RouteContext";
 import { PageDefinition } from "../../US_MA/earnedGoodTime/components/pages/PageDefinition";
 import { PageEGT } from "../../US_MA/earnedGoodTime/components/pages/PageEGT";
+import { PageIntro } from "../../US_MA/earnedGoodTime/components/pages/PageIntro";
 import { EligibilityRouteContext } from "../EligibilityRouteContext/EligibilityRouteContext";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { GenericLayoutRoute } from "../GenericLayoutRoute/GenericLayoutRoute";
@@ -140,6 +141,10 @@ export function App() {
                         element={<EGTDataRouteContext />}
                       >
                         <Route index element={<PageEGT />} />
+                        <Route
+                          path={routes.State.Resident.EGT.Intro.path}
+                          element={<PageIntro />}
+                        />
                         <Route
                           path={routes.State.Resident.EGT.Definition.path}
                           element={<PageDefinition />}

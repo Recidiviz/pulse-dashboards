@@ -40,7 +40,7 @@ export const styles = css`
 
     color: ${palette.pine1};
     font-size: ${rem(34)};
-    margin: ${rem(spacing.sm)} 0 ${rem(spacing.xl)};
+    margin: 0 0 ${rem(spacing.xl)};
   }
 
   h2 {

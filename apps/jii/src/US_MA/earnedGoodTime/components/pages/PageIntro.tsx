@@ -15,13 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { route } from "react-router-typesafe-routes/dom";
+import { Onboarding } from "../Onboarding/Onboarding";
 
-export const EGT = route(
-  "earned-good-time",
-  {},
-  {
-    Definition: route("definition/:pageSlug"),
-    Intro: route("intro"),
-  },
-);
+export const PageIntro = () => {
+  return <Onboarding />;
+};

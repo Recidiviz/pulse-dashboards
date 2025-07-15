@@ -15,13 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { route } from "react-router-typesafe-routes/dom";
+import { FC, ReactNode } from "react";
 
-export const EGT = route(
-  "earned-good-time",
-  {},
-  {
-    Definition: route("definition/:pageSlug"),
-    Intro: route("intro"),
-  },
-);
+import { Redirect } from "../../../../components/Redirect/Redirect";
+import { useRootStore } from "../../../../components/StoreProvider/useRootStore";
+import { EGT } from "../../routes/paths";
+
+export const OnboardingTakeover: FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const { userStore } = useRootStore();
+
+  const hasSeenOnboarding = !!userStore.getUserProperty("egtOnboardingSeen");
+
+  if (!hasSeenOnboarding) {
+    return <Redirect to={EGT.$.Intro.buildRelativePath({})} />;
+  }
+
+  return children;
+};

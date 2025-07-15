@@ -16,7 +16,12 @@
 // =============================================================================
 
 import { Homepage } from "../Homepage/Homepage";
+import { OnboardingTakeover } from "../Onboarding/OnboardingTakeover";
 
 export const PageEGT = () => {
-  return <Homepage />;
+  return (
+    <OnboardingTakeover>
+      <Homepage />
+    </OnboardingTakeover>
+  );
 };

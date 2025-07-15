@@ -16,6 +16,8 @@
 // =============================================================================
 
 import creditsInfoPage from "./creditsInfoPage.md?raw";
+import onboardingBody from "./onboardingBody.md?raw";
+import onboardingDisclaimer from "./onboardingDisclaimer.md?raw";
 import rtsInfoPage from "./rtsInfoPage.md?raw";
 
 // where handlebars is invoked, assume a UsMaResidentMetadata object as the template context
@@ -87,6 +89,12 @@ export const usMaEGTCopy = {
   topLinkText: "Back to top",
   definitionsLinksHeading: "Other definitions",
   homeLink: "Back to home",
+  onboarding: {
+    heading: "Track your Earned Good Time",
+    body: onboardingBody,
+    continueLink: "See your earned time",
+    disclaimer: onboardingDisclaimer,
+  },
 };
 
 export type UsMaEgtCopy = typeof usMaEGTCopy;

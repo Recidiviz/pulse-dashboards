@@ -20,7 +20,7 @@ import { configure } from "mobx";
 import { isDemoMode, isOfflineMode, isTestEnv } from "~client-env-utils";
 
 import { SegmentClient } from "../apis/Segment/SegmentClient";
-import { UserStore } from "./UserStore";
+import { USER_PROPERTY_KEYS, UserStore } from "./UserStore";
 
 vi.mock("~client-env-utils");
 
@@ -218,4 +218,12 @@ test("allowed states", () => {
   expect(store.allowedStates).toEqual(
     expect.arrayContaining(["US_ME", "US_MA", "US_ID"]),
   );
+});
+
+test.each(USER_PROPERTY_KEYS.options)("user properties: %s", (key) => {
+  const value = "foo";
+
+  expect(store.getUserProperty(key)).toBeNull();
+  store.setUserProperty(key, value);
+  expect(store.getUserProperty(key)).toBe(value);
 });

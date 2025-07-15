@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { makeAutoObservable } from "mobx";
+import { z } from "zod";
 
 import { Permission } from "~auth0-jii";
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
@@ -28,6 +29,9 @@ import {
 } from "../apis/Segment/SegmentClient";
 import { stateCodes, stateConfigsByUrlSlug } from "../configs/stateConstants";
 import { StateCode } from "../configs/types";
+
+export const USER_PROPERTY_KEYS = z.enum(["egtOnboardingSeen"]);
+type UserPropertyKey = z.infer<typeof USER_PROPERTY_KEYS>;
 
 export class UserStore {
   segmentClient: SegmentClient;
@@ -133,6 +137,14 @@ export class UserStore {
       return this.authState.userProfile;
     }
     return;
+  }
+
+  getUserProperty(key: UserPropertyKey) {
+    return localStorage.getItem(key);
+  }
+
+  setUserProperty(key: UserPropertyKey, value: string) {
+    localStorage.setItem(key, value);
   }
 }
 
