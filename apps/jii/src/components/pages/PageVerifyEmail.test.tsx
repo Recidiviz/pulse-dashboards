@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,51 +15,36 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { screen, waitFor } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { axe } from "jest-axe";
 
 import {
-  mockAuthorized,
+  mockUnauthorized,
   renderAtRoute,
 } from "../../common/components/pages/testUtils";
-import { State } from "../../routes/routes";
+import { EmailVerification } from "../../routes/routes";
 
 let container: HTMLElement;
 
-beforeEach(async () => {
-  mockAuthorized({ userOverrides: { permissions: ["enhanced"] } });
-
-  container = renderAtRoute(
-    State.Search.buildPath({
-      stateSlug: "maine",
-    }),
-  ).container;
+beforeEach(() => {
+  container = renderAtRoute(EmailVerification.buildPath({})).container;
+  mockUnauthorized();
 });
 
-it("should render", async () => {
-  expect(await screen.findByText("Look up a resident")).toBeInTheDocument();
+it("should render", () => {
+  expect(
+    screen.getByRole("heading", { name: "Please verify your email" }),
+  ).toBeInTheDocument();
 });
 
 it("should be accessible", async () => {
-  await screen.findByText("Look up a resident");
+  await screen.findByRole("heading", { name: "Please verify your email" });
 
   expect(await axe(container)).toHaveNoViolations();
 });
 
 it("should set the page title", () => {
-  expect(document.title).toMatchInlineSnapshot(`"Search – Opportunities"`);
-});
-
-test("it should not render the search page", async () => {
-  mockAuthorized({ userOverrides: { permissions: [] } });
-
-  renderAtRoute(
-    State.Search.buildPath({
-      stateSlug: "maine",
-    }),
-  );
-
-  await waitFor(() =>
-    expect(screen.getByText("Authorization required")).toBeInTheDocument(),
+  expect(document.title).toMatchInlineSnapshot(
+    `"Verify your email – Opportunities"`,
   );
 });

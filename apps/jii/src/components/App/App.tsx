@@ -42,7 +42,6 @@ import { EligibilityRouteContext } from "../EligibilityRouteContext/EligibilityR
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { GenericLayoutRoute } from "../GenericLayoutRoute/GenericLayoutRoute";
 import { NotFound } from "../NotFound/NotFound";
-import { OpportunityInfoPage } from "../OpportunityInfoPage/OpportunityInfoPage";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
 import { PageEdovoLanding } from "../pages/PageEdovoLanding";
 import { PageEligibilityHome } from "../pages/PageEligibilityHome";
@@ -50,6 +49,7 @@ import { PageHome } from "../pages/PageHome";
 import { PageOpportunityComparison } from "../pages/PageOpportunityComparison";
 import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
 import { PageOpportunityEligibilityHome } from "../pages/PageOpportunityEligibilityHome";
+import { PageOpportunityInfo } from "../pages/PageOpportunityInfo";
 import { PageOrijinSSO } from "../pages/PageOrijinSSO";
 import { PageProgressInfoPage } from "../pages/PageProgressInfoPage";
 import { PageResidentsRoot } from "../pages/PageResidentsRoot";
@@ -122,7 +122,7 @@ export function App() {
                               routes.State.Resident.Eligibility.Opportunity
                                 .InfoPage.path
                             }
-                            element={<OpportunityInfoPage />}
+                            element={<PageOpportunityInfo />}
                           />
                         </Route>
                         <Route

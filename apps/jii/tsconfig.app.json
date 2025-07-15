@@ -18,6 +18,8 @@
     "src/**/*.test.js",
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx",
+    "src/**/testUtils.ts",
+    "src/**/testUtils.tsx",
     "src/setupTests.ts",
     "src/setupTestsGlobal.ts"
   ],

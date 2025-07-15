@@ -27,6 +27,7 @@ import {
   FullBleedContainer,
   PageContainer,
 } from "../../../../components/BaseLayout/BaseLayout";
+import { usePageTitle } from "../../../../components/usePageTitle/usePageTitle";
 import { hydrateTemplate } from "../../../../configs/hydrateTemplate";
 import { useEGTDataContext } from "../EGTDataContext/context";
 import { DatesSection } from "./DatesSection";
@@ -48,11 +49,12 @@ const LastUpdatedBanner = styled(FullBleedContainer)`
 
 export const Homepage = observer(function Homepage() {
   const { data, copy } = useEGTDataContext();
+  usePageTitle(copy.home.pageTitle);
 
   return (
     <div>
       <HeaderPortal>
-        <LastUpdatedBanner as="aside">
+        <LastUpdatedBanner>
           <PageContainer>
             {hydrateTemplate(copy.lastUpdated, data)}
           </PageContainer>

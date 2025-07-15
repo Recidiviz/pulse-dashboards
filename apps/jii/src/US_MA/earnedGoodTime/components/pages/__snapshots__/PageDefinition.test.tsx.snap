@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`definition page: credits > should set the page title 1`] = `"Earned Good Time, Boosts, and Completion Credits – Opportunities"`;
+
+exports[`definition page: rts > should set the page title 1`] = `"Release-to-supervision date – Opportunities"`;

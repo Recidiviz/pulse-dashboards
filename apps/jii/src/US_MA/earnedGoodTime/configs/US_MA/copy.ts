@@ -26,6 +26,7 @@ export const usMaEGTCopy = {
   lastUpdated:
     "This information was last updated on {{formatFullDate lastUpdatedDate}}",
   home: {
+    pageTitle: "Earned Time Overview",
     dates: {
       sectionTitle: "Important dates",
       rts: {

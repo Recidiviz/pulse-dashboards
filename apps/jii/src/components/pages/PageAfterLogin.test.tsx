@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,49 +17,38 @@
 
 import { screen, waitFor } from "@testing-library/react";
 import { axe } from "jest-axe";
+import { MockInstance } from "vitest";
+
+import { AuthClient } from "~auth";
 
 import {
-  mockAuthorized,
+  mockUnauthorized,
   renderAtRoute,
 } from "../../common/components/pages/testUtils";
-import { State } from "../../routes/routes";
+import { AfterLogin } from "../../routes/routes";
 
 let container: HTMLElement;
+let spy: MockInstance;
 
-beforeEach(async () => {
-  mockAuthorized({ userOverrides: { permissions: ["enhanced"] } });
-
-  container = renderAtRoute(
-    State.Search.buildPath({
-      stateSlug: "maine",
-    }),
-  ).container;
+beforeEach(() => {
+  mockUnauthorized();
+  container = renderAtRoute(AfterLogin.buildPath({})).container;
+  spy = vi
+    .spyOn(AuthClient.prototype, "handleRedirectFromLogin")
+    .mockResolvedValue(undefined);
 });
 
 it("should render", async () => {
-  expect(await screen.findByText("Look up a resident")).toBeInTheDocument();
+  expect(screen.getByText("Loading data...")).toBeInTheDocument();
+  await waitFor(() => expect(spy).toHaveBeenCalled());
 });
 
 it("should be accessible", async () => {
-  await screen.findByText("Look up a resident");
+  await screen.findByText("Loading data...");
 
   expect(await axe(container)).toHaveNoViolations();
 });
 
 it("should set the page title", () => {
-  expect(document.title).toMatchInlineSnapshot(`"Search – Opportunities"`);
-});
-
-test("it should not render the search page", async () => {
-  mockAuthorized({ userOverrides: { permissions: [] } });
-
-  renderAtRoute(
-    State.Search.buildPath({
-      stateSlug: "maine",
-    }),
-  );
-
-  await waitFor(() =>
-    expect(screen.getByText("Authorization required")).toBeInTheDocument(),
-  );
+  expect(document.title).toMatchInlineSnapshot(`"Opportunities"`);
 });
