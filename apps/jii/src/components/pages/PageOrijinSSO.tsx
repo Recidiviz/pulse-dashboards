@@ -17,7 +17,6 @@
 
 import { observer } from "mobx-react-lite";
 
-import * as routes from "../../routes/routes";
 import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageOrijinSSO = observer(function PageOrijinSSO() {
@@ -27,12 +26,14 @@ export const PageOrijinSSO = observer(function PageOrijinSSO() {
     },
   } = useRootStore();
 
-  // if they are using an auth0 client, we can hand over control to a dedicated component
-  if (authClient) {
-    authClient.logIn({
-      targetPath: routes.AfterLogin.path,
-      connection: import.meta.env["VITE_ORIJIN_CONNECTION_NAME"],
-    });
+  // in practice we don't expect anyone to encounter this
+  if (!authClient) {
+    throw new Error("Missing required Auth0 integration");
   }
+
+  authClient.logIn({
+    targetPath: "/",
+    connection: import.meta.env["VITE_ORIJIN_CONNECTION_NAME"],
+  });
   return <p>Logging in...</p>;
 });
