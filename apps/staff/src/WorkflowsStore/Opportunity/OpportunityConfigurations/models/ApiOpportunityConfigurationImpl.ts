@@ -335,7 +335,7 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   get caseNotesTitle() {
-    return this.configurationObject.caseNotesTitle;
+    return this.configurationObject.caseNotesTitle ?? "Relevant Contact Notes";
   }
 
   /**

@@ -845,7 +845,7 @@ export class OpportunityBase<
   }
 
   get caseNotesTitle() {
-    return (this.config.caseNotesTitle ??= "Relevant Contact Notes");
+    return this.config.caseNotesTitle;
   }
 
   eligibilityStatusLabel(includeReasons?: boolean): string | null {
