@@ -106,12 +106,17 @@ export function getUsTnExpirationValidator(
   client: Client,
 ): ValidateFunction<UsTnExpirationReferralRecord> {
   return (transformedRecord) => {
-    const { eligibleDate } =
-      transformedRecord.eligibleCriteria.supervisionPastFullTermCompletionDate;
+    // we only want to validate the eligibility date for elibible/almost eligible records
+    // as ineligible (never eligible) clients do not have records
+    if (transformedRecord.isEligible || transformedRecord.isAlmostEligible) {
+      const { eligibleDate } =
+        transformedRecord.eligibleCriteria
+          .supervisionPastFullTermCompletionDate;
 
-    if (eligibleDate.getTime() !== client.expirationDate?.getTime())
-      throw new OpportunityValidationError(
-        "Expiration date does not match client record",
-      );
+      if (eligibleDate.getTime() !== client.expirationDate?.getTime())
+        throw new OpportunityValidationError(
+          "Expiration date does not match client record",
+        );
+    }
   };
 }
