@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { TenantConfig } from "../core/models/types";
+import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
 const US_UT_CONFIG: TenantConfig<"US_UT"> = {
@@ -40,6 +41,7 @@ const US_UT_CONFIG: TenantConfig<"US_UT"> = {
   },
   navigation: {
     workflows: ["home", "clients"],
+    insights: [INSIGHTS_PAGES.supervision],
   },
 };
 
