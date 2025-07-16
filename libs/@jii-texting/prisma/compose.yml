@@ -1,3 +1,4 @@
+name: "jii-texting-prisma"
 services:
   db:
     image: postgres:16

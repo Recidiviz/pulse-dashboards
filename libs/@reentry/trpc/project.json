@@ -1,0 +1,33 @@
+{
+  "name": "@reentry/trpc",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@reentry/trpc/src",
+  "projectType": "library",
+  "tags": ["reentry", "scope:server"],
+  "targets": {
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_reentry_server --env_test env_test_reentry_server",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0 --no-warn-ignored",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.lib.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

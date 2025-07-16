@@ -1,0 +1,29 @@
+{
+  "name": "@reentry/trpc-types",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@reentry/trpc-types",
+  "projectType": "library",
+  "tags": ["reentry", "scope:universal"],
+  "targets": {
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0 --no-warn-ignored",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "command": "tsc -p ./tsconfig.lib.json",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/@reentry/prisma/src",
   "projectType": "library",
+  "tags": ["reentry", "scope:server"],
   "targets": {
     "load-env-files": {
       "executor": "nx:run-commands",
@@ -131,6 +132,5 @@
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
     }
-  },
-  "tags": ["reentry"]
+  }
 }

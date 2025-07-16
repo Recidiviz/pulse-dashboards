@@ -1,3 +1,4 @@
+name: "sentencing-prisma"
 services:
   db:
     image: postgres:16

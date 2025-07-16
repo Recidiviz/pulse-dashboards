@@ -1,0 +1,240 @@
+{
+  "name": "@reentry/server",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/@reentry/server/src",
+  "projectType": "application",
+  "tags": ["reentry", "scope:server"],
+  "targets": {
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_reentry_server --env_staging env_staging_reentry_server --env_prod env_prod_reentry_server --env_test env_test_reentry_server --env_preview env_preview_reentry_server --env_demo env_demo_reentry_server",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint --max-warnings 0 --no-warn-ignored",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "prisma-generate"
+        }
+      ],
+      "options": {
+        "commands": [
+          "tsc -p ./tsconfig.app.json",
+          "tsc -p ./tsconfig.spec.json"
+        ],
+        "cwd": "{projectRoot}"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "docker"
+        },
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "prisma-seed"
+        }
+      ],
+      "options": {
+        "command": "vite-node --watch src/main.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "create-base-package-json": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsx tools/create-base-package-json.mts {projectRoot}",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        "create-base-package-json",
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "prisma-generate"
+        },
+        "load-env-files"
+      ],
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/@reentry/server",
+        "bundle": true,
+        "main": "{projectRoot}/src/main.ts",
+        "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
+        "tsConfig": "{projectRoot}/tsconfig.app.json",
+        "generatePackageJson": true,
+        "target": "node20",
+        "minify": true,
+        "assets": [
+          {
+            "glob": "prisma/schema.prisma",
+            "input": "{workspaceRoot}/libs/@reentry/prisma",
+            "output": "."
+          },
+          {
+            "glob": "prisma/migrations/**/*",
+            "input": "{workspaceRoot}/libs/@reentry/prisma",
+            "output": "."
+          },
+          "{projectRoot}/scripts/*",
+          "{workspaceRoot}/.yarnrc.yml"
+        ]
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {
+          "sourcemap": true,
+          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+        },
+        "cherry-pick": {
+          "sourcemap": true,
+          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+        },
+        "demo": {
+          "sourcemap": true,
+          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "dependsOn": [
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "docker"
+        },
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "prisma-seed"
+        },
+        "build"
+      ],
+      "options": {
+        "buildTarget": "@reentry/server:build"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "docker"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/reentry"],
+      "cache": true,
+      "options": {
+        "command": "nx prisma-deploy @reentry/prisma && cd apps/@reentry/server && vitest",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["build"],
+      "cwd": "{projectRoot}",
+      "options": {
+        "engine": "docker",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "staging": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/reentry/reentry-server:$COMMIT_SHA",
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/reentry/reentry-server:latest"
+          ]
+        },
+        "cherry-pick": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/reentry/reentry-server:$COMMIT_SHA"
+          ]
+        },
+        "preview": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/reentry/reentry-server-preview:$VERSION"
+          ]
+        },
+        "demo": {
+          "push": true,
+          "tags": [
+            "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/reentry/reentry-server:$COMMIT_SHA"
+          ]
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "create-preview-db": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/clone_reentry_db.sh",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "migrate-preview-db": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["load-env-files"],
+      "options": {
+        "command": "gcloud run jobs deploy ss-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/reentry/reentry-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID-$VERSION,DATABASE_URL_US_UT=$DATABASE_URL_US_UT-$VERSION",
+        "args": [
+          "--project recidiviz-dashboard-staging",
+          "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
+          "--service-account reentry@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+        ]
+      }
+    },
+    "deploy-preview-app": {
+      "executor": "@nx-extend/gcp-cloud-run:deploy",
+      "dependsOn": ["load-env-files", "migrate-db"],
+      "options": {
+        "name": "ss-preview-$VERSION",
+        "region": "us-central1",
+        "project": "recidiviz-dashboard-staging",
+        "image": "us-central1-docker.pkg.dev/recidiviz-dashboard-staging/reentry/reentry-server-preview:$VERSION",
+        "cloudSqlInstance": "recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
+        "memory": "512Mi",
+        "envVars": {
+          "AUTH0_DOMAIN": "$AUTH0_DOMAIN",
+          "AUTH0_AUDIENCE": "$AUTH0_AUDIENCE",
+          "SENTRY_DSN": "$SENTRY_DSN",
+          "SENTRY_ENV": "$SENTRY_ENV",
+          "IMPORT_BUCKET_ID": "$IMPORT_BUCKET_ID",
+          "DATABASE_URL_US_ID": "$DATABASE_URL_US_ID-$VERSION",
+          "DATABASE_URL_US_UT": "$DATABASE_URL_US_UT-$VERSION"
+        },
+        "serviceAccount": "reentry@recidiviz-dashboard-staging.iam.gserviceaccount.com"
+      }
+    },
+    "cleanup-preview-resources": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/cleanup_reentry_preview_resources.sh",
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}
