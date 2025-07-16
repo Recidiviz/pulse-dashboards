@@ -34,6 +34,7 @@ export const SupervisorInfoFixture: Supervisor = {
         hasLoggedIn: true,
         email: "staff.member@example.com",
         supervisorId: null,
+        supervisesAll: null,
       },
     ],
   },
@@ -44,5 +45,6 @@ export const SupervisorInfoFixture: Supervisor = {
   hasLoggedIn: true,
   email: "jane.doe@example.com",
   supervisorId: null,
+  supervisesAll: null,
   externalId: undefined,
 };

@@ -79,6 +79,7 @@ export const fakeStaff = {
   stateCode: StateCode.US_ID,
   hasLoggedIn: faker.datatype.boolean(),
   supervisorId: null,
+  supervisesAll: null,
 } satisfies StaffCreateInput;
 
 export const fakeSupervisor = {
@@ -89,6 +90,7 @@ export const fakeSupervisor = {
   stateCode: StateCode.US_ID,
   hasLoggedIn: faker.datatype.boolean(),
   supervisorId: null,
+  supervisesAll: null,
 } satisfies StaffCreateInput;
 
 export const fakeClient = {

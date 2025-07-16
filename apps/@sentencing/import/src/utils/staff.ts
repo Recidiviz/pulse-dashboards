@@ -46,6 +46,7 @@ export async function transformAndLoadStaffData(
         connect: existingCasesForStaff,
       },
       supervisorId: staffData.supervisor_id,
+      supervisesAll: !!staffData.supervises_all,
     };
 
     // Load data

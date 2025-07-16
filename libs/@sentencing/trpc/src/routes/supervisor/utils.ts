@@ -51,10 +51,24 @@ export async function getSupervisorDashboardStats(
 ): Promise<SupervisorStats | undefined> {
   if (supervisor.supervisorId) return;
 
+  const nowStart = moment().utc().startOf("day").toDate();
+  const thirtyDaysAgo = moment(nowStart).subtract(30, "days").toDate();
+
+  const staffWhere = supervisor.supervisesAll
+    ? {
+        cases: {
+          some: {
+            dueDate: {
+              gte: thirtyDaysAgo,
+              lt: nowStart,
+            },
+          },
+        },
+      }
+    : { supervisorId: supervisor.externalId };
+
   const allSupervisedStaff = await prisma.staff.findMany({
-    where: {
-      supervisorId: supervisor.externalId,
-    },
+    where: staffWhere,
     omit: {
       externalId: true,
     },

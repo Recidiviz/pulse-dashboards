@@ -202,4 +202,201 @@ describe("getSupervisorDashboardStats", () => {
 
     expect(result).toBeUndefined();
   });
+
+  test("should include all staff when supervisesAll is true", async () => {
+    await testPrismaClient.staff.deleteMany({});
+
+    const superAllSupervisor = await testPrismaClient.staff.create({
+      data: {
+        externalId: "super-all-supervisor",
+        supervisorId: null,
+        pseudonymizedId: "super-all-pseudo-id",
+        stateCode: "US_ID",
+        fullName: "Super All Supervisor",
+        email: "superall@example.com",
+        supervisesAll: true,
+      },
+      include: {
+        cases: {},
+      },
+    });
+
+    const additionalSupervisor = await testPrismaClient.staff.create({
+      data: {
+        externalId: "additional-supervisor",
+        supervisorId: null,
+        pseudonymizedId: "additional-supervisor-pseudo-id",
+        stateCode: "US_ID",
+        fullName: "Additional Supervisor",
+        email: "additionalsupervisor@example.com",
+      },
+    });
+
+    // Create staff under different supervisors
+    await testPrismaClient.staff.createMany({
+      data: [
+        {
+          externalId: "staff-under-fake-supervisor",
+          supervisorId: fakeSupervisor.externalId,
+          pseudonymizedId: "staff-under-fake-pseudo-id",
+          stateCode: "US_ID",
+          fullName: "Staff 1",
+          email: "staff1@example.com",
+        },
+        {
+          externalId: "staff-under-additional-supervisor",
+          supervisorId: additionalSupervisor.externalId,
+          pseudonymizedId: "staff-under-additional-pseudo-id",
+          stateCode: "US_ID",
+          fullName: "Staff 2",
+          email: "staff2@example.com",
+        },
+      ],
+    });
+
+    await testPrismaClient.case.createMany({
+      data: [
+        {
+          id: "current-case-1",
+          externalId: "current-case-1-external",
+          stateCode: "US_ID",
+          dueDate: moment().utc().subtract(5, "days").toDate(),
+          staffId: "additional-supervisor",
+        },
+        {
+          id: "current-case-2",
+          externalId: "current-case-2-external",
+          stateCode: "US_ID",
+          dueDate: moment().utc().subtract(22, "days").toDate(),
+          staffId: "staff-under-fake-supervisor",
+        },
+        {
+          id: "old-case-1",
+          externalId: "old-case-1-external",
+          stateCode: "US_ID",
+          dueDate: moment().utc().subtract(5, "days").toDate(),
+          staffId: "staff-under-additional-supervisor",
+        },
+        {
+          id: "old-case-2",
+          externalId: "old-case-2-external",
+          stateCode: "US_ID",
+          dueDate: moment().utc().subtract(5, "days").toDate(),
+          staffId: "super-all-supervisor",
+        },
+      ],
+    });
+
+    const result = await getSupervisorDashboardStats(
+      superAllSupervisor,
+      testPrismaClient,
+    );
+
+    expect(result?.staffStats).toHaveLength(4);
+
+    const staffIds = result?.staffStats.map((s) => s.pseudonymizedId);
+    expect(staffIds).toContain("additional-supervisor-pseudo-id");
+    expect(staffIds).toContain("staff-under-fake-pseudo-id");
+    expect(staffIds).toContain("staff-under-additional-pseudo-id");
+    expect(staffIds).toContain("super-all-pseudo-id");
+  });
+
+  test("should only include staff with active cases this month", async () => {
+    await testPrismaClient.staff.deleteMany({});
+    await testPrismaClient.case.deleteMany({});
+
+    const supervisor = await testPrismaClient.staff.create({
+      data: {
+        externalId: "test-supervisor",
+        supervisorId: null,
+        supervisesAll: true,
+        pseudonymizedId: "test-supervisor-pseudo-id",
+        stateCode: "US_ID",
+        fullName: "Test Supervisor",
+        email: "testsupervisor@example.com",
+      },
+      include: {
+        cases: {},
+      },
+    });
+
+    await testPrismaClient.staff.createMany({
+      data: [
+        {
+          externalId: "staff-with-current-cases",
+          supervisorId: supervisor.externalId,
+          pseudonymizedId: "staff-with-current-pseudo-id",
+          stateCode: "US_ID",
+          fullName: "Staff With Current Cases",
+          email: "staffwithcurrentcases@example.com",
+        },
+        {
+          externalId: "staff-with-old-cases",
+          supervisorId: supervisor.externalId,
+          pseudonymizedId: "staff-with-old-pseudo-id",
+          stateCode: "US_ID",
+          fullName: "Staff With Old Cases",
+          email: "staffwitholdcases@example.com",
+        },
+        {
+          externalId: "staff-with-no-cases",
+          supervisorId: supervisor.externalId,
+          pseudonymizedId: "staff-with-no-pseudo-id",
+          stateCode: "US_ID",
+          fullName: "Staff With No Cases",
+          email: "staffwithnocases@example.com",
+        },
+      ],
+    });
+
+    // Create cases - some this month, some from previous months
+    await testPrismaClient.case.createMany({
+      data: [
+        {
+          id: "current-case-1",
+          externalId: "current-case-1-external",
+          stateCode: "US_ID",
+          dueDate: moment().utc().subtract(1, "days").toDate(), // Within the last 30 days
+          staffId: "staff-with-current-cases",
+        },
+        {
+          id: "current-case-2",
+          externalId: "current-case-2-external",
+          stateCode: "US_ID",
+          dueDate: moment().utc().subtract(29, "days").toDate(), // Within the last 30 days
+          staffId: "staff-with-current-cases",
+        },
+        {
+          id: "old-case-1",
+          externalId: "old-case-1-external",
+          stateCode: "US_ID",
+          dueDate: moment().utc().subtract(31, "days").toDate(), // More than 30 days ago
+          staffId: "staff-with-old-cases",
+        },
+        {
+          id: "old-case-2",
+          externalId: "old-case-2-external",
+          stateCode: "US_ID",
+          dueDate: moment().utc().subtract(60, "days").toDate(), // More than 30 days ago
+          staffId: "staff-with-old-cases",
+        },
+      ],
+    });
+
+    const result = await getSupervisorDashboardStats(
+      supervisor,
+      testPrismaClient,
+    );
+
+    // Should only include staff with cases due this month
+    expect(result?.staffStats).toHaveLength(1);
+    expect(result?.staffStats[0].pseudonymizedId).toBe(
+      "staff-with-current-pseudo-id",
+    );
+
+    // Staff with old cases or no cases should not be included
+    const staffIds = result?.staffStats.map((s) => s.pseudonymizedId);
+    expect(staffIds).not.toContain("staff-with-old-pseudo-id");
+    expect(staffIds).not.toContain("staff-with-no-pseudo-id");
+  });
 });

@@ -116,6 +116,7 @@ export const staffImportSchema = z
     full_name: nameSchema,
     email: z.string(),
     supervisor_id: z.string().optional(),
+    supervises_all: z.string().optional(),
   })
   .transform((data) => {
     // Spread the full_name object into the root object
