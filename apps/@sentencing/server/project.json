@@ -199,17 +199,13 @@
       "executor": "nx:run-commands",
       "dependsOn": ["load-env-files"],
       "options": {
-        "command": "gcloud run jobs deploy ss-migrate-preview-db-$VERSION --image us-central1-docker.pkg.dev/recidiviz-dashboard-staging/sentencing/sentencing-server-preview:$VERSION --region us-central1 --execute-now --wait --command ./scripts/migrate-dbs.sh --set-env-vars DATABASE_URL_US_ID=$DATABASE_URL_US_ID-$VERSION,DATABASE_URL_US_ND=$DATABASE_URL_US_ND-$VERSION",
-        "args": [
-          "--project recidiviz-dashboard-staging",
-          "--set-cloudsql-instances recidiviz-dashboard-staging:us-central1:s-db-preview-$VERSION",
-          "--service-account sentencing@recidiviz-dashboard-staging.iam.gserviceaccount.com"
-        ]
+        "cwd": "{projectRoot}",
+        "command": "../../../tools/migrate_sentencing_preview_db.sh"
       }
     },
     "deploy-preview-app": {
       "executor": "@nx-extend/gcp-cloud-run:deploy",
-      "dependsOn": ["load-env-files", "migrate-db"],
+      "dependsOn": ["load-env-files", "migrate-preview-db"],
       "options": {
         "name": "ss-preview-$VERSION",
         "region": "us-central1",
