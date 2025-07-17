@@ -20,10 +20,13 @@ import { z } from "zod";
 import { dateStringSchema } from "../../../../utils/zod";
 
 export const usMaEarnedCreditType = z.enum([
-  "EARNED_GOOD_TIME",
+  // TODO(#44130): Fix ETL Error
+  "EARNEDGoodTime",
   "BOOST",
   "COMPLETION",
 ]);
+
+export type UsMaEarnedCreditType = z.infer<typeof usMaEarnedCreditType>;
 
 const nullZeroNumberSchema = z
   .number()
@@ -49,11 +52,11 @@ const creditValueSchema = z
     return output;
   });
 
-const creditActivitySchema = z.object({
+export const creditActivitySchema = z.object({
   creditDate: dateStringSchema,
   activity: z.string(),
   rating: z.string().nullable(),
-  [usMaEarnedCreditType.enum.EARNED_GOOD_TIME]: creditValueSchema,
+  [usMaEarnedCreditType.enum.EARNEDGoodTime]: creditValueSchema,
   [usMaEarnedCreditType.enum.BOOST]: creditValueSchema,
   [usMaEarnedCreditType.enum.COMPLETION]: creditValueSchema,
 });

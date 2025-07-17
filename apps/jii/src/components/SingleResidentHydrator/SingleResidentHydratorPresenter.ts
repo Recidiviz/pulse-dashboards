@@ -140,7 +140,7 @@ export class SingleResidentHydratorPresenter implements Hydratable {
     });
   }
 
-  private expectResidentDataPopulated() {
+  private expectResidentDataPopulated(): SingleResidentContext {
     const {
       resident,
       residentPseudoId: residentPseudoIdFromUrl,

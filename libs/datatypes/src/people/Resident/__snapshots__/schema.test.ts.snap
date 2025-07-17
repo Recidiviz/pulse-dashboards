@@ -12,7 +12,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Educ",
         "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
@@ -20,7 +20,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 0,
+        "EARNEDGoodTime": 0,
         "activity": "SOR Adult Secondary Education-Prog",
         "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
@@ -28,7 +28,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "Violence Reduction Program (Prog)",
         "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
@@ -36,7 +36,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Educ",
         "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
@@ -44,7 +44,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Prog",
         "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
@@ -52,7 +52,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 0,
+        "EARNEDGoodTime": 0,
         "activity": "Violence Reduction Program (Prog)",
         "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "I",
@@ -60,7 +60,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Educ",
         "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
@@ -68,7 +68,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "SOR Adult Secondary Education-Prog",
         "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
@@ -76,7 +76,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
       {
         "BOOST": 10,
         "COMPLETION": 30,
-        "EARNED_GOOD_TIME": 0,
+        "EARNEDGoodTime": 0,
         "activity": "Violence Reduction Program (Prog)",
         "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
@@ -117,7 +117,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
         "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
@@ -125,7 +125,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
         "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
@@ -133,7 +133,7 @@ exports[`schema for 'US_MA' 'RES002' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
         "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
@@ -174,7 +174,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
         "creditDate": 2021-08-31T00:00:00.000Z,
         "rating": "S",
@@ -182,7 +182,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
         "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
@@ -190,7 +190,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 5,
+        "EARNEDGoodTime": 5,
         "activity": "Reentry Readiness Workshop",
         "creditDate": 2021-09-30T00:00:00.000Z,
         "rating": "S",
@@ -198,7 +198,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 7.5,
+        "EARNEDGoodTime": 7.5,
         "activity": "Institutional Employment",
         "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",
@@ -206,7 +206,7 @@ exports[`schema for 'US_MA' 'RES003' 1`] = `
       {
         "BOOST": 0,
         "COMPLETION": 0,
-        "EARNED_GOOD_TIME": 5,
+        "EARNEDGoodTime": 5,
         "activity": "Reentry Readiness Workshop",
         "creditDate": 2021-10-31T00:00:00.000Z,
         "rating": "S",

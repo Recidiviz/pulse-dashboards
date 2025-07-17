@@ -15,13 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rollup } from "d3-array";
 import { observer } from "mobx-react-lite";
 import { FC, ReactNode } from "react";
 
+import { UsMaResidentMetadata } from "~datatypes";
+
 import { useSingleResidentContext } from "../../../../components/SingleResidentHydrator/context";
 import { usMaEGTCopy } from "../../configs/US_MA/copy";
+import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
 import { EGTDataContextProvider } from "./context";
 
+function populateUsMaEGTMonthlyReport(metadata: UsMaResidentMetadata) {
+  const { creditActivity } = metadata;
+
+  const reports = [
+    ...rollup(
+      creditActivity,
+      (monthActivities) => {
+        return new UsMaEGTMonthlyReport(
+          monthActivities[0].creditDate,
+          monthActivities,
+        );
+      },
+      (d) => d.creditDate.toISOString(),
+    ).values(),
+  ];
+
+  return reports;
+}
 /**
  * Provides a context with resident metadata narrowed to a type that supports EGT features.
  * Consume this context with `useEGTDataContext()`
@@ -38,11 +60,14 @@ export const EGTDataContext: FC<{ children: ReactNode }> = observer(
       throw new Error("Unexpected metadata format");
     }
 
+    const usMaEGTMonthlyReports = populateUsMaEGTMonthlyReport(data);
+
     return (
       <EGTDataContextProvider
         value={{
           data,
           copy: usMaEGTCopy,
+          monthlyReports: usMaEGTMonthlyReports,
         }}
       >
         {children}

@@ -21,6 +21,29 @@ import onboardingBody from "./onboardingBody.md?raw";
 import onboardingDisclaimer from "./onboardingDisclaimer.md?raw";
 import rtsInfoPage from "./rtsInfoPage.md?raw";
 
+export const ratingDisplayNames: { S: string; I: string; U: string } = {
+  S: "Satisfactory",
+  I: "Incompelete",
+  U: "Unsatisfactory",
+};
+
+const usMaMonthlyReportCopy = {
+  sectionTitle: "Recent monthly reports",
+  egt: {
+    label: "Earned Good Time",
+    value: `{{pluralize "days" totalEGTCreditDays true}}`,
+  },
+  boosts: {
+    label: "Boosts",
+    value: `{{pluralize "days" totalBoostCreditDays true}}`,
+  },
+  credits: {
+    label: "Completion Credits",
+    value: `{{pluralize "days" totalCompletionCreditDays true}}`,
+  },
+  ratingDisplayNames,
+};
+
 // where handlebars is invoked, assume a UsMaResidentMetadata object as the template context
 export const usMaEGTCopy = {
   lastUpdated:
@@ -77,6 +100,7 @@ export const usMaEGTCopy = {
         value: `{{pluralize "days" totalCompletionCredit true}}`,
       },
     },
+    monthlyReport: usMaMonthlyReportCopy,
   },
   infoPages: {
     rts: {
@@ -104,4 +128,5 @@ export const usMaEGTCopy = {
   },
 };
 
+export type UsMaMonthlyReportCopy = typeof usMaMonthlyReportCopy;
 export type UsMaEgtCopy = typeof usMaEGTCopy;

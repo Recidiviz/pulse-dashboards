@@ -59,6 +59,7 @@ export const Selector = observer(function Selector<OptionVal>({
   return (
     <Sans16>
       <ReactSelect
+        aria-label={labelId}
         aria-labelledby={labelId}
         placeholder={placeholder}
         options={options}

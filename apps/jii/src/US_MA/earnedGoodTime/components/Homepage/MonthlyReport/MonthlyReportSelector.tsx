@@ -15,26 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { createContext } from "react";
+import { observer } from "mobx-react-lite";
+import { useId } from "react";
 
-import { UsMaResidentMetadata } from "~datatypes";
+import {
+  Selector,
+  SelectorProps,
+} from "../../../../../components/Selector/Selector";
 
-import { useRequiredContext } from "../../../../utils/useRequiredContext";
-import { UsMaEgtCopy } from "../../configs/US_MA/copy";
-import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
+type MonthlyReportSelectorProps<OptionVal> = Pick<
+  SelectorProps<OptionVal>,
+  "placeholder" | "options" | "onChange"
+>;
 
-export type EGTDataContext = {
-  // this is not currently state agnostic, but for now we only have one state.
-  // as that changes we expect this to evolve somehow
-  data: UsMaResidentMetadata;
-  copy: UsMaEgtCopy;
-  monthlyReports: UsMaEGTMonthlyReport[];
-};
+export const MonthlyReportSelector = observer(function MonthlyReportSelector<
+  OptionVal,
+>({ placeholder, options, onChange }: MonthlyReportSelectorProps<OptionVal>) {
+  const labelId = useId();
 
-const context = createContext<EGTDataContext | undefined>(undefined);
-
-export const EGTDataContextProvider = context.Provider;
-
-export function useEGTDataContext() {
-  return useRequiredContext(context);
-}
+  return <Selector {...{ placeholder, options, onChange }} labelId={labelId} />;
+});
