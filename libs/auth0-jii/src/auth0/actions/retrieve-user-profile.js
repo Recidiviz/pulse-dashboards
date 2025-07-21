@@ -37,13 +37,14 @@ exports.onExecutePostLogin = async (event, api) => {
   let stateCode;
   let userId;
 
-  let { email } = event.user;
-  email = email?.toLowerCase();
+  const email = event.user.email?.toLowerCase();
   if (email?.endsWith("@recidiviz.org")) {
     stateCode = "RECIDIVIZ";
     userId = email;
   } else if (
+    // these are internal Orijin staff
     email?.endsWith("@orijin.works") ||
+    // these are Orijin users, but may be staff in testing/impersonation scenarios
     email?.endsWith("@learner.orijin.works")
   ) {
     // This metadata comes from the Orijin SAML mappings. To view this configuration

@@ -25,27 +25,22 @@ const ORIJIN_STATES = ["US_MA", "US_UT"];
  * @param {PostLoginAPI} api - Interface whose methods can be used to change the behavior of the login.
  */
 exports.onExecutePostLogin = async (event, api) => {
-  // this ID should match demo app in auth0 configs/Applications
-  if (event.client.client_id === "fwgl9sl9sSyrPR8pda6ghv8dGJKGpsDC") {
-    // these permissions apply to the demo application only, where all the data is fake
+  const email = event.user.email?.toLowerCase();
+  // Automatically grant relevant state permissions to reps of tablet providers,
+  // for demo data only
+  if (
+    // anyone with this email domain should be staff;
+    // residents will have @learner.orijin.works addresses
+    email?.endsWith("@orijin.works")
+  ) {
+    api.user.setAppMetadata("stateCode", "ORIJIN");
+    api.user.setAppMetadata("allowedStates", ORIJIN_STATES);
+    api.user.setAppMetadata("permissions", ["enhanced"]);
+  }
 
-    const email = event.user.email?.toLowerCase();
-
-    // Automatically grant relevant state permissions to reps of tablet providers
-
-    if (
-      // anyone with this email domain should be staff
-      email?.endsWith("@orijin.works")
-    ) {
-      api.user.setAppMetadata("stateCode", "ORIJIN");
-      api.user.setAppMetadata("allowedStates", ORIJIN_STATES);
-      api.user.setAppMetadata("permissions", ["enhanced"]);
-    }
-
-    if (email?.endsWith("@edovo.org")) {
-      api.user.setAppMetadata("stateCode", "EDOVO");
-      api.user.setAppMetadata("allowedStates", EDOVO_STATES);
-      api.user.setAppMetadata("permissions", ["enhanced"]);
-    }
+  if (email?.endsWith("@edovo.org")) {
+    api.user.setAppMetadata("stateCode", "EDOVO");
+    api.user.setAppMetadata("allowedStates", EDOVO_STATES);
+    api.user.setAppMetadata("permissions", ["enhanced"]);
   }
 };
