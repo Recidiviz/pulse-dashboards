@@ -14,8 +14,6 @@ locals {
   shared_data_import_env = local.env_secrets["env_sentencing_data_import"]
   data_import_env        = var.configure_import ? local.env_secrets[var.data_import_env_key] : {}
 
-  registry_repo_name = "sentencing"
-
   server_image_name = "sentencing-server"
 
   migrate_db_image_name = "sentencing-server"
