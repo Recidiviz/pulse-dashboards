@@ -168,6 +168,9 @@ export class OpportunityPersonListPresenter
       US_NE_PEDD_DATE:
         this.workflowsStore.activeSystem === "SUPERVISION" &&
         this.tenantStore.currentTenantId === "US_NE",
+      US_MI_UNIT_ID:
+        this.workflowsStore.activeSystem === "INCARCERATION" &&
+        this.tenantStore.currentTenantId === "US_MI",
       LAST_VIEWED: true,
       ALMOST_ELIGIBLE_STATUS: some(
         opportunities,

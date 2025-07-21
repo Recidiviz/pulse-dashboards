@@ -215,6 +215,7 @@ export type OpportunityTableColumnId =
   | "RELEASE_DATE"
   | "SUPERVISION_EXPIRATION_DATE"
   | "US_NE_PEDD_DATE"
+  | "US_MI_UNIT_ID"
   | "SNOOZE_ENDS_IN"
   | "SUBMITTED_FOR"
   | "CTA_BUTTON"
@@ -521,6 +522,17 @@ const TableView = observer(function TableView({
           return formatWorkflowsDate(person.metadata.paroleEarnedDischargeDate);
         }
         return "-";
+      },
+    },
+    {
+      header: "Unit Lock",
+      id: "US_MI_UNIT_ID",
+      enableSorting: true,
+      sortingFn: "alphanumeric",
+      accessorFn: ({ person }: Opportunity) => {
+        if (person instanceof Resident && person.stateCode === "US_MI") {
+          return person.unitId;
+        }
       },
     },
     {
