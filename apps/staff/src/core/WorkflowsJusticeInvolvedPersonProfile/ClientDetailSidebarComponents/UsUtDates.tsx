@@ -38,10 +38,12 @@ const TableHeading = styled(Sans14)`
 // TODO(#8691) Add tests for this function
 function utDates({
   startDate,
+  halfTimeDate,
   endDate,
   isEligibleForET,
 }: {
   startDate?: Date;
+  halfTimeDate?: Date;
   endDate?: Date;
   isEligibleForET: boolean;
 }): DateInfo[] {
@@ -50,7 +52,8 @@ function utDates({
     endDate = undefined;
   }
 
-  const halfTime = fractionalDateBetweenTwoDates(startDate, endDate, 0.5);
+  const halfTime =
+    halfTimeDate ?? fractionalDateBetweenTwoDates(startDate, endDate, 0.5);
   const reportDue = halfTime ? add(halfTime, { days: -30 }) : undefined;
   const finalReportDue = endDate ? add(endDate, { days: -30 }) : undefined;
 
@@ -93,7 +96,7 @@ function utDates({
 export function UsUtDates({
   client,
 }: ClientProfileProps): React.ReactElement | null {
-  const { metadata, supervisionStartDate } = client;
+  const { metadata } = client;
 
   if (metadata.stateCode !== "US_UT") return null;
 
@@ -104,7 +107,7 @@ export function UsUtDates({
   // Fallback in case we don't have any dates to display
   if (metadata.sentences.length === 0) {
     const dates = utDates({
-      startDate: supervisionStartDate,
+      startDate: metadata.latestStartDate,
       endDate: client.expirationDate,
       isEligibleForET,
     });
@@ -124,9 +127,15 @@ export function UsUtDates({
       <DetailsHeading>Supervision Dates</DetailsHeading>
       <dd>
         {metadata.sentences.map(
-          ({ courtCaseNumber, projectedCompletionDate, statutes }) => {
+          ({
+            courtCaseNumber,
+            projectedCompletionDate,
+            statutes,
+            earlyTermReviewDate,
+          }) => {
             const dates = utDates({
-              startDate: supervisionStartDate,
+              startDate: metadata.latestStartDate,
+              halfTimeDate: earlyTermReviewDate,
               endDate: projectedCompletionDate,
               isEligibleForET,
             });

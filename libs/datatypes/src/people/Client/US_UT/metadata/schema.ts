@@ -27,6 +27,8 @@ export const usUtClientMetadataSchema = z.object({
       projectedCompletionDate: nullishAsUndefined(dateStringSchema),
       courtCaseNumber: z.string(),
       statutes: z.array(z.string()),
+      earlyTermReviewDate: nullishAsUndefined(dateStringSchema),
     }),
   ),
+  latestStartDate: nullishAsUndefined(dateStringSchema),
 });
