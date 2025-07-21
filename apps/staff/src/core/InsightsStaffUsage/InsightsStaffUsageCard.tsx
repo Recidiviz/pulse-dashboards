@@ -106,7 +106,7 @@ const ManagedComponent: React.FC<{
   return (
     <InsightsPageSection
       sectionTitle="Login Activity"
-      sectionDescription="View the last log-in date for each officer. Any officer inactive for over 30 days will be flagged, so you can take action to ensure continued usage and support."
+      sectionDescription={`View the last log-in date for each ${presenter.labels.supervisionOfficerLabel}. Any ${presenter.labels.supervisionOfficerLabel} inactive for over 30 days will be flagged, so you can take action to ensure continued usage and support.`}
     >
       <ModelHydrator hydratable={presenter}>
         <InsightsUsageCard presenter={presenter} />

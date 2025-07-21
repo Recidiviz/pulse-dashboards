@@ -171,6 +171,18 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     return this.supervisionStore.supervisorInfo(this.supervisorPseudoId);
   }
 
+  isUsageLoginActivityModuleDisplayed = ({
+    loginModulePosition,
+  }: {
+    loginModulePosition: "TOP" | "BOTTOM";
+  }): boolean => {
+    if (!this.userCanViewUsageActivity) return false;
+
+    const { currentTenantId } = this.supervisionStore.insightsStore.rootStore;
+    if (loginModulePosition === "TOP") return currentTenantId === "US_ID";
+    else return currentTenantId !== "US_ID";
+  };
+
   /**
    * Provides information about the currently selected supervisor's
    * supervision location, whether it is by unit or by district

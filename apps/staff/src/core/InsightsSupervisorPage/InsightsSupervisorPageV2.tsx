@@ -88,8 +88,8 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
     pageTitle,
     highlightedOfficersByMetric,
     userCanSubmitRosterChangeRequest,
-    userCanViewUsageActivity,
     isUserEnriched,
+    isUsageLoginActivityModuleDisplayed,
   } = presenter;
 
   let teamTooltip;
@@ -187,10 +187,15 @@ const SupervisorPageV2 = observer(function SupervisorPageV2({
         />
       }
     >
-      {userCanViewUsageActivity && <InsightsManagedUsageCard />}
+      {isUsageLoginActivityModuleDisplayed({
+        loginModulePosition: "TOP",
+      }) && <InsightsManagedUsageCard />}
       <InsightsOutcomesModule labels={labels} timePeriod={timePeriod} />
       <InsightsSupervisorOpportunityDetailSection />
       <InsightsSupervisorVitals supervisorPseudoId={supervisorPseudoId} />
+      {isUsageLoginActivityModuleDisplayed({
+        loginModulePosition: "BOTTOM",
+      }) && <InsightsManagedUsageCard />}
     </InsightsPageLayout>
   );
 });
