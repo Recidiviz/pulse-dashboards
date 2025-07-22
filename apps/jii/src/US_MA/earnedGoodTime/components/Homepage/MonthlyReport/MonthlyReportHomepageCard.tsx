@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
@@ -26,9 +26,12 @@ import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { Card } from "../../../../../common/components/Card";
+import { GoButton } from "../../../../../components/ButtonLink/GoButton";
 import { CopyWrapper } from "../../../../../components/CopyWrapper/CopyWrapper";
 import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
+import { State } from "../../../../../routes/routes";
 import { useEGTDataContext } from "../../EGTDataContext/context";
+import { CreditsByTypeCard } from "../../MonthlyReport/CreditsByTypeCard";
 import { SectionHeading } from "../styles";
 import { SlateCopy } from "../styles";
 import { MonthlyReportPresenter } from "./MonthlyReportPresenter";
@@ -55,69 +58,33 @@ const ActivityRowDivider = styled.hr`
   }
 `;
 
-const CreditTotals = styled.div`
-  display: flex;
-  border: 1px solid ${palette.slate20};
-  border-radius: ${rem(spacing.sm)};
-  margin: ${rem(spacing.md)} 0;
-`;
-
-const CreditTypeCard = styled.div`
-  flex: 1;
-  border-right: 1px solid ${palette.slate10};
-  margin: 0 ${rem(spacing.sm)};
-  padding: ${rem(spacing.lg)};
-  border-radius: ${rem(spacing.sm)} 0 0 ${rem(spacing.sm)};
-
-  &:last-child {
-    border-right: none;
-  }
-`;
-
-const CardValue = styled.div`
-  ${typography.Sans24};
-
-  font-size: ${rem(24)};
-`;
-
 const ManagedComponent: FC<{
   presenter: MonthlyReportPresenter;
 }> = observer(function MonthlyReportHomepageCard({ presenter }) {
+  const {
+    totalEGTCreditDays,
+    totalBoostCreditDays,
+    totalCompletionCreditDays,
+  } = presenter;
+
   return (
     <section>
-      <SectionHeading>{presenter.sectionTitle}</SectionHeading>
+      <SectionHeading>{presenter.homepageCopy.sectionTitle}</SectionHeading>
       <Card>
         <MonthlyReportSelector
           placeholder={presenter.selectPlaceholder}
           options={presenter.sortedSelectOptions}
           onChange={presenter.setSelectedMonthYearStartDate}
         />
-        <CreditTotals>
-          <CreditTypeCard>
-            <SlateCopy>{presenter.copy.egt.label}</SlateCopy>
-            <CardValue>
-              {hydrateTemplate(presenter.copy.egt.value, {
-                totalEGTCreditDays: presenter.totalEGTCreditDays,
-              })}
-            </CardValue>
-          </CreditTypeCard>
-          <CreditTypeCard>
-            <SlateCopy>{presenter.copy.boosts.label}</SlateCopy>
-            <CardValue>
-              {hydrateTemplate(presenter.copy.boosts.value, {
-                totalBoostCreditDays: presenter.totalBoostCreditDays,
-              })}
-            </CardValue>
-          </CreditTypeCard>
-          <CreditTypeCard>
-            <SlateCopy>{presenter.copy.credits.label}</SlateCopy>
-            <CardValue>
-              {hydrateTemplate(presenter.copy.credits.value, {
-                totalCompletionCreditDays: presenter.totalCompletionCreditDays,
-              })}
-            </CardValue>
-          </CreditTypeCard>
-        </CreditTotals>
+        <CreditsByTypeCard
+          copy={presenter.homepageCopy}
+          credits={{
+            totalEGTCreditDays,
+            totalBoostCreditDays,
+            totalCompletionCreditDays,
+          }}
+          marginTopBottom={rem(spacing.md)}
+        />
         <ActivityList>
           {presenter.creditActivity.map((activity, index) => {
             return (
@@ -134,20 +101,24 @@ const ManagedComponent: FC<{
             );
           })}
         </ActivityList>
+        <GoButton
+          to={State.Resident.EGT.$.MonthlyReport.buildRelativePath({
+            reportDate: `${presenter.selectedMonthlyReport.pageSlug}`,
+          })}
+        >
+          {hydrateTemplate(presenter.homepageCopy.individualReportLink, {
+            monthDisplayName: presenter.selectedMonthlyReport.monthDisplayName,
+          })}
+        </GoButton>
       </Card>
     </section>
   );
 });
 
 function usePresenter() {
-  const {
-    copy: {
-      home: { monthlyReport: monthlyReportCopy },
-    },
-    monthlyReports,
-  } = useEGTDataContext();
+  const { copy, monthlyReports } = useEGTDataContext();
 
-  return new MonthlyReportPresenter(monthlyReports, monthlyReportCopy);
+  return new MonthlyReportPresenter(monthlyReports, copy);
 }
 
 export const MonthlyReportHomepageCard = withPresenterManager({

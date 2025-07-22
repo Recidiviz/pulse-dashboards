@@ -38,6 +38,7 @@ import { EGTDataRouteContext } from "../../US_MA/earnedGoodTime/components/EGTDa
 import { PageDefinition } from "../../US_MA/earnedGoodTime/components/pages/PageDefinition";
 import { PageEGT } from "../../US_MA/earnedGoodTime/components/pages/PageEGT";
 import { PageIntro } from "../../US_MA/earnedGoodTime/components/pages/PageIntro";
+import { PageMonthlyReport } from "../../US_MA/earnedGoodTime/components/pages/PageMonthlyReport";
 import { EligibilityRouteContext } from "../EligibilityRouteContext/EligibilityRouteContext";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { GenericLayoutRoute } from "../GenericLayoutRoute/GenericLayoutRoute";
@@ -148,6 +149,10 @@ export function App() {
                         <Route
                           path={routes.State.Resident.EGT.Definition.path}
                           element={<PageDefinition />}
+                        />
+                        <Route
+                          path={routes.State.Resident.EGT.MonthlyReport.path}
+                          element={<PageMonthlyReport />}
                         />
                       </Route>
                     </Route>

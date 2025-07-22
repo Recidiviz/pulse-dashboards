@@ -19,20 +19,39 @@ import { makeAutoObservable } from "mobx";
 
 import { UsMaCreditActivity } from "~datatypes";
 
-import {
-  ratingDisplayNames,
-  UsMaMonthlyReportCopy,
-} from "../../../configs/US_MA/copy";
+import { UsMaEgtCopy, usMaEGTCopy } from "../../../configs/US_MA/copy";
 import { UsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
 
 type SelectOption = { label: string; value: Date };
+
+export function reportSelectOptions(
+  reports: UsMaEGTMonthlyReport[],
+): Array<SelectOption> {
+  return (
+    reports
+      .map((report) => {
+        return {
+          value: report.reportStartDate,
+          label: report.fullDisplayName,
+        };
+      })
+      // Sort descending
+      .sort((a, b) => b.value.getTime() - a.value.getTime())
+  );
+}
+
+export function mapRatingToDisplayName(rating: string | null): string {
+  const { creditRatings } = usMaEGTCopy;
+
+  return creditRatings[rating as keyof typeof creditRatings] ?? "Unknown";
+}
 
 export class MonthlyReportPresenter {
   private selectedMonthYearStartDate?: Date;
 
   constructor(
     private monthlyReports: UsMaEGTMonthlyReport[],
-    public copy: UsMaMonthlyReportCopy,
+    private copy: UsMaEgtCopy,
   ) {
     makeAutoObservable(this, undefined, { autoBind: true });
     this.setSelectedMonthYearStartDate(this.latestReport.reportStartDate);
@@ -42,16 +61,24 @@ export class MonthlyReportPresenter {
     this.selectedMonthYearStartDate = date;
   }
 
+  get homepageCopy() {
+    return this.copy.home.monthlyReport;
+  }
+
+  get individualReportCopy() {
+    return this.copy.individualMonthlyReport;
+  }
+
   get sectionTitle(): string {
-    return this.copy.sectionTitle;
+    return this.homepageCopy.sectionTitle;
   }
 
   get selectorLabel(): string {
-    return this.latestReport.displayName;
+    return this.latestReport.fullDisplayName;
   }
 
   get selectPlaceholder(): string {
-    return this.latestReport.displayName;
+    return this.latestReport.fullDisplayName;
   }
 
   private get latestReport(): UsMaEGTMonthlyReport {
@@ -82,7 +109,7 @@ export class MonthlyReportPresenter {
         .map((report) => {
           return {
             value: report.reportStartDate,
-            label: report.displayName,
+            label: report.fullDisplayName,
           };
         })
         // Sort descending
@@ -107,9 +134,6 @@ export class MonthlyReportPresenter {
   }
 
   ratingDisplayName(rating: string | null): string {
-    return (
-      this.copy.ratingDisplayNames[rating as keyof typeof ratingDisplayNames] ??
-      "Unknown"
-    );
+    return mapRatingToDisplayName(rating);
   }
 }

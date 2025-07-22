@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { rollup } from "d3-array";
+import { format } from "date-fns";
 
 import {
   UsMaCreditActivity,
@@ -23,16 +24,37 @@ import {
   UsMaResidentMetadata,
 } from "~datatypes";
 
+export function getMonthlyReportPageSlug(date: Date): string {
+  return format(date, "yyyy-MM-dd");
+}
+
 export class UsMaEGTMonthlyReport {
   constructor(
     public reportStartDate: Date,
     public creditActivity: UsMaCreditActivity[],
   ) {}
 
+  get fullDisplayName(): string {
+    return new Intl.DateTimeFormat("en-US", {
+      month: "long",
+      year: "numeric",
+    }).format(this.reportStartDate);
+  }
+
   get displayName(): string {
     return new Intl.DateTimeFormat("en-US", {
       month: "long",
       year: "numeric",
+    }).format(this.reportStartDate);
+  }
+
+  get pageSlug(): string {
+    return format(this.reportStartDate, "yyyy-MM-dd");
+  }
+
+  get monthDisplayName(): string {
+    return new Intl.DateTimeFormat("en-US", {
+      month: "long",
     }).format(this.reportStartDate);
   }
 

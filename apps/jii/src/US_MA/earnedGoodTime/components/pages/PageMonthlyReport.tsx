@@ -15,14 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { route } from "react-router-typesafe-routes/dom";
+import { MonthlyReport } from "../MonthlyReport/MonthlyReport";
 
-export const EGT = route(
-  "earned-good-time",
-  {},
-  {
-    Definition: route("definition/:pageSlug"),
-    Intro: route("intro"),
-    MonthlyReport: route("report/:reportDate"),
-  },
-);
+export const PageMonthlyReport = () => {
+  return <MonthlyReport />;
+};

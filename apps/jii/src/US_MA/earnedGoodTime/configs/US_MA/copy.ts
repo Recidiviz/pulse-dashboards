@@ -23,14 +23,7 @@ import onboardingBody from "./onboardingBody.md?raw";
 import onboardingDisclaimer from "./onboardingDisclaimer.md?raw";
 import rtsInfoPage from "./rtsInfoPage.md?raw";
 
-export const ratingDisplayNames: { S: string; I: string; U: string } = {
-  S: "Satisfactory",
-  I: "Incompelete",
-  U: "Unsatisfactory",
-};
-
-const usMaMonthlyReportCopy = {
-  sectionTitle: "Recent monthly reports",
+const commonMonthlyReportCopy = {
   egt: {
     label: "Earned Good Time",
     value: `{{pluralize "days" totalEGTCreditDays true}}`,
@@ -43,7 +36,6 @@ const usMaMonthlyReportCopy = {
     label: "Completion Credits",
     value: `{{pluralize "days" totalCompletionCreditDays true}}`,
   },
-  ratingDisplayNames,
 };
 
 // where handlebars is invoked, assume a UsMaResidentMetadata object as the template context
@@ -111,7 +103,33 @@ export const usMaEGTCopy = {
       },
       creditLabel: "{{pluralize 'days' value true}}",
     },
-    monthlyReport: usMaMonthlyReportCopy,
+    monthlyReport: {
+      sectionTitle: "Recent monthly reports",
+      individualReportLink: `See {{monthDisplayName}} report`,
+      ...commonMonthlyReportCopy,
+    },
+  },
+  creditRatings: {
+    S: "Satisfactory",
+    I: "Incompelete",
+    U: "Unsatisfactory",
+  },
+  individualMonthlyReport: {
+    pageTitle: "Monthly Report",
+    browserPageTitle: "{{reportDisplayName}} Report",
+    credits: {
+      sectionTitle:
+        "Earned time and program participation in {{monthDisplayName}}",
+      ...commonMonthlyReportCopy,
+      table: {
+        columnHeaders: {
+          program: "Program",
+        },
+        aggregateColumn: {
+          label: "Total time earned",
+        },
+      },
+    },
   },
   infoPages: {
     rts: {
@@ -139,5 +157,5 @@ export const usMaEGTCopy = {
   },
 };
 
-export type UsMaMonthlyReportCopy = typeof usMaMonthlyReportCopy;
+export type UsMaMonthlyReportCopy = typeof commonMonthlyReportCopy;
 export type UsMaEgtCopy = typeof usMaEGTCopy;
