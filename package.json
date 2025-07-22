@@ -251,7 +251,7 @@
     "@types/argparse": "^2.0.10",
     "@types/cache-manager": "^3.4.3",
     "@types/cache-manager-ioredis": "^2.0.6",
-    "@types/d3-array": "^3.0.2",
+    "@types/d3-array": "2.8.0",
     "@types/d3-format": "^2.0.0",
     "@types/d3-scale": "^3.2.2",
     "@types/dompurify": "^3.0.5",

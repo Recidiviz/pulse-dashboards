@@ -43,6 +43,8 @@ import { HeaderBarContainer } from "./HeaderBarContainer";
 
 const Wrapper = styled.div<{ scrollMargin: number }>`
   display: grid;
+  // there is only one column but overriding auto width prevents overflows
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   min-height: 100vh;
   row-gap: ${rem(PAGE_LAYOUT_HEADER_GAP)};

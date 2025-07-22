@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsMaCreditActivity, UsMaEarnedCreditType } from "~datatypes";
+import { rollup } from "d3-array";
+
+import {
+  UsMaCreditActivity,
+  UsMaEarnedCreditType,
+  UsMaResidentMetadata,
+} from "~datatypes";
 
 export class UsMaEGTMonthlyReport {
   constructor(
@@ -30,9 +36,7 @@ export class UsMaEGTMonthlyReport {
     }).format(this.reportStartDate);
   }
 
-  private getTotalCreditForCreditType(
-    creditType: UsMaEarnedCreditType,
-  ): number {
+  getTotalCreditForCreditType(creditType: UsMaEarnedCreditType): number {
     return this.creditActivity.reduce((total, credit) => {
       return total + (credit[creditType as UsMaEarnedCreditType] ?? 0);
     }, 0);
@@ -49,4 +53,25 @@ export class UsMaEGTMonthlyReport {
   get totalCompletionCreditDays(): number {
     return this.getTotalCreditForCreditType("COMPLETION");
   }
+}
+
+export function populateUsMaEGTMonthlyReport(
+  metadata: UsMaResidentMetadata,
+): Array<UsMaEGTMonthlyReport> {
+  const { creditActivity } = metadata;
+
+  const reports = [
+    ...rollup(
+      creditActivity,
+      (monthActivities) => {
+        return new UsMaEGTMonthlyReport(
+          monthActivities[0].creditDate,
+          monthActivities,
+        );
+      },
+      (d) => d.creditDate.toISOString(),
+    ).values(),
+  ];
+
+  return reports;
 }

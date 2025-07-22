@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { usMaEarnedCreditTypes } from "~datatypes";
+
 import creditsInfoPage from "./creditsInfoPage.md?raw";
 import emptyStateBody from "./emptyStateBody.md?raw";
 import onboardingBody from "./onboardingBody.md?raw";
@@ -99,6 +101,15 @@ export const usMaEGTCopy = {
         label: "Completion Credits",
         value: `{{pluralize "days" totalCompletionCredit true}}`,
       },
+    },
+    creditHistory: {
+      heading: "Time you’ve earned recently",
+      legend: {
+        [usMaEarnedCreditTypes.enum.EARNEDGoodTime]: "Earned Good Time",
+        [usMaEarnedCreditTypes.enum.BOOST]: "Boosts",
+        [usMaEarnedCreditTypes.enum.COMPLETION]: "Completion Credits",
+      },
+      creditLabel: "{{pluralize 'days' value true}}",
     },
     monthlyReport: usMaMonthlyReportCopy,
   },

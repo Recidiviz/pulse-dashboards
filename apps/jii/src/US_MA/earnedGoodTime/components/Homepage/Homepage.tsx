@@ -30,6 +30,7 @@ import {
 import { usePageTitle } from "../../../../components/usePageTitle/usePageTitle";
 import { hydrateTemplate } from "../../../../configs/hydrateTemplate";
 import { useEGTDataContext } from "../EGTDataContext/context";
+import { ActivityChart } from "./ActivityChart";
 import { DatesSection } from "./DatesSection";
 import { EmptyState } from "./EmptyState";
 import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepageCard";
@@ -66,6 +67,7 @@ export const Homepage = observer(function Homepage() {
       ) : (
         <>
           <DatesSection />
+          <ActivityChart />
           <MonthlyReportHomepageCard />
           <TotalTimeEarnedSection />
         </>

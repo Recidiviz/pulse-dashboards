@@ -9648,10 +9648,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/d3-array@npm:^3.0.2":
-  version: 3.0.3
-  resolution: "@types/d3-array@npm:3.0.3"
-  checksum: 10c0/4dddae293e6e16764f8e465539548454b202a0f325f7d1cd0777690c4598bd593b1fb952501421d771204988b1a10393cf062775d2fc23851b0dec96c92eb3a4
+"@types/d3-array@npm:2.8.0":
+  version: 2.8.0
+  resolution: "@types/d3-array@npm:2.8.0"
+  checksum: 10c0/3c205b3d171b1bee4f6d897b7a52eb449701fadd1dbedf5862c9370e4e785ff157f41e82f9cab899bd73a73210ea97ce21e953cee7a70fdc6892d95d7bb847e2
   languageName: node
   linkType: hard
 
@@ -29327,7 +29327,7 @@ __metadata:
     "@types/cache-manager": "npm:^3.4.3"
     "@types/cache-manager-ioredis": "npm:^2.0.6"
     "@types/crypto-js": "npm:^4.0.2"
-    "@types/d3-array": "npm:^3.0.2"
+    "@types/d3-array": "npm:2.8.0"
     "@types/d3-format": "npm:^2.0.0"
     "@types/d3-scale": "npm:^3.2.2"
     "@types/d3-shape": "npm:^2.0.0"

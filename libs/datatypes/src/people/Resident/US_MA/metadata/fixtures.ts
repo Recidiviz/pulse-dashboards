@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Duration, endOfMonth, formatISO, parseISO } from "date-fns";
+import { Duration, formatISO, parseISO } from "date-fns";
 
 import {
   CURRENT_DATE_STRING_FIXTURE,
@@ -28,7 +28,7 @@ import {
 } from "./schema";
 
 export function creditDateString(...differences: Array<Duration>) {
-  return formatISO(endOfMonth(parseISO(relativeFixtureDate(...differences))), {
+  return formatISO(parseISO(relativeFixtureDate(...differences)), {
     representation: "date",
   });
 }
@@ -145,6 +145,102 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
     totalStateCreditDaysCalculated: null,
     creditActivity: [
       {
+        creditDate: creditDateString({ months: -13 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -13 }),
+        activity: "Violence Reduction Program (Prog)",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -12 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -12 }),
+        activity: "Violence Reduction Program (Prog)",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -11 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -11 }),
+        activity: "Violence Reduction Program (Prog)",
+        rating: "S",
+        EARNEDGoodTime: 0,
+        BOOST: 10,
+        COMPLETION: 30,
+      },
+      {
+        creditDate: creditDateString({ months: -10 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -9 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -8 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -7 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -6 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -5 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
         creditDate: creditDateString({ months: -4 }),
         activity: "Institutional Employment",
         rating: "S",
@@ -162,6 +258,14 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
       },
       {
         creditDate: creditDateString({ months: -2 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -1 }),
         activity: "Institutional Employment",
         rating: "S",
         EARNEDGoodTime: "7.5",
@@ -226,6 +330,22 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
       },
       {
         creditDate: creditDateString({ months: -2 }),
+        activity: "Reentry Readiness Workshop",
+        rating: "S",
+        EARNEDGoodTime: 5,
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -1 }),
+        activity: "Institutional Employment",
+        rating: "S",
+        EARNEDGoodTime: "7.5",
+        BOOST: null,
+        COMPLETION: null,
+      },
+      {
+        creditDate: creditDateString({ months: -1 }),
         activity: "Reentry Readiness Workshop",
         rating: "S",
         EARNEDGoodTime: 5,
