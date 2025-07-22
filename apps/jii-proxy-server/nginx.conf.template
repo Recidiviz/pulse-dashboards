@@ -46,6 +46,7 @@ server {
         proxy_pass https://o432474.ingest.us.sentry.io/api/4507433145139200/envelope/;
         proxy_http_version 1.1;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_ssl_server_name on;
     }
 
     location / {
