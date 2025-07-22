@@ -45,6 +45,7 @@ import { usAzReleaseToTPRSchema } from "../src/WorkflowsStore/Opportunity/UsAz";
 import { usAzOverdueForAcisDtpSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzOverdueForAcisDtpOpportunity/UsAzOverdueForAcisDtpReferralRecord";
 import { usAzOverdueForAcisTprSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprReferralRecord";
 import { usAzReleaseToDTPSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPReferralRecord";
+import { usAzTransferToAdministrativeSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionReferralRecord";
 import { usCaSupervisionLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsCa/UsCaSupervisionLevelDowngradeOpportunity/UsCaSupervisionLevelDowngradeReferralRecord";
 import { usIaEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsIa";
 import { usIdEarnedDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsId/EarnedDischargeOpportunity";
@@ -108,6 +109,8 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
   usAzReleaseToDTP: usAzReleaseToDTPSchema,
   usAzOverdueForACISTPR: usAzOverdueForAcisTprSchema,
   usAzOverdueForACISDTP: usAzOverdueForAcisDtpSchema,
+  usAzTransferToAdministrativeSupervision:
+    usAzTransferToAdministrativeSupervisionSchema,
 
   // US_CA
   usCaSupervisionLevelDowngrade: usCaSupervisionLevelDowngradeSchema,

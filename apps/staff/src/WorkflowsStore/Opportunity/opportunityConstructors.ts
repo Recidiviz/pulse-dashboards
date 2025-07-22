@@ -46,6 +46,7 @@ import { UsAzOverdueForAcisDtpOpportunity } from "./UsAz/UsAzOverdueForAcisDtpOp
 import { UsAzOverdueForAcisTprOpportunity } from "./UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprOpportunity";
 import { UsAzReleaseToDTPOpportunity } from "./UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPOpportunity";
 import { UsAzReleaseToTPROpportunity } from "./UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
+import { UsAzTransferToAdministrativeSupervisionOpportunity } from "./UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { UsIaEarlyDischargeOpportunity } from "./UsIa";
 import { UsIdExpandedCRCOpportunity } from "./UsId";
 import { UsIdCRCResidentWorkerOpportunity } from "./UsId/UsIdCRCResidentWorkerOpportunity/UsIdCRCResidentWorkerOpportunity";
@@ -88,6 +89,8 @@ export const opportunityConstructors = {
   usAzOverdueForACISTPR: UsAzOverdueForAcisTprOpportunity,
   usAzReleaseToTPR: UsAzReleaseToTPROpportunity,
   usAzReleaseToDTP: UsAzReleaseToDTPOpportunity,
+  usAzTransferToAdministrativeSupervision:
+    UsAzTransferToAdministrativeSupervisionOpportunity,
 
   // US_CA
   usCaSupervisionLevelDowngrade: UsCaSupervisionLevelDowngradeOpportunity,

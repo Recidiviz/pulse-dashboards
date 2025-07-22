@@ -20,3 +20,5 @@ export * from "./UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPReferralRecord";
 export * from "./UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
 export * from "./UsAzReleaseToTPROpportunity/UsAzReleaseToTPRReferralRecord";
 export * from "./UsAzReleaseToTransitionProgramOpportunityBase";
+export * from "./UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
+export * from "./UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionReferralRecord";
