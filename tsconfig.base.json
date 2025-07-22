@@ -31,6 +31,7 @@
       "~@jii-texting/server/*": ["apps/@jii-texting/server/src/*"],
       "~@jii-texting/utils": ["libs/@jii-texting/utils/src/index.ts"],
       "~@jii-texting/utils/*": ["libs/@jii-texting/utils/src/*"],
+      "~@reentry/intake-agent": ["libs/@reentry/intake-agent/src/index.ts"],
       "~@reentry/intake-agent/*": ["libs/@reentry/intake-agent/src/*"],
       "~@reentry/intake-agent/evaluate/*": [
         "libs/@reentry/intake-agent/evaluate/*"
@@ -42,6 +43,7 @@
       "~@reentry/trpc": ["libs/@reentry/trpc/src/index.ts"],
       "~@reentry/trpc-types": ["libs/@reentry/trpc-types/src/index.ts"],
       "~@reentry/trpc/*": ["libs/@reentry/trpc/src/*"],
+      "~@reentry/trpc/test/*": ["libs/@reentry/trpc/__tests__/*"],
       "~@sentencing/import": ["apps/@sentencing/import/src/index.ts"],
       "~@sentencing/import/*": ["apps/@sentencing/import/src/*"],
       "~@sentencing/import/test/*": ["apps/@sentencing/import/__tests__/*"],

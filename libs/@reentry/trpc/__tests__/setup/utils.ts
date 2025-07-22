@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { baseProcedure, router } from "~@reentry/trpc/init";
-import { processAudioInputSchema } from "~@reentry/trpc/routes/transcription-intake/transcription-intake.schema";
+import { Prisma, PrismaClient } from "~@reentry/prisma/client";
 
-export const transcriptionIntakeRouter = router({
-  processAudio: baseProcedure
-    .input(processAudioInputSchema)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .mutation(async ({ input: { clientId } }) => {
-      // TODO: Implement the logic to process audio for a client
-    }),
-});
+const PRISMA_TABLES = Object.values(Prisma.ModelName);
+
+export async function resetDb(prismaClient: PrismaClient) {
+  await prismaClient.$transaction(
+    PRISMA_TABLES.map((table) =>
+      prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),
+    ),
+  );
+}

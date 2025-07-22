@@ -24,7 +24,7 @@ import {
   runMultiturnSimulation,
 } from "openevals";
 
-import { LSIR_SECTIONS } from "~@reentry/intake-agent/constants";
+import { US_ID_SECTIONS } from "~@reentry/intake-agent/constants";
 import { CLIENT_PERSONAS } from "~@reentry/intake-agent/evaluate/profiles";
 import { IntakeAgent } from "~@reentry/intake-agent/index";
 
@@ -38,20 +38,28 @@ const model = new ChatOpenAI({
 async function main() {
   const persona = CLIENT_PERSONAS["Ethan 'Eddie' Sullivan"];
 
-  const intakeAgent = new IntakeAgent(new MemorySaver(), persona.name);
+  const intakeAgent = new IntakeAgent({
+    checkpointer: new MemorySaver(),
+    clientName: persona.name,
+    intakeId: persona.name,
+    sections: US_ID_SECTIONS,
+  });
 
   async function multiTurnAgent(params: {
     inputs: ChatCompletionMessage;
     threadId: string;
   }) {
     let messages;
-    if (intakeAgent.getStatus() === "not_started") {
-      messages = await intakeAgent.start();
+    if (intakeAgent.getStatus() === "not_initialized") {
+      messages = await intakeAgent.init();
     }
 
     messages = await intakeAgent.processResponse(params.inputs.content);
 
-    return { content: messages.join("\n"), role: "assistant" };
+    return {
+      content: messages.map((message) => message.content).join("\n"),
+      role: "assistant",
+    };
   }
 
   const simulatedClient = createLLMSimulatedUser({
@@ -97,7 +105,7 @@ async function main() {
 
       Evaluate on a scale of 1 to 10 on whether the social worker covered all of the following sections in their conversation with the client, and attempted to gather all of the required information for each section. If the client said they did not want to answer a question or did not know, the social worker should have accepted that as a response and moved on to the next question.
 
-      ${LSIR_SECTIONS.map(
+      ${US_ID_SECTIONS.map(
         (section) => `${section.title}:\n ${section.requiredInformation}\n`,
       ).join("\n")}
 
@@ -110,7 +118,7 @@ async function main() {
   const result = await runMultiturnSimulation({
     app: multiTurnAgent,
     user: simulatedClient,
-    maxTurns: 50,
+    maxTurns: 150,
     stoppingCondition: async () => {
       return (
         intakeAgent.getStatus() === "completed" ||

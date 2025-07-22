@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "~@reentry/trpc/init";
-import { intakeChatRouter } from "~@reentry/trpc/routes/intake-chat/intake-chat.router";
+import { z } from "zod";
 
-export const appRouter = router({
-  intakeChat: intakeChatRouter,
+export const intakeChatResponseInputSchema = z.object({
+  intakeId: z.string(),
+  response: z.string(),
 });
 
-// export type definition of API
-export type AppRouter = typeof appRouter;
+export const intakeChatInputSchema = z.object({
+  intakeId: z.string(),
+  lastEventId: z.string().nullish(),
+});

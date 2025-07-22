@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 
-export const processAudioInputSchema = z.object({
-  clientId: z.string(),
-});
+let checkpointer: PostgresSaver | undefined;
+
+export function getLangraphCheckpointerForStateCode(stateCode: string) {
+  const dbUrl = process.env[`DATABASE_URL_LANGGRAPH_CHECKPOINTER_${stateCode}`];
+
+  if (!dbUrl) {
+    throw Error(
+      `Attempted to access unsupported database for state ${stateCode}`,
+    );
+  }
+
+  if (!checkpointer) {
+    checkpointer = PostgresSaver.fromConnString(dbUrl);
+  }
+
+  return checkpointer;
+}

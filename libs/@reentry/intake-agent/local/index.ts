@@ -21,6 +21,7 @@ import { MemorySaver } from "@langchain/langgraph";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 import inquirer from "inquirer";
 
+import { US_ID_SECTIONS } from "~@reentry/intake-agent/constants";
 import { IntakeAgent } from "~@reentry/intake-agent/index";
 
 async function main() {
@@ -48,9 +49,14 @@ async function main() {
     message: "What's your name?",
   });
 
-  const agent = new IntakeAgent(checkpointer, name);
+  const agent = new IntakeAgent({
+    checkpointer,
+    clientName: name,
+    intakeId: name,
+    sections: US_ID_SECTIONS,
+  });
 
-  const initialMessages = await agent.start();
+  const initialMessages = await agent.init();
 
   for (const message of initialMessages) {
     console.log(message);

@@ -21,14 +21,21 @@ import "@fastify/jwt";
 import { TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
+import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { getIsAuth0Authorized } from "~server-setup-plugin";
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
 
 export async function createContext(opts: CreateFastifyContextOptions) {
-  const { req, res } = opts;
-  const stateCode = req.headers[STATE_CODE_HEADER_KEY];
+  const { req, res, info } = opts;
+  let stateCode: string | string[] | undefined;
+
+  if (info.connectionParams) {
+    stateCode = info.connectionParams[STATE_CODE_HEADER_KEY];
+  } else {
+    stateCode = req.headers[STATE_CODE_HEADER_KEY];
+  }
 
   if (!stateCode || typeof stateCode !== "string") {
     throw new TRPCError({
@@ -39,9 +46,21 @@ export async function createContext(opts: CreateFastifyContextOptions) {
 
   const auth0Authorized = await getIsAuth0Authorized(opts);
 
+  let prismaClient;
+  try {
+    prismaClient = getPrismaClientForStateCode(stateCode);
+  } catch (e) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: `Unsupported state code provided in request headers: ${stateCode}`,
+      cause: e,
+    });
+  }
+
   return {
     req,
     res,
     auth0Authorized,
+    prisma: prismaClient,
   };
 }

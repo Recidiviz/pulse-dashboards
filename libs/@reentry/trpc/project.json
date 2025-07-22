@@ -28,6 +28,29 @@
         ],
         "cwd": "{projectRoot}"
       }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "prisma-generate"
+        },
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "docker"
+        },
+        {
+          "projects": ["@reentry/intake-agent"],
+          "target": "docker"
+        }
+      ],
+      "outputs": ["{workspaceRoot}/coverage/libs/@reentry/trpc"],
+      "cache": true,
+      "options": {
+        "command": "nx prisma-deploy @reentry/prisma && cd libs/@reentry/trpc && vitest",
+        "cwd": "{workspaceRoot}"
+      }
     }
   }
 }

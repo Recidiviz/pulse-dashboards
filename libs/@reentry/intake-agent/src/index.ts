@@ -18,10 +18,13 @@
 import { AIMessage } from "@langchain/core/messages";
 import { BaseCheckpointSaver, Command } from "@langchain/langgraph";
 
+import { type Sections } from "~@reentry/intake-agent/constants";
 import { builder } from "~@reentry/intake-agent/graph";
 
+export { getLangraphCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
+
 type AgentStatus =
-  | "not_started"
+  | "not_initialized"
   | "waiting_for_response"
   | "completed"
   | "error";
@@ -30,19 +33,26 @@ export class IntakeAgent {
   graph;
   threadId;
   // Current status of the conversation with the agent.
-  status: AgentStatus = "not_started";
+  status: AgentStatus = "not_initialized";
 
-  constructor(checkpointer: BaseCheckpointSaver, clientName: string) {
-    this.graph = builder.compile({ checkpointer });
-    this.threadId = clientName;
+  constructor(opts: {
+    checkpointer: BaseCheckpointSaver;
+    clientName: string;
+    intakeId: string;
+    sections: Sections;
+  }) {
+    this.graph = builder.compile({ checkpointer: opts.checkpointer });
+    this.threadId = opts.intakeId;
+
     this.graph.updateState(
       {
         configurable: {
-          thread_id: clientName,
+          thread_id: this.threadId,
         },
       },
       {
-        clientName: clientName,
+        clientName: opts.clientName,
+        sections: opts.sections,
       },
     );
   }
@@ -50,7 +60,7 @@ export class IntakeAgent {
   async processStream(
     graphStream: Awaited<ReturnType<typeof this.graph.stream>>,
   ) {
-    const messages: string[] = [];
+    const messages: AIMessage[] = [];
     let lastNode;
 
     for await (const chunk of graphStream) {
@@ -62,7 +72,7 @@ export class IntakeAgent {
 
           for (const message of messagesArray) {
             if (message instanceof AIMessage) {
-              messages.push(message.content as string);
+              messages.push(message);
             }
           }
         }
@@ -82,9 +92,31 @@ export class IntakeAgent {
     return messages;
   }
 
-  async start() {
-    if (this.status !== "not_started") {
+  /**
+   * Initialize the agent and starts the conversation.'
+   *
+   * If a message id is provided, it will return all of the AI messages from that point onwards.
+   * If no message id is provided, it will stream the next messages from the agent.
+   *
+   * @param lastMessageId - Optional message id to start from.
+   * @returns list of AI messages
+   */
+  async init(lastMessageId?: string | null) {
+    if (this.status !== "not_initialized") {
       throw new Error("Agent has already been started.");
+    }
+
+    // If a message id was provided, just return all of the AI messages from that point onwards. Otherwise, fetch the next messages.
+    if (lastMessageId) {
+      const state = await this.graph.getState({
+        configurable: {
+          thread_id: this.threadId,
+        },
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const messages = state.values.messages;
+      // TODO: process this to return only the messages after the lastMessageId
     }
 
     const graphStream = await this.graph.stream(
@@ -101,7 +133,7 @@ export class IntakeAgent {
   }
 
   async processResponse(response: string) {
-    if (this.status === "not_started") {
+    if (this.status === "not_initialized") {
       throw new Error("Agent has not been started. Call start() first.");
     }
 

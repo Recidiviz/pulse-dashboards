@@ -30,6 +30,7 @@ export function buildServer() {
       domain: process.env["AUTH0_DOMAIN"],
       audience: process.env["AUTH0_AUDIENCE"],
     },
+    useWSS: true, // Enable WebSocket support
   });
 
   return server;

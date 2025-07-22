@@ -1,9 +1,9 @@
 {
   "name": "@reentry/intake-agent",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/@reentry/langgraph/src",
+  "sourceRoot": "libs/@reentry/intake-agent/src",
   "projectType": "library",
-  "tags": ["reentry"],
+  "tags": ["reentry", "scope:server"],
   "targets": {
     "local": {
       "executor": "nx:run-commands",
@@ -54,9 +54,17 @@
     "docker": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "{projectRoot}",
-        "command": "docker compose up --wait"
-      }
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "dev": {
+          "command": "docker compose up --wait"
+        },
+        "ci": {
+          "command": "echo 'No docker for CI'"
+        }
+      },
+      "defaultConfiguration": "dev"
     }
   }
 }

@@ -17,7 +17,12 @@
 
 import { z } from "zod";
 
-import { ROLE, SECTION_TITLES, SectionType, TONE } from "./constants";
+import {
+  ROLE,
+  SECTION_TITLES,
+  type Sections,
+  TONE,
+} from "~@reentry/intake-agent/constants";
 
 export function getOpeningRemarksPrompt(clientName: string) {
   return `
@@ -51,7 +56,7 @@ export const isSectionCompleteStructure = z.object({
     .describe("The next question to ask, or None if section is complete"),
 });
 
-export const questionPrompt = (currentSection: SectionType) => `
+export const questionPrompt = (currentSection: Sections[number]) => `
   ${ROLE}
 
   Section: ${currentSection.title}

@@ -1,12 +1,21 @@
+name: reentry-intake-agent
 services:
   db:
-    image: postgres:16
+    image: postgres:17
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=reentry-intake-agent
     ports:
       - 6506:5432
+  test-db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=reentry-intake-agent-test
+    ports:
+      - 6507:5432
 
 volumes:
   postgres_data:

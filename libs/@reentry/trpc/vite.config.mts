@@ -26,11 +26,11 @@ export default defineConfig({
   plugins: [nxViteTsPaths()],
   test: {
     name: "@reentry/trpc",
-    setupFiles: ["src/test/setup/index.ts"],
+    setupFiles: ["__tests__/setup/index.ts"],
     globals: true,
     cache: { dir: "../../../node_modules/.vitest" },
     environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
     poolOptions: {
       forks: {
@@ -48,7 +48,7 @@ export default defineConfig({
     env: {
       AUTH0_AUDIENCE: process.env["AUTH0_AUDIENCE"] ?? "test",
       AUTH0_DOMAIN: process.env["AUTH0_DOMAIN"] ?? "test",
-      DATABASE_URL:
+       DATABASE_URL:
         process.env["DATABASE_URL"] ??
         "postgresql://postgres:postgres@localhost:6505/reentry-test?schema=public",
       DATABASE_URL_US_ID:

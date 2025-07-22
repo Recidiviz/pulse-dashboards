@@ -16,6 +16,7 @@
 // =============================================================================
 
 import cors from "@fastify/cors";
+import ws from "@fastify/websocket";
 import { setupFastifyErrorHandler } from "@sentry/node";
 import { AnyRouter } from "@trpc/server";
 import {
@@ -34,6 +35,7 @@ type BuildServerOptions<TRouter extends AnyRouter> = {
     domain: string;
     audience: string;
   };
+  useWSS?: boolean;
 };
 
 /**
@@ -44,7 +46,7 @@ type BuildServerOptions<TRouter extends AnyRouter> = {
 export function buildCommonServer<TRouter extends AnyRouter>(
   options: BuildServerOptions<TRouter>,
 ) {
-  const { appRouter, createContext, auth0Options } = options;
+  const { appRouter, createContext, auth0Options, useWSS = false } = options;
 
   const server = Fastify({
     logger: true,
@@ -52,8 +54,21 @@ export function buildCommonServer<TRouter extends AnyRouter>(
 
   setupFastifyErrorHandler(server);
 
+  if (useWSS) {
+    server.register(ws);
+  }
+
   server.register(fastifyTRPCPlugin, {
     prefix: "",
+    useWSS,
+    // Enable heartbeat messages to keep connection open (disabled by default)
+    keepAlive: {
+      enabled: true,
+      // server ping message interval in milliseconds
+      pingMs: 30000,
+      // connection is terminated if pong message is not received in this many milliseconds
+      pongWaitMs: 5000,
+    },
     trpcOptions: {
       router: appRouter,
       createContext: createContext,

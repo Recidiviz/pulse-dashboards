@@ -32,7 +32,7 @@ import {
 import { ChatOpenAI } from "@langchain/openai";
 import { z } from "zod";
 
-import { LSIR_SECTIONS } from "./constants";
+import { Sections, US_ID_SECTIONS } from "./constants";
 import {
   doesClientNeedHelpPrompt,
   doesClientNeedHelpStructure,
@@ -51,7 +51,14 @@ const model = new ChatOpenAI({
 
 const StateAnnotation = Annotation.Root({
   ...MessagesAnnotation.spec,
-  clientName: Annotation<string>,
+  clientName: Annotation<string>({
+    reducer: (_state, update) => update,
+    default: () => "Client",
+  }),
+  sections: Annotation<Sections>({
+    reducer: (_state, update) => update,
+    default: () => US_ID_SECTIONS,
+  }),
   currentSectionIndex: Annotation<number>({
     reducer: (_state, update) => update,
     default: () => 0,
@@ -92,8 +99,8 @@ async function generateReturningWelcomeMessage(state: State) {
 }
 
 async function askQuestion(state: State) {
-  const { currentSectionIndex } = state;
-  const currentSection = LSIR_SECTIONS[currentSectionIndex];
+  const { currentSectionIndex, sections } = state;
+  const currentSection = sections[currentSectionIndex];
 
   const prompt = questionPrompt(currentSection);
 
@@ -110,7 +117,7 @@ async function askQuestion(state: State) {
   console.log("\n");
 
   if (response.isSectionComplete || !response.response) {
-    if (currentSectionIndex === LSIR_SECTIONS.length - 1) {
+    if (currentSectionIndex === sections.length - 1) {
       return new Command({
         goto: "closing_remarks",
       });
