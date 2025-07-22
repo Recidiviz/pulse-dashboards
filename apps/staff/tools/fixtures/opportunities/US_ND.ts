@@ -425,7 +425,17 @@ export const mockApiOpportunityConfigurationResponse = {
       submittedTabTitle: null,
       supportsSubmitted: false,
       systemType: "INCARCERATION",
-      tabGroups: null,
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Eligible Now",
+            "Referral Submitted",
+            "Almost Eligible",
+            "Marked Ineligible",
+          ],
+        },
+      ],
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "TransferToMinFacility",

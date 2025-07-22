@@ -36,6 +36,7 @@ import {
   UsMiPastFTRDOpportunity,
   UsMiSupervisionLevelDowngradeOpportunity,
   UsNdEarlyTerminationOpportunity,
+  UsNdTransferToMinFacilityOpportunity,
   UsPaSpecialCircumstancesSupervisionOpportunity,
   UsTnExpirationOpportunity,
   UsTnSupervisionLevelDowngradeOpportunity,
@@ -140,6 +141,7 @@ export const opportunityConstructors = {
 
   // US_ND
   earlyTermination: UsNdEarlyTerminationOpportunity,
+  usNdTransferToMinFacility: UsNdTransferToMinFacilityOpportunity,
 
   // US_OR
   usOrEarnedDischargeSentence: UsOrEarnedDischargeSentenceOpportunity,

@@ -222,6 +222,9 @@ export type OpportunityTab =
   | "Revisions Requests"
   | "Supervisor Review"
   | "Forms Submitted"
+
+  // For US_ND Transfer to Min Facility
+  | "Referral Submitted"
   | "Snoozed";
 
 export type OpportunityTabGroup =

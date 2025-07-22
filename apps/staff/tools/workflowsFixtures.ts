@@ -79,6 +79,7 @@ import { usMoOverdueRestrictiveHousingInitialHearingReferrals } from "./fixtures
 import { usMoOverdueRestrictiveHousingReleaseReferrals } from "./fixtures/usMoOverdueRestrictiveHousingReleaseReferrals";
 import { usMoOverdueRestrictiveHousingReviewHearingReferrals } from "./fixtures/usMoOverdueRestrictiveHousingReviewHearingReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
+import { usNdTransferToMinFacilityReferrals } from "./fixtures/usNdTransferToMinFacilityReferrals";
 import { usPaAdminSupervisionReferrals } from "./fixtures/usPaAdminSupervisionReferrals";
 import { usTnAnnualReclassificationReviewFixture } from "./fixtures/usTnAnnualReclassificationReviewReferrals";
 import { usTnCompliantReporting2025PolicyReferrals } from "./fixtures/usTnCompliantReporting2025PolicyReferrals";
@@ -204,6 +205,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usMoOverdueRestrictiveHousingReviewHearingReferrals,
   usUtEarlyTerminationReferrals,
   usIaEarlyDischargeReferrals: usIaEarlyDischargeReferralsFixture,
+  usNdTransferToMinFacilityReferrals,
 } as const;
 
 const FIXTURES_TO_LOAD = [

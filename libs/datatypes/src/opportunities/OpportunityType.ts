@@ -71,6 +71,7 @@ export const constructedOpportunityTypes = [
 
   // US_ND
   "earlyTermination",
+  "usNdTransferToMinFacility",
 
   // US_OR
   "usOrEarnedDischargeSentence",

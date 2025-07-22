@@ -23,6 +23,7 @@ import { usIdResidents } from "./residents/usIdResidents";
 import { usMeResidents } from "./residents/usMeResidents";
 import { usMiResidents } from "./residents/usMiResidents";
 import { usMoResidents } from "./residents/usMoResidents";
+import { usNdResidents } from "./residents/usNdResidents";
 import { usTnResidents } from "./residents/usTnResidents";
 import { FirestoreFixture, PersonFixture } from "./utils";
 
@@ -35,6 +36,7 @@ const data: ResidentFixture[] = [
   ...usMeResidents,
   ...usMiResidents,
   ...usMoResidents,
+  ...usNdResidents,
   ...usTnResidents,
 ];
 
