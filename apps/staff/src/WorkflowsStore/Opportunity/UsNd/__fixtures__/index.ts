@@ -41,6 +41,13 @@ export const usNdEarlyTerminationEligibleClientRecord: RequireKeys<ClientRecord>
     supervisionLevel: "MEDIUM",
     supervisionLevelStart: new Date("2019-12-20"),
     address: "123 Bedrock Lane",
+    currentPhysicalResidenceAddressStructured: {
+      addressLine1: "123 Bedrock Lane",
+      addressCity: "Bedrock",
+      addressState: "ND",
+      addressZip: "12345",
+      addressCountry: "US",
+    },
     phoneNumber: "5555555678",
     expirationDate: new Date("2024-12-31"),
     allEligibleOpportunities: ["earlyTermination"],

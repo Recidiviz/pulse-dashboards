@@ -97,6 +97,8 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
                 OVERDUE: presenter.countForCategory("OVERDUE"),
                 DUE_THIS_WEEK: presenter.countForCategory("DUE_THIS_WEEK"),
                 DUE_THIS_MONTH: presenter.countForCategory("DUE_THIS_MONTH"),
+                DUE_NEXT_MONTH: presenter.countForCategory("DUE_NEXT_MONTH"),
+                HIDDEN: presenter.countForCategory("HIDDEN"),
               }}
               activeTab={presenter.selectedTaskCategory}
               setActiveTab={(tab: SupervisionTaskCategory) => {

@@ -26,7 +26,14 @@ export const TEMPORAL_TASK_CATEGORIES = [
   "OVERDUE",
   "DUE_THIS_WEEK",
   "DUE_THIS_MONTH",
+  "DUE_NEXT_MONTH",
+  "HIDDEN",
 ] as const;
+
+export const CONDITIONAL_TASK_CATEGORIES: SupervisionTaskCategory[] = [
+  "DUE_NEXT_MONTH",
+  "HIDDEN",
+];
 
 export const SUPERVISION_TASK_CATEGORIES = [
   "ALL_TASKS_OLD",
@@ -43,12 +50,17 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   OVERDUE: "Overdue",
   DUE_THIS_WEEK: "Due this week",
   DUE_THIS_MONTH: "Due this month",
+  DUE_NEXT_MONTH: "Due next month",
+  HIDDEN: "Hidden",
   assessment: "Risk Assessments",
   contact: "Contacts",
   homeVisit: "Home Contacts",
   employment: "Employment Verification",
   employmentNeed: "Unemployed",
   usNeAssessment: "ORAS Assessment",
+  usNeCollateralContact: "Collateral Contacts",
+  usNePersonalContact: "Personal Contacts",
+  usNeNCJISCheckContact: "NCJIS Check",
   usTxCollateralContactScheduled: "Collateral Contacts",
   usTxTypeAgnosticContact: "Contacts",
   usTxHomeContactScheduled: "Home Contacts (Scheduled)",

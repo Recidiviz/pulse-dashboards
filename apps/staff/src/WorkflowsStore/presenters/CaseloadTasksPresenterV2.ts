@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isThisMonth, isThisWeek } from "date-fns";
+import { differenceInCalendarMonths, isThisMonth, isThisWeek } from "date-fns";
 import { every, some, uniq } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
 
@@ -29,9 +29,11 @@ import {
   WorkflowsTasksConfig,
 } from "../../core/models/types";
 import {
+  CONDITIONAL_TASK_CATEGORIES,
   SupervisionTaskCategory,
   TEMPORAL_TASK_CATEGORIES,
 } from "../../core/WorkflowsTasks/fixtures";
+import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
 import FirestoreStore from "../../FirestoreStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
 import TenantStore from "../../RootStore/TenantStore";
@@ -128,16 +130,24 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
         return `There are no contacts or assessments currently overdue or due within the next month for the selected ${caseloadTerm}.`;
       case "DUE_THIS_MONTH":
         return `There are no contacts or assessments currently due within the next month for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
+      case "DUE_NEXT_MONTH":
+        return `There are no contacts or assessments currently due next month for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
       case "DUE_THIS_WEEK":
         return `There are no contacts or assessments due within the next week for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
       case "OVERDUE":
         return `There are no overdue contacts or assessments for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
+      case "HIDDEN":
+        return `There are no hidden contacts or assessments for the selected ${caseloadTerm}. Please navigate to one of the other tabs.`;
     }
   }
 
   // Tab categories used in the new tasks view
   get displayedTaskCategories(): SupervisionTaskCategory[] {
-    return [...TEMPORAL_TASK_CATEGORIES];
+    return TEMPORAL_TASK_CATEGORIES.filter(
+      (category) =>
+        !CONDITIONAL_TASK_CATEGORIES.includes(category) ||
+        this.countForCategory(category) > 0,
+    );
   }
 
   get selectedTaskCategory(): SupervisionTaskCategory {
@@ -197,6 +207,12 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
 
       if (!supervisionTasks) return [];
 
+      if (category === "HIDDEN") {
+        return supervisionTasks.orderedTasks.filter(
+          (t) => (this.taskMatchesFilters(t) || !applyFilter) && t.isSnoozed,
+        );
+      }
+
       return supervisionTasks.readyOrderedTasks.filter((t) => {
         if (applyFilter && !this.taskMatchesFilters(t)) return false;
 
@@ -211,6 +227,8 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
             return (
               !t.isOverdue && !isThisWeek(t.dueDate) && isThisMonth(t.dueDate)
             );
+          case "DUE_NEXT_MONTH":
+            return differenceInCalendarMonths(t.dueDate, new Date()) === 1;
           default:
             return false;
         }
@@ -489,5 +507,9 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   // Text shown at the top of the Tasks page
   get pageDescription() {
     return taskPageDescriptionForState(this.tenantStore.currentTenantId);
+  }
+
+  get tasksTableColumns(): TaskTableColumnId[] {
+    return this.tenantStore.tasksTableColumns;
   }
 }

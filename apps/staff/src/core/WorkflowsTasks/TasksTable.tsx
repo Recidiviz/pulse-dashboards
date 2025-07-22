@@ -26,8 +26,9 @@ import useIsMobile from "../../hooks/useIsMobile";
 import {
   formatDueDateFromToday,
   formatWorkflowsDate,
+  toTitleCase,
 } from "../../utils/formatStrings";
-import { SupervisionTask } from "../../WorkflowsStore";
+import { Client, SupervisionTask } from "../../WorkflowsStore";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
 import { CaseloadTable } from "../OpportunityCaseloadView/CaseloadTable";
 import {
@@ -105,16 +106,8 @@ export const EmptyTasksTabView = ({
   );
 };
 
-export const TasksTable = observer(function TasksTable({
-  presenter,
-}: {
-  presenter: CaseloadTasksPresenterV2;
-}) {
-  if (presenter.orderedTasksForSelectedCategory.length === 0) {
-    return <EmptyTasksTabView presenter={presenter} />;
-  }
-
-  const columns: ColumnDef<SupervisionTask>[] = [
+const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
+  [
     {
       header: "Name",
       id: "name",
@@ -139,6 +132,13 @@ export const TasksTable = observer(function TasksTable({
       id: "task",
       accessorKey: "displayName",
       enableSorting: true,
+    },
+    {
+      header: "Task",
+      id: "taskDate",
+      enableSorting: true,
+      accessorFn: ({ displayName, dueDate }) =>
+        `${displayName} due ${formatDueDateFromToday(dueDate)}`,
     },
     {
       header: "Recommended",
@@ -174,7 +174,58 @@ export const TasksTable = observer(function TasksTable({
         return person.supervisionTasks?.tasks.length ?? 0;
       },
     },
-  ];
+    {
+      header: "City",
+      id: "city",
+      enableSorting: true,
+      accessorFn: ({ person }) => {
+        if (person instanceof Client) {
+          const { addressCity } =
+            person.currentPhysicalResidenceAddressStructured ?? {};
+          return addressCity && toTitleCase(addressCity);
+        }
+      },
+    },
+    {
+      header: "ZIP",
+      id: "zip",
+      enableSorting: true,
+      accessorFn: ({ person }) => {
+        if (person instanceof Client) {
+          return person.currentPhysicalResidenceAddressStructured?.addressZip;
+        }
+      },
+    },
+    {
+      header: "Assigned To",
+      id: "assignedTo",
+      accessorFn: ({ person }) => {
+        if (person instanceof Client) {
+          return person.assignedStaffFullName;
+        }
+      },
+    },
+  ] as const satisfies ColumnDef<SupervisionTask>[];
+
+export type TaskTableColumnId = ReturnType<typeof getColumnDefs>[number]["id"];
+
+export const TasksTable = observer(function TasksTable({
+  presenter,
+}: {
+  presenter: CaseloadTasksPresenterV2;
+}) {
+  if (presenter.orderedTasksForSelectedCategory.length === 0) {
+    return <EmptyTasksTabView presenter={presenter} />;
+  }
+
+  const columnsById = Object.fromEntries(
+    getColumnDefs(presenter).map((col) => [col.id, col]),
+  ) as Record<TaskTableColumnId, ColumnDef<SupervisionTask>>;
+
+  const pickColumns = (ids: TaskTableColumnId[]) =>
+    ids.map((id) => columnsById[id]);
+
+  const columns = pickColumns(presenter.tasksTableColumns);
 
   return (
     <CaseloadTable

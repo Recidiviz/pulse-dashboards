@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { addDays } from "date-fns";
+import { addDays, differenceInCalendarMonths } from "date-fns";
 import tk from "timekeeper";
 
 import { SupervisionTaskCategory } from "../../../core/WorkflowsTasks/fixtures";
@@ -140,6 +140,92 @@ describe("CaseloadTasksPresenterV2", () => {
 
     it("returns taskCategories in the same order as in the tenant store", () => {
       expect(presenter.taskCategories).toEqual(mockTenantStore.taskCategories);
+    });
+  });
+
+  describe("displayedTaskCategories", () => {
+    beforeEach(() => {
+      // Setup workflowsStore with various task scenarios
+      const workflowsStore = {
+        ...mockWorkflowsStore,
+        caseloadPersons: [
+          // Add a person with tasks that are overdue
+          makePersonWithTasks(["employment"], {
+            dateOffset: -7,
+            overdue: true,
+          }),
+          // Add a person with tasks due this week (not overdue)
+          makePersonWithTasks(["assessment"], { dateOffset: 2 }),
+          // Add a person with tasks due this month (but not this week)
+          makePersonWithTasks(["homeVisit"], { dateOffset: 12 }),
+        ],
+      } as any as WorkflowsStore;
+
+      presenter = getPresenter({ workflowsStore });
+    });
+
+    it("always includes non-conditional categories regardless of task count", () => {
+      const result = presenter.displayedTaskCategories;
+
+      // ALL_TASKS, OVERDUE, DUE_THIS_WEEK, and DUE_THIS_MONTH should always be included
+      expect(result).toContain("ALL_TASKS");
+      expect(result).toContain("OVERDUE");
+      expect(result).toContain("DUE_THIS_WEEK");
+      expect(result).toContain("DUE_THIS_MONTH");
+    });
+
+    it("excludes CONDITIONAL_TASK_CATEGORIES with no tasks", () => {
+      // Since we haven't created any tasks for the next month, DUE_NEXT_MONTH should be excluded
+      expect(presenter.displayedTaskCategories).not.toContain("DUE_NEXT_MONTH");
+
+      // Similarly, since we haven't created any hidden tasks, HIDDEN should be excluded
+      expect(presenter.displayedTaskCategories).not.toContain("HIDDEN");
+    });
+
+    it("includes conditional categories when they have tasks", () => {
+      // Create a new presenter with a person that has a task due next month
+      const workflowsStoreWithNextMonth = {
+        ...mockWorkflowsStore,
+        caseloadPersons: [
+          // Task due next month (current month + 1)
+          makePersonWithTasks(["contact"], { dateOffset: 35 }),
+        ],
+      } as any as WorkflowsStore;
+
+      const presenterWithNextMonth = getPresenter({
+        workflowsStore: workflowsStoreWithNextMonth,
+      });
+
+      // Now DUE_NEXT_MONTH should be included since there's a task due next month
+      expect(presenterWithNextMonth.displayedTaskCategories).toContain(
+        "DUE_NEXT_MONTH",
+      );
+    });
+
+    it("includes HIDDEN category when there are snoozed tasks", () => {
+      // Create a person with snoozed tasks to test HIDDEN category
+      const person = makePersonWithTasks(["contact"], { dateOffset: 1 });
+
+      // Add snoozed property to the tasks
+      if (person.supervisionTasks) {
+        person.supervisionTasks.orderedTasks =
+          person.supervisionTasks.orderedTasks.map((task) => ({
+            ...task,
+            isSnoozed: true,
+          }));
+      }
+
+      const workflowsStoreWithHidden = {
+        ...mockWorkflowsStore,
+        caseloadPersons: [person],
+      } as any as WorkflowsStore;
+
+      const presenterWithHidden = getPresenter({
+        workflowsStore: workflowsStoreWithHidden,
+      });
+
+      // HIDDEN should be included since there are snoozed tasks
+      expect(presenterWithHidden.displayedTaskCategories).toContain("HIDDEN");
     });
   });
 
@@ -518,6 +604,105 @@ describe("CaseloadTasksPresenterV2", () => {
       // Deselect all
       presenter.clearFilters();
       expect(presenter.allFiltersSelected).toBeFalse();
+    });
+  });
+
+  describe("allTasksForCategory", () => {
+    beforeEach(() => {
+      const person1 = makePersonWithTasks(["employment"], { dateOffset: 0 });
+      const person2 = makePersonWithTasks(["assessment"], { dateOffset: 35 }); // Task due next month
+      const person3 = makePersonWithTasks(["contact"], {
+        dateOffset: -1,
+        overdue: true,
+      });
+
+      // Create a person with snoozed tasks
+      const personWithSnoozedTasks = makePersonWithTasks(["homeVisit"], {
+        dateOffset: 5,
+      });
+      if (personWithSnoozedTasks.supervisionTasks) {
+        personWithSnoozedTasks.supervisionTasks.orderedTasks =
+          personWithSnoozedTasks.supervisionTasks.orderedTasks.map((task) => ({
+            ...task,
+            isSnoozed: true,
+          }));
+      }
+
+      const workflowsStore = {
+        ...mockWorkflowsStore,
+        caseloadPersons: [person1, person2, person3, personWithSnoozedTasks],
+      } as any as WorkflowsStore;
+
+      presenter = getPresenter({ workflowsStore });
+    });
+
+    it("returns tasks due next month for DUE_NEXT_MONTH category", () => {
+      const nextMonthTasks = presenter.allTasksForCategory("DUE_NEXT_MONTH");
+
+      expect(nextMonthTasks).toHaveLength(1);
+      expect(nextMonthTasks[0].type).toEqual("assessment");
+      expect(
+        differenceInCalendarMonths(nextMonthTasks[0].dueDate, new Date()),
+      ).toEqual(1);
+    });
+
+    it("doesn't include tasks in DUE_NEXT_MONTH that are in other temporal categories", () => {
+      // The task due next month should not appear in other categories
+      const thisWeekTasks = presenter.allTasksForCategory("DUE_THIS_WEEK");
+      const thisMonthTasks = presenter.allTasksForCategory("DUE_THIS_MONTH");
+      const overdueTasks = presenter.allTasksForCategory("OVERDUE");
+
+      const hasNextMonthTask = [
+        ...thisWeekTasks,
+        ...thisMonthTasks,
+        ...overdueTasks,
+      ].some(
+        (task) => differenceInCalendarMonths(task.dueDate, new Date()) === 1,
+      );
+
+      expect(hasNextMonthTask).toBeFalse();
+    });
+
+    it("returns only snoozed tasks for HIDDEN category", () => {
+      const hiddenTasks = presenter.allTasksForCategory("HIDDEN");
+
+      expect(hiddenTasks).toHaveLength(1);
+      expect(hiddenTasks[0].type).toEqual("homeVisit");
+      expect(hiddenTasks[0].isSnoozed).toBeTrue();
+    });
+
+    it("doesn't include snoozed tasks in regular task categories", () => {
+      // Snoozed tasks should only appear in the HIDDEN category
+      const allTasks = presenter.allTasksForCategory("ALL_TASKS");
+      const dueThisWeek = presenter.allTasksForCategory("DUE_THIS_WEEK");
+
+      const hasSnoozedTask = [...allTasks, ...dueThisWeek].some(
+        (task) => task.isSnoozed,
+      );
+
+      expect(hasSnoozedTask).toBeFalse();
+    });
+
+    it("respects filters when getting HIDDEN tasks", () => {
+      // First verify we have 1 hidden task
+      expect(presenter.allTasksForCategory("HIDDEN")).toHaveLength(1);
+
+      // Apply a filter that excludes the hidden task
+      presenter.setOnlyFilterForField("type", { value: "employment" });
+
+      // Now we should have no hidden tasks
+      expect(presenter.allTasksForCategory("HIDDEN")).toHaveLength(0);
+    });
+
+    it("ignores filters when applyFilter is false", () => {
+      // Apply a filter that would exclude tasks
+      presenter.setOnlyFilterForField("type", { value: "employment" });
+
+      // When applyFilter is true, we should only get employment tasks
+      expect(presenter.allTasksForCategory("HIDDEN", true)).toHaveLength(0);
+
+      // When applyFilter is false, we should get all hidden tasks regardless of filters
+      expect(presenter.allTasksForCategory("HIDDEN", false)).toHaveLength(1);
     });
   });
 });

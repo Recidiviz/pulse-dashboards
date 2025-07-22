@@ -35,6 +35,16 @@ const optionalClientInformation = z
     caseType: z.string(),
     caseTypeRawText: z.string(),
     address: z.string(),
+    currentPhysicalResidenceAddressStructured: z
+      .object({
+        addressLine1: z.string(),
+        addressLine2: z.string(),
+        addressCity: z.string(),
+        addressState: z.string(),
+        addressZip: z.string(),
+        addressCountry: z.string(),
+      })
+      .partial(),
     phoneNumber: z.string(),
     supervisionStartDate: dateStringSchema,
     expirationDate: dateStringSchema,

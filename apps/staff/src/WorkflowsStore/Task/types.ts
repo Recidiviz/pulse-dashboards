@@ -63,6 +63,16 @@ type UsNeAssessmentDetails = {
   isFirstAssessment: boolean;
 };
 
+type UsNeContactDetails = {
+  contactCadence: string;
+  contactCount: number;
+  contactDueDate: string;
+  lastContactDate: string | null;
+  overdueFlag: boolean;
+  periodType: string;
+  typeOfContact: string;
+};
+
 type UsTxContactDetails = {
   contactCount: number;
   lastContactDate: string | null;
@@ -118,6 +128,9 @@ export const SUPERVISION_TASK_TYPES = [
   "contact",
   "employment",
   "usNeAssessment",
+  "usNePersonalContact",
+  "usNeCollateralContact",
+  "usNeNCJISCheckContact",
   "usTxTypeAgnosticContact",
   "usTxCollateralContactScheduled",
   "usTxHomeContactScheduled",
@@ -140,6 +153,7 @@ export type SupervisionDetails =
   | UsIdContactDetails
   | UsIdEmploymentDetails
   | UsNeAssessmentDetails
+  | UsNeContactDetails
   | UsTxContactDetails
   | UsTxTypeAgnosticContactDetails
   | UsTxEdgeCaseContactDetails
@@ -151,6 +165,9 @@ export type SupervisionDetailsForTask = {
   contact: UsIdContactDetails;
   employment: UsIdEmploymentDetails;
   usNeAssessment: UsNeAssessmentDetails;
+  usNePersonalContact: UsNeContactDetails;
+  usNeCollateralContact: UsNeContactDetails;
+  usNeNCJISCheckContact: UsNeContactDetails;
   usTxCollateralContactScheduled: UsTxContactDetails;
   usTxTypeAgnosticContact: UsTxTypeAgnosticContactDetails;
   usTxHomeContactScheduled: UsTxOverridableContactDetails;

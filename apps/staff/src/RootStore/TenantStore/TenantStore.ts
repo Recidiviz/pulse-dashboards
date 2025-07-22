@@ -20,6 +20,7 @@ import qs from "query-string";
 
 import { StaffFilter, WorkflowsTasksConfig } from "../../core/models/types";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
+import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
 import { CombinedUserRecord } from "../../FirestoreStore";
 import { TenantConfigs } from "../../tenants";
 import { StaffFilterFunction } from "../../WorkflowsStore";
@@ -225,6 +226,21 @@ export default class TenantStore {
     if (!this.currentTenantId) return;
 
     return this.tenantConfigs[this.currentTenantId].workflowsTasksConfig;
+  }
+
+  get tasksTableColumns(): TaskTableColumnId[] {
+    return (
+      this.tasksConfiguration?.columns ?? [
+        "name",
+        "id",
+        "task",
+        "date",
+        "frequency",
+        "supervisionLevel",
+        "caseType",
+        "tasksDue",
+      ]
+    );
   }
 
   /**

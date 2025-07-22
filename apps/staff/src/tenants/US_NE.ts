@@ -18,6 +18,9 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsNeAssessmentTask from "../WorkflowsStore/Task/US_NE/UsNeAssessmentTask";
+import UsNeCollateralContactTask from "../WorkflowsStore/Task/US_NE/UsNeCollateralContactTask";
+import UsNeNCJISCheckContactTask from "../WorkflowsStore/Task/US_NE/UsNeNCJISCheckContactTask";
+import UsNePersonalContactTask from "../WorkflowsStore/Task/US_NE/UsNePersonalContactTask";
 
 const US_NE_CONFIG: TenantConfig<"US_NE"> = {
   name: "Nebraska",
@@ -35,7 +38,30 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
         constructor: UsNeAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
+      usNePersonalContact: {
+        constructor: UsNePersonalContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usNeCollateralContact: {
+        constructor: UsNeCollateralContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usNeNCJISCheckContact: {
+        constructor: UsNeNCJISCheckContactTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
     },
+    columns: [
+      "name",
+      "id",
+      "frequency",
+      "taskDate",
+      "caseType",
+      "supervisionLevel",
+      "city",
+      "zip",
+      "assignedTo",
+    ],
     filters: [
       {
         title: "Task Type",
@@ -45,6 +71,18 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
           {
             value: "usNeAssessment",
             label: "ORAS Assessment",
+          },
+          {
+            value: "usNePersonalContact",
+            label: "Personal Contact",
+          },
+          {
+            value: "usNeCollateralContact",
+            label: "Collateral Contact",
+          },
+          {
+            value: "usNeNCJISCheckContact",
+            label: "NCJIS Check",
           },
         ],
       },
@@ -82,6 +120,7 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
     workflows: ["home", "clients", "tasks"],
   },
   supervisionEndCopyOverride: "Tentative Release Date",
+  supervisionDisplayIdCopy: "NDCS ID",
 };
 
 export default US_NE_CONFIG;

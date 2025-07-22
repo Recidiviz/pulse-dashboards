@@ -204,6 +204,10 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this.record.metadata ?? {};
   }
 
+  get currentPhysicalResidenceAddressStructured() {
+    return this.record.currentPhysicalResidenceAddressStructured;
+  }
+
   get profileUrl(): string {
     return workflowsUrl("clientProfile", {
       justiceInvolvedPersonId: this.pseudonymizedId,

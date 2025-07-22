@@ -49,6 +49,7 @@ import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
 import { WorkflowsPage } from "../views";
+import { TaskTableColumnId } from "../WorkflowsTasks/TasksTable";
 
 /**
  * All data comes back from the server as string values;
@@ -129,6 +130,7 @@ export type WorkflowsTasksConfig = {
     };
   };
   filters?: TaskFilterSection[];
+  columns?: TaskTableColumnId[];
 };
 
 export type TaskFilterOption = {
