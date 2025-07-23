@@ -17,6 +17,7 @@
 
 import { rollup } from "d3-array";
 import { format } from "date-fns";
+import { DeepNonNullable } from "utility-types";
 
 import {
   UsMaCreditActivity,
@@ -24,14 +25,25 @@ import {
   UsMaResidentMetadata,
 } from "~datatypes";
 
+import { EarnedGoodTimeConfig } from "../../../configs/types";
+import { UsMaEgtCopy } from "../configs/US_MA/copy";
+
+export type AchievementKey = Exclude<
+  keyof UsMaEgtCopy["individualMonthlyReport"]["achievements"],
+  "heading"
+>;
+
 export function getMonthlyReportPageSlug(date: Date): string {
   return format(date, "yyyy-MM-dd");
 }
 
+type NonEmptyCreditActivity = Omit<UsMaCreditActivity, "activity"> &
+  DeepNonNullable<Pick<UsMaCreditActivity, "activity">>;
 export class UsMaEGTMonthlyReport {
   constructor(
     public reportStartDate: Date,
-    public creditActivity: UsMaCreditActivity[],
+    private creditActivityRecords: UsMaCreditActivity[],
+    private config: EarnedGoodTimeConfig,
   ) {}
 
   get fullDisplayName(): string {
@@ -58,6 +70,15 @@ export class UsMaEGTMonthlyReport {
     }).format(this.reportStartDate);
   }
 
+  get creditActivity(): Array<NonEmptyCreditActivity> {
+    return this.creditActivityRecords.filter(
+      // records without an activity string should be placeholders
+      // for months where there was no actual activity recorded;
+      // filtering them out would give us an empty report for that month
+      (record): record is NonEmptyCreditActivity => record.activity !== null,
+    );
+  }
+
   getTotalCreditForCreditType(creditType: UsMaEarnedCreditType): number {
     return this.creditActivity.reduce((total, credit) => {
       return total + (credit[creditType as UsMaEarnedCreditType] ?? 0);
@@ -75,11 +96,32 @@ export class UsMaEGTMonthlyReport {
   get totalCompletionCreditDays(): number {
     return this.getTotalCreditForCreditType("COMPLETION");
   }
+
+  get totalMaxDateCreditDays(): number {
+    return this.totalEGTCreditDays + this.totalBoostCreditDays;
+  }
+
+  get totalRtsDateCreditDays(): number {
+    return this.totalMaxDateCreditDays + this.totalCompletionCreditDays;
+  }
+
+  get achievements(): Array<AchievementKey> {
+    const achievementsToShow: Array<AchievementKey> = [];
+    if (
+      this.config.monthlyEarnedTimeLimit &&
+      this.totalEGTCreditDays === this.config.monthlyEarnedTimeLimit
+    ) {
+      achievementsToShow.push("maxEarnedTime");
+    }
+
+    return achievementsToShow;
+  }
 }
 
 export function populateUsMaEGTMonthlyReport(
   metadata: UsMaResidentMetadata,
-): Array<UsMaEGTMonthlyReport> {
+  config: EarnedGoodTimeConfig,
+) {
   const { creditActivity } = metadata;
 
   const reports = [
@@ -89,6 +131,7 @@ export function populateUsMaEGTMonthlyReport(
         return new UsMaEGTMonthlyReport(
           monthActivities[0].creditDate,
           monthActivities,
+          config,
         );
       },
       (d) => d.creditDate.toISOString(),

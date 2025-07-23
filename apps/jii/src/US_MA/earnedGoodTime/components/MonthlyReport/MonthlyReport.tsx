@@ -22,8 +22,6 @@ import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
-
 import { CopyWrapper } from "../../../../components/CopyWrapper/CopyWrapper";
 import { usePageTitle } from "../../../../components/usePageTitle/usePageTitle";
 import { hydrateTemplate } from "../../../../configs/hydrateTemplate";
@@ -31,61 +29,33 @@ import { State } from "../../../../routes/routes";
 import { getMonthlyReportPageSlug } from "../../models/UsMaEGTMonthlyReport";
 import { BackLink } from "../BackLink/BackLink";
 import { useEGTDataContext } from "../EGTDataContext/context";
-import {
-  mapRatingToDisplayName,
-  reportSelectOptions,
-} from "../Homepage/MonthlyReport/MonthlyReportPresenter";
+import { reportSelectOptions } from "../Homepage/MonthlyReport/MonthlyReportPresenter";
 import { MonthlyReportSelector } from "../Homepage/MonthlyReport/MonthlyReportSelector";
-import { SectionHeading, SlateCopy } from "../Homepage/styles";
+import { Achievements } from "./Achievements";
+import { ActivityTable } from "./ActivityTable";
+import { CreditsByDate } from "./CreditsByDate";
 import { CreditsByTypeCard } from "./CreditsByTypeCard";
+import { MonthlyReportSectionHeading } from "./styles";
 
 const HeaderRow = styled.div`
   display: flex;
   justify-content: space-between;
 `;
 
-const TableRow = styled.div<{ boldFont?: boolean }>`
-  display: flex;
-  border-top: 1px solid ${palette.slate10};
-  padding: ${rem(spacing.md)} 0;
-  vertical-align: middle;
-
-  &:last-child {
-    border-bottom: 1px solid ${palette.slate10};
-  }
-
-  div {
-    font-size: ${rem(14)};
-    align-items: center;
-    ${(props) => (props.boldFont ? "font-weight: bold" : "")};
-    flex: 1;
-  }
-
-  div:first-child {
-    flex: 2;
-  }
-
-  &:first-of-type > div {
-    color: ${palette.slate85};
-  }
-`;
-
-const ProgramSubtext = styled(SlateCopy)`
-  font-size: ${rem(14)};
-`;
-
-const ActivityTable = styled.div`
-  margin: ${rem(spacing.lg)} 0;
-`;
-
 export const MonthlyReport = observer(function MonthlyReport() {
   const { copy, monthlyReports } = useEGTDataContext();
+
   const { reportDate, personPseudoId, stateSlug } = useTypedParams(
     State.Resident.EGT.MonthlyReport,
   );
 
   const {
-    individualMonthlyReport: { credits, pageTitle, browserPageTitle },
+    individualMonthlyReport: {
+      credits,
+      pageTitle,
+      browserPageTitle,
+      achievements: achievementsCopy,
+    },
   } = copy;
 
   const navigate = useNavigate();
@@ -108,6 +78,7 @@ export const MonthlyReport = observer(function MonthlyReport() {
     totalEGTCreditDays,
     totalBoostCreditDays,
     totalCompletionCreditDays,
+    achievements,
   } = report;
 
   return (
@@ -134,11 +105,14 @@ export const MonthlyReport = observer(function MonthlyReport() {
           }}
         />
       </HeaderRow>
-      <SectionHeading>
+      {achievements.length > 0 && (
+        <Achievements copy={achievementsCopy} report={report} />
+      )}
+      <MonthlyReportSectionHeading>
         {hydrateTemplate(credits.sectionTitle, {
           monthDisplayName: report.monthDisplayName,
         })}
-      </SectionHeading>
+      </MonthlyReportSectionHeading>
       <CreditsByTypeCard
         copy={credits}
         credits={{
@@ -148,56 +122,10 @@ export const MonthlyReport = observer(function MonthlyReport() {
         }}
         marginTopBottom={rem(spacing.lg)}
       />
-      <ActivityTable>
-        <TableRow>
-          <div>{credits.table.columnHeaders.program}</div>
-          <div>{credits.egt.label}</div>
-          <div>{credits.boosts.label}</div>
-          <div>{credits.credits.label}</div>
-        </TableRow>
-        {report.creditActivity.map((activity, index) => {
-          return (
-            // Below there isn't anything guaranteed unique in this array
-            // eslint-disable-next-line react/no-array-index-key
-            <TableRow key={index}>
-              <div>
-                <div>{activity.activity}</div>
-                {/* replace with rating */}
-                <ProgramSubtext>
-                  {mapRatingToDisplayName(activity.rating)}
-                </ProgramSubtext>
-              </div>
-              <div>
-                {activity["EARNEDGoodTime"] > 0
-                  ? activity["EARNEDGoodTime"]
-                  : "—"}
-              </div>
-              <div>{activity["BOOST"] > 0 ? activity["BOOST"] : "—"}</div>
-              <div>
-                {activity["COMPLETION"] > 0 ? activity["COMPLETION"] : "—"}
-              </div>
-            </TableRow>
-          );
-        })}
-        <TableRow boldFont={true}>
-          <div>{credits.table.aggregateColumn.label}</div>
-          <div>
-            {hydrateTemplate(credits.egt.value, {
-              totalEGTCreditDays,
-            })}
-          </div>
-          <div>
-            {hydrateTemplate(credits.boosts.value, {
-              totalBoostCreditDays,
-            })}
-          </div>
-          <div>
-            {hydrateTemplate(credits.credits.value, {
-              totalCompletionCreditDays,
-            })}
-          </div>
-        </TableRow>
-      </ActivityTable>
+      {report.creditActivity.length > 0 && (
+        <ActivityTable copy={copy} report={report} />
+      )}
+      <CreditsByDate copy={copy} report={report} />
     </>
   );
 });

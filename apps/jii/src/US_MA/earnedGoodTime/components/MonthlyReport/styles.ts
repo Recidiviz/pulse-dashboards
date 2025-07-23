@@ -15,11 +15,15 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usMaEgtConfig } from "../../../US_MA/earnedGoodTime/configs/US_MA/egtConfig";
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
+import { spacing, typography } from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
-export const usMaResidentsConfig: ResidentsConfig = {
-  home,
-  egt: usMaEgtConfig,
-};
+import { palette } from "~design-system";
+
+export const MonthlyReportSectionHeading = styled.h2`
+  ${typography.Sans18}
+
+  color: ${palette.pine1};
+  margin: ${rem(spacing.xl)} 0 ${rem(spacing.md)};
+`;

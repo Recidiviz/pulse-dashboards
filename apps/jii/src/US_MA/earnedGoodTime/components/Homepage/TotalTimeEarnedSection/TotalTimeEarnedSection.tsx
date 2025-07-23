@@ -15,22 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
-import styled from "styled-components/macro";
-
 import { Card } from "../../../../../common/components/Card";
 import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
 import { useEGTDataContext } from "../../EGTDataContext/context";
-import { CardHeading, CardValue, SectionHeading } from "../styles";
-
-const CardWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
-  gap: ${rem(spacing.md)};
-`;
+import { CardHeading, TwoColumnWrapper } from "../../styles";
+import { CardValue, HomepageSectionHeading } from "../styles";
 
 export const TotalTimeEarnedSection = () => {
   const {
@@ -42,8 +31,10 @@ export const TotalTimeEarnedSection = () => {
 
   return (
     <section>
-      <SectionHeading>{totalTimeEarned.sectionTitle}</SectionHeading>
-      <CardWrapper>
+      <HomepageSectionHeading>
+        {totalTimeEarned.sectionTitle}
+      </HomepageSectionHeading>
+      <TwoColumnWrapper>
         <Card style={{ flex: "1" }}>
           <CardHeading>{totalTimeEarned.egt.label}</CardHeading>
           <CardValue>
@@ -56,7 +47,7 @@ export const TotalTimeEarnedSection = () => {
             {hydrateTemplate(totalTimeEarned.credits.value, data)}
           </CardValue>
         </Card>
-      </CardWrapper>
+      </TwoColumnWrapper>
     </section>
   );
 };

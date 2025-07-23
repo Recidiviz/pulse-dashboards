@@ -32,7 +32,7 @@ const commonMonthlyReportCopy = {
     label: "Boosts",
     value: `{{pluralize "days" totalBoostCreditDays true}}`,
   },
-  credits: {
+  completion: {
     label: "Completion Credits",
     value: `{{pluralize "days" totalCompletionCreditDays true}}`,
   },
@@ -42,13 +42,16 @@ const commonMonthlyReportCopy = {
 export const usMaEGTCopy = {
   lastUpdated:
     "This information was last updated on {{formatFullDate lastUpdatedDate}}",
+  tags: {
+    rts: "RTS",
+    maxRelease: "MAX",
+  },
   home: {
     pageTitle: "Earned Time Overview",
     dates: {
       sectionTitle: "Important dates",
       rts: {
         label: "Release-to-supervision date",
-        tag: "RTS",
         value: "{{formatFullDateOptional rtsDate 'No RTS date'}}",
         summary: `The RTS Date is a release to parole supervision without the need for a 
           parole hearing, based upon completion credits earned through programming 
@@ -57,7 +60,6 @@ export const usMaEGTCopy = {
       },
       maxRelease: {
         label: "Maximum release / wrap date",
-        tag: "MAX",
         value:
           "{{formatFullDateOptional adjustedMaxReleaseDate 'No MAX date'}}",
         summary: `You’ve earned {{pluralize "days" totalStateCreditDaysCalculated true}} off your maximum release / wrap date.`,
@@ -111,7 +113,7 @@ export const usMaEGTCopy = {
   },
   creditRatings: {
     S: "Satisfactory",
-    I: "Incompelete",
+    I: "Incomplete",
     U: "Unsatisfactory",
   },
   individualMonthlyReport: {
@@ -128,6 +130,23 @@ export const usMaEGTCopy = {
         aggregateColumn: {
           label: "Total time earned",
         },
+      },
+    },
+    dateChanges: {
+      heading: "Release date changes in {{monthDisplayName}}",
+      rtsSummary:
+        "You earned {{pluralize 'days' totalRtsDateCreditDays true}} off your release-to-supervision date",
+      rtsTotal: " {{pluralize 'days' totalRtsDateCreditDays true}}",
+      maxSummary:
+        "You earned {{pluralize 'days' totalMaxDateCreditDays true}} off your maximum release / wrap date",
+      maxTotal: "{{pluralize 'days' totalMaxDateCreditDays true}}",
+      totalsLabel: "Total",
+    },
+    achievements: {
+      heading: "Achievements",
+      maxEarnedTime: {
+        heading: "Earned Good Time",
+        body: "You earned the maximum possible earned good time this month",
       },
     },
   },

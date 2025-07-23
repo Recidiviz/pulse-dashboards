@@ -54,7 +54,7 @@ const creditValueSchema = z
 
 export const creditActivitySchema = z.object({
   creditDate: dateStringSchema,
-  activity: z.string(),
+  activity: z.string().nullable(),
   rating: z.string().nullable(),
   [usMaEarnedCreditTypes.enum.EARNEDGoodTime]: creditValueSchema,
   [usMaEarnedCreditTypes.enum.BOOST]: creditValueSchema,

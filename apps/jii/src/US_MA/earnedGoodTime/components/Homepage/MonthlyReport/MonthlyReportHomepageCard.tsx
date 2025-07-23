@@ -32,8 +32,7 @@ import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
 import { State } from "../../../../../routes/routes";
 import { useEGTDataContext } from "../../EGTDataContext/context";
 import { CreditsByTypeCard } from "../../MonthlyReport/CreditsByTypeCard";
-import { SectionHeading } from "../styles";
-import { SlateCopy } from "../styles";
+import { HomepageSectionHeading, SlateCopy } from "../styles";
 import { MonthlyReportPresenter } from "./MonthlyReportPresenter";
 import { MonthlyReportSelector } from "./MonthlyReportSelector";
 
@@ -69,7 +68,9 @@ const ManagedComponent: FC<{
 
   return (
     <section>
-      <SectionHeading>{presenter.homepageCopy.sectionTitle}</SectionHeading>
+      <HomepageSectionHeading>
+        {presenter.homepageCopy.sectionTitle}
+      </HomepageSectionHeading>
       <Card>
         <MonthlyReportSelector
           placeholder={presenter.selectPlaceholder}
@@ -86,14 +87,14 @@ const ManagedComponent: FC<{
           marginTopBottom={rem(spacing.md)}
         />
         <ActivityList>
-          {presenter.creditActivity.map((activity, index) => {
+          {presenter.creditActivity.map((activityRecord, index) => {
             return (
               // eslint-disable-next-line react/no-array-index-key
               <React.Fragment key={index}>
                 <ActivityRow>
-                  <CopyWrapper>{activity.activity}</CopyWrapper>
+                  <CopyWrapper>{activityRecord.activity}</CopyWrapper>
                   <SlateCopy>
-                    {presenter.ratingDisplayName(activity.rating)}
+                    {presenter.ratingDisplayName(activityRecord.rating)}
                   </SlateCopy>
                 </ActivityRow>
                 <ActivityRowDivider />

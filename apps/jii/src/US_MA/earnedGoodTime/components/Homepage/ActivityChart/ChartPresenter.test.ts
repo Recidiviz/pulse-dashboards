@@ -19,12 +19,14 @@ import { sum } from "d3-array";
 
 import { UsMaResidentMetadata, usMaResidents } from "~datatypes";
 
+import { usMaEgtConfig } from "../../../configs/US_MA/egtConfig";
 import { populateUsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
 import { ChartPresenter } from "./ChartPresenter";
 
 test("chart data", () => {
   const testReports = populateUsMaEGTMonthlyReport(
     usMaResidents[0].metadata as UsMaResidentMetadata,
+    usMaEgtConfig,
   );
   const presenter = new ChartPresenter(testReports);
 
@@ -83,6 +85,7 @@ test("calculated range extent", () => {
   let presenter = new ChartPresenter(
     populateUsMaEGTMonthlyReport(
       usMaResidents[0].metadata as UsMaResidentMetadata,
+      usMaEgtConfig,
     ).slice(-1), // one month only
   );
 
@@ -94,6 +97,7 @@ test("calculated range extent", () => {
   presenter = new ChartPresenter(
     populateUsMaEGTMonthlyReport(
       usMaResidents[2].metadata as UsMaResidentMetadata,
+      usMaEgtConfig,
     ).slice(-1), // 1 month only
   );
 
@@ -107,6 +111,7 @@ test("calculated axis ticks", () => {
   let presenter = new ChartPresenter(
     populateUsMaEGTMonthlyReport(
       usMaResidents[0].metadata as UsMaResidentMetadata,
+      usMaEgtConfig,
     ),
   );
 
@@ -117,6 +122,7 @@ test("calculated axis ticks", () => {
   presenter = new ChartPresenter(
     populateUsMaEGTMonthlyReport(
       usMaResidents[2].metadata as UsMaResidentMetadata,
+      usMaEgtConfig,
     ),
   );
 

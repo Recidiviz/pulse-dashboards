@@ -23,7 +23,8 @@ import styled from "styled-components/macro";
 import { Chip } from "../../../../../common/components/Chip";
 import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
 import { useEGTDataContext } from "../../EGTDataContext/context";
-import { CardHeading, CardValue } from "../styles";
+import { CardHeading } from "../../styles";
+import { CardValue } from "../styles";
 
 const Wrapper = styled.div`
   &:not(:last-child) {

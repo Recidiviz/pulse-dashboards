@@ -15,33 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { parseISO } from "date-fns";
+
 import {
   creditActivityFixture,
   creditActivitySchema,
   creditDateString,
   makeRecordFixture,
   outputFixtureArray,
+  UsMaCreditActivity,
 } from "~datatypes";
 
+import { usMaEgtConfig } from "../configs/US_MA/egtConfig";
 import { UsMaEGTMonthlyReport } from "./UsMaEGTMonthlyReport";
 
 const creditDateStr = creditDateString({ months: -2 });
 let report: UsMaEGTMonthlyReport;
+let parsedCreditActivity: Array<UsMaCreditActivity>;
+
+beforeEach(() => {
+  parsedCreditActivity = outputFixtureArray(
+    creditActivityFixture
+      .filter((creditRecord) => creditRecord.creditDate === creditDateStr)
+      .map((credit) => makeRecordFixture(creditActivitySchema, credit)),
+  );
+
+  report = new UsMaEGTMonthlyReport(
+    new Date(creditDateStr),
+    parsedCreditActivity,
+    usMaEgtConfig,
+  );
+});
 
 describe("credit reducers", () => {
-  beforeEach(() => {
-    const parsedCreditActivity = outputFixtureArray(
-      creditActivityFixture
-        .filter((creditRecord) => creditRecord.creditDate === creditDateStr)
-        .map((credit) => makeRecordFixture(creditActivitySchema, credit)),
-    );
-
-    report = new UsMaEGTMonthlyReport(
-      new Date(creditDateStr),
-      parsedCreditActivity,
-    );
-  });
-
   test.each([
     {
       type: "EARNEDGoodTime",
@@ -57,4 +63,54 @@ describe("credit reducers", () => {
   ])("credit total for $type", ({ type, getter, expected }) => {
     expect(getter()).toBe(expected);
   });
+});
+
+test("totalMaxDateCredits", () => {
+  expect(report.totalMaxDateCreditDays).toBe(25);
+});
+
+test("totalRtsDateCredits", () => {
+  expect(report.totalRtsDateCreditDays).toBe(55);
+});
+
+describe("achievements", () => {
+  test("max earned time", () => {
+    expect(report.achievements).toContain("maxEarnedTime");
+  });
+
+  test("no max earned time", () => {
+    report = new UsMaEGTMonthlyReport(
+      new Date(creditDateStr),
+      // pop off the first item so EGT is lower
+      parsedCreditActivity.slice(1),
+      usMaEgtConfig,
+    );
+    expect(report.totalEGTCreditDays).toBe(7.5);
+    expect(report.achievements).not.toContain("maxEarnedTime");
+  });
+});
+
+test("empty report", () => {
+  report = new UsMaEGTMonthlyReport(
+    new Date(creditDateStr),
+    [
+      creditActivitySchema.parse({
+        activity: null,
+        rating: null,
+        creditDate: creditDateStr,
+        BOOST: null,
+        COMPLETION: null,
+        EARNEDGoodTime: null,
+      }),
+    ],
+    usMaEgtConfig,
+  );
+
+  expect(report.reportStartDate).toEqual(parseISO(creditDateStr));
+  expect(report.creditActivity).toEqual([]);
+  expect(report.totalCompletionCreditDays).toBe(0);
+  expect(report.totalBoostCreditDays).toBe(0);
+  expect(report.totalEGTCreditDays).toBe(0);
+  expect(report.totalMaxDateCreditDays).toBe(0);
+  expect(report.totalRtsDateCreditDays).toBe(0);
 });

@@ -126,8 +126,7 @@ export type ResidentsConfig = {
   };
   eligibility?: EligibilityModuleConfig;
   progress?: ProgressModuleConfig;
-  // unlike other configs this one will not contain copy, so it's just a feature flag for now
-  egt?: boolean;
+  egt?: EarnedGoodTimeConfig;
 };
 
 export type EligibilityModuleConfig = {
@@ -147,6 +146,10 @@ export type ProgressModuleConfig = {
     title: string;
   };
   progressPage: FullPageConfig & { teaserText: string };
+};
+
+export type EarnedGoodTimeConfig = {
+  monthlyEarnedTimeLimit?: number;
 };
 
 export type StateCode = z.infer<typeof stateCodes>;

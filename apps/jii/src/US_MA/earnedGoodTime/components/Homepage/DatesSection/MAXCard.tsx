@@ -144,12 +144,13 @@ export const MAXCard = observer(function MAXCard() {
     data,
     copy: {
       home: { dates },
+      tags,
     },
   } = useEGTDataContext();
 
   return (
     <Card>
-      <DateInfo {...dates.maxRelease} />
+      <DateInfo {...dates.maxRelease} tag={tags.maxRelease} />
       {!!data.totalStateCreditDaysCalculated && <AdjustmentBreakdown />}
     </Card>
   );

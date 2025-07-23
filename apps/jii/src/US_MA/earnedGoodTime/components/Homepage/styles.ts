@@ -23,7 +23,7 @@ import { palette } from "~design-system";
 
 import { CopyWrapper } from "../../../../components/CopyWrapper/CopyWrapper";
 
-export const SectionHeading = styled.h2`
+export const HomepageSectionHeading = styled.h2`
   ${typography.Sans24}
 
   color: ${palette.pine1};
@@ -32,16 +32,6 @@ export const SectionHeading = styled.h2`
 
 export const SlateCopy = styled(CopyWrapper)`
   color: ${palette.slate85};
-`;
-
-export const CardHeading = styled.h3`
-  ${typography.Sans18}
-
-  align-items: center;
-  display: flex;
-  gap: 1em;
-  justify-content: space-between;
-  margin-bottom: ${rem(spacing.sm)};
 `;
 
 export const CardValue = styled.div`

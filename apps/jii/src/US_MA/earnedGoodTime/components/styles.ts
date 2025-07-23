@@ -15,11 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usMaEgtConfig } from "../../../US_MA/earnedGoodTime/configs/US_MA/egtConfig";
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
+import { spacing, typography } from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components/macro";
 
-export const usMaResidentsConfig: ResidentsConfig = {
-  home,
-  egt: usMaEgtConfig,
-};
+export const CardHeading = styled.h3`
+  ${typography.Sans18}
+
+  align-items: baseline;
+  display: flex;
+  gap: 1em;
+  justify-content: space-between;
+  margin-bottom: ${rem(spacing.sm)};
+`;
+
+export const TwoColumnWrapper = styled.div`
+  display: grid;
+  gap: ${rem(spacing.md)};
+  grid-template-columns: 1fr 1fr;
+`;

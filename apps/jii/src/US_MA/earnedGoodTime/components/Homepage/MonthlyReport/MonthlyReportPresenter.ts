@@ -17,8 +17,6 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { UsMaCreditActivity } from "~datatypes";
-
 import { UsMaEgtCopy, usMaEGTCopy } from "../../../configs/US_MA/copy";
 import { UsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
 
@@ -129,7 +127,7 @@ export class MonthlyReportPresenter {
     return this.selectedMonthlyReport.totalCompletionCreditDays;
   }
 
-  get creditActivity(): UsMaCreditActivity[] {
+  get creditActivity() {
     return this.selectedMonthlyReport.creditActivity;
   }
 

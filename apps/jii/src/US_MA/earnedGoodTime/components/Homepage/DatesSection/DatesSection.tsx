@@ -17,7 +17,7 @@
 
 import { Card } from "../../../../../common/components/Card";
 import { useEGTDataContext } from "../../EGTDataContext/context";
-import { SectionHeading, SlateCopy } from "../styles";
+import { HomepageSectionHeading, SlateCopy } from "../styles";
 import { DateInfo } from "./DateInfo";
 import { MAXCard } from "./MAXCard";
 import { RTSCard } from "./RTSCard";
@@ -35,7 +35,7 @@ export const DatesSection = () => {
 
   return (
     <section>
-      <SectionHeading>{dates.sectionTitle}</SectionHeading>
+      <HomepageSectionHeading>{dates.sectionTitle}</HomepageSectionHeading>
       {showRTSFirst ? (
         <>
           <RTSCard />

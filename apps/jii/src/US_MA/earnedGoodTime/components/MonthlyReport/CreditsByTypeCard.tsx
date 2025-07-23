@@ -87,9 +87,9 @@ export const CreditsByTypeCard: FC<{
         </CardValue>
       </CreditTypeCard>
       <CreditTypeCard>
-        <SlateCopy>{copy.credits.label}</SlateCopy>
+        <SlateCopy>{copy.completion.label}</SlateCopy>
         <CardValue>
-          {hydrateTemplate(copy.credits.value, {
+          {hydrateTemplate(copy.completion.value, {
             totalCompletionCreditDays,
           })}
         </CardValue>

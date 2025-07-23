@@ -17,7 +17,7 @@
 
 import { Card } from "../../../../../common/components/Card";
 import { useEGTDataContext } from "../../EGTDataContext/context";
-import { SectionHeading } from "../styles";
+import { HomepageSectionHeading } from "../styles";
 import { Chart } from "./Chart";
 
 export const SectionWrapper = () => {
@@ -31,7 +31,7 @@ export const SectionWrapper = () => {
 
   return (
     <>
-      <SectionHeading>{heading}</SectionHeading>
+      <HomepageSectionHeading>{heading}</HomepageSectionHeading>
       <Card>
         <Chart />
       </Card>

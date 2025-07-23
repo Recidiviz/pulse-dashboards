@@ -15,11 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { usMaEgtConfig } from "../../../US_MA/earnedGoodTime/configs/US_MA/egtConfig";
-import { home } from "../../defaults";
-import { ResidentsConfig } from "../../types";
+import { EarnedGoodTimeConfig } from "../../../../configs/types";
 
-export const usMaResidentsConfig: ResidentsConfig = {
-  home,
-  egt: usMaEgtConfig,
+export const usMaEgtConfig: EarnedGoodTimeConfig = {
+  monthlyEarnedTimeLimit: 15,
 };

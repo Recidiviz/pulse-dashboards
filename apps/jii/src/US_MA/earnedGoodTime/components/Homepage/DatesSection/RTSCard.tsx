@@ -26,12 +26,13 @@ export const RTSCard = () => {
   const {
     copy: {
       home: { dates },
+      tags,
     },
   } = useEGTDataContext();
 
   return (
     <Card>
-      <DateInfo {...dates.rts} />
+      <DateInfo {...dates.rts} tag={tags.rts} />
       <SlateCopy>{dates.rts.summary}</SlateCopy>
       <GoButton
         to={State.Resident.EGT.$.Definition.buildRelativePath({
