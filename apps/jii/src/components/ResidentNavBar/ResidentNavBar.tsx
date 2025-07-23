@@ -29,8 +29,8 @@ import { withPresenterManager } from "~hydration-utils";
 
 import { State } from "../../routes/routes";
 import { RouteParams } from "../../routes/utils";
+import { NavMenu } from "../NavMenu/NavMenu";
 import { useResidentsContext } from "../ResidentsHydrator/context";
-import { NavMenu } from "./NavMenu";
 import { ResidentNavBarPresenter } from "./ResidentNavBarPresenter";
 
 const BORDER = 4;

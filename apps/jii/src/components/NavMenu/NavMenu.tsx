@@ -119,8 +119,8 @@ function useMenuProps() {
 /**
  * Disclosure menu for navigation elements. Will also include a logout link when applicable
  */
-export const NavMenu: FC<{ links: Array<SimpleNavLinkProps> }> = memo(
-  function NavMenu({ links }) {
+export const NavMenu: FC<{ links?: Array<SimpleNavLinkProps> }> = memo(
+  function NavMenu({ links = [] }) {
     const {
       floatingStyles,
       getFloatingProps,

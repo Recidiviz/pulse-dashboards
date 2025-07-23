@@ -18,8 +18,14 @@
 import { ReactElement } from "react";
 
 import { AppLayout } from "../AppLayout/AppLayout";
+import { NavMenu } from "../NavMenu/NavMenu";
 import { ErrorPageMainContent } from "./ErrorPageMainContent";
 
 export const ErrorPage = ({ error }: { error: Error }): ReactElement => {
-  return <AppLayout main={<ErrorPageMainContent error={error} />}></AppLayout>;
+  return (
+    <AppLayout
+      main={<ErrorPageMainContent error={error} />}
+      header={<NavMenu />}
+    ></AppLayout>
+  );
 };
