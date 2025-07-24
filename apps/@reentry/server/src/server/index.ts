@@ -15,8 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import jwt from "jsonwebtoken";
+
+import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { appRouter, createContext } from "~@reentry/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
+
+interface IQuerystring {
+  stateCode: string;
+  givenNames: string;
+  surname: string;
+  birthDay: string;
+  birthMonth: string;
+  birthYear: string;
+}
 
 export function buildServer() {
   if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
@@ -31,6 +43,52 @@ export function buildServer() {
       audience: process.env["AUTH0_AUDIENCE"],
     },
     useWSS: true, // Enable WebSocket support
+    trpcPrefix: "trpc",
+  });
+
+  server.get<{
+    Querystring: IQuerystring;
+  }>("/get-intake-token", async (req, res) => {
+    const secretKey = process.env["AUTH0_INTAKE_PRIVATE_KEY"];
+    if (!secretKey) {
+      res.status(500).send("AUTH0_INTAKE_PRIVATE_KEY is not set");
+      return;
+    }
+
+    const prisma = getPrismaClientForStateCode(req.query.stateCode);
+
+    const birthDateString = `${req.query.birthYear}-${req.query.birthMonth}-${req.query.birthDay}`;
+
+    // Get the most recent active intake for the client based on given names and birth date
+    const client = await prisma.client.findFirst({
+      where: {
+        givenNames: req.query.givenNames,
+        surname: req.query.surname,
+        birthDate: new Date(birthDateString),
+      },
+      select: {
+        intakeEnabled: true,
+        pseudonymizedId: true,
+      },
+    });
+
+    if (!client?.intakeEnabled) {
+      res
+        .status(403)
+        .send(
+          `No client found with name ${req.query.givenNames} ${req.query.surname} and date of birth ${birthDateString} or intake is not enabled for this client.`,
+        );
+      return;
+    }
+
+    const token = jwt.sign(
+      {
+        pseudonymizedId: client.pseudonymizedId,
+      },
+      secretKey,
+    );
+
+    return token;
   });
 
   return server;

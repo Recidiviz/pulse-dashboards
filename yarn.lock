@@ -25846,6 +25846,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-jsonwebtoken@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "node-jsonwebtoken@npm:0.0.1"
+  dependencies:
+    jsonwebtoken: "npm:^8.5.1"
+  checksum: 10c0/fd70966eb232282646066e39e081960f4803c4447b033685940bb1de559ffee06e6e5d22d0d74d5265f21f9f0c1b193734ccee5924f26450a08f37a604ae7663
+  languageName: node
+  linkType: hard
+
 "node-machine-id@npm:1.1.12":
   version: 1.1.12
   resolution: "node-machine-id@npm:1.1.12"
@@ -29480,6 +29489,7 @@ __metadata:
     msw: "npm:^2.7.3"
     multer: "npm:^1.4.2"
     node-cache: "npm:^5.1.0"
+    node-jsonwebtoken: "npm:^0.0.1"
     nodemon: "npm:^3.1.0"
     npm-run-all: "npm:^4.1.5"
     numeral: "npm:^2.0.6"

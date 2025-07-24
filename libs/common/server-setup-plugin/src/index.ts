@@ -36,6 +36,7 @@ type BuildServerOptions<TRouter extends AnyRouter> = {
     audience: string;
   };
   useWSS?: boolean;
+  trpcPrefix?: string;
 };
 
 /**
@@ -46,7 +47,13 @@ type BuildServerOptions<TRouter extends AnyRouter> = {
 export function buildCommonServer<TRouter extends AnyRouter>(
   options: BuildServerOptions<TRouter>,
 ) {
-  const { appRouter, createContext, auth0Options, useWSS = false } = options;
+  const {
+    appRouter,
+    createContext,
+    auth0Options,
+    useWSS = false,
+    trpcPrefix = "",
+  } = options;
 
   const server = Fastify({
     logger: true,
@@ -59,7 +66,7 @@ export function buildCommonServer<TRouter extends AnyRouter>(
   }
 
   server.register(fastifyTRPCPlugin, {
-    prefix: "",
+    prefix: trpcPrefix,
     useWSS,
     // Enable heartbeat messages to keep connection open (disabled by default)
     keepAlive: {

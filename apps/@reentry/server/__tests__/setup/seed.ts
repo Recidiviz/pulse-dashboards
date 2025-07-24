@@ -39,6 +39,7 @@ export const fakeClient = {
   surname: faker.person.lastName(),
   suffix: faker.person.suffix(),
   birthDate: faker.date.birthdate(),
+  intakeEnabled: true,
   staff: {
     create: {
       staffId: fakeStaff.staffId,

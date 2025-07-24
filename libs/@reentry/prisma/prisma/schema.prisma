@@ -86,8 +86,10 @@ model Client {
   surname     String
   suffix      String?
 
-  birthDate DateTime
+  birthDate DateTime @db.Date
   address   String?
+
+  intakeEnabled Boolean @default(false)
 
   staff  ClientsToStaff[]
   Intake Intake[]
