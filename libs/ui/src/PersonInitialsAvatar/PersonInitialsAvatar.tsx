@@ -84,7 +84,7 @@ export const PersonInitialsAvatar: React.FC<AvatarProps> = ({
 }) => {
   const initials = formatAvatarText(name, splitName);
 
-  const colors = solidColor ? [solidColor] : palette.data.defaultOrder;
+  const colors = solidColor ? [solidColor] : palette.data.profileColorOrder;
 
   return (
     <AvatarElement className="UserAvatar" size={size}>

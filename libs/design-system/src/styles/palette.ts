@@ -78,6 +78,17 @@ const signal = {
   selected: rgb(55, 151, 205),
 };
 
+const profileColorOrder = [
+  "#877D87",
+  "#8A654E",
+  "#668866",
+  "#97836B",
+  "#4F6F7B",
+  "#534646",
+  "#668866",
+  "#8A654E",
+];
+
 /* Data
    Used mainly for data visualizations */
 const data = {
@@ -94,6 +105,7 @@ const data = {
   salmon1: rgb(221, 152, 157),
   salmon2: rgb(200, 116, 123),
   defaultOrder: [] as string[],
+  profileColorOrder,
 };
 
 data.defaultOrder = [

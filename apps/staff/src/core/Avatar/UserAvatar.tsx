@@ -93,7 +93,7 @@ const UserAvatar: React.FC<AvatarProps> = ({ size = 32 }) => {
           variant="marble"
           size={size}
           name={user.name}
-          colors={palette.data.defaultOrder}
+          colors={palette.data.profileColorOrder}
           square
           // @ts-ignore the title prop is missing from the package's types
           title // required for axe compliance
