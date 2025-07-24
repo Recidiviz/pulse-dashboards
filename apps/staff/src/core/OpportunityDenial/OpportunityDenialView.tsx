@@ -113,6 +113,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const { disableSnoozeSlider } = useFeatureVariants();
 
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [saveInProgress, setSaveInProgress] = useState(false);
 
   if (!opportunity) return null;
 
@@ -194,11 +195,13 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     denialConfirmationModalName &&
     DenialConfirmationModals[denialConfirmationModalName];
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (denialConfirmationModalName) {
       setShowConfirmationModal(true);
     } else {
-      submitDenial();
+      setSaveInProgress(true);
+      await submitDenial();
+      setSaveInProgress(false);
     }
   };
 
@@ -226,7 +229,8 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const disableSaveButton =
     (reasonsUnchanged && (sliderUnchanged || reasons.length === 0)) ||
     unsetSlider ||
-    otherReasonInvalid;
+    otherReasonInvalid ||
+    saveInProgress;
 
   const snoozeUntilDate = autoSnoozeUntil
     ? parseISO(autoSnoozeUntil)
@@ -330,7 +334,6 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
             opportunity={opportunity}
             reasons={reasons}
             sliderDays={sliderDays}
-            postDenialToast={postDenialToast}
             onSubmit={onSubmit}
             onSave={handleSave}
             snoozeSlider={snoozeSlider || undefined}

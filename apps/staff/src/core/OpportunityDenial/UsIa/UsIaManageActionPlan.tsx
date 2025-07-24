@@ -36,7 +36,6 @@ export const UsIaManageActionPlan = ({
   reasons,
   sliderDays,
   disableSaveButton,
-  postDenialToast,
   onSubmit,
   onSave,
   snoozeSlider,
@@ -45,7 +44,6 @@ export const UsIaManageActionPlan = ({
   reasons: string[];
   sliderDays: number;
   disableSaveButton: boolean;
-  postDenialToast: () => void;
   onSubmit: () => void;
   onSave: () => void;
   snoozeSlider?: JSX.Element;
