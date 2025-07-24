@@ -31,6 +31,9 @@
       "~@jii-texting/server/*": ["apps/@jii-texting/server/src/*"],
       "~@jii-texting/utils": ["libs/@jii-texting/utils/src/index.ts"],
       "~@jii-texting/utils/*": ["libs/@jii-texting/utils/src/*"],
+      "~@reentry/import": ["apps/@reentry/import/src/index.ts"],
+      "~@reentry/import/*": ["apps/@reentry/import/src/*"],
+      "~@reentry/import/test/*": ["apps/@reentry/import/__tests__/*"],
       "~@reentry/intake-agent": ["libs/@reentry/intake-agent/src/index.ts"],
       "~@reentry/intake-agent/*": ["libs/@reentry/intake-agent/src/*"],
       "~@reentry/intake-agent/evaluate/*": [

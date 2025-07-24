@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "extensionless": "^1.9.9",
+    "prisma": "^6.10.1",
+    "pg": "^8.16.2",
+    "@prisma/client": "^6.10.1"
+  }
+}

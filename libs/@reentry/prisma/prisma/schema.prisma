@@ -72,7 +72,7 @@ model Staff {
   suffix      String?
 
   email   String
-  clients Client[]
+  clients ClientsToStaff[]
 }
 
 model Client {
@@ -87,9 +87,19 @@ model Client {
   suffix      String?
 
   birthDate DateTime
+  address   String?
 
-  staff  Staff[]
+  staff  ClientsToStaff[]
   Intake Intake[]
+}
+
+model ClientsToStaff {
+  staff    Staff  @relation(fields: [staffId], references: [staffId])
+  staffId  String
+  Client   Client @relation(fields: [clientId], references: [personId])
+  clientId String
+
+  @@id([staffId, clientId])
 }
 
 model Intake {

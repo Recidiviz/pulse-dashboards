@@ -75,12 +75,6 @@ In order to run these tests:
 2. Make sure you have your Docker daemon running.
 3. Run `nx test sentencing` to run the tests.
 
-### Testing zod schemas
-
-If you'd like to test the zod import schemas against a downloaded JSONLines file of expected data, you can run `nx test-zod sentencing {path-to-jsonlines-file} {name-of-schema}`. This will run the zod schema against each line of the file and log any errors.
-
-The valid schema names are the keys of the `zodSchemaMap` object found in `test-zod/index.ts`
-
 ## Previews
 
 Whenever you create a PR with changes to the sentencing server, a preview deployment will be created with a preview database, preview migrate job, and preview cloud run server using your PRs code. The preview `staff` app will also be initialized to point to the preview server, so you can test any changes end to end!

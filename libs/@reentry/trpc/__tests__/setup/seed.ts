@@ -42,8 +42,8 @@ export async function seed(prismaClient: PrismaClient) {
       givenNames: "Jane",
       surname: "Doe",
       clients: {
-        connect: {
-          personId: "client-person-id-1",
+        create: {
+          clientId: "client-person-id-1",
         },
       },
     },
