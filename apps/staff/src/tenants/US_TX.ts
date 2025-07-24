@@ -20,8 +20,6 @@ import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsTxAssessmentTask from "../WorkflowsStore/Task/US_TX/UsTxAssessmentTask";
 import usTxCollateralContactScheduled from "../WorkflowsStore/Task/US_TX/UsTxCollateralContactScheduled";
-import UsTxElectronicContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxElectronicContactScheduledTask";
-import UsTxElectronicContactUnscheduledTask from "../WorkflowsStore/Task/US_TX/UsTxElectronicContactUnscheduledTask";
 import UsTxFieldContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxFieldContactScheduledTask";
 import UsTxFieldContactUnscheduledTask from "../WorkflowsStore/Task/US_TX/UsTxFieldContactUnscheduledTask";
 import usTxHomeContactEdgeCaseTask from "../WorkflowsStore/Task/US_TX/UsTxHomeContactEdgeCaseTask";
@@ -30,6 +28,7 @@ import usTxHomeContactUnscheduledTask from "../WorkflowsStore/Task/US_TX/UsTxHom
 import UsTxInCustodyContactTask from "../WorkflowsStore/Task/US_TX/UsTxInCustodyContactTask";
 import UsTxOfficeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxOfficeContactScheduledTask";
 import usTxTypeAgnosticContactTask from "../WorkflowsStore/Task/US_TX/UsTxTypeAgnosticContactTask";
+import UsTxVirtualOfficeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxVirtualOfficeContactScheduledTask";
 
 const US_TX_CONFIG: TenantConfig<"US_TX"> = {
   name: "Texas",
@@ -95,15 +94,11 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
         constructor: UsTxFieldContactUnscheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
-      usTxElectronicContactScheduled: {
-        constructor: UsTxElectronicContactScheduledTask,
+      usTxVirtualOfficeContactScheduled: {
+        constructor: UsTxVirtualOfficeContactScheduledTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
-      usTxElectronicContactUnscheduled: {
-        constructor: UsTxElectronicContactUnscheduledTask,
-        snoozeForOptionsInDays: [7, 30, 90],
-      },
-      usTxElectronicOrOfficeContact: {
+      usTxVirtualOrOfficeContact: {
         constructor: usTxTypeAgnosticContactTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
@@ -156,18 +151,13 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
             label: "Field Contact, Unscheduled",
           },
           {
-            value: "usTxElectronicContactScheduled",
-            shortLabel: "Electronic Contact, Sch.",
-            label: "Electronic Contact, Scheduled",
+            value: "usTxVirtualOfficeContactScheduled",
+            shortLabel: "Virtual Office Contact, Sch.",
+            label: "Virtual Office Contact, Scheduled",
           },
           {
-            value: "usTxElectronicContactUnscheduled",
-            shortLabel: "Electronic Contact, Unsch.",
-            label: "Electronic Contact, Unscheduled",
-          },
-          {
-            value: "usTxElectronicOrOfficeContact",
-            label: "Electronic or Office Contact",
+            value: "usTxVirtualOrOfficeContact",
+            label: "Virtual Office or In-Person Office Contact",
           },
           {
             value: "usTxTypeAgnosticContact",

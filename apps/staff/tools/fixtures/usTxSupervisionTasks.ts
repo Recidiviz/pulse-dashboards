@@ -36,18 +36,6 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           frequency: "4 MONTHS",
         },
       },
-      {
-        type: "usTxElectronicContactUnscheduled",
-        // overdue
-        dueDate: "2022-09-23",
-        details: {
-          contactCount: 2,
-          lastContactDate: "2022-06-23",
-          overdueFlag: true,
-          typeOfContact: "UNSCHEDULED ELECTRONIC",
-          frequency: "3 MONTHS",
-        },
-      },
     ],
   },
   {

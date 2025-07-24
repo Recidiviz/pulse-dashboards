@@ -140,9 +140,8 @@ export const SUPERVISION_TASK_TYPES = [
   "usTxOfficeContactScheduled",
   "usTxFieldContactScheduled",
   "usTxFieldContactUnscheduled",
-  "usTxElectronicContactScheduled",
-  "usTxElectronicContactUnscheduled",
-  "usTxElectronicOrOfficeContact",
+  "usTxVirtualOfficeContactScheduled",
+  "usTxVirtualOrOfficeContact",
   "usTxAssessment",
 ] as const;
 
@@ -177,9 +176,8 @@ export type SupervisionDetailsForTask = {
   usTxOfficeContactScheduled: UsTxContactDetails;
   usTxFieldContactScheduled: UsTxContactDetails;
   usTxFieldContactUnscheduled: UsTxContactDetails;
-  usTxElectronicContactScheduled: UsTxContactDetails;
-  usTxElectronicContactUnscheduled: UsTxContactDetails;
-  usTxElectronicOrOfficeContact: UsTxTypeAgnosticContactDetails;
+  usTxVirtualOfficeContactScheduled: UsTxContactDetails;
+  usTxVirtualOrOfficeContact: UsTxTypeAgnosticContactDetails;
   usTxAssessment: UsTxAssessmentDetails;
 };
 
@@ -229,12 +227,11 @@ export type UsTxSimpleContactTaskType =
   | "usTxOfficeContactScheduled"
   | "usTxFieldContactScheduled"
   | "usTxFieldContactUnscheduled"
-  | "usTxElectronicContactScheduled"
-  | "usTxElectronicContactUnscheduled";
+  | "usTxVirtualOfficeContactScheduled";
 
 export type UsTxAgnosticContactTaskType =
   | "usTxTypeAgnosticContact"
-  | "usTxElectronicOrOfficeContact";
+  | "usTxVirtualOrOfficeContact";
 
 // TODO: Derive these from tenant configs
 type TasksForState = {

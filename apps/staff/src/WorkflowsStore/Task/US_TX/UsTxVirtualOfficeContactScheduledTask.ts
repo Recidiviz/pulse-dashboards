@@ -17,8 +17,8 @@
 
 import UsTxContactTask from "./UsTxContactTask";
 
-class UsTxElectronicContactUnscheduledTask extends UsTxContactTask<"usTxElectronicContactUnscheduled"> {
-  displayName = "Electronic contact (unscheduled)";
+class UsTxVirtualOfficeContactScheduledTask extends UsTxContactTask<"usTxVirtualOfficeContactScheduled"> {
+  displayName = "Virtual Office contact (scheduled)";
 }
 
-export default UsTxElectronicContactUnscheduledTask;
+export default UsTxVirtualOfficeContactScheduledTask;

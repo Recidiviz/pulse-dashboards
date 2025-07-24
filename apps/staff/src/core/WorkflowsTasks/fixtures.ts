@@ -70,9 +70,8 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   usTxOfficeContactScheduled: "Office Contacts",
   usTxFieldContactScheduled: "Field Contacts (Scheduled)",
   usTxFieldContactUnscheduled: "Field Contacts (Unscheduled)",
-  usTxElectronicContactScheduled: "Electronic Contacts (Scheduled)",
-  usTxElectronicContactUnscheduled: "Electronic Contacts (Unscheduled)",
-  usTxElectronicOrOfficeContact: "Electronic or Office Contacts",
+  usTxVirtualOfficeContactScheduled: "Virtual Office Contacts (Scheduled)",
+  usTxVirtualOrOfficeContact: "Virtual Office or In-Person Office Contacts",
   usTxAssessment: "Assessments",
 };
 
