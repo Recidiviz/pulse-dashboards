@@ -30,6 +30,14 @@ class UsNeAssessmentTask extends Task<"usNeAssessment"> {
       : "No previous assessment on record";
   }
 
+  get dueDateDisplayLong() {
+    return `${this.displayName} due ${this.dueDateFromToday}`;
+  }
+
+  get dueDateDisplayShort() {
+    return `Due ${formatWorkflowsDate(this.dueDate)} (${this.dueDateFromToday})`;
+  }
+
   get frequency() {
     return "Every 6 Months";
   }

@@ -30,6 +30,14 @@ class UsNeNCJISCheckContactTask extends Task<"usNeNCJISCheckContact"> {
       : "No previous NCJIS check on record";
   }
 
+  get dueDateDisplayLong() {
+    return `${this.displayName} due ${this.dueDateFromToday}`;
+  }
+
+  get dueDateDisplayShort() {
+    return `Due ${formatWorkflowsDate(this.dueDate)} (${this.dueDateFromToday})`;
+  }
+
   get frequency() {
     return toTitleCase(this.details.contactCadence);
   }

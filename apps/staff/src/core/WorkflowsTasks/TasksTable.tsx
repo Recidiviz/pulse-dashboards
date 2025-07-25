@@ -134,15 +134,15 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       enableSorting: true,
     },
     {
-      header: "Task",
-      id: "taskDate",
+      header: "Due",
+      id: "dueDate",
       enableSorting: true,
-      accessorFn: ({ displayName, dueDate }) =>
-        `${displayName} due ${formatDueDateFromToday(dueDate)}`,
+      accessorKey: "dueDate",
+      cell: TaskDateCell,
     },
     {
       header: "Recommended",
-      id: "date",
+      id: "recommendedDate",
       enableSorting: true,
       accessorKey: "dueDate",
       cell: TaskDateCell,
@@ -182,7 +182,7 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
         if (person instanceof Client) {
           const { addressCity } =
             person.currentPhysicalResidenceAddressStructured ?? {};
-          return addressCity && toTitleCase(addressCity);
+          return (addressCity && toTitleCase(addressCity)) || "—";
         }
       },
     },
@@ -192,7 +192,9 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       enableSorting: true,
       accessorFn: ({ person }) => {
         if (person instanceof Client) {
-          return person.currentPhysicalResidenceAddressStructured?.addressZip;
+          return (
+            person.currentPhysicalResidenceAddressStructured?.addressZip ?? "—"
+          );
         }
       },
     },

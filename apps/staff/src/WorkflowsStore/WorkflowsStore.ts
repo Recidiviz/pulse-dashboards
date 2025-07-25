@@ -64,6 +64,7 @@ import {
 } from "../FirestoreStore";
 import type { RootStore } from "../RootStore";
 import { TENANT_CONFIGS } from "../tenants";
+import { toTitleCase } from "../utils";
 import { Client, isClient, UNKNOWN } from "./Client";
 import { Opportunity, OpportunityNotification } from "./Opportunity";
 import { OpportunityConfigurationStore } from "./Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
@@ -783,8 +784,7 @@ export class WorkflowsStore implements Hydratable {
   formatSupervisionLevel(levelId: string | undefined): string {
     return (
       this.supervisionLevels.find((opt) => opt.value === levelId)?.label ??
-      levelId ??
-      UNKNOWN
+      toTitleCase(levelId ?? UNKNOWN)
     );
   }
 
