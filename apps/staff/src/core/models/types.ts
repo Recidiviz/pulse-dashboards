@@ -49,6 +49,7 @@ import { VitalsMetric } from "../PageVitals/types";
 import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
 import { WorkflowsPage } from "../views";
+import { ClientDetailComponentName } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { TaskTableColumnId } from "../WorkflowsTasks/TasksTable";
 
 /**
@@ -131,6 +132,7 @@ export type WorkflowsTasksConfig = {
   };
   filters?: TaskFilterSection[];
   columns?: TaskTableColumnId[];
+  sideBarComponents?: ClientDetailComponentName[];
 };
 
 export type TaskFilterOption = {

@@ -63,6 +63,13 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
       "zip",
       "assignedTo",
     ],
+    sideBarComponents: [
+      "Supervision",
+      "Contact",
+      "UsNeORASScores",
+      "UsNeSpecialConditions",
+      "ActiveSentences",
+    ],
     filters: [
       {
         title: "Task Type",

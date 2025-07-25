@@ -74,7 +74,8 @@ export const ClientDetailSidebarComponents = {
   UsNeSpecialConditions,
 };
 
-type ClientDetailComponentName = keyof typeof ClientDetailSidebarComponents;
+export type ClientDetailComponentName =
+  keyof typeof ClientDetailSidebarComponents;
 
 export const OpportunityDetailSidebarComponents = {
   CaseNotes,

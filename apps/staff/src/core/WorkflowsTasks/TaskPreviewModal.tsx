@@ -18,6 +18,7 @@
 import { Sans12, spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
+import { Fragment } from "react";
 import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
@@ -26,13 +27,9 @@ import { useRootStore } from "../../components/StoreProvider";
 import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { CaseloadTasksPresenter } from "../../WorkflowsStore/presenters/CaseloadTasksPresenter";
 import { CaseloadTasksPresenterV2 } from "../../WorkflowsStore/presenters/CaseloadTasksPresenterV2";
-import {
-  Contact,
-  Milestones,
-  Supervision,
-} from "../WorkflowsJusticeInvolvedPersonProfile";
 import { Heading } from "../WorkflowsJusticeInvolvedPersonProfile/Heading";
 import { OpportunitiesAccordion } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunitiesAccordion";
+import { ClientDetailSidebarComponents } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { PreviewModalFooter } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfileFooter";
 import { WorkflowsPreviewModal } from "../WorkflowsPreviewModal";
 import { PreviewTasks } from "./PreviewTasks";
@@ -89,6 +86,7 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
 }) {
   const {
     workflowsStore: { selectedClient },
+    tenantStore: { tasksSidebarComponents },
   } = useRootStore();
 
   if (!selectedClient) return null;
@@ -98,6 +96,16 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
 
   const showFooter =
     presenter instanceof CaseloadTasksPresenterV2 && !presenter.showListView;
+
+  const sidebarComponents = tasksSidebarComponents.map((name, i) => {
+    const Component = ClientDetailSidebarComponents[name];
+    return (
+      <Fragment key={name}>
+        {i > 0 && <TaskItemDivider />}
+        <Component client={selectedClient} />
+      </Fragment>
+    );
+  });
 
   return (
     <WorkflowsPreviewModal
@@ -120,9 +128,7 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
             </>
           )}
           <TaskItemHeader>Client Details</TaskItemHeader>
-          <Supervision client={selectedClient} />
-          <Milestones client={selectedClient} />
-          <Contact client={selectedClient} />
+          {sidebarComponents}
         </article>
       }
       footerContent={

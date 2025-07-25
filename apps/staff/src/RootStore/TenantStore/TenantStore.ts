@@ -19,6 +19,7 @@ import { makeAutoObservable, when } from "mobx";
 import qs from "query-string";
 
 import { StaffFilter, WorkflowsTasksConfig } from "../../core/models/types";
+import { ClientDetailComponentName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
 import { CombinedUserRecord } from "../../FirestoreStore";
@@ -239,6 +240,16 @@ export default class TenantStore {
         "supervisionLevel",
         "caseType",
         "tasksDue",
+      ]
+    );
+  }
+
+  get tasksSidebarComponents(): ClientDetailComponentName[] {
+    return (
+      this.tasksConfiguration?.sideBarComponents ?? [
+        "Supervision",
+        "Milestones",
+        "Contact",
       ]
     );
   }
