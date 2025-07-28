@@ -30,6 +30,7 @@ import {
   Reason,
 } from "../..";
 import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTransitionProgramForm";
+import { convertStringToUTCDate } from "../../utils/dateUtils";
 import {
   UsAzReleaseToTPRUpdateRecord,
   UsAzReleaseToTransitionProgramOpportunityBase,
@@ -69,12 +70,14 @@ export class UsAzReleaseToDTPOpportunity extends UsAzReleaseToTransitionProgramO
     )
       return undefined;
 
-    const secondaryDate =
+    const secondaryDateString =
       metadata.acisDtpDate ??
       metadata.projectedDtpDate ??
       metadata.projectedTprDate;
 
-    return secondaryDate ? new Date(secondaryDate) : undefined;
+    return secondaryDateString
+      ? convertStringToUTCDate(secondaryDateString)
+      : undefined;
   }
 
   get requirementsMet(): OpportunityRequirement[] {
