@@ -18,6 +18,7 @@
 import { matchPath } from "react-router-dom";
 
 import { EdovoLandingPage } from "../routes/routes";
+import { windowIsIframe } from "./iframe";
 
 // we run under a custom edovo subdomain to pass through network filters
 export function isEdovoSubdomain() {
@@ -26,13 +27,21 @@ export function isEdovoSubdomain() {
 
 export function isEdovoEnv(): boolean {
   if (isEdovoSubdomain()) return true;
-  // testing environments may not iframe the custom domain URL
-  if (
-    window.parent !== window.top &&
-    // could be various domains under edovo.com or tedovo.com
-    window.parent.location.hostname.endsWith("edovo.com")
-  )
-    return true;
+
+  // wrapping in try/catch to avoid CORS errors in case we encounter a parent
+  // that doesn't allow us to access location.hostname (expected to be someone
+  // other than Edovo)
+  try {
+    // testing environments may not iframe the custom domain URL
+    if (
+      windowIsIframe() &&
+      // could be various domains under edovo.com or tedovo.com
+      window.parent.location.hostname.endsWith("edovo.com")
+    )
+      return true;
+  } catch {
+    // fall through
+  }
   // force the value if we are currently on the edovo landing page
   if (matchPath(EdovoLandingPage.path, window.location.pathname)) return true;
 

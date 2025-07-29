@@ -24,8 +24,6 @@ function edovoSubdomain() {
 }
 
 function edovoIframe() {
-  // iframe detection relies on these not being identical
-  vi.stubGlobal("top", { bar: true });
   vi.stubGlobal("parent", {
     foo: true,
     // the outer page also has to be edovo
@@ -36,7 +34,6 @@ function edovoIframe() {
 }
 
 function edovoTestIframe() {
-  vi.stubGlobal("top", { bar: true });
   vi.stubGlobal("parent", {
     foo: true,
 

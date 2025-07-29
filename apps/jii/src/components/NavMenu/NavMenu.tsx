@@ -31,6 +31,7 @@ import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
 
+import { windowIsIframe } from "../../utils/iframe";
 import { STICKY_HEADER_ZINDEX } from "../AppLayout/constants";
 import { PAGE_PADDING } from "../BaseLayout/BaseLayout";
 import { useRootStore } from "../StoreProvider/useRootStore";
@@ -136,6 +137,15 @@ export const NavMenu: FC<{ links?: Array<SimpleNavLinkProps> }> = memo(
       },
     } = useRootStore();
 
+    const showLogout: boolean =
+      // only an auth client enables logout functionality
+      !!authClient &&
+      // no logging out inside an iframe; we assume the parent window controls user session
+      !windowIsIframe();
+
+    // don't show a useless empty menu
+    if (!showLogout && links.length === 0) return null;
+
     return (
       <>
         <MenuButton
@@ -159,8 +169,14 @@ export const NavMenu: FC<{ links?: Array<SimpleNavLinkProps> }> = memo(
             {links.map((link) => (
               <NavLink key={link.to} {...link} />
             ))}
-            {authClient && (
-              <Button kind="link" onClick={() => authClient.logOut()}>
+            {showLogout && (
+              <Button
+                kind="link"
+                onClick={() =>
+                  // this shouldn't be undefined in practice because showLogout checks it
+                  authClient?.logOut()
+                }
+              >
                 Log out
               </Button>
             )}
