@@ -23,11 +23,9 @@ import {
   QueryDocumentSnapshot,
 } from "firebase-admin/firestore";
 import { defineString } from "firebase-functions/params";
-import { onSchedule } from "firebase-functions/v2/scheduler";
+import { onSchedule, ScheduleOptions } from "firebase-functions/v2/scheduler";
 
 import { formatDate } from "./utils";
-
-const schedule = "0 8 * * *"; // 0800 UTC is Midnight PST
 
 /**
  * Abstract class to export a set of data from Firebase on a schedule
@@ -42,6 +40,12 @@ export abstract class FirestoreExporter<T> {
   // The environment variable pointing to output bucket name
   protected abstract outputBucketEnvVar: string;
 
+  get scheduleOptions(): ScheduleOptions {
+    return {
+      schedule: "0 8 * * *", // 0800 UTC is Midnight PST
+    };
+  }
+
   /**
    * Creates the scheduled function that runs the backup once a day
    * This output of this method should be exported from the function file
@@ -52,7 +56,7 @@ export abstract class FirestoreExporter<T> {
     const storage = admin.storage();
     const bucket = defineString(this.outputBucketEnvVar).value();
 
-    return onSchedule(schedule, async () => {
+    return onSchedule(this.scheduleOptions, async () => {
       const baseQuery = this.docsQuery(admin.firestore());
 
       let lastDoc;

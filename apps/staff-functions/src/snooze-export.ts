@@ -21,6 +21,7 @@
  */
 import { add, isBefore, parseISO, startOfToday } from "date-fns";
 import { Firestore, QueryDocumentSnapshot } from "firebase-admin/firestore";
+import { ScheduleOptions } from "firebase-functions/v2/scheduler";
 
 import { FirestoreExporter } from "./FirestoreExporter";
 import { formatDate } from "./utils";
@@ -39,6 +40,14 @@ type SnoozeState = {
 
 class SnoozeExporter extends FirestoreExporter<SnoozeState> {
   outputBucketEnvVar = "SNOOZE_OUTPUT_BUCKET";
+
+  override get scheduleOptions(): ScheduleOptions {
+    return {
+      ...super.scheduleOptions,
+      timeoutSeconds: 300,
+      memory: "1GiB",
+    };
+  }
 
   docsQuery(db: Firestore) {
     return db
