@@ -132,16 +132,6 @@ export const usMaEGTCopy = {
         },
       },
     },
-    dateChanges: {
-      heading: "Release date changes in {{monthDisplayName}}",
-      rtsSummary:
-        "You earned {{pluralize 'days' totalRtsDateCreditDays true}} off your release-to-supervision date",
-      rtsTotal: " {{pluralize 'days' totalRtsDateCreditDays true}}",
-      maxSummary:
-        "You earned {{pluralize 'days' totalMaxDateCreditDays true}} off your maximum release / wrap date",
-      maxTotal: "{{pluralize 'days' totalMaxDateCreditDays true}}",
-      totalsLabel: "Total",
-    },
     achievements: {
       heading: "Achievements",
       maxEarnedTime: {

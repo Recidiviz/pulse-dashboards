@@ -97,14 +97,6 @@ export class UsMaEGTMonthlyReport {
     return this.getTotalCreditForCreditType("COMPLETION");
   }
 
-  get totalMaxDateCreditDays(): number {
-    return this.totalEGTCreditDays + this.totalBoostCreditDays;
-  }
-
-  get totalRtsDateCreditDays(): number {
-    return this.totalMaxDateCreditDays + this.totalCompletionCreditDays;
-  }
-
   get achievements(): Array<AchievementKey> {
     const achievementsToShow: Array<AchievementKey> = [];
     if (

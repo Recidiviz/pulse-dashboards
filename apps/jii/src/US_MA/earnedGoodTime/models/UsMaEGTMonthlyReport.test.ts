@@ -65,14 +65,6 @@ describe("credit reducers", () => {
   });
 });
 
-test("totalMaxDateCredits", () => {
-  expect(report.totalMaxDateCreditDays).toBe(25);
-});
-
-test("totalRtsDateCredits", () => {
-  expect(report.totalRtsDateCreditDays).toBe(55);
-});
-
 describe("achievements", () => {
   test("max earned time", () => {
     expect(report.achievements).toContain("maxEarnedTime");
@@ -111,6 +103,4 @@ test("empty report", () => {
   expect(report.totalCompletionCreditDays).toBe(0);
   expect(report.totalBoostCreditDays).toBe(0);
   expect(report.totalEGTCreditDays).toBe(0);
-  expect(report.totalMaxDateCreditDays).toBe(0);
-  expect(report.totalRtsDateCreditDays).toBe(0);
 });

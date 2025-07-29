@@ -33,7 +33,6 @@ import { reportSelectOptions } from "../Homepage/MonthlyReport/MonthlyReportPres
 import { MonthlyReportSelector } from "../Homepage/MonthlyReport/MonthlyReportSelector";
 import { Achievements } from "./Achievements";
 import { ActivityTable } from "./ActivityTable";
-import { CreditsByDate } from "./CreditsByDate";
 import { CreditsByTypeCard } from "./CreditsByTypeCard";
 import { MonthlyReportSectionHeading } from "./styles";
 
@@ -125,7 +124,6 @@ export const MonthlyReport = observer(function MonthlyReport() {
       {report.creditActivity.length > 0 && (
         <ActivityTable copy={copy} report={report} />
       )}
-      <CreditsByDate copy={copy} report={report} />
     </>
   );
 });
