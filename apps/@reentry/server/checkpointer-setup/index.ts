@@ -17,20 +17,14 @@
 
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 
-let checkpointer: PostgresSaver | undefined;
-
-export function getLangraphCheckpointerForStateCode(stateCode: string) {
-  const dbUrl = process.env[`INTAKE_LANGGRAPH_CHECKPOINTER_URL_${stateCode}`];
-
-  if (!dbUrl) {
-    throw Error(
-      `Attempted to access unsupported database for state ${stateCode}`,
-    );
+async function main() {
+  const databaseUrl = process.env["DATABASE_URL"];
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL environment variable is not set.");
   }
 
-  if (!checkpointer) {
-    checkpointer = PostgresSaver.fromConnString(dbUrl);
-  }
-
-  return checkpointer;
+  const checkpointer = PostgresSaver.fromConnString(databaseUrl);
+  await checkpointer.setup();
 }
+
+main();

@@ -10,9 +10,10 @@ ENV PORT=8080
 RUN apt-get update -y && apt-get install -y openssl
 RUN apt-get install dumb-init
 
-# Copy over the scripts since they should rarely be changed
+# Copy over the scripts and checkpointer-setup since they should rarely be changed
 COPY dist/apps/@reentry/server/scripts ./scripts
 RUN chmod +x scripts/*.sh
+COPY dist/apps/@reentry/server/checkpointer-setup ./checkpointer-setup
 
 # Enable corepack so newer versions of yarn can be installed
 RUN corepack enable
