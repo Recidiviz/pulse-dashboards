@@ -94,7 +94,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   // until the denial is submitted.
   const initialDenialReasons =
     isIaEDOpportunity && opportunity.latestAction?.type === "DENIAL"
-      ? opportunity.latestAction.denialReasons
+      ? opportunity?.denial?.reasons ?? opportunity.latestAction.denialReasons
       : opportunity?.denial?.reasons;
 
   const [reasons, setReasons] = useState<string[]>(initialDenialReasons ?? []);
