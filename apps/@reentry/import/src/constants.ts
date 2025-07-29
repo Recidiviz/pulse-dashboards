@@ -15,10 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  clientImportSchema,
-  staffImportSchema,
-} from "~@reentry/import/models";
+import { clientImportSchema, staffImportSchema } from "~@reentry/import/models";
 import { transformAndLoadClientData } from "~@reentry/import/utils/clients";
 import { transformAndLoadStaffData } from "~@reentry/import/utils/staff";
 

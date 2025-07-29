@@ -18,6 +18,8 @@
 import jwt from "jsonwebtoken";
 
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
+import { Prisma, StateCode } from "~@reentry/prisma/client";
+import { verifyGoogleIdToken } from "~@reentry/server/server/utils";
 import { appRouter, createContext } from "~@reentry/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 
@@ -28,6 +30,12 @@ interface IQuerystring {
   birthDay: string;
   birthMonth: string;
   birthYear: string;
+}
+
+interface ToggleIntakeBody {
+  stateCode: string;
+  clientPseudoId: string;
+  enable: boolean;
 }
 
 export function buildServer() {
@@ -49,9 +57,9 @@ export function buildServer() {
   server.get<{
     Querystring: IQuerystring;
   }>("/get-intake-token", async (req, res) => {
-    const secretKey = process.env["AUTH0_INTAKE_PRIVATE_KEY"];
+    const secretKey = process.env["INTAKE_PRIVATE_JWT_KEY"];
     if (!secretKey) {
-      res.status(500).send("AUTH0_INTAKE_PRIVATE_KEY is not set");
+      res.status(500).send("INTAKE_PRIVATE_JWT_KEY is not set");
       return;
     }
 
@@ -89,6 +97,57 @@ export function buildServer() {
     );
 
     return token;
+  });
+
+  server.post<{
+    Body: ToggleIntakeBody;
+  }>("/toogle-enable-intake", async (req, res) => {
+    const { stateCode, clientPseudoId, enable } = req.body;
+
+    const allowedEmail = process.env["ALLOWED_GOOGLE_EMAIL"];
+
+    if (!allowedEmail) {
+      res.status(500).send("ALLOWED_GOOGLE_EMAIL is not set");
+      return;
+    }
+
+    try {
+      await verifyGoogleIdToken(req.headers.authorization, allowedEmail);
+    } catch (e) {
+      let message = e;
+      if (e instanceof Error) {
+        message = e.message;
+      }
+
+      res.status(401).send(message);
+    }
+
+    if (!Object.values(StateCode).includes(stateCode as StateCode)) {
+      res.status(404).send("Invalid state code");
+      return;
+    }
+
+    const prisma = getPrismaClientForStateCode(req.body.stateCode);
+
+    try {
+      await prisma.client.update({
+        where: {
+          stateCode: stateCode as StateCode,
+          pseudonymizedId: clientPseudoId,
+        },
+        data: {
+          intakeEnabled: enable,
+        },
+      });
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === "P2025"
+      ) {
+        res.status(404).send("Client not found");
+        return;
+      }
+    }
   });
 
   return server;

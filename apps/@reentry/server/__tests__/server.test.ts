@@ -18,7 +18,11 @@
 import jwt from "jsonwebtoken";
 import { describe, expect, test } from "vitest";
 
-import { testPrismaClient, testServer } from "~@reentry/server/test/setup";
+import {
+  setGetPayloadImp,
+  testPrismaClient,
+  testServer,
+} from "~@reentry/server/test/setup";
 import { fakeClient } from "~@reentry/server/test/setup/seed";
 
 describe("search", () => {
@@ -41,14 +45,13 @@ describe("search", () => {
 
       expect(token).toBeDefined();
 
-      if (!process.env["AUTH0_INTAKE_PRIVATE_KEY"]) {
-        throw new Error("AUTH0_INTAKE_PRIVATE_KEY is not set");
+      const privateKey = process.env["INTAKE_PRIVATE_JWT_KEY"];
+
+      if (!privateKey) {
+        throw new Error("INTAKE_PRIVATE_JWT_KEY is not set");
       }
 
-      const decoded = jwt.verify(
-        token,
-        process.env["AUTH0_INTAKE_PRIVATE_KEY"],
-      );
+      const decoded = jwt.verify(token, privateKey);
 
       expect(decoded).toBeDefined();
       expect(decoded).toEqual({
@@ -99,6 +102,191 @@ describe("search", () => {
       });
 
       expect(response.statusCode).toBe(403);
+    });
+  });
+
+  describe("/toogle-enable-intake", () => {
+    describe("auth fails", () => {
+      test("should throw error if there is no token", async () => {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/toogle-enable-intake",
+          payload: {
+            stateCode: fakeClient.stateCode,
+            clientPseudoId: fakeClient.pseudonymizedId,
+            enable: true,
+          },
+        });
+
+        expect(response).toMatchObject({
+          statusCode: 401,
+          statusMessage: "Unauthorized",
+        });
+      });
+
+      test("should throw error if there is no token payload", async () => {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/toogle-enable-intake",
+          payload: {
+            stateCode: fakeClient.stateCode,
+            clientPseudoId: fakeClient.pseudonymizedId,
+            enable: true,
+          },
+          headers: { authorization: `Bearer token` },
+        });
+
+        expect(response).toMatchObject({
+          statusCode: 401,
+          statusMessage: "Unauthorized",
+        });
+      });
+
+      test("should throw error if email is not verified", async () => {
+        setGetPayloadImp(
+          vi.fn().mockReturnValue({
+            email_verified: false,
+          }),
+        );
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/toogle-enable-intake",
+          payload: {
+            stateCode: fakeClient.stateCode,
+            clientPseudoId: fakeClient.pseudonymizedId,
+            enable: true,
+          },
+          headers: { authorization: `Bearer token` },
+        });
+
+        expect(response).toMatchObject({
+          statusCode: 401,
+          statusMessage: "Unauthorized",
+        });
+      });
+
+      test("should throw error if there is no email", async () => {
+        setGetPayloadImp(
+          vi.fn().mockReturnValue({
+            email_verified: true,
+            email: undefined,
+          }),
+        );
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/toogle-enable-intake",
+          payload: {
+            stateCode: fakeClient.stateCode,
+            clientPseudoId: fakeClient.pseudonymizedId,
+            enable: true,
+          },
+          headers: { authorization: `Bearer token` },
+        });
+
+        expect(response).toMatchObject({
+          statusCode: 401,
+          statusMessage: "Unauthorized",
+        });
+      });
+
+      test("should throw error if email doesn't match expected", async () => {
+        setGetPayloadImp(
+          vi.fn().mockReturnValue({
+            email_verified: true,
+            email: "not-the-right-email@gmail.com",
+          }),
+        );
+
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/toogle-enable-intake",
+          payload: {
+            stateCode: fakeClient.stateCode,
+            clientPseudoId: fakeClient.pseudonymizedId,
+            enable: true,
+          },
+          headers: { authorization: `Bearer token` },
+        });
+
+        expect(response).toMatchObject({
+          statusCode: 401,
+          statusMessage: "Unauthorized",
+        });
+      });
+    });
+
+    describe("auth works", () => {
+      beforeEach(() => {
+        setGetPayloadImp(
+          vi.fn().mockReturnValue({
+            email_verified: true,
+            email: "test-handle-import-email@fake.com",
+          }),
+        );
+      });
+
+      test("should throw error if state code is invalid", async () => {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/toogle-enable-intake",
+          payload: {
+            stateCode: "INVALID_STATE_CODE",
+            clientPseudoId: fakeClient.pseudonymizedId,
+            enable: true,
+          },
+          headers: { authorization: `Bearer token` },
+        });
+
+        expect(response).toMatchObject({
+          statusCode: 404,
+          statusMessage: "Not Found",
+        });
+      });
+
+      test("should throw error if client is not found", async () => {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/toogle-enable-intake",
+          payload: {
+            stateCode: fakeClient.stateCode,
+            clientPseudoId: "nonexistent-client-pseudo-id",
+            enable: true,
+          },
+          headers: { authorization: `Bearer token` },
+        });
+
+        expect(response).toMatchObject({
+          statusCode: 404,
+          statusMessage: "Not Found",
+        });
+      });
+
+      test("should work if all information is valid", async () => {
+        const response = await testServer.inject({
+          method: "POST",
+          url: "/toogle-enable-intake",
+          payload: {
+            stateCode: fakeClient.stateCode,
+            clientPseudoId: fakeClient.pseudonymizedId,
+            enable: false,
+          },
+          headers: { authorization: `Bearer token` },
+        });
+
+        expect(response.statusCode).toBe(200);
+
+        const updatedClient = await testPrismaClient.client.findUnique({
+          where: {
+            pseudonymizedId: fakeClient.pseudonymizedId,
+          },
+        });
+
+        expect(updatedClient).toMatchObject({
+          intakeEnabled: false,
+        });
+      });
     });
   });
 });

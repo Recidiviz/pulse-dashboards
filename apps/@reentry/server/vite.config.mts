@@ -59,8 +59,13 @@ export default defineConfig({
         process.env["SENTRY_DSN"] ??
         "https://83072d6dfc09bb6ad83c79324f7953bb@o432474.ingest.us.sentry.io/4509667951968256",
       SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
-      AUTH0_INTAKE_PRIVATE_KEY:
-        process.env["AUTH0_INTAKE_PRIVATE_KEY"] ?? "noop",
+      INTAKE_PRIVATE_JWT_KEY:
+        process.env["INTAKE_PRIVATE_JWT_KEY"] ??
+        // This JWT secret is only used for testing purposes
+        "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",
+      ALLOWED_GOOGLE_EMAIL:
+        process.env["ALLOWED_GOOGLE_EMAIL"] ??
+        "test-handle-import-email@fake.com",
     },
   },
 });

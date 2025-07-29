@@ -39,6 +39,22 @@ export { testkit };
 
 export let testServer: FastifyInstance;
 
+export let getPayloadImp = vi.fn();
+
+export function setGetPayloadImp(fn: typeof getPayloadImp) {
+  getPayloadImp = fn;
+}
+
+vi.mock("google-auth-library", () => ({
+  OAuth2Client: vi.fn().mockImplementation(() => {
+    return {
+      verifyIdToken: vi.fn().mockResolvedValue({
+        getPayload: getPayloadImp,
+      }),
+    };
+  }),
+}));
+
 beforeAll(async () => {
   init({
     dsn: process.env["SENTRY_DSN"],
