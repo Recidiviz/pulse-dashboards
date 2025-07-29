@@ -107,3 +107,15 @@ variable "migrate_db_env_key" {
   type        = string
   description = "The key for the migrate db env"
 }
+
+variable "data_import_env_key" {
+  type        = string
+  description = "The key for the import data env"
+  default     = null
+}
+
+variable "import_container_version" {
+  type        = string
+  description = "The version tag of the image that will deployed for the import job"
+  default     = "latest"
+}

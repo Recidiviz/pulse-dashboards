@@ -33,3 +33,4 @@ components:
         artifact_registry_project_id: "{{ .settings.context.project_id }}"
         server_env_key: env_staging_reentry_server
         migrate_db_env_key: env_staging_reentry_migrate_db
+        data_import_env_key: env_staging_reentry_data_import

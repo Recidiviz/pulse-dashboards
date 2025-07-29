@@ -1,0 +1,59 @@
+# This Workflow takes the state code and executes the reentry-import job with the state code as an environment variable.
+
+main:
+  params: [event]
+  steps:
+    - decode_pubsub_message:
+        assign:
+          - base64: ${base64.decode(event.data.message.data)}
+          - message: ${json.decode(base64)}
+    - init:
+        assign:
+          - state_code: ${message.state_code}
+          - job_name: ${sys.get_env("JOB_NAME")}
+          - project_id: ${sys.get_env("PROJECT_ID")}
+          - current_date_str: ${text.substring(time.format(sys.now()), 0, 10)}
+          - archive_bucket_id: ${sys.get_env("ARCHIVE_BUCKET_ID")}
+          - etl_bucket_id: ${sys.get_env("ETL_BUCKET_ID")}
+    - run_job:
+        # Trigger the import cloud run job
+        # If there is a timeout error, ignore it and move onto the next step
+        # Fail on any other errors
+        try:
+          call: googleapis.run.v2.projects.locations.jobs.run
+          args:
+            name: ${job_name}
+            body:
+              overrides:
+                containerOverrides:
+                  env:
+                    - name: STATE_CODE
+                      value: ${state_code}
+          result: job_execution
+        except:
+          as: e
+          steps:
+            - known_errors:
+                switch:
+                  - condition: ${"TimeoutError" in e.tags}
+                    steps:
+                      - log_error:
+                          call: sys.log
+                          args:
+                            data: "Timed out waiting for the job to finish. This is likely not an issue. Moving on to the next step, please check the status of the job."
+                    next: archive_etl_data
+            - unhandled_exception:
+                raise: ${e}
+    - archive_etl_data:
+        call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.run
+        args:
+          workflow_id: archive-files
+          location: us-central1
+          project_id: ${project_id}
+          argument:
+            state_code: ${state_code}
+            etl_bucket_id: ${etl_bucket_id}
+            archive_bucket_id: ${archive_bucket_id}
+            current_date_str: ${current_date_str}
+    - finish:
+        return: ${job_execution}
