@@ -139,93 +139,9 @@ describe("CaseloadTasksPresenterV2", () => {
     });
 
     it("returns taskCategories in the same order as in the tenant store", () => {
-      expect(presenter.taskCategories).toEqual(mockTenantStore.taskCategories);
-    });
-  });
-
-  describe("displayedTaskCategories", () => {
-    beforeEach(() => {
-      // Setup workflowsStore with various task scenarios
-      const workflowsStore = {
-        ...mockWorkflowsStore,
-        caseloadPersons: [
-          // Add a person with tasks that are overdue
-          makePersonWithTasks(["employment"], {
-            dateOffset: -7,
-            overdue: true,
-          }),
-          // Add a person with tasks due this week (not overdue)
-          makePersonWithTasks(["assessment"], { dateOffset: 2 }),
-          // Add a person with tasks due this month (but not this week)
-          makePersonWithTasks(["homeVisit"], { dateOffset: 12 }),
-        ],
-      } as any as WorkflowsStore;
-
-      presenter = getPresenter({ workflowsStore });
-    });
-
-    it("always includes non-conditional categories regardless of task count", () => {
-      const result = presenter.displayedTaskCategories;
-
-      // ALL_TASKS, OVERDUE, DUE_THIS_WEEK, and DUE_THIS_MONTH should always be included
-      expect(result).toContain("ALL_TASKS");
-      expect(result).toContain("OVERDUE");
-      expect(result).toContain("DUE_THIS_WEEK");
-      expect(result).toContain("DUE_THIS_MONTH");
-    });
-
-    it("excludes CONDITIONAL_TASK_CATEGORIES with no tasks", () => {
-      // Since we haven't created any tasks for the next month, DUE_NEXT_MONTH should be excluded
-      expect(presenter.displayedTaskCategories).not.toContain("DUE_NEXT_MONTH");
-
-      // Similarly, since we haven't created any hidden tasks, HIDDEN should be excluded
-      expect(presenter.displayedTaskCategories).not.toContain("HIDDEN");
-    });
-
-    it("includes conditional categories when they have tasks", () => {
-      // Create a new presenter with a person that has a task due next month
-      const workflowsStoreWithNextMonth = {
-        ...mockWorkflowsStore,
-        caseloadPersons: [
-          // Task due next month (current month + 1)
-          makePersonWithTasks(["contact"], { dateOffset: 35 }),
-        ],
-      } as any as WorkflowsStore;
-
-      const presenterWithNextMonth = getPresenter({
-        workflowsStore: workflowsStoreWithNextMonth,
-      });
-
-      // Now DUE_NEXT_MONTH should be included since there's a task due next month
-      expect(presenterWithNextMonth.displayedTaskCategories).toContain(
-        "DUE_NEXT_MONTH",
+      expect(presenter.displayedTaskCategories).toEqual(
+        mockTenantStore.taskCategories,
       );
-    });
-
-    it("includes HIDDEN category when there are snoozed tasks", () => {
-      // Create a person with snoozed tasks to test HIDDEN category
-      const person = makePersonWithTasks(["contact"], { dateOffset: 1 });
-
-      // Add snoozed property to the tasks
-      if (person.supervisionTasks) {
-        person.supervisionTasks.orderedTasks =
-          person.supervisionTasks.orderedTasks.map((task) => ({
-            ...task,
-            isSnoozed: true,
-          }));
-      }
-
-      const workflowsStoreWithHidden = {
-        ...mockWorkflowsStore,
-        caseloadPersons: [person],
-      } as any as WorkflowsStore;
-
-      const presenterWithHidden = getPresenter({
-        workflowsStore: workflowsStoreWithHidden,
-      });
-
-      // HIDDEN should be included since there are snoozed tasks
-      expect(presenterWithHidden.displayedTaskCategories).toContain("HIDDEN");
     });
   });
 

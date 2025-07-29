@@ -83,23 +83,6 @@ function getPresenter({
 }
 
 describe("CaseloadTasksPresenter", () => {
-  describe("taskCategories", () => {
-    beforeEach(() => {
-      presenter = getPresenter({});
-    });
-
-    it("returns taskCategories in the same order as in the tenant store", () => {
-      expect(presenter.taskCategories).toEqual(mockTenantStore.taskCategories);
-    });
-
-    it("prepends 'ALL_TASKS_OLD' to categories supplied by the store for displaying categories", () => {
-      expect(presenter.displayedTaskCategories).toEqual([
-        "ALL_TASKS_OLD",
-        ...mockTenantStore.taskCategories,
-      ]);
-    });
-  });
-
   describe("selectedTaskCategory", () => {
     beforeEach(() => {
       presenter = getPresenter({});

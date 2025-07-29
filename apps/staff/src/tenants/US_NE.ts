@@ -51,6 +51,13 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
         snoozeForOptionsInDays: [7, 30, 90],
       },
     },
+    categories: [
+      "ALL_TASKS",
+      "OVERDUE",
+      "DUE_THIS_MONTH",
+      "DUE_NEXT_MONTH",
+      "HIDDEN",
+    ],
     columns: [
       "name",
       "id",

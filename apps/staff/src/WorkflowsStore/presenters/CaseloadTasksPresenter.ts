@@ -74,13 +74,9 @@ export class CaseloadTasksPresenter {
     return tasksConfiguration;
   }
 
-  get taskCategories(): SupervisionTaskCategory[] {
-    return this.tenantStore.taskCategories;
-  }
-
   // Categories used in the original tasks view in ID
   get displayedTaskCategories(): SupervisionTaskCategory[] {
-    return ["ALL_TASKS_OLD", ...this.taskCategories];
+    return this.tenantStore.taskCategories;
   }
 
   get selectedTaskCategory(): SupervisionTaskCategory {

@@ -30,11 +30,6 @@ export const TEMPORAL_TASK_CATEGORIES = [
   "HIDDEN",
 ] as const;
 
-export const CONDITIONAL_TASK_CATEGORIES: SupervisionTaskCategory[] = [
-  "DUE_NEXT_MONTH",
-  "HIDDEN",
-];
-
 export const SUPERVISION_TASK_CATEGORIES = [
   "ALL_TASKS_OLD",
   ...TEMPORAL_TASK_CATEGORIES,

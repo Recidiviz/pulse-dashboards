@@ -61,6 +61,13 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
         snoozeForOptionsInDays: [7, 30, 90],
       },
     },
+    categories: [
+      "ALL_TASKS_OLD",
+      "assessment",
+      "contact",
+      "homeVisit",
+      "employment",
+    ],
     filters: [
       {
         title: "Supervision Level",

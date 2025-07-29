@@ -267,23 +267,6 @@ describe("TenantStore", () => {
       vi.resetAllMocks();
     });
 
-    it("preserves the order of task types in workflowsTasksConfig", () => {
-      const mockRootStore = createMockRootStore({
-        userIsLoading: false,
-        userHasAccess: () => true,
-        availableStateCodes: ["US_TASKS"],
-        user: {
-          [metadataField]: { stateCode: "US_TASKS" },
-          email_verified: true,
-        },
-      });
-      tenantStore = new TenantStore({
-        rootStore: mockRootStore,
-        tenantConfigs: mockTenantConfigs,
-      });
-      expect(tenantStore.taskCategories).toEqual(["task1", "task4", "task2"]);
-    });
-
     it("returns a sane default when tasks are not configured", () => {
       const mockRootStore = createMockRootStore({
         userIsLoading: false,
@@ -298,7 +281,12 @@ describe("TenantStore", () => {
         rootStore: mockRootStore,
         tenantConfigs: mockTenantConfigs,
       });
-      expect(tenantStore.taskCategories).toEqual([]);
+      expect(tenantStore.taskCategories).toEqual([
+        "ALL_TASKS",
+        "OVERDUE",
+        "DUE_THIS_WEEK",
+        "DUE_THIS_MONTH",
+      ]);
     });
   });
 });

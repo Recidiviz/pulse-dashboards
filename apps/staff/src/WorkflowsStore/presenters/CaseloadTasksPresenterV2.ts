@@ -28,11 +28,7 @@ import {
   TaskFilterType,
   WorkflowsTasksConfig,
 } from "../../core/models/types";
-import {
-  CONDITIONAL_TASK_CATEGORIES,
-  SupervisionTaskCategory,
-  TEMPORAL_TASK_CATEGORIES,
-} from "../../core/WorkflowsTasks/fixtures";
+import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
 import FirestoreStore from "../../FirestoreStore";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
@@ -114,10 +110,6 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     return tasksConfiguration;
   }
 
-  get taskCategories(): SupervisionTaskCategory[] {
-    return this.tenantStore.taskCategories;
-  }
-
   get emptyTabText() {
     // "caseload" or "caseloads"
     const caseloadTerm = pluralizeWord({
@@ -143,11 +135,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
 
   // Tab categories used in the new tasks view
   get displayedTaskCategories(): SupervisionTaskCategory[] {
-    return TEMPORAL_TASK_CATEGORIES.filter(
-      (category) =>
-        !CONDITIONAL_TASK_CATEGORIES.includes(category) ||
-        this.countForCategory(category) > 0,
-    );
+    return this.tenantStore.taskCategories;
   }
 
   get selectedTaskCategory(): SupervisionTaskCategory {
@@ -301,7 +289,7 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     if (!matchesPeopleFilters) return false;
 
     // return true if the person has any tasks that match the filters
-    return some(person.supervisionTasks?.readyOrderedTasks ?? [], (task) =>
+    return some(person.supervisionTasks?.orderedTasks ?? [], (task) =>
       this.taskMatchesFilters(task),
     );
   }

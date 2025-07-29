@@ -50,6 +50,7 @@ import { TableColumns } from "../types/charts";
 import { Navigation } from "../types/navigation";
 import { WorkflowsPage } from "../views";
 import { ClientDetailComponentName } from "../WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
+import { SupervisionTaskCategory } from "../WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../WorkflowsTasks/TasksTable";
 
 /**
@@ -133,6 +134,7 @@ export type WorkflowsTasksConfig = {
   filters?: TaskFilterSection[];
   columns?: TaskTableColumnId[];
   sideBarComponents?: ClientDetailComponentName[];
+  categories?: SupervisionTaskCategory[];
 };
 
 export type TaskFilterOption = {

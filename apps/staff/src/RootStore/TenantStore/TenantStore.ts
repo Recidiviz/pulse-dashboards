@@ -217,10 +217,14 @@ export default class TenantStore {
   }
 
   get taskCategories(): SupervisionTaskCategory[] {
-    const { tasksConfiguration } = this;
-    // Object.keys just makes the type string[] even if they keys are restricted
-    // @ts-expect-error
-    return Object.keys(tasksConfiguration?.tasks ?? {});
+    return (
+      this.tasksConfiguration?.categories ?? [
+        "ALL_TASKS",
+        "OVERDUE",
+        "DUE_THIS_WEEK",
+        "DUE_THIS_MONTH",
+      ]
+    );
   }
 
   get tasksConfiguration(): WorkflowsTasksConfig | undefined {
