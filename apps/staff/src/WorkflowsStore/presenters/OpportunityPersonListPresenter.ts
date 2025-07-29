@@ -26,6 +26,7 @@ import { OpportunityType } from "~datatypes";
 
 import { OpportunityTableColumnId } from "../../core/OpportunityCaseloadView/HydratedOpportunityPersonList";
 import { insightsUrl, workflowsUrl } from "../../core/views";
+import { formatSupervisionEndDatePhrase } from "../../core/WorkflowsJusticeInvolvedPersonProfile/utils";
 import FirestoreStore, { UserUpdateRecord } from "../../FirestoreStore";
 import { SupervisionOpportunityPresenter } from "../../InsightsStore/presenters/SupervisionOpportunityPresenter";
 import AnalyticsStore from "../../RootStore/AnalyticsStore";
@@ -390,7 +391,9 @@ export class OpportunityPersonListPresenter
 
   get supervisionEndHeader() {
     // Header text for the "supervision end date" column in table view
-    return this.tenantStore.labels.supervisionEndDateCopy;
+    return formatSupervisionEndDatePhrase(
+      this.tenantStore.labels.supervisionEndDateCopy,
+    );
   }
 
   get submittedForHeader() {

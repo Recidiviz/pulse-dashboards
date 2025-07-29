@@ -302,7 +302,8 @@ export default class TenantStore {
       ? this.tenantConfigs[this.currentTenantId]
       : undefined;
     return {
-      releaseDateCopy: config?.releaseDateCopyOverride ?? "Release",
+      releaseDateCopy:
+        config?.releaseDateCopyOverride ?? "Full-term Release Date",
       supervisionEndDateCopy: config?.supervisionEndCopyOverride ?? "End",
       incarcerationStaffTitle:
         config?.incarcerationStaffTitleOverride ?? "Case Manager",
