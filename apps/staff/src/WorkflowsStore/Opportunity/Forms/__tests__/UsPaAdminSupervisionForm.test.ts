@@ -18,6 +18,8 @@
 import { configure } from "mobx";
 import tk from "timekeeper";
 
+import { StaffRecord } from "~datatypes";
+
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
 import { UsPaAdminSupervisionOpportunity } from "../../UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionOpportunity";
@@ -70,6 +72,13 @@ function createTestUnit() {
   };
   const person = new Client(personRecord, rootStore);
   opp = new UsPaAdminSupervisionOpportunity(person, oppRecord);
+  vi.spyOn(
+    rootStore.workflowsStore,
+    "availableOfficers",
+    "get",
+  ).mockImplementation(() => [
+    { givenNames: "John", surname: "Doe", id: "OFFICER1" } as StaffRecord,
+  ]);
   form = opp.form;
 }
 
@@ -92,6 +101,7 @@ describe("prefilledDataTransformer", () => {
   test("basic transformation", () => {
     expect(form.prefilledDataTransformer()).toMatchInlineSnapshot(`
       {
+        "agentName": "John Doe",
         "charge780_11314": false,
         "charge780_11330": true,
         "charge780_11337": false,

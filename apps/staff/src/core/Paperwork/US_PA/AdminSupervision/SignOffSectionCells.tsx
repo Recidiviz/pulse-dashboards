@@ -18,7 +18,9 @@
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { BLUE_BACKGROUND } from "./constants";
+import { UsPaAdminSupervisionDraftData } from "../../../../WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
+import DOCXFormInput from "../../DOCXFormInput";
+import { BLUE_BACKGROUND, FormDataType } from "./constants";
 
 export const EligibilityCell = styled.div`
   grid-area: 1 / 1 / span 2 / end;
@@ -45,6 +47,7 @@ const SignatureCell = styled.div<{ column: number }>`
   grid-area: 3 / ${({ column }) => column} / span 2 / span 1;
   border: 0.5px solid black;
   border-top: 0;
+  text-align: center;
 `;
 const LabelCell = styled.div<{ column: number }>`
   grid-area: 5 / ${({ column }) => column} / span 1 / span 1;
@@ -59,12 +62,20 @@ const LabelCell = styled.div<{ column: number }>`
 type SignOffCellProps = {
   column: number;
   label: string;
+  field?: keyof FormDataType;
 };
 
-export const SignOffCell = ({ column, label }: SignOffCellProps) => {
+export const SignOffCell = ({ column, label, field }: SignOffCellProps) => {
   return (
     <>
-      <SignatureCell column={column} />
+      <SignatureCell column={column}>
+        {field && (
+          <DOCXFormInput<UsPaAdminSupervisionDraftData>
+            name={field}
+            style={{ maxWidth: "160px" }}
+          />
+        )}
+      </SignatureCell>
       <LabelCell column={column}>{label}</LabelCell>
     </>
   );

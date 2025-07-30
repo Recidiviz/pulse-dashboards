@@ -42,6 +42,7 @@ export class UsPaAdminSupervisionForm extends FormBase<
       fullName: { givenNames, surname },
       externalId: paroleNumber,
       supervisionLevel: currentGradeOfSupervisionLevel,
+      assignedStaff,
     } = this.person;
 
     const {
@@ -54,6 +55,10 @@ export class UsPaAdminSupervisionForm extends FormBase<
         drugUnreportedDisposition: noDispositionPADrugCharge,
       },
     } = this.opportunity.record;
+
+    const agentName = assignedStaff
+      ? `${assignedStaff.givenNames} ${assignedStaff.surname}`
+      : "";
 
     const reentrantName = `${surname}, ${givenNames}`;
 
@@ -75,6 +80,7 @@ export class UsPaAdminSupervisionForm extends FormBase<
       charge780_11337,
       unreportedPersonalInjuryDispositions: false,
       noDispositionPADrugCharge,
+      agentName,
     };
   }
 }

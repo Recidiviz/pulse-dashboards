@@ -114,4 +114,5 @@ export type UsPaAdminSupervisionDraftData = {
   unclearRecords: boolean;
   enhancedSupervisionLevelPast12Months: boolean;
   maximumSupervisionLevelPast12Months: boolean;
+  agentName: string;
 };

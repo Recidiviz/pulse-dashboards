@@ -217,6 +217,23 @@ export const OTHER_OFFENSE_LABEL_INFO: LabelInfo[] = [
   },
 ];
 
+export const SIGN_OFF_LABEL_INFO: {
+  label: string;
+  column: number;
+  field?: Extract<keyof FormDataType, string>;
+}[] = [
+  {
+    label: "Agent Name (Printed)",
+    column: 1,
+    field: "agentName",
+  },
+  {
+    label: "Agent Signature",
+    column: 3,
+    field: undefined,
+  },
+];
+
 export const CRITERIA_LABELS: LabelInfo[] = [
   {
     label: "Incurred a high sanction within the past year",
@@ -251,8 +268,6 @@ export const strings = {
   dispositionHeader: `Are there any unreported dispositions in the reentrant's criminal history for any of the above listed personal injury crimes/other offenses? (Note date/offense below)`,
   eligibilityHeader: `Eligible for Administrative Parole?`,
   dispositionNotes: `List unreported disposition information:`,
-  agentSignature: `Agent Signature`,
-  agentName: `Agent Name (Printed)`,
   footer: `DC-P 402 | rvsd. 04.2025`,
   addendumFooter: `DC-P 402A | rvsd. 01.2024`,
 } as const;

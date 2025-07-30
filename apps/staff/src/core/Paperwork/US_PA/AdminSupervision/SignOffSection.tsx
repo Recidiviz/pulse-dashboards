@@ -19,7 +19,7 @@ import { rem } from "polished";
 import * as React from "react";
 import styled from "styled-components/macro";
 
-import { strings } from "./constants";
+import { SIGN_OFF_LABEL_INFO, strings } from "./constants";
 import FormCheckbox from "./FormCheckbox";
 import {
   DispositionCell,
@@ -58,8 +58,14 @@ const SignOffSection: React.FC = () => {
         />
         NO
       </EligibilityCell>
-      <SignOffCell column={1} label={strings.agentName} />
-      <SignOffCell column={3} label={strings.agentSignature} />
+      {SIGN_OFF_LABEL_INFO.map((info, n) => (
+        <SignOffCell
+          key={info.field}
+          label={info.label}
+          column={info.column}
+          field={info.field}
+        />
+      ))}
       <DispositionCell>{strings.dispositionNotes}</DispositionCell>
       <SeparatorColumn />
     </ContentContainer>
