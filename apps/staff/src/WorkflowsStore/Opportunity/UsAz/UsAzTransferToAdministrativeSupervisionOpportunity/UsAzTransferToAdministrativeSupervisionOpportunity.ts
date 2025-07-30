@@ -54,7 +54,7 @@ export class UsAzTransferToAdministrativeSupervisionOpportunity extends Opportun
       this.almostEligible &&
       this.record.metadata.tabDescription === "MAYBE_ELIGIBLE"
     ) {
-      return "May be eligible";
+      return "Maybe eligible";
     }
 
     // For all other cases, use the parent class logic
