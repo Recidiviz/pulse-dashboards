@@ -150,4 +150,19 @@ export class UsAzReleaseToDTPOpportunity extends UsAzReleaseToTransitionProgramO
   get customStatusPalette(): StatusPalette | undefined {
     return OPPORTUNITY_STATUS_COLORS.eligibleOverride;
   }
+
+  eligibilityStatusLabel(includeReasons?: boolean): string | null {
+    // Show "Marked Incorrect" instead of "Currently ineligible"
+    if (this.denial?.reasons.length) {
+      const statusText = "Marked Incorrect";
+      const withReasons = includeReasons
+        ? ` (${this.denial.reasons.join(", ")})`
+        : "";
+
+      return `${statusText}${withReasons}`;
+    }
+
+    // For all other cases, use the parent class logic
+    return super.eligibilityStatusLabel(includeReasons);
+  }
 }

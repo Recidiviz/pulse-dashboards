@@ -94,6 +94,21 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
     );
   }
 
+  eligibilityStatusLabel(includeReasons?: boolean): string | null {
+    // Show "Marked Incorrect" instead of "Currently ineligible"
+    if (this.denial?.reasons.length) {
+      const statusText = "Marked Incorrect";
+      const withReasons = includeReasons
+        ? ` (${this.denial.reasons.join(", ")})`
+        : "";
+
+      return `${statusText}${withReasons}`;
+    }
+
+    // For all other cases, use the parent class logic
+    return super.eligibilityStatusLabel(includeReasons);
+  }
+
   get requirementsAlmostMet(): OpportunityRequirement[] {
     if (
       this.record.ineligibleCriteria.usAzWithin7DaysOfRecidivizTprDate &&
