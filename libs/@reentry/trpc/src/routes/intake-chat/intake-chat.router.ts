@@ -15,42 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck Need to fix typing in followup
-
 import { AIMessage } from "@langchain/core/messages";
 import { tracked, TRPCError } from "@trpc/server";
 import EventEmitter, { on } from "events";
 
-import {
-  getLangraphCheckpointerForStateCode,
-  IntakeAgent,
-} from "~@reentry/intake-agent";
+import { IntakeAgent } from "~@reentry/intake-agent";
 import { sectionsSchema } from "~@reentry/intake-agent/constants";
+import { getLangraphCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
 import { router, t } from "~@reentry/trpc/init";
 import {
   intakeChatInputSchema,
   intakeChatResponseInputSchema,
 } from "~@reentry/trpc/routes/intake-chat/intake-chat.schema";
+import { EmitData } from "~@reentry/trpc/routes/intake-chat/types";
 
-type EmitData =
-  | {
-      type: "loading";
-    }
-  | {
-      type: "response";
-      lastId?: string;
-      messages?: string[];
-    };
-
-// TODO: replace this with a redis subscription so it's monitored across multiple instances
+// TODO: replace these with redis subscriptions so they are monitored across multiple instances
 const ee = new EventEmitter();
-const intakeAgents: Record<string, IntakeAgent> = {};
+const intakeAgentsAndStatuses: Record<
+  string,
+  {
+    agent: IntakeAgent;
+    hasActiveSubscription: boolean;
+    isProcessingResponse: boolean;
+  }
+> = {};
 
 function convertAIMessagesToStringsAndGetLastId(aiMessages: AIMessage[]) {
   const messages = aiMessages.map((message) => message.content as string);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const lastId = aiMessages[aiMessages.length - 1].id!;
+
+  if (aiMessages.length === 0) {
+    return { messages, lastId: "none" };
+  }
+
+  const lastId = aiMessages[aiMessages.length - 1].id ?? "none";
   return { messages, lastId };
 }
 
@@ -58,7 +55,8 @@ export const intakeChatRouter = router({
   reply: t.procedure
     .input(intakeChatResponseInputSchema)
     .mutation(async ({ input: { intakeId, response } }) => {
-      const agent = intakeAgents[intakeId];
+      const agent = intakeAgentsAndStatuses[intakeId].agent;
+
       if (!agent) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -70,9 +68,19 @@ export const intakeChatRouter = router({
         type: "loading",
       });
 
+      intakeAgentsAndStatuses[intakeId].isProcessingResponse = true;
+
       const { messages, lastId } = convertAIMessagesToStringsAndGetLastId(
         await agent.processResponse(response),
       );
+
+      // If there is still an active subscription, set processingResponse to false
+      // Otherwise, delete the agent because it is no longer being used anywhere
+      if (!intakeAgentsAndStatuses[intakeId].hasActiveSubscription) {
+        intakeAgentsAndStatuses[intakeId].isProcessingResponse = false;
+      } else {
+        delete intakeAgentsAndStatuses[intakeId];
+      }
 
       ee.emit(`response[${intakeId}]`, {
         type: "response",
@@ -102,39 +110,62 @@ export const intakeChatRouter = router({
       const clientName = `${intake.client.givenNames} ${intake.client.surname}`;
       const sections = sectionsSchema.parse(intake.sections);
 
-      if (!intakeAgents[intakeId]) {
-        intakeAgents[intakeId] = new IntakeAgent({
-          checkpointer: getLangraphCheckpointerForStateCode("US_ID"),
-          clientName,
-          intakeId,
-          sections: sections,
-        });
-      } else {
+      // 1. If there is no agent, make a new one
+      // 2. If the agent is already subscribed, throw an error
+      // 3. If there is an agent but it is not subscribed, set it to subscribed
+      if (!intakeAgentsAndStatuses[intakeId]) {
+        intakeAgentsAndStatuses[intakeId] = {
+          agent: new IntakeAgent({
+            checkpointer: getLangraphCheckpointerForStateCode("US_ID"),
+            clientName,
+            intakeId,
+            sections: sections,
+          }),
+          hasActiveSubscription: false,
+          isProcessingResponse: false,
+        };
+      } else if (intakeAgentsAndStatuses[intakeId].hasActiveSubscription) {
         throw new TRPCError({
           code: "CONFLICT",
           message: `There is already an active chat for intake with id ${intakeId}`,
         });
+      } else {
+        intakeAgentsAndStatuses[intakeId].hasActiveSubscription = true;
       }
 
-      const agent = intakeAgents[intakeId];
+      const agent = intakeAgentsAndStatuses[intakeId].agent;
 
       try {
         // Initialize the agent.
         // If this is a completely new connection, it will start the agent as if it were a new chat.
-        // If the client is reconnecting, it will return the messages that have come from the last event id.
-        const { messages, lastId } = convertAIMessagesToStringsAndGetLastId(
-          await agent.init(lastEventId),
-        );
-        yield tracked(lastId, messages);
+        // If the client is reconnecting, it will return the messages that have come after the last event id.
+        yield lastEventId
+          ? tracked(lastEventId, { type: "loading" })
+          : { type: "loading" };
+
+        // If the server is still processing the last response, we do nothing
+        if (!intakeAgentsAndStatuses[intakeId].isProcessingResponse) {
+          const { messages, lastId } = convertAIMessagesToStringsAndGetLastId(
+            await agent.init(lastEventId),
+          );
+
+          yield tracked(lastId, {
+            type: "response",
+            messages: messages,
+          });
+        }
 
         // listen for new events
-        for await (const data of on(ee, `response[${intakeId}]`, {
+        for await (const [data] of on(ee, `response[${intakeId}]`, {
           // Passing the AbortSignal from the request automatically cancels the event emitter when the subscription is aborted
           signal,
         })) {
           const typedData = data as EmitData;
+
           if (typedData.type === "loading") {
-            yield tracked("loading", { type: "loading" });
+            yield lastEventId
+              ? tracked(lastEventId, { type: "loading" })
+              : { type: "loading" };
           } else if (typedData.type === "response") {
             yield tracked(typedData.lastId, {
               type: "response",
@@ -143,9 +174,15 @@ export const intakeChatRouter = router({
           }
         }
       } finally {
-        // cleanup when the subscription is closed, for any reason
+        // cleanup when the subscription is closed
+        // If the agent is still processing a response, we do not delete it, but we set hasActiveSubscription to false
+        // Otherwise, we delete the agent because it is no longer being used anywhere
         // See https://trpc.io/docs/server/subscriptions#cleanup-of-side-effects for why this works
-        delete intakeAgents[intakeId];
+        if (intakeAgentsAndStatuses[intakeId].isProcessingResponse) {
+          intakeAgentsAndStatuses[intakeId].hasActiveSubscription = false;
+        } else {
+          delete intakeAgentsAndStatuses[intakeId];
+        }
       }
     }),
 });

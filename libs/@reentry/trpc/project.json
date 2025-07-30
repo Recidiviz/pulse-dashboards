@@ -49,7 +49,10 @@
       "cache": true,
       "options": {
         "command": "nx prisma-deploy @reentry/prisma && cd libs/@reentry/trpc && vitest",
-        "cwd": "{workspaceRoot}"
+        "cwd": "{workspaceRoot}",
+        "env": {
+          "NODE_OPTIONS": "--experimental-websocket"
+        }
       }
     }
   }

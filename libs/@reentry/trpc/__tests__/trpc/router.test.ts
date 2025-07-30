@@ -15,59 +15,247 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck Need to fix typing in followup
+import { BaseMessage } from "@langchain/core/messages";
+import { describe } from "vitest";
 
-import { describe, expect, test } from "vitest";
-
-import { testTRPCClient } from "~@reentry/trpc/test/setup";
+import { sharedMemorySaver, testTRPCClient } from "~@reentry/trpc/test/setup";
 import { intakeId } from "~@reentry/trpc/test/setup/seed";
 
-describe("search", () => {
-  test(
-    "should work if all parameters are passed",
-    { timeout: 10_000 },
+let subscription: ReturnType<
+  typeof testTRPCClient.intakeChat.intakeChat.subscribe
+>;
+const onData = vi.fn();
+
+const getSavedMessages = async (threadId: string): Promise<BaseMessage[]> => {
+  const result = await sharedMemorySaver.get({
+    configurable: { thread_id: threadId },
+  });
+  return (result?.channel_values["messages"] || []) as BaseMessage[];
+};
+
+const waitForSavedMessages = async (
+  threadId: string,
+  count: number,
+  timeout = 30_000,
+): Promise<BaseMessage[]> => {
+  await vi.waitUntil(
     async () => {
-      let subData;
+      const messages = await getSavedMessages(threadId);
+      return messages.length === count;
+    },
+    { timeout },
+  );
+  return getSavedMessages(threadId);
+};
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const sub = testTRPCClient.intakeChat.intakeChat.subscribe(
-        { intakeId: intakeId },
-        {
-          onData(data) {
-            subData = data;
-          },
-          onError(error) {
-            console.error(">>> anon:sub:randomNumber:error:", error);
-          },
-          onComplete() {
-            console.log(">>> anon:sub:randomNumber:", "unsub() called");
-          },
-        },
-      );
-
-      await vi.waitFor(() => {
-        return subData !== undefined;
-      });
-
-      expect(subData).toEqual({
-        type: "response",
-        lastId: 123123,
-        messages: ["Hello, how are you?", "I'm doing well, thank you!"],
-      });
-
-      subData = undefined;
-
-      await testTRPCClient.intakeChat.reply.mutate({
-        intakeId: "intake-id",
-        response: "Hello, how are you?",
-      });
-
-      await vi.waitFor(() => {
-        expect(subData).toBeDefined();
-      });
-
-      expect(subData).toBeDefined();
+const subscribeToIntakeChat = async (lastEventId?: string) => {
+  subscription = testTRPCClient.intakeChat.intakeChat.subscribe(
+    { intakeId, ...(lastEventId ? { lastEventId } : {}) },
+    {
+      onData(data) {
+        console.log("New data from server:", data);
+        onData(data);
+      },
+      onError(err) {
+        console.error("Subscription error:", err);
+      },
+      onComplete() {
+        console.log("Subscription completed or closed.");
+      },
     },
   );
+};
+
+describe("Intake chat", () => {
+  beforeEach(() => {
+    onData.mockClear();
+  });
+
+  afterEach(() => {
+    subscription?.unsubscribe();
+  });
+
+  test("welcome message is sent on initial intake", async () => {
+    // Subscribe to the intake chat and wait for the welcome message + first question to have been sent
+    await subscribeToIntakeChat();
+    await vi.waitUntil(() => onData.mock.calls.length >= 2);
+    await waitForSavedMessages(intakeId, 2);
+
+    // Should have received a loading message + the welcome message and first question
+    expect(onData).toHaveBeenCalledWith({ type: "loading" });
+    expect(onData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        data: {
+          type: "response",
+          messages: ["Welcome message", "question"],
+        },
+      }),
+    );
+  });
+
+  test("client messages are processed with appropriate responses from server", async () => {
+    // Subscribe to the intake chat and wait for the welcome message + first question to have been sent
+    await subscribeToIntakeChat();
+    await waitForSavedMessages(intakeId, 2);
+
+    // Send a reply and wait for the response
+    await testTRPCClient.intakeChat.reply.mutate({
+      intakeId,
+      response: "Hello, I am ready to start.",
+    });
+    await waitForSavedMessages(intakeId, 4);
+
+    // Should have received:
+    // 1. A loading message
+    // 2. The welcome message and first question
+    // 3. A loading message (after the first reply
+    // 4. The next question
+    expect(onData).toHaveBeenCalledTimes(4);
+    expect(onData).toHaveBeenCalledWith({ type: "loading" });
+    expect(onData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        data: {
+          type: "response",
+          messages: ["Welcome message", "question"],
+        },
+      }),
+    );
+    expect(onData).toHaveBeenCalledWith({ type: "loading" });
+    expect(onData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        data: {
+          type: "response",
+          messages: ["question"],
+        },
+      }),
+    );
+
+    await testTRPCClient.intakeChat.reply.mutate({
+      intakeId,
+      response: "My release date is November 25 of this year.",
+    });
+
+    await waitForSavedMessages(intakeId, 6);
+    // Should have now received:
+    // 1. A loading message
+    // 2. The next question
+    expect(onData).toHaveBeenCalledWith({ type: "loading" });
+    expect(onData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        data: {
+          type: "response",
+          messages: ["question"],
+        },
+      }),
+    );
+  });
+
+  test("client sending a message, disconnecting, and reconnecting should still process the last message before disconnection and continue the conversation", async () => {
+    // Simulate:
+    // 1. Connecting to the chat
+    // 2. Waiting for the welcome message and first question
+    // 3. Sending a message
+    // 4. Disconnecting
+    // 5. The server processing the last response
+    // 6. Reconnecting with the last event id
+    await subscribeToIntakeChat();
+    await waitForSavedMessages(intakeId, 2);
+    await testTRPCClient.intakeChat.reply.mutate({
+      intakeId,
+      response: "My release date is November 25 of this year.",
+    });
+    subscription.unsubscribe();
+    await waitForSavedMessages(intakeId, 4);
+
+    const messages = await getSavedMessages(intakeId);
+    const lastEventId = messages[1].id;
+    // Simulate a reconnection
+    await subscribeToIntakeChat(lastEventId);
+
+    // Should have received:
+    // 1. A loading message
+    // 2. The welcome message and first question
+    // 3. A loading message after the reconnection
+    // 4. The cached reply from the bot
+    expect(onData).toHaveBeenCalledTimes(4);
+    expect(onData).toHaveBeenCalledWith({ type: "loading" });
+    expect(onData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        data: {
+          type: "response",
+          messages: ["Welcome message", "question"],
+        },
+      }),
+    );
+    expect(onData).toHaveBeenCalledWith({ type: "loading" });
+    expect(onData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        data: {
+          type: "response",
+          messages: ["question"],
+        },
+      }),
+    );
+  });
+
+  test("client sending a message should throw error after client disconnects", async () => {
+    await subscribeToIntakeChat();
+    await waitForSavedMessages(intakeId, 2);
+
+    // Simulate a disconnection
+    subscription.unsubscribe();
+
+    await expect(
+      testTRPCClient.intakeChat.reply.mutate({
+        intakeId,
+        response: "I need housing.",
+      }),
+    ).rejects.toThrow();
+  });
+
+  test("client connecting a second time should result in a new welcome message", async () => {
+    // Simulate a client connecting to the chat and getting the welcome message
+    await subscribeToIntakeChat();
+    await waitForSavedMessages(intakeId, 2);
+
+    // Simulate leaving the chat and returning a different time by not passing a lastEventId, then waiting for the new welcome message + next question
+    subscription.unsubscribe();
+    await subscribeToIntakeChat();
+    await waitForSavedMessages(intakeId, 4);
+
+    // Should have received:
+    // 1. A loading message
+    // 2. The welcome message and first question
+    // 3. A loading message after the return
+    // 4. The returning welcome message and another question
+    expect(onData).toHaveBeenCalledTimes(4);
+    expect(onData).toHaveBeenCalledWith({ type: "loading" });
+    expect(onData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        data: {
+          type: "response",
+          messages: ["Welcome message", "question"],
+        },
+      }),
+    );
+    expect(onData).toHaveBeenCalledWith({ type: "loading" });
+    expect(onData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
+        data: {
+          type: "response",
+          messages: ["Welcome message", "question"],
+        },
+      }),
+    );
+  });
+
+  // TODO: Add tests for multiple clients trying to connect to the same intake chat
 });

@@ -19,6 +19,8 @@ import { faker } from "@faker-js/faker";
 
 import { PrismaClient, StateCode } from "~@reentry/prisma/client";
 
+export const intakeId = "intake-1";
+
 export const fakeStaff = {
   staffId: "staff-1",
   pseudonymizedId: "staff-pid-1",
@@ -47,7 +49,7 @@ export const fakeClient = {
 };
 
 export const fakeIntake = {
-  id: "intake-1",
+  id: intakeId,
   startDate: new Date(),
   sections: [],
   client: {

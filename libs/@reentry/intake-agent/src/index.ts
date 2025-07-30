@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AIMessage } from "@langchain/core/messages";
+import { AIMessage, BaseMessage, isAIMessage } from "@langchain/core/messages";
 import { BaseCheckpointSaver, Command } from "@langchain/langgraph";
 
 import { type Sections } from "~@reentry/intake-agent/constants";
@@ -113,10 +113,15 @@ export class IntakeAgent {
           thread_id: this.threadId,
         },
       });
+      const messages: BaseMessage[] = state.values.messages;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const messages = state.values.messages;
-      // TODO: process this to return only the messages after the lastMessageId
+      const startIndex = messages.findIndex((msg) => msg.id === lastMessageId);
+      const newMessages = startIndex >= 0 ? messages.slice(startIndex + 1) : [];
+      const newAiMessages = newMessages.filter((message) =>
+        isAIMessage(message),
+      );
+
+      return newAiMessages;
     }
 
     const graphStream = await this.graph.stream(
@@ -134,7 +139,7 @@ export class IntakeAgent {
 
   async processResponse(response: string) {
     if (this.status === "not_initialized") {
-      throw new Error("Agent has not been started. Call start() first.");
+      throw new Error("Agent has not been started. Call init() first.");
     }
 
     if (this.status === "completed") {

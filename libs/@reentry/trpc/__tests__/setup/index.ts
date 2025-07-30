@@ -15,7 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { generateMock } from "@anatine/zod-mock";
 import ws from "@fastify/websocket";
+import { RunnableLambda } from "@langchain/core/runnables";
+import { FakeListChatModel } from "@langchain/core/utils/testing";
+import { MemorySaver } from "@langchain/langgraph";
 import { init } from "@sentry/node";
 import {
   createTRPCClient,
@@ -35,7 +39,6 @@ import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
 import { beforeAll, beforeEach } from "vitest";
 
-import { getLangraphCheckpointerForStateCode } from "~@reentry/intake-agent";
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { StateCode } from "~@reentry/prisma/client";
 import { createContext } from "~@reentry/trpc/context";
@@ -56,16 +59,84 @@ const { testkit, sentryTransport } = sentryTestkit();
 
 export { testkit };
 
-beforeAll(async () => {
-  init({
-    dsn: process.env["SENTRY_DSN"],
-    transport: sentryTransport,
+vi.mock("@langchain/openai", () => {
+  const fakeModel = vi.fn().mockImplementation(() => {
+    const chat = new FakeListChatModel({
+      responses: ["Welcome message"],
+    });
+
+    chat.withStructuredOutput = vi.fn().mockImplementation((schema) => {
+      return RunnableLambda.from(async () => {
+        return generateMock(schema, {
+          mockeryMapper: (keyName: string) => {
+            if (keyName === "isSectionComplete" || keyName === "needsHelp") {
+              return () => false;
+            }
+
+            if (keyName === "response") {
+              return () => "question";
+            }
+
+            return undefined;
+          },
+        });
+      });
+    });
+
+    return chat;
   });
 
-  const checkpointer = getLangraphCheckpointerForStateCode(StateCode.US_ID);
-  await checkpointer.setup();
+  return {
+    ChatOpenAI: fakeModel,
+  };
+});
 
-  const testServer = Fastify({
+/**
+ * Ephemeral MemorySaver used to save the state of the LangGraph to enable us
+ * to initialize a brand new chat session every time we run the tests.
+ */
+export let sharedMemorySaver = new MemorySaver();
+vi.mock("~@reentry/intake-agent/get-checkpointer", () => ({
+  getLangraphCheckpointerForStateCode: () => sharedMemorySaver,
+}));
+
+export const initWSClient = () => {
+  return createWSClient({
+    url: `ws://${testHost}:${testPort}/trpc`,
+    connectionParams: () => {
+      return {
+        statecode: "US_ID",
+      };
+    },
+  });
+};
+
+export let wsClient: ReturnType<typeof initWSClient>;
+
+export const initTRPCClient = () => {
+  return createTRPCClient<AppRouter>({
+    links: [
+      splitLink({
+        condition(op) {
+          return op.type === "subscription";
+        },
+        true: wsLink({ client: wsClient, transformer: superjson }),
+        false: httpBatchLink({
+          url: `http://${testHost}:${testPort}/trpc`,
+          headers() {
+            return {
+              StateCode: "US_ID",
+            };
+          },
+          transformer: superjson,
+        }),
+      }),
+    ],
+  });
+};
+
+export const initTestServer = async () => {
+  testServer = Fastify({
     logger: true,
   });
 
@@ -92,39 +163,23 @@ beforeAll(async () => {
       console.log(`[ ready ] http://${testHost}:${testPort}/trpc`);
     }
   });
+};
 
-  const wsClient = createWSClient({
-    url: `ws://${testHost}:${testPort}/trpc`,
-    connectionParams: () => {
-      return {
-        statecode: "US_ID",
-      };
-    },
+beforeAll(async () => {
+  init({
+    dsn: process.env["SENTRY_DSN"],
+    transport: sentryTransport,
   });
 
-  testTRPCClient = createTRPCClient<AppRouter>({
-    links: [
-      splitLink({
-        condition(op) {
-          return op.type === "subscription";
-        },
-        true: wsLink({ client: wsClient, transformer: superjson }),
-        false: httpBatchLink({
-          url: `http://${testHost}:${testPort}/trpc`,
-          headers() {
-            return {
-              StateCode: "US_ID",
-            };
-          },
-          transformer: superjson,
-        }),
-      }),
-    ],
-  });
+  await initTestServer();
+  wsClient = initWSClient();
+  testTRPCClient = initTRPCClient();
 });
 
 beforeEach(async () => {
   await resetDb(testPrismaClient);
   await seed(testPrismaClient);
+  sharedMemorySaver = new MemorySaver();
+
   testkit.reset();
 });

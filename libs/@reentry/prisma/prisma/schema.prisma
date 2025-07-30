@@ -108,8 +108,9 @@ model Intake {
   id        String    @id
   startDate DateTime
   endDate   DateTime?
+
   // The sections that the intake should cover, stored as a JSON array
-  sections  Json
+  sections Json
 
   client   Client @relation(fields: [clientId], references: [personId])
   clientId String

@@ -70,6 +70,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anatine/zod-mock@npm:^3.14.0":
+  version: 3.14.0
+  resolution: "@anatine/zod-mock@npm:3.14.0"
+  dependencies:
+    randexp: "npm:^0.5.3"
+  peerDependencies:
+    "@faker-js/faker": ^7.0.0 || ^8.0.0 || ^9.0.0
+    zod: ^3.21.4
+  checksum: 10c0/b2b854386014bc66eddd68c42826e674e0b262014c807f0a13d354fd803d5d976190f5c6c8a42868c6d348dd99045ccfc0a13058ddb1537237541d967b6cdeae
+  languageName: node
+  linkType: hard
+
 "@artsy/to-title-case@npm:^1.1.0":
   version: 1.1.0
   resolution: "@artsy/to-title-case@npm:1.1.0"
@@ -16783,6 +16795,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"drange@npm:^1.0.2":
+  version: 1.1.1
+  resolution: "drange@npm:1.1.1"
+  checksum: 10c0/d63f364467be64d766d2dae10ee7e4f305fa50375f910c7525fb5983cab326ad0f1a4a3abdf2379e7d7949c0011a291114d5c6c238970a940a08a6ccba02f7b3
+  languageName: node
+  linkType: hard
+
 "dset@npm:^3.1.2, dset@npm:^3.1.4":
   version: 3.1.4
   resolution: "dset@npm:3.1.4"
@@ -28364,6 +28383,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"randexp@npm:^0.5.3":
+  version: 0.5.3
+  resolution: "randexp@npm:0.5.3"
+  dependencies:
+    drange: "npm:^1.0.2"
+    ret: "npm:^0.2.0"
+  checksum: 10c0/44ad4e6e7661c090939e062916ccf1477de27eb2b91dfa8c113de9f3116ddf2016ac090323d5d2fa0947c3ff8e9b24798ee5e25cb2c37f22df2e72cda56232b6
+  languageName: node
+  linkType: hard
+
 "randombytes@npm:^2.1.0":
   version: 2.1.0
   resolution: "randombytes@npm:2.1.0"
@@ -29258,6 +29287,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pulse-dashboards@workspace:."
   dependencies:
+    "@anatine/zod-mock": "npm:^3.14.0"
     "@artsy/to-title-case": "npm:^1.1.0"
     "@auth0/auth0-spa-js": "npm:^1.12.1"
     "@babel/core": "npm:^7.14.5"
@@ -30149,6 +30179,13 @@ __metadata:
     onetime: "npm:^5.1.0"
     signal-exit: "npm:^3.0.2"
   checksum: 10c0/6f7da8c5e422ac26aa38354870b1afac09963572cf2879443540449068cb43476e9cbccf6f8de3e0171e0d6f7f533c2bc1a0a008003c9a525bbc098e89041318
+  languageName: node
+  linkType: hard
+
+"ret@npm:^0.2.0":
+  version: 0.2.2
+  resolution: "ret@npm:0.2.2"
+  checksum: 10c0/1a41e543913cda851abb1dae4852efa97bb693ce58fde3b51cc1cae94e2599dd70b91ad6268a4a07fc238305be06fed91723ef6d08863c48a0d02e0a74b943cd
   languageName: node
   linkType: hard
 
