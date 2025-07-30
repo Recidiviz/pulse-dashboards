@@ -15,23 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { descending } from "d3-array";
 import { observer } from "mobx-react-lite";
 import { useId } from "react";
 
 import {
   Selector,
   SelectorProps,
-} from "../../../../../components/Selector/Selector";
+} from "../../../../components/Selector/Selector";
+import { UsMaEGTMonthlyReport } from "../../models/UsMaEGTMonthlyReport";
+import { useEGTDataContext } from "../EGTDataContext/context";
 
-type MonthlyReportSelectorProps<OptionVal> = Pick<
-  SelectorProps<OptionVal>,
-  "placeholder" | "options" | "onChange"
->;
+type MonthlyReportSelectorProps = Pick<SelectorProps<Date>, "onChange"> & {
+  selectedReport: UsMaEGTMonthlyReport;
+};
 
-export const MonthlyReportSelector = observer(function MonthlyReportSelector<
-  OptionVal,
->({ placeholder, options, onChange }: MonthlyReportSelectorProps<OptionVal>) {
+export const MonthlyReportSelector = observer(function MonthlyReportSelector({
+  onChange,
+  selectedReport,
+}: MonthlyReportSelectorProps) {
   const labelId = useId();
+  const { monthlyReports } = useEGTDataContext();
 
-  return <Selector {...{ placeholder, options, onChange }} labelId={labelId} />;
+  return (
+    <Selector
+      {...{ onChange }}
+      labelId={labelId}
+      placeholder=""
+      value={selectedReport.selectOption}
+      options={monthlyReports
+        .map((r) => r.selectOption)
+        .sort((a, b) => descending(a.value, b.value))}
+    />
+  );
 });

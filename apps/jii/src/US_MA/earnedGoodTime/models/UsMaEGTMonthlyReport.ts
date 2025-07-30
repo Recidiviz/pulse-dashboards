@@ -61,7 +61,7 @@ export class UsMaEGTMonthlyReport {
   }
 
   get pageSlug(): string {
-    return format(this.reportStartDate, "yyyy-MM-dd");
+    return getMonthlyReportPageSlug(this.reportStartDate);
   }
 
   get monthDisplayName(): string {
@@ -107,6 +107,16 @@ export class UsMaEGTMonthlyReport {
     }
 
     return achievementsToShow;
+  }
+
+  /**
+   * used to populate and control the monthly dropdown selectors
+   */
+  get selectOption() {
+    return {
+      value: this.reportStartDate,
+      label: this.fullDisplayName,
+    };
   }
 }
 

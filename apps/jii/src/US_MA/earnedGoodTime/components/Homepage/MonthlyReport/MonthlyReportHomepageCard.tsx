@@ -32,9 +32,9 @@ import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
 import { State } from "../../../../../routes/routes";
 import { useEGTDataContext } from "../../EGTDataContext/context";
 import { CreditsByTypeCard } from "../../MonthlyReport/CreditsByTypeCard";
+import { MonthlyReportSelector } from "../../MonthlyReportSelector/MonthlyReportSelector";
 import { HomepageSectionHeading, SlateCopy } from "../styles";
 import { MonthlyReportPresenter } from "./MonthlyReportPresenter";
-import { MonthlyReportSelector } from "./MonthlyReportSelector";
 
 const ActivityRow = styled.div`
   display: flex;
@@ -73,8 +73,7 @@ const ManagedComponent: FC<{
       </HomepageSectionHeading>
       <Card>
         <MonthlyReportSelector
-          placeholder={presenter.selectPlaceholder}
-          options={presenter.sortedSelectOptions}
+          selectedReport={presenter.selectedMonthlyReport}
           onChange={presenter.setSelectedMonthYearStartDate}
         />
         <CreditsByTypeCard

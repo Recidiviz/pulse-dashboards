@@ -44,6 +44,7 @@ export type SelectorProps<OptionVal> = {
   options: Array<SelectorOption<OptionVal>>;
   onChange: (newValue: OptionVal) => void;
   defaultValue?: PropsValue<SelectorOption<OptionVal>>;
+  value?: PropsValue<SelectorOption<OptionVal>>;
 };
 
 /**
@@ -55,6 +56,7 @@ export const Selector = observer(function Selector<OptionVal>({
   options,
   onChange,
   defaultValue,
+  value,
 }: SelectorProps<OptionVal>) {
   return (
     <Sans16>
@@ -67,6 +69,7 @@ export const Selector = observer(function Selector<OptionVal>({
           selectedOption && onChange(selectedOption.value)
         }
         defaultValue={defaultValue}
+        value={value}
         styles={{
           control: (baseStyles) => ({
             ...baseStyles,

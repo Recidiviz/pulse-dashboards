@@ -29,8 +29,7 @@ import { State } from "../../../../routes/routes";
 import { getMonthlyReportPageSlug } from "../../models/UsMaEGTMonthlyReport";
 import { BackLink } from "../BackLink/BackLink";
 import { useEGTDataContext } from "../EGTDataContext/context";
-import { reportSelectOptions } from "../Homepage/MonthlyReport/MonthlyReportPresenter";
-import { MonthlyReportSelector } from "../Homepage/MonthlyReport/MonthlyReportSelector";
+import { MonthlyReportSelector } from "../MonthlyReportSelector/MonthlyReportSelector";
 import { Achievements } from "./Achievements";
 import { ActivityTable } from "./ActivityTable";
 import { CreditsByTypeCard } from "./CreditsByTypeCard";
@@ -91,8 +90,7 @@ export const MonthlyReport = observer(function MonthlyReport() {
       <HeaderRow>
         <CopyWrapper>{`# ${pageTitle}`}</CopyWrapper>
         <MonthlyReportSelector
-          placeholder={report.displayName}
-          options={reportSelectOptions(monthlyReports)}
+          selectedReport={report}
           onChange={(value) => {
             navigate(
               State.Resident.EGT.MonthlyReport.buildPath({
