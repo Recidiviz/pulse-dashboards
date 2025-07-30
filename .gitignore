@@ -49,15 +49,9 @@ package-lock.json
 .yalc
 yalc.lock
 # these are generated as part of the build process
-libs/staff-shared-server/package.json
-apps/@jii-texting/server/package.json
-apps/@jii-texting/import/package.json
-apps/@jii-texting/processor/package.json
-apps/@jii-texting/seed-demo/package.json
-apps/@sentencing/server/package.json
-apps/@sentencing/import/package.json
-apps/@sentencing/seed-demo/package.json
-apps/@reentry/server/package.json
+**/package.json
+# the root package.json is the only one we want to track
+!/package.json
 
 # Redis dump
 dump.rdb
