@@ -15,28 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
+import { typography } from "@recidiviz/design-system";
 import { formatISO } from "date-fns";
 import { observer } from "mobx-react-lite";
-import { rem } from "polished";
 import { useEffect } from "react";
 import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
 
-import { PAGE_LAYOUT_HEADER_GAP } from "../../../../components/AppLayout/constants";
+import { ScreenFillingWrapper } from "../../../../common/components/ScreenFillingWrapper/ScreenFillingWrapper";
 import { GoButton } from "../../../../components/ButtonLink/GoButton";
 import { CopyWrapper } from "../../../../components/CopyWrapper/CopyWrapper";
 import { useRootStore } from "../../../../components/StoreProvider/useRootStore";
 import { usePageTitle } from "../../../../components/usePageTitle/usePageTitle";
 import { UserStore } from "../../../../datastores/UserStore";
 import { useEGTDataContext } from "../EGTDataContext/context";
-
-const Wrapper = styled.div`
-  display: grid;
-  grid-template-rows: 1fr auto;
-  row-gap: ${rem(spacing.xxl)};
-`;
 
 const Disclaimer = styled(CopyWrapper)`
   ${typography.Body14}
@@ -54,24 +47,22 @@ export const Onboarding = observer(function Onboarding() {
   const {
     copy: { onboarding },
   } = useEGTDataContext();
-  const { uiStore, userStore } = useRootStore();
+  const { userStore } = useRootStore();
 
   usePageTitle(onboarding.heading);
   useEffect(() => trackOnboardingSeen(userStore), [userStore]);
 
   return (
-    <Wrapper
-      style={{
-        minHeight: `calc(100vh - ${uiStore.stickyHeaderHeight}px - ${rem(PAGE_LAYOUT_HEADER_GAP)})`,
-      }}
-    >
-      <div>
-        <CopyWrapper>
-          {`# ${onboarding.heading}\n\n${onboarding.body}`}
-        </CopyWrapper>
-        <GoButton to="../">{onboarding.continueLink}</GoButton>
-      </div>
-      <Disclaimer>{onboarding.disclaimer}</Disclaimer>
-    </Wrapper>
+    <ScreenFillingWrapper
+      top={
+        <>
+          <CopyWrapper>
+            {`# ${onboarding.heading}\n\n${onboarding.body}`}
+          </CopyWrapper>
+          <GoButton to="../">{onboarding.continueLink}</GoButton>
+        </>
+      }
+      bottom={<Disclaimer>{onboarding.disclaimer}</Disclaimer>}
+    />
   );
 });

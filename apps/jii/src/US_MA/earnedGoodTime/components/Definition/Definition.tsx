@@ -21,7 +21,9 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { LinkedInfoPage } from "../../../../common/components/LinkedInfoPage/LinkedInfoPage";
+import { PageLinksFooter } from "../../../../common/components/PageLinksFooter/PageLinksFooter";
+import { ScreenFillingWrapper } from "../../../../common/components/ScreenFillingWrapper/ScreenFillingWrapper";
+import { InfoPage } from "../../../../components/InfoPage/InfoPage";
 import { State } from "../../../../routes/routes";
 import { BackLink } from "../BackLink/BackLink";
 import { useEGTDataContext } from "../EGTDataContext/context";
@@ -31,10 +33,15 @@ const ManagedComponent: FC<{
   presenter: DefinitionPagePresenter;
 }> = observer(function Definition({ presenter }) {
   return (
-    <>
-      <BackLink {...presenter.backLink} />
-      <LinkedInfoPage contents={presenter} />
-    </>
+    <ScreenFillingWrapper
+      top={
+        <>
+          <BackLink {...presenter.backLink} />
+          <InfoPage heading={presenter.heading} body={presenter.body} />
+        </>
+      }
+      bottom={<PageLinksFooter contents={presenter} />}
+    />
   );
 });
 

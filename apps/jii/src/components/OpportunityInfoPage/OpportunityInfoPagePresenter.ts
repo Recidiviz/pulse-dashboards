@@ -17,7 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { LinkedInfoPageProps } from "../../common/components/LinkedInfoPage/LinkedInfoPage";
+import { PageLinksFooterProps } from "../../common/components/PageLinksFooter/PageLinksFooter";
 import { OpportunityConfig } from "../../configs/types";
 import { EligibilityReport } from "../../models/EligibilityReport/types";
 import { findPageConfig } from "./utils";
@@ -25,7 +25,7 @@ import { findPageConfig } from "./utils";
 /**
  * Reads the specified static page content out of the opportunity config
  */
-export class OpportunityInfoPagePresenter implements LinkedInfoPageProps {
+export class OpportunityInfoPagePresenter implements PageLinksFooterProps {
   constructor(
     private opportunityConfig: OpportunityConfig,
     private pageSlug: string,

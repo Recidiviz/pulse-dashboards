@@ -21,9 +21,10 @@ import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { LinkedInfoPage } from "../../common/components/LinkedInfoPage/LinkedInfoPage";
+import { PageLinksFooter } from "../../common/components/PageLinksFooter/PageLinksFooter";
 import { State } from "../../routes/routes";
 import { HeaderPortal } from "../AppLayout/HeaderPortal";
+import { InfoPage } from "../InfoPage/InfoPage";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { BreadcrumbsNav } from "./BreadcrumbsNav";
 import { OpportunityInfoPagePresenter } from "./OpportunityInfoPagePresenter";
@@ -36,7 +37,10 @@ const ManagedComponent: FC<{
       <HeaderPortal>
         <BreadcrumbsNav />
       </HeaderPortal>
-      <LinkedInfoPage contents={presenter} />
+      <InfoPage heading={presenter.heading} body={presenter.body} />
+      {presenter.pageLinks.length > 0 && (
+        <PageLinksFooter contents={presenter} />
+      )}
     </>
   );
 });

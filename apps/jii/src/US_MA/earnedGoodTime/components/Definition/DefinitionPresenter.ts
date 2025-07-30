@@ -17,12 +17,12 @@
 
 import { matchPath } from "react-router-dom";
 
-import { LinkedInfoPageProps } from "../../../../common/components/LinkedInfoPage/LinkedInfoPage";
+import { PageLinksFooterProps } from "../../../../common/components/PageLinksFooter/PageLinksFooter";
 import { SimpleLinkProps } from "../../../../components/types";
 import { State } from "../../../../routes/routes";
 import { UsMaEgtCopy } from "../../configs/US_MA/copy";
 
-export class DefinitionPagePresenter implements LinkedInfoPageProps {
+export class DefinitionPagePresenter implements PageLinksFooterProps {
   heading: string;
   body: string;
   pageLinksHeading: string;

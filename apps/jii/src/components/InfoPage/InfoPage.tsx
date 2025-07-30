@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
 import { FC } from "react";
 
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
@@ -39,6 +40,7 @@ export const InfoPage: FC<{ heading: string; body: string }> = ({
       <CopyWrapper>{`# ${heading}`}</CopyWrapper>
       <TableOfContents body={body} />
       <CopyWrapper>{body}</CopyWrapper>
+      <ScrollToHashElement />
     </article>
   );
 };

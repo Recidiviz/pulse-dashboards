@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
 import { Icon, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -30,9 +29,8 @@ import {
   PageContainer,
 } from "../../../components/BaseLayout/BaseLayout";
 import { ButtonLink } from "../../../components/ButtonLink/ButtonLink";
-import { InfoPage } from "../../../components/InfoPage/InfoPage";
 
-const PageLinksFooter = styled(FullBleedContainer).attrs({ as: "footer" })`
+const Footer = styled(FullBleedContainer).attrs({ as: "footer" })`
   background: ${palette.marble3};
 `;
 
@@ -65,43 +63,35 @@ const PageLinks = styled(PageContainer)`
   }
 `;
 
-export interface LinkedInfoPageProps {
-  heading: string;
-  body: string;
+export interface PageLinksFooterProps {
   pageLinksHeading: string;
   pageLinks: Array<{ text: string; url: string }>;
   topLinkText: string;
 }
 
-export const LinkedInfoPage: FC<{
-  contents: LinkedInfoPageProps;
-}> = observer(function OpportunityInfoPage({ contents }) {
+export const PageLinksFooter: FC<{
+  contents: PageLinksFooterProps;
+}> = observer(function PageLinksFooter({ contents }) {
   return (
-    <>
-      <InfoPage heading={contents.heading} body={contents.body} />
-      {contents.pageLinks.length > 0 && (
-        <PageLinksFooter>
-          <PageLinks>
-            <div>
-              <h2>{contents.pageLinksHeading}</h2>
-              <ul>
-                {contents.pageLinks.map((link) => (
-                  <li key={link.url}>
-                    <Link to={link.url}>{link.text}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <ButtonLink to="#top" reloadDocument>
-                <Icon kind="Arrow" rotate={-90} size={12} />
-                <span>{contents.topLinkText}</span>
-              </ButtonLink>
-            </div>
-          </PageLinks>
-        </PageLinksFooter>
-      )}
-      <ScrollToHashElement />
-    </>
+    <Footer>
+      <PageLinks>
+        <div>
+          <h2>{contents.pageLinksHeading}</h2>
+          <ul>
+            {contents.pageLinks.map((link) => (
+              <li key={link.url}>
+                <Link to={link.url}>{link.text}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <ButtonLink to="#top" reloadDocument>
+            <Icon kind="Arrow" rotate={-90} size={12} />
+            <span>{contents.topLinkText}</span>
+          </ButtonLink>
+        </div>
+      </PageLinks>
+    </Footer>
   );
 });
