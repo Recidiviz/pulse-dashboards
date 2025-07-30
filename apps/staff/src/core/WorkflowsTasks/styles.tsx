@@ -49,7 +49,7 @@ export const TasksCaption = styled(Sans14)`
   color: ${palette.slate70};
 `;
 
-export const TasksDescription = styled(TasksCaption)`
+export const TasksDescriptionContainer = styled(TasksCaption)`
   margin-bottom: ${rem(spacing.lg)};
   max-width: ${rem(540)};
 `;

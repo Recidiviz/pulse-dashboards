@@ -38,7 +38,6 @@ import { pluralizeWord } from "../../utils/formatStrings";
 import { PartialRecord } from "../../utils/typeUtils";
 import { taskDueDateComparator } from "../Task/TasksBase";
 import { SupervisionTask } from "../Task/types";
-import { taskPageDescriptionForState } from "../Task/utils";
 import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
 import {
@@ -493,8 +492,8 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   }
 
   // Text shown at the top of the Tasks page
-  get pageDescription() {
-    return taskPageDescriptionForState(this.tenantStore.currentTenantId);
+  get pageDescriptionMarkdown() {
+    return this.tenantStore.tasksPageDescriptionMarkdown;
   }
 
   get tasksTableColumns(): TaskTableColumnId[] {

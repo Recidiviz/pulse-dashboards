@@ -30,7 +30,6 @@ import TenantStore from "../../RootStore/TenantStore";
 import { PartialRecord } from "../../utils/typeUtils";
 import { taskDueDateComparator } from "../Task/TasksBase";
 import { SupervisionTask } from "../Task/types";
-import { taskPageDescriptionForState } from "../Task/utils";
 import { JusticeInvolvedPerson } from "../types";
 import { WorkflowsStore } from "../WorkflowsStore";
 
@@ -187,7 +186,7 @@ export class CaseloadTasksPresenter {
   }
 
   // Text shown at the top of the Tasks page
-  get pageDescription() {
-    return taskPageDescriptionForState(this.tenantStore.currentTenantId);
+  get pageDescriptionMarkdown() {
+    return this.tenantStore.tasksPageDescriptionMarkdown;
   }
 }

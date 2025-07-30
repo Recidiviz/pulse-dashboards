@@ -34,10 +34,10 @@ import { MaxWidthWithSidebar } from "../sharedComponents";
 import WorkflowsCaseloadTabs from "../WorkflowsCaseloadControlBar";
 import { WorkflowsUnderstaffedPill } from "../WorkflowsUnderstaffed";
 import { SupervisionTaskCategory, TASK_SELECTOR_LABELS } from "./fixtures";
-import { TasksDescription } from "./styles";
 import { TasksHeader } from "./styles";
 import { TaskFilterDropdown } from "./TaskFilterDropdown";
 import { TaskPreviewModal } from "./TaskPreviewModal";
+import { TasksDescription } from "./TasksDescription";
 import { TasksList } from "./TasksList";
 import { TasksTable } from "./TasksTable";
 
@@ -78,7 +78,7 @@ export const ManagedComponent = observer(function WorkflowsTasksBodyV2({
       </TasksHeader>
 
       <TasksTopbarContainer $isMobile={isMobile}>
-        <TasksDescription>{presenter.pageDescription}</TasksDescription>
+        <TasksDescription>{presenter.pageDescriptionMarkdown}</TasksDescription>
         <TableControls $isMobile={isMobile}>
           <TableViewToggle presenter={presenter} />
           <TaskFilterDropdown presenter={presenter} />

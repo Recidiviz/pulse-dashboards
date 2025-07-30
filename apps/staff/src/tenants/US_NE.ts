@@ -33,6 +33,8 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
     "https://drive.google.com/file/d/1PuZnoNTddYoKVA0CSpRDoNvCIBWJxg_I/view",
   workflowsTasksConfig: {
     collection: "usNeSupervisionTasks",
+    pageDescriptionMarkdown: `Overdue and upcoming due dates for personal contacts, collateral contacts, NCJIS Checks, and ORAS Assessments for clients are listed below.
+      See [“How it works”](https://drive.google.com/file/d/1PuZnoNTddYoKVA0CSpRDoNvCIBWJxg_I/view) to learn more.`,
     tasks: {
       usNeAssessment: {
         constructor: UsNeAssessmentTask,

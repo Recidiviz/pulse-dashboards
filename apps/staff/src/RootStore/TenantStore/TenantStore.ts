@@ -257,6 +257,12 @@ export default class TenantStore {
       ]
     );
   }
+  get tasksPageDescriptionMarkdown(): string {
+    return (
+      this.tasksConfiguration?.pageDescriptionMarkdown ??
+      "The clients below might have upcoming requirements this month."
+    );
+  }
 
   /**
    * Returns the boolean from the tenant config which specifies whether to display the supervisor's

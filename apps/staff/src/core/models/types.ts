@@ -135,6 +135,7 @@ export type WorkflowsTasksConfig = {
   columns?: TaskTableColumnId[];
   sideBarComponents?: ClientDetailComponentName[];
   categories?: SupervisionTaskCategory[];
+  pageDescriptionMarkdown?: string;
 };
 
 export type TaskFilterOption = {

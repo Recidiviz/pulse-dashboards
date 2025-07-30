@@ -43,6 +43,8 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
     collection: "usIdSupervisionTasks",
     methodologyUrl:
       "https://docs.google.com/document/d/1BmzbVFUQhbWOs9IOwR-gykUHNtZin5iUyzPdn8zRdx4/edit",
+    pageDescriptionMarkdown:
+      "The clients below might have upcoming requirements this month. Hiding a below task will not change an officer's timeliness percentage in the Operations metrics.",
     tasks: {
       assessment: {
         constructor: UsIdRiskAssessmentTask,

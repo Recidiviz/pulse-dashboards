@@ -30,11 +30,11 @@ import {
   TaskCategoryPill,
   TasksBodyContainer,
   TasksCaption,
-  TasksDescription,
   TasksHeader,
 } from "./styles";
 import { TaskPreviewModal } from "./TaskPreviewModal";
 import { TasksCalendarView } from "./TasksCalendarView";
+import { TasksDescription } from "./TasksDescription";
 
 function getViewElement(
   presenter: CaseloadTasksPresenterV2 | CaseloadTasksPresenter,
@@ -58,7 +58,7 @@ export const ManagedComponent = observer(function WorkflowsTaskBody({
   return (
     <TasksBodyContainer>
       <TasksHeader>Tasks</TasksHeader>
-      <TasksDescription>{presenter.pageDescription}</TasksDescription>
+      <TasksDescription>{presenter.pageDescriptionMarkdown}</TasksDescription>
 
       <TaskCategories>
         {presenter.displayedTaskCategories.map((category) => {
