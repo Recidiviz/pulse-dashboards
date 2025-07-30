@@ -15,11 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components/macro";
+
 import { Card } from "../../../../../common/components/Card";
+import { GoButton } from "../../../../../components/ButtonLink/GoButton";
 import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
+import { State } from "../../../../../routes/routes";
 import { useEGTDataContext } from "../../EGTDataContext/context";
 import { CardHeading, TwoColumnWrapper } from "../../styles";
 import { CardValue, HomepageSectionHeading } from "../styles";
+
+const Wrapper = styled.section`
+  ${TwoColumnWrapper} {
+    margin-bottom: ${rem(spacing.sm)};
+  }
+`;
 
 export const TotalTimeEarnedSection = () => {
   const {
@@ -30,7 +42,7 @@ export const TotalTimeEarnedSection = () => {
   } = useEGTDataContext();
 
   return (
-    <section>
+    <Wrapper>
       <HomepageSectionHeading>
         {totalTimeEarned.sectionTitle}
       </HomepageSectionHeading>
@@ -48,6 +60,13 @@ export const TotalTimeEarnedSection = () => {
           </CardValue>
         </Card>
       </TwoColumnWrapper>
-    </section>
+      <GoButton
+        to={State.Resident.EGT.$.Definition.buildRelativePath({
+          pageSlug: "credits",
+        })}
+      >
+        {totalTimeEarned.learnMoreLink}
+      </GoButton>
+    </Wrapper>
   );
 };

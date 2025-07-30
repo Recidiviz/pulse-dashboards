@@ -95,6 +95,7 @@ export const usMaEGTCopy = {
         label: "Completion Credits",
         value: `{{pluralize "days" totalCompletionCredit true}}`,
       },
+      learnMoreLink: "Learn more about earned time",
     },
     creditHistory: {
       heading: "Time you’ve earned recently",
