@@ -140,7 +140,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
   }
 
   get pageTitle(): string {
-    return "Select a supervisor to view their overview";
+    return `Select a ${this.labels.supervisionSupervisorLabel} to view their overview`;
   }
 
   trackViewed(): void {
