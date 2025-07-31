@@ -52,9 +52,11 @@ describe("import staff data", () => {
     async ({ testFile, file }) => {
       const newClient = await testPrismaClient.client.create({
         data: {
-          personId: "client-2",
-          externalId: "client-ext-2",
+          personId: 2,
+          stablePersonExternalId: "client-ext-2",
+          stablePersonExternalIdType: fakeClient.stablePersonExternalIdType,
           pseudonymizedId: "staff-pid-2",
+          displayPersonExternalId: "client-dpe-2",
           givenNames: faker.person.firstName(),
           middleNames: faker.person.firstName(),
           surname: faker.person.lastName(),
@@ -64,10 +66,13 @@ describe("import staff data", () => {
       });
 
       dataProviderSingleton.setData(testFile, [
-        // Existing staff
+        // Existing staff with a new staff id but existing external id + type
         {
           state_code: StateCode.US_ID,
-          staff_id: fakeStaff.staffId,
+          // staff_id is a string in the import file
+          staff_id: "100",
+          stable_staff_external_id: fakeStaff.stableStaffExternalId,
+          stable_staff_external_id_type: fakeStaff.stableStaffExternalIdType,
           pseudonymized_id: fakeStaff.pseudonymizedId,
           full_name: JSON.stringify({
             given_names: "New Name",
@@ -76,12 +81,16 @@ describe("import staff data", () => {
             name_suffix: fakeClient.suffix,
           }),
           email: fakeStaff.email,
-          client_person_ids: [newClient.personId],
+          // client_person_ids are strings in the import file
+          client_person_ids: [newClient.personId.toString()],
         },
         // New staff
         {
           state_code: StateCode.US_ID,
-          staff_id: "new-staff-id-2",
+          // staff_id is a string in the import file
+          staff_id: "2",
+          stable_staff_external_id: "staff-ext-2",
+          stable_staff_external_id_type: fakeStaff.stableStaffExternalIdType,
           pseudonymized_id: "new-staff-pid-2",
           full_name: JSON.stringify({
             given_names: faker.person.firstName(),
@@ -89,8 +98,9 @@ describe("import staff data", () => {
             surname: fakeClient.surname,
             name_suffix: fakeClient.suffix,
           }),
-          email: faker.internet.email(),
-          client_person_ids: [fakeClient.personId],
+          email: undefined, // Email is optional
+          // client_person_ids are strings in the import file
+          client_person_ids: [fakeClient.personId.toString()],
         },
       ]);
 
@@ -110,7 +120,10 @@ describe("import staff data", () => {
 
       expect(dbStaff).toEqual([
         expect.objectContaining({
-          staffId: fakeStaff.staffId,
+          staffId: 100,
+          stableStaffExternalId: fakeStaff.stableStaffExternalId,
+          stableStaffExternalIdType: fakeStaff.stableStaffExternalIdType,
+          pseudonymizedId: fakeStaff.pseudonymizedId,
           givenNames: "New Name",
           // Should have added the new client assignment and removed the old one
           clients: [
@@ -120,7 +133,10 @@ describe("import staff data", () => {
           ],
         }),
         expect.objectContaining({
-          staffId: "new-staff-id-2",
+          staffId: 2,
+          stableStaffExternalId: "staff-ext-2",
+          stableStaffExternalIdType: "staff-ext-type-1",
+          pseudonymizedId: "new-staff-pid-2",
           clients: [
             {
               clientId: fakeClient.personId,

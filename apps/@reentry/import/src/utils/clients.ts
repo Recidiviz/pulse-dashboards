@@ -22,6 +22,7 @@ import { ClientCreateInput } from "~@reentry/import/types";
 import {
   bulkUpdate,
   type BulkUpdateEntries,
+  BulkUpdateEntry,
 } from "~@reentry/import/utils/common";
 import { PrismaClient } from "~@reentry/prisma/client";
 
@@ -29,18 +30,26 @@ export async function transformAndLoadClientData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof clientImportSchema>>,
 ) {
-  const existingClientIds = new Set(
+  const existingStablePersonExternalIdsAndTypes = new Set(
     (
       await prismaClient.client.findMany({
-        select: { personId: true },
+        select: {
+          stablePersonExternalId: true,
+          stablePersonExternalIdType: true,
+        },
       })
-    ).map(({ personId }) => personId),
+    ).map(
+      ({ stablePersonExternalId, stablePersonExternalIdType }) =>
+        `${stablePersonExternalId}+${stablePersonExternalIdType}`,
+    ),
   );
 
   const existingStaffIds = new Set(
     (
       await prismaClient.staff.findMany({
-        select: { staffId: true },
+        select: {
+          staffId: true,
+        },
       })
     ).map(({ staffId }) => staffId),
   );
@@ -63,24 +72,35 @@ export async function transformAndLoadClientData(
 
     const newClient = {
       personId: clientData.person_id,
-      externalId: clientData.external_id,
+      stablePersonExternalId: clientData.stable_person_external_id,
+      stablePersonExternalIdType: clientData.stable_person_external_id_type,
       pseudonymizedId: clientData.pseudonymized_id,
+      displayPersonExternalId: clientData.display_person_external_id,
       stateCode: clientData.state_code,
       givenNames: clientData.full_name.given_names,
       middleNames: clientData.full_name.middle_names,
       surname: clientData.full_name.surname,
       suffix: clientData.full_name.name_suffix,
       birthDate: clientData.birthdate,
-    } satisfies ClientCreateInput & BulkUpdateEntries[number];
+    } satisfies ClientCreateInput & BulkUpdateEntry;
 
-    if (existingClientIds.has(clientData.person_id)) {
+    if (
+      existingStablePersonExternalIdsAndTypes.has(
+        `${clientData.stable_person_external_id}+${clientData.stable_person_external_id_type}`,
+      )
+    ) {
       existingClientsToUpdate.push(newClient);
     } else {
       newClientsToCreate.push(newClient);
     }
   }
 
-  await bulkUpdate(prismaClient, "Client", "personId", existingClientsToUpdate);
+  await bulkUpdate(
+    prismaClient,
+    "Client",
+    ["stablePersonExternalId", "stablePersonExternalIdType"],
+    existingClientsToUpdate,
+  );
 
   await prismaClient.client.createMany({
     data: newClientsToCreate,

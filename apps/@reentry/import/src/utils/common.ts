@@ -18,7 +18,7 @@
 import { type PrismaClient } from "~@reentry/prisma/client";
 
 export type BulkUpdateEntry = {
-  [key: string]: number | string | boolean | Date;
+  [key: string]: number | string | boolean | Date | null;
 };
 export type BulkUpdateEntries = BulkUpdateEntry[];
 
@@ -37,14 +37,16 @@ const PRISMA_COLUMN_NAME_TO_ENUM_NAME: Record<string, string> = {
 export async function bulkUpdate(
   prismaClient: PrismaClient,
   tableName: string,
-  idColumnName: string,
+  idColumnNames: string[],
   entries: BulkUpdateEntries,
 ) {
   if (entries.length === 0) {
     return;
   }
 
-  const fields = Object.keys(entries[0]).filter((key) => key !== idColumnName);
+  const fields = Object.keys(entries[0]).filter(
+    (key) => !idColumnNames.includes(key),
+  );
   const setSql = fields
     .map((field) => `"${field}" = data."${field}"`)
     .join(", ");
@@ -71,17 +73,19 @@ export async function bulkUpdate(
         return value;
       });
 
-      return `('${entry[idColumnName]}', ${values.join(", ")})`;
+      return `(${idColumnNames.map((idCol) => `'${entry[idCol]}'`).join(", ")}, ${values.join(", ")})`;
     })
     .join(", ");
 
   const sql = `
     UPDATE "${tableName}"
     SET ${setSql}
-    FROM (VALUES ${valuesSql}) AS data(id, ${fields
+    FROM (VALUES ${valuesSql}) AS data(${idColumnNames.join(", ")}, ${fields
       .map((field) => `"${field}"`)
       .join(", ")})
-    WHERE "${tableName}"."${idColumnName}"::text = data.id;
+    WHERE ${idColumnNames
+      .map((idCol) => `"${tableName}"."${idCol}"::text = data.${idCol}`)
+      .join(" AND ")};
   `;
 
   await prismaClient.$executeRawUnsafe(sql);

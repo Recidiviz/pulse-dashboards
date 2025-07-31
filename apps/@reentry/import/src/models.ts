@@ -40,20 +40,27 @@ const stateCode = z.preprocess(
 
 export const clientImportSchema = z.object({
   state_code: stateCode,
-  person_id: z.string(),
-  external_id: z.string(),
+  // Need to coerce into a number because our metric exports use strings for these
+  person_id: z.coerce.number(),
+  stable_person_external_id: z.string(),
+  stable_person_external_id_type: z.string(),
   pseudonymized_id: z.string(),
+  display_person_external_id: z.string(),
   full_name: nameSchema,
   birthdate: z.coerce.date(),
-  current_address: z.string(),
-  assigned_staff_ids: z.array(z.string()),
+  // Need to coerce into a number because our metric exports use strings for these
+  assigned_staff_ids: z.array(z.coerce.number()),
 });
 
 export const staffImportSchema = z.object({
-  staff_id: z.string(),
-  pseudonymized_id: z.string(),
   state_code: stateCode,
+  // Need to coerce into a number because our metric exports use strings for these
+  staff_id: z.coerce.number(),
+  stable_staff_external_id: z.string(),
+  stable_staff_external_id_type: z.string(),
+  pseudonymized_id: z.string(),
   full_name: nameSchema,
-  email: z.string(),
-  client_person_ids: z.array(z.string()),
+  email: z.string().optional(),
+  // Need to coerce into a number because our metric exports use strings for these
+  client_person_ids: z.array(z.coerce.number()),
 });

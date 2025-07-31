@@ -24,7 +24,9 @@ import {
 import { PrismaClient, StateCode } from "~@reentry/prisma/client";
 
 export const fakeStaff = {
-  staffId: "staff-1",
+  staffId: 1,
+  stableStaffExternalId: "staff-ext-1",
+  stableStaffExternalIdType: "staff-ext-type-1",
   pseudonymizedId: "staff-pid-1",
   givenNames: faker.person.firstName(),
   middleNames: faker.person.firstName(),
@@ -35,9 +37,11 @@ export const fakeStaff = {
 
 export const fakeClient = {
   stateCode: StateCode.US_ID,
-  personId: "client-person-id-1",
-  externalId: "client-ext-1",
+  personId: 1,
+  stablePersonExternalId: "client-ext-1",
+  stablePersonExternalIdType: "client-ext-type-1",
   pseudonymizedId: "client-pid-1",
+  displayPersonExternalId: "client-display-ext-1",
   givenNames: faker.person.firstName(),
   middleNames: faker.person.firstName(),
   surname: faker.person.lastName(),

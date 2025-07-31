@@ -22,6 +22,7 @@ import { StaffCreateInput } from "~@reentry/import/types";
 import {
   bulkUpdate,
   type BulkUpdateEntries,
+  BulkUpdateEntry,
 } from "~@reentry/import/utils/common";
 import { PrismaClient } from "~@reentry/prisma/client";
 
@@ -29,20 +30,26 @@ export async function transformAndLoadStaffData(
   prismaClient: PrismaClient,
   data: AsyncGenerator<z.infer<typeof staffImportSchema>>,
 ) {
+  const existingStableStaffExternalIdsAndTypes = new Set(
+    (
+      await prismaClient.staff.findMany({
+        select: {
+          stableStaffExternalId: true,
+          stableStaffExternalIdType: true,
+        },
+      })
+    ).map(
+      ({ stableStaffExternalId, stableStaffExternalIdType }) =>
+        `${stableStaffExternalId}+${stableStaffExternalIdType}`,
+    ),
+  );
+
   const existingClientIds = new Set(
     (
       await prismaClient.client.findMany({
         select: { personId: true },
       })
     ).map(({ personId }) => personId),
-  );
-
-  const existingStaffIds = new Set(
-    (
-      await prismaClient.staff.findMany({
-        select: { staffId: true },
-      })
-    ).map(({ staffId }) => staffId),
   );
 
   const newStaffToCreate: StaffCreateInput[] = [];
@@ -63,23 +70,34 @@ export async function transformAndLoadStaffData(
 
     const newStaff = {
       staffId: staffData.staff_id,
+      stableStaffExternalId: staffData.stable_staff_external_id,
+      stableStaffExternalIdType: staffData.stable_staff_external_id_type,
       pseudonymizedId: staffData.pseudonymized_id,
       stateCode: staffData.state_code,
       givenNames: staffData.full_name.given_names,
       middleNames: staffData.full_name.middle_names,
       surname: staffData.full_name.surname,
       suffix: staffData.full_name.name_suffix,
-      email: staffData.email,
-    } satisfies StaffCreateInput & BulkUpdateEntries[number];
+      email: staffData.email ?? null,
+    } satisfies StaffCreateInput & BulkUpdateEntry;
 
-    if (existingStaffIds.has(staffData.staff_id)) {
+    if (
+      existingStableStaffExternalIdsAndTypes.has(
+        `${staffData.stable_staff_external_id}+${staffData.stable_staff_external_id_type}`,
+      )
+    ) {
       existingStaffToUpdate.push(newStaff);
     } else {
       newStaffToCreate.push(newStaff);
     }
   }
 
-  await bulkUpdate(prismaClient, "Staff", "staffId", existingStaffToUpdate);
+  await bulkUpdate(
+    prismaClient,
+    "Staff",
+    ["stableStaffExternalId", "stableStaffExternalIdType"],
+    existingStaffToUpdate,
+  );
 
   await prismaClient.staff.createMany({
     data: newStaffToCreate,

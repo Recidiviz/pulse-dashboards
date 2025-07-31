@@ -62,24 +62,44 @@ enum StateCode {
 }
 
 model Staff {
-  staffId         String    @id
-  pseudonymizedId String    @unique
-  stateCode       StateCode
+  stateCode StateCode
+  // Explanation of ids:
+  // - staffId: Unique identifier for the staff member in the system. This is not necessarily stable over time.
+  // - stableStaffExternalId: A stable identifier that is an external identifier for the staff member, such as an employee ID.
+  // - stableStaffExternalIdType: The type of the stable external identifier, such as "employee_id" or "contractor_id".
+  // - pseudonymizedId: A unique identifier that is used to anonymize the staff member's identity in the system. It is a hashing of the stableStaffExternalId
+
+  staffId                   Int    @id
+  stableStaffExternalId     String
+  stableStaffExternalIdType String
+  pseudonymizedId           String @unique
 
   givenNames  String
   middleNames String?
   surname     String
   suffix      String?
 
-  email   String
+  email   String?
   clients ClientsToStaff[]
+
+  @@unique([stableStaffExternalId, stableStaffExternalIdType])
 }
 
 model Client {
-  personId        String    @id
-  externalId      String    @unique
-  pseudonymizedId String    @unique
-  stateCode       StateCode
+  stateCode StateCode
+
+  // Explanation of ids:
+  // - personId: Unique identifier for the client in the system. This is not necessarily stable over time.
+  // - stablePersonExternalId: A stable identifier that is an external identifier for the client, such as a social security number or a unique client ID.
+  // - stablePersonExternalIdType: The type of the stable external identifier, such as "ssn" or "client_id".
+  // - pseudonymizedId: A unique identifier that is used to anonymize the client's identity in the system. It is a hashing of the stablePersonExternalId.
+  // - displayPersonExternalId: An identifier that staff are used to using to refer to the client, which may be different from the stablePersonExternalId. This is used for display purposes in the UI.
+
+  personId                   Int    @id
+  stablePersonExternalId     String
+  stablePersonExternalIdType String
+  pseudonymizedId            String @unique
+  displayPersonExternalId    String
 
   givenNames  String
   middleNames String?
@@ -93,13 +113,15 @@ model Client {
 
   staff  ClientsToStaff[]
   Intake Intake[]
+
+  @@unique([stablePersonExternalId, stablePersonExternalIdType])
 }
 
 model ClientsToStaff {
   staff    Staff  @relation(fields: [staffId], references: [staffId])
-  staffId  String
+  staffId  Int
   Client   Client @relation(fields: [clientId], references: [personId])
-  clientId String
+  clientId Int
 
   @@id([staffId, clientId])
 }
@@ -113,5 +135,5 @@ model Intake {
   sections Json
 
   client   Client @relation(fields: [clientId], references: [personId])
-  clientId String
+  clientId Int
 }
