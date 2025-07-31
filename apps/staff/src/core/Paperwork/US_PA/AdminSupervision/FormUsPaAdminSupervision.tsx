@@ -106,7 +106,7 @@ export const FormUsPaAdminSupervision = observer(
       return null;
     }
 
-    const showProviso =
+    const showDrugProviso =
       opportunity.record?.formInformation?.drugConviction ||
       opportunity.record?.formInformation?.drugUnreportedDisposition;
 
@@ -120,9 +120,9 @@ export const FormUsPaAdminSupervision = observer(
         opportunity={opportunity}
         downloadButtonLabel="Download DOCX"
         dataProviso={
-          showProviso
-            ? `${client.displayName} is serving a drug offense that may be eligible for Administrative Supervision. Fill out both the 402 and 402a forms.`
-            : undefined
+          showDrugProviso
+            ? `${client.displayName} is serving a drug offense that may be eligible for Administrative Supervision. Instructions: Ensure both the 402 and 402a forms are accurate and complete, and follow your district's procedure for transferring a reentrant to Administrative Supervision. Typically, this involves uploading the completed 402 forms to OnBase and emailing a copy to your supervisor.`
+            : `Instructions: Ensure the form is accurate and complete, and follow your district's procedure for transferring a reentrant to Administrative Supervision. Typically, this involves uploading the completed 402 form to OnBase and emailing a copy to your supervisor.`
         }
       >
         <FormViewer formRef={formRef}>

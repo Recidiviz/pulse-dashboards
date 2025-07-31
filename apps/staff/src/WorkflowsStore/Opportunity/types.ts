@@ -81,6 +81,8 @@ export type WithCaseNotes = {
 
 export type FormVariant = "deferred";
 
+export type ActedOnTextAddition = PartialRecord<OpportunityStatus, string>;
+
 /**
  * An Opportunity is associated with a single client.
  * The client is assumed to be eligible for the Opportunity unless the
@@ -95,7 +97,7 @@ export interface Opportunity<
 > extends Hydratable {
   config: OpportunityConfiguration;
   record: DocumentData | undefined;
-  actedOnTextAddition?: string;
+  actedOnTextAddition?: ActedOnTextAddition;
   almostEligible: boolean;
   // TODO: move this to status component once almost-eligible is standardized on TES
   almostEligibleStatusMessage?: string;

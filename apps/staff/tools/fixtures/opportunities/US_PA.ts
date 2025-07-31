@@ -20,7 +20,8 @@ import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore
 export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usPaAdminSupervision: {
-      callToAction: "Review clients and complete the DC-P 402 checklist",
+      callToAction: "Review clients and complete the DC-P 402 forms",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -71,14 +72,14 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: null,
       displayName: "Administrative Supervision",
       dynamicEligibilityText:
-        "client[|s] may be eligible for transfer to Adminstrative Supervision",
+        "client[|s] may be eligible for transfer to Administrative Supervision",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
           key: "usPaOnSupervisionAtLeastOneYear",
           text: "Has served on supervision for at least one year",
           tooltip:
-            "After one year of supervision, all reentrants must be assessed for administrative parole supervision",
+            "This is determined by whether a year has passed since the reentrant’s release date",
         },
         {
           key: "usPaNoHighSanctionsInPastYear",
@@ -88,13 +89,13 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usPaNotServingIneligibleOffenseForAdminSupervision",
           text: "Not convicted of an ineligible offense",
           tooltip:
-            'Click "complete checklist" to see full list of ineligible offenses',
+            'Click "complete 402 forms" to see full list of ineligible offenses',
         },
         {
           key: "usPaNotOnSexOffenseProtocol",
-          text: "Not supervised under the sex offender protocol or designated as a sexually violent predator",
+          text: "Not designated as a sex offender",
           tooltip:
-            "Reentrants designated as a sexually violent predator shall not be supervised below the maximum level of supervision. All other reentrants supervised under the sex offender protocol shall be supervised at no less than the medium level of supervision. ",
+            "A reentrant is considered a sex offender if they have a problem area of “Sex Offender” checked in Captor or have any special conditions or treatments that relate to sex offenders and/or Megan’s Law",
         },
         {
           key: "supervisionLevelIsNotHighOrMaxForOneYear",
@@ -137,7 +138,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           text: "Does not have out of state charges for ineligible offenses",
           tooltip:
-            'Click "complete checklist" to see full list of ineligible offenses',
+            'Click "complete 402 forms" to see full list of ineligible offenses',
         },
         {
           text: "Does not have sentencing enhancements related to firearms or deadly weapons",
@@ -151,7 +152,7 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_PA",
       subcategoryHeadings: [],
@@ -167,11 +168,11 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "adminSupervision",
       zeroGrantsTooltip:
         "This agent has not granted any clients this opportunity in the past 12 months.",
-      caseNotesTitle: null,
     },
     usPaSpecialCircumstancesSupervision: {
       callToAction:
         "Review clients and transfer to administrative supervision caseload",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -203,15 +204,15 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "usPaMeetsSpecialCircumstancesCriteriaForTimeServed",
-          text: "Currently serving a {{caseType}} and has served on supervision for {{yearsRequiredToServe}} years",
+          text: "Currently serving a {{caseType}} and has served on supervision for {{yearsRequiredToServe}} {{#if (eq yearsRequiredToServe 1)}}year{{else}}years{{/if}}",
           tooltip:
-            "Other reentrant categories that can be considered for the SPC include:\n(a) those serving a life sentence...over a seven year period\n(b) a non-life sentenced reentrant (violent case)...over a five-year period\n(c) a non-life sentenced reentrant (non-violent case)...over a three-year period\n(d) special probation and special parole cases that have had one year or more of successful supervision. A reentrant is classified as a violent case if their instant offense is listed in 42 Pa.C.S. § 9714(g). ",
+            'Per policy 12.4.01.06, {{#if (eq caseType "non-life sentence (violent case)")}}"a non-life sentenced reentrant (violent case) with a satisfactory adjustment\nover a five-year period" is eligible for SPC. This reentrant was classified as a violent case because they are currently serving for an offense listed in 42 Pa.C.S. § 9714(g).{{/if}}{{#if (eq caseType "non-life sentence (non-violent case)")}}"a non-life sentenced reentrant (non-violent case) with a satisfactory\nadjustment over a three-year period" is eligible for SPC. This reentrant was classified as a non-violent case because they are not currently serving for an offense listed in 42 Pa.C.S. § 9714(g).{{/if}}{{#if (eq caseType "life sentence")}}"a reentrant serving a life sentence with a satisfactory adjustment over a seven-\nyear period" is eligible for SPC.{{/if}}{{#if (eq caseType "special probation or parole case")}}"special probation and special parole cases that have...one year or more of successful supervision" are eligible for SPC.{{/if}} Time on supervision is determined by the amount of time that has passed since the reentrant\'s release date.',
         },
         {
           key: "usPaMeetsSpecialCircumstancesCriteriaForSanctions",
-          text: "No {{sanctionType}} level sanctions within the past year.",
+          text: "No {{sanctionType}} level sanctions within the past year",
           tooltip:
-            "Other reentrant categories that can be considered for the SPC include: \n(a) [reentrants] with a satisfactory adjustment\n(b) special probation and special parole cases... with one year or more of successful supervision with no medium or\nhigh-level sanctions",
+            'Per policy 12.4.01.06, {{#if (eq sanctionType "high")}}reentrants must have had a "satisfactory adjustment" over their supervision period. This tool uses a lack of high sanctions in the past year as a proxy for satisfactory adjustment while on supervision. {{else}}"special probation and special parole cases...with one year or more of successful supervision with no medium or high-level sanctions" are eligible for SPC.{{/if}}',
         },
         {
           key: "usPaNotEligibleOrMarkedIneligibleForAdminSupervision",
@@ -219,9 +220,9 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usPaNotOnSexOffenseProtocol",
-          text: "Not supervised under the sex offender protocol or designated as a sexually violent predator",
+          text: "Not designated as a sex offender",
           tooltip:
-            "Reentrants designated as a sexually violent predator shall not be supervised below the maximum level of supervision. All other reentrants supervised under the sex offender protocol shall be supervised at no less than the medium level of supervision. ",
+            "A reentrant is considered a sex offender if they have a problem area of “Sex Offender” checked in Captor or have any special conditions or treatments that relate to sex offenders or Megan’s Law ",
         },
       ],
       emptyTabCopy: [],
@@ -259,13 +260,13 @@ export const mockApiOpportunityConfigurationResponse = {
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
       sidebarComponents: ["ClientProfileDetails", "CaseNotes"],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_PA",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Special circumstances supervision allows reentrants who are not eligible for traditional administrative supervision to be supervised at a lower level of supervision. It is typically used for reentrants who have extenuating circumstances that reduce the risk of re-offending or reentrants who have made satisfactory adjustments on supervision over a period of time.<br><br>On this page, you can review clients who may be eligible for special circumstances supervision. For more information, please refer to the supervision levels policy [here](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view) or learn more about [our methodology](https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub). ",
+        "Special circumstances supervision allows reentrants who are not eligible for traditional administrative supervision to be supervised at a lower level of supervision. It is typically used for reentrants who have extenuating circumstances that reduce the risk of re-offending or reentrants who have made satisfactory adjustments on supervision over a period of time.<br><br>On this page, you can review clients who may be eligible for special circumstances supervision. For more information, please refer to the [supervision levels policy](https://drive.google.com/file/d/1MeqGQPvWNytOhUJCYsevoXwtTOEK0TIh/view) and [violent offenses list](https://drive.google.com/file/d/1UIhv6lkByGwtZBOqqO8Y9cRG_n1wMQrT/view?usp=sharing) or learn more about [our methodology](https://docs.google.com/document/d/e/2PACX-1vSdsgMDOmD7tR_IP8NwqYggO6w9MBsAdB3jZp8ZEfWSseoGw0_6gBuF1hw6AGUskESpnA7htA8uct_y/pub). ",
       submittedTabTitle: "Pending Review",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
@@ -274,7 +275,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "specialCircumstancesSupervisionReferrals",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

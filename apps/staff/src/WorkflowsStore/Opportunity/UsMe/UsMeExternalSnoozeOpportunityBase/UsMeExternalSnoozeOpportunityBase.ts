@@ -29,6 +29,7 @@ import {
 } from "../../../../FirestoreStore";
 import { JusticeInvolvedPerson } from "../../../types";
 import { OpportunityBase } from "../../OpportunityBase";
+import { ActedOnTextAddition } from "../../types";
 
 type MetadataDenial = z.infer<typeof usMeDenialMetadataSchema>;
 
@@ -93,8 +94,8 @@ export class UsMeExternalSnoozeOpportunityBase<
     return "Generate case note text";
   }
 
-  get actedOnTextAddition(): string {
-    return ", subject to supporting case note entered into CORIS.";
+  get actedOnTextAddition(): ActedOnTextAddition {
+    return { DENIED: ", subject to supporting case note entered into CORIS." };
   }
 
   get generateCaseNoteText(): string {

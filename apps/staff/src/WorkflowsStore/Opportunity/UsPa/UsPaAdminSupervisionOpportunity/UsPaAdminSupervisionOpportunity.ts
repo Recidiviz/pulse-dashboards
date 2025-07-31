@@ -20,6 +20,7 @@ import { DocumentData } from "firebase/firestore";
 import { Client } from "../../../Client";
 import { UsPaAdminSupervisionForm } from "../../Forms/UsPaAdminSupervisionForm";
 import { OpportunityBase } from "../../OpportunityBase";
+import { ActedOnTextAddition } from "../../types";
 import {
   UsPaAdminSupervisionReferralRecord,
   usPaAdminSupervisionSchema,
@@ -40,5 +41,12 @@ export class UsPaAdminSupervisionOpportunity extends OpportunityBase<
     );
 
     this.form = new UsPaAdminSupervisionForm(this, client.rootStore);
+  }
+
+  get actedOnTextAddition(): ActedOnTextAddition {
+    return {
+      SUBMITTED:
+        ". Note: this action does not automatically notify your supervisor.",
+    };
   }
 }

@@ -25,7 +25,7 @@ export class UsPaAdminSupervisionForm extends FormBase<
   UsPaAdminSupervisionDraftData,
   UsPaAdminSupervisionOpportunity
 > {
-  navigateToFormText = "Complete checklist";
+  navigateToFormText = "Complete 402 Forms";
 
   get formContents(): OpportunityFormComponentName {
     return "FormUsPaAdminSupervision";

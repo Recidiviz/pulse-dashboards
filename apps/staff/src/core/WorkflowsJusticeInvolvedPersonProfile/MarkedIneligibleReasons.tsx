@@ -24,7 +24,7 @@ import { palette } from "~design-system";
 
 import { Denial, Submission } from "../../FirestoreStore";
 import { appendDateSuffixIfMissing } from "../../utils";
-import { Opportunity } from "../../WorkflowsStore";
+import { ActedOnTextAddition, Opportunity } from "../../WorkflowsStore";
 import { formatSupervisionEndDatePhrase } from "./utils";
 
 const MarkedIneligibleReasonsText = styled.div`
@@ -62,7 +62,7 @@ export function buildActedOnText({
   submittedTabTitle: string;
   submittedUpdate?: Submission;
   subcategoryCopy?: string;
-  actedOnTextAddition?: string;
+  actedOnTextAddition?: ActedOnTextAddition;
 }): string | undefined {
   if (!isSubmitted && !denial) return;
 
@@ -74,17 +74,19 @@ export function buildActedOnText({
 
   const subcategorySubstr = subcategoryCopy ? `: ${subcategoryCopy}` : "";
 
-  if (denial && actedOnTextAddition) {
-    return `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}${subcategorySubstr} by ${actionBy} on ${format(
-      actionDate,
-      "LLLL d, yyyy",
-    )}${actedOnTextAddition}`;
+  let textAddition = undefined;
+  if (actedOnTextAddition) {
+    if (denial && actedOnTextAddition.DENIED) {
+      textAddition = actedOnTextAddition.DENIED;
+    } else if (isSubmitted && actedOnTextAddition.SUBMITTED) {
+      textAddition = actedOnTextAddition.SUBMITTED;
+    }
   }
 
   return `${status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}${subcategorySubstr} by ${actionBy} on ${format(
     actionDate,
     "LLLL d, yyyy",
-  )}.`;
+  )}${textAddition ?? "."}`;
 }
 
 export function getusAzTprDtpAdditionalInformation(

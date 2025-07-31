@@ -60,7 +60,39 @@ describe("buildDenialReasonsListText", () => {
 });
 
 describe("actedOnText", () => {
-  test("marked submitted", () => {
+  test("marked submitted without text addition", () => {
+    const testOpp = {
+      ...mockOpportunity,
+      isSubmitted: true,
+      submittedTabTitle: "Submitted",
+      submittedUpdate: {
+        date: Timestamp.fromDate(new Date(2023, 9, 15)),
+        by: "test-email",
+      },
+      actedOnTextAddition: { DENIED: ". Denied text addition." },
+    };
+    expect(buildActedOnText(testOpp)).toEqual(
+      "Submitted by test-email on October 15, 2023.",
+    );
+  });
+
+  test("marked submitted with text addition", () => {
+    const testOpp = {
+      ...mockOpportunity,
+      isSubmitted: true,
+      submittedTabTitle: "Submitted",
+      submittedUpdate: {
+        date: Timestamp.fromDate(new Date(2023, 9, 15)),
+        by: "test-email",
+      },
+      actedOnTextAddition: { SUBMITTED: ". Submitted text addition." },
+    };
+    expect(buildActedOnText(testOpp)).toEqual(
+      "Submitted by test-email on October 15, 2023. Submitted text addition.",
+    );
+  });
+
+  test("marked submitted without actedOnTextAddition object", () => {
     const testOpp = {
       ...mockOpportunity,
       isSubmitted: true,
@@ -75,16 +107,31 @@ describe("actedOnText", () => {
     );
   });
 
-  test("marked ineligible", () => {
+  test("marked ineligible without text addition", () => {
     const testOpp = {
       ...mockOpportunity,
       denial: { reasons: [] },
       deniedTabTitle: "Marked Ineligible",
       snoozedOnDate: new Date(2023, 9, 15),
       snoozedBy: "test-email",
+      actedOnTextAddition: { SUBMITTED: ". Submitted text addition." },
     };
     expect(buildActedOnText(testOpp)).toEqual(
       "Marked ineligible by test-email on October 15, 2023.",
+    );
+  });
+
+  test("marked ineligible with text addition", () => {
+    const testOpp = {
+      ...mockOpportunity,
+      denial: { reasons: [] },
+      deniedTabTitle: "Marked Ineligible",
+      snoozedOnDate: new Date(2023, 9, 15),
+      snoozedBy: "test-email",
+      actedOnTextAddition: { DENIED: ". Denied text addition." },
+    };
+    expect(buildActedOnText(testOpp)).toEqual(
+      "Marked ineligible by test-email on October 15, 2023. Denied text addition.",
     );
   });
 
