@@ -696,7 +696,7 @@ export async function processIndividualJii(
   if (latestMessageSeries === undefined) return ScriptAction.ERROR;
 
   const {
-    group: { groupName: latestMessageGroupName, id: latestMessageGroupId },
+    group: { id: latestMessageGroupId },
     messageType: latestMessageType,
   } = latestMessageSeries;
 
@@ -704,15 +704,6 @@ export async function processIndividualJii(
     new Date(),
     latestMessageAttempt.createdTimestamp,
   );
-
-  // TODO(#8136): Remove once it's been 90 days since the April manual launch
-  if (
-    latestMessageGroupName === "MANUAL" &&
-    daysSinceLatestMessageAttempt >= 0 &&
-    daysSinceLatestMessageAttempt < 90
-  ) {
-    return ScriptAction.SKIPPED;
-  }
 
   if (
     allTextAttemptsForSeriesFailed(latestMessageSeries) ||
