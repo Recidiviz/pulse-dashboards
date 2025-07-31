@@ -42,7 +42,7 @@ const mockAnalyticsStore = {
 } as any as AnalyticsStore;
 
 const mockTenantStore = {
-  taskCategories: ["assessment", "employment"],
+  taskCategories: ["ALL_TASKS", "OVERDUE", "DUE_THIS_WEEK", "DUE_THIS_MONTH"],
   tasksConfiguration: {
     tasks: {
       assessment: {
@@ -619,6 +619,75 @@ describe("CaseloadTasksPresenterV2", () => {
 
       // When applyFilter is false, we should get all hidden tasks regardless of filters
       expect(presenter.allTasksForCategory("HIDDEN", false)).toHaveLength(1);
+    });
+
+    it("excludes tasks due this week from DUE_THIS_MONTH when DUE_THIS_WEEK is in displayedTaskCategories", () => {
+      // Mock tenant store to include DUE_THIS_WEEK in displayedTaskCategories
+      const tenantStoreWithThisWeek = {
+        ...mockTenantStore,
+        taskCategories: [
+          "ALL_TASKS",
+          "OVERDUE",
+          "DUE_THIS_WEEK",
+          "DUE_THIS_MONTH",
+        ],
+      } as any as TenantStore;
+
+      presenter = getPresenter({
+        workflowsStore: {
+          ...mockWorkflowsStore,
+          caseloadPersons: [
+            makePersonWithTasks(["employment"], { dateOffset: 2 }), // Due this week
+            makePersonWithTasks(["assessment"], { dateOffset: 15 }), // Due this month but not this week
+          ],
+        } as any as WorkflowsStore,
+        tenantStore: tenantStoreWithThisWeek,
+      });
+
+      const thisWeekTasks = presenter.allTasksForCategory("DUE_THIS_WEEK");
+      const thisMonthTasks = presenter.allTasksForCategory("DUE_THIS_MONTH");
+
+      // Task due in 2 days should be in THIS_WEEK but not THIS_MONTH
+      expect(thisWeekTasks).toHaveLength(1);
+      expect(thisWeekTasks[0].type).toEqual("employment");
+
+      // Task due in 15 days should be in THIS_MONTH but not THIS_WEEK
+      expect(thisMonthTasks).toHaveLength(1);
+      expect(thisMonthTasks[0].type).toEqual("assessment");
+
+      // Verify no overlap between the two categories
+      const thisWeekTaskTypes = thisWeekTasks.map((t) => t.type);
+      const thisMonthTaskTypes = thisMonthTasks.map((t) => t.type);
+      const overlap = thisWeekTaskTypes.filter((type) =>
+        thisMonthTaskTypes.includes(type),
+      );
+      expect(overlap).toHaveLength(0);
+    });
+
+    it("includes tasks due this week in DUE_THIS_MONTH when DUE_THIS_WEEK is not in displayedTaskCategories", () => {
+      // Mock tenant store to exclude DUE_THIS_WEEK from displayedTaskCategories
+      const tenantStoreWithoutThisWeek = {
+        ...mockTenantStore,
+        taskCategories: ["ALL_TASKS", "OVERDUE", "DUE_THIS_MONTH"], // No DUE_THIS_WEEK
+      } as any as TenantStore;
+
+      presenter = getPresenter({
+        workflowsStore: {
+          ...mockWorkflowsStore,
+          caseloadPersons: [
+            makePersonWithTasks(["employment"], { dateOffset: 2 }), // Due this week
+            makePersonWithTasks(["assessment"], { dateOffset: 15 }), // Due this month but not this week
+          ],
+        } as any as WorkflowsStore,
+        tenantStore: tenantStoreWithoutThisWeek,
+      });
+
+      const thisMonthTasks = presenter.allTasksForCategory("DUE_THIS_MONTH");
+
+      // Both tasks should be in THIS_MONTH when THIS_WEEK is not available
+      expect(thisMonthTasks).toHaveLength(2);
+      const taskTypes = thisMonthTasks.map((t) => t.type).sort();
+      expect(taskTypes).toEqual(["assessment", "employment"]);
     });
   });
 });

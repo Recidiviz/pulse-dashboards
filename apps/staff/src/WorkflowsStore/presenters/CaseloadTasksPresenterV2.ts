@@ -200,6 +200,9 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
         );
       }
 
+      const hasThisWeekTab =
+        this.displayedTaskCategories.includes("DUE_THIS_WEEK");
+
       return supervisionTasks.readyOrderedTasks.filter((t) => {
         if (applyFilter && !this.taskMatchesFilters(t)) return false;
 
@@ -212,7 +215,9 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
             return !t.isOverdue && isThisWeek(t.dueDate);
           case "DUE_THIS_MONTH":
             return (
-              !t.isOverdue && !isThisWeek(t.dueDate) && isThisMonth(t.dueDate)
+              !t.isOverdue &&
+              !(hasThisWeekTab && isThisWeek(t.dueDate)) &&
+              isThisMonth(t.dueDate)
             );
           case "DUE_NEXT_MONTH":
             return differenceInCalendarMonths(t.dueDate, new Date()) === 1;
