@@ -20,6 +20,7 @@ import { faker } from "@faker-js/faker";
 import { PrismaClient, StateCode } from "~@reentry/prisma/client";
 
 export const intakeId = "intake-1";
+export const clientPseudoId = "client-pid-1";
 
 export const fakeStaff = {
   staffId: "staff-1",
@@ -35,7 +36,7 @@ export const fakeClient = {
   stateCode: StateCode.US_ID,
   personId: "client-person-id-1",
   externalId: "client-ext-1",
-  pseudonymizedId: "client-pid-1",
+  pseudonymizedId: clientPseudoId,
   givenNames: faker.person.firstName(),
   middleNames: faker.person.firstName(),
   surname: faker.person.lastName(),

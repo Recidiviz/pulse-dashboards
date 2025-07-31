@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,24 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpcMiddleware } from "@sentry/node";
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
+import { FastifyReply, FastifyRequest } from "fastify";
 
-import { createContext } from "~@reentry/trpc/context";
+import { PrismaClient } from "~@reentry/prisma/client/client";
 
-export const t = initTRPC
-  .context<typeof createContext>()
-  // Required to get Date objects to serialize correctly.
-  .create({ transformer: superjson });
+export type AuthUser = {
+  clientPseudoId: string;
+  iat?: number;
+  exp?: number;
+};
 
-export const router = t.router;
-
-export const baseProcedure = t.procedure
-  .use(trpcMiddleware({ attachRpcInput: true }))
-  .use(async ({ ctx, next }) => {
-    if (!ctx.isAuthorized) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next();
-  });
+export type Context = {
+  req: FastifyRequest;
+  res: FastifyReply;
+  isAuthorized: boolean;
+  user: AuthUser | null;
+  prisma: PrismaClient;
+};

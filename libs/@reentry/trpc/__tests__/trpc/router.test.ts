@@ -18,7 +18,13 @@
 import { BaseMessage } from "@langchain/core/messages";
 import { describe } from "vitest";
 
-import { sharedMemorySaver, testTRPCClient } from "~@reentry/trpc/test/setup";
+import {
+  initTRPCClient,
+  initWSClient,
+  sharedMemorySaver,
+  testServer,
+  testTRPCClient,
+} from "~@reentry/trpc/test/setup";
 import { intakeId } from "~@reentry/trpc/test/setup/seed";
 
 let subscription: ReturnType<
@@ -65,6 +71,31 @@ const subscribeToIntakeChat = async (lastEventId?: string) => {
     },
   );
 };
+
+test("tRPC client with bad token should throw an error", async () => {
+  const badToken = "invalid-token";
+  const wsClient = initWSClient(badToken);
+  const testTRPCClient = initTRPCClient(badToken, wsClient);
+
+  await expect(
+    new Promise<void>((resolve, reject) => {
+      testTRPCClient.intakeChat.intakeChat.subscribe(
+        { intakeId },
+        {
+          onData() {
+            resolve();
+          },
+          onError(err) {
+            reject(err);
+          },
+          onComplete() {
+            resolve();
+          },
+        },
+      );
+    }),
+  ).rejects.toThrow("UNAUTHORIZED");
+});
 
 describe("Intake chat", () => {
   beforeEach(() => {
@@ -254,6 +285,62 @@ describe("Intake chat", () => {
           messages: ["Welcome message", "question"],
         },
       }),
+    );
+  });
+
+  test("intake chat route should throw an error if the client tries to connect to a bad intake id", async () => {
+    await expect(
+      new Promise<void>((resolve, reject) => {
+        testTRPCClient.intakeChat.intakeChat.subscribe(
+          { intakeId: "non-existent-intake-id" },
+          {
+            onData() {
+              resolve();
+            },
+            onError(err) {
+              reject(err);
+            },
+            onComplete() {
+              resolve();
+            },
+          },
+        );
+      }),
+    ).rejects.toThrow(
+      `No intake found with ID "non-existent-intake-id" for client "client-pid-1"`,
+    );
+  });
+
+  test("intake chat route should throw an error if the client tries to connect to a bad pseudo id", async () => {
+    const badClientToken = testServer.jwt.sign(
+      {
+        clientPseudoId: "non-existent-client-pseudo-id",
+      },
+      { algorithm: "HS256", expiresIn: "5h" },
+    );
+
+    const wsClient = initWSClient(badClientToken);
+    const testTRPCClient = initTRPCClient(badClientToken, wsClient);
+
+    await expect(
+      new Promise<void>((resolve, reject) => {
+        testTRPCClient.intakeChat.intakeChat.subscribe(
+          { intakeId },
+          {
+            onData() {
+              resolve();
+            },
+            onError(err) {
+              reject(err);
+            },
+            onComplete() {
+              resolve();
+            },
+          },
+        );
+      }),
+    ).rejects.toThrow(
+      `No intake found with ID "intake-1" for client "non-existent-client-pseudo-id"`,
     );
   });
 

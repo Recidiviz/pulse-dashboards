@@ -22,12 +22,15 @@ import { TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
-import { getIsAuth0Authorized } from "~server-setup-plugin";
+import { authenticateAndGetUser } from "~@reentry/trpc";
+import { Context } from "~@reentry/trpc/types";
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
 
-export async function createContext(opts: CreateFastifyContextOptions) {
+export async function createContext(
+  opts: CreateFastifyContextOptions,
+): Promise<Context> {
   const { req, res, info } = opts;
   let stateCode: string | string[] | undefined;
 
@@ -44,7 +47,7 @@ export async function createContext(opts: CreateFastifyContextOptions) {
     });
   }
 
-  const auth0Authorized = await getIsAuth0Authorized(opts);
+  const user = await authenticateAndGetUser(opts);
 
   let prismaClient;
   try {
@@ -60,7 +63,8 @@ export async function createContext(opts: CreateFastifyContextOptions) {
   return {
     req,
     res,
-    auth0Authorized,
+    isAuthorized: !!user,
+    user,
     prisma: prismaClient,
   };
 }

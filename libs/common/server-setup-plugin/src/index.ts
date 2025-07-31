@@ -16,6 +16,7 @@
 // =============================================================================
 
 import cors from "@fastify/cors";
+import fastifyJwt from "@fastify/jwt";
 import ws from "@fastify/websocket";
 import { setupFastifyErrorHandler } from "@sentry/node";
 import { AnyRouter } from "@trpc/server";
@@ -35,6 +36,7 @@ type BuildServerOptions<TRouter extends AnyRouter> = {
     domain: string;
     audience: string;
   };
+  authStrategy?: "auth0" | "jwt";
   useWSS?: boolean;
   trpcPrefix?: string;
 };
@@ -52,6 +54,7 @@ export function buildCommonServer<TRouter extends AnyRouter>(
     createContext,
     auth0Options,
     useWSS = false,
+    authStrategy = "auth0",
     trpcPrefix = "",
   } = options;
 
@@ -85,10 +88,18 @@ export function buildCommonServer<TRouter extends AnyRouter>(
     } satisfies FastifyTRPCPluginOptions<typeof appRouter>["trpcOptions"],
   });
 
-  server.register(fastifyAuth0Verify, {
-    domain: auth0Options.domain,
-    audience: auth0Options.audience,
-  });
+  if (authStrategy === "auth0") {
+    server.register(fastifyAuth0Verify, {
+      domain: auth0Options.domain,
+      audience: auth0Options.audience,
+    });
+  } else if (authStrategy === "jwt") {
+    server.register(fastifyJwt, {
+      secret: process.env["INTAKE_PRIVATE_JWT_KEY"] ?? "",
+      sign: { algorithm: "HS256", expiresIn: "5h" },
+      verify: { algorithms: ["HS256"] },
+    });
+  }
 
   server.register(cors, {
     origin: "*",

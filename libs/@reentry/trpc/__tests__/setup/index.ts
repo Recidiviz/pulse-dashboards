@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { generateMock } from "@anatine/zod-mock";
+import fastifyJwt from "@fastify/jwt";
 import ws from "@fastify/websocket";
 import { RunnableLambda } from "@langchain/core/runnables";
 import { FakeListChatModel } from "@langchain/core/utils/testing";
@@ -43,7 +44,7 @@ import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { StateCode } from "~@reentry/prisma/client";
 import { createContext } from "~@reentry/trpc/context";
 import { AppRouter, appRouter } from "~@reentry/trpc/router";
-import { seed } from "~@reentry/trpc/test/setup/seed";
+import { clientPseudoId, seed } from "~@reentry/trpc/test/setup/seed";
 import { resetDb } from "~@reentry/trpc/test/setup/utils";
 
 export const testPort = process.env["PORT"]
@@ -53,6 +54,7 @@ export const testHost = process.env["HOST"] ?? "localhost";
 
 export let testTRPCClient: TRPCClient<AppRouter>;
 export let testServer: FastifyInstance;
+export let testToken: string;
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
 
 const { testkit, sentryTransport } = sentryTestkit();
@@ -100,12 +102,13 @@ vi.mock("~@reentry/intake-agent/get-checkpointer", () => ({
   getLangraphCheckpointerForStateCode: () => sharedMemorySaver,
 }));
 
-export const initWSClient = () => {
+export const initWSClient = (token: string = testToken) => {
   return createWSClient({
     url: `ws://${testHost}:${testPort}/trpc`,
     connectionParams: () => {
       return {
         statecode: "US_ID",
+        authorization: `Bearer ${token}`,
       };
     },
   });
@@ -113,19 +116,23 @@ export const initWSClient = () => {
 
 export let wsClient: ReturnType<typeof initWSClient>;
 
-export const initTRPCClient = () => {
+export const initTRPCClient = (
+  token: string = testToken,
+  client: typeof wsClient = wsClient,
+) => {
   return createTRPCClient<AppRouter>({
     links: [
       splitLink({
         condition(op) {
           return op.type === "subscription";
         },
-        true: wsLink({ client: wsClient, transformer: superjson }),
+        true: wsLink({ client: client, transformer: superjson }),
         false: httpBatchLink({
           url: `http://${testHost}:${testPort}/trpc`,
           headers() {
             return {
-              StateCode: "US_ID",
+              statecode: "US_ID",
+              authorization: `Bearer ${token}`,
             };
           },
           transformer: superjson,
@@ -138,6 +145,12 @@ export const initTRPCClient = () => {
 export const initTestServer = async () => {
   testServer = Fastify({
     logger: true,
+  });
+
+  testServer.register(fastifyJwt, {
+    secret: process.env["INTAKE_PRIVATE_JWT_KEY"] ?? "",
+    sign: { algorithm: "HS256", expiresIn: "5h" },
+    verify: { algorithms: ["HS256"] },
   });
 
   testServer.register(ws);
@@ -163,6 +176,15 @@ export const initTestServer = async () => {
       console.log(`[ ready ] http://${testHost}:${testPort}/trpc`);
     }
   });
+
+  await testServer.ready();
+
+  testToken = testServer.jwt.sign(
+    {
+      clientPseudoId,
+    },
+    { algorithm: "HS256", expiresIn: "5h" },
+  );
 };
 
 beforeAll(async () => {

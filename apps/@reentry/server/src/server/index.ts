@@ -51,6 +51,7 @@ export function buildServer() {
       audience: process.env["AUTH0_AUDIENCE"],
     },
     useWSS: true, // Enable WebSocket support
+    authStrategy: "jwt",
     trpcPrefix: "trpc",
   });
 

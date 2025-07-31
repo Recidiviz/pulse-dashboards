@@ -22,7 +22,7 @@ import EventEmitter, { on } from "events";
 import { IntakeAgent } from "~@reentry/intake-agent";
 import { sectionsSchema } from "~@reentry/intake-agent/constants";
 import { getLangraphCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
-import { router, t } from "~@reentry/trpc/init";
+import { baseProcedure, router } from "~@reentry/trpc/init";
 import {
   intakeChatInputSchema,
   intakeChatResponseInputSchema,
@@ -52,51 +52,74 @@ function convertAIMessagesToStringsAndGetLastId(aiMessages: AIMessage[]) {
 }
 
 export const intakeChatRouter = router({
-  reply: t.procedure
+  reply: baseProcedure
     .input(intakeChatResponseInputSchema)
-    .mutation(async ({ input: { intakeId, response } }) => {
-      const agent = intakeAgentsAndStatuses[intakeId].agent;
-
-      if (!agent) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: `There is no active chat for that intake. Cannot process response for intake with id ${intakeId}`,
+    .mutation(
+      async ({ ctx: { user, prisma }, input: { intakeId, response } }) => {
+        const intake = await prisma.intake.findUnique({
+          where: {
+            id: intakeId,
+            client: {
+              pseudonymizedId: user?.clientPseudoId,
+            },
+          },
         });
-      }
 
-      ee.emit(`response[${intakeId}]`, {
-        type: "loading",
-      });
+        if (!intake) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: `No intake found with ID "${intakeId}" for client "${user?.clientPseudoId}"`,
+          });
+        }
 
-      intakeAgentsAndStatuses[intakeId].isProcessingResponse = true;
+        const agent = intakeAgentsAndStatuses[intakeId].agent;
 
-      const { messages, lastId } = convertAIMessagesToStringsAndGetLastId(
-        await agent.processResponse(response),
-      );
+        if (!agent) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: `There is no active chat for that intake. Cannot process response for intake with id ${intakeId}`,
+          });
+        }
 
-      // If there is still an active subscription, set processingResponse to false
-      // Otherwise, delete the agent because it is no longer being used anywhere
-      if (!intakeAgentsAndStatuses[intakeId].hasActiveSubscription) {
-        intakeAgentsAndStatuses[intakeId].isProcessingResponse = false;
-      } else {
-        delete intakeAgentsAndStatuses[intakeId];
-      }
+        ee.emit(`response[${intakeId}]`, {
+          type: "loading",
+        });
 
-      ee.emit(`response[${intakeId}]`, {
-        type: "response",
-        lastId,
-        messages,
-      } satisfies EmitData);
-    }),
-  intakeChat: t.procedure
+        intakeAgentsAndStatuses[intakeId].isProcessingResponse = true;
+
+        const { messages, lastId } = convertAIMessagesToStringsAndGetLastId(
+          await agent.processResponse(response),
+        );
+
+        // If there is still an active subscription, set processingResponse to false
+        // Otherwise, delete the agent because it is no longer being used anywhere
+        if (!intakeAgentsAndStatuses[intakeId].hasActiveSubscription) {
+          intakeAgentsAndStatuses[intakeId].isProcessingResponse = false;
+        } else {
+          delete intakeAgentsAndStatuses[intakeId];
+        }
+
+        ee.emit(`response[${intakeId}]`, {
+          type: "response",
+          lastId,
+          messages,
+        } satisfies EmitData);
+      },
+    ),
+  intakeChat: baseProcedure
     .input(intakeChatInputSchema)
     .subscription(async function* ({
-      ctx: { prisma },
+      ctx: { prisma, user },
       input: { intakeId, lastEventId },
       signal,
     }) {
-      const intake = await prisma.intake.findUniqueOrThrow({
-        where: { id: intakeId },
+      const intake = await prisma.intake.findUnique({
+        where: {
+          id: intakeId,
+          client: {
+            pseudonymizedId: user?.clientPseudoId,
+          },
+        },
         include: {
           client: {
             select: {
@@ -106,6 +129,13 @@ export const intakeChatRouter = router({
           },
         },
       });
+
+      if (!intake) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `No intake found with ID "${intakeId}" for client "${user?.clientPseudoId}"`,
+        });
+      }
 
       const clientName = `${intake.client.givenNames} ${intake.client.surname}`;
       const sections = sectionsSchema.parse(intake.sections);
