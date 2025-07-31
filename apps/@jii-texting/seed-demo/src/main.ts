@@ -112,7 +112,7 @@ async function main() {
       stateCode: StateCode.US_ID,
       pseudonymizedId: faker.string.uuid(),
       personId: faker.string.uuid(),
-      externalId: faker.string.uuid(),
+      stableExternalId: faker.string.uuid(),
       givenName: faker.person.firstName(),
       middleName: faker.person.middleName(),
       surname: faker.person.lastName(),

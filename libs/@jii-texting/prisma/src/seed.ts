@@ -37,7 +37,7 @@ async function main() {
   for (let i = 0; i < numberOfPeople; i++) {
     people.push({
       stateCode: StateCode.US_ID,
-      externalId: faker.string.uuid(),
+      stableExternalId: faker.string.uuid(),
       pseudonymizedId: faker.string.uuid(),
       personId: faker.string.uuid(),
       givenName: faker.person.firstName(),

@@ -254,7 +254,7 @@ export async function sendText(
   twilio: TwilioAPIClient,
   messageSeriesId?: string,
 ) {
-  const { phoneNumber, externalId, pseudonymizedId } = personMetadata;
+  const { phoneNumber, stableExternalId, pseudonymizedId } = personMetadata;
 
   try {
     // TODO(#7745): Get the copy from group table or state-level
@@ -319,7 +319,7 @@ export async function sendText(
       await prisma.messageSeries.create({
         data: {
           messageType: messageType,
-          personExternalId: externalId,
+          personExternalId: stableExternalId,
           groupId: groupId,
           messageAttempts: {
             create: [
@@ -633,7 +633,7 @@ export async function processIndividualJii(
   const personMetadata: PersonDataForMessage = {
     givenName: jii.givenName,
     phoneNumber: jii.phoneNumber,
-    externalId: jii.externalId,
+    stableExternalId: jii.stableExternalId,
     poName: jii.poName,
     district: jii.district,
     pseudonymizedId: jii.pseudonymizedId,

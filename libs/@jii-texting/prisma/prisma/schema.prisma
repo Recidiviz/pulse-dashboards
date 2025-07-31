@@ -80,19 +80,19 @@ enum MessageAttemptStatus {
 }
 
 model Person {
-  externalId      String    @id // indicated by DOC
-  pseudonymizedId String    @unique // hashed id used to anonymize
-  personId        String    @unique // internal Recidiviz id
-  stateCode       StateCode
-  givenName       String
-  middleName      String?
-  surname         String
-  nameSuffix      String?
-  phoneNumber     String
-  officerId       String
-  poName          String
-  district        String
-  lastOptOutDate  DateTime? // will not be null if person has opted-out
+  stableExternalId String    @id  // indicated by DOC
+  pseudonymizedId  String    @unique // hashed id used to anonymize
+  personId         String    @unique // internal Recidiviz id
+  stateCode        StateCode
+  givenName        String
+  middleName       String?
+  surname          String
+  nameSuffix       String?
+  phoneNumber      String
+  officerId        String
+  poName           String
+  district         String
+  lastOptOutDate   DateTime? // will not be null if person has opted-out
 
   groups        Group[] // will be an empty list if this person should not be texted that day
   messageSeries MessageSeries[]
@@ -102,7 +102,7 @@ model MessageSeries {
   id          String      @id @default(cuid())
   messageType MessageType
 
-  person           Person           @relation(fields: [personExternalId], references: [externalId])
+  person           Person           @relation(fields: [personExternalId], references: [stableExternalId])
   personExternalId String
   group            Group            @relation(fields: [groupId], references: [id])
   groupId          String

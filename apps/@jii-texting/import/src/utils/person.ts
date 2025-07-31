@@ -27,7 +27,7 @@ export async function transformAndLoadPersonData(
   const errors: string[] = [];
 
   const existingPeopleExternalIds = (await prismaClient.person.findMany()).map(
-    (p) => p.externalId,
+    (p) => p.stableExternalId,
   );
   const processedExternalIds: string[] = [];
 
@@ -39,7 +39,7 @@ export async function transformAndLoadPersonData(
     });
 
     const newPerson = {
-      externalId: personData.external_id,
+      stableExternalId: personData.stable_person_external_id,
       pseudonymizedId: personData.pseudonymized_id,
       personId: personData.person_id,
       stateCode: personData.state_code,
@@ -56,7 +56,7 @@ export async function transformAndLoadPersonData(
     // Load data
     await prismaClient.person.upsert({
       where: {
-        externalId: newPerson.externalId,
+        stableExternalId: newPerson.stableExternalId,
       },
       create: {
         ...newPerson,
@@ -68,7 +68,7 @@ export async function transformAndLoadPersonData(
       },
     });
 
-    processedExternalIds.push(newPerson.externalId);
+    processedExternalIds.push(newPerson.stableExternalId);
   }
 
   // If existing Person not in the set of processed external ids, set Groups to empty array
@@ -80,7 +80,7 @@ export async function transformAndLoadPersonData(
   for await (const noLongerEligiblePeopleExternalId of noLongerEligiblePeopleExternalIds) {
     await prismaClient.person.update({
       where: {
-        externalId: noLongerEligiblePeopleExternalId,
+        stableExternalId: noLongerEligiblePeopleExternalId,
       },
       data: {
         groups: {

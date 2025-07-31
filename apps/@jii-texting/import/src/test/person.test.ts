@@ -52,7 +52,7 @@ describe("handle_import", () => {
       dataProviderSingleton.setData(TEST_PERSON_FILE_NAME, [
         // Existing person
         {
-          external_id: fakePersonOne.externalId,
+          stable_person_external_id: fakePersonOne.stableExternalId,
           pseudonymized_id: fakePersonOne.pseudonymizedId,
           person_id: fakePersonOne.personId,
           state_code: StateCode.US_ID,
@@ -70,7 +70,7 @@ describe("handle_import", () => {
         },
         // New person
         {
-          external_id: "new-person-ext",
+          stable_person_external_id: "new-person-ext",
           pseudonymized_id: "new-person-pid",
           person_id: "new-person-pid-1",
           state_code: StateCode.US_ID,
@@ -98,7 +98,7 @@ describe("handle_import", () => {
       // Check that old person lastOptOutDate has not changed and group was set
       expect(dbPeople).toEqual([
         expect.objectContaining({
-          externalId: fakePersonOne.externalId,
+          stableExternalId: fakePersonOne.stableExternalId,
           lastOptOutDate: new Date("2025-01-01"),
           groups: expect.arrayContaining([
             expect.objectContaining({
@@ -106,14 +106,14 @@ describe("handle_import", () => {
             }),
           ]),
         }),
-        expect.objectContaining({ externalId: "new-person-ext" }),
+        expect.objectContaining({ stableExternalId: "new-person-ext" }),
       ]);
     });
 
     test("no longer eligible person should have empty array of groups", async () => {
       const dbPerson = await testPrismaClient.person.findMany({
         select: {
-          externalId: true,
+          stableExternalId: true,
           groups: {
             select: {
               id: false,
@@ -129,7 +129,7 @@ describe("handle_import", () => {
       // DB should already be seeded with existing person that has a group
       expect(dbPerson).toEqual([
         expect.objectContaining({
-          externalId: fakePersonOne.externalId,
+          stableExternalId: fakePersonOne.stableExternalId,
           groups: [
             {
               groupName: fakeFullyEligibleGroup.groupName,
@@ -143,7 +143,7 @@ describe("handle_import", () => {
       dataProviderSingleton.setData(TEST_PERSON_FILE_NAME, [
         // New person
         {
-          external_id: "new-person-ext",
+          stable_person_external_id: "new-person-ext",
           pseudonymized_id: "new-person-pid",
           person_id: "new-person-pid-1",
           state_code: StateCode.US_ID,
@@ -165,7 +165,7 @@ describe("handle_import", () => {
 
       const dbPeople = await testPrismaClient.person.findMany({
         select: {
-          externalId: true,
+          stableExternalId: true,
           groups: {
             select: {
               id: false,
@@ -182,10 +182,10 @@ describe("handle_import", () => {
       // Check that old person groups are set to undefined
       expect(dbPeople).toEqual([
         expect.objectContaining({
-          externalId: fakePersonOne.externalId,
+          stableExternalId: fakePersonOne.stableExternalId,
           groups: [],
         }),
-        expect.objectContaining({ externalId: "new-person-ext" }),
+        expect.objectContaining({ stableExternalId: "new-person-ext" }),
       ]);
     });
   });

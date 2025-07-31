@@ -29,7 +29,7 @@ export const nameSchema = zu.stringToJSON().pipe(
 );
 
 export const personImportSchema = z.object({
-  external_id: z.string(),
+  stable_person_external_id: z.string(),
   pseudonymized_id: z.string(),
   person_id: z.string(),
   state_code: z.nativeEnum(StateCode),
