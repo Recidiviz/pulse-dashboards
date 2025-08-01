@@ -112,7 +112,7 @@ export async function checkResidentsRoster(
 ): Promise<AuthorizedUserProfile | undefined> {
   const userResidentRecord = (
     await (await getFirestore())
-      .doc(`residents/${stateCode.toLowerCase()}_${userId}`)
+      .doc(`residents/${stateCode.toLowerCase()}_${userId.toLowerCase()}`)
       .get()
   ).data();
 
