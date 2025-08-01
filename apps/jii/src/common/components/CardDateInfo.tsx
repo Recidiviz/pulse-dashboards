@@ -15,25 +15,43 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
 import { FC } from "react";
+import styled from "styled-components/macro";
 
-import { CardDateInfo } from "../../../../../common/components/CardDateInfo";
-import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
-import { useEGTDataContext } from "../../EGTDataContext/context";
+import { CardValue } from "../../US_MA/earnedGoodTime/components/Homepage/styles";
+import { CardHeading } from "../../US_MA/earnedGoodTime/components/styles";
+import { Chip } from "./Chip";
 
-export const DateInfo: FC<{
+export type CardDateInfoProps = {
   tag: string;
   label: string;
   value?: string;
   muted?: boolean;
-}> = ({ tag, label, value, muted }) => {
-  const { data } = useEGTDataContext();
+};
+
+const Wrapper = styled.div`
+  &:not(:last-child) {
+    margin-bottom: ${rem(spacing.lg)};
+  }
+`;
+
+export const CardDateInfo: FC<CardDateInfoProps> = ({
+  tag,
+  label,
+  value,
+  muted,
+}) => {
   return (
-    <CardDateInfo
-      tag={tag}
-      label={label}
-      muted={muted}
-      value={value && hydrateTemplate(value, data)}
-    />
+    <Wrapper>
+      <CardHeading>
+        {label}
+        <Chip color={muted ? "gray" : "green"}>
+          <abbr>{tag}</abbr>
+        </Chip>
+      </CardHeading>
+      {value && <CardValue>{value}</CardValue>}
+    </Wrapper>
   );
 };
