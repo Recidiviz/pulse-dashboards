@@ -70,7 +70,7 @@ describe("Client", () => {
     ).mockReturnValue("staff@email.com");
     vi.spyOn(rootStore.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
-        { searchType: "LOCATION", searchField: ["district"], searchTitle: "" },
+        { searchType: "DISTRICT", searchField: ["district"], searchTitle: "" },
         { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
       ],
     });

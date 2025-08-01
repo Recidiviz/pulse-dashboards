@@ -42,7 +42,7 @@ const US_TN_CONFIG: TenantConfig<"US_TN"> = {
     INCARCERATION: {
       search: [
         {
-          searchType: "LOCATION",
+          searchType: "FACILITY_UNIT",
           searchField: ["facilityUnitId"],
           searchTitle: "unit",
         },

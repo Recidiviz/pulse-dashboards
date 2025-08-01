@@ -33,9 +33,15 @@ const US_MO_CONFIG: TenantConfig<"US_MO"> = {
     INCARCERATION: {
       search: [
         {
-          searchType: "LOCATION",
+          searchType: "FACILITY",
           searchField: ["facilityId"],
           searchTitle: "facility",
+        },
+        {
+          searchType: "FACILITY_UNIT",
+          searchField: ["facilityUnitId"],
+          searchTitle: "unit",
+          restrictedToFeatureVariant: "usMoSearchByUnit",
         },
       ],
     },

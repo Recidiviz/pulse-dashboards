@@ -39,7 +39,7 @@ beforeEach(() => {
   vi.spyOn(rootStore.workflowsStore, "systemConfigFor").mockReturnValue({
     search: [
       { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
-      { searchType: "LOCATION", searchField: ["facilityId"], searchTitle: "" },
+      { searchType: "FACILITY", searchField: ["facilityId"], searchTitle: "" },
     ],
   });
   record = {

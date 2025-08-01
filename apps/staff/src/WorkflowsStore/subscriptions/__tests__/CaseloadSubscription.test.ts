@@ -37,7 +37,7 @@ let sub: CaseloadSubscription<ClientRecord>;
 let residentSub: CaseloadSubscription<ResidentRecord>;
 
 const supervisionSystemConfig = {
-  search: [{ searchType: "LOCATION", searchField: ["district"] }],
+  search: [{ searchType: "DISTRICT", searchField: ["district"] }],
 } as WorkflowsSystemConfig<ClientRecord, any>;
 
 beforeEach(() => {

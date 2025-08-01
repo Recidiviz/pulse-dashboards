@@ -94,11 +94,10 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
     INCARCERATION: {
       search: [
         {
-          searchType: "LOCATION",
+          searchType: "US_ID_CRC_FACILITY",
           searchField: ["metadata", "crcFacilities"],
           searchTitle: "facility",
           searchOp: "array-contains-any",
-          locationIdType: "crcFacilityId",
           onlySurfaceEligible: true,
           restrictedToFeatureVariant: "usIdCRCFacilitySearch",
         },

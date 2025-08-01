@@ -43,7 +43,7 @@ describe("LocationSubscription tests", () => {
           caseloadDistrict: "TEST",
           activeSystem: "SUPERVISION",
           systemConfigFor: vi.fn(() => ({
-            search: [{ searchType: "LOCATION", searchField: ["district"] }],
+            search: [{ searchType: "DISTRICT", searchField: ["district"] }],
           })),
         },
         firestoreStore: {
@@ -72,7 +72,7 @@ describe("LocationSubscription tests", () => {
         rootStoreMock.currentTenantId = "US_TN";
         // @ts-ignore
         rootStoreMock.workflowsStore.systemConfigFor = vi.fn(() => ({
-          search: [{ searchType: "LOCATION", searchField: ["facilityId"] }],
+          search: [{ searchType: "FACILITY", searchField: ["facilityId"] }],
         }));
       });
       expect(whereMock).toHaveBeenCalledWith("stateCode", "==", "US_TN");
@@ -93,12 +93,12 @@ describe("LocationSubscription tests", () => {
             s === "INCARCERATION"
               ? {
                   search: [
-                    { searchType: "LOCATION", searchField: ["facilityId"] },
+                    { searchType: "FACILITY", searchField: ["facilityId"] },
                   ],
                 }
               : {
                   search: [
-                    { searchType: "LOCATION", searchField: ["district"] },
+                    { searchType: "DISTRICT", searchField: ["district"] },
                   ],
                 },
           ),
@@ -141,11 +141,10 @@ describe("LocationSubscription tests", () => {
           activeSystem: "SUPERVISION",
           systemConfigFor: vi.fn(() => ({
             search: [
-              { searchType: "LOCATION", searchField: ["facilityId"] },
+              { searchType: "FACILITY", searchField: ["facilityId"] },
               {
-                searchType: "LOCATION",
-                locationIdType: "crcFacilityId",
-                search: ["metadata", "craFacilities"],
+                searchType: "US_ID_CRC_FACILITY",
+                search: ["metadata", "crcFacilities"],
               },
             ],
           })),

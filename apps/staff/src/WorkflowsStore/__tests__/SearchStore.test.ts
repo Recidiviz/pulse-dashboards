@@ -121,13 +121,13 @@ describe("searchTitleOverride", () => {
           searchField: "any",
         },
         {
-          searchType: "LOCATION",
+          searchType: "DISTRICT",
           searchTitle: "location title",
           searchField: "any",
         },
       ],
     }));
-    searchStore.setSearchTypeOverride("LOCATION");
+    searchStore.setSearchTypeOverride("DISTRICT");
     expect(searchStore.searchTitleOverride("SUPERVISION", "default")).toEqual(
       "location title",
     );
@@ -148,7 +148,7 @@ describe("searchTitleOverride", () => {
           searchField: "any",
         },
         {
-          searchType: "LOCATION",
+          searchType: "DISTRICT",
           searchTitle: "location title",
           searchField: "any",
         },
@@ -186,7 +186,7 @@ describe("workflowsSearchFieldTitle", () => {
       return {
         search: [
           {
-            searchType: "LOCATION",
+            searchType: "FACILITY",
             searchField: ["facilityId"],
             searchTitle: "location",
           },
@@ -201,7 +201,7 @@ describe("workflowsSearchFieldTitle", () => {
       return {
         search: [
           {
-            searchType: "LOCATION",
+            searchType: "FACILITY",
             searchField: ["facilityId"],
             searchTitle: "location",
           },
@@ -279,7 +279,7 @@ describe("availableSearchables", () => {
 
   test("for search by location", async () => {
     workflowsStore.activeSystemConfig = {
-      search: [{ searchType: "LOCATION", searchTitle: "facility" }],
+      search: [{ searchType: "FACILITY", searchTitle: "facility" }],
     };
     const actual = searchStore.availableSearchables[0].searchables.map(
       (searchable) => {
@@ -306,7 +306,7 @@ describe("availableSearchables", () => {
   test("when there are more than one search types", async () => {
     workflowsStore.activeSystemConfig = {
       search: [
-        { searchType: "LOCATION", searchTitle: "facility" },
+        { searchType: "FACILITY", searchTitle: "facility" },
         { searchType: "OFFICER", searchTitle: "officer" },
       ],
     };
@@ -357,9 +357,9 @@ describe("availableSearchables", () => {
 describe("searchType", () => {
   test("searchType when there is a single search config", async () => {
     workflowsStore.activeSystemConfig = {
-      search: [{ searchType: "LOCATION" }],
+      search: [{ searchType: "FACILITY" }],
     };
-    expect(searchStore.searchType).toEqual("LOCATION");
+    expect(searchStore.searchType).toEqual("FACILITY");
   });
 
   test("searchType when there is are multiple searchConfigs", async () => {
@@ -368,7 +368,7 @@ describe("searchType", () => {
         {
           searchType: "OFFICER",
         },
-        { searchType: "LOCATION" },
+        { searchType: "FACILITY" },
       ],
     };
     expect(searchStore.searchType).toEqual("ALL");
@@ -394,8 +394,8 @@ describe("searchType", () => {
         },
       ],
     };
-    searchStore.searchTypeOverride = "LOCATION";
-    expect(searchStore.searchType).toEqual("LOCATION");
+    searchStore.searchTypeOverride = "FACILITY";
+    expect(searchStore.searchType).toEqual("FACILITY");
   });
 });
 
@@ -587,7 +587,7 @@ describe("default selected caseload", () => {
       workflowsStore.activeSystemConfig = {
         search: [
           {
-            searchType: "LOCATION",
+            searchType: "FACILITY",
             searchField: ["facilityId"],
             searchTitle: "facility",
           },
@@ -612,7 +612,7 @@ describe("default selected caseload", () => {
       workflowsStore.activeSystemConfig = {
         search: [
           {
-            searchType: "LOCATION",
+            searchType: "FACILITY",
             searchField: ["facilityId"],
             searchTitle: "facility",
           },
@@ -751,7 +751,7 @@ describe("trackCaseloadSearch - default caseload", () => {
 
     beforeEach(() => {
       workflowsStore.activeSystemConfig = {
-        search: [{ searchType: "LOCATION" }],
+        search: [{ searchType: "FACILITY" }],
       };
       workflowsStore.activeSystem = "ALL";
       workflowsStore.activePage = { page: "home" };
@@ -763,12 +763,12 @@ describe("trackCaseloadSearch - default caseload", () => {
         },
       };
       workflowsStore.updateActiveSystem = updateActiveSystemConfigMock;
-      searchStore.setSearchTypeOverride("LOCATION");
+      searchStore.setSearchTypeOverride("FACILITY");
       vi.resetAllMocks();
     });
 
     test("when currently selected pill was clicked", () => {
-      searchStore.handleSearchPillClick("LOCATION", "INCARCERATION");
+      searchStore.handleSearchPillClick("FACILITY", "INCARCERATION");
       expect(searchStore.searchTypeOverride).toBeUndefined();
       expect(mockUpdatedSelectedSearchIds).not.toHaveBeenCalled();
       expect(updateActiveSystemConfigMock).toHaveBeenCalledWith("ALL");

@@ -161,7 +161,6 @@ export type SearchConfig<R, T extends TenantConfigId> = {
   searchTitle: string;
   searchTitleIgnoreCase?: boolean;
   searchOp?: "in" | "array-contains-any";
-  locationIdType?: "facilityId" | "facilityUnitId" | "crcFacilityId";
   onlySurfaceEligible?: boolean;
   restrictedToFeatureVariant?: FeatureVariant;
 };
@@ -192,8 +191,20 @@ export type SearchType =
   | "OFFICER"
   | "INCARCERATION_OFFICER"
   | "CASELOAD"
-  | "LOCATION"
+  | "DISTRICT"
+  | "FACILITY"
+  | "FACILITY_UNIT"
+  | "US_ID_CRC_FACILITY"
   | "ALL";
+
+export const locationIdsBySearchType = {
+  DISTRICT: "district",
+  FACILITY: "facilityId",
+  FACILITY_UNIT: "facilityUnitId",
+  US_ID_CRC_FACILITY: "crcFacilityId",
+} as const satisfies Partial<Record<SearchType, string>>;
+
+export type LocationSearchType = keyof typeof locationIdsBySearchType;
 
 export type Gender = "ALL" | "FEMALE" | "MALE";
 export type AgeGroup =

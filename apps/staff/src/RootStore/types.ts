@@ -88,6 +88,7 @@ export type FeatureVariant =
   | "usIaEarlyDischargeForms"
   | "usTnInitialClassification"
   | "usTnTEPENotesForAll"
+  | "usMoSearchByUnit"
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
@@ -166,6 +167,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   usTnInitialClassification: {},
   insightsStaffUsage: {},
   usTnTEPENotesForAll: {},
+  usMoSearchByUnit: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"

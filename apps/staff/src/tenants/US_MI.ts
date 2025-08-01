@@ -43,7 +43,7 @@ const US_MI_CONFIG: TenantConfig<"US_MI"> = {
     INCARCERATION: {
       search: [
         {
-          searchType: "LOCATION",
+          searchType: "FACILITY",
           searchField: ["facilityId"],
           searchTitle: "facility",
         },

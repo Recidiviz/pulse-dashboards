@@ -114,7 +114,7 @@ describe("queryConstraints", () => {
 
   test("queryConstraints builds the correct query for single searchField", () => {
     const supervisionSystemConfig = {
-      search: [{ searchType: "LOCATION", searchField: ["district"] }],
+      search: [{ searchType: "DISTRICT", searchField: ["district"] }],
     } as WorkflowsSystemConfig<ClientRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
       () => supervisionSystemConfig,
@@ -136,7 +136,7 @@ describe("queryConstraints", () => {
   test("queryConstraints builds the correct query for multiple searchField", () => {
     const supervisionSystemConfig = {
       search: [
-        { searchType: "LOCATION", searchField: ["district"] },
+        { searchType: "DISTRICT", searchField: ["district"] },
         {
           searchType: "OFFICER",
           searchField: ["officerId"],
@@ -378,7 +378,10 @@ describe("matchingPersonsGrouped", () => {
     const residentRecords = usIdResidents;
     const incarcerationSystemConfig = {
       search: [
-        { searchType: "LOCATION", searchField: ["metadata", "crcFacilities"] },
+        {
+          searchType: "US_ID_CRC_FACILITY",
+          searchField: ["metadata", "crcFacilities"],
+        },
       ],
     } as WorkflowsSystemConfig<ResidentRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(
@@ -414,7 +417,10 @@ describe("matchingPersonsGrouped", () => {
     const residentRecords = usIdResidents;
     const incarcerationSystemConfig = {
       search: [
-        { searchType: "LOCATION", searchField: ["metadata", "crcFacilities"] },
+        {
+          searchType: "US_ID_CRC_FACILITY",
+          searchField: ["metadata", "crcFacilities"],
+        },
       ],
     } as WorkflowsSystemConfig<ResidentRecord, any>;
     searchStoreMock.workflowsStore.systemConfigFor = vi.fn(

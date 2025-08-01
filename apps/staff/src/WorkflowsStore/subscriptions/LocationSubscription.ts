@@ -17,6 +17,10 @@
 
 import { and, or, Query, query, where } from "firebase/firestore";
 
+import {
+  locationIdsBySearchType,
+  LocationSearchType,
+} from "../../core/models/types";
 import { LocationRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
@@ -38,16 +42,18 @@ export class LocationSubscription extends FirestoreQuerySubscription<LocationRec
 
     // The conditions that are applied with a logical OR
     // A person should match if they match searchId1 OR searchId2
-    const orConditions = search
-      .filter((s) => s.searchType === "LOCATION")
-      .map((searchConfig) => {
-        const whereClause = where(
-          "idType",
-          "==",
-          searchConfig.locationIdType ?? searchConfig.searchField[0],
-        );
-        return whereClause;
-      });
+    const orConditions = search.flatMap(({ searchType }) =>
+      searchType in locationIdsBySearchType
+        ? [
+            where(
+              "idType",
+              "==",
+              // `searchType in locationIdsBySearchType` implies searchType is a LocationSearchType
+              locationIdsBySearchType[searchType as LocationSearchType],
+            ),
+          ]
+        : [],
+    );
 
     // The conditions that are applied with a logical AND
     // A person should match if they have a specific stateCode AND they match any of the searchIds

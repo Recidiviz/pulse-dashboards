@@ -39,10 +39,9 @@ const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
           searchTitleIgnoreCase: true,
         },
         {
-          searchType: "LOCATION",
+          searchType: "FACILITY",
           searchField: ["facilityId"],
           searchTitle: "facility",
-          locationIdType: "facilityId",
           restrictedToFeatureVariant: "usAzFacilitySearch",
         },
       ],

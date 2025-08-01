@@ -672,7 +672,7 @@ describe("tracking", () => {
     } as unknown as SearchStore;
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
-        { searchType: "LOCATION", searchField: ["district"], searchTitle: "" },
+        { searchType: "DISTRICT", searchField: ["district"], searchTitle: "" },
         { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
       ],
     });
@@ -700,7 +700,7 @@ describe("tracking", () => {
     } as unknown as SearchStore;
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
-        { searchType: "LOCATION", searchField: ["district"], searchTitle: "" },
+        { searchType: "DISTRICT", searchField: ["district"], searchTitle: "" },
         { searchType: "OFFICER", searchField: ["officerId"], searchTitle: "" },
       ],
     });
@@ -739,7 +739,7 @@ describe("tracking", () => {
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
         {
-          searchType: "LOCATION",
+          searchType: "US_ID_CRC_FACILITY",
           searchField: ["metadata", "crcFacilities"],
           searchTitle: "",
         },
@@ -782,7 +782,7 @@ describe("tracking", () => {
     vi.spyOn(root.workflowsStore, "systemConfigFor").mockReturnValue({
       search: [
         {
-          searchType: "LOCATION",
+          searchType: "US_ID_CRC_FACILITY",
           searchField: ["metadata", "crcFacilities"],
           searchTitle: "",
         },

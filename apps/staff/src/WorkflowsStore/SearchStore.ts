@@ -19,6 +19,7 @@ import assertNever from "assert-never";
 import { makeAutoObservable, reaction, when } from "mobx";
 
 import {
+  locationIdsBySearchType,
   Searchable,
   SearchableGroup,
   SearchType,
@@ -212,13 +213,17 @@ export class SearchStore {
 
   get availableSearchables(): SearchableGroup[] {
     switch (this.searchType) {
-      case "LOCATION": {
+      case "DISTRICT":
+      case "FACILITY":
+      case "FACILITY_UNIT":
+      case "US_ID_CRC_FACILITY": {
+        const idType = locationIdsBySearchType[this.searchType];
         return [
           {
-            groupLabel: "All Locations",
-            searchables: this.workflowsStore.availableLocations.map(
-              (location) => new Location(location),
-            ),
+            groupLabel: "All Locations", // This is generic, but the groupLabel isn't shown with just one group
+            searchables: this.workflowsStore.availableLocations
+              .filter((l) => l.idType === idType)
+              .map((location) => new Location(location)),
           },
         ];
       }
