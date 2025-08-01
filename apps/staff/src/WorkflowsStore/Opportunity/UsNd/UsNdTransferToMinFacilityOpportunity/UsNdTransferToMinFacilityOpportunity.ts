@@ -54,7 +54,8 @@ export class UsNdTransferToMinFacilityOpportunity extends OpportunityBase<
   }
 
   get customStatusPalette() {
-    if (this.record.metadata.tabName === "REFERRAL_SUBMITTED") return OPPORTUNITY_STATUS_COLORS.submitted;
-    return super.customStatusPalette
+    if (this.record.metadata.tabName === "REFERRAL_SUBMITTED")
+      return OPPORTUNITY_STATUS_COLORS.submitted;
+    return super.customStatusPalette;
   }
 }

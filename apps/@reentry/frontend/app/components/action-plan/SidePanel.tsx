@@ -1,0 +1,90 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import HomeAddressSection from "@/app/components/action-plan/HomeAddressSection";
+import ProfileDetail from "@/app/components/action-plan/ProfileDetail";
+import RegeneratePlan from "@/app/components/action-plan/RegeneratePlan";
+import Resources from "@/app/components/action-plan/Resources";
+import type { components } from "@/app/recidiviz-schema";
+
+interface SidePanelProps {
+	clientRecord: components["schemas"]["ClientRecordResponse"] | null;
+	planId: string;
+	startPolling: (executionId: string) => void;
+	setOpenResourceSection: (value: boolean) => void;
+	initialResourceSelected?: components["schemas"]["Resource"] | null;
+	setRegenerationMessage: (value: string) => void;
+	handleOpenResourceSection: () => void;
+	openResourceSection: boolean;
+	selectedResource: components["schemas"]["Resource"] | null | undefined;
+	candidateResource: components["schemas"]["Resource"] | null | undefined;
+	relatedResources: components["schemas"]["Resource"][] | null | undefined;
+	planResources?: components["schemas"]["Resource"][] | null | undefined;
+	relatedResourcesLoading: boolean;
+	handleSelectResource: (r: components["schemas"]["Resource"]) => void;
+	dataDetailPlan: components["schemas"]["PlanResponseGet"];
+	isPolling?: boolean;
+}
+
+const SidePanel = ({
+	clientRecord,
+	planId,
+	startPolling,
+	selectedResource,
+	candidateResource,
+	setRegenerationMessage,
+	relatedResourcesLoading,
+	planResources,
+	handleSelectResource,
+	relatedResources,
+	handleOpenResourceSection,
+	openResourceSection,
+	dataDetailPlan,
+	isPolling = false,
+}: SidePanelProps) => {
+	return (
+		<div className="w-[25%] overflow-auto h-full self-stretch bg-white border-r border-[#2b5469]/20 flex-col justify-start items-center gap-2 inline-flex print:hidden">
+			<div className="self-stretch h-full flex-col justify-start items-start flex">
+				<ProfileDetail clientRecord={clientRecord} />
+				{/*<PlanStatus />*/}
+				<Resources
+					selectedResource={selectedResource}
+					candidateResource={candidateResource}
+					relatedResourcesLoading={relatedResourcesLoading}
+					planResources={planResources}
+					handleSelectResource={handleSelectResource}
+					relatedResources={relatedResources}
+					handleOpenResourceSection={handleOpenResourceSection}
+					openResourceSection={openResourceSection}
+				/>
+				<RegeneratePlan
+					planId={planId}
+					startPolling={startPolling}
+					setRegenerationMessage={setRegenerationMessage}
+					dataDetailPlan={dataDetailPlan}
+					isPolling={isPolling}
+				/>
+				<HomeAddressSection
+					planId={planId}
+					startPolling={startPolling}
+					isPolling={isPolling}
+				/>
+			</div>
+		</div>
+	);
+};
+export default SidePanel;

@@ -1,0 +1,107 @@
+.markdown {
+	background: white;
+	font-size: 0.875rem;
+	font-family: var(--font-public-sans), Arial, Helvetica, sans-serif;
+	color: #2b5469d9;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+	border: none;
+	color: #003331;
+	font-size: 1.5rem;
+	margin-top: 24px;
+	margin-bottom: 16px;
+	font-weight: 600;
+	padding-bottom: 0.3rem;
+}
+
+.markdown h1:first-of-type {
+	margin-top: 0;
+}
+
+.markdown h2 {
+	font-size: 1.1rem;
+}
+
+.markdown ol,
+.markdown li,
+.markdown p {
+	line-height: 1.4rem;
+	page-break-inside: avoid !important;
+}
+
+.markdown p,
+.markdown li {
+	color: #2b5469d9;
+}
+
+.resource,
+.notes,
+.annotations,
+.markdown ol,
+.markdown ul,
+.markdown p {
+	margin-top: 0;
+	margin-bottom: 16px;
+}
+
+.markdown ol,
+.markdown ul {
+	padding-left: 1rem;
+}
+
+.markdown ol li {
+	list-style-type: decimal;
+}
+
+.markdown ul li {
+	list-style-type: disc;
+	margin-bottom: 0.5rem;
+}
+
+.markdown a {
+	border-bottom: 3px dashed #f08c00;
+}
+
+.markdown ul {
+	list-style-type: disc;
+}
+
+.notes,
+.annotations {
+	border: 1px solid #35536233;
+	border-radius: 6px;
+	padding: 12px 16px;
+}
+
+.resource h1,
+.notes h1,
+.annotations h1 {
+	font-size: 1rem;
+	margin: 0;
+	margin-bottom: 0.25rem;
+}
+
+.annotation q {
+	color: #003331;
+}
+
+.resource p,
+.notes p,
+.annotation div {
+	color: #2b5469d9;
+	margin: 0;
+}
+
+@media print {
+	.annotations,
+	.notes {
+		display: none;
+	}
+
+	.markdown > * {
+		page-break-inside: avoid !important;
+	}
+}

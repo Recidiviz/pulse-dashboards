@@ -1,0 +1,64 @@
+@import "react-toastify/dist/ReactToastify.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: "Public Sans";
+	src: url("/fonts/Public_Sans/PublicSans-VariableFont_wght.ttf")
+		format("truetype");
+	font-weight: 400 700;
+	font-display: swap;
+}
+
+:root {
+	--background: #ffffff;
+	--foreground: #171717;
+	--font-public-sans: "Public Sans", Arial, Helvetica, sans-serif;
+}
+
+html,
+body {
+	color: var(--foreground);
+	background: var(--background);
+	font-family: var(--font-public-sans), Arial, Helvetica, sans-serif;
+	min-height: 100vh;
+}
+
+@layer utilities {
+	.text-balance {
+		text-wrap: balance;
+	}
+}
+
+.mdxeditor-toolbar.larger-toolbar {
+	color: #171717 !important;
+	top: -30px !important;
+}
+
+.markdown-edit-content {
+	background: white;
+	font-size: 0.875rem;
+	font-family: var(--font-public-sans), Arial, Helvetica, sans-serif;
+	color: #2b5469d9 !important;
+}
+
+.markdown-edit-content .markdown-edit-content-link {
+	border-bottom: 3px dashed #f08c00;
+	opacity: 0.8;
+	position: relative;
+}
+
+.markdown-edit-content .markdown-edit-content-link::after {
+	content: "🔒";
+	font-size: 0.8em;
+	vertical-align: super;
+	margin-left: 2px;
+}
+
+div.rdt_TableHead svg.MuiSvgIcon-root {
+	opacity: 1 !important;
+	visibility: visible !important;
+	width: 20px !important;
+	height: 20px !important; /* add height for proportional scaling */
+}

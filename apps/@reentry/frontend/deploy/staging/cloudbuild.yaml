@@ -1,0 +1,49 @@
+steps:
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/frontend:staging"
+      - "-f"
+      - "deploy/Dockerfile.gcp"
+      - "--build-arg"
+      - "NEXT_PUBLIC_API_URL=https://backend-api-staging-773019812766.us-central1.run.app"
+      - "--build-arg"
+      - "NEXT_PUBLIC_AUTH0_DOMAIN=login-staging.recidiviz.org"
+      - "--build-arg"
+      - "NEXT_PUBLIC_AUTH0_CLIENT_ID=89b0rGatxyOcj7HQEK7GEmqv9kCQuS9L"
+      - "--build-arg"
+      - "NEXT_PUBLIC_AUTH0_AUDIENCE=https://api-dev.recidiviz.org"
+      - "--build-arg"
+      - "NEXT_PUBLIC_GA_ID=G-R8NB9XLG2P"
+      - "--build-arg"
+      - "NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LcWeGYrAAAAAB03JXwaWoa41QTE81HIWuXNkdcc"
+      - '--build-arg'
+      - 'NEXT_PUBLIC_ENVIRONMENT=staging'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_SENTRY_DSN=https://a45dc94f9ed89365e4e6ff30d35e2e5e@o432474.ingest.us.sentry.io/4509651407863809'
+      - "."
+
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$PROJECT_ID/frontend:staging"]
+
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "frontend-staging"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/frontend:staging"
+      - "--region"
+      - "us-central1"
+      - "--platform"
+      - "managed"
+      - "--allow-unauthenticated"
+      - "--service-account"
+      - "reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
+images:
+  - "gcr.io/$PROJECT_ID/frontend:staging"
