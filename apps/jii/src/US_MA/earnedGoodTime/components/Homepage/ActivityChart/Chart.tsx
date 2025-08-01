@@ -121,7 +121,6 @@ const ManagedComponent: FC<{ presenter: ChartPresenter }> = observer(
               },
             ]}
             margin={CHART_MARGINS}
-            rExtent={[0, presenter.rangeExtent]}
           />
         </ChartWrapper>
         <Legend>

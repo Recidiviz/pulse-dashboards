@@ -37,8 +37,8 @@ const CreditTotals = styled.div<{ marginTopBottom: string }>`
 const CreditTypeCard = styled.div`
   flex: 1;
   border-right: 1px solid ${palette.slate10};
-  margin: 0 ${rem(spacing.sm)};
-  padding: ${rem(spacing.lg)};
+  margin: 0;
+  padding: ${rem(spacing.md)};
   border-radius: ${rem(spacing.sm)} 0 0 ${rem(spacing.sm)};
 
   &:last-child {

@@ -48,7 +48,7 @@ export class ChartPresenter {
     );
   }
 
-  get rangeExtent() {
+  private get rangeExtent() {
     const monthlyTotals = rollup(
       this.chartData,
       (v) => sum(v.map((d) => d.totalCredits)),
@@ -57,22 +57,30 @@ export class ChartPresenter {
       (d) => d.creditMonth,
     );
     // should not ever be undefined but we're being type safe
-    const monthlyMax = max(monthlyTotals.values()) ?? 0;
-
-    // round up to nearest multiple of 10 for a cleaner axis
-    return Math.ceil(monthlyMax / 10) * 10;
+    return max(monthlyTotals.values()) ?? 0;
   }
 
   get axisTicks() {
     // for larger ranges let the chart library do whatever it wants
     if (this.rangeExtent > 40) return;
     // for smaller ranges we can ensure nicer values, since we know we'll have space for them
+
+    if (this.rangeExtent > 10) {
+      return range(
+        0,
+        // nudging the value up so the end is inclusive of the extent
+        this.rangeExtent + 0.1,
+        // display multiples of 5
+        5,
+      );
+    }
+
     return range(
       0,
       // nudging the value up so the end is inclusive of the extent
       this.rangeExtent + 0.1,
-      // display multiples of 5
-      5,
+      // display multiples of 2
+      2,
     );
   }
 }

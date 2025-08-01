@@ -29,6 +29,7 @@ import {
 } from "../../../../components/BaseLayout/BaseLayout";
 import { usePageTitle } from "../../../../components/usePageTitle/usePageTitle";
 import { hydrateTemplate } from "../../../../configs/hydrateTemplate";
+import { Disclaimer } from "../Disclaimer/Disclaimer";
 import { useEGTDataContext } from "../EGTDataContext/context";
 import { ActivityChart } from "./ActivityChart";
 import { DatesSection } from "./DatesSection";
@@ -70,6 +71,7 @@ export const Homepage = observer(function Homepage() {
           <ActivityChart />
           <MonthlyReportHomepageCard />
           <TotalTimeEarnedSection />
+          <Disclaimer />
         </>
       )}
     </div>

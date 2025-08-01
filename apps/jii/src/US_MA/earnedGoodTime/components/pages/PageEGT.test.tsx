@@ -50,6 +50,7 @@ describe("onboarding already seen", () => {
     expect(
       await screen.findByText(
         "This information was last updated on December 16, 2021",
+        { exact: false },
       ),
     ).toBeInTheDocument();
   });
@@ -57,6 +58,7 @@ describe("onboarding already seen", () => {
   it("should be accessible", async () => {
     await screen.findByText(
       "This information was last updated on December 16, 2021",
+      { exact: false },
     );
 
     expect(

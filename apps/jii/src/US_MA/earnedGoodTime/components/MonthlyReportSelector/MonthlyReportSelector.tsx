@@ -18,6 +18,7 @@
 import { descending } from "d3-array";
 import { observer } from "mobx-react-lite";
 import { useId } from "react";
+import styled from "styled-components/macro";
 
 import {
   Selector,
@@ -30,6 +31,10 @@ type MonthlyReportSelectorProps = Pick<SelectorProps<Date>, "onChange"> & {
   selectedReport: UsMaEGTMonthlyReport;
 };
 
+const Wrapper = styled.div`
+  min-width: 11em;
+`;
+
 export const MonthlyReportSelector = observer(function MonthlyReportSelector({
   onChange,
   selectedReport,
@@ -38,14 +43,16 @@ export const MonthlyReportSelector = observer(function MonthlyReportSelector({
   const { monthlyReports } = useEGTDataContext();
 
   return (
-    <Selector
-      {...{ onChange }}
-      labelId={labelId}
-      placeholder=""
-      value={selectedReport.selectOption}
-      options={monthlyReports
-        .map((r) => r.selectOption)
-        .sort((a, b) => descending(a.value, b.value))}
-    />
+    <Wrapper>
+      <Selector
+        {...{ onChange }}
+        labelId={labelId}
+        placeholder=""
+        value={selectedReport.selectOption}
+        options={monthlyReports
+          .map((r) => r.selectOption)
+          .sort((a, b) => descending(a.value, b.value))}
+      />
+    </Wrapper>
   );
 });

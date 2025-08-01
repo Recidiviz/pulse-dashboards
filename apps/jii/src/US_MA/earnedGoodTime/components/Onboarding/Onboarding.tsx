@@ -15,13 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { typography } from "@recidiviz/design-system";
 import { formatISO } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
-import styled from "styled-components/macro";
-
-import { palette } from "~design-system";
 
 import { ScreenFillingWrapper } from "../../../../common/components/ScreenFillingWrapper/ScreenFillingWrapper";
 import { GoButton } from "../../../../components/ButtonLink/GoButton";
@@ -29,13 +25,8 @@ import { CopyWrapper } from "../../../../components/CopyWrapper/CopyWrapper";
 import { useRootStore } from "../../../../components/StoreProvider/useRootStore";
 import { usePageTitle } from "../../../../components/usePageTitle/usePageTitle";
 import { UserStore } from "../../../../datastores/UserStore";
+import { Disclaimer } from "../Disclaimer/Disclaimer";
 import { useEGTDataContext } from "../EGTDataContext/context";
-
-const Disclaimer = styled(CopyWrapper)`
-  ${typography.Body14}
-
-  color: ${palette.slate85};
-`;
 
 function trackOnboardingSeen(userStore: UserStore) {
   if (!userStore.getUserProperty("egtOnboardingSeen")) {
@@ -62,7 +53,7 @@ export const Onboarding = observer(function Onboarding() {
           <GoButton to="../">{onboarding.continueLink}</GoButton>
         </>
       }
-      bottom={<Disclaimer>{onboarding.disclaimer}</Disclaimer>}
+      bottom={<Disclaimer />}
     />
   );
 });

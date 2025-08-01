@@ -1,4 +1,4 @@
-## Note
+## Disclaimer
 
 The information provided on this application is for general and supplemental purposes only and is not intended to be substituted for the official record of this information. While the Massachusetts Department of Correction (DOC) (in partnership with Recidiviz), strives to ensure the accuracy of this content, there is no guarantee of completeness or timeliness, and DOC is not liable for errors, omissions, delays, or interruptions in such information.
 

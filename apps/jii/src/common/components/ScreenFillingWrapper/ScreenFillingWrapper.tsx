@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import styled from "styled-components/macro";
@@ -37,7 +38,7 @@ const Wrapper = styled.div`
 export const ScreenFillingWrapper: FC<{
   top: ReactNode;
   bottom: ReactNode;
-}> = ({ top, bottom }) => {
+}> = observer(function ScreenFillingWrapper({ top, bottom }) {
   return (
     <Wrapper
       style={{
@@ -48,4 +49,4 @@ export const ScreenFillingWrapper: FC<{
       <div>{bottom}</div>
     </Wrapper>
   );
-};
+});

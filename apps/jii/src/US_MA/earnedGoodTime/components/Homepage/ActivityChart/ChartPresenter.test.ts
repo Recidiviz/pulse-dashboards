@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { sum } from "d3-array";
-
 import { UsMaResidentMetadata, usMaResidents } from "~datatypes";
 
 import { usMaEgtConfig } from "../../../configs/US_MA/egtConfig";
@@ -81,32 +79,6 @@ test("chart data", () => {
   `);
 });
 
-test("calculated range extent", () => {
-  let presenter = new ChartPresenter(
-    populateUsMaEGTMonthlyReport(
-      usMaResidents[0].metadata as UsMaResidentMetadata,
-      usMaEgtConfig,
-    ).slice(-1), // one month only
-  );
-
-  // stacked total for one month
-  expect(sum(presenter.chartData.map((d) => d.totalCredits))).toBe(55);
-  // rounded up to nearest 10
-  expect(presenter.rangeExtent).toBe(60);
-
-  presenter = new ChartPresenter(
-    populateUsMaEGTMonthlyReport(
-      usMaResidents[2].metadata as UsMaResidentMetadata,
-      usMaEgtConfig,
-    ).slice(-1), // 1 month only
-  );
-
-  // stacked total for one month
-  expect(sum(presenter.chartData.map((d) => d.totalCredits))).toBe(12.5);
-  // again rounded up to nearest 10
-  expect(presenter.rangeExtent).toBe(20);
-});
-
 test("calculated axis ticks", () => {
   let presenter = new ChartPresenter(
     populateUsMaEGTMonthlyReport(
@@ -116,7 +88,6 @@ test("calculated axis ticks", () => {
   );
 
   // for larger ranges we don't override the chart library's best effort
-  expect(presenter.rangeExtent).toBe(60);
   expect(presenter.axisTicks).toBeUndefined();
 
   presenter = new ChartPresenter(
@@ -127,14 +98,11 @@ test("calculated axis ticks", () => {
   );
 
   // for smaller ranges we ensure nice multiples of five
-  expect(presenter.rangeExtent).toBe(20);
   expect(presenter.axisTicks).toMatchInlineSnapshot(`
     [
       0,
       5,
       10,
-      15,
-      20,
     ]
   `);
 });

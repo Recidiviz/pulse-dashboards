@@ -38,6 +38,10 @@ import { MonthlyReportSectionHeading } from "./styles";
 const HeaderRow = styled.div`
   display: flex;
   justify-content: space-between;
+
+  h1 {
+    margin: 0;
+  }
 `;
 
 export const MonthlyReport = observer(function MonthlyReport() {
@@ -87,6 +91,7 @@ export const MonthlyReport = observer(function MonthlyReport() {
           to: State.Resident.EGT.buildPath(useTypedParams(State.Resident)),
         }}
       />
+      {/* TODO: the spacing is wrong under this header */}
       <HeaderRow>
         <CopyWrapper>{`# ${pageTitle}`}</CopyWrapper>
         <MonthlyReportSelector

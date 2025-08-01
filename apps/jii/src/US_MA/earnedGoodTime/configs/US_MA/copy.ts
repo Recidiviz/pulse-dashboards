@@ -18,9 +18,9 @@
 import { usMaEarnedCreditTypes } from "~datatypes";
 
 import creditsInfoPage from "./creditsInfoPage.md?raw";
+import disclaimer from "./disclaimer.md?raw";
 import emptyStateBody from "./emptyStateBody.md?raw";
 import onboardingBody from "./onboardingBody.md?raw";
-import onboardingDisclaimer from "./onboardingDisclaimer.md?raw";
 import rtsInfoPage from "./rtsInfoPage.md?raw";
 
 const commonMonthlyReportCopy = {
@@ -41,7 +41,7 @@ const commonMonthlyReportCopy = {
 // where handlebars is invoked, assume a UsMaResidentMetadata object as the template context
 export const usMaEGTCopy = {
   lastUpdated:
-    "This information was last updated on {{formatFullDate lastUpdatedDate}}",
+    "This information was last updated on {{formatFullDate lastUpdatedDate}}. It updates once per month.",
   tags: {
     rts: "RTS",
     maxRelease: "MAX",
@@ -158,10 +158,11 @@ export const usMaEGTCopy = {
     heading: "Track your Earned Good Time",
     body: onboardingBody,
     continueLink: "See your earned time",
-    disclaimer: onboardingDisclaimer,
   },
+  disclaimer: disclaimer,
   emptyState: {
-    heading: "You haven’t done any programs or work that earn you time.",
+    heading:
+      "You haven’t done any programs or work that give you Earned Good Time.",
     body: emptyStateBody,
     moreInfoLink: "Learn more about earned time",
   },
