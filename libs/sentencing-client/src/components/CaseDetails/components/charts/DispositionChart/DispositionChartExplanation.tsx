@@ -57,7 +57,9 @@ export function DispositionChartExplanation({
     <>
       {SENTENCE_DISTRIBUTION_TEXT} represents the percentage of cases sentenced
       to a particular disposition, using {orgName} data from 2010 to present.
-      There are no previous records of {genderCohortString}.
+      There are no previous records of {genderCohortString}. Only cases
+      sentenced to DOCR custody, either for incarceration or supervision on
+      probation, are included.
     </>
   );
   const withPreviousRecordsCopy = (
@@ -66,7 +68,9 @@ export function DispositionChartExplanation({
       to a particular disposition. The rates are based on{" "}
       {dispositionNumRecords.toLocaleString()}{" "}
       {printFormattedRecordString(dispositionNumRecords)} of{" "}
-      {genderCohortString}, using {orgName} data from 2010 to present.
+      {genderCohortString}, using {orgName} data from 2010 to present. Only
+      cases sentenced to DOCR custody, either for incarceration or supervision
+      on probation, are included.
     </>
   );
 

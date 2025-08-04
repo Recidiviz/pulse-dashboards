@@ -21,7 +21,6 @@ import MagnifyingGlassIcon from "../../../assets/magnifying-glass-black-icon.svg
 import ProtectiveFactorsIcon from "../../../assets/protective-factors-icon.svg?react";
 import { SENTENCE_DISTRIBUTION_TEXT } from "../../components/charts/constants";
 import { DispositionChartExplanation } from "../../components/charts/DispositionChart/DispositionChartExplanation";
-import { NONE_OPTION, OTHER_OPTION } from "../../Form/constants";
 import {
   HistoricalSentencingAttributeChips,
   renderMultilineText,
@@ -44,18 +43,6 @@ const ReportTemplateV2: React.FC<CustomReportProps> = ({
   const hasProtectiveFactorsOrNeeds = Boolean(
     protectiveFactors?.length || needs?.length,
   );
-  const recommendationOptionsTemplate =
-    geoConfig.recommendation.baseOptionsTemplate;
-  const selectedRecommendationType = recommendationOptionsTemplate.find(
-    (option) => option.label === selectedRecommendation,
-  )?.recommendationType;
-
-  const incarcerationSuffix =
-    selectedRecommendationType ||
-    (selectedRecommendation &&
-      [OTHER_OPTION, NONE_OPTION].includes(selectedRecommendation))
-      ? ""
-      : "Incarceration";
 
   return (
     <>
@@ -121,9 +108,7 @@ const ReportTemplateV2: React.FC<CustomReportProps> = ({
           <Styled.OverviewTitle>
             Recommendation by PSI Writer
           </Styled.OverviewTitle>
-          <Styled.Name>
-            {selectedRecommendation} {incarcerationSuffix}
-          </Styled.Name>
+          <Styled.Name>{selectedRecommendation}</Styled.Name>
         </Styled.SectionTitleWrapper>
         <Styled.RecommendationSummary>
           {renderMultilineText(recommendationSummary)}

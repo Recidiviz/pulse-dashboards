@@ -1498,7 +1498,7 @@ describe("generateRecommendationSummary for US_ND", () => {
 
   // 21+ year recommendation
   test("generates summary for 6+ years recommendation type with expected name and salutations", () => {
-    const recommendationType = "6+ years";
+    const recommendationType = "6+ Years Incarceration";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 6,
@@ -1561,7 +1561,7 @@ describe("generateRecommendationSummary for US_ND", () => {
 
   // Less than one year recommendation w/ needs and opportunities, no protective factors
   test("generates summary for less than one year recommendation type with needs and opportunities, and no protective factors with expected name and salutations", () => {
-    const recommendationType = "< 1 Year";
+    const recommendationType = "< 1 Year Incarceration";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 0,
@@ -1636,7 +1636,7 @@ describe("generateRecommendationSummary for US_ND", () => {
 
   // Less than one year recommendation (default) w/ needs and opportunities and protective factors
   test("generates summary for less than one year recommendation type w/ needs and opportunities and protective factors with expected name and salutations", () => {
-    const recommendationType = "< 1 Year";
+    const recommendationType = "< 1 Year Incarceration";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 0,
@@ -1711,7 +1711,7 @@ describe("generateRecommendationSummary for US_ND", () => {
 
   // 1-2 years recommendation w/ protective factors, opportunities and NO needs
   test("generates summary for 1-2 years recommendation type (with protective factors, opportunities and NO needs) with expected name, pronouns and salutations", () => {
-    const recommendationType = "1-2 years";
+    const recommendationType = "1-2 Years Incarceration";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 1,
@@ -1774,7 +1774,7 @@ describe("generateRecommendationSummary for US_ND", () => {
 
   //  3-5 years recommendation w/ needs, protective factors and NO opportunities
   test("generates summary for 3-5 years recommendation type (with needs, protective factors and NO opportunities) with expected name, pronouns and salutations", () => {
-    const recommendationType = "3-5 years";
+    const recommendationType = "3-5 Years Incarceration";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 3,
@@ -1837,7 +1837,7 @@ describe("generateRecommendationSummary for US_ND", () => {
 
   // 3-5 years recommendation w/ NO needs and NO opportunities and NO protective factors
   test("generates summary for 3-5 years recommendation type (with NO needs and NO opportunities and NO protective factors) with expected name, pronouns and salutations", () => {
-    const recommendationType = "3-5 years";
+    const recommendationType = "3-5 Years Incarceration";
     const props: GenerateRecommendationProps = {
       recommendation: recommendationType,
       sentenceLengthStart: 3,

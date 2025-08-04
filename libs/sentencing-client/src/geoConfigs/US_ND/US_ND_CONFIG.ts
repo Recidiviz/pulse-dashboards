@@ -46,22 +46,22 @@ export const US_ND_CONFIG: GeoConfig = {
         recommendationType: RecommendationType.Probation,
       },
       {
-        label: "< 1 Year",
+        label: "< 1 Year Incarceration",
         sentenceLengthBucketStart: 0,
         sentenceLengthBucketEnd: 1,
       },
       {
-        label: "1-2 years",
+        label: "1-2 Years Incarceration",
         sentenceLengthBucketStart: 1,
         sentenceLengthBucketEnd: 2,
       },
       {
-        label: "3-5 years",
+        label: "3-5 Years Incarceration",
         sentenceLengthBucketStart: 3,
         sentenceLengthBucketEnd: 5,
       },
       {
-        label: "6+ years",
+        label: "6+ Years Incarceration",
         sentenceLengthBucketStart: 6,
         sentenceLengthBucketEnd: -1,
       },

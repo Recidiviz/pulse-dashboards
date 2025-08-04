@@ -99,15 +99,15 @@ export function getSentenceLengthBucketLabel(
 
   // If the bucket is 0 - x, just make it < x year(s)
   if (sentenceLengthBucketStart === 0) {
-    return `< ${sentenceLengthBucketEnd} Year${sentenceLengthBucketEnd > 1 ? "s" : ""}`;
+    return `< ${sentenceLengthBucketEnd} Year${sentenceLengthBucketEnd > 1 ? "s" : ""} Incarceration`;
   }
   // If the bucket is x - infinity, just make it > x year(s)
   if (sentenceLengthBucketEnd === -1) {
-    return `${sentenceLengthBucketStart}+ Years`;
+    return `${sentenceLengthBucketStart}+ Years Incarceration`;
   }
 
   // Otherwise, return the range
-  return `${sentenceLengthBucketStart}-${sentenceLengthBucketEnd} Years`;
+  return `${sentenceLengthBucketStart}-${sentenceLengthBucketEnd} Years Incarceration`;
 }
 
 function sentenceLengthLabelFilter(d: {
