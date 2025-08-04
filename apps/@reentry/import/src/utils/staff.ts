@@ -57,8 +57,8 @@ export async function transformAndLoadStaffData(
   const clientToStaff = [];
 
   for await (const staffData of data) {
-    const importedClientIds = new Set(staffData.client_person_ids).intersection(
-      existingClientIds,
+    const importedClientIds = new Set(
+      staffData.client_person_ids.filter((id) => existingClientIds.has(id)),
     );
 
     clientToStaff.push(

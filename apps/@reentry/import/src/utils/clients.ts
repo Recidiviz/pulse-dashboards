@@ -60,8 +60,10 @@ export async function transformAndLoadClientData(
 
   for await (const clientData of data) {
     const importedStaffIds = new Set(
-      clientData.assigned_staff_ids,
-    ).intersection(existingStaffIds);
+      clientData.assigned_staff_ids.filter((staffId) =>
+        existingStaffIds.has(staffId),
+      ),
+    );
 
     clientToStaff.push(
       ...Array.from(importedStaffIds).map((staffId) => ({
