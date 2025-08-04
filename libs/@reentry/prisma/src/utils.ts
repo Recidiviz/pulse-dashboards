@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PrismaPg } from "@prisma/adapter-pg";
+
 import { PrismaClient } from "~@reentry/prisma/client";
 
 const prismaClients: Record<string, PrismaClient> = {};
@@ -29,13 +31,10 @@ export function getPrismaClientForStateCode(stateCode: string) {
   }
 
   if (!prismaClients[dbUrl]) {
-    prismaClients[dbUrl] = new PrismaClient({
-      datasources: {
-        db: {
-          url: process.env[`DATABASE_URL_${stateCode}`],
-        },
-      },
+    const adapter = new PrismaPg({
+      connectionString: process.env[`DATABASE_URL_${stateCode}`],
     });
+    prismaClients[dbUrl] = new PrismaClient({ adapter });
   }
 
   return prismaClients[dbUrl];
