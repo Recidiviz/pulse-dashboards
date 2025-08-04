@@ -25,7 +25,7 @@ export default function Profile() {
 	const { state } = useAuth();
 
 	return (
-		<ProtectedRoute requireVerifiedEmail={true}>
+		<ProtectedRoute requireVerifiedEmail={false}>
 			<div className="p-8 max-w-4xl mx-auto">
 				<h1 className="text-2xl font-bold mb-4">Your Profile</h1>
 
@@ -48,15 +48,6 @@ export default function Profile() {
 							<div>
 								<h2 className="text-xl font-bold">{state.user.name}</h2>
 								<p className="text-gray-600">{state.user.email}</p>
-								{state.emailVerified ? (
-									<span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mt-2 inline-block">
-										Email Verified
-									</span>
-								) : (
-									<span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded mt-2 inline-block">
-										Email Not Verified
-									</span>
-								)}
 							</div>
 						</div>
 

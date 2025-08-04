@@ -27,94 +27,99 @@ import Summary from "@/app/components/intake/Summary";
 import { useAuth } from "@/app/lib/auth";
 
 const IntakeManagementPage = () => {
-	const { id } = useParams() as { id: string };
+  const { id } = useParams() as { id: string };
 
-	const { data: clientData, isLoading: clientLoading } = $api.useQuery(
-		"get",
-		"/clients/{client_id}",
-		{
-			params: {
-				path: { client_id: id },
-			},
-			headers: {
-				Authorization: `Bearer ${useAuth().getAccessToken()}`,
-				"Content-Type": "application/json",
-			},
-		},
-	);
+  const { data: clientData, isLoading: clientLoading } = $api.useQuery(
+    "get",
+    "/clients/{client_id}",
+    {
+      params: {
+        path: { client_id: id },
+      },
+      headers: {
+        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
 
-	const { data: intakeData, refetch: refetchIntake } = $api.useQuery(
-		"get",
-		"/intake/admin/{client_id}",
-		{
-			params: {
-				path: { client_id: id },
-			},
-			headers: {
-				Authorization: `Bearer ${useAuth().getAccessToken()}`,
-				"Content-Type": "application/json",
-			},
-		},
-	);
+  const { data: intakeData, refetch: refetchIntake } = $api.useQuery(
+    "get",
+    "/intake/admin/{client_id}",
+    {
+      params: {
+        path: { client_id: id },
+      },
+      headers: {
+        Authorization: `Bearer ${useAuth().getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
 
-	if (clientLoading && !clientData) {
-		return (
-			<div className="w-full max-w-6xl mx-auto p-6 flex justify-center items-center h-64">
-				<div className="w-8 h-8 border-4 border-t-[#006B66] border-[#e0f2f1] rounded-full animate-spin" />
-			</div>
-		);
-	}
+  if (clientLoading && !clientData) {
+    return (
+      <div className="w-full max-w-6xl mx-auto p-6 flex justify-center items-center h-64">
+        <div className="w-8 h-8 border-4 border-t-[#006B66] border-[#e0f2f1] rounded-full animate-spin" />
+      </div>
+    );
+  }
 
-	if (!clientData) {
-		return (
-			<div className="max-w-6xl mx-auto px-4 pt-8 text-center text-gray-600">
-				<p className="mb-4">
-					No client data found. Please go back and try again.
-				</p>
-			</div>
-		);
-	}
+  if (!clientData) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 pt-8 text-center text-gray-600">
+        <p className="mb-4">
+          No client data found. Please go back and try again.
+        </p>
+      </div>
+    );
+  }
 
-	return (
-		<div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-auto">
-			{/* Profile Detail */}
-			<ProfileDetail clientRecord={clientData} />
+  return (
+    <div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] h-auto">
+      {/* Profile Detail */}
+      <ProfileDetail clientRecord={clientData} />
 
-			{/* Summary Section */}
-			<div className="flex-grow w-full flex justify-center items-center">
-				<Summary
-					clientRecord={clientData}
-					intake={intakeData}
-					onIntakeUpdate={refetchIntake}
-				/>
-			</div>
+      {/* Summary Section */}
+      <div className="flex-grow w-full flex justify-center items-center">
+        <Summary
+          clientRecord={clientData}
+          intake={intakeData}
+          onIntakeUpdate={refetchIntake}
+        />
+      </div>
 
-			<div className="mb-6 mt-8 w-full max-w-7xl">
-				<h2 className="text-lg font-medium text-[#003331] mb-4 flex items-center">
-					<FiMessageSquare className="mr-2" /> Intake Conversation History
-				</h2>
-				<div className="h-[600px]">
-					{clientData?.external_client_id &&
-					intakeData &&
-					intakeData.id &&
-					intakeData.client_intake_sections &&
-					intakeData.client_intake_sections.length > 0 &&
-					intakeData.status !== "created" ? (
-						<AdminIntakeHistory clientRecord={clientData} intake={intakeData} />
-					) : (
-						<div className="flex items-center justify-center h-full text-gray-500">
-							{/* eslint-disable-next-line no-nested-ternary */}
-							{intakeData?.status === "created"
-								? "Intake has been created but not started yet"
-								: !intakeData
-									? "No intake has been created for this client"
-									: "No conversation history available"}
-						</div>
-					)}
-				</div>
-			</div>
-		</div>
-	);
+      {clientData.state_code !== "US_AZ" && (
+        <div className="mb-6 mt-8 w-full max-w-7xl">
+          <h2 className="text-lg font-medium text-[#003331] mb-4 flex items-center">
+            <FiMessageSquare className="mr-2" /> Intake Conversation History
+          </h2>
+          <div className="h-[600px]">
+            {clientData?.external_client_id &&
+            intakeData &&
+            intakeData.id &&
+            intakeData.client_intake_sections &&
+            intakeData.client_intake_sections.length > 0 &&
+            intakeData.status !== "created" ? (
+              <AdminIntakeHistory
+                clientRecord={clientData}
+                intake={intakeData}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                {/* eslint-disable-next-line no-nested-ternary */}
+                {intakeData?.status === "created"
+                  ? "Intake has been created but not started yet"
+                  : !intakeData
+                    ? "No intake has been created for this client"
+                    : "No conversation history available"}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default IntakeManagementPage;

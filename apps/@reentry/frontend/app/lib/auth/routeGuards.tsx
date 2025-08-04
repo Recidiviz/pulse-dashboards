@@ -48,7 +48,7 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({
 	children,
-	requireVerifiedEmail = true,
+	requireVerifiedEmail = false,
 }: ProtectedRouteProps) => {
 	const { state } = useAuth();
 	const pathname = usePathname();

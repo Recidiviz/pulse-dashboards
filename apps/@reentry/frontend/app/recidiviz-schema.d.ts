@@ -834,6 +834,46 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
+	"/intake/internal/{client_id}/transcription-generate-action-plan": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Submit json transcription to generate action plan
+		 * @description Submit a JSON transcription to generate an action plan for the client's intake.
+		 */
+		post: operations["transcription_generate_action_plan_intake_internal__client_id__transcription_generate_action_plan_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake/internal/transcription-processor": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * transcription-processor
+		 * @description transcription-processor
+		 */
+		get: operations["transcription_processor_intake_internal_transcription_processor_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 	"/intake/admin/{client_id}": {
 		parameters: {
 			query?: never;
@@ -1040,6 +1080,181 @@ export interface paths {
 		 * @description Intelligently retry processing for a client based on current state. Determines whether to retry assessments, plan generation, or both.
 		 */
 		post: operations["retry_processing_clients__client_id__retry_processing_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/clients/{client_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get recording sessions for client
+		 * @description Retrieve all recording sessions associated with a specific client
+		 */
+		get: operations["get_client_recording_sessions_recordings_sessions_clients__client_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Create new recording session
+		 * @description Create a new recording session for a client
+		 */
+		post: operations["create_new_recording_session_recordings_sessions_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get recording session by ID
+		 * @description Retrieve a specific recording session by its ID
+		 */
+		get: operations["get_recording_session_recordings_sessions__session_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}/status": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get recording session status for polling
+		 * @description Retrieve lightweight status information for a recording session, optimized for polling
+		 */
+		get: operations["get_recording_session_status_recordings_sessions__session_id__status_get"];
+		/**
+		 * Update recording session status
+		 * @description Update the status of a recording session (e.g., from created to recording, paused, etc.)
+		 */
+		put: operations["update_recording_session_status_recordings_sessions__session_id__status_put"];
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}/upload-chunk": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/** Upload audio chunk to cloud storage */
+		post: operations["upload_audio_chunk_recordings_sessions__session_id__upload_chunk_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}/finalize": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/** Finalize recording and merge chunks */
+		post: operations["finalize_recording_recordings_sessions__session_id__finalize_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}/signed-url": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get signed URL for final audio file */
+		get: operations["get_signed_url_recordings_sessions__session_id__signed_url_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/transcriptions/{client_id}/complete-intake-transcription": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Submit Client address or transcription approval for intake transcription
+		 * @description Submit the client's address or transcription approval to complete the intake process.
+		 */
+		post: operations["complete_intake_transcription_transcriptions__client_id__complete_intake_transcription_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/transcriptions/{recording_session_id}/transcription": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Client Interview Transcription
+		 * @description Retrieve the interview transcription for a client recording session.
+		 */
+		get: operations["get_client_transcription_transcriptions__recording_session_id__transcription_get"];
+		put?: never;
+		post?: never;
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -1361,8 +1576,6 @@ export interface components {
 			updated_at?: string;
 			/** Pseudonymized Client Id */
 			pseudonymized_client_id: string;
-			/** External Staff Id */
-			external_staff_id: string;
 			/** External Client Id */
 			external_client_id: string;
 			full_name: components["schemas"]["FullNameModel"];
@@ -1412,6 +1625,84 @@ export interface components {
 			/** Client Id */
 			client_id: string;
 			processing_status: components["schemas"]["ProcessingStatus"];
+		};
+		/** CompleteIntakeTranscriptionResponse */
+		CompleteIntakeTranscriptionResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id?: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at?: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at?: string;
+			/** Intake Completed */
+			intake_completed: boolean;
+			/** Intake Approved */
+			intake_approved: boolean;
+			/** Address Updated */
+			address_updated: boolean;
+		};
+		/** CompleteIntakeTrascriptionSubmission */
+		CompleteIntakeTrascriptionSubmission: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id?: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at?: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at?: string;
+			/** Street Address */
+			street_address?: string | null;
+			/** City */
+			city?: string | null;
+			/** State */
+			state?: string | null;
+			/** Approved */
+			approved?: boolean | null;
+		};
+		/** ConversationTurn */
+		ConversationTurn: {
+			/** Id */
+			id: string;
+			/** Role */
+			role: string;
+			/** Content */
+			content: string;
+			/** Starttime */
+			startTime: string;
+			/** Endtime */
+			endTime: string;
+			/** Starttimems */
+			startTimeMs: number;
+			/** Endtimems */
+			endTimeMs: number;
+			/** Duration */
+			duration: string;
+			/** Speakertag */
+			speakerTag: number;
+			/** Wordcount */
+			wordCount: number;
+		};
+		/** CreateRecordingSessionRequest */
+		CreateRecordingSessionRequest: {
+			/** Client Id */
+			client_id: string;
 		};
 		/** DecisionTreeCreate */
 		DecisionTreeCreate: {
@@ -1616,6 +1907,16 @@ export interface components {
 			| "in_progress"
 			| "completed"
 			| "failed";
+		/** FinalizeRecordingRequest */
+		FinalizeRecordingRequest: {
+			/** Total Chunks */
+			total_chunks: number;
+		};
+		/** FinalizeRecordingResponse */
+		FinalizeRecordingResponse: {
+			/** Execution Id */
+			execution_id: string;
+		};
 		/** FullNameModel */
 		FullNameModel: {
 			/** Given Names */
@@ -1900,6 +2201,25 @@ export interface components {
 		InternalAccessUpdate: {
 			/** Internal Access */
 			internal_access: boolean;
+		};
+		/** OutputMetadata */
+		OutputMetadata: {
+			/** Totalduration */
+			totalDuration: string;
+			/** Totalturns */
+			totalTurns: number;
+			/** Speakers */
+			speakers: {
+				[key: string]: components["schemas"]["SpeakerStats"];
+			};
+			/** Averageconfidence */
+			averageConfidence: number;
+			/** Language */
+			language: string;
+			/** Createdat */
+			createdAt: string;
+			/** Diarizationservice */
+			diarizationService: string;
 		};
 		/** Page[AssessmentTreeResponse] */
 		Page_AssessmentTreeResponse_: {
@@ -2285,6 +2605,87 @@ export interface components {
 			| "completed"
 			| "failed"
 			| "needs_retry";
+		/** RecordingSessionResponse */
+		RecordingSessionResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Id */
+			client_id: string;
+			/**
+			 * Intake Id
+			 * Format: uuid
+			 */
+			intake_id: string;
+			/** Audio Chunks Url */
+			audio_chunks_url?: string | null;
+			/** Audio File Url */
+			audio_file_url?: string | null;
+			status: components["schemas"]["RecordingStatus"];
+			/** Gcs Bucket Name */
+			gcs_bucket_name?: string | null;
+			/** Gcs Chunks Folder */
+			gcs_chunks_folder?: string | null;
+			/** Gcs Final File Path */
+			gcs_final_file_path?: string | null;
+			/** Chunk Count */
+			chunk_count: number;
+			/**
+			 * Transcription Approved
+			 * @default false
+			 */
+			transcription_approved: boolean;
+			/** Execution Id */
+			execution_id?: string | null;
+			execution?: components["schemas"]["ExecutionResponse"] | null;
+		};
+		/** RecordingSessionStatusResponse */
+		RecordingSessionStatusResponse: {
+			/** Id */
+			id: string;
+			status: components["schemas"]["RecordingStatus"];
+			/** Chunk Count */
+			chunk_count: number;
+			/** Processing Progress */
+			processing_progress?: number | null;
+			/** Error Message */
+			error_message?: string | null;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Gcs Final File Path */
+			gcs_final_file_path?: string | null;
+			/**
+			 * Transcription Approved
+			 * @default false
+			 */
+			transcription_approved: boolean;
+		};
+		/**
+		 * RecordingStatus
+		 * @enum {string}
+		 */
+		RecordingStatus:
+			| "created"
+			| "recording"
+			| "paused"
+			| "processing"
+			| "error"
+			| "completed";
 		/** Resource */
 		Resource: {
 			/**
@@ -2407,12 +2808,73 @@ export interface components {
 			| "Volunteer Opportunities"
 			| "Recreation"
 			| "Civic Engagement";
+		/** SignedUrlResponse */
+		SignedUrlResponse: {
+			/** Signed Url */
+			signed_url: string;
+			/** Expires In Seconds */
+			expires_in_seconds: number;
+		};
+		/** SpeakerStats */
+		SpeakerStats: {
+			/** Turns */
+			turns: number;
+			/** Duration */
+			duration: string;
+		};
 		/** TokenAccessResponse */
 		TokenAccessResponse: {
 			/** Client Id */
 			client_id: string;
 			/** Token */
 			token: string;
+		};
+		/** TranscriptionMessage */
+		TranscriptionMessage: {
+			/**
+			 * Role
+			 * @enum {string}
+			 */
+			role: "client" | "caseworker";
+			/** Content */
+			content: string;
+		};
+		/** TranscriptionOutput */
+		TranscriptionOutput: {
+			metadata: components["schemas"]["OutputMetadata"];
+			/** Conversation */
+			conversation: components["schemas"]["ConversationTurn"][];
+		};
+		/** UpdateRecordingSessionStatusRequest */
+		UpdateRecordingSessionStatusRequest: {
+			status: components["schemas"]["RecordingStatus"];
+			/** Audio Chunks Url */
+			audio_chunks_url?: string | null;
+			/** Audio File Url */
+			audio_file_url?: string | null;
+		};
+		/** UploadChunkRequest */
+		UploadChunkRequest: {
+			/** Chunk Index */
+			chunk_index: number;
+			/** Chunk Data */
+			chunk_data: string;
+			/** Mime Type */
+			mime_type: string;
+			/**
+			 * Has Header
+			 * @default false
+			 */
+			has_header: boolean;
+		};
+		/** UploadChunkResponse */
+		UploadChunkResponse: {
+			/** Success */
+			success: boolean;
+			/** Chunk Index */
+			chunk_index: number;
+			/** Message */
+			message: string;
 		};
 		/** ValidationError */
 		ValidationError: {
@@ -4239,6 +4701,61 @@ export interface operations {
 			};
 		};
 	};
+	transcription_generate_action_plan_intake_internal__client_id__transcription_generate_action_plan_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["TranscriptionMessage"][];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": unknown;
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	transcription_processor_intake_internal_transcription_processor_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": unknown;
+				};
+			};
+		};
+	};
 	get_client_intake_intake_admin__client_id__get: {
 		parameters: {
 			query?: never;
@@ -4636,6 +5153,334 @@ export interface operations {
 				};
 				content: {
 					"application/json": components["schemas"]["ExecutionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_client_recording_sessions_recordings_sessions_clients__client_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionResponse"][];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	create_new_recording_session_recordings_sessions_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["CreateRecordingSessionRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_recording_session_recordings_sessions__session_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_recording_session_status_recordings_sessions__session_id__status_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionStatusResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	update_recording_session_status_recordings_sessions__session_id__status_put: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["UpdateRecordingSessionStatusRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	upload_audio_chunk_recordings_sessions__session_id__upload_chunk_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["UploadChunkRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["UploadChunkResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	finalize_recording_recordings_sessions__session_id__finalize_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["FinalizeRecordingRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["FinalizeRecordingResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_signed_url_recordings_sessions__session_id__signed_url_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["SignedUrlResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	complete_intake_transcription_transcriptions__client_id__complete_intake_transcription_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["CompleteIntakeTrascriptionSubmission"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["CompleteIntakeTranscriptionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_client_transcription_transcriptions__recording_session_id__transcription_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				recording_session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["TranscriptionOutput"];
 				};
 			};
 			/** @description Validation Error */

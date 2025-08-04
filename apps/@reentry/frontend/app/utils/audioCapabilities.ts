@@ -17,39 +17,22 @@
 
 "use client";
 
-import { AuthWall } from "@recidiviz/auth";
-import React, { type ReactNode } from "react";
+import { SupportedAudioFormat } from "@/app/types/audio";
 
-import { useAuth } from "@/app/lib/auth";
-
-import EmailVerificationState from "./EmailVerificationState";
-import LoadingState from "./LoadingState";
-import UnauthorizedState from "./UnauthorizedState";
-
-interface ProtectedRouteProps {
-	children: ReactNode;
-}
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-	const { authStore } = useAuth();
-
-	if (!authStore) {
-		return <LoadingState />;
-	}
-
-	return (
-		<AuthWall
-			authStore={authStore}
-			loading={<LoadingState />}
-			unauthorizedPage={<UnauthorizedState />}
-			emailVerificationPage={<EmailVerificationState />}
-			handleTargetUrl={(targetUrl) => {
-				console.log("Redirect to:", targetUrl);
-			}}
-		>
-			{children}
-		</AuthWall>
-	);
+export const detectMediaRecorderSupport = (): boolean => {
+	return typeof MediaRecorder !== "undefined";
 };
 
-export default ProtectedRoute;
+export const detectSupportedAudioFormat = (): SupportedAudioFormat | null => {
+	if (!detectMediaRecorderSupport()) return null;
+
+	const formats = [SupportedAudioFormat.WEBM_OPUS, SupportedAudioFormat.WEBM];
+
+	for (const format of formats) {
+		if (MediaRecorder.isTypeSupported(format)) {
+			return format;
+		}
+	}
+
+	return null;
+};

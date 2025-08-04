@@ -15,34 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-"use client";
-import { usePathname } from "next/navigation";
+export interface AudioCapabilities {
+	hasMediaRecorder: boolean;
+}
 
-import Navbar from "@/app/components/Navbar/Navbar";
-import { ProtectedRoute } from "@/app/lib/auth";
-
-export default function ProtectedLayout({ children }) {
-	const pathname = usePathname();
-
-	// Exclude specific routes from the layout (not using the Navbar)
-	const routesWithoutLayout = ["/clients/audio-recording"];
-	const shouldHideLayout = routesWithoutLayout.some((route) =>
-		pathname.startsWith(route),
-	);
-	if (shouldHideLayout) {
-		return (
-			<main className="flex flex-col h-full">
-				<ProtectedRoute>{children}</ProtectedRoute>
-			</main>
-		);
-	}
-
-	return (
-		<>
-			<main className="flex flex-col h-full">
-				<Navbar />
-				<ProtectedRoute>{children}</ProtectedRoute>
-			</main>
-		</>
-	);
+export enum SupportedAudioFormat {
+	WEBM_OPUS = "audio/webm;codecs=opus",
+	WEBM = "audio/webm",
 }
