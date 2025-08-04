@@ -63,10 +63,11 @@
       ],
       "options": {
         "platform": "node",
-        "outputPath": "dist/apps/@reentry/import",
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
         "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
+        "sourcemap": true,
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
         "target": "node20",
@@ -74,15 +75,13 @@
         "assets": ["{workspaceRoot}/.yarnrc.yml"]
       },
       "configurations": {
-        "dev": {},
-        "staging": {
-          "sourcemap": true,
-          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+        "dev": {
+          "minify": false,
+          "sourcemap": false
         },
-        "cherry-pick": {
-          "sourcemap": true,
-          "esbuildConfig": "{projectRoot}/esbuild.config.js"
-        }
+        "staging": {},
+        "cherry-pick": {},
+        "preview": {}
       },
       "defaultConfiguration": "dev"
     },
@@ -105,9 +104,10 @@
         "cwd": "{workspaceRoot}"
       }
     },
+    "upload-sourcemaps": {},
     "container": {
       "executor": "@nx-tools/nx-container:build",
-      "dependsOn": ["build"],
+      "dependsOn": ["upload-sourcemaps"],
       "cwd": "{projectRoot}",
       "options": {
         "engine": "docker",

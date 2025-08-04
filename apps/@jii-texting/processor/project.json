@@ -32,9 +32,10 @@
       "options": {
         "platform": "node",
         "target": "node20",
-        "outputPath": "dist/apps/@jii-texting/processor",
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
+        "sourcemap": true,
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "assets": [
           {
@@ -51,21 +52,20 @@
         "minify": true
       },
       "configurations": {
-        "dev": {},
-        "staging": {
-          "sourcemap": true,
-          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+        "dev": {
+          "minify": false,
+          "sourcemap": false
         },
-        "cherry-pick": {
-          "sourcemap": true,
-          "esbuildConfig": "{projectRoot}/esbuild.config.js"
-        }
+        "staging": {},
+        "cherry-pick": {},
+        "demo": {}
       },
       "defaultConfiguration": "dev"
     },
+    "upload-sourcemaps": {},
     "container": {
       "executor": "@nx-tools/nx-container:build",
-      "dependsOn": ["build"],
+      "dependsOn": ["upload-sourcemaps"],
       "cwd": "{projectRoot}",
       "options": {
         "engine": "docker",

@@ -65,7 +65,10 @@
     "@nx/esbuild:esbuild": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}"
+      }
     },
     "@nx/vite:build": {
       "cache": true,
@@ -74,6 +77,28 @@
     "typecheck": {
       "cache": true,
       "dependsOn": ["^prisma-generate", "prisma-generate"]
+    },
+    "upload-sourcemaps": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "inputs": [],
+      "options": {
+        "env": {
+          "BUILD_OUTPUT_PATH": "{workspaceRoot}/dist/apps/{projectName}"
+        },
+        "cwd": "{workspaceRoot}",
+        "command": "sentry-cli sourcemaps inject $BUILD_OUTPUT_PATH && sentry-cli sourcemaps upload $BUILD_OUTPUT_PATH && find $BUILD_OUTPUT_PATH -type f -name \"*.js.map\" -delete"
+      },
+      "configurations": {
+        "dev": {
+          "command": "echo 'No sourcemaps to upload in dev mode.'"
+        },
+        "staging": {},
+        "cherry-pick": {},
+        "preview": {},
+        "demo": {}
+      },
+      "defaultConfiguration": "dev"
     }
   }
 }

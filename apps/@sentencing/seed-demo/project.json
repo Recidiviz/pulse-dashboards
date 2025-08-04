@@ -62,7 +62,7 @@
       ],
       "options": {
         "platform": "node",
-        "outputPath": "dist/apps/@sentencing/seed-demo",
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
         "bundle": true,
         "main": "{projectRoot}/src/seed.ts",
         "tsConfig": "{projectRoot}/tsconfig.app.json",

@@ -68,10 +68,11 @@
       ],
       "options": {
         "platform": "node",
-        "outputPath": "dist/apps/@jii-texting/server",
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
         "additionalEntryPoints": ["{projectRoot}/src/sentry/index.ts"],
+        "sourcemap": true,
         "tsConfig": "{projectRoot}/tsconfig.app.json",
         "generatePackageJson": true,
         "target": "node20",
@@ -93,15 +94,14 @@
         "external": ["@prisma/jii-texting"]
       },
       "configurations": {
-        "dev": {},
-        "staging": {
-          "sourcemap": true,
-          "esbuildConfig": "{projectRoot}/esbuild.config.js"
+        "dev": {
+          "minify": false,
+          "sourcemap": false
         },
-        "cherry-pick": {
-          "sourcemap": true,
-          "esbuildConfig": "{projectRoot}/esbuild.config.js"
-        }
+        "staging": {},
+        "cherry-pick": {},
+        "preview": {},
+        "demo": {}
       },
       "defaultConfiguration": "dev"
     },
@@ -140,6 +140,7 @@
         "cwd": "{workspaceRoot}"
       }
     },
+    "upload-sourcemaps": {},
     "deploy": {
       "executor": "nx:run-commands",
       "dependsOn": ["load-env-files", "migrate-db"],
@@ -166,7 +167,7 @@
     },
     "container": {
       "executor": "@nx-tools/nx-container:build",
-      "dependsOn": ["build"],
+      "dependsOn": ["upload-sourcemaps"],
       "cwd": "{projectRoot}",
       "options": {
         "engine": "docker",

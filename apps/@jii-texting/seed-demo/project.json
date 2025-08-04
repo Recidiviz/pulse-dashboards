@@ -32,7 +32,7 @@
       "options": {
         "platform": "node",
         "target": "node20",
-        "outputPath": "dist/apps/@jii-texting/seed-demo",
+        "outputPath": "{workspaceRoot}/dist/apps/{projectName}",
         "bundle": true,
         "main": "{projectRoot}/src/main.ts",
         "tsConfig": "{projectRoot}/tsconfig.app.json",
