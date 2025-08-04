@@ -414,6 +414,7 @@ export const FullProfile = observer(
               {person.supervisionTasks?.orderedTasks && (
                 <div>
                   <SectionHeading>Tasks</SectionHeading>
+                  <Divider />
                   <CaseloadTasksHydrator
                     empty={empty}
                     hydrated={

@@ -28,7 +28,6 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { formatDate, formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
 import { formatDateString } from "../models/utils";
-import { Divider } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/types";
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
@@ -325,32 +324,29 @@ export const PreviewTasks = observer(function PreviewTasks({
   }
 
   return (
-    <>
-      <Divider />
-      <TasksWrapper>
-        <TaskItems>
-          {tasks.map((task) => {
-            if (person.stateCode === "US_ID")
-              return (
-                <TaskPreview
-                  task={task}
-                  showSnoozeDropdown={showSnoozeDropdown}
-                />
-              );
-            return <TaskPreviewV2 task={task} key={task.key} />;
-          })}
-          {needs.map((need) => {
+    <TasksWrapper>
+      <TaskItems>
+        {tasks.map((task) => {
+          if (person.stateCode === "US_ID")
             return (
-              <div key={`${need.type}`}>
-                <TaskItem key={need.type}>
-                  <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
-                </TaskItem>
-                <TaskItemDivider />
-              </div>
+              <TaskPreview
+                task={task}
+                showSnoozeDropdown={showSnoozeDropdown}
+              />
             );
-          })}
-        </TaskItems>
-      </TasksWrapper>
-    </>
+          return <TaskPreviewV2 task={task} key={task.key} />;
+        })}
+        {needs.map((need) => {
+          return (
+            <div key={`${need.type}`}>
+              <TaskItem key={need.type}>
+                <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
+              </TaskItem>
+              <TaskItemDivider />
+            </div>
+          );
+        })}
+      </TaskItems>
+    </TasksWrapper>
   );
 });
