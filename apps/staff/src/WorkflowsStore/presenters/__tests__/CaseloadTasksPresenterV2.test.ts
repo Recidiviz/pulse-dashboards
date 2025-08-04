@@ -146,11 +146,61 @@ describe("CaseloadTasksPresenterV2", () => {
   });
 
   describe("selectedTaskCategory", () => {
-    beforeEach(() => {
-      presenter = getPresenter({});
+    it("selects OVERDUE when it's first and has overdue tasks", () => {
+      const tenantStore = {
+        ...mockTenantStore,
+        taskCategories: [
+          "OVERDUE",
+          "ALL_TASKS",
+          "DUE_THIS_WEEK",
+          "DUE_THIS_MONTH",
+        ],
+      } as any as TenantStore;
+
+      const workflowsStore = {
+        ...mockWorkflowsStore,
+        caseloadPersons: [
+          makePersonWithTasks(["employment"], {
+            dateOffset: -1,
+            overdue: true,
+          }),
+          makePersonWithTasks(["contact"], { dateOffset: 0 }),
+        ],
+      } as any as WorkflowsStore;
+
+      presenter = getPresenter({ workflowsStore, tenantStore });
+
+      // OVERDUE should be selected since it's first and has overdue tasks
+      expect(presenter.selectedTaskCategory).toEqual("OVERDUE");
+    });
+
+    it("selects first non-empty category when initial categories are empty", () => {
+      const tenantStore = {
+        ...mockTenantStore,
+        taskCategories: [
+          "OVERDUE",
+          "DUE_THIS_WEEK",
+          "ALL_TASKS",
+          "DUE_THIS_MONTH",
+        ],
+      } as any as TenantStore;
+
+      const workflowsStore = {
+        ...mockWorkflowsStore,
+        caseloadPersons: [
+          makePersonWithTasks(["employment", "contact"], { dateOffset: 0 }),
+          makePersonWithTasks(["employment", "assessment"], { dateOffset: 11 }),
+        ],
+      } as any as WorkflowsStore;
+
+      presenter = getPresenter({ workflowsStore, tenantStore });
+
+      // DUE_THIS_WEEK should be selected since OVERDUE has 0 tasks but DUE_THIS_WEEK has tasks
+      expect(presenter.selectedTaskCategory).toEqual("DUE_THIS_WEEK");
     });
 
     it("logs category selection to the analytics store", () => {
+      presenter = getPresenter({});
       presenter.selectedTaskCategory = "employment";
       expect(
         mockAnalyticsStore.trackTaskTableCategorySelected,

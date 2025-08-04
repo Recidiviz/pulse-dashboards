@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { isThisMonth } from "date-fns";
 import { uniq } from "lodash";
 import { observer } from "mobx-react-lite";
 import simplur from "simplur";
 
+import { useRootStore } from "../../components/StoreProvider";
 import { SupervisionTask } from "../../WorkflowsStore";
 import { workflowsUrl } from "../views";
 import { WorkflowsHomepageSummary } from "./WorkflowsHomepageSummary";
@@ -28,22 +30,35 @@ export const TasksSummary = observer(function TasksSummary({
 }: {
   tasks: SupervisionTask[];
 }) {
+  const {
+    tenantStore: { currentTenantId },
+  } = useRootStore();
   const numTasks = tasks.length;
   const people = uniq(tasks.map((task) => task.person));
   const headerText = simplur`${people.length} [client has|clients have] tasks with overdue or upcoming due dates`;
 
   const numOverdue = tasks.filter((task) => task.isOverdue).length;
-  const reviewStatusCounts = {
-    "Overdue Tasks": numOverdue,
-    "Upcoming Tasks": numTasks - numOverdue,
-  };
+  const numDueThisMonth = tasks.filter(
+    (t) => !t.isOverdue && isThisMonth(t.dueDate),
+  ).length;
+
+  const reviewStatusCounts: Record<string, number> =
+    currentTenantId === "US_NE"
+      ? {
+          "Overdue Tasks": numOverdue,
+          "Tasks Due This Month": numDueThisMonth,
+        }
+      : {
+          "Overdue Tasks": numOverdue,
+          "Upcoming Tasks": numTasks - numOverdue,
+        };
 
   return (
     <WorkflowsHomepageSummary
       key={"supervision-tasks"}
       url={workflowsUrl("tasks")}
       headerText={headerText}
-      totalCount={numTasks}
+      totalCount={people.length}
       people={people}
       reviewStatusCounts={reviewStatusCounts}
       showZeroGrantsPill={false}

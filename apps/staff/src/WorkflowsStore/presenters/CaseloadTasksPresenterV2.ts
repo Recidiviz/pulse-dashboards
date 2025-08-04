@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { differenceInCalendarMonths, isThisMonth, isThisWeek } from "date-fns";
-import { every, some, uniq } from "lodash";
+import { every, find, some, uniq } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
 
 import {
@@ -91,7 +91,13 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
       updateNavigablePeople: action,
     });
 
-    this.selectedCategory = "ALL_TASKS";
+    // Select the first non-empty category
+    this.selectedCategory =
+      find(
+        this.displayedTaskCategories,
+        (category) => this.countForCategory(category) > 0,
+      ) ?? this.displayedTaskCategories[0];
+
     this.tableViewSelectPresenter = new TableViewSelectPresenter(
       firestoreStore,
       workflowsStore,

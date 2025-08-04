@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { Sans14, Sans16, spacing, typography } from "@recidiviz/design-system";
+import { uniqBy } from "lodash";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
@@ -314,7 +315,7 @@ export const PreviewTasks = observer(function PreviewTasks({
   showSnoozeDropdown: boolean;
   empty?: React.ReactNode;
 }) {
-  const tasks = person.supervisionTasks?.orderedTasks ?? [];
+  const tasks = uniqBy(person.supervisionTasks?.orderedTasks ?? [], "type");
   const needs = person.supervisionTasks?.needs ?? [];
 
   if (!tasks.length && !needs.length && empty) {

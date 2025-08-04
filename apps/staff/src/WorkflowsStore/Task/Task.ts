@@ -76,7 +76,7 @@ export abstract class Task<
   }
 
   get key(): string {
-    return `${this.task.type}-${this.person.externalId}`;
+    return `${this.task.type}-${this.person.externalId}-${this.task.dueDate}`;
   }
 
   abstract get additionalDetails(): string | undefined;
