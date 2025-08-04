@@ -47,6 +47,7 @@ export abstract class ImportHandlerBase<T, M> {
     bucket: string,
     file: string,
     schema: K,
+    lineErrorList: string[],
   ) {
     const data = this.getDataFromGCS(bucket, file);
     let count = 1;
@@ -54,8 +55,9 @@ export abstract class ImportHandlerBase<T, M> {
       try {
         yield schema.parse(datum) as z.infer<K>;
       } catch (e) {
-        throw new Error(
-          `\nUnable to parse data:\nData: ${JSON.stringify(datum, null, 2)}\nError: ${e}`,
+        // Instead of throwing an error immediately, we log the error and continue processing the next record.
+        lineErrorList.push(
+          `Unable to parse data for line ${count}. Error: ${e}`,
         );
       }
 
@@ -86,8 +88,8 @@ export abstract class ImportHandlerBase<T, M> {
     let prismaClient;
     try {
       prismaClient = getPrismaClientForStateCode(stateCode);
-    } catch {
-      throw new Error(`Unsupported state code: ${stateCode}`);
+    } catch (e) {
+      throw new Error(`Unsupported state code: ${stateCode}. Error: ${e}`);
     }
 
     const errors = [];
@@ -95,6 +97,7 @@ export abstract class ImportHandlerBase<T, M> {
     for await (const file of files ?? Object.keys(filesToSchemasAndLoaderFns)) {
       console.log(`Loading data for file ${file}.`);
 
+      const lineErrorList: string[] = [];
       try {
         if (!(file in filesToSchemasAndLoaderFns)) {
           throw new Error(
@@ -103,14 +106,17 @@ export abstract class ImportHandlerBase<T, M> {
         }
 
         const { schema, loaderFn } = filesToSchemasAndLoaderFns[file];
+
         const data = this.getAndTransformDataFromGCS(
           bucket,
           `${stateCode}/${file}`,
           schema,
+          lineErrorList,
         );
 
         await loaderFn(prismaClient, data);
       } catch (e) {
+        // Handle any unexpected errors that occur during the import process.
         let message = e;
         if (e instanceof Error) {
           message = e.message;
@@ -118,9 +124,16 @@ export abstract class ImportHandlerBase<T, M> {
 
         // If a file errors for any reason, we want to continue importing the other files; therefore we note the error but continue.
         errors.push(
-          `Error importing ${file} from bucket id ${bucket} for state code ${stateCode}: ${message}`,
+          `Unexpected error importing ${file} from bucket id ${bucket} for state code ${stateCode}: ${message}`,
         );
         continue;
+      }
+
+      // Add any errors that occurred during the parsing of individual records.
+      if (lineErrorList.length > 0) {
+        errors.push(
+          `Error individual lines from ${file} from bucket id ${bucket} for state code ${stateCode}:\n${lineErrorList.join("\n")}`,
+        );
       }
 
       console.log(

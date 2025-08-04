@@ -26,6 +26,10 @@ import {
   FILE_TWO,
   TEST_BUCKET,
 } from "~data-import-plugin/test/common/constants";
+import {
+  fileOneSchema,
+  fileTwoSchema,
+} from "~data-import-plugin/test/setup/constants";
 
 export const mockPrismaClient = mock();
 
@@ -37,39 +41,27 @@ export const testGetPrismaClientForStateCode = vi.fn((stateCode: string) => {
   throw new Error(`Unsupported state code: ${stateCode}`);
 });
 
-const fileOneSchema = z.object({
-  testField: z.string(),
-});
+export const dataProcessorOne = vi.fn();
+export const fileOneLoadFn = async (
+  _: typeof mockPrismaClient,
+  data: AsyncGenerator<z.infer<typeof fileOneSchema> | Error>,
+) => {
+  for await (const datum of data) {
+    dataProcessorOne(datum);
+  }
+  return Promise.resolve();
+};
 
-const fileTwoSchema = z.object({
-  testField: z.string(),
-});
-
-export const fileOneLoadFn = vi.fn(
-  async (
-    _: typeof mockPrismaClient,
-    data: AsyncGenerator<z.infer<typeof fileOneSchema> | Error>,
-  ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    for await (const _data of data) {
-      continue;
-    }
-    return Promise.resolve();
-  },
-);
-
-export const fileTwoLoadFn = vi.fn(
-  async (
-    _: typeof mockPrismaClient,
-    data: AsyncGenerator<z.infer<typeof fileTwoSchema> | Error>,
-  ) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    for await (const _data of data) {
-      continue;
-    }
-    return Promise.resolve();
-  },
-);
+export const dataProcessorTwo = vi.fn();
+export const fileTwoLoadFn = async (
+  _: typeof mockPrismaClient,
+  data: AsyncGenerator<z.infer<typeof fileTwoSchema> | Error>,
+) => {
+  for await (const datum of data) {
+    dataProcessorTwo(datum);
+  }
+  return Promise.resolve();
+};
 
 export let mockStorageSingleton: MockStorage;
 
@@ -95,6 +87,7 @@ vi.mock("@google-cloud/storage", () => ({
 }));
 
 beforeEach(() => {
-  fileOneLoadFn.mockClear();
+  dataProcessorOne.mockClear();
+  dataProcessorTwo.mockClear();
   mockStorageSingleton = new MockStorage();
 });

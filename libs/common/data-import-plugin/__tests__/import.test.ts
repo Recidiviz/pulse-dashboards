@@ -25,10 +25,9 @@ import {
 } from "~data-import-plugin/test/common/constants";
 import { arrayToJsonLines } from "~data-import-plugin/test/common/utils";
 import {
-  fileOneLoadFn,
-  fileTwoLoadFn,
+  dataProcessorOne,
+  dataProcessorTwo,
   importHandler,
-  mockPrismaClient,
   mockStorageSingleton,
 } from "~data-import-plugin/test/setup";
 
@@ -39,14 +38,19 @@ describe("import", () => {
     );
   });
 
-  test("should throw error if data is not parsable", async () => {
+  test("should throw error if data is not parsable but continue with rest of the file", async () => {
     await mockStorageSingleton
       .bucket(TEST_BUCKET)
       .file(`${TEST_STATE_CODE}/${FILE_ONE}`)
       .save(
         arrayToJsonLines([
+          // This should fail
           {
             datapoint: "not-right",
+          },
+          // This should succeed
+          {
+            testFieldOne: "testing-field",
           },
         ]),
       );
@@ -54,8 +58,12 @@ describe("import", () => {
     await expect(
       importHandler.import(TEST_STATE_CODE, [FILE_ONE]),
     ).rejects.toThrow(
-      /Error importing file-one from bucket id test-bucket for state code US_ID: \nUnable to parse data:/,
+      /Error individual lines from file-one from bucket id test-bucket for state code US_ID:\nUnable to parse data for line 1. Error: \[/,
     );
+
+    expect(dataProcessorOne).toHaveBeenCalledWith({
+      testFieldOne: "testing-field",
+    });
   });
 
   test("should handle files being passed", async () => {
@@ -65,20 +73,18 @@ describe("import", () => {
       .save(
         arrayToJsonLines([
           {
-            testField: "testing-field",
+            testFieldOne: "testing-field",
           },
         ]),
       );
 
     await importHandler.import(TEST_STATE_CODE, [FILE_ONE]);
 
-    expect(fileOneLoadFn).toHaveBeenCalledWith(
-      mockPrismaClient,
-      // This is how a generator apparently looks?
-      expect.objectContaining({}),
-    );
+    expect(dataProcessorOne).toHaveBeenCalledWith({
+      testFieldOne: "testing-field",
+    });
 
-    expect(fileTwoLoadFn).not.toHaveBeenCalled();
+    expect(dataProcessorTwo).not.toHaveBeenCalled();
   });
 
   test("should load all files by default", async () => {
@@ -88,7 +94,7 @@ describe("import", () => {
       .save(
         arrayToJsonLines([
           {
-            testField: "testing-field",
+            testFieldOne: "testing-field",
           },
         ]),
       );
@@ -99,23 +105,19 @@ describe("import", () => {
       .save(
         arrayToJsonLines([
           {
-            testField: "testing-field",
+            testFieldTwo: "testing-field",
           },
         ]),
       );
 
     await importHandler.import(TEST_STATE_CODE);
 
-    expect(fileOneLoadFn).toHaveBeenCalledWith(
-      mockPrismaClient,
-      // This is how a generator apparently looks?
-      expect.objectContaining({}),
-    );
+    expect(dataProcessorOne).toHaveBeenCalledWith({
+      testFieldOne: "testing-field",
+    });
 
-    expect(fileTwoLoadFn).toHaveBeenCalledWith(
-      mockPrismaClient,
-      // This is how a generator apparently looks?
-      expect.objectContaining({}),
-    );
+    expect(dataProcessorTwo).toHaveBeenCalledWith({
+      testFieldTwo: "testing-field",
+    });
   });
 });
