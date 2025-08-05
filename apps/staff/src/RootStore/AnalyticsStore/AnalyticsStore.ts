@@ -113,6 +113,11 @@ type SupervisorRosterModalViewedByMetadata = {
   viewedBy?: string;
 };
 
+type LastLoginUsageModuleMetadata = {
+  viewedBy?: string;
+  supervisorPseudonymizedId: string;
+};
+
 type RosterChangeRequestFormSubmittedByMetadata = Pick<
   RosterChangeRequest,
   "requestChangeType"
@@ -592,6 +597,10 @@ export default class AnalyticsStore {
       "frontend.us_ia_early_discharge_referral_form_signature_removed",
       metadata,
     );
+  }
+
+  trackLastLoginUsageModuleViewed(metadata: LastLoginUsageModuleMetadata) {
+    this.track("frontend.last_login_usage_module_viewed", metadata);
   }
 
   /****************************

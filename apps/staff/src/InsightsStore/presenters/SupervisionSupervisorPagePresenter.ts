@@ -215,6 +215,17 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
     );
   }
 
+  trackLastLoginUsageModuleViewed(): void {
+    const { userPseudoId } =
+      this.supervisionStore.insightsStore.rootStore.userStore;
+    this.supervisionStore.insightsStore.rootStore.analyticsStore.trackLastLoginUsageModuleViewed(
+      {
+        supervisorPseudonymizedId: this.supervisorPseudoId,
+        viewedBy: userPseudoId,
+      },
+    );
+  }
+
   private expectOfficersPopulated() {
     if (
       !this.supervisionStore.officersBySupervisorPseudoId.has(

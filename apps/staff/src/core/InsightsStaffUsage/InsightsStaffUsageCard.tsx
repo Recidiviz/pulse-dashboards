@@ -51,9 +51,10 @@ export const getLatestLoginDate = ({ latestLoginDate }: SupervisionOfficer) =>
 const InsightsUsageCard: React.FC<{
   presenter: SupervisionSupervisorPagePresenter;
 }> = observer(function InsightsUsageCard({
-  presenter: { allOfficers, labels },
+  presenter: { allOfficers, labels, trackLastLoginUsageModuleViewed },
 }) {
   if (allOfficers.length === 0) return null;
+  trackLastLoginUsageModuleViewed();
 
   const numOfficersWithNoLoginActivityInLast30Days = allOfficers.filter(
     hasNoLoginActivityInLast30Days,
