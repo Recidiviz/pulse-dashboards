@@ -522,6 +522,7 @@ describe("FirestoreStore", () => {
           requestedSnoozeLength: 30,
           by: "test-officer-email",
           date: mockServerTimestamp(),
+          isStale: false,
           supervisorReponse: undefined,
         },
       ];
@@ -537,6 +538,7 @@ describe("FirestoreStore", () => {
               actionPlan: "test-plan",
               denialReasons: ["reason1", "reason2"],
               requestedSnoozeLength: 30,
+              isStale: false,
             },
           ],
         },

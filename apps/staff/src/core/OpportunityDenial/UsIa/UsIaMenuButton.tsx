@@ -52,6 +52,8 @@ const UsIaMenuButton = observer(function MenuButton({
     if (latestAction?.type === "DENIAL") {
       const reasons = latestAction.denialReasons;
 
+      // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
+      await opportunity.markActionHistoryStale();
       await opportunity.setDenialReasons(reasons);
       await opportunity.setManualSnooze(
         latestAction.requestedSnoozeLength,

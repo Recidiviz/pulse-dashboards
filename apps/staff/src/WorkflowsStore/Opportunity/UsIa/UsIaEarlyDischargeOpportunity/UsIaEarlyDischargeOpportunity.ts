@@ -102,7 +102,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       return "SUBMITTED";
     }
 
-    if (officerAction) {
+    if (officerAction && !officerAction.isStale) {
       if (!supervisorResponse) {
         // Officer submits their approval/denial of a client for supervisor review
         if (officerAction.type === "APPROVAL") {
@@ -188,6 +188,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     const officerAction = {
       date: Timestamp.fromDate(new Date()),
       by: this.userName,
+      isStale: false,
       ...officerActionParams,
     };
     const updatedActionHistory = (this.actionHistory ?? []).concat(
@@ -220,6 +221,24 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     });
   }
 
+  async markActionHistoryStale(): Promise<void> {
+    if (this.actionHistory && this.latestAction) {
+      const updatedOfficerAction = {
+        ...this.latestAction,
+        isStale: true,
+      };
+
+      const updatedActionHistory = this.actionHistory
+        .slice(0, -1)
+        .concat(updatedOfficerAction);
+
+      await this.rootStore.firestoreStore.updateOpportunityActionHistory(
+        this,
+        updatedActionHistory,
+      );
+    }
+  }
+
   async setSupervisorResponse(
     supervisorResponseParams: Omit<SupervisorAction, "date" | "by">,
   ): Promise<void> {
@@ -229,16 +248,14 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       ...supervisorResponseParams,
     };
 
-    const mostRecentOfficerAction = this.actionHistory?.at(-1);
-
-    if (!this.actionHistory || !mostRecentOfficerAction) {
+    if (!this.actionHistory || !this.latestAction) {
       throw new Error(
         `Supervisor cannot respond when there is no existing Action History`,
       );
     }
 
     const updatedOfficerAction = {
-      ...mostRecentOfficerAction,
+      ...this.latestAction,
       supervisorResponse,
     };
 
@@ -248,7 +265,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
 
     const { userPseudoId } = this.rootStore.userStore;
     const actionMetadata: UsIaEarlyDischargeActionsMetadata["action"] = {
-      type: mostRecentOfficerAction.type,
+      type: this.latestAction.type,
       supervisorResponseType: supervisorResponse.type,
       revisionRequest: supervisorResponse.revisionRequest,
     };

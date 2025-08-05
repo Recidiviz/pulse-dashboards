@@ -93,7 +93,9 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   // The `UsIaEarlyDischargeOpportunity` temporarily stores denial reasons in a separate field
   // until the denial is submitted.
   const initialDenialReasons =
-    isIaEDOpportunity && opportunity.latestAction?.type === "DENIAL"
+    isIaEDOpportunity &&
+    opportunity.latestAction?.type === "DENIAL" &&
+    !opportunity.latestAction.isStale
       ? opportunity?.denial?.reasons ?? opportunity.latestAction.denialReasons
       : opportunity?.denial?.reasons;
 
@@ -172,6 +174,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       return;
     }
 
+    // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
+    if (isIaEDOpportunity) {
+      await opportunity.markActionHistoryStale();
+    }
     await opportunity.setDenialReasons(reasons);
     await opportunity.setOtherReasonText(otherReason);
     if (snoozeEnabled) {

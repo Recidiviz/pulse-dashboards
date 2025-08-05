@@ -67,7 +67,7 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
 
   it("returns DISCHARGE_FORM_REVIEW status for APPROVAL without supervisor response", () => {
     opportunity.updatesSubscription.data!.actionHistory = [
-      { type: "APPROVAL", ...updateLog },
+      { type: "APPROVAL", ...updateLog, isStale: false },
     ];
     expect(opportunity.clientStatus).toBe("DISCHARGE_FORM_REVIEW");
   });
@@ -77,6 +77,7 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
       {
         type: "DENIAL",
         ...updateLog,
+        isStale: false,
         actionPlan: "Action Plan",
         denialReasons: ["reason"],
         requestedSnoozeLength: 30,
@@ -90,6 +91,7 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
       {
         type: "APPROVAL",
         supervisorResponse: { type: "APPROVAL", ...updateLog },
+        isStale: false,
         ...updateLog,
       },
     ];
@@ -101,6 +103,7 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
       {
         type: "APPROVAL",
         supervisorResponse: { type: "DENIAL", ...updateLog },
+        isStale: false,
         ...updateLog,
       },
     ];
@@ -113,11 +116,60 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
         type: "DENIAL",
         supervisorResponse: { type: "DENIAL", ...updateLog },
         ...updateLog,
+        isStale: false,
         actionPlan: "Action Plan",
         denialReasons: ["reason"],
         requestedSnoozeLength: 30,
       },
     ];
     expect(opportunity.clientStatus).toBe("ACTION_PLAN_REVIEW_REVISION");
+  });
+
+  it("returns ELIGIBLE_NOW status for stale DENIAL with supervisor denial", () => {
+    opportunity.updatesSubscription.data!.actionHistory = [
+      {
+        type: "DENIAL",
+        supervisorResponse: { type: "DENIAL", ...updateLog },
+        ...updateLog,
+        isStale: true,
+        actionPlan: "Action Plan",
+        denialReasons: ["reason"],
+        requestedSnoozeLength: 30,
+      },
+    ];
+    expect(opportunity.clientStatus).toBe("ELIGIBLE_NOW");
+  });
+
+  it("returns ELIGIBLE_NOW status for stale DENIAL without supervisor response", () => {
+    opportunity.updatesSubscription.data!.actionHistory = [
+      {
+        type: "DENIAL",
+        ...updateLog,
+        isStale: true,
+        actionPlan: "Action Plan",
+        denialReasons: ["reason"],
+        requestedSnoozeLength: 30,
+      },
+    ];
+    expect(opportunity.clientStatus).toBe("ELIGIBLE_NOW");
+  });
+
+  it("returns ELIGIBLE_NOW status for stale APPROVAL denied by supervisor", () => {
+    opportunity.updatesSubscription.data!.actionHistory = [
+      {
+        type: "APPROVAL",
+        supervisorResponse: { type: "DENIAL", ...updateLog },
+        isStale: true,
+        ...updateLog,
+      },
+    ];
+    expect(opportunity.clientStatus).toBe("ELIGIBLE_NOW");
+  });
+
+  it("returns ELIGIBLE_NOW status for stale APPROVAL without supervisor response", () => {
+    opportunity.updatesSubscription.data!.actionHistory = [
+      { type: "APPROVAL", ...updateLog, isStale: true },
+    ];
+    expect(opportunity.clientStatus).toBe("ELIGIBLE_NOW");
   });
 });

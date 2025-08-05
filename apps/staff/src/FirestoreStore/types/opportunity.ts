@@ -51,10 +51,6 @@ export type SupervisorAction = UpdateLog & {
   revisionRequest?: string;
 };
 
-type SupervisorResponse = {
-  supervisorResponse?: SupervisorAction;
-};
-
 export type OfficerApprovalAction = {
   type: "APPROVAL";
   notes?: string;
@@ -68,8 +64,10 @@ export type OfficerDenialAction = {
 };
 
 export type OfficerAction = UpdateLog &
-  SupervisorResponse &
-  (OfficerApprovalAction | OfficerDenialAction);
+  (OfficerApprovalAction | OfficerDenialAction) & {
+    supervisorResponse?: SupervisorAction;
+    isStale: boolean;
+  };
 
 export type OpportunityUpdate = {
   denial?: Denial;
