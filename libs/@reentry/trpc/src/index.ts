@@ -15,45 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import "@fastify/jwt";
-
-import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
-import * as jwt from "jsonwebtoken";
-
-import { AuthUser } from "~@reentry/trpc/types";
-
 // Put types that need to be exported to other apps here
 export { createContext } from "~@reentry/trpc/context";
 export type { AppRouter } from "~@reentry/trpc/router";
 export { appRouter } from "~@reentry/trpc/router";
-
-export async function authenticateAndGetUser(
-  opts: CreateFastifyContextOptions,
-): Promise<AuthUser | null> {
-  const { req, info } = opts;
-
-  let token =
-    info.connectionParams?.["authorization"] ?? req.headers.authorization;
-  let user = null;
-
-  token = token?.replace(/^Bearer\s+/, "");
-
-  try {
-    if (info.connectionParams) {
-      // Websocket connection
-      if (!token) throw new Error("No token provided in WebSocket connection");
-      const JWT_SECRET = process.env["INTAKE_PRIVATE_JWT_KEY"] ?? "";
-      user = jwt.verify(token, JWT_SECRET) as AuthUser;
-    } else {
-      // HTTP connection
-      if (!req.headers.authorization)
-        throw new Error("No token provided in HTTP request");
-      await req.jwtVerify();
-      user = req.user as AuthUser;
-    }
-  } catch (err) {
-    console.error("There was an issue verifying the JWT token:", err);
-  }
-
-  return user;
-}

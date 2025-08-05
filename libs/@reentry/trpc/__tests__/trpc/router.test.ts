@@ -72,31 +72,6 @@ const subscribeToIntakeChat = async (lastEventId?: string) => {
   );
 };
 
-test("tRPC client with bad token should throw an error", async () => {
-  const badToken = "invalid-token";
-  const wsClient = initWSClient(badToken);
-  const testTRPCClient = initTRPCClient(badToken, wsClient);
-
-  await expect(
-    new Promise<void>((resolve, reject) => {
-      testTRPCClient.intakeChat.intakeChat.subscribe(
-        { intakeId },
-        {
-          onData() {
-            resolve();
-          },
-          onError(err) {
-            reject(err);
-          },
-          onComplete() {
-            resolve();
-          },
-        },
-      );
-    }),
-  ).rejects.toThrow("UNAUTHORIZED");
-});
-
 describe("Intake chat", () => {
   beforeEach(() => {
     onData.mockClear();

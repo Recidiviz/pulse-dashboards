@@ -20,13 +20,17 @@ import "@fastify/jwt";
 
 import { TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
+import { createVerifier } from "fast-jwt";
 
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
-import { authenticateAndGetUser } from "~@reentry/trpc";
 import { Context } from "~@reentry/trpc/types";
+import { verifyJwtToken } from "~server-setup-plugin";
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
+
+const JWT_SECRET = process.env["INTAKE_PRIVATE_JWT_KEY"] ?? "";
+const verifier = createVerifier({ key: JWT_SECRET });
 
 export async function createContext(
   opts: CreateFastifyContextOptions,
@@ -47,7 +51,7 @@ export async function createContext(
     });
   }
 
-  const user = await authenticateAndGetUser(opts);
+  const user = await verifyJwtToken(opts, verifier);
 
   let prismaClient;
   try {

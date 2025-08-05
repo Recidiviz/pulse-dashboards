@@ -15,17 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import jwt from "jsonwebtoken";
 import { describe, expect, test } from "vitest";
 
 import {
   setGetPayloadImp,
   testPrismaClient,
   testServer,
+  verifier,
 } from "~@reentry/server/test/setup";
 import { fakeClient } from "~@reentry/server/test/setup/seed";
 
-describe("search", () => {
+describe("server", () => {
   describe("/get-intake-token", () => {
     test("should return a token when provided with a real client with an enabled intake", async () => {
       const response = await testServer.inject({
@@ -51,10 +51,11 @@ describe("search", () => {
         throw new Error("INTAKE_PRIVATE_JWT_KEY is not set");
       }
 
-      const decoded = jwt.verify(token, privateKey);
+      const decoded = await verifier(token);
 
       expect(decoded).toBeDefined();
       expect(decoded).toEqual({
+        exp: expect.any(Number),
         pseudonymizedId: fakeClient.pseudonymizedId,
         iat: expect.any(Number),
       });

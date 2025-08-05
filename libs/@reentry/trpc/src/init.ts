@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { trpcMiddleware } from "@sentry/node";
-import { initTRPC, TRPCError } from "@trpc/server";
+import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 
 import { createContext } from "~@reentry/trpc/context";
+import { procedurePlugin } from "~server-setup-plugin";
 
 export const t = initTRPC
   .context<typeof createContext>()
@@ -28,11 +28,6 @@ export const t = initTRPC
 
 export const router = t.router;
 
-export const baseProcedure = t.procedure
-  .use(trpcMiddleware({ attachRpcInput: true }))
-  .use(async ({ ctx, next }) => {
-    if (!ctx.isAuthorized) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next();
-  });
+const plugin = procedurePlugin();
+
+export const baseProcedure = t.procedure.concat(plugin.procedure);

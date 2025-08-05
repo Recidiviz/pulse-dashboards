@@ -26,7 +26,7 @@ import { FastifyInstance } from "fastify/types/instance";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
-import { beforeAll, beforeEach, vi } from "vitest";
+import { beforeAll, beforeEach } from "vitest";
 
 import { createContext } from "~@case-notes-server/trpc/context";
 import { AppRouter, appRouter } from "~@case-notes-server/trpc/router";
@@ -71,9 +71,11 @@ beforeAll(async () => {
 
   // Override he jwtVerify function to always pass
   testServer.addHook("preHandler", (req, reply, done) => {
-    req.jwtVerify = vi.fn(async () => {
-      return "";
-    });
+    req.jwtVerify = async () => {
+      return;
+    };
+
+    req.user = "We did it Joe!";
     done();
   });
 

@@ -21,7 +21,7 @@ import "@fastify/jwt";
 import { TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 
-import { getIsAuth0Authorized } from "~server-setup-plugin";
+import { verifyAuth0Token } from "~server-setup-plugin";
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
@@ -48,11 +48,11 @@ export async function createContext(opts: CreateFastifyContextOptions) {
 
   const correctedStateCode = correctStateCode(stateCode);
 
-  const auth0Authorized = await getIsAuth0Authorized(opts);
+  const authPayload = await verifyAuth0Token(opts);
 
   return {
     ...opts,
     stateCode: correctedStateCode,
-    auth0Authorized,
+    isAuthorized: !!authPayload,
   };
 }

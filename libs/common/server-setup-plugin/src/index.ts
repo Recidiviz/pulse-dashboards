@@ -27,19 +27,7 @@ import {
 import Fastify from "fastify";
 import fastifyAuth0Verify from "fastify-auth0-verify";
 
-type BuildServerOptions<TRouter extends AnyRouter> = {
-  appRouter: TRouter;
-  createContext: NonNullable<
-    FastifyTRPCPluginOptions<TRouter>["trpcOptions"]["createContext"]
-  >;
-  auth0Options: {
-    domain: string;
-    audience: string;
-  };
-  authStrategy?: "auth0" | "jwt";
-  useWSS?: boolean;
-  trpcPrefix?: string;
-};
+import type { BuildServerOptions } from "~server-setup-plugin/types";
 
 /**
  * Returns a Fastify server with tRPC, Sentry, and Auth0 set up.
@@ -49,14 +37,7 @@ type BuildServerOptions<TRouter extends AnyRouter> = {
 export function buildCommonServer<TRouter extends AnyRouter>(
   options: BuildServerOptions<TRouter>,
 ) {
-  const {
-    appRouter,
-    createContext,
-    auth0Options,
-    useWSS = false,
-    authStrategy = "auth0",
-    trpcPrefix = "",
-  } = options;
+  const { appRouter, createContext, useWSS = false, trpcPrefix = "" } = options;
 
   const server = Fastify({
     logger: true,
@@ -88,16 +69,19 @@ export function buildCommonServer<TRouter extends AnyRouter>(
     } satisfies FastifyTRPCPluginOptions<typeof appRouter>["trpcOptions"],
   });
 
-  if (authStrategy === "auth0") {
+  if (options.auth0Options) {
     server.register(fastifyAuth0Verify, {
-      domain: auth0Options.domain,
-      audience: auth0Options.audience,
+      domain: options.auth0Options.domain,
+      audience: options.auth0Options.audience,
     });
-  } else if (authStrategy === "jwt") {
+  }
+
+  if (options.jwtOptions) {
+    const { key, algorithm = "HS256", expiresIn = "5h" } = options.jwtOptions;
     server.register(fastifyJwt, {
-      secret: process.env["INTAKE_PRIVATE_JWT_KEY"] ?? "",
-      sign: { algorithm: "HS256", expiresIn: "5h" },
-      verify: { algorithms: ["HS256"] },
+      secret: key,
+      sign: { algorithm, expiresIn },
+      verify: { algorithms: [algorithm] },
     });
   }
 

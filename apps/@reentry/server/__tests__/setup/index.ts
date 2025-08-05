@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { init } from "@sentry/node";
+import { createVerifier } from "fast-jwt";
 import type { FastifyInstance } from "fastify";
 import sentryTestkit from "sentry-testkit";
 import { beforeAll, beforeEach } from "vitest";
@@ -54,6 +55,9 @@ vi.mock("google-auth-library", () => ({
     };
   }),
 }));
+
+const JWT_SECRET = process.env["INTAKE_PRIVATE_JWT_KEY"] ?? "";
+export const verifier = createVerifier({ key: JWT_SECRET });
 
 beforeAll(async () => {
   init({

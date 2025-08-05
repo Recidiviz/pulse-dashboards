@@ -30,4 +30,4 @@ export const router = t.router;
 
 const plugin = procedurePlugin();
 
-export const baseProcedure = t.procedure.unstable_concat(plugin.procedure);
+export const baseProcedure = t.procedure.concat(plugin.procedure);

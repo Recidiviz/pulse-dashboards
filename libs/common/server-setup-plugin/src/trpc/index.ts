@@ -21,10 +21,10 @@ import "@fastify/jwt";
 import { trpcMiddleware } from "@sentry/node";
 import { initTRPC, TRPCError } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
+import { VerifierAsync } from "fast-jwt";
 
-export async function getIsAuth0Authorized(opts: CreateFastifyContextOptions) {
+export async function verifyAuth0Token(opts: CreateFastifyContextOptions) {
   const { req } = opts;
-  let auth0Authorized;
 
   // Check if the request is authorized by Auth0
   try {
@@ -32,21 +32,57 @@ export async function getIsAuth0Authorized(opts: CreateFastifyContextOptions) {
       // Auth is set up in index.ts with fastifyAuth0Verify, which uses @fastify/jwt
       // under the hood and exposes this decorator
       await req.jwtVerify();
-      auth0Authorized = true;
+      return req.user;
     } else {
-      auth0Authorized = false;
+      return undefined;
     }
   } catch {
-    auth0Authorized = false;
+    return undefined;
   }
+}
 
-  return auth0Authorized;
+export async function verifyJwtToken(
+  opts: CreateFastifyContextOptions,
+  verifier?: typeof VerifierAsync,
+) {
+  const { req, info } = opts;
+
+  try {
+    if (info.connectionParams) {
+      // Websocket connection
+      let token = info.connectionParams?.["authorization"];
+
+      token = token?.replace(/^Bearer\s+/, "");
+
+      if (!token) {
+        throw new Error("No token provided in WebSocket connection");
+      }
+
+      if (!verifier) {
+        throw new Error(
+          "No JWT verifier provided. Cannot verify subscription token.",
+        );
+      }
+      return await verifier(token);
+    } else {
+      // HTTP connection
+      if (!req.headers.authorization) {
+        throw new Error("No token provided in HTTP request");
+      }
+
+      await req.jwtVerify();
+      return req.user;
+    }
+  } catch (err) {
+    console.error("There was an issue verifying the JWT token:", err);
+    return undefined;
+  }
 }
 
 export function procedurePlugin() {
   const t = initTRPC
     .context<{
-      auth0Authorized: boolean;
+      isAuthorized: boolean;
     }>()
     .create();
 
@@ -59,7 +95,7 @@ export function procedurePlugin() {
       )
       .use(async (opts) => {
         const { ctx } = opts;
-        if (!ctx.auth0Authorized) {
+        if (!ctx.isAuthorized) {
           throw new TRPCError({ code: "UNAUTHORIZED" });
         }
         return opts.next();

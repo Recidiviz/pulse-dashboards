@@ -23453,6 +23453,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-jwt@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "fast-jwt@npm:6.0.2"
+  dependencies:
+    "@lukeed/ms": "npm:^2.0.2"
+    asn1.js: "npm:^5.4.1"
+    ecdsa-sig-formatter: "npm:^1.0.11"
+    mnemonist: "npm:^0.40.0"
+  checksum: 10c0/0b87285f0a00081f18bb5708420d1f615e8ca6c9b63b71530725f77c7275f08ef13cd3632fe019a0b7848ed5c10565023fe7b9fba7f0048bb7105b0f0b245f71
+  languageName: node
+  linkType: hard
+
 "fast-levenshtein@npm:^2.0.6, fast-levenshtein@npm:~2.0.6":
   version: 2.0.6
   resolution: "fast-levenshtein@npm:2.0.6"
@@ -31548,6 +31560,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mnemonist@npm:^0.40.0":
+  version: 0.40.3
+  resolution: "mnemonist@npm:0.40.3"
+  dependencies:
+    obliterator: "npm:^2.0.4"
+  checksum: 10c0/8c061d692dc4c45b04045e710e696f94ce6ea819769ed378636523e021ae2bb397945513e9265757b6f2fd29713b7315bc6bb74452df5508fc270bf49f1d1636
+  languageName: node
+  linkType: hard
+
 "mobx-react-lite@npm:^3.1.6":
   version: 3.2.0
   resolution: "mobx-react-lite@npm:3.2.0"
@@ -32132,15 +32153,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-jsonwebtoken@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "node-jsonwebtoken@npm:0.0.1"
-  dependencies:
-    jsonwebtoken: "npm:^8.5.1"
-  checksum: 10c0/fd70966eb232282646066e39e081960f4803c4447b033685940bb1de559ffee06e6e5d22d0d74d5265f21f9f0c1b193734ccee5924f26450a08f37a604ae7663
-  languageName: node
-  linkType: hard
-
 "node-machine-id@npm:1.1.12":
   version: 1.1.12
   resolution: "node-machine-id@npm:1.1.12"
@@ -32667,6 +32679,13 @@ __metadata:
   version: 2.0.4
   resolution: "obliterator@npm:2.0.4"
   checksum: 10c0/ff2c10d4de7d62cd1d588b4d18dfc42f246c9e3a259f60d5716f7f88e5b3a3f79856b3207db96ec9a836a01d0958a21c15afa62a3f4e73a1e0b75f2c2f6bab40
+  languageName: node
+  linkType: hard
+
+"obliterator@npm:^2.0.4":
+  version: 2.0.5
+  resolution: "obliterator@npm:2.0.5"
+  checksum: 10c0/36e67d88271c51aa6412a7d449d6c60ae6387176f94dbc557eea67456bf6ccedbcbcecdb1e56438aa4f4694f68f531b3bf2be87b019e2f69961b144bec124e70
   languageName: node
   linkType: hard
 
@@ -36277,6 +36296,7 @@ __metadata:
     express-validator: "npm:^6.8.1"
     extensionless: "npm:^1.9.9"
     factory.ts: "npm:^1.4.1"
+    fast-jwt: "npm:^6.0.2"
     fastify: "npm:5.2.1"
     fastify-auth0-verify: "npm:^3.0.0"
     file-saver: "npm:^2.0.5"
@@ -36326,7 +36346,6 @@ __metadata:
     next: "npm:14.2.12"
     next-remove-imports: "npm:^1.0.12"
     node-cache: "npm:^5.1.0"
-    node-jsonwebtoken: "npm:^0.0.1"
     nodemon: "npm:^3.1.0"
     npm-run-all: "npm:^4.1.5"
     numeral: "npm:^2.0.6"

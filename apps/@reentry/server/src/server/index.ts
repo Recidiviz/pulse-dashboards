@@ -15,8 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import jwt from "jsonwebtoken";
-
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { Prisma, StateCode } from "~@reentry/prisma/client";
 import { verifyGoogleIdToken } from "~@reentry/server/server/utils";
@@ -39,19 +37,16 @@ interface ToggleIntakeBody {
 }
 
 export function buildServer() {
-  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
-    throw new Error("Missing required environment variables for Auth0");
+  const jwtKey = process.env["INTAKE_PRIVATE_JWT_KEY"];
+  if (!jwtKey) {
+    throw new Error("Missing required environment variables for jwt");
   }
 
   const server = buildCommonServer({
     appRouter,
     createContext,
-    auth0Options: {
-      domain: process.env["AUTH0_DOMAIN"],
-      audience: process.env["AUTH0_AUDIENCE"],
-    },
     useWSS: true, // Enable WebSocket support
-    authStrategy: "jwt",
+    jwtOptions: { key: jwtKey },
     trpcPrefix: "trpc",
   });
 
@@ -90,12 +85,9 @@ export function buildServer() {
       return;
     }
 
-    const token = jwt.sign(
-      {
-        pseudonymizedId: client.pseudonymizedId,
-      },
-      secretKey,
-    );
+    const token = server.jwt.sign({
+      pseudonymizedId: client.pseudonymizedId,
+    });
 
     return token;
   });

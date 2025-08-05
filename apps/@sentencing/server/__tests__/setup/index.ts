@@ -19,7 +19,7 @@ import { init } from "@sentry/node";
 import { createTRPCClient, httpBatchLink, TRPCClient } from "@trpc/client";
 import sentryTestkit from "sentry-testkit";
 import superjson from "superjson";
-import { beforeAll, beforeEach, vi } from "vitest";
+import { beforeAll, beforeEach } from "vitest";
 
 import { getPrismaClientForStateCode } from "~@sentencing/prisma";
 import { StateCode } from "~@sentencing/prisma/client";
@@ -51,9 +51,11 @@ beforeAll(async () => {
 
   // Override he jwtVerify function to always pass
   testServer.addHook("preHandler", (req, reply, done) => {
-    req.jwtVerify = vi.fn(async () => {
-      return "";
-    });
+    req.jwtVerify = async () => {
+      return;
+    };
+
+    req.user = "We did it Joe!";
     done();
   });
 
