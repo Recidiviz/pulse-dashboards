@@ -40,15 +40,19 @@ const intakeAgentsAndStatuses: Record<
   }
 > = {};
 
-function convertAIMessagesToStringsAndGetLastId(aiMessages: AIMessage[]) {
-  const messages = aiMessages.map((message) => message.content as string);
+function getCleanedMessagesAndLastId(aiMessages: AIMessage[]) {
+  const messages = aiMessages.map((message) => ({
+    content: message.content as string,
+    section: message.response_metadata["section"],
+    id: message.id,
+  }));
 
   if (aiMessages.length === 0) {
-    return { messages, lastId: "none" };
+    return { messages: messages, lastId: "none" };
   }
 
-  const lastId = aiMessages[aiMessages.length - 1].id ?? "none";
-  return { messages, lastId };
+  const lastId = messages[messages.length - 1].id ?? "none";
+  return { messages: messages, lastId };
 }
 
 export const intakeChatRouter = router({
@@ -87,7 +91,7 @@ export const intakeChatRouter = router({
 
         intakeAgentsAndStatuses[intakeId].isProcessingResponse = true;
 
-        const { messages, lastId } = convertAIMessagesToStringsAndGetLastId(
+        const { messages, lastId } = getCleanedMessagesAndLastId(
           await agent.processResponse(response),
         );
 
@@ -175,7 +179,7 @@ export const intakeChatRouter = router({
 
         // If the server is still processing the last response, we do nothing
         if (!intakeAgentsAndStatuses[intakeId].isProcessingResponse) {
-          const { messages, lastId } = convertAIMessagesToStringsAndGetLastId(
+          const { messages, lastId } = getCleanedMessagesAndLastId(
             await agent.init(lastEventId),
           );
 

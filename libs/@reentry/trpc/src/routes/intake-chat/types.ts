@@ -22,7 +22,11 @@ interface LoadingEvent {
 interface ResponseEvent {
   type: "response";
   lastId: string;
-  messages: string[];
+  messages: {
+    content: string;
+    section: string;
+    id?: string;
+  }[];
 }
 
 export type EmitData = LoadingEvent | ResponseEvent;

@@ -30,6 +30,7 @@ import {
   StateGraph,
 } from "@langchain/langgraph";
 import { ChatOpenAI } from "@langchain/openai";
+import crypto from "crypto";
 import { z } from "zod";
 
 import { Sections, US_ID_SECTIONS } from "./constants";
@@ -91,6 +92,7 @@ async function generateReturningWelcomeMessage(state: State) {
   return {
     messages: [
       new AIMessage({
+        id: crypto.randomUUID(),
         content: `Hi ${clientName}, thanks for joining again! Let's continue our conversation.`,
         response_metadata: { section: getSectionTitle(currentSectionIndex) },
       }),
@@ -132,6 +134,7 @@ async function askQuestion(state: State) {
     update: {
       messages: [
         new AIMessage({
+          id: crypto.randomUUID(),
           content: response.response,
           response_metadata: {
             section: getSectionTitle(currentSectionIndex),
@@ -150,6 +153,7 @@ async function transitionToNextSection(state: State) {
     currentSectionIndex: state.currentSectionIndex + 1,
     messages: [
       new AIMessage({
+        id: crypto.randomUUID(),
         content: `Thank you for sharing all of that information. I really appreciate it. Let's move on to the next section!`,
         response_metadata: { section: getSectionTitle(currentSectionIndex) },
       }),
@@ -164,6 +168,7 @@ async function human(state: State) {
   return {
     messages: [
       new HumanMessage({
+        id: crypto.randomUUID(),
         content: userInput,
         response_metadata: {
           section: getSectionTitle(currentSectionIndex),
@@ -200,6 +205,7 @@ async function checkIfClientNeedsHelp(state: State) {
 export function endChat(state: State) {
   const { currentSectionIndex } = state;
   const newMessage = new AIMessage({
+    id: crypto.randomUUID(),
     content: `I see! Ending the conversation now.`,
     response_metadata: {
       section: getSectionTitle(currentSectionIndex),
@@ -217,6 +223,7 @@ export function closingRemarks(state: State) {
   return {
     messages: [
       new AIMessage({
+        id: crypto.randomUUID(),
         content: `Thank you for your time today, ${clientName}. I appreciate you sharing all of this information with me. We have reached the end of our conversation!`,
         response_metadata: {
           section: getSectionTitle(currentSectionIndex),

@@ -92,10 +92,21 @@ describe("Intake chat", () => {
     expect(onData).toHaveBeenCalledWith(
       expect.objectContaining({
         id: expect.any(String),
-        data: {
+        data: expect.objectContaining({
           type: "response",
-          messages: ["Welcome message", "question"],
-        },
+          messages: [
+            expect.objectContaining({
+              content: "Welcome message",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+            expect.objectContaining({
+              content: "question",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+          ],
+        }),
       }),
     );
   });
@@ -122,20 +133,37 @@ describe("Intake chat", () => {
     expect(onData).toHaveBeenCalledWith(
       expect.objectContaining({
         id: expect.any(String),
-        data: {
+        data: expect.objectContaining({
           type: "response",
-          messages: ["Welcome message", "question"],
-        },
+          messages: [
+            expect.objectContaining({
+              content: "Welcome message",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+            expect.objectContaining({
+              content: "question",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+          ],
+        }),
       }),
     );
     expect(onData).toHaveBeenCalledWith({ type: "loading" });
     expect(onData).toHaveBeenCalledWith(
       expect.objectContaining({
         id: expect.any(String),
-        data: {
+        data: expect.objectContaining({
           type: "response",
-          messages: ["question"],
-        },
+          messages: [
+            expect.objectContaining({
+              content: "question",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+          ],
+        }),
       }),
     );
 
@@ -152,10 +180,16 @@ describe("Intake chat", () => {
     expect(onData).toHaveBeenCalledWith(
       expect.objectContaining({
         id: expect.any(String),
-        data: {
+        data: expect.objectContaining({
           type: "response",
-          messages: ["question"],
-        },
+          messages: [
+            expect.objectContaining({
+              content: "question",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+          ],
+        }),
       }),
     );
   });
@@ -192,20 +226,37 @@ describe("Intake chat", () => {
     expect(onData).toHaveBeenCalledWith(
       expect.objectContaining({
         id: expect.any(String),
-        data: {
+        data: expect.objectContaining({
           type: "response",
-          messages: ["Welcome message", "question"],
-        },
+          messages: [
+            expect.objectContaining({
+              content: "Welcome message",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+            expect.objectContaining({
+              content: "question",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+          ],
+        }),
       }),
     );
     expect(onData).toHaveBeenCalledWith({ type: "loading" });
     expect(onData).toHaveBeenCalledWith(
       expect.objectContaining({
         id: expect.any(String),
-        data: {
+        data: expect.objectContaining({
           type: "response",
-          messages: ["question"],
-        },
+          messages: [
+            expect.objectContaining({
+              content: "question",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+          ],
+        }),
       }),
     );
   });
@@ -245,20 +296,42 @@ describe("Intake chat", () => {
     expect(onData).toHaveBeenCalledWith(
       expect.objectContaining({
         id: expect.any(String),
-        data: {
+        data: expect.objectContaining({
           type: "response",
-          messages: ["Welcome message", "question"],
-        },
+          messages: [
+            expect.objectContaining({
+              content: "Welcome message",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+            expect.objectContaining({
+              content: "question",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+          ],
+        }),
       }),
     );
     expect(onData).toHaveBeenCalledWith({ type: "loading" });
     expect(onData).toHaveBeenCalledWith(
       expect.objectContaining({
         id: expect.any(String),
-        data: {
+        data: expect.objectContaining({
           type: "response",
-          messages: ["Welcome message", "question"],
-        },
+          messages: [
+            expect.objectContaining({
+              content: "Welcome message",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+            expect.objectContaining({
+              content: "question",
+              section: "Basic Information",
+              id: expect.any(String),
+            }),
+          ],
+        }),
       }),
     );
   });
