@@ -1,0 +1,11 @@
+graph TD
+    A[Start: Assess financial risk] --> B{Q32}
+    B --> BYes[Yes] %% this person is a social isolate %%
+    B --> BNo[No]
+    B --> B999[Unclear]
+    BYes & BNo & B999 --> C{Q33} %% do they have criminal aquintances ? %%
+    BNo & B999 --> D{Q34} %% do they have criminal friends ? %%
+    BYes --> DYes{Count:Q34-0} %% if isolate, no %%
+    C --> E{Q35} %% do they have few non-criminal aquintances ? %%
+    BNo & B999 --> D{Q36} %% do they have few criminal friends ? %%
+    BYes --> DYes{Count:Q34-1} %% if isolate, yes %%

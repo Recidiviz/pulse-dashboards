@@ -1,0 +1,140 @@
+steps:
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/backend:staging"
+      - "-f"
+      - "./backend/deploy/Dockerfile.gcp"
+      - "./backend"
+
+  # Push the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$PROJECT_ID/backend:staging"]
+
+  # Deploy API service
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "backend-api-staging"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/backend:staging"
+      - "--region"
+      - "us-central1"
+      - "--platform"
+      - "managed"
+      - "--allow-unauthenticated"
+      - "--timeout"
+      - "1000"
+      - "--cpu"
+      - "1"
+      - "--memory"
+      - "1Gi"
+      - "--add-cloudsql-instances"
+      - "recidiviz-rnd-planner:us-central1:recidiviz-staging"
+      - "--service-account"
+      - "reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
+      - "--set-secrets=RECIDIVIZ_LANGCHAIN_API_KEY=RECIDIVIZ_LANGCHAIN_API_KEY_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_OPENAI_API_KEY=RECIDIVIZ_OPENAI_API_KEY_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_FABRK_BEARER_TOKEN=RECIDIVIZ_FABRK_BEARER_TOKEN_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_POSTGRES_PASSWORD=RECIDIVIZ_POSTGRES_PASSWORD_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_RESOURCES_API_KEY=RECIDIVIZ_RESOURCES_API_KEY_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_AUTH0_CLIENT_ID=RECIDIVIZ_AUTH0_CLIENT_ID_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_JWT_SECRET_KEY=RECIDIVIZ_JWT_SECRET_KEY_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_BQ_PROJECT_ID=RECIDIVIZ_BQ_PROJECT_ID_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_BQ_DATASET=RECIDIVIZ_BQ_DATASET_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_BQ_CASE_MANAGER_TABLE=RECIDIVIZ_BQ_CASE_MANAGER_TABLE:latest"
+      - "--set-secrets=RECIDIVIZ_BQ_SUPERVISION_OFFICER_TABLE=RECIDIVIZ_BQ_SUPERVISION_OFFICER_TABLE:latest"
+      - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
+      - "--set-secrets=RECIDIVIZ_BQ_CLIENT_TABLE=RECIDIVIZ_BQ_CLIENT_TABLE:latest"
+      - "--set-env-vars"
+      - |
+        ENTRYPOINT=api,
+        RECIDIVIZ_ENV_NAME=staging,
+        RECIDIVIZ_DEPLOY_ENV=gcp,
+        RECIDIVIZ_GCP_DB_INSTANCE_NAME=recidiviz-rnd-planner:us-central1:recidiviz-staging,
+        RECIDIVIZ_REDIS_URL=redis://10.149.15.203:6379,
+        RECIDIVIZ_POSTGRES_USER=postgres,
+        RECIDIVIZ_POSTGRES_SERVER=/cloudsql/recidiviz-rnd-planner:us-central1:recidiviz-staging,
+        RECIDIVIZ_POSTGRES_PORT=5432,
+        RECIDIVIZ_POSTGRES_DB=recidiviz,
+        RECIDIVIZ_LANGCHAIN_TRACING_V2=false,
+        RECIDIVIZ_LANGCHAIN_ENDPOINT=https://api.smith.langchain.com,
+        RECIDIVIZ_VCR_CLIENT_INTAKE=true,
+        RECIDIVIZ_ALLOWED_ORIGINS=https://plan-staging.recidiviz.org,
+        RECIDIVIZ_LANGCHAIN_PROJECT=dev-recidiviz,
+        RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=https://resources-api-773019812766.us-central1.run.app,
+        RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE=true,
+        RECIDIVIZ_AUTH0_AUDIENCE=https://api-dev.recidiviz.org,
+        RECIDIVIZ_AUTH0_DOMAIN=login-staging.recidiviz.org,
+        RECIDIVIZ_USE_EXTERNAL_RESOURCES_API=true,
+        RECIDIVIZ_JWT_ALGORITHM=HS256,
+        RECIDIVIZ_GCS_BUCKET_NAME=recidiviz-recording-bucket-staging,
+        RECIDIVIZ_GCS_SERVICE_ACCOUNT_EMAIL=reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com,
+        RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840,
+        RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
+        CHECKFINALCHARACTERHERE=todo:pending-to-fix
+
+  # Deploy Worker service
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy"
+      - "backend-worker-staging"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/backend:staging"
+      - "--region"
+      - "us-central1"
+      - "--platform"
+      - "managed"
+      - "--timeout"
+      - "1000"
+      - "--cpu"
+      - "1"
+      - "--memory"
+      - "1Gi"
+      - "--add-cloudsql-instances"
+      - "recidiviz-rnd-planner:us-central1:recidiviz-staging"
+      - "--no-cpu-throttling"
+      - "--service-account"
+      - "reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
+      - "--set-secrets=RECIDIVIZ_LANGCHAIN_API_KEY=RECIDIVIZ_LANGCHAIN_API_KEY_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_OPENAI_API_KEY=RECIDIVIZ_OPENAI_API_KEY_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_FABRK_BEARER_TOKEN=RECIDIVIZ_FABRK_BEARER_TOKEN_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_POSTGRES_PASSWORD=RECIDIVIZ_POSTGRES_PASSWORD_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_AUTH0_CLIENT_ID=RECIDIVIZ_AUTH0_CLIENT_ID_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_RESOURCES_API_KEY=RECIDIVIZ_RESOURCES_API_KEY_STAGING:latest"
+      - "--set-secrets=RECIDIVIZ_DEEPGRAM_API_KEY=RECIDIVIZ_DEEPGRAM_API_KEY:latest"
+      - "--set-secrets=RECIDIVIZ_JWT_SECRET_KEY=RECIDIVIZ_JWT_SECRET_KEY_STAGING:latest"
+      - "--set-env-vars"
+      - |
+        ENTRYPOINT=worker,
+        RECIDIVIZ_ENV_NAME=staging,
+        RECIDIVIZ_DEPLOY_ENV=gcp,
+        RECIDIVIZ_GCP_DB_INSTANCE_NAME=recidiviz-rnd-planner:us-central1:recidiviz-staging,
+        RECIDIVIZ_REDIS_URL=redis://10.149.15.203:6379,
+        RECIDIVIZ_POSTGRES_USER=postgres,
+        RECIDIVIZ_POSTGRES_SERVER=/cloudsql/recidiviz-rnd-planner:us-central1:recidiviz-staging,
+        RECIDIVIZ_POSTGRES_PORT=5432,
+        RECIDIVIZ_POSTGRES_DB=recidiviz,
+        RECIDIVIZ_LANGCHAIN_TRACING_V2=false,
+        RECIDIVIZ_LANGCHAIN_ENDPOINT=https://api.smith.langchain.com,
+        RECIDIVIZ_LANGCHAIN_PROJECT=dev-recidiviz,
+        RECIDIVIZ_VCR_CLIENT_INTAKE=true,
+        RECIDIVIZ_EXTERNAL_RESOURCES_API_URL=https://resources-api-773019812766.us-central1.run.app,
+        RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE=true,
+        RECIDIVIZ_AUTH0_AUDIENCE=https://api-dev.recidiviz.org,
+        RECIDIVIZ_AUTH0_DOMAIN=login-staging.recidiviz.org,
+        RECIDIVIZ_USE_EXTERNAL_RESOURCES_API=true,
+        RECIDIVIZ_JWT_ALGORITHM=HS256,
+        RECIDIVIZ_ALLOWED_ORIGINS=http://34.107.140.51,
+        RECIDIVIZ_GCS_BUCKET_NAME=recidiviz-recording-bucket-staging,
+        RECIDIVIZ_GCS_SERVICE_ACCOUNT_EMAIL=reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com,
+        RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
+        RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840
+images:
+  - "gcr.io/$PROJECT_ID/backend:staging"

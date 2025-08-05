@@ -1,0 +1,110 @@
+graph TD
+    A[Start: Assess education and employment risk] --> B{Q11}
+    B --> B1[Unemployed]
+    B --> B2[Part-time]
+    B --> B3[Employed]
+    B --> B4[Education]
+    B --> B5[Education and Employment]
+    B --> B6[Retiree]
+    B --> B7[Homemaker]
+    B --> B8[SSD/SSI]
+    B --> B999[Unclear]
+
+    B999 --> STOP[End: not enough info to start]
+
+    B1 & B2 --> BYes{Count:Q11-1}
+    B3 & B4 & B5 & B6 & B7 & B8 --> BNo{Count:Q11-0}
+
+    B1 & B2 & B3 --> C{Q12}
+    C --> C1[Yes]
+    C --> C2[No]
+    C --> C999[Unclear]
+
+    C1 --> CYes{Count:Q12-1}
+    C2 & B4 & B5 & B6 & B7 & B8 --> CNo{Count:Q12-0}
+
+    B1 & B2 & B3 & B4 & B5 & B6 & B7 & B8 --> D{Q13}
+    D --> D1[Yes]
+    D --> D2[No]
+    D --> D999[Unclear]
+
+    D1 --> DYes{Count:Q13-1}
+    D2 --> DNo{Count:Q13-0}
+
+    B1 & B2 & B3 & B4 & B5 & B6 & B7 & B8 --> E{Q14}
+    E --> E1[Yes]
+    E --> E2[No]
+    E --> E999[Unclear]
+
+    E1 --> EYes{Count:Q14-1}
+    E2 --> ENo{Count:Q14-0}
+
+
+    B1 & B2 & B3 & B4 & B5 & B6 & B7 & B8 --> F{Q15}
+    F --> F1[Yes]
+    F --> F2[No]
+    F --> F999[Unclear]
+
+    F1 --> FYes{Count:Q15-1}
+    F2 --> FNo{Count:Q15-0}
+
+    F2 & F999 --> G{Q16}
+    G & F1 --> G1[Yes] %% If previous question is yes, this one is scored yes. %%
+    G --> G2[No]
+    G --> G999[Unclear]
+
+    G1 --> GYes{Count:Q16-1}
+    G2 --> GNo{Count:Q16-0}
+
+    B1 & B2 & B3 & B4 & B5 & B6 & B7 & B8 --> H{Q17}
+    H --> H1[Yes]
+    H --> H2[No]
+    H --> H999[Unclear]
+
+    H1 --> HYes{Count:Q17-1}
+    H2 --> HNo{Count:Q17-0}
+
+    B3 --> IA{Q18A} %% Specific Q1uestion for employed ppl %%
+    B4 --> IB{Q18B} %% Specific Q1uestion for studying ppl %%
+    B5 --> IC{Q18C}
+    B6 & B7 & B8 --> ID{Q18D}
+    B1 & B2 & IA & IB & IC & ID --> I1[Negative]
+    IA & IB & IC & ID --> I2[Inconsistent]
+    IA & IB & IC & ID --> I3[Unrewarding]
+    IA & IB & IC & ID --> I3[Positive]
+    IA & IB & IC & ID --> I999[Unclear]
+
+    I1 --> I-S0{Count:Q18-S0}
+    I2 --> I-S1{Count:Q18-S1}
+    I3 --> I-S2{Count:Q18-S2}
+    I4 --> I-S3{Count:Q18-S3}
+
+    B3 --> JA{Q19A} %% Specific Question for employed ppl %%
+    B4 --> JB{Q19B} %% Specific Question for studying ppl %%
+    B5 --> JC{Q19C} %% Specific Question for studying and working ppl %%
+    B1 & B2 & JA & JB & JC --> J1[Problematic]
+    JA & JB & JC --> J2[Nonconstructive]
+    JA & JB & JC --> J3[Respectful]
+    JA & JB & JC --> J3[Positive]
+    JA & JB & JC --> J999[Unclear]
+
+    J1 --> J-S0{Count:Q19-S0}
+    J2 --> J-S1{Count:Q19-S1}
+    J3 --> J-S2{Count:Q19-S2}
+    J4 --> J-S3{Count:Q19-S3}
+
+    B3 --> KA{Q20A} %% Specific Question for employed ppl %%
+    B4 --> KB{Q20B} %% Specific Question for studying ppl %%
+    B5 --> KC{Q20C} %% Specific Question for studying and working ppl %%
+    B1 & B2 & KA & KB & KC --> K1[Problematic]
+    KA & KB & KC --> K2[Nonconstructive]
+    KA & KB & KC --> K3[Respectful]
+    KA & KB & KC --> K3[Positive]
+    KA & KB & KC --> K999[Unclear]
+
+    K1 --> K-S0{Count:Q20-S0}
+    K2 --> K-S1{Count:Q20-S1}
+    K3 --> K-S2{Count:Q20-S2}
+    K4 --> K-S3{Count:Q20-S3}
+
+    C999 & D999 & E999 & F999 & G999 & H999 & I999 & J999 & K999 --> Unclarity{Count:miss}

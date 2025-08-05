@@ -1,0 +1,26 @@
+Q15:
+  question: "Criminal Activities"
+  type: "score_box"
+  possible_answers: ["Significant Criminal Attitudes", "Some Criminal Attitudes", "No/Limited Criminal Attitudes"]
+Q16:
+  question: "Believes that it is Possible to Overcome Past"
+  type: "yes/no"
+Q17:
+  question: "Uses Anger to Intimidate Others"
+  type: "yes/no"
+Q18:
+  question: "Walks Away from a Fight"
+  type: "score_box"
+  possible_answers: ["Rarely", "Sometimes", "Yes"]
+Q19:
+  question: "Problem Solving Ability"
+  type: "score_box"
+  possible_answers: ["Poor", "Good"]
+Q20:
+  question: "Expresses Concern About Others"
+  type: "score_box"
+  possible_answers: ["No Concern for Others", "Concern for Immediate Family/Friends", "Concerned about Others"]
+Q21:
+  question: "Believes in “Do Unto Others Before They Do Unto You”"
+  type: "score_box"
+  possible_answers: ["Agree", "Sometimes", "Disagree"]

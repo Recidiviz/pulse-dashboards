@@ -1,0 +1,58 @@
+graph TD
+    A[Start: Client lacks reliable transportation to commute to work]
+
+    A --> B{Is public transportation available in the client's area?}
+    B --> B1[Yes]
+    B --> B2[No]
+
+    B1 --> C{Is public transportation accessible and practical for the client?}
+    C --> C1[Yes]
+    C1 --> D[Assist client in planning routes and schedules; explore transit subsidies]
+    C --> C2[No]
+    C2 --> E{Can barriers to using public transport be addressed?}
+    E --> E1[Yes]
+    E1 --> F[Work on solutions (e.g., mobility training, schedule adjustments)]
+    E --> E2[No]
+    E2 --> G
+
+    B2 --> G{Are there alternative transportation options available?}
+    G --> G1{Is carpooling or ride-sharing an option?}
+    G1 --> G1a[Yes]
+    G1a --> H[Facilitate connections with coworkers or local carpool programs]
+    G1 --> G1b[No]
+    G1b --> I{Is bicycling or walking feasible for the client?}
+    I --> I1[Yes]
+    I1 --> J{Is the distance and route safe and practical?}
+    J --> J1[Yes]
+    J1 --> K[Assist with planning; provide resources for safety equipment]
+    J --> J2[No]
+    J2 --> L
+
+    I --> I2[No]
+    I2 --> L{Are there community transportation services available?}
+    L --> L1[Yes]
+    L1 --> M[Connect client with community shuttles or volunteer driver programs]
+    L --> L2[No]
+    L2 --> N
+
+    E2 & L2 --> N{Is remote work or telecommuting an option?}
+    N --> N1[Yes]
+    N1 --> O[Explore remote job opportunities; assist with necessary training]
+    N --> N2[No]
+    N2 --> P{Can the client relocate closer to employment opportunities?}
+    P --> P1[Yes]
+    P1 --> Q[Assist with housing resources near employment or transit lines]
+    P --> P2[No]
+    P2 --> R{Is obtaining a driver's license and vehicle feasible?}
+    R --> R1[Yes]
+    R1 --> S{Are there programs to assist with licensing and vehicle acquisition?}
+    S --> S1[Yes]
+    S1 --> T[Connect client with driver’s education and vehicle assistance programs]
+    S --> S2[No]
+    S2 --> U[Explore financial planning for future vehicle purchase]
+
+    R --> R2[No]
+    R2 --> V[Consider employment opportunities that do not require commuting]
+
+    D & F & H & K & M & O & Q & T & U & V --> W{Develop an Action Plan addressing transportation barriers}
+    W --> X[End: Tailored Action Plan for client lacking transportation]

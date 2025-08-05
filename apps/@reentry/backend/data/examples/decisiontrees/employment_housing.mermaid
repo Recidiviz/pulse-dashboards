@@ -1,0 +1,76 @@
+graph TD
+    A[Start: Client is experiencing unstable housing or homelessness]
+
+    A --> B{Is the client currently homeless or at immediate risk of homelessness?}
+    B --> B1[Currently Homeless]
+    B --> B2[At Risk of Homelessness]
+    B --> B3[Not at risk of Homelessness]
+
+    B1 --> C{Does the client have a safe place to stay tonight?}
+    C --> C1[Yes]
+    C1 --> D{Is the current shelter appropriate for the client's needs?}
+    D --> D1[Yes]
+    D1 --> E{Is the client eligible for rapid rehousing programs?}
+    D --> D2[No]
+    D2 --> F[Assist client in finding appropriate emergency shelter]
+    F --> E
+
+    C --> C2[No]
+    C2 --> F
+
+    B2 --> G{Can the client remain in current housing temporarily?}
+    G --> G1[Yes]
+    G1 --> H{Is the housing safe and habitable?}
+    H --> H1[Yes]
+    H1 --> I{Is the client eligible for homelessness prevention services?}
+    B3 --> H1
+    H --> H2[No]
+    H2 --> F
+
+    G --> G2[No]
+    G2 --> F
+
+    E & I --> J{Is the client eligible for government housing assistance programs?}
+    J --> J1[Yes]
+    J1 --> K[Assist client in applying for programs - e.g., Section 8, public housing]
+    J --> J2[No]
+    J2 --> L{Are there local non-profit housing assistance programs available?}
+    L --> L1[Yes]
+    L1 --> M[Connect client with non-profit housing resources]
+    L --> L2[No]
+    L2 --> N{Does the client have family or friends they can stay with temporarily?}
+    N --> N1[Yes]
+    N1 --> O[Coordinate temporary housing with family/friends]
+    N --> N2[No]
+    N2 --> P{Is transitional housing an option?}
+    P --> P1[Yes]
+    P1 --> Q[Assist client in accessing transitional housing programs]
+    P --> P2[No]
+    P2 --> R{Explore emergency financial assistance for housing}
+    R --> S[Assist client in applying for emergency funds]
+
+    K & M & O & Q & S --> T{Are there underlying issues affecting housing stability?}
+    T --> T1[Yes]
+    T1 --> U{Does the client have mental health or substance use concerns?}
+    U --> U1[Yes]
+    U1 --> V[Refer client to appropriate treatment services]
+    U --> U2[No]
+    U2 --> W{Does the client have legal issues - e.g., eviction, discrimination?}
+    W --> W1[Yes]
+    W1 --> X[Connect client with legal aid services]
+    W --> W2[No]
+    W2 --> Y{Does the client lack steady income?}
+    Y --> Y1[Yes]
+    Y1 --> Z[Assist client with employment services and job training]
+    Y --> Y2[No]
+    Y2 --> AA[Assess for other barriers to housing stability]
+
+    T --> T2[No]
+    T2 --> AB{Is the client able to maintain employment currently?}
+    AB --> AB1[Yes]
+    AB1 --> AC[Identify affordable housing options near employment]
+    AB --> AB2[No]
+    AB2 --> Z
+
+    V & X & Z & AA & AC --> AD{Develop a housing stability plan with the client}
+    AD --> AE[End: Tailored Action Plan addressing unstable housing]

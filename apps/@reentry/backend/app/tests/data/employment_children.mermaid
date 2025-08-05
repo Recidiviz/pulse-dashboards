@@ -1,0 +1,79 @@
+graph TD
+    A[Start: Client lacks access to affordable childcare]
+
+    A --> B{Do the children have special needs or chronic health issues?}
+    B --> B1[Yes]
+    B1 --> C{Are specialized childcare services available?}
+    C --> C1[Yes]
+    C1 --> D[Connect client with specialized providers; assist with applications]
+    C --> C2[No]
+    C2 --> E[Explore in-home care or financial assistance options]
+
+    B --> B2[No]
+    B2 --> F{What are the ages of the children?}
+    F --> F1[Under school age]
+    F1 --> G{Are free/subsidized pre-K programs available?}
+    G --> G1[Yes]
+    G1 --> H[Assist in enrolling children in pre-K programs]
+    G --> G2[No]
+    G2 --> I[Explore other childcare options]
+
+    F --> F2[School-aged]
+    F2 --> J{Are children enrolled in school?}
+    J --> J1[Yes]
+    J1 --> K{Is before/after school care needed?}
+    K --> K1[Yes]
+    K1 --> L{Are school-based programs available?}
+    L --> L1[Yes]
+    L1 --> M[Assist in enrolling in school-based care]
+    L --> L2[No]
+    L2 --> N[Explore community programs]
+    K --> K2[No]
+    K2 --> O[Focus on work during school hours]
+    J --> J2[No]
+    J2 --> P[Assist with school enrollment]
+
+    F --> F3[Mixed ages]
+    F3 --> Q[Address needs based on individual ages]
+
+    I & N --> R{Are immediate family/friends available for childcare?}
+    R --> R1[Yes]
+    R1 --> S{Is the care reliable and covers work hours?}
+    S --> S1[Yes]
+    S1 --> T[Leverage support; create a schedule]
+    S --> S2[No]
+    S2 --> U[Identify gaps; explore backup options]
+
+    R --> R2[No]
+    R2 --> V{Is the client eligible for childcare assistance programs?}
+    V --> V1[Yes]
+    V1 --> W[Assist with applications for subsidies/programs]
+    V --> V2[No]
+    V2 --> X{Are there local non-profit/community childcare services?}
+    X --> X1[Yes]
+    X1 --> Y[Connect client with resources]
+    X --> X2[No]
+    X2 --> Z{Is client open to childcare cooperative with other parents?}
+    Z --> Z1[Yes]
+    Z1 --> AA[Facilitate joining/forming a cooperative]
+    Z --> Z2[No]
+    Z2 --> AB{Is remote work from home a viable option?}
+
+    AB --> AB1[Yes]
+    AB1 --> AC{Does client have skills for remote work?}
+    AC --> AC1[Yes]
+    AC1 --> AD[Explore remote job opportunities]
+    AC --> AC2[No]
+    AC2 --> AE[Identify training programs for remote work skills]
+    AB --> AB2[No]
+    AB2 --> AF{Can client work flexible/part-time hours?}
+    AF --> AF1[Yes]
+    AF1 --> AG[Identify jobs with flexible scheduling]
+    AF --> AF2[No]
+    AF2 --> AH{Is starting an in-home childcare business an option?}
+    AH --> AH1[Yes]
+    AH1 --> AI[Provide resources for starting home-based childcare]
+    AH --> AH2[No]
+    AH2 --> AJ[Explore financial assistance or grants for childcare costs]
+
+    D & E & H & M & O & P & T & U & W & Y & AA & AD & AE & AG & AI & AJ --> END[End: Tailored Action Plan addressing childcare obstacles]

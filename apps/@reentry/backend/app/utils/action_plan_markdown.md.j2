@@ -1,0 +1,119 @@
+{#
+#   Notes rendering
+#}
+{%- macro render_notes(notes) %}
+{%- if notes %}
+
+<notes>
+{{ notes }}
+</notes>
+{%- endif %}
+{% endmacro %}
+
+{#
+#   Annotation rendering
+#}
+{%- macro render_annotations(annotations) %}
+{%- if annotations %}
+
+<annotations>
+{%- for annotation in annotations %}
+    <annotation
+        source="{{ annotation.source | replace('"', "'") }}"
+        location="{{ annotation.source_location | replace('"', "'") }}"
+        text="{{ annotation.source_text_extract | replace('"', "'")}}"
+    />
+{% endfor -%}
+</annotations>
+{%- endif %}
+{%- endmacro %}
+
+{#
+#   Resources rendering
+#}
+{%- macro render_resources(resources) %}
+{%- if resources %}
+
+## Resources and providers to connect with
+
+<resources>
+{%- for resource in resources %}
+<resource
+    id="{{ resource.id }}"
+    category="{{ resource.category }}"
+    {% if resource.subcategory %}subcategory="{{ resource.subcategory }}"{% endif %}
+    name="{{ resource.name }}"
+    {% if resource.address %}address="{{ resource.address }}"{% endif %}
+    {% if resource.website %}website="{{ resource.website }}"{% endif %}
+    {% if resource.phone %}phone="{{ resource.phone }}"{% endif %}
+    {% if resource.email %}email="{{ resource.email }}"{% endif %}
+    {% if resource.description %}description="{{ resource.description }}"{% endif %}
+    {% if resource.rating %}rating="{{ resource.rating }}"{% endif %}
+    {% if resource.ratingCount %}ratingCount="{{ resource.ratingCount }}"{% endif %}
+    {% if resource.operationalStatus %}operationalStatus="{{ resource.operationalStatus }}"{% endif %}
+    {% if resource.price_level %}price_level="{{ resource.price_level }}"{% endif %}
+    {% if resource.llm_rank %}llm_rank="{{ resource.llm_rank }}"{% endif %}
+    {% if resource.llm_valid %}llm_valid="{{ resource.llm_valid }}"{% endif %}
+    {% if resource.score %}score="{{ resource.score }}"{% endif %}
+  />
+{% endfor -%}
+</resources>
+{%- endif %}
+{%- endmacro %}
+
+{#
+#   Section rendering
+#}
+{% macro render_section(section) %}
+# {{ section.title }}
+
+{{ section.markdown_content }}
+
+{{- render_notes(section.notes) -}}
+{{- render_annotations(section.annotations) -}}
+{{- render_resources(section.resources) -}}
+
+{%- endmacro %}
+
+{#
+# ===============================================================
+# Action plan
+# ===============================================================
+#}
+
+# Overview of the action plan
+
+{{ plan.overview }}
+
+The key to your success will be maintaining focus, commitment, and open communication with me and the various service providers you'll be working with. Remember, this plan is designed to support you, but you'll need to take an active role in making progress.
+
+I'm here to guide you, advocate for you, and ensure you have the tools and resources you need.
+
+# Quick summary of circumstances
+
+{{ plan.quick_summary_circumstances }}
+
+{{ render_section(plan.immediate_needs) }}
+
+{%- for section in plan.sections %}
+{{ render_section(section) -}}
+{%- endfor %}
+
+
+{#
+# Milestones
+{% for milestone in plan.milestones %}
+## {{ milestone.title }} ({{ milestone.date }})
+{{ milestone.markdown_content }}
+{{- render_notes(milestone.notes) -}}
+{% endfor %}
+#}
+
+{#
+# Timeline
+{% for timeline in plan.timeline %}
+## {{ timeline.date }}
+{{ timeline.markdown_content }}
+{{- render_notes(timeline.notes) -}}
+{% endfor %}
+#}

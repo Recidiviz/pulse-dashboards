@@ -1,0 +1,20 @@
+Q27:
+  question: |
+    How satisfied is the person with their current living situation?
+    Consider their physical living environment, maintenance, and neighborhood connection. For those in institutions, evaluate satisfaction with their housing assignment.
+    Severe: No fixed address/homeless, or extremely dissatisfied and wanting to move
+    Poor: Unhappy with living situation, not taking steps to improve, lacks neighborhood connection
+    Stable: Generally satisfied, maintains residence adequately
+    Strong: Takes pride in residence, maintains it well, has positive neighborhood connections
+    Unclear: Not enough information to assess housing satisfaction
+  type: "score_box"
+  possible_answers: ["Severe", "Poor", "Stable", "Strong", "Unclear"]
+Q28: # Residential Stability TODO test this with just-out-of-incarceration profiles
+  question: |
+    Has this person experienced frequent moves or housing instability in the past 12 months? Consider homelessness, staying with various friends, or 3+ address changes. Exclude periods of incarceration. If incarcerated under 2 years, evaluate based on 12 months before incarceration.
+    Yes: 3+ moves in past year OR no permanent residence/homeless
+    No: Stable housing OR incarcerated over 2 years
+    Unclear: Not enough infomration
+  type: "yes/no"
+# TODO high crime neighborhood.
+#

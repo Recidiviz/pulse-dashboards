@@ -1,0 +1,78 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    env_file:
+      - backend/.env
+    environment:
+      POSTGRES_USER: "${RECIDIVIZ_POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${RECIDIVIZ_POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${RECIDIVIZ_POSTGRES_DB}"
+      POSTGRES_PORT: "${RECIDIVIZ_POSTGRES_PORT}"
+      POSTGRES_SERVER: "${RECIDIVIZ_POSTGRES_SERVER}"
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-tests:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: recidiviz_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    networks:
+      - net
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    env_file:
+      - backend/.env
+    ports:
+      - "8002:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - net
+
+  # chat-or-simulate:
+  #   image: chat-simulator
+  #   env_file:
+  #     - backend/.env
+  #   build:
+  #     context: .
+  #     dockerfile: backend/Dockerfile.chat
+  #   stdin_open: true  # Keeps stdin open for interactive input
+  #   tty: true  # Allows colored output and better terminal handling
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #   networks:
+  #     - net
+
+volumes:
+  pg_data:
+
+networks:
+  net:
+    driver: bridge

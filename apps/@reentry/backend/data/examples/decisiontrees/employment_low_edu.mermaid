@@ -1,0 +1,63 @@
+graph TD
+    A[Start: Client lacks high school diploma or GED]
+
+    A --> B{Is the client willing and able to pursue a GED or equivalent?}
+    B --> B1[Yes]
+    B --> B2[No]
+
+    B1 --> C{Are there barriers to pursuing GED (e.g., time, childcare, transportation, learning difficulties)?}
+    C --> C1[Yes]
+    C1 --> D[Identify and address barriers]
+    D --> E[Connect client with GED programs and support services]
+    C --> C2[No]
+    C2 --> E[Connect client with GED programs]
+    E --> F[Client works toward GED while exploring employment options]
+
+    B2 --> G{Is the client interested in vocational training not requiring a GED?}
+    G --> G1[Yes]
+    G --> G2[No]
+
+    G1 --> H{Are there trade certifications or licenses the client can pursue without a GED?}
+    H --> H1[Yes]
+    H1 --> I[Explore programs (e.g., CDL, HVAC certification)]
+    I --> J{Are there barriers to participation (e.g., age, legal status, cost, prerequisites)?}
+    J --> J1[Yes]
+    J1 --> K[Identify and address barriers]
+    K --> L[Enroll client in vocational training or certification programs]
+    J --> J2[No]
+    J2 --> L[Enroll client in vocational training or certification programs]
+
+    H --> H2[No]
+    H2 --> M{Can client gain skills through apprenticeships or on-the-job training?}
+    M --> M1[Yes]
+    M1 --> N[Connect client with apprenticeship programs]
+    M --> M2[No]
+    M2 --> O[Explore other vocational options or revisit pursuing GED]
+
+    G2 --> P{Is the client interested in immediate employment without a GED?}
+    P --> P1[Yes]
+    P --> P2[No]
+
+    P1 --> Q{Does the client have work experience or transferable skills?}
+    Q --> Q1[Yes]
+    Q1 --> R[Match client to jobs leveraging existing skills]
+    Q --> Q2[No]
+    Q2 --> S[Explore entry-level positions and on-the-job training]
+
+    P2 --> T{Consider alternative options (e.g., supported employment, volunteering, micro-enterprise)}
+    T --> U[Connect client with alternative opportunities]
+
+    L & N & R & S & F & U --> V{Assess for other barriers (e.g., literacy, language, disabilities, legal status)}
+    V --> V1[Yes]
+    V1 --> W[Connect client with support services (e.g., literacy programs, ESL classes, legal aid)]
+    V --> V2[No]
+    V2 --> X[Proceed]
+
+    W & X --> Y{Does the client require additional support for long-term career advancement?}
+    Y --> Y1[Yes]
+    Y1 --> Z[Develop plan for continued education and skill development]
+    Y --> Y2[No]
+    Y2 --> AA[Proceed]
+
+    Z & AA --> AB[Develop comprehensive Action Plan addressing education and employment]
+    AB --> AC[End: Tailored Action Plan for client with low education level]

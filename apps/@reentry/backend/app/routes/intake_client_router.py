@@ -1,0 +1,280 @@
+import logging
+from datetime import date, datetime
+from typing import List, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.security import HTTPBearer
+from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.auth.intake.auth_client_user import validate_dob
+from app.core.db import get_session
+from app.crud.intake import get_intake_by_client_id
+from app.models.intake import ClientAddress, Intake, IntakeStatus
+from app.routes.client_router import ClientRecordResponse
+from app.routes.intake_sections_router import IntakeSectionResponse
+from app.routes.shared_models import AddressSubmission, IntakeMessageResponse
+from app.services.client_data.queries import get_client_data_unsafe
+
+from .base import ClientIntakeSectionResponse, ORMResponse
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter()
+security = HTTPBearer()
+
+
+class VerifyDOBRequest(BaseModel):
+    token_from_url: str
+    date_of_birth: date
+
+
+class VerifyDOBResponse(BaseModel):
+    status: bool
+    access_token: Optional[str] = None
+    token_type: str = "bearer"
+    message: Optional[str] = None
+
+
+class Message(ORMResponse):
+    role: str
+    agentId: Optional[str]
+    content: str
+    createdAt: Optional[str]
+
+
+class SummaryResponse(ORMResponse):
+    summary: str
+
+
+class IntakeResponse(ORMResponse):
+    client_id: str
+    status: IntakeStatus
+    current_section: str | None = None
+    internal_access: Optional[bool] = None
+    has_address: bool = False
+
+
+class IntakeWithSectionsResponse(IntakeResponse):
+    client_intake_sections: List[ClientIntakeSectionResponse]
+
+
+class IntakeWithSectionsAndMessagesResponse(IntakeWithSectionsResponse):
+    current_section_messages: List[IntakeMessageResponse]
+    client_name: str | None = None
+    has_accepted_terms: bool = False
+
+
+@router.post(
+    "/verify-dob",
+    response_model=VerifyDOBResponse,
+    summary="Verify date of birth and issue JWT token",
+    description="Validates the client's date of birth against records and issues JWT token",
+    tags=["Intake assessment"],
+)
+async def verify_date_of_birth(
+    request: Request,
+    data: VerifyDOBRequest,
+    session: AsyncSession = Depends(get_session),
+):
+    try:
+        redis_client = request.app.state.redis_client
+
+        result = await validate_dob(
+            request, data.token_from_url, data.date_of_birth, session, redis_client
+        )
+
+        if not result.success:
+            raise HTTPException(status_code=400, detail=result.error_message)
+
+        return VerifyDOBResponse(
+            status=True,
+            access_token=result.token_data["token"],
+            token_type="bearer",
+            message="Date of birth verified successfully",
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error verifying date of birth: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get(
+    "/{token_from_url}",
+    summary="Fetch intake, client sections, and messages for the current section",
+    description="Returns the intake record, associated client sections, current section messages, and client data",
+    tags=["Intake assessment"],
+    response_model=IntakeWithSectionsAndMessagesResponse,
+)
+async def get_client_intake(
+    request: Request, token_from_url: str, session: AsyncSession = Depends(get_session)
+):
+    client_id: str = request.state.client.get("sub")
+    login_timestamp = request.state.client.get("login_timestamp")
+
+    # First get the intake by client ID
+    intake = await get_intake_by_client_id(session, client_id, None)
+
+    if not intake:
+        # No intake found for this client_id
+        raise HTTPException(
+            status_code=404,
+            detail="Not Found",
+        )
+
+    has_access = False
+    is_internal = intake.internal_access
+    if (
+        intake.intake_token
+        and intake.intake_token.token == token_from_url
+        and not intake.internal_access
+        and intake.client_id == client_id
+    ):
+        has_access = True
+
+    elif intake.internal_access and intake.client_id == client_id:
+        has_access = True
+
+    if not has_access:
+        raise HTTPException(
+            status_code=401,
+            detail="Unauthorized",
+        )
+
+    try:
+        client_record = get_client_data_unsafe(intake.client_id)
+        if not client_record:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Client record not found for client ID: {intake.client_id}",
+            )
+
+        client_response = ClientRecordResponse(**client_record.model_dump())
+
+        if is_internal and login_timestamp:
+            # Internal user: only messages from current login session
+            login_time = datetime.fromtimestamp(login_timestamp)
+            (
+                current_section_messages,
+                has_accepted_terms,
+            ) = await intake.get_current_section_messages(
+                session, current_session_time=login_time
+            )
+        else:
+            # Non-internal user: all current section messages (existing behavior)
+            (
+                current_section_messages,
+                has_accepted_terms,
+            ) = await intake.get_current_section_messages(session)
+
+        print(f"🔍 CLIENT API: Returning intake data for {intake.id}")
+        print(f"   Number of client sections: {len(intake.client_intake_sections)}")
+
+        client_sections_response = []
+        for section in intake.client_intake_sections:
+            # Use the model method to get the correct section data
+            section_data = section.get_effective_section_data()
+
+            print(f"   📝 Section: {section_data['title']}")
+            print(
+                f"      Source: {section_data['source']} (revision: {section_data['revision_id']})"
+            )
+            print(f"      Description: {section_data['description'][:50]}...")
+
+            client_sections_response.append(
+                ClientIntakeSectionResponse(
+                    **section.model_dump(),
+                    intake_section=IntakeSectionResponse(
+                        id=section_data["id"],
+                        created_at=section_data["created_at"],
+                        updated_at=section_data["updated_at"],
+                        title=section_data["title"],
+                        description=section_data["description"],
+                    ),
+                )
+            )
+
+        return IntakeWithSectionsAndMessagesResponse(
+            **intake.model_dump(by_alias=True, exclude_none=True),
+            has_address=intake.has_address,
+            client_intake_sections=client_sections_response,
+            current_section_messages=[],
+            client_name=client_response.full_name.formatted_full_name(),
+            has_accepted_terms=has_accepted_terms,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"An error occurred while processing the intake: {str(e)}",
+        )
+
+
+class AdressSubmissionResponse(BaseModel):
+    intake_completed: bool
+
+
+@router.post(
+    "/address",
+    summary="Submit client address for intake",
+    description="Submit or update address information for the authenticated client's intake",
+    tags=["Intake assessment"],
+    response_model=AdressSubmissionResponse,
+)
+async def submit_address(
+    request: Request,
+    address_data: AddressSubmission,
+    session: AsyncSession = Depends(get_session),
+):
+    from sqlalchemy.orm import selectinload
+    from sqlmodel import select
+
+    from app.utils.intake.constants import COMPLETION_SECTION
+
+    # Extract client_id from JWT token (set by ClientAuthMiddleware)
+    client_id: str = request.state.client.get("sub")
+
+    # Get intake with address relationship loaded
+    statement = (
+        select(Intake)
+        .where(Intake.client_id == client_id)
+        .options(selectinload(Intake.address))
+    )
+    result = await session.exec(statement)
+    intake = result.first()
+
+    if not intake:
+        raise HTTPException(status_code=404, detail="Intake not found")
+
+    # Create or update address
+    if intake.address:
+        # Update existing address
+        intake.address.city = address_data.city
+        intake.address.state = address_data.state
+        intake.address.street_address = address_data.street_address
+        session.add(intake.address)
+    else:
+        # Create new address
+        new_address = ClientAddress(
+            intake_id=intake.id,
+            city=address_data.city,
+            state=address_data.state,
+            street_address=address_data.street_address,
+        )
+        session.add(new_address)
+
+    # Check if intake can be completed (conversation finished + address provided + all sections complete)
+    if (
+        intake.status == IntakeStatus.IN_PROGRESS
+        and intake.current_section == COMPLETION_SECTION
+    ):
+        await intake.update_status(session, IntakeStatus.COMPLETED)
+
+    await session.commit()
+    await session.refresh(intake)
+
+    return {
+        "intake_completed": intake.status == IntakeStatus.COMPLETED,
+    }

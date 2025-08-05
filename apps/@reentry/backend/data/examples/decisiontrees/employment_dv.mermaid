@@ -1,0 +1,93 @@
+graph TD
+    A[Start: Client is experiencing domestic violence]
+
+    A --> B{Is the client in immediate danger?}
+    B --> B1[Yes]
+    B --> B2[No]
+
+    B1 --> C{Does the client have a safety plan?}
+    C --> C1[Yes]
+    C1 --> D[Implement safety plan; contact emergency services if needed]
+    C --> C2[No]
+    C2 --> E[Assist in creating a safety plan; connect with domestic violence hotline]
+
+    D & E --> F{Is the client living with the abuser?}
+    F --> F1[Yes]
+    F1 --> G{Are there safe emergency housing options available?}
+    G --> G1[Yes]
+    G1 --> H[Arrange for immediate relocation to a safe house or shelter]
+    G --> G2[No]
+    G2 --> I[Explore temporary housing with trusted family/friends; emergency hotel vouchers]
+
+    F --> F2[No]
+    F2 --> J{Does the abuser have access to the client's current location?}
+    J --> J1[Yes]
+    J1 --> H
+    J --> J2[No]
+    J2 --> K[Advise on enhancing safety measures at current residence]
+
+    B2 --> L{Does the abuser have a history of stalking or escalating behavior?}
+    L --> L1[Yes]
+    L1 --> M[Assess risk level; prioritize safety planning]
+    L --> L2[No]
+    L2 --> N[Proceed with support services]
+
+    M & N --> O{Are there children involved?}
+    O --> O1[Yes]
+    O1 --> P{Are the children also at risk or have they witnessed abuse?}
+    P --> P1[Yes]
+    P1 --> Q[Consider mandatory reporting requirements; prioritize children's safety]
+    P --> P2[No]
+    P2 --> R[Include children's needs in safety and support plans]
+
+    O --> O2[No]
+    O2 --> S[Proceed]
+
+    Q & R & S --> T{Is the client willing to access support services?}
+    T --> T1[Yes]
+    T --> T2[No]
+
+    T1 --> U[Connect client with domestic violence support organizations]
+
+    U --> V{Does the client need legal assistance (e.g., restraining order, custody)?}
+    V --> V1[Yes]
+    V1 --> W[Refer to legal aid specializing in domestic violence and family law]
+    V --> V2[No]
+    V2 --> X[Proceed]
+
+    T2 --> Y{Explore reasons for reluctance; address barriers sensitively}
+    Y --> Z{Is fear of retaliation a concern?}
+    Z --> Z1[Yes]
+    Z1 --> AA[Discuss confidential support options; ensure information security]
+    Z --> Z2[No]
+    Z2 --> AB[Provide information; respect client's readiness]
+
+    W & X & AA & AB --> AC{Is it safe and feasible for the client to work at this time?}
+    AC --> AC1[Yes]
+    AC1 --> AD{Does the client need workplace accommodations for safety?}
+    AD --> AD1[Yes]
+    AD1 --> AE[Assist in requesting accommodations; inform about rights under laws]
+    AD --> AD2[No]
+    AD2 --> AF[Support client in job search or maintaining employment]
+
+    AC --> AC2[No]
+    AC2 --> AG{Are remote work or flexible arrangements possible?}
+    AG --> AG1[Yes]
+    AG1 --> AH[Explore remote or flexible job opportunities]
+    AG --> AG2[No]
+    AG2 --> AI[Focus on safety and stability before employment]
+
+    AF & AE & AH --> AJ{Does the abuser have access to the client's workplace or online activities?}
+    AJ --> AJ1[Yes]
+    AJ1 --> AK[Develop a workplace safety plan; consider privacy measures online]
+    AJ --> AJ2[No]
+    AJ2 --> AL[Proceed]
+
+    AK & AL & AI --> AM{Does the client need counseling or mental health support?}
+    AM --> AM1[Yes]
+    AM1 --> AN[Refer to trauma-informed counseling services; consider support for children]
+    AM --> AM2[No]
+    AM2 --> AO[Proceed]
+
+    AN & AO --> AP{Develop a comprehensive action plan addressing safety, legal issues, and employment}
+    AP --> AQ[End: Tailored Action Plan for client experiencing domestic violence]

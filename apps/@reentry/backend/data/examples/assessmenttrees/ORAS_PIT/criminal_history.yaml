@@ -1,0 +1,24 @@
+Q2:
+  question: "Most Serious Arrest Under Age 18"
+  type: "score_box"
+  possible_answers: ["Yes, Felony", "Yes, Misdemeanor", "None"]
+Q3:
+  question: "Prior Commitment as a Juvenile to Department of Youth Services"
+  type: "yes/no"
+Q4:
+  question: "Number of Prior Adult Felony Convictions"
+  type: "score_box"
+  possible_answers: ["Two or More", "One", "None"]
+Q5:
+  question: "Arrests for Violent Offense as an Adult"
+  type: "yes/no"
+Q6:
+  question: "Number of Prior Commitments to Prison"
+  type: "score_box"
+  possible_answers: ["Two or More", "One", "None"]
+Q7:
+  question: "Ever Received Official Misconduct while Incarcerated as an Adult"
+  type: "yes/no"
+Q8:
+  question: "Ever Had Escape Attempts as an Adult"
+  type: "yes/no"

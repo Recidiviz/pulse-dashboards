@@ -1,0 +1,45 @@
+FROM python:3.12-alpine
+
+# Set up environment variables
+ENV PYTHONUNBUFFERED=1 \
+    UV_LINK_MODE=copy \
+    UV_COMPILE_BYTECODE=1
+
+# Install uv package manager
+WORKDIR /tmp
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+ENV PATH="/root/.local/bin/:$PATH"
+
+# Set up working directory
+RUN mkdir -p /app
+WORKDIR /app
+
+# Copy dependency files and install packages
+COPY backend/pyproject.toml backend/uv.lock /app/
+
+# Install necessary system dependencies
+RUN apk add --no-cache \
+    build-base \
+    python3-dev \
+    gcc \
+    musl-dev \
+    rust \
+    cargo \
+    lapack-dev \
+    openblas-dev \
+    gfortran \
+    linux-headers
+
+# Install Python dependencies
+RUN uv sync --frozen
+
+# Copy only the required application files for chat simulation
+
+COPY backend/app/utils/intakeAssessment/experiments/main.py /app/utils/intakeAssessment/experiments/main.py
+COPY backend/app /app/app
+
+WORKDIR /app
+
+# Run the client simulator
+CMD ["uv", "run", "-m", "app.utils.intakeAssessment.experiments.main"]

@@ -1,0 +1,122 @@
+Q37: # Historical Alcohol Problems
+  question: |
+    Has this person ever experienced problems related to alcohol use?
+    Only consider the person's own use, not impact from someone else's alcohol abuse.
+    Consider impacts across major life areas (work, family, health, finances).
+    Heavy consumption alone doesn't indicate a problem without negative impacts.
+    Interviewer determines problem status regardless of person's self-assessment.
+    Only consider alcohol, there will be another question about drugs.
+    Yes: Any negative life impacts from alcohol use OR
+         Positive UA/BAC results OR
+         History of alcohol abuse/dependence OR
+         Any alcohor related legal incindent (licence suspension...)
+    No: No history of problematic alcohol use
+    Unclear: Not enough information
+  type: "yes/no"
+
+Q38: # Historical Drug Problems
+  question: |
+    Has this person ever experienced problems related to drug use?
+    Consider impacts across major life areas.
+    Interviewer determines problem status regardless of person's self-assessment.
+    Yes: Any negative life impacts from drug use OR
+         Positive UA results OR
+         History of drug abuse/dependence OR
+         Scored 0 or 1 on Item 40
+    No: No history of problematic drug use OR
+        Only drug experimentation without problems
+    Unclear: Not enough information
+  type: "yes/no"
+
+Q39: # Current Alcohol Problem Severity
+  question: |
+    What is the current level of alcohol-related problems? For those incarcerated <2 years, evaluate year before incarceration. For those incarcerated >2 years, evaluate during incarceration.
+    Severe: Weekly intoxication with high-risk behavior OR
+            Maintenance drinking OR
+            Unsuccessful control attempts OR
+            Personality changes from abuse
+    Moderate: Twice-yearly intoxication with consequences OR
+              Regular intoxication pattern OR
+              Perceived need for control OR
+              50%+ tolerance increase
+    Minor: Rare intoxication without consequences
+    None: No intoxication OR controlled social drinking
+    Unclear: Not enough information about current alcool problems
+  type: "score_box"
+  possible_answers: ["Severe", "Moderate", "Minor", "None", "Unclear"]
+
+Q40: # Current Drug Problem Severity
+  question: |
+    What is the current level of drug-related problems? For those incarcerated <2 years, evaluate year before incarceration. For those incarcerated >2 years, evaluate during incarceration.
+    Severe: More than twice weekly use with multiple problems OR
+            Frequent problems despite infrequent use OR
+            Failed control attempts OR
+            Maintenance use OR
+            Personality changes from use
+    Moderate: Up to twice weekly use with some problems OR
+            Regular use pattern OR
+            Perceived need for control OR
+            Increased tolerance OR
+            Use while under supervision
+    Minor: Rare use (max 3 lapses) OR
+              No use while under supervision
+    None: No drug use in past year
+    Unclear: Not enough information
+  type: "score_box"
+  possible_answers: ["Severe", "Moderate", "Minor", "None", "Unclear"]
+
+Q41: # Substance-Related Law Violations - ask evaluator
+  question: |
+    Has substance use contributed to law violations in the past year? Consider official records, self-report...
+    Yes: Substance use led to or facilitated criminal behavior
+    No: Drug transactions purely for financial gain OR
+        No substance use in past year
+        OR law violations were not related to substance use
+    Unclear: Not enough information
+  type: "yes/no"
+
+Q42: # Substance Impact on Family Relations
+  question: |
+    Has substance use negatively affected family or marital relationships in the past year?
+    Yes: Problems in family/marital relationships due to substance use OR
+          Complaints from significant others about use
+    No: No family/marital problems from substance use OR
+        No substance use in past year
+    Unclear: Not enough information
+  type: "yes/no"
+
+Q43: # Substance Impact on Work/School
+  question: |
+    Has substance use interfered with work or education in the past year?
+    Yes: Attendance issues from hangovers OR
+          Dismissal due to intoxication OR
+          Other substance-related work/school problems
+    No: No work/school problems from substance use OR
+        No substance use in past year
+    Note: Review scores of items 14, 17, and 18
+    Unclear: Not enough information
+  type: "yes/no"
+
+Q44: # Medical Impact of Substance Use
+  question: |
+    Has substance use affected physical health in the past year?
+    Yes: Physical health problems from substance use OR
+        Medical professional warnings about use
+    No: No health problems from substance use OR
+        No substance use in past year
+    Unclear: Not enough information
+  type: "yes/no"
+
+Q45: # Clinical Indicators of Substance Dependence
+  question: |
+    Are there significant clinical indicators of substance dependence in the past year? Focus on effects of use, not causes. Consider symptoms beyond typical substance abuse
+    Yes: Withdrawal symptoms (hallucinations, seizures, etc.) OR
+        Use to avoid withdrawal OR
+        Significant tolerance increase OR
+        Loss of control over use OR
+        Failed attempts to stop OR
+        Substance-induced disorders
+    No: No clinical indicators present OR
+        No substance use in past year
+    Unclear: Not enough information
+  type: "yes/no"

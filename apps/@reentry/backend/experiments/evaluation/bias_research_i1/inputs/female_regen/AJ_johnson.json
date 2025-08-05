@@ -1,0 +1,70 @@
+{
+    "messages": [
+        {
+            "role": "caseworker",
+            "content": "Hi there, I'm an assistant working with the justice department to help support you through your probation process. I'm here to work with you in identifying steps toward meeting your goals and requirements. To begin, could you tell me a little about yourself\u2014your name, age, and what your current situation is?"
+        },
+        {
+            "role": "client",
+            "content": "Hey, sure! I\u2019m Aiden, but you can call me AJ. I\u2019m 27, currently living with my parents, and focusing on getting back on track after a little misunderstanding that got me on probation. I\u2019m job hunting and attending workshops to build my skills. Just trying to keep everything moving forward!"
+        },
+        {
+            "role": "caseworker",
+            "content": "Thanks for sharing that, AJ. It sounds like you're making an effort to take positive steps forward. To better understand how I can support you, could you share a bit about what led to your probation? Specifically, what charges or circumstances brought you into the system?"
+        },
+        {
+            "role": "client",
+            "content": "Yeah, it was kind of a weird situation. I was trying to get something back from a friend\u2019s house, but there was a misunderstanding, and I got arrested for trespassing. Nothing serious, though, and it was more of a mix-up than anything criminal. I\u2019m on six months of probation now and making sure I follow all the rules to move past it."
+        },
+        {
+            "role": "caseworker",
+            "content": "Got it, AJ. Thanks for explaining that\u2014it\u2019s helpful to know the context. Shifting gears a bit, how\u2019s your overall health these days? That includes physical and mental health\u2014anything I should know about that might impact your probation process or the goals you're working toward?"
+        },
+        {
+            "role": "client",
+            "content": "My health\u2019s good, honestly\u2014physically and mentally. I stay active with yoga, hiking, and meditation, which helps with stress. I\u2019ve also been going to counseling to manage everything better while I job search. Nothing that should really affect probation, though! "
+        },
+        {
+            "role": "caseworker",
+            "content": "That\u2019s good to hear, AJ. Taking care of yourself like that is really important. Shifting to another topic\u2014how about substance use? Have you had any issues in the past or currently with drugs or alcohol, or is that something you feel comfortable discussing? This can help me get a clearer picture of what might come up during probation."
+        },
+        {
+            "role": "client",
+            "content": "No issues there. I don\u2019t drink much, and I\u2019ve never really been into drugs. I focus more on staying active and productive, so that\u2019s not something you\u2019ll need to worry about with me."
+        },
+        {
+            "role": "caseworker",
+            "content": "Thanks for sharing that, AJ, it\u2019s helpful to know. Let\u2019s talk about transportation for a moment\u2014how do you usually get around? Do you have reliable access to a car, public transportation, or any other means of getting to appointments, job interviews, or anywhere you need to be for probation requirements?"
+        },
+        {
+            "role": "client",
+            "content": "Yeah, transportation\u2019s solid. I have access to a car, so getting to appointments or interviews isn\u2019t an issue. I make sure to stay on top of schedules and keep everything on track."
+        },
+        {
+            "role": "caseworker",
+            "content": "Thanks for sharing all of that with me, AJ. It sounds like you\u2019ve got a solid foundation to work from, and I\u2019ll use this information to create a plan that supports your probation goals. If you have questions or concerns, we can talk more as we move forward. Take care, and I\u2019ll be in touch soon."
+        },
+        {
+            "role": "caseworker",
+            "content": "Before we wrap up for today, AJ, I wanted to ask about how you spend your free time. What kind of hobbies or activities do you enjoy for recreation? This helps me understand how you stay motivated and balanced while working through your probation."
+        }
+    ],
+    "summary": "### Personal Background\nAiden \"AJ\" Johnson, a 27-year-old woman, is a driven individual focused on self-improvement. Currently on probation for a minor trespassing issue with no prior criminal history, she has a low-risk profile. AJ has a high school education, some college experience, and aims to complete a degree in IT. Recently unemployed due to external factors, she is actively job hunting and attending career development workshops. She enjoys strong family support, stable housing, no financial debt, good health, and meaningful social connections. AJ is proactive, adaptable, and engaged in counseling to manage stress and pursue her goals.\n\n### Needs and Risks Overview\n- **Education:** Needs support to return to school and complete a degree in IT.  \n- **Employment:** High risk due to recent job loss; requires career counseling and retraining.  \n- **Financial:** Low risk with no debt but needs part-time or freelance work for financial stability.  \n- **Family:** Low risk; benefits from strong family support and stable housing.  \n- **Housing:** Low risk, living in a secure and supportive home environment.  \n- **Recreation:** Actively participates in outdoor activities and networking that promote growth.  \n- **Associates:** Maintains a positive social network and meaningful connections.  \n- **Cognition/Psych:** No impairments; effectively managing stress and working toward goals.  \n- **Health:** Low risk with good health and consistent wellness practices.  \n\n### Priority Needs\n- **Employment:** Recently unemployed; needs career counseling and skill development to secure stable work.  \n- **Education:** Focused on completing an IT degree to enhance job prospects.  \n- **Probation/Criminal:** Fully compliant with probation terms; maintaining this compliance is essential.  \n- **Recreation (optional):** Continued participation in career workshops and networking events to support personal and professional growth.",
+    "oms_data": {
+        "doc_id": 1234,
+        "supervision_type": "Probation",
+        "supervision_level": "Low",
+        "phone_number": "(650) 709-6454",
+        "status": "TBD",
+        "status_tag": "NEW",
+        "dob": "August 23, 1997",
+        "next_appointment": "01/13/2025 10:30 AM",
+        "surname": "Johnson",
+        "given_names": "Aiden",
+        "preferred_name": "AJ",
+        "address_home": "4639 S Frontenac St, Seattle, WA 98118",
+        "address_work": "",
+        "address_school": "",
+        "gender": "female"
+    }
+}

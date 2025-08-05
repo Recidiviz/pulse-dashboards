@@ -1,0 +1,83 @@
+graph TD
+    A[Start: Client has mental health issues interfering with work]
+
+    A --> B{Does the client have a diagnosed mental health condition?}
+    B --> B1[Yes]
+    B --> B2[No]
+
+    B1 --> C{What is the severity of the condition?}
+    C --> C1[Mild to Moderate]
+    C --> C2[Severe or Debilitating]
+
+    C1 --> D{Is the client currently receiving treatment?}
+    D --> D1[Yes]
+    D1 --> E{Is treatment effectively managing symptoms?}
+    E --> E1[Yes]
+    E1 --> F{Is the client ready to seek employment or maintain current job?}
+    F --> F1[Yes]
+    F1 --> G{Does the client need workplace accommodations?}
+    G --> G1[Yes]
+    G1 --> H[Assist client in requesting reasonable accommodations under ADA]
+    G --> G2[No]
+    G2 --> I[Support client in job search or employment retention]
+
+    F --> F2[No]
+    F2 --> J[Provide career counseling; assess job readiness; consider gradual return]
+
+    E --> E2[No]
+    E2 --> K[Refer client back to mental health provider for treatment adjustment]
+
+    D --> D2[No]
+    D2 --> L{Is the client willing to access mental health services?}
+    L --> L1[Yes]
+    L1 --> M[Refer to appropriate mental health services; consider brief interventions]
+    L --> L2[No]
+    L2 --> N[Explore barriers to treatment; address concerns sensitively]
+
+    C2 --> O{Is the client currently receiving intensive treatment?}
+    O --> O1[Yes]
+    O1 --> P[Coordinate with treatment team; focus on stabilization before employment]
+    O --> O2[No]
+    O2 --> Q{Is immediate intervention needed?}
+    Q --> Q1[Yes]
+    Q1 --> R[Facilitate urgent mental health evaluation; ensure safety]
+    Q --> Q2[No]
+    Q2 --> S[Refer to comprehensive mental health services]
+
+    B2 --> T{Are there signs suggesting an undiagnosed mental health issue?}
+    T --> T1[Yes]
+    T1 --> U{Is the client open to a mental health assessment?}
+    U --> U1[Yes]
+    U1 --> V[Refer for assessment; monitor engagement]
+    U --> U2[No]
+    U2 --> W[Respect decision; provide information; monitor for changes]
+
+    T --> T2[No]
+    T2 --> X[Proceed with available information; address presenting issues]
+
+    V & M & K & S & W & X & N & P & J --> Y{Assess impact on functioning and employment suitability}
+    Y --> Y1{Match job options to client's abilities and challenges}
+    Y1 --> Z[Identify suitable jobs; consider specific conditions]
+
+    Z --> AA{Does the client need vocational rehabilitation or job training?}
+    AA --> AA1[Yes]
+    AA1 --> AB[Refer to vocational rehabilitation services]
+    AA --> AA2[No]
+    AA2 --> AC[Proceed with job placement support]
+
+    AB & AC --> AD{Consider need for workplace accommodations or supports}
+    AD --> AD1[Yes]
+    AD1 --> AE[Assist in requesting accommodations; educate on rights]
+    AD --> AD2[No]
+    AD2 --> AF[Support client in employment process]
+
+    AE & AF --> AG{Does the client have a support network?}
+    AG --> AG1[Yes]
+    AG1 --> AH[Encourage use of support network; connect with peer groups]
+    AG --> AG2[No]
+    AG2 --> AI[Connect client with community resources]
+
+    AH & AI --> AJ{Monitor for co-occurring issues or changes in condition}
+    AJ --> AK[Adjust Action Plan as needed; maintain regular contact]
+
+    AK --> AL[End: Tailored Action Plan addressing mental health nuances]

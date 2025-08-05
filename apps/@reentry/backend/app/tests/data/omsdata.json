@@ -1,0 +1,18 @@
+[
+  {
+    "doc_id": 907775,
+    "supervision_type": "Parole",
+    "supervision_level": "Low",
+    "phone_number": "(237) 959-5390",
+    "status": "Started new job at grocery store",
+    "status_tag": "",
+    "dob": "04/23/2002",
+    "next_appointment": "01/13/2025 11:30 AM",
+    "surname": "Smith",
+    "given_names": "Ruth",
+    "preferred_name": "",
+    "address_home": "1907 1ST AVE APT 51 SEATTLE WA 98101-1030 USA",
+    "address_work": "2400 BOYER AVE E APT 305 SEATTLE WA 98112-2148 USA",
+    "address_school": ""
+  }
+]

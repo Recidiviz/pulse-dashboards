@@ -1,0 +1,45 @@
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'deploy/Dockerfile.seed'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/recidiviz-seed-job:$BUILD_ID'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/recidiviz-seed-job:latest'
+      - '.'
+    dir: 'backend'
+
+  # Push the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/recidiviz-seed-job:$BUILD_ID'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/recidiviz-seed-job:latest'
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "⏳ waiting registry propagation."
+        sleep 10
+        echo "✅ ready for deploy"
+
+  # Deploy Cloud Run Job
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'jobs'
+      - 'replace'
+      - 'backend/deploy/seed-job/job.yaml'
+      - '--region=us-central1'
+options:
+  logging: CLOUD_LOGGING_ONLY

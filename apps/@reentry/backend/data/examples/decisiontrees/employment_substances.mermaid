@@ -1,0 +1,64 @@
+graph TD
+    A[Start: Client struggles with substance abuse impacting job readiness or performance]
+
+    A --> B{Is the client currently using substances?}
+    B --> B1[Yes]
+    B --> B2[No]
+
+    B1 --> C{Is the client willing to seek treatment?}
+    C --> C1[Yes]
+    C1 --> D[Refer client to appropriate substance abuse treatment services]
+    C --> C2[No]
+    C2 --> E{Explore barriers to treatment; address concerns sensitively}
+    E --> F{Is harm reduction an option?}
+    F --> F1[Yes]
+    F1 --> G[Provide harm reduction resources; establish trust]
+    F --> F2[No]
+    F2 --> H[Focus on immediate needs; consider motivational interviewing]
+
+    D & G & H --> I{Assess for co-occurring mental health disorders}
+    I --> I1[Yes]
+    I1 --> J[Refer to integrated treatment services for co-occurring disorders]
+    I --> I2[No]
+    I2 --> K[Proceed]
+
+    B2 --> L{Is the client in early recovery?}
+    L --> L1[Yes]
+    L1 --> M{Does the client have a stable support system?}
+    M --> M1[Yes]
+    M1 --> N[Encourage continued engagement with support network]
+    M --> M2[No]
+    M2 --> O[Connect client with peer support groups (e.g., AA, NA)]
+
+    L --> L2[No]
+    L2 --> P{Is the client in sustained recovery?}
+    P --> P1[Yes]
+    P1 --> Q[Assess job readiness; proceed to employment support]
+    P --> P2[No]
+    P2 --> R[Evaluate for potential relapse triggers; reinforce coping strategies]
+
+    N & O & Q & R & K --> S{Assess job readiness and potential barriers}
+    S --> S1{Does the client need job training or education?}
+    S1 --> S1a[Yes]
+    S1a --> T[Refer to vocational training programs]
+    S1 --> S1b[No]
+    S1b --> U[Proceed]
+
+    U --> V{Are there legal issues affecting employment (e.g., criminal record)?}
+    V --> V1[Yes]
+    V1 --> W[Connect client with legal aid; explore expungement options]
+    V --> V2[No]
+    V2 --> X[Proceed]
+
+    W & X --> Y{Identify suitable employment opportunities}
+    Y --> Y1{Consider jobs supportive of recovery}
+    Y1 --> Z[Assist with job search; consider supportive employers]
+
+    Z --> AA{Does the client need workplace accommodations?}
+    AA --> AA1[Yes]
+    AA1 --> AB[Assist in requesting reasonable accommodations]
+    AA --> AA2[No]
+    AA2 --> AC[Support client in employment process]
+
+    AB & AC --> AD{Develop relapse prevention plan related to employment}
+    AD --> AE[End: Tailored Action Plan for client with substance abuse challenges]

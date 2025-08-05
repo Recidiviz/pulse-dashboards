@@ -1,0 +1,107 @@
+x-restart-policy: &restart-policy
+  restart: unless-stopped
+
+x-logging: &logging
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "5"
+
+x-backend-shared: &backend-shared
+  build:
+    context: backend
+
+x-backend-environment: &backend-environment
+  RECIDIVIZ_OPENAI_API_KEY: "${RECIDIVIZ_OPENAI_API_KEY}"
+  RECIDIVIZ_FABRK_BEARER_TOKEN: "${RECIDIVIZ_FABRK_BEARER_TOKEN}"
+  RECIDIVIZ_POSTGRES_USER: "${RECIDIVIZ_POSTGRES_USER}"
+  RECIDIVIZ_POSTGRES_PASSWORD: "${RECIDIVIZ_POSTGRES_PASSWORD}"
+  RECIDIVIZ_POSTGRES_DB: "${RECIDIVIZ_POSTGRES_DB}"
+  RECIDIVIZ_POSTGRES_SERVER: "postgres"
+  RECIDIVIZ_REDIS_URL: "redis://redis:6379"
+  RECIDIVIZ_LANGCHAIN_API_KEY: "${RECIDIVIZ_LANGCHAIN_API_KEY}"
+  RECIDIVIZ_LANGCHAIN_TRACING_V2: "${RECIDIVIZ_LANGCHAIN_TRACING_V2}"
+  RECIDIVIZ_LANGCHAIN_ENDPOINT: "${RECIDIVIZ_LANGCHAIN_ENDPOINT}"
+  RECIDIVIZ_LANGCHAIN_PROJECT: "${RECIDIVIZ_LANGCHAIN_PROJECT}"
+
+services:
+  postgres:
+    <<:
+      - *restart-policy
+      - *logging
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: "${RECIDIVIZ_POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${RECIDIVIZ_POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${RECIDIVIZ_POSTGRES_DB}"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    <<:
+      - *restart-policy
+      - *logging
+    image: redis:latest
+
+  backend:
+    <<:
+      - *restart-policy
+      - *logging
+      - *backend-shared
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: wget --no-verbose --spider --tries=1 --timeout=5 http://0.0.0.0:8000/health || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    environment:
+      <<: *backend-environment
+      ENTRYPOINT: "api"
+
+  backend-worker:
+    <<:
+      - *restart-policy
+      - *logging
+      - *backend-shared
+    depends_on:
+      backend:
+        # required to ensure the backend migration is done before the worker kick in
+        condition: service_healthy
+    environment:
+      <<: *backend-environment
+      ENTRYPOINT: "worker"
+
+  frontend:
+    build:
+      context: frontend
+    healthcheck:
+      test: wget --no-verbose --spider --tries=1 --timeout=5 http://0.0.0.0:3000/ || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  caddy:
+    image: caddy:latest
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./Caddyfile.prod:/etc/caddy/Caddyfile
+      - caddy_config:/config
+      - caddy_data:/data
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  caddy_config:
+  caddy_data:
