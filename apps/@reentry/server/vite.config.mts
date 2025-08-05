@@ -46,8 +46,6 @@ export default defineConfig({
     // 2. The env variables for local testing and CI are different
     // NOTE: none of these are true secrets, they are all fine to put in this file
     env: {
-      AUTH0_AUDIENCE: process.env["AUTH0_AUDIENCE"] ?? "test",
-      AUTH0_DOMAIN: process.env["AUTH0_DOMAIN"] ?? "test",
       DATABASE_URL:
         process.env["DATABASE_URL"] ??
         "postgresql://postgres:postgres@localhost:6505/reentry-test?schema=public",
