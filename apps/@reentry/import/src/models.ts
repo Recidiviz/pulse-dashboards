@@ -40,27 +40,27 @@ const stateCode = z.preprocess(
 
 export const clientImportSchema = z.object({
   state_code: stateCode,
-  // Need to coerce into a number because our metric exports use strings for these
-  person_id: z.coerce.number(),
+  // Need to coerce into a bigint because our metric exports use strings for these
+  person_id: z.coerce.bigint(),
   stable_person_external_id: z.string(),
   stable_person_external_id_type: z.string(),
   pseudonymized_id: z.string(),
   display_person_external_id: z.string(),
   full_name: nameSchema,
   birthdate: z.coerce.date(),
-  // Need to coerce into a number because our metric exports use strings for these
-  assigned_staff_ids: z.array(z.coerce.number()),
+  // Need to coerce into a bigint because our metric exports use strings for these
+  assigned_staff_ids: z.array(z.coerce.bigint()),
 });
 
 export const staffImportSchema = z.object({
   state_code: stateCode,
-  // Need to coerce into a number because our metric exports use strings for these
-  staff_id: z.coerce.number(),
+  // Need to coerce into a bigint because our metric exports use strings for these
+  staff_id: z.coerce.bigint(),
   stable_staff_external_id: z.string(),
   stable_staff_external_id_type: z.string(),
   pseudonymized_id: z.string(),
   full_name: nameSchema,
   email: z.string().optional(),
-  // Need to coerce into a number because our metric exports use strings for these
-  client_person_ids: z.array(z.coerce.number()),
+  // Need to coerce into a bigint because our metric exports use strings for these
+  client_person_ids: z.array(z.coerce.bigint()),
 });

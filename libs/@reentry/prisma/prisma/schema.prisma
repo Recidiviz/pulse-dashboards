@@ -70,7 +70,7 @@ model Staff {
   // - stableStaffExternalIdType: The type of the stable external identifier, such as "employee_id" or "contractor_id".
   // - pseudonymizedId: A unique identifier that is used to anonymize the staff member's identity in the system. It is a hashing of the stableStaffExternalId
 
-  staffId                   Int    @id
+  staffId                   BigInt @id
   stableStaffExternalId     String
   stableStaffExternalIdType String
   pseudonymizedId           String @unique
@@ -96,7 +96,7 @@ model Client {
   // - pseudonymizedId: A unique identifier that is used to anonymize the client's identity in the system. It is a hashing of the stablePersonExternalId.
   // - displayPersonExternalId: An identifier that staff are used to using to refer to the client, which may be different from the stablePersonExternalId. This is used for display purposes in the UI.
 
-  personId                   Int    @id
+  personId                   BigInt @id
   stablePersonExternalId     String
   stablePersonExternalIdType String
   pseudonymizedId            String @unique
@@ -120,9 +120,9 @@ model Client {
 
 model ClientsToStaff {
   staff    Staff  @relation(fields: [staffId], references: [staffId])
-  staffId  Int
+  staffId  BigInt
   Client   Client @relation(fields: [clientId], references: [personId])
-  clientId Int
+  clientId BigInt
 
   @@id([staffId, clientId])
 }
@@ -136,5 +136,5 @@ model Intake {
   sections Json
 
   client   Client @relation(fields: [clientId], references: [personId])
-  clientId Int
+  clientId BigInt
 }

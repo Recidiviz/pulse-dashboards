@@ -112,7 +112,7 @@ describe("import client data", () => {
 
     expect(dbClients).toEqual([
       expect.objectContaining({
-        personId: 100,
+        personId: BigInt(100),
         stablePersonExternalId: fakeClient.stablePersonExternalId,
         stablePersonExternalIdType: fakeClient.stablePersonExternalIdType,
         pseudonymizedId: fakeClient.pseudonymizedId,
@@ -126,7 +126,7 @@ describe("import client data", () => {
         ],
       }),
       expect.objectContaining({
-        personId: 2,
+        personId: BigInt(2),
         stablePersonExternalId: "client-ext-2",
         stablePersonExternalIdType: "client-ext-type-1",
         pseudonymizedId: "new-client-pid",

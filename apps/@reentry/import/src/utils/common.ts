@@ -18,7 +18,7 @@
 import { type PrismaClient } from "~@reentry/prisma/client";
 
 export type BulkUpdateEntry = {
-  [key: string]: number | string | boolean | Date | null;
+  [key: string]: number | string | boolean | Date | null | bigint;
 };
 export type BulkUpdateEntries = BulkUpdateEntry[];
 

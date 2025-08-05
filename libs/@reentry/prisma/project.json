@@ -8,7 +8,7 @@
     "load-env-files": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../../tools/load_env_files.sh --env env_reentry",
+        "command": "../../../tools/load_env_files.sh --env env_reentry_server",
         "cwd": "{projectRoot}"
       }
     },

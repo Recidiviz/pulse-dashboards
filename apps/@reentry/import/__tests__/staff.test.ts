@@ -120,7 +120,7 @@ describe("import staff data", () => {
 
       expect(dbStaff).toEqual([
         expect.objectContaining({
-          staffId: 100,
+          staffId: BigInt(100),
           stableStaffExternalId: fakeStaff.stableStaffExternalId,
           stableStaffExternalIdType: fakeStaff.stableStaffExternalIdType,
           pseudonymizedId: fakeStaff.pseudonymizedId,
@@ -133,7 +133,7 @@ describe("import staff data", () => {
           ],
         }),
         expect.objectContaining({
-          staffId: 2,
+          staffId: BigInt(2),
           stableStaffExternalId: "staff-ext-2",
           stableStaffExternalIdType: "staff-ext-type-1",
           pseudonymizedId: "new-staff-pid-2",
