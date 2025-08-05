@@ -22,6 +22,7 @@ export const mockApiOpportunityConfigurationResponse = {
     usMeEarlyTermination: {
       callToAction:
         "Search for officers above to review clients who may be good candidates for early termination from probation.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -90,11 +91,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "earlyTermination",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMeFurloughRelease: {
       callToAction:
         "Search for case managers above to review residents on their caseload who are approaching standard furlough release eligibility and complete application paperwork.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -190,11 +191,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "furloughRelease",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMeMediumTrustee: {
       callToAction:
         "Search for caseloads to review residents who may be eligible for Medium Trustee Status.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -267,11 +268,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "mediumTrustee",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMeReclassificationReview: {
       callToAction:
         "Search for caseloads to review residents who are up for an annual or semi-annual reclassification meeting.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -335,11 +336,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "annualReclassification",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMeSCCP: {
       callToAction:
         "Search for case managers above to review residents in their unit who are approaching SCCP eligibility and complete application paperwork.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -409,11 +410,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "SCCP",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMeWorkRelease: {
       callToAction:
         "Search caseloads to review residents for Work Release eligibility & complete application paperwork.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -473,7 +474,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "workRelease",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

@@ -21,17 +21,22 @@ export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usTxAnnualReportStatus: {
       callToAction: null,
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
         {
           key: "FEES ",
-          text: "Client does not demonstrate a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
+          text: "Client has not demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
         },
         {
           key: "RESTITUTION",
           text: "Client has not maintained compliance with all restitution obligations in accordance to PD/POP-3.1.6 for the preceding two years of supervision",
+        },
+        {
+          key: "DISCRETION",
+          text: "Per the PO’s discretion, it is not in the best interest of society for the client’s reporting status to be modified to Annual Report",
         },
         { key: "Other", text: "Other, please specify a reason" },
       ],
@@ -39,17 +44,19 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: null,
       displayName: "Annual Report Status",
       dynamicEligibilityText:
-        "clients may be eligible for Annual Report Status",
+        "client[|s] may be eligible for Annual Report Status",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
           key: "supervisionLevelIsMinimumFor3Years",
-          text: "The client has satisfactorily completed three years on Low supervision",
+          text: "Has successfully completed three years on Low supervision",
           tooltip: "As determined by the Texas Risk Assessment System (TRAS)",
         },
         {
           key: "usTxNoWarrantWithSustainedViolationWithin2Years",
-          text: "The client has not had a warrant issued within the preceding two years of supervision.  This does not apply to a warrant issued in which a subsequent investigation or administrative review did not sustain the violation.",
+          text: "Has had no warrants issued within the preceding two years of supervision",
+          tooltip:
+            "This does not apply to a warrant issued in which a subsequent investigation or administrative review did not sustain the violation.",
         },
       ],
       emptyTabCopy: [],
@@ -57,7 +64,7 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 1,
+      homepagePosition: 2,
       ineligibleCriteriaCopy: [],
       initialHeader:
         "Review clients who may be eligible for Annual Report Status",
@@ -67,11 +74,14 @@ export const mockApiOpportunityConfigurationResponse = {
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
       nonOmsCriteria: [
         {
-          text: "The client has demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
+          text: "The client has demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement, if applicable",
+          tooltip:
+            "Any supervision, crime victim fees and Post Secondary Education reimbursement which will continue to be due each month, unless paid in advance, while client is on Annual Report status.",
         },
         {
-          text: "The client has maintained compliance with all restitution obligations  for the preceding two years of supervision",
-          tooltip: "In accordance to PD/POP-3.1.6",
+          text: "The client has maintained compliance with all restitution obligations for the preceding two years of supervision",
+          tooltip:
+            "Note: Restitution obligation does not have to be paid in full to qualify. Restitution will continue to be due each month until fully paid while client is on Annual Report status.\nIn accordance to PD/POP-3.1.6",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
@@ -79,65 +89,69 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: " Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [],
+      sidebarComponents: ["ClientProfileDetails"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_TX",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Supervision clients may be eligible for Annual Report Status if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Nov 5, 2013. Review potentially eligible clients below.",
+        "Supervision clients may be eligible for Annual Report Status if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Jul 1, 2025. Review clients who may be eligible below.",
       submittedTabTitle: null,
-      supportsSubmitted: false,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
       tabPrefaceCopy: [],
       tooltipEligibilityText: "Eligible for Annual Report Status",
       urlSection: "AnnualReportStatus",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usTxEarlyReleaseFromSupervision: {
       callToAction: null,
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
         {
           key: "FEES",
-          text: "Client does not demonstrate a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
+          text: "Client has not demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
         },
         {
           key: "RESTITUTION",
           text: "Client has not maintained compliance with all restitution obligations in accordance to PD/POP-3.1.6 for the preceding two years of supervision",
         },
+        {
+          key: "DISCRETION",
+          text: "Per the PO’s discretion, it is not in the best interest of society for the client’s reporting status to be modified to Early Release",
+        },
         { key: "Other", text: "Other, please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Early Release From Supervision",
+      displayName: "Early Release from Supervision",
       dynamicEligibilityText:
-        "clients may be eligible for Early Release From Supervision",
+        "client[|s] may be eligible for Early Release from Supervision",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
+          key: "usTxServedAtLeastHalfOfRemainingSupervisionSentence",
+          text: "Has been under supervision for at least one half of the time that remained on their sentence when released to parole or mandatory supervision",
+        },
+        {
+          key: "supervisionLevelIsMinimumFor3Years",
+          text: "Has satisfactorily completed three years on Low supervision",
+          tooltip: "As determined by the Texas Risk Assessment System (TRAS)",
+        },
+        {
           key: "usTxNoWarrantWithSustainedViolationWithin2Years",
-          text: "Have no warrant issued during the previous two years of the current parole supervision period. ",
+          text: "Has had no warrant issued during the previous two years of the current parole supervision period",
           tooltip:
             "This does not apply to a warrant issued where subsequently an investigation or administrative review did not sustain a violation",
         },
         {
           key: "noSupervisionSustainedViolationWithin2Years",
-          text: "Have not committed any violation of rules or conditions of release as indicated on the release certificate, during the preceding two year period",
-        },
-        {
-          key: "usTxServedAtLeastHalfOfRemainingSupervisionSentence",
-          text: "Have been under supervision for at least one half of the time that remained on their sentence when released to parole or mandatory supervision",
-        },
-        {
-          key: "supervisionLevelIsMinimumFor3Years",
-          text: "The client has satisfactorily completed three years on Low supervision",
-          tooltip: "As determined by the Texas Risk Assessment System (TRAS)",
+          text: "Has not committed any violation of rules or conditions of release, as indicated on the release certificate, during the preceding two year period",
         },
       ],
       emptyTabCopy: [],
@@ -145,21 +159,24 @@ export const mockApiOpportunityConfigurationResponse = {
       hideDenialRevert: false,
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
-      homepagePosition: 2,
+      homepagePosition: 1,
       ineligibleCriteriaCopy: [],
       initialHeader:
-        "Review clients who may be eligible to transfer to Early Release From Supervision",
+        "Review clients who may be eligible for Early Release from Supervision",
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf",
       nonOmsCriteria: [
         {
-          text: "The client has demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement",
+          text: "The client has demonstrated a good faith effort to comply with supervision, crime victim fees and Post Secondary Education reimbursement, if applicable",
+          tooltip:
+            "Any supervision, crime victim fees and Post Secondary Education reimbursement will continue to be due each month, unless paid in advance, while client is on Early Release status.",
         },
         {
-          text: "The client has maintained compliance with all restitution obligations  for the preceding two years of supervision",
-          tooltip: "In accordance to PD/POP-3.1.6",
+          text: "The client has maintained compliance with all restitution obligations for the preceding two years",
+          tooltip:
+            "Note: Restitution obligation does not have to be paid in full to qualify. Restitution will continue to be due each month until fully paid while client is on Early Release status.\n\nIn accordance to PD/POP-3.1.6",
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
@@ -167,23 +184,22 @@ export const mockApiOpportunityConfigurationResponse = {
       omsCriteriaHeader: "Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
-      sidebarComponents: [],
+      sidebarComponents: ["ClientProfileDetails"],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
-      snoozeCompanionOpportunityTypes: [],
+      snoozeCompanionOpportunityTypes: ["usTxAnnualReportStatus"],
       stateCode: "US_TX",
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading:
-        "Supervision clients may be eligible transfer to Early Release From Supervision if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Nov 5, 2013. Review potentially eligible clients below.",
+        "Supervision clients may be eligible for Early Release from Supervision if they meet certain criteria. The official policy doc can be found [here](https://www.tdcj.texas.gov/documents/pd/03.02.30_parole_policy.pdf) effective Jul 1, 2025. Review clients who may be eligible below.",
       submittedTabTitle: null,
-      supportsSubmitted: false,
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: null,
       tabPrefaceCopy: [],
-      tooltipEligibilityText: "Eligible for Early Release From Supervision",
+      tooltipEligibilityText: "Eligible for Early Release from Supervision",
       urlSection: "EarlyReleaseFromSupervision",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

@@ -22,6 +22,7 @@ export const mockApiOpportunityConfigurationResponse = {
     usUtEarlyTermination: {
       callToAction:
         "Review the clients and submit a report for those who are good candidates for Early Termination.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -56,47 +57,49 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usUtHasCompletedOrderedAssessments",
           text: "Treatment completed",
           tooltip:
-            "AP&P BENCHMARK: Completion of ordered assessments and any recommended treatment or programming by a licensed provider. For the purposes of this section, persons voluntarily engaged in ongoing care after having completing ordered treatment\nshall be considered as having completed treatment. If no treatment is ordered, then this requirement has been met.",
+            "SENTENCING COMMISSION GUIDELINE: Completion of ordered assessments and any recommended treatment or programming by a licensed provider. For the purposes of this section, persons voluntarily engaged in ongoing care after having completing ordered treatment\nshall be considered as having completed treatment. If no treatment is ordered, then this requirement has been met.",
         },
         {
           key: "usUtRiskReductionForEt",
-          text: "Decline in risk score",
+          text: "Decline in risk score during supervision term",
           tooltip:
-            "AP&P BENCHMARK: Risk reduction as indicated by ANY of the following:\n1. Overall reduction of 5 percent or more on LS/RNR or other validated risk assessment.\n2. Reduction by one level on LS/RNR or other validated risk assessment (e.g., high to moderate).\n3. Maintaining an overall risk level of moderate or low on LS/RNR or other validated risk assessment.",
+            "SENTENCING COMMISSION GUIDELINE: Risk reduction as indicated by ANY of the following:\n1. Overall reduction of 5 percent or more on LS/RNR or other validated risk assessment.\n2. Reduction by one level on LS/RNR or other validated risk assessment (e.g., high to moderate).\n3. Maintaining an overall risk level of moderate or low on LS/RNR or other validated risk assessment.",
         },
         {
           key: "supervisionHousingIsPermanentFor3Months",
           text: "Stable housing",
           tooltip:
-            "AP&P BENCHMARK: Client has had stable housing for at least three months. ",
+            "AP&P STABILITY BENCHMARK: Client has had stable housing for at least three months. ",
         },
         {
           key: "supervisionContinuousEmploymentFor3Months",
           text: "Stable employment",
           tooltip:
-            "AP&P BENCHMARK: Client has had continuous employment for at least three months",
+            "AP&P STABILITY BENCHMARK: Client has had continuous employment for at least three months.",
         },
         {
           key: "usUtNoMedhighSupervisionViolationWithin12Months",
           text: "No recent violation history",
           tooltip:
-            "AP&P BENCHMARK: Client has had no medium/high supervision violations in the last 12 months.",
+            "AP&P STABILITY BENCHMARK: Client has had no medium/high supervision violations in the last 12 months.",
         },
         {
           key: "onSupervisionAtLeast6Months",
           text: "On supervision for at least 6 months",
-          tooltip: "AP&P BENCHMARK: On supervision for at least 6 months",
+          tooltip:
+            "AP&P STABILITY BENCHMARK: On supervision for at least 6 months",
         },
         {
           key: "usUtNoRiskLevelIncreaseOf5Percent",
           text: "No recent increase in risk score",
           tooltip:
-            "AP&P BENCHMARK: Risk score has not increased in more than 5% in the past year",
+            "AP&P STABILITY BENCHMARK: Risk score has not increased in more than 5% in the past year",
         },
         {
           key: "atLeast6MonthsSinceMostRecentPositiveDrugTest",
           text: "No recent positive drug test",
-          tooltip: "AP&P BENCHMARK: No positive drug test in the past 6 months",
+          tooltip:
+            "AP&P STABILITY BENCHMARK: No positive drug test in the past 6 months",
         },
         {
           key: "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
@@ -127,35 +130,45 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "usUtHasCompletedOrderedAssessments",
-          text: "Has not yet completed ordered assessments, recommended treatment or programming",
+          text: "Has not yet completed ordered assessments, recommended treatment or programming ",
+          tooltip:
+            "SENTENCING COMMISSION GUIDELINE: Completion of ordered assessments and any recommended treatment or programming by a licensed provider. For the purposes of this section, persons voluntarily engaged in ongoing care after having completing ordered treatment\nshall be considered as having completed treatment. If no treatment is ordered, then this requirement has been met.",
         },
         {
           key: "usUtSupervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
           text: "Is not past early termination review date (half-time date)",
           tooltip:
-            "A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
+            "SENTENCING COMMISSION GUIDELINE: A person under supervision is eligible for early termination at the early termination review date if the risk reduction, treatment completion and compliance and stability requirements are met. However, Adult Probation and Parole or the relevant supervising authority may submit for termination of supervision at any time, even if it is before the early termination review date indicated in the guidelines. The Court or the Board of Pardons and Parole may set individual criteria for a termination that is earlier than the guidelines at the time of probation sentencing or granting of parole. ",
         },
         {
           key: "supervisionHousingIsPermanentFor3Months",
           text: "Has not demonstrated housing stability or is not currently housed",
           tooltip:
-            "AP&P BENCHMARK: Client has had stable housing for at least three months.",
+            "AP&P STABILITY BENCHMARK: Client has had stable housing for at least three months.",
         },
         {
           key: "supervisionContinuousEmploymentFor3Months",
-          text: "Has not demonstrated employment stability or is not currently employed",
+          text: "Has not demonstrated employment stability or is not currently employed ",
           tooltip:
-            "AP&P BENCHMARK: Client has had continuous employment for at least three months",
+            "AP&P STABILITY BENCHMARK: Client has had continuous employment for at least three months.",
         },
         {
           key: "atLeast6MonthsSinceMostRecentPositiveDrugTest",
           text: "Recent positive drug test",
-          tooltip: "AP&P BENCHMARK: No positive drug test in the past 6 months",
+          tooltip:
+            "AP&P STABILITY BENCHMARK: No positive drug test in the past 6 months",
         },
         {
           key: "onSupervisionAtLeast6Months",
           text: "Has not been on supervision for at least 6 months",
-          tooltip: "AP&P BENCHMARK: On supervision for at least 6 months",
+          tooltip:
+            "AP&P STABILITY BENCHMARK: Client has been on supervision for at least 6 months",
+        },
+        {
+          key: "usUtNoRiskLevelIncreaseOf5Percent",
+          text: "Recent increase in risk score",
+          tooltip:
+            "AP&P STABILITY BENCHMARK: Risk score has not increased in more than 5% in the past year",
         },
       ],
       initialHeader:
@@ -195,7 +208,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       subheading:
-        "The Utah Sentencing Commission’s 2025 Adult Sentencing, Release, & Supervision Guidelines establish criteria for early termination of probation and parole. The guidelines outline when agents should submit a recommendation to the Court or Board of Pardons and Parole (BOPP) to end supervision at the halfway point—or earlier. For clients who meet all criteria, reports must be submitted to the Court or BOPP at least 30 days before the early termination review date, or earlier at the agent’s discretion.",
+        "The Utah Sentencing Commission’s 2025 Adult Sentencing, Release, & Supervision Guidelines establish criteria for early termination of probation and parole. The guidelines outline when agents should submit a recommendation to the Court or Board of Pardons and Parole (BOPP) to end supervision at the halfway point—or earlier. Reports must be submitted to the Court or BOPP at least 30 days before the early termination review date, or earlier at the agent’s discretion.",
       submittedTabTitle: null,
       supportsSubmitted: false,
       systemType: "SUPERVISION",
@@ -214,19 +227,19 @@ export const mockApiOpportunityConfigurationResponse = {
       tabPrefaceCopy: [
         {
           tab: "Report Due (Benchmarks Met)",
-          text: "This tab contains eligible cases approaching or past their early termination report due date that meet stability benchmarks set by UDC. It also contains cases almost eligible that are missing one or two indicators of stability for Early Terminations.",
+          text: "This tab lists clients approaching or past their early termination report due date who meet the treatment and risk reduction guidelines as well as the stability benchmarks set by UDC. It also lists clients that are missing one or two indicators of stability for early termination.",
         },
         {
           tab: "Report Due (Other)",
-          text: "This tab contains additional cases approaching or past their early termination report due date, even if they are missing one or two indicators of stability for Early Terminations.",
+          text: "This tab lists clients approaching or past their early termination report due date who have met the treatment and risk reduction guidelines, but not the stability benchmarks.",
         },
         {
           tab: "Early Requests",
-          text: "This tab contains cases not yet at their early termination report due date that meet stability benchmarks set by UDC and are eligible for Early Termination consideration as per the Sentencing Guidelines.",
+          text: "This tab contains clients not yet at their early termination report due date who meet stability benchmarks set by UDC and are eligible for Early Termination consideration as per the Sentencing Guidelines.",
         },
         {
           tab: "Report Submitted",
-          text: "This tab contains cases that have had a report submitted to the court or to the Board of Pardons and Parole within the past 4 months.",
+          text: "This tab contains cases that have had a report submitted to the court or to the Board of Pardons and Parole within the past 4 months. ",
         },
         {
           tab: "Marked Ineligible",
@@ -236,7 +249,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "EarlyTermination",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

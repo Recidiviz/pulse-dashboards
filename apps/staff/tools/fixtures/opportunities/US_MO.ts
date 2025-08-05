@@ -19,9 +19,119 @@ import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore
 
 export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
+    usMoOutsideClearance: {
+      callToAction: "Generate form",
+      caseNotesTitle: null,
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        { key: "WARDEN", text: "Was denied warden approval" },
+        {
+          key: "CURRENT PARTICIPANT",
+          text: "Already assigned to Outside Clearance",
+        },
+        {
+          key: "MENTAL HEALTH",
+          text: "Doesn't meet mental health requirements",
+        },
+        { key: "RELEASE", text: "Does not meet release date criteria" },
+        {
+          key: "DETAINER",
+          text: "Has outstanding wants, warrants, or detainers",
+        },
+        {
+          key: "ESCAPE",
+          text: "Has perimeter escape or absconsion history on current offense or within the last 10 years",
+        },
+        {
+          key: "SOP",
+          text: "Does not meet other, institution-specific criteria in standard operating procedures",
+        },
+        { key: "OTHER", text: "Other: please specify a reason" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "Outside Clearance",
+      dynamicEligibilityText:
+        "resident[|s] may be eligible for outside clearance",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        {
+          key: "usMoMentalHealthScore3OrBelowWhileIncarcerated",
+          text: "Mental health needs score is MH-1 or MH-2 (or MH-3, with written recommendation)",
+          tooltip:
+            "If MH-3, mental health staff members must evaluate the resident and make a written recommendation regarding outside-clearance participation.",
+        },
+        {
+          key: "usMoInstitutionalRiskScore1WhileIncarcerated",
+          text: "Institutional risk score is I-1",
+        },
+        {
+          key: "incarcerationWithin60MonthsOfProjectedFullTermCompletionDateMin",
+          text: "Within 60 months of earliest established release date",
+        },
+        {
+          key: "usMoNoEscapeIn10YearsOrCurrentSentence",
+          text: "No perimeter escapes within the current sentence structure or within the past 10 years",
+          tooltip:
+            "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
+        },
+        {
+          key: "noContrabandIncarcerationIncidentWithin2Years",
+          text: "No violations for introducing drugs or contraband within the past 2 years",
+          tooltip:
+            "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "US_MO-outsideClearanceReferrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 6,
+      ineligibleCriteriaCopy: [],
+      initialHeader:
+        "Review residents who may be eligible for Outside Clearance and download a pre-filled application.",
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl: "TBD",
+      nonOmsCriteria: [
+        {
+          text: "No outstanding wants, warrants, or detainers for Class A-D felonies",
+          tooltip:
+            "Misdemeanor warrants from out of state should be reviewed to ensure they are not considered felony wants in Missouri. Residents participating in Outside Clearance should be checked for felony wants, warrants, or detainers at least monthly.",
+        },
+        {
+          text: "Meets any other institution-specific requirements established in standard operating procedures (SOP)",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check",
+      notifications: [],
+      omsCriteriaHeader: "Validated by data from MOCIS and OP-II",
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: [],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_MO",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading:
+        "Outside Clearance is a program allowing residents to work on assignments located outside the security perimeter that are on department property and supervised by department staff members.",
+      submittedTabTitle: "Submitted",
+      supportsSubmitted: true,
+      systemType: "INCARCERATION",
+      tabGroups: null,
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "outsideClearance",
+      zeroGrantsTooltip: null,
+    },
     usMoOverdueRestrictiveHousingInitialHearing: {
       callToAction:
         "Review residents and prepare necessary paperwork for their hearing.",
+      caseNotesTitle: null,
       compareBy: [
         { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
       ],
@@ -61,7 +171,7 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 3,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
-      isAlert: true,
+      isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
@@ -103,11 +213,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "overdueRestrictiveHousingInitialHearing",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMoOverdueRestrictiveHousingRelease: {
       callToAction:
         "Review residents for release and prepare necessary paperwork for their return to general population.",
+      caseNotesTitle: null,
       compareBy: [
         { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
       ],
@@ -145,7 +255,7 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 2,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
-      isAlert: true,
+      isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
@@ -187,11 +297,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "overdueRestrictiveHousingRelease",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMoOverdueRestrictiveHousingReviewHearing: {
       callToAction:
         "Review residents and prepare necessary paperwork for their next hearing",
+      caseNotesTitle: null,
       compareBy: [
         { field: "eligibilityDate", undefinedBehavior: "undefinedFirst" },
       ],
@@ -223,7 +333,7 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 4,
       ineligibleCriteriaCopy: [],
       initialHeader: null,
-      isAlert: true,
+      isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
         "https://drive.google.com/file/d/1IyslsgIVlpACCtEeTmJKFttEp0Fmuc9A/view?usp=sharing",
@@ -265,7 +375,149 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "overdueRestrictiveHousingReviewHearing",
       zeroGrantsTooltip: null,
+    },
+    usMoWorkRelease: {
+      callToAction: "Generate form",
       caseNotesTitle: null,
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        { key: "WARDEN", text: " Was denied warden approval" },
+        {
+          key: "CURRENT PARTICIPANT",
+          text: "Already assigned to Work Release",
+        },
+        {
+          key: "MENTAL HEALTH",
+          text: "Doesn't meet mental health requirements",
+        },
+        { key: "RELEASE", text: "Does not meet release date criteria" },
+        { key: "DETAINER", text: "Outstanding wants, warrants, or detainers" },
+        { key: "OFFENSE", text: "Current or prior offense type is excluded" },
+        { key: "ABUSE", text: "Has a history of child abuse or sex offenses" },
+        {
+          key: "ESCAPE",
+          text: "Has perimeter escape or absconsion history on current offense or within the last 10 years",
+        },
+        {
+          key: "COMMUNITY IMPACT",
+          text: "Potential adverse community impact due to known gang affiliation or involvement with organized crime",
+        },
+        {
+          key: "EDUCATION",
+          text: "Does not meet minimum educational requirements",
+        },
+        {
+          key: "OC",
+          text: "Has not yet completed required 12 months of Outside Clearance required based on offense",
+        },
+        {
+          key: "SOP",
+          text: "Does not meet other, institution-specific criteria in standard operating procedures",
+        },
+        { key: "OTHER", text: "Other: please specify a reason" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "Work Release",
+      dynamicEligibilityText: "resident[|s] may be eligible for work release",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        {
+          key: "usMoMentalHealthScore3OrBelowWhileIncarcerated",
+          text: "Mental health needs score is MH-1 or MH-2 (or MH-3, with written recommendation)",
+          tooltip:
+            "If MH-3, mental health staff members must evaluate the resident and make a written recommendation regarding work-release participation.",
+        },
+        {
+          key: "usMoInstitutionalRiskScore1WhileIncarcerated",
+          text: "Institutional risk score is I-1",
+        },
+        {
+          key: "usMoMeetsTimeRemainingRequirementsWorkRelease",
+          text: "Within 48 months of earliest established release date",
+          tooltip: "",
+        },
+        {
+          key: "usMoNoEscapeIn10YearsOrCurrentSentence",
+          text: "No perimeter escapes within the current sentence structure or within the past 10 years",
+          tooltip:
+            "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
+        },
+        {
+          key: "noContrabandIncarcerationIncidentWithin2Years",
+          text: "No violations for introducing drugs or contraband within the past 2 years",
+          tooltip:
+            "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "US_MO-workReleaseReferrals",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 5,
+      ineligibleCriteriaCopy: [],
+      initialHeader:
+        "Review residents who may be eligible for Work Release and download a pre-filled application.",
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl: "TBD",
+      nonOmsCriteria: [
+        {
+          text: "Arson I or Robbery I: Within 24 months of release and has completed 12+ months of outside clearance",
+          tooltip:
+            "If current or prior conviction for Arson I or Robbery I, resident must be within 24 months of earliest release date and must have completed at least 12 months on supervised outside clearance assignment.",
+        },
+        {
+          text: "No outstanding wants, warrants, or detainers for Class A-E felonies",
+          tooltip:
+            "Misdemeanor warrants from out of state should be reviewed to ensure they are not considered felony wants in Missouri. Residents participating in Supervised Work Release should be checked for felony wants, warrants, or detainers at least monthly.",
+        },
+        {
+          text: "No current or prior conviction for an excluded offense",
+          tooltip:
+            "Excluded offenses are rape and attempted rape, sodomy and attempted sodomy, kidnapping, assault in the first degree, and murder in the first or second degree.",
+        },
+        {
+          text: "No conviction or demonstrated pattern of child abuse or sexual offenses",
+        },
+        {
+          text: "Consider adverse community impact due to factors such as gang or organized crime involvement",
+          tooltip:
+            "Consideration shall be given to whether the offender’s presence in the community may cause adverse community reaction due to factors such as organized crime affiliation or gang involvement.",
+        },
+        {
+          text: "Meets any educational requirements",
+          tooltip:
+            "Residents must meet criteria outlined in departmental procedures regarding mandatory academic education.",
+        },
+        {
+          text: "Meets any other institution-specific requirements established in standard operating procedures (SOP)",
+        },
+      ],
+      nonOmsCriteriaHeader: "Requirements to check",
+      notifications: [],
+      omsCriteriaHeader: "Validated by data from MOCIS and OP-II",
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: [],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_MO",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading:
+        "Supervised Work Release is a program that allows residents to work outside of the institution under the supervision of department staff members or trained employees of another private, nonprofit, or government agency.",
+      submittedTabTitle: "Submitted",
+      supportsSubmitted: true,
+      systemType: "INCARCERATION",
+      tabGroups: null,
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "workRelease",
+      zeroGrantsTooltip: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

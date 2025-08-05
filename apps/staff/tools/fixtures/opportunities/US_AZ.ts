@@ -22,6 +22,7 @@ export const mockApiOpportunityConfigurationResponse = {
     usAzOverdueForACISDTP: {
       callToAction:
         "This tool helps staff prioritize inmates for early release through the Drug Transition Program. Inmates with a release date in ACIS in the past will appear on this page. ",
+      caseNotesTitle: "Additional Information from ACIS",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -140,11 +141,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "OverdueForDTP",
       zeroGrantsTooltip: null,
-      caseNotesTitle: "Additional Information from ACIS",
     },
     usAzOverdueForACISTPR: {
       callToAction:
         "This tool helps staff prioritize inmates for early release through the Standard Transition Program. Inmates with a release date in ACIS in the past will appear on this page. ",
+      caseNotesTitle: "Additional Information from ACIS",
       compareBy: null,
       denialAdjective: "incorrect",
       denialNoun: null,
@@ -261,11 +262,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "OverdueForTPR",
       zeroGrantsTooltip: null,
-      caseNotesTitle: "Additional Information from ACIS",
     },
     usAzReleaseToDTP: {
       callToAction:
         "This tool helps staff prioritize inmates for early release through the Drug Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. ",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -282,7 +283,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other" },
       ],
       denialText: "Submit correction",
-      deniedTabTitle: null,
+      deniedTabTitle: "Marked Incorrect",
       displayName: "Drug Transition Program Release",
       dynamicEligibilityText:
         "inmate[|s] may be eligible for Drug Transition Program Release",
@@ -406,6 +407,14 @@ export const mockApiOpportunityConfigurationResponse = {
           tab: "Almost Eligible",
           texts: ["HOME_PLAN_IN_PROGRESS", "AWAITING_HOME_PLAN_APPROVAL"],
         },
+        {
+          tab: "Marked Incorrect",
+          texts: [
+            "HOME_PLAN_IN_PROGRESS",
+            "AWAITING_HOME_PLAN_APPROVAL",
+            "AWAITING_RELEASE",
+          ],
+        },
       ],
       methodologyUrl:
         "https://drive.google.com/file/d/13sj_5uRGKNEw1J9O-E3h-ohivKyv2k2k/view",
@@ -459,7 +468,13 @@ export const mockApiOpportunityConfigurationResponse = {
       tabGroups: [
         {
           key: "ELIGIBILITY STATUS",
-          tabs: ["Fast Trackers", "Eligible Now", "Almost Eligible", "Pending"],
+          tabs: [
+            "Fast Trackers",
+            "Eligible Now",
+            "Almost Eligible",
+            "Pending",
+            "Marked Incorrect",
+          ],
         },
       ],
       tabPrefaceCopy: [
@@ -479,15 +494,19 @@ export const mockApiOpportunityConfigurationResponse = {
           tab: "Pending",
           text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
         },
+        {
+          tab: "Marked Incorrect",
+          text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
+        },
       ],
       tooltipEligibilityText: null,
       urlSection: "DTP",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usAzReleaseToTPR: {
       callToAction:
         "This tool helps staff prioritize inmates for early release through the Standard Transition Program. Eligible individuals—or those nearing eligibility—will appear under designated tabs. ",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -504,7 +523,7 @@ export const mockApiOpportunityConfigurationResponse = {
         { key: "Other", text: "Other" },
       ],
       denialText: "Submit Correction",
-      deniedTabTitle: null,
+      deniedTabTitle: "Marked Incorrect",
       displayName: "Standard Transition Program Release",
       dynamicEligibilityText:
         "inmate[|s] may be eligible for Standard Transition Program Release",
@@ -627,7 +646,7 @@ export const mockApiOpportunityConfigurationResponse = {
           texts: ["HOME_PLAN_IN_PROGRESS", "AWAITING_HOME_PLAN_APPROVAL"],
         },
         {
-          tab: "Marked Ineligible",
+          tab: "Marked Incorrect",
           texts: [
             "HOME_PLAN_IN_PROGRESS",
             "AWAITING_HOME_PLAN_APPROVAL",
@@ -692,7 +711,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "Eligible Now",
             "Almost Eligible",
             "Pending",
-            "Marked Ineligible",
+            "Marked Incorrect",
           ],
         },
       ],
@@ -714,25 +733,25 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
         },
         {
-          tab: "Marked Ineligible",
+          tab: "Marked Incorrect",
           text: "This tab shows inmates whose status was updated in this tool. Status updates do not write back to ACIS.",
         },
       ],
       tooltipEligibilityText: null,
       urlSection: "TPR",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usAzTransferToAdministrativeSupervision: {
       callToAction:
         "Review clients who may be eligible for Administrative Supervision and complete the checklist for them.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
       denialReasons: [
         {
           key: "INELIGIBLE_OFFENSES",
-          text: "Current conviction for an ineligible offense",
+          text: "Current or prior conviction for an ineligible offense",
         },
         {
           key: "INITIAL_INTAKE",
@@ -763,21 +782,15 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzIneligibleOffensesBut15MonthsViolationFree",
-          text: "No current convictions of sex offense, domestic violence, arson, or homicide",
+          text: "No current or prior convictions of a registerable sex offense or felony domestic violence offense, or current convictions of felony arson or murder.",
           tooltip:
-            "(1.2) No current convictions of sex offense, domestic violence, arson or homicide, unless the client qualifies for administrative supervision under section 1.8.",
+            "(1.2) No current or prior convictions of a registerable sex offense or felony domestic violence offense, or current convictions of felony arson or murder, unless the client qualifies for administrative supervision under section 1.8.",
         },
         {
           key: "usAzRiskReleaseAssessmentIsCompleted",
           text: "Initial intake and needs assessment complete",
           tooltip:
             "(1.3) Has completed initial intake and needs assessment with assigned CRO. This may be done in-person, or, where deemed appropriate by the CRO, virtually (eg. telephone or by video call).",
-        },
-        {
-          key: "usAzNotHomelessInReleasePlan",
-          text: "Not classified as homeless in home release plan",
-          tooltip:
-            "(1.4) Not classified as homeless in their home release plan. A client may also meet this requirement once they have achieved stable housing while on supervision.",
         },
         {
           key: "usAzOrasEmployedDisabledRetiredOrStudent",
@@ -787,14 +800,25 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usAzMentalHealthScore3OrBelow",
-          text: "Mental Health Score of 3 or below and not SMI-C",
-          tooltip: "(1.6) Mental Health Score of 3 or below and not SMI-C.",
+          text: "Mental Health Score of 3 or below",
+          tooltip: "(1.6) Mental Health Score of 3 or below.",
+        },
+        {
+          key: "usAzNotSeverelyMentallyIll",
+          text: "Not SMI-C",
+          tooltip: "(1.7) Not SMI-C.",
         },
         {
           key: "usAzOrasHasSubstanceUseIssues",
           text: "Not currently dealing with substance use issues",
           tooltip:
-            "(1.7) Not currently dealing with substance use issues, as assessed in ORAS question 5.4. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from this requirement. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
+            "(1.8) Not currently dealing with substance use issues, as assessed in ORAS question 5.4. Only a score of 2, indicating “current problems caused by drug use,” disqualifies someone from this requirement. A client may also meet this requirement if they have abstained from illicit drug use for the past year.",
+        },
+        {
+          key: "usAzNoIneligibleCurrentOrPriorOffense",
+          text: "No current or prior convictions of exclusionary offenses",
+          tooltip:
+            "No current or prior convictions of a registrable sex offense or felony domestic violence offense, or current convictions of felony arson or murder, unless the client qualifies for administrative supervision under section 1.9. See Appendix A for a list of offenses excluded under this subsection",
         },
       ],
       emptyTabCopy: [
@@ -816,18 +840,22 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 5,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "usAzDummyCopyToEnableAE",
+          text: "This ineligible criteria is added to set opportunityConfiguration.supportsAlmostEligible as true",
+        },
+      ],
       initialHeader:
         "View low-needs clients who qualify for transfer to Administrative Supervision.",
       isAlert: false,
       markSubmittedOptionsByTab: [],
       methodologyUrl:
-        "https://drive.google.com/file/d/1Z7heBZYSj9RuEa0o6q4gW12M7ej1Ak9b/view",
+        "https://drive.google.com/file/d/1yKtEL4-wR9VB1hdyxqzPeJDGBMwjs6Sz/view",
       nonOmsCriteria: [
         {
-          text: "{{#if record.metadata.isMaybeEligibleMissing14}}Requires validation of criteria (1.4): Not classified as homeless in their home release plan.{{/if}}",
-          tooltip:
-            "Alternate Eligibility: An offender may also meet this requirement once on supervision once they have achieved stable housing.",
+          text: "Requires validation of criteria (1.4): A client has achieved stable housing while on supervision.",
+          tooltip: "",
         },
         {
           text: "{{#if record.metadata.isMaybeEligibleMissing15}}Requires validation of criteria (1.5): Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4.{{/if}}",
@@ -849,8 +877,16 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
-      subcategoryHeadings: [],
-      subcategoryOrderings: [],
+      subcategoryHeadings: [
+        { subcategory: "MAYBE_ELIGIBLE", text: "Maybe Eligible" },
+        { subcategory: "NOT_MAYBE_ELIGIBLE", text: "Eligible Now" },
+      ],
+      subcategoryOrderings: [
+        {
+          tab: "Eligible Now",
+          texts: ["MAYBE_ELIGIBLE", "NOT_MAYBE_ELIGIBLE"],
+        },
+      ],
       subheading: null,
       submittedTabTitle: null,
       supportsSubmitted: false,
@@ -860,7 +896,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "AdminSupervision",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

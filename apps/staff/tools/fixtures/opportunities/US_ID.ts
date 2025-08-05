@@ -15,6 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
 import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
 
 export const mockApiOpportunityConfigurationResponse = {
@@ -22,6 +39,7 @@ export const mockApiOpportunityConfigurationResponse = {
     LSU: {
       callToAction:
         "Review clients who may be eligible for LSU and complete a pre-filled transfer chrono.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -94,11 +112,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for transfer to LSU",
       urlSection: "LSU",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     earnedDischarge: {
       callToAction:
         "Review clients who may be eligible for Earned Discharge and complete a pre-filled request form.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -211,11 +229,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for Earned Discharge",
       urlSection: "earnedDischarge",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     pastFTRD: {
       callToAction:
         "Review clients who are nearing or past their full-term release date and email clerical to move them to history.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -278,11 +296,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for discharge",
       urlSection: "pastFTRD",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usIdCRCResidentWorker: {
       callToAction:
         "Review residents who may be eligbile for transfer to a CRC and start their paperwork in ATLAS.",
+      caseNotesTitle: null,
       compareBy: [{ field: "releaseDate" }],
       denialAdjective: null,
       denialNoun: null,
@@ -370,6 +388,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usIdNotServingARiderSentence",
           text: "Not serving for a rider sentence",
         },
+        {
+          key: "usIdIncarcerationNotWithin6MonthsOfUpcomingEprd",
+          text: "Resident has an upcoming EPRD of {{date earliestPossibleReleaseDate}} which is more than 6 months away.",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_ID-CRCResidentWorkerReferrals",
@@ -404,7 +426,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "UsIdParoleDates",
         "CaseNotes",
       ],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snooze: { defaultSnoozeDays: 60, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_ID",
       subcategoryHeadings: [],
@@ -446,11 +468,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "CRCResidentWorker",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usIdCRCWorkRelease: {
       callToAction:
         "Review residents who may be eligible for work-release to a CRC and start their paperwork in ATLAS.",
+      caseNotesTitle: null,
       compareBy: [{ field: "releaseDate" }],
       denialAdjective: null,
       denialNoun: null,
@@ -538,6 +560,10 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usIdNotServingARiderSentence",
           text: "Not serving for a rider sentence",
         },
+        {
+          key: "usIdIncarcerationNotWithin6MonthsOfUpcomingEprd",
+          text: "Resident has an upcoming EPRD of {{date earliestPossibleReleaseDate}} which is more than 6 months away.",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_ID-CRCWorkReleaseReferrals",
@@ -572,7 +598,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "UsIdParoleDates",
         "CaseNotes",
       ],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
+      snooze: { defaultSnoozeDays: 60, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_ID",
       subcategoryHeadings: [],
@@ -614,10 +640,10 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "CRCWorkRelease",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usIdCustodyLevelDowngrade: {
       callToAction: "Review eligible residents and reclassify in Atlas.",
+      caseNotesTitle: null,
       compareBy: [
         { field: "eligibilityDate", sortDirection: "asc" },
         { field: "releaseDate", sortDirection: "asc" },
@@ -626,26 +652,18 @@ export const mockApiOpportunityConfigurationResponse = {
       denialNoun: null,
       denialReasons: [
         { key: "OVERRIDE", text: "Active discretionary override" },
-        {
-          key: "PROGRAMMING",
-          text: "Reclassification would disrupt required programming",
-        },
-        {
-          key: "HOUSING",
-          text: "Reclassification requires housing that is currently unavailable",
-        },
         { key: "Other", text: "Other: please specify a reason" },
       ],
       denialText: null,
       deniedTabTitle: null,
-      displayName: "Unscheduled Reclassification",
+      displayName: "Classification Assistant",
       dynamicEligibilityText:
         "resident[|s] may be eligible for an unscheduled reclassification to a lower custody level",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
           key: "custodyLevelHigherThanRecommended",
-          text: "Custody level has been higher than latest classification score suggests since {{date upcomingEligibilityDate}}.",
+          text: "Eligible for reclassification since {{date upcomingEligibilityDate}}.",
           tooltip: "",
         },
       ],
@@ -658,7 +676,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "custodyLevelHigherThanRecommended",
-          text: "Custody level will be higher than classification score on  {{date upcomingEligibilityDate}}.",
+          text: "Eligible for reclassification on  {{date upcomingEligibilityDate}}.",
         },
       ],
       initialHeader: null,
@@ -688,11 +706,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "custodyLevelDowngrade",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usIdExpandedCRC: {
       callToAction:
         "Review clients who may be eligible for a transfer to XCRC and start their paperwork in ATLAS.",
+      caseNotesTitle: null,
       compareBy: [{ field: "releaseDate" }],
       denialAdjective: null,
       denialNoun: null,
@@ -701,24 +719,13 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "BEHAVIOR",
           text: "Resident has had poor institutional behavior",
         },
-        {
-          key: "CLASS_A_OR_B",
-          text: "Has class A or B disciplinary reports in the past six months",
-        },
-        {
-          key: "EMPLOYMENT",
-          text: "Resident is not currently employed full-time or engaged in or accepted to a full-time Idaho educational program approved by the IDOC",
-        },
-        {
-          key: "MEDICAL",
-          text: "Was not approved by an IDOC medical provider",
-        },
         { key: "Other", text: "Other, please specify a reason" },
         { key: "PROGRAM", text: "Missing required facility programming" },
         {
           key: "TRUST",
-          text: "Resident does not have $500.00 in their resident trust account",
+          text: "Resident does not have sufficient funds in their resident trust account",
         },
+        { key: "VICTIM", text: "Resident has a victim" },
       ],
       denialText: null,
       deniedTabTitle: null,
@@ -802,7 +809,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "UsIdParoleDates",
         "CaseNotes",
       ],
-      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 30 },
+      snooze: { defaultSnoozeDays: 60, maxSnoozeDays: 180 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_ID",
       subcategoryHeadings: [],
@@ -844,10 +851,10 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "expandedCRC",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usIdSupervisionLevelDowngrade: {
       callToAction: "Change their supervision level in Atlas",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -908,7 +915,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for supervision downgrade",
       urlSection: "supervisionLevelMismatch",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

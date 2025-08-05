@@ -22,6 +22,7 @@ export const mockApiOpportunityConfigurationResponse = {
     usNeConditionalLowRiskOverride: {
       callToAction:
         "Review clients who may be eligible for Conditional Low Risk and complete an override request",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -42,6 +43,10 @@ export const mockApiOpportunityConfigurationResponse = {
         "[client|clients] may be eligible for an override to Conditional Low Risk",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
+        {
+          key: "onParoleAtLeast6Months",
+          text: "Time on supervision: {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
+        },
         {
           key: "onParoleAtLeastOneYear",
           text: "Time on supervision: {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
@@ -115,11 +120,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "ConditionalLowRiskOverride",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usNeOverrideModerateToLow: {
       callToAction:
         "Review clients who may be eligible for Low and complete an override request",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -140,6 +145,10 @@ export const mockApiOpportunityConfigurationResponse = {
         "[client|clients] may be eligible for an override to Low",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
+        {
+          key: "onParoleAtLeast6Months",
+          text: "Time on supervision: {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
+        },
         {
           key: "onParoleAtLeastOneYear",
           text: "Time on supervision: {{daysToYearsMonthsPast (daysPast opportunity.person.supervisionStartDate)}}",
@@ -207,7 +216,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "OverrideModerateToLow",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

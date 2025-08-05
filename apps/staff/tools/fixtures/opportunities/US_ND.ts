@@ -22,6 +22,7 @@ export const mockApiOpportunityConfigurationResponse = {
     earlyTermination: {
       callToAction:
         "Review clients eligible for early termination and download the paperwork to file with the Court.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -155,10 +156,10 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "earlyTermination",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usNdATP: {
       callToAction: "Review residents who may be eligible for ATP",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -311,10 +312,10 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "ATP",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usNdTransferToMinFacility: {
       callToAction: "Review clients overdue for minimum housing referral",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -425,22 +426,11 @@ export const mockApiOpportunityConfigurationResponse = {
       submittedTabTitle: null,
       supportsSubmitted: false,
       systemType: "INCARCERATION",
-      tabGroups: [
-        {
-          key: "ELIGIBILITY STATUS",
-          tabs: [
-            "Eligible Now",
-            "Referral Submitted",
-            "Almost Eligible",
-            "Marked Ineligible",
-          ],
-        },
-      ],
+      tabGroups: null,
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "TransferToMinFacility",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

@@ -22,6 +22,7 @@ export const mockApiOpportunityConfigurationResponse = {
     usMiAddInPersonSecurityClassificationCommitteeReview: {
       callToAction:
         "Complete SCC review and fill out 283 Form for eligible residents, inclusive of ADD signature.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -127,11 +128,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "addInPersonSecurityClassificationCommitteeReview",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMiClassificationReview: {
       callToAction:
         "Review clients who meet the time threshold for classification review and downgrade supervision levels in COMS.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -168,7 +169,19 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "usMiClassificationReviewPastDueDate",
-          text: "Recommended classification review date, based on supervision start date and last classification review date, is {{date eligibleDate}}",
+          text: "Recommended classification review date is {{date eligibleDate}}, based on supervision start date and last classification review date",
+          tooltip:
+            "Classification reviews shall be completed after six months of active supervision […] Subsequent classification reviews shall be scheduled at six-month intervals.",
+        },
+        {
+          key: "usMiPastInitialClassificationReviewDate",
+          text: "Recommended classification review date is {{date eligibleDate}}, based on supervision start date and last classification review date",
+          tooltip:
+            "Classification reviews shall be completed after six months of active supervision […] Subsequent classification reviews shall be scheduled at six-month intervals.",
+        },
+        {
+          key: "usMiSixMonthsPastLastClassificationReviewDate",
+          text: "Recommended classification review date is {{date eligibleDate}}, based on supervision start date and last classification review date",
           tooltip:
             "Classification reviews shall be completed after six months of active supervision […] Subsequent classification reviews shall be scheduled at six-month intervals.",
         },
@@ -185,7 +198,20 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 1,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "usMiPastInitialClassificationReviewDate",
+          text: "Recommended classification review date is {{date eligibleDate}}, based on supervision start date and last classification review date",
+          tooltip:
+            "Classification reviews shall be completed after six months of active supervision […] Subsequent classification reviews shall be scheduled at six-month intervals.",
+        },
+        {
+          key: "usMiSixMonthsPastLastClassificationReviewDate",
+          text: "Recommended classification review date is {{date eligibleDate}}, based on supervision start date and last classification review date",
+          tooltip:
+            "Classification reviews shall be completed after six months of active supervision […] Subsequent classification reviews shall be scheduled at six-month intervals.",
+        },
+      ],
       initialHeader: null,
       isAlert: false,
       markSubmittedOptionsByTab: [],
@@ -220,11 +246,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "classificationReview",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMiEarlyDischarge: {
       callToAction:
         "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -363,7 +389,20 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 2,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "supervisionOrSupervisionOutOfStatePastHalfFullTermReleaseDate",
+          text: "Needs {{monthsOrDaysRemainingFromToday eligibleDate}} on supervision",
+          tooltip:
+            '{{#if (eq record.metadata.supervisionType "Parole")}}A parolee is eligible for early discharge consideration prior to the expiration of the original term of parole if they have completed at least one-half of an original parole term of 12 months or more{{else}}An offender may be considered for discharge prior to the expiration of the original term of probation if they have completed at least one-half of the probation term{{/if}}',
+        },
+        {
+          key: "usMiParoleDualSupervisionPastEarlyDischargeDate",
+          text: "Needs {{monthsOrDaysRemainingFromToday eligibleDate}} on supervision",
+          tooltip:
+            "A parolee is eligible for early discharge consideration once they have served any mandatory period of parole as set forth in Paragraph F. ",
+        },
+      ],
       initialHeader: null,
       isAlert: false,
       markSubmittedOptionsByTab: [],
@@ -408,11 +447,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "earlyDischarge",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMiMinimumTelephoneReporting: {
       callToAction:
         "Review clients who meet the requirements for minimum telephone reporting and change supervision levels in COMS.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -475,6 +514,12 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "supervisionNotPastFullTermCompletionDateOrUpcoming90Days",
           text: "More than 90 days remaining until full-term discharge.",
         },
+        {
+          key: "usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision",
+          text: "{{#if eligibleDate}}\nSuccessfully completed twelve months of active supervision if serving for an OUIL or OWI\n{{/if}}",
+          tooltip:
+            "Offenders serving for an OUIL or OWI shall be evaluated for assignment to minimum TRS after they have completed twelve months of active supervision.",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_MI-minimumTelephoneReporting",
@@ -482,7 +527,20 @@ export const mockApiOpportunityConfigurationResponse = {
       highlightCasesOnHomepage: false,
       highlightedCaseCtaCopy: null,
       homepagePosition: 3,
-      ineligibleCriteriaCopy: [],
+      ineligibleCriteriaCopy: [
+        {
+          key: "onMinimumSupervisionAtLeastSixMonths",
+          text: "Needs {{monthsOrDaysRemainingFromToday eligibleDate}} on minimum in person or minimum low-risk supervision",
+          tooltip:
+            "Offenders assigned to minimum in person or minimum low-risk supervision shall be evaluated for assignment to minimum TRS after they have completed six months of active supervision.",
+        },
+        {
+          key: "usMiIfServingAnOuilOrOwiHasCompleted12MonthsOnSupervision",
+          text: "Needs {{monthsOrDaysRemainingFromToday eligibleDate}} on supervision",
+          tooltip:
+            "Offenders serving for an OUIL or OWI shall be evaluated for assignment to minimum TRS after they have completed twelve months of active supervision.",
+        },
+      ],
       initialHeader: null,
       isAlert: false,
       markSubmittedOptionsByTab: [],
@@ -510,11 +568,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "minimumTelephoneReporting",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMiPastFTRD: {
       callToAction:
         "Review clients who are nearing or past their full-term release date and complete discharges in COMS.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -531,9 +589,8 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
-          key: "supervisionPastFullTermCompletionDate",
+          key: "supervisionTwoDaysPastFullTermCompletionDate",
           text: "{{daysPast eligibleDate}} days past FTRD ({{date eligibleDate}})",
-          tooltip: null,
         },
       ],
       emptyTabCopy: [],
@@ -544,9 +601,8 @@ export const mockApiOpportunityConfigurationResponse = {
       homepagePosition: 4,
       ineligibleCriteriaCopy: [
         {
-          key: "supervisionPastFullTermCompletionDate",
+          key: "supervisionTwoDaysPastFullTermCompletionDate",
           text: "{{daysUntil eligibleDate}} days until FTRD ({{date eligibleDate}})",
-          tooltip: null,
         },
       ],
       initialHeader: null,
@@ -578,11 +634,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for discharge",
       urlSection: "pastFTRD",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMiReclassificationRequest: {
       callToAction:
         "Return residents eligible for reclassification to general population",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -670,11 +726,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "reclassificationRequest",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMiSecurityClassificationCommitteeReview: {
       callToAction:
         "Complete SCC review and fill out 283 Form for eligible residents",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -776,11 +832,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "securityClassificationCommitteeReview",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMiSupervisionLevelDowngrade: {
       callToAction:
         "Review clients whose supervision level does not match their risk level and change supervision levels in COMS.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -857,11 +913,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "supervisionLevelMismatch",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usMiWardenInPersonSecurityClassificationCommitteeReview: {
       callToAction:
         "Complete SCC review and fill out 283 Form for eligible residents, inclusive of Warden signature.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -967,7 +1023,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "wardenInPersonSecurityClassificationCommitteeReview",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

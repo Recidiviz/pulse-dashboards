@@ -169,7 +169,7 @@ describe("fully eligible", () => {
   describe("tabs", () => {
     test("overridden", () => {
       updatesSub.data = { denial: { reasons: ["test-reason"] } };
-      expect(opp.tabTitle()).toEqual("Overridden");
+      expect(opp.tabTitle()).toEqual("Marked Ineligible");
     });
 
     test("Due this week", () => {

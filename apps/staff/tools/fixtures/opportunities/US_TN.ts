@@ -22,6 +22,7 @@ export const mockApiOpportunityConfigurationResponse = {
     compliantReporting: {
       callToAction:
         "Review and refer eligible clients for Compliant Reporting.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -80,10 +81,10 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "compliantReporting",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     supervisionLevelDowngrade: {
       callToAction: "Change their supervision level in TOMIS.",
+      caseNotesTitle: "Relevant Contact Codes",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -141,11 +142,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "supervisionLevelDowngrade",
       zeroGrantsTooltip: null,
-      caseNotesTitle: "Relevant Contact Codes",
     },
     usTnAnnualReclassification: {
       callToAction:
         "Review residents due for their annual reclassification and update their custody level in TOMIS.",
+      caseNotesTitle: "Relevant Information For Classification",
       compareBy: [{ field: "releaseDate" }],
       denialAdjective: null,
       denialNoun: null,
@@ -160,13 +161,8 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "usTnAtLeast12MonthsSinceLatestAssessment",
           text: "At least 12 months since last reclassification date",
-          tooltip: null,
         },
-        {
-          key: "custodyLevelIsNotMax",
-          text: "Custody level is not maximum",
-          tooltip: null,
-        },
+        { key: "custodyLevelIsNotMax", text: "Custody level is not maximum" },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_TN-annualReclassificationReferrals",
@@ -206,10 +202,10 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "annualReclassification",
       zeroGrantsTooltip: null,
-      caseNotesTitle: "Relevant Information For Classification",
     },
     usTnCompliantReporting2025Policy: {
       callToAction: "Auto-fill referral",
+      caseNotesTitle: "Other Relevant Information",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -441,10 +437,10 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "usTnCompliantReporting2025Policy",
       zeroGrantsTooltip: null,
-      caseNotesTitle: "Other Relevant Information",
     },
     usTnCustodyLevelDowngrade: {
       callToAction: "Review and update custody levels.",
+      caseNotesTitle: "Relevant Information for Classification",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -459,22 +455,15 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "custodyLevelHigherThanRecommended",
           text: "Custody level is higher than latest CAF score suggests",
-          tooltip: null,
         },
-        {
-          key: "custodyLevelIsNotMax",
-          text: "Custody level is not maximum",
-          tooltip: null,
-        },
+        { key: "custodyLevelIsNotMax", text: "Custody level is not maximum" },
         {
           key: "usTnIneligibleForAnnualReclassification",
           text: "Not eligible for annual reclassification",
-          tooltip: null,
         },
         {
           key: "usTnLatestCafAssessmentNotOverride",
           text: "Last assessment did not include an override",
-          tooltip: null,
         },
       ],
       emptyTabCopy: [],
@@ -487,7 +476,8 @@ export const mockApiOpportunityConfigurationResponse = {
       initialHeader: null,
       isAlert: false,
       markSubmittedOptionsByTab: [],
-      methodologyUrl: "",
+      methodologyUrl:
+        "https://drive.google.com/file/d/1fkqncNb_GNYBvRfOgij4QHw4HEdkkHHz/view",
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
       notifications: [],
@@ -514,11 +504,11 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "custodyLevelDowngrade",
       zeroGrantsTooltip: null,
-      caseNotesTitle: "Relevant Information for Classification",
     },
     usTnExpiration: {
       callToAction:
         "Review these clients and complete their auto-generated TEPE Note.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -587,10 +577,10 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "expiration",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
     usTnInitialClassification: {
       callToAction: "Auto-fill paperwork",
+      caseNotesTitle: "Relevant Information For Classification",
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -654,10 +644,10 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "initialClassification",
       zeroGrantsTooltip: null,
-      caseNotesTitle: "Relevant Information For Classification",
     },
     usTnSuspensionOfDirectSupervision: {
       callToAction: "Generate request",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -815,7 +805,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "suspensionOfDirectSupervision",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

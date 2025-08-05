@@ -21,6 +21,7 @@ export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usIaEarlyDischarge: {
       callToAction: null,
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -51,7 +52,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "INTERSTATE (IC-OUT)",
-          text: "Is serving an ICOTS case and supervising state has failed to provide progress report",
+          text: "Is serving an ICOTS case and supervising state has not provided progress report or other necessary information",
         },
       ],
       denialText: null,
@@ -65,7 +66,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usIaSupervisionLevelIs0NotAvailable12Or3",
           text: "Is on supervision {{lowerCase supervisionLevelRawText}}",
           tooltip:
-            "Client must be on supervision level 0 - Not available for supervision (ICOTS), 1, 2, or 3",
+            'Client must be on supervision level 0 - Not available for supervision (ICOTS), 1, 2, or 3. Clients with the supervision level "Level 1 - No Early Discharge - Owes Fines and Fees" are not eligible',
         },
         {
           key: "usIaServingSupervisionCaseAtLeast90Days",
@@ -77,7 +78,16 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "noSupervisionViolationReportWithin6MonthsUsingResponseDate",
           text: "Has no violation reports in the past 6 months",
           tooltip:
-            "This is defined by whether there were any Reports of Violation submitted in ICON in the past 6 months. This does not include reports that were dismissed or resulted in a reinstatement",
+            "This is defined by whether there were any Reports of Violation submitted in ICON in the past 6 months. This does not include reports that resulted in a final decision of “Reinstate”,  “Dismissed”, “No hearing held”, “Not filed with the court”, or “Probable cause not found”",
+        },
+        {
+          key: "notServingALifeSentenceOnSupervisionOrSupervisionOutOfState",
+          text: '{{#unless (eq opportunity.person.supervisionType "PROBATION")}}Is not serving a lifetime sentence{{/unless}}',
+          tooltip: "",
+        },
+        {
+          key: "usIaNotExcludedFromEarlyDischargeByParoleCondition",
+          text: '{{#unless (eq opportunity.person.supervisionType "PROBATION")}}Is not excluded from early discharge by Iowa Board of Parole condition{{/unless}}',
         },
         {
           key: "usIaNoOpenSupervisionModifiers",
@@ -102,19 +112,16 @@ export const mockApiOpportunityConfigurationResponse = {
             "See CBC-FS-02 Appendix A for a list of all ineligible offenses. Note that this only includes Iowa statutes, not NCIC or other state statute codes",
         },
         {
-          key: "notServingALifeSentenceOnSupervisionOrSupervisionOutOfState",
-          text: '{{#unless (eq opportunity.person.supervisionType "PROBATION")}}Is not serving a lifetime sentence{{/unless}}',
-          tooltip: "",
-        },
-        {
           key: "notSupervisionPastFullTermCompletionDateOrUpcoming30Days",
           text: "Is not within 30 days of discharge date",
           tooltip:
             "Discharge date is determined by the primary TDD (tentative discharge date) and/or SDD (supervision discharge date)",
         },
         {
-          key: "usIaNotExcludedFromEarlyDischargeByParoleCondition",
-          text: '{{#unless (eq opportunity.person.supervisionType "PROBATION")}}Is not excluded from early discharge by board of parole condition{{/unless}}',
+          key: "notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days",
+          text: "Is not within 30 days of discharge date",
+          tooltip:
+            "Discharge date is determined by the primary TDD (tentative discharge date) and/or SDD (supervision discharge date)",
         },
       ],
       emptyTabCopy: [],
@@ -131,7 +138,7 @@ export const mockApiOpportunityConfigurationResponse = {
         "https://docs.google.com/document/d/e/2PACX-1vQqlFtl1xFx92rX0jlal5N92klcsaALS2G9djBYNh-UNxuynROOOGXlb9zJg2NDeX11ZUxWclVD-kBo/pub",
       nonOmsCriteria: [
         {
-          text: "Has no pending criminal charges",
+          text: "Has no pending criminal charges or active warrants",
           tooltip:
             'Run NCIC check for pending charges + see "Relevant Contact Notes" section below for any active warrants & detainers entered in ICON',
         },
@@ -142,22 +149,22 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         { text: "Has paid restitution in full", tooltip: "" },
         {
-          text: '{{#if (or (eq opportunity.person.supervisionType "PROBATION") (eq opportunity.person.supervisionType "DUAL"))}}Not excluded from early discharge via court order (for probation clients only){{/if}}',
-          tooltip: "",
-        },
-        {
-          text: "{{#if record.metadata.victimFlag}}Registered victim has been contacted{{/if}}",
-        },
-        {
-          text: "{{#if record.metadata.dnaRequiredFlag}}{{#unless record.metadata.dnaSubmittedFlag}}DNA is required to be collected and has not yet been collected{{/unless}}{{/if}}",
-          tooltip:
-            "ICON indicates that for this client, DNA is required to be collected but has not yet been collected",
+          text: '{{#if (or (eq opportunity.person.supervisionType "PROBATION") (eq opportunity.person.supervisionType "DUAL"))}}Has paid court fees in full (for probation clients){{/if}}',
         },
         {
           text: '{{#if (or (eq opportunity.person.supervisionType "PAROLE") (eq opportunity.person.supervisionType "DUAL"))}}Has consistent payments or a payment plan for court fees (for parole clients){{/if}}',
         },
         {
-          text: '{{#if (or (eq opportunity.person.supervisionType "PROBATION") (eq opportunity.person.supervisionType "DUAL"))}}Has paid court fees in full (for probation clients){{/if}}',
+          text: '{{#if (or (eq opportunity.person.supervisionType "PROBATION") (eq opportunity.person.supervisionType "DUAL"))}}Not excluded from early discharge via court order (for probation clients only){{/if}}',
+          tooltip: "",
+        },
+        {
+          text: '{{#unless record.metadata.dnaSubmittedFlag}}{{#unless (eq record.metadata.dnaRequirementStatus "Not Required")}}DNA has been collected and uploaded to CODIS if required{{/unless}}{{/unless}}',
+          tooltip:
+            "ICON indicates that for this client, DNA may be required to be collected but has not yet been collected",
+        },
+        {
+          text: "{{#if record.metadata.victimFlag}}There is a registered victim in ICON. Contact required before discharge.{{/if}}",
         },
       ],
       nonOmsCriteriaHeader: "Requirements for officers to check",
@@ -197,7 +204,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: null,
       urlSection: "earlyDischarge",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

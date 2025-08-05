@@ -22,6 +22,7 @@ export const mockApiOpportunityConfigurationResponse = {
     usCaSupervisionLevelDowngrade: {
       callToAction:
         "Review clients who may be eligible for a Supervision Level Downgrade and complete the paperwork.",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -90,7 +91,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for supervision downgrade",
       urlSection: "supervisionLevelDowngrade",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

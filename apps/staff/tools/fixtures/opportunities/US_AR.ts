@@ -21,6 +21,7 @@ export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
     usArInstitutionalWorkerStatus: {
       callToAction: "Review residents who may be eligible for 309",
+      caseNotesTitle: null,
       compareBy: null,
       denialAdjective: null,
       denialNoun: null,
@@ -94,7 +95,6 @@ export const mockApiOpportunityConfigurationResponse = {
       tooltipEligibilityText: "Eligible for 309",
       urlSection: "institutionalWorkerStatus",
       zeroGrantsTooltip: null,
-      caseNotesTitle: null,
     },
   },
 } as const satisfies ApiOpportunityConfigurationResponse;

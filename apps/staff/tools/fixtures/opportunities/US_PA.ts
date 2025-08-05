@@ -101,6 +101,12 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "supervisionLevelIsNotHighOrMaxForOneYear",
           text: "Not supervised under enhanced or maximum supervision within the past 12 months",
         },
+        {
+          key: "usPaNotMarkedIneligibleForAdminSupervisionInOms",
+          text: "Not marked NAE",
+          tooltip:
+            'This is determined by whether "NAE" ("Not Admin Eligible") is found in the Other, Miscellaneous, or Notes fields in Captor',
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_PA-adminSupervisionReferrals",
