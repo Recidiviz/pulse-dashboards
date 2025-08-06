@@ -48,6 +48,7 @@ import {
   PersonRecordType,
   PersonType,
 } from "./types";
+import { isEligible } from "./utils";
 
 export abstract class JusticeInvolvedPersonBase<
   RecordType extends PersonRecordType = WorkflowsJusticeInvolvedPersonRecord,
@@ -238,9 +239,7 @@ export abstract class JusticeInvolvedPersonBase<
   }
 
   get opportunitiesEligible(): OpportunityMapping {
-    return this.getFilteredOpportunityMapping(
-      (opp) => opp && !opp.isSubmitted && !opp.almostEligible && !opp.denied,
-    );
+    return this.getFilteredOpportunityMapping((opp) => opp && isEligible(opp));
   }
 
   get opportunitiesAlmostEligible(): OpportunityMapping {

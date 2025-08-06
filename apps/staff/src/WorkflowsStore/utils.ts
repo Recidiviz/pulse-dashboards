@@ -286,6 +286,15 @@ export function snoozeUntilDateInTheFuture(snoozeUntilDate: Date) {
 }
 
 /**
+ * Returns true if the opportunity is eligible and not submitted and not denied.
+ * This helper function is used to count/filter for eligible opportunities
+ * particularly on the Supervisor Homepage.
+ */
+export function isEligible(opp: Opportunity) {
+  return !opp.almostEligible && !opp.isSubmitted && !opp.denied;
+}
+
+/**
  * Organizes opportunities by both opportunity type and the relevant tab grouping.
  */
 export function opportunitiesByTab(

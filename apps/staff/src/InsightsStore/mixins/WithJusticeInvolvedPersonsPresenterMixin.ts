@@ -113,8 +113,11 @@ export function WithJusticeInvolvedPersonStore<
     // TODO (#5994): this field appears to briefly remain empty, even after hydration
     // completes.
     /**
-     * Finds verified opportunities (eligible, almost eligible, overridden) for all
-     * clients assigned to a given officer, grouped by opportunity type.
+     * Finds opportunities for all clients assigned to a given officer, grouped by opportunity type.
+     * If opportunityMappingOverride is provided, this function will only return opportunities
+     * applicable to the override (e.g. only eligible opportunities). Otherwise, this function
+     * will return opportunities based on the opportunity mapping of the implementing class.
+     *
      * @param officerExternalId - The external ID of the officer to look up opportunities.
      * @returns An object with lists of opportunities assigned to keys of the same type.
      * @see {Opportunity}

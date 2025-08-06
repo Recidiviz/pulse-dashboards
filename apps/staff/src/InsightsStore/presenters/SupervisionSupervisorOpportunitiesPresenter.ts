@@ -27,9 +27,11 @@ import {
 } from "~datatypes";
 import { HydratesFromSource, isHydrated } from "~hydration-utils";
 
-import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
+import { PartialRecord } from "../../utils/typeUtils";
+import { Opportunity } from "../../WorkflowsStore";
 import { JusticeInvolvedPersonsStore } from "../../WorkflowsStore/JusticeInvolvedPersonsStore";
 import { OpportunityConfigurationStore } from "../../WorkflowsStore/Opportunity/OpportunityConfigurations/OpportunityConfigurationStore";
+import { isEligible } from "../../WorkflowsStore/utils";
 import { WithJusticeInvolvedPersonStore } from "../mixins/WithJusticeInvolvedPersonsPresenterMixin";
 import { InsightsSupervisionStore } from "../stores/InsightsSupervisionStore";
 import { SupervisionBasePresenter } from "./SupervisionBasePresenter";
@@ -52,7 +54,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
     super(supervisionStore);
 
     this.justiceInvolvedPersonsStore = justiceInvolvedPersonsStore;
-    this.opportunityMapping = "opportunitiesEligible";
+    this.opportunityMapping = "opportunities";
     this.personFieldsToHydrate = ["opportunityManager"];
 
     makeObservable<
@@ -177,26 +179,39 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
         acc: RawOpportunityInfoByOpportunityType,
         officer: SupervisionOfficer,
       ) => {
-        const opportunitiesByType =
-          this.opportunitiesByTypeForOfficer(officer.externalId) ?? {};
+        const opportunitiesByType: PartialRecord<
+          OpportunityType,
+          Opportunity[]
+        > = this.opportunitiesByTypeForOfficer(officer.externalId) ?? {};
 
-        Object.entries<[OpportunityType, Opportunity<JusticeInvolvedPerson>[]]>(
-          opportunitiesByType,
-        ).forEach(([oppType, opportunities]) => {
-          const opportunityType = oppType as OpportunityType;
-          const oppDetail =
-            acc.get(opportunityType) ??
-            this.initializeOpportunityDetail(opportunityType);
+        // For every opportunity type, add info for this officer to the returned map
+        Object.entries(opportunitiesByType).forEach(
+          ([oppType, opportunities]) => {
+            const opportunityType = oppType as OpportunityType;
+            const oppDetail =
+              acc.get(opportunityType) ??
+              this.initializeOpportunityDetail(opportunityType);
 
-          oppDetail.officersWithEligibleClients.push({
-            ...officer,
-            clientsEligibleCount: opportunities.length,
-            clientsEligibleCountWithLabel: simplur`${opportunities.length} ${this.labels.supervisionJiiLabel}[|s]`,
-          });
-          oppDetail.clientsEligibleCount += opportunities.length;
+            // Use a custom counting function defined for this opportunity when one exists.
+            // Otherwise, only count eligible opportunities.
+            const { countByFunction } =
+              this.opportunityConfigurationStore.opportunities[opportunityType];
+            const clientCountForOfficer = countByFunction
+              ? countByFunction(opportunities)
+              : opportunities.filter((opp) => opp && isEligible(opp)).length;
 
-          acc.set(opportunityType, oppDetail);
-        });
+            if (clientCountForOfficer > 0) {
+              oppDetail.officersWithEligibleClients.push({
+                ...officer,
+                clientsEligibleCount: clientCountForOfficer,
+                clientsEligibleCountWithLabel: simplur`${clientCountForOfficer} ${this.labels.supervisionJiiLabel}[|s]`,
+              });
+              oppDetail.clientsEligibleCount += clientCountForOfficer;
+
+              acc.set(opportunityType, oppDetail);
+            }
+          },
+        );
 
         return acc;
       },
@@ -270,7 +285,7 @@ export class SupervisionSupervisorOpportunitiesPresenter extends WithJusticeInvo
   }
 
   // ==============================
-  // Static Sort Functions
+  // Static Functions for sorting officers and opportunities
   // ==============================
 
   /**
