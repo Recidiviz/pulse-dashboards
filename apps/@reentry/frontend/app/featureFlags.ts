@@ -15,29 +15,4 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-"use client";
-
-import { useAuth } from "~@reentry/frontend/lib/auth";
-
-const UnauthorizedState = () => {
-  const { login } = useAuth();
-
-  return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <div className="bg-white p-6 rounded shadow-md max-w-md w-full text-center">
-        <h1 className="text-2xl font-bold mb-4">Access Restricted</h1>
-        <p className="mb-6">Please sign in to access this page</p>
-
-        <button
-          type={"button"}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded transition"
-          onClick={() => login()}
-        >
-          Sign In
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export default UnauthorizedState;
+export const IS_V2_INTAKE_CHAT = process.env["IS_V2_INTAKE_CHAT"] === "true";

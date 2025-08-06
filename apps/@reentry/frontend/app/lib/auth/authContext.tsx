@@ -18,7 +18,7 @@
 "use client";
 
 import { AuthStore } from "@recidiviz/auth";
-import React, {
+import {
   createContext,
   type ReactNode,
   useContext,
@@ -123,12 +123,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const checkAuthentication = async (store: AuthStore) => {
     try {
       console.log("Checking authentication status...");
-      // @ts-expect-error ported from old codebase
+
       const isAuthenticated = await store.checkForAuthentication();
-      console.log(
-        "Authentication check complete. Authenticated:",
-        isAuthenticated,
-      );
 
       setState({
         isAuthorized: isAuthenticated,
@@ -165,7 +161,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     try {
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
-      // @ts-expect-error ported from old codebase
       await authStore.loginWithRedirect();
     } catch (error) {
       console.error("Login error:", error);

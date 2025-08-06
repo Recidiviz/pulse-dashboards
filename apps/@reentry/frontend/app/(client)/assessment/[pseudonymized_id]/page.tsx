@@ -19,56 +19,56 @@
 
 import { useEffect, useState } from "react";
 
-import ConfirmBirthdate from "@/app/components/intake/ChatInterface/ConfirmBirthday";
-import IntakeRouter from "@/app/components/intake/IntakeRouter";
-import { IntakeSocketProvider } from "@/app/websockets/IntakeSocketContext";
+import ConfirmBirthdate from "~@reentry/frontend/components/intake/ChatInterface/ConfirmBirthday";
+import IntakeRouter from "~@reentry/frontend/components/intake/IntakeRouter";
+import { IntakeSocketProvider } from "~@reentry/frontend/websockets/IntakeSocketContext";
 
 export default function Intake({
-	params,
+  params,
 }: {
-	params: { pseudonymized_id: string };
+  params: { pseudonymized_id: string };
 }) {
-	const [loading, setLoading] = useState(true);
-	const [authorized, setAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
 
-	const pseudonymized_id = params.pseudonymized_id;
+  const pseudonymized_id = params.pseudonymized_id;
 
-	useEffect(() => {
-		const storedToken = sessionStorage.getItem("intake_token");
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem("intake_token");
 
-		if (storedToken) {
-			setAuthorized(true);
-			setLoading(false);
-		} else {
-			setAuthorized(false);
-			setLoading(false);
-		}
-	}, [params?.pseudonymized_id]);
+    if (storedToken) {
+      setAuthorized(true);
+      setLoading(false);
+    } else {
+      setAuthorized(false);
+      setLoading(false);
+    }
+  }, [params?.pseudonymized_id]);
 
-	if (loading) {
-		return (
-			<div className="min-h-screen flex items-center justify-center bg-gray-100">
-				<div className="animate-spin h-8 w-8 border-4 border-gray-300 rounded-full border-t-green-900" />
-			</div>
-		);
-	}
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="animate-spin h-8 w-8 border-4 border-gray-300 rounded-full border-t-green-900" />
+      </div>
+    );
+  }
 
-	if (!authorized) {
-		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<ConfirmBirthdate
-					pseudonymized_id={pseudonymized_id}
-					mode={"pseudoDob"}
-				/>
-			</div>
-		);
-	}
+  if (!authorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <ConfirmBirthdate
+          pseudonymized_id={pseudonymized_id}
+          mode={"pseudoDob"}
+        />
+      </div>
+    );
+  }
 
-	return (
-		<div style={{ width: "100%", height: "100vh" }}>
-			<IntakeSocketProvider token_from_url={pseudonymized_id}>
-				<IntakeRouter />
-			</IntakeSocketProvider>
-		</div>
-	);
+  return (
+    <div style={{ width: "100%", height: "100vh" }}>
+      <IntakeSocketProvider token_from_url={pseudonymized_id}>
+        <IntakeRouter />
+      </IntakeSocketProvider>
+    </div>
+  );
 }

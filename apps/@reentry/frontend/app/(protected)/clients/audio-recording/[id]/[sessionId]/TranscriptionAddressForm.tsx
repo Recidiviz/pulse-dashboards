@@ -20,9 +20,9 @@
 import type React from "react";
 import { useState } from "react";
 
-import { $api } from "@/app/api";
-import { useAuth } from "@/app/lib/auth";
-import type { components } from "@/app/recidiviz-schema";
+import { $api } from "~@reentry/frontend/api";
+import { useAuth } from "~@reentry/frontend/lib/auth";
+import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 interface AddressFormData {
   streetAddress?: string;

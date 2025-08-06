@@ -21,24 +21,24 @@ import { useEffect, useState } from "react";
 
 import AddressForm from "~@reentry/frontend/components/intake/AddressForm";
 import ChatHeader from "~@reentry/frontend/components/intake/ChatInterface/ChatHeader";
-import ConversationLayout from "~@reentry/frontend/components/intake/ChatInterface/ConversationLayout";
 import IntakeCompleted from "~@reentry/frontend/components/intake/IntakeCompleted";
 import {
   PreIntakeNoteOne,
   PreIntakeNoteTwo,
 } from "~@reentry/frontend/components/intake/PreIntakeNote";
-import { useSocket } from "~@reentry/frontend/websockets/IntakeSocketContext";
+import { useIntakeContext } from "~@reentry/frontend/websockets/IntakeSocketContextV2";
 
-export default function IntakeRouter() {
-  const { intakeContext, intakeDispatchContext } = useSocket();
+import ConversationLayoutV2 from "./ChatInterface/ConversationLayoutV2";
+
+export function IntakeRouterV2() {
   const {
     intakeStatus,
     currentSection,
     conversationStarted,
-    has_accepted_terms,
-    has_address,
-  } = intakeContext;
-  const { startConversation } = intakeDispatchContext;
+    hasAcceptedTerms,
+    hasAddress,
+    startConversation,
+  } = useIntakeContext();
 
   const [preIntakeStep, setPreIntakeStep] = useState<"one" | "two">(() => {
     if (typeof window !== "undefined") {
@@ -53,7 +53,7 @@ export default function IntakeRouter() {
   const needsAddress =
     intakeStatus === "in_progress" &&
     currentSection === "Completion" &&
-    !has_address;
+    !hasAddress;
   const isPreIntake =
     (intakeStatus === "in_progress" || intakeStatus === "created") &&
     !conversationStarted &&
@@ -81,7 +81,7 @@ export default function IntakeRouter() {
   useEffect(() => {
     if (
       intakeStatus === "in_progress" &&
-      has_accepted_terms &&
+      hasAcceptedTerms &&
       !conversationStarted &&
       !isCompleted // Don't auto-start if completed
     ) {
@@ -89,7 +89,7 @@ export default function IntakeRouter() {
     }
   }, [
     intakeStatus,
-    has_accepted_terms,
+    hasAcceptedTerms,
     conversationStarted,
     startConversation,
     isCompleted,
@@ -128,7 +128,7 @@ export default function IntakeRouter() {
           />
         )}
 
-        {isConversationInProgress && <ConversationLayout />}
+        {isConversationInProgress && <ConversationLayoutV2 />}
       </div>
     </div>
   );

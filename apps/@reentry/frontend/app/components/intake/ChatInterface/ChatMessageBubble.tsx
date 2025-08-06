@@ -19,20 +19,20 @@ import { Typography } from "@mui/material";
 import type React from "react";
 
 import {
-	CaseWorkerAvatar,
-	ClientAvatar,
-} from "@/app/components/intake/ChatInterface/CustomAvatar";
-import type { components } from "@/app/recidiviz-schema";
+  CaseWorkerAvatar,
+  ClientAvatar,
+} from "~@reentry/frontend/components/intake/ChatInterface/CustomAvatar";
+import type { components } from "~@reentry/frontend/recidiviz-schema";
 interface MessageBubbleProps {
-	message?: components["schemas"]["IntakeMessageResponse"];
-	name?: string;
-	isTyping?: boolean;
+  message?: components["schemas"]["IntakeMessageResponse"];
+  name?: string;
+  isTyping?: boolean;
 }
 
 const TypingDots: React.FC = () => (
-	<>
-		<style>
-			{`
+  <>
+    <style>
+      {`
         @keyframes dot-bounce {
           0%, 80%, 100% {
             transform: translateY(0) scale(1);
@@ -48,114 +48,114 @@ const TypingDots: React.FC = () => (
           animation: dot-bounce 1.4s infinite ease-in-out;
         }
       `}
-		</style>
-		<span className="inline-flex items-center gap-1 h-[24px] align-middle">
-			<span
-				className="w-2.5 h-2.5 bg-[#25636F] rounded-full dot-bounce"
-				style={{ animationDelay: "0s" }}
-			/>
-			<span
-				className="w-2.5 h-2.5 bg-[#25636F] rounded-full dot-bounce"
-				style={{ animationDelay: "0.2s" }}
-			/>
-			<span
-				className="w-2.5 h-2.5 bg-[#25636F] rounded-full dot-bounce"
-				style={{ animationDelay: "0.4s" }}
-			/>
-		</span>
-	</>
+    </style>
+    <span className="inline-flex items-center gap-1 h-[24px] align-middle">
+      <span
+        className="w-2.5 h-2.5 bg-[#25636F] rounded-full dot-bounce"
+        style={{ animationDelay: "0s" }}
+      />
+      <span
+        className="w-2.5 h-2.5 bg-[#25636F] rounded-full dot-bounce"
+        style={{ animationDelay: "0.2s" }}
+      />
+      <span
+        className="w-2.5 h-2.5 bg-[#25636F] rounded-full dot-bounce"
+        style={{ animationDelay: "0.4s" }}
+      />
+    </span>
+  </>
 );
 
 export const UserBubbleTail: React.FC = () => (
-	<svg
-		className="absolute right-[-10px] bottom-0 w-[18px] h-[37px]"
-		width="18"
-		height="37"
-		viewBox="0 0 18 37"
-		xmlns="http://www.w3.org/2000/svg"
-	>
-		<title>Message bubble</title>
-		<path d="M0,0 C0,0 0,11 13,37 C10,37 0,30 0,33 L0,37 Z" fill="#2B6C75" />
-	</svg>
+  <svg
+    className="absolute right-[-10px] bottom-0 w-[18px] h-[37px]"
+    width="18"
+    height="37"
+    viewBox="0 0 18 37"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <title>Message bubble</title>
+    <path d="M0,0 C0,0 0,11 13,37 C10,37 0,30 0,33 L0,37 Z" fill="#2B6C75" />
+  </svg>
 );
 
 export const CaseWorkerBubbleTail: React.FC = () => (
-	<svg
-		className="absolute left-[-18px] bottom-0 w-[18px] h-[37px] overflow-visible transform scale-x-[-1]"
-		xmlns="http://www.w3.org/2000/svg"
-	>
-		<title>Message bubble tail</title>
-		<path d="M0,0 C0,0 0,10 13,37 C10,37 0,30 0,33 L0,37 Z" fill="white" />
-	</svg>
+  <svg
+    className="absolute left-[-18px] bottom-0 w-[18px] h-[37px] overflow-visible transform scale-x-[-1]"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <title>Message bubble tail</title>
+    <path d="M0,0 C0,0 0,10 13,37 C10,37 0,30 0,33 L0,37 Z" fill="white" />
+  </svg>
 );
 
 export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
-	message,
-	name,
-	isTyping = false,
+  message,
+  name,
+  isTyping = false,
 }) => {
-	// Return nothing if no message and not typing
-	if (!message && !isTyping) {
-		return null;
-	}
+  // Return nothing if no message and not typing
+  if (!message && !isTyping) {
+    return null;
+  }
 
-	// Return nothing if message exists but has no content
-	if (message && !message.content?.trim()) {
-		return null;
-	}
+  // Return nothing if message exists but has no content
+  if (message && !message.content?.trim()) {
+    return null;
+  }
 
-	const isUser = message?.from_role === "client";
+  const isUser = message?.from_role === "client";
 
-	return (
-		<div
-			className={`flex w-full px-4 mb-4 ${isUser ? "justify-end" : "justify-start"}`}
-		>
-			{isUser ? (
-				<div className="flex flex-col items-end sm:flex-row sm:items-start">
-					{/* Avatar on top for mobile, hidden for desktop */}
-					<div className="flex-shrink-0 mb-2 sm:hidden">
-						<ClientAvatar name={name} />
-					</div>
+  return (
+    <div
+      className={`flex w-full px-4 mb-4 ${isUser ? "justify-end" : "justify-start"}`}
+    >
+      {isUser ? (
+        <div className="flex flex-col items-end sm:flex-row sm:items-start">
+          {/* Avatar on top for mobile, hidden for desktop */}
+          <div className="flex-shrink-0 mb-2 sm:hidden">
+            <ClientAvatar name={name} />
+          </div>
 
-					<div className="relative inline-flex flex-col items-end">
-						<div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-[#2B6C75] text-white break-words">
-							<Typography className="break-words whitespace-pre-wrap">
-								{isTyping ? <TypingDots /> : message?.content}
-							</Typography>
-						</div>
-						<UserBubbleTail />
-					</div>
+          <div className="relative inline-flex flex-col items-end">
+            <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-[#2B6C75] text-white break-words">
+              <Typography className="break-words whitespace-pre-wrap">
+                {isTyping ? <TypingDots /> : message?.content}
+              </Typography>
+            </div>
+            <UserBubbleTail />
+          </div>
 
-					{/* Client Avatar - Right side for desktop */}
-					<div className="hidden sm:flex flex-shrink-0 ml-2">
-						<ClientAvatar name={name} />
-					</div>
-				</div>
-			) : (
-				<div className="flex flex-col items-start sm:flex-row sm:items-start">
-					{/* Caseworker Avatar */}
-					<div className="flex-shrink-0 mr-2">
-						<CaseWorkerAvatar />
-					</div>
+          {/* Client Avatar - Right side for desktop */}
+          <div className="hidden sm:flex flex-shrink-0 ml-2">
+            <ClientAvatar name={name} />
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-start sm:flex-row sm:items-start">
+          {/* Caseworker Avatar */}
+          <div className="flex-shrink-0 mr-2">
+            <CaseWorkerAvatar />
+          </div>
 
-					{/* Message Bubble */}
-					<div className="relative inline-flex flex-col items-start">
-						<div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-white text-[#1E3A3A] break-words">
-							<Typography
-								variant="body1"
-								className="font-inter text-[16px] leading-[1.2] font-normal break-words whitespace-pre-wrap"
-							>
-								{isTyping ? <TypingDots /> : message?.content}
-							</Typography>
-						</div>
+          {/* Message Bubble */}
+          <div className="relative inline-flex flex-col items-start">
+            <div className="py-2 px-3 rounded-[16px] shadow-sm max-w-[80vw] sm:max-w-sm md:max-w-md bg-white text-[#1E3A3A] break-words">
+              <Typography
+                variant="body1"
+                className="font-inter text-[16px] leading-[1.2] font-normal break-words whitespace-pre-wrap"
+              >
+                {isTyping ? <TypingDots /> : message?.content}
+              </Typography>
+            </div>
 
-						{/* Tail */}
-						<CaseWorkerBubbleTail />
-					</div>
-				</div>
-			)}
-		</div>
-	);
+            {/* Tail */}
+            <CaseWorkerBubbleTail />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ChatMessageBubble;

@@ -21,18 +21,17 @@ import Image from "next/image";
 import type React from "react";
 import { useState } from "react";
 
-import { $api } from "~@reentry/frontend/api";
 //import RecaptchaWidget from "~@reentry/frontend/components/RecaptchaWidget";
 import { showSuccessToast } from "~@reentry/frontend/utils/toast";
 
 interface ConfirmBirthdatePageProps {
-  token?: string | null;
   mode: "dob" | "pseudoDob" | "nonPseudoId";
   pseudonymized_id?: string | null;
 }
 
-export default function ConfirmBirthdatePage({
-  token,
+const API_BASE_URL = process.env["NEXT_PUBLIC_API_URL"] || "";
+
+export default function ConfirmBirthdatePageV2({
   mode,
   pseudonymized_id,
 }: ConfirmBirthdatePageProps) {
@@ -41,24 +40,10 @@ export default function ConfirmBirthdatePage({
   const [year, setYear] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [currentState, setCurrentState] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   //const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-
-  const { mutateAsync: verifyDobMutation } = $api.useMutation(
-    "post",
-    "/intake/client/verify-dob",
-  );
-
-  const { mutateAsync: verifyPseudoDobMutation } = $api.useMutation(
-    "post",
-    "/intake/internal/{pseudonymized_id}",
-  );
-
-  const { mutateAsync: verifyNonPseudoIdMutation } = $api.useMutation(
-    "post",
-    "/intake/internal/verify/non-pseudo-id",
-  );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !isLoading) {
@@ -124,58 +109,51 @@ export default function ConfirmBirthdatePage({
       return;
     }
 
+    if (!currentState) {
+      setError("Please select a state");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      // Create date in UTC to avoid timezone conversion issues
-      // Format: YYYY-MM-DD (ISO 8601 date format)
       const paddedMonth = month.padStart(2, "0");
       const paddedDay = day.padStart(2, "0");
-      const isoDateString = `${year}-${paddedMonth}-${paddedDay}`;
+      const dateString = `${year}-${paddedMonth}-${paddedDay}`;
 
-      let response: Awaited<ReturnType<typeof verifyDobMutation>>;
+      const res = await fetch(`${API_BASE_URL}/get-intake-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          date_of_birth: dateString,
+          state_code: currentState,
+        }),
+      });
 
-      if (mode === "pseudoDob" && pseudonymized_id) {
-        response = await verifyPseudoDobMutation({
-          params: { path: { pseudonymized_id } },
-          body: {
-            date_of_birth: isoDateString,
-            last_name: lastName.trim(),
-          },
-        });
-      } else if (mode === "dob" && token) {
-        response = await verifyDobMutation({
-          body: {
-            token_from_url: token,
-            date_of_birth: isoDateString,
-          },
-        });
-      } else if (mode === "nonPseudoId") {
-        response = await verifyNonPseudoIdMutation({
-          body: {
-            first_name: firstName.trim(),
-            last_name: lastName.trim(),
-            date_of_birth: isoDateString,
-            //recaptchaToken: recaptchaToken,
-          },
-        });
-      } else {
-        setError("Missing authentication information. Please try again.");
-        return;
+      if (!res.ok) {
+        throw new Error(`Token request failed: ${res.statusText}`);
       }
 
-      showSuccessToast("Successful!");
+      const data = await res.json();
+      const accessToken = data.access_token;
+      const lastIntakeId = data.last_intake_id;
 
-      if (response?.access_token) {
-        sessionStorage.setItem("intake_token", response.access_token);
+      showSuccessToast("Access token obtained");
+
+      if (accessToken) {
+        sessionStorage.setItem("intake_token", accessToken);
+        sessionStorage.setItem("state_code", currentState);
+        sessionStorage.setItem("last_intake_id", lastIntakeId || "");
         window.location.reload();
       } else {
-        setError("Invalid response from server. Please try again.");
+        setError("No token returned. Please try again.");
         return;
       }
     } catch (err: unknown) {
-      console.error("Error verifying DOB:", err);
+      console.error("Error verifying information:", err);
       // @ts-expect-error ported from old codebase
       setError(err.detail);
       // @ts-expect-error ported from old codebase
@@ -363,6 +341,29 @@ export default function ConfirmBirthdatePage({
                 onKeyDown={handleKeyDown}
               />
             </div>
+          </div>
+
+          {/* State Selector */}
+          <div className="mb-6">
+            <label
+              htmlFor="state-selector"
+              className="block font-public font-medium text-[16px] tracking-[-0.02em] text-[#012322] mb-1 text-left"
+            >
+              State
+            </label>
+            <select
+              id="state-selector"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 text-start"
+              value={currentState}
+              onChange={(e) => setCurrentState(e.target.value)}
+              disabled={isLoading}
+              required
+            >
+              <option value="">Select a state</option>
+              <option value="US_AZ">Arizona</option>
+              <option value="US_ID">Idaho</option>
+              <option value="US_UT">Utah</option>
+            </select>
           </div>
 
           {/* pending to define if recaptcha is needed */}

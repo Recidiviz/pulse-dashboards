@@ -19,48 +19,62 @@
 
 import { useEffect, useState } from "react";
 
-import ConfirmBirthdate from "@/app/components/intake/ChatInterface/ConfirmBirthday";
-import IntakeRouter from "@/app/components/intake/IntakeRouter";
-import { IntakeSocketProvider } from "@/app/websockets/IntakeSocketContext";
+import ConfirmBirthdate from "~@reentry/frontend/components/intake/ChatInterface/ConfirmBirthday";
+import ConfirmBirthdateV2 from "~@reentry/frontend/components/intake/ChatInterface/ConfirmBirthdayV2";
+import IntakeRouter from "~@reentry/frontend/components/intake/IntakeRouter";
+import { IntakeRouterV2 } from "~@reentry/frontend/components/intake/IntakeRouterV2";
+import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
+import { IntakeSocketProvider } from "~@reentry/frontend/websockets/IntakeSocketContext";
+import { IntakeSocketProviderV2 } from "~@reentry/frontend/websockets/IntakeSocketContextV2";
 
 export default function Intake() {
-	const [loading, setLoading] = useState(true);
-	const [authorized, setAuthorized] = useState(false);
-	const [storedToken, setStoredToken] = useState<string | null>(null);
-	useEffect(() => {
-		const storedToken = sessionStorage.getItem("intake_token");
+  const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+  const [storedToken, setStoredToken] = useState<string | null>(null);
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem("intake_token");
 
-		if (storedToken) {
-			setStoredToken(storedToken);
-			setAuthorized(true);
-			setLoading(false);
-		} else {
-			setAuthorized(false);
-			setLoading(false);
-		}
-	}, []);
+    if (storedToken) {
+      setStoredToken(storedToken);
+      setAuthorized(true);
+      setLoading(false);
+    } else {
+      setAuthorized(false);
+      setLoading(false);
+    }
+  }, []);
 
-	if (loading) {
-		return (
-			<div className="min-h-screen flex items-center justify-center bg-gray-100">
-				<div className="animate-spin h-8 w-8 border-4 border-gray-300 rounded-full border-t-green-900" />
-			</div>
-		);
-	}
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="animate-spin h-8 w-8 border-4 border-gray-300 rounded-full border-t-green-900" />
+      </div>
+    );
+  }
 
-	if (!authorized) {
-		return (
-			<div className="min-h-screen flex items-center justify-center">
-				<ConfirmBirthdate mode={"nonPseudoId"} />
-			</div>
-		);
-	}
+  if (!authorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        {IS_V2_INTAKE_CHAT ? (
+          <ConfirmBirthdateV2 mode={"nonPseudoId"} />
+        ) : (
+          <ConfirmBirthdate mode={"nonPseudoId"} />
+        )}
+      </div>
+    );
+  }
 
-	return (
-		<div style={{ width: "100%", height: "100vh" }}>
-			<IntakeSocketProvider token_from_url={storedToken}>
-				<IntakeRouter />
-			</IntakeSocketProvider>
-		</div>
-	);
+  return (
+    <div style={{ width: "100%", height: "100vh" }}>
+      {IS_V2_INTAKE_CHAT ? (
+        <IntakeSocketProviderV2 token_from_url={storedToken}>
+          <IntakeRouterV2 />
+        </IntakeSocketProviderV2>
+      ) : (
+        <IntakeSocketProvider token_from_url={storedToken}>
+          <IntakeRouter />
+        </IntakeSocketProvider>
+      )}
+    </div>
+  );
 }

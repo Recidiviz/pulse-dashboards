@@ -20,149 +20,152 @@ import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 
-import { $api } from "@/app/api";
-import PrimaryButton from "@/app/components/buttons/PrimaryButton";
-import { useAuth } from "@/app/lib/auth";
-import { showErrorToast, showSuccessToast } from "@/app/utils/toast";
+import { $api } from "~@reentry/frontend/api";
+import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
+import { useAuth } from "~@reentry/frontend/lib/auth";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "~@reentry/frontend/utils/toast";
 
 interface AudioRecordingsProps {
-	clientId: string;
+  clientId: string;
 }
 
 const AudioRecordings: React.FC<AudioRecordingsProps> = ({ clientId }) => {
-	const { getAccessToken } = useAuth();
-	const router = useRouter();
-	const [isCreating, setIsCreating] = useState(false);
+  const { getAccessToken } = useAuth();
+  const router = useRouter();
+  const [isCreating, setIsCreating] = useState(false);
 
-	// Fetch recording sessions for the client
-	const {
-		data: sessions,
-		isLoading,
-		error,
-		refetch,
-	} = $api.useQuery("get", "/recordings/sessions/clients/{client_id}", {
-		params: { path: { client_id: clientId } },
-		headers: {
-			Authorization: `Bearer ${getAccessToken()}`,
-			"Content-Type": "application/json",
-		},
-	});
+  // Fetch recording sessions for the client
+  const {
+    data: sessions,
+    isLoading,
+    error,
+    refetch,
+  } = $api.useQuery("get", "/recordings/sessions/clients/{client_id}", {
+    params: { path: { client_id: clientId } },
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+      "Content-Type": "application/json",
+    },
+  });
 
-	// Create new recording session mutation
-	const { mutateAsync: createSession } = $api.useMutation(
-		"post",
-		"/recordings/sessions",
-	);
+  // Create new recording session mutation
+  const { mutateAsync: createSession } = $api.useMutation(
+    "post",
+    "/recordings/sessions",
+  );
 
-	const handleCreateSession = async () => {
-		setIsCreating(true);
-		try {
-			const newSession = await createSession({
-				body: { client_id: clientId },
-				headers: {
-					Authorization: `Bearer ${getAccessToken()}`,
-					"Content-Type": "application/json",
-				},
-			});
-			showSuccessToast("Recording session created successfully");
+  const handleCreateSession = async () => {
+    setIsCreating(true);
+    try {
+      const newSession = await createSession({
+        body: { client_id: clientId },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+      showSuccessToast("Recording session created successfully");
 
-			// Navigate to the new session page
-			if (newSession?.id) {
-				router.push(`/clients/audio-recording/${clientId}/${newSession.id}`);
-			} else {
-				refetch(); // Fallback: refresh the sessions list
-			}
-		} catch (error) {
-			console.error("Error creating recording session:", error);
-			showErrorToast("Failed to create recording session");
-		} finally {
-			setIsCreating(false);
-		}
-	};
+      // Navigate to the new session page
+      if (newSession?.id) {
+        router.push(`/clients/audio-recording/${clientId}/${newSession.id}`);
+      } else {
+        refetch(); // Fallback: refresh the sessions list
+      }
+    } catch (error) {
+      console.error("Error creating recording session:", error);
+      showErrorToast("Failed to create recording session");
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
-	const handleSessionClick = (sessionId: string) => {
-		router.push(`/clients/audio-recording/${clientId}/${sessionId}`);
-	};
+  const handleSessionClick = (sessionId: string) => {
+    router.push(`/clients/audio-recording/${clientId}/${sessionId}`);
+  };
 
-	// Loading state
-	if (isLoading) {
-		return (
-			<div className="bg-white rounded-lg shadow-sm p-6">
-				<div className="mb-4">
-					<Typography
-						variant="h6"
-						className="text-[#003331] text-base font-semibold"
-					>
-						Loading Audio Recordings...
-					</Typography>
-				</div>
-				<div className="flex justify-center items-center h-20">
-					<div className="w-8 h-8 border-4 border-t-[#006B66] border-[#e0f2f1] rounded-full animate-spin" />
-				</div>
-			</div>
-		);
-	}
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="mb-4">
+          <Typography
+            variant="h6"
+            className="text-[#003331] text-base font-semibold"
+          >
+            Loading Audio Recordings...
+          </Typography>
+        </div>
+        <div className="flex justify-center items-center h-20">
+          <div className="w-8 h-8 border-4 border-t-[#006B66] border-[#e0f2f1] rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
-	// Error state
-	if (error) {
-		return (
-			<div className="bg-white rounded-lg shadow-sm p-6">
-				<div className="mb-4">
-					<Typography
-						variant="h6"
-						className="text-[#003331] text-base font-semibold"
-					>
-						Audio Recording
-					</Typography>
-				</div>
-				<div className="text-red-500 text-center py-4">
-					Error loading recording sessions
-				</div>
-			</div>
-		);
-	}
+  // Error state
+  if (error) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="mb-4">
+          <Typography
+            variant="h6"
+            className="text-[#003331] text-base font-semibold"
+          >
+            Audio Recording
+          </Typography>
+        </div>
+        <div className="text-red-500 text-center py-4">
+          Error loading recording sessions
+        </div>
+      </div>
+    );
+  }
 
-	// Process sessions to show only the earliest one if multiple exist
-	const processedSessions =
-		sessions && sessions.length > 1
-			? [
-					sessions.reduce((earliest, current) =>
-						new Date(current.created_at) < new Date(earliest.created_at)
-							? current
-							: earliest,
-					),
-				]
-			: sessions;
+  // Process sessions to show only the earliest one if multiple exist
+  const processedSessions =
+    sessions && sessions.length > 1
+      ? [
+          sessions.reduce((earliest, current) =>
+            new Date(current.created_at) < new Date(earliest.created_at)
+              ? current
+              : earliest,
+          ),
+        ]
+      : sessions;
 
-	const shouldShowNewSessionButton = !sessions || sessions.length === 0;
+  const shouldShowNewSessionButton = !sessions || sessions.length === 0;
 
-	return (
-		<div className="w-full py-6 px-16">
-			{shouldShowNewSessionButton && (
-				<PrimaryButton
-					buttonText={
-						isCreating ? "Creating..." : "Begin live intake Assessment"
-					}
-					className="inline-flex w-full items-right min-w-2xl max-w-2xl px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case mb-6"
-					onClick={handleCreateSession}
-					disabled={isCreating}
-				/>
-			)}
+  return (
+    <div className="w-full py-6 px-16">
+      {shouldShowNewSessionButton && (
+        <PrimaryButton
+          buttonText={
+            isCreating ? "Creating..." : "Begin live intake Assessment"
+          }
+          className="inline-flex w-full items-right min-w-2xl max-w-2xl px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case mb-6"
+          onClick={handleCreateSession}
+          disabled={isCreating}
+        />
+      )}
 
-			<div className="space-y-4">
-				{/*Only one session available for recording at a time. so taking the earliest session.*/}
-				{processedSessions && processedSessions.length > 0 && (
-					<div className="space-y-3">
-						<PrimaryButton
-							buttonText={"Go to the assessment"}
-							className="inline-flex w-full items-right px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case mb-6"
-							onClick={() => handleSessionClick(processedSessions[0].id)}
-						/>
-					</div>
-				)}
-			</div>
-		</div>
-	);
+      <div className="space-y-4">
+        {/*Only one session available for recording at a time. so taking the earliest session.*/}
+        {processedSessions && processedSessions.length > 0 && (
+          <div className="space-y-3">
+            <PrimaryButton
+              buttonText={"Go to the assessment"}
+              className="inline-flex w-full items-right px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case mb-6"
+              onClick={() => handleSessionClick(processedSessions[0].id)}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default AudioRecordings;

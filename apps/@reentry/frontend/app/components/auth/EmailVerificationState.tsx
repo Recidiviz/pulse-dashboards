@@ -17,32 +17,30 @@
 
 "use client";
 
-import React from "react";
-
-import { useAuth } from "@/app/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth";
 
 const EmailVerificationState = () => {
-	const { logout } = useAuth();
+  const { logout } = useAuth();
 
-	return (
-		<div className="flex flex-col justify-center items-center h-screen">
-			<div className="bg-white p-6 rounded shadow-md max-w-md w-full text-center">
-				<h1 className="text-2xl font-bold mb-4">Email Verification Required</h1>
-				<p className="mb-6">
-					Please verify your email address before continuing. Check your inbox
-					for a verification email.
-				</p>
+  return (
+    <div className="flex flex-col justify-center items-center h-screen">
+      <div className="bg-white p-6 rounded shadow-md max-w-md w-full text-center">
+        <h1 className="text-2xl font-bold mb-4">Email Verification Required</h1>
+        <p className="mb-6">
+          Please verify your email address before continuing. Check your inbox
+          for a verification email.
+        </p>
 
-				<button
-					type={"button"}
-					className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded transition"
-					onClick={() => logout()}
-				>
-					Sign Out
-				</button>
-			</div>
-		</div>
-	);
+        <button
+          type={"button"}
+          className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded transition"
+          onClick={() => logout()}
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default EmailVerificationState;

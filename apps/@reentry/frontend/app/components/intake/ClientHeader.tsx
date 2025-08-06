@@ -18,39 +18,39 @@
 import { Box, Typography } from "@mui/material";
 import type React from "react";
 
-import { ClientAvatar } from "@/app/components/intake/ClientAvatar";
+import { ClientAvatar } from "~@reentry/frontend/components/intake/ClientAvatar";
 
 interface ChatHeaderProps {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	client: any;
-	className?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  client: any;
+  className?: string;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({ client, className }) => {
-	return (
-		<Box
-			className={`flex items-center gap-2 p-4 border-b border-gray-200 bg-white ${className}`}
-		>
-			<ClientAvatar client={client} />
-			<Typography
-				component="div"
-				className="font-public font-large text-[18px] leading-[160%] tracking-[-0.02em] text-[#003331]"
-			>
-				{client.full_name && (
-					<>
-						{client.full_name.given_names || ""}{" "}
-						{client.full_name.surname || ""}
-					</>
-				)}
-			</Typography>
-			<Typography
-				component="div"
-				className="font-public font-medium text-[18px] leading-[120%] tracking-[-0.02em] text-[#8BB1BA]"
-			>
-				{client.doc_id}
-			</Typography>
-		</Box>
-	);
+  return (
+    <Box
+      className={`flex items-center gap-2 p-4 border-b border-gray-200 bg-white ${className}`}
+    >
+      <ClientAvatar client={client} />
+      <Typography
+        component="div"
+        className="font-public font-large text-[18px] leading-[160%] tracking-[-0.02em] text-[#003331]"
+      >
+        {client.full_name && (
+          <>
+            {client.full_name.given_names || ""}{" "}
+            {client.full_name.surname || ""}
+          </>
+        )}
+      </Typography>
+      <Typography
+        component="div"
+        className="font-public font-medium text-[18px] leading-[120%] tracking-[-0.02em] text-[#8BB1BA]"
+      >
+        {client.doc_id}
+      </Typography>
+    </Box>
+  );
 };
 
 export default ChatHeader;

@@ -21,7 +21,8 @@
   // This is needed for ts-node to work with prisma/seed.ts
   "ts-node": {
     "compilerOptions": {
-      "module": "commonjs"
+      "module": "esnext",
+      "moduleResolution": "bundler"
     }
   },
 }

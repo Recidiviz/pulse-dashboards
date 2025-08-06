@@ -17,22 +17,22 @@
 
 "use client";
 
-import { SupportedAudioFormat } from "@/app/types/audio";
+import { SupportedAudioFormat } from "~@reentry/frontend/types/audio";
 
 export const detectMediaRecorderSupport = (): boolean => {
-	return typeof MediaRecorder !== "undefined";
+  return typeof MediaRecorder !== "undefined";
 };
 
 export const detectSupportedAudioFormat = (): SupportedAudioFormat | null => {
-	if (!detectMediaRecorderSupport()) return null;
+  if (!detectMediaRecorderSupport()) return null;
 
-	const formats = [SupportedAudioFormat.WEBM_OPUS, SupportedAudioFormat.WEBM];
+  const formats = [SupportedAudioFormat.WEBM_OPUS, SupportedAudioFormat.WEBM];
 
-	for (const format of formats) {
-		if (MediaRecorder.isTypeSupported(format)) {
-			return format;
-		}
-	}
+  for (const format of formats) {
+    if (MediaRecorder.isTypeSupported(format)) {
+      return format;
+    }
+  }
 
-	return null;
+  return null;
 };

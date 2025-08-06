@@ -21,42 +21,42 @@ import { MenuIcon, XIcon } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 
-import ChatHeader from "@/app/components/intake/ChatInterface/ChatHeader";
+import ChatHeader from "~@reentry/frontend/components/intake/ChatInterface/ChatHeader";
 
 interface MainLayoutProps {
-	sidebar: React.ReactNode;
-	content: React.ReactNode;
+  sidebar: React.ReactNode;
+  content: React.ReactNode;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ sidebar, content }) => {
-	const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-	const toggleSidebar = () => {
-		setSidebarOpen(!sidebarOpen);
-	};
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
-	return (
-		<div className="flex flex-col h-screen bg-slate-50">
-			<div className="relative max-w-full overflow-x-hidden">
-				<ChatHeader />
+  return (
+    <div className="flex flex-col h-screen bg-slate-50">
+      <div className="relative max-w-full overflow-x-hidden">
+        <ChatHeader />
 
-				<button
-					type="button"
-					onClick={toggleSidebar}
-					className="absolute top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md lg:hidden"
-					aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
-				>
-					{sidebarOpen ? (
-						<XIcon className="h-6 w-6" />
-					) : (
-						<MenuIcon className="h-6 w-6" />
-					)}
-				</button>
-			</div>
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          className="absolute top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md lg:hidden"
+          aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+        >
+          {sidebarOpen ? (
+            <XIcon className="h-6 w-6" />
+          ) : (
+            <MenuIcon className="h-6 w-6" />
+          )}
+        </button>
+      </div>
 
-			<div className="relative flex-1 flex overflow-hidden">
-				<div
-					className={`
+      <div className="relative flex-1 flex overflow-hidden">
+        <div
+          className={`
             hidden lg:block
             fixed md:relative
             inset-y-0 left-0
@@ -67,12 +67,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ sidebar, content }) => {
             transition-transform duration-300 ease-in-out
             ${sidebarOpen ? "block" : "hidden"}
           `}
-				>
-					<div className="h-full">{sidebar}</div>
-				</div>
+        >
+          <div className="h-full">{sidebar}</div>
+        </div>
 
-				<div
-					className={`
+        <div
+          className={`
 						${sidebarOpen ? "block" : "hidden"}
 						lg:hidden
 						fixed inset-0
@@ -80,15 +80,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ sidebar, content }) => {
 						z-40
 						transition-opacity duration-300
 					`}
-					onClick={() => setSidebarOpen(false)}
-				/>
+          onClick={() => setSidebarOpen(false)}
+        />
 
-				<div className="flex-1 w-full bg-[#F9FAFA] overflow-auto">
-					{content}
-				</div>
-			</div>
-		</div>
-	);
+        <div className="flex-1 w-full bg-[#F9FAFA] overflow-auto">
+          {content}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default MainLayout;

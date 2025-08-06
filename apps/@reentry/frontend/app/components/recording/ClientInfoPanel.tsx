@@ -18,68 +18,68 @@
 import { Typography } from "@mui/material";
 
 import type {
-	ClientRecordResponse,
-	RecordingSessionResponse,
-} from "@/app/types/recording";
-import { formatDateMMDDYYYY } from "@/app/utils/index";
-import { getStateName } from "@/app/utils/states";
+  ClientRecordResponse,
+  RecordingSessionResponse,
+} from "~@reentry/frontend/types/recording";
+import { formatDateMMDDYYYY } from "~@reentry/frontend/utils/index";
+import { getStateName } from "~@reentry/frontend/utils/states";
 
 interface ClientInfoPanelProps {
-	clientRecord: ClientRecordResponse;
-	sessionData: RecordingSessionResponse;
+  clientRecord: ClientRecordResponse;
+  sessionData: RecordingSessionResponse;
 }
 
 const ClientInfoPanel: React.FC<ClientInfoPanelProps> = ({
-	clientRecord,
-	sessionData,
+  clientRecord,
+  sessionData,
 }) => {
-	return (
-		<div className="p-6 border-r border-gray-200">
-			<div className="space-y-4">
-				<div>
-					<Typography className="text-[12px] font-medium leading-[120%] tracking-[-0.01em] text-[#6B7280] font-['Public_Sans'] uppercase">
-						Full Name
-					</Typography>
-					<Typography className="text-[14px] font-medium leading-[120%] tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
-						{clientRecord.full_name
-							? `${clientRecord.full_name.given_names} ${clientRecord.full_name.surname}`
-							: "N/A"}
-					</Typography>
-				</div>
+  return (
+    <div className="p-6 border-r border-gray-200">
+      <div className="space-y-4">
+        <div>
+          <Typography className="text-[12px] font-medium leading-[120%] tracking-[-0.01em] text-[#6B7280] font-['Public_Sans'] uppercase">
+            Full Name
+          </Typography>
+          <Typography className="text-[14px] font-medium leading-[120%] tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
+            {clientRecord.full_name
+              ? `${clientRecord.full_name.given_names} ${clientRecord.full_name.surname}`
+              : "N/A"}
+          </Typography>
+        </div>
 
-				<div>
-					<Typography className="text-[12px] font-medium leading-[120%] tracking-[-0.01em] text-[#6B7280] font-['Public_Sans'] uppercase">
-						Birth Date
-					</Typography>
-					<Typography className="text-[14px] font-medium leading-[120%] tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
-						{clientRecord.birthdate
-							? formatDateMMDDYYYY(new Date(clientRecord.birthdate))
-							: "N/A"}
-					</Typography>
-				</div>
+        <div>
+          <Typography className="text-[12px] font-medium leading-[120%] tracking-[-0.01em] text-[#6B7280] font-['Public_Sans'] uppercase">
+            Birth Date
+          </Typography>
+          <Typography className="text-[14px] font-medium leading-[120%] tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
+            {clientRecord.birthdate
+              ? formatDateMMDDYYYY(new Date(clientRecord.birthdate))
+              : "N/A"}
+          </Typography>
+        </div>
 
-				<div>
-					<Typography className="text-[12px] font-medium leading-[120%] tracking-[-0.01em] text-[#6B7280] font-['Public_Sans'] uppercase">
-						State
-					</Typography>
-					<Typography className="text-[14px] font-medium leading-[120%] tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
-						{clientRecord.state_code
-							? getStateName(clientRecord.state_code)
-							: "N/A"}
-					</Typography>
-				</div>
+        <div>
+          <Typography className="text-[12px] font-medium leading-[120%] tracking-[-0.01em] text-[#6B7280] font-['Public_Sans'] uppercase">
+            State
+          </Typography>
+          <Typography className="text-[14px] font-medium leading-[120%] tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
+            {clientRecord.state_code
+              ? getStateName(clientRecord.state_code)
+              : "N/A"}
+          </Typography>
+        </div>
 
-				<div>
-					<Typography className="text-[12px] font-medium leading-[120%] tracking-[-0.01em] text-[#6B7280] font-['Public_Sans'] uppercase">
-						Session Created
-					</Typography>
-					<Typography className="text-[14px] font-medium leading-[120%] tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
-						{formatDateMMDDYYYY(new Date(sessionData.created_at))}
-					</Typography>
-				</div>
-			</div>
-		</div>
-	);
+        <div>
+          <Typography className="text-[12px] font-medium leading-[120%] tracking-[-0.01em] text-[#6B7280] font-['Public_Sans'] uppercase">
+            Session Created
+          </Typography>
+          <Typography className="text-[14px] font-medium leading-[120%] tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
+            {formatDateMMDDYYYY(new Date(sessionData.created_at))}
+          </Typography>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ClientInfoPanel;

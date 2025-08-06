@@ -15,17 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import Navbar from "@/app/components/Navbar/Navbar";
+import Navbar from "~@reentry/frontend/components/Navbar/Navbar";
 
 export default function PublicLayout({
-	children,
-}: { children: React.ReactNode }) {
-	return (
-		<>
-			<main>
-				<Navbar />
-				{children}
-			</main>
-		</>
-	);
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <main>
+        <Navbar />
+        {children}
+      </main>
+    </>
+  );
 }

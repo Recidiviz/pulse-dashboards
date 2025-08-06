@@ -18,9 +18,9 @@
 import type React from "react";
 import { useEffect, useMemo } from "react";
 
-import TranscriptionConversation from "@/app/components/transcription/TranscriptionConversation";
-import { useRecordingSessionStatus } from "@/app/hooks/useRecordingSessionStatus";
-import type { components } from "@/app/recidiviz-schema";
+import TranscriptionConversation from "~@reentry/frontend/components/transcription/TranscriptionConversation";
+import { useRecordingSessionStatus } from "~@reentry/frontend/hooks/useRecordingSessionStatus";
+import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 type RecordingSession = components["schemas"]["RecordingSessionResponse"];
 

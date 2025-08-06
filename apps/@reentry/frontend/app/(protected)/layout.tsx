@@ -18,31 +18,31 @@
 "use client";
 import { usePathname } from "next/navigation";
 
-import Navbar from "@/app/components/Navbar/Navbar";
-import { ProtectedRoute } from "@/app/lib/auth";
+import Navbar from "~@reentry/frontend/components/Navbar/Navbar";
+import { ProtectedRoute } from "~@reentry/frontend/lib/auth";
 
 export default function ProtectedLayout({ children }) {
-	const pathname = usePathname();
+  const pathname = usePathname();
 
-	// Exclude specific routes from the layout (not using the Navbar)
-	const routesWithoutLayout = ["/clients/audio-recording"];
-	const shouldHideLayout = routesWithoutLayout.some((route) =>
-		pathname.startsWith(route),
-	);
-	if (shouldHideLayout) {
-		return (
-			<main className="flex flex-col h-full">
-				<ProtectedRoute>{children}</ProtectedRoute>
-			</main>
-		);
-	}
+  // Exclude specific routes from the layout (not using the Navbar)
+  const routesWithoutLayout = ["/clients/audio-recording"];
+  const shouldHideLayout = routesWithoutLayout.some((route) =>
+    pathname.startsWith(route),
+  );
+  if (shouldHideLayout) {
+    return (
+      <main className="flex flex-col h-full">
+        <ProtectedRoute>{children}</ProtectedRoute>
+      </main>
+    );
+  }
 
-	return (
-		<>
-			<main className="flex flex-col h-full">
-				<Navbar />
-				<ProtectedRoute>{children}</ProtectedRoute>
-			</main>
-		</>
-	);
+  return (
+    <>
+      <main className="flex flex-col h-full">
+        <Navbar />
+        <ProtectedRoute>{children}</ProtectedRoute>
+      </main>
+    </>
+  );
 }

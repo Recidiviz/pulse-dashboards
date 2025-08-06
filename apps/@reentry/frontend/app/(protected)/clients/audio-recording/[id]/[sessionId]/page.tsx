@@ -21,14 +21,14 @@ import { useParams } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 
-import NavRecordingPage from "@/app/(protected)/clients/audio-recording/[id]/[sessionId]/NavRecordingPage";
-import TranscriptionAdressForm from "@/app/(protected)/clients/audio-recording/[id]/[sessionId]/TranscriptionAddressForm";
-import TranscriptionSection from "@/app/(protected)/clients/audio-recording/[id]/[sessionId]/TranscriptionSection";
-import UserSummary from "@/app/(protected)/clients/audio-recording/[id]/[sessionId]/UserSummary";
-import { $api } from "@/app/api";
-import RecordingInterface from "@/app/components/recording/RecordingInterface";
-import { QueueProvider } from "@/app/contexts/QueueContext";
-import { useAuth } from "@/app/lib/auth";
+import NavRecordingPage from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/NavRecordingPage";
+import TranscriptionAdressForm from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/TranscriptionAddressForm";
+import TranscriptionSection from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/TranscriptionSection";
+import UserSummary from "~@reentry/frontend/(protected)/clients/audio-recording/[id]/[sessionId]/UserSummary";
+import { $api } from "~@reentry/frontend/api";
+import RecordingInterface from "~@reentry/frontend/components/recording/RecordingInterface";
+import { QueueProvider } from "~@reentry/frontend/contexts/QueueContext";
+import { useAuth } from "~@reentry/frontend/lib/auth";
 
 const AudioRecordingPage: React.FC = () => {
   const { id, sessionId } = useParams() as { id: string; sessionId: string };

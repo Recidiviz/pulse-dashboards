@@ -17,57 +17,60 @@
 
 import { useEffect, useState } from "react";
 
-import type { SupportedAudioFormat } from "@/app/types/audio";
-import type { AudioCapabilities, MediaDevice } from "@/app/types/recording";
+import type { SupportedAudioFormat } from "~@reentry/frontend/types/audio";
+import type {
+  AudioCapabilities,
+  MediaDevice,
+} from "~@reentry/frontend/types/recording";
 import {
-	detectMediaRecorderSupport,
-	detectSupportedAudioFormat,
-} from "@/app/utils/audioCapabilities";
+  detectMediaRecorderSupport,
+  detectSupportedAudioFormat,
+} from "~@reentry/frontend/utils/audioCapabilities";
 
 export const useAudioCapabilities = () => {
-	const [hasMediaRecorder, setHasMediaRecorder] = useState<boolean>(false);
-	const [supportedFormat, setSupportedFormat] =
-		useState<SupportedAudioFormat | null>(null);
-	const [microphones, setMicrophones] = useState<MediaDevice[]>([]);
+  const [hasMediaRecorder, setHasMediaRecorder] = useState<boolean>(false);
+  const [supportedFormat, setSupportedFormat] =
+    useState<SupportedAudioFormat | null>(null);
+  const [microphones, setMicrophones] = useState<MediaDevice[]>([]);
 
-	useEffect(() => {
-		const mediaRecorderSupported = detectMediaRecorderSupport();
-		const audioFormat = detectSupportedAudioFormat();
+  useEffect(() => {
+    const mediaRecorderSupported = detectMediaRecorderSupport();
+    const audioFormat = detectSupportedAudioFormat();
 
-		setHasMediaRecorder(mediaRecorderSupported);
-		setSupportedFormat(audioFormat);
-	}, []);
+    setHasMediaRecorder(mediaRecorderSupported);
+    setSupportedFormat(audioFormat);
+  }, []);
 
-	useEffect(() => {
-		const loadMicrophones = async () => {
-			try {
-				await navigator.mediaDevices.getUserMedia({ audio: true });
-				const devices = await navigator.mediaDevices.enumerateDevices();
-				const audioInputs = devices
-					.filter((device) => device.kind === "audioinput")
-					.map((device) => ({
-						deviceId: device.deviceId,
-						label:
-							device.label || `Microphone ${device.deviceId.slice(0, 8)}...`,
-					}));
+  useEffect(() => {
+    const loadMicrophones = async () => {
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioInputs = devices
+          .filter((device) => device.kind === "audioinput")
+          .map((device) => ({
+            deviceId: device.deviceId,
+            label:
+              device.label || `Microphone ${device.deviceId.slice(0, 8)}...`,
+          }));
 
-				setMicrophones(audioInputs);
-			} catch (error) {
-				console.error("Error accessing microphones:", error);
-			}
-		};
+        setMicrophones(audioInputs);
+      } catch (error) {
+        console.error("Error accessing microphones:", error);
+      }
+    };
 
-		loadMicrophones();
-	}, []);
+    loadMicrophones();
+  }, []);
 
-	const audioCapabilities: AudioCapabilities = {
-		hasMediaRecorder,
-		supportedFormat,
-		isRecordingSupported: hasMediaRecorder && supportedFormat !== null,
-	};
+  const audioCapabilities: AudioCapabilities = {
+    hasMediaRecorder,
+    supportedFormat,
+    isRecordingSupported: hasMediaRecorder && supportedFormat !== null,
+  };
 
-	return {
-		...audioCapabilities,
-		microphones,
-	};
+  return {
+    ...audioCapabilities,
+    microphones,
+  };
 };

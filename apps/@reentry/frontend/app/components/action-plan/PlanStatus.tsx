@@ -17,31 +17,31 @@
 
 import Image from "next/image";
 
-import PrimaryButton from "@/app/components/buttons/PrimaryButton";
+import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 
 const PlanStatus = () => {
-	return (
-		<div className="self-stretch h-[178px] px-8 py-6 border-b border-[#2b5469]/20 flex-col justify-start items-start gap-3 flex">
-			<div className="justify-start items-center gap-2 inline-flex">
-				<div className="text-[#002321] text-sm font-medium leading-[16.80px]">
-					Plan status
-				</div>
-				<Image
-					src="/images/info_icon.svg"
-					alt="info icon"
-					width={15}
-					height={15}
-					priority
-				/>
-			</div>
-			<div className="text-[#2a5469]/90 text-sm font-medium leading-[16.80px]">
-				Last edited: Never
-			</div>
-			<div className="self-stretch flex-col justify-start items-start gap-2 flex">
-				<PrimaryButton buttonText="Save as Draft" />
-				<PrimaryButton buttonText="Save as Official Plan" />
-			</div>
-		</div>
-	);
+  return (
+    <div className="self-stretch h-[178px] px-8 py-6 border-b border-[#2b5469]/20 flex-col justify-start items-start gap-3 flex">
+      <div className="justify-start items-center gap-2 inline-flex">
+        <div className="text-[#002321] text-sm font-medium leading-[16.80px]">
+          Plan status
+        </div>
+        <Image
+          src="/images/info_icon.svg"
+          alt="info icon"
+          width={15}
+          height={15}
+          priority
+        />
+      </div>
+      <div className="text-[#2a5469]/90 text-sm font-medium leading-[16.80px]">
+        Last edited: Never
+      </div>
+      <div className="self-stretch flex-col justify-start items-start gap-2 flex">
+        <PrimaryButton buttonText="Save as Draft" />
+        <PrimaryButton buttonText="Save as Official Plan" />
+      </div>
+    </div>
+  );
 };
 export default PlanStatus;

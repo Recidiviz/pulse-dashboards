@@ -15,39 +15,39 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { $api } from "@/app/api";
-import { useAuth } from "@/app/lib/auth";
-import type { RecordingStatus } from "@/app/types/recording";
+import { $api } from "~@reentry/frontend/api";
+import { useAuth } from "~@reentry/frontend/lib/auth";
+import type { RecordingStatus } from "~@reentry/frontend/types/recording";
 
 export const useUpdateRecordingStatus = () => {
-	const { getAccessToken } = useAuth();
+  const { getAccessToken } = useAuth();
 
-	const {
-		mutateAsync: updateSessionStatus,
-		isPending,
-		error,
-	} = $api.useMutation("put", "/recordings/sessions/{session_id}/status");
+  const {
+    mutateAsync: updateSessionStatus,
+    isPending,
+    error,
+  } = $api.useMutation("put", "/recordings/sessions/{session_id}/status");
 
-	const updateStatus = async (sessionId: string, status: RecordingStatus) => {
-		try {
-			await updateSessionStatus({
-				params: { path: { session_id: sessionId } },
-				body: { status },
-				headers: {
-					Authorization: `Bearer ${getAccessToken()}`,
-					"Content-Type": "application/json",
-				},
-			});
-			console.log(`Updated session ${sessionId} status to ${status}`);
-		} catch (err) {
-			console.error(`Failed to update session status to ${status}:`, err);
-			throw err;
-		}
-	};
+  const updateStatus = async (sessionId: string, status: RecordingStatus) => {
+    try {
+      await updateSessionStatus({
+        params: { path: { session_id: sessionId } },
+        body: { status },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(`Updated session ${sessionId} status to ${status}`);
+    } catch (err) {
+      console.error(`Failed to update session status to ${status}:`, err);
+      throw err;
+    }
+  };
 
-	return {
-		updateStatus,
-		isUpdating: isPending,
-		error,
-	};
+  return {
+    updateStatus,
+    isUpdating: isPending,
+    error,
+  };
 };

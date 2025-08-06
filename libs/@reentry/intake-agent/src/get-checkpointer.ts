@@ -20,7 +20,8 @@ import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 let checkpointer: PostgresSaver | undefined;
 
 export function getLangraphCheckpointerForStateCode(stateCode: string) {
-  const dbUrl = process.env[`INTAKE_LANGGRAPH_CHECKPOINTER_URL_${stateCode}`];
+  const dbUrl =
+    process.env[`INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING_${stateCode}`];
 
   if (!dbUrl) {
     throw Error(

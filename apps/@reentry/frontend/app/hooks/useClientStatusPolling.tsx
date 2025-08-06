@@ -18,98 +18,98 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-import { $api } from "@/app/api";
-import { useAuth } from "@/app/lib/auth";
-import type { components } from "@/app/recidiviz-schema";
+import { $api } from "~@reentry/frontend/api";
+import { useAuth } from "~@reentry/frontend/lib/auth";
+import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 interface UseClientStatusPollingProps {
-	enabled: boolean;
-	interval?: number;
-	onStatusUpdate?: (
-		inProgressClients: components["schemas"]["ClientStatusUpdate"][],
-	) => void;
+  enabled: boolean;
+  interval?: number;
+  onStatusUpdate?: (
+    inProgressClients: components["schemas"]["ClientStatusUpdate"][],
+  ) => void;
 }
 
 interface UseClientStatusPollingReturn {
-	data: unknown;
-	error: unknown;
-	isPolling: boolean;
-	startPolling: () => void;
+  data: unknown;
+  error: unknown;
+  isPolling: boolean;
+  startPolling: () => void;
 }
 
 export const useClientStatusPolling = ({
-	enabled,
-	interval = 5000, // 5 seconds default
-	onStatusUpdate,
+  enabled,
+  interval = 5000, // 5 seconds default
+  onStatusUpdate,
 }: UseClientStatusPollingProps): UseClientStatusPollingReturn => {
-	const { getAccessToken } = useAuth();
-	const intervalRef = useRef<NodeJS.Timeout | null>(null);
-	const onStatusUpdateRef = useRef(onStatusUpdate);
+  const { getAccessToken } = useAuth();
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const onStatusUpdateRef = useRef(onStatusUpdate);
 
-	// Update the ref when the callback changes
-	useEffect(() => {
-		onStatusUpdateRef.current = onStatusUpdate;
-	}, [onStatusUpdate]);
+  // Update the ref when the callback changes
+  useEffect(() => {
+    onStatusUpdateRef.current = onStatusUpdate;
+  }, [onStatusUpdate]);
 
-	const { data, error, refetch } = $api.useQuery(
-		"get",
-		"/clients/status",
-		{
-			headers: {
-				Authorization: `Bearer ${getAccessToken()}`,
-				"Content-Type": "application/json",
-			},
-		},
-		{
-			enabled: false, // We'll manually trigger this
-		},
-	);
+  const { data, error, refetch } = $api.useQuery(
+    "get",
+    "/clients/status",
+    {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+    {
+      enabled: false, // We'll manually trigger this
+    },
+  );
 
-	const startPolling = () => {
-		if (intervalRef.current) return; // Already polling
+  const startPolling = () => {
+    if (intervalRef.current) return; // Already polling
 
-		const pollStatus = async () => {
-			try {
-				const result = await refetch();
-				if (result.data && onStatusUpdateRef.current) {
-					onStatusUpdateRef.current(result.data.in_progress);
-				}
-			} catch (error) {
-				console.error("Error polling client status:", error);
-			}
-		};
+    const pollStatus = async () => {
+      try {
+        const result = await refetch();
+        if (result.data && onStatusUpdateRef.current) {
+          onStatusUpdateRef.current(result.data.in_progress);
+        }
+      } catch (error) {
+        console.error("Error polling client status:", error);
+      }
+    };
 
-		// Poll immediately
-		pollStatus();
+    // Poll immediately
+    pollStatus();
 
-		// Set up interval polling
-		intervalRef.current = setInterval(pollStatus, interval);
-	};
+    // Set up interval polling
+    intervalRef.current = setInterval(pollStatus, interval);
+  };
 
-	useEffect(() => {
-		if (!enabled) {
-			if (intervalRef.current) {
-				clearInterval(intervalRef.current);
-				intervalRef.current = null;
-			}
-			return;
-		}
+  useEffect(() => {
+    if (!enabled) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
 
-		// Auto-start polling when enabled becomes true
-		startPolling();
+    // Auto-start polling when enabled becomes true
+    startPolling();
 
-		return () => {
-			if (intervalRef.current) {
-				clearInterval(intervalRef.current);
-				intervalRef.current = null;
-			}
-		};
-	}, [enabled, interval]);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [enabled, interval]);
 
-	return {
-		data,
-		error,
-		isPolling: intervalRef.current !== null,
-		startPolling,
-	};
+  return {
+    data,
+    error,
+    isPolling: intervalRef.current !== null,
+    startPolling,
+  };
 };

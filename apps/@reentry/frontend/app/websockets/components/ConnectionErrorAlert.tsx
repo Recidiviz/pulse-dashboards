@@ -21,59 +21,60 @@ import { useEffect, useState } from "react";
 import { useSocket } from "../IntakeSocketContext";
 
 export const ConnectionErrorAlert = () => {
-	const {
-		intakeContext: { connectionStatus, intakeStatus, error, disconnectReason },
-		intakeDispatchContext: { reconnect },
-	} = useSocket();
+  const {
+    intakeContext: { connectionStatus, intakeStatus, error, disconnectReason },
+    intakeDispatchContext: { reconnect },
+  } = useSocket();
 
-	const [connectingDuration, setConnectingDuration] = useState(0);
+  const [connectingDuration, setConnectingDuration] = useState(0);
 
-	// Track how long we've been in connecting state
-	useEffect(() => {
-		if (connectionStatus === "connecting") {
-			const interval = setInterval(() => {
-				setConnectingDuration((prev) => prev + 1);
-			}, 1000);
-			return () => clearInterval(interval);
-		}
-		setConnectingDuration(0);
-	}, [connectionStatus]);
-	if (
-		connectionStatus === "connected" ||
-		intakeStatus === "error" ||
-		error?.type === "api" ||
-		intakeStatus !== "in_progress"
-	) {
-		return null;
-	}
+  // Track how long we've been in connecting state
+  useEffect(() => {
+    if (connectionStatus === "connecting") {
+      const interval = setInterval(() => {
+        setConnectingDuration((prev) => prev + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+    setConnectingDuration(0);
+    return;
+  }, [connectionStatus]);
+  if (
+    connectionStatus === "connected" ||
+    intakeStatus === "error" ||
+    error?.type === "api" ||
+    intakeStatus !== "in_progress"
+  ) {
+    return null;
+  }
 
-	return (
-		<Box sx={{ width: "100%", position: "fixed", top: 0, zIndex: 1100 }}>
-			<Alert
-				severity={connectionStatus === "error" ? "warning" : "info"}
-				action={
-					connectionStatus === "error" ||
-					connectionStatus === "disconnected" ||
-					(connectionStatus === "connecting" && connectingDuration > 5) ? (
-						<Button color="inherit" size="small" onClick={reconnect}>
-							Reconnect
-						</Button>
-					) : null
-				}
-			>
-				{/* eslint-disable-next-line no-nested-ternary */}
-				{connectionStatus === "error"
-					? "Connection error - please reconnect"
-					// eslint-disable-next-line no-nested-ternary
-					: connectionStatus === "disconnected"
-						? disconnectReason || "Connection lost - please reconnect"
-						// eslint-disable-next-line no-nested-ternary
-						: connectionStatus === "connecting" && connectingDuration > 5
-							? "Connection taking longer than expected"
-							: connectionStatus === "connecting"
-								? "Connecting..."
-								: connectionStatus}
-			</Alert>
-		</Box>
-	);
+  return (
+    <Box sx={{ width: "100%", position: "fixed", top: 0, zIndex: 1100 }}>
+      <Alert
+        severity={connectionStatus === "error" ? "warning" : "info"}
+        action={
+          connectionStatus === "error" ||
+          connectionStatus === "disconnected" ||
+          (connectionStatus === "connecting" && connectingDuration > 5) ? (
+            <Button color="inherit" size="small" onClick={reconnect}>
+              Reconnect
+            </Button>
+          ) : null
+        }
+      >
+        {/* eslint-disable-next-line no-nested-ternary */}
+        {connectionStatus === "error"
+          ? "Connection error - please reconnect"
+          : // eslint-disable-next-line no-nested-ternary
+            connectionStatus === "disconnected"
+            ? disconnectReason || "Connection lost - please reconnect"
+            : // eslint-disable-next-line no-nested-ternary
+              connectionStatus === "connecting" && connectingDuration > 5
+              ? "Connection taking longer than expected"
+              : connectionStatus === "connecting"
+                ? "Connecting..."
+                : connectionStatus}
+      </Alert>
+    </Box>
+  );
 };

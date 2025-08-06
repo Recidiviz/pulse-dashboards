@@ -17,121 +17,121 @@
 
 "use client";
 
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { $api } from "@/app/api";
-import { useRecordingSessionStatus } from "@/app/hooks/useRecordingSessionStatus";
-import { useAuth } from "@/app/lib/auth";
-import { showErrorToast } from "@/app/utils/toast";
+import { $api } from "~@reentry/frontend/api";
+import { useRecordingSessionStatus } from "~@reentry/frontend/hooks/useRecordingSessionStatus";
+import { useAuth } from "~@reentry/frontend/lib/auth";
+import { showErrorToast } from "~@reentry/frontend/utils/toast";
 
 interface SimpleAudioPlayerProps {
-	sessionId: string;
-	onLoadComplete?: () => void;
-	shouldPollStatus?: boolean;
+  sessionId: string;
+  onLoadComplete?: () => void;
+  shouldPollStatus?: boolean;
 }
 
 export const SimpleAudioPlayer: React.FC<SimpleAudioPlayerProps> = ({
-	sessionId,
-	onLoadComplete,
-	shouldPollStatus = false,
+  sessionId,
+  onLoadComplete,
+  shouldPollStatus = false,
 }) => {
-	const [signedUrl, setSignedUrl] = useState<string | null>(null);
-	const [shouldLoad, setShouldLoad] = useState(false);
-	const { getAccessToken } = useAuth();
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+  const [shouldLoad, setShouldLoad] = useState(false);
+  const { getAccessToken } = useAuth();
 
-	const { statusData } = useRecordingSessionStatus(sessionId, shouldPollStatus);
+  const { statusData } = useRecordingSessionStatus(sessionId, shouldPollStatus);
 
-	const { data, isLoading, error } = $api.useQuery(
-		"get",
-		"/recordings/sessions/{session_id}/signed-url",
-		{
-			params: { path: { session_id: sessionId } },
-			headers: {
-				Authorization: `Bearer ${getAccessToken()}`,
-				"Content-Type": "application/json",
-			},
-		},
-		{
-			enabled: shouldLoad && !!sessionId,
-		},
-	);
+  const { data, isLoading, error } = $api.useQuery(
+    "get",
+    "/recordings/sessions/{session_id}/signed-url",
+    {
+      params: { path: { session_id: sessionId } },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+    {
+      enabled: shouldLoad && !!sessionId,
+    },
+  );
 
-	useEffect(() => {
-		if (statusData?.status === "completed" && !shouldLoad && !signedUrl) {
-			console.info(`Session ${sessionId} completed, auto-loading audio`);
-			setShouldLoad(true);
-		}
-	}, [statusData?.status, shouldLoad, signedUrl, sessionId]);
+  useEffect(() => {
+    if (statusData?.status === "completed" && !shouldLoad && !signedUrl) {
+      console.info(`Session ${sessionId} completed, auto-loading audio`);
+      setShouldLoad(true);
+    }
+  }, [statusData?.status, shouldLoad, signedUrl, sessionId]);
 
-	React.useEffect(() => {
-		if (data) {
-			console.info(
-				`Signed URL received for session ${sessionId}: ${data.signed_url}`,
-			);
-			setSignedUrl(data.signed_url);
-			onLoadComplete?.();
-		}
-		if (error) {
-			console.error(
-				`Failed to get signed URL for session ${sessionId}:`,
-				error,
-			);
-			showErrorToast("Failed to load audio file");
-		}
-	}, [data, error, onLoadComplete, sessionId]);
+  React.useEffect(() => {
+    if (data) {
+      console.info(
+        `Signed URL received for session ${sessionId}: ${data.signed_url}`,
+      );
+      setSignedUrl(data.signed_url);
+      onLoadComplete?.();
+    }
+    if (error) {
+      console.error(
+        `Failed to get signed URL for session ${sessionId}:`,
+        error,
+      );
+      showErrorToast("Failed to load audio file");
+    }
+  }, [data, error, onLoadComplete, sessionId]);
 
-	const isRecordingComplete = statusData?.status === "completed";
+  const isRecordingComplete = statusData?.status === "completed";
 
-	return (
-		<div className="simple-audio-player border rounded-lg p-4">
-			{signedUrl ? (
-				<div className="space-y-4">
-					<audio
-						controls
-						src={signedUrl}
-						className="w-full"
-						preload="metadata"
-						onLoadStart={() =>
-							console.info(`Audio element loading from: ${signedUrl}`)
-						}
-						onCanPlay={() =>
-							console.info(`Audio file ready for playback: ${signedUrl}`)
-						}
-						onError={(e) =>
-							console.error(`Audio playback error for ${signedUrl}:`, e)
-						}
-					>
-						<track kind="captions" src="" label="No captions available" />
-						Your browser does not support audio playback.
-					</audio>
-				</div>
-			) : (
-				<div className="space-y-4">
-					<div className="bg-gray-100 rounded-lg p-4">
-						<audio
-							controls={isRecordingComplete}
-							className={`w-full ${!isRecordingComplete ? "opacity-50 cursor-not-allowed" : ""}`}
-						>
-							<track kind="captions" src="" label="No captions available" />
-							Your browser does not support audio playback.
-						</audio>
-						<p className="text-sm text-gray-600 mt-2">
-							{/* eslint-disable-next-line no-nested-ternary */}
-							{isRecordingComplete
-								? isLoading
-									? "Loading audio..."
-									: "Recording ready for playback."
-								: "Audio player will be available when recording is completed."}
-						</p>
-					</div>
+  return (
+    <div className="simple-audio-player border rounded-lg p-4">
+      {signedUrl ? (
+        <div className="space-y-4">
+          <audio
+            controls
+            src={signedUrl}
+            className="w-full"
+            preload="metadata"
+            onLoadStart={() =>
+              console.info(`Audio element loading from: ${signedUrl}`)
+            }
+            onCanPlay={() =>
+              console.info(`Audio file ready for playback: ${signedUrl}`)
+            }
+            onError={(e) =>
+              console.error(`Audio playback error for ${signedUrl}:`, e)
+            }
+          >
+            <track kind="captions" src="" label="No captions available" />
+            Your browser does not support audio playback.
+          </audio>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="bg-gray-100 rounded-lg p-4">
+            <audio
+              controls={isRecordingComplete}
+              className={`w-full ${!isRecordingComplete ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              <track kind="captions" src="" label="No captions available" />
+              Your browser does not support audio playback.
+            </audio>
+            <p className="text-sm text-gray-600 mt-2">
+              {/* eslint-disable-next-line no-nested-ternary */}
+              {isRecordingComplete
+                ? isLoading
+                  ? "Loading audio..."
+                  : "Recording ready for playback."
+                : "Audio player will be available when recording is completed."}
+            </p>
+          </div>
 
-					{isLoading && (
-						<div className="flex justify-center">
-							<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
-						</div>
-					)}
-				</div>
-			)}
-		</div>
-	);
+          {isLoading && (
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };

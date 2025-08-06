@@ -20,11 +20,11 @@
 import { useParams } from "next/navigation";
 import { FiMessageSquare } from "react-icons/fi";
 
-import AdminIntakeHistory from "@/app/(protected)/clients/intake/[id]/AdminIntakeHistory";
-import { $api } from "@/app/api";
-import ProfileDetail from "@/app/components/action-plan/ProfileDetail";
-import Summary from "@/app/components/intake/Summary";
-import { useAuth } from "@/app/lib/auth";
+import AdminIntakeHistory from "~@reentry/frontend/(protected)/clients/intake/[id]/AdminIntakeHistory";
+import { $api } from "~@reentry/frontend/api";
+import ProfileDetail from "~@reentry/frontend/components/action-plan/ProfileDetail";
+import Summary from "~@reentry/frontend/components/intake/Summary";
+import { useAuth } from "~@reentry/frontend/lib/auth";
 
 const IntakeManagementPage = () => {
   const { id } = useParams() as { id: string };

@@ -19,65 +19,65 @@ import { FormControl, MenuItem } from "@mui/material";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import { useEffect, useState } from "react";
 
-import type { Action } from "@/app/types";
+import type { Action } from "~@reentry/frontend/types";
 
 const ResourceAction = ({ action, _idx }: { action: Action; _idx: number }) => {
-	const [internalAction, setInternalAction] = useState<null | Action>(null);
-	useEffect(() => {
-		setInternalAction(action);
-	}, [action]);
+  const [internalAction, setInternalAction] = useState<null | Action>(null);
+  useEffect(() => {
+    setInternalAction(action);
+  }, [action]);
 
-	const handleChange = (event: SelectChangeEvent) => {
-		if (internalAction) {
-			setInternalAction({
-				...internalAction,
-				value: event.target.value as string,
-			});
-		}
-	};
-	return (
-		internalAction && (
-			<div
-				key={`resources-action-${_idx}`}
-				className="flex flex-row justify-between items-center my-5"
-			>
-				<div>
-					<span className="font-bold">{internalAction.title}</span>
-					<p className="font-light">{internalAction.subtitle}</p>
-				</div>
-				<div>
-					<FormControl sx={{ m: 1, minWidth: 120 }}>
-						<Select
-							inputProps={{ "aria-label": "Without label" }}
-							sx={{ borderRadius: "20px", height: "35px", color: "#7c7c7c" }}
-							value={internalAction.value}
-							onChange={handleChange}
-						>
-							<MenuItem value="Action">
-								<em>Action</em>
-							</MenuItem>
-							{internalAction.options.map((option, _optionidx) => (
-								<MenuItem
-									key={`resources-action-option-${_idx}-${_optionidx}`}
-									value={option.key}
-								>
-									{option.label}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
-				</div>
-			</div>
-		)
-	);
+  const handleChange = (event: SelectChangeEvent) => {
+    if (internalAction) {
+      setInternalAction({
+        ...internalAction,
+        value: event.target.value as string,
+      });
+    }
+  };
+  return (
+    internalAction && (
+      <div
+        key={`resources-action-${_idx}`}
+        className="flex flex-row justify-between items-center my-5"
+      >
+        <div>
+          <span className="font-bold">{internalAction.title}</span>
+          <p className="font-light">{internalAction.subtitle}</p>
+        </div>
+        <div>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            <Select
+              inputProps={{ "aria-label": "Without label" }}
+              sx={{ borderRadius: "20px", height: "35px", color: "#7c7c7c" }}
+              value={internalAction.value}
+              onChange={handleChange}
+            >
+              <MenuItem value="Action">
+                <em>Action</em>
+              </MenuItem>
+              {internalAction.options.map((option, _optionidx) => (
+                <MenuItem
+                  key={`resources-action-option-${_idx}-${_optionidx}`}
+                  value={option.key}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+      </div>
+    )
+  );
 };
 
 export const Resources = ({ actions }: { actions: Action[] }) => {
-	return actions.map((action, _idx) => (
-		<ResourceAction
-			key={`resource-action-${_idx}`}
-			action={action}
-			_idx={_idx}
-		/>
-	));
+  return actions.map((action, _idx) => (
+    <ResourceAction
+      key={`resource-action-${_idx}`}
+      action={action}
+      _idx={_idx}
+    />
+  ));
 };

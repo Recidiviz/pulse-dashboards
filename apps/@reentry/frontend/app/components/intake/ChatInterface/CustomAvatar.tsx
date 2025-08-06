@@ -19,62 +19,62 @@ import { Avatar } from "@mui/material";
 import Image from "next/image";
 import type React from "react";
 
-import { useSocket } from "@/app/websockets/IntakeSocketContext";
+import { useSocket } from "~@reentry/frontend/websockets/IntakeSocketContext";
 
 interface AvatarProps {
-	size?: number;
-	name?: string;
+  size?: number;
+  name?: string;
 }
 
 const getInitials = (fullName: string): string =>
-	fullName
-		? fullName
-				.split(" ")
-				.slice(0, 2)
-				.map((n) => n.charAt(0).toUpperCase())
-				.join("")
-		: "";
+  fullName
+    ? fullName
+        .split(" ")
+        .slice(0, 2)
+        .map((n) => n.charAt(0).toUpperCase())
+        .join("")
+    : "";
 
 export const ClientAvatar: React.FC<AvatarProps> = ({ size = 32, name }) => {
-	const {
-		intakeContext: { client_name },
-	} = useSocket();
+  const {
+    intakeContext: { client_name },
+  } = useSocket();
 
-	const clientName = client_name || name;
-	const userInitials = getInitials(clientName as string);
+  const clientName = client_name || name;
+  const userInitials = getInitials(clientName as string);
 
-	return (
-		<Avatar
-			sx={{
-				width: size,
-				height: size,
-			}}
-			variant="circular"
-			className={`
+  return (
+    <Avatar
+      sx={{
+        width: size,
+        height: size,
+      }}
+      variant="circular"
+      className={`
         ring-1 ring-transparent ring-inset
         shadow-[0_0_11.74px_rgba(0,0,0,0.12)]
         rounded-full flex items-center justify-center z-[1]
       `}
-			style={{
-				background: "linear-gradient(20turn,#285386 35%, #a2d1db 100%)",
-				backgroundBlendMode: "darken",
-			}}
-		>
-			<span className="font-public font-bold text-[14px] leading-[24px] tracking-[0.02em] text-center text-[rgba(255,255,255,1)] top-2">
-				{userInitials}
-			</span>
-		</Avatar>
-	);
+      style={{
+        background: "linear-gradient(20turn,#285386 35%, #a2d1db 100%)",
+        backgroundBlendMode: "darken",
+      }}
+    >
+      <span className="font-public font-bold text-[14px] leading-[24px] tracking-[0.02em] text-center text-[rgba(255,255,255,1)] top-2">
+        {userInitials}
+      </span>
+    </Avatar>
+  );
 };
 
 export const CaseWorkerAvatar: React.FC = () => (
-	<div className="relative w-[32px] h-[32px] bg-[#FFF] rounded-full flex items-center justify-center border-[0.5px] gap-2">
-		<Image
-			src="/favicon.ico"
-			alt="caseworker"
-			width={22}
-			height={22}
-			priority
-		/>
-	</div>
+  <div className="relative w-[32px] h-[32px] bg-[#FFF] rounded-full flex items-center justify-center border-[0.5px] gap-2">
+    <Image
+      src="/favicon.ico"
+      alt="caseworker"
+      width={22}
+      height={22}
+      priority
+    />
+  </div>
 );

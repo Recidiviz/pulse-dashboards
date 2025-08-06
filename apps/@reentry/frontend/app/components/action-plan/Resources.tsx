@@ -17,71 +17,71 @@
 
 import Image from "next/image";
 
-import type { components } from "@/app/recidiviz-schema";
+import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 import ResourcesList from "./ResourcesList";
 
 export type ResourcesProps = {
-	handleOpenResourceSection: () => void;
-	openResourceSection: boolean;
-	selectedResource: components["schemas"]["Resource"] | null | undefined;
-	candidateResource: components["schemas"]["Resource"] | null | undefined;
-	relatedResources: components["schemas"]["Resource"][] | null | undefined;
-	planResources?: components["schemas"]["Resource"][] | null | undefined;
-	relatedResourcesLoading: boolean;
-	handleSelectResource: (r: components["schemas"]["Resource"]) => void;
+  handleOpenResourceSection: () => void;
+  openResourceSection: boolean;
+  selectedResource: components["schemas"]["Resource"] | null | undefined;
+  candidateResource: components["schemas"]["Resource"] | null | undefined;
+  relatedResources: components["schemas"]["Resource"][] | null | undefined;
+  planResources?: components["schemas"]["Resource"][] | null | undefined;
+  relatedResourcesLoading: boolean;
+  handleSelectResource: (r: components["schemas"]["Resource"]) => void;
 };
 
 export enum ShowResourcesEnum {
-	planResources = 0,
-	relatedResources = 1,
+  planResources = 0,
+  relatedResources = 1,
 }
 const Resources = ({
-	handleOpenResourceSection,
-	openResourceSection,
-	selectedResource,
-	candidateResource,
-	relatedResourcesLoading,
-	planResources,
-	handleSelectResource,
-	relatedResources,
+  handleOpenResourceSection,
+  openResourceSection,
+  selectedResource,
+  candidateResource,
+  relatedResourcesLoading,
+  planResources,
+  handleSelectResource,
+  relatedResources,
 }: ResourcesProps) => {
-	return (
-		<div className="self-stretch h-auto max-h-[320px] px-2 md:px-8 py-6 border-b border-[#2b5469]/20 flex-col justify-start items-start gap-3 flex ">
-			<div className="justify-start items-center gap-2 inline-flex w-full">
-				<div className="text-[#002321] text-sm font-medium leading-[16.80px]">
-					Resources
-				</div>
-				<Image
-					src="/images/info_icon.svg"
-					alt="info icon"
-					width={15}
-					height={15}
-					priority
-				/>
-				<div className={"flex w-full items-end justify-end"}>
-					<Image
-						src={"/images/arrow_down.svg"}
-						alt="toggle arrow"
-						width={10}
-						height={10}
-						priority
-						onClick={handleOpenResourceSection}
-						className={`cursor-pointer transition-transform duration-200 ${!openResourceSection ? "-rotate-90" : ""}`}
-					/>
-				</div>
-			</div>
-			{openResourceSection && (
-				<ResourcesList
-					selectedResource={selectedResource}
-					candidateResource={candidateResource}
-					relatedResourcesLoading={relatedResourcesLoading}
-					planResources={planResources}
-					handleSelectResource={handleSelectResource}
-					relatedResources={relatedResources}
-				/>
-			)}
-		</div>
-	);
+  return (
+    <div className="self-stretch h-auto max-h-[320px] px-2 md:px-8 py-6 border-b border-[#2b5469]/20 flex-col justify-start items-start gap-3 flex ">
+      <div className="justify-start items-center gap-2 inline-flex w-full">
+        <div className="text-[#002321] text-sm font-medium leading-[16.80px]">
+          Resources
+        </div>
+        <Image
+          src="/images/info_icon.svg"
+          alt="info icon"
+          width={15}
+          height={15}
+          priority
+        />
+        <div className={"flex w-full items-end justify-end"}>
+          <Image
+            src={"/images/arrow_down.svg"}
+            alt="toggle arrow"
+            width={10}
+            height={10}
+            priority
+            onClick={handleOpenResourceSection}
+            className={`cursor-pointer transition-transform duration-200 ${!openResourceSection ? "-rotate-90" : ""}`}
+          />
+        </div>
+      </div>
+      {openResourceSection && (
+        <ResourcesList
+          selectedResource={selectedResource}
+          candidateResource={candidateResource}
+          relatedResourcesLoading={relatedResourcesLoading}
+          planResources={planResources}
+          handleSelectResource={handleSelectResource}
+          relatedResources={relatedResources}
+        />
+      )}
+    </div>
+  );
 };
 export default Resources;

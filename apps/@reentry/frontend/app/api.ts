@@ -20,12 +20,12 @@
 import createFetchClient from "openapi-fetch";
 import createClient from "openapi-react-query";
 
-import type { paths } from "@/app/recidiviz-schema";
+import type { paths } from "~@reentry/frontend/recidiviz-schema";
 
 import { BACKEND_URL } from "./constants";
 
 const fetchClient = createFetchClient<paths>({
-	baseUrl: BACKEND_URL,
+  baseUrl: BACKEND_URL,
 });
 export const $api = createClient(fetchClient);
 

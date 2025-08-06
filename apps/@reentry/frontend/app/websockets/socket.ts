@@ -16,29 +16,29 @@
 // =============================================================================
 
 "use client";
-import { io,type Socket } from "socket.io-client";
+import { io, type Socket } from "socket.io-client";
 
-import { BACKEND_URL } from "@/app/constants";
+import { BACKEND_URL } from "~@reentry/frontend/constants";
 
 import type { ClientToServerEvents, ServerToClientEvents } from "./eventTypes";
 
 const getUserAgent = (): string => {
-	if (typeof window !== "undefined" && typeof navigator !== "undefined") {
-		return navigator.userAgent;
-	}
-	return "Unknown";
+  if (typeof window !== "undefined" && typeof navigator !== "undefined") {
+    return navigator.userAgent;
+  }
+  return "Unknown";
 };
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-	`${BACKEND_URL}`,
-	{
-		autoConnect: false,
-		path: "/socket.io",
-		transports: ["websocket"],
-		// Add custom headers to ensure environment data is preserved during reconnections
-		extraHeaders: {
-			"User-Agent": getUserAgent(),
-			"X-Client-Environment": "browser",
-		},
-	},
+  `${BACKEND_URL}`,
+  {
+    autoConnect: false,
+    path: "/socket.io",
+    transports: ["websocket"],
+    // Add custom headers to ensure environment data is preserved during reconnections
+    extraHeaders: {
+      "User-Agent": getUserAgent(),
+      "X-Client-Environment": "browser",
+    },
+  },
 );

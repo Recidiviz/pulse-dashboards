@@ -17,455 +17,455 @@
 
 "use client";
 import {
-	ArrowDropDown,
-	ArrowDropUp,
-	FilterList,
-	Search,
+  ArrowDropDown,
+  ArrowDropUp,
+  FilterList,
+  Search,
 } from "@mui/icons-material";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useCallback, useMemo,useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import DataTable from "react-data-table-component";
 
-import { $api } from "@/app/api";
-import CustomPagination from "@/app/components/base/CustomPagination";
-import { IconInput } from "@/app/components/base/SortingInput";
-import ActionButton from "@/app/components/clients/ActionButton";
-import { useClientStatusPolling } from "@/app/hooks/useClientStatusPolling";
-import { useAuth } from "@/app/lib/auth";
-import type { components } from "@/app/recidiviz-schema";
+import { $api } from "~@reentry/frontend/api";
+import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
+import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
+import ActionButton from "~@reentry/frontend/components/clients/ActionButton";
+import { useClientStatusPolling } from "~@reentry/frontend/hooks/useClientStatusPolling";
+import { useAuth } from "~@reentry/frontend/lib/auth";
+import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 // Styles
 const customStyles = {
-	header: {
-		style: {
-			minHeight: "56px",
-			backgroundColor: "#f8fafc",
-		},
-	},
-	rows: {
-		style: {
-			minHeight: "72px",
-			borderBottomColor: "#2b5469/10",
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			overflowY: "auto" as any,
-		},
-	},
-	headCells: {
-		style: {
-			paddingLeft: "16px",
-			paddingRight: "16px",
-			fontWeight: "500",
-			fontSize: "14px",
-			color: "#2b5469",
-			backgroundColor: "#fff",
-			borderBottomColor: "#2b5469/30",
-			borderBottomWidth: "1.5px",
-			opacity: 1,
-			display: "flex",
-			alignItems: "center",
-			gap: "4px",
-		},
-	},
-	cells: {
-		style: {
-			paddingLeft: "16px",
-			paddingRight: "16px",
-		},
-	},
+  header: {
+    style: {
+      minHeight: "56px",
+      backgroundColor: "#f8fafc",
+    },
+  },
+  rows: {
+    style: {
+      minHeight: "72px",
+      borderBottomColor: "#2b5469/10",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      overflowY: "auto" as any,
+    },
+  },
+  headCells: {
+    style: {
+      paddingLeft: "16px",
+      paddingRight: "16px",
+      fontWeight: "500",
+      fontSize: "14px",
+      color: "#2b5469",
+      backgroundColor: "#fff",
+      borderBottomColor: "#2b5469/30",
+      borderBottomWidth: "1.5px",
+      opacity: 1,
+      display: "flex",
+      alignItems: "center",
+      gap: "4px",
+    },
+  },
+  cells: {
+    style: {
+      paddingLeft: "16px",
+      paddingRight: "16px",
+    },
+  },
 };
 
 const SortIcon = () => (
-	<div className="relative flex flex-col items-center w-4 h-6 text-slate-400 mt-1">
-		<ArrowDropDown className="absolute bottom-2 h-6 w-6 rotate-180" />
-		<ArrowDropUp className="absolute bottom-0.5 h-6 w-6" />
-	</div>
+  <div className="relative flex flex-col items-center w-4 h-6 text-slate-400 mt-1">
+    <ArrowDropDown className="absolute bottom-2 h-6 w-6 rotate-180" />
+    <ArrowDropUp className="absolute bottom-0.5 h-6 w-6" />
+  </div>
 );
 
 // Formatting
 const formatInitials = (row: components["schemas"]["ClientResponse"]) => {
-	if (!row.client || !row.client.full_name) return null;
-	return row.client.full_name.given_names.charAt(0);
+  if (!row.client || !row.client.full_name) return null;
+  return row.client.full_name.given_names.charAt(0);
 };
 
 const formatName = (row: components["schemas"]["ClientResponse"]) => {
-	if (!row.client || !row.client.full_name) return null;
-	return `${row.client.full_name.given_names} ${row.client.full_name.surname}`;
+  if (!row.client || !row.client.full_name) return null;
+  return `${row.client.full_name.given_names} ${row.client.full_name.surname}`;
 };
 
 const formatFrontendStatus = (status: string) => {
-	const statusMap: Record<string, string> = {
-		new: "New",
-		intake_enabled: "Intake Enabled",
-		intake_in_progress: "Intake In Progress",
-		processing: "Processing",
-		intake_complete: "Intake Complete",
-		error: "Error",
-		unknown: "Unknown",
-	};
-	return statusMap[status] || "Unknown";
+  const statusMap: Record<string, string> = {
+    new: "New",
+    intake_enabled: "Intake Enabled",
+    intake_in_progress: "Intake In Progress",
+    processing: "Processing",
+    intake_complete: "Intake Complete",
+    error: "Error",
+    unknown: "Unknown",
+  };
+  return statusMap[status] || "Unknown";
 };
 
 const ClientsPage = () => {
-	const searchParams = useSearchParams();
-	const router = useRouter();
-	const rowsPerPage = 10;
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const rowsPerPage = 10;
 
-	const [searchTerm, setSearchTerm] = useState("");
-	const [activeSearchTerm, setActiveSearchTerm] = useState("");
-	const [statusFilter, setStatusFilter] = useState("");
-	const [sortBy, setSortBy] = useState("");
-	const [sortOrder, setSortOrder] = useState("asc");
-	const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
-	const [activeRowId, setActiveRowId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeSearchTerm, setActiveSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [activeRowId, setActiveRowId] = useState<string | null>(null);
 
-	const uniqueIntakeStatusOptions = [
-		["New", "new"],
-		["Intake Enabled", "intake_enabled"],
-		["Intake In Progress", "intake_in_progress"],
-		["Processing", "processing"],
-		["Intake Complete", "intake_complete"],
-		["Error", "error"],
-	];
+  const uniqueIntakeStatusOptions = [
+    ["New", "new"],
+    ["Intake Enabled", "intake_enabled"],
+    ["Intake In Progress", "intake_in_progress"],
+    ["Processing", "processing"],
+    ["Intake Complete", "intake_complete"],
+    ["Error", "error"],
+  ];
 
-	const executeSearch = () => {
-		setActiveSearchTerm(searchTerm);
-		// Reset to page 1 when searching
-		const params = new URLSearchParams(searchParams);
-		params.set("page", "1");
-		router.push(`?${params.toString()}`);
-	};
+  const executeSearch = () => {
+    setActiveSearchTerm(searchTerm);
+    // Reset to page 1 when searching
+    const params = new URLSearchParams(searchParams);
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  };
 
-	const handleToggleDropdown = (id: string) => {
-		setOpenDropdownId((prev) => {
-			if (prev !== id) {
-				setActiveRowId(id.replace("dropdown-", ""));
-			} else {
-				setActiveRowId(null);
-			}
-			return prev === id ? null : id;
-		});
-	};
+  const handleToggleDropdown = (id: string) => {
+    setOpenDropdownId((prev) => {
+      if (prev !== id) {
+        setActiveRowId(id.replace("dropdown-", ""));
+      } else {
+        setActiveRowId(null);
+      }
+      return prev === id ? null : id;
+    });
+  };
 
-	const handleSearchKeyDown = (e) => {
-		if (e.key === "Enter") {
-			executeSearch();
-		}
-	};
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter") {
+      executeSearch();
+    }
+  };
 
-	const auth = useAuth();
+  const auth = useAuth();
 
-	// Get page from URL query parameters, default to 1
-	const page = Number(searchParams.get("page") || 1);
+  // Get page from URL query parameters, default to 1
+  const page = Number(searchParams.get("page") || 1);
 
-	const { data, error, isLoading, refetch } = $api.useQuery(
-		"get",
-		"/clients/",
-		{
-			params: {
-				query: {
-					page: page,
-					size: rowsPerPage,
-					...(activeSearchTerm && { search: activeSearchTerm }),
-					...(statusFilter && { status_filter: statusFilter }),
-					...(sortBy && { sort_by: sortBy }),
-					...(sortOrder && { sort_order: sortOrder }),
-				},
-			},
-			headers: {
-				Authorization: `Bearer ${auth.getAccessToken()}`,
-				"Content-Type": "application/json",
-			},
-		},
-	);
+  const { data, error, isLoading, refetch } = $api.useQuery(
+    "get",
+    "/clients/",
+    {
+      params: {
+        query: {
+          page: page,
+          size: rowsPerPage,
+          ...(activeSearchTerm && { search: activeSearchTerm }),
+          ...(statusFilter && { status_filter: statusFilter }),
+          ...(sortBy && { sort_by: sortBy }),
+          ...(sortOrder && { sort_order: sortOrder }),
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${auth.getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+  );
 
-	const handleSort = (column, sortDirection) => {
-		const columnMapping = {
-			NAME: "name",
-			STATUS: "status",
-		};
+  const handleSort = (column, sortDirection) => {
+    const columnMapping = {
+      NAME: "name",
+      STATUS: "status",
+    };
 
-		const apiSortBy = columnMapping[column.name];
-		if (apiSortBy) {
-			setSortBy(apiSortBy);
-			setSortOrder(sortDirection);
-		}
-	};
+    const apiSortBy = columnMapping[column.name];
+    if (apiSortBy) {
+      setSortBy(apiSortBy);
+      setSortOrder(sortDirection);
+    }
+  };
 
-	const formatDate = (dateString: string | undefined) => {
-		if (!dateString) return "-";
-		return new Date(dateString).toLocaleDateString("en-US", {
-			year: "numeric",
-			month: "short",
-			day: "numeric",
-		});
-	};
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
-	// Client Status Polling
-	// State to track status updates from polling
-	const [statusUpdates, setStatusUpdates] = useState<Map<string, string>>(
-		new Map(),
-	);
+  // Client Status Polling
+  // State to track status updates from polling
+  const [statusUpdates, setStatusUpdates] = useState<Map<string, string>>(
+    new Map(),
+  );
 
-	// Determine if any clients are in progress and need polling
-	const hasInProgressClients = useMemo(() => {
-		if (!data?.items) return false;
-		return data.items.some(
-			(client) => client.processing_status === "in_progress",
-		);
-	}, [data?.items]);
+  // Determine if any clients are in progress and need polling
+  const hasInProgressClients = useMemo(() => {
+    if (!data?.items) return false;
+    return data.items.some(
+      (client) => client.processing_status === "in_progress",
+    );
+  }, [data?.items]);
 
-	// Handle status updates from polling
-	const handleStatusUpdate = useCallback(
-		(
-			inProgressClients: Array<{
-				client_id: string;
-				processing_status: string;
-			}>,
-		) => {
-			const newUpdates = new Map<string, string>();
+  // Handle status updates from polling
+  const handleStatusUpdate = useCallback(
+    (
+      inProgressClients: Array<{
+        client_id: string;
+        processing_status: string;
+      }>,
+    ) => {
+      const newUpdates = new Map<string, string>();
 
-			// Update status for clients that are still in progress
-			for (const client of inProgressClients) {
-				newUpdates.set(client.client_id, client.processing_status);
-			}
+      // Update status for clients that are still in progress
+      for (const client of inProgressClients) {
+        newUpdates.set(client.client_id, client.processing_status);
+      }
 
-			// Check if any previously in-progress clients are no longer in the list (completed)
-			for (const [clientId, status] of statusUpdates) {
-				if (status === "in_progress" && !newUpdates.has(clientId)) {
-					// Client was in progress but is no longer - it likely completed
-					// Trigger a full refetch to get updated data
-					refetch();
-				}
-			}
+      // Check if any previously in-progress clients are no longer in the list (completed)
+      for (const [clientId, status] of statusUpdates) {
+        if (status === "in_progress" && !newUpdates.has(clientId)) {
+          // Client was in progress but is no longer - it likely completed
+          // Trigger a full refetch to get updated data
+          refetch();
+        }
+      }
 
-			setStatusUpdates(newUpdates);
-		},
-		[statusUpdates, refetch],
-	);
+      setStatusUpdates(newUpdates);
+    },
+    [statusUpdates, refetch],
+  );
 
-	// Set up polling for status updates
-	useClientStatusPolling({
-		enabled: hasInProgressClients,
-		interval: 5000, // Poll every 5 seconds
-		onStatusUpdate: handleStatusUpdate,
-	});
+  // Set up polling for status updates
+  useClientStatusPolling({
+    enabled: hasInProgressClients,
+    interval: 5000, // Poll every 5 seconds
+    onStatusUpdate: handleStatusUpdate,
+  });
 
-	if (isLoading) {
-		return (
-			<Box
-				display="flex"
-				flexDirection="column"
-				justifyContent="center"
-				alignItems="center"
-				height="100vh"
-			>
-				<CircularProgress size={40} />
-				<Typography variant="h6" sx={{ mt: 2 }}>
-					Loading intake information...
-				</Typography>
-			</Box>
-		);
-	}
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress size={40} />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Loading intake information...
+        </Typography>
+      </Box>
+    );
+  }
 
-	const columns = [
-		{
-			name: "NAME",
-			cell: (row: components["schemas"]["ClientResponse"]) => (
-				<div className="flex items-center gap-3">
-					<div className="w-10 h-10 bg-white rounded-full text-center font-bold text-[14px] flex justify-center items-center text-white bg-[url('/images/profile.png')]">
-						{formatInitials(row)}
-					</div>
-					<span className="text-[#002321] text-base font-medium">
-						{formatName(row)}
-					</span>
-				</div>
-			),
-			sortable: true,
-			grow: 2,
-		},
-		{
-			name: "DOC ID",
-			selector: (row: components["schemas"]["ClientResponse"]) =>
-				row.client?.external_client_id || "",
-			cell: (row: components["schemas"]["ClientResponse"]) => (
-				<span className="text-[#002321] text-sm">
-					{row.client?.external_client_id || "-"}
-				</span>
-			),
-			sortable: false,
-		},
-		{
-			name: "INTAKE DATE",
-			selector: (row: components["schemas"]["ClientResponse"]) =>
-				row.intake?.created_at || "",
-			cell: (row: components["schemas"]["ClientResponse"]) => (
-				<span className="text-[#002321] text-sm">
-					{row.intake?.updated_at ? formatDate(row.intake.updated_at) : "-"}
-				</span>
-			),
-			sortable: false,
-		},
-		{
-			name: "STATUS",
-			cell: (row: components["schemas"]["ClientResponse"]) => (
-				<div className="flex gap-2 items-center">
-					<span className="text-[#002321] text-sm font-medium">
-						{formatFrontendStatus(row.frontend_status)}
-					</span>
-				</div>
-			),
-			sortable: true,
-		},
-		{
-			name: "",
-			cell: (row: components["schemas"]["ClientResponse"]) => (
-				<ActionButton
-					client={row}
-					isOpen={openDropdownId === `dropdown-${row.client_id}`}
-					onToggle={() => handleToggleDropdown(`dropdown-${row.client_id}`)}
-					onRefetch={refetch}
-				/>
-			),
-			width: "50px",
-		},
-	];
+  const columns = [
+    {
+      name: "NAME",
+      cell: (row: components["schemas"]["ClientResponse"]) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white rounded-full text-center font-bold text-[14px] flex justify-center items-center text-white bg-[url('/images/profile.png')]">
+            {formatInitials(row)}
+          </div>
+          <span className="text-[#002321] text-base font-medium">
+            {formatName(row)}
+          </span>
+        </div>
+      ),
+      sortable: true,
+      grow: 2,
+    },
+    {
+      name: "DOC ID",
+      selector: (row: components["schemas"]["ClientResponse"]) =>
+        row.client?.external_client_id || "",
+      cell: (row: components["schemas"]["ClientResponse"]) => (
+        <span className="text-[#002321] text-sm">
+          {row.client?.external_client_id || "-"}
+        </span>
+      ),
+      sortable: false,
+    },
+    {
+      name: "INTAKE DATE",
+      selector: (row: components["schemas"]["ClientResponse"]) =>
+        row.intake?.created_at || "",
+      cell: (row: components["schemas"]["ClientResponse"]) => (
+        <span className="text-[#002321] text-sm">
+          {row.intake?.updated_at ? formatDate(row.intake.updated_at) : "-"}
+        </span>
+      ),
+      sortable: false,
+    },
+    {
+      name: "STATUS",
+      cell: (row: components["schemas"]["ClientResponse"]) => (
+        <div className="flex gap-2 items-center">
+          <span className="text-[#002321] text-sm font-medium">
+            {formatFrontendStatus(row.frontend_status)}
+          </span>
+        </div>
+      ),
+      sortable: true,
+    },
+    {
+      name: "",
+      cell: (row: components["schemas"]["ClientResponse"]) => (
+        <ActionButton
+          client={row}
+          isOpen={openDropdownId === `dropdown-${row.client_id}`}
+          onToggle={() => handleToggleDropdown(`dropdown-${row.client_id}`)}
+          onRefetch={refetch}
+        />
+      ),
+      width: "50px",
+    },
+  ];
 
-	return (
-		<div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
-			<div className="w-full flex-col justify-start items-start gap-8 flex sm:w-[100%] xl:w-[80%] 2xl:w-[60%]">
-				<div className="self-stretch flex-col justify-start items-start gap-2 flex">
-					<div className="self-stretch text-[#003331] text-[34px] font-normal font-['Libre Baskerville'] leading-[40.80px]  ">
-						Clients
-					</div>
-					<div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
-						<div className="text-[#2b5469]/70 text-lg font-medium leading-snug">
-							All clients on your caseload are displayed below.
-						</div>
-						<div className="flex flex-col md:flex-row gap-4 w-full max-w-md">
-							<IconInput
-								placeholder="Search by name..."
-								startIcon={
-									<button
-										type="button"
-										onClick={() => {
-											if (searchTerm.trim()) {
-												executeSearch();
-											}
-										}}
-										className="focus:outline-none"
-									>
-										<Search fontSize="small" />
-									</button>
-								}
-								value={searchTerm}
-								onChange={(e) => setSearchTerm(e.target.value)}
-								onKeyDown={handleSearchKeyDown}
-								className="h-10 text-sm border border-gray-300 rounded-md flex-1 min-w-[100px]"
-							/>
+  return (
+    <div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
+      <div className="w-full flex-col justify-start items-start gap-8 flex sm:w-[100%] xl:w-[80%] 2xl:w-[60%]">
+        <div className="self-stretch flex-col justify-start items-start gap-2 flex">
+          <div className="self-stretch text-[#003331] text-[34px] font-normal font-['Libre Baskerville'] leading-[40.80px]  ">
+            Clients
+          </div>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
+            <div className="text-[#2b5469]/70 text-lg font-medium leading-snug">
+              All clients on your caseload are displayed below.
+            </div>
+            <div className="flex flex-col md:flex-row gap-4 w-full max-w-md">
+              <IconInput
+                placeholder="Search by name..."
+                startIcon={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (searchTerm.trim()) {
+                        executeSearch();
+                      }
+                    }}
+                    className="focus:outline-none"
+                  >
+                    <Search fontSize="small" />
+                  </button>
+                }
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+                className="h-10 text-sm border border-gray-300 rounded-md flex-1 min-w-[100px]"
+              />
 
-							<div className="relative flex-1 min-w-[100px]">
-								<FilterList
-									className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-									fontSize="small"
-								/>
+              <div className="relative flex-1 min-w-[100px]">
+                <FilterList
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  fontSize="small"
+                />
 
-								<select
-									value={statusFilter}
-									onChange={(e) => {
-										setStatusFilter(e.target.value);
-										// Reset to page 1 when filter changes
-										const params = new URLSearchParams(searchParams);
-										params.set("page", "1");
-										router.push(`?${params.toString()}`);
-									}}
-									className="h-10 text-sm pl-10 pr-8 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none w-full"
-								>
-									<option value="">All</option>
-									{uniqueIntakeStatusOptions.map(([label, value]) => (
-										<option key={value} value={value}>
-											{label}
-										</option>
-									))}
-								</select>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value);
+                    // Reset to page 1 when filter changes
+                    const params = new URLSearchParams(searchParams);
+                    params.set("page", "1");
+                    router.push(`?${params.toString()}`);
+                  }}
+                  className="h-10 text-sm pl-10 pr-8 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none w-full"
+                >
+                  <option value="">All</option>
+                  {uniqueIntakeStatusOptions.map(([label, value]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
 
-								<ArrowDropDown
-									className="pointer-events-none absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"
-									fontSize="small"
-								/>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="w-full rounded-lg flex-col justify-start items-start mb-20">
-					{activeSearchTerm && (
-						<div className="text-sm text-gray-600 px-4 pt-4">
-							Showing results for {<strong>{activeSearchTerm}</strong>}
-							<button
-								type="button"
-								onClick={() => {
-									setActiveSearchTerm("");
-									setSearchTerm("");
-									// Reset to page 1 when clearing search
-									const params = new URLSearchParams(searchParams);
-									params.set("page", "1");
-									router.push(`?${params.toString()}`);
-								}}
-								className="ml-2 text-blue-500 underline text-xs"
-							>
-								Clear search
-							</button>
-						</div>
-					)}
+                <ArrowDropDown
+                  className="pointer-events-none absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  fontSize="small"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="w-full rounded-lg flex-col justify-start items-start mb-20">
+          {activeSearchTerm && (
+            <div className="text-sm text-gray-600 px-4 pt-4">
+              Showing results for {<strong>{activeSearchTerm}</strong>}
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveSearchTerm("");
+                  setSearchTerm("");
+                  // Reset to page 1 when clearing search
+                  const params = new URLSearchParams(searchParams);
+                  params.set("page", "1");
+                  router.push(`?${params.toString()}`);
+                }}
+                className="ml-2 text-blue-500 underline text-xs"
+              >
+                Clear search
+              </button>
+            </div>
+          )}
 
-					{error ? (
-						<div className="text-red-500">
-							An error occurred while loading, please try again later
-						</div>
-					) : (
-						<DataTable
-							columns={columns}
-							data={data?.items || []}
-							customStyles={customStyles}
-							sortIcon={<SortIcon />}
-							onSort={handleSort}
-							noHeader
-							responsive
-							highlightOnHover
-							noDataComponent={
-								<div className="text-gray-600 py-4 ">No clients found.</div>
-							}
-							conditionalRowStyles={[
-								{
-									when: (row) => row.client_id === activeRowId,
-									style: {
-										backgroundColor: "bg-gray-200",
-										"&:hover": {
-											backgroundColor: "bg-gray-200",
-										},
-									},
-								},
-							]}
-							pagination
-							paginationComponent={() => (
-								<CustomPagination
-									currentPage={page}
-									totalRows={data?.total || 0}
-									rowsPerPage={rowsPerPage}
-								/>
-							)}
-							onRowClicked={(row) => {
-								if (row.processing_status === "not_started") {
-									window.location.href = `/clients/intake/${row.client_id}`;
-								}
-							}}
-							pointerOnHover
-						/>
-					)}
-				</div>
-			</div>
-		</div>
-	);
+          {error ? (
+            <div className="text-red-500">
+              An error occurred while loading, please try again later
+            </div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={data?.items || []}
+              customStyles={customStyles}
+              sortIcon={<SortIcon />}
+              onSort={handleSort}
+              noHeader
+              responsive
+              highlightOnHover
+              noDataComponent={
+                <div className="text-gray-600 py-4 ">No clients found.</div>
+              }
+              conditionalRowStyles={[
+                {
+                  when: (row) => row.client_id === activeRowId,
+                  style: {
+                    backgroundColor: "bg-gray-200",
+                    "&:hover": {
+                      backgroundColor: "bg-gray-200",
+                    },
+                  },
+                },
+              ]}
+              pagination
+              paginationComponent={() => (
+                <CustomPagination
+                  currentPage={page}
+                  totalRows={data?.total || 0}
+                  rowsPerPage={rowsPerPage}
+                />
+              )}
+              onRowClicked={(row) => {
+                if (row.processing_status === "not_started") {
+                  window.location.href = `/clients/intake/${row.client_id}`;
+                }
+              }}
+              pointerOnHover
+            />
+          )}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ClientsPage;

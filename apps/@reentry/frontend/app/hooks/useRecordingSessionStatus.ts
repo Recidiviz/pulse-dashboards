@@ -15,42 +15,42 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { $api } from "@/app/api";
-import { useAuth } from "@/app/lib/auth";
-import type { RecordingSessionStatusResponse } from "@/app/types/recording";
+import { $api } from "~@reentry/frontend/api";
+import { useAuth } from "~@reentry/frontend/lib/auth";
+import type { RecordingSessionStatusResponse } from "~@reentry/frontend/types/recording";
 
 export const useRecordingSessionStatus = (
-	sessionId: string,
-	enabled = false,
+  sessionId: string,
+  enabled = false,
 ) => {
-	const { getAccessToken } = useAuth();
+  const { getAccessToken } = useAuth();
 
-	const { data, error, isLoading } = $api.useQuery(
-		"get",
-		"/recordings/sessions/{session_id}/status",
-		{
-			params: { path: { session_id: sessionId } },
-			headers: {
-				Authorization: `Bearer ${getAccessToken()}`,
-				"Content-Type": "application/json",
-			},
-		},
-		{
-			enabled,
-			refetchInterval: (query) => {
-				const status = query.state.data?.status;
-				if (status === "completed" || status === "error") {
-					return false;
-				}
-				return 3000;
-			},
-			keepPreviousData: true, // avoid flicker between sessionId changes
-		},
-	);
+  const { data, error, isLoading } = $api.useQuery(
+    "get",
+    "/recordings/sessions/{session_id}/status",
+    {
+      params: { path: { session_id: sessionId } },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+    {
+      enabled,
+      refetchInterval: (query) => {
+        const status = query.state.data?.status;
+        if (status === "completed" || status === "error") {
+          return false;
+        }
+        return 3000;
+      },
+      keepPreviousData: true, // avoid flicker between sessionId changes
+    },
+  );
 
-	return {
-		statusData: data as RecordingSessionStatusResponse | undefined,
-		isLoading,
-		error,
-	};
+  return {
+    statusData: data as RecordingSessionStatusResponse | undefined,
+    isLoading,
+    error,
+  };
 };

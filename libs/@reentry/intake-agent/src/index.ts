@@ -64,7 +64,10 @@ export class IntakeAgent {
     let lastNode;
 
     for await (const chunk of graphStream) {
-      for (const [node, values] of Object.entries(chunk)) {
+      for (const [node, values] of Object.entries(chunk) as [
+        string,
+        { messages?: BaseMessage[] },
+      ][]) {
         if (values.messages) {
           const messagesArray = Array.isArray(values.messages)
             ? values.messages

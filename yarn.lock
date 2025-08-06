@@ -10281,9 +10281,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@recidiviz/auth@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@recidiviz/auth@npm:1.0.1"
+"@recidiviz/auth@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@recidiviz/auth@npm:1.1.0"
   dependencies:
     "@auth0/auth0-spa-js": "npm:^1.22.1"
     mobx: "npm:^6.6.1"
@@ -10291,7 +10291,7 @@ __metadata:
     qs: "npm:^6.11.0"
   peerDependencies:
     react: ^17.0.0
-  checksum: 10c0/fd23dbe50a8115230ce575cfa36eea384b843f5214aacab1caa60a632376032217d0346945878769ba09f74da7de828e46cb5924e258fbe58bad92c7b9c55941
+  checksum: 10c0/0334a4d713a3d94a98d1ed8a48911b2d1ed291321b2dc24cfa8129a7a9b73531e0bf709152305dedb44af2ec31555580102f6750ae712518dbd071b954fff462
   languageName: node
   linkType: hard
 
@@ -36196,7 +36196,7 @@ __metadata:
     "@prisma/adapter-pg": "npm:^6.10.1"
     "@prisma/client": "npm:^6.10.1"
     "@react-spring/web": "npm:^9.7.4"
-    "@recidiviz/auth": "npm:^1.0.1"
+    "@recidiviz/auth": "npm:^1.1.0"
     "@recidiviz/design-system": "npm:^5.11.0"
     "@rmwc/select": "npm:^14.0.11"
     "@rmwc/textfield": "npm:^14.0.11"

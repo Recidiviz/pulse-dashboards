@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/@reentry/frontend/app",
   "projectType": "application",
+  "tags": ["scope:client"],
   "targets": {
     "lint-files": {
       "executor": "nx:run-commands",
@@ -14,9 +15,7 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "tsc -p ./tsconfig.json",
-        ],
+        "commands": ["tsc -p ./tsconfig.json"],
         "cwd": "{projectRoot}"
       }
     },

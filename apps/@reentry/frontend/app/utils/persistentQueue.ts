@@ -21,7 +21,7 @@
  * PersistentChunkQueue - Page-level singleton for audio chunk upload queue
  */
 
-import type { QueuedChunk } from "@/app/types/recording";
+import type { QueuedChunk } from "~@reentry/frontend/types/recording";
 
 interface UploadResponse {
   success: boolean;
@@ -301,6 +301,7 @@ export class PersistentChunkQueue {
 
         return "Upload in progress. Close anyway?";
       }
+      return;
     });
   }
 }

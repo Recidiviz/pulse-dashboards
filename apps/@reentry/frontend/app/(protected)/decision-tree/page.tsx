@@ -17,17 +17,17 @@
 
 import Head from "next/head";
 
-import DecisionTreeTable from "@/app/components/DecisionTrees/DecisionTreeTable";
+import DecisionTreeTable from "~@reentry/frontend/components/DecisionTrees/DecisionTreeTable";
 
 const DecisionTreesPage = () => {
-	return (
-		<div>
-			<Head>
-				<title>Decision Trees</title>
-			</Head>
-			<DecisionTreeTable />
-		</div>
-	);
+  return (
+    <div>
+      <Head>
+        <title>Decision Trees</title>
+      </Head>
+      <DecisionTreeTable />
+    </div>
+  );
 };
 
 export default DecisionTreesPage;

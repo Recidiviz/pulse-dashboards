@@ -18,60 +18,60 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { $api } from "@/app/api";
-import Breadcrumb from "@/app/components/base/Breadcrumb";
-import { useAuth } from "@/app/lib/auth";
+import { $api } from "~@reentry/frontend/api";
+import Breadcrumb from "~@reentry/frontend/components/base/Breadcrumb";
+import { useAuth } from "~@reentry/frontend/lib/auth";
 
 // Important to use dynamic import for client-side rendering
 const MermaidVisualizer = dynamic(
-	() => import("@/app/components/DecisionTrees/MermaidVisualizer"),
-	{ ssr: false },
+  () => import("~@reentry/frontend/components/DecisionTrees/MermaidVisualizer"),
+  { ssr: false },
 );
 
 const ShowDecisionTree = () => {
-	const [textAreaValue, setTextAreaValue] = useState<null | string>(null);
-	const { id } = useParams();
+  const [textAreaValue, setTextAreaValue] = useState<null | string>(null);
+  const { id } = useParams();
 
-	const { data } = $api.useQuery("get", "/decision-trees/{decision_tree_id}", {
-		params: {
-			path: {
-				decision_tree_id: id as string,
-			},
-		},
-		headers: {
-			Authorization: `Bearer ${useAuth().getAccessToken()}`,
-			"Content-Type": "application/json",
-		},
-	});
+  const { data } = $api.useQuery("get", "/decision-trees/{decision_tree_id}", {
+    params: {
+      path: {
+        decision_tree_id: id as string,
+      },
+    },
+    headers: {
+      Authorization: `Bearer ${useAuth().getAccessToken()}`,
+      "Content-Type": "application/json",
+    },
+  });
 
-	const breadcrumbRoutes = [
-		{ label: "Home", href: "/" },
-		{ label: "Decision Trees", href: "/decision-tree" },
-		{ label: `Show ${data?.name}`, href: "#" },
-	];
+  const breadcrumbRoutes = [
+    { label: "Home", href: "/" },
+    { label: "Decision Trees", href: "/decision-tree" },
+    { label: `Show ${data?.name}`, href: "#" },
+  ];
 
-	useEffect(() => {
-		if (!data) return;
-		if (data.revisions.length > 0) {
-			const currentRevision = data.revisions.find(
-				(rev) => rev.id === data.current_revision_id,
-			);
-			if (currentRevision) {
-				setTextAreaValue(currentRevision.mermaid_content);
-			}
-		}
-	}, [data]);
+  useEffect(() => {
+    if (!data) return;
+    if (data.revisions.length > 0) {
+      const currentRevision = data.revisions.find(
+        (rev) => rev.id === data.current_revision_id,
+      );
+      if (currentRevision) {
+        setTextAreaValue(currentRevision.mermaid_content);
+      }
+    }
+  }, [data]);
 
-	return (
-		<div className={"flex flex-row w-full min-h-screen bg-white"}>
-			<div className={"w-full"}>
-				<Breadcrumb routes={breadcrumbRoutes} />
-				<MermaidVisualizer chart={textAreaValue || ""} />
-			</div>
-		</div>
-	);
+  return (
+    <div className={"flex flex-row w-full min-h-screen bg-white"}>
+      <div className={"w-full"}>
+        <Breadcrumb routes={breadcrumbRoutes} />
+        <MermaidVisualizer chart={textAreaValue || ""} />
+      </div>
+    </div>
+  );
 };
 
 export default ShowDecisionTree;

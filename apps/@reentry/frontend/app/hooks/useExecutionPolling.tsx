@@ -17,92 +17,92 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useAuth } from "@/app/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth";
 
 import { $api } from "../api";
 
 interface UseExecutionPollingProps {
-	interval?: number;
+  interval?: number;
 }
 
 export const useExecutionPolling = ({
-	interval = 2000,
+  interval = 2000,
 }: UseExecutionPollingProps) => {
-	const { getAccessToken } = useAuth();
-	const [isPolling, setIsPolling] = useState(false);
-	const [isCompleted, setIsCompleted] = useState(false);
+  const { getAccessToken } = useAuth();
+  const [isPolling, setIsPolling] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
-	const [executionId, setExectionId] = useState<string | null>(null);
+  const [executionId, setExectionId] = useState<string | null>(null);
 
-	const attemptsRef = useRef(0); // to check the number of attempts done
-	const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null); // Active interval reference
+  const attemptsRef = useRef(0); // to check the number of attempts done
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null); // Active interval reference
 
-	const { data, refetch, error } = $api.useQuery(
-		"get",
-		"/executions/{execution_id}",
-		{
-			params: {
-				path: {
-					execution_id: executionId || "",
-				},
-			},
-			headers: {
-				Authorization: `Bearer ${getAccessToken()}`,
-				"Content-Type": "application/json",
-			},
-			enabled: !!executionId && isPolling && executionId.length > 0,
-		},
-	);
-	const startPolling = useCallback(
-		(executionId: string) => {
-			setExectionId(executionId);
-			setIsPolling(true);
-			setIsCompleted(false);
-			const poll = async () => {
-				attemptsRef.current += 1;
-				const { data, error } = await refetch();
+  const { data, refetch, error } = $api.useQuery(
+    "get",
+    "/executions/{execution_id}",
+    {
+      params: {
+        path: {
+          execution_id: executionId || "",
+        },
+      },
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+        "Content-Type": "application/json",
+      },
+      enabled: !!executionId && isPolling && executionId.length > 0,
+    },
+  );
+  const startPolling = useCallback(
+    (executionId: string) => {
+      setExectionId(executionId);
+      setIsPolling(true);
+      setIsCompleted(false);
+      const poll = async () => {
+        attemptsRef.current += 1;
+        const { data, error } = await refetch();
 
-				if (data && (data.status === "completed" || data.status === "failed")) {
-					if (pollingIntervalRef.current)
-						clearInterval(pollingIntervalRef.current as NodeJS.Timeout);
-					setIsPolling(false);
-					setIsCompleted(true);
-					setExectionId(null);
-				} else {
-					if (error) {
-						console.error("Error polling the execution status:", error);
-						if (pollingIntervalRef.current)
-							clearInterval(pollingIntervalRef.current as NodeJS.Timeout);
-						setIsPolling(false);
-						setExectionId(null);
-					}
-				}
-			};
+        if (data && (data.status === "completed" || data.status === "failed")) {
+          if (pollingIntervalRef.current)
+            clearInterval(pollingIntervalRef.current as NodeJS.Timeout);
+          setIsPolling(false);
+          setIsCompleted(true);
+          setExectionId(null);
+        } else {
+          if (error) {
+            console.error("Error polling the execution status:", error);
+            if (pollingIntervalRef.current)
+              clearInterval(pollingIntervalRef.current as NodeJS.Timeout);
+            setIsPolling(false);
+            setExectionId(null);
+          }
+        }
+      };
 
-			pollingIntervalRef.current = setInterval(poll, interval);
-			poll();
-		},
-		[refetch, interval],
-	);
+      pollingIntervalRef.current = setInterval(poll, interval);
+      poll();
+    },
+    [refetch, interval],
+  );
 
-	// Cleanup the interval on unmount
-	useEffect(() => {
-		return () => {
-			if (pollingIntervalRef.current) {
-				clearInterval(pollingIntervalRef.current as NodeJS.Timeout);
-			}
-		};
-	}, []);
+  // Cleanup the interval on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current as NodeJS.Timeout);
+      }
+    };
+  }, []);
 
-	return {
-		isPolling,
-		isCompleted,
-		progress: data?.progress,
-		message: data?.message,
-		error: !!isPolling && !!error,
-		startTime: data?.created_at
-			? new Date(`${data.created_at}Z`).getTime()
-			: undefined,
-		startPolling,
-	};
+  return {
+    isPolling,
+    isCompleted,
+    progress: data?.progress,
+    message: data?.message,
+    error: !!isPolling && !!error,
+    startTime: data?.created_at
+      ? new Date(`${data.created_at}Z`).getTime()
+      : undefined,
+    startPolling,
+  };
 };

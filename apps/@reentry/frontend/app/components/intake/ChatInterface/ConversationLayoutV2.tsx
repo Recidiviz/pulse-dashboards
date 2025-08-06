@@ -24,16 +24,14 @@ import ChatbotInterface from "~@reentry/frontend/components/intake/ChatInterface
 import ChatHeader from "~@reentry/frontend/components/intake/ChatInterface/ChatHeader";
 import Sidebar from "~@reentry/frontend/components/intake/ChatInterface/Sidebar";
 import { ConnectionErrorAlert } from "~@reentry/frontend/websockets/components/ConnectionErrorAlert";
-import { useSocket } from "~@reentry/frontend/websockets/IntakeSocketContext";
+import { useIntakeContext } from "~@reentry/frontend/websockets/IntakeSocketContextV2";
 
-const LinearChatComponent: React.FC = () => {
+const LinearChatComponentV2: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const {
-    intakeContext: { isLoading, error, intakeStatus },
-  } = useSocket();
+  const { isLoading, error, intakeStatus } = useIntakeContext();
 
-  if ((error && error.type === "api") || intakeStatus === "error") {
+  if (error || intakeStatus === "error") {
     return (
       <Box
         display="flex"
@@ -44,7 +42,7 @@ const LinearChatComponent: React.FC = () => {
       >
         <ConnectionErrorAlert />
         <Typography variant="h6" sx={{ mt: 2 }}>
-          {error?.message ||
+          {error ||
             "There was an issue processing your intake, please try again"}
         </Typography>
       </Box>
@@ -76,6 +74,7 @@ const LinearChatComponent: React.FC = () => {
       <div className="relative max-w-full overflow-x-hidden">
         <ChatHeader />
       </div>
+
       {/* Main content */}
       <div className="relative flex-1 flex overflow-hidden">
         {/* Sidebar */}
@@ -94,7 +93,6 @@ const LinearChatComponent: React.FC = () => {
         >
           <Sidebar onClose={() => setSidebarOpen(false)} />
         </div>
-
         {/* Overlay */}
         <div
           className={`
@@ -108,9 +106,9 @@ const LinearChatComponent: React.FC = () => {
           `}
           onClick={() => setSidebarOpen(false)}
         />
-
         {/* Chat */}
         <div className="flex-1 w-full bg-[#F9FAFA] overflow-hidden">
+          {/* TODO: Adjust to V2 and remove socket */}
           <ChatbotInterface />
         </div>
       </div>
@@ -118,4 +116,4 @@ const LinearChatComponent: React.FC = () => {
   );
 };
 
-export default LinearChatComponent;
+export default LinearChatComponentV2;

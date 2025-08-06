@@ -19,47 +19,47 @@
 
 import type React from "react";
 
-import { useAuth } from "@/app/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth";
 
 interface LoginButtonProps {
-	className?: string;
-	children?: React.ReactNode;
+  className?: string;
+  children?: React.ReactNode;
 }
 
 export default function LoginButton({ className, children }: LoginButtonProps) {
-	const { state, login, logout } = useAuth();
+  const { state, login, logout } = useAuth();
 
-	if (state.isLoading) {
-		return (
-			<button
-				type={"button"}
-				className={`bg-gray-300 text-gray-500 px-4 py-2 rounded cursor-not-allowed ${className}`}
-				disabled
-			>
-				Loading...
-			</button>
-		);
-	}
+  if (state.isLoading) {
+    return (
+      <button
+        type={"button"}
+        className={`bg-gray-300 text-gray-500 px-4 py-2 rounded cursor-not-allowed ${className}`}
+        disabled
+      >
+        Loading...
+      </button>
+    );
+  }
 
-	if (state.isAuthorized) {
-		return (
-			<button
-				type={"button"}
-				className={`bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition ${className}`}
-				onClick={() => logout()}
-			>
-				{children || "Sign Out"}
-			</button>
-		);
-	}
+  if (state.isAuthorized) {
+    return (
+      <button
+        type={"button"}
+        className={`bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition ${className}`}
+        onClick={() => logout()}
+      >
+        {children || "Sign Out"}
+      </button>
+    );
+  }
 
-	return (
-		<button
-			type={"button"}
-			className={`bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition ${className}`}
-			onClick={() => login()}
-		>
-			{children || "Sign In"}
-		</button>
-	);
+  return (
+    <button
+      type={"button"}
+      className={`bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition ${className}`}
+      onClick={() => login()}
+    >
+      {children || "Sign In"}
+    </button>
+  );
 }

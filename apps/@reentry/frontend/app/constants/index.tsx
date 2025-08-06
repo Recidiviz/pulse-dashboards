@@ -28,162 +28,162 @@ graph TD
     F --> B`;
 
 export const APP_DATA = {
-	actions: [
-		{
-			title: "ROOTS YA Shelter",
-			subtitle: "4 stars, 7 min from sis' home",
-			options: [
-				{
-					label: "Action 1",
-					key: "action1",
-				},
-				{
-					label: "Action 2",
-					key: "action2",
-				},
-				{
-					label: "Action 3",
-					key: "action3",
-				},
-				{
-					label: "Action 4",
-					key: "action4",
-				},
-			],
-		},
-		{
-			title: "YouthCare",
-			subtitle: "2.7 stars, 21 min from school",
-			options: [
-				{
-					label: "Action 1",
-					key: "action1",
-				},
-				{
-					label: "Action 2",
-					key: "action2",
-				},
-				{
-					label: "Action 3",
-					key: "action3",
-				},
-				{
-					label: "Action 4",
-					key: "action4",
-				},
-			],
-		},
-		{
-			title: "Youth Eastside Services",
-			subtitle: "4.1 stars, 14 min from school",
-			options: [
-				{
-					label: "Action 1",
-					key: "action1",
-				},
-				{
-					label: "Action 2",
-					key: "action2",
-				},
-				{
-					label: "Action 3",
-					key: "action3",
-				},
-				{
-					label: "Action 4",
-					key: "action4",
-				},
-			],
-		},
-		{
-			title: "Valley Corps",
-			subtitle: "1.7 stars, 3 min from home",
-			options: [
-				{
-					label: "Action 1",
-					key: "action1",
-				},
-				{
-					label: "Action 2",
-					key: "action1",
-				},
-				{
-					label: "Action 3",
-					key: "action1",
-				},
-				{
-					label: "Action 4",
-					key: "action1",
-				},
-			],
-		},
-	],
-	sections: [
-		{
-			title: "Goals",
-			subsections: [
-				{
-					title: "4 stars, 7 min from sis' home",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
-				},
-			],
-			text: "The primary goal is to achieve stable housing and financial independence while addressing any underlying challenges that contribute to the current situation. This includes securing safe and affordable housing, increasing income through stable employment or expanding music opportunities, and developing essential life skills. Additionally, the plan aims to support mental and emotional well-being and ensure compliance with any legal obligations.",
-		},
-		{
-			title: "Timeline",
-			text: "The action plan outlines a timeline with both short-term and long-term goals. The initial focus is on securing immediate safe housing and stabilizing income within the first month.  Education and skills development, along with mental health support, are prioritized in the first three months. Long-term goals, such as career development, financial planning, and finding stable housing, are targeted for completion within 3 to 12 months. The timeline is flexible and subject to adjustment based on individual progress and circumstances.",
-		},
-		{
-			title: "Substance use",
-			subsections: [
-				{
-					title: "Immediate steps",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
-				},
-				{
-					title: "Monitoring",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
-				},
-			],
-			text: "This section of the action plan likely focuses on addressing any potential substance use issues that may be impacting the individual's stability or hindering their progress towards their goals. It could include steps such as seeking immediate professional help if needed, developing strategies for monitoring and managing substance use, and participating in ongoing support or treatment programs. The specific details would depend on the individual's situation and needs, but the overall aim is to promote a healthy and substance-free lifestyle that supports long-term stability and success.",
-		},
-		{
-			title: "Housing",
-			subsections: [
-				{
-					title: "Short-term stability",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
-				},
-				{
-					title: "Long-term plan",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
-				},
-			],
-			text: "The action plan prioritizes securing stable housing, recognizing its crucial role in overall well-being and success. In the short term, the focus is on finding immediate safe housing, potentially through youth shelters or exploring options with family members. The long-term goal is to achieve independent living, which involves researching affordable housing options, applying for assistance if eligible, and saving for moving costs. The plan emphasizes working with Officer Kindra to develop a sustainable housing plan that aligns with the individual's financial capabilities and long-term goals.",
-		},
-		{
-			title: "Education",
-			subsections: [
-				{
-					title: "Funding",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
-				},
-				{
-					title: "Enrollment",
-					text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
-				},
-			],
-			text: "This section of the plan emphasizes the importance of education and skills development as a pathway to stability and self-sufficiency. It encourages pursuing a GED if high school hasn't been completed and exploring vocational training opportunities, particularly in music or related fields. The plan also highlights the importance of securing funding and enrollment for these educational pursuits, potentially with the assistance of Officer Kindra or other support services. The focus is on acquiring the knowledge and skills necessary to achieve long-term career goals and financial independence.",
-		},
-		{
-			title: "Resource List",
-			text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
-		},
-		{
-			title: "Using Link to Help",
-			text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
-		},
-	],
+  actions: [
+    {
+      title: "ROOTS YA Shelter",
+      subtitle: "4 stars, 7 min from sis' home",
+      options: [
+        {
+          label: "Action 1",
+          key: "action1",
+        },
+        {
+          label: "Action 2",
+          key: "action2",
+        },
+        {
+          label: "Action 3",
+          key: "action3",
+        },
+        {
+          label: "Action 4",
+          key: "action4",
+        },
+      ],
+    },
+    {
+      title: "YouthCare",
+      subtitle: "2.7 stars, 21 min from school",
+      options: [
+        {
+          label: "Action 1",
+          key: "action1",
+        },
+        {
+          label: "Action 2",
+          key: "action2",
+        },
+        {
+          label: "Action 3",
+          key: "action3",
+        },
+        {
+          label: "Action 4",
+          key: "action4",
+        },
+      ],
+    },
+    {
+      title: "Youth Eastside Services",
+      subtitle: "4.1 stars, 14 min from school",
+      options: [
+        {
+          label: "Action 1",
+          key: "action1",
+        },
+        {
+          label: "Action 2",
+          key: "action2",
+        },
+        {
+          label: "Action 3",
+          key: "action3",
+        },
+        {
+          label: "Action 4",
+          key: "action4",
+        },
+      ],
+    },
+    {
+      title: "Valley Corps",
+      subtitle: "1.7 stars, 3 min from home",
+      options: [
+        {
+          label: "Action 1",
+          key: "action1",
+        },
+        {
+          label: "Action 2",
+          key: "action1",
+        },
+        {
+          label: "Action 3",
+          key: "action1",
+        },
+        {
+          label: "Action 4",
+          key: "action1",
+        },
+      ],
+    },
+  ],
+  sections: [
+    {
+      title: "Goals",
+      subsections: [
+        {
+          title: "4 stars, 7 min from sis' home",
+          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
+        },
+      ],
+      text: "The primary goal is to achieve stable housing and financial independence while addressing any underlying challenges that contribute to the current situation. This includes securing safe and affordable housing, increasing income through stable employment or expanding music opportunities, and developing essential life skills. Additionally, the plan aims to support mental and emotional well-being and ensure compliance with any legal obligations.",
+    },
+    {
+      title: "Timeline",
+      text: "The action plan outlines a timeline with both short-term and long-term goals. The initial focus is on securing immediate safe housing and stabilizing income within the first month.  Education and skills development, along with mental health support, are prioritized in the first three months. Long-term goals, such as career development, financial planning, and finding stable housing, are targeted for completion within 3 to 12 months. The timeline is flexible and subject to adjustment based on individual progress and circumstances.",
+    },
+    {
+      title: "Substance use",
+      subsections: [
+        {
+          title: "Immediate steps",
+          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
+        },
+        {
+          title: "Monitoring",
+          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
+        },
+      ],
+      text: "This section of the action plan likely focuses on addressing any potential substance use issues that may be impacting the individual's stability or hindering their progress towards their goals. It could include steps such as seeking immediate professional help if needed, developing strategies for monitoring and managing substance use, and participating in ongoing support or treatment programs. The specific details would depend on the individual's situation and needs, but the overall aim is to promote a healthy and substance-free lifestyle that supports long-term stability and success.",
+    },
+    {
+      title: "Housing",
+      subsections: [
+        {
+          title: "Short-term stability",
+          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
+        },
+        {
+          title: "Long-term plan",
+          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
+        },
+      ],
+      text: "The action plan prioritizes securing stable housing, recognizing its crucial role in overall well-being and success. In the short term, the focus is on finding immediate safe housing, potentially through youth shelters or exploring options with family members. The long-term goal is to achieve independent living, which involves researching affordable housing options, applying for assistance if eligible, and saving for moving costs. The plan emphasizes working with Officer Kindra to develop a sustainable housing plan that aligns with the individual's financial capabilities and long-term goals.",
+    },
+    {
+      title: "Education",
+      subsections: [
+        {
+          title: "Funding",
+          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
+        },
+        {
+          title: "Enrollment",
+          text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
+        },
+      ],
+      text: "This section of the plan emphasizes the importance of education and skills development as a pathway to stability and self-sufficiency. It encourages pursuing a GED if high school hasn't been completed and exploring vocational training opportunities, particularly in music or related fields. The plan also highlights the importance of securing funding and enrollment for these educational pursuits, potentially with the assistance of Officer Kindra or other support services. The focus is on acquiring the knowledge and skills necessary to achieve long-term career goals and financial independence.",
+    },
+    {
+      title: "Resource List",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
+    },
+    {
+      title: "Using Link to Help",
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi. Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. ",
+    },
+  ],
 } as AppData;
 
 export const EXAMPLE_MARKDOWN = `
@@ -274,9 +274,9 @@ By following this structured action plan, the case officer can provide comprehen
 `;
 
 export const EXAMPLE_OUTPUT = {
-	output:
-		"# Action Plan for Allistor\n\n## Summary\nAllistor is a 17-year-old on probation for petty theft, with a four-year sentence. He is facing several challenges, including strained family relationships, educational needs, and housing insecurity. He shows interest in attending community college but lacks stable housing. His recidivism risk is medium, and his substance use risk is low.\n\n## Short-term Plan (1-3 Months)\n\n1. **Immediate Needs Assessment**\n    - No immediate danger.\n    - No need for medical attention.\n    - He has housing insecurity.\n\n2. **Housing Security**\n    - **Check availability** at SafeStay Youth Shelter: [Contact SafeStay](https://safestay.org) (Phone: 555-1234).\n    - **Refer client** to SafeStay for temporary housing.\n\n3. **Educational Pathway**\n    - **Enroll** Allistor in Cityville Community College: [Contact CCC](https://cityvillecc.edu) (Phone: 555-5678).\n    - **Check class availability** for courses that can meet probation reduction criteria.\n\n4. **Family Relationship Support**\n    - Arrange family mediation to address conflicts and strain.\n\n### Timeline for Short-term Plan Check-ins\n- **Check-in bi-weekly** with Allistor to monitor progress on housing and college enrollment.\n- **Case Officer Actions**:\n    - September 15, 2024: Verify housing arrangement with SafeStay.\n    - September 30, 2024: Confirm college enrollment and class start dates.\n    - October 15, 2024: Conduct first mediation session with the family.\n\n## Long-term Plan (3-24 Months)\n\n1. **Sustained Housing Stability**\n    - **Assist in finding permanent housing** solutions alongside employment.\n    - **Explore housing assistance programs** if income remains insufficient.\n\n2. **Educational Advancement**\n    - Monitor academic progress at college.\n    - Ensure participation in 5 quarters to meet probation reduction criteria.\n\n3. **Employment Services**\n    - **Refer to employment services** to help Allistor find a job.\n    - Develop an employment plan based on assessed job skills and education.\n\n4. **Mental Health and Substance Use**\n    - **Assess mental health needs** and provide appropriate resources if needed.\n    - Regularly check to ensure low-risk substance use remains unchanged.\n\n5. **Community and Self-Sufficiency**\n    - **Connect with community resources** for additional support.\n    - Develop a plan to achieve self-sufficiency over the probation period.\n\n### Timeline for Long-term Plan Check-ins\n- **Monthly check-ins** with Allistor to monitor progress in housing, education, and employment.\n- **Case Officer Actions**: \n    - November 1, 2024: Review housing stability.\n    - December 1, 2024: Check academic performance and employment status.\n    - January 2025: Reassess mental health and ensure community connections.\n    - Continue monthly reviews adjusting support as needed until 2026.\n\n## Resources and Providers to Connect With\n\n1. **SafeStay Youth Shelter**\n    - **Phone**: 555-1234\n    - **Website**: [SafeStay](https://safestay.org)\n    - **Services**: Temporary housing for homeless youth\n    - **Actions**: Check availability, Refer client\n\n2. **Cityville Community College**\n    - **Phone**: 555-5678\n    - **Website**: [Cityville CC](https://cityvillecc.edu)\n    - **Services**: Degree programs and vocational training\n    - **Actions**: Enroll, Check class availability\n\n## Steps for the Case Officer\n\n1. Schedule and facilitate bi-weekly and monthly check-ins with Allistor.\n2. Maintain regular contact with SafeStay Youth Shelter and Cityville Community College.\n3. Conduct family mediation and ongoing support.\n4. Oversee Allistor’s progress in the 5 quarters of community college needed for probation reduction.\n5. Regularly update risk assessments and adapt support plans accordingly.",
+  output:
+    "# Action Plan for Allistor\n\n## Summary\nAllistor is a 17-year-old on probation for petty theft, with a four-year sentence. He is facing several challenges, including strained family relationships, educational needs, and housing insecurity. He shows interest in attending community college but lacks stable housing. His recidivism risk is medium, and his substance use risk is low.\n\n## Short-term Plan (1-3 Months)\n\n1. **Immediate Needs Assessment**\n    - No immediate danger.\n    - No need for medical attention.\n    - He has housing insecurity.\n\n2. **Housing Security**\n    - **Check availability** at SafeStay Youth Shelter: [Contact SafeStay](https://safestay.org) (Phone: 555-1234).\n    - **Refer client** to SafeStay for temporary housing.\n\n3. **Educational Pathway**\n    - **Enroll** Allistor in Cityville Community College: [Contact CCC](https://cityvillecc.edu) (Phone: 555-5678).\n    - **Check class availability** for courses that can meet probation reduction criteria.\n\n4. **Family Relationship Support**\n    - Arrange family mediation to address conflicts and strain.\n\n### Timeline for Short-term Plan Check-ins\n- **Check-in bi-weekly** with Allistor to monitor progress on housing and college enrollment.\n- **Case Officer Actions**:\n    - September 15, 2024: Verify housing arrangement with SafeStay.\n    - September 30, 2024: Confirm college enrollment and class start dates.\n    - October 15, 2024: Conduct first mediation session with the family.\n\n## Long-term Plan (3-24 Months)\n\n1. **Sustained Housing Stability**\n    - **Assist in finding permanent housing** solutions alongside employment.\n    - **Explore housing assistance programs** if income remains insufficient.\n\n2. **Educational Advancement**\n    - Monitor academic progress at college.\n    - Ensure participation in 5 quarters to meet probation reduction criteria.\n\n3. **Employment Services**\n    - **Refer to employment services** to help Allistor find a job.\n    - Develop an employment plan based on assessed job skills and education.\n\n4. **Mental Health and Substance Use**\n    - **Assess mental health needs** and provide appropriate resources if needed.\n    - Regularly check to ensure low-risk substance use remains unchanged.\n\n5. **Community and Self-Sufficiency**\n    - **Connect with community resources** for additional support.\n    - Develop a plan to achieve self-sufficiency over the probation period.\n\n### Timeline for Long-term Plan Check-ins\n- **Monthly check-ins** with Allistor to monitor progress in housing, education, and employment.\n- **Case Officer Actions**: \n    - November 1, 2024: Review housing stability.\n    - December 1, 2024: Check academic performance and employment status.\n    - January 2025: Reassess mental health and ensure community connections.\n    - Continue monthly reviews adjusting support as needed until 2026.\n\n## Resources and Providers to Connect With\n\n1. **SafeStay Youth Shelter**\n    - **Phone**: 555-1234\n    - **Website**: [SafeStay](https://safestay.org)\n    - **Services**: Temporary housing for homeless youth\n    - **Actions**: Check availability, Refer client\n\n2. **Cityville Community College**\n    - **Phone**: 555-5678\n    - **Website**: [Cityville CC](https://cityvillecc.edu)\n    - **Services**: Degree programs and vocational training\n    - **Actions**: Enroll, Check class availability\n\n## Steps for the Case Officer\n\n1. Schedule and facilitate bi-weekly and monthly check-ins with Allistor.\n2. Maintain regular contact with SafeStay Youth Shelter and Cityville Community College.\n3. Conduct family mediation and ongoing support.\n4. Oversee Allistor’s progress in the 5 quarters of community college needed for probation reduction.\n5. Regularly update risk assessments and adapt support plans accordingly.",
 };
 
 export const BACKEND_URL =
-	process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  process.env["NEXT_PUBLIC_API_URL"] || "http://localhost:8000";

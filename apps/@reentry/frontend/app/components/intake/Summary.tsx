@@ -19,14 +19,17 @@ import { Grid, Paper, Typography } from "@mui/material";
 import { useState } from "react";
 import { FiLink } from "react-icons/fi";
 
-import { $api } from "@/app/api";
-import PrimaryButton from "@/app/components/buttons/PrimaryButton";
-import AudioRecordings from "@/app/components/intake/VoiceIntake/AudioRecordings";
-import { useAuth } from "@/app/lib/auth";
-import type { components } from "@/app/recidiviz-schema";
-import { formatDateMMDDYYYY } from "@/app/utils/index";
-import { getStateName } from "@/app/utils/states";
-import { showErrorToast, showSuccessToast } from "@/app/utils/toast";
+import { $api } from "~@reentry/frontend/api";
+import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
+import AudioRecordings from "~@reentry/frontend/components/intake/VoiceIntake/AudioRecordings";
+import { useAuth } from "~@reentry/frontend/lib/auth";
+import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { formatDateMMDDYYYY } from "~@reentry/frontend/utils/index";
+import { getStateName } from "~@reentry/frontend/utils/states";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "~@reentry/frontend/utils/toast";
 
 const formatAddress = (
   address: components["schemas"]["AddressSubmission"] | null | undefined,

@@ -15,37 +15,37 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import PrimaryButton from "@/app/components/buttons/PrimaryButton";
+import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 
 const updateResource = ({
-	onUpdate,
-	onCancel,
-	candidateResource,
-	selectedResource,
+  onUpdate,
+  onCancel,
+  candidateResource,
+  selectedResource,
 }) => {
-	return (
-		<div className="fixed bottom-0 left-0 w-full p-3 shadow-2xl border-t border-gray-200 flex justify-center items-center z-50 bg-[#f9fafa]">
-			<p className="text-[#003331] text-base mr-14">
-				Replace resource{" "}
-				<span className="font-bold">{selectedResource.name}</span> with{" "}
-				<span className="font-bold">{candidateResource.name}</span>?
-			</p>
-			<div className="flex space-x-3">
-				<button
-					type={"button"}
-					onClick={onUpdate}
-					className={`self-stretch h-8  justify-center items-center gap-2 inline-flex rounded-[32px]
+  return (
+    <div className="fixed bottom-0 left-0 w-full p-3 shadow-2xl border-t border-gray-200 flex justify-center items-center z-50 bg-[#f9fafa]">
+      <p className="text-[#003331] text-base mr-14">
+        Replace resource{" "}
+        <span className="font-bold">{selectedResource.name}</span> with{" "}
+        <span className="font-bold">{candidateResource.name}</span>?
+      </p>
+      <div className="flex space-x-3">
+        <button
+          type={"button"}
+          onClick={onUpdate}
+          className={`self-stretch h-8  justify-center items-center gap-2 inline-flex rounded-[32px]
           text-[13px] font-medium leading-none px-4 py-2 bg-blue-500 text-white text-sm rounded
           "hover:bg-blue-600"
           `}
-					disabled={candidateResource.id === selectedResource.id}
-				>
-					Yes
-				</button>
-				<PrimaryButton buttonText="No" onClick={onCancel} />
-			</div>
-		</div>
-	);
+          disabled={candidateResource.id === selectedResource.id}
+        >
+          Yes
+        </button>
+        <PrimaryButton buttonText="No" onClick={onCancel} />
+      </div>
+    </div>
+  );
 };
 
 export default updateResource;

@@ -20,69 +20,69 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useState } from "react";
 
-import ChatbotInterface from "@/app/components/intake/ChatInterface/ChatbotInterface";
-import ChatHeader from "@/app/components/intake/ChatInterface/ChatHeader";
-import Sidebar from "@/app/components/intake/ChatInterface/Sidebar";
-import { ConnectionErrorAlert } from "@/app/websockets/components/ConnectionErrorAlert";
-import { useSocket } from "@/app/websockets/IntakeSocketContext";
+import ChatbotInterface from "~@reentry/frontend/components/intake/ChatInterface/ChatbotInterface";
+import ChatHeader from "~@reentry/frontend/components/intake/ChatInterface/ChatHeader";
+import Sidebar from "~@reentry/frontend/components/intake/ChatInterface/Sidebar";
+import { ConnectionErrorAlert } from "~@reentry/frontend/websockets/components/ConnectionErrorAlert";
+import { useSocket } from "~@reentry/frontend/websockets/IntakeSocketContext";
 
 const LinearChatComponent: React.FC = () => {
-	const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-	const {
-		intakeContext: { isLoading, error, intakeStatus },
-	} = useSocket();
+  const {
+    intakeContext: { isLoading, error, intakeStatus },
+  } = useSocket();
 
-	if ((error && error.type === "api") || intakeStatus === "error") {
-		return (
-			<Box
-				display="flex"
-				flexDirection="column"
-				justifyContent="center"
-				alignItems="center"
-				height="100vh"
-			>
-				<ConnectionErrorAlert />
-				<Typography variant="h6" sx={{ mt: 2 }}>
-					{error?.message ||
-						"There was an issue processing your intake, please try again later"}
-				</Typography>
-			</Box>
-		);
-	}
+  if ((error && error.type === "api") || intakeStatus === "error") {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <ConnectionErrorAlert />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          {error?.message ||
+            "There was an issue processing your intake, please try again later"}
+        </Typography>
+      </Box>
+    );
+  }
 
-	if (isLoading) {
-		return (
-			<Box
-				display="flex"
-				flexDirection="column"
-				justifyContent="center"
-				alignItems="center"
-				height="100vh"
-			>
-				<ConnectionErrorAlert />
-				<CircularProgress size={40} />
-				<Typography variant="h6" sx={{ mt: 2 }}>
-					Loading intake information...
-				</Typography>
-			</Box>
-		);
-	}
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <ConnectionErrorAlert />
+        <CircularProgress size={40} />
+        <Typography variant="h6" sx={{ mt: 2 }}>
+          Loading intake information...
+        </Typography>
+      </Box>
+    );
+  }
 
-	return (
-		<div className="flex flex-col h-screen bg-slate-50">
-			<ConnectionErrorAlert />
+  return (
+    <div className="flex flex-col h-screen bg-slate-50">
+      <ConnectionErrorAlert />
 
-			{/* Header */}
-			<div className="relative max-w-full overflow-x-hidden">
-				<ChatHeader />
-			</div>
+      {/* Header */}
+      <div className="relative max-w-full overflow-x-hidden">
+        <ChatHeader />
+      </div>
 
-			{/* Main content */}
-			<div className="relative flex-1 flex overflow-hidden">
-				{/* Sidebar */}
-				<div
-					className={`
+      {/* Main content */}
+      <div className="relative flex-1 flex overflow-hidden">
+        {/* Sidebar */}
+        <div
+          className={`
 						hidden lg:block
 						fixed md:relative
 						inset-y-0 left-0
@@ -92,13 +92,13 @@ const LinearChatComponent: React.FC = () => {
 						transition-transform duration-300
 						${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
 					`}
-				>
-					<Sidebar onClose={() => setSidebarOpen(false)} />
-				</div>
+        >
+          <Sidebar onClose={() => setSidebarOpen(false)} />
+        </div>
 
-				{/* Overlay */}
-				<div
-					className={`
+        {/* Overlay */}
+        <div
+          className={`
 						${sidebarOpen ? "block" : "hidden"}
 						lg:hidden
 						fixed inset-0
@@ -107,16 +107,16 @@ const LinearChatComponent: React.FC = () => {
 						transition-opacity duration-300
 						opacity-100
 					`}
-					onClick={() => setSidebarOpen(false)}
-				/>
+          onClick={() => setSidebarOpen(false)}
+        />
 
-				{/* Chat */}
-				<div className="flex-1 w-full bg-[#F9FAFA] overflow-hidden">
-					<ChatbotInterface />
-				</div>
-			</div>
-		</div>
-	);
+        {/* Chat */}
+        <div className="flex-1 w-full bg-[#F9FAFA] overflow-hidden">
+          <ChatbotInterface />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default LinearChatComponent;

@@ -20,79 +20,80 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 
-import ChatInput from "@/app/components/intake/ChatInterface/ChatInput";
-import { ChatMessageBubble } from "@/app/components/intake/ChatInterface/ChatMessageBubble";
-import { useSocket } from "@/app/websockets/IntakeSocketContext";
+import ChatInput from "~@reentry/frontend/components/intake/ChatInterface/ChatInput";
+import { ChatMessageBubble } from "~@reentry/frontend/components/intake/ChatInterface/ChatMessageBubble";
+import { useSocket } from "~@reentry/frontend/websockets/IntakeSocketContext";
 
 const ChatbotInterface: React.FC = () => {
-	const {
-		intakeContext: { messages, waitingForAIInput, connectionStatus },
-	} = useSocket();
+  const {
+    intakeContext: { messages, waitingForAIInput, connectionStatus },
+  } = useSocket();
 
-	const messagesEndRef = useRef<HTMLDivElement>(null);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const [wasAtBottom, setWasAtBottom] = useState(true); // Start at bottom on load
-	// Detect if the user is currently at the bottom (with small tolerance)
-	const isAtBottom = () => {
-		const container = containerRef.current;
-		if (!container) return false;
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [wasAtBottom, setWasAtBottom] = useState(true); // Start at bottom on load
+  // Detect if the user is currently at the bottom (with small tolerance)
+  const isAtBottom = () => {
+    const container = containerRef.current;
+    if (!container) return false;
 
-		const threshold = 5; // Allow 5px tolerance
-		return (
-			container.scrollHeight - container.scrollTop - container.clientHeight <=
-			threshold
-		);
-	};
+    const threshold = 5; // Allow 5px tolerance
+    return (
+      container.scrollHeight - container.scrollTop - container.clientHeight <=
+      threshold
+    );
+  };
 
-	// Track scroll position to determine if user is at bottom
-	useEffect(() => {
-		const container = containerRef.current;
-		if (!container) return;
+  // Track scroll position to determine if user is at bottom
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-		const handleScroll = () => {
-			setWasAtBottom(isAtBottom());
-		};
+    const handleScroll = () => {
+      setWasAtBottom(isAtBottom());
+    };
 
-		container.addEventListener("scroll", handleScroll);
-		return () => container.removeEventListener("scroll", handleScroll);
-	}, []);
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
 
-	useEffect(() => {
-		if (messagesEndRef.current && wasAtBottom) {
-			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-		}
-	}, [messages, wasAtBottom]);
+  useEffect(() => {
+    if (messagesEndRef.current && wasAtBottom) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, wasAtBottom]);
 
-	const formatedMessages = messages;
+  const formatedMessages = messages;
 
-	return (
-		<div className="max-w-4xl mx-auto flex flex-col h-full px-4 sm:px-6">
-			{/* Messages */}
-			<div
-				className="flex-1 overflow-y-auto no-scrollbar pt-10 sm:pt-12"
-				ref={containerRef}
-			>
-				<div className="flex flex-col gap-4 sm:gap-6">
-					{formatedMessages.map((message) => (
-						<ChatMessageBubble key={message.id} message={message} />
-					))}
+  return (
+    <div className="max-w-4xl mx-auto flex flex-col h-full px-4 sm:px-6">
+      {/* Messages */}
+      <div
+        className="flex-1 overflow-y-auto no-scrollbar pt-10 sm:pt-12"
+        ref={containerRef}
+      >
+        <div className="flex flex-col gap-4 sm:gap-6">
+          {formatedMessages?.map((message) => (
+            <ChatMessageBubble key={message.id} message={message} />
+          ))}
 
-					{/* Show typing indicator when AI is thinking or when no messages initially */}
-					{waitingForAIInput ||
-					(!messages.length && connectionStatus === "connected") ? (
-						<ChatMessageBubble key="typing-indicator" isTyping={true} />
-					) : null}
+          {/* Show typing indicator when AI is thinking or when no messages initially */}
+          {waitingForAIInput ||
+          (!messages?.length && connectionStatus === "connected") ? (
+            <ChatMessageBubble key="typing-indicator" isTyping={true} />
+          ) : null}
 
-					<div ref={messagesEndRef} />
-				</div>
-			</div>
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
 
-			{/* Input */}
-			<div className="shrink-0 pb-6">
-				<ChatInput />
-			</div>
-		</div>
-	);
+      {/* Input */}
+      <div className="shrink-0 pb-6">
+        {/* TODO: Adjust to V2 and remove socket context */}
+        <ChatInput />
+      </div>
+    </div>
+  );
 };
 
 export default ChatbotInterface;

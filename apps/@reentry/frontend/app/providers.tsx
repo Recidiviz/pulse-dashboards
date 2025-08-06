@@ -18,22 +18,94 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useRef } from "react";
+import { createWSClient, httpBatchLink, splitLink, wsLink } from "@trpc/client";
+import { createTRPCReact } from "@trpc/react-query";
+import { useEffect, useMemo, useRef, useState } from "react";
+import superjson from "superjson";
+
+import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
+import type { AppRouter } from "~@reentry/trpc-types";
+
+export const trpc = createTRPCReact<AppRouter>();
 
 export function Providers({ children }: { children: React.ReactNode }) {
-	const queryClient = useRef(
-		new QueryClient({
-			defaultOptions: {
-				queries: {
-					retry: false,
-				},
-			},
-		}),
-	);
+  const [token, setToken] = useState<string | null>(null);
+  const [stateCode, setStateCode] = useState<string>("");
 
-	return (
-		<QueryClientProvider client={queryClient.current}>
-			{children}
-		</QueryClientProvider>
-	);
+  useEffect(() => {
+    setToken(sessionStorage.getItem("intake_token"));
+    setStateCode(sessionStorage.getItem("state_code") ?? "");
+  }, []);
+
+  const queryClient = useRef(
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    }),
+  );
+
+  if (IS_V2_INTAKE_CHAT) {
+    const wsClient = useMemo(
+      () =>
+        token &&
+        stateCode &&
+        createWSClient({
+          url: (process.env["NEXT_PUBLIC_API_URL"] ?? "") + "/trpc",
+          connectionParams: () => {
+            return {
+              statecode: stateCode,
+              authorization: `Bearer ${token}`,
+            };
+          },
+        }),
+      [stateCode, token],
+    );
+
+    const trpcClient = useMemo(
+      () =>
+        token &&
+        stateCode &&
+        wsClient &&
+        trpc.createClient({
+          links: [
+            splitLink({
+              condition(op) {
+                return op.type === "subscription";
+              },
+              true: wsLink({ client: wsClient, transformer: superjson }),
+              false: httpBatchLink({
+                url: (process.env["NEXT_PUBLIC_API_URL"] ?? "") + "/trpc",
+                async headers() {
+                  return {
+                    statecode: stateCode,
+                    authorization: `Bearer ${token}`,
+                  };
+                },
+                transformer: superjson,
+              }),
+            }),
+          ],
+        }),
+      [stateCode, token],
+    );
+
+    if (trpcClient) {
+      return (
+        <trpc.Provider client={trpcClient} queryClient={queryClient.current}>
+          <QueryClientProvider client={queryClient.current}>
+            {children}
+          </QueryClientProvider>
+        </trpc.Provider>
+      );
+    }
+  }
+
+  return (
+    <QueryClientProvider client={queryClient.current}>
+      {children}
+    </QueryClientProvider>
+  );
 }

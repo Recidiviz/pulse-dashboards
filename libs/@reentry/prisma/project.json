@@ -119,11 +119,11 @@
       }
     },
     "prisma-seed": {
-      "executor": "@nx-tools/nx-prisma:seed",
+      "executor": "nx:run-commands",
       "dependsOn": ["docker", "prisma-deploy"],
       "options": {
-        "schema": "{projectRoot}/prisma/schema.prisma",
-        "script": "{projectRoot}/src/seed.ts"
+        "command": "tsx src/seed.ts",
+        "cwd": "{projectRoot}"
       }
     },
     "prisma-validate": {

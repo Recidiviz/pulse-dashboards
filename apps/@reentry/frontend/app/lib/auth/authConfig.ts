@@ -18,27 +18,27 @@
 import type { AuthSettings } from "@recidiviz/auth";
 
 export const getAuthSettings = (): AuthSettings => {
-	if (
-		!process.env.NEXT_PUBLIC_AUTH0_DOMAIN ||
-		!process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID ||
-		!process.env.NEXT_PUBLIC_AUTH0_AUDIENCE
-	) {
-		throw new Error("Required environment variables for Auth0 are missing");
-	}
+  if (
+    !process.env["NEXT_PUBLIC_AUTH0_DOMAIN"] ||
+    !process.env["NEXT_PUBLIC_AUTH0_CLIENT_ID"] ||
+    !process.env["NEXT_PUBLIC_AUTH0_AUDIENCE"]
+  ) {
+    throw new Error("Required environment variables for Auth0 are missing");
+  }
 
-	const settings: AuthSettings = {
-		domain: process.env.NEXT_PUBLIC_AUTH0_DOMAIN,
-		client_id: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID,
-		redirect_uri:
-			typeof window !== "undefined"
-				? `${window.location.origin}/auth/callback`
-				: "http://localhost:3000/auth/callback",
-		useRefreshTokens: true,
-		cacheLocation: "localstorage",
-		scope:
-			"openid profile email read:users read:current_user read:user_idp_tokens",
-		audience: process.env.NEXT_PUBLIC_AUTH0_AUDIENCE,
-	};
+  const settings: AuthSettings = {
+    domain: process.env["NEXT_PUBLIC_AUTH0_DOMAIN"],
+    client_id: process.env["NEXT_PUBLIC_AUTH0_CLIENT_ID"],
+    redirect_uri:
+      typeof window !== "undefined"
+        ? `${window.location.origin}/auth/callback`
+        : "http://localhost:3000/auth/callback",
+    useRefreshTokens: true,
+    cacheLocation: "localstorage",
+    scope:
+      "openid profile email read:users read:current_user read:user_idp_tokens",
+    audience: process.env["NEXT_PUBLIC_AUTH0_AUDIENCE"],
+  };
 
-	return settings;
+  return settings;
 };

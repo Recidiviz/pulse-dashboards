@@ -15,58 +15,58 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { components } from "@/app/recidiviz-schema";
+import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 export type RecordingSessionResponse =
-	components["schemas"]["RecordingSessionResponse"];
+  components["schemas"]["RecordingSessionResponse"];
 export type RecordingSessionStatusResponse =
-	components["schemas"]["RecordingSessionStatusResponse"];
+  components["schemas"]["RecordingSessionStatusResponse"];
 export type ClientRecordResponse =
-	components["schemas"]["ClientRecordResponse"];
+  components["schemas"]["ClientRecordResponse"];
 
 export interface MediaDevice {
-	deviceId: string;
-	label: string;
+  deviceId: string;
+  label: string;
 }
 
 export type RecordingStatus =
-	| "created"
-	| "recording"
-	| "paused"
-	| "completed"
-	| "error";
+  | "created"
+  | "recording"
+  | "paused"
+  | "completed"
+  | "error";
 
 // add a processing state to show that while frontend waits for backend status update.
 export type UIRecordingStatus = RecordingStatus | "processing";
 
 export interface RecordingState {
-	status: RecordingStatus;
-	uiStatus: UIRecordingStatus;
-	selectedMicrophone: string;
-	microphones: MediaDevice[];
-	chunkCount: number;
+  status: RecordingStatus;
+  uiStatus: UIRecordingStatus;
+  selectedMicrophone: string;
+  microphones: MediaDevice[];
+  chunkCount: number;
 }
 
 export interface RecordingActions {
-	startRecording: () => Promise<void>;
-	pauseRecording: () => void;
-	resumeRecording: () => void;
-	stopRecording: () => void;
-	setSelectedMicrophone: (deviceId: string) => void;
+  startRecording: () => Promise<void>;
+  pauseRecording: () => void;
+  resumeRecording: () => void;
+  stopRecording: () => void;
+  setSelectedMicrophone: (deviceId: string) => void;
 }
 
 export interface AudioCapabilities {
-	hasMediaRecorder: boolean;
-	supportedFormat: string | null;
-	isRecordingSupported: boolean;
+  hasMediaRecorder: boolean;
+  supportedFormat: string | null;
+  isRecordingSupported: boolean;
 }
 
 export interface QueuedChunk {
-	id: string;
-	sessionId: string;
-	chunkIndex: number;
-	chunkData: string; // base64
-	mimeType: string;
-	hasHeader: boolean;
-	timestamp: number;
+  id: string;
+  sessionId: string;
+  chunkIndex: number;
+  chunkData: string; // base64
+  mimeType: string;
+  hasHeader: boolean;
+  timestamp: number;
 }

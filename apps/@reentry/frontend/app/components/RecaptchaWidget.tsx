@@ -20,12 +20,14 @@
 import ReCAPTCHA from "react-google-recaptcha";
 
 export default function RecaptchaWidget({
-	onChange,
-}: { onChange: (value: string | null) => void }) {
-	return (
-		<ReCAPTCHA
-			sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
-			onChange={onChange}
-		/>
-	);
+  onChange,
+}: {
+  onChange: (value: string | null) => void;
+}) {
+  return (
+    <ReCAPTCHA
+      sitekey={process.env["NEXT_PUBLIC_RECAPTCHA_SITE_KEY"] || ""}
+      onChange={onChange}
+    />
+  );
 }

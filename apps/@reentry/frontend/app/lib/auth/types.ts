@@ -19,19 +19,19 @@ import type { User } from "@auth0/auth0-spa-js";
 import type { AuthStore } from "@recidiviz/auth";
 
 export interface AuthState {
-	isAuthorized: boolean;
-	isLoading: boolean;
-	user?: User;
-	emailVerified?: boolean;
-	error?: Error | null;
-	accessToken?: string | null;
+  isAuthorized: boolean;
+  isLoading: boolean;
+  user?: User;
+  emailVerified?: boolean;
+  error?: Error | null;
+  accessToken?: string | null;
 }
 
 export interface AuthContextType {
-	authStore: AuthStore | null;
-	state: AuthState;
-	login: (options?: unknown) => Promise<void>;
-	logout: () => Promise<void>;
-	getAccessToken: () => string | null | undefined;
-	refreshToken: () => Promise<void>;
+  authStore: AuthStore | null;
+  state: AuthState;
+  login: (options?: unknown) => Promise<void>;
+  logout: () => Promise<void>;
+  getAccessToken: () => string | null | undefined;
+  refreshToken: () => Promise<void>;
 }

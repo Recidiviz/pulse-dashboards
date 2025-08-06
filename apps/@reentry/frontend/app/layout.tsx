@@ -23,59 +23,59 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 
-import { AuthProvider } from "@/app/lib/auth";
+import { AuthProvider } from "~@reentry/frontend/lib/auth";
 
 import { Providers } from "./providers";
 
 const geistSans = localFont({
-	src: "./fonts/GeistVF.woff",
-	variable: "--font-geist-sans",
-	weight: "100 900",
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
 });
 const geistMono = localFont({
-	src: "./fonts/GeistMonoVF.woff",
-	variable: "--font-geist-mono",
-	weight: "100 900",
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
 });
 const publicSans = localFont({
-	src: "./fonts/Public_Sans/PublicSans-VariableFont_wght.ttf",
-	variable: "--font-public-sans",
-	weight: "400 700",
+  src: "./fonts/Public_Sans/PublicSans-VariableFont_wght.ttf",
+  variable: "--font-public-sans",
+  weight: "400 700",
 });
 
 export const metadata: Metadata = {
-	title: "Recidiviz",
-	description: "Recidiviz app",
-	// This ensures that even if a search engine discovers the page (e.g., through links or direct access), it will not index it.
-	// same as <meta name="robots" content="noindex, nofollow">
-	robots: {
-		index: false, // Prevent indexing
-		follow: false, // Prevent following links
-	},
+  title: "Recidiviz",
+  description: "Recidiviz app",
+  // This ensures that even if a search engine discovers the page (e.g., through links or direct access), it will not index it.
+  // same as <meta name="robots" content="noindex, nofollow">
+  robots: {
+    index: false, // Prevent indexing
+    follow: false, // Prevent following links
+  },
 };
 
 export default function RootLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<html lang="en">
-			<body
-				className={`${publicSans.variable} ${geistSans.variable} ${geistMono.variable} antialiased h-screen`}
-			>
-				<Providers>
-					<AppRouterCacheProvider>
-						<AuthProvider>
-							{children}
-							{process.env.NEXT_PUBLIC_GA_ID && (
-								<GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-							)}
-						</AuthProvider>
-						<ToastContainer />
-					</AppRouterCacheProvider>
-				</Providers>
-			</body>
-		</html>
-	);
+  return (
+    <html lang="en">
+      <body
+        className={`${publicSans.variable} ${geistSans.variable} ${geistMono.variable} antialiased h-screen`}
+      >
+        <Providers>
+          <AppRouterCacheProvider>
+            <AuthProvider>
+              {children}
+              {process.env["NEXT_PUBLIC_GA_ID"] && (
+                <GoogleAnalytics gaId={process.env["NEXT_PUBLIC_GA_ID"]} />
+              )}
+            </AuthProvider>
+            <ToastContainer />
+          </AppRouterCacheProvider>
+        </Providers>
+      </body>
+    </html>
+  );
 }

@@ -18,7 +18,7 @@
 import { Calendar } from "lucide-react";
 import type React from "react";
 
-import type { components } from "@/app/recidiviz-schema";
+import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 const UserSummary: React.FC<{
   clientData: components["schemas"]["ClientRecordResponse"] | null;

@@ -18,17 +18,17 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import React, { type ReactNode } from "react";
+import { type ReactNode } from "react";
 
-import EmailVerificationState from "@/app/components/auth/EmailVerificationState";
-import LoadingState from "@/app/components/auth/LoadingState";
-import UnauthorizedState from "@/app/components/auth/UnauthorizedState";
+import EmailVerificationState from "~@reentry/frontend/components/auth/EmailVerificationState";
+import LoadingState from "~@reentry/frontend/components/auth/LoadingState";
+import UnauthorizedState from "~@reentry/frontend/components/auth/UnauthorizedState";
 
 import { useAuth } from "./authContext";
 
 interface ProtectedRouteProps {
-	children: ReactNode;
-	requireVerifiedEmail?: boolean;
+  children: ReactNode;
+  requireVerifiedEmail?: boolean;
 }
 
 /**
@@ -47,32 +47,32 @@ interface ProtectedRouteProps {
  */
 
 export const ProtectedRoute = ({
-	children,
-	requireVerifiedEmail = false,
+  children,
+  requireVerifiedEmail = false,
 }: ProtectedRouteProps) => {
-	const { state } = useAuth();
-	const pathname = usePathname();
+  const { state } = useAuth();
+  const pathname = usePathname();
 
-	if (state.isLoading) {
-		return <LoadingState />;
-	}
+  if (state.isLoading) {
+    return <LoadingState />;
+  }
 
-	// Not authorized, redirect to login
-	if (!state.isAuthorized) {
-		// Store the current path to redirect back after login
-		if (typeof window !== "undefined") {
-			sessionStorage.setItem("auth_redirect", pathname);
-		}
-		return <UnauthorizedState />;
-	}
+  // Not authorized, redirect to login
+  if (!state.isAuthorized) {
+    // Store the current path to redirect back after login
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("auth_redirect", pathname);
+    }
+    return <UnauthorizedState />;
+  }
 
-	// Email verification required but not verified
-	if (requireVerifiedEmail && !state.emailVerified) {
-		return <EmailVerificationState />;
-	}
+  // Email verification required but not verified
+  if (requireVerifiedEmail && !state.emailVerified) {
+    return <EmailVerificationState />;
+  }
 
-	// All requirements met, render the protected content
-	return <>{children}</>;
+  // All requirements met, render the protected content
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

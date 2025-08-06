@@ -54,7 +54,7 @@ or create the page into the app/(protected) folder.
 3. Now we can use the hook useAuth();  it returns the current user logged, login, logout , getAccessToken, and refresh token functions.
 
 ```
-import { useAuth } from "@/app/lib/auth";
+import { useAuth } from "~@reentry/frontend/lib/auth";
 
 const { state, login, logout, getAccessToken, refreshToken } = useAuth();
 ```
