@@ -39,7 +39,8 @@ async function main() {
 
   if (checkpointerOption === "postgres") {
     checkpointer = PostgresSaver.fromConnString(
-      process.env["LANGGRAPH_CHECKPOINTER_DB_CONNECTION_STRING"] ?? "",
+      process.env["INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING"] ?? "",
+      { schema: process.env["INTAKE_LANGGRAPH_CHECKPOINTER_SCHEMA"] },
     );
     await checkpointer.setup();
   } else {

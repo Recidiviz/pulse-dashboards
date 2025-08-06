@@ -17,11 +17,15 @@
 
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { Prisma, StateCode } from "~@reentry/prisma/client";
-import { verifyGoogleIdToken } from "~@reentry/server/server/utils";
+import { RequestWithStateCodeParams } from "~@reentry/server/server/types";
+import {
+  getAuthenticateInternalRequestPreHandlerFn,
+  getChatHistoryForClient,
+} from "~@reentry/server/server/utils";
 import { appRouter, createContext } from "~@reentry/trpc";
 import { buildCommonServer } from "~server-setup-plugin";
 
-interface IQuerystring {
+interface GetIntakeTokenQueryString {
   stateCode: string;
   givenNames: string;
   surname: string;
@@ -41,15 +45,26 @@ interface GetIntakeTokenResponse {
 }
 
 interface ToggleIntakeBody {
-  stateCode: string;
   clientPseudoId: string;
   enable: boolean;
+}
+
+interface GetIntakeForClientQueryString {
+  clientPseudoId: string;
 }
 
 export function buildServer() {
   const jwtKey = process.env["INTAKE_PRIVATE_JWT_KEY"];
   if (!jwtKey) {
     throw new Error("Missing required environment variables for jwt");
+  }
+
+  const allowedEmail = process.env["ALLOWED_GOOGLE_EMAIL"];
+
+  if (!allowedEmail) {
+    throw new Error(
+      "Missing required environment variables for Google ID token verification",
+    );
   }
 
   const server = buildCommonServer({
@@ -61,7 +76,7 @@ export function buildServer() {
   });
 
   server.get<{
-    Querystring: IQuerystring;
+    Querystring: GetIntakeTokenQueryString;
   }>("/get-intake-token", async (req, res) => {
     const secretKey = process.env["INTAKE_PRIVATE_JWT_KEY"];
     if (!secretKey) {
@@ -159,54 +174,77 @@ export function buildServer() {
 
   server.post<{
     Body: ToggleIntakeBody;
-  }>("/toogle-enable-intake", async (req, res) => {
-    const { stateCode, clientPseudoId, enable } = req.body;
+    Params: RequestWithStateCodeParams;
+  }>(
+    "/toggle-enable-intake/:stateCode",
+    {
+      preHandler: [getAuthenticateInternalRequestPreHandlerFn(allowedEmail)],
+    },
+    async (req, res) => {
+      const { stateCode } = req.params;
+      const { clientPseudoId, enable } = req.body;
 
-    const allowedEmail = process.env["ALLOWED_GOOGLE_EMAIL"];
+      const prisma = getPrismaClientForStateCode(stateCode);
 
-    if (!allowedEmail) {
-      res.status(500).send("ALLOWED_GOOGLE_EMAIL is not set");
-      return;
-    }
-
-    try {
-      await verifyGoogleIdToken(req.headers.authorization, allowedEmail);
-    } catch (e) {
-      let message = e;
-      if (e instanceof Error) {
-        message = e.message;
+      try {
+        await prisma.client.update({
+          where: {
+            stateCode: stateCode as StateCode,
+            pseudonymizedId: clientPseudoId,
+          },
+          data: {
+            intakeEnabled: enable,
+          },
+        });
+      } catch (e) {
+        if (
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === "P2025"
+        ) {
+          res.status(404).send("Client not found");
+          return;
+        }
       }
+    },
+  );
 
-      res.status(401).send(message);
-    }
+  server.get<{
+    Querystring: GetIntakeForClientQueryString;
+    Params: RequestWithStateCodeParams;
+  }>(
+    "/get-intake-for-client/:stateCode",
+    {
+      preHandler: [getAuthenticateInternalRequestPreHandlerFn(allowedEmail)],
+    },
+    async (req, res) => {
+      const { stateCode } = req.params;
+      const { clientPseudoId } = req.query;
 
-    if (!Object.values(StateCode).includes(stateCode as StateCode)) {
-      res.status(404).send("Invalid state code");
-      return;
-    }
+      const prisma = getPrismaClientForStateCode(stateCode);
 
-    const prisma = getPrismaClientForStateCode(req.body.stateCode);
-
-    try {
-      await prisma.client.update({
-        where: {
-          stateCode: stateCode as StateCode,
-          pseudonymizedId: clientPseudoId,
+      const intake = await prisma.intake.findFirst({
+        select: {
+          id: true,
+          startDate: true,
+          endDate: true,
+          sections: true,
         },
-        data: {
-          intakeEnabled: enable,
+        where: {
+          client: {
+            pseudonymizedId: clientPseudoId,
+          },
         },
       });
-    } catch (e) {
-      if (
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        e.code === "P2025"
-      ) {
-        res.status(404).send("Client not found");
+
+      if (!intake) {
+        res.status(404).send("Intake not found");
         return;
       }
-    }
-  });
 
+      const messages = await getChatHistoryForClient(intake.id, stateCode);
+
+      res.send({ ...intake, messages });
+    },
+  );
   return server;
 }

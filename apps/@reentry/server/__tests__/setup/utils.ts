@@ -15,14 +15,40 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
+import { Client } from "pg";
+
 import { Prisma, PrismaClient } from "~@reentry/prisma/client";
 
 const PRISMA_TABLES = Object.values(Prisma.ModelName);
 
-export async function resetDb(prismaClient: PrismaClient) {
+export async function resetDbs(
+  prismaClient: PrismaClient,
+  checkpointer: PostgresSaver,
+) {
   await prismaClient.$transaction(
     PRISMA_TABLES.map((table) =>
       prismaClient.$executeRawUnsafe(`TRUNCATE "${table}" CASCADE;`),
     ),
   );
+
+  // PostgreSQL connection configuration
+  const client = new Client({
+    connectionString:
+      process.env["INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING"],
+  });
+
+  // Reset the Postgres checkpointer database
+  try {
+    await client.connect();
+    await client.query(
+      `DROP SCHEMA IF EXISTS ${process.env["INTAKE_LANGGRAPH_CHECKPOINTER_SCHEMA"]} CASCADE`,
+    );
+  } catch (err) {
+    console.error("Error dropping schema:", err);
+  } finally {
+    await client.end();
+  }
+
+  await checkpointer.setup();
 }

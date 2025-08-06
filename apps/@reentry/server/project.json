@@ -35,9 +35,17 @@
         "cwd": "{projectRoot}"
       }
     },
+    "checkpointer-setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "DATABASE_URL=$INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING DATABASE_SCHEMA=$INTAKE_LANGGRAPH_CHECKPOINTER_SCHEMA tsx checkpointer-setup/index.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "dependsOn": [
+        "checkpointer-setup",
         {
           "projects": ["@reentry/prisma"],
           "target": "docker"

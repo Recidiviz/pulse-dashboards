@@ -21,7 +21,7 @@ import EventEmitter, { on } from "events";
 
 import { IntakeAgent } from "~@reentry/intake-agent";
 import { sectionsSchema } from "~@reentry/intake-agent/constants";
-import { getLangraphCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
+import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
 import { baseProcedure, router } from "~@reentry/trpc/init";
 import {
   intakeChatInputSchema,
@@ -150,7 +150,7 @@ export const intakeChatRouter = router({
       if (!intakeAgentsAndStatuses[intakeId]) {
         intakeAgentsAndStatuses[intakeId] = {
           agent: new IntakeAgent({
-            checkpointer: getLangraphCheckpointerForStateCode("US_ID"),
+            checkpointer: getIntakeCheckpointerForStateCode("US_ID"),
             clientName,
             intakeId,
             sections: sections,

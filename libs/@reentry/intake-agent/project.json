@@ -5,8 +5,21 @@
   "projectType": "library",
   "tags": ["reentry", "scope:server"],
   "targets": {
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_reentry_server --env_staging env_staging_reentry_server --env_test env_test_reentry_server",
+        "cwd": "{projectRoot}"
+      }
+    },
     "local": {
       "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "projects": ["@reentry/prisma"],
+          "target": "docker"
+        }
+      ],
       "options": {
         "command": "tsx local/index.ts",
         "cwd": "{projectRoot}"

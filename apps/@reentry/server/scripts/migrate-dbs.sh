@@ -10,11 +10,11 @@ do
    DATABASE_URL=$CONNECTION_STRING yarn prisma migrate deploy
 done
 
-CHECKPOINTER_URLS=$(printenv | grep LANGGRAPH_CHECKPOINTER_URL)
+CHECKPOINTER_URLS=$(printenv | grep INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING)
 for CHECKPOINTER_URL in $CHECKPOINTER_URLS
 do
    # Get the connection string
    CONNECTION_STRING=$(echo $CHECKPOINTER_URL | cut -d '=' -f 2-)
    echo "Setting up checkpointer database: $CONNECTION_STRING"
-   DATABASE_URL=$CONNECTION_STRING node checkpointer-setup/index.js
+   DATABASE_URL=$CONNECTION_STRING DATABASE_SCHEMA=$INTAKE_LANGGRAPH_CHECKPOINTER_SCHEMA node checkpointer-setup/index.js
 done

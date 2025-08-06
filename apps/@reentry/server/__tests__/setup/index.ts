@@ -21,11 +21,12 @@ import type { FastifyInstance } from "fastify";
 import sentryTestkit from "sentry-testkit";
 import { beforeAll, beforeEach } from "vitest";
 
+import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent";
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { StateCode } from "~@reentry/prisma/client";
 import { buildServer } from "~@reentry/server/server";
 import { seed } from "~@reentry/server/test/setup/seed";
-import { resetDb } from "~@reentry/server/test/setup/utils";
+import { resetDbs } from "~@reentry/server/test/setup/utils";
 
 export const testPort = process.env["PORT"]
   ? Number(process.env["PORT"])
@@ -33,6 +34,9 @@ export const testPort = process.env["PORT"]
 export const testHost = process.env["HOST"] ?? "localhost";
 
 export const testPrismaClient = getPrismaClientForStateCode(StateCode.US_ID);
+export const testIntakeCheckpointer = getIntakeCheckpointerForStateCode(
+  StateCode.US_ID,
+);
 
 const { testkit, sentryTransport } = sentryTestkit();
 
@@ -80,8 +84,8 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await resetDb(testPrismaClient);
-  await seed(testPrismaClient);
+  await resetDbs(testPrismaClient, testIntakeCheckpointer);
+  await seed(testPrismaClient, testIntakeCheckpointer);
 
   testkit.reset();
 });

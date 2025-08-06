@@ -15,21 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
-
-async function main() {
-  const databaseUrl = process.env["DATABASE_URL"];
-  const schema = process.env["DATABASE_SCHEMA"];
-  if (!databaseUrl || !schema) {
-    throw new Error(
-      "DATABASE_URL or DATABASE_SCHEMA environment variable is not set.",
-    );
-  }
-
-  const checkpointer = PostgresSaver.fromConnString(databaseUrl, {
-    schema,
-  });
-  await checkpointer.setup();
-}
-
-main();
+export type RequestWithStateCodeParams = {
+  stateCode: string;
+};

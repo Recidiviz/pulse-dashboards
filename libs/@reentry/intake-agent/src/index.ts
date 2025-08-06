@@ -21,7 +21,7 @@ import { BaseCheckpointSaver, Command } from "@langchain/langgraph";
 import { type Sections } from "~@reentry/intake-agent/constants";
 import { builder } from "~@reentry/intake-agent/graph";
 
-export { getLangraphCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
+export { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
 
 type AgentStatus =
   | "not_initialized"

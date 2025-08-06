@@ -106,35 +106,24 @@ describe("server", () => {
     });
   });
 
-  describe("/toogle-enable-intake", () => {
+  // Tests for the prehandler using the /toggle-enable-intake endpoint as an sample route
+  describe("Authenticate request prehandler", () => {
     describe("auth fails", () => {
       test("should throw error if there is no token", async () => {
+        setGetPayloadImp(
+          vi.fn().mockReturnValue({
+            email_verified: true,
+            email: "test-handle-import-email@fake.com",
+          }),
+        );
+
         const response = await testServer.inject({
           method: "POST",
-          url: "/toogle-enable-intake",
+          url: `/toggle-enable-intake/${fakeClient.stateCode}`,
           payload: {
-            stateCode: fakeClient.stateCode,
             clientPseudoId: fakeClient.pseudonymizedId,
             enable: true,
           },
-        });
-
-        expect(response).toMatchObject({
-          statusCode: 401,
-          statusMessage: "Unauthorized",
-        });
-      });
-
-      test("should throw error if there is no token payload", async () => {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/toogle-enable-intake",
-          payload: {
-            stateCode: fakeClient.stateCode,
-            clientPseudoId: fakeClient.pseudonymizedId,
-            enable: true,
-          },
-          headers: { authorization: `Bearer token` },
         });
 
         expect(response).toMatchObject({
@@ -147,14 +136,14 @@ describe("server", () => {
         setGetPayloadImp(
           vi.fn().mockReturnValue({
             email_verified: false,
+            email: "test-handle-import-email@fake.com",
           }),
         );
 
         const response = await testServer.inject({
           method: "POST",
-          url: "/toogle-enable-intake",
+          url: `/toggle-enable-intake/${fakeClient.stateCode}`,
           payload: {
-            stateCode: fakeClient.stateCode,
             clientPseudoId: fakeClient.pseudonymizedId,
             enable: true,
           },
@@ -177,9 +166,8 @@ describe("server", () => {
 
         const response = await testServer.inject({
           method: "POST",
-          url: "/toogle-enable-intake",
+          url: `/toggle-enable-intake/${fakeClient.stateCode}`,
           payload: {
-            stateCode: fakeClient.stateCode,
             clientPseudoId: fakeClient.pseudonymizedId,
             enable: true,
           },
@@ -202,9 +190,8 @@ describe("server", () => {
 
         const response = await testServer.inject({
           method: "POST",
-          url: "/toogle-enable-intake",
+          url: `/toggle-enable-intake/${fakeClient.stateCode}`,
           payload: {
-            stateCode: fakeClient.stateCode,
             clientPseudoId: fakeClient.pseudonymizedId,
             enable: true,
           },
@@ -219,7 +206,7 @@ describe("server", () => {
     });
 
     describe("auth works", () => {
-      beforeEach(() => {
+      beforeAll(() => {
         setGetPayloadImp(
           vi.fn().mockReturnValue({
             email_verified: true,
@@ -231,9 +218,8 @@ describe("server", () => {
       test("should throw error if state code is invalid", async () => {
         const response = await testServer.inject({
           method: "POST",
-          url: "/toogle-enable-intake",
+          url: "/toggle-enable-intake/INVALID_STATE_CODE",
           payload: {
-            stateCode: "INVALID_STATE_CODE",
             clientPseudoId: fakeClient.pseudonymizedId,
             enable: true,
           },
@@ -241,52 +227,118 @@ describe("server", () => {
         });
 
         expect(response).toMatchObject({
-          statusCode: 404,
-          statusMessage: "Not Found",
+          statusCode: 400,
+          statusMessage: "Bad Request",
         });
       });
+    });
+  });
 
-      test("should throw error if client is not found", async () => {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/toogle-enable-intake",
-          payload: {
-            stateCode: fakeClient.stateCode,
-            clientPseudoId: "nonexistent-client-pseudo-id",
-            enable: true,
-          },
-          headers: { authorization: `Bearer token` },
-        });
+  describe("/toggle-enable-intake", () => {
+    beforeAll(() => {
+      setGetPayloadImp(
+        vi.fn().mockReturnValue({
+          email_verified: true,
+          email: "test-handle-import-email@fake.com",
+        }),
+      );
+    });
 
-        expect(response).toMatchObject({
-          statusCode: 404,
-          statusMessage: "Not Found",
-        });
+    test("should throw error if client is not found", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: `/toggle-enable-intake/${fakeClient.stateCode}`,
+        payload: {
+          clientPseudoId: "nonexistent-client-pseudo-id",
+          enable: true,
+        },
+        headers: { authorization: `Bearer token` },
       });
 
-      test("should work if all information is valid", async () => {
-        const response = await testServer.inject({
-          method: "POST",
-          url: "/toogle-enable-intake",
-          payload: {
-            stateCode: fakeClient.stateCode,
-            clientPseudoId: fakeClient.pseudonymizedId,
-            enable: false,
-          },
-          headers: { authorization: `Bearer token` },
-        });
+      expect(response).toMatchObject({
+        statusCode: 404,
+        statusMessage: "Not Found",
+      });
+    });
 
-        expect(response.statusCode).toBe(200);
+    test("should work if all information is valid", async () => {
+      const response = await testServer.inject({
+        method: "POST",
+        url: `/toggle-enable-intake/${fakeClient.stateCode}`,
+        payload: {
+          clientPseudoId: fakeClient.pseudonymizedId,
+          enable: false,
+        },
+        headers: { authorization: `Bearer token` },
+      });
 
-        const updatedClient = await testPrismaClient.client.findUnique({
-          where: {
-            pseudonymizedId: fakeClient.pseudonymizedId,
-          },
-        });
+      expect(response.statusCode).toBe(200);
 
-        expect(updatedClient).toMatchObject({
-          intakeEnabled: false,
-        });
+      const updatedClient = await testPrismaClient.client.findUnique({
+        where: {
+          pseudonymizedId: fakeClient.pseudonymizedId,
+        },
+      });
+
+      expect(updatedClient).toMatchObject({
+        intakeEnabled: false,
+      });
+    });
+  });
+
+  describe("/get-intake-for-client", () => {
+    beforeAll(() => {
+      setGetPayloadImp(
+        vi.fn().mockReturnValue({
+          email_verified: true,
+          email: "test-handle-import-email@fake.com",
+        }),
+      );
+    });
+
+    test("should throw error if intake is not found", async () => {
+      const response = await testServer.inject({
+        method: "GET",
+        url: `/get-intake-for-client/${fakeClient.stateCode}`,
+        query: {
+          clientPseudoId: "nonexistent-client-pseudo-id",
+        },
+        headers: { authorization: `Bearer token` },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 404,
+        statusMessage: "Not Found",
+      });
+    });
+
+    test("should work if intake is found", async () => {
+      const response = await testServer.inject({
+        method: "GET",
+        url: `/get-intake-for-client/${fakeClient.stateCode}`,
+        query: {
+          clientPseudoId: fakeClient.pseudonymizedId,
+        },
+        headers: { authorization: `Bearer token` },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 200,
+        statusMessage: "OK",
+      });
+
+      expect(JSON.parse(response.body)).toEqual({
+        id: "intake-1",
+        startDate: expect.any(String),
+        endDate: null,
+        sections: [],
+        messages: [
+          expect.objectContaining({
+            content: "Hello, world!",
+            section: "Section 1",
+            id: "message-1",
+          }),
+        ],
       });
     });
   });

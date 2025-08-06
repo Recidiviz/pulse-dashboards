@@ -38,7 +38,7 @@
     "@intercom/messenger-js-sdk": "^0.0.11",
     "@langchain/core": "^0.3.61",
     "@langchain/langgraph": "^0.3.6",
-    "@langchain/langgraph-checkpoint-postgres": "^0.0.5",
+    "@langchain/langgraph-checkpoint-postgres": "^0.1.1",
     "@langchain/openai": "^0.5.16",
     "@material/select": "^14.0.0",
     "@material/textfield": "^14.0.0",

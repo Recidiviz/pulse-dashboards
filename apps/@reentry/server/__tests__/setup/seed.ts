@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+import type { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 
 import { Prisma, PrismaClient, StateCode } from "~@reentry/prisma/client";
 
@@ -62,7 +63,26 @@ export const fakeIntake = {
   },
 } satisfies Prisma.IntakeCreateInput;
 
-export async function seed(prismaClient: PrismaClient) {
+const checkpoint = {
+  v: 1,
+  id: "1ef4f797-8335-6428-8001-8a1503f9b875",
+  ts: "2024-04-19T17:19:07.952Z",
+  channel_values: {
+    messages: [
+      { content: "Hello, world!", section: "Section 1", id: "message-1" },
+    ],
+  },
+  channel_versions: {
+    messages: 1,
+  },
+  versions_seen: {},
+  pending_sends: [],
+};
+
+export async function seed(
+  prismaClient: PrismaClient,
+  intakeCheckPointer: PostgresSaver,
+) {
   // Seed Data
   await prismaClient.staff.create({
     data: fakeStaff,
@@ -75,4 +95,16 @@ export async function seed(prismaClient: PrismaClient) {
   await prismaClient.intake.create({
     data: fakeIntake,
   });
+
+  await intakeCheckPointer.put(
+    {
+      configurable: {
+        thread_id: fakeIntake.id,
+        checkpoint_ns: "",
+      },
+    },
+    checkpoint,
+    { source: "update", step: -1, parents: {}, writes: null },
+    checkpoint.channel_versions,
+  );
 }

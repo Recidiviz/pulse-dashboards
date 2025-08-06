@@ -53,6 +53,14 @@ export default defineConfig({
         process.env["DATABASE_URL_US_ID"] ??
         "postgresql://postgres:postgres@localhost:6505/reentry-test?schema=public",
       IMPORT_BUCKET_ID: process.env["IMPORT_BUCKET_ID"] ?? "test-bucket",
+      INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING:
+        process.env["INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING"] ??
+        "postgresql://postgres:postgres@localhost:6504/reentry?schema=intake",
+      INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING_US_ID:
+        process.env["INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING_US_ID"] ??
+        "postgresql://postgres:postgres@localhost:6504/reentry?schema=intake",
+      INTAKE_LANGGRAPH_CHECKPOINTER_SCHEMA:
+        process.env["INTAKE_LANGGRAPH_CHECKPOINTER_SCHEMA"] ?? "intake",
       SENTRY_DSN:
         process.env["SENTRY_DSN"] ??
         "https://83072d6dfc09bb6ad83c79324f7953bb@o432474.ingest.us.sentry.io/4509667951968256",

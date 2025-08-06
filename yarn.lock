@@ -5762,15 +5762,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-checkpoint-postgres@npm:^0.0.5":
-  version: 0.0.5
-  resolution: "@langchain/langgraph-checkpoint-postgres@npm:0.0.5"
+"@langchain/langgraph-checkpoint-postgres@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@langchain/langgraph-checkpoint-postgres@npm:0.1.1"
   dependencies:
     pg: "npm:^8.12.0"
   peerDependencies:
     "@langchain/core": ">=0.2.31 <0.4.0"
-    "@langchain/langgraph-checkpoint": ~0.0.15
-  checksum: 10c0/9d90b2ac2a51276d001b5023f591ba9091b166537b4dde4527b13d73d6ff60f6c4d6dd31dac82e54647129480562fa64a5f41b83075feb0c09b3d2af1e5426b5
+    "@langchain/langgraph-checkpoint": ^0.1.0
+  checksum: 10c0/6bb0edbeaaba2fbea413464ea0a44c4368803bc75f792e476b3eac22de458e56da95dbddd085f473b4014abd6ca9cf46ce9932e3195b4e1c86c894847cd31698
   languageName: node
   linkType: hard
 
@@ -36163,7 +36163,7 @@ __metadata:
     "@juggle/resize-observer": "npm:^3.4.0"
     "@langchain/core": "npm:^0.3.61"
     "@langchain/langgraph": "npm:^0.3.6"
-    "@langchain/langgraph-checkpoint-postgres": "npm:^0.0.5"
+    "@langchain/langgraph-checkpoint-postgres": "npm:^0.1.1"
     "@langchain/openai": "npm:^0.5.16"
     "@material/select": "npm:^14.0.0"
     "@material/textfield": "npm:^14.0.0"
