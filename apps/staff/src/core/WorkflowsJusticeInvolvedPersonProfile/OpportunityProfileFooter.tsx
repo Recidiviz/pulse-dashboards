@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, Sans16, TooltipTrigger } from "@recidiviz/design-system";
+import { Sans16, TooltipTrigger } from "@recidiviz/design-system";
 import { useCallback, useEffect } from "react";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";

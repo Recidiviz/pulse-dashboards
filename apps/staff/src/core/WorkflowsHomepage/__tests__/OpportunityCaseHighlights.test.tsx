@@ -31,18 +31,21 @@ function generateMockOpps(type: string, count: number): Opportunity[] {
   return Array.from(
     { length: count },
     (_, i) =>
-      ({
+      (({
         type,
+
         config: {
           highlightCasesOnHomepage: true,
           highlightedCaseCtaCopy: `${type} candidates`,
         },
+
         person: {
           externalId: `${i}`,
         },
+
         highlightCalloutText: `I am candidate ${i}`,
-        eligibilityDate: addDays(new Date("2024-10-01"), i),
-      }) as Opportunity,
+        eligibilityDate: addDays(new Date("2024-10-01"), i)
+      }) as Opportunity),
   );
 }
 

@@ -15,7 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, Button, Icon, Modal, Sans24, spacing } from "@recidiviz/design-system";
+import {
+  animation,
+  Icon,
+  Modal,
+  Sans24,
+  spacing,
+} from "@recidiviz/design-system";
 import { startOfToday } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
@@ -23,7 +29,7 @@ import { useEffect, useState } from "react";
 import useCopyClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import {
   useFeatureVariants,

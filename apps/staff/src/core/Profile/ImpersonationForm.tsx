@@ -17,12 +17,11 @@
 
 import "./Profile.scss";
 
-import { Button } from "@recidiviz/design-system";
 import React, { MutableRefObject, useRef, useState } from "react";
 import styled from "styled-components/macro";
 
 import { isOfflineMode } from "~client-env-utils";
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import { stopImpersonating } from "../../utils/impersonation";
 import ImpersonationErrorModal from "./ImpersonationErrorModal";

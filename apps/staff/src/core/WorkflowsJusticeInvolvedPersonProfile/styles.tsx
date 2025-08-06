@@ -15,16 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Button,
-  spacing,
-  TooltipTrigger,
-  typography,
-} from "@recidiviz/design-system";
+import { spacing, TooltipTrigger, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 export const DetailsSection = styled.dl``;
 

@@ -17,12 +17,13 @@
 
 import "./Profile.scss";
 
-import { Button, TooltipTrigger } from "@recidiviz/design-system";
+import { TooltipTrigger } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { isDemoMode, isOfflineMode } from "~client-env-utils";
+import { Button } from "~design-system";
 
 import FeatureVariantSelection from "../../components/FeatureVariantSelection";
 import StateSelection from "../../components/StateSelection";

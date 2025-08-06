@@ -70,9 +70,9 @@ export function withPresenterManager<Presenter, Props>({
     return HydratorComponent ? (
       // asserting Hydratable because `PresenterManagerOpts` ensures this component only
       // exists if the presenter is Hydratable, even though TS can't infer that here
-      <HydratorComponent hydratable={presenter as unknown as Hydratable}>
+      (<HydratorComponent hydratable={presenter as unknown as Hydratable}>
         {wrapped}
-      </HydratorComponent>
+      </HydratorComponent>)
     ) : (
       wrapped
     );

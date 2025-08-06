@@ -16,7 +16,6 @@
 // =============================================================================
 
 import {
-  Button,
   Loading,
   spacing,
   TooltipTrigger,
@@ -29,7 +28,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import Checkbox from "../../components/Checkbox";
 import {

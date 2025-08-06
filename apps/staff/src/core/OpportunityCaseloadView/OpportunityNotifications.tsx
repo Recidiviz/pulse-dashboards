@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, Button, typography } from "@recidiviz/design-system";
+import { animation, typography } from "@recidiviz/design-system";
 import { useEffect, useState } from "react";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import { OpportunityNotification } from "../../WorkflowsStore";
 import cssVars from "../CoreConstants.module.scss";

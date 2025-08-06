@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, ButtonProps, spacing } from "@recidiviz/design-system";
+import { ButtonProps, spacing } from "@recidiviz/design-system";
 import { darken, rem } from "polished";
 import { Link, LinkProps, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
+
+import { Button } from "~design-system";
 
 import { desktopLinkGate } from "../../../core/desktopLinkGate";
 import { OPPORTUNITY_STATUS_COLORS } from "../../../core/utils/workflowsUtils";

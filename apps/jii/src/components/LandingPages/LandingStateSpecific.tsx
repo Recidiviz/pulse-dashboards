@@ -15,11 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button } from "@recidiviz/design-system";
 import {
   useTypedParams,
   useTypedSearchParams,
 } from "react-router-typesafe-routes/dom";
+
+import { Button } from "~design-system";
 
 import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
 import { ReturnToPathFragment, State } from "../../routes/routes";

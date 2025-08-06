@@ -138,7 +138,7 @@ const workingReactConfig = getWorkingReactConfig();
 
 export const designSystemRestrictedImports = {
   name: "@recidiviz/design-system",
-  importNames: ["palette"],
+  importNames: ["Button", "palette"],
   message: "Please import from ~design-system instead.",
 };
 

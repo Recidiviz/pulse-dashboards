@@ -16,7 +16,6 @@
 // =============================================================================
 
 import {
-  Button,
   Icon,
   Sans16,
   Sans24,
@@ -26,7 +25,7 @@ import {
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 const ModalTitle = styled(Sans24)`
   color: ${palette.pine1};

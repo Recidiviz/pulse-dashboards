@@ -17,15 +17,12 @@
 
 import "./MoreFilters.scss";
 
-import {
-  Button,
-  Icon,
-  IconSVG,
-  TooltipTrigger,
-} from "@recidiviz/design-system";
+import { Icon, IconSVG, TooltipTrigger } from "@recidiviz/design-system";
 import { get } from "mobx";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
+
+import { Button } from "~design-system";
 
 import Modal from "../../components/Modal";
 import RadioGroup from "../../controls/RadioGroup";

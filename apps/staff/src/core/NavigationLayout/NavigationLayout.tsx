@@ -16,7 +16,6 @@
 // =============================================================================
 
 import {
-  Button,
   Dropdown,
   DropdownMenu,
   DropdownToggle,
@@ -33,7 +32,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { isOfflineMode } from "~client-env-utils";
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 import { psiUrl } from "~sentencing-client";
 
 import Drawer from "../../components/Drawer/Drawer";

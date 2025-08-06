@@ -16,7 +16,6 @@
 // =============================================================================
 
 import {
-  Button,
   Icon,
   IconSVG,
   Modal,
@@ -44,7 +43,7 @@ import ReactSelect, {
 } from "react-select";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useIsMobile from "../../hooks/useIsMobile";

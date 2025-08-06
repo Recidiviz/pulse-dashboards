@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { parseISO } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { darken, rem } from "polished";
@@ -24,7 +24,7 @@ import toast from "react-hot-toast";
 import { Link, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import {
   useFeatureVariants,

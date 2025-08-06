@@ -15,10 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { animation, Button } from "@recidiviz/design-system";
+import { animation } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import useClipboard from "react-use-clipboard";
+
+import { Button } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { Client, Opportunity } from "../../WorkflowsStore";

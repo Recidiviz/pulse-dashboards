@@ -17,7 +17,6 @@
 
 import {
   animation,
-  Button,
   Sans14,
   spacing,
   TooltipTrigger,
@@ -28,7 +27,7 @@ import { useEffect, useState } from "react";
 import useClipboard from "react-use-clipboard";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import { useRootStore } from "../../components/StoreProvider";
 import { formatDate } from "../../utils";

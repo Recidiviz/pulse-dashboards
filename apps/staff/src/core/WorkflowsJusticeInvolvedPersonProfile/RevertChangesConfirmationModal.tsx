@@ -15,12 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, Modal, spacing, typography } from "@recidiviz/design-system";
+import { Modal, spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import { createPortal } from "react-dom";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 const ModalHeader = styled.div`
   ${typography.Sans18};

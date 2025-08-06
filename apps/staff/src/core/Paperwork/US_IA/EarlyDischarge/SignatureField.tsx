@@ -15,10 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button } from "@recidiviz/design-system";
 import { runInAction } from "mobx";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components/macro";
+
+import { Button } from "~design-system";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { PartialRecord } from "../../../../utils/typeUtils";

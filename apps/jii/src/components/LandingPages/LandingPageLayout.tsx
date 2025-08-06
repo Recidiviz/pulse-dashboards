@@ -15,13 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, spacing, typography } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import Markdown from "markdown-to-jsx";
 import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { Button } from "~design-system";
 import { palette } from "~design-system";
 
 import recidivizWordmarkUrl from "../../assets/images/recidiviz-wordmark-white.svg";

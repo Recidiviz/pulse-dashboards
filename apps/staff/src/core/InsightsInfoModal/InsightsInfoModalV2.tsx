@@ -16,7 +16,6 @@
 // =============================================================================
 
 import {
-  Button,
   DrawerModal,
   Icon,
   spacing,
@@ -29,7 +28,7 @@ import { Link } from "react-router-dom";
 import MarkdownView from "react-showdown";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";

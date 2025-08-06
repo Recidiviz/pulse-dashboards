@@ -15,38 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  DropdownMenuItem,
-  DropdownToggle,
-  spacing,
-} from "@recidiviz/design-system";
-import { rem } from "polished";
-import styled from "styled-components/macro";
+import { IconSVG } from "@recidiviz/design-system";
+import React, { MouseEventHandler, ReactNode } from "react";
 
-import { Button, palette } from "~design-system";
+export type ButtonKind = "primary" | "secondary" | "link" | "borderless";
+export type ButtonShape = "pill" | "block";
 
-export const StatusAwareToggle = styled(DropdownToggle).attrs({
-  kind: "secondary",
-  shape: "block",
-  showCaret: true,
-})`
-  max-width: 11rem;
-  height: 40px;
-  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
-`;
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /**
+   * children will not be rendered if an icon is specified
+   */
+  children?: ReactNode;
 
-export const StatusAwareButton = styled(Button).attrs({
-  kind: "secondary",
-  shape: "block",
-})`
-  max-width: 11rem;
-  height: 40px;
-  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
-`;
+  className?: string;
 
-export const OpportunityStatusDropdownMenuItem = styled(DropdownMenuItem)`
-  :focus {
-    background-color: ${palette.slate10};
-    color: ${palette.pine2};
-  }
-`;
+  kind?: ButtonKind;
+  /**
+   * `shape` has no effect when `kind === "link"`
+   */
+  shape?: ButtonShape;
+  disabled?: boolean;
+
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  icon?: keyof typeof IconSVG;
+  iconSize?: number;
+}

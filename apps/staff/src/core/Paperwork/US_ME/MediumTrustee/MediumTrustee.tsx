@@ -69,7 +69,7 @@ function MediumTrustee({ opportunity }: { opportunity: Opportunity }) {
     >
       {previewImages.map((image, index) => (
         // eslint-disable-next-line react/no-array-index-key
-        <FormPreviewPage key={index} src={image} />
+        (<FormPreviewPage key={index} src={image} />)
       ))}
     </FormContainer>
   );

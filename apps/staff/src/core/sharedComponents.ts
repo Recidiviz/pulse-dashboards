@@ -16,7 +16,6 @@
 // =============================================================================
 
 import {
-  Button,
   Sans12,
   Sans14,
   Sans16,
@@ -27,7 +26,7 @@ import {
 import { rem, rgba } from "polished";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 import TealStar from "../assets/static/images/tealStar.svg?react";
 import cssVars from "./CoreConstants.module.scss";

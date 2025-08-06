@@ -278,9 +278,9 @@ export const highlightMatchedText = (
     searchWords.includes(part.toLowerCase()) ? (
       // TODO(#8709): Add color to design system or change to design system color
       // eslint-disable-next-line react/no-array-index-key
-      <span key={index} style={{ backgroundColor: "rgba(160, 255, 202, 1)" }}>
+      (<span key={index} style={{ backgroundColor: "rgba(160, 255, 202, 1)" }}>
         {part}
-      </span>
+      </span>)
     ) : (
       part
     ),

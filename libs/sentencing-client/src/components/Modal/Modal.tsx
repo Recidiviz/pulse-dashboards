@@ -15,11 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Button, Modal as ModalBase, spacing } from "@recidiviz/design-system";
+import { Modal as ModalBase, spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
+import { Button, palette } from "~design-system";
 
 export const MAX_MODAL_HEIGHT = "90vh";
 export const MODAL_PADDING = 40;

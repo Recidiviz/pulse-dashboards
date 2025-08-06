@@ -108,7 +108,7 @@ ${pageContents.body}`}
               <tr key={row[0]}>
                 {row.map((cell, i) => (
                   // eslint-disable-next-line react/no-array-index-key
-                  <td key={i}>{cell}</td>
+                  (<td key={i}>{cell}</td>)
                 ))}
               </tr>
             ))}

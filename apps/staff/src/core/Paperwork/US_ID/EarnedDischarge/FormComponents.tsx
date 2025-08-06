@@ -64,7 +64,7 @@ export const FormColGroup = ({
     <colgroup>
       {widths.map((w, index) => (
         // eslint-disable-next-line react/no-array-index-key
-        <col style={{ width: `${w}%` }} key={`${w}-${index}`} />
+        (<col style={{ width: `${w}%` }} key={`${w}-${index}`} />)
       ))}
     </colgroup>
   );
