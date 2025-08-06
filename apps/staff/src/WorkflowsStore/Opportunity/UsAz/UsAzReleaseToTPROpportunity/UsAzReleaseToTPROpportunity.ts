@@ -16,7 +16,6 @@
 // =============================================================================
 
 import { DocumentData } from "firebase/firestore";
-import { remove } from "lodash";
 
 import { Resident } from "../../../Resident";
 import { UsAzReleaseToTransitionProgramForm } from "../../Forms/UsAzReleaseToTransitionProgramForm";
@@ -108,7 +107,16 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
     // For all other cases, use the parent class logic
     return super.eligibilityStatusLabel(includeReasons);
   }
-
+  /**
+   * Gets the list of opportunity requirements that are almost met for this opportunity.
+   *
+   * If the client has a Recidiviz date, but no Acis date, it returns the parent's `requirementsAlmostMet`,
+   * which will include the Recidiviz date as an almost met requirement.
+   *
+   * If the client has an Acis date, it returns the Acis date criteria as the only almost met requirement.
+   *
+   * @returns An array of `OpportunityRequirement` objects representing requirements that are almost met.
+   */
   get requirementsAlmostMet(): OpportunityRequirement[] {
     if (
       this.record.ineligibleCriteria.usAzWithin7DaysOfRecidivizTprDate &&
@@ -121,26 +129,17 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
       record: {
         eligibleCriteria: {
           usAzIncarcerationWithin6MonthsOfAcisTprDate: acisDate,
-          usAzWithin7DaysOfRecidivizTprDate: recidivizDate,
         },
       },
       config: {
         eligibleCriteriaCopy: {
           usAzIncarcerationWithin6MonthsOfAcisTprDate: acisRaw,
-          usAzWithin7DaysOfRecidivizTprDate: recidivizRaw,
         },
       },
     } = this;
 
-    const criteria = (acisDate ?? recidivizDate) as Reason;
-    const raw = acisDate ? acisRaw : recidivizRaw;
-    const reqs = acisDate
-      ? remove(
-          super.requirementsAlmostMet,
-          (r) => r.key === "usAzWithin7DaysOfRecidivizTprDate",
-        )
-      : super.requirementsAlmostMet;
-
+    const criteria = acisDate as Reason;
+    const raw = acisRaw;
     return [
       hydrateReq({
         raw,
@@ -148,7 +147,6 @@ export class UsAzReleaseToTPROpportunity extends UsAzReleaseToTransitionProgramO
         criteria,
         formatters: this.criteriaFormatters,
       }),
-      ...reqs,
     ];
   }
 }
