@@ -225,6 +225,9 @@ export type OpportunityTab =
   | "Supervisor Review"
   | "Forms Submitted"
 
+  // For US_IA Supervision Level Downgrade opportunity
+  | "Pending Eligibility"
+
   // For US_ND Transfer to Min Facility
   | "Referral Submitted"
   | "Snoozed";

@@ -15,5 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UsIaEarlyDischargeOpportunity";
 export * from "./UsIaSupervisionLevelDowngradeOpportunity";
+export * from "./UsIaSupervisionLevelDowngradeReferralRecord";

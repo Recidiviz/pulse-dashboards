@@ -86,6 +86,7 @@ export type FeatureVariant =
   | "usTnCompliantReporting2025Policy"
   | "usIaEarlyDischargeCustomizations"
   | "usIaEarlyDischargeForms"
+  | "usIaSupervisionLevelDowngrade"
   | "usTnInitialClassification"
   | "usTnTEPENotesForAll"
   | "usMoSearchByUnit"
@@ -163,6 +164,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   snoozeCompanions: {},
   usIaEarlyDischargeCustomizations: {},
   usIaEarlyDischargeForms: {},
+  usIaSupervisionLevelDowngrade: {},
   operationsDrilldown: {},
   usTnInitialClassification: {},
   insightsStaffUsage: {},
@@ -208,6 +210,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],
         },
+        // Currently disabled until the config is finalized and fixture can be updated
+        usIaSupervisionLevelDowngrade: undefined,
       };
 
 export type LanternMethodologyByTenant = {

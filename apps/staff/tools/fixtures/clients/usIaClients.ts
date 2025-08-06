@@ -37,7 +37,10 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     address: "123 Bedrock Lane",
     phoneNumber: "5555555678",
     expirationDate: relativeFixtureDate({ months: 2 }),
-    allEligibleOpportunities: ["usIaEarlyDischarge"],
+    allEligibleOpportunities: [
+      "usIaEarlyDischarge",
+      "usIaSupervisionLevelDowngrade",
+    ],
   },
   {
     personName: {
@@ -56,7 +59,10 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     address: "456 Bedrock Lane",
     phoneNumber: "5555555678",
     expirationDate: relativeFixtureDate({ months: 7 }),
-    allEligibleOpportunities: ["usIaEarlyDischarge"],
+    allEligibleOpportunities: [
+      "usIaEarlyDischarge",
+      "usIaSupervisionLevelDowngrade",
+    ],
   },
   {
     personName: {
@@ -75,7 +81,10 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     address: "789 Bedrock Lane",
     phoneNumber: "5555555678",
     expirationDate: relativeFixtureDate({ months: 12 }),
-    allEligibleOpportunities: ["usIaEarlyDischarge"],
+    allEligibleOpportunities: [
+      "usIaEarlyDischarge",
+      "usIaSupervisionLevelDowngrade",
+    ],
   },
   {
     personName: {
@@ -94,7 +103,10 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     address: "100 Bedrock Lane",
     phoneNumber: "5555555678",
     expirationDate: relativeFixtureDate({ months: 9 }),
-    allEligibleOpportunities: ["usIaEarlyDischarge"],
+    allEligibleOpportunities: [
+      "usIaEarlyDischarge",
+      "usIaSupervisionLevelDowngrade",
+    ],
   },
   {
     personName: {
@@ -113,6 +125,9 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     address: "102 Bedrock Lane",
     phoneNumber: "5555555680",
     expirationDate: relativeFixtureDate({ months: 11 }),
-    allEligibleOpportunities: ["usIaEarlyDischarge"],
+    allEligibleOpportunities: [
+      "usIaEarlyDischarge",
+      "usIaSupervisionLevelDowngrade",
+    ],
   },
 ];
