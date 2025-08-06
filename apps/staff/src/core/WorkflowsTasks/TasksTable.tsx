@@ -119,8 +119,7 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
       cell: PersonNameCell,
     },
     {
-      // TODO(#6737): Make the column header the same as the label displayed when copied
-      header: presenter.supervisionDisplayIdCopy,
+      header: presenter.displayIdHeader,
       id: "id",
       accessorKey: "person.displayId",
       enableSorting: true,

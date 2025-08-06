@@ -46,7 +46,6 @@ export const US_PA: InsightsConfig = {
   atOrBelowRateLabel: "At or below statewide rate",
   caseloadCategories: [],
   clientEvents: [],
-  docLabel: "DOC",
   exclusionReasonDescription: "--",
   learnMoreUrl:
     "https://docs.google.com/document/d/e/2PACX-1vQtoN37YkmqHVxIThm9-I5_kPaWTBoLAWS8nkuJm13mnwS8re_mTP1wb98_Ui3dVPvBG7rQeWswBjXG/pub",

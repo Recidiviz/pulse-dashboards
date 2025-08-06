@@ -25,6 +25,8 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
   stateCode: "CA",
   domain: "cdcr.ca.gov",
   DOCName: "CDCR",
+  supervisionDisplayIdCopy: "CDCNO",
+  facilitiesDisplayIdCopy: "CDCNO",
   internalSystemName: "OMS",
   availableStateCodes: [dashboard.US_CA],
   enableUserRestrictions: false,

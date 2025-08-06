@@ -46,7 +46,6 @@ export const US_TX: InsightsConfig = {
   atOrBelowRateLabel: "tbd",
   caseloadCategories: [],
   clientEvents: [],
-  docLabel: "TDCJ",
   exclusionReasonDescription: "tbd",
   learnMoreUrl:
     "https://drive.google.com/file/d/1-dH4m9MHrd9kXUyZNvBf6-0KTPOiP1rl/view",

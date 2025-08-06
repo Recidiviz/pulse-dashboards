@@ -122,8 +122,8 @@ export const VitalsTaskDrilldownModal = observer(
         <ModalContent>
           <VitalsTaskDrilldownTable
             tasks={tasks}
-            docLabel={labels.docLabel}
             bodyDisplayName={bodyDisplayName}
+            labels={labels}
           />
           <FooterText>
             {bodyDisplayName}s due more than 30 days from today are not shown.

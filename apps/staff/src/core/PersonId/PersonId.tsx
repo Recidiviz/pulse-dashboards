@@ -55,16 +55,16 @@ const PersonId: React.FC<{
   children: React.ReactNode;
   personId: string;
   shiftIcon?: boolean;
-  docLabel?: string;
   opportunity?: Opportunity;
   pseudoId?: string;
+  systemType?: "SUPERVISION" | "INCARCERATION";
 }> = ({
   children,
   personId,
   shiftIcon = false,
-  docLabel = "DOC",
   opportunity = undefined,
   pseudoId = undefined,
+  systemType = undefined,
 }) => {
   const { isMobile } = useIsMobile(true);
   const [isCopied, copyToClipboard] = useClipboard(personId, {
@@ -73,16 +73,9 @@ const PersonId: React.FC<{
 
   const { tenantStore, analyticsStore, workflowsStore } = useRootStore();
 
-  // TODO(#6737): Parameterize this and pull from same source as insights if possible
-  let stateIdDescriptor = `${docLabel} ID`;
-  if (
-    workflowsStore.activeSystem === "SUPERVISION" &&
-    tenantStore?.supervisionDisplayIdCopy
-  ) {
-    stateIdDescriptor = tenantStore.supervisionDisplayIdCopy;
-  } else if (tenantStore?.facilitiesDisplayIdCopy) {
-    stateIdDescriptor = tenantStore.facilitiesDisplayIdCopy;
-  }
+  const stateIdDescriptor = tenantStore.getDisplayIdCopy(
+    systemType ?? workflowsStore.activeSystem,
+  );
 
   useEffect(() => {
     if (isCopied) toast(`${stateIdDescriptor} copied!`, { duration: 5000 });

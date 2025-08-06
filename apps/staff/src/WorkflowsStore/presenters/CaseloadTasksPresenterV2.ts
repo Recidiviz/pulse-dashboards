@@ -169,10 +169,6 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     );
   }
 
-  get supervisionDisplayIdCopy() {
-    return this.tenantStore.supervisionDisplayIdCopy ?? "ID";
-  }
-
   // Selection controls
   selectPerson(person: JusticeInvolvedPerson) {
     this.workflowsStore.updateSelectedPerson(person.pseudonymizedId);
@@ -505,6 +501,11 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
   // Text shown at the top of the Tasks page
   get pageDescriptionMarkdown() {
     return this.tenantStore.tasksPageDescriptionMarkdown;
+  }
+
+  get displayIdHeader() {
+    // Header text for the "display ID" column in table view
+    return this.tenantStore.getDisplayIdCopy("SUPERVISION");
   }
 
   get tasksTableColumns(): TaskTableColumnId[] {

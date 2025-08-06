@@ -396,6 +396,11 @@ export class OpportunityPersonListPresenter
     );
   }
 
+  get displayIdHeader() {
+    // Header text for the "display ID" column in table view
+    return this.tenantStore.getDisplayIdCopy(this.config.systemType);
+  }
+
   get submittedForHeader() {
     // Header text for the "submitted" column in table view
     const { submittedTabTitle } = this.config;
@@ -589,14 +594,6 @@ export class OpportunityPersonListPresenter
         this.peopleInActiveTab.map((person) => person.eligibilityStatusLabel()),
       ).size > 1
     );
-  }
-
-  get supervisionDisplayIdCopy() {
-    return this.tenantStore.supervisionDisplayIdCopy ?? "ID";
-  }
-
-  get facilitiesDisplayIdCopy() {
-    return this.tenantStore.facilitiesDisplayIdCopy ?? "ID";
   }
 
   dismissNotification(id: string) {

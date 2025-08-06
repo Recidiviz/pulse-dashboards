@@ -46,7 +46,6 @@ export const US_CA: InsightsConfig = {
   atOrBelowRateLabel: "At or above statewide rate",
   caseloadCategories: [],
   clientEvents: [],
-  docLabel: "CDCR",
   exclusionReasonDescription:
     "We've excluded agents from this list with particularly large or small average caseloads (larger than 175 or smaller than 10). We also excluded agents who didn’t have a caseload of at least 10 clients for at least 75% of the observation period. ",
   learnMoreUrl:

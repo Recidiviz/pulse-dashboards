@@ -135,7 +135,6 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
     metricId,
     eventsLabelSingular,
     outcomeDate,
-    labels,
     isInsightsLanternState,
   } = presenter;
 
@@ -198,7 +197,6 @@ const InsightsClientDetailsPanel = observer(function InsightsClientPanel({
       <ModalHeader>
         <InsightsClientCapsule
           clientInfo={clientInfo}
-          docLabel={labels.docLabel}
           supervisionType={supervisionDetails?.supervisionType}
         />
       </ModalHeader>

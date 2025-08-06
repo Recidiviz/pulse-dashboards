@@ -272,7 +272,7 @@ export class InsightsSupervisionStore {
       slightlyWorseThanRateLabel: this.config.slightlyWorseThanRateLabel,
       worseThanRateLabel: this.config.worseThanRateLabel,
       noneAreOutliersLabel: this.config.noneAreOutliersLabel,
-      docLabel: this.config.docLabel,
+      DOCName: this.insightsStore.rootStore.tenantStore.DOCName,
       outliersHover: this.config.outliersHover,
       vitalsMetricsMethodologyUrl: this.config.vitalsMetricsMethodologyUrl,
     };

@@ -602,11 +602,7 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     const salutation = clientName ? `Hey ${clientName}!` : `Hey!`;
 
     return dedent`
-    Message from Agent ${userSurname} at ${
-      !this.rootStore.currentTenantId
-        ? "DOC"
-        : TENANT_CONFIGS[this.rootStore.currentTenantId].DOCName
-    }:
+    Message from Agent ${userSurname} at ${this.rootStore.tenantStore.DOCName}:
 
     ${salutation} Congratulations on reaching ${
       congratulationsMilestones.length > 1

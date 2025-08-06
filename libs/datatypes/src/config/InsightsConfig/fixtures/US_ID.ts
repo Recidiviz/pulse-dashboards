@@ -52,7 +52,6 @@ export const US_ID: InsightsConfig = {
     { displayName: "Violations", name: "violations" },
     { displayName: "Sanctions", name: "violation_responses" },
   ],
-  docLabel: "IDOC",
   exclusionReasonDescription:
     "We've excluded officers from this list who have particularly large or small average caseloads (larger than 175 or smaller than 10). We've also excluded officers who didn't have a caseload of at least 10 clients for at least 75% of the observation period. Lastly, we exclude P&P specialists, as events that occur while clients are assigned to them are attributed to the previous officer.",
   learnMoreUrl:

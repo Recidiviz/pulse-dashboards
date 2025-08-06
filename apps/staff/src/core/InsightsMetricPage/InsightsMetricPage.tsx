@@ -160,7 +160,7 @@ const ManagedComponent = observer(function MetricPage({
                The name of the client and their CDCR ID is included as well.
           ${ctaText.insightsLanternStateCaseLearnMore}`
       : `This is the list of ${eventNameSingular} events which are being counted in the numerator of this metric.<br><br>
-              The name of the ${labels.supervisionJiiLabel}, their ${labels.docLabel} ID, and the date of the ${eventNameSingular} are listed within this table.<br><br>
+              The name of the ${labels.supervisionJiiLabel}, their ${labels.DOCName} ID, and the date of the ${eventNameSingular} are listed within this table.<br><br>
               ${ctaText.insightsLanternStateCaseLearnMore}`;
 
   const dotPlotLearnMoreText = `This plot shows the selected ${labels.supervisionOfficerLabel} and all other ${labels.supervisionOfficerLabel}s in the state based on their rate for this metric.<br><br>

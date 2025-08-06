@@ -58,7 +58,6 @@ export const rawInsightsConfigFixture: RawInsightsConfig = {
   learnMoreUrl: "https://recidiviz.org",
   exclusionReasonDescription: dedent`We've excluded officers from this list with particularly large or small average caseloads (larger than 175 or smaller than 10). 
   We also excluded officers who didn’t have a caseload of at least 10 clients for at least 75% of the observation period.`,
-  docLabel: "DOC",
   metrics: [
     {
       name: ADVERSE_METRIC_IDS.enum.absconsions_bench_warrants,

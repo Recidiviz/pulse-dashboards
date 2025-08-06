@@ -18,7 +18,11 @@
 import { makeAutoObservable, when } from "mobx";
 import qs from "query-string";
 
-import { StaffFilter, WorkflowsTasksConfig } from "../../core/models/types";
+import {
+  StaffFilter,
+  SystemId,
+  WorkflowsTasksConfig,
+} from "../../core/models/types";
 import { ClientDetailComponentName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";
@@ -288,18 +292,29 @@ export default class TenantStore {
     );
   }
 
-  get supervisionDisplayIdCopy(): string | undefined {
+  get DOCName(): string {
     const config = this.currentTenantId
       ? this.tenantConfigs[this.currentTenantId]
       : undefined;
-    return config?.supervisionDisplayIdCopy;
+    return config?.DOCName ?? "DOC";
   }
 
-  get facilitiesDisplayIdCopy(): string | undefined {
+  /**
+   * Returns the appropriate display ID copy based on system type and tenant configuration.
+   * Defaults to "${DOCName} ID" if no specific override is configured.
+   */
+  getDisplayIdCopy(systemType: SystemId | undefined): string {
     const config = this.currentTenantId
       ? this.tenantConfigs[this.currentTenantId]
       : undefined;
-    return config?.facilitiesDisplayIdCopy;
+
+    if (systemType === "SUPERVISION" && config?.supervisionDisplayIdCopy) {
+      return config.supervisionDisplayIdCopy;
+    }
+    if (systemType === "INCARCERATION" && config?.facilitiesDisplayIdCopy) {
+      return config.facilitiesDisplayIdCopy;
+    }
+    return `${this.DOCName} ID`;
   }
 
   // Copy used for the Workflows tool, with reasonable defaults

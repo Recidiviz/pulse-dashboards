@@ -31,6 +31,7 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
   name: "North Dakota",
   stateCode: "ND",
   domain: "nd.gov",
+  DOCName: "DOCR",
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],

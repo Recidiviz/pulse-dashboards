@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Icon, spacing, TooltipTrigger, typography } from "@recidiviz/design-system";
+import {
+  Icon,
+  spacing,
+  TooltipTrigger,
+  typography,
+} from "@recidiviz/design-system";
 import {
   ColumnDef,
   flexRender,
@@ -32,6 +37,7 @@ import styled from "styled-components/macro";
 import { palette } from "~design-system";
 
 import SortIcon from "../../assets/static/images/sortIcon.svg?react";
+import { ConfigLabels } from "../../InsightsStore/presenters/types";
 import { formatWorkflowsDate } from "../../utils";
 import { SupervisionTask } from "../../WorkflowsStore";
 import PersonId, { PersonIdWithCopyIcon } from "../PersonId/PersonId";
@@ -124,15 +130,15 @@ const StatusIcon = ({
 
 type VitalsTaskDrilldownTableProps = {
   tasks: SupervisionTask[];
-  docLabel: string;
   bodyDisplayName: string;
+  labels: ConfigLabels;
 };
 
 export const VitalsTaskDrilldownTable = observer(
   function VitalsTaskDrilldownTable({
     tasks,
-    docLabel,
     bodyDisplayName,
+    labels,
   }: VitalsTaskDrilldownTableProps) {
     const columns = useMemo<ColumnDef<SupervisionTask>[]>(
       () => [
@@ -142,7 +148,7 @@ export const VitalsTaskDrilldownTable = observer(
         },
         {
           accessorKey: "person.displayId",
-          header: `${docLabel} ID`,
+          header: `${labels.DOCName} ID`,
           // react-table wants the columns memoized, so I think this is ok
           // eslint-disable-next-line react/no-unstable-nested-components
           cell: (info) => {
@@ -150,8 +156,8 @@ export const VitalsTaskDrilldownTable = observer(
             return (
               <PersonId
                 personId={displayId}
-                docLabel={docLabel}
                 pseudoId={info.row.original.person.pseudonymizedId}
+                systemType="SUPERVISION"
                 shiftIcon
               >
                 {displayId}
@@ -190,7 +196,7 @@ export const VitalsTaskDrilldownTable = observer(
           },
         },
       ],
-      [docLabel, bodyDisplayName],
+      [labels.DOCName, bodyDisplayName],
     );
 
     const table = useReactTable({

@@ -54,13 +54,11 @@ const ClientSupervisionType = styled.div`
 
 type InsightsClientCapsuleProps = {
   clientInfo: ClientInfo;
-  docLabel: string;
   supervisionType: string | undefined;
 };
 
 export const InsightsClientCapsule = observer(function InsightsClientCapsule({
   clientInfo,
-  docLabel,
   supervisionType,
 }: InsightsClientCapsuleProps): JSX.Element {
   return (
@@ -72,7 +70,7 @@ export const InsightsClientCapsule = observer(function InsightsClientCapsule({
         <PersonId
           personId={clientInfo.clientId}
           pseudoId={clientInfo.pseudonymizedClientId}
-          docLabel={docLabel}
+          systemType="SUPERVISION"
         >
           <ClientId>{clientInfo.clientId}</ClientId>
         </PersonId>

@@ -49,7 +49,6 @@ export const US_MI: InsightsConfig = {
     { displayName: "Violations", name: "violations" },
     { displayName: "Sanctions", name: "violation_responses" },
   ],
-  docLabel: "DOC",
   exclusionReasonDescription:
     "We've excluded agents from this list with particularly large or small average daily caseloads (larger than 150 or smaller than 10). We also excluded agents who didn’t have a caseload of at least 10 clients for at least 75% of the observation period.",
   learnMoreUrl:

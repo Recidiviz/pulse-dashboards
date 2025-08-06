@@ -49,7 +49,6 @@ export const US_ND: InsightsConfig = {
     { displayName: "Violations", name: "violations" },
     { displayName: "Sanctions", name: "violation_responses" },
   ],
-  docLabel: "DOCR",
   exclusionReasonDescription: "TODO EXCLUSION REASON",
   learnMoreUrl:
     "https://drive.google.com/file/d/1gWA2aFu0VtL9c9ysv3PuhWjVjj7jYPNc/view?usp=sharing",

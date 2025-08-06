@@ -39,6 +39,10 @@ const useFeatureVariantsMock = useFeatureVariants as Mock;
 
 const baseRootStoreMock = {
   userStore: { userSurname: "Smith", userFullName: "Firstname Smith" },
+  tenantStore: {
+    DOCName: "DOC",
+    getDisplayIdCopy: () => "DOC ID",
+  },
   workflowsStore: {
     availableOfficers: [],
     updateSelectedPersonAndOpportunity: () => null,

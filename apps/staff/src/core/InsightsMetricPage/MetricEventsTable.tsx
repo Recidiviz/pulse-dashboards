@@ -73,7 +73,6 @@ function withPresenter(Component: ComponentType<MetricEventsTableProps>) {
 const createTableColumn = (
   column: Column,
   clientDetailLinks: string[] | undefined,
-  docLabel: string,
 ): Column => {
   const { accessor } = column;
 
@@ -98,7 +97,7 @@ const createTableColumn = (
         : {
             ...column,
             Cell: ({ value }: { value: string }) => (
-              <PersonId personId={value} docLabel={docLabel} shiftIcon>
+              <PersonId personId={value} systemType="SUPERVISION" shiftIcon>
                 {value}
               </PersonId>
             ),
@@ -131,7 +130,7 @@ export const MetricEventsTable = withPresenter(
         width: isMobile ? 40 : 120,
       },
       {
-        title: "ID",
+        title: `${labels.DOCName} ID`,
         accessor: "clientId",
         width: isMobile ? 40 : 70,
       },
@@ -150,7 +149,7 @@ export const MetricEventsTable = withPresenter(
           <InsightsTable<SupervisionOfficerMetricEvent>
             data={officerMetricEvents}
             columns={columns.map((c) =>
-              createTableColumn(c, clientDetailLinks, labels.docLabel),
+              createTableColumn(c, clientDetailLinks),
             )}
             rowLinks={clientDetailLinks}
             scrollElement={scrollElement}

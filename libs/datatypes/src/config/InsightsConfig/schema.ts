@@ -68,7 +68,6 @@ export const insightsConfigSchema = z.object({
       name: z.string(),
     }),
   ),
-  docLabel: z.string(),
   outliersHover: z.string(),
   vitalsMetricsMethodologyUrl: z.string().optional(),
   vitalsMetrics: z.array(

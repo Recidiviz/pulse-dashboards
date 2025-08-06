@@ -87,6 +87,10 @@ describe("Client", () => {
     mockRootStore = {
       ...rootStore,
       currentTenantId: "US_CA",
+      tenantStore: {
+        ...rootStore.tenantStore,
+        DOCName: "CDCR",
+      },
       firestoreStore: {
         updateMilestonesMessages: vi.fn(),
         doc: vi.fn(),

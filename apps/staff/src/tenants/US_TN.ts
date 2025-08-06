@@ -18,10 +18,10 @@
 import { TenantConfig } from "../core/models/types";
 import enabledTableColumns from "../core/utils/enabledTableColumns";
 import {
-  DASHBOARD_VIEWS,
-  INSIGHTS_PAGES,
-  PATHWAYS_PAGES,
-  PATHWAYS_SECTIONS,
+    DASHBOARD_VIEWS,
+    INSIGHTS_PAGES,
+    PATHWAYS_PAGES,
+    PATHWAYS_SECTIONS,
 } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
@@ -30,6 +30,7 @@ const US_TN_CONFIG: TenantConfig<"US_TN"> = {
   name: "Tennessee",
   stateCode: "TN",
   domain: "tn.gov",
+  DOCName: "TDOC",
   pathwaysNameOverride: "Pathways",
   supervisionEndCopyOverride: "Expiration",
   availableStateCodes: [pathways.US_TN],

@@ -76,10 +76,12 @@ export type ConfigLabels = Pick<
   | "slightlyWorseThanRateLabel"
   | "worseThanRateLabel"
   | "noneAreOutliersLabel"
-  | "docLabel"
   | "outliersHover"
   | "vitalsMetricsMethodologyUrl"
->;
+> & {
+  // Computed from tenantStore.DOCName
+  DOCName: string;
+};
 export type SupervisionDetails = Pick<
   SupervisionOfficerMetricEvent,
   "supervisionStartDate" | "supervisionType" | "officerAssignmentDate"

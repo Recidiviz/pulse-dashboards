@@ -29,7 +29,6 @@ export const US_UT: InsightsConfig = {
   atOrBelowRateLabel: "tbd",
   caseloadCategories: [],
   clientEvents: [],
-  docLabel: "UDC",
   exclusionReasonDescription: "tbd",
   learnMoreUrl: "tbd",
   metrics: [

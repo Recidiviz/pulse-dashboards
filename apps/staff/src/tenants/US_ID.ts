@@ -34,6 +34,7 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
   name: "Idaho",
   stateCode: "ID",
   domain: "idoc.idaho.gov",
+  DOCName: "IDOC",
   availableStateCodes: [pathways.US_ID],
   enableUserRestrictions: false,
   workflowsStaffFilterFn: filterByUserDistrict,
