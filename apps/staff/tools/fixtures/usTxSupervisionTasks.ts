@@ -131,7 +131,11 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         type: "usTxInCustodyContact",
         dueDate: "2022-03-19",
         details: {
-          reasonForContact: "In-Custody Contact",
+          contactCount: 2,
+          lastContactDate: null,
+          overdueFlag: false,
+          typeOfContact: "UNSCHEDULED HOME",
+          frequency: "12 MONTHS",
         },
       },
     ],
