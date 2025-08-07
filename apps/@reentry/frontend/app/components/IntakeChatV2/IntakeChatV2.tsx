@@ -15,35 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { AnyRouter } from "@trpc/server";
-import type { FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
-import type { Algorithm } from "fast-jwt";
+import { IntakeProvider } from "~@reentry/frontend/websockets/IntakeContext";
 
-export type Auth0Config = {
-  domain: string;
-  audience: string;
+import { useIntakeAuthContext } from "./IntakeAuthProvider";
+import IntakeLogin from "./IntakeLogin";
+
+const IntakeChatV2 = () => {
+  const { token } = useIntakeAuthContext();
+
+  if (!token) {
+    return <IntakeLogin />;
+  }
+
+  return <IntakeProvider>Oh hello there!</IntakeProvider>;
 };
 
-export type JwtConfig = {
-  key: string;
-  algorithm?: Algorithm;
-  expiresIn?: string;
-  cookie?: {
-    cookieName: string;
-    signed: boolean;
-  };
-};
-
-export type AuthConfig =
-  | { auth0Options: Auth0Config; jwtOptions?: never }
-  | { auth0Options?: never; jwtOptions: JwtConfig }
-  | { auth0Options?: never; jwtOptions?: never };
-
-export type BuildServerOptions<TRouter extends AnyRouter> = {
-  appRouter: TRouter;
-  createContext: NonNullable<
-    FastifyTRPCPluginOptions<TRouter>["trpcOptions"]["createContext"]
-  >;
-  useWSS?: boolean;
-  trpcPrefix?: string;
-} & AuthConfig;
+export default IntakeChatV2;

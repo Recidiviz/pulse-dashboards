@@ -28,7 +28,7 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["**/dist", "vite.config.mts.timestamp-*"],
+    ignores: ["**/dist", "vite.config.mts.timestamp-*", "**/.next/**"],
   },
   {
     plugins: {

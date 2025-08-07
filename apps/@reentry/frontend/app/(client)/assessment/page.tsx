@@ -20,12 +20,11 @@
 import { useEffect, useState } from "react";
 
 import ConfirmBirthdate from "~@reentry/frontend/components/intake/ChatInterface/ConfirmBirthday";
-import ConfirmBirthdateV2 from "~@reentry/frontend/components/intake/ChatInterface/ConfirmBirthdayV2";
 import IntakeRouter from "~@reentry/frontend/components/intake/IntakeRouter";
-import { IntakeRouterV2 } from "~@reentry/frontend/components/intake/IntakeRouterV2";
+import { IntakeAuthProvider } from "~@reentry/frontend/components/IntakeChatV2/IntakeAuthProvider";
+import IntakeChatV2 from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { IntakeSocketProvider } from "~@reentry/frontend/websockets/IntakeSocketContext";
-import { IntakeSocketProviderV2 } from "~@reentry/frontend/websockets/IntakeSocketContextV2";
 
 export default function Intake() {
   const [loading, setLoading] = useState(true);
@@ -44,6 +43,14 @@ export default function Intake() {
     }
   }, []);
 
+  if (IS_V2_INTAKE_CHAT) {
+    return (
+      <IntakeAuthProvider>
+        <IntakeChatV2 />
+      </IntakeAuthProvider>
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -55,26 +62,16 @@ export default function Intake() {
   if (!authorized) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        {IS_V2_INTAKE_CHAT ? (
-          <ConfirmBirthdateV2 mode={"nonPseudoId"} />
-        ) : (
-          <ConfirmBirthdate mode={"nonPseudoId"} />
-        )}
+        <ConfirmBirthdate mode={"nonPseudoId"} />
       </div>
     );
   }
 
   return (
     <div style={{ width: "100%", height: "100vh" }}>
-      {IS_V2_INTAKE_CHAT ? (
-        <IntakeSocketProviderV2 token_from_url={storedToken}>
-          <IntakeRouterV2 />
-        </IntakeSocketProviderV2>
-      ) : (
-        <IntakeSocketProvider token_from_url={storedToken}>
-          <IntakeRouter />
-        </IntakeSocketProvider>
-      )}
+      <IntakeSocketProvider token_from_url={storedToken}>
+        <IntakeRouter />
+      </IntakeSocketProvider>
     </div>
   );
 }

@@ -15,35 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { AnyRouter } from "@trpc/server";
-import type { FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
-import type { Algorithm } from "fast-jwt";
+"use client";
 
-export type Auth0Config = {
-  domain: string;
-  audience: string;
-};
+import { createContext, ReactNode, useContext } from "react";
 
-export type JwtConfig = {
-  key: string;
-  algorithm?: Algorithm;
-  expiresIn?: string;
-  cookie?: {
-    cookieName: string;
-    signed: boolean;
-  };
-};
+interface IntakeContextType {
+  noop: () => void; // Placeholder for future methods or state
+}
 
-export type AuthConfig =
-  | { auth0Options: Auth0Config; jwtOptions?: never }
-  | { auth0Options?: never; jwtOptions: JwtConfig }
-  | { auth0Options?: never; jwtOptions?: never };
+const IntakeContext = createContext<IntakeContextType | undefined>(undefined);
 
-export type BuildServerOptions<TRouter extends AnyRouter> = {
-  appRouter: TRouter;
-  createContext: NonNullable<
-    FastifyTRPCPluginOptions<TRouter>["trpcOptions"]["createContext"]
-  >;
-  useWSS?: boolean;
-  trpcPrefix?: string;
-} & AuthConfig;
+export function useIntakeContext() {
+  const ctx = useContext(IntakeContext);
+  if (!ctx)
+    throw new Error("useIntakeContext must be used within IntakeProvider");
+  return ctx;
+}
+
+interface IntakeProviderProps {
+  children: ReactNode;
+}
+
+export function IntakeProvider({ children }: IntakeProviderProps) {
+  return (
+    <IntakeContext.Provider value={{ noop: () => null }}>
+      {children}
+    </IntakeContext.Provider>
+  );
+}

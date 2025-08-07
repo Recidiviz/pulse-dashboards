@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { FastifyReply, FastifyRequest } from "fastify";
+
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { Prisma, StateCode } from "~@reentry/prisma/client";
 import { RequestWithStateCodeParams } from "~@reentry/server/server/types";
@@ -40,8 +42,8 @@ interface GetIntakeTokenBody {
   state_code: string;
 }
 interface GetIntakeTokenResponse {
-  access_token: string;
-  last_intake_id: string | null;
+  token: string;
+  clientPseudoId: string;
 }
 
 interface ToggleIntakeBody {
@@ -71,9 +73,22 @@ export function buildServer() {
     appRouter,
     createContext,
     useWSS: true, // Enable WebSocket support
-    jwtOptions: { key: jwtKey },
+    jwtOptions: {
+      key: jwtKey,
+    },
     trpcPrefix: "trpc",
   });
+
+  server.decorate(
+    "authenticate",
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      try {
+        await request.jwtVerify();
+      } catch (err) {
+        reply.code(401).send({ authorized: false, error: err });
+      }
+    },
+  );
 
   server.get<{
     Querystring: GetIntakeTokenQueryString;
@@ -157,18 +172,21 @@ export function buildServer() {
       }
 
       const token = server.jwt.sign({
-        pseudonymizedId: client.pseudonymizedId,
+        clientPseudoId: client.pseudonymizedId,
+        stateCode: state_code,
       });
 
-      const lastIntakeId =
-        client.Intake?.[client.Intake?.length - 1]?.id || null;
+      if (!token) {
+        res.status(500).send("Failed to generate JWT token");
+        return;
+      }
 
       const response: GetIntakeTokenResponse = {
-        access_token: token,
-        last_intake_id: lastIntakeId,
+        token,
+        clientPseudoId: client.pseudonymizedId,
       };
 
-      return res.send(response);
+      return res.status(200).send(response);
     },
   );
 
@@ -246,5 +264,6 @@ export function buildServer() {
       res.send({ ...intake, messages });
     },
   );
+
   return server;
 }

@@ -15,35 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { AnyRouter } from "@trpc/server";
-import type { FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
-import type { Algorithm } from "fast-jwt";
+export interface IntakeFields {
+  firstName: string;
+  lastName: string;
+  month: string;
+  day: string;
+  year: string;
+  stateCode: string;
+}
 
-export type Auth0Config = {
-  domain: string;
-  audience: string;
-};
+export interface IntakeResponse {
+  clientPseudoId: string;
+  token: string;
+}
 
-export type JwtConfig = {
-  key: string;
-  algorithm?: Algorithm;
-  expiresIn?: string;
-  cookie?: {
-    cookieName: string;
-    signed: boolean;
-  };
-};
-
-export type AuthConfig =
-  | { auth0Options: Auth0Config; jwtOptions?: never }
-  | { auth0Options?: never; jwtOptions: JwtConfig }
-  | { auth0Options?: never; jwtOptions?: never };
-
-export type BuildServerOptions<TRouter extends AnyRouter> = {
-  appRouter: TRouter;
-  createContext: NonNullable<
-    FastifyTRPCPluginOptions<TRouter>["trpcOptions"]["createContext"]
-  >;
-  useWSS?: boolean;
-  trpcPrefix?: string;
-} & AuthConfig;
+export interface AuthVerificationResponse {
+  authorized: boolean;
+  clientPseudoId?: string;
+  stateCode?: string;
+}

@@ -15,4 +15,5 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export const IS_V2_INTAKE_CHAT = process.env["IS_V2_INTAKE_CHAT"] === "true";
+export const IS_V2_INTAKE_CHAT =
+  process.env["NEXT_PUBLIC_IS_V2_INTAKE_CHAT"] === "true";

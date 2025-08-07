@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { faker } from "@faker-js/faker";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 import {
   Client,
@@ -24,7 +25,10 @@ import {
   StateCode,
 } from "~@reentry/prisma/client/client";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({
+  connectionString: process.env[`DATABASE_URL`],
+});
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Clean up existing data

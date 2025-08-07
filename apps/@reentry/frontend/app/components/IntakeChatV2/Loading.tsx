@@ -15,35 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import type { AnyRouter } from "@trpc/server";
-import type { FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
-import type { Algorithm } from "fast-jwt";
+import React from "react";
 
-export type Auth0Config = {
-  domain: string;
-  audience: string;
-};
+import styles from "./Loading.module.css";
 
-export type JwtConfig = {
-  key: string;
-  algorithm?: Algorithm;
-  expiresIn?: string;
-  cookie?: {
-    cookieName: string;
-    signed: boolean;
-  };
-};
+interface LoadingProps {
+  message?: string;
+}
 
-export type AuthConfig =
-  | { auth0Options: Auth0Config; jwtOptions?: never }
-  | { auth0Options?: never; jwtOptions: JwtConfig }
-  | { auth0Options?: never; jwtOptions?: never };
+const Loading: React.FC<LoadingProps> = ({ message = "Loading..." }) => (
+  <div className={styles["container"]}>
+    <div className={styles["spinner"]} />
+    <div className={styles["message"]}>{message}</div>
+  </div>
+);
 
-export type BuildServerOptions<TRouter extends AnyRouter> = {
-  appRouter: TRouter;
-  createContext: NonNullable<
-    FastifyTRPCPluginOptions<TRouter>["trpcOptions"]["createContext"]
-  >;
-  useWSS?: boolean;
-  trpcPrefix?: string;
-} & AuthConfig;
+export default Loading;

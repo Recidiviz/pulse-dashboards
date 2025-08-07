@@ -77,10 +77,16 @@ export function buildCommonServer<TRouter extends AnyRouter>(
   }
 
   if (options.jwtOptions) {
-    const { key, algorithm = "HS256", expiresIn = "5h" } = options.jwtOptions;
+    const {
+      key,
+      algorithm = "HS256",
+      expiresIn = "5h",
+      cookie,
+    } = options.jwtOptions;
     server.register(fastifyJwt, {
       secret: key,
       sign: { algorithm, expiresIn },
+      cookie,
       verify: { algorithms: [algorithm] },
     });
   }
