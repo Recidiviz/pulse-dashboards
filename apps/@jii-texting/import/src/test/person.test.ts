@@ -28,6 +28,7 @@ import {
 import {
   fakeFullyEligibleGroup,
   fakePersonOne,
+  fakeTrustedTesterGroup,
 } from "~@jii-texting/utils/test/constants";
 import { dataProviderSingleton } from "~data-import-plugin/testkit";
 
@@ -107,6 +108,75 @@ describe("handle_import", () => {
           ]),
         }),
         expect.objectContaining({ stableExternalId: "new-person-ext" }),
+      ]);
+    });
+
+    test("should update existing persons group", async () => {
+      const existingDbPeople = await testPrismaClient.person.findMany({
+        select: {
+          stableExternalId: true,
+          groups: {
+            select: {
+              id: false,
+              groupName: true,
+              messageCopyTemplate: true,
+              status: true,
+              topicId: false,
+            },
+          },
+        },
+      });
+
+      // Check that person has fully eligible group in setup
+      expect(existingDbPeople).toEqual([
+        expect.objectContaining({
+          stableExternalId: fakePersonOne.stableExternalId,
+          groups: expect.arrayContaining([
+            expect.objectContaining({
+              groupName: fakeFullyEligibleGroup.groupName,
+            }),
+          ]),
+        }),
+      ]);
+
+      dataProviderSingleton.setData(TEST_PERSON_FILE_NAME, [
+        // Existing person
+        {
+          stable_person_external_id: fakePersonOne.stableExternalId,
+          pseudonymized_id: fakePersonOne.pseudonymizedId,
+          person_id: fakePersonOne.personId,
+          state_code: StateCode.US_ID,
+          person_name: JSON.stringify({
+            given_names: fakePersonOne.givenName,
+            middle_names: fakePersonOne.middleName,
+            surname: fakePersonOne.surname,
+            name_suffix: fakePersonOne.nameSuffix,
+          }),
+          phone_number: fakePersonOne.phoneNumber,
+          officer_id: fakePersonOne.officerId,
+          po_name: fakePersonOne.poName,
+          district: fakePersonOne.district,
+          // DIFFERENT GROUP
+          group_id: fakeTrustedTesterGroup.groupName,
+        },
+      ]);
+
+      await importHandler.import(TEST_STATE_CODE, [PERSON_FILE_NAME]);
+
+      const dbPeople = await testPrismaClient.person.findMany({
+        include: { groups: true },
+      });
+
+      // Check that old person group was updated and they are only connected to one group
+      expect(dbPeople).toEqual([
+        expect.objectContaining({
+          stableExternalId: fakePersonOne.stableExternalId,
+          groups: [
+            expect.objectContaining({
+              groupName: fakeTrustedTesterGroup.groupName,
+            }),
+          ],
+        }),
       ]);
     });
 

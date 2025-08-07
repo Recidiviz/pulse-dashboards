@@ -34,9 +34,24 @@ export async function transformAndLoadPersonData(
   // Load new people data
   // We do this in a for loop since we are using AsyncGenerator (needs to be iterated over)
   for await (const personData of data) {
-    const group = await prismaClient.group.findFirstOrThrow({
+    const incomingGroup = await prismaClient.group.findFirstOrThrow({
       where: { groupName: personData.group_id },
     });
+
+    // Find the person if they exist
+    const currentGroupsForPerson = await prismaClient.person.findUnique({
+      where: { stableExternalId: personData.stable_person_external_id },
+      select: {
+        groups: { select: { groupName: true, id: true } },
+      },
+    });
+
+    const groupsToDisconnect =
+      currentGroupsForPerson !== null
+        ? currentGroupsForPerson.groups.filter(
+            (currentGroup) => currentGroup.id !== incomingGroup.id,
+          )
+        : [];
 
     const newPerson = {
       stableExternalId: personData.stable_person_external_id,
@@ -60,11 +75,14 @@ export async function transformAndLoadPersonData(
       },
       create: {
         ...newPerson,
-        groups: { connect: { id: group.id } },
+        groups: { connect: { id: incomingGroup.id } },
       },
       update: {
         ...newPerson,
-        groups: { connect: { id: group.id } },
+        groups: {
+          connect: { id: incomingGroup.id },
+          disconnect: groupsToDisconnect.map((group) => ({ id: group.id })), // Disconnect the groups in the array
+        },
       },
     });
 
