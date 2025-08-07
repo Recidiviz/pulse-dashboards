@@ -17,25 +17,23 @@
 
 import { DocumentData } from "firebase/firestore";
 
+import { OpportunityRecordBase, opportunitySchemaBase } from "~datatypes";
+
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { Resident } from "../../../Resident";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab } from "../../types";
-import {
-  UsNdTransferToMinFacilityReferralRecord,
-  usNdTransferToMinFacilitySchema,
-} from "./UsNdTransferToMinFacilityReferralRecord";
 
 export class UsNdTransferToMinFacilityOpportunity extends OpportunityBase<
   Resident,
-  UsNdTransferToMinFacilityReferralRecord
+  OpportunityRecordBase
 > {
   constructor(resident: Resident, record: DocumentData) {
     super(
       resident,
       "usNdTransferToMinFacility",
       resident.rootStore,
-      usNdTransferToMinFacilitySchema.parse(record),
+      opportunitySchemaBase.parse(record),
     );
   }
 
