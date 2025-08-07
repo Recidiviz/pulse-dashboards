@@ -67,7 +67,15 @@ export class FirestoreAPIClient implements FirestoreAPI {
     this.app = initializeApp({ projectId, apiKey });
 
     this.db = initializeFirestore(this.app, {
-      ...(proxyHost ? { host: `${proxyHost}/firestore` } : {}),
+      ...(proxyHost
+        ? {
+            host: `${proxyHost}/firestore`,
+            // this can be a little slower but seems to be more reliable
+            // when accessing Firestore via proxy;
+            // see https://github.com/firebase/firebase-js-sdk/issues/1674
+            experimentalForceLongPolling: true,
+          }
+        : {}),
     });
   }
 

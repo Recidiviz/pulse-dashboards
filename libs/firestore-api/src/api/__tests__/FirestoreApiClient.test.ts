@@ -98,6 +98,7 @@ test("initialize with proxy", () => {
   );
   expect(initializeFirestore).toHaveBeenLastCalledWith(appMock, {
     host: "foo.bar/firestore",
+    experimentalForceLongPolling: true,
   });
 });
 
