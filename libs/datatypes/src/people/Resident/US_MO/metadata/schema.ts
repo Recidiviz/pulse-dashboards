@@ -35,9 +35,38 @@ const usMoSolitaryAssignmentInfoPastYearSchema = z.object({
 export const usMoResidentMetadataSchema = z.object({
   stateCode: z.literal("US_MO"),
   d1SanctionInfoPastYear: z.array(usMoSanctionsSchema),
+  numD1SanctionsPastYear: z.number(),
   solitaryAssignmentInfoPastYear: z.array(
     usMoSolitaryAssignmentInfoPastYearSchema,
   ),
   numSolitaryAssignmentsPastYear: z.number(),
-  numD1SanctionsPastYear: z.number(),
+  medicalScore: z.number().nullable(),
+  publicRiskScore: z.number().nullable(),
+
+  // TODO(#8881) Remove the optional after #45957 gets to production
+  institutionalRiskScore: z.number().nullable().optional(),
+  educationScore: z.number().nullable(),
+  gangAffiliation: z.string().nullable(),
+  mentalHealthScore: z.number().nullable(),
+  activeSentences: z
+    .object({
+      offense: z.string(),
+      sentenceLengthYears: z.number().nullable(),
+      sentenceLengthMonths: z.number().nullable(),
+      sentenceLengthDays: z.number().nullable(),
+    })
+    .array(),
+  completedPrograms: z
+    .object({
+      completionDate: dateStringSchema,
+      program: z.string(),
+      status: z.string(),
+    })
+    .array(),
+  priorOffenseHistory: z
+    .object({
+      offenseDescription: z.string(),
+      offenseCommittedDate: dateStringSchema.nullable(),
+    })
+    .array(),
 });

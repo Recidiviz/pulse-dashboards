@@ -35,7 +35,7 @@ const US_MO_CONFIG: TenantConfig<"US_MO"> = {
         {
           searchType: "FACILITY",
           searchField: ["facilityId"],
-          searchTitle: "facility",
+          searchTitle: "institution",
         },
         {
           searchType: "FACILITY_UNIT",

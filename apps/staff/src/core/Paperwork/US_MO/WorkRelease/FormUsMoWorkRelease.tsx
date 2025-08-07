@@ -1,0 +1,308 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { observer } from "mobx-react-lite";
+import styled from "styled-components/macro";
+
+import { useRootStore } from "../../../../components/StoreProvider";
+import { Opportunity } from "../../../../WorkflowsStore";
+import { UsMoWorkReleaseDraftData } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseReferralRecord";
+import { FormContainer } from "../../FormContainer";
+import { fillAndSavePDF, PDFFillerFunc } from "../../PDFFormFiller";
+import p1 from "./assets/page1.png";
+import p2 from "./assets/page2.png";
+import p3 from "./assets/page3.png";
+
+const FormPreviewPage = styled.img`
+  height: auto;
+  width: 100%;
+`;
+
+const fillerFunc: PDFFillerFunc<UsMoWorkReleaseDraftData> = async (
+  formData,
+  set,
+  form,
+  doc,
+) => {
+  set("form1[0].MainSF[0].OffenderSF[0].Institution[0]", formData.institution); // PDFDropdown
+  set("form1[0].MainSF[0].OffenderSF[0].Date[0]", formData.date); // PDFTextField
+  set(
+    "form1[0].MainSF[0].OffenderSF[0].OffenderName[0]",
+    formData.offenderName,
+  ); // PDFTextField
+  set("form1[0].MainSF[0].OffenderSF[0].DOCID[0]", formData.docId); // PDFTextField
+  set("form1[0].MainSF[0].OffenderSF[0].HousingUnit[0]", formData.housingUnit); // PDFTextField
+  set("form1[0].MainSF[0].RcaSF[0].Medical[0]", formData.scoreM); // PDFTextField
+  set("form1[0].MainSF[0].RcaSF[0].MH[0]", formData.scoreMH); // PDFTextField
+  set("form1[0].MainSF[0].RcaSF[0].P[0]", formData.scoreP); // PDFTextField
+  set("form1[0].MainSF[0].RcaSF[0].I[0]", formData.scoreI); // PDFTextField
+  set("form1[0].MainSF[0].RcaSF[0].E[0]", formData.scoreE); // PDFTextField
+  set("form1[0].MainSF[0].RcaSF[0].C[0]", formData.scoreC); // PDFTextField
+  set("form1[0].MainSF[0].SentenceSF[0].Sentence[0]", formData.sentence); // PDFTextField
+  set(
+    "form1[0].MainSF[0].HeadingReleaseDatesSF[0].ReleaseDates[0]",
+    formData.releaseDatesType,
+  ); // PDFDropdown
+  set(
+    "form1[0].MainSF[0].DetailsSF[0].DetailsReleaseDates[0]",
+    formData.detailsReleaseDates,
+  ); // PDFTextField
+  set("form1[0].MainSF[0].DetainerSF[0].Detainer[0]", formData.detainer); // PDFTextField
+  set(
+    "form1[0].MainSF[0].CompletedProgramsSF[0].CompletedPrograms[0]",
+    formData.completedPrograms,
+  ); // PDFTextField
+  set(
+    "form1[0].MainSF[0].IncarcerationSF[0].IncarcerationAdjustmentRecord[0]",
+    formData.incarcerationAdjustmentRecord,
+  ); // PDFTextField
+  set(
+    "form1[0].MainSF[0].SubstanceUseSF[0].SubstanceUseHistory[0]",
+    formData.substanceUseHistory,
+  ); // PDFTextField
+  set(
+    "form1[0].MainSF[0].OrganizedCrimeSF[0].OrganizedCrimeInvolvement[0]",
+    formData.organizedCrimeInvolvement,
+  ); // PDFTextField
+  set(
+    "form1[0].MainSF[0].HistOfViolenceSF[0].HistoryOfViolence[0]",
+    formData.historyOfViolence,
+  ); // PDFTextField
+  // TODO(#8881) Check if we're populating the fields this references yet
+  // set(
+  //   "form1[0].MainSF[0].HeadingOffenseAndOtherCriteriaSF[0].None[0]",
+  //   !(
+  //     formData.historyOfChildAbuse ||
+  //     formData.historyOfSexualAbuse ||
+  //     formData.otherOffense
+  //   ),
+  // ); // PDFCheckBox
+  set(
+    "form1[0].MainSF[0].HeadingOffenseAndOtherCriteriaSF[0].OffenseSF[0].HistoryOfChildAbuse[0]",
+    formData.historyOfChildAbuse,
+  ); // PDFCheckBox
+  set(
+    "form1[0].MainSF[0].HeadingOffenseAndOtherCriteriaSF[0].OffenseSF[0].HistoryOfSexualAbuse[0]",
+    formData.historyOfSexualAbuse,
+  ); // PDFCheckBox
+  set(
+    "form1[0].MainSF[0].HeadingOffenseAndOtherCriteriaSF[0].OffenseSF[0].Other[0]",
+    formData.otherOffense,
+  ); // PDFCheckBox
+  set(
+    "form1[0].MainSF[0].HeadingOffenseAndOtherCriteriaSF[0].OffenseSF[0].OtherTextfield[0]",
+    formData.otherOffense,
+  ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].OtherCommentsSF[0].OtherAdditionalComments[0]",
+  //   formData,
+  // ); // PDFTextField
+  set(
+    "form1[0].MainSF[0].EscapeObscondSF[0].EscapeObscond[0]",
+    formData.escapeAbscond,
+  ); // PDFTextField
+  set("form1[0].MainSF[0].SummarySF[0].Summary[0]", formData.summary); // PDFTextField
+  set(
+    "form1[0].MainSF[0].AdditionalInforSF[0].AdditionalInforNotPrevAddressed[0]",
+    formData.additionalInformationNotPreviouslyAddressed,
+  ); // PDFTextField
+  set(
+    "form1[0].MainSF[0].WorkReleaseOutsideAssignSF[0].WorkReleaseOutsideAssignmentInfor[0]",
+    formData.workReleaseOutsideAssignmentInformation,
+  ); // PDFTextField
+
+  /////////
+  // Additional fields not currently filled, but left here to preserve their widget names
+
+  // set("form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Welding[0]", formData); // PDFCheckBox
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Computer[0]",
+  //   formData,
+  // ); // PDFCheckBox
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Drafting[0]",
+  //   formData,
+  // ); // PDFCheckBox
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Clerking[0]",
+  //   formData,
+  // ); // PDFCheckBox
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Mechanic[0]",
+  //   formData,
+  // ); // PDFCheckBox
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Autobody[0]",
+  //   formData,
+  // ); // PDFCheckBox
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Landscaping[0]",
+  //   formData,
+  // ); // PDFCheckBox
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Maintenance[0]",
+  //   formData,
+  // ); // PDFCheckBox
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].FoodService[0]",
+  //   formData,
+  // ); // PDFCheckBox
+  // set("form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Janitor[0]", formData); // PDFCheckBox
+  // set("form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Other[0]", formData); // PDFCheckBox
+  // set("form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].Other[1]", formData); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].StaffCompleteDate[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].CompletedByStaffMembersSignature[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].PreIncarcerationWorkExperSF[0].CompletedByStaffMemberNamePrinted[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].FUMdesigneeApprovalSF[0].DaysOfProbationWhenSucessfullyCompleted[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set("form1[0].MainSF[0].FUMdesigneeApprovalSF[0].Comments[0]", formData); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].FUMdesigneeApprovalSF[0].FUMDesigneeSignature[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].FUMdesigneeApprovalSF[0].FUMDesigneeDate[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].ChiefOfCustApprovalSF[0].DaysOfProbationWhenSucessfullyCompleted[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set("form1[0].MainSF[0].ChiefOfCustApprovalSF[0].Comments[0]", formData); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].ChiefOfCustApprovalSF[0].ChiefOfCustDesigneeSignature[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].ChiefOfCustApprovalSF[0].ChiefOfCustDesigneeDate[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].AssistantWardendesigneeApprovalSF[0].DaysOfProbationWhenSucessfullyCompleted[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].AssistantWardendesigneeApprovalSF[0].Comments[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].AssistantWardendesigneeApprovalSF[0].AssistantWardenDesigneeSignature[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].AssistantWardendesigneeApprovalSF[0].AssistantWardenDesigneeDate[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].DeputyWardenApprovalSF[0].DaysOfProbationWhenSucessfullyCompleted[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set("form1[0].MainSF[0].DeputyWardenApprovalSF[0].Comments[0]", formData); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].DeputyWardenApprovalSF[0].DeputyWardenDesigneeSignature[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].DeputyWardenApprovalSF[0].DeputyWardenDesigneeDate[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].DeputyWardenOptionalApprovalSF[0].DaysOfProbationWhenSucessfullyCompleted[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].DeputyWardenOptionalApprovalSF[0].Comments[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].DeputyWardenOptionalApprovalSF[0].DeputyWardenDesigneeSignature[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].DeputyWardenOptionalApprovalSF[0].DeputyWardenDesigneeDate[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set(
+  //   "form1[0].MainSF[0].CAOApprovalSF[0].DaysOfProbationWhenSucessfullyCompleted[0]",
+  //   formData,
+  // ); // PDFTextField
+  // set("form1[0].MainSF[0].CAOApprovalSF[0].Comments[0]", formData); // PDFTextField
+  // set("form1[0].MainSF[0].CAOApprovalSF[0].CAOSignature[0]", formData); // PDFTextField
+  // set("form1[0].MainSF[0].CAOApprovalSF[0].CAODesigneeDate[0]", formData); // PDFTextField
+  // set("form1[0].Main2SF[0].OffenderSF[0].OffenderName[0]", formData); // PDFTextField
+  // set("form1[0].Main2SF[0].OffenderSF[0].HousingUnit[0]", formData); // PDFTextField
+  // set("form1[0].Main2SF[0].OffenderSF[0].DOCID[0]", formData); // PDFTextField
+  // set("form1[0].Main2SF[0].OffenderSF[0].CAODesigneeDate[0]", formData); // PDFTextField
+  // set("radio", formData); // PDFCheckBox
+  try {
+    form.flatten();
+  } catch (error) {
+    console.error("Error flattening form:", error);
+  }
+};
+
+export const FormUsMoWorkRelease = observer(function FormUsMoWorkRelease({
+  opportunity,
+}: {
+  opportunity: Opportunity;
+}) {
+  const { getTokenSilently } = useRootStore();
+  const oppName = opportunity.config.label;
+
+  const onClickDownload = async () => {
+    const formData = opportunity?.form?.formData;
+    if (!formData) return;
+
+    await fillAndSavePDF(
+      `${opportunity.person.displayName} - ${oppName} Screening Form.pdf`,
+      "US_MO",
+      "work_release_template.pdf",
+      fillerFunc,
+      formData,
+      getTokenSilently,
+    );
+  };
+
+  return (
+    <FormContainer
+      agencyName="MODOC"
+      heading={`${oppName} Screening Form`}
+      onClickDownload={onClickDownload}
+      downloadButtonLabel="Download Form"
+      opportunity={opportunity}
+    >
+      {[p1, p2, p3].map((imageUrl, index) => (
+        <FormPreviewPage
+          key={imageUrl}
+          src={imageUrl}
+          alt={`Form preview, page ${index + 1}`}
+        />
+      ))}
+    </FormContainer>
+  );
+});

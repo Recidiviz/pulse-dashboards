@@ -18,12 +18,13 @@
 import { captureException } from "@sentry/react";
 import { saveAs } from "file-saver";
 import { toJS } from "mobx";
-import type {
-  PDFCheckBox,
-  PDFDocument,
-  PDFForm,
-  PDFRadioGroup,
-  PDFTextField,
+import {
+  type PDFCheckBox,
+  type PDFDocument,
+  PDFDropdown,
+  type PDFForm,
+  type PDFRadioGroup,
+  type PDFTextField,
 } from "pdf-lib";
 
 import { fetchWorkflowsTemplates } from "../../api/fetchWorkflowsTemplates";
@@ -33,14 +34,16 @@ export type SetFunc = (
   value?: string | boolean | number,
 ) => void;
 
-export type PDFFillerFunc = (
-  formData: any,
+export type PDFFillerFunc<FormData = any> = (
+  formData: FormData,
   set: SetFunc,
-  form?: PDFForm,
-  doc?: PDFDocument,
+  form: PDFForm,
+  doc: PDFDocument,
 ) => Promise<void>;
 
-type FillPDFFunc = (formData: any) => Promise<Uint8Array<ArrayBufferLike>>;
+export type FillPDFFunc = (
+  formData: any,
+) => Promise<Uint8Array<ArrayBufferLike>>;
 
 type PDFLib = {
   PDFCheckBox: typeof PDFCheckBox;
@@ -70,7 +73,10 @@ const fillPDF: (
         } else {
           field.uncheck();
         }
-      } else if (field instanceof PDFRadioGroup) {
+      } else if (
+        field instanceof PDFRadioGroup ||
+        field instanceof PDFDropdown
+      ) {
         if (value) {
           field.select(value.toString());
         } else {
