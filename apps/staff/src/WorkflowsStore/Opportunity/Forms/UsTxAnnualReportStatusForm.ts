@@ -25,7 +25,6 @@ export class UsTxAnnualReportStatusForm extends FormBase<
   UsTxAnnualReportStatusOpportunity
 > {
   navigateToFormText = "Download Form";
-  allowRevert = false;
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsTxAnnualReportStatusForm";
@@ -56,8 +55,6 @@ export class UsTxAnnualReportStatusForm extends FormBase<
     const warrantCheck = true;
     const societyBestInterestCheck = true;
     const officerName = this.person.assignedStaffFullName;
-    const supervisingOfficerRecommendYes = false;
-    const unitSupervisorConcurWithSupervisingOfficerYes = false;
 
     return {
       clientName,
@@ -69,8 +66,6 @@ export class UsTxAnnualReportStatusForm extends FormBase<
       warrantCheck,
       societyBestInterestCheck,
       officerName,
-      supervisingOfficerRecommendYes,
-      unitSupervisorConcurWithSupervisingOfficerYes,
     };
   }
 }

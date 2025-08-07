@@ -87,7 +87,10 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <Item>
-              <FormInput name="comment1" style={{ width: 500 }} />
+              <FormInput
+                name="comment1"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </Item>
           </Row>
           <Row justifyContentStart>
@@ -118,7 +121,10 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <Item>
-              <FormInput name="comment2" style={{ width: 500 }} />
+              <FormInput
+                name="comment2"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </Item>
           </Row>
           <Row justifyContentStart>
@@ -150,7 +156,10 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <Item>
-              <FormInput name="comment3" style={{ width: 500 }} />
+              <FormInput
+                name="comment3"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </Item>
           </Row>
           <Row justifyContentStart>
@@ -178,7 +187,10 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <Item>
-              <FormInput name="comment4" style={{ width: 500 }} />
+              <FormInput
+                name="comment4"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </Item>
           </Row>
           <Row justifyContentStart>
@@ -208,7 +220,10 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <Item>
-              <FormInput name="comment5" style={{ width: 500 }} />
+              <FormInput
+                name="comment5"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </Item>
           </Row>
           <Row style={{ fontSize: 8, fontWeight: "bold" }}>
@@ -221,7 +236,7 @@ const FormPSV323D: React.FC = () => {
           </Row>
           <Grid columns="2.6fr 1.8fr 2.9fr">
             <Item>
-              Supervising Officer
+              Supervising Officer:{" "}
               <FormInput
                 name="officerName"
                 style={{
@@ -250,16 +265,24 @@ const FormPSV323D: React.FC = () => {
             <Item textAlignCenter>Yes</Item>
             <Item textAlignCenter>
               <FormCheckbox
-                name="supervisingOfficerRecommendYes"
+                toggleable
+                name="supervisingOfficerRecommendCheck"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
-            <Item></Item>
+            <FormInput name="supervisingOfficerSignature" />
             <Item textAlignCenter>No</Item>
-            <Item></Item>
+            <Item textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="supervisingOfficerRecommendCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </Item>
           </Grid>
           <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <Item>Remarks:</Item>
@@ -270,7 +293,7 @@ const FormPSV323D: React.FC = () => {
           ></Item>
           <Grid columns="2.6fr 1.8fr 2.9fr">
             <Item>
-              Unit Supervisor{" "}
+              Unit Supervisor:{" "}
               <FormInput
                 name="unitSupervisorName"
                 style={{ borderRight: "unset" }}
@@ -295,16 +318,24 @@ const FormPSV323D: React.FC = () => {
             <Item textAlignCenter>Yes</Item>
             <Item textAlignCenter>
               <FormCheckbox
-                name="unitSupervisorConcurWithSupervisingOfficerYes"
+                toggleable
+                name="unitSupervisorConcurWithSupervisingOfficerCheck"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </Item>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
-            <Item></Item>
+            <FormInput name="unitSupervisorSignature" />
             <Item textAlignCenter>No</Item>
-            <Item></Item>
+            <Item textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="unitSupervisorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </Item>
           </Grid>
           <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <Item>Remarks:</Item>
@@ -314,8 +345,20 @@ const FormPSV323D: React.FC = () => {
             style={{ lineHeight: "unset", height: "3px", display: "flex" }}
           ></Item>
           <Grid columns="2.6fr 1.8fr 2.9fr">
-            <Item>Parole Supervisor:</Item>
-            <Item>Date:</Item>
+            <Item>
+              Parole Supervisor:{" "}
+              <FormInput
+                name="paroleSupervisorName"
+                style={{ borderRight: "unset" }}
+              />
+            </Item>
+            <Item>
+              Date:
+              <FormInput
+                name="paroleSupervisorDate"
+                style={{ borderRight: "unset" }}
+              />
+            </Item>
             <Item textAlignCenter>
               Concur with Supervising Officer's Decision
             </Item>
@@ -326,26 +369,49 @@ const FormPSV323D: React.FC = () => {
               thoroughly reviewed.
             </Item>
             <Item textAlignCenter>Yes</Item>
-            <Item></Item>
+            <Item textAlignCenter>
+              <FormCheckbox
+                toggleable
+                name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </Item>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
-            <Item></Item>
+            <FormInput name="paroleSupervisorSignature" />
             <Item textAlignCenter>No</Item>
-            <Item></Item>
+            <Item textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </Item>
           </Grid>
-          <Grid
-            columns="0.745fr 6.5fr"
-            style={{ borderBottom: "1px solid", borderRight: "1px solid" }}
-          >
+          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <Item>Remarks:</Item>
+            <FormInput name="paroleSupervisorRemarks" />
           </Grid>
           <Item
             style={{ lineHeight: "unset", height: "3px", display: "flex" }}
           ></Item>
           <Grid columns="2.6fr 1.8fr 2.9fr">
-            <Item>Assistant Region Director:</Item>
-            <Item>Date:</Item>
+            <Item>
+              Assistant Region Director:{" "}
+              <FormInput
+                name="assistantRegionDirectorName"
+                style={{ borderRight: "unset" }}
+              />
+            </Item>
+            <Item>
+              Date:
+              <FormInput
+                name="assistantRegionDirectorDate"
+                style={{ borderRight: "unset" }}
+              />
+            </Item>
             <Item textAlignCenter>
               Concur with Supervising Officer's Decision
             </Item>
@@ -356,26 +422,49 @@ const FormPSV323D: React.FC = () => {
               thoroughly reviewed.
             </Item>
             <Item textAlignCenter>Yes</Item>
-            <Item></Item>
+            <Item textAlignCenter>
+              <FormCheckbox
+                toggleable
+                name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </Item>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
-            <Item></Item>
+            <FormInput name="assistantRegionDirectorSignature" />
             <Item textAlignCenter>No</Item>
-            <Item></Item>
+            <Item textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </Item>
           </Grid>
-          <Grid
-            columns="0.745fr 6.5fr"
-            style={{ borderBottom: "1px solid", borderRight: "1px solid" }}
-          >
+          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <Item>Remarks:</Item>
+            <FormInput name="assistantRegionDirectorRemarks" />
           </Grid>
           <Item
             style={{ lineHeight: "unset", height: "3px", display: "flex" }}
           ></Item>
           <Grid columns="2.6fr 1.8fr 2.9fr">
-            <Item>Region Director:</Item>
-            <Item>Date:</Item>
+            <Item>
+              Region Director:{" "}
+              <FormInput
+                name="regionDirectorName"
+                style={{ borderRight: "unset" }}
+              />
+            </Item>
+            <Item>
+              Date:
+              <FormInput
+                name="regionDirectorDate"
+                style={{ borderRight: "unset" }}
+              />
+            </Item>
             <Item textAlignCenter>Final Authority</Item>
           </Grid>
           <Grid columns="4.44fr 1.45fr 1.45fr">
@@ -384,19 +473,30 @@ const FormPSV323D: React.FC = () => {
               thoroughly reviewed.
             </Item>
             <Item textAlignCenter>Yes</Item>
-            <Item></Item>
+            <Item textAlignCenter>
+              <FormCheckbox
+                toggleable
+                name="regionDirectorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </Item>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <Item>Signature:</Item>
-            <Item></Item>
+            <FormInput name="regionDirectorSignature" />
             <Item textAlignCenter>No</Item>
-            <Item></Item>
+            <Item textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="regionDirectorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </Item>
           </Grid>
-          <Grid
-            columns="0.745fr 6.5fr"
-            style={{ borderBottom: "1px solid", borderRight: "1px solid" }}
-          >
+          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <Item>Remarks:</Item>
+            <FormInput name="regionDirectorRemarks" />
           </Grid>
         </FormContainer>
       </PrintablePage>
