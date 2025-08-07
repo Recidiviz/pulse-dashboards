@@ -53,7 +53,7 @@ const ERSChecklist: React.FC = () => {
                 <FormInput name="tdcjNumberAndSid" style={{ width: 175 }} />
               </ErsItem>
               <ErsItem>
-                Eligibility Month
+                Eligibility Month:
                 <FormInput
                   name="eligibilityMonthString"
                   style={{ width: 175 }}
@@ -88,7 +88,10 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <ErsItem>
-              <FormInput name="comment1" style={{ width: 500 }} />
+              <FormInput
+                name="comment1"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </ErsItem>
           </Row>
           <Row justifyContentStart unsetMargin>
@@ -118,7 +121,10 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <ErsItem>
-              <FormInput name="comment2" style={{ width: 500 }} />
+              <FormInput
+                name="comment2"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </ErsItem>
           </Row>
           <Row justifyContentStart unsetMargin>
@@ -148,7 +154,10 @@ const ERSChecklist: React.FC = () => {
             <ErsItem>Comments:</ErsItem>
             <Row paddingLeft>
               <ErsItem>
-                <FormInput name="comment3" style={{ width: 500 }} />
+                <FormInput
+                  name="comment3"
+                  style={{ width: 500, borderBottom: "solid thin" }}
+                />
               </ErsItem>
             </Row>
           </Row>
@@ -181,7 +190,10 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <ErsItem>
-              <FormInput name="comment4" style={{ width: 500 }} />
+              <FormInput
+                name="comment4"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </ErsItem>
           </Row>
           <Row justifyContentStart unsetMargin>
@@ -209,7 +221,10 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <ErsItem>
-              <FormInput name="comment5" style={{ width: 500 }} />
+              <FormInput
+                name="comment5"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </ErsItem>
           </Row>
           <Row justifyContentStart unsetMargin>
@@ -240,7 +255,10 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <ErsItem>
-              <FormInput name="comment6" style={{ width: 500 }} />
+              <FormInput
+                name="comment6"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </ErsItem>
           </Row>
           <Row justifyContentStart unsetMargin>
@@ -270,7 +288,10 @@ const ERSChecklist: React.FC = () => {
           </Row>
           <Row paddingLeft>
             <ErsItem>
-              <FormInput name="comment7" style={{ width: 500 }} />
+              <FormInput
+                name="comment7"
+                style={{ width: 500, borderBottom: "solid thin" }}
+              />
             </ErsItem>
           </Row>
           <Row style={{ fontSize: 8, fontWeight: "bold" }}>
@@ -312,16 +333,24 @@ const ERSChecklist: React.FC = () => {
             <ErsItem textAlignCenter>Yes</ErsItem>
             <ErsItem textAlignCenter>
               <FormCheckbox
-                name="supervisingOfficerRecommendYes"
+                toggleable
+                name="supervisingOfficerRecommendCheck"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <ErsItem>Signature:</ErsItem>
-            <ErsItem></ErsItem>
+            <FormInput name="supervisingOfficerSignature" />
             <ErsItem textAlignCenter>No</ErsItem>
-            <ErsItem></ErsItem>
+            <ErsItem textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="supervisingOfficerRecommendCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </ErsItem>
           </Grid>
           <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <ErsItem>Remarks:</ErsItem>
@@ -357,16 +386,24 @@ const ERSChecklist: React.FC = () => {
             <ErsItem textAlignCenter>Yes</ErsItem>
             <ErsItem textAlignCenter>
               <FormCheckbox
-                name="unitSupervisorConcurWithSupervisingOfficerYes"
+                toggleable
+                name="unitSupervisorConcurWithSupervisingOfficerCheck"
                 style={{ height: "10px", verticalAlign: "middle" }}
               ></FormCheckbox>
             </ErsItem>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <ErsItem>Signature:</ErsItem>
-            <ErsItem></ErsItem>
+            <FormInput name="unitSupervisorSignature" />
             <ErsItem textAlignCenter>No</ErsItem>
-            <ErsItem></ErsItem>
+            <ErsItem textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="unitSupervisorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </ErsItem>
           </Grid>
           <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <ErsItem>Remarks:</ErsItem>
@@ -376,8 +413,20 @@ const ERSChecklist: React.FC = () => {
             style={{ lineHeight: "unset", height: "3px", display: "flex" }}
           ></ErsItem>
           <Grid columns="2.6fr 1.8fr 2.9fr">
-            <ErsItem>Parole Supervisor:</ErsItem>
-            <ErsItem>Date:</ErsItem>
+            <ErsItem>
+              Parole Supervisor:{" "}
+              <FormInput
+                name="paroleSupervisorName"
+                style={{ borderRight: "unset" }}
+              />
+            </ErsItem>
+            <ErsItem>
+              Date:
+              <FormInput
+                name="paroleSupervisorDate"
+                style={{ borderRight: "unset" }}
+              />
+            </ErsItem>
             <ErsItem textAlignCenter>
               Concur with Supervising Officer's Decision
             </ErsItem>
@@ -388,26 +437,49 @@ const ERSChecklist: React.FC = () => {
               reviewed.
             </ErsItem>
             <ErsItem textAlignCenter>Yes</ErsItem>
-            <ErsItem></ErsItem>
+            <ErsItem textAlignCenter>
+              <FormCheckbox
+                toggleable
+                name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </ErsItem>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <ErsItem>Signature:</ErsItem>
-            <ErsItem></ErsItem>
+            <FormInput name="paroleSupervisorSignature" />
             <ErsItem textAlignCenter>No</ErsItem>
-            <ErsItem></ErsItem>
+            <ErsItem textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="paroleSupervisorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </ErsItem>
           </Grid>
-          <Grid
-            columns="0.745fr 6.5fr"
-            style={{ borderBottom: "1px solid", borderRight: "1px solid" }}
-          >
+          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <ErsItem>Remarks:</ErsItem>
+            <FormInput name="paroleSupervisorRemarks" />
           </Grid>
           <ErsItem
             style={{ lineHeight: "unset", height: "3px", display: "flex" }}
           ></ErsItem>
           <Grid columns="2.6fr 1.8fr 2.9fr">
-            <ErsItem>Assistant Region Director:</ErsItem>
-            <ErsItem>Date:</ErsItem>
+            <ErsItem>
+              Assistant Region Director:{" "}
+              <FormInput
+                name="assistantRegionDirectorName"
+                style={{ borderRight: "unset" }}
+              />
+            </ErsItem>
+            <ErsItem>
+              Date:
+              <FormInput
+                name="assistantRegionDirectorDate"
+                style={{ borderRight: "unset" }}
+              />
+            </ErsItem>
             <ErsItem textAlignCenter>
               Concur with Supervising Officer's Decision
             </ErsItem>
@@ -418,26 +490,49 @@ const ERSChecklist: React.FC = () => {
               reviewed.
             </ErsItem>
             <ErsItem textAlignCenter>Yes</ErsItem>
-            <ErsItem></ErsItem>
+            <ErsItem textAlignCenter>
+              <FormCheckbox
+                toggleable
+                name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </ErsItem>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <ErsItem>Signature:</ErsItem>
-            <ErsItem></ErsItem>
+            <FormInput name="assistantRegionDirectorSignature" />
             <ErsItem textAlignCenter>No</ErsItem>
-            <ErsItem></ErsItem>
+            <ErsItem textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="assistantRegionDirectorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </ErsItem>
           </Grid>
-          <Grid
-            columns="0.745fr 6.5fr"
-            style={{ borderBottom: "1px solid", borderRight: "1px solid" }}
-          >
+          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <ErsItem>Remarks:</ErsItem>
+            <FormInput name="assistantRegionDirectorRemarks" />
           </Grid>
           <ErsItem
             style={{ lineHeight: "unset", height: "3px", display: "flex" }}
           ></ErsItem>
           <Grid columns="2.6fr 1.8fr 2.9fr">
-            <ErsItem>Region Director:</ErsItem>
-            <ErsItem>Date:</ErsItem>
+            <ErsItem>
+              Region Director:{" "}
+              <FormInput
+                name="regionDirectorName"
+                style={{ borderRight: "unset" }}
+              />
+            </ErsItem>
+            <ErsItem>
+              Date:
+              <FormInput
+                name="regionDirectorDate"
+                style={{ borderRight: "unset" }}
+              />
+            </ErsItem>
             <ErsItem textAlignCenter>Final Authority</ErsItem>
           </Grid>
           <Grid columns="4.44fr 1.45fr 1.45fr">
@@ -446,21 +541,32 @@ const ERSChecklist: React.FC = () => {
               reviewed.
             </ErsItem>
             <ErsItem textAlignCenter>Recommend for ERS</ErsItem>
-            <ErsItem></ErsItem>
+            <ErsItem textAlignCenter>
+              <FormCheckbox
+                toggleable
+                name="regionDirectorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </ErsItem>
           </Grid>
           <Grid columns="0.75fr 3.67fr 1.45fr 1.45fr">
             <ErsItem>Signature:</ErsItem>
-            <ErsItem></ErsItem>
+            <FormInput name="regionDirectorSignature" />
             <ErsItem textAlignCenter style={{ fontSize: "7px" }}>
               Does Not Recommend for ERS
             </ErsItem>
-            <ErsItem></ErsItem>
+            <ErsItem textAlignCenter>
+              <FormCheckbox
+                toggleable
+                invert
+                name="regionDirectorConcurWithSupervisingOfficerCheck"
+                style={{ height: "10px", verticalAlign: "middle" }}
+              ></FormCheckbox>
+            </ErsItem>
           </Grid>
-          <Grid
-            columns="0.745fr 6.5fr"
-            style={{ borderBottom: "1px solid", borderRight: "1px solid" }}
-          >
+          <Grid columns="0.745fr 6.5fr" style={{ borderBottom: "1px solid" }}>
             <ErsItem>Remarks:</ErsItem>
+            <FormInput name="regionDirectorRemarks" />
           </Grid>
         </FormContainer>
       </PrintablePage>

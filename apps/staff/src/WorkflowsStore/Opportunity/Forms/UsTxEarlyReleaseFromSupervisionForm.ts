@@ -25,7 +25,6 @@ export class UsTxEarlyReleaseFromSupervisionForm extends FormBase<
   UsTxEarlyReleaseFromSupervisionOpportunity
 > {
   navigateToFormText = "Download Form";
-  allowRevert = false;
 
   get formContents(): OpportunityFormComponentName {
     return "WorkflowsUsTxEarlyReleaseFromSupervisionForm";

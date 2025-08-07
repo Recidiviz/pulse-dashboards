@@ -132,7 +132,7 @@ export const Row = styled.div<RowProps>(
     flex-wrap: wrap;
     align-items: center;
     justify-content: ${justifyContentStart ? "start" : "space-between"};
-    margin-bottom: ${unsetMargin ? "unset" : "4px"};
+    margin-bottom: ${unsetMargin ? "unset" : "1px"};
     width: 100%;
     padding-left: ${paddingLeft ? "60px" : "0pt"};
   `;
