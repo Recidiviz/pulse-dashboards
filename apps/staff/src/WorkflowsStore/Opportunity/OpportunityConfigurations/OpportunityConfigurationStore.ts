@@ -118,6 +118,7 @@ export class OpportunityConfigurationStore implements Hydratable {
     const states = TENANT_CONFIGS.RECIDIVIZ.availableStateCodes.filter(
       (t) => TENANT_CONFIGS[t].navigation?.workflows,
     );
+
     const files = await Promise.all(
       states.map(async (tenant, i) => {
         await new Promise((resolve) => setTimeout(resolve, throttle_ms * i));
@@ -127,7 +128,6 @@ export class OpportunityConfigurationStore implements Hydratable {
         const fetched = {
           enabledConfigs: sortObject(mapValues(enabledConfigs, sortObject)),
         };
-
         return {
           filename: `${tenant}.ts`,
           fileContents: `import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore/Opportunity/OpportunityConfigurations/interfaces";
@@ -136,6 +136,9 @@ export const mockApiOpportunityConfigurationResponse = ${JSON.stringify(fetched)
         };
       }),
     );
+    // US_OR is a special case state that is deprecated, but we still need to appear in
+    // demo mode for BD purposes.
+    states.push("US_OR");
     files.push({
       filename: "index.ts",
       fileContents: `${states.map((s) => `import * as ${s} from "./${s}";`).join("")}
