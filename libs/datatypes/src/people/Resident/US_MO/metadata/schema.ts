@@ -48,7 +48,7 @@ export const usMoResidentMetadataSchema = z.object({
   educationScore: z.number().nullable(),
   gangAffiliation: z.string().nullable(),
   mentalHealthScore: z.number().nullable(),
-  activeSentences: z
+  latestCycleSentences: z
     .object({
       offense: z.string(),
       sentenceLengthYears: z.number().nullable(),
@@ -56,17 +56,17 @@ export const usMoResidentMetadataSchema = z.object({
       sentenceLengthDays: z.number().nullable(),
     })
     .array(),
-  completedPrograms: z
+  latestCycleCompletedPrograms: z
     .object({
       completionDate: dateStringSchema,
       program: z.string(),
       status: z.string(),
     })
     .array(),
-  priorOffenseHistory: z
+  priorCycleSentences: z
     .object({
-      offenseDescription: z.string(),
-      offenseCommittedDate: dateStringSchema.nullable(),
+      offense: z.string(),
+      offenseDate: dateStringSchema.nullable(),
     })
     .array(),
 });

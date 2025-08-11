@@ -66,7 +66,7 @@ export class UsMoWorkReleaseForm extends FormBase<
         scoreE: metadata.educationScore?.toString() ?? "",
         scoreC: (person.custodyLevel ?? "").replace("C-", ""),
         sentence: formatList(
-          metadata.activeSentences,
+          metadata.latestCycleSentences,
           (s) => `* ${s.offense} - ${s.sentenceLengthYears}`,
         ),
         // releaseDatesType: formInformation.releaseDate.releaseDateType,
@@ -75,7 +75,7 @@ export class UsMoWorkReleaseForm extends FormBase<
         // ),
         detainer: "",
         completedPrograms: formatList(
-          metadata.completedPrograms,
+          metadata.latestCycleCompletedPrograms,
           (p) =>
             `* ${p.program} - ${p.status} - ${formatDate(p.completionDate)}`,
         ),
