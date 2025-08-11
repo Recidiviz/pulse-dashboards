@@ -20,6 +20,7 @@ import { DocumentData } from "@google-cloud/firestore";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab } from "../../types";
+import { UsIaEarlyDischargeOpportunity } from "../UsIaEarlyDischargeOpportunity";
 import {
   UsIaSupervisionLevelDowngradeReferralRecord,
   usIaSupervisionLevelDowngradeSchema,
@@ -36,6 +37,23 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       client.rootStore,
       usIaSupervisionLevelDowngradeSchema.parse(record),
     );
+  }
+
+  get earlyDischargeEligibilityCompanionOpportunity():
+    | UsIaEarlyDischargeOpportunity
+    | undefined {
+    const earlyDischargeOpportunity =
+      this.eligibilityCompanionOpportunities.filter(
+        (opportunity) => opportunity.type === "usIaEarlyDischarge",
+      ) as UsIaEarlyDischargeOpportunity[];
+
+    if (earlyDischargeOpportunity.length > 1) {
+      throw new Error(
+        "Expected either zero or one companion UsIaEarlyDischargeOpportunity, received multiple.",
+      );
+    }
+
+    return earlyDischargeOpportunity[0];
   }
 
   tabTitle(): OpportunityTab {

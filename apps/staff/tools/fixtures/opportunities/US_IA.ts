@@ -257,6 +257,7 @@ export const mockApiOpportunityConfigurationResponse = {
       sidebarComponents: [],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
+      eligibilityCompanionOpportunityTypes: ["usIaEarlyDischarge"],
       stateCode: "US_IA",
       subcategoryHeadings: [],
       subcategoryOrderings: [],

@@ -820,6 +820,14 @@ export class OpportunityBase<
     );
   }
 
+  get eligibilityCompanionOpportunities() {
+    const eligibilityCompanionOpportunityTypes =
+      this.config.eligibilityCompanionOpportunityTypes ?? [];
+    return this.person.flattenedOpportunities.filter((opp) =>
+      eligibilityCompanionOpportunityTypes.includes(opp.type),
+    );
+  }
+
   // Used to determine whether or not an included opportunity requires a "Revert Changes" confirmation step
   requiresRevertConfirmation = false;
 

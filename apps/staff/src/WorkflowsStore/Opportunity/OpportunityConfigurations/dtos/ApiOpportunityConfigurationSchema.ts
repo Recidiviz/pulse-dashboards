@@ -146,6 +146,9 @@ export const apiOpportunityConfigurationSchema = z.object({
   overdueOpportunityCalloutCopy: nullishAsUndefined(z.string()),
 
   snoozeCompanionOpportunityTypes: z.array(z.string()),
+  // TODO(#9240): Remove the optional() once eligibilityCompanionOpportunityTypes
+  // is configured in Admin Panel
+  eligibilityCompanionOpportunityTypes: z.array(z.string()).optional(),
   // TODO(#8429): Add caseNoteHeaders field to the admin panel config
   // This field is currently never defined on the backend
   caseNoteHeaders: nullishAsUndefined(z.array(z.string())),
