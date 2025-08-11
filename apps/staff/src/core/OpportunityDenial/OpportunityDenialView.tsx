@@ -28,10 +28,7 @@ import { palette } from "~design-system";
 import { CharacterCountTextField } from "../../components/CharacterCountTextField";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Slider from "../../components/Slider";
-import {
-  useFeatureVariants,
-  useRootStore,
-} from "../../components/StoreProvider";
+import { useRootStore } from "../../components/StoreProvider";
 import {
   ActionButton,
   MenuItem,
@@ -111,8 +108,6 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const [autoSnoozeUntil, setAutoSnoozeUntil] = useState<string | undefined>(
     opportunity?.autoSnooze?.snoozeUntil,
   );
-
-  const { disableSnoozeSlider } = useFeatureVariants();
 
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [saveInProgress, setSaveInProgress] = useState(false);
@@ -253,7 +248,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const snoozeSection = (
     <>
-      {maxManualSnoozeDays && !disableSnoozeSlider && (
+      {maxManualSnoozeDays && (
         <SliderWrapper>
           <SliderLabel>Snooze for:</SliderLabel>
           <Slider

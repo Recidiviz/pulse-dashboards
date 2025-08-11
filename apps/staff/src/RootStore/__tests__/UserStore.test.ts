@@ -1020,7 +1020,6 @@ describe("feature variants", () => {
         "TEST": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
-        "disableSnoozeSlider": {},
         "editCountyFields": {},
         "formRevertButton": {},
         "hideDenialRevert": {},
@@ -1070,7 +1069,6 @@ describe("feature variants", () => {
         "TEST": {},
         "actionStrategies": {},
         "caseNoteSearch": {},
-        "disableSnoozeSlider": {},
         "editCountyFields": {},
         "formRevertButton": {},
         "hideDenialRevert": {},
@@ -1118,7 +1116,6 @@ describe("feature variants", () => {
       {
         "actionStrategies": {},
         "caseNoteSearch": {},
-        "disableSnoozeSlider": {},
         "editCountyFields": {},
         "formRevertButton": {},
         "hideDenialRevert": {},

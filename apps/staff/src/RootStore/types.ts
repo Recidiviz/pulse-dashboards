@@ -66,7 +66,6 @@ export type UserAppMetadata = {
 export type FeatureVariant =
   | "TEST"
   // WORKFLOWS
-  | "disableSnoozeSlider"
   | "supervisionUnrestrictedSearch"
   | "usAzFacilitySearch"
   | "usTnExpiration"
@@ -131,7 +130,6 @@ export type FeatureVariantOverrideRecord = PartialRecord<
 >;
 export const allFeatureVariants: FeatureVariantMapping = {
   TEST: {},
-  disableSnoozeSlider: {},
   usAzFacilitySearch: {},
   usTnExpiration: {},
   usTnExpirationSubmitToTomis: {},
@@ -175,7 +173,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
   import.meta.env.VITE_DEPLOY_ENV === "production"
     ? {
         actionStrategies: { activeTenants: ["US_MI"] },
-        disableSnoozeSlider: { activeTenants: ["US_MO"] },
         insightsOnboarding: {},
         outcomesModule: { activeTenants: ["US_CA", "US_ID", "US_MI", "US_TN"] },
         supervisionUnrestrictedSearch: {},
@@ -197,8 +194,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
       }
     : {
         ...allFeatureVariants,
-        disableSnoozeSlider: { activeTenants: ["US_MO"] },
-        // Currently disabled because the last synced date doesn't exist on the backend yet.
         // Undefined so that Recidiviz users see both FVs in staging
         usOrEarnedDischargeSentence: undefined,
         usMeCaseNoteSnooze: isDemoMode() ? undefined : {},
