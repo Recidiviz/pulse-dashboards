@@ -23,14 +23,16 @@ import styled from "styled-components/macro";
 
 import { OpportunityType } from "~datatypes";
 import { palette } from "~design-system";
+import { withPresenterManager } from "~hydration-utils";
 
 import { useRootStore } from "../../components/StoreProvider";
-import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
+import { JusticeInvolvedPerson } from "../../WorkflowsStore";
+import { WorkflowsFormLayoutPresenter } from "../../WorkflowsStore/presenters/WorkflowsFormLayoutPresenter";
 import cssVars from "../CoreConstants.module.scss";
 import { usePersonTracking } from "../hooks/usePersonTracking";
+import ModelHydrator from "../ModelHydrator";
 import { NavigationBackButton } from "../NavigationBackButton";
 import { NavigationLayout } from "../NavigationLayout";
-import { SelectedPersonOpportunitiesHydrator } from "../OpportunitiesHydrator";
 import { OpportunityPreviewPanel } from "../OpportunityCaseloadView/OpportunityPreviewPanel";
 import { OpportunityFormProvider } from "../Paperwork/OpportunityFormContext";
 import { FormUsIaEarlyDischargeParole } from "../Paperwork/US_IA/EarlyDischarge/FormUsIaEarlyDischargeParole";
@@ -125,6 +127,11 @@ const FormComponents = {
 
 export type OpportunityFormComponentName = keyof typeof FormComponents;
 
+type WorkflowsFormLayoutProps = {
+  selectedPerson: JusticeInvolvedPerson;
+  selectedOpportunityType: OpportunityType;
+};
+
 /**
  * A wrapper for the FormLayout that's used from workflows views - access to
  * state fields in the store is consolidated here and passed into the layout component.
@@ -132,18 +139,13 @@ export type OpportunityFormComponentName = keyof typeof FormComponents;
 export const WorkflowsFormLayoutWrapper = observer(
   function WorkflowsFormLayoutWrapper() {
     const {
-      workflowsStore: {
-        selectedOpportunity,
-        selectedPerson,
-        selectedOpportunityType,
-      },
+      workflowsStore: { selectedPerson, selectedOpportunityType },
     } = useRootStore();
     if (!selectedPerson || !selectedOpportunityType) return null;
     return (
       <WorkflowsFormLayout
-        opportunity={selectedOpportunity}
         selectedPerson={selectedPerson}
-        opportunityType={selectedOpportunityType}
+        selectedOpportunityType={selectedOpportunityType}
       />
     );
   },
@@ -159,23 +161,21 @@ export const WorkflowsFormLayoutWrapper = observer(
  */
 const HydratedWorkflowsFormLayout = observer(
   function HydratedWorkflowsFormLayout({
-    opportunity,
+    presenter,
   }: {
-    opportunity: Opportunity;
+    presenter: WorkflowsFormLayoutPresenter;
   }) {
     const { currentView, setCurrentView } = useOpportunitySidePanel();
     const navigate = useNavigate();
-    const selectedPerson = opportunity.person;
+
+    const { selectedOpportunity, selectedPerson, workflowsMethodologyUrl } =
+      presenter;
 
     usePersonTracking(selectedPerson, () => {
-      opportunity.form?.trackViewed();
+      selectedOpportunity?.form?.trackViewed();
     });
 
-    const {
-      tenantStore: { workflowsMethodologyUrl },
-    } = useRootStore();
-
-    const formContents = opportunity.form?.formContents;
+    const formContents = selectedOpportunity?.form?.formContents;
 
     const FormComponent = formContents && FormComponents[formContents];
 
@@ -201,7 +201,7 @@ const HydratedWorkflowsFormLayout = observer(
               </NavigationBackButton>
             </BackButtonWrapper>
             <OpportunityPreviewPanel
-              opportunity={opportunity}
+              opportunity={selectedOpportunity}
               selectedPerson={selectedPerson}
               isFormView
             />
@@ -210,8 +210,8 @@ const HydratedWorkflowsFormLayout = observer(
 
         <FormWrapper>
           {FormComponent && (
-            <OpportunityFormProvider value={opportunity.form}>
-              <FormComponent opportunity={opportunity} />
+            <OpportunityFormProvider value={selectedOpportunity.form}>
+              <FormComponent opportunity={selectedOpportunity} />
             </OpportunityFormProvider>
           )}
         </FormWrapper>
@@ -220,39 +220,27 @@ const HydratedWorkflowsFormLayout = observer(
   },
 );
 
-/*
- * opportunityType and selectedPerson can both be derived from the opportunity, but
- * need to be passed separately so that the Hydrator can work if the opportunity isn't
- * loaded yet.
- */
-export const WorkflowsFormLayout = observer(function WorkflowsFormLayout({
-  opportunity,
+function usePresenter({
   selectedPerson,
-  opportunityType,
-}: {
-  opportunity: Opportunity | undefined;
-  selectedPerson: JusticeInvolvedPerson;
-  opportunityType: OpportunityType;
-}) {
-  if (opportunity) {
-    if (opportunity.type !== opportunityType)
-      throw new Error("WorkflowsFormLayout: opportunity types don't match");
-    if (opportunity.person !== selectedPerson)
-      throw new Error("WorkflowsFormLayout: people don't match");
+  selectedOpportunityType,
+}: WorkflowsFormLayoutProps) {
+  const { firestoreStore, tenantStore } = useRootStore();
+
+  if (!selectedPerson || !selectedOpportunityType) {
+    return null;
   }
 
-  const empty = <div />;
-
-  return (
-    <SelectedPersonOpportunitiesHydrator
-      {...{
-        hydrated: opportunity && (
-          <HydratedWorkflowsFormLayout opportunity={opportunity} />
-        ),
-        empty,
-        opportunityTypes: [opportunityType],
-        person: selectedPerson,
-      }}
-    />
+  return new WorkflowsFormLayoutPresenter(
+    selectedPerson,
+    selectedOpportunityType,
+    firestoreStore,
+    tenantStore,
   );
+}
+
+export const WorkflowsFormLayout = withPresenterManager({
+  usePresenter,
+  ManagedComponent: HydratedWorkflowsFormLayout,
+  managerIsObserver: true,
+  HydratorComponent: ModelHydrator,
 });

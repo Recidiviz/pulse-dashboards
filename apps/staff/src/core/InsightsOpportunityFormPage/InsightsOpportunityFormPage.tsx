@@ -30,7 +30,7 @@ const ManagedComponent = observer(function InsightsOpportunityFormPage({
 }: {
   presenter: SupervisionOpportunityPresenter;
 }) {
-  const { opportunityType, client, selectedOpportunity } = presenter;
+  const { opportunityType, client } = presenter;
 
   // If the presenter is hydrated and we're on an opportunity page, this stuff should
   // never be missing in practice.
@@ -38,9 +38,8 @@ const ManagedComponent = observer(function InsightsOpportunityFormPage({
 
   return (
     <WorkflowsFormLayout
-      opportunity={selectedOpportunity}
       selectedPerson={client}
-      opportunityType={opportunityType}
+      selectedOpportunityType={opportunityType}
     />
   );
 });
