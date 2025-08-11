@@ -61,43 +61,110 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
     configure({ safeDescriptors: true });
   });
 
-  it("returns the correct earlyDischargeEligibilityCompanionOpportunity when there is an ED opp", () => {
-    vi.spyOn(
-      OpportunityBase.prototype,
-      "eligibilityCompanionOpportunities",
-      "get",
-    ).mockReturnValue([edOpportunity]);
+  describe("earlyDischargeEligibilityCompanionOpportunity", () => {
+    it("returns the correct earlyDischargeEligibilityCompanionOpportunity when there is an ED opp", () => {
+      vi.spyOn(
+        OpportunityBase.prototype,
+        "eligibilityCompanionOpportunities",
+        "get",
+      ).mockReturnValue([edOpportunity]);
 
-    expect(sldOpportunity.earlyDischargeEligibilityCompanionOpportunity).toBe(
-      edOpportunity,
-    );
-  });
-
-  it("throws an error if there are more than one earlyDischargeEligibilityCompanionOpportunity", () => {
-    vi.spyOn(
-      OpportunityBase.prototype,
-      "eligibilityCompanionOpportunities",
-      "get",
-    ).mockReturnValue([edOpportunity, edOpportunity]);
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      sldOpportunity.earlyDischargeEligibilityCompanionOpportunity;
-    } catch (e: any) {
-      expect((e as Error).message).toBe(
-        "Expected either zero or one companion UsIaEarlyDischargeOpportunity, received multiple.",
+      expect(sldOpportunity.earlyDischargeEligibilityCompanionOpportunity).toBe(
+        edOpportunity,
       );
-    }
-  });
+    });
 
-  it("returns undefined when there is not an earlyDischargeEligibilityCompanionOpportunity", () => {
-    vi.spyOn(
-      OpportunityBase.prototype,
-      "eligibilityCompanionOpportunities",
-      "get",
-    ).mockReturnValue([]);
+    it("throws an error if there are more than one earlyDischargeEligibilityCompanionOpportunity", () => {
+      vi.spyOn(
+        OpportunityBase.prototype,
+        "eligibilityCompanionOpportunities",
+        "get",
+      ).mockReturnValue([edOpportunity, edOpportunity]);
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        sldOpportunity.earlyDischargeEligibilityCompanionOpportunity;
+      } catch (e: any) {
+        expect((e as Error).message).toBe(
+          "Expected either zero or one companion UsIaEarlyDischargeOpportunity, received multiple.",
+        );
+      }
+    });
 
-    expect(
-      sldOpportunity.earlyDischargeEligibilityCompanionOpportunity,
-    ).toBeUndefined();
-  });
+    it("returns undefined when there is not an earlyDischargeEligibilityCompanionOpportunity", () => {
+      vi.spyOn(
+        OpportunityBase.prototype,
+        "eligibilityCompanionOpportunities",
+        "get",
+      ).mockReturnValue([]);
+
+      expect(
+        sldOpportunity.earlyDischargeEligibilityCompanionOpportunity,
+      ).toBeUndefined();
+    });
+  })
+
+  describe("pendingEligbility", () => {
+    beforeEach(() => {
+      vi.spyOn(
+        OpportunityBase.prototype,
+        "eligibilityCompanionOpportunities",
+        "get",
+      ).mockReturnValue([edOpportunity]);
+    })
+
+    it("returns true when the earlyDischargeEligibilityCompanionOpportunity has a denial with relevant reason", () => {
+      edOpportunity.updatesSubscription = {
+        data: { denial: { reasons: ["FINES & FEES"] } },
+        subscribe: vi.fn(),
+        unsubscribe: vi.fn(),
+        hydrate: vi.fn(),
+        hydrationState: { status: "hydrated" },
+      };
+      expect(sldOpportunity.pendingEligibility).toBe(true);
+    });
+
+    it("returns false when the earlyDischargeEligibilityCompanionOpportunity does not have a denial", () => {
+      edOpportunity.updatesSubscription = {
+        data: { },
+        subscribe: vi.fn(),
+        unsubscribe: vi.fn(),
+        hydrate: vi.fn(),
+        hydrationState: { status: "hydrated" },
+      };
+      expect(sldOpportunity.pendingEligibility).toBe(false);
+    });
+
+    it("returns false when the earlyDischargeEligibilityCompanionOpportunity has a denial without relevant reason", () => {
+      edOpportunity.updatesSubscription = {
+        data: { denial: { reasons: ["OTHER REASON"] } },
+        subscribe: vi.fn(),
+        unsubscribe: vi.fn(),
+        hydrate: vi.fn(),
+        hydrationState: { status: "hydrated" },
+      };
+      expect(sldOpportunity.pendingEligibility).toBe(false);
+    });
+
+    it("returns false when the earlyDischargeEligibilityCompanionOpportunity has a denial with relevant and not-relevant reason", () => {
+      edOpportunity.updatesSubscription = {
+        data: { denial: { reasons: ["ANY OTHER REASON", "FINES & FEES"] } },
+        subscribe: vi.fn(),
+        unsubscribe: vi.fn(),
+        hydrate: vi.fn(),
+        hydrationState: { status: "hydrated" },
+      };
+      expect(sldOpportunity.pendingEligibility).toBe(false);
+    });
+
+    it("returns true when the earlyDischargeEligibilityCompanionOpportunity has a denial with more than one relevant reason", () => {
+      edOpportunity.updatesSubscription = {
+        data: { denial: { reasons: ["COURT", "FINES & FEES"] } },
+        subscribe: vi.fn(),
+        unsubscribe: vi.fn(),
+        hydrate: vi.fn(),
+        hydrationState: { status: "hydrated" },
+      };
+      expect(sldOpportunity.pendingEligibility).toBe(true);
+    });
+  })
 });

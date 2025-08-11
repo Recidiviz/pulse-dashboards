@@ -53,8 +53,8 @@ export const usIaSupervisionLevelDowngradeRecordFixture: UsIaSupervisionLevelDow
       },
     },
     ineligibleCriteria: {},
-    isEligible: true,
-    isAlmostEligible: false,
+    isEligible: false,
+    isAlmostEligible: true,
     eligibleDate: relativeFixtureDate({ months: -12 }),
   };
 

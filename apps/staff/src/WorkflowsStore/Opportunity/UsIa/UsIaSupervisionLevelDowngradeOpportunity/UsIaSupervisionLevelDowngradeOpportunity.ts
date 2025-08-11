@@ -56,6 +56,25 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
     return earlyDischargeOpportunity[0];
   }
 
+  get pendingEligibility(): boolean {
+    const RELEVANT_ED_DENIAL_REASONS = [
+      "FINES & FEES",
+      "COURT",
+      "INTERSTATE (IC-IN)",
+    ];
+
+    if (!this.almostEligible) return false;
+
+    const edOppDenial =
+      this.earlyDischargeEligibilityCompanionOpportunity?.updates?.denial;
+    if (!edOppDenial) return false;
+
+    const relevantDenial = edOppDenial.reasons.every((item) =>
+      RELEVANT_ED_DENIAL_REASONS.includes(item),
+    );
+    return relevantDenial;
+  }
+
   tabTitle(): OpportunityTab {
     if (this.isSubmitted) return this.submittedTabTitle;
     if (this.denied) return this.deniedTabTitle;
