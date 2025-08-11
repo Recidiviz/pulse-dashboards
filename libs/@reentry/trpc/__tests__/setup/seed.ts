@@ -56,7 +56,15 @@ export const fakeClient = {
 export const fakeIntake = {
   id: intakeId,
   startDate: new Date(),
-  sections: [],
+  config: {
+    role: "social worker",
+    sections: [
+      {
+        requiredInformation: "something or the other",
+        title: "Personal Information",
+      },
+    ],
+  },
   client: {
     connect: {
       personId: 1,

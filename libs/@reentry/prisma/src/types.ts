@@ -15,26 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// @ts-check
+export type IntakeConfig = {
+  role: string;
+  sections: {
+    title: string;
+    requiredInformation: string;
+  }[];
+};
 
-import tseslint from "typescript-eslint";
+export type Sections = IntakeConfig["sections"];
 
-import baseConfig from "../../../eslint.config.mjs";
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace PrismaJson {
+    // Define a type for a user's profile information.
+    type IntakeConfigType = IntakeConfig;
+  }
+}
 
-export default tseslint.config(
-  // Ignore the generated prisma client
-  { ignores: ["src/client/**"] },
-  baseConfig,
-  {
-    files: ["**/*.ts", "**/*.tsx"],
-    rules: {
-      // This enforces that we use absolute imports for all of the code in this project
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [".*"],
-        },
-      ],
-    },
-  },
-);
+// This file must be a module, so we include an empty export.
+export {};

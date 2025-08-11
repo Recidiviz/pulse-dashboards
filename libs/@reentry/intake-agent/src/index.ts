@@ -18,8 +18,8 @@
 import { AIMessage, BaseMessage, isAIMessage } from "@langchain/core/messages";
 import { BaseCheckpointSaver, Command } from "@langchain/langgraph";
 
-import { type Sections } from "~@reentry/intake-agent/constants";
 import { builder } from "~@reentry/intake-agent/graph";
+import { IntakeConfig } from "~@reentry/prisma/types";
 
 export { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
 
@@ -32,6 +32,8 @@ type AgentStatus =
 export class IntakeAgent {
   graph;
   threadId;
+  clientName: string;
+  config: IntakeConfig;
   // Current status of the conversation with the agent.
   status: AgentStatus = "not_initialized";
 
@@ -39,22 +41,12 @@ export class IntakeAgent {
     checkpointer: BaseCheckpointSaver;
     clientName: string;
     intakeId: string;
-    sections: Sections;
+    config: IntakeConfig;
   }) {
     this.graph = builder.compile({ checkpointer: opts.checkpointer });
     this.threadId = opts.intakeId;
-
-    this.graph.updateState(
-      {
-        configurable: {
-          thread_id: this.threadId,
-        },
-      },
-      {
-        clientName: opts.clientName,
-        sections: opts.sections,
-      },
-    );
+    this.clientName = opts.clientName;
+    this.config = opts.config;
   }
 
   async processStream(
@@ -105,6 +97,18 @@ export class IntakeAgent {
    * @returns list of AI messages
    */
   async init(lastMessageId?: string | null) {
+    await this.graph.updateState(
+      {
+        configurable: {
+          thread_id: this.threadId,
+        },
+      },
+      {
+        clientName: this.clientName,
+        config: this.config,
+      },
+    );
+
     if (this.status !== "not_initialized") {
       throw new Error("Agent has already been started.");
     }

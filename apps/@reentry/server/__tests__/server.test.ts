@@ -331,7 +331,15 @@ describe("server", () => {
         id: "intake-1",
         startDate: expect.any(String),
         endDate: null,
-        sections: [],
+        config: expect.objectContaining({
+          role: "social worker",
+          sections: [
+            {
+              requiredInformation: "something or the other",
+              title: "Personal Information",
+            },
+          ],
+        }),
         messages: [
           expect.objectContaining({
             content: "Hello, world!",

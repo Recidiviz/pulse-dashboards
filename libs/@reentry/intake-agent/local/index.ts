@@ -21,10 +21,8 @@ import { MemorySaver } from "@langchain/langgraph";
 import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
 import inquirer from "inquirer";
 
-// import { US_ID_SECTIONS } from "~@reentry/intake-agent/constants";
-// import { IntakeAgent } from "~@reentry/intake-agent/index";
-import { US_ID_SECTIONS } from "../src/constants";
-import { IntakeAgent } from "../src/index";
+import { IntakeAgent } from "~@reentry/intake-agent/index";
+import { getIntakeConfigForState } from "~@reentry/intake-agent/intake_configs/utils";
 
 async function main() {
   const { checkpointerOption } = await inquirer.prompt({
@@ -56,7 +54,7 @@ async function main() {
     checkpointer,
     clientName: name,
     intakeId: name,
-    sections: US_ID_SECTIONS,
+    config: getIntakeConfigForState("US_ID"),
   });
 
   const initialMessages = await agent.init();

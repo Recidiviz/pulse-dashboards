@@ -97,12 +97,12 @@ describe("Intake chat", () => {
           messages: [
             expect.objectContaining({
               content: "Welcome message",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
             expect.objectContaining({
               content: "question",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
           ],
@@ -138,12 +138,12 @@ describe("Intake chat", () => {
           messages: [
             expect.objectContaining({
               content: "Welcome message",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
             expect.objectContaining({
               content: "question",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
           ],
@@ -159,7 +159,7 @@ describe("Intake chat", () => {
           messages: [
             expect.objectContaining({
               content: "question",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
           ],
@@ -185,7 +185,7 @@ describe("Intake chat", () => {
           messages: [
             expect.objectContaining({
               content: "question",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
           ],
@@ -231,12 +231,12 @@ describe("Intake chat", () => {
           messages: [
             expect.objectContaining({
               content: "Welcome message",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
             expect.objectContaining({
               content: "question",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
           ],
@@ -252,7 +252,7 @@ describe("Intake chat", () => {
           messages: [
             expect.objectContaining({
               content: "question",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
           ],
@@ -301,12 +301,12 @@ describe("Intake chat", () => {
           messages: [
             expect.objectContaining({
               content: "Welcome message",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
             expect.objectContaining({
               content: "question",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
           ],
@@ -322,12 +322,12 @@ describe("Intake chat", () => {
           messages: [
             expect.objectContaining({
               content: "Welcome message",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
             expect.objectContaining({
               content: "question",
-              section: "Basic Information",
+              section: "Personal Information",
               id: expect.any(String),
             }),
           ],

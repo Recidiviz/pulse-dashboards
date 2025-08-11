@@ -39,10 +39,6 @@
         {
           "projects": ["@reentry/prisma"],
           "target": "docker"
-        },
-        {
-          "projects": ["@reentry/intake-agent"],
-          "target": "docker"
         }
       ],
       "outputs": ["{workspaceRoot}/coverage/libs/@reentry/trpc"],

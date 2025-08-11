@@ -245,7 +245,7 @@ export function buildServer() {
           id: true,
           startDate: true,
           endDate: true,
-          sections: true,
+          config: true,
         },
         where: {
           client: {

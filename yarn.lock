@@ -5989,23 +5989,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/core@npm:^0.3.61":
-  version: 0.3.61
-  resolution: "@langchain/core@npm:0.3.61"
+"@langchain/core@npm:^0.3.67":
+  version: 0.3.67
+  resolution: "@langchain/core@npm:0.3.67"
   dependencies:
     "@cfworker/json-schema": "npm:^4.0.2"
     ansi-styles: "npm:^5.0.0"
     camelcase: "npm:6"
     decamelize: "npm:1.2.0"
     js-tiktoken: "npm:^1.0.12"
-    langsmith: "npm:^0.3.33"
+    langsmith: "npm:^0.3.46"
     mustache: "npm:^4.2.0"
     p-queue: "npm:^6.6.2"
     p-retry: "npm:4"
     uuid: "npm:^10.0.0"
     zod: "npm:^3.25.32"
     zod-to-json-schema: "npm:^3.22.3"
-  checksum: 10c0/4ef6442eccecb236b4e872366fdfa5f9b71cd5d1559cc7b977d43fa63dd55fd926c96dfb03539c1b80641fab0024e5db1cc4f07cefd49e683fa83100113a93b7
+  checksum: 10c0/69fd913115f3e5cea3d9869b0f8f4d5370250c572e85bdf52948c5db5f83cf082c7017ec9596f0f800f0a49dea8187d7d3e538acd5f3621099fb9e682cff08d0
   languageName: node
   linkType: hard
 
@@ -6021,20 +6021,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-checkpoint@npm:~0.0.18":
-  version: 0.0.18
-  resolution: "@langchain/langgraph-checkpoint@npm:0.0.18"
+"@langchain/langgraph-checkpoint@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@langchain/langgraph-checkpoint@npm:0.1.0"
   dependencies:
     uuid: "npm:^10.0.0"
   peerDependencies:
     "@langchain/core": ">=0.2.31 <0.4.0"
-  checksum: 10c0/d0a1525a7e45044953ddaafeeb702f7ddfb3d30632ac93842f8f940b1fe410f6e132080db6f6843e0a19bc59f8e4fef6b55d59f2812bc708f50cbec5fdcd6ce6
+  checksum: 10c0/4755d982d76f4931bac23da3613bd860c515a6ac333c38c229d3a39e4acb13e27eb498ed2b78f3369be177d689b33834a45653095269bb08c40508f57e0113b0
   languageName: node
   linkType: hard
 
-"@langchain/langgraph-sdk@npm:~0.0.32":
-  version: 0.0.74
-  resolution: "@langchain/langgraph-sdk@npm:0.0.74"
+"@langchain/langgraph-sdk@npm:~0.0.105":
+  version: 0.0.105
+  resolution: "@langchain/langgraph-sdk@npm:0.0.105"
   dependencies:
     "@types/json-schema": "npm:^7.0.15"
     p-queue: "npm:^6.6.2"
@@ -6043,21 +6043,24 @@ __metadata:
   peerDependencies:
     "@langchain/core": ">=0.2.31 <0.4.0"
     react: ^18 || ^19
+    react-dom: ^18 || ^19
   peerDependenciesMeta:
     "@langchain/core":
       optional: true
     react:
       optional: true
-  checksum: 10c0/2347334b1002a78c36e51151531debfbf0f517f3ddd3e0708d0ae21e23d7f33080aabf6274ea3943c4eb29d8c8c5ffdd2e40a3a72295a52bdee7e8ed7ea68db4
+    react-dom:
+      optional: true
+  checksum: 10c0/5ab1b2ad3a2e4150ab26db0b8b9286d835d6c8b04fb06b548d5e70ed71feae08e42b733c51371ae5477cdaf2c2b0062b5c0d77f7f7d410da2df979e31d3c2378
   languageName: node
   linkType: hard
 
-"@langchain/langgraph@npm:^0.3.6":
-  version: 0.3.6
-  resolution: "@langchain/langgraph@npm:0.3.6"
+"@langchain/langgraph@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "@langchain/langgraph@npm:0.4.3"
   dependencies:
-    "@langchain/langgraph-checkpoint": "npm:~0.0.18"
-    "@langchain/langgraph-sdk": "npm:~0.0.32"
+    "@langchain/langgraph-checkpoint": "npm:^0.1.0"
+    "@langchain/langgraph-sdk": "npm:~0.0.105"
     uuid: "npm:^10.0.0"
     zod: "npm:^3.25.32"
   peerDependencies:
@@ -6066,11 +6069,11 @@ __metadata:
   peerDependenciesMeta:
     zod-to-json-schema:
       optional: true
-  checksum: 10c0/31428a0a380b87567c29f496f36bd6021cf68a280ebc42fef6f0115d5491e8fee5bcc9186c91dae1638826732054921f428164f8b21356e6dc404571966a9703
+  checksum: 10c0/641e37fb2b62fa980dddef03124654ca8f4277321528775dc96b10347c25b5bb068a46395a9a14df055964a80e1c504aab87d4a285bea9da0b136b8d9e813370
   languageName: node
   linkType: hard
 
-"@langchain/openai@npm:>=0.1.0 <0.6.0, @langchain/openai@npm:^0.5.16":
+"@langchain/openai@npm:>=0.1.0 <0.6.0":
   version: 0.5.16
   resolution: "@langchain/openai@npm:0.5.16"
   dependencies:
@@ -6094,6 +6097,19 @@ __metadata:
   peerDependencies:
     "@langchain/core": ">=0.3.39 <0.4.0"
   checksum: 10c0/456db6d039fad521caf9c2dab547075120d1156282c9eb891430b83f34d617121f4d97fda2be7954558910ddac8d235effe6071a002b93e60f460111318466d2
+  languageName: node
+  linkType: hard
+
+"@langchain/openai@npm:^0.6.4":
+  version: 0.6.4
+  resolution: "@langchain/openai@npm:0.6.4"
+  dependencies:
+    js-tiktoken: "npm:^1.0.12"
+    openai: "npm:^5.3.0"
+    zod: "npm:^3.25.32"
+  peerDependencies:
+    "@langchain/core": ">=0.3.58 <0.4.0"
+  checksum: 10c0/0d9024d7600f202422596cfc3d5c6aca1c47592e96bfb4ee70d4f0487910305b392e46130019eccb9305405df44b3119d141a00715b3cf845cc4c2659d4222f6
   languageName: node
   linkType: hard
 
@@ -9543,6 +9559,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prisma/debug@npm:6.13.0":
+  version: 6.13.0
+  resolution: "@prisma/debug@npm:6.13.0"
+  checksum: 10c0/d57ae55d8b96d5a14488fb36c2d442123a75f00ba189f185409e418f6727849b5ce591f39fbca1f159a7a9d6bf629c020e6cbfb4149d244a47535bc514925bbb
+  languageName: node
+  linkType: hard
+
+"@prisma/dmmf@npm:6.13.0":
+  version: 6.13.0
+  resolution: "@prisma/dmmf@npm:6.13.0"
+  checksum: 10c0/2dfefd07a300105d10586cec3f1417055988f216114a017e9fc2f02cccaafb6b51540d9d4dbc0b359d9f387863e4cdd11bb5c5212c33ed9e46b5b60ff37dcfdb
+  languageName: node
+  linkType: hard
+
 "@prisma/driver-adapter-utils@npm:6.10.1":
   version: 6.10.1
   resolution: "@prisma/driver-adapter-utils@npm:6.10.1"
@@ -9579,6 +9609,24 @@ __metadata:
     "@prisma/engines-version": "npm:6.10.1-1.9b628578b3b7cae625e8c927178f15a170e74a9c"
     "@prisma/get-platform": "npm:6.10.1"
   checksum: 10c0/46a47eac79f53ef7a5ff513e237a95c6b2f7509317c49f4df6b4151002a768715eccf7eb6e0bf9ca4c64d5703fc6ba3af33bfb105c9d37decd225a2bab9fc4cf
+  languageName: node
+  linkType: hard
+
+"@prisma/generator-helper@npm:^6.11.0":
+  version: 6.13.0
+  resolution: "@prisma/generator-helper@npm:6.13.0"
+  dependencies:
+    "@prisma/debug": "npm:6.13.0"
+    "@prisma/dmmf": "npm:6.13.0"
+    "@prisma/generator": "npm:6.13.0"
+  checksum: 10c0/aaa499ba03f76f0cbc344862ec623dd2f61d97b5c46ea0ac15e8741e1a84c9d379121f2ad8c144ad8486b9355fc91278c30d570b503eb80556f93cdcaa944d54
+  languageName: node
+  linkType: hard
+
+"@prisma/generator@npm:6.13.0":
+  version: 6.13.0
+  resolution: "@prisma/generator@npm:6.13.0"
+  checksum: 10c0/c716e757bb0a6345f34e260078fbe2a49c65c97bfc956f409b81fd2a2b30f8b546d3ad2e65e60b63db989817beff1890554415300a689b3ec27bb3eb3138b81b
   languageName: node
   linkType: hard
 
@@ -29464,9 +29512,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"langsmith@npm:^0.3.26, langsmith@npm:^0.3.33, langsmith@npm:^0.3.37":
-  version: 0.3.37
-  resolution: "langsmith@npm:0.3.37"
+"langsmith@npm:^0.3.26, langsmith@npm:^0.3.33, langsmith@npm:^0.3.46, langsmith@npm:^0.3.54":
+  version: 0.3.54
+  resolution: "langsmith@npm:0.3.54"
   dependencies:
     "@types/uuid": "npm:^10.0.0"
     chalk: "npm:^4.1.2"
@@ -29489,7 +29537,7 @@ __metadata:
       optional: true
     openai:
       optional: true
-  checksum: 10c0/ebc186d0be347fdb6d24baf8363e48d1780457c8530eeaa76ce57cf9d3d170c032fcbf7f2e83d0b4e0506e7a7dc569ab72759e1afe2d2ed21ff11cb71b26102d
+  checksum: 10c0/0668b5ff4a883826d851794f3f2231b7694d92b37e85230a318b2d752fcbc471b159d33be0bbb90bdf9cd139592699fc654d7e741a4ed9af79c40f5cca1f8469
   languageName: node
   linkType: hard
 
@@ -34658,6 +34706,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prisma-json-types-generator@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "prisma-json-types-generator@npm:3.5.1"
+  dependencies:
+    "@prisma/generator-helper": "npm:^6.11.0"
+    semver: "npm:^7.7.2"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    "@prisma/client": ~6.11
+    prisma: ~6.11
+    typescript: ^5.8
+  bin:
+    prisma-json-types-generator: index.js
+  checksum: 10c0/180f0a622fbb3f0f380a7501f385de4c8ed5ebcd7b6b5d9627aa95643b3d1f83ba870af4b98a79ae8b8dd6e35e9cdf0ee250a11cf15fe36c358265d9dfb0d3a5
+  languageName: node
+  linkType: hard
+
 "prisma@npm:^6.10.1":
   version: 6.10.1
   resolution: "prisma@npm:6.10.1"
@@ -36470,10 +36535,10 @@ __metadata:
     "@google-cloud/tasks": "npm:^5.4.0"
     "@intercom/messenger-js-sdk": "npm:^0.0.11"
     "@juggle/resize-observer": "npm:^3.4.0"
-    "@langchain/core": "npm:^0.3.61"
-    "@langchain/langgraph": "npm:^0.3.6"
+    "@langchain/core": "npm:^0.3.67"
+    "@langchain/langgraph": "npm:^0.4.3"
     "@langchain/langgraph-checkpoint-postgres": "npm:^0.1.1"
-    "@langchain/openai": "npm:^0.5.16"
+    "@langchain/openai": "npm:^0.6.4"
     "@material/select": "npm:^14.0.0"
     "@material/textfield": "npm:^14.0.0"
     "@mdxeditor/editor": "npm:^3.30.1"
@@ -36669,7 +36734,7 @@ __metadata:
     jspdf: "npm:^2.5.1"
     jszip: "npm:^3.8.0"
     jwks-rsa: "npm:^3.1.0"
-    langsmith: "npm:^0.3.37"
+    langsmith: "npm:^0.3.54"
     lint-staged: "npm:^15.2.2"
     lodash: "npm:^4.17.21"
     lucide-react: "npm:^0.479.0"
@@ -36710,6 +36775,7 @@ __metadata:
     postcss: "npm:^8"
     prettier: "npm:^3.2.5"
     prisma: "npm:^6.10.1"
+    prisma-json-types-generator: "npm:^3.5.1"
     prompts: "npm:^2.4.2"
     prop-types: "npm:^15.7.2"
     qs: "npm:^6.9.7"
@@ -38319,7 +38385,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:7.6.3, semver@npm:^7.5.4, semver@npm:^7.6.0":
+"semver@npm:7.6.3":
   version: 7.6.3
   resolution: "semver@npm:7.6.3"
   bin:
@@ -38328,7 +38394,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^6.0.0, semver@npm:^6.3.0, semver@npm:^6.3.1":
+"semver@npm:^6.0.0, semver@npm:^6.2.0, semver@npm:^6.3.0, semver@npm:^6.3.1":
   version: 6.3.1
   resolution: "semver@npm:6.3.1"
   bin:
@@ -38337,58 +38403,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^6.2.0":
-  version: 6.3.0
-  resolution: "semver@npm:6.3.0"
-  bin:
-    semver: ./bin/semver.js
-  checksum: 10c0/1f4959e15bcfbaf727e964a4920f9260141bb8805b399793160da4e7de128e42a7d1f79c1b7d5cd21a6073fba0d55feb9966f5fef3e5ccb8e1d7ead3d7527458
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.0.0":
-  version: 7.6.0
-  resolution: "semver@npm:7.6.0"
-  dependencies:
-    lru-cache: "npm:^6.0.0"
-  bin:
-    semver: bin/semver.js
-  checksum: 10c0/fbfe717094ace0aa8d6332d7ef5ce727259815bd8d8815700853f4faf23aacbd7192522f0dc5af6df52ef4fa85a355ebd2f5d39f554bd028200d6cf481ab9b53
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.1.2, semver@npm:^7.5.2":
-  version: 7.5.2
-  resolution: "semver@npm:7.5.2"
-  dependencies:
-    lru-cache: "npm:^6.0.0"
-  bin:
-    semver: bin/semver.js
-  checksum: 10c0/d151207ab762a8067f6302076edc04e5b8da2362eb9e3f21c2567ceadfd415064936d215b4aae7791da118c230649d29089be979ffa49c5b56a6bcf82147efdd
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.3.2, semver@npm:^7.3.5, semver@npm:^7.3.8, semver@npm:^7.5.3":
-  version: 7.5.4
-  resolution: "semver@npm:7.5.4"
-  dependencies:
-    lru-cache: "npm:^6.0.0"
-  bin:
-    semver: bin/semver.js
-  checksum: 10c0/5160b06975a38b11c1ab55950cb5b8a23db78df88275d3d8a42ccf1f29e55112ac995b3a26a522c36e3b5f76b0445f1eef70d696b8c7862a2b4303d7b0e7609e
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.6.3":
-  version: 7.7.1
-  resolution: "semver@npm:7.7.1"
-  bin:
-    semver: bin/semver.js
-  checksum: 10c0/fd603a6fb9c399c6054015433051bdbe7b99a940a8fb44b85c2b524c4004b023d7928d47cb22154f8d054ea7ee8597f586605e05b52047f048278e4ac56ae958
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.7.1":
+"semver@npm:^7.0.0, semver@npm:^7.1.2, semver@npm:^7.3.2, semver@npm:^7.3.5, semver@npm:^7.3.8, semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.0, semver@npm:^7.6.3, semver@npm:^7.7.1, semver@npm:^7.7.2":
   version: 7.7.2
   resolution: "semver@npm:7.7.2"
   bin:
@@ -40778,7 +40793,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.1, tslib@npm:^2.6.3, tslib@npm:^2.8.0":
+"tslib@npm:^2.0.1, tslib@npm:^2.6.3, tslib@npm:^2.8.0, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62

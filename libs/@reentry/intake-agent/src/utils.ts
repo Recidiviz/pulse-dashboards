@@ -15,11 +15,60 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { SECTION_TITLES } from "~@reentry/intake-agent/constants";
+import { AIMessage, HumanMessage } from "@langchain/core/messages";
 
-export function getSectionTitle(index: number) {
-  if (index < 0 || index >= SECTION_TITLES.length) {
+import { IntakeConfig } from "~@reentry/prisma/types";
+
+export function getSectionTitles(config: IntakeConfig) {
+  return config.sections.map((section) => section.title);
+}
+
+export function getSectionTitle(config: IntakeConfig, index: number) {
+  const sectionTitles = getSectionTitles(config);
+  if (index < 0 || index >= sectionTitles.length) {
     throw new Error("Index out of bounds");
   }
-  return SECTION_TITLES[index];
+  return sectionTitles[index];
+}
+
+function createMessageWithMetadata(opts: {
+  content: string;
+  config: IntakeConfig;
+  currentSectionIndex: number;
+  messageType: "ai" | "human";
+}) {
+  const section = getSectionTitle(opts.config, opts.currentSectionIndex);
+  const MessageClass = opts.messageType === "ai" ? AIMessage : HumanMessage;
+
+  return new MessageClass({
+    id: crypto.randomUUID(),
+    content: opts.content,
+    response_metadata: { section },
+  });
+}
+
+export function createAiMessageWithMetadata(opts: {
+  content: string;
+  config: IntakeConfig;
+  currentSectionIndex: number;
+}) {
+  return createMessageWithMetadata({
+    content: opts.content,
+    config: opts.config,
+    currentSectionIndex: opts.currentSectionIndex,
+    messageType: "ai",
+  });
+}
+
+export function createHumanMessageWithMetadata(opts: {
+  content: string;
+  config: IntakeConfig;
+  currentSectionIndex: number;
+}) {
+  return createMessageWithMetadata({
+    content: opts.content,
+    config: opts.config,
+    currentSectionIndex: opts.currentSectionIndex,
+    messageType: "human",
+  });
 }

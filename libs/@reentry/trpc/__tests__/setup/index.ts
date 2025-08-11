@@ -99,7 +99,7 @@ vi.mock("@langchain/openai", () => {
  */
 export let sharedMemorySaver = new MemorySaver();
 vi.mock("~@reentry/intake-agent/get-checkpointer", () => ({
-  getLangraphCheckpointerForStateCode: () => sharedMemorySaver,
+  getIntakeCheckpointerForStateCode: () => sharedMemorySaver,
 }));
 
 export const initWSClient = (token: string = testToken) => {

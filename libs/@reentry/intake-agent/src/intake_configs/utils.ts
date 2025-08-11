@@ -15,26 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// @ts-check
+import { config } from "~@reentry/intake-agent/intake_configs/US_ID";
+import { StateCode } from "~@reentry/prisma/client";
 
-import tseslint from "typescript-eslint";
-
-import baseConfig from "../../../eslint.config.mjs";
-
-export default tseslint.config(
-  // Ignore the generated prisma client
-  { ignores: ["src/client/**"] },
-  baseConfig,
-  {
-    files: ["**/*.ts", "**/*.tsx"],
-    rules: {
-      // This enforces that we use absolute imports for all of the code in this project
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [".*"],
-        },
-      ],
-    },
-  },
-);
+export function getIntakeConfigForState(stateCode: StateCode) {
+  switch (stateCode) {
+    case StateCode.US_ID: {
+      return config;
+    }
+    default: {
+      throw new Error(`Unsupported state code: ${stateCode}`);
+    }
+  }
+}

@@ -55,7 +55,15 @@ export const fakeClient = {
 export const fakeIntake = {
   id: "intake-1",
   startDate: new Date(),
-  sections: [],
+  config: {
+    role: "social worker",
+    sections: [
+      {
+        requiredInformation: "something or the other",
+        title: "Personal Information",
+      },
+    ],
+  },
   client: {
     connect: {
       personId: 1,
@@ -104,7 +112,7 @@ export async function seed(
       },
     },
     checkpoint,
-    { source: "update", step: -1, parents: {}, writes: null },
+    { source: "update", step: -1, parents: {} },
     checkpoint.channel_versions,
   );
 }

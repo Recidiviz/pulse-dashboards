@@ -20,7 +20,6 @@ import { tracked, TRPCError } from "@trpc/server";
 import EventEmitter, { on } from "events";
 
 import { IntakeAgent } from "~@reentry/intake-agent";
-import { sectionsSchema } from "~@reentry/intake-agent/constants";
 import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
 import { baseProcedure, router } from "~@reentry/trpc/init";
 import {
@@ -142,7 +141,6 @@ export const intakeChatRouter = router({
       }
 
       const clientName = `${intake.client.givenNames} ${intake.client.surname}`;
-      const sections = sectionsSchema.parse(intake.sections);
 
       // 1. If there is no agent, make a new one
       // 2. If the agent is already subscribed, throw an error
@@ -153,7 +151,7 @@ export const intakeChatRouter = router({
             checkpointer: getIntakeCheckpointerForStateCode("US_ID"),
             clientName,
             intakeId,
-            sections: sections,
+            config: intake.config,
           }),
           hasActiveSubscription: false,
           isProcessingResponse: false,

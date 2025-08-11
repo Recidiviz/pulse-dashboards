@@ -23,7 +23,7 @@ import {
   Prisma,
   PrismaClient,
   StateCode,
-} from "~@reentry/prisma/client/client";
+} from "~@reentry/prisma/client";
 
 const adapter = new PrismaPg({
   connectionString: process.env[`DATABASE_URL`],
@@ -97,7 +97,10 @@ async function main() {
       data: {
         id: `intake-${i + 1}`,
         startDate: new Date(),
-        sections: [],
+        config: {
+          role: "Case Worker",
+          sections: [],
+        },
         client: {
           connect: {
             personId:

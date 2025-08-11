@@ -4,6 +4,10 @@ generator client {
   output          = "../src/client"
 }
 
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -132,8 +136,9 @@ model Intake {
   startDate DateTime
   endDate   DateTime?
 
-  // The sections that the intake should cover, stored as a JSON array
-  sections Json
+  // The intake config, stored as a JSON object.
+  /// [IntakeConfigType]
+  config Json
 
   client   Client @relation(fields: [clientId], references: [personId])
   clientId BigInt
