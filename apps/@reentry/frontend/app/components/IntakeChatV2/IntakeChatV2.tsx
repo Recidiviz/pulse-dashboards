@@ -15,19 +15,93 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { IntakeProvider } from "~@reentry/frontend/websockets/IntakeContext";
+"use client";
 
-import { useIntakeAuthContext } from "./IntakeAuthProvider";
-import IntakeLogin from "./IntakeLogin";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createWSClient } from "@trpc/client";
+import {
+  createTRPCReact,
+  httpBatchLink,
+  splitLink,
+  wsLink,
+} from "@trpc/react-query";
+import { useState } from "react";
+import superjson from "superjson";
+
+import Chat from "~@reentry/frontend/components/IntakeChatV2/Chat/Chat";
+import ChatHeader from "~@reentry/frontend/components/IntakeChatV2/ChatHeader/ChatHeader";
+import IntakeLogin from "~@reentry/frontend/components/IntakeChatV2/IntakeLogin/IntakeLogin";
+import PreIntake from "~@reentry/frontend/components/IntakeChatV2/PreIntake/PreIntake";
+import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
+import { ConnectionState } from "~@reentry/frontend/components/IntakeChatV2/types";
+import type { AppRouter } from "~@reentry/trpc-types";
+
+export const trpc = createTRPCReact<AppRouter>();
 
 const IntakeChatV2 = () => {
-  const { token } = useIntakeAuthContext();
+  const { token, firstName, lastName, stateCode } = useIntakeAuthContext();
 
   if (!token) {
     return <IntakeLogin />;
   }
 
-  return <IntakeProvider>Oh hello there!</IntakeProvider>;
+  const [isPreIntakeComplete, setIsPreIntakeComplete] = useState(false);
+  const [connectionState, setConnectionState] =
+    useState<ConnectionState>("connecting");
+  const [connectionError, setConnectionError] = useState<Event>();
+  const [queryClient] = useState(() => new QueryClient());
+  const [wsClient] = useState(() =>
+    createWSClient({
+      url: process.env["NEXT_PUBLIC_API_URL"] + "/trpc",
+      connectionParams: () => ({
+        statecode: stateCode ?? "",
+        authorization: `Bearer ${token}`,
+      }),
+      onOpen: () => setConnectionState("connected"),
+      onClose: () => setConnectionState("closed"),
+      onError: (err) => {
+        setConnectionState("error");
+        setConnectionError(err);
+      },
+    }),
+  );
+  const [trpcClient] = useState(() =>
+    trpc.createClient({
+      links: [
+        splitLink({
+          condition(op) {
+            return op.type === "subscription";
+          },
+          true: wsLink({ client: wsClient, transformer: superjson }),
+          false: httpBatchLink({
+            url: process.env["NEXT_PUBLIC_API_URL"] + "/trpc",
+            headers: () => ({
+              statecode: stateCode ?? "",
+              authorization: `Bearer ${token}`,
+            }),
+            transformer: superjson,
+          }),
+        }),
+      ],
+    }),
+  );
+  // TODO: Call Get/Create Intake Route to get an intakeId
+  const intakeId = "intake-id-placeholder";
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <ChatHeader firstName={firstName} lastName={lastName} />
+        <PreIntake onStartIntake={() => setIsPreIntakeComplete(true)} />
+        {isPreIntakeComplete && (
+          <Chat
+            intakeId={intakeId}
+            connectionStatus={{ connectionState, connectionError }}
+          />
+        )}
+      </trpc.Provider>
+    </QueryClientProvider>
+  );
 };
 
 export default IntakeChatV2;

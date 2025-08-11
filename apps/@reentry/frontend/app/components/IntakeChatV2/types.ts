@@ -34,3 +34,10 @@ export interface AuthVerificationResponse {
   clientPseudoId?: string;
   stateCode?: string;
 }
+
+export type ConnectionState = "connecting" | "connected" | "closed" | "error";
+
+export interface ConnectionStatus {
+  connectionState: ConnectionState;
+  connectionError?: Event;
+}

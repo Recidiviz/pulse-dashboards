@@ -21,7 +21,7 @@ import {
   AuthVerificationResponse,
   IntakeFields,
   IntakeResponse,
-} from "./types";
+} from "~@reentry/frontend/components/IntakeChatV2/types";
 
 const API_BASE_URL = process.env["NEXT_PUBLIC_API_URL"] || "";
 

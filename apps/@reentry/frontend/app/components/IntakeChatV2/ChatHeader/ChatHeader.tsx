@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "~@reentry/trpc/init";
-import { intakeChatRouter } from "~@reentry/trpc/routes/intake-chat/intake-chat.router";
+import React from "react";
 
-export const appRouter = router({
-  intake: intakeChatRouter,
-});
+import styles from "~@reentry/frontend/components/IntakeChatV2/ChatHeader/ChatHeader.module.css";
 
-// export type definition of API
-export type AppRouter = typeof appRouter;
+interface ChatHeaderProps {
+  firstName: string | null;
+  lastName: string | null;
+  docId?: string;
+}
+
+const ChatHeader: React.FC<ChatHeaderProps> = ({
+  firstName,
+  lastName,
+  docId,
+}) => {
+  const initials =
+    `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`.toUpperCase();
+  return (
+    <div className={`${styles["container"]}`}>
+      <div className={styles["avatar"]}>{initials}</div>
+      <div
+        className={styles["name"]}
+      >{`${firstName || ""} ${lastName || ""}`}</div>
+      <div className={styles["docId"]}>{docId}</div>
+    </div>
+  );
+};
+
+export default ChatHeader;

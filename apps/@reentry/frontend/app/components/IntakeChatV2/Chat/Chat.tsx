@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { router } from "~@reentry/trpc/init";
-import { intakeChatRouter } from "~@reentry/trpc/routes/intake-chat/intake-chat.router";
+import ConversationLayout from "~@reentry/frontend/components/IntakeChatV2/Chat/ConversationLayout";
+import { ChatProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
+import { ConnectionStatus } from "~@reentry/frontend/components/IntakeChatV2/types";
 
-export const appRouter = router({
-  intake: intakeChatRouter,
-});
+interface ChatProps {
+  intakeId: string;
+  connectionStatus?: ConnectionStatus;
+}
 
-// export type definition of API
-export type AppRouter = typeof appRouter;
+const Chat = ({ intakeId, connectionStatus }: ChatProps) => {
+  return (
+    <ChatProvider intakeId={intakeId}>
+      <ConversationLayout connectionStatus={connectionStatus} />
+    </ChatProvider>
+  );
+};
+
+export default Chat;

@@ -89,7 +89,6 @@ const ChatbotInterface: React.FC = () => {
 
       {/* Input */}
       <div className="shrink-0 pb-6">
-        {/* TODO: Adjust to V2 and remove socket context */}
         <ChatInput />
       </div>
     </div>

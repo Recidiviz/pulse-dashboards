@@ -15,6 +15,7 @@
 	--background: #ffffff;
 	--foreground: #171717;
 	--font-public-sans: "Public Sans", Arial, Helvetica, sans-serif;
+	--chat-header-height: 65px;
 }
 
 html,

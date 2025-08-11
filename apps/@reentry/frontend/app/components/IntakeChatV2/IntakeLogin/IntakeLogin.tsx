@@ -15,23 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-"use client";
-
 import { AxiosError } from "axios";
 import Image from "next/image";
 import React, { useState } from "react";
 
+import { getIntakeToken } from "~@reentry/frontend/components/IntakeChatV2/api/api";
+import styles from "~@reentry/frontend/components/IntakeChatV2/IntakeLogin/IntakeLogin.module.css";
+import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
+import { IntakeFields } from "~@reentry/frontend/components/IntakeChatV2/types";
 import { validateIntakeFields } from "~@reentry/frontend/components/IntakeChatV2/utils";
 import { showSuccessToast } from "~@reentry/frontend/utils/toast";
 
-import { getIntakeToken } from "./api";
-import { useIntakeAuthContext } from "./IntakeAuthProvider";
-import styles from "./IntakeLogin.module.css";
-import { IntakeFields } from "./types";
-
 export default function IntakeLogin() {
   const [isLoading, setIsLoading] = useState(false);
-  const { setToken, setClientId, setStateCode } = useIntakeAuthContext();
+  const { setToken, setClientId, setStateCode, setFirstName, setLastName } =
+    useIntakeAuthContext();
 
   const [fields, setFields] = useState<IntakeFields>({
     firstName: "",
@@ -69,10 +67,16 @@ export default function IntakeLogin() {
       setToken(token);
       setClientId(clientPseudoId);
       setStateCode(fields.stateCode);
+      setFirstName(fields.firstName);
+      setLastName(fields.lastName);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
-        console.error("Error during intake verification:", err.response?.data);
+        console.error(
+          "Error during intake verification:",
+          err.response?.data || err.message,
+        );
       }
+
       setError("Verification failed.");
     } finally {
       setIsLoading(false);

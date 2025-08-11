@@ -1,0 +1,93 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f1f5f9;
+}
+
+.header {
+  position: relative;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.main {
+  position: relative;
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.sidebar {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
+  background-color: #ffffff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  transition: transform 300ms;
+  display: none;
+  position: fixed;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: block;
+  }
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    position: relative;
+    box-shadow: none;
+  }
+}
+
+.sidebarClosed {
+  transform: translateX(-100%);
+}
+
+@media (min-width: 768px) {
+  .sidebarClosed {
+    transform: translateX(0);
+  }
+}
+
+.sidebarOpen {
+  transform: translateX(0);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  transition: opacity 300ms;
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .overlay {
+    display: block;
+  }
+}
+
+.overlayHidden {
+  opacity: 0;
+  display: none;
+}
+
+.overlayVisible {
+  opacity: 1;
+  display: block;
+}
+
+.chat {
+  flex: 1;
+  width: 100%;
+  background-color: #F9FAFA;
+  overflow: hidden;
+}

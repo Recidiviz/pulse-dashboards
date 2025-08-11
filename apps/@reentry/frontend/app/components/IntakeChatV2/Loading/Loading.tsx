@@ -15,31 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-"use client";
+import React from "react";
 
-import { createContext, ReactNode, useContext } from "react";
+import styles from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading.module.css";
 
-interface IntakeContextType {
-  noop: () => void; // Placeholder for future methods or state
+interface LoadingProps {
+  message?: string;
 }
 
-const IntakeContext = createContext<IntakeContextType | undefined>(undefined);
+const Loading: React.FC<LoadingProps> = ({ message = "Loading..." }) => (
+  <div className={styles["container"]}>
+    <div className={styles["spinner"]} />
+    <div className={styles["message"]}>{message}</div>
+  </div>
+);
 
-export function useIntakeContext() {
-  const ctx = useContext(IntakeContext);
-  if (!ctx)
-    throw new Error("useIntakeContext must be used within IntakeProvider");
-  return ctx;
-}
-
-interface IntakeProviderProps {
-  children: ReactNode;
-}
-
-export function IntakeProvider({ children }: IntakeProviderProps) {
-  return (
-    <IntakeContext.Provider value={{ noop: () => null }}>
-      {children}
-    </IntakeContext.Provider>
-  );
-}
+export default Loading;

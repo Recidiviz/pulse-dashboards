@@ -109,7 +109,7 @@ export const intakeChatRouter = router({
         } satisfies EmitData);
       },
     ),
-  intakeChat: baseProcedure
+  chat: baseProcedure
     .input(intakeChatInputSchema)
     .subscription(async function* ({
       ctx: { prisma, user },

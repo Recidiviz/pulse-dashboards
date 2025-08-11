@@ -21,8 +21,8 @@ import { useEffect, useState } from "react";
 
 import ConfirmBirthdate from "~@reentry/frontend/components/intake/ChatInterface/ConfirmBirthday";
 import IntakeRouter from "~@reentry/frontend/components/intake/IntakeRouter";
-import { IntakeAuthProvider } from "~@reentry/frontend/components/IntakeChatV2/IntakeAuthProvider";
 import IntakeChatV2 from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
+import { IntakeAuthProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { IntakeSocketProvider } from "~@reentry/frontend/websockets/IntakeSocketContext";
 

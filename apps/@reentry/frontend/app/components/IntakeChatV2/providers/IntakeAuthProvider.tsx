@@ -24,6 +24,10 @@ const IntakeAuthContext = createContext<{
   setClientId: (clientId: string | null) => void;
   stateCode: string | null;
   setStateCode: (stateCode: string | null) => void;
+  firstName: string | null;
+  setFirstName: (firstName: string | null) => void;
+  lastName: string | null;
+  setLastName: (lastName: string | null) => void;
 }>({
   token: null,
   setToken: () => null,
@@ -31,6 +35,10 @@ const IntakeAuthContext = createContext<{
   setClientId: () => null,
   stateCode: null,
   setStateCode: () => null,
+  firstName: null,
+  setFirstName: () => null,
+  lastName: null,
+  setLastName: () => null,
 });
 
 export const useIntakeAuthContext = () => {
@@ -48,6 +56,8 @@ export const IntakeAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [token, setToken] = useState<string | null>(null);
   const [clientId, setClientId] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [lastName, setLastName] = useState<string | null>(null);
   const [stateCode, setStateCode] = useState<string | null>(null);
 
   return (
@@ -59,6 +69,10 @@ export const IntakeAuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setClientId,
         stateCode,
         setStateCode,
+        firstName,
+        setFirstName,
+        lastName,
+        setLastName,
       }}
     >
       {children}

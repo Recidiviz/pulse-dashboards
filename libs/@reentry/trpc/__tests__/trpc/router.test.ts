@@ -27,9 +27,7 @@ import {
 } from "~@reentry/trpc/test/setup";
 import { intakeId } from "~@reentry/trpc/test/setup/seed";
 
-let subscription: ReturnType<
-  typeof testTRPCClient.intakeChat.intakeChat.subscribe
->;
+let subscription: ReturnType<typeof testTRPCClient.intake.chat.subscribe>;
 const onData = vi.fn();
 
 const getSavedMessages = async (threadId: string): Promise<BaseMessage[]> => {
@@ -55,7 +53,7 @@ const waitForSavedMessages = async (
 };
 
 const subscribeToIntakeChat = async (lastEventId?: string) => {
-  subscription = testTRPCClient.intakeChat.intakeChat.subscribe(
+  subscription = testTRPCClient.intake.chat.subscribe(
     { intakeId, ...(lastEventId ? { lastEventId } : {}) },
     {
       onData(data) {
@@ -117,7 +115,7 @@ describe("Intake chat", () => {
     await waitForSavedMessages(intakeId, 2);
 
     // Send a reply and wait for the response
-    await testTRPCClient.intakeChat.reply.mutate({
+    await testTRPCClient.intake.reply.mutate({
       intakeId,
       response: "Hello, I am ready to start.",
     });
@@ -167,7 +165,7 @@ describe("Intake chat", () => {
       }),
     );
 
-    await testTRPCClient.intakeChat.reply.mutate({
+    await testTRPCClient.intake.reply.mutate({
       intakeId,
       response: "My release date is November 25 of this year.",
     });
@@ -204,7 +202,7 @@ describe("Intake chat", () => {
     // 6. Reconnecting with the last event id
     await subscribeToIntakeChat();
     await waitForSavedMessages(intakeId, 2);
-    await testTRPCClient.intakeChat.reply.mutate({
+    await testTRPCClient.intake.reply.mutate({
       intakeId,
       response: "My release date is November 25 of this year.",
     });
@@ -269,7 +267,7 @@ describe("Intake chat", () => {
     subscription.unsubscribe();
 
     await expect(
-      testTRPCClient.intakeChat.reply.mutate({
+      testTRPCClient.intake.reply.mutate({
         intakeId,
         response: "I need housing.",
       }),
@@ -339,7 +337,7 @@ describe("Intake chat", () => {
   test("intake chat route should throw an error if the client tries to connect to a bad intake id", async () => {
     await expect(
       new Promise<void>((resolve, reject) => {
-        testTRPCClient.intakeChat.intakeChat.subscribe(
+        testTRPCClient.intake.chat.subscribe(
           { intakeId: "non-existent-intake-id" },
           {
             onData() {
@@ -372,7 +370,7 @@ describe("Intake chat", () => {
 
     await expect(
       new Promise<void>((resolve, reject) => {
-        testTRPCClient.intakeChat.intakeChat.subscribe(
+        testTRPCClient.intake.chat.subscribe(
           { intakeId },
           {
             onData() {

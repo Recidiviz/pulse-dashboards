@@ -15,19 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import React from "react";
+import React, { useState } from "react";
 
-import styles from "./Loading.module.css";
+import StepOne from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepOne";
+import StepTwo from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepTwo";
 
-interface LoadingProps {
-  message?: string;
+interface PreIntakeProps {
+  onStartIntake: () => void;
 }
+const PreIntake: React.FC<PreIntakeProps> = ({ onStartIntake }) => {
+  const [step, setStep] = useState<1 | 2>(1);
 
-const Loading: React.FC<LoadingProps> = ({ message = "Loading..." }) => (
-  <div className={styles["container"]}>
-    <div className={styles["spinner"]} />
-    <div className={styles["message"]}>{message}</div>
-  </div>
-);
+  const handleGoBack = () => {
+    if (step === 1) {
+      window.history.back();
+    } else {
+      setStep(1);
+    }
+  };
+  const handleContinue = () => setStep(2);
 
-export default Loading;
+  return (
+    <>
+      {step === 1 ? (
+        <StepOne onGoBack={handleGoBack} onContinue={handleContinue} />
+      ) : (
+        <StepTwo onGoBack={handleGoBack} onStartIntake={onStartIntake} />
+      )}
+    </>
+  );
+};
+
+export default PreIntake;
