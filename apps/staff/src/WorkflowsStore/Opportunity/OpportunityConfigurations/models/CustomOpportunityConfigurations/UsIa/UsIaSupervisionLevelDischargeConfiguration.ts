@@ -15,12 +15,26 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { countBy } from "lodash";
+
 import { OpportunityType } from "~datatypes";
 
+import { PartialRecord } from "../../../../../../utils/typeUtils";
+import { Opportunity, OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsIaSupervisionLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
   get eligibilityCompanionOpportunityTypes(): OpportunityType[] {
     return ["usIaEarlyDischarge"];
   }
+
+  countByFunction = (opportunities: Opportunity[]) => {
+    const counts = countBy(opportunities, (opp) =>
+      opp.tabTitle(),
+    ) as PartialRecord<OpportunityTab, number>;
+    return (
+      (counts["Pending Eligibility"] ?? 0) +
+      (counts["Eligible Now"] ?? 0)
+    );
+  };
 }

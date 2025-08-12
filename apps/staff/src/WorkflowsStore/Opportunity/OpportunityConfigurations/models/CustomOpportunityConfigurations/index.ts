@@ -23,6 +23,7 @@ import { ApiOpportunityConfiguration } from "../ApiOpportunityConfigurationImpl"
 import { UsAzReleaseToDTPConfiguration } from "./UsAz/UsAzReleaseToDTPConfiguration";
 import { UsAzReleaseToTPRConfiguration } from "./UsAz/UsAzReleaseToTPRConfiguration";
 import { UsIaEarlyDischargeConfiguration } from "./UsIa/UsIaEarlyDischargeConfiguration";
+import { UsIaSupervisionLevelDowngradeConfiguration } from "./UsIa/UsIaSupervisionLevelDischargeConfiguration";
 import { LSUConfiguration } from "./UsId/LSUConfiguration";
 import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
@@ -55,6 +56,7 @@ const customOpportunityConfigurations: Partial<
   // This is a non-constructed opportunity that is being customized
   ["usNdTransferToMinFacility" as OpportunityType]: UsNdTransferToMinFacility,
   usIaEarlyDischarge: UsIaEarlyDischargeConfiguration,
+  usIaSupervisionLevelDowngrade: UsIaSupervisionLevelDowngradeConfiguration,
   usUtEarlyTermination: UsUtEarlyTerminationConfiguration,
 };
 

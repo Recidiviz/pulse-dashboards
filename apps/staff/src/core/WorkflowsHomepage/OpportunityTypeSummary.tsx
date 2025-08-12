@@ -48,7 +48,11 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
 
   // there should always be at least one tab group to display the tab names from
   const tabGroup = Object.keys(tabGroups)[0] as OpportunityTabGroup;
-  const numOpportunitiesByTab = countBy(opportunities, (opp) =>
+  const tabTitles = Object.values(tabGroups)[0];
+  const oppsForEnabledTabs = opportunities.filter((opp) => {
+    return tabTitles.includes(opp.tabTitle(tabGroup));
+  });
+  const numOpportunitiesByTab = countBy(oppsForEnabledTabs, (opp) =>
     opp.tabTitle(tabGroup),
   );
 

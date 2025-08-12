@@ -63,7 +63,7 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       "INTERSTATE (IC-IN)",
     ];
 
-    if (!this.almostEligible) return false;
+    if (!this.record.isAlmostEligible) return false;
 
     const edOppDenial =
       this.earlyDischargeEligibilityCompanionOpportunity?.updates?.denial;
@@ -72,14 +72,21 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
     const relevantDenial = edOppDenial.reasons.every((item) =>
       RELEVANT_ED_DENIAL_REASONS.includes(item),
     );
+
     return relevantDenial;
+  }
+
+  eligibilityStatusLabel(includeReasons?: boolean): string | null {
+    if (this.pendingEligibility) return "Pending Eligibility";
+    return super.eligibilityStatusLabel(includeReasons);
   }
 
   tabTitle(): OpportunityTab {
     if (this.isSubmitted) return this.submittedTabTitle;
-    if (this.denied) return this.deniedTabTitle;
+    if (this.denied) return "Snoozed";
     if (this.record.isEligible) return "Eligible Now";
-    if (this.almostEligible) return "Pending Eligibility";
-    return "Snoozed";
+    if (this.pendingEligibility) return "Pending Eligibility";
+    // This tab will not be visible, but we want to catch almost eligible but not pending opps.
+    return "Almost Eligible";
   }
 }
