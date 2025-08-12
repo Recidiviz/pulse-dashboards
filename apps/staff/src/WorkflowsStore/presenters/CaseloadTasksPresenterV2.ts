@@ -66,7 +66,7 @@ type SelectedFilters = PartialRecord<
 >;
 
 export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
-  private selectedCategory: SupervisionTaskCategory;
+  private _selectedCategory: SupervisionTaskCategory | undefined = undefined;
   private _selectedFilters: SelectedFilters = {};
   private tableViewSelectPresenter: TableViewSelectPresenter;
   private _navigablePeople: JusticeInvolvedPerson[] = [];
@@ -90,13 +90,6 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
     makeAutoObservable(this, {
       updateNavigablePeople: action,
     });
-
-    // Select the first non-empty category
-    this.selectedCategory =
-      find(
-        this.displayedTaskCategories,
-        (category) => this.countForCategory(category) > 0,
-      ) ?? this.displayedTaskCategories[0];
 
     this.tableViewSelectPresenter = new TableViewSelectPresenter(
       firestoreStore,
@@ -155,7 +148,19 @@ export class CaseloadTasksPresenterV2 implements TableViewSelectInterface {
       selectedCaseloadIds: this.workflowsStore.searchStore.selectedSearchIds,
     });
 
-    this.selectedCategory = newCategory;
+    this._selectedCategory = newCategory;
+  }
+
+  get selectedCategory() {
+    return (
+      this._selectedCategory ??
+      // If the user hasn't selected anything, default to the first non-empty category
+      find(
+        this.displayedTaskCategories,
+        (category) => this.countForCategory(category) > 0,
+      ) ??
+      this.displayedTaskCategories[0]
+    );
   }
 
   get someFiltersSet(): boolean {
