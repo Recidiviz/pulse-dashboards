@@ -98,7 +98,7 @@ export const mockApiOpportunityConfigurationResponse = {
       methodologyUrl: "TBD",
       nonOmsCriteria: [
         {
-          text: "No outstanding wants, warrants, or detainers for Class A-D felonies",
+          text: "No outstanding wants, warrants, or detainers for Class A–D felonies",
           tooltip:
             "Misdemeanor warrants from out of state should be reviewed to ensure they are not considered felony wants in Missouri. Residents participating in Outside Clearance should be checked for felony wants, warrants, or detainers at least monthly.",
         },
@@ -451,6 +451,12 @@ export const mockApiOpportunityConfigurationResponse = {
           tooltip:
             "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
         },
+        {
+          key: "usMoEducationalScore1",
+          text: "Meets educational requirements",
+          tooltip:
+            "Residents must meet criteria outlined in departmental procedures regarding mandatory academic education. Recidiviz checks for an E-1 education needs score to determine whether a resident meets this eligibility requirement.",
+        },
       ],
       emptyTabCopy: [],
       firestoreCollection: "US_MO-workReleaseReferrals",
@@ -471,7 +477,7 @@ export const mockApiOpportunityConfigurationResponse = {
             "If current or prior conviction for Arson I or Robbery I, resident must be within 24 months of earliest release date and must have completed at least 12 months on supervised outside clearance assignment.",
         },
         {
-          text: "No outstanding wants, warrants, or detainers for Class A-E felonies",
+          text: "No outstanding wants, warrants, or detainers for Class A–E felonies",
           tooltip:
             "Misdemeanor warrants from out of state should be reviewed to ensure they are not considered felony wants in Missouri. Residents participating in Supervised Work Release should be checked for felony wants, warrants, or detainers at least monthly.",
         },
@@ -487,11 +493,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Consider adverse community impact due to factors such as gang or organized crime involvement",
           tooltip:
             "Consideration shall be given to whether the offender’s presence in the community may cause adverse community reaction due to factors such as organized crime affiliation or gang involvement.",
-        },
-        {
-          text: "Meets any educational requirements",
-          tooltip:
-            "Residents must meet criteria outlined in departmental procedures regarding mandatory academic education.",
         },
         {
           text: "Meets any other institution-specific requirements established in standard operating procedures (SOP)",

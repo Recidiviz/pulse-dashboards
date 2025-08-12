@@ -127,12 +127,12 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           text: "Not being supervised for an offense resulting in the death of a person",
           tooltip:
-            "Adults under supervision are ineligible for early termination if [...] (they are being supervised for an offense which) [...] involves causing a human being’s death.",
+            "Adults under supervision are ineligible for early termination if they are being supervised for an offense which involves causing a human being’s death.",
         },
         {
           text: "Not being supervised for a sex offense",
           tooltip:
-            "Adults under supervision are ineligible for early termination if [...] (they are being supervised for) [...] any felony sex offense",
+            "Adults under supervision are ineligible for early termination if they are being supervised for any felony sex offense.",
         },
       ],
       nonOmsCriteriaHeader: null,

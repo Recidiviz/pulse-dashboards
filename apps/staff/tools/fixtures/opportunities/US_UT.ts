@@ -33,6 +33,10 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Insufficient restitution, fines, or fees effort",
         },
         {
+          key: "DENIED",
+          text: "Early termination request was denied by parole board or judge",
+        },
+        {
           key: "TREATMENT",
           text: "Has not completed treatment or programming",
         },
