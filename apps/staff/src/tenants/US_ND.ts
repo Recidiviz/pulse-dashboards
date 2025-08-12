@@ -32,6 +32,8 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
   stateCode: "ND",
   domain: "nd.gov",
   DOCName: "DOCR",
+  supervisionDisplayIdCopy: "SID",
+  facilitiesDisplayIdCopy: "DOC ID",
   availableStateCodes: [pathways.US_ND],
   enableUserRestrictions: false,
   workflowsSupportedSystems: ["SUPERVISION", "INCARCERATION"],
