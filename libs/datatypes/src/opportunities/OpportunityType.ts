@@ -24,7 +24,6 @@ export const constructedOpportunityTypes = [
   "usAzOverdueForACISTPR",
   "usAzReleaseToDTP",
   "usAzReleaseToTPR",
-  "usAzTransferToAdministrativeSupervision",
 
   // US_CA
   "usCaSupervisionLevelDowngrade",
