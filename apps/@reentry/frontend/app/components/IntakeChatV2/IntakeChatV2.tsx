@@ -38,12 +38,20 @@ import type { AppRouter } from "~@reentry/trpc-types";
 
 export const trpc = createTRPCReact<AppRouter>();
 
-const IntakeChatV2 = () => {
-  const { token, firstName, lastName, stateCode } = useIntakeAuthContext();
+type IntakeChatV2ContentProps = {
+  token: string;
+  stateCode: string | null;
+  firstName: string | null;
+  lastName: string | null;
+};
 
-  if (!token) {
-    return <IntakeLogin />;
-  }
+const IntakeChatV2Content: React.FC<IntakeChatV2ContentProps> = ({
+  token,
+  stateCode,
+  firstName,
+  lastName,
+}) => {
+  const trpcUrl = process.env["NEXT_PUBLIC_API_URL"] + "/trpc";
 
   const [isPreIntakeComplete, setIsPreIntakeComplete] = useState(false);
   const [connectionState, setConnectionState] =
@@ -52,7 +60,7 @@ const IntakeChatV2 = () => {
   const [queryClient] = useState(() => new QueryClient());
   const [wsClient] = useState(() =>
     createWSClient({
-      url: process.env["NEXT_PUBLIC_API_URL"] + "/trpc",
+      url: trpcUrl,
       connectionParams: () => ({
         statecode: stateCode ?? "",
         authorization: `Bearer ${token}`,
@@ -74,7 +82,7 @@ const IntakeChatV2 = () => {
           },
           true: wsLink({ client: wsClient, transformer: superjson }),
           false: httpBatchLink({
-            url: process.env["NEXT_PUBLIC_API_URL"] + "/trpc",
+            url: trpcUrl,
             headers: () => ({
               statecode: stateCode ?? "",
               authorization: `Bearer ${token}`,
@@ -86,13 +94,15 @@ const IntakeChatV2 = () => {
     }),
   );
   // TODO: Call Get/Create Intake Route to get an intakeId
-  const intakeId = "intake-id-placeholder";
+  const intakeId = "intake-1";
 
   return (
     <QueryClientProvider client={queryClient}>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <ChatHeader firstName={firstName} lastName={lastName} />
-        <PreIntake onStartIntake={() => setIsPreIntakeComplete(true)} />
+        {!isPreIntakeComplete && (
+          <PreIntake onStartIntake={() => setIsPreIntakeComplete(true)} />
+        )}
         {isPreIntakeComplete && (
           <Chat
             intakeId={intakeId}
@@ -101,6 +111,23 @@ const IntakeChatV2 = () => {
         )}
       </trpc.Provider>
     </QueryClientProvider>
+  );
+};
+
+const IntakeChatV2 = () => {
+  const { token, firstName, lastName, stateCode } = useIntakeAuthContext();
+
+  if (!token) {
+    return <IntakeLogin />;
+  }
+
+  return (
+    <IntakeChatV2Content
+      token={token}
+      stateCode={stateCode}
+      firstName={firstName}
+      lastName={lastName}
+    />
   );
 };
 

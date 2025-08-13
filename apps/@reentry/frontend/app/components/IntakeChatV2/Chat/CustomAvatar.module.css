@@ -1,0 +1,32 @@
+.clientAvatar {
+  box-shadow: 0 0 11.74px rgba(0,0,0,0.12);
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  background: linear-gradient(20turn, #285386 35%, #a2d1db 100%);
+  background-blend-mode: darken;
+}
+
+.initials {
+  font-family: var(--font-public-sans);
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: #ffffff;
+}
+
+.caseAvatar {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid rgba(0,0,0,0.1);
+}

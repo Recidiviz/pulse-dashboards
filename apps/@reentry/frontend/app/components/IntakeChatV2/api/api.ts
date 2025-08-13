@@ -18,7 +18,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
 import {
-  AuthVerificationResponse,
   IntakeFields,
   IntakeResponse,
 } from "~@reentry/frontend/components/IntakeChatV2/types";
@@ -63,8 +62,8 @@ export function getIntakeToken(fields: IntakeFields): Promise<IntakeResponse> {
   const { firstName, lastName, month, day, year, stateCode } = fields;
   const dob = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   const payload = {
-    first_name: firstName.trim(),
-    last_name: lastName.trim(),
+    first_name: firstName,
+    last_name: lastName,
     date_of_birth: dob,
     state_code: stateCode,
   };
@@ -72,14 +71,5 @@ export function getIntakeToken(fields: IntakeFields): Promise<IntakeResponse> {
   return apiRequest<IntakeResponse>("/get-intake-token", {
     method: "POST",
     body: payload,
-  });
-}
-
-/**
- * Calls GET /verify-auth to verify the HTTP‐only token cookie
- */
-export function verifyAuthToken(): Promise<AuthVerificationResponse> {
-  return apiRequest<AuthVerificationResponse>("/verify-auth", {
-    method: "GET",
   });
 }

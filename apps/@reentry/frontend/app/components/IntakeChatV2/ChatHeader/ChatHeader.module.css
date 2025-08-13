@@ -19,14 +19,14 @@
   justify-content: center;
   box-shadow: 0 0 12.74px rgba(0,0,0,0.25);
   color: #fff;
-  font-family: 'Public Sans', sans-serif;
+  font-family: var(--font-public-sans);
   font-weight: bold;
   font-size: 0.875rem;
   line-height: 1.5rem;
 }
 
 .name {
-  font-family: 'Public Sans', sans-serif;
+  font-family: var(--font-public-sans);
   font-size: 1.125rem;
   line-height: 160%;
   letter-spacing: -0.02em;
@@ -36,7 +36,7 @@
 }
 
 .docId {
-  font-family: 'Public Sans', sans-serif;
+  font-family: var(--font-public-sans);
   font-size: 1.125rem;
   line-height: 120%;
   letter-spacing: -0.02em;

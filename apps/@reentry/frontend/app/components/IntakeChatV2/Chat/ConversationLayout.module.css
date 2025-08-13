@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - var(--chat-header-height));
   background-color: #f1f5f9;
 }
 
@@ -19,6 +19,7 @@
 }
 
 .sidebar {
+  width: 280px;
   top: 0;
   bottom: 0;
   left: 0;
@@ -90,4 +91,49 @@
   width: 100%;
   background-color: #F9FAFA;
   overflow: hidden;
+}
+
+.chatContainer {
+  max-width: 64rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 1rem;
+}
+
+
+.messagesWrapper {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-top: 2.5rem;
+}
+
+.messagesWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .messagesWrapper {
+    padding-top: 3rem;
+  }
+}
+
+.messagesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .messagesList {
+    gap: 1.5rem;
+  }
+}
+
+.inputContainer {
+  flex-shrink: 0;
+  padding-bottom: 1.5rem;
 }

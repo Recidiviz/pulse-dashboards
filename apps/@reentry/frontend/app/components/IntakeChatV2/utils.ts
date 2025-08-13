@@ -54,3 +54,12 @@ export function validateIntakeFields(fields: IntakeFields): string | null {
 
   return null;
 }
+
+export const getInitials = (fullName?: string): string =>
+  fullName
+    ? fullName
+        .split(" ")
+        .slice(0, 2)
+        .map((n) => n.charAt(0).toUpperCase())
+        .join("")
+    : "";

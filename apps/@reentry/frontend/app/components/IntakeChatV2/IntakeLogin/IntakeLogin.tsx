@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { AxiosError } from "axios";
+import { capitalize } from "lodash";
 import Image from "next/image";
 import React, { useState } from "react";
 
@@ -58,17 +59,27 @@ export default function IntakeLogin() {
     setIsLoading(true);
 
     try {
-      const { token, clientPseudoId } = await getIntakeToken(fields);
+      const formattedFirstName = capitalize(
+        fields.firstName.trim().toLowerCase(),
+      );
+      const formattedLastName = capitalize(
+        fields.lastName.trim().toLowerCase(),
+      );
+      const { token, clientPseudoId } = await getIntakeToken({
+        ...fields,
+        firstName: formattedFirstName,
+        lastName: formattedLastName,
+      });
 
       if (!clientPseudoId)
         throw new Error("There was an issue verifying the client.");
 
-      showSuccessToast(`Success! Welcome, ${fields.firstName}.`);
+      showSuccessToast(`Success! Welcome, ${formattedFirstName}.`);
       setToken(token);
       setClientId(clientPseudoId);
       setStateCode(fields.stateCode);
-      setFirstName(fields.firstName);
-      setLastName(fields.lastName);
+      setFirstName(formattedFirstName);
+      setLastName(formattedLastName);
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
         console.error(
