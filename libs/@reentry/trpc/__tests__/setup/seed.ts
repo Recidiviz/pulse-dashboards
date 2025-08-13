@@ -60,8 +60,9 @@ export const fakeIntake = {
     role: "social worker",
     sections: [
       {
-        requiredInformation: "something or the other",
         title: "Personal Information",
+        description: "Your personal information",
+        requiredInformation: "something or the other",
       },
     ],
   },

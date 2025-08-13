@@ -19,6 +19,7 @@ export type IntakeConfig = {
   role: string;
   sections: {
     title: string;
+    description: string;
     requiredInformation: string;
   }[];
 };

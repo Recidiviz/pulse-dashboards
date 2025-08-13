@@ -24,6 +24,7 @@ Role: You are a social worker conducting a structured intake assessment with a n
 export const US_ID_SECTIONS: Sections = [
   {
     title: "Basic Information",
+    description: "Your basic information",
     requiredInformation: `
       1. Does the client have a birth certificate? If not, do they need assistance obtaining one?
       2. Does the client have a social security card? If not, do they need assistance obtaining one? If they do, do they know their social security number (tell them they should not give the number)?
@@ -37,6 +38,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Immediate Needs",
+    description: "Your immediate needs",
     requiredInformation: `
       1. Upon release, will the client have access to sufficient food? If not would like like a referral to a food bank?
       2. Upon release, will the client have access to weather-appropriate clothing? If not, do they want a referral to a clothing closet or other community resource that provides clothing?
@@ -46,6 +48,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Housing",
+    description: "Your housing situation and plans",
     requiredInformation: `
         1. Does the client have a short-term plan for a safe and confirmed place to go immediately upon release?
            a. If yes, what is the nature of that housing? If it's with family or friends: who will be living there? Has the client discussed this stay with them? What are the rules or expectations for living there? How long have they agreed the client can stay? Is there a housing agreement (e.g., lease) that has a time limit on how long a guest can stay? If it's in a transitional housing program or shelter: has the client been accepted into a program? What is the name of the program/shelter? Does the client understand the program's rules and requirements? If it's in the client's own rented or owned home: will anyone else be living there? If so, who?
@@ -58,6 +61,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Employment",
+    description: "Your employment history and goals",
     requiredInformation: `
       1. Does the client plan to work after release? 
          a . If yes, how many hours per week does the client seek to work, what jobs would the client ideally like to have after release, does the client have a resume, and does the client have a professional email address for job applications? 
@@ -69,6 +73,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Education",
+    description: "Your education history and goals",
     requiredInformation: `
       1. What is the highest grade level or education the client has completed?
       2. Has the client completed any educational or vocational programming while incarcerated? If yes, what programming (make sure to collect a comprehensive list)? Has the client received their GED, college credits, or any other kind of diploma or credentials while incarcerated? What work-related skills has the client learned from this programming?
@@ -79,6 +84,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Financial",
+    description: "Your financial history and goals",
     requiredInformation: `
       1. Will the client have any financial resources upon release? If yes, approximately how much will they have?
       2. Does the client have any court-ordered financial obligations (restitution, fines, fees)? If yes, what is the total amount owed and to which agencies? What are the payment terms?
@@ -89,6 +95,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Family Relationships",
+    description: "Your family relationships",
     requiredInformation: `
       1. What is the client's primary family? What are their names and relationships to the client?
       2. What are the client's hopes and any concerns about their relationships with family after release? Is the client planning to reunify with their family? What practical steps do they plan to take to nurture these relationships? What specific challenges do they anticipate, and how do they plan to navigate them? Are they interested in resources like family counseling or mediation?
@@ -98,6 +105,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Social Connections",
+    description: "Your social connections",
     requiredInformation: `
       1. What is the nature of the client's friendships and social network? Do they feel their current social circle will be supportive of their reentry goals? If they have concerns about negative influences, how do they plan to set boundaries or create distance?
       2. Is the client interested in developing new, positive social connections? If yes, what are they looking for in these new connections (e.g., shared hobbies, sobriety support, faith-based community, mentorship)?
@@ -105,6 +113,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Leisure and Recreation",
+    description: "How you like to spend your free time.",
     requiredInformation: `
       1. What are the client's hobbies and interests? What positive and pro-social activities do they enjoy?
       2. What former activities, if any, do they plan to avoid after release?
@@ -112,6 +121,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Alcohol and Drugs",
+    description: "Your relationship with alcohol and drugs",
     requiredInformation: `
       1. Does the client have a history with substance abuse? If yes, what does their recovery journey look like so far? Have they ever participated in a substance abuse treatment program while incarcerated or prior to incarceration? If yes, which ones? What was helpful or unhelpful about prior experiences with treatment programs?
       2. Is the client interested in starting or continuing treatment support after release? If yes, what type of support do they feel would be most effective for them now (e.g., group meetings like AA/NA, individual counseling, medication-assisted treatment, residential treatment, or something else)?
@@ -119,6 +129,7 @@ export const US_ID_SECTIONS: Sections = [
   },
   {
     title: "Health and Wellness",
+    description: "Your health and wellness",
     requiredInformation: `
       1. Does the client have any current medical conditions that require ongoing treatment or medication? If yes, do they have a 30-day supply of medication upon release? Do they have a plan to see a doctor and get prescriptions filled?
       2. Does the client have a plan for securing health care insurance upon release?

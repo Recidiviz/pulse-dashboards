@@ -335,8 +335,9 @@ describe("server", () => {
           role: "social worker",
           sections: [
             {
-              requiredInformation: "something or the other",
               title: "Personal Information",
+              requiredInformation: "something or the other",
+              description: "Your personal information",
             },
           ],
         }),
