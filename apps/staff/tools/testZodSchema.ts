@@ -67,6 +67,7 @@ import { usMoOverdueRestrictiveHousingReleaseSchema } from "../src/WorkflowsStor
 import { usMoOverdueRestrictiveHousingReviewHearingSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingReviewHearingOpportunity/UsMoOverdueRestrictiveHousingReviewHearingReferralRecord";
 import { usMoWorkReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseReferralRecord";
 import { usNdEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsNd/UsNdEarlyTerminationOpportunity/UsNdEarlyTerminationReferralRecord";
+import { usNdTransferToMinFacilitySchema } from "../src/WorkflowsStore/Opportunity/UsNd/UsNdTransferToMinFacilityOpportunity/UsNdTransferToMinFacilityReferralRecord";
 import { usOrEarnedDischargeSentenceSchema } from "../src/WorkflowsStore/Opportunity/UsOr/UsOrEarnedDischargeSentenceOpportunity";
 import { usPaAdminSupervisionSchema } from "../src/WorkflowsStore/Opportunity/UsPa/UsPaAdminSupervisionOpportunity/UsPaAdminSupervisionReferralRecord";
 import { compliantReportingSchema } from "../src/WorkflowsStore/Opportunity/UsTn/CompliantReportingOpportunity/CompliantReportingReferralRecord";
@@ -165,6 +166,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
 
   // US_ND
   earlyTermination: usNdEarlyTerminationSchema,
+  usNdTransferToMinFacility: usNdTransferToMinFacilitySchema,
 
   // US_OR
   usOrEarnedDischargeSentence: usOrEarnedDischargeSentenceSchema,
