@@ -132,8 +132,8 @@ model ClientsToStaff {
 }
 
 model Intake {
-  id        String    @id
-  startDate DateTime
+  id        String    @id @default(cuid())
+  startDate DateTime  @default(now())
   endDate   DateTime?
 
   // The intake config, stored as a JSON object.

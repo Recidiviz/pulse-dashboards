@@ -26,3 +26,7 @@ export const intakeChatInputSchema = z.object({
   intakeId: z.string(),
   lastEventId: z.string().nullish(),
 });
+
+export const createOrGetInputSchema = z.object({
+  clientPseudoId: z.string(),
+});

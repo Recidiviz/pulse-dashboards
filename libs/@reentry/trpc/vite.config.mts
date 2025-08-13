@@ -58,6 +58,9 @@ export default defineConfig({
         process.env["SENTRY_DSN"] ??
         "https://83072d6dfc09bb6ad83c79324f7953bb@o432474.ingest.us.sentry.io/4509667951968256",
       SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
+      INTAKE_PRIVATE_JWT_KEY:
+        process.env["INTAKE_PRIVATE_JWT_KEY"] ??
+        "0d9e4eb91b3bc1ad85a6f39c7070a6dc30c003da1eb83d86e8fdabdb4e96761f",
     },
   },
 });

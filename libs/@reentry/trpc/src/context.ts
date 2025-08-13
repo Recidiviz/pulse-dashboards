@@ -23,6 +23,7 @@ import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify"
 import { createVerifier } from "fast-jwt";
 
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
+import { StateCode } from "~@reentry/prisma/client";
 import { Context } from "~@reentry/trpc/types";
 import { verifyJwtToken } from "~server-setup-plugin";
 
@@ -44,7 +45,11 @@ export async function createContext(
     stateCode = req.headers[STATE_CODE_HEADER_KEY];
   }
 
-  if (!stateCode || typeof stateCode !== "string") {
+  if (
+    !stateCode ||
+    typeof stateCode !== "string" ||
+    !Object.values(StateCode).includes(stateCode as StateCode)
+  ) {
     throw new TRPCError({
       code: "PRECONDITION_FAILED",
       message: `Unsupported state code provided in request headers: ${stateCode}`,
@@ -70,5 +75,6 @@ export async function createContext(
     isAuthorized: !!user,
     user,
     prisma: prismaClient,
+    stateCode: stateCode as StateCode,
   };
 }

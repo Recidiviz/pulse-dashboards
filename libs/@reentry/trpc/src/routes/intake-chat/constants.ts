@@ -15,21 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FastifyReply, FastifyRequest } from "fastify";
+import { Prisma } from "~@reentry/prisma/client/client";
 
-import { PrismaClient, StateCode } from "~@reentry/prisma/client";
-
-export type AuthUser = {
-  clientPseudoId: string;
-  iat?: number;
-  exp?: number;
-};
-
-export type Context = {
-  req: FastifyRequest;
-  res: FastifyReply;
-  isAuthorized: boolean;
-  user: AuthUser | null;
-  prisma: PrismaClient;
-  stateCode: StateCode;
-};
+export const INTAKE_GET_ARGS = {
+  id: true,
+  config: true,
+} satisfies Prisma.IntakeSelect;

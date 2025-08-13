@@ -19,10 +19,13 @@ import { AIMessage } from "@langchain/core/messages";
 import { tracked, TRPCError } from "@trpc/server";
 import EventEmitter, { on } from "events";
 
-import { IntakeAgent } from "~@reentry/intake-agent";
+import { getIntakeConfigForState, IntakeAgent } from "~@reentry/intake-agent";
 import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
+import { Prisma } from "~@reentry/prisma/client";
 import { baseProcedure, router } from "~@reentry/trpc/init";
+import { INTAKE_GET_ARGS } from "~@reentry/trpc/routes/intake-chat/constants";
 import {
+  createOrGetInputSchema,
   intakeChatInputSchema,
   intakeChatResponseInputSchema,
 } from "~@reentry/trpc/routes/intake-chat/intake-chat.schema";
@@ -55,6 +58,53 @@ function getCleanedMessagesAndLastId(aiMessages: AIMessage[]) {
 }
 
 export const intakeChatRouter = router({
+  createOrGet: baseProcedure
+    .input(createOrGetInputSchema)
+    .mutation(
+      async ({ ctx: { prisma, stateCode }, input: { clientPseudoId } }) => {
+        const existingIntake = await prisma.intake.findFirst({
+          where: {
+            client: {
+              pseudonymizedId: clientPseudoId,
+            },
+          },
+          select: INTAKE_GET_ARGS,
+        });
+
+        if (existingIntake) {
+          return existingIntake;
+        }
+
+        const intakeConfig = getIntakeConfigForState(stateCode);
+
+        try {
+          return await prisma.intake.create({
+            data: {
+              config: intakeConfig,
+              client: {
+                connect: {
+                  pseudonymizedId: clientPseudoId,
+                },
+              },
+            },
+            select: INTAKE_GET_ARGS,
+          });
+        } catch (e) {
+          if (
+            e instanceof Prisma.PrismaClientKnownRequestError &&
+            e.code === "P2025"
+          ) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Client with that id was not found",
+              cause: e,
+            });
+          }
+
+          throw e;
+        }
+      },
+    ),
   reply: baseProcedure
     .input(intakeChatResponseInputSchema)
     .mutation(

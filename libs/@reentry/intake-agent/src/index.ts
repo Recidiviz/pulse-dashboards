@@ -22,6 +22,7 @@ import { builder } from "~@reentry/intake-agent/graph";
 import { IntakeConfig } from "~@reentry/prisma/types";
 
 export { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
+export { getIntakeConfigForState } from "~@reentry/intake-agent/intake_configs/utils";
 
 type AgentStatus =
   | "not_initialized"
