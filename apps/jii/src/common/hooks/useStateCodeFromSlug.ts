@@ -15,24 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { memo } from "react";
+import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { useStateCodeFromSlug } from "../../common/hooks/useStateCodeFromSlug";
-import { UsTnSingleResidentHome } from "../../US_TN/UsTnSingleResidentHome/UsTnSingleResidentHome";
-import { SingleResidentHome } from "../SingleResidentHome";
-import { usePageTitle } from "../usePageTitle/usePageTitle";
+import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
+import { StateCode } from "../../configs/types";
+import { State } from "../../routes/routes";
 
-export const PageSingleResidentHome = memo(function PageSingleResidentHome() {
-  usePageTitle("Home");
-  const stateCode = useStateCodeFromSlug();
-
-  // Shouldn't happen in practice
-  if (!stateCode) return null;
-
-  switch (stateCode) {
-    case "US_TN":
-      return <UsTnSingleResidentHome />;
-    default:
-      return <SingleResidentHome />;
-  }
-});
+export const useStateCodeFromSlug = (): StateCode | undefined => {
+  const { stateSlug } = useTypedParams(State);
+  return stateConfigsByUrlSlug[stateSlug]?.stateCode;
+};

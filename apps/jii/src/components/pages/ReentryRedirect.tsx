@@ -17,13 +17,13 @@
 
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
+import { useStateCodeFromSlug } from "../../common/hooks/useStateCodeFromSlug";
 import { State } from "../../routes/routes";
 import { SingleResidentHydrator } from "../SingleResidentHydrator/SingleResidentHydrator";
 
 export function ReentryRedirect() {
-  const { stateSlug, personPseudoId } = useTypedParams(State.Resident);
-  const stateCode = stateConfigsByUrlSlug[stateSlug]?.stateCode;
+  const { personPseudoId } = useTypedParams(State.Resident);
+  const stateCode = useStateCodeFromSlug();
 
   // Redirect to the reentry tool for Idaho and Utah
   if (stateCode === "US_ID" || stateCode === "US_UT") {

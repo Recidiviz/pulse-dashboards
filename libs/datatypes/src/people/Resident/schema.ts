@@ -19,8 +19,7 @@ import { isEqual } from "date-fns";
 import { z } from "zod";
 
 import { usMeXPortionServedEnum } from "../../opportunities/UsMe/UsMeSCCP/schema";
-import { nullishAsUndefined } from "../../utils/zod";
-import { dateStringSchema } from "../../utils/zod/date/dateStringSchema";
+import { dateStringSchema, nullishAsUndefined } from "../../utils/zod";
 import { personMetadataSchema } from "../utils/personMetadataSchema";
 import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
 import { usArResidentMetadataSchema } from "./US_AR/metadata/schema";
@@ -30,6 +29,7 @@ import { usMaResidentMetadataSchema } from "./US_MA/metadata/schema";
 import { usMeResidentMetadataSchema } from "./US_ME/metadata/schema";
 import { usMoResidentMetadataSchema } from "./US_MO/metadata/schema";
 import { usNdResidentMetadataSchema } from "./US_ND/metadata/schema";
+import { usTnResidentMetadataSchema } from "./US_TN/metadata/schema";
 
 /**
  * Magic date that appears in data sometimes and is equivalent to null
@@ -63,6 +63,7 @@ export const residentRecordSchema = workflowsJusticeInvolvedPersonRecordSchema
         usMaResidentMetadataSchema,
         usMoResidentMetadataSchema,
         usNdResidentMetadataSchema,
+        usTnResidentMetadataSchema,
       ]),
     }),
   )

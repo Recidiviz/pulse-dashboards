@@ -15,24 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { memo } from "react";
+import { z } from "zod";
 
-import { useStateCodeFromSlug } from "../../common/hooks/useStateCodeFromSlug";
-import { UsTnSingleResidentHome } from "../../US_TN/UsTnSingleResidentHome/UsTnSingleResidentHome";
-import { SingleResidentHome } from "../SingleResidentHome";
-import { usePageTitle } from "../usePageTitle/usePageTitle";
+import { dateStringSchema } from "../../../../utils/zod";
 
-export const PageSingleResidentHome = memo(function PageSingleResidentHome() {
-  usePageTitle("Home");
-  const stateCode = useStateCodeFromSlug();
-
-  // Shouldn't happen in practice
-  if (!stateCode) return null;
-
-  switch (stateCode) {
-    case "US_TN":
-      return <UsTnSingleResidentHome />;
-    default:
-      return <SingleResidentHome />;
-  }
+export const usTnResidentMetadataSchema = z.object({
+  stateCode: z.literal("US_TN"),
+  expirationDate: dateStringSchema.nullable(),
+  expirationDateOriginal: dateStringSchema.nullable(),
+  releaseEligibilityDate: dateStringSchema.nullable(),
+  sentenceEffectiveDate: dateStringSchema.nullable(),
 });

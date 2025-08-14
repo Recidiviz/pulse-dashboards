@@ -17,6 +17,7 @@
 
 import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
+import { Fragment } from "react";
 import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
@@ -109,10 +110,10 @@ export function BulletTimeline({ items }: BulletTimelineProps) {
   return (
     <BulletTimelineList>
       {items.map(({ label, value }) => (
-        <>
+        <Fragment key={label}>
           <dt>{label}</dt>
           <dd>{value}</dd>
-        </>
+        </Fragment>
       ))}
     </BulletTimelineList>
   );

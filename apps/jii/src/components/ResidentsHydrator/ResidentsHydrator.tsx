@@ -18,12 +18,10 @@
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { Outlet } from "react-router-dom";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
-import { State } from "../../routes/routes";
+import { useStateCodeFromSlug } from "../../common/hooks/useStateCodeFromSlug";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { ResidentsContextProvider } from "./context";
@@ -42,8 +40,7 @@ const ManagedComponent: FC<{
 
 function usePresenter() {
   const rootStore = useRootStore();
-  const { stateSlug } = useTypedParams(State);
-  const stateCode = stateConfigsByUrlSlug[stateSlug]?.stateCode;
+  const stateCode = useStateCodeFromSlug();
   // not really expected in practice, just for type safety
   if (!stateCode) return null;
   return new ResidentsHydratorPresenter(rootStore, stateCode);
