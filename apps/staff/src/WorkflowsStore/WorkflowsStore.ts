@@ -749,7 +749,9 @@ export class WorkflowsStore implements Hydratable {
   get isSupervisionTasksLinkEnabled(): boolean {
     return (
       // tasks is available in the current tenant, and
-      this.isSupervisionTasksConfigured &&
+      !!this.rootStore.tenantStore.currentTenantConfig?.navigation?.workflows?.includes(
+        "tasks",
+      ) &&
       // the current user is allowed to see tasks, and
       this.rootStore.userStore.canUserAccessTasks &&
       // the workflows home page is not tasks

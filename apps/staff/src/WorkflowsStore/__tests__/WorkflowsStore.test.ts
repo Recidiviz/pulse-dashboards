@@ -890,6 +890,9 @@ describe("isSupervisionTasksLinkEnabled", () => {
       "get",
     ).mockReturnValue({
       workflowsHomepage: "home",
+      navigation: {
+        workflows: ["home", "tasks"],
+      },
     } as unknown as TenantConfig<"US_ME">);
     setUser({}, "US_ME", {
       tasks: true,

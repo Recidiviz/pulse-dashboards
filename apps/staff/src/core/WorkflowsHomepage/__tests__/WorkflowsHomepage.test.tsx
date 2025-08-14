@@ -78,6 +78,8 @@ const baseRootStoreMock = {
   },
 };
 
+baseWorkflowsStoreMock.rootStore = baseRootStoreMock as any;
+
 describe("WorkflowsHomepage", () => {
   beforeEach(() => {
     // @ts-expect-error
@@ -323,6 +325,7 @@ describe("WorkflowsHomepage", () => {
         hasOpportunities: () => true,
         activeSystem: "ALL",
         rootStore: {
+          ...baseRootStoreMock,
           currentTenantId: "US_MI",
         },
       },
@@ -354,6 +357,7 @@ describe("WorkflowsHomepage", () => {
         hasOpportunities: () => true,
         activeSystem: "ALL",
         rootStore: {
+          ...baseRootStoreMock,
           currentTenantId: "US_ME",
         },
       },

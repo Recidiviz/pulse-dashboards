@@ -160,8 +160,9 @@ export class WorkflowsHomepagePresenter extends CaseloadOpportunitiesPresenter {
   }
 
   get showTasksSummary() {
+    const { currentTenantConfig } = this.workflowsStore.rootStore.tenantStore;
     return (
-      this.workflowsStore.isSupervisionTasksConfigured &&
+      !!currentTenantConfig?.navigation?.workflows?.includes("tasks") &&
       this.workflowsStore.hasSupervisionTasks &&
       this.workflowsStore.rootStore.userStore.canUserAccessTasks
     );
