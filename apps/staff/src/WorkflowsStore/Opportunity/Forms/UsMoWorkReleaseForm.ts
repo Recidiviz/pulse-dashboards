@@ -85,10 +85,6 @@ export class UsMoWorkReleaseForm extends FormBase<
         ),
         substanceUseHistory: "",
         organizedCrimeInvolvement: metadata.gangAffiliation ?? "",
-        historyOfViolence: formatList(
-          formInformation.historyViolentOffenses,
-          (v) => `* ${formatDate(v.offenseDate)} - ${v.offense}`,
-        ),
         escapeAbscond: formatList(
           formInformation.historyEscapesAbsconsions,
           (e) => `* ${formatDate(e.eventDate)} - ${e.eventType}`,

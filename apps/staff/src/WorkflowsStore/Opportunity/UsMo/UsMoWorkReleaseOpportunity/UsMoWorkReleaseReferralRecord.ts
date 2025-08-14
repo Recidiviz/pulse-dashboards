@@ -33,12 +33,6 @@ export const usMoWorkReleaseSchema = opportunitySchemaBase.extend({
         violationDate: dateStringSchema,
       })
       .array(),
-    historyViolentOffenses: z
-      .object({
-        offense: z.string(),
-        offenseDate: dateStringSchema.optional(),
-      })
-      .array(),
   }),
 });
 
