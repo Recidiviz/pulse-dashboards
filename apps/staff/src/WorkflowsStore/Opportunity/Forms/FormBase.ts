@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { FieldValue } from "@google-cloud/firestore";
+import * as Sentry from "@sentry/react";
 import { deleteField, serverTimestamp } from "firebase/firestore";
 import { action, computed, makeObservable, runInAction, toJS } from "mobx";
 
@@ -314,6 +315,21 @@ export class FormBase<
     return false;
   }
 
+  async download(domElement?: HTMLElement | null): Promise<string | undefined> {
+    this.markDownloading();
+
+    await this.waitForPendingUpdates();
+
+    try {
+      await this.fillAndSaveFile(domElement);
+      return await this.recordSuccessfulDownload();
+    } catch (e) {
+      Sentry.captureException(e);
+    } finally {
+      this.formIsDownloading = false;
+    }
+  }
+
   // ==========================
   // properties below this line are stubs and should usually be replaced by the subclass.
   // as such they are not annotated with MobX so subclasses can use standard annotations
@@ -339,5 +355,10 @@ export class FormBase<
 
   prefilledDataTransformer(): Partial<FormDisplayType> {
     return this.opportunity.record?.formInformation ?? {};
+  }
+
+  async fillAndSaveFile(domElement?: HTMLElement | null): Promise<void> {
+    // Override this method in subclasses to implement form-specific download logic.
+    return;
   }
 }

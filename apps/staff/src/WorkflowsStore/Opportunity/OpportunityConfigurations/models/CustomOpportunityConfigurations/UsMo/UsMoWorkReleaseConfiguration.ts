@@ -21,4 +21,8 @@ export class UsMoWorkReleaseConfiguration extends ApiOpportunityConfiguration {
   get markSubmittedOnFormDownload(): boolean {
     return false;
   }
+
+  get skipFormPreview(): boolean {
+    return true;
+  }
 }

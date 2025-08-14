@@ -96,6 +96,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   enableProgressiveLoading: false,
   progressiveLoadingBatchSize: 50,
   caseNotesTitle: "Mock Case Notes Title",
+  skipFormPreview: true,
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

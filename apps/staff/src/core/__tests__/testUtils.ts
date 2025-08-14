@@ -147,6 +147,7 @@ export const mockOpportunity: Opportunity<Client> = {
     enableProgressiveLoading: false,
     progressiveLoadingBatchSize: 50,
     caseNotesTitle: "Additional Information",
+    skipFormPreview: false,
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

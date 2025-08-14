@@ -80,6 +80,7 @@ export interface OpportunityConfiguration {
   linkedOverdueOpportunityType?: OpportunityType;
   overdueOpportunityCalloutCopy: string;
   markSubmittedOnFormDownload?: boolean;
+  skipFormPreview: boolean;
 
   // Map tabs to lists of the subcategories within that tab
   subcategoryOrderings?: Partial<Record<OpportunityTab, string[]>>;

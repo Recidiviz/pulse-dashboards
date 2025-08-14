@@ -191,6 +191,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.tooltipEligibilityText;
   }
 
+  get skipFormPreview() {
+    return false;
+  }
+
   get eligibleCriteriaCopy() {
     return this.configurationObject.eligibleCriteriaCopy;
   }

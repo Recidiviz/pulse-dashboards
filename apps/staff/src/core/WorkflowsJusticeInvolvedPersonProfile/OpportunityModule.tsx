@@ -18,13 +18,13 @@
 import { spacing, typography } from "@recidiviz/design-system";
 import { parseISO } from "date-fns";
 import { observer } from "mobx-react-lite";
-import { darken, rem } from "polished";
+import { rem } from "polished";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
-import { Button, palette } from "~design-system";
+import { palette } from "~design-system";
 
 import {
   useFeatureVariants,
@@ -35,8 +35,7 @@ import {
   Opportunity,
   UsArInstitutionalWorkerStatusOpportunity,
 } from "../../WorkflowsStore";
-import { getLinkToForm } from "../../WorkflowsStore/utils";
-import { desktopLinkGate } from "../desktopLinkGate";
+import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { MenuButton } from "../OpportunityDenial/MenuButton";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 import { useStatusColors } from "../utils/workflowsUtils";
@@ -69,23 +68,6 @@ const ActionButtons = styled.div<{ isMobile: boolean }>`
   align-items: baseline;
   gap: ${({ isMobile }) => (isMobile ? rem(spacing.sm) : rem(spacing.sm))};
   flex-direction: ${({ isMobile }) => (isMobile ? "column" : "row")};
-`;
-
-const FormActionButton = styled(Button).attrs({
-  kind: "primary",
-  shape: "block",
-})<{
-  buttonFill: string;
-}>`
-  background: ${(props) => props.buttonFill};
-  margin-right: ${rem(spacing.sm)};
-  height: 40px;
-  padding: ${rem(spacing.xs)} ${rem(spacing.md)};
-
-  &:hover,
-  &:focus {
-    background: ${(props) => darken(0.1, props.buttonFill)};
-  }
 `;
 
 const RevertChangesButtonLink = styled(TextLink)`
@@ -127,7 +109,6 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     const { isLaptop } = useIsMobile(true);
 
     const { pathname } = useLocation();
-    const { officerPseudoId } = useParams();
 
     const [isRevertConfirmationModalOpen, setRevertConfirmationModalOpen] =
       useState(false);
@@ -216,8 +197,6 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
       }
     };
 
-    const linkToForm = getLinkToForm(pathname, opportunity, officerPseudoId);
-
     return (
       <Wrapper {...colors}>
         {!hideHeader && <OpportunityModuleHeader opportunity={opportunity} />}
@@ -232,17 +211,12 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
         {showActionButtons && (
           <ActionButtons isMobile={isLaptop}>
             {formLinkButton && opportunity?.form && (
-              <Link to={linkToForm}>
-                <FormActionButton
-                  className="NavigateToFormButton"
-                  buttonFill={colors.buttonFill}
-                  onClick={desktopLinkGate({
-                    headline: "Referral Unavailable in Mobile View",
-                  })}
-                >
-                  {opportunity.form.navigateToFormText}
-                </FormActionButton>
-              </Link>
+              <NavigateToFormButton
+                opportunity={opportunity}
+                style={{ marginRight: rem(spacing.sm) }}
+              >
+                {opportunity.form.navigateToFormText}
+              </NavigateToFormButton>
             )}
             {showUpdateStatusButton && onDenialButtonClick && (
               <>
