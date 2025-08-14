@@ -79,6 +79,7 @@ export interface OpportunityConfiguration {
   zeroGrantsTooltip?: string;
   linkedOverdueOpportunityType?: OpportunityType;
   overdueOpportunityCalloutCopy: string;
+  markSubmittedOnFormDownload?: boolean;
 
   // Map tabs to lists of the subcategories within that tab
   subcategoryOrderings?: Partial<Record<OpportunityTab, string[]>>;

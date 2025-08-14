@@ -324,6 +324,10 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     return this.configurationObject.markSubmittedOptionsByTab;
   }
 
+  get markSubmittedOnFormDownload() {
+    return this.configurationObject.markSubmittedOnFormDownload ?? true;
+  }
+
   get snoozeCompanionOpportunityTypes(): OpportunityType[] {
     // TODO(#8022): Once this configuration is available via the admin panel, it should be appear here
     return (this.configurationObject.snoozeCompanionOpportunityTypes ??

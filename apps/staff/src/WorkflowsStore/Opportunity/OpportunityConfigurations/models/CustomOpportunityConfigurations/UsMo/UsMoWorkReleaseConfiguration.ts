@@ -17,11 +17,8 @@
 
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
-export class UsIaEarlyDischargeConfiguration extends ApiOpportunityConfiguration {
-  enableProgressiveLoading = true;
-
+export class UsMoWorkReleaseConfiguration extends ApiOpportunityConfiguration {
   get markSubmittedOnFormDownload(): boolean {
-    // IA ED has customized opportunity submission flow
     return false;
   }
 }
