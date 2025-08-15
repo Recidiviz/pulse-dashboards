@@ -184,20 +184,25 @@ async function human(state: HumanNodeType) {
 async function transitionToNextSection(state: State) {
   const { currentSectionIndex, config } = state;
 
-  if (currentSectionIndex + 1 === config.sections.length) {
+  const newSectionIndex = currentSectionIndex + 1;
+
+  if (newSectionIndex === config.sections.length) {
     return new Command({
+      update: {
+        currentSectionIndex: newSectionIndex,
+      },
       goto: "closing_remarks",
     });
   }
 
   return new Command({
     update: {
-      currentSectionIndex: state.currentSectionIndex + 1,
+      currentSectionIndex: newSectionIndex,
       messages: [
         createAiMessageWithMetadata({
           content: `Thank you for sharing all of that information. I really appreciate it. Let's move on to the next section!`,
           config: config,
-          currentSectionIndex: currentSectionIndex + 1,
+          currentSectionIndex: newSectionIndex,
         }),
       ],
     },
@@ -232,6 +237,20 @@ export function closingRemarks(state: State) {
   };
 }
 
+export function alreadyFinished(state: State) {
+  const { currentSectionIndex, clientName, config } = state;
+
+  return {
+    messages: [
+      createAiMessageWithMetadata({
+        content: `Hi ${clientName}. Looks like we've already finished our conversation. Thank you for your time!`,
+        config,
+        currentSectionIndex,
+      }),
+    ],
+  };
+}
+
 export const builder = new StateGraph(StateAnnotation)
   .addNode("new_welcome_message", generateNewWelcomeMessage)
   .addNode("returning_welcome_message", generateReturningWelcomeMessage)
@@ -245,9 +264,13 @@ export const builder = new StateGraph(StateAnnotation)
   })
   .addNode("end_chat", endChat)
   .addNode("closing_remarks", closingRemarks)
+  .addNode("already_finished", alreadyFinished)
   .addConditionalEdges(
     START,
     (state: State) => {
+      if (state.currentSectionIndex == state.config.sections.length) {
+        return "already_finished";
+      }
       if (state.messages.length === 0) {
         return "new_client_welcome_message";
       }
@@ -257,10 +280,12 @@ export const builder = new StateGraph(StateAnnotation)
     {
       new_client_welcome_message: "new_welcome_message",
       returning_client_welcome_message: "returning_welcome_message",
+      already_finished: "already_finished",
     },
   )
   .addEdge("new_welcome_message", "ask_question")
   .addEdge("returning_welcome_message", "ask_question")
   .addEdge("ask_question", "human")
   .addEdge("end_chat", END)
-  .addEdge("closing_remarks", END);
+  .addEdge("closing_remarks", END)
+  .addEdge("already_finished", END);

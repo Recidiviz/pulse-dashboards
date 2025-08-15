@@ -71,8 +71,12 @@ vi.mock("@langchain/openai", () => {
       return RunnableLambda.from(async () => {
         return generateMock(schema, {
           mockeryMapper: (keyName: string) => {
-            if (keyName === "isSectionComplete" || keyName === "needsHelp") {
-              return () => false;
+            if (keyName === "isSectionComplete") {
+              return () => process.env["MOCK_SECTION_COMPLETE"] === "true";
+            }
+
+            if (keyName === "needsHelp") {
+              return () => process.env["MOCK_NEEDS_HELP"] === "true";
             }
 
             if (keyName === "response") {

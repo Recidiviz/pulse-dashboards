@@ -15,21 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type Status = "active" | "complete" | "user_ended";
+import type { AgentStatus } from "~@reentry/intake-agent/types";
+import { Status } from "~@reentry/trpc/routes/intake-chat/types";
 
-interface LoadingEvent {
-  type: "loading";
+export function agentStatusToSubscriptionStatus(
+  agentStatus: AgentStatus,
+): Status {
+  if (agentStatus === "complete") {
+    return "complete";
+  } else if (agentStatus === "user_ended") {
+    return "user_ended";
+  }
+
+  return "active";
 }
-
-interface ResponseEvent {
-  type: "response";
-  lastId: string;
-  status: Status;
-  messages: {
-    content: string;
-    section: string;
-    id?: string;
-  }[];
-}
-
-export type EmitData = LoadingEvent | ResponseEvent;

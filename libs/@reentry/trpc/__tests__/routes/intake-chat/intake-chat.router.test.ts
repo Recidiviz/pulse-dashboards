@@ -453,6 +453,155 @@ describe("intake chat router", () => {
       );
     });
 
+    test("Should handle chat completion", async () => {
+      // Make it so that the section will be marked complete after the getting a response
+      vi.stubEnv("MOCK_SECTION_COMPLETE", "true");
+
+      // Subscribe to the intake chat and wait for the welcome message + first question to have been sent
+      await subscribeToIntakeChat();
+      await waitForSavedMessages(intakeId, 2);
+
+      // Send a reply and wait for the response
+      await testTRPCClient.intake.reply.mutate({
+        intakeId,
+        response: "Hello, I am ready to start.",
+      });
+      await waitForSavedMessages(intakeId, 4);
+
+      // Should have received:
+      // 1. A loading message
+      // 2. The welcome message and first question
+      // 3. A loading message (after the first reply
+      // 4. Completion message from the chat
+      expect(onData).toHaveBeenCalledTimes(4);
+      expect(onData).toHaveBeenCalledWith({ type: "loading" });
+      expect(onData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: expect.any(String),
+          data: expect.objectContaining({
+            type: "response",
+            status: "active",
+            messages: [
+              expect.objectContaining({
+                content: "Welcome message",
+                section: "Personal Information",
+                id: expect.any(String),
+              }),
+              expect.objectContaining({
+                content: "question",
+                section: "Personal Information",
+                id: expect.any(String),
+              }),
+            ],
+          }),
+        }),
+      );
+      expect(onData).toHaveBeenCalledWith({ type: "loading" });
+      expect(onData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: expect.any(String),
+          data: expect.objectContaining({
+            type: "response",
+            status: "complete",
+            messages: [
+              expect.objectContaining({
+                content: `Thank you for your time today, ${fakeClient.givenNames} ${fakeClient.surname}. I appreciate you sharing all of this information with me. We have reached the end of our conversation!`,
+                section: "Closing Remarks",
+                id: expect.any(String),
+              }),
+            ],
+          }),
+        }),
+      );
+
+      // Unsubscribe and re-subscribe to simulate leaving and returning to the chat
+      subscription.unsubscribe();
+      await subscribeToIntakeChat();
+      // Should have received:
+      // 1. A loading message
+      // 2. Completion message from the chat
+      await waitForSavedMessages(intakeId, 5);
+      expect(onData).toHaveBeenCalledWith({ type: "loading" });
+      expect(onData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: expect.any(String),
+          data: expect.objectContaining({
+            type: "response",
+            status: "complete",
+            messages: [
+              expect.objectContaining({
+                content: `Thank you for your time today, ${fakeClient.givenNames} ${fakeClient.surname}. I appreciate you sharing all of this information with me. We have reached the end of our conversation!`,
+                section: "Closing Remarks",
+                id: expect.any(String),
+              }),
+            ],
+          }),
+        }),
+      );
+    });
+
+    test("Should handle user ending chat", async () => {
+      // Make it so that the section will be marked complete after the getting a response
+      vi.stubEnv("MOCK_NEEDS_HELP", "true");
+
+      // Subscribe to the intake chat and wait for the welcome message + first question to have been sent
+      await subscribeToIntakeChat();
+      await waitForSavedMessages(intakeId, 2);
+
+      // Send a reply and wait for the response
+      await testTRPCClient.intake.reply.mutate({
+        intakeId,
+        response: "Hello, I am ready to start.",
+      });
+      await waitForSavedMessages(intakeId, 4);
+
+      // Should have received:
+      // 1. A loading message
+      // 2. The welcome message and first question
+      // 3. A loading message (after the first reply
+      // 4. User ending message in the chat
+      expect(onData).toHaveBeenCalledTimes(4);
+      expect(onData).toHaveBeenCalledWith({ type: "loading" });
+      expect(onData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: expect.any(String),
+          data: expect.objectContaining({
+            type: "response",
+            status: "active",
+            messages: [
+              expect.objectContaining({
+                content: "Welcome message",
+                section: "Personal Information",
+                id: expect.any(String),
+              }),
+              expect.objectContaining({
+                content: "question",
+                section: "Personal Information",
+                id: expect.any(String),
+              }),
+            ],
+          }),
+        }),
+      );
+      expect(onData).toHaveBeenCalledWith({ type: "loading" });
+      expect(onData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: expect.any(String),
+          data: expect.objectContaining({
+            type: "response",
+            status: "user_ended",
+            messages: [
+              expect.objectContaining({
+                content: `I see! Ending the conversation now.`,
+                section: "Personal Information",
+                id: expect.any(String),
+              }),
+            ],
+          }),
+        }),
+      );
+    });
+
     // TODO: Add tests for multiple clients trying to connect to the same intake chat
   });
 });

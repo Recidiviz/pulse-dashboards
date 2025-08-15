@@ -15,21 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type Status = "active" | "complete" | "user_ended";
-
-interface LoadingEvent {
-  type: "loading";
-}
-
-interface ResponseEvent {
-  type: "response";
-  lastId: string;
-  status: Status;
-  messages: {
-    content: string;
-    section: string;
-    id?: string;
-  }[];
-}
-
-export type EmitData = LoadingEvent | ResponseEvent;
+export type AgentStatus =
+  | "not_initialized"
+  | "waiting_for_response"
+  | "complete"
+  | "user_ended"
+  | "error";

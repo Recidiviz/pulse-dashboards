@@ -30,6 +30,7 @@ import {
   intakeChatResponseInputSchema,
 } from "~@reentry/trpc/routes/intake-chat/intake-chat.schema";
 import { EmitData } from "~@reentry/trpc/routes/intake-chat/types";
+import { agentStatusToSubscriptionStatus } from "~@reentry/trpc/routes/intake-chat/utils";
 
 // TODO: replace these with redis subscriptions so they are monitored across multiple instances
 const ee = new EventEmitter();
@@ -156,6 +157,7 @@ export const intakeChatRouter = router({
           type: "response",
           lastId,
           messages,
+          status: agentStatusToSubscriptionStatus(agent.getStatus()),
         } satisfies EmitData);
       },
     ),
@@ -233,6 +235,7 @@ export const intakeChatRouter = router({
 
           yield tracked(lastId, {
             type: "response",
+            status: agentStatusToSubscriptionStatus(agent.getStatus()),
             messages: messages,
           });
         }
@@ -251,6 +254,7 @@ export const intakeChatRouter = router({
           } else if (typedData.type === "response") {
             yield tracked(typedData.lastId, {
               type: "response",
+              status: typedData.status,
               messages: typedData.messages,
             });
           }

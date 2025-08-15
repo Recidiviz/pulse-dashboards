@@ -25,8 +25,11 @@ export function getSectionTitles(config: IntakeConfig) {
 
 export function getSectionTitle(config: IntakeConfig, index: number) {
   const sectionTitles = getSectionTitles(config);
-  if (index < 0 || index >= sectionTitles.length) {
+  if (index < 0) {
     throw new Error("Index out of bounds");
+  }
+  if (index >= sectionTitles.length) {
+    return "Closing Remarks";
   }
   return sectionTitles[index];
 }

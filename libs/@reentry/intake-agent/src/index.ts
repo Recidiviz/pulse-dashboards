@@ -19,16 +19,11 @@ import { AIMessage, BaseMessage, isAIMessage } from "@langchain/core/messages";
 import { BaseCheckpointSaver, Command } from "@langchain/langgraph";
 
 import { builder } from "~@reentry/intake-agent/graph";
+import { AgentStatus } from "~@reentry/intake-agent/types";
 import { IntakeConfig } from "~@reentry/prisma/types";
 
 export { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
 export { getIntakeConfigForState } from "~@reentry/intake-agent/intake_configs/utils";
-
-type AgentStatus =
-  | "not_initialized"
-  | "waiting_for_response"
-  | "completed"
-  | "error";
 
 export class IntakeAgent {
   graph;
@@ -76,8 +71,10 @@ export class IntakeAgent {
       }
     }
 
-    if (lastNode === "end_chat" || lastNode === "closing_remarks") {
-      this.status = "completed";
+    if (lastNode === "closing_remarks" || lastNode === "already_finished") {
+      this.status = "complete";
+    } else if (lastNode === "end_chat") {
+      this.status = "user_ended";
     } else if (lastNode === "__interrupt__") {
       this.status = "waiting_for_response";
     } else {
@@ -150,7 +147,7 @@ export class IntakeAgent {
       throw new Error("Agent has not been started. Call init() first.");
     }
 
-    if (this.status === "completed") {
+    if (this.status === "complete") {
       throw new Error("Agent has already completed its run.");
     }
 
