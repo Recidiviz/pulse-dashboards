@@ -41,6 +41,9 @@ export class UsNdTransferToMinFacilityOpportunity extends OpportunityBase<
 
   tabTitle(): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
+    if (this.record.metadata.tabName === "MARKED_INELIGIBLE") {
+      return "Marked Ineligible";
+    }
     if (this.record.metadata.tabName === "REFERRAL_SUBMITTED")
       return "Referral Submitted";
 
@@ -49,8 +52,13 @@ export class UsNdTransferToMinFacilityOpportunity extends OpportunityBase<
 
   eligibilityStatusLabel(includeReasons?: boolean) {
     if (this.denied) return super.eligibilityStatusLabel(includeReasons);
-    if (this.record.metadata.tabName === "REFERRAL_SUBMITTED")
+    if (this.record.metadata.tabName === "MARKED_INELIGIBLE") {
+      return "Marked Ineligible";
+    }
+
+    if (this.record.metadata.tabName === "REFERRAL_SUBMITTED") {
       return "Referral Submitted";
+    }
 
     return super.eligibilityStatusLabel(includeReasons);
   }
