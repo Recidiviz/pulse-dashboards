@@ -20,6 +20,7 @@ import { capitalize } from "lodash";
 import { fieldToDate } from "~datatypes";
 
 import { formatWorkflowsDate, generateSerialListString } from "../../../utils";
+import {toTitleCase} from "../../../utils/formatStrings";
 import { Task } from "../Task";
 import { UsTxAgnosticContactTaskType } from "../types";
 
@@ -55,7 +56,7 @@ class UsTxTypeAgnosticContactTask<
   }
 
   get frequency(): string {
-    return `Every ${this.details.frequency.toLowerCase()}`;
+    return toTitleCase(this.details.contactCadence);
   }
 }
 

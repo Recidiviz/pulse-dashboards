@@ -33,7 +33,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           lastContactDate: "2021-08-03",
           overdueFlag: true,
           typeOfContact: "UNSCHEDULED HOME",
-          frequency: "4 MONTHS",
+          contactCadence: "4 MONTHS",
         },
       },
     ],
@@ -52,7 +52,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           lastContactDate: "2021-03-09",
           overdueFlag: true,
           typeOfContact: "SCHEDULED HOME",
-          frequency: "12 MONTHS",
+          contactCadence: "12 MONTHS",
         },
       },
       {
@@ -64,7 +64,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           lastContactDate: "2021-03-09",
           overdueFlag: false,
           typeOfContact: "UNSCHEDULED FIELD",
-          frequency: "12 MONTHS",
+          contactCadence: "12 MONTHS",
         },
       },
       {
@@ -90,6 +90,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         dueDate: "2022-03-12",
         details: {
           reasonForContact: "Initial Home Contact",
+          contactCadence: "3 MONTHS",
         },
       },
       {
@@ -103,7 +104,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           contactCount: 2,
           overdueFlag: false,
           typeOfContact: "SCHEDULED HOME",
-          frequency: "2 MONTHS",
+          contactCadence: "2 MONTHS",
         },
       },
     ],
@@ -118,6 +119,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
         dueDate: "2022-03-18",
         details: {
           reasonForContact: "Home Contact due to Address Change",
+          contactCadence: "3 MONTHS",
         },
       },
     ],
@@ -135,7 +137,7 @@ const data: SupervisionTasksRecord<"US_TX">[] = [
           lastContactDate: null,
           overdueFlag: false,
           typeOfContact: "UNSCHEDULED HOME",
-          frequency: "12 MONTHS",
+          contactCadence: "12 MONTHS",
         },
       },
     ],

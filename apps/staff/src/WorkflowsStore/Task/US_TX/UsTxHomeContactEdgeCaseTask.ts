@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { toTitleCase } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 
 class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
@@ -25,7 +26,7 @@ class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
   }
 
   get frequency(): string {
-    return this.additionalDetails;
+    return toTitleCase(this.details.contactCadence);
   }
 }
 

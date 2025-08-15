@@ -78,7 +78,7 @@ type UsTxContactDetails = {
   lastContactDate: string | null;
   overdueFlag: boolean;
   typeOfContact: string;
-  frequency: string;
+  contactCadence: string;
 };
 
 type UsTxOverridableContactDetails = UsTxContactDetails & {
@@ -91,7 +91,7 @@ type UsTxOverridableContactDetails = UsTxContactDetails & {
 
 type UsTxTypeAgnosticContactDetails = {
   contactDueDate: string;
-  frequency: string;
+  contactCadence: string;
   lastContactDate: string | null;
   overdueFlag: boolean;
   contactTypesAccepted: string;
@@ -101,6 +101,7 @@ type UsTxTypeAgnosticContactDetails = {
 
 type UsTxEdgeCaseContactDetails = {
   reasonForContact: string;
+  contactCadence: string;
 };
 
 type UsTxAssessmentDetails = {

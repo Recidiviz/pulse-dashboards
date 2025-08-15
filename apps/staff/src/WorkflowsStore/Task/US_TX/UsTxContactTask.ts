@@ -18,6 +18,7 @@
 import { fieldToDate } from "~datatypes";
 
 import { formatWorkflowsDate } from "../../../utils/formatStrings";
+import { toTitleCase } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 import { UsTxSimpleContactTaskType } from "../types";
 
@@ -36,7 +37,7 @@ abstract class UsTxContactTask<
   }
 
   get frequency(): string {
-    return `Every ${this.details.frequency.toLowerCase()}`;
+    return toTitleCase(this.details.contactCadence);
   }
 }
 
