@@ -126,6 +126,7 @@ export const OpportunityModule: React.FC<OpportunityModuleProps> = observer(
     }, [opportunity, isVisible, pathname, shouldTrackOpportunityPreviewed]);
 
     const colors = useStatusColors(opportunity);
+
     const showUpdateStatusButton =
       opportunity.config.supportsDenial || opportunity.config.supportsSubmitted;
 

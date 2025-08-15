@@ -36,6 +36,7 @@ import { Client, JusticeInvolvedPerson } from "../../WorkflowsStore";
 import { Resident } from "../../WorkflowsStore/Resident";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { Supervision } from "./ClientDetailSidebarComponents/Supervision";
+import { UsTnNavigateToTepeFormButton } from "./ClientDetailSidebarComponents/US_TN";
 import { Incarceration } from "./ResidentDetailSidebarComponents/Incarceration";
 import { ClientProfileProps, ResidentProfileProps } from "./types";
 
@@ -49,6 +50,13 @@ const VizHeader = styled.div`
   & > *:first-child {
     margin-right: ${rem(spacing.lg)};
   }
+`;
+
+const StateSpecificWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: ${rem(spacing.sm)};
 `;
 
 const Title = styled.div`
@@ -140,6 +148,17 @@ const OfficerAssignmentDisplay = ({ officerId }: { officerId?: string }) => {
   );
 };
 
+function StateSpecificSupervisionDetails({
+  client,
+}: ClientProfileProps): React.ReactElement | null {
+  switch (client.stateCode) {
+    case "US_TN":
+      return <UsTnNavigateToTepeFormButton client={client} />;
+    default:
+      return null;
+  }
+}
+
 export const ProgressTimeline = ({
   header,
   startDate,
@@ -147,6 +166,7 @@ export const ProgressTimeline = ({
   officerId,
   fallbackComponent,
   timelineLabels,
+  person,
 }: {
   header: string;
   startDate?: Date;
@@ -154,6 +174,7 @@ export const ProgressTimeline = ({
   officerId?: string;
   fallbackComponent: React.ReactNode;
   timelineLabels: TimelineLabels;
+  person: JusticeInvolvedPerson;
 }): React.ReactElement => {
   // can't visualize anything if we don't have both valid dates
   if (!startDate || !endDate || endDate <= startDate)
@@ -234,6 +255,9 @@ export const ProgressTimeline = ({
           {timelineLabels.end}: <span>{formatWorkflowsDate(endDate)}</span>
         </div>
       </TimelineDates>
+      <StateSpecificWrapper>
+        <StateSpecificSupervisionDetails client={person as any} />
+      </StateSpecificWrapper>
     </Wrapper>
   );
 };
@@ -255,6 +279,7 @@ export function SupervisionProgress({
       officerId={officerId}
       fallbackComponent={<Supervision client={client} />}
       timelineLabels={{ start: "Start", end: "End" }}
+      person={client}
     />
   );
 }
@@ -300,6 +325,7 @@ export function IncarcerationProgress({
       officerId={officerId}
       fallbackComponent={<Incarceration resident={resident} />}
       timelineLabels={{ start: "Start", end: releaseDateCopy }}
+      person={resident}
     />
   );
 }

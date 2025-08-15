@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Opportunity } from "../../WorkflowsStore";
+import { isEligibleOrAlmostEligible, Opportunity } from "../../WorkflowsStore";
 import { Heading } from "./Heading";
 import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
 import { OpportunityBanner } from "./OpportunityBanner";
@@ -38,6 +38,10 @@ export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
   shouldTrackOpportunityPreviewed = true,
 }) => {
   const selectedPerson = opportunity?.person;
+  const showAccordion = isEligibleOrAlmostEligible(
+    selectedPerson,
+    opportunity.type,
+  );
 
   return (
     <>
@@ -48,18 +52,20 @@ export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
           title={justiceInvolvedPersonTitle}
         />
       )}
-      <AccordionWrapper
-        allowZeroExpanded
-        preExpanded={[opportunity.accordionKey]}
-      >
-        <AccordionSection
-          opportunity={opportunity}
-          formLinkButton={formLinkButton}
-          onDenialButtonClick={onDenialButtonClick}
-          hideActionButtons={hideActionButtons}
-          shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
-        />
-      </AccordionWrapper>
+      {showAccordion && (
+        <AccordionWrapper
+          allowZeroExpanded
+          preExpanded={[opportunity.accordionKey]}
+        >
+          <AccordionSection
+            opportunity={opportunity}
+            formLinkButton={formLinkButton}
+            onDenialButtonClick={onDenialButtonClick}
+            hideActionButtons={hideActionButtons}
+            shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
+          />
+        </AccordionWrapper>
+      )}
     </>
   );
 };

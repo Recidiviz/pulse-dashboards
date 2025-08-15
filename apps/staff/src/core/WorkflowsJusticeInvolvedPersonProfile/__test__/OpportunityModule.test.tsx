@@ -23,6 +23,7 @@ import {
   useFeatureVariants,
   useRootStore,
 } from "../../../components/StoreProvider";
+import { isEligibleOrAlmostEligible } from "../../../WorkflowsStore";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityModule } from "../OpportunityModule";
 
@@ -33,6 +34,10 @@ const useFeatureVariantsMock = useFeatureVariants as Mock;
 vi.mock("react-router-dom", async () => ({
   ...(await vi.importActual("react-router-dom")),
   useLocation: vi.fn(),
+}));
+
+vi.mock("../../../WorkflowsStore/Opportunity/utils", () => ({
+  isEligibleOrAlmostEligible: vi.fn(),
 }));
 
 afterEach(() => {
@@ -53,6 +58,7 @@ test.each([
       pathname: path,
     });
     const setLastViewedSpy = vi.spyOn(mockOpportunity, "setLastViewed");
+    vi.mocked(isEligibleOrAlmostEligible).mockReturnValueOnce(true);
 
     render(
       <BrowserRouter>

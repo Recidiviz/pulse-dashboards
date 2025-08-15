@@ -141,7 +141,9 @@ export const WorkflowsFormLayoutWrapper = observer(
     const {
       workflowsStore: { selectedPerson, selectedOpportunityType },
     } = useRootStore();
+
     if (!selectedPerson || !selectedOpportunityType) return null;
+
     return (
       <WorkflowsFormLayout
         selectedPerson={selectedPerson}
@@ -224,7 +226,7 @@ function usePresenter({
   selectedPerson,
   selectedOpportunityType,
 }: WorkflowsFormLayoutProps) {
-  const { firestoreStore, tenantStore } = useRootStore();
+  const { workflowsStore, firestoreStore, tenantStore } = useRootStore();
 
   if (!selectedPerson || !selectedOpportunityType) {
     return null;
@@ -233,6 +235,7 @@ function usePresenter({
   return new WorkflowsFormLayoutPresenter(
     selectedPerson,
     selectedOpportunityType,
+    workflowsStore,
     firestoreStore,
     tenantStore,
   );

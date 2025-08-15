@@ -42,7 +42,8 @@ import {
   OpportunityTab,
   OpportunityTabGroup,
 } from "./Opportunity";
-import { StaffFilterFunction } from "./types";
+import { OpportunityConfiguration } from "./Opportunity/OpportunityConfigurations";
+import { JusticeInvolvedPerson, StaffFilterFunction } from "./types";
 
 /**
  * Returns a string of the month and year formatted as "MM_YYYY"
@@ -353,3 +354,31 @@ export { fieldToDate };
 
 export const sortObject = (o: object) =>
   Object.fromEntries(sortBy(Object.entries(o), 0));
+
+/**
+ * Returns the relevant form url withouth needing an opportunity obj, relevant for ineligible clients
+ */
+export function getLinkToFormWithoutOpportunity(
+  pathname: string,
+  officerPseudoId: string | undefined,
+  person: JusticeInvolvedPerson,
+  config: OpportunityConfiguration,
+): string {
+  const isInsights = pathname.startsWith(INSIGHTS_PATHS.supervision);
+  const { urlSection } = config;
+  const justiceInvolvedPersonId = person.pseudonymizedId;
+  const linkToForm =
+    isInsights && officerPseudoId
+      ? insightsUrl("supervisionOpportunityForm", {
+          officerPseudoId,
+          opportunityTypeUrl: urlSection,
+          clientPseudoId: justiceInvolvedPersonId,
+          opportunityPseudoId: justiceInvolvedPersonId,
+        })
+      : workflowsUrl("opportunityAction", {
+          urlSection,
+          justiceInvolvedPersonId,
+          opportunityPseudoId: justiceInvolvedPersonId,
+        });
+  return linkToForm;
+}

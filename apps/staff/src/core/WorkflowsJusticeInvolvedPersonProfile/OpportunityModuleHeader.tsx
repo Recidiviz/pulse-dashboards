@@ -22,7 +22,7 @@ import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
 
-import { Opportunity } from "../../WorkflowsStore";
+import { isEligibleOrAlmostEligible, Opportunity } from "../../WorkflowsStore";
 import { useStatusColors } from "../utils/workflowsUtils";
 
 const TitleText = styled(Sans16)`
@@ -56,16 +56,22 @@ export const EligibilityStatusPill = observer(function EligibilityStatusPill({
   opportunity: Opportunity;
 }) {
   const colors = useStatusColors(opportunity);
+  const showEligibilityStatus = isEligibleOrAlmostEligible(
+    opportunity.person,
+    opportunity.type,
+  );
   return (
-    <EligibilityStatusPillStyled
-      className="EligibilityStatus"
-      filled
-      color={colors.badgeBackground}
-      textColor={colors.badgeText}
-      $borderColor={colors.badgeBorder}
-    >
-      {opportunity.eligibilityStatusLabel()}
-    </EligibilityStatusPillStyled>
+    showEligibilityStatus && (
+      <EligibilityStatusPillStyled
+        className="EligibilityStatus"
+        filled
+        color={colors.badgeBackground}
+        textColor={colors.badgeText}
+        $borderColor={colors.badgeBorder}
+      >
+        {opportunity.eligibilityStatusLabel()}
+      </EligibilityStatusPillStyled>
+    )
   );
 });
 

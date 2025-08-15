@@ -15,33 +15,60 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
-import { isTestEnv } from "~client-env-utils";
 import { OpportunityType } from "~datatypes";
-import { Hydratable, HydrationState, isHydrated } from "~hydration-utils";
+import {
+  awaitHydration,
+  castToError,
+  Hydratable,
+  HydrationState,
+  isHydrated,
+  isHydrationUntouched,
+} from "~hydration-utils";
 
 import FirestoreStore from "../../FirestoreStore";
 import TenantStore from "../../RootStore/TenantStore";
-import { JusticeInvolvedPerson, Opportunity } from "../../WorkflowsStore";
+import {
+  getRecordForIneligible,
+  isEligibleOrAlmostEligible,
+  JusticeInvolvedPerson,
+  Opportunity,
+  WorkflowsStore,
+} from "../../WorkflowsStore";
+import { opportunityConstructors } from "../Opportunity/opportunityConstructors";
 
 export class WorkflowsFormLayoutPresenter implements Hydratable {
   constructor(
     public selectedPerson: JusticeInvolvedPerson,
     public selectedOpportunityType: OpportunityType,
+    protected workflowsStore: WorkflowsStore,
     protected firestoreStore: FirestoreStore,
     protected tenantStore: TenantStore,
   ) {
     makeAutoObservable(this);
   }
 
+  private ineligibleOpportunity: Opportunity | undefined;
+  private hydrationStateOverride?: HydrationState;
+
   /**
    * GET METHODS
+   *
+   * get selectedOpportunity either returns the corresponding opportunity to cur oppType & person or
+   * creates a new opportunity from a retrieved record (only if they're ineligible & us_tn_expiration opp)
    */
   public get selectedOpportunity(): Opportunity | undefined {
-    return this.selectedPerson.flattenedOpportunities.find(
-      (opp) => opp.type === this.selectedOpportunityType,
-    );
+    if (!isHydrated(this.selectedPerson.opportunityManager)) {
+      throw new Error(
+        "WorkflowsFormLayoutPresenter: opportunityManager isn't hydrated.",
+      );
+    }
+    return this.ineligibleOpportunity
+      ? this.ineligibleOpportunity
+      : this.selectedPerson.flattenedOpportunities.find(
+          (opp) => opp.type === this.selectedOpportunityType,
+        );
   }
 
   public get workflowsMethodologyUrl(): string {
@@ -59,15 +86,60 @@ export class WorkflowsFormLayoutPresenter implements Hydratable {
    * The hydrate() method assumes that selectedOpportunity, selectedPerson, and selectedOpportunityType
    * are already defined externally. It will hydrate for the given person and opportunity type.
    */
-  hydrate() {
-    if (!this.isDebug) {
-      this.hydrateOpportunity();
+  async hydrate() {
+    if (isHydrationUntouched(this)) {
+      try {
+        runInAction(() => {
+          this.hydrationStateOverride = undefined;
+        });
+        await this.hydrateOpportunity();
+      } catch (e) {
+        runInAction(() => {
+          this.hydrationStateOverride = {
+            status: "failed",
+            error: castToError(e),
+          };
+        });
+      }
     }
   }
 
   private async hydrateOpportunity() {
+    // for eligible/almost eligible case
     if (!isHydrated(this.selectedPerson.opportunityManager)) {
-      await this.selectedPerson.opportunityManager.hydrate();
+      await awaitHydration(this.selectedPerson.opportunityManager);
+    }
+
+    // for ineligible case: create opp from record (only used for usTnExpiration opportunity)
+    if (
+      !isEligibleOrAlmostEligible(
+        this.selectedPerson,
+        this.selectedOpportunityType,
+      ) &&
+      this.workflowsStore.featureVariants.usTnTEPENotesForAll
+    ) {
+      const record = await getRecordForIneligible(
+        this.selectedPerson,
+        this.selectedOpportunityType,
+        this.workflowsStore,
+        this.firestoreStore,
+      );
+
+      if (record !== undefined) {
+        const constructor =
+          opportunityConstructors[this.selectedOpportunityType];
+        const opp = new constructor(
+          this.selectedPerson as any,
+          record,
+          this.selectedOpportunityType,
+        );
+        this.ineligibleOpportunity = opp;
+        await this.ineligibleOpportunity.hydrate();
+      } else {
+        throw new Error(
+          "WorkflowsFormLayoutPresenter: selectedPerson has no record.",
+        );
+      }
     }
   }
 
@@ -75,7 +147,7 @@ export class WorkflowsFormLayoutPresenter implements Hydratable {
    * HYDRATION STATE
    */
   get hydrationState(): HydrationState {
-    if (this.isDebug) return { status: "hydrated" };
+    if (this.hydrationStateOverride) return this.hydrationStateOverride;
 
     if (!isHydrated(this.selectedPerson.opportunityManager))
       return this.selectedPerson.opportunityManager.hydrationState;
@@ -83,6 +155,15 @@ export class WorkflowsFormLayoutPresenter implements Hydratable {
     // if we've gotten this far it means the opportunities are fully hydrated,
     // so we can expect to find one for our specified OpportunityType and fail hydration if it's missing
     if (!this.selectedOpportunity) {
+      // unless if they're ineligible, that means we don't expect to find our specified oppType
+      if (
+        !isEligibleOrAlmostEligible(
+          this.selectedPerson,
+          this.selectedOpportunityType,
+        )
+      )
+        return { status: "needs hydration" };
+
       return {
         status: "failed",
         error: new Error(
@@ -91,13 +172,6 @@ export class WorkflowsFormLayoutPresenter implements Hydratable {
       };
     }
 
-    return { status: "hydrated" };
-  }
-
-  /**
-   * TESTING
-   */
-  get isDebug() {
-    return isTestEnv();
+    return this.selectedOpportunity.hydrationState;
   }
 }
