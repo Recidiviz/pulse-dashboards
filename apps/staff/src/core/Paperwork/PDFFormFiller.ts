@@ -19,12 +19,15 @@ import { captureException } from "@sentry/react";
 import { saveAs } from "file-saver";
 import { toJS } from "mobx";
 import {
+  PDFBool,
   type PDFCheckBox,
   type PDFDocument,
   PDFDropdown,
   type PDFForm,
+  PDFName,
   type PDFRadioGroup,
   type PDFTextField,
+  StandardFonts,
 } from "pdf-lib";
 
 import { fetchWorkflowsTemplates } from "../../api/fetchWorkflowsTemplates";
@@ -91,7 +94,27 @@ const fillPDF: (
       captureException(e);
     }
 
-    const pdfBytes = await doc.save();
+    // Firefox/PDF.js compatibility fixes
+    // Ensure filled AcroForm fields render consistently in Firefox/PDF.js by embedding a font
+    // and generating appearance streams, then forcing /NeedAppearances=false so viewers use
+    // those baked appearances instead of trying (and failing) to synthesize them; we also save
+    // with updateFieldAppearances:false to preserve the APs and avoid Firefox “blank field” issues.
+    try {
+      // Step 1: Embed font for appearance generation
+      const font = await doc.embedFont(StandardFonts.Helvetica);
+
+      // Step 2: Generate appearances with embedded font
+      form.updateFieldAppearances(font);
+
+      // Step 3: Set NeedAppearances to FALSE (not true!)
+      form.acroForm.dict.set(PDFName.of("NeedAppearances"), PDFBool.False);
+    } catch (error) {
+      console.error("Error applying Firefox compatibility fixes:", error);
+      // Continue anyway. Better to have a working PDF than none!
+    }
+
+    // Step 4: Save without re-generating appearances
+    const pdfBytes = await doc.save({ updateFieldAppearances: false });
     return pdfBytes;
   };
 
