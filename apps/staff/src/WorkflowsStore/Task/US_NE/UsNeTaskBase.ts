@@ -15,24 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { fieldToDate } from "~datatypes";
+import { formatWorkflowsDate } from "../../../utils";
+import { Task } from "../Task";
+import { SupervisionTaskType } from "../types";
 
-import { formatWorkflowsDate, toTitleCase } from "../../../utils";
-import UsNeTaskBase from "./UsNeTaskBase";
-
-class UsNeNCJISCheckContactTask extends UsNeTaskBase<"usNeNCJISCheckContact"> {
-  displayName = "NCJIS Check";
-
-  get additionalDetails() {
-    const { lastContactDate } = this.details;
-    return lastContactDate
-      ? `Last NCJIS check on ${formatWorkflowsDate(fieldToDate(lastContactDate))}`
-      : "No previous NCJIS check on record";
+abstract class UsNeTaskBase<
+  TaskType extends SupervisionTaskType,
+> extends Task<TaskType> {
+  get dueDateDisplayLong() {
+    return `${this.displayName} due ${this.dueDateFromToday}`;
   }
 
-  get frequency() {
-    return toTitleCase(this.details.contactCadence);
+  get dueDateDisplayShort() {
+    return `Due ${formatWorkflowsDate(this.dueDate)} (${this.dueDateFromToday})`;
   }
 }
 
-export default UsNeNCJISCheckContactTask;
+export default UsNeTaskBase;

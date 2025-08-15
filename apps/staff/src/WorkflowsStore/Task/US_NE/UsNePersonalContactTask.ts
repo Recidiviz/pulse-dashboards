@@ -18,9 +18,9 @@
 import { fieldToDate } from "~datatypes";
 
 import { formatWorkflowsDate, toTitleCase } from "../../../utils";
-import { Task } from "../Task";
+import UsNeTaskBase from "./UsNeTaskBase";
 
-class UsNePersonalContactTask extends Task<"usNePersonalContact"> {
+class UsNePersonalContactTask extends UsNeTaskBase<"usNePersonalContact"> {
   displayName = "Personal Contact";
 
   get additionalDetails() {
@@ -28,14 +28,6 @@ class UsNePersonalContactTask extends Task<"usNePersonalContact"> {
     return lastContactDate
       ? `Last personal contact on ${formatWorkflowsDate(fieldToDate(lastContactDate))}`
       : "No previous personal contact on record";
-  }
-
-  get dueDateDisplayLong() {
-    return `${this.displayName} due ${this.dueDateFromToday}`;
-  }
-
-  get dueDateDisplayShort() {
-    return `Due ${formatWorkflowsDate(this.dueDate)} (${this.dueDateFromToday})`;
   }
 
   get frequency() {

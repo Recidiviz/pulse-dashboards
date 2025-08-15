@@ -36,9 +36,8 @@ import {
 /**
  * Implements functionality shared by a single task.
  */
-export abstract class Task<
-  TaskType extends SupervisionTaskType = SupervisionTaskType,
-> implements SupervisionTask<TaskType>
+export abstract class Task<TaskType extends SupervisionTaskType>
+  implements SupervisionTask<TaskType>
 {
   task: SupervisionTaskRecord<TaskType>;
 

@@ -20,7 +20,9 @@ import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import UsNeAssessmentTask from "../WorkflowsStore/Task/US_NE/UsNeAssessmentTask";
 import UsNeCollateralContactTask from "../WorkflowsStore/Task/US_NE/UsNeCollateralContactTask";
 import UsNeNCJISCheckContactTask from "../WorkflowsStore/Task/US_NE/UsNeNCJISCheckContactTask";
+import UsNeOrasAssessmentTask from "../WorkflowsStore/Task/US_NE/UsNeOrasAssessmentTask";
 import UsNePersonalContactTask from "../WorkflowsStore/Task/US_NE/UsNePersonalContactTask";
+import UsNeStableAssessmentTask from "../WorkflowsStore/Task/US_NE/UsNeStableAssessmentTask";
 
 const US_NE_CONFIG: TenantConfig<"US_NE"> = {
   name: "Nebraska",
@@ -37,7 +39,16 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
       See [“How it works”](https://drive.google.com/file/d/1PuZnoNTddYoKVA0CSpRDoNvCIBWJxg_I/view) to learn more.`,
     tasks: {
       usNeAssessment: {
+        // TODO(#9302) delete this
         constructor: UsNeAssessmentTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usNeOrasAssessment: {
+        constructor: UsNeOrasAssessmentTask,
+        snoozeForOptionsInDays: [7, 30, 90],
+      },
+      usNeStableAssessment: {
+        constructor: UsNeStableAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],
       },
       usNePersonalContact: {
@@ -80,8 +91,12 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
         type: "task",
         options: [
           {
-            value: "usNeAssessment",
+            value: "usNeOrasAssessment",
             label: "ORAS Assessment",
+          },
+          {
+            value: "usNeStableAssessment",
+            label: "STABLE Assessment",
           },
           {
             value: "usNePersonalContact",

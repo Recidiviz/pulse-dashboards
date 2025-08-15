@@ -17,22 +17,22 @@
 
 import { fieldToDate } from "~datatypes";
 
-import { formatWorkflowsDate, toTitleCase } from "../../../utils";
+import { formatWorkflowsDate } from "../../../utils";
 import UsNeTaskBase from "./UsNeTaskBase";
 
-class UsNeNCJISCheckContactTask extends UsNeTaskBase<"usNeNCJISCheckContact"> {
-  displayName = "NCJIS Check";
+class UsNeStableAssessmentTask extends UsNeTaskBase<"usNeStableAssessment"> {
+  displayName = "STABLE Assessment";
 
   get additionalDetails() {
-    const { lastContactDate } = this.details;
-    return lastContactDate
-      ? `Last NCJIS check on ${formatWorkflowsDate(fieldToDate(lastContactDate))}`
-      : "No previous NCJIS check on record";
+    const { mostRecentAssessmentDate } = this.details;
+    return mostRecentAssessmentDate
+      ? `Last assessed on ${formatWorkflowsDate(fieldToDate(mostRecentAssessmentDate))}`
+      : "No previous assessment on record";
   }
 
   get frequency() {
-    return toTitleCase(this.details.contactCadence);
+    return "Every 12 Months";
   }
 }
 
-export default UsNeNCJISCheckContactTask;
+export default UsNeStableAssessmentTask;

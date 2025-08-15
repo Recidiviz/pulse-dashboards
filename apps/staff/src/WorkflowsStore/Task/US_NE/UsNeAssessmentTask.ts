@@ -18,9 +18,10 @@
 import { fieldToDate } from "~datatypes";
 
 import { formatWorkflowsDate } from "../../../utils";
-import { Task } from "../Task";
+import UsNeTaskBase from "./UsNeTaskBase";
 
-class UsNeAssessmentTask extends Task<"usNeAssessment"> {
+// TODO(#9302) delete this file
+class UsNeAssessmentTask extends UsNeTaskBase<"usNeAssessment"> {
   displayName = "ORAS Assessment";
 
   get additionalDetails() {
@@ -28,14 +29,6 @@ class UsNeAssessmentTask extends Task<"usNeAssessment"> {
     return mostRecentAssessmentDate
       ? `Last assessed on ${formatWorkflowsDate(fieldToDate(mostRecentAssessmentDate))}`
       : "No previous assessment on record";
-  }
-
-  get dueDateDisplayLong() {
-    return `${this.displayName} due ${this.dueDateFromToday}`;
-  }
-
-  get dueDateDisplayShort() {
-    return `Due ${formatWorkflowsDate(this.dueDate)} (${this.dueDateFromToday})`;
   }
 
   get frequency() {

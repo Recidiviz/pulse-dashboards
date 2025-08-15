@@ -18,9 +18,9 @@
 import { fieldToDate } from "~datatypes";
 
 import { formatWorkflowsDate, toTitleCase } from "../../../utils";
-import { Task } from "../Task";
+import UsNeTaskBase from "./UsNeTaskBase";
 
-class UsNeCollateralContactTask extends Task<"usNeCollateralContact"> {
+class UsNeCollateralContactTask extends UsNeTaskBase<"usNeCollateralContact"> {
   displayName = "Collateral Contact";
 
   get additionalDetails() {
@@ -28,14 +28,6 @@ class UsNeCollateralContactTask extends Task<"usNeCollateralContact"> {
     return lastContactDate
       ? `Last collateral contact on ${formatWorkflowsDate(fieldToDate(lastContactDate))}`
       : "No previous collateral contact on record";
-  }
-
-  get dueDateDisplayLong() {
-    return `${this.displayName} due ${this.dueDateFromToday}`;
-  }
-
-  get dueDateDisplayShort() {
-    return `Due ${formatWorkflowsDate(this.dueDate)} (${this.dueDateFromToday})`;
   }
 
   get frequency() {
