@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { sortBy } from "lodash";
 import React from "react";
 
+import { formatWorkflowsDate } from "../../../../utils";
 import {
+  DetailsContent,
   DetailsHeading,
   DetailsList,
   DetailsSection,
@@ -26,28 +29,37 @@ import {
 } from "../../styles";
 import { ResidentProfileProps } from "../../types";
 
-// We haven't decided yet what end dates we want to show for MO individuals. To keep the sidebar
-// simple, we've opted not to hydrate start or end dates in the MO resident record.
-// MO workflows also currently treat facilities as staff, so we don't want to show a heading for
-// case manager (since our record will actually show the facility ID there). Since this is different
-// enough from other facilities workflows, add a separate component for MO Incarceration instead of
-// the generic Incarceration one.
-export function UsMoIncarceration({
+const UsMoProgramParticipation: React.FC<ResidentProfileProps> = ({
   resident,
-}: ResidentProfileProps): React.ReactElement {
+}) => {
+  const metadata = resident.metadata;
+  if (metadata.stateCode !== "US_MO") return null;
+
+  const completedPrograms = sortBy(
+    metadata.latestCycleCompletedPrograms,
+    (p) => -(p.completionDate ?? 0),
+  );
+
   return (
     <DetailsSection>
-      <DetailsHeading>Incarceration</DetailsHeading>
+      <DetailsHeading>Program Participation</DetailsHeading>
       <SecureDetailsContent>
+        {completedPrograms.length === 0 && "None Noted"}
         <DetailsList>
-          <DetailsSubheading>Facility</DetailsSubheading>
-          <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
-        </DetailsList>
-        <DetailsList>
-          <DetailsSubheading>Unit</DetailsSubheading>
-          <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
+          {completedPrograms.map(({ completionDate, program, status }) => (
+            <React.Fragment key={`${program}-${status}-${completionDate}`}>
+              <DetailsSubheading>{program}</DetailsSubheading>
+              <DetailsContent>
+                {status === "CMP"
+                  ? `Completed on ${formatWorkflowsDate(completionDate)}`
+                  : status}
+              </DetailsContent>
+            </React.Fragment>
+          ))}
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>
   );
-}
+};
+
+export default UsMoProgramParticipation;

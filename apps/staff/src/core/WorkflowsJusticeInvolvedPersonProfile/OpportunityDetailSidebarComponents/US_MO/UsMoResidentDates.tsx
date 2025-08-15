@@ -17,23 +17,35 @@
 
 import React from "react";
 
-import { UsMoSanctions } from "../ResidentDetailSidebarComponents/US_MO/UsMoSanctions";
-import { UsMoSolitary } from "../ResidentDetailSidebarComponents/US_MO/UsMoSolitary";
-import { ResidentProfileProps } from "../types";
+import { DateInfo, DatesTable } from "../../DatesTable";
+import { DetailsHeading, DetailsSection } from "../../styles";
+import { ResidentProfileProps } from "../../types";
 
-export function UsMoResidentInformation({
-  resident,
-}: ResidentProfileProps): React.ReactElement | null {
-  const { metadata } = resident;
+const UsMoResidentDates: React.FC<ResidentProfileProps> = ({ resident }) => {
+  const metadata = resident.metadata;
+  if (metadata.stateCode !== "US_MO") return null;
 
-  if (metadata.stateCode !== "US_MO") {
-    return null;
-  }
+  const dates: DateInfo[] = [
+    {
+      label: "Conditional Release",
+      date: metadata.conditionalReleaseDate,
+    },
+    {
+      label: "Presumptive Parole",
+      date: metadata.presumptiveParoleDate,
+    },
+    {
+      label: "Max Release Date",
+      date: metadata.maximumReleaseDate ?? undefined,
+    },
+  ];
 
   return (
-    <>
-      <UsMoSolitary resident={resident} />
-      <UsMoSanctions sanctions={metadata.d1SanctionInfoPastYear} />
-    </>
+    <DetailsSection>
+      <DetailsHeading>Release Dates</DetailsHeading>
+      <DatesTable dates={dates} highlightPastDates={false} />
+    </DetailsSection>
   );
-}
+};
+
+export default UsMoResidentDates;

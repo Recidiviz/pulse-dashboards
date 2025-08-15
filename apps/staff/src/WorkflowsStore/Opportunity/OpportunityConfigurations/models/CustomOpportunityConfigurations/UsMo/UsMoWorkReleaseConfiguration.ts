@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { OpportunityProfileModuleName } from "../../../../../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsMoWorkReleaseConfiguration extends ApiOpportunityConfiguration {
@@ -24,5 +25,20 @@ export class UsMoWorkReleaseConfiguration extends ApiOpportunityConfiguration {
 
   get skipFormPreview(): boolean {
     return true;
+  }
+
+  get sidebarComponents(): OpportunityProfileModuleName[] {
+    return [
+      "UsMoIncarceration",
+      "UsMoResidentDates",
+      "UsMoAssessmentScores",
+      "UsMoSentences",
+      "UsMoGangInvolvement",
+      "UsMoViolations",
+      "UsMoEscapes",
+      "UsMoSolitary",
+      "UsMoProgramParticipation",
+      "UsMoOffenseHistory",
+    ];
   }
 }

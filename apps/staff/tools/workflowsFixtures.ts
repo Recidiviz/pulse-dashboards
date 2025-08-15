@@ -76,9 +76,11 @@ import { usMiEarlyDischargeReferralsFixture } from "./fixtures/usMiEarlyDischarg
 import { usMiMinimumTelephoneReportingReferralsFixture } from "./fixtures/usMiMinimumTelephoneReportingReferrals";
 import { usMiPastFTRDReferralsFixture } from "./fixtures/usMiPastFTRDReferrals";
 import { usMiSupervisionLevelDowngradeReferrals } from "./fixtures/usMiSupervisionLevelDowngradeReferrals";
+import { usMoOutsideClearanceReferrals } from "./fixtures/usMoOutsideClearanceReferrals";
 import { usMoOverdueRestrictiveHousingInitialHearingReferrals } from "./fixtures/usMoOverdueRestrictiveHousingInitialHearingReferrals";
 import { usMoOverdueRestrictiveHousingReleaseReferrals } from "./fixtures/usMoOverdueRestrictiveHousingReleaseReferrals";
 import { usMoOverdueRestrictiveHousingReviewHearingReferrals } from "./fixtures/usMoOverdueRestrictiveHousingReviewHearingReferrals";
+import { usMoWorkReleaseReferrals } from "./fixtures/usMoWorkReleaseReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 import { usNdTransferToMinFacilityReferrals } from "./fixtures/usNdTransferToMinFacilityReferrals";
 import { usOrEarnedDischargeSentenceReferrals } from "./fixtures/usOrEarnedDischargeSentenceReferrals";
@@ -211,6 +213,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usIaSupervisionLevelDowngradeReferrals:
     usIaSupervisionLevelDowngradeReferralsFixture,
   usNdTransferToMinFacilityReferrals,
+  usMoOutsideClearanceReferrals,
+  usMoWorkReleaseReferrals,
 } as const;
 
 const FIXTURES_TO_LOAD = [

@@ -28,7 +28,6 @@ import { LSUConfiguration } from "./UsId/LSUConfiguration";
 import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
-import { UsMoOutsideClearanceConfiguration } from "./UsMo/UsMoOutsideClearanceConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
 import { UsNdTransferToMinFacility } from "./UsNd/UsNdTransferToMinFacility";
@@ -46,7 +45,7 @@ const customOpportunityConfigurations: Partial<
   usMoOverdueRestrictiveHousingReviewHearing:
     UsMoOverdueRestrictiveHousingConfiguration,
   usMoWorkRelease: UsMoWorkReleaseConfiguration,
-  usMoOutsideClearance: UsMoOutsideClearanceConfiguration,
+  usMoOutsideClearance: UsMoWorkReleaseConfiguration,
   usMeSCCP: UsMeSCCPConfiguration,
   usMeEarlyTermination: UsMeEarlyTerminationConfiguration,
   usAzReleaseToTPR: UsAzReleaseToTPRConfiguration,

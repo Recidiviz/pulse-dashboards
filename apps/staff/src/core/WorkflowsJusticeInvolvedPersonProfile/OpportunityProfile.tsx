@@ -44,6 +44,14 @@ import {
   UsMiRecommendedSupervisionLevel,
   UsMoIncarceration,
 } from "./OpportunityDetailSidebarComponents";
+import UsMoAssessmentScores from "./OpportunityDetailSidebarComponents/US_MO/UsMoAssessmentScores";
+import UsMoEscapes from "./OpportunityDetailSidebarComponents/US_MO/UsMoEscapes";
+import UsMoGangInvolvement from "./OpportunityDetailSidebarComponents/US_MO/UsMoGangInvolvement";
+import UsMoOffenseHistory from "./OpportunityDetailSidebarComponents/US_MO/UsMoOffenseHistory";
+import UsMoProgramParticipation from "./OpportunityDetailSidebarComponents/US_MO/UsMoProgramParticipation";
+import UsMoResidentDates from "./OpportunityDetailSidebarComponents/US_MO/UsMoResidentDates";
+import UsMoSentences from "./OpportunityDetailSidebarComponents/US_MO/UsMoSentences";
+import UsMoViolations from "./OpportunityDetailSidebarComponents/US_MO/UsMoViolations";
 import { OpportunityOverview } from "./OpportunityOverview";
 import {
   Incarceration,
@@ -56,6 +64,7 @@ import { UsAzDates } from "./ResidentDetailSidebarComponents/US_AZ/UsAzDates";
 import { UsIdParoleDates } from "./ResidentDetailSidebarComponents/US_ID/UsIdParoleDates";
 import { UsIdPastTwoYearsAlert } from "./ResidentDetailSidebarComponents/US_ID/UsIdPastTwoYearsAlert";
 import { UsMiRestrictiveHousing } from "./ResidentDetailSidebarComponents/US_MI/UsMiRestrictiveHousingDetails";
+import { UsMoSolitary } from "./ResidentDetailSidebarComponents/US_MO/UsMoSolitary";
 import { Divider } from "./styles";
 import { OpportunitySidebarProfileProps } from "./types";
 
@@ -84,6 +93,8 @@ export const OpportunityDetailSidebarComponents = {
   UsMiEarlyDischargeIcDetails,
   UsMiRecommendedSupervisionLevel,
   UsMoRestrictiveHousing,
+  UsMoViolations,
+  UsMoEscapes,
   UsTnCommonlyUsedOverrideCodes,
   UsMiRestrictiveHousing,
   UsAzAcisInformation,
@@ -95,6 +106,13 @@ export const ResidentDetailSidebarComponents = {
   Incarceration,
   ResidentHousing,
   UsMoIncarceration,
+  UsMoAssessmentScores,
+  UsMoSentences,
+  UsMoResidentDates,
+  UsMoGangInvolvement,
+  UsMoOffenseHistory,
+  UsMoProgramParticipation,
+  UsMoSolitary,
   UsIdPastTwoYearsAlert,
   UsIdParoleDates,
   UsAzDates,

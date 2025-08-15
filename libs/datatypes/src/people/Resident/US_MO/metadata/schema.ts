@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import simplur from "simplur";
 import { z } from "zod";
 
 import { dateStringSchema, nullishAsUndefined } from "../../../../utils/zod";
@@ -32,6 +33,13 @@ const usMoSolitaryAssignmentInfoPastYearSchema = z.object({
   startDate: nullishAsUndefined(dateStringSchema),
 });
 
+const sentenceSchema = z.object({
+  offense: z.string(),
+  sentenceLengthYears: z.number().nullable(),
+  sentenceLengthMonths: z.number().nullable(),
+  sentenceLengthDays: z.number().nullable(),
+});
+
 export const usMoResidentMetadataSchema = z.object({
   stateCode: z.literal("US_MO"),
   d1SanctionInfoPastYear: z.array(usMoSanctionsSchema),
@@ -43,19 +51,18 @@ export const usMoResidentMetadataSchema = z.object({
   medicalScore: z.number().nullable(),
   publicRiskScore: z.number().nullable(),
 
+  maximumReleaseDate: nullishAsUndefined(dateStringSchema),
+  conditionalReleaseDate: nullishAsUndefined(dateStringSchema),
+  presumptiveParoleDate: nullishAsUndefined(dateStringSchema),
+
   // TODO(#8881) Remove the optional after #45957 gets to production
   institutionalRiskScore: z.number().nullable().optional(),
   educationScore: z.number().nullable(),
-  gangAffiliation: z.string().nullable(),
+  gangAffiliation: z
+    .enum(["NON-STG MEMBER", "STG MEMBER", "STG ASSOCIATE"])
+    .nullable(),
   mentalHealthScore: z.number().nullable(),
-  latestCycleSentences: z
-    .object({
-      offense: z.string(),
-      sentenceLengthYears: z.number().nullable(),
-      sentenceLengthMonths: z.number().nullable(),
-      sentenceLengthDays: z.number().nullable(),
-    })
-    .array(),
+  latestCycleSentences: sentenceSchema.array(),
   latestCycleCompletedPrograms: z
     .object({
       completionDate: dateStringSchema,
@@ -70,3 +77,17 @@ export const usMoResidentMetadataSchema = z.object({
     })
     .array(),
 });
+
+export function usMoFormatSentenceLength({
+  sentenceLengthYears,
+  sentenceLengthMonths,
+  sentenceLengthDays,
+}: z.infer<typeof sentenceSchema>): string {
+  const parts = [];
+  if (sentenceLengthYears)
+    parts.push(simplur`${sentenceLengthYears} [year|years]`);
+  if (sentenceLengthMonths)
+    parts.push(simplur`${sentenceLengthMonths} [month|months]`);
+  if (sentenceLengthDays) parts.push(simplur`${sentenceLengthDays} [day|days]`);
+  return parts.join(", ") || "Length Unknown";
+}

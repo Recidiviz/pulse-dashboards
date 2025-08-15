@@ -21,7 +21,6 @@ import React from "react";
 import { formatWorkflowsDate } from "../../../../utils";
 import { UsMoOverdueRestrictiveHousingBase } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingOpportunityBase";
 import { BaseUsMoOverdueRestrictiveHousingReferralRecord } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoOverdueRestrictiveHousingOpportunityBase/UsMoOverdueRestrictiveHousingReferralRecord";
-import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
   CaseNoteDate,
   DetailsHeading,
@@ -129,7 +128,7 @@ export function UsMoRestrictiveHousing({
       <UsMoUnwaivedEnemies unwaivedEnemies={unwaivedEnemies} />
 
       <UsMoSanctions sanctions={allSanctions} />
-      <UsMoSolitary person={opportunity.person as Resident} />
+      <UsMoSolitary resident={opportunity.person} />
 
       <UsMoConductViolations
         majorCdvs={majorCdvs}

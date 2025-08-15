@@ -15,39 +15,48 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { sortBy } from "lodash";
 import React from "react";
 
 import {
+  formatWorkflowsDate,
+  toTitleCase,
+} from "../../../../utils/formatStrings";
+import { UsMoWorkReleaseOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMo/UsMoWorkReleaseOpportunity/UsMoWorkReleaseOpportunity";
+import {
+  DetailsContent,
   DetailsHeading,
   DetailsList,
   DetailsSection,
   DetailsSubheading,
   SecureDetailsContent,
 } from "../../styles";
-import { ResidentProfileProps } from "../../types";
+import { OpportunityProfileProps } from "../../types";
 
-// We haven't decided yet what end dates we want to show for MO individuals. To keep the sidebar
-// simple, we've opted not to hydrate start or end dates in the MO resident record.
-// MO workflows also currently treat facilities as staff, so we don't want to show a heading for
-// case manager (since our record will actually show the facility ID there). Since this is different
-// enough from other facilities workflows, add a separate component for MO Incarceration instead of
-// the generic Incarceration one.
-export function UsMoIncarceration({
-  resident,
-}: ResidentProfileProps): React.ReactElement {
+const UsMoEscapes: React.FC<OpportunityProfileProps> = ({ opportunity }) => {
+  if (!(opportunity instanceof UsMoWorkReleaseOpportunity)) return null;
+
+  const historyEscapesAbsconsions = sortBy(
+    opportunity.record.formInformation.historyEscapesAbsconsions,
+    (e) => -e.eventDate,
+  );
+
   return (
     <DetailsSection>
-      <DetailsHeading>Incarceration</DetailsHeading>
+      <DetailsHeading>Escape and Absconsion History</DetailsHeading>
       <SecureDetailsContent>
         <DetailsList>
-          <DetailsSubheading>Facility</DetailsSubheading>
-          <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
-        </DetailsList>
-        <DetailsList>
-          <DetailsSubheading>Unit</DetailsSubheading>
-          <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
+          {historyEscapesAbsconsions.length === 0 && "None Noted"}
+          {historyEscapesAbsconsions.map(({ eventType, eventDate }) => (
+            <React.Fragment key={`${eventType}-${eventDate}`}>
+              <DetailsSubheading>{toTitleCase(eventType)}</DetailsSubheading>
+              <DetailsContent>{formatWorkflowsDate(eventDate)}</DetailsContent>
+            </React.Fragment>
+          ))}
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>
   );
-}
+};
+
+export default UsMoEscapes;

@@ -15,9 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { sortBy } from "lodash";
 import React from "react";
 
+import { formatWorkflowsDate } from "../../../../utils";
 import {
+  DetailsContent,
   DetailsHeading,
   DetailsList,
   DetailsSection,
@@ -26,28 +29,35 @@ import {
 } from "../../styles";
 import { ResidentProfileProps } from "../../types";
 
-// We haven't decided yet what end dates we want to show for MO individuals. To keep the sidebar
-// simple, we've opted not to hydrate start or end dates in the MO resident record.
-// MO workflows also currently treat facilities as staff, so we don't want to show a heading for
-// case manager (since our record will actually show the facility ID there). Since this is different
-// enough from other facilities workflows, add a separate component for MO Incarceration instead of
-// the generic Incarceration one.
-export function UsMoIncarceration({
-  resident,
-}: ResidentProfileProps): React.ReactElement {
+const UsMoOffenseHistory: React.FC<ResidentProfileProps> = ({ resident }) => {
+  const metadata = resident.metadata;
+  if (metadata.stateCode !== "US_MO") return null;
+
+  const priorCycleSentences = sortBy(
+    metadata.priorCycleSentences,
+    (s) => -(s.offenseDate ?? 0),
+  );
+
   return (
     <DetailsSection>
-      <DetailsHeading>Incarceration</DetailsHeading>
+      <DetailsHeading>Offense History</DetailsHeading>
       <SecureDetailsContent>
+        {priorCycleSentences.length === 0 && "None Noted"}
         <DetailsList>
-          <DetailsSubheading>Facility</DetailsSubheading>
-          <SecureDetailsContent>{resident.facilityId}</SecureDetailsContent>
-        </DetailsList>
-        <DetailsList>
-          <DetailsSubheading>Unit</DetailsSubheading>
-          <SecureDetailsContent>{resident.unitId}</SecureDetailsContent>
+          {priorCycleSentences.map(({ offenseDate, offense }) => (
+            <React.Fragment key={`${offense}-${offenseDate}`}>
+              <DetailsSubheading>{offense}</DetailsSubheading>
+              <DetailsContent>
+                {offenseDate
+                  ? formatWorkflowsDate(offenseDate)
+                  : "Date Unknown"}
+              </DetailsContent>
+            </React.Fragment>
+          ))}
         </DetailsList>
       </SecureDetailsContent>
     </DetailsSection>
   );
-}
+};
+
+export default UsMoOffenseHistory;

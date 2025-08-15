@@ -16,20 +16,18 @@
 // =============================================================================
 
 import { formatWorkflowsDate } from "../../../../utils";
-import { Resident } from "../../../../WorkflowsStore/Resident";
 import {
   DetailsHeading,
   DetailsSubheading,
   SecureDetailsContent,
   SecureDetailsList,
 } from "../../styles";
+import { ResidentProfileProps } from "../../types";
 
 export function UsMoSolitary({
-  person,
-}: {
-  person: Resident;
-}): React.ReactElement | null {
-  const { metadata } = person;
+  resident,
+}: ResidentProfileProps): React.ReactElement | null {
+  const { metadata } = resident;
 
   if (metadata.stateCode !== "US_MO") return null;
 
@@ -52,9 +50,9 @@ export function UsMoSolitary({
 
   return (
     <SecureDetailsList>
-      <DetailsHeading>Restrictive Housing assignments</DetailsHeading>
+      <DetailsHeading>Restrictive Housing Assignments</DetailsHeading>
       <DetailsSubheading>
-        Restrictive Housing assignments in past year
+        Restrictive Housing Assignments in Past Year
       </DetailsSubheading>
       {solitaryAssignmentInfoPastYear &&
       solitaryAssignmentInfoPastYear.length > 0 ? (
@@ -69,7 +67,7 @@ export function UsMoSolitary({
         <SecureDetailsContent>None</SecureDetailsContent>
       )}
       <DetailsSubheading>
-        Number of Restrictive Housing assignments in past year
+        Number of Restrictive Housing Assignments in Past Year
       </DetailsSubheading>
       <SecureDetailsContent>
         {numSolitaryAssignmentsPastYear}

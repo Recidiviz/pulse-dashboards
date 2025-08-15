@@ -17,23 +17,32 @@
 
 import React from "react";
 
-import { UsMoSanctions } from "../ResidentDetailSidebarComponents/US_MO/UsMoSanctions";
-import { UsMoSolitary } from "../ResidentDetailSidebarComponents/US_MO/UsMoSolitary";
-import { ResidentProfileProps } from "../types";
+import {
+  DetailsHeading,
+  DetailsSection,
+  SecureDetailsContent,
+} from "../../styles";
+import { ResidentProfileProps } from "../../types";
 
-export function UsMoResidentInformation({
-  resident,
-}: ResidentProfileProps): React.ReactElement | null {
-  const { metadata } = resident;
+const UsMoGangInvolvement: React.FC<ResidentProfileProps> = ({ resident }) => {
+  const metadata = resident.metadata;
+  if (metadata.stateCode !== "US_MO") return null;
+  if (!metadata.gangAffiliation) return null;
 
-  if (metadata.stateCode !== "US_MO") {
-    return null;
-  }
+  const copyMapping: Record<typeof metadata.gangAffiliation, string> = {
+    "NON-STG MEMBER": "None",
+    "STG MEMBER": "Known member",
+    "STG ASSOCIATE": "Known associate",
+  };
 
   return (
-    <>
-      <UsMoSolitary resident={resident} />
-      <UsMoSanctions sanctions={metadata.d1SanctionInfoPastYear} />
-    </>
+    <DetailsSection>
+      <DetailsHeading>Gang Involvement</DetailsHeading>
+      <SecureDetailsContent>
+        {copyMapping[metadata.gangAffiliation]}
+      </SecureDetailsContent>
+    </DetailsSection>
   );
-}
+};
+
+export default UsMoGangInvolvement;

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { usMoFormatSentenceLength } from "~datatypes";
+
 import {
   fillAndSavePDF,
   PDFFillerFunc,
@@ -26,7 +28,12 @@ import { UsMoWorkReleaseDraftData } from "../UsMo/UsMoWorkReleaseOpportunity/UsM
 import { FormBase, PrefilledDataTransformer } from "./FormBase";
 
 function formatList<T>(items: T[], formatFn: (item: T) => string): string {
-  return items.length > 0 ? items.map(formatFn).join("\n") : "None Noted";
+  return items.length > 0
+    ? items
+        .map(formatFn)
+        // .map((item) => `* ${item}`)
+        .join("; ")
+    : "None Noted";
 }
 
 const fillerFunc: PDFFillerFunc<UsMoWorkReleaseDraftData> = async (
@@ -303,10 +310,9 @@ export class UsMoWorkReleaseForm extends FormBase<
         scoreI: metadata.institutionalRiskScore?.toString() ?? "",
         scoreE: metadata.educationScore?.toString() ?? "",
         scoreC: (person.custodyLevel ?? "").replace("C-", ""),
-        sentence: formatList(
-          metadata.latestCycleSentences,
-          (s) => `* ${s.offense} - ${s.sentenceLengthYears}`,
-        ),
+        sentence: formatList(metadata.latestCycleSentences, (s) => {
+          return `${s.offense} - ${usMoFormatSentenceLength(s)}`;
+        }),
         // releaseDatesType: formInformation.releaseDate.releaseDateType,
         // detailsReleaseDates: formatDate(
         //   formInformation.releaseDate.releaseDate,
@@ -314,18 +320,17 @@ export class UsMoWorkReleaseForm extends FormBase<
         detainer: "",
         completedPrograms: formatList(
           metadata.latestCycleCompletedPrograms,
-          (p) =>
-            `* ${p.program} - ${p.status} - ${formatDate(p.completionDate)}`,
+          (p) => `${p.program} - ${p.status} - ${formatDate(p.completionDate)}`,
         ),
         incarcerationAdjustmentRecord: formatList(
           formInformation.historyViolationsLast24Months,
-          (v) => `* ${formatDate(v.violationDate)} - ${v.violationCode}`,
+          (v) => `${formatDate(v.violationDate)} - ${v.violationCode}`,
         ),
         substanceUseHistory: "",
         organizedCrimeInvolvement: metadata.gangAffiliation ?? "",
         escapeAbscond: formatList(
           formInformation.historyEscapesAbsconsions,
-          (e) => `* ${formatDate(e.eventDate)} - ${e.eventType}`,
+          (e) => `${formatDate(e.eventDate)} - ${e.eventType}`,
         ),
         summary: "",
         additionalInformationNotPreviouslyAddressed: `${person.displayName} is recommended for ${
