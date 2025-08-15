@@ -200,12 +200,18 @@ module "gcs_bucket" {
   }]
   set_admin_roles = true
   bucket_admins = {
-    (local.etl_bucket_name) = "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com,serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+    (local.etl_bucket_name) = join(",", [
+      "serviceAccount:${var.project_number}-compute@developer.gserviceaccount.com",
+      "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+    ])
   }
 
   set_viewer_roles = true
   bucket_viewers = {
-    (local.archive_bucket_name) = "serviceAccount:cloud-build-ci-cd@${var.data_platform_project_id}.iam.gserviceaccount.com"
+    (local.archive_bucket_name) = join(",", [
+      "serviceAccount:cloud-build-ci-cd@${var.data_platform_project_id}.iam.gserviceaccount.com",
+      "serviceAccount:${var.data_platform_project_number}-compute@developer.gserviceaccount.com"
+    ])
   }
 }
 
