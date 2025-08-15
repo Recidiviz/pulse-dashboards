@@ -208,7 +208,7 @@ exports[`transformations 11`] = `
 {
   "avgDailyPopulation": 8,
   "displayName": "Jacquline Fordman",
-  "district": "N/A",
+  "district": "Unknown",
   "email": "officer8@recidiviz.org",
   "externalId": "so11",
   "fullName": {

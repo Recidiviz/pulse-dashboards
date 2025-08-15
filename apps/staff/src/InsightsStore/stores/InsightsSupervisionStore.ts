@@ -391,8 +391,8 @@ export class InsightsSupervisionStore {
 
   supervisionLocationInfo(supervisorPseudoId: string): {
     locationLabel: string;
-    supervisionLocationForListPage?: string | null;
-    supervisionLocationForSupervisorPage?: string | null;
+    supervisionLocationForListPage?: string;
+    supervisionLocationForSupervisorPage?: string;
   } {
     const {
       tenantStore: { insightsUnitState },

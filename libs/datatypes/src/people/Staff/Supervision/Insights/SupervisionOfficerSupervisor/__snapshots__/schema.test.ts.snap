@@ -61,7 +61,7 @@ exports[`transformations 4`] = `
   "hasOutliers": false,
   "pseudonymizedId": "hashed-cthomas321",
   "supervisionLocationForListPage": "Region 2",
-  "supervisionLocationForSupervisorPage": null,
+  "supervisionLocationForSupervisorPage": "Unknown",
 }
 `;
 
@@ -76,8 +76,8 @@ exports[`transformations 5`] = `
   },
   "hasOutliers": false,
   "pseudonymizedId": "hashed-cmatterson567",
-  "supervisionLocationForListPage": "N/A",
-  "supervisionLocationForSupervisorPage": null,
+  "supervisionLocationForListPage": "Unknown",
+  "supervisionLocationForSupervisorPage": "Unknown",
 }
 `;
 
@@ -92,7 +92,7 @@ exports[`transformations 6`] = `
   },
   "hasOutliers": false,
   "pseudonymizedId": "hashed-jwilliams345",
-  "supervisionLocationForListPage": null,
-  "supervisionLocationForSupervisorPage": "N/A",
+  "supervisionLocationForListPage": "Unknown",
+  "supervisionLocationForSupervisorPage": "Unknown",
 }
 `;

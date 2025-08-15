@@ -87,7 +87,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
    * all supervisors, not just supervisors with outlier officers.
    */
   get supervisorsByLocation(): Array<{
-    location: string | null;
+    location: string;
     supervisors: Array<SupervisionOfficerSupervisor>;
   }> {
     const result = pipe(
@@ -98,7 +98,7 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
       map((dataset) => {
         const { supervisionLocationForListPage } = dataset[0];
         return {
-          location: supervisionLocationForListPage,
+          location: supervisionLocationForListPage as string,
           supervisors: dataset as SupervisionOfficerSupervisor[],
         };
       }),
@@ -113,8 +113,8 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
     );
 
     result.sort((a, b) => {
-      if (!a.location) return 1;
-      if (!b.location) return -1;
+      if (a.location === "Unknown") return 1;
+      if (b.location === "Unknown") return -1;
 
       return a.location
         .toLowerCase()

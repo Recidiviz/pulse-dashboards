@@ -25,8 +25,8 @@ export function nullishAsUndefined<T extends z.ZodTypeAny>(schema: T) {
 
 export const getReadableSupervisionLocation = (
   location: string | undefined | null,
-) =>
-  location &&
+): string =>
+  !location ||
   [
     "NOT_APPLICABLE",
     "EXTERNAL_UNKNOWN",
@@ -34,5 +34,5 @@ export const getReadableSupervisionLocation = (
     "NULL",
     "UNKNOWN LOCATION",
   ].includes(location.toUpperCase().trim())
-    ? "N/A"
+    ? "Unknown"
     : location;

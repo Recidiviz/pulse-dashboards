@@ -189,8 +189,8 @@ export class SupervisionSupervisorPagePresenter implements Hydratable {
    */
   get supervisionLocationInfo(): {
     locationLabel: string;
-    supervisionLocationForListPage?: string | null;
-    supervisionLocationForSupervisorPage?: string | null;
+    supervisionLocationForListPage?: string;
+    supervisionLocationForSupervisorPage?: string;
   } {
     return this.supervisionStore.supervisionLocationInfo(
       this.supervisorPseudoId,

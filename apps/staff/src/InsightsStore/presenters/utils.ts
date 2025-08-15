@@ -120,12 +120,12 @@ export function getOfficerOutcomesData(
 }
 
 export function getLocationWithoutLabel(
-  location: string | null | undefined,
+  location: string | undefined,
   label: string,
 ): string | undefined {
   return location?.toUpperCase().startsWith(label.toUpperCase())
     ? location.toUpperCase().split(`${label.toUpperCase()} `)[1]
-    : location ?? undefined;
+    : location;
 }
 
 export function getHighlightedOfficersByMetric(

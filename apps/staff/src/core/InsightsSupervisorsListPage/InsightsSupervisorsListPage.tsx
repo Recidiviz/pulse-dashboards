@@ -112,7 +112,7 @@ const SupervisorsList = observer(function SupervisorsList({
   const districtViz = supervisorsByLocation.map(
     ({ location, supervisors }, districtIndex) => (
       <div key={location}>
-        <DistrictName>{location ?? "Unknown"}</DistrictName>
+        <DistrictName>{location}</DistrictName>
         <SupervisorLinksWrapper isMobile={isMobile}>
           {supervisors.map((supervisor, supervisorIndex) => (
             <SupervisorWrapper
