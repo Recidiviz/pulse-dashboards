@@ -37,7 +37,11 @@ abstract class UsTxContactTask<
   }
 
   get frequency(): string {
-    return toTitleCase(this.details.contactCadence);
+    if (this.details.contactCadence) {
+      return toTitleCase(this.details.contactCadence);
+    }
+    // TODO(#9309) remove
+    return `Every ${this.details.frequency?.toLowerCase()}`;
   }
 }
 

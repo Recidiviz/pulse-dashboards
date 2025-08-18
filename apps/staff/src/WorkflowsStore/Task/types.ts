@@ -79,6 +79,7 @@ type UsTxContactDetails = {
   overdueFlag: boolean;
   typeOfContact: string;
   contactCadence: string;
+  frequency?: string; // TODO(#9309) remove
 };
 
 type UsTxOverridableContactDetails = UsTxContactDetails & {
@@ -97,11 +98,13 @@ type UsTxTypeAgnosticContactDetails = {
   contactTypesAccepted: string;
   officerInCriticallyUnderstaffedLocation: boolean;
   overrideContactTypesAccepted: string;
+  frequency?: string; // TODO(#9309) remove
 };
 
 type UsTxEdgeCaseContactDetails = {
   reasonForContact: string;
   contactCadence: string;
+  frequency?: string; // TODO(#9309) remove
 };
 
 type UsTxAssessmentDetails = {

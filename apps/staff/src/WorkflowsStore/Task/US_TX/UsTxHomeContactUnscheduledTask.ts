@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { toTitleCase } from "../../../utils/formatStrings";
 import { Client } from "../../Client";
 import UsTxContactTask from "./UsTxContactTask";
 
@@ -32,6 +33,11 @@ class UsTxHomeContactUnscheduledTask extends UsTxContactTask<"usTxHomeContactUns
   }
 
   get frequency(): string {
+    if (this.details.contactCadence) {
+      return toTitleCase(this.details.contactCadence);
+    }
+
+    // TODO(#9309) remove, contact cadence should correctly handle this case
     const client = this.person as Client;
     const high = client.supervisionLevel === "High";
     const moderate = client.supervisionLevel === "Moderate";

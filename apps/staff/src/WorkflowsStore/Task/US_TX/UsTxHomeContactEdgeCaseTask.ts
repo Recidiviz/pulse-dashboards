@@ -26,7 +26,10 @@ class UsTxHomeContactEdgeCaseTask extends Task<"usTxHomeContactEdgeCase"> {
   }
 
   get frequency(): string {
-    return toTitleCase(this.details.contactCadence);
+    if (this.details.contactCadence) {
+      return toTitleCase(this.details.contactCadence);
+    }
+    return `Every ${this.details.frequency?.toLowerCase()}`;
   }
 }
 
