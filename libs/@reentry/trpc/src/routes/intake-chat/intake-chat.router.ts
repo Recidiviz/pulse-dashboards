@@ -63,9 +63,27 @@ function getCleanedMessagesAndLastId(aiMessages: AIMessage[]): MessagesLastId {
 }
 
 export const intakeChatRouter = router({
-  createOrGet: baseProcedure
+  getIntake: baseProcedure
     .input(createOrGetInputSchema)
-    .query(
+    .query(async ({ ctx: { prisma }, input: { clientPseudoId } }) => {
+      const existingIntake = await prisma.intake.findFirst({
+        where: {
+          client: {
+            pseudonymizedId: clientPseudoId,
+          },
+        },
+        select: INTAKE_GET_ARGS,
+      });
+
+      if (!existingIntake) {
+        return null;
+      }
+
+      return existingIntake;
+    }),
+  createIntake: baseProcedure
+    .input(createOrGetInputSchema)
+    .mutation(
       async ({ ctx: { prisma, stateCode }, input: { clientPseudoId } }) => {
         const existingIntake = await prisma.intake.findFirst({
           where: {
@@ -77,7 +95,7 @@ export const intakeChatRouter = router({
         });
 
         if (existingIntake) {
-          return existingIntake;
+          throw new Error("Intake already exists for this client.");
         }
 
         const intakeConfig = getIntakeConfigForState(stateCode);

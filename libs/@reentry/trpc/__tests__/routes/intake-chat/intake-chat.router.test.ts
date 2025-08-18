@@ -80,9 +80,9 @@ const subscribeToIntakeChat = async (lastEventId?: string) => {
 };
 
 describe("intake chat router", () => {
-  describe("create", () => {
-    test("create for client with existing intake should return existing intake ID", async () => {
-      const response = await testTRPCClient.intake.createOrGet.query({
+  describe("get", () => {
+    test("get for client with existing intake should return existing intake ID", async () => {
+      const response = await testTRPCClient.intake.getIntake.query({
         clientPseudoId: fakeClient.pseudonymizedId,
       });
 
@@ -92,9 +92,40 @@ describe("intake chat router", () => {
       });
     });
 
+    test("get for client without existing intake should return null", async () => {
+      // Create a client without an intake
+      await testPrismaClient.client.create({
+        data: {
+          stateCode: StateCode.US_ID,
+          personId: 3,
+          stablePersonExternalId: "client-ext-3",
+          stablePersonExternalIdType: "client-ext-type-1",
+          displayPersonExternalId: "client-display-ext-3",
+          pseudonymizedId: "client-psuedo-id-3",
+          givenNames: faker.person.firstName(),
+          middleNames: faker.person.firstName(),
+          surname: faker.person.lastName(),
+          suffix: faker.person.suffix(),
+          birthDate: faker.date.birthdate(),
+          staff: {
+            create: {
+              staffId: fakeStaff.staffId,
+            },
+          },
+        },
+      });
+
+      const result = await testTRPCClient.intake.getIntake.query({
+        clientPseudoId: "client-psuedo-id-3",
+      });
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("create", () => {
     test("create for client should throw error if client doesn't exist", async () => {
       await expect(
-        testTRPCClient.intake.createOrGet.query({
+        testTRPCClient.intake.createIntake.mutate({
           clientPseudoId: "client-psuedo-id-2",
         }),
       ).rejects.toThrowError("Client with that id was not found");
@@ -122,7 +153,7 @@ describe("intake chat router", () => {
         },
       });
 
-      const response = await testTRPCClient.intake.createOrGet.query({
+      const response = await testTRPCClient.intake.createIntake.mutate({
         clientPseudoId: "client-psuedo-id-2",
       });
 

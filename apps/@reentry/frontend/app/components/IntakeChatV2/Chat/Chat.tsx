@@ -18,6 +18,7 @@
 import ConversationLayout from "~@reentry/frontend/components/IntakeChatV2/Chat/ConversationLayout";
 import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
+import PreIntake from "~@reentry/frontend/components/IntakeChatV2/PreIntake/PreIntake";
 import { ChatProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
 import { ConnectionStatus } from "~@reentry/frontend/components/IntakeChatV2/types";
 
@@ -29,11 +30,13 @@ interface ChatProps {
 const Chat = ({ clientId, connectionStatus }: ChatProps) => {
   if (!clientId) return null;
 
-  const { data: intake } = trpc.intake.createOrGet.useQuery({
+  const { data: intake, isLoading } = trpc.intake.getIntake.useQuery({
     clientPseudoId: clientId,
   });
 
-  if (!intake) return <Loading message="Loading chat..." />;
+  if (isLoading) return <Loading />;
+
+  if (!intake) return <PreIntake clientPseudoId={clientId} />;
 
   return (
     <ChatProvider intake={intake}>

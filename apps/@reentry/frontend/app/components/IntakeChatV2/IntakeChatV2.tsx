@@ -31,7 +31,6 @@ import superjson from "superjson";
 import Chat from "~@reentry/frontend/components/IntakeChatV2/Chat/Chat";
 import ChatHeader from "~@reentry/frontend/components/IntakeChatV2/ChatHeader/ChatHeader";
 import IntakeLogin from "~@reentry/frontend/components/IntakeChatV2/IntakeLogin/IntakeLogin";
-import PreIntake from "~@reentry/frontend/components/IntakeChatV2/PreIntake/PreIntake";
 import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { ConnectionState } from "~@reentry/frontend/components/IntakeChatV2/types";
 import type { AppRouter } from "~@reentry/trpc-types";
@@ -55,7 +54,6 @@ const IntakeChatV2Content: React.FC<IntakeChatV2ContentProps> = ({
 }) => {
   const trpcUrl = process.env["NEXT_PUBLIC_API_URL"] + "/trpc";
 
-  const [isPreIntakeComplete, setIsPreIntakeComplete] = useState(false);
   const [connectionState, setConnectionState] =
     useState<ConnectionState>("connecting");
   const [connectionError, setConnectionError] = useState<Event>();
@@ -100,15 +98,10 @@ const IntakeChatV2Content: React.FC<IntakeChatV2ContentProps> = ({
     <QueryClientProvider client={queryClient}>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
         <ChatHeader firstName={firstName} lastName={lastName} />
-        {!isPreIntakeComplete && (
-          <PreIntake onStartIntake={() => setIsPreIntakeComplete(true)} />
-        )}
-        {isPreIntakeComplete && (
-          <Chat
-            clientId={clientId}
-            connectionStatus={{ connectionState, connectionError }}
-          />
-        )}
+        <Chat
+          clientId={clientId}
+          connectionStatus={{ connectionState, connectionError }}
+        />
       </trpc.Provider>
     </QueryClientProvider>
   );

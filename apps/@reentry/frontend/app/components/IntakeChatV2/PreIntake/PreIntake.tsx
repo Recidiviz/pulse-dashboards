@@ -17,14 +17,37 @@
 
 import React, { useState } from "react";
 
+import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
+import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import StepOne from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepOne";
 import StepTwo from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepTwo";
 
 interface PreIntakeProps {
-  onStartIntake: () => void;
+  clientPseudoId: string;
 }
-const PreIntake: React.FC<PreIntakeProps> = ({ onStartIntake }) => {
+
+const PreIntake: React.FC<PreIntakeProps> = ({ clientPseudoId }) => {
   const [step, setStep] = useState<1 | 2>(1);
+
+  const utils = trpc.useUtils();
+  const createIntakeMutation = trpc.intake.createIntake.useMutation({
+    onMutate: async (input) => {
+      await utils.intake.getIntake.cancel(input);
+      const previous = utils.intake.getIntake.getData(input);
+      return { previous, input };
+    },
+    onError: (_, __, ctx) => {
+      if (ctx?.previous) {
+        utils.intake.getIntake.setData(ctx.input, ctx.previous);
+      }
+    },
+    onSuccess: (intake, input) => {
+      utils.intake.getIntake.setData(input, intake);
+    },
+    onSettled: async (_, __, input) => {
+      await utils.intake.getIntake.invalidate(input);
+    },
+  });
 
   const handleGoBack = () => {
     if (step === 1) {
@@ -34,6 +57,14 @@ const PreIntake: React.FC<PreIntakeProps> = ({ onStartIntake }) => {
     }
   };
   const handleContinue = () => setStep(2);
+
+  const onStartIntake = () => {
+    createIntakeMutation.mutate({ clientPseudoId });
+  };
+
+  if (createIntakeMutation.isPending) {
+    return <Loading />;
+  }
 
   return (
     <>

@@ -17,7 +17,7 @@
 
 import type { AppRouter } from "~@reentry/trpc-types";
 
-export type Intake = Awaited<ReturnType<AppRouter["intake"]["createOrGet"]>>;
+export type Intake = Awaited<ReturnType<AppRouter["intake"]["createIntake"]>>;
 
 // TODO: Find a way to infer type of Message from our BE
 export type Message = {
