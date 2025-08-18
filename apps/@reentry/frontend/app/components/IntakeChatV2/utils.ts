@@ -15,7 +15,12 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import {
+  Message,
+  StepStatus,
+} from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
 import { IntakeFields } from "~@reentry/frontend/components/IntakeChatV2/types";
+import { Section } from "~@reentry/frontend/types/intake";
 
 /**
  * Validate IntakeLogin form fields.
@@ -63,3 +68,30 @@ export const getInitials = (fullName?: string): string =>
         .map((n) => n.charAt(0).toUpperCase())
         .join("")
     : "";
+
+export function getSectionStatuses(
+  messages: Message[],
+  sections?: Section[],
+): StepStatus[] {
+  if (!sections) return [];
+  if (messages.length === 0) {
+    return sections.map(() => "not_started");
+  }
+
+  const currentSectionTitle = messages[messages.length - 1].section;
+  const currentIdx = sections.findIndex(
+    (section) => section.title === currentSectionTitle,
+  );
+
+  return sections.map((_, idx) => {
+    if (idx < currentIdx) return "completed";
+    if (idx === currentIdx) return "in_progress";
+    return "not_started";
+  });
+}
+
+export function getMessagesForCurrentSection(messages: Message[]): Message[] {
+  if (!messages.length) return [];
+  const currentSection = messages[messages.length - 1].section;
+  return messages.filter((msg) => msg.section === currentSection);
+}

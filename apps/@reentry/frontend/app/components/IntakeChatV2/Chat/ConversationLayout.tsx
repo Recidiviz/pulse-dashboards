@@ -25,6 +25,7 @@ import Sidebar from "~@reentry/frontend/components/IntakeChatV2/Chat/Sidebar";
 import { useAutoScroll } from "~@reentry/frontend/components/IntakeChatV2/hooks/useAutoScroll";
 import { useChatContext } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
 import { ConnectionStatus } from "~@reentry/frontend/components/IntakeChatV2/types";
+import { getMessagesForCurrentSection } from "~@reentry/frontend/components/IntakeChatV2/utils";
 interface ConversationLayoutProps {
   connectionStatus?: ConnectionStatus;
 }
@@ -35,6 +36,7 @@ const ConversationLayout: React.FC<ConversationLayoutProps> = ({
   const { messages, waitingForAIInput } = useChatContext();
   const { connectionState } = connectionStatus || {};
   const containerRef = useRef<HTMLDivElement>(null);
+  const currentSectionMessages = getMessagesForCurrentSection(messages);
 
   useAutoScroll(containerRef, [messages]);
 
@@ -76,7 +78,7 @@ const ConversationLayout: React.FC<ConversationLayoutProps> = ({
           <div className={styles["chatContainer"]}>
             <div ref={containerRef} className={styles["messagesWrapper"]}>
               <div className={styles["messagesList"]}>
-                {messages?.map((message) => (
+                {currentSectionMessages?.map((message) => (
                   <ChatMessageBubble key={message.id} message={message} />
                 ))}
                 {waitingForAIInput && (

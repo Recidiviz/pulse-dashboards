@@ -16,17 +16,27 @@
 // =============================================================================
 
 import ConversationLayout from "~@reentry/frontend/components/IntakeChatV2/Chat/ConversationLayout";
+import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
+import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { ChatProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
 import { ConnectionStatus } from "~@reentry/frontend/components/IntakeChatV2/types";
 
 interface ChatProps {
-  intakeId: string;
+  clientId: string | null;
   connectionStatus?: ConnectionStatus;
 }
 
-const Chat = ({ intakeId, connectionStatus }: ChatProps) => {
+const Chat = ({ clientId, connectionStatus }: ChatProps) => {
+  if (!clientId) return null;
+
+  const { data: intake } = trpc.intake.createOrGet.useQuery({
+    clientPseudoId: clientId,
+  });
+
+  if (!intake) return <Loading message="Loading chat..." />;
+
   return (
-    <ChatProvider intakeId={intakeId}>
+    <ChatProvider intake={intake}>
       <ConversationLayout connectionStatus={connectionStatus} />
     </ChatProvider>
   );

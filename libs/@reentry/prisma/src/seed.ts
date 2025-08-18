@@ -88,30 +88,6 @@ async function main() {
     const client = await prisma.client.create({ data: clientData });
     createdClients.push(client);
   }
-
-  // Seed Intakes
-  const numberOfIntakes = 10;
-  for (let i = 0; i < numberOfIntakes; i++) {
-    // eslint-disable-next-line no-await-in-loop -- this is a seed script
-    await prisma.intake.create({
-      data: {
-        id: `intake-${i + 1}`,
-        startDate: new Date(),
-        config: {
-          role: "Case Worker",
-          sections: [],
-        },
-        client: {
-          connect: {
-            personId:
-              createdClients[
-                faker.number.int({ max: createdClients.length - 1 })
-              ].personId,
-          },
-        },
-      },
-    });
-  }
 }
 
 main()

@@ -15,4 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { AppRouter } from "~@reentry/trpc-types";
+
+export type Intake = Awaited<ReturnType<AppRouter["intake"]["createOrGet"]>>;
+
+// TODO: Find a way to infer type of Message from our BE
+export type Message = {
+  id: string;
+  content: string;
+  from_role: string;
+  section: string;
+};
+
 export type StepStatus = "completed" | "in_progress" | "not_started";

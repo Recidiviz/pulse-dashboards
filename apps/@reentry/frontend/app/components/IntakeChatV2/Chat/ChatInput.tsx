@@ -33,9 +33,9 @@ const ChatInput: React.FC = () => {
   const onSend = async () => {
     if (isDisabled || !inputValue.trim()) return;
     setIsSending(true);
-    await sendMessage(inputValue.trim());
     setInputValue("");
     setIsSending(false);
+    await sendMessage(inputValue.trim());
     textareaRef.current?.focus();
   };
 

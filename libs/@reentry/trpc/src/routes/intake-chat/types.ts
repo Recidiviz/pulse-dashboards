@@ -33,3 +33,15 @@ interface ResponseEvent {
 }
 
 export type EmitData = LoadingEvent | ResponseEvent;
+
+export type Message = {
+  id?: string;
+  content: string;
+  section: string;
+  from_role: string;
+};
+
+export type MessagesLastId = {
+  messages: Message[];
+  lastId: string;
+};

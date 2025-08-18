@@ -23,10 +23,10 @@ import {
   CaseWorkerAvatar,
   ClientAvatar,
 } from "~@reentry/frontend/components/IntakeChatV2/Chat/CustomAvatar";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { Message } from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
 
 interface MessageBubbleProps {
-  message?: components["schemas"]["IntakeMessageResponse"];
+  message?: Message;
   name?: string;
   isTyping?: boolean;
 }
@@ -55,8 +55,8 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
   const leadingAvatarClass = isUser
     ? styles["avatarMobile"]
     : styles["avatarDesktop"];
-  const content = isTyping ? <TypingDots /> : message?.content;
 
+  const content = isTyping ? <TypingDots /> : message?.content;
   const leadingAvatar = (
     <div className={leadingAvatarClass}>
       {isUser ? <ClientAvatar /> : <CaseWorkerAvatar />}

@@ -19,20 +19,15 @@ import { skipToken } from "@tanstack/react-query";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-import { StepStatus } from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
+import {
+  Intake,
+  Message,
+} from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
 import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
-import type { components } from "~@reentry/frontend/recidiviz-schema";
 
 interface ChatState {
-  // TODO: Import proper type for sections
-  sections?: {
-    completion_status: StepStatus;
-    intake_section: {
-      title: string;
-      description: string;
-    };
-  }[];
-  messages: components["schemas"]["IntakeMessageResponse"][];
+  sections?: Intake["config"]["sections"];
+  messages: Message[];
   waitingForAIInput: boolean;
   error?: string;
   sendMessage: (text: string) => Promise<void>;
@@ -47,36 +42,10 @@ export function useChatContext() {
 }
 
 export const ChatProvider: React.FC<{
-  intakeId?: string;
+  intake: Intake;
   children?: React.ReactNode;
-}> = ({ intakeId, children }) => {
-  const [messages, setMessages] = useState<
-    components["schemas"]["IntakeMessageResponse"][]
-  >([]);
-  // TODO: Replace placeholder sections for the chat with ones we fetch
-  const [placeholderSections] = useState<ChatState["sections"]>([
-    {
-      completion_status: "not_started",
-      intake_section: {
-        title: "Welcome",
-        description: "Let's get started with your intake.",
-      },
-    },
-    {
-      completion_status: "not_started",
-      intake_section: {
-        title: "Personal Information",
-        description: "Please provide your personal details.",
-      },
-    },
-    {
-      completion_status: "not_started",
-      intake_section: {
-        title: "Background Information",
-        description: "We need some background information.",
-      },
-    },
-  ]);
+}> = ({ intake, children }) => {
+  const [messages, setMessages] = useState<ChatState["messages"]>([]);
   const [waitingForAIInput, setWaitingForAIInput] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -84,7 +53,7 @@ export const ChatProvider: React.FC<{
     setMessages([]);
     setWaitingForAIInput(false);
     setError(undefined);
-  }, [intakeId]);
+  }, [intake]);
 
   useEffect(() => {
     if (error) {
@@ -97,25 +66,27 @@ export const ChatProvider: React.FC<{
   }, [error]);
 
   const reply = trpc.intake.reply.useMutation();
-  trpc.intake.chat.useSubscription(intakeId ? { intakeId } : skipToken, {
-    // TODO: Sort out the types for data
-    onData(payload) {
-      if ("type" in payload && payload.type === "loading") {
-        setWaitingForAIInput(true);
-      } else if ("data" in payload && "messages" in payload.data) {
-        const newMessages = payload.data
-          .messages as components["schemas"]["IntakeMessageResponse"][];
-        setMessages((prev) => [...prev, ...newMessages]);
-        setWaitingForAIInput(false);
-      }
+  trpc.intake.chat.useSubscription(
+    intake.id ? { intakeId: intake.id } : skipToken,
+    {
+      // TODO: Sort out the types for data
+      onData(payload) {
+        if ("type" in payload && payload.type === "loading") {
+          setWaitingForAIInput(true);
+        } else if ("data" in payload && "messages" in payload.data) {
+          const newMessages = payload.data.messages as Message[];
+          setMessages((prev) => [...prev, ...newMessages]);
+          setWaitingForAIInput(false);
+        }
+      },
+      onError(err) {
+        setError(err.message);
+      },
     },
-    onError(err) {
-      setError(err.message);
-    },
-  });
+  );
 
   const sendMessage = async (text: string) => {
-    if (!intakeId) return;
+    if (!intake.id) return;
 
     try {
       setWaitingForAIInput(true);
@@ -124,9 +95,10 @@ export const ChatProvider: React.FC<{
         {
           content: text,
           from_role: "client",
-        } as components["schemas"]["IntakeMessageResponse"],
+          section: prev[prev.length - 1].section,
+        } as Message,
       ]);
-      await reply.mutateAsync({ intakeId, response: text });
+      await reply.mutateAsync({ intakeId: intake.id, response: text });
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -140,7 +112,7 @@ export const ChatProvider: React.FC<{
   return (
     <ChatContext.Provider
       value={{
-        sections: placeholderSections,
+        sections: intake.config?.sections ?? [],
         messages,
         waitingForAIInput,
         error,

@@ -29,7 +29,10 @@ import {
   intakeChatInputSchema,
   intakeChatResponseInputSchema,
 } from "~@reentry/trpc/routes/intake-chat/intake-chat.schema";
-import { EmitData } from "~@reentry/trpc/routes/intake-chat/types";
+import {
+  EmitData,
+  MessagesLastId,
+} from "~@reentry/trpc/routes/intake-chat/types";
 import { agentStatusToSubscriptionStatus } from "~@reentry/trpc/routes/intake-chat/utils";
 
 // TODO: replace these with redis subscriptions so they are monitored across multiple instances
@@ -43,11 +46,12 @@ const intakeAgentsAndStatuses: Record<
   }
 > = {};
 
-function getCleanedMessagesAndLastId(aiMessages: AIMessage[]) {
+function getCleanedMessagesAndLastId(aiMessages: AIMessage[]): MessagesLastId {
   const messages = aiMessages.map((message) => ({
     content: message.content as string,
     section: message.response_metadata["section"],
     id: message.id,
+    from_role: message.response_metadata["from_role"],
   }));
 
   if (aiMessages.length === 0) {
@@ -61,7 +65,7 @@ function getCleanedMessagesAndLastId(aiMessages: AIMessage[]) {
 export const intakeChatRouter = router({
   createOrGet: baseProcedure
     .input(createOrGetInputSchema)
-    .mutation(
+    .query(
       async ({ ctx: { prisma, stateCode }, input: { clientPseudoId } }) => {
         const existingIntake = await prisma.intake.findFirst({
           where: {

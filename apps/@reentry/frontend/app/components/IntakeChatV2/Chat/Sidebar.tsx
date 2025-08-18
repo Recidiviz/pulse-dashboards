@@ -19,15 +19,16 @@ import Image from "next/image";
 
 import styles from "~@reentry/frontend/components/IntakeChatV2/Chat/Sidebar.module.css";
 import { StepIndicator } from "~@reentry/frontend/components/IntakeChatV2/Chat/StepsIndicator";
-import { StepStatus } from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
 import { useChatContext } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
+import { getSectionStatuses } from "~@reentry/frontend/components/IntakeChatV2/utils";
 
 interface SidebarProps {
   onClose: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
-  const { sections } = useChatContext();
+  const { sections, messages } = useChatContext();
+  const statuses = getSectionStatuses(messages, sections);
 
   return (
     <div className={styles["container"]}>
@@ -73,21 +74,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       {/* Sections */}
       <div className={styles["steps"]}>
         {sections?.map((section, index) => {
-          let status: StepStatus = "not_started";
-          if (section.completion_status === "completed") {
-            status = "completed";
-          } else if (section.completion_status === "in_progress") {
-            status = "in_progress";
-          }
+          const status = statuses[index];
           const hasNext = index < sections.length - 1;
 
           return (
             <StepIndicator
-              key={section.intake_section.title}
+              key={section.title}
               status={status}
               hasNext={hasNext}
-              text={section.intake_section.title}
-              description={section.intake_section.description}
+              text={section.title}
+              description={section.description}
             />
           );
         })}

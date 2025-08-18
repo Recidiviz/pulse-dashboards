@@ -40,6 +40,7 @@ export const trpc = createTRPCReact<AppRouter>();
 
 type IntakeChatV2ContentProps = {
   token: string;
+  clientId: string | null;
   stateCode: string | null;
   firstName: string | null;
   lastName: string | null;
@@ -47,6 +48,7 @@ type IntakeChatV2ContentProps = {
 
 const IntakeChatV2Content: React.FC<IntakeChatV2ContentProps> = ({
   token,
+  clientId,
   stateCode,
   firstName,
   lastName,
@@ -93,8 +95,6 @@ const IntakeChatV2Content: React.FC<IntakeChatV2ContentProps> = ({
       ],
     }),
   );
-  // TODO: Call Get/Create Intake Route to get an intakeId
-  const intakeId = "intake-1";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -105,7 +105,7 @@ const IntakeChatV2Content: React.FC<IntakeChatV2ContentProps> = ({
         )}
         {isPreIntakeComplete && (
           <Chat
-            intakeId={intakeId}
+            clientId={clientId}
             connectionStatus={{ connectionState, connectionError }}
           />
         )}
@@ -115,7 +115,8 @@ const IntakeChatV2Content: React.FC<IntakeChatV2ContentProps> = ({
 };
 
 const IntakeChatV2 = () => {
-  const { token, firstName, lastName, stateCode } = useIntakeAuthContext();
+  const { token, firstName, lastName, stateCode, clientId } =
+    useIntakeAuthContext();
 
   if (!token) {
     return <IntakeLogin />;
@@ -123,6 +124,7 @@ const IntakeChatV2 = () => {
 
   return (
     <IntakeChatV2Content
+      clientId={clientId}
       token={token}
       stateCode={stateCode}
       firstName={firstName}

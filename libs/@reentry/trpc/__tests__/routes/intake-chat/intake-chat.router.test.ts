@@ -82,7 +82,7 @@ const subscribeToIntakeChat = async (lastEventId?: string) => {
 describe("intake chat router", () => {
   describe("create", () => {
     test("create for client with existing intake should return existing intake ID", async () => {
-      const response = await testTRPCClient.intake.createOrGet.mutate({
+      const response = await testTRPCClient.intake.createOrGet.query({
         clientPseudoId: fakeClient.pseudonymizedId,
       });
 
@@ -94,7 +94,7 @@ describe("intake chat router", () => {
 
     test("create for client should throw error if client doesn't exist", async () => {
       await expect(
-        testTRPCClient.intake.createOrGet.mutate({
+        testTRPCClient.intake.createOrGet.query({
           clientPseudoId: "client-psuedo-id-2",
         }),
       ).rejects.toThrowError("Client with that id was not found");
@@ -122,7 +122,7 @@ describe("intake chat router", () => {
         },
       });
 
-      const response = await testTRPCClient.intake.createOrGet.mutate({
+      const response = await testTRPCClient.intake.createOrGet.query({
         clientPseudoId: "client-psuedo-id-2",
       });
 
