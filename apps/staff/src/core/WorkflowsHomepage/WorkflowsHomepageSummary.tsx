@@ -159,8 +159,7 @@ export const WorkflowsHomepageSummary = observer(
     zeroGrantsTooltip,
   }: WorkflowsHomepageSummaryProps): React.ReactElement | null {
     const { isMobile } = useIsMobile(true);
-    // TODO(#7966): the number of avatars shown is not always correct
-    const defaultAvatarsShown = 4;
+    const defaultAvatarsShown = totalCount < 4 ? totalCount : 4;
     const sliceIndex =
       totalCount > defaultAvatarsShown
         ? defaultAvatarsShown - 1
