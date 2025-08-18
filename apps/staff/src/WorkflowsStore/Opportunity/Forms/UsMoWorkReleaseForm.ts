@@ -330,7 +330,12 @@ export class UsMoWorkReleaseForm extends FormBase<
         organizedCrimeInvolvement: metadata.gangAffiliation ?? "",
         escapeAbscond: formatList(
           formInformation.historyEscapesAbsconsions,
-          (e) => `${formatDate(e.eventDate)} - ${e.eventType}`,
+          (e) =>
+            `${formatDate(e.eventDate)} - ${
+              e.eventType === "WARRANT_ISSUED"
+                ? "Absconsion Warrant Issued"
+                : e.eventType
+            }`,
         ),
         summary: "",
         additionalInformationNotPreviouslyAddressed: `${person.displayName} is recommended for ${

@@ -40,7 +40,7 @@ const UsMoOffenseHistory: React.FC<ResidentProfileProps> = ({ resident }) => {
 
   return (
     <DetailsSection>
-      <DetailsHeading>Offense History</DetailsHeading>
+      <DetailsHeading>Offense History from ISEN</DetailsHeading>
       <SecureDetailsContent>
         {priorCycleSentences.length === 0 && "None Noted"}
         <DetailsList>

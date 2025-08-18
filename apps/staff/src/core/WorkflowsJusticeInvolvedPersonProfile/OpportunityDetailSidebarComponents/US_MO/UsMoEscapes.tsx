@@ -49,7 +49,11 @@ const UsMoEscapes: React.FC<OpportunityProfileProps> = ({ opportunity }) => {
           {historyEscapesAbsconsions.length === 0 && "None Noted"}
           {historyEscapesAbsconsions.map(({ eventType, eventDate }) => (
             <React.Fragment key={`${eventType}-${eventDate}`}>
-              <DetailsSubheading>{toTitleCase(eventType)}</DetailsSubheading>
+              <DetailsSubheading>
+                {eventType === "WARRANT_ISSUED"
+                  ? "Absconsion Warrant Issued"
+                  : toTitleCase(eventType)}
+              </DetailsSubheading>
               <DetailsContent>{formatWorkflowsDate(eventDate)}</DetailsContent>
             </React.Fragment>
           ))}

@@ -89,6 +89,7 @@ export type FeatureVariant =
   | "usTnInitialClassification"
   | "usTnTEPENotesForAll"
   | "usMoSearchByUnit"
+  | "usMoWorkRelease"
   // INSIGHTS
   | "insightsLeadershipPageAllDistricts"
   | "insightsOnboarding"
@@ -168,6 +169,7 @@ export const allFeatureVariants: FeatureVariantMapping = {
   insightsStaffUsage: {},
   usTnTEPENotesForAll: {},
   usMoSearchByUnit: {},
+  usMoWorkRelease: {},
 };
 export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMapping> =
   import.meta.env.VITE_DEPLOY_ENV === "production"
@@ -191,6 +193,8 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         usTnCompliantReporting2025Policy: {},
         usTnInitialClassification: {},
         usTnTEPENotesForAll: {},
+        usMoSearchByUnit: {},
+        usMoWorkRelease: {},
       }
     : {
         ...allFeatureVariants,
