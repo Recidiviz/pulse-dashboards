@@ -761,8 +761,11 @@ if (
   } while (retryDeploy);
 }
 
-// TODO(#9213): Add support for prod and demo reentry server deploys
-if (deployReentryServer && deployEnv === "staging") {
+// TODO(#9213): Add support for demo reentry server deploys
+if (
+  deployReentryServer &&
+  (deployEnv === "staging" || deployEnv === "production")
+) {
   console.log("Building and deploying the application...");
 
   // Start docker and configure docker to upload to container registry

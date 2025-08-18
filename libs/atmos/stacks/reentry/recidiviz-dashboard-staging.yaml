@@ -11,6 +11,7 @@ settings:
 # The variables set here are automatically provided to any components used in this stack.
 vars:
   project_id: "{{ .settings.context.project_id }}"
+  location: us-central1
 
 import:
   - ../@defaults/terraform-backend
@@ -25,7 +26,6 @@ components:
         repository_id: reentry
     apps/reentry:
       vars:
-        location: "{{ .settings.context.location }}"
         project_number: "{{ .settings.context.project_number }}"
         data_platform_project_number: "{{ .settings.context.data_platform_project_number }}"
         data_platform_project_id: "{{ .settings.context.data_platform_project_id }}"
