@@ -5,6 +5,13 @@
   "projectType": "application",
   "tags": ["scope:client"],
   "targets": {
+    "load-env-files": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../tools/load_env_files.sh --env env_reentry_frontend  --env_demo env_demo_reentry_frontend --env_staging env_staging_reentry_frontend --env_prod env_prod_reentry_frontend",
+        "cwd": "{projectRoot}"
+      }
+    },
     "lint-files": {
       "executor": "nx:run-commands",
       "options": {
@@ -27,11 +34,94 @@
       }
     },
     "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": ["load-env-files"],
+      "options": {
+        "outputPath": "dist/apps/@reentry/frontend",
+        "cwd": "{workspaceRoot}"
+      },
+      "configurations": {
+        "dev": {},
+        "staging": {},
+        "demo": {},
+        "production": {}
+      },
+      "defaultConfiguration": "dev"
+    },
+    "copy-correct-env": {
+      "dependsOn": ["build"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "next build",
+        "cwd": "{workspaceRoot}"
+      },
+      "configurations": {
+        "dev": {
+          "command": "cp apps/@reentry/frontend/.env dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env"
+        },
+        "staging": {
+          "command": "cp apps/@reentry/frontend/.env.staging dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
+        },
+        "demo": {
+          "command": "cp apps/@reentry/frontend/.env.demo dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
+        },
+        "production": {
+          "command": "cp apps/@reentry/frontend/.env.production dist/apps/@reentry/frontend/.next/standalone/apps/@reentry/frontend/.env.production"
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "container": {
+      "executor": "@nx-tools/nx-container:build",
+      "dependsOn": ["copy-correct-env"],
+      "cwd": "{projectRoot}",
+      "options": {
+        "engine": "docker",
+        "file": "{projectRoot}/Dockerfile.gcp",
+        "platforms": ["linux/amd64"]
+      },
+      "configurations": {
+        "dev": {
+          "push": false
+        },
+        "staging": {
+          "push": true,
+          "tags": [
+            "gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA",
+            "gcr.io/recidiviz-rnd-planner/frontend:latest"
+          ]
+        },
+        "cherry-pick": {
+          "push": true,
+          "tags": ["gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA"]
+        },
+        "demo": {
+          "push": true,
+          "tags": ["gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA"]
+        }
+      },
+      "defaultConfiguration": "dev"
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
         "cwd": "{projectRoot}"
-      }
+      },
+      "configurations": {
+        "staging": {
+          "command": "gcloud run deploy frontend-staging --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
+        },
+        "cherry-pick": {
+          "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com"
+        },
+        "prod": {
+          "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com"
+        },
+        "demo": {
+          "command": "gcloud run deploy frontend-demo --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated"
+        }
+      },
+      "defaultConfiguration": "demo"
     },
     "start": {
       "executor": "nx:run-commands",

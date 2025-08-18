@@ -76,6 +76,9 @@ addopts = "--cov=app"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "integration: marks tests as integration tests (deselected by default)"
+]
 
 [tool.coverage.run]
 omit = ["app/manage/*", "app/utils/messages.py"]

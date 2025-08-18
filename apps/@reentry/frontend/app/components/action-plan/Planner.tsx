@@ -38,6 +38,7 @@ interface PlannerProps {
   planId: string;
   refetchDetailPlan: () => void;
   handleSelectResource: (resourceName: string) => void;
+  showRegenerationNotify?: boolean;
 }
 
 const Planner = ({
@@ -48,11 +49,16 @@ const Planner = ({
   planId,
   refetchDetailPlan,
   handleSelectResource,
+  showRegenerationNotify,
 }: PlannerProps) => {
   const { getAccessToken } = useAuth();
   const [markDownPlan, setMarkdownPlan] = useState<string>(markDownText);
   const [update, setUpdate] = useState(false);
   const [internalMarkdown, setInternalMarkdown] = useState<string>("");
+  const [showLastPrompt, setShowLastPrompt] = useState(
+    showRegenerationNotify && !!planPrompt,
+  );
+
   const contentRef = useRef<HTMLDivElement | null>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
   const router = useRouter();
@@ -63,6 +69,11 @@ const Planner = ({
 
   const { mutateAsync: generatePlanMutation /*, isError: generatePlanError*/ } =
     $api.useMutation("post", "/plans/{id}/edit");
+
+  const { mutateAsync: setNotifyMutation } = $api.useMutation(
+    "post",
+    "/plans/{id}/set-notify",
+  );
 
   const postprocessMarkdown = (markdown) => {
     // Replace ReadOnlyLink with a markdown link [example.md](example.com)
@@ -148,6 +159,35 @@ const Planner = ({
       .catch((err) => console.error(err));
   };
 
+  useEffect(() => {
+    setShowLastPrompt(showRegenerationNotify && !!planPrompt);
+  }, [showRegenerationNotify, planPrompt]);
+
+  const handleDismissPrompt = async () => {
+    try {
+      await setNotifyMutation({
+        params: {
+          path: {
+            id: planId as string,
+          },
+        },
+        body: {
+          notify: false,
+        },
+        headers: {
+          Authorization: `Bearer ${getAccessToken()}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      refetchDetailPlan();
+      setShowLastPrompt(false);
+    } catch (error) {
+      console.error("Failed to dismiss notification:", error);
+      showErrorToast("Failed to dismiss notification");
+    }
+  };
+
   return (
     <div className="w-[75%] grow shrink basis-0 self-stretch px-14 py-8 bg-white flex-col justify-start items-center gap-2 inline-flex overflow-y-auto actionPlanSide">
       <div className="mx-auto max-w-[800px] h-full flex-col justify-start items-center gap-8 flex">
@@ -174,7 +214,12 @@ const Planner = ({
               </>
             )}
           </div>
-          <LastPrompt planPrompt={planPrompt} />
+          {showLastPrompt && (
+            <LastPrompt
+              planPrompt={planPrompt}
+              onDismiss={handleDismissPrompt}
+            />
+          )}
           <div
             ref={contentRef}
             id={"contentToDownload"}

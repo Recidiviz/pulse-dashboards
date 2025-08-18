@@ -76,7 +76,10 @@ async def test_list_clients_with_intake(
     data = response.json()
 
     # Verify content
-    assert data["total"] == 2  # We expect both mock clients from conftest.py
+
+    assert (
+        data["total"] == 1
+    )  # should match the number of clients with same state_code as the caseworker
     assert data["page"] == 1
     # Find the client with our intake
     client_item = next(

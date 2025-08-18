@@ -140,30 +140,26 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({ clientId }) => {
   const shouldShowNewSessionButton = !sessions || sessions.length === 0;
 
   return (
-    <div className="w-full py-6 px-16">
+    <div className="w-full h-full py-6 px-16 flex align-middle items-center">
       {shouldShowNewSessionButton && (
         <PrimaryButton
           buttonText={
             isCreating ? "Creating..." : "Begin live intake Assessment"
           }
-          className="inline-flex w-full items-right min-w-2xl max-w-2xl px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case mb-6"
+          className="px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-sm m-auto"
           onClick={handleCreateSession}
           disabled={isCreating}
         />
       )}
 
-      <div className="space-y-4">
-        {/*Only one session available for recording at a time. so taking the earliest session.*/}
-        {processedSessions && processedSessions.length > 0 && (
-          <div className="space-y-3">
-            <PrimaryButton
-              buttonText={"Go to the assessment"}
-              className="inline-flex w-full items-right px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case mb-6"
-              onClick={() => handleSessionClick(processedSessions[0].id)}
-            />
-          </div>
-        )}
-      </div>
+      {/*Only one session available for recording at a time. so taking the earliest session.*/}
+      {processedSessions && processedSessions.length > 0 && (
+        <PrimaryButton
+          buttonText={"Go to the assessment"}
+          className="px-5 py-2 text-white text-sm font-medium rounded-md bg-[#006B66] hover:bg-[#005c59] normal-case w-full max-w-sm m-auto"
+          onClick={() => handleSessionClick(processedSessions[0].id)}
+        />
+      )}
     </div>
   );
 };

@@ -208,6 +208,28 @@ const intakeReducer = (
       };
     }
     case "receiveAIMessage": {
+      const [secondToLast, last] = state.messages.slice(-2);
+      if (last && last.id === action.content.id) {
+        return {
+          ...state,
+          waitingForAIInput: false,
+          connectionStatus: "connected",
+        };
+      }
+
+      const hasLetsContinuePair =
+        secondToLast?.from_role === "caseworker" &&
+        secondToLast.content.includes("Let's continue our conversation") &&
+        last?.from_role === "caseworker";
+
+      if (hasLetsContinuePair) {
+        return {
+          ...state,
+          waitingForAIInput: false,
+          connectionStatus: "connected",
+        };
+      }
+
       return {
         ...state,
         messages: [...state.messages, action.content],

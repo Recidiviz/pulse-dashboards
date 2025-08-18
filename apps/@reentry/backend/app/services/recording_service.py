@@ -254,18 +254,8 @@ class RecordingService:
         except Exception as e:
             error_msg = str(e)
             if "404" in error_msg or "not found" in error_msg.lower():
-                try:
-                    # Create bucket if it doesn't exist
-                    await self.storage.create_bucket(self.bucket_name)
-                    logger.info(f"Created new GCS bucket: {self.bucket_name}")
-                except Exception as create_error:
-                    logger.error(
-                        f"Failed to create GCS bucket {self.bucket_name}: {create_error}"
-                    )
-                    logger.info(
-                        "Make sure you have the necessary permissions and the bucket name is globally unique"
-                    )
-                    raise
+                logger.error(f"Bucket doesn't exist {self.bucket_name}")
+                raise
             else:
                 # Bucket exists but might have other issues (permissions, etc)
                 logger.warning(f"Bucket check returned error but continuing: {e}")
@@ -605,7 +595,7 @@ class RecordingService:
 
         if not group_paths:
             logger.warning(f"No groups were created for session {session_id}")
-            return ""
+            raise ValueError("Failed or empty audio file")
 
         logger.info(f"Successfully created {len(group_paths)} groups: {group_paths}")
 

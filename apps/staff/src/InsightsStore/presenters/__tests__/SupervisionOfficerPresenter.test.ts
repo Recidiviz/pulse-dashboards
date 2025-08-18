@@ -16,6 +16,7 @@
 // =============================================================================
 
 import { configure, flowResult } from "mobx";
+import { expect } from "vitest";
 
 import {
   ClientRecord,

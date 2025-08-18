@@ -6,8 +6,8 @@ steps:
       - "-t"
       - "gcr.io/$PROJECT_ID/backend:staging"
       - "-f"
-      - "./backend/deploy/Dockerfile.gcp"
-      - "./backend"
+      - "deploy/Dockerfile.gcp"
+      - "."
 
   # Push the container image
   - name: "gcr.io/cloud-builders/docker"

@@ -1,0 +1,46 @@
+{
+  "metadata": {
+    "totalDuration": "311.3s",
+    "totalTurns": 2,
+    "speakers": {
+      "caseworker": {
+        "turns": 1,
+        "duration": "16.1s"
+      },
+      "client": {
+        "turns": 1,
+        "duration": "3.5s"
+      }
+    },
+    "averageConfidence": 1.0,
+    "language": "en_us",
+    "createdAt": "2025-08-06T15:43:26.135084+00:00",
+    "diarizationService": "deepgram"
+  },
+  "conversation": [
+    {
+      "id": "turn_1",
+      "role": "caseworker",
+      "content": "Good morning. I'm here to conduct the ORAS community supervision assessment with you today. This will help us understand your situation better and develop an appropriate supervision plan. I need you to be honest with me throughout this interview. Do you understand?",
+      "startTime": "0.000s",
+      "endTime": "16.085s",
+      "startTimeMs": 0,
+      "endTimeMs": 16085,
+      "duration": "16.1s",
+      "speakerTag": 0,
+      "wordCount": 42
+    },
+    {
+      "id": "turn_2",
+      "role": "client",
+      "content": "Yes. I understand. I'll do my best to answer honestly.",
+      "startTime": "16.805s",
+      "endTime": "20.325s",
+      "startTimeMs": 16805,
+      "endTimeMs": 20325,
+      "duration": "3.5s",
+      "speakerTag": 1,
+      "wordCount": 10
+    }
+  ]
+}

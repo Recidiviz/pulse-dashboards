@@ -27,8 +27,8 @@ class Settings(BaseSettings):
     )
     LANGCHAIN_API_KEY: str | None = None
     LANGCHAIN_TRACING_V2: bool = True
-    LANGCHAIN_ENDPOINT: str = "https://api.smith.langchain.com"
-    LANGCHAIN_PROJECT: str = "dev-recidiviz"
+    LANGCHAIN_ENDPOINT: str | None = "https://api.smith.langchain.com"
+    LANGCHAIN_PROJECT: str | None = "dev-recidiviz"
     ANTHROPIC_API_KEY: str | None = None
     ALLOWED_ORIGINS: str = "http://localhost:3000"
     DT_MODEL_PROVIDER: str = "openai"
@@ -109,14 +109,22 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-if settings.LANGCHAIN_API_KEY is None:
+if (
+    settings.LANGCHAIN_API_KEY is None
+    or settings.LANGCHAIN_API_KEY is None
+    or settings.LANGCHAIN_ENDPOINT is None
+    or settings.LANGCHAIN_PROJECT is None
+    or not settings.LANGCHAIN_TRACING_V2
+):
     langsmith_client = tracer = None
 else:
     langsmith_client = Client(
         api_key=settings.LANGCHAIN_API_KEY,
         api_url=settings.LANGCHAIN_ENDPOINT,
     )
-    tracer = LangChainTracer(client=langsmith_client, project_name="dev-recidiviz")
+    tracer = LangChainTracer(
+        client=langsmith_client, project_name=settings.LANGCHAIN_PROJECT
+    )
 
 
 if settings.OPENAI_API_KEY is None and (
@@ -166,3 +174,10 @@ elif settings.GEN_MODEL_PROVIDER == "anthropic":
     gen_model = ChatAnthropic(
         anthropic_api_key=settings.ANTHROPIC_API_KEY, model_name=model_name
     )
+
+if settings.DIARIZATION_SERVICE == "deepgram" and settings.DEEPGRAM_API_KEY is None:
+    raise ValueError("missing deepgram api key")
+elif (
+    settings.DIARIZATION_SERVICE != "gcp" and settings.DIARIZATION_SERVICE != "deepgram"
+):
+    raise ValueError("unknown diarization service")

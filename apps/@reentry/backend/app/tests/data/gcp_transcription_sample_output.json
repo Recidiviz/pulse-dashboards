@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "totalDuration": "92.1s",
+    "totalTurns": 1,
+    "speakers": {
+      "client": {
+        "turns": 1,
+        "duration": "91.2s"
+      }
+    },
+    "averageConfidence": 0.0,
+    "language": "EN-US",
+    "createdAt": "2025-08-06T15:43:30.782038+00:00",
+    "diarizationService": "gcp"
+  },
+  "conversation": [
+    {
+      "id": "turn_1",
+      "role": "client",
+      "content": "Good morning. I'm here to conduct the 0ras community supervision assessment with you today. This will help us understand your situation better, and develop, an appropriate supervision plan. I need you to be honest with me throughout this interview. Do you understand? Yes, I understand. I'll do my best to answer honestly. Let's start with some basic information. Can you please State your full name for the record? My name is Robert Johnson. Now, I need to ask you about your criminal history, tell me about the first time you were ever arrested. I was 23 years old. It was for shoplifting. Let's talk about your adult criminal record. How many times have you been convicted of a felony? None. I've only had misdemeanors. I'd now like to talk with you about your education employment and financial situation. What is the highest grade you completed? I graduated high school, got my diploma. Were you ever suspended or expelled from school? No, I was a pretty good student. Maybe got detention once or twice but nothing serious Where you working at the time of your arrest? Yes, I was working full-time at a warehouse. Are you currently employed? Yes, I'm still at the same job. My boss has been understanding about my situation. I now want to talk with you about your family.",
+      "startTime": "0.900s",
+      "endTime": "92.100s",
+      "startTimeMs": 900,
+      "endTimeMs": 92100,
+      "duration": "91.2s",
+      "speakerTag": 1,
+      "wordCount": 222
+    }
+  ]
+}

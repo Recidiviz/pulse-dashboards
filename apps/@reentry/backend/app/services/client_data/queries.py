@@ -377,7 +377,7 @@ def get_clients_by_external_staff_id(external_staff_id: str) -> list[ClientDataR
       `{settings.BQ_PROJECT_ID}.{settings.BQ_DATASET}.{settings.BQ_CLIENT_TABLE}` client
     ON
       client_external_id = client.external_id
-      AND officer.state_code = client.state_code
+      {'AND officer.state_code = client.state_code' if settings.ENV_NAME == "staging" or settings.ENV_NAME == "prod" else ''}
     WHERE
       officer.external_id = @external_staff_id
     """
@@ -395,20 +395,21 @@ def get_clients_by_external_staff_id(external_staff_id: str) -> list[ClientDataR
         clients = []
         for row in results:
             try:
-                # Handle full_name with proper capitalization
-                full_name_data = row.full_name
-                capitalized_data = format_name_capitalization(full_name_data)
-                full_name = FullNameModel(**capitalized_data)
+                if row.full_name and row.pseudonymized_id:
+                    # Handle full_name with proper capitalization
+                    full_name_data = row.full_name
+                    capitalized_data = format_name_capitalization(full_name_data)
+                    full_name = FullNameModel(**capitalized_data)
 
-                clients.append(
-                    ClientDataRecord(
-                        external_client_id=row.external_id,
-                        pseudonymized_client_id=row.pseudonymized_id,
-                        full_name=full_name,
-                        birthdate=row.birthdate,
-                        state_code=row.state_code,
+                    clients.append(
+                        ClientDataRecord(
+                            external_client_id=row.external_id,
+                            pseudonymized_client_id=row.pseudonymized_id,
+                            full_name=full_name,
+                            birthdate=row.birthdate,
+                            state_code=row.state_code,
+                        )
                     )
-                )
             except Exception as e:
                 logger.error(f"Error processing client data in staff query: {str(e)}")
                 continue

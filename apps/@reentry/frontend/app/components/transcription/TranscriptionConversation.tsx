@@ -112,7 +112,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
   return (
     <div className="self-stretch flex-1 flex flex-col justify-start items-center gap-5 p-6">
       {/* Header with metadata */}
-      <div className="w-full max-w-[800px] flex flex-col justify-start items-center gap-4">
+      <div className="w-full max-w-[70%] flex flex-col justify-start items-center gap-4">
         <div className="justify-start text-[#002321] text-lg font-bold font-['Public_Sans'] leading-snug">
           Interview Transcription
         </div>
@@ -129,7 +129,7 @@ const TranscriptionConversation: React.FC<TranscriptionViewProps> = ({
       </div>
 
       {/* Conversation turns */}
-      <div className="max-h-[80vh] overflow-y-auto space-y-4">
+      <div className="max-h-[45vh] overflow-y-auto space-y-4">
         {transcription.conversation.map((turn, index) => (
           <div
             key={`${turn.id}-${index}`}

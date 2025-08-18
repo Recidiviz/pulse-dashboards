@@ -17,6 +17,7 @@
 
 import { writeBatch } from "firebase/firestore";
 import { configure } from "mobx";
+import { expect } from "vitest";
 
 import { RootStore } from "../../../../RootStore";
 import AnalyticsStore from "../../../../RootStore/AnalyticsStore";

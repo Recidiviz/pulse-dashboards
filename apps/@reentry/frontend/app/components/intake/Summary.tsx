@@ -109,23 +109,32 @@ const ClientSummaryCard: React.FC<ClientSummaryCardProps> = ({
         <div className="border-t border-gray-200">
           <Grid container>
             <Grid item xs={12} md={5} className="border-r border-gray-200">
-              <div className="p-6 space-y-4 w-80">
+              <div className="p-6 space-y-4 max-w-sm m-auto">
                 {[
                   [
                     "Full name",
                     `${clientRecord?.full_name?.given_names} ${clientRecord.full_name.surname}`,
+                    "full_name",
                   ],
-                  ["Birth date", formatDateMMDDYYYY(clientRecord.birthdate)],
-                  ["Address", formatAddress(intake?.address)],
-                  ["State", getStateName(clientRecord.state_code)],
-                ].map(([label, value], index) => (
-                  <div className="flex justify-between" key={index}>
-                    <Typography className="text-[14px] font-medium leading-[120%] tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
-                      {label}
-                    </Typography>
-                    <Typography className="text-right text-[14px] font-medium leading-[120%] tracking-[-0.01em] font-['Public_Sans'] text-[#2B5469D9]">
-                      {value || "—"}
-                    </Typography>
+                  [
+                    "Birth date",
+                    formatDateMMDDYYYY(clientRecord.birthdate),
+                    "birthdate",
+                  ],
+                  ["Address", formatAddress(intake?.address), "address"],
+                  ["State", getStateName(clientRecord.state_code), "state"],
+                ].map(([label, value, key]) => (
+                  <div className="flex justify-between" key={key}>
+                    <div>
+                      <Typography className="text-[14px] font-medium leading-4 tracking-[-0.01em] text-[#012322] font-['Public_Sans']">
+                        {label}
+                      </Typography>
+                    </div>
+                    <div className="ml-2">
+                      <Typography className="text-right text-[14px] font-medium leading-4 tracking-[-0.01em] font-['Public_Sans'] text-[#2B5469D9]">
+                        {value || "—"}
+                      </Typography>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -223,9 +232,7 @@ const ClientSummaryCard: React.FC<ClientSummaryCardProps> = ({
             )}
             {clientRecord.state_code === "US_AZ" && (
               <Grid item xs={12} md={7}>
-                <div className="p-6">
-                  <AudioRecordings clientId={clientRecord.external_client_id} />
-                </div>
+                <AudioRecordings clientId={clientRecord.external_client_id} />
               </Grid>
             )}
           </Grid>

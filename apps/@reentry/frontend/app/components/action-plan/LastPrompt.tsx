@@ -15,7 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-const LastPrompt = ({ planPrompt }) => {
+import React from "react";
+
+const LastPrompt = ({ planPrompt, onDismiss }) => {
 	return (
 		planPrompt && (
 			<div className="relative p-2 bg-gray-50 border border-gray-300 rounded-lg shadow-md transition hover:shadow-lg w-full">
@@ -25,6 +27,16 @@ const LastPrompt = ({ planPrompt }) => {
 					</div>
 					<span className="ml-4">Your last prompt</span>
 				</div>
+
+				<button
+					type="button"
+					onClick={onDismiss}
+					className="absolute -top-2 -right-2 bg-gray-400 hover:bg-gray-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition-colors"
+					aria-label="Dismiss notification"
+				>
+					×
+				</button>
+
 				<p className="text-[#2b5469]/70 text-sm mx-4 my-4 font-semibold">
 					{planPrompt}
 				</p>

@@ -189,6 +189,9 @@ const deployServicesChoices = [
   { name: "Case notes server", checked: true },
   { name: "Opportunities frontend", checked: true },
   { name: "Opportunities backend", checked: true },
+  { name: "Reentry backend (v0)", checked: false },
+  { name: "Reentry server (v1)", checked: false },
+  { name: "Reentry frontend", checked: false },
 ];
 
 if (deployEnv === "demo") {
@@ -231,6 +234,14 @@ const deployOppsBackend = deployServicesPrompt.deployServices.includes(
 const deployOppsTestData = deployServicesPrompt.deployServices.includes(
   "Opportunities test data",
 );
+const deployReentryBackend = deployServicesPrompt.deployServices.includes(
+  "Reentry backend (v0)",
+);
+const deployReentryServer = deployServicesPrompt.deployServices.includes(
+  "Reentry server (v1)",
+);
+const deployReentryFrontend =
+  deployServicesPrompt.deployServices.includes("Reentry frontend");
 
 console.log("Running nx reset...");
 await $`nx reset`.pipe(process.stdout);
@@ -707,6 +718,196 @@ if (deployEnv === "demo") {
       }
     } while (retryFixtures);
   }
+}
+
+if (
+  deployReentryBackend &&
+  (deployEnv === "staging" ||
+    deployEnv === "production" ||
+    deployEnv === "demo")
+) {
+  console.log("Building and deploying the application...");
+
+  let retryDeploy = false;
+  do {
+    // Deploy the app
+    console.log("Deploying reentry backend...");
+    try {
+      if (deployEnv === "staging") {
+        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/staging/cloudbuild.yaml `.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "production" && isCpDeploy) {
+        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/production/cloudbuild.yaml `.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "demo") {
+        await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/demo/cloudbuild.yaml `.pipe(
+          process.stdout,
+        );
+      }
+
+      retryDeploy = false;
+      successfullyDeployed.push("Reentry Backend (v0)");
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `Reentry backend (v0) deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
+}
+
+// TODO(#9213): Add support for prod and demo reentry server deploys
+if (deployReentryServer && deployEnv === "staging") {
+  console.log("Building and deploying the application...");
+
+  // Start docker and configure docker to upload to container registry
+  // Only needed for staging deploys
+  if (
+    deployEnv === "staging" ||
+    (deployEnv === "production" && isCpDeploy) ||
+    deployEnv === "demo"
+  ) {
+    try {
+      await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
+        process.stdout,
+      );
+    } catch (e) {
+      console.error("Failed to configure docker for gcloud", e);
+    }
+  }
+
+  let retryDeploy = false;
+  do {
+    // Deploy the app
+    console.log("Deploying reentry backend services...");
+    try {
+      // We only need to build and push the docker containers if we are
+      // 1. deploying to staging
+      // 2. deploying a cherry-pick
+      // 3. deploying to demo
+      // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+
+      if (deployEnv === "staging") {
+        await $`COMMIT_SHA=${currentRevision} nx container @reentry/server --configuration ${deployEnv}`.pipe(
+          process.stdout,
+        );
+
+        await $`COMMIT_SHA=${currentRevision} nx container @reentry/import --configuration ${deployEnv}`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "production" && isCpDeploy) {
+        await $`COMMIT_SHA=${currentRevision} nx container @reentry/server --configuration cherry-pick`.pipe(
+          process.stdout,
+        );
+
+        await $`COMMIT_SHA=${currentRevision} nx container @reentry/import --configuration cherry-pick`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "demo") {
+        await $`COMMIT_SHA=${currentRevision} nx container @reentry/server --configuration demo`.pipe(
+          process.stdout,
+        );
+
+        // There is no import job for demo, instead we have a cloud run job that
+        // seeds the demo database
+        await $`COMMIT_SHA=${currentRevision} nx container @reentry/seed-demo --configuration demo`.pipe(
+          process.stdout,
+        );
+      }
+
+      // Deploy any changes to the artifact registry if we're on staging
+      if (deployEnv === "staging") {
+        await $`yarn atmos:apply artifact_registry -s recidiviz-dashboard-${deployEnv}--reentry -- -auto-approve`.pipe(
+          process.stdout,
+        );
+      }
+
+      // Deploy the import, migration, and server infrastructure changes for the applicable environment
+      let stack;
+      if (deployEnv === "staging") {
+        stack = `recidiviz-dashboard-${deployEnv}--reentry`;
+      } else if (deployEnv === "production") {
+        stack = `recidiviz-dashboard-${deployEnv}--reentry`;
+      } else if (deployEnv === "demo") {
+        stack = "recidiviz-dashboard-staging--reentry-demo";
+      }
+
+      await $`yarn atmos:apply apps/reentry -s ${stack} -- -auto-approve \
+          -var server_container_version=${currentRevision} \
+          -var migrate_db_container_version=${currentRevision} \
+          -var import_container_version=${currentRevision}`.pipe(
+        process.stdout,
+      );
+
+      if (deployEnv === "demo") {
+        // If we're in demo mode, deploy the seed demo job
+        await $`yarn atmos:apply apps/reentry-seed-demo -s ${stack} -- -auto-approve -var container_version=${currentRevision}`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "production") {
+        await $`yarn atmos:apply postgres-bq-data-transfer -s recidiviz-dashboard-production--reentry -- -auto-approve`.pipe(
+          process.stdout,
+        );
+      }
+
+      retryDeploy = false;
+      successfullyDeployed.push("Reentry server (v1)");
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `Reentry server (v1) deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
+}
+
+if (
+  deployReentryFrontend &&
+  (deployEnv === "staging" ||
+    deployEnv === "production" ||
+    deployEnv === "demo")
+) {
+  console.log("Building and deploying the application...");
+
+  let retryDeploy = false;
+  do {
+    // Deploy the app
+    console.log("Deploying reentry frontend...");
+    try {
+      if (deployEnv === "staging") {
+        await $`gcloud builds submit apps/@reentry/frontend --project recidiviz-rnd-planner --config apps/@reentry/frontend/deploy/staging/cloudbuild.yaml`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "production" && isCpDeploy) {
+        await $`gcloud builds submit apps/@reentry/frontend --project recidiviz-rnd-planner --config apps/@reentry/frontend/deploy/production/cloudbuild.yaml`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "demo") {
+        await $`gcloud builds submit apps/@reentry/frontend --project recidiviz-rnd-planner --config apps/@reentry/frontend/deploy/demo/cloudbuild.yaml`.pipe(
+          process.stdout,
+        );
+      }
+
+      retryDeploy = false;
+      successfullyDeployed.push("Reentry Frontend");
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `Reentry frontend deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
 }
 
 // If one deploy succeeded but the other deploy failed, we still want to publish release notes for

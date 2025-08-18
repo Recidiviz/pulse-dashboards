@@ -150,6 +150,7 @@ async def get_paginated_client_list(
         return empty_paginated_response(page, page_size)
 
     from app.services.client_data.queries import (
+        get_caseworker_by_pseudonymized_id,
         get_clients_by_pseudonymized_staff_id,
     )
 
@@ -158,6 +159,17 @@ async def get_paginated_client_list(
         return empty_paginated_response(page, page_size)
 
     bq_clients = apply_search_filter(bq_clients, search) if search else bq_clients
+    # TODO: This may be a temporary situation until the duplicate external ID issue is resolved
+    caseworker = get_caseworker_by_pseudonymized_id(pseudonymized_staff_id)
+    if caseworker:
+        bq_clients = [
+            client
+            for client in bq_clients
+            if client.state_code == caseworker.state_code
+        ]
+    else:
+        return empty_paginated_response(page, page_size)
+
     bq_clients_by_id = {c.external_client_id: c for c in bq_clients}
     bq_client_ids = list(bq_clients_by_id.keys())
 

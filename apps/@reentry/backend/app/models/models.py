@@ -170,6 +170,9 @@ class PlanGeneration(BaseModel, table=True):
     # if set, it would prefer a generation than edit/regeneration
     force_generation: Optional[bool] = None
 
+    regeneration_notify: bool = Field(
+        default=False, sa_column_kwargs={"server_default": "false"}
+    )
     #
     # Execution status and output
     #
@@ -195,6 +198,10 @@ class PlanGeneration(BaseModel, table=True):
     @property
     def is_execution_finished(self) -> bool:
         return self.status in ("completed", "failed")
+
+    def set_regeneration_notify(self, state: bool) -> bool:
+        self.regeneration_notify = state
+        return self.regeneration_notify
 
     async def schedule_execution(self, session) -> Execution:
         """

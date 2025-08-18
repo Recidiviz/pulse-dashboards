@@ -15,11 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { X } from "lucide-react";
 import { useState } from "react";
-import Modal from "react-modal";
 
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
+import BaseModal from "~@reentry/frontend/components/recording/modals/BaseModal";
 
 interface LiveAssessmentModalProps {
   isOpen: boolean;
@@ -33,91 +32,64 @@ export default function LiveAssessmentModal({
   onConfirm,
 }: LiveAssessmentModalProps) {
   const [fullName, setFullName] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (fullName.trim()) {
+      onConfirm();
+      setFullName("");
+    }
+  };
+
   return (
-    <Modal
+    <BaseModal
       isOpen={isOpen}
-      onRequestClose={onClose}
-      className="outline-none"
-      overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-center justify-center"
+      title="Start Live Intake Assessment"
+      onClose={onClose}
     >
-      <div className="w-[410px] bg-white rounded-xl shadow-[0px_8px_56px_0px_rgba(43,84,105,0.12)] shadow-[0px_4px_8px_0px_rgba(43,84,105,0.06)] shadow-[0px_0px_1px_0px_rgba(43,84,105,0.10)] inline-flex flex-col justify-start items-end overflow-hidden">
-        {/* Header */}
-        <div className="self-stretch px-4 py-3 border-b border-[#2b5469]/20 inline-flex justify-between items-center">
-          <div className="justify-start text-[#002321] text-base font-medium font-['Public_Sans'] leading-tight">
-            Start Live Intake Assessment
-          </div>
+      <div className="text-[#2a5469]/90 text-sm font-medium font-['Public_Sans'] space-y-4">
+        <p>
+          Before proceeding, please inform all parties present that this session
+          is being recorded and transcribed by artificial intelligence to create
+          a record of the discussion and help facilitate case management.
+        </p>
+        <p>
+          Enter your full name to confirm all parties were provided the above
+          notice and have consented to the recording:
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-2">
+        <label
+          htmlFor="fullName"
+          className="text-[#004d47] text-[13px] font-medium font-['Public_Sans']"
+        >
+          Enter your full name to confirm consent
+        </label>
+        <input
+          id="fullName"
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="John Doe"
+          required
+          className="px-4 py-3 rounded-lg outline outline-1 outline-[#345262]/30 text-[#2a5469]/90 text-[13px] placeholder:text-[#2a5469]/50 font-medium font-['Public_Sans']"
+        />
+        <div className="flex gap-3 mt-3">
+          <PrimaryButton buttonText="Cancel" onClick={onClose} />
           <button
-            className="p-1 hover:bg-gray-100 rounded"
-            onClick={onClose}
-            type="button"
-            aria-label="Close modal"
+            type="submit"
+            disabled={!fullName.trim()}
+            className={`flex-1 h-8 px-4 py-2 rounded-[32px] text-[13px] font-medium leading-none transition-colors duration-300 ${
+              fullName.trim()
+                ? "bg-[#006c67] text-white hover:bg-[#005752]"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
           >
-            <X size={14} className="text-[#004D48]" />
+            Confirm & Start Recording
           </button>
         </div>
-
-        {/* Body */}
-        <div className="self-stretch p-4 flex flex-col justify-start items-start gap-5">
-          <div className="self-stretch justify-start text-[#2a5469]/90 text-sm font-medium font-['Public_Sans'] leading-[16.80px] space-y-4">
-            <p>
-              Before proceeding, please inform all parties present that this
-              session is being recorded and transcribed by artificial
-              intelligence to create a record of the discussion and help
-              facilitate case management.
-            </p>
-            <p>
-              Enter your full name to confirm all parties were provided the
-              above notice and have consented to the recording:
-            </p>
-          </div>
-
-          <form
-            id="consent-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (fullName.trim().length > 0) {
-                onConfirm();
-                setFullName("");
-              }
-            }}
-            className="self-stretch flex flex-col justify-start items-start gap-2"
-          >
-            <label
-              htmlFor="fullName"
-              className="self-stretch justify-start text-[#004d47] text-[13px] font-medium font-['Public_Sans'] leading-none"
-            >
-              Enter your full name to confirm consent
-            </label>
-            <input
-              type="text"
-              id="fullName"
-              name="fullName"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-              placeholder="John Doe"
-              className="self-stretch px-4 py-3 rounded-lg outline outline-1 outline-offset-[-1px] outline-[#345262]/30 text-[#2a5469]/90 text-[13px] font-medium font-['Public_Sans'] leading-none placeholder:text-[#2a5469]/50"
-            />
-          </form>
-
-          {/* Footer buttons */}
-          <div className="self-stretch inline-flex justify-start items-start gap-3">
-            <PrimaryButton buttonText="Cancel" onClick={onClose} />
-            <button
-              type="submit"
-              form="consent-form"
-              disabled={fullName.trim().length === 0}
-              className={`flex-1 h-8 px-4 py-2 rounded-[32px] border border-[#345262]/20 justify-center items-center gap-2 inline-flex transition-colors duration-300 text-[13px] font-medium leading-none ${
-                fullName.trim().length > 0
-                  ? "bg-[#006c67] text-white hover:bg-[#005752]"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              Confirm & Start Recording
-            </button>
-          </div>
-        </div>
-      </div>
-    </Modal>
+      </form>
+    </BaseModal>
   );
 }

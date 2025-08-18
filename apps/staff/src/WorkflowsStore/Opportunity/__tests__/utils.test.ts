@@ -16,6 +16,7 @@
 // =============================================================================
 
 import tk from "timekeeper";
+import { expect } from "vitest";
 
 import { OpportunityType } from "~datatypes";
 

@@ -38,7 +38,7 @@
     "checkpointer-setup": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "DATABASE_URL=$INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING DATABASE_SCHEMA=$INTAKE_LANGGRAPH_CHECKPOINTER_SCHEMA tsx checkpointer-setup/index.ts",
+        "command": "DATABASE_URL=$INTAKE_LANGGRAPH_CHECKPOINTER_CONNECTION_STRING DATABASE_SCHEMA=$INTAKE_LANGGRAPH_CHECKPOINTER_SCHEMA tsx src/checkpointer-setup/index.ts",
         "cwd": "{projectRoot}"
       }
     },
@@ -85,7 +85,7 @@
         "main": "{projectRoot}/src/main.ts",
         "additionalEntryPoints": [
           "{projectRoot}/src/sentry/index.ts",
-          "{projectRoot}/checkpointer-setup/index.ts"
+          "{projectRoot}/src/checkpointer-setup/index.ts"
         ],
         "sourcemap": true,
         "tsConfig": "{projectRoot}/tsconfig.app.json",

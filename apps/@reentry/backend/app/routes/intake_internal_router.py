@@ -1,8 +1,6 @@
-import json
 import logging
 from datetime import date
-from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
@@ -10,15 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.intake.auth_client_user import validate_non_pseudo_id, validate_pseudo_dob
 from app.core.db import get_session
-from app.crud.intake import create_intake, get_intake_by_client_id
-from app.models.intake import ClientAddress, IntakeType
-from app.utils.action_plan_types import TranscriptionMessage
-from app.utils.intake.constants import IntakeStatus
-from app.utils.transcription.post_processing import (
-    DeepgramTranscriptionInput,
-    TranscriptionOutput,
-    TranscriptionProcessor,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -138,109 +127,4 @@ async def verify_non_pseudonymized_id(
         raise
     except Exception as e:
         logger.error(f"Error verifying non-pseudonymized ID: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# todo: provisional endpoint to generate action plan from transcription
-@router.post(
-    "/{client_id}/transcription-generate-action-plan",
-    summary="Submit json transcription to generate action plan",
-    description="Submit a JSON transcription to generate an action plan for the client's intake.",
-    tags=["Intake assessment"],
-)
-async def transcription_generate_action_plan(
-    request: Request,
-    messages: List[TranscriptionMessage],
-    client_id: str,
-    session: AsyncSession = Depends(get_session),
-):
-    print("Transcription generate action plan called", len(messages))
-
-    # getting intake
-    intake = await get_intake_by_client_id(session, client_id)
-
-    if not intake:
-        intake = await create_intake(session, client_id, IntakeType.TRANSCRIPTION)
-
-    if intake.intake_type != IntakeType.TRANSCRIPTION:
-        raise HTTPException(
-            status_code=400,
-            detail="Intake type must be TRANSCRIPTION for this endpoint",
-        )
-    # save the intake messages to the database into the intake table
-    intake.transcription_messages = [msg.dict() for msg in messages]
-    # using a fake address
-    new_address = ClientAddress(
-        intake_id=intake.id,
-        city="New york",
-        state="NY",
-    )
-    session.add(new_address)
-    session.add(intake)
-
-    await intake.update_status(session, IntakeStatus.COMPLETED)
-    await session.commit()
-    await session.refresh(intake)
-
-    return {
-        "intake_completed": intake.status == IntakeStatus.COMPLETED,
-    }
-
-
-@router.get(
-    "/transcription-processor",
-    summary="transcription-processor",
-    description="transcription-processor",
-    tags=["Intake assessment"],
-)
-async def transcription_processor(
-    request: Request, session: AsyncSession = Depends(get_session)
-):
-    # TODO: Remove this endpoint once the transcription processor is fully integrated, this is just for testing purposes
-    async def _load_transcription():
-        base_dir = Path(__file__).parent
-        input_file = base_dir / "../utils/transcription/transcription_input.json"
-        if not input_file.exists():
-            raise FileNotFoundError(f"Input file not found: {input_file}")
-
-        try:
-            with open(input_file, "r", encoding="utf-8") as f:
-                raw_data = json.load(f)
-            transcription = DeepgramTranscriptionInput(**raw_data)
-            return transcription
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON format in {input_file}: {e}")
-        except Exception as e:
-            raise ValueError(f"Invalid transcription data: {e}")
-
-    async def _save_output(output: TranscriptionOutput) -> None:
-        try:
-            base_dir = Path(__file__).parent
-            output_file = base_dir / "../utils/transcription/transcription_output.json"
-
-            # Ensure output directory exists
-            output_file.parent.mkdir(parents=True, exist_ok=True)
-
-            with open(output_file, "w", encoding="utf-8") as f:
-                json.dump(output.dict(), f, indent=2, ensure_ascii=False)
-
-            logger.debug(f"Output JSON saved: {output_file}")
-
-        except IOError as error:
-            raise (IOError(f"Failed to save output file: {error}"))
-
-    try:
-        # todo: get the transcription data from the url, for now using a json file for input data
-        transcription = await _load_transcription()
-
-        processor = TranscriptionProcessor(
-            transcription=transcription, diarization_service="deepgram"
-        )
-        transcription_result = await processor.convert_transcript_to_conversation()
-
-        # todo: saving the output in a database, for now saving it in a json file
-        await _save_output(transcription_result)
-        return {"message": "Transcription post processing completed successfully."}
-    except Exception as e:
-        logger.error(f"Error fetching client intake: {e}")
         raise HTTPException(status_code=500, detail=str(e))

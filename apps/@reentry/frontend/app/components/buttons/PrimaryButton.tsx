@@ -35,7 +35,7 @@ const PrimaryButton: React.FC<ButtonProps> = ({
 			type={"button"}
 			onClick={onClick}
 			disabled={disabled}
-			className={`self-stretch h-8 px-4 py-2 rounded-[32px] border border-[#345262]/20 justify-center items-center gap-2 inline-flex
+			className={`h-8 px-4 py-2 rounded-[32px] border border-[#345262]/20 justify-center items-center gap-2 inline-flex
     	transition-colors duration-300 text-[13px] font-medium leading-none
     	${
 				disabled

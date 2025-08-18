@@ -10,7 +10,9 @@ ENVIRONMENT = os.environ.get("ENVIRONMENT")
 if ENVIRONMENT == "pytest":
     broker = InMemoryBroker()
 else:
-    redis_async_result = RedisAsyncResultBackend(redis_url=settings.REDIS_URL)
-    broker = ListQueueBroker(
-        url=settings.REDIS_URL,
-    ).with_result_backend(redis_async_result)
+    redis_async_result = RedisAsyncResultBackend(
+        redis_url=settings.REDIS_URL, result_ex_time=864000
+    )
+    broker = ListQueueBroker(url=settings.REDIS_URL).with_result_backend(
+        redis_async_result
+    )

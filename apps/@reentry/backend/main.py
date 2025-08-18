@@ -161,7 +161,6 @@ exclude_paths = [
     "/metrics",
     "/intake/client",
     "/intake/internal",
-    "/api/intake/internal",  # todo: remove this, temporal while testing transcription intake
 ]
 
 auth0_config = get_auth0_config()

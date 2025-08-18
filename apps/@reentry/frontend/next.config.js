@@ -15,21 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { PostgresSaver } from "@langchain/langgraph-checkpoint-postgres";
+//@ts-check
 
-async function main() {
-  const databaseUrl = process.env["DATABASE_URL"];
-  const schema = process.env["DATABASE_SCHEMA"];
-  if (!databaseUrl || !schema) {
-    throw new Error(
-      "DATABASE_URL or DATABASE_SCHEMA environment variable is not set.",
-    );
-  }
+const { composePlugins, withNx } = require("@nx/next");
+const { withSentryConfig } = require("@sentry/nextjs");
 
-  const checkpointer = PostgresSaver.fromConnString(databaseUrl, {
-    schema,
-  });
-  await checkpointer.setup();
-}
+/**
+ * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
+ **/
+const nextConfig = {
+  output: "standalone",
+};
 
-main();
+const plugins = [
+  // Add more Next.js plugins to this list if needed.
+  withNx,
+];
+
+module.exports = composePlugins(...plugins)(
+  withSentryConfig(nextConfig, {
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    silent: !process.env.CI,
+    widenClientFileUpload: true,
+    sourcemaps: {
+      disable: true,
+    },
+    disableLogger: true,
+  }),
+);

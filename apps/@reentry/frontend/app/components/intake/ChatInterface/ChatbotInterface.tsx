@@ -63,8 +63,6 @@ const ChatbotInterface: React.FC = () => {
     }
   }, [messages, wasAtBottom]);
 
-  const formatedMessages = messages;
-
   return (
     <div className="max-w-4xl mx-auto flex flex-col h-full px-4 sm:px-6">
       {/* Messages */}
@@ -73,13 +71,16 @@ const ChatbotInterface: React.FC = () => {
         ref={containerRef}
       >
         <div className="flex flex-col gap-4 sm:gap-6">
-          {formatedMessages?.map((message) => (
-            <ChatMessageBubble key={message.id} message={message} />
+          {messages.map((message, index) => (
+            <ChatMessageBubble
+              key={`${message.id}-${index}`}
+              message={message}
+            />
           ))}
 
           {/* Show typing indicator when AI is thinking or when no messages initially */}
           {waitingForAIInput ||
-          (!messages?.length && connectionStatus === "connected") ? (
+          (!messages.length && connectionStatus === "connected") ? (
             <ChatMessageBubble key="typing-indicator" isTyping={true} />
           ) : null}
 

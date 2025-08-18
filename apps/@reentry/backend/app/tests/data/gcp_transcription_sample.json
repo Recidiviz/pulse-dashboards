@@ -1,0 +1,1887 @@
+{
+  "results": [
+    {
+      "alternatives": [
+        {
+          "transcript": " I now want to talk with you about your family.",
+          "confidence": 0.8370758,
+          "words": [
+            {
+              "startTime": "89.900s",
+              "endTime": "90.200s",
+              "word": "I",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            },
+            {
+              "startTime": "90.200s",
+              "endTime": "90.400s",
+              "word": "now",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            },
+            {
+              "startTime": "90.400s",
+              "endTime": "90.600s",
+              "word": "want",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            },
+            {
+              "startTime": "90.600s",
+              "endTime": "90.700s",
+              "word": "to",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            },
+            {
+              "startTime": "90.700s",
+              "endTime": "91s",
+              "word": "talk",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            },
+            {
+              "startTime": "91s",
+              "endTime": "91.100s",
+              "word": "with",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            },
+            {
+              "startTime": "91.100s",
+              "endTime": "91.200s",
+              "word": "you",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            },
+            {
+              "startTime": "91.200s",
+              "endTime": "91.300s",
+              "word": "about",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            },
+            {
+              "startTime": "91.300s",
+              "endTime": "91.600s",
+              "word": "your",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            },
+            {
+              "startTime": "91.600s",
+              "endTime": "92.100s",
+              "word": "family.",
+              "confidence": 0.0,
+              "speakerTag": 0,
+              "speakerLabel": ""
+            }
+          ]
+        }
+      ],
+      "resultEndTime": "92.210s",
+      "languageCode": "en-us",
+      "channelTag": 0
+    },
+    {
+      "alternatives": [
+        {
+          "words": [
+            {
+              "startTime": "0.900s",
+              "endTime": "1.400s",
+              "word": "Good",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "1.400s",
+              "endTime": "1.800s",
+              "word": "morning.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "1.800s",
+              "endTime": "2.400s",
+              "word": "I'm",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "2.400s",
+              "endTime": "2.600s",
+              "word": "here",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "2.600s",
+              "endTime": "2.800s",
+              "word": "to",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "2.800s",
+              "endTime": "3.100s",
+              "word": "conduct",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "3.100s",
+              "endTime": "3.400s",
+              "word": "the",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "3.400s",
+              "endTime": "4.300s",
+              "word": "0ras",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "4.300s",
+              "endTime": "4.800s",
+              "word": "community",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "4.800s",
+              "endTime": "5.200s",
+              "word": "supervision",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "5.200s",
+              "endTime": "6s",
+              "word": "assessment",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "6s",
+              "endTime": "6.200s",
+              "word": "with",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "6.200s",
+              "endTime": "6.300s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "6.300s",
+              "endTime": "6.600s",
+              "word": "today.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "6.600s",
+              "endTime": "7.500s",
+              "word": "This",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "7.500s",
+              "endTime": "7.700s",
+              "word": "will",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "7.700s",
+              "endTime": "7.800s",
+              "word": "help",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "7.800s",
+              "endTime": "8.100s",
+              "word": "us",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "8.100s",
+              "endTime": "8.700s",
+              "word": "understand",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "8.700s",
+              "endTime": "8.800s",
+              "word": "your",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "8.800s",
+              "endTime": "9.100s",
+              "word": "situation",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "9.100s",
+              "endTime": "9.800s",
+              "word": "better,",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "9.800s",
+              "endTime": "10.100s",
+              "word": "and",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "10.100s",
+              "endTime": "10.700s",
+              "word": "develop,",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "10.700s",
+              "endTime": "10.800s",
+              "word": "an",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "10.800s",
+              "endTime": "11.100s",
+              "word": "appropriate",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "11.100s",
+              "endTime": "12s",
+              "word": "supervision",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "12s",
+              "endTime": "12.400s",
+              "word": "plan.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "12.400s",
+              "endTime": "13s",
+              "word": "I",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "13s",
+              "endTime": "13.300s",
+              "word": "need",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "13.300s",
+              "endTime": "13.400s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "13.400s",
+              "endTime": "13.600s",
+              "word": "to",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "13.600s",
+              "endTime": "13.700s",
+              "word": "be",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "13.700s",
+              "endTime": "14.100s",
+              "word": "honest",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "14.100s",
+              "endTime": "14.300s",
+              "word": "with",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "14.300s",
+              "endTime": "14.400s",
+              "word": "me",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "14.400s",
+              "endTime": "14.800s",
+              "word": "throughout",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "14.800s",
+              "endTime": "15s",
+              "word": "this",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "15s",
+              "endTime": "15.400s",
+              "word": "interview.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "15.400s",
+              "endTime": "16.100s",
+              "word": "Do",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "16.100s",
+              "endTime": "16.200s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "16.200s",
+              "endTime": "16.800s",
+              "word": "understand?",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "17.800s",
+              "endTime": "18.300s",
+              "word": "Yes,",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "18.300s",
+              "endTime": "18.400s",
+              "word": "I",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "18.400s",
+              "endTime": "19.100s",
+              "word": "understand.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "19.100s",
+              "endTime": "19.400s",
+              "word": "I'll",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "19.400s",
+              "endTime": "19.500s",
+              "word": "do",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "19.500s",
+              "endTime": "19.600s",
+              "word": "my",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "19.600s",
+              "endTime": "19.800s",
+              "word": "best",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "19.800s",
+              "endTime": "20s",
+              "word": "to",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "20s",
+              "endTime": "20.100s",
+              "word": "answer",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "20.100s",
+              "endTime": "20.700s",
+              "word": "honestly.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "24.400s",
+              "endTime": "25.500s",
+              "word": "Let's",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "25.500s",
+              "endTime": "25.700s",
+              "word": "start",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "25.700s",
+              "endTime": "25.800s",
+              "word": "with",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "25.800s",
+              "endTime": "26s",
+              "word": "some",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "26s",
+              "endTime": "26.400s",
+              "word": "basic",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "26.400s",
+              "endTime": "26.600s",
+              "word": "information.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "26.600s",
+              "endTime": "27.700s",
+              "word": "Can",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "27.700s",
+              "endTime": "27.800s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "27.800s",
+              "endTime": "28.100s",
+              "word": "please",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "28.100s",
+              "endTime": "28.400s",
+              "word": "State",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "28.400s",
+              "endTime": "28.400s",
+              "word": "your",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "28.400s",
+              "endTime": "28.500s",
+              "word": "full",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "28.500s",
+              "endTime": "28.800s",
+              "word": "name",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "28.800s",
+              "endTime": "29.200s",
+              "word": "for",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "29.200s",
+              "endTime": "29.200s",
+              "word": "the",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "29.200s",
+              "endTime": "29.400s",
+              "word": "record?",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "30.600s",
+              "endTime": "31s",
+              "word": "My",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "31s",
+              "endTime": "31.100s",
+              "word": "name",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "31.100s",
+              "endTime": "31.300s",
+              "word": "is",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "31.300s",
+              "endTime": "31.500s",
+              "word": "Robert",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "31.500s",
+              "endTime": "32.100s",
+              "word": "Johnson.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "33.200s",
+              "endTime": "33.600s",
+              "word": "Now,",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "33.600s",
+              "endTime": "33.900s",
+              "word": "I",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "33.900s",
+              "endTime": "34.100s",
+              "word": "need",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "34.100s",
+              "endTime": "34.300s",
+              "word": "to",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "34.300s",
+              "endTime": "34.400s",
+              "word": "ask",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "34.400s",
+              "endTime": "34.700s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "34.700s",
+              "endTime": "34.900s",
+              "word": "about",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "34.900s",
+              "endTime": "35.200s",
+              "word": "your",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "35.200s",
+              "endTime": "35.500s",
+              "word": "criminal",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "35.500s",
+              "endTime": "35.700s",
+              "word": "history,",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "35.700s",
+              "endTime": "36.900s",
+              "word": "tell",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "36.900s",
+              "endTime": "37s",
+              "word": "me",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "37s",
+              "endTime": "37.300s",
+              "word": "about",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "37.300s",
+              "endTime": "37.400s",
+              "word": "the",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "37.400s",
+              "endTime": "37.700s",
+              "word": "first",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "37.700s",
+              "endTime": "37.900s",
+              "word": "time",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "37.900s",
+              "endTime": "38.100s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "38.100s",
+              "endTime": "38.200s",
+              "word": "were",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "38.200s",
+              "endTime": "38.300s",
+              "word": "ever",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "38.300s",
+              "endTime": "39s",
+              "word": "arrested.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "40s",
+              "endTime": "40.300s",
+              "word": "I",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "40.300s",
+              "endTime": "40.500s",
+              "word": "was",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "40.500s",
+              "endTime": "41.100s",
+              "word": "23",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "41.100s",
+              "endTime": "41.200s",
+              "word": "years",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "41.200s",
+              "endTime": "41.400s",
+              "word": "old.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "41.400s",
+              "endTime": "42s",
+              "word": "It",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "42s",
+              "endTime": "42.100s",
+              "word": "was",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "42.100s",
+              "endTime": "42.300s",
+              "word": "for",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "42.300s",
+              "endTime": "42.900s",
+              "word": "shoplifting.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "44.100s",
+              "endTime": "44.600s",
+              "word": "Let's",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "44.600s",
+              "endTime": "44.800s",
+              "word": "talk",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "44.800s",
+              "endTime": "44.900s",
+              "word": "about",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "44.900s",
+              "endTime": "45.200s",
+              "word": "your",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "45.200s",
+              "endTime": "45.600s",
+              "word": "adult",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "45.600s",
+              "endTime": "45.900s",
+              "word": "criminal",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "45.900s",
+              "endTime": "46.500s",
+              "word": "record.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "46.500s",
+              "endTime": "47.100s",
+              "word": "How",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "47.100s",
+              "endTime": "47.300s",
+              "word": "many",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "47.300s",
+              "endTime": "47.800s",
+              "word": "times",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "47.800s",
+              "endTime": "48s",
+              "word": "have",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "48s",
+              "endTime": "48s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "48s",
+              "endTime": "48.100s",
+              "word": "been",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "48.100s",
+              "endTime": "48.600s",
+              "word": "convicted",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "48.600s",
+              "endTime": "48.700s",
+              "word": "of",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "48.700s",
+              "endTime": "48.800s",
+              "word": "a",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "48.800s",
+              "endTime": "49.200s",
+              "word": "felony?",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "50.200s",
+              "endTime": "50.800s",
+              "word": "None.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "50.800s",
+              "endTime": "51s",
+              "word": "I've",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "51s",
+              "endTime": "51.100s",
+              "word": "only",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "51.100s",
+              "endTime": "51.300s",
+              "word": "had",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "51.300s",
+              "endTime": "51.500s",
+              "word": "misdemeanors.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "53.100s",
+              "endTime": "53.500s",
+              "word": "I'd",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "53.500s",
+              "endTime": "53.700s",
+              "word": "now",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "53.700s",
+              "endTime": "53.700s",
+              "word": "like",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "53.700s",
+              "endTime": "54s",
+              "word": "to",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "54s",
+              "endTime": "54.300s",
+              "word": "talk",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "54.300s",
+              "endTime": "54.400s",
+              "word": "with",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "54.400s",
+              "endTime": "54.500s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "54.500s",
+              "endTime": "54.600s",
+              "word": "about",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "54.600s",
+              "endTime": "55s",
+              "word": "your",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "55s",
+              "endTime": "55.200s",
+              "word": "education",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "55.200s",
+              "endTime": "56.500s",
+              "word": "employment",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "56.500s",
+              "endTime": "57s",
+              "word": "and",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "57s",
+              "endTime": "57.500s",
+              "word": "financial",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "57.500s",
+              "endTime": "58.200s",
+              "word": "situation.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "58.200s",
+              "endTime": "58.900s",
+              "word": "What",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "58.900s",
+              "endTime": "58.900s",
+              "word": "is",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "58.900s",
+              "endTime": "59.100s",
+              "word": "the",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "59.100s",
+              "endTime": "59.600s",
+              "word": "highest",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "59.600s",
+              "endTime": "59.800s",
+              "word": "grade",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "59.800s",
+              "endTime": "60s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "60s",
+              "endTime": "60.500s",
+              "word": "completed?",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "61.400s",
+              "endTime": "61.700s",
+              "word": "I",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "61.700s",
+              "endTime": "62.400s",
+              "word": "graduated",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "62.400s",
+              "endTime": "62.500s",
+              "word": "high",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "62.500s",
+              "endTime": "62.600s",
+              "word": "school,",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "62.600s",
+              "endTime": "63.200s",
+              "word": "got",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "63.200s",
+              "endTime": "63.400s",
+              "word": "my",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "63.400s",
+              "endTime": "63.600s",
+              "word": "diploma.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "65s",
+              "endTime": "65.400s",
+              "word": "Were",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "65.400s",
+              "endTime": "65.500s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "65.500s",
+              "endTime": "65.700s",
+              "word": "ever",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "65.700s",
+              "endTime": "66.200s",
+              "word": "suspended",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "66.200s",
+              "endTime": "66.700s",
+              "word": "or",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "66.700s",
+              "endTime": "66.800s",
+              "word": "expelled",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "66.800s",
+              "endTime": "67.200s",
+              "word": "from",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "67.200s",
+              "endTime": "67.400s",
+              "word": "school?",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "68.700s",
+              "endTime": "69.100s",
+              "word": "No,",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "69.100s",
+              "endTime": "69.400s",
+              "word": "I",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "69.400s",
+              "endTime": "69.600s",
+              "word": "was",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "69.600s",
+              "endTime": "69.700s",
+              "word": "a",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "69.700s",
+              "endTime": "70s",
+              "word": "pretty",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "70s",
+              "endTime": "70.100s",
+              "word": "good",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "70.100s",
+              "endTime": "70.500s",
+              "word": "student.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "70.500s",
+              "endTime": "71.200s",
+              "word": "Maybe",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "71.200s",
+              "endTime": "71.400s",
+              "word": "got",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "71.400s",
+              "endTime": "71.900s",
+              "word": "detention",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "71.900s",
+              "endTime": "72.200s",
+              "word": "once",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "72.200s",
+              "endTime": "72.300s",
+              "word": "or",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "72.300s",
+              "endTime": "72.500s",
+              "word": "twice",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "72.500s",
+              "endTime": "72.800s",
+              "word": "but",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "72.800s",
+              "endTime": "73.100s",
+              "word": "nothing",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "73.100s",
+              "endTime": "73.500s",
+              "word": "serious",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "74.900s",
+              "endTime": "75.300s",
+              "word": "Where",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "75.300s",
+              "endTime": "75.400s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "75.400s",
+              "endTime": "75.800s",
+              "word": "working",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "75.800s",
+              "endTime": "75.900s",
+              "word": "at",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "75.900s",
+              "endTime": "76s",
+              "word": "the",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "76s",
+              "endTime": "76.300s",
+              "word": "time",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "76.300s",
+              "endTime": "76.400s",
+              "word": "of",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "76.400s",
+              "endTime": "76.500s",
+              "word": "your",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "76.500s",
+              "endTime": "77s",
+              "word": "arrest?",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "77.900s",
+              "endTime": "78.400s",
+              "word": "Yes,",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "78.400s",
+              "endTime": "78.500s",
+              "word": "I",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "78.500s",
+              "endTime": "78.600s",
+              "word": "was",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "78.600s",
+              "endTime": "78.800s",
+              "word": "working",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "78.800s",
+              "endTime": "79.200s",
+              "word": "full-time",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "79.200s",
+              "endTime": "79.500s",
+              "word": "at",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "79.500s",
+              "endTime": "79.600s",
+              "word": "a",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "79.600s",
+              "endTime": "79.800s",
+              "word": "warehouse.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "81.200s",
+              "endTime": "81.500s",
+              "word": "Are",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "81.500s",
+              "endTime": "81.700s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "81.700s",
+              "endTime": "82s",
+              "word": "currently",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "82s",
+              "endTime": "82.600s",
+              "word": "employed?",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "83.600s",
+              "endTime": "84.100s",
+              "word": "Yes,",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "84.100s",
+              "endTime": "84.300s",
+              "word": "I'm",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "84.300s",
+              "endTime": "84.600s",
+              "word": "still",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "84.600s",
+              "endTime": "84.800s",
+              "word": "at",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "84.800s",
+              "endTime": "84.900s",
+              "word": "the",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "84.900s",
+              "endTime": "85.100s",
+              "word": "same",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "85.100s",
+              "endTime": "85.600s",
+              "word": "job.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "85.600s",
+              "endTime": "86.100s",
+              "word": "My",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "86.100s",
+              "endTime": "86.400s",
+              "word": "boss",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "86.400s",
+              "endTime": "86.600s",
+              "word": "has",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "86.600s",
+              "endTime": "86.700s",
+              "word": "been",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "86.700s",
+              "endTime": "87.600s",
+              "word": "understanding",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "87.600s",
+              "endTime": "87.800s",
+              "word": "about",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "87.800s",
+              "endTime": "88s",
+              "word": "my",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "88s",
+              "endTime": "88.800s",
+              "word": "situation.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "89.900s",
+              "endTime": "90.200s",
+              "word": "I",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "90.200s",
+              "endTime": "90.400s",
+              "word": "now",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "90.400s",
+              "endTime": "90.600s",
+              "word": "want",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "90.600s",
+              "endTime": "90.700s",
+              "word": "to",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "90.700s",
+              "endTime": "91s",
+              "word": "talk",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "91s",
+              "endTime": "91.100s",
+              "word": "with",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "91.100s",
+              "endTime": "91.200s",
+              "word": "you",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "91.200s",
+              "endTime": "91.300s",
+              "word": "about",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "91.300s",
+              "endTime": "91.600s",
+              "word": "your",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            },
+            {
+              "startTime": "91.600s",
+              "endTime": "92.100s",
+              "word": "family.",
+              "speakerTag": 1,
+              "speakerLabel": "1",
+              "confidence": 0.0
+            }
+          ],
+          "transcript": "",
+          "confidence": 0.0
+        }
+      ],
+      "channelTag": 0,
+      "languageCode": ""
+    }
+  ],
+  "totalBilledTime": "93s",
+  "requestId": "5963506353995742675"
+}

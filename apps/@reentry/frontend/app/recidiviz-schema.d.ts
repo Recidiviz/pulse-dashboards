@@ -109,6 +109,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/plans/{id}/set-notify": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Set Generation Notification
+     * @description Set the regeneration notification flag for the latest completed generation of the specified plan.
+     */
+    post: operations["router_set_generation_notify_plans__id__set_notify_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/plans/{id}/generate": {
     parameters: {
       query?: never;
@@ -828,46 +848,6 @@ export interface paths {
      * @description Validates client's data  against BigQuery records and issues JWT token
      */
     post: operations["verify_non_pseudonymized_id_intake_internal_verify_non_pseudo_id_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/internal/{client_id}/transcription-generate-action-plan": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Submit json transcription to generate action plan
-     * @description Submit a JSON transcription to generate an action plan for the client's intake.
-     */
-    post: operations["transcription_generate_action_plan_intake_internal__client_id__transcription_generate_action_plan_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/internal/transcription-processor": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * transcription-processor
-     * @description transcription-processor
-     */
-    get: operations["transcription_processor_intake_internal_transcription_processor_get"];
-    put?: never;
-    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1628,21 +1608,6 @@ export interface components {
     };
     /** CompleteIntakeTranscriptionResponse */
     CompleteIntakeTranscriptionResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id?: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at?: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at?: string;
       /** Intake Completed */
       intake_completed: boolean;
       /** Intake Approved */
@@ -1652,21 +1617,6 @@ export interface components {
     };
     /** CompleteIntakeTrascriptionSubmission */
     CompleteIntakeTrascriptionSubmission: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id?: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at?: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at?: string;
       /** Street Address */
       street_address?: string | null;
       /** City */
@@ -1676,8 +1626,8 @@ export interface components {
       /** Approved */
       approved?: boolean | null;
     };
-    /** ConversationTurn */
-    ConversationTurn: {
+    /** ConversationTurnResponse */
+    ConversationTurnResponse: {
       /** Id */
       id: string;
       /** Role */
@@ -1688,16 +1638,12 @@ export interface components {
       startTime: string;
       /** Endtime */
       endTime: string;
-      /** Starttimems */
-      startTimeMs: number;
-      /** Endtimems */
-      endTimeMs: number;
-      /** Duration */
-      duration: string;
       /** Speakertag */
       speakerTag: number;
       /** Wordcount */
       wordCount: number;
+      /** Duration */
+      duration: string;
     };
     /** CreateRecordingSessionRequest */
     CreateRecordingSessionRequest: {
@@ -2202,8 +2148,8 @@ export interface components {
       /** Internal Access */
       internal_access: boolean;
     };
-    /** OutputMetadata */
-    OutputMetadata: {
+    /** OutputMetadataResponse */
+    OutputMetadataResponse: {
       /** Totalduration */
       totalDuration: string;
       /** Totalturns */
@@ -2218,8 +2164,6 @@ export interface components {
       language: string;
       /** Createdat */
       createdAt: string;
-      /** Diarizationservice */
-      diarizationService: string;
     };
     /** Page[AssessmentTreeResponse] */
     Page_AssessmentTreeResponse_: {
@@ -2483,6 +2427,8 @@ export interface components {
       /** Execution Id */
       execution_id?: string | null;
       execution?: components["schemas"]["ExecutionResponse"] | null;
+      /** Regeneration Notify */
+      regeneration_notify: boolean;
     };
     /** PlanGenerationResponseGet */
     PlanGenerationResponseGet: {
@@ -2515,6 +2461,8 @@ export interface components {
       /** Execution Id */
       execution_id?: string | null;
       execution?: components["schemas"]["ExecutionResponse"] | null;
+      /** Regeneration Notify */
+      regeneration_notify: boolean;
       /** Markdown Result */
       markdown_result?: string | null;
     };
@@ -2822,6 +2770,10 @@ export interface components {
       /** Duration */
       duration: string;
     };
+    SetNotificationRequest: {
+      /** Notify */
+      notify: boolean;
+    };
     /** TokenAccessResponse */
     TokenAccessResponse: {
       /** Client Id */
@@ -2829,21 +2781,11 @@ export interface components {
       /** Token */
       token: string;
     };
-    /** TranscriptionMessage */
-    TranscriptionMessage: {
-      /**
-       * Role
-       * @enum {string}
-       */
-      role: "client" | "caseworker";
-      /** Content */
-      content: string;
-    };
-    /** TranscriptionOutput */
-    TranscriptionOutput: {
-      metadata: components["schemas"]["OutputMetadata"];
+    /** TranscriptionOutputResponse */
+    TranscriptionOutputResponse: {
+      metadata: components["schemas"]["OutputMetadataResponse"];
       /** Conversation */
-      conversation: components["schemas"]["ConversationTurn"][];
+      conversation: components["schemas"]["ConversationTurnResponse"][];
     };
     /** UpdateRecordingSessionStatusRequest */
     UpdateRecordingSessionStatusRequest: {
@@ -3168,6 +3110,41 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["DeletionResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  router_set_generation_notify_plans__id__set_notify_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SetNotificationRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
         };
       };
       /** @description Validation Error */
@@ -4701,61 +4678,6 @@ export interface operations {
       };
     };
   };
-  transcription_generate_action_plan_intake_internal__client_id__transcription_generate_action_plan_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["TranscriptionMessage"][];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  transcription_processor_intake_internal_transcription_processor_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
   get_client_intake_intake_admin__client_id__get: {
     parameters: {
       query?: never;
@@ -5480,7 +5402,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["TranscriptionOutput"];
+          "application/json": components["schemas"]["TranscriptionOutputResponse"];
         };
       };
       /** @description Validation Error */

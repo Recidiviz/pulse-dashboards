@@ -1,0 +1,1423 @@
+{
+  "metadata": {
+    "transaction_key": "deprecated",
+    "request_id": "4860cee6-0f56-47a9-a316-f93205a471ee",
+    "sha256": "d10a42726d726887ceb76dbaf7d5cb365ede1165fd792d9d1f297e5242e8596b",
+    "created": "2025-07-31T20:34:57.050Z",
+    "duration": 311.3,
+    "channels": 1,
+    "models": [
+      "2187e11a-3532-4498-b076-81fa530bdd49"
+    ],
+    "model_info": {
+      "2187e11a-3532-4498-b076-81fa530bdd49": {
+        "name": "general-nova-3",
+        "version": "2025-07-31.0",
+        "arch": "nova-3"
+      }
+    }
+  },
+  "results": {
+    "channels": [
+      {
+        "alternatives": [
+          {
+            "transcript": "Good morning. I'm here to conduct the ORAS community supervision assessment with you today. This will help us understand your situation better and develop an appropriate supervision plan. I need you to be honest with me throughout this interview. Do you understand? Yes. I understand. I'll do my best to answer honestly. Great. Let's start with some basic information. Can you please state your full name for the record? My name is John Brown. Now I need to ask you about your criminal history. Tell me about the first time you were ever arrested. I was 17 years old. It was for aggravated assault. That was when you were a juvenile, what exactly happened? I was already running with a bad crowd, we were breaking into houses, stealing cars, getting into fights, I thought I was tough. Let's talk about your adult criminal record. How many times have you been convicted of a felony? I've been convicted of four felonies over the years. Tell me about what happened the day you were arrested for your current offense. I was back to my old ways, got caught selling drugs near a school zone, the cops had been watching me for a while. Why did you decide to commit the offense? It's how I've always made money, I don't know any other way to get by. I'd now like to talk with you about your education, employment, and financial situation. What is the highest grade you completed? I only made it to eighth grade, school was never my thing. Were you ever suspended or expelled from school? All the time, fighting, skipping class, talking back to teachers, they finally expelled me in tenth grade. Were you working at the time of your arrest? No, I'd been out of work for a few months. Are you currently employed? No, I lost my job after the arrest, been looking but it's hard with a record. How do you support yourself while not working? I get by however I can, stay with different people sometimes at the shelter. I now want to talk with you about your family and the support you get from them. Describe your relationship with your family. Not great, most of them don't want anything to do with me anymore. Does anyone in your family have a criminal record? Yeah, my dad's been in and out of prison my whole life, my older brother too. Are you married or in a relationship? No, I'm single, hard to maintain a relationship with my lifestyle. Let's take a quick break, would you like some water? Yes please, thank you. Alright. Let's continue. We're about halfway through. Okay. I'm ready. Let's talk about your substance use. Have you ever had a problem with alcohol? Yeah. I've been drinking heavy since I was a teenager. Have you ever had a problem with drugs other than alcohol? Yeah, I've had issues with drugs for years. What drugs have you used? Started with weed, moved to cocaine, then meth, I've tried just about everything. Have you ever had any problems due to your drug use? Lost jobs, lost relationships, got arrested multiple times, drugs have ruined my life. I now want to ask you about your friends, how many close friends would you say you have? Just a couple guys I hang with, hard to trust people in my situation. Have any of your close friends been involved in criminal behavior? Yeah, I'd say about 51% of my friends have been in trouble with the law. What kind of things have they been involved in? Heavy stuff, armed robbery, drug dealing, some are doing serious time. Have you ever been in a gang? I used to run with a crew when I was younger, not officially a gang but we caused trouble. Let's talk again about the trouble you got in. How do you feel about what happened? It is what it is, I did what I had to do to survive. Do you sometimes feel that you have lost control over events in your life? All the time feels like life just happens to me. Do you think it is sometimes Okay to tell a lie? You do what you have to do, everybody lies. Would you describe yourself as someone who walks away from a fight? I don't back down, you show weakness and people will walk all over you. How do you feel about getting some help or participating in programs? I've been through programs before, they don't really help but I'll go if I have to. Is there anything else you'd like to tell me that might help with your case planning? Not really, you've heard it all before. Thank you for your time and honesty today. We'll use this information to develop a supervision plan that works for you. Thank you, I appreciate you taking the time to understand my situation.",
+            "confidence": 1.0,
+            "words": [
+              {
+                "word": "good",
+                "start": 0.0,
+                "end": 0.56,
+                "confidence": 0.9951172,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "Good"
+              },
+              {
+                "word": "morning",
+                "start": 0.56,
+                "end": 1.2,
+                "confidence": 0.9614258,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "morning."
+              },
+              {
+                "word": "i'm",
+                "start": 1.28,
+                "end": 1.5999999,
+                "confidence": 0.9980469,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "I'm"
+              },
+              {
+                "word": "here",
+                "start": 1.5999999,
+                "end": 1.76,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "here"
+              },
+              {
+                "word": "to",
+                "start": 1.76,
+                "end": 2.0,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "to"
+              },
+              {
+                "word": "conduct",
+                "start": 2.0,
+                "end": 2.32,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "conduct"
+              },
+              {
+                "word": "the",
+                "start": 2.32,
+                "end": 2.56,
+                "confidence": 0.99902344,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "the"
+              },
+              {
+                "word": "oras",
+                "start": 2.56,
+                "end": 3.52,
+                "confidence": 0.98999023,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "ORAS"
+              },
+              {
+                "word": "community",
+                "start": 3.52,
+                "end": 4.0,
+                "confidence": 0.75634766,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "community"
+              },
+              {
+                "word": "supervision",
+                "start": 4.0,
+                "end": 4.56,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "supervision"
+              },
+              {
+                "word": "assessment",
+                "start": 4.56,
+                "end": 5.04,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "assessment"
+              },
+              {
+                "word": "with",
+                "start": 5.04,
+                "end": 5.3599997,
+                "confidence": 0.99902344,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "with"
+              },
+              {
+                "word": "you",
+                "start": 5.3599997,
+                "end": 5.52,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "you"
+              },
+              {
+                "word": "today",
+                "start": 5.52,
+                "end": 6.16,
+                "confidence": 0.99902344,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "today."
+              },
+              {
+                "word": "this",
+                "start": 6.3999996,
+                "end": 6.64,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "This"
+              },
+              {
+                "word": "will",
+                "start": 6.64,
+                "end": 6.8799996,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "will"
+              },
+              {
+                "word": "help",
+                "start": 6.8799996,
+                "end": 7.04,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "help"
+              },
+              {
+                "word": "us",
+                "start": 7.04,
+                "end": 7.2799997,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "us"
+              },
+              {
+                "word": "understand",
+                "start": 7.2799997,
+                "end": 7.7599998,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "understand"
+              },
+              {
+                "word": "your",
+                "start": 7.7599998,
+                "end": 8.0,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "your"
+              },
+              {
+                "word": "situation",
+                "start": 8.0,
+                "end": 8.639999,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "situation"
+              },
+              {
+                "word": "better",
+                "start": 8.639999,
+                "end": 9.04,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "better"
+              },
+              {
+                "word": "and",
+                "start": 9.04,
+                "end": 9.36,
+                "confidence": 0.9873047,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "and"
+              },
+              {
+                "word": "develop",
+                "start": 9.36,
+                "end": 9.76,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "develop"
+              },
+              {
+                "word": "an",
+                "start": 9.76,
+                "end": 10.0,
+                "confidence": 0.99902344,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "an"
+              },
+              {
+                "word": "appropriate",
+                "start": 10.0,
+                "end": 10.48,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "appropriate"
+              },
+              {
+                "word": "supervision",
+                "start": 10.48,
+                "end": 11.12,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "supervision"
+              },
+              {
+                "word": "plan",
+                "start": 11.12,
+                "end": 11.839999,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "plan."
+              },
+              {
+                "word": "i",
+                "start": 12.0,
+                "end": 12.24,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "I"
+              },
+              {
+                "word": "need",
+                "start": 12.24,
+                "end": 12.4,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "need"
+              },
+              {
+                "word": "you",
+                "start": 12.4,
+                "end": 12.639999,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "you"
+              },
+              {
+                "word": "to",
+                "start": 12.639999,
+                "end": 12.719999,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "to"
+              },
+              {
+                "word": "be",
+                "start": 12.719999,
+                "end": 12.88,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "be"
+              },
+              {
+                "word": "honest",
+                "start": 12.88,
+                "end": 13.2,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "honest"
+              },
+              {
+                "word": "with",
+                "start": 13.2,
+                "end": 13.44,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "with"
+              },
+              {
+                "word": "me",
+                "start": 13.44,
+                "end": 13.599999,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "me"
+              },
+              {
+                "word": "throughout",
+                "start": 13.599999,
+                "end": 14.0,
+                "confidence": 0.99902344,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "throughout"
+              },
+              {
+                "word": "this",
+                "start": 14.0,
+                "end": 14.24,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "this"
+              },
+              {
+                "word": "interview",
+                "start": 14.24,
+                "end": 14.559999,
+                "confidence": 0.99853516,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "interview."
+              },
+              {
+                "word": "do",
+                "start": 14.965,
+                "end": 15.285,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "Do"
+              },
+              {
+                "word": "you",
+                "start": 15.285,
+                "end": 15.445001,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "you"
+              },
+              {
+                "word": "understand",
+                "start": 15.445001,
+                "end": 16.085001,
+                "confidence": 1.0,
+                "speaker": 0,
+                "speaker_confidence": 1.0,
+                "punctuated_word": "understand?"
+              },
+              {
+                "word": "yes",
+                "start": 16.805,
+                "end": 17.525,
+                "confidence": 0.8051758,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "Yes."
+              },
+              {
+                "word": "i",
+                "start": 17.525,
+                "end": 17.685,
+                "confidence": 1.0,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "I"
+              },
+              {
+                "word": "understand",
+                "start": 17.685,
+                "end": 18.325,
+                "confidence": 0.9975586,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "understand."
+              },
+              {
+                "word": "i'll",
+                "start": 18.325,
+                "end": 18.565,
+                "confidence": 1.0,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "I'll"
+              },
+              {
+                "word": "do",
+                "start": 18.565,
+                "end": 18.725,
+                "confidence": 1.0,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "do"
+              },
+              {
+                "word": "my",
+                "start": 18.725,
+                "end": 18.885,
+                "confidence": 1.0,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "my"
+              },
+              {
+                "word": "best",
+                "start": 18.885,
+                "end": 19.045,
+                "confidence": 1.0,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "best"
+              },
+              {
+                "word": "to",
+                "start": 19.045,
+                "end": 19.205,
+                "confidence": 1.0,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "to"
+              },
+              {
+                "word": "answer",
+                "start": 19.205,
+                "end": 19.525,
+                "confidence": 1.0,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "answer"
+              },
+              {
+                "word": "honestly",
+                "start": 19.525,
+                "end": 20.325,
+                "confidence": 0.9975586,
+                "speaker": 1,
+                "speaker_confidence": 0.7989936,
+                "punctuated_word": "honestly."
+              }
+            ],
+            "paragraphs": {
+              "transcript": "\nSpeaker 0: Good morning. I'm here to conduct the ORAS community supervision assessment with you today. This will help us understand your situation better and develop an appropriate supervision plan. I need you to be honest with me throughout this interview. Do you understand?\n\nSpeaker 1: Yes. I understand. I'll do my best to answer honestly.\n\nSpeaker 0: Great. Let's start with some basic information. Can you please state your full name for the record?\n\nSpeaker 1: My name is John Brown.\n\nSpeaker 0: Now I need to ask you about your criminal history. Tell me about the first time you were ever arrested.\n\nSpeaker 1: I was 17 years old. It was for aggravated assault.\n\nSpeaker 0: That was when you were a juvenile, what exactly happened?\n\nSpeaker 1: I was already running with a bad crowd, we were breaking into houses, stealing cars, getting into fights, I thought I was tough.\n\nSpeaker 0: Let's talk about your adult criminal record. How many times have you been convicted of a felony?\n\nSpeaker 1: I've been convicted of four felonies over the years.\n\nSpeaker 0: Tell me about what happened the day you were arrested for your current offense.\n\nSpeaker 1: I was back to my old ways, got caught selling drugs near a school zone, the cops had been watching me for a while.\n\nSpeaker 0: Why did you decide to commit the offense?\n\nSpeaker 1: It's how I've always made money, I don't know any other way to get by.\n\nSpeaker 0: I'd now like to talk with you about your education, employment, and financial situation. What is the highest grade you completed?\n\nSpeaker 1: I only made it to eighth grade, school was never my thing.\n\nSpeaker 0: Were you ever suspended or expelled from school?\n\nSpeaker 1: All the time, fighting, skipping class, talking back to teachers, they finally expelled me in tenth grade.\n\nSpeaker 0: Were you working at the time of your arrest?\n\nSpeaker 1: No, I'd been out of work for a few months.\n\nSpeaker 0: Are you currently employed?\n\nSpeaker 1: No, I lost my job after the arrest, been looking but it's hard with a record.\n\nSpeaker 0: How do you support yourself while not working?\n\nSpeaker 1: I get by however I can, stay with different people sometimes at the shelter.\n\nSpeaker 0: I now want to talk with you about your family and the support you get from them. Describe your relationship with your family.\n\nSpeaker 1: Not great, most of them don't want anything to do with me anymore.\n\nSpeaker 0: Does anyone in your family have a criminal record?\n\nSpeaker 1: Yeah, my dad's been in and out of prison my whole life, my older brother too.\n\nSpeaker 0: Are you married or in a relationship?\n\nSpeaker 1: No, I'm single, hard to maintain a relationship with my lifestyle.\n\nSpeaker 0: Let's take a quick break, would you like some water?\n\nSpeaker 1: Yes please, thank you.\n\nSpeaker 0: Alright. Let's continue. We're about halfway through.\n\nSpeaker 1: Okay. I'm ready.\n\nSpeaker 0: Let's talk about your substance use. Have you ever had a problem with alcohol?\n\nSpeaker 1: Yeah. I've been drinking heavy since I was a teenager.\n\nSpeaker 0: Have you ever had a problem with drugs other than alcohol?\n\nSpeaker 1: Yeah, I've had issues with drugs for years. What drugs have you used? Started with weed, moved to cocaine, then meth, I've tried just about everything.\n\nSpeaker 0: Have you ever had any problems due to your drug use?\n\nSpeaker 1: Lost jobs, lost relationships, got arrested multiple times, drugs have ruined my life.\n\nSpeaker 0: I now want to ask you about your friends, how many close friends would you say you have?\n\nSpeaker 1: Just a couple guys I hang with, hard to trust people in my situation.\n\nSpeaker 0: Have any of your close friends been involved in criminal behavior?\n\nSpeaker 1: Yeah, I'd say about 51% of my friends have been in trouble with the law.\n\nSpeaker 0: What kind of things have they been involved in?\n\nSpeaker 1: Heavy stuff, armed robbery, drug dealing, some are doing serious time.\n\nSpeaker 0: Have you ever been in a gang?\n\nSpeaker 1: I used to run with a crew when I was younger, not officially a gang but we caused trouble.\n\nSpeaker 0: Let's talk again about the trouble you got in. How do you feel about what happened?\n\nSpeaker 1: It is what it is, I did what I had to do to survive.\n\nSpeaker 0: Do you sometimes feel that you have lost control over events in your life?\n\nSpeaker 1: All the time feels like life just happens to me.\n\nSpeaker 0: Do you think it is sometimes Okay to tell a lie?\n\nSpeaker 1: You do what you have to do, everybody lies.\n\nSpeaker 0: Would you describe yourself as someone who walks away from a fight?\n\nSpeaker 1: I don't back down, you show weakness and people will walk all over you.\n\nSpeaker 0: How do you feel about getting some help or participating in programs?\n\nSpeaker 1: I've been through programs before, they don't really help but I'll go if I have to.\n\nSpeaker 0: Is there anything else you'd like to tell me that might help with your case planning?\n\nSpeaker 1: Not really, you've heard it all before.\n\nSpeaker 0: Thank you for your time and honesty today. We'll use this information to develop a supervision plan that works for you.\n\nSpeaker 1: Thank you, I appreciate you taking the time to understand my situation.",
+              "paragraphs": [
+                {
+                  "sentences": [
+                    {
+                      "text": "Good morning.",
+                      "start": 0.0,
+                      "end": 1.2
+                    },
+                    {
+                      "text": "I'm here to conduct the ORAS community supervision assessment with you today.",
+                      "start": 1.28,
+                      "end": 6.16
+                    },
+                    {
+                      "text": "This will help us understand your situation better and develop an appropriate supervision plan.",
+                      "start": 6.3999996,
+                      "end": 11.839999
+                    },
+                    {
+                      "text": "I need you to be honest with me throughout this interview.",
+                      "start": 12.0,
+                      "end": 14.559999
+                    },
+                    {
+                      "text": "Do you understand?",
+                      "start": 14.965,
+                      "end": 16.085001
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 42,
+                  "start": 0.0,
+                  "end": 16.085001
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Yes.",
+                      "start": 16.805,
+                      "end": 17.525
+                    },
+                    {
+                      "text": "I understand.",
+                      "start": 17.525,
+                      "end": 18.325
+                    },
+                    {
+                      "text": "I'll do my best to answer honestly.",
+                      "start": 18.325,
+                      "end": 20.325
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 10,
+                  "start": 16.805,
+                  "end": 20.325
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Great.",
+                      "start": 21.445,
+                      "end": 22.005001
+                    },
+                    {
+                      "text": "Let's start with some basic information.",
+                      "start": 22.005001,
+                      "end": 24.165
+                    },
+                    {
+                      "text": "Can you please state your full name for the record?",
+                      "start": 24.325,
+                      "end": 26.564999
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 17,
+                  "start": 21.445,
+                  "end": 26.564999
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "My name is John Brown.",
+                      "start": 27.64,
+                      "end": 29.24
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 5,
+                  "start": 27.64,
+                  "end": 29.24
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Now I need to ask you about your criminal history.",
+                      "start": 30.2,
+                      "end": 33.239998
+                    },
+                    {
+                      "text": "Tell me about the first time you were ever arrested.",
+                      "start": 33.4,
+                      "end": 36.12
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 20,
+                  "start": 30.2,
+                  "end": 36.12
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I was 17 years old.",
+                      "start": 36.92,
+                      "end": 38.76
+                    },
+                    {
+                      "text": "It was for aggravated assault.",
+                      "start": 38.76,
+                      "end": 40.28
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 10,
+                  "start": 36.92,
+                  "end": 40.28
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "That was when you were a juvenile, what exactly happened?",
+                      "start": 41.615,
+                      "end": 44.575
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 10,
+                  "start": 41.615,
+                  "end": 44.575
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I was already running with a bad crowd, we were breaking into houses, stealing cars, getting into fights, I thought I was tough.",
+                      "start": 45.455,
+                      "end": 52.655
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 23,
+                  "start": 45.455,
+                  "end": 52.655
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Let's talk about your adult criminal record.",
+                      "start": 53.97,
+                      "end": 56.530003
+                    },
+                    {
+                      "text": "How many times have you been convicted of a felony?",
+                      "start": 56.690002,
+                      "end": 59.41
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 17,
+                  "start": 53.97,
+                  "end": 59.41
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I've been convicted of four felonies over the years.",
+                      "start": 60.13,
+                      "end": 63.170002
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 9,
+                  "start": 60.13,
+                  "end": 63.170002
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Tell me about what happened the day you were arrested for your current offense.",
+                      "start": 64.21,
+                      "end": 67.65
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 14,
+                  "start": 64.21,
+                  "end": 67.65
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I was back to my old ways, got caught selling drugs near a school zone, the cops had been watching me for a while.",
+                      "start": 68.755005,
+                      "end": 75.555
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 24,
+                  "start": 68.755005,
+                  "end": 75.555
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Why did you decide to commit the offense?",
+                      "start": 76.595,
+                      "end": 78.915
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 8,
+                  "start": 76.595,
+                  "end": 78.915
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "It's how I've always made money, I don't know any other way to get by.",
+                      "start": 79.635,
+                      "end": 83.475006
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 15,
+                  "start": 79.635,
+                  "end": 83.475006
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I'd now like to talk with you about your education, employment, and financial situation.",
+                      "start": 84.72,
+                      "end": 89.84
+                    },
+                    {
+                      "text": "What is the highest grade you completed?",
+                      "start": 90.079994,
+                      "end": 92.24
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 21,
+                  "start": 84.72,
+                  "end": 92.24
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I only made it to eighth grade, school was never my thing.",
+                      "start": 93.04,
+                      "end": 96.159996
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 12,
+                  "start": 93.04,
+                  "end": 96.159996
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Were you ever suspended or expelled from school?",
+                      "start": 97.395004,
+                      "end": 100.275
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 8,
+                  "start": 97.395004,
+                  "end": 100.275
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "All the time, fighting, skipping class, talking back to teachers, they finally expelled me in tenth grade.",
+                      "start": 101.155,
+                      "end": 107.235
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 17,
+                  "start": 101.155,
+                  "end": 107.235
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Were you working at the time of your arrest?",
+                      "start": 108.275,
+                      "end": 110.195
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 9,
+                  "start": 108.275,
+                  "end": 110.195
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "No, I'd been out of work for a few months.",
+                      "start": 111.36,
+                      "end": 113.52
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 10,
+                  "start": 111.36,
+                  "end": 113.52
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Are you currently employed?",
+                      "start": 114.32,
+                      "end": 116.0
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 4,
+                  "start": 114.32,
+                  "end": 116.0
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "No, I lost my job after the arrest, been looking but it's hard with a record.",
+                      "start": 116.88,
+                      "end": 121.68
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 16,
+                  "start": 116.88,
+                  "end": 121.68
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "How do you support yourself while not working?",
+                      "start": 122.64,
+                      "end": 124.64
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 8,
+                  "start": 122.64,
+                  "end": 124.64
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I get by however I can, stay with different people sometimes at the shelter.",
+                      "start": 125.815,
+                      "end": 130.455
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 14,
+                  "start": 125.815,
+                  "end": 130.455
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I now want to talk with you about your family and the support you get from them.",
+                      "start": 131.41501,
+                      "end": 135.49501
+                    },
+                    {
+                      "text": "Describe your relationship with your family.",
+                      "start": 135.735,
+                      "end": 137.655
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 23,
+                  "start": 131.41501,
+                  "end": 137.655
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Not great, most of them don't want anything to do with me anymore.",
+                      "start": 138.98,
+                      "end": 142.66
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 13,
+                  "start": 138.98,
+                  "end": 142.66
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Does anyone in your family have a criminal record?",
+                      "start": 143.62,
+                      "end": 146.66
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 9,
+                  "start": 143.62,
+                  "end": 146.66
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Yeah, my dad's been in and out of prison my whole life, my older brother too.",
+                      "start": 147.54,
+                      "end": 152.09999
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 16,
+                  "start": 147.54,
+                  "end": 152.09999
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Are you married or in a relationship?",
+                      "start": 153.395,
+                      "end": 155.55501
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 7,
+                  "start": 153.395,
+                  "end": 155.55501
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "No, I'm single, hard to maintain a relationship with my lifestyle.",
+                      "start": 156.43501,
+                      "end": 160.43501
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 11,
+                  "start": 156.43501,
+                  "end": 160.43501
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Let's take a quick break, would you like some water?",
+                      "start": 161.235,
+                      "end": 164.27501
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 10,
+                  "start": 161.235,
+                  "end": 164.27501
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Yes please, thank you.",
+                      "start": 165.07501,
+                      "end": 166.195
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 4,
+                  "start": 165.07501,
+                  "end": 166.195
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Alright.",
+                      "start": 167.51,
+                      "end": 168.06999
+                    },
+                    {
+                      "text": "Let's continue.",
+                      "start": 168.06999,
+                      "end": 168.95
+                    },
+                    {
+                      "text": "We're about halfway through.",
+                      "start": 168.95,
+                      "end": 170.39
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 7,
+                  "start": 167.51,
+                  "end": 170.39
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Okay.",
+                      "start": 171.19,
+                      "end": 171.67
+                    },
+                    {
+                      "text": "I'm ready.",
+                      "start": 171.67,
+                      "end": 172.39
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 3,
+                  "start": 171.19,
+                  "end": 172.39
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Let's talk about your substance use.",
+                      "start": 173.26999,
+                      "end": 175.51
+                    },
+                    {
+                      "text": "Have you ever had a problem with alcohol?",
+                      "start": 175.51,
+                      "end": 177.67
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 14,
+                  "start": 173.26999,
+                  "end": 177.67
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Yeah.",
+                      "start": 178.47,
+                      "end": 178.95
+                    },
+                    {
+                      "text": "I've been drinking heavy since I was a teenager.",
+                      "start": 178.95,
+                      "end": 181.11
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 10,
+                  "start": 178.47,
+                  "end": 181.11
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Have you ever had a problem with drugs other than alcohol?",
+                      "start": 182.355,
+                      "end": 185.63501
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 11,
+                  "start": 182.355,
+                  "end": 185.63501
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Yeah, I've had issues with drugs for years.",
+                      "start": 186.435,
+                      "end": 188.675
+                    },
+                    {
+                      "text": "What drugs have you used?",
+                      "start": 189.715,
+                      "end": 191.235
+                    },
+                    {
+                      "text": "Started with weed, moved to cocaine, then meth, I've tried just about everything.",
+                      "start": 191.955,
+                      "end": 196.595
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 26,
+                  "start": 186.435,
+                  "end": 196.595
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Have you ever had any problems due to your drug use?",
+                      "start": 197.95999,
+                      "end": 200.76
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 11,
+                  "start": 197.95999,
+                  "end": 200.76
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Lost jobs, lost relationships, got arrested multiple times, drugs have ruined my life.",
+                      "start": 201.64,
+                      "end": 207.48
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 13,
+                  "start": 201.64,
+                  "end": 207.48
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I now want to ask you about your friends, how many close friends would you say you have?",
+                      "start": 208.43999,
+                      "end": 212.59999
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 18,
+                  "start": 208.43999,
+                  "end": 212.59999
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Just a couple guys I hang with, hard to trust people in my situation.",
+                      "start": 213.855,
+                      "end": 218.095
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 14,
+                  "start": 213.855,
+                  "end": 218.095
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Have any of your close friends been involved in criminal behavior?",
+                      "start": 219.215,
+                      "end": 222.815
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 11,
+                  "start": 219.215,
+                  "end": 222.815
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Yeah, I'd say about 51% of my friends have been in trouble with the law.",
+                      "start": 223.775,
+                      "end": 228.175
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 15,
+                  "start": 223.775,
+                  "end": 228.175
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "What kind of things have they been involved in?",
+                      "start": 229.36,
+                      "end": 232.00002
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 9,
+                  "start": 229.36,
+                  "end": 232.00002
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Heavy stuff, armed robbery, drug dealing, some are doing serious time.",
+                      "start": 232.88,
+                      "end": 236.96
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 11,
+                  "start": 232.88,
+                  "end": 236.96
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Have you ever been in a gang?",
+                      "start": 238.0,
+                      "end": 239.68001
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 7,
+                  "start": 238.0,
+                  "end": 239.68001
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I used to run with a crew when I was younger, not officially a gang but we caused trouble.",
+                      "start": 240.40001,
+                      "end": 245.88501
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 19,
+                  "start": 240.40001,
+                  "end": 245.88501
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Let's talk again about the trouble you got in.",
+                      "start": 246.685,
+                      "end": 249.325
+                    },
+                    {
+                      "text": "How do you feel about what happened?",
+                      "start": 249.325,
+                      "end": 251.005
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 16,
+                  "start": 246.685,
+                  "end": 251.005
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "It is what it is, I did what I had to do to survive.",
+                      "start": 251.88501,
+                      "end": 254.685
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 14,
+                  "start": 251.88501,
+                  "end": 254.685
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Do you sometimes feel that you have lost control over events in your life?",
+                      "start": 255.90999,
+                      "end": 259.99
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 14,
+                  "start": 255.90999,
+                  "end": 259.99
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "All the time feels like life just happens to me.",
+                      "start": 260.87,
+                      "end": 263.75
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 10,
+                  "start": 260.87,
+                  "end": 263.75
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Do you think it is sometimes Okay to tell a lie?",
+                      "start": 264.47,
+                      "end": 266.94998
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 11,
+                  "start": 264.47,
+                  "end": 266.94998
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "You do what you have to do, everybody lies.",
+                      "start": 267.925,
+                      "end": 270.565
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 9,
+                  "start": 267.925,
+                  "end": 270.565
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Would you describe yourself as someone who walks away from a fight?",
+                      "start": 271.445,
+                      "end": 274.885
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 12,
+                  "start": 271.445,
+                  "end": 274.885
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I don't back down, you show weakness and people will walk all over you.",
+                      "start": 275.525,
+                      "end": 279.125
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 14,
+                  "start": 275.525,
+                  "end": 279.125
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "How do you feel about getting some help or participating in programs?",
+                      "start": 280.16,
+                      "end": 284.16
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 12,
+                  "start": 280.16,
+                  "end": 284.16
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "I've been through programs before, they don't really help but I'll go if I have to.",
+                      "start": 284.96,
+                      "end": 289.44
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 16,
+                  "start": 284.96,
+                  "end": 289.44
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Is there anything else you'd like to tell me that might help with your case planning?",
+                      "start": 290.4,
+                      "end": 294.24
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 16,
+                  "start": 290.4,
+                  "end": 294.24
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Not really, you've heard it all before.",
+                      "start": 295.42502,
+                      "end": 297.345
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 7,
+                  "start": 295.42502,
+                  "end": 297.345
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Thank you for your time and honesty today.",
+                      "start": 298.14502,
+                      "end": 301.02502
+                    },
+                    {
+                      "text": "We'll use this information to develop a supervision plan that works for you.",
+                      "start": 301.185,
+                      "end": 305.185
+                    }
+                  ],
+                  "speaker": 0,
+                  "num_words": 21,
+                  "start": 298.14502,
+                  "end": 305.185
+                },
+                {
+                  "sentences": [
+                    {
+                      "text": "Thank you, I appreciate you taking the time to understand my situation.",
+                      "start": 306.33496,
+                      "end": 310.09494
+                    }
+                  ],
+                  "speaker": 1,
+                  "num_words": 12,
+                  "start": 306.33496,
+                  "end": 310.09494
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

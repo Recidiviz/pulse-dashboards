@@ -20,45 +20,45 @@
  */
 
 export const blobToBase64 = (blob: Blob): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      const base64 = result.split(",")[1];
-      resolve(base64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			const result = reader.result as string;
+			const base64 = result.split(",")[1];
+			resolve(base64);
+		};
+		reader.onerror = reject;
+		reader.readAsDataURL(blob);
+	});
 };
 
 export const validateRecordingCapabilities = (
-  selectedMicrophone: string,
-  isRecordingSupported: boolean,
-  supportedFormat: string | null,
+	selectedMicrophone: string,
+	isRecordingSupported: boolean,
+	supportedFormat: string | null,
 ): void => {
-  if (!selectedMicrophone) {
-    throw new Error("Please select a microphone first");
-  }
+	if (!selectedMicrophone) {
+		throw new Error("Please select a microphone first");
+	}
 
-  if (!isRecordingSupported || !supportedFormat) {
-    throw new Error("Audio recording not supported on this device");
-  }
+	if (!isRecordingSupported || !supportedFormat) {
+		throw new Error("Audio recording not supported on this device");
+	}
 };
 
 export const cleanupMediaResources = (
-  stream: MediaStream | null,
-  interval: NodeJS.Timeout | null = null,
+	stream: MediaStream | null,
+	interval: NodeJS.Timeout | null = null,
 ): void => {
-  if (stream) {
-    for (const track of stream.getTracks()) {
-      track.stop();
-    }
-  }
+	if (stream) {
+		for (const track of stream.getTracks()) {
+			track.stop();
+		}
+	}
 
-  if (interval) {
-    clearInterval(interval);
-  }
+	if (interval) {
+		clearInterval(interval);
+	}
 };
 
 // ====== RESUME UTILITIES ======
@@ -68,9 +68,9 @@ export const cleanupMediaResources = (
  * vs cross-session resume (need new MediaRecorder + dummy chunk)
  */
 export const isWithinSessionResume = (
-  mediaRecorder: MediaRecorder | null,
+	mediaRecorder: MediaRecorder | null,
 ): boolean => {
-  return mediaRecorder !== null && mediaRecorder.state === "paused";
+	return mediaRecorder !== null && mediaRecorder.state === "paused";
 };
 
 /**
@@ -79,28 +79,28 @@ export const isWithinSessionResume = (
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const restoreChunkCounter = (sessionData: any): number => {
-  console.log("Attempting to restore chunk counter from:", sessionData);
+	console.log("Attempting to restore chunk counter from:", sessionData);
 
-  // Try different possible property names
-  const chunkCount =
-    sessionData?.chunk_count ??
-    sessionData?.chunkCount ??
-    sessionData?.chunks ??
-    sessionData?.total_chunks;
+	// Try different possible property names
+	const chunkCount =
+		sessionData?.chunk_count ??
+		sessionData?.chunkCount ??
+		sessionData?.chunks ??
+		sessionData?.total_chunks;
 
-  if (typeof chunkCount === "number" && chunkCount >= 0) {
-    console.log(`Restoring chunk counter to: ${chunkCount}`);
-    return chunkCount;
-  }
+	if (typeof chunkCount === "number" && chunkCount >= 0) {
+		console.log(`Restoring chunk counter to: ${chunkCount}`);
+		return chunkCount;
+	}
 
-  // Log available properties for debugging
-  if (sessionData && typeof sessionData === "object") {
-    console.warn(
-      "Available properties in session data:",
-      Object.keys(sessionData),
-    );
-  }
+	// Log available properties for debugging
+	if (sessionData && typeof sessionData === "object") {
+		console.warn(
+			"Available properties in session data:",
+			Object.keys(sessionData),
+		);
+	}
 
-  console.warn("No valid chunk count in session data, starting from 0");
-  return 0;
+	console.warn("No valid chunk count in session data, starting from 0");
+	return 0;
 };

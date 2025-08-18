@@ -10,7 +10,7 @@ steps:
       - '-t'
       - 'gcr.io/$PROJECT_ID/recidiviz-seed-job:latest'
       - '.'
-    dir: 'backend'
+    dir: '.'
 
   # Push the Docker image
   - name: 'gcr.io/cloud-builders/docker'
@@ -39,7 +39,7 @@ steps:
       - 'run'
       - 'jobs'
       - 'replace'
-      - 'backend/deploy/seed-job/job.yaml'
+      - 'deploy/seed-job/job.yaml'
       - '--region=us-central1'
 options:
   logging: CLOUD_LOGGING_ONLY

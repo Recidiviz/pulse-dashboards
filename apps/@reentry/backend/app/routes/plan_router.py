@@ -5,7 +5,7 @@ from io import BytesIO
 from typing import Optional
 
 import orjson
-from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi_pagination import Page
 from fastapi_pagination.ext.sqlmodel import paginate
@@ -88,6 +88,10 @@ class PlanRequestCreate(BaseModel):
     no_initial_generation: Optional[bool] = False
 
 
+class SetNotificationRequest(BaseModel):
+    notify: bool
+
+
 # Using shared model as base class
 
 
@@ -126,6 +130,7 @@ class PlanGenerationResponse(ORMResponse):
     finished_at: Optional[datetime] = None
     execution_id: uuid.UUID | None = None
     execution: ExecutionResponse | None = None
+    regeneration_notify: bool
 
 
 class PlanGenerationResponseCreate(PlanGenerationResponse):
@@ -263,6 +268,42 @@ async def router_get_plan(
     )
 
 
+@router.post(
+    "/plans/{id}/set-notify",
+    summary="Set Generation Notification",
+    description=(
+        "Set the regeneration notification flag for the latest completed generation "
+        "of the specified plan."
+    ),
+)
+async def router_set_generation_notify(
+    id: uuid.UUID,
+    request: SetNotificationRequest,
+    session: AsyncSession = Depends(get_session),
+):
+    plan = await get_plan_by_id(session, id)
+    if plan is None:
+        raise HTTPException(status_code=404)
+
+    gens = await get_gen_by_plan_id(session, id)
+    gens = [gen for gen in gens if gen.status == PlanGenerationStatus.COMPLETED]
+    gens = sorted(gens, key=lambda x: x.finished_at, reverse=True)
+    latest_generation = gens[0] if gens else None
+
+    if not latest_generation:
+        raise HTTPException(status_code=404)
+
+    try:
+        latest_generation.set_regeneration_notify(request.notify)
+    except Exception:
+        raise HTTPException(status_code=400)
+
+    session.add(latest_generation)
+    await session.commit()
+
+    return Response(status_code=200)
+
+
 @router.delete(
     "/plans/{id}",
     response_model=DeletionResponse,
@@ -331,6 +372,9 @@ async def router_generate_plan(
         resource_to_add_content=request.resource_to_add_content,
         resource_to_remove_id=request.resource_to_remove_id,
     )
+
+    if request.prompt:
+        plan_gen.regeneration_notify = True
     gen = await create_plan_generation(session, plan_gen)
     await gen.schedule_execution(session)
     return gen

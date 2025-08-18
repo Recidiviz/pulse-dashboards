@@ -12,7 +12,7 @@ DB_URL = settings.DATABASE_URL
 if "pytest" in modules:
     DB_URL = settings.DATABASE_URL_TESTS
 
-engine = AsyncEngine(create_engine(DB_URL, future=True))
+engine = AsyncEngine(create_engine(DB_URL, future=True, pool_pre_ping=True))
 
 
 async def init_db():

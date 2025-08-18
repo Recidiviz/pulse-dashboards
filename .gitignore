@@ -87,3 +87,7 @@ vitest.config.*.timestamp*
 
 # may be generated temporarily while running vitest type tests
 tsconfig.vitest-temp.json
+
+# Next.js
+.next
+out

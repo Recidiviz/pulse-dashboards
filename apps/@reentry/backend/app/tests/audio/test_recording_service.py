@@ -1,7 +1,6 @@
-"""Tests for SimpleCloudStorageService."""
-
 import os
 import uuid
+from pathlib import Path
 
 import aiohttp
 import pytest
@@ -12,6 +11,9 @@ from app.services.recording_service import (
     extract_chunk_index,
     group_chunks_by_start,
 )
+
+TEST_AUDIO_DATA_ROOT = Path(__file__).parent.parent / "data" / "audio"
+GCP_BUCKET = os.getenv("RECIDIVIZ_GCS_BUCKET_NAME")
 
 
 async def upload_file_to_gcs(bucket_name: str, file_path: str, file_data: bytes):
@@ -51,9 +53,9 @@ async def delete_file_from_gcs(bucket_name: str, file_path: str):
         await service.close()
 
 
-@pytest.mark.skip("Skipping GPC tests")
 @pytest.mark.asyncio
-async def test_upload_file(bucket_name: str = "recidiviz-dev-bucket-1"):
+@pytest.mark.integration
+async def test_upload_file(bucket_name: str = GCP_BUCKET):
     test_data = b"This is a test file content for GCS upload"
     file_name = f"test-files/{uuid.uuid4()}.txt"
     file_uploaded = False
@@ -76,9 +78,9 @@ async def test_upload_file(bucket_name: str = "recidiviz-dev-bucket-1"):
                 print(f"Warning: Failed to delete file {file_name}: {cleanup_error}")
 
 
-@pytest.mark.skip("Skipping GPC tests")
 @pytest.mark.asyncio
-async def test_generate_signed_url(bucket_name: str = "recidiviz-dev-bucket-1"):
+@pytest.mark.integration
+async def test_generate_signed_url(bucket_name: str = GCP_BUCKET):
     test_data = b"This is a test file for signed URL"
     file_name = f"test-files/{uuid.uuid4()}.txt"
 
@@ -177,16 +179,14 @@ def test_group_chunks_by_start():
     ]
 
 
-@pytest.mark.skip("Skipping GPC tests")
 @pytest.mark.asyncio
-async def test_process_and_upload_groups(bucket_name: str = "recidiviz-dev-bucket-1"):
+@pytest.mark.integration
+async def test_process_and_upload_groups(bucket_name: str = GCP_BUCKET):
     test_session_id = f"test-{uuid.uuid4()}"
     print(f"Using test session ID: {test_session_id}")
 
     # Path to sample files
-    test_data_dir = os.path.join(
-        os.path.dirname(__file__), "data", "audio", "chunked_webm_samples"
-    )
+    test_data_dir = os.path.join(TEST_AUDIO_DATA_ROOT, "chunked_webm_samples")
 
     sample_files = [f for f in os.listdir(test_data_dir) if f.endswith(".webm")]
 
@@ -255,9 +255,7 @@ def test_concatenate_webm_files():
     import tempfile
 
     # Path to sample files
-    test_data_dir = os.path.join(
-        os.path.dirname(__file__), "data", "audio", "complete_webm_samples"
-    )
+    test_data_dir = os.path.join(TEST_AUDIO_DATA_ROOT, "complete_webm_samples")
 
     sample_files = [f for f in os.listdir(test_data_dir) if f.endswith(".webm")]
     sample_files.sort()
@@ -298,18 +296,14 @@ def test_concatenate_webm_files():
             print(f"Cleaned up output file: {output_path}")
 
 
-@pytest.mark.skip("Skipping GPC tests")
 @pytest.mark.asyncio
-async def test_process_chunks_to_final_audio(
-    bucket_name: str = "recidiviz-dev-bucket-1",
-):
+@pytest.mark.integration
+async def test_process_chunks_to_final_audio(bucket_name: str = GCP_BUCKET):
     """Upload sample audio chunks and test the creation of the final audio file.."""
     test_session_id = f"test-{uuid.uuid4()}"
     print(f"Using test session ID: {test_session_id}")
 
-    test_data_dir = os.path.join(
-        os.path.dirname(__file__), "data", "audio", "chunked_webm_samples"
-    )
+    test_data_dir = os.path.join(TEST_AUDIO_DATA_ROOT, "chunked_webm_samples")
 
     sample_files = [f for f in os.listdir(test_data_dir) if f.endswith(".webm")]
 

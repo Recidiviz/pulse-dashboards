@@ -116,7 +116,7 @@ const AudioRecordingPage: React.FC = () => {
         sessionData={sessionData || null}
         onRefreshNeeded={() => refetchSession()}
       />
-      <div className="self-stretch self-stretch p-10 bg-[#f9fafa] inline-flex flex-col justify-center items-start gap-10 h-full">
+      <div className="min-h-[calc(100vh-65px)] self-stretch p-10 bg-[#f9fafa] flex flex-col items-start gap-5">
         <UserSummary
           clientData={clientData}
           sessionData={sessionData || null}

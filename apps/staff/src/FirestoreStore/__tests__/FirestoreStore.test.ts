@@ -26,7 +26,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import tk from "timekeeper";
-import { Mock } from "vitest";
+import { expect, Mock } from "vitest";
 
 import { isOfflineMode } from "~client-env-utils";
 

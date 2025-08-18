@@ -17,7 +17,7 @@
 
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect,useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
 import { useRecordingSessionStatus } from "~@reentry/frontend/hooks/useRecordingSessionStatus";

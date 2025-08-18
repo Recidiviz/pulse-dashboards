@@ -529,3 +529,211 @@ async def test_suggested_resources(
                 == ResourceSubcategory.JOB_PLACEMENT
             )
             assert suggested_resources[1]["name"] == "Test Employment Resource"
+
+
+@pytest.mark.asyncio
+async def test_regeneration_notify_set_on_prompt_generation(
+    mock_clientdata_service,
+    client,
+    async_session,
+    assert_response,
+):
+    """Test that regeneration_notify is set to True when generating with a prompt"""
+    client_id = mock_clientdata_service["clients"][0].external_client_id
+
+    response = await client.post(
+        "/plans",
+        json={
+            "client_id": client_id,
+            "no_initial_generation": True,
+        },
+    )
+    assert_response(response, 200)
+    plan_id = response.json()["id"]
+
+    for filename, name, mimetype in [
+        ("client_messages.json", "messages.json", "application/json"),
+        ("client_summary.md", "summary.md", "text/markdown"),
+    ]:
+        with open(Path(__file__).parent / "data" / filename, "r", encoding="utf8") as f:
+            files = {"file": (name, f.read(), mimetype)}
+            response = await client.post(f"/plans/{plan_id}/assets/upload", files=files)
+            assert_response(response, 200)
+
+    with patch(
+        "app.utils.llm_agent_qa.LLMAgentQA.call",
+        new_callable=AsyncMock,
+    ) as mock_find:
+        mock_find.return_value = ClientExtractedInfo()
+        with patch(
+            "app.utils.llm_agent_gen_plan.LLMAgentGenerate.generate",
+            new_callable=AsyncMock,
+        ) as mock_gen:
+            mock_gen.return_value = ActionPlanMarkdown(
+                user_prompt="USER_PROMPT_SENT_TO_MODEL",
+                action_plan="ACTION_PLAN_REGENERATED",
+                messages=[],
+                suggested_resources=[],
+                structured_action_plan=ActionPlan(
+                    sections=[],
+                    immediate_needs={
+                        "annotations": [],
+                        "markdown_content": "",
+                        "notes": "",
+                        "title": "",
+                    },
+                    milestones=[],
+                    timeline=[],
+                    quick_summary_circumstances="",
+                    overview="",
+                    sections_order=[],
+                ),
+            )
+
+            response = await client.post(
+                f"/plans/{plan_id}/generate",
+                json={"prompt": "Please regenerate the plan with more details"},
+            )
+            assert_response(response, 200)
+            data = response.json()
+            gen_id = data["id"]
+
+            for x in range(10):
+                response = await client.get(f"/plans/{plan_id}/gens/{gen_id}")
+                assert_response(response, 200)
+                data = response.json()
+                if data["status"] in ("completed", "failed"):
+                    break
+                await asyncio.sleep(1)
+            else:
+                pytest.fail("Generation not completed in time")
+
+            # Verify regeneration_notify is True for prompt-based generation
+            assert data["regeneration_notify"] is True
+            assert data["status"] == "completed"
+
+
+@pytest.mark.asyncio
+async def test_set_notify_endpoint(
+    mock_clientdata_service,
+    client,
+    async_session,
+    assert_response,
+):
+    """Test the /plans/{id}/set-notify endpoint"""
+    client_id = mock_clientdata_service["clients"][0].external_client_id
+
+    response = await client.post(
+        "/plans",
+        json={
+            "client_id": client_id,
+            "no_initial_generation": True,
+        },
+    )
+    assert_response(response, 200)
+    plan_id = response.json()["id"]
+
+    for filename, name, mimetype in [
+        ("client_messages.json", "messages.json", "application/json"),
+        ("client_summary.md", "summary.md", "text/markdown"),
+    ]:
+        with open(Path(__file__).parent / "data" / filename, "r", encoding="utf8") as f:
+            files = {"file": (name, f.read(), mimetype)}
+            response = await client.post(f"/plans/{plan_id}/assets/upload", files=files)
+            assert_response(response, 200)
+
+    with patch(
+        "app.utils.llm_agent_qa.LLMAgentQA.call",
+        new_callable=AsyncMock,
+    ) as mock_find:
+        mock_find.return_value = ClientExtractedInfo()
+        with patch(
+            "app.utils.llm_agent_gen_plan.LLMAgentGenerate.generate",
+            new_callable=AsyncMock,
+        ) as mock_gen:
+            mock_gen.return_value = ActionPlanMarkdown(
+                user_prompt="USER_PROMPT_SENT_TO_MODEL",
+                action_plan="ACTION_PLAN",
+                messages=[],
+                suggested_resources=[],
+                structured_action_plan=ActionPlan(
+                    sections=[],
+                    immediate_needs={
+                        "annotations": [],
+                        "markdown_content": "",
+                        "notes": "",
+                        "title": "",
+                    },
+                    milestones=[],
+                    timeline=[],
+                    quick_summary_circumstances="",
+                    overview="",
+                    sections_order=[],
+                ),
+            )
+
+            response = await client.post(
+                f"/plans/{plan_id}/generate", json={"prompt": "Regenerate with changes"}
+            )
+            assert_response(response, 200)
+            gen_id = response.json()["id"]
+
+            for x in range(10):
+                response = await client.get(f"/plans/{plan_id}/gens/{gen_id}")
+                assert_response(response, 200)
+                data = response.json()
+                if data["status"] in ("completed", "failed"):
+                    break
+                await asyncio.sleep(1)
+            else:
+                pytest.fail("Generation not completed in time")
+
+            assert data["regeneration_notify"] is True
+
+            response = await client.post(
+                f"/plans/{plan_id}/set-notify", json={"notify": False}
+            )
+            assert_response(response, 200)
+
+            response = await client.get(f"/plans/{plan_id}/gens/{gen_id}")
+            assert_response(response, 200)
+            data = response.json()
+            assert data["regeneration_notify"] is False
+
+            response = await client.post(
+                f"/plans/{plan_id}/set-notify", json={"notify": True}
+            )
+            assert_response(response, 200)
+
+            response = await client.get(f"/plans/{plan_id}/gens/{gen_id}")
+            assert_response(response, 200)
+            data = response.json()
+            assert data["regeneration_notify"] is True
+
+
+@pytest.mark.asyncio
+async def test_set_notify_endpoint_error_cases(
+    mock_clientdata_service,
+    client,
+    async_session,
+    assert_response,
+):
+    fake_plan_id = uuid.uuid4()
+    response = await client.post(
+        f"/plans/{fake_plan_id}/set-notify", json={"notify": False}
+    )
+    assert response.status_code == 404
+
+    client_id = mock_clientdata_service["clients"][0].external_client_id
+    response = await client.post(
+        "/plans",
+        json={
+            "client_id": client_id,
+            "no_initial_generation": True,
+        },
+    )
+    assert_response(response, 200)
+    plan_id = response.json()["id"]
+
+    response = await client.post(f"/plans/{plan_id}/set-notify", json={"notify": False})
+    assert response.status_code == 404

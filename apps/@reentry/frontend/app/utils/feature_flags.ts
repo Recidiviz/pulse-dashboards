@@ -15,19 +15,29 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withSentryConfig } from "@sentry/nextjs";
+function getCurrentEnvironment(): string {
+	if (process.env["NEXT_PUBLIC_ENVIRONMENT"]) {
+		return process.env["NEXT_PUBLIC_ENVIRONMENT"].toLowerCase();
+	}
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: "standalone",
-};
+	return "dev";
+}
 
-export default withSentryConfig(nextConfig, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
-  hideSourceMaps: true,
-  disableLogger: true,
-  automaticVercelMonitors: true,
-});
+export function isFeatureEnabled(
+	featureName: string,
+	currentEnv: string = getCurrentEnvironment(),
+): boolean {
+	const envVarName = `NEXT_PUBLIC_ENVIRONMENT_${featureName}`;
+	const enabledEnvironments = process.env[envVarName] || "";
+
+	if (!enabledEnvironments) {
+		return false;
+	}
+
+	// Split by comma and check if current environment is in the list
+	const envList = enabledEnvironments
+		.split(",")
+		.map((env) => env.trim().toLowerCase());
+
+	return envList.includes(currentEnv.toLowerCase());
+}

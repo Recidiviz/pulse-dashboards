@@ -1,21 +1,19 @@
 import json
 import logging
-from typing import Optional
+from typing import Dict, List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import HTTPBearer
-from pydantic import model_validator
+from pydantic import BaseModel, model_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import get_session
 from app.crud.recording_session import get_recording_session_by_id
-from app.models.base import BaseModel
 from app.models.intake import ClientAddress, Intake, IntakeStatus
 from app.services.client_data.queries import get_clients_by_pseudonymized_staff_id
 from app.services.recording_service import RecordingService
-from app.utils.transcription.post_processing import TranscriptionOutput
 
 logger = logging.getLogger(__name__)
 
@@ -116,15 +114,44 @@ async def complete_intake_transcription(
     )
 
 
+class ConversationTurnResponse(BaseModel):
+    id: str
+    role: str
+    content: str
+    startTime: str
+    endTime: str
+    speakerTag: int
+    wordCount: int
+    duration: str
+
+
+class SpeakerStats(BaseModel):
+    turns: int
+    duration: str
+
+
+class OutputMetadataResponse(BaseModel):
+    totalDuration: str
+    totalTurns: int
+    speakers: Dict[str, SpeakerStats]
+    averageConfidence: float
+    language: str
+    createdAt: str
+
+
+class TranscriptionOutputResponse(BaseModel):
+    metadata: OutputMetadataResponse
+    conversation: List[ConversationTurnResponse]
+
+
 @router.get(
     "/{recording_session_id}/transcription",
-    response_model=TranscriptionOutput,
+    response_model=TranscriptionOutputResponse,
     summary="Get Client Interview Transcription",
     description="Retrieve the interview transcription for a client recording session.",
     tags=["Client Records"],
 )
 async def get_client_transcription(
-    request: Request,
     recording_session_id: UUID,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
@@ -167,7 +194,4 @@ async def get_client_transcription(
     except json.JSONDecodeError:
         raise HTTPException(status_code=500, detail="Invalid transcription file format")
 
-    return TranscriptionOutput(
-        conversation=transcription_data.get("conversation", []),
-        metadata=transcription_data.get("metadata", {}),
-    )
+    return TranscriptionOutputResponse.model_validate(transcription_data)

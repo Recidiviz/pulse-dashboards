@@ -18,6 +18,7 @@
 import { renderHook } from "@testing-library/react";
 import { useLocation } from "react-router-dom";
 import { Mock } from "vitest";
+import { expect } from "vitest";
 
 import { useRootStore } from "../../components/StoreProvider";
 import useAuth from "../useAuth";
