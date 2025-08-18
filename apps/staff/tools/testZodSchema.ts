@@ -300,19 +300,38 @@ async function testCollection(opportunityType: SchemaKey, stateCode?: string) {
 
     // Process current chunk
     for (const d of docs) {
-      const result = validateDocument(
-        d,
-        schema,
-        firestoreCollection,
-        isOpportunity,
-      );
-      if (result.success) {
-        succeeded += 1;
-      } else {
-        failed += 1;
-        if (result.error.issues) {
-          failures[d.id] = result.error.issues;
+      try {
+        const result = validateDocument(
+          d,
+          schema,
+          firestoreCollection,
+          isOpportunity,
+        );
+        if (result.success) {
+          succeeded += 1;
+        } else {
+          failed += 1;
+          if (result.error.issues) {
+            failures[d.id] = result.error.issues;
+          }
         }
+      } catch (e) {
+        console.log(`Error processing document ${d.id}:`, e);
+
+        if (
+          e instanceof Error &&
+          e.message.includes("Cannot read properties of undefined")
+        ) {
+          console.warn("*******************************************");
+          console.warn("**NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE**");
+          console.warn("*******************************************");
+          console.warn(
+            "Being unable to find ZodObject._parse is often a sign of circular imports.",
+          );
+          process.exitCode = 1;
+          process.exit();
+        }
+        failed += 1;
       }
     }
 
