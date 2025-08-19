@@ -423,8 +423,8 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This tool helps case managers identify residents who are eligible for transfer to a minimum security unit (MRCC or JRMU). Case managers should complete a Minimum Housing Referral assessment in Elite for every eligible resident.",
-      submittedTabTitle: null,
-      supportsSubmitted: false,
+      submittedTabTitle: "Referral Submitted",
+      supportsSubmitted: true,
       systemType: "INCARCERATION",
       tabGroups: null,
       tabPrefaceCopy: [],

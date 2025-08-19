@@ -38,7 +38,6 @@ const allConfigs = {
   ...US_ME.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_MI.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_NE.mockApiOpportunityConfigurationResponse.enabledConfigs,
-  ...US_OR.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_PA.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_TX.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_UT.mockApiOpportunityConfigurationResponse.enabledConfigs,
@@ -46,6 +45,7 @@ const allConfigs = {
   ...US_ID.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_MO.mockApiOpportunityConfigurationResponse.enabledConfigs,
   ...US_ND.mockApiOpportunityConfigurationResponse.enabledConfigs,
+  ...US_OR.mockApiOpportunityConfigurationResponse.enabledConfigs,
 } as const;
 export default allConfigs;
 export type FixtureOpportunityType = keyof typeof allConfigs;

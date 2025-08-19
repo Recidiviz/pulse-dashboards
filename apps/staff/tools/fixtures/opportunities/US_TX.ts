@@ -85,7 +85,13 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
-      notifications: [],
+      notifications: [
+        {
+          body: "Want to understand what the recent ARS policy change that went into effect on July 1, 2025 might mean for you?",
+          cta: "[FAQ](https://docs.google.com/document/d/15t2-0GNBEXzHFyaNjO-v7QcPNxoqVHLLfCd2VehcuIw/edit?tab=t.0#heading=h.ad9wclkxnl7w)",
+          id: "3f78cf16-ed4f-4ea0-9c7b-903d1c5c9bf9",
+        },
+      ],
       omsCriteriaHeader: " Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",
@@ -180,7 +186,14 @@ export const mockApiOpportunityConfigurationResponse = {
         },
       ],
       nonOmsCriteriaHeader: "Requirements to check",
-      notifications: [],
+      notifications: [
+        {
+          body: "Want to understand how the recent ERS policy changes that went into effect on July 1, 2025 mean for you?",
+          cta: "(https://docs.google.com/document/d/15t2-0GNBEXzHFyaNjO-v7QcPNxoqVHLLfCd2VehcuIw/edit?tab=t.0#heading=h.ad9wclkxnl7w)",
+          id: "4ef11701-0b09-4b81-b5d0-20dcbe6e9d1a",
+          title: "",
+        },
+      ],
       omsCriteriaHeader: "Requirements validated by OIMS data",
       overdueOpportunityCalloutCopy: null,
       priority: "NORMAL",

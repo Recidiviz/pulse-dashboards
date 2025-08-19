@@ -872,16 +872,8 @@ export const mockApiOpportunityConfigurationResponse = {
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_AZ",
-      subcategoryHeadings: [
-        { subcategory: "MAYBE_ELIGIBLE", text: "Maybe Eligible" },
-        { subcategory: "NOT_MAYBE_ELIGIBLE", text: "Eligible Now" },
-      ],
-      subcategoryOrderings: [
-        {
-          tab: "Eligible Now",
-          texts: ["NOT_MAYBE_ELIGIBLE", "MAYBE_ELIGIBLE"],
-        },
-      ],
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
       subheading: null,
       submittedTabTitle: null,
       supportsSubmitted: false,

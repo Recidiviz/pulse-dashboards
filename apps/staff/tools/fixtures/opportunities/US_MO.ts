@@ -72,16 +72,14 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Within 60 months of earliest established release date",
         },
         {
+          key: "usMoWithin60MonthsOfEarliestReleaseDate",
+          text: "Within 60 months of earliest established release date",
+        },
+        {
           key: "usMoNoEscapeIn10YearsOrCurrentSentence",
           text: "No perimeter escapes within the current sentence structure or within the past 10 years",
           tooltip:
             "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
-        },
-        {
-          key: "noContrabandIncarcerationIncidentWithin2Years",
-          text: "No violations for introducing drugs or contraband within the past 2 years",
-          tooltip:
-            "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
         },
       ],
       emptyTabCopy: [],
@@ -101,6 +99,11 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "No outstanding wants, warrants, or detainers for Class A–D felonies",
           tooltip:
             "Misdemeanor warrants from out of state should be reviewed to ensure they are not considered felony wants in Missouri. Residents participating in Outside Clearance should be checked for felony wants, warrants, or detainers at least monthly.",
+        },
+        {
+          text: "No violations for introducing drugs or contraband within the past 2 years",
+          tooltip:
+            "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
         },
         {
           text: "Meets any other institution-specific requirements established in standard operating procedures (SOP)",
@@ -446,12 +449,6 @@ export const mockApiOpportunityConfigurationResponse = {
             "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
         },
         {
-          key: "noContrabandIncarcerationIncidentWithin2Years",
-          text: "No violations for introducing drugs or contraband within the past 2 years",
-          tooltip:
-            "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
-        },
-        {
           key: "usMoEducationalScore1",
           text: "Meets educational requirements",
           tooltip:
@@ -488,6 +485,12 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           text: "No conviction or demonstrated pattern of child abuse or sexual offenses",
+          tooltip: "",
+        },
+        {
+          text: "No violations for introducing drugs or contraband within the past 2 years",
+          tooltip:
+            "Residents who have a history of introducing illicit drugs or contraband into a correctional facility (including suspicion of involvement, conspiracy, and investigation) cannot be considered for at least 2 years from the last violation.",
         },
         {
           text: "Consider adverse community impact due to factors such as gang or organized crime involvement",
