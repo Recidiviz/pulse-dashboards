@@ -45,7 +45,7 @@
       },
       "configurations": {
         "dev": {
-          "command": "docker compose up --wait"
+          "command": "docker compose up --remove-orphans --wait"
         },
         "ci": {
           "command": "echo 'No docker for CI'"
@@ -129,6 +129,19 @@
       "options": {
         "schema": "{projectRoot}/prisma/schema.prisma"
       }
+    },
+    "custom-prisma-deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sh scripts/migrate-dbs.sh",
+        "cwd": "{projectRoot}"
+      },
+      "inputs": [
+        "{projectRoot}/prisma/schema.prisma",
+        "{projectRoot}/prisma/migrations/**",
+        "{projectRoot}/scripts/migrate-dbs.sh"
+      ],
+      "outputs": []
     }
   },
   "tags": ["jii-texting", "scope:server"]

@@ -112,7 +112,7 @@
       "outputs": ["{workspaceRoot}/coverage/apps/@jii-texting/processor"],
       "cache": true,
       "options": {
-        "command": "nx prisma-deploy @jii-texting/prisma && cd apps/@jii-texting/processor && vitest",
+        "command": "nx custom-prisma-deploy @jii-texting/prisma && cd apps/@jii-texting/processor && vitest",
         "cwd": "{workspaceRoot}"
       }
     },

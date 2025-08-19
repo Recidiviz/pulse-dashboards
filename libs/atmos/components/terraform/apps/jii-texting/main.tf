@@ -58,7 +58,7 @@ module "database" {
   zone                       = "us-central1-a"
   secondary_zone             = var.database_secondary_zone
   tier                       = "db-custom-1-3840"
-  additional_databases       = ["us_id"]
+  additional_databases       = ["us_id", "us_tx"]
   private_network            = "projects/${var.project_id}/global/networks/default"
   insights_config = {
     query_insights_enabled : true

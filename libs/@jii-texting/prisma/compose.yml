@@ -15,11 +15,12 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=jii-texting-test
+      - POSTGRES_MULTIPLE_DATABASES=jii-texting-test-us-id,jii-texting-test-us-tx
     ports:
       - 6503:5432
     volumes:
       - postgres_data:/var/lib/postgresql/test-data/
+      - ./scripts/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/init-multiple-dbs.sh
 
 volumes:
   postgres_data:
