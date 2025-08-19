@@ -78,7 +78,10 @@ export function UsTnNavigateToTepeFormButton({
   client,
   onClick,
   ...props
-}: React.PropsWithChildren<NavigateToFormButtonProps>): JSX.Element | boolean {
+}: React.PropsWithChildren<NavigateToFormButtonProps>):
+  | JSX.Element
+  | boolean
+  | null {
   const { pathname } = useLocation();
   const { officerPseudoId } = useParams();
 
@@ -88,7 +91,16 @@ export function UsTnNavigateToTepeFormButton({
     workflowsStore,
     firestoreStore,
   } = useRootStore();
+
+  // check if the client has a record or not
+  const [hasRecord, setHasRecord] = useState(false);
+
+  // FV that controls this feature directly
+  if (!workflowsStore.featureVariants.usTnTEPENotesForAll) return null;
+
   const config = opportunityConfigurationStore.opportunities["usTnExpiration"];
+  // can be missing if an upstream FV is not enabled
+  if (!config) return null;
 
   const linkToForm = getLinkToFormWithoutOpportunity(
     pathname,
@@ -96,9 +108,6 @@ export function UsTnNavigateToTepeFormButton({
     client,
     config,
   );
-
-  // check if the client has a record or not
-  const [hasRecord, setHasRecord] = useState(false);
 
   getRecordForIneligible(
     client,
