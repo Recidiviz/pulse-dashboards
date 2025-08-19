@@ -31,8 +31,8 @@ components:
         migrate_db_env_key: env_prod_reentry_migrate_db
         data_import_env_key: env_prod_reentry_data_import
         private_network: projects/recidiviz-dashboard-production/global/networks/default
-    hooks:
-      store-outputs:
-        outputs:
-          service_account_email: .service_account_email
-          database_credentials: .database_credentials
+      hooks:
+        store-outputs:
+          outputs:
+            service_account_email: .service_account_email
+            database_credentials: .database_credentials
