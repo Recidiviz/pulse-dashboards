@@ -36,7 +36,7 @@
     "build": {
       "executor": "@nx/next:build",
       "outputs": ["{options.outputPath}"],
-      "dependsOn": ["load-env-files"],
+      "dependsOn": ["load-env-files", "^prisma-generate"],
       "options": {
         "outputPath": "dist/apps/@reentry/frontend",
         "cwd": "{workspaceRoot}"

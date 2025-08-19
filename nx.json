@@ -89,6 +89,10 @@
       "cache": true,
       "dependsOn": ["^prisma-generate", "prisma-generate"]
     },
+    "@nx/next:build": {
+      "cache": true,
+      "dependsOn": ["^prisma-generate", "prisma-generate"]
+    },
     "typecheck": {
       "cache": true,
       "dependsOn": ["^prisma-generate", "prisma-generate"]
