@@ -80,8 +80,8 @@ const subscribeToIntakeChat = async (lastEventId?: string) => {
 };
 
 describe("intake chat router", () => {
-  describe("get", () => {
-    test("get for client with existing intake should return existing intake ID", async () => {
+  describe("getIntake", () => {
+    test("getIntake for client with existing intake should return existing intake ID", async () => {
       const response = await testTRPCClient.intake.getIntake.query({
         clientPseudoId: fakeClient.pseudonymizedId,
       });
@@ -89,10 +89,11 @@ describe("intake chat router", () => {
       expect(response).toEqual({
         id: fakeIntake.id,
         config: fakeIntake.config,
+        endDate: null,
       });
     });
 
-    test("get for client without existing intake should return null", async () => {
+    test("getIntake for client without existing intake should return null", async () => {
       // Create a client without an intake
       await testPrismaClient.client.create({
         data: {
@@ -122,8 +123,8 @@ describe("intake chat router", () => {
     });
   });
 
-  describe("create", () => {
-    test("create for client should throw error if client doesn't exist", async () => {
+  describe("createIntake", () => {
+    test("createIntake for client should throw error if client doesn't exist", async () => {
       await expect(
         testTRPCClient.intake.createIntake.mutate({
           clientPseudoId: "client-psuedo-id-2",
@@ -131,7 +132,7 @@ describe("intake chat router", () => {
       ).rejects.toThrowError("Client with that id was not found");
     });
 
-    test("create for client without existing intake should create new intake", async () => {
+    test("createIntake for client without existing intake should create new intake", async () => {
       await testPrismaClient.client.create({
         data: {
           stateCode: StateCode.US_ID,
@@ -160,6 +161,7 @@ describe("intake chat router", () => {
       expect(response).toEqual({
         id: expect.any(String),
         config: getIntakeConfigForState(StateCode.US_ID),
+        endDate: null,
       });
     });
   });

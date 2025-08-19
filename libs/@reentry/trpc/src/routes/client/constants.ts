@@ -17,8 +17,6 @@
 
 import { Prisma } from "~@reentry/prisma/client/client";
 
-export const INTAKE_GET_ARGS = {
-  id: true,
-  config: true,
-  endDate: true,
-} satisfies Prisma.IntakeSelect;
+export const CLIENT_GET_ARGS = {
+  address: true,
+} satisfies Prisma.ClientSelect;

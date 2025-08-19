@@ -15,8 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import Address from "~@reentry/frontend/components/IntakeChatV2/Address/Address";
 import ConversationLayout from "~@reentry/frontend/components/IntakeChatV2/Chat/ConversationLayout";
 import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
+import IntakeComplete from "~@reentry/frontend/components/IntakeChatV2/IntakeComplete/IntakeComplete";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import PreIntake from "~@reentry/frontend/components/IntakeChatV2/PreIntake/PreIntake";
 import { ChatProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
@@ -30,14 +32,29 @@ interface ChatProps {
 const Chat = ({ clientId, connectionStatus }: ChatProps) => {
   if (!clientId) return null;
 
-  const { data: intake, isLoading } = trpc.intake.getIntake.useQuery({
-    clientPseudoId: clientId,
-  });
+  const { data: intake, isLoading: isLoadingIntake } =
+    trpc.intake.getIntake.useQuery({
+      clientPseudoId: clientId,
+    });
+  const { data: address, isLoading: isLoadingAddress } =
+    trpc.clientRecords.getAddress.useQuery(
+      {
+        clientPseudoId: clientId,
+      },
+      {
+        // Only fetch address if intake is complete
+        enabled: Boolean(intake?.endDate),
+      },
+    );
 
-  if (isLoading) return <Loading />;
+  if (isLoadingIntake || isLoadingAddress) return <Loading />;
 
   if (!intake) return <PreIntake clientPseudoId={clientId} />;
 
+  if (intake.endDate) {
+    if (!address) return <Address clientPseudoId={clientId} />;
+    return <IntakeComplete />;
+  }
   return (
     <ChatProvider intake={intake}>
       <ConversationLayout connectionStatus={connectionStatus} />
