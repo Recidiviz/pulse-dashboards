@@ -158,4 +158,10 @@ export class ApiClient implements DataAPI {
       throw e;
     }
   }
+
+  async locations(stateCode: StateCode) {
+    await when(() => this.isAuthenticated);
+
+    return this.firestoreClient.locations(stateCode);
+  }
 }

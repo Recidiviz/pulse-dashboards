@@ -51,6 +51,7 @@ export const ETL_COLLECTION_NAMES = [
   "clients",
   "residents",
   "compliantReportingReferrals",
+  "locations",
 ];
 
 export const DEMO_ETL_COLLECTION_NAMES = ETL_COLLECTION_NAMES.map(
@@ -65,7 +66,7 @@ export const SHARED_UPDATE_COLLECTION_NAMES = ["clientUpdatesV2"];
  */
 export const PERSONAL_UPDATE_COLLECTION_NAME = "userUpdates";
 
-export async function testAllReadsUnrestricted(
+export async function testAllQueriesUnrestricted(
   db: FirestoreInstance,
   assertFn: AssertFn,
 ) {
@@ -79,7 +80,7 @@ export async function testAllReadsUnrestricted(
   ]);
 }
 
-export async function testAllETLReadsForState(
+export async function testAllETLQueriesForState(
   db: FirestoreInstance,
   assertFn: AssertFn,
   stateCode: string,
@@ -99,14 +100,13 @@ export async function testAllETLReadsForState(
   );
 }
 
-export async function testAllReadsForState(
+export async function testAllUpdateQueriesForState(
   db: FirestoreInstance,
   assertFn: AssertFn,
   stateCode: string,
   collectionsPrefix = "",
 ) {
   return Promise.all([
-    testAllETLReadsForState(db, assertFn, stateCode, collectionsPrefix),
     ...SHARED_UPDATE_COLLECTION_NAMES.map(async (collectionName) => {
       await assertFn(
         getDoc(
@@ -117,6 +117,18 @@ export async function testAllReadsForState(
         ),
       );
     }),
+  ]);
+}
+
+export async function testAllReadsForState(
+  db: FirestoreInstance,
+  assertFn: AssertFn,
+  stateCode: string,
+  collectionsPrefix = "",
+) {
+  return Promise.all([
+    testAllETLQueriesForState(db, assertFn, stateCode, collectionsPrefix),
+    testAllUpdateQueriesForState(db, assertFn, stateCode, collectionsPrefix),
   ]);
 }
 

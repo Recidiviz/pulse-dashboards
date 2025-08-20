@@ -18,7 +18,7 @@
 import keyBy from "lodash/keyBy";
 import { makeAutoObservable, set } from "mobx";
 
-import { ResidentRecord } from "~datatypes";
+import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 import { FlowMethod } from "~hydration-utils";
 
@@ -57,6 +57,8 @@ export class ResidentsStore {
     Map<IncarcerationOpportunityId, EligibilityReport>
   > = new Map();
 
+  locations: Array<LocationRecord> = [];
+
   constructor(
     private readonly rootStore: RootStore,
     public readonly stateCode: StateCode,
@@ -79,7 +81,8 @@ export class ResidentsStore {
     return this.residentsByExternalId.size > 1;
   }
   /**
-   * Populates {@link residentsByExternalId} with the API response for all available residents.
+   * Populates {@link residentsByExternalId} with the API response for all available residents
+   * (or the subset indicated by {@link filters}).
    * Will not refetch if data is already populated, unless `forceRefresh` is true
    */
   *populateResidents(
@@ -94,6 +97,13 @@ export class ResidentsStore {
 
   isResidentPopulated(residentExternalId: string): boolean {
     return this.residentsByExternalId.has(residentExternalId);
+  }
+
+  /**
+   * Populates {@link locations} with the API response for all available locations
+   */
+  *populateLocations(): FlowMethod<DataAPI["locations"], void> {
+    this.locations = yield this.apiClient.locations(this.stateCode);
   }
 
   /**

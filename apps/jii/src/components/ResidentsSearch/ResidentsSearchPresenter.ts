@@ -15,11 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ascending } from "d3-array";
-import { uniq } from "lodash";
 import { flowResult, makeAutoObservable } from "mobx";
 
-import { ResidentRecord } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
@@ -42,15 +39,15 @@ export class ResidentsSearchPresenter implements Hydratable {
 
     this.hydrationSource = new HydratesFromSource({
       populate: async () => {
-        await flowResult(this.residentsStore.populateResidents());
+        await flowResult(this.residentsStore.populateLocations());
       },
-      expectPopulated: [this.expectResidentsPopulated],
+      expectPopulated: [this.expectLocationsPopulated],
     });
   }
 
-  private expectResidentsPopulated() {
-    if (!this.residentsStore.areAllResidentsPopulated()) {
-      throw new Error("Residents data is not populated");
+  private expectLocationsPopulated() {
+    if (!this.residentsStore.locations.length) {
+      throw new Error("Locations data is not populated");
     }
   }
 
@@ -62,35 +59,16 @@ export class ResidentsSearchPresenter implements Hydratable {
     return this.hydrationSource.hydrate();
   }
 
-  private get residents(): Array<ResidentRecord> {
-    return Array.from(this.residentsStore.residentsByExternalId.values());
-  }
-
-  private get filteredResidents(): Array<ResidentRecord> {
-    const { selectedFacilityIdFilterOptionValue } = this.uiStore;
-
-    return this.residents
-      .filter((r) => r.facilityId === selectedFacilityIdFilterOptionValue)
-      .sort((a, b) => ascending(a.personName.surname, b.personName.surname));
-  }
-
-  get selectOptions() {
-    return this.filteredResidents.map((r) => ({
-      value: r,
-      label: `${r.personName.givenNames} ${r.personName.surname} (${r.personExternalId})`,
-    }));
-  }
-
   private get facilities() {
-    return uniq(
-      this.residents.map((r) => r.facilityId).filter((f): f is string => !!f),
+    return this.residentsStore.locations.filter(
+      (l) => l.system === "INCARCERATION" && l.idType === "facilityId",
     );
   }
 
   get residentFilterOptions(): Array<SelectOption> {
-    return this.facilities.map((facilityId) => ({
-      value: facilityId,
-      label: facilityId,
+    return this.facilities.map((facility) => ({
+      value: facility.id,
+      label: facility.name,
     }));
   }
 
@@ -115,12 +93,5 @@ export class ResidentsSearchPresenter implements Hydratable {
     if (value !== this.uiStore.selectedFacilityIdFilterOptionValue) {
       this.uiStore.selectedFacilityIdFilterOptionValue = value;
     }
-  }
-
-  get enableResidentSearch(): boolean {
-    return !!(
-      this.uiStore.selectedFacilityIdFilterOptionValue &&
-      this.filteredResidents.length > 0
-    );
   }
 }

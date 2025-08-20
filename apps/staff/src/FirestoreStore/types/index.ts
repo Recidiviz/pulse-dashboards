@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./location";
 export * from "./metadata";
 export * from "./milestones";
 export * from "./opportunity";

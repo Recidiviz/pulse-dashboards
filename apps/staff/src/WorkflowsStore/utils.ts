@@ -30,9 +30,13 @@ import { Timestamp } from "firebase/firestore";
 import { groupBy, mapValues, sortBy } from "lodash";
 import moment from "moment";
 
-import { fieldToDate, OpportunityType, StaffRecord } from "~datatypes";
+import {
+  fieldToDate,
+  OpportunityType,
+  StaffRecord,
+  SystemId,
+} from "~datatypes";
 
-import { SystemId } from "../core/models/types";
 import {
   INSIGHTS_PATHS,
   insightsUrl,

@@ -32,12 +32,14 @@ import {
   clientRecordSchema,
   IncarcerationStaffRecord,
   incarcerationStaffRecordSchema,
+  LocationRecord,
   OpportunityType,
   ResidentRecord,
   residentRecordSchema,
   StaffRecord,
   SupervisionStaffRecord,
   supervisionStaffRecordSchema,
+  SystemId,
 } from "~datatypes";
 import {
   castToError,
@@ -49,7 +51,7 @@ import {
   isHydrationFinished,
 } from "~hydration-utils";
 
-import { AnyWorkflowsSystemConfig, SystemId } from "../core/models/types";
+import { AnyWorkflowsSystemConfig } from "../core/models/types";
 import { FilterOption } from "../core/types/filters";
 import filterOptions, {
   DefaultPopulationFilterOptions,
@@ -57,7 +59,6 @@ import filterOptions, {
 import { WORKFLOWS_PAGES, WorkflowsPage } from "../core/views";
 import {
   CombinedUserRecord,
-  LocationRecord,
   MilestonesMessage,
   UserMetadata,
   UserUpdateRecord,

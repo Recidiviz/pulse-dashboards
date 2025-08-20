@@ -19,6 +19,7 @@ import {
   ClientRecord,
   IncarcerationStaffRecord,
   incarcerationStaffRecordSchema,
+  LocationRecord,
   makeRecordFixture,
   outputFixtureArray,
   ResidentRecord,
@@ -26,11 +27,7 @@ import {
   supervisionStaffRecordSchema,
 } from "~datatypes";
 
-import {
-  CombinedUserRecord,
-  LocationRecord,
-  UserRecord,
-} from "../../FirestoreStore";
+import { CombinedUserRecord, UserRecord } from "../../FirestoreStore";
 
 // INCARCERATION
 

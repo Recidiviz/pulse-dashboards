@@ -15,26 +15,19 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import {
-  Body16,
-  Header34,
-  spacing,
-  typography,
-} from "@recidiviz/design-system";
+import { Header34, spacing, typography } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC, useId } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { State } from "../../routes/routes";
 import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { Selector } from "../Selector/Selector";
 import { useRootStore } from "../StoreProvider/useRootStore";
+import { ResidentSelector } from "./ResidentSelector";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
 const FilterLabel = styled.label`
@@ -52,10 +45,7 @@ function usePresenter() {
 
 const ManagedComponent: FC<{ presenter: ResidentsSearchPresenter }> = observer(
   function ResidentsSearch({ presenter }) {
-    const navigate = useNavigate();
-    const residentLabelId = useId();
     const filterLabelId = useId();
-    const urlParams = useTypedParams(State.Search);
 
     return (
       <div>
@@ -72,27 +62,11 @@ const ManagedComponent: FC<{ presenter: ResidentsSearchPresenter }> = observer(
           />
         </FilterLabel>
 
-        {presenter.enableResidentSearch && (
-          <>
-            <Body16 as="p" id={residentLabelId}>
-              Search for a resident to explore what they will see in
-              Opportunities.
-            </Body16>
-            <Selector
-              labelId={residentLabelId}
-              options={presenter.selectOptions}
-              onChange={(value) => {
-                // this should land you on the selected resident's homepage
-                navigate(
-                  State.Resident.buildPath({
-                    ...urlParams,
-                    personPseudoId: value.pseudonymizedId,
-                  }),
-                );
-              }}
-              placeholder="Start typing a resident's name or DOC ID …"
-            />
-          </>
+        {presenter.residentFilterDefaultOption?.value && (
+          <ResidentSelector
+            key={presenter.residentFilterDefaultOption.value}
+            facilityId={presenter.residentFilterDefaultOption.value}
+          />
         )}
       </div>
     );

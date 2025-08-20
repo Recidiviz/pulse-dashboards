@@ -18,12 +18,13 @@
 import assertNever from "assert-never";
 import { makeAutoObservable, reaction, when } from "mobx";
 
+import { SystemId } from "~datatypes";
+
 import {
   locationIdsBySearchType,
   Searchable,
   SearchableGroup,
   SearchType,
-  SystemId,
 } from "../core/models/types";
 import { CaseloadSearchable } from "./CaseloadSearchable";
 import { Location } from "./Location";

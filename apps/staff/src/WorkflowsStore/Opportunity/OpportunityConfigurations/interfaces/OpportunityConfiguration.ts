@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { OpportunityType } from "~datatypes";
+import { OpportunityType, SystemId } from "~datatypes";
 
-import { SystemId } from "../../../../core/models/types";
 import { FeatureVariant, TenantId } from "../../../../RootStore/types";
 import {
   DenialReasonsMap,

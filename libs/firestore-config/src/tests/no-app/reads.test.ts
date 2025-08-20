@@ -22,8 +22,8 @@ import {
 
 import {
   startTestEnv,
+  testAllQueriesUnrestricted,
   testAllReadsForState,
-  testAllReadsUnrestricted,
   testUserUpdateRead,
 } from "../utils";
 import { getAnonUser, getRecidivizUser, getTNUser } from "./utils";
@@ -54,7 +54,7 @@ describe("no app specified", () => {
     async (userType, getUserContext, email) => {
       const db = getUserContext(testEnv).firestore();
 
-      await testAllReadsUnrestricted(db, assertFails);
+      await testAllQueriesUnrestricted(db, assertFails);
 
       await testAllReadsForState(db, assertFails, "US_TN");
 

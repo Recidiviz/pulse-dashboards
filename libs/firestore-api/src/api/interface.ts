@@ -18,7 +18,7 @@
 import { where } from "firebase/firestore";
 import { z } from "zod";
 
-import { ResidentRecord } from "~datatypes";
+import { LocationRecord, ResidentRecord } from "~datatypes";
 
 import { FirestoreCollectionKey } from "../types";
 
@@ -48,4 +48,6 @@ export interface FirestoreAPI {
     externalId: string,
     recordSchema: Schema,
   ): Promise<z.infer<Schema> | undefined>;
+
+  locations(stateCode: string): Promise<Array<LocationRecord>>;
 }

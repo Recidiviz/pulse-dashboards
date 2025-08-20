@@ -20,11 +20,12 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
+import { SystemId } from "~datatypes";
+
 import NotFound from "../../components/NotFound";
 import { useRootStore } from "../../components/StoreProvider";
 import { WorkflowsRouteParams } from "../../WorkflowsStore";
 import { getSystemIdFromPage } from "../../WorkflowsStore/utils";
-import { SystemId } from "../models/types";
 import { WorkflowsPage, workflowsUrl } from "../views";
 
 // react-router does not seem to export this type directly

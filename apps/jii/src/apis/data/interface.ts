@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ResidentRecord } from "~datatypes";
+import { LocationRecord, ResidentRecord } from "~datatypes";
 import { FilterParams } from "~firestore-api";
 
 import {
@@ -69,4 +69,8 @@ export interface DataAPI {
     residentExternalId: string,
     opportunity: IncarcerationOpportunityId,
   ): Promise<OpportunityRecord<O>>;
+  /**
+   * Fetches all location records (facilities, etc) for the specified state
+   */
+  locations(stateCode: StateCode): Promise<Array<LocationRecord>>;
 }

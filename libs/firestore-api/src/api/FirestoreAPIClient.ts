@@ -44,6 +44,8 @@ import {
 import { z } from "zod";
 
 import {
+  LocationRecord,
+  locationRecordSchema,
   ResidentRecord,
   residentRecordSchema,
   shiftAllDates,
@@ -216,5 +218,37 @@ export class FirestoreAPIClient implements FirestoreAPI {
       ...snapshot.docs[0].data(),
       recordId: snapshot.docs[0].id,
     });
+  }
+
+  /**
+   * Use to query all documents in a collection that match the specified state code.
+   */
+  private async getAllForState<Schema extends z.ZodTypeAny>(
+    stateCode: string,
+    collectionKey: FirestoreCollectionKey,
+    s: Schema,
+  ): Promise<Array<z.infer<Schema>>> {
+    const snapshot = await getDocs(
+      query(
+        collection(
+          this.db,
+          collectionNameFromConfig({
+            demo: this.isDemoMode(),
+            name: collectionKey,
+          }),
+        ),
+        where("stateCode", "==", stateCode),
+      ),
+    );
+
+    return snapshot.docs.map((d) => this.parseFirestoreDocument(s, d.data()));
+  }
+
+  async locations(stateCode: string): Promise<Array<LocationRecord>> {
+    return this.getAllForState(
+      stateCode,
+      { key: "locations" },
+      locationRecordSchema,
+    );
   }
 }

@@ -19,9 +19,10 @@ import { intersection, uniq } from "lodash";
 import { observer } from "mobx-react-lite";
 import React from "react";
 
+import { SystemId } from "~datatypes";
+
 import { useRootStore } from "../../components/StoreProvider";
 import { toTitleCase } from "../../utils";
-import { SystemId } from "../models/types";
 import { PillButton } from "../WorkflowsJusticeInvolvedPersonProfile/styles";
 
 const CaseloadTypeSelect = observer(

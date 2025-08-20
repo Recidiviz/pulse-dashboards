@@ -18,10 +18,9 @@
 import { reverse, shuffle } from "lodash";
 import { configure } from "mobx";
 
-import { OpportunityRecordBase } from "~datatypes";
+import { OpportunityRecordBase, SystemId } from "~datatypes";
 import { OpportunityType } from "~datatypes";
 
-import { SystemId } from "../../../../core/models/types";
 import { RootStore } from "../../../../RootStore";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";

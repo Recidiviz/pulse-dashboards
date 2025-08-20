@@ -20,6 +20,7 @@ import {
   MilestoneType,
   ResidentRecord,
   StaffRecord,
+  SystemId,
 } from "~datatypes";
 import { FirestoreCollectionName } from "~firestore-api";
 import { Hydratable } from "~hydration-utils";
@@ -186,7 +187,6 @@ export type SearchableGroup = {
   searchables: Searchable[];
 };
 
-export type SystemId = "INCARCERATION" | "SUPERVISION" | "ALL";
 export type SearchType =
   | "OFFICER"
   | "INCARCERATION_OFFICER"

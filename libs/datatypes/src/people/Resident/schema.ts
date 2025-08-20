@@ -15,62 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { isEqual } from "date-fns";
 import { z } from "zod";
 
-import { usMeXPortionServedEnum } from "../../opportunities/UsMe/UsMeSCCP/schema";
-import { dateStringSchema, nullishAsUndefined } from "../../utils/zod";
-import { personMetadataSchema } from "../utils/personMetadataSchema";
-import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
-import { usArResidentMetadataSchema } from "./US_AR/metadata/schema";
-import { usAzResidentMetadataSchema } from "./US_AZ/metadata/schema";
-import { usIdResidentMetadataSchema } from "./US_ID/metadata/schema";
-import { usMaResidentMetadataSchema } from "./US_MA/metadata/schema";
-import { usMeResidentMetadataSchema } from "./US_ME/metadata/schema";
-import { usMoResidentMetadataSchema } from "./US_MO/metadata/schema";
-import { usNdResidentMetadataSchema } from "./US_ND/metadata/schema";
-import { usTnResidentMetadataSchema } from "./US_TN/metadata/schema";
+import { residentRecordObjectSchema } from "./objectOnlySchema";
 
-/**
- * Magic date that appears in data sometimes and is equivalent to null
- */
-const MISSING_DATE_SENTINEL = new Date(9999, 11, 1);
-
-export const residentRecordSchema = workflowsJusticeInvolvedPersonRecordSchema
-  .merge(
-    z.object({
-      facilityId: z.string().nullish(),
-      unitId: z.string().nullish(),
-      facilityUnitId: z.string().nullish(),
-      custodyLevel: z.string().nullish(),
-      admissionDate: nullishAsUndefined(dateStringSchema),
-      releaseDate: nullishAsUndefined(dateStringSchema).transform((d) => {
-        if (d && isEqual(d, MISSING_DATE_SENTINEL)) {
-          return undefined;
-        }
-        return d;
-      }),
-      portionServedNeeded: usMeXPortionServedEnum.nullish(),
-      sccpEligibilityDate: dateStringSchema.nullish(),
-      usTnFacilityAdmissionDate: nullishAsUndefined(dateStringSchema),
-      usMePortionNeededEligibleDate: dateStringSchema.nullish(),
-      gender: z.string(),
-      metadata: personMetadataSchema([
-        usArResidentMetadataSchema,
-        usAzResidentMetadataSchema,
-        usIdResidentMetadataSchema,
-        usMeResidentMetadataSchema,
-        usMaResidentMetadataSchema,
-        usMoResidentMetadataSchema,
-        usNdResidentMetadataSchema,
-        usTnResidentMetadataSchema,
-      ]),
-    }),
-  )
-  .transform((input) => ({
+export const residentRecordSchema = residentRecordObjectSchema.transform(
+  (input) => ({
     ...input,
     personType: "RESIDENT" as const,
-  }));
+  }),
+);
 
 /**
  * Data from the Recidiviz data platform about an incarcerated person

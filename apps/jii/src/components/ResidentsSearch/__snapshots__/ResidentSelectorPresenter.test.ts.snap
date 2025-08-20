@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`facility filter > residents become searchable once filter is selected 1`] = `
+exports[`hydration > hydrate 1`] = `
 [
   {
     "label": "First Resident (RES001)",

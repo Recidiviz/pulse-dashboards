@@ -115,6 +115,14 @@ export * from "./people/utils/types";
 export type * from "./people/WorkflowsJusticeInvolvedPerson/schema";
 
 // =============================================================================
+// Places
+// =============================================================================
+
+export * from "./places/Location/fixtures";
+export * from "./places/Location/schema";
+export * from "./places/System/SystemId/schema";
+
+// =============================================================================
 // Config
 // =============================================================================
 

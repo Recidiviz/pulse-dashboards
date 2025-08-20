@@ -15,112 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { LocationRecord } from "../../src/FirestoreStore/types";
+import { LocationRecord, locationRecordFixtures } from "~datatypes";
+
 import { FirestoreFixture } from "./utils";
 
-const data: LocationRecord[] = [
-  //
-  // Arkansas
-  //
-  {
-    stateCode: "US_AR",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY1",
-    name: "Central Prison",
-  },
-  {
-    stateCode: "US_AR",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY2",
-    name: "Upstate Facility",
-  },
-
-  //
-  // Idaho
-  //
-  {
-    stateCode: "US_ID",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY1",
-    name: "Lunar Penal Colony",
-  },
-  {
-    stateCode: "US_ID",
-    system: "INCARCERATION",
-    idType: "crcFacilityId",
-    id: "CRC LRC",
-    name: "Lunar Reentry Center",
-  },
-  {
-    stateCode: "US_ID",
-    system: "INCARCERATION",
-    idType: "crcFacilityId",
-    id: "CRC PRC",
-    name: "Phobos Reentry Center",
-  },
-
-  //
-  // Michigan
-  //
-
-  {
-    stateCode: "US_MI",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY1",
-    name: "Facility #1",
-  },
-  {
-    stateCode: "US_MI",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY2",
-    name: "Facility #2",
-  },
-
-  //
-  // Missouri
-  //
-
-  {
-    stateCode: "US_MO",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY1",
-    name: "Facility #1",
-  },
-  {
-    stateCode: "US_MO",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "FACILITY2",
-    name: "Facility #2",
-  },
-
-  //
-  // Tennessee
-  //
-
-  {
-    stateCode: "US_TN",
-    system: "INCARCERATION",
-    idType: "facilityId",
-    id: "BLEDSOE_CC",
-    name: "Bledsoe County Correctional Complex",
-  },
-  {
-    stateCode: "US_TN",
-    system: "INCARCERATION",
-    idType: "facilityUnitId",
-    id: "BLEDSOE_CC‡UNIT A",
-    name: "Bledsoe County Correctional Complex/UNIT A",
-  },
-];
-
 export const locationsData: FirestoreFixture<LocationRecord> = {
-  data,
+  data: locationRecordFixtures,
   idFunc: (r) => r.id,
 };

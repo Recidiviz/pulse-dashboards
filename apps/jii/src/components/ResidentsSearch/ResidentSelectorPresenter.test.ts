@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,18 +16,21 @@
 // =============================================================================
 
 import { waitFor } from "@testing-library/react";
+import { keyBy } from "lodash";
 import { configure, set } from "mobx";
 
-import { locationRecordFixtures } from "~datatypes";
+import { usMeResidents } from "~datatypes";
 
 import { residentsConfigByState } from "../../configs/residentsConfig";
 import { ResidentsStore } from "../../datastores/ResidentsStore";
 import { RootStore } from "../../datastores/RootStore";
-import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
+import { ResidentSelectorPresenter } from "./ResidentSelectorPresenter";
 
 let residentsStore: ResidentsStore;
-let presenter: ResidentsSearchPresenter;
+let presenter: ResidentSelectorPresenter;
 let rootStore: RootStore;
+
+const TEST_FACILITY_ID = "FACILITY NAME";
 
 beforeEach(() => {
   configure({ safeDescriptors: false });
@@ -46,7 +49,7 @@ beforeEach(() => {
     "US_ME",
     residentsConfigByState.US_ME,
   );
-  presenter = new ResidentsSearchPresenter(residentsStore, rootStore.uiStore);
+  presenter = new ResidentSelectorPresenter(residentsStore, TEST_FACILITY_ID);
 });
 
 afterEach(() => {
@@ -56,13 +59,14 @@ afterEach(() => {
 describe("hydration", () => {
   test("needs hydration", () => {
     expect(presenter.hydrationState.status).toBe("needs hydration");
-    expect(presenter.residentFilterOptions).toEqual([]);
+    expect(presenter.selectOptions).toEqual([]);
   });
 
   test("already hydrated", () => {
-    set(residentsStore.locations, [
-      [locationRecordFixtures.find((r) => r.stateCode === "US_ME")],
-    ]);
+    set(
+      residentsStore.residentsByExternalId,
+      keyBy(usMeResidents, "personExternalId"),
+    );
 
     expect(presenter.hydrationState.status).toBe("hydrated");
   });
@@ -79,30 +83,10 @@ describe("hydration", () => {
       expect(presenter.hydrationState.status).toBe("hydrated"),
     );
 
-    expect(presenter.residentFilterOptions).toMatchInlineSnapshot(`
-      [
-        {
-          "label": "Demo Facility",
-          "value": "FACILITY NAME",
-        },
-      ]
-    `);
-    expect(presenter.residentFilterDefaultOption).toBeUndefined();
-  });
-});
-
-describe("facility filter", () => {
-  beforeEach(async () => {
-    await presenter.hydrate();
-  });
-
-  test("set value", async () => {
-    presenter.setResidentsFilter("FACILITY NAME");
-    expect(presenter.residentFilterDefaultOption).toMatchInlineSnapshot(`
-      {
-        "label": "Demo Facility",
-        "value": "FACILITY NAME",
-      }
-    `);
+    expect(presenter.selectOptions).toMatchSnapshot();
+    expect(residentsStore.populateResidents).toHaveBeenCalledWith(
+      [["facilityId", "==", TEST_FACILITY_ID]],
+      true,
+    );
   });
 });

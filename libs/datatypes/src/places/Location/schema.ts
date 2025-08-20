@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,14 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { ClientRecord, ResidentRecord } from "~datatypes";
+import { z } from "zod";
 
-import { SystemId } from "../../core/models/types";
+import { clientRecordObjectSchema } from "../../people/Client/objectOnlySchema";
+import { residentRecordObjectSchema } from "../../people/Resident/objectOnlySchema";
+import { systemIdEnum } from "../System/SystemId/schema";
 
-export type LocationRecord = {
-  stateCode: string;
-  system: SystemId;
-  idType: keyof ClientRecord | keyof ResidentRecord | "crcFacilityId";
-  id: string;
-  name: string;
-};
+export const locationRecordSchema = z.object({
+  stateCode: z.string(),
+  id: z.string(),
+  name: z.string(),
+  system: systemIdEnum,
+  idType: clientRecordObjectSchema
+    .keyof()
+    .or(residentRecordObjectSchema.keyof())
+    .or(z.literal("crcFacilityId")),
+});
+
+export type LocationRecord = z.infer<typeof locationRecordSchema>;

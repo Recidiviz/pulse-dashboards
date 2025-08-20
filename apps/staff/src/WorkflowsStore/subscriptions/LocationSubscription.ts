@@ -17,11 +17,12 @@
 
 import { and, or, Query, query, where } from "firebase/firestore";
 
+import { LocationRecord } from "~datatypes";
+
 import {
   locationIdsBySearchType,
   LocationSearchType,
 } from "../../core/models/types";
-import { LocationRecord } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
 import { FirestoreQuerySubscription } from "./FirestoreQuerySubscription";
 

@@ -1,0 +1,95 @@
+// Recidiviz - a data platform for criminal justice reform
+// Copyright (C) 2025 Recidiviz, Inc.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+// =============================================================================
+
+import { z } from "zod";
+
+import { milestoneSchema } from "../../milestones/schema";
+import { milestoneTypes } from "../../milestones/types";
+import { dateStringSchema } from "../../utils/zod";
+import { personMetadataSchema } from "../utils/personMetadataSchema";
+import { workflowsJusticeInvolvedPersonRecordSchema } from "../WorkflowsJusticeInvolvedPerson/schema";
+import { usNeClientMetadataSchema } from "./US_NE/metadata/schema";
+import { usUtClientMetadataSchema } from "./US_UT/metadata/schema";
+import { clientEmployerSchema, specialConditionCodeSchema } from "./utils";
+
+const optionalClientInformation = z
+  .object({
+    district: z.string(),
+    supervisionType: z.string(),
+    supervisionLevel: z.string(),
+    supervisionLevelStart: dateStringSchema,
+    caseType: z.string(),
+    caseTypeRawText: z.string(),
+    address: z.string(),
+    currentPhysicalResidenceAddressStructured: z
+      .object({
+        addressLine1: z.string(),
+        addressLine2: z.string(),
+        addressCity: z.string(),
+        addressState: z.string(),
+        addressZip: z.string(),
+        addressCountry: z.string(),
+      })
+      .partial(),
+    phoneNumber: z.string(),
+    supervisionStartDate: dateStringSchema,
+    expirationDate: dateStringSchema,
+    currentBalance: z.number(),
+    lastPaymentAmount: z.number(),
+    lastPaymentDate: dateStringSchema,
+    specialConditions: z.array(z.string()),
+    boardConditions: z.array(specialConditionCodeSchema),
+    currentEmployers: z.array(clientEmployerSchema),
+    milestones: z
+      .array(milestoneSchema)
+      .transform((r) =>
+        r.flatMap((m) => (milestoneTypes.includes(m.type) ? [m] : [])),
+      ),
+    emailAddress: z.string(),
+    activeSentences: z.array(
+      z.object({
+        sentenceId: z.number(),
+        offenseType: z.string().nullable(),
+        isSexOffense: z.boolean().nullable(),
+        countyCode: z.string().nullable(),
+        dateImposed: dateStringSchema,
+      }),
+    ),
+    hasAnyInStateSentences: z.boolean().nullish(),
+    hasAnyOutOfStateSentences: z.boolean().nullish(),
+    custodialAuthority: z.string().nullish(),
+    metadata: personMetadataSchema([
+      usNeClientMetadataSchema,
+      usUtClientMetadataSchema,
+    ]).optional(),
+  })
+  .partial();
+
+/**
+ * This is an intermediate schema that should not be included in the public ~datatypes API.
+ * It is separated out to support Zod operations on the object schema before transforms are applied
+ */
+export const clientRecordObjectSchema =
+  workflowsJusticeInvolvedPersonRecordSchema
+    .merge(
+      z.object({
+        // the officerId field exists on the justiceInvolvedPersonRecordSchema,
+        // however it is required for the Client object, so we redefine the field type here
+        officerId: z.string(),
+      }),
+    )
+    .merge(optionalClientInformation);

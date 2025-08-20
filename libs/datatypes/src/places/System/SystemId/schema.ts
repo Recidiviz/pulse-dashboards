@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,22 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { LocationRecord } from "~datatypes";
+import { z } from "zod";
 
-import { Searchable } from "../core/models/types";
+export const systemIdEnum = z.enum(["INCARCERATION", "SUPERVISION", "ALL"]);
 
-export class Location implements Searchable {
-  record: LocationRecord;
-
-  constructor(record: LocationRecord) {
-    this.record = record;
-  }
-
-  get searchLabel(): string {
-    return this.record.name;
-  }
-
-  get searchId(): string {
-    return this.record.id;
-  }
-}
+export type SystemId = z.infer<typeof systemIdEnum>;

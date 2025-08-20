@@ -24,11 +24,12 @@ import {
   OpportunityType,
   ResidentRecord,
   SupervisionStaffRecord,
+  SystemId,
 } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
 import { mockOpportunityConfigs } from "../../core/__tests__/testUtils";
-import { SystemId, TenantConfig } from "../../core/models/types";
+import { TenantConfig } from "../../core/models/types";
 import FirestoreStore, {
   CombinedUserRecord,
   MilestonesMessage,

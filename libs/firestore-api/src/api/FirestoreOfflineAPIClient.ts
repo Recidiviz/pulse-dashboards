@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { allResidents } from "~datatypes";
+import { allResidents, locationRecordFixtures } from "~datatypes";
 
 import { FirestoreAPI } from "./interface";
 
@@ -46,5 +46,9 @@ export class FirestoreOfflineAPIClient implements FirestoreAPI {
 
   async recordForExternalId() {
     throw new Error("Not implemented");
+  }
+
+  async locations(stateCode: string) {
+    return locationRecordFixtures.filter((r) => r.stateCode === stateCode);
   }
 }

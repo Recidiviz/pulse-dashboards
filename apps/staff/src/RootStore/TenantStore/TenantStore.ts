@@ -18,11 +18,9 @@
 import { makeAutoObservable, when } from "mobx";
 import qs from "query-string";
 
-import {
-  StaffFilter,
-  SystemId,
-  WorkflowsTasksConfig,
-} from "../../core/models/types";
+import { SystemId } from "~datatypes";
+
+import { StaffFilter, WorkflowsTasksConfig } from "../../core/models/types";
 import { ClientDetailComponentName } from "../../core/WorkflowsJusticeInvolvedPersonProfile/OpportunityProfile";
 import { SupervisionTaskCategory } from "../../core/WorkflowsTasks/fixtures";
 import { TaskTableColumnId } from "../../core/WorkflowsTasks/TasksTable";

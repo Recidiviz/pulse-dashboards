@@ -150,4 +150,8 @@ export class OfflineAPIClient implements DataAPI {
 
     return fixture;
   }
+
+  async locations(stateCode: StateCode) {
+    return this.firestoreClient.locations(stateCode);
+  }
 }

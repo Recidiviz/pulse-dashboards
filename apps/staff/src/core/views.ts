@@ -17,9 +17,10 @@
 
 /* eslint-disable no-redeclare */
 
+import { SystemId } from "~datatypes";
 import { psiRootPath } from "~sentencing-client";
 
-import { MetricId, SystemId } from "./models/types";
+import { MetricId } from "./models/types";
 
 export const UNRESTRICTED_PAGES = ["profile", "methodology", ""];
 

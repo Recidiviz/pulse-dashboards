@@ -19,6 +19,8 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
+import { SystemId } from "~datatypes";
+
 import {
   PartiallyTypedRootStore,
   useRootStore,
@@ -26,7 +28,6 @@ import {
 import useIsMobile from "../../hooks/useIsMobile";
 import { toTitleCase } from "../../utils";
 import { getJusticeInvolvedPersonTitle } from "../../WorkflowsStore/utils";
-import { SystemId } from "../models/types";
 import { DASHBOARD_VIEWS, WorkflowsPage, workflowsUrl } from "../views";
 
 export const SYSTEM_ID_TO_PATH: Record<SystemId, WorkflowsPage> = {

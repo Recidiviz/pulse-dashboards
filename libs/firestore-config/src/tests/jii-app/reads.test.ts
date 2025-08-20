@@ -35,9 +35,9 @@ import {
   ETL_COLLECTION_NAMES,
   SHARED_UPDATE_COLLECTION_NAMES,
   startTestEnv,
-  testAllETLReadsForState,
+  testAllETLQueriesForState,
+  testAllQueriesUnrestricted,
   testAllReadsForState,
-  testAllReadsUnrestricted,
 } from "../utils";
 import {
   getDemoMEUser,
@@ -123,6 +123,24 @@ function testList(
 
 let db: FirestoreInstance;
 
+const includeLocations = (s: string) => {
+  return !!s.match(/locations/i);
+};
+
+const excludeStaff = (s: string) => {
+  return !s.match(/staff/i) && !includeLocations(s);
+};
+
+const JII_OWN_DATA_ETL_COLLECTION_NAMES =
+  ETL_COLLECTION_NAMES.filter(excludeStaff);
+const JII_STATE_DATA_ETL_COLLECTION_NAMES =
+  ETL_COLLECTION_NAMES.filter(includeLocations);
+
+const DEMO_JII_OWN_DATA_ETL_COLLECTION_NAMES =
+  DEMO_ETL_COLLECTION_NAMES.filter(excludeStaff);
+const DEMO_JII_STATE_DATA_ETL_COLLECTION_NAMES =
+  DEMO_ETL_COLLECTION_NAMES.filter(includeLocations);
+
 describe("app = jii", () => {
   describe("Maine JII user", () => {
     beforeEach(() => {
@@ -134,14 +152,14 @@ describe("app = jii", () => {
       await testGet(
         db,
         assertSucceeds,
-        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_me_user",
       );
 
       await testPseudoIdQuery(
         db,
         assertSucceeds,
-        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "US_ME",
         "pid-user",
       );
@@ -152,14 +170,14 @@ describe("app = jii", () => {
       await testGet(
         db,
         assertFails,
-        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_me_other-user",
       );
 
       await testPseudoIdQuery(
         db,
         assertFails,
-        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "US_ME",
         "pid-other-user",
       );
@@ -170,7 +188,7 @@ describe("app = jii", () => {
       return testGet(
         db,
         assertFails,
-        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_xx_user",
       );
     });
@@ -201,9 +219,8 @@ describe("app = jii", () => {
     });
 
     // eslint-disable-next-line vitest/expect-expect
-    test("cannot query any collections", async () => {
-      await testAllReadsUnrestricted(db, assertFails);
-      await testAllReadsForState(db, assertFails, "US_ME");
+    test("cannot query entire collections", async () => {
+      await testAllQueriesUnrestricted(db, assertFails);
     });
   });
 
@@ -217,14 +234,14 @@ describe("app = jii", () => {
       await testGet(
         db,
         assertSucceeds,
-        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_me_user",
       );
 
       await testGet(
         db,
         assertSucceeds,
-        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_me_other-user",
       );
     });
@@ -234,7 +251,10 @@ describe("app = jii", () => {
       return testList(
         db,
         assertSucceeds,
-        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        [
+          ...JII_OWN_DATA_ETL_COLLECTION_NAMES,
+          ...JII_STATE_DATA_ETL_COLLECTION_NAMES,
+        ],
         "US_ME",
       );
     });
@@ -262,7 +282,7 @@ describe("app = jii", () => {
 
     // eslint-disable-next-line vitest/expect-expect
     test("can query all ETL collections", async () => {
-      await testAllETLReadsForState(db, assertSucceeds, "US_ME");
+      await testAllETLQueriesForState(db, assertSucceeds, "US_ME");
     });
 
     // eslint-disable-next-line vitest/expect-expect
@@ -279,7 +299,7 @@ describe("app = jii", () => {
 
     // eslint-disable-next-line vitest/expect-expect
     test("can read data from demo ETL collections", async () => {
-      await testAllETLReadsForState(db, assertSucceeds, "US_ME", "DEMO_");
+      await testAllETLQueriesForState(db, assertSucceeds, "US_ME", "DEMO_");
     });
   });
 
@@ -293,9 +313,14 @@ describe("app = jii", () => {
       return testGet(
         db,
         assertSucceeds,
-        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        DEMO_JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_me_demouser",
       );
+    });
+
+    // eslint-disable-next-line vitest/expect-expect
+    test("cannot query ETL documents for their state", async () => {
+      return testList(db, assertFails, DEMO_ETL_COLLECTION_NAMES, "US_ME");
     });
 
     // eslint-disable-next-line vitest/expect-expect
@@ -303,19 +328,14 @@ describe("app = jii", () => {
       return testGet(
         db,
         assertFails,
-        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        DEMO_JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_xx_demouser",
       );
     });
 
     // eslint-disable-next-line vitest/expect-expect
     test("cannot read data from live ETL collections, even if it matches their ID", () => {
-      return testGet(
-        db,
-        assertFails,
-        ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
-        "us_me_demouser",
-      );
+      return testGet(db, assertFails, ETL_COLLECTION_NAMES, "us_me_demouser");
     });
   });
 
@@ -329,14 +349,14 @@ describe("app = jii", () => {
       await testGet(
         db,
         assertSucceeds,
-        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        DEMO_JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_me_user",
       );
 
       await testGet(
         db,
         assertSucceeds,
-        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        DEMO_JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_me_other-user",
       );
     });
@@ -346,7 +366,10 @@ describe("app = jii", () => {
       return testList(
         db,
         assertSucceeds,
-        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        [
+          ...DEMO_JII_OWN_DATA_ETL_COLLECTION_NAMES,
+          ...DEMO_JII_STATE_DATA_ETL_COLLECTION_NAMES,
+        ],
         "US_ME",
       );
     });
@@ -361,7 +384,7 @@ describe("app = jii", () => {
       return testGet(
         db,
         assertFails,
-        DEMO_ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
+        DEMO_JII_OWN_DATA_ETL_COLLECTION_NAMES,
         "us_xx_demouser",
       );
     });
@@ -374,7 +397,7 @@ describe("app = jii", () => {
         ETL_COLLECTION_NAMES.filter((name) => !name.match(/staff/i)),
         "us_me_demouser",
       );
-      await testAllETLReadsForState(db, assertFails, "US_ME");
+      await testAllETLQueriesForState(db, assertFails, "US_ME");
     });
   });
 
@@ -385,7 +408,7 @@ describe("app = jii", () => {
 
     // eslint-disable-next-line vitest/expect-expect
     test("can read data from demo ETL collections", async () => {
-      await testAllETLReadsForState(db, assertSucceeds, "US_ME", "DEMO_");
+      await testAllETLQueriesForState(db, assertSucceeds, "US_ME", "DEMO_");
     });
 
     // eslint-disable-next-line vitest/expect-expect
@@ -401,17 +424,17 @@ describe("app = jii", () => {
 
     // eslint-disable-next-line vitest/expect-expect
     test("can read data from Maine demo ETL collections", async () => {
-      await testAllETLReadsForState(db, assertSucceeds, "US_ME", "DEMO_");
+      await testAllETLQueriesForState(db, assertSucceeds, "US_ME", "DEMO_");
     });
 
     // eslint-disable-next-line vitest/expect-expect
     test("can read data from other state demo ETL collections", async () => {
-      await testAllETLReadsForState(db, assertSucceeds, "US_XX", "DEMO_");
+      await testAllETLQueriesForState(db, assertSucceeds, "US_XX", "DEMO_");
     });
 
     // eslint-disable-next-line vitest/expect-expect
     test("cannot read data from third state demo ETL collections", async () => {
-      await testAllETLReadsForState(db, assertFails, "US_YY", "DEMO_");
+      await testAllETLQueriesForState(db, assertFails, "US_YY", "DEMO_");
     });
 
     // eslint-disable-next-line vitest/expect-expect

@@ -23,8 +23,8 @@ import {
 
 import {
   startTestEnv,
+  testAllQueriesUnrestricted,
   testAllReadsForState,
-  testAllReadsUnrestricted,
   testUserUpdateRead,
 } from "../utils";
 import {
@@ -56,7 +56,7 @@ describe("app = staff", () => {
     ["ND", getNDUser],
     ["TN", getTNUser],
   ])("%s user cannot read unrestricted", async (userType, getUserContext) => {
-    await testAllReadsUnrestricted(
+    await testAllQueriesUnrestricted(
       getUserContext(testEnv).firestore(),
       assertFails,
     );
