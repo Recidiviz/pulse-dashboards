@@ -107,6 +107,7 @@
       "options": {
         "cwd": "{projectRoot}"
       },
+      "dependsOn": ["container"],
       "configurations": {
         "staging": {
           "command": "gcloud run deploy frontend-staging --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
