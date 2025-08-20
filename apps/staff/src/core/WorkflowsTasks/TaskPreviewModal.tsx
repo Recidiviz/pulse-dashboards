@@ -120,7 +120,6 @@ export const TaskPreviewModal = observer(function TaskPreviewModal({
           <Heading person={selectedClient} />
           <TaskItemHeader>Tasks</TaskItemHeader>
           <PreviewTasks person={selectedClient} showSnoozeDropdown />
-          <TaskItemDivider />
           {opportunitiesToDisplay && (
             <>
               <TaskItemHeader>Opportunities</TaskItemHeader>

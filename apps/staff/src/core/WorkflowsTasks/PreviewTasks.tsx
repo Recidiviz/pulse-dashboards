@@ -32,7 +32,6 @@ import { PersonProfileProps } from "../WorkflowsJusticeInvolvedPersonProfile/typ
 import { NEED_DISPLAY_NAME } from "./fixtures";
 import { SnoozeTaskDropdown } from "./SnoozeTaskDropdown";
 import { TaskDueDate } from "./styles";
-import { TaskItemDivider } from "./TaskPreviewModal";
 
 const TasksWrapper = styled.div``;
 const TaskItems = styled.div`
@@ -54,13 +53,27 @@ const TaskTitle = styled.div<{ isMobile: boolean }>`
 `;
 
 const TaskItem = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
-  min-height: ${rem(75)};
   padding: 1.5rem 0;
   display: grid;
   grid-template-columns: 5fr ${({ showSnoozeDropdown }) =>
       showSnoozeDropdown ? "1fr" : "auto"};
   align-content: center;
   position: relative;
+
+  &:last-of-type {
+    padding-bottom: 1.5rem;
+  }
+
+  /* Replaces TaskItemDivider - creates dividers between tasks using CSS pseudo-selectors */
+  &:not(:last-of-type)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: ${palette.slate20};
+  }
 `;
 
 const TaskName = styled(Sans16)`
@@ -94,9 +107,22 @@ const TaskSnoozedDate = styled(Sans14)`
 `;
 
 const TaskItemWrapper = styled.div`
-  min-height: ${rem(75)};
   padding: 1.5rem 0;
   position: relative;
+
+  &:last-of-type {
+    padding-bottom: 1.5rem;
+  }
+
+  &:not(:last-of-type)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: ${palette.slate20};
+  }
 `;
 
 const TaskItemV2 = styled(Sans16)<{ showSnoozeDropdown?: boolean }>`
@@ -226,83 +252,77 @@ const TaskPreview = ({
 }) => {
   const { isMobile } = useIsMobile(true);
   return (
-    <div key={task.key}>
-      <TaskItem showSnoozeDropdown={showSnoozeDropdown}>
-        <TaskContent>
-          <TaskTitle isMobile={isMobile}>
-            <TaskName>{task.displayName}</TaskName>
-            <TaskDivider> &bull; </TaskDivider>
-            <TaskDueDate
-              font={typography.Sans16}
-              marginLeft="0"
-              overdue={task.isOverdue && !task.isSnoozed}
-              title={task.dueDateDisplayShort}
-              isMobile={isMobile}
-            >
-              {task.dueDateDisplayShort}
-            </TaskDueDate>
-          </TaskTitle>
-          {task.snoozeInfo?.snoozedUntil && (
-            <TaskSnoozedDate>
-              {"Hidden from Tasks list until " +
-                formatDate(task.snoozeInfo.snoozedUntil)}
-            </TaskSnoozedDate>
-          )}
-          <TaskDetails>{task.additionalDetails}</TaskDetails>
-        </TaskContent>
-        {showSnoozeDropdown && (
-          <SnoozeTaskDropdown
-            task={task}
-            taskConfig={
-              task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
-            }
-            operationsInfoInToast={true}
-          />
+    <TaskItem showSnoozeDropdown={showSnoozeDropdown} key={task.key}>
+      <TaskContent>
+        <TaskTitle isMobile={isMobile}>
+          <TaskName>{task.displayName}</TaskName>
+          <TaskDivider> &bull; </TaskDivider>
+          <TaskDueDate
+            font={typography.Sans16}
+            marginLeft="0"
+            overdue={task.isOverdue && !task.isSnoozed}
+            title={task.dueDateDisplayShort}
+            isMobile={isMobile}
+          >
+            {task.dueDateDisplayShort}
+          </TaskDueDate>
+        </TaskTitle>
+        {task.snoozeInfo?.snoozedUntil && (
+          <TaskSnoozedDate>
+            {"Hidden from Tasks list until " +
+              formatDate(task.snoozeInfo.snoozedUntil)}
+          </TaskSnoozedDate>
         )}
-      </TaskItem>
-      <TaskItemDivider />
-    </div>
+        <TaskDetails>{task.additionalDetails}</TaskDetails>
+      </TaskContent>
+      {showSnoozeDropdown && (
+        <SnoozeTaskDropdown
+          task={task}
+          taskConfig={
+            task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
+          }
+          operationsInfoInToast={true}
+        />
+      )}
+    </TaskItem>
   );
 };
 
 const TaskPreviewV2 = ({ task }: { task: SupervisionTask }) => {
   return (
-    <>
-      <TaskItemWrapper>
-        <TaskItemV2>
-          <TaskInfo>
-            <TaskName>{task.displayName}</TaskName>
-            <TaskFrequency>
-              <i className="fa fa-refresh" /> {task.frequency}
-            </TaskFrequency>
-          </TaskInfo>
+    <TaskItemWrapper>
+      <TaskItemV2>
+        <TaskInfo>
+          <TaskName>{task.displayName}</TaskName>
+          <TaskFrequency>
+            <i className="fa fa-refresh" /> {task.frequency}
+          </TaskFrequency>
+        </TaskInfo>
 
-          <TaskTimelineGroup>
-            <TaskTimelineDonut filled lineBelow />
-            <TaskTimelineText>
-              <div>{task.additionalDetails}</div>
-            </TaskTimelineText>
+        <TaskTimelineGroup>
+          <TaskTimelineDonut filled lineBelow />
+          <TaskTimelineText>
+            <div>{task.additionalDetails}</div>
+          </TaskTimelineText>
 
-            <TaskTimelineDonut />
-            <TaskTimelineText>
-              <TaskTimelineDueDate overdue={task.isOverdue}>
-                {task.dueDateDisplayShort}
-              </TaskTimelineDueDate>
-            </TaskTimelineText>
-          </TaskTimelineGroup>
+          <TaskTimelineDonut />
+          <TaskTimelineText>
+            <TaskTimelineDueDate overdue={task.isOverdue}>
+              {task.dueDateDisplayShort}
+            </TaskTimelineDueDate>
+          </TaskTimelineText>
+        </TaskTimelineGroup>
 
-          <SnoozeTaskDropdown
-            task={task}
-            taskConfig={
-              task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
-            }
-            operationsInfoInToast={false} // only for Texas
-          />
-        </TaskItemV2>
-        <SnoozedTaskInfo task={task} />
-      </TaskItemWrapper>
-      <TaskItemDivider />
-    </>
+        <SnoozeTaskDropdown
+          task={task}
+          taskConfig={
+            task.person.supervisionTasks?.tasksConfig?.tasks[task.type]
+          }
+          operationsInfoInToast={false} // only for Texas
+        />
+      </TaskItemV2>
+      <SnoozedTaskInfo task={task} />
+    </TaskItemWrapper>
   );
 };
 
@@ -330,6 +350,7 @@ export const PreviewTasks = observer(function PreviewTasks({
           if (person.stateCode === "US_ID")
             return (
               <TaskPreview
+                key={task.key}
                 task={task}
                 showSnoozeDropdown={showSnoozeDropdown}
               />
@@ -338,12 +359,9 @@ export const PreviewTasks = observer(function PreviewTasks({
         })}
         {needs.map((need) => {
           return (
-            <div key={`${need.type}`}>
-              <TaskItem key={need.type}>
-                <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
-              </TaskItem>
-              <TaskItemDivider />
-            </div>
+            <TaskItem key={need.type}>
+              <TaskName>{NEED_DISPLAY_NAME[need.type]}</TaskName>
+            </TaskItem>
           );
         })}
       </TaskItems>
