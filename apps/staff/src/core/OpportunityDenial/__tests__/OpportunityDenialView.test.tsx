@@ -25,7 +25,10 @@ import {
 } from "../../../components/StoreProvider";
 import { RootStore } from "../../../RootStore";
 import { Opportunity } from "../../../WorkflowsStore";
-import { OTHER_KEY } from "../../../WorkflowsStore/utils";
+import {
+  getPersonDaysToRelease,
+  OTHER_KEY,
+} from "../../../WorkflowsStore/utils";
 import { mockOpportunity } from "../../__tests__/testUtils";
 import { OpportunityDenialView } from "../OpportunityDenialView";
 
@@ -277,14 +280,12 @@ describe("OpportunityDenialView", () => {
         ...mockOpportunity,
         config: {
           ...mockOpportunity.config,
-          snooze: {
-            defaultSnoozeDays: 30,
-            maxSnoozeDays: 90,
-          },
           denialReasons: {
             CODE: "Denial reason",
           },
         },
+        maxManualSnoozeDays: () => 90,
+        defaultManualSnoozeDays: () => 30,
         snoozedOnDate: new Date(2023, 9, 5),
         type: "compliantReporting",
       });
@@ -344,15 +345,13 @@ describe("OpportunityDenialView", () => {
         type: "compliantReporting",
         config: {
           ...mockOpportunity.config,
-          snooze: {
-            defaultSnoozeDays: 30,
-            maxSnoozeDays: 90,
-          },
           denialReasons: {
             CODE: "Denial reason",
             CODE2: "Denial reason2",
           },
         },
+        maxManualSnoozeDays: () => 90,
+        defaultManualSnoozeDays: () => 30,
         snoozedOnDate: new Date(2023, 9, 5),
         manualSnooze: {
           snoozeForDays: 30,
@@ -409,11 +408,11 @@ describe("OpportunityDenialView", () => {
         type: "compliantReporting",
         config: {
           ...mockOpportunity.config,
-          snooze: {
-            defaultSnoozeDays: 30,
-            maxSnoozeDays: 90,
-          },
         },
+        maxManualSnoozeDays: () =>
+          getPersonDaysToRelease(mockOpportunity.person),
+        defaultManualSnoozeDays: () =>
+          getPersonDaysToRelease(mockOpportunity.person),
       });
 
       const slider = screen
@@ -428,11 +427,11 @@ describe("OpportunityDenialView", () => {
         ...mockOpportunity,
         config: {
           ...mockOpportunity.config,
-          snooze: {
-            defaultSnoozeDays: 30,
-            maxSnoozeDays: 90,
-          },
         },
+        maxManualSnoozeDays: () =>
+          getPersonDaysToRelease(mockOpportunity.person),
+        defaultManualSnoozeDays: () =>
+          getPersonDaysToRelease(mockOpportunity.person),
         type: "compliantReporting",
       });
 
@@ -450,11 +449,9 @@ describe("OpportunityDenialView", () => {
         type: "compliantReporting",
         config: {
           ...mockOpportunity.config,
-          snooze: {
-            defaultSnoozeDays: 30,
-            maxSnoozeDays: 90,
-          },
         },
+        maxManualSnoozeDays: () => 90,
+        defaultManualSnoozeDays: () => 30,
       });
 
       const slider = screen
@@ -479,15 +476,13 @@ describe("OpportunityDenialView", () => {
         type: "compliantReporting",
         config: {
           ...mockOpportunity.config,
-          snooze: {
-            defaultSnoozeDays: 30,
-            maxSnoozeDays: 90,
-          },
           isAlert: true,
           denialReasons: {
             CODE: "Denial reason",
           },
         },
+        maxManualSnoozeDays: () => 90,
+        defaultManualSnoozeDays: () => 30,
       });
     });
     it("shows the resurface text", () => {

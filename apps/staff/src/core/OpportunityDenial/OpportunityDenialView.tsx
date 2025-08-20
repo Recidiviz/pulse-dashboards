@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Sans14, typography } from "@recidiviz/design-system";
-import { differenceInDays, isAfter, parseISO, startOfToday } from "date-fns";
+import { parseISO, startOfToday } from "date-fns";
 import { isEqual, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
@@ -118,32 +118,12 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const snoozeEnabled = snoozeConfig !== undefined;
 
-  let releaseDate: Date | undefined;
-  const { person } = opportunity;
-  if ("expirationDate" in person && person.expirationDate instanceof Date) {
-    releaseDate = person.expirationDate;
-  } else if ("releaseDate" in person && person.releaseDate instanceof Date) {
-    releaseDate = person.releaseDate;
-  }
-
-  const daysToRelease =
-    releaseDate !== undefined && isAfter(releaseDate, startOfToday())
-      ? differenceInDays(releaseDate, startOfToday())
-      : Infinity;
-
-  const maxManualSnoozeDays =
-    snoozeConfig?.maxSnoozeDays !== undefined
-      ? Math.min(daysToRelease, snoozeConfig?.maxSnoozeDays)
-      : undefined;
-
-  const defaultManualSnoozeDays =
-    snoozeConfig?.defaultSnoozeDays !== undefined
-      ? Math.min(daysToRelease, snoozeConfig?.defaultSnoozeDays)
-      : undefined;
+  const maxManualSnoozeDays = opportunity.maxManualSnoozeDays(reasons);
 
   const defaultAutoSnoozeFn = snoozeConfig?.autoSnoozeParams;
 
-  const sliderDays = (snoozeForDays || defaultManualSnoozeDays) ?? 0;
+  const sliderDays =
+    (snoozeForDays || opportunity.defaultManualSnoozeDays(reasons)) ?? 0;
 
   const { denialConfirmationModalName } = opportunity;
 

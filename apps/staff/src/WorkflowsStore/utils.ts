@@ -16,7 +16,16 @@
 // =============================================================================
 
 import assertNever from "assert-never";
-import { add, endOfToday, getMonth, getYear, parseISO } from "date-fns";
+import {
+  add,
+  differenceInDays,
+  endOfToday,
+  getMonth,
+  getYear,
+  isAfter,
+  parseISO,
+  startOfToday,
+} from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import { groupBy, mapValues, sortBy } from "lodash";
 import moment from "moment";
@@ -381,4 +390,29 @@ export function getLinkToFormWithoutOpportunity(
           opportunityPseudoId: justiceInvolvedPersonId,
         });
   return linkToForm;
+}
+
+/**
+ * Returns the release date if it exists for the given person.
+ */
+export function getPersonReleaseDate(
+  person: JusticeInvolvedPerson,
+): Date | undefined {
+  if ("expirationDate" in person && person.expirationDate instanceof Date) {
+    return person.expirationDate;
+  } else if ("releaseDate" in person && person.releaseDate instanceof Date) {
+    return person.releaseDate;
+  }
+  return undefined;
+}
+
+/**
+ * Return the number of days until the given person's release date. If release date
+ * is in the past, returns Infinity.
+ */
+export function getPersonDaysToRelease(person: JusticeInvolvedPerson): number {
+  const releaseDate = getPersonReleaseDate(person);
+  return releaseDate !== undefined && isAfter(releaseDate, startOfToday())
+    ? differenceInDays(releaseDate, startOfToday())
+    : Infinity;
 }

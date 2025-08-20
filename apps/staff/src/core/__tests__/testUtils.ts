@@ -171,4 +171,6 @@ export const mockOpportunity: Opportunity<Client> = {
       includeReasons,
     );
   },
+  maxManualSnoozeDays: () => undefined,
+  defaultManualSnoozeDays: () => undefined,
 };

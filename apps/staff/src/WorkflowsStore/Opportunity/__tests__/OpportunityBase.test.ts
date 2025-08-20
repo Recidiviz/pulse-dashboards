@@ -1227,4 +1227,48 @@ describe("eligibilityStatusLabel", () => {
 
     expect(submitted.eligibilityStatusLabel()).toBe("Submitted");
   });
+
+  describe("maxManualSnoozeLength", () => {
+    test("Should use configuration maxSnoozeDays if the manual snooze config is present", () => {
+      vi.spyOn(opp, "config", "get").mockReturnValue({
+        snooze: {
+          maxSnoozeDays: 90,
+        },
+      } as any);
+
+      expect(opp.maxManualSnoozeDays([])).toEqual(90);
+    });
+
+    test("Returns undefined when there is no manual snooze config", () => {
+      vi.spyOn(opp, "config", "get").mockReturnValue({
+        snooze: {
+          autoSnoozeParams: {},
+        },
+      } as any);
+
+      expect(opp.maxManualSnoozeDays([])).toBeUndefined();
+    });
+
+    test("Caps the maxManualSnoozeLength at the person's release date", () => {
+      timekeeper.freeze(new Date("2024-12-30")); // client expiration date is 12-31
+      vi.spyOn(opp, "config", "get").mockReturnValue({
+        snooze: {
+          maxSnoozeDays: 90,
+        },
+      } as any);
+
+      expect(opp.maxManualSnoozeDays([])).toEqual(1);
+    });
+
+    test("Doesn't cap when release date isn't in the future", () => {
+      timekeeper.freeze(new Date("2025-1-15")); // client expiration date is 12-31
+      vi.spyOn(opp, "config", "get").mockReturnValue({
+        snooze: {
+          maxSnoozeDays: 90,
+        },
+      } as any);
+
+      expect(opp.maxManualSnoozeDays([])).toEqual(90);
+    });
+  });
 });

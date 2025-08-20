@@ -56,7 +56,11 @@ import {
   UpdateFunction,
 } from "../subscriptions";
 import { JusticeInvolvedPerson } from "../types";
-import { getSnoozeUntilDate, snoozeUntilDateInTheFuture } from "../utils";
+import {
+  getPersonDaysToRelease,
+  getSnoozeUntilDate,
+  snoozeUntilDateInTheFuture,
+} from "../utils";
 import { FormBase } from "./Forms/FormBase";
 import { SnoozeConfiguration } from "./OpportunityConfigurations/modules/SnoozeConfiguration/interfaces/ISnoozeConfiguration";
 import {
@@ -768,6 +772,34 @@ export class OpportunityBase<
 
   get eligibilityDate(): Date | undefined {
     return this.record?.eligibleDate ?? undefined;
+  }
+
+  /**
+   * Returns the manual max snooze length in days based on the given reasons. Returns
+   * undefined if auto snooze is enabled for this opportunity. Can be overridden to
+   * return undefined for denial reasons that trigger an indefinite snooze.
+   *
+   */
+  maxManualSnoozeDays(_: string[]): number | undefined {
+    return this.config.snooze?.maxSnoozeDays !== undefined
+      ? Math.min(
+          getPersonDaysToRelease(this.person),
+          this.config.snooze?.maxSnoozeDays,
+        )
+      : undefined;
+  }
+
+  /**
+   * Returns the default snooze length in days based on the given reasons. Returns
+   * undefined if auto snooze is enabled for this opportunity.
+   */
+  defaultManualSnoozeDays(_: string[]): number | undefined {
+    return this.config.snooze?.defaultSnoozeDays !== undefined
+      ? Math.min(
+          getPersonDaysToRelease(this.person),
+          this.config.snooze?.defaultSnoozeDays,
+        )
+      : undefined;
   }
 
   // ===============================

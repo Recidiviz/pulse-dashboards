@@ -16,14 +16,18 @@
 // =============================================================================
 
 import { add, parseISO, sub } from "date-fns";
+import timekeeper from "timekeeper";
 
 import { StaffRecord } from "~datatypes";
 
 import { StaffFilter } from "../../core/models/types";
 import { CombinedUserRecord } from "../../FirestoreStore/types";
+import { JusticeInvolvedPerson } from "../types";
 import {
   filterByUserDistrict,
   fractionalDateBetweenTwoDates,
+  getPersonDaysToRelease,
+  getPersonReleaseDate,
   getSnoozeUntilDate,
   snoozeUntilDateInTheFuture,
   staffNameComparator,
@@ -433,5 +437,66 @@ describe("snoozeUntilDateInTheFuture", () => {
     expect(
       snoozeUntilDateInTheFuture(sub(new Date(), { days: 5 })),
     ).toBeFalse();
+  });
+});
+
+describe("getPersonReleaseDate", () => {
+  let client: JusticeInvolvedPerson;
+  test("when person has expiration date", () => {
+    const testDate = new Date("2024-12-31");
+    client = {
+      expirationDate: testDate,
+    } as any as JusticeInvolvedPerson;
+    expect(getPersonReleaseDate(client)).toEqual(testDate);
+  });
+
+  test("when person has release date", () => {
+    const testDate = new Date("2024-12-31");
+    client = {
+      releaseDate: testDate,
+    } as any as JusticeInvolvedPerson;
+    expect(getPersonReleaseDate(client)).toEqual(testDate);
+  });
+
+  test("when person has no date", () => {
+    client = {} as any as JusticeInvolvedPerson;
+    expect(getPersonReleaseDate(client)).toBeUndefined();
+  });
+});
+
+describe("getPersonDaysToRelease", () => {
+  let client: JusticeInvolvedPerson;
+
+  beforeEach(() => {
+    timekeeper.freeze(new Date("2024-12-01"));
+  });
+
+  test("when person has expiration date", () => {
+    const testDate = new Date("2024-12-31");
+    client = {
+      expirationDate: testDate,
+    } as any as JusticeInvolvedPerson;
+    expect(getPersonDaysToRelease(client)).toEqual(30);
+  });
+
+  test("when person has release date", () => {
+    const testDate = new Date("2024-12-31");
+    client = {
+      releaseDate: testDate,
+    } as any as JusticeInvolvedPerson;
+    expect(getPersonDaysToRelease(client)).toEqual(30);
+  });
+
+  test("when person has no date", () => {
+    client = {} as any as JusticeInvolvedPerson;
+    expect(getPersonDaysToRelease(client)).toEqual(Infinity);
+  });
+
+  test("when person has release date that isn't in the future", () => {
+    const testDate = new Date("2024-12-01");
+    client = {
+      expirationDate: testDate,
+    } as any as JusticeInvolvedPerson;
+    expect(getPersonDaysToRelease(client)).toEqual(Infinity);
   });
 });

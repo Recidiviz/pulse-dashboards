@@ -179,6 +179,8 @@ export interface Opportunity<
   caseNoteHeaders: string[];
   generateCaseNoteText?: string;
   eligibilityStatusLabel: (includeReasons?: boolean) => string | null;
+  maxManualSnoozeDays(denialReasons: string[]): number | undefined;
+  defaultManualSnoozeDays(denialReasons: string[]): number | undefined;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
