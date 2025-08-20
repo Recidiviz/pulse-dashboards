@@ -1,7 +1,7 @@
 """transcription feature
 
 Revision ID: 5131a8c909b9
-Revises: eb68d94e870b
+Revises: 25e1e88178eb
 Create Date: 2025-07-29 13:13:45.486709
 
 """
@@ -16,7 +16,7 @@ recording_status_enum = sa.Enum("created", "recording", "paused", "processing", 
 
 # revision identifiers, used by Alembic.
 revision: str = '5131a8c909b9'
-down_revision: Union[str, None] = 'eb68d94e870b'
+down_revision: Union[str, None] = '25e1e88178eb'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

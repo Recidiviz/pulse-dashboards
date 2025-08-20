@@ -50,4 +50,7 @@ module.exports = {
   "**/*.{!ts,tsx,js,jsx,mjs,mts}": [formatCommand],
   "tsconfig.base.json": [() => "nx lint-import-paths"],
   "**/*.{yaml,yml}": [lintCommand],
+  "apps/@reentry/backend/**/*.py": [
+    () => `cd apps/@reentry/backend && pre-commit run --all-files`,
+  ],
 };

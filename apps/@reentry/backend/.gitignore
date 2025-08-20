@@ -28,7 +28,7 @@ cover/
 
 # Secrets and credentials
 .secrets/*
-.secrets/gcp-service-account.json-sample
+!.secrets/gcp-service-account.json-sample
 
 # IDE
 .idea/
