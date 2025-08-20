@@ -27,7 +27,7 @@ import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 import UsNdContactTask from "../WorkflowsStore/Task/US_ND/UsNdContactTask";
 import UsNdRiskAssessmentTask from "../WorkflowsStore/Task/US_ND/UsNdRiskAssessmentTask";
 
-const US_ND_CONFIG: TenantConfig<"US_ND"> = {
+const US_ND_CONFIG = {
   name: "North Dakota",
   stateCode: "ND",
   domain: "nd.gov",
@@ -164,6 +164,6 @@ const US_ND_CONFIG: TenantConfig<"US_ND"> = {
       accessor: "timelyRiskAssessment",
     },
   ],
-};
+} satisfies TenantConfig<"US_ND">;
 
 export default US_ND_CONFIG;

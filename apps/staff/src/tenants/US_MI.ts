@@ -20,7 +20,7 @@ import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import { usMiFilterByUserDistrict } from "../WorkflowsStore/utils";
 
-const US_MI_CONFIG: TenantConfig<"US_MI"> = {
+const US_MI_CONFIG = {
   name: "Michigan",
   stateCode: "MI",
   domain: "michigan.gov",
@@ -58,6 +58,6 @@ const US_MI_CONFIG: TenantConfig<"US_MI"> = {
   featureVariants: {
     outcomesModule: {},
   },
-};
+} satisfies TenantConfig<"US_MI">;
 
 export default US_MI_CONFIG;

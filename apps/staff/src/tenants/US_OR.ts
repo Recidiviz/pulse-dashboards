@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_OR_CONFIG: TenantConfig<"US_OR"> = {
+const US_OR_CONFIG = {
   name: "Oregon",
   stateCode: "OR",
   domain: "doc.oregon.gov",
@@ -41,6 +41,6 @@ const US_OR_CONFIG: TenantConfig<"US_OR"> = {
   navigation: {
     workflows: ["home", "clients"],
   },
-};
+} satisfies TenantConfig<"US_OR">;
 
 export default US_OR_CONFIG;

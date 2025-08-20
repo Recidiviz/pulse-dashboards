@@ -24,7 +24,7 @@ import UsNeOrasAssessmentTask from "../WorkflowsStore/Task/US_NE/UsNeOrasAssessm
 import UsNePersonalContactTask from "../WorkflowsStore/Task/US_NE/UsNePersonalContactTask";
 import UsNeStableAssessmentTask from "../WorkflowsStore/Task/US_NE/UsNeStableAssessmentTask";
 
-const US_NE_CONFIG: TenantConfig<"US_NE"> = {
+const US_NE_CONFIG = {
   name: "Nebraska",
   stateCode: "NE",
   domain: "corrections.nebraska.gov",
@@ -147,6 +147,6 @@ const US_NE_CONFIG: TenantConfig<"US_NE"> = {
   },
   supervisionEndCopyOverride: "Tentative Release Date",
   supervisionDisplayIdCopy: "NDCS ID",
-};
+} satisfies TenantConfig<"US_NE">;
 
 export default US_NE_CONFIG;

@@ -19,7 +19,7 @@ import { TenantConfig } from "../core/models/types";
 import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboards from "../RootStore/TenantStore/dashboardTenants";
 
-const US_PA_CONFIG: TenantConfig<"US_PA"> = {
+const US_PA_CONFIG = {
   name: "Pennsylvania",
   stateCode: "PA",
   domain: "pa.gov",
@@ -45,6 +45,6 @@ const US_PA_CONFIG: TenantConfig<"US_PA"> = {
     revocations: [],
   },
   featureVariants: { zeroGrantsFlag: {} },
-};
+} satisfies TenantConfig<"US_PA">;
 
 export default US_PA_CONFIG;

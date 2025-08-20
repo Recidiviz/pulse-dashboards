@@ -25,6 +25,7 @@ import {
   SupervisionTaskUpdate,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
+import { SpecificTenantConfigs } from "../../tenants";
 import { Expect, Extends } from "../../utils/typeUtils";
 import { Client } from "../Client";
 import { JusticeInvolvedPerson } from "../types";
@@ -225,8 +226,6 @@ export type SupervisionNeed = {
   type: SupervisionNeedType;
 };
 
-export type TasksStateCode = "US_ID" | "US_TX";
-
 export type UsTxSimpleContactTaskType =
   | "usTxCollateralContactScheduled"
   | "usTxHomeContactScheduled"
@@ -241,14 +240,16 @@ export type UsTxAgnosticContactTaskType =
   | "usTxTypeAgnosticContact"
   | "usTxVirtualOrOfficeContact";
 
-// TODO: Derive these from tenant configs
+type TasksStateCode = {
+  [K in keyof SpecificTenantConfigs]: SpecificTenantConfigs[K] extends {
+    workflowsTasksConfig: WorkflowsTasksConfig;
+  }
+    ? K
+    : never;
+}[keyof SpecificTenantConfigs];
+
 type TasksForState = {
-  US_ID: "homeVisit" | "assessment" | "contact" | "employment";
-  US_TX:
-    | UsTxSimpleContactTaskType
-    | UsTxAgnosticContactTaskType
-    | "usTxHomeContactEdgeCase"
-    | "usTxAssessment";
+  [T in TasksStateCode]: keyof SpecificTenantConfigs[T]["workflowsTasksConfig"]["tasks"];
 };
 
 export interface SupervisionTasksRecord<T extends TasksStateCode> {

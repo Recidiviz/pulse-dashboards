@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
+const US_AZ_CONFIG = {
   name: "Arizona",
   stateCode: "AZ",
   domain: "corrections.az.gov",
@@ -62,6 +62,6 @@ const US_AZ_CONFIG: TenantConfig<"US_AZ"> = {
   },
   incarcerationStaffTitleOverride: "COIII",
   releaseDateCopyOverride: "SED",
-};
+} satisfies TenantConfig<"US_AZ">;
 
 export default US_AZ_CONFIG;

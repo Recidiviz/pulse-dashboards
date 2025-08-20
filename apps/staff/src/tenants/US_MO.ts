@@ -20,7 +20,7 @@ import enabledTableColumns from "../core/utils/enabledTableColumns";
 import { PATHWAYS_PAGES, PATHWAYS_SECTIONS } from "../core/views";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 
-const US_MO_CONFIG: TenantConfig<"US_MO"> = {
+const US_MO_CONFIG = {
   name: "Missouri",
   stateCode: "MO",
   domain: "doc.mo.gov",
@@ -104,6 +104,6 @@ const US_MO_CONFIG: TenantConfig<"US_MO"> = {
     methodology: ["system"],
   },
   tableColumns: enabledTableColumns[pathways.US_MO],
-};
+} satisfies TenantConfig<"US_MO">;
 
 export default US_MO_CONFIG;

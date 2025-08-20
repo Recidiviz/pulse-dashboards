@@ -63,7 +63,9 @@ export type TenantConfigs = {
 // Add any new tenant IDs to the list in `fetchOfflineUser.js` to enable in offline mode.
 const ALL_TENANTS = uniq([...DASHBOARD_TENANTS, ...LANTERN_TENANTS]);
 
-export const TENANT_CONFIGS: TenantConfigs = {
+// This is called SPECIFIC_TENANT_CONFIGS because it has the narrow const type. The exported
+// TENANT_CONFIGS is the exact same object, but with the wider TenantConfigs type.
+const SPECIFIC_TENANT_CONFIGS = {
   [US_AZ]: US_AZ_CONFIG,
   [US_AR]: US_AR_CONFIG,
   [US_CA]: US_CA_CONFIG,
@@ -108,4 +110,7 @@ export const TENANT_CONFIGS: TenantConfigs = {
     enableUserRestrictions: true,
   },
   CSG: CSG_CONFIG,
-};
+} satisfies TenantConfigs;
+
+export type SpecificTenantConfigs = typeof SPECIFIC_TENANT_CONFIGS;
+export const TENANT_CONFIGS: TenantConfigs = SPECIFIC_TENANT_CONFIGS;

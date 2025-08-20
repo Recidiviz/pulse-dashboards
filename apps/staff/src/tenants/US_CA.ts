@@ -20,7 +20,7 @@ import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import { usCaFilterByRoleSubtype } from "../WorkflowsStore/utils";
 
-const US_CA_CONFIG: TenantConfig<"US_CA"> = {
+const US_CA_CONFIG = {
   name: "California",
   stateCode: "CA",
   domain: "cdcr.ca.gov",
@@ -54,6 +54,6 @@ const US_CA_CONFIG: TenantConfig<"US_CA"> = {
   featureVariants: {
     outcomesModule: {},
   },
-};
+} satisfies TenantConfig<"US_CA">;
 
 export default US_CA_CONFIG;

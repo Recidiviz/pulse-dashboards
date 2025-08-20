@@ -30,7 +30,7 @@ import UsTxOfficeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxOff
 import usTxTypeAgnosticContactTask from "../WorkflowsStore/Task/US_TX/UsTxTypeAgnosticContactTask";
 import UsTxVirtualOfficeContactScheduledTask from "../WorkflowsStore/Task/US_TX/UsTxVirtualOfficeContactScheduledTask";
 
-const US_TX_CONFIG: TenantConfig<"US_TX"> = {
+const US_TX_CONFIG = {
   name: "Texas",
   stateCode: "TX",
   domain: "tdcj.texas.gov",
@@ -255,6 +255,6 @@ const US_TX_CONFIG: TenantConfig<"US_TX"> = {
     insights: [INSIGHTS_PAGES.supervision],
     workflows: ["home", "tasks", "clients"],
   },
-};
+} satisfies TenantConfig<"US_TX">;
 
 export default US_TX_CONFIG;

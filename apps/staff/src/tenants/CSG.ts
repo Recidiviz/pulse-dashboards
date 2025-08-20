@@ -20,7 +20,7 @@ import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 import * as lantern from "../RootStore/TenantStore/lanternTenants";
 import * as pathways from "../RootStore/TenantStore/pathwaysTenants";
 
-export const CSG_CONFIG: TenantConfig<"CSG"> = {
+export const CSG_CONFIG = {
   name: "CSG",
   stateCode: "CSG",
   domain: "csg.org",
@@ -30,4 +30,4 @@ export const CSG_CONFIG: TenantConfig<"CSG"> = {
     pathways.US_TN,
   ],
   enableUserRestrictions: false,
-};
+} satisfies TenantConfig<"CSG">;

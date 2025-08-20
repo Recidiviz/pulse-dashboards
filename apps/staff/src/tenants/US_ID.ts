@@ -30,7 +30,7 @@ import UsIdHomeVisitTask from "../WorkflowsStore/Task/US_ID/UsIdHomeVisitTask";
 import UsIdRiskAssessmentTask from "../WorkflowsStore/Task/US_ID/UsIdRiskAssessmentTask";
 import { filterByUserDistrict } from "../WorkflowsStore/utils";
 
-const US_ID_CONFIG: TenantConfig<"US_ID"> = {
+const US_ID_CONFIG = {
   name: "Idaho",
   stateCode: "ID",
   domain: "idoc.idaho.gov",
@@ -212,6 +212,6 @@ const US_ID_CONFIG: TenantConfig<"US_ID"> = {
   featureVariants: {
     outcomesModule: {},
   },
-};
+} satisfies TenantConfig<"US_ID">;
 
 export default US_ID_CONFIG;

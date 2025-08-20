@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_AR_CONFIG: TenantConfig<"US_AR"> = {
+const US_AR_CONFIG = {
   name: "Arkansas",
   stateCode: "AR",
   domain: "doc.arkansas.gov",
@@ -40,6 +40,6 @@ const US_AR_CONFIG: TenantConfig<"US_AR"> = {
     workflows: ["home", "residents"],
   },
   releaseDateCopyOverride: "Projected Release",
-};
+} satisfies TenantConfig<"US_AR">;
 
 export default US_AR_CONFIG;

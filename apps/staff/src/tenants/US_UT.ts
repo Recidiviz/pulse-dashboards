@@ -19,7 +19,7 @@ import { TenantConfig } from "../core/models/types";
 import { INSIGHTS_PAGES } from "../core/views";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_UT_CONFIG: TenantConfig<"US_UT"> = {
+const US_UT_CONFIG = {
   name: "Utah",
   stateCode: "UT",
   domain: "utah.gov",
@@ -43,6 +43,6 @@ const US_UT_CONFIG: TenantConfig<"US_UT"> = {
     workflows: ["home", "clients"],
     insights: [INSIGHTS_PAGES.supervision],
   },
-};
+} satisfies TenantConfig<"US_UT">;
 
 export default US_UT_CONFIG;

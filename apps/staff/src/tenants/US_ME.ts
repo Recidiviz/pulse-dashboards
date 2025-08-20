@@ -18,7 +18,7 @@
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
 
-const US_ME_CONFIG: TenantConfig<"US_ME"> = {
+const US_ME_CONFIG = {
   name: "Maine",
   stateCode: "ME",
   domain: "maine.gov",
@@ -51,6 +51,6 @@ const US_ME_CONFIG: TenantConfig<"US_ME"> = {
   navigation: {
     workflows: ["home", "clients", "residents"],
   },
-};
+} satisfies TenantConfig<"US_ME">;
 
 export default US_ME_CONFIG;
