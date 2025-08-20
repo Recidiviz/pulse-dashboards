@@ -1228,7 +1228,7 @@ describe("eligibilityStatusLabel", () => {
     expect(submitted.eligibilityStatusLabel()).toBe("Submitted");
   });
 
-  describe("maxManualSnoozeLength", () => {
+  describe("maxManualSnoozeDays", () => {
     test("Should use configuration maxSnoozeDays if the manual snooze config is present", () => {
       vi.spyOn(opp, "config", "get").mockReturnValue({
         snooze: {
@@ -1249,7 +1249,7 @@ describe("eligibilityStatusLabel", () => {
       expect(opp.maxManualSnoozeDays([])).toBeUndefined();
     });
 
-    test("Caps the maxManualSnoozeLength at the person's release date", () => {
+    test("Caps the maxManualSnoozeDays at the person's release date", () => {
       timekeeper.freeze(new Date("2024-12-30")); // client expiration date is 12-31
       vi.spyOn(opp, "config", "get").mockReturnValue({
         snooze: {

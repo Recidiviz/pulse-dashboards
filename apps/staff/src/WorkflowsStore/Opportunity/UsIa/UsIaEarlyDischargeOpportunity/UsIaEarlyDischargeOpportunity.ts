@@ -17,6 +17,7 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 import { Timestamp } from "firebase/firestore";
+import { intersection } from "lodash";
 
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import {
@@ -384,5 +385,21 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
 
   get showRevertLinkFallback(): boolean {
     return this.clientStatus !== "ELIGIBLE_NOW";
+  }
+
+  maxManualSnoozeDays(denialReasons: string[]): number | undefined {
+    if (this.rootStore.userStore.activeFeatureVariants.indefiniteSnooze) {
+      const indefiniteReasons = ["INTERSTATE (IC-IN)", "COURT"];
+      const selectedIndefiniteReasons = intersection(
+        indefiniteReasons,
+        denialReasons,
+      );
+      // If an indefinite denial reason is selected, we'll return undefined (i.e. there
+      // is no max snooze length for this reason).
+      if (selectedIndefiniteReasons.length > 0) {
+        return undefined;
+      }
+    }
+    return super.maxManualSnoozeDays(denialReasons);
   }
 }

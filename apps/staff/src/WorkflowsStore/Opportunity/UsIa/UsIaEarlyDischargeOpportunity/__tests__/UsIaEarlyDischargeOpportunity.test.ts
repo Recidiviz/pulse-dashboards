@@ -18,8 +18,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { Timestamp } from "firebase/firestore";
+import timekeeper from "timekeeper";
 
 import { RootStore } from "../../../../../RootStore";
+import UserStore from "../../../../../RootStore/UserStore";
+import { Client } from "../../../../Client";
 import { UsIaEarlyDischargeOpportunity } from "../UsIaEarlyDischargeOpportunity";
 
 describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
@@ -171,5 +174,111 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
       { type: "APPROVAL", ...updateLog, isStale: true },
     ];
     expect(opportunity.clientStatus).toBe("ELIGIBLE_NOW");
+  });
+});
+
+describe("maxManualSnoozeDays", () => {
+  let opportunity: UsIaEarlyDischargeOpportunity;
+  let client: Client;
+
+  beforeEach(() => {
+    opportunity = Object.create(UsIaEarlyDischargeOpportunity.prototype);
+    opportunity.updatesSubscription = {
+      data: {},
+      subscribe: vi.fn(),
+      unsubscribe: vi.fn(),
+      hydrate: vi.fn(),
+      hydrationState: { status: "hydrated" },
+    };
+    // set up a mock configuration for this opportunity
+    // @ts-ignore setting a read-only property that is undefined
+    opportunity.type = "usIaEarlyDischarge";
+
+    opportunity.rootStore = {
+      workflowsRootStore: {
+        opportunityConfigurationStore: {
+          opportunities: {
+            [opportunity.type]: { supportsSubmitted: true },
+          },
+        },
+      },
+      userStore: {
+        activeFeatureVariants: vi.fn() as any,
+      } as UserStore,
+    } as unknown as RootStore;
+
+    client = Object.create(Client.prototype);
+    client.expirationDate = new Date("2024-12-31");
+
+    opportunity.person = client;
+
+    vi.spyOn(
+      opportunity.rootStore.userStore,
+      "activeFeatureVariants",
+      "get",
+    ).mockReturnValue({
+      indefiniteSnooze: {},
+    });
+  });
+
+  test("Returns max from config if indefinite snooze reason is not selected", () => {
+    vi.spyOn(opportunity, "config", "get").mockReturnValue({
+      snooze: {
+        maxSnoozeDays: 90,
+      },
+    } as any);
+
+    expect(
+      opportunity.maxManualSnoozeDays(["temporaryReason1", "temporaryReason2"]),
+    ).toEqual(90);
+  });
+
+  test("Returns undefined if indefinite snooze reason (COURT) is selected", () => {
+    vi.spyOn(opportunity, "config", "get").mockReturnValue({
+      snooze: {
+        maxSnoozeDays: 90,
+      },
+    } as any);
+
+    expect(
+      opportunity.maxManualSnoozeDays(["COURT", "temporaryReason2"]),
+    ).toBeUndefined();
+  });
+
+  test("Returns undefined if indefinite snooze reason (IC-IN) is selected", () => {
+    vi.spyOn(opportunity, "config", "get").mockReturnValue({
+      snooze: {
+        maxSnoozeDays: 90,
+      },
+    } as any);
+
+    expect(
+      opportunity.maxManualSnoozeDays([
+        "INTERSTATE (IC-IN)",
+        "temporaryReason2",
+      ]),
+    ).toBeUndefined();
+  });
+
+  test("Caps snooze length to release date", () => {
+    timekeeper.freeze(new Date("2024-12-30")); // client expiration date is 12-31
+    vi.spyOn(opportunity, "config", "get").mockReturnValue({
+      snooze: {
+        maxSnoozeDays: 90,
+      },
+    } as any);
+
+    expect(opportunity.maxManualSnoozeDays(["temporaryReason2"])).toEqual(1);
+  });
+
+  test("Doesn't cap snooze length when release date is in the past", () => {
+    timekeeper.freeze(new Date("2025-1-15")); // client expiration date is 12-31
+    vi.spyOn(opportunity, "config", "get").mockReturnValue({
+      snooze: {
+        maxSnoozeDays: 90,
+      },
+    } as any);
+
+    expect(opportunity.maxManualSnoozeDays(["temporaryReason2"])).toEqual(90);
   });
 });
