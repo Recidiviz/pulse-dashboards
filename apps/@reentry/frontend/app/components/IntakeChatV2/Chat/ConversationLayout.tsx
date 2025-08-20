@@ -79,7 +79,10 @@ const ConversationLayout: React.FC<ConversationLayoutProps> = ({
             <div ref={containerRef} className={styles["messagesWrapper"]}>
               <div className={styles["messagesList"]}>
                 {currentSectionMessages?.map((message) => (
-                  <ChatMessageBubble key={message.id} message={message} />
+                  <ChatMessageBubble
+                    key={message.id + message.content}
+                    message={message}
+                  />
                 ))}
                 {waitingForAIInput && (
                   <ChatMessageBubble key="typing-indicator" isTyping />

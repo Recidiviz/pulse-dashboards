@@ -28,6 +28,7 @@ import {
   createOrGetInputSchema,
   intakeChatInputSchema,
   intakeChatResponseInputSchema,
+  updateEndDateInputSchema,
 } from "~@reentry/trpc/routes/intake-chat/intake-chat.schema";
 import {
   EmitData,
@@ -51,7 +52,7 @@ function getCleanedMessagesAndLastId(aiMessages: AIMessage[]): MessagesLastId {
     content: message.content as string,
     section: message.response_metadata["section"],
     id: message.id,
-    from_role: message.response_metadata["from_role"],
+    from_role: "case_worker",
   }));
 
   if (aiMessages.length === 0) {
@@ -128,7 +129,33 @@ export const intakeChatRouter = router({
         }
       },
     ),
+  updateEndDate: baseProcedure
+    .input(updateEndDateInputSchema)
+    .mutation(
+      async ({ ctx: { prisma, user }, input: { intakeId, endDate } }) => {
+        const intake = await prisma.intake.findUnique({
+          where: {
+            id: intakeId,
+            client: {
+              pseudonymizedId: user?.clientPseudoId,
+            },
+          },
+          select: { id: true },
+        });
 
+        if (!intake) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: `No intake found with ID "${intakeId}" for client "${user?.clientPseudoId}"`,
+          });
+        }
+
+        await prisma.intake.update({
+          where: { id: intakeId },
+          data: { endDate },
+        });
+      },
+    ),
   reply: baseProcedure
     .input(intakeChatResponseInputSchema)
     .mutation(

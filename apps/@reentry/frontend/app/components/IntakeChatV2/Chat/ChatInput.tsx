@@ -22,13 +22,15 @@ import styles from "~@reentry/frontend/components/IntakeChatV2/Chat/ChatInput.mo
 import { useChatContext } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
 
 const ChatInput: React.FC = () => {
-  const { waitingForAIInput, sendMessage } = useChatContext();
+  const { waitingForAIInput, intakeStatus, error, sendMessage, setEndDate } =
+    useChatContext();
 
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const isDisabled = waitingForAIInput || isSending;
+  const isDisabled = waitingForAIInput || isSending || !!error;
+  const isIntakeComplete = intakeStatus === "complete";
 
   const onSend = async () => {
     if (isDisabled || !inputValue.trim()) return;
@@ -55,32 +57,44 @@ const ChatInput: React.FC = () => {
   return (
     <div className={styles["container"]}>
       <div className={styles["inputRow"]}>
-        <div className={styles["inputWrapper"]}>
-          <textarea
-            ref={textareaRef}
-            rows={1}
-            value={inputValue}
-            disabled={isDisabled}
-            placeholder="Write a message..."
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className={styles["textarea"]}
-          />
+        {isIntakeComplete ? (
+          // End of Conversation Continue Button
           <button
             type="button"
-            onClick={onSend}
-            disabled={isDisabled || !inputValue.trim()}
-            className={styles["sendButton"]}
+            onClick={() => setEndDate(new Date())}
+            className={`${styles["buttonCommon"]} ${styles["continue"]}`}
           >
-            <SendIcon
-              className={
-                isDisabled || !inputValue.trim()
-                  ? styles["sendIconDisabled"]
-                  : styles["sendIcon"]
-              }
-            />
+            Continue
           </button>
-        </div>
+        ) : (
+          // Chat Input Text Area
+          <div className={styles["inputWrapper"]}>
+            <textarea
+              ref={textareaRef}
+              rows={1}
+              value={inputValue}
+              disabled={isDisabled}
+              placeholder="Write a message..."
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className={styles["textarea"]}
+            />
+            <button
+              type="button"
+              onClick={onSend}
+              disabled={isDisabled || !inputValue.trim()}
+              className={styles["sendButton"]}
+            >
+              <SendIcon
+                className={
+                  isDisabled || !inputValue.trim()
+                    ? styles["sendIconDisabled"]
+                    : styles["sendIcon"]
+                }
+              />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

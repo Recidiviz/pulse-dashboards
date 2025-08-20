@@ -15,19 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { AGENT_STATUSES } from "~@reentry/frontend/components/IntakeChatV2/Chat/constants";
-import type { AppRouter } from "~@reentry/trpc-types";
-
-export type Intake = Awaited<ReturnType<AppRouter["intake"]["createIntake"]>>;
-// TODO: Find a way to infer the AgentStatus types
-export type AgentStatus = (typeof AGENT_STATUSES)[number];
-
-// TODO: Find a way to infer type of Message from our BE
-export type Message = {
-  id: string;
-  content: string;
-  from_role: string;
-  section: string;
-};
-
-export type StepStatus = "completed" | "in_progress" | "not_started";
+// TODO: Find a way to derive these from the BE
+export const AGENT_STATUSES = [
+  "not_initialized",
+  "waiting_for_response",
+  "complete",
+  "user_ended",
+  "error",
+] as const;

@@ -20,6 +20,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 import {
+  AgentStatus,
   Intake,
   Message,
 } from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
@@ -28,9 +29,12 @@ import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
 interface ChatState {
   sections?: Intake["config"]["sections"];
   messages: Message[];
+  intakeStatus: AgentStatus;
   waitingForAIInput: boolean;
   error?: string;
+  intakeEndDate: Date | null;
   sendMessage: (text: string) => Promise<void>;
+  setEndDate: (endDate: Date) => Promise<void>;
 }
 
 const ChatContext = createContext<ChatState | null>(null);
@@ -43,8 +47,11 @@ export function useChatContext() {
 
 export const ChatProvider: React.FC<{
   intake: Intake;
+  clientId: string;
   children?: React.ReactNode;
-}> = ({ intake, children }) => {
+}> = ({ intake, clientId, children }) => {
+  const [intakeStatus, setIntakeStatus] =
+    useState<ChatState["intakeStatus"]>("not_initialized");
   const [messages, setMessages] = useState<ChatState["messages"]>([]);
   const [waitingForAIInput, setWaitingForAIInput] = useState(false);
   const [error, setError] = useState<string>();
@@ -65,7 +72,9 @@ export const ChatProvider: React.FC<{
     }
   }, [error]);
 
+  const utils = trpc.useUtils();
   const reply = trpc.intake.reply.useMutation();
+  const updateEndDate = trpc.intake.updateEndDate.useMutation();
   trpc.intake.chat.useSubscription(
     intake.id ? { intakeId: intake.id } : skipToken,
     {
@@ -73,9 +82,14 @@ export const ChatProvider: React.FC<{
       onData(payload) {
         if ("type" in payload && payload.type === "loading") {
           setWaitingForAIInput(true);
-        } else if ("data" in payload && "messages" in payload.data) {
-          const newMessages = payload.data.messages as Message[];
-          setMessages((prev) => [...prev, ...newMessages]);
+        } else if ("data" in payload) {
+          if ("messages" in payload.data) {
+            const newMessages = payload.data.messages as Message[];
+            setMessages((prev) => [...prev, ...newMessages]);
+          }
+          if ("status" in payload.data) {
+            setIntakeStatus(payload.data.status as AgentStatus);
+          }
           setWaitingForAIInput(false);
         }
       },
@@ -109,14 +123,33 @@ export const ChatProvider: React.FC<{
     }
   };
 
+  const setIntakeEndDate = async (endDate: Date) => {
+    try {
+      await updateEndDate.mutateAsync({ intakeId: intake.id, endDate });
+      if (clientId) {
+        // Refetch the intake to move on to the next steps
+        await utils.intake.getIntake.invalidate({ clientPseudoId: clientId });
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    }
+  };
+  console.log("intakeStatus", intakeStatus);
   return (
     <ChatContext.Provider
       value={{
         sections: intake.config?.sections ?? [],
         messages,
+        intakeStatus,
         waitingForAIInput,
         error,
+        intakeEndDate: intake.endDate,
         sendMessage,
+        setEndDate: setIntakeEndDate,
       }}
     >
       {children}

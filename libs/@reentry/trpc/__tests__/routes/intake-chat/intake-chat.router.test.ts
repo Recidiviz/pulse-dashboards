@@ -123,6 +123,51 @@ describe("intake chat router", () => {
     });
   });
 
+  describe("updateEndDate", () => {
+    test("should update intake endDate", async () => {
+      const endDate = new Date("2025-01-02T03:04:05.000Z");
+      const original = await testPrismaClient.intake.findUnique({
+        where: { id: intakeId },
+        select: { endDate: true },
+      });
+
+      expect(original?.endDate).toBeNull();
+
+      await testTRPCClient.intake.updateEndDate.mutate({
+        intakeId,
+        endDate,
+      });
+
+      const updated = await testPrismaClient.intake.findUnique({
+        where: { id: intakeId },
+        select: { endDate: true },
+      });
+
+      expect(updated?.endDate?.toISOString()).toBe(endDate.toISOString());
+    });
+
+    test("should throw error if client not authorized for intake", async () => {
+      const badClientToken = testServer.jwt.sign(
+        {
+          clientPseudoId: "non-existent-client-pseudo-id",
+        },
+        { algorithm: "HS256", expiresIn: "5h" },
+      );
+
+      const wsClient = initWSClient(badClientToken);
+      const badTRPCClient = initTRPCClient(badClientToken, wsClient);
+
+      await expect(
+        badTRPCClient.intake.updateEndDate.mutate({
+          intakeId,
+          endDate: new Date(),
+        }),
+      ).rejects.toThrow(
+        `No intake found with ID "${intakeId}" for client "non-existent-client-pseudo-id"`,
+      );
+    });
+  });
+
   describe("createIntake", () => {
     test("createIntake for client should throw error if client doesn't exist", async () => {
       await expect(

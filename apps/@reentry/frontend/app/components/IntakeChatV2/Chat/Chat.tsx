@@ -56,7 +56,7 @@ const Chat = ({ clientId, connectionStatus }: ChatProps) => {
     return <IntakeComplete />;
   }
   return (
-    <ChatProvider intake={intake}>
+    <ChatProvider intake={intake} clientId={clientId}>
       <ConversationLayout connectionStatus={connectionStatus} />
     </ChatProvider>
   );
