@@ -67,7 +67,10 @@ describe("handle_import", () => {
           officer_id: fakePersonOne.officerId,
           po_name: fakePersonOne.poName,
           district: fakePersonOne.district,
-          group_id: fakeFullyEligibleGroup.groupName,
+          group_ids: [
+            fakeFullyEligibleGroup.groupName,
+            fakeTrustedTesterGroup.groupName,
+          ],
         },
         // New person
         {
@@ -85,7 +88,10 @@ describe("handle_import", () => {
           officer_id: fakePersonOne.officerId,
           po_name: fakePersonOne.poName,
           district: fakePersonOne.district,
-          group_id: fakeFullyEligibleGroup.groupName,
+          group_ids: [
+            fakeFullyEligibleGroup.groupName,
+            fakeTrustedTesterGroup.groupName,
+          ],
         },
       ]);
 
@@ -104,6 +110,9 @@ describe("handle_import", () => {
           groups: expect.arrayContaining([
             expect.objectContaining({
               groupName: fakeFullyEligibleGroup.groupName,
+            }),
+            expect.objectContaining({
+              groupName: fakeTrustedTesterGroup.groupName,
             }),
           ]),
         }),
@@ -127,7 +136,6 @@ describe("handle_import", () => {
         },
       });
 
-      // Check that person has fully eligible group in setup
       expect(existingDbPeople).toEqual([
         expect.objectContaining({
           stableExternalId: fakePersonOne.stableExternalId,
@@ -157,7 +165,7 @@ describe("handle_import", () => {
           po_name: fakePersonOne.poName,
           district: fakePersonOne.district,
           // DIFFERENT GROUP
-          group_id: fakeTrustedTesterGroup.groupName,
+          group_ids: [fakeTrustedTesterGroup.groupName],
         },
       ]);
 
@@ -167,7 +175,7 @@ describe("handle_import", () => {
         include: { groups: true },
       });
 
-      // Check that old person group was updated and they are only connected to one group
+      // Check that old person group was updated
       expect(dbPeople).toEqual([
         expect.objectContaining({
           stableExternalId: fakePersonOne.stableExternalId,
@@ -200,13 +208,13 @@ describe("handle_import", () => {
       expect(dbPerson).toEqual([
         expect.objectContaining({
           stableExternalId: fakePersonOne.stableExternalId,
-          groups: [
+          groups: expect.arrayContaining([
             {
               groupName: fakeFullyEligibleGroup.groupName,
               messageCopyTemplate: "Hi, this is a message.",
               status: "ACTIVE",
             },
-          ],
+          ]),
         }),
       ]);
 
@@ -227,7 +235,10 @@ describe("handle_import", () => {
           officer_id: fakePersonOne.officerId,
           po_name: fakePersonOne.poName,
           district: fakePersonOne.district,
-          group_id: fakeFullyEligibleGroup.groupName,
+          group_ids: [
+            fakeFullyEligibleGroup.groupName,
+            fakeTrustedTesterGroup.groupName,
+          ],
         },
       ]);
 
@@ -255,7 +266,17 @@ describe("handle_import", () => {
           stableExternalId: fakePersonOne.stableExternalId,
           groups: [],
         }),
-        expect.objectContaining({ stableExternalId: "new-person-ext" }),
+        expect.objectContaining({
+          stableExternalId: "new-person-ext",
+          groups: [
+            expect.objectContaining({
+              groupName: fakeTrustedTesterGroup.groupName,
+            }),
+            expect.objectContaining({
+              groupName: fakeFullyEligibleGroup.groupName,
+            }),
+          ],
+        }),
       ]);
     });
   });

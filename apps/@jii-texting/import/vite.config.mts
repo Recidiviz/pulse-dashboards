@@ -56,7 +56,8 @@ export default defineConfig(() => ({
         "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
       DATABASE_URL_US_ID:
         process.env["DATABASE_URL_US_ID"] ??
-        "postgresql://postgres:postgres@localhost:6503/jii-texting-test-us-id?schema=public",
+        "postgresql://postgres:postgres@localhost:6503/jii-texting-test?schema=public",
+      IMPORT_BUCKET_ID: process.env["IMPORT_BUCKET_ID"] ?? "test-bucket",
     },
   },
 }));

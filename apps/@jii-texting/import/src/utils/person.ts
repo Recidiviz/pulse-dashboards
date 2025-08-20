@@ -34,9 +34,20 @@ export async function transformAndLoadPersonData(
   // Load new people data
   // We do this in a for loop since we are using AsyncGenerator (needs to be iterated over)
   for await (const personData of data) {
-    const incomingGroup = await prismaClient.group.findFirstOrThrow({
-      where: { groupName: personData.group_id },
+    const incomingGroups = await prismaClient.group.findMany({
+      where: {
+        groupName: {
+          in: personData.group_ids, // finds all groups where groupName is in the array
+        },
+      },
     });
+
+    // Log if there are any incoming groups are missing
+    const foundGroupNames = new Set(incomingGroups.map((g) => g.groupName));
+    const missingGroups = personData.group_ids.filter(
+      (id) => !foundGroupNames.has(id),
+    );
+    console.log(`Groups not found: ${missingGroups.join(", ")}`);
 
     // Find the person if they exist
     const currentGroupsForPerson = await prismaClient.person.findUnique({
@@ -45,11 +56,11 @@ export async function transformAndLoadPersonData(
         groups: { select: { groupName: true, id: true } },
       },
     });
-
+    const incomingGroupIds = incomingGroups.map((g) => g.id);
     const groupsToDisconnect =
       currentGroupsForPerson !== null
         ? currentGroupsForPerson.groups.filter(
-            (currentGroup) => currentGroup.id !== incomingGroup.id,
+            (currentGroup) => !incomingGroupIds.includes(currentGroup.id),
           )
         : [];
 
@@ -75,12 +86,12 @@ export async function transformAndLoadPersonData(
       },
       create: {
         ...newPerson,
-        groups: { connect: { id: incomingGroup.id } },
+        groups: { connect: incomingGroupIds.map((id) => ({ id })) },
       },
       update: {
         ...newPerson,
         groups: {
-          connect: { id: incomingGroup.id },
+          connect: incomingGroupIds.map((id) => ({ id })),
           disconnect: groupsToDisconnect.map((group) => ({ id: group.id })), // Disconnect the groups in the array
         },
       },
