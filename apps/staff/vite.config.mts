@@ -23,7 +23,7 @@ import macros from "vite-plugin-babel-macros";
 import { comlink } from "vite-plugin-comlink";
 import svgr from "vite-plugin-svgr";
 
-export default defineConfig({
+export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/apps/staff",
 
@@ -88,4 +88,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

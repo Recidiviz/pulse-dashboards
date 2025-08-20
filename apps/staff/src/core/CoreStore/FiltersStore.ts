@@ -188,10 +188,11 @@ export default class FiltersStore {
   }
 
   get enabledFilters(): EnabledFiltersByMetric {
-    // @ts-ignore
     return this.pathwaysTenantId
-      ? enabledFilters[this.pathwaysTenantId]
-      : undefined;
+      ? // @ts-expect-error grandfathered
+        enabledFilters[this.pathwaysTenantId]
+      : // @ts-expect-error grandfathered
+        undefined;
   }
 
   get sortedFilters(): EnabledFilters {

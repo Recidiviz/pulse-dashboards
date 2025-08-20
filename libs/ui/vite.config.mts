@@ -19,7 +19,7 @@ import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-export default defineConfig({
+export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/libs/ui",
 
@@ -39,4 +39,4 @@ export default defineConfig({
     reporters: ["default"],
     coverage: { reportsDirectory: "../../coverage/libs/ui", provider: "v8" },
   },
-});
+}));

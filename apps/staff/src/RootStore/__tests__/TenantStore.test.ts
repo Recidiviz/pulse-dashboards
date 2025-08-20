@@ -223,6 +223,7 @@ describe("TenantStore", () => {
       // location, this works.
       // @ts-expect-error
       delete window.location;
+      // @ts-expect-error grandfathered
       window.location = { search: "?tenantId=US_TN" } as Location;
       sessionStorage.setItem(CURRENT_TENANT_IN_SESSION, tenantIdFromStorage);
     });

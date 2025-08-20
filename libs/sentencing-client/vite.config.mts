@@ -20,7 +20,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import svgr from "vite-plugin-svgr";
 
-export default defineConfig({
+export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../node_modules/.vite/libs/sentencing-client",
 
@@ -45,4 +45,4 @@ export default defineConfig({
       provider: "v8",
     },
   },
-});
+}));

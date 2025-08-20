@@ -19,7 +19,7 @@
 import { nxViteTsPaths } from "@nx/vite/plugins/nx-tsconfig-paths.plugin";
 import { defineConfig } from "vite";
 
-export default defineConfig({
+export default defineConfig(() => ({
   root: __dirname,
   cacheDir: "../../../node_modules/.vite/libs/@reentry/trpc",
 
@@ -63,4 +63,4 @@ export default defineConfig({
         "0d9e4eb91b3bc1ad85a6f39c7070a6dc30c003da1eb83d86e8fdabdb4e96761f",
     },
   },
-});
+}));
