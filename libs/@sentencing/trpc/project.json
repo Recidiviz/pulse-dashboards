@@ -19,13 +19,6 @@
         "cwd": "{projectRoot}"
       }
     },
-    "lint-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "eslint --max-warnings 0 --no-warn-ignored",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {

@@ -92,15 +92,6 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
     updateProjectConfiguration(tree, options.name, {
       ...readProjectConfiguration(tree, options.name),
       targets: {
-        // unlike the Nx default lint command, this will accept a list of files,
-        // e.g. from lint-staged
-        "lint-files": {
-          executor: "nx:run-commands",
-          options: {
-            command: "eslint --max-warnings 0 --no-warn-ignored",
-            cwd: "{projectRoot}",
-          },
-        },
         typecheck: {
           executor: "nx:run-commands",
           options: {

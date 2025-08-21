@@ -49,7 +49,6 @@ export interface IntakeSocketContextType {
   clientId?: string | null | undefined;
   intakeStatus: components["schemas"]["IntakeStatus"] | undefined;
   isLoading: boolean;
-  // eslint-disable-next-line no-use-before-define
   error?: IntakeErrorType;
   client_name: string | null;
   conversationStarted: boolean;

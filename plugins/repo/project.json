@@ -4,13 +4,6 @@
   "sourceRoot": "plugins/repo/src",
   "projectType": "library",
   "targets": {
-    "lint-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "eslint --max-warnings 0 --no-warn-ignored",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {

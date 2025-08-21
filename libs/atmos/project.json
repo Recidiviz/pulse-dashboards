@@ -4,13 +4,6 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "lint-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "eslint --max-warnings 0 --no-warn-ignored",
-        "cwd": "{projectRoot}"
-      }
-    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {

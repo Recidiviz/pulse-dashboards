@@ -23,7 +23,6 @@ import { ImportHandlerBase } from "~data-import-plugin/common/classes";
  * Use the `setData` method to set the data that will be returned by any instance of a MockImportHandler.
  */
 export class MockDataProvider {
-  // eslint-disable-next-line no-use-before-define -- only using it as a type here
   private static _instance: MockDataProvider;
   data: {
     [key: string]: unknown[];

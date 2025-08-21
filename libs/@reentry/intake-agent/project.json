@@ -46,13 +46,6 @@
         "command": "npx @langchain/langgraph-cli dev"
       }
     },
-    "lint-files": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "eslint --max-warnings 0",
-        "cwd": "{projectRoot}"
-      }
-    },
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
