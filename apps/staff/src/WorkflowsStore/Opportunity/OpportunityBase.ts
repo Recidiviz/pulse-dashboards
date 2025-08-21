@@ -49,7 +49,7 @@ import {
   UpdateLog,
 } from "../../FirestoreStore";
 import { RootStore } from "../../RootStore";
-import { formatDateToISO } from "../../utils";
+import { formatDateToISO, toTitleCase } from "../../utils";
 import {
   DocumentSubscription,
   OpportunityUpdateSubscription,
@@ -68,6 +68,7 @@ import {
   DefaultEligibility,
   FormVariant,
   Opportunity,
+  OpportunityBannerInfo,
   OpportunityRequirement,
   OpportunityStatus,
   OpportunityTab,
@@ -163,6 +164,7 @@ export class OpportunityBase<
       denied: computed,
       isSubmitted: computed,
       submittedUpdate: computed,
+      bannerInfo: computed,
     });
 
     this.updateOpportunityEligibility = updateOpportunityEligibility(
@@ -363,6 +365,14 @@ export class OpportunityBase<
    */
   get previewBannerText(): string | undefined {
     return;
+  }
+
+  get bannerInfo(): OpportunityBannerInfo | undefined {
+    return this.previewBannerText ? {
+      previewBannerText: this.previewBannerText,
+      link: this.person.profileUrl,
+      linkText: `See ${toTitleCase(this.rootStore.workflowsStore.justiceInvolvedPersonTitle)} Profile`
+    } : undefined;
   }
 
   /**

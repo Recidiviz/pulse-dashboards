@@ -58,6 +58,7 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
   });
 
   afterEach(() => {
+    vi.resetAllMocks();
     configure({ safeDescriptors: true });
   });
 
@@ -101,7 +102,7 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
         sldOpportunity.earlyDischargeEligibilityCompanionOpportunity,
       ).toBeUndefined();
     });
-  })
+  });
 
   describe("pendingEligbility", () => {
     beforeEach(() => {
@@ -110,7 +111,7 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
         "eligibilityCompanionOpportunities",
         "get",
       ).mockReturnValue([edOpportunity]);
-    })
+    });
 
     it("returns true when the earlyDischargeEligibilityCompanionOpportunity has a denial with relevant reason", () => {
       edOpportunity.updatesSubscription = {
@@ -125,7 +126,7 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
 
     it("returns false when the earlyDischargeEligibilityCompanionOpportunity does not have a denial", () => {
       edOpportunity.updatesSubscription = {
-        data: { },
+        data: {},
         subscribe: vi.fn(),
         unsubscribe: vi.fn(),
         hydrate: vi.fn(),
@@ -166,5 +167,5 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
       };
       expect(sldOpportunity.pendingEligibility).toBe(true);
     });
-  })
+  });
 });

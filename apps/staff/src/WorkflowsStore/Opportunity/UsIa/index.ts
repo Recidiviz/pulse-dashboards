@@ -17,3 +17,9 @@
 
 export * from "./UsIaEarlyDischargeOpportunity";
 export * from "./UsIaSupervisionLevelDowngradeOpportunity";
+
+export const RELEVANT_ED_DENIAL_REASONS = [
+  "FINES & FEES",
+  "COURT",
+  "DENIED",
+];

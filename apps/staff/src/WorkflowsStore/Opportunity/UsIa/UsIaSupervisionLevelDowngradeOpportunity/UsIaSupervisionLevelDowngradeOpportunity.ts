@@ -20,6 +20,7 @@ import { DocumentData } from "@google-cloud/firestore";
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityTab } from "../../types";
+import { RELEVANT_ED_DENIAL_REASONS } from "..";
 import { UsIaEarlyDischargeOpportunity } from "../UsIaEarlyDischargeOpportunity";
 import {
   UsIaSupervisionLevelDowngradeReferralRecord,
@@ -57,12 +58,6 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   }
 
   get pendingEligibility(): boolean {
-    const RELEVANT_ED_DENIAL_REASONS = [
-      "FINES & FEES",
-      "COURT",
-      "INTERSTATE (IC-IN)",
-    ];
-
     if (!this.record.isAlmostEligible) return false;
 
     const edOppDenial =

@@ -181,6 +181,8 @@ export interface Opportunity<
   eligibilityStatusLabel: (includeReasons?: boolean) => string | null;
   maxManualSnoozeDays(denialReasons: string[]): number | undefined;
   defaultManualSnoozeDays(denialReasons: string[]): number | undefined;
+  opportunityBannerInfo?: OpportunityBannerInfo;
+  bannerInfo?: OpportunityBannerInfo;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";
@@ -258,4 +260,11 @@ export interface OpportunityManagerInterface extends Hydratable {
 export type RevertConfirmationCopy = {
   headerText: string;
   descriptionText: string;
+};
+
+export type OpportunityBannerInfo = {
+  previewBannerHeading?: string;
+  previewBannerText?: string;
+  link: string;
+  linkText: string;
 };

@@ -20,6 +20,7 @@ import { Timestamp } from "firebase/firestore";
 import { intersection } from "lodash";
 
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
+import { workflowsUrl } from "../../../../core/views";
 import {
   OfficerAction,
   OfficerApprovalAction,
@@ -31,10 +32,14 @@ import { Client } from "../../../Client";
 import { UsIaEarlyDischargeForm } from "../../Forms/UsIaEarlyDischargeForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import {
+  ActedOnTextAddition,
+  OpportunityBannerInfo,
   OpportunityRequirement,
   OpportunityTab,
   RevertConfirmationCopy,
 } from "../../types";
+import { RELEVANT_ED_DENIAL_REASONS } from "..";
+import { UsIaSupervisionLevelDowngradeOpportunity } from "../UsIaSupervisionLevelDowngradeOpportunity";
 import { UsIaClientStatus } from "./types";
 import {
   UsIaEarlyDischargeReferralRecord,
@@ -401,5 +406,58 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       }
     }
     return super.maxManualSnoozeDays(denialReasons);
+  }
+  
+  get sldRelevantDenial(): boolean {
+    const { reasons } = this.updates?.denial ?? {};
+    // Reasons should never be empty, but we check just in case.
+    if (!reasons || reasons.length === 0) return false;
+    return reasons.every((item) => RELEVANT_ED_DENIAL_REASONS.includes(item));
+  }
+
+  get sldCompanionOpportunity():
+    | UsIaSupervisionLevelDowngradeOpportunity
+    | undefined {
+    const sldOpportunity = this.eligibilityCompanionOpportunities.filter(
+      (opportunity) => opportunity.type === "usIaSupervisionLevelDowngrade",
+    ) as UsIaSupervisionLevelDowngradeOpportunity[];
+
+    if (sldOpportunity.length > 1) {
+      throw new Error(
+        "Expected either zero or one companion UsIaEarlyDischargeOpportunity, received multiple.",
+      );
+    }
+
+    return sldOpportunity.length === 0 ? undefined : sldOpportunity[0];
+  }
+
+  get hasPendingSldCompanionOpportunity(): boolean {
+    return (
+      !!this.sldCompanionOpportunity?.almostEligible && this.sldRelevantDenial
+    );
+  }
+
+  get actedOnTextAddition(): ActedOnTextAddition {
+    return this.hasPendingSldCompanionOpportunity
+      ? {
+          DENIED:
+            ". This client is now eligible for a Supervision Level Downgrade.",
+        }
+      : {};
+  }
+
+  get bannerInfo(): OpportunityBannerInfo | undefined {
+    if (this.hasPendingSldCompanionOpportunity) {
+      return {
+        previewBannerHeading: `${this.person.displayName} is eligible for a Supervision Level Downgrade`,
+        previewBannerText:
+          "This client will be pending for approximately 24 hours before they become eligible for a Supervision Level Downgrade.",
+        link: workflowsUrl("opportunityClients", {
+          urlSection: "supervisionLevelDowngrade",
+        }),
+        linkText: "See Pending Eligibility",
+      };
+    }
+    return undefined;
   }
 }

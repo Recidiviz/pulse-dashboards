@@ -173,4 +173,6 @@ export const mockOpportunity: Opportunity<Client> = {
   },
   maxManualSnoozeDays: () => undefined,
   defaultManualSnoozeDays: () => undefined,
+  opportunityBannerInfo: undefined,
+  bannerInfo: undefined,
 };

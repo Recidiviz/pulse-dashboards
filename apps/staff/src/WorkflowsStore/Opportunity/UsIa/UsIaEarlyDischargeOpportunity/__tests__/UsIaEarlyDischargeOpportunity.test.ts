@@ -18,18 +18,28 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { Timestamp } from "firebase/firestore";
+import { configure } from "mobx";
 import timekeeper from "timekeeper";
 
 import { RootStore } from "../../../../../RootStore";
 import UserStore from "../../../../../RootStore/UserStore";
 import { Client } from "../../../../Client";
+import { OpportunityBase } from "../../../OpportunityBase";
+import { UsIaSupervisionLevelDowngradeOpportunity } from "../../UsIaSupervisionLevelDowngradeOpportunity";
+import {
+  usIaEdAndSldEligibleClientRecord,
+  usIaSupervisionLevelDowngradeRecordFixture,
+} from "../../UsIaSupervisionLevelDowngradeOpportunity/__fixtures__";
 import { UsIaEarlyDischargeOpportunity } from "../UsIaEarlyDischargeOpportunity";
 
 describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
   let opportunity: UsIaEarlyDischargeOpportunity;
   const updateLog = { date: Timestamp.fromDate(new Date()), by: "User" };
+  let client: Client;
+  let rootStore: RootStore;
 
   beforeEach(() => {
+    configure({ safeDescriptors: false });
     opportunity = Object.create(UsIaEarlyDischargeOpportunity.prototype);
     opportunity.updatesSubscription = {
       data: {},
@@ -50,6 +60,11 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
         },
       },
     } as unknown as RootStore;
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    configure({ safeDescriptors: true });
   });
 
   it("returns ELIGIBLE_NOW status by default", () => {
@@ -174,6 +189,134 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
       { type: "APPROVAL", ...updateLog, isStale: true },
     ];
     expect(opportunity.clientStatus).toBe("ELIGIBLE_NOW");
+  });
+
+  describe("sldRelevantDenialReasons", () => {
+    it("sldRelevantDenialReasons returns true for relevant denial reasons", () => {
+      opportunity.updatesSubscription.data!.denial = {
+        reasons: ["FINES & FEES"],
+      };
+      expect(opportunity.sldRelevantDenial).toBe(true);
+    });
+
+    it("sldRelevantDenialReasons returns true for more than one relevant denial reasons", () => {
+      opportunity.updatesSubscription.data!.denial = {
+        reasons: ["FINES & FEES", "COURT"],
+      };
+      expect(opportunity.sldRelevantDenial).toBe(true);
+    });
+
+    it("sldRelevantDenialReasons returns false for non-relevant denial reasons", () => {
+      opportunity.updatesSubscription.data!.denial = {
+        reasons: ["PUBLIC SAFETY"],
+      };
+      expect(opportunity.sldRelevantDenial).toBe(false);
+    });
+
+    it("sldRelevantDenial returns false when there is not a denial", () => {
+      opportunity.updatesSubscription.data!.denial = undefined;
+      expect(opportunity.sldRelevantDenial).toBe(false);
+    });
+  });
+
+  describe("supervisionLevelDowngradeEligibilityCompanionOpportunity", () => {
+    it("returns undefined when no companion opportunity exists", () => {
+      vi.spyOn(
+        OpportunityBase.prototype,
+        "eligibilityCompanionOpportunities",
+        "get",
+      ).mockReturnValue([]);
+
+      expect(opportunity.sldCompanionOpportunity).toBeUndefined();
+    });
+
+    it("returns the sld opportunity when it exists", () => {
+      const rootStore = new RootStore();
+      rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "opportunityTypes",
+        "get",
+      ).mockReturnValue(["usIaEarlyDischarge"]);
+      const client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
+      const sldOpportunity = new UsIaSupervisionLevelDowngradeOpportunity(
+        client,
+        usIaSupervisionLevelDowngradeRecordFixture,
+      );
+
+      vi.spyOn(
+        OpportunityBase.prototype,
+        "eligibilityCompanionOpportunities",
+        "get",
+      ).mockReturnValue([sldOpportunity]);
+
+      expect(opportunity.sldCompanionOpportunity).toBe(sldOpportunity);
+    });
+  });
+
+  describe("bannerInfo", () => {
+    beforeEach(() => {
+      rootStore = new RootStore();
+      rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+      vi.spyOn(
+        rootStore.workflowsStore,
+        "opportunityTypes",
+        "get",
+      ).mockReturnValue([
+        "usIaEarlyDischarge",
+        "usIaSupervisionLevelDowngrade",
+      ]);
+    });
+
+    it("returns undefined when no companion opportunity exists", () => {
+      vi.spyOn(
+        OpportunityBase.prototype,
+        "eligibilityCompanionOpportunities",
+        "get",
+      ).mockReturnValue([]);
+
+      expect(opportunity.bannerInfo).toBeUndefined();
+    });
+
+    it("returns the correct banner info when there is a companion sld opp", () => {
+      client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
+      opportunity.person = client;
+      opportunity.updatesSubscription.data!.denial = {
+        reasons: ["FINES & FEES", "COURT"],
+      };
+      const sldOpportunity = new UsIaSupervisionLevelDowngradeOpportunity(
+        client,
+        usIaSupervisionLevelDowngradeRecordFixture,
+      );
+
+      vi.spyOn(
+        OpportunityBase.prototype,
+        "eligibilityCompanionOpportunities",
+        "get",
+      ).mockReturnValue([sldOpportunity]);
+
+      expect(opportunity.bannerInfo).toMatchSnapshot();
+    });
+
+    it("returns the correct banner info when there are no reasons (should never be the case, just testing logic)", () => {
+      client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
+      opportunity.person = client;
+      opportunity.updatesSubscription.data!.denial = {
+        reasons: [],
+      };
+      const sldOpportunity = new UsIaSupervisionLevelDowngradeOpportunity(
+        client,
+        usIaSupervisionLevelDowngradeRecordFixture,
+      );
+
+      vi.spyOn(
+        OpportunityBase.prototype,
+        "eligibilityCompanionOpportunities",
+        "get",
+      ).mockReturnValue([sldOpportunity]);
+
+      expect(opportunity.bannerInfo).toBeUndefined();
+    });
   });
 });
 

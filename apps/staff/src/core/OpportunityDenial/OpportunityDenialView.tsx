@@ -130,7 +130,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const postDenialToast = () => {
     toast(
       <OpportunityStatusUpdateToast
-        toastText={`${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
+        toastText={`${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}${opportunity.actedOnTextAddition?.DENIED ?? ""}`}
       />,
       {
         id: "denialToast", // prevent duplicate toasts

@@ -22,8 +22,7 @@ import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
 
-import { toTitleCase } from "../../utils";
-import { Opportunity } from "../../WorkflowsStore";
+import { OpportunityBannerInfo } from "../../WorkflowsStore";
 
 const Banner = styled(Sans14)`
   color: ${palette.marble1};
@@ -39,7 +38,7 @@ const InlineArrow = styled(Icon).attrs({ size: 12, kind: "Arrow" })`
   margin-bottom: ${rem(spacing.xxs)};
 `;
 
-const ProfileLink = styled(Link)`
+const BannerLink = styled(Link)`
   color: ${palette.marble1};
   border-bottom: 1px solid ${palette.marble1};
 
@@ -51,20 +50,31 @@ const ProfileLink = styled(Link)`
   }
 `;
 
+const BannerText = styled.div`
+  white-space: pre-wrap;
+  line-height: 150%;
+  padding-bottom: ${rem(spacing.xs)};
+`;
+
+const BannerHeading = styled(BannerText)`
+  font-weight: 700;
+`;
+
 export const OpportunityBanner = function OpportunityBanner({
-  opportunity,
-  title,
+  bannerInfo,
 }: {
-  opportunity: Opportunity;
-  title: string;
+  bannerInfo: OpportunityBannerInfo;
 }) {
   return (
     <Banner>
-      {opportunity.previewBannerText}{" "}
-      <ProfileLink to={opportunity.person.profileUrl}>
-        See&nbsp;{toTitleCase(title)}&nbsp;Profile
+      {bannerInfo.previewBannerHeading && (
+        <BannerHeading>{bannerInfo.previewBannerHeading} </BannerHeading>
+      )}
+      <BannerText>{bannerInfo.previewBannerText} </BannerText>
+      <BannerLink to={bannerInfo.link}>
+        {bannerInfo.linkText}
         <InlineArrow />
-      </ProfileLink>
+      </BannerLink>
     </Banner>
   );
 };

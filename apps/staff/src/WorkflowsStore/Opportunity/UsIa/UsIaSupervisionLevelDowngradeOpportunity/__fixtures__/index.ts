@@ -149,3 +149,11 @@ export const usIaSupervisionLevelDowngradeEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
   allEligibleOpportunities: ["usIaSupervisionLevelDowngrade"],
 };
+
+export const usIaEdAndSldEligibleClientRecord: ClientRecord = {
+  ...ineligibleClientRecord,
+  allEligibleOpportunities: [
+    "usIaSupervisionLevelDowngrade",
+    "usIaEarlyDischarge",
+  ],
+};

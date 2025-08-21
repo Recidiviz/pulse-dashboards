@@ -180,6 +180,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 90 },
       snoozeCompanionOpportunityTypes: [],
+      eligibilityCompanionOpportunityTypes: ["usIaSupervisionLevelDowngrade"],
       stateCode: "US_IA",
       subcategoryHeadings: [],
       subcategoryOrderings: [],

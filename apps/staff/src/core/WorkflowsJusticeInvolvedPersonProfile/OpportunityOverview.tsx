@@ -37,7 +37,7 @@ export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
   hideActionButtons,
   shouldTrackOpportunityPreviewed = true,
 }) => {
-  const selectedPerson = opportunity?.person;
+  const selectedPerson = opportunity.person;
   const showAccordion = isEligibleOrAlmostEligible(
     selectedPerson,
     opportunity.type,
@@ -46,11 +46,8 @@ export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
   return (
     <>
       <Heading person={selectedPerson} trackingOpportunity={opportunity} />
-      {opportunity.previewBannerText && (
-        <OpportunityBanner
-          opportunity={opportunity}
-          title={justiceInvolvedPersonTitle}
-        />
+      {opportunity.bannerInfo?.previewBannerText && (
+        <OpportunityBanner bannerInfo={opportunity.bannerInfo} />
       )}
       {showAccordion && (
         <AccordionWrapper
