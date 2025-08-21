@@ -418,7 +418,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   get sldCompanionOpportunity():
     | UsIaSupervisionLevelDowngradeOpportunity
     | undefined {
-    const sldOpportunity = this.eligibilityCompanionOpportunities.filter(
+    const sldOpportunity = this.companionOpportunities.filter(
       (opportunity) => opportunity.type === "usIaSupervisionLevelDowngrade",
     ) as UsIaSupervisionLevelDowngradeOpportunity[];
 

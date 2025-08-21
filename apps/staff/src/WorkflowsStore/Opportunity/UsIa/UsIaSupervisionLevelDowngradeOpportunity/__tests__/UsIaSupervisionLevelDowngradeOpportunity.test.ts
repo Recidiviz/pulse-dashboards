@@ -62,28 +62,28 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
     configure({ safeDescriptors: true });
   });
 
-  describe("earlyDischargeEligibilityCompanionOpportunity", () => {
-    it("returns the correct earlyDischargeEligibilityCompanionOpportunity when there is an ED opp", () => {
+  describe("earlyDischargeCompanionOpportunity", () => {
+    it("returns the correct earlyDischargeCompanionOpportunity when there is an ED opp", () => {
       vi.spyOn(
         OpportunityBase.prototype,
-        "eligibilityCompanionOpportunities",
+        "companionOpportunities",
         "get",
       ).mockReturnValue([edOpportunity]);
 
-      expect(sldOpportunity.earlyDischargeEligibilityCompanionOpportunity).toBe(
+      expect(sldOpportunity.earlyDischargeCompanionOpportunity).toBe(
         edOpportunity,
       );
     });
 
-    it("throws an error if there are more than one earlyDischargeEligibilityCompanionOpportunity", () => {
+    it("throws an error if there are more than one earlyDischargeCompanionOpportunity", () => {
       vi.spyOn(
         OpportunityBase.prototype,
-        "eligibilityCompanionOpportunities",
+        "companionOpportunities",
         "get",
       ).mockReturnValue([edOpportunity, edOpportunity]);
       try {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        sldOpportunity.earlyDischargeEligibilityCompanionOpportunity;
+        sldOpportunity.earlyDischargeCompanionOpportunity;
       } catch (e: any) {
         expect((e as Error).message).toBe(
           "Expected either zero or one companion UsIaEarlyDischargeOpportunity, received multiple.",
@@ -91,16 +91,14 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
       }
     });
 
-    it("returns undefined when there is not an earlyDischargeEligibilityCompanionOpportunity", () => {
+    it("returns undefined when there is not an earlyDischargeCompanionOpportunity", () => {
       vi.spyOn(
         OpportunityBase.prototype,
-        "eligibilityCompanionOpportunities",
+        "companionOpportunities",
         "get",
       ).mockReturnValue([]);
 
-      expect(
-        sldOpportunity.earlyDischargeEligibilityCompanionOpportunity,
-      ).toBeUndefined();
+      expect(sldOpportunity.earlyDischargeCompanionOpportunity).toBeUndefined();
     });
   });
 
@@ -108,12 +106,12 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
     beforeEach(() => {
       vi.spyOn(
         OpportunityBase.prototype,
-        "eligibilityCompanionOpportunities",
+        "companionOpportunities",
         "get",
       ).mockReturnValue([edOpportunity]);
     });
 
-    it("returns true when the earlyDischargeEligibilityCompanionOpportunity has a denial with relevant reason", () => {
+    it("returns true when the earlyDischargeCompanionOpportunity has a denial with relevant reason", () => {
       edOpportunity.updatesSubscription = {
         data: { denial: { reasons: ["FINES & FEES"] } },
         subscribe: vi.fn(),
@@ -124,7 +122,7 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
       expect(sldOpportunity.pendingEligibility).toBe(true);
     });
 
-    it("returns false when the earlyDischargeEligibilityCompanionOpportunity does not have a denial", () => {
+    it("returns false when the earlyDischargeCompanionOpportunity does not have a denial", () => {
       edOpportunity.updatesSubscription = {
         data: {},
         subscribe: vi.fn(),
@@ -135,7 +133,7 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
       expect(sldOpportunity.pendingEligibility).toBe(false);
     });
 
-    it("returns false when the earlyDischargeEligibilityCompanionOpportunity has a denial without relevant reason", () => {
+    it("returns false when the earlyDischargeCompanionOpportunity has a denial without relevant reason", () => {
       edOpportunity.updatesSubscription = {
         data: { denial: { reasons: ["OTHER REASON"] } },
         subscribe: vi.fn(),
@@ -146,7 +144,7 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
       expect(sldOpportunity.pendingEligibility).toBe(false);
     });
 
-    it("returns false when the earlyDischargeEligibilityCompanionOpportunity has a denial with relevant and not-relevant reason", () => {
+    it("returns false when the earlyDischargeCompanionOpportunity has a denial with relevant and not-relevant reason", () => {
       edOpportunity.updatesSubscription = {
         data: { denial: { reasons: ["ANY OTHER REASON", "FINES & FEES"] } },
         subscribe: vi.fn(),
@@ -157,7 +155,7 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
       expect(sldOpportunity.pendingEligibility).toBe(false);
     });
 
-    it("returns true when the earlyDischargeEligibilityCompanionOpportunity has a denial with more than one relevant reason", () => {
+    it("returns true when the earlyDischargeCompanionOpportunity has a denial with more than one relevant reason", () => {
       edOpportunity.updatesSubscription = {
         data: { denial: { reasons: ["COURT", "FINES & FEES"] } },
         subscribe: vi.fn(),

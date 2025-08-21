@@ -368,11 +368,13 @@ export class OpportunityBase<
   }
 
   get bannerInfo(): OpportunityBannerInfo | undefined {
-    return this.previewBannerText ? {
-      previewBannerText: this.previewBannerText,
-      link: this.person.profileUrl,
-      linkText: `See ${toTitleCase(this.rootStore.workflowsStore.justiceInvolvedPersonTitle)} Profile`
-    } : undefined;
+    return this.previewBannerText
+      ? {
+          previewBannerText: this.previewBannerText,
+          link: this.person.profileUrl,
+          linkText: `See ${toTitleCase(this.rootStore.workflowsStore.justiceInvolvedPersonTitle)} Profile`,
+        }
+      : undefined;
   }
 
   /**
@@ -812,6 +814,21 @@ export class OpportunityBase<
       : undefined;
   }
 
+  /**
+   * Opportunities of different types that are tightly linked are companion opportunities. 
+   * For example, if an opportunity UI element will be present if another opportunity of
+   * a different type is "Pending", they are companion opportunities. 
+   * 
+   * This function returns the companion opportunities for this base opportunity.
+   */
+  get companionOpportunities() {
+    const companionOpportunityTypes =
+      this.config.companionOpportunityTypes ?? [];
+    return this.person.flattenedOpportunities.filter((opp) =>
+      companionOpportunityTypes.includes(opp.type),
+    );
+  }
+
   // ===============================
   // properties below this line are stubs and in most cases should be overridden
   // in a subclass. Given their triviality they are not annotated by MobX either,
@@ -859,14 +876,6 @@ export class OpportunityBase<
       this.config.snoozeCompanionOpportunityTypes ?? [];
     return this.person.flattenedOpportunities.filter((opp) =>
       snoozeCompanionOpportunityTypes.includes(opp.type),
-    );
-  }
-
-  get eligibilityCompanionOpportunities() {
-    const eligibilityCompanionOpportunityTypes =
-      this.config.eligibilityCompanionOpportunityTypes ?? [];
-    return this.person.flattenedOpportunities.filter((opp) =>
-      eligibilityCompanionOpportunityTypes.includes(opp.type),
     );
   }
 

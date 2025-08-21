@@ -24,7 +24,7 @@ import { Opportunity, OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsIaSupervisionLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
-  get eligibilityCompanionOpportunityTypes(): OpportunityType[] {
+  get companionOpportunityTypes(): OpportunityType[] {
     return ["usIaEarlyDischarge"];
   }
 
@@ -32,9 +32,6 @@ export class UsIaSupervisionLevelDowngradeConfiguration extends ApiOpportunityCo
     const counts = countBy(opportunities, (opp) =>
       opp.tabTitle(),
     ) as PartialRecord<OpportunityTab, number>;
-    return (
-      (counts["Pending Eligibility"] ?? 0) +
-      (counts["Eligible Now"] ?? 0)
-    );
+    return (counts["Pending Eligibility"] ?? 0) + (counts["Eligible Now"] ?? 0);
   };
 }

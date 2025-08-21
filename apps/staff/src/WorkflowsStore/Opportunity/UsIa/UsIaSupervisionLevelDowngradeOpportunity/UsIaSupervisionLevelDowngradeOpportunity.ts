@@ -40,13 +40,12 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
     );
   }
 
-  get earlyDischargeEligibilityCompanionOpportunity():
+  get earlyDischargeCompanionOpportunity():
     | UsIaEarlyDischargeOpportunity
     | undefined {
-    const earlyDischargeOpportunity =
-      this.eligibilityCompanionOpportunities.filter(
-        (opportunity) => opportunity.type === "usIaEarlyDischarge",
-      ) as UsIaEarlyDischargeOpportunity[];
+    const earlyDischargeOpportunity = this.companionOpportunities.filter(
+      (opportunity) => opportunity.type === "usIaEarlyDischarge",
+    ) as UsIaEarlyDischargeOpportunity[];
 
     if (earlyDischargeOpportunity.length > 1) {
       throw new Error(
@@ -61,7 +60,7 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
     if (!this.record.isAlmostEligible) return false;
 
     const edOppDenial =
-      this.earlyDischargeEligibilityCompanionOpportunity?.updates?.denial;
+      this.earlyDischargeCompanionOpportunity?.updates?.denial;
     if (!edOppDenial) return false;
 
     const relevantDenial = edOppDenial.reasons.every((item) =>

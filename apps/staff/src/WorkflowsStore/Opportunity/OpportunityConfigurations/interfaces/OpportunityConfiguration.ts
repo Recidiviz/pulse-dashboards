@@ -92,7 +92,7 @@ export interface OpportunityConfiguration {
   snoozeCompanionOpportunityTypes?: OpportunityType[];
 
   // List of opportunity types that this opportunity relies on to determine their eligibility status
-  eligibilityCompanionOpportunityTypes?: OpportunityType[];
+  companionOpportunityTypes?: OpportunityType[];
 
   // An optional sorted array of strings that will determine the order of case notes on the client side panel
   caseNoteHeaders: string[];

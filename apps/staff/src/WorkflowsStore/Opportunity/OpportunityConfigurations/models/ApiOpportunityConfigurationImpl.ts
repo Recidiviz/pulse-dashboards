@@ -339,9 +339,9 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   }
 
   // TODO(#9240): Once this configuration is available via the admin panel,
-  // the ternary should be removed to only return configurationObject.eligibilityCompanionOpportunityTypes
-  get eligibilityCompanionOpportunityTypes(): OpportunityType[] {
-    return (this.configurationObject.eligibilityCompanionOpportunityTypes ??
+  // the ternary should be removed to only return configurationObject.companionOpportunityTypes
+  get companionOpportunityTypes(): OpportunityType[] {
+    return (this.configurationObject.companionOpportunityTypes ??
       []) as OpportunityType[];
   }
 

@@ -219,11 +219,11 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
     });
   });
 
-  describe("supervisionLevelDowngradeEligibilityCompanionOpportunity", () => {
+  describe("supervisionLevelDowngradeCompanionOpportunity", () => {
     it("returns undefined when no companion opportunity exists", () => {
       vi.spyOn(
         OpportunityBase.prototype,
-        "eligibilityCompanionOpportunities",
+        "companionOpportunities",
         "get",
       ).mockReturnValue([]);
 
@@ -246,7 +246,7 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
 
       vi.spyOn(
         OpportunityBase.prototype,
-        "eligibilityCompanionOpportunities",
+        "companionOpportunities",
         "get",
       ).mockReturnValue([sldOpportunity]);
 
@@ -271,7 +271,7 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
     it("returns undefined when no companion opportunity exists", () => {
       vi.spyOn(
         OpportunityBase.prototype,
-        "eligibilityCompanionOpportunities",
+        "companionOpportunities",
         "get",
       ).mockReturnValue([]);
 
@@ -291,7 +291,7 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
 
       vi.spyOn(
         OpportunityBase.prototype,
-        "eligibilityCompanionOpportunities",
+        "companionOpportunities",
         "get",
       ).mockReturnValue([sldOpportunity]);
 
@@ -311,7 +311,7 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
 
       vi.spyOn(
         OpportunityBase.prototype,
-        "eligibilityCompanionOpportunities",
+        "companionOpportunities",
         "get",
       ).mockReturnValue([sldOpportunity]);
 
