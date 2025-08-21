@@ -317,7 +317,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   }
 
   get requirementsMet(): OpportunityRequirement[] {
-    const customReqs = [];
+    const customReqs = [] as OpportunityRequirement[];
     const {
       victimFlag,
       violationsPast6MonthsFlag,
@@ -346,7 +346,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {
-    const customReqs = [];
+    const customReqs = [] as OpportunityRequirement[];
     const {
       victimFlag,
       violationsPast6MonthsFlag,
@@ -366,13 +366,17 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       });
     }
     if (!dnaSubmittedFlag) {
+      const dnaNotSubmittedTooltip =
+        "This tool determines successful DNA submission based on whether a CODIS date has been entered in ICON. If you've otherwise confirmed that DNA submission was successful, please proceed with the Early Discharge approval.";
       if (dnaRequirementStatus === "Definitely Required") {
         customReqs.push({
           text: "DNA is required to be collected but has not yet been successfully uploaded to CODIS",
+          tooltip: dnaNotSubmittedTooltip,
         });
       } else if (dnaRequirementStatus === "Maybe Required") {
         customReqs.push({
           text: "DNA might be required to be collected but has not yet been successfully uploaded to CODIS. Please review DNA requirements based on charges.",
+          tooltip: dnaNotSubmittedTooltip,
         });
       }
     }
@@ -407,7 +411,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     }
     return super.maxManualSnoozeDays(denialReasons);
   }
-  
+
   get sldRelevantDenial(): boolean {
     const { reasons } = this.updates?.denial ?? {};
     // Reasons should never be empty, but we check just in case.
