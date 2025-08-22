@@ -103,16 +103,16 @@
       "dependsOn": ["container"],
       "configurations": {
         "staging": {
-          "command": "gcloud run deploy frontend-staging --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com"
+          "command": "gcloud run deploy frontend-staging --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server-staging@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner"
         },
         "cherry-pick": {
-          "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com"
+          "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner"
         },
         "prod": {
-          "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com"
+          "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner"
         },
         "demo": {
-          "command": "gcloud run deploy frontend-demo --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated"
+          "command": "gcloud run deploy frontend-demo --image gcr.io/recidiviz-rnd-planner/frontend:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner"
         }
       },
       "defaultConfiguration": "demo"
