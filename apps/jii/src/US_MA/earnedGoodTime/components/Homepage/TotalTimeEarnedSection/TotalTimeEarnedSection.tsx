@@ -19,16 +19,20 @@ import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { Card } from "../../../../../common/components/Card";
+import {
+  Card,
+  CardHeading,
+  CardValue,
+  TwoColumnCardWrapper,
+} from "../../../../../common/components/Card";
 import { GoButton } from "../../../../../components/ButtonLink/GoButton";
 import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
 import { State } from "../../../../../routes/routes";
 import { useEGTDataContext } from "../../EGTDataContext/context";
-import { CardHeading, TwoColumnWrapper } from "../../styles";
-import { CardValue, HomepageSectionHeading } from "../styles";
+import { HomepageSectionHeading } from "../styles";
 
 const Wrapper = styled.section`
-  ${TwoColumnWrapper} {
+  ${TwoColumnCardWrapper} {
     margin-bottom: ${rem(spacing.sm)};
   }
 `;
@@ -46,20 +50,20 @@ export const TotalTimeEarnedSection = () => {
       <HomepageSectionHeading>
         {totalTimeEarned.sectionTitle}
       </HomepageSectionHeading>
-      <TwoColumnWrapper>
-        <Card style={{ flex: "1" }}>
+      <TwoColumnCardWrapper>
+        <Card>
           <CardHeading>{totalTimeEarned.egt.label}</CardHeading>
           <CardValue>
             {hydrateTemplate(totalTimeEarned.egt.value, data)}
           </CardValue>
         </Card>
-        <Card style={{ flex: "1" }}>
+        <Card>
           <CardHeading>{totalTimeEarned.credits.label}</CardHeading>
           <CardValue>
             {hydrateTemplate(totalTimeEarned.credits.value, data)}
           </CardValue>
         </Card>
-      </TwoColumnWrapper>
+      </TwoColumnCardWrapper>
       <GoButton
         to={State.Resident.EGT.$.Definition.buildRelativePath({
           pageSlug: "credits",

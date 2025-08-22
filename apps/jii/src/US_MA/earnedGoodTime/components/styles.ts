@@ -15,19 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
-
-export const CardHeading = styled.h3`
-  ${typography.Sans18}
-
-  align-items: baseline;
-  display: flex;
-  gap: 1em;
-  justify-content: space-between;
-  margin-bottom: ${rem(spacing.sm)};
-`;
 
 export const TwoColumnWrapper = styled.div`
   display: grid;

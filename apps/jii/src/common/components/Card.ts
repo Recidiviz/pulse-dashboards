@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
+import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
@@ -26,4 +26,26 @@ export const Card = styled.section`
   border-radius: ${rem(spacing.sm)};
   margin: ${rem(spacing.sm)} 0;
   padding: ${rem(spacing.lg)};
+`;
+
+export const CardHeading = styled.h3`
+  ${typography.Sans18}
+
+  align-items: baseline;
+  display: flex;
+  gap: 1em;
+  justify-content: space-between;
+  margin-bottom: ${rem(spacing.sm)};
+`;
+
+export const CardValue = styled.div`
+  ${typography.Sans24};
+
+  font-size: ${rem(34)};
+`;
+
+export const TwoColumnCardWrapper = styled.div`
+  display: grid;
+  gap: ${rem(spacing.md)};
+  grid-template-columns: 1fr 1fr;
 `;

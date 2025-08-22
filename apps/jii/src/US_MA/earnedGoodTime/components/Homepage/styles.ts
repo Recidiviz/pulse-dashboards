@@ -33,9 +33,3 @@ export const HomepageSectionHeading = styled.h2`
 export const SlateCopy = styled(CopyWrapper)`
   color: ${palette.slate85};
 `;
-
-export const CardValue = styled.div`
-  ${typography.Sans24};
-
-  font-size: ${rem(34)};
-`;

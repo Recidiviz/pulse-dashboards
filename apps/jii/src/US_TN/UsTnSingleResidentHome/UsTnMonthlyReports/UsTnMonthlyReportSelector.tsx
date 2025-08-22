@@ -15,14 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsTnImportantDates } from "./UsTnImportantDates";
-import { UsTnMonthlyReports } from "./UsTnMonthlyReports/UsTnMonthlyReports";
+import { useId } from "react";
 
-export function UsTnSingleResidentHome() {
+import { Selector } from "../../../components/Selector/Selector";
+import { UsTnMonthlyReportsPresenter } from "./UsTnMonthlyReportsPresenter";
+
+export const UsTnMonthlyReportSelector = ({
+  presenter,
+}: {
+  presenter: UsTnMonthlyReportsPresenter;
+}) => {
+  const labelId = useId();
+
   return (
-    <div>
-      <UsTnImportantDates />
-      <UsTnMonthlyReports />
-    </div>
+    <Selector
+      onChange={(value) => presenter.setSelectedSearchOption(value)}
+      options={presenter.monthlyReportOptions}
+      value={presenter.selectedSearchOption}
+      placeholder=""
+      labelId={labelId}
+    />
   );
-}
+};

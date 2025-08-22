@@ -20,8 +20,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { CardValue } from "../../US_MA/earnedGoodTime/components/Homepage/styles";
-import { CardHeading } from "../../US_MA/earnedGoodTime/components/styles";
+import { CardHeading, CardValue } from "./Card";
 import { Chip } from "./Chip";
 
 export type CardDateInfoProps = {
