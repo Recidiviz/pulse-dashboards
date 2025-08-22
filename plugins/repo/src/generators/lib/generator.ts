@@ -20,6 +20,7 @@
 import {
   formatFiles,
   generateFiles,
+  offsetFromRoot,
   readProjectConfiguration,
   Tree,
   updateJson,
@@ -185,6 +186,7 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
   function makeFilesFromTemplates() {
     generateFiles(tree, join(__dirname, "./files"), PROJECT_ROOT, {
       isReact: options.libType === "react",
+      pathToRoot: offsetFromRoot(PROJECT_ROOT),
     });
   }
 
