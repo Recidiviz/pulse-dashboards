@@ -40,26 +40,9 @@
   gap: 4px;
 }
 
-.avatarMobile {
-  flex-shrink: 0;
-  margin-bottom: 0.5rem;
-}
-
-@media (min-width: 640px) {
-  .avatarMobile {
-    display: none;
-  }
-}
-
 .avatarDesktop {
-  display: none;
+  display: flex;
   flex-shrink: 0;
-}
-
-@media (min-width: 640px) {
-  .avatarDesktop {
-    display: flex;
-  }
 }
 
 .bubbleWrapper {
@@ -71,7 +54,7 @@
 .bubble {
   padding: 0.5rem 0.75rem;
   border-radius: 1rem;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  box-shadow: 0 0 5px var(--shadow-10);
   max-width: 80vw;
   word-break: break-word;
 }
@@ -89,13 +72,13 @@
 }
 
 .userBubble {
-  background-color: #2B6C75;
-  color: #ffffff;
+  background-color: var(--color-teal-5);
+  color: var(--color-white);
 }
 
 .caseBubble {
-  background-color: #ffffff;
-  color: #1E3A3A;
+  background-color: var(--color-white);
+  color: var(--color-ink-1);
 }
 
 .bubbleText {
@@ -118,7 +101,7 @@
 .dot {
   width: 0.625rem;
   height: 0.625rem;
-  background-color: #25636F;
+  background-color: var(--color-teal-6);
   border-radius: 50%;
   animation: dot-bounce 1.4s infinite ease-in-out;
 }

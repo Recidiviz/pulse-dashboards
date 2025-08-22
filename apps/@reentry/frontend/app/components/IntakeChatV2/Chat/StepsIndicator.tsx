@@ -16,13 +16,17 @@
 // =============================================================================
 
 import styles from "~@reentry/frontend/components/IntakeChatV2/Chat/Sidebar.module.css";
-import { StepStatus } from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
+import {
+  AgentStatus,
+  StepStatus,
+} from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
 
 interface StepIndicatorProps {
   status: StepStatus;
   hasNext: boolean;
   text: string;
   description: string;
+  intakeStatus: AgentStatus;
 }
 
 export const StepIndicator: React.FC<StepIndicatorProps> = ({
@@ -30,8 +34,9 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
   hasNext,
   text,
   description,
+  intakeStatus,
 }) => {
-  const isCompleted = status === "completed";
+  const isCompleted = status === "completed" || intakeStatus === "complete";
   const isInProgress = status === "in_progress";
 
   return (

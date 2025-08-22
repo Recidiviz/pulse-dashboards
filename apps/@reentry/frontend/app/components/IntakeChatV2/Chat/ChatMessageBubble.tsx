@@ -52,14 +52,11 @@ export const ChatMessageBubble: React.FC<MessageBubbleProps> = ({
     : styles["caseContainer"];
   const roleClass = isUser ? styles["user"] : styles["caseWorker"];
   const bubbleClass = isUser ? styles["userBubble"] : styles["caseBubble"];
-  const leadingAvatarClass = isUser
-    ? styles["avatarMobile"]
-    : styles["avatarDesktop"];
 
   const content = isTyping ? <TypingDots /> : message?.content;
-  const leadingAvatar = (
-    <div className={leadingAvatarClass}>
-      {isUser ? <ClientAvatar /> : <CaseWorkerAvatar />}
+  const leadingAvatar = !isUser && (
+    <div className={styles["avatarDesktop"]}>
+      <CaseWorkerAvatar />
     </div>
   );
 

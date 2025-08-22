@@ -17,6 +17,7 @@
 
 import React from "react";
 
+import common from "~@reentry/frontend/components/IntakeChatV2/Common.module.css";
 import styles from "~@reentry/frontend/components/IntakeChatV2/PreIntake/PreIntake.module.css";
 
 interface StepOneProps {
@@ -51,14 +52,14 @@ const StepOne: React.FC<StepOneProps> = ({ onContinue, onGoBack }) => (
           <button
             type="button"
             onClick={onGoBack}
-            className={`${styles["buttonCommon"]} ${styles["goBack"]}`}
+            className={`${styles["buttonCommon"]} ${styles["goBack"]} ${common["buttonBase"]} ${common["buttonSecondary"]}`}
           >
             Go Back
           </button>
           <button
             type="button"
             onClick={onContinue}
-            className={`${styles["buttonCommon"]} ${styles["continue"]}`}
+            className={`${styles["buttonCommon"]} ${styles["continue"]} ${common["buttonBase"]} ${common["buttonPrimary"]}`}
           >
             Continue
           </button>

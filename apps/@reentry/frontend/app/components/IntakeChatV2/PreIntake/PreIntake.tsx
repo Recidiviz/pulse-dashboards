@@ -21,6 +21,7 @@ import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import StepOne from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepOne";
 import StepTwo from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepTwo";
+import { showErrorToast } from "~@reentry/frontend/utils/toast";
 
 interface PreIntakeProps {
   clientPseudoId: string;
@@ -37,6 +38,9 @@ const PreIntake: React.FC<PreIntakeProps> = ({ clientPseudoId }) => {
       return { previous, input };
     },
     onError: (_, __, ctx) => {
+      showErrorToast(
+        "We ran into an issue starting the chat. Please refresh and try again.",
+      );
       if (ctx?.previous) {
         utils.intake.getIntake.setData(ctx.input, ctx.previous);
       }

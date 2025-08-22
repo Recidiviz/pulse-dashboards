@@ -9,8 +9,8 @@
 
 .card {
   width: 714px;
-  background-color: #fff;
-  box-shadow: 0 4px 4px 3px rgba(0,0,0,0.25);
+  background-color: var(--color-white);
+  box-shadow: 0 4px 4px 3px var(--shadow-25);
   border-radius: 0.5rem;
   padding: 40px 48px 32px;
   display: flex;
@@ -30,7 +30,7 @@
   font-size: 32px;
   line-height: 40px;
   letter-spacing: -0.04em;
-  color: #000;
+  color: var(--color-black);
 }
 
 .subtitle {
@@ -38,7 +38,7 @@
   font-size: 16px;
   line-height: 24px;
   letter-spacing: -0.01em;
-  color: #000;
+  color: var(--color-black);
 }
 
 .body {
@@ -63,16 +63,16 @@
   line-height: 24px;
   letter-spacing: -0.01em;
   cursor: pointer;
-  border: 1px solid rgba(53,83,98,0.2);
+  border: 1px solid var(--ink-4-a20);
 }
 
 .secondary {
   background: transparent;
-  color: rgba(53,83,98,0.85);
+  color: var(--ink-4-a85);
 }
 
 .secondary:hover {
-  background-color: #f9fafb;
+  background-color: var(--gray-50);
 }
 
 @media (max-width: 640px) {

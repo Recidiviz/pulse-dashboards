@@ -23,6 +23,7 @@ import {
   showSuccessToast,
 } from "~@reentry/frontend/utils/toast";
 
+import common from "../Common.module.css";
 import styles from "./Address.module.css";
 
 interface AddressProps {
@@ -92,8 +93,10 @@ const Address: React.FC<AddressProps> = ({ clientPseudoId }) => {
     <div className={styles["container"]}>
       <div className={styles["card"]}>
         <div className={styles["header"]}>
-          <h1 className={styles["title"]}>Your Home Address After Release</h1>
-          <p className={styles["subtitle"]}>
+          <h1 className={`${styles["title"]} ${common["titleSerifLg"]}`}>
+            Your Home Address After Release
+          </h1>
+          <p className={`${styles["subtitle"]} ${common["subtitleSans"]}`}>
             Please provide the address where you plan to live after release
           </p>
         </div>
@@ -130,13 +133,16 @@ const Address: React.FC<AddressProps> = ({ clientPseudoId }) => {
           <div className={styles["formContainer"]}>
             <form className={styles["form"]} onSubmit={handleSubmit}>
               <div className={styles["streetAddress"]}>
-                <label className={styles["label"]} htmlFor="streetAddress">
+                <label
+                  className={`${styles["label"]} ${common["labelBase"]}`}
+                  htmlFor="streetAddress"
+                >
                   Street Address
                 </label>
                 <input
                   id="streetAddress"
                   name="streetAddress"
-                  className={styles["input"]}
+                  className={`${styles["input"]} ${common["inputBase"]}`}
                   type="text"
                   placeholder="123 Main St"
                   value={streetAddress}
@@ -146,14 +152,17 @@ const Address: React.FC<AddressProps> = ({ clientPseudoId }) => {
 
               <div className={styles["row"]}>
                 <div className={styles["col"]}>
-                  <label className={styles["label"]} htmlFor="city">
+                  <label
+                    className={`${styles["label"]} ${common["labelBase"]}`}
+                    htmlFor="city"
+                  >
                     City{" "}
                     <span className={styles["requiredMark"]}>(required)</span>
                   </label>
                   <input
                     id="city"
                     name="city"
-                    className={styles["input"]}
+                    className={`${styles["input"]} ${common["inputBase"]}`}
                     type="text"
                     placeholder="City"
                     required
@@ -162,14 +171,17 @@ const Address: React.FC<AddressProps> = ({ clientPseudoId }) => {
                   />
                 </div>
                 <div className={styles["col"]}>
-                  <label className={styles["label"]} htmlFor="state">
+                  <label
+                    className={`${styles["label"]} ${common["labelBase"]}`}
+                    htmlFor="state"
+                  >
                     State{" "}
                     <span className={styles["requiredMark"]}>(required)</span>
                   </label>
                   <input
                     id="state"
                     name="state"
-                    className={styles["input"]}
+                    className={`${styles["input"]} ${common["inputBase"]}`}
                     type="text"
                     placeholder="State"
                     required
@@ -181,7 +193,7 @@ const Address: React.FC<AddressProps> = ({ clientPseudoId }) => {
               <div className={styles["buttonRow"]}>
                 <button
                   type="submit"
-                  className={`${styles["buttonCommon"]} ${styles["submit"]}`}
+                  className={`${styles["buttonCommon"]} ${styles["submit"]} ${common["buttonBase"]} ${common["buttonPrimary"]}`}
                   disabled={!isValid || isSubmitting}
                   aria-disabled={!isValid || isSubmitting}
                 >

@@ -13,16 +13,17 @@
 }
 
 .noteCard {
-  height: 66vh;
+  height: 62vh;
   width: 714px;
-  background-color: #fff;
-  box-shadow: 0 4px 4px 3px rgba(0,0,0,0.25);
+  background-color: var(--color-white);
+  box-shadow: 0 4px 4px 3px var(--shadow-25);
   border-radius: 0.5rem;
   padding: 56px 48px 40px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow-y: auto;
+  position: relative;
 }
 
 .noteOneTitle {
@@ -30,7 +31,7 @@
   font-size: 32px;
   line-height: 40px;
   letter-spacing: -0.04em;
-  color: #000;
+  color: var(--color-black);
   text-align: center;
 }
 
@@ -49,7 +50,7 @@
   font-size: 18px;
   line-height: 1.2;
   letter-spacing: -0.02em;
-  color: #000;
+  color: var(--color-black);
   text-align: center;
   max-width: 520px;
   margin: 0 auto;
@@ -75,19 +76,19 @@
 }
 
 .goBack {
-  border: 1px solid rgba(53,83,98,0.2);
-  color: rgba(53,83,98,0.85);
+  border: 1px solid var(--ink-4-a20);
+  color: var(--ink-4-a85);
   background: transparent;
 }
 
 .continue {
-  border: 1px solid rgba(53,83,98,0.2);
-  color: #fff;
-  background-color: #00665F;
+  border: 1px solid var(--ink-4-a20);
+  color: var(--color-white);
+  background-color: var(--color-teal-4);
 }
 
 .goBack:hover {
-  background-color: #f9fafb;
+  background-color: var(--gray-9);
 }
 
 .continue:hover {
@@ -103,8 +104,8 @@
 }
 
 .noteTwoCard {
-  background-color: #fff;
-  box-shadow: 0 4px 4px 0 rgba(0,0,0,0.25);
+  background-color: var(--color-white);
+  box-shadow: 0 4px 4px 0 var(--shadow-25);
   border-radius: 0.125rem;
   width: 714px;
   padding: 36px 48px 28px;
@@ -117,7 +118,7 @@
   font-family: serif;
   font-size: 2.25rem;
   font-weight: normal;
-  color: #000;
+  color: var(--color-black);
   text-align: center;
   margin-bottom: 2.5rem;
   letter-spacing: -0.025em;
@@ -126,9 +127,9 @@
 .noteTwoBody {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   flex: 1;
-  color: #000;
+  color: var(--color-black);
   font-family: var(--font-public-sans);
   font-size: 1rem;
   line-height: 1.75;
@@ -147,7 +148,7 @@
   font-weight: 700;
   line-height: 24px;
   letter-spacing: -0.01em;
-  color: #000;
+  color: var(--color-black);
 }
 
 .sectionText,
@@ -158,7 +159,7 @@
   font-weight: 500;
   line-height: 24px;
   letter-spacing: -0.01em;
-  color: #000;
+  color: var(--color-black);
 }
 
 .list {
@@ -178,7 +179,7 @@
   width: 0.25rem;
   height: 0.25rem;
   border-radius: 50%;
-  background-color: #000;
+  background-color: var(--color-black);
   flex-shrink: 0;
   margin-top: 0.5rem;
 }

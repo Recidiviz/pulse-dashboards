@@ -21,6 +21,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 
 import { getIntakeToken } from "~@reentry/frontend/components/IntakeChatV2/api/api";
+import common from "~@reentry/frontend/components/IntakeChatV2/Common.module.css";
 import styles from "~@reentry/frontend/components/IntakeChatV2/IntakeLogin/IntakeLogin.module.css";
 import { useIntakeAuthContext } from "~@reentry/frontend/components/IntakeChatV2/providers/IntakeAuthProvider";
 import { IntakeFields } from "~@reentry/frontend/components/IntakeChatV2/types";
@@ -112,8 +113,10 @@ export default function IntakeLogin() {
       <div className={styles["content"]}>
         <div className={styles["card"]}>
           {/* Header */}
-          <h1 className={styles["title"]}>Welcome!</h1>
-          <p className={styles["subtitle"]}>
+          <h1 className={`${styles["title"]} ${common["titleSerifLg"]}`}>
+            Welcome!
+          </h1>
+          <p className={`${styles["subtitle"]} ${common["subtitleSans"]}`}>
             Before you proceed, please confirm your full name and birthdate.
           </p>
 
@@ -123,13 +126,16 @@ export default function IntakeLogin() {
           {/* First & Last Name  */}
           <div className={styles["fieldGroup"]}>
             <div className={styles["field"]}>
-              <label htmlFor="firstName" className={styles["label"]}>
+              <label
+                htmlFor="firstName"
+                className={`${styles["label"]} ${common["labelBase"]}`}
+              >
                 First Name
               </label>
               <input
                 id="firstName"
                 name="firstName"
-                className={styles["input"]}
+                className={`${styles["input"]} ${common["inputBase"]}`}
                 value={fields.firstName}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
@@ -137,13 +143,16 @@ export default function IntakeLogin() {
               />
             </div>
             <div className={styles["field"]}>
-              <label htmlFor="lastName" className={styles["label"]}>
+              <label
+                htmlFor="lastName"
+                className={`${styles["label"]} ${common["labelBase"]}`}
+              >
                 Last Name
               </label>
               <input
                 id="lastName"
                 name="lastName"
-                className={styles["input"]}
+                className={`${styles["input"]} ${common["inputBase"]}`}
                 value={fields.lastName}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
@@ -155,13 +164,16 @@ export default function IntakeLogin() {
           {/* Date of Birth */}
           <div className={styles["fieldGroup"]}>
             <div className={styles["field"]}>
-              <label htmlFor="month" className={styles["label"]}>
+              <label
+                htmlFor="month"
+                className={`${styles["label"]} ${common["labelBase"]}`}
+              >
                 Month
               </label>
               <input
                 id="month"
                 name="month"
-                className={styles["input"]}
+                className={`${styles["input"]} ${common["inputBase"]}`}
                 value={fields.month}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
@@ -170,13 +182,16 @@ export default function IntakeLogin() {
               />
             </div>
             <div className={styles["field"]}>
-              <label htmlFor="day" className={styles["label"]}>
+              <label
+                htmlFor="day"
+                className={`${styles["label"]} ${common["labelBase"]}`}
+              >
                 Day
               </label>
               <input
                 id="day"
                 name="day"
-                className={styles["input"]}
+                className={`${styles["input"]} ${common["inputBase"]}`}
                 value={fields.day}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
@@ -185,13 +200,16 @@ export default function IntakeLogin() {
               />
             </div>
             <div className={styles["field"]}>
-              <label htmlFor="year" className={styles["label"]}>
+              <label
+                htmlFor="year"
+                className={`${styles["label"]} ${common["labelBase"]}`}
+              >
                 Year
               </label>
               <input
                 id="year"
                 name="year"
-                className={styles["input"]}
+                className={`${styles["input"]} ${common["inputBase"]}`}
                 value={fields.year}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
@@ -203,13 +221,16 @@ export default function IntakeLogin() {
 
           {/* State */}
           <div className={styles["field"]}>
-            <label htmlFor="stateCode" className={styles["label"]}>
+            <label
+              htmlFor="stateCode"
+              className={`${styles["label"]} ${common["labelBase"]}`}
+            >
               State
             </label>
             <select
               id="stateCode"
               name="stateCode"
-              className={styles["select"]}
+              className={`${styles["select"]} ${common["inputBase"]}`}
               value={fields.stateCode}
               onChange={handleChange}
               disabled={isLoading}
@@ -223,7 +244,7 @@ export default function IntakeLogin() {
 
           {/* Continue */}
           <button
-            className={styles["button"]}
+            className={`${styles["button"]} ${common["buttonBase"]} ${common["buttonPrimary"]}`}
             onClick={handleContinue}
             disabled={isLoading}
           >

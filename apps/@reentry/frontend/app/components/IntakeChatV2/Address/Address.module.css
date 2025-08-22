@@ -12,8 +12,8 @@
 	width: 714px;
     display: flex;
 	flex-direction: column;
-	background-color: #fff;
-	box-shadow: 0 4px 4px 3px rgba(0,0,0,0.25);
+	background-color: var(--color-white);
+	box-shadow: 0 4px 4px 3px var(--shadow-25);
 	border-radius: 0.5rem;
 	padding: 40px 48px 32px;
 	gap: 1.5rem;
@@ -34,7 +34,7 @@
 	font-size: 32px;
 	line-height: 40px;
 	letter-spacing: -0.04em;
-	color: #000;
+	color: var(--color-black);
 }
 
 .subtitle {
@@ -42,7 +42,7 @@
 	font-size: 16px;
 	line-height: 24px;
 	letter-spacing: -0.01em;
-	color: #000;
+	color: var(--color-black);
 }
 
 .body {
@@ -63,7 +63,7 @@
 	font-weight: 700;
 	line-height: 24px;
 	letter-spacing: -0.01em;
-	color: #000;
+	color: var(--color-black);
 }
 
 .qaAnswer {
@@ -72,7 +72,7 @@
 	font-weight: 500;
 	line-height: 24px;
 	letter-spacing: -0.01em;
-	color: #000;
+	color: var(--color-black);
 }
 
 .formContainer {
@@ -100,17 +100,17 @@
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 22px;
-	color: #000;
+	color: var(--color-black);
 }
 
 .requiredMark {
 	font-weight: 500;
-	color: rgba(53,83,98,0.85);
+	color: var(--ink-4-a85);
 }
 
 .input {
 	height: 40px;
-	border: 1px solid rgba(53,83,98,0.2);
+	border: 1px solid var(--ink-4-a20);
 	border-radius: 6px;
 	padding: 8px 12px;
 	font-family: var(--font-public-sans);
@@ -119,13 +119,13 @@
 }
 
 .input::placeholder {
-	color: rgba(53,83,98,0.6);
+	color: var(--ink-4-a60);
 }
 
 .input:focus {
 	outline: none;
-	border-color: #00665F;
-	box-shadow: 0 0 0 2px rgba(0, 102, 95, 0.15);
+	border-color: var(--color-teal-4);
+	box-shadow: 0 0 0 2px var(--teal-4-a15);
 }
 
 .row {
@@ -156,12 +156,12 @@
 	line-height: 24px;
 	letter-spacing: -0.01em;
 	cursor: pointer;
-	border: 1px solid rgba(53,83,98,0.2);
+	border: 1px solid var(--ink-4-a20);
 }
 
 .submit {
-	color: #fff;
-	background-color: #00665F;
+	color: var(--color-white);
+	background-color: var(--color-teal-4);
 }
 
 .submit:hover {

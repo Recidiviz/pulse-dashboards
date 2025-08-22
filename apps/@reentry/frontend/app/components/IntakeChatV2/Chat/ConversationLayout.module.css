@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: calc(100vh - var(--chat-header-height));
-  background-color: #f1f5f9;
+  background-color: var(--gray-8);
 }
 
 .header {
@@ -24,8 +24,8 @@
   bottom: 0;
   left: 0;
   z-index: 50;
-  background-color: #ffffff;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-white);
+  box-shadow: 0 0 15px var(--shadow-10);
   transition: transform 300ms;
   display: none;
   position: fixed;
@@ -64,7 +64,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--overlay-50);
   z-index: 40;
   transition: opacity 300ms;
   display: none;
@@ -89,12 +89,11 @@
 .chat {
   flex: 1;
   width: 100%;
-  background-color: #F9FAFA;
+  background-color: var(--gray-10);
   overflow: hidden;
 }
 
 .chatContainer {
-  max-width: 64rem;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -105,14 +104,27 @@
 
 .messagesWrapper {
   flex: 1;
-  overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding-top: 2.5rem;
+  overflow-y: scroll;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  padding: 2.5rem 3rem 0 3rem;
 }
 
+/* WebKit-based browsers (Chrome, Edge, Safari) */
 .messagesWrapper::-webkit-scrollbar {
-  display: none;
+  width: 10px;
+  height: 10px;
+}
+
+.messagesWrapper::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.messagesWrapper::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 @media (min-width: 640px) {

@@ -17,6 +17,7 @@
 
 import React from "react";
 
+import common from "../Common.module.css";
 import styles from "./IntakeComplete.module.css";
 
 interface IntakeCompleteProps {
@@ -30,10 +31,14 @@ const IntakeComplete: React.FC<IntakeCompleteProps> = () => {
 
   return (
     <div className={styles["container"]}>
-      <div className={styles["card"]}>
+      <div
+        className={`${styles["card"]} ${common["cardBase"]} ${common["card714"]} ${common["cardPaddingLg"]}`}
+      >
         <div className={styles["header"]}>
-          <h1 className={styles["title"]}>You're all set.</h1>
-          <p className={styles["subtitle"]}>
+          <h1 className={`${styles["title"]} ${common["titleSerifLg"]}`}>
+            You're all set.
+          </h1>
+          <p className={`${styles["subtitle"]} ${common["subtitleSans"]}`}>
             Your intake is complete. Thank you for taking the time to fill it
             out. Your case manager and supervision officer will receive the
             details you provided and work with you on the next steps.
@@ -44,7 +49,7 @@ const IntakeComplete: React.FC<IntakeCompleteProps> = () => {
           <div className={styles["buttonRow"]}>
             <button
               type="button"
-              className={`${styles["buttonCommon"]} ${styles["secondary"]}`}
+              className={`${styles["buttonCommon"]} ${styles["secondary"]} ${common["buttonBase"]} ${common["buttonSecondary"]}`}
               onClick={handleBack}
             >
               Back to Home

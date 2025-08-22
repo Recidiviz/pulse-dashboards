@@ -16,7 +16,14 @@
 // =============================================================================
 
 import { skipToken } from "@tanstack/react-query";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "react-toastify";
 
 import {
@@ -25,6 +32,7 @@ import {
   Message,
 } from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
 import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
+import { ConnectionStatus } from "~@reentry/frontend/components/IntakeChatV2/types";
 
 interface ChatState {
   sections?: Intake["config"]["sections"];
@@ -34,7 +42,8 @@ interface ChatState {
   error?: string;
   intakeEndDate: Date | null;
   sendMessage: (text: string) => Promise<void>;
-  setEndDate: (endDate: Date) => Promise<void>;
+  setIntakeEndDate: (endDate: Date) => Promise<void>;
+  restartChat: () => Promise<void>;
 }
 
 const ChatContext = createContext<ChatState | null>(null);
@@ -48,8 +57,10 @@ export function useChatContext() {
 export const ChatProvider: React.FC<{
   intake: Intake;
   clientId: string;
+  connectionStatus?: ConnectionStatus;
+  setChatSessionKey: Dispatch<SetStateAction<number>>;
   children?: React.ReactNode;
-}> = ({ intake, clientId, children }) => {
+}> = ({ intake, clientId, connectionStatus, setChatSessionKey, children }) => {
   const [intakeStatus, setIntakeStatus] =
     useState<ChatState["intakeStatus"]>("not_initialized");
   const [messages, setMessages] = useState<ChatState["messages"]>([]);
@@ -63,10 +74,21 @@ export const ChatProvider: React.FC<{
   }, [intake]);
 
   useEffect(() => {
+    if (
+      connectionStatus?.connectionError ||
+      connectionStatus?.connectionState === "closed"
+    ) {
+      setError("Chat is disconnected.");
+      return;
+    }
+    setError(undefined);
+  }, [connectionStatus]);
+
+  useEffect(() => {
     if (error) {
       console.error("Chat error:", error);
       toast.error(
-        "There was an issue connecting to the chat. Please try again later.",
+        "There was an issue connecting to the chat. Please refresh and try again.",
         { autoClose: false, toastId: "chat-setup-error" },
       );
     }
@@ -138,7 +160,11 @@ export const ChatProvider: React.FC<{
       }
     }
   };
-  console.log("intakeStatus", intakeStatus);
+
+  const restartChat = async () => {
+    setChatSessionKey((prev) => prev + 1);
+  };
+
   return (
     <ChatContext.Provider
       value={{
@@ -149,7 +175,8 @@ export const ChatProvider: React.FC<{
         error,
         intakeEndDate: intake.endDate,
         sendMessage,
-        setEndDate: setIntakeEndDate,
+        setIntakeEndDate,
+        restartChat,
       }}
     >
       {children}

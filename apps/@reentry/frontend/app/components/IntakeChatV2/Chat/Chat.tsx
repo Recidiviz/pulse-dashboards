@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { useState } from "react";
+
 import Address from "~@reentry/frontend/components/IntakeChatV2/Address/Address";
 import ConversationLayout from "~@reentry/frontend/components/IntakeChatV2/Chat/ConversationLayout";
 import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
@@ -30,6 +32,8 @@ interface ChatProps {
 }
 
 const Chat = ({ clientId, connectionStatus }: ChatProps) => {
+  const [chatSessionKey, setChatSessionKey] = useState(0);
+
   if (!clientId) return null;
 
   const { data: intake, isLoading: isLoadingIntake } =
@@ -56,7 +60,13 @@ const Chat = ({ clientId, connectionStatus }: ChatProps) => {
     return <IntakeComplete />;
   }
   return (
-    <ChatProvider intake={intake} clientId={clientId}>
+    <ChatProvider
+      key={chatSessionKey}
+      intake={intake}
+      clientId={clientId}
+      connectionStatus={connectionStatus}
+      setChatSessionKey={setChatSessionKey}
+    >
       <ConversationLayout connectionStatus={connectionStatus} />
     </ChatProvider>
   );

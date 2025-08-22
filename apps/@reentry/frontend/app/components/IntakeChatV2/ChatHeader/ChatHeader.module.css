@@ -5,20 +5,20 @@
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  border-bottom: 1px solid #E5E7EB;
-  background-color: #fff;
+  border-bottom: 1px solid var(--gray-7);
+  background-color: var(--color-white);
 }
 
 .avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(to right, #4C6290, #90AEB5);
+  background: linear-gradient(to right, var(--color-navy-2), var(--color-navy-3));
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 12.74px rgba(0,0,0,0.25);
-  color: #fff;
+  box-shadow: 0 0 5px var(--shadow-25);
+  color: var(--color-white);
   font-family: var(--font-public-sans);
   font-weight: bold;
   font-size: 0.875rem;
@@ -30,7 +30,7 @@
   font-size: 1.125rem;
   line-height: 160%;
   letter-spacing: -0.02em;
-  color: #003331;
+  color: var(--color-teal-2);
   font-weight: 600;
   text-transform: capitalize;
 }
@@ -40,6 +40,6 @@
   font-size: 1.125rem;
   line-height: 120%;
   letter-spacing: -0.02em;
-  color: #8BB1BA;
+  color: var(--color-teal-7);
   font-weight: 500;
 }

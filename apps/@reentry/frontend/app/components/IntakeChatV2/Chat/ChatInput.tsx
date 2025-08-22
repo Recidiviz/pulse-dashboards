@@ -19,18 +19,26 @@ import SendIcon from "@mui/icons-material/Send";
 import React, { useEffect, useRef, useState } from "react";
 
 import styles from "~@reentry/frontend/components/IntakeChatV2/Chat/ChatInput.module.css";
+import common from "~@reentry/frontend/components/IntakeChatV2/Common.module.css";
 import { useChatContext } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
 
 const ChatInput: React.FC = () => {
-  const { waitingForAIInput, intakeStatus, error, sendMessage, setEndDate } =
-    useChatContext();
+  const {
+    waitingForAIInput,
+    intakeStatus,
+    error,
+    sendMessage,
+    setIntakeEndDate,
+    restartChat,
+  } = useChatContext();
 
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const isDisabled = waitingForAIInput || isSending || !!error;
   const isIntakeComplete = intakeStatus === "complete";
+  const isUserEnded = intakeStatus === "user_ended";
+  const isDisabled = waitingForAIInput || isSending || !!error || isUserEnded;
 
   const onSend = async () => {
     if (isDisabled || !inputValue.trim()) return;
@@ -54,48 +62,64 @@ const ChatInput: React.FC = () => {
     }
   }, [waitingForAIInput]);
 
+  const RestartChatButton = (
+    <button
+      type="button"
+      onClick={restartChat}
+      className={`${styles["buttonCommon"]} ${styles["continue"]} ${common["buttonBase"]} ${common["buttonPrimary"]}`}
+    >
+      Restart Chat
+    </button>
+  );
+
+  const IntakeCompleteButton = (
+    <button
+      type="button"
+      onClick={() => setIntakeEndDate(new Date())}
+      className={`${styles["buttonCommon"]} ${styles["continue"]} ${common["buttonBase"]} ${common["buttonPrimary"]}`}
+    >
+      Continue
+    </button>
+  );
+
+  const ChatInputTextArea = (
+    <div className={styles["inputWrapper"]}>
+      <textarea
+        ref={textareaRef}
+        rows={1}
+        value={inputValue}
+        disabled={isDisabled}
+        placeholder="Write a message..."
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        className={styles["textarea"]}
+      />
+      <button
+        type="button"
+        onClick={onSend}
+        disabled={isDisabled || !inputValue.trim()}
+        className={styles["sendButton"]}
+      >
+        <SendIcon
+          className={
+            isDisabled || !inputValue.trim()
+              ? styles["sendIconDisabled"]
+              : styles["sendIcon"]
+          }
+        />
+      </button>
+    </div>
+  );
+
+  const getInput = () => {
+    if (isUserEnded) return RestartChatButton;
+    if (isIntakeComplete) return IntakeCompleteButton;
+    return ChatInputTextArea;
+  };
+
   return (
     <div className={styles["container"]}>
-      <div className={styles["inputRow"]}>
-        {isIntakeComplete ? (
-          // End of Conversation Continue Button
-          <button
-            type="button"
-            onClick={() => setEndDate(new Date())}
-            className={`${styles["buttonCommon"]} ${styles["continue"]}`}
-          >
-            Continue
-          </button>
-        ) : (
-          // Chat Input Text Area
-          <div className={styles["inputWrapper"]}>
-            <textarea
-              ref={textareaRef}
-              rows={1}
-              value={inputValue}
-              disabled={isDisabled}
-              placeholder="Write a message..."
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className={styles["textarea"]}
-            />
-            <button
-              type="button"
-              onClick={onSend}
-              disabled={isDisabled || !inputValue.trim()}
-              className={styles["sendButton"]}
-            >
-              <SendIcon
-                className={
-                  isDisabled || !inputValue.trim()
-                    ? styles["sendIconDisabled"]
-                    : styles["sendIcon"]
-                }
-              />
-            </button>
-          </div>
-        )}
-      </div>
+      <div className={styles["inputRow"]}>{getInput()}</div>
     </div>
   );
 };

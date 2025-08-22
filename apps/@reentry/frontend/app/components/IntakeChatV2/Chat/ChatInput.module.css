@@ -15,7 +15,7 @@
   width: 80%;
   min-height: 100px;
   margin-bottom: 1rem;
-  color: #525454;
+  color: var(--gray-500);
 }
 
 .inputRow {
@@ -28,15 +28,14 @@
   display: flex;
   align-items: center;
   width: 100%;
-  background: #fff;
-  border: 1px solid #2B546933;
+  background: var(--color-white);
+  border: 1px solid var(--ink-2-a20);
   border-radius: 0.75rem;
   padding: 0.25rem;
 }
 
 .textarea {
   width: 100%;
-  max-width: 800px;
   border: none;
   outline: none;
   resize: none;
@@ -47,19 +46,18 @@
 }
 
 .sendButton {
-  position: absolute;
-  right: 0.75rem;
+  padding-right: 10px;
   background: transparent;
   border: none;
   cursor: pointer;
 }
 
 .sendIcon {
-  color: #2B5469;
+  color: var(--color-ink-2);
 }
 
 .sendIconDisabled {
-  color: rgba(43,84,105,0.2);
+  color: var(--ink-2-a20);
 }
 
 .buttonCommon {
@@ -74,9 +72,13 @@
   cursor: pointer;
 }
 
+.buttonCommon:hover {
+  opacity: 0.9;
+}
+
 .continue {
-  border: 1px solid rgba(53,83,98,0.2);
-  color: #fff;
-  background-color: #00665F;
+  border: 1px solid var(--ink-4-a20);
+  color: var(--color-white);
+  background-color: var(--color-teal-4);
   margin: 0 auto;
 }

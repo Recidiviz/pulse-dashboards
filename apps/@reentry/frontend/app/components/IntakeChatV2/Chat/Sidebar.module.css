@@ -70,15 +70,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #25636F;
+  background-color: var(--color-teal-6);
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 9999px;
-  border: 1px solid #25636F;
+  border: 1px solid var(--color-teal-6);
   flex-shrink: 0;
 }
 
 .completedIcon svg {
+  margin-left: 2px;
   width: 12px;
   height: 18px;
   color: white;
@@ -95,13 +96,13 @@
 }
 
 .notStarted {
-  background-color: #F9FAFA;
-  border: 1px solid #E9EDED;
+  background-color: var(--gray-10);
+  border: 1px solid var(--gray-5);
 }
 
 .inProgress {
-  box-shadow: 0px 0px 0px 3px #D5ECF1;
-  background-color: #25636F;
+  box-shadow: 0px 0px 0px 3px var(--color-teal-8);
+  background-color: var(--color-teal-6);
 }
 
 .pendingInner {
@@ -111,13 +112,13 @@
 .notStartedInner {
   width: 0.5rem;
   height: 0.5rem;
-  background-color: #e2e8f0;
+  background-color: var(--gray-4);
 }
 
 .inProgressInner {
   width: 0.5rem;
   height: 0.5rem;
-  background-color: #ffffff;
+  background-color: var(--color-white);
 }
 
 .connector {
@@ -125,11 +126,11 @@
   height: 38px;
   margin-top: 3px;
   border-radius: 1px;
-  background-color: #E2E8F0;
+  background-color: var(--gray-4);
 }
 
 .connectorActive {
-  background-color: #25636F;
+  background-color: var(--color-teal-6);
 }
 
 .content {
@@ -147,7 +148,7 @@
   font-weight: 700;
   line-height: 1.125rem;
   letter-spacing: -0.025em;
-  color: #012322;
+  color: var(--color-teal-1);
 }
 
 .description {
@@ -156,6 +157,6 @@
   font-weight: 500;
   line-height: 1.125rem;
   letter-spacing: -0.025em;
-  color: rgba(43, 84, 105, 0.85);
+  color: var(--ink-2-a85);
   width: 100%;
 }

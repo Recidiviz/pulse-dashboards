@@ -27,7 +27,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
-  const { sections, messages } = useChatContext();
+  const { sections, messages, intakeStatus } = useChatContext();
   const statuses = getSectionStatuses(messages, sections);
 
   return (
@@ -84,6 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
               hasNext={hasNext}
               text={section.title}
               description={section.description}
+              intakeStatus={intakeStatus}
             />
           );
         })}

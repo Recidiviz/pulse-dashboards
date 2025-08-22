@@ -78,9 +78,9 @@ const ConversationLayout: React.FC<ConversationLayoutProps> = ({
           <div className={styles["chatContainer"]}>
             <div ref={containerRef} className={styles["messagesWrapper"]}>
               <div className={styles["messagesList"]}>
-                {currentSectionMessages?.map((message) => (
+                {currentSectionMessages?.map((message, idx) => (
                   <ChatMessageBubble
-                    key={message.id + message.content}
+                    key={message.id + message.content + idx}
                     message={message}
                   />
                 ))}
