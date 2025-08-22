@@ -450,6 +450,16 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       : {};
   }
 
+  trackSldNavigateToCompanionOpportunityLinkClicked(): void {
+    this.rootStore.analyticsStore.trackNavigateToCompanionOpportunityLinkClicked(
+      {
+        justiceInvolvedPersonId: this.person.pseudonymizedId,
+        opportunityType: this.type,
+        companionOpportunityType: "usIaSupervisionLevelDowngrade",
+      },
+    );
+  }
+
   get bannerInfo(): OpportunityBannerInfo | undefined {
     if (this.hasPendingSldCompanionOpportunity) {
       return {
@@ -460,6 +470,8 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
           urlSection: "supervisionLevelDowngrade",
         }),
         linkText: "See Pending Eligibility",
+        onLinkClick: () =>
+          this.trackSldNavigateToCompanionOpportunityLinkClicked(),
       };
     }
     return undefined;

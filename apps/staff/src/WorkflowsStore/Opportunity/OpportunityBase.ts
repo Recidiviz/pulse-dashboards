@@ -367,12 +367,26 @@ export class OpportunityBase<
     return;
   }
 
+  /**
+   * Information shown in the OpportunityBanner.
+   * The banner will only be displayed when previewBannerText is defined.
+   * OpportunityBase.previewBannerText is undefined by default and overridden in child
+   * opportunity classes with the relevant text for the opportunities where the banner
+   * is to be displayed.
+   */
   get bannerInfo(): OpportunityBannerInfo | undefined {
     return this.previewBannerText
       ? {
           previewBannerText: this.previewBannerText,
           link: this.person.profileUrl,
           linkText: `See ${toTitleCase(this.rootStore.workflowsStore.justiceInvolvedPersonTitle)} Profile`,
+          onLinkClick: () =>
+            this.rootStore.analyticsStore.trackNavigateToPersonProfileLinkClicked(
+              {
+                justiceInvolvedPersonId: this.person.pseudonymizedId,
+                opportunityType: this.type,
+              },
+            ),
         }
       : undefined;
   }

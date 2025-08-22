@@ -264,7 +264,8 @@ export type RevertConfirmationCopy = {
 
 export type OpportunityBannerInfo = {
   previewBannerHeading?: string;
-  previewBannerText?: string;
+  previewBannerText: string;
   link: string;
   linkText: string;
+  onLinkClick: () => void;
 };

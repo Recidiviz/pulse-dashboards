@@ -71,7 +71,7 @@ export const OpportunityBanner = function OpportunityBanner({
         <BannerHeading>{bannerInfo.previewBannerHeading} </BannerHeading>
       )}
       <BannerText>{bannerInfo.previewBannerText} </BannerText>
-      <BannerLink to={bannerInfo.link}>
+      <BannerLink to={bannerInfo.link} onClick={() => bannerInfo.onLinkClick()}>
         {bannerInfo.linkText}
         <InlineArrow />
       </BannerLink>

@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { observer } from "mobx-react-lite";
+
 import { isEligibleOrAlmostEligible, Opportunity } from "../../WorkflowsStore";
 import { Heading } from "./Heading";
 import { AccordionSection, AccordionWrapper } from "./OpportunitiesAccordion";
@@ -29,7 +31,7 @@ type OpportunityOverviewProps = {
   shouldTrackOpportunityPreviewed?: boolean;
 };
 
-export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
+const OpportunityOverviewComponent: React.FC<OpportunityOverviewProps> = ({
   opportunity,
   formLinkButton,
   onDenialButtonClick,
@@ -46,7 +48,7 @@ export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
   return (
     <>
       <Heading person={selectedPerson} trackingOpportunity={opportunity} />
-      {opportunity.bannerInfo?.previewBannerText && (
+      {opportunity.bannerInfo && (
         <OpportunityBanner bannerInfo={opportunity.bannerInfo} />
       )}
       {showAccordion && (
@@ -66,3 +68,7 @@ export const OpportunityOverview: React.FC<OpportunityOverviewProps> = ({
     </>
   );
 };
+
+export const OpportunityOverview = observer(
+  OpportunityOverviewComponent,
+);

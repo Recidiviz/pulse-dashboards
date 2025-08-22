@@ -4,6 +4,7 @@ exports[`UsIaEarlyDischargeOpportunity clientStatus > bannerInfo > returns the c
 {
   "link": "/workflows/supervisionLevelDowngrade",
   "linkText": "See Pending Eligibility",
+  "onLinkClick": [Function],
   "previewBannerHeading": "BETTY RUBBLE is eligible for a Supervision Level Downgrade",
   "previewBannerText": "This client will be pending for approximately 24 hours before they become eligible for a Supervision Level Downgrade.",
 }

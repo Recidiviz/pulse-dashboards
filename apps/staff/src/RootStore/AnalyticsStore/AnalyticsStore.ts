@@ -207,6 +207,17 @@ export type UsTnExpirationFormMetadata = {
   reason: string;
 };
 
+export type NavigateToCompanionOpportunityLinkClickedMetadata = {
+  justiceInvolvedPersonId: string;
+  opportunityType: OpportunityType;
+  companionOpportunityType: OpportunityType;
+}
+
+export type NavigateToPersonProfileLinkClickedMetadata = {
+  justiceInvolvedPersonId: string;
+  opportunityType: OpportunityType;
+}
+
 export default class AnalyticsStore {
   rootStore;
   segment;
@@ -600,6 +611,24 @@ export default class AnalyticsStore {
   ) {
     this.track(
       "frontend.us_ia_early_discharge_referral_form_signature_removed",
+      metadata,
+    );
+  }
+
+  trackNavigateToCompanionOpportunityLinkClicked(
+    metadata: NavigateToCompanionOpportunityLinkClickedMetadata,
+  ) {
+    this.track(
+      "frontend.navigate_to_companion_opportunity_link_clicked",
+      metadata,
+    );
+  }
+
+  trackNavigateToPersonProfileLinkClicked(
+    metadata: NavigateToPersonProfileLinkClickedMetadata,
+  ) {
+    this.track(
+      "frontend.navigate_to_person_profile_link_clicked",
       metadata,
     );
   }

@@ -16,8 +16,9 @@
 // =============================================================================
 
 import { DrawerModal, Icon, spacing } from "@recidiviz/design-system";
+import { observer } from "mobx-react-lite";
 import { rem } from "polished";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
 
 import { Button, palette } from "~design-system";
@@ -144,92 +145,94 @@ type PreviewModalProps = {
   contentRef?: React.MutableRefObject<HTMLDivElement | null>;
 };
 
-export function WorkflowsPreviewModal({
-  isOpen,
-  pageContent,
-  footerContent,
-  onAfterOpen,
-  onBackClick,
-  onClose = () => null,
-  clearSelectedPersonOnClose = true,
-  contentRef,
-}: PreviewModalProps): JSX.Element {
-  const { workflowsStore } = useRootStore();
-  const { isMobile } = useIsMobile(true);
-  const CLOSE_TIMEOUT_MS = 1000;
-  const MODAL_WIDTH = 480;
+export const WorkflowsPreviewModal: FC<PreviewModalProps> = observer(
+  function WorkflowsPreviewModal({
+    isOpen,
+    pageContent,
+    footerContent,
+    onAfterOpen,
+    onBackClick,
+    onClose = () => null,
+    clearSelectedPersonOnClose = true,
+    contentRef,
+  }: PreviewModalProps): JSX.Element {
+    const { workflowsStore } = useRootStore();
+    const { isMobile } = useIsMobile(true);
+    const CLOSE_TIMEOUT_MS = 1000;
+    const MODAL_WIDTH = 480;
 
-  // Managing the modal isOpen state here instead of tying it directly to
-  // props helps to smooth out the open/close transition
-  const [modalIsOpen, setModalIsOpen] = useState(isOpen);
-  const { setDismissAfterMs } = useModalTimeoutDismissal({ setModalIsOpen });
+    // Managing the modal isOpen state here instead of tying it directly to
+    // props helps to smooth out the open/close transition
+    const [modalIsOpen, setModalIsOpen] = useState(isOpen);
+    const { setDismissAfterMs } = useModalTimeoutDismissal({ setModalIsOpen });
 
-  // Scroll to the top when a new modal is opened
-  useEffect(() => {
-    if (contentRef?.current) {
-      contentRef.current.scrollTo(0, 0);
+    // Scroll to the top when a new modal is opened
+    useEffect(() => {
+      if (contentRef?.current) {
+        contentRef.current.scrollTo(0, 0);
+      }
+    }, [workflowsStore.selectedOpportunity, contentRef]);
+
+    useEffect(() => {
+      setModalIsOpen(isOpen);
+    }, [isOpen]);
+
+    // useMemo here to prevent creating a new object on every render
+    const contextValue = useMemo(
+      () => ({ setDismissAfterMs, setModalIsOpen }),
+      [setDismissAfterMs, setModalIsOpen],
+    );
+
+    function handleCloseModal() {
+      onClose();
+      setModalIsOpen(false);
     }
-  }, [workflowsStore.selectedOpportunity, contentRef]);
 
-  useEffect(() => {
-    setModalIsOpen(isOpen);
-  }, [isOpen]);
-
-  // useMemo here to prevent creating a new object on every render
-  const contextValue = useMemo(
-    () => ({ setDismissAfterMs, setModalIsOpen }),
-    [setDismissAfterMs, setModalIsOpen],
-  );
-
-  function handleCloseModal() {
-    onClose();
-    setModalIsOpen(false);
-  }
-
-  return (
-    <StyledDrawerModal
-      isOpen={modalIsOpen}
-      onAfterOpen={onAfterOpen}
-      onRequestClose={() => handleCloseModal()}
-      onAfterClose={async () => {
-        if (clearSelectedPersonOnClose) {
-          await workflowsStore.updateSelectedPersonAndOpportunity(undefined);
-        }
-      }}
-      closeTimeoutMS={CLOSE_TIMEOUT_MS}
-      width={MODAL_WIDTH}
-      isMobile={isMobile}
-      contentRef={(node) => {
-        if (contentRef) {
-          contentRef.current = node;
-        }
-      }}
-      shouldCloseOnOverlayClick={false}
-      $overrideStyles={true}
-      disableBackgroundScroll={isMobile}
-    >
-      <ModalControls>
-        {onBackClick && (
+    return (
+      <StyledDrawerModal
+        isOpen={modalIsOpen}
+        onAfterOpen={onAfterOpen}
+        onRequestClose={() => handleCloseModal()}
+        onAfterClose={async () => {
+          if (clearSelectedPersonOnClose) {
+            await workflowsStore.updateSelectedPersonAndOpportunity(undefined);
+          }
+        }}
+        closeTimeoutMS={CLOSE_TIMEOUT_MS}
+        width={MODAL_WIDTH}
+        isMobile={isMobile}
+        contentRef={(node) => {
+          if (contentRef) {
+            contentRef.current = node;
+          }
+        }}
+        shouldCloseOnOverlayClick={false}
+        $overrideStyles={true}
+        disableBackgroundScroll={isMobile}
+      >
+        <ModalControls>
+          {onBackClick && (
+            <Button
+              className="WorkflowsPreviewModal__back"
+              kind="link"
+              onClick={onBackClick}
+            >
+              Back
+            </Button>
+          )}
           <Button
-            className="WorkflowsPreviewModal__back"
+            className="WorkflowsPreviewModal__close"
             kind="link"
-            onClick={onBackClick}
+            onClick={() => handleCloseModal()}
           >
-            Back
+            <Icon kind="Close" size="14" color={palette.pine2} />
           </Button>
-        )}
-        <Button
-          className="WorkflowsPreviewModal__close"
-          kind="link"
-          onClick={() => handleCloseModal()}
-        >
-          <Icon kind="Close" size="14" color={palette.pine2} />
-        </Button>
-      </ModalControls>
-      <WorkflowsPreviewModalContext.Provider value={contextValue}>
-        <Wrapper className="WorkflowsPreviewModal">{pageContent}</Wrapper>
-      </WorkflowsPreviewModalContext.Provider>
-      {footerContent && <Footer>{footerContent}</Footer>}
-    </StyledDrawerModal>
-  );
-}
+        </ModalControls>
+        <WorkflowsPreviewModalContext.Provider value={contextValue}>
+          <Wrapper className="WorkflowsPreviewModal">{pageContent}</Wrapper>
+        </WorkflowsPreviewModalContext.Provider>
+        {footerContent && <Footer>{footerContent}</Footer>}
+      </StyledDrawerModal>
+    );
+  },
+);
