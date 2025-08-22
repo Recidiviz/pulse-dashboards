@@ -133,6 +133,11 @@ describe("WorkflowsFormLayoutPresenter", () => {
         presenter,
         "hydrate"
       );
+
+      vi.spyOn(
+        presenter,
+        "hydrate"
+      );
     });
 
     it("correctly identifies ineligible person", () => {

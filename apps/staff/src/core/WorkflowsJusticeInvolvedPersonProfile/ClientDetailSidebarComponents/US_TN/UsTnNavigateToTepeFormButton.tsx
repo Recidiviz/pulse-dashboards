@@ -90,6 +90,7 @@ export function UsTnNavigateToTepeFormButton({
     workflowsRootStore: { opportunityConfigurationStore },
     workflowsStore,
     firestoreStore,
+    analyticsStore,
   } = useRootStore();
 
   // check if the client has a record or not
@@ -116,14 +117,22 @@ export function UsTnNavigateToTepeFormButton({
     firestoreStore,
   ).then((record) => setHasRecord(record !== undefined));
 
-  // TODO: maybe analytics to track?
-  const handleOnClick = async () => {
+  const handleOnClick = (reason: string) => {
     desktopLinkGate({
       headline: "Referral Unavailable in Mobile View",
     });
+
+    analyticsStore.trackUsTnExpirationFormGenerationReason({
+      justiceInvolvedPersonId: client.pseudonymizedId,
+      reason: reason,
+    });
   };
 
-  const reasons = ["Supervision Expiration", "Transfer", "Client Deceased"];
+  const reasons = {
+    SUPERVISION_EXPIRATION: "Supervision Expiration",
+    TRANSFER: "Transfer",
+    CLIENT_DECEASED: "Client Deceased",
+  };
 
   return (
     hasRecord && (
@@ -132,15 +141,15 @@ export function UsTnNavigateToTepeFormButton({
           Generate TEPE
         </StyledDropdownToggle>
         <DropdownMenu>
-          {reasons.map((reason) => (
+          {Object.entries(reasons).map(([key, value]) => (
             <Link
               {...props}
               to={linkToForm}
               aria-label="Navigate to form link"
               className="NavigateToFormLink"
             >
-              <StyledDropdownMenuItem onClick={handleOnClick}>
-                {reason}
+              <StyledDropdownMenuItem onClick={(event) => handleOnClick(key)}>
+                {value}
               </StyledDropdownMenuItem>
             </Link>
           ))}

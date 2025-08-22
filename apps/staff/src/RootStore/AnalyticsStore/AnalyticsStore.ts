@@ -202,6 +202,11 @@ export type UsIaEarlyDischargeReferralFormSignatureMetadata = {
   signatureField: "officer" | "approver";
 };
 
+export type UsTnExpirationFormMetadata = {
+  justiceInvolvedPersonId: string;
+  reason: string;
+};
+
 export default class AnalyticsStore {
   rootStore;
   segment;
@@ -721,5 +726,11 @@ export default class AnalyticsStore {
 
   trackCaseStatusCompleteClicked(metadata: PageOrClickTrackingMetadata): void {
     this.track("frontend.sentencing_case_status_complete_clicked", metadata);
+  }
+
+  trackUsTnExpirationFormGenerationReason(
+    metadata: UsTnExpirationFormMetadata,
+  ) {
+    this.track("frontend.us_tn_expiration_form_generation_reason", metadata);
   }
 }
