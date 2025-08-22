@@ -48,7 +48,7 @@ export const US_TX: InsightsConfig = {
   clientEvents: [],
   exclusionReasonDescription: "tbd",
   learnMoreUrl:
-    "https://drive.google.com/file/d/1-dH4m9MHrd9kXUyZNvBf6-0KTPOiP1rl/view",
+    "https://docs.google.com/document/d/e/2PACX-1vQmDKJI0ZNRvfeX4lTqPjAHR19j3E1-90zi21p1hM9g_TgHejdgcpDylLlI4Hsqau-1xPQrubJUXieQ/pub",
   metrics: [
     {
       name: "incarceration_starts",
@@ -90,6 +90,6 @@ export const US_TX: InsightsConfig = {
     },
   ],
   vitalsMetricsMethodologyUrl:
-    "https://drive.google.com/file/d/1-dH4m9MHrd9kXUyZNvBf6-0KTPOiP1rl/view",
+    "https://docs.google.com/document/d/e/2PACX-1vQmDKJI0ZNRvfeX4lTqPjAHR19j3E1-90zi21p1hM9g_TgHejdgcpDylLlI4Hsqau-1xPQrubJUXieQ/pub",
   worseThanRateLabel: "tbd",
 };
