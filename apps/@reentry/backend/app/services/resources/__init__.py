@@ -339,7 +339,7 @@ async def list_resources(request: GetResourcesRequest) -> GetResourcesResponse:
     from app.services.resources.stub_resources import _list_resources_internal
 
     # Always use built-in resources in test environment
-    if "pytest" in sys.modules:
+    if settings.ENV_NAME == "pytest":
         internal_result = _list_resources_internal(request)
         return GetResourcesResponse(
             resources=internal_result.resources,

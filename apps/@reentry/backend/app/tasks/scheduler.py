@@ -18,6 +18,8 @@ from taskiq.task import AsyncTaskiqTask
 from app.core.db import AsyncSession
 from app.crud.execution import get_execution_by_id, update_execution, upsert_execution
 from app.models.execution import Execution, ExecutionStatus
+from app.core.config import settings
+
 
 logger = structlog.get_logger(__name__)
 
@@ -53,8 +55,7 @@ async def schedule_task(
     await upsert_execution(session, execution)
 
     # in pytest mode, we sync for execution
-    ENVIRONMENT = os.environ.get("ENVIRONMENT")
-    if ENVIRONMENT == "pytest":
+    if settings.ENV_NAME == "pytest":
         await task.wait_result()
 
     return execution

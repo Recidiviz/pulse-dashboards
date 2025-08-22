@@ -5,9 +5,7 @@ from taskiq_redis import ListQueueBroker, RedisAsyncResultBackend
 
 from app.core.config import settings
 
-ENVIRONMENT = os.environ.get("ENVIRONMENT")
-
-if ENVIRONMENT == "pytest":
+if settings.ENV_NAME == "pytest":
     broker = InMemoryBroker()
 else:
     redis_async_result = RedisAsyncResultBackend(
