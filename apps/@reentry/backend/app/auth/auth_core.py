@@ -1,7 +1,8 @@
 import logging
 import pickle
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import lru_cache
+import time
 from typing import Any, Callable, List, Optional
 from urllib.request import urlopen
 
@@ -223,16 +224,27 @@ def validate_token(token: str, auth0_config: Auth0Config):
             audience=auth0_config.audience,
         )
 
-        current_time = datetime.utcnow().timestamp()
-        if "exp" in payload and current_time > payload["exp"]:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token has expired",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
         return payload
 
-    except jwt.ExpiredSignatureError:
+    except jwt.ExpiredSignatureError as e:
+        logging.exception(f"Expired token: {e}.")
+
+        # Get token info for logging.
+        try:
+            unverified_payload = jwt.decode(token, options={"verify_signature": False})
+            if "exp" in unverified_payload:
+                current_time = time.time()
+                expired_duration_seconds = current_time - unverified_payload["exp"]
+                current_datetime_utc = datetime.fromtimestamp(current_time, tz=timezone.utc)
+                token_expiration_datetime_utc = datetime.fromtimestamp(unverified_payload["exp"], tz=timezone.utc)
+                logging.info(
+                    f"Token expired. current_time_utc={current_datetime_utc}, "
+                    f"expiration_time_utc={token_expiration_datetime_utc}, "
+                    f"expired_duration_seconds={expired_duration_seconds}"
+                )
+        except Exception:
+            logging.exception("Could not extract expiration info from expired token for logging")
+
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token has expired",
@@ -249,7 +261,11 @@ def validate_token(token: str, auth0_config: Auth0Config):
             headers={"WWW-Authenticate": "Bearer"},
         )
     except Exception as e:
-        logging.error(f"Unexpected error validating token: {e}")
+        logging.exception(f"Unexpected error validating token: {e}. ")
+        token_preview = f"{token[:8]}..." if len(token) > 8 else token
+        logging.exception(
+            f"Token info. token_len: {len(token)}, token_preview: {token_preview}",
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authentication error",

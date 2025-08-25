@@ -8,7 +8,7 @@ yarn install
 Then in any folder in the repo
 
 ```bash
-nx build @reentry/frontend
+yarn nx build @reentry/frontend
 ```
 
 ## Running the Frontend/Backend
@@ -84,7 +84,7 @@ The API documentation is accessible at [http://localhost:8000/docs](http://local
 
 Anywhere in the repo run
 ```
-nx dev @reentry/frontend
+yarn nx dev @reentry/frontend
 ```
 
 ## Testing

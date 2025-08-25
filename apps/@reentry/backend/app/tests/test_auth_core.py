@@ -1,5 +1,7 @@
 import json
 from datetime import datetime
+import logging
+import time
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import jwt
@@ -52,11 +54,10 @@ def mock_jwks_cache(auth0_config, mock_jwks):
         return cache
 
 
-@pytest.fixture
-def mock_jwt_payload():
-    # current time and expiration time 1 hour from now
-    now = datetime.utcnow().timestamp()
-    exp = now + 3600
+def create_jwt_payload(expired : bool = False):
+    # current time and expiration time 1 hour (+/-) from now
+    now = int(time.time())
+    exp = now + 3600 if not expired else now - 3600
 
     return {
         "sub": "auth0|1234567890",
@@ -75,16 +76,27 @@ def mock_jwt_payload():
         "nbf": now,
     }
 
-
 @pytest.fixture
-def mock_token(mock_jwt_payload):
+def mock_jwt_payload():
+    return create_jwt_payload()
+
+
+def create_token(expired : bool = False):
     dummy_key = "dummy-secret-key-for-testing"
     return jwt.encode(
-        mock_jwt_payload,
+        create_jwt_payload(expired),
         dummy_key,
         algorithm="HS256",
         headers={"kid": "test-kid", "typ": "JWT"},
     )
+
+@pytest.fixture
+def mock_token():
+    return create_token()
+
+@pytest.fixture
+def mock_expired_token():
+    return create_token(expired = True)
 
 
 def test_auth0_config_properties(auth0_config):
@@ -195,20 +207,23 @@ def test_validate_token_key_not_found(
 
 
 @patch("app.auth.auth_core.get_jwks_cache")
-@patch("app.auth.auth_core.jwt.decode")
-@patch("app.auth.auth_core.jwt.get_unverified_header")
-def test_validate_token_expired(
-    mock_get_header, mock_decode, mock_get_jwks_cache, auth0_config, mock_token
-):
-    mock_get_header.return_value = {"typ": "JWT", "kid": "test-kid"}
-    mock_decode.side_effect = jwt.ExpiredSignatureError("Token expired")
+@patch("app.auth.auth_core.logging", wraps=logging)
+def test_validate_token_expired(mock_logging, mock_get_jwks_cache, mock_expired_token):
+    # Create auth0_config that matches the test token algorithm (HS256), simplifies the test.
+    auth0_config = Auth0Config(
+        algorithms=["HS256"],
+        audience="test-audience",
+        client_id="test-client-id",
+        domain="test-domain.auth0.com",
+    )
 
+    # Set up JWKS cache mock to return a key for decoding
     jwks_cache_mock = MagicMock()
-    jwks_cache_mock.get_key.return_value = "mock-key"
+    jwks_cache_mock.get_key.return_value = "dummy-secret-key-for-testing"
     mock_get_jwks_cache.return_value = jwks_cache_mock
 
     with pytest.raises(HTTPException) as excinfo:
-        validate_token(mock_token, auth0_config)
+        validate_token(mock_expired_token, auth0_config)
 
     assert excinfo.value.status_code == 401
     assert excinfo.value.detail == "Token has expired"
@@ -481,3 +496,19 @@ async def test_get_pseudonymized_id_missing(
 
         assert exec_info.value.status_code == 401
         assert exec_info.value.detail == "Pseudonymized ID not found in user profile"
+
+
+@patch("app.auth.auth_core.logging", wraps=logging)
+def test_null_token_logs_not_enough_segments_error(mock_logging, auth0_config):
+    with pytest.raises(HTTPException) as excinfo:
+        validate_token("null", auth0_config)
+
+    assert mock_logging.exception.call_count >= 1
+    calls = [str(call) for call in mock_logging.exception.call_args_list]
+    assert any(
+        "Unexpected error validating token: Not enough segments" in call
+        for call in calls
+    )
+    assert excinfo.value.status_code == 401
+    assert excinfo.value.detail == "Authentication error"
+
