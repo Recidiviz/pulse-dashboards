@@ -58,9 +58,10 @@ export type OfficerApprovalAction = {
 
 export type OfficerDenialAction = {
   type: "DENIAL";
-  actionPlan: string;
+  actionPlan?: string;
   denialReasons: string[];
-  requestedSnoozeLength: number;
+  // Undefined for indefinite snoozes
+  requestedSnoozeLength?: number;
 };
 
 export type OfficerAction = UpdateLog &

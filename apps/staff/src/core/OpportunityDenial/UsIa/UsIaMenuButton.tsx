@@ -55,10 +55,13 @@ const UsIaMenuButton = observer(function MenuButton({
       // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
       await opportunity.markActionHistoryStale();
       await opportunity.setDenialReasons(reasons);
-      await opportunity.setManualSnooze(
-        latestAction.requestedSnoozeLength,
-        reasons,
-      );
+
+      if (latestAction.requestedSnoozeLength) {
+        await opportunity.setManualSnooze(
+          latestAction.requestedSnoozeLength,
+          reasons,
+        );
+      }
 
       toast(
         <OpportunityStatusUpdateToast

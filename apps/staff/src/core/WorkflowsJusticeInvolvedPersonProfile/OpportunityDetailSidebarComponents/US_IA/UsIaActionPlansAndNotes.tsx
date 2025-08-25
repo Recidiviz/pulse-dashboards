@@ -54,7 +54,9 @@ function OfficerActionContents({
     return <SecureSmallDetailsCopy>{action.notes}</SecureSmallDetailsCopy>;
   } else {
     const denialReasons = `Denial Reasons: ${action.denialReasons.join(", ")}`;
-    const snooze = `Snooze: ${action.requestedSnoozeLength} Days (Will resurface: ${formatWorkflowsDate(addDays(new Date(), action.requestedSnoozeLength))})`;
+    const snooze = action?.requestedSnoozeLength
+      ? `Snooze: ${action.requestedSnoozeLength} Days (Will resurface: ${formatWorkflowsDate(addDays(new Date(), action.requestedSnoozeLength))})`
+      : undefined;
 
     return (
       <div>
@@ -62,9 +64,11 @@ function OfficerActionContents({
         <SecureSmallDetailsCopy style={{ marginTop: spacing.sm }}>
           {denialReasons}
         </SecureSmallDetailsCopy>
-        <SecureSmallDetailsCopy style={{ marginTop: spacing.sm }}>
-          {snooze}
-        </SecureSmallDetailsCopy>
+        {snooze && (
+          <SecureSmallDetailsCopy style={{ marginTop: spacing.sm }}>
+            {snooze}
+          </SecureSmallDetailsCopy>
+        )}
       </div>
     );
   }
