@@ -737,7 +737,7 @@ if (
         await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/staging/cloudbuild.yaml `.pipe(
           process.stdout,
         );
-      } else if (deployEnv === "production" && isCpDeploy) {
+      } else if (deployEnv === "production") {
         await $`gcloud builds submit apps/@reentry/backend --project recidiviz-rnd-planner --config apps/@reentry/backend/deploy/production/cloudbuild.yaml `.pipe(
           process.stdout,
         );
@@ -886,15 +886,21 @@ if (
     console.log("Deploying reentry frontend...");
     try {
       if (deployEnv === "staging") {
-        await $`gcloud builds submit apps/@reentry/frontend --project recidiviz-rnd-planner --config apps/@reentry/frontend/deploy/staging/cloudbuild.yaml`.pipe(
+        await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration ${deployEnv}`.pipe(
           process.stdout,
         );
-      } else if (deployEnv === "production" && isCpDeploy) {
-        await $`gcloud builds submit apps/@reentry/frontend --project recidiviz-rnd-planner --config apps/@reentry/frontend/deploy/production/cloudbuild.yaml`.pipe(
-          process.stdout,
-        );
+      } else if (deployEnv === "production") {
+        if (isCpDeploy) {
+          await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration cherry-pick`.pipe(
+            process.stdout,
+          );
+        } else {
+          await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration ${deployEnv}`.pipe(
+            process.stdout,
+          );
+        }
       } else if (deployEnv === "demo") {
-        await $`gcloud builds submit apps/@reentry/frontend --project recidiviz-rnd-planner --config apps/@reentry/frontend/deploy/demo/cloudbuild.yaml`.pipe(
+        await $`COMMIT_SHA=${currentRevision} nx deploy @reentry/frontend --configuration ${deployEnv}`.pipe(
           process.stdout,
         );
       }
