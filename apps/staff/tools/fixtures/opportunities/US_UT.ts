@@ -114,8 +114,8 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       emptyTabCopy: [
         {
-          tab: "Report Due (Benchmarks Met)",
-          text: "At this time, there are no clients who have a report due and benchmarks met. Please navigate to one of the other tabs.",
+          tab: "Suitable for Early Termination",
+          text: "At this time, there are no clients who have a report due and early termination benchmarks met. Please navigate to one of the other tabs.",
         },
         {
           tab: "Report Due (Other)",
@@ -134,7 +134,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "usUtHasCompletedOrderedAssessments",
-          text: "Has not yet completed ordered assessments, recommended treatment or programming ",
+          text: "May be missing ordered assessments, recommended treatment or programming",
           tooltip:
             "SENTENCING COMMISSION GUIDELINE: Completion of ordered assessments and any recommended treatment or programming by a licensed provider. For the purposes of this section, persons voluntarily engaged in ongoing care after having completing ordered treatment\nshall be considered as having completed treatment. If no treatment is ordered, then this requirement has been met.",
         },
@@ -152,7 +152,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "supervisionContinuousEmploymentFor3Months",
-          text: "Has not demonstrated employment stability or is not currently employed ",
+          text: "May not have had continuous employment",
           tooltip:
             "AP&P STABILITY BENCHMARK: Client has had continuous employment for at least three months.",
         },
@@ -185,9 +185,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           text: "{{#unless (or record.ineligibleCriteria.atLeast6MonthsSinceMostRecentPositiveDrugTest (eq record.ineligibleCriteria.atLeast6MonthsSinceMostRecentPositiveDrugTest null))}}If relevant, negative drug test within the last 6 months{{/unless}}",
         },
-        {
-          text: "{{#if (or record.ineligibleCriteria.usUtHasCompletedOrderedAssessments (eq record.ineligibleCriteria.usUtHasCompletedOrderedAssessments null))}}Confirm that clinical assessment confirmed need for treatment{{/if}}",
-        },
+        { text: "Confirm that any required treatment has been completed" },
       ],
       nonOmsCriteriaHeader: null,
       notifications: [],
@@ -199,16 +197,13 @@ export const mockApiOpportunityConfigurationResponse = {
       snoozeCompanionOpportunityTypes: [],
       stateCode: "US_UT",
       subcategoryHeadings: [
-        { subcategory: "REPORT_DUE_ELIGIBLE", text: "All Benchmarks Met" },
-        {
-          subcategory: "REPORT_DUE_ALMOST_ELIGIBLE",
-          text: "Almost All Benchmarks Met",
-        },
+        { subcategory: "REPORT_DUE", text: "Report Due" },
+        { subcategory: "EARLY_REQUESTS", text: "Early Requests" },
       ],
       subcategoryOrderings: [
         {
-          tab: "Report Due (Benchmarks Met)",
-          texts: ["REPORT_DUE_ELIGIBLE", "REPORT_DUE_ALMOST_ELIGIBLE"],
+          tab: "Suitable for Early Termination",
+          texts: ["REPORT_DUE", "EARLY_REQUESTS"],
         },
       ],
       subheading:
@@ -220,9 +215,8 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           key: "ELIGIBILITY STATUS",
           tabs: [
-            "Report Due (Benchmarks Met)",
+            "Suitable for Early Termination",
             "Report Due (Other)",
-            "Early Requests",
             "Report Submitted",
             "Marked Ineligible",
           ],
@@ -230,16 +224,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       tabPrefaceCopy: [
         {
-          tab: "Report Due (Benchmarks Met)",
+          tab: "Suitable for Early Termination",
           text: "This tab lists clients approaching or past their early termination report due date who meet the treatment and risk reduction guidelines as well as the stability benchmarks set by UDC. It also lists clients that are missing one or two indicators of stability for early termination.",
         },
         {
           tab: "Report Due (Other)",
           text: "This tab lists clients approaching or past their early termination report due date who have met the treatment and risk reduction guidelines, but not the stability benchmarks.",
-        },
-        {
-          tab: "Early Requests",
-          text: "This tab contains clients not yet at their early termination report due date who meet stability benchmarks set by UDC and are eligible for Early Termination consideration as per the Sentencing Guidelines.",
         },
         {
           tab: "Report Submitted",

@@ -68,15 +68,17 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Institutional risk score is I-1",
         },
         {
-          key: "incarcerationWithin60MonthsOfProjectedFullTermCompletionDateMin",
-          text: "Within 60 months of earliest established release date",
-        },
-        {
           key: "usMoWithin60MonthsOfEarliestReleaseDate",
           text: "Within 60 months of earliest established release date",
         },
         {
           key: "usMoNoEscapeIn10YearsOrCurrentSentence",
+          text: "No perimeter escapes within the current sentence structure or within the past 10 years",
+          tooltip:
+            "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
+        },
+        {
+          key: "usMoNoEscapeIn10YearsOrCurrentCycle",
           text: "No perimeter escapes within the current sentence structure or within the past 10 years",
           tooltip:
             "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
@@ -444,6 +446,12 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "usMoNoEscapeIn10YearsOrCurrentSentence",
+          text: "No perimeter escapes within the current sentence structure or within the past 10 years",
+          tooltip:
+            "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
+        },
+        {
+          key: "usMoNoEscapeIn10YearsOrCurrentCycle",
           text: "No perimeter escapes within the current sentence structure or within the past 10 years",
           tooltip:
             "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
