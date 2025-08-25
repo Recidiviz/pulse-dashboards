@@ -15,16 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
-import { createVerifier } from "fast-jwt";
 import superjson from "superjson";
 
-import {
-  procedurePlugin,
-  verifyAuth0Token,
-  verifyJwtToken,
-} from "~server-setup-plugin/trpc";
+import { procedurePlugin, verifyAuth0Token } from "~server-setup-plugin/trpc";
 
 const plugin = procedurePlugin();
 
@@ -47,7 +42,15 @@ const auth0Root = initTRPC
 
 const auth0Router = auth0Root.router;
 
-const auth0baseProcedure = auth0Root.procedure.concat(plugin.procedure);
+const auth0baseProcedure = auth0Root.procedure
+  .concat(plugin)
+  .use(async (opts) => {
+    const { ctx } = opts;
+    if (!ctx.isAuthorized) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return opts.next();
+  });
 
 export const testAuth0Router = auth0Router({
   // A procedure that does nothing, but is used to test that the base procedure auth checks are running.
@@ -57,38 +60,3 @@ export const testAuth0Router = auth0Router({
 });
 
 export type Auth0AppRouter = typeof testAuth0Router;
-
-// Jwt TRPC initialization
-
-const verifier = createVerifier({
-  key: "0d9e4eb91b3bc1ad85a6f39c7070a6dc30c003da1eb83d86e8fdabdb4e96761f",
-});
-
-export async function createJwtContext(opts: CreateFastifyContextOptions) {
-  const { req, res } = opts;
-  const authPayload = await verifyJwtToken(opts, verifier);
-
-  return {
-    req,
-    res,
-    isAuthorized: !!authPayload,
-  };
-}
-
-const jwtRoot = initTRPC
-  .context<typeof createJwtContext>()
-  // Required to get Date objects to serialize correctly.
-  .create({ transformer: superjson });
-
-const jwtRouter = jwtRoot.router;
-
-const jwtbaseProcedure = jwtRoot.procedure.concat(plugin.procedure);
-
-export const testJwtRouter = jwtRouter({
-  // A procedure that does nothing, but is used to test that the base procedure auth checks are running.
-  test: jwtbaseProcedure.query(async () => {
-    return "Hello, world!";
-  }),
-});
-
-export type JwtAppRouter = typeof testJwtRouter;

@@ -15,16 +15,30 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import type { JWT as BaseJWT } from "@fastify/jwt";
 import type { AnyRouter } from "@trpc/server";
 import type { FastifyTRPCPluginOptions } from "@trpc/server/adapters/fastify";
 import type { Algorithm } from "fast-jwt";
 
-export type Auth0Config = {
+declare module "@fastify/jwt" {
+  interface JWT {
+    [namespace: string]: BaseJWT; // if we wanted to keep this extensible this to other namespaces
+    regular: BaseJWT;
+  }
+}
+
+declare module "fastify" {
+  interface FastifyRequest {
+    regularJwtVerify: FastifyRequest["jwtVerify"];
+  }
+}
+
+type Auth0Config = {
   domain: string;
   audience: string;
 };
 
-export type JwtConfig = {
+type JwtConfig = {
   key: string;
   algorithm?: Algorithm;
   expiresIn?: string;
@@ -34,11 +48,6 @@ export type JwtConfig = {
   };
 };
 
-export type AuthConfig =
-  | { auth0Options: Auth0Config; jwtOptions?: never }
-  | { auth0Options?: never; jwtOptions: JwtConfig }
-  | { auth0Options?: never; jwtOptions?: never };
-
 export type BuildServerOptions<TRouter extends AnyRouter> = {
   appRouter: TRouter;
   createContext: NonNullable<
@@ -46,4 +55,6 @@ export type BuildServerOptions<TRouter extends AnyRouter> = {
   >;
   useWSS?: boolean;
   trpcPrefix?: string;
-} & AuthConfig;
+  auth0Options?: Auth0Config;
+  jwtOptions?: JwtConfig;
+};

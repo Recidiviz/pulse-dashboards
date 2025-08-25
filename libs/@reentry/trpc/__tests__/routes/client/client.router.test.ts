@@ -50,7 +50,7 @@ describe("client router", () => {
     });
 
     test("should throw error when client doesn't exist", async () => {
-      const badClientToken = testServer.jwt.sign(
+      const badClientToken = testServer.jwt.regular.sign(
         {
           clientPseudoId: "non-existent-client-pseudo-id",
         },

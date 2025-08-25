@@ -25,7 +25,7 @@ import { createVerifier } from "fast-jwt";
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { StateCode } from "~@reentry/prisma/client";
 import { Context } from "~@reentry/trpc/types";
-import { verifyJwtToken } from "~server-setup-plugin";
+import { verifyAuth0Token, verifyRegularJwtToken } from "~server-setup-plugin";
 
 // HTTP headers are flattened to lowercase in Fastify
 const STATE_CODE_HEADER_KEY = "statecode";
@@ -56,7 +56,8 @@ export async function createContext(
     });
   }
 
-  const user = await verifyJwtToken(opts, verifier);
+  const regularJwtUser = await verifyRegularJwtToken(opts, verifier);
+  const auth0User = await verifyAuth0Token(opts);
 
   let prismaClient;
   try {
@@ -72,8 +73,9 @@ export async function createContext(
   return {
     req,
     res,
-    isAuthorized: !!user,
-    user,
+    isRegularJwtAuthorized: !!regularJwtUser,
+    isAuth0Authorized: !!auth0User,
+    user: regularJwtUser || auth0User,
     prisma: prismaClient,
     stateCode: stateCode as StateCode,
   };

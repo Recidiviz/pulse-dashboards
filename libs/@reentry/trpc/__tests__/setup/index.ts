@@ -155,6 +155,7 @@ export const initTestServer = async () => {
     secret: process.env["INTAKE_PRIVATE_JWT_KEY"] ?? "",
     sign: { algorithm: "HS256", expiresIn: "5h" },
     verify: { algorithms: ["HS256"] },
+    namespace: "regular",
   });
 
   testServer.register(ws);
@@ -183,7 +184,7 @@ export const initTestServer = async () => {
 
   await testServer.ready();
 
-  testToken = testServer.jwt.sign(
+  testToken = testServer.jwt.regular.sign(
     {
       clientPseudoId,
     },

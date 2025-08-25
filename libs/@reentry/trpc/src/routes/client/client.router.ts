@@ -17,7 +17,7 @@
 
 import { TRPCError } from "@trpc/server";
 
-import { baseProcedure, router } from "~@reentry/trpc/init";
+import { regularJwtProcedure, router } from "~@reentry/trpc/init";
 import {
   getAddressInputSchema,
   updateAddressInputSchema,
@@ -25,7 +25,7 @@ import {
 import { CLIENT_GET_ARGS } from "~@reentry/trpc/routes/client/constants";
 
 export const clientRouter = router({
-  getAddress: baseProcedure
+  getAddress: regularJwtProcedure
     .input(getAddressInputSchema)
     .query(async ({ ctx: { prisma }, input: { clientPseudoId } }) => {
       const client = await prisma.client.findUnique({
@@ -48,7 +48,7 @@ export const clientRouter = router({
 
       return client.address;
     }),
-  updateAddress: baseProcedure
+  updateAddress: regularJwtProcedure
     .input(updateAddressInputSchema)
     .mutation(
       async ({ ctx: { prisma }, input: { clientPseudoId, address } }) => {

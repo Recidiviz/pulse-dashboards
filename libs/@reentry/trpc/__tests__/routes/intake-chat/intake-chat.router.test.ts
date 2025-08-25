@@ -147,7 +147,7 @@ describe("intake chat router", () => {
     });
 
     test("should throw error if client not authorized for intake", async () => {
-      const badClientToken = testServer.jwt.sign(
+      const badClientToken = testServer.jwt.regular.sign(
         {
           clientPseudoId: "non-existent-client-pseudo-id",
         },
@@ -499,7 +499,7 @@ describe("intake chat router", () => {
     });
 
     test("intake chat route should throw an error if the client tries to connect to a bad pseudo id", async () => {
-      const badClientToken = testServer.jwt.sign(
+      const badClientToken = testServer.jwt.regular.sign(
         {
           clientPseudoId: "non-existent-client-pseudo-id",
         },

@@ -26,9 +26,9 @@ import {
   Auth0AppRouter,
   createAuth0Context,
   testAuth0Router,
-} from "~server-setup-plugin/test/setup";
+} from "~server-setup-plugin/test/utils/auth0";
 
-export const testPort = 3003;
+export const testPort = 3010;
 export const testHost = "localhost";
 
 describe("auth0", () => {

@@ -22,7 +22,7 @@ import EventEmitter, { on } from "events";
 import { getIntakeConfigForState, IntakeAgent } from "~@reentry/intake-agent";
 import { getIntakeCheckpointerForStateCode } from "~@reentry/intake-agent/get-checkpointer";
 import { Prisma } from "~@reentry/prisma/client";
-import { baseProcedure, router } from "~@reentry/trpc/init";
+import { regularJwtProcedure, router } from "~@reentry/trpc/init";
 import { INTAKE_GET_ARGS } from "~@reentry/trpc/routes/intake-chat/constants";
 import {
   createOrGetInputSchema,
@@ -64,7 +64,7 @@ function getCleanedMessagesAndLastId(aiMessages: AIMessage[]): MessagesLastId {
 }
 
 export const intakeChatRouter = router({
-  getIntake: baseProcedure
+  getIntake: regularJwtProcedure
     .input(createOrGetInputSchema)
     .query(async ({ ctx: { prisma }, input: { clientPseudoId } }) => {
       const existingIntake = await prisma.intake.findFirst({
@@ -82,7 +82,7 @@ export const intakeChatRouter = router({
 
       return existingIntake;
     }),
-  createIntake: baseProcedure
+  createIntake: regularJwtProcedure
     .input(createOrGetInputSchema)
     .mutation(
       async ({ ctx: { prisma, stateCode }, input: { clientPseudoId } }) => {
@@ -129,7 +129,7 @@ export const intakeChatRouter = router({
         }
       },
     ),
-  updateEndDate: baseProcedure
+  updateEndDate: regularJwtProcedure
     .input(updateEndDateInputSchema)
     .mutation(
       async ({ ctx: { prisma, user }, input: { intakeId, endDate } }) => {
@@ -156,7 +156,7 @@ export const intakeChatRouter = router({
         });
       },
     ),
-  reply: baseProcedure
+  reply: regularJwtProcedure
     .input(intakeChatResponseInputSchema)
     .mutation(
       async ({ ctx: { user, prisma }, input: { intakeId, response } }) => {
@@ -211,7 +211,7 @@ export const intakeChatRouter = router({
         } satisfies EmitData);
       },
     ),
-  chat: baseProcedure
+  chat: regularJwtProcedure
     .input(intakeChatInputSchema)
     .subscription(async function* ({
       ctx: { prisma, user },

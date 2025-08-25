@@ -28,7 +28,8 @@ export type AuthUser = {
 export type Context = {
   req: FastifyRequest;
   res: FastifyReply;
-  isAuthorized: boolean;
+  isRegularJwtAuthorized: boolean;
+  isAuth0Authorized: boolean;
   user: AuthUser | null;
   prisma: PrismaClient;
   stateCode: StateCode;

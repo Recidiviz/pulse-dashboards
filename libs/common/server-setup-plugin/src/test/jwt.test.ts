@@ -23,10 +23,10 @@ import { beforeAll } from "vitest";
 
 import { buildCommonServer } from "~server-setup-plugin";
 import {
-  Auth0AppRouter,
   createJwtContext,
+  JwtAppRouter,
   testJwtRouter,
-} from "~server-setup-plugin/test/setup";
+} from "~server-setup-plugin/test/utils/jwt";
 
 export const testPort = 3005;
 export const testHost = "localhost";
@@ -60,7 +60,7 @@ describe("jwt", () => {
 
   test("should be marked as unauthorized if there is no authorization header", async () => {
     // Don't pass authorization headers
-    const trpcClient = createTRPCClient<Auth0AppRouter>({
+    const trpcClient = createTRPCClient<JwtAppRouter>({
       links: [
         httpBatchLink({
           url: `http://${testHost}:${testPort}`,
@@ -78,7 +78,7 @@ describe("jwt", () => {
   });
 
   test("should throw error if not authorized", async () => {
-    const trpcClient = createTRPCClient<Auth0AppRouter>({
+    const trpcClient = createTRPCClient<JwtAppRouter>({
       links: [
         httpBatchLink({
           url: `http://${testHost}:${testPort}`,
@@ -102,9 +102,9 @@ describe("jwt", () => {
   });
 
   test("should be marked as authorized if passed valid token", async () => {
-    const token = testServer.jwt.sign({ user: "test-user" });
+    const token = testServer.jwt.regular.sign({ user: "test-user" });
 
-    const trpcClient = createTRPCClient<Auth0AppRouter>({
+    const trpcClient = createTRPCClient<JwtAppRouter>({
       links: [
         httpBatchLink({
           url: `http://${testHost}:${testPort}`,

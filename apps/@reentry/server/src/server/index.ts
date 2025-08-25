@@ -69,12 +69,20 @@ export function buildServer() {
     );
   }
 
+  if (!process.env["AUTH0_DOMAIN"] || !process.env["AUTH0_AUDIENCE"]) {
+    throw new Error("Missing required environment variables for Auth0");
+  }
+
   const server = buildCommonServer({
     appRouter,
     createContext,
     useWSS: true, // Enable WebSocket support
     jwtOptions: {
       key: jwtKey,
+    },
+    auth0Options: {
+      domain: process.env["AUTH0_DOMAIN"],
+      audience: process.env["AUTH0_AUDIENCE"],
     },
     trpcPrefix: "trpc",
   });
@@ -124,7 +132,7 @@ export function buildServer() {
         );
       return;
     }
-    const token = server.jwt.sign({
+    const token = server.jwt.regular.sign({
       pseudonymizedId: client.pseudonymizedId,
     });
 
@@ -171,7 +179,7 @@ export function buildServer() {
         return;
       }
 
-      const token = server.jwt.sign({
+      const token = server.jwt.regular.sign({
         clientPseudoId: client.pseudonymizedId,
         stateCode: state_code,
       });

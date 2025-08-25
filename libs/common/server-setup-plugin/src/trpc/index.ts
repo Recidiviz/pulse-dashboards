@@ -15,11 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-// Required to get the "request.jwtVerify" decorator to be recognized by typescript
-import "@fastify/jwt";
-
 import { trpcMiddleware } from "@sentry/node";
-import { initTRPC, TRPCError } from "@trpc/server";
+import { initTRPC } from "@trpc/server";
 import type { CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 import { VerifierAsync } from "fast-jwt";
 
@@ -41,7 +38,7 @@ export async function verifyAuth0Token(opts: CreateFastifyContextOptions) {
   }
 }
 
-export async function verifyJwtToken(
+export async function verifyRegularJwtToken(
   opts: CreateFastifyContextOptions,
   verifier?: typeof VerifierAsync,
 ) {
@@ -70,7 +67,8 @@ export async function verifyJwtToken(
         throw new Error("No token provided in HTTP request");
       }
 
-      await req.jwtVerify();
+      // This is is a different namespace so it doesn't potentially conflict with the regular JWT verification
+      await req.regularJwtVerify();
       return req.user;
     }
   } catch (err) {
@@ -80,25 +78,11 @@ export async function verifyJwtToken(
 }
 
 export function procedurePlugin() {
-  const t = initTRPC
-    .context<{
-      isAuthorized: boolean;
-    }>()
-    .create();
+  const t = initTRPC.context().create();
 
-  return {
-    procedure: t.procedure
-      .use(
-        trpcMiddleware({
-          attachRpcInput: true,
-        }),
-      )
-      .use(async (opts) => {
-        const { ctx } = opts;
-        if (!ctx.isAuthorized) {
-          throw new TRPCError({ code: "UNAUTHORIZED" });
-        }
-        return opts.next();
-      }),
-  };
+  return t.procedure.use(
+    trpcMiddleware({
+      attachRpcInput: true,
+    }),
+  );
 }

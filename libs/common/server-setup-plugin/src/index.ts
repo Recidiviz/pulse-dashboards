@@ -88,6 +88,8 @@ export function buildCommonServer<TRouter extends AnyRouter>(
       sign: { algorithm, expiresIn },
       cookie,
       verify: { algorithms: [algorithm] },
+      // Create a namespace so that the verification function doesn't collide with the Auth0 one
+      namespace: "regular",
     });
   }
 
@@ -101,3 +103,4 @@ export function buildCommonServer<TRouter extends AnyRouter>(
 }
 
 export * from "~server-setup-plugin/trpc";
+export * from "~server-setup-plugin/types";
