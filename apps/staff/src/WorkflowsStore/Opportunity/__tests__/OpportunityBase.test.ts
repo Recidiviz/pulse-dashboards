@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { add, format, parseISO, sub } from "date-fns";
-import { DocumentData, writeBatch } from "firebase/firestore";
+import { DocumentData, Timestamp, writeBatch } from "firebase/firestore";
 import { configure, runInAction } from "mobx";
 import timekeeper from "timekeeper";
 import { MockInstance } from "vitest";
@@ -25,7 +25,11 @@ import { OpportunityRecordBase, OpportunityType } from "~datatypes";
 import { HydrationState } from "~hydration-utils";
 
 import { mockOpportunity } from "../../../core/__tests__/testUtils";
-import { CombinedUserRecord, OpportunityUpdate } from "../../../FirestoreStore";
+import {
+  CombinedUserRecord,
+  OfficerDenialAction,
+  OpportunityUpdate,
+} from "../../../FirestoreStore";
 import { RootStore } from "../../../RootStore";
 import AnalyticsStore from "../../../RootStore/AnalyticsStore";
 import { formatDateToISO } from "../../../utils";
@@ -1270,5 +1274,105 @@ describe("eligibilityStatusLabel", () => {
 
       expect(opp.maxManualSnoozeDays([])).toEqual(90);
     });
+  });
+});
+
+describe("setOfficerAction", () => {
+  beforeEach(() => {
+    vi.spyOn(root.firestoreStore, "updateOpportunityActionHistory");
+    vi.spyOn(opp, "actionHistory", "get").mockReturnValue([] as any);
+    timekeeper.freeze(new Date("2025-01-15"));
+  });
+  test("sets approval action", async () => {
+    await opp.setOfficerAction({ type: "APPROVAL" });
+
+    const expectedAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "test@email.gov",
+      isStale: false,
+      type: "APPROVAL",
+    };
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [expectedAction]);
+  });
+
+  test("sets denial action with action plan", async () => {
+    const testAction = {
+      type: "DENIAL",
+      denialReasons: ["REASON", "REASON2"],
+      requestedSnoozeLength: 30,
+      actionPlan: "Test action plan",
+    };
+    await opp.setOfficerAction(testAction as OfficerDenialAction);
+
+    const expectedAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "test@email.gov",
+      isStale: false,
+      ...testAction,
+    };
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [expectedAction]);
+  });
+
+  test("Appends action to end of current actionHistory", async () => {
+    const existingAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "test@email.gov",
+      isStale: false,
+      type: "APPROVAL",
+    };
+    vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
+      existingAction,
+    ] as any);
+
+    const testAction = {
+      type: "DENIAL",
+      denialReasons: ["REASON", "REASON2"],
+      requestedSnoozeLength: 30,
+      actionPlan: "Test action plan",
+    };
+    await opp.setOfficerAction(testAction as OfficerDenialAction);
+
+    const expectedAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "test@email.gov",
+      isStale: false,
+      ...testAction,
+    };
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [existingAction, expectedAction]);
+  });
+});
+
+describe("markActionHistoryStale", () => {
+  beforeEach(() => {
+    vi.spyOn(root.firestoreStore, "updateOpportunityActionHistory");
+    const existingAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "test@email.gov",
+      isStale: false, // stale flag initially set to false
+      type: "APPROVAL",
+    };
+    vi.spyOn(opp, "actionHistory", "get").mockReturnValue([
+      existingAction,
+    ] as any);
+  });
+
+  test("sets isStale on latest action", async () => {
+    await opp.markActionHistoryStale();
+
+    const expectedAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "test@email.gov",
+      isStale: true, // expect stale flag to have been set
+      type: "APPROVAL",
+    };
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [expectedAction]);
   });
 });

@@ -28,6 +28,9 @@ import {
   ExternalRequestUpdate,
   ExternalSystemRequestStatus,
   ManualSnoozeUpdate,
+  OfficerAction,
+  OfficerApprovalAction,
+  OfficerDenialAction,
   SharedSnoozeUpdate,
   Submission,
   UpdateLog,
@@ -183,6 +186,12 @@ export interface Opportunity<
   defaultManualSnoozeDays(denialReasons: string[]): number | undefined;
   opportunityBannerInfo?: OpportunityBannerInfo;
   bannerInfo?: OpportunityBannerInfo;
+  actionHistory: OfficerAction[] | undefined;
+  latestAction: OfficerAction | undefined;
+  setOfficerAction: (
+    officerActionParams: OfficerApprovalAction | OfficerDenialAction,
+  ) => Promise<void>;
+  markActionHistoryStale: () => Promise<void>;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

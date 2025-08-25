@@ -175,4 +175,8 @@ export const mockOpportunity: Opportunity<Client> = {
   defaultManualSnoozeDays: () => undefined,
   opportunityBannerInfo: undefined,
   bannerInfo: undefined,
+  actionHistory: undefined,
+  setOfficerAction: async () => undefined,
+  latestAction: undefined,
+  markActionHistoryStale: async () => undefined,
 };

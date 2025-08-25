@@ -22,7 +22,6 @@ import { intersection } from "lodash";
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { workflowsUrl } from "../../../../core/views";
 import {
-  OfficerAction,
   OfficerApprovalAction,
   OfficerDenialAction,
   SupervisorAction,
@@ -82,14 +81,6 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   get userName(): string {
     // We'll fall back to the user's email
     return this.rootStore.userStore.userFullName ?? this.currentUserEmail;
-  }
-
-  get actionHistory(): OfficerAction[] | undefined {
-    return this.updates?.actionHistory;
-  }
-
-  get latestAction() {
-    return this.actionHistory?.at(-1);
   }
 
   get mostRecentActions() {
@@ -225,24 +216,6 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       currentStatus: originalStatus,
       subsequentStatus: this.clientStatus,
     });
-  }
-
-  async markActionHistoryStale(): Promise<void> {
-    if (this.actionHistory && this.latestAction) {
-      const updatedOfficerAction = {
-        ...this.latestAction,
-        isStale: true,
-      };
-
-      const updatedActionHistory = this.actionHistory
-        .slice(0, -1)
-        .concat(updatedOfficerAction);
-
-      await this.rootStore.firestoreStore.updateOpportunityActionHistory(
-        this,
-        updatedActionHistory,
-      );
-    }
   }
 
   async setSupervisorResponse(

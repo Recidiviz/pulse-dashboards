@@ -23,7 +23,7 @@ import {
   parseISO,
   startOfToday,
 } from "date-fns";
-import { DocumentData } from "firebase/firestore";
+import { DocumentData, Timestamp } from "firebase/firestore";
 import { action, computed, makeObservable, when } from "mobx";
 
 import { OpportunityType } from "~datatypes";
@@ -42,6 +42,9 @@ import {
   AutoSnoozeUpdate,
   Denial,
   ManualSnoozeUpdate,
+  OfficerAction,
+  OfficerApprovalAction,
+  OfficerDenialAction,
   OpportunityUpdate,
   OpportunityUpdateWithForm,
   SharedSnoozeUpdate,
@@ -829,10 +832,10 @@ export class OpportunityBase<
   }
 
   /**
-   * Opportunities of different types that are tightly linked are companion opportunities. 
+   * Opportunities of different types that are tightly linked are companion opportunities.
    * For example, if an opportunity UI element will be present if another opportunity of
-   * a different type is "Pending", they are companion opportunities. 
-   * 
+   * a different type is "Pending", they are companion opportunities.
+   *
    * This function returns the companion opportunities for this base opportunity.
    */
   get companionOpportunities() {
@@ -841,6 +844,67 @@ export class OpportunityBase<
     return this.person.flattenedOpportunities.filter((opp) =>
       companionOpportunityTypes.includes(opp.type),
     );
+  }
+
+  /**
+   * The history of officer actions requiring supervisor approval that have been
+   * taken on an opportunity .
+   */
+  get actionHistory(): OfficerAction[] | undefined {
+    return this.updates?.actionHistory;
+  }
+
+  get latestAction() {
+    return this.actionHistory?.at(-1);
+  }
+
+  /**
+   * Push a new officer action requiring supervisor approval onto the action history
+   * timeline.
+   */
+  async setOfficerAction(
+    officerActionParams: OfficerApprovalAction | OfficerDenialAction,
+  ): Promise<void> {
+    const officerAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: this.currentUserEmail,
+      isStale: false,
+      ...officerActionParams,
+    };
+    const updatedActionHistory = (this.actionHistory ?? []).concat(
+      officerAction,
+    );
+
+    await this.rootStore.firestoreStore.updateOpportunityActionHistory(
+      this,
+      updatedActionHistory,
+    );
+  }
+
+  /**
+   * Mark the latest officer action as stale. A stale action should not be relied upon
+   * when determining client status, as staleness signifies that some other action has
+   * broken the client out of the supervisor approval cycle. Some examples of when an
+   * officer action should be marked stale are:
+   *   - when a client is successfully snoozed
+   *   - when an indefinite snooze is denied
+   */
+  async markActionHistoryStale(): Promise<void> {
+    if (this.actionHistory && this.latestAction) {
+      const updatedOfficerAction = {
+        ...this.latestAction,
+        isStale: true,
+      };
+
+      const updatedActionHistory = this.actionHistory
+        .slice(0, -1)
+        .concat(updatedOfficerAction);
+
+      await this.rootStore.firestoreStore.updateOpportunityActionHistory(
+        this,
+        updatedActionHistory,
+      );
+    }
   }
 
   // ===============================

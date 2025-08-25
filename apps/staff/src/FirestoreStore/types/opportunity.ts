@@ -66,6 +66,10 @@ export type OfficerDenialAction = {
 export type OfficerAction = UpdateLog &
   (OfficerApprovalAction | OfficerDenialAction) & {
     supervisorResponse?: SupervisorAction;
+    // Set to true when this OfficerAction should not be relied upon to determine
+    // a client's status or tab. Signifies that some unrelated action has been taken to
+    // break the client out of the supervisor approval flow (e.g. the client was
+    // snoozed successfully, ending the approval lifecycle).
     isStale: boolean;
   };
 
