@@ -34,4 +34,10 @@ export interface AuthContextType {
   logout: () => Promise<void>;
   getAccessToken: () => string | null | undefined;
   refreshToken: () => Promise<void>;
+  userAppMetadata?: UserAppMetadata;
 }
+
+export type UserAppMetadata = {
+  stateCode: string;
+  pseudonymizedId?: string;
+};

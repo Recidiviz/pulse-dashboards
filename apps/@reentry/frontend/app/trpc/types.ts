@@ -15,22 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export interface IntakeFields {
-  firstName: string;
-  lastName: string;
-  month: string;
-  day: string;
-  year: string;
-  stateCode: string;
+export type ConnectionState = "connecting" | "connected" | "closed" | "error";
+
+export interface ConnectionStatus {
+  connectionState?: ConnectionState;
+  connectionError?: Event;
 }
 
-export interface IntakeResponse {
-  clientPseudoId: string;
-  token: string;
-}
-
-export interface AuthVerificationResponse {
-  authorized: boolean;
-  clientPseudoId?: string;
-  stateCode?: string;
+export interface UseTrpcReactQueryOptions {
+  enableWS?: boolean;
+  token?: string | null;
+  stateCode?: string | null;
+  headers?: () => Record<string, string>;
+  connectionParams?: () => Record<string, string>;
 }

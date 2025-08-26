@@ -24,8 +24,8 @@ import styles from "~@reentry/frontend/components/IntakeChatV2/Chat/Conversation
 import Sidebar from "~@reentry/frontend/components/IntakeChatV2/Chat/Sidebar";
 import { useAutoScroll } from "~@reentry/frontend/components/IntakeChatV2/hooks/useAutoScroll";
 import { useChatContext } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
-import { ConnectionStatus } from "~@reentry/frontend/components/IntakeChatV2/types";
 import { getMessagesForCurrentSection } from "~@reentry/frontend/components/IntakeChatV2/utils";
+import { ConnectionStatus } from "~@reentry/frontend/trpc/types";
 interface ConversationLayoutProps {
   connectionStatus?: ConnectionStatus;
 }

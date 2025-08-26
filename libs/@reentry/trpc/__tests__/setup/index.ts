@@ -151,6 +151,13 @@ export const initTestServer = async () => {
     logger: true,
   });
 
+  testServer.addHook("preHandler", (req, reply, done) => {
+    req.jwtVerify = async () => {
+      return;
+    };
+    done();
+  });
+
   testServer.register(fastifyJwt, {
     secret: process.env["INTAKE_PRIVATE_JWT_KEY"] ?? "",
     sign: { algorithm: "HS256", expiresIn: "5h" },

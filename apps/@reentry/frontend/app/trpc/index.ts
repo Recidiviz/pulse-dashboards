@@ -15,22 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export interface IntakeFields {
-  firstName: string;
-  lastName: string;
-  month: string;
-  day: string;
-  year: string;
-  stateCode: string;
-}
+import { createTRPCReact } from "@trpc/react-query";
 
-export interface IntakeResponse {
-  clientPseudoId: string;
-  token: string;
-}
+import type { AppRouter } from "~@reentry/trpc-types";
 
-export interface AuthVerificationResponse {
-  authorized: boolean;
-  clientPseudoId?: string;
-  stateCode?: string;
-}
+export const trpc = createTRPCReact<AppRouter>();
+export const trpcUrl = `${process.env["NEXT_PUBLIC_API_URL"] ?? ""}/trpc`;

@@ -19,19 +19,19 @@ import { useState } from "react";
 
 import Address from "~@reentry/frontend/components/IntakeChatV2/Address/Address";
 import ConversationLayout from "~@reentry/frontend/components/IntakeChatV2/Chat/ConversationLayout";
-import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
 import IntakeComplete from "~@reentry/frontend/components/IntakeChatV2/IntakeComplete/IntakeComplete";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import PreIntake from "~@reentry/frontend/components/IntakeChatV2/PreIntake/PreIntake";
 import { ChatProvider } from "~@reentry/frontend/components/IntakeChatV2/providers/ChatProvider";
-import { ConnectionStatus } from "~@reentry/frontend/components/IntakeChatV2/types";
+import { trpc } from "~@reentry/frontend/trpc";
+import { useTrpcConnection } from "~@reentry/frontend/trpc/TrpcReactQueryProvider";
 
 interface ChatProps {
   clientId: string | null;
-  connectionStatus?: ConnectionStatus;
 }
 
-const Chat = ({ clientId, connectionStatus }: ChatProps) => {
+const Chat = ({ clientId }: ChatProps) => {
+  const connectionStatus = useTrpcConnection();
   const [chatSessionKey, setChatSessionKey] = useState(0);
 
   if (!clientId) return null;

@@ -61,6 +61,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     accessToken: null,
   });
 
+  const METADATA_NAMESPACE =
+    process.env["NEXT_PUBLIC_AUTH0_METADATA_NAMESPACE"];
+  const appMetadataKey = `${METADATA_NAMESPACE}app_metadata`;
+  const userAppMetadata = authStore?.user?.[appMetadataKey];
+
   // Initialize the auth store
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -217,6 +222,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         logout,
         getAccessToken,
         refreshToken,
+        userAppMetadata,
       }}
     >
       {children}

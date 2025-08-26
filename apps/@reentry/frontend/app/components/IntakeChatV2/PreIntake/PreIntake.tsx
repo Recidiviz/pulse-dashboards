@@ -17,10 +17,10 @@
 
 import React, { useState } from "react";
 
-import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
 import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import StepOne from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepOne";
 import StepTwo from "~@reentry/frontend/components/IntakeChatV2/PreIntake/StepTwo";
+import { trpc } from "~@reentry/frontend/trpc";
 import { showErrorToast } from "~@reentry/frontend/utils/toast";
 
 interface PreIntakeProps {

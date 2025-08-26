@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2025 Recidiviz, Inc.
+// Copyright (C) 2024 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,22 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export interface IntakeFields {
-  firstName: string;
-  lastName: string;
-  month: string;
-  day: string;
-  year: string;
-  stateCode: string;
-}
+import { z } from "zod";
 
-export interface IntakeResponse {
-  clientPseudoId: string;
-  token: string;
-}
+export const getIntakeInputSchema = z.object({
+  clientPseudoId: z.string(),
+});
 
-export interface AuthVerificationResponse {
-  authorized: boolean;
-  clientPseudoId?: string;
-  stateCode?: string;
-}
+export const toggleIntakeInputSchema = z.object({
+  clientPseudoId: z.string(),
+  enable: z.boolean(),
+});

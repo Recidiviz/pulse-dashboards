@@ -18,10 +18,12 @@
 import { router } from "~@reentry/trpc/init";
 import { clientRouter } from "~@reentry/trpc/routes/client/client.router";
 import { intakeChatRouter } from "~@reentry/trpc/routes/intake-chat/intake-chat.router";
+import { staffRouter } from "~@reentry/trpc/routes/staff/staff.router";
 
 export const appRouter = router({
   intake: intakeChatRouter,
   clientRecords: clientRouter,
+  staff: staffRouter,
 });
 
 // export type definition of API

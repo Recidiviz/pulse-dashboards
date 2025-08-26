@@ -31,8 +31,8 @@ import {
   Intake,
   Message,
 } from "~@reentry/frontend/components/IntakeChatV2/Chat/types";
-import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
-import { ConnectionStatus } from "~@reentry/frontend/components/IntakeChatV2/types";
+import { trpc } from "~@reentry/frontend/trpc";
+import { ConnectionStatus } from "~@reentry/frontend/trpc/types";
 
 interface ChatState {
   sections?: Intake["config"]["sections"];

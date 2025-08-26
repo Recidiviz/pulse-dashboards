@@ -22,8 +22,10 @@ import { FiLink } from "react-icons/fi";
 import { $api } from "~@reentry/frontend/api";
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import AudioRecordings from "~@reentry/frontend/components/intake/VoiceIntake/AudioRecordings";
+import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { trpc } from "~@reentry/frontend/trpc";
 import { formatDateMMDDYYYY } from "~@reentry/frontend/utils/index";
 import { getStateName } from "~@reentry/frontend/utils/states";
 import {
@@ -59,25 +61,41 @@ const ClientSummaryCard: React.FC<ClientSummaryCardProps> = ({
   const [linkLoading, setLinkLoading] = useState(false);
 
   const auth = useAuth();
+  const clientPseudoId = auth.userAppMetadata?.["pseudonymizedId"] ?? "";
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
 
+  const { data: intakeInfo } = trpc.staff.getIntakeEnabled.useQuery({
+    clientPseudoId,
+  });
+  const toggleIntake = trpc.staff.toggleIntake.useMutation();
   const { mutateAsync: startIntakeAsync } = $api.useMutation(
     "post",
     "/intake/admin/{client_id}",
   );
 
+  const isIntakeEnabled = IS_V2_INTAKE_CHAT
+    ? intakeInfo?.intakeEnabled
+    : Boolean(intake);
+
   const startIntake = async () => {
     setLinkLoading(true);
     try {
-      await startIntakeAsync({
-        params: {
-          path: { client_id: clientRecord.external_client_id },
-        },
-        headers: {
-          Authorization: `Bearer ${auth.getAccessToken()}`,
-          "Content-Type": "application/json",
-        },
-      });
+      if (IS_V2_INTAKE_CHAT) {
+        await toggleIntake.mutateAsync({
+          clientPseudoId,
+          enable: true,
+        });
+      } else {
+        await startIntakeAsync({
+          params: {
+            path: { client_id: clientRecord.external_client_id },
+          },
+          headers: {
+            Authorization: `Bearer ${auth.getAccessToken()}`,
+            "Content-Type": "application/json",
+          },
+        });
+      }
 
       onIntakeUpdate();
       showSuccessToast("Intake enabled successfully");
@@ -142,7 +160,7 @@ const ClientSummaryCard: React.FC<ClientSummaryCardProps> = ({
             {clientRecord.state_code !== "US_AZ" && (
               <Grid item xs={12} md={7} className="border-r border-gray-200">
                 <div className="bg-white rounded-lg shadow-sm p-10">
-                  {intake ? (
+                  {isIntakeEnabled ? (
                     <>
                       <div className="flex justify-between pl-5">
                         <div className="flex items-center">
@@ -150,14 +168,14 @@ const ClientSummaryCard: React.FC<ClientSummaryCardProps> = ({
                           <span
                             className={`ml-3 px-3 py-1 rounded-full text-xs ${
                               // eslint-disable-next-line no-nested-ternary
-                              intake.status === "completed"
+                              intake?.status === "completed"
                                 ? "bg-green-100 text-green-800"
-                                : intake.status === "in_progress"
+                                : intake?.status === "in_progress"
                                   ? "bg-blue-100 text-blue-800"
                                   : "bg-gray-100 text-gray-800"
                             }`}
                           >
-                            {intake.status
+                            {intake?.status
                               .replace(/_/g, " ")
                               .replace(/\b\w/g, (l) => l.toUpperCase())}
                           </span>
@@ -165,7 +183,7 @@ const ClientSummaryCard: React.FC<ClientSummaryCardProps> = ({
                         <span className="text-xs text-gray-500">
                           Last updated:{" "}
                           {new Date(
-                            intake.updated_at || Date.now(),
+                            intake?.updated_at || Date.now(),
                           ).toLocaleDateString(undefined, {
                             year: "numeric",
                             month: "short",

@@ -101,6 +101,7 @@ export function buildServer() {
     },
   );
 
+  // TODO: Remove endpoint when switching to V2
   server.get<{
     Querystring: GetIntakeTokenQueryString;
   }>("/get-intake-token", async (req, res) => {
@@ -144,6 +145,7 @@ export function buildServer() {
 
   server.post<{ Body: GetIntakeTokenBody }>(
     "/get-intake-token",
+    { onRequest: [], preValidation: [], preHandler: [] },
     async (req, res) => {
       const { first_name, last_name, date_of_birth, state_code } = req.body;
       const birthDate = new Date(date_of_birth);
@@ -291,6 +293,7 @@ export function buildServer() {
     },
   );
 
+  // TODO: Remove endpoint when switching to V2
   server.get<{
     Querystring: GetIntakeForClientQueryString;
     Params: RequestWithStateCodeParams;

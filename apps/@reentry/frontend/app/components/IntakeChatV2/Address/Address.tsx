@@ -17,7 +17,7 @@
 
 import React, { useMemo, useState } from "react";
 
-import { trpc } from "~@reentry/frontend/components/IntakeChatV2/IntakeChatV2";
+import { trpc } from "~@reentry/frontend/trpc";
 import {
   showErrorToast,
   showSuccessToast,
