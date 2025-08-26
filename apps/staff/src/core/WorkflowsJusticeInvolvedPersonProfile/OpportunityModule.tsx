@@ -65,7 +65,6 @@ const Wrapper = styled.div<{
 const ActionButtons = styled.div<{ isMobile: boolean }>`
   margin-top: ${rem(spacing.md)};
   display: flex;
-  align-items: baseline;
   gap: ${({ isMobile }) => (isMobile ? rem(spacing.sm) : rem(spacing.sm))};
   flex-direction: ${({ isMobile }) => (isMobile ? "column" : "row")};
 `;
