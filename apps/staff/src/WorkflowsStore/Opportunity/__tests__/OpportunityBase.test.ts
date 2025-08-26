@@ -1296,6 +1296,24 @@ describe("setOfficerAction", () => {
       root.firestoreStore.updateOpportunityActionHistory,
     ).toHaveBeenCalledWith(opp, [expectedAction]);
   });
+  test("sets indefinite snooze denial action", async () => {
+    const testAction = {
+      type: "DENIAL",
+      denialReasons: ["INDEFINITE REASON"],
+      requestedSnoozeLength: undefined,
+    };
+    await opp.setOfficerAction(testAction as OfficerDenialAction);
+
+    const expectedAction = {
+      date: Timestamp.fromDate(new Date()),
+      by: "test@email.gov",
+      isStale: false,
+      ...testAction,
+    };
+    expect(
+      root.firestoreStore.updateOpportunityActionHistory,
+    ).toHaveBeenCalledWith(opp, [expectedAction]);
+  });
 
   test("sets denial action with action plan", async () => {
     const testAction = {

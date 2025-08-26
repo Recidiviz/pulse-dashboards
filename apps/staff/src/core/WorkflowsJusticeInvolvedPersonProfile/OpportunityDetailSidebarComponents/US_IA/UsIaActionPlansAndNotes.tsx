@@ -56,7 +56,7 @@ function OfficerActionContents({
     const denialReasons = `Denial Reasons: ${action.denialReasons.join(", ")}`;
     const snooze = action?.requestedSnoozeLength
       ? `Snooze: ${action.requestedSnoozeLength} Days (Will resurface: ${formatWorkflowsDate(addDays(new Date(), action.requestedSnoozeLength))})`
-      : undefined;
+      : "Snooze: Indefinite (Will not resurface)";
 
     return (
       <div>

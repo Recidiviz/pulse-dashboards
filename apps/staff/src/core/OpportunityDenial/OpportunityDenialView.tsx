@@ -28,7 +28,10 @@ import { palette } from "~design-system";
 import { CharacterCountTextField } from "../../components/CharacterCountTextField";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import Slider from "../../components/Slider";
-import { useRootStore } from "../../components/StoreProvider";
+import {
+  useFeatureVariants,
+  useRootStore,
+} from "../../components/StoreProvider";
 import {
   ActionButton,
   MenuItem,
@@ -83,6 +86,8 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const {
     tenantStore: { labels },
   } = useRootStore();
+
+  const { indefiniteSnooze } = useFeatureVariants();
 
   const isIaEDOpportunity =
     opportunity instanceof UsIaEarlyDischargeOpportunity;
@@ -172,16 +177,53 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     onSubmit();
   };
 
+  const handleIndefiniteSnoozeRequest = async () => {
+    // If a client is moving into snooze review, we should
+    // delete denials and submissions, if applicable.
+    if (opportunity.denied) {
+      await opportunity.deleteOpportunityDenialAndSnooze();
+    }
+    if (opportunity.isSubmitted) {
+      await opportunity.deleteSubmitted();
+    }
+    await opportunity.setOfficerAction({
+      type: "DENIAL",
+      denialReasons: reasons,
+    });
+
+    toast(
+      <OpportunityStatusUpdateToast
+        toastText={`You have submitted ${opportunity.person.displayName} for indefinite snooze under 'Supervisor Review'.`}
+      />,
+      {
+        id: "indefiniteSnoozeSubmittedToast", // prevent duplicate toasts
+        position: "bottom-left",
+      },
+    );
+
+    onSubmit();
+  };
+
   const DenialConfirmationModal =
     denialConfirmationModalName &&
     DenialConfirmationModals[denialConfirmationModalName];
+
+  const isIndefiniteReasonRequiringApproval = reasons.some(
+    (reason) => reason in opportunity.indefiniteDenialReasons,
+  );
 
   const handleSave = async () => {
     if (denialConfirmationModalName) {
       setShowConfirmationModal(true);
     } else {
       setSaveInProgress(true);
-      await submitDenial();
+      // For indefinite snooze reasons, create an officer denial request instead of
+      // kicking off the snooze immediately.
+      if (indefiniteSnooze && isIndefiniteReasonRequiringApproval) {
+        await handleIndefiniteSnoozeRequest();
+      } else {
+        await submitDenial();
+      }
       setSaveInProgress(false);
     }
   };

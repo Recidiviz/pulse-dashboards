@@ -179,4 +179,5 @@ export const mockOpportunity: Opportunity<Client> = {
   setOfficerAction: async () => undefined,
   latestAction: undefined,
   markActionHistoryStale: async () => undefined,
+  indefiniteDenialReasons: {},
 };

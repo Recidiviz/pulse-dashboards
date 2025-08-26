@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import { useRootStore } from "../../../components/StoreProvider";
 import { UsIaEarlyDischargeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
 import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
+import { reasonsIncludesKey } from "../../utils/workflowsUtils";
 import { useOpportunitySidePanel } from "../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import {
   OpportunityStatusDropdownMenuItem,
@@ -63,10 +64,12 @@ const UsIaMenuButton = observer(function MenuButton({
         );
       }
 
+      const snoozeApprovalToastText = reasonsIncludesKey("PUBLIC SAFETY RISK")
+        ? `Action Plan has been approved. ${opportunity.person.displayName} will now be snoozed for ${latestAction.requestedSnoozeLength} days before reappearing.`
+        : `You have approved ${opportunity.person.displayName} for an indefinite snooze.`;
+
       toast(
-        <OpportunityStatusUpdateToast
-          toastText={`Action Plan has been approved. ${opportunity.person.displayName} will now be snoozed for ${latestAction.requestedSnoozeLength} days before reappearing.`}
-        />,
+        <OpportunityStatusUpdateToast toastText={snoozeApprovalToastText} />,
         {
           id: "snoozeApprovalToast",
           position: "bottom-left",

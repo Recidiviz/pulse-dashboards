@@ -192,6 +192,7 @@ export interface Opportunity<
     officerActionParams: OfficerApprovalAction | OfficerDenialAction,
   ) => Promise<void>;
   markActionHistoryStale: () => Promise<void>;
+  indefiniteDenialReasons: DenialReasonsMap;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

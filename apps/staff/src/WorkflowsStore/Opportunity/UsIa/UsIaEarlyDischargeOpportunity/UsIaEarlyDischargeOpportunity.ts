@@ -17,7 +17,7 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 import { Timestamp } from "firebase/firestore";
-import { intersection } from "lodash";
+import { intersection, pick } from "lodash";
 
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { workflowsUrl } from "../../../../core/views";
@@ -388,11 +388,14 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     return this.clientStatus !== "ELIGIBLE_NOW";
   }
 
+  get indefiniteSnoozeEnabled(): boolean {
+    return !!this.rootStore.userStore.activeFeatureVariants.indefiniteSnooze;
+  }
+
   maxManualSnoozeDays(denialReasons: string[]): number | undefined {
-    if (this.rootStore.userStore.activeFeatureVariants.indefiniteSnooze) {
-      const indefiniteReasons = ["INTERSTATE (IC-IN)", "COURT"];
+    if (this.indefiniteSnoozeEnabled) {
       const selectedIndefiniteReasons = intersection(
-        indefiniteReasons,
+        Object.keys(this.indefiniteDenialReasons),
         denialReasons,
       );
       // If an indefinite denial reason is selected, we'll return undefined (i.e. there
@@ -467,5 +470,14 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       };
     }
     return undefined;
+  }
+
+  get indefiniteDenialReasons() {
+    if (this.indefiniteSnoozeEnabled) {
+      const indefiniteReasonKeys = ["INTERSTATE (IC-IN)", "COURT"];
+      return pick(this.denialReasons, indefiniteReasonKeys);
+    } else {
+      return super.indefiniteDenialReasons;
+    }
   }
 }

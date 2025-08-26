@@ -367,6 +367,12 @@ describe("maxManualSnoozeDays", () => {
     ).mockReturnValue({
       indefiniteSnooze: {},
     });
+
+    vi.spyOn(opportunity, "denialReasons", "get").mockReturnValue({
+      "TEMPORARY REASON": "Temp reason label",
+      COURT: "Court reason triggers indefinite snooze",
+      "INTERSTATE (IC-IN)": "IC-IN triggers indefinite snooze",
+    });
   });
 
   test("Returns max from config if indefinite snooze reason is not selected", () => {

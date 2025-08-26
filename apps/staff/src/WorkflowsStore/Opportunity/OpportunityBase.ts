@@ -69,6 +69,7 @@ import { SnoozeConfiguration } from "./OpportunityConfigurations/modules/SnoozeC
 import {
   Component,
   DefaultEligibility,
+  DenialReasonsMap,
   FormVariant,
   Opportunity,
   OpportunityBannerInfo,
@@ -912,6 +913,10 @@ export class OpportunityBase<
   // in a subclass. Given their triviality they are not annotated by MobX either,
   // so subclasses can use normal annotations instead of having to use `override`.
   // ===============================
+
+  get indefiniteDenialReasons(): DenialReasonsMap {
+    return {};
+  }
 
   get formVariant(): FormVariant | undefined {
     return undefined;
