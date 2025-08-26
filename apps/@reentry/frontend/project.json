@@ -116,7 +116,7 @@
         "cherry-pick": {
           "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend-production:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner"
         },
-        "prod": {
+        "production": {
           "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend-production:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner"
         },
         "demo": {
