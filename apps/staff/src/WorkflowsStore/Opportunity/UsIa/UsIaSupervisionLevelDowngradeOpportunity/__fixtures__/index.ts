@@ -147,13 +147,13 @@ export const usIaEarlyDischargeRecordFixture: UsIaEarlyDischargeReferralRecordRa
 
 export const usIaSupervisionLevelDowngradeEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
-  allEligibleOpportunities: ["usIaSupervisionLevelDowngrade"],
+  allEligibleOpportunities: ["usIaCompleteSupervisionLevelDowngrade"],
 };
 
 export const usIaEdAndSldEligibleClientRecord: ClientRecord = {
   ...ineligibleClientRecord,
   allEligibleOpportunities: [
-    "usIaSupervisionLevelDowngrade",
+    "usIaCompleteSupervisionLevelDowngrade",
     "usIaEarlyDischarge",
   ],
 };

@@ -833,21 +833,6 @@ export class OpportunityBase<
   }
 
   /**
-   * Opportunities of different types that are tightly linked are companion opportunities.
-   * For example, if an opportunity UI element will be present if another opportunity of
-   * a different type is "Pending", they are companion opportunities.
-   *
-   * This function returns the companion opportunities for this base opportunity.
-   */
-  get companionOpportunities() {
-    const companionOpportunityTypes =
-      this.config.companionOpportunityTypes ?? [];
-    return this.person.flattenedOpportunities.filter((opp) =>
-      companionOpportunityTypes.includes(opp.type),
-    );
-  }
-
-  /**
    * The history of officer actions requiring supervisor approval that have been
    * taken on an opportunity .
    */

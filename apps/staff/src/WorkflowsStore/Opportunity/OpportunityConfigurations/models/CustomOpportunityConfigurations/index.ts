@@ -59,7 +59,7 @@ const customOpportunityConfigurations: Partial<
   // This is a non-constructed opportunity that is being customized
   ["usNdTransferToMinFacility" as OpportunityType]: UsNdTransferToMinFacility,
   usIaEarlyDischarge: UsIaEarlyDischargeConfiguration,
-  usIaSupervisionLevelDowngrade: UsIaSupervisionLevelDowngradeConfiguration,
+  usIaCompleteSupervisionLevelDowngrade: UsIaSupervisionLevelDowngradeConfiguration,
   usUtEarlyTermination: UsUtEarlyTerminationConfiguration,
 };
 

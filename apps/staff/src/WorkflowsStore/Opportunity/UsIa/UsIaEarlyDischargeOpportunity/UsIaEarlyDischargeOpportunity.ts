@@ -414,20 +414,26 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     return reasons.every((item) => RELEVANT_ED_DENIAL_REASONS.includes(item));
   }
 
+  /**
+   * This opportunity shows a Banner Opportunity Preview if it has a "Pending" SLD companion opp
+   */
   get sldCompanionOpportunity():
     | UsIaSupervisionLevelDowngradeOpportunity
     | undefined {
-    const sldOpportunity = this.companionOpportunities.filter(
-      (opportunity) => opportunity.type === "usIaSupervisionLevelDowngrade",
+    const companionOpportunityType = "usIaCompleteSupervisionLevelDowngrade";
+    const companionOpportunities = this.person.flattenedOpportunities.filter(
+      (opp) => opp.type === companionOpportunityType,
     ) as UsIaSupervisionLevelDowngradeOpportunity[];
 
-    if (sldOpportunity.length > 1) {
+    if (companionOpportunities.length > 1) {
       throw new Error(
-        "Expected either zero or one companion UsIaEarlyDischargeOpportunity, received multiple.",
+        "Expected either zero or one companion UsIASupervisionLevelDowngrade, received multiple.",
       );
     }
 
-    return sldOpportunity.length === 0 ? undefined : sldOpportunity[0];
+    return companionOpportunities.length === 0
+      ? undefined
+      : companionOpportunities[0];
   }
 
   get hasPendingSldCompanionOpportunity(): boolean {
@@ -450,7 +456,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       {
         justiceInvolvedPersonId: this.person.pseudonymizedId,
         opportunityType: this.type,
-        companionOpportunityType: "usIaSupervisionLevelDowngrade",
+        companionOpportunityType: "usIaCompleteSupervisionLevelDowngrade",
       },
     );
   }

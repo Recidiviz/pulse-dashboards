@@ -39,7 +39,7 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     expirationDate: relativeFixtureDate({ months: 2 }),
     allEligibleOpportunities: [
       "usIaEarlyDischarge",
-      "usIaSupervisionLevelDowngrade",
+      "usIaCompleteSupervisionLevelDowngrade",
     ],
   },
   {
@@ -61,7 +61,7 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     expirationDate: relativeFixtureDate({ months: 7 }),
     allEligibleOpportunities: [
       "usIaEarlyDischarge",
-      "usIaSupervisionLevelDowngrade",
+      "usIaCompleteSupervisionLevelDowngrade",
     ],
   },
   {
@@ -83,7 +83,7 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     expirationDate: relativeFixtureDate({ months: 12 }),
     allEligibleOpportunities: [
       "usIaEarlyDischarge",
-      "usIaSupervisionLevelDowngrade",
+      "usIaCompleteSupervisionLevelDowngrade",
     ],
   },
   {
@@ -105,7 +105,7 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     expirationDate: relativeFixtureDate({ months: 9 }),
     allEligibleOpportunities: [
       "usIaEarlyDischarge",
-      "usIaSupervisionLevelDowngrade",
+      "usIaCompleteSupervisionLevelDowngrade",
     ],
   },
   {
@@ -127,7 +127,7 @@ export const US_IA_CLIENTS: ClientFixture[] = [
     expirationDate: relativeFixtureDate({ months: 11 }),
     allEligibleOpportunities: [
       "usIaEarlyDischarge",
-      "usIaSupervisionLevelDowngrade",
+      "usIaCompleteSupervisionLevelDowngrade",
     ],
   },
 ];

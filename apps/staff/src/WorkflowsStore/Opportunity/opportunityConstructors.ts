@@ -96,7 +96,7 @@ export const opportunityConstructors = {
 
   // US_IA
   usIaEarlyDischarge: UsIaEarlyDischargeOpportunity,
-  usIaSupervisionLevelDowngrade: UsIaSupervisionLevelDowngradeOpportunity,
+  usIaCompleteSupervisionLevelDowngrade: UsIaSupervisionLevelDowngradeOpportunity,
 
   // US_ID
   usIdCRCResidentWorker: UsIdCRCResidentWorkerOpportunity,

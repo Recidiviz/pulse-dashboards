@@ -210,7 +210,7 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usMoOverdueRestrictiveHousingReviewHearingReferrals,
   usUtEarlyTerminationReferrals,
   usIaEarlyDischargeReferrals: usIaEarlyDischargeReferralsFixture,
-  usIaSupervisionLevelDowngradeReferrals:
+  usIaCompleteSupervisionLevelDowngradeReferrals:
     usIaSupervisionLevelDowngradeReferralsFixture,
   usNdTransferToMinFacilityReferrals,
   usMoOutsideClearanceReferrals,

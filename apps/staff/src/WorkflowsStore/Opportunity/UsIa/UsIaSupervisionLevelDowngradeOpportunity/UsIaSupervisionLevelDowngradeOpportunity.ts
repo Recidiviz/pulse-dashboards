@@ -34,26 +34,34 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   constructor(client: Client, record: DocumentData) {
     super(
       client,
-      "usIaSupervisionLevelDowngrade",
+      "usIaCompleteSupervisionLevelDowngrade",
       client.rootStore,
       usIaSupervisionLevelDowngradeSchema.parse(record),
     );
   }
 
+  /**
+   * This opportunity shows up in the "Pending Eligibility" tab if the companion ED opp has a
+   * relevant denial reason
+   */
   get earlyDischargeCompanionOpportunity():
     | UsIaEarlyDischargeOpportunity
     | undefined {
-    const earlyDischargeOpportunity = this.companionOpportunities.filter(
-      (opportunity) => opportunity.type === "usIaEarlyDischarge",
-    ) as UsIaEarlyDischargeOpportunity[];
+    const companionOpportunityType = "usIaEarlyDischarge";
+    const earlyDischargeOpportunities =
+      this.person.flattenedOpportunities.filter(
+        (opportunity) => opportunity.type === companionOpportunityType,
+      ) as UsIaEarlyDischargeOpportunity[];
 
-    if (earlyDischargeOpportunity.length > 1) {
+    if (earlyDischargeOpportunities.length > 1) {
       throw new Error(
         "Expected either zero or one companion UsIaEarlyDischargeOpportunity, received multiple.",
       );
     }
 
-    return earlyDischargeOpportunity[0];
+    return earlyDischargeOpportunities.length === 0
+      ? undefined
+      : earlyDischargeOpportunities[0];
   }
 
   get pendingEligibility(): boolean {

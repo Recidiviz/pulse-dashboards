@@ -24,9 +24,9 @@ import timekeeper from "timekeeper";
 import { RootStore } from "../../../../../RootStore";
 import UserStore from "../../../../../RootStore/UserStore";
 import { Client } from "../../../../Client";
-import { OpportunityBase } from "../../../OpportunityBase";
 import { UsIaSupervisionLevelDowngradeOpportunity } from "../../UsIaSupervisionLevelDowngradeOpportunity";
 import {
+  usIaEarlyDischargeRecordFixture,
   usIaEdAndSldEligibleClientRecord,
   usIaSupervisionLevelDowngradeRecordFixture,
 } from "../../UsIaSupervisionLevelDowngradeOpportunity/__fixtures__";
@@ -35,11 +35,11 @@ import {
   UsIaEarlyDischargeOpportunity,
 } from "../UsIaEarlyDischargeOpportunity";
 
+let rootStore: RootStore;
+
 describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
   let opportunity: UsIaEarlyDischargeOpportunity;
   const updateLog = { date: Timestamp.fromDate(new Date()), by: "User" };
-  let client: Client;
-  let rootStore: RootStore;
 
   beforeEach(() => {
     configure({ safeDescriptors: false });
@@ -223,37 +223,52 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
       expect(opportunity.sldRelevantDenial).toBe(false);
     });
   });
+});
 
-  describe("supervisionLevelDowngradeCompanionOpportunity", () => {
+describe("companion opportunity", () => {
+  let client: Client;
+  let opportunity: UsIaEarlyDischargeOpportunity;
+  let sldOpportunity: UsIaSupervisionLevelDowngradeOpportunity;
+
+  beforeEach(() => {
+    configure({ safeDescriptors: false });
+    rootStore = new RootStore();
+    rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
+    vi.spyOn(
+      rootStore.workflowsStore,
+      "opportunityTypes",
+      "get",
+    ).mockReturnValue(["usIaEarlyDischarge"]);
+    client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
+    opportunity = new UsIaEarlyDischargeOpportunity(
+      client,
+      usIaEarlyDischargeRecordFixture,
+    );
+    sldOpportunity = new UsIaSupervisionLevelDowngradeOpportunity(
+      client,
+      usIaSupervisionLevelDowngradeRecordFixture,
+    );
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+    configure({ safeDescriptors: true });
+  });
+
+  describe("sldCompanionOpportunity", () => {
     it("returns undefined when no companion opportunity exists", () => {
-      vi.spyOn(
-        OpportunityBase.prototype,
-        "companionOpportunities",
-        "get",
-      ).mockReturnValue([]);
+      vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue([
+        opportunity,
+      ]);
 
       expect(opportunity.sldCompanionOpportunity).toBeUndefined();
     });
 
     it("returns the sld opportunity when it exists", () => {
-      const rootStore = new RootStore();
-      rootStore.workflowsRootStore.opportunityConfigurationStore.mockHydrated();
-      vi.spyOn(
-        rootStore.workflowsStore,
-        "opportunityTypes",
-        "get",
-      ).mockReturnValue(["usIaEarlyDischarge"]);
-      const client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
-      const sldOpportunity = new UsIaSupervisionLevelDowngradeOpportunity(
-        client,
-        usIaSupervisionLevelDowngradeRecordFixture,
-      );
-
-      vi.spyOn(
-        OpportunityBase.prototype,
-        "companionOpportunities",
-        "get",
-      ).mockReturnValue([sldOpportunity]);
+      vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue([
+        opportunity,
+        sldOpportunity,
+      ]);
 
       expect(opportunity.sldCompanionOpportunity).toBe(sldOpportunity);
     });
@@ -269,16 +284,14 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
         "get",
       ).mockReturnValue([
         "usIaEarlyDischarge",
-        "usIaSupervisionLevelDowngrade",
+        "usIaCompleteSupervisionLevelDowngrade",
       ]);
     });
 
     it("returns undefined when no companion opportunity exists", () => {
-      vi.spyOn(
-        OpportunityBase.prototype,
-        "companionOpportunities",
-        "get",
-      ).mockReturnValue([]);
+      vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue([
+        opportunity,
+      ]);
 
       expect(opportunity.bannerInfo).toBeUndefined();
     });
@@ -286,19 +299,22 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
     it("returns the correct banner info when there is a companion sld opp", () => {
       client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
       opportunity.person = client;
-      opportunity.updatesSubscription.data!.denial = {
-        reasons: ["FINES & FEES", "COURT"],
+      opportunity.updatesSubscription = {
+        data: { denial: { reasons: ["FINES & FEES", "COURT"] } },
+        subscribe: vi.fn(),
+        unsubscribe: vi.fn(),
+        hydrate: vi.fn(),
+        hydrationState: { status: "hydrated" },
       };
       const sldOpportunity = new UsIaSupervisionLevelDowngradeOpportunity(
         client,
         usIaSupervisionLevelDowngradeRecordFixture,
       );
 
-      vi.spyOn(
-        OpportunityBase.prototype,
-        "companionOpportunities",
-        "get",
-      ).mockReturnValue([sldOpportunity]);
+      vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue([
+        opportunity,
+        sldOpportunity,
+      ]);
 
       expect(opportunity.bannerInfo).toMatchSnapshot();
     });
@@ -306,19 +322,22 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
     it("returns the correct banner info when there are no reasons (should never be the case, just testing logic)", () => {
       client = new Client(usIaEdAndSldEligibleClientRecord, rootStore);
       opportunity.person = client;
-      opportunity.updatesSubscription.data!.denial = {
-        reasons: [],
+      opportunity.updatesSubscription = {
+        data: { denial: { reasons: [] } },
+        subscribe: vi.fn(),
+        unsubscribe: vi.fn(),
+        hydrate: vi.fn(),
+        hydrationState: { status: "hydrated" },
       };
       const sldOpportunity = new UsIaSupervisionLevelDowngradeOpportunity(
         client,
         usIaSupervisionLevelDowngradeRecordFixture,
       );
 
-      vi.spyOn(
-        OpportunityBase.prototype,
-        "companionOpportunities",
-        "get",
-      ).mockReturnValue([sldOpportunity]);
+      vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue([
+        opportunity,
+        sldOpportunity,
+      ]);
 
       expect(opportunity.bannerInfo).toBeUndefined();
     });

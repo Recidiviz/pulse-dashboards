@@ -211,8 +211,6 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         reportIncorrectRosters: {
           activeTenants: ["US_TN"],
         },
-        // Currently disabled until the config is finalized and fixture can be updated
-        usIaSupervisionLevelDowngrade: undefined,
       };
 
 export type LanternMethodologyByTenant = {

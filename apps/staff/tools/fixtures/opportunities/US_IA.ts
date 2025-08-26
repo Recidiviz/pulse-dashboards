@@ -19,7 +19,7 @@ import { ApiOpportunityConfigurationResponse } from "../../../src/WorkflowsStore
 
 export const mockApiOpportunityConfigurationResponse = {
   enabledConfigs: {
-    usIaSupervisionLevelDowngrade: {
+    usIaCompleteSupervisionLevelDowngrade: {
       callToAction: null,
       caseNotesTitle: null,
       compareBy: null,

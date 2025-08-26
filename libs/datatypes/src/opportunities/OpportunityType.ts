@@ -30,7 +30,7 @@ export const constructedOpportunityTypes = [
 
   // US_IA
   "usIaEarlyDischarge",
-  "usIaSupervisionLevelDowngrade",
+  "usIaCompleteSupervisionLevelDowngrade",
 
   // US_ID
   "pastFTRD",

@@ -19,7 +19,6 @@ import { configure } from "mobx";
 
 import { RootStore } from "../../../../../RootStore";
 import { Client } from "../../../../Client";
-import { OpportunityBase } from "../../../OpportunityBase";
 import { UsIaEarlyDischargeOpportunity } from "../../UsIaEarlyDischargeOpportunity";
 import {
   usIaEarlyDischargeRecordFixture,
@@ -33,6 +32,7 @@ let rootStore: RootStore;
 describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
   let sldOpportunity: UsIaSupervisionLevelDowngradeOpportunity;
   let edOpportunity: UsIaEarlyDischargeOpportunity;
+  let client: Client;
 
   beforeEach(() => {
     configure({ safeDescriptors: false });
@@ -42,8 +42,11 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
       rootStore.workflowsStore,
       "opportunityTypes",
       "get",
-    ).mockReturnValue(["usIaSupervisionLevelDowngrade"]);
-    const client = new Client(
+    ).mockReturnValue([
+      "usIaCompleteSupervisionLevelDowngrade",
+      "usIaEarlyDischarge",
+    ]);
+    client = new Client(
       usIaSupervisionLevelDowngradeEligibleClientRecord,
       rootStore,
     );
@@ -64,23 +67,19 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
 
   describe("earlyDischargeCompanionOpportunity", () => {
     it("returns the correct earlyDischargeCompanionOpportunity when there is an ED opp", () => {
-      vi.spyOn(
-        OpportunityBase.prototype,
-        "companionOpportunities",
-        "get",
-      ).mockReturnValue([edOpportunity]);
-
+      vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue([
+        edOpportunity,
+      ]);
       expect(sldOpportunity.earlyDischargeCompanionOpportunity).toBe(
         edOpportunity,
       );
     });
 
     it("throws an error if there are more than one earlyDischargeCompanionOpportunity", () => {
-      vi.spyOn(
-        OpportunityBase.prototype,
-        "companionOpportunities",
-        "get",
-      ).mockReturnValue([edOpportunity, edOpportunity]);
+      vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue([
+        edOpportunity,
+        edOpportunity,
+      ]);
       try {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         sldOpportunity.earlyDischargeCompanionOpportunity;
@@ -92,25 +91,17 @@ describe("UsIaSupervisionLevelDowngradeOpportunity", () => {
     });
 
     it("returns undefined when there is not an earlyDischargeCompanionOpportunity", () => {
-      vi.spyOn(
-        OpportunityBase.prototype,
-        "companionOpportunities",
-        "get",
-      ).mockReturnValue([]);
-
+      vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue([]);
       expect(sldOpportunity.earlyDischargeCompanionOpportunity).toBeUndefined();
     });
   });
 
   describe("pendingEligbility", () => {
     beforeEach(() => {
-      vi.spyOn(
-        OpportunityBase.prototype,
-        "companionOpportunities",
-        "get",
-      ).mockReturnValue([edOpportunity]);
+      vi.spyOn(client, "flattenedOpportunities", "get").mockReturnValue([
+        edOpportunity,
+      ]);
     });
-
     it("returns true when the earlyDischargeCompanionOpportunity has a denial with relevant reason", () => {
       edOpportunity.updatesSubscription = {
         data: { denial: { reasons: ["FINES & FEES"] } },

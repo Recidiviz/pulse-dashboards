@@ -17,15 +17,13 @@
 
 import { countBy } from "lodash";
 
-import { OpportunityType } from "~datatypes";
-
 import { PartialRecord } from "../../../../../../utils/typeUtils";
 import { Opportunity, OpportunityTab } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsIaSupervisionLevelDowngradeConfiguration extends ApiOpportunityConfiguration {
-  get companionOpportunityTypes(): OpportunityType[] {
-    return ["usIaEarlyDischarge"];
+  get supportsAlmostEligible() {
+    return true;
   }
 
   countByFunction = (opportunities: Opportunity[]) => {

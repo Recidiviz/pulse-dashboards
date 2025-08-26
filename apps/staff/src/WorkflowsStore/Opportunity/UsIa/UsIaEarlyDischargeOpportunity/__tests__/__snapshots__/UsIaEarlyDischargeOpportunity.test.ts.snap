@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`UsIaEarlyDischargeOpportunity clientStatus > bannerInfo > returns the correct banner info when there is a companion sld opp 1`] = `
+exports[`companion opportunity > bannerInfo > returns the correct banner info when there is a companion sld opp 1`] = `
 {
   "link": "/workflows/supervisionLevelDowngrade",
   "linkText": "See Pending Eligibility",
