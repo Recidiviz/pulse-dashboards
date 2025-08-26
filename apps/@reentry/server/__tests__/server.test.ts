@@ -23,7 +23,7 @@ import {
   testServer,
   verifier,
 } from "~@reentry/server/test/setup";
-import { fakeClient } from "~@reentry/server/test/setup/seed";
+import { fakeClient, fakeStaff } from "~@reentry/server/test/setup/seed";
 
 describe("server", () => {
   describe("/get-intake-token", () => {
@@ -349,6 +349,52 @@ describe("server", () => {
           }),
         ],
       });
+    });
+  });
+
+  describe("/clients-intake-status", () => {
+    test("should return 400 for invalid staffId", async () => {
+      const response = await testServer.inject({
+        method: "GET",
+        url: `/clients-intake-status/${fakeClient.stateCode}/not-a-number`,
+        headers: { authorization: `Bearer test-token` },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 400,
+        statusMessage: "Bad Request",
+      });
+      expect(response.body).toContain("Invalid staffId");
+    });
+
+    test("should return 404 if no clients are found for that staff member", async () => {
+      const response = await testServer.inject({
+        method: "GET",
+        url: `/clients-intake-status/${fakeClient.stateCode}/1234`,
+        headers: { authorization: `Bearer test-token` },
+      });
+
+      expect(response).toMatchObject({
+        statusCode: 404,
+        statusMessage: "Not Found",
+      });
+      expect(response.body).toContain("No clients found for staffId: 1234");
+    });
+
+    test("should return client status map for a valid staffId", async () => {
+      const response = await testServer.inject({
+        method: "GET",
+        url: `/clients-intake-status/${fakeClient.stateCode}/${fakeStaff.staffId}`,
+        headers: { authorization: `Bearer test-token` },
+      });
+
+      expect(response).toMatchObject({ statusCode: 200 });
+
+      const body = JSON.parse(response.body);
+      expect(body).toHaveProperty(fakeClient.pseudonymizedId);
+      expect(["intake_in_progress", "intake_enabled", "new"]).toContain(
+        body[fakeClient.pseudonymizedId],
+      );
     });
   });
 });

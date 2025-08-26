@@ -19,7 +19,10 @@ import { FastifyReply, FastifyRequest } from "fastify";
 
 import { getPrismaClientForStateCode } from "~@reentry/prisma";
 import { Prisma, StateCode } from "~@reentry/prisma/client";
-import { RequestWithStateCodeParams } from "~@reentry/server/server/types";
+import {
+  RequestWithStateCodeParams,
+  RequestWithStateCodeStaffIdParams,
+} from "~@reentry/server/server/types";
 import {
   getAuthenticateInternalRequestPreHandlerFn,
   getChatHistoryForClient,
@@ -88,7 +91,7 @@ export function buildServer() {
   });
 
   server.decorate(
-    "authenticate",
+    "authenticateJwt",
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         await request.jwtVerify();
@@ -195,6 +198,60 @@ export function buildServer() {
       };
 
       return res.status(200).send(response);
+    },
+  );
+
+  server.get<{
+    Params: RequestWithStateCodeStaffIdParams;
+  }>(
+    "/clients-intake-status/:stateCode/:staffId",
+    {
+      preHandler: server.authenticate,
+    },
+    async (req, res) => {
+      const { stateCode, staffId } = req.params;
+
+      if (!stateCode || !staffId) {
+        return res.status(400).send("Missing stateCode or staffId");
+      }
+
+      if (isNaN(+staffId)) {
+        return res.status(400).send("Invalid staffId");
+      }
+
+      const prisma = getPrismaClientForStateCode(stateCode);
+
+      const clients = await prisma.client.findMany({
+        where: {
+          staff: {
+            some: {
+              staffId: +staffId,
+            },
+          },
+        },
+        include: {
+          Intake: true,
+        },
+      });
+
+      if (!clients.length) {
+        return res.status(404).send("No clients found for staffId: " + staffId);
+      }
+
+      const clientToStatus: Record<string, string> = {};
+
+      clients.forEach((client) => {
+        const intake = client.Intake[client.Intake.length - 1];
+        if (intake) {
+          clientToStatus[client.pseudonymizedId] = "intake_in_progress";
+        } else if (client.intakeEnabled) {
+          clientToStatus[client.pseudonymizedId] = "intake_enabled";
+        } else {
+          clientToStatus[client.pseudonymizedId] = "new";
+        }
+      });
+
+      return res.status(200).send(clientToStatus);
     },
   );
 

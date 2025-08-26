@@ -18,3 +18,7 @@
 export type RequestWithStateCodeParams = {
   stateCode: string;
 };
+export type RequestWithStateCodeStaffIdParams = {
+  staffId: string;
+  stateCode: string;
+};
