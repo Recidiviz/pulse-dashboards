@@ -45,6 +45,8 @@ import {
   usIaEarlyDischargeSchema,
 } from "./UsIaEarlyDischargeOpportunitySchema";
 
+export const PUBLIC_SAFETY_KEY = "PUBLIC SAFETY";
+
 export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   Client,
   UsIaEarlyDischargeReferralRecord
@@ -99,35 +101,48 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       return "SUBMITTED";
     }
 
-    if (officerAction && !officerAction.isStale) {
-      if (!supervisorResponse) {
-        // Officer submits their approval/denial of a client for supervisor review
-        if (officerAction.type === "APPROVAL") {
-          return "DISCHARGE_FORM_REVIEW";
-        }
-        if (officerAction.type === "DENIAL") {
-          return "ACTION_PLAN_REVIEW";
-        }
-      } else {
-        // Supervisor responds to officer's approval/denial by either approving, denying (with an action plan)
-        // or requesting revisions to an action plan
-        if (officerAction.type === "APPROVAL") {
-          if (supervisorResponse.type === "APPROVAL") {
-            return "READY_FOR_DISCHARGE";
-          }
-          if (supervisorResponse.type === "DENIAL") {
-            return "ACTION_PLAN_REVIEW";
-          }
-        }
-        // Supervisor requests revisions to an officer's denial and action plan
-        if (
-          officerAction.type === "DENIAL" &&
-          supervisorResponse.type === "DENIAL"
-        ) {
-          return "ACTION_PLAN_REVIEW_REVISION";
-        }
-      }
-    }
+    if (!officerAction || officerAction.isStale) return "ELIGIBLE_NOW";
+
+    // A discharge request has been submitted
+    if (officerAction.type === "APPROVAL" && !supervisorResponse)
+      return "DISCHARGE_FORM_REVIEW";
+
+    // A denial request has been submitted
+    if (officerAction.type === "DENIAL" && !supervisorResponse)
+      return officerAction.denialReasons.includes(PUBLIC_SAFETY_KEY)
+        ? "ACTION_PLAN_REVIEW"
+        : "SNOOZE_REVIEW";
+
+    // A discharge request has been approved
+    if (
+      officerAction.type === "APPROVAL" &&
+      supervisorResponse?.type === "APPROVAL"
+    )
+      return "READY_FOR_DISCHARGE";
+
+    // A discharge request has been approved
+    if (
+      officerAction.type === "APPROVAL" &&
+      supervisorResponse?.type === "APPROVAL"
+    )
+      return "READY_FOR_DISCHARGE";
+
+    // A denial request has been denied
+    if (
+      officerAction.type === "DENIAL" &&
+      supervisorResponse?.type === "DENIAL"
+    )
+      return "ACTION_PLAN_REVIEW_REVISION";
+
+    // A discharge request has been denied - with the current opportunity lifecycle,
+    // this state should be unreachable.
+    if (
+      officerAction.type === "APPROVAL" &&
+      supervisorResponse?.type === "DENIAL"
+    )
+      throw new Error(
+        "Expected to be unreachable state. A discharge request was denied without creating a new denial request or action being marked stale.",
+      );
 
     return "ELIGIBLE_NOW";
   }
@@ -144,6 +159,9 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     }
     if (this.clientStatus === "DISCHARGE_FORM_REVIEW") {
       return "Discharge Form Review";
+    }
+    if (this.clientStatus === "SNOOZE_REVIEW") {
+      return "Indefinite Snooze Review";
     }
 
     return "Eligible Now";
@@ -170,6 +188,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       case "ACTION_PLAN_REVIEW_REVISION":
         return "Revisions Requests";
       case "ACTION_PLAN_REVIEW":
+      case "SNOOZE_REVIEW":
       case "DISCHARGE_FORM_REVIEW":
         return "Supervisor Review";
       case "READY_FOR_DISCHARGE":

@@ -30,7 +30,10 @@ import {
   usIaEdAndSldEligibleClientRecord,
   usIaSupervisionLevelDowngradeRecordFixture,
 } from "../../UsIaSupervisionLevelDowngradeOpportunity/__fixtures__";
-import { UsIaEarlyDischargeOpportunity } from "../UsIaEarlyDischargeOpportunity";
+import {
+  PUBLIC_SAFETY_KEY,
+  UsIaEarlyDischargeOpportunity,
+} from "../UsIaEarlyDischargeOpportunity";
 
 describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
   let opportunity: UsIaEarlyDischargeOpportunity;
@@ -90,14 +93,14 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
     expect(opportunity.clientStatus).toBe("DISCHARGE_FORM_REVIEW");
   });
 
-  it("returns ACTION_PLAN_REVIEW status for DENIAL without supervisor response", () => {
+  it("returns ACTION_PLAN_REVIEW status for DENIAL with PUBLIC SAFETY reason without supervisor response", () => {
     opportunity.updatesSubscription.data!.actionHistory = [
       {
         type: "DENIAL",
         ...updateLog,
         isStale: false,
         actionPlan: "Action Plan",
-        denialReasons: ["reason"],
+        denialReasons: [PUBLIC_SAFETY_KEY],
         requestedSnoozeLength: 30,
       },
     ];
@@ -125,7 +128,9 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
         ...updateLog,
       },
     ];
-    expect(opportunity.clientStatus).toBe("ACTION_PLAN_REVIEW");
+    expect(() => opportunity.clientStatus).toThrow(
+      "Expected to be unreachable state. A discharge request was denied without creating a new denial request or action being marked stale.",
+    );
   });
 
   it("returns ACTION_PLAN_REVIEW_REVISION status for DENIAL with supervisor denial", () => {
@@ -208,7 +213,7 @@ describe("UsIaEarlyDischargeOpportunity clientStatus", () => {
 
     it("sldRelevantDenialReasons returns false for non-relevant denial reasons", () => {
       opportunity.updatesSubscription.data!.denial = {
-        reasons: ["PUBLIC SAFETY"],
+        reasons: [PUBLIC_SAFETY_KEY],
       };
       expect(opportunity.sldRelevantDenial).toBe(false);
     });

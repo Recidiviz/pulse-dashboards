@@ -88,6 +88,24 @@ const UsIaMenuButton = observer(function MenuButton({
     );
   };
 
+  const supervisorIndefiniteSnoozeDenialAndToast = async () => {
+    await opportunity.setSupervisorResponse({ type: "DENIAL" });
+    // When an indefinite snooze is denied, the client should move back to
+    // "Eligible Now", so we'll mark the action history stale.
+    await opportunity.markActionHistoryStale();
+
+    toast(
+      <OpportunityStatusUpdateToast
+        toastText={`Denied indefinite snooze request for ${opportunity.person.displayName}. ${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
+      />,
+      {
+        id: "indefiniteSnoozeDenialToast",
+        position: "bottom-left",
+        duration: 7000,
+      },
+    );
+  };
+
   // TODO(#8669): Add tooltip copy to menu options
   const menuConfig: MenuConfig = {
     ELIGIBLE_NOW: {
@@ -128,6 +146,21 @@ const UsIaMenuButton = observer(function MenuButton({
         {
           label: "Mark as Eligible",
           onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
+        },
+      ],
+    },
+    SNOOZE_REVIEW: {
+      buttonLabel: "Review",
+      options: [
+        {
+          label: "Deny Indefinite Snooze",
+          onClick: () => supervisorIndefiniteSnoozeDenialAndToast(),
+          tooltip: "To move to 'Eligible Now'",
+        },
+        {
+          label: "Approve Snooze",
+          onClick: () => supervisorApprovalAndToast(),
+          tooltip: "To move to 'Snoozed'",
         },
       ],
     },

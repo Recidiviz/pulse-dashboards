@@ -57,6 +57,7 @@ describe("UsIaMenuButton", () => {
       "Update Eligibility",
       ["Edit Action Plan", "Mark as Eligible"],
     ],
+    ["SNOOZE_REVIEW", "Review", ["Deny Indefinite Snooze", "Approve Snooze"]],
     [
       "DISCHARGE_FORM_REVIEW",
       "Review",

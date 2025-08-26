@@ -19,7 +19,10 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 import { CharacterCountTextField } from "../../../components/CharacterCountTextField";
-import { UsIaEarlyDischargeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
+import {
+  PUBLIC_SAFETY_KEY,
+  UsIaEarlyDischargeOpportunity,
+} from "../../../WorkflowsStore/Opportunity/UsIa";
 import {
   DEFAULT_MAX_CHAR_LENGTH,
   DEFAULT_MIN_CHAR_LENGTH,
@@ -28,8 +31,6 @@ import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast
 import { ActionButton } from "../../sharedComponents";
 import { reasonsIncludesKey } from "../../utils/workflowsUtils";
 import { UsIaActionPlansAndNotes } from "../../WorkflowsJusticeInvolvedPersonProfile";
-
-const PUBLIC_SAFETY_KEY = "PUBLIC SAFETY";
 
 export const UsIaManageActionPlan = ({
   opportunity,
