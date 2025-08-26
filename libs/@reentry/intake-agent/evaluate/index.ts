@@ -33,7 +33,7 @@ const OPENAI_API_KEY = process.env["OPENAI_API_KEY"];
 
 const model = new ChatOpenAI({
   openAIApiKey: OPENAI_API_KEY,
-  model: "o4-mini",
+  model: "gpt-5-mini-2025-08-07",
 });
 
 const config = getIntakeConfigForState("US_ID");

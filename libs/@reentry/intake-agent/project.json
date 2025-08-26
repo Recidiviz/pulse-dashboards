@@ -15,6 +15,7 @@
     "local": {
       "executor": "nx:run-commands",
       "dependsOn": [
+        "load-env-files",
         {
           "projects": ["@reentry/prisma"],
           "target": "docker"

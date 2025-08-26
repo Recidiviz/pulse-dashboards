@@ -75,24 +75,24 @@ export const getQuestionPrompt = (
 
   2. Check if, for every piece of required information in the section, that the client's answers have sufficiently covered the required information, or they have said they do not want to talk about/do not know in response to that piece of required information.
 
-  3. If this criteria has been met, mark the section as complete. Draft a response asking the client if there is anything else about this section that they would like to add.
+  3. If this criteria has been met, mark the section as complete. Draft a response asking the client if there is anything else about this section that they would like to add. This is all you have to do.
 
   Otherwise:
 
   1. For the first part of your response, if last message in the chat was from the client, thank them for their last response using at most five words. if the last message in the chat was from you, such as saying you are moving onto the next section, do not thank them for their last response.
 
-  2. For the second part of your response, draft a questions or questions that will gather some of the required information that has not already been collected.
+  2. For the second part of your response, draft a question that will gather some of the required information that has not already been collected.
 
-  Some guidelines for drafting the question:
-  - If the client has previously said they don't know or don't want to talk about a piece of required information, don't ask about for that information again. If they have said they need time to think about it or don't know, do not offer to help them with that piece of information, just move on to the next piece of required information.
+  Requirements for the question you draft:
+  - The question can have at most two parts attempting to collect at most two pieces of information. If the question has two parts, both parts must be directly related to each other. A good example is asking if the client has a drivers license and if it is valid. A bad example is asking about documents and then also about transportation plans.
+
+  - If the client has previously said they don't know, don't want to talk about, or need time to think about a piece of required information, don't ask about for that information again. Some examples of this are response like "I don't know," "No clue," "I'm not sure," "I need to think about that," or "I don't want to talk about that." Do not offer to help them with that piece of information, just move on to the next piece of required information.
   
-  - If there is a piece of required information that is a natural follow-up to the previous question and response, ask about that piece of information.
+  - If there is a piece of required information that is a natural follow-up to the previous question and response, ask about that piece of information, even if it might be out of priority order.
   
   - Try and incorporate parts of the client's previous responses in your question if it seems natural.
 
   - In the case where the client's last response was not relevant to the previous question, politely ask them a follow-up question to elicit the information you need.
-
-  - You can ask multiple questions or a multi-part question in a single response, but do not ask more than 2 questions/a question with more than 2 parts at once. Also, do not chain together questions that are not related to each other.
 
   - If the client asked for suggestions or advice, politely let them know your role and steer the conversation back to collecting information.
 
