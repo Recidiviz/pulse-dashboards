@@ -20,10 +20,6 @@ import { z } from "zod";
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 import { defaultOnNull, stringToIntSchema } from "../../schemaHelpers";
-import {
-  eligibleCriteriaLsuED,
-  ineligibleCriteriaLsuED,
-} from "../UsIdSharedCriteria";
 
 export const usIdLsuSchema = opportunitySchemaBase.extend({
   formInformation: z
@@ -48,31 +44,33 @@ export const usIdLsuSchema = opportunitySchemaBase.extend({
       caseNumbers: z.array(z.string()),
     })
     .partial(),
-  eligibleCriteria: eligibleCriteriaLsuED.extend({
-    usIdNoActiveNco: defaultOnNull(
-      z.object({
-        activeNco: z.boolean(),
-      }),
-      { activeNco: false },
-    ),
-    usIdLsirLevelLowFor90Days: z.object({
-      eligibleDate: dateStringSchema,
-      riskLevel: z.literal("LOW"),
-    }),
-    onSupervisionAtLeastOneYear: z
-      .object({
+  eligibleCriteria: z
+    .object({
+      usIdNoActiveNco: defaultOnNull(
+        z.object({
+          activeNco: z.boolean(),
+        }),
+        { activeNco: false },
+      ),
+      usIdLsirLevelLowFor90Days: z.object({
         eligibleDate: dateStringSchema,
-      })
-      .partial()
-      .optional(),
-    usIdIncomeVerifiedWithin3Months: z
-      .object({
-        incomeVerifiedDate: dateStringSchema,
-      })
-      .optional(),
-  }),
-  ineligibleCriteria: ineligibleCriteriaLsuED
-    .extend({
+        riskLevel: z.literal("LOW"),
+      }),
+      onSupervisionAtLeastOneYear: z
+        .object({
+          eligibleDate: dateStringSchema,
+        })
+        .partial()
+        .optional(),
+      usIdIncomeVerifiedWithin3Months: z
+        .object({
+          incomeVerifiedDate: dateStringSchema,
+        })
+        .optional(),
+    })
+    .passthrough(),
+  ineligibleCriteria: z
+    .object({
       onSupervisionAtLeastOneYear: z
         .object({
           eligibleDate: dateStringSchema,
@@ -82,6 +80,7 @@ export const usIdLsuSchema = opportunitySchemaBase.extend({
       // however, it's easier to reason about downstream if it's a truthy value
       usIdIncomeVerifiedWithin3Months: z.null().transform(() => true),
     })
+    .passthrough()
     .partial(),
   eligibleStartDate: dateStringSchema.optional(),
 });

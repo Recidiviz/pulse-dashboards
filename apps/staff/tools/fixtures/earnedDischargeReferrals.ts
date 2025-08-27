@@ -27,7 +27,6 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
         eligibleStartDate: "2022-09-10",
         formInformation: {},
         eligibleCriteria: {
-          negativeDaWithin90Days: null,
           noFelonyWithin24Months: null,
           usIdLsirLevelLowModerateForXDays: {
             eligibleDate: "2022-10-10",
@@ -84,7 +83,6 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
           latestAssessmentDate: "2022-10-24",
         },
         eligibleCriteria: {
-          negativeDaWithin90Days: null,
           noFelonyWithin24Months: null,
           usIdLsirLevelLowModerateForXDays: {
             eligibleDate: "2022-08-10",
@@ -147,7 +145,6 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
           },
         },
         eligibleCriteria: {
-          negativeDaWithin90Days: null,
           noFelonyWithin24Months: null,
           onProbationAtLeastOneYear: {
             eligibleDate: "2022-05-11",
@@ -203,7 +200,6 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
         },
         ineligibleCriteria: {},
         eligibleCriteria: {
-          negativeDaWithin90Days: null,
           noFelonyWithin24Months: null,
           onProbationAtLeastOneYear: {
             eligibleDate: "2022-05-11",
@@ -267,7 +263,6 @@ export const earnedDischargeReferralsFixture: FirestoreFixture<EarnedDischargeRe
           },
         },
         eligibleCriteria: {
-          negativeDaWithin90Days: null,
           noFelonyWithin24Months: null,
           usIdLsirLevelLowModerateForXDays: {
             eligibleDate: "2022-08-10",

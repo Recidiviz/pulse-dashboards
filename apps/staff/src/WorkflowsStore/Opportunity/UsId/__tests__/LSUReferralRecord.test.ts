@@ -29,10 +29,6 @@ test("transform record", () => {
         riskLevel: "LOW",
         eligibleDate: "2022-01-03",
       },
-      negativeDaWithin90Days: {
-        latestUaDates: ["2022-01-03"],
-        latestUaResults: [false],
-      },
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2022-06-03",
       },
@@ -120,10 +116,6 @@ test("can transform record with eligible and ineligible criteria", () => {
       usIdLsirLevelLowFor90Days: {
         riskLevel: "LOW",
         eligibleDate: "2022-01-03",
-      },
-      negativeDaWithin90Days: {
-        latestUaDates: ["2022-01-03"],
-        latestUaResults: [false],
       },
       usIdIncomeVerifiedWithin3Months: {
         incomeVerifiedDate: "2024-06-03",

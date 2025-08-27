@@ -4,10 +4,6 @@ exports[`formInformation parses 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "negativeDaWithin90Days": {
-      "latestUaDates": [],
-      "latestUaResults": [],
-    },
     "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
@@ -90,10 +86,6 @@ exports[`optional criteria have sane fallbacks 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "negativeDaWithin90Days": {
-      "latestUaDates": [],
-      "latestUaResults": [],
-    },
     "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
@@ -129,14 +121,6 @@ exports[`transform dual/parole record 1`] = `
     ],
   },
   "eligibleCriteria": {
-    "negativeDaWithin90Days": {
-      "latestUaDates": [
-        2022-01-03T00:00:00.000Z,
-      ],
-      "latestUaResults": [
-        false,
-      ],
-    },
     "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
@@ -173,14 +157,6 @@ exports[`transform probation record 1`] = `
     ],
   },
   "eligibleCriteria": {
-    "negativeDaWithin90Days": {
-      "latestUaDates": [
-        2022-01-03T00:00:00.000Z,
-      ],
-      "latestUaResults": [
-        false,
-      ],
-    },
     "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,
@@ -208,10 +184,6 @@ exports[`transforms records with eligible and ineligible criteria 1`] = `
 {
   "caseNotes": {},
   "eligibleCriteria": {
-    "negativeDaWithin90Days": {
-      "latestUaDates": [],
-      "latestUaResults": [],
-    },
     "noFelonyWithin24Months": true,
     "pastEarnedDischargeEligibleDate": {
       "eligibleDate": 2022-05-22T00:00:00.000Z,

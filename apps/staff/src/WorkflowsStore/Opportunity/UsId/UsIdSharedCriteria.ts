@@ -17,29 +17,7 @@
 
 import { z } from "zod";
 
-import { dateStringSchema } from "~datatypes";
-
-import { defaultOnNull } from "../schemaHelpers";
-
 export const sentenceTypeSchema = z.enum(["PROBATION", "PAROLE", "DUAL"]);
-
-export const eligibleCriteriaLsuED = z
-  .object({
-    negativeDaWithin90Days: defaultOnNull(
-      z.object({
-        latestUaDates: z.array(dateStringSchema),
-        latestUaResults: z.array(z.boolean()),
-      }),
-      { latestUaDates: [], latestUaResults: [] },
-    ).optional(),
-  })
-  .passthrough();
-
-export const ineligibleCriteriaLsuED = z.object({}).passthrough();
-
-export type LSUEarnedDischargeEligibleCriteria = z.infer<
-  typeof eligibleCriteriaLsuED
->;
 
 export const crcSharedCriteria = z
   .object({

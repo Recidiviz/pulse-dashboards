@@ -21,11 +21,7 @@ import { z } from "zod";
 import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
 
 import { stringToIntSchema } from "../../schemaHelpers";
-import {
-  eligibleCriteriaLsuED,
-  ineligibleCriteriaLsuED,
-  sentenceTypeSchema,
-} from "../UsIdSharedCriteria";
+import { sentenceTypeSchema } from "../UsIdSharedCriteria";
 
 const collapsedCriteriaSchema = z
   .object({
@@ -97,9 +93,9 @@ export const usIdEarnedDischargeSchema = opportunitySchemaBase.extend({
       latestAssessmentDate: dateStringSchema,
     })
     .partial(),
-  ineligibleCriteria: ineligibleCriteriaLsuED.pipe(collapsedCriteriaSchema),
-  eligibleCriteria: eligibleCriteriaLsuED
-    .extend({
+  ineligibleCriteria: collapsedCriteriaSchema,
+  eligibleCriteria: z
+    .object({
       noFelonyWithin24Months: z
         .null()
         .transform((output) => (output === null ? true : output)),
@@ -108,6 +104,7 @@ export const usIdEarnedDischargeSchema = opportunitySchemaBase.extend({
         riskLevel: z.enum(["LOW", "MODERATE"]),
       }),
     })
+    .passthrough()
     .pipe(collapsedCriteriaSchema),
   eligibleStartDate: dateStringSchema.optional(),
 });

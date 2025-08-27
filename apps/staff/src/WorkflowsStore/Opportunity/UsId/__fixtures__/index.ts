@@ -66,10 +66,6 @@ export const LSUReferralRecordFixture: LSUReferralRecordRaw = {
       riskLevel: "LOW",
       eligibleDate: "2022-01-03",
     },
-    negativeDaWithin90Days: {
-      latestUaDates: ["2022-05-28"],
-      latestUaResults: [false],
-    },
     usIdIncomeVerifiedWithin3Months: {
       incomeVerifiedDate: "2022-06-03",
     },
@@ -129,10 +125,6 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecordRaw = {
       riskLevel: "LOW",
       eligibleDate: "2022-01-03",
     },
-    negativeDaWithin90Days: {
-      latestUaDates: ["2022-05-28"],
-      latestUaResults: [false],
-    },
     onSupervisionAtLeastOneYear: {
       eligibleDate: "2022-06-01",
     },
@@ -179,10 +171,6 @@ export const EarnedDischargeReferralRecordFixture: EarnedDischargeReferralRecord
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
       },
-      negativeDaWithin90Days: {
-        latestUaDates: ["2022-05-28"],
-        latestUaResults: [false],
-      },
       noFelonyWithin24Months: null,
       usIdParoleDualSupervisionPastEarlyDischargeDate: {
         eligibleDate: "2022-03-17",
@@ -225,10 +213,6 @@ export const earnedDischargeAlmostEligibleSupervisionLength: EarnedDischargeRefe
       usIdLsirLevelLowModerateForXDays: {
         riskLevel: "MODERATE",
         eligibleDate: "2022-01-03",
-      },
-      negativeDaWithin90Days: {
-        latestUaDates: ["2022-05-28"],
-        latestUaResults: [false],
       },
       noFelonyWithin24Months: null,
     },

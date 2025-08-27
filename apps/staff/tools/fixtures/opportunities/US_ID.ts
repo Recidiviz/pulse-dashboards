@@ -130,12 +130,6 @@ export const mockApiOpportunityConfigurationResponse = {
             "Assessed at low risk level on LSI-R with no risk increase in past 90 days or moderate risk level on LSI-R with no risk increase in past 360 days",
         },
         {
-          key: "negativeDaWithin90Days",
-          text: "Negative UA within past 90 days",
-          tooltip:
-            "Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
-        },
-        {
           key: "usIdIncomeVerifiedWithin3Months",
           text: "Verified compliant employment",
           tooltip:

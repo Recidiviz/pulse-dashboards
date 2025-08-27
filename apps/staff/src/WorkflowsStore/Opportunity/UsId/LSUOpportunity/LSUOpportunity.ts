@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { DocumentData } from "firebase/firestore";
-import { cloneDeep, some } from "lodash";
+import { cloneDeep } from "lodash";
 
 import { OpportunityUpdateWithForm } from "../../../../FirestoreStore";
 import { Client } from "../../../Client";
@@ -24,31 +24,16 @@ import { LSUForm } from "../../Forms/LSUForm";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement } from "../../types";
 import { monthsOrDaysRemainingFromToday } from "../../utils/criteriaUtils";
-import { LSUEarnedDischargeEligibleCriteria } from "../UsIdSharedCriteria";
 import {
   LSUDraftData,
   LSUReferralRecord,
   usIdLsuSchema,
 } from "./LSUReferralRecord";
 
-// This could be configured externally once it's fleshed out
-// to include all copy and other static data
-export const LSU_EARNED_DISCHARGE_COMMON_CRITERIA: Record<
-  keyof LSUEarnedDischargeEligibleCriteria,
-  OpportunityRequirement
-> = {
-  negativeDaWithin90Days: {
-    text: "Negative UA within past 90 days",
-    tooltip:
-      "Policy requirement: Negative UA within past 90 days, unless the client lacks a history of drug/alcohol abuse or has been supervised at low risk for more than one year",
-  },
-};
-
 export const LSU_CRITERIA: Record<
   keyof LSUReferralRecord["eligibleCriteria"],
   OpportunityRequirement
 > = {
-  ...LSU_EARNED_DISCHARGE_COMMON_CRITERIA,
   usIdNoActiveNco: {
     text: "No active NCO, CPO, or restraining order",
     tooltip:
@@ -86,29 +71,6 @@ const INELIGIBLE_CRITERIA_COPY: Record<
   },
 };
 
-export const LSUEarnedDischargeCommonRequirementsMet = (
-  eligibleCriteria: LSUEarnedDischargeEligibleCriteria,
-): OpportunityRequirement[] => {
-  const requirements: OpportunityRequirement[] = [];
-  const { negativeDaWithin90Days } = eligibleCriteria;
-
-  if (
-    negativeDaWithin90Days &&
-    !some(negativeDaWithin90Days?.latestUaResults)
-  ) {
-    // TODO(#2468): Reassess how to indicate no UA required
-    if (negativeDaWithin90Days.latestUaDates.length === 0) {
-      requirements.push({
-        text: "No UA needed",
-        tooltip: LSU_CRITERIA.negativeDaWithin90Days.tooltip,
-      });
-    } else {
-      requirements.push(LSU_CRITERIA.negativeDaWithin90Days);
-    }
-  }
-
-  return requirements;
-};
 
 export class LSUOpportunity extends OpportunityBase<
   Client,
@@ -175,8 +137,7 @@ export class LSUOpportunity extends OpportunityBase<
   get requirementsMet(): OpportunityRequirement[] {
     if (!this.record) return [];
     const { eligibleCriteria } = this.record;
-    const requirements =
-      LSUEarnedDischargeCommonRequirementsMet(eligibleCriteria);
+    const requirements: OpportunityRequirement[] = [];
 
     if (eligibleCriteria.usIdIncomeVerifiedWithin3Months?.incomeVerifiedDate) {
       requirements.push(LSU_CRITERIA.usIdIncomeVerifiedWithin3Months);

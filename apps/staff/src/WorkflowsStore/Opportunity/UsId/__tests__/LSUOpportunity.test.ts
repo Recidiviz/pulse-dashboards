@@ -190,28 +190,6 @@ describe("fully eligible", () => {
   );
 });
 
-describe("no UA required", () => {
-  beforeEach(() => {
-    const record = LSUReferralRecordFixture;
-    record.eligibleCriteria.negativeDaWithin90Days = {
-      latestUaDates: [],
-      latestUaResults: [],
-    };
-    createTestUnit(LSUEligibleClientRecord, record);
-
-    updatesSub = opp.updatesSubscription;
-    updatesSub.hydrationState = { status: "hydrated" };
-  });
-
-  test("requirements almost met", () => {
-    expect(opp.requirementsAlmostMet).toEqual([]);
-  });
-
-  test("requirements met", () => {
-    expect(opp.requirementsMet).toMatchSnapshot();
-  });
-});
-
 describe("almost eligible income verified within 3 months", () => {
   const almostEligibleIncomeVerified = {
     ...cloneDeep(LSUReferralRecordFixture),
