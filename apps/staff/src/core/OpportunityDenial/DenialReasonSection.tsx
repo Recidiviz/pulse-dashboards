@@ -28,9 +28,11 @@ export const DenialReasonSection = function DenialReasonSection({
   selectedReasons,
   sectionHeading,
   handleSelectReason,
+  disabledReasons,
 }: {
   denialReasonsMap: DenialReasonsMap;
   selectedReasons: string[];
+  disabledReasons: string[];
   handleSelectReason: (code: string) => void;
   sectionHeading: string;
   sectionSubheading?: string;
@@ -40,13 +42,15 @@ export const DenialReasonSection = function DenialReasonSection({
       <SidePanelHeader>{sectionHeading}</SidePanelHeader>
       {/* TODO(#9163): Add optional section for indefinite snooze subheading */}
       {Object.entries(denialReasonsMap).map(([code, description]) => {
+        const disabled = disabledReasons.includes(code);
         return (
-          <MenuItem key={code}>
+          <MenuItem key={code} disabled={disabled}>
             <Checkbox
               value={code}
               checked={selectedReasons.includes(code)}
               name={`denial_reason-${code}`}
               onChange={() => handleSelectReason(code)}
+              disabled={disabled}
             >
               {description}
             </Checkbox>

@@ -97,6 +97,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       : opportunity?.denial?.reasons;
 
   const [reasons, setReasons] = useState<string[]>(initialDenialReasons ?? []);
+  const [disabledReasons, setDisabledReasons] = useState<string[]>([]);
   const [otherReason, setOtherReason] = useState<string>(
     opportunity?.denial?.otherReason ?? "",
   );
@@ -297,7 +298,19 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
   const showSnoozeSliderAndSaveButton = !isIaEDOpportunity; // The opportunities listed here will render their own slider and save button
 
   const handleSelectReason = (code: string) => {
-    const updatedReasons = xor(reasons, [code]).sort();
+    let updatedReasons = xor(reasons, [code]).sort();
+
+    // Handle de-selecting and disabling other reasons when indefinite reason
+    // gets selected.
+    const isIndefiniteReason = code in opportunity.indefiniteDenialReasons;
+    if (isIndefiniteReason) {
+      if (!reasons.includes(code)) {
+        updatedReasons = [code];
+        setDisabledReasons(xor(Object.keys(opportunity.denialReasons), [code]));
+      } else {
+        setDisabledReasons([]);
+      }
+    }
     setReasons(updatedReasons);
 
     if (snoozeEnabled) {
@@ -321,6 +334,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
         <DenialReasonSection
           denialReasonsMap={denialReasonsMap}
           selectedReasons={reasons}
+          disabledReasons={disabledReasons}
           sectionHeading={prompt}
           handleSelectReason={handleSelectReason}
         />

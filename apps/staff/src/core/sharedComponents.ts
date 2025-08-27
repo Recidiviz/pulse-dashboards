@@ -131,10 +131,11 @@ export const ActionButton = styled(Button)<{ width?: string }>`
   margin-bottom: 0.75rem;
 `;
 
-export const MenuItem = styled.div`
+export const MenuItem = styled.div<{ disabled?: boolean }>`
   > .Checkbox__container {
     width: 100%;
     height: 100%;
+    ${({ disabled }) => disabled && `color: ${palette.slate30};`}
   }
 `;
 
