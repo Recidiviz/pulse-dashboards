@@ -72,6 +72,10 @@ export default defineConfig(() => ({
       ALLOWED_GOOGLE_EMAIL:
         process.env["ALLOWED_GOOGLE_EMAIL"] ??
         "test-handle-import-email@fake.com",
+      AUTH0_AUDIENCE:
+        process.env["AUTH0_AUDIENCE"] ??
+        "https://recidiviz-rnd.us.auth0.com/api/v2/",
+      AUTH0_DOMAIN: process.env["AUTH0_DOMAIN"] ?? "recidiviz-rnd.us.auth0.com",
     },
   },
 }));
