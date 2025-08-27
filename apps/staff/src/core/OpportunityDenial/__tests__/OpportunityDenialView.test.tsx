@@ -49,7 +49,7 @@ function renderElement(opportunity: Opportunity) {
 }
 
 function getCheckbox(reason: string) {
-  return screen.getByTestId(`OpportunityDenialView__checkbox-${reason}`);
+  return screen.getByTestId(`checkbox-denial_reason-${reason}`);
 }
 
 describe("OpportunityDenialView", () => {

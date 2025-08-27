@@ -26,18 +26,12 @@ import styled from "styled-components/macro";
 import { palette } from "~design-system";
 
 import { CharacterCountTextField } from "../../components/CharacterCountTextField";
-import Checkbox from "../../components/Checkbox/Checkbox";
 import Slider from "../../components/Slider";
 import {
   useFeatureVariants,
   useRootStore,
 } from "../../components/StoreProvider";
-import {
-  ActionButton,
-  MenuItem,
-  SidePanelContents,
-  SidePanelHeader,
-} from "../../core/sharedComponents";
+import { ActionButton, SidePanelContents } from "../../core/sharedComponents";
 import { formatDateToISO } from "../../utils";
 import { Opportunity } from "../../WorkflowsStore";
 import { UsIaEarlyDischargeOpportunity } from "../../WorkflowsStore/Opportunity/UsIa";
@@ -52,6 +46,7 @@ import {
   getusAzTprDtpAdditionalInformation,
 } from "../WorkflowsJusticeInvolvedPersonProfile/MarkedIneligibleReasons";
 import { DenialConfirmationModals } from "./DenialConfirmationModals";
+import { DenialReasonSection } from "./DenialReasonSection";
 import { UsIaManageActionPlan } from "./UsIa/UsIaManageActionPlan";
 
 const SliderWrapper = styled.div`
@@ -301,46 +296,35 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const showSnoozeSliderAndSaveButton = !isIaEDOpportunity; // The opportunities listed here will render their own slider and save button
 
+  const handleSelectReason = (code: string) => {
+    const updatedReasons = xor(reasons, [code]).sort();
+    setReasons(updatedReasons);
+
+    if (snoozeEnabled) {
+      if (defaultAutoSnoozeFn && updatedReasons.length) {
+        setAutoSnoozeUntil(
+          formatDateToISO(defaultAutoSnoozeFn(startOfToday(), opportunity)),
+        );
+      } else {
+        setAutoSnoozeUntil(undefined);
+      }
+    }
+  };
+
   return (
     <SidePanelContents
       className="OpportunityDenial"
       data-testid="OpportunityDenial"
     >
       <Heading person={opportunity.person} trackingOpportunity={opportunity} />
-      <SidePanelHeader>{prompt}</SidePanelHeader>
       <>
-        {Object.entries(denialReasonsMap).map(([code, description]) => (
-          <MenuItem
-            data-testid={`OpportunityDenialView__checkbox-${code}`}
-            key={code}
-            onClick={(e) => {
-              const updatedReasons = xor(reasons, [code]).sort();
-              setReasons(updatedReasons);
-              e.preventDefault();
-
-              if (snoozeEnabled) {
-                if (defaultAutoSnoozeFn && updatedReasons.length) {
-                  setAutoSnoozeUntil(
-                    formatDateToISO(
-                      defaultAutoSnoozeFn(startOfToday(), opportunity),
-                    ),
-                  );
-                } else {
-                  setAutoSnoozeUntil(undefined);
-                }
-              }
-            }}
-          >
-            <Checkbox
-              value={code}
-              checked={reasons.includes(code)}
-              name="denial reason"
-            >
-              {description}
-            </Checkbox>
-          </MenuItem>
-        ))}
-
+        <DenialReasonSection
+          denialReasonsMap={denialReasonsMap}
+          selectedReasons={reasons}
+          sectionHeading={prompt}
+          handleSelectReason={handleSelectReason}
+        />
+        {/* TODO(#9163): Add DenialSection for indefinite snooze reasons */}
         {reasonsIncludesOtherKey(reasons) && (
           <CharacterCountTextField
             data-testid="OtherReasonInput"
