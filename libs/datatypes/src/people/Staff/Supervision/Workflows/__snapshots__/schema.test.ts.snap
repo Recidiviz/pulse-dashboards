@@ -95,6 +95,20 @@ exports[`supervision staff schema for 'US_ND' 'OFFICER3' 1`] = `
 }
 `;
 
+exports[`supervision staff schema for 'US_NE' 'NEOFFICER1' 1`] = `
+{
+  "district": "DISTRICT 1",
+  "email": "test-officer-ne@example.com",
+  "givenNames": "Sarah",
+  "id": "NEOFFICER1",
+  "pseudonymizedId": "p001",
+  "recordType": "supervisionStaff",
+  "stateCode": "US_NE",
+  "supervisorExternalId": "NESUPERVISOR1",
+  "surname": "Mitchell",
+}
+`;
+
 exports[`supervision staff schema for 'US_OR' '271828' 1`] = `
 {
   "email": null,

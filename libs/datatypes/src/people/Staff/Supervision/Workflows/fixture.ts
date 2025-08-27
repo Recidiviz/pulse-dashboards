@@ -107,6 +107,18 @@ export const supervisionStaffFixtures: Array<SupervisionStaffRecord> = [
     pseudonymizedId: "p003",
   },
 
+  // US_NE - NEBRASKA
+  {
+    email: "test-officer-ne@example.com",
+    district: "DISTRICT 1",
+    id: "NEOFFICER1",
+    stateCode: "US_NE",
+    givenNames: "Sarah",
+    surname: "Mitchell",
+    supervisorExternalId: "NESUPERVISOR1",
+    pseudonymizedId: "p001",
+  },
+
   // US_OR - OREGON
   {
     email: null,

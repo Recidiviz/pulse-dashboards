@@ -132,7 +132,6 @@ export const SUPERVISION_TASK_TYPES = [
   "assessment",
   "contact",
   "employment",
-  "usNeAssessment", // TODO(#9302) delete this
   "usNeOrasAssessment",
   "usNeStableAssessment",
   "usNePersonalContact",
@@ -170,7 +169,6 @@ export type SupervisionDetailsForTask = {
   assessment: UsIdAssessmentDetails;
   contact: UsIdContactDetails;
   employment: UsIdEmploymentDetails;
-  usNeAssessment: UsNeAssessmentDetails; // TODO(#9302) delete this
   usNeOrasAssessment: UsNeAssessmentDetails;
   usNeStableAssessment: UsNeAssessmentDetails;
   usNePersonalContact: UsNeContactDetails;

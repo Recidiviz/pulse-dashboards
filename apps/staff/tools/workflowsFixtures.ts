@@ -83,6 +83,9 @@ import { usMoOverdueRestrictiveHousingReviewHearingReferrals } from "./fixtures/
 import { usMoWorkReleaseReferrals } from "./fixtures/usMoWorkReleaseReferrals";
 import { usNdEarlyTerminationFixture } from "./fixtures/usNdEarlyTerminationReferrals";
 import { usNdTransferToMinFacilityReferrals } from "./fixtures/usNdTransferToMinFacilityReferrals";
+import { usNeConditionalLowRiskOverrideReferrals } from "./fixtures/usNeConditionalLowRiskOverrideReferrals";
+import { usNeOverrideModerateToLowReferrals } from "./fixtures/usNeOverrideModerateToLowReferrals";
+import { usNeSupervisionTasksData } from "./fixtures/usNeSupervisionTasks";
 import { usOrEarnedDischargeSentenceReferrals } from "./fixtures/usOrEarnedDischargeSentenceReferrals";
 import { usPaAdminSupervisionReferrals } from "./fixtures/usPaAdminSupervisionReferrals";
 import { usTnAnnualReclassificationReviewFixture } from "./fixtures/usTnAnnualReclassificationReviewReferrals";
@@ -146,6 +149,7 @@ const GENERAL_FIXTURES_TO_LOAD: Partial<
   locations: locationsData,
   usIdSupervisionTasks: usIdSupervisionTasksData,
   usTxSupervisionTasks: usTxSupervisionTasksData,
+  usNeSupervisionTasks: usNeSupervisionTasksData,
 } as const;
 
 const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
@@ -215,6 +219,8 @@ const OPPORTUNITY_FIXTURES_TO_LOAD: PartialRecord<
   usNdTransferToMinFacilityReferrals,
   usMoOutsideClearanceReferrals,
   usMoWorkReleaseReferrals,
+  usNeConditionalLowRiskOverrideReferrals,
+  usNeOverrideModerateToLowReferrals,
 } as const;
 
 const FIXTURES_TO_LOAD = [

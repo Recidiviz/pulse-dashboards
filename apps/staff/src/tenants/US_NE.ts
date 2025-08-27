@@ -17,7 +17,6 @@
 
 import { TenantConfig } from "../core/models/types";
 import * as dashboard from "../RootStore/TenantStore/dashboardTenants";
-import UsNeAssessmentTask from "../WorkflowsStore/Task/US_NE/UsNeAssessmentTask";
 import UsNeCollateralContactTask from "../WorkflowsStore/Task/US_NE/UsNeCollateralContactTask";
 import UsNeNCJISCheckContactTask from "../WorkflowsStore/Task/US_NE/UsNeNCJISCheckContactTask";
 import UsNeOrasAssessmentTask from "../WorkflowsStore/Task/US_NE/UsNeOrasAssessmentTask";
@@ -38,11 +37,6 @@ const US_NE_CONFIG = {
     pageDescriptionMarkdown: `Overdue and upcoming due dates for personal contacts, collateral contacts, NCJIS Checks, and ORAS Assessments for clients are listed below.
       See [“How it works”](https://drive.google.com/file/d/1PuZnoNTddYoKVA0CSpRDoNvCIBWJxg_I/view) to learn more.`,
     tasks: {
-      usNeAssessment: {
-        // TODO(#9302) delete this
-        constructor: UsNeAssessmentTask,
-        snoozeForOptionsInDays: [7, 30, 90],
-      },
       usNeOrasAssessment: {
         constructor: UsNeOrasAssessmentTask,
         snoozeForOptionsInDays: [7, 30, 90],

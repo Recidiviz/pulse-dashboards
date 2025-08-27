@@ -52,7 +52,6 @@ export const TASK_SELECTOR_LABELS: Record<SupervisionTaskCategory, string> = {
   homeVisit: "Home Contacts",
   employment: "Employment Verification",
   employmentNeed: "Unemployed",
-  usNeAssessment: "ORAS Assessments", // TODO(#9302) delete this
   usNeOrasAssessment: "ORAS Assessments",
   usNeStableAssessment: "STABLE Assessments",
   usNeCollateralContact: "Collateral Contacts",
