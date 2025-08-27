@@ -486,4 +486,11 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       return super.indefiniteDenialReasons;
     }
   }
+
+  get denialViewPrompt() {
+    if (this.indefiniteSnoozeEnabled) {
+      return "Temporary Snooze";
+    }
+    return super.denialViewPrompt;
+  }
 }

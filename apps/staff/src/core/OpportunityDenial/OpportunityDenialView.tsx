@@ -17,7 +17,7 @@
 
 import { Sans14, typography } from "@recidiviz/design-system";
 import { parseISO, startOfToday } from "date-fns";
-import { isEqual, xor } from "lodash";
+import { isEmpty, isEqual, omit, xor } from "lodash";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -260,10 +260,6 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
 
   const savingWillUnsnooze = reasons.length === 0 && !reasonsUnchanged;
 
-  const prompt = opportunity.config.isAlert
-    ? `Please select the reason(s) ${opportunity.person?.displayPreferredName} should be overridden:`
-    : `Which of the following requirements has ${opportunity.person?.displayPreferredName} not met${opportunity.instanceDetails ? ` [${opportunity.instanceDetails}]` : ""}?`;
-
   const snoozeSection = (
     <>
       {maxManualSnoozeDays && (
@@ -291,7 +287,10 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     </>
   );
 
-  const denialReasonsMap = opportunity.denialReasons;
+  const denialReasonsMap = omit(
+    opportunity.denialReasons,
+    Object.keys(opportunity.indefiniteDenialReasons),
+  );
 
   const snoozeSlider = snoozeEnabled && !savingWillUnsnooze && snoozeSection;
 
@@ -330,38 +329,44 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       data-testid="OpportunityDenial"
     >
       <Heading person={opportunity.person} trackingOpportunity={opportunity} />
-      <>
-        <DenialReasonSection
-          denialReasonsMap={denialReasonsMap}
-          selectedReasons={reasons}
-          disabledReasons={disabledReasons}
-          sectionHeading={prompt}
-          handleSelectReason={handleSelectReason}
+      <DenialReasonSection
+        denialReasonsMap={denialReasonsMap}
+        selectedReasons={reasons}
+        disabledReasons={disabledReasons}
+        sectionHeading={opportunity.denialViewPrompt}
+        handleSelectReason={handleSelectReason}
+      />
+      {reasonsIncludesOtherKey(reasons) && (
+        <CharacterCountTextField
+          data-testid="OtherReasonInput"
+          id="OtherReasonInput"
+          maxLength={DEFAULT_MAX_CHAR_LENGTH}
+          minLength={DEFAULT_MIN_CHAR_LENGTH}
+          value={otherReason}
+          placeholder="Please specify a reason…"
+          onChange={(newValue) => setOtherReason(newValue)}
         />
-        {/* TODO(#9163): Add DenialSection for indefinite snooze reasons */}
-        {reasonsIncludesOtherKey(reasons) && (
-          <CharacterCountTextField
-            data-testid="OtherReasonInput"
-            id="OtherReasonInput"
-            maxLength={DEFAULT_MAX_CHAR_LENGTH}
-            minLength={DEFAULT_MIN_CHAR_LENGTH}
-            value={otherReason}
-            placeholder="Please specify a reason…"
-            onChange={(newValue) => setOtherReason(newValue)}
-          />
-        )}
-        {isIaEDOpportunity && (
-          <UsIaManageActionPlan
-            opportunity={opportunity}
-            reasons={reasons}
-            sliderDays={sliderDays}
-            onSubmit={onSubmit}
-            onSave={handleSave}
-            snoozeSlider={snoozeSlider || undefined}
-            disableSaveButton={disableSaveButton}
-          />
-        )}
-      </>
+      )}
+      {!isEmpty(opportunity.indefiniteDenialReasons) && (
+        <DenialReasonSection
+          denialReasonsMap={opportunity.indefiniteDenialReasons}
+          selectedReasons={reasons}
+          handleSelectReason={handleSelectReason}
+          sectionHeading={"Indefinite Snooze"}
+          disabledReasons={disabledReasons}
+        />
+      )}
+      {isIaEDOpportunity && (
+        <UsIaManageActionPlan
+          opportunity={opportunity}
+          reasons={reasons}
+          sliderDays={sliderDays}
+          onSubmit={onSubmit}
+          onSave={handleSave}
+          snoozeSlider={snoozeSlider || undefined}
+          disableSaveButton={disableSaveButton}
+        />
+      )}
       {showSnoozeSliderAndSaveButton && (
         <>
           {snoozeSlider}

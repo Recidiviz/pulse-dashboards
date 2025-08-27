@@ -893,6 +893,12 @@ export class OpportunityBase<
     }
   }
 
+  get denialViewPrompt(): string {
+    return this.config.isAlert
+      ? `Please select the reason(s) ${this.person?.displayPreferredName} should be overridden:`
+      : `Which of the following requirements has ${this.person?.displayPreferredName} not met${this.instanceDetails ? ` [${this.instanceDetails}]` : ""}?`;
+  }
+
   // ===============================
   // properties below this line are stubs and in most cases should be overridden
   // in a subclass. Given their triviality they are not annotated by MobX either,

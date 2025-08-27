@@ -193,6 +193,7 @@ export interface Opportunity<
   ) => Promise<void>;
   markActionHistoryStale: () => Promise<void>;
   indefiniteDenialReasons: DenialReasonsMap;
+  denialViewPrompt: string;
 }
 
 export type Component = "OpportunityModuleHeader" | "OpportunityCapsule";

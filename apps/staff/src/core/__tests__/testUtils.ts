@@ -180,4 +180,5 @@ export const mockOpportunity: Opportunity<Client> = {
   latestAction: undefined,
   markActionHistoryStale: async () => undefined,
   indefiniteDenialReasons: {},
+  denialViewPrompt: "",
 };
