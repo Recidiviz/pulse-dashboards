@@ -184,7 +184,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     try {
       setState((prev) => ({ ...prev, isLoading: true }));
-      await authStore.logout();
+      const stateCode = (
+        userAppMetadata?.["stateCode"] as string | undefined
+      )?.toLowerCase();
+      const federated = stateCode === "us_ut";
+      await authStore.logout(federated);
 
       // Reset state after logout
       setState({
