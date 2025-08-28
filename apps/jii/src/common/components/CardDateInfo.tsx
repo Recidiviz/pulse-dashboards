@@ -20,8 +20,7 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { CardHeading, CardValue } from "./Card";
-import { Chip } from "./Chip";
+import { CardHeading, CardValue,Chip } from "~@jii/common-ui";
 
 export type CardDateInfoProps = {
   tag: string;

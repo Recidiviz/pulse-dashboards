@@ -22,11 +22,10 @@ import { FC } from "react";
 import React from "react";
 import styled from "styled-components/macro";
 
+import { Card, GoButton } from "~@jii/common-ui";
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import { Card } from "../../../../../common/components/Card";
-import { GoButton } from "../../../../../components/ButtonLink/GoButton";
 import { CopyWrapper } from "../../../../../components/CopyWrapper/CopyWrapper";
 import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
 import { State } from "../../../../../routes/routes";

@@ -20,13 +20,10 @@ import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { FullBleedContainer, PageContainer } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 import { HeaderPortal } from "../../../../components/AppLayout/HeaderPortal";
-import {
-  FullBleedContainer,
-  PageContainer,
-} from "../../../../components/BaseLayout/BaseLayout";
 import { usePageTitle } from "../../../../components/usePageTitle/usePageTitle";
 import { hydrateTemplate } from "../../../../configs/hydrateTemplate";
 import { Disclaimer } from "../Disclaimer/Disclaimer";

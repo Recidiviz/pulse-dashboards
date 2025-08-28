@@ -19,7 +19,7 @@ import { Body16, Body19, Header34 } from "@recidiviz/design-system";
 import { ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-import { PageContainer } from "../BaseLayout/BaseLayout";
+import { PageContainer } from "~@jii/common-ui";
 
 export const ErrorPageMainContent = ({
   error,

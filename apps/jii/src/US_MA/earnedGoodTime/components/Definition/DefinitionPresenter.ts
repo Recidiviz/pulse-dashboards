@@ -17,7 +17,8 @@
 
 import { matchPath } from "react-router-dom";
 
-import { PageLinksFooterProps } from "../../../../common/components/PageLinksFooter/PageLinksFooter";
+import { PageLinksFooterProps } from "~@jii/common-ui";
+
 import { SimpleLinkProps } from "../../../../components/types";
 import { State } from "../../../../routes/routes";
 import { UsMaEgtCopy } from "../../configs/US_MA/copy";

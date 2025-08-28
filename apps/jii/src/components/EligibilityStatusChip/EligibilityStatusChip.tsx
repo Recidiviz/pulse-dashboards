@@ -17,7 +17,8 @@
 
 import { FC } from "react";
 
-import { Chip, ChipColor } from "../../common/components/Chip";
+import { Chip, ChipColor } from "~@jii/common-ui";
+
 import { EligibilityStatus } from "../../models/EligibilityReport/types";
 
 const statusStyles: Record<EligibilityStatus, ChipColor> = {

@@ -20,8 +20,9 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
+import { Card } from "~@jii/common-ui";
+
 import { CopyWrapper } from "../../components/CopyWrapper/CopyWrapper";
-import { Card } from "./Card";
 
 const Wrapper = styled(Card)`
   display: flex;

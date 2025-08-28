@@ -17,7 +17,8 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { PageLinksFooterProps } from "../../common/components/PageLinksFooter/PageLinksFooter";
+import { PageLinksFooterProps } from "~@jii/common-ui";
+
 import { OpportunityConfig } from "../../configs/types";
 import { EligibilityReport } from "../../models/EligibilityReport/types";
 import { findPageConfig } from "./utils";

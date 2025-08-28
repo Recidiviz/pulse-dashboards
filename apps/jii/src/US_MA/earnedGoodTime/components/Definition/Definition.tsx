@@ -19,9 +19,9 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { PageLinksFooter } from "~@jii/common-ui";
 import { withPresenterManager } from "~hydration-utils";
 
-import { PageLinksFooter } from "../../../../common/components/PageLinksFooter/PageLinksFooter";
 import { ScreenFillingWrapper } from "../../../../common/components/ScreenFillingWrapper/ScreenFillingWrapper";
 import { InfoPage } from "../../../../components/InfoPage/InfoPage";
 import { State } from "../../../../routes/routes";

@@ -19,9 +19,9 @@ import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import styled from "styled-components/macro";
 
+import { FullBleedContainer, PageContainer } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
-import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 import { HEADER_BORDER_WIDTH } from "./constants";
 
 const FullWidthWrapper = styled(FullBleedContainer)`

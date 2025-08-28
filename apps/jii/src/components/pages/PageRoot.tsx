@@ -19,8 +19,9 @@ import { withErrorBoundary } from "@sentry/react";
 import { observer } from "mobx-react-lite";
 import { Outlet } from "react-router-dom";
 
+import { PageContainer } from "~@jii/common-ui";
+
 import { AuthManagerHydrator } from "../AuthManagerHydrator/AuthManagerHydrator";
-import { PageContainer } from "../BaseLayout/BaseLayout";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { ScrollToTop } from "../ScrollToTop/ScrollToTop";
 import { usePageviewTracking } from "../usePageviewTracking/usePageviewTracking";

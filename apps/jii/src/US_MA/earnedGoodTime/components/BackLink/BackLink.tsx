@@ -20,7 +20,8 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { ButtonLink } from "../../../../components/ButtonLink/ButtonLink";
+import { ButtonLink } from "~@jii/common-ui";
+
 import { SimpleLinkProps } from "../../../../components/types";
 
 const Wrapper = styled.div`

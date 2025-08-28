@@ -20,9 +20,9 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
+import { Card } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
-import { Card } from "../../../../common/components/Card";
 import { UsMaEgtCopy } from "../../configs/US_MA/copy";
 import {
   AchievementKey,

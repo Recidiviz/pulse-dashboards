@@ -17,14 +17,14 @@
 
 import { observer } from "mobx-react-lite";
 
-import { withPresenterManager } from "~hydration-utils";
-
 import {
   Card,
   CardHeading,
   CardValue,
   TwoColumnCardWrapper,
-} from "../../../common/components/Card";
+} from "~@jii/common-ui";
+import { withPresenterManager } from "~hydration-utils";
+
 import { useSingleResidentContext } from "../../../components/SingleResidentHydrator/context";
 import { HomepageSectionHeading } from "../../../US_MA/earnedGoodTime/components/Homepage/styles";
 import { UsTnMonthlyReportSelector } from "./UsTnMonthlyReportSelector";

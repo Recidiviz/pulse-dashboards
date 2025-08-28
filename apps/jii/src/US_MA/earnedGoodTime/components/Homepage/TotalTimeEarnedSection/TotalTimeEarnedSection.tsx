@@ -23,9 +23,10 @@ import {
   Card,
   CardHeading,
   CardValue,
+  GoButton,
   TwoColumnCardWrapper,
-} from "../../../../../common/components/Card";
-import { GoButton } from "../../../../../components/ButtonLink/GoButton";
+} from "~@jii/common-ui";
+
 import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
 import { State } from "../../../../../routes/routes";
 import { useEGTDataContext } from "../../EGTDataContext/context";

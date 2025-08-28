@@ -19,7 +19,8 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { ValuesType } from "utility-types";
 
-import { GoButton } from "../ButtonLink/GoButton";
+import { GoButton } from "~@jii/common-ui";
+
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 import { Section, SectionHeading } from "./styles";

@@ -20,8 +20,8 @@ import { rem } from "polished";
 import { FC, memo } from "react";
 import styled from "styled-components/macro";
 
-import { Card } from "../../common/components/Card";
-import { GoButton } from "../ButtonLink/GoButton";
+import { Card, GoButton } from "~@jii/common-ui";
+
 import { SimpleLinkProps } from "../types";
 
 const Wrapper = styled(Card)`

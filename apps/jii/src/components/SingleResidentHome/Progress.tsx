@@ -22,12 +22,12 @@ import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { GoButton } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 import { ProgressModuleConfig } from "../../configs/types";
 import { State } from "../../routes/routes";
 import { formatFullDate } from "../../utils/date";
-import { GoButton } from "../ButtonLink/GoButton";
 import { useSingleResidentContext } from "../SingleResidentHydrator/context";
 
 const ItemsWrapper = styled.dl`

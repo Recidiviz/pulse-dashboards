@@ -19,9 +19,8 @@ import { spacing, typography } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
+import { ButtonLink } from "~@jii/common-ui";
 import { palette } from "~design-system";
-
-import { ButtonLink } from "../ButtonLink/ButtonLink";
 
 export const Section = styled.section`
   border: 1px solid ${palette.slate20};

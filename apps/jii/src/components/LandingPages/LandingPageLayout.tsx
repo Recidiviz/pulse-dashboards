@@ -22,13 +22,12 @@ import { FC, ReactNode } from "react";
 import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { FullBleedContainer, PAGE_WIDTH } from "~@jii/common-ui";
 import { Button } from "~design-system";
 import { palette } from "~design-system";
 
 import recidivizWordmarkUrl from "../../assets/images/recidiviz-wordmark-white.svg";
 import { ReturnToPathFragment } from "../../routes/routes";
-import { PAGE_WIDTH } from "../../utils/constants";
-import { FullBleedContainer } from "../BaseLayout/BaseLayout";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { Wordmark } from "../Wordmark/Wordmark";
 

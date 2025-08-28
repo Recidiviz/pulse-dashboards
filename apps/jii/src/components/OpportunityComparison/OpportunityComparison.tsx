@@ -21,11 +21,11 @@ import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
+import { GoButton } from "~@jii/common-ui";
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
 import { State } from "../../routes/routes";
-import { GoButton } from "../ButtonLink/GoButton";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { useEligibilityRouteContext } from "../EligibilityRouteContext/context";
 import { usePageTitle } from "../usePageTitle/usePageTitle";
@@ -108,7 +108,7 @@ ${pageContents.body}`}
               <tr key={row[0]}>
                 {row.map((cell, i) => (
                   // eslint-disable-next-line react/no-array-index-key
-                  (<td key={i}>{cell}</td>)
+                  <td key={i}>{cell}</td>
                 ))}
               </tr>
             ))}

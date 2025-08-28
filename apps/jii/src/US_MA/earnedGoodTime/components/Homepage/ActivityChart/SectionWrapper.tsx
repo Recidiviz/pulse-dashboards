@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card } from "../../../../../common/components/Card";
+import { Card } from "~@jii/common-ui";
+
 import { useEGTDataContext } from "../../EGTDataContext/context";
 import { HomepageSectionHeading } from "../styles";
 import { Chart } from "./Chart";

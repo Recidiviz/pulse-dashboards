@@ -20,8 +20,8 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { Card } from "../../../../common/components/Card";
-import { GoButton } from "../../../../components/ButtonLink/GoButton";
+import { Card, GoButton } from "~@jii/common-ui";
+
 import { CopyWrapper } from "../../../../components/CopyWrapper/CopyWrapper";
 import { State } from "../../../../routes/routes";
 import { useEGTDataContext } from "../EGTDataContext/context";

@@ -18,10 +18,10 @@
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 
+import { Card } from "~@jii/common-ui";
 import { withPresenterManager } from "~hydration-utils";
 
 import { BulletTimeline } from "../../common/components/BulletTimeline";
-import { Card } from "../../common/components/Card";
 import { CardDateInfo } from "../../common/components/CardDateInfo";
 import { useSingleResidentContext } from "../../components/SingleResidentHydrator/context";
 import { hydrateTemplate } from "../../configs/hydrateTemplate";

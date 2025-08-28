@@ -17,8 +17,9 @@
 
 import { observer } from "mobx-react-lite";
 
+import { Card } from "~@jii/common-ui";
+
 import { BulletTimeline } from "../../../../../common/components/BulletTimeline";
-import { Card } from "../../../../../common/components/Card";
 import { hydrateTemplate } from "../../../../../configs/hydrateTemplate";
 import {
   EGTDataContext,

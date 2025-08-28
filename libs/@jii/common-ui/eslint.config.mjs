@@ -15,32 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, GoButton } from "~@jii/common-ui";
+// @ts-check
 
-import { State } from "../../../../../routes/routes";
-import { useEGTDataContext } from "../../EGTDataContext/context";
-import { SlateCopy } from "../styles";
-import { DateInfo } from "./DateInfo";
+import tseslint from "typescript-eslint";
 
-export const RTSCard = () => {
-  const {
-    copy: {
-      home: { dates },
-      tags,
-    },
-  } = useEGTDataContext();
+import baseConfig, { reactConfig } from "../../../eslint.config.mjs";
 
-  return (
-    <Card>
-      <DateInfo {...dates.rts} tag={tags.rts} />
-      <SlateCopy>{dates.rts.summary}</SlateCopy>
-      <GoButton
-        to={State.Resident.EGT.$.Definition.buildRelativePath({
-          pageSlug: "rts",
-        })}
-      >
-        {dates.rts.moreInfoLink}
-      </GoButton>
-    </Card>
-  );
-};
+export default tseslint.config(baseConfig, reactConfig);

@@ -20,9 +20,9 @@ import { rem } from "polished";
 import { FC, ReactNode } from "react";
 import styled from "styled-components/macro";
 
+import { PAGE_WIDTH } from "~@jii/common-ui";
 import { Button } from "~design-system";
 
-import { PAGE_WIDTH } from "../../utils/constants";
 import { ModalProps } from "./types";
 
 export const MAX_MODAL_HEIGHT = "90vh";

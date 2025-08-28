@@ -23,6 +23,7 @@ import { FC, useId } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { FullBleedContainer } from "~@jii/common-ui";
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
@@ -32,7 +33,6 @@ import {
   HIDDEN_HEADER_OFFSET,
   PAGE_LAYOUT_HEADER_GAP,
 } from "../AppLayout/constants";
-import { FullBleedContainer } from "../BaseLayout/BaseLayout";
 import { useResidentOpportunityContext } from "../ResidentOpportunityHydrator/context";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 import { useSingleResidentContext } from "../SingleResidentHydrator/context";

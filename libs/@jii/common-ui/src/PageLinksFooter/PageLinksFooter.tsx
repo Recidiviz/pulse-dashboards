@@ -24,11 +24,8 @@ import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
 
-import {
-  FullBleedContainer,
-  PageContainer,
-} from "../../../components/BaseLayout/BaseLayout";
-import { ButtonLink } from "../../../components/ButtonLink/ButtonLink";
+import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
+import { ButtonLink } from "../ButtonLink/ButtonLink";
 
 const Footer = styled(FullBleedContainer).attrs({ as: "footer" })`
   background: ${palette.marble3};

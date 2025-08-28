@@ -20,10 +20,10 @@ import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
+import { GoButton } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 import { State } from "../../../routes/routes";
-import { GoButton } from "../../ButtonLink/GoButton";
 import { EligibilityStatusChip } from "../../EligibilityStatusChip/EligibilityStatusChip";
 import { OpportunityData } from "../../SingleResidentHydrator/context";
 

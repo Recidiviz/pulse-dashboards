@@ -22,10 +22,10 @@ import { rem, rgba } from "polished";
 import { FC, Fragment } from "react";
 import styled from "styled-components/macro";
 
+import { GoButton } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
 import { RequirementsSectionContent } from "../../models/EligibilityReport/types";
-import { GoButton } from "../ButtonLink/GoButton";
 import { EligibilityStatusChip } from "../EligibilityStatusChip/EligibilityStatusChip";
 import { OpportunityEligibilityPresenter } from "./OpportunityEligibilityPresenter";
 import { Section, SectionHeading } from "./styles";

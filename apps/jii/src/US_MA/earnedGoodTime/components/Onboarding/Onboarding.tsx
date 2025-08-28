@@ -19,8 +19,9 @@ import { formatISO } from "date-fns";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 
+import { GoButton } from "~@jii/common-ui";
+
 import { ScreenFillingWrapper } from "../../../../common/components/ScreenFillingWrapper/ScreenFillingWrapper";
-import { GoButton } from "../../../../components/ButtonLink/GoButton";
 import { CopyWrapper } from "../../../../components/CopyWrapper/CopyWrapper";
 import { useRootStore } from "../../../../components/StoreProvider/useRootStore";
 import { usePageTitle } from "../../../../components/usePageTitle/usePageTitle";

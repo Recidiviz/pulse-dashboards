@@ -19,7 +19,7 @@ import { spacing } from "@recidiviz/design-system";
 import { rem } from "polished";
 import styled from "styled-components/macro";
 
-import { PAGE_WIDTH } from "../../utils/constants";
+import { PAGE_WIDTH } from "../constants";
 
 export const PAGE_PADDING = rem(spacing.md);
 

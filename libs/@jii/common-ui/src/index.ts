@@ -15,32 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, GoButton } from "~@jii/common-ui";
-
-import { State } from "../../../../../routes/routes";
-import { useEGTDataContext } from "../../EGTDataContext/context";
-import { SlateCopy } from "../styles";
-import { DateInfo } from "./DateInfo";
-
-export const RTSCard = () => {
-  const {
-    copy: {
-      home: { dates },
-      tags,
-    },
-  } = useEGTDataContext();
-
-  return (
-    <Card>
-      <DateInfo {...dates.rts} tag={tags.rts} />
-      <SlateCopy>{dates.rts.summary}</SlateCopy>
-      <GoButton
-        to={State.Resident.EGT.$.Definition.buildRelativePath({
-          pageSlug: "rts",
-        })}
-      >
-        {dates.rts.moreInfoLink}
-      </GoButton>
-    </Card>
-  );
-};
+export * from "./BaseLayout/BaseLayout";
+export * from "./ButtonLink/ButtonLink";
+export * from "./ButtonLink/GoButton";
+export * from "./Card";
+export * from "./Chip";
+export * from "./constants";
+export * from "./PageLinksFooter/PageLinksFooter";

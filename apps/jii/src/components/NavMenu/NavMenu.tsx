@@ -29,11 +29,11 @@ import { FC, memo, useEffect, useId, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { PAGE_PADDING } from "~@jii/common-ui";
 import { Button, palette } from "~design-system";
 
 import { windowIsIframe } from "../../utils/iframe";
 import { STICKY_HEADER_ZINDEX } from "../AppLayout/constants";
-import { PAGE_PADDING } from "../BaseLayout/BaseLayout";
 import { useRootStore } from "../StoreProvider/useRootStore";
 import { SimpleNavLinkProps } from "../types";
 

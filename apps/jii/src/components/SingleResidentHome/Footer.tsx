@@ -21,9 +21,9 @@ import { CSSProperties, memo } from "react";
 import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
 
+import { FullBleedContainer, PageContainer } from "~@jii/common-ui";
 import { palette } from "~design-system";
 
-import { FullBleedContainer, PageContainer } from "../BaseLayout/BaseLayout";
 import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 import { useResidentsContext } from "../ResidentsHydrator/context";
 
