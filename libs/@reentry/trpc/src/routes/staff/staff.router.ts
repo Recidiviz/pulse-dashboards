@@ -29,7 +29,7 @@ export const staffRouter = router({
     .input(getIntakeInputSchema)
     .query(async ({ ctx: { prisma }, input: { clientPseudoId } }) => {
       try {
-        const client = await prisma.client.findUnique({
+        const client = await prisma.client.findUniqueOrThrow({
           where: {
             pseudonymizedId: clientPseudoId,
           },
@@ -38,7 +38,7 @@ export const staffRouter = router({
           },
         });
 
-        return { intakeEnabled: client?.intakeEnabled ?? false };
+        return { intakeEnabled: client.intakeEnabled };
       } catch (e) {
         if (
           e instanceof Prisma.PrismaClientKnownRequestError &&

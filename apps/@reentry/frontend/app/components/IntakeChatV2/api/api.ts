@@ -22,7 +22,7 @@ import {
   IntakeResponse,
 } from "~@reentry/frontend/components/IntakeChatV2/types";
 
-const API_BASE_URL = process.env["NEXT_PUBLIC_API_URL"] || "";
+const API_BASE_URL = process.env["NEXT_PUBLIC_V2_API_URL"] || "";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,

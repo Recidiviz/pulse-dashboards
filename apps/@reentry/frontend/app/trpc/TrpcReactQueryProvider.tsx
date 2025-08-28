@@ -19,7 +19,14 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createWSClient, httpBatchLink, splitLink, wsLink } from "@trpc/client";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import superjson from "superjson";
 
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
@@ -49,79 +56,82 @@ export const useTrpcReactQuery = (options?: UseTrpcReactQueryOptions) => {
     ConnectionState | undefined
   >(options?.enableWS ? "connecting" : undefined);
   const [connectionError, setConnectionError] = useState<Event>();
+  const [queryClient] = useState(() => new QueryClient());
+  const [wsClient, setWsClient] = useState<ReturnType<typeof createWSClient>>();
 
   const auth = useAuth();
-  const token = options?.token ?? auth.getAccessToken() ?? undefined;
-  const stateCode =
-    options?.stateCode ?? auth.userAppMetadata?.["stateCode"] ?? undefined;
-  const authorization = token ? `Bearer ${token}` : undefined;
-  const headers = {
-    authorization,
-    statecode: stateCode,
-  };
 
-  const httpHeaders = options?.headers ?? (() => headers);
-  const wsParams = options?.connectionParams ?? (() => headers);
+  const getAuthHeaders = useCallback(async () => {
+    if (!options?.token) {
+      await auth.refreshToken();
+    }
+    const token = options?.token ?? auth.getAccessToken() ?? undefined;
+    const stateCode =
+      options?.stateCode ?? auth.userAppMetadata?.["stateCode"] ?? undefined;
 
-  const [queryClient] = useState(() => new QueryClient());
+    return {
+      authorization: token ? `Bearer ${token}` : undefined,
+      statecode: stateCode?.toUpperCase(),
+    };
+  }, [options?.token, options?.stateCode, auth]);
 
-  const wsClient = useMemo(
-    () =>
-      options?.enableWS
-        ? createWSClient({
-            url: trpcUrl,
-            connectionParams: wsParams,
-            onOpen: () => setConnectionState("connected"),
-            onClose: () => setConnectionState("closed"),
-            onError: (err) => {
-              setConnectionState("error");
-              setConnectionError(err);
-            },
-          })
-        : undefined,
-    [options?.enableWS, wsParams],
-  );
-
-  const trpcClient = useMemo(() => {
-    const hasProvidedToken = !!options?.token;
-    const authReady = !auth.state.isLoading;
-
-    if (!hasProvidedToken && !authReady) {
-      return null;
+  useEffect(() => {
+    if (!options?.enableWS) {
+      setWsClient((prev) => {
+        prev?.close();
+        return undefined;
+      });
+      setConnectionState(undefined);
+      setConnectionError(undefined);
+      return;
     }
 
-    return trpc.createClient({
-      links:
-        options?.enableWS && wsClient
-          ? [
-              splitLink({
-                condition(op) {
-                  return op.type === "subscription";
-                },
-                true: wsLink({ client: wsClient, transformer: superjson }),
-                false: httpBatchLink({
-                  url: trpcUrl,
-                  headers: httpHeaders,
-                  transformer: superjson,
-                }),
-              }),
-            ]
-          : [
-              httpBatchLink({
+    const client = createWSClient({
+      url: trpcUrl,
+      connectionParams: getAuthHeaders,
+      onOpen: () => setConnectionState("connected"),
+      onClose: () => setConnectionState("closed"),
+      onError: (err) => {
+        console.error("WS error", err);
+        setConnectionState("error");
+        setConnectionError(err);
+      },
+    });
+
+    setWsClient(client);
+    setConnectionState("connecting");
+
+    return () => {
+      client.close();
+    };
+  }, [options?.enableWS, getAuthHeaders]);
+
+  const trpcClient = useMemo(() => {
+    const links =
+      options?.enableWS && wsClient
+        ? [
+            splitLink({
+              condition: (op) => op.type === "subscription",
+              true: wsLink({ client: wsClient, transformer: superjson }),
+              false: httpBatchLink({
                 url: trpcUrl,
-                headers: httpHeaders,
+                headers: getAuthHeaders,
                 transformer: superjson,
               }),
-            ],
-    });
-  }, [
-    options?.enableWS,
-    options?.token,
-    auth.state.isLoading,
-    wsClient,
-    httpHeaders,
-  ]);
+            }),
+          ]
+        : [
+            httpBatchLink({
+              url: trpcUrl,
+              headers: getAuthHeaders,
+              transformer: superjson,
+            }),
+          ];
 
+    return trpc.createClient({
+      links,
+    });
+  }, [options?.enableWS, wsClient, getAuthHeaders]);
   return {
     queryClient,
     trpcClient,
@@ -147,16 +157,14 @@ export const TrpcReactQueryProvider = ({
 
   // Close Websocket connection on unmount
   useEffect(() => {
-    if (!wsClient) return;
     return () => {
-      wsClient.close();
+      if (wsClient) {
+        wsClient.close();
+      }
     };
   }, [wsClient]);
 
   if (!IS_V2_INTAKE_CHAT) return children;
-  if (!trpcClient) {
-    return children;
-  }
 
   return (
     <QueryClientProvider client={queryClient}>

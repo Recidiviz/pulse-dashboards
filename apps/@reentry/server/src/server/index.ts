@@ -128,14 +128,19 @@ export function buildServer() {
       },
     });
 
-    if (!client?.intakeEnabled) {
+    if (!client) {
       res
         .status(403)
         .send(
-          `No client found with name ${req.query.givenNames} ${req.query.surname} and date of birth ${birthDateString} or intake is not enabled for this client.`,
+          `No client found with name ${req.query.givenNames} ${req.query.surname} and date of birth ${birthDateString}`,
         );
       return;
     }
+    if (!client.intakeEnabled) {
+      res.status(403).send(`Intake is not enabled for this client.`);
+      return;
+    }
+
     const token = server.jwt.regular.sign({
       pseudonymizedId: client.pseudonymizedId,
     });
@@ -160,8 +165,8 @@ export function buildServer() {
 
       const client = await prisma.client.findFirst({
         where: {
-          givenNames: first_name,
-          surname: last_name,
+          givenNames: { equals: first_name, mode: "insensitive" },
+          surname: { equals: last_name, mode: "insensitive" },
           birthDate,
         },
         select: {

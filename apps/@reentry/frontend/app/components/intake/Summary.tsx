@@ -22,6 +22,7 @@ import { FiLink } from "react-icons/fi";
 import { $api } from "~@reentry/frontend/api";
 import PrimaryButton from "~@reentry/frontend/components/buttons/PrimaryButton";
 import AudioRecordings from "~@reentry/frontend/components/intake/VoiceIntake/AudioRecordings";
+import Loading from "~@reentry/frontend/components/IntakeChatV2/Loading/Loading";
 import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
@@ -280,14 +281,17 @@ const ClientSummaryCardV2: React.FC<ClientSummaryCardProps> = ({
   intake,
 }) => {
   const [linkLoading, setLinkLoading] = useState(false);
-  const auth = useAuth();
-  const clientPseudoId = auth.userAppMetadata?.["pseudonymizedId"] ?? "";
+  const clientPseudoId = clientRecord.pseudonymized_client_id;
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const utils = trpc.useUtils();
 
-  const { data: intakeInfo } = trpc.staff.getIntakeEnabled.useQuery({
+  const { data: intakeInfo, isLoading } = trpc.staff.getIntakeEnabled.useQuery({
     clientPseudoId,
   });
-  const toggleIntake = trpc.staff.toggleIntake.useMutation();
+  const toggleIntake = trpc.staff.toggleIntake.useMutation({
+    onSettled: () =>
+      utils.staff.getIntakeEnabled.invalidate({ clientPseudoId }),
+  });
 
   const startIntake = async () => {
     setLinkLoading(true);
@@ -296,6 +300,7 @@ const ClientSummaryCardV2: React.FC<ClientSummaryCardProps> = ({
         clientPseudoId,
         enable: true,
       });
+
       onIntakeUpdate();
       showSuccessToast("Intake enabled successfully");
     } catch {
@@ -306,6 +311,10 @@ const ClientSummaryCardV2: React.FC<ClientSummaryCardProps> = ({
   };
 
   const cleanedBaseUrl = baseUrl.replace(/^https?:\/\//, "");
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <SummaryBody

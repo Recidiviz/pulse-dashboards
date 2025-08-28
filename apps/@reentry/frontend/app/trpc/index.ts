@@ -20,4 +20,4 @@ import { createTRPCReact } from "@trpc/react-query";
 import type { AppRouter } from "~@reentry/trpc-types";
 
 export const trpc = createTRPCReact<AppRouter>();
-export const trpcUrl = `${process.env["NEXT_PUBLIC_TRPC_API_URL"] ?? ""}/trpc`;
+export const trpcUrl = `${process.env["NEXT_PUBLIC_V2_API_URL"] ?? ""}/trpc`;
