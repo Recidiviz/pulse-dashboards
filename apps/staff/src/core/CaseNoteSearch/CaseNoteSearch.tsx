@@ -84,7 +84,7 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
     useRootStore() as PartiallyTypedRootStore;
   const [currentView, setCurrentView] =
     React.useState<CASE_NOTE_SEARCH_VIEWS>("SEARCH_VIEW");
-  const [sortOrder, setSortOrder] = React.useState<SortOrder>("Relevance");
+  const [sortOrder, setSortOrder] = React.useState<SortOrder>("Date");
   const [docId, setDocId] = React.useState<string>();
   const [modalIsOpen, setModalIsOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -206,10 +206,10 @@ export const CaseNoteSearch = observer(function CaseNoteSearch() {
           <ModalTitle className={isNoteView ? "fs-exclude" : ""}>
             {isNoteView && (
               // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-              (<i
+              <i
                 className="fa fa-angle-left"
                 onClick={() => setCurrentView("SEARCH_VIEW")}
-              />)
+              />
             )}
             {isNoteView ? currentNoteTitle : "Case Note Search"}
             <PrototypePill>Prototype</PrototypePill>
