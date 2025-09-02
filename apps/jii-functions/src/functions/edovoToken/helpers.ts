@@ -35,6 +35,7 @@ export const edovoIdTokenPayloadSchema = z
       .string()
       .toUpperCase()
       .transform((s) => `US_${s}`),
+    facility_name: z.string().optional(),
   })
   .transform((user) => {
     // known cases where our ID formats do not match
@@ -65,6 +66,31 @@ export async function checkRecidivizEmployeeRoster(
   const { email } = z.object({ email: z.string() }).parse(employeeRecord);
 
   return getRecidivizUserProfile(email);
+}
+
+const securusSecretSchema = z
+  .string()
+  .transform((s) => JSON.parse(s))
+  .pipe(z.array(z.string()));
+
+export async function securusTestIdentity(
+  userData: EdovoIdTokenPayload,
+): Promise<AuthorizedUserProfile | undefined> {
+  if (!userData.facility_name) return;
+
+  const securusFacilities = securusSecretSchema.parse(
+    await secrets.getLatestValue("SECURUS_TEST_FACILITIES"),
+  );
+  if (securusFacilities.includes(userData.facility_name)) {
+    // all securus test accounts are mapped to the same test data, for consistency
+    return {
+      stateCode: "US_MA",
+      permissions: [],
+      externalId: "RES002",
+      pseudonymizedId: "anonres002",
+    };
+  }
+  return;
 }
 
 export async function getDecryptedToken(encryptedToken: string) {

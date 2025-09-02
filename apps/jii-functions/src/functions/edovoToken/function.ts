@@ -35,6 +35,7 @@ import {
   checkRecidivizEmployeeRoster,
   edovoIdTokenPayloadSchema,
   lookupResident,
+  securusTestIdentity,
 } from "./helpers";
 import { decryptToken, verifyToken } from "./middleware";
 
@@ -59,7 +60,13 @@ app.get("/*", async (request, response, next): Promise<void> => {
 
     // the order of these checks is important; earlier ones
     // are intentionally chosen to supersede later ones that address edge cases
-    let userProfile = await lookupResident(userData);
+
+    // we start with these dedicated test accounts so collisions don't result in
+    // escalation of privilege (because their IDs are just numbers that resemble real data)
+    let userProfile = await securusTestIdentity(userData);
+    if (!userProfile) {
+      userProfile = await lookupResident(userData);
+    }
     if (!userProfile) {
       userProfile = await checkRecidivizEmployeeRoster(userData);
       isRecidiviz = !!userProfile;
