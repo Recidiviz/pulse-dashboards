@@ -278,7 +278,14 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       )}
       {snoozeUntilDate !== undefined && (
         <SnoozeUntilReminderText>
-          <div>{buildResurfaceText(opportunity, snoozeUntilDate, labels)}</div>
+          <div>
+            {buildResurfaceText(
+              opportunity,
+              snoozeUntilDate,
+              isIndefiniteReasonRequiringApproval,
+              labels,
+            )}
+          </div>
           <br />
           {getusAzTprDtpAdditionalInformation(opportunity)}
           <div>{buildDenialReasonsListText(opportunity, reasons)}</div>
@@ -323,6 +330,8 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     }
   };
 
+  const indefiniteSnoozeSubheading = `An approval request will be sent to your supervisor before this client can be snoozed indefinitely and removed from this opportunity`;
+
   return (
     <SidePanelContents
       className="OpportunityDenial"
@@ -354,6 +363,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           handleSelectReason={handleSelectReason}
           sectionHeading={"Indefinite Snooze"}
           disabledReasons={disabledReasons}
+          sectionSubheading={indefiniteSnoozeSubheading}
         />
       )}
       {isIaEDOpportunity && (

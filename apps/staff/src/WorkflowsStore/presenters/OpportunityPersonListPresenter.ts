@@ -17,7 +17,7 @@
 
 import { arrayMove } from "@dnd-kit/sortable";
 import { differenceInDays, startOfToday } from "date-fns";
-import { difference, intersection, some } from "lodash";
+import { difference, intersection, isEmpty, some } from "lodash";
 import { action, makeAutoObservable, reaction } from "mobx";
 import pluralize from "pluralize";
 import toast from "react-hot-toast";
@@ -180,7 +180,12 @@ export class OpportunityPersonListPresenter
       ),
       SNOOZE_ENDS_IN:
         this.isViewingDeniedTab &&
-        some(opportunities, (opp: Opportunity) => !!this.snoozeEndsInDays(opp)),
+        some(
+          opportunities,
+          (opp: Opportunity) =>
+            !!this.snoozeEndsInDays(opp) ||
+            !isEmpty(opp.indefiniteDenialReasons),
+        ),
       SUBMITTED_FOR: this.isViewingSubmittedTab,
       CTA_BUTTON: true,
     };

@@ -180,11 +180,23 @@ describe("buildResurfaceText", () => {
       buildResurfaceText(
         testOpp,
         new Date(2023, 9, 15),
+        false,
         mockTenantStore.labels,
       ),
     ).toEqual(
       "Client Name may be surfaced again on or after October 15, 2023.",
     );
+  });
+
+  test("indefinite snooze", () => {
+    const testOpp = {
+      ...mockOpportunity,
+      deniedTabTitle: "Marked Ineligible",
+      snoozedOnDate: new Date(2023, 9, 10),
+    };
+    expect(
+      buildResurfaceText(testOpp, undefined, true, mockTenantStore.labels),
+    ).toEqual("Client Name will no longer be surfaced for this opportunity");
   });
 
   test("no snoozeUntil supplied", () => {
@@ -194,7 +206,7 @@ describe("buildResurfaceText", () => {
       snoozedOnDate: new Date(2023, 9, 10),
     };
     expect(
-      buildResurfaceText(testOpp, undefined, mockTenantStore.labels),
+      buildResurfaceText(testOpp, undefined, false, mockTenantStore.labels),
     ).toBeUndefined();
   });
 
@@ -205,7 +217,12 @@ describe("buildResurfaceText", () => {
       snoozedOnDate: new Date(2023, 9, 10),
     };
     expect(
-      buildResurfaceText(testOpp, new Date(2025, 1, 1), mockTenantStore.labels),
+      buildResurfaceText(
+        testOpp,
+        new Date(2025, 1, 1),
+        false,
+        mockTenantStore.labels,
+      ),
     ).toEqual("February 1, 2025 is Client Name's Supervision End Date.");
   });
 
@@ -223,9 +240,9 @@ describe("buildResurfaceText", () => {
       };
       const labels = { releaseDateCopy: "Release", supervisionEndDateCopy };
 
-      expect(buildResurfaceText(testOpp, new Date(2025, 1, 1), labels)).toEqual(
-        `February 1, 2025 is Client Name's ${expected}.`,
-      );
+      expect(
+        buildResurfaceText(testOpp, new Date(2025, 1, 1), false, labels),
+      ).toEqual(`February 1, 2025 is Client Name's ${expected}.`);
     },
   );
 });

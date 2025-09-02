@@ -15,9 +15,32 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { Icon, IconSVG, Sans14, spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
+import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
+
 import Checkbox from "../../components/Checkbox/Checkbox";
 import { DenialReasonsMap } from "../../WorkflowsStore";
 import { MenuItem, SidePanelHeader } from "../sharedComponents";
+
+const SubheadingWrapper = styled.div`
+  display: flex;
+  margin-bottom: ${rem(spacing.md)};
+  margin-right: ${rem(spacing.md)};
+  gap: ${rem(spacing.md)};
+  justify-content: center;
+  align-items: center;
+`;
+
+const SubheadingCopy = styled(Sans14)`
+  display: flex;
+`;
+
+const IconWrapper = styled(Icon)`
+  min-width: ${rem(16)};
+`;
 
 /**
  * A section containing a list of denial reason items (i.e. the relevant labels and
@@ -29,6 +52,7 @@ export const DenialReasonSection = function DenialReasonSection({
   sectionHeading,
   handleSelectReason,
   disabledReasons,
+  sectionSubheading,
 }: {
   denialReasonsMap: DenialReasonsMap;
   selectedReasons: string[];
@@ -40,7 +64,16 @@ export const DenialReasonSection = function DenialReasonSection({
   return (
     <>
       <SidePanelHeader>{sectionHeading}</SidePanelHeader>
-      {/* TODO(#9163): Add optional section for indefinite snooze subheading */}
+      {sectionSubheading && (
+        <SubheadingWrapper>
+          <IconWrapper
+            kind={IconSVG.Error}
+            color={palette.data.gold1}
+            size={16}
+          />
+          <SubheadingCopy>{sectionSubheading}</SubheadingCopy>
+        </SubheadingWrapper>
+      )}
       {Object.entries(denialReasonsMap).map(([code, description]) => {
         const disabled = disabledReasons.includes(code);
         return (

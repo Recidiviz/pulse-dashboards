@@ -113,12 +113,15 @@ export function getusAzTprDtpAdditionalInformation(
 export function buildResurfaceText(
   opportunity: Opportunity,
   snoozeUntil: Date | undefined,
+  isIndefiniteReason: boolean,
   labels: { releaseDateCopy: string; supervisionEndDateCopy: string },
 ): string | undefined {
+  const { person } = opportunity;
+  if (isIndefiniteReason)
+    return `${person.displayPreferredName} will no longer be surfaced for this opportunity`;
   if (!snoozeUntil) return;
   const { supervisionEndDateCopy, releaseDateCopy } = labels;
   const dateStr = format(snoozeUntil, "LLLL d, yyyy");
-  const { person } = opportunity;
 
   let endDateString;
 
@@ -163,7 +166,12 @@ export function buildActedOnTextAndResurfaceText(
   labels: { releaseDateCopy: string; supervisionEndDateCopy: string },
 ) {
   const actedOnText = buildActedOnText(opportunity);
-  const resurfaceText = buildResurfaceText(opportunity, snoozeUntil, labels);
+  const resurfaceText = buildResurfaceText(
+    opportunity,
+    snoozeUntil,
+    false,
+    labels,
+  );
   return [actedOnText, resurfaceText];
 }
 
