@@ -28,18 +28,16 @@ export const usMaEarnedCreditTypes = z.enum([
 
 export type UsMaEarnedCreditType = z.infer<typeof usMaEarnedCreditTypes>;
 
-const nullZeroNumberSchema = z
-  .number()
-  .nullable()
-  .transform((i) => i ?? 0);
-
-const creditValueSchema = z
+/**
+ * Accepts either a number or a decimal in string form and casts it to a Number.
+ * (DO NOT USE for cases where null or undefined has a more specific meaning!)
+ *
+ */
+const numberRepresentationSchema = z
   .number()
   // this union and additional validation is needed because unfortunately
   // the BigQuery JSON export renders integers as numbers and floats as strings
   .or(z.string())
-  .nullish()
-  .transform((i) => i ?? 0)
   .transform((input, ctx) => {
     const output = Number(input);
     if (isNaN(output)) {
@@ -52,13 +50,20 @@ const creditValueSchema = z
     return output;
   });
 
+/**
+ * Applies {@link numberRepresentationSchema} while casting nullish values to zero.
+ */
+const nullZeroFloatSchema = numberRepresentationSchema
+  .nullish()
+  .transform((i) => i ?? 0);
+
 export const creditActivitySchema = z.object({
   creditDate: dateStringSchema,
   activity: z.string().nullable(),
   rating: z.string().nullable(),
-  [usMaEarnedCreditTypes.enum.EARNEDGoodTime]: creditValueSchema,
-  [usMaEarnedCreditTypes.enum.BOOST]: creditValueSchema,
-  [usMaEarnedCreditTypes.enum.COMPLETION]: creditValueSchema,
+  [usMaEarnedCreditTypes.enum.EARNEDGoodTime]: nullZeroFloatSchema,
+  [usMaEarnedCreditTypes.enum.BOOST]: nullZeroFloatSchema,
+  [usMaEarnedCreditTypes.enum.COMPLETION]: nullZeroFloatSchema,
 });
 
 export const usMaResidentMetadataSchema = z.object({
@@ -67,10 +72,10 @@ export const usMaResidentMetadataSchema = z.object({
   rtsDate: dateStringSchema.nullable(),
   adjustedMaxReleaseDate: dateStringSchema.nullable(),
   originalMaxReleaseDate: dateStringSchema.nullable(),
-  totalCompletionCredit: nullZeroNumberSchema,
-  totalCompletionCreditDaysCalculated: nullZeroNumberSchema,
-  totalStateCredit: nullZeroNumberSchema,
-  totalStateCreditDaysCalculated: nullZeroNumberSchema,
+  totalCompletionCredit: nullZeroFloatSchema,
+  totalCompletionCreditDaysCalculated: nullZeroFloatSchema,
+  totalStateCredit: nullZeroFloatSchema,
+  totalStateCreditDaysCalculated: nullZeroFloatSchema,
   creditActivity: z.array(creditActivitySchema),
   lastUpdatedDate: dateStringSchema,
 });

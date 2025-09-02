@@ -89,7 +89,7 @@ exports[`schema for 'US_MA' 'RES001' 1`] = `
     "stateCode": "US_MA",
     "totalCompletionCredit": 30,
     "totalCompletionCreditDaysCalculated": 30,
-    "totalStateCredit": 63,
+    "totalStateCredit": 63.5,
     "totalStateCreditDaysCalculated": 63,
   },
   "personExternalId": "RES001",

@@ -127,7 +127,7 @@ export const rawUsMaResidentMetadataFixtures: Array<RawUsMaResidentMetadata> = [
     ),
     totalCompletionCredit: 30,
     totalCompletionCreditDaysCalculated: 30,
-    totalStateCredit: 63,
+    totalStateCredit: 63.5,
     totalStateCreditDaysCalculated: 63,
     lastUpdatedDate: CURRENT_DATE_STRING_FIXTURE,
     creditActivity: creditActivityFixture,
