@@ -63,6 +63,8 @@ export const usMiSecurityClassificationCommitteeReviewSchema =
       lessThan24MonthsFromErd: z.boolean().optional(),
       neededProgramming: z.string().optional(),
       completedProgramming: z.string().optional(),
+      solitarySessionStartDate: dateStringSchema.optional(),
+      solitarySessionType: z.string().optional(),
     }),
     isOverdue: z.boolean(),
   });

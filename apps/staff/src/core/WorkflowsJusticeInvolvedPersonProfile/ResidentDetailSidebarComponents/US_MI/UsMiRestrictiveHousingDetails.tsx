@@ -19,7 +19,10 @@ import React from "react";
 
 import { usMiSecurityClassificationCommitteeReviewRecord } from "~datatypes";
 
+import { formatWorkflowsDate } from "../../../../utils";
+import { usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiAddInPersonSecurityClassificationCommitteeReviewOpportunity";
 import { usMiSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiSecurityClassificationCommitteeReviewOpportunity";
+import { usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity } from "../../../../WorkflowsStore/Opportunity/UsMi/UsMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity";
 import {
   DetailsHeading,
   DetailsSection,
@@ -35,7 +38,11 @@ export function UsMiRestrictiveHousing({
   if (
     !(
       opportunity instanceof
-      usMiSecurityClassificationCommitteeReviewOpportunity
+        usMiSecurityClassificationCommitteeReviewOpportunity ||
+      opportunity instanceof
+        usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity ||
+      opportunity instanceof
+        usMiAddInPersonSecurityClassificationCommitteeReviewOpportunity
     )
   ) {
     return null;
@@ -50,6 +57,8 @@ export function UsMiRestrictiveHousing({
     recentNonbondableOffenses,
     recentBondableOffenses,
     adSegStaysAndReasonsWithin3Yrs,
+    solitarySessionStartDate,
+    solitarySessionType,
   } = opportunityRecord.metadata;
 
   const misconductHistory = recentBondableOffenses
@@ -62,6 +71,13 @@ export function UsMiRestrictiveHousing({
       <DetailsHeading>Additional Details</DetailsHeading>
       <SecureDetailsContent>
         <SecureDetailsList>
+          <DetailsSubheading>
+            Start Date in {solitarySessionType}
+          </DetailsSubheading>
+          <SecureDetailsContent>
+            {formatWorkflowsDate(solitarySessionStartDate)}
+          </SecureDetailsContent>
+
           <DetailsSubheading>Prior Segregation History</DetailsSubheading>
           <SecureDetailsContent>
             {adSegStaysAndReasonsWithin3Yrs?.length

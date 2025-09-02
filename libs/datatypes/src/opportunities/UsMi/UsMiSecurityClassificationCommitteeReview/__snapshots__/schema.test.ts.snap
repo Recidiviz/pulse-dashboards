@@ -44,6 +44,8 @@ exports[`schema for almostEligible 1`] = `
     "neededProgramming": "105",
     "recentBondableOffenses": "(020, 2024-02-26)",
     "recentNonbondableOffenses": "(008, 2023-05-31)",
+    "solitarySessionStartDate": 2021-11-16T00:00:00.000Z,
+    "solitarySessionType": "TEMPORARY_SOLITARY_CONFINEMENT",
   },
   "stateCode": "US_MI",
 }
@@ -102,6 +104,8 @@ exports[`schema for fullyEligible1 1`] = `
     "neededProgramming": "101",
     "recentBondableOffenses": "(423, 2023-12-27)",
     "recentNonbondableOffenses": "(008, 2023-05-31)",
+    "solitarySessionStartDate": 2021-11-21T00:00:00.000Z,
+    "solitarySessionType": "ADMINISTRATIVE_SOLITARY_CONFINEMENT",
   },
   "stateCode": "US_MI",
 }
@@ -146,6 +150,8 @@ exports[`schema for fullyEligible2 1`] = `
     "neededProgramming": "101",
     "recentBondableOffenses": "(020, 2024-02-26), (057, 2023-12-05), (057, 2024-01-31)",
     "recentNonbondableOffenses": "(008, 2023-05-31)",
+    "solitarySessionStartDate": 2021-10-27T00:00:00.000Z,
+    "solitarySessionType": "TEMPORARY_SOLITARY_CONFINEMENT",
   },
   "stateCode": "US_MI",
 }
