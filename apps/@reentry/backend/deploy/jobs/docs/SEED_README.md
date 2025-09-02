@@ -2,27 +2,13 @@
 
 This directory contains the configuration for running the seed-workflow command as a Google Cloud Run Job.
 
-## Components
-
-- `cloudbuild.yaml` - Builds and deploys the seed job
-- `job.yaml` - Cloud Run Job specification
-- `Dockerfile.seed` - Docker image for the seed job
-- `entrypoint.seed.sh` - Entrypoint script that runs the seed-workflow command
 
 ## Usage
 
-### Build and Deploy
-```bash
-gcloud builds submit --config=backend/deploy/seed-job/cloudbuild.yaml
-```
 
 ### Run the Job Manually
 ```bash
 # Run with default 'demo' mode
-gcloud run jobs execute recidiviz-seed-workflow --region=us-central1
-
-# Run with specific mode by updating the job first
-gcloud run jobs replace backend/deploy/seed-job/job.yaml --region=us-central1
 gcloud run jobs execute recidiviz-seed-workflow --region=us-central1
 ```
 

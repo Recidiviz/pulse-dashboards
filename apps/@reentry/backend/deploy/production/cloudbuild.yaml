@@ -77,7 +77,6 @@ steps:
         RECIDIVIZ_DIARIZATION_SERVICE=deepgram,
         RECIDIVIZ_SENTRY_DSN=https://68c6d6b1c76579ebee3b9b8d785eda5a@o432474.ingest.us.sentry.io/4509651398819840,
         CHECKFINALCHARACTERHERE=todo:pending-to-fix
-
   # Deploy Worker service
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
     entrypoint: gcloud

@@ -78,7 +78,7 @@ class Plan(BaseModel, table=True):
         from app.tasks.plan_create import plan_create_task
         from app.tasks.scheduler import schedule_task
 
-        if self.create_execution and not self.is_create_execution_finished:
+        if self.create_execution:
             return self.execution
 
         execution = await schedule_task(
@@ -170,9 +170,7 @@ class PlanGeneration(BaseModel, table=True):
     # if set, it would prefer a generation than edit/regeneration
     force_generation: Optional[bool] = None
 
-    regeneration_notify: bool = Field(
-        default=False, sa_column_kwargs={"server_default": "false"}
-    )
+    regeneration_notify:  Optional[bool] = None
     #
     # Execution status and output
     #

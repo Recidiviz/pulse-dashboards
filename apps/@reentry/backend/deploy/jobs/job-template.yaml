@@ -1,0 +1,124 @@
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: recidiviz-${_JOB_NAME}-${_ENVIRONMENT}
+  labels:
+    cloud.googleapis.com/location: us-central1
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/cloudsql-instances: "${RECIDIVIZ_GCP_DB_INSTANCE_NAME}"
+        run.googleapis.com/network-interfaces: '[{"network":"default","subnetwork":"default"}]'
+    spec:
+      parallelism: 1
+      taskCount: 1
+      template:
+        spec:
+          maxRetries: ${MAX_RETRIES}
+          timeoutSeconds: ${TIMEOUT_SECONDS}
+          containers:
+          - name: recidiviz-${_JOB_NAME}-${_ENVIRONMENT}
+            image: gcr.io/${PROJECT_ID}/recidiviz-${_JOB_NAME}-job:latest
+            command: ["./entrypoint.${_JOB_NAME}.sh"]
+            env:
+            # Regular environment variables
+            - name: RECIDIVIZ_DEPLOY_ENV
+              value: "${RECIDIVIZ_DEPLOY_ENV}"
+            - name: RECIDIVIZ_ENV_NAME
+              value: "${RECIDIVIZ_ENV_NAME}"
+            - name: RECIDIVIZ_GCP_DB_INSTANCE_NAME
+              value: "${RECIDIVIZ_GCP_DB_INSTANCE_NAME}"
+            - name: RECIDIVIZ_REDIS_URL
+              value: "${RECIDIVIZ_REDIS_URL}"
+            - name: RECIDIVIZ_POSTGRES_USER
+              value: "${RECIDIVIZ_POSTGRES_USER}"
+            - name: RECIDIVIZ_POSTGRES_SERVER
+              value: "${RECIDIVIZ_POSTGRES_SERVER}"
+            - name: RECIDIVIZ_POSTGRES_PORT
+              value: "${RECIDIVIZ_POSTGRES_PORT}"
+            - name: RECIDIVIZ_POSTGRES_DB
+              value: "${RECIDIVIZ_POSTGRES_DB}"
+            - name: RECIDIVIZ_LANGCHAIN_TRACING_V2
+              value: "${RECIDIVIZ_LANGCHAIN_TRACING_V2}"
+            - name: RECIDIVIZ_LANGCHAIN_ENDPOINT
+              value: "${RECIDIVIZ_LANGCHAIN_ENDPOINT}"
+            - name: RECIDIVIZ_VCR_CLIENT_INTAKE
+              value: "${RECIDIVIZ_VCR_CLIENT_INTAKE}"
+            - name: RECIDIVIZ_ALLOWED_ORIGINS
+              value: "${RECIDIVIZ_ALLOWED_ORIGINS}"
+            - name: RECIDIVIZ_LANGCHAIN_PROJECT
+              value: "${RECIDIVIZ_LANGCHAIN_PROJECT}"
+            - name: RECIDIVIZ_EXTERNAL_RESOURCES_API_URL
+              value: "${RECIDIVIZ_EXTERNAL_RESOURCES_API_URL}"
+            - name: RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE
+              value: "${RECIDIVIZ_ENABLE_AUTH_MIDDLEWARE}"
+            - name: RECIDIVIZ_AUTH0_AUDIENCE
+              value: "${RECIDIVIZ_AUTH0_AUDIENCE}"
+            - name: RECIDIVIZ_AUTH0_DOMAIN
+              value: "${RECIDIVIZ_AUTH0_DOMAIN}"
+            - name: RECIDIVIZ_USE_EXTERNAL_RESOURCES_API
+              value: "${RECIDIVIZ_USE_EXTERNAL_RESOURCES_API}"
+            - name: RECIDIVIZ_JWT_ALGORITHM
+              value: "${RECIDIVIZ_JWT_ALGORITHM}"
+            - name: RECIDIVIZ_GCS_BUCKET_NAME
+              value: "${RECIDIVIZ_GCS_BUCKET_NAME}"
+            - name: SEED_MODE
+              value: "${SEED_MODE}"
+
+            # Secret references
+            - name: RECIDIVIZ_LANGCHAIN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_LANGCHAIN_API_KEY_${ENVIRONMENT_UPPER}
+                  key: "latest"
+            - name: RECIDIVIZ_OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_OPENAI_API_KEY_${ENVIRONMENT_UPPER}
+                  key: "latest"
+            - name: RECIDIVIZ_FABRK_BEARER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_FABRK_BEARER_TOKEN_${ENVIRONMENT_UPPER}
+                  key: "latest"
+            - name: RECIDIVIZ_POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_POSTGRES_PASSWORD_${ENVIRONMENT_UPPER}
+                  key: "latest"
+            - name: RECIDIVIZ_RESOURCES_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_RESOURCES_API_KEY_${ENVIRONMENT_UPPER}
+                  key: "latest"
+            - name: RECIDIVIZ_AUTH0_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_AUTH0_CLIENT_ID_${ENVIRONMENT_UPPER}
+                  key: "latest"
+            - name: RECIDIVIZ_JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_JWT_SECRET_KEY_${ENVIRONMENT_UPPER}
+                  key: "latest"
+            - name: RECIDIVIZ_BQ_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_BQ_PROJECT_ID_${ENVIRONMENT_UPPER}
+                  key: "latest"
+            - name: RECIDIVIZ_BQ_DATASET
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_BQ_DATASET_${ENVIRONMENT_UPPER}
+                  key: "latest"
+            - name: RECIDIVIZ_DEEPGRAM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: RECIDIVIZ_DEEPGRAM_API_KEY
+                  key: "latest"
+
+            resources:
+              limits:
+                cpu: "${CPU_LIMIT}"
+                memory: "${MEMORY_LIMIT}"

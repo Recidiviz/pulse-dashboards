@@ -66,12 +66,12 @@ async def get_plans(
 ) -> list[Plan]: ...
 
 
+
 @statement_or_result(result_type=list)
 async def get_plans(
     session: AsyncSession, *, query_only: bool = False
 ) -> SelectOfScalar[Plan] | list[Plan]:
     return select(Plan)
-
 
 async def delete_plan_by_id(session: AsyncSession, plan_id: UUID):
     plan = await get_plan_by_id(session, plan_id)

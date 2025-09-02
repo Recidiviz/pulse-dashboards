@@ -1,0 +1,73 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "build"
+      - "-f"
+      - "deploy/jobs/Dockerfile"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/recidiviz-${_JOB_NAME}-job:latest"
+      - "."
+
+  # Push the Docker image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "gcr.io/$PROJECT_ID/recidiviz-${_JOB_NAME}-job:latest"
+
+  # Generate and deploy job
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        set -e
+
+        # Install envsubst if not available
+        if ! command -v envsubst &> /dev/null; then
+          echo "Installing envsubst..."
+          apt-get update && apt-get install -y gettext-base
+        fi
+
+        # Validate that required substitutions are provided
+        if [[ -z "${_JOB_NAME}" ]]; then
+          echo "ERROR: _JOB_NAME is required"
+          echo "Usage: gcloud builds submit --config deploy/jobs/cloudbuild.yaml --substitutions=_JOB_NAME=force-db,_ENVIRONMENT=demo"
+          exit 1
+        fi
+
+        if [[ -z "${_ENVIRONMENT}" ]]; then
+          echo "ERROR: _ENVIRONMENT is required"
+          echo "Usage: gcloud builds submit --config deploy/jobs/cloudbuild.yaml --substitutions=_JOB_NAME=force-db,_ENVIRONMENT=demo"
+          exit 1
+        fi
+
+        # Export substitution variables for envsubst
+        export _JOB_NAME="${_JOB_NAME}"
+        export _ENVIRONMENT="${_ENVIRONMENT}"
+        export PROJECT_ID="${PROJECT_ID}"
+
+        #  Validate that the environment and job type files exist
+        if [[ ! -f "deploy/jobs/envs/${_ENVIRONMENT}.env" ]]; then
+          echo "ERROR: Base environment configuration file deploy/jobs/envs/${_ENVIRONMENT}.env does not exist."
+          exit 1
+        fi
+
+        # validations passed, proceed with job generation and deployment
+        echo "Building job: ${_JOB_NAME} for environment: ${_ENVIRONMENT}"
+
+        echo "Loading base environment for ${_ENVIRONMENT}"
+        source deploy/jobs/envs/${_ENVIRONMENT}.env
+
+        echo "Generating job from template..."
+        envsubst < deploy/jobs/job-template.yaml > /tmp/job.yaml
+
+        echo "Generated job YAML:"
+        cat /tmp/job.yaml
+
+        echo "Deploying job to Cloud Run..."
+        gcloud run jobs replace /tmp/job.yaml --region=us-central1
+
+        echo "Job deployed successfully!"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
