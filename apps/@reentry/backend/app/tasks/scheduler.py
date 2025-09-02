@@ -8,18 +8,16 @@ task, manage execution statuses, and handle database operations related
 to task executions.
 """
 
-import os
 import uuid
 from contextlib import asynccontextmanager
 
 import structlog
 from taskiq.task import AsyncTaskiqTask
 
+from app.core.config import settings
 from app.core.db import AsyncSession
 from app.crud.execution import get_execution_by_id, update_execution, upsert_execution
 from app.models.execution import Execution, ExecutionStatus
-from app.core.config import settings
-
 
 logger = structlog.get_logger(__name__)
 

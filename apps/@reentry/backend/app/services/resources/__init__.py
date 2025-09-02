@@ -333,8 +333,6 @@ async def list_resources(request: GetResourcesRequest) -> GetResourcesResponse:
     Returns:
         GetResourcesResponse with resources
     """
-    # Import here to avoid circular imports
-    import sys
 
     from app.services.resources.stub_resources import _list_resources_internal
 

@@ -1,7 +1,7 @@
 import json
-from datetime import datetime
 import logging
 import time
+from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import jwt
@@ -54,7 +54,7 @@ def mock_jwks_cache(auth0_config, mock_jwks):
         return cache
 
 
-def create_jwt_payload(expired : bool = False):
+def create_jwt_payload(expired: bool = False):
     # current time and expiration time 1 hour (+/-) from now
     now = int(time.time())
     exp = now + 3600 if not expired else now - 3600
@@ -76,12 +76,13 @@ def create_jwt_payload(expired : bool = False):
         "nbf": now,
     }
 
+
 @pytest.fixture
 def mock_jwt_payload():
     return create_jwt_payload()
 
 
-def create_token(expired : bool = False):
+def create_token(expired: bool = False):
     dummy_key = "dummy-secret-key-for-testing"
     return jwt.encode(
         create_jwt_payload(expired),
@@ -90,13 +91,15 @@ def create_token(expired : bool = False):
         headers={"kid": "test-kid", "typ": "JWT"},
     )
 
+
 @pytest.fixture
 def mock_token():
     return create_token()
 
+
 @pytest.fixture
 def mock_expired_token():
-    return create_token(expired = True)
+    return create_token(expired=True)
 
 
 def test_auth0_config_properties(auth0_config):
@@ -511,4 +514,3 @@ def test_null_token_logs_not_enough_segments_error(mock_logging, auth0_config):
     )
     assert excinfo.value.status_code == 401
     assert excinfo.value.detail == "Authentication error"
-

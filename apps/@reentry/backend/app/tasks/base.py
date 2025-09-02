@@ -1,5 +1,3 @@
-import os
-
 from taskiq import InMemoryBroker
 from taskiq_redis import ListQueueBroker, RedisAsyncResultBackend
 
