@@ -39,7 +39,7 @@ const US_TX_CONFIG = {
   supervisionDisplayIdCopy: "SID",
   workflowsSupportedSystems: ["SUPERVISION"],
   workflowsHomepage: "home",
-  workflowsHomepageName: "Home",
+  workflowsHomepageName: "Opportunities",
   workflowsMethodologyUrl:
     "https://docs.google.com/document/d/e/2PACX-1vQ2vXowyvhHi5o0NZsWBlQbmTveRcirOsOBghxbv_1JjhMZyMnL-RAJ9VwMuMMsLmSXwpoF6N1SvkLm/pub",
   workflowsSystemConfigs: {
@@ -113,6 +113,16 @@ const US_TX_CONFIG = {
         snoozeForOptionsInDays: [7, 30, 90],
       },
     },
+    columns: [
+      "name",
+      "id",
+      "frequency",
+      "task",
+      "dueDate",
+      "caseType",
+      "supervisionLevel",
+      "assignedTo",
+    ],
     filters: [
       {
         title: "Contact Type",
@@ -140,7 +150,7 @@ const US_TX_CONFIG = {
           },
           {
             value: "usTxInCustodyContact",
-            label: "In-Custody Contact",
+            label: "Investigative Contact",
           },
           {
             value: "usTxOfficeContactScheduled",
@@ -171,7 +181,7 @@ const US_TX_CONFIG = {
           },
           {
             value: "usTxAssessment",
-            label: "Assessments",
+            label: "TRAS",
           },
         ],
       },

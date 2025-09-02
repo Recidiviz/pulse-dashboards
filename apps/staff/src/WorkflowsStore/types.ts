@@ -61,6 +61,8 @@ export type JusticeInvolvedPerson = {
   fullName: FullName;
   displayName: string;
   displayPreferredName: string;
+  displayPreferredNameLastFirst: string;
+  preferredName: string | undefined;
   assignedStaff: StaffRecord | undefined;
   assignedStaffId?: string;
   assignedStaffPseudoId?: string;

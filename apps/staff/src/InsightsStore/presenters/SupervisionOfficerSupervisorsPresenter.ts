@@ -109,7 +109,11 @@ export class SupervisionOfficerSupervisorsPresenter implements Hydratable {
     );
 
     result.map(({ supervisors }) =>
-      supervisors.sort((a, b) => a.displayName.localeCompare(b.displayName)),
+      supervisors.sort((a, b) =>
+        (a.fullName.surname ?? a.displayName).localeCompare(
+          b.fullName.surname ?? b.displayName,
+        ),
+      ),
     );
 
     result.sort((a, b) => {

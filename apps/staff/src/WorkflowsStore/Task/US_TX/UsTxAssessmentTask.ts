@@ -21,7 +21,7 @@ import { formatWorkflowsDate } from "../../../utils/formatStrings";
 import { Task } from "../Task";
 
 class UsTxAssessmentTask extends Task<"usTxAssessment"> {
-  displayName = "Assessment";
+  displayName = "TRAS";
 
   get lastAssessment(): string | undefined {
     if (this.details.eventType !== "assessment_completed") return;
@@ -30,8 +30,8 @@ class UsTxAssessmentTask extends Task<"usTxAssessment"> {
 
   get additionalDetails(): string {
     return this.lastAssessment
-      ? `Last assessment: ${this.lastAssessment}`
-      : "No previous assessment on record";
+      ? `Last TRAS: ${this.lastAssessment}`
+      : "No previous TRAS on record";
   }
 
   get frequency(): string {

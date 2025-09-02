@@ -18,7 +18,7 @@
 import UsTxContactTask from "./UsTxContactTask";
 
 class UsTxInCustodyContactTask extends UsTxContactTask<"usTxInCustodyContact"> {
-  displayName = "In-custody contact";
+  displayName = "Investigative contact";
 }
 
 export default UsTxInCustodyContactTask;

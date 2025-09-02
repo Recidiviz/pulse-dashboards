@@ -50,7 +50,14 @@ const WorkflowsOfficerName: React.FC<WorkflowsOfficerNameProps> = ({
   let officerFullName: string | undefined;
   // unlikely but not impossible that name data could be missing
   if (officer?.givenNames && officer?.surname) {
-    officerFullName = `${officer.givenNames} ${officer.surname}`.trim();
+    // names should display in reverse order in TX
+    if (officer.stateCode === "US_TX") {
+      officerFullName = [officer.surname ?? "", officer.givenNames ?? ""].join(
+        ", ",
+      );
+    } else {
+      officerFullName = `${officer.givenNames} ${officer.surname}`.trim();
+    }
   }
 
   if (searchType === "CASELOAD" && officerId)

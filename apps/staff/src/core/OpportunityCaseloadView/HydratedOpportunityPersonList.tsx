@@ -449,8 +449,13 @@ const TableView = observer(function TableView({
         opp.person.record.personName.surname ?? opp.person.displayName,
       enableSorting: true,
       sortingFn: "text",
-      cell: ({ row }: { row: Row<Opportunity> }) =>
-        row.original.person.displayName,
+      cell: ({ row }: { row: Row<Opportunity> }) => {
+        const { person } = row.original;
+        if (person.stateCode === "US_TX") {
+          return person.displayPreferredNameLastFirst;
+        }
+        return person.displayPreferredName;
+      },
     },
     {
       // TODO(#7453): Update this heading if other opportunities use instanceDetails

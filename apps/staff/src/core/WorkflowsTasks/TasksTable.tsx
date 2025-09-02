@@ -37,10 +37,13 @@ import {
   MaxWidthFlexWrapper,
 } from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
 import PersonId from "../PersonId";
+import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { WorkflowsStatusPill } from "../WorkflowsStatusPill/WorkflowsStatusPill";
 import { TaskFrequency } from "./TaskFrequency";
 
-const PersonNameElement = styled.div<{ $isMobile: boolean }>`
+const PersonNameElement = styled.div.attrs({
+  className: "fs-exclude",
+})<{ $isMobile: boolean }>`
   display: flex;
   flex-direction: ${({ $isMobile }) => ($isMobile ? "column" : "row")};
   align-items: ${({ $isMobile }) => ($isMobile ? "flex-start" : "center")};
@@ -51,10 +54,23 @@ const PersonNameElement = styled.div<{ $isMobile: boolean }>`
 function PersonNameCell({ row }: { row: Row<SupervisionTask> }) {
   const { isMobile } = useIsMobile(true);
   const { person } = row.original;
+  const displayName =
+    person.stateCode === "US_TX"
+      ? person.displayPreferredNameLastFirst
+      : person.displayPreferredName;
   return (
     <PersonNameElement $isMobile={isMobile}>
-      {person.displayName} <WorkflowsStatusPill person={person} />
+      {displayName} <WorkflowsStatusPill person={person} />
     </PersonNameElement>
+  );
+}
+
+function OfficerNameCell({ row }: { row: Row<SupervisionTask> }) {
+  return row.original.person.assignedStaffId ? (
+    <WorkflowsOfficerName officerId={row.original.person.assignedStaffId} />
+  ) : (
+    // for type safety, but we should not show this column for anyone without an officer
+    "—"
   );
 }
 
@@ -111,9 +127,7 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
     {
       header: "Name",
       id: "name",
-      accessorFn: (task: SupervisionTask) =>
-        // Sort by surname if available, full displayed name if not
-        task.person.record.personName.surname ?? task.person.displayName,
+      accessorFn: (task: SupervisionTask) => task.person.displayName,
       enableSorting: true,
       sortingFn: "text",
       cell: PersonNameCell,
@@ -135,13 +149,6 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
     {
       header: "Due",
       id: "dueDate",
-      enableSorting: true,
-      accessorKey: "dueDate",
-      cell: TaskDateCell,
-    },
-    {
-      header: "Recommended",
-      id: "recommendedDate",
       enableSorting: true,
       accessorKey: "dueDate",
       cell: TaskDateCell,
@@ -200,11 +207,12 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
     {
       header: "Assigned To",
       id: "assignedTo",
-      accessorFn: ({ person }) => {
-        if (person instanceof Client) {
-          return person.assignedStaffFullName;
-        }
-      },
+      // Sort by surname if available, full displayed name if not
+      accessorFn: ({ person }) =>
+        person.assignedStaff?.surname ?? person.assignedStaffFullName,
+      enableSorting: true,
+      sortingFn: "text",
+      cell: OfficerNameCell,
     },
   ] as const satisfies ColumnDef<SupervisionTask>[];
 

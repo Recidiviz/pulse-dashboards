@@ -241,7 +241,7 @@ export default class TenantStore {
         "name",
         "id",
         "task",
-        "recommendedDate",
+        "dueDate",
         "frequency",
         "supervisionLevel",
         "caseType",

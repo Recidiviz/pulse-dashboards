@@ -173,19 +173,27 @@ export abstract class JusticeInvolvedPersonBase<
       .join(" ");
   }
 
+  get preferredGivenName(): string {
+    return [
+      this.fullName.givenNames,
+      this.preferredName && this.preferredName !== this.fullName.givenNames
+        ? `(${this.preferredName})`
+        : undefined,
+    ]
+      .filter((n) => Boolean(n))
+      .join(" ");
+  }
+
   get displayPreferredName(): string {
-    if (this.preferredName) {
-      return [
-        this.fullName.givenNames,
-        this.preferredName && this.preferredName !== this.fullName.givenNames
-          ? `(${this.preferredName})`
-          : undefined,
-        this.fullName.surname,
-      ]
-        .filter((n) => Boolean(n))
-        .join(" ");
-    }
-    return this.displayName;
+    return [this.preferredGivenName, this.fullName.surname]
+      .filter((n) => Boolean(n))
+      .join(" ");
+  }
+
+  get displayPreferredNameLastFirst(): string {
+    return [this.fullName.surname, this.preferredGivenName]
+      .filter((n) => Boolean(n))
+      .join(", ");
   }
 
   get updates(): PersonUpdateRecord | undefined {
