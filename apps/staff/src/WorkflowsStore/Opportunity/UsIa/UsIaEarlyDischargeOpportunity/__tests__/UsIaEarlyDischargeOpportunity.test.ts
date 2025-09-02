@@ -391,6 +391,8 @@ describe("maxManualSnoozeDays", () => {
       "TEMPORARY REASON": "Temp reason label",
       COURT: "Court reason triggers indefinite snooze",
       "INTERSTATE (IC-IN)": "IC-IN triggers indefinite snooze",
+      "INTERSTATE (IC-OUT)":
+        "IC-OUT has a longer max snooze length than normal",
     });
   });
 
@@ -431,6 +433,21 @@ describe("maxManualSnoozeDays", () => {
         "temporaryReason2",
       ]),
     ).toBeUndefined();
+  });
+
+  test("Returns 365 if extended snooze reason (IC-OUT) is selected", () => {
+    vi.spyOn(opportunity, "config", "get").mockReturnValue({
+      snooze: {
+        maxSnoozeDays: 90,
+      },
+    } as any);
+
+    expect(
+      opportunity.maxManualSnoozeDays([
+        "INTERSTATE (IC-OUT)",
+        "temporaryReason2",
+      ]),
+    ).toEqual(365);
   });
 
   test("Caps snooze length to release date", () => {

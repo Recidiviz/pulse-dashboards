@@ -393,6 +393,15 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   }
 
   maxManualSnoozeDays(denialReasons: string[]): number | undefined {
+    const extendedSnoozeReasons = [
+      "FINES & FEES",
+      "DENIED",
+      "INTERSTATE (IC-OUT)",
+    ];
+    const extendedSnoozeMaxLength = 365;
+    if (intersection(extendedSnoozeReasons, denialReasons).length > 0) {
+      return extendedSnoozeMaxLength;
+    }
     if (this.indefiniteSnoozeEnabled) {
       const selectedIndefiniteReasons = intersection(
         Object.keys(this.indefiniteDenialReasons),
