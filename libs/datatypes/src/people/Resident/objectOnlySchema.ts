@@ -29,6 +29,7 @@ import { usMaResidentMetadataSchema } from "./US_MA/metadata/schema";
 import { usMeResidentMetadataSchema } from "./US_ME/metadata/schema";
 import { usMoResidentMetadataSchema } from "./US_MO/metadata/schema";
 import { usNdResidentMetadataSchema } from "./US_ND/metadata/schema";
+import { usNeResidentMetadataSchema } from "./US_NE/metadata/schema";
 import { usTnResidentMetadataSchema } from "./US_TN/metadata/schema";
 
 /**
@@ -67,6 +68,7 @@ export const residentRecordObjectSchema =
         usMaResidentMetadataSchema,
         usMoResidentMetadataSchema,
         usNdResidentMetadataSchema,
+        usNeResidentMetadataSchema,
         usTnResidentMetadataSchema,
       ]),
     }),
