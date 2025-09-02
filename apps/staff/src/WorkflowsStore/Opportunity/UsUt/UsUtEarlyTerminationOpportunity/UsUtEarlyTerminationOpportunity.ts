@@ -39,23 +39,15 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
     );
   }
 
-  get almostEligible() {
-    // Even though "Early Requests" have an ineligible criteria specified,
-    // they are technically "eligible" for the opportunity
-    if (this.record.metadata.tabName === "EARLY_REQUESTS") return false;
-    return super.almostEligible;
-  }
-
   tabTitle(): OpportunityTab {
     if (this.denied) return this.deniedTabTitle;
     switch (this.record.metadata.tabName) {
       case "REPORT_DUE_ELIGIBLE":
       case "REPORT_DUE_ALMOST_ELIGIBLE":
-        return "Report Due (Benchmarks Met)";
+      case "EARLY_REQUESTS":
+        return "Suitable for Early Termination";
       case "REPORT_DUE_INELIGIBLE":
         return "Report Due (Other)";
-      case "EARLY_REQUESTS":
-        return "Early Requests";
       case "REPORT_SUBMITTED":
         return "Report Submitted";
       default:
@@ -69,30 +61,56 @@ export class UsUtEarlyTerminationOpportunity extends OpportunityBase<
     switch (this.record.metadata.tabName) {
       case "REPORT_DUE_ELIGIBLE":
       case "REPORT_DUE_ALMOST_ELIGIBLE":
-        return this.record.metadata.tabName;
+        return "REPORT_DUE";
+      case "EARLY_REQUESTS":
+        return "EARLY_REQUESTS";
+    }
+  }
+
+  get allBenchmarksMet() {
+    // For Early Requests, we want to determine whether the person is missing another
+    // criteria in addition to the half-time criteria
+    const ineligibleCriteria = Object.keys(this.record.ineligibleCriteria);
+
+    switch (this.record.metadata.tabName) {
+      case "REPORT_DUE_ELIGIBLE":
+        return true;
+      case "EARLY_REQUESTS":
+        return ineligibleCriteria.length === 1;
+      case "REPORT_DUE_ALMOST_ELIGIBLE":
+      case "REPORT_DUE_INELIGIBLE":
+      default:
+        return false;
     }
   }
 
   eligibilityStatusLabel(includeReasons?: boolean) {
-    if (this.denied) return super.eligibilityStatusLabel(includeReasons);
-
-    switch (this.record.metadata.tabName) {
-      case "REPORT_DUE_ELIGIBLE":
-        return "All Benchmarks Met";
-      case "REPORT_DUE_ALMOST_ELIGIBLE":
-        return "Almost All Benchmarks Met";
-      case "REPORT_DUE_INELIGIBLE":
-        return "Report Due";
-      case "EARLY_REQUESTS":
-      case "REPORT_SUBMITTED":
-        return this.tabTitle();
-      default:
-        return "Other";
+    if (this.denied) {
+      return super.eligibilityStatusLabel(includeReasons);
     }
+    if (this.record.metadata.tabName === "REPORT_SUBMITTED") {
+      return this.tabTitle();
+    }
+    if (this.record.metadata.tabName === "REPORT_DUE_INELIGIBLE") {
+      return "Report Due";
+    }
+
+    return this.allBenchmarksMet
+      ? "All Benchmarks Met"
+      : "Verification Required";
   }
 
   get customStatusPalette() {
-    if (this.record.metadata.tabName === "REPORT_SUBMITTED")
+    if (this.denied) {
+      return OPPORTUNITY_STATUS_COLORS.ineligible;
+    }
+    if (this.record.metadata.tabName === "REPORT_SUBMITTED") {
       return OPPORTUNITY_STATUS_COLORS.submitted;
+    }
+    if (this.allBenchmarksMet) {
+      return OPPORTUNITY_STATUS_COLORS.eligible;
+    } else {
+      return OPPORTUNITY_STATUS_COLORS.submitted;
+    }
   }
 }

@@ -230,8 +230,7 @@ export type OpportunityTab =
 
   // For US_UT Early Termination
   | "Report Due (Other)"
-  | "Report Due (Benchmarks Met)"
-  | "Early Requests"
+  | "Suitable for Early Termination"
   | "Report Submitted"
 
   // For US_IA Early Discharge opportunity

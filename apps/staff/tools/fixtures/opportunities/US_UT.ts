@@ -115,7 +115,7 @@ export const mockApiOpportunityConfigurationResponse = {
       emptyTabCopy: [
         {
           tab: "Suitable for Early Termination",
-          text: "At this time, there are no clients who have a report due and early termination benchmarks met. Please navigate to one of the other tabs.",
+          text: "At this time, there are no clients who have a report due and early termination stability benchmarks met. Please navigate to one of the other tabs.",
         },
         {
           tab: "Report Due (Other)",
@@ -134,7 +134,7 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [
         {
           key: "usUtHasCompletedOrderedAssessments",
-          text: "May be missing ordered assessments, recommended treatment or programming",
+          text: "Unable to auto-verify ordered assessment or treatment completion. Please confirm treatment status if applicable.",
           tooltip:
             "SENTENCING COMMISSION GUIDELINE: Completion of ordered assessments and any recommended treatment or programming by a licensed provider. For the purposes of this section, persons voluntarily engaged in ongoing care after having completing ordered treatment\nshall be considered as having completed treatment. If no treatment is ordered, then this requirement has been met.",
         },
@@ -152,7 +152,7 @@ export const mockApiOpportunityConfigurationResponse = {
         },
         {
           key: "supervisionContinuousEmploymentFor3Months",
-          text: "May not have had continuous employment",
+          text: "Unable to auto-verify continuous employment. Please confirm employment history if applicable.",
           tooltip:
             "AP&P STABILITY BENCHMARK: Client has had continuous employment for at least three months.",
         },
@@ -179,13 +179,14 @@ export const mockApiOpportunityConfigurationResponse = {
         "Review the clients and submit a report to the court or BOPP for those who are strong candidates",
       isAlert: false,
       markSubmittedOptionsByTab: [],
-      methodologyUrl:
-        "https://docs.google.com/document/d/e/2PACX-1vR3uKKRbdWXDRUz8v1km5oZNNeYuB3yUmWsZLut8RlPCAQqjUi4Cle3fXeivhYKYm8By--6nNRWFIUO/pub",
+      methodologyUrl: "#",
       nonOmsCriteria: [
         {
           text: "{{#unless (or record.ineligibleCriteria.atLeast6MonthsSinceMostRecentPositiveDrugTest (eq record.ineligibleCriteria.atLeast6MonthsSinceMostRecentPositiveDrugTest null))}}If relevant, negative drug test within the last 6 months{{/unless}}",
         },
-        { text: "Confirm that any required treatment has been completed" },
+        {
+          text: "Confirm that any required treatment has been completed",
+        },
       ],
       nonOmsCriteriaHeader: null,
       notifications: [],
@@ -198,7 +199,10 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_UT",
       subcategoryHeadings: [
         { subcategory: "REPORT_DUE", text: "Report Due" },
-        { subcategory: "EARLY_REQUESTS", text: "Early Requests" },
+        {
+          subcategory: "EARLY_REQUESTS",
+          text: "Early Requests",
+        },
       ],
       subcategoryOrderings: [
         {
@@ -225,7 +229,7 @@ export const mockApiOpportunityConfigurationResponse = {
       tabPrefaceCopy: [
         {
           tab: "Suitable for Early Termination",
-          text: "This tab lists clients approaching or past their early termination report due date who meet the treatment and risk reduction guidelines as well as the stability benchmarks set by UDC. It also lists clients that are missing one or two indicators of stability for early termination.",
+          text: "This tab lists all clients who meet the treatment and risk reduction guidelines as well as the stability benchmarks set by UDC. Clients approaching or past their early termination report due date are listed at the top, and clients earlier in their sentence who are still good candidates for early termination are listed below under “Early Requests”.",
         },
         {
           tab: "Report Due (Other)",

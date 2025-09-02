@@ -15,21 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { countBy } from "lodash";
-
-import { PartialRecord } from "../../../../../../utils/typeUtils";
-import { Opportunity, OpportunityTab } from "../../../../types";
+import { Opportunity } from "../../../../types";
 import { ApiOpportunityConfiguration } from "../../ApiOpportunityConfigurationImpl";
 
 export class UsUtEarlyTerminationConfiguration extends ApiOpportunityConfiguration {
   countByFunction = (opportunities: Opportunity[]) => {
-    const counts = countBy(opportunities, (opp) =>
-      opp.tabTitle(),
-    ) as PartialRecord<OpportunityTab, number>;
-    return (
-      (counts["Early Requests"] ?? 0) +
-      (counts["Report Due (Benchmarks Met)"] ?? 0) +
-      (counts["Report Due (Other)"] ?? 0)
-    );
+    return opportunities.filter(
+      (opp) => opp.tabTitle() === "Suitable for Early Termination",
+    ).length;
   };
 }
