@@ -63,8 +63,13 @@ export class Resident extends JusticeInvolvedPersonBase<ResidentRecord> {
         return `${this.custodyLevel.replace("_", " ")} CUSTODY`;
       }
     }
-
-    return this.custodyLevel ?? "";
+    const tenantConfig = this.rootStore.tenantStore.currentTenantConfig;
+    if (!this.custodyLevel) {
+      return tenantConfig?.custodyLevelCopy?.["null"] ?? "Unknown";
+    }
+    return (
+      tenantConfig?.custodyLevelCopy?.[this.custodyLevel] ?? this.custodyLevel
+    );
   }
 
   get admissionDate(): Date | undefined {

@@ -58,6 +58,15 @@ const US_MI_CONFIG = {
   featureVariants: {
     outcomesModule: {},
   },
+  custodyLevelCopy: {
+    MINIMUM: "Level I",
+    RESTRICTIVE_MINIMUM: "Level II",
+    CLOSE: "Level IV",
+    MAXIMUM: "Level V",
+    INTERNAL_UNKNOWN: "Unknown",
+    EXTERNAL_UNKNOWN: "Unknown",
+    null: "Unknown",
+  },
 } satisfies TenantConfig<"US_MI">;
 
 export default US_MI_CONFIG;

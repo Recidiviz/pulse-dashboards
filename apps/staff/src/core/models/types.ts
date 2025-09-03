@@ -100,6 +100,7 @@ export type TenantConfig<TENANT_ID extends TenantConfigId> = {
   releaseDateCopyOverride?: string;
   supervisionEndCopyOverride?: string;
   incarcerationStaffTitleOverride?: string;
+  custodyLevelCopy?: Record<string, string>;
 
   // Insights
   insightsLaunchedDistricts?: string[];
