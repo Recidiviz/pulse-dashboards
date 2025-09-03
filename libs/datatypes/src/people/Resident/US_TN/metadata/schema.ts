@@ -33,6 +33,7 @@ export const usTnJiiCreditsSchema = z.object({
       "GED",
       "PROGRAM",
       "BONUS_PROGRAM",
+      "REMOVAL",
     ])
     .nullable(),
   creditsEarned: z.number().nullable(),
