@@ -69,7 +69,7 @@ export const LSUReferralRecordFixture: LSUReferralRecordRaw = {
     usIdIncomeVerifiedWithin3Months: {
       incomeVerifiedDate: "2022-06-03",
     },
-    onSupervisionAtLeastOneYear: {
+    underSupervisionCustodialAuthorityAtLeastOneYear: {
       eligibleDate: "2022-06-01",
     },
     usIdNoActiveNco: {
@@ -125,7 +125,7 @@ export const AlmostEligibleLSUReferralRecordFixture: LSUReferralRecordRaw = {
       riskLevel: "LOW",
       eligibleDate: "2022-01-03",
     },
-    onSupervisionAtLeastOneYear: {
+    underSupervisionCustodialAuthorityAtLeastOneYear: {
       eligibleDate: "2022-06-01",
     },
     usIdNoActiveNco: {

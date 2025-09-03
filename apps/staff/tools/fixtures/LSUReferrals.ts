@@ -53,7 +53,7 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
           eligibleDate: "2021-02-15",
           riskLevel: "LOW",
         },
-        onSupervisionAtLeastOneYear: {
+        underSupervisionCustodialAuthorityAtLeastOneYear: {
           eligibleDate: "2021-10-16",
         },
       },
@@ -82,7 +82,7 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
         latestNegativeDrugScreenDate: "2022-03-02",
       },
       ineligibleCriteria: {
-        onSupervisionAtLeastOneYear: {
+        underSupervisionCustodialAuthorityAtLeastOneYear: {
           eligibleDate: "2025-10-16",
         },
       },
@@ -134,7 +134,7 @@ export const LSUReferralsFixture: FirestoreFixture<LSUReferralRecordRaw> = {
           eligibleDate: "2021-02-15",
           riskLevel: "LOW",
         },
-        onSupervisionAtLeastOneYear: {
+        underSupervisionCustodialAuthorityAtLeastOneYear: {
           eligibleDate: "2021-10-16",
         },
       },

@@ -44,7 +44,7 @@ export const LSU_CRITERIA: Record<
     tooltip:
       "Policy requirement: Assessed at low risk level on LSI-R with no risk increase in past 90 days",
   },
-  onSupervisionAtLeastOneYear: {
+  underSupervisionCustodialAuthorityAtLeastOneYear: {
     text: "On supervision at least 1 year",
     tooltip: "Has been on supervision for at least 1 year",
   },
@@ -59,7 +59,7 @@ const INELIGIBLE_CRITERIA_COPY: Record<
   keyof LSUReferralRecord["ineligibleCriteria"],
   OpportunityRequirement
 > = {
-  onSupervisionAtLeastOneYear: {
+  underSupervisionCustodialAuthorityAtLeastOneYear: {
     text: "Needs $TIME_REMAINING on supervision",
     tooltip: "Policy requirement: Has been on supervision for at least 1 year",
   },
@@ -89,7 +89,7 @@ export class LSUOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const { ineligibleCriteria } = this.record;
     const requirements: OpportunityRequirement[] = [];
-    const { usIdIncomeVerifiedWithin3Months, onSupervisionAtLeastOneYear } =
+    const { usIdIncomeVerifiedWithin3Months, underSupervisionCustodialAuthorityAtLeastOneYear } =
       cloneDeep(INELIGIBLE_CRITERIA_COPY);
 
     if (ineligibleCriteria.usIdIncomeVerifiedWithin3Months) {
@@ -97,37 +97,37 @@ export class LSUOpportunity extends OpportunityBase<
     }
 
     if (
-      ineligibleCriteria.onSupervisionAtLeastOneYear &&
-      ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate
+      ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear &&
+      ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear.eligibleDate
     ) {
       const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
-        ineligibleCriteria.onSupervisionAtLeastOneYear.eligibleDate,
+        ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear.eligibleDate,
       );
-      onSupervisionAtLeastOneYear.text =
-        onSupervisionAtLeastOneYear.text.replace(
+      underSupervisionCustodialAuthorityAtLeastOneYear.text =
+        underSupervisionCustodialAuthorityAtLeastOneYear.text.replace(
           "$TIME_REMAINING",
           `${monthsOrDaysRemaining}`,
         );
-      requirements.push(onSupervisionAtLeastOneYear);
+      requirements.push(underSupervisionCustodialAuthorityAtLeastOneYear);
     }
     return requirements;
   }
 
   get almostEligibleStatusMessage(): string | undefined {
     if (!this.almostEligible) return;
-    const { usIdIncomeVerifiedWithin3Months, onSupervisionAtLeastOneYear } =
+    const { usIdIncomeVerifiedWithin3Months, underSupervisionCustodialAuthorityAtLeastOneYear } =
       this.record?.ineligibleCriteria ?? {};
     if (usIdIncomeVerifiedWithin3Months) {
       return INELIGIBLE_CRITERIA_COPY.usIdIncomeVerifiedWithin3Months.text;
     }
     if (
-      onSupervisionAtLeastOneYear &&
-      onSupervisionAtLeastOneYear.eligibleDate
+      underSupervisionCustodialAuthorityAtLeastOneYear &&
+      underSupervisionCustodialAuthorityAtLeastOneYear.eligibleDate
     ) {
       const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
-        onSupervisionAtLeastOneYear.eligibleDate,
+        underSupervisionCustodialAuthorityAtLeastOneYear.eligibleDate,
       );
-      return INELIGIBLE_CRITERIA_COPY.onSupervisionAtLeastOneYear.text.replace(
+      return INELIGIBLE_CRITERIA_COPY.underSupervisionCustodialAuthorityAtLeastOneYear.text.replace(
         "$TIME_REMAINING",
         `${monthsOrDaysRemaining}`,
       );
@@ -152,10 +152,10 @@ export class LSUOpportunity extends OpportunityBase<
     }
 
     if (
-      eligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate &&
-      eligibleCriteria.onSupervisionAtLeastOneYear?.eligibleDate <= new Date()
+      eligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear?.eligibleDate &&
+      eligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear?.eligibleDate <= new Date()
     ) {
-      requirements.push(LSU_CRITERIA.onSupervisionAtLeastOneYear);
+      requirements.push(LSU_CRITERIA.underSupervisionCustodialAuthorityAtLeastOneYear);
     }
 
     return requirements;

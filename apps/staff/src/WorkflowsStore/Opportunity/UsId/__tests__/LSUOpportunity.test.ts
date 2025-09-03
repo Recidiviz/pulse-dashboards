@@ -241,13 +241,13 @@ describe("almost eligible on supervision at least a year", () => {
     isAlmostEligible: true,
   };
 
-  almostEligibleSupervisionLength.ineligibleCriteria.onSupervisionAtLeastOneYear =
+  almostEligibleSupervisionLength.ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear =
     {
       eligibleDate: "2022-12-01",
     };
 
   delete almostEligibleSupervisionLength.eligibleCriteria
-    .onSupervisionAtLeastOneYear;
+    .underSupervisionCustodialAuthorityAtLeastOneYear;
   beforeEach(() => {
     tk.freeze(new Date(2022, 6, 1));
 
@@ -285,13 +285,13 @@ describe("almost eligible days remaining on supervision", () => {
     isEligible: false,
     isAlmostEligible: true,
   };
-  almostEligibleSupervisionLength.ineligibleCriteria.onSupervisionAtLeastOneYear =
+  almostEligibleSupervisionLength.ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear =
     {
       eligibleDate: "2023-03-02",
     };
 
   delete almostEligibleSupervisionLength.eligibleCriteria
-    .onSupervisionAtLeastOneYear;
+    .underSupervisionCustodialAuthorityAtLeastOneYear;
   beforeEach(() => {
     tk.freeze(new Date(2023, 1, 23));
     createTestUnit(LSUEligibleClientRecord, almostEligibleSupervisionLength);

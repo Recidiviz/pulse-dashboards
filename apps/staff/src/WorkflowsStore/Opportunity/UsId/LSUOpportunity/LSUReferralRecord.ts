@@ -56,7 +56,7 @@ export const usIdLsuSchema = opportunitySchemaBase.extend({
         eligibleDate: dateStringSchema,
         riskLevel: z.literal("LOW"),
       }),
-      onSupervisionAtLeastOneYear: z
+      underSupervisionCustodialAuthorityAtLeastOneYear: z
         .object({
           eligibleDate: dateStringSchema,
         })
@@ -71,7 +71,7 @@ export const usIdLsuSchema = opportunitySchemaBase.extend({
     .passthrough(),
   ineligibleCriteria: z
     .object({
-      onSupervisionAtLeastOneYear: z
+      underSupervisionCustodialAuthorityAtLeastOneYear: z
         .object({
           eligibleDate: dateStringSchema,
         })

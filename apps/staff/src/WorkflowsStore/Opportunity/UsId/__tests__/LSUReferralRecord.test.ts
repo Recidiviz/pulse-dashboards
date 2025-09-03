@@ -39,7 +39,7 @@ test("transform record", () => {
       usIdNoActiveNco: {
         activeNco: true,
       },
-      onSupervisionAtLeastOneYear: {
+      underSupervisionCustodialAuthorityAtLeastOneYear: {
         eligibleDate: "2022-05-28",
       },
     },
@@ -93,7 +93,7 @@ test("optional criteria have sane fallbacks", () => {
         eligibleDate: "2025-06-19",
       },
       usIdNoActiveNco: null,
-      onSupervisionAtLeastOneYear: {
+      underSupervisionCustodialAuthorityAtLeastOneYear: {
         eligibleDate: "2022-05-28",
       },
     },
@@ -126,7 +126,7 @@ test("can transform record with eligible and ineligible criteria", () => {
       usIdNoActiveNco: {
         activeNco: true,
       },
-      onSupervisionAtLeastOneYear: {
+      underSupervisionCustodialAuthorityAtLeastOneYear: {
         eligibleDate: "2022-05-28",
       },
     },
