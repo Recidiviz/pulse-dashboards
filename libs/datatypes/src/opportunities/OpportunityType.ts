@@ -20,6 +20,7 @@ export const constructedOpportunityTypes = [
   "usArInstitutionalWorkerStatus",
 
   // US_AZ
+  "usAzTransferToAdministrativeSupervision",
   "usAzOverdueForACISDTP",
   "usAzOverdueForACISTPR",
   "usAzReleaseToDTP",

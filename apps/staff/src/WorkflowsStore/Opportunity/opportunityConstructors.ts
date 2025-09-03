@@ -46,6 +46,7 @@ import { UsAzOverdueForAcisDtpOpportunity } from "./UsAz/UsAzOverdueForAcisDtpOp
 import { UsAzOverdueForAcisTprOpportunity } from "./UsAz/UsAzOverdueForAcisTprOpportunity/UsAzOverdueForAcisTprOpportunity";
 import { UsAzReleaseToDTPOpportunity } from "./UsAz/UsAzReleaseToDTPOpportunity/UsAzReleaseToDTPOpportunity";
 import { UsAzReleaseToTPROpportunity } from "./UsAz/UsAzReleaseToTPROpportunity/UsAzReleaseToTPROpportunity";
+import { UsAzTransferToAdministrativeSupervisionOpportunity } from "./UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { UsIaEarlyDischargeOpportunity } from "./UsIa";
 import { UsIaSupervisionLevelDowngradeOpportunity } from "./UsIa";
 import { UsIdExpandedCRCOpportunity } from "./UsId";
@@ -86,6 +87,8 @@ export const opportunityConstructors = {
   usArInstitutionalWorkerStatus: UsArInstitutionalWorkerStatusOpportunity,
 
   // US_AZ
+  usAzTransferToAdministrativeSupervision:
+    UsAzTransferToAdministrativeSupervisionOpportunity,
   usAzOverdueForACISDTP: UsAzOverdueForAcisDtpOpportunity,
   usAzOverdueForACISTPR: UsAzOverdueForAcisTprOpportunity,
   usAzReleaseToTPR: UsAzReleaseToTPROpportunity,
@@ -96,7 +99,8 @@ export const opportunityConstructors = {
 
   // US_IA
   usIaEarlyDischarge: UsIaEarlyDischargeOpportunity,
-  usIaCompleteSupervisionLevelDowngrade: UsIaSupervisionLevelDowngradeOpportunity,
+  usIaCompleteSupervisionLevelDowngrade:
+    UsIaSupervisionLevelDowngradeOpportunity,
 
   // US_ID
   usIdCRCResidentWorker: UsIdCRCResidentWorkerOpportunity,

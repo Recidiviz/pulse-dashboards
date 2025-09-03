@@ -228,6 +228,10 @@ export type OpportunityTab =
   | "Fast Trackers"
   | "Pending"
 
+  // For US_AZ Admin Supervision
+  | "Eligible per Initial Assessment"
+  | "Eligible per ORAS"
+
   // For US_UT Early Termination
   | "Report Due (Other)"
   | "Suitable for Early Termination"
