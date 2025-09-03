@@ -1,0 +1,74 @@
+# Environments and sensitive files
+.env
+*.env*
+.env-cmdrc
+.envrc
+.environment
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Firebase and Google Cloud configs
+.firebase/
+.runtimeconfig.json
+firebase-debug.log
+firestore-debug.log
+
+# Recidiviz-specific service account patterns
+recidiviz-production-*.json
+recidiviz-dev-*.json
+recidiviz-dashboard-*.json
+recidiviz-staging-*.json
+gha-creds-*.json
+
+# Google App Engine configs
+gae*.yaml
+
+# Security certificates and keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cert
+
+# Configuration files that might contain secrets
+config/local.*
+config/dev.*
+config/prod.*
+config/production.*
+secrets/
+credentials/
+src/assets/scripts/metrics/*.json
+
+# API keys and authentication tokens
+.secrets
+secrets.json
+api-keys.json
+.api-keys
+auth.json
+token.json
+.token
+oauth.json
+
+# Database files and connection strings
+dump.rdb
+
+# Build artifacts and dependencies
+node_modules/
+
+# Terraform/Atmos files
+.atmos/
+.terraform/
+.terraform.lock.hcl
+*.tf.json
+*.tfvars.json
+*.planfile
+*.tfplan
+.decrypted*
+
+# Generated/temporary files
+opportunityPageConfig.json
