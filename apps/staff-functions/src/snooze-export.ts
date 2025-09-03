@@ -66,7 +66,7 @@ class SnoozeExporter extends FirestoreExporter<SnoozeState> {
 
     if (!denial) return; // We searched for it, but double-check
 
-    if (denial.reasons.length === 0) return; // No reasons means the denial isn't active anymore
+    if (!denial.reasons || denial.reasons.length === 0) return; // No reasons means the denial isn't active anymore
 
     const snooze_start_date = denial.updated.date.toDate();
 
