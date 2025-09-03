@@ -87,6 +87,7 @@ export type * from "./people/Resident/US_ME/metadata/schema";
 export * from "./people/Resident/US_MO/metadata/schema";
 export type * from "./people/Resident/US_ND/metadata/schema";
 export type * from "./people/Resident/US_NE/metadata/schema";
+export type * from "./people/Resident/US_TN/metadata/schema";
 
 // Staff Exports: Includes fixtures and schema related to Staff
 // -----------------------------------------------------------------------------

@@ -17,7 +17,10 @@
 
 import { ResidentRecord } from "~datatypes";
 
-import { UsTnMonthlyReportsPresenter } from "./UsTnMonthlyReportsPresenter";
+import {
+  processMonthlyReports,
+  UsTnMonthlyReportsPresenter,
+} from "./UsTnMonthlyReportsPresenter";
 
 describe("UsTnMonthlyReportsPresenter tests", () => {
   const mockCreditActivity = [
@@ -75,6 +78,49 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
     });
   });
 
+  describe("processMonthlyReports", () => {
+    const processedReports = processMonthlyReports(
+      createMockResident("US_TN", mockCreditActivity),
+    );
+
+    it("should aggregate monthly reports into an object keyed by month of report", () => {
+      expect(Object.keys(processedReports)).toHaveLength(3);
+
+      expect(processedReports["December 2024"]).toEqual({
+        formattedMonth: "December 2024",
+        month: new Date("2024-12-31"),
+        behaviorCredits: 5,
+        programCredits: 10,
+        educationCredits: 0,
+        treatmentCredits: 0,
+        totalCredits: 15,
+        reports: mockCreditActivity.slice(0, 2),
+      });
+
+      expect(processedReports["November 2024"]).toEqual({
+        formattedMonth: "November 2024",
+        month: new Date("2024-11-30"),
+        behaviorCredits: 0,
+        programCredits: 0,
+        educationCredits: 15,
+        treatmentCredits: 8,
+        totalCredits: 23,
+        reports: mockCreditActivity.slice(2, 4),
+      });
+
+      expect(processedReports["October 2024"]).toEqual({
+        formattedMonth: "October 2024",
+        month: new Date("2024-10-31"),
+        behaviorCredits: 3,
+        programCredits: 0,
+        educationCredits: 0,
+        treatmentCredits: 0,
+        totalCredits: 3,
+        reports: [mockCreditActivity[4]],
+      });
+    });
+  });
+
   describe("monthlyReportOptions", () => {
     it("should return sorted monthly report options in descending order", () => {
       const resident = createMockResident("US_TN", mockCreditActivity);
@@ -120,6 +166,7 @@ describe("UsTnMonthlyReportsPresenter tests", () => {
       expect(selectedReport.programCredits).toBe(10);
       expect(selectedReport.educationCredits).toBe(0);
       expect(selectedReport.treatmentCredits).toBe(0);
+      expect(selectedReport.reports).toEqual(mockCreditActivity.slice(0, 2));
     });
 
     it("should aggregate credits correctly by type", () => {

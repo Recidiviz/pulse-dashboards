@@ -21,14 +21,25 @@ import {
   Card,
   CardHeading,
   CardValue,
+  Chip,
   TwoColumnCardWrapper,
 } from "~@jii/common-ui";
 import { withPresenterManager } from "~hydration-utils";
 
+import { OpenTable } from "../../../common/components/OpenTable";
 import { useSingleResidentContext } from "../../../components/SingleResidentHydrator/context";
 import { HomepageSectionHeading } from "../../../US_MA/earnedGoodTime/components/Homepage/styles";
+import { formatFullDate } from "../../../utils/date";
 import { UsTnMonthlyReportSelector } from "./UsTnMonthlyReportSelector";
 import { UsTnMonthlyReportsPresenter } from "./UsTnMonthlyReportsPresenter";
+
+const StatusChip: React.FC<{ status: "GAIN" | "LOSS" }> = ({ status }) => {
+  if (status === "GAIN") {
+    return <Chip color="green">Earned</Chip>;
+  } else {
+    return <Chip color="gray">Lost</Chip>;
+  }
+};
 
 const ManagedComponent = observer(function UsTnMonthlyReports({
   presenter,
@@ -41,8 +52,15 @@ const ManagedComponent = observer(function UsTnMonthlyReports({
       programCredits,
       educationCredits,
       treatmentCredits,
+      totalCredits,
+      reports,
     },
   } = presenter;
+
+  const filteredReports = reports.filter(
+    ({ creditType }) => creditType !== null,
+  );
+
   return (
     <section>
       <HomepageSectionHeading>Recent monthly reports</HomepageSectionHeading>
@@ -66,6 +84,30 @@ const ManagedComponent = observer(function UsTnMonthlyReports({
             <CardValue>{treatmentCredits} days</CardValue>
           </Card>
         </TwoColumnCardWrapper>
+        {filteredReports.length === 0 ? (
+          "No credit activity for this month."
+        ) : (
+          <OpenTable
+            columns={[
+              { key: "creditType", label: "Credit Type" },
+              { key: "status", label: "Status" },
+              { key: "amount", label: "Days" },
+              { key: "creditDate", label: "Date" },
+            ]}
+            data={filteredReports.map(
+              ({ creditDate, creditType, creditsEarned }) => ({
+                creditDate: formatFullDate(creditDate),
+                creditType,
+                amount: `+ ${creditsEarned} days`,
+                status: <StatusChip status="GAIN" />,
+              }),
+            )}
+            footer={{
+              creditType: "Total Credits",
+              amount: `+ ${totalCredits} days`,
+            }}
+          />
+        )}
       </Card>
     </section>
   );

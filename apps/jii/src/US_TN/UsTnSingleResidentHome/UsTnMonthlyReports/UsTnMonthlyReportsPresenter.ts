@@ -17,7 +17,7 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { ResidentRecord } from "~datatypes";
+import { ResidentRecord, UsTnCreditActivity } from "~datatypes";
 
 export type UsTnMonthlyReport = {
   formattedMonth: string;
@@ -26,6 +26,8 @@ export type UsTnMonthlyReport = {
   educationCredits: number;
   programCredits: number;
   treatmentCredits: number;
+  totalCredits: number;
+  reports: UsTnCreditActivity[];
 };
 
 type UsTnMonthlyReports = Record<string, UsTnMonthlyReport>;
@@ -85,7 +87,9 @@ export class UsTnMonthlyReportsPresenter {
   }
 }
 
-function processMonthlyReports(resident: ResidentRecord): UsTnMonthlyReports {
+export function processMonthlyReports(
+  resident: ResidentRecord,
+): UsTnMonthlyReports {
   const { metadata } = resident;
   if (metadata.stateCode !== "US_TN") {
     return {};
@@ -109,24 +113,31 @@ function processMonthlyReports(resident: ResidentRecord): UsTnMonthlyReports {
         programCredits: 0,
         educationCredits: 0,
         treatmentCredits: 0,
+        reports: [],
+        totalCredits: 0,
       };
     }
+
+    monthlyReports[formattedMonth].reports.push(record);
+
+    const credits = creditsEarned ?? 0;
+    monthlyReports[formattedMonth].totalCredits += credits;
 
     switch (creditType) {
       case "BEHAVIOR":
       case "BONUS_BEHAVIOR":
-        monthlyReports[formattedMonth].behaviorCredits += creditsEarned ?? 0;
+        monthlyReports[formattedMonth].behaviorCredits += credits;
         break;
       case "PROGRAM":
       case "BONUS_PROGRAM":
-        monthlyReports[formattedMonth].programCredits += creditsEarned ?? 0;
+        monthlyReports[formattedMonth].programCredits += credits;
         break;
       case "60_DAY_ED_CREDIT":
       case "GED":
-        monthlyReports[formattedMonth].educationCredits += creditsEarned ?? 0;
+        monthlyReports[formattedMonth].educationCredits += credits;
         break;
       case "60_DAY_TREATMENT":
-        monthlyReports[formattedMonth].treatmentCredits += creditsEarned ?? 0;
+        monthlyReports[formattedMonth].treatmentCredits += credits;
     }
   });
 
