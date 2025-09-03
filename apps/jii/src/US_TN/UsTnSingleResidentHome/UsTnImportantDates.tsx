@@ -45,7 +45,7 @@ const ManagedComponent: FC<{
           label="Release Eligibility Date"
           tag="RED"
           value={hydrateTemplate(
-            "{{formatFullDate metadata.releaseEligibilityDate}}",
+            "{{formatFullDateOptional metadata.releaseEligibilityDate 'No release eligibility date on record'}}",
             resident,
           )}
         />
@@ -58,7 +58,7 @@ const ManagedComponent: FC<{
           label="Expiration Date"
           tag="EXP"
           value={hydrateTemplate(
-            "{{formatFullDate metadata.expirationDate}}",
+            "{{formatFullDateOptional metadata.expirationDate 'No expiration date on record'}}",
             resident,
           )}
         />
@@ -97,7 +97,7 @@ const ExpirationDateReduction = ({
             {
               label: "Original EXP date",
               value: hydrateTemplate(
-                "{{formatFullDate expirationDateOriginal}}",
+                "{{formatFullDateOptional expirationDateOriginal 'No original EXP date on record'}}",
                 metadata,
               ),
             },
@@ -108,7 +108,7 @@ const ExpirationDateReduction = ({
             {
               label: "Adjusted EXP date",
               value: hydrateTemplate(
-                "{{formatFullDate expirationDate}}",
+                "{{formatFullDateOptional expirationDate 'No updated EXP date on record'}}",
                 metadata,
               ),
             },
