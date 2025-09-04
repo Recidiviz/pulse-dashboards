@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { captureException, withScope } from "@sentry/nextjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { $api } from "~@reentry/frontend/api";
@@ -207,8 +208,24 @@ export const useRecording = ({
 
       mediaRecorder.onerror = (event) => {
         console.error("MediaRecorder error:", event);
-        showErrorToast("Recording error occurred");
-        updateRecordingStatus("error");
+        showErrorToast(
+          `An error occurred during the recording: ${event.error?.message} . Please refresh the page.`,
+        );
+
+        const error = new Error(
+          `MediaRecorder error: ${event.error?.message || "Unknown error"}`,
+        );
+        withScope((scope) => {
+          scope.setContext("mediaRecorder", {
+            sessionId: sessionId,
+            state: mediaRecorder.state,
+            mimeType: mediaRecorder.mimeType,
+            errorName: event.error?.name,
+            errorMessage: event.error?.message,
+            eventType: event.type,
+          });
+          captureException(error);
+        });
       };
 
       mediaRecorder.start(5000);
@@ -220,8 +237,21 @@ export const useRecording = ({
       showSuccessToast("Recording started");
     } catch (error) {
       console.error("Error starting recording:", error);
-      showErrorToast("Failed to start recording");
-      updateRecordingStatus("error");
+      showErrorToast(
+        `Failed to start recording ${error}. Please refresh the page.`,
+      );
+
+      const sentryError = new Error(`Error: ${error || "Unknown error"}`);
+      withScope((scope) => {
+        scope.setContext("mediaRecorder", {
+          function: "startRecording",
+          sessionId: sessionId,
+          selectedMicrophone: selectedMicrophone,
+          mimeType: supportedFormat,
+          isRecordingSupported,
+        });
+        captureException(sentryError);
+      });
     }
   }, [
     selectedMicrophone,
@@ -289,8 +319,24 @@ export const useRecording = ({
 
         mediaRecorder.onerror = (event) => {
           console.error("MediaRecorder error:", event);
-          showErrorToast("Recording error occurred");
-          updateRecordingStatus("error");
+          showErrorToast(
+            `Recording error occurred: ${event.error?.message}. Please refresh the page.`,
+          );
+
+          const error = new Error(
+            `MediaRecorder error: ${event.error?.message || "Unknown error"}`,
+          );
+          withScope((scope) => {
+            scope.setContext("mediaRecorder", {
+              sessionId: sessionId,
+              state: mediaRecorder.state,
+              mimeType: mediaRecorder.mimeType,
+              errorName: event.error?.name,
+              errorMessage: event.error?.message,
+              eventType: event.type,
+            });
+            captureException(error);
+          });
         };
 
         mediaRecorder.start(5000);
@@ -309,9 +355,20 @@ export const useRecording = ({
     } catch (error) {
       console.error("Error resuming recording:", error);
       showErrorToast(
-        error instanceof Error ? error.message : "Failed to resume recording",
+        `Failed to resume the recording: ${error}. Please refresh the page to try again.`,
       );
-      updateRecordingStatus("error");
+
+      const sentryError = new Error(`Error: ${error}`);
+      withScope((scope) => {
+        scope.setContext("mediaRecorder", {
+          sessionId: sessionId,
+          function: "resumeRecording",
+          selectedMicrophone: selectedMicrophone,
+          mimeType: supportedFormat,
+          isRecordingSupported,
+        });
+        captureException(sentryError);
+      });
     }
   }, [
     selectedMicrophone,
