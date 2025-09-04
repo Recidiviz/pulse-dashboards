@@ -183,6 +183,7 @@ export const defaultRecidivizUserFeatureVariantsActive: Partial<FeatureVariantMa
         supervisorHomepageWorkflows: {},
         supervisorHomepageVitals: { activeTenants: ["US_ID", "US_ND"] },
         operationsDrilldown: { activeTenants: ["US_ID", "US_ND"] },
+        insightsStaffUsage: { activeTenants: ["US_ID", "US_UT"] },
         usAzFacilitySearch: {},
         usIdCaseManagerSearch: {},
         usIdCRCFacilitySearch: {},

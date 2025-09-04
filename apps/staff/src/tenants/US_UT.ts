@@ -40,8 +40,8 @@ const US_UT_CONFIG = {
     },
   },
   navigation: {
-    workflows: ["home", "clients"],
     insights: [INSIGHTS_PAGES.supervision],
+    workflows: ["home", "clients"],
   },
 } satisfies TenantConfig<"US_UT">;
 
