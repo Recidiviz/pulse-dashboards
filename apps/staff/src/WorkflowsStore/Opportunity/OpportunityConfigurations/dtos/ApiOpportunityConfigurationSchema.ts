@@ -153,6 +153,8 @@ export const apiOpportunityConfigurationSchema = z.object({
 
   caseNotesTitle: nullishAsUndefined(z.string()),
   markSubmittedOnFormDownload: z.boolean().default(true),
+  indefiniteSnoozeSectionHeader: nullishAsUndefined(z.string()),
+  indefiniteSnoozeSectionSubheading: nullishAsUndefined(z.string()),
 });
 
 export const apiOpportunityConfigurationResponseSchema = z.object({

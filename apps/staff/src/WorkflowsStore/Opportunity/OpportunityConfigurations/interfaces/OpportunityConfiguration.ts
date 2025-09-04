@@ -113,4 +113,11 @@ export interface OpportunityConfiguration {
    */
   enableProgressiveLoading: boolean;
   progressiveLoadingBatchSize: number;
+
+  /**
+   * The header/subheading used for the indefinite denial reasons section in the
+   * opportunity denial view.
+   */
+  indefiniteSnoozeSectionHeader: string;
+  indefiniteSnoozeSectionSubheading: string;
 }

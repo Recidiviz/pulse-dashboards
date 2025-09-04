@@ -360,4 +360,21 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
    */
   enableProgressiveLoading = false;
   progressiveLoadingBatchSize = 30;
+
+  /**
+   * The header/subheading used for the indefinite denial reasons section in the
+   * opportunity denial view.
+   */
+  get indefiniteSnoozeSectionHeader() {
+    return (
+      this.configurationObject.indefiniteSnoozeSectionHeader ??
+      "Indefinite Snooze"
+    );
+  }
+  get indefiniteSnoozeSectionSubheading() {
+    return (
+      this.configurationObject.indefiniteSnoozeSectionHeader ??
+      "An approval request will be sent to your supervisor before this client can be snoozed indefinitely and removed from this opportunity"
+    );
+  }
 }

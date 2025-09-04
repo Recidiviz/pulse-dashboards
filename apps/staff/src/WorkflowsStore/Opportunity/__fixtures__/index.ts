@@ -97,6 +97,8 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   progressiveLoadingBatchSize: 50,
   caseNotesTitle: "Mock Case Notes Title",
   skipFormPreview: true,
+  indefiniteSnoozeSectionHeader: "Mock Indefinite Snooze Header",
+  indefiniteSnoozeSectionSubheading: "Mock indefinite snooze subheading",
 };
 
 export const mockUsXxTwoOppConfig: OpportunityConfiguration = {

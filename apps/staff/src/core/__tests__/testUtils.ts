@@ -148,6 +148,8 @@ export const mockOpportunity: Opportunity<Client> = {
     progressiveLoadingBatchSize: 50,
     caseNotesTitle: "Additional Information",
     skipFormPreview: false,
+    indefiniteSnoozeSectionHeader: "Indefinite Snooze",
+    indefiniteSnoozeSectionSubheading: "Indefinite snooze subheading",
   },
   sentryTrackingId: undefined,
   instanceDetails: undefined,

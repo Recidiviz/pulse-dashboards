@@ -330,8 +330,6 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     }
   };
 
-  const indefiniteSnoozeSubheading = `An approval request will be sent to your supervisor before this client can be snoozed indefinitely and removed from this opportunity`;
-
   return (
     <SidePanelContents
       className="OpportunityDenial"
@@ -361,9 +359,11 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
           denialReasonsMap={opportunity.indefiniteDenialReasons}
           selectedReasons={reasons}
           handleSelectReason={handleSelectReason}
-          sectionHeading={"Indefinite Snooze"}
+          sectionHeading={opportunity.config.indefiniteSnoozeSectionHeader}
           disabledReasons={disabledReasons}
-          sectionSubheading={indefiniteSnoozeSubheading}
+          sectionSubheading={
+            opportunity.config.indefiniteSnoozeSectionSubheading
+          }
         />
       )}
       {isIaEDOpportunity && (
