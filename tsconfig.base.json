@@ -32,6 +32,11 @@
       "~@jii-texting/utils": ["libs/@jii-texting/utils/src/index.ts"],
       "~@jii-texting/utils/*": ["libs/@jii-texting/utils/src/*"],
       "~@jii/common-ui": ["libs/@jii/common-ui/src/index.ts"],
+      "~@meetings/prisma": ["libs/@meetings/prisma/src/index.ts"],
+      "~@meetings/prisma/*": ["libs/@meetings/prisma/src/*"],
+      "~@meetings/prisma/client": [
+        "libs/@meetings/prisma/src/client/client.ts"
+      ],
       "~@reentry/frontend/*": ["apps/@reentry/frontend/app/*"],
       "~@reentry/import": ["apps/@reentry/import/src/index.ts"],
       "~@reentry/import/*": ["apps/@reentry/import/src/*"],

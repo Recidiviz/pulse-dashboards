@@ -1,0 +1,131 @@
+generator client {
+  provider        = "prisma-client"
+  previewFeatures = ["queryCompiler", "driverAdapters"]
+  output          = "../src/client"
+}
+
+generator json {
+  provider = "prisma-json-types-generator"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StateCode {
+  US_AL
+  US_AK
+  US_AZ
+  US_AR
+  US_CA
+  US_CO
+  US_CT
+  US_DE
+  US_FL
+  US_GA
+  US_HI
+  US_ID
+  US_IL
+  US_IN
+  US_IA
+  US_KS
+  US_KY
+  US_LA
+  US_ME
+  US_MD
+  US_MA
+  US_MI
+  US_MN
+  US_MS
+  US_MO
+  US_MT
+  US_NE
+  US_NV
+  US_NH
+  US_NJ
+  US_NM
+  US_NY
+  US_NC
+  US_ND
+  US_OH
+  US_OK
+  US_OR
+  US_PA
+  US_RI
+  US_SC
+  US_SD
+  US_TN
+  US_TX
+  US_UT
+  US_VT
+  US_VA
+  US_WA
+  US_WV
+  US_WI
+  US_WY
+}
+
+model Staff {
+  stateCode StateCode
+  // Explanation of ids:
+  // - staffId: Unique identifier for the staff member in the system. This is not necessarily stable over time.
+  // - stableStaffExternalId: A stable identifier that is an external identifier for the staff member, such as an employee ID.
+  // - stableStaffExternalIdType: The type of the stable external identifier, such as "employee_id" or "contractor_id".
+  // - pseudonymizedId: A unique identifier that is used to anonymize the staff member's identity in the system. It is a hashing of the stableStaffExternalId
+
+  staffId                   BigInt @id
+  stableStaffExternalId     String
+  stableStaffExternalIdType String
+  pseudonymizedId           String @unique
+
+  givenNames  String
+  middleNames String?
+  surname     String
+  suffix      String?
+
+  email   String?
+  clients ClientsToStaff[]
+
+  @@unique([stableStaffExternalId, stableStaffExternalIdType])
+}
+
+model Client {
+  stateCode StateCode
+
+  // Explanation of ids:
+  // - personId: Unique identifier for the client in the system. This is not necessarily stable over time.
+  // - stablePersonExternalId: A stable identifier that is an external identifier for the client, such as a social security number or a unique client ID.
+  // - stablePersonExternalIdType: The type of the stable external identifier, such as "ssn" or "client_id".
+  // - pseudonymizedId: A unique identifier that is used to anonymize the client's identity in the system. It is a hashing of the stablePersonExternalId.
+  // - displayPersonExternalId: An identifier that staff are used to using to refer to the client, which may be different from the stablePersonExternalId. This is used for display purposes in the UI.
+
+  personId                   BigInt @id
+  stablePersonExternalId     String
+  stablePersonExternalIdType String
+  pseudonymizedId            String @unique
+  displayPersonExternalId    String
+
+  givenNames  String
+  middleNames String?
+  surname     String
+  suffix      String?
+
+  birthDate          DateTime @db.Date
+  lastKnownResidence String?
+
+  supervisionType String?
+
+  staff ClientsToStaff[]
+
+  @@unique([stablePersonExternalId, stablePersonExternalIdType])
+}
+
+model ClientsToStaff {
+  staff    Staff  @relation(fields: [staffId], references: [staffId])
+  staffId  BigInt
+  Client   Client @relation(fields: [clientId], references: [personId])
+  clientId BigInt
+
+  @@id([staffId, clientId])
+}

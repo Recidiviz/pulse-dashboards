@@ -1,0 +1,25 @@
+name: "meetings-prisma"
+services:
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=meetings
+    ports:
+      - 6506:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  test-db:
+    image: postgres:17
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=meetings-test
+    ports:
+      - 6507:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/test-data/
+
+volumes:
+  postgres_data:
