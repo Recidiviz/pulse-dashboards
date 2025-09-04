@@ -246,6 +246,17 @@ export class Client extends JusticeInvolvedPersonBase<ClientRecord> {
     return this._caseType ?? "Unknown";
   }
 
+  get caseTypeForFilter(): string {
+    if (
+      this.stateCode === "US_TX" &&
+      this.caseType.toLowerCase().startsWith("substance abuse")
+    ) {
+      return "Substance abuse";
+    }
+
+    return this.caseType;
+  }
+
   get isInCustody(): boolean {
     // Note that we are only handling in-custody for Texas, but there's no reason
     // not to expand it to other states

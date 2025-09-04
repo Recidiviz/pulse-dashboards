@@ -15,12 +15,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
+import { spacing, TooltipTrigger } from "@recidiviz/design-system";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
+
+import { palette } from "~design-system";
 
 import useIsMobile from "../../hooks/useIsMobile";
 import {
@@ -37,6 +39,7 @@ import {
   MaxWidthFlexWrapper,
 } from "../OpportunityCaseloadView/HydratedOpportunityPersonList";
 import PersonId from "../PersonId";
+import { InfoButton } from "../WorkflowsJusticeInvolvedPersonProfile/InfoButton";
 import WorkflowsOfficerName from "../WorkflowsOfficerName";
 import { WorkflowsStatusPill } from "../WorkflowsStatusPill/WorkflowsStatusPill";
 import { TaskFrequency } from "./TaskFrequency";
@@ -49,6 +52,10 @@ const PersonNameElement = styled.div.attrs({
   align-items: ${({ $isMobile }) => ($isMobile ? "flex-start" : "center")};
   text-wrap: nowrap;
   gap: ${({ $isMobile }) => rem($isMobile ? spacing.xs : spacing.sm)};
+`;
+
+const StyledInfoButton = styled.span`
+  color: ${palette.slate60};
 `;
 
 function PersonNameCell({ row }: { row: Row<SupervisionTask> }) {
@@ -80,6 +87,28 @@ function PersonIdCell({ row }: { row: Row<SupervisionTask> }) {
     <PersonId personId={person.displayId} pseudoId={person.pseudonymizedId}>
       {person.displayId}
     </PersonId>
+  );
+}
+
+function CaseTypeCell({ row }: { row: Row<SupervisionTask> }) {
+  const { person } = row.original;
+  const { caseType } = person as Client;
+  return (
+    <>
+      {caseType}{" "}
+      {caseType.toLowerCase().startsWith("substance abuse") &&
+        person.stateCode === "US_TX" && (
+          <StyledInfoButton>
+            <TooltipTrigger contents="Note: Phase information may be inaccurate if referral and attendance details are not up-to-date in OIMS. Click here for a guide on how to enter referral details in OIMS so that the most accurate phases appear in this tool.">
+              <InfoButton
+                infoUrl={
+                  "https://docs.google.com/document/d/e/2PACX-1vQamrgWtwG-kUfm6sBTRjRCYlFAZmMUQRHvoZ-fLU_YO0YfEElrVG7Rgq9NFdIq-NbcD_aILsZvWT2Z/pub#h.ptv2xvkqdjv2"
+                }
+              />
+            </TooltipTrigger>
+          </StyledInfoButton>
+        )}
+    </>
   );
 }
 
@@ -168,7 +197,11 @@ const getColumnDefs = (presenter: CaseloadTasksPresenterV2) =>
     {
       header: "Case Type",
       id: "caseType",
-      accessorKey: "person.caseType",
+      accessorFn: (task) => {
+        const person = task.person as Client;
+        return person.caseType;
+      },
+      cell: CaseTypeCell,
       enableSorting: true,
     },
     {

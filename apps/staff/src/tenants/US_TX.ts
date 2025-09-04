@@ -212,7 +212,7 @@ const US_TX_CONFIG = {
       },
       {
         title: "Case Type",
-        field: "caseType",
+        field: "caseTypeForFilter",
         type: "person",
         options: [
           {
@@ -225,13 +225,7 @@ const US_TX_CONFIG = {
             value: "Sex offender",
           },
           {
-            value: "Substance abuse - phase 1",
-          },
-          {
-            value: "Substance abuse - phase 2",
-          },
-          {
-            value: "Substance abuse - phase 3",
+            value: "Substance abuse",
           },
           {
             value: "Mentally ill",
