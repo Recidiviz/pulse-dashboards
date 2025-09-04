@@ -27,6 +27,7 @@ export const US_IA = "US_IA";
 export const US_ME = "US_ME";
 export const US_MI = "US_MI";
 export const US_NE = "US_NE";
+export const US_NY = "US_NY";
 export const US_OR = "US_OR";
 export const US_PA = "US_PA";
 export const US_TX = "US_TX";

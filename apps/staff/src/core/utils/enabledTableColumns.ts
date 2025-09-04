@@ -19,6 +19,7 @@ import {
   US_ID,
   US_MO,
   US_ND,
+  US_NY,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { TableColumns } from "../types/charts";
@@ -131,6 +132,10 @@ export const NdEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
 
+export const NyEnabledTableColumns: TableColumns = {
+  ...DefaultTableColumns,
+};
+
 export const TnEnabledTableColumns: TableColumns = {
   ...DefaultTableColumns,
 };
@@ -139,5 +144,6 @@ export default {
   [US_ID]: IdEnabledTableColumns,
   [US_MO]: MoEnabledTableColumns,
   [US_ND]: NdEnabledTableColumns,
+  [US_NY]: NyEnabledTableColumns,
   [US_TN]: TnEnabledTableColumns,
 } as const;

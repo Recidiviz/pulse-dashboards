@@ -25,6 +25,7 @@ export const stateCodes = {
   US_MI: "US_MI",
   US_MO: "US_MO",
   US_ND: "US_ND",
+  US_NY: "US_NY",
   US_NE: "US_NE",
   US_OR: "US_OR",
   US_PA: "US_PA",

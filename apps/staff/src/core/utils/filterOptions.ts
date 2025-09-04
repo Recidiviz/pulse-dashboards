@@ -25,6 +25,7 @@ import {
   US_ID,
   US_MO,
   US_ND,
+  US_NY,
   US_TN,
 } from "../../RootStore/TenantStore/pathwaysTenants";
 import { PathwaysTenants } from "../../RootStore/types";
@@ -1289,6 +1290,10 @@ export const NdPopulationFilterOptions: PopulationFilters = {
   },
 };
 
+export const NyPopulationFilterOptions: PopulationFilters = {
+  ...DefaultPopulationFilterOptions,
+};
+
 export const PaPopulationFilterOptions: PopulationFilters = {
   ...DefaultPopulationFilterOptions,
   [FILTER_TYPES.SUPERVISION_LEVEL]: {
@@ -1556,6 +1561,7 @@ const filterOptions: FilterOptions = {
   [US_ID]: IdPopulationFilterOptions,
   [US_MO]: MoPopulationFilterOptions,
   [US_ND]: NdPopulationFilterOptions,
+  [US_NY]: NyPopulationFilterOptions,
   [US_PA]: PaPopulationFilterOptions,
   [US_TN]: TnPopulationFilterOptions,
   [US_TX]: TxPopulationFilterOptions,
