@@ -17,10 +17,9 @@
 
 import { configure } from "mobx";
 
+import { residentsConfigByState, UserStore } from "~@jii/data";
 import { usMeResidents } from "~datatypes";
 
-import { residentsConfigByState } from "../../configs/residentsConfig";
-import { UserStore } from "../../datastores/UserStore";
 import { ResidentNavBarPresenter } from "./ResidentNavBarPresenter";
 
 let presenter: ResidentNavBarPresenter;

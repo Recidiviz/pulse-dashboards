@@ -15,7 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { RootStore } from "../../datastores/RootStore";
+import { RootStore } from "~@jii/data";
+
 import { LandingStateSelectionPresenter } from "./LandingStateSelectionPresenter";
 
 test("constructs URL when a state is selected", async () => {

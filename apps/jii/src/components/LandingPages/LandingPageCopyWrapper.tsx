@@ -18,9 +18,8 @@
 import { typography } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
+import { CopyWrapper } from "~@jii/common-ui";
 import { palette } from "~design-system";
-
-import { CopyWrapper } from "../CopyWrapper/CopyWrapper";
 
 export const LandingPageCopyWrapper = styled(CopyWrapper)`
   ${typography.Body16}

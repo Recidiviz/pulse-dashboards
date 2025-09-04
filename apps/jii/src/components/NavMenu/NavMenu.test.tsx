@@ -18,11 +18,16 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
-import { RootStore } from "../../datastores/RootStore";
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { RootStore, useRootStore } from "~@jii/data";
+
 import { NavMenu } from "./NavMenu";
 
-vi.mock("../StoreProvider/useRootStore");
+vi.mock("~@jii/data", async (importOriginal) => {
+  return {
+    ...(await importOriginal()),
+    useRootStore: vi.fn(),
+  };
+});
 
 let rootStore: RootStore;
 

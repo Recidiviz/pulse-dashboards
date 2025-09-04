@@ -17,14 +17,12 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
+import { ResidentsStore, UiStore } from "~@jii/data";
 import {
   Hydratable,
   HydratesFromSource,
   HydrationState,
 } from "~hydration-utils";
-
-import { ResidentsStore } from "../../datastores/ResidentsStore";
-import { UiStore } from "../../datastores/UiStore";
 
 type SelectOption = { label: string; value: string };
 

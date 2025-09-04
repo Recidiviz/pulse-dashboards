@@ -19,11 +19,9 @@ import { observer } from "mobx-react-lite";
 import { FC, ReactNode } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { isAuthorizedState, useRootStore } from "~@jii/data";
+import { State } from "~@jii/paths";
 import { RedirectIfLoggedOut } from "~auth";
-
-import { isAuthorizedState } from "../../apis/auth/types";
-import { State } from "../../routes/routes";
-import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const RequiresLogin: FC<{ children: ReactNode }> = observer(
   function RequiresLogin({ children }) {

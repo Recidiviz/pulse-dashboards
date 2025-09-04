@@ -18,9 +18,8 @@
 import { observer } from "mobx-react-lite";
 import { FC, ReactNode } from "react";
 
+import { useRootStore } from "~@jii/data";
 import { NotAuthorized } from "~auth";
-
-import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const RequiresStateAuth: FC<{
   children: ReactNode;

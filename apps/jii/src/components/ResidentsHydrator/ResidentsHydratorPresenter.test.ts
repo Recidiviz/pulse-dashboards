@@ -17,7 +17,8 @@
 
 import { configure } from "mobx";
 
-import { RootStore } from "../../datastores/RootStore";
+import { RootStore } from "~@jii/data";
+
 import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 
 let store: RootStore;

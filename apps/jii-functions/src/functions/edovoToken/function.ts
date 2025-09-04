@@ -19,7 +19,7 @@ import { setupExpressErrorHandler } from "@sentry/node";
 import express, { NextFunction, Request, Response } from "express";
 import { onRequest } from "firebase-functions/v2/https";
 
-import { tokenAuthResponseSchema } from "~auth0-jii";
+import { tokenAuthResponseSchema } from "~@jii/auth";
 
 import {
   checkDemoResidentsRoster,

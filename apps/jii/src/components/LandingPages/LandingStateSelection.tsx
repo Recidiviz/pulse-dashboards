@@ -19,11 +19,11 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { usePageTitle } from "~@jii/common-ui";
+import { useRootStore } from "~@jii/data";
 import { withPresenterManager } from "~hydration-utils";
 
 import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { usePageTitle } from "../usePageTitle/usePageTitle";
 import { LandingPageCopyWrapper } from "./LandingPageCopyWrapper";
 import { LandingPageSelector } from "./LandingPageSelector";
 import { LandingStateSelectionPresenter } from "./LandingStateSelectionPresenter";

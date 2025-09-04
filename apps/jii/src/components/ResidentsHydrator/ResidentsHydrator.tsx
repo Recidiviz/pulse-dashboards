@@ -19,12 +19,14 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import { Outlet } from "react-router-dom";
 
+import {
+  ResidentsContextProvider,
+  useRootStore,
+  useStateCodeFromSlug,
+} from "~@jii/data";
 import { withPresenterManager } from "~hydration-utils";
 
-import { useStateCodeFromSlug } from "../../common/hooks/useStateCodeFromSlug";
 import { PageHydrator } from "../PageHydrator/PageHydrator";
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { ResidentsContextProvider } from "./context";
 import { ResidentsHydratorPresenter } from "./ResidentsHydratorPresenter";
 
 const ManagedComponent: FC<{

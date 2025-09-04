@@ -17,8 +17,9 @@
 
 import { FC, ReactNode } from "react";
 
+import { useRootStore } from "~@jii/data";
+
 import { PageHydrator } from "../PageHydrator/PageHydrator";
-import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const AuthManagerHydrator: FC<{ children: ReactNode }> = ({
   children,

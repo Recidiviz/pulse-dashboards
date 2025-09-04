@@ -18,10 +18,9 @@
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 
-import { stateConfigs } from "../../configs/stateConstants";
-import { State } from "../../routes/routes";
-import { NotFound } from "../NotFound/NotFound";
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { NotFound } from "~@jii/common-ui";
+import { stateConfigs, useRootStore } from "~@jii/data";
+import { State } from "~@jii/paths";
 
 export const PageSelectState = observer(function PageSelectState() {
   const {

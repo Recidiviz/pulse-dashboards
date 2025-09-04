@@ -18,11 +18,9 @@
 import { waitFor } from "@testing-library/react";
 import { configure, set } from "mobx";
 
+import { residentsConfigByState, ResidentsStore, RootStore } from "~@jii/data";
 import { locationRecordFixtures } from "~datatypes";
 
-import { residentsConfigByState } from "../../configs/residentsConfig";
-import { ResidentsStore } from "../../datastores/ResidentsStore";
-import { RootStore } from "../../datastores/RootStore";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 
 let residentsStore: ResidentsStore;

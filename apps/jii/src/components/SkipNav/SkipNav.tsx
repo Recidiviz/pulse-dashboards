@@ -19,9 +19,8 @@ import { createContext, JSX, ReactNode, useContext, useId } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { STICKY_HEADER_ZINDEX } from "~@jii/common-ui";
 import { palette } from "~design-system";
-
-import { STICKY_HEADER_ZINDEX } from "../AppLayout/constants";
 
 // invisible navigation link for keyboard and screen reader users; visible on tab focus
 const SkipNavContainer = styled.div`

@@ -37,7 +37,7 @@ import { LibGeneratorSchema } from "./schema";
 
 export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
   // constants used in steps
-  const PROJECT_ROOT = `libs/${options.name}`;
+  const PROJECT_ROOT = `libs/${options.folder || options.name}`;
 
   // steps to execute. should be one-liners if possible
   await createLibrary();
@@ -63,6 +63,14 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
       strict: true,
     } as const;
 
+    // Nx JS generators tend to aggressively bump our package dependencies,
+    // which we would rather not do as part of this task. This doesn't seem
+    // to be configurable but we can revert it afterwards by storing its initial state
+    const initialPackageJsonContents = tree.read("package.json");
+    if (!initialPackageJsonContents) {
+      throw new Error("Unable to read workspace package.json");
+    }
+
     switch (options.libType) {
       case "vanilla":
         await jsLibraryGenerator(tree, {
@@ -82,6 +90,9 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
       default:
         return assertNever(options.libType);
     }
+
+    // revert any changes the generators may have made to our dependencies
+    tree.write("package.json", initialPackageJsonContents);
 
     tree.write(
       `${PROJECT_ROOT}/src/index.ts`,
@@ -115,17 +126,24 @@ export async function libGenerator(tree: Tree, options: LibGeneratorSchema) {
           },
         },
       },
+      tags: [`scope:${options.scope}`],
     });
   }
 
   function updateTsconfig() {
     updateJson(tree, `${PROJECT_ROOT}/tsconfig.json`, (config) => {
-      // we have added common options to base tsconfig; no overrides by default ...
-      delete config.compilerOptions;
+      // we have added common options to base tsconfig to replace the generated default
+      config.compilerOptions = {};
+
+      // overrides and extensions
       if (options.libType === "react") {
         // ... except for react libraries
-        config.compilerOptions = { jsx: "react-jsx" };
+        config.compilerOptions.jsx = "react-jsx";
       }
+      if (options.scope === "client") {
+        config.compilerOptions.lib = ["esnext", "dom"];
+      }
+
       return config;
     });
 

@@ -20,12 +20,10 @@ import {
   useTypedSearchParams,
 } from "react-router-typesafe-routes/dom";
 
+import { usePageTitle } from "~@jii/common-ui";
+import { stateConfigsByUrlSlug, useRootStore } from "~@jii/data";
+import { ReturnToPathFragment, State } from "~@jii/paths";
 import { Button } from "~design-system";
-
-import { stateConfigsByUrlSlug } from "../../configs/stateConstants";
-import { ReturnToPathFragment, State } from "../../routes/routes";
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { usePageTitle } from "../usePageTitle/usePageTitle";
 
 export const LandingStateSpecific = () => {
   const { stateSlug } = useTypedParams(State);

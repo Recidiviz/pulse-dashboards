@@ -18,6 +18,13 @@
 import { configure, flowResult } from "mobx";
 
 import {
+  ResidentsStore,
+  RootStore,
+  usMeEligibilityConfig,
+  UsMeSCCPEligibilityReport,
+  UsMeWorkReleaseEligibilityReport,
+} from "~@jii/data";
+import {
   outputFixture,
   usMeResidents,
   usMeSccpFixtures,
@@ -25,11 +32,6 @@ import {
 } from "~datatypes";
 import { hydrationFailure } from "~hydration-utils";
 
-import { usMeEligibilityConfig } from "../../configs/US_ME/eligibility/config";
-import { ResidentsStore } from "../../datastores/ResidentsStore";
-import { RootStore } from "../../datastores/RootStore";
-import { UsMeSCCPEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeSCCPEligibilityReport";
-import { UsMeWorkReleaseEligibilityReport } from "../../models/EligibilityReport/UsMe/UsMeWorkReleaseEligibilityReport";
 import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresenter";
 
 let presenter: SingleResidentHydratorPresenter;

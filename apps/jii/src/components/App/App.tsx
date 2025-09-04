@@ -30,39 +30,34 @@ import { ErrorBoundary, withSentryReactRouterV6Routing } from "@sentry/react";
 import { Route, Routes } from "react-router-dom";
 import styled, { createGlobalStyle } from "styled-components/macro";
 
+import { NotFound } from "~@jii/common-ui";
+import { initializeSentry, StoreProvider } from "~@jii/data";
+import {
+  AfterLogin,
+  EdovoLandingPage,
+  EmailVerification,
+  OrijinSSOPage,
+  SiteRoot,
+  State,
+  StateSelect,
+} from "~@jii/paths";
 import { palette } from "~design-system";
 
-import { initializeSentry } from "../../apis/Sentry/initializeSentry";
-import * as routes from "../../routes/routes";
-import { EGTDataRouteContext } from "../../US_MA/earnedGoodTime/components/EGTDataContext/RouteContext";
-import { PageDefinition } from "../../US_MA/earnedGoodTime/components/pages/PageDefinition";
-import { PageEGT } from "../../US_MA/earnedGoodTime/components/pages/PageEGT";
-import { PageIntro } from "../../US_MA/earnedGoodTime/components/pages/PageIntro";
-import { PageMonthlyReport } from "../../US_MA/earnedGoodTime/components/pages/PageMonthlyReport";
-import { EligibilityRouteContext } from "../EligibilityRouteContext/EligibilityRouteContext";
 import { ErrorPage } from "../ErrorPage/ErrorPage";
 import { GenericLayoutRoute } from "../GenericLayoutRoute/GenericLayoutRoute";
-import { NotFound } from "../NotFound/NotFound";
 import { PageAfterLogin } from "../pages/PageAfterLogin";
 import { PageEdovoLanding } from "../pages/PageEdovoLanding";
-import { PageEligibilityHome } from "../pages/PageEligibilityHome";
 import { PageHome } from "../pages/PageHome";
-import { PageOpportunityComparison } from "../pages/PageOpportunityComparison";
-import { PageOpportunityEligibility } from "../pages/PageOpportunityEligibility";
-import { PageOpportunityEligibilityHome } from "../pages/PageOpportunityEligibilityHome";
-import { PageOpportunityInfo } from "../pages/PageOpportunityInfo";
 import { PageOrijinSSO } from "../pages/PageOrijinSSO";
-import { PageProgressInfoPage } from "../pages/PageProgressInfoPage";
 import { PageResidentsRoot } from "../pages/PageResidentsRoot";
 import { PageRoot } from "../pages/PageRoot";
 import { PageSearch } from "../pages/PageSearch";
 import { PageSelectState } from "../pages/PageSelectState";
-import { PageSingleResidentHome } from "../pages/PageSingleResidentHome";
+import { PageSingleResidentRoot } from "../pages/PageSingleResidentRoot";
 import { PageState } from "../pages/PageState";
 import { PageVerifyEmail } from "../pages/PageVerifyEmail";
-import { ReentryRedirect } from "../pages/ReentryRedirect";
 import { ResidentsLayoutRoute } from "../ResidentsLayoutRoute/ResidentsLayoutRoute";
-import { StoreProvider } from "../StoreProvider/StoreProvider";
+import { StateSpecificRouter } from "../StateSpecificRouter/StateSpecificRouter";
 
 const StyledApp = styled.div`
   /* these properties prevent full-bleed sections from messing up the page width */
@@ -92,101 +87,37 @@ export function App() {
         <GlobalStyle />
         <StyledApp>
           <SentryRoutes>
-            <Route path={routes.SiteRoot.path} element={<PageRoot />}>
+            <Route path={SiteRoot.path} element={<PageRoot />}>
               <Route index element={<PageHome />} />
-              <Route path={routes.State.path}>
+              <Route path={State.path}>
                 <Route index element={<PageState />} />
                 <Route element={<PageResidentsRoot />}>
                   <Route element={<ResidentsLayoutRoute />}>
                     <Route
-                      path={routes.State.Resident.path}
-                      element={<ReentryRedirect />}
+                      path={State.Resident.path}
+                      element={<PageSingleResidentRoot />}
                     >
-                      <Route index element={<PageSingleResidentHome />} />
-                      <Route
-                        path={routes.State.Resident.Eligibility.path}
-                        element={<EligibilityRouteContext />}
-                      >
-                        <Route index element={<PageEligibilityHome />} />
-                        <Route
-                          path={
-                            routes.State.Resident.Eligibility.Opportunity.path
-                          }
-                          element={<PageOpportunityEligibility />}
-                        >
-                          <Route
-                            index
-                            element={<PageOpportunityEligibilityHome />}
-                          />
-                          <Route
-                            path={
-                              routes.State.Resident.Eligibility.Opportunity
-                                .InfoPage.path
-                            }
-                            element={<PageOpportunityInfo />}
-                          />
-                        </Route>
-                        <Route
-                          path={
-                            routes.State.Resident.Eligibility.Comparison.path
-                          }
-                          element={<PageOpportunityComparison />}
-                        />
-                      </Route>
-                      <Route
-                        path={routes.State.Resident.Progress.InfoPage.path}
-                        element={<PageProgressInfoPage />}
-                      />
-                      <Route
-                        path={routes.State.Resident.EGT.path}
-                        element={<EGTDataRouteContext />}
-                      >
-                        <Route index element={<PageEGT />} />
-                        <Route
-                          path={routes.State.Resident.EGT.Intro.path}
-                          element={<PageIntro />}
-                        />
-                        <Route
-                          path={routes.State.Resident.EGT.Definition.path}
-                          element={<PageDefinition />}
-                        />
-                        <Route
-                          path={routes.State.Resident.EGT.MonthlyReport.path}
-                          element={<PageMonthlyReport />}
-                        />
-                      </Route>
+                      <Route index path="*" element={<StateSpecificRouter />} />
                     </Route>
-                    <Route
-                      path={routes.State.Search.path}
-                      element={<PageSearch />}
-                    />
+                    <Route path={State.Search.path} element={<PageSearch />} />
                   </Route>
                 </Route>
               </Route>
               <Route element={<GenericLayoutRoute />}>
                 <Route
-                  path={routes.EmailVerification.path}
+                  path={EmailVerification.path}
                   element={<PageVerifyEmail />}
                 />
+                <Route path={AfterLogin.path} element={<PageAfterLogin />} />
                 <Route
-                  path={routes.AfterLogin.path}
-                  element={<PageAfterLogin />}
-                />
-                <Route
-                  path={routes.EdovoLandingPage.path}
+                  path={EdovoLandingPage.path}
                   element={<PageEdovoLanding />}
                 />
-                <Route
-                  path={routes.StateSelect.path}
-                  element={<PageSelectState />}
-                />
+                <Route path={StateSelect.path} element={<PageSelectState />} />
 
                 <Route path="*" element={<NotFound />} />
               </Route>
-              <Route
-                path={routes.OrijinSSOPage.path}
-                element={<PageOrijinSSO />}
-              />
+              <Route path={OrijinSSOPage.path} element={<PageOrijinSSO />} />
             </Route>
           </SentryRoutes>
         </StyledApp>

@@ -17,11 +17,10 @@
 
 import { makeAutoObservable } from "mobx";
 
-import { ResidentsConfig } from "../../configs/types";
-import { UserStore } from "../../datastores/UserStore";
-import { State } from "../../routes/routes";
-import { RouteParams } from "../../routes/utils";
-import { SimpleNavLinkProps } from "../types";
+import { SimpleNavLinkProps } from "~@jii/common-ui";
+import { ResidentsConfig, UserStore } from "~@jii/data";
+import { State } from "~@jii/paths";
+import { RouteParams } from "~@jii/paths";
 
 export class ResidentNavBarPresenter {
   constructor(

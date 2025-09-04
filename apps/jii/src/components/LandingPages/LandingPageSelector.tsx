@@ -21,10 +21,9 @@ import { rem } from "polished";
 import { useId } from "react";
 import styled from "styled-components/macro";
 
+import { Selector, SelectorProps } from "~@jii/common-ui";
 import { Button } from "~design-system";
 import { palette } from "~design-system";
-
-import { Selector, SelectorProps } from "../Selector/Selector";
 
 const Wrapper = styled.div`
   background: ${palette.marble2};

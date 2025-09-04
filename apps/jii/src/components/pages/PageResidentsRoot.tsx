@@ -18,7 +18,8 @@
 import { observer } from "mobx-react-lite";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { State } from "../../routes/routes";
+import { State } from "~@jii/paths";
+
 import { IdentityTracker } from "../IdentityTracker/IdentityTracker";
 import { RequiresLogin } from "../RequiresLogin/RequiresLogin";
 import { RequiresStateAuth } from "../RequiresStateAuth/RequiresStateAuth";

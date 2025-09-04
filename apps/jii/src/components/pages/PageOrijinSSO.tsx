@@ -17,7 +17,7 @@
 
 import { observer } from "mobx-react-lite";
 
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { useRootStore } from "~@jii/data";
 
 export const PageOrijinSSO = observer(function PageOrijinSSO() {
   const {

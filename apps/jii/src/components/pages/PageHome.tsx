@@ -17,11 +17,10 @@
 
 import { observer } from "mobx-react-lite";
 
-import { stateConfigsByStateCode } from "../../configs/stateConstants";
-import { StateCode } from "../../configs/types";
-import { EmailVerification, State, StateSelect } from "../../routes/routes";
-import { Redirect } from "../Redirect/Redirect";
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { Redirect } from "~@jii/common-ui";
+import { StateCode, stateConfigsByStateCode, useRootStore } from "~@jii/data";
+import { EmailVerification, State, StateSelect } from "~@jii/paths";
+
 import { PageLanding } from "./PageLanding";
 
 export const PageHome = observer(function PageHome() {

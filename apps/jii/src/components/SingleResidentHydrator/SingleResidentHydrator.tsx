@@ -20,12 +20,11 @@ import { FC } from "react";
 import { Outlet } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { SingleResidentContextProvider, useResidentsContext } from "~@jii/data";
+import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
-import { State } from "../../routes/routes";
 import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
-import { useResidentsContext } from "../ResidentsHydrator/context";
-import { SingleResidentContextProvider } from "./context";
 import { SingleResidentHydratorPresenter } from "./SingleResidentHydratorPresenter";
 
 // isolating data access in its own component prevents it from throwing errors before hydration is complete

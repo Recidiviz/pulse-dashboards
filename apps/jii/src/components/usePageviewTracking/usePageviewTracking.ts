@@ -18,7 +18,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { useRootStore } from "~@jii/data";
 
 export function usePageviewTracking() {
   const {

@@ -18,7 +18,7 @@
 import { Storage } from "@google-cloud/storage";
 import { defineString } from "firebase-functions/params";
 
-import { AuthorizedUserProfile } from "~auth0-jii";
+import { AuthorizedUserProfile } from "~@jii/auth";
 
 const RECIDIVIZ_ALLOWED_STATES_PROJECT_ID = defineString(
   "RECIDIVIZ_ALLOWED_STATES_PROJECT_ID",

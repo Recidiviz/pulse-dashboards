@@ -18,14 +18,13 @@
 import { ascending } from "d3-array";
 import { flowResult, makeAutoObservable } from "mobx";
 
+import { ResidentsStore } from "~@jii/data";
 import { ResidentRecord } from "~datatypes";
 import {
   Hydratable,
   HydratesFromSource,
   HydrationState,
 } from "~hydration-utils";
-
-import { ResidentsStore } from "../../datastores/ResidentsStore";
 
 export class ResidentSelectorPresenter implements Hydratable {
   private hydrationSource: HydratesFromSource;

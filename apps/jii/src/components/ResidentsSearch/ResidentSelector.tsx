@@ -21,12 +21,12 @@ import { FC, useId } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
+import { Selector } from "~@jii/common-ui";
+import { useResidentsContext } from "~@jii/data";
+import { State } from "~@jii/paths";
 import { withPresenterManager } from "~hydration-utils";
 
-import { State } from "../../routes/routes";
 import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
-import { useResidentsContext } from "../ResidentsHydrator/context";
-import { Selector } from "../Selector/Selector";
 import { ResidentSelectorPresenter } from "./ResidentSelectorPresenter";
 
 function usePresenter({ facilityId }: { facilityId: string }) {

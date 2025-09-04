@@ -17,16 +17,15 @@
 
 import { flowResult, makeAutoObservable, when } from "mobx";
 
-import { ResidentRecord } from "~datatypes";
-import { Hydratable, HydratesFromSource } from "~hydration-utils";
-
 import {
   EligibilityModuleConfig,
   IncarcerationOpportunityId,
   OpportunityRecord,
-} from "../../configs/types";
-import { ResidentsStore } from "../../datastores/ResidentsStore";
-import { SingleResidentContext } from "./context";
+  ResidentsStore,
+  SingleResidentContext,
+} from "~@jii/data";
+import { ResidentRecord } from "~datatypes";
+import { Hydratable, HydratesFromSource } from "~hydration-utils";
 
 export class SingleResidentHydratorPresenter implements Hydratable {
   private hydrationSource: HydratesFromSource;

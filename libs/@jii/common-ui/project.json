@@ -11,6 +11,15 @@
         "commands": ["tsc -p ./tsconfig.lib.json"],
         "cwd": "{projectRoot}"
       }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/coverage/libs/@jii/common-ui"],
+      "cache": true,
+      "options": {
+        "command": "vitest",
+        "cwd": "{projectRoot}"
+      }
     }
   }
 }

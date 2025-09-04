@@ -26,7 +26,7 @@ import {
   authorizedUserProfileSchema,
   getAuth0Config,
   metadataNamespace,
-} from "~auth0-jii";
+} from "~@jii/auth";
 
 import { getFirebaseToken } from "../helpers/firebaseAdmin";
 import { makeRateLimiter } from "../helpers/middleware";

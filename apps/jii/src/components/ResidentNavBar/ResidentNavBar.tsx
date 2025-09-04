@@ -24,13 +24,12 @@ import { FC } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components/macro";
 
+import { useResidentsContext } from "~@jii/data";
+import { RouteParams, State } from "~@jii/paths";
 import { palette } from "~design-system";
 import { withPresenterManager } from "~hydration-utils";
 
-import { State } from "../../routes/routes";
-import { RouteParams } from "../../routes/utils";
 import { NavMenu } from "../NavMenu/NavMenu";
-import { useResidentsContext } from "../ResidentsHydrator/context";
 import { ResidentNavBarPresenter } from "./ResidentNavBarPresenter";
 
 const BORDER = 4;

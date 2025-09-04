@@ -17,12 +17,9 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
+import { LoginConfigStore, StateConfig, stateConfigs } from "~@jii/data";
+import { State } from "~@jii/paths";
 import { Hydratable, HydratesFromSource } from "~hydration-utils";
-
-import { stateConfigs } from "../../configs/stateConstants";
-import { StateConfig } from "../../configs/types";
-import type { LoginConfigStore } from "../../datastores/LoginConfigStore";
-import { State } from "../../routes/routes";
 
 export class LandingStateSelectionPresenter implements Hydratable {
   private selectedStateConfig?: StateConfig;

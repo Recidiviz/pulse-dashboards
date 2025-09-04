@@ -18,10 +18,9 @@
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
 
+import { usePageTitle } from "~@jii/common-ui";
+import { useRootStore } from "~@jii/data";
 import { HandleRedirectAfterLogin } from "~auth";
-
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { usePageTitle } from "../usePageTitle/usePageTitle";
 
 export const PageAfterLogin: FC = observer(function PageAfterLogin() {
   const {

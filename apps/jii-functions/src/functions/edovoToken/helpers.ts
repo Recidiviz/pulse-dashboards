@@ -19,7 +19,7 @@ import { createPrivateKey } from "crypto";
 import { compactDecrypt } from "jose";
 import { z } from "zod";
 
-import { AuthorizedUserProfile } from "~auth0-jii";
+import { AuthorizedUserProfile } from "~@jii/auth";
 
 import {
   checkResidentsRoster,

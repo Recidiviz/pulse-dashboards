@@ -26,20 +26,20 @@ import { Link } from "react-router-dom";
 import useMeasure from "react-use-measure";
 import styled from "styled-components/macro";
 
-import { palette } from "~design-system";
-
-import { useSkipNav } from "../SkipNav/SkipNav";
-import { useRootStore } from "../StoreProvider/useRootStore";
-import { Wordmark } from "../Wordmark/Wordmark";
 import {
   HEADER_ANIMATION_OPTIONS,
   HEADER_HEIGHT,
   HEADER_PORTAL_ID,
+  HeaderBarContainer,
   HIDDEN_HEADER_OFFSET,
-  PAGE_LAYOUT_HEADER_GAP,
   STICKY_HEADER_ZINDEX,
-} from "./constants";
-import { HeaderBarContainer } from "./HeaderBarContainer";
+} from "~@jii/common-ui";
+import { useRootStore } from "~@jii/data";
+import { PAGE_LAYOUT_HEADER_GAP } from "~@jii/layout";
+import { palette } from "~design-system";
+
+import { useSkipNav } from "../SkipNav/SkipNav";
+import { Wordmark } from "../Wordmark/Wordmark";
 
 const Wrapper = styled.div<{ scrollMargin: number }>`
   display: grid;

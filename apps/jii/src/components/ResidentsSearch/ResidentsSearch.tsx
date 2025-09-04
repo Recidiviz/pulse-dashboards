@@ -21,12 +21,11 @@ import { rem } from "polished";
 import { FC, useId } from "react";
 import styled from "styled-components/macro";
 
+import { Selector } from "~@jii/common-ui";
+import { useResidentsContext, useRootStore } from "~@jii/data";
 import { withPresenterManager } from "~hydration-utils";
 
 import { MainContentHydrator } from "../PageHydrator/MainContentHydrator";
-import { useResidentsContext } from "../ResidentsHydrator/context";
-import { Selector } from "../Selector/Selector";
-import { useRootStore } from "../StoreProvider/useRootStore";
 import { ResidentSelector } from "./ResidentSelector";
 import { ResidentsSearchPresenter } from "./ResidentsSearchPresenter";
 

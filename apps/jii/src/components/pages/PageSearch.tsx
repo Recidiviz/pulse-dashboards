@@ -17,9 +17,10 @@
 
 import { observer } from "mobx-react-lite";
 
+import { usePageTitle } from "~@jii/common-ui";
+
 import { RequiresPermission } from "../RequiresPermission/RequiresPermission";
 import { ResidentsSearch } from "../ResidentsSearch/ResidentsSearch";
-import { usePageTitle } from "../usePageTitle/usePageTitle";
 
 export const PageSearch = observer(function PageSearch() {
   usePageTitle("Search");

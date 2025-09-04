@@ -15,9 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { usePageTitle } from "~@jii/common-ui";
 import { EmailVerificationRequired } from "~auth";
-
-import { usePageTitle } from "../usePageTitle/usePageTitle";
 
 export function PageVerifyEmail() {
   usePageTitle("Verify your email");

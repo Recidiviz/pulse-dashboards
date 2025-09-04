@@ -18,16 +18,22 @@
 import { render } from "@testing-library/react";
 import { configure } from "mobx";
 
-import { RootStore } from "../../datastores/RootStore";
-import * as hooks from "../StoreProvider/useRootStore";
+import { RootStore, useRootStore } from "~@jii/data";
+
 import { IdentityTracker } from "./IdentityTracker";
 
+vi.mock("~@jii/data", async (importOriginal) => {
+  return {
+    ...(await importOriginal()),
+    useRootStore: vi.fn(),
+  };
+});
 let rootStore: RootStore;
 
 beforeEach(async () => {
   configure({ safeDescriptors: false });
   rootStore = new RootStore();
-  vi.spyOn(hooks, "useRootStore").mockReturnValue(rootStore);
+  vi.mocked(useRootStore).mockReturnValue(rootStore);
 });
 
 test("side effect", () => {

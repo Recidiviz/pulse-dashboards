@@ -18,11 +18,12 @@
 import { FC } from "react";
 import { useTypedParams } from "react-router-typesafe-routes/dom";
 
-import { EmailVerification, State } from "../../routes/routes";
+import { Redirect } from "~@jii/common-ui";
+import { useRootStore } from "~@jii/data";
+import { EmailVerification, State } from "~@jii/paths";
+
 import { LandingPageLayout } from "../LandingPages/LandingPageLayout";
 import { LandingStateSpecific } from "../LandingPages/LandingStateSpecific";
-import { Redirect } from "../Redirect/Redirect";
-import { useRootStore } from "../StoreProvider/useRootStore";
 
 export const PageState: FC = () => {
   const { userStore } = useRootStore();

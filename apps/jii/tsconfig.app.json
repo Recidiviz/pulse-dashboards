@@ -20,6 +20,8 @@
     "src/**/*.test.jsx",
     "src/**/testUtils.ts",
     "src/**/testUtils.tsx",
+    "src/**/__tests__/*.ts",
+    "src/**/__tests__/*.tsx",
     "src/setupTests.ts",
     "src/setupTestsGlobal.ts"
   ],

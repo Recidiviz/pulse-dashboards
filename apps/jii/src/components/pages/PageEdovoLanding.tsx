@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Redirect } from "../Redirect/Redirect";
+import { Redirect } from "~@jii/common-ui";
 
 export const PageEdovoLanding = () => {
   return <Redirect to="/" />;

@@ -17,5 +17,7 @@
 
 export interface LibGeneratorSchema {
   name: string;
+  folder: string;
   libType: "vanilla" | "react";
+  scope: "client" | "server" | "universal";
 }

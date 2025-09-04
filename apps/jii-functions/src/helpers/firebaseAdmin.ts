@@ -21,7 +21,7 @@ import { defineString } from "firebase-functions/params";
 import toUpper from "lodash/toUpper";
 import { z } from "zod";
 
-import { AuthorizedUserProfile, ResidentUserProfile } from "~auth0-jii";
+import { AuthorizedUserProfile, ResidentUserProfile } from "~@jii/auth";
 
 import { secrets } from "./secrets";
 

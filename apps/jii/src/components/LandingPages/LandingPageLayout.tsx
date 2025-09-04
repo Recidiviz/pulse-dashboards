@@ -23,13 +23,13 @@ import { useTypedSearchParams } from "react-router-typesafe-routes/dom";
 import styled from "styled-components/macro";
 
 import { FullBleedContainer, PAGE_WIDTH } from "~@jii/common-ui";
+import { useRootStore } from "~@jii/data";
+import { ReturnToPathFragment } from "~@jii/paths";
 import { Button } from "~design-system";
 import { palette } from "~design-system";
 
-import recidivizWordmarkUrl from "../../assets/images/recidiviz-wordmark-white.svg";
-import { ReturnToPathFragment } from "../../routes/routes";
-import { useRootStore } from "../StoreProvider/useRootStore";
 import { Wordmark } from "../Wordmark/Wordmark";
+import recidivizWordmarkUrl from "./recidiviz-wordmark-white.svg";
 
 const CONTENT_WIDTH = PAGE_WIDTH * 0.8;
 

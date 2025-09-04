@@ -17,14 +17,12 @@
 
 import { flowResult, makeAutoObservable } from "mobx";
 
+import { RootStore, StateCode } from "~@jii/data";
 import {
   Hydratable,
   HydratesFromSource,
   HydrationState,
 } from "~hydration-utils";
-
-import { StateCode } from "../../configs/types";
-import { RootStore } from "../../datastores/RootStore";
 
 export class ResidentsHydratorPresenter implements Hydratable {
   constructor(

@@ -13,6 +13,13 @@
         "index": 0
       }
     },
+    "folder": {
+      "type": "string",
+      "description": "Optional alternate folder path, relative to /libs",
+      "x-prompt": {
+        "message": "What should the directory be named? (leave blank to use project name)"
+      }
+    },
     "libType": {
       "type": "string",
       "description": "Provide the library type",
@@ -24,7 +31,20 @@
           { "value": "react", "label": "Typescript with React Components" }
         ]
       }
+    },
+    "scope": {
+      "type": "string",
+      "description": "The execution environment (client/server) supported by this library",
+      "x-prompt": {
+        "message": "Where can this library be used?",
+        "type": "list",
+        "items": [
+          { "value": "client", "label": "Browser only" },
+          { "value": "server", "label": "Node environments only" },
+          { "value": "universal", "label": "Anywhere" }
+        ]
+      }
     }
   },
-  "required": ["name", "libType"]
+  "required": ["name", "folder", "libType", "scope"]
 }

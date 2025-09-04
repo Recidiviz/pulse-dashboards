@@ -1,0 +1,16 @@
+{
+  "name": "@jii/earned-good-time",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/@jii/earned-good-time/src",
+  "projectType": "library",
+  "tags": ["scope:client"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["tsc -p ./tsconfig.lib.json"],
+        "cwd": "{projectRoot}"
+      }
+    }
+  }
+}

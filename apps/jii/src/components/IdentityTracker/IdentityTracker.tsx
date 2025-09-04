@@ -19,7 +19,7 @@ import { when } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 
-import { useRootStore } from "../StoreProvider/useRootStore";
+import { useRootStore } from "~@jii/data";
 
 /**
  * Triggers a one-time side effect, when an authorized user is detected, that identifies

@@ -17,9 +17,10 @@
 
 import { FC } from "react";
 
+import { usePageTitle } from "~@jii/common-ui";
+
 import { LandingPageLayout } from "../LandingPages/LandingPageLayout";
 import { LoginStateSelection } from "../LandingPages/LandingStateSelection";
-import { usePageTitle } from "../usePageTitle/usePageTitle";
 
 export const PageLanding: FC = () => {
   usePageTitle(undefined);

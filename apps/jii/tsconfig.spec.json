@@ -25,6 +25,8 @@
     "src/**/*.spec.jsx",
     "src/**/testUtils.ts",
     "src/**/testUtils.tsx",
+    "src/**/__tests__/*.ts",
+    "src/**/__tests__/*.tsx",
     "src/**/*.d.ts",
     "vite.config.mts",
     "src/setupTests.ts",

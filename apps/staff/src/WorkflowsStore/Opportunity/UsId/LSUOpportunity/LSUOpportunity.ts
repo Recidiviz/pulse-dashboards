@@ -71,7 +71,6 @@ const INELIGIBLE_CRITERIA_COPY: Record<
   },
 };
 
-
 export class LSUOpportunity extends OpportunityBase<
   Client,
   LSUReferralRecord,
@@ -89,8 +88,10 @@ export class LSUOpportunity extends OpportunityBase<
     if (!this.record) return [];
     const { ineligibleCriteria } = this.record;
     const requirements: OpportunityRequirement[] = [];
-    const { usIdIncomeVerifiedWithin3Months, underSupervisionCustodialAuthorityAtLeastOneYear } =
-      cloneDeep(INELIGIBLE_CRITERIA_COPY);
+    const {
+      usIdIncomeVerifiedWithin3Months,
+      underSupervisionCustodialAuthorityAtLeastOneYear,
+    } = cloneDeep(INELIGIBLE_CRITERIA_COPY);
 
     if (ineligibleCriteria.usIdIncomeVerifiedWithin3Months) {
       requirements.push(usIdIncomeVerifiedWithin3Months);
@@ -98,10 +99,12 @@ export class LSUOpportunity extends OpportunityBase<
 
     if (
       ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear &&
-      ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear.eligibleDate
+      ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear
+        .eligibleDate
     ) {
       const monthsOrDaysRemaining = monthsOrDaysRemainingFromToday(
-        ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear.eligibleDate,
+        ineligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear
+          .eligibleDate,
       );
       underSupervisionCustodialAuthorityAtLeastOneYear.text =
         underSupervisionCustodialAuthorityAtLeastOneYear.text.replace(
@@ -115,8 +118,10 @@ export class LSUOpportunity extends OpportunityBase<
 
   get almostEligibleStatusMessage(): string | undefined {
     if (!this.almostEligible) return;
-    const { usIdIncomeVerifiedWithin3Months, underSupervisionCustodialAuthorityAtLeastOneYear } =
-      this.record?.ineligibleCriteria ?? {};
+    const {
+      usIdIncomeVerifiedWithin3Months,
+      underSupervisionCustodialAuthorityAtLeastOneYear,
+    } = this.record?.ineligibleCriteria ?? {};
     if (usIdIncomeVerifiedWithin3Months) {
       return INELIGIBLE_CRITERIA_COPY.usIdIncomeVerifiedWithin3Months.text;
     }
@@ -152,10 +157,14 @@ export class LSUOpportunity extends OpportunityBase<
     }
 
     if (
-      eligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear?.eligibleDate &&
-      eligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear?.eligibleDate <= new Date()
+      eligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear
+        ?.eligibleDate &&
+      eligibleCriteria.underSupervisionCustodialAuthorityAtLeastOneYear
+        ?.eligibleDate <= new Date()
     ) {
-      requirements.push(LSU_CRITERIA.underSupervisionCustodialAuthorityAtLeastOneYear);
+      requirements.push(
+        LSU_CRITERIA.underSupervisionCustodialAuthorityAtLeastOneYear,
+      );
     }
 
     return requirements;

@@ -4,10 +4,12 @@
   "references": [
     {
       "path": "./tsconfig.lib.json"
-    }
+    },
+    { "path": "./tsconfig.spec.json" }
   ],
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "lib": ["esnext", "dom"]
   }
 }

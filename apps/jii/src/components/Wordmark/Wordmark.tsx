@@ -19,8 +19,8 @@ import { rem } from "polished";
 import { FC, memo } from "react";
 import styled from "styled-components/macro";
 
-import wordmarkUrl from "../../assets/images/wordmark.svg";
-import wordmarkHighContrastUrl from "../../assets/images/wordmark-hc-wob.svg";
+import wordmarkUrl from "./wordmark.svg";
+import wordmarkHighContrastUrl from "./wordmark-hc-wob.svg";
 
 const Img = styled.img`
   display: block;
