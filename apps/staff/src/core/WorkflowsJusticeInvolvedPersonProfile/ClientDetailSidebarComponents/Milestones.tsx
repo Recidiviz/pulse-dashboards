@@ -28,7 +28,7 @@ import {
 } from "../styles";
 import { ClientProfileProps } from "../types";
 
-export function Milestones({ client }: ClientProfileProps): React.ReactElement {
+export function Milestones({ client }: ClientProfileProps): React.ReactElement | null {
   if (client.profileMilestones.length > 0) {
     return (
       <DetailsSection>
@@ -49,7 +49,7 @@ export function Milestones({ client }: ClientProfileProps): React.ReactElement {
         </SecureDetailsContent>
       </DetailsSection>
     );
+  } else {
+    return null;
   }
-
-  return <div />;
 }

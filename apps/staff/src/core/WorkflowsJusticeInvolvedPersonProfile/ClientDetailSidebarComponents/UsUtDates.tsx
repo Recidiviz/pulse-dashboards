@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { Sans14 } from "@recidiviz/design-system";
-import { add } from "date-fns";
+import { add, startOfToday } from "date-fns";
 import pluralize from "pluralize";
 import styled from "styled-components/macro";
 
@@ -35,8 +35,7 @@ const TableHeading = styled(Sans14)`
   color: ${palette.slate80};
 `;
 
-// TODO(#8691) Add tests for this function
-function utDates({
+export function utDates({
   startDate,
   halfTimeDate,
   endDate,
@@ -59,7 +58,7 @@ function utDates({
 
   // If the report due date was in the past, we only show that date for people who are
   // Eligible for ET, not Almost Eligible or ineligible
-  const reportDueInFuture = reportDue && reportDue >= new Date();
+  const reportDueInFuture = reportDue && reportDue >= startOfToday();
   const displayReportDueDate =
     reportDue && (isEligibleForET || reportDueInFuture);
 
