@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import startOfMonth from "date-fns/startOfMonth";
+
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { UsTxAnnualReportStatusOpportunity } from "../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunity";
 import { UsTxAnnualReportStatusDraftData } from "../UsTx/UsTxAnnualReportStatusOpportunity/UsTxAnnualReportStatusOpportunityReferralRecord";
@@ -44,11 +46,13 @@ export class UsTxAnnualReportStatusForm extends FormBase<
       ? tdcjNumber + " / " + clientId
       : clientId;
 
-    const eligibilityMonthString =
-      this.opportunity.eligibilityDate?.toLocaleString("en-US", {
+    const eligibilityMonthString = startOfMonth(new Date()).toLocaleString(
+      "en-US",
+      {
         month: "long",
         year: "numeric",
-      });
+      },
+    );
     const threeYearsTRASCheck = true;
     const complianceFeesAndEducationCheck = true;
     const restitutionObligationsCheck = true;

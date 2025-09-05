@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import startOfMonth from "date-fns/startOfMonth";
+
 import { OpportunityFormComponentName } from "../../../core/WorkflowsLayouts";
 import { UsTxEarlyReleaseFromSupervisionOpportunity } from "../UsTx/UsTxEarlyReleaseFromSupervisionOpportunity/UsTxEarlyReleaseFromSupervisionOpportunity";
 import { UsTxEarlyReleaseFromSupervisionDraftData } from "../UsTx/UsTxEarlyReleaseFromSupervisionOpportunityReferralRecord";
@@ -44,11 +46,13 @@ export class UsTxEarlyReleaseFromSupervisionForm extends FormBase<
       ? tdcjNumber + " / " + clientId
       : clientId;
 
-    const eligibilityMonthString =
-      this.opportunity.eligibilityDate?.toLocaleString("en-US", {
+    const eligibilityMonthString = startOfMonth(new Date()).toLocaleString(
+      "en-US",
+      {
         month: "long",
         year: "numeric",
-      });
+      },
+    );
 
     const atLeastHalfTimeCheck = true;
     const minimumThreeYearsSupervisionCheck = true;
