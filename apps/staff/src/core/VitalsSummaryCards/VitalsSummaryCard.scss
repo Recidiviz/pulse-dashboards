@@ -1,13 +1,13 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 .VitalsSummaryCard {
   max-height: 6rem;
   height: 6rem;
   flex: 40%;
   border-radius: 0.5rem;
-  box-shadow: $inset-shadow-30;
+  box-shadow: constants.$inset-shadow-30;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
@@ -19,7 +19,7 @@
       margin-right: 1.5rem;
     }
 
-    @media screen and (max-width: $core-breakpoint-sm) {
+    @media screen and (max-width: constants.$core-breakpoint-sm) {
       margin-top: 1rem;
       margin-right: 1rem;
 
@@ -28,12 +28,12 @@
       }
     }
 
-    @media screen and (max-width: $core-breakpoint-xs) {
+    @media screen and (max-width: constants.$core-breakpoint-xs) {
       margin-right: 0 !important;
     }
   }
 
-  @media screen and (max-width: $core-breakpoint-sm) {
+  @media screen and (max-width: constants.$core-breakpoint-sm) {
     max-width: 100%;
     min-width: 20rem;
   }
@@ -54,8 +54,8 @@
     border-radius: 0.5rem 0.5rem 0 0;
   }
   &__title {
-    color: $slate-80;
-    @include sans-16;
+    color: constants.$slate-80;
+    @include mixins.sans-16;
     line-height: 1.25rem;
     padding: 0 0.12rem 0 1.56rem;
     min-width: 115px;
@@ -66,9 +66,9 @@
     align-items: center;
     background-size: cover;
     background-position-y: bottom;
-    color: $pine-3;
+    color: constants.$pine-3;
     display: flex;
-    @include serif-34;
+    @include mixins.serif-34;
     height: 100%;
     justify-content: center;
     width: 50%;

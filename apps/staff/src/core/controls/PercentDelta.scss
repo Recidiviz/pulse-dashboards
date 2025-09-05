@@ -1,4 +1,4 @@
-@import "../CoreConstants.module.scss";
+@use "../CoreConstants.module.scss" as constants;
 
 .PercentDelta {
   display: flex;

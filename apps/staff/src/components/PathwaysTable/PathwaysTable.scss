@@ -1,37 +1,37 @@
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../../core/CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../../core/CoreConstants.module.scss" as constants;
 
 .PathwaysTable {
   width: 100%;
   min-width: 1100px !important;
   text-align: left;
-  color: $pine-1;
-  @include sans-14;
+  color: constants.$pine-1;
+  @include mixins.sans-14;
 
-  @media screen and (max-width: $core-breakpoint-sm) {
+  @media screen and (max-width: constants.$core-breakpoint-sm) {
     min-width: 1300px !important;
   }
 
   &__head {
-    color: $slate-80;
-    border-bottom: 1px solid $slate-20;
+    color: constants.$slate-80;
+    border-bottom: 1px solid constants.$slate-20;
 
     &--sortable {
       display: flex;
     }
 
     & .th {
-      background: $white;
+      background: constants.$white;
       padding: 0.875rem 0;
       padding-left: 2.5rem;
-      @include sans-14;
+      @include mixins.sans-14;
     }
   }
 
   &__body {
     height: 520px;
 
-    @media screen and (max-width: $core-breakpoint-sm) {
+    @media screen and (max-width: constants.$core-breakpoint-sm) {
       height: 420px;
     }
   }
@@ -42,7 +42,7 @@
 
   & .tr {
     display: flex;
-    border-bottom: 1px solid $slate-20;
+    border-bottom: 1px solid constants.$slate-20;
   }
 
   & .td {

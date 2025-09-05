@@ -1,9 +1,9 @@
 
 
-@import "./CoreConstants.module.scss";
+@use "./CoreConstants.module.scss" as constants;
 
 .PageTemplate {
-  background: $marble-3;
+  background: constants.$marble-3;
   display: flex;
   flex-flow: row;
   min-height: 92vh;
@@ -40,7 +40,7 @@
     }
   }
 
-  @media screen and (max-width: $core-breakpoint-sm) {
+  @media screen and (max-width: constants.$core-breakpoint-sm) {
     flex-direction: column;
     &__left-panel {
       max-width: 100%;
@@ -52,7 +52,7 @@
     }
   }
 
-  @media screen and (max-width: $core-breakpoint-xs) {
+  @media screen and (max-width: constants.$core-breakpoint-xs) {
     &__body {
       padding-left: 1rem;
       padding-right: 1rem;
@@ -61,7 +61,7 @@
 
   #mainContent {
     align-self: center;
-    max-width: $core-max-view-width;
+    max-width: constants.$core-max-view-width;
     width: 100%;
   }
 

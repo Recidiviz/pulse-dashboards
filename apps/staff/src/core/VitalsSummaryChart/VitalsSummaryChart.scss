@@ -1,9 +1,9 @@
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
-@import "../controls/mixins.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
+@use "../controls/mixins.scss" as controls;
 
 .VitalsSummaryChart {
-  @include sans-14;
+  @include mixins.sans-14;
   padding: 0 0 40px;
   width: 100%;
 
@@ -12,7 +12,7 @@
       stroke: none;
     }
     .left.tick-line {
-      stroke: $slate-20;
+      stroke: constants.$slate-20;
       stroke-width: 1px;
     }
   }
@@ -23,7 +23,7 @@
     }
 
     .axis-label {
-      fill: $slate-80;
+      fill: constants.$slate-80;
     }
   }
 
@@ -31,7 +31,7 @@
     transform: translate(0, 1.5rem);
 
     .ordinal-labels {
-      fill: $slate-80;
+      fill: constants.$slate-80;
     }
   }
 
@@ -45,21 +45,21 @@
   }
 
   &__goal-label {
-    @include sans-14;
-    fill: $signal-links;
+    @include mixins.sans-14;
+    fill: constants.$signal-links;
   }
 }
 
 .VitalsSummaryTooltip {
-  @include chart-tooltip;
+  @include controls.chart-tooltip;
 
   &__Date,
   &__Average {
     opacity: 0.8;
-    @include sans-14;
+    @include mixins.sans-14;
   }
 
   &__Value {
-    @include sans-16;
+    @include mixins.sans-16;
   }
 }

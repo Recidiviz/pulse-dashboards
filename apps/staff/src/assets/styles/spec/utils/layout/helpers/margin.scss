@@ -1,3 +1,5 @@
+@use "../mixins";
+@use "layout";
 // ---------------------------------------------------------
 // @TOC
 // ---------------------------------------------------------
@@ -7,12 +9,6 @@
 // + @Margin (5 > 35 Step 5)
 // + @Margin (40 > 160 Step 10)
 // + @Margin Auto
-
-// ---------------------------------------------------------
-// @Variables
-// ---------------------------------------------------------
-
-$responsive: true;
 
 // ---------------------------------------------------------
 // @Padding (0 > 4 Step 1)
@@ -71,56 +67,56 @@ $responsive: true;
     margin-right: -#{$i}px !important;
   }
 
-  @if ($responsive == true) {
-    @include generateResponsive() {
-      .m-#{$i}\@#{$breakpointAlias} {
+  @if (layout.$responsive == true) {
+    @include mixins.generateResponsive() {
+      .m-#{$i}\@#{mixins.$breakpointAlias} {
         margin: #{$i}px !important;
       }
-      .mT-#{$i}\@#{$breakpointAlias} {
+      .mT-#{$i}\@#{mixins.$breakpointAlias} {
         margin-top: #{$i}px !important;
       }
-      .mR-#{$i}\@#{$breakpointAlias} {
+      .mR-#{$i}\@#{mixins.$breakpointAlias} {
         margin-right: #{$i}px !important;
       }
-      .mB-#{$i}\@#{$breakpointAlias} {
+      .mB-#{$i}\@#{mixins.$breakpointAlias} {
         margin-bottom: #{$i}px !important;
       }
-      .mL-#{$i}\@#{$breakpointAlias} {
+      .mL-#{$i}\@#{mixins.$breakpointAlias} {
         margin-left: #{$i}px !important;
       }
 
-      .mY-#{$i}\@#{$breakpointAlias} {
+      .mY-#{$i}\@#{mixins.$breakpointAlias} {
         margin-top: #{$i}px !important;
         margin-bottom: #{$i}px !important;
       }
 
-      .mX-#{$i}\@#{$breakpointAlias} {
+      .mX-#{$i}\@#{mixins.$breakpointAlias} {
         margin-left: #{$i}px !important;
         margin-right: #{$i}px !important;
       }
 
-      .m-nv-#{$i}\@#{$breakpointAlias} {
+      .m-nv-#{$i}\@#{mixins.$breakpointAlias} {
         margin: -#{$i}px !important;
       }
-      .mT-nv-#{$i}\@#{$breakpointAlias} {
+      .mT-nv-#{$i}\@#{mixins.$breakpointAlias} {
         margin-top: -#{$i}px !important;
       }
-      .mR-nv-#{$i}\@#{$breakpointAlias} {
+      .mR-nv-#{$i}\@#{mixins.$breakpointAlias} {
         margin-right: -#{$i}px !important;
       }
-      .mB-nv-#{$i}\@#{$breakpointAlias} {
+      .mB-nv-#{$i}\@#{mixins.$breakpointAlias} {
         margin-bottom: -#{$i}px !important;
       }
-      .mL-nv-#{$i}\@#{$breakpointAlias} {
+      .mL-nv-#{$i}\@#{mixins.$breakpointAlias} {
         margin-left: -#{$i}px !important;
       }
 
-      .mY-nv-#{$i}\@#{$breakpointAlias} {
+      .mY-nv-#{$i}\@#{mixins.$breakpointAlias} {
         margin-top: -#{$i}px !important;
         margin-bottom: -#{$i}px !important;
       }
 
-      .mX-nv-#{$i}\@#{$breakpointAlias} {
+      .mX-nv-#{$i}\@#{mixins.$breakpointAlias} {
         margin-left: -#{$i}px !important;
         margin-right: -#{$i}px !important;
       }
@@ -186,56 +182,56 @@ $responsive: true;
       margin-right: -#{$i}px !important;
     }
 
-    @if ($responsive == true) {
-      @include generateResponsive() {
-        .m-#{$i}\@#{$breakpointAlias} {
+    @if (layout.$responsive == true) {
+      @include mixins.generateResponsive() {
+        .m-#{$i}\@#{mixins.$breakpointAlias} {
           margin: #{$i}px !important;
         }
-        .mT-#{$i}\@#{$breakpointAlias} {
+        .mT-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: #{$i}px !important;
         }
-        .mR-#{$i}\@#{$breakpointAlias} {
+        .mR-#{$i}\@#{mixins.$breakpointAlias} {
           margin-right: #{$i}px !important;
         }
-        .mB-#{$i}\@#{$breakpointAlias} {
+        .mB-#{$i}\@#{mixins.$breakpointAlias} {
           margin-bottom: #{$i}px !important;
         }
-        .mL-#{$i}\@#{$breakpointAlias} {
+        .mL-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: #{$i}px !important;
         }
 
-        .mY-#{$i}\@#{$breakpointAlias} {
+        .mY-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: #{$i}px !important;
           margin-bottom: #{$i}px !important;
         }
 
-        .mX-#{$i}\@#{$breakpointAlias} {
+        .mX-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: #{$i}px !important;
           margin-right: #{$i}px !important;
         }
 
-        .m-nv-#{$i}\@#{$breakpointAlias} {
+        .m-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin: -#{$i}px !important;
         }
-        .mT-nv-#{$i}\@#{$breakpointAlias} {
+        .mT-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: -#{$i}px !important;
         }
-        .mR-nv-#{$i}\@#{$breakpointAlias} {
+        .mR-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-right: -#{$i}px !important;
         }
-        .mB-nv-#{$i}\@#{$breakpointAlias} {
+        .mB-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-bottom: -#{$i}px !important;
         }
-        .mL-nv-#{$i}\@#{$breakpointAlias} {
+        .mL-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: -#{$i}px !important;
         }
 
-        .mY-nv-#{$i}\@#{$breakpointAlias} {
+        .mY-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: -#{$i}px !important;
           margin-bottom: -#{$i}px !important;
         }
 
-        .mX-nv-#{$i}\@#{$breakpointAlias} {
+        .mX-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: -#{$i}px !important;
           margin-right: -#{$i}px !important;
         }
@@ -302,56 +298,56 @@ $responsive: true;
       margin-right: -#{$i}px !important;
     }
 
-    @if ($responsive == true) {
-      @include generateResponsive() {
-        .m-#{$i}\@#{$breakpointAlias} {
+    @if (layout.$responsive == true) {
+      @include mixins.generateResponsive() {
+        .m-#{$i}\@#{mixins.$breakpointAlias} {
           margin: #{$i}px !important;
         }
-        .mT-#{$i}\@#{$breakpointAlias} {
+        .mT-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: #{$i}px !important;
         }
-        .mR-#{$i}\@#{$breakpointAlias} {
+        .mR-#{$i}\@#{mixins.$breakpointAlias} {
           margin-right: #{$i}px !important;
         }
-        .mB-#{$i}\@#{$breakpointAlias} {
+        .mB-#{$i}\@#{mixins.$breakpointAlias} {
           margin-bottom: #{$i}px !important;
         }
-        .mL-#{$i}\@#{$breakpointAlias} {
+        .mL-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: #{$i}px !important;
         }
 
-        .mY-#{$i}\@#{$breakpointAlias} {
+        .mY-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: #{$i}px !important;
           margin-bottom: #{$i}px !important;
         }
 
-        .mX-#{$i}\@#{$breakpointAlias} {
+        .mX-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: #{$i}px !important;
           margin-right: #{$i}px !important;
         }
 
-        .m-nv-#{$i}\@#{$breakpointAlias} {
+        .m-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin: -#{$i}px !important;
         }
-        .mT-nv-#{$i}\@#{$breakpointAlias} {
+        .mT-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: -#{$i}px !important;
         }
-        .mR-nv-#{$i}\@#{$breakpointAlias} {
+        .mR-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-right: -#{$i}px !important;
         }
-        .mB-nv-#{$i}\@#{$breakpointAlias} {
+        .mB-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-bottom: -#{$i}px !important;
         }
-        .mL-nv-#{$i}\@#{$breakpointAlias} {
+        .mL-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: -#{$i}px !important;
         }
 
-        .mY-nv-#{$i}\@#{$breakpointAlias} {
+        .mY-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: -#{$i}px !important;
           margin-bottom: -#{$i}px !important;
         }
 
-        .mX-nv-#{$i}\@#{$breakpointAlias} {
+        .mX-nv-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: -#{$i}px !important;
           margin-right: -#{$i}px !important;
         }
@@ -384,25 +380,25 @@ $responsive: true;
   margin-left: auto !important;
 }
 
-@if ($responsive == true) {
-  @include generateResponsive() {
-    .m-a\@#{$breakpointAlias} {
+@if (layout.$responsive == true) {
+  @include mixins.generateResponsive() {
+    .m-a\@#{mixins.$breakpointAlias} {
       margin: auto !important;
     }
-    .mX-a\@#{$breakpointAlias} {
+    .mX-a\@#{mixins.$breakpointAlias} {
       margin-left: auto !important;
       margin-right: auto !important;
     }
-    .mT-a\@#{$breakpointAlias} {
+    .mT-a\@#{mixins.$breakpointAlias} {
       margin-top: auto !important;
     }
-    .mR-a\@#{$breakpointAlias} {
+    .mR-a\@#{mixins.$breakpointAlias} {
       margin-right: auto !important;
     }
-    .mB-a\@#{$breakpointAlias} {
+    .mB-a\@#{mixins.$breakpointAlias} {
       margin-bottom: auto !important;
     }
-    .mL-a\@#{$breakpointAlias} {
+    .mL-a\@#{mixins.$breakpointAlias} {
       margin-left: auto !important;
     }
   }

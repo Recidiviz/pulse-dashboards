@@ -1,25 +1,25 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 .VitalsSummaryDetail {
-  color: $slate-80;
+  color: constants.$slate-80;
   display: flex;
   flex-flow: column;
   justify-content: center;
   height: 100%;
   padding: 3rem 4rem;
 
-  @media screen and (max-width: $core-breakpoint-sm) {
+  @media screen and (max-width: constants.$core-breakpoint-sm) {
     padding: 2.5rem 5rem;
   }
 
-  @media screen and (max-width: $core-breakpoint-xs) {
+  @media screen and (max-width: constants.$core-breakpoint-xs) {
     padding: 2rem 3rem;
   }
 
   &__title {
-    @include sans-24;
+    @include mixins.sans-24;
     padding: 0 0 1rem;
   }
 
@@ -29,11 +29,11 @@
     width: 4rem;
 
     &--POOR {
-      border-color: $crimson-dark;
+      border-color: constants.$crimson-dark;
     }
 
     &--NEEDS_IMPROVEMENT {
-      border-color: $crimson;
+      border-color: constants.$crimson;
     }
 
     &--GOOD {
@@ -47,8 +47,8 @@
   }
 
   &__value {
-    @include serif-34;
-    color: $pine-3;
+    @include mixins.serif-34;
+    color: constants.$pine-3;
     font-size: 6rem;
     line-height: 100%;
     margin: 0;
@@ -56,7 +56,7 @@
   }
 
   &__description {
-    @include sans-16;
+    @include mixins.sans-16;
     text-align: center;
   }
 }

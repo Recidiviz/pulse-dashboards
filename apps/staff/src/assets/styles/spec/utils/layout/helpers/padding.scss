@@ -1,3 +1,6 @@
+@use "layout";
+@use "../mixins";
+
 // ---------------------------------------------------------
 // @TOC
 // ---------------------------------------------------------
@@ -7,12 +10,6 @@
 // + @Padding (5 > 35 Step 5)
 // + @Padding (40 > 160 Step 10)
 // + @Padding Auto
-
-// ---------------------------------------------------------
-// @Variables
-// ---------------------------------------------------------
-
-$responsive: true;
 
 // ---------------------------------------------------------
 // @Padding (0 > 4 Step 1)
@@ -45,30 +42,30 @@ $responsive: true;
     padding-right: #{$i}px !important;
   }
 
-  @if ($responsive == true) {
-    @include generateResponsive() {
-      .p-#{$i}\@#{$breakpointAlias} {
+  @if (layout.$responsive == true) {
+    @include mixins.generateResponsive() {
+      .p-#{$i}\@#{mixins.$breakpointAlias} {
         padding: #{$i}px !important;
       }
-      .pT-#{$i}\@#{$breakpointAlias} {
+      .pT-#{$i}\@#{mixins.$breakpointAlias} {
         padding-top: #{$i}px !important;
       }
-      .pR-#{$i}\@#{$breakpointAlias} {
+      .pR-#{$i}\@#{mixins.$breakpointAlias} {
         padding-right: #{$i}px !important;
       }
-      .pB-#{$i}\@#{$breakpointAlias} {
+      .pB-#{$i}\@#{mixins.$breakpointAlias} {
         padding-bottom: #{$i}px !important;
       }
-      .pL-#{$i}\@#{$breakpointAlias} {
+      .pL-#{$i}\@#{mixins.$breakpointAlias} {
         padding-left: #{$i}px !important;
       }
 
-      .pY-#{$i}\@#{$breakpointAlias} {
+      .pY-#{$i}\@#{mixins.$breakpointAlias} {
         padding-top: #{$i}px !important;
         padding-bottom: #{$i}px !important;
       }
 
-      .pX-#{$i}\@#{$breakpointAlias} {
+      .pX-#{$i}\@#{mixins.$breakpointAlias} {
         padding-left: #{$i}px !important;
         padding-right: #{$i}px !important;
       }
@@ -108,30 +105,30 @@ $responsive: true;
       padding-right: #{$i}px !important;
     }
 
-    @if ($responsive == true) {
-      @include generateResponsive() {
-        .p-#{$i}\@#{$breakpointAlias} {
+    @if (layout.$responsive == true) {
+      @include mixins.generateResponsive() {
+        .p-#{$i}\@#{mixins.$breakpointAlias} {
           padding: #{$i}px !important;
         }
-        .pT-#{$i}\@#{$breakpointAlias} {
+        .pT-#{$i}\@#{mixins.$breakpointAlias} {
           padding-top: #{$i}px !important;
         }
-        .pR-#{$i}\@#{$breakpointAlias} {
+        .pR-#{$i}\@#{mixins.$breakpointAlias} {
           padding-right: #{$i}px !important;
         }
-        .pB-#{$i}\@#{$breakpointAlias} {
+        .pB-#{$i}\@#{mixins.$breakpointAlias} {
           padding-bottom: #{$i}px !important;
         }
-        .pL-#{$i}\@#{$breakpointAlias} {
+        .pL-#{$i}\@#{mixins.$breakpointAlias} {
           padding-left: #{$i}px !important;
         }
 
-        .pY-#{$i}\@#{$breakpointAlias} {
+        .pY-#{$i}\@#{mixins.$breakpointAlias} {
           padding-top: #{$i}px !important;
           padding-bottom: #{$i}px !important;
         }
 
-        .pX-#{$i}\@#{$breakpointAlias} {
+        .pX-#{$i}\@#{mixins.$breakpointAlias} {
           padding-left: #{$i}px !important;
           padding-right: #{$i}px !important;
         }
@@ -172,30 +169,30 @@ $responsive: true;
       padding-right: #{$i}px !important;
     }
 
-    @if ($responsive == true) {
-      @include generateResponsive() {
-        .p-#{$i}\@#{$breakpointAlias} {
+    @if (layout.$responsive == true) {
+      @include mixins.generateResponsive() {
+        .p-#{$i}\@#{mixins.$breakpointAlias} {
           padding: #{$i}px !important;
         }
-        .pT-#{$i}\@#{$breakpointAlias} {
+        .pT-#{$i}\@#{mixins.$breakpointAlias} {
           padding-top: #{$i}px !important;
         }
-        .pR-#{$i}\@#{$breakpointAlias} {
+        .pR-#{$i}\@#{mixins.$breakpointAlias} {
           padding-right: #{$i}px !important;
         }
-        .pB-#{$i}\@#{$breakpointAlias} {
+        .pB-#{$i}\@#{mixins.$breakpointAlias} {
           padding-bottom: #{$i}px !important;
         }
-        .pL-#{$i}\@#{$breakpointAlias} {
+        .pL-#{$i}\@#{mixins.$breakpointAlias} {
           padding-left: #{$i}px !important;
         }
 
-        .pY-#{$i}\@#{$breakpointAlias} {
+        .pY-#{$i}\@#{mixins.$breakpointAlias} {
           padding-top: #{$i}px !important;
           padding-bottom: #{$i}px !important;
         }
 
-        .pX-#{$i}\@#{$breakpointAlias} {
+        .pX-#{$i}\@#{mixins.$breakpointAlias} {
           padding-left: #{$i}px !important;
           padding-right: #{$i}px !important;
         }

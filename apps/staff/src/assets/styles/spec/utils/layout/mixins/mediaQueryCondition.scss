@@ -1,3 +1,5 @@
+@use "../../../settings";
+
 // ---------------------------------------------------------
 // @Media Queries Generator
 // ---------------------------------------------------------
@@ -7,7 +9,7 @@
 @mixin mediaQueryCondition($mq) {
   $breakpointFound: false;
 
-  @each $breakpoint in $breakpoints {
+  @each $breakpoint in settings.$breakpoints {
     $alias: nth($breakpoint, 1);
     $condition: nth($breakpoint, 2);
 

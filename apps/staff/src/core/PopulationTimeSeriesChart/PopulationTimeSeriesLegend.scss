@@ -1,4 +1,4 @@
-@import "../CoreConstants.module.scss";
+@use "../CoreConstants.module.scss" as constants;
 
 .PopulationTimeSeriesLegend {
   display: flex;
@@ -18,7 +18,7 @@
   }
 
   &__line {
-    stroke: $indigo;
+    stroke: constants.$indigo;
     stroke-width: 4;
     width: 100%;
   }
@@ -28,7 +28,7 @@
   }
 
   .ProjectedLegend {
-    background: $indigo-10;
+    background: constants.$indigo-10;
 
     .PopulationTimeSeriesLegend__line {
       stroke-dasharray: 3.5, 4.5, 8, 4.5, 3.5;
@@ -36,7 +36,7 @@
   }
 
   .MonthlyLegend {
-    background: $indigo-10;
+    background: constants.$indigo-10;
 
     .PopulationTimeSeriesLegend__line {
       display: none;

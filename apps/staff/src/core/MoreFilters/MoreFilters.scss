@@ -1,17 +1,17 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 .MoreFilters {
-  @include sans-16;
+  @include mixins.sans-16;
   box-shadow: inset 0px -0.749129px 0.749129px rgba(19, 44, 82, 0.2);
   border-radius: 8px;
-  background: $white;
+  background: constants.$white;
   margin-bottom: 1rem;
   &__header {
-    color: $slate-80;
+    color: constants.$slate-80;
     padding: 1rem 2rem;
-    border-bottom: 1px solid $slate-20;
+    border-bottom: 1px solid constants.$slate-20;
   }
   &__content {
     display: flex;

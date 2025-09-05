@@ -1,19 +1,19 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../../assets/styles/spec/settings/index";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../../assets/styles/spec/settings/index";
+@use "../CoreConstants.module.scss" as constants;
 
 .CoreSelect {
   flex-grow: 1;
   font-size: 0.8em;
   font-weight: 500;
-  color: $pine-3;
+  color: constants.$pine-3;
 
   &__control {
-    border: 1px solid $core-border-color !important;
+    border: 1px solid constants.$core-border-color !important;
     box-shadow: none !important;
     border-radius: 1.25rem !important;
-    background-color: $marble-3 !important;
+    background-color: constants.$marble-3 !important;
     transition: border-radius 0s !important;
     cursor: pointer !important;
 
@@ -24,7 +24,7 @@
   }
 
   &__container {
-    background-color: $marble-3 !important;
+    background-color: constants.$marble-3 !important;
   }
 
   &__single-value {
@@ -32,10 +32,10 @@
   }
 
   &__menu {
-    @include sans-14;
-    color: $pine-3;
-    background-color: $marble-3 !important;
-    border: 1px solid $core-border-color;
+    @include mixins.sans-14;
+    color: constants.$pine-3;
+    background-color: constants.$marble-3 !important;
+    border: 1px solid constants.$core-border-color;
     border-radius: 0rem 0rem 1.25rem 1.25rem !important;
     border-top: none !important;
     box-shadow: none !important;
@@ -67,8 +67,8 @@
 
     &:active,
     &:hover {
-      background: $core-focused-color !important;
-      color: $pine-3 !important;
+      background: constants.$core-focused-color !important;
+      color: constants.$pine-3 !important;
     }
   }
 
@@ -77,8 +77,8 @@
   }
 
   &__value-container {
-    color: $pine-3;
-    @include sans-14;
+    color: constants.$pine-3;
+    @include mixins.sans-14;
     padding-left: 1rem !important;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -97,10 +97,10 @@
     height: 0;
     border-style: solid;
     border-width: 4px 4px 0 4px;
-    border-color: $pine-3 transparent transparent transparent;
+    border-color: constants.$pine-3 transparent transparent transparent;
 
     .CoreSelect--changed & {
-      border-color: $signal-links transparent transparent transparent;
+      border-color: constants.$signal-links transparent transparent transparent;
     }
   }
 }

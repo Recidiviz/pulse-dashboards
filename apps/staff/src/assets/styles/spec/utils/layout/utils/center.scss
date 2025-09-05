@@ -1,15 +1,12 @@
+@use "../mixins";
+@use "../helpers";
+
 // ---------------------------------------------------------
 // @TOC
 // ---------------------------------------------------------
 
 // + @Variables
 // + @Centering
-
-// ---------------------------------------------------------
-// @Variables
-// ---------------------------------------------------------
-
-$responsive: true;
 
 // ---------------------------------------------------------
 // @Centering
@@ -31,19 +28,19 @@ $responsive: true;
   transform: translate(-50%, -50%);
 }
 
-@if ($responsive == true) {
-  @include generateResponsive() {
-    .centerY\@#{$breakpointAlias} {
+@if (helpers.$responsive == true) {
+  @include mixins.generateResponsive() {
+    .centerY\@#{mixins.$breakpointAlias} {
       top: 50%;
       transform: translateY(-50%);
     }
 
-    .centerX\@#{$breakpointAlias} {
+    .centerX\@#{mixins.$breakpointAlias} {
       left: 50%;
       transform: translateX(-50%);
     }
 
-    .centerXY\@#{$breakpointAlias} {
+    .centerXY\@#{mixins.$breakpointAlias} {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);

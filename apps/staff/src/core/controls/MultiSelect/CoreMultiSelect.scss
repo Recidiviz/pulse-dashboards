@@ -1,7 +1,7 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../../../assets/styles/spec/settings/index";
-@import "../../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../../../assets/styles/spec/settings" as settings;
+@use "../../CoreConstants.module.scss" as constants;
 
 .CoreMultiSelect {
   &__custom-indicator {
@@ -27,7 +27,7 @@
     left: 0;
     height: 1.25rem;
     width: 1.25rem;
-    border: 1px solid $core-border-color;
+    border: 1px solid settings.$core-border-color;
     background-color: transparent;
     border-radius: 0.25rem;
 
@@ -61,8 +61,8 @@
 div.CoreMultiSelect {
   max-height: 2.5rem;
   flex-grow: 1;
-  font-size: $font-size-base;
-  color: $pine-3;
+  font-size: settings.$font-size-base;
+  color: constants.$pine-3;
 
   &__value-container {
     white-space: nowrap;
@@ -71,7 +71,7 @@ div.CoreMultiSelect {
     justify-content: left;
     padding-left: 1rem;
     font-weight: 500;
-    @include sans-14;
+    @include mixins.sans-14;
   }
 
   &__clear-indicator {
@@ -113,8 +113,8 @@ div.CoreMultiSelect {
   }
 
   div.CoreMultiSelect__control {
-    background-color: $marble-3;
-    border: 1px solid $core-border-color;
+    background-color: constants.$marble-3;
+    border: 1px solid settings.$core-border-color;
     border-radius: 1.5rem;
     box-shadow: none;
     outline: none;
@@ -126,8 +126,8 @@ div.CoreMultiSelect {
     }
   }
   div.CoreMultiSelect__menu {
-    background-color: $marble-3;
-    border: 1px solid $core-border-color;
+    background-color: constants.$marble-3;
+    border: 1px solid settings.$core-border-color;
     border-radius: 0 0 1.5rem 1.5rem;
     border-top: none;
     box-shadow: none;
@@ -135,7 +135,7 @@ div.CoreMultiSelect {
     overflow: hidden;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    @include sans-14;
+    @include mixins.sans-14;
 
     &-list div:first-child {
       padding-top: none;
@@ -155,7 +155,7 @@ div.CoreMultiSelect {
       }
 
       &--is-focused {
-        background-color: $core-focused-color;
+        background-color: settings.$core-focused-color;
 
         & .MultiSelect__checkbox {
           background: rgba(0, 108, 103, 0.2);

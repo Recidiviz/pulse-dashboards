@@ -1,6 +1,6 @@
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../../assets/styles/spec/settings/index";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../../assets/styles/spec/settings/index";
+@use "../CoreConstants.module.scss" as constants;
 
 .PageNavigation {
   display: flex;
@@ -13,7 +13,7 @@
     align-items: center;
     cursor: pointer;
     display: flex;
-    @include sans-16;
+    @include mixins.sans-16;
     height: 100%;
     justify-content: center;
     margin: 0;
@@ -33,7 +33,7 @@
 
             &--selected {
               border-left: none;
-              border-right: 1px solid $data-forest;
+              border-right: 1px solid constants.$data-forest;
             }
           }
         }
@@ -46,7 +46,7 @@
 
             &--selected {
               border-right: none;
-              border-left: 1px solid $data-forest;
+              border-left: 1px solid constants.$data-forest;
             }
           }
         }
@@ -56,19 +56,19 @@
     .PageNavigation {
       &__option {
         width: 100%;
-        color: $slate-80;
-        border-right: 1px solid $slate-20;
-        border-left: 1px solid $slate-20;
+        color: constants.$slate-80;
+        border-right: 1px solid constants.$slate-20;
+        border-left: 1px solid constants.$slate-20;
 
         &:hover {
-          color: $pine-3;
+          color: constants.$pine-3;
         }
 
         &--selected {
-          color: $pine-3;
-          background: $data-forest-07;
-          border-right: 1px solid $data-forest;
-          border-left: 1px solid $data-forest;
+          color: constants.$pine-3;
+          background: constants.$data-forest-07;
+          border-right: 1px solid constants.$data-forest;
+          border-left: 1px solid constants.$data-forest;
         }
       }
     }
@@ -87,18 +87,18 @@
     .PageNavigation {
       &__option {
         width: 100%;
-        color: $white;
+        color: constants.$white;
         opacity: 0.6;
         margin-bottom: 1rem;
         border: 0 !important;
 
         &:hover {
-          color: $white;
+          color: constants.$white;
           opacity: 1;
         }
 
         &--selected {
-          color: $white;
+          color: constants.$white;
           opacity: 1;
           background: transparent;
           border: 0 !important;

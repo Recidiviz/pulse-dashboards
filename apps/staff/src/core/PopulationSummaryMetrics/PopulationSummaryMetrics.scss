@@ -1,10 +1,10 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
-@import "../../assets/styles/spec/tools/mixins/mediaQueriesRanges.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
+@use "../../assets/styles/spec/tools/mixins/mediaQueriesRanges.scss";
 
 @mixin loading-value {
-  background-color: $marble-3;
+  background-color: constants.$marble-3;
   border-radius: 4px;
 }
 
@@ -15,7 +15,7 @@
   width: 100%;
   justify-content: space-evenly;
 
-  @media screen and (max-width: $core-breakpoint-xs) {
+  @media screen and (max-width: constants.$core-breakpoint-xs) {
     flex-flow: row wrap;
   }
 
@@ -27,8 +27,8 @@
   }
 
   &__value {
-    @include serif-34;
-    color: $pine-3;
+    @include mixins.serif-34;
+    color: constants.$pine-3;
     padding: 0 0 0;
 
     &--loading {
@@ -39,8 +39,8 @@
   }
 
   &__min-max {
-    @include sans-14;
-    color: $slate-80;
+    @include mixins.sans-14;
+    color: constants.$slate-80;
     white-space: nowrap;
 
     &--loading {
@@ -52,7 +52,7 @@
   }
 
   &__delta {
-    @include sans-14;
+    @include mixins.sans-14;
     line-height: 1.5rem;
 
     &--loading {
@@ -66,7 +66,7 @@
       text-indent: -9999px;
       height: 0;
       width: 2rem;
-      border: 2px solid $slate-20;
+      border: 2px solid constants.$slate-20;
     }
   }
 }

@@ -1,6 +1,6 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "./CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "./CoreConstants.module.scss" as constants;
 
 .DetailsGroup {
   min-height: 2.375rem;
@@ -8,8 +8,8 @@
   align-items: center;
 
   &__item {
-    color: $slate-80;
-    @include sans-14;
+    color: constants.$slate-80;
+    @include mixins.sans-14;
 
     > :not(:last-child) {
       margin-right: 1.5rem;
@@ -22,8 +22,8 @@
     outline: 0;
     border: 0;
     background: transparent;
-    color: $signal-links;
-    @include sans-16;
+    color: constants.$signal-links;
+    @include mixins.sans-16;
     padding: 0;
     &:not(:last-child) {
       padding-right: 1.5rem;
@@ -31,7 +31,7 @@
 
     &:hover {
       text-decoration: none;
-      color: $signal-links;
+      color: constants.$signal-links;
     }
   }
 
@@ -49,10 +49,10 @@
 
   &__menu {
     cursor: pointer;
-    color: $signal-links;
+    color: constants.$signal-links;
     display: block;
 
-    @media screen and (max-width: $core-breakpoint-sm) {
+    @media screen and (max-width: constants.$core-breakpoint-sm) {
       display: block;
     }
   }
@@ -65,12 +65,12 @@
     right: -0.5rem;
     top: 3.5rem;
     padding: 0.5rem 0;
-    background: $white;
+    background: constants.$white;
     box-shadow: 0px 4px 35px rgba(0, 0, 0, 0.25);
     border-radius: 8px;
     z-index: 3;
 
-    @media screen and (max-width: $core-breakpoint-sm) {
+    @media screen and (max-width: constants.$core-breakpoint-sm) {
       top: 6.5rem;
     }
 
@@ -85,8 +85,8 @@
         width: 100%;
 
         &:hover {
-          color: $white;
-          background: $signal-links;
+          color: constants.$white;
+          background: constants.$signal-links;
         }
       }
     }

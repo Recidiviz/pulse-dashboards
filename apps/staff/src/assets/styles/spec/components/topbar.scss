@@ -8,12 +8,13 @@
 // @Topbar
 // ---------------------------------------------------------
 
-@import "../settings/index";
-@import "../tools/index";
+@use "../settings";
+@use "../tools";
+@use "sass:color";
 
 .header {
-  background-color: $default-white;
-  border-bottom: 1px solid $border-color;
+  background-color: settings.$default-white;
+  border-bottom: 1px solid settings.$border-color;
   display: block;
   margin-bottom: 0;
   padding: 0;
@@ -26,14 +27,14 @@
   z-index: 800;
 
   .header-container {
-    @include clearfix;
+    @include tools.clearfix;
     display: flex;
 
-    height: $header-height;
+    height: settings.$header-height;
 
     .lantern-logo {
-      height: calc($header-height/2);
-      margin: calc($header-height/4);
+      height: calc(settings.$header-height/2);
+      margin: calc(settings.$header-height/4);
     }
 
     .nav-right {
@@ -47,10 +48,10 @@
 
         > a,
         button {
-          color: $default-text-color;
+          color: settings.$default-text-color;
           display: block;
-          line-height: $header-height;
-          min-height: $header-height;
+          line-height: settings.$header-height;
+          min-height: settings.$header-height;
           padding: 0 15px;
           background-color: transparent;
           transition: all 0.2s ease-in-out;
@@ -61,11 +62,11 @@
 
           &:hover,
           &:focus {
-            color: $default-dark;
+            color: settings.$default-dark;
             text-decoration: none;
           }
 
-          @include to($breakpoint-md) {
+          @include tools.to(settings.$breakpoint-md) {
             padding: 0 15px;
           }
         }
@@ -75,9 +76,9 @@
         position: relative;
 
         .counter {
-          background-color: $default-danger;
+          background-color: settings.$default-danger;
           border-radius: 50px;
-          color: $default-white;
+          color: settings.$default-white;
           font-size: 10px;
           line-height: 1;
           padding: 3px 5.5px;
@@ -90,7 +91,7 @@
           min-width: 350px;
           padding: 0;
 
-          @include to($breakpoint-sm) {
+          @include tools.to(settings.$breakpoint-sm) {
             max-width: 300px;
           }
         }
@@ -102,7 +103,7 @@
       margin: 0;
 
       .divider {
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid settings.$border-color;
         height: 1px;
         overflow: hidden;
       }
@@ -185,12 +186,12 @@
       outline: none;
       padding: 5px;
 
-      @include to($breakpoint-sm) {
+      @include tools.to(settings.$breakpoint-sm) {
         width: 85px;
       }
 
-      @include placeholder {
-        color: lighten($default-text-color, 20%);
+      @include tools.placeholder {
+        color: color.adjust(settings.$default-text-color, $lightness: 20%);
         font-style: italic;
       }
     }
@@ -211,11 +212,11 @@
   .header {
     width: 100%;
 
-    @include to($breakpoint-md) {
+    @include tools.to(settings.$breakpoint-md) {
       width: 100%;
     }
 
-    @include between($breakpoint-md, $breakpoint-xl) {
+    @include tools.between(settings.$breakpoint-md, settings.$breakpoint-xl) {
       width: 100%;
     }
   }

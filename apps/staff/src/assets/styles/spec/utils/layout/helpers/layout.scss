@@ -1,3 +1,5 @@
+@use "../mixins";
+
 // ---------------------------------------------------------
 // @TOC
 // ---------------------------------------------------------
@@ -40,23 +42,23 @@ $responsive: true;
 }
 
 @if ($responsive == true) {
-  @include generateResponsive() {
-    .d-b\@#{$breakpointAlias} {
+  @include mixins.generateResponsive() {
+    .d-b\@#{mixins.$breakpointAlias} {
       display: block !important;
     }
-    .d-ib\@#{$breakpointAlias} {
+    .d-ib\@#{mixins.$breakpointAlias} {
       display: inline-block !important;
     }
-    .d-i\@#{$breakpointAlias} {
+    .d-i\@#{mixins.$breakpointAlias} {
       display: inline !important;
     }
-    .d-tb\@#{$breakpointAlias} {
+    .d-tb\@#{mixins.$breakpointAlias} {
       display: table !important;
     }
-    .d-tbc\@#{$breakpointAlias} {
+    .d-tbc\@#{mixins.$breakpointAlias} {
       display: table-cell !important;
     }
-    .d-n\@#{$breakpointAlias} {
+    .d-n\@#{mixins.$breakpointAlias} {
       display: none !important;
     }
   }
@@ -96,33 +98,33 @@ $responsive: true;
 }
 
 @if ($responsive == true) {
-  @include generateResponsive() {
-    .ov-h\@#{$breakpointAlias} {
+  @include mixins.generateResponsive() {
+    .ov-h\@#{mixins.$breakpointAlias} {
       overflow: hidden !important;
     }
-    .ov-a\@#{$breakpointAlias} {
+    .ov-a\@#{mixins.$breakpointAlias} {
       overflow: auto !important;
     }
-    .ov-s\@#{$breakpointAlias} {
+    .ov-s\@#{mixins.$breakpointAlias} {
       overflow: scroll !important;
     }
 
-    .ovY-h\@#{$breakpointAlias} {
+    .ovY-h\@#{mixins.$breakpointAlias} {
       overflow-y: hidden !important;
     }
-    .ovX-h\@#{$breakpointAlias} {
+    .ovX-h\@#{mixins.$breakpointAlias} {
       overflow-x: hidden !important;
     }
-    .ovY-a\@#{$breakpointAlias} {
+    .ovY-a\@#{mixins.$breakpointAlias} {
       overflow-y: auto !important;
     }
-    .ovX-a\@#{$breakpointAlias} {
+    .ovX-a\@#{mixins.$breakpointAlias} {
       overflow-x: auto !important;
     }
-    .ovY-s\@#{$breakpointAlias} {
+    .ovY-s\@#{mixins.$breakpointAlias} {
       overflow-y: scroll !important;
     }
-    .ovX-s\@#{$breakpointAlias} {
+    .ovX-s\@#{mixins.$breakpointAlias} {
       overflow-x: scroll !important;
     }
   }
@@ -143,14 +145,14 @@ $responsive: true;
 }
 
 @if ($responsive == true) {
-  @include generateResponsive() {
-    .fl-l\@#{$breakpointAlias} {
+  @include mixins.generateResponsive() {
+    .fl-l\@#{mixins.$breakpointAlias} {
       float: left !important;
     }
-    .fl-r\@#{$breakpointAlias} {
+    .fl-r\@#{mixins.$breakpointAlias} {
       float: right !important;
     }
-    .fl-n\@#{$breakpointAlias} {
+    .fl-n\@#{mixins.$breakpointAlias} {
       float: none !important;
     }
   }
@@ -171,14 +173,14 @@ $responsive: true;
 }
 
 @if ($responsive == true) {
-  @include generateResponsive() {
-    .va-t\@#{$breakpointAlias} {
+  @include mixins.generateResponsive() {
+    .va-t\@#{mixins.$breakpointAlias} {
       vertical-align: top !important;
     }
-    .va-m\@#{$breakpointAlias} {
+    .va-m\@#{mixins.$breakpointAlias} {
       vertical-align: middle !important;
     }
-    .va-b\@#{$breakpointAlias} {
+    .va-b\@#{mixins.$breakpointAlias} {
       vertical-align: bottom !important;
     }
   }
@@ -205,20 +207,20 @@ $responsive: true;
 }
 
 @if ($responsive == true) {
-  @include generateResponsive() {
-    .pos-s\@#{$breakpointAlias} {
+  @include mixins.generateResponsive() {
+    .pos-s\@#{mixins.$breakpointAlias} {
       position: static !important;
     }
-    .pos-st\@#{$breakpointAlias} {
+    .pos-st\@#{mixins.$breakpointAlias} {
       position: sticky !important;
     }
-    .pos-r\@#{$breakpointAlias} {
+    .pos-r\@#{mixins.$breakpointAlias} {
       position: relative !important;
     }
-    .pos-a\@#{$breakpointAlias} {
+    .pos-a\@#{mixins.$breakpointAlias} {
       position: absolute !important;
     }
-    .pos-f\@#{$breakpointAlias} {
+    .pos-f\@#{mixins.$breakpointAlias} {
       position: fixed !important;
     }
   }
@@ -234,8 +236,8 @@ $responsive: true;
   }
 
   @if ($responsive == true) {
-    @include generateResponsive() {
-      .z-#{$i}\@#{$breakpointAlias} {
+    @include mixins.generateResponsive() {
+      .z-#{$i}\@#{mixins.$breakpointAlias} {
         z-index: ($i * 1000) !important;
       }
     }

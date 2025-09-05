@@ -1,6 +1,6 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 .VitalsSummaryBreadcrumbs {
   line-height: 2.67rem;
@@ -19,11 +19,11 @@
 
   &--state,
   &--parent {
-    @include sans-16;
-    color: $slate-80;
+    @include mixins.sans-16;
+    color: constants.$slate-80;
     &:hover {
       text-decoration-line: underline;
-      color: $signal-links;
+      color: constants.$signal-links;
       cursor: pointer;
     }
   }
@@ -36,14 +36,14 @@
   }
 
   &--current {
-    @include serif-34;
-    color: $pine-3;
+    @include mixins.serif-34;
+    color: constants.$pine-3;
   }
 }
 
 .DashboardLayout {
   .VitalsSummaryBreadcrumbs {
-    @media screen and (max-width: $core-breakpoint-sm) {
+    @media screen and (max-width: constants.$core-breakpoint-sm) {
       display: flex;
       flex-direction: row-reverse;
       align-items: center;
@@ -51,7 +51,7 @@
       margin: 0;
 
       &--current {
-        @include serif-24;
+        @include mixins.serif-24;
       }
     }
   }

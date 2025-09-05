@@ -1,3 +1,5 @@
+@use "../settings";
+
 // ---------------------------------------------------------
 // @TOC
 // ---------------------------------------------------------
@@ -9,7 +11,7 @@
 // @Material Color
 // ---------------------------------------------------------
 
-@each $item, $color in $md-colors {
+@each $item, $color in settings.$md-colors {
   .c-#{"" + $item},
   .cH-#{"" + $item}:hover {
     color: $color !important;
@@ -36,7 +38,7 @@
 // @Grey Colors
 // ---------------------------------------------------------
 
-@each $item, $color in $grey-colors-alt {
+@each $item, $color in settings.$grey-colors-alt {
   .c-#{"" + $item},
   .cH-#{"" + $item}:hover {
     color: $color !important;

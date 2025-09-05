@@ -1,3 +1,6 @@
+@use "layout";
+@use "../mixins";
+
 // ---------------------------------------------------------
 // @TOC
 // ---------------------------------------------------------
@@ -16,12 +19,6 @@
 // + @Line Height
 
 // ---------------------------------------------------------
-// @Variables
-// ---------------------------------------------------------
-
-$responsive: true;
-
-// ---------------------------------------------------------
 // @Text Align
 // ---------------------------------------------------------
 
@@ -35,15 +32,15 @@ $responsive: true;
   text-align: right !important;
 }
 
-@if ($responsive == true) {
-  @include generateResponsive() {
-    .ta-c\@#{$breakpointAlias} {
+@if (layout.$responsive == true) {
+  @include mixins.generateResponsive() {
+    .ta-c\@#{mixins.$breakpointAlias} {
       text-align: center !important;
     }
-    .ta-l\@#{$breakpointAlias} {
+    .ta-l\@#{mixins.$breakpointAlias} {
       text-align: left !important;
     }
-    .ta-r\@#{$breakpointAlias} {
+    .ta-r\@#{mixins.$breakpointAlias} {
       text-align: right !important;
     }
   }

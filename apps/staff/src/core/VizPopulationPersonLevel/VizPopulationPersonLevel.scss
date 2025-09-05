@@ -1,6 +1,6 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 .VizPopulationPersonLevel {
   &__header {
@@ -12,10 +12,10 @@
   }
 
   &__title {
-    color: $pine-1;
-    @include sans-16;
+    color: constants.$pine-1;
+    @include mixins.sans-16;
     & span {
-      color: $slate-80;
+      color: constants.$slate-80;
     }
   }
 

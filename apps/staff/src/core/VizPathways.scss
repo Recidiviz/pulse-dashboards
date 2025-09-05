@@ -1,7 +1,7 @@
 
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "./CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "./CoreConstants.module.scss" as constants;
 
 .VizPathways {
   &__header {
@@ -13,17 +13,17 @@
   }
 
   &__title {
-    color: $pine-1;
-    @include sans-16;
+    color: constants.$pine-1;
+    @include mixins.sans-16;
     & span {
-      color: $slate-80;
+      color: constants.$slate-80;
     }
   }
 
   &__subtitle {
     padding-top: 0.5rem;
-    @include sans-14;
-    color: $slate-60;
+    @include mixins.sans-14;
+    color: constants.$slate-60;
   }
 
   &__content {
@@ -31,14 +31,14 @@
   }
 
   &__point {
-    fill: $indigo;
+    fill: constants.$indigo;
     r: 0.3rem;
-    stroke: $white;
+    stroke: constants.$white;
     stroke-width: 2;
   }
 
   &__historicalLine {
-    stroke: $indigo;
+    stroke: constants.$indigo;
     stroke-width: 2;
   }
 
@@ -48,7 +48,7 @@
     }
 
     .axis-label {
-      fill: $slate-80;
+      fill: constants.$slate-80;
     }
 
     .axis.bottom {
@@ -69,18 +69,18 @@
     }
 
     .y.tick-line {
-      stroke: $slate-20;
+      stroke: constants.$slate-20;
     }
   }
 
   .annotation-layer {
     .uncertainty {
-      fill: $indigo-10;
+      fill: constants.$indigo-10;
     }
 
     .frame-hover {
-      fill: $signal-tooltip;
-      stroke: $signal-tooltip;
+      fill: constants.$signal-tooltip;
+      stroke: constants.$signal-tooltip;
       r: 0.25rem;
     }
   }

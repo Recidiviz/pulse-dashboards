@@ -1,3 +1,6 @@
+@use "../mixins";
+@use "../helpers";
+
 // ---------------------------------------------------------
 // @TOC
 // ---------------------------------------------------------
@@ -8,11 +11,6 @@
 // + @Gap (5 > 35 Step 5)
 // + @Gap (40 > 160 Step 10)
 
-// ---------------------------------------------------------
-// @Variables
-// ---------------------------------------------------------
-
-$responsive: true;
 
 // ---------------------------------------------------------
 // @Base
@@ -56,9 +54,9 @@ $responsive: true;
     }
   }
 
-  @if ($responsive == true) {
-    @include generateResponsive() {
-      .gapX-#{$i}\@#{$breakpointAlias} {
+  @if (helpers.$responsive == true) {
+    @include mixins.generateResponsive() {
+      .gapX-#{$i}\@#{mixins.$breakpointAlias} {
         margin-left: #{(calc($i / -2))}px !important;
         margin-right: #{(calc($i / -2))}px !important;
 
@@ -68,7 +66,7 @@ $responsive: true;
         }
       }
 
-      .gapY-#{$i}\@#{$breakpointAlias} {
+      .gapY-#{$i}\@#{mixins.$breakpointAlias} {
         margin-top: #{(calc($i / -2))}px !important;
         margin-bottom: #{(calc($i / -2))}px !important;
 
@@ -78,7 +76,7 @@ $responsive: true;
         }
       }
 
-      .gap-#{$i}\@#{$breakpointAlias} {
+      .gap-#{$i}\@#{mixins.$breakpointAlias} {
         margin: #{(calc($i / -2))}px !important;
 
         & > * {
@@ -123,9 +121,9 @@ $responsive: true;
       }
     }
 
-    @if ($responsive == true) {
-      @include generateResponsive() {
-        .gapX-#{$i}\@#{$breakpointAlias} {
+    @if (helpers.$responsive == true) {
+      @include mixins.generateResponsive() {
+        .gapX-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: #{(calc($i / -2))}px !important;
           margin-right: #{(calc($i / -2))}px !important;
 
@@ -135,7 +133,7 @@ $responsive: true;
           }
         }
 
-        .gapY-#{$i}\@#{$breakpointAlias} {
+        .gapY-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: #{(calc($i / -2))}px !important;
           margin-bottom: #{(calc($i / -2))}px !important;
 
@@ -145,7 +143,7 @@ $responsive: true;
           }
         }
 
-        .gap-#{$i}\@#{$breakpointAlias} {
+        .gap-#{$i}\@#{mixins.$breakpointAlias} {
           margin: #{(calc($i / -2))}px !important;
 
           & > * {
@@ -191,9 +189,9 @@ $responsive: true;
       }
     }
 
-    @if ($responsive == true) {
-      @include generateResponsive() {
-        .gapX-#{$i}\@#{$breakpointAlias} {
+    @if (helpers.$responsive == true) {
+      @include mixins.generateResponsive() {
+        .gapX-#{$i}\@#{mixins.$breakpointAlias} {
           margin-left: #{(calc($i / -2))}px !important;
           margin-right: #{(calc($i / -2))}px !important;
 
@@ -203,7 +201,7 @@ $responsive: true;
           }
         }
 
-        .gapY-#{$i}\@#{$breakpointAlias} {
+        .gapY-#{$i}\@#{mixins.$breakpointAlias} {
           margin-top: #{(calc($i / -2))}px !important;
           margin-bottom: #{(calc($i / -2))}px !important;
 
@@ -213,7 +211,7 @@ $responsive: true;
           }
         }
 
-        .gap-#{$i}\@#{$breakpointAlias} {
+        .gap-#{$i}\@#{mixins.$breakpointAlias} {
           margin: #{(calc($i / -2))}px !important;
 
           & > * {

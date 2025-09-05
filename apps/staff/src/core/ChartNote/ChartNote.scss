@@ -1,15 +1,15 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 .ChartNote {
-  color: $slate-80;
+  color: constants.$slate-80;
   margin-top: 12px;
   margin-bottom: 1.375rem;
-  @include body-14;
+  @include mixins.body-14;
 
   &__link {
-    color: $signal-links;
+    color: constants.$signal-links;
     padding-left: 5px;
 
     &:hover {

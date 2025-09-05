@@ -1,7 +1,6 @@
-@import "react-perfect-scrollbar/dist/css/styles.css";
-@import "themify-icons";
-@import "font-awesome";
-@import "perfectScrollbar";
-@import "sparkline";
-@import "fullcalendar";
-@import "datepicker";
+@forward "react-perfect-scrollbar/dist/css/styles.css";
+@forward "themify-icons";
+@forward "font-awesome";
+@forward "perfectScrollbar";
+@forward "sparkline";
+@forward "datepicker";

@@ -1,5 +1,5 @@
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../../core/CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../../core/CoreConstants.module.scss" as constants;
 
 .Checkbox {
   &__container {
@@ -14,7 +14,7 @@
     -ms-user-select: none;
     user-select: none;
     cursor: pointer;
-    color: $pine-3;
+    color: constants.$pine-3;
 
     &:has(.Checkbox__input:disabled) {
       cursor: not-allowed;
@@ -24,7 +24,7 @@
   &__label {
     position: relative;
     top: -3px;
-    @include sans-14;
+    @include mixins.sans-14;
   }
 
   &__input {
@@ -40,7 +40,7 @@
     left: 0;
     height: 1rem;
     width: 1rem;
-    border: 1px solid $slate-30;
+    border: 1px solid constants.$slate-30;
     background: transparent;
     border-radius: 0.094rem;
 
@@ -60,11 +60,11 @@
     }
 
     .Checkbox__input:checked:disabled ~ & {
-      background-color: $slate-30;
+      background-color: constants.$slate-30;
     }
 
     .Checkbox__input:checked ~ & {
-      background-color: $signal-links;
+      background-color: constants.$signal-links;
     }
 
     .Checkbox__input:checked ~ &:after {

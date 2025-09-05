@@ -1,4 +1,4 @@
-@import "../../core/CoreConstants.module.scss";
+@use "../../core/CoreConstants.module.scss" as constants;
 
 .Drawer {
   &__overlay {
@@ -10,7 +10,7 @@
     z-index: 100;
     width: 100vw;
     height: 100vh;
-    background: $slate-10;
+    background: constants.$slate-10;
     backdrop-filter: blur(4px);
     transition:
       opacity 300ms ease,
@@ -47,7 +47,7 @@
     flex-direction: column;
     box-sizing: border-box;
     z-index: 99;
-    background: $pine-3;
+    background: constants.$pine-3;
     position: relative;
     min-height: 15rem;
     height: 100%;
@@ -55,7 +55,7 @@
   }
 
   &__close-icon {
-    color: $white;
+    color: constants.$white;
     cursor: pointer;
     transform: rotate(0.5turn);
     display: flex;

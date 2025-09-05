@@ -1,9 +1,9 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 .main-content {
-  background-color: $marble-3;
+  background-color: constants.$marble-3;
 }
 .Methodology {
   padding: 0px 0px 5rem 0px !important;
@@ -17,8 +17,8 @@
   }
 
   &__main-title {
-    color: $pine-3;
-    @include header-56;
+    color: constants.$pine-3;
+    @include mixins.header-56;
     letter-spacing: -0.04em;
     padding-bottom: 1rem;
     padding-top: 6rem;
@@ -27,52 +27,52 @@
     margin: 0px;
   }
   a {
-    color: $signal-links;
+    color: constants.$signal-links;
     width: fit-content;
     &:hover,
     &:focus {
-      color: $signal-links;
+      color: constants.$signal-links;
       cursor: pointer;
       text-decoration: underline;
     }
     &:active {
-      color: $signal-links;
+      color: constants.$signal-links;
     }
   }
   &__main-description {
-    @include body-24;
-    color: $pine-3;
+    @include mixins.body-24;
+    color: constants.$pine-3;
   }
   &__toc {
     padding: 2.93rem 0px 0px 0px !important;
     &--header {
-      @include sans-14;
-      color: $slate-85;
+      @include mixins.sans-14;
+      color: constants.$slate-85;
     }
     &--link {
-      @include sans-24;
+      @include mixins.sans-24;
     }
   }
   &__block {
     margin-bottom: 1rem;
-    color: $pine-2;
+    color: constants.$pine-2;
 
     &--title {
       padding: 4.5rem 0px 0px 0px !important;
-      @include header-34;
-      color: $pine-3;
+      @include mixins.header-34;
+      color: constants.$pine-3;
       letter-spacing: -0.04em;
     }
     &--content,
     p {
-      @include body-16;
-      color: $pine-2;
+      @include mixins.body-16;
+      color: constants.$pine-2;
     }
   }
   &__sub-block--title {
     padding: 2rem 0px 1rem 0px !important;
-    color: $pine-3;
-    @include header-24;
+    color: constants.$pine-3;
+    @include mixins.header-24;
     letter-spacing: -0.04em;
   }
   &__table {
@@ -81,12 +81,12 @@
     font-weight: 300;
     padding: 25px 0 0 25px !important;
     .table {
-      color: $pine-2;
+      color: constants.$pine-2;
     }
     &__description {
       font-size: 1.18rem;
       font-weight: 300;
-      color: $slate-85;
+      color: constants.$slate-85;
     }
   }
 }

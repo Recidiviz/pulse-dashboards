@@ -1,12 +1,12 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../controls/mixins.scss";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../controls/mixins.scss" as controls;
+@use "../CoreConstants.module.scss" as constants;
 
 .PopulationTimeseriesTooltip {
-  @include chart-tooltip;
+  @include controls.chart-tooltip;
   &__value {
-    @include sans-16;
+    @include mixins.sans-16;
   }
   &__date,
   &__bottom {

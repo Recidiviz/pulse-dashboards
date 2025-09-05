@@ -1,4 +1,5 @@
-@import "generic/index";
-@import "components/index";
-@import "screens/index";
-@import "utils/index";
+@forward "generic";
+@forward "components";
+@forward "utils";
+@forward "settings";
+@forward "tools";

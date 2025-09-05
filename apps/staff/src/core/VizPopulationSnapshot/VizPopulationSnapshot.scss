@@ -1,12 +1,12 @@
 
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
-@import "../controls/mixins";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
+@use "../controls/mixins" as controls;
 
 .VizPopulationSnapshot {
-  background: $white;
-  @include sans-14;
+  background: constants.$white;
+  @include mixins.sans-14;
   border-radius: 0.5rem;
   line-height: 1.5rem;
   width: 100%;
@@ -14,7 +14,7 @@
   &__chartXAxisTitle {
     text-align: center;
     padding-bottom: 2rem;
-    color: $slate-85;
+    color: constants.$slate-85;
   }
 
   &__labels--not-rotated {
@@ -44,7 +44,7 @@
       stroke: none;
     }
     .left.tick-line {
-      stroke: $slate-20;
+      stroke: constants.$slate-20;
       stroke-width: 1px;
     }
   }
@@ -55,7 +55,7 @@
     }
 
     .axis-label {
-      fill: $slate-80;
+      fill: constants.$slate-80;
       font-size: 12px;
     }
   }
@@ -64,7 +64,7 @@
     transform: translate(0, 2rem);
 
     .ordinal-labels text {
-      fill: $slate-80;
+      fill: constants.$slate-80;
       transform: rotate(-45deg) translate(-1rem, -2rem);
     }
   }

@@ -1,7 +1,7 @@
 
 
-@import "../CoreConstants.module.scss";
-@import "../controls/mixins";
+@use "../CoreConstants.module.scss" as constants;
+@use "../controls/mixins" as controls;
 
 .VizLengthOfStay {
   &__chart-container {
@@ -10,11 +10,11 @@
   &__chartXAxisTitle {
     text-align: center;
     padding-bottom: 2rem;
-    color: $slate-85;
+    color: constants.$slate-85;
   }
   &__chartYAxisTitle {
     text-align: center;
-    color: $slate-85;
+    color: constants.$slate-85;
     writing-mode: vertical-rl;
     transform: scale(-1, -1);
   }

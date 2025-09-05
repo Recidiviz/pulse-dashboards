@@ -1,7 +1,7 @@
-@import "../CoreConstants.module.scss";
+@use "../CoreConstants.module.scss" as constants;
 
 .PopulationTimeSeriesErrorBar {
   stroke-width: 1px;
-  stroke: $signal-tooltip;
-  fill: $signal-tooltip;
+  stroke: constants.$signal-tooltip;
+  fill: constants.$signal-tooltip;
 }

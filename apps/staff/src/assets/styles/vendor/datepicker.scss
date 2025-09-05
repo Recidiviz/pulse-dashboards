@@ -1,8 +1,12 @@
+@use "sass:color";
+@use "../spec/settings";
+@use "../spec/tools";
+
 .datepicker {
   border-radius: 0;
   padding: 25px;
   box-shadow: none;
-  border: 1px solid $border-color;
+  border: 1px solid settings.$border-color;
 
   table {
     tr {
@@ -50,20 +54,20 @@
 .datepicker table tr td.active.highlighted:active.focus,
 .datepicker table tr td.active.active.focus,
 .datepicker table tr td.active.highlighted.active.focus {
-  color: $default-white;
-  background-color: $default-primary;
+  color: settings.$default-white;
+  background-color: settings.$default-primary;
   border-color: transparent;
 }
 
 .datepicker table tr td span:hover,
 .datepicker table tr td span.focused {
-  background: $default-primary;
+  background: settings.$default-primary;
   color: #fff;
 }
 
 .datepicker table tr td.day:hover,
 .datepicker table tr td.focused {
-  background: $default-primary;
+  background: settings.$default-primary;
   color: #fff;
   cursor: pointer;
 }
@@ -72,7 +76,7 @@
 .datepicker .prev:hover,
 .datepicker .next:hover,
 .datepicker tfoot tr th:hover {
-  background: $default-primary;
+  background: settings.$default-primary;
   color: #fff;
   cursor: pointer;
 }
@@ -85,7 +89,7 @@
   border-radius: 0;
   padding: 30px;
   box-shadow: none;
-  border: 1px solid $border-color;
+  border: 1px solid settings.$border-color;
 
   .input-mini {
     border-radius: 0;
@@ -95,7 +99,7 @@
 
     &.active {
       border-radius: 0;
-      border-color: lighten($default-info, 20%);
+      border-color: color.adjust(settings.$default-info, $lightness: 20%);
     }
   }
 
@@ -115,7 +119,7 @@
 
     &.available {
       &:hover {
-        background: $default-primary;
+        background: settings.$default-primary;
         color: #fff;
       }
     }
@@ -124,16 +128,16 @@
   td {
     &.in-range {
       background-color: transparent;
-      color: $default-primary;
+      color: settings.$default-primary;
     }
 
     &.active {
-      background-color: $default-primary;
+      background-color: settings.$default-primary;
       border-color: transparent;
       color: #fff;
 
       &:hover {
-        background-color: $default-primary;
+        background-color: settings.$default-primary;
         border-color: transparent;
         color: #fff;
       }
@@ -157,7 +161,7 @@
     &.minuteselect,
     &.secondselect,
     &.ampmselect {
-      border: 1px solid $border-color;
+      border: 1px solid settings.$border-color;
       min-height: 30px;
     }
   }
@@ -169,7 +173,7 @@
     }
   }
 
-  @include from($breakpoint-sm) {
+  @include tools.from(settings.$breakpoint-sm) {
     .calendar {
       margin-right: 20px !important;
     }

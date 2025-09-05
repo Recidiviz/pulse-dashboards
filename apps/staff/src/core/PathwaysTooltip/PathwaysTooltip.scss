@@ -1,19 +1,19 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
-@import "../controls/mixins.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
+@use "../controls/mixins.scss" as controls;
 
 .PathwaysTooltip {
-  @include chart-tooltip;
+  @include controls.chart-tooltip;
 
   &__label,
   &__average {
     opacity: 0.8;
-    @include sans-14;
+    @include mixins.sans-14;
     text-align: center;
   }
 
   &__value {
-    @include sans-16;
+    @include mixins.sans-16;
   }
 }

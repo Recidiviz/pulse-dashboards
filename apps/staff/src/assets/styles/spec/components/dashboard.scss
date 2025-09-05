@@ -1,11 +1,13 @@
+@use "../settings";
+
 .top-level-filters {
   background: white;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid settings.$border-color;
 
   .top-level-filter {
     width: 33%;
     padding: 20px 40px;
-    border-right: 1px solid $border-color;
+    border-right: 1px solid settings.$border-color;
 
     @media screen and (max-width: 1024px) {
       padding-left: 20px;
@@ -99,7 +101,7 @@
   }
 
   tr {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid settings.$border-color;
   }
 
   th {

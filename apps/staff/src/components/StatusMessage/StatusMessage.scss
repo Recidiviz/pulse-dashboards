@@ -1,5 +1,5 @@
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../../core/CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../../core/CoreConstants.module.scss" as constants;
 
 .StatusMessage {
   display: flex;
@@ -11,16 +11,16 @@
   width: 100%;
 
   &__title {
-    @include sans-16;
+    @include mixins.sans-16;
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
-    color: $pine-1;
+    color: constants.$pine-1;
   }
 
   &__subtitle {
-    @include sans-14;
+    @include mixins.sans-14;
     margin-bottom: 1.5rem;
-    color: $slate-80;
+    color: constants.$slate-80;
   }
 
   &__content {
@@ -30,19 +30,19 @@
   }
 
   & a {
-    color: $signal-links;
+    color: constants.$signal-links;
 
     &:hover {
-      color: $signal-links;
+      color: constants.$signal-links;
     }
   }
 
   & button {
     padding: 0.75rem 1rem;
-    background: $marble-4;
+    background: constants.$marble-4;
     border-radius: 999px;
-    color: $pine-3;
-    @include sans-14;
+    color: constants.$pine-3;
+    @include mixins.sans-14;
     outline: 0;
     border: 0;
     height: 40px;

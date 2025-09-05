@@ -1,9 +1,9 @@
-@import "../CoreConstants.module.scss";
+@use "../CoreConstants.module.scss" as constants;
 
 @mixin chart-tooltip {
-  background: $signal-tooltip;
+  background: constants.$signal-tooltip;
   border-radius: 0.25rem;
-  color: $white;
+  color: constants.$white;
   padding: 0.5rem;
   display: flex;
   flex-direction: column;

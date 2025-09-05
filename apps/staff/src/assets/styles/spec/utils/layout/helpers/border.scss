@@ -1,3 +1,6 @@
+@use "../mixins";
+@use "../../../settings";
+
 // ---------------------------------------------------------
 // @TOC
 // ---------------------------------------------------------
@@ -12,19 +15,19 @@
 // ---------------------------------------------------------
 
 .bd {
-  border: #{$border-width} solid #{$border-color} !important;
+  border: #{settings.$border-width} solid #{settings.$border-color} !important;
 }
 .bdT {
-  border-top: #{$border-width} solid #{$border-color} !important;
+  border-top: #{settings.$border-width} solid #{settings.$border-color} !important;
 }
 .bdR {
-  border-right: #{$border-width} solid #{$border-color} !important;
+  border-right: #{settings.$border-width} solid #{settings.$border-color} !important;
 }
 .bdB {
-  border-bottom: #{$border-width} solid #{$border-color} !important;
+  border-bottom: #{settings.$border-width} solid #{settings.$border-color} !important;
 }
 .bdL {
-  border-left: #{$border-width} solid #{$border-color} !important;
+  border-left: #{settings.$border-width} solid #{settings.$border-color} !important;
 }
 
 // ---------------------------------------------------------

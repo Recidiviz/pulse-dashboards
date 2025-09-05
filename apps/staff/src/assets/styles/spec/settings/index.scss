@@ -1,6 +1,6 @@
-@import "breakpoints";
-@import "fonts";
-@import "brandColors";
-@import "materialColors";
-@import "baseColors";
-@import "borders";
+@forward "breakpoints";
+@forward "fonts";
+@forward "brandColors";
+@forward "materialColors";
+@forward "baseColors";
+@forward "borders";

@@ -1,30 +1,30 @@
 
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 .SectionNavigation {
   padding-bottom: 2rem;
 
   &__title {
-    @include sans-24;
-    color: $slate-85;
-    border-bottom: 1px solid $slate-20;
+    @include mixins.sans-24;
+    color: constants.$slate-85;
+    border-bottom: 1px solid constants.$slate-20;
     margin-bottom: 2.5rem;
     margin-top: 2.5rem;
   }
   &__navlink {
-    @include sans-16;
-    color: $pine-1;
+    @include mixins.sans-16;
+    color: constants.$pine-1;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     &:hover {
-      color: $signal-links;
+      color: constants.$signal-links;
     }
     &--active {
-      color: $signal-links;
+      color: constants.$signal-links;
     }
   }
 
@@ -35,7 +35,7 @@
     min-width: 16px;
   }
 
-  @media screen and (max-width: $core-breakpoint-sm) {
+  @media screen and (max-width: constants.$core-breakpoint-sm) {
     padding: 2rem 0;
 
     &__title {
@@ -43,10 +43,10 @@
     }
     &__navlink {
       margin-bottom: 0;
-      color: $slate-80;
+      color: constants.$slate-80;
       &--multiple {
         margin-bottom: 2.5rem;
-        color: $white !important;
+        color: constants.$white !important;
         opacity: 0.6;
       }
       &:hover {
@@ -60,11 +60,11 @@
       border: 0;
       padding: 0;
       background: transparent;
-      @include sans-16;
-      color: $slate-80;
+      @include mixins.sans-16;
+      color: constants.$slate-80;
       transition: all 0.3s ease-in-out;
       &:hover {
-        color: $signal-links;
+        color: constants.$signal-links;
       }
       & :first-child {
         padding-right: 0.625rem;

@@ -1,10 +1,10 @@
 
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 .FilterBar {
-  background: $marble-3;
+  background: constants.$marble-3;
   display: flex;
   justify-content: center;
   padding-bottom: 1rem;
@@ -12,10 +12,10 @@
   &__container {
     display: flex;
     justify-content: space-between;
-    max-width: $core-max-view-width;
+    max-width: constants.$core-max-view-width;
     width: 100%;
 
-    @media screen and (max-width: $core-breakpoint-sm) {
+    @media screen and (max-width: constants.$core-breakpoint-sm) {
       flex-wrap: nowrap;
       padding-top: 3rem;
     }
@@ -27,13 +27,13 @@
       padding-right: 1.5rem;
       padding-bottom: 0.5rem;
 
-      @media screen and (max-width: $core-breakpoint-sm) {
+      @media screen and (max-width: constants.$core-breakpoint-sm) {
         padding-right: 1rem;
       }
 
       &__title {
-        color: $slate-80;
-        @include sans-14;
+        color: constants.$slate-80;
+        @include mixins.sans-14;
         padding-right: 0.5rem;
         white-space: nowrap;
       }

@@ -1,18 +1,18 @@
 
-@import "../../assets/styles/spec/settings/index";
-@import "../CoreConstants.module.scss";
+@use "../../assets/styles/spec/settings/index";
+@use "../CoreConstants.module.scss" as constants;
 
 .PathwaysNavigation {
-  background: $marble-3;
+  background: constants.$marble-3;
   height: 4rem;
   width: calc(100% - 4rem);
   align-items: center;
   justify-content: space-between;
-  border-bottom: $core-border-color 1px solid;
+  border-bottom: constants.$core-border-color 1px solid;
   position: fixed;
   z-index: 2;
 
-  @media screen and (max-width: $core-breakpoint-sm) {
+  @media screen and (max-width: constants.$core-breakpoint-sm) {
     display: none;
   }
 }

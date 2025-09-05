@@ -1,3 +1,6 @@
+@use "sass:color";
+@use "../settings";
+
 html,
 html a,
 body {
@@ -10,9 +13,9 @@ a {
 }
 
 body {
-  font-family: $font-primary;
+  font-family: settings.$font-primary;
   font-size: 14px;
-  color: $default-text-color;
+  color: settings.$default-text-color;
   line-height: 1.5;
   letter-spacing: 0.2px;
   overflow-x: hidden;
@@ -29,17 +32,17 @@ h6 {
   line-height: 1.5;
 
   a {
-    font-family: $font-secondary;
+    font-family: settings.$font-secondary;
   }
 
   small {
     font-weight: 300;
-    color: lighten($default-dark, 5%);
+    color: color.adjust(settings.$default-dark, $lightness: 5%);
   }
 }
 
 p {
-  font-family: $font-primary;
+  font-family: settings.$font-primary;
   line-height: 1.9;
 }
 
@@ -52,7 +55,7 @@ ul {
 }
 
 a {
-  color: $default-info;
+  color: settings.$default-info;
 
   &:hover,
   &:focus {
@@ -67,7 +70,7 @@ a {
     &:hover,
     &:focus,
     &.active {
-      color: $default-dark !important;
+      color: settings.$default-dark !important;
     }
   }
 }
@@ -77,5 +80,5 @@ a {
 }
 
 hr {
-  border-top: 1px solid $border-color;
+  border-top: 1px solid settings.$border-color;
 }

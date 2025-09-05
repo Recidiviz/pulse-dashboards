@@ -1,3 +1,5 @@
+@use "../settings";
+
 .checkbox label {
   display: inline-block;
   vertical-align: middle;
@@ -16,9 +18,9 @@
   top: 50%;
   transform: translateY(-50%);
   margin-left: -12px;
-  border: 1px solid $grey-300;
+  border: 1px solid settings.$grey-300;
   border-radius: 3px;
-  background-color: $md-white;
+  background-color: settings.$md-white;
   -webkit-transition:
     border 0.15s ease-in-out,
     color 0.15s ease-in-out;
@@ -42,7 +44,7 @@
   top: 50%;
   transform: translateY(-50%);
   margin-left: -12px;
-  color: $grey-500;
+  color: settings.$grey-500;
 }
 
 .checkbox input[type="checkbox"] {
@@ -67,7 +69,7 @@
 }
 
 .checkbox input[type="checkbox"]:disabled + label::before {
-  background-color: $grey-400;
+  background-color: settings.$grey-400;
   cursor: not-allowed;
 }
 
@@ -80,8 +82,8 @@
 }
 
 .checkbox-primary input[type="checkbox"]:checked + label::before {
-  background-color: $default-primary;
-  border-color: $default-primary;
+  background-color: settings.$default-primary;
+  border-color: settings.$default-primary;
 }
 
 .checkbox-primary input[type="checkbox"]:checked + label::after {
@@ -89,39 +91,39 @@
 }
 
 .checkbox-danger input[type="checkbox"]:checked + label::before {
-  background-color: $default-danger;
-  border-color: $default-danger;
+  background-color: settings.$default-danger;
+  border-color: settings.$default-danger;
 }
 
 .checkbox-danger input[type="checkbox"]:checked + label::after {
-  color: $md-white;
+  color: settings.$md-white;
 }
 
 .checkbox-info input[type="checkbox"]:checked + label::before {
-  background-color: $default-info;
-  border-color: $default-info;
+  background-color: settings.$default-info;
+  border-color: settings.$default-info;
 }
 
 .checkbox-info input[type="checkbox"]:checked + label::after {
-  color: $md-white;
+  color: settings.$md-white;
 }
 
 .checkbox-warning input[type="checkbox"]:checked + label::before {
-  background-color: $default-warning;
-  border-color: $default-warning;
+  background-color: settings.$default-warning;
+  border-color: settings.$default-warning;
 }
 
 .checkbox-warning input[type="checkbox"]:checked + label::after {
-  color: $md-white;
+  color: settings.$md-white;
 }
 
 .checkbox-success input[type="checkbox"]:checked + label::before {
-  background-color: $default-success;
-  border-color: $default-success;
+  background-color: settings.$default-success;
+  border-color: settings.$default-success;
 }
 
 .checkbox-success input[type="checkbox"]:checked + label::after {
-  color: $md-white;
+  color: settings.$md-white;
 }
 
 .radio {

@@ -1,3 +1,6 @@
+@use "../../../settings";
+@use "mediaQueryCondition" as mixins;
+
 // ---------------------------------------------------------
 // @Responsive Suffix Generator
 // ---------------------------------------------------------
@@ -5,11 +8,11 @@
 // Mixin used to generate responsive suffixes for classes (i.e. m-10@sm+).
 
 @mixin generateResponsive() {
-  @each $breakpoint in $breakpoints {
+  @each $breakpoint in settings.$breakpoints {
     $breakpointAlias: nth($breakpoint, 1) !global;
     $breakpointCondition: nth($breakpoint, 2);
 
-    @include mediaQueryCondition($breakpointAlias) {
+    @include mixins.mediaQueryCondition($breakpointAlias) {
       @content;
     }
 

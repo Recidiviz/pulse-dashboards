@@ -1,5 +1,5 @@
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../../core/CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../../core/CoreConstants.module.scss" as constants;
 
 .Modal {
   &__overlay {
@@ -9,7 +9,7 @@
     z-index: 100;
     width: 100vw;
     height: 100vh;
-    background: $slate-30;
+    background: constants.$slate-30;
     backdrop-filter: blur(4px);
   }
 
@@ -26,7 +26,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     outline: 0;
-    @media screen and (max-width: $core-breakpoint-xs) {
+    @media screen and (max-width: constants.$core-breakpoint-xs) {
       align-items: flex-end;
     }
   }
@@ -36,13 +36,13 @@
     flex-direction: column;
     z-index: 99;
     position: relative;
-    background: $marble-3;
+    background: constants.$marble-3;
     box-shadow: 0px 4px 35px rgba(0, 0, 0, 0.25);
     border-radius: 0.5rem;
     width: 784px;
     height: auto;
     max-height: 784px;
-    @media screen and (max-width: $core-breakpoint-xs) {
+    @media screen and (max-width: constants.$core-breakpoint-xs) {
       width: 100%;
       height: 100vh;
       max-height: 100vh;
@@ -54,16 +54,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    @include serif-24;
-    color: $pine-2;
+    @include mixins.serif-24;
+    color: constants.$pine-2;
     padding: 3rem 2.5rem 0;
-    @media screen and (max-width: $core-breakpoint-xs) {
+    @media screen and (max-width: constants.$core-breakpoint-xs) {
       padding: 2rem 1rem 0;
     }
   }
 
   &__close-icon {
-    color: $slate-70;
+    color: constants.$slate-70;
     cursor: pointer;
     margin-left: auto;
   }
@@ -73,8 +73,8 @@
     overflow-y: auto;
     padding: 1.5rem 2.5rem;
     height: 100%;
-    @include sans-14;
-    @media screen and (max-width: $core-breakpoint-xs) {
+    @include mixins.sans-14;
+    @media screen and (max-width: constants.$core-breakpoint-xs) {
       padding: 1.5rem 1rem;
     }
   }
@@ -84,13 +84,13 @@
     flex-direction: row;
     display: flex;
     justify-content: space-between;
-    border-top: 1px solid $slate-20;
+    border-top: 1px solid constants.$slate-20;
     padding: 1.5rem 2.5rem;
     & button {
-      @include sans-16;
+      @include mixins.sans-16;
       display: block;
     }
-    @media screen and (max-width: $core-breakpoint-xs) {
+    @media screen and (max-width: constants.$core-breakpoint-xs) {
       padding: 1.5rem 1rem;
     }
   }

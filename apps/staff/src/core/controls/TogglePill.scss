@@ -1,6 +1,6 @@
 
-@import "@recidiviz/design-system/dist/scss/typography/mixins";
-@import "../CoreConstants.module.scss";
+@use "@recidiviz/design-system/dist/scss/typography/mixins" as mixins;
+@use "../CoreConstants.module.scss" as constants;
 
 $ALL_PILL_WIDTH: 160px;
 
@@ -13,14 +13,14 @@ $ALL_PILL_WIDTH: 160px;
   &__button {
     display: flex;
     align-items: center;
-    color: $pine-3;
+    color: constants.$pine-3;
     justify-content: center;
     width: calc($ALL_PILL_WIDTH / 2);
     height: 2.33rem;
     border: 1px solid #d2d8d8;
     background: transparent;
     padding: 0 1rem;
-    @include sans-14;
+    @include mixins.sans-14;
 
     &:focus {
       outline: none;
