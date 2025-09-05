@@ -181,3 +181,75 @@ export const TextFieldHeader = styled.div`
   margin-bottom: ${rem(spacing.md)};
   display: flex;
 `;
+
+// Styled, PII-safe table with rounded borders that can include shaded cells
+
+export const SidebarTable = styled.table.attrs({
+  className: "fs-exclude",
+})`
+  ${typography.Sans14};
+  color: ${palette.slate80};
+  border-spacing: 0;
+  border-collapse: separate;
+  margin-top: ${rem(spacing.md)};
+  margin-bottom: ${rem(spacing.lg)};
+  width: 100%;
+`;
+
+export const SidebarTableCell = styled.td`
+  border: 1px ${palette.slate20};
+
+  border-top-style: solid;
+  border-left-style: solid;
+  padding: ${rem(spacing.sm)};
+`;
+
+export const ShadedSidebarTableCell = styled(SidebarTableCell)<{
+  $highlight?: boolean;
+}>`
+  background-color: ${palette.marble3};
+  white-space: nowrap;
+
+  ${({ $highlight }) => $highlight && `color: ${palette.signal.notification};`}
+`;
+
+export const SidebarTableRow = styled.tr<{
+  $wideLeftColumn?: boolean;
+}>`
+  /* first column: conditional width */
+  & ${SidebarTableCell}:first-child {
+    width: ${({ $wideLeftColumn }) => ($wideLeftColumn ? "70%" : "30%")};
+  }
+
+  /* last column: right border */
+  & ${SidebarTableCell}:last-child {
+    border-right-style: solid;
+  }
+
+  /* first row: round corners */
+  &:first-child {
+    & ${SidebarTableCell} {
+      &:first-child {
+        border-top-left-radius: 4px;
+      }
+      &:last-child {
+        border-top-right-radius: 4px;
+        border-right-style: solid;
+      }
+    }
+  }
+
+  /* last row: bottom border, round corners */
+  &:last-child {
+    & ${SidebarTableCell} {
+      border-bottom-style: solid;
+
+      &:first-child {
+        border-bottom-left-radius: 4px;
+      }
+      &:last-child {
+        border-bottom-right-radius: 4px;
+      }
+    }
+  }
+`;

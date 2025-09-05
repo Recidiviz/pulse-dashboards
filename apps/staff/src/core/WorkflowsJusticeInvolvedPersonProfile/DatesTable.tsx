@@ -15,8 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Sans14, spacing, typography } from "@recidiviz/design-system";
-import { rem } from "polished";
+import { Sans14 } from "@recidiviz/design-system";
 import styled from "styled-components/macro";
 
 import { palette } from "~design-system";
@@ -26,67 +25,13 @@ import {
   formatWorkflowsDate,
 } from "../../utils/formatStrings";
 import { InfoButton } from "./InfoButton";
+import {
+  ShadedSidebarTableCell,
+  SidebarTable,
+  SidebarTableCell,
+  SidebarTableRow,
+} from "./styles";
 import { InfoTooltipWrapper } from "./styles";
-
-const DateTable = styled.table`
-  ${typography.Sans14};
-  color: ${palette.slate80};
-  border-spacing: 0;
-  border-collapse: separate;
-  margin-top: ${rem(spacing.md)};
-  margin-bottom: ${rem(spacing.lg)};
-  width: 100%;
-`;
-
-const DateTableCell = styled.td`
-  border: 1px ${palette.slate20};
-
-  border-top-style: solid;
-  border-left-style: solid;
-  padding: ${rem(spacing.sm)};
-`;
-
-const ShadedDateTableCell = styled(DateTableCell)<{ $highlight?: boolean }>`
-  background-color: ${palette.marble3};
-  white-space: nowrap;
-  width: 30%;
-
-  ${({ $highlight }) => $highlight && `color: ${palette.signal.notification};`}
-`;
-
-const DateTableRow = styled.tr`
-  /* last column: right border */
-  & ${DateTableCell}:last-child {
-    border-right-style: solid;
-  }
-
-  /* first row: round corners */
-  &:first-child {
-    & ${DateTableCell} {
-      &:first-child {
-        border-top-left-radius: 4px;
-      }
-      &:last-child {
-        border-top-right-radius: 4px;
-        border-right-style: solid;
-      }
-    }
-  }
-
-  /* last row: bottom border, round corners */
-  &:last-child {
-    & ${DateTableCell} {
-      border-bottom-style: solid;
-
-      &:first-child {
-        border-bottom-left-radius: 4px;
-      }
-      &:last-child {
-        border-bottom-right-radius: 4px;
-      }
-    }
-  }
-`;
 
 const DateExplainer = styled(Sans14)<{ $datePast: boolean }>`
   display: inline;
@@ -110,11 +55,11 @@ export function DatesTable({
 }) {
   const today = new Date();
   return (
-    <DateTable className="fs-exclude">
+    <SidebarTable>
       <tbody>
         {dates.map(({ label, date, tooltip, highlight }) => (
-          <DateTableRow key={label}>
-            <ShadedDateTableCell $highlight={highlight}>
+          <SidebarTableRow key={label} $wideLeftColumn={false}>
+            <ShadedSidebarTableCell $highlight={highlight}>
               {label}
               {tooltip && (
                 <>
@@ -124,8 +69,8 @@ export function DatesTable({
                   </InfoTooltipWrapper>
                 </>
               )}
-            </ShadedDateTableCell>
-            <DateTableCell>
+            </ShadedSidebarTableCell>
+            <SidebarTableCell>
               {formatWorkflowsDate(date)}
               {date && (
                 <>
@@ -137,10 +82,10 @@ export function DatesTable({
                   </DateExplainer>
                 </>
               )}
-            </DateTableCell>
-          </DateTableRow>
+            </SidebarTableCell>
+          </SidebarTableRow>
         ))}
       </tbody>
-    </DateTable>
+    </SidebarTable>
   );
 }
