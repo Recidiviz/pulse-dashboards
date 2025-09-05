@@ -21,211 +21,34 @@ import {
   TooltipTrigger,
 } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
-import toast from "react-hot-toast";
 
 import { useRootStore } from "../../../components/StoreProvider";
-import { UsIaEarlyDischargeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
-import { OpportunityStatusUpdateToast } from "../../opportunityStatusUpdateToast";
-import { reasonsIncludesKey } from "../../utils/workflowsUtils";
-import { useOpportunitySidePanel } from "../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
 import {
-  OpportunityStatusDropdownMenuItem,
-  StatusAwareToggle,
-} from "../MenuButton.styles";
-import { MenuConfig } from "./types";
+  UsIaEarlyDischargeOpportunity,
+  UsIaSupervisionLevelDowngradeOpportunity,
+} from "../../../WorkflowsStore/Opportunity/UsIa";
+import { useOpportunitySidePanel } from "../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
+import { OpportunityStatusDropdownMenuItem, StatusAwareToggle } from "../MenuButton.styles";
+import { getEdButtonConfig, getSldButtonConfig } from "./menuConfigs";
+
 
 const UsIaMenuButton = observer(function MenuButton({
   opportunity,
   markSubmittedAndToast,
   deleteSubmitted,
 }: {
-  opportunity: UsIaEarlyDischargeOpportunity;
+  opportunity:
+    | UsIaEarlyDischargeOpportunity
+    | UsIaSupervisionLevelDowngradeOpportunity;
   markSubmittedAndToast: (subcategory?: string) => Promise<void>;
   deleteSubmitted: () => Promise<void>;
 }) {
   const { workflowsStore } = useRootStore();
   const { setCurrentView } = useOpportunitySidePanel();
-  const { latestAction, clientStatus } = opportunity;
-
-  const supervisorApprovalAndToast = async () => {
-    await opportunity.setSupervisorResponse({ type: "APPROVAL" });
-
-    if (latestAction?.type === "DENIAL") {
-      const reasons = latestAction.denialReasons;
-
-      // Snoozing ends the approval lifecycle, so we'll mark the action history stale.
-      await opportunity.markActionHistoryStale();
-      await opportunity.setDenialReasons(reasons);
-
-      if (latestAction.requestedSnoozeLength) {
-        await opportunity.setManualSnooze(
-          latestAction.requestedSnoozeLength,
-          reasons,
-        );
-      }
-
-      const snoozeApprovalToastText = reasonsIncludesKey("PUBLIC SAFETY RISK")
-        ? `Action Plan has been approved. ${opportunity.person.displayName} will now be snoozed for ${latestAction.requestedSnoozeLength} days before reappearing.`
-        : `You have approved ${opportunity.person.displayName} for an indefinite snooze.`;
-
-      toast(
-        <OpportunityStatusUpdateToast toastText={snoozeApprovalToastText} />,
-        {
-          id: "snoozeApprovalToast",
-          position: "bottom-left",
-          duration: 7000,
-        },
-      );
-      return;
-    }
-
-    toast(
-      <OpportunityStatusUpdateToast
-        toastText={`You have approved ${opportunity.person.displayName} for Early Discharge. The officer will now take the next steps for discharge.`}
-      />,
-      {
-        id: "dischargeApprovalToast",
-        position: "bottom-left",
-        duration: 7000,
-      },
-    );
-  };
-
-  const supervisorIndefiniteSnoozeDenialAndToast = async () => {
-    await opportunity.setSupervisorResponse({ type: "DENIAL" });
-    // When an indefinite snooze is denied, the client should move back to
-    // "Eligible Now", so we'll mark the action history stale.
-    await opportunity.markActionHistoryStale();
-
-    toast(
-      <OpportunityStatusUpdateToast
-        toastText={`Denied indefinite snooze request for ${opportunity.person.displayName}. ${opportunity.person.displayName} is now in the ${opportunity.tabTitle()} tab for ${opportunity.config.label}`}
-      />,
-      {
-        id: "indefiniteSnoozeDenialToast",
-        position: "bottom-left",
-        duration: 7000,
-      },
-    );
-  };
-
-  // TODO(#8669): Add tooltip copy to menu options
-  const menuConfig: MenuConfig = {
-    ELIGIBLE_NOW: {
-      options: [
-        {
-          label: "Submit for Supervisor Approval",
-          onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
-          tooltip: "To confirm all requirements checked",
-        },
-        {
-          label: "Mark as Ineligible",
-          onClick: () => setCurrentView("MARK_INELIGIBLE"),
-          tooltip: "To select a denial reason",
-        },
-      ],
-    },
-    ACTION_PLAN_REVIEW: {
-      buttonLabel: "Review",
-      options: [
-        {
-          label: "Request Revisions",
-          onClick: () => setCurrentView("US_IA_REQUEST_REVISIONS"),
-          tooltip: "To move to 'Revisions Requests'",
-        },
-        {
-          label: "Approve Snooze",
-          onClick: () => supervisorApprovalAndToast(),
-          tooltip: "To move to 'Snoozed'",
-        },
-      ],
-    },
-    ACTION_PLAN_REVIEW_REVISION: {
-      options: [
-        {
-          label: "Edit Action Plan",
-          onClick: () => setCurrentView("MARK_INELIGIBLE"),
-        },
-        {
-          label: "Mark as Eligible",
-          onClick: () => setCurrentView("US_IA_MARK_ELIGIBLE_FOR_APPROVAL"),
-        },
-      ],
-    },
-    SNOOZE_REVIEW: {
-      buttonLabel: "Review",
-      options: [
-        {
-          label: "Deny Indefinite Snooze",
-          onClick: () => supervisorIndefiniteSnoozeDenialAndToast(),
-          tooltip: "To move to 'Eligible Now'",
-        },
-        {
-          label: "Approve Snooze",
-          onClick: () => supervisorApprovalAndToast(),
-          tooltip: "To move to 'Snoozed'",
-        },
-      ],
-    },
-    DISCHARGE_FORM_REVIEW: {
-      buttonLabel: "Review",
-      options: [
-        {
-          label: "Approve Discharge and Forms",
-          onClick: () => supervisorApprovalAndToast(),
-          tooltip: "To move to 'Ready for Discharge'",
-        },
-        {
-          label: "Mark as Ineligible",
-          onClick: () => setCurrentView("MARK_INELIGIBLE"),
-          tooltip: "To move to 'Snoozed'",
-        },
-      ],
-    },
-    READY_FOR_DISCHARGE: {
-      options: [
-        {
-          label: "Mark Submitted",
-          onClick: () => markSubmittedAndToast(),
-          tooltip: "To move to 'Forms Submitted'",
-        },
-        {
-          label: "Mark as Ineligible",
-          onClick: () => setCurrentView("MARK_INELIGIBLE"),
-          tooltip: "To move to 'Snoozed'",
-        },
-      ],
-    },
-    DENIED: {
-      options: [
-        {
-          label: "Change Snooze/Denial Reason",
-          onClick: () => {
-            setCurrentView("MARK_INELIGIBLE");
-          },
-          tooltip: "Update denial reason or snooze length",
-        },
-      ],
-    },
-    SUBMITTED: {
-      options: [
-        {
-          label: "Revert from Submitted",
-          onClick: () => deleteSubmitted(),
-          tooltip: "To move to 'Ready for Discharge'",
-        },
-        {
-          label: "Mark as Ineligible",
-          onClick: () => setCurrentView("MARK_INELIGIBLE"),
-          tooltip: "To move to 'Snoozed'",
-        },
-      ],
-    },
-  };
-
   const { buttonLabel = "Update Eligibility", options } =
-    menuConfig[clientStatus];
-
+    opportunity.type === "usIaCompleteSupervisionLevelDowngrade"
+    ? getSldButtonConfig({ opportunity: opportunity as UsIaSupervisionLevelDowngradeOpportunity, setCurrentView, deleteSubmitted})
+    : getEdButtonConfig({ opportunity: opportunity as UsIaEarlyDischargeOpportunity, setCurrentView, markSubmittedAndToast, deleteSubmitted});
   return (
     <Dropdown>
       <StatusAwareToggle>{buttonLabel}</StatusAwareToggle>

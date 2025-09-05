@@ -20,7 +20,10 @@ import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
 
 import { Opportunity } from "../../WorkflowsStore";
-import { UsIaEarlyDischargeOpportunity } from "../../WorkflowsStore/Opportunity/UsIa";
+import {
+  UsIaEarlyDischargeOpportunity,
+  UsIaSupervisionLevelDowngradeOpportunity,
+} from "../../WorkflowsStore/Opportunity/UsIa";
 import { OpportunityStatusUpdateToast } from "../opportunityStatusUpdateToast";
 import {
   OpportunityStatusDropdownMenuItem,
@@ -83,7 +86,10 @@ export const MenuButton = observer(function MenuButton({
   /**
    * TODO(#8376): If/where possible, we should explore a clean way to unify the UsIaMenuButton and MenuButton components.
    */
-  if (opportunity instanceof UsIaEarlyDischargeOpportunity) {
+  if (
+    opportunity instanceof UsIaEarlyDischargeOpportunity ||
+    opportunity instanceof UsIaSupervisionLevelDowngradeOpportunity
+  ) {
     return (
       <UsIaMenuButton
         opportunity={opportunity}

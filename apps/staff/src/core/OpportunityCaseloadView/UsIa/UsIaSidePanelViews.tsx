@@ -22,7 +22,9 @@ import { SidePanelConfigProps, SidePanelConfigSetupProps } from "../types";
 export function getUsIaSidePanelViewConfigs(
   panelConfigSetupProps: SidePanelConfigSetupProps,
 ): Record<
-  "US_IA_MARK_ELIGIBLE_FOR_APPROVAL" | "US_IA_REQUEST_REVISIONS",
+  | "US_IA_MARK_ELIGIBLE_FOR_APPROVAL"
+  | "US_IA_REQUEST_REVISIONS"
+  | "US_IA_REVIEW_DOWNGRADE",
   SidePanelConfigProps
 > {
   const {
@@ -57,6 +59,21 @@ export function getUsIaSidePanelViewConfigs(
         <UsIaRequestRevisionsView
           opportunity={opportunity}
           selectedPerson={selectedPerson}
+          onSubmit={() => {
+            onSubmit?.();
+            resetPreviewView();
+          }}
+        />
+      ),
+    },
+    US_IA_REVIEW_DOWNGRADE: {
+      onAfterOpen: handleTrackPreviewed,
+      onBackClick: resetPreviewView,
+      pageContent: (
+        <UsIaOfficerApprovalView
+          opportunity={opportunity}
+          selectedPerson={selectedPerson}
+          shouldTrackOpportunityPreviewed={shouldTrackOpportunityPreviewed}
           onSubmit={() => {
             onSubmit?.();
             resetPreviewView();

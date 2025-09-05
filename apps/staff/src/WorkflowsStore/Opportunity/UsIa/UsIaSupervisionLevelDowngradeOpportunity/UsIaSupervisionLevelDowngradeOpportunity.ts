@@ -21,7 +21,10 @@ import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
 import { OpportunityRequirement, OpportunityTab } from "../../types";
 import { RELEVANT_ED_DENIAL_REASONS } from "..";
-import { UsIaEarlyDischargeOpportunity } from "../UsIaEarlyDischargeOpportunity";
+import {
+  UsIaEarlyDischargeOpportunity,
+  UsIaSupervisionLevelDowngradeClientStatus,
+} from "../UsIaEarlyDischargeOpportunity";
 import {
   UsIaSupervisionLevelDowngradeReferralRecord,
   usIaSupervisionLevelDowngradeSchema,
@@ -38,6 +41,20 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       client.rootStore,
       usIaSupervisionLevelDowngradeSchema.parse(record),
     );
+  }
+
+  get clientStatus(): UsIaSupervisionLevelDowngradeClientStatus {
+    if (this.denied) {
+      return "DENIED";
+    }
+
+    if (this.isSubmitted) {
+      return "SUBMITTED";
+    }
+
+    if (this.record.isEligible) return "ELIGIBLE_NOW";
+
+    return "PENDING_ELIGIBILITY";
   }
 
   get requirementsAlmostMet(): OpportunityRequirement[] {

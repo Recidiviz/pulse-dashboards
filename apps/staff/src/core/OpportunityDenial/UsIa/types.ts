@@ -15,7 +15,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { UsIaClientStatus } from "../../../WorkflowsStore/Opportunity/UsIa";
+import {
+  UsIaEarlyDischargeClientStatus,
+  UsIaSupervisionLevelDowngradeClientStatus,
+} from "../../../WorkflowsStore/Opportunity/UsIa";
 
 export type DropdownOption = {
   label: string;
@@ -28,6 +31,10 @@ export type MenuLabelWithOptions = {
   options: DropdownOption[];
 };
 
-export type MenuConfig = {
-  [key in UsIaClientStatus]: MenuLabelWithOptions;
+export type EarlyDischargeMenuConfig = {
+  [key in UsIaEarlyDischargeClientStatus]: MenuLabelWithOptions;
+};
+
+export type SupervisionLevelDowngradeMenuConfig = {
+  [key in UsIaSupervisionLevelDowngradeClientStatus]: MenuLabelWithOptions;
 };

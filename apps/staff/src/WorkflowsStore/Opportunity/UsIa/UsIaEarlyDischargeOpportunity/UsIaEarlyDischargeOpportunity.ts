@@ -39,7 +39,7 @@ import {
 } from "../../types";
 import { RELEVANT_ED_DENIAL_REASONS } from "..";
 import { UsIaSupervisionLevelDowngradeOpportunity } from "../UsIaSupervisionLevelDowngradeOpportunity";
-import { UsIaClientStatus } from "./types";
+import { UsIaEarlyDischargeClientStatus } from "./types";
 import {
   UsIaEarlyDischargeReferralRecord,
   usIaEarlyDischargeSchema,
@@ -89,7 +89,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     return this.actionHistory?.slice(-2);
   }
 
-  get clientStatus(): UsIaClientStatus {
+  get clientStatus(): UsIaEarlyDischargeClientStatus {
     const officerAction = this.latestAction;
     const supervisorResponse = officerAction?.supervisorResponse;
 

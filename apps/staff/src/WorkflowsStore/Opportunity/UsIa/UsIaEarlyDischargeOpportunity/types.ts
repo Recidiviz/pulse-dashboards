@@ -15,12 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export type UsIaClientStatus =
+export type UsIaEarlyDischargeClientStatus =
   | "ELIGIBLE_NOW"
   | "ACTION_PLAN_REVIEW"
   | "ACTION_PLAN_REVIEW_REVISION"
   | "DISCHARGE_FORM_REVIEW"
   | "SNOOZE_REVIEW"
   | "READY_FOR_DISCHARGE"
+  | "DENIED"
+  | "SUBMITTED";
+
+export type UsIaSupervisionLevelDowngradeClientStatus =
+  | "ELIGIBLE_NOW"
+  | "PENDING_ELIGIBILITY"
   | "DENIED"
   | "SUBMITTED";

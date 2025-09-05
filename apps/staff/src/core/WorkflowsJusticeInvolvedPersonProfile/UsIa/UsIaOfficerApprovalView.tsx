@@ -27,7 +27,7 @@ import { Button, palette } from "~design-system";
 import { CharacterCountTextField } from "../../../components/CharacterCountTextField/CharacterCountTextField";
 import Checkbox from "../../../components/Checkbox";
 import { useRootStore } from "../../../components/StoreProvider";
-import { UsIaEarlyDischargeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
+import { UsIaEarlyDischargeOpportunity, UsIaSupervisionLevelDowngradeOpportunity } from "../../../WorkflowsStore/Opportunity/UsIa";
 import {
   DEFAULT_MAX_CHAR_LENGTH,
   DEFAULT_MIN_CHAR_LENGTH,
@@ -74,13 +74,14 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
 
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [additionalNotes, setAdditionalNotes] = useState("");
-
     if (
       !opportunity?.person ||
-      !(opportunity instanceof UsIaEarlyDischargeOpportunity)
+      !(opportunity instanceof UsIaEarlyDischargeOpportunity || opportunity instanceof UsIaSupervisionLevelDowngradeOpportunity)
     ) {
       return null;
     }
+
+    const isEarlyDischargeOpp = opportunity instanceof UsIaEarlyDischargeOpportunity
 
     const canSubmit =
       isConfirmed &&
@@ -88,22 +89,35 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
         additionalNotes.length >= DEFAULT_MIN_CHAR_LENGTH);
 
     const handleSubmit = async () => {
-      if (canSubmit) {
-        await opportunity.setOfficerAction({
-          type: "APPROVAL",
-          notes: additionalNotes ?? undefined,
-        });
+      if (isEarlyDischargeOpp) {
+        if (canSubmit) {
+          await opportunity.setOfficerAction({
+            type: "APPROVAL",
+            notes: additionalNotes ?? undefined,
+          });
 
-        toast(
-          <OpportunityStatusUpdateToast
-            toastText={`You have submitted ${opportunity.person.displayName} for Early Discharge. Sent to supervisor for additional approval.`}
-          />,
-          {
-            id: "earlyDischargeApprovalToast",
-            position: "bottom-left",
-            duration: 7000,
-          },
-        );
+          toast(
+            <OpportunityStatusUpdateToast
+              toastText={`You have submitted ${opportunity.person.displayName} for Early Discharge. Sent to supervisor for additional approval.`}
+            />,
+            {
+              id: "earlyDischargeApprovalToast",
+              position: "bottom-left",
+              duration: 7000,
+            },
+          );
+        }
+      }
+      else {
+        opportunity.markSubmittedAndGenerateToast().then((message) => {
+          if (message) {
+            toast(<OpportunityStatusUpdateToast toastText={message} />, {
+              id: "submittedToast", // prevent duplicate toasts
+              position: "bottom-left",
+              duration: 7000,
+            });
+          }
+        });
       }
       onSubmit?.();
     };
@@ -130,7 +144,7 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
             I confirm that all requirements have been checked.
           </Checkbox>
 
-          <CharacterCountTextField
+          {isEarlyDischargeOpp && <CharacterCountTextField
             id="additional-notes"
             header="Additional Notes"
             label="Enter any additional information"
@@ -140,8 +154,8 @@ export const UsIaOfficerApprovalView: React.FC<OpportunitySidebarProfileProps> =
             maxLength={DEFAULT_MAX_CHAR_LENGTH}
             placeholder="Add notes for supervisor review..."
             isOptional={true}
-          />
-          <TooltipTrigger contents="To move to 'Supervisor Review'">
+          />}
+          <TooltipTrigger contents={isEarlyDischargeOpp ? "To move to 'Supervisor Review'" : "To Mark Downgraded"}>
             <SaveButton
               shape="block"
               disabled={!canSubmit}
