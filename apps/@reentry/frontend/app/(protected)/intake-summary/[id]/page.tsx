@@ -40,10 +40,10 @@ const IntakeSummaryPage = () => {
     data: dataPlan,
     refetch: refetchPlan,
     error: errorPlan,
-  } = $api.useQuery("get", "/plans/by_client/{client_id}", {
+  } = $api.useQuery("get", "/plans/by_client/{client_pseudo_id}", {
     params: {
       path: {
-        client_id: id as string,
+        client_pseudo_id: id as string,
       },
     },
     headers: {

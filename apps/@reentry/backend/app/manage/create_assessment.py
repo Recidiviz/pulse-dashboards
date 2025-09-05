@@ -10,7 +10,7 @@ from .base import cli
 logger = structlog.get_logger(__name__)
 
 
-async def _create_assessment(client_id: str):
+async def _create_assessment(client_pseudo_id: str):
     """
     Use the tasks to create a new assessment
     """
@@ -19,7 +19,7 @@ async def _create_assessment(client_id: str):
     from app.crud.assessment import create_assessment
 
     async with get_session_async_manager() as session:
-        assessment = Assessment(client_id=client_id)
+        assessment = Assessment(client_pseudo_id=client_pseudo_id)
         assessment = await create_assessment(session, assessment)
         await assessment.schedule_execution(session)
         await session.refresh(assessment)
@@ -27,13 +27,13 @@ async def _create_assessment(client_id: str):
 
 
 @cli.command()
-async def create_assessment(client_id: str):
+async def create_assessment(client_pseudo_id: str):
     experiments_dir = (
         Path(__file__).parent.parent.parent / "experiments" / "structured_assessment"
     )
     experiments_dir.mkdir(parents=True, exist_ok=True)
 
-    assessment = await _create_assessment(client_id)
+    assessment = await _create_assessment(client_pseudo_id)
 
     print("Scores: ")
     pprint(assessment.scores)
@@ -41,12 +41,12 @@ async def create_assessment(client_id: str):
     pprint(assessment.misses_counts)
 
     counter = 1
-    file_name = f"{client_id}_assessment_it{counter}.json"
+    file_name = f"{client_pseudo_id}_assessment_it{counter}.json"
     while True:
         if not (experiments_dir / file_name).exists():
             break
         counter += 1
-        file_name = f"{client_id}_assessment_it{counter}.json"
+        file_name = f"{client_pseudo_id}_assessment_it{counter}.json"
 
     data = assessment.model_dump_json(by_alias=True)
     (experiments_dir / file_name).write_text(data)

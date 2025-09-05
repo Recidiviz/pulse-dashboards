@@ -219,7 +219,7 @@ const ClientsPage = () => {
   const handleStatusUpdate = useCallback(
     (
       inProgressClients: Array<{
-        client_id: string;
+        client_pseudo_id: string;
         processing_status: string;
       }>,
     ) => {
@@ -227,12 +227,12 @@ const ClientsPage = () => {
 
       // Update status for clients that are still in progress
       for (const client of inProgressClients) {
-        newUpdates.set(client.client_id, client.processing_status);
+        newUpdates.set(client.client_pseudo_id, client.processing_status);
       }
 
       // Check if any previously in-progress clients are no longer in the list (completed)
-      for (const [clientId, status] of statusUpdates) {
-        if (status === "in_progress" && !newUpdates.has(clientId)) {
+      for (const [clientPseudoId, status] of statusUpdates) {
+        if (status === "in_progress" && !newUpdates.has(clientPseudoId)) {
           // Client was in progress but is no longer - it likely completed
           // Trigger a full refetch to get updated data
           refetch();
@@ -322,8 +322,10 @@ const ClientsPage = () => {
       cell: (row: components["schemas"]["ClientResponse"]) => (
         <ActionButton
           client={row}
-          isOpen={openDropdownId === `dropdown-${row.client_id}`}
-          onToggle={() => handleToggleDropdown(`dropdown-${row.client_id}`)}
+          isOpen={openDropdownId === `dropdown-${row.client_pseudo_id}`}
+          onToggle={() =>
+            handleToggleDropdown(`dropdown-${row.client_pseudo_id}`)
+          }
           onRefetch={refetch}
         />
       ),
@@ -437,7 +439,7 @@ const ClientsPage = () => {
               }
               conditionalRowStyles={[
                 {
-                  when: (row) => row.client_id === activeRowId,
+                  when: (row) => row.client_pseudo_id === activeRowId,
                   style: {
                     backgroundColor: "bg-gray-200",
                     "&:hover": {
@@ -456,7 +458,7 @@ const ClientsPage = () => {
               )}
               onRowClicked={(row) => {
                 if (row.processing_status === "not_started") {
-                  window.location.href = `/clients/intake/${row.client_id}`;
+                  window.location.href = `/clients/intake/${row.client_pseudo_id}`;
                 }
               }}
               pointerOnHover

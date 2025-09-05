@@ -16,7 +16,7 @@ async def test_assessment_update_status(mock_schedule_plan):
     # Setup
     session = AsyncMock()
     execution = Execution(status=ExecutionStatus.IN_PROGRESS.value)
-    assessment = Assessment(client_id="test_client")
+    assessment = Assessment(client_pseudo_id="test_client")
     assessment.execution = execution
 
     # For test simplicity, mock the schedule_plan_generation to avoid db calls
@@ -41,7 +41,7 @@ async def test_assessment_update_status_triggers_plan_generation(mock_schedule_p
     # Setup
     session = AsyncMock()
     execution = Execution(status=ExecutionStatus.IN_PROGRESS.value)
-    assessment = Assessment(client_id="test_client")
+    assessment = Assessment(client_pseudo_id="test_client")
     assessment.execution = execution
 
     # Act
@@ -62,7 +62,7 @@ async def test_assessment_update_status_does_not_trigger_plan_when_not_completed
     # Setup
     session = AsyncMock()
     execution = Execution(status=ExecutionStatus.IN_PROGRESS.value)
-    assessment = Assessment(client_id="test_client")
+    assessment = Assessment(client_pseudo_id="test_client")
     assessment.execution = execution
 
     # Act
@@ -72,7 +72,7 @@ async def test_assessment_update_status_does_not_trigger_plan_when_not_completed
     mock_schedule_plan.assert_not_called()
 
 
-@patch("app.crud.plan.get_plan_by_client_id")
+@patch("app.crud.plan.get_plan_by_client_pseudo_id")
 @patch("app.crud.plan.create_plan")
 async def test_schedule_plan_generation_creates_new_plan(
     mock_create_plan, mock_get_plan
@@ -83,7 +83,7 @@ async def test_schedule_plan_generation_creates_new_plan(
     # Setup
     session = AsyncMock()
     execution = Execution(status=ExecutionStatus.COMPLETED.value)
-    assessment = Assessment(client_id="test_client")
+    assessment = Assessment(client_pseudo_id="test_client")
     assessment.execution = execution
 
     # Configure mocks
@@ -100,7 +100,7 @@ async def test_schedule_plan_generation_creates_new_plan(
     mock_created_plan.schedule_initial_creation.assert_called_once_with(session)
 
 
-@patch("app.crud.plan.get_plan_by_client_id")
+@patch("app.crud.plan.get_plan_by_client_pseudo_id")
 @patch("app.crud.plan.create_plan")
 async def test_schedule_plan_generation_uses_existing_plan(
     mock_create_plan, mock_get_plan
@@ -111,7 +111,7 @@ async def test_schedule_plan_generation_uses_existing_plan(
     # Setup
     session = AsyncMock()
     execution = Execution(status=ExecutionStatus.COMPLETED.value)
-    assessment = Assessment(client_id="test_client")
+    assessment = Assessment(client_pseudo_id="test_client")
     assessment.execution = execution
 
     # Configure mocks

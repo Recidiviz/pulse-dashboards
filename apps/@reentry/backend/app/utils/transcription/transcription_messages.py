@@ -15,7 +15,7 @@ async def get_transcription_messages_from_gcp(
         raise ValueError("Recording session not found")
 
     intake = recording_session.intake
-    if intake.client_id != recording_session.client_id:
+    if intake.client_pseudo_id != recording_session.client_pseudo_id:
         raise ValueError("Client ID mismatch between intake and recording session")
 
     # Try to retrieve the transcription from storage

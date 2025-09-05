@@ -20,12 +20,8 @@ from app.auth.intake.verification_attempts import (
     get_attempts_remaining,
     record_failed_attempt,
 )
-from app.crud.intake import get_intake_by_client_id, get_intake_by_token
-from app.services.client_data.queries import (
-    get_client_by_names_and_dob,
-    get_client_by_pseudonymized_id_unsafe,
-    get_client_data_unsafe,
-)
+from app.crud.intake import get_intake_by_client_pseudo_id, get_intake_by_token
+from app.services.client_data.queries import Queries
 
 logger = logging.getLogger(__name__)
 security = HTTPBearer()
@@ -106,7 +102,7 @@ async def validate_dob(
     token_obj, intake = await get_intake_by_token(session, token_from_url)
     if not token_obj or not intake:
         return ValidationResult.error_result("Login failed. Please try again.")
-    record = get_client_data_unsafe(external_client_id=intake.client_id)
+    record = Queries.get_client_by_pseudonymized_id_unsafe(intake.client_pseudo_id)
     if not record:
         return ValidationResult.error_result("Verification failed. Please try again.")
 
@@ -116,7 +112,7 @@ async def validate_dob(
     if not is_valid:
         return await record_validation_failure(request, redis_client, token_from_url)
 
-    token_data = create_client_response(intake.client_id, record.full_name)
+    token_data = create_client_response(intake.client_pseudo_id, record.full_name)
     return ValidationResult.success_result(token_data)
 
 
@@ -141,7 +137,7 @@ async def validate_pseudo_dob(
         return ValidationResult.error_result(error_message)
 
     # Look up client by pseudonymized_id
-    record = get_client_by_pseudonymized_id_unsafe(pseudonymized_id)
+    record = Queries.get_client_by_pseudonymized_id_unsafe(pseudonymized_id)
     if not record:
         return ValidationResult.error_result("Verification failed. Please try again.")
 
@@ -152,17 +148,19 @@ async def validate_pseudo_dob(
     if not is_valid:
         return await record_validation_failure(request, redis_client, rate_limit_key)
 
-    client_id = record.external_client_id
+    client_pseudo_id = record.pseudonymized_client_id
 
     # Check if an intake record exists
-    intake_record = await get_intake_by_client_id(session, client_id)
+    intake_record = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
     if not intake_record or not intake_record.internal_access:
-        logger.error(f"Intake record not found for client ID: {client_id}")
+        logger.error(
+            f"Intake record not found for client pseudo ID: {client_pseudo_id}"
+        )
         return ValidationResult.error_result(
             "Login failed. Please contact your case worker for assistance."
         )
 
-    token_data = create_client_response(client_id, record.full_name)
+    token_data = create_client_response(client_pseudo_id, record.full_name)
     return ValidationResult.success_result(token_data)
 
 
@@ -176,7 +174,7 @@ async def validate_non_pseudo_id(
     """
     Validate client existing in the bigquery database using first name, last name, and date of birth.
     """
-    record = get_client_by_names_and_dob(
+    record = Queries.get_client_by_names_and_dob(
         first_name=first_name,
         last_name=last_name,
         date_of_birth=date_of_birth,
@@ -185,23 +183,25 @@ async def validate_non_pseudo_id(
     if not record:
         return ValidationResult.error_result("Verification failed. Please try again.")
 
-    client_id = record.external_client_id
+    client_pseudo_id = record.pseudonymized_client_id
 
     # Check if an intake record exists
-    intake_record = await get_intake_by_client_id(session, client_id)
+    intake_record = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
     if not intake_record:
-        logger.error(f"Intake record not found for client ID: {client_id}")
+        logger.error(
+            f"Intake record not found for client pseudo ID: {client_pseudo_id}"
+        )
         return ValidationResult.error_result(
             "Login failed. Please contact your case worker for assistance."
         )
 
     if not intake_record.internal_access:
-        logger.error(f"Intake not enabled for client ID: {client_id}")
+        logger.error(f"Intake not enabled for client pseudo ID: {client_pseudo_id}")
         return ValidationResult.error_result(
             "Intake not enabled. Please contact your case worker for assistance."
         )
 
-    token_data = create_client_response(client_id, record.full_name)
+    token_data = create_client_response(client_pseudo_id, record.full_name)
     return ValidationResult.success_result(token_data)
 
 
@@ -266,21 +266,21 @@ def setup_client_auth(
 
 async def verify_client_token(token: str) -> Tuple[bool, Optional[str], Optional[str]]:
     """
-    Verify a client JWT token and extract the client_id.
+    Verify a client JWT token and extract the client_pseudo_id.
     """
     try:
         payload = decode_jwt_token(token)
 
-        client_id = payload.get("sub")
+        client_pseudo_id = payload.get("sub")
 
-        if not client_id:
-            return False, "Invalid token: missing client identifier", None
+        if not client_pseudo_id:
+            return False, "Invalid token: missing client pseudo identifier", None
 
         token_type = payload.get("token_type")
         if token_type != "client":
             return False, "Invalid token type", None
 
-        return True, None, client_id
+        return True, None, client_pseudo_id
 
     except HTTPException as e:
         return False, e.detail, None

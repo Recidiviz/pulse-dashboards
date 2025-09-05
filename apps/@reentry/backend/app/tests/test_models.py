@@ -6,24 +6,24 @@ from app.models.models import Plan, PlanAsset, PlanGeneration
 
 @pytest.mark.asyncio
 async def test_create_plan(async_session: AsyncSession):
-    new_plan = Plan(client_id="client_1")
+    new_plan = Plan(client_pseudo_id="client_1")
     async_session.add(new_plan)
     await async_session.commit()
 
     result = await async_session.get(Plan, new_plan.id)
     assert result is not None
-    assert result.client_id == "client_1"
+    assert result.client_pseudo_id == "client_1"
 
 
 @pytest.mark.asyncio
 async def test_create_plan_asset(async_session: AsyncSession):
-    new_plan = Plan(client_id="client_1")
+    new_plan = Plan(client_pseudo_id="client_1")
     async_session.add(new_plan)
     await async_session.commit()
 
     new_asset = PlanAsset(
         plan_id=new_plan.id,
-        client_id="client_1",
+        client_pseudo_id="client_1",
         filename="example.png",
         file_blob=b"fake_data",
         mimetype="image/png",
@@ -41,7 +41,7 @@ async def test_create_plan_asset(async_session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_create_plan_generation(async_session: AsyncSession):
-    new_plan = Plan(client_id="client_1")
+    new_plan = Plan(client_pseudo_id="client_1")
     async_session.add(new_plan)
     await async_session.commit()
 

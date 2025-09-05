@@ -51,7 +51,7 @@ const TranscriptionAddressForm = ({
 
   const { mutateAsync: submitAddressMutation } = $api.useMutation(
     "post",
-    "/transcriptions/{client_id}/complete-intake-transcription",
+    "/transcriptions/{client_pseudo_id}/complete-intake-transcription",
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,7 +66,7 @@ const TranscriptionAddressForm = ({
       const response = (await submitAddressMutation({
         params: {
           path: {
-            client_id: clientData?.external_client_id as string,
+            client_pseudo_id: clientData?.pseudonymized_client_id as string,
           },
         },
         body: {

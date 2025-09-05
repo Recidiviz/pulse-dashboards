@@ -32,6 +32,7 @@ import {
   showErrorToast,
   showSuccessToast,
 } from "~@reentry/frontend/utils/toast";
+
 type ResourceType = components["schemas"]["Resource"];
 
 const ActionPlanPage = () => {
@@ -55,10 +56,10 @@ const ActionPlanPage = () => {
     refetch: refetchDetailPlan,
     error: errorDetailPlan,
     isLoading: isLoadingDetailPlan,
-  } = $api.useQuery("get", "/plans/by_client/{client_id}", {
+  } = $api.useQuery("get", "/plans/by_client/{client_pseudo_id}", {
     params: {
       path: {
-        client_id: id,
+        client_pseudo_id: id,
       },
     },
     headers: {
@@ -298,7 +299,7 @@ const ActionPlanPage = () => {
               refetchDetailPlan={refetchDetailPlan}
               handleSelectResource={handleSelectResource}
               planId={dataDetailPlan?.id}
-              clientId={id as string}
+              clientPseudoId={id as string}
               planPrompt={dataDetailPlan?.latest_generation?.prompt || ""}
               clientFullName={
                 dataDetailPlan?.client_record?.full_name

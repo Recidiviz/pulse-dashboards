@@ -11,6 +11,7 @@ from app.models.intake import (
     IntakeMessage,
     IntakeMessageRole,
 )
+from app.tests.test_fixtures.client_examples import create_test_client
 from app.tests.test_fixtures.intake_sections import (
     create_test_section,
     create_test_sections,
@@ -27,10 +28,10 @@ async def test_get_client_intake(
 ):
     """Test retrieving client intake data."""
 
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
-    print(f"Test setup: client_id={client_id}, token={token_value}")
+    print(f"Test setup: client_pseudo_id={client_pseudo_id}, token={token_value}")
 
     section1, section2 = create_test_sections(2)
     async_session.add_all([section1, section2])
@@ -40,22 +41,20 @@ async def test_get_client_intake(
 
     # Step 2: Create Intake record
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section="Test Section 1",
     )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
-    print(f"Created intake: id={intake.id}, client_id={intake.client_id}")
+    print(f"Created intake: id={intake.id}, client_pseudo_id={intake.client_pseudo_id}")
 
     from app.models.intake import IntakeToken
 
     token = IntakeToken(
         token=token_value,
-        client_id=client_id,
         intake_id=intake.id,
-        is_active=True,
     )
     async_session.add(token)
     await async_session.commit()
@@ -66,6 +65,7 @@ async def test_get_client_intake(
         is_active=True,
         order=0,
         completion_status=CompletionStatus.IN_PROGRESS,
+        intake_section_revision_id=None,
     )
     client_section2 = ClientIntakeSection(
         intake_id=intake.id,
@@ -73,6 +73,7 @@ async def test_get_client_intake(
         is_active=False,
         order=1,
         completion_status=CompletionStatus.NOT_STARTED,
+        intake_section_revision_id=None,
     )
     async_session.add_all([client_section1, client_section2])
     await async_session.commit()
@@ -92,37 +93,29 @@ async def test_get_client_intake(
     )
     async_session.add_all([message1, message2])
     await async_session.commit()
-
+    # Create a mock for the client data function
     with patch(
-        "app.services.client_data.queries.get_client_data_unsafe"
-    ) as mock_get_client:
-        # Make sure it returns the exact record from the fixture
-        client_record = mock_clientdata_service["clients_by_id"].get("client-001")
-        if not client_record:
-            # Just in case it's not in the fixture, create a standard one
-            from app.tests.test_fixtures.client_examples import create_john_doe
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
-            client_record = create_john_doe()
-        mock_get_client.return_value = client_record
-        with patch(
-            "app.auth.intake.auth_client_user.decode_jwt_token"
-        ) as mock_verify_token:
-            mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        response = await client.get(
+            f"/intake/client/{token_value}",
+            headers={"Authorization": "Bearer test-token"},
+        )
 
-            response = await client.get(
-                f"/intake/client/{token_value}",
-                headers={"Authorization": "Bearer test-token"},
-            )
-
-            # Debug the response
-            print(f"Response status: {response.status_code}")
-            print(f"Response body: {response.text}")
+        # Debug the response
+        print(f"Response status: {response.status_code}")
+        print(f"Response body: {response.text}")
 
     assert_response(response, 200)
     data = response.json()
 
     assert data["id"] == str(intake.id)
-    assert data["client_id"] == client_id
+    assert data["client_pseudo_id"] == client_pseudo_id
     assert data["status"] == IntakeStatus.IN_PROGRESS.value
     assert data["current_section"] == "Test Section 1"
 
@@ -139,14 +132,14 @@ async def test_get_client_intake_nonexistent(
 ):
     """Test retrieving intake for a non-existent client returns 404."""
     # Use a non-existent client ID
-    non_existent_client_id = "non-existent-client"
+    non_existent_client_pseudo_id = "non-existent-client"
     token_from_url = "some-token-value"
 
     with patch(
         "app.auth.intake.auth_client_user.decode_jwt_token"
     ) as mock_decode_jwt_token:
         mock_decode_jwt_token.return_value = {
-            "sub": non_existent_client_id,
+            "sub": non_existent_client_pseudo_id,
             "token_type": "client",
         }
 
@@ -167,7 +160,7 @@ async def test_get_client_intake_token_mismatch(
 ):
     """Test retrieving intake with incorrect token returns 401."""
     # Create a client with valid intake but mismatched token
-    client_id = "client-001"  # Use client ID that exists in mock_client_data fixture
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     correct_token = "correct-token-value"
     incorrect_token = "incorrect-token-value"
 
@@ -179,7 +172,7 @@ async def test_get_client_intake_token_mismatch(
 
     # Step 2: Create Intake record
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section="Test Section",
         internal_access=False,
@@ -209,45 +202,37 @@ async def test_get_client_intake_token_mismatch(
     async_session.add(client_section)
     await async_session.commit()
 
-    # Prepare client record by adding it to the database
-
-    # Use our standardized client examples
-    from app.tests.test_fixtures.client_examples import create_test_client
-
-    # Create a mock for the client data function
-    with patch(
-        "app.services.client_data.queries.get_client_data_unsafe"
-    ) as mock_get_client:
-        client_record = create_test_client()
-        # Update the client ID to match the test
-        client_record.external_client_id = client_id
-        mock_get_client.return_value = client_record
-
     # Make request with incorrect token
     with patch(
         "app.auth.intake.auth_client_user.decode_jwt_token"
     ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
         response = await client.get(
             f"/intake/client/{incorrect_token}",
             headers={"Authorization": "Bearer test-token"},
         )
 
-    assert_response(response, 401)
+        assert_response(response, 401)
 
-    # Verify that a request with the correct token would work
-    with patch(
-        "app.auth.intake.auth_client_user.decode_jwt_token"
-    ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        # Verify that a request with the correct token would work
+        with patch(
+            "app.auth.intake.auth_client_user.decode_jwt_token"
+        ) as mock_verify_token:
+            mock_verify_token.return_value = {
+                "sub": client_pseudo_id,
+                "token_type": "client",
+            }
 
-        response = await client.get(
-            f"/intake/client/{correct_token}",
-            headers={"Authorization": "Bearer test-token"},
-        )
+            response = await client.get(
+                f"/intake/client/{correct_token}",
+                headers={"Authorization": "Bearer test-token"},
+            )
 
-    assert_response(response, 200)
+        assert_response(response, 200)
 
 
 @pytest.mark.asyncio
@@ -258,7 +243,9 @@ async def test_check_token_not_in_response(
     mock_clientdata_service,
 ):
     """Test that the token is not returned in the intake response."""
-    client_id = "client-002"  # Use client ID that exists in mock_client_data fixture
+    client_pseudo_id = mock_clientdata_service["clients"][
+        1
+    ].pseudonymized_client_id  # Use client ID that exists in mock_client_data fixture
     token_value = "test-token-secret-value"
 
     # Create section
@@ -269,7 +256,7 @@ async def test_check_token_not_in_response(
 
     # Create intake
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section="Test Section",
     )
@@ -300,27 +287,28 @@ async def test_check_token_not_in_response(
 
     # Create a mock for the client data function
     with patch(
-        "app.services.client_data.queries.get_client_data_unsafe"
+        "app.routes.intake_client_router.Queries.get_client_by_pseudonymized_id_unsafe"
     ) as mock_get_client:
-        from app.tests.test_fixtures.client_examples import create_test_client
-
         client_record = create_test_client()
         # Update the client ID to match the test
-        client_record.external_client_id = client_id
+        client_record.external_client_id = client_pseudo_id
         mock_get_client.return_value = client_record
 
-    # Make request
-    with patch(
-        "app.auth.intake.auth_client_user.decode_jwt_token"
-    ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        # Make request
+        with patch(
+            "app.auth.intake.auth_client_user.decode_jwt_token"
+        ) as mock_verify_token:
+            mock_verify_token.return_value = {
+                "sub": client_pseudo_id,
+                "token_type": "client",
+            }
 
-        response = await client.get(
-            f"/intake/client/{token_value}",
-            headers={"Authorization": "Bearer test-token"},
-        )
+            response = await client.get(
+                f"/intake/client/{token_value}",
+                headers={"Authorization": "Bearer test-token"},
+            )
 
-    assert_response(response, 200)
+        assert_response(response, 200)
 
     # Check that the token is not in the response
     data = response.json()
@@ -340,7 +328,7 @@ async def test_get_client_intake_completed(
     mock_clientdata_service,
 ):
     """Test that accessing a completed intake returns the data normally."""
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
     # Create two sections as before
@@ -351,7 +339,7 @@ async def test_get_client_intake_completed(
     await async_session.refresh(section2)
 
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.COMPLETED,
         current_section="Test Section 1",
     )
@@ -363,18 +351,26 @@ async def test_get_client_intake_completed(
 
     token = IntakeToken(
         token=token_value,
-        client_id=client_id,
         intake_id=intake.id,
-        is_active=True,
     )
     async_session.add(token)
     await async_session.commit()
 
     # Test the API with proper mocking via fixture
-    with patch(
-        "app.auth.intake.auth_client_user.decode_jwt_token"
-    ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+    with (
+        patch(
+            "app.routes.intake_client_router.Queries.get_client_by_pseudonymized_id_unsafe"
+        ) as mock_get_client,
+        patch("app.auth.intake.auth_client_user.decode_jwt_token") as mock_verify_token,
+    ):
+        client_record = create_test_client()
+        # Update the client ID to match the test
+        client_record.external_client_id = client_pseudo_id
+        mock_get_client.return_value = client_record
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
         response = await client.get(
             f"/intake/client/{token_value}",
@@ -397,8 +393,7 @@ async def test_get_client_intake_with_internal_access(
 ):
     """Test retrieving client intake data with internal access."""
 
-    client_id = "client-001"
-    pseudonymized_id = "pc-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     section1 = create_test_section("Test Section 1")
     async_session.add(section1)
@@ -406,7 +401,7 @@ async def test_get_client_intake_with_internal_access(
     await async_session.refresh(section1)
 
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section="Test Section 1",
         internal_access=True,
@@ -438,30 +433,23 @@ async def test_get_client_intake_with_internal_access(
     await async_session.commit()
 
     with patch(
-        "app.services.client_data.queries.get_client_data_unsafe"
-    ) as mock_get_client:
-        client_record = mock_clientdata_service["clients_by_id"].get("client-001")
-        if not client_record:
-            from app.tests.test_fixtures.client_examples import create_john_doe
+        "app.auth.intake.auth_client_user.decode_jwt_token"
+    ) as mock_verify_token:
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
-            client_record = create_john_doe()
-        mock_get_client.return_value = client_record
-
-        with patch(
-            "app.auth.intake.auth_client_user.decode_jwt_token"
-        ) as mock_verify_token:
-            mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
-
-            response = await client.get(
-                f"/intake/client/{pseudonymized_id}",
-                headers={"Authorization": "Bearer test-token"},
-            )
+        response = await client.get(
+            f"/intake/client/{client_pseudo_id}",
+            headers={"Authorization": "Bearer test-token"},
+        )
 
     assert_response(response, 200)
     data = response.json()
 
     assert data["id"] == str(intake.id)
-    assert data["client_id"] == client_id
+    assert data["client_pseudo_id"] == client_pseudo_id
     assert data["status"] == IntakeStatus.IN_PROGRESS.value
     assert data["current_section"] == "Test Section 1"
     assert data["internal_access"] is True
@@ -478,7 +466,7 @@ async def test_submit_address_new(
     mock_clientdata_service,
 ):
     """Test submitting a new address for client intake."""
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
     # Create test section
@@ -489,7 +477,7 @@ async def test_submit_address_new(
 
     # Create intake
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section="Address Section",
     )
@@ -502,9 +490,7 @@ async def test_submit_address_new(
 
     token = IntakeToken(
         token=token_value,
-        client_id=client_id,
         intake_id=intake.id,
-        is_active=True,
     )
     async_session.add(token)
     await async_session.commit()
@@ -513,7 +499,10 @@ async def test_submit_address_new(
     with patch(
         "app.auth.intake.auth_client_user.decode_jwt_token"
     ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
         # Submit address data
         address_data = {
@@ -555,7 +544,7 @@ async def test_submit_address_optional_street(
     mock_clientdata_service,
 ):
     """Test submitting address without street address (optional field)."""
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
     # Create test section
@@ -566,7 +555,7 @@ async def test_submit_address_optional_street(
 
     # Create intake
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section="Address Section",
     )
@@ -579,9 +568,7 @@ async def test_submit_address_optional_street(
 
     token = IntakeToken(
         token=token_value,
-        client_id=client_id,
         intake_id=intake.id,
-        is_active=True,
     )
     async_session.add(token)
     await async_session.commit()
@@ -590,7 +577,10 @@ async def test_submit_address_optional_street(
     with patch(
         "app.auth.intake.auth_client_user.decode_jwt_token"
     ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
         # Submit address data without street address
         address_data = {"city": "Chicago", "state": "IL"}
@@ -627,7 +617,7 @@ async def test_submit_address_validation_error_missing_city(
     mock_clientdata_service,
 ):
     """Test submitting address with missing required city field."""
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
     # Create test section
@@ -638,7 +628,7 @@ async def test_submit_address_validation_error_missing_city(
 
     # Create intake
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section="Address Section",
     )
@@ -660,7 +650,10 @@ async def test_submit_address_validation_error_missing_city(
     with patch(
         "app.auth.intake.auth_client_user.decode_jwt_token"
     ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
         # Submit address data missing required city
         address_data = {"street_address": "123 Main St", "state": "IL"}
@@ -682,7 +675,7 @@ async def test_submit_address_validation_error_missing_state(
     mock_clientdata_service,
 ):
     """Test submitting address with missing required state field."""
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
     # Create test section
@@ -693,7 +686,7 @@ async def test_submit_address_validation_error_missing_state(
 
     # Create intake
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section="Address Section",
     )
@@ -715,7 +708,10 @@ async def test_submit_address_validation_error_missing_state(
     with patch(
         "app.auth.intake.auth_client_user.decode_jwt_token"
     ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
         # Submit address data missing required state
         address_data = {"street_address": "123 Main St", "city": "Springfield"}
@@ -789,13 +785,16 @@ async def test_submit_address_nonexistent_intake(
     assert_response,
 ):
     """Test submitting address for client with no intake."""
-    client_id = "non-existent-client"
+    client_pseudo_id = "non-existent-client"
 
     # Mock authentication
     with patch(
         "app.auth.intake.auth_client_user.decode_jwt_token"
     ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
         address_data = {
             "street_address": "123 Main St",
@@ -824,7 +823,7 @@ async def test_submit_address_completes_intake_when_in_completion_section(
 
     from app.utils.intake.constants import COMPLETION_SECTION
 
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
     # Create test section
@@ -835,7 +834,7 @@ async def test_submit_address_completes_intake_when_in_completion_section(
 
     # Create intake in IN_PROGRESS status with completion section as current
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section=COMPLETION_SECTION,  # This is the key condition
     )
@@ -860,7 +859,10 @@ async def test_submit_address_completes_intake_when_in_completion_section(
         with patch(
             "app.auth.intake.auth_client_user.decode_jwt_token"
         ) as mock_verify_token:
-            mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+            mock_verify_token.return_value = {
+                "sub": client_pseudo_id,
+                "token_type": "client",
+            }
 
             # Submit address data
             address_data = {
@@ -895,7 +897,7 @@ async def test_submit_address_does_not_complete_intake_when_not_in_completion_se
     mock_clientdata_service,
 ):
     """Test that submitting address does not complete intake when not in completion section."""
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
     # Create test section
@@ -906,7 +908,7 @@ async def test_submit_address_does_not_complete_intake_when_not_in_completion_se
 
     # Create intake in IN_PROGRESS status with regular section (not completion)
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.IN_PROGRESS,
         current_section="Regular Section",  # Not completion section
     )
@@ -927,7 +929,10 @@ async def test_submit_address_does_not_complete_intake_when_not_in_completion_se
     with patch(
         "app.auth.intake.auth_client_user.decode_jwt_token"
     ) as mock_verify_token:
-        mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+        mock_verify_token.return_value = {
+            "sub": client_pseudo_id,
+            "token_type": "client",
+        }
 
         # Submit address data
         address_data = {
@@ -963,7 +968,7 @@ async def test_submit_address_does_not_complete_intake_when_already_completed(
 
     from app.utils.intake.constants import COMPLETION_SECTION
 
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     token_value = "test-token-12345"
 
     # Create test section
@@ -974,7 +979,7 @@ async def test_submit_address_does_not_complete_intake_when_already_completed(
 
     # Create intake already in COMPLETED status
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.COMPLETED,  # Already completed
         current_section=COMPLETION_SECTION,
     )
@@ -1006,7 +1011,10 @@ async def test_submit_address_does_not_complete_intake_when_already_completed(
         with patch(
             "app.auth.intake.auth_client_user.decode_jwt_token"
         ) as mock_verify_token:
-            mock_verify_token.return_value = {"sub": client_id, "token_type": "client"}
+            mock_verify_token.return_value = {
+                "sub": client_pseudo_id,
+                "token_type": "client",
+            }
 
             # Submit updated address data
             address_data = {

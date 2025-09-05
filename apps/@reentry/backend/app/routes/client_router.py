@@ -5,11 +5,11 @@ from pydantic import BaseModel
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
 from app.crud.assessment import (
-    get_assessments_by_client_id,
+    get_assessments_by_client_pseudo_id,
 )
 from app.crud.client import get_client_status_updates, get_paginated_client_list
-from app.crud.intake import get_intake_by_client_id
-from app.crud.plan import create_plan, get_plan_by_client_id, retry_plan_creation
+from app.crud.intake import get_intake_by_client_pseudo_id
+from app.crud.plan import create_plan, get_plan_by_client_pseudo_id, retry_plan_creation
 from app.models.models import Plan
 from app.routes.execution_router import ExecutionResponse
 from app.routes.shared_models import (
@@ -17,7 +17,8 @@ from app.routes.shared_models import (
     ClientResponse,
     ProcessingStatus,
 )
-from app.services.client_data.queries import get_client_data
+from app.services.client_data.queries import Queries
+from app.utils.permission_utils import check_access
 
 router = APIRouter()
 
@@ -27,7 +28,7 @@ class RetryProcessingResponse(BaseModel):
 
 
 class ClientStatusUpdate(BaseModel):
-    client_id: str
+    client_pseudo_id: str
     processing_status: ProcessingStatus
 
 
@@ -80,20 +81,21 @@ async def get_client_status_updates_route(
 
 
 @router.get(
-    "/{client_id}",
+    "/{client_pseudo_id}",
     response_model=ClientRecordResponse,
     summary="Get Client Record",
-    description="Retrieve an Client record by its external id",
+    description="Retrieve an Client record by its pseudonimyzed id (client_pseudo_id)",
     tags=["Client Records"],
 )
 async def get_client_record(
-    client_id: str,
+    client_pseudo_id: str,
     request: Request,
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
     # Get client data with staff verification
-    record = get_client_data(
-        external_client_id=client_id, pseudonymized_staff_id=pseudonymized_id
+    record = Queries.get_client_data_by_pseudonymized_id(
+        pseudonymized_client_id=client_pseudo_id,
+        pseudonymized_staff_id=pseudonymized_id,
     )
     if record is None:
         raise HTTPException(status_code=404, detail="Client Record not found")
@@ -101,31 +103,26 @@ async def get_client_record(
 
 
 @router.post(
-    "/{client_id}/retry-processing",
+    "/{client_pseudo_id}/retry-processing",
     response_model=ExecutionResponse,
     summary="Retry Processing",
     description="Intelligently retry processing for a client based on current state. Determines whether to retry assessments, plan generation, or both.",
     tags=["Client Processing"],
 )
 async def retry_processing(
-    client_id: str,
+    client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
-    # Verify client access
-    record = get_client_data(
-        external_client_id=client_id, pseudonymized_staff_id=pseudonymized_id
-    )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client not found")
+    check_access(client_pseudo_id, pseudonymized_id)
 
     # Get intake for the client
-    intake = await get_intake_by_client_id(session, client_id)
+    intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
     if not intake or intake.status != "completed":
         raise HTTPException(status_code=400, detail="No retryable operations found")
 
     # Get current assessments and plan
-    assessments = await get_assessments_by_client_id(session, client_id)
+    assessments = await get_assessments_by_client_pseudo_id(session, client_pseudo_id)
 
     # Check if we should retry assessments
     need_assessment_retry = not assessments or all(
@@ -139,7 +136,7 @@ async def retry_processing(
         await session.refresh(intake)
         return execution
 
-    plan = await get_plan_by_client_id(session, client_id)
+    plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
 
     no_in_progress_assessments = not assessments or not any(
         a.status in ["pending", "in_progress"] for a in assessments
@@ -155,7 +152,7 @@ async def retry_processing(
     if need_initial_plan_retry:
         if not plan:
             # Create new plan (only if we have completed assessments and no plan)
-            plan_obj = Plan(client_id=client_id)
+            plan_obj = Plan(client_pseudo_id=client_pseudo_id)
             plan = await create_plan(session, plan_obj)
             execution = await plan.schedule_initial_creation(session)
             await session.commit()

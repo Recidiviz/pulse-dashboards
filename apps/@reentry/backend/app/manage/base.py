@@ -54,3 +54,4 @@ import app.manage.conversation_tester  # noqa
 import app.manage.process_recording  # noqa
 import app.manage.requeue_pending_executions  # noqa
 import app.manage.retry_plan_gens  # noqa
+import app.manage.migrate_external_to_pseudonymized # noqa

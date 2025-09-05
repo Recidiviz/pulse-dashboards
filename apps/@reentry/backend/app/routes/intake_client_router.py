@@ -9,12 +9,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.intake.auth_client_user import validate_dob
 from app.core.db import get_session
-from app.crud.intake import get_intake_by_client_id
+from app.crud.intake import get_intake_by_client_pseudo_id
 from app.models.intake import ClientAddress, Intake, IntakeStatus
 from app.routes.client_router import ClientRecordResponse
 from app.routes.intake_sections_router import IntakeSectionResponse
 from app.routes.shared_models import AddressSubmission, IntakeMessageResponse
-from app.services.client_data.queries import get_client_data_unsafe
+from app.services.client_data.queries import Queries
 
 from .base import ClientIntakeSectionResponse, ORMResponse
 
@@ -48,7 +48,7 @@ class SummaryResponse(ORMResponse):
 
 
 class IntakeResponse(ORMResponse):
-    client_id: str
+    client_pseudo_id: str
     status: IntakeStatus
     current_section: str | None = None
     internal_access: Optional[bool] = None
@@ -110,14 +110,14 @@ async def verify_date_of_birth(
 async def get_client_intake(
     request: Request, token_from_url: str, session: AsyncSession = Depends(get_session)
 ):
-    client_id: str = request.state.client.get("sub")
+    client_pseudo_id: str = request.state.client.get("sub")
     login_timestamp = request.state.client.get("login_timestamp")
 
     # First get the intake by client ID
-    intake = await get_intake_by_client_id(session, client_id, None)
+    intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id, None)
 
     if not intake:
-        # No intake found for this client_id
+        # No intake found for this client_pseudo_id
         raise HTTPException(
             status_code=404,
             detail="Not Found",
@@ -129,11 +129,11 @@ async def get_client_intake(
         intake.intake_token
         and intake.intake_token.token == token_from_url
         and not intake.internal_access
-        and intake.client_id == client_id
+        and intake.client_pseudo_id == client_pseudo_id
     ):
         has_access = True
 
-    elif intake.internal_access and intake.client_id == client_id:
+    elif intake.internal_access and intake.client_pseudo_id == client_pseudo_id:
         has_access = True
 
     if not has_access:
@@ -143,11 +143,13 @@ async def get_client_intake(
         )
 
     try:
-        client_record = get_client_data_unsafe(intake.client_id)
+        client_record = Queries.get_client_by_pseudonymized_id_unsafe(
+            intake.client_pseudo_id
+        )
         if not client_record:
             raise HTTPException(
                 status_code=404,
-                detail=f"Client record not found for client ID: {intake.client_id}",
+                detail=f"Client record not found for client ID: {intake.client_pseudo_id}",
             )
 
         client_response = ClientRecordResponse(**client_record.model_dump())
@@ -233,13 +235,13 @@ async def submit_address(
 
     from app.utils.intake.constants import COMPLETION_SECTION
 
-    # Extract client_id from JWT token (set by ClientAuthMiddleware)
-    client_id: str = request.state.client.get("sub")
+    # Extract client_pseudo_id from JWT token (set by ClientAuthMiddleware)
+    client_pseudo_id: str = request.state.client.get("sub")
 
     # Get intake with address relationship loaded
     statement = (
         select(Intake)
-        .where(Intake.client_id == client_id)
+        .where(Intake.client_pseudo_id == client_pseudo_id)
         .options(selectinload(Intake.address))
     )
     result = await session.exec(statement)

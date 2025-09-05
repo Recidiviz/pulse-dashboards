@@ -13,17 +13,20 @@ async def test_get_assessment_by_id(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    mock_clientdata_service,
 ):
     """Test retrieving an assessment by ID."""
     # Create test data
-    client_id = "client-001"  # Using mock client ID from fixture
-    intake = Intake(client_id=client_id)
+    client_pseudo_id = mock_clientdata_service[
+        "client_pseudo_id"
+    ]  # Using mock client ID from fixture
+    intake = Intake(client_pseudo_id=client_pseudo_id)
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
 
     assessment = Assessment(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         intake_id=intake.id,
     )
     async_session.add(assessment)
@@ -39,7 +42,7 @@ async def test_get_assessment_by_id(
 
     # Verify content
     assert data["id"] == str(assessment.id)
-    assert data["client_id"] == client_id
+    assert data["client_pseudo_id"] == client_pseudo_id
     assert str(data["intake_id"]) == str(
         intake.id
     )  # Compare as strings since it's a UUID
@@ -66,22 +69,25 @@ async def test_get_client_assessments(
     client: AsyncClient,
     async_session: AsyncSession,
     assert_response,
+    mock_clientdata_service,
 ):
     """Test retrieving all assessments for a client."""
     # Create test data with multiple assessments for a client
-    client_id = "client-001"  # Using mock client ID from fixture
-    intake = Intake(client_id=client_id)
+    client_pseudo_id = mock_clientdata_service[
+        "client_pseudo_id"
+    ]  # Using mock client ID from fixture
+    intake = Intake(client_pseudo_id=client_pseudo_id)
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
 
     # Create two assessments for the same client
     assessment1 = Assessment(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         intake_id=intake.id,
     )
     assessment2 = Assessment(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         intake_id=intake.id,
     )
 
@@ -90,7 +96,7 @@ async def test_get_client_assessments(
     await async_session.commit()
 
     # Call the endpoint
-    response = await client.get(f"/assessments/clients/{client_id}")
+    response = await client.get(f"/assessments/clients/{client_pseudo_id}")
 
     # Verify response
     assert_response(response, 200)
@@ -109,10 +115,10 @@ async def test_get_assessments_for_nonexistent_client(
 ):
     """Test retrieving assessments for a non-existent client returns empty list."""
     # Use a non-existent client ID
-    non_existent_client_id = "non-existent-client"
+    non_existent_client_pseudo_id = "non-existent-client"
 
     # Call the endpoint
-    response = await client.get(f"/assessments/clients/{non_existent_client_id}")
+    response = await client.get(f"/assessments/clients/{non_existent_client_pseudo_id}")
 
     # Should return empty list
     assert_response(response, 200)

@@ -79,5 +79,5 @@ export interface ChatMessagesProps {
 
 export interface SocketProviderProps {
 	children: ReactNode;
-	clientId: string;
+	clientPseudoId: string;
 }

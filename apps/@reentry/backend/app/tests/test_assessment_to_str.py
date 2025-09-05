@@ -11,8 +11,8 @@ from app.utils.intake_summary_runner import format_assessments_list
 @pytest.mark.asyncio
 async def test_assessment_to_str_unfinished(async_session: AsyncSession):
     """Test to_str method when assessment execution is not finished."""
-    client_id = "test-client-id"
-    assessment = Assessment(client_id=client_id)
+    client_pseudo_id = "test-client-id"
+    assessment = Assessment(client_pseudo_id=client_pseudo_id)
 
     # Assessment has no execution, so is_execution_finished should be False
     assert assessment.to_str() is None
@@ -21,7 +21,7 @@ async def test_assessment_to_str_unfinished(async_session: AsyncSession):
 @pytest.mark.asyncio
 async def test_assessment_to_str_no_scores(async_session: AsyncSession):
     """Test to_str method when assessment has finished but has no scores."""
-    client_id = "test-client-id"
+    client_pseudo_id = "test-client-id"
 
     # Create execution with completed status
     execution = Execution(
@@ -35,7 +35,9 @@ async def test_assessment_to_str_no_scores(async_session: AsyncSession):
 
     # Create assessment with execution but no scores
     assessment = Assessment(
-        client_id=client_id, execution_id=execution.id, execution=execution
+        client_pseudo_id=client_pseudo_id,
+        execution_id=execution.id,
+        execution=execution,
     )
 
     assert assessment.to_str() is None
@@ -44,7 +46,7 @@ async def test_assessment_to_str_no_scores(async_session: AsyncSession):
 @pytest.mark.asyncio
 async def test_assessment_to_str_with_scores(async_session: AsyncSession):
     """Test to_str method when assessment has finished and has scores."""
-    client_id = "test-client-id"
+    client_pseudo_id = "test-client-id"
 
     # Create execution with completed status
     execution = Execution(
@@ -58,7 +60,7 @@ async def test_assessment_to_str_with_scores(async_session: AsyncSession):
 
     # Create assessment with execution and scores
     assessment = Assessment(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         execution_id=execution.id,
         execution=execution,
         scores={"tree1": 5, "tree2": 8},
@@ -93,14 +95,16 @@ async def test_format_assessments_list(async_session: AsyncSession):
 
     # Create assessments
     assessment1 = Assessment(
-        client_id="client-1",
+        client_pseudo_id="client-1",
         execution_id=execution.id,
         execution=execution,
         scores={"tree1": 5, "tree2": 8},
         misses_counts={"tree1": 2, "tree2": 1},
     )
 
-    assessment2 = Assessment(client_id="client-2", execution_id=None, execution=None)
+    assessment2 = Assessment(
+        client_pseudo_id="client-2", execution_id=None, execution=None
+    )
 
     result = format_assessments_list([assessment1, assessment2])
 

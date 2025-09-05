@@ -72,9 +72,11 @@ async def assessment(
         intake = assessment.intake
     else:
         # Try to find an intake for this client
-        from app.crud.intake import get_intake_by_client_id
+        from app.crud.intake import get_intake_by_client_pseudo_id
 
-        intake = await get_intake_by_client_id(session, client_id=assessment.client_id)
+        intake = await get_intake_by_client_pseudo_id(
+            session, client_pseudo_id=assessment.client_pseudo_id
+        )
 
     # Only proceed with trees that need intake data if an intake is present
     task_logger.debug("Checking for intake availability")

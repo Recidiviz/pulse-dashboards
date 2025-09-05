@@ -34,7 +34,7 @@ interface PlannerProps {
   markDownText: string;
   planPrompt: string;
   clientFullName: string;
-  clientId: string;
+  clientPseudoId: string;
   planId: string;
   refetchDetailPlan: () => void;
   handleSelectResource: (resourceName: string) => void;
@@ -45,7 +45,7 @@ const Planner = ({
   markDownText,
   planPrompt,
   clientFullName,
-  clientId,
+  clientPseudoId,
   planId,
   refetchDetailPlan,
   handleSelectResource,
@@ -203,7 +203,9 @@ const Planner = ({
                 <PrimaryButton
                   className={"!w-[180px] "}
                   buttonText="View Intake Summary"
-                  onClick={() => router.push(`/intake-summary/${clientId}`)}
+                  onClick={() =>
+                    router.push(`/intake-summary/${clientPseudoId}`)
+                  }
                 />
                 <PrimaryButton
                   buttonText="Edit"

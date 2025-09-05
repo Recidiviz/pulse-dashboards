@@ -35,7 +35,7 @@
 
 
 # class ExampleIdentifiers(TypedDict):
-#     client_id: str
+#     client_pseudo_id: str
 
 
 # experiment_prefix_explanation = (

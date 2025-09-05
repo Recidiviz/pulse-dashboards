@@ -25,7 +25,7 @@ const ChatHeader: React.FC = () => {
   const {
     intakeContext: {
       client_name,
-      clientId,
+      clientPseudoId,
       allSections,
       conversationStarted,
       currentSection,
@@ -95,7 +95,7 @@ const ChatHeader: React.FC = () => {
                 }}
                 component="p"
               >
-                {clientId}
+                {clientPseudoId}
               </Typography>
             </div>
           </Box>

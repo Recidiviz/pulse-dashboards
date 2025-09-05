@@ -41,22 +41,22 @@ async def get_assessment_by_id(
 
 
 @overload
-async def get_assessments_by_client_id(
-    session: AsyncSession, client_id: str, *, query_only: Literal[True]
+async def get_assessments_by_client_pseudo_id(
+    session: AsyncSession, client_pseudo_id: str, *, query_only: Literal[True]
 ) -> SelectOfScalar[Assessment]: ...
 
 
 @overload
-async def get_assessments_by_client_id(
-    session: AsyncSession, client_id: str, *, query_only: Literal[False] = False
+async def get_assessments_by_client_pseudo_id(
+    session: AsyncSession, client_pseudo_id: str, *, query_only: Literal[False] = False
 ) -> list[Assessment]: ...
 
 
 @statement_or_result(first_only=False)
-async def get_assessments_by_client_id(
-    session: AsyncSession, client_id: str, *, query_only: bool = False
+async def get_assessments_by_client_pseudo_id(
+    session: AsyncSession, client_pseudo_id: str, *, query_only: bool = False
 ) -> SelectOfScalar[Assessment] | list[Assessment]:
-    query = select(Assessment).where(Assessment.client_id == client_id)
+    query = select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
     return query
 
 

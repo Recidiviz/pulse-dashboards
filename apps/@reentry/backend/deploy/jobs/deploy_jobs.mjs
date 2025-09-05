@@ -41,6 +41,21 @@ const JOBS = {
     description: "Regenerate all plans from a set date",
     environments: ["staging", "demo", "prod"], // environments where this job is applicable
   },
+  "demo-migrate-ids": {
+    name: "demo-migrate-ids",
+    description: "populates pseudo_id fields",
+    environments: ["demo"], // environments where this job is applicable
+  },
+  "staging-migrate-ids": {
+    name: "staging-migrate-ids",
+    description: "populates pseudo_id fields",
+    environments: ["staging"], // environments where this job is applicable
+  },
+  "prod-migrate-ids": {
+    name: "prod-migrate-ids",
+    description: "populates pseudo_id fields",
+    environments: ["prod"], // environments where this job is applicable
+  },
 };
 
 async function main() {

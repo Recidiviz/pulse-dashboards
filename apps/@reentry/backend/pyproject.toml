@@ -68,7 +68,6 @@ RECIDIVIZ_ENV_NAME = "pytest"
 [tool.uv.sources]
 
 [tool.pytest.ini_options]
-addopts = "--cov=app"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"

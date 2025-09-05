@@ -32,7 +32,7 @@ class MockDatabaseManager:
         self.sections = [section["title"] for section in SECTIONS_LSIR]
 
     async def store_message(
-        self, client_id: str, content: str, from_role: str
+        self, client_pseudo_id: str, content: str, from_role: str
     ) -> IntakeMessage:
         """Mock store message - returns a proper IntakeMessage instance."""
         print(
@@ -42,7 +42,7 @@ class MockDatabaseManager:
             id=str(uuid.uuid4()),
             content=content,
             from_role=IntakeMessageRole(from_role),
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=str(uuid.uuid4()),
         )
         print(
@@ -50,17 +50,17 @@ class MockDatabaseManager:
         )
         return message
 
-    async def get_latest_message(self, client_id: str) -> IntakeMessage:
+    async def get_latest_message(self, client_pseudo_id: str) -> IntakeMessage:
         """Mock get latest message."""
         return IntakeMessage(
             id=str(uuid.uuid4()),
             content="Mock message",
             from_role=IntakeMessageRole.CASEWORKER,
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=str(uuid.uuid4()),
         )
 
-    async def complete_section(self, client_id: str) -> str:
+    async def complete_section(self) -> str:
         """Mock complete section - returns next section title or completion."""
         self.current_section_index += 1
 
@@ -72,11 +72,11 @@ class MockDatabaseManager:
         print(f"✅ [Mock DB] Section completed, moving to: {next_section}")
         return next_section
 
-    async def update_intake_status(self, client_id: str, status: str) -> None:
+    async def update_intake_status(self, client_pseudo_id: str, status: str) -> None:
         """Mock update intake status."""
-        print(f"📊 [Mock DB] Updated client {client_id} status to {status}")
+        print(f"📊 [Mock DB] Updated client {client_pseudo_id} status to {status}")
 
-    async def all_messages_by_time(self, client_id: str) -> list:
+    async def all_messages_by_time(self) -> list:
         """Mock get all messages - returns empty list for new conversation."""
         return []
 
@@ -88,9 +88,11 @@ class MockIntake:
         self.current_section = SECTIONS_LSIR[0]["title"]
 
 
-async def mock_wait_for_user_response(client_id: str, message: IntakeMessage) -> str:
+async def mock_wait_for_user_response(
+    client_pseudo_id: str, message: IntakeMessage
+) -> str:
     """Mock wait for user response - gets input from command line."""
-    print(f"📞 MOCK_WAIT_FOR_USER_RESPONSE called for client: {client_id}")
+    print(f"📞 MOCK_WAIT_FOR_USER_RESPONSE called for client: {client_pseudo_id}")
     print(f"\n🤖 AI: {message.content}")
 
     while True:
@@ -108,7 +110,7 @@ async def mock_wait_for_user_response(client_id: str, message: IntakeMessage) ->
         print("Please enter a response (or 'quit' to exit)")
 
 
-async def mock_send_message(client_id: str, event: ServerEvent) -> str:
+async def mock_send_message(client_pseudo_id: str, event: ServerEvent) -> str:
     """Mock send message - prints events and handles AI messages."""
     print(f"🔔 MOCK_SEND_MESSAGE called with event type: {event.type}")
 
@@ -145,7 +147,7 @@ async def test_conversation():
     print("=" * 60)
 
     # Create mock objects
-    mock_client = ClientContext(client_id="test-client-123", client_name="Bob")
+    mock_client = ClientContext(client_pseudo_id="test-client-123", client_name="Bob")
     mock_db_manager = MockDatabaseManager()
     mock_intake = MockIntake()
 

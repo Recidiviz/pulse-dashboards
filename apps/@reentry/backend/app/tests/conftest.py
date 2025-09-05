@@ -1,4 +1,3 @@
-import logging
 import os
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -14,6 +13,7 @@ from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.db import engine
+from app.utils import permission_utils
 from main import app as fastapi_app
 
 test_data_directory = Path(__file__).parent / "data"
@@ -66,7 +66,7 @@ async def async_session() -> AsyncSession:
                     CREATE OR REPLACE VIEW client_view AS
                     -- INTAKE CLIENTS (earliest in process): Order values 10-30
                     SELECT
-                        i.client_id,
+                        i.client_pseudo_id,
                         i.id AS intake_id,
                         i.status::text AS intake_status,
                         CASE i.status::text
@@ -96,12 +96,12 @@ async def async_session() -> AsyncSession:
                         NOT EXISTS (
                             SELECT 1 FROM assessment a
                             LEFT JOIN execution e ON a.execution_id = e.id
-                            WHERE a.client_id = i.client_id AND e.status = 'completed'
+                            WHERE a.client_pseudo_id = i.client_pseudo_id AND e.status = 'completed'
                         )
                     UNION
                     -- ASSESSMENT CLIENTS (middle of process): Order values 40-60
                     SELECT
-                        a.client_id,
+                        a.client_pseudo_id,
                         NULL AS intake_id,
                         NULL AS intake_status,
                         999 AS intake_order,
@@ -120,18 +120,18 @@ async def async_session() -> AsyncSession:
                         -- Include completed intake clients with assessments
                         EXISTS (
                             SELECT 1 FROM intake i
-                            WHERE i.client_id = a.client_id AND i.status = 'completed'
+                            WHERE i.client_pseudo_id = a.client_pseudo_id AND i.status = 'completed'
                         )
                         -- For assessment clients, only include those without plans or with incomplete plans
                         AND NOT EXISTS (
                             SELECT 1 FROM plan p
                             LEFT JOIN execution e ON p.create_execution_id = e.id
-                            WHERE p.client_id = a.client_id AND e.status = 'completed'
+                            WHERE p.client_pseudo_id = a.client_pseudo_id AND e.status = 'completed'
                         )
                     UNION
                     -- PLAN CLIENTS (latest in process): Order values 70-90
                     SELECT
-                        p.client_id,
+                        p.client_pseudo_id,
                         NULL AS intake_id,
                         NULL AS intake_status,
                         999 AS intake_order,
@@ -150,13 +150,13 @@ async def async_session() -> AsyncSession:
                         -- Include completed intake clients with plans
                         EXISTS (
                             SELECT 1 FROM intake i
-                            WHERE i.client_id = p.client_id AND i.status = 'completed'
+                            WHERE i.client_pseudo_id = p.client_pseudo_id AND i.status = 'completed'
                         )
                         -- Include completed assessment clients with plans
                         AND EXISTS (
                             SELECT 1 FROM assessment a
                             LEFT JOIN execution e ON a.execution_id = e.id
-                            WHERE a.client_id = p.client_id AND e.status = 'completed'
+                            WHERE a.client_pseudo_id = p.client_pseudo_id AND e.status = 'completed'
                         )
                     """)
                 )
@@ -254,7 +254,8 @@ def mock_client_data():
     return {
         "clients": [client1, client2],
         "staff": staff,
-        "clients_by_id": {"client-001": client1, "client-002": client2},
+        "clients_by_pseudo_id": {"client-001ps": client1, "client-002ps": client2},
+        "client_pseudo_id": "client-001ps",
     }
 
 
@@ -262,66 +263,52 @@ def mock_client_data():
 def mock_clientdata_service(monkeypatch, mock_client_data):
     """Mock the clientdata service functions"""
 
-    import app.crud.client
-    import app.services.client_data.queries
+    from app.services.client_data.queries import Queries
 
-    logger = logging.getLogger(__name__)
+    # Mock get_client_data_by_pseudonymized_id
+    def mock_get_client_data_by_pseudonymized_id(
+        pseudonymized_client_id: str, pseudonymized_staff_id: str
+    ):
+        return mock_client_data["clients_by_pseudo_id"].get(pseudonymized_client_id)
 
-    # Mock get_clients_by_external_ids
-    def mock_get_clients_by_external_ids(external_client_ids):
-        return {
-            client_id: mock_client_data["clients_by_id"].get(client_id)
-            for client_id in external_client_ids
-            if client_id in mock_client_data["clients_by_id"]
-        }
-
-    # Mock get_client_data
-    def mock_get_client_data(external_client_id, pseudonymized_staff_id=None):
-        # During tests, always return the client regardless of pseudonymized ID
-        # This ensures tests don't fail due to authentication issues
-        logger.error("clients staff", external_client_id)
-        logger.error("lalalala2")
-        return mock_client_data["clients_by_id"].get(external_client_id)
-
-    # Mock get_client_data_unsafe
-    def mock_get_client_data_unsafe(external_client_id):
-        logger.error("lalalala3")
-        return mock_client_data["clients_by_id"].get(external_client_id)
+    # Mock mock_get_client_by_pseudonymized_id_unsafe
+    def mock_get_client_by_pseudonymized_id_unsafe(
+        pseudonymized_id: str,
+    ):
+        return mock_client_data["clients_by_pseudo_id"].get(pseudonymized_id)
 
     # Mock get_clients_by_pseudonymized_staff_id to return an empty list for the test ID
-    def mock_get_clients_by_pseudonymized_staff_id(pseudonymized_staff_id):
-        logger.error("lalalala4")
+    def mock_get_clients_by_pseudonymized_staff_id(pseudonymized_staff_id: str):
         if pseudonymized_staff_id == "no-clients-id":
             return []
 
         return mock_client_data["clients"]
 
     # Mock get_caseworker_by_pseudonymized_id
-    def mock_get_caseworker_by_pseudonymized_id(pseudonymized_staff_id):
-        logger.error("lalalala1")
+    def mock_get_caseworker_by_pseudonymized_id(pseudonymized_staff_id: str):
         return mock_client_data["staff"]
 
-    # Apply all the monkeypatches
+    def mock_check_access(client_pseudo_id, pseudonymized_id):
+        return client_pseudo_id in ["client-001", "client-002"]
+
+    monkeypatch.setattr(permission_utils, "check_access", mock_check_access)
     monkeypatch.setattr(
-        app.services.client_data.queries,
-        "get_clients_by_external_ids",
-        mock_get_clients_by_external_ids,
+        Queries,
+        "get_client_data_by_pseudonymized_id",
+        mock_get_client_data_by_pseudonymized_id,
     )
     monkeypatch.setattr(
-        app.services.client_data.queries, "get_client_data", mock_get_client_data
+        Queries,
+        "get_client_by_pseudonymized_id_unsafe",
+        mock_get_client_by_pseudonymized_id_unsafe,
     )
     monkeypatch.setattr(
-        app.services.client_data.queries,
-        "get_client_data_unsafe",
-        mock_get_client_data_unsafe,
-    )
-    monkeypatch.setattr(
-        app.services.client_data.queries,
+        Queries,
         "get_clients_by_pseudonymized_staff_id",
         mock_get_clients_by_pseudonymized_staff_id,
     )
     monkeypatch.setattr(
-        app.services.client_data.queries,
+        Queries,
         "get_caseworker_by_pseudonymized_id",
         mock_get_caseworker_by_pseudonymized_id,
     )

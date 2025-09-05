@@ -31,7 +31,8 @@ class AssessmentType(StrEnum):
 
 class Assessment(BaseModel, table=True):
     assessment_type: Optional[str] = Field(default=None, nullable=True)
-    client_id: str
+    client_pseudo_id: Optional[str]
+    client_id: Optional[str] = None
 
     # Relationship to intake
     intake_id: UUID | None = Field(
@@ -184,7 +185,7 @@ class Assessment(BaseModel, table=True):
         Schedule the creation of a plan based on this assessment.
         Only works when assessment status is COMPLETED.
         """
-        from app.crud.plan import create_plan, get_plan_by_client_id
+        from app.crud.plan import create_plan, get_plan_by_client_pseudo_id
         from app.models.models import Plan
 
         # Only create plan if assessment is completed
@@ -194,16 +195,18 @@ class Assessment(BaseModel, table=True):
             )
             return None
 
-        # Check if plan already exists for this client_id
-        existing_plan = await get_plan_by_client_id(session, self.client_id)
+        # Check if plan already exists for this client_pseudo_id
+        existing_plan = await get_plan_by_client_pseudo_id(
+            session, self.client_pseudo_id
+        )
 
         if existing_plan:
-            logger.info(f"Plan already exists for client {self.client_id}")
+            logger.info(f"Plan already exists for client {self.client_pseudo_id}")
             return existing_plan.id
 
         # Create and schedule the plan
-        logger.info(f"Creating new plan for client {self.client_id}")
-        plan = Plan(client_id=self.client_id)
+        logger.info(f"Creating new plan for client {self.client_pseudo_id}")
+        plan = Plan(client_pseudo_id=self.client_pseudo_id)
         plan = await create_plan(session, plan)
         await plan.schedule_initial_creation(session)
 

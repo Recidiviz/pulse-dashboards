@@ -27,7 +27,7 @@ import {
 } from "~@reentry/frontend/utils/toast";
 
 interface InternalAccessToggleProps {
-  clientId: string;
+  clientPseudoId: string;
   internalAccess?: boolean | null;
   intake?: object | null;
   onUpdate?: () => void;
@@ -35,7 +35,7 @@ interface InternalAccessToggleProps {
 }
 
 const InternalAccessToggle: React.FC<InternalAccessToggleProps> = ({
-  clientId,
+  clientPseudoId,
   internalAccess = false,
   intake,
   onUpdate,
@@ -46,12 +46,12 @@ const InternalAccessToggle: React.FC<InternalAccessToggleProps> = ({
 
   const { mutateAsync: generateTokenAsync } = $api.useMutation(
     "post",
-    "/intake/admin/{client_id}",
+    "/intake/admin/{client_pseudo_id}",
   );
 
   const { mutateAsync: patchInternalAccess } = $api.useMutation(
     "patch",
-    "/intake/admin/{client_id}/internal-access",
+    "/intake/admin/{client_pseudo_id}/internal-access",
   );
 
   const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +62,7 @@ const InternalAccessToggle: React.FC<InternalAccessToggleProps> = ({
       if (!intake) {
         // Intake is null → create it
         await generateTokenAsync({
-          params: { path: { client_id: clientId } },
+          params: { path: { client_pseudo_id: clientPseudoId } },
           headers: {
             Authorization: `Bearer ${auth.getAccessToken()}`,
             "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const InternalAccessToggle: React.FC<InternalAccessToggleProps> = ({
       }
 
       await patchInternalAccess({
-        params: { path: { client_id: clientId } },
+        params: { path: { client_pseudo_id: clientPseudoId } },
         body: { internal_access: newValue },
         headers: {
           Authorization: `Bearer ${auth.getAccessToken()}`,

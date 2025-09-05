@@ -24,7 +24,7 @@ async def create_recording_session(
     await session.commit()
     await session.refresh(recording_session)
     logger.info(
-        f"Created recording session {recording_session.id} for client {recording_session.client_id}"
+        f"Created recording session {recording_session.id} for client {recording_session.client_pseudo_id}"
     )
     return recording_session
 
@@ -50,24 +50,24 @@ async def get_recording_session_by_id(
 
 
 @overload
-async def get_recording_sessions_by_client_id(
-    session: AsyncSession, client_id: str, *, query_only: Literal[True]
+async def get_recording_sessions_by_client_pseudo_id(
+    session: AsyncSession, client_pseudo_id: str, *, query_only: Literal[True]
 ) -> SelectOfScalar[RecordingSession]: ...
 
 
 @overload
-async def get_recording_sessions_by_client_id(
-    session: AsyncSession, client_id: str, *, query_only: Literal[False] = False
+async def get_recording_sessions_by_client_pseudo_id(
+    session: AsyncSession, client_pseudo_id: str, *, query_only: Literal[False] = False
 ) -> list[RecordingSession]: ...
 
 
 @statement_or_result(first_only=False)
-async def get_recording_sessions_by_client_id(
-    session: AsyncSession, client_id: str, *, query_only: bool = False
+async def get_recording_sessions_by_client_pseudo_id(
+    session: AsyncSession, client_pseudo_id: str, *, query_only: bool = False
 ) -> SelectOfScalar[RecordingSession] | list[RecordingSession]:
     query = (
         select(RecordingSession)
-        .where(RecordingSession.client_id == client_id)
+        .where(RecordingSession.client_pseudo_id == client_pseudo_id)
         .order_by(RecordingSession.created_at.desc())
     )
     return query

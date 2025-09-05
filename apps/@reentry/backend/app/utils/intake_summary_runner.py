@@ -28,7 +28,7 @@ def format_assessments_list(assessments: List[Assessment]) -> str:
 
     for i, assessment in enumerate(assessments):
         formatted_output += f"\nAssessment #{i+1} (ID: {assessment.id})\n"
-        formatted_output += f"Client ID: {assessment.client_id}\n"
+        formatted_output += f"Client ID: {assessment.client_pseudo_id}\n"
         formatted_output += f"Status: {assessment.status}\n"
 
         assessment_str = assessment.to_str()

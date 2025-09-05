@@ -194,8 +194,10 @@ Provide your evaluation in JSON format with the following structure:
 class HeadlessIntakeClient:
     """Simulates a client responding to intake questions using an LLM."""
 
-    def __init__(self, client_id: str, client_name: str, persona: Dict[str, Any]):
-        self.client_id = client_id
+    def __init__(
+        self, client_pseudo_id: str, client_name: str, persona: Dict[str, Any]
+    ):
+        self.client_pseudo_id = client_pseudo_id
         self.client_name = client_name
         self.persona = persona
         self.conversation_history: List[Dict[str, str]] = []
@@ -310,28 +312,30 @@ Instructions:
 class HeadlessDatabaseManager:
     """Mock database manager for headless evaluation."""
 
-    def __init__(self, client_id: str, sections):
-        self.client_id = client_id
+    def __init__(self, client_pseudo_id: str, sections):
+        self.client_pseudo_id = client_pseudo_id
         self.current_section_index = 0
         self.sections = [section["title"] for section in sections]
         self.messages: List[IntakeMessage] = []
 
     async def store_message(
-        self, client_id: str, content: str, from_role: str
+        self, client_pseudo_id: str, content: str, from_role: str
     ) -> IntakeMessage:
         """Store message in memory."""
         message = IntakeMessage(
             id=str(uuid.uuid4()),
             content=content,
             from_role=IntakeMessageRole(from_role),
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=str(uuid.uuid4()),
         )
         self.messages.append(message)
-        logger.debug(f"[{client_id}] Stored {from_role} message: {content[:50]}...")
+        logger.debug(
+            f"[{client_pseudo_id}] Stored {from_role} message: {content[:50]}..."
+        )
         return message
 
-    async def get_latest_message(self, client_id: str) -> IntakeMessage:
+    async def get_latest_message(self, client_pseudo_id: str) -> IntakeMessage:
         """Get the latest message."""
         if self.messages:
             return self.messages[-1]
@@ -339,27 +343,27 @@ class HeadlessDatabaseManager:
             id=str(uuid.uuid4()),
             content="No messages yet",
             from_role=IntakeMessageRole.CASEWORKER,
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=str(uuid.uuid4()),
         )
 
-    async def complete_section(self, client_id: str) -> str:
+    async def complete_section(self, client_pseudo_id: str) -> str:
         """Complete current section and move to next."""
         self.current_section_index += 1
 
         if self.current_section_index >= len(self.sections):
-            logger.info(f"[{client_id}] All sections completed")
+            logger.info(f"[{client_pseudo_id}] All sections completed")
             return "Completion"
 
         next_section = self.sections[self.current_section_index]
-        logger.info(f"[{client_id}] Moving to section: {next_section}")
+        logger.info(f"[{client_pseudo_id}] Moving to section: {next_section}")
         return next_section
 
-    async def update_intake_status(self, client_id: str, status: str) -> None:
+    async def update_intake_status(self, client_pseudo_id: str, status: str) -> None:
         """Update intake status."""
-        logger.info(f"[{client_id}] Status updated to: {status}")
+        logger.info(f"[{client_pseudo_id}] Status updated to: {status}")
 
-    async def all_messages_by_time(self, client_id: str) -> List[IntakeMessage]:
+    async def all_messages_by_time(self, client_pseudo_id: str) -> List[IntakeMessage]:
         """Get all messages."""
         return self.messages
 
@@ -375,14 +379,16 @@ async def run_client_conversation(
     client: HeadlessIntakeClient, sections
 ) -> Dict[str, Any]:
     """Run a complete conversation for a single client."""
-    logger.info(f"Starting conversation for {client.client_name} ({client.client_id})")
+    logger.info(
+        f"Starting conversation for {client.client_name} ({client.client_pseudo_id})"
+    )
 
     # Create components
-    mock_db_manager = HeadlessDatabaseManager(client.client_id, sections)
+    mock_db_manager = HeadlessDatabaseManager(client.client_pseudo_id, sections)
     mock_intake = HeadlessIntake(sections)
 
     async def headless_wait_for_user_response(
-        client_id: str, message: IntakeMessage
+        client_pseudo_id: str, message: IntakeMessage
     ) -> str:
         """Generate response using the client's LLM."""
         ai_content = message.content
@@ -394,7 +400,7 @@ async def run_client_conversation(
 
         return response
 
-    async def headless_send_message(client_id: str, event: ServerEvent) -> str:
+    async def headless_send_message(client_pseudo_id: str, event: ServerEvent) -> str:
         """Handle server events."""
         if event.type == "sectionChange":
             mock_intake.current_section = event.content.section
@@ -414,7 +420,7 @@ async def run_client_conversation(
 
     # Initialize conversation graph
     client_context = ClientContext(
-        client_id=client.client_id, client_name=client.client_name
+        client_pseudo_id=client.client_pseudo_id, client_name=client.client_name
     )
     conversation_graph = IntakeConversationGraph(
         session=client_context,
@@ -430,7 +436,7 @@ async def run_client_conversation(
 
         # Compile results
         result = {
-            "client_id": client.client_id,
+            "client_pseudo_id": client.client_pseudo_id,
             "client_name": client.client_name,
             "persona": client.persona,
             "completed_sections": client.completed_sections,
@@ -449,7 +455,7 @@ async def run_client_conversation(
     except Exception as e:
         logger.error(f"Error in conversation for {client.client_name}: {e}")
         return {
-            "client_id": client.client_id,
+            "client_pseudo_id": client.client_pseudo_id,
             "client_name": client.client_name,
             "persona": client.persona,
             "error": str(e),
@@ -489,9 +495,11 @@ async def headless_conversation_eval(type: str):
     # Create clients with personas
     clients = []
     for i, persona in enumerate(SAMPLE_PERSONAS):
-        client_id = f"eval-client-{i+1}-{uuid.uuid4().hex[:8]}"
+        client_pseudo_id = f"eval-client-{i+1}-{uuid.uuid4().hex[:8]}"
         client = HeadlessIntakeClient(
-            client_id=client_id, client_name=persona["name"], persona=persona
+            client_pseudo_id=client_pseudo_id,
+            client_name=persona["name"],
+            persona=persona,
         )
         clients.append(client)
 

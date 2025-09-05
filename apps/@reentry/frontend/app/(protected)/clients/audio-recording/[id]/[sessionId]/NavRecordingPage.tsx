@@ -46,7 +46,7 @@ const NavRecordingPage = ({
 
   const { mutateAsync: submitAddressMutation } = $api.useMutation(
     "post",
-    "/transcriptions/{client_id}/complete-intake-transcription",
+    "/transcriptions/{client_pseudo_id}/complete-intake-transcription",
   );
 
   const handleApproveTranscript = async () => {
@@ -54,7 +54,7 @@ const NavRecordingPage = ({
       const response = await submitAddressMutation({
         params: {
           path: {
-            client_id: clientData?.external_client_id,
+            client_pseudo_id: clientData?.pseudonymized_client_id,
           },
         },
         body: {

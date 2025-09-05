@@ -215,7 +215,9 @@ const SummaryBody: React.FC<SummaryBodyProps> = ({
           )}
           {clientRecord.state_code === "US_AZ" && (
             <Grid item xs={12} md={7}>
-              <AudioRecordings clientId={clientRecord.external_client_id} />
+              <AudioRecordings
+                clientPseudoId={clientRecord.pseudonymized_client_id}
+              />
             </Grid>
           )}
         </Grid>
@@ -236,7 +238,7 @@ const ClientSummaryCardLegacy: React.FC<ClientSummaryCardProps> = ({
 
   const { mutateAsync: startIntakeAsync } = $api.useMutation(
     "post",
-    "/intake/admin/{client_id}",
+    "/intake/admin/{client_pseudo_id}",
   );
 
   const startIntake = async () => {
@@ -244,7 +246,7 @@ const ClientSummaryCardLegacy: React.FC<ClientSummaryCardProps> = ({
     try {
       await startIntakeAsync({
         params: {
-          path: { client_id: clientRecord.external_client_id },
+          path: { client_pseudo_id: clientRecord.pseudonymized_client_id },
         },
         headers: {
           Authorization: `Bearer ${auth.getAccessToken()}`,

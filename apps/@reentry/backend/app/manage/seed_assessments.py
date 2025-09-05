@@ -27,29 +27,31 @@ async def seed_demo_assessments():
         print("All demo assessments created successfully")
 
 
-async def create_completed_assessment(session: AsyncSession, client_id: str):
+async def create_completed_assessment(session: AsyncSession, client_pseudo_id: str):
     """Create a completed assessment with example data."""
-    print(f"Creating completed assessment for client {client_id}")
+    print(f"Creating completed assessment for client {client_pseudo_id}")
 
     # Get the client's intake
-    intake = await session.exec(select(Intake).where(Intake.client_id == client_id))
+    intake = await session.exec(
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
+    )
     intake_obj = intake.first()
 
     if not intake_obj:
-        print(f"No intake found for client {client_id}")
+        print(f"No intake found for client {client_pseudo_id}")
         return
 
     # Check if assessment already exists
     existing = await session.exec(
-        select(Assessment).where(Assessment.client_id == client_id)
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
     )
     assessment = existing.first()
 
     if not assessment:
-        print(f"Creating new assessment for client {client_id}")
+        print(f"Creating new assessment for client {client_pseudo_id}")
         # Create assessment
         assessment = Assessment(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=intake_obj.id,
         )
         session.add(assessment)
@@ -131,34 +133,38 @@ async def create_completed_assessment(session: AsyncSession, client_id: str):
 
         session.add(assessment)
         await session.commit()
-        print(f"Successfully created completed assessment for client {client_id}")
+        print(
+            f"Successfully created completed assessment for client {client_pseudo_id}"
+        )
     else:
-        print(f"Assessment already exists for client {client_id}")
+        print(f"Assessment already exists for client {client_pseudo_id}")
 
 
-async def create_inprogress_assessment(session: AsyncSession, client_id: str):
+async def create_inprogress_assessment(session: AsyncSession, client_pseudo_id: str):
     """Create an in-progress assessment."""
-    print(f"Creating in-progress assessment for client {client_id}")
+    print(f"Creating in-progress assessment for client {client_pseudo_id}")
 
     # Get the client's intake
-    intake = await session.exec(select(Intake).where(Intake.client_id == client_id))
+    intake = await session.exec(
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
+    )
     intake_obj = intake.first()
 
     if not intake_obj:
-        print(f"No intake found for client {client_id}")
+        print(f"No intake found for client {client_pseudo_id}")
         return
 
     # Check if assessment already exists
     existing = await session.exec(
-        select(Assessment).where(Assessment.client_id == client_id)
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
     )
     assessment = existing.first()
 
     if not assessment:
-        print(f"Creating new in-progress assessment for client {client_id}")
+        print(f"Creating new in-progress assessment for client {client_pseudo_id}")
         # Create assessment
         assessment = Assessment(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=intake_obj.id,
         )
         session.add(assessment)
@@ -214,34 +220,38 @@ async def create_inprogress_assessment(session: AsyncSession, client_id: str):
 
         session.add(assessment)
         await session.commit()
-        print(f"Successfully created in-progress assessment for client {client_id}")
+        print(
+            f"Successfully created in-progress assessment for client {client_pseudo_id}"
+        )
     else:
-        print(f"Assessment already exists for client {client_id}")
+        print(f"Assessment already exists for client {client_pseudo_id}")
 
 
-async def create_pending_assessment(session: AsyncSession, client_id: str):
+async def create_pending_assessment(session: AsyncSession, client_pseudo_id: str):
     """Create a pending assessment (scheduled but not started)."""
-    print(f"Creating pending assessment for client {client_id}")
+    print(f"Creating pending assessment for client {client_pseudo_id}")
 
     # Get the client's intake
-    intake = await session.exec(select(Intake).where(Intake.client_id == client_id))
+    intake = await session.exec(
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
+    )
     intake_obj = intake.first()
 
     if not intake_obj:
-        print(f"No intake found for client {client_id}")
+        print(f"No intake found for client {client_pseudo_id}")
         return
 
     # Check if assessment already exists
     existing = await session.exec(
-        select(Assessment).where(Assessment.client_id == client_id)
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
     )
     assessment = existing.first()
 
     if not assessment:
-        print(f"Creating new pending assessment for client {client_id}")
+        print(f"Creating new pending assessment for client {client_pseudo_id}")
         # Create assessment
         assessment = Assessment(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=intake_obj.id,
         )
         session.add(assessment)
@@ -264,30 +274,32 @@ async def create_pending_assessment(session: AsyncSession, client_id: str):
 
         session.add(assessment)
         await session.commit()
-        print(f"Successfully created pending assessment for client {client_id}")
+        print(f"Successfully created pending assessment for client {client_pseudo_id}")
     else:
-        print(f"Assessment already exists for client {client_id}")
+        print(f"Assessment already exists for client {client_pseudo_id}")
 
 
-async def create_failed_assessment(session: AsyncSession, client_id: str):
+async def create_failed_assessment(session: AsyncSession, client_pseudo_id: str):
     """Create a failed assessment."""
-    print(f"Creating failed assessment for client {client_id}")
+    print(f"Creating failed assessment for client {client_pseudo_id}")
 
     # Get the client's intake if one exists
-    intake = await session.exec(select(Intake).where(Intake.client_id == client_id))
+    intake = await session.exec(
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
+    )
     intake_obj = intake.first()
 
     # Check if assessment already exists
     existing = await session.exec(
-        select(Assessment).where(Assessment.client_id == client_id)
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
     )
     assessment = existing.first()
 
     if not assessment:
-        print(f"Creating new failed assessment for client {client_id}")
+        print(f"Creating new failed assessment for client {client_pseudo_id}")
         # Create assessment
         assessment = Assessment(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=intake_obj.id if intake_obj else None,
         )
         session.add(assessment)
@@ -313,6 +325,6 @@ async def create_failed_assessment(session: AsyncSession, client_id: str):
 
         session.add(assessment)
         await session.commit()
-        print(f"Successfully created failed assessment for client {client_id}")
+        print(f"Successfully created failed assessment for client {client_pseudo_id}")
     else:
-        print(f"Assessment already exists for client {client_id}")
+        print(f"Assessment already exists for client {client_pseudo_id}")

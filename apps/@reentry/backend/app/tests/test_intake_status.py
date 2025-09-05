@@ -26,7 +26,7 @@ async def test_update_status_basic(
     """Test basic status update functionality."""
     # Create a test intake with CREATED status using a client ID that exists in mock data
     conversation_intake = Intake(
-        client_id="client-001",
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
         status=IntakeStatus.CREATED.value,
         intake_type=IntakeType.CONVERSATION.value,
     )
@@ -48,7 +48,7 @@ async def test_update_status_basic(
 
     # Transncription intake should not create sections
     transcription_intake = Intake(
-        client_id="client-002",
+        client_pseudo_id="client-002",
         status=IntakeStatus.CREATED.value,
         intake_type=IntakeType.TRANSCRIPTION.value,
     )
@@ -73,7 +73,10 @@ async def test_update_status_basic(
 async def test_update_status_idempotent(async_session, mock_clientdata_service):
     """Test that updating to the same status does nothing."""
     # Create a test intake with IN_PROGRESS status
-    intake = Intake(client_id="client-001", status=IntakeStatus.IN_PROGRESS.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.IN_PROGRESS.value,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -90,7 +93,10 @@ async def test_update_status_idempotent(async_session, mock_clientdata_service):
 async def test_prevent_going_back_to_created(async_session, mock_clientdata_service):
     """Test that an intake cannot go back to CREATED state once it has moved beyond it."""
     # Create a test intake with IN_PROGRESS status
-    intake = Intake(client_id="client-001", status=IntakeStatus.IN_PROGRESS.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.IN_PROGRESS.value,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -111,11 +117,14 @@ async def test_prevent_going_back_to_created(async_session, mock_clientdata_serv
 
 @pytest.mark.asyncio
 async def test_completed_status_triggers_assessment(
-    async_session, mock_clientdata_service
+    mock_clientdata_service, async_session
 ):
     """Test that updating to COMPLETED status triggers assessment creation."""
     # Create a test intake with IN_PROGRESS status
-    intake = Intake(client_id="client-001", status=IntakeStatus.IN_PROGRESS.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.IN_PROGRESS.value,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -147,9 +156,9 @@ async def test_in_progress_populates_sections(
     """Test that updating to IN_PROGRESS populates sections if needed."""
     # Create a test intake with CREATED status
     intake = Intake(
-        client_id="client-001",
-        status=IntakeStatus.CREATED.value,
-        intake_type=IntakeType.CONVERSATION.value,
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.CREATED,
+        intake_type=IntakeType.CONVERSATION,
     )
     async_session.add(intake)
     await async_session.commit()
@@ -183,7 +192,10 @@ async def test_dont_duplicate_sections(
     """Test that updating to IN_PROGRESS doesn't create duplicate sections."""
 
     # Create a test intake with CREATED status and update to IN_PROGRESS
-    intake = Intake(client_id="client-001", status=IntakeStatus.CREATED.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.CREATED.value,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -211,7 +223,10 @@ async def test_valid_status_transitions(async_session, mock_clientdata_service):
     await async_session.commit()
 
     # Create a test intake
-    intake = Intake(client_id="client-001", status=IntakeStatus.CREATED)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.CREATED,
+    )
     async_session.add(intake)
     await async_session.commit()
 
@@ -239,9 +254,9 @@ async def test_first_section_marked_in_progress(
 ):
     """Test that the first section is marked as in-progress when status becomes IN_PROGRESS."""
     intake = Intake(
-        client_id="client-001",
-        status=IntakeStatus.CREATED.value,
-        intake_type=IntakeType.CONVERSATION.value,
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.CREATED,
+        intake_type=IntakeType.CONVERSATION,
     )
     async_session.add(intake)
     await async_session.commit()
@@ -284,7 +299,7 @@ async def test_completion_section_for_terminal_statuses(
 ):
     """Test that terminal statuses set the current_section to COMPLETION_SECTION."""
     intake = Intake(
-        client_id="client-001",
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
         status=IntakeStatus.IN_PROGRESS.value,
         intake_type=IntakeType.CONVERSATION.value,
     )
@@ -315,9 +330,9 @@ async def test_completion_section_for_terminal_statuses(
 async def test_update_status_with_no_sections(async_session, mock_clientdata_service):
     """Test that updating to IN_PROGRESS with no sections raises an error."""
     intake = Intake(
-        client_id="client-001",
-        status=IntakeStatus.CREATED.value,
-        intake_type=IntakeType.CONVERSATION.value,
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.CREATED,
+        intake_type=IntakeType.CONVERSATION,
     )
     async_session.add(intake)
     await async_session.commit()
@@ -335,9 +350,9 @@ async def test_update_status_with_no_sections(async_session, mock_clientdata_ser
 async def test_update_status_with_no_messages(async_session, mock_clientdata_service):
     """Test that updating to COMPLETED with no messages raises an error with Intakes based-trancriptions"""
     intake = Intake(
-        client_id="client-001",
-        status=IntakeStatus.CREATED.value,
-        intake_type=IntakeType.TRANSCRIPTION.value,
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.CREATED,
+        intake_type=IntakeType.TRANSCRIPTION,
     )
     async_session.add(intake)
     await async_session.commit()
@@ -356,7 +371,10 @@ async def test_update_status_with_no_messages(async_session, mock_clientdata_ser
 @pytest.mark.asyncio
 async def test_completed_status_idempotent(async_session, mock_clientdata_service):
     """Test that updating to COMPLETED status is idempotent."""
-    intake = Intake(client_id="client-001", status=IntakeStatus.COMPLETED.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.COMPLETED.value,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -379,9 +397,9 @@ async def test_db_manager_update_status(
 
     # Create a test intake
     intake = Intake(
-        client_id="client-001",
-        status=IntakeStatus.CREATED.value,
-        intake_type=IntakeType.CONVERSATION.value,
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.CREATED,
+        intake_type=IntakeType.CONVERSATION,
     )
     async_session.add(intake)
     await async_session.commit()
@@ -392,7 +410,7 @@ async def test_db_manager_update_status(
 
     # Update status through the manager
     updated_intake = await db_manager.update_intake_status(
-        "client-001", IntakeStatus.IN_PROGRESS
+        mock_clientdata_service["client_pseudo_id"], IntakeStatus.IN_PROGRESS
     )
 
     # Verify the update was successful
@@ -428,9 +446,9 @@ async def test_all_transition_combinations(
     """Test various status transitions between all possible statuses."""
     # Setup - create intake with CREATED status
     intake = Intake(
-        client_id="client-001",
-        status=IntakeStatus.CREATED.value,
-        intake_type=IntakeType.CONVERSATION.value,
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.CREATED,
+        intake_type=IntakeType.CONVERSATION,
     )
     async_session.add(intake)
     await async_session.commit()
@@ -456,7 +474,7 @@ async def test_all_transition_combinations(
 
         for from_status, to_status, should_succeed in transitions:
             # Reset intake to the from_status
-            intake.status = from_status.value
+            intake.status = from_status
             async_session.add(intake)
             await async_session.commit()
             await async_session.refresh(intake)
@@ -516,7 +534,10 @@ async def test_next_section_basic(async_session, mock_clientdata_service):
         await async_session.refresh(section)
 
     # Create intake with multiple sections
-    intake = Intake(client_id="client-001", status=IntakeStatus.IN_PROGRESS.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.IN_PROGRESS.value,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -584,7 +605,10 @@ async def test_next_section_moves_to_completion_section(
     await async_session.refresh(section)
 
     # Create intake with a single section
-    intake = Intake(client_id="client-001", status=IntakeStatus.IN_PROGRESS.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.IN_PROGRESS.value,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -617,7 +641,10 @@ async def test_next_section_moves_to_completion_section(
 @pytest.mark.asyncio
 async def test_next_section_no_current_section(async_session, mock_clientdata_service):
     """Test that next_section raises an error when there is no current section."""
-    intake = Intake(client_id="client-001", status=IntakeStatus.IN_PROGRESS.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.IN_PROGRESS.value,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -635,7 +662,10 @@ async def test_next_section_invalid_current_section(
     async_session, seed_default_sections, mock_clientdata_service
 ):
     """Test that next_section raises an error when the current section doesn't exist."""
-    intake = Intake(client_id="client-001", status=IntakeStatus.IN_PROGRESS.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.IN_PROGRESS.value,
+    )
     intake.current_section = "Non-existent Section"
     async_session.add(intake)
     await async_session.commit()
@@ -666,7 +696,10 @@ async def test_next_section_skip_incomplete(async_session, mock_clientdata_servi
         await async_session.refresh(section)
 
     # Create intake with multiple sections in non-sequential order
-    intake = Intake(client_id="client-001", status=IntakeStatus.IN_PROGRESS.value)
+    intake = Intake(
+        client_pseudo_id=mock_clientdata_service["client_pseudo_id"],
+        status=IntakeStatus.IN_PROGRESS.value,
+    )
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)

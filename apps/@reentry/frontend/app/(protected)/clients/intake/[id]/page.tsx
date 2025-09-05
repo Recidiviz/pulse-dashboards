@@ -31,10 +31,10 @@ const IntakeManagementPage = () => {
 
   const { data: clientData, isLoading: clientLoading } = $api.useQuery(
     "get",
-    "/clients/{client_id}",
+    "/clients/{client_pseudo_id}",
     {
       params: {
-        path: { client_id: id },
+        path: { client_pseudo_id: id },
       },
       headers: {
         Authorization: `Bearer ${useAuth().getAccessToken()}`,
@@ -45,10 +45,10 @@ const IntakeManagementPage = () => {
 
   const { data: intakeData, refetch: refetchIntake } = $api.useQuery(
     "get",
-    "/intake/admin/{client_id}",
+    "/intake/admin/{client_pseudo_id}",
     {
       params: {
-        path: { client_id: id },
+        path: { client_pseudo_id: id },
       },
       headers: {
         Authorization: `Bearer ${useAuth().getAccessToken()}`,

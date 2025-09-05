@@ -16,7 +16,7 @@ from .execution_router import ExecutionResponse
 
 
 class RecordingSessionResponse(ORMResponse):
-    client_id: str
+    client_pseudo_id: str
     intake_id: UUID
     audio_chunks_url: Optional[str] = None
     audio_file_url: Optional[str] = None
@@ -31,7 +31,7 @@ class RecordingSessionResponse(ORMResponse):
 
 
 class CreateRecordingSessionRequest(BaseModel):
-    client_id: str
+    client_pseudo_id: str
 
 
 class UpdateRecordingSessionStatusRequest(BaseModel):

@@ -42,8 +42,8 @@ const AudioRecordingPage: React.FC = () => {
     data: clientData,
     isLoading: clientLoading,
     error: clientError,
-  } = $api.useQuery("get", "/clients/{client_id}", {
-    params: { path: { client_id: id } },
+  } = $api.useQuery("get", "/clients/{client_pseudo_id}", {
+    params: { path: { client_pseudo_id: id } },
     headers: {
       Authorization: `Bearer ${getAccessToken()}`,
       "Content-Type": "application/json",

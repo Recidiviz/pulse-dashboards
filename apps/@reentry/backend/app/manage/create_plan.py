@@ -3,7 +3,7 @@ from pathlib import Path
 import structlog
 
 from app.models.models import PlanType
-from app.services.client_data.queries import get_client_data_unsafe
+from app.services.client_data.queries import Queries
 
 from .base import cli
 
@@ -11,7 +11,7 @@ logger = structlog.get_logger(__name__)
 
 
 async def _create_plan(
-    client_id: str,
+    client_pseudo_id: str,
     force: bool = False,
     regen: bool = False,
     prompt: str | None = None,
@@ -28,7 +28,7 @@ async def _create_plan(
         Plan,
         create_plan,
         delete_plan_by_id,
-        get_plan_by_client_id,
+        get_plan_by_client_pseudo_id,
     )
     from app.crud.plan_generation import (
         PlanGeneration,
@@ -36,17 +36,19 @@ async def _create_plan(
     )
 
     async with get_session_async_manager() as session:
-        plan = await get_plan_by_client_id(session, client_id)
+        plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
 
         if regen:
             # Regeneration checks
             if not plan:
-                logger.error("Plan not found, cannot regen", client_id=client_id)
+                logger.error(
+                    "Plan not found, cannot regen", client_pseudo_id=client_pseudo_id
+                )
                 return
             if not (prompt or resource_remove_id or resource_add_id):
                 logger.error(
                     "prompt, resource_remove_id or resource_add_id required for regen",
-                    client_id=client_id,
+                    client_pseudo_id=client_pseudo_id,
                 )
                 return
 
@@ -57,7 +59,9 @@ async def _create_plan(
                 return
             if plan:
                 if not force:
-                    logger.info("Plan already exists", client_id=client_id)
+                    logger.info(
+                        "Plan already exists", client_pseudo_id=client_pseudo_id
+                    )
                     return
                 await delete_plan_by_id(session, plan.id)
 
@@ -74,19 +78,19 @@ async def _create_plan(
         else:
             # Creation process
             type = PlanType.EVALUATION if mark_eval else PlanType.LIVE
-            plan = Plan(client_id=client_id, type=type)
+            plan = Plan(client_pseudo_id=client_pseudo_id, type=type)
             plan = await create_plan(session, plan)
             await plan.schedule_initial_creation(session)
 
         # save the plan to a file
-        plan = await get_plan_by_client_id(session, client_id)
+        plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
 
         # refresh the plan
-        plan = await get_plan_by_client_id(session, client_id)
+        plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
         latest_generation = await plan.get_latest_generation(session)
         print(latest_generation)
         if not latest_generation:
-            logger.error("No generation found", client_id=client_id)
+            logger.error("No generation found", client_pseudo_id=client_pseudo_id)
             return
 
         return plan, latest_generation
@@ -94,7 +98,7 @@ async def _create_plan(
 
 @cli.command()
 async def create_plan(
-    client_id: str,
+    client_pseudo_id: str,
     force: bool = False,
     regen: bool = False,
     prompt: str | None = None,
@@ -104,13 +108,13 @@ async def create_plan(
     )
     experiments_dir.mkdir(parents=True, exist_ok=True)
 
-    res = await _create_plan(client_id, force, regen, prompt)
+    res = await _create_plan(client_pseudo_id, force, regen, prompt)
     if not res:
         return
     plan, latest_generation = res
-    data = get_client_data_unsafe(plan.client_id)
+    data = Queries.get_client_by_pseudonymized_id_unsafe(plan.client_pseudo_id)
     if not data:
-        logger.error("Client not found", client_id=plan.client_id)
+        logger.error("Client not found", client_pseudo_id=plan.client_pseudo_id)
         return
 
     counter = 1

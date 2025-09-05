@@ -46,7 +46,7 @@ export interface IntakeSocketContextType {
   waitingForAIInput: boolean;
   currentSection: string | null;
   allSections: components["schemas"]["ClientIntakeSectionResponse"][];
-  clientId?: string | null | undefined;
+  clientPseudoId?: string | null | undefined;
   intakeStatus: components["schemas"]["IntakeStatus"] | undefined;
   isLoading: boolean;
   error?: IntakeErrorType;
@@ -201,7 +201,7 @@ const intakeReducer = (
         currentSection: action.content.current_section || null,
         intakeStatus: action.content.status,
         client_name: action.content.client_name || null,
-        clientId: action.content.client_id || null,
+        clientPseudoId: action.content.client_pseudo_id || null,
         has_accepted_terms: action.content.has_accepted_terms || false,
         has_address: action.content.has_address || false,
       };

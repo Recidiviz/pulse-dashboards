@@ -60,8 +60,8 @@ async def test_list_clients_with_intake(
 ):
     """Test the /clients endpoint returns clients with intakes."""
     # Create test data - use client ID from our mock data
-    client_id = "client-001"
-    intake = Intake(client_id=client_id, status=IntakeStatus.IN_PROGRESS)
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
+    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS)
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -71,19 +71,21 @@ async def test_list_clients_with_intake(
     # Call the endpoint - auth headers already set in client fixture
     response = await client.get("/clients/")
 
-    # Verify response
     assert_response(response, 200)
     data = response.json()
 
     # Verify content
 
-    assert (
-        data["total"] == 1
-    )  # should match the number of clients with same state_code as the caseworker
+    assert data["total"] == 2
     assert data["page"] == 1
     # Find the client with our intake
     client_item = next(
-        (item for item in data["items"] if item["client_id"] == client_id), None
+        (
+            item
+            for item in data["items"]
+            if item["client_pseudo_id"] == client_pseudo_id
+        ),
+        None,
     )
     assert client_item is not None
     assert client_item["intake"]["status"] == IntakeStatus.IN_PROGRESS.value
@@ -104,10 +106,12 @@ async def test_list_clients_with_plan(
 ):
     """Test the /clients endpoint returns clients with plans."""
     # Create test data - client with a plan
-    client_id = "client-001"  # Use the ID from mock_clientdata_service
+    client_pseudo_id = mock_clientdata_service[
+        "client_pseudo_id"
+    ]  # Use the ID from mock_clientdata_service
 
     # First create completed intake (required by the view)
-    intake = Intake(client_id=client_id, status=IntakeStatus.COMPLETED)
+    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
     async_session.add(intake)
     await async_session.commit()
 
@@ -116,7 +120,9 @@ async def test_list_clients_with_plan(
     async_session.add(assessment_execution)
     await async_session.commit()
 
-    assessment = Assessment(client_id=client_id, execution_id=assessment_execution.id)
+    assessment = Assessment(
+        client_pseudo_id=client_pseudo_id, execution_id=assessment_execution.id
+    )
     async_session.add(assessment)
     await async_session.commit()
 
@@ -126,7 +132,7 @@ async def test_list_clients_with_plan(
     await async_session.commit()
     await async_session.refresh(execution)
 
-    plan = Plan(client_id=client_id, create_execution_id=execution.id)
+    plan = Plan(client_pseudo_id=client_pseudo_id, create_execution_id=execution.id)
     async_session.add(plan)
     await async_session.commit()
     await async_session.refresh(plan)
@@ -144,7 +150,12 @@ async def test_list_clients_with_plan(
 
     # Find the client with our intake
     client_item = next(
-        (item for item in data["items"] if item["client_id"] == client_id), None
+        (
+            item
+            for item in data["items"]
+            if item["client_pseudo_id"] == client_pseudo_id
+        ),
+        None,
     )
     assert client_item is not None
 
@@ -163,10 +174,12 @@ async def test_list_clients_with_intake_and_plan(
 ):
     """Test the /clients endpoint returns clients with both intakes and plans."""
     # Create test data
-    client_id = "client-001"  # Use the ID from mock_clientdata_service
+    client_pseudo_id = mock_clientdata_service[
+        "client_pseudo_id"
+    ]  # Use the ID from mock_clientdata_service
 
     # Create intake
-    intake = Intake(client_id=client_id, status=IntakeStatus.COMPLETED)
+    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -177,7 +190,7 @@ async def test_list_clients_with_intake_and_plan(
     await async_session.commit()
     await async_session.refresh(execution)
 
-    plan = Plan(client_id=client_id, create_execution_id=execution.id)
+    plan = Plan(client_pseudo_id=client_pseudo_id, create_execution_id=execution.id)
     async_session.add(plan)
     await async_session.commit()
     await async_session.refresh(plan)
@@ -195,7 +208,12 @@ async def test_list_clients_with_intake_and_plan(
 
     # Find the client with our intake
     client_item = next(
-        (item for item in data["items"] if item["client_id"] == client_id), None
+        (
+            item
+            for item in data["items"]
+            if item["client_pseudo_id"] == client_pseudo_id
+        ),
+        None,
     )
     assert client_item is not None
 
@@ -218,10 +236,12 @@ async def test_list_clients_with_assessments(
 ):
     """Test the /clients endpoint returns clients with assessments."""
     # Create test data - client with assessments
-    client_id = "client-001"  # Use the ID from mock_clientdata_service
+    client_pseudo_id = mock_clientdata_service[
+        "client_pseudo_id"
+    ]  # Use the ID from mock_clientdata_service
 
     # First create completed intake (required by the view)
-    intake = Intake(client_id=client_id, status=IntakeStatus.COMPLETED)
+    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
     async_session.add(intake)
     await async_session.commit()
 
@@ -231,7 +251,9 @@ async def test_list_clients_with_assessments(
     await async_session.commit()
     await async_session.refresh(execution)
 
-    assessment = Assessment(client_id=client_id, execution_id=execution.id)
+    assessment = Assessment(
+        client_pseudo_id=client_pseudo_id, execution_id=execution.id
+    )
     async_session.add(assessment)
     await async_session.commit()
     await async_session.refresh(assessment)
@@ -249,7 +271,12 @@ async def test_list_clients_with_assessments(
 
     # Find the client with our assessment
     client_item = next(
-        (item for item in data["items"] if item["client_id"] == client_id), None
+        (
+            item
+            for item in data["items"]
+            if item["client_pseudo_id"] == client_pseudo_id
+        ),
+        None,
     )
     assert client_item is not None
     assert client_item["plans"] is None
@@ -268,12 +295,16 @@ async def test_list_clients_pagination(
 ):
     """Test the /clients endpoint supports pagination."""
     # For this test, we'll use a valid client ID from our mock
-    client_id = "client-001"  # Use the ID from mock_clientdata_service
+    client_pseudo_id = mock_clientdata_service[
+        "client_pseudo_id"
+    ]  # Use the ID from mock_clientdata_service
 
     # Add 5 intakes with the same client ID (normally this wouldn't happen in production)
     # but for testing pagination it's fine
     for i in range(5):
-        intake = Intake(client_id=client_id, status=IntakeStatus.IN_PROGRESS)
+        intake = Intake(
+            client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS
+        )
         async_session.add(intake)
 
     await async_session.commit()
@@ -289,7 +320,12 @@ async def test_list_clients_pagination(
     assert data["size"] == 2
     # Verify that our created client is included
     client_item = next(
-        (item for item in data["items"] if item["client_id"] == client_id), None
+        (
+            item
+            for item in data["items"]
+            if item["client_pseudo_id"] == client_pseudo_id
+        ),
+        None,
     )
     assert client_item is not None
     # With mock_clientdata_service, we have different client fields
@@ -309,10 +345,12 @@ async def test_retry_processing_immediate_status_update(
     from app.models.execution import Execution, ExecutionStatus
 
     # Create test data - client with completed intake but no assessments
-    client_id = "client-001"  # Use the ID from mock_clientdata_service
+    client_pseudo_id = mock_clientdata_service[
+        "client_pseudo_id"
+    ]  # Use the ID from mock_clientdata_service
 
     # Create completed intake
-    intake = Intake(client_id=client_id, status=IntakeStatus.COMPLETED)
+    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
     async_session.add(intake)
     await async_session.commit()
     await async_session.refresh(intake)
@@ -322,7 +360,12 @@ async def test_retry_processing_immediate_status_update(
     assert_response(response, 200)
     data = response.json()
     client_item = next(
-        (item for item in data["items"] if item["client_id"] == client_id), None
+        (
+            item
+            for item in data["items"]
+            if item["client_pseudo_id"] == client_pseudo_id
+        ),
+        None,
     )
     assert client_item is not None
     initial_status = client_item["processing_status"]
@@ -345,7 +388,9 @@ async def test_retry_processing_immediate_status_update(
 
         # Create assessment linked to the execution
         assessment = Assessment(
-            client_id=client_id, intake_id=intake.id, execution_id=execution.id
+            client_pseudo_id=client_pseudo_id,
+            intake_id=intake.id,
+            execution_id=execution.id,
         )
         async_session.add(assessment)
         await async_session.commit()
@@ -357,7 +402,7 @@ async def test_retry_processing_immediate_status_update(
         Intake, "schedule_assessment", side_effect=mock_schedule_assessment
     ) as mock_schedule:
         # Call retry_processing endpoint
-        response = await client.post(f"/clients/{client_id}/retry-processing")
+        response = await client.post(f"/clients/{client_pseudo_id}/retry-processing")
 
         # Verify the retry_processing call succeeded
         assert_response(response, 200)
@@ -378,7 +423,12 @@ async def test_retry_processing_immediate_status_update(
 
     # Find our test client
     client_item = next(
-        (item for item in data["items"] if item["client_id"] == client_id), None
+        (
+            item
+            for item in data["items"]
+            if item["client_pseudo_id"] == client_pseudo_id
+        ),
+        None,
     )
     assert client_item is not None
 
@@ -402,10 +452,10 @@ async def test_list_clients_filter_by_status(
     # Add multiple clients with various statuses
     target_status = IntakeStatus.IN_PROGRESS
     other_status = IntakeStatus.COMPLETED
-    client_ids = ["client-a", "client-b", "client-c"]
-    for i, cid in enumerate(client_ids):
+    client_pseudo_ids = ["client-a", "client-b", "client-c"]
+    for i, cid in enumerate(client_pseudo_ids):
         status = target_status if i % 2 == 0 else other_status
-        intake = Intake(client_id=cid, status=status)
+        intake = Intake(client_pseudo_id=cid, status=status)
         async_session.add(intake)
     await async_session.commit()
 
@@ -428,10 +478,12 @@ async def test_list_clients_sort_by_status(
     assert_response,
 ):
     """Test the /clients endpoint supports pagination."""
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     for _ in range(5):
-        intake = Intake(client_id=client_id, status=IntakeStatus.IN_PROGRESS)
+        intake = Intake(
+            client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS
+        )
         async_session.add(intake)
     await async_session.commit()
 
@@ -444,7 +496,8 @@ async def test_list_clients_sort_by_status(
     assert data["size"] == 2
     assert len(data["items"]) <= 2
     assert any(
-        item["client"]["external_client_id"] == client_id for item in data["items"]
+        item["client"]["pseudonymized_client_id"] == client_pseudo_id
+        for item in data["items"]
     )
 
 
@@ -456,11 +509,13 @@ async def test_list_clients_pagination_edge_cases(
     assert_response,
 ):
     """Test pagination edge cases including invalid page numbers and boundary conditions."""
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Create some test data
     for i in range(3):
-        intake = Intake(client_id=client_id, status=IntakeStatus.IN_PROGRESS)
+        intake = Intake(
+            client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS
+        )
         async_session.add(intake)
     await async_session.commit()
 
@@ -502,11 +557,13 @@ async def test_list_clients_pagination_metadata(
     assert_response,
 ):
     """Test that pagination metadata is correctly calculated."""
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # Create exactly 5 test records
     for i in range(5):
-        intake = Intake(client_id=client_id, status=IntakeStatus.IN_PROGRESS)
+        intake = Intake(
+            client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS
+        )
         async_session.add(intake)
     await async_session.commit()
 
@@ -549,7 +606,7 @@ async def test_list_clients_pagination_with_filters(
 ):
     """Test that pagination works correctly with status filters."""
     # Create test data with different statuses
-    client_ids = ["client-a", "client-b", "client-c", "client-d"]
+    client_pseudo_ids = ["client-a", "client-b", "client-c", "client-d"]
     statuses = [
         IntakeStatus.IN_PROGRESS,
         IntakeStatus.COMPLETED,
@@ -557,8 +614,8 @@ async def test_list_clients_pagination_with_filters(
         IntakeStatus.COMPLETED,
     ]
 
-    for client_id, status in zip(client_ids, statuses):
-        intake = Intake(client_id=client_id, status=status)
+    for client_pseudo_id, status in zip(client_pseudo_ids, statuses):
+        intake = Intake(client_pseudo_id=client_pseudo_id, status=status)
         async_session.add(intake)
     await async_session.commit()
 

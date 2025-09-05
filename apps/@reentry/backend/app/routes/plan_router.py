@@ -17,7 +17,7 @@ from app.crud.intake import update_client_address
 from app.crud.plan import (
     create_plan,
     delete_plan_by_id,
-    get_plan_by_client_id,
+    get_plan_by_client_pseudo_id,
     get_plan_by_id,
     get_plans,
     update_plan_field,
@@ -48,7 +48,7 @@ from app.routes.base import (
 )
 from app.routes.shared_models import AddressSubmission, ClientRecordResponse
 from app.routes.shared_models import PlanResponse as BasePlanResponse
-from app.services.client_data.queries import get_client_data, get_client_data_unsafe
+from app.services.client_data.queries import Queries
 from app.services.resources import (
     GetPlanResourcesRequest,
     GetResourcesRequest,
@@ -84,12 +84,8 @@ class ClientInfoResponse(BaseModel):
 
 
 class PlanRequestCreate(BaseModel):
-    client_id: str
+    client_pseudo_id: str
     no_initial_generation: Optional[bool] = False
-
-
-class SetNotificationRequest(BaseModel):
-    notify: bool
 
 
 # Using shared model as base class
@@ -102,7 +98,9 @@ class PlanResponse(BasePlanResponse, ORMResponse):
         Gets the client record data for this plan.
         Renamed from 'oms' to better reflect its content and source.
         """
-        record = get_client_data_unsafe(external_client_id=self.client_id)
+        record = Queries.get_client_by_pseudonymized_id_unsafe(
+            pseudonymized_id=self.client_pseudo_id
+        )
         if record:
             return ClientRecordResponse.model_validate(record.model_dump())
 
@@ -130,7 +128,7 @@ class PlanGenerationResponse(ORMResponse):
     finished_at: Optional[datetime] = None
     execution_id: uuid.UUID | None = None
     execution: ExecutionResponse | None = None
-    regeneration_notify: bool
+    regeneration_notify: bool | None = None
 
 
 class PlanGenerationResponseCreate(PlanGenerationResponse):
@@ -182,20 +180,21 @@ async def router_create_plan(
     # increment the total call counter
     llm_plan_creation_total_counter.inc()
 
-    record = get_client_data(
-        external_client_id=request.client_id, pseudonymized_staff_id=pseudonymized_id
+    record = Queries.get_client_data_by_pseudonymized_id(
+        pseudonymized_client_id=request.client_pseudo_id,
+        pseudonymized_staff_id=pseudonymized_id,
     )
     if not record:
         raise HTTPException(status_code=404, detail="Client not found")
 
     # if a plan already exists for the client, return it
-    plan_obj = await get_plan_by_client_id(session, request.client_id)
+    plan_obj = await get_plan_by_client_pseudo_id(session, request.client_pseudo_id)
     if plan_obj:
         return plan_obj.model_dump(by_alias=True)
 
-    # Create plan with only client_id which will be used for client data retrieval
+    # Create plan with only client_pseudo_id which will be used for client data retrieval
     plan_obj = Plan(
-        client_id=request.client_id,
+        client_pseudo_id=request.client_pseudo_id,
     )
     plan = await create_plan(session, plan_obj)
     if not request.no_initial_generation:
@@ -204,7 +203,7 @@ async def router_create_plan(
 
 
 @router.get(
-    "/plans/by_client/{client_id}",
+    "/plans/by_client/{client_pseudo_id}",
     response_model=PlanResponseGet,
     summary="Get Plan by Client ID",
     description=(
@@ -212,11 +211,11 @@ async def router_create_plan(
         "completed generation result if available."
     ),
 )
-async def router_get_plan_by_client_id(
-    client_id: str,
+async def router_get_plan_by_client_pseudo_id(
+    client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
 ):
-    plan = await get_plan_by_client_id(session, client_id)
+    plan = await get_plan_by_client_pseudo_id(session, client_pseudo_id)
     if plan is None:
         raise HTTPException(status_code=404, detail="Plan not found")
 
@@ -266,42 +265,6 @@ async def router_get_plan(
             **plan.model_dump(),
         }
     )
-
-
-@router.post(
-    "/plans/{id}/set-notify",
-    summary="Set Generation Notification",
-    description=(
-        "Set the regeneration notification flag for the latest completed generation "
-        "of the specified plan."
-    ),
-)
-async def router_set_generation_notify(
-    id: uuid.UUID,
-    request: SetNotificationRequest,
-    session: AsyncSession = Depends(get_session),
-):
-    plan = await get_plan_by_id(session, id)
-    if plan is None:
-        raise HTTPException(status_code=404)
-
-    gens = await get_gen_by_plan_id(session, id)
-    gens = [gen for gen in gens if gen.status == PlanGenerationStatus.COMPLETED]
-    gens = sorted(gens, key=lambda x: x.finished_at, reverse=True)
-    latest_generation = gens[0] if gens else None
-
-    if not latest_generation:
-        raise HTTPException(status_code=404)
-
-    try:
-        latest_generation.set_regeneration_notify(request.notify)
-    except Exception:
-        raise HTTPException(status_code=400)
-
-    session.add(latest_generation)
-    await session.commit()
-
-    return Response(status_code=200)
 
 
 @router.delete(
@@ -372,10 +335,11 @@ async def router_generate_plan(
         resource_to_add_content=request.resource_to_add_content,
         resource_to_remove_id=request.resource_to_remove_id,
     )
+    gen = await create_plan_generation(session, plan_gen)
 
     if request.prompt:
         plan_gen.regeneration_notify = True
-    gen = await create_plan_generation(session, plan_gen)
+
     await gen.schedule_execution(session)
     return gen
 
@@ -719,7 +683,7 @@ async def update_client_info_address(
     # update address both in the plan extracted information AND in the intake.
     # the intake is the source of thruth, but there is no need to call client data extraction again
     await update_client_address(
-        session, client_id=plan.client_id, address_data=address_data
+        session, client_pseudo_id=plan.client_pseudo_id, address_data=address_data
     )
 
     # XXX Why deepcopy is necessary:
@@ -748,3 +712,40 @@ async def update_client_info_address(
     gen = await create_plan_generation(session, plan_gen)
     await gen.schedule_execution(session)
     return gen
+
+
+class SetNotificationRequest(BaseModel):
+    notify: bool
+
+
+@router.post(
+    "/plans/{id}/set-notify",
+    summary="Set Generation Notification",
+    description=(
+        "Set the regeneration notification flag for the latest completed generation "
+        "of the specified plan."
+    ),
+)
+async def router_set_generation_notify(
+    id: uuid.UUID,
+    request: SetNotificationRequest,
+    session: AsyncSession = Depends(get_session),
+):
+    plan = await get_plan_by_id(session, id)
+    if plan is None:
+        raise HTTPException(status_code=404)
+
+    latest_generation = await plan.get_latest_generation(session)
+
+    if not latest_generation:
+        raise HTTPException(status_code=404)
+
+    try:
+        latest_generation.set_regeneration_notify(request.notify)
+    except Exception:
+        raise HTTPException(status_code=400)
+
+    session.add(latest_generation)
+    await session.commit()
+
+    return Response(status_code=200)

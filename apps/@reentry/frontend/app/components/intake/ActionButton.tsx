@@ -21,13 +21,13 @@ import type React from "react";
 import { useEffect, useRef } from "react";
 
 interface DropdownProps {
-	clientId: string;
+	clientPseudoId: string;
 	isOpen: boolean;
 	onToggle: () => void;
 }
 
 const ActionButton: React.FC<DropdownProps> = ({
-	clientId,
+	clientPseudoId,
 	isOpen,
 	onToggle,
 }) => {
@@ -77,7 +77,7 @@ const ActionButton: React.FC<DropdownProps> = ({
 						<button
 							type={"button"}
 							onClick={() => {
-								router.push(`/intake-summary/${clientId}`);
+								router.push(`/intake-summary/${clientPseudoId}`);
 							}}
 							className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
 							role="menuitem"

@@ -6,21 +6,18 @@ import jwt
 from fastapi import HTTPException
 
 from app.core.config import settings
-from app.services.client_data.queries import (
-    ClientDataRecord,
-    FullNameModel,
-)
+from app.services.client_data.types import ClientDataRecord, FullNameModel
 
 
 def create_access_token(
-    client_id: str, client_name: Optional[Union[str, FullNameModel]] = None
+    client_pseudo_id: str, client_name: Optional[Union[str, FullNameModel]] = None
 ) -> str:
     """
     Create a JWT access token with client ID as the subject.
     """
     login_time = datetime.utcnow()
     payload = {
-        "sub": client_id,
+        "sub": client_pseudo_id,
         "iat": login_time,
         "token_type": "client",
         "login_timestamp": login_time.timestamp(),
@@ -39,8 +36,8 @@ def decode_jwt_token(token: str) -> Dict[str, Any]:
             token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
         )
 
-        client_id = payload.get("sub")
-        if not client_id:
+        client_pseudo_id = payload.get("sub")
+        if not client_pseudo_id:
             raise HTTPException(status_code=401, detail="Invalid token.")
 
         token_type = payload.get("token_type")
@@ -88,15 +85,17 @@ def validate_credentials_and_dob(
     return True, record
 
 
-def create_client_response(client_id: str, full_name: FullNameModel) -> Dict[str, Any]:
+def create_client_response(
+    client_pseudo_id: str, full_name: FullNameModel
+) -> Dict[str, Any]:
     """
     Create a standard client response with token.
     """
-    token = create_access_token(client_id, full_name)
+    token = create_access_token(client_pseudo_id, full_name)
     formatted_name = full_name.formatted_full_name()
 
     return {
-        "client_id": str(client_id),
+        "client_pseudo_id": str(client_pseudo_id),
         "client_name": formatted_name,
         "token": token,
         "full_name": full_name.dict(),

@@ -18,9 +18,8 @@ from app.services.client_data.types import (
 def create_john_doe():
     """Return a standard John Doe client example."""
     return ClientDataRecord(
-        external_client_id="client-001",
-        pseudonymized_client_id="pc-001",
-        external_staff_id="test-pseudonymized-id",
+        external_client_id="client-001ex",
+        pseudonymized_client_id="client-001ps",
         full_name=FullNameModel(
             given_names="John", middle_names="", surname="Doe", name_suffix=""
         ),
@@ -32,9 +31,8 @@ def create_john_doe():
 def create_jane_smith():
     """Return a standard Jane Smith client example."""
     return ClientDataRecord(
-        external_client_id="client-002",
-        pseudonymized_client_id="pc-002",
-        external_staff_id="test-pseudonymized-id",
+        external_client_id="client-002ex",
+        pseudonymized_client_id="client-002ps",
         full_name=FullNameModel(
             given_names="Jane", middle_names="", surname="Smith", name_suffix=""
         ),
@@ -46,9 +44,8 @@ def create_jane_smith():
 def create_robert_johnson():
     """Return a standard Robert Johnson client example with middle name and suffix."""
     return ClientDataRecord(
-        external_client_id="client-003",
-        pseudonymized_client_id="pc-003",
-        external_staff_id="test-pseudonymized-id",
+        external_client_id="client-003ex",
+        pseudonymized_client_id="client-003ps",
         full_name=FullNameModel(
             given_names="Robert",
             middle_names="Alan",
@@ -65,9 +62,8 @@ def create_test_client():
     states_codes = ["US_ID", "US_AZ", "US_UT"]
 
     return ClientDataRecord(
-        external_client_id="907775",
-        pseudonymized_client_id="pc-001",
-        external_staff_id="test-pseudonymized-id",
+        external_client_id="client-001ex",
+        pseudonymized_client_id="client-001ps",
         full_name=FullNameModel(
             given_names="Test", middle_names="", surname="Client", name_suffix=""
         ),
@@ -88,7 +84,7 @@ def create_case_manager():
         full_name=FullNameModel(
             given_names="Case", middle_names="", surname="Manager", name_suffix=""
         ),
-        external_client_ids=["client-001", "client-002"],
+        external_client_ids=["client-001ex", "client-002ex"],
         state_code="US_ID",
     )
 
@@ -102,7 +98,7 @@ def create_supervision_officer():
         full_name=FullNameModel(
             given_names="Susan", middle_names="", surname="Supervisor", name_suffix=""
         ),
-        external_client_ids=["client-003"],
+        external_client_ids=["client-003ex"],
         state_code="US_AZ",
     )
 

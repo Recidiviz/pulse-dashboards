@@ -4,5420 +4,5420 @@
  */
 
 export interface paths {
-  "/metrics": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Metrics
-     * @description Endpoint that serves Prometheus metrics.
-     */
-    get: operations["metrics_metrics_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List Plans
-     * @description Retrieve a paginated list of plans.
-     */
-    get: operations["router_list_plans_plans_get"];
-    put?: never;
-    /**
-     * Create Plan
-     * @description Create a new plan with the provided client ID.
-     */
-    post: operations["router_create_plan_plans_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/by_client/{client_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Plan by Client ID
-     * @description Retrieve a specific plan by its client ID, including the latest completed generation result if available.
-     */
-    get: operations["router_get_plan_by_client_id_plans_by_client__client_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Plan
-     * @description Retrieve a specific plan by its ID, including the latest completed generation result if available.
-     */
-    get: operations["router_get_plan_plans__id__get"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete Plan
-     * @description Delete a specific plan by its ID, along with all associated generations and assets.
-     */
-    delete: operations["router_delete_plan_plans__id__delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/set-notify": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Set Generation Notification
-     * @description Set the regeneration notification flag for the latest completed generation of the specified plan.
-     */
-    post: operations["router_set_generation_notify_plans__id__set_notify_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/generate": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Generate Plan
-     * @description Initiate the generation of a new plan for the specified plan ID. The generation process will be handled in the background.
-     */
-    post: operations["router_generate_plan_plans__id__generate_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/edit": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Generate the plan manually
-     * @description Create a new generation for the specified plan ID when the markdown is edited manually.
-     */
-    post: operations["router_generate_plan_manually_plans__id__edit_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/gens/{gen_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Generation
-     * @description Retrieve a specific generation by its ID for the specified plan ID.
-     */
-    get: operations["router_get_generation_plans__id__gens__gen_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/assets": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List Assets
-     * @description Retrieve a paginated list of assets associated with the specified plan ID.
-     */
-    get: operations["router_list_assets_plans__id__assets_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/assets/upload": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Upload Asset
-     * @description Upload a new asset for the specified plan ID. The file is read and stored as a blob in the database.
-     */
-    post: operations["router_upload_asset_plans__id__assets_upload_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/assets/by_filename/{filename}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Asset
-     * @description Retrieve a specific asset by its name for the specified plan ID.
-     */
-    get: operations["router_get_asset_by_filename_plans__id__assets_by_filename__filename__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/assets/{asset_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Asset
-     * @description Retrieve a specific asset by its ID for the specified plan ID.
-     */
-    get: operations["router_get_asset_plans__id__assets__asset_id__get"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete Asset
-     * @description Delete a specific asset by its ID for the specified plan ID.
-     */
-    delete: operations["router_delete_asset_plans__id__assets__asset_id__delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/assets/{asset_id}/download": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Download Asset
-     * @description Download a specific asset by its ID for the specified plan ID. The file is streamed as a response.
-     */
-    get: operations["router_download_asset_plans__id__assets__asset_id__download_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/resources": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get plan resources
-     * @description Get resources currently associated with this plan
-     */
-    get: operations["get_plan_resources_plans__id__resources_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/search-resources": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Search for resources using client info
-     * @description Search for resources based on the client's information from their plan generation data
-     */
-    post: operations["search_resources_plans__id__search_resources_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/suggested-resources": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get suggested resources
-     * @description Get resources that were stored during plan generation
-     */
-    get: operations["get_suggested_resources_plans__id__suggested_resources_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/client-info": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Client Info
-     * @description Get the latest client's extracted information including addresses and transportation options.
-     */
-    get: operations["get_client_info_plans__id__client_info_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/client-info/address": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Update Client Home Address
-     * @description Update the client's home address in their plan. This is for admin use to update the address used for resource recommendations. It will trigger a new generation.
-     */
-    patch: operations["update_client_info_address_plans__id__client_info_address_patch"];
-    trace?: never;
-  };
-  "/plans/{id}/decisiontrees": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List Decision Trees
-     * @description Retrieve a paginated list of decision trees associated with the specified plan ID.
-     */
-    get: operations["router_list_decision_trees_plans__id__decisiontrees_get"];
-    put?: never;
-    /**
-     * Add Decision Tree
-     * @description Add a new decision tree to the specified plan ID.
-     */
-    post: operations["router_add_decision_tree_plans__id__decisiontrees_post"];
-    /**
-     * Delete All Decision Trees
-     * @description Delete all decision trees associated with the specified plan ID.
-     */
-    delete: operations["router_delete_all_decision_trees_plans__id__decisiontrees_delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/decisiontrees/{plan_decision_tree_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Decision Tree
-     * @description Retrieve a specific decision tree by its ID for the specified plan ID.
-     */
-    get: operations["router_get_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__get"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete Decision Tree
-     * @description Delete a specific decision tree by its ID for the specified plan ID.
-     */
-    delete: operations["router_delete_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__delete"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/decisiontrees/{plan_decision_tree_id}/run": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Run a decision tree
-     * @description Run a decision tree against the input for the specified plan ID.
-     */
-    post: operations["router_execute_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__run_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/plans/{id}/decisiontrees/populate": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Suggest Decision Tree
-     * @description Search which decision tree applies to the plan and populate them.
-     */
-    post: operations["router_suggest_decision_tree_plans__id__decisiontrees_populate_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/resources": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Search for resources
-     * @description Search for resources based on the resource types needed and others criterias
-     */
-    post: operations["get_resources_resources_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/decision-trees": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Retrieve a list of decision trees
-     * @description This endpoint retrieves a paginated list of all decision trees.
-     */
-    get: operations["router_get_decision_trees_list_decision_trees_get"];
-    put?: never;
-    /**
-     * Create a new decision tree
-     * @description This endpoint allows the creation of a new decision tree. The decision tree must have a unique name.
-     */
-    post: operations["router_add_decision_tree_decision_trees_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/decision-trees/{decision_tree_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Retrieve a decision tree
-     * @description This endpoint retrieves a decision tree by its ID, including all its revisions.
-     */
-    get: operations["router_get_decision_tree_decision_trees__decision_tree_id__get"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete a decision tree
-     * @description Deletes a decision tree by its ID.
-     */
-    delete: operations["router_delete_decision_tree_decision_trees__decision_tree_id__delete"];
-    options?: never;
-    head?: never;
-    /**
-     * Update a decision tree
-     * @description This endpoint updates a decision tree by its ID with the given data.
-     */
-    patch: operations["router_update_decision_tree_decision_trees__decision_tree_id__patch"];
-    trace?: never;
-  };
-  "/decision-trees/{decision_tree_id}/revisions": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get decision tree revisions
-     * @description Retrieve a paginated list of revisions for a specific decision tree by its ID.
-     */
-    get: operations["router_get_decision_tree_revisions_decision_trees__decision_tree_id__revisions_get"];
-    put?: never;
-    /**
-     * Add a new revision to a decision tree
-     * @description This endpoint allows adding a new revision to an existing decision tree by its ID. The revision includes mermaid content and optional notes.
-     */
-    post: operations["router_add_decision_tree_revision_decision_trees__decision_tree_id__revisions_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/decision-trees/{decision_tree_id}/revisions/{revision_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Retrieve a specific decision tree revision
-     * @description This endpoint retrieves a specific revision of a decision tree by its ID and revision ID.
-     */
-    get: operations["router_get_decision_tree_revision_decision_trees__decision_tree_id__revisions__revision_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/assessment-trees": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Retrieve a list of assessment trees
-     * @description This endpoint retrieves a paginated list of all assessment trees.
-     */
-    get: operations["router_get_assessment_trees_list_assessment_trees_get"];
-    put?: never;
-    /**
-     * Create a new assessment tree
-     * @description This endpoint allows the creation of a new assessment tree. The assessment tree must have a unique name.
-     */
-    post: operations["router_add_assessment_tree_assessment_trees_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/assessment-trees/{assessment_tree_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Retrieve an assessment tree
-     * @description This endpoint retrieves an assessment tree by its ID, including all its revisions.
-     */
-    get: operations["router_get_assessment_tree_assessment_trees__assessment_tree_id__get"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete an assessment tree
-     * @description Deletes an assessment tree by its ID.
-     */
-    delete: operations["router_delete_assessment_tree_assessment_trees__assessment_tree_id__delete"];
-    options?: never;
-    head?: never;
-    /**
-     * Update an assessment tree
-     * @description This endpoint updates an assessment tree by its ID with the given data.
-     */
-    patch: operations["router_update_assessment_tree_assessment_trees__assessment_tree_id__patch"];
-    trace?: never;
-  };
-  "/assessment-trees/{assessment_tree_id}/revisions": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get assessment tree revisions
-     * @description Retrieve a paginated list of revisions for a specific assessment tree by its ID.
-     */
-    get: operations["router_get_assessment_tree_revisions_assessment_trees__assessment_tree_id__revisions_get"];
-    put?: never;
-    /**
-     * Add a new revision to an assessment tree
-     * @description This endpoint allows adding a new revision to an existing assessment tree by its ID. The revision includes mermaid content and optional data.
-     */
-    post: operations["router_add_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/assessment-trees/{assessment_tree_id}/revisions/{revision_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Retrieve a specific assessment tree revision
-     * @description This endpoint retrieves a specific revision of an assessment tree by its ID and revision ID.
-     */
-    get: operations["router_get_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions__revision_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/assessments/{assessment_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get assessment by ID
-     * @description Returns a specific assessment by its ID
-     */
-    get: operations["get_assessment_assessments__assessment_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/assessments/clients/{client_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get assessments by client ID
-     * @description Returns all assessments associated with a client ID
-     */
-    get: operations["get_client_assessments_assessments_clients__client_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/executions/{execution_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Router Get Execution */
-    get: operations["router_get_execution_executions__execution_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/client/verify-dob": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Verify date of birth and issue JWT token
-     * @description Validates the client's date of birth against records and issues JWT token
-     */
-    post: operations["verify_date_of_birth_intake_client_verify_dob_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/client/{token_from_url}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Fetch intake, client sections, and messages for the current section
-     * @description Returns the intake record, associated client sections, current section messages, and client data
-     */
-    get: operations["get_client_intake_intake_client__token_from_url__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/client/address": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Submit client address for intake
-     * @description Submit or update address information for the authenticated client's intake
-     */
-    post: operations["submit_address_intake_client_address_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/internal/{pseudonymized_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Verify date of birth with pseudonymized ID and last name
-     * @description Validates client's DOB and last name against pseudonymized ID records and issues JWT token
-     */
-    post: operations["verify_pseudo_date_of_birth_intake_internal__pseudonymized_id__post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/internal/verify/non-pseudo-id": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Verify date of birth,first name and last name
-     * @description Validates client's data  against BigQuery records and issues JWT token
-     */
-    post: operations["verify_non_pseudonymized_id_intake_internal_verify_non_pseudo_id_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/admin/{client_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Fetch intake, client sections for the current section
-     * @description Returns the intake record, associated client sections for the current section
-     */
-    get: operations["get_client_intake_intake_admin__client_id__get"];
-    put?: never;
-    /**
-     * Start the intake process for a client
-     * @description Creates or updates the intake record for the given client ID and returns complete intake data
-     */
-    post: operations["start_intake_process_intake_admin__client_id__post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/admin/{intake_id}/{section_title}/messages": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Fetch intake messages for the current section
-     * @description Returns the intake messages for the current section
-     */
-    get: operations["get_intake_section_messages_route_intake_admin__intake_id___section_title__messages_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake/admin/{client_id}/internal-access": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    /**
-     * Update internal access field
-     * @description Sets internal_access (true/false) for the intake
-     */
-    patch: operations["set_internal_access_intake_admin__client_id__internal_access_patch"];
-    trace?: never;
-  };
-  "/intake/admin/{client_id}/token_access": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Generate a client access token
-     * @description Generates a new access token for a client's intake
-     */
-    post: operations["generate_client_token_intake_admin__client_id__token_access_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake-sections": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Add new intake sections
-     * @description Create one or multiple intake sections for the assessment process
-     */
-    post: operations["create_intake_sections_intake_sections_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/intake-sections/{section_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Retrieve a specific intake section
-     * @description Fetch a single intake section by its ID
-     */
-    get: operations["get_intake_section_intake_sections__section_id__get"];
-    put?: never;
-    post?: never;
-    /**
-     * Delete an intake section
-     * @description Remove a specific intake section by its ID
-     */
-    delete: operations["delete_intake_section_intake_sections__section_id__delete"];
-    options?: never;
-    head?: never;
-    /**
-     * Update an intake section
-     * @description Update a specific intake section by its ID
-     */
-    patch: operations["update_intake_section_intake_sections__section_id__patch"];
-    trace?: never;
-  };
-  "/clients/": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * List Clients
-     * @description Retrieve a paginated list of clients. If a user is authenticated, only show clients assigned to them.
-     */
-    get: operations["router_list_clients_clients__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/clients/status": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Client Status Updates
-     * @description Retrieve status updates for clients that are currently in progress processing. Returns only clients with in_progress status to minimize database load.
-     */
-    get: operations["get_client_status_updates_route_clients_status_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/clients/{client_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Client Record
-     * @description Retrieve an Client record by its external id
-     */
-    get: operations["get_client_record_clients__client_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/clients/{client_id}/retry-processing": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Retry Processing
-     * @description Intelligently retry processing for a client based on current state. Determines whether to retry assessments, plan generation, or both.
-     */
-    post: operations["retry_processing_clients__client_id__retry_processing_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/recordings/sessions/clients/{client_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get recording sessions for client
-     * @description Retrieve all recording sessions associated with a specific client
-     */
-    get: operations["get_client_recording_sessions_recordings_sessions_clients__client_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/recordings/sessions": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Create new recording session
-     * @description Create a new recording session for a client
-     */
-    post: operations["create_new_recording_session_recordings_sessions_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/recordings/sessions/{session_id}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get recording session by ID
-     * @description Retrieve a specific recording session by its ID
-     */
-    get: operations["get_recording_session_recordings_sessions__session_id__get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/recordings/sessions/{session_id}/status": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get recording session status for polling
-     * @description Retrieve lightweight status information for a recording session, optimized for polling
-     */
-    get: operations["get_recording_session_status_recordings_sessions__session_id__status_get"];
-    /**
-     * Update recording session status
-     * @description Update the status of a recording session (e.g., from created to recording, paused, etc.)
-     */
-    put: operations["update_recording_session_status_recordings_sessions__session_id__status_put"];
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/recordings/sessions/{session_id}/upload-chunk": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Upload audio chunk to cloud storage */
-    post: operations["upload_audio_chunk_recordings_sessions__session_id__upload_chunk_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/recordings/sessions/{session_id}/finalize": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /** Finalize recording and merge chunks */
-    post: operations["finalize_recording_recordings_sessions__session_id__finalize_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/recordings/sessions/{session_id}/signed-url": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Get signed URL for final audio file */
-    get: operations["get_signed_url_recordings_sessions__session_id__signed_url_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/transcriptions/{client_id}/complete-intake-transcription": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Submit Client address or transcription approval for intake transcription
-     * @description Submit the client's address or transcription approval to complete the intake process.
-     */
-    post: operations["complete_intake_transcription_transcriptions__client_id__complete_intake_transcription_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/transcriptions/{recording_session_id}/transcription": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /**
-     * Get Client Interview Transcription
-     * @description Retrieve the interview transcription for a client recording session.
-     */
-    get: operations["get_client_transcription_transcriptions__recording_session_id__transcription_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/health": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    /** Health Check */
-    get: operations["health_check_health_get"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
+	"/metrics": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Metrics
+		 * @description Endpoint that serves Prometheus metrics.
+		 */
+		get: operations["metrics_metrics_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * List Plans
+		 * @description Retrieve a paginated list of plans.
+		 */
+		get: operations["router_list_plans_plans_get"];
+		put?: never;
+		/**
+		 * Create Plan
+		 * @description Create a new plan with the provided client ID.
+		 */
+		post: operations["router_create_plan_plans_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/by_client/{client_pseudo_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Plan by Client ID
+		 * @description Retrieve a specific plan by its client ID, including the latest completed generation result if available.
+		 */
+		get: operations["router_get_plan_by_client_pseudo_id_plans_by_client__client_pseudo_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Plan
+		 * @description Retrieve a specific plan by its ID, including the latest completed generation result if available.
+		 */
+		get: operations["router_get_plan_plans__id__get"];
+		put?: never;
+		post?: never;
+		/**
+		 * Delete Plan
+		 * @description Delete a specific plan by its ID, along with all associated generations and assets.
+		 */
+		delete: operations["router_delete_plan_plans__id__delete"];
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/generate": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Generate Plan
+		 * @description Initiate the generation of a new plan for the specified plan ID. The generation process will be handled in the background.
+		 */
+		post: operations["router_generate_plan_plans__id__generate_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/edit": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Generate the plan manually
+		 * @description Create a new generation for the specified plan ID when the markdown is edited manually.
+		 */
+		post: operations["router_generate_plan_manually_plans__id__edit_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/gens/{gen_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Generation
+		 * @description Retrieve a specific generation by its ID for the specified plan ID.
+		 */
+		get: operations["router_get_generation_plans__id__gens__gen_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/assets": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * List Assets
+		 * @description Retrieve a paginated list of assets associated with the specified plan ID.
+		 */
+		get: operations["router_list_assets_plans__id__assets_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/assets/upload": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Upload Asset
+		 * @description Upload a new asset for the specified plan ID. The file is read and stored as a blob in the database.
+		 */
+		post: operations["router_upload_asset_plans__id__assets_upload_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/assets/by_filename/{filename}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Asset
+		 * @description Retrieve a specific asset by its name for the specified plan ID.
+		 */
+		get: operations["router_get_asset_by_filename_plans__id__assets_by_filename__filename__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/assets/{asset_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Asset
+		 * @description Retrieve a specific asset by its ID for the specified plan ID.
+		 */
+		get: operations["router_get_asset_plans__id__assets__asset_id__get"];
+		put?: never;
+		post?: never;
+		/**
+		 * Delete Asset
+		 * @description Delete a specific asset by its ID for the specified plan ID.
+		 */
+		delete: operations["router_delete_asset_plans__id__assets__asset_id__delete"];
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/assets/{asset_id}/download": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Download Asset
+		 * @description Download a specific asset by its ID for the specified plan ID. The file is streamed as a response.
+		 */
+		get: operations["router_download_asset_plans__id__assets__asset_id__download_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/resources": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get plan resources
+		 * @description Get resources currently associated with this plan
+		 */
+		get: operations["get_plan_resources_plans__id__resources_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/search-resources": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Search for resources using client info
+		 * @description Search for resources based on the client's information from their plan generation data
+		 */
+		post: operations["search_resources_plans__id__search_resources_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/suggested-resources": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get suggested resources
+		 * @description Get resources that were stored during plan generation
+		 */
+		get: operations["get_suggested_resources_plans__id__suggested_resources_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/client-info": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Client Info
+		 * @description Get the latest client's extracted information including addresses and transportation options.
+		 */
+		get: operations["get_client_info_plans__id__client_info_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/client-info/address": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		/**
+		 * Update Client Home Address
+		 * @description Update the client's home address in their plan. This is for admin use to update the address used for resource recommendations. It will trigger a new generation.
+		 */
+		patch: operations["update_client_info_address_plans__id__client_info_address_patch"];
+		trace?: never;
+	};
+	"/plans/{id}/set-notify": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Set Generation Notification
+		 * @description Set the regeneration notification flag for the latest completed generation of the specified plan.
+		 */
+		post: operations["router_set_generation_notify_plans__id__set_notify_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/decisiontrees": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * List Decision Trees
+		 * @description Retrieve a paginated list of decision trees associated with the specified plan ID.
+		 */
+		get: operations["router_list_decision_trees_plans__id__decisiontrees_get"];
+		put?: never;
+		/**
+		 * Add Decision Tree
+		 * @description Add a new decision tree to the specified plan ID.
+		 */
+		post: operations["router_add_decision_tree_plans__id__decisiontrees_post"];
+		/**
+		 * Delete All Decision Trees
+		 * @description Delete all decision trees associated with the specified plan ID.
+		 */
+		delete: operations["router_delete_all_decision_trees_plans__id__decisiontrees_delete"];
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/decisiontrees/{plan_decision_tree_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Decision Tree
+		 * @description Retrieve a specific decision tree by its ID for the specified plan ID.
+		 */
+		get: operations["router_get_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__get"];
+		put?: never;
+		post?: never;
+		/**
+		 * Delete Decision Tree
+		 * @description Delete a specific decision tree by its ID for the specified plan ID.
+		 */
+		delete: operations["router_delete_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__delete"];
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/decisiontrees/{plan_decision_tree_id}/run": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Run a decision tree
+		 * @description Run a decision tree against the input for the specified plan ID.
+		 */
+		post: operations["router_execute_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__run_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/plans/{id}/decisiontrees/populate": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Suggest Decision Tree
+		 * @description Search which decision tree applies to the plan and populate them.
+		 */
+		post: operations["router_suggest_decision_tree_plans__id__decisiontrees_populate_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/resources": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Search for resources
+		 * @description Search for resources based on the resource types needed and others criterias
+		 */
+		post: operations["get_resources_resources_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/decision-trees": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Retrieve a list of decision trees
+		 * @description This endpoint retrieves a paginated list of all decision trees.
+		 */
+		get: operations["router_get_decision_trees_list_decision_trees_get"];
+		put?: never;
+		/**
+		 * Create a new decision tree
+		 * @description This endpoint allows the creation of a new decision tree. The decision tree must have a unique name.
+		 */
+		post: operations["router_add_decision_tree_decision_trees_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/decision-trees/{decision_tree_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Retrieve a decision tree
+		 * @description This endpoint retrieves a decision tree by its ID, including all its revisions.
+		 */
+		get: operations["router_get_decision_tree_decision_trees__decision_tree_id__get"];
+		put?: never;
+		post?: never;
+		/**
+		 * Delete a decision tree
+		 * @description Deletes a decision tree by its ID.
+		 */
+		delete: operations["router_delete_decision_tree_decision_trees__decision_tree_id__delete"];
+		options?: never;
+		head?: never;
+		/**
+		 * Update a decision tree
+		 * @description This endpoint updates a decision tree by its ID with the given data.
+		 */
+		patch: operations["router_update_decision_tree_decision_trees__decision_tree_id__patch"];
+		trace?: never;
+	};
+	"/decision-trees/{decision_tree_id}/revisions": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get decision tree revisions
+		 * @description Retrieve a paginated list of revisions for a specific decision tree by its ID.
+		 */
+		get: operations["router_get_decision_tree_revisions_decision_trees__decision_tree_id__revisions_get"];
+		put?: never;
+		/**
+		 * Add a new revision to a decision tree
+		 * @description This endpoint allows adding a new revision to an existing decision tree by its ID. The revision includes mermaid content and optional notes.
+		 */
+		post: operations["router_add_decision_tree_revision_decision_trees__decision_tree_id__revisions_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/decision-trees/{decision_tree_id}/revisions/{revision_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Retrieve a specific decision tree revision
+		 * @description This endpoint retrieves a specific revision of a decision tree by its ID and revision ID.
+		 */
+		get: operations["router_get_decision_tree_revision_decision_trees__decision_tree_id__revisions__revision_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/assessment-trees": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Retrieve a list of assessment trees
+		 * @description This endpoint retrieves a paginated list of all assessment trees.
+		 */
+		get: operations["router_get_assessment_trees_list_assessment_trees_get"];
+		put?: never;
+		/**
+		 * Create a new assessment tree
+		 * @description This endpoint allows the creation of a new assessment tree. The assessment tree must have a unique name.
+		 */
+		post: operations["router_add_assessment_tree_assessment_trees_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/assessment-trees/{assessment_tree_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Retrieve an assessment tree
+		 * @description This endpoint retrieves an assessment tree by its ID, including all its revisions.
+		 */
+		get: operations["router_get_assessment_tree_assessment_trees__assessment_tree_id__get"];
+		put?: never;
+		post?: never;
+		/**
+		 * Delete an assessment tree
+		 * @description Deletes an assessment tree by its ID.
+		 */
+		delete: operations["router_delete_assessment_tree_assessment_trees__assessment_tree_id__delete"];
+		options?: never;
+		head?: never;
+		/**
+		 * Update an assessment tree
+		 * @description This endpoint updates an assessment tree by its ID with the given data.
+		 */
+		patch: operations["router_update_assessment_tree_assessment_trees__assessment_tree_id__patch"];
+		trace?: never;
+	};
+	"/assessment-trees/{assessment_tree_id}/revisions": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get assessment tree revisions
+		 * @description Retrieve a paginated list of revisions for a specific assessment tree by its ID.
+		 */
+		get: operations["router_get_assessment_tree_revisions_assessment_trees__assessment_tree_id__revisions_get"];
+		put?: never;
+		/**
+		 * Add a new revision to an assessment tree
+		 * @description This endpoint allows adding a new revision to an existing assessment tree by its ID. The revision includes mermaid content and optional data.
+		 */
+		post: operations["router_add_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/assessment-trees/{assessment_tree_id}/revisions/{revision_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Retrieve a specific assessment tree revision
+		 * @description This endpoint retrieves a specific revision of an assessment tree by its ID and revision ID.
+		 */
+		get: operations["router_get_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions__revision_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/assessments/{assessment_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get assessment by ID
+		 * @description Returns a specific assessment by its ID
+		 */
+		get: operations["get_assessment_assessments__assessment_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/assessments/clients/{client_pseudo_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get assessments by client ID
+		 * @description Returns all assessments associated with a client ID
+		 */
+		get: operations["get_client_assessments_assessments_clients__client_pseudo_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/executions/{execution_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Router Get Execution */
+		get: operations["router_get_execution_executions__execution_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake/client/verify-dob": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Verify date of birth and issue JWT token
+		 * @description Validates the client's date of birth against records and issues JWT token
+		 */
+		post: operations["verify_date_of_birth_intake_client_verify_dob_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake/client/{token_from_url}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Fetch intake, client sections, and messages for the current section
+		 * @description Returns the intake record, associated client sections, current section messages, and client data
+		 */
+		get: operations["get_client_intake_intake_client__token_from_url__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake/client/address": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Submit client address for intake
+		 * @description Submit or update address information for the authenticated client's intake
+		 */
+		post: operations["submit_address_intake_client_address_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake/internal/{pseudonymized_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Verify date of birth with pseudonymized ID and last name
+		 * @description Validates client's DOB and last name against pseudonymized ID records and issues JWT token
+		 */
+		post: operations["verify_pseudo_date_of_birth_intake_internal__pseudonymized_id__post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake/internal/verify/non-pseudo-id": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Verify date of birth,first name and last name
+		 * @description Validates client's data  against BigQuery records and issues JWT token
+		 */
+		post: operations["verify_non_pseudonymized_id_intake_internal_verify_non_pseudo_id_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake/admin/{client_pseudo_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Fetch intake, client sections for the current section
+		 * @description Returns the intake record, associated client sections for the current section
+		 */
+		get: operations["get_client_intake_intake_admin__client_pseudo_id__get"];
+		put?: never;
+		/**
+		 * Start the intake process for a client
+		 * @description Creates or updates the intake record for the given client ID and returns complete intake data
+		 */
+		post: operations["start_intake_process_intake_admin__client_pseudo_id__post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake/admin/{intake_id}/{section_title}/messages": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Fetch intake messages for the current section
+		 * @description Returns the intake messages for the current section
+		 */
+		get: operations["get_intake_section_messages_route_intake_admin__intake_id___section_title__messages_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake/admin/{client_pseudo_id}/internal-access": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		/**
+		 * Update internal access field
+		 * @description Sets internal_access (true/false) for the intake
+		 */
+		patch: operations["set_internal_access_intake_admin__client_pseudo_id__internal_access_patch"];
+		trace?: never;
+	};
+	"/intake/admin/{client_pseudo_id}/token_access": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Generate a client access token
+		 * @description Generates a new access token for a client's intake
+		 */
+		post: operations["generate_client_token_intake_admin__client_pseudo_id__token_access_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake-sections": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Add new intake sections
+		 * @description Create one or multiple intake sections for the assessment process
+		 */
+		post: operations["create_intake_sections_intake_sections_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/intake-sections/{section_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Retrieve a specific intake section
+		 * @description Fetch a single intake section by its ID
+		 */
+		get: operations["get_intake_section_intake_sections__section_id__get"];
+		put?: never;
+		post?: never;
+		/**
+		 * Delete an intake section
+		 * @description Remove a specific intake section by its ID
+		 */
+		delete: operations["delete_intake_section_intake_sections__section_id__delete"];
+		options?: never;
+		head?: never;
+		/**
+		 * Update an intake section
+		 * @description Update a specific intake section by its ID
+		 */
+		patch: operations["update_intake_section_intake_sections__section_id__patch"];
+		trace?: never;
+	};
+	"/clients/": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * List Clients
+		 * @description Retrieve a paginated list of clients. If a user is authenticated, only show clients assigned to them.
+		 */
+		get: operations["router_list_clients_clients__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/clients/status": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Client Status Updates
+		 * @description Retrieve status updates for clients that are currently in progress processing. Returns only clients with in_progress status to minimize database load.
+		 */
+		get: operations["get_client_status_updates_route_clients_status_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/clients/{client_pseudo_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Client Record
+		 * @description Retrieve an Client record by its pseudonimyzed id (client_pseudo_id)
+		 */
+		get: operations["get_client_record_clients__client_pseudo_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/clients/{client_pseudo_id}/retry-processing": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Retry Processing
+		 * @description Intelligently retry processing for a client based on current state. Determines whether to retry assessments, plan generation, or both.
+		 */
+		post: operations["retry_processing_clients__client_pseudo_id__retry_processing_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/clients/{client_pseudo_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get recording sessions for client
+		 * @description Retrieve all recording sessions associated with a specific client
+		 */
+		get: operations["get_client_recording_sessions_recordings_sessions_clients__client_pseudo_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Create new recording session
+		 * @description Create a new recording session for a client
+		 */
+		post: operations["create_new_recording_session_recordings_sessions_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get recording session by ID
+		 * @description Retrieve a specific recording session by its ID
+		 */
+		get: operations["get_recording_session_recordings_sessions__session_id__get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}/status": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get recording session status for polling
+		 * @description Retrieve lightweight status information for a recording session, optimized for polling
+		 */
+		get: operations["get_recording_session_status_recordings_sessions__session_id__status_get"];
+		/**
+		 * Update recording session status
+		 * @description Update the status of a recording session (e.g., from created to recording, paused, etc.)
+		 */
+		put: operations["update_recording_session_status_recordings_sessions__session_id__status_put"];
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}/upload-chunk": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/** Upload audio chunk to cloud storage */
+		post: operations["upload_audio_chunk_recordings_sessions__session_id__upload_chunk_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}/finalize": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/** Finalize recording and merge chunks */
+		post: operations["finalize_recording_recordings_sessions__session_id__finalize_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/recordings/sessions/{session_id}/signed-url": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get signed URL for final audio file */
+		get: operations["get_signed_url_recordings_sessions__session_id__signed_url_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/transcriptions/{client_pseudo_id}/complete-intake-transcription": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		get?: never;
+		put?: never;
+		/**
+		 * Submit Client address or transcription approval for intake transcription
+		 * @description Submit the client's address or transcription approval to complete the intake process.
+		 */
+		post: operations["complete_intake_transcription_transcriptions__client_pseudo_id__complete_intake_transcription_post"];
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/transcriptions/{recording_session_id}/transcription": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/**
+		 * Get Client Interview Transcription
+		 * @description Retrieve the interview transcription for a client recording session.
+		 */
+		get: operations["get_client_transcription_transcriptions__recording_session_id__transcription_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	"/health": {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Health Check */
+		get: operations["health_check_health_get"];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    /** AddressSubmission */
-    AddressSubmission: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id?: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at?: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at?: string;
-      /** Street Address */
-      street_address?: string | null;
-      /** City */
-      city: string;
-      /** State */
-      state: string;
-    };
-    /** AdressSubmissionResponse */
-    AdressSubmissionResponse: {
-      /** Intake Completed */
-      intake_completed: boolean;
-    };
-    /** Annotation */
-    Annotation: {
-      /**
-       * Source
-       * @description The source of the annotation
-       */
-      source: string;
-      /**
-       * Source Location
-       * @description The location of the annotation in the source
-       */
-      source_location: string;
-      /**
-       * Source Text Extract
-       * @description The text extract of the annotation
-       */
-      source_text_extract: string;
-    };
-    /** AssessmentResponse */
-    AssessmentResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Client Id */
-      client_id: string;
-      /** Intake Id */
-      intake_id?: string | null;
-      /** Scores */
-      scores?: Record<string, never> | null;
-      /** Status */
-      status: string;
-    };
-    /** AssessmentTreeCreate */
-    AssessmentTreeCreate: {
-      /** Name */
-      name: string;
-    };
-    /** AssessmentTreeResponse */
-    AssessmentTreeResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Name */
-      name: string;
-      /** Enabled */
-      enabled: boolean;
-      /** Current Revision Id */
-      current_revision_id?: string | null;
-    };
-    /** AssessmentTreeRevision */
-    AssessmentTreeRevision: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id?: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at?: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at?: string;
-      /**
-       * Assessment Tree Id
-       * Format: uuid
-       */
-      assessment_tree_id: string;
-      /** Mermaid Content */
-      mermaid_content: string;
-      /** Additional Structured Data */
-      additional_structured_data: Record<string, never>;
-      /** Content Hash */
-      content_hash: string | null;
-      /**
-       * Input Data
-       * @default [
-       *       "intake_conversation"
-       *     ]
-       */
-      input_data: components["schemas"]["InputType"][];
-    };
-    /** AssessmentTreeRevisionCreate */
-    AssessmentTreeRevisionCreate: {
-      /** Mermaid Content */
-      mermaid_content: string;
-      /** Additional Structured Data */
-      additional_structured_data?: Record<string, never> | null;
-      /** Input Data */
-      input_data?: components["schemas"]["InputType"][] | null;
-    };
-    /** AssessmentTreeRevisionResponse */
-    AssessmentTreeRevisionResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /**
-       * Assessment Tree Id
-       * Format: uuid
-       */
-      assessment_tree_id: string;
-      /** Mermaid Content */
-      mermaid_content: string;
-      /** Additional Structured Data */
-      additional_structured_data?: Record<string, never> | null;
-      /** Input Data */
-      input_data: components["schemas"]["InputType"][];
-    };
-    /** AssessmentTreeUpdate */
-    AssessmentTreeUpdate: {
-      /** Name */
-      name?: string | null;
-      /** Enabled */
-      enabled?: boolean | null;
-    };
-    /** AssessmentTreeWithRevisionsResponse */
-    AssessmentTreeWithRevisionsResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Name */
-      name: string;
-      /** Enabled */
-      enabled: boolean;
-      /** Current Revision Id */
-      current_revision_id?: string | null;
-      /** Revisions */
-      revisions: components["schemas"]["AssessmentTreeRevisionResponse"][];
-    };
-    /** Body_router_upload_asset_plans__id__assets_upload_post */
-    Body_router_upload_asset_plans__id__assets_upload_post: {
-      /**
-       * File
-       * Format: binary
-       */
-      file: string;
-    };
-    /** ClientAddressResponse */
-    ClientAddressResponse: {
-      /** Street Address */
-      street_address: string | null;
-      /** City */
-      city: string;
-      /** State */
-      state: string;
-    };
-    /** ClientInfoResponse */
-    ClientInfoResponse: {
-      /** Home */
-      home?: string | null;
-      /** Work */
-      work?: string | null;
-      /** School */
-      school?: string | null;
-      /** Probation Office */
-      probation_office?: string | null;
-      /** Can Drive */
-      can_drive?: boolean | null;
-      /** Can Walk */
-      can_walk?: boolean | null;
-      /** Can Bike */
-      can_bike?: boolean | null;
-      /** Transit Pass */
-      transit_pass?: boolean | null;
-    };
-    /** ClientIntakeSectionResponse */
-    ClientIntakeSectionResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /**
-       * Intake Section Id
-       * Format: uuid
-       */
-      intake_section_id: string;
-      /** Is Active */
-      is_active: boolean;
-      /** Completion Status */
-      completion_status: string;
-      /** Notes */
-      notes?: string | null;
-      intake_section: components["schemas"]["IntakeSectionResponse"];
-    };
-    /** ClientRecordResponse */
-    ClientRecordResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id?: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at?: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at?: string;
-      /** Pseudonymized Client Id */
-      pseudonymized_client_id: string;
-      /** External Client Id */
-      external_client_id: string;
-      full_name: components["schemas"]["FullNameModel"];
-      /**
-       * Birthdate
-       * Format: date
-       */
-      birthdate: string;
-      /** State Code */
-      state_code: string;
-    };
-    /** ClientResponse */
-    ClientResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id?: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at?: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at?: string;
-      /** Client Id */
-      client_id: string;
-      intake?: components["schemas"]["IntakeResponse"] | null;
-      plans?:
-        | components["schemas"]["app__routes__shared_models__PlanResponse"]
-        | null;
-      processing_status: components["schemas"]["ProcessingStatus"];
-      client?: components["schemas"]["ClientRecordResponse"] | null;
-      /** Frontend Status */
-      readonly frontend_status: string;
-    };
-    /** ClientStatusResponse */
-    ClientStatusResponse: {
-      /** In Progress */
-      in_progress: components["schemas"]["ClientStatusUpdate"][];
-    };
-    /** ClientStatusUpdate */
-    ClientStatusUpdate: {
-      /** Client Id */
-      client_id: string;
-      processing_status: components["schemas"]["ProcessingStatus"];
-    };
-    /** CompleteIntakeTranscriptionResponse */
-    CompleteIntakeTranscriptionResponse: {
-      /** Intake Completed */
-      intake_completed: boolean;
-      /** Intake Approved */
-      intake_approved: boolean;
-      /** Address Updated */
-      address_updated: boolean;
-    };
-    /** CompleteIntakeTrascriptionSubmission */
-    CompleteIntakeTrascriptionSubmission: {
-      /** Street Address */
-      street_address?: string | null;
-      /** City */
-      city?: string | null;
-      /** State */
-      state?: string | null;
-      /** Approved */
-      approved?: boolean | null;
-    };
-    /** ConversationTurnResponse */
-    ConversationTurnResponse: {
-      /** Id */
-      id: string;
-      /** Role */
-      role: string;
-      /** Content */
-      content: string;
-      /** Starttime */
-      startTime: string;
-      /** Endtime */
-      endTime: string;
-      /** Speakertag */
-      speakerTag: number;
-      /** Wordcount */
-      wordCount: number;
-      /** Duration */
-      duration: string;
-    };
-    /** CreateRecordingSessionRequest */
-    CreateRecordingSessionRequest: {
-      /** Client Id */
-      client_id: string;
-    };
-    /** DecisionTreeCreate */
-    DecisionTreeCreate: {
-      /** Name */
-      name: string;
-      /** Criterias */
-      criterias?: string | null;
-    };
-    /** DecisionTreeResponse */
-    DecisionTreeResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Name */
-      name: string;
-      /** Enabled */
-      enabled: boolean;
-      /** Criterias */
-      criterias?: string | null;
-      /** Current Revision Id */
-      current_revision_id?: string | null;
-    };
-    /** DecisionTreeRevision */
-    DecisionTreeRevision: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id?: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at?: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at?: string;
-      /**
-       * Decision Tree Id
-       * Format: uuid
-       */
-      decision_tree_id: string;
-      /** Mermaid Content */
-      mermaid_content: string;
-      /** Notes */
-      notes: string;
-      /** Content Hash */
-      content_hash: string | null;
-    };
-    /** DecisionTreeRevisionCreate */
-    DecisionTreeRevisionCreate: {
-      /** Mermaid Content */
-      mermaid_content: string;
-      /** Notes */
-      notes: string;
-    };
-    /** DecisionTreeRevisionResponse */
-    DecisionTreeRevisionResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /**
-       * Decision Tree Id
-       * Format: uuid
-       */
-      decision_tree_id: string;
-      /** Mermaid Content */
-      mermaid_content: string;
-      /** Notes */
-      notes: string;
-    };
-    /** DecisionTreeRunnerStep */
-    DecisionTreeRunnerStep: {
-      /**
-       * Node Key
-       * @description Node traversed during the execution
-       */
-      node_key: string;
-      /**
-       * Node Value
-       * @description Value of the node, for reference
-       */
-      node_value: string | null;
-      /**
-       * Node Type
-       * @description Type of the node, for reference
-       */
-      node_type: string;
-      /**
-       * Annotations
-       * @description The annotations of the answer (for question only)
-       */
-      annotations?: components["schemas"]["Annotation"][] | null;
-    };
-    /** DecisionTreeUpdate */
-    DecisionTreeUpdate: {
-      /** Name */
-      name?: string | null;
-      /** Enabled */
-      enabled?: boolean | null;
-      /** Criterias */
-      criterias?: string | null;
-    };
-    /** DecisionTreeWithRevisionsResponse */
-    DecisionTreeWithRevisionsResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Name */
-      name: string;
-      /** Enabled */
-      enabled: boolean;
-      /** Criterias */
-      criterias?: string | null;
-      /** Current Revision Id */
-      current_revision_id?: string | null;
-      /** Revisions */
-      revisions: components["schemas"]["DecisionTreeRevisionResponse"][];
-    };
-    /** DeletionResponse */
-    DeletionResponse: {
-      status: components["schemas"]["DeletionStatus"];
-    };
-    /**
-     * DeletionStatus
-     * @enum {string}
-     */
-    DeletionStatus: "success" | "failed";
-    /**
-     * DistanceMode
-     * @enum {string}
-     */
-    DistanceMode: "driving" | "walking" | "bicycling" | "transit";
-    /** ExecutionResponse */
-    ExecutionResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      status: components["schemas"]["ExecutionStatus"];
-      /** Progress */
-      progress: number;
-      /** Message */
-      message?: string | null;
-    };
-    /**
-     * ExecutionStatus
-     * @enum {string}
-     */
-    ExecutionStatus:
-      | "not_started"
-      | "pending"
-      | "in_progress"
-      | "completed"
-      | "failed";
-    /** FinalizeRecordingRequest */
-    FinalizeRecordingRequest: {
-      /** Total Chunks */
-      total_chunks: number;
-    };
-    /** FinalizeRecordingResponse */
-    FinalizeRecordingResponse: {
-      /** Execution Id */
-      execution_id: string;
-    };
-    /** FullNameModel */
-    FullNameModel: {
-      /** Given Names */
-      given_names: string;
-      /**
-       * Middle Names
-       * @default
-       */
-      middle_names: string | null;
-      /** Surname */
-      surname: string;
-      /**
-       * Name Suffix
-       * @default
-       */
-      name_suffix: string | null;
-    };
-    /** GetPlanResourcesRequest */
-    GetPlanResourcesRequest: {
-      /** @description Resource category */
-      category: components["schemas"]["ResourceCategory"];
-      /** @description Resource subcategory */
-      subcategory?: components["schemas"]["ResourceSubcategory"] | null;
-      /**
-       * Exclude
-       * @description Keywords to exclude in the resource names, if a specific resource for one of the resource types is mentioned. For example, if the client was banned from a specific shelter.
-       * @default []
-       */
-      exclude: string[];
-    };
-    /** GetResourcesRequest */
-    GetResourcesRequest: {
-      /**
-       * Home
-       * @description Client's home address, which can be a full address (preferred), a zip code, or a landmark.
-       */
-      home?: string | null;
-      /**
-       * Work
-       * @description Client's work address, which can be a full address (preferred), a zip code, or a landmark.
-       */
-      work?: string | null;
-      /**
-       * School
-       * @description Client's school address, which can be a full address (preferred), a zip code, or a landmark.
-       */
-      school?: string | null;
-      /**
-       * Probation Office
-       * @description Client's probation office address, which can be a full address (preferred), a zip code, or a landmark.
-       */
-      probation_office?: string | null;
-      /**
-       * Can Drive
-       * @description Whether the client has a car
-       */
-      can_drive?: boolean | null;
-      /**
-       * Can Walk
-       * @description Whether the client can comfortably walk
-       */
-      can_walk?: boolean | null;
-      /**
-       * Can Bike
-       * @description Whether the client has a bike
-       */
-      can_bike?: boolean | null;
-      /**
-       * Transit Pass
-       * @description Whether the client has a transit pass
-       */
-      transit_pass?: boolean | null;
-      /** @description Resource category */
-      category: components["schemas"]["ResourceCategory"];
-      /** @description Resource subcategory */
-      subcategory?: components["schemas"]["ResourceSubcategory"] | null;
-      /**
-       * Exclude Names
-       * @description Keywords to exclude in resource names
-       */
-      exclude_names?: string[] | null;
-      /**
-       * Exclude Ids
-       * @description List of resource IDs to exclude from results
-       */
-      exclude_ids?: string[] | null;
-      /**
-       * Limit
-       * @description How many
-       * @default 10
-       */
-      limit: number | null;
-    };
-    /** GetResourcesResponse */
-    GetResourcesResponse: {
-      /** Resources */
-      resources: components["schemas"]["Resource"][];
-      failure_reason?: components["schemas"]["ResourceFailureReason"] | null;
-      /** Error Message */
-      error_message?: string | null;
-    };
-    /** HTTPValidationError */
-    HTTPValidationError: {
-      /** Detail */
-      detail?: components["schemas"]["ValidationError"][];
-    };
-    /**
-     * InputType
-     * @enum {string}
-     */
-    InputType: "intake_conversation" | "conversation_summary";
-    /** IntakeMessageResponse */
-    IntakeMessageResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Content */
-      content: string;
-      from_role: components["schemas"]["IntakeMessageRole"];
-    };
-    /**
-     * IntakeMessageRole
-     * @description Roles for messages in intake assessment.
-     * @enum {string}
-     */
-    IntakeMessageRole: "client" | "caseworker" | "system";
-    /** IntakeResponse */
-    IntakeResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Client Id */
-      client_id: string;
-      /** Status */
-      status: string;
-      /** Current Section */
-      current_section?: string | null;
-      /** Token */
-      token?: string | null;
-      /** Internal Access */
-      internal_access?: boolean | null;
-    };
-    /**
-     * IntakeSectionCreate
-     * @description Model for creating intake sections
-     */
-    IntakeSectionCreate: {
-      /** Title */
-      title: string;
-      /** Description */
-      description: string;
-      /** Required Information */
-      required_information: string;
-    };
-    /** IntakeSectionResponse */
-    IntakeSectionResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Title */
-      title: string;
-      /** Description */
-      description: string;
-    };
-    /**
-     * IntakeStatus
-     * @description Status for intake assessment process.
-     *     Used for both database persistence and UI state representation.
-     * @enum {string}
-     */
-    IntakeStatus: "created" | "in_progress" | "error" | "completed";
-    /** IntakeWithSectionsAndMessagesResponse */
-    IntakeWithSectionsAndMessagesResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Client Id */
-      client_id: string;
-      status: components["schemas"]["IntakeStatus"];
-      /** Current Section */
-      current_section?: string | null;
-      /** Internal Access */
-      internal_access?: boolean | null;
-      /**
-       * Has Address
-       * @default false
-       */
-      has_address: boolean;
-      /** Client Intake Sections */
-      client_intake_sections: components["schemas"]["ClientIntakeSectionResponse"][];
-      /** Current Section Messages */
-      current_section_messages: components["schemas"]["IntakeMessageResponse"][];
-      /** Client Name */
-      client_name?: string | null;
-      /**
-       * Has Accepted Terms
-       * @default false
-       */
-      has_accepted_terms: boolean;
-    };
-    /** IntakeWithSectionsResponse */
-    IntakeWithSectionsResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Client Id */
-      client_id: string;
-      /** Status */
-      status: string;
-      /** Current Section */
-      current_section?: string | null;
-      client?: components["schemas"]["ClientRecordResponse"] | null;
-      /** Client Intake Sections */
-      client_intake_sections: components["schemas"]["ClientIntakeSectionResponse"][];
-      /** Token */
-      token: string;
-      /** Internal Access */
-      internal_access?: boolean | null;
-      address: components["schemas"]["ClientAddressResponse"] | null;
-    };
-    /** InternalAccessUpdate */
-    InternalAccessUpdate: {
-      /** Internal Access */
-      internal_access: boolean;
-    };
-    /** OutputMetadataResponse */
-    OutputMetadataResponse: {
-      /** Totalduration */
-      totalDuration: string;
-      /** Totalturns */
-      totalTurns: number;
-      /** Speakers */
-      speakers: {
-        [key: string]: components["schemas"]["SpeakerStats"];
-      };
-      /** Averageconfidence */
-      averageConfidence: number;
-      /** Language */
-      language: string;
-      /** Createdat */
-      createdAt: string;
-    };
-    /** Page[AssessmentTreeResponse] */
-    Page_AssessmentTreeResponse_: {
-      /** Items */
-      items: components["schemas"]["AssessmentTreeResponse"][];
-      /** Total */
-      total: number | null;
-      /** Page */
-      page: number | null;
-      /** Size */
-      size: number | null;
-      /** Pages */
-      pages?: number | null;
-    };
-    /** Page[AssessmentTreeRevision] */
-    Page_AssessmentTreeRevision_: {
-      /** Items */
-      items: components["schemas"]["AssessmentTreeRevision"][];
-      /** Total */
-      total: number | null;
-      /** Page */
-      page: number | null;
-      /** Size */
-      size: number | null;
-      /** Pages */
-      pages?: number | null;
-    };
-    /** Page[ClientResponse] */
-    Page_ClientResponse_: {
-      /** Items */
-      items: components["schemas"]["ClientResponse"][];
-      /** Total */
-      total: number | null;
-      /** Page */
-      page: number | null;
-      /** Size */
-      size: number | null;
-      /** Pages */
-      pages?: number | null;
-    };
-    /** Page[DecisionTreeResponse] */
-    Page_DecisionTreeResponse_: {
-      /** Items */
-      items: components["schemas"]["DecisionTreeResponse"][];
-      /** Total */
-      total: number | null;
-      /** Page */
-      page: number | null;
-      /** Size */
-      size: number | null;
-      /** Pages */
-      pages?: number | null;
-    };
-    /** Page[DecisionTreeRevision] */
-    Page_DecisionTreeRevision_: {
-      /** Items */
-      items: components["schemas"]["DecisionTreeRevision"][];
-      /** Total */
-      total: number | null;
-      /** Page */
-      page: number | null;
-      /** Size */
-      size: number | null;
-      /** Pages */
-      pages?: number | null;
-    };
-    /** Page[PlanAssetResponse] */
-    Page_PlanAssetResponse_: {
-      /** Items */
-      items: components["schemas"]["PlanAssetResponse"][];
-      /** Total */
-      total: number | null;
-      /** Page */
-      page: number | null;
-      /** Size */
-      size: number | null;
-      /** Pages */
-      pages?: number | null;
-    };
-    /** Page[PlanDecisionTreeResponse] */
-    Page_PlanDecisionTreeResponse_: {
-      /** Items */
-      items: components["schemas"]["PlanDecisionTreeResponse"][];
-      /** Total */
-      total: number | null;
-      /** Page */
-      page: number | null;
-      /** Size */
-      size: number | null;
-      /** Pages */
-      pages?: number | null;
-    };
-    /** Page[PlanResponse] */
-    Page_PlanResponse_: {
-      /** Items */
-      items: components["schemas"]["app__routes__plan_router__PlanResponse"][];
-      /** Total */
-      total: number | null;
-      /** Page */
-      page: number | null;
-      /** Size */
-      size: number | null;
-      /** Pages */
-      pages?: number | null;
-    };
-    /** PlanAssetResponse */
-    PlanAssetResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /**
-       * Plan Id
-       * Format: uuid
-       */
-      plan_id: string;
-      /** Filename */
-      filename?: string | null;
-      /** Mimetype */
-      mimetype?: string | null;
-      /** Data */
-      data?: string | null;
-    };
-    /** PlanDecisionTreeExtendedResponse */
-    PlanDecisionTreeExtendedResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Status */
-      status: string;
-      /** Execution Id */
-      execution_id: string | null;
-      /**
-       * Decision Tree Id
-       * Format: uuid
-       */
-      decision_tree_id: string;
-      /**
-       * Plan Id
-       * Format: uuid
-       */
-      plan_id: string;
-      decision_tree?: components["schemas"]["DecisionTreeResponse"] | null;
-      execution: components["schemas"]["ExecutionResponse"] | null;
-      /** Annotations */
-      annotations: components["schemas"]["Annotation"][] | null;
-      /** Run Statements */
-      run_statements: string[] | null;
-      /** Run Steps */
-      run_steps: components["schemas"]["DecisionTreeRunnerStep"][] | null;
-    };
-    /** PlanDecisionTreeRequestCreate */
-    PlanDecisionTreeRequestCreate: {
-      /**
-       * Decision Tree Id
-       * Format: uuid
-       */
-      decision_tree_id: string;
-    };
-    /** PlanDecisionTreeResponse */
-    PlanDecisionTreeResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Status */
-      status: string;
-      /** Execution Id */
-      execution_id: string | null;
-      /**
-       * Decision Tree Id
-       * Format: uuid
-       */
-      decision_tree_id: string;
-      /**
-       * Plan Id
-       * Format: uuid
-       */
-      plan_id: string;
-      decision_tree?: components["schemas"]["DecisionTreeResponse"] | null;
-      execution: components["schemas"]["ExecutionResponse"] | null;
-    };
-    /** PlanGenerationEditRequest */
-    PlanGenerationEditRequest: {
-      /** Markdown */
-      markdown: string;
-    };
-    /** PlanGenerationRequestCreate */
-    PlanGenerationRequestCreate: {
-      /** Prompt */
-      prompt?: string | null;
-      /** Resource To Remove Id */
-      resource_to_remove_id?: string | null;
-      /** Resource To Add Content */
-      resource_to_add_content?: {
-        [key: string]: string | number | string[] | boolean | null;
-      } | null;
-    };
-    /** PlanGenerationResponseCreate */
-    PlanGenerationResponseCreate: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /**
-       * Plan Id
-       * Format: uuid
-       */
-      plan_id: string;
-      /** Status */
-      status: string;
-      /** Prompt */
-      prompt?: string | null;
-      /** Finished At */
-      finished_at?: string | null;
-      /** Execution Id */
-      execution_id?: string | null;
-      execution?: components["schemas"]["ExecutionResponse"] | null;
-      /** Regeneration Notify */
-      regeneration_notify: boolean;
-    };
-    /** PlanGenerationResponseGet */
-    PlanGenerationResponseGet: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /**
-       * Plan Id
-       * Format: uuid
-       */
-      plan_id: string;
-      /** Status */
-      status: string;
-      /** Prompt */
-      prompt?: string | null;
-      /** Finished At */
-      finished_at?: string | null;
-      /** Execution Id */
-      execution_id?: string | null;
-      execution?: components["schemas"]["ExecutionResponse"] | null;
-      /** Regeneration Notify */
-      regeneration_notify: boolean;
-      /** Markdown Result */
-      markdown_result?: string | null;
-    };
-    /** PlanRequestCreate */
-    PlanRequestCreate: {
-      /** Client Id */
-      client_id: string;
-      /**
-       * No Initial Generation
-       * @default false
-       */
-      no_initial_generation: boolean | null;
-    };
-    /** PlanResponseCreate */
-    PlanResponseCreate: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Client Id */
-      client_id: string;
-      /** Create Execution Id */
-      create_execution_id?: string | null;
-      create_execution?: components["schemas"]["ExecutionResponse"] | null;
-      /** Create Status */
-      create_status: string;
-      /** Edited Manually */
-      edited_manually: boolean;
-      /** @description Gets the client record data for this plan.
-       *     Renamed from 'oms' to better reflect its content and source. */
-      readonly client_record:
-        | components["schemas"]["ClientRecordResponse"]
-        | null;
-    };
-    /** PlanResponseGet */
-    PlanResponseGet: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Client Id */
-      client_id: string;
-      /** Create Execution Id */
-      create_execution_id?: string | null;
-      create_execution?: components["schemas"]["ExecutionResponse"] | null;
-      /** Create Status */
-      create_status: string;
-      /** Edited Manually */
-      edited_manually: boolean;
-      latest_generation:
-        | components["schemas"]["PlanGenerationResponseGet"]
-        | null;
-      /** @description Gets the client record data for this plan.
-       *     Renamed from 'oms' to better reflect its content and source. */
-      readonly client_record:
-        | components["schemas"]["ClientRecordResponse"]
-        | null;
-    };
-    /**
-     * ProcessingStatus
-     * @enum {string}
-     */
-    ProcessingStatus:
-      | "not_started"
-      | "in_progress"
-      | "completed"
-      | "failed"
-      | "needs_retry";
-    /** RecordingSessionResponse */
-    RecordingSessionResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Client Id */
-      client_id: string;
-      /**
-       * Intake Id
-       * Format: uuid
-       */
-      intake_id: string;
-      /** Audio Chunks Url */
-      audio_chunks_url?: string | null;
-      /** Audio File Url */
-      audio_file_url?: string | null;
-      status: components["schemas"]["RecordingStatus"];
-      /** Gcs Bucket Name */
-      gcs_bucket_name?: string | null;
-      /** Gcs Chunks Folder */
-      gcs_chunks_folder?: string | null;
-      /** Gcs Final File Path */
-      gcs_final_file_path?: string | null;
-      /** Chunk Count */
-      chunk_count: number;
-      /**
-       * Transcription Approved
-       * @default false
-       */
-      transcription_approved: boolean;
-      /** Execution Id */
-      execution_id?: string | null;
-      execution?: components["schemas"]["ExecutionResponse"] | null;
-    };
-    /** RecordingSessionStatusResponse */
-    RecordingSessionStatusResponse: {
-      /** Id */
-      id: string;
-      status: components["schemas"]["RecordingStatus"];
-      /** Chunk Count */
-      chunk_count: number;
-      /** Processing Progress */
-      processing_progress?: number | null;
-      /** Error Message */
-      error_message?: string | null;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Gcs Final File Path */
-      gcs_final_file_path?: string | null;
-      /**
-       * Transcription Approved
-       * @default false
-       */
-      transcription_approved: boolean;
-    };
-    /**
-     * RecordingStatus
-     * @enum {string}
-     */
-    RecordingStatus:
-      | "created"
-      | "recording"
-      | "paused"
-      | "processing"
-      | "error"
-      | "completed";
-    /** Resource */
-    Resource: {
-      /**
-       * Id
-       * @description Unique identifier for the resource.
-       */
-      id: string;
-      /** @description Category of the resource. */
-      category: components["schemas"]["ResourceCategory"];
-      /** @description Subcategory of the resource. */
-      subcategory?: components["schemas"]["ResourceSubcategory"] | null;
-      /**
-       * Name
-       * @description Name of the resource.
-       */
-      name: string;
-      /**
-       * Phone
-       * @description List of phone numbers for the resource.
-       */
-      phone?: string | null;
-      /** Description */
-      description?: string | null;
-      /** Tags */
-      tags?: string[] | null;
-      /**
-       * Address
-       * @description Address of the resource, if available.
-       */
-      address?: string | null;
-      /**
-       * Website
-       * @description Website of the resource, if available.
-       */
-      website?: string | null;
-      /**
-       * Email
-       * @description Email to contacts if available.
-       */
-      email?: string | null;
-      /** Score */
-      score?: number | null;
-      /** Llm Rank */
-      llm_rank?: number | null;
-      /** Llm Valid */
-      llm_valid?: boolean | null;
-      /** Rating */
-      rating?: number | null;
-      /** Ratingcount */
-      ratingCount?: number | null;
-      /** Operationalstatus */
-      operationalStatus?: string | null;
-      /** Price Level */
-      price_level?: string | null;
-      transport_mode?: components["schemas"]["DistanceMode"] | null;
-      /** Transport Minutes */
-      transport_minutes?: number | null;
-    };
-    /**
-     * ResourceCategory
-     * @description Resource categories
-     * @enum {string}
-     */
-    ResourceCategory:
-      | "Basic Needs"
-      | "Employment and Career Support"
-      | "Education"
-      | "Behavioral Health Services"
-      | "Medical and Health Services"
-      | "Legal and Financial Assistance"
-      | "Family and Community Support"
-      | "Transportation"
-      | "Specialized Services"
-      | "Community and Social Reintegration"
-      | "Unknown";
-    /**
-     * ResourceFailureReason
-     * @enum {string}
-     */
-    ResourceFailureReason: "api_error" | "no_results_found" | "success";
-    /**
-     * ResourceSubcategory
-     * @description Resource subcategories
-     * @enum {string}
-     */
-    ResourceSubcategory:
-      | "Housing"
-      | "Food Assistance"
-      | "Clothing"
-      | "Job Training Programs"
-      | "Job Placement Services"
-      | "Resume and Interview Support"
-      | "Certification and Licensing Assistance"
-      | "High School Equivalency Programs"
-      | "Post-Secondary Education"
-      | "Literacy Programs"
-      | "Digital Literacy"
-      | "Mental Health Counseling"
-      | "Substance Abuse Treatment"
-      | "Trauma-Informed Care"
-      | "Primary Care"
-      | "Specialized Care"
-      | "Addiction Medicine"
-      | "HIV/AIDS and Hepatitis C Services"
-      | "Identification Services"
-      | "Legal Aid"
-      | "Financial Literacy Programs"
-      | "Emergency Financial Assistance"
-      | "Family Reunification Services"
-      | "Mentorship Programs"
-      | "Faith-Based Support"
-      | "Reentry Support Groups"
-      | "Public Transit Access"
-      | "Driver's License Assistance"
-      | "Transportation Services"
-      | "Domestic Violence Support"
-      | "Sex Offender-Specific Programs"
-      | "Youth-Specific Resources"
-      | "Culturally Specific Programs"
-      | "Volunteer Opportunities"
-      | "Recreation"
-      | "Civic Engagement";
-    /** SetNotificationRequest */
-    SetNotificationRequest: {
-      /** Notify */
-      notify: boolean;
-    };
-    /** SignedUrlResponse */
-    SignedUrlResponse: {
-      /** Signed Url */
-      signed_url: string;
-      /** Expires In Seconds */
-      expires_in_seconds: number;
-    };
-    /** SpeakerStats */
-    SpeakerStats: {
-      /** Turns */
-      turns: number;
-      /** Duration */
-      duration: string;
-    };
-    /** TokenAccessResponse */
-    TokenAccessResponse: {
-      /** Client Id */
-      client_id: string;
-      /** Token */
-      token: string;
-    };
-    /** TranscriptionOutputResponse */
-    TranscriptionOutputResponse: {
-      metadata: components["schemas"]["OutputMetadataResponse"];
-      /** Conversation */
-      conversation: components["schemas"]["ConversationTurnResponse"][];
-    };
-    /** UpdateRecordingSessionStatusRequest */
-    UpdateRecordingSessionStatusRequest: {
-      status: components["schemas"]["RecordingStatus"];
-      /** Audio Chunks Url */
-      audio_chunks_url?: string | null;
-      /** Audio File Url */
-      audio_file_url?: string | null;
-    };
-    /** UploadChunkRequest */
-    UploadChunkRequest: {
-      /** Chunk Index */
-      chunk_index: number;
-      /** Chunk Data */
-      chunk_data: string;
-      /** Mime Type */
-      mime_type: string;
-      /**
-       * Has Header
-       * @default false
-       */
-      has_header: boolean;
-    };
-    /** UploadChunkResponse */
-    UploadChunkResponse: {
-      /** Success */
-      success: boolean;
-      /** Chunk Index */
-      chunk_index: number;
-      /** Message */
-      message: string;
-    };
-    /** ValidationError */
-    ValidationError: {
-      /** Location */
-      loc: (string | number)[];
-      /** Message */
-      msg: string;
-      /** Error Type */
-      type: string;
-    };
-    /** VerifyDOBRequest */
-    VerifyDOBRequest: {
-      /** Token From Url */
-      token_from_url: string;
-      /**
-       * Date Of Birth
-       * Format: date
-       */
-      date_of_birth: string;
-    };
-    /** VerifyDOBResponse */
-    VerifyDOBResponse: {
-      /** Status */
-      status: boolean;
-      /** Access Token */
-      access_token?: string | null;
-      /**
-       * Token Type
-       * @default bearer
-       */
-      token_type: string;
-      /** Message */
-      message?: string | null;
-    };
-    /** VerifyNonPseudoId */
-    VerifyNonPseudoId: {
-      /** First Name */
-      first_name: string;
-      /** Last Name */
-      last_name: string;
-      /**
-       * Date Of Birth
-       * Format: date
-       */
-      date_of_birth: string;
-      /** Recaptchatoken */
-      recaptchaToken?: string | null;
-    };
-    /** VerifyPseudoDOBRequest */
-    VerifyPseudoDOBRequest: {
-      /** Last Name */
-      last_name: string;
-      /**
-       * Date Of Birth
-       * Format: date
-       */
-      date_of_birth: string;
-    };
-    /** PlanResponse */
-    app__routes__plan_router__PlanResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Client Id */
-      client_id: string;
-      /** Create Execution Id */
-      create_execution_id?: string | null;
-      create_execution?: components["schemas"]["ExecutionResponse"] | null;
-      /** Create Status */
-      create_status: string;
-      /** Edited Manually */
-      edited_manually: boolean;
-      /** @description Gets the client record data for this plan.
-       *     Renamed from 'oms' to better reflect its content and source. */
-      readonly client_record:
-        | components["schemas"]["ClientRecordResponse"]
-        | null;
-    };
-    /** PlanResponse */
-    app__routes__shared_models__PlanResponse: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string;
-      /**
-       * Created At
-       * Format: date-time
-       */
-      created_at: string;
-      /**
-       * Updated At
-       * Format: date-time
-       */
-      updated_at: string;
-      /** Client Id */
-      client_id: string;
-      /** Create Execution Id */
-      create_execution_id?: string | null;
-      create_execution?: components["schemas"]["ExecutionResponse"] | null;
-      /** Create Status */
-      create_status: string;
-      /** Edited Manually */
-      edited_manually: boolean;
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+	schemas: {
+		/** AddressSubmission */
+		AddressSubmission: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id?: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at?: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at?: string;
+			/** Street Address */
+			street_address?: string | null;
+			/** City */
+			city: string;
+			/** State */
+			state: string;
+		};
+		/** AdressSubmissionResponse */
+		AdressSubmissionResponse: {
+			/** Intake Completed */
+			intake_completed: boolean;
+		};
+		/** Annotation */
+		Annotation: {
+			/**
+			 * Source
+			 * @description The source of the annotation
+			 */
+			source: string;
+			/**
+			 * Source Location
+			 * @description The location of the annotation in the source
+			 */
+			source_location: string;
+			/**
+			 * Source Text Extract
+			 * @description The text extract of the annotation
+			 */
+			source_text_extract: string;
+		};
+		/** AssessmentResponse */
+		AssessmentResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/** Intake Id */
+			intake_id?: string | null;
+			/** Scores */
+			scores?: Record<string, never> | null;
+			/** Status */
+			status: string;
+		};
+		/** AssessmentTreeCreate */
+		AssessmentTreeCreate: {
+			/** Name */
+			name: string;
+		};
+		/** AssessmentTreeResponse */
+		AssessmentTreeResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Name */
+			name: string;
+			/** Enabled */
+			enabled: boolean;
+			/** Current Revision Id */
+			current_revision_id?: string | null;
+		};
+		/** AssessmentTreeRevision */
+		AssessmentTreeRevision: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id?: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at?: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at?: string;
+			/**
+			 * Assessment Tree Id
+			 * Format: uuid
+			 */
+			assessment_tree_id: string;
+			/** Mermaid Content */
+			mermaid_content: string;
+			/** Additional Structured Data */
+			additional_structured_data: Record<string, never>;
+			/** Content Hash */
+			content_hash: string | null;
+			/**
+			 * Input Data
+			 * @default [
+			 *       "intake_conversation"
+			 *     ]
+			 */
+			input_data: components["schemas"]["InputType"][];
+		};
+		/** AssessmentTreeRevisionCreate */
+		AssessmentTreeRevisionCreate: {
+			/** Mermaid Content */
+			mermaid_content: string;
+			/** Additional Structured Data */
+			additional_structured_data?: Record<string, never> | null;
+			/** Input Data */
+			input_data?: components["schemas"]["InputType"][] | null;
+		};
+		/** AssessmentTreeRevisionResponse */
+		AssessmentTreeRevisionResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/**
+			 * Assessment Tree Id
+			 * Format: uuid
+			 */
+			assessment_tree_id: string;
+			/** Mermaid Content */
+			mermaid_content: string;
+			/** Additional Structured Data */
+			additional_structured_data?: Record<string, never> | null;
+			/** Input Data */
+			input_data: components["schemas"]["InputType"][];
+		};
+		/** AssessmentTreeUpdate */
+		AssessmentTreeUpdate: {
+			/** Name */
+			name?: string | null;
+			/** Enabled */
+			enabled?: boolean | null;
+		};
+		/** AssessmentTreeWithRevisionsResponse */
+		AssessmentTreeWithRevisionsResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Name */
+			name: string;
+			/** Enabled */
+			enabled: boolean;
+			/** Current Revision Id */
+			current_revision_id?: string | null;
+			/** Revisions */
+			revisions: components["schemas"]["AssessmentTreeRevisionResponse"][];
+		};
+		/** Body_router_upload_asset_plans__id__assets_upload_post */
+		Body_router_upload_asset_plans__id__assets_upload_post: {
+			/**
+			 * File
+			 * Format: binary
+			 */
+			file: string;
+		};
+		/** ClientAddressResponse */
+		ClientAddressResponse: {
+			/** Street Address */
+			street_address: string | null;
+			/** City */
+			city: string;
+			/** State */
+			state: string;
+		};
+		/** ClientInfoResponse */
+		ClientInfoResponse: {
+			/** Home */
+			home?: string | null;
+			/** Work */
+			work?: string | null;
+			/** School */
+			school?: string | null;
+			/** Probation Office */
+			probation_office?: string | null;
+			/** Can Drive */
+			can_drive?: boolean | null;
+			/** Can Walk */
+			can_walk?: boolean | null;
+			/** Can Bike */
+			can_bike?: boolean | null;
+			/** Transit Pass */
+			transit_pass?: boolean | null;
+		};
+		/** ClientIntakeSectionResponse */
+		ClientIntakeSectionResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/**
+			 * Intake Section Id
+			 * Format: uuid
+			 */
+			intake_section_id: string;
+			/** Is Active */
+			is_active: boolean;
+			/** Completion Status */
+			completion_status: string;
+			/** Notes */
+			notes?: string | null;
+			intake_section: components["schemas"]["IntakeSectionResponse"];
+		};
+		/** ClientRecordResponse */
+		ClientRecordResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id?: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at?: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at?: string;
+			/** Pseudonymized Client Id */
+			pseudonymized_client_id: string;
+			/** External Client Id */
+			external_client_id: string;
+			full_name: components["schemas"]["FullNameModel"];
+			/**
+			 * Birthdate
+			 * Format: date
+			 */
+			birthdate: string;
+			/** State Code */
+			state_code: string;
+		};
+		/** ClientResponse */
+		ClientResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id?: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at?: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at?: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			intake?: components["schemas"]["IntakeResponse"] | null;
+			plans?:
+				| components["schemas"]["app__routes__shared_models__PlanResponse"]
+				| null;
+			processing_status: components["schemas"]["ProcessingStatus"];
+			client?: components["schemas"]["ClientRecordResponse"] | null;
+			/** Frontend Status */
+			readonly frontend_status: string;
+		};
+		/** ClientStatusResponse */
+		ClientStatusResponse: {
+			/** In Progress */
+			in_progress: components["schemas"]["ClientStatusUpdate"][];
+		};
+		/** ClientStatusUpdate */
+		ClientStatusUpdate: {
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			processing_status: components["schemas"]["ProcessingStatus"];
+		};
+		/** CompleteIntakeTranscriptionResponse */
+		CompleteIntakeTranscriptionResponse: {
+			/** Intake Completed */
+			intake_completed: boolean;
+			/** Intake Approved */
+			intake_approved: boolean;
+			/** Address Updated */
+			address_updated: boolean;
+		};
+		/** CompleteIntakeTrascriptionSubmission */
+		CompleteIntakeTrascriptionSubmission: {
+			/** Street Address */
+			street_address?: string | null;
+			/** City */
+			city?: string | null;
+			/** State */
+			state?: string | null;
+			/** Approved */
+			approved?: boolean | null;
+		};
+		/** ConversationTurnResponse */
+		ConversationTurnResponse: {
+			/** Id */
+			id: string;
+			/** Role */
+			role: string;
+			/** Content */
+			content: string;
+			/** Starttime */
+			startTime: string;
+			/** Endtime */
+			endTime: string;
+			/** Speakertag */
+			speakerTag: number;
+			/** Wordcount */
+			wordCount: number;
+			/** Duration */
+			duration: string;
+		};
+		/** CreateRecordingSessionRequest */
+		CreateRecordingSessionRequest: {
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+		};
+		/** DecisionTreeCreate */
+		DecisionTreeCreate: {
+			/** Name */
+			name: string;
+			/** Criterias */
+			criterias?: string | null;
+		};
+		/** DecisionTreeResponse */
+		DecisionTreeResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Name */
+			name: string;
+			/** Enabled */
+			enabled: boolean;
+			/** Criterias */
+			criterias?: string | null;
+			/** Current Revision Id */
+			current_revision_id?: string | null;
+		};
+		/** DecisionTreeRevision */
+		DecisionTreeRevision: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id?: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at?: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at?: string;
+			/**
+			 * Decision Tree Id
+			 * Format: uuid
+			 */
+			decision_tree_id: string;
+			/** Mermaid Content */
+			mermaid_content: string;
+			/** Notes */
+			notes: string;
+			/** Content Hash */
+			content_hash: string | null;
+		};
+		/** DecisionTreeRevisionCreate */
+		DecisionTreeRevisionCreate: {
+			/** Mermaid Content */
+			mermaid_content: string;
+			/** Notes */
+			notes: string;
+		};
+		/** DecisionTreeRevisionResponse */
+		DecisionTreeRevisionResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/**
+			 * Decision Tree Id
+			 * Format: uuid
+			 */
+			decision_tree_id: string;
+			/** Mermaid Content */
+			mermaid_content: string;
+			/** Notes */
+			notes: string;
+		};
+		/** DecisionTreeRunnerStep */
+		DecisionTreeRunnerStep: {
+			/**
+			 * Node Key
+			 * @description Node traversed during the execution
+			 */
+			node_key: string;
+			/**
+			 * Node Value
+			 * @description Value of the node, for reference
+			 */
+			node_value: string | null;
+			/**
+			 * Node Type
+			 * @description Type of the node, for reference
+			 */
+			node_type: string;
+			/**
+			 * Annotations
+			 * @description The annotations of the answer (for question only)
+			 */
+			annotations?: components["schemas"]["Annotation"][] | null;
+		};
+		/** DecisionTreeUpdate */
+		DecisionTreeUpdate: {
+			/** Name */
+			name?: string | null;
+			/** Enabled */
+			enabled?: boolean | null;
+			/** Criterias */
+			criterias?: string | null;
+		};
+		/** DecisionTreeWithRevisionsResponse */
+		DecisionTreeWithRevisionsResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Name */
+			name: string;
+			/** Enabled */
+			enabled: boolean;
+			/** Criterias */
+			criterias?: string | null;
+			/** Current Revision Id */
+			current_revision_id?: string | null;
+			/** Revisions */
+			revisions: components["schemas"]["DecisionTreeRevisionResponse"][];
+		};
+		/** DeletionResponse */
+		DeletionResponse: {
+			status: components["schemas"]["DeletionStatus"];
+		};
+		/**
+		 * DeletionStatus
+		 * @enum {string}
+		 */
+		DeletionStatus: "success" | "failed";
+		/**
+		 * DistanceMode
+		 * @enum {string}
+		 */
+		DistanceMode: "driving" | "walking" | "bicycling" | "transit";
+		/** ExecutionResponse */
+		ExecutionResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			status: components["schemas"]["ExecutionStatus"];
+			/** Progress */
+			progress: number;
+			/** Message */
+			message?: string | null;
+		};
+		/**
+		 * ExecutionStatus
+		 * @enum {string}
+		 */
+		ExecutionStatus:
+			| "not_started"
+			| "pending"
+			| "in_progress"
+			| "completed"
+			| "failed";
+		/** FinalizeRecordingRequest */
+		FinalizeRecordingRequest: {
+			/** Total Chunks */
+			total_chunks: number;
+		};
+		/** FinalizeRecordingResponse */
+		FinalizeRecordingResponse: {
+			/** Execution Id */
+			execution_id: string;
+		};
+		/** FullNameModel */
+		FullNameModel: {
+			/** Given Names */
+			given_names: string;
+			/**
+			 * Middle Names
+			 * @default
+			 */
+			middle_names: string | null;
+			/** Surname */
+			surname: string;
+			/**
+			 * Name Suffix
+			 * @default
+			 */
+			name_suffix: string | null;
+		};
+		/** GetPlanResourcesRequest */
+		GetPlanResourcesRequest: {
+			/** @description Resource category */
+			category: components["schemas"]["ResourceCategory"];
+			/** @description Resource subcategory */
+			subcategory?: components["schemas"]["ResourceSubcategory"] | null;
+			/**
+			 * Exclude
+			 * @description Keywords to exclude in the resource names, if a specific resource for one of the resource types is mentioned. For example, if the client was banned from a specific shelter.
+			 * @default []
+			 */
+			exclude: string[];
+		};
+		/** GetResourcesRequest */
+		GetResourcesRequest: {
+			/**
+			 * Home
+			 * @description Client's home address, which can be a full address (preferred), a zip code, or a landmark.
+			 */
+			home?: string | null;
+			/**
+			 * Work
+			 * @description Client's work address, which can be a full address (preferred), a zip code, or a landmark.
+			 */
+			work?: string | null;
+			/**
+			 * School
+			 * @description Client's school address, which can be a full address (preferred), a zip code, or a landmark.
+			 */
+			school?: string | null;
+			/**
+			 * Probation Office
+			 * @description Client's probation office address, which can be a full address (preferred), a zip code, or a landmark.
+			 */
+			probation_office?: string | null;
+			/**
+			 * Can Drive
+			 * @description Whether the client has a car
+			 */
+			can_drive?: boolean | null;
+			/**
+			 * Can Walk
+			 * @description Whether the client can comfortably walk
+			 */
+			can_walk?: boolean | null;
+			/**
+			 * Can Bike
+			 * @description Whether the client has a bike
+			 */
+			can_bike?: boolean | null;
+			/**
+			 * Transit Pass
+			 * @description Whether the client has a transit pass
+			 */
+			transit_pass?: boolean | null;
+			/** @description Resource category */
+			category: components["schemas"]["ResourceCategory"];
+			/** @description Resource subcategory */
+			subcategory?: components["schemas"]["ResourceSubcategory"] | null;
+			/**
+			 * Exclude Names
+			 * @description Keywords to exclude in resource names
+			 */
+			exclude_names?: string[] | null;
+			/**
+			 * Exclude Ids
+			 * @description List of resource IDs to exclude from results
+			 */
+			exclude_ids?: string[] | null;
+			/**
+			 * Limit
+			 * @description How many
+			 * @default 10
+			 */
+			limit: number | null;
+		};
+		/** GetResourcesResponse */
+		GetResourcesResponse: {
+			/** Resources */
+			resources: components["schemas"]["Resource"][];
+			failure_reason?: components["schemas"]["ResourceFailureReason"] | null;
+			/** Error Message */
+			error_message?: string | null;
+		};
+		/** HTTPValidationError */
+		HTTPValidationError: {
+			/** Detail */
+			detail?: components["schemas"]["ValidationError"][];
+		};
+		/**
+		 * InputType
+		 * @enum {string}
+		 */
+		InputType: "intake_conversation" | "conversation_summary";
+		/** IntakeMessageResponse */
+		IntakeMessageResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Content */
+			content: string;
+			from_role: components["schemas"]["IntakeMessageRole"];
+		};
+		/**
+		 * IntakeMessageRole
+		 * @description Roles for messages in intake assessment.
+		 * @enum {string}
+		 */
+		IntakeMessageRole: "client" | "caseworker" | "system";
+		/** IntakeResponse */
+		IntakeResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/** Status */
+			status: string;
+			/** Current Section */
+			current_section?: string | null;
+			/** Token */
+			token?: string | null;
+			/** Internal Access */
+			internal_access?: boolean | null;
+		};
+		/**
+		 * IntakeSectionCreate
+		 * @description Model for creating intake sections
+		 */
+		IntakeSectionCreate: {
+			/** Title */
+			title: string;
+			/** Description */
+			description: string;
+			/** Required Information */
+			required_information: string;
+		};
+		/** IntakeSectionResponse */
+		IntakeSectionResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Title */
+			title: string;
+			/** Description */
+			description: string;
+		};
+		/**
+		 * IntakeStatus
+		 * @description Status for intake assessment process.
+		 *     Used for both database persistence and UI state representation.
+		 * @enum {string}
+		 */
+		IntakeStatus: "created" | "in_progress" | "error" | "completed";
+		/** IntakeWithSectionsAndMessagesResponse */
+		IntakeWithSectionsAndMessagesResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			status: components["schemas"]["IntakeStatus"];
+			/** Current Section */
+			current_section?: string | null;
+			/** Internal Access */
+			internal_access?: boolean | null;
+			/**
+			 * Has Address
+			 * @default false
+			 */
+			has_address: boolean;
+			/** Client Intake Sections */
+			client_intake_sections: components["schemas"]["ClientIntakeSectionResponse"][];
+			/** Current Section Messages */
+			current_section_messages: components["schemas"]["IntakeMessageResponse"][];
+			/** Client Name */
+			client_name?: string | null;
+			/**
+			 * Has Accepted Terms
+			 * @default false
+			 */
+			has_accepted_terms: boolean;
+		};
+		/** IntakeWithSectionsResponse */
+		IntakeWithSectionsResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/** Status */
+			status: string;
+			/** Current Section */
+			current_section?: string | null;
+			client?: components["schemas"]["ClientRecordResponse"] | null;
+			/** Client Intake Sections */
+			client_intake_sections: components["schemas"]["ClientIntakeSectionResponse"][];
+			/** Token */
+			token: string;
+			/** Internal Access */
+			internal_access?: boolean | null;
+			address: components["schemas"]["ClientAddressResponse"] | null;
+		};
+		/** InternalAccessUpdate */
+		InternalAccessUpdate: {
+			/** Internal Access */
+			internal_access: boolean;
+		};
+		/** OutputMetadataResponse */
+		OutputMetadataResponse: {
+			/** Totalduration */
+			totalDuration: string;
+			/** Totalturns */
+			totalTurns: number;
+			/** Speakers */
+			speakers: {
+				[key: string]: components["schemas"]["SpeakerStats"];
+			};
+			/** Averageconfidence */
+			averageConfidence: number;
+			/** Language */
+			language: string;
+			/** Createdat */
+			createdAt: string;
+		};
+		/** Page[AssessmentTreeResponse] */
+		Page_AssessmentTreeResponse_: {
+			/** Items */
+			items: components["schemas"]["AssessmentTreeResponse"][];
+			/** Total */
+			total: number | null;
+			/** Page */
+			page: number | null;
+			/** Size */
+			size: number | null;
+			/** Pages */
+			pages?: number | null;
+		};
+		/** Page[AssessmentTreeRevision] */
+		Page_AssessmentTreeRevision_: {
+			/** Items */
+			items: components["schemas"]["AssessmentTreeRevision"][];
+			/** Total */
+			total: number | null;
+			/** Page */
+			page: number | null;
+			/** Size */
+			size: number | null;
+			/** Pages */
+			pages?: number | null;
+		};
+		/** Page[ClientResponse] */
+		Page_ClientResponse_: {
+			/** Items */
+			items: components["schemas"]["ClientResponse"][];
+			/** Total */
+			total: number | null;
+			/** Page */
+			page: number | null;
+			/** Size */
+			size: number | null;
+			/** Pages */
+			pages?: number | null;
+		};
+		/** Page[DecisionTreeResponse] */
+		Page_DecisionTreeResponse_: {
+			/** Items */
+			items: components["schemas"]["DecisionTreeResponse"][];
+			/** Total */
+			total: number | null;
+			/** Page */
+			page: number | null;
+			/** Size */
+			size: number | null;
+			/** Pages */
+			pages?: number | null;
+		};
+		/** Page[DecisionTreeRevision] */
+		Page_DecisionTreeRevision_: {
+			/** Items */
+			items: components["schemas"]["DecisionTreeRevision"][];
+			/** Total */
+			total: number | null;
+			/** Page */
+			page: number | null;
+			/** Size */
+			size: number | null;
+			/** Pages */
+			pages?: number | null;
+		};
+		/** Page[PlanAssetResponse] */
+		Page_PlanAssetResponse_: {
+			/** Items */
+			items: components["schemas"]["PlanAssetResponse"][];
+			/** Total */
+			total: number | null;
+			/** Page */
+			page: number | null;
+			/** Size */
+			size: number | null;
+			/** Pages */
+			pages?: number | null;
+		};
+		/** Page[PlanDecisionTreeResponse] */
+		Page_PlanDecisionTreeResponse_: {
+			/** Items */
+			items: components["schemas"]["PlanDecisionTreeResponse"][];
+			/** Total */
+			total: number | null;
+			/** Page */
+			page: number | null;
+			/** Size */
+			size: number | null;
+			/** Pages */
+			pages?: number | null;
+		};
+		/** Page[PlanResponse] */
+		Page_PlanResponse_: {
+			/** Items */
+			items: components["schemas"]["app__routes__plan_router__PlanResponse"][];
+			/** Total */
+			total: number | null;
+			/** Page */
+			page: number | null;
+			/** Size */
+			size: number | null;
+			/** Pages */
+			pages?: number | null;
+		};
+		/** PlanAssetResponse */
+		PlanAssetResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/**
+			 * Plan Id
+			 * Format: uuid
+			 */
+			plan_id: string;
+			/** Filename */
+			filename?: string | null;
+			/** Mimetype */
+			mimetype?: string | null;
+			/** Data */
+			data?: string | null;
+		};
+		/** PlanDecisionTreeExtendedResponse */
+		PlanDecisionTreeExtendedResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Status */
+			status: string;
+			/** Execution Id */
+			execution_id: string | null;
+			/**
+			 * Decision Tree Id
+			 * Format: uuid
+			 */
+			decision_tree_id: string;
+			/**
+			 * Plan Id
+			 * Format: uuid
+			 */
+			plan_id: string;
+			decision_tree?: components["schemas"]["DecisionTreeResponse"] | null;
+			execution: components["schemas"]["ExecutionResponse"] | null;
+			/** Annotations */
+			annotations: components["schemas"]["Annotation"][] | null;
+			/** Run Statements */
+			run_statements: string[] | null;
+			/** Run Steps */
+			run_steps: components["schemas"]["DecisionTreeRunnerStep"][] | null;
+		};
+		/** PlanDecisionTreeRequestCreate */
+		PlanDecisionTreeRequestCreate: {
+			/**
+			 * Decision Tree Id
+			 * Format: uuid
+			 */
+			decision_tree_id: string;
+		};
+		/** PlanDecisionTreeResponse */
+		PlanDecisionTreeResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Status */
+			status: string;
+			/** Execution Id */
+			execution_id: string | null;
+			/**
+			 * Decision Tree Id
+			 * Format: uuid
+			 */
+			decision_tree_id: string;
+			/**
+			 * Plan Id
+			 * Format: uuid
+			 */
+			plan_id: string;
+			decision_tree?: components["schemas"]["DecisionTreeResponse"] | null;
+			execution: components["schemas"]["ExecutionResponse"] | null;
+		};
+		/** PlanGenerationEditRequest */
+		PlanGenerationEditRequest: {
+			/** Markdown */
+			markdown: string;
+		};
+		/** PlanGenerationRequestCreate */
+		PlanGenerationRequestCreate: {
+			/** Prompt */
+			prompt?: string | null;
+			/** Resource To Remove Id */
+			resource_to_remove_id?: string | null;
+			/** Resource To Add Content */
+			resource_to_add_content?: {
+				[key: string]: string | number | string[] | boolean | null;
+			} | null;
+		};
+		/** PlanGenerationResponseCreate */
+		PlanGenerationResponseCreate: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/**
+			 * Plan Id
+			 * Format: uuid
+			 */
+			plan_id: string;
+			/** Status */
+			status: string;
+			/** Prompt */
+			prompt?: string | null;
+			/** Finished At */
+			finished_at?: string | null;
+			/** Execution Id */
+			execution_id?: string | null;
+			execution?: components["schemas"]["ExecutionResponse"] | null;
+			/** Regeneration Notify */
+			regeneration_notify?: boolean | null;
+		};
+		/** PlanGenerationResponseGet */
+		PlanGenerationResponseGet: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/**
+			 * Plan Id
+			 * Format: uuid
+			 */
+			plan_id: string;
+			/** Status */
+			status: string;
+			/** Prompt */
+			prompt?: string | null;
+			/** Finished At */
+			finished_at?: string | null;
+			/** Execution Id */
+			execution_id?: string | null;
+			execution?: components["schemas"]["ExecutionResponse"] | null;
+			/** Regeneration Notify */
+			regeneration_notify?: boolean | null;
+			/** Markdown Result */
+			markdown_result?: string | null;
+		};
+		/** PlanRequestCreate */
+		PlanRequestCreate: {
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/**
+			 * No Initial Generation
+			 * @default false
+			 */
+			no_initial_generation: boolean | null;
+		};
+		/** PlanResponseCreate */
+		PlanResponseCreate: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/** Create Execution Id */
+			create_execution_id?: string | null;
+			create_execution?: components["schemas"]["ExecutionResponse"] | null;
+			/** Create Status */
+			create_status: string;
+			/** Edited Manually */
+			edited_manually: boolean;
+			/** @description Gets the client record data for this plan.
+			 *     Renamed from 'oms' to better reflect its content and source. */
+			readonly client_record:
+				| components["schemas"]["ClientRecordResponse"]
+				| null;
+		};
+		/** PlanResponseGet */
+		PlanResponseGet: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/** Create Execution Id */
+			create_execution_id?: string | null;
+			create_execution?: components["schemas"]["ExecutionResponse"] | null;
+			/** Create Status */
+			create_status: string;
+			/** Edited Manually */
+			edited_manually: boolean;
+			latest_generation:
+				| components["schemas"]["PlanGenerationResponseGet"]
+				| null;
+			/** @description Gets the client record data for this plan.
+			 *     Renamed from 'oms' to better reflect its content and source. */
+			readonly client_record:
+				| components["schemas"]["ClientRecordResponse"]
+				| null;
+		};
+		/**
+		 * ProcessingStatus
+		 * @enum {string}
+		 */
+		ProcessingStatus:
+			| "not_started"
+			| "in_progress"
+			| "completed"
+			| "failed"
+			| "needs_retry";
+		/** RecordingSessionResponse */
+		RecordingSessionResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/**
+			 * Intake Id
+			 * Format: uuid
+			 */
+			intake_id: string;
+			/** Audio Chunks Url */
+			audio_chunks_url?: string | null;
+			/** Audio File Url */
+			audio_file_url?: string | null;
+			status: components["schemas"]["RecordingStatus"];
+			/** Gcs Bucket Name */
+			gcs_bucket_name?: string | null;
+			/** Gcs Chunks Folder */
+			gcs_chunks_folder?: string | null;
+			/** Gcs Final File Path */
+			gcs_final_file_path?: string | null;
+			/** Chunk Count */
+			chunk_count: number;
+			/**
+			 * Transcription Approved
+			 * @default false
+			 */
+			transcription_approved: boolean;
+			/** Execution Id */
+			execution_id?: string | null;
+			execution?: components["schemas"]["ExecutionResponse"] | null;
+		};
+		/** RecordingSessionStatusResponse */
+		RecordingSessionStatusResponse: {
+			/** Id */
+			id: string;
+			status: components["schemas"]["RecordingStatus"];
+			/** Chunk Count */
+			chunk_count: number;
+			/** Processing Progress */
+			processing_progress?: number | null;
+			/** Error Message */
+			error_message?: string | null;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Gcs Final File Path */
+			gcs_final_file_path?: string | null;
+			/**
+			 * Transcription Approved
+			 * @default false
+			 */
+			transcription_approved: boolean;
+		};
+		/**
+		 * RecordingStatus
+		 * @enum {string}
+		 */
+		RecordingStatus:
+			| "created"
+			| "recording"
+			| "paused"
+			| "processing"
+			| "error"
+			| "completed";
+		/** Resource */
+		Resource: {
+			/**
+			 * Id
+			 * @description Unique identifier for the resource.
+			 */
+			id: string;
+			/** @description Category of the resource. */
+			category: components["schemas"]["ResourceCategory"];
+			/** @description Subcategory of the resource. */
+			subcategory?: components["schemas"]["ResourceSubcategory"] | null;
+			/**
+			 * Name
+			 * @description Name of the resource.
+			 */
+			name: string;
+			/**
+			 * Phone
+			 * @description List of phone numbers for the resource.
+			 */
+			phone?: string | null;
+			/** Description */
+			description?: string | null;
+			/** Tags */
+			tags?: string[] | null;
+			/**
+			 * Address
+			 * @description Address of the resource, if available.
+			 */
+			address?: string | null;
+			/**
+			 * Website
+			 * @description Website of the resource, if available.
+			 */
+			website?: string | null;
+			/**
+			 * Email
+			 * @description Email to contacts if available.
+			 */
+			email?: string | null;
+			/** Score */
+			score?: number | null;
+			/** Llm Rank */
+			llm_rank?: number | null;
+			/** Llm Valid */
+			llm_valid?: boolean | null;
+			/** Rating */
+			rating?: number | null;
+			/** Ratingcount */
+			ratingCount?: number | null;
+			/** Operationalstatus */
+			operationalStatus?: string | null;
+			/** Price Level */
+			price_level?: string | null;
+			transport_mode?: components["schemas"]["DistanceMode"] | null;
+			/** Transport Minutes */
+			transport_minutes?: number | null;
+		};
+		/**
+		 * ResourceCategory
+		 * @description Resource categories
+		 * @enum {string}
+		 */
+		ResourceCategory:
+			| "Basic Needs"
+			| "Employment and Career Support"
+			| "Education"
+			| "Behavioral Health Services"
+			| "Medical and Health Services"
+			| "Legal and Financial Assistance"
+			| "Family and Community Support"
+			| "Transportation"
+			| "Specialized Services"
+			| "Community and Social Reintegration"
+			| "Unknown";
+		/**
+		 * ResourceFailureReason
+		 * @enum {string}
+		 */
+		ResourceFailureReason: "api_error" | "no_results_found" | "success";
+		/**
+		 * ResourceSubcategory
+		 * @description Resource subcategories
+		 * @enum {string}
+		 */
+		ResourceSubcategory:
+			| "Housing"
+			| "Food Assistance"
+			| "Clothing"
+			| "Job Training Programs"
+			| "Job Placement Services"
+			| "Resume and Interview Support"
+			| "Certification and Licensing Assistance"
+			| "High School Equivalency Programs"
+			| "Post-Secondary Education"
+			| "Literacy Programs"
+			| "Digital Literacy"
+			| "Mental Health Counseling"
+			| "Substance Abuse Treatment"
+			| "Trauma-Informed Care"
+			| "Primary Care"
+			| "Specialized Care"
+			| "Addiction Medicine"
+			| "HIV/AIDS and Hepatitis C Services"
+			| "Identification Services"
+			| "Legal Aid"
+			| "Financial Literacy Programs"
+			| "Emergency Financial Assistance"
+			| "Family Reunification Services"
+			| "Mentorship Programs"
+			| "Faith-Based Support"
+			| "Reentry Support Groups"
+			| "Public Transit Access"
+			| "Driver's License Assistance"
+			| "Transportation Services"
+			| "Domestic Violence Support"
+			| "Sex Offender-Specific Programs"
+			| "Youth-Specific Resources"
+			| "Culturally Specific Programs"
+			| "Volunteer Opportunities"
+			| "Recreation"
+			| "Civic Engagement";
+		/** SetNotificationRequest */
+		SetNotificationRequest: {
+			/** Notify */
+			notify: boolean;
+		};
+		/** SignedUrlResponse */
+		SignedUrlResponse: {
+			/** Signed Url */
+			signed_url: string;
+			/** Expires In Seconds */
+			expires_in_seconds: number;
+		};
+		/** SpeakerStats */
+		SpeakerStats: {
+			/** Turns */
+			turns: number;
+			/** Duration */
+			duration: string;
+		};
+		/** TokenAccessResponse */
+		TokenAccessResponse: {
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/** Token */
+			token: string;
+		};
+		/** TranscriptionOutputResponse */
+		TranscriptionOutputResponse: {
+			metadata: components["schemas"]["OutputMetadataResponse"];
+			/** Conversation */
+			conversation: components["schemas"]["ConversationTurnResponse"][];
+		};
+		/** UpdateRecordingSessionStatusRequest */
+		UpdateRecordingSessionStatusRequest: {
+			status: components["schemas"]["RecordingStatus"];
+			/** Audio Chunks Url */
+			audio_chunks_url?: string | null;
+			/** Audio File Url */
+			audio_file_url?: string | null;
+		};
+		/** UploadChunkRequest */
+		UploadChunkRequest: {
+			/** Chunk Index */
+			chunk_index: number;
+			/** Chunk Data */
+			chunk_data: string;
+			/** Mime Type */
+			mime_type: string;
+			/**
+			 * Has Header
+			 * @default false
+			 */
+			has_header: boolean;
+		};
+		/** UploadChunkResponse */
+		UploadChunkResponse: {
+			/** Success */
+			success: boolean;
+			/** Chunk Index */
+			chunk_index: number;
+			/** Message */
+			message: string;
+		};
+		/** ValidationError */
+		ValidationError: {
+			/** Location */
+			loc: (string | number)[];
+			/** Message */
+			msg: string;
+			/** Error Type */
+			type: string;
+		};
+		/** VerifyDOBRequest */
+		VerifyDOBRequest: {
+			/** Token From Url */
+			token_from_url: string;
+			/**
+			 * Date Of Birth
+			 * Format: date
+			 */
+			date_of_birth: string;
+		};
+		/** VerifyDOBResponse */
+		VerifyDOBResponse: {
+			/** Status */
+			status: boolean;
+			/** Access Token */
+			access_token?: string | null;
+			/**
+			 * Token Type
+			 * @default bearer
+			 */
+			token_type: string;
+			/** Message */
+			message?: string | null;
+		};
+		/** VerifyNonPseudoId */
+		VerifyNonPseudoId: {
+			/** First Name */
+			first_name: string;
+			/** Last Name */
+			last_name: string;
+			/**
+			 * Date Of Birth
+			 * Format: date
+			 */
+			date_of_birth: string;
+			/** Recaptchatoken */
+			recaptchaToken?: string | null;
+		};
+		/** VerifyPseudoDOBRequest */
+		VerifyPseudoDOBRequest: {
+			/** Last Name */
+			last_name: string;
+			/**
+			 * Date Of Birth
+			 * Format: date
+			 */
+			date_of_birth: string;
+		};
+		/** PlanResponse */
+		app__routes__plan_router__PlanResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/** Create Execution Id */
+			create_execution_id?: string | null;
+			create_execution?: components["schemas"]["ExecutionResponse"] | null;
+			/** Create Status */
+			create_status: string;
+			/** Edited Manually */
+			edited_manually: boolean;
+			/** @description Gets the client record data for this plan.
+			 *     Renamed from 'oms' to better reflect its content and source. */
+			readonly client_record:
+				| components["schemas"]["ClientRecordResponse"]
+				| null;
+		};
+		/** PlanResponse */
+		app__routes__shared_models__PlanResponse: {
+			/**
+			 * Id
+			 * Format: uuid
+			 */
+			id: string;
+			/**
+			 * Created At
+			 * Format: date-time
+			 */
+			created_at: string;
+			/**
+			 * Updated At
+			 * Format: date-time
+			 */
+			updated_at: string;
+			/** Client Pseudo Id */
+			client_pseudo_id: string;
+			/** Create Execution Id */
+			create_execution_id?: string | null;
+			create_execution?: components["schemas"]["ExecutionResponse"] | null;
+			/** Create Status */
+			create_status: string;
+			/** Edited Manually */
+			edited_manually: boolean;
+		};
+	};
+	responses: never;
+	parameters: never;
+	requestBodies: never;
+	headers: never;
+	pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  metrics_metrics_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
-  router_list_plans_plans_get: {
-    parameters: {
-      query?: {
-        /** @description Page number */
-        page?: number;
-        /** @description Page size */
-        size?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Page_PlanResponse_"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_create_plan_plans_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PlanRequestCreate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanResponseCreate"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_plan_by_client_id_plans_by_client__client_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanResponseGet"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_plan_plans__id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanResponseGet"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_delete_plan_plans__id__delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DeletionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_set_generation_notify_plans__id__set_notify_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["SetNotificationRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_generate_plan_plans__id__generate_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PlanGenerationRequestCreate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanGenerationResponseCreate"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_generate_plan_manually_plans__id__edit_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PlanGenerationEditRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanGenerationResponseGet"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_generation_plans__id__gens__gen_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        gen_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanGenerationResponseGet"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_list_assets_plans__id__assets_get: {
-    parameters: {
-      query?: {
-        /** @description Page number */
-        page?: number;
-        /** @description Page size */
-        size?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Page_PlanAssetResponse_"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_upload_asset_plans__id__assets_upload_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "multipart/form-data": components["schemas"]["Body_router_upload_asset_plans__id__assets_upload_post"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanAssetResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_asset_by_filename_plans__id__assets_by_filename__filename__get: {
-    parameters: {
-      query?: {
-        include_data?: boolean | null;
-      };
-      header?: never;
-      path: {
-        id: string;
-        filename: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanAssetResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_asset_plans__id__assets__asset_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        asset_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanAssetResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_delete_asset_plans__id__assets__asset_id__delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        asset_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DeletionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_download_asset_plans__id__assets__asset_id__download_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        asset_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_plan_resources_plans__id__resources_get: {
-    parameters: {
-      query?: {
-        filter_category?: components["schemas"]["ResourceCategory"] | null;
-        filter_subcategory?:
-          | components["schemas"]["ResourceSubcategory"]
-          | null;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Resource"][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  search_resources_plans__id__search_resources_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["GetPlanResourcesRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["GetResourcesResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_suggested_resources_plans__id__suggested_resources_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Resource"][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_client_info_plans__id__client_info_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ClientInfoResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  update_client_info_address_plans__id__client_info_address_patch: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AddressSubmission"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanGenerationResponseCreate"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_list_decision_trees_plans__id__decisiontrees_get: {
-    parameters: {
-      query?: {
-        /** @description Page number */
-        page?: number;
-        /** @description Page size */
-        size?: number;
-      };
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Page_PlanDecisionTreeResponse_"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_add_decision_tree_plans__id__decisiontrees_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PlanDecisionTreeRequestCreate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanDecisionTreeExtendedResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_delete_all_decision_trees_plans__id__decisiontrees_delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DeletionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        plan_decision_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanDecisionTreeExtendedResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_delete_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        plan_decision_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DeletionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_execute_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__run_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-        plan_decision_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PlanDecisionTreeExtendedResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_suggest_decision_tree_plans__id__decisiontrees_populate_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ExecutionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_resources_resources_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["GetResourcesRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["GetResourcesResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_decision_trees_list_decision_trees_get: {
-    parameters: {
-      query?: {
-        /** @description Page number */
-        page?: number;
-        /** @description Page size */
-        size?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Page_DecisionTreeResponse_"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_add_decision_tree_decision_trees_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["DecisionTreeCreate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DecisionTreeWithRevisionsResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_decision_tree_decision_trees__decision_tree_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        decision_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DecisionTreeWithRevisionsResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_delete_decision_tree_decision_trees__decision_tree_id__delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        decision_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_update_decision_tree_decision_trees__decision_tree_id__patch: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        decision_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["DecisionTreeUpdate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DecisionTreeWithRevisionsResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_decision_tree_revisions_decision_trees__decision_tree_id__revisions_get: {
-    parameters: {
-      query?: {
-        /** @description Page number */
-        page?: number;
-        /** @description Page size */
-        size?: number;
-      };
-      header?: never;
-      path: {
-        decision_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Page_DecisionTreeRevision_"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_add_decision_tree_revision_decision_trees__decision_tree_id__revisions_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        decision_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["DecisionTreeRevisionCreate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DecisionTreeRevisionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_decision_tree_revision_decision_trees__decision_tree_id__revisions__revision_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        decision_tree_id: string;
-        revision_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["DecisionTreeRevisionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_assessment_trees_list_assessment_trees_get: {
-    parameters: {
-      query?: {
-        /** @description Page number */
-        page?: number;
-        /** @description Page size */
-        size?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Page_AssessmentTreeResponse_"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_add_assessment_tree_assessment_trees_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AssessmentTreeCreate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssessmentTreeWithRevisionsResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_assessment_tree_assessment_trees__assessment_tree_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        assessment_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssessmentTreeWithRevisionsResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_delete_assessment_tree_assessment_trees__assessment_tree_id__delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        assessment_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_update_assessment_tree_assessment_trees__assessment_tree_id__patch: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        assessment_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AssessmentTreeUpdate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssessmentTreeWithRevisionsResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_assessment_tree_revisions_assessment_trees__assessment_tree_id__revisions_get: {
-    parameters: {
-      query?: {
-        /** @description Page number */
-        page?: number;
-        /** @description Page size */
-        size?: number;
-      };
-      header?: never;
-      path: {
-        assessment_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Page_AssessmentTreeRevision_"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_add_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        assessment_tree_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AssessmentTreeRevisionCreate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssessmentTreeRevisionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions__revision_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        assessment_tree_id: string;
-        revision_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssessmentTreeRevisionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_assessment_assessments__assessment_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        assessment_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssessmentResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_client_assessments_assessments_clients__client_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AssessmentResponse"][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_get_execution_executions__execution_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        execution_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ExecutionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  verify_date_of_birth_intake_client_verify_dob_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["VerifyDOBRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["VerifyDOBResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_client_intake_intake_client__token_from_url__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        token_from_url: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeWithSectionsAndMessagesResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  submit_address_intake_client_address_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["AddressSubmission"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["AdressSubmissionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  verify_pseudo_date_of_birth_intake_internal__pseudonymized_id__post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        pseudonymized_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["VerifyPseudoDOBRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["VerifyDOBResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  verify_non_pseudonymized_id_intake_internal_verify_non_pseudo_id_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["VerifyNonPseudoId"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["VerifyDOBResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_client_intake_intake_admin__client_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeWithSectionsResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  start_intake_process_intake_admin__client_id__post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeWithSectionsResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_intake_section_messages_route_intake_admin__intake_id___section_title__messages_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        intake_id: string;
-        section_title: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeMessageResponse"][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  set_internal_access_intake_admin__client_id__internal_access_patch: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["InternalAccessUpdate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": string;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  generate_client_token_intake_admin__client_id__token_access_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TokenAccessResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  create_intake_sections_intake_sections_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "application/json":
-          | components["schemas"]["IntakeSectionCreate"][]
-          | null;
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      201: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeSectionResponse"][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_intake_section_intake_sections__section_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        section_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeSectionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  delete_intake_section_intake_sections__section_id__delete: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        section_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      204: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  update_intake_section_intake_sections__section_id__patch: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        section_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["IntakeSectionCreate"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["IntakeSectionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  router_list_clients_clients__get: {
-    parameters: {
-      query?: {
-        /** @description Page number */
-        page?: number;
-        /** @description Page size */
-        size?: number;
-        sort_by?: string | null;
-        sort_order?: string;
-        search?: string | null;
-        status_filter?: string | null;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["Page_ClientResponse_"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_client_status_updates_route_clients_status_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ClientStatusResponse"];
-        };
-      };
-    };
-  };
-  get_client_record_clients__client_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ClientRecordResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  retry_processing_clients__client_id__retry_processing_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["ExecutionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_client_recording_sessions_recordings_sessions_clients__client_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["RecordingSessionResponse"][];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  create_new_recording_session_recordings_sessions_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["CreateRecordingSessionRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["RecordingSessionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_recording_session_recordings_sessions__session_id__get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["RecordingSessionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_recording_session_status_recordings_sessions__session_id__status_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["RecordingSessionStatusResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  update_recording_session_status_recordings_sessions__session_id__status_put: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UpdateRecordingSessionStatusRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["RecordingSessionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  upload_audio_chunk_recordings_sessions__session_id__upload_chunk_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["UploadChunkRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["UploadChunkResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  finalize_recording_recordings_sessions__session_id__finalize_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["FinalizeRecordingRequest"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["FinalizeRecordingResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_signed_url_recordings_sessions__session_id__signed_url_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["SignedUrlResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  complete_intake_transcription_transcriptions__client_id__complete_intake_transcription_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        client_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["CompleteIntakeTrascriptionSubmission"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["CompleteIntakeTranscriptionResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  get_client_transcription_transcriptions__recording_session_id__transcription_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        recording_session_id: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TranscriptionOutputResponse"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  health_check_health_get: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
+	metrics_metrics_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": unknown;
+				};
+			};
+		};
+	};
+	router_list_plans_plans_get: {
+		parameters: {
+			query?: {
+				/** @description Page number */
+				page?: number;
+				/** @description Page size */
+				size?: number;
+			};
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Page_PlanResponse_"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_create_plan_plans_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["PlanRequestCreate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanResponseCreate"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_plan_by_client_pseudo_id_plans_by_client__client_pseudo_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanResponseGet"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_plan_plans__id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanResponseGet"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_delete_plan_plans__id__delete: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["DeletionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_generate_plan_plans__id__generate_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["PlanGenerationRequestCreate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanGenerationResponseCreate"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_generate_plan_manually_plans__id__edit_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["PlanGenerationEditRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanGenerationResponseGet"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_generation_plans__id__gens__gen_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				gen_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanGenerationResponseGet"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_list_assets_plans__id__assets_get: {
+		parameters: {
+			query?: {
+				/** @description Page number */
+				page?: number;
+				/** @description Page size */
+				size?: number;
+			};
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Page_PlanAssetResponse_"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_upload_asset_plans__id__assets_upload_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"multipart/form-data": components["schemas"]["Body_router_upload_asset_plans__id__assets_upload_post"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanAssetResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_asset_by_filename_plans__id__assets_by_filename__filename__get: {
+		parameters: {
+			query?: {
+				include_data?: boolean | null;
+			};
+			header?: never;
+			path: {
+				id: string;
+				filename: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanAssetResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_asset_plans__id__assets__asset_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+				asset_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanAssetResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_delete_asset_plans__id__assets__asset_id__delete: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+				asset_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["DeletionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_download_asset_plans__id__assets__asset_id__download_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+				asset_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": unknown;
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_plan_resources_plans__id__resources_get: {
+		parameters: {
+			query?: {
+				filter_category?: components["schemas"]["ResourceCategory"] | null;
+				filter_subcategory?:
+					| components["schemas"]["ResourceSubcategory"]
+					| null;
+			};
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Resource"][];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	search_resources_plans__id__search_resources_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["GetPlanResourcesRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["GetResourcesResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_suggested_resources_plans__id__suggested_resources_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Resource"][];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_client_info_plans__id__client_info_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ClientInfoResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	update_client_info_address_plans__id__client_info_address_patch: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["AddressSubmission"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanGenerationResponseCreate"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_set_generation_notify_plans__id__set_notify_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["SetNotificationRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": unknown;
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_list_decision_trees_plans__id__decisiontrees_get: {
+		parameters: {
+			query?: {
+				/** @description Page number */
+				page?: number;
+				/** @description Page size */
+				size?: number;
+			};
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Page_PlanDecisionTreeResponse_"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_add_decision_tree_plans__id__decisiontrees_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["PlanDecisionTreeRequestCreate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanDecisionTreeExtendedResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_delete_all_decision_trees_plans__id__decisiontrees_delete: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["DeletionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+				plan_decision_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanDecisionTreeExtendedResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_delete_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__delete: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+				plan_decision_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["DeletionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_execute_decision_tree_plans__id__decisiontrees__plan_decision_tree_id__run_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+				plan_decision_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["PlanDecisionTreeExtendedResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_suggest_decision_tree_plans__id__decisiontrees_populate_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ExecutionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_resources_resources_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["GetResourcesRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["GetResourcesResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_decision_trees_list_decision_trees_get: {
+		parameters: {
+			query?: {
+				/** @description Page number */
+				page?: number;
+				/** @description Page size */
+				size?: number;
+			};
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Page_DecisionTreeResponse_"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_add_decision_tree_decision_trees_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["DecisionTreeCreate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			201: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["DecisionTreeWithRevisionsResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_decision_tree_decision_trees__decision_tree_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				decision_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["DecisionTreeWithRevisionsResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_delete_decision_tree_decision_trees__decision_tree_id__delete: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				decision_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			204: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_update_decision_tree_decision_trees__decision_tree_id__patch: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				decision_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["DecisionTreeUpdate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["DecisionTreeWithRevisionsResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_decision_tree_revisions_decision_trees__decision_tree_id__revisions_get: {
+		parameters: {
+			query?: {
+				/** @description Page number */
+				page?: number;
+				/** @description Page size */
+				size?: number;
+			};
+			header?: never;
+			path: {
+				decision_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Page_DecisionTreeRevision_"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_add_decision_tree_revision_decision_trees__decision_tree_id__revisions_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				decision_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["DecisionTreeRevisionCreate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			201: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["DecisionTreeRevisionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_decision_tree_revision_decision_trees__decision_tree_id__revisions__revision_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				decision_tree_id: string;
+				revision_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["DecisionTreeRevisionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_assessment_trees_list_assessment_trees_get: {
+		parameters: {
+			query?: {
+				/** @description Page number */
+				page?: number;
+				/** @description Page size */
+				size?: number;
+			};
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Page_AssessmentTreeResponse_"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_add_assessment_tree_assessment_trees_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["AssessmentTreeCreate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			201: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["AssessmentTreeWithRevisionsResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_assessment_tree_assessment_trees__assessment_tree_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				assessment_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["AssessmentTreeWithRevisionsResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_delete_assessment_tree_assessment_trees__assessment_tree_id__delete: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				assessment_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			204: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_update_assessment_tree_assessment_trees__assessment_tree_id__patch: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				assessment_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["AssessmentTreeUpdate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["AssessmentTreeWithRevisionsResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_assessment_tree_revisions_assessment_trees__assessment_tree_id__revisions_get: {
+		parameters: {
+			query?: {
+				/** @description Page number */
+				page?: number;
+				/** @description Page size */
+				size?: number;
+			};
+			header?: never;
+			path: {
+				assessment_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Page_AssessmentTreeRevision_"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_add_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				assessment_tree_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["AssessmentTreeRevisionCreate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			201: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["AssessmentTreeRevisionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_assessment_tree_revision_assessment_trees__assessment_tree_id__revisions__revision_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				assessment_tree_id: string;
+				revision_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["AssessmentTreeRevisionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_assessment_assessments__assessment_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				assessment_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["AssessmentResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_client_assessments_assessments_clients__client_pseudo_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["AssessmentResponse"][];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_get_execution_executions__execution_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				execution_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ExecutionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	verify_date_of_birth_intake_client_verify_dob_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["VerifyDOBRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["VerifyDOBResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_client_intake_intake_client__token_from_url__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				token_from_url: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["IntakeWithSectionsAndMessagesResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	submit_address_intake_client_address_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["AddressSubmission"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["AdressSubmissionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	verify_pseudo_date_of_birth_intake_internal__pseudonymized_id__post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				pseudonymized_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["VerifyPseudoDOBRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["VerifyDOBResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	verify_non_pseudonymized_id_intake_internal_verify_non_pseudo_id_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["VerifyNonPseudoId"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["VerifyDOBResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_client_intake_intake_admin__client_pseudo_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["IntakeWithSectionsResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	start_intake_process_intake_admin__client_pseudo_id__post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["IntakeWithSectionsResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_intake_section_messages_route_intake_admin__intake_id___section_title__messages_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				intake_id: string;
+				section_title: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["IntakeMessageResponse"][];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	set_internal_access_intake_admin__client_pseudo_id__internal_access_patch: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["InternalAccessUpdate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": string;
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	generate_client_token_intake_admin__client_pseudo_id__token_access_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["TokenAccessResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	create_intake_sections_intake_sections_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: {
+			content: {
+				"application/json":
+					| components["schemas"]["IntakeSectionCreate"][]
+					| null;
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			201: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["IntakeSectionResponse"][];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_intake_section_intake_sections__section_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				section_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["IntakeSectionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	delete_intake_section_intake_sections__section_id__delete: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				section_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			204: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content?: never;
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	update_intake_section_intake_sections__section_id__patch: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				section_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["IntakeSectionCreate"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["IntakeSectionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	router_list_clients_clients__get: {
+		parameters: {
+			query?: {
+				/** @description Page number */
+				page?: number;
+				/** @description Page size */
+				size?: number;
+				sort_by?: string | null;
+				sort_order?: string;
+				search?: string | null;
+				status_filter?: string | null;
+			};
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["Page_ClientResponse_"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_client_status_updates_route_clients_status_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ClientStatusResponse"];
+				};
+			};
+		};
+	};
+	get_client_record_clients__client_pseudo_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ClientRecordResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	retry_processing_clients__client_pseudo_id__retry_processing_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["ExecutionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_client_recording_sessions_recordings_sessions_clients__client_pseudo_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionResponse"][];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	create_new_recording_session_recordings_sessions_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["CreateRecordingSessionRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_recording_session_recordings_sessions__session_id__get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_recording_session_status_recordings_sessions__session_id__status_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionStatusResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	update_recording_session_status_recordings_sessions__session_id__status_put: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["UpdateRecordingSessionStatusRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["RecordingSessionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	upload_audio_chunk_recordings_sessions__session_id__upload_chunk_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["UploadChunkRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["UploadChunkResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	finalize_recording_recordings_sessions__session_id__finalize_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["FinalizeRecordingRequest"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["FinalizeRecordingResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_signed_url_recordings_sessions__session_id__signed_url_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["SignedUrlResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	complete_intake_transcription_transcriptions__client_pseudo_id__complete_intake_transcription_post: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				client_pseudo_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				"application/json": components["schemas"]["CompleteIntakeTrascriptionSubmission"];
+			};
+		};
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["CompleteIntakeTranscriptionResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	get_client_transcription_transcriptions__recording_session_id__transcription_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				recording_session_id: string;
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["TranscriptionOutputResponse"];
+				};
+			};
+			/** @description Validation Error */
+			422: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": components["schemas"]["HTTPValidationError"];
+				};
+			};
+		};
+	};
+	health_check_health_get: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Successful Response */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					"application/json": unknown;
+				};
+			};
+		};
+	};
 }

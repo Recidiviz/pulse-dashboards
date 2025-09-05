@@ -15,7 +15,7 @@ from app.utils.intake.schemas import ClientContext
 
 @pytest.fixture
 def client_context():
-    return ClientContext(client_id="test-client-id", client_name="Test Client")
+    return ClientContext(client_pseudo_id="test-client-id", client_name="Test Client")
 
 
 @pytest.fixture
@@ -37,7 +37,7 @@ def mock_send_message():
 def intake():
     return Intake(
         id=uuid4(),
-        client_id="test-client-id",
+        client_pseudo_id="test-client-id",
         status=IntakeStatus.IN_PROGRESS,
         current_section="Education / Employment",
         internal_access=True,
@@ -87,7 +87,7 @@ def graph(
 class TestIntakeConversationGraph:
     def test_initialization(self, graph):
         """Test that the graph can be created."""
-        assert graph.session.client_id == "test-client-id"
+        assert graph.session.client_pseudo_id == "test-client-id"
         assert graph.session.client_name == "Test Client"
         assert graph.workflow is None
         assert graph.graph is None

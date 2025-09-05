@@ -66,17 +66,20 @@ const ActionButton: React.FC<DropdownProps> = ({
   // Mutation for retry processing
   const { mutateAsync: retryProcessingMutation } = $api.useMutation(
     "post",
-    "/clients/{client_id}/retry-processing",
+    "/clients/{client_pseudo_id}/retry-processing",
   );
 
   const handleRetryProcessing = async () => {
     try {
-      console.log("Starting retry processing for client:", client.client_id);
+      console.log(
+        "Starting retry processing for client:",
+        client.client_pseudo_id,
+      );
 
       await retryProcessingMutation({
         params: {
           path: {
-            client_id: client.client_id,
+            client_pseudo_id: client.client_pseudo_id,
           },
         },
         headers: {
@@ -165,14 +168,14 @@ const ActionButton: React.FC<DropdownProps> = ({
               {client.plans && (
                 <>
                   <a
-                    href={`/intake-summary/${client.client_id}`}
+                    href={`/intake-summary/${client.client_pseudo_id}`}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                     role="menuitem"
                   >
                     Intake Summary
                   </a>
                   <a
-                    href={`/action-plan/${client.client_id}`}
+                    href={`/action-plan/${client.client_pseudo_id}`}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                     role="menuitem"
                   >
@@ -182,7 +185,7 @@ const ActionButton: React.FC<DropdownProps> = ({
               )}
 
               <a
-                href={`/clients/intake/${client.client_id}`}
+                href={`/clients/intake/${client.client_pseudo_id}`}
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                 role="menuitem"
               >

@@ -23,7 +23,7 @@ from app.crud.plan_generation import (
     update_plan_generation,
 )
 from app.models.models import PlanGeneration
-from app.services.client_data.queries import get_client_data_unsafe
+from app.services.client_data.queries import Queries
 from app.services.resources import ClientExtractedInfo, Resource
 from app.utils.action_plan_types import (
     ActionPlanMilestones,
@@ -181,7 +181,7 @@ async def get_client_background_data(
 
     # Extract address
     collected_address = await get_collected_address_for_client(
-        session, gen.plan.client_id
+        session, gen.plan.client_pseudo_id
     )
     home_address = ""
     if collected_address:
@@ -192,11 +192,11 @@ async def get_client_background_data(
         parts.append(collected_address.state)
         home_address = ", ".join(parts)
 
-    # Get client data using client_id
+    # Get client data using client_pseudo_id
     # Using unsafe version since this is a background task and we don't have access to current user
     # In production, this should use a service account with appropriate permissions
     # We could retrieve the staff_id from the plan if it exists
-    record = get_client_data_unsafe(gen.plan.client_id)
+    record = Queries.get_client_by_pseudonymized_id_unsafe(gen.plan.client_pseudo_id)
     record_dict = {}
     if record:
         record_dict = record.model_dump()

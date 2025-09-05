@@ -30,13 +30,13 @@ async def test_start_intake_process_success(
         "name": "John Doe",
     }
 
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     intake_id = uuid4()
     section_id = uuid4()
 
     intake = Intake(
         id=intake_id,
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         current_section="Education / Employment",
         status=IntakeStatus.CREATED,
         internal_access=True,
@@ -79,13 +79,13 @@ async def test_start_intake_process_success(
     token = jwt.encode(payload, "dummy-secret", algorithm="HS256")
     headers = {"Authorization": f"Bearer {token}"}
 
-    response = await client.post(f"/intake/admin/{client_id}", headers=headers)
+    response = await client.post(f"/intake/admin/{client_pseudo_id}", headers=headers)
 
     assert response.status_code == 200
     data = response.json()
 
     # Validate response structure
-    assert data["client_id"] == client_id
+    assert data["client_pseudo_id"] == client_pseudo_id
     assert data["status"] == IntakeStatus.CREATED.value
     assert data["current_section"] == "Education / Employment"
     assert len(data["client_intake_sections"]) == 1
@@ -95,9 +95,7 @@ async def test_start_intake_process_success(
 
 @pytest.mark.asyncio
 @patch("app.auth.auth_core.validate_token")
-@patch("app.services.client_data.queries.get_client_data")
 async def test_get_client_intake_success(
-    mock_get_client_data,
     mock_validate_token,
     async_session,
     client: AsyncClient,
@@ -110,18 +108,13 @@ async def test_get_client_intake_success(
         "name": "John Doe",
     }
 
-    # Configure mock for client data
-    mock_get_client_data.return_value = mock_clientdata_service["clients_by_id"][
-        "client-001"
-    ]
-
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     intake_id = uuid4()
     section_id = uuid4()
 
     intake = Intake(
         id=intake_id,
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         current_section="Education / Employment",
         status=IntakeStatus.IN_PROGRESS,
         internal_access=True,
@@ -159,17 +152,17 @@ async def test_get_client_intake_success(
     token = jwt.encode(payload, "dummy-secret", algorithm="HS256")
     headers = {"Authorization": f"Bearer {token}"}
 
-    response = await client.get(f"/intake/admin/{client_id}", headers=headers)
+    response = await client.get(f"/intake/admin/{client_pseudo_id}", headers=headers)
 
     assert response.status_code == 200
     data = response.json()
 
-    assert data["client_id"] == client_id
+    assert data["client_pseudo_id"] == client_pseudo_id
     assert data["status"] == IntakeStatus.IN_PROGRESS.value
     assert data["current_section"] == "Education / Employment"
     assert len(data["client_intake_sections"]) == 1
     # Since we're using client-001 which doesn't have doc_id
-    assert data["client"]["external_client_id"] == client_id
+    assert data["client"]["pseudonymized_client_id"] == client_pseudo_id
 
 
 @pytest.mark.asyncio
@@ -185,12 +178,12 @@ async def test_set_internal_access_success(
         "name": "John Doe",
     }
 
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     intake_id = uuid4()
 
     intake = Intake(
         id=intake_id,
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         current_section="Education / Employment",
         status=IntakeStatus.IN_PROGRESS,
         internal_access=False,
@@ -210,7 +203,7 @@ async def test_set_internal_access_success(
 
     # Test setting internal_access to True
     response = await client.patch(
-        f"/intake/admin/{client_id}/internal-access",
+        f"/intake/admin/{client_pseudo_id}/internal-access",
         headers=headers,
         json={"internal_access": True},
     )
@@ -223,7 +216,7 @@ async def test_set_internal_access_success(
     assert intake.internal_access is True
 
     response = await client.patch(
-        f"/intake/admin/{client_id}/internal-access",
+        f"/intake/admin/{client_pseudo_id}/internal-access",
         headers=headers,
         json={"internal_access": False},
     )
@@ -248,7 +241,7 @@ async def test_set_internal_access_not_found(
         "name": "John Doe",
     }
 
-    non_existent_client_id = "client-999"
+    non_existent_client_pseudo_id = "client-999"
 
     payload = {
         "sub": "auth0|1234567890",
@@ -260,7 +253,7 @@ async def test_set_internal_access_not_found(
     headers = {"Authorization": f"Bearer {token}"}
 
     response = await client.patch(
-        f"/intake/admin/{non_existent_client_id}/internal-access",
+        f"/intake/admin/{non_existent_client_pseudo_id}/internal-access",
         headers=headers,
         json={"internal_access": True},
     )
@@ -268,7 +261,7 @@ async def test_set_internal_access_not_found(
     assert response.status_code == 404
     assert (
         response.json()["detail"]
-        == f"Intake record not found for client ID: {non_existent_client_id}"
+        == f"Intake record not found for client ID: {non_existent_client_pseudo_id}"
     )
 
 
@@ -281,10 +274,11 @@ async def test_set_internal_access_unauthorized(
 
     mock_validate_token.side_effect = Exception("Invalid token")
 
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     response = await client.patch(
-        f"/intake/admin/{client_id}/internal-access", json={"internal_access": True}
+        f"/intake/admin/{client_pseudo_id}/internal-access",
+        json={"internal_access": True},
     )
 
     assert response.status_code == 404
@@ -303,12 +297,12 @@ async def test_set_internal_access_invalid_payload(
         "name": "John Doe",
     }
 
-    client_id = "client-001"
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     intake_id = uuid4()
 
     intake = Intake(
         id=intake_id,
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         current_section="Education / Employment",
         status=IntakeStatus.IN_PROGRESS,
         internal_access=False,
@@ -327,7 +321,7 @@ async def test_set_internal_access_invalid_payload(
     headers = {"Authorization": f"Bearer {token}"}
 
     response = await client.patch(
-        f"/intake/admin/{client_id}/internal-access",
+        f"/intake/admin/{client_pseudo_id}/internal-access",
         headers=headers,
         json={},  # Missing required field
     )
@@ -335,7 +329,7 @@ async def test_set_internal_access_invalid_payload(
     assert response.status_code == 422
 
     response = await client.patch(
-        f"/intake/admin/{client_id}/internal-access",
+        f"/intake/admin/{client_pseudo_id}/internal-access",
         headers=headers,
         json={"internal_access": "not_a_boolean"},
     )

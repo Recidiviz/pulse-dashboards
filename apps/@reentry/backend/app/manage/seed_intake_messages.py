@@ -65,31 +65,31 @@ async def seed_intake_messages():
 
 async def create_client_intake_messages(
     session: AsyncSession,
-    client_id: str,
+    client_pseudo_id: str,
     status: IntakeStatus,
     current_section: str = None,
 ):
     """Create a set of intake messages for a client based on their ID."""
-    print(f"Creating intake conversation for client {client_id}...")
+    print(f"Creating intake conversation for client {client_pseudo_id}...")
 
     # Check if this client already has an intake
     existing_intake = await session.exec(
-        select(Intake).where(Intake.client_id == client_id)
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
     )
     intake = existing_intake.first()
 
     if not intake:
-        print(f"Creating new intake for client {client_id}")
+        print(f"Creating new intake for client {client_pseudo_id}")
         # Create intake record
         intake = Intake(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             status=status.value,
             current_section=current_section,
         )
         session.add(intake)
         await session.flush()
     else:
-        print(f"Using existing intake for client {client_id}: {intake.id}")
+        print(f"Using existing intake for client {client_pseudo_id}: {intake.id}")
 
         # Update intake status and current section
         intake.status = status.value
@@ -166,7 +166,7 @@ async def create_client_intake_messages(
             session.add(existing_section)
 
     # Add messages for each section based on client ID
-    messages = get_client_messages(client_id)
+    messages = get_client_messages(client_pseudo_id)
 
     # Don't add messages for created status (new intake)
     if status != IntakeStatus.CREATED:
@@ -188,14 +188,14 @@ async def create_client_intake_messages(
             if (
                 status == IntakeStatus.IN_PROGRESS
                 and section_title == current_section
-                and client_id == "CLIENT-005"
+                and client_pseudo_id == "CLIENT-005"
             ):
                 # For in-progress intakes, only add caseworker message for current section
                 add_messages = section_messages[:1]
             elif (
                 status == IntakeStatus.IN_PROGRESS
                 and section_title == current_section
-                and client_id == "CLIENT-006"
+                and client_pseudo_id == "CLIENT-006"
             ):
                 # For what was previously paused intakes, add up to the caseworker's last question
                 add_messages = section_messages
@@ -228,10 +228,10 @@ async def create_client_intake_messages(
                 session.add(message)
 
     await session.commit()
-    print(f"Successfully created intake conversation for client {client_id}")
+    print(f"Successfully created intake conversation for client {client_pseudo_id}")
 
 
-def get_client_messages(client_id: str) -> dict:
+def get_client_messages(client_pseudo_id: str) -> dict:
     """Return conversation messages for a specific client."""
     # Default messages dictionary for all clients
     default_messages = {
@@ -673,8 +673,8 @@ def get_client_messages(client_id: str) -> dict:
     result = default_messages.copy()
 
     # Update with client-specific messages if available
-    if client_id in client_messages:
-        for section, messages in client_messages[client_id].items():
+    if client_pseudo_id in client_messages:
+        for section, messages in client_messages[client_pseudo_id].items():
             result[section] = messages
 
     return result

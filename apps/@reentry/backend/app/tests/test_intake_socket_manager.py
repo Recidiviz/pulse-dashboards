@@ -24,7 +24,7 @@ def mock_client_connection_manager():
     manager = AsyncMock(spec=ClientConnectionManager)
     manager.register_client = AsyncMock(return_value=True)
     manager.disconnect_client = AsyncMock(return_value=True)
-    manager.get_client_id_by_sid = AsyncMock(return_value="test_client")
+    manager.get_client_pseudo_id_by_sid = AsyncMock(return_value="test_client")
     manager.get_client_sid = AsyncMock(return_value="test_sid")
     return manager
 
@@ -75,7 +75,7 @@ def mock_intake_and_client():
 
     intake = Mock()
     intake.id = "intake-123"
-    intake.client_id = "test_client"
+    intake.client_pseudo_id = "test_client"
     intake.status = "IN_PROGRESS"
     intake.current_section = "Test Section"
 
@@ -107,7 +107,7 @@ async def test_initialization(socket_manager, mock_socketio_server):
 
 
 @pytest.mark.asyncio
-async def test_handle_connect_no_client_id(socket_manager):
+async def test_handle_connect_no_client_pseudo_id(socket_manager):
     """Test connect handler with no client ID."""
     sid = "test_sid"
     environ = {}
@@ -115,7 +115,7 @@ async def test_handle_connect_no_client_id(socket_manager):
 
     result = await socket_manager.handle_connect(sid, environ, auth)
 
-    # Should return False when no client_id is provided
+    # Should return False when no client_pseudo_id is provided
     assert result is False
 
 
@@ -132,12 +132,15 @@ async def test_handle_connect_success(
     """Test successful client connection."""
     sid = "test_sid"
     environ = {"HTTP_USER_AGENT": "test_agent"}
-    client_id = "test_client"
+    client_pseudo_id = "test_client"
 
     # Auth contains auth_token and token_from_url
     auth = {"auth_token": "mock_jwt_token", "token_from_url": "mock_url_token"}
 
-    mock_decode_jwt_token.return_value = {"sub": client_id, "token_type": "client"}
+    mock_decode_jwt_token.return_value = {
+        "sub": client_pseudo_id,
+        "token_type": "client",
+    }
 
     intake, client = mock_intake_and_client
     mock_db_manager.get_client.return_value = client
@@ -153,12 +156,14 @@ async def test_handle_connect_success(
 
         # Verify connection manager was called
         mock_client_connection_manager.register_client.assert_called_once_with(
-            client_id, sid, "test_agent"
+            client_pseudo_id, sid, "test_agent"
         )
 
         # Verify client data and intake were fetched
-        mock_db_manager.get_client.assert_called_once_with(client_id)
-        mock_db_manager.get_intake.assert_called_once_with(client_id, "mock_url_token")
+        mock_db_manager.get_client.assert_called_once_with(client_pseudo_id)
+        mock_db_manager.get_intake.assert_called_once_with(
+            client_pseudo_id, "mock_url_token"
+        )
 
         # Verify connection acknowledgment was sent
         mock_socketio_server.emit.assert_called()
@@ -174,7 +179,7 @@ async def test_handle_connect_failure(
     """Test client connection failure."""
     sid = "test_sid"
     environ = {"HTTP_USER_AGENT": "test_agent"}
-    auth = {"client_id": "test_client"}
+    auth = {"client_pseudo_id": "test_client"}
 
     # Setup mocks
     mock_db_manager.get_client.side_effect = Exception("Test error")
@@ -263,8 +268,8 @@ async def test_init_and_run_graph(
         # Verify graph was stored
         assert socket_manager.conversation_graphs["test_client"] == mock_graph
 
-        # Ensure the graphs are keyed by client_id
-        assert intake.client_id in socket_manager.conversation_graphs
+        # Ensure the graphs are keyed by client_pseudo_id
+        assert intake.client_pseudo_id in socket_manager.conversation_graphs
 
 
 @pytest.mark.asyncio
@@ -274,7 +279,7 @@ async def test_handle_disconnect(
     """Test client disconnection with session."""
     sid = "test_sid"
 
-    # Set up the test to return a valid client_id
+    # Set up the test to return a valid client_pseudo_id
     mock_socketio_server.get_session.return_value = "test_client"
 
     # Add a conversation graph to be removed
@@ -308,15 +313,15 @@ async def test_handle_client_response_with_pending_future(
 
     # Original test code below
     # sid = "test_sid"
-    # client_id = "test_client"
+    # client_pseudo_id = "test_client"
     # data = "Test response"
 
     # # Set up the pending response future
     # future = asyncio.get_event_loop().create_future()
-    # socket_manager.pending_responses[client_id] = future
+    # socket_manager.pending_responses[client_pseudo_id] = future
 
     # # Set up mocks
-    # mock_client_connection_manager.get_client_id_by_sid.return_value = client_id
+    # mock_client_connection_manager.get_client_pseudo_id_by_sid.return_value = client_pseudo_id
     # msg = IntakeMessage(
     #     id=UUID("00000000-0000-0000-0000-000000000000"),
     #     from_role=IntakeMessageRole.CLIENT,
@@ -339,11 +344,11 @@ async def test_handle_client_response_with_pending_future(
 async def test_handle_client_response_wrong_turn(socket_manager, mock_db_manager):
     """Test handling client response when it's not client's turn."""
     sid = "test_sid"
-    client_id = "test_client"
+    client_pseudo_id = "test_client"
     data = {"content": "Test response"}
 
     # Setup to get correct client ID from session
-    socket_manager.sio.get_session.return_value = client_id
+    socket_manager.sio.get_session.return_value = client_pseudo_id
 
     # Set up to indicate it's caseworker's turn (not client's)
     mock_db_manager.get_talking_turn.return_value = IntakeMessageRole.CASEWORKER
@@ -360,11 +365,11 @@ async def test_handle_client_response_completed_intake(
 ):
     """Test handling client response for a completed intake."""
     sid = "test_sid"
-    client_id = "test_client"
+    client_pseudo_id = "test_client"
     data = {"content": "Test response"}
 
     # Setup to get correct client ID
-    socket_manager.sio.get_session.return_value = client_id
+    socket_manager.sio.get_session.return_value = client_pseudo_id
 
     # Set up to indicate it's client's turn
     mock_db_manager.get_talking_turn.return_value = IntakeMessageRole.CLIENT
@@ -400,11 +405,11 @@ async def test_handle_client_response_reinitialize_graph(
 
     # Original test code below
     # sid = "test_sid"
-    # client_id = "test_client"
+    # client_pseudo_id = "test_client"
     # data = "Test response"
 
     # # Setup to get correct client ID
-    # mock_client_connection_manager.get_client_id_by_sid.return_value = client_id
+    # mock_client_connection_manager.get_client_pseudo_id_by_sid.return_value = client_pseudo_id
 
     # # Set up to indicate it's client's turn
     # mock_db_manager.get_talking_turn.return_value = IntakeMessageRole.CLIENT
@@ -435,7 +440,7 @@ async def test_handle_client_response_reinitialize_graph(
     #     mock_db_manager.store_message.assert_called_with(
     #         from_role=IntakeMessageRole.CLIENT,
     #         content="Test response",
-    #         client_id=client_id,
+    #         client_pseudo_id=client_pseudo_id,
     #     )
 
     #     # Verify graph was reinitialized

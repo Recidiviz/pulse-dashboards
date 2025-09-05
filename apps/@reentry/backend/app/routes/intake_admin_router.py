@@ -11,11 +11,11 @@ from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import get_session
 from app.crud.intake import (
     create_intake,
-    get_intake_by_client_id,
+    get_intake_by_client_pseudo_id,
     get_intake_by_id,
     get_intake_section_messages,
     get_or_create_token,
-    update_internal_access_by_client_id,
+    update_internal_access_by_client_pseudo_id,
 )
 from app.models.intake import Intake, IntakeType
 from app.routes.intake_sections_router import IntakeSectionResponse
@@ -23,7 +23,7 @@ from app.routes.shared_models import (
     ClientRecordResponse,
     IntakeMessageResponse,
 )
-from app.services.client_data.queries import get_client_data
+from app.services.client_data.queries import Queries
 
 from .base import (
     ClientIntakeSectionResponse,
@@ -53,7 +53,7 @@ class ClientAddressResponse(BaseModel):
 
 
 class IntakeWithSectionsResponse(ORMResponse):
-    client_id: str
+    client_pseudo_id: str
     status: str
     current_section: str | None = None
     client: ClientRecordResponse | None = None
@@ -64,7 +64,7 @@ class IntakeWithSectionsResponse(ORMResponse):
 
 
 class TokenAccessResponse(BaseModel):
-    client_id: str
+    client_pseudo_id: str
     token: str
 
 
@@ -80,8 +80,8 @@ async def prepare_intake_response(
     token: Optional[str] = None,
 ) -> IntakeWithSectionsResponse:
     client_record = (
-        get_client_data(
-            external_client_id=intake.client_id,
+        Queries.get_client_data_by_pseudonymized_id(
+            pseudonymized_client_id=intake.client_pseudo_id,
             pseudonymized_staff_id=pseudonymized_staff_id,
         )
         if pseudonymized_staff_id
@@ -90,7 +90,7 @@ async def prepare_intake_response(
     if not client_record:
         raise HTTPException(
             status_code=404,
-            detail=f"client record not found for client ID: {intake.client_id}",
+            detail=f"client record not found for client ID: {intake.client_pseudo_id}",
         )
 
     client_data = ClientRecordResponse(**client_record.dict())
@@ -109,7 +109,7 @@ async def prepare_intake_response(
         id=intake.id,
         created_at=intake.created_at,
         updated_at=intake.updated_at,
-        client_id=intake.client_id,
+        client_pseudo_id=intake.client_pseudo_id,
         status=intake.status.value,
         current_section=intake.current_section,
         client=client_data,
@@ -127,7 +127,7 @@ async def prepare_intake_response(
 
 
 @router.post(
-    "/{client_id}",
+    "/{client_pseudo_id}",
     summary="Start the intake process for a client",
     description="Creates or updates the intake record for the given client ID and returns complete intake data",
     tags=["Intake assessment"],
@@ -135,14 +135,16 @@ async def prepare_intake_response(
 )
 async def start_intake_process(
     request: Request,
-    client_id: str,
+    client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
     try:
-        intake = await get_intake_by_client_id(session, client_id)
+        intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
         if not intake:
-            intake = await create_intake(session, client_id, IntakeType.CONVERSATION)
+            intake = await create_intake(
+                session, client_pseudo_id, IntakeType.CONVERSATION
+            )
         if not intake:
             raise HTTPException(status_code=404, detail="Failed to retrieve intake")
 
@@ -165,7 +167,7 @@ async def start_intake_process(
 
 
 @router.get(
-    "/{client_id}",
+    "/{client_pseudo_id}",
     summary="Fetch intake, client sections for the current section",
     description="Returns the intake record, associated client sections for the current section",
     tags=["Intake assessment"],
@@ -173,16 +175,18 @@ async def start_intake_process(
 )
 async def get_client_intake(
     request: Request,
-    client_id: str,
+    client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
-    intake: Intake | None = await get_intake_by_client_id(session, client_id)
+    intake: Intake | None = await get_intake_by_client_pseudo_id(
+        session, client_pseudo_id
+    )
 
     if not intake:
         raise HTTPException(
             status_code=404,
-            detail=f"Intake record not found for client ID: {client_id}",
+            detail=f"Intake record not found for client ID: {client_pseudo_id}",
         )
 
     try:
@@ -248,46 +252,46 @@ async def get_intake_section_messages_route(
 
 
 @router.patch(
-    "/{client_id}/internal-access",
+    "/{client_pseudo_id}/internal-access",
     summary="Update internal access field",
     description="Sets internal_access (true/false) for the intake",
     tags=["Intake assessment"],
     response_model=str,
 )
 async def set_internal_access(
-    client_id: str,
+    client_pseudo_id: str,
     body: InternalAccessUpdate,
     session: AsyncSession = Depends(get_session),
 ):
-    intake = await update_internal_access_by_client_id(
+    intake = await update_internal_access_by_client_pseudo_id(
         session=session,
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         internal_access=body.internal_access,
     )
 
     if not intake:
         raise HTTPException(
             status_code=404,
-            detail=f"Intake record not found for client ID: {client_id}",
+            detail=f"Intake record not found for client ID: {client_pseudo_id}",
         )
 
     return "success"
 
 
 @router.post(
-    "/{client_id}/token_access",
+    "/{client_pseudo_id}/token_access",
     summary="Generate a client access token",
     description="Generates a new access token for a client's intake",
     tags=["Intake assessment"],
     response_model=TokenAccessResponse,
 )
 async def generate_client_token(
-    client_id: str,
+    client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ):
     try:
-        intake = await get_intake_by_client_id(session, client_id)
+        intake = await get_intake_by_client_pseudo_id(session, client_pseudo_id)
 
         if not intake:
             raise HTTPException(status_code=404, detail="Intake not found")
@@ -296,7 +300,7 @@ async def generate_client_token(
         token_entry, raw_token = await get_or_create_token(session, intake.id)
 
         return TokenAccessResponse(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             token=raw_token,
         )
 

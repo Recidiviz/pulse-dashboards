@@ -25,9 +25,9 @@ logger = logging.getLogger(__name__)
 
 
 @overload
-async def get_intake_by_client_id(
+async def get_intake_by_client_pseudo_id(
     session: AsyncSession,
-    client_id: str,
+    client_pseudo_id: str,
     token: str | None = None,
     *,
     query_only: Literal[True],
@@ -35,9 +35,9 @@ async def get_intake_by_client_id(
 
 
 @overload
-async def get_intake_by_client_id(
+async def get_intake_by_client_pseudo_id(
     session: AsyncSession,
-    client_id: str,
+    client_pseudo_id: str,
     token: str | None = None,
     *,
     query_only: Literal[False] = False,
@@ -45,9 +45,9 @@ async def get_intake_by_client_id(
 
 
 @statement_or_result(first_only=True)
-async def get_intake_by_client_id(
+async def get_intake_by_client_pseudo_id(
     session: AsyncSession,
-    client_id: str,
+    client_pseudo_id: str,
     token: str | None = None,
     *,
     query_only: bool = False,
@@ -64,11 +64,13 @@ async def get_intake_by_client_id(
             selectinload(Intake.intake_token),
             selectinload(Intake.address),
         )
-        .where(Intake.client_id == client_id)
+        .where(Intake.client_pseudo_id == client_pseudo_id)
     )
 
     result = await session.execute(
-        select(Intake.internal_access).where(Intake.client_id == client_id)
+        select(Intake.internal_access).where(
+            Intake.client_pseudo_id == client_pseudo_id
+        )
     )
     intake_row = result.first()
     internal_access = intake_row.internal_access if intake_row else None
@@ -270,11 +272,11 @@ async def get_latest_message(
 
 
 async def create_intake(
-    session: AsyncSession, client_id: str, intake_type: IntakeType
+    session: AsyncSession, client_pseudo_id: str, intake_type: IntakeType
 ) -> Intake:
     """Create a new intake record."""
     intake = Intake(
-        client_id=client_id,
+        client_pseudo_id=client_pseudo_id,
         status=IntakeStatus.CREATED.value,
         internal_access=True,
         intake_type=intake_type.value,
@@ -325,12 +327,14 @@ async def get_intake_by_token(
     return token_obj, intake
 
 
-async def update_internal_access_by_client_id(
+async def update_internal_access_by_client_pseudo_id(
     session: AsyncSession,
-    client_id: str,
+    client_pseudo_id: str,
     internal_access: bool,
 ) -> Intake | None:
-    result = await session.execute(select(Intake).where(Intake.client_id == client_id))
+    result = await session.execute(
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
+    )
     intake = result.scalar_one_or_none()
 
     if not intake:
@@ -364,14 +368,14 @@ async def get_collected_address_for_intake(
 
 
 async def get_collected_address_for_client(
-    session: AsyncSession, client_id: str
+    session: AsyncSession, client_pseudo_id: str
 ) -> Optional[ClientAddress]:
-    """Get collected address for a client by client_id using the intake.address relationship"""
+    """Get collected address for a client by client_pseudo_id using the intake.address relationship"""
     # Get the intake with address relationship
     statement = (
         select(Intake)
         .options(selectinload(Intake.address))
-        .where(Intake.client_id == client_id)
+        .where(Intake.client_pseudo_id == client_pseudo_id)
     )
     result = await session.exec(statement)
     intake = result.first()
@@ -384,13 +388,13 @@ async def get_collected_address_for_client(
 
 async def update_client_address(
     session: AsyncSession,
-    client_id: str,
+    client_pseudo_id: str,
     address_data: AddressSubmission,
 ):
     statement = (
         select(Intake)
         .options(selectinload(Intake.address))
-        .where(Intake.client_id == client_id)
+        .where(Intake.client_pseudo_id == client_pseudo_id)
     )
     result = await session.exec(statement)
     intake = result.first()

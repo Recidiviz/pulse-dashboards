@@ -77,7 +77,7 @@ class SimulatedConversationHandler:
     def __init__(self, persona: dict):
         self.persona = persona
         self.intake_manager = None
-        self.session_id = persona.get("client_id")
+        self.session_id = persona.get("client_pseudo_id")
 
     @classmethod
     async def create(cls, persona: dict):
@@ -165,7 +165,7 @@ class SimulatedConversationHandler:
             async def handle_input():
                 while True:
                     state = self.intake_manager.active_conversations.get(
-                        self.persona.get("client_id")
+                        self.persona.get("client_pseudo_id")
                     )
                     if state and state.waiting_for_response:
                         print("\n\033[1;34m>> Case Worker:\033[0m")
@@ -178,7 +178,7 @@ class SimulatedConversationHandler:
                             print("See you next time!")
                             return
                         await self.intake_manager.add_response(
-                            self.persona.get("client_id"), response
+                            self.persona.get("client_pseudo_id"), response
                         )
                     await asyncio.sleep(0.1)
 

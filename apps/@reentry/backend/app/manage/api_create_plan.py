@@ -8,11 +8,11 @@ from .base import cli
 logger = structlog.get_logger(__name__)
 
 
-async def get_plan_by_client_id(
-    client: httpx.AsyncClient, client_id: str
+async def get_plan_by_client_pseudo_id(
+    client: httpx.AsyncClient, client_pseudo_id: str
 ) -> dict | None:
-    logger.info("Fetching plan for client", client_id=client_id)
-    response = await client.get(f"/plans/by_client/{client_id}")
+    logger.info("Fetching plan for client", client_pseudo_id=client_pseudo_id)
+    response = await client.get(f"/plans/by_client/{client_pseudo_id}")
     if response.status_code == 404:
         return None
     assert response.status_code == 200
@@ -20,9 +20,9 @@ async def get_plan_by_client_id(
     return plan
 
 
-async def create_plan(client: httpx.AsyncClient, client_id: str) -> dict:
-    logger.info("Creating plan for client", client_id=client_id)
-    response = await client.post("/plans", json={"client_id": client_id})
+async def create_plan(client: httpx.AsyncClient, client_pseudo_id: str) -> dict:
+    logger.info("Creating plan for client", client_pseudo_id=client_pseudo_id)
+    response = await client.post("/plans", json={"client_pseudo_id": client_pseudo_id})
     assert response.status_code == 200
     plan = response.json()
     return plan
@@ -46,7 +46,7 @@ async def delete_plan(client: httpx.AsyncClient, plan_id: str):
 
 @cli.command()
 async def api_create_plan(
-    client_id: str,
+    client_pseudo_id: str,
     force: bool = False,
     regen: bool = False,
     prompt: str | None = None,
@@ -58,7 +58,9 @@ async def api_create_plan(
     # implement with baseurl as http://localhost:8000/
     async with httpx.AsyncClient(base_url="http://localhost:8000/") as client:
         # check if a plan already exists
-        plan = await get_plan_by_client_id(client, client_id=client_id)
+        plan = await get_plan_by_client_pseudo_id(
+            client, client_pseudo_id=client_pseudo_id
+        )
         if plan:
             logger.info("Plan already exists", plan_id=plan["id"])
             if not regen:
@@ -78,7 +80,7 @@ async def api_create_plan(
             logger.info("Regenerating the plan", plan_id=plan["id"], gen_id=gen["id"])
             execution_id = gen["execution_id"]
         else:
-            plan = await create_plan(client, client_id=client_id)
+            plan = await create_plan(client, client_pseudo_id=client_pseudo_id)
             logger.info("Plan created", plan_id=plan["id"])
             execution_id = plan["create_execution_id"]
 
@@ -100,6 +102,8 @@ async def api_create_plan(
             await asyncio.sleep(1)
 
         # get the plan
-        plan = await get_plan_by_client_id(client, client_id=client_id)
+        plan = await get_plan_by_client_pseudo_id(
+            client, client_pseudo_id=client_pseudo_id
+        )
         if plan:
             print(plan["latest_generation"]["markdown_result"])

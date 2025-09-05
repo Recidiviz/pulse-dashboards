@@ -16,7 +16,7 @@ from app.auth.intake.auth_client_user import verify_client_token
 from app.core.config import settings
 from app.models.intake import Intake, IntakeMessage, IntakeMessageRole, IntakeStatus
 from app.routes.shared_models import IntakeMessageResponse
-from app.services.client_data.queries import ClientDataRecord
+from app.services.client_data.types import ClientDataRecord
 from app.utils.intake.client_connection_manager import ClientConnectionManager
 from app.utils.intake.constants import COMPLETION_SECTION
 from app.utils.intake.conversation_graph import IntakeConversationGraph
@@ -101,7 +101,7 @@ class SocketIOManager:
         """
         Handle new client connections with proper registration and conversation state management.
         Determines whether to start a new conversation, resume an existing one, or refuse connection for a completed connection.
-        Uses JWT token verification instead of direct client_id.
+        Uses JWT token verification instead of direct client_pseudo_id.
 
         Args:
             sid (str): Socket ID.
@@ -111,18 +111,18 @@ class SocketIOManager:
         Returns:
             bool: Whether connection was accepted.
         """
-        client_id = None
+        client_pseudo_id = None
         try:
             if auth:
                 parsedAuth = Auth(**auth)
                 token = parsedAuth.auth_token
 
                 if token:
-                    # Verify the JWT token and get the client_id
+                    # Verify the JWT token and get the client_pseudo_id
                     (
                         success,
                         error_message,
-                        extracted_client_id,
+                        extracted_client_pseudo_id,
                     ) = await verify_client_token(token)
 
                     if not success:
@@ -137,31 +137,31 @@ class SocketIOManager:
                         )
                         return False
 
-                    client_id = extracted_client_id
+                    client_pseudo_id = extracted_client_pseudo_id
 
-                    if client_id:
+                    if client_pseudo_id:
                         user_agent = environ.get("HTTP_USER_AGENT", "Unknown")
-                        client_data = self.db_manager.get_client(client_id)
+                        client_data = self.db_manager.get_client(client_pseudo_id)
                         intake = await self.db_manager.get_intake(
-                            client_id, parsedAuth.token_from_url
+                            client_pseudo_id, parsedAuth.token_from_url
                         )
                         if client_data and intake:
                             was_connected_elsewhere = (
                                 await self.client_connection_manager.register_client(
-                                    client_id, sid, user_agent
+                                    client_pseudo_id, sid, user_agent
                                 )
                             )
                             if was_connected_elsewhere:
                                 # Client was connected elsewhere, clean up existing graph
-                                await self.handle_disconnect_client(client_id)
+                                await self.handle_disconnect_client(client_pseudo_id)
                             if intake and intake.status != IntakeStatus.COMPLETED:
                                 if intake.status == IntakeStatus.CREATED:
                                     intake = await self.db_manager.update_intake_status(
-                                        client_id, IntakeStatus.IN_PROGRESS
+                                        client_pseudo_id, IntakeStatus.IN_PROGRESS
                                     )
 
-                                await self.send_event_client_id(
-                                    client_id,
+                                await self.send_event_client_pseudo_id(
+                                    client_pseudo_id,
                                     ConnectionAckEvent(
                                         content=ConnectionAckContent(accepted=True)
                                     ),
@@ -188,16 +188,18 @@ class SocketIOManager:
         except Exception as e:
             traceback.print_exc()
             logger.error(
-                f"\n\nError connecting client {client_id or 'unknown'}: {str(e)}"
+                f"\n\nError connecting client {client_pseudo_id or 'unknown'}: {str(e)}"
             )
             return False
 
-    async def wait_for_user_response(self, client_id: str, message: IntakeMessage):
+    async def wait_for_user_response(
+        self, client_pseudo_id: str, message: IntakeMessage
+    ):
         """
         Wait for a user response with timeout.
 
         Args:
-            client_id: The client ID
+            client_pseudo_id: The client ID
             message: The message to send to the client
             timeout: Timeout in seconds (default: 30 minutes)
 
@@ -210,37 +212,43 @@ class SocketIOManager:
         try:
             # Clear any existing future for this client to prevent leaks
             if (
-                client_id in self.pending_responses
-                and not self.pending_responses[client_id].done()
+                client_pseudo_id in self.pending_responses
+                and not self.pending_responses[client_pseudo_id].done()
             ):
-                self.pending_responses[client_id].cancel()
+                self.pending_responses[client_pseudo_id].cancel()
 
             response_future = asyncio.get_running_loop().create_future()
 
             # Track the future
-            self.pending_responses[client_id] = response_future
+            self.pending_responses[client_pseudo_id] = response_future
 
             # Log that we're waiting for a response
-            logger.info(f"Waiting for response from client {client_id}")
+            logger.info(f"Waiting for response from client {client_pseudo_id}")
 
-            await self.send_event_client_id(
-                client_id,
+            await self.send_event_client_pseudo_id(
+                client_pseudo_id,
                 AIMessageEvent(content=IntakeMessageResponse(**message.model_dump())),
             )
 
             # Wait for response with timeout
             response = await asyncio.wait_for(response_future, 1800)
 
-            logger.info(f"Received response from client {client_id}")
+            logger.info(f"Received response from client {client_pseudo_id}")
             return response
 
         except asyncio.TimeoutError:
-            logger.warning(f"Timeout waiting for response from client {client_id}")
-            await self.handle_disconnect_client(client_id)
-            await self.client_connection_manager.disconnect_client_id(client_id)
+            logger.warning(
+                f"Timeout waiting for response from client {client_pseudo_id}"
+            )
+            await self.handle_disconnect_client(client_pseudo_id)
+            await self.client_connection_manager.disconnect_client_pseudo_id(
+                client_pseudo_id
+            )
 
         except asyncio.CancelledError:
-            logger.info(f"Wait for user response cancelled for client {client_id}")
+            logger.info(
+                f"Wait for user response cancelled for client {client_pseudo_id}"
+            )
             raise
         except Exception as e:
             traceback.print_exc()
@@ -248,20 +256,20 @@ class SocketIOManager:
             raise
         finally:
             # Remove future from pending responses
-            if client_id in self.pending_responses:
+            if client_pseudo_id in self.pending_responses:
                 # Don't try to cancel if it's already done to avoid warnings
-                if not self.pending_responses[client_id].done():
-                    self.pending_responses[client_id].cancel()
-                del self.pending_responses[client_id]
+                if not self.pending_responses[client_pseudo_id].done():
+                    self.pending_responses[client_pseudo_id].cancel()
+                del self.pending_responses[client_pseudo_id]
 
     async def _init_and_run_graph(self, intake: Intake, client: ClientDataRecord, sid):
-        client_id = intake.client_id
+        client_pseudo_id = intake.client_pseudo_id
         # Create a client context with the client information
         # Format the full structured name as a string
         formatted_name = client.full_name.formatted_full_name()
 
         client_context = ClientContext(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             client_name=formatted_name,
         )
 
@@ -270,7 +278,7 @@ class SocketIOManager:
             session=client_context,
             db_manager=self.db_manager,
             wait_for_user_response=self.wait_for_user_response,
-            send_message=self.send_event_client_id,
+            send_message=self.send_event_client_pseudo_id,
         )
 
         # Pass the client sections (which have revision data) instead of extracted sections
@@ -278,7 +286,7 @@ class SocketIOManager:
         await graph.initialize(intake, intake.client_intake_sections)
 
         # Store the graph for future reference
-        self.conversation_graphs[client_id] = graph
+        self.conversation_graphs[client_pseudo_id] = graph
 
         await graph.run_assessment()
 
@@ -295,7 +303,7 @@ class SocketIOManager:
         """
 
         try:
-            client_id = intake.client_id
+            client_pseudo_id = intake.client_pseudo_id
 
             # Don't create graphs for completed intakes
             if (
@@ -303,19 +311,21 @@ class SocketIOManager:
                 or intake.current_section == COMPLETION_SECTION
             ):
                 logger.info(
-                    f"Intake for client {client_id} is already completed, not creating a graph"
+                    f"Intake for client {client_pseudo_id} is already completed, not creating a graph"
                 )
                 return
 
             # Check if we already have a conversation graph for this client
-            if client_id in self.conversation_graphs:
-                logger.info(f"Already have a conversation graph for client {client_id}")
+            if client_pseudo_id in self.conversation_graphs:
+                logger.info(
+                    f"Already have a conversation graph for client {client_pseudo_id}"
+                )
                 # If we do, return - no need to create a new one
                 return
 
             # For all other statuses (IN_PROGRESS, PAUSED, etc.), resume the conversation
             logger.info(
-                f"Resuming conversation for client {client_id} with status {intake.status}"
+                f"Resuming conversation for client {client_pseudo_id} with status {intake.status}"
             )
 
             await self._init_and_run_graph(intake, client, sid)
@@ -327,18 +337,18 @@ class SocketIOManager:
             logger.error(f"Error handling conversation state: {e}")
             return
 
-    async def handle_disconnect_client(self, client_id) -> None:
-        logger.info(f"Cleaning up resources for disconnected client {client_id}")
+    async def handle_disconnect_client(self, client_pseudo_id) -> None:
+        logger.info(f"Cleaning up resources for disconnected client {client_pseudo_id}")
 
         # Safely delete items from dictionaries only if they exist
-        if client_id in self.conversation_graphs:
-            del self.conversation_graphs[client_id]
+        if client_pseudo_id in self.conversation_graphs:
+            del self.conversation_graphs[client_pseudo_id]
 
-        if client_id in self.pending_responses:
+        if client_pseudo_id in self.pending_responses:
             # Cancel the pending future to prevent hanging
-            if not self.pending_responses[client_id].done():
-                self.pending_responses[client_id].cancel()
-                del self.pending_responses[client_id]
+            if not self.pending_responses[client_pseudo_id].done():
+                self.pending_responses[client_pseudo_id].cancel()
+                del self.pending_responses[client_pseudo_id]
 
     async def handle_disconnect(self, sid: str) -> None:
         """
@@ -348,14 +358,16 @@ class SocketIOManager:
             sid (str): The socket ID that disconnected.
         """
         try:
-            # Use our improved method for getting client_id
-            client_id = await self.client_connection_manager.get_client_id_by_sid(sid)
+            # Use our improved method for getting client_pseudo_id
+            client_pseudo_id = (
+                await self.client_connection_manager.get_client_pseudo_id_by_sid(sid)
+            )
 
             # Clean up in client connection manager
             await self.client_connection_manager.disconnect_client(sid)
 
-            if client_id:
-                await self.handle_disconnect_client(client_id)
+            if client_pseudo_id:
+                await self.handle_disconnect_client(client_pseudo_id)
             else:
                 logger.warning(f"No client ID found for disconnecting socket {sid}")
 
@@ -377,9 +389,11 @@ class SocketIOManager:
         try:
             parsed_message = HumanMessage(content=data)
 
-            # Get client_id using the more robust client_connection_manager method
-            client_id = await self.client_connection_manager.get_client_id_by_sid(sid)
-            if not client_id:
+            # Get client_pseudo_id using the more robust client_connection_manager method
+            client_pseudo_id = (
+                await self.client_connection_manager.get_client_pseudo_id_by_sid(sid)
+            )
+            if not client_pseudo_id:
                 logger.warning(f"No client ID found for socket ID {sid}")
                 return
 
@@ -389,19 +403,21 @@ class SocketIOManager:
                 return
 
             # If there's a pending response waiting, fulfill it
-            pending_response = self.pending_responses.get(client_id)
+            pending_response = self.pending_responses.get(client_pseudo_id)
             if pending_response and not pending_response.done():
                 message = await self.db_manager.store_message(
                     from_role=IntakeMessageRole.CLIENT,
                     content=content,
-                    client_id=client_id,
+                    client_pseudo_id=client_pseudo_id,
                 )
                 if not message:
-                    logger.warning(f"Error saving message for client {client_id}")
+                    logger.warning(
+                        f"Error saving message for client {client_pseudo_id}"
+                    )
                     return
 
                 logger.info(
-                    f"Setting result for pending response for client {client_id}"
+                    f"Setting result for pending response for client {client_pseudo_id}"
                 )
                 pending_response.set_result(content)
                 # Return the message for acknowledgment
@@ -413,46 +429,46 @@ class SocketIOManager:
 
             # If we're not expecting a response, check if it's the caseworker's turn to talk
             if (
-                await self.db_manager.get_talking_turn(client_id)
+                await self.db_manager.get_talking_turn(client_pseudo_id)
             ) == IntakeMessageRole.CASEWORKER:
                 logger.debug(
-                    f"Ignoring message - it's the caseworker's turn for client {client_id}"
+                    f"Ignoring message - it's the caseworker's turn for client {client_pseudo_id}"
                 )
                 return
 
             # If we get here, we're handling an unexpected or out-of-sequence message
-            intake = await self.db_manager.get_intake(client_id)
+            intake = await self.db_manager.get_intake(client_pseudo_id)
             if not intake:
-                logger.warning(f"No intake found for client {client_id}")
+                logger.warning(f"No intake found for client {client_pseudo_id}")
                 return
 
             if intake.status != IntakeStatus.IN_PROGRESS:
                 logger.info(
-                    f"Intake for client {client_id} is not in progress (status: {intake.status})"
+                    f"Intake for client {client_pseudo_id} is not in progress (status: {intake.status})"
                 )
                 return
 
             # Store the message - it might be valid but our conversation state is out of sync
             logger.info(
-                f"Storing unexpected message for client {client_id} and reinitializing graph"
+                f"Storing unexpected message for client {client_pseudo_id} and reinitializing graph"
             )
-            client_data = self.db_manager.get_client(client_id)
+            client_data = self.db_manager.get_client(client_pseudo_id)
             if not client_data:
-                logger.warning(f"No client data found for client {client_id}")
+                logger.warning(f"No client data found for client {client_pseudo_id}")
                 return
 
             message = await self.db_manager.store_message(
                 from_role=IntakeMessageRole.CLIENT,
                 content=content,
-                client_id=client_id,
+                client_pseudo_id=client_pseudo_id,
             )
             if not message:
-                logger.warning(f"Error saving message for client {client_id}")
+                logger.warning(f"Error saving message for client {client_pseudo_id}")
                 return
 
             # Clear any existing graph for this client and start fresh
-            if client_id in self.conversation_graphs:
-                del self.conversation_graphs[client_id]
+            if client_pseudo_id in self.conversation_graphs:
+                del self.conversation_graphs[client_pseudo_id]
 
             # Reinitialize the conversation graph
             asyncio.create_task(self._init_and_run_graph(intake, client_data, sid))
@@ -473,10 +489,12 @@ class SocketIOManager:
         content_json = event.content.model_dump(mode="json") if event.content else None
         await self.sio.emit(event.type, content_json, room=sid)
 
-    async def send_event_client_id(self, client_id: str, event: ServerEvent):
+    async def send_event_client_pseudo_id(
+        self, client_pseudo_id: str, event: ServerEvent
+    ):
         # Use model_dump with mode="json" to ensure proper serialization
         content_json = event.content.model_dump(mode="json") if event.content else None
-        await self.sio.emit(event.type, content_json, room=f"client_{client_id}")
+        await self.sio.emit(event.type, content_json, room=f"client_{client_pseudo_id}")
 
     async def handle_ping(self, sid: str, data: Dict) -> None:
         """

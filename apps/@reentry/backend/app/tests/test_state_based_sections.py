@@ -65,7 +65,9 @@ async def test_arizona_client_gets_oras_rt_sections(
     """Test that Arizona clients get ORAS_RT sections assigned."""
     # Create intake for Arizona client (using test fixture client)
     intake = Intake(
-        client_id="client-002",  # Jane Smith - Arizona client from test fixtures
+        client_pseudo_id=mock_clientdata_service["clients"][
+            1
+        ].pseudonymized_client_id,  # Jane Smith - Arizona client from test fixtures
         status=IntakeStatus.CREATED.value,
         intake_type=IntakeType.CONVERSATION.value,  # Use conversation type for testing
     )
@@ -117,7 +119,9 @@ async def test_idaho_client_gets_lsir_sections(
     """Test that Idaho clients get LSIR sections assigned."""
     # Create intake for Idaho client (using test fixture client)
     intake = Intake(
-        client_id="client-001",  # John Doe - Idaho client from test fixtures
+        client_pseudo_id=mock_clientdata_service[
+            "client_pseudo_id"
+        ],  # John Doe - Idaho client from test fixtures
         status=IntakeStatus.CREATED.value,
         intake_type=IntakeType.CONVERSATION.value,
     )

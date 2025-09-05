@@ -12,8 +12,8 @@ from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import get_session
 from app.crud.recording_session import get_recording_session_by_id
 from app.models.intake import ClientAddress, Intake, IntakeStatus
-from app.services.client_data.queries import get_clients_by_pseudonymized_staff_id
 from app.services.recording_service import RecordingService
+from app.utils.permission_utils import check_access
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ class CompleteIntakeTranscriptionResponse(BaseModel):
 
 
 @router.post(
-    "/{client_id}/complete-intake-transcription",
+    "/{client_pseudo_id}/complete-intake-transcription",
     summary="Submit Client address or transcription approval for intake transcription",
     description="Submit the client's address or transcription approval to complete the intake process.",
     response_model=CompleteIntakeTranscriptionResponse,
@@ -60,7 +60,7 @@ class CompleteIntakeTranscriptionResponse(BaseModel):
 )
 async def complete_intake_transcription(
     request: Request,
-    client_id: str,
+    client_pseudo_id: str,
     data: CompleteIntakeTrascriptionSubmission,
     session: AsyncSession = Depends(get_session),
 ):
@@ -69,7 +69,7 @@ async def complete_intake_transcription(
 
     statement = (
         select(Intake)
-        .where(Intake.client_id == client_id)
+        .where(Intake.client_pseudo_id == client_pseudo_id)
         .options(
             selectinload(Intake.address),
             selectinload(Intake.recording_session),
@@ -106,6 +106,8 @@ async def complete_intake_transcription(
     intake_has_address = intake.address.city and intake.address.state
     if intake.recording_session.transcription_approved and intake_has_address:
         await intake.update_status(session, IntakeStatus.COMPLETED)
+        await session.commit()
+        await session.refresh(intake)
 
     return CompleteIntakeTranscriptionResponse(
         intake_completed=intake.status == IntakeStatus.COMPLETED,
@@ -161,18 +163,16 @@ async def get_client_transcription(
     if recording_session is None:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    if recording_session.intake.client_id != recording_session.client_id:
+    if recording_session.intake.client_pseudo_id != recording_session.client_pseudo_id:
         raise HTTPException(
             status_code=400,
             detail="Client ID mismatch between intake and recording session",
         )
 
-    bq_clients = get_clients_by_pseudonymized_staff_id(pseudonymized_id)
-    if recording_session.client_id not in [c.external_client_id for c in bq_clients]:
-        raise HTTPException(
-            status_code=403,
-            detail="You do not have permission to access this recording session",
-        )
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
+        pseudonymized_staff_id=pseudonymized_id,
+    )
 
     # Try to retrieve the transcription from storage
     service = RecordingService(recording_session.gcs_bucket_name)

@@ -1,3 +1,7 @@
+from typing import TypeVar
+from app.services.client_data.types import ClientDataRecord
+
+
 def statement_or_result(result_type=None, first_only=False):
     """
     Decorator to allow function to be used as statement or result.
@@ -49,8 +53,8 @@ def statement_or_result(result_type=None, first_only=False):
 
     return decorator
 
-
-def paginate(items: list, page: int, size: int) -> list:
+T = TypeVar('T')
+def paginate(items: list[T], page: int, size: int) -> list[T]:
     total = len(items)
     pages = (total + size - 1) // size if total else 0
     page = min(max(1, page), pages) if pages else 1
@@ -68,9 +72,9 @@ def apply_search_filter(clients, search):
     ]
 
 
-def sort_clients_by_name(clients, order):
+def sort_clients_by_name(clients: list[ClientDataRecord], order):
     return [
-        c.external_client_id
+        c
         for c in sorted(
             clients,
             key=lambda c: f"{c.full_name.given_names} {c.full_name.surname}".lower()

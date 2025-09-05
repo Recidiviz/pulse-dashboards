@@ -8,7 +8,7 @@ from pydantic import computed_field
 from app.models.base import BaseModel
 from app.models.intake import IntakeMessageRole
 from app.routes.execution_router import ExecutionResponse
-from app.services.client_data.queries import FullNameModel
+from app.services.client_data.types import FullNameModel
 
 from .base import ORMResponse
 
@@ -36,7 +36,7 @@ class ClientRecordResponse(BaseModel):
 
 # Forward declarations for cross-dependent types
 class IntakeResponse(ORMResponse):
-    client_id: str
+    client_pseudo_id: str
     status: str
     current_section: str | None = None
     token: str | None = None
@@ -44,7 +44,7 @@ class IntakeResponse(ORMResponse):
 
 
 class PlanResponse(ORMResponse):
-    client_id: str
+    client_pseudo_id: str
     create_execution_id: UUID | None = None
     create_execution: ExecutionResponse | None = None
     create_status: str
@@ -52,14 +52,14 @@ class PlanResponse(ORMResponse):
 
 
 class AssessmentResponse(ORMResponse):
-    client_id: str
+    client_pseudo_id: str
     intake_id: UUID | None = None
     scores: dict | None = None
     status: str
 
 
 class ClientResponse(BaseModel):
-    client_id: str
+    client_pseudo_id: str
     intake: IntakeResponse | None = None
     plans: PlanResponse | None = None
     processing_status: ProcessingStatus

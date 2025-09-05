@@ -27,10 +27,10 @@ from .base import cli
 from .seed_intake_messages import create_client_intake_messages
 
 
-def load_client_data_from_file(client_id: str, data_type: str) -> dict | None:
+def load_client_data_from_file(client_pseudo_id: str, data_type: str) -> dict | None:
     """Load client data from JSON file in seed_workflow folder"""
     data_dir = Path(__file__).parent.parent.parent / "data" / "seed_workflow"
-    file_path = data_dir / f"{client_id}_{data_type}.json"
+    file_path = data_dir / f"{client_pseudo_id}_{data_type}.json"
 
     if not file_path.exists():
         print(f"Data file not found: {file_path}")
@@ -50,16 +50,16 @@ def get_available_client_data_files() -> list[str]:
     if not data_dir.exists():
         return []
 
-    client_ids = set()
+    client_pseudo_ids = set()
     for file_path in data_dir.glob("*_assessment.json"):
-        client_id = file_path.stem.replace("_assessment", "")
-        client_ids.add(client_id)
+        client_pseudo_id = file_path.stem.replace("_assessment", "")
+        client_pseudo_ids.add(client_pseudo_id)
 
     for file_path in data_dir.glob("*_plan.json"):
-        client_id = file_path.stem.replace("_plan", "")
-        client_ids.add(client_id)
+        client_pseudo_id = file_path.stem.replace("_plan", "")
+        client_pseudo_ids.add(client_pseudo_id)
 
-    return list(client_ids)
+    return list(client_pseudo_ids)
 
 
 @cli.command("seed-workflow")
@@ -141,23 +141,29 @@ async def seed_demo_mode(session: AsyncSession):
         "Franklin Smith",
     ]
 
-    for i, client_id in enumerate(clients_with_plans):
-        name = client_names[i] if i < len(client_names) else f"Client {client_id}"
-        print(f"Creating completed workflow for {name} ({client_id}) - has plan file")
-        await create_completed_intake(session, client_id, name)
-        await create_completed_assessment(session, client_id)
-        await create_completed_plan(session, client_id)
+    for i, client_pseudo_id in enumerate(clients_with_plans):
+        name = (
+            client_names[i] if i < len(client_names) else f"Client {client_pseudo_id}"
+        )
+        print(
+            f"Creating completed workflow for {name} ({client_pseudo_id}) - has plan file"
+        )
+        await create_completed_intake(session, client_pseudo_id, name)
+        await create_completed_assessment(session, client_pseudo_id)
+        await create_completed_plan(session, client_pseudo_id)
 
     # Create one in-progress intake for the first client without a plan file
     if clients_without_plans:
-        client_id = clients_without_plans[0]
+        client_pseudo_id = clients_without_plans[0]
         name = (
             client_names[len(clients_with_plans)]
             if len(clients_with_plans) < len(client_names)
-            else f"Client {client_id}"
+            else f"Client {client_pseudo_id}"
         )
-        print(f"Creating in-progress intake for {name} ({client_id}) - no plan file")
-        await create_in_progress_intake(session, client_id, name)
+        print(
+            f"Creating in-progress intake for {name} ({client_pseudo_id}) - no plan file"
+        )
+        await create_in_progress_intake(session, client_pseudo_id, name)
 
     # Remaining clients without plans are left empty (no intakes created)
     if len(clients_without_plans) > 1:
@@ -196,14 +202,16 @@ async def seed_dev_mode(session: AsyncSession):
     print("\nCreating assessments only for completed intakes...")
     completed_intake_clients = [client1, client2, client3]
 
-    for client_id in completed_intake_clients:
-        assessment_data = load_client_data_from_file(client_id, "assessment")
+    for client_pseudo_id in completed_intake_clients:
+        assessment_data = load_client_data_from_file(client_pseudo_id, "assessment")
         if assessment_data:
-            print(f"Found assessment data file for {client_id}, creating assessment...")
-            await create_completed_assessment(session, client_id)
+            print(
+                f"Found assessment data file for {client_pseudo_id}, creating assessment..."
+            )
+            await create_completed_assessment(session, client_pseudo_id)
         else:
             print(
-                f"No assessment data file found for {client_id}, skipping assessment creation"
+                f"No assessment data file found for {client_pseudo_id}, skipping assessment creation"
             )
 
     # Create plans only for clients that have plan data files and completed assessments
@@ -211,39 +219,43 @@ async def seed_dev_mode(session: AsyncSession):
         "\nCreating plans for clients with plan data files and completed assessments..."
     )
 
-    for client_id in completed_intake_clients:
+    for client_pseudo_id in completed_intake_clients:
         # Check if client has both completed assessment and plan data file
         assessment_result = await session.exec(
-            select(Assessment).where(Assessment.client_id == client_id)
+            select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
         )
         assessment_obj = assessment_result.first()
 
         if assessment_obj and assessment_obj.status == ExecutionStatus.COMPLETED.value:
-            plan_data = load_client_data_from_file(client_id, "plan")
+            plan_data = load_client_data_from_file(client_pseudo_id, "plan")
             if plan_data:
-                print(f"Found plan data file for {client_id}, creating plan...")
-                await create_completed_plan(session, client_id)
+                print(f"Found plan data file for {client_pseudo_id}, creating plan...")
+                await create_completed_plan(session, client_pseudo_id)
             else:
                 print(
-                    f"No plan data file found for {client_id}, skipping plan creation"
+                    f"No plan data file found for {client_pseudo_id}, skipping plan creation"
                 )
         else:
-            print(f"No completed assessment for {client_id}, skipping plan creation")
+            print(
+                f"No completed assessment for {client_pseudo_id}, skipping plan creation"
+            )
 
 
-async def clean_client_data(session: AsyncSession, client_ids: list[str]):
+async def clean_client_data(session: AsyncSession, client_pseudo_ids: list[str]):
     """
     Remove all workflow data for the specified clients.
 
     Args:
         session: The database session
-        client_ids: List of client IDs to clean data for
+        client_pseudo_ids: List of client IDs to clean data for
     """
-    for client_id in client_ids:
-        print(f"Cleaning data for client {client_id}...")
+    for client_pseudo_id in client_pseudo_ids:
+        print(f"Cleaning data for client {client_pseudo_id}...")
 
         # Step 1: Delete plan and related entities
-        plans = await session.exec(select(Plan).where(Plan.client_id == client_id))
+        plans = await session.exec(
+            select(Plan).where(Plan.client_pseudo_id == client_pseudo_id)
+        )
         plan_obj = plans.first()
 
         if plan_obj:
@@ -283,7 +295,7 @@ async def clean_client_data(session: AsyncSession, client_ids: list[str]):
 
         # Step 2: Delete assessments
         assessments = await session.exec(
-            select(Assessment).where(Assessment.client_id == client_id)
+            select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
         )
         assessment_obj = assessments.first()
 
@@ -306,7 +318,7 @@ async def clean_client_data(session: AsyncSession, client_ids: list[str]):
 
         # Step 3: Delete intake (this will cascade delete messages, sections, and address)
         intakes = await session.exec(
-            select(Intake).where(Intake.client_id == client_id)
+            select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
         )
         intake_obj = intakes.first()
 
@@ -327,54 +339,62 @@ async def clean_client_data(session: AsyncSession, client_ids: list[str]):
             await session.delete(intake_obj)
 
         await session.commit()
-        print(f"Successfully cleaned all data for client {client_id}")
+        print(f"Successfully cleaned all data for client {client_pseudo_id}")
 
 
 # --- INTAKE FUNCTIONS ---
 
 
-async def create_completed_intake(session: AsyncSession, client_id: str, name: str):
+async def create_completed_intake(
+    session: AsyncSession, client_pseudo_id: str, name: str
+):
     """Create a completed intake with sample conversation data."""
-    print(f"Creating completed intake for {name} (ID: {client_id})...")
+    print(f"Creating completed intake for {name} (ID: {client_pseudo_id})...")
 
     # Use the new create_client_intake_messages function
-    await create_client_intake_messages(session, client_id, IntakeStatus.COMPLETED)
+    await create_client_intake_messages(
+        session, client_pseudo_id, IntakeStatus.COMPLETED
+    )
 
     # Find and return the intake for compatibility
     existing_intake = await session.exec(
-        select(Intake).where(Intake.client_id == client_id)
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
     )
     return existing_intake.first()
 
 
-async def create_in_progress_intake(session: AsyncSession, client_id: str, name: str):
+async def create_in_progress_intake(
+    session: AsyncSession, client_pseudo_id: str, name: str
+):
     """Create an in-progress intake with almost all sections completed."""
     print(
-        f"Creating almost complete in-progress intake for {name} (ID: {client_id})..."
+        f"Creating almost complete in-progress intake for {name} (ID: {client_pseudo_id})..."
     )
 
     # Use the new create_client_intake_messages function
     await create_client_intake_messages(
-        session, client_id, IntakeStatus.IN_PROGRESS, "Alcohol and Drug Use"
+        session, client_pseudo_id, IntakeStatus.IN_PROGRESS, "Alcohol and Drug Use"
     )
 
     # Find and return the intake for compatibility
     existing_intake = await session.exec(
-        select(Intake).where(Intake.client_id == client_id)
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
     )
     return existing_intake.first()
 
 
-async def create_created_intake(session: AsyncSession, client_id: str, name: str):
+async def create_created_intake(
+    session: AsyncSession, client_pseudo_id: str, name: str
+):
     """Create an intake in 'created' state (just registered, no sections started)."""
-    print(f"Creating 'created' intake for {name} (ID: {client_id})...")
+    print(f"Creating 'created' intake for {name} (ID: {client_pseudo_id})...")
 
     # Use the new create_client_intake_messages function
-    await create_client_intake_messages(session, client_id, IntakeStatus.CREATED)
+    await create_client_intake_messages(session, client_pseudo_id, IntakeStatus.CREATED)
 
     # Find and return the intake for compatibility
     existing_intake = await session.exec(
-        select(Intake).where(Intake.client_id == client_id)
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
     )
     return existing_intake.first()
 
@@ -382,35 +402,39 @@ async def create_created_intake(session: AsyncSession, client_id: str, name: str
 # --- ASSESSMENT FUNCTIONS ---
 
 
-async def create_completed_assessment(session: AsyncSession, client_id: str):
+async def create_completed_assessment(session: AsyncSession, client_pseudo_id: str):
     """Create a completed assessment with sample data."""
-    print(f"Creating completed assessment for client {client_id}...")
+    print(f"Creating completed assessment for client {client_pseudo_id}...")
 
     # Verify intake exists and is completed
-    intake = await session.exec(select(Intake).where(Intake.client_id == client_id))
+    intake = await session.exec(
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
+    )
     intake_obj = intake.first()
 
     if not intake_obj:
-        print(f"No intake found for client {client_id} - cannot create assessment")
+        print(
+            f"No intake found for client {client_pseudo_id} - cannot create assessment"
+        )
         return None
 
     if intake_obj.status != IntakeStatus.COMPLETED.value:
         print(
-            f"Cannot create assessment for client {client_id} - intake not completed (status: {intake_obj.status})"
+            f"Cannot create assessment for client {client_pseudo_id} - intake not completed (status: {intake_obj.status})"
         )
         return None
 
     # Check if assessment already exists
     existing = await session.exec(
-        select(Assessment).where(Assessment.client_id == client_id)
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
     )
     assessment = existing.first()
 
     if not assessment:
-        print(f"Creating new assessment for client {client_id}")
+        print(f"Creating new assessment for client {client_pseudo_id}")
         # Create assessment
         assessment = Assessment(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=intake_obj.id,
         )
         session.add(assessment)
@@ -432,7 +456,7 @@ async def create_completed_assessment(session: AsyncSession, client_id: str):
         assessment.execution = execution
 
         # Load assessment data from file if it exists
-        assessment_data = load_client_data_from_file(client_id, "assessment")
+        assessment_data = load_client_data_from_file(client_pseudo_id, "assessment")
         if assessment_data:
             assessment.scores = assessment_data.get("scores", {})
             assessment.misses_counts = assessment_data.get("misses_counts", {})
@@ -440,42 +464,48 @@ async def create_completed_assessment(session: AsyncSession, client_id: str):
 
         session.add(assessment)
         await session.commit()
-        print(f"Successfully created completed assessment for client {client_id}")
+        print(
+            f"Successfully created completed assessment for client {client_pseudo_id}"
+        )
     else:
-        print(f"Assessment for client {client_id} already exists - skipping")
+        print(f"Assessment for client {client_pseudo_id} already exists - skipping")
 
     return assessment
 
 
-async def create_inprogress_assessment(session: AsyncSession, client_id: str):
+async def create_inprogress_assessment(session: AsyncSession, client_pseudo_id: str):
     """Create an in-progress assessment."""
-    print(f"Creating in-progress assessment for client {client_id}...")
+    print(f"Creating in-progress assessment for client {client_pseudo_id}...")
 
     # Verify intake exists and is completed
-    intake = await session.exec(select(Intake).where(Intake.client_id == client_id))
+    intake = await session.exec(
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
+    )
     intake_obj = intake.first()
 
     if not intake_obj:
-        print(f"No intake found for client {client_id} - cannot create assessment")
+        print(
+            f"No intake found for client {client_pseudo_id} - cannot create assessment"
+        )
         return None
 
     if intake_obj.status != IntakeStatus.COMPLETED.value:
         print(
-            f"Cannot create assessment for client {client_id} - intake not completed (status: {intake_obj.status})"
+            f"Cannot create assessment for client {client_pseudo_id} - intake not completed (status: {intake_obj.status})"
         )
         return None
 
     # Check if assessment already exists
     existing = await session.exec(
-        select(Assessment).where(Assessment.client_id == client_id)
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
     )
     assessment = existing.first()
 
     if not assessment:
-        print(f"Creating new in-progress assessment for client {client_id}")
+        print(f"Creating new in-progress assessment for client {client_pseudo_id}")
         # Create assessment
         assessment = Assessment(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=intake_obj.id,
         )
         session.add(assessment)
@@ -533,42 +563,48 @@ async def create_inprogress_assessment(session: AsyncSession, client_id: str):
 
         session.add(assessment)
         await session.commit()
-        print(f"Successfully created in-progress assessment for client {client_id}")
+        print(
+            f"Successfully created in-progress assessment for client {client_pseudo_id}"
+        )
     else:
-        print(f"Assessment for client {client_id} already exists - skipping")
+        print(f"Assessment for client {client_pseudo_id} already exists - skipping")
 
     return assessment
 
 
-async def create_pending_assessment(session: AsyncSession, client_id: str):
+async def create_pending_assessment(session: AsyncSession, client_pseudo_id: str):
     """Create a pending assessment (scheduled but not started)."""
-    print(f"Creating pending assessment for client {client_id}...")
+    print(f"Creating pending assessment for client {client_pseudo_id}...")
 
     # Verify intake exists and is completed
-    intake = await session.exec(select(Intake).where(Intake.client_id == client_id))
+    intake = await session.exec(
+        select(Intake).where(Intake.client_pseudo_id == client_pseudo_id)
+    )
     intake_obj = intake.first()
 
     if not intake_obj:
-        print(f"No intake found for client {client_id} - cannot create assessment")
+        print(
+            f"No intake found for client {client_pseudo_id} - cannot create assessment"
+        )
         return None
 
     if intake_obj.status != IntakeStatus.COMPLETED.value:
         print(
-            f"Cannot create assessment for client {client_id} - intake not completed (status: {intake_obj.status})"
+            f"Cannot create assessment for client {client_pseudo_id} - intake not completed (status: {intake_obj.status})"
         )
         return None
 
     # Check if assessment already exists
     existing = await session.exec(
-        select(Assessment).where(Assessment.client_id == client_id)
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
     )
     assessment = existing.first()
 
     if not assessment:
-        print(f"Creating new pending assessment for client {client_id}")
+        print(f"Creating new pending assessment for client {client_pseudo_id}")
         # Create assessment
         assessment = Assessment(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             intake_id=intake_obj.id,
         )
         session.add(assessment)
@@ -591,9 +627,9 @@ async def create_pending_assessment(session: AsyncSession, client_id: str):
 
         session.add(assessment)
         await session.commit()
-        print(f"Successfully created pending assessment for client {client_id}")
+        print(f"Successfully created pending assessment for client {client_pseudo_id}")
     else:
-        print(f"Assessment for client {client_id} already exists - skipping")
+        print(f"Assessment for client {client_pseudo_id} already exists - skipping")
 
     return assessment
 
@@ -601,41 +637,45 @@ async def create_pending_assessment(session: AsyncSession, client_id: str):
 # --- PLAN FUNCTIONS ---
 
 
-async def create_completed_plan(session: AsyncSession, client_id: str):
+async def create_completed_plan(session: AsyncSession, client_pseudo_id: str):
     """Create a completed plan with a generation."""
-    print(f"Creating completed plan for client {client_id}...")
+    print(f"Creating completed plan for client {client_pseudo_id}...")
 
     # Check if plan data file exists
-    plan_data = load_client_data_from_file(client_id, "plan")
+    plan_data = load_client_data_from_file(client_pseudo_id, "plan")
     if not plan_data:
-        print(f"No plan data file found for client {client_id} - cannot create plan")
+        print(
+            f"No plan data file found for client {client_pseudo_id} - cannot create plan"
+        )
         return None
 
     # Verify client has a completed assessment
     assessment = await session.exec(
-        select(Assessment).where(Assessment.client_id == client_id)
+        select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
     )
     assessment_obj = assessment.first()
 
     if not assessment_obj:
-        print(f"No assessment found for client {client_id} - cannot create plan")
+        print(f"No assessment found for client {client_pseudo_id} - cannot create plan")
         return None
 
     if assessment_obj.status != ExecutionStatus.COMPLETED.value:
         print(
-            f"Cannot create plan for client {client_id} - assessment not completed (status: {assessment_obj.status})"
+            f"Cannot create plan for client {client_pseudo_id} - assessment not completed (status: {assessment_obj.status})"
         )
         return None
 
     # Check if plan already exists
-    existing = await session.exec(select(Plan).where(Plan.client_id == client_id))
+    existing = await session.exec(
+        select(Plan).where(Plan.client_pseudo_id == client_pseudo_id)
+    )
     plan = existing.first()
 
     if not plan:
-        print(f"Creating new plan for client {client_id}")
+        print(f"Creating new plan for client {client_pseudo_id}")
         # Create plan
         plan = Plan(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             type=PlanType.LIVE,
         )
         session.add(plan)
@@ -699,7 +739,7 @@ async def create_completed_plan(session: AsyncSession, client_id: str):
                     Path(__file__).parent.parent.parent
                     / "data"
                     / "seed_workflow"
-                    / f"{client_id}_{asset_data['filename']}"
+                    / f"{client_pseudo_id}_{asset_data['filename']}"
                 )
                 if asset_file_path.exists():
                     with open(asset_file_path, "rb") as f:
@@ -716,8 +756,8 @@ async def create_completed_plan(session: AsyncSession, client_id: str):
 
         session.add(plan)
         await session.commit()
-        print(f"Successfully created completed plan for client {client_id}")
+        print(f"Successfully created completed plan for client {client_pseudo_id}")
     else:
-        print(f"Plan already exists for client {client_id} - skipping")
+        print(f"Plan already exists for client {client_pseudo_id} - skipping")
 
     return plan

@@ -29,10 +29,12 @@ import {
 } from "~@reentry/frontend/utils/toast";
 
 interface AudioRecordingsProps {
-  clientId: string;
+  clientPseudoId: string;
 }
 
-const AudioRecordings: React.FC<AudioRecordingsProps> = ({ clientId }) => {
+const AudioRecordings: React.FC<AudioRecordingsProps> = ({
+  clientPseudoId,
+}) => {
   const { getAccessToken } = useAuth();
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
@@ -43,8 +45,8 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({ clientId }) => {
     isLoading,
     error,
     refetch,
-  } = $api.useQuery("get", "/recordings/sessions/clients/{client_id}", {
-    params: { path: { client_id: clientId } },
+  } = $api.useQuery("get", "/recordings/sessions/clients/{client_pseudo_id}", {
+    params: { path: { client_pseudo_id: clientPseudoId } },
     headers: {
       Authorization: `Bearer ${getAccessToken()}`,
       "Content-Type": "application/json",
@@ -61,7 +63,7 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({ clientId }) => {
     setIsCreating(true);
     try {
       const newSession = await createSession({
-        body: { client_id: clientId },
+        body: { client_pseudo_id: clientPseudoId },
         headers: {
           Authorization: `Bearer ${getAccessToken()}`,
           "Content-Type": "application/json",
@@ -71,7 +73,9 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({ clientId }) => {
 
       // Navigate to the new session page
       if (newSession?.id) {
-        router.push(`/clients/audio-recording/${clientId}/${newSession.id}`);
+        router.push(
+          `/clients/audio-recording/${clientPseudoId}/${newSession.id}`,
+        );
       } else {
         refetch(); // Fallback: refresh the sessions list
       }
@@ -84,7 +88,7 @@ const AudioRecordings: React.FC<AudioRecordingsProps> = ({ clientId }) => {
   };
 
   const handleSessionClick = (sessionId: string) => {
-    router.push(`/clients/audio-recording/${clientId}/${sessionId}`);
+    router.push(`/clients/audio-recording/${clientPseudoId}/${sessionId}`);
   };
 
   // Loading state

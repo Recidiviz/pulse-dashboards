@@ -40,7 +40,7 @@ class ErrorInfo(TypedDict):
 class ClientContext(BaseModel):
     """Client context for conversation."""
 
-    client_id: str
+    client_pseudo_id: str
     client_name: str
 
 

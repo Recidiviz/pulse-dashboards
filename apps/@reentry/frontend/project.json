@@ -120,7 +120,7 @@
           "command": "gcloud run deploy frontend-prod --image gcr.io/recidiviz-rnd-planner/frontend-production:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --service-account reentry-server@recidiviz-rnd-planner.iam.gserviceaccount.com --project recidiviz-rnd-planner"
         },
         "demo": {
-          "command": "gcloud run deploy frontend-demo --image gcr.io/recidiviz-rnd-planner/frontend-demo  :$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner"
+          "command": "gcloud run deploy frontend-demo --image gcr.io/recidiviz-rnd-planner/frontend-demo:$COMMIT_SHA --region us-central1 --platform managed --allow-unauthenticated --project recidiviz-rnd-planner"
         }
       },
       "defaultConfiguration": "demo"
@@ -132,6 +132,7 @@
         "cwd": "{projectRoot}"
       }
     },
+
     "openapi": {
       "executor": "nx:run-commands",
       "options": {

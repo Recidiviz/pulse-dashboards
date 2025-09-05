@@ -381,7 +381,7 @@ def generate_client_data(
     # Create 10 clients - all assigned to the special staff member
     clients = []
     for i in range(10):
-        client_id = f"CLIENT-1{i + 1:03d}"
+        client_id = f"CLIENT-{i + 1:03d}"
 
         # Use mode to determine name generation and state distribution
         first_name = "UXR" if mode == "demo" else fake.first_name()

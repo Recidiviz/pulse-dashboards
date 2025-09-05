@@ -22,12 +22,12 @@ async def test_plan_create(
     async_session,
     assert_response,
 ):
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     # Create test plan
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -37,7 +37,7 @@ async def test_plan_create(
 
     # Verify the plan was created successfully
     assert data["id"] is not None
-    assert data["client_id"] == client_id
+    assert data["client_pseudo_id"] == client_pseudo_id
     assert data["created_at"] is not None
     assert data["updated_at"] is not None
 
@@ -61,12 +61,12 @@ async def test_plan_get(
     async_session,
     assert_response,
 ):
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     # create a plan
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -78,7 +78,7 @@ async def test_plan_get(
     assert_response(response, 200)
     data = response.json()
     assert data["id"] == plan_id
-    assert data["client_id"] == client_id
+    assert data["client_pseudo_id"] == client_pseudo_id
     assert data["created_at"] is not None
     assert data["updated_at"] is not None
     assert "latest_generation" in data
@@ -90,7 +90,7 @@ async def test_plan_get(
     data = response.json()
     assert data["total"] == 1
     assert data["items"][0]["id"] == plan_id
-    assert data["items"][0]["client_id"] == client_id
+    assert data["items"][0]["client_pseudo_id"] == client_pseudo_id
     assert data["items"][0]["created_at"] is not None
     assert data["items"][0]["updated_at"] is not None
 
@@ -108,12 +108,12 @@ async def test_plan_generation(
     async_session,
     assert_response,
 ):
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     # create a plan
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -212,12 +212,12 @@ async def test_plan_generation_manually(
     async_session,
     assert_response,
 ):
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     # create a plan
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -309,13 +309,13 @@ async def test_plan_assets(
     async_session,
     assert_response,
 ):
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     # create a plan
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -371,12 +371,12 @@ async def test_resource_type_get_result(
     if category == ResourceCategory.UNKNOWN:
         pytest.skip()
 
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     # create a plan
     cplan_r = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -419,12 +419,12 @@ async def test_suggested_resources(
     async_session,
     assert_response,
 ):
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     # Create a plan
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -539,12 +539,12 @@ async def test_regeneration_notify_set_on_prompt_generation(
     assert_response,
 ):
     """Test that regeneration_notify is set to True when generating with a prompt"""
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -621,12 +621,12 @@ async def test_set_notify_endpoint(
     assert_response,
 ):
     """Test the /plans/{id}/set-notify endpoint"""
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
 
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -724,11 +724,11 @@ async def test_set_notify_endpoint_error_cases(
     )
     assert response.status_code == 404
 
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["client_pseudo_id"]
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )

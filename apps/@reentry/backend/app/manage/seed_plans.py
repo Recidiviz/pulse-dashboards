@@ -30,19 +30,21 @@ async def seed_demo_plans():
         print("All demo plans created successfully")
 
 
-async def create_completed_plan(session: AsyncSession, client_id: str):
+async def create_completed_plan(session: AsyncSession, client_pseudo_id: str):
     """Create a completed plan with a generation."""
-    print(f"Creating completed plan for client {client_id}")
+    print(f"Creating completed plan for client {client_pseudo_id}")
 
     # Check if plan already exists
-    existing = await session.exec(select(Plan).where(Plan.client_id == client_id))
+    existing = await session.exec(
+        select(Plan).where(Plan.client_pseudo_id == client_pseudo_id)
+    )
     plan = existing.first()
 
     if not plan:
-        print(f"Creating new plan for client {client_id}")
+        print(f"Creating new plan for client {client_pseudo_id}")
         # Create plan
         plan = Plan(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             type=PlanType.LIVE,
         )
         session.add(plan)
@@ -121,24 +123,26 @@ async def create_completed_plan(session: AsyncSession, client_id: str):
         session.add(plan)
         session.add(generation)
         await session.commit()
-        print(f"Successfully created completed plan for client {client_id}")
+        print(f"Successfully created completed plan for client {client_pseudo_id}")
     else:
-        print(f"Plan already exists for client {client_id}")
+        print(f"Plan already exists for client {client_pseudo_id}")
 
 
-async def create_inprogress_plan(session: AsyncSession, client_id: str):
+async def create_inprogress_plan(session: AsyncSession, client_pseudo_id: str):
     """Create an in-progress plan."""
-    print(f"Creating in-progress plan for client {client_id}")
+    print(f"Creating in-progress plan for client {client_pseudo_id}")
 
     # Check if plan already exists
-    existing = await session.exec(select(Plan).where(Plan.client_id == client_id))
+    existing = await session.exec(
+        select(Plan).where(Plan.client_pseudo_id == client_pseudo_id)
+    )
     plan = existing.first()
 
     if not plan:
-        print(f"Creating new in-progress plan for client {client_id}")
+        print(f"Creating new in-progress plan for client {client_pseudo_id}")
         # Create plan
         plan = Plan(
-            client_id=client_id,
+            client_pseudo_id=client_pseudo_id,
             type=PlanType.LIVE,
         )
         session.add(plan)
@@ -169,6 +173,6 @@ async def create_inprogress_plan(session: AsyncSession, client_id: str):
 
         session.add(plan)
         await session.commit()
-        print(f"Successfully created in-progress plan for client {client_id}")
+        print(f"Successfully created in-progress plan for client {client_pseudo_id}")
     else:
-        print(f"Plan already exists for client {client_id}")
+        print(f"Plan already exists for client {client_pseudo_id}")

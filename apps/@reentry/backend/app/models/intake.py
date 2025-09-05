@@ -26,7 +26,7 @@ from sqlmodel import Field, Relationship, select
 
 from app.core.config import settings
 from app.models.base import BaseModel
-from app.services.client_data.queries import get_client_data_unsafe
+from app.services.client_data.queries import Queries
 from app.utils.assessment_runner import get_assessments_type
 from app.utils.intake.constants import (
     CompletionStatus,
@@ -62,7 +62,8 @@ class Intake(BaseModel, table=True):
         ),
         description="Type of intake assessment",
     )
-    client_id: str = Field(..., nullable=False, description="Client identifier")
+    client_pseudo_id: Optional[str]
+    client_id: Optional[str] = None
     internal_access: bool = Field(
         default=True,
         nullable=True,
@@ -243,7 +244,9 @@ class Intake(BaseModel, table=True):
         logger.info(f"Populating sections for intake {self.id}")
 
         # Get client data to determine assessment type based on state
-        client_record = get_client_data_unsafe(self.client_id)
+        client_record = Queries.get_client_by_pseudonymized_id_unsafe(
+            self.client_pseudo_id
+        )
         assessment_types = get_assessments_type(client_record.state_code)
         assessment_type = assessment_types[0].value  # Use the first assessment type
 
@@ -407,33 +410,37 @@ class Intake(BaseModel, table=True):
             )
             return None
 
-        # Check if assessment already exists for this client_id
+        # Check if assessment already exists for this client_pseudo_id
         from sqlmodel import select
 
-        statement = select(Assessment).where(Assessment.client_id == self.client_id)
+        statement = select(Assessment).where(
+            Assessment.client_pseudo_id == self.client_pseudo_id
+        )
         result = await session.exec(statement)
         existing_assessment = result.first()
 
         if existing_assessment:
-            logger.info(f"Assessment already exists for client {self.client_id}")
+            logger.info(f"Assessment already exists for client {self.client_pseudo_id}")
             return existing_assessment.id
 
         # Create and schedule the assessment
-        logger.info(f"Creating new assessment for client {self.client_id}")
-        client_record = get_client_data_unsafe(self.client_id)
+        logger.info(f"Creating new assessment for client {self.client_pseudo_id}")
+        client_record = Queries.get_client_by_pseudonymized_id_unsafe(
+            self.client_pseudo_id
+        )
         # todo: getting assessments type as array, since we probably will have more than one type in the near future
         assessments_types = get_assessments_type(client_record.state_code)
         logger.info(f"Assessments type determined: {assessments_types}")
         logger.info(f"Using assessment type: {assessments_types[0]}")
         if assessments_types[0] == "utah_lsir":
             assessment = Assessment(
-                client_id=self.client_id,
+                client_pseudo_id=self.client_pseudo_id,
                 intake_id=self.id,
                 assessment_type="lsir",  # Using by default the first type
             )
         else:
             assessment = Assessment(
-                client_id=self.client_id,
+                client_pseudo_id=self.client_pseudo_id,
                 intake_id=self.id,
                 assessment_type=assessments_types[0],  # Using by default the first type
             )
@@ -601,7 +608,9 @@ class IntakeToken(BaseModel, table=True):
         if self.token != token:
             return False
 
-        client_record = get_client_data_unsafe(self.intake.client_id)
+        client_record = Queries.get_client_by_pseudonymized_id_unsafe(
+            self.intake.client_pseudo_id
+        )
 
         if not client_record:
             print("No client found")
@@ -629,7 +638,7 @@ class IntakeToken(BaseModel, table=True):
 
         payload = {
             "intake_id": str(self.intake_id),
-            "client_id": self.intake.client_id,
+            "client_pseudo_id": self.intake.client_pseudo_id,
             "exp": datetime.utcnow() + timedelta(hours=1),
         }
 

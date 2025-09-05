@@ -10,12 +10,12 @@ async def create_decision_tree(
     client, assert_response, mock_clientdata_service, decision_tree_key=None
 ):
     # Use client ID from mock_clientdata_service
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["clients"][0].pseudonymized_client_id
     # create a plan
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )
@@ -125,12 +125,12 @@ async def test_plan_decision_tree_populate(
     from app.utils.decision_tree_runner import Annotation, DecisionTreeSelection
 
     # Use client ID from mock_clientdata_service
-    client_id = mock_clientdata_service["clients"][0].external_client_id
+    client_pseudo_id = mock_clientdata_service["clients"][0].pseudonymized_client_id
     # create a plan
     response = await client.post(
         "/plans",
         json={
-            "client_id": client_id,
+            "client_pseudo_id": client_pseudo_id,
             "no_initial_generation": True,
         },
     )

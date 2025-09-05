@@ -18,7 +18,7 @@ async def create_client_view(async_session):
         CREATE OR REPLACE VIEW client_view AS
         -- INTAKE CLIENTS (earliest in process): Order values 10-30
         SELECT
-            i.client_id,
+            i.client_pseudo_id,
             i.id AS intake_id,
             i.status::text AS intake_status,
             CASE i.status::text
@@ -48,14 +48,14 @@ async def create_client_view(async_session):
             NOT EXISTS (
                 SELECT 1 FROM assessment a
                 LEFT JOIN execution e ON a.execution_id = e.id
-                WHERE a.client_id = i.client_id AND e.status = 'completed'
+                WHERE a.client_pseudo_id = i.client_pseudo_id AND e.status = 'completed'
             )
 
         UNION
 
         -- ASSESSMENT CLIENTS (middle of process): Order values 40-60
         SELECT
-            a.client_id,
+            a.client_pseudo_id,
             NULL AS intake_id,
             NULL AS intake_status,
             999 AS intake_order,
@@ -74,20 +74,20 @@ async def create_client_view(async_session):
             -- Include completed intake clients with assessments
             EXISTS (
                 SELECT 1 FROM intake i
-                WHERE i.client_id = a.client_id AND i.status = 'completed'
+                WHERE i.client_pseudo_id = a.client_pseudo_id AND i.status = 'completed'
             )
             -- For assessment clients, only include those without plans or with incomplete plans
             AND NOT EXISTS (
                 SELECT 1 FROM plan p
                 LEFT JOIN execution e ON p.create_execution_id = e.id
-                WHERE p.client_id = a.client_id AND e.status = 'completed'
+                WHERE p.client_pseudo_id = a.client_pseudo_id AND e.status = 'completed'
             )
 
         UNION
 
         -- PLAN CLIENTS (latest in process): Order values 70-90
         SELECT
-            p.client_id,
+            p.client_pseudo_id,
             NULL AS intake_id,
             NULL AS intake_status,
             999 AS intake_order,
@@ -106,13 +106,13 @@ async def create_client_view(async_session):
             -- Include completed intake clients with plans
             EXISTS (
                 SELECT 1 FROM intake i
-                WHERE i.client_id = p.client_id AND i.status = 'completed'
+                WHERE i.client_pseudo_id = p.client_pseudo_id AND i.status = 'completed'
             )
             -- Include completed assessment clients with plans
             AND EXISTS (
                 SELECT 1 FROM assessment a
                 LEFT JOIN execution e ON a.execution_id = e.id
-                WHERE a.client_id = p.client_id AND e.status = 'completed'
+                WHERE a.client_pseudo_id = p.client_pseudo_id AND e.status = 'completed'
             )
     """)
     )
@@ -145,8 +145,8 @@ def mock_clientdata():
 # ):
 #     """Test getting client list with a pseudonymized staff ID."""
 #     # Create test data in the database
-#     client_id = "client-001"
-#     intake = Intake(client_id=client_id, status=IntakeStatus.IN_PROGRESS)
+#     client_pseudo_id = "client-001"
+#     intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.IN_PROGRESS)
 #     async_session.add(intake)
 #     await async_session.commit()
 
@@ -182,13 +182,13 @@ def mock_clientdata():
 #             assert result["page"] == 1
 
 #             # Assert client info is correct
-#             client_ids = {item["client_id"] for item in result["items"]}
-#             assert "client-001" in client_ids
-#             # assert "client-002" in client_ids
+#             client_pseudo_ids = {item["client_pseudo_id"] for item in result["items"]}
+#             assert "client-001" in client_pseudo_ids
+#             # assert "client-002" in client_pseudo_ids
 
 #             # Verify the intake was associated with the client
 #             for item in result["items"]:
-#                 if item["client_id"] == "client-001":
+#                 if item["client_pseudo_id"] == "client-001":
 #                     assert item["intake"] is not None
 #                     assert item["intake"]["status"] == "in_progress"
 
@@ -218,7 +218,7 @@ async def test_get_paginated_client_list_with_unknown_id(
 ):
     """Test with an unknown pseudonymized ID."""
     with patch(
-        "app.services.client_data.queries.get_clients_by_pseudonymized_staff_id"
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
     ) as mock_get_clients:
         # Return empty list for unknown staff ID
         mock_get_clients.return_value = []

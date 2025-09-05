@@ -31,7 +31,8 @@ class PlanType(StrEnum):
 
 
 class Plan(BaseModel, table=True):
-    client_id: str
+    client_pseudo_id: Optional[str]
+    client_id: Optional[str] = None
     type: str = Field(
         default=PlanType.LIVE, sa_column_kwargs={"server_default": PlanType.LIVE.value}
     )

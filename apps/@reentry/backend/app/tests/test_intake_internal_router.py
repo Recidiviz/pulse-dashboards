@@ -23,7 +23,7 @@ async def test_verify_pseudo_date_of_birth_direct(
         """Mocked version that always returns success"""
         token_data = {
             "token": "test-token-12345",
-            "client_id": "client-001",
+            "client_pseudo_id": "client-001",
             "client_name": "John Doe",
             "full_name": {"given_name": "John", "surname": "Doe"},
         }

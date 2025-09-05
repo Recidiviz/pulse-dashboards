@@ -70,7 +70,7 @@ class IntakeConversationGraph:
         self.log_error = log_error
         self.wait_for_user_response = wait_for_user_response
         self.config = {
-            "configurable": {"thread_id": session.client_id},
+            "configurable": {"thread_id": session.client_pseudo_id},
             "callbacks": [self.custom_metrics_callback],
         }
         if tracer:
@@ -203,25 +203,25 @@ class IntakeConversationGraph:
 
         state["messages"].append(opening_prompt)
         try:
-            client_id = self.session.client_id
+            client_pseudo_id = self.session.client_pseudo_id
 
             response = await self.call_model(state["messages"])
             ai_message_str = response if isinstance(response, str) else response.content
             state["messages"].append(AIMessage(ai_message_str))
             message = await self.db_manager.store_message(
-                client_id=client_id,
+                client_pseudo_id=client_pseudo_id,
                 content=ai_message_str,
                 from_role=IntakeMessageRole.CASEWORKER,
             )
             if not message:
                 raise ValueError(
-                    f"error saving message in opening remarks for client {client_id}"
+                    f"error saving message in opening remarks for client {client_pseudo_id}"
                 )
 
             message_event = AIMessageEvent(
                 content=IntakeMessageResponse(**message.model_dump())
             )
-            await self.send_message(client_id, message_event)
+            await self.send_message(client_pseudo_id, message_event)
 
             return state
 
@@ -239,7 +239,7 @@ class IntakeConversationGraph:
         logger.info("🟡 ENTERING NODE: _ask_section_question")
         current_section_title = state["current_section"]
         try:
-            client_id = self.session.client_id
+            client_pseudo_id = self.session.client_pseudo_id
             if not current_section_title:
                 raise ValueError("Empty current section")
 
@@ -278,16 +278,16 @@ class IntakeConversationGraph:
 
             state["messages"].append(AIMessage(response.section_next_question))
             message = await self.db_manager.store_message(
-                client_id=client_id,
+                client_pseudo_id=client_pseudo_id,
                 content=response.section_next_question,
                 from_role=IntakeMessageRole.CASEWORKER,
             )
             if not message:
                 raise ValueError(
-                    f"error saving message in ask question for client {client_id}"
+                    f"error saving message in ask question for client {client_pseudo_id}"
                 )
             client_response = await self.wait_for_user_response(
-                self.session.client_id,
+                self.session.client_pseudo_id,
                 message,
             )
             if not client_response:
@@ -313,17 +313,17 @@ class IntakeConversationGraph:
         """
         # Log resumption for debugging
         logger.info(
-            f"Resuming conversation for client {self.session.client_id} in section {state['current_section']}"
+            f"Resuming conversation for client {self.session.client_pseudo_id} in section {state['current_section']}"
         )
 
         try:
-            client_id = self.session.client_id
-            is_internal = await self.db_manager.is_internal_intake(client_id)
+            client_pseudo_id = self.session.client_pseudo_id
+            is_internal = await self.db_manager.is_internal_intake(client_pseudo_id)
             welcome_message_text = f"Hi {self.session.client_name}, thanks for joining again! Let's continue our conversation."
 
             # Check if the last message from the database is already a welcome back message
             # SO we avoid adding multiple welcome messages during unstable connections
-            latest_message = await self.db_manager.get_latest_message(client_id)
+            latest_message = await self.db_manager.get_latest_message(client_pseudo_id)
             is_last_message_welcome_back = (
                 latest_message
                 and latest_message.content
@@ -339,7 +339,7 @@ class IntakeConversationGraph:
                 )
                 # Non-internal user: wait for the client's response
                 client_response = await self.wait_for_user_response(
-                    client_id, latest_message
+                    client_pseudo_id, latest_message
                 )
 
                 # Add the client's response to the conversation state
@@ -352,13 +352,13 @@ class IntakeConversationGraph:
                 # There is no welcome back message, so send it.
                 # store welcome back
                 stored_message = await self.db_manager.store_message(
-                    client_id=client_id,
+                    client_pseudo_id=client_pseudo_id,
                     content=welcome_message_text,
                     from_role=IntakeMessageRole.CASEWORKER,
                 )
                 if not stored_message:
                     raise ValueError(
-                        f"Could not save welcome back message for client {client_id}"
+                        f"Could not save welcome back message for client {client_pseudo_id}"
                     )
                 # store in conversation state
                 state["messages"].append(AIMessage(welcome_message_text))
@@ -366,7 +366,9 @@ class IntakeConversationGraph:
                     content=IntakeMessageResponse(**stored_message.model_dump())
                 )
                 # Non-internal user: wait for the client's response
-                client_response = await self.send_message(client_id, message_event)
+                client_response = await self.send_message(
+                    client_pseudo_id, message_event
+                )
 
                 # Add the client's response to the conversation state
                 state["messages"].append(HumanMessage(client_response))
@@ -380,11 +382,11 @@ class IntakeConversationGraph:
 
                 # Send the welcome back message directly to client
                 await self.send_message(
-                    client_id,
+                    client_pseudo_id,
                     AIMessageEvent(
                         content=IntakeMessageResponse(
                             **IntakeMessage(
-                                intake_id=client_id,
+                                intake_id=client_pseudo_id,
                                 content=welcome_message_text,
                                 from_role=IntakeMessageRole.CASEWORKER,
                             ).model_dump()
@@ -394,7 +396,7 @@ class IntakeConversationGraph:
                 if not is_last_message_welcome_back:
                     # if the welcome back message is not in store, store it
                     stored_message = await self.db_manager.store_message(
-                        client_id=client_id,
+                        client_pseudo_id=client_pseudo_id,
                         content=welcome_message_text,
                         from_role=IntakeMessageRole.CASEWORKER,
                     )
@@ -403,7 +405,7 @@ class IntakeConversationGraph:
                     )
                     # Non-internal user: wait for the client's response
                     client_response = await self.wait_for_user_response(
-                        client_id, latest_message
+                        client_pseudo_id, latest_message
                     )
 
                     # Add the client's response to the conversation state
@@ -413,12 +415,12 @@ class IntakeConversationGraph:
                     # latest message is a welcome back, and user doesn't havce message history, find the latest contentful AI message and await an answer to that message.
                     latest_message = (
                         await self.db_manager.get_latest_non_welcome_ai_message(
-                            client_id
+                            client_pseudo_id
                         )
                     )
                     # Non-internal user: wait for the client's response
                     client_response = await self.wait_for_user_response(
-                        client_id, latest_message
+                        client_pseudo_id, latest_message
                     )
 
                     if not client_response:
@@ -460,18 +462,18 @@ class IntakeConversationGraph:
 
         state["messages"].append(AIMessage(transition_message_text))
         message = await self.db_manager.store_message(
-            client_id=self.session.client_id,
+            client_pseudo_id=self.session.client_pseudo_id,
             content=transition_message_text,
             from_role=IntakeMessageRole.CASEWORKER,
         )
         if not message:
             raise ValueError(
-                f"Could not save transition message for client {self.session.client_id}"
+                f"Could not save transition message for client {self.session.client_pseudo_id}"
             )
 
         # Complete section in database
         new_section_title = await self.db_manager.complete_section(
-            client_id=str(self.session.client_id)
+            client_pseudo_id=str(self.session.client_pseudo_id)
         )
         if new_section_title == "error":
             raise ValueError("Could not complete section")
@@ -484,7 +486,7 @@ class IntakeConversationGraph:
         section_change_event = SectionChangeEvent(
             content=SectionChangeContent(section=new_section_title, messages=[])
         )
-        await self.send_message(self.session.client_id, section_change_event)
+        await self.send_message(self.session.client_pseudo_id, section_change_event)
 
         return state
 
@@ -520,13 +522,15 @@ class IntakeConversationGraph:
         message = await self.db_manager.store_message(
             from_role=IntakeMessageRole.CASEWORKER,
             content=content,
-            client_id=self.session.client_id,
+            client_pseudo_id=self.session.client_pseudo_id,
         )
 
         if not message:
-            raise ValueError(f"Could not save message for {self.session.client_id}")
+            raise ValueError(
+                f"Could not save message for {self.session.client_pseudo_id}"
+            )
         await self.send_message(
-            self.session.client_id,
+            self.session.client_pseudo_id,
             AIMessageEvent(content=IntakeMessageResponse(**message.model_dump())),
         )
 
@@ -541,7 +545,7 @@ class IntakeConversationGraph:
                     "We apologize for the inconvenience."
                 )
                 await self.db_manager.update_intake_status(
-                    self.session.client_id, IntakeStatus.ERROR
+                    self.session.client_pseudo_id, IntakeStatus.ERROR
                 )
                 await self.save_and_send_AI_message(closing_message)
             else:
@@ -564,7 +568,7 @@ class IntakeConversationGraph:
         except Exception as e:
             try:
                 await self.db_manager.update_intake_status(
-                    self.session.client_id, IntakeStatus.ERROR
+                    self.session.client_pseudo_id, IntakeStatus.ERROR
                 )
             except Exception as e2:
                 error_info = {
@@ -594,7 +598,7 @@ class IntakeConversationGraph:
         """
         # Get all messages from the database
         messages: list[IntakeMessage] = await self.db_manager.all_messages_by_time(
-            self.session.client_id
+            self.session.client_pseudo_id
         )
         system_message = get_system_message_prompt()
 
@@ -629,14 +633,16 @@ class IntakeConversationGraph:
             invoke_config = {
                 "recursion_limit": 300,
                 "configurable": {
-                    "thread_id": f"intake_{self.session.client_id}",
+                    "thread_id": f"intake_{self.session.client_pseudo_id}",
                     "checkpoint_ns": "intake_conversation",
-                    "checkpoint_id": f"client_{self.session.client_id}",
+                    "checkpoint_id": f"client_{self.session.client_pseudo_id}",
                 },
             }
 
             # Run the graph with the initial state
-            logger.info(f"Starting assessment for client {self.session.client_id}")
+            logger.info(
+                f"Starting assessment for client {self.session.client_pseudo_id}"
+            )
             return await self.graph.ainvoke(self.initial_state, config=invoke_config)
 
         except Exception as e:
@@ -649,6 +655,6 @@ class IntakeConversationGraph:
             self.log_error(error_info, e)
             # TODO: HANDLE ERROR STATE HERE
             # await self.db_manager.update_intake_status(
-            #     self.session.client_id, IntakeStatus.ERROR
+            #     self.session.client_pseudo_id, IntakeStatus.ERROR
             # )
             raise

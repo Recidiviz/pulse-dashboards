@@ -15,23 +15,23 @@ from .base import cli
 
 
 @cli.command("export-client-data")
-async def export_client_data(client_id: str):
+async def export_client_data(client_pseudo_id: str):
     """Export assessment and plan data for a client to JSON files"""
     data_dir = Path("data")
     data_dir.mkdir(exist_ok=True)
 
     async with get_session_async_manager() as session:
         # Export assessment data
-        print(f"Fetching assessment for {client_id}...")
+        print(f"Fetching assessment for {client_pseudo_id}...")
         assessment_result = await session.exec(
-            select(Assessment).where(Assessment.client_id == client_id)
+            select(Assessment).where(Assessment.client_pseudo_id == client_pseudo_id)
         )
         assessment = assessment_result.first()
 
         if assessment:
             assessment_data = {
                 "id": str(assessment.id),
-                "client_id": assessment.client_id,
+                "client_pseudo_id": assessment.client_pseudo_id,
                 "intake_id": str(assessment.intake_id),
                 "scores": assessment.scores,
                 "misses_counts": assessment.misses_counts,
@@ -47,17 +47,17 @@ async def export_client_data(client_id: str):
                 else None,
             }
 
-            assessment_file = data_dir / f"{client_id}_assessment.json"
+            assessment_file = data_dir / f"{client_pseudo_id}_assessment.json"
             with open(assessment_file, "w") as f:
                 json.dump(assessment_data, f, indent=2)
             print(f"Assessment data saved to {assessment_file}")
         else:
-            print(f"No assessment found for {client_id}")
+            print(f"No assessment found for {client_pseudo_id}")
 
         # Export plan data
-        print(f"Fetching plan for {client_id}...")
+        print(f"Fetching plan for {client_pseudo_id}...")
         plan_result = await session.exec(
-            select(Plan).where(Plan.client_id == client_id)
+            select(Plan).where(Plan.client_pseudo_id == client_pseudo_id)
         )
         plan = plan_result.first()
 
@@ -76,7 +76,7 @@ async def export_client_data(client_id: str):
 
             plan_data = {
                 "id": str(plan.id),
-                "client_id": plan.client_id,
+                "client_pseudo_id": plan.client_pseudo_id,
                 "type": plan.type,
                 "result_gen_id": plan.result_gen_id,
                 "client_extracted_info": plan.client_extracted_info,
@@ -116,7 +116,7 @@ async def export_client_data(client_id: str):
                 ],
             }
 
-            plan_file = data_dir / f"{client_id}_plan.json"
+            plan_file = data_dir / f"{client_pseudo_id}_plan.json"
             with open(plan_file, "w") as f:
                 json.dump(plan_data, f, indent=2)
             print(f"Plan data saved to {plan_file}")
@@ -124,9 +124,9 @@ async def export_client_data(client_id: str):
             # Save individual assets as separate files
             for asset in assets:
                 if asset.file_blob and asset.filename:
-                    asset_file = data_dir / f"{client_id}_{asset.filename}"
+                    asset_file = data_dir / f"{client_pseudo_id}_{asset.filename}"
                     with open(asset_file, "wb") as f:
                         f.write(asset.file_blob)
                     print(f"Asset saved to {asset_file}")
         else:
-            print(f"No plan found for {client_id}")
+            print(f"No plan found for {client_pseudo_id}")

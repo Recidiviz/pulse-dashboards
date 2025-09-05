@@ -14,11 +14,15 @@ from sqlalchemy.exc import IntegrityError
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.config import settings
 from app.core.db import AsyncSession, get_session
-from app.crud.intake import create_intake, get_intake_by_client_id, get_intake_by_id
+from app.crud.intake import (
+    create_intake,
+    get_intake_by_client_pseudo_id,
+    get_intake_by_id,
+)
 from app.crud.recording_session import (
     create_recording_session,
     get_recording_session_by_id,
-    get_recording_sessions_by_client_id,
+    get_recording_sessions_by_client_pseudo_id,
     update_status,
 )
 from app.models.intake import IntakeType
@@ -34,10 +38,10 @@ from app.routes.recording_session_models import (
     UploadChunkRequest,
     UploadChunkResponse,
 )
-from app.services.client_data.queries import get_client_data
 from app.services.recording_service import RecordingService
 from app.tasks.recording import process_recording_task
 from app.tasks.scheduler import schedule_task
+from app.utils.permission_utils import check_access
 
 logger = logging.getLogger(__name__)
 
@@ -45,27 +49,26 @@ router = APIRouter()
 
 
 @router.get(
-    "/sessions/clients/{client_id}",
+    "/sessions/clients/{client_pseudo_id}",
     response_model=List[RecordingSessionResponse],
     summary="Get recording sessions for client",
     description="Retrieve all recording sessions associated with a specific client",
     tags=["Recording Sessions"],
 )
 async def get_client_recording_sessions(
-    client_id: str,
+    client_pseudo_id: str,
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ) -> List[RecordingSessionResponse]:
-    record = get_client_data(
-        external_client_id=client_id, pseudonymized_staff_id=pseudonymized_id
+    check_access(
+        client_pseudo_id=client_pseudo_id, pseudonymized_staff_id=pseudonymized_id
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client not found or access denied")
-
-    recording_sessions = await get_recording_sessions_by_client_id(session, client_id)
+    recording_sessions = await get_recording_sessions_by_client_pseudo_id(
+        session, client_pseudo_id
+    )
 
     logger.info(
-        f"Retrieved {len(recording_sessions)} recording sessions for client {client_id}"
+        f"Retrieved {len(recording_sessions)} recording sessions for client {client_pseudo_id}"
     )
     return recording_sessions
 
@@ -82,18 +85,16 @@ async def create_new_recording_session(
     session: AsyncSession = Depends(get_session),
     pseudonymized_id: str = Depends(get_pseudonymized_id),
 ) -> RecordingSessionResponse:
-    record = get_client_data(
-        external_client_id=request.client_id,
+    check_access(
+        client_pseudo_id=request.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client not found or access denied")
 
     # Check if intake exists for the client, create if not
-    intake = await get_intake_by_client_id(session, request.client_id)
+    intake = await get_intake_by_client_pseudo_id(session, request.client_pseudo_id)
     if not intake:
         intake = await create_intake(
-            session, request.client_id, IntakeType.TRANSCRIPTION
+            session, request.client_pseudo_id, IntakeType.TRANSCRIPTION
         )
     if not intake:
         raise HTTPException(
@@ -110,7 +111,7 @@ async def create_new_recording_session(
 
     # Create the new recording session linked to the intake
     recording_session = RecordingSession(
-        client_id=request.client_id,
+        client_pseudo_id=request.client_pseudo_id,
         status=RecordingStatus.CREATED,
         intake_id=intake.id,
     )
@@ -123,7 +124,7 @@ async def create_new_recording_session(
     await session.refresh(created_session)
 
     logger.info(
-        f"Recording session {created_session.id} created for client {request.client_id}"
+        f"Recording session {created_session.id} created for client {request.client_pseudo_id}"
     )
 
     return created_session
@@ -146,12 +147,11 @@ async def get_recording_session(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    record = get_client_data(
-        external_client_id=recording_session.client_id,
+    # TODO: here we're leaking a little info because someone who doesn't have access can know what recordings exist. Low priority
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client data not found")
 
     logger.info(f"Retrieved recording session {session_id}")
     return recording_session
@@ -174,12 +174,10 @@ async def get_recording_session_status(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    record = get_client_data(
-        external_client_id=recording_session.client_id,
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client data not found")
 
     logger.info(f"Retrieved status for recording session {session_id}")
 
@@ -210,12 +208,10 @@ async def update_recording_session_status(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    record = get_client_data(
-        external_client_id=recording_session.client_id,
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client data not found")
 
     updated_session = await update_status(
         session,
@@ -234,7 +230,7 @@ async def update_recording_session_status(
 
     return RecordingSessionResponse(
         id=str(updated_session.id),
-        client_id=updated_session.client_id,
+        client_pseudo_id=updated_session.client_pseudo_id,
         intake_id=updated_session.intake_id,
         audio_chunks_url=updated_session.audio_chunks_url,
         audio_file_url=updated_session.audio_file_url,
@@ -265,12 +261,10 @@ async def upload_audio_chunk(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    record = get_client_data(
-        external_client_id=recording_session.client_id,
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client data not found")
 
     try:
         chunk_record = RecordingChunk(
@@ -345,12 +339,10 @@ async def finalize_recording(
     if not recording_session:
         raise HTTPException(status_code=404, detail="Recording session not found")
 
-    record = get_client_data(
-        external_client_id=recording_session.client_id,
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client data not found")
 
     execution = await schedule_task(
         session,
@@ -392,12 +384,10 @@ async def get_signed_url(
     if not recording_session.gcs_final_file_path:
         raise HTTPException(status_code=400, detail="No final audio file available")
 
-    record = get_client_data(
-        external_client_id=recording_session.client_id,
+    check_access(
+        client_pseudo_id=recording_session.client_pseudo_id,
         pseudonymized_staff_id=pseudonymized_id,
     )
-    if record is None:
-        raise HTTPException(status_code=404, detail="Client data not found")
 
     try:
         async with RecordingService(settings.GCS_BUCKET_NAME) as recording_service:

@@ -113,7 +113,7 @@ Other flags:
 uv run python -m app.manage create-plan 108734 --force
 ```
 
-This will create an action plan for the given `client_id`, corresponding to a BigQuery external identifier, synchronously.
+This will create an action plan for the given `client_pseudo_id`, corresponding to a BigQuery pseudonymized identifier, synchronously.
 You need to have an intake in db for that client.
 You can then see the result in `experiments/structured_action_plan/Allistor_Jones_it1_*`:
 

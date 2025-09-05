@@ -5,7 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.db import get_session
-from app.crud.assessment import get_assessment_by_id, get_assessments_by_client_id
+from app.crud.assessment import (
+    get_assessment_by_id,
+    get_assessments_by_client_pseudo_id,
+)
 from app.routes.shared_models import AssessmentResponse
 
 router = APIRouter()
@@ -30,16 +33,16 @@ async def get_assessment(
 
 
 @router.get(
-    "/clients/{client_id}",
+    "/clients/{client_pseudo_id}",
     response_model=List[AssessmentResponse],
     summary="Get assessments by client ID",
     description="Returns all assessments associated with a client ID",
     tags=["Assessments"],
 )
 async def get_client_assessments(
-    client_id: str, session: AsyncSession = Depends(get_session)
+    client_pseudo_id: str, session: AsyncSession = Depends(get_session)
 ):
-    assessments = await get_assessments_by_client_id(session, client_id)
+    assessments = await get_assessments_by_client_pseudo_id(session, client_pseudo_id)
 
     if not assessments:
         return []

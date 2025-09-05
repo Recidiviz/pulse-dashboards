@@ -28,7 +28,8 @@ class RecordingStatus(StrEnum):
 class RecordingSession(BaseModel, table=True):
     __tablename__ = "recording_session"
 
-    client_id: str = Field(..., nullable=False, description="Client identifier")
+    client_pseudo_id: Optional[str]
+    client_id: Optional[str] = None
     intake_id: UUID = Field(
         foreign_key="intake.id",
         nullable=False,

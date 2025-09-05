@@ -231,8 +231,8 @@ class TestIntakeSectionRevisions:
         from app.models.intake import ClientIntakeSection, Intake
 
         # Create test intakes
-        intake1 = Intake(client_id="CLIENT-001", status="created")
-        intake2 = Intake(client_id="CLIENT-002", status="created")
+        intake1 = Intake(client_pseudo_id="CLIENT-001", status="created")
+        intake2 = Intake(client_pseudo_id="CLIENT-002", status="created")
         async_session.add_all([intake1, intake2])
         await async_session.commit()
         await async_session.refresh(intake1)
