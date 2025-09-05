@@ -15,41 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing, typography } from "@recidiviz/design-system";
+import { spacing } from "@recidiviz/design-system";
 import { observer } from "mobx-react-lite";
 import { rem } from "polished";
 import { FC } from "react";
 import styled from "styled-components/macro";
 
-import { SlateCopy } from "~@jii/common-ui";
 import { hydrateTemplate } from "~@jii/data";
 import { palette } from "~design-system";
 
 import { UsMaMonthlyReportCopy } from "../../configs/US_MA/copy";
+import { CreditTypeCard } from "./CreditTypeCard";
 
-const CreditTotals = styled.div<{ marginTopBottom: string }>`
+export const CreditTotals = styled.div<{ marginTopBottom: string }>`
   display: flex;
   border: 1px solid ${palette.slate20};
   border-radius: ${rem(spacing.sm)};
   margin: ${(props) => props.marginTopBottom} 0;
-`;
-
-const CreditTypeCard = styled.div`
-  flex: 1;
-  border-right: 1px solid ${palette.slate10};
-  margin: 0;
-  padding: ${rem(spacing.md)};
-  border-radius: ${rem(spacing.sm)} 0 0 ${rem(spacing.sm)};
-
-  &:last-child {
-    border-right: none;
-  }
-`;
-
-const CardValue = styled.div`
-  ${typography.Sans24};
-
-  font-size: ${rem(24)};
 `;
 
 export type creditTypeToTotal = {
@@ -70,29 +52,20 @@ export const CreditsByTypeCard: FC<{
   } = credits;
   return (
     <CreditTotals marginTopBottom={marginTopBottom}>
-      <CreditTypeCard>
-        <SlateCopy>{copy.egt.label}</SlateCopy>
-        <CardValue>
-          {hydrateTemplate(copy.egt.value, {
-            totalEGTCreditDays,
-          })}
-        </CardValue>
+      <CreditTypeCard label={copy.egt.label}>
+        {hydrateTemplate(copy.egt.value, {
+          totalEGTCreditDays,
+        })}
       </CreditTypeCard>
-      <CreditTypeCard>
-        <SlateCopy>{copy.boosts.label}</SlateCopy>
-        <CardValue>
-          {hydrateTemplate(copy.boosts.value, {
-            totalBoostCreditDays,
-          })}
-        </CardValue>
+      <CreditTypeCard label={copy.boosts.label}>
+        {hydrateTemplate(copy.boosts.value, {
+          totalBoostCreditDays,
+        })}
       </CreditTypeCard>
-      <CreditTypeCard>
-        <SlateCopy>{copy.completion.label}</SlateCopy>
-        <CardValue>
-          {hydrateTemplate(copy.completion.value, {
-            totalCompletionCreditDays,
-          })}
-        </CardValue>
+      <CreditTypeCard label={copy.completion.label}>
+        {hydrateTemplate(copy.completion.value, {
+          totalCompletionCreditDays,
+        })}
       </CreditTypeCard>
     </CreditTotals>
   );

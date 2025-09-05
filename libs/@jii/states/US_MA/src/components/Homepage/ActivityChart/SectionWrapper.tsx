@@ -15,26 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { Card, HomepageSectionHeading } from "~@jii/common-ui";
-
-import { useEGTDataContext } from "../../EGTDataContext/context";
+import { ActivityChartShell } from "./ActivityChartShell";
 import { Chart } from "./Chart";
 
 export const SectionWrapper = () => {
-  const {
-    copy: {
-      home: {
-        creditHistory: { heading },
-      },
-    },
-  } = useEGTDataContext();
-
   return (
-    <>
-      <HomepageSectionHeading>{heading}</HomepageSectionHeading>
-      <Card>
-        <Chart />
-      </Card>
-    </>
+    <ActivityChartShell>
+      <Chart />
+    </ActivityChartShell>
   );
 };

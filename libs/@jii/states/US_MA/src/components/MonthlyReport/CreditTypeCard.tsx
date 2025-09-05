@@ -15,28 +15,45 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { FC } from "react";
+import { spacing, typography } from "@recidiviz/design-system";
+import { rem } from "polished";
+import { FC, ReactNode } from "react";
+import styled from "styled-components/macro";
 
-import { CardValue } from "~@jii/common-ui";
+import { SlateCopy } from "~@jii/common-ui";
+import { palette } from "~design-system";
 
-import { DateInfoShell } from "./DateInfoShell";
-
-export type CardDateInfoProps = {
-  tag: string;
+export type CreditTypeCardProps = {
   label: string;
-  value?: string;
-  muted?: boolean;
+  children: ReactNode;
 };
 
-export const CardDateInfo: FC<CardDateInfoProps> = ({
-  tag,
+const CreditTypeCardShell = styled.div`
+  flex: 1;
+  border-right: 1px solid ${palette.slate10};
+  margin: 0;
+  padding: ${rem(spacing.md)};
+  border-radius: ${rem(spacing.sm)} 0 0 ${rem(spacing.sm)};
+
+  &:last-child {
+    border-right: none;
+  }
+`;
+
+const CardValue = styled.div`
+  ${typography.Sans24};
+
+  font-size: ${rem(24)};
+`;
+
+export const CreditTypeCard: FC<CreditTypeCardProps> = ({
   label,
-  value,
-  muted,
+  children,
 }) => {
   return (
-    <DateInfoShell tag={tag} label={label} muted={muted}>
-      {value && <CardValue>{value}</CardValue>}
-    </DateInfoShell>
+    <CreditTypeCardShell>
+      <SlateCopy>{label}</SlateCopy>
+      <CardValue>{children}</CardValue>
+    </CreditTypeCardShell>
   );
 };

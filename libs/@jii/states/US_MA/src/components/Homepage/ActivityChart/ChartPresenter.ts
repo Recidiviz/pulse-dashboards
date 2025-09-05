@@ -18,22 +18,17 @@
 import { max, range, rollup, sum } from "d3-array";
 import { makeAutoObservable } from "mobx";
 
-import { UsMaEarnedCreditType, usMaEarnedCreditTypes } from "~datatypes";
+import { usMaEarnedCreditTypes } from "~datatypes";
 
 import { UsMaEGTMonthlyReport } from "../../../models/UsMaEGTMonthlyReport";
-
-export type ChartDatum = {
-  creditMonth: string;
-  creditType: UsMaEarnedCreditType;
-  totalCredits: number;
-};
+import { ChartDatum, ChartPresenterInterface } from "./types";
 
 const formatMonth = Intl.DateTimeFormat(undefined, { month: "short" });
-function formatCreditDate(d: Date) {
+export function formatCreditDate(d: Date) {
   return formatMonth.format(d);
 }
 
-export class ChartPresenter {
+export class ChartPresenter implements ChartPresenterInterface {
   constructor(private monthlyReports: Array<UsMaEGTMonthlyReport>) {
     makeAutoObservable(this);
   }

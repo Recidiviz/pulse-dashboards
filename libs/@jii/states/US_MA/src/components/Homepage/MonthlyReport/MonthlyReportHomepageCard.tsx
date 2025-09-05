@@ -39,7 +39,7 @@ import { CreditsByTypeCard } from "../../MonthlyReport/CreditsByTypeCard";
 import { MonthlyReportSelector } from "../../MonthlyReportSelector/MonthlyReportSelector";
 import { MonthlyReportPresenter } from "./MonthlyReportPresenter";
 
-const ActivityRow = styled.div`
+export const ActivityRow = styled.div`
   display: flex;
   justify-content: space-between;
   gap: ${rem(spacing.lg)};
@@ -47,11 +47,11 @@ const ActivityRow = styled.div`
   margin: ${rem(spacing.sm)} 0;
 `;
 
-const ActivityList = styled.div`
+export const ActivityList = styled.div`
   margin: ${rem(spacing.md)} 0;
 `;
 
-const ActivityRowDivider = styled.hr`
+export const ActivityRowDivider = styled.hr`
   border-top: 1px solid ${palette.slate10};
   margin: ${rem(spacing.xs)} ${rem(spacing.xxs)};
 

@@ -17,15 +17,14 @@
 
 import { withPresenterManager } from "~hydration-utils";
 
-import { useEGTDataContext } from "../../EGTDataContext/context";
 import { ChartComponent } from "./ChartComponent";
-import { ChartPresenter } from "./ChartPresenter";
+import { SkeletonChartPresenter } from "./SkeletonChartPresenter";
 
 function usePresenter() {
-  return new ChartPresenter(useEGTDataContext().monthlyReports);
+  return new SkeletonChartPresenter();
 }
 
-export const Chart = withPresenterManager({
+export const ChartSkeleton = withPresenterManager({
   usePresenter,
   ManagedComponent: ChartComponent,
   managerIsObserver: true,

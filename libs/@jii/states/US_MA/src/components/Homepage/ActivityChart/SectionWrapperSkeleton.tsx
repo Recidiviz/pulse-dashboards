@@ -15,18 +15,13 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withPresenterManager } from "~hydration-utils";
+import { ActivityChartShell } from "./ActivityChartShell";
+import { ChartSkeleton } from "./ChartSkeleton";
 
-import { useEGTDataContext } from "../../EGTDataContext/context";
-import { ChartComponent } from "./ChartComponent";
-import { ChartPresenter } from "./ChartPresenter";
-
-function usePresenter() {
-  return new ChartPresenter(useEGTDataContext().monthlyReports);
-}
-
-export const Chart = withPresenterManager({
-  usePresenter,
-  ManagedComponent: ChartComponent,
-  managerIsObserver: true,
-});
+export const SectionWrapperSkeleton = () => {
+  return (
+    <ActivityChartShell>
+      <ChartSkeleton />
+    </ActivityChartShell>
+  );
+};

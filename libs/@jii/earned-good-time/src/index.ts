@@ -17,5 +17,6 @@
 
 export * from "./components/BulletTimeline";
 export * from "./components/CardDateInfo";
+export * from "./components/DateInfoShell";
 export * from "./components/EgtCopyWrapper/EgtCopyWrapper";
 export * from "./components/OpenTable";

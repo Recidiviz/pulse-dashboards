@@ -15,18 +15,35 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withPresenterManager } from "~hydration-utils";
+import { Card, HomepageSectionHeading } from "~@jii/common-ui";
 
 import { useEGTDataContext } from "../../EGTDataContext/context";
-import { ChartComponent } from "./ChartComponent";
-import { ChartPresenter } from "./ChartPresenter";
+import { DateInfoSkeleton } from "./DateInfoSkeleton";
 
-function usePresenter() {
-  return new ChartPresenter(useEGTDataContext().monthlyReports);
-}
+export const DatesSectionSkeleton = () => {
+  const {
+    copy: {
+      home: { dates },
+      tags,
+    },
+  } = useEGTDataContext();
 
-export const Chart = withPresenterManager({
-  usePresenter,
-  ManagedComponent: ChartComponent,
-  managerIsObserver: true,
-});
+  return (
+    <section>
+      <HomepageSectionHeading>{dates.sectionTitle}</HomepageSectionHeading>
+
+      {/* First card skeleton (RTS) */}
+      <Card>
+        <DateInfoSkeleton tag={tags.rts} label={dates.rts.label} />
+      </Card>
+
+      {/* Second card skeleton (MAX) */}
+      <Card>
+        <DateInfoSkeleton
+          tag={tags.maxRelease}
+          label={dates.maxRelease.breakdown.adjusted.label}
+        />
+      </Card>
+    </section>
+  );
+};

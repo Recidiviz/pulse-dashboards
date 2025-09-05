@@ -31,11 +31,15 @@ import { palette } from "~design-system";
 
 import { Disclaimer } from "../Disclaimer/Disclaimer";
 import { useEGTDataContext } from "../EGTDataContext/context";
-import { ActivityChart } from "./ActivityChart";
+import { SkeletonThemeProvider } from "../SkeletonThemeProvider";
+import { ActivityChart, ActivityChartSkeleton } from "./ActivityChart";
 import { DatesSection } from "./DatesSection";
+import { DatesSectionSkeleton } from "./DatesSection/DatesSectionSkeleton";
 import { EmptyState } from "./EmptyState";
 import { MonthlyReportHomepageCard } from "./MonthlyReport/MonthlyReportHomepageCard";
+import { MonthlyReportHomepageCardSkeleton } from "./MonthlyReport/MonthlyReportHomepageCardSkeleton";
 import { TotalTimeEarnedSection } from "./TotalTimeEarnedSection/TotalTimeEarnedSection";
+import { TotalTimeEarnedSectionSkeleton } from "./TotalTimeEarnedSection/TotalTimeEarnedSectionSkeleton";
 
 const LastUpdatedBanner = styled(FullBleedContainer)`
   ${typography.Sans14}
@@ -64,7 +68,15 @@ export const Homepage = observer(function Homepage() {
         </LastUpdatedBanner>
       </HeaderPortal>
       {data.isEgtDisabled ? (
-        <EmptyState />
+        <>
+          <EmptyState />
+          <SkeletonThemeProvider className="skeleton-mode">
+            <DatesSectionSkeleton />
+            <ActivityChartSkeleton />
+            <MonthlyReportHomepageCardSkeleton />
+            <TotalTimeEarnedSectionSkeleton />
+          </SkeletonThemeProvider>
+        </>
       ) : (
         <>
           <DatesSection />

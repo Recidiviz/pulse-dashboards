@@ -15,18 +15,41 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withPresenterManager } from "~hydration-utils";
+import { spacing } from "@recidiviz/design-system";
+import { rem } from "polished";
+import { FC, ReactNode } from "react";
+import styled from "styled-components/macro";
 
-import { useEGTDataContext } from "../../EGTDataContext/context";
-import { ChartComponent } from "./ChartComponent";
-import { ChartPresenter } from "./ChartPresenter";
+import { CardHeading, Chip } from "~@jii/common-ui";
 
-function usePresenter() {
-  return new ChartPresenter(useEGTDataContext().monthlyReports);
-}
+export type DateInfoShellProps = {
+  tag: string;
+  label: string;
+  muted?: boolean;
+  children: ReactNode;
+};
 
-export const Chart = withPresenterManager({
-  usePresenter,
-  ManagedComponent: ChartComponent,
-  managerIsObserver: true,
-});
+const Wrapper = styled.div`
+  &:not(:last-child) {
+    margin-bottom: ${rem(spacing.lg)};
+  }
+`;
+
+export const DateInfoShell: FC<DateInfoShellProps> = ({
+  tag,
+  label,
+  muted,
+  children,
+}) => {
+  return (
+    <Wrapper>
+      <CardHeading>
+        {label}
+        <Chip color={muted ? "gray" : "green"}>
+          <abbr>{tag}</abbr>
+        </Chip>
+      </CardHeading>
+      {children}
+    </Wrapper>
+  );
+};

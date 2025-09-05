@@ -15,18 +15,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withPresenterManager } from "~hydration-utils";
+import { FC } from "react";
+import Skeleton from "react-loading-skeleton";
 
-import { useEGTDataContext } from "../../EGTDataContext/context";
-import { ChartComponent } from "./ChartComponent";
-import { ChartPresenter } from "./ChartPresenter";
+import { CardValue } from "~@jii/common-ui";
+import { DateInfoShell } from "~@jii/earned-good-time";
 
-function usePresenter() {
-  return new ChartPresenter(useEGTDataContext().monthlyReports);
-}
-
-export const Chart = withPresenterManager({
-  usePresenter,
-  ManagedComponent: ChartComponent,
-  managerIsObserver: true,
-});
+export const DateInfoSkeleton: FC<{
+  tag: string;
+  label: string;
+  muted?: boolean;
+}> = ({ tag, label, muted }) => {
+  return (
+    <DateInfoShell tag={tag} label={label} muted={muted}>
+      <CardValue>
+        <Skeleton width="60%" />
+      </CardValue>
+    </DateInfoShell>
+  );
+};

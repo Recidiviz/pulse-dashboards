@@ -15,32 +15,21 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { spacing } from "@recidiviz/design-system";
-import { rem } from "polished";
-import styled from "styled-components/macro";
+import Skeleton from "react-loading-skeleton";
 
 import {
   Card,
   CardHeading,
   CardValue,
-  GoButton,
   HomepageSectionHeading,
   TwoColumnCardWrapper,
 } from "~@jii/common-ui";
-import { hydrateTemplate } from "~@jii/data";
-import { State } from "~@jii/paths";
 
 import { useEGTDataContext } from "../../EGTDataContext/context";
+import { Wrapper } from "./TotalTimeEarnedSection";
 
-export const Wrapper = styled.section`
-  ${TwoColumnCardWrapper} {
-    margin-bottom: ${rem(spacing.sm)};
-  }
-`;
-
-export const TotalTimeEarnedSection = () => {
+export const TotalTimeEarnedSectionSkeleton = () => {
   const {
-    data,
     copy: {
       home: { totalTimeEarned },
     },
@@ -55,23 +44,16 @@ export const TotalTimeEarnedSection = () => {
         <Card>
           <CardHeading>{totalTimeEarned.egt.label}</CardHeading>
           <CardValue>
-            {hydrateTemplate(totalTimeEarned.egt.value, data)}
+            <Skeleton />
           </CardValue>
         </Card>
         <Card>
           <CardHeading>{totalTimeEarned.credits.label}</CardHeading>
           <CardValue>
-            {hydrateTemplate(totalTimeEarned.credits.value, data)}
+            <Skeleton />
           </CardValue>
         </Card>
       </TwoColumnCardWrapper>
-      <GoButton
-        to={State.Resident.EGT.$.Definition.buildRelativePath({
-          pageSlug: "credits",
-        })}
-      >
-        {totalTimeEarned.learnMoreLink}
-      </GoButton>
     </Wrapper>
   );
 };

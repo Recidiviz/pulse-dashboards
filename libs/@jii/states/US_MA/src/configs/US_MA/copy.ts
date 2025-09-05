@@ -53,8 +53,8 @@ export const usMaEGTCopy = {
       rts: {
         label: "Release-to-supervision date",
         value: "{{formatFullDateOptional rtsDate 'No RTS date'}}",
-        summary: `The RTS Date is a release to parole supervision without the need for a 
-          parole hearing, based upon completion credits earned through programming 
+        summary: `The RTS Date is a release to parole supervision without the need for a
+          parole hearing, based upon completion credits earned through programming
           and education pursuant to M.G.L.c.127, §129D.`,
         moreInfoLink: "Learn more about RTS",
       },
@@ -105,6 +105,7 @@ export const usMaEGTCopy = {
         [usMaEarnedCreditTypes.enum.COMPLETION]: "Completion Credits",
       },
       creditLabel: "{{pluralize 'days' value true}}",
+      noDataMessage: "You haven't earned time yet.",
     },
     monthlyReport: {
       sectionTitle: "Recent monthly reports",

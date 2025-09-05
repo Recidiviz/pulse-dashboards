@@ -16,3 +16,4 @@
 // =============================================================================
 
 export { SectionWrapper as ActivityChart } from "./SectionWrapper";
+export { SectionWrapperSkeleton as ActivityChartSkeleton } from "./SectionWrapperSkeleton";

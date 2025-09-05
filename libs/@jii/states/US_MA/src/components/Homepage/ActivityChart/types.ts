@@ -15,18 +15,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withPresenterManager } from "~hydration-utils";
+// Shared types and interfaces for ActivityChart presenters
+import { UsMaEarnedCreditType } from "~datatypes";
 
-import { useEGTDataContext } from "../../EGTDataContext/context";
-import { ChartComponent } from "./ChartComponent";
-import { ChartPresenter } from "./ChartPresenter";
+export type ChartDatum = {
+  creditMonth: string;
+  creditType: UsMaEarnedCreditType;
+  totalCredits: number;
+};
 
-function usePresenter() {
-  return new ChartPresenter(useEGTDataContext().monthlyReports);
+export interface ChartPresenterInterface {
+  chartData: Array<ChartDatum>;
+  axisTicks: number[] | undefined;
+  isSkeleton?: boolean;
 }
-
-export const Chart = withPresenterManager({
-  usePresenter,
-  ManagedComponent: ChartComponent,
-  managerIsObserver: true,
-});

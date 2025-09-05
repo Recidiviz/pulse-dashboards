@@ -15,18 +15,28 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withPresenterManager } from "~hydration-utils";
+import { FC } from "react";
+import Skeleton from "react-loading-skeleton";
 
-import { useEGTDataContext } from "../../EGTDataContext/context";
-import { ChartComponent } from "./ChartComponent";
-import { ChartPresenter } from "./ChartPresenter";
+import { UsMaMonthlyReportCopy } from "../../configs/US_MA/copy";
+import { CreditTotals } from "./CreditsByTypeCard";
+import { CreditTypeCard } from "./CreditTypeCard";
 
-function usePresenter() {
-  return new ChartPresenter(useEGTDataContext().monthlyReports);
-}
-
-export const Chart = withPresenterManager({
-  usePresenter,
-  ManagedComponent: ChartComponent,
-  managerIsObserver: true,
-});
+export const CreditsByTypeCardSkeleton: FC<{
+  copy: UsMaMonthlyReportCopy;
+  marginTopBottom: string;
+}> = function CreditsByTypeCardSkeleton({ copy, marginTopBottom }) {
+  return (
+    <CreditTotals marginTopBottom={marginTopBottom}>
+      <CreditTypeCard label={copy.egt.label}>
+        <Skeleton />
+      </CreditTypeCard>
+      <CreditTypeCard label={copy.boosts.label}>
+        <Skeleton />
+      </CreditTypeCard>
+      <CreditTypeCard label={copy.completion.label}>
+        <Skeleton />
+      </CreditTypeCard>
+    </CreditTotals>
+  );
+};

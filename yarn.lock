@@ -39494,6 +39494,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-loading-skeleton@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "react-loading-skeleton@npm:3.5.0"
+  peerDependencies:
+    react: ">=16.8.0"
+  checksum: 10c0/a081f561c9700fead6ba98b91e3fe77a36a680e3fd69dbf4eecbaa5fabcb7173049c6d6fb7487355331a770bed432356edaa147702f3d46ddf0d6caa623e779f
+  languageName: node
+  linkType: hard
+
 "react-markdown@npm:~9.0.1":
   version: 9.0.3
   resolution: "react-markdown@npm:9.0.3"
@@ -40535,6 +40544,7 @@ __metadata:
     react-input-autosize: "npm:^3.0.0"
     react-intersection-observer: "npm:^9.4.3"
     react-is: "npm:18.3.1"
+    react-loading-skeleton: "npm:^3.5.0"
     react-minimal-pie-chart: "npm:^9.1.0"
     react-modal: "npm:^3.12.1"
     react-perfect-scrollbar: "npm:^1.5.8"

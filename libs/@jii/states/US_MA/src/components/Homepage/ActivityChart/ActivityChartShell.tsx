@@ -15,18 +15,31 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { withPresenterManager } from "~hydration-utils";
+import { FC, ReactNode } from "react";
+
+import { Card, HomepageSectionHeading } from "~@jii/common-ui";
 
 import { useEGTDataContext } from "../../EGTDataContext/context";
-import { ChartComponent } from "./ChartComponent";
-import { ChartPresenter } from "./ChartPresenter";
 
-function usePresenter() {
-  return new ChartPresenter(useEGTDataContext().monthlyReports);
-}
+export type ActivityChartShellProps = {
+  children: ReactNode;
+};
 
-export const Chart = withPresenterManager({
-  usePresenter,
-  ManagedComponent: ChartComponent,
-  managerIsObserver: true,
-});
+export const ActivityChartShell: FC<ActivityChartShellProps> = ({
+  children,
+}) => {
+  const {
+    copy: {
+      home: {
+        creditHistory: { heading },
+      },
+    },
+  } = useEGTDataContext();
+
+  return (
+    <>
+      <HomepageSectionHeading>{heading}</HomepageSectionHeading>
+      <Card>{children}</Card>
+    </>
+  );
+};
