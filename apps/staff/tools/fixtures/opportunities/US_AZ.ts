@@ -776,15 +776,15 @@ export const mockApiOpportunityConfigurationResponse = {
       eligibleCriteriaCopy: [
         {
           key: "usAzAnyRiskScoreBut15MonthsViolationFree",
-          text: "Eligible risk score",
+          text: '{{#if \n    (or\n      (or\n        (or\n            (eq orasAssessmentLevel "LOW" )\n            (eq orasAssessmentLevel "MODERATE" )\n        )\n        (eq orasAssessmentLevel "LOW_MODERATE" )\n      )\n      (eq intakeAssessmentLevel "MINIMUM" )\n    )\n}}\nEligible risk score\n{{else}}\nOn supervision 15 months violation free despite ineligible risk score\n{{/if}}\n\n',
           tooltip:
             "(1.1) Risk and needs assessment shows a risk determination of moderate or lower, unless the client qualifies for administrative supervision under section 8.1.9.",
         },
         {
           key: "usAzIneligibleOffensesBut15MonthsViolationFree",
-          text: "No current or prior convictions of exclusionary offenses",
+          text: "{{#if \n  (and\n    (eq ineligibleConvictions null )\n    (eq ineligibleOffenses null )\n)\n}}\nNo current or prior convictions of exclusionary offenses\n{{else}}\nOn supervision 15 months violation free despite ineligible offenses/convictions \n{{/if}}\n\n",
           tooltip:
-            "(1.2) No current or prior convictions of a registerable sex offense or felony domestic violence offense, or current convictions of felony arson or murder, unless the client qualifies for administrative supervision under section 8.1.9.",
+            "(1.2) No current or prior convictions of a registrable sex offense or felony domestic violence offense, or current convictions of felony arson or murder, unless the client qualifies for administrative supervision under section 8.1.9.\n\n",
         },
         {
           key: "usAzRiskReleaseAssessmentIsCompleted",
@@ -817,11 +817,11 @@ export const mockApiOpportunityConfigurationResponse = {
       ],
       emptyTabCopy: [
         {
-          tab: "Eligible Now",
+          tab: "Eligible per ORAS",
           text: "At this time, there are no clients who are currently eligible. Please navigate to one of the other tabs.",
         },
         {
-          tab: "Almost Eligible",
+          tab: "Eligible per Initial Assessment",
           text: "At this time, there are no clients who are almost eligible. Please navigate to one of the other tabs.",
         },
         {
@@ -848,17 +848,17 @@ export const mockApiOpportunityConfigurationResponse = {
         "https://drive.google.com/file/d/1yKtEL4-wR9VB1hdyxqzPeJDGBMwjs6Sz/view",
       nonOmsCriteria: [
         {
-          text: "Requires validation of criteria (1.4): A client has achieved stable housing while on supervision.",
+          text: "Requires validation of criteria (1.4): A client has achieved stable housing while on supervision",
           tooltip:
             "See policy section 8.1.4 for details on what qualifies as stable housing.",
         },
         {
-          text: "{{#if record.metadata.isMaybeEligibleMissing15}}Requires validation of criteria (1.5): Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4.{{/if}}",
+          text: "{{#if record.metadata.isMaybeEligible}}Requires validation of criteria (1.5): Currently employed, disabled, retired, or in school, as assessed in ORAS question 2.4{{/if}}",
           tooltip:
             "Alternate Eligibility: An offender may also meet this requirement by presenting their CRO with proof of gainful employment, enrollment in education, disability status, or retirement. For the purpose of this policy, people providing caregiving for a family member may also be considered to meet this condition. ",
         },
         {
-          text: "{{#if record.metadata.isMaybeEligibleMissing17}}Requires validation of criteria (1.8): Not currently dealing with substance uses issues, as assessed in ORAS question 5.4. {{/if}}",
+          text: "{{#if record.metadata.isMaybeEligible}}Requires validation of criteria (1.8): Not currently dealing with substance uses issues, as assessed in ORAS question 5.4 {{/if}}",
           tooltip:
             "Alternate Eligibility: An offender may also meet this requirement if they have abstained from illicit drug use for the past year.",
         },
@@ -875,10 +875,19 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading: null,
-      submittedTabTitle: null,
-      supportsSubmitted: false,
+      submittedTabTitle: "Transferred",
+      supportsSubmitted: true,
       systemType: "SUPERVISION",
-      tabGroups: null,
+      tabGroups: [
+        {
+          key: "ELIGIBILITY STATUS",
+          tabs: [
+            "Eligible per ORAS",
+            "Eligible per Initial Assessment",
+            "Marked Ineligible",
+          ],
+        },
+      ],
       tabPrefaceCopy: [],
       tooltipEligibilityText: null,
       urlSection: "AdminSupervision",

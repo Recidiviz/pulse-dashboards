@@ -72,12 +72,6 @@ export const mockApiOpportunityConfigurationResponse = {
           text: "Within 60 months of earliest established release date",
         },
         {
-          key: "usMoNoEscapeIn10YearsOrCurrentSentence",
-          text: "No perimeter escapes within the current sentence structure or within the past 10 years",
-          tooltip:
-            "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
-        },
-        {
           key: "usMoNoEscapeIn10YearsOrCurrentCycle",
           text: "No perimeter escapes within the current sentence structure or within the past 10 years",
           tooltip:
@@ -417,6 +411,7 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "OC",
           text: "Has not yet completed required 12 months of Outside Clearance required based on offense",
         },
+        { key: "EMPLOYER", text: "Receiving employer denied the placement" },
         {
           key: "SOP",
           text: "Does not meet other, institution-specific criteria in standard operating procedures",
@@ -443,12 +438,6 @@ export const mockApiOpportunityConfigurationResponse = {
           key: "usMoMeetsTimeRemainingRequirementsWorkRelease",
           text: "Within 48 months of earliest established release date",
           tooltip: "",
-        },
-        {
-          key: "usMoNoEscapeIn10YearsOrCurrentSentence",
-          text: "No perimeter escapes within the current sentence structure or within the past 10 years",
-          tooltip:
-            "Residents must have no history of security perimeter escapes within current sentence structure or within the last 10 years. Escapes while not on supervision and absconsions are considered on a case-by-case basis.",
         },
         {
           key: "usMoNoEscapeIn10YearsOrCurrentCycle",

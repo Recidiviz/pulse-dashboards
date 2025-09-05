@@ -184,9 +184,7 @@ export const mockApiOpportunityConfigurationResponse = {
         {
           text: "{{#unless (or record.ineligibleCriteria.atLeast6MonthsSinceMostRecentPositiveDrugTest (eq record.ineligibleCriteria.atLeast6MonthsSinceMostRecentPositiveDrugTest null))}}If relevant, negative drug test within the last 6 months{{/unless}}",
         },
-        {
-          text: "Confirm that any required treatment has been completed",
-        },
+        { text: "Confirm that any required treatment has been completed" },
       ],
       nonOmsCriteriaHeader: null,
       notifications: [],
@@ -199,10 +197,7 @@ export const mockApiOpportunityConfigurationResponse = {
       stateCode: "US_UT",
       subcategoryHeadings: [
         { subcategory: "REPORT_DUE", text: "Report Due" },
-        {
-          subcategory: "EARLY_REQUESTS",
-          text: "Early Requests",
-        },
+        { subcategory: "EARLY_REQUESTS", text: "Early Requests" },
       ],
       subcategoryOrderings: [
         {

@@ -87,8 +87,8 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [
         {
-          body: "Want to understand what the recent ARS policy change that went into effect on July 1, 2025 might mean for you?",
-          cta: "[FAQ](https://docs.google.com/document/d/15t2-0GNBEXzHFyaNjO-v7QcPNxoqVHLLfCd2VehcuIw/edit?tab=t.0#heading=h.ad9wclkxnl7w)",
+          body: "ARS/ERS Policy changes went into effect on July 21, 2025. Learn what this means for you: [FAQ](https://docs.google.com/document/d/e/2PACX-1vSZ6cUATsrYOH4x72IbC3EnULM651f2taDj-rXDqVMdMrCQC_OIscuqWV0rslrlZfZeLHDQrO2af7QY/pub)",
+          cta: "Acknowledge & Close",
           id: "3f78cf16-ed4f-4ea0-9c7b-903d1c5c9bf9",
         },
       ],
@@ -188,8 +188,8 @@ export const mockApiOpportunityConfigurationResponse = {
       nonOmsCriteriaHeader: "Requirements to check",
       notifications: [
         {
-          body: "Want to understand how the recent ERS policy changes that went into effect on July 1, 2025 mean for you?",
-          cta: "(https://docs.google.com/document/d/15t2-0GNBEXzHFyaNjO-v7QcPNxoqVHLLfCd2VehcuIw/edit?tab=t.0#heading=h.ad9wclkxnl7w)",
+          body: "ARS/ERS Policy changes went into effect on July 21, 2025. Learn what this means for you: [FAQ](https://docs.google.com/document/d/e/2PACX-1vSZ6cUATsrYOH4x72IbC3EnULM651f2taDj-rXDqVMdMrCQC_OIscuqWV0rslrlZfZeLHDQrO2af7QY/pub)",
+          cta: "Acknowledge & Close",
           id: "4ef11701-0b09-4b81-b5d0-20dcbe6e9d1a",
           title: "",
         },

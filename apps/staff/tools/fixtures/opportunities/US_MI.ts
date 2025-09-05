@@ -247,6 +247,91 @@ export const mockApiOpportunityConfigurationResponse = {
       urlSection: "classificationReview",
       zeroGrantsTooltip: null,
     },
+    usMiCustodyLevelDowngrade: {
+      callToAction: null,
+      caseNotesTitle: null,
+      compareBy: null,
+      denialAdjective: null,
+      denialNoun: null,
+      denialReasons: [
+        {
+          key: "PROGRAMMING",
+          text: "The resident is currently participating in programming, e.g. START, that is not available at a facility that houses residents with a lower security level.",
+        },
+        {
+          key: "INVESTIGATION",
+          text: "The resident has a pending misconduct investigation.",
+        },
+        {
+          key: "ACCOMMODATION",
+          text: "There is a lack of accommodations that the resident requires for religious, medical or other reasons at other facilities with a lower security level.",
+        },
+        {
+          key: "BED SPACE",
+          text: "There is a lack of bed space at other facilities with a lower security level.",
+        },
+        { key: "OTHER", text: "Other: Please specify a reason" },
+      ],
+      denialText: null,
+      deniedTabTitle: null,
+      displayName: "Custody Level Downgrade",
+      dynamicEligibilityText:
+        "client[|s] may be eligible for custody level downgrade",
+      eligibilityDateText: null,
+      eligibleCriteriaCopy: [
+        {
+          key: "usMiNoClassIOrIiMisconductInSixMonthsAndNoSecurityAssessment",
+          text: "6-months misconduct-free since {{date sixMonthMisconductFreeDate}} but has not been assessed since {{date mostRecentAssessmentDate}}",
+          tooltip:
+            "Last assessment was completed on {{date mostRecentAssessmentDate}} and resident has been 6-month misconduct-free since {{date sixMonthMisconductFreeDate}}.",
+        },
+        {
+          key: "usMiManagementLevelWithinSixPointsOfLowerLevel",
+          text: "Management level could be reduced due to favorable behavior",
+          tooltip:
+            "Management score is {{managementLevelRawScore}}. A 6-point reduction to management score due to favorable behavior would result in a lower management level.",
+        },
+        {
+          key: "usMiManagementLevelGreaterThanConfinementLevel",
+          text: "Management level is currently determining security level",
+          tooltip:
+            "Security level is determined by the higher level between management level and confinement level. This resident has a management level of {{managementLevel}}, above their confinement level of {{confinementLevel}}. A reduction to their management level could result in an overall reduction to their security level. ",
+        },
+      ],
+      emptyTabCopy: [],
+      firestoreCollection: "US_MI-custodyLevelDowngrade",
+      hideDenialRevert: false,
+      highlightCasesOnHomepage: false,
+      highlightedCaseCtaCopy: null,
+      homepagePosition: 1,
+      ineligibleCriteriaCopy: [],
+      initialHeader: null,
+      isAlert: false,
+      markSubmittedOptionsByTab: [],
+      methodologyUrl: "tbd",
+      nonOmsCriteria: [],
+      nonOmsCriteriaHeader: null,
+      notifications: [],
+      omsCriteriaHeader: null,
+      overdueOpportunityCalloutCopy: null,
+      priority: "NORMAL",
+      sidebarComponents: ["Incarceration", "ResidentHousing"],
+      snooze: { defaultSnoozeDays: 30, maxSnoozeDays: 180 },
+      snoozeCompanionOpportunityTypes: [],
+      stateCode: "US_MI",
+      subcategoryHeadings: [],
+      subcategoryOrderings: [],
+      subheading:
+        "This alert helps staff identify residents who may be newly eligible for a custody level downgrade because they have not had a Class I or II misconduct in over 6 months. ",
+      submittedTabTitle: "Pending",
+      supportsSubmitted: false,
+      systemType: "INCARCERATION",
+      tabGroups: null,
+      tabPrefaceCopy: [],
+      tooltipEligibilityText: null,
+      urlSection: "custodyLevelDowngrade",
+      zeroGrantsTooltip: null,
+    },
     usMiEarlyDischarge: {
       callToAction:
         "Review clients who may be eligible for early discharge and complete discharge paperwork in COMS.",

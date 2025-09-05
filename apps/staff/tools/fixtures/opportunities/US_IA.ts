@@ -47,7 +47,7 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: "Snoozed",
       displayName: "Supervision Level Downgrade",
       dynamicEligibilityText:
-        "client[|s] are awaiting actions related to Supervision Level Downgrade",
+        "client[|s] [is|are] awaiting actions related to Supervision Level Downgrade",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
@@ -98,6 +98,12 @@ export const mockApiOpportunityConfigurationResponse = {
             "Discharge date is determined by the primary TDD (tentative discharge date) and/or SDD (supervision discharge date)",
         },
         {
+          key: "notSupervisionPastGroupFullTermCompletionDateOrUpcoming30Days",
+          text: "Is not within 30 days of discharge date",
+          tooltip:
+            "Discharge date is determined by the primary TDD (tentative discharge date) and/or SDD (supervision discharge date)",
+        },
+        {
           key: "usIaNotEligibleOrMarkedIneligibleForEarlyDischarge",
           text: "Is not eligible for early discharge",
           tooltip:
@@ -128,7 +134,7 @@ export const mockApiOpportunityConfigurationResponse = {
             'See "Relevant Contact Notes" section below for any required programming entered in ICON',
         },
         {
-          text: '{{#if (eq record.metadata.supervisionLevel "Level 3")}}Completed DRAOR Assessment{{/if}}',
+          text: '{{#if (eq record.eligibleCriteria.supervisionLevelIsMediumOrMinimum.supervisionLevel "MEDIUM")}}Completed DRAOR Assessment{{/if}}',
         },
       ],
       nonOmsCriteriaHeader: "Requirements for officers to check",
@@ -143,7 +149,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryHeadings: [],
       subcategoryOrderings: [],
       subheading: null,
-      submittedTabTitle: "Submitted for Supervision Level Downgrade",
+      submittedTabTitle: "Downgraded",
       supportsSubmitted: true,
       systemType: "SUPERVISION",
       tabGroups: [
@@ -152,7 +158,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tabs: [
             "Eligible Now",
             "Pending Eligibility",
-            "Submitted for Supervision Level Downgrade",
+            "Downgraded",
             "Snoozed",
           ],
         },
@@ -202,7 +208,7 @@ export const mockApiOpportunityConfigurationResponse = {
       deniedTabTitle: "Snoozed",
       displayName: "Early Discharge",
       dynamicEligibilityText:
-        "client[|s] are awaiting actions related to Early Discharge",
+        "client[|s] [is|are] awaiting actions related to Early Discharge",
       eligibilityDateText: null,
       eligibleCriteriaCopy: [
         {
