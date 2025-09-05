@@ -5,7 +5,7 @@ exports[`companion opportunity > bannerInfo > returns the correct banner info wh
   "link": "/workflows/supervisionLevelDowngrade",
   "linkText": "See Pending Eligibility",
   "onLinkClick": [Function],
-  "previewBannerHeading": "BETTY RUBBLE is eligible for a Supervision Level Downgrade",
+  "previewBannerHeading": "BETTY RUBBLE may be eligible for a Supervision Level Downgrade",
   "previewBannerText": "This client will be pending for approximately 24 hours before they become eligible for a Supervision Level Downgrade.",
 }
 `;

@@ -19,7 +19,7 @@ import { DocumentData } from "@google-cloud/firestore";
 
 import { Client } from "../../../Client";
 import { OpportunityBase } from "../../OpportunityBase";
-import { OpportunityTab } from "../../types";
+import { OpportunityRequirement, OpportunityTab } from "../../types";
 import { RELEVANT_ED_DENIAL_REASONS } from "..";
 import { UsIaEarlyDischargeOpportunity } from "../UsIaEarlyDischargeOpportunity";
 import {
@@ -38,6 +38,23 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
       client.rootStore,
       usIaSupervisionLevelDowngradeSchema.parse(record),
     );
+  }
+
+  get requirementsAlmostMet(): OpportunityRequirement[] {
+    const customReqs = [] as OpportunityRequirement[];
+    const { violationsPast6MonthsFlag, openInterventionsFlag } =
+      this.record.metadata;
+    if (violationsPast6MonthsFlag) {
+      customReqs.push({
+        text: "Has violation incidents dated within the past 6 months. Please review incident history.",
+      });
+    }
+    if (openInterventionsFlag) {
+      customReqs.push({
+        text: "Has open interventions in ICON. Please ensure client has completed court-ordered interventions.",
+      });
+    }
+    return super.requirementsAlmostMet.concat(customReqs);
   }
 
   /**
@@ -79,6 +96,8 @@ export class UsIaSupervisionLevelDowngradeOpportunity extends OpportunityBase<
   }
 
   eligibilityStatusLabel(includeReasons?: boolean): string | null {
+    if (this.denied || this.isSubmitted)
+      return super.eligibilityStatusLabel(includeReasons);
     if (this.pendingEligibility) return "Pending Eligibility";
     return super.eligibilityStatusLabel(includeReasons);
   }

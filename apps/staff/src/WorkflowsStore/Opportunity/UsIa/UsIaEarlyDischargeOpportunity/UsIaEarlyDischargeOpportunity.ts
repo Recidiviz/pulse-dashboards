@@ -473,7 +473,7 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
   get bannerInfo(): OpportunityBannerInfo | undefined {
     if (this.hasPendingSldCompanionOpportunity) {
       return {
-        previewBannerHeading: `${this.person.displayName} is eligible for a Supervision Level Downgrade`,
+        previewBannerHeading: `${this.person.displayName} may be eligible for a Supervision Level Downgrade`,
         previewBannerText:
           "This client will be pending for approximately 24 hours before they become eligible for a Supervision Level Downgrade.",
         link: workflowsUrl("opportunityClients", {

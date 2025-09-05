@@ -55,6 +55,7 @@ const OpportunityOverviewComponent: React.FC<OpportunityOverviewProps> = ({
         <AccordionWrapper
           allowZeroExpanded
           preExpanded={[opportunity.accordionKey]}
+          key={opportunity.accordionKey}
         >
           <AccordionSection
             opportunity={opportunity}
@@ -69,6 +70,4 @@ const OpportunityOverviewComponent: React.FC<OpportunityOverviewProps> = ({
   );
 };
 
-export const OpportunityOverview = observer(
-  OpportunityOverviewComponent,
-);
+export const OpportunityOverview = observer(OpportunityOverviewComponent);

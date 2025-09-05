@@ -52,6 +52,11 @@ const OpportunityTypeSummary = observer(function OpportunityTypeSummary({
   const oppsForEnabledTabs = opportunities.filter((opp) => {
     return tabTitles.includes(opp.tabTitle(tabGroup));
   });
+
+  // Some opportunities have opportunities for non-enabled tabs,
+  // but we don't show a summary if those are the only opps
+  if (oppsForEnabledTabs.length === 0) return null;
+
   const numOpportunitiesByTab = countBy(oppsForEnabledTabs, (opp) =>
     opp.tabTitle(tabGroup),
   );
