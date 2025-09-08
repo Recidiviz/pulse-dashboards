@@ -17,24 +17,41 @@
 
 "use client";
 
-const IntakeCompleted: React.FC = () => {
-	return (
-		<div className="flex justify-center pt-12 md:pt-16">
-			<div className="w-full max-w-[640px] md:max-w-[720px] px-6">
-				<div className="text-center bg-white rounded-sm shadow-[0_4px_4px_rgba(0,0,0,0.25)] p-8 md:p-12">
-					<h1 className="font-['Libre Baskerville'] font-normal text-[32px] leading-[40px] tracking-[-0.04em] text-black mb-6 md:mb-8">
-						You&apos;re all set.
-					</h1>
+import React from "react";
 
-					<p className="font-['Public_Sans'] font-medium text-[18px] leading-[1.2] tracking-[-0.02em] text-black text-center mb-8 md:mb-12 mx-auto">
-						Your intake is complete. Thank you for taking the time to fill it
-						out. Your case manager and supervision officer will receive the
-						details you provided and work with you on the next steps.
-					</p>
-				</div>
-			</div>
-		</div>
-	);
+import common from "~@reentry/frontend/components/IntakeChatV2/Common.module.css";
+import styles from "~@reentry/frontend/components/IntakeChatV2/IntakeComplete/IntakeComplete.module.css";
+
+const IntakeCompleted: React.FC = () => {
+  const handleBack = () => {
+    sessionStorage.removeItem("intake_token");
+    window.location.href = "/assessment";
+  };
+
+  return (
+    <div className="flex justify-center pt-12 md:pt-16">
+      <div className="w-full max-w-[640px] md:max-w-[720px] px-6">
+        <div className="text-center bg-white rounded-sm shadow-[0_4px_4px_rgba(0,0,0,0.25)] p-8 md:p-12">
+          <h1 className="font-['Libre Baskerville'] font-normal text-[32px] leading-[40px] tracking-[-0.04em] text-black mb-6 md:mb-8">
+            You&apos;re all set.
+          </h1>
+
+          <p className="font-['Public_Sans'] font-medium text-[18px] leading-[1.2] tracking-[-0.02em] text-black text-center mb-8 md:mb-12 mx-auto">
+            Your intake is complete. Thank you for taking the time to fill it
+            out. Your case manager and supervision officer will receive the
+            details you provided and work with you on the next steps.
+          </p>
+          <button
+            type="button"
+            className={`${styles["buttonCommon"]} ${styles["secondary"]} ${common["buttonBase"]} ${common["buttonSecondary"]}`}
+            onClick={handleBack}
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default IntakeCompleted;
