@@ -296,7 +296,7 @@ export const jsxComponentDescriptors: JsxComponentDescriptor[] = [
     Editor: AnnotationEditor,
   },
   {
-    name: "ReadOnlyLink",
+    name: "readonlylink",
     kind: "flow",
     source: "./components",
     props: [{ name: "href", type: "string" }],
@@ -332,12 +332,12 @@ const MdxEditor = ({
   };
 
   function preprocessMarkdown(markdown) {
-    // replacing <a> with <ReadOnlyLink> to be able to make it read-only with a custom directive
-    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-    const processedMarkdown = markdown.replace(
+    // replacing <a> with <readonlylink> to be able to make it read-only with a custom directive
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/gi;
+    const processedMarkdown = markdown.replaceAll(
       linkRegex,
       (match, text, url) => {
-        return `<ReadOnlyLink href='${url}'>${text}</ReadOnlyLink>`;
+        return `<readonlylink href='${url}'>${text}</readonlylink>`;
       },
     );
     return processedMarkdown;

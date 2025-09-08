@@ -76,17 +76,16 @@ const Planner = ({
   );
 
   const postprocessMarkdown = (markdown) => {
-    // Replace ReadOnlyLink with a markdown link [example.md](example.com)
-    return markdown.replace(
-      /<ReadOnlyLink\s+[^>]*href='([^"]+)'[^>]*>([\s\S]*?)<\/ReadOnlyLink>/g,
-      (_, href, text) => `[${text.trim()}](${href})`,
+    // Replace <readonlylink href="https://somewhere.com">some text</readonlylink> with a markdown link [https://somewhere.com](https://somewhere.com)
+    return markdown.replaceAll(
+      /<readonlylink\s+[^>]*href=(["'])([^"']+)\1[^>]*>([\s\S]*?)<\/readonlylink>/gi,
+      (_, _quote, href, text) => `[${text.trim()}](${href})`,
     );
   };
 
   const saveEdit = async () => {
     try {
       const processedMarkdown = postprocessMarkdown(internalMarkdown);
-
       await generatePlanMutation({
         params: {
           path: {
