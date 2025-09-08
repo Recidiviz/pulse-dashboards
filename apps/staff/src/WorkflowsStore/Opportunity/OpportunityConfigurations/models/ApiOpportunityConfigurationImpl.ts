@@ -17,6 +17,7 @@
 
 import assertNever from "assert-never";
 import { add, nextDay } from "date-fns";
+import { isEmpty, mapValues, pick, pickBy } from "lodash";
 import simplur from "simplur";
 
 import { OpportunityType } from "~datatypes";
@@ -78,7 +79,7 @@ export function hydrateSnooze(
 export class ApiOpportunityConfiguration implements OpportunityConfiguration {
   constructor(
     protected configurationObject: IApiOpportunityConfiguration,
-    private userStore: UserStore,
+    protected userStore: UserStore,
   ) {}
 
   get systemType() {
@@ -177,6 +178,21 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
 
   get denialReasons() {
     return this.configurationObject.denialReasons;
+  }
+
+  /**
+   * Returns the denial reasons map for indefinite reasons (you can set indefinite
+   * reasons by overriding maxSnoozeDaysByDenialReason on a custom Opportunity Config class)
+   */
+  get indefiniteDenialReasons() {
+    if (!isEmpty(this.maxSnoozeDaysByDenialReason)) {
+      const indefiniteSnoozeSettings = pickBy(
+        this.maxSnoozeDaysByDenialReason,
+        (maxSnoozeDays) => maxSnoozeDays === undefined,
+      );
+      return pick(this.denialReasons, Object.keys(indefiniteSnoozeSettings));
+    }
+    return {};
   }
 
   get sidebarComponents() {
@@ -376,5 +392,20 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
       this.configurationObject.indefiniteSnoozeSectionHeader ??
       "An approval request will be sent to your supervisor before this client can be snoozed indefinitely and removed from this opportunity"
     );
+  }
+
+  /**
+   * Returns a record of each denial reason to the relevant max snooze length.
+   * Override to set individual denial reason max snoozes or map a reason to undefined
+   * to mark the given reason as indefinite snooze.
+   *
+   * Empty record for auto snooze opps.
+   */
+  get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
+    const configuredMaxSnoozeDays = this.snooze?.maxSnoozeDays;
+    if (configuredMaxSnoozeDays) {
+      return mapValues(this.denialReasons, () => configuredMaxSnoozeDays);
+    }
+    return {};
   }
 }

@@ -17,7 +17,6 @@
 
 import { DocumentData } from "@google-cloud/firestore";
 import { Timestamp } from "firebase/firestore";
-import { intersection, pick } from "lodash";
 
 import { OPPORTUNITY_STATUS_COLORS } from "../../../../core/utils/workflowsUtils";
 import { workflowsUrl } from "../../../../core/views";
@@ -392,30 +391,6 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
     return !!this.rootStore.userStore.activeFeatureVariants.indefiniteSnooze;
   }
 
-  maxManualSnoozeDays(denialReasons: string[]): number | undefined {
-    const extendedSnoozeReasons = [
-      "FINES & FEES",
-      "DENIED",
-      "INTERSTATE (IC-OUT)",
-    ];
-    const extendedSnoozeMaxLength = 365;
-    if (intersection(extendedSnoozeReasons, denialReasons).length > 0) {
-      return extendedSnoozeMaxLength;
-    }
-    if (this.indefiniteSnoozeEnabled) {
-      const selectedIndefiniteReasons = intersection(
-        Object.keys(this.indefiniteDenialReasons),
-        denialReasons,
-      );
-      // If an indefinite denial reason is selected, we'll return undefined (i.e. there
-      // is no max snooze length for this reason).
-      if (selectedIndefiniteReasons.length > 0) {
-        return undefined;
-      }
-    }
-    return super.maxManualSnoozeDays(denialReasons);
-  }
-
   get sldRelevantDenial(): boolean {
     const { reasons } = this.updates?.denial ?? {};
     // Reasons should never be empty, but we check just in case.
@@ -485,15 +460,6 @@ export class UsIaEarlyDischargeOpportunity extends OpportunityBase<
       };
     }
     return undefined;
-  }
-
-  get indefiniteDenialReasons() {
-    if (this.indefiniteSnoozeEnabled) {
-      const indefiniteReasonKeys = ["INTERSTATE (IC-IN)", "COURT"];
-      return pick(this.denialReasons, indefiniteReasonKeys);
-    } else {
-      return super.indefiniteDenialReasons;
-    }
   }
 
   get denialViewPrompt() {

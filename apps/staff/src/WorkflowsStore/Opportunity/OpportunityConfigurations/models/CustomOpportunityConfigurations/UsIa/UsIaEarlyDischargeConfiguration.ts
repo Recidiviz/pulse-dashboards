@@ -24,4 +24,25 @@ export class UsIaEarlyDischargeConfiguration extends ApiOpportunityConfiguration
     // IA ED has customized opportunity submission flow
     return false;
   }
+
+  get maxSnoozeDaysByDenialReason(): Record<string, number | undefined> {
+    let indefiniteSnoozes = {};
+    if (this.userStore.activeFeatureVariants.indefiniteSnooze) {
+      indefiniteSnoozes = {
+        "INTERSTATE (IC-IN)": undefined,
+        COURT: undefined,
+      };
+    }
+    const snoozeLengthOverrides = {
+      "FINES & FEES": 365,
+      DENIED: 365,
+      "INTERSTATE (IC-OUT)": 365,
+    };
+
+    return {
+      ...super.maxSnoozeDaysByDenialReason,
+      ...snoozeLengthOverrides,
+      ...indefiniteSnoozes,
+    };
+  }
 }

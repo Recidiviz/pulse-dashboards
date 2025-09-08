@@ -79,6 +79,8 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   firestoreCollection: "US_XX_mockOpportunity",
   sidebarComponents: [],
   denialReasons: {},
+  indefiniteDenialReasons: {},
+  maxSnoozeDaysByDenialReason: {},
   methodologyUrl: "",
   homepagePosition: 1,
   deniedTabTitle: "Marked Ineligible",

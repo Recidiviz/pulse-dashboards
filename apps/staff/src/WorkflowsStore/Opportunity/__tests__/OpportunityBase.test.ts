@@ -1233,13 +1233,19 @@ describe("eligibilityStatusLabel", () => {
   });
 
   describe("maxManualSnoozeDays", () => {
-    test("Should use configuration maxSnoozeDays if the manual snooze config is present", () => {
+    beforeEach(() => {
       vi.spyOn(opp, "config", "get").mockReturnValue({
         snooze: {
           maxSnoozeDays: 90,
         },
+        maxSnoozeDaysByDenialReason: {
+          "TEMPORARY REASON": 90,
+          "INDEFINITE REASON": undefined,
+          "EXTENDED REASON": 365,
+        },
       } as any);
-
+    });
+    test("Should use configuration maxSnoozeDays when no reason is selected", () => {
       expect(opp.maxManualSnoozeDays([])).toEqual(90);
     });
 
@@ -1253,15 +1259,28 @@ describe("eligibilityStatusLabel", () => {
       expect(opp.maxManualSnoozeDays([])).toBeUndefined();
     });
 
+    test("Returns undefined if indefinite snooze reason is selected", () => {
+      expect(opp.maxManualSnoozeDays(["INDEFINITE REASON"])).toBeUndefined();
+    });
+
+    test("Returns maximum configured max snooze when multiple reasons are selected", () => {
+      expect(
+        opp.maxManualSnoozeDays(["EXTENDED REASON", "TEMPORARY REASON"]),
+      ).toEqual(365);
+    });
+
     test("Caps the maxManualSnoozeDays at the person's release date", () => {
       timekeeper.freeze(new Date("2024-12-30")); // client expiration date is 12-31
-      vi.spyOn(opp, "config", "get").mockReturnValue({
-        snooze: {
-          maxSnoozeDays: 90,
-        },
-      } as any);
 
       expect(opp.maxManualSnoozeDays([])).toEqual(1);
+    });
+
+    test("Caps the maxManualSnoozeDays at the person's release date with selected reasons", () => {
+      timekeeper.freeze(new Date("2024-12-30")); // client expiration date is 12-31
+
+      expect(
+        opp.maxManualSnoozeDays(["TEMPORARY REASON", "EXTENDED REASON"]),
+      ).toEqual(1);
     });
 
     test("Doesn't cap when release date isn't in the future", () => {

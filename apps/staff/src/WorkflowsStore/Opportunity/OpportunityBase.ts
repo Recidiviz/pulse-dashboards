@@ -24,6 +24,7 @@ import {
   startOfToday,
 } from "date-fns";
 import { DocumentData, Timestamp } from "firebase/firestore";
+import { pick } from "lodash";
 import { action, computed, makeObservable, when } from "mobx";
 
 import { OpportunityType } from "~datatypes";
@@ -805,18 +806,44 @@ export class OpportunityBase<
   }
 
   /**
-   * Returns the manual max snooze length in days based on the given reasons. Returns
-   * undefined if auto snooze is enabled for this opportunity. Can be overridden to
-   * return undefined for denial reasons that trigger an indefinite snooze.
+   * Returns the manual max snooze length in days based on the given reasons and their
+   * configured max snooze lengths.
+   *
+   * Undefined if auto snooze is enabled for this opportunity.
+   * Undefined if an indefinite snooze reason is selected.
+   * Otherwise, returns the maximum max snooze length across the selected reasons,
+   * cappedy by the person's release date.
    *
    */
-  maxManualSnoozeDays(_: string[]): number | undefined {
-    return this.config.snooze?.maxSnoozeDays !== undefined
-      ? Math.min(
-          getPersonDaysToRelease(this.person),
-          this.config.snooze?.maxSnoozeDays,
-        )
-      : undefined;
+  maxManualSnoozeDays(selectedReasons: string[]): number | undefined {
+    // Return undefined for auto snooze.
+    if (!this.config.snooze?.maxSnoozeDays) return undefined;
+
+    const selectedMaxSnoozeDays = Object.values(
+      pick(this.config.maxSnoozeDaysByDenialReason, selectedReasons),
+    );
+
+    if (selectedMaxSnoozeDays.some((maxSnooze) => maxSnooze === undefined))
+      // Return undefined if indefinite snooze reason is selected.
+      return undefined;
+    else {
+      // Calculate the maximum max snooze of all selected reasons
+      // OR if no reasons are selected, use the default config max.
+      const calculatedMaxSnoozeDays =
+        selectedReasons.length > 0
+          ? Math.max(
+              ...selectedMaxSnoozeDays.filter(
+                (maxSnooze) => maxSnooze !== undefined,
+              ),
+            )
+          : this.config.snooze?.maxSnoozeDays;
+
+      // Cap the max snooze length to the person's release date.
+      return Math.min(
+        getPersonDaysToRelease(this.person),
+        calculatedMaxSnoozeDays,
+      );
+    }
   }
 
   /**
@@ -906,7 +933,7 @@ export class OpportunityBase<
   // ===============================
 
   get indefiniteDenialReasons(): DenialReasonsMap {
-    return {};
+    return this.config.indefiniteDenialReasons;
   }
 
   get formVariant(): FormVariant | undefined {

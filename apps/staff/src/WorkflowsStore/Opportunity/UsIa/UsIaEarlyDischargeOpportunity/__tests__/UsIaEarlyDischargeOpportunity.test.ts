@@ -394,81 +394,57 @@ describe("maxManualSnoozeDays", () => {
       "INTERSTATE (IC-OUT)":
         "IC-OUT has a longer max snooze length than normal",
     });
+
+    vi.spyOn(opportunity, "config", "get").mockReturnValue({
+      snooze: {
+        maxSnoozeDays: 90,
+      },
+      maxSnoozeDaysByDenialReason: {
+        "TEMPORARY REASON": 90,
+        COURT: undefined,
+        "INTERSTATE (IC-IN)": undefined,
+        "INTERSTATE (IC-OUT)": 365,
+      },
+    } as any);
   });
 
   test("Returns max from config if indefinite snooze reason is not selected", () => {
-    vi.spyOn(opportunity, "config", "get").mockReturnValue({
-      snooze: {
-        maxSnoozeDays: 90,
-      },
-    } as any);
-
-    expect(
-      opportunity.maxManualSnoozeDays(["temporaryReason1", "temporaryReason2"]),
-    ).toEqual(90);
+    expect(opportunity.maxManualSnoozeDays(["TEMPORARY REASON"])).toEqual(90);
   });
 
   test("Returns undefined if indefinite snooze reason (COURT) is selected", () => {
-    vi.spyOn(opportunity, "config", "get").mockReturnValue({
-      snooze: {
-        maxSnoozeDays: 90,
-      },
-    } as any);
-
     expect(
-      opportunity.maxManualSnoozeDays(["COURT", "temporaryReason2"]),
+      opportunity.maxManualSnoozeDays(["COURT", "TEMPORARY REASON"]),
     ).toBeUndefined();
   });
 
   test("Returns undefined if indefinite snooze reason (IC-IN) is selected", () => {
-    vi.spyOn(opportunity, "config", "get").mockReturnValue({
-      snooze: {
-        maxSnoozeDays: 90,
-      },
-    } as any);
-
     expect(
       opportunity.maxManualSnoozeDays([
         "INTERSTATE (IC-IN)",
-        "temporaryReason2",
+        "TEMPORARY REASON",
       ]),
     ).toBeUndefined();
   });
 
   test("Returns 365 if extended snooze reason (IC-OUT) is selected", () => {
-    vi.spyOn(opportunity, "config", "get").mockReturnValue({
-      snooze: {
-        maxSnoozeDays: 90,
-      },
-    } as any);
-
     expect(
       opportunity.maxManualSnoozeDays([
         "INTERSTATE (IC-OUT)",
-        "temporaryReason2",
+        "TEMPORARY REASON",
       ]),
     ).toEqual(365);
   });
 
   test("Caps snooze length to release date", () => {
     timekeeper.freeze(new Date("2024-12-30")); // client expiration date is 12-31
-    vi.spyOn(opportunity, "config", "get").mockReturnValue({
-      snooze: {
-        maxSnoozeDays: 90,
-      },
-    } as any);
 
-    expect(opportunity.maxManualSnoozeDays(["temporaryReason2"])).toEqual(1);
+    expect(opportunity.maxManualSnoozeDays(["TEMPORARY REASON"])).toEqual(1);
   });
 
   test("Doesn't cap snooze length when release date is in the past", () => {
     timekeeper.freeze(new Date("2025-1-15")); // client expiration date is 12-31
-    vi.spyOn(opportunity, "config", "get").mockReturnValue({
-      snooze: {
-        maxSnoozeDays: 90,
-      },
-    } as any);
 
-    expect(opportunity.maxManualSnoozeDays(["temporaryReason2"])).toEqual(90);
+    expect(opportunity.maxManualSnoozeDays(["TEMPORARY REASON"])).toEqual(90);
   });
 });
