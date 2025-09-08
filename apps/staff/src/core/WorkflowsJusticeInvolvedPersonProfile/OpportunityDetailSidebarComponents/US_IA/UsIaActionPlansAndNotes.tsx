@@ -136,7 +136,7 @@ export const UsIaActionPlansAndNotes = observer(
 
     return (
       <DetailsSection>
-        <DetailsHeading>Action Plans and Notes</DetailsHeading>
+        <DetailsHeading>Recent Notes</DetailsHeading>
         {opportunity.mostRecentActions.reverse().map((action) => (
           <ActionEntry action={action} />
         ))}
