@@ -43,6 +43,9 @@
       "~@jii/earned-good-time": ["libs/@jii/earned-good-time/src/index.ts"],
       "~@jii/layout": ["libs/@jii/layout/src/index.ts"],
       "~@jii/paths": ["libs/@jii/paths/src/index.ts"],
+      "~@meetings/import": ["apps/@meetings/import/src/index.ts"],
+      "~@meetings/import/*": ["apps/@meetings/import/src/*"],
+      "~@meetings/import/test/*": ["apps/@meetings/import/__tests__/*"],
       "~@meetings/prisma": ["libs/@meetings/prisma/src/index.ts"],
       "~@meetings/prisma/*": ["libs/@meetings/prisma/src/*"],
       "~@meetings/prisma/client": [

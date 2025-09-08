@@ -21,18 +21,24 @@ import { defineConfig } from "vite";
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: "../../../node_modules/.vite/libs/@meetings/prisma",
+  cacheDir: "../../../node_modules/.vite/apps/@meetings/import",
 
   plugins: [nxViteTsPaths()],
   test: {
-    name: "@meetings/prisma",
+    name: "@meetings/import",
+    setupFiles: ["__tests__/setup/index.ts"],
     globals: true,
-    cache: { dir: "../../../node_modules/.vitest" },
+    cache: { dir: "../../node_modules/.vitest" },
     environment: "node",
-    include: ["src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    include: ["__tests__/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     reporters: ["default"],
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
     coverage: {
-      reportsDirectory: "../../../coverage/libs/@meetings/prisma",
+      reportsDirectory: "../../coverage/apps/@meetings/import",
       provider: "v8",
     },
     // We need to set this up this way because:
@@ -46,6 +52,11 @@ export default defineConfig(() => ({
       DATABASE_URL_US_ID:
         process.env["DATABASE_URL_US_ID"] ??
         "postgresql://postgres:postgres@localhost:6507/meetings-test?schema=public",
+      IMPORT_BUCKET_ID: process.env["IMPORT_BUCKET_ID"] ?? "test-bucket",
+      SENTRY_DSN:
+        process.env["SENTRY_DSN"] ??
+        "https://90cb634f34081fd723efbb6060c6debc@o432474.ingest.us.sentry.io/4509710403567616",
+      SENTRY_ENV: process.env["SENTRY_ENV"] ?? "test",
     },
   },
 }));
