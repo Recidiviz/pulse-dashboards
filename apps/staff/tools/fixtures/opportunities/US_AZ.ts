@@ -884,6 +884,7 @@ export const mockApiOpportunityConfigurationResponse = {
           tabs: [
             "Eligible per ORAS",
             "Eligible per Initial Assessment",
+            "Transferred",
             "Marked Ineligible",
           ],
         },

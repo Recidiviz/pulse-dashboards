@@ -307,7 +307,12 @@ export const mockApiOpportunityConfigurationResponse = {
       ineligibleCriteriaCopy: [],
       initialHeader: null,
       isAlert: false,
-      markSubmittedOptionsByTab: [],
+      markSubmittedOptionsByTab: [
+        {
+          tab: "Pending Review for Transfer",
+          texts: ["Education status", "Medical status", "Mental Health status"],
+        },
+      ],
       methodologyUrl: "tbd",
       nonOmsCriteria: [],
       nonOmsCriteriaHeader: null,
@@ -323,7 +328,7 @@ export const mockApiOpportunityConfigurationResponse = {
       subcategoryOrderings: [],
       subheading:
         "This alert helps staff identify residents who may be newly eligible for a custody level downgrade because they have not had a Class I or II misconduct in over 6 months. ",
-      submittedTabTitle: "Pending",
+      submittedTabTitle: null,
       supportsSubmitted: false,
       systemType: "INCARCERATION",
       tabGroups: null,
