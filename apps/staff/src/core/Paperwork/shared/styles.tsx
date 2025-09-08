@@ -160,10 +160,12 @@ export const Grid = styled.div<GridProps>(
     grid-gap: 1px;
     border-top: 1px solid;
     border-left: 1px solid;
-    
+
     & > ${Item},
     & ${Input} {
-      border-right: 1px solid;  
+      border-right: 1px solid;
     }
   `,
 );
+
+export const Footer = styled.div``;

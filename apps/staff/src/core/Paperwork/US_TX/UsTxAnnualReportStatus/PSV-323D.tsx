@@ -21,7 +21,7 @@ import { FormViewerContext } from "../../FormViewer";
 import FormCheckbox from "../../shared/FormCheckbox";
 import FormHeader from "../../shared/FormHeader";
 import FormInput from "../../shared/FormInput";
-import { FormContainer, Grid, Item, Row } from "../../shared/styles";
+import { Footer, FormContainer, Grid, Item, Row } from "../../shared/styles";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 
 const FormPSV323D: React.FC = () => {
@@ -498,6 +498,8 @@ const FormPSV323D: React.FC = () => {
             <Item>Remarks:</Item>
             <FormInput name="regionDirectorRemarks" />
           </Grid>
+
+          <Footer>PSV-323D (Rev. 07/01/2025)</Footer>
         </FormContainer>
       </PrintablePage>
     </PrintablePageMargin>

@@ -42,7 +42,7 @@ interface FormHeaderProps {
 }
 
 const FormHeaderContainer = styled.div`
-  margin-bottom: ${rem(10)};
+  margin-bottom: ${rem(5)};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -50,7 +50,6 @@ const FormHeaderContainer = styled.div`
 `;
 
 const FormHeaderHeading = styled.h1`
-  margin-left: ${rem(50)};
   font-family: "Arial", sans-serif;
   font-size: 9px;
   margin-bottom: 0;

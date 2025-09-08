@@ -21,7 +21,7 @@ import { FormViewerContext } from "../../FormViewer";
 import FormCheckbox from "../../shared/FormCheckbox";
 import FormHeader from "../../shared/FormHeader";
 import FormInput from "../../shared/FormInput";
-import { ErsItem, FormContainer, Grid, Row } from "../../shared/styles";
+import { ErsItem, Footer, FormContainer, Grid, Row } from "../../shared/styles";
 import { PrintablePage, PrintablePageMargin } from "../../styles";
 
 const ERSChecklist: React.FC = () => {
@@ -568,6 +568,8 @@ const ERSChecklist: React.FC = () => {
             <ErsItem>Remarks:</ErsItem>
             <FormInput name="regionDirectorRemarks" />
           </Grid>
+
+          <Footer>PSV-323A (Rev. 07/01/2025)</Footer>
         </FormContainer>
       </PrintablePage>
     </PrintablePageMargin>
