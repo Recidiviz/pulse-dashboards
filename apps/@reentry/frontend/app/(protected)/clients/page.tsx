@@ -25,15 +25,23 @@ import {
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
-import DataTable from "react-data-table-component";
+import DataTable, {
+  SortOrder,
+  TableColumn,
+  TableStyles,
+} from "react-data-table-component";
 
 import { $api } from "~@reentry/frontend/api";
 import CustomPagination from "~@reentry/frontend/components/base/CustomPagination";
 import { IconInput } from "~@reentry/frontend/components/base/SortingInput";
 import ActionButton from "~@reentry/frontend/components/clients/ActionButton";
+import { IS_V2_INTAKE_CHAT } from "~@reentry/frontend/featureFlags";
 import { useClientStatusPolling } from "~@reentry/frontend/hooks/useClientStatusPolling";
 import { useAuth } from "~@reentry/frontend/lib/auth";
 import type { components } from "~@reentry/frontend/recidiviz-schema";
+import { trpc } from "~@reentry/frontend/trpc";
+
+type ClientResponse = components["schemas"]["ClientResponse"];
 
 // Styles
 const customStyles = {
@@ -83,12 +91,12 @@ const SortIcon = () => (
 );
 
 // Formatting
-const formatInitials = (row: components["schemas"]["ClientResponse"]) => {
+const formatInitials = (row: ClientResponse) => {
   if (!row.client || !row.client.full_name) return null;
   return row.client.full_name.given_names.charAt(0);
 };
 
-const formatName = (row: components["schemas"]["ClientResponse"]) => {
+const formatName = (row: ClientResponse) => {
   if (!row.client || !row.client.full_name) return null;
   return `${row.client.full_name.given_names} ${row.client.full_name.surname}`;
 };
@@ -268,10 +276,101 @@ const ClientsPage = () => {
     );
   }
 
+  // V2-only table that fetches statuses via tRPC and merges into items
+  const ClientsTableV2: React.FC<{
+    items: ClientResponse[];
+    total: number;
+    page: number;
+    rowsPerPage: number;
+    columns: TableColumn<ClientResponse>[];
+    customStyles: TableStyles;
+    onSort: (
+      column: TableColumn<ClientResponse>,
+      sortDirection: SortOrder,
+    ) => void;
+    SortIconComp: React.ReactNode;
+    activeRowId: string | null;
+  }> = ({
+    items,
+    total,
+    page,
+    rowsPerPage,
+    columns,
+    customStyles,
+    onSort,
+    SortIconComp,
+    activeRowId,
+  }) => {
+    const auth = useAuth();
+    const stateCode = auth.userAppMetadata?.stateCode ?? "";
+    const staffPseudoId = auth.userAppMetadata?.pseudonymizedId;
+
+    const enableGetClientsIntakeStatus = Boolean(stateCode && staffPseudoId);
+
+    const { data: intakeStatuses } =
+      trpc.staff.getAllClientsIntakeStatus.useQuery(
+        {
+          staffPseudoId: Number(staffPseudoId),
+        },
+        { enabled: enableGetClientsIntakeStatus },
+      );
+
+    // Merges the status of existing clients with the new server's statuses
+    const updatedItems = items.map((item) => {
+      if (!enableGetClientsIntakeStatus || !intakeStatuses) return item;
+      const pseudoId = item.client?.pseudonymized_client_id;
+      const statusOverride = pseudoId ? intakeStatuses[pseudoId] : undefined;
+
+      return {
+        ...item,
+        frontend_status: statusOverride || item.frontend_status,
+      };
+    });
+
+    return (
+      <DataTable
+        columns={columns}
+        data={updatedItems}
+        customStyles={customStyles}
+        sortIcon={SortIconComp}
+        onSort={onSort}
+        noHeader
+        responsive
+        highlightOnHover
+        noDataComponent={
+          <div className="text-gray-600 py-4 ">No clients found.</div>
+        }
+        conditionalRowStyles={[
+          {
+            when: (row) => row.client_pseudo_id === activeRowId,
+            style: {
+              backgroundColor: "bg-gray-200",
+              "&:hover": { backgroundColor: "bg-gray-200" },
+            },
+          },
+        ]}
+        pagination
+        paginationComponent={() => (
+          <CustomPagination
+            currentPage={page}
+            totalRows={total}
+            rowsPerPage={rowsPerPage}
+          />
+        )}
+        onRowClicked={(row) => {
+          if (row.processing_status === "not_started") {
+            window.location.href = `/clients/intake/${row.client_pseudo_id}`;
+          }
+        }}
+        pointerOnHover
+      />
+    );
+  };
+
   const columns = [
     {
       name: "NAME",
-      cell: (row: components["schemas"]["ClientResponse"]) => (
+      cell: (row: ClientResponse) => (
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-white rounded-full text-center font-bold text-[14px] flex justify-center items-center text-white bg-[url('/images/profile.png')]">
             {formatInitials(row)}
@@ -286,9 +385,8 @@ const ClientsPage = () => {
     },
     {
       name: "DOC ID",
-      selector: (row: components["schemas"]["ClientResponse"]) =>
-        row.client?.external_client_id || "",
-      cell: (row: components["schemas"]["ClientResponse"]) => (
+      selector: (row: ClientResponse) => row.client?.external_client_id || "",
+      cell: (row: ClientResponse) => (
         <span className="text-[#002321] text-sm">
           {row.client?.external_client_id || "-"}
         </span>
@@ -297,9 +395,8 @@ const ClientsPage = () => {
     },
     {
       name: "INTAKE DATE",
-      selector: (row: components["schemas"]["ClientResponse"]) =>
-        row.intake?.created_at || "",
-      cell: (row: components["schemas"]["ClientResponse"]) => (
+      selector: (row: ClientResponse) => row.intake?.created_at || "",
+      cell: (row: ClientResponse) => (
         <span className="text-[#002321] text-sm">
           {row.intake?.updated_at ? formatDate(row.intake.updated_at) : "-"}
         </span>
@@ -308,7 +405,7 @@ const ClientsPage = () => {
     },
     {
       name: "STATUS",
-      cell: (row: components["schemas"]["ClientResponse"]) => (
+      cell: (row: ClientResponse) => (
         <div className="flex gap-2 items-center">
           <span className="text-[#002321] text-sm font-medium">
             {formatFrontendStatus(row.frontend_status)}
@@ -319,7 +416,7 @@ const ClientsPage = () => {
     },
     {
       name: "",
-      cell: (row: components["schemas"]["ClientResponse"]) => (
+      cell: (row: ClientResponse) => (
         <ActionButton
           client={row}
           isOpen={openDropdownId === `dropdown-${row.client_pseudo_id}`}
@@ -332,6 +429,71 @@ const ClientsPage = () => {
       width: "50px",
     },
   ];
+
+  const renderClientsTable = () => {
+    if (error) {
+      return (
+        <div className="text-red-500">
+          An error occurred while loading, please try again later
+        </div>
+      );
+    }
+    if (IS_V2_INTAKE_CHAT) {
+      return (
+        <ClientsTableV2
+          items={data?.items || []}
+          total={data?.total || 0}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          columns={columns}
+          customStyles={customStyles}
+          onSort={handleSort}
+          SortIconComp={<SortIcon />}
+          activeRowId={activeRowId}
+        />
+      );
+    }
+    return (
+      <DataTable
+        columns={columns}
+        data={data?.items || []}
+        customStyles={customStyles}
+        sortIcon={<SortIcon />}
+        onSort={handleSort}
+        noHeader
+        responsive
+        highlightOnHover
+        noDataComponent={
+          <div className="text-gray-600 py-4 ">No clients found.</div>
+        }
+        conditionalRowStyles={[
+          {
+            when: (row) => row.client_pseudo_id === activeRowId,
+            style: {
+              backgroundColor: "bg-gray-200",
+              "&:hover": {
+                backgroundColor: "bg-gray-200",
+              },
+            },
+          },
+        ]}
+        pagination
+        paginationComponent={() => (
+          <CustomPagination
+            currentPage={page}
+            totalRows={data?.total || 0}
+            rowsPerPage={rowsPerPage}
+          />
+        )}
+        onRowClicked={(row) => {
+          if (row.processing_status === "not_started") {
+            window.location.href = `/clients/intake/${row.client_pseudo_id}`;
+          }
+        }}
+        pointerOnHover
+      />
+    );
+  };
 
   return (
     <div className="w-full p-14 flex-col justify-start items-center gap-2 inline-flex bg-[#f9fafa] flex-grow">
@@ -419,51 +581,7 @@ const ClientsPage = () => {
               </button>
             </div>
           )}
-
-          {error ? (
-            <div className="text-red-500">
-              An error occurred while loading, please try again later
-            </div>
-          ) : (
-            <DataTable
-              columns={columns}
-              data={data?.items || []}
-              customStyles={customStyles}
-              sortIcon={<SortIcon />}
-              onSort={handleSort}
-              noHeader
-              responsive
-              highlightOnHover
-              noDataComponent={
-                <div className="text-gray-600 py-4 ">No clients found.</div>
-              }
-              conditionalRowStyles={[
-                {
-                  when: (row) => row.client_pseudo_id === activeRowId,
-                  style: {
-                    backgroundColor: "bg-gray-200",
-                    "&:hover": {
-                      backgroundColor: "bg-gray-200",
-                    },
-                  },
-                },
-              ]}
-              pagination
-              paginationComponent={() => (
-                <CustomPagination
-                  currentPage={page}
-                  totalRows={data?.total || 0}
-                  rowsPerPage={rowsPerPage}
-                />
-              )}
-              onRowClicked={(row) => {
-                if (row.processing_status === "not_started") {
-                  window.location.href = `/clients/intake/${row.client_pseudo_id}`;
-                }
-              }}
-              pointerOnHover
-            />
-          )}
+          {renderClientsTable()}
         </div>
       </div>
     </div>

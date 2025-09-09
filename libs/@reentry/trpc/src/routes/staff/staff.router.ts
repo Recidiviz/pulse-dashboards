@@ -20,11 +20,76 @@ import { TRPCError } from "@trpc/server";
 import { Prisma } from "~@reentry/prisma/client";
 import { auth0Procedure, router } from "~@reentry/trpc/init";
 import {
+  getAllClientsIntakeStatusInputSchema,
+  getClientIntakeStatusSchema,
   getIntakeInputSchema,
   toggleIntakeInputSchema,
 } from "~@reentry/trpc/routes/staff/staff.schema";
+import * as staffUtils from "~@reentry/trpc/routes/staff/utils";
 
 export const staffRouter = router({
+  getClientIntakeStatus: auth0Procedure
+    .input(getClientIntakeStatusSchema)
+    .query(async ({ ctx: { prisma, req }, input: { clientPseudoId } }) => {
+      try {
+        const client = await prisma.client.findUniqueOrThrow({
+          where: {
+            pseudonymizedId: clientPseudoId,
+          },
+          select: {
+            intakeEnabled: true,
+            Intake: true,
+          },
+        });
+
+        const processingStatus = await staffUtils.fetchProcessingStatus(req, [
+          clientPseudoId,
+        ]);
+        return staffUtils.resolveIntakeStatus(
+          { ...client, pseudonymizedId: clientPseudoId },
+          processingStatus,
+        );
+      } catch (e) {
+        if (
+          e instanceof Prisma.PrismaClientKnownRequestError &&
+          e.code === "P2025"
+        ) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Client not found",
+          });
+        }
+        return;
+      }
+    }),
+  getAllClientsIntakeStatus: auth0Procedure
+    .input(getAllClientsIntakeStatusInputSchema)
+    .query(async ({ ctx: { prisma, req }, input: { staffPseudoId } }) => {
+      const clients = await prisma.client.findMany({
+        where: {
+          staff: {
+            some: { staffId: staffPseudoId },
+          },
+        },
+        include: {
+          Intake: true,
+        },
+      });
+
+      const clientToStatusMap: Record<string, string> = {};
+      const clientIds = clients.map((client) => client.pseudonymizedId);
+      const processingStatusMap = await staffUtils.fetchProcessingStatus(
+        req,
+        clientIds,
+      );
+
+      clients.forEach((client) => {
+        clientToStatusMap[client.pseudonymizedId] =
+          staffUtils.resolveIntakeStatus(client, processingStatusMap);
+      });
+
+      return clientToStatusMap;
+    }),
   getIntakeEnabled: auth0Procedure
     .input(getIntakeInputSchema)
     .query(async ({ ctx: { prisma }, input: { clientPseudoId } }) => {

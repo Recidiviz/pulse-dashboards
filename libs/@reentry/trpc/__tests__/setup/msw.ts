@@ -1,5 +1,5 @@
 // Recidiviz - a data platform for criminal justice reform
-// Copyright (C) 2024 Recidiviz, Inc.
+// Copyright (C) 2025 Recidiviz, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,21 +15,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-import { z } from "zod";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 
-export const getIntakeInputSchema = z.object({
-  clientPseudoId: z.string(),
-});
+export function processingStatusHandler(status = "unknown") {
+  return http.post("*/processing-status", async ({ request }) => {
+    const body = (await request.json()) as { client_ids?: string[] };
+    const clientIds = body.client_ids ?? [];
 
-export const getClientIntakeStatusSchema = z.object({
-  clientPseudoId: z.string(),
-});
+    const clientToStatusMap: Record<string, string> = {};
+    clientIds.forEach((id) => {
+      clientToStatusMap[id] = status;
+    });
+    return HttpResponse.json(clientToStatusMap);
+  });
+}
 
-export const toggleIntakeInputSchema = z.object({
-  clientPseudoId: z.string(),
-  enable: z.boolean(),
-});
-
-export const getAllClientsIntakeStatusInputSchema = z.object({
-  staffPseudoId: z.number().int().nonnegative(),
-});
+export const mswServer = setupServer(
+  // Default processing-status handler returning 'unknown' for all ids.
+  processingStatusHandler("unknown"),
+);

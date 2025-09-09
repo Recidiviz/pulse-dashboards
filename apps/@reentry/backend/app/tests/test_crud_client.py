@@ -6,7 +6,15 @@ import pytest
 import sqlalchemy
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.crud.client import get_paginated_client_list
+from app.crud.client import get_paginated_client_list, get_processing_status
+from app.routes.shared_models import ProcessingStatus
+
+
+class StubStaffClient:
+    """Minimal stand-in object exposing pseudonymized_client_id attribute."""
+
+    def __init__(self, pseudonymized_client_id: str):
+        self.pseudonymized_client_id = pseudonymized_client_id
 
 
 @pytest.fixture(scope="function")
@@ -14,7 +22,8 @@ async def create_client_view(async_session):
     """Create the client_view in the test database."""
     # Execute the DDL statement to create the view
     await async_session.execute(
-        sqlalchemy.text("""
+        sqlalchemy.text(
+            """
         CREATE OR REPLACE VIEW client_view AS
         -- INTAKE CLIENTS (earliest in process): Order values 10-30
         SELECT
@@ -114,7 +123,8 @@ async def create_client_view(async_session):
                 LEFT JOIN execution e ON a.execution_id = e.id
                 WHERE a.client_pseudo_id = p.client_pseudo_id AND e.status = 'completed'
             )
-    """)
+    """
+        )
     )
     await async_session.commit()
     yield
@@ -238,3 +248,106 @@ async def test_get_paginated_client_list_with_unknown_id(
 
         # Verify mock was called correctly
         mock_get_clients.assert_called_once_with("unknown-id")
+
+
+@pytest.mark.asyncio
+async def test_get_processing_status_not_started(async_session: AsyncSession):
+    """get_processing_status returns NOT_STARTED for a client with no intake"""
+    client_pseudo_id = "no-intake-client"
+    staff_id = "staff-1"
+
+    with patch(
+        "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+    ) as mock_get_clients:
+        mock_get_clients.return_value = [StubStaffClient(client_pseudo_id)]
+
+        result = await get_processing_status(async_session, staff_id)
+    assert result == {client_pseudo_id: ProcessingStatus.NOT_STARTED}
+
+
+@pytest.mark.asyncio
+async def test_get_processing_status_completed(async_session: AsyncSession):
+    """get_processing_status returns COMPLETED when plan is done"""
+    from app.models.assessment import Assessment
+    from app.models.intake import Intake, IntakeStatus
+    from app.models.models import Execution, Plan
+
+    client_pseudo_id = "completed-client"
+    staff_id = "staff-2"
+
+    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
+    async_session.add(intake)
+    await async_session.commit()
+
+    exec_assess = Execution(status="completed")
+    async_session.add(exec_assess)
+    await async_session.commit()
+
+    assessment = Assessment(
+        client_pseudo_id=client_pseudo_id, execution_id=exec_assess.id
+    )
+    async_session.add(assessment)
+    await async_session.commit()
+
+    exec_plan = Execution(status="completed")
+    async_session.add(exec_plan)
+    await async_session.commit()
+    await async_session.refresh(exec_plan)
+
+    plan = Plan(client_pseudo_id=client_pseudo_id, create_execution_id=exec_plan.id)
+    async_session.add(plan)
+    await async_session.commit()
+
+    with (
+        patch(
+            "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+        ) as mock_get_clients,
+    ):
+        mock_get_clients.return_value = [StubStaffClient(client_pseudo_id)]
+
+        result = await get_processing_status(async_session, staff_id)
+    assert result[client_pseudo_id] == ProcessingStatus.COMPLETED
+
+
+@pytest.mark.asyncio
+async def test_get_processing_status_needs_retry(async_session: AsyncSession):
+    """get_processing_status returns NEEDS_RETRY when plan has failed after assessment"""
+    from app.models.assessment import Assessment
+    from app.models.intake import Intake, IntakeStatus
+    from app.models.models import Execution, Plan
+
+    client_pseudo_id = "retry-client"
+    staff_id = "staff-3"
+
+    intake = Intake(client_pseudo_id=client_pseudo_id, status=IntakeStatus.COMPLETED)
+    async_session.add(intake)
+    await async_session.commit()
+
+    exec_assess = Execution(status="completed")
+    async_session.add(exec_assess)
+    await async_session.commit()
+
+    assessment = Assessment(
+        client_pseudo_id=client_pseudo_id, execution_id=exec_assess.id
+    )
+    async_session.add(assessment)
+    await async_session.commit()
+
+    exec_plan = Execution(status="failed")
+    async_session.add(exec_plan)
+    await async_session.commit()
+    await async_session.refresh(exec_plan)
+
+    plan = Plan(client_pseudo_id=client_pseudo_id, create_execution_id=exec_plan.id)
+    async_session.add(plan)
+    await async_session.commit()
+
+    with (
+        patch(
+            "app.services.client_data.queries.Queries.get_clients_by_pseudonymized_staff_id"
+        ) as mock_get_clients,
+    ):
+        mock_get_clients.return_value = [StubStaffClient(client_pseudo_id)]
+
+        result = await get_processing_status(async_session, staff_id)
+    assert result[client_pseudo_id] == ProcessingStatus.NEEDS_RETRY

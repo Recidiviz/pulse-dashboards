@@ -4,10 +4,12 @@ from pydantic import BaseModel
 
 from app.auth.auth_core import get_pseudonymized_id
 from app.core.db import AsyncSession, get_session
-from app.crud.assessment import (
-    get_assessments_by_client_pseudo_id,
+from app.crud.assessment import get_assessments_by_client_pseudo_id
+from app.crud.client import (
+    get_client_status_updates,
+    get_paginated_client_list,
+    get_processing_status,
 )
-from app.crud.client import get_client_status_updates, get_paginated_client_list
 from app.crud.intake import get_intake_by_client_pseudo_id
 from app.crud.plan import create_plan, get_plan_by_client_pseudo_id, retry_plan_creation
 from app.models.models import Plan
@@ -34,6 +36,10 @@ class ClientStatusUpdate(BaseModel):
 
 class ClientStatusResponse(BaseModel):
     in_progress: list[ClientStatusUpdate]
+
+
+class ProcessingStatusRequest(BaseModel):
+    staff_pseudo_id: str
 
 
 # Client list
@@ -172,3 +178,17 @@ async def retry_processing(
 
     # Fallback: no current executions found
     raise HTTPException(status_code=400, detail="No retryable operations found")
+
+
+@router.post(
+    "/processing-status",
+    response_model=dict[str, ProcessingStatus],
+    summary="Get Intake Processing Status",
+    description="Retrieve intake processing status for all clients belonging to the provided staff pseudonymized id.",
+    tags=["Client Intake Processing Status"],
+)
+async def get_processing_status_route(
+    request: ProcessingStatusRequest,
+    session: AsyncSession = Depends(get_session),
+):
+    return await get_processing_status(session, request.staff_pseudo_id)

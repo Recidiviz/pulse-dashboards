@@ -290,10 +290,24 @@ const ClientSummaryCardV2: React.FC<ClientSummaryCardProps> = ({
   const { data: intakeInfo, isLoading } = trpc.staff.getIntakeEnabled.useQuery({
     clientPseudoId,
   });
+  const { data: clientStatusOverride, isLoading: isLoadingClientStatus } =
+    trpc.staff.getClientIntakeStatus.useQuery({
+      clientPseudoId,
+    });
+
   const toggleIntake = trpc.staff.toggleIntake.useMutation({
-    onSettled: () =>
-      utils.staff.getIntakeEnabled.invalidate({ clientPseudoId }),
+    onSettled: () => {
+      utils.staff.getIntakeEnabled.invalidate({ clientPseudoId });
+      utils.staff.getClientIntakeStatus.invalidate({ clientPseudoId });
+    },
   });
+
+  const intakeWithMergedStatus = intake
+    ? {
+        ...intake,
+        status: clientStatusOverride || intake.status,
+      }
+    : null;
 
   const startIntake = async () => {
     setLinkLoading(true);
@@ -314,14 +328,14 @@ const ClientSummaryCardV2: React.FC<ClientSummaryCardProps> = ({
 
   const cleanedBaseUrl = baseUrl.replace(/^https?:\/\//, "");
 
-  if (isLoading) {
+  if (isLoading || isLoadingClientStatus) {
     return <Loading />;
   }
 
   return (
     <SummaryBody
       clientRecord={clientRecord}
-      intake={intake}
+      intake={intakeWithMergedStatus}
       isIntakeEnabled={Boolean(intakeInfo?.intakeEnabled)}
       linkLoading={linkLoading}
       startIntake={startIntake}

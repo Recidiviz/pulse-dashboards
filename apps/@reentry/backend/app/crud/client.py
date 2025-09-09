@@ -1,7 +1,7 @@
 import logging
 
 import sqlalchemy
-from sqlmodel.sql.expression import select
+from sqlmodel import select
 
 from app.core.db import AsyncSession
 from app.crud.utils import apply_search_filter, paginate, sort_clients_by_name
@@ -189,9 +189,11 @@ async def get_paginated_client_list(
             "total": len(filtered_items),
             "page": page,
             "size": page_size,
-            "pages": (len(filtered_items) + page_size - 1) // page_size
-            if filtered_items
-            else 0,
+            "pages": (
+                (len(filtered_items) + page_size - 1) // page_size
+                if filtered_items
+                else 0
+            ),
         }
 
     sorted_clients = await compute_priority_order(bq_clients, session)
@@ -217,13 +219,15 @@ async def compute_priority_order(
     placeholders = ", ".join(
         [f"'{client.pseudonymized_client_id}'" for client in clients]
     )
-    stmt = sqlalchemy.text(f"""
+    stmt = sqlalchemy.text(
+        f"""
         SELECT DISTINCT client_pseudo_id, MIN(process_stage_order) as min_order
         FROM client_view
         WHERE client_pseudo_id IN ({placeholders})
         GROUP BY client_pseudo_id
         ORDER BY min_order ASC
-    """)
+    """
+    )
 
     result = await session.exec(stmt)
     ordered = [(row[0], row[1]) for row in result]
@@ -364,11 +368,13 @@ async def get_client_status_updates(
     # Step 2: Get only clients that have completed intake (processing-eligible)
     if bq_client_pseudo_ids:
         placeholders = ", ".join([f"'{id}'" for id in bq_client_pseudo_ids])
-        intake_stmt = sqlalchemy.text(f"""
+        intake_stmt = sqlalchemy.text(
+            f"""
             SELECT client_pseudo_id
             FROM intake
             WHERE client_pseudo_id IN ({placeholders}) AND status = 'completed'
-        """)
+        """
+        )
 
         result = await session.exec(intake_stmt)
         clients_with_completed_intake = [row[0] for row in result]
@@ -461,3 +467,32 @@ async def get_client_status_updates(
             )
 
     return {"in_progress": in_progress_clients}
+
+
+async def get_processing_status(
+    session: AsyncSession,
+    staff_pseudo_id: str | None,
+) -> dict[str, ProcessingStatus]:
+    """Return a map of client_pseudo_id -> ProcessingStatus for the given staff member."""
+
+    if not staff_pseudo_id:
+        return {}
+
+    try:
+        staff_clients = (
+            Queries.get_clients_by_pseudonymized_staff_id(staff_pseudo_id) or []
+        )
+    except Exception:
+        return {}
+
+    if not staff_clients:
+        return {}
+
+    response = await build_response_for_clients(
+        staff_clients, session, 1, len(staff_clients)
+    )
+
+    return {
+        item["client_pseudo_id"]: item["processing_status"]
+        for item in response.get("items", [])
+    }

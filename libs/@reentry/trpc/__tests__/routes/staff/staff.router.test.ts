@@ -31,10 +31,141 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
+
 import { testPrismaClient, testTRPCClient } from "~@reentry/trpc/test/setup";
-import { fakeClient } from "~@reentry/trpc/test/setup/seed";
+import {
+  mswServer,
+  processingStatusHandler,
+} from "~@reentry/trpc/test/setup/msw";
+import { fakeClient, fakeStaff } from "~@reentry/trpc/test/setup/seed";
 
 describe("staff router", () => {
+  beforeAll(() => {
+    process.env["V0_API_URL"] = process.env["V0_API_URL"] || "http://test-api";
+    mswServer.listen({ onUnhandledRequest: "warn" });
+  });
+
+  afterEach(() => {
+    mswServer.resetHandlers();
+  });
+
+  afterAll(() => {
+    mswServer.close();
+  });
+
+  describe("getClientIntakeStatus", () => {
+    test("returns 'new' when intake is not enabled and there is no intake", async () => {
+      // Ensure client has no Intake records
+      await testPrismaClient.intake.deleteMany({
+        where: { client: { pseudonymizedId: fakeClient.pseudonymizedId } },
+      });
+      await testPrismaClient.client.update({
+        where: { pseudonymizedId: fakeClient.pseudonymizedId },
+        data: { intakeEnabled: false },
+      });
+
+      const status = await testTRPCClient.staff.getClientIntakeStatus.query({
+        clientPseudoId: fakeClient.pseudonymizedId,
+      });
+      expect(status).toBe("new");
+    });
+
+    test("returns 'intake_enabled' when intake is enabled and there is no intake", async () => {
+      // Ensure client has no Intake records
+      await testPrismaClient.intake.deleteMany({
+        where: { client: { pseudonymizedId: fakeClient.pseudonymizedId } },
+      });
+      await testTRPCClient.staff.toggleIntake.mutate({
+        clientPseudoId: fakeClient.pseudonymizedId,
+        enable: true,
+      });
+
+      const status = await testTRPCClient.staff.getClientIntakeStatus.query({
+        clientPseudoId: fakeClient.pseudonymizedId,
+      });
+      expect(status).toBe("intake_enabled");
+    });
+
+    test("returns 'intake_in_progress' when intake is enabled and there is no intake", async () => {
+      await testTRPCClient.staff.toggleIntake.mutate({
+        clientPseudoId: fakeClient.pseudonymizedId,
+        enable: true,
+      });
+
+      const status = await testTRPCClient.staff.getClientIntakeStatus.query({
+        clientPseudoId: fakeClient.pseudonymizedId,
+      });
+      expect(status).toBe("intake_in_progress");
+    });
+
+    test("returns external 'in_progress' status when fetchProcessingStatus is not 'unknown' or 'not_started'", async () => {
+      mswServer.use(processingStatusHandler("in_progress"));
+
+      const result = await testTRPCClient.staff.getAllClientsIntakeStatus.query(
+        {
+          staffPseudoId: fakeStaff.staffId,
+        },
+      );
+
+      expect(result[fakeClient.pseudonymizedId]).toBe("in_progress");
+    });
+  });
+
+  describe("getAllClientsIntakeStatus", () => {
+    test("returns an empty map for a staffId with no clients", async () => {
+      const result = await testTRPCClient.staff.getAllClientsIntakeStatus.query(
+        {
+          staffPseudoId: 999999,
+        },
+      );
+      expect(result).toEqual({});
+    });
+
+    test("returns correct statuses for multiple clients", async () => {
+      // Create two clients under the same staff w/ no intakes
+      await testPrismaClient.client.create({
+        data: {
+          ...fakeClient,
+          personId: 2,
+          pseudonymizedId: "client-pid-2",
+          stablePersonExternalId: "client-ext-2a",
+          displayPersonExternalId: "client-display-ext-2a",
+          staff: { create: { staffId: fakeStaff.staffId } },
+        },
+      });
+      await testPrismaClient.client.create({
+        data: {
+          ...fakeClient,
+          personId: 3,
+          pseudonymizedId: "client-pid-3",
+          stablePersonExternalId: "client-ext-3a",
+          displayPersonExternalId: "client-display-ext-3a",
+          staff: { create: { staffId: fakeStaff.staffId } },
+        },
+      });
+
+      const result = await testTRPCClient.staff.getAllClientsIntakeStatus.query(
+        {
+          staffPseudoId: fakeStaff.staffId,
+        },
+      );
+
+      expect(result).toEqual({
+        "client-pid-1": "intake_in_progress",
+        "client-pid-2": "new",
+        "client-pid-3": "new",
+      });
+    });
+
+    test("rejects with BAD_REQUEST for invalid staffId input", async () => {
+      await expect(
+        testTRPCClient.staff.getAllClientsIntakeStatus.query({
+          // @ts-expect-error intentional bad input to test validation
+          staffPseudoId: "not-a-number",
+        }),
+      ).rejects.toThrow(/Expected number, received string|invalid_type/);
+    });
+  });
   describe("getIntakeEnabled", () => {
     test("returns intake status for an existing client", async () => {
       const result = await testTRPCClient.staff.getIntakeEnabled.query({
@@ -98,7 +229,7 @@ describe("staff router", () => {
           clientPseudoId: "missing-client",
           enable: true,
         }),
-      ).rejects.toThrow("Client not found");
+      ).rejects.toThrow(/Client not found/);
     });
   });
 });
