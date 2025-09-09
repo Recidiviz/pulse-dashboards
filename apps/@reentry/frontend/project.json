@@ -26,6 +26,12 @@
         "cwd": "{projectRoot}"
       }
     },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'No tests yet'"
+      }
+    },
     "build": {
       "executor": "@nx/next:build",
       "outputs": ["{options.outputPath}"],
@@ -132,7 +138,6 @@
         "cwd": "{projectRoot}"
       }
     },
-
     "openapi": {
       "executor": "nx:run-commands",
       "options": {
