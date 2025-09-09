@@ -17,6 +17,7 @@
 
 import {
   rawLeadershipUserInfoFixture,
+  rawSupervisionOfficerUserInfoFixture,
   rawSupervisorUserInfoFixture,
 } from "./fixture";
 import { RawUserInfo, userInfoSchema } from "./schema";
@@ -28,6 +29,11 @@ test("supervisor transformation", () => {
 test("leadership transformation", () => {
   expect(userInfoSchema.parse(rawLeadershipUserInfoFixture)).toMatchSnapshot();
 });
+
+test("supervision officer transformation", () => {
+  expect(userInfoSchema.parse(rawSupervisionOfficerUserInfoFixture)).toMatchSnapshot();
+});
+
 
 test("null entity with supervisor role fails", () => {
   expect(() => {

@@ -10,6 +10,37 @@ exports[`leadership transformation 1`] = `
 }
 `;
 
+exports[`supervision officer transformation 1`] = `
+{
+  "entity": {
+    "avgDailyPopulation": 54,
+    "displayName": "Walter Harris",
+    "district": "Unit 1",
+    "email": "officer1@recidiviz.org",
+    "externalId": "OFFICER4",
+    "fullName": {
+      "givenNames": "Walter",
+      "surname": "Harris",
+    },
+    "includeInOutcomes": true,
+    "latestLoginDate": 2021-12-16T00:00:00.000Z,
+    "pseudonymizedId": "hashed-so1",
+    "supervisorExternalIds": [
+      "agonzalez123",
+      "dlee456",
+    ],
+    "zeroGrantOpportunities": [
+      "LSU",
+      "pastFTRD",
+    ],
+  },
+  "metadata": {
+    "hasSeenOnboarding": false,
+  },
+  "role": "supervision_officer",
+}
+`;
+
 exports[`supervisor transformation 1`] = `
 {
   "entity": {

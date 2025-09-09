@@ -32,6 +32,7 @@ import {
   rawSupervisionOfficerFixture,
   rawSupervisionOfficerMetricEventFixture,
   rawSupervisionOfficerOutcomesFixture,
+  rawSupervisionOfficerUserInfoFixture,
   rawSupervisionVitalsMetricFixture,
   rawSupervisorUserInfoFixture,
   rosterChangeRequestFixtures,
@@ -40,6 +41,7 @@ import {
   supervisionOfficerMetricEventFixture,
   supervisionOfficerOutcomesFixture,
   supervisionOfficerSupervisorsFixture,
+  supervisionOfficerUserInfoFixture,
   supervisorUserInfoFixture,
 } from "~datatypes";
 
@@ -114,6 +116,13 @@ describe("InsightsAPIClient", () => {
     const response = await client.userInfo("fake-pseudo-id");
     expect(response).toEqual(leadershipUserInfoFixture);
   });
+
+  it("userInfo parses the data for supervision officer", async () => {
+    mockAxios.onGet().replyOnce(200, rawSupervisionOfficerUserInfoFixture);
+    const response = await client.userInfo("fake-pseudo-id");
+    expect(response).toEqual(supervisionOfficerUserInfoFixture);
+  });
+
 
   it("patchUserInfo parses the data for supervisor", async () => {
     // We can't test that the API actually modified anything here, but since it returns the updated

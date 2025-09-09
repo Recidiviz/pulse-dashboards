@@ -17,13 +17,17 @@
 
 import { z } from "zod";
 
-import { supervisionOfficerSupervisorSchema } from "~datatypes";
+import { supervisionOfficerSchema, supervisionOfficerSupervisorSchema } from "~datatypes";
 
 export const userInfoSchema = z
   .discriminatedUnion("role", [
     z.object({
       role: z.literal("supervision_officer_supervisor"),
       entity: supervisionOfficerSupervisorSchema,
+    }),
+    z.object({
+      role: z.literal("supervision_officer"),
+      entity: supervisionOfficerSchema,
     }),
     z.object({ role: z.null(), entity: z.null() }),
   ])

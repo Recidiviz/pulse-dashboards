@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
+import { rawSupervisionOfficerFixture } from "../../people/Staff/Supervision/Insights/SupervisionOfficer/fixture";
 import { rawSupervisionOfficerSupervisorFixture } from "../../people/Staff/Supervision/Insights/SupervisionOfficerSupervisor/fixture";
 import { RawUserInfo, userInfoSchema } from "./schema";
 
@@ -34,10 +35,22 @@ export const rawLeadershipUserInfoFixture: RawUserInfo = {
   },
 };
 
+export const rawSupervisionOfficerUserInfoFixture: RawUserInfo = {
+  role: "supervision_officer",
+  entity: rawSupervisionOfficerFixture[0],
+  metadata: {
+    hasSeenOnboarding: false,
+  },
+};
+
 export const supervisorUserInfoFixture = userInfoSchema.parse(
   rawSupervisorUserInfoFixture,
 );
 
 export const leadershipUserInfoFixture = userInfoSchema.parse(
   rawLeadershipUserInfoFixture,
+);
+
+export const supervisionOfficerUserInfoFixture = userInfoSchema.parse(
+  rawSupervisionOfficerUserInfoFixture,
 );
