@@ -20,7 +20,6 @@ import { z } from "zod";
 import { dateStringSchema } from "../../../../utils/zod";
 
 export const usTnJiiCreditsSchema = z.object({
-  behaviorCredit: z.string().nullable(),
   creditDate: dateStringSchema,
   creditFunction: z.enum(["ORIGINAL", "REMOVAL"]).nullable(),
   creditSource: z.enum(["LOCAL_JAIL", "TDOC", "WORKHOUSE"]).nullable(),
@@ -37,10 +36,6 @@ export const usTnJiiCreditsSchema = z.object({
     ])
     .nullable(),
   creditsEarned: z.number().nullable(),
-  halfTime: z.enum(["Y", "N"]).nullable(),
-  removalReason: z.string().nullable(),
-  // TODO(#46525): [US_TN][JII] Ensure all entries in creditActivity have reportedDate populated
-  reportedDate: dateStringSchema.nullable(),
 });
 
 export const usTnResidentMetadataSchema = z.object({
