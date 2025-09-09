@@ -108,18 +108,13 @@
     display: inline-block;
     right: inherit;
     width: max-content;
-    @include ie11.ie11 {
-      min-width: 13rem;
-    }
     max-width: 15.5rem;
     background-color: constants.$pine-1;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     border-radius: 0.25rem;
     letter-spacing: -0.01em;
     opacity: 0;
-    transition:
-      opacity 0.2s,
-      visibility 0.2s;
+    transition: opacity 0.2s, visibility 0.2s;
     transition-delay: 0.2s;
     &:hover {
       visibility: visible;
@@ -142,6 +137,9 @@
       @include mixins.sans-14;
       color: rgba(255, 255, 255, 0.8);
       margin-top: 0.5rem;
+    }
+    @include ie11.ie11 {
+      min-width: 13rem;
     }
   }
 }

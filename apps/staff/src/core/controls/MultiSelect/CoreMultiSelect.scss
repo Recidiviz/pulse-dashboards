@@ -4,6 +4,7 @@
 @use "../../CoreConstants.module.scss" as constants;
 
 .CoreMultiSelect {
+  transition: border-radius 0s;
   &__custom-indicator {
     display: flex;
     align-items: center;
@@ -11,7 +12,6 @@
     width: 2.25rem;
     height: 2.25rem;
   }
-  transition: border-radius 0s;
 
   &__custom-arrow {
     width: 0;

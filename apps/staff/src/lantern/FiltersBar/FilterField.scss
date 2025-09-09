@@ -33,10 +33,6 @@
   }
 
   &__label {
-    @media (max-width: 768px) {
-      font-size: 0.6rem;
-    }
-
     font-size: 0.8rem;
     font-weight: 600;
     margin-bottom: 0.3rem;
@@ -50,6 +46,9 @@
         margin-right: 0;
         margin-bottom: 0.5rem;
       }
+    }
+    @media (max-width: 768px) {
+      font-size: 0.6rem;
     }
   }
 }

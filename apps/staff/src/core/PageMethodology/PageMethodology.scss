@@ -18,10 +18,10 @@
 
   &__main-title {
     color: constants.$pine-3;
-    @include mixins.header-56;
     letter-spacing: -0.04em;
     padding-bottom: 1rem;
     padding-top: 6rem;
+    @include mixins.header-56;
   }
   h3 {
     margin: 0px;
@@ -40,8 +40,8 @@
     }
   }
   &__main-description {
-    @include mixins.body-24;
     color: constants.$pine-3;
+    @include mixins.body-24;
   }
   &__toc {
     padding: 2.93rem 0px 0px 0px !important;
@@ -59,21 +59,21 @@
 
     &--title {
       padding: 4.5rem 0px 0px 0px !important;
-      @include mixins.header-34;
       color: constants.$pine-3;
       letter-spacing: -0.04em;
+      @include mixins.header-34;
     }
     &--content,
     p {
-      @include mixins.body-16;
       color: constants.$pine-2;
+      @include mixins.body-16;
     }
   }
   &__sub-block--title {
     padding: 2rem 0px 1rem 0px !important;
     color: constants.$pine-3;
-    @include mixins.header-24;
     letter-spacing: -0.04em;
+    @include mixins.header-24;
   }
   &__table {
     font-size: 1rem;

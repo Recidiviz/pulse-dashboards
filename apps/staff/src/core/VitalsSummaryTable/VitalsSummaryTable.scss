@@ -65,8 +65,8 @@ $border-styles: 1px solid constants.$slate-20;
       }
 
       & > :first-child {
-        @include sticky-scroll-column;
         border-right: $border-styles;
+        @include sticky-scroll-column;
       }
 
       & > :nth-child(2) {
@@ -95,7 +95,6 @@ $border-styles: 1px solid constants.$slate-20;
 
       /* Entity Header */
       & > th#entity {
-        @include sticky-scroll-column;
         border-right: $border-styles;
         font-weight: 500;
         text-align: left;
@@ -107,6 +106,7 @@ $border-styles: 1px solid constants.$slate-20;
             min-width: 140px;
           }
         }
+        @include sticky-scroll-column;
       }
 
       /* Performance by Metric Headers */
@@ -143,20 +143,20 @@ $border-styles: 1px solid constants.$slate-20;
   &__cell {
     /* Entity cells */
     &--entity {
-      @include sticky-scroll-column;
       border-right: $border-styles;
       padding: 1.25rem 0.5rem 1.25rem 2.5rem;
       text-align: left;
+      @include sticky-scroll-column;
     }
   }
 
   /* Entity links */
   &__link {
     color: constants.$pine-3;
-    @include mixins.sans-14;
     border: 0;
     background-color: transparent;
     text-align: left;
+    @include mixins.sans-14;
     &:hover {
       text-decoration-line: underline;
       color: constants.$signal-links;
