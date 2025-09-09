@@ -38,7 +38,9 @@ import SortIcon from "../../assets/static/images/sortIcon.svg?react";
 import useIsMobile from "../../hooks/useIsMobile";
 import { NavigateToFormButtonStyle } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
 import { NAV_BAR_HEIGHT } from "../NavigationLayout";
+import {StatusAwareButton} from "../OpportunityDenial/MenuButton.styles";
 import { PersonIdWithCopyIcon } from "../PersonId/PersonId";
+
 
 const Table = styled.table`
   width: 100%;
@@ -130,8 +132,9 @@ const Row = styled.tr<{ $isSelected?: boolean }>`
     transition: all 0.15s ease-in-out;
   }
 
+  // Only show UsAzMarkSubmittedButton and NavigateToFormButton buttons on row hover
   :not(:hover, :focus) {
-    ${NavigateToFormButtonStyle} {
+    ${NavigateToFormButtonStyle}, ${StatusAwareButton} {
       display: none;
     }
   }

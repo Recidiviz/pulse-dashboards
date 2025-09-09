@@ -20,6 +20,7 @@ import { observer } from "mobx-react-lite";
 import toast from "react-hot-toast";
 
 import { Opportunity } from "../../WorkflowsStore";
+import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import {
   UsIaEarlyDischargeOpportunity,
   UsIaSupervisionLevelDowngradeOpportunity,
@@ -30,7 +31,36 @@ import {
   StatusAwareButton,
   StatusAwareToggle,
 } from "./MenuButton.styles";
+import UsAzMenuButton from "./UsAz/UsAzMenuButton";
 import UsIaMenuButton from "./UsIa/UsIaMenuButton";
+
+export const deleteSubmitted = async (opportunity: Opportunity) => {
+  await opportunity.deleteSubmitted();
+  // The person may become either Eligible or Almost Eligible
+  toast(
+    <OpportunityStatusUpdateToast
+      toastText={`Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${opportunity.config.label}`}
+    />,
+    {
+      id: "eligibleToast", // prevent duplicate toasts
+      position: "bottom-left",
+    },
+  );
+};
+
+export const markSubmittedAndToast = async (
+  opportunity: Opportunity,
+  subcategory?: string,
+) => {
+  const message = await opportunity.markSubmittedAndGenerateToast(subcategory);
+  if (message) {
+    toast(<OpportunityStatusUpdateToast toastText={message} />, {
+      id: "submittedToast", // prevent duplicate toasts
+      position: "bottom-left",
+      duration: 7000,
+    });
+  }
+};
 
 export const MenuButton = observer(function MenuButton({
   opportunity,
@@ -54,33 +84,6 @@ export const MenuButton = observer(function MenuButton({
   const denialText = opportunity.denial
     ? `Update ${config.denialNoun}`
     : config.denialButtonText ?? `Mark ${config.denialAdjective}`;
-
-  const deleteSubmitted = async () => {
-    await opportunity.deleteSubmitted();
-    // The person may become either Eligible or Almost Eligible
-    toast(
-      <OpportunityStatusUpdateToast
-        toastText={`Marked ${opportunity.person.displayName} as ${opportunity.tabTitle()} for ${config.label}`}
-      />,
-      {
-        id: "eligibleToast", // prevent duplicate toasts
-        position: "bottom-left",
-      },
-    );
-  };
-
-  const markSubmittedAndToast = async (subcategory?: string) => {
-    opportunity.markSubmittedAndGenerateToast(subcategory).then((message) => {
-      if (message) {
-        toast(<OpportunityStatusUpdateToast toastText={message} />, {
-          id: "submittedToast", // prevent duplicate toasts
-          position: "bottom-left",
-          duration: 7000,
-        });
-      }
-    });
-  };
-
   const { submittedSubcategories } = opportunity;
 
   /**
@@ -93,8 +96,23 @@ export const MenuButton = observer(function MenuButton({
     return (
       <UsIaMenuButton
         opportunity={opportunity}
-        markSubmittedAndToast={markSubmittedAndToast}
-        deleteSubmitted={deleteSubmitted}
+        markSubmittedAndToast={async () => {
+          await markSubmittedAndToast(opportunity);
+        }}
+        deleteSubmitted={async () => {
+          await deleteSubmitted(opportunity);
+        }}
+      />
+    );
+  }
+  // Arizona Admin Supervision requires separate buttons rather than dropdowns
+  if (
+    opportunity instanceof UsAzTransferToAdministrativeSupervisionOpportunity
+  ) {
+    return (
+      <UsAzMenuButton
+        opportunity={opportunity}
+        onDenialButtonClick={onDenialButtonClick}
       />
     );
   }
@@ -113,7 +131,7 @@ export const MenuButton = observer(function MenuButton({
                   <OpportunityStatusDropdownMenuItem
                     key={subcategory}
                     onClick={async () => {
-                      await markSubmittedAndToast(subcategory);
+                      await markSubmittedAndToast(opportunity, subcategory);
                     }}
                   >
                     {opportunity.subcategoryHeadingFor(subcategory)}
@@ -123,13 +141,17 @@ export const MenuButton = observer(function MenuButton({
             ) : // If there are no subcategories, show a button to undo or mark submitted
             // depending on the opportunity's current status
             opportunity.isSubmitted ? (
-              <OpportunityStatusDropdownMenuItem onClick={deleteSubmitted}>
+              <OpportunityStatusDropdownMenuItem
+                onClick={async () => {
+                  await deleteSubmitted(opportunity);
+                }}
+              >
                 {undoSubmitText}
               </OpportunityStatusDropdownMenuItem>
             ) : (
               <OpportunityStatusDropdownMenuItem
                 onClick={async () => {
-                  await markSubmittedAndToast();
+                  await markSubmittedAndToast(opportunity);
                 }}
               >
                 {submittedText}
@@ -150,7 +172,7 @@ export const MenuButton = observer(function MenuButton({
     return (
       <>
         {config.supportsDenial && (
-          <StatusAwareButton onClick={onDenialButtonClick}>
+          <StatusAwareButton onClick={onDenialButtonClick} kind={"secondary"}>
             {config.denialButtonText ??
               (config.isAlert ? "Override?" : "Update eligibility")}
           </StatusAwareButton>

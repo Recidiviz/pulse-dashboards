@@ -79,10 +79,12 @@ import {
   OpportunityTabGroup,
 } from "../../WorkflowsStore";
 import { NavigateToFormButton } from "../../WorkflowsStore/Opportunity/Forms/NavigateToFormButton";
+import { UsAzTransferToAdministrativeSupervisionOpportunity } from "../../WorkflowsStore/Opportunity/UsAz/UsAzTransferToAdministrativeSupervisionOpportunity/UsAzTransferToAdministrativeSupervisionOpportunity";
 import { OpportunityPersonListPresenter } from "../../WorkflowsStore/presenters/OpportunityPersonListPresenter";
 import { Resident } from "../../WorkflowsStore/Resident";
 import { CaseloadSelect } from "../CaseloadSelect";
 import InsightsPill from "../InsightsPill";
+import { UsAzMarkSubmittedButton } from "../OpportunityDenial/UsAz/UsAzMenuButton";
 import PersonId from "../PersonId";
 import { Heading, MaxWidth } from "../sharedComponents";
 import { WorkflowsCaseloadControlBar } from "../WorkflowsCaseloadControlBar/WorkflowsCaseloadControlBar";
@@ -281,6 +283,16 @@ export function OfficerNameCell({ row }: { row: Row<Opportunity> }) {
 }
 
 export function FormButtonCell({ row }: { row: Row<Opportunity> }) {
+  if (
+    row.original instanceof UsAzTransferToAdministrativeSupervisionOpportunity
+  ) {
+    return (
+      <RightAlignedWrapper>
+        <UsAzMarkSubmittedButton opportunity={row.original}/>
+      </RightAlignedWrapper>
+    );
+  }
+
   return row.original.form?.navigateToFormText ? (
     <RightAlignedWrapper>
       <NavigateToFormButton

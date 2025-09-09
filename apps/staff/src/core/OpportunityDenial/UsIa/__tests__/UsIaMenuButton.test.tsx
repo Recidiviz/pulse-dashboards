@@ -16,12 +16,12 @@
 // =============================================================================
 
 import { fireEvent, render, screen } from "@testing-library/react";
-import { Mock } from "vitest";
 
 import { useRootStore } from "../../../../components/StoreProvider";
 import { RootStore } from "../../../../RootStore";
 import { UsIaEarlyDischargeOpportunity } from "../../../../WorkflowsStore/Opportunity/UsIa";
 import { OpportunitySidePanelProvider } from "../../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
+import { deleteSubmitted, markSubmittedAndToast } from "../../MenuButton";
 import UsIaMenuButton from "../UsIaMenuButton";
 
 vi.mock("../../../../components/StoreProvider", () => ({
@@ -31,12 +31,8 @@ const useRootStoreMock = vi.mocked(useRootStore);
 
 describe("UsIaMenuButton", () => {
   let opportunity: UsIaEarlyDischargeOpportunity;
-  let markSubmittedAndToast: Mock;
-  let deleteSubmitted: Mock;
 
   beforeEach(() => {
-    markSubmittedAndToast = vi.fn();
-    deleteSubmitted = vi.fn();
     useRootStoreMock.mockReturnValue({
       workflowsStore: {
         currentUserEmail: "mock-email",
@@ -87,8 +83,12 @@ describe("UsIaMenuButton", () => {
         <OpportunitySidePanelProvider>
           <UsIaMenuButton
             opportunity={opportunity}
-            markSubmittedAndToast={markSubmittedAndToast}
-            deleteSubmitted={deleteSubmitted}
+            markSubmittedAndToast={async () => {
+              await markSubmittedAndToast(opportunity);
+            }}
+            deleteSubmitted={async () => {
+              await deleteSubmitted(opportunity);
+            }}
           />
         </OpportunitySidePanelProvider>,
       );

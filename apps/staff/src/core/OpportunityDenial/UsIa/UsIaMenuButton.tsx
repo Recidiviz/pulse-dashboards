@@ -28,9 +28,11 @@ import {
   UsIaSupervisionLevelDowngradeOpportunity,
 } from "../../../WorkflowsStore/Opportunity/UsIa";
 import { useOpportunitySidePanel } from "../../WorkflowsJusticeInvolvedPersonProfile/OpportunitySidePanelContext";
-import { OpportunityStatusDropdownMenuItem, StatusAwareToggle } from "../MenuButton.styles";
+import {
+  OpportunityStatusDropdownMenuItem,
+  StatusAwareToggle,
+} from "../MenuButton.styles";
 import { getEdButtonConfig, getSldButtonConfig } from "./menuConfigs";
-
 
 const UsIaMenuButton = observer(function MenuButton({
   opportunity,
@@ -47,8 +49,17 @@ const UsIaMenuButton = observer(function MenuButton({
   const { setCurrentView } = useOpportunitySidePanel();
   const { buttonLabel = "Update Eligibility", options } =
     opportunity.type === "usIaCompleteSupervisionLevelDowngrade"
-    ? getSldButtonConfig({ opportunity: opportunity as UsIaSupervisionLevelDowngradeOpportunity, setCurrentView, deleteSubmitted})
-    : getEdButtonConfig({ opportunity: opportunity as UsIaEarlyDischargeOpportunity, setCurrentView, markSubmittedAndToast, deleteSubmitted});
+      ? getSldButtonConfig({
+          opportunity: opportunity as UsIaSupervisionLevelDowngradeOpportunity,
+          setCurrentView,
+          deleteSubmitted,
+        })
+      : getEdButtonConfig({
+          opportunity: opportunity as UsIaEarlyDischargeOpportunity,
+          setCurrentView,
+          markSubmittedAndToast,
+          deleteSubmitted,
+        });
   return (
     <Dropdown>
       <StatusAwareToggle>{buttonLabel}</StatusAwareToggle>

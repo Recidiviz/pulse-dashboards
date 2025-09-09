@@ -36,7 +36,6 @@ export const StatusAwareToggle = styled(DropdownToggle).attrs({
 `;
 
 export const StatusAwareButton = styled(Button).attrs({
-  kind: "secondary",
   shape: "block",
 })`
   max-width: 11rem;
