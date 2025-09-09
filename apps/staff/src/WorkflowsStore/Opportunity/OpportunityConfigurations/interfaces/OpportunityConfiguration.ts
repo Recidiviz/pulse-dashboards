@@ -52,6 +52,7 @@ export interface OpportunityConfiguration {
   methodologyUrl: string;
   denialReasons: DenialReasonsMap;
   indefiniteDenialReasons: DenialReasonsMap;
+  reasonsRequiringApproval: string[];
   maxSnoozeDaysByDenialReason: Record<string, number | undefined>;
   sidebarComponents: string[];
   isAlert?: boolean;

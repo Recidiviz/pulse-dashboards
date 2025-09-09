@@ -204,9 +204,15 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
     denialConfirmationModalName &&
     DenialConfirmationModals[denialConfirmationModalName];
 
-  const isIndefiniteReasonRequiringApproval = reasons.some(
+  const hasSelectedIndefiniteReason = reasons.some(
     (reason) => reason in opportunity.indefiniteDenialReasons,
   );
+  const requiresApproval = reasons.some((reason) =>
+    opportunity.config.reasonsRequiringApproval.includes(reason),
+  );
+
+  const shouldSubmitIndefiniteSnoozeRequest =
+    hasSelectedIndefiniteReason && requiresApproval;
 
   const handleSave = async () => {
     if (denialConfirmationModalName) {
@@ -215,7 +221,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
       setSaveInProgress(true);
       // For indefinite snooze reasons, create an officer denial request instead of
       // kicking off the snooze immediately.
-      if (indefiniteSnooze && isIndefiniteReasonRequiringApproval) {
+      if (indefiniteSnooze && shouldSubmitIndefiniteSnoozeRequest) {
         await handleIndefiniteSnoozeRequest();
       } else {
         await submitDenial();
@@ -282,7 +288,7 @@ export const OpportunityDenialView = observer(function OpportunityDenialView({
             {buildResurfaceText(
               opportunity,
               snoozeUntilDate,
-              isIndefiniteReasonRequiringApproval,
+              hasSelectedIndefiniteReason,
               labels,
             )}
           </div>

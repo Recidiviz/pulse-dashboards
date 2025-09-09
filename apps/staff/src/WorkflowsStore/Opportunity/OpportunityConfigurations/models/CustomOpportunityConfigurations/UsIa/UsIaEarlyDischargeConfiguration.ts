@@ -45,4 +45,8 @@ export class UsIaEarlyDischargeConfiguration extends ApiOpportunityConfiguration
       ...indefiniteSnoozes,
     };
   }
+
+  get reasonsRequiringApproval() {
+    return ["INTERSTATE (IC-IN)", "COURT"];
+  }
 }

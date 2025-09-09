@@ -408,4 +408,11 @@ export class ApiOpportunityConfiguration implements OpportunityConfiguration {
     }
     return {};
   }
+
+  /**
+   * Denial reasons that require a supervisor approval before triggering a snooze.
+   */
+  get reasonsRequiringApproval(): string[] {
+    return [];
+  }
 }

@@ -121,6 +121,7 @@ export const mockOpportunity: Opportunity<Client> = {
     isEnabled: true,
     denialReasons: { CODE: "Denial Code", [OTHER_KEY]: "Other" },
     indefiniteDenialReasons: {},
+    reasonsRequiringApproval: [],
     maxSnoozeDaysByDenialReason: {},
     methodologyUrl: "https://example.com",
     sidebarComponents: [],

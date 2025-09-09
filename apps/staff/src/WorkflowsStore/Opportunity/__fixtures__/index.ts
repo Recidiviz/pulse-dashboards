@@ -81,6 +81,7 @@ export const mockUsXxOppConfig: OpportunityConfiguration = {
   denialReasons: {},
   indefiniteDenialReasons: {},
   maxSnoozeDaysByDenialReason: {},
+  reasonsRequiringApproval: [],
   methodologyUrl: "",
   homepagePosition: 1,
   deniedTabTitle: "Marked Ineligible",
