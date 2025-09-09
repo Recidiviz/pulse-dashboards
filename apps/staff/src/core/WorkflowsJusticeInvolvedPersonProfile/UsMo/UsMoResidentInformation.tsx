@@ -16,10 +16,23 @@
 // =============================================================================
 
 import React from "react";
+import styled from "styled-components/macro";
 
+import UsMoAssessmentScores from "../OpportunityDetailSidebarComponents/US_MO/UsMoAssessmentScores";
+import UsMoGangInvolvement from "../OpportunityDetailSidebarComponents/US_MO/UsMoGangInvolvement";
+import UsMoProgramParticipation from "../OpportunityDetailSidebarComponents/US_MO/UsMoProgramParticipation";
+import UsMoResidentDates from "../OpportunityDetailSidebarComponents/US_MO/UsMoResidentDates";
+import UsMoSentences from "../OpportunityDetailSidebarComponents/US_MO/UsMoSentences";
 import { UsMoSanctions } from "../ResidentDetailSidebarComponents/US_MO/UsMoSanctions";
 import { UsMoSolitary } from "../ResidentDetailSidebarComponents/US_MO/UsMoSolitary";
+import { Divider } from "../styles";
 import { ResidentProfileProps } from "../types";
+
+const Wrapper = styled.div`
+  hr + hr {
+    display: none; // Suppress extra dividers when sections are conditionally hidden
+  }
+`;
 
 export function UsMoResidentInformation({
   resident,
@@ -31,9 +44,21 @@ export function UsMoResidentInformation({
   }
 
   return (
-    <>
+    <Wrapper>
+      <Divider />
+      <UsMoResidentDates resident={resident} />
+      <Divider />
+      <UsMoAssessmentScores resident={resident} />
+      <Divider />
+      <UsMoSentences resident={resident} />
+      <Divider />
+      <UsMoGangInvolvement resident={resident} />
+      <Divider />
       <UsMoSolitary resident={resident} />
+      <Divider />
+      <UsMoProgramParticipation resident={resident} />
+      <Divider />
       <UsMoSanctions sanctions={metadata.d1SanctionInfoPastYear} />
-    </>
+    </Wrapper>
   );
 }
