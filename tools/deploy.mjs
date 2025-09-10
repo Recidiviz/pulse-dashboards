@@ -192,6 +192,7 @@ const deployServicesChoices = [
   { name: "Reentry backend (v0)", checked: false },
   { name: "Reentry server (v1)", checked: false },
   { name: "Reentry frontend", checked: false },
+  { name: "Meeting Assistant Server", checked: false },
 ];
 
 if (deployEnv === "demo") {
@@ -242,6 +243,8 @@ const deployReentryServer = deployServicesPrompt.deployServices.includes(
 );
 const deployReentryFrontend =
   deployServicesPrompt.deployServices.includes("Reentry frontend");
+const deployMeetingAssistantServer =
+  deployServicesPrompt.deployServices.includes("Meeting Assistant Server");
 
 console.log("Running nx reset...");
 await $`nx reset`.pipe(process.stdout);
@@ -912,6 +915,112 @@ if (
         type: "confirm",
         name: "retryDeploy",
         message: `Reentry frontend deploy failed with error: ${e}. Retry?`,
+        default: false,
+      });
+      retryDeploy = retryDeployPrompt.retryDeploy;
+    }
+  } while (retryDeploy);
+}
+
+if (
+  deployMeetingAssistantServer &&
+  (deployEnv === "staging" || deployEnv === "production")
+) {
+  console.log("Building and deploying the application...");
+
+  // Start docker and configure docker to upload to container registry
+  // Only needed for staging deploys
+  if (
+    deployEnv === "staging" ||
+    (deployEnv === "production" && isCpDeploy) ||
+    deployEnv === "demo"
+  ) {
+    try {
+      await $`open -a Docker && gcloud auth configure-docker us-central1-docker.pkg.dev`.pipe(
+        process.stdout,
+      );
+    } catch (e) {
+      console.error("Failed to configure docker for gcloud", e);
+    }
+  }
+
+  let retryDeploy = false;
+  do {
+    // Deploy the app
+    console.log("Deploying Meeting Assistant backend services...");
+    try {
+      // We only need to build and push the docker containers if we are
+      // 1. deploying to staging
+      // 2. deploying a cherry-pick
+      // 3. deploying to demo
+      // If we're on production, we should use the container that (ideally) should have been pushed in an earlier staging deploy.
+
+      if (deployEnv === "staging") {
+        await $`COMMIT_SHA=${currentRevision} nx container @meetings/server --configuration ${deployEnv}`.pipe(
+          process.stdout,
+        );
+
+        await $`COMMIT_SHA=${currentRevision} nx container @meetings/import --configuration ${deployEnv}`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "production" && isCpDeploy) {
+        await $`COMMIT_SHA=${currentRevision} nx container @meetings/server --configuration cherry-pick`.pipe(
+          process.stdout,
+        );
+
+        await $`COMMIT_SHA=${currentRevision} nx container @meetings/import --configuration cherry-pick`.pipe(
+          process.stdout,
+        );
+      } else if (deployEnv === "demo") {
+        await $`COMMIT_SHA=${currentRevision} nx container @meetings/server --configuration demo`.pipe(
+          process.stdout,
+        );
+
+        // There is no import job for demo, instead we have a cloud run job that
+        // seeds the demo database
+        await $`COMMIT_SHA=${currentRevision} nx container @meetings/seed-demo --configuration demo`.pipe(
+          process.stdout,
+        );
+      }
+
+      // Deploy any changes to the artifact registry if we're on staging
+      if (deployEnv === "staging") {
+        await $`yarn atmos:apply artifact_registry -s recidiviz-dashboard-${deployEnv}--meetings -- -auto-approve`.pipe(
+          process.stdout,
+        );
+      }
+
+      // Deploy the import, migration, and server infrastructure changes for the applicable environment
+      let stack;
+      if (deployEnv === "staging") {
+        stack = `recidiviz-dashboard-${deployEnv}--meetings`;
+      } else if (deployEnv === "production") {
+        stack = `recidiviz-dashboard-${deployEnv}--meetings`;
+      } else if (deployEnv === "demo") {
+        stack = "recidiviz-dashboard-staging--meetings-demo";
+      }
+
+      await $`yarn atmos:apply apps/meetings -s ${stack} -- -auto-approve \
+          -var server_container_version=${currentRevision} \
+          -var migrate_db_container_version=${currentRevision} \
+          -var import_container_version=${currentRevision}`.pipe(
+        process.stdout,
+      );
+
+      if (deployEnv === "demo") {
+        // If we're in demo mode, deploy the seed demo job
+        await $`yarn atmos:apply apps/meetings-seed-demo -s ${stack} -- -auto-approve -var container_version=${currentRevision}`.pipe(
+          process.stdout,
+        );
+      }
+
+      retryDeploy = false;
+      successfullyDeployed.push("Meeting Assistant Server");
+    } catch (e) {
+      const retryDeployPrompt = await inquirer.prompt({
+        type: "confirm",
+        name: "retryDeploy",
+        message: `Meeting Assistant Server deploy failed with error: ${e}. Retry?`,
         default: false,
       });
       retryDeploy = retryDeployPrompt.retryDeploy;

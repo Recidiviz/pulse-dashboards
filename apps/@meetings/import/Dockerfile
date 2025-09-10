@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-slim AS builder
+FROM node:20-alpine AS builder
 WORKDIR /usr/src/app
 
 RUN corepack enable
@@ -10,19 +10,23 @@ RUN yarn workspaces focus --production
 COPY dist/apps/@meetings/import .
 
 # Production stage
-FROM node:20-slim
+FROM node:20-alpine
 WORKDIR /usr/src/app
 
 ENV NODE_ENV=production
+# Cloud run requires the host to be 0.0.0.0
 ENV HOST=0.0.0.0
 ENV PORT=8080
 
-RUN apt-get update -y && apt-get install -y openssl dumb-init && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache dumb-init && \
+    chown -R node:node .
 
 COPY --from=builder /usr/src/app .
 
-RUN chown -R node:node .
 USER node
 EXPOSE ${PORT}
 
+# Make sure to:
+# 1. Use the extensionless package so directory imports can be resolved
+# 2. import the sentry module before the main.js file in order for packages to be instrumented
 CMD ["dumb-init", "node", "--import=extensionless/register", "--import", "./sentry/index.js", "main.js"]
