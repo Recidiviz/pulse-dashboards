@@ -16,7 +16,7 @@
 // =============================================================================
 
 import { rollup } from "d3-array";
-import { format } from "date-fns";
+import { format, isAfter } from "date-fns";
 import { DeepNonNullable } from "utility-types";
 
 import { EarnedGoodTimeConfig } from "~@jii/data";
@@ -120,11 +120,25 @@ export class UsMaEGTMonthlyReport {
   }
 }
 
+function getValidCreditActivity(metadata: UsMaResidentMetadata) {
+  const { creditActivity, lastUpdatedDate } = metadata;
+
+  // activity may be future-dated but it may also be a future-dated placeholder record,
+  // because of how missing data is imputed on the backend. These should be
+  // dropped so that we don't create any spurious monthly reports for them
+  return creditActivity.filter((activity) => {
+    if (isAfter(activity.creditDate, lastUpdatedDate)) {
+      return activity.activity !== null;
+    }
+    return true;
+  });
+}
+
 export function populateUsMaEGTMonthlyReport(
   metadata: UsMaResidentMetadata,
   config: EarnedGoodTimeConfig,
 ) {
-  const { creditActivity } = metadata;
+  const creditActivity = getValidCreditActivity(metadata);
 
   const reports = [
     ...rollup(
