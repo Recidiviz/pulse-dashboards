@@ -118,6 +118,8 @@ export class AuthClient<AppMetadata extends z.ZodType<object> = z.ZodTypeAny>
    * to override the need for actual verification
    */
   get isEmailVerificationRequired(): boolean {
+    if (isOfflineMode()) return false;
+
     if (this.appMetadataConstants?.skipEmailVerification) return false;
 
     return this.isAuthenticated && !this.isEmailVerified;

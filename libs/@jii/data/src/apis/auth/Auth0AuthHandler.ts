@@ -23,6 +23,7 @@ import {
   metadataNamespace,
 } from "~@jii/auth";
 import { AuthClient } from "~auth";
+import { isOfflineMode } from "~client-env-utils";
 import {
   castToError,
   HydrationState,
@@ -50,6 +51,12 @@ export class Auth0AuthHandler implements AuthHandler {
   }
 
   get userProfile(): AuthorizedUserProperties["userProfile"] | undefined {
+    if (isOfflineMode()) {
+      return {
+        stateCode: "RECIDIVIZ",
+      };
+    }
+
     try {
       return {
         ...this.authClient.appMetadata,

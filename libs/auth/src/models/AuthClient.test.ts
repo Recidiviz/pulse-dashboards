@@ -18,7 +18,7 @@
 import createAuth0Client from "@auth0/auth0-spa-js";
 import { z } from "zod";
 
-import { isTestEnv } from "~client-env-utils";
+import { isOfflineMode, isTestEnv } from "~client-env-utils";
 
 import { AuthClient } from "./AuthClient";
 
@@ -304,6 +304,12 @@ describe("after hydration", () => {
       await client.logInIfLoggedOut();
       expect(loginWithRedirectMock).not.toHaveBeenCalled();
     });
+
+    test("override verification check in offline mode", () => {
+      vi.mocked(isOfflineMode).mockReturnValue(true);
+      expect(client.isAuthorized).toBeTrue();
+      expect(client.isEmailVerificationRequired).toBeFalse();
+    })
   });
 
   test("authorized with email verification skipped", async () => {
