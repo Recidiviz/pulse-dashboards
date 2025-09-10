@@ -145,7 +145,9 @@ export class OpportunityPersonListPresenter
       ASSIGNED_STAFF_NAME:
         !this.isSupervisorHomepage &&
         some(opportunities, (opp) => !!opp.person.assignedStaffId),
-      STATUS: true,
+      // TODO(#7921): More gracefully handle these special cases
+      STATUS:
+        this.opportunityType !== "usAzTransferToAdministrativeSupervision",
       // TODO(#7921): More gracefully handle these special cases
       ELIGIBILITY_DATE:
         ![
