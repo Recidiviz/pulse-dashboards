@@ -59,13 +59,13 @@ const US_MI_CONFIG = {
     outcomesModule: {},
   },
   custodyLevelCopy: {
-    MINIMUM: "Level I",
-    RESTRICTIVE_MINIMUM: "Level II",
-    CLOSE: "Level IV",
-    MAXIMUM: "Level V",
-    INTERNAL_UNKNOWN: "Unknown",
-    EXTERNAL_UNKNOWN: "Unknown",
-    null: "Unknown",
+    MINIMUM: "Security Level I",
+    RESTRICTIVE_MINIMUM: "Security Level II",
+    CLOSE: "Security Level IV",
+    MAXIMUM: "Security Level V",
+    INTERNAL_UNKNOWN: "Unknown Security Level",
+    EXTERNAL_UNKNOWN: "Unknown Security Level",
+    null: "Unknown Security Level",
   },
 } satisfies TenantConfig<"US_MI">;
 

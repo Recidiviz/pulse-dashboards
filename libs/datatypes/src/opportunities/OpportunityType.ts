@@ -61,6 +61,7 @@ export const constructedOpportunityTypes = [
   "usMiSecurityClassificationCommitteeReview",
   "usMiWardenInPersonSecurityClassificationCommitteeReview",
   "usMiAddInPersonSecurityClassificationCommitteeReview",
+  "usMiCustodyLevelDowngrade",
 
   // US_MO
   "usMoOverdueRestrictiveHousingRelease",

@@ -57,6 +57,7 @@ import { usIdPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsId/UsIdP
 import { usMeEarlyTerminationSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeEarlyTerminationOpportunity/UsMeEarlyTerminationReferralRecord";
 import { usMeFurloughReleaseSchema } from "../src/WorkflowsStore/Opportunity/UsMe/UsMeFurloughReleaseOpportunity/UsMeFurloughReleaseReferralRecord";
 import { usMiClassificationReviewSchemaForSupervisionLevelFormatter } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiClassificationReviewOpportunity/UsMiClassificationReviewReferralRecord";
+import { usMiCustodyLevelDowngradeSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiCustodyLevelDowngradeOpportunity/UsMiCustodyLevelDowngradeReferralRecord";
 import { usMiEarlyDischargeSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiEarlyDischargeOpportunity/UsMiEarlyDischargeReferralRecord";
 import { usMiMinimumTelephoneReportingSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiMinimumTelephoneReportingOpportunity/UsMiMinimumTelephoneReportingReferralRecord";
 import { usMiPastFTRDSchema } from "../src/WorkflowsStore/Opportunity/UsMi/UsMiPastFTRDOpportunity/UsMiPastFTRDReferralRecord";
@@ -150,6 +151,7 @@ const OPPORTUNITY_SCHEMAS: Partial<Record<OpportunityType, z.ZodTypeAny>> = {
     usMiSecurityClassificationCommitteeReviewSchema,
   usMiWardenInPersonSecurityClassificationCommitteeReview:
     usMiWardenInPersonSecurityClassificationCommitteeReviewSchema,
+  usMiCustodyLevelDowngrade: usMiCustodyLevelDowngradeSchema,
 
   // US_MO
   usMoOverdueRestrictiveHousingRelease:

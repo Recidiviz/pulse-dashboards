@@ -15,9 +15,20 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UsMiClassificationReviewOpportunity";
-export * from "./UsMiCustodyLevelDowngradeOpportunity";
-export * from "./UsMiEarlyDischargeOpportunity";
-export * from "./UsMiMinimumTelephoneReportingOpportunity";
-export * from "./UsMiPastFTRDOpportunity";
-export * from "./UsMiSupervisionLevelDowngradeOpportunity";
+import { z } from "zod";
+
+import { dateStringSchema, opportunitySchemaBase } from "~datatypes";
+
+export const usMiCustodyLevelDowngradeSchema = opportunitySchemaBase.extend({
+  metadata: z.object({
+    confinementLevel: z.string(),
+    managementLevel: z.string(),
+    managementLevelRawScore: z.coerce.number(),
+    mostRecentAssessmentDate: dateStringSchema,
+    noAssessmentSince26: z.boolean(),
+  }),
+});
+
+export type UsMiCustodyLevelDowngradeReferralRecord = z.infer<
+  typeof usMiCustodyLevelDowngradeSchema
+>;

@@ -31,6 +31,7 @@ import {
   UsIdSupervisionLevelDowngradeOpportunity,
   UsMeEarlyTerminationOpportunity,
   UsMiClassificationReviewOpportunity,
+  UsMiCustodyLevelDowngradeOpportunity,
   UsMiEarlyDischargeOpportunity,
   UsMiMinimumTelephoneReportingOpportunity,
   UsMiPastFTRDOpportunity,
@@ -125,6 +126,7 @@ export const opportunityConstructors = {
   usMiSupervisionLevelDowngrade: UsMiSupervisionLevelDowngradeOpportunity,
   usMiWardenInPersonSecurityClassificationCommitteeReview:
     usMiWardenInPersonSecurityClassificationCommitteeReviewOpportunity,
+  usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeOpportunity,
 
   // US_ME
   usMeEarlyTermination: UsMeEarlyTerminationOpportunity,

@@ -15,9 +15,25 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // =============================================================================
 
-export * from "./UsMiClassificationReviewOpportunity";
-export * from "./UsMiCustodyLevelDowngradeOpportunity";
-export * from "./UsMiEarlyDischargeOpportunity";
-export * from "./UsMiMinimumTelephoneReportingOpportunity";
-export * from "./UsMiPastFTRDOpportunity";
-export * from "./UsMiSupervisionLevelDowngradeOpportunity";
+import { DocumentData } from "firebase/firestore";
+
+import { Resident } from "../../../Resident";
+import { OpportunityBase } from "../../OpportunityBase";
+import {
+  UsMiCustodyLevelDowngradeReferralRecord,
+  usMiCustodyLevelDowngradeSchema,
+} from "./UsMiCustodyLevelDowngradeReferralRecord";
+
+export class UsMiCustodyLevelDowngradeOpportunity extends OpportunityBase<
+  Resident,
+  UsMiCustodyLevelDowngradeReferralRecord
+> {
+  constructor(resident: Resident, record: DocumentData) {
+    super(
+      resident,
+      "usMiCustodyLevelDowngrade",
+      resident.rootStore,
+      usMiCustodyLevelDowngradeSchema.parse(record),
+    );
+  }
+}

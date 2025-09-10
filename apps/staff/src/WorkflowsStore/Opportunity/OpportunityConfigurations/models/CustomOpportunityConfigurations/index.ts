@@ -28,6 +28,7 @@ import { LSUConfiguration } from "./UsId/LSUConfiguration";
 import { UsIdFacilitiesConfiguration } from "./UsId/UsIdFacilitiesConfiguration";
 import { UsMeEarlyTerminationConfiguration } from "./UsMe/UsMeEarlyTerminationConfiguration";
 import { UsMeSCCPConfiguration } from "./UsMe/UsMeSCCPConfiguration";
+import { UsMiCustodyLevelDowngradeConfiguration } from "./UsMi/UsMiCustodyLevelDowngradeConfiguration";
 import { UsMoOverdueRestrictiveHousingConfiguration } from "./UsMo/UsMoOverdueRestrictiveHousingConfiguration";
 import { UsMoWorkReleaseConfiguration } from "./UsMo/UsMoWorkReleaseConfiguration";
 import { UsNdTransferToMinFacility } from "./UsNd/UsNdTransferToMinFacility";
@@ -59,8 +60,10 @@ const customOpportunityConfigurations: Partial<
   // This is a non-constructed opportunity that is being customized
   ["usNdTransferToMinFacility" as OpportunityType]: UsNdTransferToMinFacility,
   usIaEarlyDischarge: UsIaEarlyDischargeConfiguration,
-  usIaCompleteSupervisionLevelDowngrade: UsIaSupervisionLevelDowngradeConfiguration,
+  usIaCompleteSupervisionLevelDowngrade:
+    UsIaSupervisionLevelDowngradeConfiguration,
   usUtEarlyTermination: UsUtEarlyTerminationConfiguration,
+  usMiCustodyLevelDowngrade: UsMiCustodyLevelDowngradeConfiguration,
 };
 
 export function apiOpportunityConfigurationFactory(

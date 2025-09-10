@@ -45,6 +45,7 @@ import {
   UsMiRecommendedSupervisionLevel,
   UsMoIncarceration,
 } from "./OpportunityDetailSidebarComponents";
+import UsMiLastAssessment from "./OpportunityDetailSidebarComponents/US_MI/UsMiLastAssessment";
 import UsMoAssessmentScores from "./OpportunityDetailSidebarComponents/US_MO/UsMoAssessmentScores";
 import UsMoEscapes from "./OpportunityDetailSidebarComponents/US_MO/UsMoEscapes";
 import UsMoGangInvolvement from "./OpportunityDetailSidebarComponents/US_MO/UsMoGangInvolvement";
@@ -102,6 +103,7 @@ export const OpportunityDetailSidebarComponents = {
   UsIaActionPlansAndNotes,
   UsIaVictimContactInfo,
   UsIaEarlyDischargeIcOutDetails,
+  UsMiLastAssessment,
 };
 
 export const ResidentDetailSidebarComponents = {
