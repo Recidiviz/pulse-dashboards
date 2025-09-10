@@ -41,6 +41,7 @@ async def async_session() -> AsyncSession:
     import app.models.execution  # noqa
     import app.models.assessment  # noqa
     import app.models.intake  # noqa
+    import app.models.recording  # noqa
     import sqlalchemy
 
     session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

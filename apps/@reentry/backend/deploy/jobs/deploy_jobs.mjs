@@ -56,6 +56,16 @@ const JOBS = {
     description: "populates pseudo_id fields",
     environments: ["prod"], // environments where this job is applicable
   },
+  "demo-update-recording-status": {
+    name: "demo-update-recording-status",
+    description: "Update the status of a recording session.",
+    environments: ["demo"],
+  },
+  "prod-update-recording-status": {
+    name: "prod-update-recording-status",
+    description: "Update the status of a recording session.",
+    environments: ["prod"],
+  },
 };
 
 async function main() {
